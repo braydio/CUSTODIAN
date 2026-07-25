@@ -7,12 +7,16 @@ class_name SunderedKeepVistaController
 @export var start_marker_path: NodePath
 @export var reveal_full_marker_path: NodePath
 @export var mid_gameplay_marker_path: NodePath
+@export var first_camera_control_start_marker_path: NodePath
 @export var reveal_control_start_marker_path: NodePath
 @export var reveal_control_end_marker_path: NodePath
+@export var first_camera_return_complete_marker_path: NodePath
 @export var end_marker_path: NodePath
 
 @export var vista_root_path: NodePath
 @export var grand_vista_root_path: NodePath
+@export var grand_vista_cinematic_root_path: NodePath
+@export var fortress_vista_root_path: NodePath
 @export var vista_fog_band_path: NodePath
 @export var fog_underlay_path: NodePath
 @export var occlusion_root_path: NodePath
@@ -44,19 +48,15 @@ const CAMERA_FIRST_REVEAL_ZOOM := Vector2(0.84, 0.84)
 const CAMERA_TRAVERSE_OFFSET := Vector2(0.0, -48.0)
 const CAMERA_TRAVERSE_ZOOM := Vector2(0.98, 0.98)
 const CAMERA_SECOND_REVEAL_OFFSET := Vector2(150.0, -115.0)
-const CAMERA_SECOND_REVEAL_ZOOM := Vector2(0.84, 0.84)
+const CAMERA_SECOND_REVEAL_ZOOM := Vector2(0.78, 0.78)
 const CAMERA_FINAL_GATE_OFFSET := Vector2.ZERO
 const CAMERA_FINAL_GATE_ZOOM := Vector2.ONE
 
 enum FramingPhase {
-	INTRO_TIGHT,
-	FIRST_REVEAL,
-	FIRST_REVEAL_HOLD,
-	FIRST_PROGRESS_CONTROL,
-	RETURNING_TO_PLAY,
 	GAMEPLAY,
 	SECOND_REVEAL,
 	SECOND_REVEAL_HOLD,
+	SECOND_PROGRESS_CONTROL,
 	SECOND_RETURNING_TO_PLAY,
 }
 
@@ -66,11 +66,18 @@ var _entry: Marker2D
 var _start: Node2D
 var _reveal_full: Node2D
 var _mid_gameplay: Marker2D
+var _first_camera_control_start: Marker2D
 var _reveal_control_start: Marker2D
 var _reveal_control_end: Marker2D
+var _first_camera_return_complete: Marker2D
 var _end: Node2D
 var _vista_root: CanvasItem
 var _grand_vista_root: CanvasItem
+var _grand_vista_cinematic_root: CanvasItem
+var _fortress_vista_root: CanvasItem
+var _fortress_far: CanvasItem
+var _fortress_mid: CanvasItem
+var _fortress_near: CanvasItem
 var _vista_fog: CanvasItem
 var _fog_underlay: CanvasItem
 var _occlusion_root: CanvasItem
@@ -89,41 +96,40 @@ var _presentation_anchor: Marker2D
 var _camera_target_offset := CAMERA_INTRO_TIGHT_OFFSET
 var _camera_target_zoom := CAMERA_INTRO_TIGHT_ZOOM
 var _last_progress := 0.0
-var _framing_phase := FramingPhase.INTRO_TIGHT
+var _framing_phase := FramingPhase.GAMEPLAY
+var _first_enter_progress := 0.0
+var _first_return_progress := 0.0
+var _first_enter_weight := 0.0
+var _first_return_weight := 0.0
+var _first_camera_weight := 0.0
+var _first_camera_phase := "GAMEPLAY_BEFORE"
 var _first_reveal_weight := 0.0
 var _first_progress_weight := 0.0
 var _return_to_play_weight := 0.0
-var _return_start_offset := CAMERA_FIRST_REVEAL_OFFSET
-var _return_start_zoom := CAMERA_FIRST_REVEAL_ZOOM
-var _return_anchor_start := Vector2.ZERO
 var _first_reveal_complete := false
 var _second_reveal_weight := 0.0
+var _second_reveal_anchor_start := Vector2.ZERO
+var _second_progress_weight := 0.0
 var _second_return_to_play_weight := 0.0
+var _second_return_anchor_start := Vector2.ZERO
 var _second_reveal_complete := false
 
 
 func _ready() -> void:
-	_ensure_presentation_anchor()
 	_resolve_nodes()
-	_apply_progress(0.0)
+	_ensure_presentation_anchor()
+	_apply_progress(_compute_route_progress())
 
 
 func _process(_delta: float) -> void:
 	if _player == null or not is_instance_valid(_player):
 		_player = get_node_or_null(player_path) as Node2D
-	if _player == null or _start == null or _end == null:
+	if _player == null:
 		return
 
-	var progress_axis := _end.global_position - _start.global_position
-	var total := progress_axis.length()
-	if total <= 0.01:
-		return
-
-	var along := (_player.global_position - _start.global_position).dot(progress_axis.normalized())
-	var t := clampf(along / total, 0.0, 1.0)
-	if _framing_phase == FramingPhase.FIRST_PROGRESS_CONTROL:
-		_update_first_progress_control()
-	_apply_progress(t)
+	if _framing_phase == FramingPhase.SECOND_PROGRESS_CONTROL:
+		_update_second_progress_control()
+	_apply_progress(_compute_route_progress())
 
 
 func play_final_fade() -> void:
@@ -145,6 +151,8 @@ func play_final_fade() -> void:
 
 func refresh_bindings() -> void:
 	_resolve_nodes()
+	_ensure_presentation_anchor()
+	_apply_progress(_compute_route_progress())
 
 
 func apply_progress(t: float) -> void:
@@ -164,104 +172,108 @@ func get_camera_target_state() -> Dictionary:
 
 
 func enter_intro_tight_mode() -> void:
-	_framing_phase = FramingPhase.INTRO_TIGHT
-	_first_reveal_weight = 0.0
-	_first_progress_weight = 0.0
-	_return_to_play_weight = 0.0
-	_first_reveal_complete = false
+	_framing_phase = FramingPhase.GAMEPLAY
 	_second_reveal_weight = 0.0
+	_second_progress_weight = 0.0
 	_second_return_to_play_weight = 0.0
 	_second_reveal_complete = false
-	_restore_operator_follow()
-	_set_camera_target(
-		CAMERA_INTRO_TIGHT_OFFSET,
-		CAMERA_INTRO_TIGHT_ZOOM
-	)
+	_ensure_presentation_anchor()
+	_apply_progress(_compute_route_progress())
 
 
 func begin_first_reveal() -> void:
-	_framing_phase = FramingPhase.FIRST_REVEAL
-	_first_reveal_weight = 0.0
-	_return_to_play_weight = 0.0
-	_ensure_presentation_anchor()
-	if _first_reveal_camera_anchor != null:
-		_presentation_anchor.global_position = (
-			_first_reveal_camera_anchor.global_position
-		)
-	_set_camera_follow_target(_presentation_anchor)
-	_apply_progress(_last_progress)
+	# Compatibility only. Camera 1 is always derived from physical position.
+	_apply_progress(_compute_route_progress())
 
 
 func set_first_reveal_weight(weight: float) -> void:
-	_first_reveal_weight = clampf(weight, 0.0, 1.0)
-	_apply_progress(_last_progress)
+	# Compatibility only. Timed reveal weights no longer own Camera 1.
+	_apply_progress(_compute_route_progress())
 
 
 func hold_first_reveal() -> void:
-	_framing_phase = FramingPhase.FIRST_REVEAL_HOLD
-	_first_reveal_weight = 1.0
-	_apply_progress(_last_progress)
+	# Compatibility only. Camera 1 has no timed hold state.
+	_apply_progress(_compute_route_progress())
 
 
 func begin_first_progress_control() -> void:
-	_framing_phase = FramingPhase.FIRST_PROGRESS_CONTROL
-	_first_reveal_weight = 1.0
-	_first_progress_weight = 0.0
-	_update_first_progress_control()
-	_apply_progress(_last_progress)
+	# Compatibility only. The complete envelope is evaluated every frame.
+	_apply_progress(_compute_route_progress())
 
 
 func begin_return_to_gameplay() -> void:
-	_framing_phase = FramingPhase.RETURNING_TO_PLAY
-	_return_to_play_weight = 0.0
-	_return_start_offset = _camera_target_offset
-	_return_start_zoom = _camera_target_zoom
-	if _presentation_anchor != null:
-		_return_anchor_start = _presentation_anchor.global_position
-	_apply_progress(_last_progress)
+	# Compatibility only. Return is the second position segment.
+	_apply_progress(_compute_route_progress())
 
 
 func set_return_to_gameplay_weight(weight: float) -> void:
-	_return_to_play_weight = clampf(weight, 0.0, 1.0)
-	if (
-		_presentation_anchor != null
-		and _player != null
-	):
-		_presentation_anchor.global_position = (
-			_return_anchor_start.lerp(
-				_player.global_position,
-				_return_to_play_weight
-			)
-		)
-	_apply_progress(_last_progress)
+	# Compatibility only. Timed return weights no longer own Camera 1.
+	_apply_progress(_compute_route_progress())
 
 
 func complete_first_reveal() -> void:
-	_first_reveal_complete = true
-	_framing_phase = FramingPhase.GAMEPLAY
-	_first_reveal_weight = 1.0
-	_return_to_play_weight = 1.0
-	_restore_operator_follow()
-	_apply_progress(_last_progress)
+	# Compatibility only. Completion is derived from current position.
+	_apply_progress(_compute_route_progress())
 
 
 func begin_second_reveal() -> void:
-	if not _first_reveal_complete or _second_reveal_complete:
+	if _second_reveal_complete:
 		return
 	_framing_phase = FramingPhase.SECOND_REVEAL
 	_second_reveal_weight = 0.0
+	_second_progress_weight = 0.0
 	_second_return_to_play_weight = 0.0
 	_ensure_presentation_anchor()
-	if _second_reveal_camera_anchor != null:
-		_presentation_anchor.global_position = (
+
+	var current_follow_target: Node2D = null
+	if _camera != null:
+		for property: Dictionary in _camera.get_property_list():
+			if StringName(property.get("name", &"")) != &"follow_target":
+				continue
+			var follow_candidate: Variant = _camera.get(
+				"follow_target"
+			)
+			if follow_candidate is Node2D:
+				current_follow_target = follow_candidate as Node2D
+			break
+
+	if current_follow_target != null:
+		_second_reveal_anchor_start = (
+			current_follow_target.global_position
+		)
+	elif _player != null:
+		_second_reveal_anchor_start = _player.global_position
+	elif _second_reveal_camera_anchor != null:
+		_second_reveal_anchor_start = (
 			_second_reveal_camera_anchor.global_position
 		)
+	else:
+		_second_reveal_anchor_start = Vector2.ZERO
+
+	_presentation_anchor.global_position = (
+		_second_reveal_anchor_start
+	)
 	_set_camera_follow_target(_presentation_anchor)
 	_apply_progress(_last_progress)
 
 
 func set_second_reveal_weight(weight: float) -> void:
 	_second_reveal_weight = clampf(weight, 0.0, 1.0)
+	if (
+		_presentation_anchor != null
+		and _second_reveal_camera_anchor != null
+	):
+		var eased := smoothstep(
+			0.0,
+			1.0,
+			_second_reveal_weight
+		)
+		_presentation_anchor.global_position = (
+			_second_reveal_anchor_start.lerp(
+				_second_reveal_camera_anchor.global_position,
+				eased
+			)
+		)
 	_apply_progress(_last_progress)
 
 
@@ -271,9 +283,20 @@ func hold_second_reveal() -> void:
 	_apply_progress(_last_progress)
 
 
+func begin_second_progress_control() -> void:
+	_framing_phase = FramingPhase.SECOND_PROGRESS_CONTROL
+	_second_progress_weight = 0.0
+	_update_second_progress_control()
+	_apply_progress(_last_progress)
+
+
 func begin_second_return_to_gameplay() -> void:
 	_framing_phase = FramingPhase.SECOND_RETURNING_TO_PLAY
 	_second_return_to_play_weight = 0.0
+	if _presentation_anchor != null:
+		_second_return_anchor_start = (
+			_presentation_anchor.global_position
+		)
 	_apply_progress(_last_progress)
 
 
@@ -282,10 +305,9 @@ func set_second_return_to_gameplay_weight(weight: float) -> void:
 	if (
 		_presentation_anchor != null
 		and _player != null
-		and _second_reveal_camera_anchor != null
 	):
 		_presentation_anchor.global_position = (
-			_second_reveal_camera_anchor.global_position.lerp(
+			_second_return_anchor_start.lerp(
 				_player.global_position,
 				_second_return_to_play_weight
 			)
@@ -298,8 +320,8 @@ func complete_second_reveal() -> void:
 	_framing_phase = FramingPhase.GAMEPLAY
 	_second_reveal_weight = 1.0
 	_second_return_to_play_weight = 1.0
-	_restore_operator_follow()
-	_apply_progress(_last_progress)
+	_track_operator_with_presentation_anchor()
+	_apply_progress(_compute_route_progress())
 
 
 # Compatibility with the former one-phase reveal API.
@@ -316,28 +338,43 @@ func complete_reveal_choreography() -> void:
 
 
 func get_reveal_choreography_state() -> Dictionary:
+	var second_camera_active := _is_second_camera_active()
 	return {
-		"active": _framing_phase in [
-			FramingPhase.FIRST_REVEAL,
-			FramingPhase.FIRST_REVEAL_HOLD,
-			FramingPhase.FIRST_PROGRESS_CONTROL,
-			FramingPhase.RETURNING_TO_PLAY,
-			FramingPhase.SECOND_REVEAL,
-			FramingPhase.SECOND_REVEAL_HOLD,
-			FramingPhase.SECOND_RETURNING_TO_PLAY,
-		],
-		"weight": _first_reveal_weight,
+		"active": _first_camera_weight > 0.001 or second_camera_active,
+		"weight": _first_enter_weight,
 		"progress_floor": 0.0,
-		"phase": FramingPhase.keys()[_framing_phase],
-		"first_reveal_complete": _first_reveal_complete,
-		"first_progress_weight": _first_progress_weight,
+		"phase": (
+			FramingPhase.keys()[_framing_phase]
+			if second_camera_active
+			else _first_camera_phase
+		),
+		"framing_phase": FramingPhase.keys()[_framing_phase],
+		"first_camera_phase": _first_camera_phase,
+		"first_reveal_complete": _first_enter_progress >= 0.999,
+		"first_progress_weight": _first_return_progress,
+		"first_enter_progress": _first_enter_progress,
+		"first_return_progress": _first_return_progress,
+		"first_enter_weight": _first_enter_weight,
+		"first_return_weight": _first_return_weight,
+		"first_camera_weight": _first_camera_weight,
+		"presentation_anchor_position": (
+			_presentation_anchor.global_position
+			if _presentation_anchor != null
+			else Vector2.ZERO
+		),
 		"second_reveal_complete": _second_reveal_complete,
 		"second_reveal_weight": _second_reveal_weight,
+		"second_anchor_blend_weight": _second_reveal_weight,
+		"second_progress_weight": _second_progress_weight,
 		"second_return_weight": _second_return_to_play_weight,
 		"return_weight": _return_to_play_weight,
 		"follow_target_is_operator": (
 			_camera != null
 			and _camera.get("follow_target") == _player
+		),
+		"follow_target_is_presentation_anchor": (
+			_camera != null
+			and _camera.get("follow_target") == _presentation_anchor
 		),
 	}
 
@@ -349,15 +386,37 @@ func _resolve_nodes() -> void:
 	_start = get_node_or_null(start_marker_path) as Node2D
 	_reveal_full = get_node_or_null(reveal_full_marker_path) as Node2D
 	_mid_gameplay = get_node_or_null(mid_gameplay_marker_path) as Marker2D
+	_first_camera_control_start = get_node_or_null(
+		first_camera_control_start_marker_path
+	) as Marker2D
 	_reveal_control_start = get_node_or_null(
 		reveal_control_start_marker_path
 	) as Marker2D
 	_reveal_control_end = get_node_or_null(
 		reveal_control_end_marker_path
 	) as Marker2D
+	_first_camera_return_complete = get_node_or_null(
+		first_camera_return_complete_marker_path
+	) as Marker2D
 	_end = get_node_or_null(end_marker_path) as Node2D
 	_vista_root = get_node_or_null(vista_root_path) as CanvasItem
 	_grand_vista_root = get_node_or_null(grand_vista_root_path) as CanvasItem
+	_grand_vista_cinematic_root = get_node_or_null(
+		grand_vista_cinematic_root_path
+	) as CanvasItem
+	_fortress_vista_root = get_node_or_null(
+		fortress_vista_root_path
+	) as CanvasItem
+	if _fortress_vista_root != null:
+		_fortress_far = _fortress_vista_root.get_node_or_null(
+			"FortressFarParallax"
+		) as CanvasItem
+		_fortress_mid = _fortress_vista_root.get_node_or_null(
+			"FortressMidParallax"
+		) as CanvasItem
+		_fortress_near = _fortress_vista_root.get_node_or_null(
+			"FortressNearParallax"
+		) as CanvasItem
 	_vista_fog = get_node_or_null(vista_fog_band_path) as CanvasItem
 	if String(fog_underlay_path).is_empty():
 		_fog_underlay = null
@@ -395,6 +454,10 @@ func _resolve_nodes() -> void:
 		_reveal_full = approach_root.get_node_or_null("Markers/RevealFull") as Node2D
 	if _mid_gameplay == null:
 		_mid_gameplay = approach_root.get_node_or_null("Markers/MidGameplayStart") as Marker2D
+	if _first_camera_control_start == null:
+		_first_camera_control_start = approach_root.get_node_or_null(
+			"Markers/FirstCameraControlStart"
+		) as Marker2D
 	if _reveal_control_start == null:
 		_reveal_control_start = approach_root.get_node_or_null(
 			"Markers/RevealControlStart"
@@ -403,12 +466,37 @@ func _resolve_nodes() -> void:
 		_reveal_control_end = approach_root.get_node_or_null(
 			"Markers/RevealControlEnd"
 		) as Marker2D
+	if _first_camera_return_complete == null:
+		_first_camera_return_complete = approach_root.get_node_or_null(
+			"Markers/FirstCameraReturnComplete"
+		) as Marker2D
 	if _end == null:
 		_end = approach_root.get_node_or_null("Markers/ReturnTopdown") as Node2D
 	if _vista_root == null:
 		_vista_root = approach_root.get_node_or_null("VistaRoot") as CanvasItem
 	if _grand_vista_root == null:
 		_grand_vista_root = approach_root.get_node_or_null("GrandVistaRoot") as CanvasItem
+	if _grand_vista_cinematic_root == null:
+		_grand_vista_cinematic_root = approach_root.get_node_or_null(
+			"GrandVistaRoot/GrandVistaCinematicRoot"
+		) as CanvasItem
+	if _fortress_vista_root == null:
+		_fortress_vista_root = approach_root.get_node_or_null(
+			"GrandVistaRoot/FortressVistaRoot"
+		) as CanvasItem
+	if _fortress_vista_root != null:
+		if _fortress_far == null:
+			_fortress_far = _fortress_vista_root.get_node_or_null(
+				"FortressFarParallax"
+			) as CanvasItem
+		if _fortress_mid == null:
+			_fortress_mid = _fortress_vista_root.get_node_or_null(
+				"FortressMidParallax"
+			) as CanvasItem
+		if _fortress_near == null:
+			_fortress_near = _fortress_vista_root.get_node_or_null(
+				"FortressNearParallax"
+			) as CanvasItem
 	if _vista_fog == null:
 		_vista_fog = approach_root.get_node_or_null(
 			"VistaRoot/FirstVistaMistParallax/ApproachFirstVistaFogVeil"
@@ -453,18 +541,17 @@ func _resolve_nodes() -> void:
 
 func _apply_progress(t: float) -> void:
 	_last_progress = clampf(t, 0.0, 1.0)
-	var first_vista_alpha := 0.0
-	if _first_reveal_complete:
-		first_vista_alpha = 1.0
-	elif _framing_phase in [
-		FramingPhase.FIRST_REVEAL,
-		FramingPhase.FIRST_REVEAL_HOLD,
-		FramingPhase.FIRST_PROGRESS_CONTROL,
-		FramingPhase.RETURNING_TO_PLAY,
-	]:
-		first_vista_alpha = _first_reveal_weight
-	var second_vista_alpha := _get_second_vista_alpha(t)
+	_update_first_camera_envelope_state()
+	var first_vista_alpha := _first_enter_weight
 	var exit_shadow_alpha := _get_exit_shadow_alpha(t)
+	var cinematic_alpha := _get_second_cinematic_alpha()
+	var fortress_alphas := _get_fortress_layer_alphas(
+		exit_shadow_alpha
+	)
+	var fortress_replacement_alpha := maxf(
+		fortress_alphas.x,
+		maxf(fortress_alphas.y, fortress_alphas.z)
+	)
 	_apply_camera_progress(t)
 
 	if _parallax_reveal_root != null:
@@ -479,7 +566,17 @@ func _apply_progress(t: float) -> void:
 	if _vista_root != null:
 		_vista_root.modulate.a = first_vista_alpha * vista_max_alpha
 	if _grand_vista_root != null:
-		_grand_vista_root.modulate.a = second_vista_alpha
+		_grand_vista_root.modulate.a = 1.0
+	if _grand_vista_cinematic_root != null:
+		_grand_vista_cinematic_root.modulate.a = cinematic_alpha
+	if _fortress_vista_root != null:
+		_fortress_vista_root.modulate.a = 1.0
+	if _fortress_far != null:
+		_fortress_far.modulate.a = fortress_alphas.x
+	if _fortress_mid != null:
+		_fortress_mid.modulate.a = fortress_alphas.y
+	if _fortress_near != null:
+		_fortress_near.modulate.a = fortress_alphas.z
 	if _vista_fog != null:
 		_vista_fog.modulate.a = lerpf(0.0, vista_fog_max_alpha, first_vista_alpha)
 	if _fog_underlay != null:
@@ -493,58 +590,23 @@ func _apply_progress(t: float) -> void:
 	if _final_gate_shadow_veil != null:
 		_final_gate_shadow_veil.modulate.a = exit_shadow_alpha * shadow_max_alpha
 	if _keep != null:
-		_keep.modulate.a = lerpf(keep_min_alpha, 1.0, first_vista_alpha)
+		var preview_alpha := lerpf(
+			keep_min_alpha,
+			1.0,
+			first_vista_alpha
+		)
+		var replacement_weight := smoothstep(
+			0.0,
+			0.75,
+			fortress_replacement_alpha
+		)
+		_keep.modulate.a = preview_alpha * (
+			1.0 - replacement_weight
+		)
 
 
 func _apply_camera_progress(t: float) -> void:
 	match _framing_phase:
-		FramingPhase.INTRO_TIGHT:
-			_restore_operator_follow()
-			_set_camera_target(
-				CAMERA_INTRO_TIGHT_OFFSET,
-				CAMERA_INTRO_TIGHT_ZOOM
-			)
-			return
-
-		FramingPhase.FIRST_REVEAL, FramingPhase.FIRST_REVEAL_HOLD:
-			_set_camera_target(
-				CAMERA_INTRO_TIGHT_OFFSET.lerp(
-					CAMERA_FIRST_REVEAL_OFFSET,
-					_first_reveal_weight
-				),
-				CAMERA_INTRO_TIGHT_ZOOM.lerp(
-					CAMERA_FIRST_REVEAL_ZOOM,
-					_first_reveal_weight
-				)
-			)
-			return
-
-		FramingPhase.FIRST_PROGRESS_CONTROL:
-			_set_camera_target(
-				CAMERA_FIRST_REVEAL_OFFSET.lerp(
-					CAMERA_TRAVERSE_OFFSET,
-					_first_progress_weight
-				),
-				CAMERA_FIRST_REVEAL_ZOOM.lerp(
-					CAMERA_TRAVERSE_ZOOM,
-					_first_progress_weight
-				)
-			)
-			return
-
-		FramingPhase.RETURNING_TO_PLAY:
-			_set_camera_target(
-				_return_start_offset.lerp(
-					CAMERA_TRAVERSE_OFFSET,
-					_return_to_play_weight
-				),
-				_return_start_zoom.lerp(
-					CAMERA_TRAVERSE_ZOOM,
-					_return_to_play_weight
-				)
-			)
-			return
-
 		FramingPhase.SECOND_REVEAL, FramingPhase.SECOND_REVEAL_HOLD:
 			_set_camera_target(
 				CAMERA_TRAVERSE_OFFSET.lerp(
@@ -554,6 +616,19 @@ func _apply_camera_progress(t: float) -> void:
 				CAMERA_TRAVERSE_ZOOM.lerp(
 					CAMERA_SECOND_REVEAL_ZOOM,
 					_second_reveal_weight
+				)
+			)
+			return
+
+		FramingPhase.SECOND_PROGRESS_CONTROL:
+			_set_camera_target(
+				CAMERA_SECOND_REVEAL_OFFSET.lerp(
+					CAMERA_TRAVERSE_OFFSET,
+					_second_progress_weight
+				),
+				CAMERA_SECOND_REVEAL_ZOOM.lerp(
+					CAMERA_TRAVERSE_ZOOM,
+					_second_progress_weight
 				)
 			)
 			return
@@ -572,45 +647,192 @@ func _apply_camera_progress(t: float) -> void:
 			return
 
 		FramingPhase.GAMEPLAY:
-			_apply_gameplay_camera_progress(t)
+			if (
+				_second_reveal_complete
+				and _first_return_progress >= 0.999
+			):
+				_track_operator_with_presentation_anchor()
+				_apply_gameplay_camera_progress(t)
+			else:
+				_apply_first_camera_envelope()
+
+		_:
+			_apply_first_camera_envelope()
 
 
-func _update_first_progress_control() -> void:
+func _segment_progress(
+	point: Vector2,
+	segment_start: Vector2,
+	segment_end: Vector2
+) -> float:
+	var axis := segment_end - segment_start
+	var length_squared := axis.length_squared()
+	if length_squared <= 0.001:
+		return 0.0
+	return clampf(
+		(point - segment_start).dot(axis) / length_squared,
+		0.0,
+		1.0
+	)
+
+
+func _smootherstep(value: float) -> float:
+	var t := clampf(value, 0.0, 1.0)
+	return t * t * t * (
+		t * (t * 6.0 - 15.0) + 10.0
+	)
+
+
+func _evaluate_first_camera_envelope() -> Dictionary:
 	if (
 		_player == null
+		or _first_camera_control_start == null
 		or _reveal_control_start == null
 		or _reveal_control_end == null
+		or _first_camera_return_complete == null
+	):
+		return {
+			"enter_progress": 0.0,
+			"return_progress": 0.0,
+			"enter_weight": 0.0,
+			"return_weight": 0.0,
+			"camera_weight": 0.0,
+		}
+
+	var enter_progress := _segment_progress(
+		_player.global_position,
+		_first_camera_control_start.global_position,
+		_reveal_control_start.global_position
+	)
+	var return_progress := _segment_progress(
+		_player.global_position,
+		_reveal_control_end.global_position,
+		_first_camera_return_complete.global_position
+	)
+	var enter_weight := _smootherstep(enter_progress)
+	var return_weight := _smootherstep(return_progress)
+	return {
+		"enter_progress": enter_progress,
+		"return_progress": return_progress,
+		"enter_weight": enter_weight,
+		"return_weight": return_weight,
+		"camera_weight": enter_weight * (1.0 - return_weight),
+	}
+
+
+func _update_first_camera_envelope_state() -> void:
+	var envelope := _evaluate_first_camera_envelope()
+	_first_enter_progress = float(
+		envelope.get("enter_progress", 0.0)
+	)
+	_first_return_progress = float(
+		envelope.get("return_progress", 0.0)
+	)
+	_first_enter_weight = float(
+		envelope.get("enter_weight", 0.0)
+	)
+	_first_return_weight = float(
+		envelope.get("return_weight", 0.0)
+	)
+	_first_camera_weight = float(
+		envelope.get("camera_weight", 0.0)
+	)
+	_first_camera_phase = _get_first_camera_phase(
+		_first_enter_progress,
+		_first_return_progress
+	)
+
+	# Compatibility state remains derived; it never owns framing.
+	_first_reveal_weight = _first_enter_weight
+	_first_progress_weight = _first_return_progress
+	_return_to_play_weight = _first_return_weight
+	_first_reveal_complete = _first_enter_progress >= 0.999
+
+
+func _get_first_camera_phase(
+	enter_progress: float,
+	return_progress: float
+) -> String:
+	if enter_progress <= 0.001:
+		return "GAMEPLAY_BEFORE"
+	if enter_progress < 0.999:
+		return "BLEND_TO_CINEMATIC"
+	if return_progress <= 0.001:
+		return "CINEMATIC_APEX"
+	if return_progress < 0.999:
+		return "BLEND_TO_GAMEPLAY"
+	return "GAMEPLAY_AFTER"
+
+
+func _apply_first_camera_envelope() -> void:
+	if (
+		_player == null
+		or _first_reveal_camera_anchor == null
+		or _presentation_anchor == null
 	):
 		return
 
-	var route_segment := (
-		_reveal_control_end.global_position
-		- _reveal_control_start.global_position
+	_presentation_anchor.global_position = (
+		_player.global_position.lerp(
+			_first_reveal_camera_anchor.global_position,
+			_first_camera_weight
+		)
 	)
-	var segment_length_squared := route_segment.length_squared()
-	if segment_length_squared <= 0.001:
-		_first_progress_weight = 1.0
+	_set_camera_follow_target(_presentation_anchor)
+
+	var gameplay_offset := CAMERA_INTRO_TIGHT_OFFSET.lerp(
+		CAMERA_TRAVERSE_OFFSET,
+		_first_return_weight
+	)
+	var gameplay_zoom := CAMERA_INTRO_TIGHT_ZOOM.lerp(
+		CAMERA_TRAVERSE_ZOOM,
+		_first_return_weight
+	)
+	_set_camera_target(
+		gameplay_offset.lerp(
+			CAMERA_FIRST_REVEAL_OFFSET,
+			_first_camera_weight
+		),
+		gameplay_zoom.lerp(
+			CAMERA_FIRST_REVEAL_ZOOM,
+			_first_camera_weight
+		)
+	)
+
+
+func _update_second_progress_control() -> void:
+	if (
+		_player == null
+		or _second_vista_full == null
+		or _second_vista_end == null
+		or _second_reveal_camera_anchor == null
+		or _presentation_anchor == null
+	):
+		return
+
+	var segment := (
+		_second_vista_end.global_position
+		- _second_vista_full.global_position
+	)
+	var length_squared := segment.length_squared()
+	if length_squared <= 0.001:
+		_second_progress_weight = 1.0
 	else:
-		_first_progress_weight = clampf(
+		_second_progress_weight = clampf(
 			(
 				_player.global_position
-				- _reveal_control_start.global_position
-			).dot(route_segment) / segment_length_squared,
+				- _second_vista_full.global_position
+			).dot(segment) / length_squared,
 			0.0,
 			1.0
 		)
 
-	if (
-		_presentation_anchor != null
-		and _first_reveal_camera_anchor != null
-		and _reveal_control_end != null
-	):
-		_presentation_anchor.global_position = (
-			_first_reveal_camera_anchor.global_position.lerp(
-				_reveal_control_end.global_position,
-				_first_progress_weight
-			)
+	_presentation_anchor.global_position = (
+		_second_reveal_camera_anchor.global_position.lerp(
+			_second_vista_end.global_position,
+			_second_progress_weight
 		)
+	)
 
 
 func _apply_gameplay_camera_progress(t: float) -> void:
@@ -645,20 +867,18 @@ func _ensure_presentation_anchor() -> void:
 	add_child(_presentation_anchor)
 
 
+func _track_operator_with_presentation_anchor() -> void:
+	if _player == null or _presentation_anchor == null:
+		return
+	_presentation_anchor.global_position = _player.global_position
+	_set_camera_follow_target(_presentation_anchor)
+
+
 func _set_camera_follow_target(target: Node2D) -> void:
 	if _camera == null:
 		return
 	if _camera.has_method("set_follow_target"):
 		_camera.call("set_follow_target", target)
-
-
-func _restore_operator_follow() -> void:
-	if _camera == null:
-		return
-	if _player == null or not is_instance_valid(_player):
-		_player = get_node_or_null(player_path) as Node2D
-	if _player != null and _camera.has_method("set_follow_target"):
-		_camera.call("set_follow_target", _player)
 
 
 func _set_camera_target(target_offset: Vector2, target_zoom: Vector2) -> void:
@@ -670,15 +890,78 @@ func _set_camera_target(target_offset: Vector2, target_zoom: Vector2) -> void:
 		_camera.call("set_presentation_framing", true, target_offset, target_zoom)
 
 
-func _get_second_vista_alpha(_t: float) -> float:
-	if _framing_phase in [
+func _get_second_cinematic_alpha() -> float:
+	match _framing_phase:
+		FramingPhase.SECOND_REVEAL, FramingPhase.SECOND_REVEAL_HOLD:
+			return _second_reveal_weight
+		FramingPhase.SECOND_PROGRESS_CONTROL:
+			return 1.0 - smoothstep(
+				0.18,
+				0.88,
+				_second_progress_weight
+			)
+		FramingPhase.SECOND_RETURNING_TO_PLAY:
+			return 0.0
+		_:
+			return 0.0
+
+
+func _get_fortress_layer_alphas(
+	exit_shadow_alpha: float
+) -> Vector3:
+	match _framing_phase:
+		FramingPhase.SECOND_REVEAL, FramingPhase.SECOND_REVEAL_HOLD:
+			return Vector3(
+				smoothstep(0.0, 0.55, _second_reveal_weight),
+				smoothstep(0.18, 0.88, _second_reveal_weight),
+				smoothstep(0.48, 1.0, _second_reveal_weight)
+					* 0.78
+			)
+		FramingPhase.SECOND_PROGRESS_CONTROL:
+			return Vector3(
+				lerpf(1.0, 0.48, _second_progress_weight),
+				lerpf(1.0, 0.38, _second_progress_weight),
+				lerpf(0.78, 0.08, _second_progress_weight)
+			)
+		FramingPhase.SECOND_RETURNING_TO_PLAY:
+			return Vector3(0.48, 0.38, 0.08)
+		FramingPhase.GAMEPLAY:
+			if not _second_reveal_complete:
+				return Vector3.ZERO
+			var final_fade := 1.0 - smoothstep(
+				0.05,
+				0.85,
+				exit_shadow_alpha
+			)
+			return Vector3(0.48, 0.38, 0.08) * final_fade
+		_:
+			return Vector3.ZERO
+
+
+func _is_second_camera_active() -> bool:
+	return _framing_phase in [
 		FramingPhase.SECOND_REVEAL,
 		FramingPhase.SECOND_REVEAL_HOLD,
-	]:
-		return _second_reveal_weight
-	if _framing_phase == FramingPhase.SECOND_RETURNING_TO_PLAY:
-		return 1.0 - _second_return_to_play_weight
-	return 0.0
+		FramingPhase.SECOND_PROGRESS_CONTROL,
+		FramingPhase.SECOND_RETURNING_TO_PLAY,
+	]
+
+
+func _compute_route_progress() -> float:
+	if (
+		_player == null
+		or _start == null
+		or _end == null
+	):
+		return _last_progress
+	var progress_axis := _end.global_position - _start.global_position
+	var total := progress_axis.length()
+	if total <= 0.01:
+		return _last_progress
+	var along := (
+		_player.global_position - _start.global_position
+	).dot(progress_axis.normalized())
+	return clampf(along / total, 0.0, 1.0)
 
 
 func _marker_progress(marker: Node2D) -> float:

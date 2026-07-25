@@ -3,6 +3,11 @@ class_name CombatDrone
 
 const BULLET_SCENE := preload("res://game/actors/projectiles/bullet.tscn")
 const MECH_GUNSHOT_SOUND: AudioStream = preload("res://content/audio/sfx/combat/mech_gun_shot_01.wav")
+const STEP_SOUNDS: Array[AudioStream] = [
+	preload("res://content/audio/sfx/foley/step_mechanoid_01.wav"),
+	preload("res://content/audio/sfx/foley/step_mechanoid_02.wav"),
+	preload("res://content/audio/sfx/foley/step_mechanoid_03.wav"),
+]
 const DroneCommandProfileScript := preload("res://game/systems/drone/drone_command_profile.gd")
 const DroneTargetingScript := preload("res://game/systems/drone/drone_targeting.gd")
 
@@ -39,6 +44,9 @@ var _roam_repath_timer: float = 0.0
 var _roam_sequence: int = 0
 var _command_target_instance_id: int = 0
 var _target_scan_timer: float = 0.0
+var _footstep_timer: float = 0.0
+var _footstep_interval: float = 0.3
+var _step_index: int = 0
 
 @onready var visual: ColorRect = get_node_or_null("Visual")
 @onready var health_bar: ProgressBar = get_node_or_null("HealthBar")
@@ -214,6 +222,7 @@ func _update_movement(delta: float) -> void:
 	var desired_velocity := Vector2.ZERO
 	if to_goal.length() > 4.0:
 		desired_velocity = to_goal.normalized() * profile.drone_speed
+		_update_footstep_sfx(delta)
 	velocity = velocity.move_toward(desired_velocity, profile.drone_acceleration * delta)
 	move_and_slide()
 
@@ -578,3 +587,28 @@ func _update_visuals() -> void:
 			visual.modulate = base_tint
 	if health_bar != null:
 		health_bar.value = health_ratio * 100.0
+
+
+func _update_footstep_sfx(delta: float) -> void:
+	if STEP_SOUNDS.is_empty():
+		return
+	_footstep_timer -= delta
+	if _footstep_timer > 0.0:
+		return
+	_footstep_timer = _footstep_interval
+	var stream: AudioStream = STEP_SOUNDS[_step_index % STEP_SOUNDS.size()]
+	_step_index += 1
+	var player := AudioStreamPlayer2D.new()
+	player.stream = stream
+	player.volume_db = -6.0
+	player.max_distance = 400.0
+	var parent := get_tree().current_scene
+	if parent == null:
+		parent = get_parent()
+	if parent == null:
+		player.free()
+		return
+	parent.add_child(player)
+	player.global_position = global_position
+	player.finished.connect(player.queue_free)
+	player.play()

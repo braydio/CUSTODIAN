@@ -6,6 +6,8 @@ signal repaired(amount: float, new_hp: float)
 signal destroyed()
 signal state_changed(new_state: String)
 
+const STRUCTURE_DAMAGE_SOUND: AudioStream = preload("res://content/audio/sfx/structures/structure_damaged_01.wav")
+
 @export var max_health: float = 100.0
 @export var current_health: float = 100.0
 @export var projectile_armor: float = 0.0
@@ -28,6 +30,7 @@ func take_damage(amount: float) -> void:
 
 	current_health = max(0.0, current_health - applied)
 	damaged.emit(applied, current_health)
+	_play_structure_damage_sfx()
 	_update_state()
 
 	if current_health <= 0.0:
@@ -106,3 +109,20 @@ func _on_state_changed(_new_state: String) -> void:
 
 func _on_destroyed() -> void:
 	destroyed.emit()
+
+
+func _play_structure_damage_sfx() -> void:
+	var player := AudioStreamPlayer2D.new()
+	player.stream = STRUCTURE_DAMAGE_SOUND
+	player.volume_db = -3.0
+	player.max_distance = 400.0
+	var parent := get_tree().current_scene
+	if parent == null:
+		parent = get_parent()
+	if parent == null:
+		player.free()
+		return
+	parent.add_child(player)
+	player.global_position = global_position
+	player.finished.connect(player.queue_free)
+	player.play()

@@ -19,6 +19,10 @@ const VISTA_DEBUG_PROBE_SCRIPT := preload(
 	"res://game/world/approaches/sundered_keep/"
 	+ "sundered_keep_vista_debug_probe.gd"
 )
+const FORTRESS_VISTA_SCRIPT := preload(
+	"res://game/world/approaches/sundered_keep/"
+	+ "sundered_keep_fortress_vista.gd"
+)
 
 const USE_ROUTE_MASTER := true
 
@@ -98,14 +102,14 @@ const RETURN_TOPDOWN_POS := Vector2(980.0, -305.0)
 const LEVEL_EXIT_POS := Vector2(1240.0, -218.0)
 const FIRST_REVEAL_TRIGGER_POS := Vector2(-150.0, -175.0)
 const FIRST_REVEAL_CAMERA_ANCHOR_POS := Vector2(210.0, -300.0)
-const FIRST_REVEAL_TRIGGER_SIZE := Vector2(190.0, 120.0)
 const REVEAL_CONTROL_START_POS := REVEAL_FULL_POS
 const REVEAL_CONTROL_END_POS := MID_GAMEPLAY_START_POS
 const RETURN_TO_GAMEPLAY_TRIGGER_POS := MID_GAMEPLAY_START_POS
-const RETURN_TO_GAMEPLAY_TRIGGER_SIZE := Vector2(140.0, 120.0)
 const SECOND_REVEAL_TRIGGER_POS := SECOND_VISTA_START_POS
 const SECOND_REVEAL_CAMERA_ANCHOR_POS := Vector2(650.0, -420.0)
 const SECOND_REVEAL_TRIGGER_SIZE := Vector2(170.0, 140.0)
+const SECOND_RETURN_TRIGGER_SIZE := Vector2(150.0, 120.0)
+const FORTRESS_VISTA_ORIGIN_SOURCE := Vector2(-360.0, -1280.0)
 const FINAL_FOG_OVERSCAN := Vector4(
 	384.0,
 	320.0,
@@ -208,10 +212,10 @@ const AUTHORING_MARKERS := {
 		"position": Vector2(914.9, -273.5),
 	},
 	"first_reveal_trigger": {
-		"node_name": "FirstVistaRevealTrigger",
-		"label": "FIRST REVEAL TRIGGER",
-		"kind": "presentation_trigger",
-		"position": Vector2(-284.4, -292.0),
+		"node_name": "FirstCameraControlStart",
+		"label": "FIRST CAMERA CONTROL START",
+		"kind": "camera_control",
+		"position": Vector2(-356.0, -202.0),
 	},
 	"first_reveal_camera_anchor": {
 		"node_name": "FirstRevealCameraAnchor",
@@ -223,25 +227,25 @@ const AUTHORING_MARKERS := {
 		"node_name": "RevealControlStart",
 		"label": "REVEAL CONTROL START",
 		"kind": "camera_control",
-		"position": Vector2(-241.9, -345.3),
+		"position": Vector2(-257.4, -321.9),
 	},
 	"reveal_control_end": {
 		"node_name": "RevealControlEnd",
 		"label": "REVEAL CONTROL END",
 		"kind": "camera_control",
-		"position": Vector2(197.8, -367.1),
+		"position": Vector2(-162.5, -380.6),
 	},
 	"return_to_gameplay_trigger": {
-		"node_name": "ReturnToGameplayTrigger",
-		"label": "RETURN TO GAMEPLAY",
-		"kind": "presentation_trigger",
-		"position": Vector2(224.8, -361.9),
+		"node_name": "FirstCameraReturnComplete",
+		"label": "FIRST CAMERA RETURN COMPLETE",
+		"kind": "camera_control",
+		"position": Vector2(113.6, -370.2),
 	},
 	"second_reveal_trigger": {
 		"node_name": "SecondVistaRevealTrigger",
 		"label": "SECOND REVEAL TRIGGER",
 		"kind": "presentation_trigger",
-		"position": Vector2(595.8, -375.9),
+		"position": Vector2(236.3, -346.4),
 	},
 	"second_reveal_camera_anchor": {
 		"node_name": "SecondVistaCameraAnchor",
@@ -271,6 +275,8 @@ var event_markers_root: Node2D = null
 var event_runtime_root: Node2D = null
 var sequence_triggers_root: Node2D = null
 var roof_occlusion_root: Node2D = null
+var grand_vista_cinematic_root: Node2D = null
+var fortress_vista_root: Node2D = null
 
 var entry_spawn: Marker2D = null
 var reveal_start: Marker2D = null
@@ -278,6 +284,8 @@ var reveal_full: Marker2D = null
 var mid_gameplay_start: Marker2D = null
 var reveal_control_start: Marker2D = null
 var reveal_control_end: Marker2D = null
+var first_camera_control_start: Marker2D = null
+var first_camera_return_complete: Marker2D = null
 var traverse_end: Marker2D = null
 var return_topdown: Marker2D = null
 var second_vista_start: Marker2D = null
@@ -285,10 +293,9 @@ var second_vista_full: Marker2D = null
 var second_vista_end: Marker2D = null
 var vista_controller: SunderedKeepVistaController = null
 var reveal_director: Node = null
-var first_reveal_trigger: Area2D = null
-var return_to_gameplay_trigger: Area2D = null
 var first_reveal_camera_anchor: Marker2D = null
 var second_reveal_trigger: Area2D = null
+var second_return_to_gameplay_trigger: Area2D = null
 var second_reveal_camera_anchor: Marker2D = null
 var vista_debug_probe: CanvasLayer = null
 var _continue_exit: LevelExit2D = null
@@ -358,7 +365,7 @@ func _ensure_roots() -> void:
 	underlay_root = _ensure_node2d_root("UnderlayRoot", -300)
 	vista_root = _ensure_node2d_root("VistaRoot", -200)
 	_grand_vista_root = _ensure_node2d_root("GrandVistaRoot", -220)
-	_grand_vista_root.modulate.a = 0.0
+	_grand_vista_root.modulate.a = 1.0
 	playable_root = _ensure_node2d_root("PlayableRoot", 0)
 	occlusion_root = _ensure_node2d_root("OcclusionRoot", 100)
 	collision_root = _ensure_plain_node2d("Collision")
@@ -387,6 +394,24 @@ func _ensure_roots() -> void:
 			_get_authoring_marker_position(
 				"reveal_control_end",
 				REVEAL_CONTROL_END_POS
+			)
+		)
+	)
+	first_camera_control_start = _ensure_marker(
+		"FirstCameraControlStart",
+		_route_point(
+			_get_authoring_marker_position(
+				"first_reveal_trigger",
+				FIRST_REVEAL_TRIGGER_POS
+			)
+		)
+	)
+	first_camera_return_complete = _ensure_marker(
+		"FirstCameraReturnComplete",
+		_route_point(
+			_get_authoring_marker_position(
+				"return_to_gameplay_trigger",
+				RETURN_TO_GAMEPLAY_TRIGGER_POS
 			)
 		)
 	)
@@ -464,7 +489,7 @@ func _build_visuals() -> void:
 	_clear_children(occlusion_root)
 	_clear_children(roof_occlusion_root)
 	vista_root.modulate.a = 0.0
-	_grand_vista_root.modulate.a = 0.0
+	_grand_vista_root.modulate.a = 1.0
 	occlusion_root.modulate.a = 1.0
 
 	if parallax_root != null:
@@ -520,28 +545,85 @@ func _build_visuals() -> void:
 		Vector4(0.08, 0.08, 0.18, 0.24)
 	)
 
-	var labyrinth_far := _add_parallax_layer(
+	grand_vista_cinematic_root = _ensure_child_node2d_root(
 		_grand_vista_root,
+		"GrandVistaCinematicRoot",
+		0
+	)
+	grand_vista_cinematic_root.modulate.a = 0.0
+
+	fortress_vista_root = _ensure_child_node2d_root(
+		_grand_vista_root,
+		"FortressVistaRoot",
+		0
+	)
+	fortress_vista_root.position = _route_point(
+		FORTRESS_VISTA_ORIGIN_SOURCE
+	)
+	fortress_vista_root.scale = Vector2(0.88, 0.88)
+	fortress_vista_root.modulate.a = 1.0
+
+	var labyrinth_far := _add_parallax_layer(
+		grand_vista_cinematic_root,
 		"LabyrinthFarParallax",
 		0,
 		Vector2(0.15, 0.05)
 	)
 	var labyrinth_mist := _add_parallax_layer(
-		_grand_vista_root,
+		grand_vista_cinematic_root,
 		"LabyrinthMistParallax",
-		10,
+		12,
 		Vector2(0.08, 0.025),
 		Vector2(12.0, 4.0),
 		0.065
 	)
 	var labyrinth_near := _add_parallax_layer(
-		_grand_vista_root,
+		grand_vista_cinematic_root,
 		"LabyrinthNearRoot",
 		20,
 		Vector2(0.025, 0.01)
 	)
+
+	var fortress_far := _add_parallax_layer(
+		fortress_vista_root,
+		"FortressFarParallax",
+		4,
+		Vector2(0.18, 0.06)
+	)
+	var fortress_mid := _add_parallax_layer(
+		fortress_vista_root,
+		"FortressMidParallax",
+		8,
+		Vector2(0.11, 0.04)
+	)
+	var fortress_near := _add_parallax_layer(
+		fortress_vista_root,
+		"FortressNearParallax",
+		16,
+		Vector2(0.045, 0.018)
+	)
+	fortress_far.modulate.a = 0.0
+	fortress_mid.modulate.a = 0.0
+	fortress_near.modulate.a = 0.0
+	var fortress_builder := FORTRESS_VISTA_SCRIPT.new()
+	fortress_builder.name = "FortressVistaComposer"
+	fortress_vista_root.add_child(fortress_builder)
+	var component_count := fortress_builder.build(
+		fortress_far,
+		fortress_mid,
+		fortress_near
+	)
+	var panorama_alpha := 0.22 if component_count == 30 else 0.88
+
 	_apply_soft_rect_feather(
-		_add_fitted_sprite(labyrinth_far, "GrandVistaPanorama", GRAND_VISTA_PANORAMA, RECT_GRAND_VISTA_PANORAMA, 0, Color(0.72, 0.80, 0.92, 0.88)),
+		_add_fitted_sprite(
+			labyrinth_far,
+			"GrandVistaPanorama",
+			GRAND_VISTA_PANORAMA,
+			RECT_GRAND_VISTA_PANORAMA,
+			0,
+			Color(0.72, 0.80, 0.92, panorama_alpha)
+		),
 		Vector4(0.08, 0.08, 0.10, 0.16)
 	)
 	_apply_soft_rect_feather(
@@ -957,9 +1039,7 @@ func _refresh_camera() -> void:
 func _apply_initial_camera_state() -> void:
 	if vista_controller == null:
 		return
-	var state := vista_controller.get_reveal_choreography_state()
-	if not bool(state.get("first_reveal_complete", false)):
-		vista_controller.enter_intro_tight_mode()
+	vista_controller.enter_intro_tight_mode()
 
 
 func _apply_vista_presentation_mode() -> void:
@@ -998,58 +1078,6 @@ func _build_collision() -> void:
 func _build_sequence_triggers() -> void:
 	_clear_children(sequence_triggers_root)
 
-	first_reveal_trigger = Area2D.new()
-	first_reveal_trigger.name = "FirstVistaRevealTrigger"
-	first_reveal_trigger.position = _route_point(
-		_get_authoring_marker_position(
-			"first_reveal_trigger",
-			FIRST_REVEAL_TRIGGER_POS
-		)
-	)
-	first_reveal_trigger.collision_layer = 0
-	first_reveal_trigger.collision_mask = 1
-	first_reveal_trigger.monitoring = true
-	first_reveal_trigger.monitorable = false
-	sequence_triggers_root.add_child(first_reveal_trigger)
-
-	var shape_node := CollisionShape2D.new()
-	shape_node.name = "CollisionShape2D"
-	var shape := RectangleShape2D.new()
-	shape.size = FIRST_REVEAL_TRIGGER_SIZE
-	shape_node.shape = shape
-	first_reveal_trigger.add_child(shape_node)
-	first_reveal_trigger.body_entered.connect(
-		_on_first_reveal_trigger_body_entered
-	)
-
-	return_to_gameplay_trigger = Area2D.new()
-	return_to_gameplay_trigger.name = "ReturnToGameplayTrigger"
-	return_to_gameplay_trigger.position = _route_point(
-		_get_authoring_marker_position(
-			"return_to_gameplay_trigger",
-			RETURN_TO_GAMEPLAY_TRIGGER_POS
-		)
-	)
-	return_to_gameplay_trigger.collision_layer = 0
-	return_to_gameplay_trigger.collision_mask = 1
-	return_to_gameplay_trigger.monitoring = true
-	return_to_gameplay_trigger.monitorable = false
-	sequence_triggers_root.add_child(
-		return_to_gameplay_trigger
-	)
-
-	var return_shape_node := CollisionShape2D.new()
-	return_shape_node.name = "CollisionShape2D"
-	var return_shape := RectangleShape2D.new()
-	return_shape.size = RETURN_TO_GAMEPLAY_TRIGGER_SIZE
-	return_shape_node.shape = return_shape
-	return_to_gameplay_trigger.add_child(
-		return_shape_node
-	)
-	return_to_gameplay_trigger.body_entered.connect(
-		_on_return_to_gameplay_trigger_body_entered
-	)
-
 	second_reveal_trigger = Area2D.new()
 	second_reveal_trigger.name = "SecondVistaRevealTrigger"
 	second_reveal_trigger.position = _route_point(
@@ -1074,13 +1102,30 @@ func _build_sequence_triggers() -> void:
 		_on_second_reveal_trigger_body_entered
 	)
 
+	second_return_to_gameplay_trigger = Area2D.new()
+	second_return_to_gameplay_trigger.name = (
+		"SecondReturnToGameplayTrigger"
+	)
+	second_return_to_gameplay_trigger.position = second_vista_end.position
+	second_return_to_gameplay_trigger.collision_layer = 0
+	second_return_to_gameplay_trigger.collision_mask = 1
+	second_return_to_gameplay_trigger.monitoring = true
+	second_return_to_gameplay_trigger.monitorable = false
+	sequence_triggers_root.add_child(
+		second_return_to_gameplay_trigger
+	)
 
-func _on_first_reveal_trigger_body_entered(body: Node) -> void:
-	if not _is_player_body(body):
-		return
-	if reveal_director == null:
-		return
-	reveal_director.call("play_first_reveal")
+	var second_return_shape_node := CollisionShape2D.new()
+	second_return_shape_node.name = "CollisionShape2D"
+	var second_return_shape := RectangleShape2D.new()
+	second_return_shape.size = SECOND_RETURN_TRIGGER_SIZE
+	second_return_shape_node.shape = second_return_shape
+	second_return_to_gameplay_trigger.add_child(
+		second_return_shape_node
+	)
+	second_return_to_gameplay_trigger.body_entered.connect(
+		_on_second_return_to_gameplay_trigger_body_entered
+	)
 
 
 func _on_second_reveal_trigger_body_entered(body: Node) -> void:
@@ -1091,7 +1136,7 @@ func _on_second_reveal_trigger_body_entered(body: Node) -> void:
 	reveal_director.call("play_second_reveal")
 
 
-func _on_return_to_gameplay_trigger_body_entered(
+func _on_second_return_to_gameplay_trigger_body_entered(
 	body: Node
 ) -> void:
 	if not _is_player_body(body):
@@ -1099,7 +1144,7 @@ func _on_return_to_gameplay_trigger_body_entered(
 	if reveal_director == null:
 		return
 	reveal_director.call(
-		"return_first_reveal_to_gameplay"
+		"return_second_reveal_to_gameplay"
 	)
 
 
@@ -1267,6 +1312,12 @@ func _ensure_vista_controller() -> void:
 	)
 	vista_controller.vista_root_path = NodePath("../VistaRoot")
 	vista_controller.grand_vista_root_path = NodePath("../GrandVistaRoot")
+	vista_controller.grand_vista_cinematic_root_path = NodePath(
+		"../GrandVistaRoot/GrandVistaCinematicRoot"
+	)
+	vista_controller.fortress_vista_root_path = NodePath(
+		"../GrandVistaRoot/FortressVistaRoot"
+	)
 	vista_controller.vista_fog_band_path = NodePath(
 		"../VistaRoot/FirstVistaMistParallax/ApproachFirstVistaFogVeil"
 	)
@@ -1283,6 +1334,12 @@ func _ensure_vista_controller() -> void:
 	vista_controller.second_vista_start_marker_path = NodePath("../Markers/SecondVistaStart")
 	vista_controller.second_vista_full_marker_path = NodePath("../Markers/SecondVistaFull")
 	vista_controller.second_vista_end_marker_path = NodePath("../Markers/SecondVistaEnd")
+	vista_controller.first_camera_control_start_marker_path = NodePath(
+		"../Markers/FirstCameraControlStart"
+	)
+	vista_controller.first_camera_return_complete_marker_path = NodePath(
+		"../Markers/FirstCameraReturnComplete"
+	)
 	vista_controller.first_reveal_camera_anchor_path = NodePath(
 		"../Markers/FirstRevealCameraAnchor"
 	)

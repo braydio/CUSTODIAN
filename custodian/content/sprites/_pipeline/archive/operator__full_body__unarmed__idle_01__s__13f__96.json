@@ -1,0 +1,20 @@
+{
+  "source": "operator__full_body__unarmed__idle_01__s__13f__96.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "operator/runtime/full_body/operator__full_body__unarmed__idle_01__s__13f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 13
+      }
+    }
+  ],
+  "frame_size": [
+    96,
+    96
+  ],
+  "remove_superseded": true
+}

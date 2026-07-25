@@ -18,6 +18,7 @@ const TERRAIN_BALLISTICS_SCRIPT := preload("res://game/world/procgen/terrain/ter
 const REQUIRED_CELL_CLASSIFIER_SCRIPT := preload("res://game/world/procgen/diagnostics/procgen_required_cell_classifier.gd")
 const PRETERRAIN_DIAGNOSTICS_SCRIPT := preload("res://game/world/procgen/diagnostics/procgen_preterrain_diagnostics.gd")
 const PRETERRAIN_AUTHORITY_REPAIR_SCRIPT := preload("res://game/world/procgen/diagnostics/procgen_preturn_authority_repair.gd")
+const WIND_AMBIENT_LOOP: AudioStream = preload("res://content/audio/sfx/ambience/wind_ambient_loop.wav")
 const WORLD_PROGRESS_PROFILE_SCRIPT := preload("res://game/world/procgen/progression/world_progress_profile.gd")
 const FACTION_SITE_PLACER_SCRIPT := preload("res://game/world/procgen/factions/faction_site_placer.gd")
 const STORY_ROOM_PLACER_SCRIPT := preload("res://game/world/procgen/story/story_room_placer.gd")
@@ -621,6 +622,7 @@ func _ready() -> void:
 	add_to_group("procgen_tilemap")
 	add_to_group("procgen_walkability_provider")
 	add_to_group("terrain_ballistics_provider")
+	_start_wind_ambient_loop()
 	# Auto-find ProcGen if not assigned
 	if not procgen_node:
 		procgen_node = find_child("ProcGen", true, false) as ProcGen
@@ -4726,6 +4728,15 @@ func _ensure_elevation_map() -> void:
 	elevation_map = ELEVATION_MAP_SCRIPT.new()
 	elevation_map.name = "ElevationMap"
 	add_child(elevation_map)
+
+
+func _start_wind_ambient_loop() -> void:
+	var player := AudioStreamPlayer.new()
+	player.stream = WIND_AMBIENT_LOOP
+	player.volume_db = -12.0
+	player.name = "WindAmbientLoop"
+	add_child(player)
+	player.play()
 
 
 func _ensure_terrain_builder() -> void:

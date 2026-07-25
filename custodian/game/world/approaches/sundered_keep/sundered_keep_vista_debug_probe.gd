@@ -2,9 +2,12 @@ extends CanvasLayer
 class_name SunderedKeepVistaDebugProbe
 
 const REFRESH_INTERVAL_SEC := 0.10
-const FIRST_TRIGGER_PATH := "SequenceTriggers/FirstVistaRevealTrigger"
-const RETURN_TRIGGER_PATH := "SequenceTriggers/ReturnToGameplayTrigger"
+const FIRST_TRIGGER_PATH := "Markers/FirstCameraControlStart"
+const RETURN_TRIGGER_PATH := "Markers/FirstCameraReturnComplete"
 const SECOND_TRIGGER_PATH := "SequenceTriggers/SecondVistaRevealTrigger"
+const SECOND_RETURN_TRIGGER_PATH := (
+	"SequenceTriggers/SecondReturnToGameplayTrigger"
+)
 const FIRST_ANCHOR_PATH := "Markers/FirstRevealCameraAnchor"
 const CONTROL_START_PATH := "Markers/RevealControlStart"
 const CONTROL_END_PATH := "Markers/RevealControlEnd"
@@ -86,9 +89,9 @@ func _build_transition_indicators() -> void:
 
 	_add_world_indicator(
 		FIRST_TRIGGER_PATH,
-		"FIRST REVEAL TRIGGER",
+		"FIRST CONTROL START",
 		FIRST_COLOR,
-		true
+		false
 	)
 	_add_world_indicator(
 		FIRST_ANCHOR_PATH,
@@ -98,21 +101,21 @@ func _build_transition_indicators() -> void:
 	)
 	_add_world_indicator(
 		CONTROL_START_PATH,
-		"REVEAL CONTROL START",
+		"FIRST CONTROL APEX",
 		CONTROL_COLOR,
 		false
 	)
 	_add_world_indicator(
-		CONTROL_END_PATH,
-		"REVEAL CONTROL END",
+			CONTROL_END_PATH,
+			"FIRST RETURN START",
 		CONTROL_COLOR,
 		false
 	)
 	_add_world_indicator(
 		RETURN_TRIGGER_PATH,
-		"RETURN TO GAMEPLAY",
+		"FIRST RETURN COMPLETE",
 		RETURN_COLOR,
-		true
+		false
 	)
 	_add_world_indicator(
 		SECOND_TRIGGER_PATH,
@@ -125,6 +128,12 @@ func _build_transition_indicators() -> void:
 		"SECOND CAMERA ANCHOR",
 		SECOND_COLOR,
 		false
+	)
+	_add_world_indicator(
+		SECOND_RETURN_TRIGGER_PATH,
+		"SECOND RETURN TO GAMEPLAY",
+		RETURN_COLOR,
+		true
 	)
 
 
@@ -249,30 +258,63 @@ func _refresh_readout() -> void:
 			camera_distance,
 			operator_position
 		),
-		"alpha vista=%.2f grand=%.2f reveal=%.2f foreground=%.2f"
+		"alpha vista=%.2f cinematic=%.2f fortress far/mid/near=%.2f/%.2f/%.2f"
 		% [
 			_alpha_at("VistaRoot"),
-			_alpha_at("GrandVistaRoot"),
-			_alpha_at("ParallaxRoot/RevealDepth"),
-			_alpha_at("ParallaxRoot/ForegroundDepth"),
+			_alpha_at("GrandVistaRoot/GrandVistaCinematicRoot"),
+			_alpha_at(
+				"GrandVistaRoot/FortressVistaRoot/"
+				+ "FortressFarParallax"
+			),
+			_alpha_at(
+				"GrandVistaRoot/FortressVistaRoot/"
+				+ "FortressMidParallax"
+			),
+			_alpha_at(
+				"GrandVistaRoot/FortressVistaRoot/"
+				+ "FortressNearParallax"
+			),
 		],
-		"first played=%s running=%s complete=%s"
-		% [
-			str(reveal.get("played", false)),
-			str(reveal.get("running", false)),
-			str(reveal.get("complete", false)),
-		],
-		"first progress=%.2f ready_return=%s return_running=%s"
-		% [
-			float(choreography.get("first_progress_weight", 0.0)),
-			str(reveal.get("ready_for_return", false)),
-			str(reveal.get("return_running", false)),
+			"first phase=%s enter p/w=%.2f/%.2f"
+			% [
+				String(
+					choreography.get(
+						"first_camera_phase",
+						"unknown"
+					)
+				),
+				float(choreography.get("first_enter_progress", 0.0)),
+				float(choreography.get("first_enter_weight", 0.0)),
+			],
+			"first return p/w=%.2f/%.2f camera=%.2f anchor=%s"
+			% [
+				float(choreography.get("first_return_progress", 0.0)),
+				float(choreography.get("first_return_weight", 0.0)),
+				float(choreography.get("first_camera_weight", 0.0)),
+				str(
+					choreography.get(
+						"presentation_anchor_position",
+						Vector2.ZERO
+					)
+				),
 		],
 		"second played=%s running=%s complete=%s"
 		% [
 			str(reveal.get("second_played", false)),
 			str(reveal.get("second_running", false)),
 			str(reveal.get("second_complete", false)),
+		],
+		"second anchor=%.2f physical=%.2f ready_return=%s return_running=%s"
+		% [
+			float(
+				choreography.get(
+					"second_anchor_blend_weight",
+					0.0
+				)
+			),
+			float(choreography.get("second_progress_weight", 0.0)),
+			str(reveal.get("second_ready_for_return", false)),
+			str(reveal.get("second_return_running", false)),
 		],
 	]
 	_label.text = "\n".join(rows)
@@ -302,37 +344,27 @@ func _update_phase_banner(
 	var banner_text := phase
 	var banner_color := Color(0.82, 0.90, 1.0, 1.0)
 	match phase:
-		"INTRO_TIGHT":
-			banner_text = "FIRST REVEAL ARMED — ENTER CYAN TRIGGER"
+		"GAMEPLAY_BEFORE":
+			banner_text = "CAMERA 1 — GAMEPLAY BEFORE"
 			banner_color = FIRST_COLOR
-		"FIRST_REVEAL":
-			banner_text = "FIRST REVEAL — BLEND %d%%" % roundi(
-				float(choreography.get("weight", 0.0)) * 100.0
+		"BLEND_TO_CINEMATIC":
+			banner_text = "CAMERA 1 — BLEND TO CINEMATIC %d%%" % roundi(
+				float(
+					choreography.get("first_camera_weight", 0.0)
+				) * 100.0
 			)
 			banner_color = FIRST_COLOR
-		"FIRST_REVEAL_HOLD":
-			banner_text = "FIRST REVEAL — HOLD"
+		"CINEMATIC_APEX":
+			banner_text = "CAMERA 1 — CINEMATIC APEX"
 			banner_color = FIRST_COLOR
-		"FIRST_PROGRESS_CONTROL":
-			banner_text = (
-				"FIRST REVEAL — ROUTE CONTROL %d%%"
-				% roundi(
-					float(
-						choreography.get(
-							"first_progress_weight",
-							0.0
-						)
-					) * 100.0
-				)
+		"BLEND_TO_GAMEPLAY":
+			banner_text = "CAMERA 1 — BLEND TO GAMEPLAY %d%%" % roundi(
+				float(
+					choreography.get("first_return_weight", 0.0)
+				) * 100.0
 			)
 			banner_color = CONTROL_COLOR
-		"RETURNING_TO_PLAY":
-			banner_text = "FIRST REVEAL — RETURN %d%%" % roundi(
-				float(choreography.get("return_weight", 0.0))
-				* 100.0
-			)
-			banner_color = FIRST_COLOR
-		"GAMEPLAY":
+		"GAMEPLAY_AFTER", "GAMEPLAY":
 			if bool(reveal.get("second_complete", false)):
 				banner_text = "VISTA REVEALS COMPLETE"
 			else:
@@ -353,6 +385,19 @@ func _update_phase_banner(
 		"SECOND_REVEAL_HOLD":
 			banner_text = "SECOND REVEAL — HOLD"
 			banner_color = SECOND_COLOR
+		"SECOND_PROGRESS_CONTROL":
+			banner_text = (
+				"SECOND REVEAL — ROUTE CONTROL %d%%"
+				% roundi(
+					float(
+						choreography.get(
+							"second_progress_weight",
+							0.0
+						)
+					) * 100.0
+				)
+			)
+			banner_color = CONTROL_COLOR
 		"SECOND_RETURNING_TO_PLAY":
 			banner_text = "SECOND REVEAL — RETURN %d%%" % roundi(
 				float(
@@ -430,17 +475,19 @@ func _update_transition_indicators() -> void:
 func _indicator_label(path: String, occupied: bool) -> String:
 	var prefix := ""
 	if path == FIRST_TRIGGER_PATH:
-		prefix = "FIRST REVEAL TRIGGER"
+		prefix = "FIRST CONTROL START"
 	elif path == RETURN_TRIGGER_PATH:
-		prefix = "RETURN TO GAMEPLAY"
+		prefix = "FIRST RETURN COMPLETE"
 	elif path == SECOND_TRIGGER_PATH:
 		prefix = "SECOND REVEAL TRIGGER"
+	elif path == SECOND_RETURN_TRIGGER_PATH:
+		prefix = "SECOND RETURN TO GAMEPLAY"
 	elif path == FIRST_ANCHOR_PATH:
 		prefix = "FIRST CAMERA ANCHOR"
 	elif path == CONTROL_START_PATH:
-		prefix = "REVEAL CONTROL START"
+		prefix = "FIRST CONTROL APEX"
 	elif path == CONTROL_END_PATH:
-		prefix = "REVEAL CONTROL END"
+		prefix = "FIRST RETURN START"
 	else:
 		prefix = "SECOND CAMERA ANCHOR"
 	return prefix + (" [OCCUPIED]" if occupied else "")
@@ -450,16 +497,34 @@ func _update_target_line(canvas_transform: Transform2D) -> void:
 	if _target_line == null or _operator == null:
 		return
 	var reveal := _call_dictionary(_director, "get_reveal_state")
+	var choreography := _call_dictionary(
+		_controller,
+		"get_reveal_choreography_state"
+	)
 	var target_path := ""
 	var color := FIRST_COLOR
-	if not bool(reveal.get("played", false)):
-		target_path = FIRST_TRIGGER_PATH
-	elif not bool(reveal.get("complete", false)):
-		target_path = RETURN_TRIGGER_PATH
-		color = RETURN_COLOR
-	elif not bool(reveal.get("second_played", false)):
+	match String(
+		choreography.get("first_camera_phase", "GAMEPLAY_BEFORE")
+	):
+		"GAMEPLAY_BEFORE":
+			target_path = FIRST_TRIGGER_PATH
+		"BLEND_TO_CINEMATIC":
+			target_path = CONTROL_START_PATH
+		"CINEMATIC_APEX":
+			target_path = CONTROL_END_PATH
+		"BLEND_TO_GAMEPLAY":
+			target_path = RETURN_TRIGGER_PATH
+			color = RETURN_COLOR
+	if target_path.is_empty() and not bool(
+		reveal.get("second_played", false)
+	):
 		target_path = SECOND_TRIGGER_PATH
 		color = SECOND_COLOR
+	elif target_path.is_empty() and not bool(
+		reveal.get("second_complete", false)
+	):
+		target_path = SECOND_RETURN_TRIGGER_PATH
+		color = RETURN_COLOR
 	var target := _approach.get_node_or_null(target_path) as Node2D
 	if target == null:
 		_target_line.clear_points()

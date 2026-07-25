@@ -18,6 +18,10 @@ const RELIQUARY_BACKDROP_MATERIAL := preload(
 )
 const SYSTEM_TECH := Color("#5a9ea0")
 
+const UI_SELECT_SOUND: AudioStream = preload("res://content/audio/sfx/ui/ui_select_01.wav")
+const UI_INVENTORY_SOUND: AudioStream = preload("res://content/audio/sfx/ui/ui_inventory_01.wav")
+const UI_ERROR_SOUND: AudioStream = preload("res://content/audio/sfx/ui/ui_error_01.wav")
+
 const PAGE_STATUS := "status"
 const PAGE_HISTORY := "history"
 const PAGE_LEDGER := "ledger"
@@ -181,6 +185,7 @@ func open(inv: Inventory = null) -> void:
 		inventory = inv
 	visible = true
 	mouse_filter = Control.MOUSE_FILTER_STOP
+	_play_ui_sound(UI_INVENTORY_SOUND, -6.0)
 	_refresh_entries()
 	_select_page(_current_page, false)
 	call_deferred("_update_ledger_grid_columns")
@@ -193,6 +198,7 @@ func close() -> void:
 		return
 	visible = false
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_play_ui_sound(UI_SELECT_SOUND, -8.0)
 	closed.emit()
 
 
@@ -252,6 +258,15 @@ func _notification(what: int) -> void:
 	if what == NOTIFICATION_RESIZED:
 		call_deferred("_update_ledger_grid_columns")
 		call_deferred("_update_responsive_layout")
+
+
+func _play_ui_sound(stream: AudioStream, volume_db: float = -6.0) -> void:
+	var player := AudioStreamPlayer.new()
+	player.stream = stream
+	player.volume_db = volume_db
+	add_child(player)
+	player.finished.connect(player.queue_free)
+	player.play()
 
 
 func set_location(text: String) -> void:

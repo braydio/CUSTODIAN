@@ -2,6 +2,7 @@ extends Node
 class_name WaveManager
 
 const ENEMY_VARIANT_FACTORY_SCRIPT := preload("res://game/enemies/procgen/enemy_variant_factory.gd")
+const WAVE_ALERT_SOUND: AudioStream = preload("res://content/audio/sfx/environment/wave_alert_01.wav")
 
 signal wave_started(wave_number: int)
 signal wave_completed(wave_number: int)
@@ -152,6 +153,7 @@ func start_next_wave() -> void:
 	var points := _calculate_points()
 	var difficulty := _calculate_difficulty()
 
+	_play_wave_alert_sfx()
 	print("[WaveManager] Starting wave %d | points=%d difficulty=%.2f" % [wave_number, points, difficulty])
 	wave_started.emit(wave_number)
 	_wave_in_progress = true
@@ -536,3 +538,12 @@ func _arm_next_wave_timer() -> void:
 		return
 	_waiting_for_recovery_clearance = false
 	_timer.start(max(0.1, wave_interval))
+
+
+func _play_wave_alert_sfx() -> void:
+	var player := AudioStreamPlayer.new()
+	player.stream = WAVE_ALERT_SOUND
+	player.volume_db = -2.0
+	add_child(player)
+	player.finished.connect(player.queue_free)
+	player.play()

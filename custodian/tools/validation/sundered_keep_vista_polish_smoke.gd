@@ -7,9 +7,12 @@ const APPROACH_SCENE := preload(
 const PARALLAX_PATHS := [
 	"VistaRoot/FirstVistaFarParallax",
 	"VistaRoot/FirstVistaMistParallax",
-	"GrandVistaRoot/LabyrinthFarParallax",
-	"GrandVistaRoot/LabyrinthMistParallax",
-	"GrandVistaRoot/LabyrinthNearRoot",
+	"GrandVistaRoot/GrandVistaCinematicRoot/LabyrinthFarParallax",
+	"GrandVistaRoot/GrandVistaCinematicRoot/LabyrinthMistParallax",
+	"GrandVistaRoot/GrandVistaCinematicRoot/LabyrinthNearRoot",
+	"GrandVistaRoot/FortressVistaRoot/FortressFarParallax",
+	"GrandVistaRoot/FortressVistaRoot/FortressMidParallax",
+	"GrandVistaRoot/FortressVistaRoot/FortressNearParallax",
 ]
 
 const ROOF_NAMES := [
@@ -92,35 +95,9 @@ func _init() -> void:
 	if vista_root == null:
 		errors.append("VistaRoot missing")
 
-	if controller != null:
-		var initial := controller.get_camera_target_state()
-		_expect_vec2(
-			initial.get("offset", Vector2.INF),
-			Vector2(0.0, -18.0),
-			"initial camera offset",
-			errors
-		)
-		_expect_vec2(
-			initial.get("zoom", Vector2.ZERO),
-			Vector2(1.12, 1.12),
-			"initial camera zoom",
-			errors
-		)
-	if camera.follow_target != actor:
-		errors.append("initial camera follow target is not Operator")
-
-	if controller != null:
-		controller.apply_progress(0.50)
-	if vista_root != null and vista_root.modulate.a > 0.01:
-		errors.append("VistaRoot became visible from raw route progress")
-	if director != null and director.has_played():
-		errors.append("RevealDirector played before the physical reveal trigger")
-
 	if director != null:
 		director.anticipation_duration = 0.01
 		director.reveal_in_duration = 0.04
-		director.reveal_hold_duration = 0.15
-		director.return_duration = 0.04
 		director.atmosphere_settle_duration = 0.01
 
 	var completion_count := [0]
@@ -130,152 +107,29 @@ func _init() -> void:
 				completion_count[0] += 1
 		)
 
-	var reveal_trigger := scene.get_node_or_null(
-		"SequenceTriggers/FirstVistaRevealTrigger"
-	) as Area2D
-	if reveal_trigger == null:
-		errors.append("FirstVistaRevealTrigger missing")
-	elif director != null:
-		actor.global_position = reveal_trigger.global_position
-		for unused in 8:
-			await physics_frame
-			if director.has_played():
-				break
-		if not director.has_played():
-			errors.append("physical overlap did not start the first reveal")
-
-	if director != null and director.has_played():
-		var reached_hold := false
-		for unused in 30:
-			await process_frame
-			var state := controller.get_reveal_choreography_state()
-			if state.get("phase", "") == "FIRST_REVEAL_HOLD":
-				reached_hold = true
-				break
-		if not reached_hold:
-			errors.append("first reveal never reached its hold phase")
-		else:
-			if camera.follow_target == actor:
-				errors.append("reveal camera never followed CameraPresentationAnchor")
-			_expect_vec2(
-				camera.framing_zoom,
-				Vector2(0.84, 0.84),
-				"first reveal zoom",
-				errors
-			)
-		for unused in 40:
-			if bool(
-				director.get_reveal_state().get(
-					"ready_for_return",
-					false
-				)
-			):
-				break
-			await process_frame
-		var progress_state := (
-			controller.get_reveal_choreography_state()
-		)
-		if progress_state.get("phase", "") != "FIRST_PROGRESS_CONTROL":
-			errors.append(
-				"first reveal did not enter progress-driven framing"
-			)
-		var control_start := scene.get_node_or_null(
-			"Markers/RevealControlStart"
-		) as Marker2D
-		var control_end := scene.get_node_or_null(
-			"Markers/RevealControlEnd"
-		) as Marker2D
-		if control_start == null or control_end == null:
-			errors.append("reveal-control markers missing")
-		else:
-			actor.global_position = control_start.global_position.lerp(
-				control_end.global_position,
-				0.5
-			)
-			await process_frame
-			progress_state = (
-				controller.get_reveal_choreography_state()
-			)
-			var progress_weight := float(
-				progress_state.get(
-					"first_progress_weight",
-					-1.0
-				)
-			)
-			if progress_weight < 0.45 or progress_weight > 0.55:
-				errors.append(
-					"player position did not drive reveal framing progress"
-				)
-			var first_anchor := scene.get_node_or_null(
-				"Markers/FirstRevealCameraAnchor"
-			) as Marker2D
-			var presentation_anchor := controller.get_node_or_null(
-				"CameraPresentationAnchor"
-			) as Marker2D
-			if first_anchor == null or presentation_anchor == null:
-				errors.append(
-					"progress-controlled camera anchor is unavailable"
-				)
-			else:
-				var expected_anchor := (
-					first_anchor.global_position.lerp(
-						control_end.global_position,
-						0.5
-					)
-				)
-				if presentation_anchor.global_position.distance_to(
-					expected_anchor
-				) > 1.0:
-					errors.append(
-						"reveal progress did not interpolate "
-						+ "between authored camera endpoints"
-					)
-		var return_trigger := scene.get_node_or_null(
-			"SequenceTriggers/ReturnToGameplayTrigger"
-		) as Area2D
-		if return_trigger == null:
-			errors.append("ReturnToGameplayTrigger missing")
-		else:
-			actor.global_position = return_trigger.global_position
-			for unused in 8:
-				await physics_frame
-				if bool(
-					director.get_reveal_state().get(
-						"return_running",
-						false
-					)
-				):
-					break
-		if not director.is_reveal_complete():
-			await director.reveal_completed
-
-	if director != null and not director.is_reveal_complete():
-		errors.append("first reveal did not complete")
-	if camera.follow_target != actor:
-		errors.append("camera follow target did not return to Operator")
-	_expect_vec2(
-		camera.framing_offset,
-		Vector2(0.0, -48.0),
-		"returned gameplay offset",
+	await _check_first_camera_envelope(
+		scene,
+		actor,
+		camera,
+		controller,
+		vista_root,
 		errors
 	)
-	_expect_vec2(
-		camera.framing_zoom,
-		Vector2(0.98, 0.98),
-		"returned gameplay zoom",
-		errors
-	)
-	if vista_root != null and vista_root.modulate.a < 0.99:
-		errors.append("VistaRoot did not remain visible after the reveal")
-	if reveal_trigger != null:
-		actor.global_position = reveal_trigger.global_position + Vector2(0.0, 300.0)
-		await physics_frame
-		actor.global_position = reveal_trigger.global_position
-		await physics_frame
-		await process_frame
+	if director != null and director.has_played() \
+			and not director.is_reveal_complete():
+		await director.reveal_completed
 	if int(completion_count[0]) != 1:
-		errors.append("first reveal did not remain one-shot")
+		errors.append("first reveal accent did not remain one-shot")
 
+	_check_fortress_composition(scene, errors)
+	await _check_second_reveal(
+		scene,
+		actor,
+		camera,
+		controller,
+		director,
+		errors
+	)
 	await _check_parallax(scene, camera, errors)
 	await _check_roofs(scene, actor, errors)
 	_check_labyrinth_depth(scene, errors)
@@ -288,6 +142,547 @@ func _init() -> void:
 		for error in errors:
 			push_error("[SunderedKeepVistaPolishSmoke] %s" % error)
 		_fail("%d checks failed" % errors.size())
+
+
+func _check_first_camera_envelope(
+	scene: Node2D,
+	actor: Node2D,
+	camera: PresentationCamera,
+	controller: SunderedKeepVistaController,
+	vista_root: CanvasItem,
+	errors: Array[String]
+) -> void:
+	if controller == null:
+		return
+	if scene.get_node_or_null(
+		"SequenceTriggers/FirstVistaRevealTrigger"
+	) != null:
+		errors.append("Camera 1 still builds FirstVistaRevealTrigger")
+	if scene.get_node_or_null(
+		"SequenceTriggers/ReturnToGameplayTrigger"
+	) != null:
+		errors.append("Camera 1 still builds ReturnToGameplayTrigger")
+
+	var control_start := scene.get_node_or_null(
+		"Markers/FirstCameraControlStart"
+	) as Marker2D
+	var control_apex := scene.get_node_or_null(
+		"Markers/RevealControlStart"
+	) as Marker2D
+	var return_start := scene.get_node_or_null(
+		"Markers/RevealControlEnd"
+	) as Marker2D
+	var return_complete := scene.get_node_or_null(
+		"Markers/FirstCameraReturnComplete"
+	) as Marker2D
+	var cinematic_anchor := scene.get_node_or_null(
+		"Markers/FirstRevealCameraAnchor"
+	) as Marker2D
+	var presentation_anchor := controller.get_node_or_null(
+		"CameraPresentationAnchor"
+	) as Marker2D
+	if (
+		control_start == null
+		or control_apex == null
+		or return_start == null
+		or return_complete == null
+		or cinematic_anchor == null
+		or presentation_anchor == null
+	):
+		errors.append("Camera 1 envelope markers/anchor are incomplete")
+		return
+
+	var enter_axis := (
+		control_apex.global_position
+		- control_start.global_position
+	)
+	var return_axis := (
+		return_complete.global_position
+		- return_start.global_position
+	)
+	var before := control_start.global_position - enter_axis * 0.25
+	var enter_mid := control_start.global_position.lerp(
+		control_apex.global_position,
+		0.5
+	)
+	var plateau := control_apex.global_position.lerp(
+		return_start.global_position,
+		0.5
+	)
+	var return_mid := return_start.global_position.lerp(
+		return_complete.global_position,
+		0.5
+	)
+	var after := return_complete.global_position + return_axis * 0.25
+	var samples := [
+		{
+			"position": before,
+			"phase": "GAMEPLAY_BEFORE",
+			"enter": 0.0,
+			"return": 0.0,
+			"camera": 0.0,
+		},
+		{
+			"position": enter_mid,
+			"phase": "BLEND_TO_CINEMATIC",
+			"enter": 0.5,
+			"return": 0.0,
+			"camera": 0.5,
+		},
+		{
+			"position": plateau,
+			"phase": "CINEMATIC_APEX",
+			"enter": 1.0,
+			"return": 0.0,
+			"camera": 1.0,
+		},
+		{
+			"position": return_mid,
+			"phase": "BLEND_TO_GAMEPLAY",
+			"enter": 1.0,
+			"return": 0.5,
+			"camera": 0.5,
+		},
+		{
+			"position": after,
+			"phase": "GAMEPLAY_AFTER",
+			"enter": 1.0,
+			"return": 1.0,
+			"camera": 0.0,
+		},
+	]
+
+	for sample: Dictionary in samples:
+		await _assert_first_camera_sample(
+			actor,
+			camera,
+			controller,
+			vista_root,
+			cinematic_anchor,
+			presentation_anchor,
+			sample,
+			"forward",
+			errors
+		)
+	var reverse_samples := samples.duplicate()
+	reverse_samples.reverse()
+	for sample: Dictionary in reverse_samples:
+		await _assert_first_camera_sample(
+			actor,
+			camera,
+			controller,
+			vista_root,
+			cinematic_anchor,
+			presentation_anchor,
+			sample,
+			"backward",
+			errors
+		)
+
+	for blend_data in [
+		{
+			"start": control_start.global_position,
+			"end": control_apex.global_position,
+			"key": "first_enter_weight",
+		},
+		{
+			"start": return_start.global_position,
+			"end": return_complete.global_position,
+			"key": "first_return_weight",
+		},
+	]:
+		var first_weight := -1.0
+		for ratio in [0.25, 0.75, 0.25]:
+			actor.global_position = (
+				blend_data["start"] as Vector2
+			).lerp(
+				blend_data["end"] as Vector2,
+				ratio
+			)
+			await process_frame
+			var state := controller.get_reveal_choreography_state()
+			var weight := float(state.get(blend_data["key"], -1.0))
+			if ratio == 0.25 and first_weight < 0.0:
+				first_weight = weight
+			elif ratio == 0.25 and absf(weight - first_weight) > 0.001:
+				errors.append(
+					"Camera 1 blend is history-dependent after reversal"
+				)
+
+	actor.global_position = plateau
+	controller.refresh_bindings()
+	var spawn_plateau := controller.get_reveal_choreography_state()
+	if spawn_plateau.get("first_camera_phase", "") != "CINEMATIC_APEX":
+		errors.append("Spawning in the Camera 1 plateau evaluated incorrectly")
+
+	actor.global_position = after
+	controller.refresh_bindings()
+	var spawn_after := controller.get_reveal_choreography_state()
+	if spawn_after.get("first_camera_phase", "") != "GAMEPLAY_AFTER":
+		errors.append("Spawning after Camera 1 evaluated incorrectly")
+
+	actor.global_position = before
+	controller.apply_progress(0.0)
+	var teleported := controller.get_reveal_choreography_state()
+	if teleported.get("first_camera_phase", "") != "GAMEPLAY_BEFORE":
+		errors.append("Teleporting backward did not immediately reset Camera 1")
+	if presentation_anchor.global_position.distance_to(
+		actor.global_position
+	) > 0.01:
+		errors.append("CameraPresentationAnchor did not track teleport immediately")
+
+
+func _assert_first_camera_sample(
+	actor: Node2D,
+	camera: PresentationCamera,
+	controller: SunderedKeepVistaController,
+	vista_root: CanvasItem,
+	cinematic_anchor: Marker2D,
+	presentation_anchor: Marker2D,
+	sample: Dictionary,
+	direction_label: String,
+	errors: Array[String]
+) -> void:
+	actor.global_position = sample["position"] as Vector2
+	await process_frame
+	var state := controller.get_reveal_choreography_state()
+	var context := "%s %s" % [
+		direction_label,
+		String(sample["phase"]),
+	]
+	if state.get("first_camera_phase", "") != sample["phase"]:
+		errors.append(
+			"%s phase expected %s, got %s"
+			% [
+				context,
+				sample["phase"],
+				state.get("first_camera_phase", ""),
+			]
+		)
+	var enter_weight := float(state.get("first_enter_weight", -1.0))
+	var return_weight := float(state.get("first_return_weight", -1.0))
+	var camera_weight := float(state.get("first_camera_weight", -1.0))
+	if absf(enter_weight - float(sample["enter"])) > 0.03:
+		errors.append("%s enter weight %.3f" % [context, enter_weight])
+	if absf(return_weight - float(sample["return"])) > 0.03:
+		errors.append("%s return weight %.3f" % [context, return_weight])
+	if absf(camera_weight - float(sample["camera"])) > 0.03:
+		errors.append("%s camera weight %.3f" % [context, camera_weight])
+	var expected_anchor := actor.global_position.lerp(
+		cinematic_anchor.global_position,
+		camera_weight
+	)
+	if presentation_anchor.global_position.distance_to(expected_anchor) > 0.05:
+		errors.append("%s presentation anchor mismatch" % context)
+	if camera.follow_target != presentation_anchor:
+		errors.append("%s camera did not follow presentation anchor" % context)
+	if vista_root != null and absf(
+		vista_root.modulate.a - enter_weight
+	) > 0.03:
+		errors.append("%s VistaRoot alpha mismatch" % context)
+
+
+func _check_fortress_composition(
+	scene: Node2D,
+	errors: Array[String]
+) -> void:
+	var cinematic_root := scene.get_node_or_null(
+		"GrandVistaRoot/GrandVistaCinematicRoot"
+	) as CanvasItem
+	var fortress_root := scene.get_node_or_null(
+		"GrandVistaRoot/FortressVistaRoot"
+	) as CanvasItem
+	if cinematic_root == null:
+		errors.append("GrandVistaCinematicRoot missing")
+	if fortress_root == null:
+		errors.append("FortressVistaRoot missing")
+		return
+	if fortress_root.modulate.a < 0.99:
+		errors.append("FortressVistaRoot container must remain visible")
+	if not fortress_root.scale.is_equal_approx(Vector2(0.88, 0.88)):
+		errors.append("FortressVistaRoot must use the 0.88 review scale")
+
+	var expected_counts := {
+		"FortressFarParallax": 4,
+		"FortressMidParallax": 16,
+		"FortressNearParallax": 10,
+	}
+	var grand_root := scene.get_node_or_null("GrandVistaRoot") as Node2D
+	var playable_root := scene.get_node_or_null("PlayableRoot") as Node2D
+	var component_count := 0
+	var visible_component_count := 0
+	for layer_name: String in expected_counts:
+		var layer := fortress_root.get_node_or_null(
+			layer_name
+		) as Node2D
+		if layer == null:
+			errors.append("%s missing" % layer_name)
+			continue
+		if layer.modulate.a > 0.01:
+			errors.append("%s should start at zero alpha" % layer_name)
+		var sprites := layer.find_children(
+			"*",
+			"Sprite2D",
+			false,
+			false
+		)
+		if sprites.size() != int(expected_counts[layer_name]):
+			errors.append(
+				"%s expected %d sprites, got %d"
+				% [
+					layer_name,
+					int(expected_counts[layer_name]),
+					sprites.size(),
+				]
+			)
+		component_count += sprites.size()
+		for node: Node in sprites:
+			var sprite := node as Sprite2D
+			if sprite.visible:
+				visible_component_count += 1
+			if sprite.texture == null:
+				errors.append("%s has no texture" % sprite.name)
+			if (
+				sprite.texture_filter
+				!= CanvasItem.TEXTURE_FILTER_LINEAR
+			):
+				errors.append("%s is not linearly filtered" % sprite.name)
+			if not bool(sprite.get_meta("presentation_only", false)):
+				errors.append("%s lacks presentation-only metadata" % sprite.name)
+			if (
+				grand_root != null
+				and playable_root != null
+				and (
+					grand_root.z_index
+					+ fortress_root.z_index
+					+ layer.z_index
+					+ sprite.z_index
+				) >= playable_root.z_index
+			):
+				errors.append("%s does not remain below PlayableRoot" % sprite.name)
+
+	if component_count != 30:
+		errors.append("fortress component total expected 30, got %d" % component_count)
+	if visible_component_count < 14 or visible_component_count > 18:
+		errors.append(
+			"primary composition should expose 14–18 parts, got %d"
+			% visible_component_count
+		)
+	if _contains_gameplay_authority(fortress_root):
+		errors.append("FortressVistaRoot contains gameplay authority")
+
+
+func _check_second_reveal(
+	scene: Node2D,
+	actor: CharacterBody2D,
+	camera: PresentationCamera,
+	controller: SunderedKeepVistaController,
+	director: SunderedKeepRevealDirector,
+	errors: Array[String]
+) -> void:
+	if controller == null or director == null:
+		return
+	director.second_reveal_anticipation_duration = 0.12
+	director.second_reveal_in_duration = 0.04
+	director.second_reveal_hold_duration = 0.08
+	director.second_return_duration = 0.04
+
+	var cinematic_root := scene.get_node_or_null(
+		"GrandVistaRoot/GrandVistaCinematicRoot"
+	) as CanvasItem
+	var fortress_root := scene.get_node_or_null(
+		"GrandVistaRoot/FortressVistaRoot"
+	) as CanvasItem
+	var fortress_far := scene.get_node_or_null(
+		"GrandVistaRoot/FortressVistaRoot/FortressFarParallax"
+	) as CanvasItem
+	var fortress_mid := scene.get_node_or_null(
+		"GrandVistaRoot/FortressVistaRoot/FortressMidParallax"
+	) as CanvasItem
+	var fortress_near := scene.get_node_or_null(
+		"GrandVistaRoot/FortressVistaRoot/FortressNearParallax"
+	) as CanvasItem
+	var keep := scene.get_node_or_null(
+		"ParallaxRoot/RevealDepth/DistantKeep_Parallax2D/"
+		+ "DistantSunderedKeepLandmark"
+	) as CanvasItem
+	var second_trigger := scene.get_node_or_null(
+		"SequenceTriggers/SecondVistaRevealTrigger"
+	) as Area2D
+	if second_trigger == null:
+		errors.append("SecondVistaRevealTrigger missing")
+		return
+
+	actor.global_position = second_trigger.global_position
+	for unused in 8:
+		await physics_frame
+		if bool(
+			director.get_reveal_state().get(
+				"second_played",
+				false
+			)
+		):
+			break
+	var presentation_anchor := controller.get_node_or_null(
+		"CameraPresentationAnchor"
+	) as Marker2D
+	if presentation_anchor == null:
+		errors.append("second reveal presentation anchor missing")
+	elif presentation_anchor.global_position.distance_to(
+		actor.global_position
+	) > 1.0:
+		errors.append("second reveal anchor teleported before its blend")
+	if camera.follow_target != presentation_anchor:
+		errors.append("camera did not transfer continuously to presentation anchor")
+	if (
+		fortress_far == null
+		or fortress_mid == null
+		or fortress_near == null
+	):
+		errors.append("fortress reveal layers missing")
+	elif (
+		fortress_far.modulate.a > 0.01
+		or fortress_mid.modulate.a > 0.01
+		or fortress_near.modulate.a > 0.01
+	):
+		errors.append("fortress became visible during anticipation")
+
+	for unused in 30:
+		await physics_frame
+		if bool(
+			director.get_reveal_state().get(
+				"second_ready_for_return",
+				false
+			)
+		):
+			break
+	if not bool(
+		director.get_reveal_state().get(
+			"second_ready_for_return",
+			false
+		)
+	):
+		errors.append("second reveal did not enter progress control")
+		return
+	if cinematic_root == null or cinematic_root.modulate.a < 0.99:
+		errors.append("second reveal did not expose cinematic layers")
+	if fortress_root == null or fortress_root.modulate.a < 0.99:
+		errors.append("fortress container was unexpectedly faded")
+	if fortress_far == null or fortress_far.modulate.a < 0.95:
+		errors.append("second reveal did not expose the far fortress")
+	if fortress_mid == null or fortress_mid.modulate.a < 0.95:
+		errors.append("second reveal did not expose the mid fortress")
+	if (
+		fortress_near == null
+		or absf(fortress_near.modulate.a - 0.78) > 0.02
+	):
+		errors.append("second reveal did not stage the near fortress")
+	if keep != null and keep.modulate.a > 0.05:
+		errors.append("distant Keep proxy did not crossfade out")
+	if camera.follow_target == actor:
+		errors.append("second reveal camera did not use presentation anchor")
+	_expect_vec2(
+		camera.framing_zoom,
+		Vector2(0.78, 0.78),
+		"second reveal zoom",
+		errors
+	)
+
+	var second_full := scene.get_node_or_null(
+		"Markers/SecondVistaFull"
+	) as Marker2D
+	var second_end := scene.get_node_or_null(
+		"Markers/SecondVistaEnd"
+	) as Marker2D
+	if second_full == null or second_end == null:
+		errors.append("second progress markers missing")
+		return
+	actor.global_position = second_full.global_position.lerp(
+		second_end.global_position,
+		0.5
+	)
+	await process_frame
+	await process_frame
+	var state := controller.get_reveal_choreography_state()
+	var progress := float(state.get("second_progress_weight", -1.0))
+	if progress < 0.45 or progress > 0.55:
+		errors.append(
+			"second camera progress did not follow Operator position: %.3f"
+			% progress
+		)
+	if cinematic_root != null and cinematic_root.modulate.a >= 0.99:
+		errors.append("cinematic layers did not fade during second progress")
+	if fortress_far != null and absf(fortress_far.modulate.a - 0.74) > 0.03:
+		errors.append("far fortress did not recede with second progress")
+	if fortress_mid != null and absf(fortress_mid.modulate.a - 0.69) > 0.03:
+		errors.append("mid fortress did not recede with second progress")
+	if fortress_near != null and absf(fortress_near.modulate.a - 0.43) > 0.03:
+		errors.append("near fortress did not recede with second progress")
+
+	var return_trigger := scene.get_node_or_null(
+		"SequenceTriggers/SecondReturnToGameplayTrigger"
+	) as Area2D
+	if return_trigger == null:
+		errors.append("SecondReturnToGameplayTrigger missing")
+		return
+	actor.global_position = return_trigger.global_position
+	for unused in 20:
+		await physics_frame
+		if bool(
+			director.get_reveal_state().get(
+				"second_complete",
+				false
+			)
+		):
+			break
+	if not bool(
+		director.get_reveal_state().get(
+			"second_complete",
+			false
+		)
+	):
+		await director.second_reveal_completed
+	if camera.follow_target != presentation_anchor:
+		errors.append(
+			"second handback did not preserve presentation-anchor follow"
+		)
+	elif presentation_anchor.global_position.distance_to(
+		actor.global_position
+	) > 1.0:
+		errors.append("presentation anchor did not return to Operator position")
+	if cinematic_root == null or cinematic_root.modulate.a > 0.01:
+		errors.append("cinematic layers remained visible after handback")
+	if fortress_far == null or absf(fortress_far.modulate.a - 0.48) > 0.02:
+		errors.append("far fortress did not settle at distant alpha")
+	if fortress_mid == null or absf(fortress_mid.modulate.a - 0.38) > 0.02:
+		errors.append("mid fortress did not settle at distant alpha")
+	if fortress_near == null or absf(fortress_near.modulate.a - 0.08) > 0.02:
+		errors.append("near fortress did not settle at distant alpha")
+	controller.apply_progress(1.0)
+	if (
+		fortress_far != null
+		and fortress_far.modulate.a > 0.01
+	):
+		errors.append("final-gate progress did not fade fortress completely")
+	actor.global_position = Vector2(-600.0, 900.0)
+	await physics_frame
+	await create_timer(0.30).timeout
+
+
+func _contains_gameplay_authority(node: Node) -> bool:
+	if (
+		node is CollisionObject2D
+		or node is CollisionShape2D
+		or node is NavigationRegion2D
+		or node is NavigationLink2D
+		or node is Marker2D
+		or node is Camera2D
+	):
+		return true
+	for child: Node in node.get_children():
+		if _contains_gameplay_authority(child):
+			return true
+	return false
 
 
 func _check_parallax(
@@ -310,12 +705,19 @@ func _check_parallax(
 	var labyrinth_far := layers[2]
 	var labyrinth_mist := layers[3]
 	var labyrinth_near := layers[4]
+	var fortress_far := layers[5]
+	var fortress_mid := layers[6]
+	var fortress_near := layers[7]
 	if first_far.get("follow_ratio").x <= first_mist.get("follow_ratio").x:
 		errors.append("first vista far parallax ratio must exceed mist ratio")
 	if labyrinth_far.get("follow_ratio").x <= labyrinth_mist.get("follow_ratio").x:
 		errors.append("Labyrinth far parallax ratio must exceed mist ratio")
 	if labyrinth_mist.get("follow_ratio").x <= labyrinth_near.get("follow_ratio").x:
 		errors.append("Labyrinth mist parallax ratio must exceed near ratio")
+	if fortress_far.get("follow_ratio").x <= fortress_mid.get("follow_ratio").x:
+		errors.append("fortress far ratio must exceed mid ratio")
+	if fortress_mid.get("follow_ratio").x <= fortress_near.get("follow_ratio").x:
+		errors.append("fortress mid ratio must exceed near ratio")
 
 	var origins: Array[Vector2] = []
 	for layer in layers:

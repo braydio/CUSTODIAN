@@ -81,13 +81,15 @@ const PAIRED_EXECUTION_HIT_STOP_DURATION := 0.11
 const PAIRED_EXECUTION_IMPACT_SOUND := preload("res://addons/Sound FX Starter Pack Vol. 1/Motions and Impacts/Impact Vox Hammer.wav")
 const MELEE_CONTACT_SOUND: AudioStream = preload("res://content/audio/sfx/combat/melee_contact_01.wav")
 const MELEE_HEAVY_HIT_SOUND: AudioStream = preload("res://content/audio/sfx/combat/melee_heavy_hit_01.wav")
-const CRITICAL_IMPACT_SOUND: AudioStream = preload("res://content/audio/sfx/combat/critical_impact_01.wav")
+const CRITICAL_IMPACT_SOUND: AudioStream = preload("res://content/audio/sfx/combat/critical_hit_composite_01.wav")
 const KNOCKDOWN_SOUND: AudioStream = preload("res://content/audio/sfx/combat/operator_heavy_knockdown_01.wav")
 const MELEE_MISS_SOUND: AudioStream = preload("res://content/audio/sfx/combat/melee_miss_01.wav")
 const MELEE_GRAZE_SOUND: AudioStream = preload("res://content/audio/sfx/combat/melee_graze_01.wav")
 const DODGE_ROLL_SOUND: AudioStream = preload("res://content/audio/sfx/combat/dodge_roll_01.wav")
 const CRITICAL_WINDUP_SOUND: AudioStream = preload("res://content/audio/sfx/combat/critical_windup_01.wav")
 const FIELD_PATCH_SOUND: AudioStream = preload("res://content/audio/sfx/healing/field_patch_composite.wav")
+const LOW_HEALTH_WARNING_SOUND: AudioStream = preload("res://content/audio/sfx/ambience/low_health_warning_01.wav")
+const DAMAGE_TAKEN_SOUND: AudioStream = preload("res://content/audio/sfx/combat/damage_taken_01.wav")
 const DODGE_FAST_ATTACK_FRAME_COUNT := 11
 const DODGE_FAST_ATTACK_FPS := 20.0
 const DODGE_FAST_ATTACK_HIT_FRAME := 4
@@ -4688,6 +4690,14 @@ func _play_combat_sfx(stream: AudioStream, position: Vector2, volume_db: float =
 	return player
 
 
+func _play_low_health_warning() -> void:
+	_play_combat_sfx(LOW_HEALTH_WARNING_SOUND, global_position, -4.0, 640.0)
+
+
+func _play_damage_taken_sfx() -> void:
+	_play_combat_sfx(DAMAGE_TAKEN_SOUND, global_position, -2.0, 480.0)
+
+
 func _play_parry_success_sound(contact_position: Vector2) -> AudioStreamPlayer2D:
 	var player := AudioStreamPlayer2D.new()
 	player.name = "ParrySuccessAudio"
@@ -5897,6 +5907,8 @@ func _update_field_patch_observability(delta: float) -> void:
 			"patches_remaining": field_patch_count,
 			"severity": "critical" if critical_prompt else "warning",
 		})
+		if critical_prompt and not _field_patch_prompt_critical:
+			_play_low_health_warning()
 	_field_patch_prompt_active = should_prompt
 	_field_patch_prompt_critical = critical_prompt
 
@@ -9259,6 +9271,7 @@ func take_damage(amount: float, trigger_reaction: bool = true, damage_context: D
 		damage_event[key] = damage_context[key]
 	_obs_log(&"player_damage", damage_event)
 	_obs_gauge(&"player_health", health)
+	_play_damage_taken_sfx()
 
 	var world_history := get_node_or_null("/root/WorldHistory")
 	if world_history != null:

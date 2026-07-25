@@ -12,6 +12,7 @@ const ENEMY_BLACKBOARD_SCRIPT := preload("res://game/actors/enemies/components/e
 const ENEMY_PERCEPTION_SCRIPT := preload("res://game/actors/enemies/components/enemy_perception_component.gd")
 const ENEMY_OBJECTIVE_SENSOR_SCRIPT := preload("res://game/actors/enemies/components/enemy_objective_sensor.gd")
 const ENEMY_LOOT_CARRIER_SCRIPT := preload("res://game/actors/enemies/components/enemy_loot_carrier.gd")
+const ENEMY_DEATH_SOUND: AudioStream = preload("res://content/audio/sfx/combat/enemy_death_01.wav")
 const ENEMY_BEHAVIOR_STATE_MACHINE_SCRIPT := preload("res://game/actors/enemies/enemy_behavior_state_machine.gd")
 const CRITICAL_BREACH_MARKER_VFX_SCENE := preload("res://game/vfx/combat/critical_breach_marker_vfx.tscn")
 const CRITICAL_WINDOW_RING_VFX_SCENE := preload("res://game/vfx/combat/critical_window_ring_vfx.tscn")
@@ -1854,6 +1855,7 @@ func update_visuals():
 func die():
 	dead = true
 	velocity = Vector2.ZERO
+	_play_enemy_death_sfx()
 	_cancel_pending_attack_with_result(&"cancelled_by_death", &"death")
 	_clear_grunt_critical_open_vfx(false)
 	_release_parry_critical_execution_owner()
@@ -3899,6 +3901,23 @@ func _play_grunt_death() -> void:
 	animated_sprite.play(String(GRUNT_DEATH_ANIMATION))
 	await animated_sprite.animation_finished
 	queue_free()
+
+
+func _play_enemy_death_sfx() -> void:
+	var player := AudioStreamPlayer2D.new()
+	player.stream = ENEMY_DEATH_SOUND
+	player.volume_db = -2.0
+	player.max_distance = 480.0
+	var parent := get_tree().current_scene
+	if parent == null:
+		parent = get_parent()
+	if parent == null:
+		player.free()
+		return
+	parent.add_child(player)
+	player.global_position = global_position
+	player.finished.connect(player.queue_free)
+	player.play()
 
 
 func _get_custom_ambient_scale_for_animation(animation_name: StringName) -> Vector2:

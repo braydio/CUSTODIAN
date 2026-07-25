@@ -22,9 +22,11 @@ signal second_reveal_completed
 @export_range(0.2, 2.5, 0.05) var reveal_hold_duration := 1.80
 @export_range(0.1, 1.0, 0.01) var return_duration := 0.70
 @export_range(0.1, 1.0, 0.01) var atmosphere_settle_duration := 0.45
-@export_range(0.1, 1.2, 0.01) var second_reveal_in_duration := 0.65
-@export_range(0.2, 2.0, 0.05) var second_reveal_hold_duration := 1.30
-@export_range(0.1, 1.0, 0.01) var second_return_duration := 0.55
+@export_range(0.0, 0.4, 0.01) \
+var second_reveal_anticipation_duration := 0.12
+@export_range(0.1, 1.2, 0.01) var second_reveal_in_duration := 1.00
+@export_range(0.2, 2.0, 0.05) var second_reveal_hold_duration := 1.50
+@export_range(0.1, 1.0, 0.01) var second_return_duration := 0.35
 @export_range(0.0, 1.0, 0.05) var reveal_movement_multiplier := 0.25
 
 const NEAR_FOG_TRAVEL := Vector2(-180.0, 58.0)
@@ -50,6 +52,8 @@ var _first_return_running := false
 var _second_reveal_played := false
 var _second_reveal_running := false
 var _second_reveal_finished := false
+var _second_reveal_ready_for_return := false
+var _second_return_running := false
 var _near_fog_origin := Vector2.ZERO
 var _mid_fog_origin := Vector2.ZERO
 var _edge_mist_origin := Vector2.ZERO
@@ -58,6 +62,17 @@ var _edge_mist_origin := Vector2.ZERO
 func _ready() -> void:
 	refresh_bindings()
 	_prepare_initial_state()
+
+
+func _process(_delta: float) -> void:
+	if _vista_controller == null:
+		return
+	var state := _vista_controller.get_reveal_choreography_state()
+	if (
+		not _reveal_played
+		and float(state.get("first_enter_progress", 0.0)) > 0.001
+	):
+		play_first_reveal()
 
 
 func refresh_bindings() -> void:
@@ -88,144 +103,46 @@ func play_first_reveal() -> void:
 	_reveal_running = true
 	reveal_started.emit()
 	refresh_bindings()
-	_set_player_movement_multiplier(reveal_movement_multiplier)
-	if _vista_controller != null:
-		_vista_controller.begin_first_reveal()
 
-	var anticipation := create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
-	if _near_fog != null:
-		anticipation.parallel().tween_property(_near_fog, "modulate:a", minf(_near_fog.modulate.a + 0.12, 1.0), anticipation_duration)
-	if _mid_fog != null:
-		anticipation.parallel().tween_property(_mid_fog, "modulate:a", minf(_mid_fog.modulate.a + 0.08, 1.0), anticipation_duration)
-	await anticipation.finished
-
-	var reveal_in := create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	reveal_in.tween_method(
-		_set_first_reveal_weight,
-		0.0,
-		1.0,
-		reveal_in_duration
-	)
-	if _near_fog is Node2D:
-		reveal_in.parallel().tween_property(
-			_near_fog,
-			"position",
-			_near_fog_origin + NEAR_FOG_TRAVEL,
-			reveal_in_duration
-		)
-		reveal_in.parallel().tween_property(
-			_near_fog,
-			"modulate:a",
-			0.04,
-			reveal_in_duration
-		)
-	if _mid_fog is Node2D:
-		reveal_in.parallel().tween_property(
-			_mid_fog,
-			"position",
-			_mid_fog_origin + MID_FOG_TRAVEL,
-			reveal_in_duration
-		)
-		reveal_in.parallel().tween_property(
-			_mid_fog,
-			"modulate:a",
-			0.08,
-			reveal_in_duration
-		)
-	if _edge_mist is Node2D:
-		reveal_in.parallel().tween_property(
-			_edge_mist,
-			"position",
-			_edge_mist_origin + EDGE_MIST_TRAVEL,
-			reveal_in_duration
-		)
+	# This is an optional one-shot accent only. Camera position, zoom, follow
+	# ownership, and presentation alpha are evaluated positionally elsewhere.
+	var accent := create_tween() \
+		.set_trans(Tween.TRANS_SINE) \
+		.set_ease(Tween.EASE_OUT)
 	if _reveal_light != null:
-		reveal_in.parallel().tween_property(
+		accent.tween_interval(anticipation_duration)
+		accent.tween_property(
 			_reveal_light,
 			"energy",
 			REVEAL_LIGHT_PEAK,
-			reveal_in_duration * 0.72
+			reveal_in_duration * 0.45
 		)
-	await reveal_in.finished
-
-	if _vista_controller != null:
-		_vista_controller.hold_first_reveal()
-
-	await get_tree().create_timer(reveal_hold_duration).timeout
-
-	_set_player_movement_multiplier(1.0)
-	if _vista_controller != null:
-		_vista_controller.begin_first_progress_control()
-	_reveal_ready_for_return = true
-
-	var settle := create_tween() \
-		.set_trans(Tween.TRANS_SINE) \
-		.set_ease(Tween.EASE_OUT)
-	if _far_fog != null:
-		settle.tween_property(
-			_far_fog,
-			"modulate:a",
-			maxf(_far_fog.modulate.a, 0.16),
-			atmosphere_settle_duration
-		)
-	await settle.finished
-
-
-func return_first_reveal_to_gameplay() -> void:
-	if (
-		not _reveal_played
-		or not _reveal_ready_for_return
-		or _first_return_running
-		or _reveal_finished
-	):
-		return
-
-	_first_return_running = true
-	if _vista_controller != null:
-		_vista_controller.begin_return_to_gameplay()
-
-	var return_tween := create_tween() \
-		.set_trans(Tween.TRANS_SINE) \
-		.set_ease(Tween.EASE_IN_OUT)
-	return_tween.tween_method(
-		_set_return_to_gameplay_weight,
-		0.0,
-		1.0,
-		return_duration
-	)
-	if _reveal_light != null:
-		return_tween.parallel().tween_property(
+		accent.tween_property(
 			_reveal_light,
 			"energy",
 			0.0,
-			return_duration
+			atmosphere_settle_duration
 		)
-	await return_tween.finished
-
-	if _vista_controller != null:
-		_vista_controller.complete_first_reveal()
+	await accent.finished
 
 	_resolve_destination_prompt()
 	if _destination_prompt != null:
-		var prompt_tween := create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-		prompt_tween.tween_property(_destination_prompt, "modulate:a", 1.0, 0.18)
-		await prompt_tween.finished
+		_destination_prompt.modulate.a = 1.0
 	_reveal_ready_for_return = false
-	_first_return_running = false
 	_reveal_running = false
 	_reveal_finished = true
 	reveal_completed.emit()
+
+
+func return_first_reveal_to_gameplay() -> void:
+	# Compatibility only. Camera 1 return is position-controlled.
+	return
 
 
 func play_second_reveal() -> void:
 	if _second_reveal_played:
 		return
 	_second_reveal_played = true
-	if _reveal_running:
-		await reveal_completed
-	if not _reveal_finished:
-		_second_reveal_played = false
-		return
 
 	_second_reveal_running = true
 	second_reveal_started.emit()
@@ -233,6 +150,23 @@ func play_second_reveal() -> void:
 	_set_player_movement_multiplier(reveal_movement_multiplier)
 	if _vista_controller != null:
 		_vista_controller.begin_second_reveal()
+
+	var near_fog_alpha := (
+		_near_fog.modulate.a
+		if _near_fog != null
+		else 0.0
+	)
+	var anticipation := create_tween() \
+		.set_trans(Tween.TRANS_CUBIC) \
+		.set_ease(Tween.EASE_IN)
+	if _near_fog != null:
+		anticipation.tween_property(
+			_near_fog,
+			"modulate:a",
+			minf(near_fog_alpha + 0.06, 1.0),
+			second_reveal_anticipation_duration
+		)
+	await anticipation.finished
 
 	var reveal_in := create_tween() \
 		.set_trans(Tween.TRANS_CUBIC) \
@@ -243,6 +177,13 @@ func play_second_reveal() -> void:
 		1.0,
 		second_reveal_in_duration
 	)
+	if _near_fog != null:
+		reveal_in.parallel().tween_property(
+			_near_fog,
+			"modulate:a",
+			near_fog_alpha,
+			second_reveal_in_duration * 0.65
+		)
 	await reveal_in.finished
 
 	if _vista_controller != null:
@@ -252,6 +193,20 @@ func play_second_reveal() -> void:
 	).timeout
 
 	_set_player_movement_multiplier(1.0)
+	if _vista_controller != null:
+		_vista_controller.begin_second_progress_control()
+	_second_reveal_ready_for_return = true
+
+
+func return_second_reveal_to_gameplay() -> void:
+	if (
+		not _second_reveal_ready_for_return
+		or _second_return_running
+		or _second_reveal_finished
+	):
+		return
+
+	_second_return_running = true
 	if _vista_controller != null:
 		_vista_controller.begin_second_return_to_gameplay()
 
@@ -268,6 +223,8 @@ func play_second_reveal() -> void:
 
 	if _vista_controller != null:
 		_vista_controller.complete_second_reveal()
+	_second_reveal_ready_for_return = false
+	_second_return_running = false
 	_second_reveal_running = false
 	_second_reveal_finished = true
 	second_reveal_completed.emit()
@@ -295,6 +252,8 @@ func get_reveal_state() -> Dictionary:
 		"second_played": _second_reveal_played,
 		"second_running": _second_reveal_running,
 		"second_complete": _second_reveal_finished,
+		"second_ready_for_return": _second_reveal_ready_for_return,
+		"second_return_running": _second_return_running,
 		"camera_bound": _vista_controller != null,
 		"threshold_bound": _threshold_marker != null,
 		"prompt_visible": _destination_prompt != null and _destination_prompt.modulate.a > 0.99,

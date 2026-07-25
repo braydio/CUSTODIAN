@@ -22,6 +22,8 @@ const OPERATOR_ARRIVAL_BELOW_HORIZON_OFFSET_PX := 5.0
 const PORTAL_SCREEN_VEIL_GROUP := "portal_screen_veil"
 const PORTAL_SCREEN_VEIL_COLOR := Color.BLACK
 
+const PORTAL_TRANSITION_SOUND: AudioStream = preload("res://content/audio/sfx/environment/portal_transition_01.wav")
+
 # Keep destination placement below the visual/trigger horizon so the operator:
 # 1. does not immediately re-trigger the portal on arrival
 # 2. has enough visible body below the portal horizon for the arrival one-shot
@@ -265,6 +267,7 @@ func _run_teleport_sequence(body: Node2D) -> void:
 	_teleport_sequence_active = true
 	_active_body = body
 	_set_body_portal_transition_locked(body, true)
+	_play_portal_transition_sfx()
 
 	var start_frame := Engine.get_physics_frames()
 	var sequence_frames := int(ceil(teleport_sequence_seconds * float(Engine.physics_ticks_per_second)))
@@ -1135,3 +1138,14 @@ func _get_animation_duration(animation_name: String) -> float:
 
 	var frame_count := _state_sprite.sprite_frames.get_frame_count(animation_name)
 	return float(frame_count) / fps
+
+
+func _play_portal_transition_sfx() -> void:
+	var player := AudioStreamPlayer2D.new()
+	player.stream = PORTAL_TRANSITION_SOUND
+	player.volume_db = 0.0
+	player.max_distance = 640.0
+	add_child(player)
+	player.global_position = global_position
+	player.finished.connect(player.queue_free)
+	player.play()
