@@ -8,6 +8,14 @@ const UNDERLAY_COLLISION_DATA_PATH := (
 	"res://content/levels/sundered_keep/"
 	+ "sundered_keep_underlay_collision.json"
 )
+const UNDERLAY_GAMEPLAY_TILE_DATA_PATH := (
+	"res://content/levels/sundered_keep/"
+	+ "sundered_keep_underlay_gameplay_tiles.json"
+)
+const UNDERLAY_GAMEPLAY_TILE_SCHEMA := (
+	"custodian.sundered_keep.underlay_gameplay_tiles.v1"
+)
+const UNDERLAY_GAMEPLAY_SOURCE_SIZE_PX := Vector2(5048.0, 3500.0)
 const DEFAULT_UNDERLAY_RAIL_RADIUS := 18.0
 const SUNDERED_KEEP_ASSETS := preload("res://content/runtime/sundered_keep/sundered_keep_game32_assets.gd")
 const SUNDERED_KEEP_INTERACTABLE := preload("res://game/world/sundered_keep/sundered_keep_interactable.gd")
@@ -650,6 +658,7 @@ func _build_from_level_data(data: Dictionary) -> void:
 
 	for op in data.get("ops", []):
 		_apply_level_op(op)
+	_apply_underlay_gameplay_tile_mapping()
 
 	_build_interior_occlusion_regions(data)
 	for marker in data.get("markers", []):
@@ -1316,10 +1325,37 @@ func _build_level_underlay(config: Dictionary = {}) -> void:
 	sprite.name = "LevelShapeUnderlay"
 	sprite.centered = false
 	sprite.texture = texture
+	var source_rect := Rect2(
+		Vector2.ZERO,
+		Vector2(texture.get_width(), texture.get_height())
+	)
+	var raw_source_rect := config.get("source_rect_pixels", []) as Array
+	if raw_source_rect.size() >= 4:
+		var requested_source_rect := Rect2(
+			Vector2(
+				float(raw_source_rect[0]),
+				float(raw_source_rect[1])
+			),
+			Vector2(
+				float(raw_source_rect[2]),
+				float(raw_source_rect[3])
+			)
+		)
+		var texture_rect := Rect2(
+			Vector2.ZERO,
+			Vector2(texture.get_width(), texture.get_height())
+		)
+		source_rect = requested_source_rect.intersection(texture_rect)
+		if source_rect.size.x <= 0.0 or source_rect.size.y <= 0.0:
+			return
+		sprite.region_enabled = true
+		sprite.region_rect = source_rect
 	sprite.position = _tile_top_left(rect_tiles.position)
 	sprite.scale = Vector2(
-		(float(rect_tiles.size.x) * TILE_SIZE) / max(1.0, float(texture.get_width())),
-		(float(rect_tiles.size.y) * TILE_SIZE) / max(1.0, float(texture.get_height()))
+		(float(rect_tiles.size.x) * TILE_SIZE)
+			/ max(1.0, source_rect.size.x),
+		(float(rect_tiles.size.y) * TILE_SIZE)
+			/ max(1.0, source_rect.size.y)
 	)
 	sprite.modulate = _array_to_color(config.get("modulate", [1.0, 1.0, 1.0, 1.0]), Color.WHITE)
 	layer.add_child(sprite)
@@ -1331,6 +1367,219 @@ func _build_level_underlay(config: Dictionary = {}) -> void:
 	if bool(config.get("expand_camera_bounds", false)):
 		var underlay_rect := Rect2(_tile_top_left(rect_tiles.position), Vector2(rect_tiles.size) * TILE_SIZE)
 		_camera_bounds = _camera_bounds.merge(underlay_rect)
+
+
+func _apply_underlay_gameplay_tile_mapping() -> void:
+	if not FileAccess.file_exists(UNDERLAY_GAMEPLAY_TILE_DATA_PATH):
+		return
+	var file := FileAccess.open(
+		UNDERLAY_GAMEPLAY_TILE_DATA_PATH,
+		FileAccess.READ
+	)
+	if file == null:
+		push_warning(
+			"[SunderedKeep] Could not read underlay gameplay mapping: %s"
+			% UNDERLAY_GAMEPLAY_TILE_DATA_PATH
+		)
+		return
+	var parsed: Variant = JSON.parse_string(file.get_as_text())
+	if not (parsed is Dictionary):
+		push_warning("[SunderedKeep] Underlay gameplay mapping is invalid JSON")
+		return
+	var document := parsed as Dictionary
+	if str(document.get("schema", "")) != UNDERLAY_GAMEPLAY_TILE_SCHEMA:
+		push_warning("[SunderedKeep] Underlay gameplay mapping schema is unsupported")
+		return
+	var underlay_grid := _array_to_vector2i(
+		document.get(
+			"underlay_grid_size",
+			[map_size_tiles.x, map_size_tiles.y]
+		),
+		map_size_tiles
+	)
+	if underlay_grid != map_size_tiles:
+		push_warning(
+			"[SunderedKeep] Underlay gameplay grid %s disagrees with map %s"
+			% [underlay_grid, map_size_tiles]
+		)
+		return
+	var underlay_texture_path := str(
+		document.get(
+			"underlay_texture_path",
+			_level_underlay_texture_path
+		)
+	)
+	if underlay_texture_path.is_empty():
+		underlay_texture_path = DEFAULT_LEVEL_UNDERLAY_PATH
+	var underlay_texture := _load_texture(underlay_texture_path)
+	var underlay_source_size := _array_to_vector2(
+		document.get(
+			"underlay_source_size_pixels",
+			[
+				UNDERLAY_GAMEPLAY_SOURCE_SIZE_PX.x,
+				UNDERLAY_GAMEPLAY_SOURCE_SIZE_PX.y,
+			]
+		),
+		UNDERLAY_GAMEPLAY_SOURCE_SIZE_PX
+	)
+	var palette_by_number := {}
+	for raw_item: Variant in document.get("palette", []):
+		if not (raw_item is Dictionary):
+			continue
+		var item := raw_item as Dictionary
+		var number := int(item.get("number", 0))
+		if number > 0:
+			palette_by_number[number] = item
+	for raw_placement: Variant in document.get("placements", []):
+		if not (raw_placement is Dictionary):
+			continue
+		var placement := raw_placement as Dictionary
+		if str(placement.get("type", "palette_tile")) == "underlay_stamp":
+			_apply_underlay_stamp_placement(
+				placement,
+				underlay_texture,
+				underlay_source_size
+			)
+			continue
+		_apply_palette_gameplay_tile_placement(
+			placement,
+			palette_by_number
+		)
+
+
+func _apply_palette_gameplay_tile_placement(
+	placement: Dictionary,
+	palette_by_number: Dictionary
+) -> bool:
+	var raw_cell := placement.get("cell", []) as Array
+	if raw_cell.size() < 2:
+		return false
+	var target_cell := Vector2i(int(raw_cell[0]), int(raw_cell[1]))
+	if not Rect2i(Vector2i.ZERO, map_size_tiles).has_point(target_cell):
+		return false
+	var tile_number := int(placement.get("tile_number", 0))
+	var item := palette_by_number.get(tile_number, {}) as Dictionary
+	if item.is_empty():
+		return false
+	var texture := _load_texture(str(item.get("texture_path", "")))
+	if texture == null:
+		return false
+	var category := str(item.get("category", "floor"))
+	var layer_name := "FloorDetail"
+	if category == "architecture":
+		layer_name = "WallsLow"
+	elif category == "traversal":
+		layer_name = "Traversal"
+	var layer := _layers.get(layer_name, null) as Node2D
+	if layer == null:
+		return false
+	var sprite := Sprite2D.new()
+	sprite.name = "UnderlayGameplayPalette_%02d_%d_%d" % [
+		tile_number,
+		target_cell.x,
+		target_cell.y,
+	]
+	sprite.texture = texture
+	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	if category == "floor":
+		sprite.position = (
+			_tile_top_left(target_cell)
+			+ Vector2.ONE * TILE_SIZE * 0.5
+		)
+	else:
+		sprite.position = (
+			_tile_top_left(target_cell)
+			+ Vector2(TILE_SIZE * 0.5, TILE_SIZE)
+		)
+		sprite.offset = Vector2(0.0, -texture.get_height() * 0.5)
+	sprite.set_meta("underlay_gameplay_mapping", true)
+	sprite.set_meta("tile_number", tile_number)
+	layer.add_child(sprite)
+	if (
+		category == "floor"
+		or category == "traversal"
+	) and not _minimap_wall_cells.has(target_cell):
+		_minimap_floor_cells[target_cell] = true
+	return true
+
+
+func _apply_underlay_stamp_placement(
+	placement: Dictionary,
+	underlay_texture: Texture2D,
+	source_size_px: Vector2 = UNDERLAY_GAMEPLAY_SOURCE_SIZE_PX
+) -> bool:
+	if (
+		underlay_texture == null
+		or source_size_px.x <= 0.0
+		or source_size_px.y <= 0.0
+		or source_size_px.x > float(underlay_texture.get_width())
+		or source_size_px.y > float(underlay_texture.get_height())
+	):
+		return false
+	var raw_cell := placement.get("cell", []) as Array
+	var raw_rect := placement.get("source_rect_cells", []) as Array
+	if raw_cell.size() < 2 or raw_rect.size() < 4:
+		return false
+	var target_cell := Vector2i(int(raw_cell[0]), int(raw_cell[1]))
+	var source_rect_cells := Rect2i(
+		Vector2i(int(raw_rect[0]), int(raw_rect[1])),
+		Vector2i(int(raw_rect[2]), int(raw_rect[3]))
+	)
+	var map_rect := Rect2i(Vector2i.ZERO, map_size_tiles)
+	if (
+		source_rect_cells.size.x <= 0
+		or source_rect_cells.size.y <= 0
+		or not map_rect.encloses(source_rect_cells)
+		or not map_rect.encloses(
+			Rect2i(target_cell, source_rect_cells.size)
+		)
+	):
+		return false
+	var source_cell := Vector2(
+		source_size_px.x / float(map_size_tiles.x),
+		source_size_px.y / float(map_size_tiles.y)
+	)
+	var source_rect_px := Rect2(
+		Vector2(source_rect_cells.position) * source_cell,
+		Vector2(source_rect_cells.size) * source_cell
+	)
+	var target_size_px := (
+		Vector2(source_rect_cells.size) * TILE_SIZE
+	)
+	var layer := _layers.get("FloorDetail", null) as Node2D
+	if layer == null:
+		return false
+	var sprite := Sprite2D.new()
+	sprite.name = "UnderlayGameplayStamp_%d_%d" % [
+		target_cell.x,
+		target_cell.y,
+	]
+	sprite.texture = underlay_texture
+	sprite.region_enabled = true
+	sprite.region_rect = source_rect_px
+	sprite.centered = false
+	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	sprite.position = _tile_top_left(target_cell)
+	sprite.scale = Vector2(
+		target_size_px.x / maxf(1.0, source_rect_px.size.x),
+		target_size_px.y / maxf(1.0, source_rect_px.size.y)
+	)
+	sprite.set_meta("underlay_gameplay_mapping", true)
+	sprite.set_meta("type", "underlay_stamp")
+	sprite.set_meta("source_rect_cells", source_rect_cells)
+	layer.add_child(sprite)
+	for y in range(
+		target_cell.y,
+		target_cell.y + source_rect_cells.size.y
+	):
+		for x in range(
+			target_cell.x,
+			target_cell.x + source_rect_cells.size.x
+		):
+			var cell := Vector2i(x, y)
+			if not _minimap_wall_cells.has(cell):
+				_minimap_floor_cells[cell] = true
+	return true
 
 
 func _build_ocean_backdrop() -> void:

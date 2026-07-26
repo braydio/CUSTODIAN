@@ -25,6 +25,7 @@ func _draw() -> void:
 	_draw_palette_grid(state)
 	if bool(state.get("show_collision", true)):
 		_draw_collision(state)
+	_draw_underlay_selection(state)
 	_draw_cursor(state)
 
 
@@ -125,6 +126,31 @@ func _draw_collision(state: Dictionary) -> void:
 					(collision.shape as CapsuleShape2D).radius * 2.0
 				)
 			)
+
+
+func _draw_underlay_selection(state: Dictionary) -> void:
+	if not bool(state.get("underlay_select_mode", false)):
+		return
+	var tile_size := int(state.get("tile_size", 32))
+	var raw_rect := state.get("selection_rect_cells", []) as Array
+	if (
+		raw_rect.size() < 4
+		or int(raw_rect[2]) <= 0
+		or int(raw_rect[3]) <= 0
+	):
+		return
+	var rect := Rect2(
+		Vector2(
+			int(raw_rect[0]) * tile_size,
+			int(raw_rect[1]) * tile_size
+		),
+		Vector2(
+			int(raw_rect[2]) * tile_size,
+			int(raw_rect[3]) * tile_size
+		)
+	)
+	draw_rect(rect, Color(1.0, 0.74, 0.18, 0.18), true)
+	draw_rect(rect, Color(1.0, 0.84, 0.22, 0.95), false, 3.0)
 
 
 func _draw_cursor(state: Dictionary) -> void:

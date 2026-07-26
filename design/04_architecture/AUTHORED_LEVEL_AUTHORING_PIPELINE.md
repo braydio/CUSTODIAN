@@ -3,7 +3,7 @@
 **Project:** CUSTODIAN  
 **Created:** 2026-07-19  
 **Status:** complete-v1; lifecycle hardening complete; route traversal v1 complete
-**Last Updated:** 2026-07-23
+**Last Updated:** 2026-07-26
 
 ## Purpose
 
@@ -150,10 +150,13 @@ Sundered Keep is a registered route with distinct Vista Approach, Return Causewa
 
 The Front Gate also has a review-only underlay gameplay-tile mapper. It loads
 the same canonical underlay/collision pair as the collision mapper, presents a
-stable numbered `01–99` palette beside it, and records grid-snapped preview
-placements in a separate JSON document. This authoring document is not runtime
-authority until its reviewed placements are explicitly promoted into the level
-data; it must never silently replace the canonical collision rails.
+stable numbered `01–99` palette beside it, and can drag-sample rectangular
+regions from the visible underlay as reusable stamps. Both source types record
+grid-snapped placements in a separate backward-compatible JSON document.
+`SunderedKeepMap` consumes saved placements as presentation/floor-authoring
+sprites only. They may extend minimap floor visibility but never create
+blockers, navigation, elevation, or collision; the canonical collision rails
+remain the sole static-boundary authority.
 
 The Sundered scenes author their `LevelExit2D` children directly: production Vista owns `continue` and `return_world`, quarantined Return Causeway owns `continue` and `backtrack`, and production Front Gate owns `backtrack` and `exfil`. Runtime scripts locate and position these nodes but do not instantiate them.
 

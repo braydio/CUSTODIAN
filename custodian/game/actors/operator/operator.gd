@@ -1539,6 +1539,13 @@ func _update_animation():
 		if _is_current_profile_unarmed() and _sync_modular_locomotion_layers("unarmed_idle", visual_idle_direction, _get_modular_upper_locomotion_direction(animation_dir)):
 			_update_idle_loop_tracking(true, "unarmed_idle")
 			return
+		# Modular melee stance: check if modular layers have a melee_1h_stance_01 animation
+		if _is_melee_loadout_active():
+			var melee_modular_stance := AnimationResolver.resolve("melee_1h_stance_01", animation_dir, modular_lower_body_sprite)
+			if modular_lower_body_sprite and modular_lower_body_sprite.sprite_frames and modular_lower_body_sprite.sprite_frames.has_animation(melee_modular_stance):
+				_sync_modular_locomotion_layers("melee_1h_stance_01", animation_dir, _get_modular_upper_locomotion_direction(animation_dir))
+				_update_idle_loop_tracking(false, "")
+				return
 		var melee_body_stance_anim := _get_authored_melee_body_stance_animation()
 		if _is_melee_loadout_active() and not melee_body_stance_anim.is_empty():
 			var resolved_stance_anim := AnimationResolver.resolve(String(melee_body_stance_anim), animation_dir, animated_sprite)
@@ -1607,6 +1614,15 @@ func _sync_modular_locomotion_layers(base_animation: String, lower_direction: Ve
 		if not _sync_modular_ranged_relaxed_upper_layers(resolved_upper_direction):
 			_hide_modular_locomotion_layers()
 			return false
+	elif _is_melee_loadout_active():
+		if not _sync_modular_lower_body_locomotion(base_animation, lower_direction, speed_scale):
+			_hide_modular_locomotion_layers()
+			return false
+		if not _sync_modular_unarmed_upper_body_locomotion(base_animation, resolved_upper_direction, speed_scale):
+			_hide_modular_locomotion_layers()
+			return false
+		_sync_modular_head_locomotion(base_animation, resolved_upper_direction, speed_scale)
+		_hide_modular_cape_layer()
 	else:
 		_hide_modular_head_layer()
 		_hide_modular_locomotion_layers()

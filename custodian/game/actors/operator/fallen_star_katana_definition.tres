@@ -71,7 +71,7 @@ fx_map = {
 "weapon_anim": "melee_2h_heavy_weapon"
 }
 }
-authored_body_stance_animation = &"melee_2h_stance"
+authored_body_stance_animation = &""
 right_hand_socket_position = Vector2(10, -11)
 left_hand_socket_position = Vector2(2, -5)
 weapon_socket_position = Vector2(10, -11)

@@ -7,6 +7,12 @@ const TILE_MAPPING_DATA_PATH := (
 	"res://content/levels/sundered_keep/"
 	+ "sundered_keep_underlay_gameplay_tiles.json"
 )
+const UNDERLAY_TEXTURE_PATH := (
+	"res://content/masters/sundered_keep/"
+	+ "sundered_keep_main_overlay.png"
+)
+const UNDERLAY_GRID_SIZE := Vector2i(112, 80)
+const UNDERLAY_SOURCE_SIZE_PX := Vector2(5048.0, 3500.0)
 const MAP_SIZE := Vector2(3584.0, 2560.0)
 const TILE_SIZE := 32
 const PALETTE_ORIGIN := Vector2(3904.0, 160.0)
@@ -32,6 +38,11 @@ const PALETTE_EXTRA_PATHS := [
 	"res://content/runtime/sundered_keep/doors_traversal/stairs/stone_stairs_up_n.png",
 ]
 
+enum PaintSource {
+	PALETTE_TILE,
+	UNDERLAY_STAMP,
+}
+
 @export var zoom_step := 1.15
 @export var pan_step := 96.0
 
@@ -43,9 +54,17 @@ const PALETTE_EXTRA_PATHS := [
 @onready var _hud: Label = $CanvasLayer/Help
 
 var _underlay_scene: Node2D
+var _underlay_texture: Texture2D
 var _palette: Array[Dictionary] = []
 var _placements: Array[Dictionary] = []
 var _selected_tile_number := 0
+var _paint_source: PaintSource = PaintSource.PALETTE_TILE
+var _underlay_select_mode := false
+var _selecting_underlay_region := false
+var _has_underlay_selection := false
+var _selection_start_cell := Vector2i.ZERO
+var _selection_end_cell := Vector2i.ZERO
+var _active_underlay_stamp: Dictionary = {}
 var _mouse_world := Vector2.ZERO
 var _show_grid := true
 var _show_collision := true
@@ -57,6 +76,13 @@ var _dirty := false
 func _ready() -> void:
 	_camera.make_current()
 	_load_underlay_collision_pair()
+	_underlay_texture = load(UNDERLAY_TEXTURE_PATH) as Texture2D
+	if _underlay_texture == null:
+		push_warning(
+			"[SunderedKeepUnderlayGameplayTileMapper] "
+			+ "Could not load underlay texture: %s"
+			% UNDERLAY_TEXTURE_PATH
+		)
 	_build_palette()
 	_load_mapping_document()
 	_rebuild_placement_preview()
@@ -77,16 +103,44 @@ func _process(_delta: float) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		var mouse := event as InputEventMouseButton
-		if mouse.pressed:
-			match mouse.button_index:
-				MOUSE_BUTTON_LEFT:
-					_handle_left_click(_camera.get_global_mouse_position())
-				MOUSE_BUTTON_RIGHT:
-					_handle_right_click(_camera.get_global_mouse_position())
-				MOUSE_BUTTON_WHEEL_UP:
-					_zoom(zoom_step)
-				MOUSE_BUTTON_WHEEL_DOWN:
-					_zoom(1.0 / zoom_step)
+		var point := _camera.get_global_mouse_position()
+		if mouse.button_index == MOUSE_BUTTON_LEFT:
+			if _underlay_select_mode:
+				if mouse.pressed and _is_on_underlay(point):
+					_selecting_underlay_region = true
+					_has_underlay_selection = true
+					_selection_start_cell = _clamped_underlay_cell(point)
+					_selection_end_cell = _selection_start_cell
+					_overlay.queue_redraw()
+					_update_help()
+					return
+				if not mouse.pressed and _selecting_underlay_region:
+					_selection_end_cell = _clamped_underlay_cell(point)
+					_selecting_underlay_region = false
+					_load_underlay_selection_as_stamp()
+					_overlay.queue_redraw()
+					_update_help()
+					return
+			if mouse.pressed:
+				_handle_left_click(point)
+				return
+		if mouse.button_index == MOUSE_BUTTON_RIGHT and mouse.pressed:
+			_handle_right_click(point)
+			return
+		if mouse.pressed and mouse.button_index == MOUSE_BUTTON_WHEEL_UP:
+			_zoom(zoom_step)
+			return
+		if mouse.pressed and mouse.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			_zoom(1.0 / zoom_step)
+			return
+	elif event is InputEventMouseMotion:
+		if _selecting_underlay_region:
+			_selection_end_cell = _clamped_underlay_cell(
+				_camera.get_global_mouse_position()
+			)
+			_overlay.queue_redraw()
+			_update_help()
+			return
 	elif (
 		event is InputEventKey
 		and (event as InputEventKey).pressed
@@ -210,10 +264,18 @@ func _handle_left_click(point: Vector2) -> void:
 	var palette_number := _palette_number_at(point)
 	if palette_number > 0:
 		_selected_tile_number = palette_number
+		_paint_source = PaintSource.PALETTE_TILE
+		_underlay_select_mode = false
+		_selecting_underlay_region = false
 		_update_help()
 		_overlay.queue_redraw()
 		return
-	if not _is_on_underlay(point) or _selected_tile_number <= 0:
+	if not _is_on_underlay(point):
+		return
+	if _paint_source == PaintSource.UNDERLAY_STAMP:
+		_place_underlay_stamp(_world_to_tile(point))
+		return
+	if _selected_tile_number <= 0:
 		return
 	_place_selected_tile(_world_to_tile(point))
 
@@ -236,12 +298,12 @@ func _place_selected_tile(cell: Vector2i) -> void:
 	for index in range(_placements.size() - 1, -1, -1):
 		var placement := _placements[index]
 		if (
-			placement.get("cell", Vector2i(-1, -1)) as Vector2i
-			== cell
+			_placement_cell(placement) == cell
 			and str(placement.get("category", "")) == category
 		):
 			_placements.remove_at(index)
 	var placement := {
+		"type": "palette_tile",
 		"cell": cell,
 		"tile_number": _selected_tile_number,
 		"category": category,
@@ -253,10 +315,44 @@ func _place_selected_tile(cell: Vector2i) -> void:
 	_overlay.queue_redraw()
 
 
+func _place_underlay_stamp(cell: Vector2i) -> void:
+	if _active_underlay_stamp.is_empty():
+		return
+	var raw_rect := (
+		_active_underlay_stamp.get("source_rect_cells", []) as Array
+	)
+	if raw_rect.size() < 4:
+		return
+	var stamp_size := Vector2i(int(raw_rect[2]), int(raw_rect[3]))
+	if (
+		cell.x < 0
+		or cell.y < 0
+		or cell.x + stamp_size.x > UNDERLAY_GRID_SIZE.x
+		or cell.y + stamp_size.y > UNDERLAY_GRID_SIZE.y
+	):
+		return
+	var placement := _active_underlay_stamp.duplicate(true)
+	placement["cell"] = [cell.x, cell.y]
+	_placements.append(placement)
+	_dirty = true
+	_rebuild_placement_preview()
+	_update_help()
+	_overlay.queue_redraw()
+
+
 func _remove_top_placement(cell: Vector2i) -> void:
 	for index in range(_placements.size() - 1, -1, -1):
 		var placement := _placements[index]
-		if placement.get("cell", Vector2i(-1, -1)) as Vector2i == cell:
+		var placement_cell := _placement_cell(placement)
+		var placement_size := Vector2i.ONE
+		if str(placement.get("type", "palette_tile")) == "underlay_stamp":
+			var raw_rect := placement.get("source_rect_cells", []) as Array
+			if raw_rect.size() >= 4:
+				placement_size = Vector2i(
+					maxi(1, int(raw_rect[2])),
+					maxi(1, int(raw_rect[3]))
+				)
+		if Rect2i(placement_cell, placement_size).has_point(cell):
 			_placements.remove_at(index)
 			_dirty = true
 			_rebuild_placement_preview()
@@ -269,34 +365,143 @@ func _rebuild_placement_preview() -> void:
 	for child: Node in _placed_root.get_children():
 		child.queue_free()
 	for placement: Dictionary in _placements:
-		var item := _palette_item(int(placement.get("tile_number", 0)))
-		if item.is_empty():
-			continue
-		var texture := load(str(item["texture_path"])) as Texture2D
-		if texture == null:
-			continue
-		var cell := placement.get("cell", Vector2i.ZERO) as Vector2i
-		var sprite := Sprite2D.new()
-		sprite.name = "Placed_%02d_%d_%d" % [
-			int(item["number"]),
-			cell.x,
-			cell.y,
-		]
-		sprite.texture = texture
-		sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-		sprite.position = _placement_anchor(
-			cell,
-			texture,
-			str(item["category"])
-		)
-		sprite.offset = _placement_offset(
-			texture,
-			str(item["category"])
-		)
-		sprite.set_meta("tile_number", int(item["number"]))
-		sprite.set_meta("cell", cell)
-		_placed_root.add_child(sprite)
+		if str(placement.get("type", "palette_tile")) == "underlay_stamp":
+			_add_underlay_stamp_preview(placement)
+		else:
+			_add_palette_tile_preview(placement)
 	_placed_root.visible = _show_placements
+
+
+func _add_palette_tile_preview(placement: Dictionary) -> void:
+	var item := _palette_item(int(placement.get("tile_number", 0)))
+	if item.is_empty():
+		return
+	var texture := load(str(item["texture_path"])) as Texture2D
+	if texture == null:
+		return
+	var cell := _placement_cell(placement)
+	var sprite := Sprite2D.new()
+	sprite.name = "Placed_%02d_%d_%d" % [
+		int(item["number"]),
+		cell.x,
+		cell.y,
+	]
+	sprite.texture = texture
+	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	sprite.position = _placement_anchor(
+		cell,
+		texture,
+		str(item["category"])
+	)
+	sprite.offset = _placement_offset(
+		texture,
+		str(item["category"])
+	)
+	sprite.set_meta("type", "palette_tile")
+	sprite.set_meta("tile_number", int(item["number"]))
+	sprite.set_meta("cell", cell)
+	_placed_root.add_child(sprite)
+
+
+func _add_underlay_stamp_preview(placement: Dictionary) -> void:
+	if _underlay_texture == null:
+		return
+	var raw_rect := placement.get("source_rect_cells", []) as Array
+	if raw_rect.size() < 4:
+		return
+	var target_cell := _placement_cell(placement)
+	var source_rect_cells := Rect2i(
+		Vector2i(int(raw_rect[0]), int(raw_rect[1])),
+		Vector2i(int(raw_rect[2]), int(raw_rect[3]))
+	)
+	if source_rect_cells.size.x <= 0 or source_rect_cells.size.y <= 0:
+		return
+	var source_rect_px := _source_rect_px_from_cells(source_rect_cells)
+	var target_size_px := (
+		Vector2(source_rect_cells.size) * float(TILE_SIZE)
+	)
+	var sprite := Sprite2D.new()
+	sprite.name = "UnderlayStamp_%d_%d_%d_%d_to_%d_%d" % [
+		source_rect_cells.position.x,
+		source_rect_cells.position.y,
+		source_rect_cells.size.x,
+		source_rect_cells.size.y,
+		target_cell.x,
+		target_cell.y,
+	]
+	sprite.texture = _underlay_texture
+	sprite.region_enabled = true
+	sprite.region_rect = source_rect_px
+	sprite.centered = false
+	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	sprite.position = Vector2(target_cell * TILE_SIZE)
+	sprite.scale = Vector2(
+		target_size_px.x / maxf(1.0, source_rect_px.size.x),
+		target_size_px.y / maxf(1.0, source_rect_px.size.y)
+	)
+	sprite.modulate = Color(1.0, 1.0, 1.0, 0.92)
+	sprite.set_meta("type", "underlay_stamp")
+	sprite.set_meta("cell", target_cell)
+	sprite.set_meta("source_rect_cells", source_rect_cells)
+	_placed_root.add_child(sprite)
+
+
+func _source_cell_size_px() -> Vector2:
+	if _underlay_texture == null:
+		return Vector2.ONE * float(TILE_SIZE)
+	return Vector2(
+		UNDERLAY_SOURCE_SIZE_PX.x / float(UNDERLAY_GRID_SIZE.x),
+		UNDERLAY_SOURCE_SIZE_PX.y / float(UNDERLAY_GRID_SIZE.y)
+	)
+
+
+func _source_rect_px_from_cells(source_rect_cells: Rect2i) -> Rect2:
+	var source_cell := _source_cell_size_px()
+	return Rect2(
+		Vector2(source_rect_cells.position) * source_cell,
+		Vector2(source_rect_cells.size) * source_cell
+	)
+
+
+func _normalized_cell_rect(a: Vector2i, b: Vector2i) -> Rect2i:
+	var min_x := mini(a.x, b.x)
+	var min_y := mini(a.y, b.y)
+	var max_x := maxi(a.x, b.x)
+	var max_y := maxi(a.y, b.y)
+	return Rect2i(
+		Vector2i(min_x, min_y),
+		Vector2i(max_x - min_x + 1, max_y - min_y + 1)
+	)
+
+
+func _load_underlay_selection_as_stamp() -> void:
+	var rect := _normalized_cell_rect(
+		_selection_start_cell,
+		_selection_end_cell
+	)
+	rect = rect.intersection(Rect2i(Vector2i.ZERO, UNDERLAY_GRID_SIZE))
+	if rect.size.x <= 0 or rect.size.y <= 0:
+		return
+	_has_underlay_selection = true
+	_active_underlay_stamp = {
+		"type": "underlay_stamp",
+		"source_rect_cells": [
+			rect.position.x,
+			rect.position.y,
+			rect.size.x,
+			rect.size.y,
+		],
+		"tile_size": TILE_SIZE,
+		"category": "underlay_sample",
+	}
+	_paint_source = PaintSource.UNDERLAY_STAMP
+	_update_help()
+	_overlay.queue_redraw()
+	print(
+		"[SunderedKeepUnderlayGameplayTileMapper] "
+		+ "Loaded underlay stamp source_rect_cells=%s"
+		% [_active_underlay_stamp["source_rect_cells"]]
+	)
 
 
 func _placement_anchor(
@@ -357,8 +562,23 @@ func _handle_key(event: InputEventKey) -> void:
 			_rebuild_placement_preview()
 		KEY_P:
 			_focus_palette()
+		KEY_Q:
+			_underlay_select_mode = not _underlay_select_mode
+			if _underlay_select_mode:
+				_paint_source = PaintSource.UNDERLAY_STAMP
+			else:
+				_selecting_underlay_region = false
 		KEY_S:
 			_focus_spawn_causeway()
+		KEY_TAB:
+			_paint_source = (
+				PaintSource.UNDERLAY_STAMP
+				if _paint_source == PaintSource.PALETTE_TILE
+				else PaintSource.PALETTE_TILE
+			)
+			if _paint_source == PaintSource.PALETTE_TILE:
+				_underlay_select_mode = false
+				_selecting_underlay_region = false
 		KEY_T:
 			_show_placements = not _show_placements
 			_placed_root.visible = _show_placements
@@ -423,12 +643,59 @@ func _load_mapping_document() -> void:
 		if not (raw_placement is Dictionary):
 			continue
 		var source := raw_placement as Dictionary
+		var placement_type := str(source.get("type", "palette_tile"))
+		if placement_type == "underlay_stamp":
+			var stamp_cell := source.get("cell", []) as Array
+			var stamp_rect := (
+				source.get("source_rect_cells", []) as Array
+			)
+			if stamp_cell.size() < 2 or stamp_rect.size() < 4:
+				continue
+			var target_cell := Vector2i(
+				int(stamp_cell[0]),
+				int(stamp_cell[1])
+			)
+			var source_rect := Rect2i(
+				Vector2i(int(stamp_rect[0]), int(stamp_rect[1])),
+				Vector2i(int(stamp_rect[2]), int(stamp_rect[3]))
+			)
+			if (
+				source_rect.size.x <= 0
+				or source_rect.size.y <= 0
+				or not Rect2i(
+					Vector2i.ZERO,
+					UNDERLAY_GRID_SIZE
+				).encloses(source_rect)
+				or target_cell.x < 0
+				or target_cell.y < 0
+				or target_cell.x + source_rect.size.x
+					> UNDERLAY_GRID_SIZE.x
+				or target_cell.y + source_rect.size.y
+					> UNDERLAY_GRID_SIZE.y
+			):
+				continue
+			_placements.append({
+				"type": "underlay_stamp",
+				"cell": [target_cell.x, target_cell.y],
+				"source_rect_cells": [
+					source_rect.position.x,
+					source_rect.position.y,
+					source_rect.size.x,
+					source_rect.size.y,
+				],
+				"tile_size": int(
+					source.get("tile_size", TILE_SIZE)
+				),
+				"category": "underlay_sample",
+			})
+			continue
 		var raw_cell := source.get("cell", []) as Array
 		var tile_number := int(source.get("tile_number", 0))
 		if raw_cell.size() != 2 or _palette_item(tile_number).is_empty():
 			continue
 		var item := _palette_item(tile_number)
 		_placements.append({
+			"type": "palette_tile",
 			"cell": Vector2i(int(raw_cell[0]), int(raw_cell[1])),
 			"tile_number": tile_number,
 			"category": str(item["category"]),
@@ -478,18 +745,38 @@ func _mapping_document() -> Dictionary:
 		})
 	var placement_document: Array[Dictionary] = []
 	for placement: Dictionary in _placements:
-		placement_document.append({
-			"cell": [
-				int((placement["cell"] as Vector2i).x),
-				int((placement["cell"] as Vector2i).y),
-			],
-			"tile_number": int(placement["tile_number"]),
-			"category": str(placement["category"]),
-		})
+		var cell := _placement_cell(placement)
+		if str(placement.get("type", "palette_tile")) == "underlay_stamp":
+			placement_document.append({
+				"type": "underlay_stamp",
+				"cell": [cell.x, cell.y],
+				"source_rect_cells": placement.get(
+					"source_rect_cells",
+					[0, 0, 1, 1]
+				),
+				"tile_size": TILE_SIZE,
+				"category": "underlay_sample",
+			})
+		else:
+			placement_document.append({
+				"type": "palette_tile",
+				"cell": [cell.x, cell.y],
+				"tile_number": int(placement["tile_number"]),
+				"category": str(placement["category"]),
+			})
 	return {
 		"schema": "custodian.sundered_keep.underlay_gameplay_tiles.v1",
 		"map_size_pixels": [int(MAP_SIZE.x), int(MAP_SIZE.y)],
 		"tile_size": TILE_SIZE,
+		"underlay_texture_path": UNDERLAY_TEXTURE_PATH,
+		"underlay_grid_size": [
+			UNDERLAY_GRID_SIZE.x,
+			UNDERLAY_GRID_SIZE.y,
+		],
+		"underlay_source_size_pixels": [
+			int(UNDERLAY_SOURCE_SIZE_PX.x),
+			int(UNDERLAY_SOURCE_SIZE_PX.y),
+		],
 		"palette_count": _palette.size(),
 		"palette": palette_document,
 		"placements": placement_document,
@@ -550,6 +837,24 @@ func _world_to_tile(point: Vector2) -> Vector2i:
 	)
 
 
+func _clamped_underlay_cell(point: Vector2) -> Vector2i:
+	var cell := _world_to_tile(point)
+	return Vector2i(
+		clampi(cell.x, 0, UNDERLAY_GRID_SIZE.x - 1),
+		clampi(cell.y, 0, UNDERLAY_GRID_SIZE.y - 1)
+	)
+
+
+func _placement_cell(placement: Dictionary) -> Vector2i:
+	var raw_cell: Variant = placement.get("cell", Vector2i(-1, -1))
+	if raw_cell is Vector2i:
+		return raw_cell as Vector2i
+	if raw_cell is Array and (raw_cell as Array).size() >= 2:
+		var values := raw_cell as Array
+		return Vector2i(int(values[0]), int(values[1]))
+	return Vector2i(-1, -1)
+
+
 func _update_help() -> void:
 	if _hud == null:
 		return
@@ -560,12 +865,28 @@ func _update_help() -> void:
 			str(selected["label"]),
 			str(selected["asset_id"]),
 		]
+	var paint_source_text := (
+		"UNDERLAY STAMP"
+		if _paint_source == PaintSource.UNDERLAY_STAMP
+		else "PALETTE"
+	)
+	var active_stamp_text := "none"
+	if not _active_underlay_stamp.is_empty():
+		active_stamp_text = str(
+			_active_underlay_stamp.get("source_rect_cells", [])
+		)
 	_hud.text = "\n".join([
 		"Sundered Keep Underlay + Collision + Gameplay Tile Mapper",
 		"P: numbered 01–99 palette   F: full underlay   S: spawn/causeway",
-		"Left-click palette: select   Left-click underlay: place on 32 px grid   Right-click: remove top tile / clear selection",
+		"Q: underlay select mode   Drag: sample region   Q off: paint stamp   Tab: palette/stamp source",
+		"Left-click palette: select   Left-click underlay: place active source on 32 px grid   Right-click: remove top placement / clear palette selection",
 		"WASD/arrows: pan   Wheel/+/-: zoom   G: grid   E: collision rails   T: placed tiles   L/R: reload saved",
 		"C: copy mapping JSON   Enter/U: save mapping JSON   H: help",
+		"Paint source: %s   Active stamp: source_rect_cells=%s   Source-select: %s" % [
+			paint_source_text,
+			active_stamp_text,
+			"ON" if _underlay_select_mode else "OFF",
+		],
 		"Selected: %s   placements: %d%s" % [
 			selected_text,
 			_placements.size(),
@@ -580,6 +901,12 @@ func _update_help() -> void:
 
 
 func get_gameplay_tile_mapper_state() -> Dictionary:
+	var selection_rect := Rect2i()
+	if _has_underlay_selection:
+		selection_rect = _normalized_cell_rect(
+			_selection_start_cell,
+			_selection_end_cell
+		).intersection(Rect2i(Vector2i.ZERO, UNDERLAY_GRID_SIZE))
 	return {
 		"underlay_scene": _underlay_scene,
 		"map_size": MAP_SIZE,
@@ -591,6 +918,21 @@ func get_gameplay_tile_mapper_state() -> Dictionary:
 		"palette": _palette,
 		"placements": _placements,
 		"selected_tile_number": _selected_tile_number,
+		"paint_source": (
+			"UNDERLAY_STAMP"
+			if _paint_source == PaintSource.UNDERLAY_STAMP
+			else "PALETTE_TILE"
+		),
+		"underlay_select_mode": _underlay_select_mode,
+		"selection_rect_cells": [
+			selection_rect.position.x,
+			selection_rect.position.y,
+			selection_rect.size.x,
+			selection_rect.size.y,
+		],
+		"active_underlay_stamp": _active_underlay_stamp,
+		"underlay_texture_path": UNDERLAY_TEXTURE_PATH,
+		"underlay_grid_size": UNDERLAY_GRID_SIZE,
 		"mouse_world": _mouse_world,
 		"show_grid": _show_grid,
 		"show_collision": _show_collision,

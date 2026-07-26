@@ -89,6 +89,7 @@
 [ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/modules/new_operator/upper_body/locomotion/walk_01/operator__modular_upper_body__unarmed__walk_01__n__8f__96.png" id="84_pin0i"]
 [ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/modules/new_operator/upper_body/locomotion/walk_01/operator__modular_upper_body__unarmed__walk_01__nw__8f__96.png" id="85_hmwkn"]
 [ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/modules/new_operator/upper_body/locomotion/walk_01/operator__modular_upper_body__unarmed__walk_01__ne__8f__96.png" id="86_0ffs6"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/modules/new_operator/upper_body/actions/melee_1h/stance_01/operator__modular_upper_body__melee_1h__stance_01__e__1f__96.png" id="87_melee1h"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_nxmgj"]
 atlas = ExtResource("1_pin0i")
@@ -2237,6 +2238,10 @@ region = Rect2(576, 0, 96, 96)
 [sub_resource type="AtlasTexture" id="AtlasTexture_ur8pp"]
 atlas = ExtResource("86_0ffs6")
 region = Rect2(672, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_melee1h_upper_e"]
+atlas = ExtResource("87_melee1h")
+region = Rect2(0, 0, 96, 96)
 
 [resource]
 animations = [{
@@ -4400,4 +4405,12 @@ animations = [{
 "loop": 1,
 "name": &"unarmed_walk_up_right",
 "speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_melee1h_upper_e")
+}],
+"loop": 0,
+"name": &"melee_1h_stance_01_e",
+"speed": 8.0
 }]

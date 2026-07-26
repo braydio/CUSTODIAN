@@ -8,6 +8,13 @@ const MAPPING_DATA_PATH := (
 	"res://content/levels/sundered_keep/"
 	+ "sundered_keep_underlay_gameplay_tiles.json"
 )
+const UNDERLAY_TEXTURE_PATH := (
+	"res://content/masters/sundered_keep/"
+	+ "sundered_keep_main_overlay.png"
+)
+const SUNDERED_KEEP_MAP_SCRIPT := preload(
+	"res://game/world/sundered_keep/sundered_keep_map.gd"
+)
 
 
 func _init() -> void:
@@ -32,6 +39,14 @@ func _init() -> void:
 		errors.append("palette must use 9 rows")
 	if int(state.get("tile_size", 0)) != 32:
 		errors.append("placement grid must remain 32 px")
+	if not mapper.has_method("_source_cell_size_px"):
+		errors.append("mapper missing source cell size helper")
+	if not mapper.has_method("_source_rect_px_from_cells"):
+		errors.append("mapper missing source rect conversion")
+	if not mapper.has_method("_load_underlay_selection_as_stamp"):
+		errors.append("mapper missing underlay stamp loader")
+	if not mapper.has_method("_place_underlay_stamp"):
+		errors.append("mapper missing underlay stamp placement")
 	if state.get("map_size", Vector2.ZERO) as Vector2 != Vector2(
 		3584.0,
 		2560.0
@@ -84,23 +99,147 @@ func _init() -> void:
 				errors.append("gameplay tile mapping schema drifted")
 			if int(document.get("palette_count", 0)) != 99:
 				errors.append("mapping document palette count must be 99")
+			if str(document.get("underlay_texture_path", "")) != (
+				UNDERLAY_TEXTURE_PATH
+			):
+				errors.append("mapping document underlay texture path drifted")
+			var document_grid := document.get(
+				"underlay_grid_size",
+				[]
+			) as Array
+			if (
+				document_grid.size() != 2
+				or int(document_grid[0]) != 112
+				or int(document_grid[1]) != 80
+			):
+				errors.append("mapping document underlay grid must be 112x80")
 
+	var initial_placement_count := (
+		state.get("placements", []) as Array
+	).size()
 	mapper.set("_selected_tile_number", 10)
 	mapper.call("_place_selected_tile", Vector2i(12, 34))
 	state = mapper.call("get_gameplay_tile_mapper_state") as Dictionary
 	var placements := state.get("placements", []) as Array
-	if placements.size() != 1:
+	if placements.size() != initial_placement_count + 1:
 		errors.append("grid-snapped preview placement was not recorded")
 	else:
-		var placement := placements[0] as Dictionary
+		var placement := placements[placements.size() - 1] as Dictionary
 		if placement.get("cell", Vector2i.ZERO) as Vector2i != Vector2i(12, 34):
 			errors.append("preview placement did not retain its grid cell")
 		if int(placement.get("tile_number", 0)) != 10:
 			errors.append("preview placement did not retain tile number 10")
 	mapper.call("_remove_top_placement", Vector2i(12, 34))
 	state = mapper.call("get_gameplay_tile_mapper_state") as Dictionary
-	if not (state.get("placements", []) as Array).is_empty():
+	if (
+		(state.get("placements", []) as Array).size()
+		!= initial_placement_count
+	):
 		errors.append("right-click removal contract did not remove the top tile")
+
+	var source_cell_size := mapper.call("_source_cell_size_px") as Vector2
+	if not source_cell_size.is_equal_approx(Vector2(5048.0 / 112.0, 3500.0 / 80.0)):
+		errors.append(
+			"underlay source-cell conversion does not use reviewed source bounds"
+		)
+	var source_rect_px := mapper.call(
+		"_source_rect_px_from_cells",
+		Rect2i(Vector2i(10, 12), Vector2i(4, 4))
+	) as Rect2
+	if not source_rect_px.size.is_equal_approx(source_cell_size * 4.0):
+		errors.append("underlay source rectangle conversion is incorrect")
+
+	mapper.set("_selection_start_cell", Vector2i(10, 12))
+	mapper.set("_selection_end_cell", Vector2i(13, 15))
+	mapper.call("_load_underlay_selection_as_stamp")
+	state = mapper.call("get_gameplay_tile_mapper_state") as Dictionary
+	if str(state.get("paint_source", "")) != "UNDERLAY_STAMP":
+		errors.append("paint source did not switch to underlay stamp")
+	var active_stamp := (
+		state.get("active_underlay_stamp", {}) as Dictionary
+	)
+	if active_stamp.get("source_rect_cells", []) != [10, 12, 4, 4]:
+		errors.append("active underlay stamp did not retain selected source cells")
+
+	mapper.call("_place_underlay_stamp", Vector2i(20, 22))
+	var document := mapper.call("_mapping_document") as Dictionary
+	placements = document.get("placements", []) as Array
+	var stamp_placement: Dictionary = {}
+	for placement_variant: Variant in placements:
+		var placement := placement_variant as Dictionary
+		if str(placement.get("type", "")) == "underlay_stamp":
+			stamp_placement = placement
+	if stamp_placement.is_empty():
+		errors.append("mapping document did not serialize underlay stamp")
+	elif (
+		stamp_placement.get("source_rect_cells", [])
+		!= [10, 12, 4, 4]
+	):
+		errors.append("serialized underlay stamp source rectangle drifted")
+	var placed_root := mapper.get_node(
+		"World/PlacedGameplayTiles"
+	) as Node2D
+	var found_region_preview := false
+	for child: Node in placed_root.get_children():
+		var sprite := child as Sprite2D
+		if (
+			sprite != null
+			and str(sprite.get_meta("type", "")) == "underlay_stamp"
+			and sprite.region_enabled
+		):
+			found_region_preview = true
+	if not found_region_preview:
+		errors.append("underlay stamp did not build a region-enabled preview")
+	mapper.call("_remove_top_placement", Vector2i(22, 24))
+	state = mapper.call("get_gameplay_tile_mapper_state") as Dictionary
+	if (
+		(state.get("placements", []) as Array).size()
+		!= initial_placement_count
+	):
+		errors.append("stamp footprint removal did not remove top placement")
+
+	var runtime_map := SUNDERED_KEEP_MAP_SCRIPT.new()
+	runtime_map.set("map_size_tiles", Vector2i(112, 80))
+	runtime_map.call("_create_layers")
+	var underlay_texture := load(UNDERLAY_TEXTURE_PATH) as Texture2D
+	var applied := bool(runtime_map.call(
+		"_apply_underlay_stamp_placement",
+		{
+			"type": "underlay_stamp",
+			"cell": [20, 22],
+			"source_rect_cells": [10, 12, 4, 4],
+			"tile_size": 32,
+			"category": "underlay_sample",
+		},
+		underlay_texture
+	))
+	if not applied:
+		errors.append("production consumer rejected a valid underlay stamp")
+	else:
+		var palette_applied := bool(runtime_map.call(
+			"_apply_palette_gameplay_tile_placement",
+			{
+				"type": "palette_tile",
+				"cell": [30, 30],
+				"tile_number": 1,
+				"category": "floor",
+			},
+			{1: palette[0]}
+		))
+		if not palette_applied:
+			errors.append(
+				"production consumer rejected a legacy palette placement"
+			)
+		var layers := runtime_map.get("_layers") as Dictionary
+		var floor_detail := layers.get("FloorDetail") as Node2D
+		var collision := layers.get("Collision") as Node2D
+		if floor_detail == null or floor_detail.get_child_count() != 2:
+			errors.append(
+				"production stamp/palette placements did not reach FloorDetail"
+			)
+		if collision == null or collision.get_child_count() != 0:
+			errors.append("production stamp created collision authority")
+	runtime_map.free()
 
 	mapper.queue_free()
 	await process_frame

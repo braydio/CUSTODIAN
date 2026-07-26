@@ -1,7 +1,7 @@
 # Sundered Keep Large Front Gate
 
 Status: implemented first pass
-Last updated: 2026-05-30
+Last updated: 2026-07-26
 
 ## Goal
 
@@ -78,15 +78,29 @@ The mapper instantiates the same reviewed underlay debug scene and its 127
 canonical collision rails. It does not reuse the current Front Gate gameplay
 layout. Instead, it provides a blank adjacent staging area containing a stable
 `01–99` palette of live Sundered Keep floor, wall, gate, door, and stair assets.
-The palette is arranged as an `11x9` review grid.
+The palette is arranged as an `11x9` review grid. A second paint source can
+drag-sample any rectangular set of visible underlay cells and reuse that region
+as a multi-cell stamp without cropping or exporting a PNG.
+
+The reviewed source region is `5048×3500` pixels mapped across the `112×80`
+gameplay grid. Source rectangles therefore use fractional source-cell sizes
+(`5048/112` by `3500/80`) and are rendered with `Sprite2D.region_rect`, scaled
+back onto the 32 px gameplay grid. The imported PNG also contains unused pixels
+below this reviewed region; those pixels are not underlay-stamp authority.
 
 Authoring controls:
 
 - `P`: focus the numbered palette
 - `F`: focus the complete underlay
+- `Q`: toggle underlay source-selection mode
+- left-drag the underlay in source-selection mode: load that region as the
+  active underlay stamp
+- toggle `Q` off after sampling to place copies of the active stamp
+- `Tab`: switch active paint source between palette tile and underlay stamp
 - left-click a palette cell: select its numbered asset
-- left-click the underlay: place the selected asset on the shared `32 px` grid
-- right-click the underlay: remove the most recent placement at that cell
+- left-click the underlay: place the active palette tile or underlay stamp on
+  the shared `32 px` grid
+- right-click the underlay: remove the top placement covering that cell
 - `G`: toggle the underlay grid
 - `E`: toggle canonical collision rails
 - `T`: toggle placed gameplay tiles
@@ -95,10 +109,11 @@ Authoring controls:
 - `L` or `R`: discard unsaved preview edits and reload the saved mapping
 
 Floor and architecture/traversal placements use separate replacement lanes, so
-a floor and a wall module may intentionally share one grid cell. These
-placements are review/authoring data until explicitly promoted into the Front
-Gate level-data consumer. The underlay PNG still never generates collision, and
-the gameplay-tile mapping never modifies the canonical collision JSON.
+a floor and a wall module may intentionally share one grid cell. Explicitly
+saving the mapping makes its visual/floor-authoring placements available to the
+Front Gate consumer; unsaved previews remain mapper-local. The underlay PNG
+still never generates collision, and the gameplay-tile mapping never modifies
+the canonical collision JSON.
 
 ## Overlay Authoring Pipeline
 
@@ -198,18 +213,17 @@ PY
 
 - Persist `sundered_gate_key`, Main Gate open state, and Great Hall door state if connected maps become save/load persistent.
 - Add encounter composition and tactical cover review after the layout stabilizes visually.
-- Promote reviewed underlay gameplay-tile placements into the Front Gate
-  level-data consumer after the numbered palette and mapped composition receive
-  explicit visual approval.
+- Visually approve and curate the saved palette/stamp composition before
+  treating it as production Front Gate dressing.
 - Consider a dedicated TileSet/TileMapLayer runtime adapter if the reviewed
   JSON/Sprite2D mapping becomes difficult to maintain.
 - Keep `ContractWorldLoader.debug_start_near_sundered_keep_entrance` disabled for normal contract progression; re-enable it only for focused Sundered Keep visual review.
 
 ## Next Agent Slice
 
-Goal: use the numbered gameplay-tile mapper to author and visually approve a
-tile composition against the fixed underlay/collision pair before promoting it
-to production.
+Goal: use palette tiles and sampled underlay-region stamps to author and
+visually approve the gameplay composition against the fixed underlay/collision
+pair.
 
 Files:
 
@@ -221,8 +235,9 @@ Constraints:
 
 - Keep the underlay and canonical collision rails fixed during tile review.
 - Refer to palette assets by their stable `01–99` numbers.
-- Do not promote preview placements to runtime until the composition is
-  explicitly approved.
+- Keep sampled stamps as source-cell rectangles; do not crop or export new PNGs.
+- Saved placements are consumed as visual/floor-authoring sprites only and must
+  not create collision, blockers, navigation, or elevation authority.
 
 Acceptance:
 

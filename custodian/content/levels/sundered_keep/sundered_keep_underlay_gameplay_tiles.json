@@ -3,6 +3,15 @@
     3584,
     2560
   ],
+  "underlay_texture_path": "res://content/masters/sundered_keep/sundered_keep_main_overlay.png",
+  "underlay_grid_size": [
+    112,
+    80
+  ],
+  "underlay_source_size_pixels": [
+    5048,
+    3500
+  ],
   "palette": [
     {
       "asset_id": "cliff_rock_floor_01",

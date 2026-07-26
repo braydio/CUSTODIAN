@@ -21,6 +21,12 @@
 	  112,
 	  80
 	],
+	"source_rect_pixels": [
+	  0,
+	  0,
+	  5048,
+	  3500
+	],
 	"z_index": -120,
 	"modulate": [
 	  1.0,

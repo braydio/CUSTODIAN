@@ -20,6 +20,18 @@ func _init() -> void:
 		push_error("[SunderedKeepAssetSmoke] Missing level shape underlay sprite or texture")
 		quit(1)
 		return
+	if (
+		not underlay.region_enabled
+		or not underlay.region_rect.is_equal_approx(
+			Rect2(Vector2.ZERO, Vector2(5048.0, 3500.0))
+		)
+	):
+		push_error(
+			"[SunderedKeepAssetSmoke] "
+			+ "Level underlay is not using the reviewed 5048x3500 source region"
+		)
+		quit(1)
+		return
 
 	print("[SunderedKeepAssetSmoke] OK: %d Sprite2D nodes have live textures" % _count_sprites(map))
 	quit(0)
