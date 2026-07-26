@@ -1,13 +1,10 @@
-Yes — I see the new tool on `main`.
+# Sundered Keep Underlay Gameplay Tile Mapper — Implementation Tasks
 
-The live scene is:
+## Current State
 
-```text
-custodian/scenes/debug/sundered_keep_underlay_gameplay_tile_mapper.tscn
-```
+**Live scene:** `custodian/scenes/debug/sundered_keep_underlay_gameplay_tile_mapper.tscn`
 
-It has the expected dedicated structure:
-
+Structure:
 ```text
 SunderedKeepUnderlayGameplayTileMapper
 ├── World
@@ -19,121 +16,28 @@ SunderedKeepUnderlayGameplayTileMapper
     └── Help
 ```
 
-The scene points to:
+Scripts: `sundered_keep_underlay_gameplay_tile_mapper.gd`, `sundered_keep_underlay_gameplay_tile_mapper_overlay.gd`
 
-```text
-res://scenes/debug/sundered_keep_underlay_gameplay_tile_mapper.gd
-res://scenes/debug/sundered_keep_underlay_gameplay_tile_mapper_overlay.gd
-```
+The mapper correctly:
+- Instantiates the reviewed underlay/collision scene (`sundered_keep_production_underlay_debug.tscn`)
+- Writes to `res://content/levels/sundered_keep/sundered_keep_underlay_gameplay_tiles.json`
+- Uses `MAP_SIZE = Vector2(3584.0, 2560.0)`, `TILE_SIZE = 32`
+- Builds a 99-tile palette from Sundered Keep floor/wall/rampart paths + traversal extras
+- Supports click-to-select palette, click-to-place, right-click removal, save/load JSON
+- Exposes mapper state (map size, tile size, palette, placements, selected tile, visibility flags) to overlay
+- Overlay draws underlay grid, palette grid, collision rails, and cursor cell
 
-## Current implementation read
-
-This is a **good first tooling slice**. It is already much closer to what you wanted than the collision mapper extension I was initially reviewing.
-
-It currently does these things correctly:
-
-1. Instantiates the existing reviewed underlay/collision scene:
-
-```gdscript
-const UNDERLAY_DEBUG_SCENE := preload(
-	"res://scenes/debug/sundered_keep_production_underlay_debug.tscn"
-)
-```
-
-2. Uses a dedicated mapping file:
-
-```text
-res://content/levels/sundered_keep/sundered_keep_underlay_gameplay_tiles.json
-```
-
-3. Uses the correct underlay dimensions and tile size:
-
-```gdscript
-const MAP_SIZE := Vector2(3584.0, 2560.0)
-const TILE_SIZE := 32
-```
-
-4. Builds a numbered 99-tile palette from Sundered Keep floor/wall/rampart paths plus traversal extras.
-
-5. Supports click-to-select from the palette and click-to-place onto the underlay grid.
-
-6. Supports right-click removal.
-
-7. Saves and reloads the mapping JSON.
-
-8. Exposes useful mapper state to the overlay, including map size, tile size, palette, placements, selected tile, grid/collision/placement visibility, and mapping path.
-
-9. The overlay draws the underlay grid, palette grid, collision rails, and cursor cell.
-
-So: **the authoring tool exists and is conceptually right.**
-
-## The important gap
-
-I do **not** see evidence that the production Sundered Keep map consumes `sundered_keep_underlay_gameplay_tiles.json` yet.
-
-The new mapper writes this document:
-
-```json
-{
-  "schema": "custodian.sundered_keep.underlay_gameplay_tiles.v1",
-  "map_size_pixels": [3584, 2560],
-  "tile_size": 32,
-  "palette_count": 99,
-  "palette": [...],
-  "placements": []
-}
-```
-
-But `SunderedKeepMap` currently declares the main level JSON path and the underlay collision JSON path, not this new gameplay tile mapping path.
-
-So right now this looks like:
-
-> **mapper can place and save gameplay tile selections, but production runtime probably does not render/consume them yet.**
-
-That is the next fix.
+**Gap:** `SunderedKeepMap` does not consume `sundered_keep_underlay_gameplay_tiles.json` yet. The mapper is an authoring surface but not a live gameplay tile pipeline.
 
 ---
 
-# Codex implementation instructions: wire mapper output into runtime
+## Task 1: Wire Mapper Output Into Production Runtime
 
-Give Codex this:
+**Target:** `custodian/game/world/sundered_keep/sundered_keep_map.gd`
 
-```text
-You are working in braydio/CUSTODIAN.
+**Constraints:** No changes to combat, routing, collision mapper, level JSON `ops` pipeline, or TileMapLayer replacement. Gameplay tile mapper document is an authored overlay consumed by SunderedKeepMap.
 
-Task:
-Wire `sundered_keep_underlay_gameplay_tiles.json` into the production Sundered Keep runtime.
-
-Existing new tooling:
-- `custodian/scenes/debug/sundered_keep_underlay_gameplay_tile_mapper.tscn`
-- `custodian/scenes/debug/sundered_keep_underlay_gameplay_tile_mapper.gd`
-- `custodian/scenes/debug/sundered_keep_underlay_gameplay_tile_mapper_overlay.gd`
-- `custodian/content/levels/sundered_keep/sundered_keep_underlay_gameplay_tiles.json`
-
-Primary runtime target:
-- `custodian/game/world/sundered_keep/sundered_keep_map.gd`
-
-Goal:
-Tiles placed in `sundered_keep_underlay_gameplay_tile_mapper.tscn` and saved to `sundered_keep_underlay_gameplay_tiles.json` should populate the live Sundered Keep map at runtime.
-
-Constraints:
-- Do not change combat.
-- Do not change routing.
-- Do not change collision mapper behavior.
-- Do not remove the existing level JSON `ops` pipeline.
-- Do not replace SunderedKeepMap with TileMapLayer.
-- Treat the gameplay tile mapper document as an authored overlay layer consumed by SunderedKeepMap.
-```
-
-## 1. Add runtime constant
-
-In:
-
-```text
-custodian/game/world/sundered_keep/sundered_keep_map.gd
-```
-
-Near the existing underlay collision path constants, add:
+### 1.1 Add constant
 
 ```gdscript
 const UNDERLAY_GAMEPLAY_TILE_DATA_PATH := (
@@ -142,34 +46,19 @@ const UNDERLAY_GAMEPLAY_TILE_DATA_PATH := (
 )
 ```
 
-Current nearby constants include `DEFAULT_LEVEL_DATA_PATH`, `UNDERLAY_COLLISION_DATA_PATH`, and `SUNDERED_KEEP_ASSETS`.
+Place near `DEFAULT_LEVEL_DATA_PATH`, `UNDERLAY_COLLISION_DATA_PATH`, `SUNDERED_KEEP_ASSETS`.
 
-## 2. Add storage field
-
-Near the existing runtime state fields:
+### 1.2 Add storage field
 
 ```gdscript
 var _underlay_gameplay_tile_data: Dictionary = {}
 ```
 
-## 3. Load after level data build begins
+### 1.3 Load in `_build_from_level_data(data)`
 
-In `_build_from_level_data(data: Dictionary)`, after the ordinary JSON ops are applied, call:
+After the level ops loop (`for op in data.get("ops", []): _apply_level_op(op)`), call `_apply_underlay_gameplay_tile_mapping()` before markers/interactables/blockers/stateful gates.
 
-```gdscript
-_apply_underlay_gameplay_tile_mapping()
-```
-
-Current flow applies level ops here:
-
-```gdscript
-for op in data.get("ops", []):
-	_apply_level_op(op)
-```
-
-Place the new call immediately after that block, before markers/interactables/blockers/stateful gates are built. That lets mapper-authored floors/walls appear as authored map content, while still letting later interactables and stateful gates remain authoritative.
-
-## 4. Add loader
+### 1.4 Add loader
 
 ```gdscript
 func _load_underlay_gameplay_tile_data() -> Dictionary:
@@ -199,7 +88,7 @@ func _load_underlay_gameplay_tile_data() -> Dictionary:
 	return data
 ```
 
-## 5. Add application method
+### 1.5 Add application method
 
 ```gdscript
 func _apply_underlay_gameplay_tile_mapping() -> void:
@@ -237,7 +126,7 @@ func _apply_underlay_gameplay_tile_mapping() -> void:
 		print("[SunderedKeep] Applied %d underlay gameplay tile placement(s)" % applied)
 ```
 
-## 6. Add palette helper
+### 1.6 Add palette helper
 
 ```gdscript
 func _underlay_palette_by_number(palette: Array) -> Dictionary:
@@ -252,9 +141,7 @@ func _underlay_palette_by_number(palette: Array) -> Dictionary:
 	return result
 ```
 
-## 7. Add tile application helper
-
-This is the important one. It should respect existing SunderedKeepMap helper behavior:
+### 1.7 Add tile application helper
 
 ```gdscript
 func _apply_underlay_gameplay_tile(cell: Vector2i, item: Dictionary) -> bool:
@@ -268,33 +155,22 @@ func _apply_underlay_gameplay_tile(cell: Vector2i, item: Dictionary) -> bool:
 		"floor":
 			_add_tile("FloorDetail", asset_id, "floors", cell)
 			return true
-
 		"architecture":
 			_add_wall_tile(cell, asset_id)
 			return true
-
 		"traversal":
 			_add_tile("Traversal", asset_id, "traversal", cell)
 			if _asset_blocks_movement(asset_id):
 				_add_blocker(Rect2i(cell, Vector2i.ONE), "%sUnderlayGameplayBlocker" % asset_id)
 			return true
-
 		_:
 			_add_tile("FloorDetail", asset_id, _category_for_layer_asset("FloorDetail", asset_id), cell)
 			return true
 ```
 
-Reasoning:
+Routing: floors → `_add_tile("FloorDetail", ...)`; architecture → `_add_wall_tile(...)` (adds wall sprite + blocker + minimap wall cells); traversal → `_add_tile("Traversal", ...)` with conditional blocker.
 
-- Floor placements should become regular visible floor/detail tiles.
-- Architecture placements should route through `_add_wall_tile(...)` because that already adds wall blockers and tracks minimap wall cells.
-- Traversal tiles should use the `Traversal` layer and only add blockers when the asset metadata says it blocks movement.
-
-Current `_add_wall_tile(...)` already adds a wall sprite and blocker. Current `_add_tile(...)` updates floor/edge stats and minimap floor cells.
-
-## 8. Add asset metadata helper
-
-Since `SunderedKeepMap` already preloads `SUNDERED_KEEP_ASSETS`, use that.
+### 1.8 Add asset metadata helper
 
 ```gdscript
 func _asset_blocks_movement(asset_id: String) -> bool:
@@ -305,19 +181,13 @@ func _asset_blocks_movement(asset_id: String) -> bool:
 	return bool(entry.get("blocks_movement", false))
 ```
 
-The generated asset catalog includes `blocks_movement` and `walkable` metadata for runtime assets.
-
 ---
 
-# Codex implementation instructions: harden the mapper
+## Task 2: Harden the Mapper
 
-The mapper itself is good, but I would tighten a few things before relying on it heavily.
+### 2.1 Atomic save
 
-## 1. Make save atomic
-
-Current `_write_mapping_document()` writes directly to the target JSON with `FileAccess.WRITE`.
-
-Replace direct write with an atomic helper similar to the collision mapper’s desired behavior:
+Replace `_write_mapping_document()` with atomic write:
 
 ```gdscript
 func _write_mapping_document() -> bool:
@@ -337,8 +207,6 @@ func _write_mapping_document() -> bool:
 	_update_help()
 	return true
 ```
-
-Add:
 
 ```gdscript
 func _atomic_write_json_document(path: String, text: String) -> bool:
@@ -387,17 +255,15 @@ func _atomic_write_json_document(path: String, text: String) -> bool:
 	return true
 ```
 
-## 2. Add drag painting
+### 2.2 Drag painting
 
-Right now it places one cell per click. For your stated workflow, add continuous paint/erase:
-
+Add state:
 ```gdscript
 var _drag_painting := false
 var _drag_erasing := false
 ```
 
 Update `_unhandled_input`:
-
 ```gdscript
 if event is InputEventMouseButton:
 	var mouse := event as InputEventMouseButton
@@ -425,35 +291,20 @@ elif event is InputEventMouseMotion:
 		_handle_right_click(_camera.get_global_mouse_position())
 ```
 
-Then add the control to help text:
-
-```text
-Shift+drag: continuous paint/erase
-```
-
-## 3. Add paint stats to state
+### 2.3 Paint stats in state
 
 Add to `get_gameplay_tile_mapper_state()`:
-
 ```gdscript
 "dirty": _dirty,
 "placement_count": _placements.size(),
 "selected_tile": _palette_item(_selected_tile_number),
 ```
 
-This makes future overlay/debug assertions easier.
-
 ---
 
-# Add validation smoke for this new mapper
+## Task 3: Validation Smoke Test
 
-Create:
-
-```text
-custodian/tools/validation/sundered_keep_underlay_gameplay_tile_mapper_smoke.gd
-```
-
-Use this structure:
+Create: `custodian/tools/validation/sundered_keep_underlay_gameplay_tile_mapper_smoke.gd`
 
 ```gdscript
 extends SceneTree
@@ -563,191 +414,52 @@ func _finish() -> void:
 	quit(1)
 ```
 
-Run:
-
-```bash
-cd custodian
-godot --headless --script res://tools/validation/sundered_keep_underlay_gameplay_tile_mapper_smoke.gd
-```
+Run: `cd custodian && godot --headless --script res://tools/validation/sundered_keep_underlay_gameplay_tile_mapper_smoke.gd`
 
 ---
 
-# Documentation drift check
+## Task 4: Documentation Updates
 
-This push added a new source-of-truth file:
+Update these files:
+- `design/02_features/debug_ui/UNDERLAY_GAMEPLAY_TILE_MAPPER.md`
+- `custodian/docs/ai_context/CURRENT_STATE.md`
+- `custodian/docs/ai_context/FILE_INDEX.md`
+- `custodian/docs/ai_context/VALIDATION_RECIPES.md`
+- `design/04_architecture/AUTHORED_LEVEL_AUTHORING_PIPELINE.md`
 
-```text
-custodian/content/levels/sundered_keep/sundered_keep_underlay_gameplay_tiles.json
-```
-
-and a new debug scene/tool:
-
-```text
-custodian/scenes/debug/sundered_keep_underlay_gameplay_tile_mapper.tscn
-```
-
-I would update:
-
-```text
-design/02_features/debug_ui/UNDERLAY_GAMEPLAY_TILE_MAPPER.md
-custodian/docs/ai_context/CURRENT_STATE.md
-custodian/docs/ai_context/FILE_INDEX.md
-custodian/docs/ai_context/VALIDATION_RECIPES.md
-design/04_architecture/AUTHORED_LEVEL_AUTHORING_PIPELINE.md
-```
-
-The key doc note should say:
-
-> Sundered Keep now has a dedicated underlay gameplay tile mapper that writes `sundered_keep_underlay_gameplay_tiles.json`. The production SunderedKeepMap consumes this document as an authored tile overlay. The older collision mapper remains the authority for underlay boundary rails and markers.
+Key note: "Sundered Keep now has a dedicated underlay gameplay tile mapper that writes `sundered_keep_underlay_gameplay_tiles.json`. The production SunderedKeepMap consumes this document as an authored tile overlay. The older collision mapper remains the authority for underlay boundary rails and markers."
 
 ---
 
-## Bottom line
+## Task 5: Underlay Region Stamp Mode
 
-The pushed mapper is a **good tool foundation**:
+Adds a second paint source: drag-select a rectangular region from the visible underlay, sample it as an active stamp, and place copies onto the gameplay grid.
 
-```text
-visible underlay + collision
-numbered tile palette
-32×32 grid
-click-to-place
-live preview
-save/load JSON
-```
+**Source texture:** `res://content/masters/sundered_keep/sundered_keep_main_overlay.png`
+**Gameplay grid:** 112×80 tiles, 32 px/tile, 3584×2560 px
+**Source image:** 5048×3500 px → one gameplay cell = (5048/112) × (3500/80) source pixels
 
-But the next required implementation is:
-
-> **make `SunderedKeepMap` consume `sundered_keep_underlay_gameplay_tiles.json`**
-
-Until that is done, the mapper is an authoring surface, not a full live gameplay tile pipeline.
-
-ADDENDUM:
-
-That specific feature is **not covered yet**.
-
-What got pushed is:
-
-> **asset-palette paint mapper**
-> pick one of 99 existing tile textures → place it on the underlay grid → save placement JSON.
-
-Your requested feature is different:
-
-> **underlay selection sampler**
-> drag-select visible 32×32 cells from the actual underlay image → turn that sampled section into the active stamp/selection → place copies of that sampled section onto the gameplay layer live.
-
-The current mapper builds a numbered palette from existing folders and extra traversal textures. Then left-click either selects from that palette or places the selected palette tile on the underlay. The saved document only stores palette entries and placements by `tile_number`; it does not store an underlay source rectangle, sampled region, or stamp selection.
-
-So the next feature should be:
-
-# **Underlay Region Stamp Mode**
-
-This adds a second source type:
+### Controls
 
 ```text
-current: select existing tile asset → place tile
-new:     select visible underlay region → place sampled region
-```
-
-## Important design detail
-
-Do **not** crop/export PNGs yet.
-
-The underlay texture is:
-
-```text
-res://content/masters/sundered_keep/sundered_keep_main_overlay.png
-```
-
-and it is mapped across the 112×80 gameplay grid. The authoring mask confirms the source image is `5048×3500` pixels while the gameplay grid is `112×80` tiles.
-
-That means one gameplay tile is **not** exactly 32 source-image pixels. The mapper must convert:
-
-```text
-gameplay cell rect → source texture pixel rect
-```
-
-using:
-
-```text
-source_cell_width  = texture_width / 112
-source_cell_height = texture_height / 80
-```
-
-Then preview/runtime can use `Sprite2D.region_enabled = true` with a `region_rect`, scaled back onto the 32×32 gameplay grid.
-
----
-
-# Codex implementation instructions
-
-Give Codex this:
-
-```text id="p3xifn"
-You are working in braydio/CUSTODIAN.
-
-Task:
-Add Underlay Region Stamp Mode to the Sundered Keep Underlay Gameplay Tile Mapper.
-
-Existing mapper:
-- `custodian/scenes/debug/sundered_keep_underlay_gameplay_tile_mapper.tscn`
-- `custodian/scenes/debug/sundered_keep_underlay_gameplay_tile_mapper.gd`
-- `custodian/scenes/debug/sundered_keep_underlay_gameplay_tile_mapper_overlay.gd`
-
-Existing mapper data:
-- `custodian/content/levels/sundered_keep/sundered_keep_underlay_gameplay_tiles.json`
-
-Existing reviewed underlay:
-- `res://scenes/debug/sundered_keep_production_underlay_debug.tscn`
-- underlay texture: `res://content/masters/sundered_keep/sundered_keep_main_overlay.png`
-- gameplay map size: 3584×2560 px
-- gameplay grid: 112×80
-- gameplay tile size: 32
-
-Current behavior:
-The mapper selects from a 99-item existing tile palette and places those tile assets on the 32×32 grid.
-
-New behavior:
-Add a mode that lets the user drag-select a rectangular section from the visible underlay grid, load that selected underlay section as the active stamp, and place copies of that sampled section live on the gameplay grid.
-
-Constraints:
-- Do not generate new PNGs.
-- Do not mutate imported assets.
-- Do not replace the existing 99-tile palette.
-- Do not replace collision mapper behavior.
-- Do not change combat, routing, or collision.
-- Keep existing mapping JSON backward compatible.
-```
-
----
-
-# Controls to add
-
-```text id="op8j2g"
 Q: toggle underlay source-selection mode
-Left drag on underlay while source-selection mode is active: define source region
-Release left mouse: load selected source region as active underlay stamp
+Left drag on underlay while source-selection active: define source region
+Release left mouse: load selected region as active underlay stamp
 Tab: switch active paint source between palette tile and underlay stamp
-Left click underlay while stamp source is active: place underlay stamp at target cell
+Left click underlay while stamp source active: place stamp at target cell
 Right click: remove top placement at target cell
 C: copy full mapping JSON
 Enter/U: save mapping JSON
-G: grid
-E: collision rails
-T: placed tiles
-P: palette focus
-F: full underlay focus
-S: spawn/causeway focus
+G: grid  E: collision rails  T: placed tiles
+P: palette focus  F: full underlay focus  S: spawn/causeway focus
 L/R: reload saved
+Shift+drag: continuous paint/erase
 ```
 
----
+### Data model change
 
-# Data model change
-
-Keep existing palette placements working.
-
-Current placement shape:
-
-```json id="p1l8ts"
+Existing palette placements remain unchanged:
+```json
 {
   "cell": [56, 76],
   "tile_number": 10,
@@ -755,9 +467,8 @@ Current placement shape:
 }
 ```
 
-Add new underlay stamp placement shape:
-
-```json id="ffm6z4"
+New underlay stamp placement:
+```json
 {
   "type": "underlay_stamp",
   "cell": [56, 76],
@@ -767,28 +478,21 @@ Add new underlay stamp placement shape:
 }
 ```
 
-Also add top-level source metadata:
-
-```json id="v8qfbp"
+New top-level metadata:
+```json
 {
   "underlay_texture_path": "res://content/masters/sundered_keep/sundered_keep_main_overlay.png",
   "underlay_grid_size": [112, 80]
 }
 ```
 
----
+### Mapper script changes
 
-# Mapper script changes
+File: `custodian/scenes/debug/sundered_keep_underlay_gameplay_tile_mapper.gd`
 
-File:
+#### 5.1 Add constants
 
-```text id="oiunfk"
-custodian/scenes/debug/sundered_keep_underlay_gameplay_tile_mapper.gd
-```
-
-## 1. Add constants
-
-```gdscript id="pn2a0d"
+```gdscript
 const UNDERLAY_TEXTURE_PATH := "res://content/masters/sundered_keep/sundered_keep_main_overlay.png"
 const UNDERLAY_GRID_SIZE := Vector2i(112, 80)
 
@@ -798,9 +502,9 @@ enum PaintSource {
 }
 ```
 
-## 2. Add state
+#### 5.2 Add state
 
-```gdscript id="vqaj09"
+```gdscript
 var _underlay_texture: Texture2D = null
 var _paint_source: PaintSource = PaintSource.PALETTE_TILE
 
@@ -811,19 +515,18 @@ var _selection_end_cell := Vector2i.ZERO
 var _active_underlay_stamp: Dictionary = {}
 ```
 
-## 3. Load the underlay texture
+#### 5.3 Load underlay texture
 
 In `_ready()`, after `_load_underlay_collision_pair()`:
-
-```gdscript id="ly2r4t"
+```gdscript
 _underlay_texture = load(UNDERLAY_TEXTURE_PATH) as Texture2D
 if _underlay_texture == null:
 	push_warning("[SunderedKeepUnderlayGameplayTileMapper] Could not load underlay texture: %s" % UNDERLAY_TEXTURE_PATH)
 ```
 
-## 4. Add source-cell conversion
+#### 5.4 Source-cell conversion helpers
 
-```gdscript id="yqcg1k"
+```gdscript
 func _source_cell_size_px() -> Vector2:
 	if _underlay_texture == null:
 		return Vector2.ONE * float(TILE_SIZE)
@@ -832,14 +535,12 @@ func _source_cell_size_px() -> Vector2:
 		float(_underlay_texture.get_height()) / float(UNDERLAY_GRID_SIZE.y)
 	)
 
-
 func _source_rect_px_from_cells(source_rect_cells: Rect2i) -> Rect2:
 	var source_cell := _source_cell_size_px()
 	return Rect2(
 		Vector2(source_rect_cells.position) * source_cell,
 		Vector2(source_rect_cells.size) * source_cell
 	)
-
 
 func _normalized_cell_rect(a: Vector2i, b: Vector2i) -> Rect2i:
 	var min_x := mini(a.x, b.x)
@@ -852,9 +553,9 @@ func _normalized_cell_rect(a: Vector2i, b: Vector2i) -> Rect2i:
 	)
 ```
 
-## 5. Add active stamp creation
+#### 5.5 Active stamp creation
 
-```gdscript id="k5al1d"
+```gdscript
 func _load_underlay_selection_as_stamp() -> void:
 	var rect := _normalized_cell_rect(_selection_start_cell, _selection_end_cell)
 	if rect.size.x <= 0 or rect.size.y <= 0:
@@ -878,11 +579,9 @@ func _load_underlay_selection_as_stamp() -> void:
 	print("[SunderedKeepUnderlayGameplayTileMapper] Loaded underlay stamp source_rect_cells=%s" % _active_underlay_stamp["source_rect_cells"])
 ```
 
-## 6. Update mouse input
+#### 5.6 Mouse input update
 
-Add drag-selection handling before normal placement logic:
-
-```gdscript id="d1fupf"
+```gdscript
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		var mouse := event as InputEventMouseButton
@@ -932,11 +631,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		_handle_key(event as InputEventKey)
 ```
 
-## 7. Update placement logic
+#### 5.7 Placement logic update
 
-Current `_handle_left_click()` selects palette or places palette tile. Modify it:
-
-```gdscript id="jnor0t"
+```gdscript
 func _handle_left_click(point: Vector2) -> void:
 	var palette_number := _palette_number_at(point)
 	if palette_number > 0:
@@ -959,9 +656,7 @@ func _handle_left_click(point: Vector2) -> void:
 	_place_selected_tile(_world_to_tile(point))
 ```
 
-Add:
-
-```gdscript id="zwgnoq"
+```gdscript
 func _place_underlay_stamp(cell: Vector2i) -> void:
 	if _active_underlay_stamp.is_empty():
 		return
@@ -976,11 +671,9 @@ func _place_underlay_stamp(cell: Vector2i) -> void:
 	_overlay.queue_redraw()
 ```
 
-## 8. Update preview rendering
+#### 5.8 Preview rendering update
 
-Current `_rebuild_placement_preview()` only knows palette tile placements. Add branch:
-
-```gdscript id="apwewc"
+```gdscript
 func _rebuild_placement_preview() -> void:
 	for child: Node in _placed_root.get_children():
 		child.queue_free()
@@ -994,9 +687,8 @@ func _rebuild_placement_preview() -> void:
 	_placed_root.visible = _show_placements
 ```
 
-Move existing palette preview body into:
-
-```gdscript id="39jvw5"
+Palette preview:
+```gdscript
 func _add_palette_tile_preview(placement: Dictionary) -> void:
 	var item := _palette_item(int(placement.get("tile_number", 0)))
 	if item.is_empty():
@@ -1016,9 +708,8 @@ func _add_palette_tile_preview(placement: Dictionary) -> void:
 	_placed_root.add_child(sprite)
 ```
 
-Add underlay stamp preview:
-
-```gdscript id="fyka0a"
+Underlay stamp preview:
+```gdscript
 func _add_underlay_stamp_preview(placement: Dictionary) -> void:
 	if _underlay_texture == null:
 		return
@@ -1062,18 +753,16 @@ func _add_underlay_stamp_preview(placement: Dictionary) -> void:
 	_placed_root.add_child(sprite)
 ```
 
-## 9. Update mapping JSON builder
+#### 5.9 Mapping JSON builder update
 
-In `_mapping_document()`, add:
-
-```gdscript id="x4458c"
+In `_mapping_document()`, add top-level keys:
+```gdscript
 "underlay_texture_path": UNDERLAY_TEXTURE_PATH,
 "underlay_grid_size": [UNDERLAY_GRID_SIZE.x, UNDERLAY_GRID_SIZE.y],
 ```
 
-Then change placement serialization:
-
-```gdscript id="c06es7"
+Placement serialization:
+```gdscript
 var placement_document: Array[Dictionary] = []
 for placement: Dictionary in _placements:
 	if str(placement.get("type", "palette_tile")) == "underlay_stamp":
@@ -1096,11 +785,9 @@ for placement: Dictionary in _placements:
 		})
 ```
 
-## 10. Update mapping loader
+#### 5.10 Mapping loader update
 
-Current loader assumes every placement has a `tile_number`. Make it backward-compatible:
-
-```gdscript id="w4zwkx"
+```gdscript
 for raw_placement: Variant in data.get("placements", []):
 	if not (raw_placement is Dictionary):
 		continue
@@ -1141,11 +828,10 @@ for raw_placement: Variant in data.get("placements", []):
 	})
 ```
 
-## 11. Update key handling
+#### 5.11 Key handling update
 
 Add to `_handle_key()`:
-
-```gdscript id="s3r4nm"
+```gdscript
 KEY_Q:
 	_underlay_select_mode = not _underlay_select_mode
 	if _underlay_select_mode:
@@ -1154,42 +840,30 @@ KEY_TAB:
 	_paint_source = PaintSource.UNDERLAY_STAMP if _paint_source == PaintSource.PALETTE_TILE else PaintSource.PALETTE_TILE
 ```
 
-## 12. Update help text
+#### 5.12 Help text update
 
-Current help text says left-click palette selects and left-click underlay places on 32px grid. Add:
-
-```text id="s0fiwx"
+Add:
+```text
 Q: underlay select mode   Drag underlay: sample visible region as stamp   Tab: palette/stamp source
 ```
 
-Also show:
-
-```text id="8ukyc3"
+Show:
+```text
 Paint source: PALETTE / UNDERLAY STAMP
 Active stamp: source_rect_cells=[x,y,w,h]
 ```
 
----
+### Overlay changes
 
-# Overlay changes
-
-File:
-
-```text id="r3f987"
-custodian/scenes/debug/sundered_keep_underlay_gameplay_tile_mapper_overlay.gd
-```
-
-The overlay already draws underlay grid, palette grid, collision, and cursor. Add selection rectangle drawing.
+File: `custodian/scenes/debug/sundered_keep_underlay_gameplay_tile_mapper_overlay.gd`
 
 In `_draw()`:
-
-```gdscript id="zstxou"
+```gdscript
 _draw_underlay_selection(state)
 ```
 
 Add:
-
-```gdscript id="coqpa0"
+```gdscript
 func _draw_underlay_selection(state: Dictionary) -> void:
 	if not bool(state.get("underlay_select_mode", false)):
 		return
@@ -1208,15 +882,13 @@ func _draw_underlay_selection(state: Dictionary) -> void:
 	draw_rect(rect, Color(1.0, 0.84, 0.22, 0.95), false, 3.0)
 ```
 
-Update `get_gameplay_tile_mapper_state()`:
-
-```gdscript id="d50x0v"
+Update `get_gameplay_tile_mapper_state()` to include:
+```gdscript
 var selection_rect := _normalized_cell_rect(_selection_start_cell, _selection_end_cell)
 ```
 
 Return:
-
-```gdscript id="i53beq"
+```gdscript
 "paint_source": "UNDERLAY_STAMP" if _paint_source == PaintSource.UNDERLAY_STAMP else "PALETTE_TILE",
 "underlay_select_mode": _underlay_select_mode,
 "selection_rect_cells": [
@@ -1228,29 +900,19 @@ Return:
 "active_underlay_stamp": _active_underlay_stamp,
 ```
 
----
+### Runtime consumption for underlay stamps
 
-# Runtime consumption addition
+File: `custodian/game/world/sundered_keep/sundered_keep_map.gd`
 
-Once the production consumer is wired, it also needs to understand `underlay_stamp`.
-
-File:
-
-```text id="ftfe7s"
-custodian/game/world/sundered_keep/sundered_keep_map.gd
-```
-
-Add underlay stamp handling to the mapping application loop:
-
-```gdscript id="2uzif1"
+In the mapping application loop, add before the palette tile branch:
+```gdscript
 if str(placement.get("type", "palette_tile")) == "underlay_stamp":
 	_apply_underlay_stamp_placement(placement, underlay_texture)
 	continue
 ```
 
 Add:
-
-```gdscript id="pqxuqa"
+```gdscript
 func _apply_underlay_stamp_placement(placement: Dictionary, underlay_texture: Texture2D) -> bool:
 	if underlay_texture == null:
 		return false
@@ -1301,21 +963,12 @@ func _apply_underlay_stamp_placement(placement: Dictionary, underlay_texture: Te
 	return true
 ```
 
-This makes underlay stamps visual/floor-authoring only. It should **not** create blockers. Collision remains the collision mapper’s job.
+Underlay stamps are visual/floor-authoring only — no blockers. Collision remains the collision mapper's job.
 
----
+### Smoke test additions for stamp mode
 
-# Smoke test additions
-
-Update or create:
-
-```text id="cz12mk"
-custodian/tools/validation/sundered_keep_underlay_gameplay_tile_mapper_smoke.gd
-```
-
-Add assertions:
-
-```gdscript id="xe4vmv"
+Add to the smoke test:
+```gdscript
 _assert(scene.has_method("_source_cell_size_px"), "mapper missing source cell size helper")
 _assert(scene.has_method("_source_rect_px_from_cells"), "mapper missing source rect conversion")
 _assert(scene.has_method("_load_underlay_selection_as_stamp"), "mapper missing underlay stamp loader")
@@ -1323,8 +976,7 @@ _assert(scene.has_method("_place_underlay_stamp"), "mapper missing underlay stam
 ```
 
 Test without writing:
-
-```gdscript id="3q5dm5"
+```gdscript
 scene.set("_selection_start_cell", Vector2i(10, 12))
 scene.set("_selection_end_cell", Vector2i(13, 15))
 scene.call("_load_underlay_selection_as_stamp")
@@ -1343,21 +995,3 @@ for placement_variant: Variant in placements:
 		found_stamp = true
 _assert(found_stamp, "mapping document did not serialize underlay_stamp placement")
 ```
-
----
-
-# What this gives you
-
-After this pass, the tool supports both workflows:
-
-```text id="zpv1jm"
-Palette workflow:
-existing asset tile → click-place on grid → save JSON
-
-Underlay sample workflow:
-drag visible underlay region → loaded as active stamp → click-place copied region → save JSON
-```
-
-That is the feature you were asking for.
-
-The current pushed tool is still useful, but it is missing the **underlay-as-source** concept. Add `underlay_stamp` placements next.

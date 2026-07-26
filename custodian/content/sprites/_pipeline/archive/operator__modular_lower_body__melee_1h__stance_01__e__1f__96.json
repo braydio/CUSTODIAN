@@ -1,0 +1,14 @@
+{
+  "source": "operator__modular_lower_body__melee_1h__stance_01__e__1f__96.png",
+  "mode": "copy",
+  "outputs": [
+    {
+      "path": "operator/new_operator/modular/stance_01/operator__modular_lower_body__melee_1h__stance_01__e__1f__96.png",
+      "layout": "copy"
+    }
+  ],
+  "remove_superseded": true,
+  "post_process": [
+    "operator_modular_runtime"
+  ]
+}
