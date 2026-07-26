@@ -1,30 +1,30 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://bnqkc0vwrm0bd"]
 
-[ext_resource type="Script" path="res://scenes/debug/sundered_keep_underlay_gameplay_tile_mapper.gd" id="1_mapper"]
-[ext_resource type="Script" path="res://scenes/debug/sundered_keep_underlay_gameplay_tile_mapper_overlay.gd" id="2_overlay"]
+[ext_resource type="Script" uid="uid://6qxnhwdl4jhj" path="res://scenes/debug/sundered_keep_underlay_gameplay_tile_mapper.gd" id="1_mapper"]
+[ext_resource type="Script" uid="uid://c7cakvmem2ytv" path="res://scenes/debug/sundered_keep_underlay_gameplay_tile_mapper_overlay.gd" id="2_overlay"]
 
-[node name="SunderedKeepUnderlayGameplayTileMapper" type="Node2D"]
+[node name="SunderedKeepUnderlayGameplayTileMapper" type="Node2D" unique_id=1020535489]
 script = ExtResource("1_mapper")
 
-[node name="World" type="Node2D" parent="."]
+[node name="World" type="Node2D" parent="." unique_id=302651007]
 
-[node name="PlacedGameplayTiles" type="Node2D" parent="World"]
+[node name="PlacedGameplayTiles" type="Node2D" parent="World" unique_id=1882207638]
 z_index = 120
 
-[node name="TilePalette" type="Node2D" parent="World"]
+[node name="TilePalette" type="Node2D" parent="World" unique_id=42658027]
 z_index = 200
 
-[node name="MapperOverlay" type="Node2D" parent="World"]
+[node name="MapperOverlay" type="Node2D" parent="World" unique_id=1594863595]
 z_index = 150
 script = ExtResource("2_overlay")
 
-[node name="Camera2D" type="Camera2D" parent="World"]
+[node name="Camera2D" type="Camera2D" parent="World" unique_id=762506844]
 position = Vector2(1792, 1280)
 zoom = Vector2(0.24, 0.24)
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=159360735]
 
-[node name="Help" type="Label" parent="CanvasLayer"]
+[node name="Help" type="Label" parent="CanvasLayer" unique_id=552825909]
 offset_left = 16.0
 offset_top = 16.0
 offset_right = 1220.0
