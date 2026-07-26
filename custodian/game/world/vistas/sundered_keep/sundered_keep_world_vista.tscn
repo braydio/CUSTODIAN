@@ -1,0 +1,66 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://game/world/vistas/sundered_keep/sundered_keep_world_vista.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/approach/first_vista_base_storm_horizon.png" id="2_storm"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/distant_sundered_keep_landmark_v2.png" id="3_keep"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/approach/fog/first_vista_reveal_veil.png" id="4_fog"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/approach/playable/overlook_ledge.png" id="5_lip"]
+
+[node name="SunderedKeepWorldVista" type="Node2D"]
+script = ExtResource("1_script")
+y_sort_enabled = false
+
+[node name="HorizonPresentation" type="Node2D" parent="."]
+y_sort_enabled = false
+
+[node name="StormParallax" type="Parallax2D" parent="HorizonPresentation"]
+scroll_scale = Vector2(0.02, 0.01)
+repeat_size = Vector2(0, 0)
+
+[node name="StormHorizon" type="Sprite2D" parent="HorizonPresentation/StormParallax"]
+z_as_relative = false
+z_index = -300
+texture = ExtResource("2_storm")
+texture_filter = 1
+
+[node name="KeepParallax" type="Parallax2D" parent="HorizonPresentation"]
+scroll_scale = Vector2(0.08, 0.03)
+repeat_size = Vector2(0, 0)
+
+[node name="DistantKeep" type="Sprite2D" parent="HorizonPresentation/KeepParallax"]
+position = Vector2(170, -120)
+scale = Vector2(0.32, 0.32)
+z_as_relative = false
+z_index = -250
+texture = ExtResource("3_keep")
+texture_filter = 1
+
+[node name="FogParallax" type="Parallax2D" parent="HorizonPresentation"]
+scroll_scale = Vector2(0.18, 0.08)
+repeat_size = Vector2(0, 0)
+
+[node name="FogVeil" type="Sprite2D" parent="HorizonPresentation/FogParallax"]
+position = Vector2(0, 70)
+z_as_relative = false
+z_index = -200
+texture = ExtResource("4_fog")
+texture_filter = 1
+
+[node name="ForegroundCliffLip" type="Sprite2D" parent="."]
+scale = Vector2(1.25, 1.25)
+z_as_relative = false
+z_index = 100
+texture = ExtResource("5_lip")
+texture_filter = 1
+
+[node name="CameraPresentationAnchor" type="Marker2D" parent="."]
+
+[node name="CameraInfluenceStart" type="Marker2D" parent="."]
+
+[node name="CameraApex" type="Marker2D" parent="."]
+
+[node name="CameraReturnStart" type="Marker2D" parent="."]
+
+[node name="CameraReturnComplete" type="Marker2D" parent="."]
+
+[node name="VistaController" type="Node" parent="."]

@@ -1808,26 +1808,66 @@ func apply_difficulty_modifiers(hp_scale: float, damage_scale: float):
 	damage = max(1.0, damage * damage_scale)
 	update_visuals()
 
-func take_damage(amount: float, hit_strength: int = CombatConstants.HitStrength.LIGHT):
-	if dead:
-		return
+func take_damage(
+	amount: float,
+	hit_strength: int = CombatConstants.HitStrength.LIGHT
+) -> Dictionary:
+	var health_before := maxf(0.0, health)
+	if dead or health_before <= 0.0:
+		return _damage_result(0.0, false)
 
-	health -= amount
+	var applied_damage := minf(maxf(0.0, amount), health_before)
+	if applied_damage <= 0.0:
+		return _damage_result(0.0, true)
+	health = maxf(0.0, health_before - applied_damage)
 	_cancel_savage_attack()
 	if behavior_state_machine != null and behavior_state_machine.has_method("on_damaged"):
-		behavior_state_machine.call("on_damaged", self, amount)
-	_on_assault_damage_taken(amount)
-	_apply_reaction(amount, hit_strength)
+		behavior_state_machine.call(
+			"on_damaged",
+			self,
+			applied_damage
+		)
+	_on_assault_damage_taken(applied_damage)
+	_apply_reaction(applied_damage, hit_strength)
 	update_visuals()
-	_spawn_damage_popup(amount)
+	_spawn_damage_popup(applied_damage)
 	
 	if visual:
 		visual.modulate = Color(1, 1, 1)  # Flash white
-		await get_tree().create_timer(0.1).timeout
-		update_visuals()
+		get_tree().create_timer(0.1).timeout.connect(
+			func() -> void:
+				if is_instance_valid(self) and not dead:
+					update_visuals()
+		)
 	
 	if health <= 0:
 		die()
+	return _damage_result(applied_damage, true)
+
+
+func _damage_result(
+	applied_damage: float,
+	target_was_alive: bool
+) -> Dictionary:
+	var safe_applied := maxf(0.0, applied_damage)
+	var health_after := maxf(0.0, health)
+	return {
+		"applied_damage": safe_applied,
+		"damage_applied": safe_applied,
+		"target_was_alive": target_was_alive,
+		"target_health_before": health_after + safe_applied,
+		"target_health_after": health_after,
+		"lethal": dead or health <= 0.0,
+		"blocked": false,
+		"eligible_hostile": (
+			team == "enemy"
+			and not passive
+		),
+		"passive": passive,
+		"structure": false,
+		"deflected": false,
+		"invulnerable": false,
+	}
 
 func update_visuals():
 	if health_bar:
@@ -2869,8 +2909,12 @@ func apply_parry_critical_execution_damage(attacker: Node2D, damage_amount: floa
 	if not _is_valid_parry_critical_execution_owner(attacker, token) or _parry_critical_execution_damage_applied:
 		return {"critical": false, "consumed": false, "damage_applied": 0.0, "lethal": dead}
 	_parry_critical_execution_damage_applied = true
-	var applied_damage := maxf(0.0, damage_amount)
-	health -= applied_damage
+	var health_before := maxf(0.0, health)
+	var applied_damage := minf(
+		maxf(0.0, damage_amount),
+		health_before
+	)
+	health = maxf(0.0, health_before - applied_damage)
 	if behavior_state_machine != null and behavior_state_machine.has_method("on_damaged"):
 		behavior_state_machine.call("on_damaged", self, applied_damage)
 	_on_assault_damage_taken(applied_damage)
@@ -2879,7 +2923,14 @@ func apply_parry_critical_execution_damage(attacker: Node2D, damage_amount: floa
 	var lethal := health <= 0.0
 	if lethal:
 		die()
-	return {"critical": true, "consumed": true, "damage_applied": applied_damage, "lethal": lethal}
+	var result := _damage_result(applied_damage, health_before > 0.0)
+	result.merge({
+		"critical": true,
+		"consumed": true,
+		"damage_applied": applied_damage,
+		"lethal": lethal,
+	}, true)
+	return result
 
 
 func finish_parry_critical_execution(attacker: Node2D, result: Dictionary = {}) -> void:

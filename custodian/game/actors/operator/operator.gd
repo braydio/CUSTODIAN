@@ -10,6 +10,7 @@ signal dodge_charge_cancelled(reason: StringName)
 signal dodge_chain_started(index: int, flow: float, direction: Vector2)
 signal dodge_chain_ended(count: int, flow: float, reason: StringName)
 signal dodge_flow_changed(value: float, direction: Vector2)
+signal integrity_reclaim_changed(status: Dictionary)
 
 const AnimationResolver = preload("res://game/actors/operator/animations/animation_resolver.gd")
 const DirectionalAnimationFallback = preload(
@@ -28,6 +29,9 @@ const SprintState = preload("res://game/actors/operator/animations/states/sprint
 const DeathState = preload("res://game/actors/operator/animations/states/death_state.gd")
 const MeleeAttackProfile = preload("res://game/systems/combat/melee_attack_profile.gd")
 const CombatConstants = preload("res://game/systems/combat/combat_constants.gd")
+const OperatorIntegrityReclaim = preload(
+	"res://game/actors/operator/combat/operator_integrity_reclaim.gd"
+)
 const SPEED := 150.0
 const BULLET_SCENE := preload("res://game/actors/projectiles/bullet.tscn")
 const MUZZLE_FLASH_SCENE := preload("res://game/actors/effects/muzzle_flash.tscn")
@@ -93,6 +97,22 @@ const DAMAGE_TAKEN_SOUND: AudioStream = preload("res://content/audio/sfx/combat/
 const DODGE_FAST_ATTACK_FRAME_COUNT := 11
 const DODGE_FAST_ATTACK_FPS := 20.0
 const DODGE_FAST_ATTACK_HIT_FRAME := 4
+const MELEE_FAST_CHAIN_FPS := 18.0
+const MELEE_FAST_CHAIN_FRAME_SIZE := Vector2i(156, 96)
+const MELEE_FAST_CHAIN_BODY_SHEETS := {
+	&"melee_2h_fast_1_right": {
+		"path": "res://content/sprites/operator/runtime/body/melee_1h/operator__body__melee__fast_01__e__7f__156x96.png",
+		"frames": 7,
+	},
+	&"melee_2h_fast_2_right": {
+		"path": "res://content/sprites/operator/runtime/body/melee_1h/operator__body__melee__fast_02__e__7f__156x96.png",
+		"frames": 7,
+	},
+	&"melee_2h_fast_3_right": {
+		"path": "res://content/sprites/operator/runtime/body/melee_1h/operator__body__melee__fast_03__e__8f__156x96.png",
+		"frames": 8,
+	},
+}
 
 enum AttackPhase {
 	NONE,
@@ -199,6 +219,7 @@ var last_fire_cooldown := 0.0
 @export var melee_fast_knockback_force: float = 56.0
 @export var melee_fast_recovery_duration: float = 0.10
 @export var melee_fast_animation_speed_scale: float = 1.35
+@export var melee_fast_chain_max_retarget_degrees: float = 75.0
 @export var melee_heavy_hit_stop_scale: float = 0.55
 @export var melee_heavy_hit_stop_duration: float = 0.05
 @export var melee_heavy_camera_shake_power: float = 4.2
@@ -383,11 +404,13 @@ var _ranged_config_warning_once: Dictionary = {}
 var _melee_heavy_anticipating: bool = false
 var _melee_fast_windup: bool = false
 var _melee_fast_combo_step: int = 0
+var _melee_fast_chain_direction_active: bool = false
 var _skip_next_fast_attack_windup: bool = false
 var _dodge_fast_attack_buffered: bool = false
 var _dodge_fast_attack_presentation_active: bool = false
 var _buffered_attack_kind: String = ""
 var _buffered_attack_timer: float = 0.0
+var _buffered_dodge_direction: Vector2 = Vector2.ZERO
 var _hit_stop_active: bool = false
 var _melee_damage_current: float = 0.0
 var _melee_range_current: float = 0.0
@@ -503,6 +526,9 @@ var _unstuck_report_cooldown := 0.0
 var _field_patch_seconds_available_below_half_health := 0.0
 var _field_patch_prompt_active := false
 var _field_patch_prompt_critical := false
+var _integrity_reclaim: RefCounted = OperatorIntegrityReclaim.new()
+var _integrity_reclaim_restore_serial := 0
+var _integrity_reclaim_last_restore := 0.0
 var _last_damage_kind: StringName = &""
 var _last_enemy_attack_kind: StringName = &""
 var _body_recoil_offset := Vector2.ZERO
@@ -735,6 +761,8 @@ func _ready():
 	add_to_group("player")
 	# Sync with ControllableActor base class
 	current_health = health
+	_integrity_reclaim.call("configure", max_health)
+	_sync_integrity_reclaim_observability()
 	move_speed = SPEED
 	_base_world_z_index = z_index
 	
@@ -1088,6 +1116,7 @@ func _input(event: InputEvent) -> void:
 
 func _physics_process(delta):
 	apply_debug_resource_overrides()
+	_advance_integrity_reclaim(delta)
 	if _paired_execution_active:
 		if _is_dead:
 			_cleanup_paired_execution(false, &"operator_dead")
@@ -3506,6 +3535,12 @@ func _try_melee_attack(intent: String = ""):
 		)
 		return
 	if _can_start_attack_now():
+		if requested_kind == "fast" \
+		and not _can_afford_fast_chain_step(
+			_melee_fast_combo_step
+		):
+			_reset_fast_chain()
+			return
 		_request_attack_state(requested_kind)
 		return
 	_buffer_attack(requested_kind)
@@ -3679,7 +3714,7 @@ func _try_start_parry() -> bool:
 	_spend_stamina(parry_stamina_cost, &"parry")
 	_exit_ranged_ready()
 	_cancel_reload()
-	_clear_attack_buffer()
+	_reset_fast_chain()
 	_melee_active = false
 	_melee_heavy_anticipating = false
 	_melee_fast_windup = false
@@ -3991,6 +4026,8 @@ func _request_block_state() -> void:
 
 
 func _buffer_attack(kind: String) -> void:
+	if not _buffered_attack_kind.is_empty():
+		return
 	_buffered_attack_kind = kind
 	_buffered_attack_timer = melee_input_buffer_time
 
@@ -4012,6 +4049,185 @@ func _consume_buffered_attack() -> String:
 func _clear_attack_buffer() -> void:
 	_buffered_attack_kind = ""
 	_buffered_attack_timer = 0.0
+	_buffered_dodge_direction = Vector2.ZERO
+
+
+func _get_fast_chain_weapon() -> OperatorWeaponDefinition:
+	if _active_attack_profile != null:
+		return _active_attack_profile
+	return get_current_combat_profile()
+
+
+func _has_authored_fast_chain() -> bool:
+	var weapon := _get_fast_chain_weapon()
+	return weapon != null and not weapon.fast_chain_keys.is_empty()
+
+
+func _get_fast_chain_keys() -> PackedStringArray:
+	var weapon := _get_fast_chain_weapon()
+	if weapon != null and not weapon.fast_chain_keys.is_empty():
+		return weapon.fast_chain_keys
+	return PackedStringArray(["melee_fast_1"])
+
+
+func _get_fast_chain_commit_frame() -> int:
+	var weapon := _get_fast_chain_weapon()
+	if weapon == null:
+		return -1
+	var index := _melee_fast_combo_step
+	if index < 0 or index >= weapon.fast_chain_commit_frames.size():
+		return -1
+	return int(weapon.fast_chain_commit_frames[index])
+
+
+func _get_fast_chain_stamina_cost_for_step(step: int) -> float:
+	var weapon := _get_fast_chain_weapon()
+	if weapon == null \
+	or step < 0 \
+	or step >= weapon.fast_chain_stamina_costs.size():
+		return 0.0
+	return float(weapon.fast_chain_stamina_costs[step])
+
+
+func _get_fast_chain_stamina_cost() -> float:
+	return _get_fast_chain_stamina_cost_for_step(
+		_melee_fast_combo_step
+	)
+
+
+func _can_afford_fast_chain_step(step: int) -> bool:
+	return stamina + 0.0001 >= _get_fast_chain_stamina_cost_for_step(
+		step
+	)
+
+
+func _advance_fast_chain_step() -> bool:
+	var weapon := _get_fast_chain_weapon()
+	var keys := _get_fast_chain_keys()
+	if keys.is_empty():
+		_melee_fast_combo_step = 0
+		return false
+	var next_step := _melee_fast_combo_step + 1
+	if next_step >= keys.size():
+		if weapon != null and weapon.fast_chain_loops:
+			next_step = 0
+		else:
+			_melee_fast_combo_step = 0
+			return false
+	if not _can_afford_fast_chain_step(next_step):
+		return false
+	_melee_fast_combo_step = next_step
+	return true
+
+
+func _reset_fast_chain(clear_buffer: bool = true) -> void:
+	_melee_fast_combo_step = 0
+	_melee_fast_chain_direction_active = false
+	if clear_buffer:
+		_clear_attack_buffer()
+
+
+func _get_fast_chain_forward_direction() -> Vector2:
+	var requested := _get_melee_forward_direction().normalized()
+	if requested == Vector2.ZERO:
+		requested = Vector2.RIGHT
+	if not _has_authored_fast_chain():
+		return requested
+
+	var horizontal_sign := signf(requested.x)
+	if is_zero_approx(horizontal_sign):
+		horizontal_sign = (
+			signf(_melee_forward.x)
+			if _melee_fast_chain_direction_active
+			else signf(visual_idle_direction.x)
+		)
+	if is_zero_approx(horizontal_sign):
+		horizontal_sign = 1.0
+	var horizontal := Vector2(horizontal_sign, 0.0)
+	var art_limit := deg_to_rad(
+		clampf(melee_fast_chain_max_retarget_degrees, 0.0, 89.0)
+	)
+	var art_delta := clampf(
+		horizontal.angle_to(requested),
+		-art_limit,
+		art_limit
+	)
+	var resolved := horizontal.rotated(art_delta).normalized()
+
+	if _melee_fast_chain_direction_active:
+		var turn_limit := deg_to_rad(
+			clampf(
+				melee_fast_chain_max_retarget_degrees,
+				0.0,
+				180.0
+			)
+		)
+		var turn_delta := clampf(
+			_melee_forward.normalized().angle_to(resolved),
+			-turn_limit,
+			turn_limit
+		)
+		resolved = _melee_forward.normalized().rotated(
+			turn_delta
+		)
+	_melee_fast_chain_direction_active = true
+	return resolved.normalized()
+
+
+func get_melee_fast_chain_status() -> Dictionary:
+	return {
+		"authored": _has_authored_fast_chain(),
+		"step": _melee_fast_combo_step,
+		"attack_key": _melee_attack_key,
+		"commit_frame": _get_fast_chain_commit_frame(),
+		"buffered_command": _buffered_attack_kind,
+		"stamina_cost": _get_fast_chain_stamina_cost(),
+		"direction": _melee_forward,
+		"integrated_recovery": (
+			_get_fast_chain_weapon() != null
+			and _get_fast_chain_weapon().fast_chain_has_integrated_recovery
+		),
+	}
+
+
+func _get_fast_chain_knockback_multiplier() -> float:
+	if not _has_authored_fast_chain():
+		return 1.0
+	match _melee_fast_combo_step:
+		1:
+			return 1.05
+		2:
+			return 1.20
+		_:
+			return 1.0
+
+
+func _get_fast_chain_camera_shake_multiplier() -> float:
+	if not _has_authored_fast_chain():
+		return 1.0
+	match _melee_fast_combo_step:
+		1:
+			return 1.08
+		2:
+			return 1.25
+		_:
+			return 1.0
+
+
+func _get_fast_chain_hit_stop_duration(
+	fallback: float
+) -> float:
+	if not _has_authored_fast_chain():
+		return fallback
+	match _melee_fast_combo_step:
+		0:
+			return 0.026
+		1:
+			return 0.030
+		2:
+			return 0.036
+		_:
+			return fallback
 
 
 func _start_fast_attack() -> void:
@@ -4031,6 +4247,71 @@ func _start_fast_attack() -> void:
 	_melee_attack_kind = "fast"
 	var attack_profile: MeleeAttackProfile = _begin_melee_attack_profile("fast")
 	_notify_camera_attack_windup(false)
+	if _has_authored_fast_chain():
+		var chain_keys := _get_fast_chain_keys()
+		if chain_keys.is_empty():
+			chain_keys = PackedStringArray(["melee_fast_1"])
+		_melee_fast_combo_step = clampi(
+			_melee_fast_combo_step,
+			0,
+			chain_keys.size() - 1
+		)
+		if not _can_afford_fast_chain_step(
+			_melee_fast_combo_step
+		):
+			_melee_active = false
+			_reset_fast_chain()
+			return
+		_melee_attack_key = String(
+			chain_keys[_melee_fast_combo_step]
+		)
+		var fallback_name := StringName(
+			_get_weapon_animation_name(
+				_active_attack_profile,
+				_melee_attack_key,
+				&"melee_2h_fast"
+			)
+		)
+		var stamina_cost := _get_fast_chain_stamina_cost()
+		if stamina_cost > 0.0:
+			_spend_stamina(stamina_cost, &"fast_attack")
+		_melee_elapsed = 0.0
+		_melee_forward = _get_fast_chain_forward_direction()
+		_begin_attack_movement_profile(
+			_resolve_current_attack_id(),
+			_melee_forward
+		)
+		if attack_profile != null:
+			_configure_melee_hitbox(
+				attack_profile.damage,
+				attack_profile.range_px,
+				attack_profile.arc_degrees
+			)
+		else:
+			_configure_melee_hitbox(
+				melee_fast_hit_damage,
+				melee_range,
+				melee_arc_degrees
+			)
+		_play_melee_anim_from_key(
+			_melee_attack_key,
+			fallback_name
+		)
+		_melee_duration = _get_current_melee_animation_duration(
+			0.45,
+			0.24,
+			0.50
+		)
+		_lock_melee_cooldown(_melee_duration + 0.04)
+		_obs_log(&"player_melee_fast_chain_step_started", {
+			"step": _melee_fast_combo_step,
+			"attack_key": _melee_attack_key,
+			"commit_frame": _get_fast_chain_commit_frame(),
+			"stamina_cost": stamina_cost,
+			"direction": _melee_forward,
+		})
+		return
+
 	var next_fast_key := "melee_fast_1"
 	var fallback_animation: StringName = &"melee_2h_fast"
 	var next_duration := 0.42
@@ -4163,7 +4444,7 @@ func _start_heavy_attack() -> void:
 	_parry_neutral_lock_active = false
 	_modular_upper_action_animation = &""
 	_melee_heavy_anticipating = false
-	_melee_fast_combo_step = 0
+	_reset_fast_chain()
 	_melee_attack_kind = "heavy"
 	var is_unarmed_attack := _is_attack_profile_unarmed(_active_attack_profile)
 	_melee_attack_key = "unarmed_heavy" if is_unarmed_attack else "melee_heavy"
@@ -4233,7 +4514,42 @@ func _update_melee_attack(delta: float) -> void:
 	if _melee_hitbox_active:
 		_apply_melee_hitbox_tick()
 
-	if not _buffered_attack_kind.is_empty() and _melee_elapsed >= _get_cancel_start_time():
+	if _melee_attack_kind == "fast" \
+	and _has_authored_fast_chain() \
+	and not _buffered_attack_kind.is_empty():
+		var commit_frame := _get_fast_chain_commit_frame()
+		var presentation_frame: int = (
+			animated_sprite.frame
+			if animated_sprite != null
+			else -1
+		)
+		if _buffered_attack_kind == "dodge":
+			var final_frame := -1
+			if animated_sprite != null \
+			and animated_sprite.sprite_frames != null:
+				final_frame = (
+					animated_sprite.sprite_frames.get_frame_count(
+						animated_sprite.animation
+					) - 1
+				)
+			if final_frame >= 0 \
+			and presentation_frame >= final_frame:
+				_start_buffered_fast_chain_dodge()
+				return
+			return
+		if commit_frame >= 0 and presentation_frame >= commit_frame:
+			var buffered_kind := _consume_buffered_attack()
+			if buffered_kind == "fast":
+				if _advance_fast_chain_step():
+					_request_attack_state("fast")
+					return
+				_reset_fast_chain()
+			elif buffered_kind == "heavy":
+				_reset_fast_chain()
+				_request_attack_state("heavy")
+				return
+	elif not _buffered_attack_kind.is_empty() \
+	and _melee_elapsed >= _get_cancel_start_time():
 		_request_attack_state(_consume_buffered_attack())
 		return
 
@@ -4241,8 +4557,11 @@ func _update_melee_attack(delta: float) -> void:
 		return
 
 	if _melee_attack_kind == "fast" and _buffered_attack_kind.is_empty():
-		_start_fast_attack_recovery()
-		_melee_fast_combo_step = 0
+		var weapon := _get_fast_chain_weapon()
+		if weapon == null \
+		or not weapon.fast_chain_has_integrated_recovery:
+			_start_fast_attack_recovery()
+		_reset_fast_chain(false)
 
 	_melee_active = false
 	_melee_attack_kind = ""
@@ -4260,6 +4579,28 @@ func _update_melee_attack(delta: float) -> void:
 		_active_attack_profile = null
 		_active_melee_attack_profile = null
 		_reset_melee_overlay_visuals()
+
+
+func _start_buffered_fast_chain_dodge() -> bool:
+	var dodge_direction := _buffered_dodge_direction
+	if dodge_direction.length_squared() <= 0.0001:
+		dodge_direction = _resolve_dodge_direction()
+	_reset_fast_chain()
+	_melee_active = false
+	_melee_attack_kind = ""
+	_melee_attack_key = ""
+	_melee_elapsed = 0.0
+	_melee_duration = 0.0
+	_active_attack_profile = null
+	_active_melee_attack_profile = null
+	disable_hitbox()
+	_melee_hit_targets.clear()
+	_melee_miss_sfx_played = false
+	_reset_melee_overlay_visuals()
+	return _try_start_dodge_with_profile(
+		dodge_direction,
+		&"tap"
+	)
 
 
 func _apply_melee_hitbox_tick() -> void:
@@ -4304,7 +4645,28 @@ func _apply_melee_hitbox_tick() -> void:
 			melee_hit_strength = CombatConstants.HitStrength.HEAVY
 		elif _active_melee_attack_profile != null and _active_melee_attack_profile.attack_kind == "heavy":
 			melee_hit_strength = CombatConstants.HitStrength.HEAVY
-		enemy.take_damage(_melee_damage_current, melee_hit_strength)
+		var damage_result_variant: Variant = enemy.take_damage(
+			_melee_damage_current,
+			melee_hit_strength
+		)
+		if damage_result_variant is Dictionary:
+			var reclaim_kind := (
+				&"unarmed"
+				if _get_active_weapon_state_key() == "unarmed"
+				else &"melee"
+			)
+			report_confirmed_damage_dealt(
+				float(
+					(damage_result_variant as Dictionary).get(
+						"applied_damage",
+						0.0
+					)
+				),
+				_damage_result_reclaim_context(
+					damage_result_variant as Dictionary,
+					reclaim_kind
+				)
+			)
 		_report_material_contact(
 			impact_position,
 			&"melee_impact",
@@ -4318,6 +4680,8 @@ func _apply_melee_hitbox_tick() -> void:
 		_melee_hit_targets[enemy_id] = true
 		var knockback_dir := global_position.direction_to(enemy.global_position)
 		var knockback_force: float = _active_melee_attack_profile.knockback_force if _active_melee_attack_profile != null else (melee_fast_knockback_force if _melee_attack_kind == "fast" else melee_heavy_knockback_force)
+		if _melee_attack_kind == "fast":
+			knockback_force *= _get_fast_chain_knockback_multiplier()
 		if enemy.has_method("apply_melee_impact"):
 			enemy.apply_melee_impact(_melee_attack_kind, knockback_dir, knockback_force)
 		else:
@@ -4363,6 +4727,7 @@ func start_block() -> void:
 		return
 	if _block_phase == &"hold":
 		return
+	_reset_fast_chain()
 	_melee_active = false
 	_melee_attack_kind = ""
 	_melee_attack_key = ""
@@ -4870,7 +5235,7 @@ func _start_critical_attack(target: Node2D) -> void:
 	_modular_upper_fx_action_animation = &""
 	_melee_heavy_anticipating = false
 	_melee_fast_windup = false
-	_melee_fast_combo_step = 0
+	_reset_fast_chain()
 	_melee_attack_kind = "critical"
 	_melee_attack_key = "critical_attack_01"
 	_critical_attack_target = target
@@ -5039,6 +5404,10 @@ func _apply_paired_execution_impact() -> void:
 	if not bool(damage_result.get("critical", false)):
 		_cleanup_paired_execution(false, &"damage_rejected")
 		return
+	report_confirmed_damage_dealt(
+		float(damage_result.get("damage_applied", 0.0)),
+		_damage_result_reclaim_context(damage_result, &"critical")
+	)
 	_obs_increment(&"player_critical_attack_hit")
 	_obs_log(&"player_critical_attack_hit", {
 		"target_id": _paired_execution_target.get_instance_id(),
@@ -5413,6 +5782,9 @@ func _has_playable_sprite_animation(sprite_frames: SpriteFrames, animation_name:
 
 
 func _get_melee_animation_speed_scale(attack_key: String) -> float:
+	if _has_authored_fast_chain() \
+	and _get_fast_chain_keys().has(attack_key):
+		return 1.0
 	if attack_key.begins_with("melee_fast") or attack_key.begins_with("unarmed_fast"):
 		return max(0.1, melee_fast_animation_speed_scale)
 	return 1.0
@@ -5567,6 +5939,14 @@ func _play_melee_overlay_from_key(attack_key: String) -> void:
 		return
 	var weapon_anim := StringName(str(overlay_data.get("weapon_anim", "")))
 	var fx_anim := StringName(str(overlay_data.get("fx_anim", "")))
+	if weapon_anim.is_empty() and melee_weapon_overlay_sprite:
+		melee_weapon_overlay_sprite.visible = false
+		melee_weapon_overlay_sprite.stop()
+		melee_weapon_overlay_sprite.frame = 0
+	if fx_anim.is_empty() and melee_fx_overlay_sprite:
+		melee_fx_overlay_sprite.visible = false
+		melee_fx_overlay_sprite.stop()
+		melee_fx_overlay_sprite.frame = 0
 	if not weapon_anim.is_empty() and melee_weapon_overlay_sprite:
 		weapon_anim = AnimationResolver.resolve(String(weapon_anim), _melee_forward, melee_weapon_overlay_sprite)
 	if not fx_anim.is_empty() and melee_fx_overlay_sprite:
@@ -5761,6 +6141,8 @@ func _trigger_camera_shake() -> void:
 		if _active_melee_attack_profile == null:
 			if _melee_attack_kind == "fast":
 				power = melee_fast_camera_shake_power
+		if _melee_attack_kind == "fast":
+			power *= _get_fast_chain_camera_shake_multiplier()
 		camera.call("shake", power if power > 0.0 else melee_camera_shake_power)
 
 
@@ -5797,6 +6179,10 @@ func _apply_hit_stop() -> void:
 		if _melee_attack_kind == "fast":
 			configured_scale = melee_fast_hit_stop_scale
 			configured_duration = melee_fast_hit_stop_duration
+	if _melee_attack_kind == "fast":
+		configured_duration = _get_fast_chain_hit_stop_duration(
+			configured_duration
+		)
 	var target_scale: float = clamp(configured_scale if configured_scale > 0.0 else melee_hit_stop_scale, 0.01, 1.0)
 	Engine.time_scale = min(previous_scale, target_scale)
 	await get_tree().create_timer(configured_duration if configured_duration > 0.0 else melee_hit_stop_duration, true, false, true).timeout
@@ -6022,9 +6408,123 @@ func restore_health(amount: float) -> void:
 	var health_before := current_health
 	current_health = minf(max_health, current_health + applied)
 	health = current_health
+	_integrity_reclaim.call(
+		"clamp_to_missing_health",
+		maxf(0.0, max_health - current_health)
+	)
+	_flush_integrity_reclaim_events()
 	_obs_accumulate(&"player_healing_amount_total", maxf(0.0, current_health - health_before))
 	health_changed.emit(current_health, max_health)
 	update_visuals()
+
+
+func report_confirmed_damage_dealt(
+	applied_damage: float,
+	damage_context: Dictionary
+) -> float:
+	if _is_dead:
+		return 0.0
+	var context := damage_context.duplicate(true)
+	context["current_health"] = current_health
+	context["operator_owned"] = true
+	context["direct"] = bool(context.get("direct", true))
+	var restored := float(
+		_integrity_reclaim.call(
+			"record_confirmed_damage",
+			applied_damage,
+			context
+		)
+	)
+	if restored > 0.0:
+		restore_health(restored)
+	_flush_integrity_reclaim_events()
+	return restored
+
+
+func get_integrity_reclaim_status() -> Dictionary:
+	return {
+		"active_amount": float(
+			_integrity_reclaim.call("get_active_amount")
+		),
+		"packet_count": int(
+			_integrity_reclaim.call("get_packet_count")
+		),
+		"window_remaining": float(
+			_integrity_reclaim.call("get_window_remaining")
+		),
+		"max_pool": max_health * 0.30,
+		"last_restore_amount": _integrity_reclaim_last_restore,
+		"restore_serial": _integrity_reclaim_restore_serial,
+	}
+
+
+func _advance_integrity_reclaim(delta: float) -> void:
+	_integrity_reclaim.call("advance_fixed", delta)
+	_flush_integrity_reclaim_events()
+
+
+func _damage_result_reclaim_context(
+	damage_result: Dictionary,
+	reclaim_kind: StringName
+) -> Dictionary:
+	return {
+		"reclaim_kind": reclaim_kind,
+		"hostile": bool(
+			damage_result.get("eligible_hostile", false)
+		),
+		"passive": bool(damage_result.get("passive", false)),
+		"structure": bool(damage_result.get("structure", false)),
+		"target_was_alive": bool(
+			damage_result.get("target_was_alive", false)
+		),
+		"deflected": bool(damage_result.get("deflected", false)),
+		"invulnerable": bool(
+			damage_result.get("invulnerable", false)
+		),
+		"direct": true,
+	}
+
+
+func _flush_integrity_reclaim_events() -> void:
+	var events := (
+		_integrity_reclaim.call("drain_events") as Array
+	)
+	for event_variant: Variant in events:
+		var event := event_variant as Dictionary
+		var kind := StringName(str(event.get("kind", "")))
+		match kind:
+			&"pool_added":
+				_obs_log(&"player_reclaim_pool_added", event)
+			&"restored":
+				var restored := float(event.get("amount", 0.0))
+				_obs_log(&"player_reclaim_restored", event)
+				if restored >= 1.0:
+					_integrity_reclaim_last_restore = restored
+					_integrity_reclaim_restore_serial += 1
+			&"expired":
+				_obs_log(&"player_reclaim_expired", event)
+			&"forfeited":
+				_obs_log(&"player_reclaim_forfeited", event)
+			&"rejected":
+				_obs_log(&"player_reclaim_rejected", event)
+	_sync_integrity_reclaim_observability()
+
+
+func _sync_integrity_reclaim_observability() -> void:
+	var status := get_integrity_reclaim_status()
+	_obs_gauge(
+		&"player_reclaim_active",
+		float(status.get("active_amount", 0.0))
+	)
+	_obs_gauge(
+		&"player_reclaim_packet_count",
+		int(status.get("packet_count", 0))
+	)
+	_obs_gauge(
+		&"player_reclaim_window_remaining",
+		float(status.get("window_remaining", 0.0))
+	)
+	integrity_reclaim_changed.emit(status)
 
 
 func add_field_patches(amount: int) -> int:
@@ -6078,7 +6578,25 @@ func _is_action_just_released_any(action_names: Array) -> bool:
 
 
 func _handle_dodge_input(delta: float = 0.0) -> void:
-	if dodge_chain_enabled and _is_action_just_pressed_any(["dodge"]):
+	var dodge_just_pressed := _is_action_just_pressed_any(
+		["dodge"]
+	)
+	if dodge_just_pressed \
+	and _melee_active \
+	and _melee_attack_kind == "fast" \
+	and _has_authored_fast_chain():
+		var commit_frame := _get_fast_chain_commit_frame()
+		var presentation_frame: int = (
+			animated_sprite.frame
+			if animated_sprite != null
+			else -1
+		)
+		if presentation_frame >= commit_frame \
+		and _buffered_attack_kind.is_empty():
+			_buffered_dodge_direction = _resolve_dodge_direction()
+			_buffer_attack("dodge")
+		return
+	if dodge_chain_enabled and dodge_just_pressed:
 		if _dodge_active:
 			var active_elapsed := maxf(0.0, _active_dodge_duration - _dodge_timer)
 			if active_elapsed >= maxf(0.0, dodge_chain_buffer_start):
@@ -6090,7 +6608,7 @@ func _handle_dodge_input(delta: float = 0.0) -> void:
 				_launch_buffered_dodge_chain()
 			return
 	if not dodge_charge_enabled:
-		if _is_action_just_pressed_any(["dodge"]):
+		if dodge_just_pressed:
 			_try_start_dodge()
 		return
 	if _dodge_charge_active:
@@ -6108,7 +6626,7 @@ func _handle_dodge_input(delta: float = 0.0) -> void:
 		_update_dodge_charge_presentation(ratio)
 		dodge_charge_changed.emit(true, ratio, ratio >= 1.0)
 		return
-	if _is_action_just_pressed_any(["dodge"]):
+	if dodge_just_pressed:
 		_begin_dodge_charge()
 
 
@@ -6344,6 +6862,7 @@ func _try_start_dodge_with_profile(direction: Vector2, profile: StringName, char
 	var stamina_cost := float(config.get("stamina_cost", dodge_stamina_cost))
 	if not _can_start_dodge(stamina_cost):
 		return false
+	_reset_fast_chain()
 	_parry_neutral_lock_active = false
 	_dodge_fast_attack_buffered = false
 	_dodge_chain_buffered = false
@@ -7049,6 +7568,7 @@ func _is_equip_weapon_state_active() -> bool:
 
 
 func _apply_unarmed_selection() -> void:
+	_reset_fast_chain()
 	using_unarmed = true
 	primary_weapon_equipped = true
 	equipped_primary_weapon_id = String(unarmed_definition.weapon_id) if unarmed_definition != null else "fists"
@@ -7058,6 +7578,7 @@ func _apply_unarmed_selection() -> void:
 
 
 func _apply_armed_selection(index: int) -> void:
+	_reset_fast_chain()
 	if armed_weapons.is_empty():
 		_apply_unarmed_selection()
 		return
@@ -7731,6 +8252,9 @@ func _ensure_runtime_body_animations() -> void:
 	if runtime_frames == null:
 		return
 	var changed := false
+	changed = _register_melee_fast_chain_body_animations(
+		runtime_frames
+	) or changed
 	if not runtime_frames.has_animation(RANGED_FIRE_WALK_ANIMATION):
 		var fire_walk_texture: Texture2D = _load_optional_texture(ranged_2h_fire_walk_sheet_path, null)
 		if fire_walk_texture != null:
@@ -7782,6 +8306,56 @@ func _ensure_runtime_body_animations() -> void:
 	if changed:
 		animated_sprite.sprite_frames = runtime_frames
 	_ensure_dodge_fx_animation()
+
+
+func _register_melee_fast_chain_body_animations(
+	runtime_frames: SpriteFrames
+) -> bool:
+	var changed := false
+	for animation_variant: Variant in MELEE_FAST_CHAIN_BODY_SHEETS:
+		var animation_name := StringName(animation_variant)
+		var spec := (
+			MELEE_FAST_CHAIN_BODY_SHEETS[animation_name]
+			as Dictionary
+		)
+		var texture := _load_optional_texture(
+			String(spec.get("path", "")),
+			null
+		)
+		if texture == null:
+			continue
+		var frame_count := int(spec.get("frames", 0))
+		var expected_size := Vector2i(
+			MELEE_FAST_CHAIN_FRAME_SIZE.x * frame_count,
+			MELEE_FAST_CHAIN_FRAME_SIZE.y
+		)
+		var actual_size := Vector2i(
+			texture.get_width(),
+			texture.get_height()
+		)
+		if actual_size != expected_size:
+			_obs_warning(
+				"Operator fast-chain strip has invalid dimensions",
+				{
+					"animation": String(animation_name),
+					"path": String(spec.get("path", "")),
+					"expected": expected_size,
+					"actual": actual_size,
+				}
+			)
+			continue
+		if runtime_frames.has_animation(animation_name):
+			runtime_frames.remove_animation(animation_name)
+		_add_sheet_animation(
+			runtime_frames,
+			String(animation_name),
+			texture,
+			frame_count,
+			false,
+			MELEE_FAST_CHAIN_FPS
+		)
+		changed = true
+	return changed
 
 
 func _ensure_optional_sheet_animation(
@@ -8419,7 +8993,7 @@ func set_portal_transition_locked(locked: bool) -> void:
 	if locked:
 		velocity = Vector2.ZERO
 		is_sprinting = false
-		_clear_attack_buffer()
+		_reset_fast_chain()
 
 
 func set_arrn_stabilization_locked(locked: bool) -> void:
@@ -8427,7 +9001,7 @@ func set_arrn_stabilization_locked(locked: bool) -> void:
 	if locked:
 		velocity = Vector2.ZERO
 		is_sprinting = false
-		_clear_attack_buffer()
+		_reset_fast_chain()
 
 
 func _get_weapon_animation_name(weapon_definition, key: String, fallback: StringName = &"") -> StringName:
@@ -9165,7 +9739,7 @@ func toggle_primary_carbine() -> void:
 	equip_primary_carbine()
 
 
-func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker_team: String = "enemy", attacker: Node2D = null, hit_direction: Vector2 = Vector2.ZERO, guard_stamina_cost_override: float = -1.0, attack_context: Dictionary = {}) -> Dictionary:
+func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", attacker_team: String = "enemy", attacker: Node2D = null, hit_direction: Vector2 = Vector2.ZERO, guard_stamina_cost_override: float = -1.0, attack_context: Dictionary = {}) -> Dictionary:
 	var health_before := current_health
 	var hit_context := attack_context.duplicate(true)
 	hit_context["damage_attempted"] = amount
@@ -9197,6 +9771,14 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker
 		resolved_hit_direction = -visual_idle_direction.normalized() if visual_idle_direction.length_squared() > 0.001 else Vector2.DOWN
 	hit_context["hit_direction"] = resolved_hit_direction
 	hit_context["hit_kind"] = hit_kind
+	hit_context["reclaim_eligible"] = (
+		attacker_team == "enemy"
+		or (
+			attacker != null
+			and is_instance_valid(attacker)
+			and attacker.is_in_group("enemy")
+		)
+	)
 
 	if try_parry_incoming_attack(attacker, resolved_hit_direction, {"damage": amount, "hit_kind": hit_kind}):
 		_log_incoming_hit_result(&"parried", hit_kind, amount, 0.0, attacker, hit_context)
@@ -9229,6 +9811,8 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker
 		var final_damage := float(guard_result.get("damage", amount))
 		if final_damage > 0.0:
 			hit_context["guard_blocked"] = true
+			hit_context["guard_chip"] = true
+			hit_context["reclaim_eligible"] = false
 			take_damage(final_damage, false, hit_context)
 		_log_incoming_hit_result(&"blocked", hit_kind, amount, final_damage, attacker, {
 			"guard_damage": final_damage,
@@ -9243,7 +9827,10 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker
 			"dodged": false,
 			"parried": false,
 			"blocked": true,
-			"applied_damage": max(0.0, final_damage),
+			"applied_damage": maxf(
+				0.0,
+				health_before - current_health
+			),
 			"target_health_before": health_before,
 			"target_health_after": current_health,
 		}
@@ -9261,7 +9848,10 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker
 			"parried": false,
 			"blocked": false,
 			"block_hitreact": true,
-			"applied_damage": max(0.0, amount),
+			"applied_damage": maxf(
+				0.0,
+				health_before - current_health
+			),
 			"target_health_before": health_before,
 			"target_health_after": current_health,
 		}
@@ -9279,7 +9869,7 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker
 		"dodged": false,
 		"parried": false,
 		"blocked": false,
-		"applied_damage": max(0.0, amount),
+		"applied_damage": maxf(0.0, health_before - current_health),
 		"target_health_before": health_before,
 		"target_health_after": current_health,
 	}
@@ -9313,6 +9903,16 @@ func take_damage(amount: float, trigger_reaction: bool = true, damage_context: D
 	current_health = health
 	health_changed.emit(current_health, max_health)
 	var applied_damage := maxf(0.0, health_before - health)
+	if health > 0.0:
+		var reclaim_context := damage_context.duplicate(true)
+		reclaim_context["target_health_before"] = health_before
+		_integrity_reclaim.call("configure", max_health)
+		_integrity_reclaim.call(
+			"record_incoming_damage",
+			applied_damage,
+			reclaim_context
+		)
+		_flush_integrity_reclaim_events()
 	_obs_accumulate(&"player_damage_amount_total", applied_damage)
 	if bool(damage_context.get("guard_blocked", false)):
 		_obs_accumulate(&"player_chip_damage_amount_total", applied_damage)
@@ -9360,6 +9960,8 @@ func take_damage(amount: float, trigger_reaction: bool = true, damage_context: D
 	_spawn_damage_popup(amount)
 
 	if health <= 0.0:
+		_integrity_reclaim.call("clear", &"death")
+		_flush_integrity_reclaim_events()
 		print("OPERATOR DOWN!")
 		_handle_death()
 		return
@@ -9674,8 +10276,7 @@ func finish_damage_reaction_presentation() -> void:
 
 
 func _interrupt_active_combat_for_damage_reaction() -> void:
-	_buffered_attack_kind = ""
-	_buffered_attack_timer = 0.0
+	_reset_fast_chain()
 	_melee_active = false
 	_melee_attack_kind = ""
 	_melee_attack_key = ""
@@ -9697,6 +10298,7 @@ func _interrupt_active_combat_for_damage_reaction() -> void:
 func _handle_death() -> void:
 	if _is_dead:
 		return
+	_reset_fast_chain()
 	var last_live_weapon_status := get_weapon_status()
 	_is_dead = true
 	if not _pending_ranged_shot.is_empty():
@@ -9785,6 +10387,7 @@ func _finish_death() -> void:
 	var gs = get_node_or_null("/root/GameState")
 	if gs and gs.game_over:
 		return
+	_reset_fast_chain()
 	health = max_health
 	current_health = health
 	stamina = stamina_max

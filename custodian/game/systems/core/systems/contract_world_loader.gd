@@ -46,8 +46,10 @@ const SUNDERED_KEEP_MAP_SCRIPT := preload("res://game/world/sundered_keep/sunder
 const WORLD_INGRESS_SITE_SCRIPT := preload("res://game/world/procgen/ingress/world_ingress_site.gd")
 const LEVEL_LOADER_SCRIPT := preload("res://game/world/levels/level_loader.gd")
 const WORLD_INGRESS_SPAWNER_SCRIPT := preload("res://game/world/levels/world_ingress_spawner.gd")
-const SUNDERED_KEEP_APPROACH_SCENE := preload("res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn")
-const SUNDERED_KEEP_TARGET_SCENE_PATH := "res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn"
+const SUNDERED_KEEP_WORLD_VISTA_SCENE := preload(
+	"res://game/world/vistas/sundered_keep/"
+	+ "sundered_keep_world_vista.tscn"
+)
 const SUNDERED_KEEP_LEVEL_ID := &"sundered_keep_front_gate"
 const WORLD_ORIGIN_BRANCH_GROUP := &"world_origin_branch"
 const SECTOR_TILE_PX := 24.0
@@ -1026,6 +1028,8 @@ func _place_gothic_compound_connection(level_data: Dictionary, map_instance: Nod
 
 
 func _place_sundered_keep_connection(level_data: Dictionary, map_instance: Node) -> void:
+	# Legacy non-registered fallback. Production uses the registered route and
+	# places its world-map Vista through _place_registered_world_ingresses().
 	var world := get_node_or_null(world_path) as Node2D
 	if world == null:
 		return
@@ -1052,7 +1056,6 @@ func _place_sundered_keep_connection(level_data: Dictionary, map_instance: Node)
 		return
 	ingress.name = "SunderedKeepIngressSite"
 	ingress.add_to_group("generated_sundered_keep_connection")
-	ingress.call("configure", &"sundered_keep", SUNDERED_KEEP_APPROACH_SCENE, SUNDERED_KEEP_TARGET_SCENE_PATH, &"")
 	var level_loader := _ensure_level_loader(world)
 	if level_loader != null:
 		ingress.call("configure_level", SUNDERED_KEEP_LEVEL_ID, map_instance)
@@ -1088,7 +1091,67 @@ func _place_registered_world_ingresses(level_data: Dictionary, map_instance: Nod
 		spawner.set("fallback_tile_size", fallback_tile_size)
 		world.add_child(spawner)
 	var loader := _ensure_level_loader(world)
-	spawner.call("place_all", level_data, map_instance, world, loader)
+	var placed_ingresses := (
+		spawner.call(
+			"place_all",
+			level_data,
+			map_instance,
+			world,
+			loader
+		) as Array
+	)
+	_place_sundered_keep_world_vista(
+		world,
+		placed_ingresses,
+		map_instance,
+		level_data
+	)
+
+
+func _place_sundered_keep_world_vista(
+	world: Node2D,
+	placed_ingresses: Array,
+	map_instance: Node,
+	level_data: Dictionary
+) -> void:
+	var landmarks := world.get_node_or_null("WorldLandmarks") as Node2D
+	if landmarks == null:
+		landmarks = Node2D.new()
+		landmarks.name = "WorldLandmarks"
+		landmarks.add_to_group(WORLD_ORIGIN_BRANCH_GROUP)
+		world.add_child(landmarks)
+	for child: Node in landmarks.get_children():
+		if child.is_in_group("generated_sundered_keep_world_vista"):
+			child.free()
+	for node_variant: Variant in placed_ingresses:
+		var ingress := node_variant as Node
+		if (
+			ingress == null
+			or not ingress.is_in_group(
+				"generated_sundered_keep_connection"
+			)
+		):
+			continue
+		var vista := (
+			SUNDERED_KEEP_WORLD_VISTA_SCENE.instantiate() as Node2D
+		)
+		if vista == null:
+			push_warning(
+				"[ContractWorldLoader] Could not instantiate "
+				+ "Sundered Keep world Vista"
+			)
+			return
+		vista.name = "SunderedKeepWorldVista"
+		vista.add_to_group("generated_sundered_keep_world_vista")
+		landmarks.add_child(vista)
+		if vista.has_method("configure"):
+			vista.call(
+				"configure",
+				ingress,
+				map_instance,
+				level_data
+			)
+		return
 
 
 func _ensure_level_loader(world: Node) -> Node:

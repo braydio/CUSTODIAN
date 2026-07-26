@@ -6,7 +6,9 @@ const Styles := preload("res://game/ui/theme/black_reliquary_styles.gd")
 const InventoryAssets := preload("res://game/ui/inventory/inventory_asset_catalog.gd")
 
 @onready var health_label: Label = get_node_or_null("Root/TopLeftVitals/Margin/Content/HealthLabel")
-@onready var health_bar: ProgressBar = get_node_or_null("Root/TopLeftVitals/Margin/Content/HealthBar")
+@onready var health_bar: ProgressBar = get_node_or_null("Root/TopLeftVitals/Margin/Content/HealthBarStack/HealthBar")
+@onready var reclaim_health_bar: ProgressBar = get_node_or_null("Root/TopLeftVitals/Margin/Content/HealthBarStack/ReclaimHealthBar")
+@onready var reclaim_toast: Label = get_node_or_null("Root/TopLeftVitals/Margin/Content/ReclaimToast")
 @onready var stamina_label: Label = get_node_or_null("Root/TopLeftVitals/Margin/Content/StaminaLabel")
 @onready var stamina_bar: ProgressBar = get_node_or_null("Root/TopLeftVitals/Margin/Content/StaminaBar")
 @onready var weapon_icon_frame: PanelContainer = get_node_or_null("Root/TopLeftVitals/Margin/Content/WeaponStatusRow/WeaponIconFrame")
@@ -28,6 +30,8 @@ const InventoryAssets := preload("res://game/ui/inventory/inventory_asset_catalo
 
 var _health_current := 100
 var _health_max := 100
+var _reclaim_restore_serial := 0
+var _reclaim_toast_tween: Tween = null
 var _last_weapon_status_text := ""
 var _last_weapon_icon: Texture2D = null
 var _weapon_pressure_state: StringName = &"normal"
@@ -90,9 +94,66 @@ func set_health(current: int, max_value: int) -> void:
 		health_bar.max_value = 100.0
 		health_bar.value = clampf(ratio * 100.0, 0.0, 100.0)
 		health_bar.show_percentage = false
-		health_bar.add_theme_stylebox_override("background", Styles.bar_background_style())
+		var transparent_background := StyleBoxFlat.new()
+		transparent_background.bg_color = Color.TRANSPARENT
+		health_bar.add_theme_stylebox_override(
+			"background",
+			transparent_background
+		)
 		health_bar.add_theme_stylebox_override("fill", Styles.bar_fill_style(Palette.DANGER))
 	_forward_inventory_status("set_health", [current, max_value])
+
+
+func set_integrity_reclaim(
+	current: float,
+	max_value: float,
+	recoverable: float
+) -> void:
+	if reclaim_health_bar == null:
+		return
+	var safe_max := maxf(1.0, max_value)
+	reclaim_health_bar.max_value = 100.0
+	reclaim_health_bar.value = clampf(
+		(current + maxf(0.0, recoverable)) / safe_max * 100.0,
+		0.0,
+		100.0
+	)
+	reclaim_health_bar.show_percentage = false
+	reclaim_health_bar.add_theme_stylebox_override(
+		"background",
+		Styles.bar_background_style()
+	)
+	reclaim_health_bar.add_theme_stylebox_override(
+		"fill",
+		Styles.bar_fill_style(Palette.BLUE_TECH.lightened(0.28))
+	)
+
+
+func _show_reclaim_restore(amount: float) -> void:
+	if reclaim_toast == null or amount < 1.0:
+		return
+	if _reclaim_toast_tween != null \
+	and _reclaim_toast_tween.is_valid():
+		_reclaim_toast_tween.kill()
+	reclaim_toast.text = "RECLAIM +%d" % int(round(amount))
+	reclaim_toast.modulate = Color.WHITE
+	reclaim_toast.visible = true
+	reclaim_toast.add_theme_color_override(
+		"font_color",
+		Palette.BLUE_TECH.lightened(0.28)
+	)
+	_reclaim_toast_tween = create_tween()
+	_reclaim_toast_tween.tween_interval(0.35)
+	_reclaim_toast_tween.tween_property(
+		reclaim_toast,
+		"modulate:a",
+		0.0,
+		0.30
+	)
+	_reclaim_toast_tween.tween_callback(
+		func() -> void:
+			reclaim_toast.visible = false
+	)
 
 
 func set_stamina_status(text: String, percent: float, show_percent: bool = true) -> void:
@@ -220,6 +281,18 @@ func _ensure_weapon_feedback_connection(operator_ref: Node) -> void:
 		if _feedback_operator.is_connected("dodge_charge_cancelled", old_dodge_callable):
 			_feedback_operator.disconnect("dodge_charge_cancelled", old_dodge_callable)
 	_feedback_operator = operator_ref
+	if _feedback_operator != null \
+	and _feedback_operator.has_method(
+		"get_integrity_reclaim_status"
+	):
+		var reclaim_status := (
+			_feedback_operator.call(
+				"get_integrity_reclaim_status"
+			) as Dictionary
+		)
+		_reclaim_restore_serial = int(
+			reclaim_status.get("restore_serial", 0)
+		)
 	if _feedback_operator != null and _feedback_operator.has_signal("weapon_feedback_event"):
 		_feedback_operator.connect("weapon_feedback_event", Callable(self, "_on_weapon_feedback_event"))
 	if _feedback_operator != null and _feedback_operator.has_signal("dodge_charge_cancelled"):
@@ -399,6 +472,33 @@ func _refresh_operator_status() -> void:
 		max_value = int(round(float(operator_ref.get("max_health"))))
 	if current != _health_current or max_value != _health_max:
 		set_health(current, max_value)
+	if operator_ref.has_method("get_integrity_reclaim_status"):
+		var reclaim_status := (
+			operator_ref.call("get_integrity_reclaim_status")
+			as Dictionary
+		)
+		set_integrity_reclaim(
+			float(operator_ref.call("get_health"))
+				if operator_ref.has_method("get_health")
+				else float(current),
+			float(operator_ref.call("get_max_health"))
+				if operator_ref.has_method("get_max_health")
+				else float(max_value),
+			float(reclaim_status.get("active_amount", 0.0))
+		)
+		var restore_serial := int(
+			reclaim_status.get("restore_serial", 0)
+		)
+		if restore_serial > _reclaim_restore_serial:
+			_reclaim_restore_serial = restore_serial
+			_show_reclaim_restore(
+				float(
+					reclaim_status.get(
+						"last_restore_amount",
+						0.0
+					)
+				)
+			)
 	if operator_ref.has_method("get_sprint_status"):
 		var sprint_status: Dictionary = operator_ref.call("get_sprint_status")
 		var stamina_max: float = max(1.0, float(sprint_status.get("stamina_max", 1.0)))

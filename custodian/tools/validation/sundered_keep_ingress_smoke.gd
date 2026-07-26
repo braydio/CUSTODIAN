@@ -77,6 +77,20 @@ func _init() -> void:
 	if not _origin_sector_has_wall_collision(world, sectors):
 		errors.append("origin sector fixture did not create its expected wall collision")
 	var ingress := world.get_node_or_null("SunderedKeepIngressSite") as Area2D
+	var landmarks := world.get_node_or_null("WorldLandmarks") as Node2D
+	var vista := (
+		landmarks.get_node_or_null("SunderedKeepWorldVista") as Node2D
+		if landmarks != null
+		else null
+	)
+	if landmarks == null:
+		errors.append("WorldLandmarks branch missing")
+	elif not landmarks.is_in_group(&"world_origin_branch"):
+		errors.append("WorldLandmarks missing world_origin_branch")
+	if vista == null:
+		errors.append("generated Sundered Keep world Vista missing")
+	elif not vista.is_in_group("generated_sundered_keep_world_vista"):
+		errors.append("world Vista missing generated landmark group")
 	if ingress == null:
 		errors.append("SunderedKeepIngressSite missing")
 	else:
@@ -86,12 +100,51 @@ func _init() -> void:
 			errors.append("SunderedKeepIngressSite is not configured exclusively for the route")
 		if String(ingress.get("route_profile")) != "production":
 			errors.append("SunderedKeepIngressSite route profile is not production")
-		if String(ingress.get("prompt_text")) == "ENTER SUNDERED KEEP":
-			errors.append("SunderedKeepIngressSite still uses generic direct gate prompt")
+		if String(ingress.get("prompt_text")) != "ENTER SUNDERED KEEP":
+			errors.append("SunderedKeepIngressSite does not identify the real Keep ingress")
 		var actor := Node2D.new()
 		actor.name = "Operator"
 		actor.add_to_group("player")
 		world.add_child(actor)
+		var route_manager := world.get_node_or_null("RouteTraversalManager")
+		if route_manager == null:
+			errors.append("registered ingress did not create RouteTraversalManager")
+		elif route_manager.call("has_active_route"):
+			errors.append("world Vista started a route before ingress crossing")
+		var actor_parent := actor.get_parent()
+		var actor_start := actor.global_position
+		if vista != null:
+			var apex := vista.get_node("CameraApex") as Marker2D
+			var return_complete := vista.get_node(
+				"CameraReturnComplete"
+			) as Marker2D
+			actor.global_position = apex.global_position
+			vista.call("_process", 0.0)
+			var apex_state := (
+				vista.call("get_world_vista_debug_state") as Dictionary
+			)
+			if not is_equal_approx(
+				float(apex_state.get("camera_weight", 0.0)),
+				1.0
+			):
+				errors.append("world Vista did not reach its physical camera apex")
+			if runtime_container != null and (
+				not runtime_container.visible
+				or runtime_container.process_mode == Node.PROCESS_MODE_DISABLED
+			):
+				errors.append("world Vista hid or disabled ProcGenRuntime")
+			if route_manager != null and route_manager.call("has_active_route"):
+				errors.append("world Vista acquired route authority")
+			actor.global_position = return_complete.global_position
+			vista.call("_process", 0.0)
+			var return_state := (
+				vista.call("get_world_vista_debug_state") as Dictionary
+			)
+			if float(return_state.get("camera_weight", 1.0)) > 0.001:
+				errors.append("world Vista camera envelope did not return to gameplay")
+			if actor.get_parent() != actor_parent:
+				errors.append("world Vista reparented Operator")
+			actor.global_position = actor_start
 		ingress.call("_enter_approach", actor)
 		await process_frame
 		var level_loader := world.get_node_or_null("LevelLoader")
@@ -100,11 +153,10 @@ func _init() -> void:
 			approach = level_loader.call("get_active_level_instance") as Node
 		if approach == null:
 			errors.append("WorldIngressSite did not enter the registered authored route")
-		elif String(level_loader.call("get_active_level_id")) != "sundered_keep_vista_approach":
+		elif String(level_loader.call("get_active_level_id")) != "sundered_keep_front_gate":
 			errors.append("LevelLoader active level ID is wrong")
-		var route_manager := world.get_node_or_null("RouteTraversalManager")
-		if route_manager == null or String(route_manager.call("get_current_node_id")) != "vista_approach":
-			errors.append("production ingress did not start the Vista route node")
+		if route_manager == null or String(route_manager.call("get_current_node_id")) != "front_gate":
+			errors.append("production ingress did not start the Front Gate route node")
 		if runtime_container != null and runtime_container.visible:
 			errors.append("WorldIngressSite did not hide ProcGenRuntime while approach is active")
 		if runtime_container != null \
@@ -114,31 +166,13 @@ func _init() -> void:
 			errors.append("WorldIngressSite did not hide ConnectedMaps while approach is active")
 		if connected_maps.process_mode != Node.PROCESS_MODE_DISABLED:
 			errors.append("WorldIngressSite did not disable ConnectedMaps processing while approach is active")
-		_assert_origin_sector_isolated(sectors, "Vista", errors)
+		_assert_origin_sector_isolated(sectors, "Front Gate", errors)
 		await physics_frame
 		if _origin_sector_has_wall_collision(world, sectors):
-			errors.append("origin sector wall collision remained active during Vista")
+			errors.append("origin sector wall collision remained active during Front Gate")
 		if route_manager != null:
-			_transition_and_assert(
-				route_manager,
-				&"continue",
-				&"front_gate",
-				actor,
-				sectors,
-				"Vista -> Front Gate",
-				errors
-			)
-			_transition_and_assert(
-				route_manager,
-				&"backtrack",
-				&"vista_approach",
-				actor,
-				sectors,
-				"Front Gate -> Vista",
-				errors
-			)
-			if not bool(route_manager.call("request_exit", &"return_world", actor)):
-				errors.append("Vista route exfil to @world_origin failed")
+			if not bool(route_manager.call("request_exit", &"exfil", actor)):
+				errors.append("Front Gate route exfil to @world_origin failed")
 			if not sectors.visible \
 			or sectors.process_mode != Node.PROCESS_MODE_ALWAYS:
 				errors.append("origin sector was not restored exactly after route exfil")

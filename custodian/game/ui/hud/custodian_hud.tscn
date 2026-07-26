@@ -42,11 +42,36 @@ theme_override_constants/separation = 4
 layout_mode = 2
 text = "HEALTH 100/100"
 
-[node name="HealthBar" type="ProgressBar" parent="Root/TopLeftVitals/Margin/Content"]
+[node name="HealthBarStack" type="Control" parent="Root/TopLeftVitals/Margin/Content"]
 custom_minimum_size = Vector2(180, 10)
 layout_mode = 2
+
+[node name="ReclaimHealthBar" type="ProgressBar" parent="Root/TopLeftVitals/Margin/Content/HealthBarStack"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 value = 100.0
 show_percentage = false
+
+[node name="HealthBar" type="ProgressBar" parent="Root/TopLeftVitals/Margin/Content/HealthBarStack"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+value = 100.0
+show_percentage = false
+
+[node name="ReclaimToast" type="Label" parent="Root/TopLeftVitals/Margin/Content"]
+custom_minimum_size = Vector2(180, 12)
+layout_mode = 2
+text = "RECLAIM +3"
+horizontal_alignment = 2
+visible = false
 
 [node name="StaminaLabel" type="Label" parent="Root/TopLeftVitals/Margin/Content"]
 layout_mode = 2

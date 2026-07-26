@@ -28,6 +28,7 @@ below; this document does not duplicate their runtime ownership.
 | Global attention/escalation | pending | No shared attention meter, alarm network, reinforcement pressure, or ritual acceleration from noise | This document |
 | Sidearm loadout tradeoff | complete-v1 | Recovered P-9 must occupy the Equipment-page sidearm slot; equipped P-9 replaces guard/parry with sidearm-ready | `COMBAT_FEEL_SYSTEM.md`, `SIDEARM_UNLOCK.md` |
 | Health | complete-v1 | Operator health, damage, death, hit recoil, and HUD/status display are live | `COMBAT_FEEL_SYSTEM.md` |
+| Integrity Reclaim | complete-v1 | Unblocked damage creates independently expiring recoverable integrity; confirmed direct hostile damage restores it at melee/critical/ranged efficiencies through the trailing health-bar segment | `OPERATOR_INTEGRITY_RECLAIM.md` |
 | Field Patch healing/restock | complete-v1 | Operator carries limited Field Patches, uses a timed commit heal, slows during use, restores 35% max health at commit, and interrupts before commit on damage or conflicting actions. Restock v1 is terminal/crafting based through `lattice_field_patch`, with emergency cache pickup fallback materials when full. | This document |
 | Stamina, dodge, guard, parry | complete-v1 | Dodge/heavy/parry costs, guard chip and stamina damage, timed parry, enemy stagger, and counter window are live | `COMBAT_FEEL_SYSTEM.md` |
 | Dedicated riposte/opened state | partial | Parry grants a counter damage window, but there is no unique riposte action or persistent enemy-opened state | This document |

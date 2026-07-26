@@ -1,9 +1,18 @@
 # Sundered Keep Vista Approach
 
-- **Status:** route-master playable Sundered Keep Vista node implemented in the production directed route
+- **Status:** superseded / debug-only under `legacy_vista_debug`
 - **Owner:** authored level / rendering / camera
 - **Runtime:** `custodian/` Godot 4.x
 - **Production runtime scene:** `custodian/game/world/approaches/sundered_keep/sundered_keep_approach.tscn`
+
+## Superseded Production Role
+
+The production landmark reveal now lives in the generated world. See
+`design/05_levels/SUNDERED_KEEP_WORLD_VISTA.md`.
+
+This authored approach remains loadable for focused visual experiments and
+historical validation only. It must not be restored to the production ingress
+without explicit design review.
 
 ## Summary
 
@@ -13,7 +22,7 @@ A playable first Sundered Keep slice built from the former approach scene. The p
 
 ## Runtime Ingress Chain
 
-Normal contract-world access uses the production directed route:
+The retained `legacy_vista_debug` profile uses:
 
 ```
 @world_origin
@@ -21,7 +30,10 @@ Normal contract-world access uses the production directed route:
   -> front_gate
 ```
 
-`ContractWorldLoader` owns placement of the procgen-side `WorldIngressSite`. `RouteTraversalManager` resolves the production graph in `content/routes/sundered_keep/sundered_keep_route.json`, while `LevelLoader` stages and activates Vista and the approved Front Gate level. The unfinished Return Causeway remains registered only for the isolated `causeway_only` debug profile and must not be promoted without explicit user review.
+Production bypasses this node and enters Front Gate directly. `RouteTraversalManager`
+and `LevelLoader` stage this scene only for `legacy_vista_debug`. The unfinished
+Return Causeway remains registered only for the isolated `causeway_only` debug
+profile and must not be promoted without explicit user review.
 
 `WorldIngressSite` captures every direct child of `World` assigned to `world_origin_branch`, then hides and processing-disables the captured branches for the full route session. The Operator, Camera2D, shared lighting, LevelLoader, and RouteTraversalManager remain persistent. Node-to-node traversal never restores origin content; exact captured branch visibility and process modes are restored only during route exfil to `@world_origin`.
 

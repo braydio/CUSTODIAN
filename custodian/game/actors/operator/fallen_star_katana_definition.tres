@@ -15,6 +15,7 @@ animation_map = {
 "melee_fast": "melee_2h_fast",
 "melee_fast_1": "melee_2h_fast_1",
 "melee_fast_2": "melee_2h_fast_2",
+"melee_fast_3": "melee_2h_fast_3",
 "melee_heavy": "melee_2h_heavy",
 "melee_stance": "melee_stance"
 }
@@ -28,21 +29,13 @@ hit_windows = {
 "frames": [2, 3, 4]
 },
 "melee_fast_1": {
-"directional_frames": {
-"2": ["north", "northeast"],
-"3": ["east", "southeast"],
-"4": ["south", "southwest", "west"]
-},
-"frames": [2, 3, 4]
+"frames": [5]
 },
 "melee_fast_2": {
-"directional_frames": {
-"2": ["south", "southeast"],
-"3": ["east", "northeast"],
-"4": ["north", "northwest"],
-"5": ["west"]
+"frames": [5]
 },
-"frames": [2, 3, 4, 5]
+"melee_fast_3": {
+"frames": [6]
 },
 "melee_heavy": {
 "directional_frames": {
@@ -59,12 +52,16 @@ fx_map = {
 "weapon_anim": "melee_2h_fast_weapon"
 },
 "melee_fast_1": {
-"fx_anim": "melee_2h_fast_1_fx",
-"weapon_anim": "melee_2h_fast_1_weapon"
+"fx_anim": "",
+"weapon_anim": ""
 },
 "melee_fast_2": {
-"fx_anim": "melee_2h_fast_2_fx",
-"weapon_anim": "melee_2h_fast_2_weapon"
+"fx_anim": "",
+"weapon_anim": ""
+},
+"melee_fast_3": {
+"fx_anim": "",
+"weapon_anim": ""
 },
 "melee_heavy": {
 "fx_anim": "melee_2h_heavy_fx",
@@ -89,3 +86,8 @@ weapon_socket_position_down = Vector2(11, -8)
 muzzle_socket_position_down = Vector2(24, -14)
 fast_attack_profile = ExtResource("4_fast_attack")
 heavy_attack_profile = ExtResource("5_heavy_attack")
+fast_chain_keys = PackedStringArray("melee_fast_1", "melee_fast_2", "melee_fast_3")
+fast_chain_commit_frames = PackedInt32Array(5, 5, 6)
+fast_chain_stamina_costs = PackedFloat32Array(7, 8, 10)
+fast_chain_loops = true
+fast_chain_has_integrated_recovery = true

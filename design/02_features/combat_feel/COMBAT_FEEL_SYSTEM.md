@@ -78,8 +78,14 @@ Implemented in first slice:
 
 Current chain model:
 
-- `fast -> fast/heavy` (buffered)
-- `heavy -> fast/heavy` (buffered)
+- Fallen Star Katana fast attacks use the authored-frame three-link contract in
+  `OPERATOR_MELEE_FAST_CHAIN.md`: `Fast 01 -> Fast 02 -> Fast 03 -> Fast 01`.
+- One distinct primary press advances one link; holding does not repeat.
+- The first queued fast/heavy command commits only at the configured visible
+  frame. A post-contact dodge waits for the final stance frame.
+- Legacy profiles without `fast_chain_keys` retain their existing time-based
+  buffered fast/heavy fallback.
+- `heavy -> fast/heavy` remains buffered through the shared legacy profile.
 
 ### Animation requirements
 
@@ -100,12 +106,17 @@ Required events:
 
 Current runtime hookup:
 
-- `operator_runtime_frames.tres` fast melee attack uses `res://assets/sprites/operator/runtime/body/melee_fast/melee_fast_baked_operator_only.png`
-- fast attack weapon overlay uses `res://assets/sprites/operator/runtime/body/melee_fast/melee_fast_baked_katana.png`
-- fast attack FX overlay uses `res://assets/sprites/operator/runtime/body/melee_fast/melee_fast_baked_katana_effects.png`
+- The Katana source master is the verified `3432x96` 22-frame strip under
+  `content/sprites/operator/new_operator/modular/chain_attack/`.
+- Runtime body slices are `7/7/8` frames under
+  `content/sprites/operator/runtime/body/melee_1h/` and register dynamically as
+  three non-looping 18 FPS animations.
+- The master already bakes body, weapon, and effect presentation, so the three
+  links do not also play separate weapon/FX overlays.
 - melee idle stance now uses the authored body clip `res://assets/sprites/operator/runtime/body/melee_2h/operator_body_melee_2h_stance.png`
 - socketed `fallen_star_katana` remains active for non-authored melee movement/fallback poses
-- fast melee hit confirm / impact spark timing is frame 5 of the authored strip (1-based)
+- Katana fast damage/commit indices are `5, 5, 6` (zero-based), with exactly
+  one damage event per link.
 
 #### Heavy attack
 

@@ -167,10 +167,7 @@ func _validate_route_quarantine() -> void:
 		profiles_by_id[str(profile.get("profile_id", ""))] = profile
 	var production: Dictionary = profiles_by_id.get("production", {})
 	var expected := [
-		"enter_vista",
-		"vista_to_keep_direct",
-		"vista_exfil",
-		"keep_to_vista_direct",
+		"enter_keep",
 		"keep_exfil",
 	]
 	_assert(

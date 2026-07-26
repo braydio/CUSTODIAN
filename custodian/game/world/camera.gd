@@ -168,6 +168,7 @@ var _locked_zoom: Vector2 = base_zoom
 var _presentation_framing_active := false
 var _presentation_offset := Vector2.ZERO
 var _presentation_zoom := Vector2.ONE
+var _presentation_bounds_override := Rect2()
 var _debug_free_camera_active := false
 var _debug_saved_state: Dictionary = {}
 
@@ -788,6 +789,7 @@ func reset_zoom():
 
 func set_runtime_map(map_instance: Node) -> void:
 	clear_presentation_framing(true)
+	clear_presentation_bounds_override()
 	if not is_in_group("camera"):
 		add_to_group("camera")
 	if operator_ref == null or not is_instance_valid(operator_ref):
@@ -807,6 +809,7 @@ func clear_presentation_framing(
 	_presentation_framing_active = false
 	_presentation_offset = Vector2.ZERO
 	_presentation_zoom = Vector2.ONE
+	_presentation_bounds_override = Rect2()
 
 	if restore_operator_follow:
 		if operator_ref == null or not is_instance_valid(operator_ref):
@@ -822,6 +825,32 @@ func clear_presentation_framing(
 	_target_bob = 0.0
 	_push_offset = Vector2.ZERO
 	_current_aim_camera_lead = Vector2.ZERO
+
+
+func set_presentation_bounds_override(bounds: Rect2) -> void:
+	if bounds.size.x <= 0.0 or bounds.size.y <= 0.0:
+		_presentation_bounds_override = Rect2()
+		return
+	_presentation_bounds_override = bounds
+
+
+func clear_presentation_bounds_override() -> void:
+	_presentation_bounds_override = Rect2()
+
+
+func get_presentation_bounds_override() -> Rect2:
+	return _presentation_bounds_override
+
+
+func calculate_visible_half_view(
+	viewport_size: Vector2,
+	camera_zoom: Vector2
+) -> Vector2:
+	var safe_zoom := Vector2(
+		maxf(camera_zoom.x, 0.001),
+		maxf(camera_zoom.y, 0.001)
+	)
+	return viewport_size * 0.5 / safe_zoom
 
 
 func get_runtime_map() -> Node:
@@ -921,29 +950,38 @@ func _rebuild_bounds_from_procgen() -> bool:
 
 
 func _clamp_to_bounds():
-	if map_bounds.size.x <= 0.0 or map_bounds.size.y <= 0.0:
+	var active_bounds := (
+		_presentation_bounds_override
+		if _presentation_bounds_override.size.x > 0.0
+			and _presentation_bounds_override.size.y > 0.0
+		else map_bounds
+	)
+	if active_bounds.size.x <= 0.0 or active_bounds.size.y <= 0.0:
 		return
 	var viewport_size = get_viewport_rect().size
 	if viewport_size.x <= 0.0 or viewport_size.y <= 0.0:
 		return
 	
-	var zoom_factor = clamp(zoom.x, 0.3, 1.0)
-	var half_view = viewport_size * 0.5 * zoom_factor
+	var half_view := calculate_visible_half_view(viewport_size, zoom)
 	var slack_ratio = clamp(edge_view_slack_ratio, 0.0, 0.95)
 	var clamp_half_view = half_view * (1.0 - slack_ratio)
 	
-	var x_min = map_bounds.position.x + clamp_half_view.x
-	var x_max = map_bounds.position.x + map_bounds.size.x - clamp_half_view.x
-	var y_min = map_bounds.position.y + clamp_half_view.y
-	var y_max = map_bounds.position.y + map_bounds.size.y - clamp_half_view.y
+	var x_min = active_bounds.position.x + clamp_half_view.x
+	var x_max = active_bounds.position.x + active_bounds.size.x - clamp_half_view.x
+	var y_min = active_bounds.position.y + clamp_half_view.y
+	var y_max = active_bounds.position.y + active_bounds.size.y - clamp_half_view.y
 	
 	if x_min > x_max:
-		global_position.x = map_bounds.position.x + map_bounds.size.x * 0.5
+		global_position.x = (
+			active_bounds.position.x + active_bounds.size.x * 0.5
+		)
 	else:
 		global_position.x = clamp(global_position.x, x_min, x_max)
 	
 	if y_min > y_max:
-		global_position.y = map_bounds.position.y + map_bounds.size.y * 0.5
+		global_position.y = (
+			active_bounds.position.y + active_bounds.size.y * 0.5
+		)
 	else:
 		global_position.y = clamp(global_position.y, y_min, y_max)
 

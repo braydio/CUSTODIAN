@@ -511,10 +511,23 @@ func _bind_exits(
 		seen[exit_id] = true
 		var resolved_node_id := node_id if not node_id.is_empty() else _node_id_for_instance(instance)
 		var matches: Array[RefCounted] = _active_route.call("resolve_exit", _active_session.profile_id, resolved_node_id, exit_id)
+		if matches.size() > 1:
+			return {
+				"succeeded": false,
+				"reason": (
+					"route exit %s resolves %d legal edges"
+					% [exit_id, matches.size()]
+				),
+			}
 		var enabled := matches.size() == 1
 		exit_node.set_route_enabled(enabled)
 		if not enabled:
-			push_error("[RouteTraversalManager] disabled exit %s: active profile resolves %d legal edges" % [exit_id, matches.size()])
+			_observe(&"route_exit_disabled", {
+				"route_id": String(_active_session.route_id),
+				"profile_id": String(_active_session.profile_id),
+				"node_id": String(resolved_node_id),
+				"exit_id": String(exit_id),
+			})
 		if enabled and not exit_node.transition_requested.is_connected(_on_exit_requested):
 			exit_node.transition_requested.connect(_on_exit_requested)
 		if enabled and arrival_actor != null:

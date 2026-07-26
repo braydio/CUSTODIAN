@@ -146,7 +146,13 @@ Every definition also declares lifecycle data:
 
 Definitions tagged `world_ingress` are eligible for procgen placement. Registry paths are sorted and duplicate paths/IDs are rejected.
 
-Sundered Keep is a registered route with distinct Vista Approach, Return Causeway, and Front Gate levels. Its route definition owns world ingress and production/debug profiles; each scene exposes only generic exits. Production connects Vista directly to Front Gate, while Return Causeway remains quarantined in `causeway_only`. The Front Gate definition points to the real Keep scene. Generated definitions default to `gameplay`, while the Vista node explicitly selects `vista_approach`.
+Sundered Keep is a registered route with distinct legacy Vista Approach, Return
+Causeway, and Front Gate levels. Its generated-world landmark is not a route
+node. Production connects world origin directly to Front Gate; Vista Approach
+and Return Causeway remain quarantined in `legacy_vista_debug` and
+`causeway_only`. The Front Gate definition points to the real Keep scene.
+Generated definitions default to `gameplay`, while the legacy Vista node
+explicitly selects `vista_approach`.
 
 The Front Gate also has a review-only underlay gameplay-tile mapper. It loads
 the same canonical underlay/collision pair as the collision mapper, presents a

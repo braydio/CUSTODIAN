@@ -24,8 +24,8 @@ func _run() -> void:
 	else:
 		if route.nodes.size() != 3:
 			errors.append("expected three route nodes")
-		if route.profiles.size() != 3:
-			errors.append("expected production, debug_direct_keep, and causeway_only profiles")
+		if route.profiles.size() != 4:
+			errors.append("expected production, legacy Vista, direct debug, and causeway profiles")
 		if route.call("get_node_definition", &"front_gate").level_id != &"sundered_keep_front_gate":
 			errors.append("front_gate node does not resolve the registered Keep level")
 	var source := _read_json("res://content/routes/sundered_keep/sundered_keep_route.json")
@@ -44,7 +44,8 @@ func _run() -> void:
 	var duplicate_exit := source.duplicate(true); var duplicate_edge: Dictionary = duplicate_exit.edges[2].duplicate(true)
 	duplicate_edge.edge_id = "duplicate_vista_exit"; duplicate_exit.edges.append(duplicate_edge); duplicate_exit.profiles[0].enabled_edge_ids.append("duplicate_vista_exit")
 	_expect_invalid(levels, duplicate_exit, "duplicate_exit", "duplicate exit mapping", errors)
-	var non_exfil_world := source.duplicate(true); non_exfil_world.edges[4].direction = "back"
+	var non_exfil_world := source.duplicate(true)
+	_find_edge(non_exfil_world, "vista_exfil").direction = "back"
 	_expect_invalid(levels, non_exfil_world, "non_exfil_world", "@world_origin target requires direction exfil", errors)
 	var extra_world_entry := source.duplicate(true); extra_world_entry.profiles[0].enabled_edge_ids.append("enter_causeway_debug")
 	_expect_invalid(levels, extra_world_entry, "extra_world_entry", "enables non-entry edge from @world_origin", errors)
@@ -52,6 +53,14 @@ func _run() -> void:
 	_expect_invalid(levels, bad_entry, "bad_entry", "entry edge must start", errors)
 	_expect_duplicate_route_id(levels, source, errors)
 	_finish(errors)
+
+
+func _find_edge(source: Dictionary, edge_id: String) -> Dictionary:
+	for edge_variant: Variant in source.get("edges", []):
+		var edge := edge_variant as Dictionary
+		if str(edge.get("edge_id", "")) == edge_id:
+			return edge
+	return {}
 
 
 func _expect_invalid(levels: RefCounted, data: Dictionary, suffix: String, expected: String, errors: Array[String]) -> void:

@@ -1,13 +1,17 @@
 # Sundered Keep Vista Approach Parallax
 
 **Project:** CUSTODIAN  
-**Status:** blocked — replacement plates require alpha validation and visual review  
+**Status:** archived experiment — not part of the production world Vista
 **Parent specification:** `design/05_levels/SUNDERED_KEEP_VISTA_APPROACH.md`
 
 ## Purpose
 
 Add presentation-only depth without changing the authored route, collision,
 progression, reveal timing, camera authority, or Grand Vista composition.
+
+Production uses the deliberately small layer set in
+`design/05_levels/SUNDERED_KEEP_WORLD_VISTA.md`. These supplementary plates
+must remain disabled unless a later reviewed feature explicitly adopts them.
 
 ## Current review gate
 

@@ -12,7 +12,7 @@
 
 A lightweight Route/Stage level-organization layer that wraps a linear sequence of authored scenes (stages) behind a single route controller. The world map and level registry know the route controller, not the substages. Each stage is a standalone scene under `routes/<route_name>/stages/`.
 
-This route is retired from the configured production ingress. It remains a smoke-covered prototype of the Route/Stage organization layer. The implementation is still **stage-cut based**: `LevelRoute` queue-frees one stage and instantiates the next. Production uses the continuous authored Vista Approach and must not reconnect this prototype without first converting it into a visually continuous authored route.
+This route is retired from the configured production ingress. It remains a smoke-covered prototype of the Route/Stage organization layer. The implementation is still **stage-cut based**: `LevelRoute` queue-frees one stage and instantiates the next. Production uses the generated-world landmark defined by `SUNDERED_KEEP_WORLD_VISTA.md` and must not reconnect this prototype.
 
 ## Architecture
 

@@ -110,6 +110,13 @@ const MeleeAttackProfile = preload("res://game/systems/combat/melee_attack_profi
 @export var fast_attack_profile: MeleeAttackProfile
 @export var heavy_attack_profile: MeleeAttackProfile
 
+@export_group("Melee Fast Chain")
+@export var fast_chain_keys: PackedStringArray = PackedStringArray()
+@export var fast_chain_commit_frames: PackedInt32Array = PackedInt32Array()
+@export var fast_chain_stamina_costs: PackedFloat32Array = PackedFloat32Array()
+@export var fast_chain_loops: bool = true
+@export var fast_chain_has_integrated_recovery: bool = false
+
 # === RUNTIME STATE ===
 @export_group("Runtime State")
 @export var current_magazine: int = 0

@@ -30,6 +30,7 @@ func _run() -> void:
 	_validate_registry(errors)
 	await _run_production_chain(errors)
 	await _run_debug_direct_keep(errors)
+	await _run_legacy_vista_debug(errors)
 	await _run_causeway_only(errors)
 	_finish(errors)
 
@@ -46,11 +47,12 @@ func _validate_registry(errors: Array[String]) -> void:
 		errors.append("route missing")
 		return
 	var expected := [
-		[&"production", &"@world_origin", &"enter", &"vista_approach"],
-		[&"production", &"vista_approach", &"continue", &"front_gate"],
-		[&"production", &"front_gate", &"backtrack", &"vista_approach"],
-		[&"production", &"vista_approach", &"return_world", &"@world_origin"],
-		[&"debug_direct_keep", &"vista_approach", &"continue", &"front_gate"],
+		[&"production", &"@world_origin", &"enter", &"front_gate"],
+		[&"production", &"front_gate", &"exfil", &"@world_origin"],
+		[&"debug_direct_keep", &"@world_origin", &"enter", &"front_gate"],
+		[&"legacy_vista_debug", &"@world_origin", &"enter", &"vista_approach"],
+		[&"legacy_vista_debug", &"vista_approach", &"continue", &"front_gate"],
+		[&"legacy_vista_debug", &"front_gate", &"backtrack", &"vista_approach"],
 		[&"causeway_only", &"@world_origin", &"enter", &"return_causeway"],
 		[&"causeway_only", &"return_causeway", &"backtrack", &"@world_origin"],
 	]
@@ -76,37 +78,12 @@ func _run_production_chain(errors: Array[String]) -> void:
 	var actor: CharacterBody2D = runtime.actor
 	runtime.ingress.set("_triggered", true)
 	runtime.ingress.call("_enter_approach", actor)
-	_assert_active(runtime, &"vista_approach", &"EntrySpawn", errors)
-	var first_vista: Node = loader.call("get_active_level_instance")
-
-	var physics_transitioned := await _trigger_physics_exit(
-		runtime,
-		&"continue",
-		&"front_gate",
-		errors
-	)
-	if not physics_transitioned:
-		_cleanup_runtime(runtime)
-		await process_frame
-		return
 	_assert_active(runtime, &"front_gate", &"EntrySpawn", errors)
-	if is_instance_valid(first_vista):
-		errors.append("Vista was retained after its forward destroy policy")
-	var first_front_gate: Node = loader.call("get_active_level_instance")
-	_transition(
-		runtime,
-		&"backtrack",
-		&"vista_approach",
-		&"ReturnTopdown",
-		errors
-	)
-	await process_frame
-	if is_instance_valid(first_front_gate):
-		errors.append("Front Gate was retained despite snapshot-and-unload policy")
 	var session: RefCounted = manager.call("get_active_session")
-	if session.cached_instances.has(&"return_causeway"):
-		errors.append("production activated or cached quarantined Return Causeway")
-	_transition_to_world(runtime, &"return_world", errors)
+	if session.cached_instances.has(&"return_causeway") \
+	or session.cached_instances.has(&"vista_approach"):
+		errors.append("production activated or cached a legacy route node")
+	_transition_to_world(runtime, &"exfil", errors)
 	_cleanup_runtime(runtime)
 	await process_frame
 
@@ -116,9 +93,27 @@ func _run_debug_direct_keep(errors: Array[String]) -> void:
 	var actor: Node = runtime.actor
 	runtime.ingress.set("_triggered", true)
 	runtime.ingress.call("_enter_approach", actor)
+	_assert_active(runtime, &"front_gate", &"EntrySpawn", errors)
+	_transition_to_world(runtime, &"exfil", errors)
+	_cleanup_runtime(runtime)
+	await process_frame
+
+
+func _run_legacy_vista_debug(errors: Array[String]) -> void:
+	var runtime := _build_runtime(&"legacy_vista_debug")
+	var actor: Node = runtime.actor
+	runtime.ingress.set("_triggered", true)
+	runtime.ingress.call("_enter_approach", actor)
 	_assert_active(runtime, &"vista_approach", &"EntrySpawn", errors)
 	_transition(runtime, &"continue", &"front_gate", &"EntrySpawn", errors)
-	_transition_to_world(runtime, &"exfil", errors)
+	_transition(
+		runtime,
+		&"backtrack",
+		&"vista_approach",
+		&"ReturnTopdown",
+		errors
+	)
+	_transition_to_world(runtime, &"return_world", errors)
 	_cleanup_runtime(runtime)
 	await process_frame
 
@@ -293,6 +288,10 @@ func _assert_active(
 		var should_be_enabled := expected_exit_ids.has(exit_node.exit_id)
 		var profile_id: StringName = manager.call("get_active_session").profile_id
 		if profile_id == &"causeway_only" and exit_node.exit_id == &"continue":
+			should_be_enabled = false
+		if profile_id in [&"production", &"debug_direct_keep"] \
+		and node_id == &"front_gate" \
+		and exit_node.exit_id == &"backtrack":
 			should_be_enabled = false
 		if exit_node.monitoring != should_be_enabled:
 			errors.append(

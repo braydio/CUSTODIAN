@@ -39,8 +39,11 @@
 
 ## Completion Handoff
 
-- Implemented production graph: `@world_origin → vista_approach → return_causeway → front_gate`; reverse graph: `front_gate → return_causeway → vista_approach → @world_origin`; Front Gate also has direct `exfil`.
-- Profiles: `production`, `debug_direct_keep`, and `causeway_only`.
+- **Superseded route note (2026-07-26):** production is now
+  `@world_origin → front_gate → @world_origin`; the Vista is a generated-world
+  landmark outside route traversal.
+- Historical Vista traversal remains under `legacy_vista_debug`; Return
+  Causeway remains under `causeway_only`.
 - Hardened guarantees: initial-entry post-commit rollback clears loader authority synchronously; Front Gate capture/restore is symmetric for scalar, siege-objective, and Great Hall ambush state; enabled profile topology rejects disconnected participants; scaffold route changes run full `RouteDefinition` validation before writing; and all production Sundered exits are authored scene nodes.
 - Validation boundary: run `tools/validation/run_route_pipeline_suite.sh`, the authored-level lifecycle matrix in `.github/workflows/godot-level-pipeline.yml`, project import, and `git diff --check`.
 - Blockers or open questions: none for V1; deferred work remains limited to the list above.

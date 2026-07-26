@@ -1117,6 +1117,9 @@ func _build_debug_player_snapshot(operator: Node) -> Dictionary:
 	var field_patch := {}
 	if operator.has_method("get_field_patch_status"):
 		field_patch = operator.call("get_field_patch_status")
+	var reclaim := {}
+	if operator.has_method("get_integrity_reclaim_status"):
+		reclaim = operator.call("get_integrity_reclaim_status")
 	return {
 		"name": operator.name,
 		"position": (operator as Node2D).global_position if operator is Node2D else Vector2.ZERO,
@@ -1125,6 +1128,11 @@ func _build_debug_player_snapshot(operator: Node) -> Dictionary:
 			int(field_patch.get("count", 0)),
 			int(field_patch.get("max", 0)),
 			" active" if bool(field_patch.get("active", false)) else "",
+		],
+		"integrity_reclaim": "%.2f (%d packets, %.2fs)" % [
+			float(reclaim.get("active_amount", 0.0)),
+			int(reclaim.get("packet_count", 0)),
+			float(reclaim.get("window_remaining", 0.0)),
 		],
 		"stamina": "%.0f/%.0f" % [float(sprint.get("stamina", 0.0)), float(sprint.get("stamina_max", 0.0))],
 		"sprinting": bool(sprint.get("is_sprinting", false)),

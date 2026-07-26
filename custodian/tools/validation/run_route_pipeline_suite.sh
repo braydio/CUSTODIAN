@@ -14,6 +14,7 @@ tests=(
   route_cache_policy_smoke.gd
   route_state_policy_smoke.gd
   route_exit_binding_smoke.gd
+  sundered_keep_world_vista_smoke.gd
   sundered_keep_route_graph_smoke.gd
   sundered_keep_route_state_smoke.gd
   sundered_keep_authored_exits_smoke.gd

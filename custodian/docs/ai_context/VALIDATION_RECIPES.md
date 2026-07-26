@@ -262,21 +262,25 @@ connection samples at each of 96, 136, and 176 pixels. The focused reaction smok
 
 For Sundered Keep asset wiring specifically:
 
-For the registered Sundered Keep ingress and active continuous approach:
+For the registered Sundered Keep world Vista and direct Front Gate ingress:
 
 ```bash
 cd custodian
 godot --headless --path . --script res://tools/validation/sundered_keep_ingress_smoke.gd
+godot --headless --path . --script res://tools/validation/sundered_keep_world_vista_smoke.gd
 godot --headless --path . --script res://tools/validation/world_origin_branch_contract_smoke.gd
-godot --headless --path . --script res://tools/validation/sundered_keep_approach_smoke.gd
-godot --headless --path . --script res://tools/validation/sundered_keep_first_vista_continuity_smoke.gd
-godot --headless --path . --script res://tools/validation/sundered_keep_vista_polish_smoke.gd
-godot --headless --path . --script res://tools/validation/sundered_keep_level_chain_smoke.gd
-godot --headless --path . --script res://tools/validation/sundered_keep_approach_collision_runtime_smoke.gd
-godot --headless --path . --script res://tools/validation/sundered_keep_approach_collision_mapper_smoke.gd
+bash tools/validation/run_route_pipeline_suite.sh
 ```
 
-The ingress smoke proves registered route entry, static-sector isolation across the direct Vista → Front Gate → Vista production path, and exact restoration only at `@world_origin`. The scene-contract smoke inspects `game.tscn` without running it and proves every base-world branch is classified while Operator, Camera2D, shared lighting, LevelLoader, and RouteTraversalManager remain persistent. The active approach smoke proves the Vista scene contains no misplaced Keep-specific runtime nodes/blocker, its backdrop covers camera bounds plus framing slack, the tight-entry and later gameplay camera targets are wired, raw progress cannot expose the first vista, and its authored endpoint affordance points to the Sundered Keep. The first-vista continuity smoke proves the storm/ocean base never crossfades, the isolated Keep remains vague early and persists after handback, fog retains 0.24 apex atmosphere and stays inside its 80–140 px peel budget, and Grand Vista/final-gate layers remain hidden during Camera 1. The broader Vista polish smoke covers the reversible Camera 1 anchor envelope, Camera 2 choreography, camera-relative layers, immobile playable/collision roots, Labyrinth depth lights, player-only roof fading/restoration, and final-fog coverage of the overscanned 1920×1080 exit view. The route graph smoke proves direct production Vista ↔ Front Gate traversal, Return Causeway quarantine, and the explicit `debug_direct_keep` and `causeway_only` profiles, loader/cache/camera/spawn authority, disabled exits, and a real physics-driven authored exit. The state and authored-exit smokes prove Front Gate unload/revisit symmetry without replayed side effects and that each authored scene owns its generic exit nodes.
+The world-Vista smoke proves a single forward/reverse physical camera envelope,
+procgen and Operator continuity, collision-free landmark ownership, temporary
+camera bounds, and correct zoomed-out coverage math. The ingress smoke proves
+the landmark starts no route and that only crossing the separate ingress hides
+origin branches and stages Front Gate. The route suite proves direct production
+entry/exfil, quarantine of `legacy_vista_debug` and `causeway_only`, loader and
+spawn authority, rollback, state policy, and authored exits. The old approach,
+continuity, parallax, and polish smokes remain legacy experiment regressions;
+they no longer define production acceptance.
 
 For the reusable authored-level scaffold and registry ingress pipeline:
 
@@ -377,6 +381,48 @@ godot --headless --script tools/validation/field_patch_smoke.gd
 ```
 
 This validates input binding, timed commit healing, interruption semantics, capped restock helpers, terminal fabrication restock, cap-blocked no-spend behavior, and emergency-cache fallback materials.
+
+For Operator Integrity Reclaim changes:
+
+```bash
+cd custodian
+godot --headless --path . \
+  --script res://tools/validation/operator_integrity_reclaim_smoke.gd
+godot --headless --path . \
+  --script res://tools/validation/field_patch_smoke.gd
+godot --headless --path . \
+  --script res://tools/validation/operator_primary_ranged_modular_fire_smoke.gd
+godot --headless --path . \
+  --script res://tools/validation/grunt_parry_crit_reaction_smoke.gd
+```
+
+The focused smoke proves exact reclaim math, independently expiring packets,
+second-hit forfeiture, eligible-source filtering, overkill and health ceilings,
+fatal clearing, healing clamp without timer refresh, HUD trailing-fill
+composition, and repeat-run fixed-step determinism. Adjacent smokes preserve
+Field Patch, projectile delivery, and paired-critical behavior.
+
+For Fallen Star Katana fast-chain changes:
+
+```bash
+cd custodian
+godot --headless --path . \
+  --script res://tools/validation/operator_melee_fast_chain_smoke.gd
+godot --headless --path . \
+  --script res://tools/validation/operator_modular_fast_attack_smoke.gd
+godot --headless --path . \
+  --script res://tools/validation/grunt_parry_crit_reaction_smoke.gd
+godot --headless --path . \
+  --script res://tools/validation/operator_charged_long_roll_smoke.gd
+```
+
+The focused smoke validates the verified `3432x96` master and distinct
+`7/7/8` runtime slices, 18 FPS non-looping registration, `1 -> 2 -> 3 -> 1`
+command order, frame `5/5/6` contact/commit authority, first-valid buffering,
+stamina, heavy and final-stance dodge branches, whiff continuation, one-hit
+dedupe, integrated recovery, Fast 03 feel hierarchy, reset causes, and the
+75-degree retarget limit. Adjacent smokes preserve legacy modular Fists,
+paired-critical, and dodge behavior.
 
 For the native Godot lighting layer:
 

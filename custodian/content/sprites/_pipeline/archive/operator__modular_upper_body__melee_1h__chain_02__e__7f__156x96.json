@@ -1,0 +1,23 @@
+{
+  "source": "operator__modular_upper_body__melee_1h__chain_02__e__7f__156x96.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "operator/new_operator/modular/chain_02/operator__modular_upper_body__melee_1h__chain_02__e__7f__156x96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 7
+      }
+    }
+  ],
+  "frame_size": [
+    156,
+    96
+  ],
+  "remove_superseded": true,
+  "post_process": [
+    "operator_modular_runtime"
+  ]
+}

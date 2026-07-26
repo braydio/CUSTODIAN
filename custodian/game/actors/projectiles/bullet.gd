@@ -162,6 +162,7 @@ func _handle_body_hit(body: Node, impact_position: Vector2, surface_normal: Vect
 		else:
 			result_variant = body.call("receive_projectile_hit", get_scaled_damage(), team)
 		var was_blocked: bool = _extract_blocked_result(result_variant)
+		_report_operator_confirmed_damage(result_variant, body)
 		_apply_game_feel(body, 0.0)
 		if was_blocked:
 			_spawn_block_impact_at(impact_position)
@@ -181,7 +182,11 @@ func _handle_body_hit(body: Node, impact_position: Vector2, surface_normal: Vect
 		if crit_chance > 0.0 and randf() < crit_chance:
 			final_damage *= crit_multiplier
 		var bullet_hit_strength := CombatConstants.HitStrength.HEAVY if final_damage >= damage * 1.5 else CombatConstants.HitStrength.LIGHT
-		body.take_damage(final_damage, bullet_hit_strength)
+		var damage_result: Variant = body.take_damage(
+			final_damage,
+			bullet_hit_strength
+		)
+		_report_operator_confirmed_damage(damage_result, body)
 		_apply_game_feel(body, 60.0)
 		_spawn_impact_at(impact_position, surface_normal)
 		queue_free()
@@ -192,6 +197,49 @@ func _handle_body_hit(body: Node, impact_position: Vector2, surface_normal: Vect
 		queue_free()
 		return true
 	return false
+
+
+func _report_operator_confirmed_damage(
+	result_variant: Variant,
+	target: Node
+) -> void:
+	if team != "player" \
+	or shooter == null \
+	or not is_instance_valid(shooter) \
+	or not shooter.has_method("report_confirmed_damage_dealt") \
+	or not (result_variant is Dictionary):
+		return
+	var result := result_variant as Dictionary
+	shooter.call(
+		"report_confirmed_damage_dealt",
+		float(
+			result.get(
+				"applied_damage",
+				result.get("damage_applied", 0.0)
+			)
+		),
+		{
+			"reclaim_kind": &"ranged",
+			"hostile": bool(
+				result.get("eligible_hostile", false)
+			),
+			"passive": bool(result.get("passive", false)),
+			"structure": bool(
+				result.get(
+					"structure",
+					target is StaticBody2D
+				)
+			),
+			"target_was_alive": bool(
+				result.get("target_was_alive", false)
+			),
+			"deflected": bool(result.get("deflected", false)),
+			"invulnerable": bool(
+				result.get("invulnerable", false)
+			),
+			"direct": true,
+		}
+	)
 
 
 func get_scaled_damage() -> float:

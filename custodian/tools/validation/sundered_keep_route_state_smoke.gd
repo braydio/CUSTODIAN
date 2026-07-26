@@ -240,7 +240,7 @@ func _build_runtime() -> Dictionary:
 	var ingress := INGRESS.new()
 	ingress.name = "RouteIngress"
 	ingress.ingress_id = &"sundered_keep"
-	ingress.configure_route(&"sundered_keep", &"production", procgen)
+	ingress.configure_route(&"sundered_keep", &"legacy_vista_debug", procgen)
 	world.add_child(ingress)
 	return {
 		"game_root": game_root,

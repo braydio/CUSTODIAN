@@ -8,10 +8,10 @@ func _init() -> void:
 	var route: RefCounted = routes.get_route(&"sundered_keep")
 	if route == null: errors.append("Sundered route missing")
 	else:
-		var production: Array[RefCounted] = route.resolve_exit(&"production", &"vista_approach", &"continue")
-		var debug: Array[RefCounted] = route.resolve_exit(&"debug_direct_keep", &"vista_approach", &"continue")
-		if production.size() != 1 or production[0].to_node_id != &"front_gate": errors.append("production Vista continue did not resolve directly to Front Gate")
-		if debug.size() != 1 or debug[0].to_node_id != &"front_gate": errors.append("debug Vista continue did not resolve to Front Gate")
+		var production: Array[RefCounted] = route.resolve_exit(&"production", &"@world_origin", &"enter")
+		var legacy: Array[RefCounted] = route.resolve_exit(&"legacy_vista_debug", &"vista_approach", &"continue")
+		if production.size() != 1 or production[0].to_node_id != &"front_gate": errors.append("production ingress did not resolve directly to Front Gate")
+		if legacy.size() != 1 or legacy[0].to_node_id != &"front_gate": errors.append("legacy Vista continue did not resolve to Front Gate")
 	finish(errors)
 func finish(errors: Array[String]) -> void:
 	if errors.is_empty(): print("[RouteProfileSelectionSmoke] PASS"); quit(0); return

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://buhaxmyqtdmlt"
-path="res://.godot/imported/operator__modular_upper_body__melee_1h__fast_attack_chain_01__e__8f__96.png-96476d19bdbc437f9067b4459ab9c03f.ctex"
+uid="uid://oewvt7go2wya"
+path="res://.godot/imported/operator__modular_ranged_weapon__melee_1h__chain_01__e__9f__156x96.png-59b4c58bea35005fe07a0b46c6a8613e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/_pipeline/inbox/operator__modular_upper_body__melee_1h__fast_attack_chain_01__e__8f__96.png"
-dest_files=["res://.godot/imported/operator__modular_upper_body__melee_1h__fast_attack_chain_01__e__8f__96.png-96476d19bdbc437f9067b4459ab9c03f.ctex"]
+source_file="res://content/sprites/_pipeline/archive/operator__modular_ranged_weapon__melee_1h__chain_01__e__9f__156x96.png"
+dest_files=["res://.godot/imported/operator__modular_ranged_weapon__melee_1h__chain_01__e__9f__156x96.png-59b4c58bea35005fe07a0b46c6a8613e.ctex"]
 
 [params]
 
