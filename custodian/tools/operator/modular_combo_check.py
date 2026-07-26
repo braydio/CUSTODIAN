@@ -70,9 +70,10 @@ from PIL import Image, ImageDraw, ImageFont
 HASH_SHEET_RE = re.compile(r"__[0-9a-f]{8}__sheet$", re.IGNORECASE)
 SHEET_RE = re.compile(r"__sheet$", re.IGNORECASE)
 
+MODULAR_PART_RE = r"(?P<part>lower|upper|head|upper_fx|wardrobe_cape|ranged_weapon|sidearm)(?:_body)?"
 MODULAR_NAME_RE = re.compile(
     r"^(?P<actor>.+?)"
-    r"__modular_(?P<part>lower|upper)_body"
+    r"__modular_" + MODULAR_PART_RE +
     r"__(?P<middle>.+)"
     r"__(?P<direction>ne|nw|se|sw|n|e|s|w)"
     r"__(?P<frames>\d+)f"
@@ -233,6 +234,7 @@ class PairJob:
     upper: Sheet
     output_id: str
     pair_mode: str
+    extra_layers: Optional[Dict[str, Sheet]] = None
 
 
 @dataclass
@@ -383,6 +385,18 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=Path(__file__).resolve().parents[3],
         help="CUSTODIAN repository root used for runtime discovery, outputs, and contract tooling.",
+    )
+
+    # ── Extra layers ─────────────────────────────────────────────────────
+    parser.add_argument(
+        "--extra-layers",
+        type=str,
+        default=None,
+        help=(
+            "Comma-separated extra modular layer directories to composite on top "
+            "of lower+upper. E.g. --extra-layers head,upper_fx,wardrobe_cape. "
+            "Each layer must exist as a directory under the runtime module root."
+        ),
     )
 
     # ── Chain flags ──────────────────────────────────────────────────────
@@ -539,6 +553,23 @@ def stage_runtime_domain(args: argparse.Namespace) -> Tuple[Path, List[str]]:
 
     copy_runtime_domain(lower_source, stage_root / "lower")
     copy_runtime_domain(upper_source, stage_root / "upper")
+
+    # Stage extra layers
+    extra_layer_names = []
+    if args.extra_layers:
+        extra_layer_names = [x.strip().lower() for x in args.extra_layers.split(",") if x.strip()]
+        for layer_name in extra_layer_names:
+            layer_root = runtime_root / layer_name
+            if layer_root.is_dir():
+                try:
+                    layer_source = resolve_runtime_directory(layer_root, args.domain, layer_name)
+                    copy_runtime_domain(layer_source, stage_root / layer_name)
+                    print(f"extra layer:  {layer_name} -> {layer_source}")
+                except RuntimeError:
+                    print(f"WARNING: no {layer_name} runtime directory for domain '{args.domain}', skipping.")
+            else:
+                print(f"WARNING: extra layer directory '{layer_name}' not found at {layer_root}, skipping.")
+
     inferred = inferred_domains_from_pngs(stage_root / "lower")
 
     print(f"runtime domain: {args.domain}")
@@ -581,6 +612,21 @@ def stage_runtime_direction(
             f"Direction '{direction}' needs runtime PNGs in both body layers; "
             f"found lower={lower_count}, upper={upper_count} below {runtime_root}."
         )
+
+    # Stage extra layers
+    extra_layer_names = []
+    if args.extra_layers:
+        extra_layer_names = [x.strip().lower() for x in args.extra_layers.split(",") if x.strip()]
+        for layer_name in extra_layer_names:
+            layer_root = runtime_root / layer_name
+            if layer_root.is_dir():
+                layer_count = copy_runtime_direction(layer_root, stage_root / layer_name, direction)
+                if layer_count > 0:
+                    print(f"extra layer:  {layer_name} ({layer_count} sheets)")
+                else:
+                    print(f"WARNING: no {layer_name} sheets for direction '{direction}', skipping.")
+            else:
+                print(f"WARNING: extra layer directory '{layer_name}' not found at {layer_root}, skipping.")
 
     inferred = inferred_domains_from_pngs(stage_root / "lower")
     print(f"runtime direction: {direction}")
@@ -674,7 +720,7 @@ def split_middle_for_upper_variant(part: str, middle: str) -> Tuple[Optional[str
     """
     chunks = middle.split("__")
 
-    if part in {"lower", "upper"} and len(chunks) >= 2:
+    if len(chunks) >= 2:
         variant = chunks[0]
         anim_id = "__".join(chunks[1:])
         return variant, anim_id
@@ -948,6 +994,7 @@ def find_pair_jobs(
     lower_sheets: List[Sheet],
     upper_sheets: List[Sheet],
     lower_domains: List[str],
+    extra_sheets: Optional[Dict[str, List[Sheet]]] = None,
 ) -> Tuple[List[PairJob], List[Dict]]:
     jobs: List[PairJob] = []
     missing: List[Dict] = []
@@ -963,6 +1010,17 @@ def find_pair_jobs(
             and lower.domain in lower_domains_set
         ]
 
+        # Match extra layers for this upper's direction/anim
+        matched_extras: Dict[str, Sheet] = {}
+        if extra_sheets:
+            for layer_name, layer_sheets in extra_sheets.items():
+                for ls in layer_sheets:
+                    if (ls.actor == upper.actor
+                            and ls.direction == upper.direction
+                            and ls.frame_w == upper.frame_w):
+                        matched_extras[layer_name] = ls
+                        break
+
         if upper.domain in lower_domains_set:
             exact = [
                 lower for lower in same_direction_candidates
@@ -977,6 +1035,7 @@ def find_pair_jobs(
                             upper=upper,
                             output_id="",
                             pair_mode="locomotion_exact",
+                            extra_layers=matched_extras if matched_extras else None,
                         )
                     )
                 continue
@@ -994,6 +1053,7 @@ def find_pair_jobs(
                             upper=upper,
                             output_id="",
                             pair_mode="locomotion_domain",
+                            extra_layers=matched_extras if matched_extras else None,
                         )
                     )
                 continue
@@ -1014,6 +1074,7 @@ def find_pair_jobs(
                         upper=upper,
                         output_id="",
                         pair_mode="action_fanout",
+                        extra_layers=matched_extras if matched_extras else None,
                     )
                 )
         else:
@@ -1031,6 +1092,7 @@ def find_pair_jobs(
 def find_direction_pair_jobs(
     lower_sheets: List[Sheet],
     upper_sheets: List[Sheet],
+    extra_sheets: Optional[Dict[str, List[Sheet]]] = None,
 ) -> Tuple[List[PairJob], List[Dict]]:
     """Pair all runtime sheets for one direction without action fan-out."""
     jobs: List[PairJob] = []
@@ -1052,6 +1114,18 @@ def find_direction_pair_jobs(
                 "reason": "No exact lower-body runtime counterpart for direction review.",
             })
             continue
+
+        # Match extra layers for this upper
+        matched_extras: Dict[str, Sheet] = {}
+        if extra_sheets:
+            for layer_name, layer_sheets in extra_sheets.items():
+                for ls in layer_sheets:
+                    if (ls.actor == upper.actor
+                            and ls.direction == upper.direction
+                            and ls.frame_w == upper.frame_w):
+                        matched_extras[layer_name] = ls
+                        break
+
         for lower in exact:
             matched_lower_ids.add(id(lower))
             jobs.append(
@@ -1060,6 +1134,7 @@ def find_direction_pair_jobs(
                     upper=upper,
                     output_id="",
                     pair_mode="runtime_direction_exact",
+                    extra_layers=matched_extras if matched_extras else None,
                 )
             )
 
@@ -1228,6 +1303,15 @@ def composite_pair(
 
     warnings = lower_warnings + upper_warnings
 
+    # Load extra layer images and metadata
+    extra_layers_data: Dict[str, Tuple[Image.Image, int, int]] = {}
+    if job.extra_layers:
+        for layer_name, layer_sheet in job.extra_layers.items():
+            layer_img = Image.open(layer_sheet.workspace_path).convert("RGBA")
+            layer_count, layer_fw, layer_warns = sheet_meta(layer_sheet.workspace_path, layer_img)
+            extra_layers_data[layer_name] = (layer_img, layer_count, layer_fw)
+            warnings.extend(layer_warns)
+
     output_count = choose_output_frame_count(
         lower_count=lower_count,
         upper_count=upper_count,
@@ -1240,8 +1324,15 @@ def composite_pair(
             f"output policy '{args.output_frame_policy}' -> {output_count} frames."
         )
 
-    canvas_w = max(lower_fw, upper_fw)
-    canvas_h = max(lower_img.height, upper_img.height)
+    # Canvas dimensions: max across all layers
+    all_frame_widths = [lower_fw, upper_fw]
+    all_heights = [lower_img.height, upper_img.height]
+    for layer_img, _, layer_fw in extra_layers_data.values():
+        all_frame_widths.append(layer_fw)
+        all_heights.append(layer_img.height)
+
+    canvas_w = max(all_frame_widths)
+    canvas_h = max(all_heights)
 
     strip = Image.new("RGBA", (canvas_w * output_count, canvas_h), (0, 0, 0, 0))
     frames: List[Image.Image] = []
@@ -1261,6 +1352,13 @@ def composite_pair(
 
         frame.alpha_composite(lower_frame, (lower_x, args.lower_offset_y))
         frame.alpha_composite(upper_frame, (upper_x, args.upper_offset_y))
+
+        # Composite extra layers
+        for layer_name, (layer_img, layer_count, layer_fw) in extra_layers_data.items():
+            layer_i = mapped_frame_index(out_i, layer_count, "loop")
+            layer_frame = layer_img.crop((layer_i * layer_fw, 0, (layer_i + 1) * layer_fw, layer_img.height))
+            layer_x = (canvas_w - layer_fw) // 2
+            frame.alpha_composite(layer_frame, (layer_x, 0))
 
         strip.alpha_composite(frame, (out_i * canvas_w, 0))
         frames.append(frame)
@@ -1289,6 +1387,7 @@ def composite_pair(
         "frame_width": canvas_w,
         "frame_height": canvas_h,
         "warnings": warnings,
+        "extra_layers": {name: sheet.workspace_path.name for name, sheet in (job.extra_layers or {}).items()},
     }, fit_debug_frames
 
 
@@ -1405,9 +1504,18 @@ def make_review_sheet(
     lower_count, lower_fw, _ = sheet_meta(job.lower.workspace_path, lower_img)
     upper_count, upper_fw, _ = sheet_meta(job.upper.workspace_path, upper_img)
 
+    # Load extra layer data for review
+    extra_review_data: List[Tuple[str, Image.Image, int, int]] = []
+    if job.extra_layers:
+        for layer_name, layer_sheet in job.extra_layers.items():
+            layer_img = Image.open(layer_sheet.workspace_path).convert("RGBA")
+            layer_count, layer_fw, _ = sheet_meta(layer_sheet.workspace_path, layer_img)
+            extra_review_data.append((layer_name, layer_img, layer_count, layer_fw))
+
+    n_rows = 3 + len(extra_review_data)  # lower + upper + combined + extras
     out = Image.new(
         "RGBA",
-        (label_w + pad + output_count * cell_w + pad, pad + 3 * row_h + pad),
+        (label_w + pad + output_count * cell_w + pad, pad + n_rows * row_h + pad),
         (18, 18, 22, 255),
     )
     draw = ImageDraw.Draw(out)
@@ -1415,7 +1523,6 @@ def make_review_sheet(
     rows = [
         ("lower", lower_img, lower_fw, lower_count, args.lower_frame_repeat),
         ("upper", upper_img, upper_fw, upper_count, args.upper_frame_repeat),
-        ("combined", None, frame_w, output_count, "hold"),
     ]
 
     for row_i, (label, source, fw, count, repeat) in enumerate(rows):
@@ -1423,14 +1530,10 @@ def make_review_sheet(
         draw.text((pad, y + 6), label, fill=(230, 230, 230, 255), font=font)
 
         for out_i in range(output_count):
-            if label == "combined":
-                frame = frames[out_i]
-                source_i = out_i
-            else:
-                source_i = mapped_frame_index(out_i, count, repeat)
-                frame = Image.new("RGBA", (frame_w, frame_h), (0, 0, 0, 0))
-                crop = source.crop((source_i * fw, 0, (source_i + 1) * fw, source.height))
-                frame.alpha_composite(crop, ((frame_w - fw) // 2, 0))
+            source_i = mapped_frame_index(out_i, count, repeat)
+            frame = Image.new("RGBA", (frame_w, frame_h), (0, 0, 0, 0))
+            crop = source.crop((source_i * fw, 0, (source_i + 1) * fw, source.height))
+            frame.alpha_composite(crop, ((frame_w - fw) // 2, 0))
 
             preview = on_checker(frame, scale)
             x = label_w + pad + out_i * cell_w
@@ -1446,6 +1549,37 @@ def make_review_sheet(
                 fill=(255, 255, 255, 255),
                 font=font,
             )
+
+    # Extra layer rows
+    for extra_idx, (layer_name, layer_img, layer_count, layer_fw) in enumerate(extra_review_data):
+        row_idx = 2 + extra_idx
+        y = pad + row_idx * row_h
+        draw.text((pad, y + 6), layer_name, fill=(180, 220, 255, 255), font=font)
+
+        for out_i in range(output_count):
+            source_i = mapped_frame_index(out_i, layer_count, "loop")
+            frame = Image.new("RGBA", (frame_w, frame_h), (0, 0, 0, 0))
+            if source_i < layer_count and (source_i * layer_fw) < layer_img.width:
+                crop = layer_img.crop((source_i * layer_fw, 0, (source_i + 1) * layer_fw, layer_img.height))
+                frame.alpha_composite(crop, ((frame_w - layer_fw) // 2, 0))
+
+            preview = on_checker(frame, scale)
+            x = label_w + pad + out_i * cell_w
+            out.alpha_composite(preview, (x, y))
+            draw.rectangle([x, y, x + preview.width - 1, y + preview.height - 1], outline=(100, 140, 180, 255))
+            draw.text((x + 3, y + 3), f"{out_i + 1}:{source_i + 1}", fill=(180, 220, 255, 255), font=font)
+
+    # Combined row (last row)
+    combined_row = 2 + len(extra_review_data)
+    y = pad + combined_row * row_h
+    draw.text((pad, y + 6), "combined", fill=(255, 230, 180, 255), font=font)
+    for out_i in range(output_count):
+        frame = frames[out_i]
+        preview = on_checker(frame, scale)
+        x = label_w + pad + out_i * cell_w
+        out.alpha_composite(preview, (x, y))
+        draw.rectangle([x, y, x + preview.width - 1, y + preview.height - 1], outline=(200, 180, 140, 255))
+        draw.text((x + 3, y + 3), f"{out_i + 1}", fill=(255, 230, 180, 255), font=font)
 
     return out
 
@@ -1610,12 +1744,21 @@ def write_html(
                 fit_html += f'<p style="color:#ff6b6b">{len(flagged)}/{len(record["fit_debug"])} frames exceed gap/center thresholds (±{gap_threshold}px / ±{center_threshold}px)</p>'
             fit_html += "<pre>" + "\n".join(html.escape(l) for l in fit_summary_lines) + "</pre></div>"
 
+        extra_layer_html = ""
+        if record.get("extra_layers"):
+            extra_items = "".join(
+                f"<li><b>{html.escape(name)}:</b> {html.escape(fname)}</li>"
+                for name, fname in record["extra_layers"].items()
+            )
+            extra_layer_html = f"<p><b>extra layers:</b></p><ul>{extra_items}</ul>"
+
         cards.append(f"""
 <section class="card">
   <h2>{html.escape(record["id"])}</h2>
   <p><b>mode:</b> <code>{html.escape(record["pair_mode"])}</code></p>
   <p><b>lower:</b> {html.escape(record["lower"])}</p>
   <p><b>upper:</b> {html.escape(record["upper"])}</p>
+  {extra_layer_html}
   <p><b>lower anim:</b> <code>{html.escape(record["lower_anim"])}</code> |
      <b>upper anim:</b> <code>{html.escape(record["upper_anim"])}</code> |
      <b>direction:</b> <code>{html.escape(record["direction"])}</code></p>
@@ -1897,15 +2040,31 @@ def main() -> int:
     lower_sheets, lower_warnings = gather_part_pngs(src, "lower", dirs["parts_lower"])
     upper_sheets, upper_warnings = gather_part_pngs(src, "upper", dirs["parts_upper"])
 
-    warnings = lower_warnings + upper_warnings
+    # Gather extra layers
+    extra_layer_names = []
+    extra_sheets: Dict[str, List[Sheet]] = {}
+    extra_warnings: List[str] = []
+    if args.extra_layers:
+        extra_layer_names = [x.strip().lower() for x in args.extra_layers.split(",") if x.strip()]
+        for layer_name in extra_layer_names:
+            layer_dir = dirs["root"] / "parts" / layer_name
+            layer_dir.mkdir(parents=True, exist_ok=True)
+            sheets, warns = gather_part_pngs(src, layer_name, layer_dir)
+            extra_sheets[layer_name] = sheets
+            extra_warnings.extend(warns)
+            if sheets:
+                print(f"extra layer '{layer_name}': {len(sheets)} sheets")
+
+    warnings = lower_warnings + upper_warnings + extra_warnings
 
     if selected_direction:
-        jobs, missing = find_direction_pair_jobs(lower_sheets, upper_sheets)
+        jobs, missing = find_direction_pair_jobs(lower_sheets, upper_sheets, extra_sheets or None)
     else:
         jobs, missing = find_pair_jobs(
             lower_sheets=lower_sheets,
             upper_sheets=upper_sheets,
             lower_domains=lower_domains,
+            extra_sheets=extra_sheets or None,
         )
 
     # ── Chain grouping ───────────────────────────────────────────────────

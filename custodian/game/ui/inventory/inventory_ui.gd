@@ -1406,7 +1406,7 @@ func _create_item_button(entry: Dictionary) -> Button:
 	var button := Button.new()
 	button.name = "Item_%s" % item_id
 	button.custom_minimum_size = _ledger_card_size()
-	button.tooltip_text = str(definition.get("description", ""))
+	button.tooltip_text = _build_item_tooltip(entry)
 	button.text = ""
 	button.set_meta("inventory_category", str(definition.get("category", "carried")))
 	button.set_meta("inventory_item_id", item_id)
@@ -1485,6 +1485,17 @@ func _create_item_button(entry: Dictionary) -> Button:
 	button.focus_exited.connect(_refresh_item_focus.bind(button))
 	_apply_item_button_style(button, category, item_id == _selected_item_id)
 	return button
+
+
+func _build_item_tooltip(entry: Dictionary) -> String:
+	var definition: Dictionary = entry.get("definition", {})
+	var display_name := str(definition.get("display_name", entry.get("item_id", "UNKNOWN ITEM"))).to_upper()
+	var category := str(definition.get("category", entry.get("category", "carried")))
+	var category_label := str(CATEGORY_LABELS.get(category, category.replace("_", " ").to_upper()))
+	var quantity := maxi(0, int(entry.get("quantity", 0)))
+	var description := str(definition.get("description", "")).strip_edges()
+	var header := "%s\n%s · QTY %d" % [display_name, category_label, quantity]
+	return header if description.is_empty() else "%s\n\n%s" % [header, description]
 
 
 func _update_item_icon_pivot(icon: TextureRect) -> void:

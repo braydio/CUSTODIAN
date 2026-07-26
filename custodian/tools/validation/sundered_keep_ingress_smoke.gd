@@ -122,28 +122,10 @@ func _init() -> void:
 			_transition_and_assert(
 				route_manager,
 				&"continue",
-				&"return_causeway",
-				actor,
-				sectors,
-				"Vista -> Causeway",
-				errors
-			)
-			_transition_and_assert(
-				route_manager,
-				&"continue",
 				&"front_gate",
 				actor,
 				sectors,
-				"Causeway -> Front Gate",
-				errors
-			)
-			_transition_and_assert(
-				route_manager,
-				&"backtrack",
-				&"return_causeway",
-				actor,
-				sectors,
-				"Front Gate -> Causeway",
+				"Vista -> Front Gate",
 				errors
 			)
 			_transition_and_assert(
@@ -152,7 +134,7 @@ func _init() -> void:
 				&"vista_approach",
 				actor,
 				sectors,
-				"Causeway -> Vista",
+				"Front Gate -> Vista",
 				errors
 			)
 			if not bool(route_manager.call("request_exit", &"return_world", actor)):

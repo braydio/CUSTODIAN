@@ -4,6 +4,11 @@ class_name SunderedKeepMap
 const TILE_SIZE := 32.0
 const DEFAULT_LEVEL_DATA_PATH := "res://content/levels/sundered_keep/sundered_keep_front_gate_large.json"
 const DEFAULT_SIEGE_CONFIG_PATH := "res://content/levels/sundered_keep/gatehouse_siege_config.json"
+const UNDERLAY_COLLISION_DATA_PATH := (
+	"res://content/levels/sundered_keep/"
+	+ "sundered_keep_underlay_collision.json"
+)
+const DEFAULT_UNDERLAY_RAIL_RADIUS := 18.0
 const SUNDERED_KEEP_ASSETS := preload("res://content/runtime/sundered_keep/sundered_keep_game32_assets.gd")
 const SUNDERED_KEEP_INTERACTABLE := preload("res://game/world/sundered_keep/sundered_keep_interactable.gd")
 const SUNDERED_KEEP_TILEMAP_LOADER := preload("res://game/world/sundered_keep/sundered_keep_tilemap_loader.gd")
@@ -144,6 +149,9 @@ var _level_underlay_sprite: Sprite2D = null
 var _level_underlay_rect_tiles := Rect2i()
 var _level_underlay_texture_path := ""
 var _level_authoring_mask_path := ""
+var _underlay_collision_data: Dictionary = {}
+var _mapped_underlay_collision: StaticBody2D = null
+var _approved_forward_progression_marker: Marker2D = null
 var _stats := {
 	"floors": 0,
 	"edges": 0,
@@ -470,6 +478,12 @@ func get_sundered_keep_debug_state() -> Dictionary:
 		"last_routekeeper_recovered": _last_routekeeper_trace_recovered,
 		"last_routekeeper_trace_tile": routekeeper_trace_tile,
 		"last_routekeeper_hint_tile": routekeeper_hint_tile,
+		"underlay_collision_data_path": UNDERLAY_COLLISION_DATA_PATH,
+		"underlay_collision_segments": (
+			_mapped_underlay_collision.get_child_count()
+			if _mapped_underlay_collision != null
+			else 0
+		),
 	}
 
 
@@ -629,6 +643,7 @@ func _build_from_level_data(data: Dictionary) -> void:
 	)
 	_create_layers_from_names(data.get("layers", []))
 	_build_level_underlay(data.get("underlay", {}))
+	_build_mapped_underlay_collision()
 	_build_ocean_backdrop()
 	_build_elevation_from_level_data(data)
 	_build_underpass_and_shore_regions(data)
@@ -639,6 +654,7 @@ func _build_from_level_data(data: Dictionary) -> void:
 	_build_interior_occlusion_regions(data)
 	for marker in data.get("markers", []):
 		_apply_marker(marker)
+	_apply_underlay_marker_tile_authority()
 	for interactable in data.get("interactables", []):
 		_apply_interactable(interactable)
 	for blocker in data.get("blockers", []):
@@ -650,6 +666,209 @@ func _build_from_level_data(data: Dictionary) -> void:
 	_build_siege_runtime_slice()
 	_build_traversal_stubs()
 	_add_return_gate()
+	_apply_underlay_marker_placements()
+
+
+func get_underlay_collision_data() -> Dictionary:
+	return _underlay_collision_data.duplicate(true)
+
+
+func get_underlay_authoring_marker_state() -> Dictionary:
+	var result := {}
+	var markers: Dictionary = _underlay_collision_data.get("markers", {})
+	for marker_id: String in markers.keys():
+		var marker_data := markers[marker_id] as Dictionary
+		result[marker_id] = marker_data.duplicate(true)
+		result[marker_id]["position"] = _array_to_vector2(
+			marker_data.get("position", []),
+			Vector2.ZERO
+		)
+	return result
+
+
+func _build_mapped_underlay_collision() -> void:
+	_underlay_collision_data = _load_underlay_collision_data()
+	if _underlay_collision_data.is_empty():
+		return
+	var expected_map_size := Vector2(map_size_tiles) * TILE_SIZE
+	var authored_map_size := _array_to_vector2(
+		_underlay_collision_data.get("map_size_pixels", []),
+		Vector2.ZERO
+	)
+	if not authored_map_size.is_equal_approx(expected_map_size):
+		push_warning(
+			"[SunderedKeep] Underlay collision map size %s disagrees with level size %s"
+			% [authored_map_size, expected_map_size]
+		)
+
+	var bounds_root := get_node_or_null("MappedUnderlayBounds") as Node2D
+	if bounds_root == null:
+		bounds_root = Node2D.new()
+		bounds_root.name = "MappedUnderlayBounds"
+		add_child(bounds_root)
+	for child: Node in bounds_root.get_children():
+		child.queue_free()
+
+	_mapped_underlay_collision = StaticBody2D.new()
+	_mapped_underlay_collision.name = "UnderlayBoundaryCollision"
+	_mapped_underlay_collision.collision_layer = 1
+	_mapped_underlay_collision.collision_mask = 1
+	bounds_root.add_child(_mapped_underlay_collision)
+
+	var radius := float(_underlay_collision_data.get(
+		"rail_radius",
+		DEFAULT_UNDERLAY_RAIL_RADIUS
+	))
+	var segments: Array = _underlay_collision_data.get("segments", [])
+	var segment_index := 1
+	for segment_variant: Variant in segments:
+		if not (segment_variant is Array):
+			continue
+		var segment := segment_variant as Array
+		if segment.size() < 2:
+			continue
+		_add_mapped_boundary_segment(
+			_mapped_underlay_collision,
+			"UnderlayBoundarySegment_%03d" % segment_index,
+			_array_to_vector2(segment[0], Vector2.ZERO),
+			_array_to_vector2(segment[1], Vector2.ZERO),
+			radius
+		)
+		segment_index += 1
+
+
+func _load_underlay_collision_data() -> Dictionary:
+	var file := FileAccess.open(UNDERLAY_COLLISION_DATA_PATH, FileAccess.READ)
+	if file == null:
+		push_error("[SunderedKeep] Missing mapped collision data: %s" % UNDERLAY_COLLISION_DATA_PATH)
+		return {}
+	var parsed: Variant = JSON.parse_string(file.get_as_text())
+	if not (parsed is Dictionary):
+		push_error("[SunderedKeep] Invalid mapped collision JSON: %s" % UNDERLAY_COLLISION_DATA_PATH)
+		return {}
+	var data := parsed as Dictionary
+	if str(data.get("schema", "")) != "custodian.sundered_keep.underlay_collision.v1":
+		push_error("[SunderedKeep] Unsupported mapped collision schema")
+		return {}
+	return data
+
+
+func _add_mapped_boundary_segment(
+	parent: StaticBody2D,
+	node_name: String,
+	a: Vector2,
+	b: Vector2,
+	radius: float
+) -> CollisionShape2D:
+	var direction := b - a
+	var length := direction.length()
+
+	var rail := CapsuleShape2D.new()
+	rail.radius = radius
+	rail.height = maxf(length + radius * 2.0, radius * 2.0)
+
+	var shape := CollisionShape2D.new()
+	shape.name = node_name
+	shape.shape = rail
+	shape.position = (a + b) * 0.5
+	if length > 0.001:
+		shape.rotation = direction.angle() - PI * 0.5
+	shape.set_meta("boundary_a", a)
+	shape.set_meta("boundary_b", b)
+	shape.set_meta("collision_authority", "underlay_mapper")
+	parent.add_child(shape)
+	return shape
+
+
+func _apply_underlay_marker_placements() -> void:
+	if _underlay_collision_data.is_empty():
+		return
+	var markers: Dictionary = _underlay_collision_data.get("markers", {})
+	_apply_marker_to_node(markers, "spawn", find_child("EntrySpawn", true, false) as Node2D)
+	_apply_marker_to_node(markers, "return_causeway", _route_backtrack_exit)
+	_apply_marker_to_node(markers, "gatehouse_key", _key_pickup_interaction)
+	_apply_marker_to_node(markers, "main_gate", _main_gate_interaction)
+
+	_approved_forward_progression_marker = get_node_or_null(
+		"ApprovedForwardProgressionExit"
+	) as Marker2D
+	if _approved_forward_progression_marker == null:
+		_approved_forward_progression_marker = Marker2D.new()
+		_approved_forward_progression_marker.name = "ApprovedForwardProgressionExit"
+		add_child(_approved_forward_progression_marker)
+	_apply_marker_to_node(
+		markers,
+		"level_exit",
+		_approved_forward_progression_marker
+	)
+
+	var enemy_marker_ids := ["enemy_spawn_west", "enemy_spawn_gate"]
+	for index in range(mini(enemy_marker_ids.size(), _siege_spawn_nodes.size())):
+		var marker_id: String = enemy_marker_ids[index]
+		var spawn_node := _siege_spawn_nodes[index]
+		_apply_marker_to_node(markers, marker_id, spawn_node)
+		var marker_data: Dictionary = markers.get(marker_id, {})
+		if marker_data.has("lane"):
+			spawn_node.set("lane", str(marker_data.get("lane", "")))
+
+
+func _apply_underlay_marker_tile_authority() -> void:
+	var markers: Dictionary = _underlay_collision_data.get("markers", {})
+	entrance_tile = _marker_tile(markers, "spawn", entrance_tile)
+	return_gate_tile = _marker_tile(
+		markers,
+		"return_causeway",
+		return_gate_tile
+	)
+	key_pickup_tile = _marker_tile(
+		markers,
+		"gatehouse_key",
+		key_pickup_tile
+	)
+	main_gate_tile = _marker_tile(markers, "main_gate", main_gate_tile)
+
+
+func _marker_tile(
+	markers: Dictionary,
+	marker_id: String,
+	fallback: Vector2i
+) -> Vector2i:
+	if not markers.has(marker_id):
+		return fallback
+	var marker_data := markers[marker_id] as Dictionary
+	var position := _array_to_vector2(marker_data.get("position", []), Vector2(fallback) * TILE_SIZE)
+	return Vector2i(floori(position.x / TILE_SIZE), floori(position.y / TILE_SIZE))
+
+
+func _apply_marker_to_node(
+	markers: Dictionary,
+	marker_id: String,
+	node: Node2D
+) -> void:
+	if node == null or not markers.has(marker_id):
+		return
+	var marker_data := markers[marker_id] as Dictionary
+	var authored_position := _array_to_vector2(
+		marker_data.get("position", []),
+		node.position
+	)
+	if not node.position.is_equal_approx(authored_position):
+		push_warning(
+			(
+				"[SunderedKeep] %s placement %s disagrees with reviewed mapper %s; "
+				+ "using mapper marker"
+			)
+			% [marker_id, node.position, authored_position]
+		)
+	node.position = authored_position
+	node.set_meta("underlay_marker_id", marker_id)
+	node.set_meta("placement_authority", "underlay_mapper")
+
+
+func _array_to_vector2(value: Variant, fallback: Vector2) -> Vector2:
+	if value is Array and (value as Array).size() >= 2:
+		return Vector2(float(value[0]), float(value[1]))
+	return fallback
 
 
 func _apply_level_op(op: Dictionary) -> void:
@@ -757,6 +976,9 @@ func _apply_blocker(op: Dictionary) -> void:
 		_main_gate_blockers.append(_add_blocker(rect, name))
 	elif role == "great_hall_door":
 		_great_hall_door_blockers.append(_add_blocker(rect, name))
+	elif not _underlay_collision_data.is_empty():
+		# Reviewed mapped rails own permanent architecture and route boundaries.
+		return
 	else:
 		_add_blocker(rect, name)
 
@@ -1630,7 +1852,8 @@ func _add_wall_tile(tile: Vector2i, tile_id: String) -> void:
 		_stats["walls"] = int(_stats["walls"]) + 1
 		_minimap_wall_cells[tile] = true
 		_minimap_floor_cells.erase(tile)
-	_add_blocker(Rect2i(tile, Vector2i.ONE), "WallBlocker")
+	if _underlay_collision_data.is_empty():
+		_add_blocker(Rect2i(tile, Vector2i.ONE), "WallBlocker")
 
 
 func _add_tile(layer_name: String, tile_id: String, category: String, tile: Vector2i) -> Sprite2D:

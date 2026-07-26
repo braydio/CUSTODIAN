@@ -1,8 +1,12 @@
 extends Node2D
 
 const UNDERLAY_DEBUG_SCENE := preload("res://scenes/debug/sundered_keep_production_underlay_debug.tscn")
-const UNDERLAY_DEBUG_SCRIPT_PATH := "res://scenes/debug/sundered_keep_production_underlay_debug.gd"
+const UNDERLAY_COLLISION_DATA_PATH := (
+	"res://content/levels/sundered_keep/"
+	+ "sundered_keep_underlay_collision.json"
+)
 const MAP_SIZE := Vector2(3584.0, 2560.0)
+const DEFAULT_RAIL_RADIUS := 18.0
 const MARKER_KINDS := [
 	"spawn",
 	"return_causeway",
@@ -237,49 +241,23 @@ func _copy_markers_to_clipboard() -> void:
 
 
 func _apply_draft_segments_to_underlay_collision_map() -> bool:
-	var lines := _format_draft_segment_lines()
-	if lines.is_empty():
+	if _draft_points.size() < 2:
 		push_warning("[SunderedKeepUnderlayCollisionMapper] No complete draft segments to apply")
 		return false
-
-	var script_path := ProjectSettings.globalize_path(UNDERLAY_DEBUG_SCRIPT_PATH)
-	if script_path.is_empty():
-		push_warning("[SunderedKeepUnderlayCollisionMapper] Could not resolve %s" % UNDERLAY_DEBUG_SCRIPT_PATH)
+	var data := _load_collision_document()
+	if data.is_empty():
 		return false
-	if not FileAccess.file_exists(script_path):
-		push_warning("[SunderedKeepUnderlayCollisionMapper] Missing underlay debug script: %s" % script_path)
+	var segments: Array = []
+	for index in range(1, _draft_points.size()):
+		segments.append([
+			_vector_to_array(_draft_points[index - 1]),
+			_vector_to_array(_draft_points[index]),
+		])
+	data["segments"] = segments
+	data["markers"] = _merged_marker_document(data.get("markers", {}) as Dictionary)
+	if not _write_collision_document(data):
 		return false
-
-	var file := FileAccess.open(script_path, FileAccess.READ)
-	if file == null:
-		push_warning("[SunderedKeepUnderlayCollisionMapper] Could not read underlay debug script: %s" % script_path)
-		return false
-	var text := file.get_as_text()
-	file.close()
-
-	var replacement := _format_underlay_boundary_segments_const(lines)
-	var existing_block := _extract_underlay_boundary_segments_block(text)
-	if existing_block.is_empty():
-		push_warning("[SunderedKeepUnderlayCollisionMapper] UNDERLAY_BOUNDARY_SEGMENTS block was not found")
-		return false
-	if existing_block == replacement:
-		print("[SunderedKeepUnderlayCollisionMapper] UNDERLAY_BOUNDARY_SEGMENTS already up to date with %d segment(s)" % lines.size())
-		_copy_segments_to_clipboard()
-		return true
-
-	var replaced := _replace_underlay_boundary_segments_block(text, replacement)
-	if replaced == text:
-		push_warning("[SunderedKeepUnderlayCollisionMapper] UNDERLAY_BOUNDARY_SEGMENTS block was not replaced")
-		return false
-
-	file = FileAccess.open(script_path, FileAccess.WRITE)
-	if file == null:
-		push_warning("[SunderedKeepUnderlayCollisionMapper] Could not write underlay debug script: %s" % script_path)
-		return false
-	file.store_string(replaced)
-	file.close()
-
-	print("[SunderedKeepUnderlayCollisionMapper] Applied %d segment(s) to %s" % [lines.size(), UNDERLAY_DEBUG_SCRIPT_PATH])
+	print("[SunderedKeepUnderlayCollisionMapper] Applied %d segment(s) to %s" % [segments.size(), UNDERLAY_COLLISION_DATA_PATH])
 	_copy_segments_to_clipboard()
 	return true
 
@@ -288,30 +266,61 @@ func _apply_draft_markers_to_underlay_marker_map() -> bool:
 	if _draft_markers.is_empty():
 		push_warning("[SunderedKeepUnderlayCollisionMapper] No draft markers to apply")
 		return false
-	var script_path := ProjectSettings.globalize_path(UNDERLAY_DEBUG_SCRIPT_PATH)
-	if script_path.is_empty() or not FileAccess.file_exists(script_path):
-		push_warning("[SunderedKeepUnderlayCollisionMapper] Missing underlay debug script: %s" % script_path)
+	var data := _load_collision_document()
+	if data.is_empty():
 		return false
-	var file := FileAccess.open(script_path, FileAccess.READ)
-	if file == null:
-		push_warning("[SunderedKeepUnderlayCollisionMapper] Could not read underlay debug script: %s" % script_path)
+	data["markers"] = _merged_marker_document(data.get("markers", {}) as Dictionary)
+	if not _write_collision_document(data):
 		return false
-	var text := file.get_as_text()
-	file.close()
-	var replacement := _format_underlay_authoring_markers_const()
-	var replaced := _replace_underlay_authoring_markers_block(text, replacement)
-	if replaced == text:
-		push_warning("[SunderedKeepUnderlayCollisionMapper] UNDERLAY_AUTHORING_MARKERS block was not replaced")
-		return false
-	file = FileAccess.open(script_path, FileAccess.WRITE)
-	if file == null:
-		push_warning("[SunderedKeepUnderlayCollisionMapper] Could not write underlay debug script: %s" % script_path)
-		return false
-	file.store_string(replaced)
-	file.close()
-	print("[SunderedKeepUnderlayCollisionMapper] Applied %d marker override(s) to %s" % [_draft_markers.size(), UNDERLAY_DEBUG_SCRIPT_PATH])
+	print("[SunderedKeepUnderlayCollisionMapper] Applied %d marker override(s) to %s" % [_draft_markers.size(), UNDERLAY_COLLISION_DATA_PATH])
 	_copy_markers_to_clipboard()
 	return true
+
+
+func _load_collision_document() -> Dictionary:
+	var file := FileAccess.open(UNDERLAY_COLLISION_DATA_PATH, FileAccess.READ)
+	if file == null:
+		push_warning("[SunderedKeepUnderlayCollisionMapper] Missing collision data: %s" % UNDERLAY_COLLISION_DATA_PATH)
+		return {}
+	var parsed: Variant = JSON.parse_string(file.get_as_text())
+	if not (parsed is Dictionary):
+		push_warning("[SunderedKeepUnderlayCollisionMapper] Invalid collision data JSON")
+		return {}
+	var data := parsed as Dictionary
+	if str(data.get("schema", "")) != "custodian.sundered_keep.underlay_collision.v1":
+		push_warning("[SunderedKeepUnderlayCollisionMapper] Unsupported collision data schema")
+		return {}
+	return data
+
+
+func _write_collision_document(data: Dictionary) -> bool:
+	data["schema"] = "custodian.sundered_keep.underlay_collision.v1"
+	data["map_size_pixels"] = [int(MAP_SIZE.x), int(MAP_SIZE.y)]
+	data["rail_radius"] = float(data.get("rail_radius", DEFAULT_RAIL_RADIUS))
+	var file := FileAccess.open(UNDERLAY_COLLISION_DATA_PATH, FileAccess.WRITE)
+	if file == null:
+		push_warning("[SunderedKeepUnderlayCollisionMapper] Could not write collision data: %s" % UNDERLAY_COLLISION_DATA_PATH)
+		return false
+	file.store_string(JSON.stringify(data, "  ") + "\n")
+	file.close()
+	return true
+
+
+func _merged_marker_document(existing: Dictionary) -> Dictionary:
+	var markers := existing.duplicate(true)
+	for marker_id: String in MARKER_KINDS:
+		var marker: Dictionary = markers.get(marker_id, {}) as Dictionary
+		marker["label"] = str(MARKER_KIND_LABELS.get(marker_id, marker_id.to_upper()))
+		marker["kind"] = str(MARKER_KIND_TYPES.get(marker_id, marker_id))
+		marker["position"] = _vector_to_array(_marker_world_point(marker_id))
+		if marker_id.begins_with("enemy_spawn"):
+			marker["lane"] = str(marker.get("lane", "sundered_keep_%s" % marker_id.trim_prefix("enemy_spawn_")))
+		markers[marker_id] = marker
+	return markers
+
+
+func _vector_to_array(point: Vector2) -> Array[float]:
+	return [point.x, point.y]
 
 
 func _format_draft_segment_lines() -> Array[String]:
@@ -321,40 +330,6 @@ func _format_draft_segment_lines() -> Array[String]:
 		lines.append(_format_segment(_draft_points[index - 1], _draft_points[index]))
 		index += 1
 	return lines
-
-
-func _format_underlay_boundary_segments_const(lines: Array[String]) -> String:
-	return "const UNDERLAY_BOUNDARY_SEGMENTS := [\n\t%s\n]" % "\n\t".join(lines)
-
-
-func _replace_underlay_boundary_segments_block(text: String, replacement: String) -> String:
-	var existing_block := _extract_underlay_boundary_segments_block(text)
-	if existing_block.is_empty():
-		return text
-	return text.replace(existing_block, replacement)
-
-
-func _extract_underlay_boundary_segments_block(text: String) -> String:
-	const MARKER := "const UNDERLAY_BOUNDARY_SEGMENTS := ["
-	var marker_start := text.find(MARKER)
-	if marker_start < 0:
-		return ""
-	var bracket_start := text.find("[", marker_start)
-	if bracket_start < 0:
-		return ""
-
-	var depth := 0
-	var index := bracket_start
-	while index < text.length():
-		var character := text[index]
-		if character == "[":
-			depth += 1
-		elif character == "]":
-			depth -= 1
-			if depth == 0:
-				return text.substr(marker_start, index + 1 - marker_start)
-		index += 1
-	return ""
 
 
 func _format_underlay_authoring_markers_const() -> String:
@@ -370,28 +345,6 @@ func _format_underlay_authoring_markers_const() -> String:
 		lines.append("\t},")
 	lines.append("}")
 	return "\n".join(lines)
-
-
-func _replace_underlay_authoring_markers_block(text: String, replacement: String) -> String:
-	const MARKER := "const UNDERLAY_AUTHORING_MARKERS := {"
-	var marker_start := text.find(MARKER)
-	if marker_start < 0:
-		return text
-	var brace_start := text.find("{", marker_start)
-	if brace_start < 0:
-		return text
-	var depth := 0
-	var index := brace_start
-	while index < text.length():
-		var character := text[index]
-		if character == "{":
-			depth += 1
-		elif character == "}":
-			depth -= 1
-			if depth == 0:
-				return text.substr(0, marker_start) + replacement + text.substr(index + 1)
-		index += 1
-	return text
 
 
 func _print_point(point: Vector2) -> void:

@@ -4691,8 +4691,16 @@ func _play_combat_sfx(stream: AudioStream, position: Vector2, volume_db: float =
 	return player
 
 
-func _play_low_health_warning() -> void:
-	_play_combat_sfx(LOW_HEALTH_WARNING_SOUND, global_position, -4.0, 640.0)
+func _play_low_health_warning() -> AudioStreamPlayer2D:
+	var player := _play_combat_sfx(
+		LOW_HEALTH_WARNING_SOUND,
+		global_position,
+		-1.0,
+		640.0
+	)
+	if player != null:
+		player.name = "LowHealthWarningAudio"
+	return player
 
 
 func _play_damage_taken_sfx() -> void:
@@ -5025,6 +5033,8 @@ func _apply_paired_execution_impact() -> void:
 	var camera = _get_world_camera()
 	if camera and camera.has_method("on_execution_impact"):
 		camera.call("on_execution_impact", _paired_execution_direction_vector(_paired_execution_direction))
+	elif camera and camera.has_method("on_critical_hit"):
+		camera.call("on_critical_hit", _paired_execution_direction_vector(_paired_execution_direction))
 	else:
 		_notify_camera_attack_impact(_paired_execution_direction_vector(_paired_execution_direction), true)
 	_play_paired_execution_impact_sound()

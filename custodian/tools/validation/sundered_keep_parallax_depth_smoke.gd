@@ -111,7 +111,8 @@ func _check_rig(
 		parallax_root.get_node_or_null("ForegroundDepth")
 		as CanvasItem
 	)
-	var expected_reveal_alpha := 0.0 if label == "Vista" else 1.0
+	# Camera 1 keeps RevealDepth present and drives the landmark child directly.
+	var expected_reveal_alpha := 1.0
 	var expected_foreground_alpha := 0.08 if label == "Vista" else 1.0
 	if (
 		reveal_root != null

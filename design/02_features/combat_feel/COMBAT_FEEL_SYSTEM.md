@@ -486,6 +486,14 @@ Animation/event-driven SFX triggers:
 - `attack_heavy -> swing_heavy`
 - `hit -> impact`
 
+Implemented feedback refinement:
+
+- enemy `HEAVY` hit strength guarantees stagger unless the hit crosses into the
+  stronger critical reaction
+- paired critical contact applies a dedicated short camera shake plus its
+  directional impact kick
+- the critical low-health warning plays at `-1 dB`
+
 ## First Playable Combat Slice Asset Checklist
 
 ### Player

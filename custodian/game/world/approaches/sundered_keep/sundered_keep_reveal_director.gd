@@ -32,8 +32,6 @@ var second_reveal_anticipation_duration := 0.12
 const NEAR_FOG_TRAVEL := Vector2(-180.0, 58.0)
 const MID_FOG_TRAVEL := Vector2(170.0, 42.0)
 const EDGE_MIST_TRAVEL := Vector2(0.0, 24.0)
-const REVEAL_LIGHT_PEAK := 0.42
-
 var _player: Node2D
 var _entry_marker: Node2D
 var _threshold_marker: Node2D
@@ -73,6 +71,14 @@ func _process(_delta: float) -> void:
 		and float(state.get("first_enter_progress", 0.0)) > 0.001
 	):
 		play_first_reveal()
+	if (
+		_second_reveal_played
+		and not _second_reveal_finished
+		and not _second_reveal_ready_for_return
+		and float(state.get("second_enter_progress", 0.0)) >= 0.999
+	):
+		_second_reveal_ready_for_return = true
+		_second_reveal_running = false
 
 
 func refresh_bindings() -> void:
@@ -104,25 +110,17 @@ func play_first_reveal() -> void:
 	reveal_started.emit()
 	refresh_bindings()
 
-	# This is an optional one-shot accent only. Camera position, zoom, follow
-	# ownership, and presentation alpha are evaluated positionally elsewhere.
+	# Camera position, zoom, follow, presentation alpha, fog peel, and the
+	# moonlight separation cue are all evaluated positionally by VistaController.
+	# This one-shot clock owns only prompt timing and reveal signals.
 	var accent := create_tween() \
 		.set_trans(Tween.TRANS_SINE) \
 		.set_ease(Tween.EASE_OUT)
-	if _reveal_light != null:
-		accent.tween_interval(anticipation_duration)
-		accent.tween_property(
-			_reveal_light,
-			"energy",
-			REVEAL_LIGHT_PEAK,
-			reveal_in_duration * 0.45
-		)
-		accent.tween_property(
-			_reveal_light,
-			"energy",
-			0.0,
-			atmosphere_settle_duration
-		)
+	accent.tween_interval(
+		anticipation_duration
+		+ reveal_in_duration * 0.45
+		+ atmosphere_settle_duration
+	)
 	await accent.finished
 
 	_resolve_destination_prompt()
@@ -144,12 +142,12 @@ func play_second_reveal() -> void:
 		return
 	_second_reveal_played = true
 
+	# Camera 2 framing and all fortress plane weights are evaluated from the
+	# Operator's physical position by VistaController. This one-shot state owns
+	# only the entrance accent and event/debug signals.
 	_second_reveal_running = true
 	second_reveal_started.emit()
 	refresh_bindings()
-	_set_player_movement_multiplier(reveal_movement_multiplier)
-	if _vista_controller != null:
-		_vista_controller.begin_second_reveal()
 
 	var near_fog_alpha := (
 		_near_fog.modulate.a
@@ -167,35 +165,18 @@ func play_second_reveal() -> void:
 			second_reveal_anticipation_duration
 		)
 	await anticipation.finished
-
-	var reveal_in := create_tween() \
-		.set_trans(Tween.TRANS_CUBIC) \
-		.set_ease(Tween.EASE_OUT)
-	reveal_in.tween_method(
-		_set_second_reveal_weight,
-		0.0,
-		1.0,
-		second_reveal_in_duration
-	)
 	if _near_fog != null:
-		reveal_in.parallel().tween_property(
+		var settle := create_tween() \
+			.set_trans(Tween.TRANS_CUBIC) \
+			.set_ease(Tween.EASE_OUT)
+		settle.tween_property(
 			_near_fog,
 			"modulate:a",
 			near_fog_alpha,
-			second_reveal_in_duration * 0.65
+			minf(second_reveal_in_duration * 0.35, 0.25)
 		)
-	await reveal_in.finished
-
-	if _vista_controller != null:
-		_vista_controller.hold_second_reveal()
-	await get_tree().create_timer(
-		second_reveal_hold_duration
-	).timeout
-
-	_set_player_movement_multiplier(1.0)
-	if _vista_controller != null:
-		_vista_controller.begin_second_progress_control()
-	_second_reveal_ready_for_return = true
+		await settle.finished
+	_second_reveal_running = false
 
 
 func return_second_reveal_to_gameplay() -> void:
@@ -207,20 +188,8 @@ func return_second_reveal_to_gameplay() -> void:
 		return
 
 	_second_return_running = true
-	if _vista_controller != null:
-		_vista_controller.begin_second_return_to_gameplay()
-
-	var return_tween := create_tween() \
-		.set_trans(Tween.TRANS_SINE) \
-		.set_ease(Tween.EASE_IN_OUT)
-	return_tween.tween_method(
-		_set_second_return_to_gameplay_weight,
-		0.0,
-		1.0,
-		second_return_duration
-	)
-	await return_tween.finished
-
+	# Physical reverse/forward travel already owns the handback. Completion is
+	# bookkeeping for one-shot audio/UI and cannot change the camera envelope.
 	if _vista_controller != null:
 		_vista_controller.complete_second_reveal()
 	_second_reveal_ready_for_return = false

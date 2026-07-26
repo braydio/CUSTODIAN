@@ -4,7 +4,7 @@ extends Area2D
 @export var pickup_volume_db: float = -6.0
 
 const FLOATING_TEXT_SCENE := preload("res://game/actors/effects/floating_text.tscn")
-const PICKUP_SOUND: AudioStream = preload("res://content/audio/sfx/items/pickup_collect_01.wav")
+const SCRAP_PICKUP_SOUND: AudioStream = preload("res://content/audio/sfx/items/pickup_collect_01.wav")
 
 
 func _ready() -> void:
@@ -44,7 +44,8 @@ func _spawn_pickup_popup() -> void:
 
 func _play_pickup_tone() -> void:
 	var player := AudioStreamPlayer2D.new()
-	player.stream = PICKUP_SOUND
+	player.name = "ScrapPickupAudio"
+	player.stream = SCRAP_PICKUP_SOUND
 	player.volume_db = pickup_volume_db
 	player.max_distance = 320.0
 	player.global_position = global_position

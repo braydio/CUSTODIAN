@@ -46,15 +46,59 @@ The active front-gate JSON may declare:
 - optional `underlay.modulate`
 - optional `underlay.expand_camera_bounds`
 
-This is presentation-only. It gives the level a silhouette plate and shape anchor beneath the authored tile/prop layers, but it does not own collision, traversal, blockers, interactables, or elevation authority.
+The image remains presentation-only and never generates collision from alpha.
+Reviewed manual rails now provide the corresponding static-boundary authority.
 
 The playable underlay debug scene now supports explicit mapped boundary rails for manual review:
 
 - scene: `custodian/scenes/debug/sundered_keep_production_underlay_debug.tscn`
 - mapper: `custodian/scenes/debug/sundered_keep_underlay_collision_mapper.tscn`
-- runtime data home: `UNDERLAY_BOUNDARY_SEGMENTS` in `sundered_keep_production_underlay_debug.gd`
+- canonical data: `custodian/content/levels/sundered_keep/sundered_keep_underlay_collision.json`
 
-These rails are authored line segments over the underlay in world space. They are not generated from alpha and should remain review/debug collision until promoted deliberately into the final `SunderedKeepMap` layout data.
+`sundered_keep_underlay_collision.json` is the canonical static-boundary source
+shared by the mapper, debug review scene, and production `SunderedKeepMap`.
+Its capsule rails own permanent exterior walls, cliff edges, inaccessible art
+masses, the walkable silhouette, and permanent route boundaries. Dynamic gate,
+door, prop, encounter, and temporary-state blockers remain separate; the old
+per-tile rectangular wall blockers are suppressed when mapped rails are active.
+
+The same JSON owns reviewed placement markers for spawn, Vista backtrack,
+gatehouse key, Main Gate, approved forward progression, and the first two siege
+spawn lanes. Runtime marker diamonds and labels remain debug-only.
+
+## Underlay Gameplay Tile Mapper
+
+The collision-underlay pair now has a separate gameplay-tile authoring scene:
+
+- scene: `custodian/scenes/debug/sundered_keep_underlay_gameplay_tile_mapper.tscn`
+- mapping data: `custodian/content/levels/sundered_keep/sundered_keep_underlay_gameplay_tiles.json`
+- validation: `custodian/tools/validation/sundered_keep_underlay_gameplay_tile_mapper_smoke.gd`
+
+The mapper instantiates the same reviewed underlay debug scene and its 127
+canonical collision rails. It does not reuse the current Front Gate gameplay
+layout. Instead, it provides a blank adjacent staging area containing a stable
+`01–99` palette of live Sundered Keep floor, wall, gate, door, and stair assets.
+The palette is arranged as an `11x9` review grid.
+
+Authoring controls:
+
+- `P`: focus the numbered palette
+- `F`: focus the complete underlay
+- left-click a palette cell: select its numbered asset
+- left-click the underlay: place the selected asset on the shared `32 px` grid
+- right-click the underlay: remove the most recent placement at that cell
+- `G`: toggle the underlay grid
+- `E`: toggle canonical collision rails
+- `T`: toggle placed gameplay tiles
+- `C`: copy the complete mapping document
+- `Enter` or `U`: write the mapping JSON
+- `L` or `R`: discard unsaved preview edits and reload the saved mapping
+
+Floor and architecture/traversal placements use separate replacement lanes, so
+a floor and a wall module may intentionally share one grid cell. These
+placements are review/authoring data until explicitly promoted into the Front
+Gate level-data consumer. The underlay PNG still never generates collision, and
+the gameplay-tile mapping never modifies the canonical collision JSON.
 
 ## Overlay Authoring Pipeline
 
@@ -112,6 +156,7 @@ godot --headless --script res://tools/validation/sundered_keep_asset_smoke.gd
 godot --headless --script res://tools/validation/sundered_keep_layout_smoke.gd
 godot --headless --script res://tools/validation/sundered_keep_large_layout_smoke.gd
 godot --headless --script res://tools/validation/sundered_keep_underlay_collision_mapper_smoke.gd
+godot --headless --script res://tools/validation/sundered_keep_underlay_gameplay_tile_mapper_smoke.gd
 ```
 
 Also useful after manifest changes:
@@ -153,27 +198,34 @@ PY
 
 - Persist `sundered_gate_key`, Main Gate open state, and Great Hall door state if connected maps become save/load persistent.
 - Add encounter composition and tactical cover review after the layout stabilizes visually.
-- Consider a dedicated TileSet/TileMapLayer authoring path if the JSON/Sprite2D level data becomes difficult to inspect or edit.
+- Promote reviewed underlay gameplay-tile placements into the Front Gate
+  level-data consumer after the numbered palette and mapped composition receive
+  explicit visual approval.
+- Consider a dedicated TileSet/TileMapLayer runtime adapter if the reviewed
+  JSON/Sprite2D mapping becomes difficult to maintain.
 - Keep `ContractWorldLoader.debug_start_near_sundered_keep_entrance` disabled for normal contract progression; re-enable it only for focused Sundered Keep visual review.
 
 ## Next Agent Slice
 
-Goal: consume the generated overlay-authoring guide to tighten authored floor/blocker/elevation data where the live front gate still drifts from the master silhouette.
+Goal: use the numbered gameplay-tile mapper to author and visually approve a
+tile composition against the fixed underlay/collision pair before promoting it
+to production.
 
 Files:
 
-- `custodian/content/levels/sundered_keep/sundered_keep_overlay_authoring.json`
-- `custodian/content/levels/sundered_keep/sundered_keep_front_gate_large.json`
-- `custodian/game/world/sundered_keep/sundered_keep_map.gd`
+- `custodian/scenes/debug/sundered_keep_underlay_gameplay_tile_mapper.tscn`
+- `custodian/content/levels/sundered_keep/sundered_keep_underlay_gameplay_tiles.json`
+- `custodian/content/levels/sundered_keep/sundered_keep_underlay_collision.json`
 
 Constraints:
 
-- Keep overlay-derived data advisory until a reviewed authored change is accepted.
-- Do not let the PNG directly own collision, traversal, interactables, or elevation.
-- Prefer deterministic JSON edits and focused smokes over ad hoc scene-only tweaks.
+- Keep the underlay and canonical collision rails fixed during tile review.
+- Refer to palette assets by their stable `01–99` numbers.
+- Do not promote preview placements to runtime until the composition is
+  explicitly approved.
 
 Acceptance:
 
-- any consumed overlay-derived edits remain visible in the review scene
-- Sundered Keep smokes still pass
-- docs/context stay aligned with the chosen authoring contract
+- the complete mapped gameplay tile composition follows the underlay silhouette
+- placed floor/wall/traversal modules remain aligned to the shared 32 px grid
+- debug and production collision remain shape-for-shape identical

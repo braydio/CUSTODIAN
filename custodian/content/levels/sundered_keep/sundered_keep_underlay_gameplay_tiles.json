@@ -1,0 +1,606 @@
+{
+  "map_size_pixels": [
+    3584,
+    2560
+  ],
+  "palette": [
+    {
+      "asset_id": "cliff_rock_floor_01",
+      "category": "floor",
+      "number": 1,
+      "texture_path": "res://content/tiles/sundered_keep/floors/cliff_rock_floor_01.png"
+    },
+    {
+      "asset_id": "cliff_rock_floor_cracked_01",
+      "category": "floor",
+      "number": 2,
+      "texture_path": "res://content/tiles/sundered_keep/floors/cliff_rock_floor_cracked_01.png"
+    },
+    {
+      "asset_id": "dungeon_stone_floor_01",
+      "category": "floor",
+      "number": 3,
+      "texture_path": "res://content/tiles/sundered_keep/floors/dungeon_stone_floor_01.png"
+    },
+    {
+      "asset_id": "gatehouse_floor_dark_01",
+      "category": "floor",
+      "number": 4,
+      "texture_path": "res://content/tiles/sundered_keep/floors/gatehouse_floor_dark_01.png"
+    },
+    {
+      "asset_id": "gatehouse_floor_murder_hole_01",
+      "category": "floor",
+      "number": 5,
+      "texture_path": "res://content/tiles/sundered_keep/floors/gatehouse_floor_murder_hole_01.png"
+    },
+    {
+      "asset_id": "great_hall_carpet_runner_horizontal_01",
+      "category": "floor",
+      "number": 6,
+      "texture_path": "res://content/tiles/sundered_keep/floors/great_hall_carpet_runner_horizontal_01.png"
+    },
+    {
+      "asset_id": "great_hall_carpet_runner_vertical_01",
+      "category": "floor",
+      "number": 7,
+      "texture_path": "res://content/tiles/sundered_keep/floors/great_hall_carpet_runner_vertical_01.png"
+    },
+    {
+      "asset_id": "great_hall_marble_floor_01",
+      "category": "floor",
+      "number": 8,
+      "texture_path": "res://content/tiles/sundered_keep/floors/great_hall_marble_floor_01.png"
+    },
+    {
+      "asset_id": "great_hall_marble_floor_cracked_01",
+      "category": "floor",
+      "number": 9,
+      "texture_path": "res://content/tiles/sundered_keep/floors/great_hall_marble_floor_cracked_01.png"
+    },
+    {
+      "asset_id": "main_courtyard_flagstone_01",
+      "category": "floor",
+      "number": 10,
+      "texture_path": "res://content/tiles/sundered_keep/floors/main_courtyard_flagstone_01.png"
+    },
+    {
+      "asset_id": "main_courtyard_flagstone_02",
+      "category": "floor",
+      "number": 11,
+      "texture_path": "res://content/tiles/sundered_keep/floors/main_courtyard_flagstone_02.png"
+    },
+    {
+      "asset_id": "main_courtyard_flagstone_cracked_01",
+      "category": "floor",
+      "number": 12,
+      "texture_path": "res://content/tiles/sundered_keep/floors/main_courtyard_flagstone_cracked_01.png"
+    },
+    {
+      "asset_id": "main_courtyard_flagstone_mossy_01",
+      "category": "floor",
+      "number": 13,
+      "texture_path": "res://content/tiles/sundered_keep/floors/main_courtyard_flagstone_mossy_01.png"
+    },
+    {
+      "asset_id": "main_courtyard_flagstone_wet_01",
+      "category": "floor",
+      "number": 14,
+      "texture_path": "res://content/tiles/sundered_keep/floors/main_courtyard_flagstone_wet_01.png"
+    },
+    {
+      "asset_id": "main_gate_threshold_stone_01",
+      "category": "floor",
+      "number": 15,
+      "texture_path": "res://content/tiles/sundered_keep/floors/main_gate_threshold_stone_01.png"
+    },
+    {
+      "asset_id": "main_gate_threshold_wet_01",
+      "category": "floor",
+      "number": 16,
+      "texture_path": "res://content/tiles/sundered_keep/floors/main_gate_threshold_wet_01.png"
+    },
+    {
+      "asset_id": "ocean_void_01",
+      "category": "floor",
+      "number": 17,
+      "texture_path": "res://content/tiles/sundered_keep/floors/ocean_void_01.png"
+    },
+    {
+      "asset_id": "rampart_walkway_broken_01",
+      "category": "floor",
+      "number": 18,
+      "texture_path": "res://content/tiles/sundered_keep/floors/rampart_walkway_broken_01.png"
+    },
+    {
+      "asset_id": "rampart_walkway_floor_01",
+      "category": "floor",
+      "number": 19,
+      "texture_path": "res://content/tiles/sundered_keep/floors/rampart_walkway_floor_01.png"
+    },
+    {
+      "asset_id": "roof_slate_dark_01",
+      "category": "floor",
+      "number": 20,
+      "texture_path": "res://content/tiles/sundered_keep/floors/roof_slate_dark_01.png"
+    },
+    {
+      "asset_id": "undercroft_wet_stone_floor_01",
+      "category": "floor",
+      "number": 21,
+      "texture_path": "res://content/tiles/sundered_keep/floors/undercroft_wet_stone_floor_01.png"
+    },
+    {
+      "asset_id": "gothic_castle_wall_arch_e",
+      "category": "architecture",
+      "number": 22,
+      "texture_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_arch_e.png"
+    },
+    {
+      "asset_id": "gothic_castle_wall_arch_n",
+      "category": "architecture",
+      "number": 23,
+      "texture_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_arch_n.png"
+    },
+    {
+      "asset_id": "gothic_castle_wall_arch_s",
+      "category": "architecture",
+      "number": 24,
+      "texture_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_arch_s.png"
+    },
+    {
+      "asset_id": "gothic_castle_wall_arch_w",
+      "category": "architecture",
+      "number": 25,
+      "texture_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_arch_w.png"
+    },
+    {
+      "asset_id": "gothic_castle_wall_breach_e",
+      "category": "architecture",
+      "number": 26,
+      "texture_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_breach_e.png"
+    },
+    {
+      "asset_id": "gothic_castle_wall_breach_n",
+      "category": "architecture",
+      "number": 27,
+      "texture_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_breach_n.png"
+    },
+    {
+      "asset_id": "gothic_castle_wall_breach_s",
+      "category": "architecture",
+      "number": 28,
+      "texture_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_breach_s.png"
+    },
+    {
+      "asset_id": "gothic_castle_wall_breach_w",
+      "category": "architecture",
+      "number": 29,
+      "texture_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_breach_w.png"
+    },
+    {
+      "asset_id": "gothic_castle_wall_damaged_e",
+      "category": "architecture",
+      "number": 30,
+      "texture_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_damaged_e.png"
+    },
+    {
+      "asset_id": "gothic_castle_wall_damaged_n",
+      "category": "architecture",
+      "number": 31,
+      "texture_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_damaged_n.png"
+    },
+    {
+      "asset_id": "gothic_castle_wall_damaged_s",
+      "category": "architecture",
+      "number": 32,
+      "texture_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_damaged_s.png"
+    },
+    {
+      "asset_id": "gothic_castle_wall_damaged_w",
+      "category": "architecture",
+      "number": 33,
+      "texture_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_damaged_w.png"
+    },
+    {
+      "asset_id": "gothic_castle_wall_endcap_e",
+      "category": "architecture",
+      "number": 34,
+      "texture_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_endcap_e.png"
+    },
+    {
+      "asset_id": "gothic_castle_wall_endcap_n",
+      "category": "architecture",
+      "number": 35,
+      "texture_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_endcap_n.png"
+    },
+    {
+      "asset_id": "gothic_castle_wall_endcap_s",
+      "category": "architecture",
+      "number": 36,
+      "texture_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_endcap_s.png"
+    },
+    {
+      "asset_id": "gothic_castle_wall_endcap_w",
+      "category": "architecture",
+      "number": 37,
+      "texture_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_endcap_w.png"
+    },
+    {
+      "asset_id": "gothic_castle_wall_inner_corner_ne",
+      "category": "architecture",
+      "number": 38,
+      "texture_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_inner_corner_ne.png"
+    },
+    {
+      "asset_id": "gothic_castle_wall_inner_corner_nw",
+      "category": "architecture",
+      "number": 39,
+      "texture_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_inner_corner_nw.png"
+    },
+    {
+      "asset_id": "gothic_castle_wall_inner_corner_se",
+      "category": "architecture",
+      "number": 40,
+      "texture_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_inner_corner_se.png"
+    },
+    {
+      "asset_id": "gothic_castle_wall_inner_corner_sw",
+      "category": "architecture",
+      "number": 41,
+      "texture_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_inner_corner_sw.png"
+    },
+    {
+      "asset_id": "gothic_castle_wall_outer_corner_ne",
+      "category": "architecture",
+      "number": 42,
+      "texture_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_outer_corner_ne.png"
+    },
+    {
+      "asset_id": "gothic_castle_wall_outer_corner_nw",
+      "category": "architecture",
+      "number": 43,
+      "texture_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_outer_corner_nw.png"
+    },
+    {
+      "asset_id": "gothic_castle_wall_outer_corner_se",
+      "category": "architecture",
+      "number": 44,
+      "texture_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_outer_corner_se.png"
+    },
+    {
+      "asset_id": "gothic_castle_wall_outer_corner_sw",
+      "category": "architecture",
+      "number": 45,
+      "texture_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_outer_corner_sw.png"
+    },
+    {
+      "asset_id": "gothic_castle_wall_straight_e",
+      "category": "architecture",
+      "number": 46,
+      "texture_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_straight_e.png"
+    },
+    {
+      "asset_id": "gothic_castle_wall_straight_n",
+      "category": "architecture",
+      "number": 47,
+      "texture_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_straight_n.png"
+    },
+    {
+      "asset_id": "gothic_castle_wall_straight_s",
+      "category": "architecture",
+      "number": 48,
+      "texture_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_straight_s.png"
+    },
+    {
+      "asset_id": "gothic_castle_wall_straight_w",
+      "category": "architecture",
+      "number": 49,
+      "texture_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_straight_w.png"
+    },
+    {
+      "asset_id": "gothic_castle_wall_window_tall_e",
+      "category": "architecture",
+      "number": 50,
+      "texture_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_window_tall_e.png"
+    },
+    {
+      "asset_id": "gothic_castle_wall_window_tall_n",
+      "category": "architecture",
+      "number": 51,
+      "texture_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_window_tall_n.png"
+    },
+    {
+      "asset_id": "gothic_castle_wall_window_tall_s",
+      "category": "architecture",
+      "number": 52,
+      "texture_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_window_tall_s.png"
+    },
+    {
+      "asset_id": "gothic_castle_wall_window_tall_w",
+      "category": "architecture",
+      "number": 53,
+      "texture_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_window_tall_w.png"
+    },
+    {
+      "asset_id": "great_hall_wall_banner_e",
+      "category": "architecture",
+      "number": 54,
+      "texture_path": "res://content/tiles/sundered_keep/walls/great_hall/great_hall_wall_banner_e.png"
+    },
+    {
+      "asset_id": "great_hall_wall_banner_n",
+      "category": "architecture",
+      "number": 55,
+      "texture_path": "res://content/tiles/sundered_keep/walls/great_hall/great_hall_wall_banner_n.png"
+    },
+    {
+      "asset_id": "great_hall_wall_banner_s",
+      "category": "architecture",
+      "number": 56,
+      "texture_path": "res://content/tiles/sundered_keep/walls/great_hall/great_hall_wall_banner_s.png"
+    },
+    {
+      "asset_id": "great_hall_wall_banner_w",
+      "category": "architecture",
+      "number": 57,
+      "texture_path": "res://content/tiles/sundered_keep/walls/great_hall/great_hall_wall_banner_w.png"
+    },
+    {
+      "asset_id": "great_hall_wall_broken_exterior_e",
+      "category": "architecture",
+      "number": 58,
+      "texture_path": "res://content/tiles/sundered_keep/walls/great_hall/great_hall_wall_broken_exterior_e.png"
+    },
+    {
+      "asset_id": "great_hall_wall_broken_exterior_n",
+      "category": "architecture",
+      "number": 59,
+      "texture_path": "res://content/tiles/sundered_keep/walls/great_hall/great_hall_wall_broken_exterior_n.png"
+    },
+    {
+      "asset_id": "great_hall_wall_broken_exterior_n_01",
+      "category": "architecture",
+      "number": 60,
+      "texture_path": "res://content/tiles/sundered_keep/walls/great_hall/great_hall_wall_broken_exterior_n_01.png"
+    },
+    {
+      "asset_id": "great_hall_wall_broken_exterior_s",
+      "category": "architecture",
+      "number": 61,
+      "texture_path": "res://content/tiles/sundered_keep/walls/great_hall/great_hall_wall_broken_exterior_s.png"
+    },
+    {
+      "asset_id": "great_hall_wall_broken_exterior_w",
+      "category": "architecture",
+      "number": 62,
+      "texture_path": "res://content/tiles/sundered_keep/walls/great_hall/great_hall_wall_broken_exterior_w.png"
+    },
+    {
+      "asset_id": "great_hall_wall_column_e",
+      "category": "architecture",
+      "number": 63,
+      "texture_path": "res://content/tiles/sundered_keep/walls/great_hall/great_hall_wall_column_e.png"
+    },
+    {
+      "asset_id": "great_hall_wall_column_n",
+      "category": "architecture",
+      "number": 64,
+      "texture_path": "res://content/tiles/sundered_keep/walls/great_hall/great_hall_wall_column_n.png"
+    },
+    {
+      "asset_id": "great_hall_wall_column_s",
+      "category": "architecture",
+      "number": 65,
+      "texture_path": "res://content/tiles/sundered_keep/walls/great_hall/great_hall_wall_column_s.png"
+    },
+    {
+      "asset_id": "great_hall_wall_column_w",
+      "category": "architecture",
+      "number": 66,
+      "texture_path": "res://content/tiles/sundered_keep/walls/great_hall/great_hall_wall_column_w.png"
+    },
+    {
+      "asset_id": "great_hall_wall_straight_e",
+      "category": "architecture",
+      "number": 67,
+      "texture_path": "res://content/tiles/sundered_keep/walls/great_hall/great_hall_wall_straight_e.png"
+    },
+    {
+      "asset_id": "great_hall_wall_straight_n",
+      "category": "architecture",
+      "number": 68,
+      "texture_path": "res://content/tiles/sundered_keep/walls/great_hall/great_hall_wall_straight_n.png"
+    },
+    {
+      "asset_id": "great_hall_wall_straight_s",
+      "category": "architecture",
+      "number": 69,
+      "texture_path": "res://content/tiles/sundered_keep/walls/great_hall/great_hall_wall_straight_s.png"
+    },
+    {
+      "asset_id": "great_hall_wall_straight_w",
+      "category": "architecture",
+      "number": 70,
+      "texture_path": "res://content/tiles/sundered_keep/walls/great_hall/great_hall_wall_straight_w.png"
+    },
+    {
+      "asset_id": "great_hall_wall_straight_w_01",
+      "category": "architecture",
+      "number": 71,
+      "texture_path": "res://content/tiles/sundered_keep/walls/ramparts/great_hall_wall_straight_w_01.png"
+    },
+    {
+      "asset_id": "rampart_broken_gap_e",
+      "category": "architecture",
+      "number": 72,
+      "texture_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_broken_gap_e.png"
+    },
+    {
+      "asset_id": "rampart_broken_gap_n",
+      "category": "architecture",
+      "number": 73,
+      "texture_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_broken_gap_n.png"
+    },
+    {
+      "asset_id": "rampart_broken_gap_s",
+      "category": "architecture",
+      "number": 74,
+      "texture_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_broken_gap_s.png"
+    },
+    {
+      "asset_id": "rampart_broken_gap_w",
+      "category": "architecture",
+      "number": 75,
+      "texture_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_broken_gap_w.png"
+    },
+    {
+      "asset_id": "rampart_crenellation_crumbling",
+      "category": "architecture",
+      "number": 76,
+      "texture_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_crenellation_crumbling.png"
+    },
+    {
+      "asset_id": "rampart_crenellation_crumbling_east",
+      "category": "architecture",
+      "number": 77,
+      "texture_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_crenellation_crumbling_east.png"
+    },
+    {
+      "asset_id": "rampart_crenellation_crumbling_west",
+      "category": "architecture",
+      "number": 78,
+      "texture_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_crenellation_crumbling_west.png"
+    },
+    {
+      "asset_id": "rampart_crenellation_e",
+      "category": "architecture",
+      "number": 79,
+      "texture_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_crenellation_e.png"
+    },
+    {
+      "asset_id": "rampart_crenellation_end_cap",
+      "category": "architecture",
+      "number": 80,
+      "texture_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_crenellation_end_cap.png"
+    },
+    {
+      "asset_id": "rampart_crenellation_end_cap_n",
+      "category": "architecture",
+      "number": 81,
+      "texture_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_crenellation_end_cap_n.png"
+    },
+    {
+      "asset_id": "rampart_crenellation_end_cap_s",
+      "category": "architecture",
+      "number": 82,
+      "texture_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_crenellation_end_cap_s.png"
+    },
+    {
+      "asset_id": "rampart_crenellation_n",
+      "category": "architecture",
+      "number": 83,
+      "texture_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_crenellation_n.png"
+    },
+    {
+      "asset_id": "rampart_crenellation_s",
+      "category": "architecture",
+      "number": 84,
+      "texture_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_crenellation_s.png"
+    },
+    {
+      "asset_id": "rampart_crenellation_w",
+      "category": "architecture",
+      "number": 85,
+      "texture_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_crenellation_w.png"
+    },
+    {
+      "asset_id": "rampart_crenellaton_end_cap_right",
+      "category": "architecture",
+      "number": 86,
+      "texture_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_crenellaton_end_cap_right.png"
+    },
+    {
+      "asset_id": "rampart_crumbling_connector_horizontal",
+      "category": "architecture",
+      "number": 87,
+      "texture_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_crumbling_connector_horizontal.png"
+    },
+    {
+      "asset_id": "rampart_crumbling_segment",
+      "category": "architecture",
+      "number": 88,
+      "texture_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_crumbling_segment.png"
+    },
+    {
+      "asset_id": "rampart_crumbling_segment_01",
+      "category": "architecture",
+      "number": 89,
+      "texture_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_crumbling_segment_01.png"
+    },
+    {
+      "asset_id": "rampart_crumbling_segment_02",
+      "category": "architecture",
+      "number": 90,
+      "texture_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_crumbling_segment_02.png"
+    },
+    {
+      "asset_id": "rampart_crumbling_vertical_bottom",
+      "category": "architecture",
+      "number": 91,
+      "texture_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_crumbling_vertical_bottom.png"
+    },
+    {
+      "asset_id": "rampart_crumbling_vertical_connector",
+      "category": "architecture",
+      "number": 92,
+      "texture_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_crumbling_vertical_connector.png"
+    },
+    {
+      "asset_id": "rampart_parapet_e",
+      "category": "architecture",
+      "number": 93,
+      "texture_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_parapet_e.png"
+    },
+    {
+      "asset_id": "rampart_parapet_n",
+      "category": "architecture",
+      "number": 94,
+      "texture_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_parapet_n.png"
+    },
+    {
+      "asset_id": "rampart_parapet_s",
+      "category": "architecture",
+      "number": 95,
+      "texture_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_parapet_s.png"
+    },
+    {
+      "asset_id": "rampart_parapet_w",
+      "category": "architecture",
+      "number": 96,
+      "texture_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_parapet_w.png"
+    },
+    {
+      "asset_id": "main_gate_portcullis_closed",
+      "category": "traversal",
+      "number": 97,
+      "texture_path": "res://content/runtime/sundered_keep/doors_traversal/gates/main_gate_portcullis_closed.png"
+    },
+    {
+      "asset_id": "gothic_double_door_closed_n",
+      "category": "traversal",
+      "number": 98,
+      "texture_path": "res://content/runtime/sundered_keep/doors_traversal/doors/gothic_double_door_closed_n.png"
+    },
+    {
+      "asset_id": "stone_stairs_up_n",
+      "category": "traversal",
+      "number": 99,
+      "texture_path": "res://content/runtime/sundered_keep/doors_traversal/stairs/stone_stairs_up_n.png"
+    }
+  ],
+  "palette_count": 99,
+  "placements": [],
+  "schema": "custodian.sundered_keep.underlay_gameplay_tiles.v1",
+  "tile_size": 32
+}

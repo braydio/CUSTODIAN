@@ -7,7 +7,7 @@
 
 ## Summary
 
-A playable first Sundered Keep slice built from the former approach scene. The player enters from mainland top-down on one authored route-master terrain sprite under a tight gameplay camera. Camera 1 is a reversible influence corridor evaluated from the Operator's physical position: it blends toward the first cinematic anchor, holds that composition across an authored route interval, and blends back to traversal framing without trigger order, timers, or completion state. The later Labyrinth section uses layered panorama/fog/parapet parallax, local depth lighting, and independently fading route-master roof crops before the route continues to Return Causeway.
+A playable first Sundered Keep slice built from the former approach scene. The player enters from mainland top-down on one authored route-master terrain sprite under a tight gameplay camera. Camera 1 is a reversible influence corridor evaluated from the Operator's physical position: it blends toward the first cinematic anchor, holds that composition across an authored route interval, and blends back to traversal framing without trigger order, timers, or completion state. The later Labyrinth section uses layered panorama/fog/parapet parallax, local depth lighting, and independently fading route-master roof crops before the route continues directly to the approved large Front Gate map.
 
 **Hard constraint:** Art alpha still does not own collision. The production runtime scene uses fitted `Sprite2D` matte/terrain assets, a single perimeter-rail `StaticBody2D` made from mapper-authored thick `CapsuleShape2D` rails, and explicit `AUTHORING_MARKERS` for gameplay/event semantics. `GrandVistaRoot` is presentation-only and must not become collision, navigation, enemy AI, or sim authority. Filled path-shaped `CollisionPolygon2D` solids are not valid walkable-boundary collision because they block the path itself. Sprite2D assets are fit to their target `Rect2`; the rect is runtime layout authority. Playable terrain art must keep transparent pixels outside the authored terrain shape unless the full rectangle is intentionally terrain.
 
@@ -18,11 +18,10 @@ Normal contract-world access uses the production directed route:
 ```
 @world_origin
   -> vista_approach
-  -> return_causeway
   -> front_gate
 ```
 
-`ContractWorldLoader` owns placement of the procgen-side `WorldIngressSite`. `RouteTraversalManager` resolves the production graph in `content/routes/sundered_keep/sundered_keep_route.json`, while `LevelLoader` stages and activates the independent Vista, Return Causeway, and Front Gate level scenes. Route data, not a Vista scene switch or destination-loading trigger, selects production and debug profiles.
+`ContractWorldLoader` owns placement of the procgen-side `WorldIngressSite`. `RouteTraversalManager` resolves the production graph in `content/routes/sundered_keep/sundered_keep_route.json`, while `LevelLoader` stages and activates Vista and the approved Front Gate level. The unfinished Return Causeway remains registered only for the isolated `causeway_only` debug profile and must not be promoted without explicit user review.
 
 `WorldIngressSite` captures every direct child of `World` assigned to `world_origin_branch`, then hides and processing-disables the captured branches for the full route session. The Operator, Camera2D, shared lighting, LevelLoader, and RouteTraversalManager remain persistent. Node-to-node traversal never restores origin content; exact captured branch visibility and process modes are restored only during route exfil to `@world_origin`.
 
@@ -58,7 +57,7 @@ The same mapper now has marker mode for route and presentation authoring:
 - `C`: copy the full `AUTHORING_MARKERS` block.
 - `Enter` / `U`: apply marker positions back to `sundered_keep_approach.gd`.
 
-`AUTHORING_MARKERS` is the stable authoring contract for Vista reference points. Keep key, gate, encounter, and siege markers belong to Return Causeway or the Sundered Keep map, not this presentation route. The runtime endpoint is positioned by `LEVEL_EXIT_POS`; its authored `continue` exit resolves to Return Causeway in the production route profile.
+`AUTHORING_MARKERS` is the stable authoring contract for Vista reference points. Keep key, gate, encounter, and siege markers belong to the Sundered Keep map, not this presentation route. The runtime endpoint is positioned by `LEVEL_EXIT_POS`; its authored `continue` exit resolves directly to Front Gate in production.
 
 For Camera 1 tuning, place `FirstCameraControlStart`,
 `RevealControlStart` (the apex), `RevealControlEnd` (return start), and
@@ -87,7 +86,7 @@ SunderedKeepApproach
 ├── EventMarkers          — retained Vista reference markers for spawn and Return Causeway
 ├── EventRuntime          — authored route-exit affordances bound by RouteTraversalManager
 ├── VistaController       — drives vista, grand vista, fog, occlusion, and distant keep alpha
-├── RevealDirector        — optional Camera 1 light/prompt accent plus Camera 2 timed choreography
+├── RevealDirector        — optional one-shot Camera 1/2 prompt, signal, and near-fog accents
 ```
 
 ### Z-order
@@ -108,8 +107,9 @@ The production runtime script self-heals these visual roots with `z_as_relative=
 
 ### Camera states & markers
 
-Camera 1 is driven entirely by the Operator's position against four `Marker2D`
-control points. Camera 2 retains its physical-trigger presentation sequence.
+Camera 1 and Camera 2 are driven entirely by the Operator's position against
+their `Marker2D` control points. Camera 2's trigger is retained only for
+one-shot prompt, signal, sound, or near-fog accents; it has no framing authority.
 Approach flows **north (decreasing Y)** then **east (increasing X)**.
 
 | State | Camera offset/zoom | Vista alpha | Occlusion alpha | Trigger marker |
@@ -118,8 +118,8 @@ Approach flows **north (decreasing Y)** then **east (increasing X)**.
 | 2 — Camera 1 Enter | gameplay → anchor offset `(0,0)`, zoom `0.84` | 0→1 from enter weight | Cinematic treatment follows camera weight | `FirstCameraControlStart → RevealControlStart` |
 | 3 — Camera 1 Apex | anchor offset `(0,0)`, zoom `0.84` | 1.0 | Full first composition | `RevealControlStart → RevealControlEnd` |
 | 3b — Camera 1 Return | reveal → traverse offset `(0,-48)`, zoom `0.98` | 1.0 | Cinematic treatment reverses | `RevealControlEnd → FirstCameraReturnComplete` |
-| 4 — Labyrinth Vista | anchor offset `(150,-115)`, zoom `0.78` | 1.0 | Cinematic atmosphere and modular fortress blend in; local roofs fade | Physical overlap at `SecondVistaRevealTrigger` |
-| 4b — Fortress Traverse | second anchor → `SecondVistaEnd`, zoom `0.78→0.98` | 1.0 | Cinematic layers fade; fortress planes recede independently | Operator advances from `SecondVistaFull` to `SecondVistaEnd` |
+| 4 — Labyrinth Vista | gameplay → anchor offset `(150,-115)`, zoom `0.98→0.78` | 1.0 | Cinematic atmosphere and modular fortress blend in; local roofs fade | `SecondVistaStart → SecondVistaFull` |
+| 4b — Fortress Traverse | anchor → gameplay offset `(150,-115)→(0,-48)`, zoom `0.78→0.98` | 1.0 | Cinematic layers fade; fortress planes recede independently | `SecondVistaFull → SecondVistaEnd` |
 | 5 — Final Gate Veil | normal_offset, normal_zoom | 1.0 | Final gate shadow veil fades in | Player passes SecondVistaEnd toward ReturnTopdown |
 
 These values are live camera targets. `SunderedKeepVistaController` interpolates
@@ -137,28 +137,41 @@ Every frame, `CameraPresentationAnchor` is the Operator position lerped toward
 presentation anchor throughout the level, so weight zero tracks the Operator
 exactly and no follow-target switch occurs at an envelope boundary. Entry-tight
 and traverse gameplay targets are themselves blended from return weight before
-the cinematic influence is applied. `VistaRoot` and the distant Keep use
-`enter_weight`, so the established world remains visible after the camera
-returns and reverses naturally when walking backward before the apex.
+the cinematic influence is applied. Camera 1 is an occlusion-removal reveal,
+not a background crossfade: `UnderlayRoot/FirstVistaBaseStormHorizon`,
+`ApproachOceanVoidUnderlay`, `ParallaxRoot/BaseDepth`, and the playable route
+remain at alpha `1.0`. Only the isolated distant Keep, the first-vista reveal
+veil, and the moonlight separation cue respond to `enter_weight`.
 
-`SunderedKeepRevealDirector` may threshold-detect Camera 1 once for the moonlight
-cue and destination prompt, but it does not own Camera 1 position, zoom, follow
-target, movement restraint, or presentation alpha. Respawn, teleport, route
-restoration, and reverse travel immediately reevaluate the same envelope from
-the Operator's actual position.
+The Keep uses a delayed smootherstep window from `0.12–0.82`, moving from
+`0.08` concealed alpha to `0.92` at the apex. The reveal veil uses
+`0.05–0.90`, peeling from `0.68` to `0.24` while moving only
+`Vector2(-110, 50)` (about 121 pixels). Return weight settles the Keep at
+`0.82`, the veil at `0.32`, and the veil offset at `Vector2(-90, 42)`.
+Reverse travel before the apex restores the concealed state positionally.
+The moonlight cue peaks at `0.20`; it is a separation accent rather than a new
+moon/sky composition. Grand Vista, close fortress planes, foreground ruins,
+and the final-gate veil remain hidden throughout Camera 1.
 
-`SecondVistaRevealTrigger` begins with 0.12 seconds of anticipation while the
-presentation anchor remains at the current follow subject. It then travels
-continuously from that captured position to the existing
-`SecondVistaCameraAnchor`, blending to `(150,-115)` / `0.78` over 1.00 second,
-and holds for 1.50 seconds. Movement is then restored and the presentation
-anchor advances from the second anchor toward `SecondVistaEnd` according to the
-Operator's projection along `SecondVistaFull → SecondVistaEnd`. Physical overlap
-with `SecondReturnToGameplayTrigger`, centered on `SecondVistaEnd`, begins the
-0.35-second return to gameplay framing. The Camera2D continues following
-`CameraPresentationAnchor`, which tracks the Operator exactly after the
-handback; direct Operator follow is restored only when the map is deactivated.
-Raw player progress cannot start the second reveal.
+`SunderedKeepRevealDirector` may threshold-detect Camera 1 once for destination
+prompt timing and reveal signals, but it does not own Camera 1 position, zoom,
+follow target, movement restraint, presentation alpha, fog movement, or
+moonlight energy. Respawn, teleport, route restoration, and reverse travel
+immediately reevaluate the same envelope from the Operator's actual position.
+
+Camera 2 independently projects the Operator onto
+`SecondVistaStart → SecondVistaFull` for entry and
+`SecondVistaFull → SecondVistaEnd` for return. Both use smootherstep easing and
+`camera_weight = enter_weight * (1 - return_weight)`. Every frame,
+`CameraPresentationAnchor` lerps from the Operator to
+`SecondVistaCameraAnchor` by that physical weight, while offset and zoom lerp
+from gameplay framing to `(150,-115)` / `0.78`. Forward travel, reverse travel,
+spawn restoration, and teleporting therefore reconstruct the same framing
+immediately. `SecondVistaRevealTrigger` and `SecondReturnToGameplayTrigger`
+remain event-bookkeeping hooks only: the reveal director may emit signals and
+briefly accent near fog, but cannot restrain movement or change camera position,
+zoom, presentation anchor, or fortress alpha. Direct Operator follow resumes
+only when the map is deactivated.
 
 In debug-UI builds, `VistaDebugProbe` draws Camera 1 marker/anchor swatches and
 Camera 2 trigger rectangles, plus a route guide and derived phase banner. The
@@ -166,23 +179,24 @@ detailed readout reports enter/return progress and weights, camera weight,
 presentation-anchor position, route/profile/node identity, follow ownership,
 handoff status, zoom, and presentation alphas.
 
-The temporary `FarKeepSilhouetteLayerA/B` copies have been removed. The authored
-`ApproachFirstVistaHorizon` remains the broad horizon composition. A dedicated,
-sharper `DistantSunderedKeepLandmark` under `ParallaxRoot/RevealDepth` supplies the
-focal Keep silhouette without enabling any review-blocked supplementary plates.
+The temporary `FarKeepSilhouetteLayerA/B` copies and baked
+`ApproachFirstVistaHorizon` wallpaper are not active. The opaque
+`first_vista_base_storm_horizon.png` contains storm sky and ocean only and
+remains under `UnderlayRoot`. The alpha-valid
+`distant_sundered_keep_landmark_v2.png` under `ParallaxRoot/RevealDepth`
+contains only the Keep and low island silhouette. The separate
+`first_vista_reveal_veil.png` owns the directional fog peel. This prevents
+Camera 1 from introducing a new moon, skyline, ocean, or contrast composition.
 
 The endpoint remains an `Area2D`, but it is a narrow walkable threshold under
-`EventRuntime/LevelExitAffordance`, displays the Return Causeway destination
+`EventRuntime/LevelExitAffordance`, displays the `ENTER SUNDERED KEEP` destination
 prompt, accepts automatic crossing only from the authored approach side, raises
 the final veil, and requests the route-owned `continue` handoff. Production uses
 the route's `fade` transition style: the route manager fades fully to black,
-clears Vista presentation framing, activates Return Causeway at its named spawn,
+clears Vista presentation framing, activates Front Gate at `EntrySpawn`,
 rebinds and snaps the shared camera while obscured, then fades back in. The
 `debug_direct_keep` profile remains the only Vista exit that intentionally skips
-Return Causeway. The production Causeway arrival places the Operator five tiles
-north of its reverse exit and keeps that backtrack trigger guarded until the
-Operator clears the 192 px arrival radius, preventing an immediate bounce to
-Vista.
+Front Gate. Its `backtrack` edge returns directly to Vista `ReturnTopdown`.
 
 **Marker positions** (from builder):
 
@@ -212,7 +226,8 @@ The following painterly matte/background assets already exist at `res://content/
 | `horizon_sky_02.png` | 2100×380 | VistaRoot — sky variant |
 | `far_sea.png` | 2100×260 | VistaRoot — dark sea band on horizon |
 | `far_sea_02.png` | 2100×260 | VistaRoot — sea variant |
-| `distant_sundered_keep.png` | 540×250 | VistaRoot — keep silhouette on horizon |
+| `distant_sundered_keep.png` | 540×250 | Legacy broad distant composition retained for non-Vista compatibility |
+| `distant_sundered_keep_landmark_v2.png` | 1840×854 | Alpha-valid Camera 1 Keep/island landmark only |
 | `vista_fog_band.png` | 2100×160 | VistaRoot/VistaFogBand — seam-hiding fog |
 | `keep_horizon_wide.png` | 1689×787 | Reserve — wider keep matte if needed |
 
@@ -224,9 +239,9 @@ Vista Approach and Return Causeway both build the presentation-only
 `SunderedKeepParallaxRig`, but its supplementary painterly plates are review-gated
 off by default. The current source revisions contain baked checkerboard, mismatched
 mist halves, or compositionally unsafe foreground coverage. Until corrected plates
-pass the alpha/source-revision validator and visual review, Vista uses its existing
-authored first-vista composition as the sole background authority. Return Causeway
-preserves only
+pass the alpha/source-revision validator and visual review, Vista uses the
+persistent base storm horizon plus isolated Keep and reveal veil as first-vista
+authority. Return Causeway preserves only
 `BaseDepth/DistantKeep_Parallax2D/DistantSunderedKeepLandmark` for compatibility.
 
 | Layer | Vista scroll scale | Review state |
@@ -258,13 +273,21 @@ PNG plates do not require artificial Aseprite source files.
 
 `GrandVistaRoot` is an always-visible presentation container in the production
 approach scene. `GrandVistaCinematicRoot` owns the temporary panorama, fog,
-spray, vignette, parapet, and glue overlays. `FortressVistaRoot` owns a
+spray, vignette, and glue overlays. `FortressVistaRoot` owns a
 deterministic 30-piece fortress kit anchored at source-space `(-360,-1280)` near
-the northeast route and scaled to `0.88`. All pieces are instantiated at level
+the northeast route, shifted 70 px east, and scaled to `0.82` (about 93% of the
+previous composition). All pieces are instantiated at level
 build time, but the primary composition enables only 17 connected, supported
 pieces; unattached crowns, unconnected bridges/causeways, and redundant masses
 remain loaded and hidden for later visual review. Neither child defines terrain,
 collision, navigation, encounters, or exit logic.
+
+The 17-piece shot is organized into a western collapsed ward, central round
+citadel, eastern gate ward, and softened remote inner keep. Existing bridge,
+causeway, wall, and broken-arch pieces form three implied labyrinth routes: an
+upper walk that disappears behind the citadel, a middle approach entering a dark
+central opening, and a lower route descending into fog. Pieces overlap their
+supporting masses so no visible route terminates at a transparent asset edge.
 
 The approach also applies `res://game/world/approaches/sundered_keep/soft_rect_feather.gdshader` to horizon, sea, fog, distant-keep, cliff-depth, and grand-vista plates so fitted matte rectangles feather at their UV edges instead of reading as hard cards. Low-opacity `Polygon2D` grounding shadows sit under the walkable chunks to tie the path art into the void/ocean composition; these are visual-only and are not collision authority.
 
@@ -274,17 +297,17 @@ The approach also applies `res://game/world/approaches/sundered_keep/soft_rect_f
 | GrandVistaOceanSprayOverlay | `res://content/backgrounds/sundered_keep/grand_vista/grand_vista_ocean_spray_overlay.png` | `Rect2(-1280, -160, 2560, 720)` | 1 | feathered, alpha 0.58 |
 | GrandVistaFogOverlay | `res://content/backgrounds/sundered_keep/grand_vista/grand_vista_fog_overlay.png` | `Rect2(-1280, -520, 2560, 480)` | 2 | feathered, alpha 0.48 |
 | GrandVistaShadowVignette | `res://content/backgrounds/sundered_keep/grand_vista/grand_vista_shadow_vignette.png` | `Rect2(-1280, -920, 2560, 1440)` | 3 | feathered, alpha 0.42 |
-| GrandVistaForegroundParapet | `res://content/backgrounds/sundered_keep/grand_vista/grand_vista_foreground_parapet.png` | `Rect2(-1280, 260, 2560, 360)` | 20 | feathered, alpha 0.92 |
+| GrandVistaForegroundParapet | `res://content/backgrounds/sundered_keep/grand_vista/grand_vista_foreground_parapet.png` | `Rect2(-1280, 260, 2560, 360)` | 20 | disabled, alpha 0; removes the chest-like central focal mass while the playable route remains visible |
 
-`SunderedKeepRevealDirector` starts the second beat only from physical overlap
-with `SecondVistaRevealTrigger`. The cinematic child rises with the anchored
-camera blend, holds at `1`, then fades as the Operator advances physically. The
-fortress planes rise separately—far over reveal weight `0.00→0.55`, mid over
-`0.18→0.88`, and near over `0.48→1.00` with a `0.78` ceiling—while the distant
-Keep proxy crossfades out. During physical progress the far/mid/near planes
-recede toward `0.48/0.38/0.08`; the final-gate veil then drives the remaining
-fortress to zero before handoff. Neither child may appear during the first
-reveal or its traversal gap.
+The physical Camera 2 envelope drives the cinematic child and all fortress
+planes. Far architecture appears earliest and remains longest, mid architecture
+owns the hero citadel and reaches full visual authority at the apex, and near
+framing appears latest and recedes earliest. Apex far/mid/near alpha is
+`0.66/0.96/0.68`; after physical return it settles at `0.58/0.42/0.10` before
+the final-gate veil drives the remaining fortress to zero. The far plane is
+cooler, darker, and lower-contrast than the mid hero plane, without heavy blur.
+Neither Grand Vista child may appear during the first reveal or its traversal
+gap.
 
 ### Labyrinth depth layers and glue overlays
 
@@ -299,7 +322,7 @@ Vista/Return Causeway rig.
 
 | Sprite name | Asset path | Rect | z_index | Tint |
 |---|---|---|---|---|
-| GrandVistaHorizonSeamFog | `res://content/backgrounds/sundered_keep/grand_vista/grand_vista_horizon_seam_fog.png` | `Rect2(-1280, -460, 2560, 320)` | 30 | alpha 0.45 |
+| GrandVistaHorizonSeamFog | `res://content/backgrounds/sundered_keep/grand_vista/grand_vista_horizon_seam_fog.png` | `Rect2(-1280, -560, 2560, 420)` | 30 | continuous mid-fog band, alpha 0.56 |
 | GrandVistaPathContactShadow | `res://content/backgrounds/sundered_keep/grand_vista/grand_vista_path_contact_shadow.png` | `Rect2(-1280, -160, 2560, 720)` | 35 | alpha 0.50 |
 | GrandVistaEdgeSprayWrap | `res://content/backgrounds/sundered_keep/grand_vista/grand_vista_edge_spray_wrap.png` | `Rect2(-1280, -160, 2560, 720)` | 40 | alpha 0.35 |
 | GrandVistaForegroundEdgeMask | `res://content/backgrounds/sundered_keep/grand_vista/grand_vista_foreground_edge_mask.png` | `Rect2(-1280, 220, 2560, 420)` | 80 | alpha 0.55 |
@@ -325,8 +348,9 @@ Route-master runtime assets:
 | Ocean void underlay | `res://content/backgrounds/sundered_keep/approach/approach_ocean_void_underlay.png` | `UnderlayRoot/ApproachOceanVoidUnderlay` |
 | Cliff spires underlay | `res://content/backgrounds/sundered_keep/approach/approach_cliff_spires_underlay.png` | `UnderlayRoot/ApproachCliffSpiresUnderlay` |
 | Route contact shadow | `res://content/backgrounds/sundered_keep/approach/approach_route_contact_shadow.png` | `UnderlayRoot/ApproachRouteContactShadow` |
-| First vista horizon | `res://content/backgrounds/sundered_keep/approach/approach_first_vista_horizon.png` | `VistaRoot/FirstVistaFarParallax/ApproachFirstVistaHorizon` |
-| First vista fog veil | `res://content/backgrounds/sundered_keep/approach/approach_first_vista_fog_veil.png` | `VistaRoot/FirstVistaMistParallax/ApproachFirstVistaFogVeil` |
+| Persistent first-vista storm horizon | `res://content/backgrounds/sundered_keep/approach/first_vista_base_storm_horizon.png` | `UnderlayRoot/FirstVistaBaseStormHorizon` |
+| Isolated first-vista Keep landmark | `res://content/backgrounds/sundered_keep/distant_sundered_keep_landmark_v2.png` | `ParallaxRoot/RevealDepth/DistantKeep_Parallax2D/DistantSunderedKeepLandmark` |
+| First-vista reveal veil | `res://content/backgrounds/sundered_keep/approach/fog/first_vista_reveal_veil.png` | `VistaRoot/FirstVistaMistParallax/ApproachFirstVistaFogVeil` |
 | Edge mist wrap | `res://content/backgrounds/sundered_keep/approach/approach_edge_mist_wrap.png` | `OcclusionRoot/ApproachEdgeMistWrap` |
 | Final gate shadow veil | `res://content/backgrounds/sundered_keep/approach/approach_final_gate_shadow_veil.png` | `OcclusionRoot/ApproachFinalGateShadowVeil` |
 | Fog strips | `res://content/backgrounds/sundered_keep/approach/fog/approach_fog_strip_0*.png` | `OcclusionRoot/ApproachFogStrip0*` |
@@ -346,14 +370,16 @@ The audit checks all full-composition PNGs and fails if any PlayableRoot terrain
 
 The live ingress approach has a runtime fitting table in `res://game/world/approaches/sundered_keep/sundered_keep_approach.gd`. It intentionally scales `res://content/sprites/world/return_causeway/` path/underlay/occlusion PNGs and `res://content/backgrounds/sundered_keep/` vista mattes into target world rectangles, including a thin `2100x130` `WallShadowOccluder`, so oversized generated overlay exports cannot appear as raw black curtains over the scene.
 
-The production route always continues from Vista to Return Causeway before Front Gate:
+The production route continues directly from Vista to the approved large Front Gate:
 
 ```text
 @world_origin
   -> vista_approach
-  -> return_causeway
   -> front_gate
 ```
+
+Return Causeway is an isolated, unfinished experiment available only through
+`causeway_only`; production traversal and backtracking never activate it.
 
 `sundered_keep_approach_smoke.gd` validates the Vista scene and mapper-authored
 collision. `sundered_keep_vista_polish_smoke.gd` exercises Camera 1 forward,
@@ -549,5 +575,5 @@ Verify at each state:
   - In-editor visual review of the procgen ingress -> `sundered_keep_approach.tscn` playable-map flow
   - Replace the current ingress tile fallback with a specific coast/keep ingress reservation in the procgen intent graph
   - Expand `AUTHORING_MARKERS` into richer encounter scripting once enemy compositions are selected
-  - Continue Return Causeway presentation polish without changing the production route graph
+  - Keep Return Causeway changes isolated to `causeway_only`; do not promote it into production without explicit user review
 - **Constraint:** Art alpha remains non-authoritative; use mapper rails for collision and `AUTHORING_MARKERS` for semantic gameplay points.

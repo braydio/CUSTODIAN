@@ -2669,13 +2669,13 @@ func _apply_reaction(amount: float, hit_strength: int = CombatConstants.HitStren
 	if amount >= crit_damage_threshold:
 		_start_crit_reaction()
 		_obs_increment(&"enemy_reactions_crit", 1)
+	elif hit_strength == CombatConstants.HitStrength.HEAVY:
+		# Attack commitment, not raw damage, guarantees the heavy stagger.
+		_start_stagger_reaction()
+		_obs_increment(&"enemy_reactions_stagger", 1)
 	elif amount >= stagger_damage_threshold:
 		_start_stagger_reaction()
 		_obs_increment(&"enemy_reactions_stagger", 1)
-	elif hit_strength == CombatConstants.HitStrength.HEAVY:
-		# Heavy hits always flinch if damage is above minimum
-		_start_hit_recoil_reaction()
-		_obs_increment(&"enemy_reactions_flinch", 1)
 	elif resists_light_flinch:
 		# Armor-deflect presentation: visual cue but no movement interruption
 		_play_armor_deflect_fx()

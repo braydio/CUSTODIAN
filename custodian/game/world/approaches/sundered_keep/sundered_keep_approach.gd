@@ -32,8 +32,14 @@ const APPROACH_OCEAN_VOID_UNDERLAY := "res://content/backgrounds/sundered_keep/a
 const APPROACH_CLIFF_SPIRES_UNDERLAY := "res://content/backgrounds/sundered_keep/approach/approach_cliff_spires_underlay.png"
 const APPROACH_ROUTE_CONTACT_SHADOW := "res://content/backgrounds/sundered_keep/approach/approach_route_contact_shadow.png"
 const APPROACH_EDGE_MIST_WRAP := "res://content/backgrounds/sundered_keep/approach/approach_edge_mist_wrap.png"
-const APPROACH_FIRST_VISTA_HORIZON := "res://content/backgrounds/sundered_keep/approach/approach_first_vista_horizon.png"
-const APPROACH_FIRST_VISTA_FOG_VEIL := "res://content/backgrounds/sundered_keep/approach/approach_first_vista_fog_veil.png"
+const FIRST_VISTA_BASE_STORM_HORIZON := (
+	"res://content/backgrounds/sundered_keep/approach/"
+	+ "first_vista_base_storm_horizon.png"
+)
+const FIRST_VISTA_REVEAL_VEIL := (
+	"res://content/backgrounds/sundered_keep/approach/fog/"
+	+ "first_vista_reveal_veil.png"
+)
 const APPROACH_FINAL_GATE_SHADOW_VEIL := "res://content/backgrounds/sundered_keep/approach/approach_final_gate_shadow_veil.png"
 
 const APPROACH_FOG_STRIP_01 := "res://content/backgrounds/sundered_keep/approach/fog/approach_fog_strip_01.png"
@@ -75,7 +81,7 @@ const RECT_GRAND_VISTA_SPRAY := Rect2(Vector2(-1280.0, -160.0), Vector2(2560.0, 
 const RECT_GRAND_VISTA_FOG := Rect2(Vector2(-1280.0, -520.0), Vector2(2560.0, 480.0))
 const RECT_GRAND_VISTA_VIGNETTE := Rect2(Vector2(-1280.0, -920.0), Vector2(2560.0, 1440.0))
 const RECT_GRAND_VISTA_PARAPET := Rect2(Vector2(-1280.0, 260.0), Vector2(2560.0, 360.0))
-const RECT_GRAND_VISTA_HORIZON_SEAM_FOG := Rect2(Vector2(-1280.0, -460.0), Vector2(2560.0, 320.0))
+const RECT_GRAND_VISTA_HORIZON_SEAM_FOG := Rect2(Vector2(-1280.0, -560.0), Vector2(2560.0, 420.0))
 const RECT_GRAND_VISTA_PATH_CONTACT_SHADOW := Rect2(Vector2(-1280.0, -160.0), Vector2(2560.0, 720.0))
 const RECT_GRAND_VISTA_EDGE_SPRAY_WRAP := Rect2(Vector2(-1280.0, -160.0), Vector2(2560.0, 720.0))
 const RECT_GRAND_VISTA_FOREGROUND_EDGE_MASK := Rect2(Vector2(-1280.0, 220.0), Vector2(2560.0, 420.0))
@@ -517,17 +523,22 @@ func _build_visuals() -> void:
 	_add_backdrop_void_fill()
 	_add_fitted_sprite(underlay_root, "ApproachOceanVoidUnderlay", APPROACH_OCEAN_VOID_UNDERLAY, RECT_APPROACH_UNDERLAY, -30, Color.WHITE)
 	_apply_soft_rect_feather(
+		_add_fitted_sprite(
+			underlay_root,
+			"FirstVistaBaseStormHorizon",
+			FIRST_VISTA_BASE_STORM_HORIZON,
+			RECT_FIRST_VISTA_HORIZON,
+			-25,
+			Color.WHITE
+		),
+		Vector4(0.06, 0.06, 0.08, 0.18)
+	)
+	_apply_soft_rect_feather(
 		_add_fitted_sprite(underlay_root, "ApproachCliffSpiresUnderlay", APPROACH_CLIFF_SPIRES_UNDERLAY, RECT_APPROACH_UNDERLAY, -20, Color(1.0, 1.0, 1.0, 0.42)),
 		Vector4(0.12, 0.12, 0.14, 0.22)
 	)
 	_add_fitted_sprite(underlay_root, "ApproachRouteContactShadow", APPROACH_ROUTE_CONTACT_SHADOW, _route_rect(RECT_ROUTE_MASTER), -5, Color(1.0, 1.0, 1.0, 0.85))
 
-	var first_vista_far := _add_parallax_layer(
-		vista_root,
-		"FirstVistaFarParallax",
-		-20,
-		Vector2(0.18, 0.07)
-	)
 	var first_vista_mist := _add_parallax_layer(
 		vista_root,
 		"FirstVistaMistParallax",
@@ -537,11 +548,14 @@ func _build_visuals() -> void:
 		0.08
 	)
 	_apply_soft_rect_feather(
-		_add_fitted_sprite(first_vista_far, "ApproachFirstVistaHorizon", APPROACH_FIRST_VISTA_HORIZON, RECT_FIRST_VISTA_HORIZON, 0, Color.WHITE),
-		Vector4(0.06, 0.06, 0.08, 0.18)
-	)
-	_apply_soft_rect_feather(
-		_add_fitted_sprite(first_vista_mist, "ApproachFirstVistaFogVeil", APPROACH_FIRST_VISTA_FOG_VEIL, RECT_FIRST_VISTA_FOG_VEIL, 10, Color(1.0, 1.0, 1.0, 0.38)),
+		_add_fitted_sprite(
+			first_vista_mist,
+			"ApproachFirstVistaFogVeil",
+			FIRST_VISTA_REVEAL_VEIL,
+			RECT_FIRST_VISTA_FOG_VEIL,
+			10,
+			Color(1.0, 1.0, 1.0, 0.68)
+		),
 		Vector4(0.08, 0.08, 0.18, 0.24)
 	)
 
@@ -559,8 +573,10 @@ func _build_visuals() -> void:
 	)
 	fortress_vista_root.position = _route_point(
 		FORTRESS_VISTA_ORIGIN_SOURCE
-	)
-	fortress_vista_root.scale = Vector2(0.88, 0.88)
+	) + Vector2(70.0, 0.0)
+	# Preserve open sky and rebalance the western mass without resizing pieces
+	# independently. This is ~93% of the former 0.88 review scale.
+	fortress_vista_root.scale = Vector2(0.82, 0.82)
 	fortress_vista_root.modulate.a = 1.0
 
 	var labyrinth_far := _add_parallax_layer(
@@ -639,11 +655,19 @@ func _build_visuals() -> void:
 		Vector4(0.08, 0.08, 0.08, 0.08)
 	)
 	_apply_soft_rect_feather(
-		_add_fitted_sprite(labyrinth_near, "GrandVistaForegroundParapet", GRAND_VISTA_PARAPET, RECT_GRAND_VISTA_PARAPET, 20, Color(0.90, 0.94, 1.0, 0.92)),
+		_add_fitted_sprite(labyrinth_near, "GrandVistaForegroundParapet", GRAND_VISTA_PARAPET, RECT_GRAND_VISTA_PARAPET, 20, Color(0.90, 0.94, 1.0, 0.0)),
 		Vector4(0.08, 0.08, 0.18, 0.08)
 	)
+	var foreground_parapet := labyrinth_near.get_node_or_null(
+		"GrandVistaForegroundParapet"
+	)
+	if foreground_parapet != null:
+		foreground_parapet.set_meta(
+			"disabled_for_cinematic_focal_axis",
+			true
+		)
 	_apply_soft_rect_feather(
-		_add_fitted_sprite(labyrinth_mist, "GrandVistaHorizonSeamFog", GRAND_VISTA_HORIZON_SEAM_FOG, RECT_GRAND_VISTA_HORIZON_SEAM_FOG, 30, Color(1.0, 1.0, 1.0, 0.45)),
+		_add_fitted_sprite(labyrinth_mist, "GrandVistaHorizonSeamFog", GRAND_VISTA_HORIZON_SEAM_FOG, RECT_GRAND_VISTA_HORIZON_SEAM_FOG, 30, Color(0.78, 0.86, 0.94, 0.56)),
 		Vector4(0.10, 0.10, 0.28, 0.30)
 	)
 	_apply_soft_rect_feather(
@@ -1263,7 +1287,7 @@ func _build_level_exit_affordance(exit_position: Vector2) -> void:
 
 	var prompt := Label.new()
 	prompt.name = "DestinationPrompt"
-	prompt.text = "CONTINUE TO RETURN CAUSEWAY  >"
+	prompt.text = "ENTER SUNDERED KEEP  >"
 	prompt.position = Vector2(-82.0, -88.0)
 	prompt.size = Vector2(164.0, 24.0)
 	prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -1330,6 +1354,9 @@ func _ensure_vista_controller() -> void:
 		"../ParallaxRoot/RevealDepth/"
 		+ "DistantKeep_Parallax2D/"
 		+ "DistantSunderedKeepLandmark"
+	)
+	vista_controller.first_reveal_light_path = NodePath(
+		"../OcclusionRoot/RevealMoonlightCue"
 	)
 	vista_controller.second_vista_start_marker_path = NodePath("../Markers/SecondVistaStart")
 	vista_controller.second_vista_full_marker_path = NodePath("../Markers/SecondVistaFull")

@@ -47,10 +47,8 @@ func _validate_registry(errors: Array[String]) -> void:
 		return
 	var expected := [
 		[&"production", &"@world_origin", &"enter", &"vista_approach"],
-		[&"production", &"vista_approach", &"continue", &"return_causeway"],
-		[&"production", &"return_causeway", &"continue", &"front_gate"],
-		[&"production", &"front_gate", &"backtrack", &"return_causeway"],
-		[&"production", &"return_causeway", &"backtrack", &"vista_approach"],
+		[&"production", &"vista_approach", &"continue", &"front_gate"],
+		[&"production", &"front_gate", &"backtrack", &"vista_approach"],
 		[&"production", &"vista_approach", &"return_world", &"@world_origin"],
 		[&"debug_direct_keep", &"vista_approach", &"continue", &"front_gate"],
 		[&"causeway_only", &"@world_origin", &"enter", &"return_causeway"],
@@ -84,68 +82,17 @@ func _run_production_chain(errors: Array[String]) -> void:
 	var physics_transitioned := await _trigger_physics_exit(
 		runtime,
 		&"continue",
-		&"return_causeway",
+		&"front_gate",
 		errors
 	)
 	if not physics_transitioned:
 		_cleanup_runtime(runtime)
 		await process_frame
 		return
-	_assert_active(runtime, &"return_causeway", &"OperatorSpawn", errors)
-	var arrival_backtrack := _find_exit(
-		loader.call("get_active_level_instance"),
-		&"backtrack"
-	)
-	if arrival_backtrack == null:
-		errors.append("Return Causeway arrival lacks backtrack exit")
-	elif not arrival_backtrack.is_actor_arrival_guarded(actor):
-		errors.append(
-			"Return Causeway backtrack exit lacks its arrival guard"
-		)
-	else:
-		for unused in 4:
-			await physics_frame
-		if manager.call("get_current_node_id") != &"return_causeway":
-			errors.append(
-				"Return Causeway arrival guard bounced back to Vista"
-			)
-		actor.global_position = (
-			arrival_backtrack.global_position
-			- Vector2(0.0, 224.0)
-		)
-		actor.force_update_transform()
-		await physics_frame
-		await physics_frame
-		if arrival_backtrack.is_actor_arrival_guarded(actor):
-			errors.append(
-				"Return Causeway arrival guard did not arm backtrack "
-				+ "after Operator cleared the staging radius"
-			)
-	await process_frame
+	_assert_active(runtime, &"front_gate", &"EntrySpawn", errors)
 	if is_instance_valid(first_vista):
 		errors.append("Vista was retained after its forward destroy policy")
-	var first_causeway: Node = loader.call("get_active_level_instance")
-
-	_transition(runtime, &"continue", &"front_gate", &"EntrySpawn", errors)
-	if not is_instance_valid(first_causeway):
-		errors.append("Causeway was released despite keep_during_route policy")
-	else:
-		_assert_inactive(first_causeway, "retained Causeway", errors)
 	var first_front_gate: Node = loader.call("get_active_level_instance")
-
-	_transition(
-		runtime,
-		&"backtrack",
-		&"return_causeway",
-		&"KeepReturnSpawn",
-		errors
-	)
-	if loader.call("get_active_level_instance") != first_causeway:
-		errors.append("Causeway backtrack did not reactivate its retained instance")
-	await process_frame
-	if is_instance_valid(first_front_gate):
-		errors.append("Front Gate was retained despite snapshot-and-unload policy")
-
 	_transition(
 		runtime,
 		&"backtrack",
@@ -153,13 +100,13 @@ func _run_production_chain(errors: Array[String]) -> void:
 		&"ReturnTopdown",
 		errors
 	)
-	if is_instance_valid(first_causeway):
-		_assert_inactive(first_causeway, "cached Causeway after reverse exit", errors)
+	await process_frame
+	if is_instance_valid(first_front_gate):
+		errors.append("Front Gate was retained despite snapshot-and-unload policy")
+	var session: RefCounted = manager.call("get_active_session")
+	if session.cached_instances.has(&"return_causeway"):
+		errors.append("production activated or cached quarantined Return Causeway")
 	_transition_to_world(runtime, &"return_world", errors)
-	if is_instance_valid(first_causeway):
-		await process_frame
-	if is_instance_valid(first_causeway):
-		errors.append("production exfil retained the cached Causeway")
 	_cleanup_runtime(runtime)
 	await process_frame
 

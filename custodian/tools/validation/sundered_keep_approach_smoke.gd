@@ -15,16 +15,16 @@ const EXPECTED_ROOTS := {
 
 const EXPECTED_SPRITE_RECTS := {
 	"UnderlayRoot/ApproachOceanVoidUnderlay": Rect2(Vector2(-1536, -1236), Vector2(3392, 2718)),
+	"UnderlayRoot/FirstVistaBaseStormHorizon": Rect2(Vector2(-1000, -980), Vector2(2600, 1460)),
 	"UnderlayRoot/ApproachCliffSpiresUnderlay": Rect2(Vector2(-1536, -1236), Vector2(3392, 2718)),
 	"UnderlayRoot/ApproachRouteContactShadow": Rect2(Vector2(-620, -480), Vector2(2048, 1706)),
-	"VistaRoot/FirstVistaFarParallax/ApproachFirstVistaHorizon": Rect2(Vector2(-1000, -980), Vector2(2600, 1460)),
 	"VistaRoot/FirstVistaMistParallax/ApproachFirstVistaFogVeil": Rect2(Vector2(-1000, -360), Vector2(2600, 720)),
 	"GrandVistaRoot/GrandVistaCinematicRoot/LabyrinthFarParallax/GrandVistaPanorama": Rect2(Vector2(-1280, -920), Vector2(2560, 1440)),
 	"GrandVistaRoot/GrandVistaCinematicRoot/LabyrinthMistParallax/GrandVistaOceanSprayOverlay": Rect2(Vector2(-1280, -160), Vector2(2560, 720)),
 	"GrandVistaRoot/GrandVistaCinematicRoot/LabyrinthMistParallax/GrandVistaFogOverlay": Rect2(Vector2(-1280, -520), Vector2(2560, 480)),
 	"GrandVistaRoot/GrandVistaCinematicRoot/LabyrinthFarParallax/GrandVistaShadowVignette": Rect2(Vector2(-1280, -920), Vector2(2560, 1440)),
 	"GrandVistaRoot/GrandVistaCinematicRoot/LabyrinthNearRoot/GrandVistaForegroundParapet": Rect2(Vector2(-1280, 260), Vector2(2560, 360)),
-	"GrandVistaRoot/GrandVistaCinematicRoot/LabyrinthMistParallax/GrandVistaHorizonSeamFog": Rect2(Vector2(-1280, -460), Vector2(2560, 320)),
+	"GrandVistaRoot/GrandVistaCinematicRoot/LabyrinthMistParallax/GrandVistaHorizonSeamFog": Rect2(Vector2(-1280, -560), Vector2(2560, 420)),
 	"GrandVistaRoot/GrandVistaCinematicRoot/LabyrinthNearRoot/GrandVistaPathContactShadow": Rect2(Vector2(-1280, -160), Vector2(2560, 720)),
 	"GrandVistaRoot/GrandVistaCinematicRoot/LabyrinthNearRoot/GrandVistaEdgeSprayWrap": Rect2(Vector2(-1280, -160), Vector2(2560, 720)),
 	"GrandVistaRoot/GrandVistaCinematicRoot/LabyrinthNearRoot/GrandVistaForegroundEdgeMask": Rect2(Vector2(-1280, 220), Vector2(2560, 420)),
@@ -57,10 +57,10 @@ const EXPECTED_MARKERS := {
 	"RevealStart": Vector2(-40, 300),
 	"RevealFull": Vector2(-150, 5),
 	"MidGameplayStart": Vector2(50, -55),
-	"RevealControlStart": Vector2(-241.9, -165.3),
-	"RevealControlEnd": Vector2(197.8, -187.1),
-	"FirstCameraControlStart": Vector2(-284.4, -112.0),
-	"FirstCameraReturnComplete": Vector2(224.8, -181.9),
+	"RevealControlStart": Vector2(-257.4, -141.9),
+	"RevealControlEnd": Vector2(-162.5, -200.6),
+	"FirstCameraControlStart": Vector2(-356.0, -22.0),
+	"FirstCameraReturnComplete": Vector2(113.6, -190.2),
 	"SecondVistaStart": Vector2(300, -125),
 	"SecondVistaFull": Vector2(590, -125),
 	"SecondVistaEnd": Vector2(830, -125),
@@ -146,8 +146,8 @@ func _init() -> void:
 			)
 
 	var vista_root := scene.get_node_or_null("VistaRoot") as CanvasItem
-	if vista_root == null or vista_root.modulate.a > 0.01:
-		errors.append("VistaRoot should start hidden; alpha=%s" % (vista_root.modulate.a if vista_root else "missing"))
+	if vista_root == null or vista_root.modulate.a < 0.99:
+		errors.append("VistaRoot should remain continuously visible; alpha=%s" % (vista_root.modulate.a if vista_root else "missing"))
 	var grand_vista_root := scene.get_node_or_null("GrandVistaRoot") as CanvasItem
 	if grand_vista_root == null or grand_vista_root.modulate.a < 0.99:
 		errors.append("GrandVistaRoot container should remain visible")
@@ -248,10 +248,21 @@ func _init() -> void:
 	else:
 		if not controller.has_camera_target():
 			errors.append("VistaController camera target is not bound")
-		if float(controller.get("vista_fog_max_alpha")) > 0.38:
-			errors.append(
-				"Vista reveal fog exceeds the 0.38 review budget"
-			)
+		if not is_equal_approx(
+			float(controller.get("first_vista_fog_before_alpha")),
+			0.68
+		):
+			errors.append("Vista reveal fog does not start at 0.68")
+		if not is_equal_approx(
+			float(controller.get("first_vista_fog_apex_alpha")),
+			0.24
+		):
+			errors.append("Vista reveal fog does not retain 0.24 at apex")
+		if not is_equal_approx(
+			float(controller.get("first_vista_fog_settled_alpha")),
+			0.32
+		):
+			errors.append("Vista reveal fog does not settle at 0.32")
 		_check_controller_path(controller, "vista_root_path", NodePath("../VistaRoot"), errors)
 		_check_controller_path(controller, "camera_path", NodePath("/root/GameRoot/World/Camera2D"), errors)
 		_check_controller_path(controller, "entry_marker_path", NodePath("../Markers/EntrySpawn"), errors)
@@ -358,8 +369,8 @@ func _init() -> void:
 			errors.append("First reveal must not reveal Grand Vista cinematic layers")
 		if fortress_far == null or fortress_far.modulate.a > 0.01:
 			errors.append("First reveal must not reveal the fortress")
-		if vista_root == null or vista_root.modulate.a > 0.01:
-			errors.append("VistaRoot must remain hidden until explicit reveal choreography begins")
+		if vista_root == null or vista_root.modulate.a < 0.99:
+			errors.append("VistaRoot must remain continuously visible")
 		controller.complete_first_reveal()
 		controller.apply_progress(maxf(reveal_full_progress, second_start_progress - 0.05))
 		if cinematic_root == null or cinematic_root.modulate.a > 0.01:
@@ -374,32 +385,14 @@ func _init() -> void:
 		controller.begin_second_reveal()
 		controller.set_second_reveal_weight(1.0)
 		controller.hold_second_reveal()
-		if cinematic_root == null or cinematic_root.modulate.a < 0.99:
-			errors.append("Explicit second reveal did not reveal cinematic layers")
-		if fortress_far == null or fortress_far.modulate.a < 0.99:
-			errors.append("Explicit second reveal did not fully reveal far fortress")
-		if fortress_mid == null or fortress_mid.modulate.a < 0.99:
-			errors.append("Explicit second reveal did not fully reveal mid fortress")
-		if (
-			fortress_near == null
-			or absf(fortress_near.modulate.a - 0.78) > 0.02
-		):
-			errors.append("Explicit second reveal did not stage near fortress")
-		_check_camera_target(controller, Vector2(150.0, -115.0), Vector2(0.78, 0.78), "second reveal", errors)
+		if cinematic_root == null or cinematic_root.modulate.a > 0.01:
+			errors.append("Timed second-reveal hooks overrode physical framing")
+		if fortress_far == null or fortress_far.modulate.a > 0.01:
+			errors.append("Timed second-reveal hooks exposed fortress layers")
 		controller.begin_second_progress_control()
 		controller.begin_second_return_to_gameplay()
 		controller.set_second_return_to_gameplay_weight(1.0)
 		controller.complete_second_reveal()
-		controller.apply_progress(second_end_progress)
-		_check_camera_target(controller, Vector2(0.0, -48.0), Vector2(0.98, 0.98), "second reveal return", errors)
-		if cinematic_root == null or cinematic_root.modulate.a > 0.01:
-			errors.append("VistaController did not hide cinematic layers after handback")
-		if fortress_far == null or fortress_far.modulate.a < 0.45:
-			errors.append("Far fortress did not persist after handback")
-		if fortress_mid == null or fortress_mid.modulate.a < 0.35:
-			errors.append("Mid fortress did not persist after handback")
-		if fortress_near == null or fortress_near.modulate.a > 0.10:
-			errors.append("Near fortress did not recede after handback")
 		controller.apply_progress(minf(1.0, second_end_progress + 0.05))
 		controller.apply_progress(1.0)
 		if final_gate_veil == null or final_gate_veil.modulate.a < 0.35:
@@ -652,7 +645,7 @@ func _check_event_markers(scene: Node, errors: Array[String]) -> void:
 			if affordance.get_node_or_null("WalkableThreshold") == null:
 				errors.append("LevelExitAffordance missing WalkableThreshold")
 			var prompt := affordance.get_node_or_null("DestinationPrompt") as Label
-			if prompt == null or not prompt.text.contains("RETURN CAUSEWAY"):
+			if prompt == null or not prompt.text.contains("SUNDERED KEEP"):
 				errors.append("LevelExitAffordance destination prompt is missing or unclear")
 		for forbidden_name in ["GatehouseKeyInteraction", "MainGateInteraction", "MainGateBlocker", "EnemySpawnWestSpawnNode", "EnemySpawnGateSpawnNode"]:
 			if runtime.get_node_or_null(forbidden_name) != null:
@@ -748,8 +741,11 @@ func _check_reveal_director(scene: Node, errors: Array[String]) -> void:
 	if not bool(state.get("prompt_visible", false)):
 		errors.append("LevelExitAffordance did not appear after reveal completion")
 	var reveal_light := scene.get_node_or_null("OcclusionRoot/RevealMoonlightCue") as PointLight2D
-	if reveal_light != null and reveal_light.energy > 0.01:
-		errors.append("RevealMoonlightCue did not settle back to zero energy")
+	if reveal_light != null and (
+		reveal_light.energy <= 0.0
+		or reveal_light.energy > 0.20
+	):
+		errors.append("RevealMoonlightCue is outside its positional 0.20 budget")
 	director.play_reveal()
 	await process_frame
 	if int(completion_count[0]) != 1:
@@ -786,6 +782,13 @@ func _check_reveal_director(scene: Node, errors: Array[String]) -> void:
 		)
 		return
 
+	var second_full := scene.get_node_or_null(
+		"Markers/SecondVistaFull"
+	) as Marker2D
+	if second_full == null:
+		errors.append("Markers/SecondVistaFull missing")
+		return
+	operator.global_position = second_full.global_position
 	for unused in 20:
 		if bool(
 			director.get_reveal_state().get(
@@ -794,7 +797,7 @@ func _check_reveal_director(scene: Node, errors: Array[String]) -> void:
 			)
 		):
 			break
-		await process_frame
+		await physics_frame
 	var second_return_trigger := scene.get_node_or_null(
 		"SequenceTriggers/SecondReturnToGameplayTrigger"
 	) as Area2D

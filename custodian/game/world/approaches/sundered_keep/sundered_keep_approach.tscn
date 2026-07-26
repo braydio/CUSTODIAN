@@ -19,7 +19,7 @@ script = ExtResource("1_script")
 [node name="Exit_Continue" type="Area2D" parent="EventRuntimeRoot/Exits"]
 script = ExtResource("2_exit")
 exit_id = &"continue"
-prompt_text = "CONTINUE TO RETURN CAUSEWAY"
+prompt_text = "ENTER SUNDERED KEEP"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="EventRuntimeRoot/Exits/Exit_Continue"]
 shape = SubResource("RectangleShape2D_continue")

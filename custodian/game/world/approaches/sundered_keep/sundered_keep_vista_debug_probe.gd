@@ -304,17 +304,22 @@ func _refresh_readout() -> void:
 			str(reveal.get("second_running", false)),
 			str(reveal.get("second_complete", false)),
 		],
-		"second anchor=%.2f physical=%.2f ready_return=%s return_running=%s"
+		"second phase=%s enter/return=%.2f/%.2f camera=%.2f"
 		% [
+			String(
+				choreography.get(
+					"second_camera_phase",
+					"unknown"
+				)
+			),
 			float(
 				choreography.get(
-					"second_anchor_blend_weight",
+					"second_enter_progress",
 					0.0
 				)
 			),
-			float(choreography.get("second_progress_weight", 0.0)),
-			str(reveal.get("second_ready_for_return", false)),
-			str(reveal.get("second_return_running", false)),
+			float(choreography.get("second_return_progress", 0.0)),
+			float(choreography.get("second_camera_weight", 0.0)),
 		],
 	]
 	_label.text = "\n".join(rows)
@@ -372,34 +377,21 @@ func _update_phase_banner(
 					"SECOND REVEAL ARMED — ENTER MAGENTA TRIGGER"
 				)
 				banner_color = SECOND_COLOR
-		"SECOND_REVEAL":
-			banner_text = "SECOND REVEAL — BLEND %d%%" % roundi(
+		"SECOND_BLEND_TO_CINEMATIC":
+			banner_text = "CAMERA 2 — BLEND TO CITADEL %d%%" % roundi(
 				float(
 					choreography.get(
-						"second_reveal_weight",
+						"second_camera_weight",
 						0.0
 					)
 				) * 100.0
 			)
 			banner_color = SECOND_COLOR
-		"SECOND_REVEAL_HOLD":
-			banner_text = "SECOND REVEAL — HOLD"
+		"SECOND_CINEMATIC_APEX":
+			banner_text = "CAMERA 2 — LABYRINTH APEX"
 			banner_color = SECOND_COLOR
-		"SECOND_PROGRESS_CONTROL":
-			banner_text = (
-				"SECOND REVEAL — ROUTE CONTROL %d%%"
-				% roundi(
-					float(
-						choreography.get(
-							"second_progress_weight",
-							0.0
-						)
-					) * 100.0
-				)
-			)
-			banner_color = CONTROL_COLOR
-		"SECOND_RETURNING_TO_PLAY":
-			banner_text = "SECOND REVEAL — RETURN %d%%" % roundi(
+		"SECOND_BLEND_TO_GAMEPLAY":
+			banner_text = "CAMERA 2 — BLEND TO GAMEPLAY %d%%" % roundi(
 				float(
 					choreography.get(
 						"second_return_weight",
@@ -407,6 +399,9 @@ func _update_phase_banner(
 					)
 				) * 100.0
 			)
+			banner_color = CONTROL_COLOR
+		"SECOND_GAMEPLAY_AFTER":
+			banner_text = "CAMERA 2 — GAMEPLAY AFTER"
 			banner_color = SECOND_COLOR
 	_phase_banner.text = banner_text
 	_phase_banner.add_theme_color_override(
@@ -515,16 +510,19 @@ func _update_target_line(canvas_transform: Transform2D) -> void:
 		"BLEND_TO_GAMEPLAY":
 			target_path = RETURN_TRIGGER_PATH
 			color = RETURN_COLOR
-	if target_path.is_empty() and not bool(
-		reveal.get("second_played", false)
-	):
-		target_path = SECOND_TRIGGER_PATH
-		color = SECOND_COLOR
-	elif target_path.is_empty() and not bool(
-		reveal.get("second_complete", false)
-	):
-		target_path = SECOND_RETURN_TRIGGER_PATH
-		color = RETURN_COLOR
+	if target_path.is_empty():
+		match String(
+			choreography.get(
+				"second_camera_phase",
+				"SECOND_GAMEPLAY_BEFORE"
+			)
+		):
+			"SECOND_GAMEPLAY_BEFORE", "SECOND_BLEND_TO_CINEMATIC":
+				target_path = SECOND_TRIGGER_PATH
+				color = SECOND_COLOR
+			"SECOND_CINEMATIC_APEX", "SECOND_BLEND_TO_GAMEPLAY":
+				target_path = SECOND_RETURN_TRIGGER_PATH
+				color = RETURN_COLOR
 	var target := _approach.get_node_or_null(target_path) as Node2D
 	if target == null:
 		_target_line.clear_points()

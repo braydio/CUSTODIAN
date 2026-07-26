@@ -70,6 +70,8 @@ class_name CameraController
 @export var combat_state_hold_time: float = 0.18
 @export var heavy_state_hold_time: float = 0.22
 @export var hitstun_state_hold_time: float = 0.30
+@export var critical_hit_shake_power: float = 6.0
+@export var critical_hit_shake_duration: float = 0.18
 
 # Screen Shake
 @export_group("Shake")
@@ -698,7 +700,12 @@ func on_attack_impact(direction: Vector2, is_heavy: bool = false):
 
 
 func on_execution_impact(direction: Vector2):
-	# Executions use one authored directional kick instead of prolonged random shake.
+	on_critical_hit(direction)
+
+
+func on_critical_hit(direction: Vector2):
+	# Critical contact combines a concise shake with the authored directional kick.
+	apply_shake(critical_hit_shake_power, critical_hit_shake_duration)
 	_push_offset += direction.normalized() * 3.0
 	_hold_state(CameraState.HEAVY_ATTACK, 0.14)
 

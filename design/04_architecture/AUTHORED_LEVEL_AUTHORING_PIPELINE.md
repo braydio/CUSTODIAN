@@ -146,9 +146,16 @@ Every definition also declares lifecycle data:
 
 Definitions tagged `world_ingress` are eligible for procgen placement. Registry paths are sorted and duplicate paths/IDs are rejected.
 
-Sundered Keep is a registered route with distinct Vista Approach, Return Causeway, and Front Gate levels. Its route definition owns world ingress and production/debug profiles; each scene exposes only generic exits. The Front Gate definition points to the real Keep scene. Generated definitions default to `gameplay`, while the Vista node explicitly selects `vista_approach`.
+Sundered Keep is a registered route with distinct Vista Approach, Return Causeway, and Front Gate levels. Its route definition owns world ingress and production/debug profiles; each scene exposes only generic exits. Production connects Vista directly to Front Gate, while Return Causeway remains quarantined in `causeway_only`. The Front Gate definition points to the real Keep scene. Generated definitions default to `gameplay`, while the Vista node explicitly selects `vista_approach`.
 
-The production Sundered scenes author their `LevelExit2D` children directly: Vista owns `continue` and `return_world`, Return Causeway owns `continue` and `backtrack`, and Front Gate owns `backtrack` and `exfil`. Runtime scripts locate and position these nodes but do not instantiate them.
+The Front Gate also has a review-only underlay gameplay-tile mapper. It loads
+the same canonical underlay/collision pair as the collision mapper, presents a
+stable numbered `01–99` palette beside it, and records grid-snapped preview
+placements in a separate JSON document. This authoring document is not runtime
+authority until its reviewed placements are explicitly promoted into the level
+data; it must never silently replace the canonical collision rails.
+
+The Sundered scenes author their `LevelExit2D` children directly: production Vista owns `continue` and `return_world`, quarantined Return Causeway owns `continue` and `backtrack`, and production Front Gate owns `backtrack` and `exfil`. Runtime scripts locate and position these nodes but do not instantiate them.
 
 `WorldIngressSpawner` combines level-owned and route-owned ingress definitions deterministically and rejects duplicate ingress IDs. Production level-only ingress starts an internal one-node route. `LevelLoader` is the low-level staged-instance service and never owns graph/profile/history logic.
 

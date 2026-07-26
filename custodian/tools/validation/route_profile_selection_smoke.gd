@@ -10,7 +10,7 @@ func _init() -> void:
 	else:
 		var production: Array[RefCounted] = route.resolve_exit(&"production", &"vista_approach", &"continue")
 		var debug: Array[RefCounted] = route.resolve_exit(&"debug_direct_keep", &"vista_approach", &"continue")
-		if production.size() != 1 or production[0].to_node_id != &"return_causeway": errors.append("production Vista continue did not resolve to Causeway")
+		if production.size() != 1 or production[0].to_node_id != &"front_gate": errors.append("production Vista continue did not resolve directly to Front Gate")
 		if debug.size() != 1 or debug[0].to_node_id != &"front_gate": errors.append("debug Vista continue did not resolve to Front Gate")
 	finish(errors)
 func finish(errors: Array[String]) -> void:

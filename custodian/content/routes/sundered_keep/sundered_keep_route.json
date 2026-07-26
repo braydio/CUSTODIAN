@@ -33,18 +33,19 @@
     {"edge_id": "causeway_to_vista", "from_node_id": "return_causeway", "exit_id": "backtrack", "to_node_id": "vista_approach", "target_spawn_id": "ReturnTopdown", "direction": "back", "transition_style": "fade"},
     {"edge_id": "causeway_exfil_debug", "from_node_id": "return_causeway", "exit_id": "backtrack", "to_node_id": "@world_origin", "target_spawn_id": "", "direction": "exfil", "transition_style": "fade"},
     {"edge_id": "keep_to_causeway", "from_node_id": "front_gate", "exit_id": "backtrack", "to_node_id": "return_causeway", "target_spawn_id": "KeepReturnSpawn", "direction": "back", "transition_style": "fade"},
+    {"edge_id": "keep_to_vista_direct", "from_node_id": "front_gate", "exit_id": "backtrack", "to_node_id": "vista_approach", "target_spawn_id": "ReturnTopdown", "direction": "back", "transition_style": "fade"},
     {"edge_id": "keep_exfil", "from_node_id": "front_gate", "exit_id": "exfil", "to_node_id": "@world_origin", "target_spawn_id": "", "direction": "exfil", "transition_style": "fade"}
   ],
   "profiles": [
     {
       "profile_id": "production",
       "entry_edge_id": "enter_vista",
-      "enabled_edge_ids": ["enter_vista", "vista_to_causeway", "vista_exfil", "causeway_to_keep", "causeway_to_vista", "keep_to_causeway", "keep_exfil"]
+      "enabled_edge_ids": ["enter_vista", "vista_to_keep_direct", "vista_exfil", "keep_to_vista_direct", "keep_exfil"]
     },
     {
       "profile_id": "debug_direct_keep",
       "entry_edge_id": "enter_vista",
-      "enabled_edge_ids": ["enter_vista", "vista_to_keep_direct", "vista_exfil", "keep_to_causeway", "causeway_to_vista", "keep_exfil"]
+      "enabled_edge_ids": ["enter_vista", "vista_to_keep_direct", "vista_exfil", "keep_to_vista_direct", "keep_exfil"]
     },
     {
       "profile_id": "causeway_only",

@@ -32,6 +32,8 @@ const FOREGROUND_ARCH_PATH := \
 
 const DISTANT_KEEP_PATH := \
 	"res://content/backgrounds/sundered_keep/distant_sundered_keep.png"
+const DISTANT_KEEP_LANDMARK_PATH := \
+	"res://content/backgrounds/sundered_keep/distant_sundered_keep_landmark_v2.png"
 
 const STRIP_OVERLAP_PX := 96.0
 
@@ -190,7 +192,7 @@ func _build_vista_approach(
 		reveal_root,
 		"DistantKeep_Parallax2D",
 		"DistantSunderedKeepLandmark",
-		DISTANT_KEEP_PATH,
+		DISTANT_KEEP_LANDMARK_PATH,
 		keep_rect,
 		Vector2(0.12, 0.06),
 		-214,

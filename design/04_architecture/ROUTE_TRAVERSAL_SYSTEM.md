@@ -101,7 +101,7 @@ disconnects automatic body-entry requests until that actor leaves its configured
 radius; it does not select a destination or add time-based route authority. It
 contains no route, destination, scene, spawn, profile, cache, or loader authority.
 
-Production Sundered exits are authored `LevelExit2D` children in the Vista, Return Causeway, and Front Gate scenes. Their scripts may locate and position them from authored markers or tiles, but must not instantiate route exits.
+Sundered exits are authored `LevelExit2D` children in the Vista, Return Causeway, and Front Gate scenes. Production enables the Vista and Front Gate exits only; Return Causeway exits are enabled solely by `causeway_only`. Their scripts may locate and position them from authored markers or tiles, but must not instantiate route exits.
 
 ## State Policies
 
@@ -129,14 +129,18 @@ Distinct registered levels:
 Production:
 
 ```text
-@world_origin → vista_approach → return_causeway → front_gate
-front_gate → return_causeway → vista_approach → @world_origin
+@world_origin → vista_approach → front_gate
+front_gate → vista_approach → @world_origin
 front_gate → @world_origin
 ```
 
-`debug_direct_keep` resolves Vista `continue` directly to Front Gate. `causeway_only` enters Return Causeway and exfils for focused validation. Route data, not scene booleans, selects these edges.
+Production and `debug_direct_keep` resolve Vista `continue` directly to Front
+Gate. The unfinished Return Causeway is quarantined behind `causeway_only`,
+which enters it from world origin and exfils without connecting to production.
+It must not be promoted without explicit user review. Route data, not scene
+booleans, selects these edges.
 
-Return Causeway places `OperatorSpawn` five tiles north of its southern
+Within its isolated debug profile, Return Causeway places `OperatorSpawn` five tiles north of its southern
 `backtrack` exit. That reverse exit uses a 192 px arrival guard, so activating the
 Causeway cannot immediately re-enter Vista; the guard clears only after the
 Operator leaves the arrival radius, after which ordinary physical backtracking is

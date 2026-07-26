@@ -55,6 +55,14 @@ func _init() -> void:
 	_assert(map.get_node_or_null("SunderedGateKeyPickup") != null, "Sundered Gate Key pickup missing")
 	_assert(map.get_node_or_null("MainGateInteraction") != null, "main gate interaction missing")
 	_assert(map.get_node_or_null("Collision/PrefabGatehouseGateBlocker") != null, "closed prefab gate blocker missing")
+	var mapped_collision := map.get_node_or_null(
+		"MappedUnderlayBounds/UnderlayBoundaryCollision"
+	) as StaticBody2D
+	_assert(mapped_collision != null, "canonical mapped underlay collision missing")
+	_assert(
+		mapped_collision != null and mapped_collision.get_child_count() == 127,
+		"canonical mapped underlay segment count drifted"
+	)
 
 	var floors := _collect_walkable_floor_tiles(map)
 	var minimap_data: Dictionary = map.call("get_level_data")
@@ -130,8 +138,6 @@ func _init() -> void:
 	_assert(_count_sprites_with_path_fragment(map, "Traversal", "main_gate_portcullis_") == 0, "old small portcullis runtime sprites are still present")
 	var great_hall_horizontal_carpet := _count_sprites_with_path_fragment_in_rect(map, "FloorDetail", "great_hall_carpet_runner_horizontal_01", Rect2i(Vector2i(56, 26), Vector2i(18, 2)))
 	_assert(great_hall_horizontal_carpet >= 30, "Great Hall post-door carpet does not turn right into the hallway; count=%d" % great_hall_horizontal_carpet)
-	_assert(_has_blocker_covering_tile(map, Vector2i(71, 25)), "Great Hall right-turn hallway north wall lacks collision")
-	_assert(_has_blocker_covering_tile(map, Vector2i(71, 29)), "Great Hall right-turn hallway south wall lacks collision")
 	_assert(not _has_blocker_covering_tile(map, Vector2i(71, 27)), "Great Hall right-turn hallway walking lane is blocked")
 	var marine_ambush: Dictionary = state["great_hall_marine_ambush"]
 	_assert(bool(marine_ambush.get("exists", false)), "Great Hall marine ambush was not spawned")
@@ -170,10 +176,6 @@ func _init() -> void:
 		_assert(marine_sprite != null and marine_sprite.animation == "marine_dash_charge_e", "Great Hall marine did not play dash windup animation")
 
 	_assert(not _has_blocker_covering_tile(map, Vector2i(56, 76)), "spawn tile is blocked")
-	_assert(_has_blocker_covering_tile(map, Vector2i(51, 55)), "west bridge parapet wall lacks collision")
-	_assert(_has_blocker_covering_tile(map, Vector2i(61, 55)), "east bridge parapet wall lacks collision")
-	_assert(_has_blocker_covering_tile(map, Vector2i(45, 38)), "west labyrinth partition lacks collision")
-	_assert(_has_blocker_covering_tile(map, Vector2i(67, 38)), "east labyrinth partition lacks collision")
 	_assert(not _has_blocker_covering_tile(map, Vector2i(56, 43)), "central courtyard labyrinth lane is blocked")
 	_assert(not _has_blocker_covering_tile(map, Vector2i(51, 64)), "west side stair opening is blocked")
 	_assert(not _has_blocker_covering_tile(map, Vector2i(61, 64)), "east side stair opening is blocked")

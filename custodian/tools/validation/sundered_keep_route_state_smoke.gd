@@ -33,7 +33,6 @@ func _run() -> void:
 
 	runtime.ingress.set("_triggered", true)
 	runtime.ingress.call("_enter_approach", actor)
-	_traverse(manager, &"continue", &"return_causeway", actor, errors)
 	_traverse(manager, &"continue", &"front_gate", actor, errors)
 
 	var first_front_gate: Node = loader.call("get_active_level_instance")
@@ -114,7 +113,7 @@ func _run() -> void:
 			errors.append("objective restoration replayed %s" % signal_name)
 	var inventory_calls_before_revisit := inventory.add_item_calls
 
-	_traverse(manager, &"backtrack", &"return_causeway", actor, errors)
+	_traverse(manager, &"backtrack", &"vista_approach", actor, errors)
 	await process_frame
 	if is_instance_valid(first_front_gate):
 		errors.append("snapshot-and-unload retained the original Front Gate instance")

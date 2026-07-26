@@ -148,6 +148,12 @@ func _initialize() -> void:
 	var key_quantity := (_find_node_named(inventory_ui, "Item_sundered_gate_key") as Button).get_node_or_null("ItemQuantity") as Label
 	_assert(key_quantity != null and not key_quantity.visible, "key-object cards should not display stack quantity")
 	var p9_card := _find_node_named(inventory_ui, "Item_p9_sidearm") as Button
+	_assert(
+		p9_card.tooltip_text.contains("P-9 FIELD SIDEARM")
+		and p9_card.tooltip_text.contains("EQUIPMENT · QTY 1")
+		and p9_card.tooltip_text.length() > "P-9 FIELD SIDEARM".length(),
+		"hovering an inventory card should expose an identity, quantity, and description tooltip"
+	)
 	var p9_name := _find_node_named(p9_card, "ItemName") as Label
 	_assert(p9_name != null and p9_name.text == "P-9 FIELD SIDEARM", "item card should keep its name in a dedicated text region")
 	var expected_card_size := inventory_ui.call(

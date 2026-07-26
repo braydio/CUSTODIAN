@@ -99,6 +99,8 @@ creating a second overbright arch behind page content.
 ## Controls
 
 - Category filtering and class/name sorting are real focusable buttons.
+- Hovering an item card exposes its identity, class, quantity, and description
+  through a native tooltip without changing selection.
 - `F` / controller `X` cycles filters.
 - `R` / controller right-stick click toggles class-first and name-first sorting.
 - `Q` / `LB` and `E` / `RB` cycle pages.

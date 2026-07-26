@@ -112,7 +112,7 @@ front_gate (sundered_keep_map.tscn)
 
 ## Implementation Notes
 
-- The prototype is not connected to the live level/route registries. Production uses the independent registered Vista, Return Causeway, and Front Gate levels under `RouteTraversalManager`.
+- The prototype is not connected to the live level/route registries. Production uses the independent registered Vista and Front Gate levels under `RouteTraversalManager`; Return Causeway remains registered but quarantined in `causeway_only`.
 - `SunderedKeepMap` is script-only (`.gd`). The route's `final_target_scene` expects a `PackedScene`, so `sundered_keep_map.tscn` wrapper was created.
 - Stage scenes should remain thin — all substantive logic lives in the `.gd` script, the `.tscn` is a minimal stub (script + EntrySpawn + CameraBounds).
 - The current route-stage flow remains visually discontinuous by design because substages are separate scenes. It is retired from production; do not reconnect it unless vista_one/pre_level/grand_vista/causeway_approach are redesigned as one continuous authored route.
