@@ -118,13 +118,29 @@ func _resolve_north_edge_overlook(
 			map_instance
 		):
 			continue
-		return {
+		var result := {
 			"ok": true,
 			"tile": candidate,
 			"anchor": anchor,
 			"outward_direction": Vector2i.UP,
 			"edge_distance_tiles": candidate.y,
 		}
+		if (
+			map_instance != null
+			and map_instance.has_method(
+				"claim_world_overlook_pocket"
+			)
+		):
+			result["requires_authored_pocket"] = true
+			result["pocket_center_tile"] = (
+				candidate
+				+ Vector2i.DOWN * int(approach_depth / 2)
+			)
+			result["pocket_size_tiles"] = Vector2i(
+				9,
+				approach_depth
+			)
+		return result
 
 	if map_instance != null and map_instance.has_method(
 		"claim_world_overlook_pocket"

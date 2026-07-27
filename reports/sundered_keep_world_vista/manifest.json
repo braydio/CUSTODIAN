@@ -16,7 +16,7 @@
       "seed": 1
     },
     {
-      "authored_pocket": false,
+      "authored_pocket": true,
       "edge_distance_tiles": 4,
       "ingress_tile": [
         67,
@@ -27,7 +27,7 @@
       "seed": 2
     },
     {
-      "authored_pocket": false,
+      "authored_pocket": true,
       "edge_distance_tiles": 4,
       "ingress_tile": [
         65,
@@ -38,7 +38,7 @@
       "seed": 3
     },
     {
-      "authored_pocket": false,
+      "authored_pocket": true,
       "edge_distance_tiles": 4,
       "ingress_tile": [
         67,
@@ -49,7 +49,7 @@
       "seed": 4
     },
     {
-      "authored_pocket": false,
+      "authored_pocket": true,
       "edge_distance_tiles": 4,
       "ingress_tile": [
         82,
@@ -82,7 +82,7 @@
       "seed": 7
     },
     {
-      "authored_pocket": false,
+      "authored_pocket": true,
       "edge_distance_tiles": 4,
       "ingress_tile": [
         74,

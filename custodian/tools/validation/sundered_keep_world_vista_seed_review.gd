@@ -119,27 +119,42 @@ func _capture_seed(seed_value: int) -> void:
 		viewport.queue_free()
 		await process_frame
 		return
-	if bool(placement_result.get("requires_authored_pocket", false)):
-		var pocket := map.call(
-			"claim_world_overlook_pocket",
-			placement_result.get(
-				"pocket_center_tile"
-			) as Vector2i,
-			placement_result.get(
-				"pocket_size_tiles"
-			) as Vector2i
-		) as Rect2i
-		if pocket.size == Vector2i.ZERO:
-			var reason := "authored overlook pocket could not be claimed"
-			_failures.append("seed %04d: %s" % [seed_value, reason])
-			_manifest_entries.append({
-				"seed": seed_value,
-				"ok": false,
-				"reason": reason,
-			})
-			viewport.queue_free()
-			await process_frame
-			return
+	if not bool(
+		placement_result.get(
+			"requires_authored_pocket",
+			false
+		)
+	):
+		var reason := "north-edge Vista did not claim its authored pocket"
+		_failures.append("seed %04d: %s" % [seed_value, reason])
+		_manifest_entries.append({
+			"seed": seed_value,
+			"ok": false,
+			"reason": reason,
+		})
+		viewport.queue_free()
+		await process_frame
+		return
+	var pocket := map.call(
+		"claim_world_overlook_pocket",
+		placement_result.get(
+			"pocket_center_tile"
+		) as Vector2i,
+		placement_result.get(
+			"pocket_size_tiles"
+		) as Vector2i
+	) as Rect2i
+	if pocket.size == Vector2i.ZERO:
+		var reason := "authored overlook pocket could not be claimed"
+		_failures.append("seed %04d: %s" % [seed_value, reason])
+		_manifest_entries.append({
+			"seed": seed_value,
+			"ok": false,
+			"reason": reason,
+		})
+		viewport.queue_free()
+		await process_frame
+		return
 
 	var ingress_tile := placement_result.get("tile") as Vector2i
 	var ingress := Area2D.new()

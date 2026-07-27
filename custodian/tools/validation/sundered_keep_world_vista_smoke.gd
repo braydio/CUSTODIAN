@@ -109,9 +109,10 @@ func _run() -> void:
 		errors.append(
 			"horizon aperture remained beneath procgen presentation"
 		)
-	if not storm.region_enabled or storm.region_rect.size != Vector2(
-		2600.0,
-		1200.0
+	if (
+		not storm.region_enabled
+		or storm.region_rect.size.x < 2600.0
+		or storm.region_rect.size.y < 1200.0
 	):
 		errors.append(
 			"horizon aperture did not restrict storm coverage"
@@ -121,6 +122,50 @@ func _run() -> void:
 		errors.append("Vista has no foreground separation asset")
 	elif lip.texture.get_size() != Vector2(2048.0, 512.0):
 		errors.append("Vista foreground separator is not 2048x512")
+	vista.call(
+		"_fit_presentation_to_viewport",
+		Vector2(2560.0, 1440.0)
+	)
+	vista.call("_update_presentation_bounds")
+	vista.call("_process", 0.0)
+	state = vista.call("get_world_vista_debug_state") as Dictionary
+	var expected_safety_width := 2560.0 / 0.78 + 192.0
+	if float(
+		state.get("fitted_safety_width", 0.0)
+	) < expected_safety_width - 0.01:
+		errors.append(
+			"Vista did not fit presentation width for 2560x1440"
+		)
+	if float(
+		state.get("cliff_lip_world_width", 0.0)
+	) < expected_safety_width - 0.01:
+		errors.append(
+			"foreground separator did not cover ultrawide safety width"
+		)
+	var fitted_storm_size := state.get(
+		"storm_region_size",
+		Vector2.ZERO
+	) as Vector2
+	if fitted_storm_size.x < expected_safety_width - 0.01:
+		errors.append(
+			"horizon aperture did not cover ultrawide safety width"
+		)
+	vista.call("_apply_visual_weight", 0.35)
+	if not is_equal_approx(storm.modulate.a, 1.0):
+		errors.append(
+			"storm child alpha multiplied the parent reveal"
+		)
+	var horizon := vista.get_node(
+		"HorizonPresentation"
+	) as Node2D
+	if (
+		horizon.modulate.a <= 0.0
+		or horizon.modulate.a >= 1.0
+	):
+		errors.append(
+			"partial reveal did not remain on HorizonPresentation"
+		)
+	vista.call("_process", 0.0)
 	var bounds := state.get("presentation_bounds", Rect2()) as Rect2
 	if bounds.size.x <= 0.0 or bounds.size.y <= 0.0:
 		errors.append("Vista did not provide presentation bounds")

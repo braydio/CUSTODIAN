@@ -10,7 +10,7 @@ class PocketMap:
 	var claim_count := 0
 
 	func is_walkable_floor_tile(_tile: Vector2i) -> bool:
-		return false
+		return true
 
 	func claim_world_overlook_pocket(
 		center_tile: Vector2i,
@@ -116,9 +116,11 @@ func _run() -> void:
 		vista_definitions
 	)
 	if authored_vista.size() != 1:
-		errors.append("authored overlook fallback was not placed")
+		errors.append("naturally walkable authored overlook was not placed")
 	if pocket_map.claim_count != 1:
-		errors.append("authored overlook fallback did not claim a pocket")
+		errors.append(
+			"naturally walkable north-edge overlook did not claim its mandatory pocket"
+		)
 	_finish(errors)
 
 

@@ -8,6 +8,9 @@ const CINEMATIC_OFFSET := Vector2(0.0, -120.0)
 const DEFAULT_MAP_SIZE := Vector2i(96, 96)
 const DEFAULT_TILE_SIZE := Vector2(16.0, 16.0)
 const PRESENTATION_COVERAGE := Vector2(2800.0, 1640.0)
+const PRESENTATION_WIDTH_SAFETY_MARGIN := 192.0
+const MINIMUM_STORM_REGION_SIZE := Vector2(2600.0, 1200.0)
+const MINIMUM_CLIFF_LIP_SCALE_X := 1.25
 
 @export var operator_path := NodePath("/root/GameRoot/World/Operator")
 @export var camera_path := NodePath("/root/GameRoot/World/Camera2D")
@@ -43,13 +46,26 @@ var _camera_weight := 0.0
 var _enter_progress := 0.0
 var _return_progress := 0.0
 var _presentation_bounds := Rect2()
+var _fitted_visible_world_size := Vector2.ZERO
+var _fitted_safety_width := 0.0
 
 
 func _ready() -> void:
 	add_to_group("sundered_keep_world_vista")
 	_horizon_presentation.modulate.a = 0.0
+	_storm_horizon.modulate.a = 1.0
 	_distant_keep.modulate.a = 0.08
 	_fog_veil.modulate.a = 0.68
+	var viewport := get_viewport()
+	if (
+		viewport != null
+		and not viewport.size_changed.is_connected(
+			_on_viewport_size_changed
+		)
+	):
+		viewport.size_changed.connect(
+			_on_viewport_size_changed
+		)
 	_resolve_runtime_nodes()
 	if _ingress != null:
 		_layout_from_ingress()
@@ -146,10 +162,66 @@ func _layout_from_ingress() -> void:
 	)
 	_foreground_cliff_lip.flip_v = _outward_direction.y > 0.5
 
+	_fit_presentation_to_viewport()
+	_update_presentation_bounds()
+	_configured = true
+	if _operator != null:
+		_evaluate_envelope()
+
+
+func _fit_presentation_to_viewport(
+	viewport_size_override: Vector2 = Vector2.ZERO
+) -> void:
+	var viewport_size := viewport_size_override
+	if viewport_size.x <= 0.0 or viewport_size.y <= 0.0:
+		viewport_size = get_viewport_rect().size
+	if viewport_size.x <= 0.0 or viewport_size.y <= 0.0:
+		return
+	_fitted_visible_world_size = Vector2(
+		viewport_size.x / maxf(CINEMATIC_ZOOM.x, 0.001),
+		viewport_size.y / maxf(CINEMATIC_ZOOM.y, 0.001)
+	)
+	_fitted_safety_width = (
+		_fitted_visible_world_size.x
+		+ PRESENTATION_WIDTH_SAFETY_MARGIN
+	)
+	if _foreground_cliff_lip.texture != null:
+		var texture_width := float(
+			_foreground_cliff_lip.texture.get_width()
+		)
+		_foreground_cliff_lip.scale.x = maxf(
+			MINIMUM_CLIFF_LIP_SCALE_X,
+			_fitted_safety_width
+				/ maxf(texture_width, 1.0)
+		)
+	var region := _storm_horizon.region_rect
+	region.size.x = maxf(
+		MINIMUM_STORM_REGION_SIZE.x,
+		_fitted_safety_width
+	)
+	region.size.y = maxf(
+		MINIMUM_STORM_REGION_SIZE.y,
+		region.size.y
+	)
+	_storm_horizon.region_rect = region
+
+
+func _update_presentation_bounds() -> void:
+	var fitted_coverage := Vector2(
+		maxf(
+			PRESENTATION_COVERAGE.x,
+			_fitted_safety_width
+		),
+		maxf(
+			PRESENTATION_COVERAGE.y,
+			_fitted_visible_world_size.y
+				+ PRESENTATION_WIDTH_SAFETY_MARGIN
+		)
+	)
 	_presentation_bounds = Rect2(
 		_presentation_anchor.global_position
-			- PRESENTATION_COVERAGE * 0.5,
-		PRESENTATION_COVERAGE
+			- fitted_coverage * 0.5,
+		fitted_coverage
 	).grow(256.0)
 	for marker: Marker2D in [
 		_influence_start,
@@ -160,9 +232,26 @@ func _layout_from_ingress() -> void:
 		_presentation_bounds = _presentation_bounds.expand(
 			marker.global_position
 		)
-	_configured = true
-	if _operator != null:
-		_evaluate_envelope()
+
+
+func _on_viewport_size_changed() -> void:
+	if not is_node_ready():
+		return
+	_fit_presentation_to_viewport()
+	if not _configured:
+		return
+	_update_presentation_bounds()
+	if (
+		_camera_owned
+		and _camera != null
+		and _camera.has_method(
+			"set_presentation_bounds_override"
+		)
+	):
+		_camera.call(
+			"set_presentation_bounds_override",
+			_presentation_bounds
+		)
 
 
 func _evaluate_envelope() -> void:
@@ -205,7 +294,7 @@ func _apply_visual_weight(weight: float) -> void:
 	var reveal := _smootherstep_range(0.02, 0.72, weight)
 	var keep_reveal := _smootherstep_range(0.14, 0.88, weight)
 	_horizon_presentation.modulate.a = reveal
-	_storm_horizon.modulate.a = reveal
+	_storm_horizon.modulate.a = 1.0
 	_distant_keep.modulate.a = lerpf(0.08, 0.92, keep_reveal)
 	_fog_veil.modulate.a = lerpf(0.68, 0.26, reveal)
 	_fog_veil.position = Vector2.ZERO.lerp(
@@ -336,6 +425,15 @@ func get_world_vista_debug_state() -> Dictionary:
 		"return_progress": _return_progress,
 		"outward_direction": _outward_direction,
 		"presentation_bounds": _presentation_bounds,
+		"fitted_visible_world_size": _fitted_visible_world_size,
+		"fitted_safety_width": _fitted_safety_width,
+		"cliff_lip_world_width": (
+			float(_foreground_cliff_lip.texture.get_width())
+				* _foreground_cliff_lip.scale.x
+			if _foreground_cliff_lip.texture != null
+			else 0.0
+		),
+		"storm_region_size": _storm_horizon.region_rect.size,
 		"operator": _operator,
 		"camera": _camera,
 		"ingress": _ingress,

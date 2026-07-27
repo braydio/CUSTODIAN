@@ -68,7 +68,6 @@ fx_map = {
 "weapon_anim": "melee_2h_heavy_weapon"
 }
 }
-authored_body_stance_animation = &""
 right_hand_socket_position = Vector2(10, -11)
 left_hand_socket_position = Vector2(2, -5)
 weapon_socket_position = Vector2(10, -11)
@@ -89,5 +88,4 @@ heavy_attack_profile = ExtResource("5_heavy_attack")
 fast_chain_keys = PackedStringArray("melee_fast_1", "melee_fast_2", "melee_fast_3")
 fast_chain_commit_frames = PackedInt32Array(5, 5, 6)
 fast_chain_stamina_costs = PackedFloat32Array(7, 8, 10)
-fast_chain_loops = true
 fast_chain_has_integrated_recovery = true
