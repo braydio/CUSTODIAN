@@ -1,0 +1,150 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/actors/enemies/visuals/humanoid_cutout_rig_2d.gd" id="1_rig"]
+[ext_resource type="AnimationLibrary" path="res://game/actors/enemies/visuals/animations/humanoid_cutout_default_animation_library.tres" id="2_anim"]
+
+[node name="HumanoidCutoutRig2D" type="Node2D"]
+texture_filter = 1
+script = ExtResource("1_rig")
+
+[node name="MotionRoot" type="Node2D" parent="."]
+
+[node name="PelvisPivot" type="Node2D" parent="MotionRoot"]
+
+[node name="PelvisSprite" type="Sprite2D" parent="MotionRoot/PelvisPivot"]
+texture_filter = 1
+centered = false
+
+[node name="CapePivot" type="Node2D" parent="MotionRoot/PelvisPivot"]
+
+[node name="CapeSprite" type="Sprite2D" parent="MotionRoot/PelvisPivot/CapePivot"]
+texture_filter = 1
+centered = false
+
+[node name="BackAttachmentPivot" type="Node2D" parent="MotionRoot/PelvisPivot"]
+
+[node name="BackAttachmentSprite" type="Sprite2D" parent="MotionRoot/PelvisPivot/BackAttachmentPivot"]
+texture_filter = 1
+centered = false
+
+[node name="TorsoPivot" type="Node2D" parent="MotionRoot/PelvisPivot"]
+
+[node name="TorsoSprite" type="Sprite2D" parent="MotionRoot/PelvisPivot/TorsoPivot"]
+texture_filter = 1
+centered = false
+
+[node name="HeadPivot" type="Node2D" parent="MotionRoot/PelvisPivot/TorsoPivot"]
+
+[node name="HeadSprite" type="Sprite2D" parent="MotionRoot/PelvisPivot/TorsoPivot/HeadPivot"]
+texture_filter = 1
+centered = false
+
+[node name="BackUpperArmPivot" type="Node2D" parent="MotionRoot/PelvisPivot/TorsoPivot"]
+
+[node name="BackUpperArmSprite" type="Sprite2D" parent="MotionRoot/PelvisPivot/TorsoPivot/BackUpperArmPivot"]
+texture_filter = 1
+centered = false
+
+[node name="BackForearmPivot" type="Node2D" parent="MotionRoot/PelvisPivot/TorsoPivot/BackUpperArmPivot"]
+
+[node name="BackForearmSprite" type="Sprite2D" parent="MotionRoot/PelvisPivot/TorsoPivot/BackUpperArmPivot/BackForearmPivot"]
+texture_filter = 1
+centered = false
+
+[node name="BackHandPivot" type="Node2D" parent="MotionRoot/PelvisPivot/TorsoPivot/BackUpperArmPivot/BackForearmPivot"]
+
+[node name="BackHandSprite" type="Sprite2D" parent="MotionRoot/PelvisPivot/TorsoPivot/BackUpperArmPivot/BackForearmPivot/BackHandPivot"]
+texture_filter = 1
+centered = false
+
+[node name="FrontUpperArmPivot" type="Node2D" parent="MotionRoot/PelvisPivot/TorsoPivot"]
+
+[node name="FrontUpperArmSprite" type="Sprite2D" parent="MotionRoot/PelvisPivot/TorsoPivot/FrontUpperArmPivot"]
+texture_filter = 1
+centered = false
+
+[node name="FrontForearmPivot" type="Node2D" parent="MotionRoot/PelvisPivot/TorsoPivot/FrontUpperArmPivot"]
+
+[node name="FrontForearmSprite" type="Sprite2D" parent="MotionRoot/PelvisPivot/TorsoPivot/FrontUpperArmPivot/FrontForearmPivot"]
+texture_filter = 1
+centered = false
+
+[node name="FrontHandPivot" type="Node2D" parent="MotionRoot/PelvisPivot/TorsoPivot/FrontUpperArmPivot/FrontForearmPivot"]
+
+[node name="FrontHandSprite" type="Sprite2D" parent="MotionRoot/PelvisPivot/TorsoPivot/FrontUpperArmPivot/FrontForearmPivot/FrontHandPivot"]
+texture_filter = 1
+centered = false
+
+[node name="BackThighPivot" type="Node2D" parent="MotionRoot/PelvisPivot"]
+
+[node name="BackThighSprite" type="Sprite2D" parent="MotionRoot/PelvisPivot/BackThighPivot"]
+texture_filter = 1
+centered = false
+
+[node name="BackShinPivot" type="Node2D" parent="MotionRoot/PelvisPivot/BackThighPivot"]
+
+[node name="BackShinSprite" type="Sprite2D" parent="MotionRoot/PelvisPivot/BackThighPivot/BackShinPivot"]
+texture_filter = 1
+centered = false
+
+[node name="BackFootPivot" type="Node2D" parent="MotionRoot/PelvisPivot/BackThighPivot/BackShinPivot"]
+
+[node name="BackFootSprite" type="Sprite2D" parent="MotionRoot/PelvisPivot/BackThighPivot/BackShinPivot/BackFootPivot"]
+texture_filter = 1
+centered = false
+
+[node name="FrontThighPivot" type="Node2D" parent="MotionRoot/PelvisPivot"]
+
+[node name="FrontThighSprite" type="Sprite2D" parent="MotionRoot/PelvisPivot/FrontThighPivot"]
+texture_filter = 1
+centered = false
+
+[node name="FrontShinPivot" type="Node2D" parent="MotionRoot/PelvisPivot/FrontThighPivot"]
+
+[node name="FrontShinSprite" type="Sprite2D" parent="MotionRoot/PelvisPivot/FrontThighPivot/FrontShinPivot"]
+texture_filter = 1
+centered = false
+
+[node name="FrontFootPivot" type="Node2D" parent="MotionRoot/PelvisPivot/FrontThighPivot/FrontShinPivot"]
+
+[node name="FrontFootSprite" type="Sprite2D" parent="MotionRoot/PelvisPivot/FrontThighPivot/FrontShinPivot/FrontFootPivot"]
+texture_filter = 1
+centered = false
+
+[node name="FrontAttachmentPivot" type="Node2D" parent="MotionRoot/PelvisPivot"]
+
+[node name="FrontAttachmentSprite" type="Sprite2D" parent="MotionRoot/PelvisPivot/FrontAttachmentPivot"]
+texture_filter = 1
+centered = false
+
+[node name="WeaponPivot" type="Node2D" parent="MotionRoot/PelvisPivot"]
+
+[node name="WeaponSprite" type="Sprite2D" parent="MotionRoot/PelvisPivot/WeaponPivot"]
+texture_filter = 1
+centered = false
+
+[node name="WeaponGripAnchor" type="Marker2D" parent="MotionRoot/PelvisPivot/WeaponPivot"]
+
+[node name="WeaponTipAnchor" type="Marker2D" parent="MotionRoot/PelvisPivot/WeaponPivot"]
+
+[node name="ReservedPivot" type="Node2D" parent="MotionRoot/PelvisPivot"]
+
+[node name="ReservedSprite" type="Sprite2D" parent="MotionRoot/PelvisPivot/ReservedPivot"]
+texture_filter = 1
+centered = false
+
+[node name="BodyCenterAnchor" type="Marker2D" parent="."]
+
+[node name="HeadAnchor" type="Marker2D" parent="."]
+
+[node name="HitAnchor" type="Marker2D" parent="."]
+
+[node name="GroundAnchor" type="Marker2D" parent="."]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": ExtResource("2_anim")
+}
+
+[node name="DebugOverlay" type="Node2D" parent="."]
+visible = false

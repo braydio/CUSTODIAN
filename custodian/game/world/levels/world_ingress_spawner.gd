@@ -79,11 +79,38 @@ func place_all(
 			_last_errors.append(reason)
 			_observe(&"level_ingress_placement_failed", {"identity": str(record.get("identity")), "reason": reason})
 			continue
+		if bool(result.get("requires_authored_pocket", false)):
+			var pocket_result := _author_overlook_pocket(
+				map_instance,
+				result
+			)
+			if pocket_result.size == Vector2i.ZERO:
+				var reason := (
+					"%s: failed to author north-edge overlook pocket"
+					% record.get("identity")
+				)
+				_last_errors.append(reason)
+				_observe(
+					&"level_ingress_placement_failed",
+					{
+						"identity": str(record.get("identity")),
+						"reason": reason,
+					}
+				)
+				continue
 		var tile := result.get("tile") as Vector2i
 		var ingress := _create_ingress(record, map_instance)
 		if ingress == null:
 			continue
 		ingress.global_position = _tile_to_world(map_instance, tile)
+		ingress.set_meta(
+			"world_ingress_outward_direction",
+			result.get("outward_direction", Vector2i.ZERO)
+		)
+		ingress.set_meta(
+			"world_ingress_edge_distance_tiles",
+			int(result.get("edge_distance_tiles", -1))
+		)
 		world.add_child(ingress)
 		occupied_tiles.append(tile)
 		placed.append(ingress)
@@ -94,6 +121,24 @@ func place_all(
 			"tile": [tile.x, tile.y],
 		})
 	return placed
+
+
+func _author_overlook_pocket(
+	map_instance: Node,
+	result: Dictionary
+) -> Rect2i:
+	if (
+		map_instance == null
+		or not map_instance.has_method(
+			"claim_world_overlook_pocket"
+		)
+	):
+		return Rect2i()
+	return map_instance.call(
+		"claim_world_overlook_pocket",
+		result.get("pocket_center_tile") as Vector2i,
+		result.get("pocket_size_tiles") as Vector2i
+	) as Rect2i
 
 
 func get_last_placements() -> Dictionary:

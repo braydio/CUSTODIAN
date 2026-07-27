@@ -4,6 +4,28 @@ const LEVEL_DEFINITION_SCRIPT := preload("res://game/world/levels/level_definiti
 const SPAWNER_SCRIPT := preload("res://game/world/levels/world_ingress_spawner.gd")
 
 
+class PocketMap:
+	extends Node2D
+
+	var claim_count := 0
+
+	func is_walkable_floor_tile(_tile: Vector2i) -> bool:
+		return false
+
+	func claim_world_overlook_pocket(
+		center_tile: Vector2i,
+		size_tiles: Vector2i
+	) -> Rect2i:
+		claim_count += 1
+		return Rect2i(
+			center_tile - Vector2i(
+				int(size_tiles.x / 2),
+				int(size_tiles.y / 2)
+			),
+			size_tiles
+		)
+
+
 func _init() -> void:
 	call_deferred("_run")
 
@@ -44,6 +66,59 @@ func _run() -> void:
 	var repeated: Array = spawner.call("place_all", level_data, map, world, null, definitions)
 	if spawner.call("get_last_placements") != first_snapshot: errors.append("placement is not deterministic")
 	if repeated.size() != 2: errors.append("repeat placement count changed")
+	for ingress in repeated:
+		ingress.queue_free()
+	await process_frame
+	var vista_level_data := {
+		"map_size": Vector2i(96, 96),
+		"compound_ingress": [Vector2i(48, 48)],
+	}
+	var vista_definitions := [
+		_overlook_definition(),
+	]
+	var vista_placed: Array = spawner.call(
+		"place_all",
+		vista_level_data,
+		map,
+		world,
+		null,
+		vista_definitions
+	)
+	if vista_placed.size() != 1:
+		errors.append("north-edge overlook ingress was not placed")
+	else:
+		var vista_ingress := vista_placed[0] as Node
+		if vista_ingress.get_meta(
+			"world_ingress_outward_direction",
+			Vector2i.ZERO
+		) != Vector2i.UP:
+			errors.append("north-edge orientation metadata was not propagated")
+		var edge_distance := int(
+			vista_ingress.get_meta(
+				"world_ingress_edge_distance_tiles",
+				-1
+			)
+		)
+		if edge_distance < 0 or edge_distance > 8:
+			errors.append("north-edge distance metadata was invalid")
+	for ingress in vista_placed:
+		ingress.queue_free()
+	await process_frame
+	var pocket_map := PocketMap.new()
+	pocket_map.name = "PocketMap"
+	world.add_child(pocket_map)
+	var authored_vista: Array = spawner.call(
+		"place_all",
+		vista_level_data,
+		pocket_map,
+		world,
+		null,
+		vista_definitions
+	)
+	if authored_vista.size() != 1:
+		errors.append("authored overlook fallback was not placed")
+	if pocket_map.claim_count != 1:
+		errors.append("authored overlook fallback did not claim a pocket")
 	_finish(errors)
 
 
@@ -64,6 +139,34 @@ func _definition(level_id: String, ingress_id: String, offsets: Array, priority:
 				"minimum_spacing_tiles": 10,
 				"search_radius_tiles": 14,
 				"offset_candidates_tiles": offsets,
+			},
+		},
+	})
+	return definition
+
+
+func _overlook_definition() -> RefCounted:
+	var definition: RefCounted = LEVEL_DEFINITION_SCRIPT.new()
+	definition.call("configure_from_dictionary", {
+		"level_id": "vista_level",
+		"display_name": "Vista Level",
+		"target_scene_path": (
+			"res://game/world/approaches/sundered_keep/"
+			+ "sundered_keep_approach.tscn"
+		),
+		"tags": ["world_ingress"],
+		"ingress": {
+			"ingress_id": "vista_ingress",
+			"prompt_text": "ENTER",
+			"target_spawn_id": "EntrySpawn",
+			"interaction_distance": 92.0,
+			"placement": {
+				"strategy": "north_edge_overlook",
+				"priority": 200,
+				"minimum_spacing_tiles": 10,
+				"max_edge_distance_tiles": 8,
+				"approach_depth_tiles": 10,
+				"lateral_search_tiles": 28,
 			},
 		},
 	})

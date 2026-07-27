@@ -68,6 +68,11 @@ enum ParryCriticalPhase {
 	EXECUTING,
 }
 
+enum VisualBackend {
+	AUTHORED_FRAMES,
+	HUMANOID_CUTOUT,
+}
+
 @export var enemy_name: String = "SCOUT"
 @export var speed: float = 80.0
 @export var health: float = 50.0
@@ -129,6 +134,7 @@ enum ParryCriticalPhase {
 @export var custom_enemy_animation_set: String = ""
 @export var custom_enemy_animation_scale: Vector2 = Vector2.ONE
 @export var custom_enemy_fx_scale: Vector2 = Vector2.ONE
+@export var visual_backend: VisualBackend = VisualBackend.AUTHORED_FRAMES
 @export var health_bar_vertical_offset: float = -28.0
 @export var grunt_parry_critical_window_min_sec: float = 0.8
 @export var grunt_parry_critical_capture_range_px: float = 72.0
@@ -363,7 +369,9 @@ const OBJECTIVE_GROUPS := {
 @onready var visual = $Visual
 @onready var animated_sprite = $AnimatedSprite2D if has_node("AnimatedSprite2D") else null
 @onready var custom_enemy_fx_sprite = $CustomEnemyFxSprite if has_node("CustomEnemyFxSprite") else null
+@onready var humanoid_cutout_rig: HumanoidCutoutRig2D = get_node_or_null("HumanoidCutoutRig2D") as HumanoidCutoutRig2D
 @onready var behavior_state_machine = $EnemyBehaviorStateMachine if has_node("EnemyBehaviorStateMachine") else null
+var _visual_backend_fallbacks_reported: Dictionary = {}
 
 func _ready():
 	add_to_group("enemies")
@@ -374,9 +382,11 @@ func _ready():
 		_ensure_behavior_components()
 	if passive:
 		add_to_group("ambient_critter")
+	_configure_visual_backend()
 	if _uses_directional_animation_set():
-		_ensure_directional_animations()
-		_ensure_custom_enemy_fx_animations()
+		if not _uses_humanoid_cutout_backend():
+			_ensure_directional_animations()
+			_ensure_custom_enemy_fx_animations()
 		if visual:
 			visual.visible = false
 		if animated_sprite:
@@ -1937,6 +1947,9 @@ func die():
 			"enemy": enemy_name,
 		})
 	print("ENEMY DESTROYED: ", enemy_name)
+	if _uses_humanoid_cutout_backend() and humanoid_cutout_rig.has_state(&"death"):
+		call_deferred("_play_humanoid_cutout_death")
+		return
 	if _uses_procedural_variant_animation_set() and _has_animation(String(WOLF_DEATH_ANIMATION)):
 		call_deferred("_play_procedural_variant_death")
 		return
@@ -1947,6 +1960,16 @@ func die():
 		call_deferred("_play_grunt_death")
 		return
 	queue_free()
+
+
+func _play_humanoid_cutout_death() -> void:
+	if humanoid_cutout_rig == null or not humanoid_cutout_rig.has_state(&"death"):
+		queue_free()
+		return
+	humanoid_cutout_rig.play_state(&"death", true)
+	await humanoid_cutout_rig.state_finished
+	if is_instance_valid(self):
+		queue_free()
 
 
 func is_passive_enemy() -> bool:
@@ -2384,7 +2407,10 @@ func _start_attack_windup(queued_damage: float, is_strong: bool) -> void:
 		"arc_degrees": _pending_attack_arc_degrees,
 	})
 	velocity = Vector2.ZERO
-	if _uses_custom_enemy_animation_set():
+	if _uses_humanoid_cutout_backend():
+		humanoid_cutout_rig.set_facing_vector(_last_move_direction)
+		_play_cutout_presentation_state(&"attack_light", true)
+	elif _uses_custom_enemy_animation_set():
 		_update_custom_enemy_animation(_last_move_direction, false, true)
 	elif _uses_procedural_variant_animation_set():
 		_update_procedural_variant_animation(_last_move_direction, false, true)
@@ -3384,7 +3410,64 @@ func is_dead() -> bool:
 
 
 func _uses_directional_animation_set() -> bool:
+	if _uses_humanoid_cutout_backend():
+		return true
 	return (uses_directional_charset or _uses_custom_enemy_animation_set() or _uses_custom_ambient_animation_set() or _uses_procedural_variant_animation_set()) and animated_sprite != null
+
+
+func _uses_humanoid_cutout_backend() -> bool:
+	return visual_backend == VisualBackend.HUMANOID_CUTOUT and humanoid_cutout_rig != null
+
+
+func _configure_visual_backend() -> void:
+	if visual_backend == VisualBackend.HUMANOID_CUTOUT and humanoid_cutout_rig == null:
+		_report_visual_backend_fallback_once(
+			&"missing_humanoid_cutout_rig",
+			"HumanoidCutoutRig2D child is missing; preserving authored-frame presentation."
+		)
+		return
+	if _uses_humanoid_cutout_backend():
+		humanoid_cutout_rig.visible = true
+		if visual != null:
+			visual.visible = false
+		if animated_sprite != null:
+			animated_sprite.visible = false
+		humanoid_cutout_rig.set_facing_vector(_last_move_direction)
+		humanoid_cutout_rig.play_state(&"idle", true)
+		if grunt_falcon_punch_enabled or savage_chain_enabled or savage_pounce_enabled or marine_dash_enabled:
+			_report_visual_backend_fallback_once(
+				&"unsupported_cutout_specials",
+				"Enabled bespoke specials have no cutout choreography; use authored frames or an explicit authored fallback."
+			)
+	elif humanoid_cutout_rig != null:
+		humanoid_cutout_rig.visible = false
+
+
+func _play_cutout_presentation_state(state: StringName, restart: bool = false) -> void:
+	if not _uses_humanoid_cutout_backend():
+		return
+	if humanoid_cutout_rig.has_state(state):
+		humanoid_cutout_rig.play_state(state, restart)
+		return
+	_report_visual_backend_fallback_once(
+		StringName("missing_cutout_state_%s" % String(state)),
+		"Cutout state '%s' is unsupported; holding the generic idle pose." % String(state)
+	)
+	if humanoid_cutout_rig.has_state(&"idle"):
+		humanoid_cutout_rig.play_state(&"idle", false)
+
+
+func _report_visual_backend_fallback_once(key: StringName, message: String) -> void:
+	if _visual_backend_fallbacks_reported.has(key):
+		return
+	_visual_backend_fallbacks_reported[key] = true
+	push_warning("[EnemyVisualBackend] %s: %s" % [enemy_name, message])
+	_obs_log(&"enemy_visual_backend_fallback", {
+		"enemy": enemy_name,
+		"fallback": String(key),
+		"message": message,
+		"position": global_position,
+	})
 
 
 func _uses_procedural_variant_animation_set() -> bool:
@@ -3478,6 +3561,13 @@ func _build_directional_atlas(texture: Texture2D, dir_index: int, row_index: int
 
 
 func _update_directional_animation(direction: Vector2, is_moving: bool) -> void:
+	if _uses_humanoid_cutout_backend():
+		humanoid_cutout_rig.set_facing_vector(direction)
+		if _recoil_timer > 0.0 or _stagger_timer > 0.0 or _crit_timer > 0.0:
+			_play_cutout_presentation_state(&"hit_react", false)
+		else:
+			_play_cutout_presentation_state(&"run" if is_moving else &"idle", false)
+		return
 	if animated_sprite == null or animated_sprite.sprite_frames == null:
 		return
 	if _uses_custom_enemy_animation_set():
@@ -4023,18 +4113,23 @@ func _play_custom_ambient_knockout() -> void:
 
 func set_threat_highlight(enabled: bool) -> void:
 	_threat_highlight_enabled = enabled
+	if humanoid_cutout_rig != null and not _threat_highlight_enabled:
+		humanoid_cutout_rig.set_visual_modulate(Color.WHITE)
 	if not _threat_highlight_enabled and animated_sprite:
 		animated_sprite.modulate = Color(1.0, 1.0, 1.0, 1.0)
 		animated_sprite.scale = _base_sprite_scale
 
 
 func _update_threat_highlight_visual(delta: float) -> void:
-	if animated_sprite == null:
+	if animated_sprite == null and humanoid_cutout_rig == null:
 		return
 	if not _threat_highlight_enabled:
 		return
 	_threat_highlight_time += delta
 	var pulse: float = 0.5 + 0.5 * sin(_threat_highlight_time * 7.5)
 	var intensity: float = lerp(1.0, 1.2, pulse)
+	if _uses_humanoid_cutout_backend():
+		humanoid_cutout_rig.set_visual_modulate(Color(intensity, 0.72, 0.72, 1.0))
+		return
 	animated_sprite.modulate = Color(intensity, 0.72, 0.72, 1.0)
 	animated_sprite.scale = _base_sprite_scale * lerp(1.0, 1.06, pulse)

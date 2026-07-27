@@ -11,6 +11,24 @@ The existing sprite pipeline is the authority. Do not create a second asset tree
 debug, archive, and request planning only; runtime scenes should consume files under the normal
 `content/sprites/enemies/<owner>/runtime/...` paths for enemies, `content/sprites/<owner>/runtime/...` for allied actors, and the documented specialized runtime domains for other sprite classes.
 
+## 0. Convert High-Resolution Source Art
+
+After sourcing `tools/custodian_aliases.sh`, generate three candidates and choose the final PNG interactively:
+
+```bash
+pixelart source_384.png output_96.png
+```
+
+The previews are crisp nearest-neighbor, balanced area/palette, and bold clustered conversions. The default is
+`96x96` with a 24-color balanced palette. For a repeatable non-interactive conversion:
+
+```bash
+pixelart source_384.png output_96.png --choose balanced
+```
+
+Prefer exact integer ratios such as `384→96` or `768→96`. Treat the result as a cleanup master that still needs
+silhouette, face/hand/equipment landmark, isolated-pixel, and cross-frame continuity review before inbox ingest.
+
 ## 1. Check What Assets Are Needed
 
 For Operator modular animation coverage:

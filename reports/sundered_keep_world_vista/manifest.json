@@ -1,0 +1,96 @@
+{
+  "map_size": [
+    176,
+    176
+  ],
+  "seeds": [
+    {
+      "authored_pocket": true,
+      "edge_distance_tiles": 8,
+      "ingress_tile": [
+        66,
+        8
+      ],
+      "ok": true,
+      "output": "res://../reports/sundered_keep_world_vista/seed_0001.png",
+      "seed": 1
+    },
+    {
+      "authored_pocket": false,
+      "edge_distance_tiles": 4,
+      "ingress_tile": [
+        67,
+        4
+      ],
+      "ok": true,
+      "output": "res://../reports/sundered_keep_world_vista/seed_0002.png",
+      "seed": 2
+    },
+    {
+      "authored_pocket": false,
+      "edge_distance_tiles": 4,
+      "ingress_tile": [
+        65,
+        4
+      ],
+      "ok": true,
+      "output": "res://../reports/sundered_keep_world_vista/seed_0003.png",
+      "seed": 3
+    },
+    {
+      "authored_pocket": false,
+      "edge_distance_tiles": 4,
+      "ingress_tile": [
+        67,
+        4
+      ],
+      "ok": true,
+      "output": "res://../reports/sundered_keep_world_vista/seed_0004.png",
+      "seed": 4
+    },
+    {
+      "authored_pocket": false,
+      "edge_distance_tiles": 4,
+      "ingress_tile": [
+        82,
+        4
+      ],
+      "ok": true,
+      "output": "res://../reports/sundered_keep_world_vista/seed_0005.png",
+      "seed": 5
+    },
+    {
+      "authored_pocket": true,
+      "edge_distance_tiles": 8,
+      "ingress_tile": [
+        66,
+        8
+      ],
+      "ok": true,
+      "output": "res://../reports/sundered_keep_world_vista/seed_0006.png",
+      "seed": 6
+    },
+    {
+      "authored_pocket": true,
+      "edge_distance_tiles": 8,
+      "ingress_tile": [
+        70,
+        8
+      ],
+      "ok": true,
+      "output": "res://../reports/sundered_keep_world_vista/seed_0007.png",
+      "seed": 7
+    },
+    {
+      "authored_pocket": false,
+      "edge_distance_tiles": 4,
+      "ingress_tile": [
+        74,
+        4
+      ],
+      "ok": true,
+      "output": "res://../reports/sundered_keep_world_vista/seed_0008.png",
+      "seed": 8
+    }
+  ]
+}

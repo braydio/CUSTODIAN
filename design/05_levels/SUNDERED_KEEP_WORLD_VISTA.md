@@ -1,6 +1,6 @@
 # Sundered Keep World Vista
 
-- **Status:** production
+- **Status:** review — camera behavior complete; edge placement and visual isolation incomplete
 - **Owner:** generated world landmark presentation / shared camera
 - **Runtime:** `custodian/` Godot 4.x
 - **Scene:** `custodian/game/world/vistas/sundered_keep/sundered_keep_world_vista.tscn`
@@ -20,7 +20,15 @@ removal; the reveal never swaps in a separate prestige level.
 `ContractWorldLoader` creates one `WorldLandmarks` branch after registered
 ingresses are placed. The branch belongs to `world_origin_branch`, and the
 Sundered Keep Vista is configured from the generated
-`SunderedKeepIngressSite` position and nearest map boundary.
+`SunderedKeepIngressSite` position. The ingress resolver fixes this landmark
+to a north-edge overlook, and the spawner passes that authored orientation to
+the Vista rather than asking the presentation to infer a boundary.
+
+When a generated seed already provides a readable north-edge corridor, the
+resolver uses it unchanged. Otherwise `ProcGenTilemap` claims a collision- and
+prop-cleared `world_overlook_floor` pocket at the selected edge position. This
+keeps the authored approach local to the generated world instead of loading a
+replacement scene.
 
 The Vista:
 
@@ -53,16 +61,17 @@ SunderedKeepWorldVista
 └── VistaController
 ```
 
-The first pass reuses the approved first-Vista storm horizon, isolated Keep,
-reveal veil, and overlook-ledge art. It does not include close fortress planes,
-Grand Vista architecture, roof fades, a second reveal, or a playable Vista
-route.
+The horizon reuses the approved first-Vista storm plate, isolated Keep, and
+reveal veil. `ForegroundCliffLip` uses the dedicated 2048×512
+`sundered_keep_world_vista_cliff_lip.png` separator; the former 640×200
+playable-route ledge no longer owns viewport framing. The world Vista does not
+include close fortress planes, Grand Vista architecture, roof fades, a second
+reveal, or a playable Vista route.
 
 ## Camera Envelope
 
-The control points are laid out relative to the ingress, inward from the
-nearest map boundary. Both enter and return progress are projected from the
-Operator's current position:
+The control points are laid out relative to the north-oriented ingress. Both
+enter and return progress are projected from the Operator's current position:
 
 ```gdscript
 camera_weight = smootherstep(enter_progress) \
@@ -80,10 +89,15 @@ A zoom below `1.0` sees more world and therefore requires larger safe bounds.
 
 ## Visual Contract
 
-- Storm horizon: absolute `z=-300`, scroll scale `(0.02, 0.01)`.
-- Distant Keep: absolute `z=-250`, scroll scale `(0.08, 0.03)`.
-- Reveal fog: absolute `z=-200`, scroll scale `(0.18, 0.08)`.
-- Foreground lip: absolute `z=100`, world-relative overlook occlusion.
+- Storm aperture: fixed world-local plane, absolute `z=40`, restricted to a
+  `2600×1200` upper-frame region.
+- Distant Keep: fixed world-local plane, absolute `z=50`.
+- Reveal fog: fixed world-local plane, absolute `z=60`.
+- Foreground cliff lip: absolute `z=80`, scaled to cover the cinematic
+  viewport width.
+- These four planes are spatially limited to the overlook composition. They
+  visually cover distant procgen and the outer-map seam without covering the
+  Operator's immediate approach.
 - Keep alpha grows from `0.08` to `0.92`.
 - Fog thins from `0.68` to `0.26` and peels only about 121 px.
 
@@ -110,21 +124,30 @@ godot --headless --path . \
 godot --headless --path . \
   --script res://tools/validation/sundered_keep_ingress_smoke.gd
 bash tools/validation/run_route_pipeline_suite.sh
+godot --display-driver x11 --rendering-driver opengl3 \
+  --audio-driver Dummy --path . \
+  --script res://tools/validation/sundered_keep_world_vista_seed_review.gd
 ```
 
 The focused Vista smoke proves physical forward/reverse camera behavior,
 procgen/Operator/ingress continuity, absence of collision and Grand Vista
-content, temporary bounds ownership, and correct zoomed-out coverage math.
+content, north orientation and edge distance, positive-z aperture ownership,
+foreground-separator dimensions, temporary bounds ownership, and correct
+zoomed-out coverage math. The renderer-backed seed review generates eight
+production-sized procgen maps and saves apex captures plus a manifest under
+`reports/sundered_keep_world_vista/`.
 
 ## Next Agent Slice
 
-Goal: review final placement and composition in several real procgen seeds.
+Goal: complete human review of the eight generated apex captures and tune the
+Keep/fog balance only after the edge pocket and separator remain readable.
 
 Files: this scene/script and the existing world-Vista background assets.
 
 Constraints: preserve the single envelope, direct Front Gate production route,
 world continuity, and collision-free presentation ownership.
 
-Acceptance: the overlook points outward at every supported map edge, the
+Acceptance: the north overlook remains readable across production seeds, the
 Operator remains in the lower quarter at apex, the Keep is readable without
-becoming a replacement skyline, and no camera frame exposes engine clear color.
+becoming a replacement skyline, and no camera frame exposes engine clear
+color or procgen masses above the cliff lip.

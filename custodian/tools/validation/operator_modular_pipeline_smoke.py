@@ -48,8 +48,10 @@ def main() -> int:
         walk = root / "operator__modular_lower_body__unarmed__walk_01__s__5f__96.png"
         ranged = root / "operator__modular_upper_body__stance__ranged_2h__e__5f__96.png"
         ranged_weapon = root / "operator__modular_ranged_weapon__ranged_2h__relaxed_carbine_mk1_01__e__5f__96.png"
+        chain_fx = root / "operator__modular_upper_fx__melee_1h__chain_01__e__9f__156x96.png"
         for path in (canonical, legacy, cape, head, walk, ranged, ranged_weapon):
             _write_strip(path)
+        Image.new("RGBA", (9 * 156, 96), (255, 255, 255, 255)).save(chain_fx)
         _write_strip(cape_alias, frames=11)
         _write_strip(legacy_collision, frames=4)
         rectangular = root / "operator__body__melee_1h__e__8f__156x96.png"
@@ -121,6 +123,9 @@ def main() -> int:
         assert parsed_ranged_weapon is not None
         assert parsed_ranged_weapon[1:3] == ("ranged_2h", "relaxed_01")
         assert parsed_ranged_weapon[4] == 3
+        parsed_chain_fx = builder._parse_generic_modular_source(chain_fx)
+        assert parsed_chain_fx is not None
+        assert parsed_chain_fx[0:3] == ("upper_fx", "melee_1h", "chain_01")
         rectangular_manifest = manifests._build_manifest(rectangular)
         assert rectangular_manifest["frame_size"] == [156, 96]
         assert rectangular_manifest["outputs"][0]["select"]["count"] == 8
@@ -158,6 +163,10 @@ def main() -> int:
         assert (
             "head/actions/hooded/idle_01/"
             "operator__modular_head__hooded__idle_01__s__5f__96.png"
+        ) in relative
+        assert (
+            "upper_fx/actions/melee_1h/chain_01/"
+            "operator__modular_upper_fx__melee_1h__chain_01__e__9f__96.png"
         ) in relative
         assert not any("ranged_2h/stance_01" in path for path in relative)
 

@@ -8,6 +8,16 @@ func resolve(
 	map_instance: Node,
 	occupied_tiles: Array[Vector2i]
 ) -> Dictionary:
+	var strategy := str(
+		placement.get("strategy", "near_compound_ingress")
+	)
+	if strategy == "north_edge_overlook":
+		return _resolve_north_edge_overlook(
+			placement,
+			level_data,
+			map_instance,
+			occupied_tiles
+		)
 	var anchor := _resolve_anchor(placement, level_data)
 	var minimum_spacing := maxi(1, int(placement.get("minimum_spacing_tiles", 10)))
 	var search_radius := maxi(0, int(placement.get("search_radius_tiles", 14)))
@@ -33,6 +43,206 @@ func resolve(
 		"anchor": anchor,
 		"reason": "no valid tile within search radius",
 	}
+
+
+func _resolve_north_edge_overlook(
+	placement: Dictionary,
+	level_data: Dictionary,
+	map_instance: Node,
+	occupied_tiles: Array[Vector2i]
+) -> Dictionary:
+	var map_size := level_data.get(
+		"map_size",
+		Vector2i.ZERO
+	) as Vector2i
+	if map_size.x <= 0 or map_size.y <= 0:
+		return {
+			"ok": false,
+			"reason": "north-edge overlook requires map_size",
+		}
+
+	var anchor := _resolve_anchor(
+		{"strategy": "near_compound_ingress"},
+		level_data
+	)
+	var max_edge_distance := maxi(
+		2,
+		int(placement.get("max_edge_distance_tiles", 8))
+	)
+	var approach_depth := maxi(
+		4,
+		int(placement.get("approach_depth_tiles", 10))
+	)
+	var lateral_search := maxi(
+		4,
+		int(placement.get("lateral_search_tiles", 28))
+	)
+	var minimum_spacing := maxi(
+		1,
+		int(placement.get("minimum_spacing_tiles", 10))
+	)
+	var candidates := _north_edge_candidates(
+		map_size,
+		max_edge_distance,
+		level_data
+	)
+	candidates.sort_custom(
+		func(a: Vector2i, b: Vector2i) -> bool:
+			if a.y != b.y:
+				return a.y < b.y
+			var a_lateral := absi(a.x - anchor.x)
+			var b_lateral := absi(b.x - anchor.x)
+			if a_lateral != b_lateral:
+				return a_lateral < b_lateral
+			return a.x < b.x
+	)
+
+	for candidate: Vector2i in candidates:
+		if absi(candidate.x - anchor.x) > lateral_search:
+			continue
+		if not _is_walkable(candidate, level_data, map_instance):
+			continue
+		if _is_reserved(candidate, level_data):
+			continue
+		if not _has_spacing(
+			candidate,
+			occupied_tiles,
+			minimum_spacing
+		):
+			continue
+		if not _has_inward_corridor(
+			candidate,
+			Vector2i.DOWN,
+			approach_depth,
+			level_data,
+			map_instance
+		):
+			continue
+		return {
+			"ok": true,
+			"tile": candidate,
+			"anchor": anchor,
+			"outward_direction": Vector2i.UP,
+			"edge_distance_tiles": candidate.y,
+		}
+
+	if map_instance != null and map_instance.has_method(
+		"claim_world_overlook_pocket"
+	):
+		var authored_candidate := _best_north_edge_authoring_candidate(
+			anchor,
+			map_size,
+			max_edge_distance,
+			approach_depth,
+			lateral_search,
+			level_data,
+			map_instance
+		)
+		var pocket_width := 9
+		return {
+			"ok": true,
+			"tile": authored_candidate,
+			"anchor": anchor,
+			"outward_direction": Vector2i.UP,
+			"edge_distance_tiles": authored_candidate.y,
+			"requires_authored_pocket": true,
+			"pocket_center_tile": (
+				authored_candidate
+				+ Vector2i.DOWN * int(approach_depth / 2)
+			),
+			"pocket_size_tiles": Vector2i(
+				pocket_width,
+				approach_depth
+			),
+		}
+
+	return {
+		"ok": false,
+		"tile": Vector2i.ZERO,
+		"anchor": anchor,
+		"reason": "no valid north-edge overlook corridor",
+	}
+
+
+func _north_edge_candidates(
+	map_size: Vector2i,
+	max_edge_distance: int,
+	level_data: Dictionary
+) -> Array[Vector2i]:
+	var result: Array[Vector2i] = []
+	var floor_cells: Array = level_data.get("floor_cells", [])
+	if floor_cells.is_empty():
+		floor_cells = level_data.get("random_floor_tiles", [])
+	for raw: Variant in floor_cells:
+		if raw is Vector2i:
+			var tile := raw as Vector2i
+			if tile.y >= 0 and tile.y <= max_edge_distance:
+				result.append(tile)
+	if not result.is_empty():
+		return result
+	for y in range(0, mini(map_size.y, max_edge_distance + 1)):
+		for x in range(map_size.x):
+			result.append(Vector2i(x, y))
+	return result
+
+
+func _best_north_edge_authoring_candidate(
+	anchor: Vector2i,
+	map_size: Vector2i,
+	max_edge_distance: int,
+	approach_depth: int,
+	lateral_search: int,
+	level_data: Dictionary,
+	map_instance: Node
+) -> Vector2i:
+	var pocket_half_width := 4
+	var min_x := maxi(
+		pocket_half_width + 1,
+		anchor.x - lateral_search
+	)
+	var max_x := mini(
+		map_size.x - pocket_half_width - 2,
+		anchor.x + lateral_search
+	)
+	var best := Vector2i(
+		clampi(anchor.x, min_x, max_x),
+		max_edge_distance
+	)
+	var best_score := -1
+	for x in range(min_x, max_x + 1):
+		var score := 0
+		for step in range(approach_depth):
+			if _is_walkable(
+				Vector2i(x, max_edge_distance + step),
+				level_data,
+				map_instance
+			):
+				score += 1
+		if (
+			score > best_score
+			or (
+				score == best_score
+				and absi(x - anchor.x) < absi(best.x - anchor.x)
+			)
+		):
+			best_score = score
+			best = Vector2i(x, max_edge_distance)
+	return best
+
+
+func _has_inward_corridor(
+	origin: Vector2i,
+	inward_direction: Vector2i,
+	depth: int,
+	level_data: Dictionary,
+	map_instance: Node
+) -> bool:
+	var walkable_count := 0
+	for step: int in range(depth):
+		var tile := origin + inward_direction * step
+		if _is_walkable(tile, level_data, map_instance):
+			walkable_count += 1
+	return walkable_count >= ceili(float(depth) * 0.80)
 
 
 func _resolve_anchor(placement: Dictionary, level_data: Dictionary) -> Vector2i:

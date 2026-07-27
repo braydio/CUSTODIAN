@@ -113,6 +113,32 @@ const MELEE_FAST_CHAIN_BODY_SHEETS := {
 		"frames": 8,
 	},
 }
+const MELEE_FAST_CHAIN_FX_SHEETS := {
+	&"melee_2h_fast_1_fx_right": {
+		"path": "res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/melee_1h/chain_01/operator__modular_upper_fx__melee_1h__chain_01__e__9f__96.png",
+		"frames": 9,
+	},
+	&"melee_2h_fast_1_fx_left": {
+		"path": "res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/melee_1h/chain_01/operator__modular_upper_fx__melee_1h__chain_01__w__9f__96.png",
+		"frames": 9,
+	},
+	&"melee_2h_fast_2_fx_right": {
+		"path": "res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/melee_1h/chain_02/operator__modular_upper_fx__melee_1h__chain_02__e__7f__96.png",
+		"frames": 7,
+	},
+	&"melee_2h_fast_2_fx_left": {
+		"path": "res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/melee_1h/chain_02/operator__modular_upper_fx__melee_1h__chain_02__w__7f__96.png",
+		"frames": 7,
+	},
+	&"melee_2h_fast_3_fx_right": {
+		"path": "res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/melee_1h/chain_03/operator__modular_upper_fx__melee_1h__chain_03__e__8f__96.png",
+		"frames": 8,
+	},
+	&"melee_2h_fast_3_fx_left": {
+		"path": "res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/melee_1h/chain_03/operator__modular_upper_fx__melee_1h__chain_03__w__8f__96.png",
+		"frames": 8,
+	},
+}
 
 enum AttackPhase {
 	NONE,
@@ -5953,12 +5979,20 @@ func _play_melee_overlay_from_key(attack_key: String) -> void:
 		fx_anim = AnimationResolver.resolve(String(fx_anim), _melee_forward, melee_fx_overlay_sprite)
 	if melee_weapon_overlay_sprite and melee_weapon_overlay_sprite.sprite_frames and melee_weapon_overlay_sprite.sprite_frames.has_animation(weapon_anim):
 		melee_weapon_overlay_sprite.visible = true
-		melee_weapon_overlay_sprite.flip_h = animated_sprite.flip_h if animated_sprite else false
+		melee_weapon_overlay_sprite.flip_h = (
+			animated_sprite != null
+			and animated_sprite.flip_h
+			and not String(weapon_anim).ends_with("_left")
+		)
 		melee_weapon_overlay_sprite.speed_scale = _get_melee_animation_speed_scale(attack_key)
 		melee_weapon_overlay_sprite.play(weapon_anim)
 	if melee_fx_overlay_sprite and melee_fx_overlay_sprite.sprite_frames and melee_fx_overlay_sprite.sprite_frames.has_animation(fx_anim):
 		melee_fx_overlay_sprite.visible = true
-		melee_fx_overlay_sprite.flip_h = animated_sprite.flip_h if animated_sprite else false
+		melee_fx_overlay_sprite.flip_h = (
+			animated_sprite != null
+			and animated_sprite.flip_h
+			and not String(fx_anim).ends_with("_left")
+		)
 		melee_fx_overlay_sprite.speed_scale = _get_melee_animation_speed_scale(attack_key)
 		melee_fx_overlay_sprite.play(fx_anim)
 
@@ -5967,10 +6001,20 @@ func _sync_melee_overlay_frames() -> void:
 	if animated_sprite == null:
 		return
 	if melee_weapon_overlay_sprite and melee_weapon_overlay_sprite.visible:
-		melee_weapon_overlay_sprite.flip_h = animated_sprite.flip_h
+		melee_weapon_overlay_sprite.flip_h = (
+			animated_sprite.flip_h
+			and not String(
+				melee_weapon_overlay_sprite.animation
+			).ends_with("_left")
+		)
 		melee_weapon_overlay_sprite.frame = animated_sprite.frame
 	if melee_fx_overlay_sprite and melee_fx_overlay_sprite.visible:
-		melee_fx_overlay_sprite.flip_h = animated_sprite.flip_h
+		melee_fx_overlay_sprite.flip_h = (
+			animated_sprite.flip_h
+			and not String(
+				melee_fx_overlay_sprite.animation
+			).ends_with("_left")
+		)
 		melee_fx_overlay_sprite.frame = animated_sprite.frame
 	if modular_upper_body_sprite and modular_upper_body_sprite.visible and not _modular_upper_action_animation.is_empty():
 		var frame_count: int = 0
@@ -8305,6 +8349,7 @@ func _ensure_runtime_body_animations() -> void:
 	) or changed
 	if changed:
 		animated_sprite.sprite_frames = runtime_frames
+	_ensure_melee_fast_chain_fx_animations()
 	_ensure_dodge_fx_animation()
 
 
@@ -8356,6 +8401,59 @@ func _register_melee_fast_chain_body_animations(
 		)
 		changed = true
 	return changed
+
+
+func _ensure_melee_fast_chain_fx_animations() -> void:
+	if melee_fx_overlay_sprite == null:
+		return
+	if melee_fx_overlay_sprite.sprite_frames == null:
+		melee_fx_overlay_sprite.sprite_frames = SpriteFrames.new()
+	var runtime_frames := (
+		melee_fx_overlay_sprite.sprite_frames.duplicate()
+		as SpriteFrames
+	)
+	if runtime_frames == null:
+		return
+	var changed := false
+	for animation_variant: Variant in MELEE_FAST_CHAIN_FX_SHEETS:
+		var animation_name := StringName(animation_variant)
+		var spec := MELEE_FAST_CHAIN_FX_SHEETS[animation_name] as Dictionary
+		var texture := _load_optional_texture(
+			String(spec.get("path", "")),
+			null
+		)
+		if texture == null:
+			continue
+		var frame_count := int(spec.get("frames", 0))
+		var expected_size := Vector2i(96 * frame_count, 96)
+		var actual_size := Vector2i(
+			texture.get_width(),
+			texture.get_height()
+		)
+		if actual_size != expected_size:
+			_obs_warning(
+				"Operator fast-chain FX strip has invalid dimensions",
+				{
+					"animation": String(animation_name),
+					"path": String(spec.get("path", "")),
+					"expected": expected_size,
+					"actual": actual_size,
+				}
+			)
+			continue
+		if runtime_frames.has_animation(animation_name):
+			runtime_frames.remove_animation(animation_name)
+		_add_sheet_animation(
+			runtime_frames,
+			String(animation_name),
+			texture,
+			frame_count,
+			false,
+			MELEE_FAST_CHAIN_FPS
+		)
+		changed = true
+	if changed:
+		melee_fx_overlay_sprite.sprite_frames = runtime_frames
 
 
 func _ensure_optional_sheet_animation(

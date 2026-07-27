@@ -66,6 +66,13 @@ matchpal() {
     --strength "$strength" --max-colors "$max_colors"
 }
 
+# -- Convert source art to pixel art and choose among three previews
+#    Usage: pixelart <source> [output] [--size 96x96] [--colors 24]
+pixelart() {
+  _update_usage "pixelart"
+  python3 "${CUSTODIAN_GODOT}/tools/art/source_to_pixel_art.py" "$@"
+}
+
 # -- Batch-match all fast_strike_01 palettes to their fast_windup_01 counterparts
 batchstrike() {
   _update_usage "batchstrike"
@@ -121,6 +128,7 @@ clisting() {
   echo "    runjson        generate JSON sidecar manifests (live)"
   echo "    runsprite      run sprite ingest pipeline"
   echo "    opingest       focused operator ingest (dry run; --apply to write)"
+  echo "    pixelart       source art -> three pixel-art previews -> chosen PNG"
   echo "    matchpal       match sprite palette to a reference (CIE LAB)"
   echo "    batchstrike    batch-match fast_strike palettes to fast_windup"
   echo "    listbox        list current assets in pipeline inbox"
@@ -149,7 +157,7 @@ alias_usage() {
     return
   fi
   echo "Custodian alias usage counts:"
-  for cmd in dryjson runjson runsprite opingest obsreport listbox matchpal batchstrike opcolor promptmenu opcombo opcontract opaudit opnext clisting; do
+  for cmd in dryjson runjson runsprite opingest obsreport listbox pixelart matchpal batchstrike opcolor promptmenu opcombo opcontract opaudit opnext clisting; do
     local count
     count=$(grep -c "$cmd" "$usage_file" 2>/dev/null || echo 0)
     printf "  %-12s %d\n" "${cmd}:" "${count}"
@@ -158,5 +166,5 @@ alias_usage() {
   echo "Total: $(wc -l <"${usage_file}") invocations"
 }
 
-echo "  Custodian commands ready: croot, cgodot, cpack, opcolor, dryjson, runjson, runsprite, opingest, obsreport, listbox, matchpal, batchstrike, promptmenu, opcombo, opcontract, opaudit, opnext, clisting"
+echo "  Custodian commands ready: croot, cgodot, cpack, opcolor, dryjson, runjson, runsprite, opingest, obsreport, listbox, pixelart, matchpal, batchstrike, promptmenu, opcombo, opcontract, opaudit, opnext, clisting"
 echo "  Type 'clisting' for all commands with descriptions, 'alias_usage' for usage counts."

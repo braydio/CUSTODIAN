@@ -41,7 +41,7 @@ MODULAR_LAYER_OUTPUTS = {
     "modular_upper_fx": "upper_fx",
     "modular_wardrobe_cape": "wardrobe_cape",
 }
-KNOWN_LOADOUTS = {"unarmed", "sidearm", "ranged_2h"}
+KNOWN_LOADOUTS = {"unarmed", "sidearm", "ranged_2h", "melee_1h"}
 
 
 @dataclass(frozen=True)

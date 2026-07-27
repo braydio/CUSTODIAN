@@ -5,7 +5,7 @@
 - **Type**: Infrastructure Architecture
 - **Location**: `custodian/tools/pipelines/`
 - **Status**: Active, repo-native intake pipeline
-- **Last Updated**: 2026-07-22
+- **Last Updated**: 2026-07-26
 
 ## Purpose
 
@@ -90,6 +90,28 @@ Supported output layouts:
 - `vertical_strip`
 
 Optional transforms are output-local and explicit. The pipeline must preserve source pixels by default.
+
+## High-Resolution Source-Art Preparation
+
+High-resolution art is reviewable source material, not runtime authority. Before placing a converted PNG in
+the sprite inbox, source `tools/custodian_aliases.sh` and run:
+
+```bash
+pixelart source_384.png output_96.png
+```
+
+`pixelart` generates and presents three deterministic 96×96 candidates:
+
+1. crisp nearest-neighbor reduction for already grid-aligned enlarged pixel art
+2. balanced box/area reduction with a 24-color no-dither palette
+3. clustered area reduction with stronger values, a smaller palette, and isolated-color cleanup
+
+The command opens a labeled comparison when a supported terminal or desktop viewer is available, prompts for
+the chosen candidate, and writes only that choice to the requested output. Use exact integer source multiples
+where practical (`384→96`, `768→96`). The tool warns on non-integer ratios because important landmarks may
+shift. `--size`, `--colors`, `--choose`, and `--keep-candidates` support other targets, reproducible automation,
+and explicit review artifact retention. These outputs still require silhouette, landmark, and animation
+continuity review before ingest.
 
 ## Canonical Runtime Naming
 
@@ -199,6 +221,7 @@ Direction rule:
 
 Primary scripts:
 
+- `custodian/tools/art/source_to_pixel_art.py`
 - `custodian/tools/pipelines/generate_inbox_manifests.py`
 - `custodian/tools/pipelines/ingest.py`
 - `custodian/tools/pipelines/ingest_runtime.gd`

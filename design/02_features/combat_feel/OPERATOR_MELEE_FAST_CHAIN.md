@@ -46,9 +46,21 @@ The runtime strips live under:
 custodian/content/sprites/operator/runtime/body/melee_1h/
 ```
 
-The verified master is a baked body/weapon/effect presentation. The Katana
-chain therefore leaves `weapon_anim` and `fx_anim` empty; it does not combine
-the baked strip with independently timed overlays.
+The verified master supplies the baked body/weapon presentation, but its attack
+VFX is not baked. The existing `modular_upper_fx` pipeline sources generate
+directional runtime overlays under:
+
+```text
+custodian/content/sprites/operator/runtime/modules/new_operator/
+upper_fx/actions/melee_1h/chain_01/
+upper_fx/actions/melee_1h/chain_02/
+upper_fx/actions/melee_1h/chain_03/
+```
+
+The runtime registers the E/W `9/7/8` FX strips at 18 FPS, maps them to
+`melee_fast_1/2/3`, and synchronizes their visible frame to the authoritative
+body frame. The Katana weapon overlay remains empty because the weapon is
+already present in the body presentation.
 
 ## Timing
 
@@ -104,7 +116,7 @@ impact presentation and reactions, not chain permission.
 - `fallen_star_katana_definition.tres` configures the three Katana links.
 - `operator.gd` owns the single command slot, authored-frame transition,
   stamina spending, retarget clamp, hit dedupe, reset behavior, and dynamic
-  runtime registration.
+  body/FX runtime registration.
 - `operator_melee_fast_chain_smoke.gd` validates assets, data, animation
   registration, command order, branches, dedupe, reset behavior, and feel
   hierarchy.

@@ -97,9 +97,19 @@ func _layout_from_ingress() -> void:
 	if map_size.x <= 0 or map_size.y <= 0:
 		map_size = DEFAULT_MAP_SIZE
 	var ingress_tile := _global_to_tile(_ingress.global_position)
-	_outward_direction = Vector2(
-		_nearest_boundary_direction(ingress_tile, map_size)
+	var authored_direction: Variant = _ingress.get_meta(
+		"world_ingress_outward_direction",
+		Vector2i.ZERO
 	)
+	if (
+		authored_direction is Vector2i
+		and authored_direction != Vector2i.ZERO
+	):
+		_outward_direction = Vector2(authored_direction as Vector2i)
+	else:
+		_outward_direction = Vector2(
+			_nearest_boundary_direction(ingress_tile, map_size)
+		)
 	var tile_size := _runtime_tile_size()
 	var step_px := maxf(
 		16.0,

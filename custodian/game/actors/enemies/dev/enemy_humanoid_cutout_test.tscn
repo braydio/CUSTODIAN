@@ -1,0 +1,78 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://game/actors/enemies/enemy.gd" id="1_enemy"]
+[ext_resource type="PackedScene" path="res://game/actors/enemies/visuals/humanoid_cutout_rig_2d.tscn" id="2_rig"]
+[ext_resource type="Resource" path="res://content/sprites/enemies/enemy_humanoid_cutout_test/runtime/body/rig/enemy_humanoid_cutout_test_humanoid_rig_skin.tres" id="3_skin"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape_body"]
+size = Vector2(24, 34)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_empty"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_health_bg"]
+bg_color = Color(0.08, 0.08, 0.1, 0.85)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_health_fill"]
+bg_color = Color(0.2, 0.8, 0.3, 1)
+
+[node name="EnemyHumanoidCutoutTest" type="CharacterBody2D"]
+script = ExtResource("1_enemy")
+enemy_name = "CUTOUT TEST (DEV ONLY)"
+speed = 55.0
+health = 50.0
+max_health = 50.0
+damage = 8.0
+detection_range = 180.0
+material_drop_fallback_enabled = false
+visual_backend = 1
+grunt_falcon_punch_enabled = false
+savage_chain_enabled = false
+savage_pounce_enabled = false
+marine_dash_enabled = false
+
+[node name="Visual" type="ColorRect" parent="."]
+visible = false
+offset_left = -10.0
+offset_top = -28.0
+offset_right = 10.0
+offset_bottom = 0.0
+color = Color(1, 0, 1, 1)
+mouse_filter = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -17)
+shape = SubResource("RectangleShape_body")
+
+[node name="HealthBar" type="ProgressBar" parent="."]
+offset_left = -24.0
+offset_top = -52.0
+offset_right = 24.0
+offset_bottom = -44.0
+theme_override_styles/background = SubResource("StyleBox_health_bg")
+theme_override_styles/fill = SubResource("StyleBox_health_fill")
+value = 100.0
+show_percentage = false
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+visible = false
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_empty")
+
+[node name="CustomEnemyFxSprite" type="AnimatedSprite2D" parent="."]
+visible = false
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_empty")
+
+[node name="HumanoidCutoutRig2D" parent="." instance=ExtResource("2_rig")]
+position = Vector2(0, -34)
+skin = ExtResource("3_skin")
+
+[node name="DevOnlyLabel" type="Label" parent="."]
+offset_left = -61.0
+offset_top = 8.0
+offset_right = 61.0
+offset_bottom = 25.0
+theme_override_colors/font_color = Color(1, 0.25, 0.9, 1)
+theme_override_font_sizes/font_size = 9
+text = "GEOMETRIC DEV PLACEHOLDER"
+horizontal_alignment = 1

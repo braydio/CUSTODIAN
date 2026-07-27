@@ -270,11 +270,19 @@ godot --headless --path . --script res://tools/validation/sundered_keep_ingress_
 godot --headless --path . --script res://tools/validation/sundered_keep_world_vista_smoke.gd
 godot --headless --path . --script res://tools/validation/world_origin_branch_contract_smoke.gd
 bash tools/validation/run_route_pipeline_suite.sh
+godot --display-driver x11 --rendering-driver opengl3 \
+  --audio-driver Dummy --path . \
+  --script res://tools/validation/sundered_keep_world_vista_seed_review.gd
 ```
 
 The world-Vista smoke proves a single forward/reverse physical camera envelope,
-procgen and Operator continuity, collision-free landmark ownership, temporary
-camera bounds, and correct zoomed-out coverage math. The ingress smoke proves
+fixed north-edge orientation, a bounded positive-z horizon aperture, dedicated
+foreground separation, procgen and Operator continuity, collision-free
+landmark ownership, temporary camera bounds, and correct zoomed-out coverage
+math. The renderer-backed seed review produces eight apex PNGs and a manifest
+under `reports/sundered_keep_world_vista/`; it uses an actual renderer because
+Godot's dummy headless driver cannot read back a viewport texture. The ingress
+smoke proves
 the landmark starts no route and that only crossing the separate ingress hides
 origin branches and stages Front Gate. The route suite proves direct production
 entry/exfil, quarantine of `legacy_vista_debug` and `causeway_only`, loader and
@@ -542,6 +550,18 @@ Check the specific acceptance path from the task packet when one exists; otherwi
 ## Sprite Pipeline Validation
 
 Use for sprite intake, runtime animation slices, and curated operator resources.
+
+For the high-resolution source-art preparation command:
+
+```bash
+python3 -m py_compile custodian/tools/art/source_to_pixel_art.py custodian/tools/validation/source_to_pixel_art_smoke.py
+python3 custodian/tools/validation/source_to_pixel_art_smoke.py
+bash -n tools/custodian_aliases.sh
+```
+
+After sourcing `tools/custodian_aliases.sh`, run `pixelart source.png [output.png]` for the interactive
+three-candidate review. Use `--choose crisp`, `--choose balanced`, or `--choose clustered` for reproducible
+non-interactive conversion.
 
 Read first:
 

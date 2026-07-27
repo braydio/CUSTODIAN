@@ -54,6 +54,14 @@ func _run() -> void:
 	var ingress := Area2D.new()
 	ingress.name = "SunderedKeepIngressSite"
 	ingress.global_position = Vector2(1536.0, 256.0)
+	ingress.set_meta(
+		"world_ingress_outward_direction",
+		Vector2i.UP
+	)
+	ingress.set_meta(
+		"world_ingress_edge_distance_tiles",
+		8
+	)
 	world.add_child(ingress)
 	var landmarks := Node2D.new()
 	landmarks.name = "WorldLandmarks"
@@ -82,6 +90,37 @@ func _run() -> void:
 	vista.call("_process", 0.0)
 	_assert_weight(vista, 1.0, "camera apex", errors)
 	var state := vista.call("get_world_vista_debug_state") as Dictionary
+	if state.get("outward_direction") != Vector2.UP:
+		errors.append("production world Vista was not oriented north")
+	var edge_distance := int(
+		ingress.get_meta(
+			"world_ingress_edge_distance_tiles",
+			-1
+		)
+	)
+	if edge_distance < 0 or edge_distance > 8:
+		errors.append(
+			"Vista ingress was not placed near the north map edge"
+		)
+	var storm := vista.get_node(
+		"HorizonPresentation/StormParallax/StormHorizon"
+	) as Sprite2D
+	if storm.z_index <= 0:
+		errors.append(
+			"horizon aperture remained beneath procgen presentation"
+		)
+	if not storm.region_enabled or storm.region_rect.size != Vector2(
+		2600.0,
+		1200.0
+	):
+		errors.append(
+			"horizon aperture did not restrict storm coverage"
+		)
+	var lip := vista.get_node("ForegroundCliffLip") as Sprite2D
+	if lip.texture == null:
+		errors.append("Vista has no foreground separation asset")
+	elif lip.texture.get_size() != Vector2(2048.0, 512.0):
+		errors.append("Vista foreground separator is not 2048x512")
 	var bounds := state.get("presentation_bounds", Rect2()) as Rect2
 	if bounds.size.x <= 0.0 or bounds.size.y <= 0.0:
 		errors.append("Vista did not provide presentation bounds")

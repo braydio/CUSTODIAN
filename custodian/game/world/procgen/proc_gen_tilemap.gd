@@ -2361,6 +2361,71 @@ func claim_procgen_floor_rect_for_authored_scene_tiles(
 	return footprint_rect
 
 
+func claim_world_overlook_pocket(
+	center_tile: Vector2i,
+	size_tiles: Vector2i
+) -> Rect2i:
+	var footprint := claim_procgen_floor_rect_for_authored_scene_tiles(
+		center_tile,
+		size_tiles,
+		"world_overlook_floor",
+		"world_vista",
+		1
+	)
+	if footprint.size == Vector2i.ZERO:
+		return footprint
+	var clearance := footprint.grow(1)
+	_clear_runtime_prop_sources_in_rect(clearance)
+	_clear_prop_visuals_in_rect(clearance)
+	_queue_navigation_rebuild()
+	return footprint
+
+
+func _clear_runtime_prop_sources_in_rect(rect: Rect2i) -> void:
+	var owner_ids: Array[String] = []
+	for owner_id_variant: Variant in _runtime_prop_blocker_sources.keys():
+		var owner_id := str(owner_id_variant)
+		var source: Dictionary = _runtime_prop_blocker_sources[
+			owner_id_variant
+		]
+		var source_tile: Variant = source.get(
+			"source_tile",
+			Vector2i.ZERO
+		)
+		if source_tile is Vector2i and rect.has_point(
+			source_tile as Vector2i
+		):
+			var owner := source.get("owner", null) as Node
+			if owner != null and is_instance_valid(owner):
+				owner.queue_free()
+			owner_ids.append(owner_id)
+	for owner_id: String in owner_ids:
+		_unregister_runtime_prop_blocker_id(owner_id)
+
+
+func _clear_prop_visuals_in_rect(rect: Rect2i) -> void:
+	var prop_parent := get_node_or_null(ruin_prop_parent_path)
+	if prop_parent == null:
+		return
+	var stack: Array[Node] = []
+	for child: Node in prop_parent.get_children():
+		stack.append(child)
+	while not stack.is_empty():
+		var node: Node = stack.pop_back()
+		if node.has_meta("source_tile"):
+			var source_tile: Variant = node.get_meta(
+				"source_tile",
+				Vector2i.ZERO
+			)
+			if source_tile is Vector2i and rect.has_point(
+				source_tile as Vector2i
+			):
+				node.queue_free()
+				continue
+		for child: Node in node.get_children():
+			stack.append(child)
+
+
 func _force_authored_scene_floor_authority(tile: Vector2i, region_type: String, zone: String, refresh_collision_debug: bool = true) -> void:
 	var source_id := _select_floor_source_id(tile)
 	var atlas := _select_floor_coord(tile)

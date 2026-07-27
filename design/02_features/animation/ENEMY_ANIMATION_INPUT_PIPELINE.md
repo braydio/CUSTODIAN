@@ -15,6 +15,10 @@ Give enemies the same practical animation intake path as the operator: source ar
 - Enemies are mixed:
   - Shrumbs build `SpriteFrames` dynamically from explicit slink/knockout sheet paths on `Enemy`.
   - Wolves build `SpriteFrames` dynamically in `game/enemies/procgen/wolf_animation_library.gd`.
+  - Opt-in 96×96 humanoid skins may use the rigid, non-deforming
+    `HumanoidCutoutRig2D` backend and its static 5×4 directional part atlases.
+    Authored `SpriteFrames` remain the default and remain required for bespoke
+    full-body special actions.
   - There is no enemy-wide SpriteFrames rebuild step yet.
 
 ## Intake Contract
@@ -85,3 +89,8 @@ Responsibilities:
 4. Report missing directions, frame-count mismatches, and unsupported naming.
 
 Until that exists, enemies can still use the pipeline by writing the runtime PNGs that their current dynamic loaders already read.
+
+The rigid-cutout atlas is not an animation input and must not be passed through
+the future `SpriteFrames` rebuild step. Its fixed contract, canonical
+`runtime/body/rig/` location, and Aseprite exporter are specified in
+`design/02_features/enemy_visuals/HUMANOID_CUTOUT_RIG_SYSTEM.md`.

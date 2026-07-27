@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/approach/first_vista_base_storm_horizon.png" id="2_storm"]
 [ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/distant_sundered_keep_landmark_v2.png" id="3_keep"]
 [ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/approach/fog/first_vista_reveal_veil.png" id="4_fog"]
-[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/approach/playable/overlook_ledge.png" id="5_lip"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/world_vista/sundered_keep_world_vista_cliff_lip.png" id="5_lip"]
 
 [node name="SunderedKeepWorldVista" type="Node2D"]
 script = ExtResource("1_script")
@@ -13,43 +13,40 @@ y_sort_enabled = false
 [node name="HorizonPresentation" type="Node2D" parent="."]
 y_sort_enabled = false
 
-[node name="StormParallax" type="Parallax2D" parent="HorizonPresentation"]
-scroll_scale = Vector2(0.02, 0.01)
-repeat_size = Vector2(0, 0)
+[node name="StormParallax" type="Node2D" parent="HorizonPresentation"]
 
 [node name="StormHorizon" type="Sprite2D" parent="HorizonPresentation/StormParallax"]
+position = Vector2(0, -220)
 z_as_relative = false
-z_index = -300
+z_index = 40
 texture = ExtResource("2_storm")
 texture_filter = 1
+region_enabled = true
+region_rect = Rect2(0, 0, 2600, 1200)
 
-[node name="KeepParallax" type="Parallax2D" parent="HorizonPresentation"]
-scroll_scale = Vector2(0.08, 0.03)
-repeat_size = Vector2(0, 0)
+[node name="KeepParallax" type="Node2D" parent="HorizonPresentation"]
 
 [node name="DistantKeep" type="Sprite2D" parent="HorizonPresentation/KeepParallax"]
-position = Vector2(170, -120)
+position = Vector2(170, -180)
 scale = Vector2(0.32, 0.32)
 z_as_relative = false
-z_index = -250
+z_index = 50
 texture = ExtResource("3_keep")
 texture_filter = 1
 
-[node name="FogParallax" type="Parallax2D" parent="HorizonPresentation"]
-scroll_scale = Vector2(0.18, 0.08)
-repeat_size = Vector2(0, 0)
+[node name="FogParallax" type="Node2D" parent="HorizonPresentation"]
 
 [node name="FogVeil" type="Sprite2D" parent="HorizonPresentation/FogParallax"]
-position = Vector2(0, 70)
+position = Vector2(0, -20)
 z_as_relative = false
-z_index = -200
+z_index = 60
 texture = ExtResource("4_fog")
 texture_filter = 1
 
 [node name="ForegroundCliffLip" type="Sprite2D" parent="."]
-scale = Vector2(1.25, 1.25)
+scale = Vector2(1.25, 1)
 z_as_relative = false
-z_index = 100
+z_index = 80
 texture = ExtResource("5_lip")
 texture_filter = 1
 

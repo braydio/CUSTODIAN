@@ -18,7 +18,13 @@ const ANIMATIONS := [
 	&"melee_2h_fast_3_right",
 ]
 const FRAME_COUNTS := [7, 7, 8]
+const FX_FRAME_COUNTS := [9, 7, 8]
 const COMMIT_FRAMES := [5, 5, 6]
+const FX_ANIMATION_BASES := [
+	"melee_2h_fast_1_fx",
+	"melee_2h_fast_2_fx",
+	"melee_2h_fast_3_fx",
+]
 
 var _errors: Array[String] = []
 var _fixture_root: Node2D
@@ -72,6 +78,7 @@ func _run() -> void:
 	_validate_source_and_definition()
 	_validate_runtime_registration(operator)
 	_validate_single_press_settle(operator)
+	_validate_directional_fx(operator)
 	_validate_chain_order_and_stamina(operator)
 	_validate_first_input_wins(operator)
 	_validate_heavy_branch(operator)
@@ -177,6 +184,37 @@ func _validate_runtime_registration(operator: Node) -> void:
 			not sprite.sprite_frames.get_animation_loop(animation),
 			"%s must not loop internally" % animation
 		)
+	var fx_sprite := operator.get(
+		"melee_fx_overlay_sprite"
+	) as AnimatedSprite2D
+	_assert(fx_sprite != null, "Operator fast-chain FX sprite is missing")
+	if fx_sprite == null or fx_sprite.sprite_frames == null:
+		return
+	for index in range(FX_ANIMATION_BASES.size()):
+		for suffix in ["right", "left"]:
+			var animation := StringName(
+				"%s_%s" % [FX_ANIMATION_BASES[index], suffix]
+			)
+			_assert(
+				fx_sprite.sprite_frames.has_animation(animation),
+				"missing runtime FX animation %s" % animation
+			)
+			if not fx_sprite.sprite_frames.has_animation(animation):
+				continue
+			_assert(
+				fx_sprite.sprite_frames.get_frame_count(animation)
+				== FX_FRAME_COUNTS[index],
+				"%s has wrong frame count" % animation
+			)
+			_assert_close(
+				fx_sprite.sprite_frames.get_animation_speed(animation),
+				18.0,
+				"%s is not registered at 18 FPS" % animation
+			)
+			_assert(
+				not fx_sprite.sprite_frames.get_animation_loop(animation),
+				"%s must not loop internally" % animation
+			)
 
 
 func _validate_single_press_settle(operator: Node) -> void:
@@ -207,6 +245,26 @@ func _validate_single_press_settle(operator: Node) -> void:
 		int(operator.get("_melee_fast_combo_step")) == 0,
 		"stopped attack did not reset to Fast 01"
 	)
+
+
+func _validate_directional_fx(operator: Node) -> void:
+	_reset_attack(operator)
+	operator.set("aim_direction", Vector2.LEFT)
+	operator.set("arrow_aim_enabled", false)
+	operator.call("_request_attack_state", "fast")
+	var fx_sprite := operator.get(
+		"melee_fx_overlay_sprite"
+	) as AnimatedSprite2D
+	_assert(
+		fx_sprite != null
+		and fx_sprite.animation == &"melee_2h_fast_1_fx_left",
+		"west-facing Fast 01 did not select the west pipeline FX"
+	)
+	if fx_sprite != null:
+		_assert(
+			not fx_sprite.flip_h,
+			"authored west pipeline FX was mirrored a second time"
+		)
 
 
 func _validate_chain_order_and_stamina(operator: Node) -> void:
@@ -413,12 +471,19 @@ func _assert_step(
 		) as AnimatedSprite2D
 		_assert(
 			weapon_overlay == null or not weapon_overlay.visible,
-			"baked chain body also showed a weapon overlay"
+			"Katana chain unexpectedly showed a separate weapon overlay"
 		)
 		_assert(
-			fx_overlay == null or not fx_overlay.visible,
-			"baked chain body also showed an unsynchronized FX overlay"
+			fx_overlay != null and fx_overlay.visible,
+			"Katana chain did not show its pipeline FX overlay"
 		)
+		if fx_overlay != null:
+			_assert(
+				String(fx_overlay.animation).begins_with(
+					FX_ANIMATION_BASES[expected_step]
+				),
+				"Katana chain played the wrong FX overlay"
+			)
 
 
 func _assert_chain_reset(operator: Node, cause: String) -> void:

@@ -52,15 +52,15 @@ fx_map = {
 "weapon_anim": "melee_2h_fast_weapon"
 },
 "melee_fast_1": {
-"fx_anim": "",
+"fx_anim": "melee_2h_fast_1_fx",
 "weapon_anim": ""
 },
 "melee_fast_2": {
-"fx_anim": "",
+"fx_anim": "melee_2h_fast_2_fx",
 "weapon_anim": ""
 },
 "melee_fast_3": {
-"fx_anim": "",
+"fx_anim": "melee_2h_fast_3_fx",
 "weapon_anim": ""
 },
 "melee_heavy": {

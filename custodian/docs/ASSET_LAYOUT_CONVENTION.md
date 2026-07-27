@@ -155,6 +155,54 @@ command_terminal__body__interaction__activate__omni__4f__48.png
 Legacy names remain valid only as compatibility targets for existing scenes/resources. Do not use legacy names for
 new source art unless a manifest also writes the canonical asset.
 
+### Humanoid Rigid-Cutout Atlas Naming
+
+Rigid cutout atlases are a distinct non-animation asset class. They do not use
+the animation-sheet `<frames>f` form:
+
+```text
+<owner>__rig_atlas__<variant>__<direction>__5x4__96.png
+```
+
+Each atlas is transparent, exactly 480×384, and contains a fixed 5×4 grid of
+twenty 96×96 static part cells. Each part stays in the assembled character's
+absolute 96×96 coordinate space; do not tightly crop, scale, filter, or move it
+within the cell.
+
+Enemy runtime atlases belong at:
+
+```text
+content/sprites/enemies/<enemy_id>/runtime/body/rig/
+```
+
+Examples:
+
+```text
+enemy_raider__rig_atlas__base__s__5x4__96.png
+enemy_raider__rig_atlas__base__n__5x4__96.png
+enemy_raider__rig_atlas__base__e__5x4__96.png
+enemy_raider__rig_atlas__base__w__5x4__96.png
+```
+
+The matching one-frame, 96×96 layered Aseprite sources belong at:
+
+```text
+content/_aseprite/sprites/enemies/<enemy_id>/source/rig/
+```
+
+and use:
+
+```text
+<enemy_id>__rig_source__<variant>__<direction>__96.aseprite
+```
+
+South, north, and east runtime atlases are required. West may be absent when
+the skin resource explicitly permits mirroring east. This convention does not
+weaken or replace the existing authored full-body animation-sheet convention;
+replacement-part poses and authored full-body fallback strips remain separate
+assets. Geometric placeholder atlases must use an unmistakable dev-only owner
+and must not be mistaken for production art.
+
 ### Modular Operator Naming
 
 Modular Operator source sheets specialize the canonical pattern as:

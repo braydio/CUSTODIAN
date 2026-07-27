@@ -1,0 +1,18 @@
+[gd_resource type="Resource" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://game/actors/enemies/visuals/humanoid_cutout_rig_skin.gd" id="1_skin"]
+[ext_resource type="Script" path="res://game/actors/enemies/visuals/humanoid_cutout_rig_profile.gd" id="2_profile"]
+[ext_resource type="Texture2D" path="res://content/sprites/enemies/enemy_humanoid_cutout_test/runtime/body/rig/enemy_humanoid_cutout_test__rig_atlas__base__s__5x4__96.png" id="3_s"]
+[ext_resource type="Texture2D" path="res://content/sprites/enemies/enemy_humanoid_cutout_test/runtime/body/rig/enemy_humanoid_cutout_test__rig_atlas__base__n__5x4__96.png" id="4_n"]
+[ext_resource type="Texture2D" path="res://content/sprites/enemies/enemy_humanoid_cutout_test/runtime/body/rig/enemy_humanoid_cutout_test__rig_atlas__base__e__5x4__96.png" id="5_e"]
+
+[sub_resource type="Resource" id="Resource_profile"]
+script = ExtResource("2_profile")
+
+[resource]
+script = ExtResource("1_skin")
+skin_id = &"enemy_humanoid_cutout_test_base"
+south_atlas = ExtResource("3_s")
+north_atlas = ExtResource("4_n")
+east_atlas = ExtResource("5_e")
+profile = SubResource("Resource_profile")

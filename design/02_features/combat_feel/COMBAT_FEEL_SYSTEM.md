@@ -111,8 +111,9 @@ Current runtime hookup:
 - Runtime body slices are `7/7/8` frames under
   `content/sprites/operator/runtime/body/melee_1h/` and register dynamically as
   three non-looping 18 FPS animations.
-- The master already bakes body, weapon, and effect presentation, so the three
-  links do not also play separate weapon/FX overlays.
+- The body master includes the body and weapon but not the attack VFX. Each
+  link loads its directional `modular_upper_fx` pipeline output as a separate
+  synchronized overlay; no additional weapon overlay is played.
 - melee idle stance now uses the authored body clip `res://assets/sprites/operator/runtime/body/melee_2h/operator_body_melee_2h_stance.png`
 - socketed `fallen_star_katana` remains active for non-authored melee movement/fallback poses
 - Katana fast damage/commit indices are `5, 5, 6` (zero-based), with exactly
