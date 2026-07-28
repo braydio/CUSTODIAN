@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://game/actors/operator/operator.gd" id="1_operator"]
 [ext_resource type="Resource" path="res://game/actors/operator/carbine_rifle_mk1_definition.tres" id="2_carbine_weapon"]
-[ext_resource type="Resource" path="res://game/actors/operator/fallen_star_katana_definition.tres" id="3_sword_weapon"]
+[ext_resource type="Resource" path="res://game/actors/operator/vigil_pattern_dagger_definition.tres" id="3_melee_weapon"]
 [ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_runtime_frames.tres" id="25_runtime_frames"]
 [ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_weapon_frames.tres" id="26_weapon_frames"]
 [ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_melee_overlay_frames.tres" id="27_melee_overlay_frames"]
@@ -53,7 +53,7 @@ idle_main_sheet_path = null
 ranged_2h_stance_sheet_path = null
 ranged_2h_aim_sheet_path = null
 primary_weapon_definition = ExtResource("2_carbine_weapon")
-melee_weapon_definition = ExtResource("3_sword_weapon")
+melee_weapon_definition = ExtResource("3_melee_weapon")
 idle_long_loop_threshold = null
 primary_weapon_frames_resource = ExtResource("26_weapon_frames")
 placeholder_sprite_position = null

@@ -18,7 +18,7 @@ const ANIMATIONS := [
 	&"melee_2h_fast_3_right",
 ]
 const FRAME_COUNTS := [7, 7, 8]
-const FX_FRAME_COUNTS := [9, 7, 8]
+const FX_FRAME_COUNTS := [10, 7, 8]
 const COMMIT_FRAMES := [5, 5, 6]
 const FX_ANIMATION_BASES := [
 	"melee_2h_fast_1_fx",
@@ -99,9 +99,10 @@ func _run() -> void:
 
 
 func _select_katana(operator: Node) -> void:
+	operator.set("melee_weapon_definition", KATANA_DEFINITION)
+	operator.call("_rebuild_armed_weapon_list")
 	var weapons := operator.get("armed_weapons") as Array
-	var katana: Variant = operator.get("melee_weapon_definition")
-	var index: int = weapons.find(katana)
+	var index: int = weapons.find(KATANA_DEFINITION)
 	_assert(index >= 0, "Katana is not in the armed weapon list")
 	if index >= 0:
 		operator.call("_apply_armed_selection", index)

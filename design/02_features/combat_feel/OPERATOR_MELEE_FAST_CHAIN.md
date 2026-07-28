@@ -57,7 +57,7 @@ upper_fx/actions/melee_1h/chain_02/
 upper_fx/actions/melee_1h/chain_03/
 ```
 
-The runtime registers the E/W `9/7/8` FX strips at 18 FPS, maps them to
+The runtime registers the E/W `10/7/8` FX strips at 18 FPS, maps them to
 `melee_fast_1/2/3`, and synchronizes their visible frame to the authoritative
 body frame. The Katana weapon overlay remains empty because the weapon is
 already present in the body presentation.
@@ -120,6 +120,11 @@ impact presentation and reactions, not chain permission.
 - `operator_melee_fast_chain_smoke.gd` validates assets, data, animation
   registration, command order, branches, dedupe, reset behavior, and feel
   hierarchy.
+
+This document is Katana-specific. The default Vigil-Pattern Dagger and the
+universal attack-drive contract are owned by
+`design/02_features/weapons/VIGIL_PATTERN_DAGGER.md` and
+`design/02_features/combat_feel/OPERATOR_MELEE_ATTACK_DRIVE.md`.
 
 ## Validation
 

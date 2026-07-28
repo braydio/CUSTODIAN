@@ -27,11 +27,13 @@ OPERATOR_MODULAR_LAYERS = {
     "modular_sidearm",
     "modular_upper_body",
     "modular_upper_fx",
+    "modular_weapon_cleaver",
+    "modular_weapon_vigil_dagger",
     "modular_wardrobe_cape",
 }
 
-SUPPORTED_OPERATOR_MODULAR_LOADOUTS = {"unarmed", "sidearm", "ranged_2h"}
-FUTURE_OPERATOR_MODULAR_LOADOUTS = {"melee", "melee_1h", "melee_2h"}
+SUPPORTED_OPERATOR_MODULAR_LOADOUTS = {"unarmed", "sidearm", "ranged_2h", "melee_1h"}
+FUTURE_OPERATOR_MODULAR_LOADOUTS = {"melee", "melee_2h"}
 
 
 @dataclass(frozen=True)

@@ -11,6 +11,12 @@ const MeleeAttackProfile = preload("res://game/systems/combat/melee_attack_profi
 @export var secondary_intent: String = "melee_heavy"
 @export_file("*.json") var weapon_data_path: String = ""
 @export var frames_resource: SpriteFrames
+
+@export_group("Weapon Animation Resources")
+@export var body_frames_resource: SpriteFrames
+@export var melee_overlay_frames_resource: SpriteFrames
+@export var melee_fx_frames_resource: SpriteFrames
+
 @export var animation_map: Dictionary = {
 	"ranged_stance": "ranged_2h_stance",
 	"ranged_fire": "ranged_2h_fire"
@@ -112,6 +118,7 @@ const MeleeAttackProfile = preload("res://game/systems/combat/melee_attack_profi
 
 @export_group("Melee Fast Chain")
 @export var fast_chain_keys: PackedStringArray = PackedStringArray()
+@export var fast_chain_attack_profiles: Array[MeleeAttackProfile] = []
 @export var fast_chain_commit_frames: PackedInt32Array = PackedInt32Array()
 @export var fast_chain_stamina_costs: PackedFloat32Array = PackedFloat32Array()
 @export var fast_chain_loops: bool = true

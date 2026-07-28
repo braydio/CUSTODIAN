@@ -86,7 +86,17 @@ Primary runtime files:
 - `custodian/game/actors/operator/operator_runtime_frames.tres`
 - `custodian/game/actors/operator/operator_melee_overlay_frames.tres`
 - `custodian/game/actors/operator/carbine_rifle_mk1_definition.tres`
+- `custodian/game/actors/operator/vigil_pattern_dagger_definition.tres`
+- `custodian/game/actors/operator/sword_cleaver_definition.tres`
 - `custodian/game/actors/operator/fallen_star_katana_definition.tres`
+
+The Vigil-Pattern Dagger is the baseline/default melee implementation. The
+optional Sword-Cleaver and later Fallen Star Katana remain separate weapons.
+Definitions may own separate held, body-action, melee-weapon-overlay, and
+melee-FX `SpriteFrames` plus per-link fast profiles. The current dagger and
+cleaver Fast 02/03 entries provisionally reuse Chain 01 pixels behind distinct
+semantic names; that reuse is an asset-availability bridge, not a universal
+animation contract.
 
 State machine files:
 
@@ -514,7 +524,7 @@ Manual validation after each phase:
 | Fast melee attack | correct animation, overlay, and hit confirm |
 | Heavy melee attack | stamina consumed and heavy hit window respected |
 | Direction change | resolver chooses suffix and left-facing uses sprite flip |
-| Weapon swap | carbine and katana resolve different animation maps |
+| Weapon swap | carbine, dagger, and Katana resolve different animation maps and resources |
 | Overlay FX | only mapped attacks spawn overlay playback |
 | State machine attack | input requests state, state starts attack, operator executes |
 
@@ -554,7 +564,9 @@ Mitigation:
 
 1. Add `animation_resolver.gd`
 2. Expand `operator_weapon_definition.gd` with animation, hit-window, and fx maps
-3. Populate `fallen_star_katana_definition.tres` and `carbine_rifle_mk1_definition.tres`
+3. Keep `vigil_pattern_dagger_definition.tres`,
+   `fallen_star_katana_definition.tres`, and
+   `carbine_rifle_mk1_definition.tres` independently populated
 4. Replace hardcoded playback in `operator.gd`
 5. Replace hardcoded hit windows in `operator.gd`
 6. Replace brittle overlay string checks with weapon-driven lookup

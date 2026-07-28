@@ -410,6 +410,28 @@ fatal clearing, healing clamp without timer refresh, HUD trailing-fill
 composition, and repeat-run fixed-step determinism. Adjacent smokes preserve
 Field Patch, projectile delivery, and paired-critical behavior.
 
+For Vigil-Pattern Dagger, Sword-Cleaver, or generic melee attack-drive changes:
+
+```bash
+cd custodian
+godot --headless --path . \
+  --script res://tools/validation/operator_vigil_dagger_smoke.gd
+godot --headless --path . \
+  --script res://tools/validation/operator_sword_cleaver_smoke.gd
+godot --headless --path . \
+  --script res://tools/validation/operator_melee_fast_chain_smoke.gd
+godot --headless --path . --quit \
+  --scene res://scenes/game.tscn
+```
+
+The dagger smoke validates the default definition, three-link resources,
+contact/commit timing, synchronized E/W body/weapon/FX playback, bounded
+movement, input filtering, wall truncation, no snapback, and interruption
+cancellation. The cleaver smoke validates its explicit override, independent
+per-link profiles, synchronized provisional Chain 01 reuse, bounded finisher
+drive, and the unchanged dagger default. The Katana smoke remains the separate
+later-weapon regression.
+
 For Fallen Star Katana fast-chain changes:
 
 ```bash

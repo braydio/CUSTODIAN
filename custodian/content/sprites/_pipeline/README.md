@@ -103,9 +103,12 @@ Modular Operator layer sheets use this canonical specialization:
 operator__<modular_layer>__<loadout>__<action>__<direction>__<frames>f__<frame_size>.png
 ```
 
-Supported modular layers include `modular_lower_body`, `modular_upper_body`, `modular_upper_fx`,
-`modular_wardrobe_cape`, `modular_combined_body`, and `modular_sidearm`. Use loadouts such as
-`unarmed`, `sidearm`, or `ranged_2h`; keep the action in the next token.
+Supported modular layers include `modular_lower_body`, `modular_upper_body`,
+`modular_upper_fx`, `modular_weapon_vigil_dagger`,
+`modular_weapon_cleaver`, `modular_wardrobe_cape`,
+`modular_combined_body`, and `modular_sidearm`. Use loadouts such as
+`unarmed`, `sidearm`, `ranged_2h`, or `melee_1h`; keep the action in the next
+token.
 
 ```text
 operator__modular_lower_body__unarmed__block_loop_01__e__5f__96.png
@@ -119,6 +122,24 @@ The manifest generator routes modular sheets into action-family buckets below
 96px-canvas runtime modules below `operator/runtime/modules/new_operator/<layer>/actions/<loadout>/<action>/`.
 Explicit loadout/action names are preferred when both they and a legacy short name exist. Legacy short names
 and the earlier ranged token ordering remain compatibility inputs.
+
+The first one-handed melee weapon-overlay contract uses complete 156×96 action
+coordinates:
+
+```text
+operator__modular_lower_body__melee_1h__chain_01__e__10f__156x96.png
+operator__modular_upper_body__melee_1h__chain_01__e__10f__156x96.png
+operator__modular_upper_fx__melee_1h__chain_01__e__10f__156x96.png
+operator__modular_weapon_vigil_dagger__melee_1h__chain_01__e__10f__156x96.png
+operator__modular_weapon_cleaver__melee_1h__chain_01__e__10f__156x96.png
+```
+
+Ingest mirrors east to west. The modular builder composites the shared body,
+preserves full FX and weapon coordinates, and writes weapon-specific action
+strips under `operator/runtime/weapon/melee_1h/<weapon_id>/`. A definition may
+temporarily reuse Chain 01 for several semantic links, but every link keeps its
+own animation name and combat profile so later art can replace the reuse
+without changing Operator playback code.
 
 Ingest and runtime-module generation do not automatically grant a new gameplay animation state. Live playback
 must still be registered deliberately in the Operator state machine and curated `SpriteFrames`.

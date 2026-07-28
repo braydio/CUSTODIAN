@@ -115,12 +115,12 @@ const MELEE_FAST_CHAIN_BODY_SHEETS := {
 }
 const MELEE_FAST_CHAIN_FX_SHEETS := {
 	&"melee_2h_fast_1_fx_right": {
-		"path": "res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/melee_1h/chain_01/operator__modular_upper_fx__melee_1h__chain_01__e__9f__96.png",
-		"frames": 9,
+		"path": "res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/melee_1h/chain_01/operator__modular_upper_fx__melee_1h__chain_01__e__10f__96.png",
+		"frames": 10,
 	},
 	&"melee_2h_fast_1_fx_left": {
-		"path": "res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/melee_1h/chain_01/operator__modular_upper_fx__melee_1h__chain_01__w__9f__96.png",
-		"frames": 9,
+		"path": "res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/melee_1h/chain_01/operator__modular_upper_fx__melee_1h__chain_01__w__10f__96.png",
+		"frames": 10,
 	},
 	&"melee_2h_fast_2_fx_right": {
 		"path": "res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/melee_1h/chain_02/operator__modular_upper_fx__melee_1h__chain_02__e__7f__96.png",
@@ -425,6 +425,16 @@ var using_unarmed: bool = false
 var pending_weapon_selection: Dictionary = {}
 var _active_attack_profile: OperatorWeaponDefinition = null
 var _active_melee_attack_profile: MeleeAttackProfile = null
+var _attack_drive_direction := Vector2.ZERO
+var _attack_drive_delay_remaining := 0.0
+var _attack_drive_time_remaining := 0.0
+var _attack_drive_total_duration := 0.0
+var _attack_drive_distance_total := 0.0
+var _attack_drive_distance_remaining := 0.0
+var _attack_drive_input_influence := 0.0
+var _attack_drive_falloff_power := 1.0
+var _attack_drive_stops_on_collision := true
+var _last_attack_drive_velocity := Vector2.ZERO
 var _missing_animation_warnings: Dictionary = {}
 var _ranged_config_warning_once: Dictionary = {}
 var _melee_heavy_anticipating: bool = false
@@ -574,6 +584,8 @@ var _modular_damage_reaction_animation: StringName = &""
 var _modular_damage_reaction_head_animation: StringName = &""
 var _modular_damage_reaction_sector: StringName = &"s"
 var _production_body_frames: SpriteFrames = null
+var _default_melee_overlay_frames: SpriteFrames = null
+var _default_melee_fx_frames: SpriteFrames = null
 var _knight_test_frames: SpriteFrames = null
 var _knight_test_skin_active: bool = false
 var _modular_lower_action_animation: StringName = &""
@@ -662,7 +674,6 @@ func _get_current_ranged_profile() -> Dictionary:
 
 const PRIMARY_WEAPON_NONE := ""
 const PRIMARY_WEAPON_CARBINE := "carbine_rifle"
-const PRIMARY_WEAPON_SWORD := "fallen_star_katana"
 const LOADOUT_HOLSTERED := &"holstered"
 const LOADOUT_MELEE := &"melee"
 const LOADOUT_RANGED := &"ranged"
@@ -804,6 +815,14 @@ func _ready():
 			animated_sprite.animation_finished.connect(_on_operator_animation_finished)
 		_ensure_runtime_body_animations()
 		_apply_knight_test_skin_if_requested()
+	if melee_weapon_overlay_sprite != null:
+		_default_melee_overlay_frames = (
+			melee_weapon_overlay_sprite.sprite_frames
+		)
+	if melee_fx_overlay_sprite != null:
+		_default_melee_fx_frames = (
+			melee_fx_overlay_sprite.sprite_frames
+		)
 	if dodge_fx_back_sprite:
 		dodge_fx_back_sprite.visible = false
 		dodge_fx_back_sprite.z_index = -1
@@ -823,7 +842,13 @@ func _ready():
 		modular_head_sprite.visible = false
 		modular_head_sprite.modulate = Color(1.3, 1.3, 1.3, 1)
 	_configure_weapon_definition_defaults(primary_weapon_definition, "Carbine Rifle", "ranged", "ranged_unfocused_fire", "ranged_ready")
-	_configure_weapon_definition_defaults(melee_weapon_definition, "Fallen Star Katana", "melee", "melee_fast", "melee_heavy")
+	_configure_weapon_definition_defaults(
+		melee_weapon_definition,
+		"Melee Weapon",
+		"melee",
+		"melee_fast",
+		"melee_heavy"
+	)
 	_rebuild_armed_weapon_list()
 	_sync_weapon_selection_from_current_loadout()
 	_apply_active_weapon_frames()
@@ -1259,8 +1284,20 @@ func _physics_process(delta):
 	var accel_rate: float = move_acceleration if moving else move_deceleration
 	if movement_profile != null:
 		accel_rate *= movement_profile.acceleration_multiplier
-	velocity = velocity.move_toward(target_velocity, accel_rate * delta)
+	if _attack_drive_direction != Vector2.ZERO:
+		target_velocity = _filter_locomotion_for_attack_drive(
+			target_velocity
+		)
+	var base_velocity := velocity - _last_attack_drive_velocity
+	base_velocity = base_velocity.move_toward(
+		target_velocity,
+		accel_rate * delta
+	)
+	var drive_velocity := _sample_attack_drive_velocity(delta)
+	velocity = base_velocity + drive_velocity
+	_last_attack_drive_velocity = drive_velocity
 	move_and_slide()
+	_check_attack_drive_collision()
 	_update_unstuck_detector(delta, input_direction)
 	_update_stealth_noise_snapshot(moving)
 
@@ -4002,6 +4039,14 @@ func _get_current_melee_attack_profile(kind: String) -> MeleeAttackProfile:
 		"heavy":
 			return weapon_profile.heavy_attack_profile
 		"fast":
+			if (
+				not weapon_profile.fast_chain_attack_profiles.is_empty()
+				and _melee_fast_combo_step
+				< weapon_profile.fast_chain_attack_profiles.size()
+			):
+				return weapon_profile.fast_chain_attack_profiles[
+					_melee_fast_combo_step
+				]
 			return weapon_profile.fast_attack_profile
 		_:
 			return null
@@ -4047,6 +4092,7 @@ func _request_attack_state(kind: String) -> void:
 
 
 func _request_block_state() -> void:
+	_cancel_attack_drive(true)
 	if _animation_state_machine != null:
 		_animation_state_machine.request("block", 8)
 
@@ -4307,6 +4353,10 @@ func _start_fast_attack() -> void:
 			_resolve_current_attack_id(),
 			_melee_forward
 		)
+		_begin_attack_drive(
+			attack_profile,
+			_melee_forward
+		)
 		if attack_profile != null:
 			_configure_melee_hitbox(
 				attack_profile.damage,
@@ -4359,6 +4409,7 @@ func _start_fast_attack() -> void:
 	_melee_elapsed = 0.0
 	_melee_forward = _get_melee_forward_direction()
 	_begin_attack_movement_profile(_resolve_current_attack_id(), _melee_forward)
+	_begin_attack_drive(attack_profile, _melee_forward)
 	if attack_profile != null:
 		_configure_melee_hitbox(attack_profile.damage, attack_profile.range_px, attack_profile.arc_degrees)
 	else:
@@ -4480,6 +4531,7 @@ func _start_heavy_attack() -> void:
 	_spend_stamina(heavy_attack_stamina_cost, &"heavy_attack")
 	_melee_forward = _get_melee_forward_direction()
 	_begin_attack_movement_profile(_resolve_current_attack_id(), _melee_forward)
+	_begin_attack_drive(_active_melee_attack_profile, _melee_forward)
 	if not is_unarmed_attack and animated_sprite and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation("melee_2h_heavy_anticipation"):
 		_melee_active = false
 		_melee_heavy_anticipating = true
@@ -5246,6 +5298,7 @@ func _start_critical_attack(target: Node2D) -> void:
 	if not _ensure_paired_execution_animation(modular_upper_fx_sprite, fx_animation, fx_sheet, _paired_execution_frame_count):
 		target.call("cancel_parry_critical_execution", self, &"operator_fx_asset_missing")
 		return
+	_cancel_attack_drive(true)
 	_active_attack_profile = get_current_combat_profile()
 	_active_melee_attack_profile = _get_current_melee_attack_profile("fast")
 	_parry_neutral_lock_active = false
@@ -6906,6 +6959,7 @@ func _try_start_dodge_with_profile(direction: Vector2, profile: StringName, char
 	var stamina_cost := float(config.get("stamina_cost", dodge_stamina_cost))
 	if not _can_start_dodge(stamina_cost):
 		return false
+	_cancel_attack_drive(true)
 	_reset_fast_chain()
 	_parry_neutral_lock_active = false
 	_dodge_fast_attack_buffered = false
@@ -7612,6 +7666,7 @@ func _is_equip_weapon_state_active() -> bool:
 
 
 func _apply_unarmed_selection() -> void:
+	_cancel_attack_drive(true)
 	_reset_fast_chain()
 	using_unarmed = true
 	primary_weapon_equipped = true
@@ -7619,9 +7674,11 @@ func _apply_unarmed_selection() -> void:
 	combat_loadout_mode = LOADOUT_MELEE
 	_cancel_reload()
 	_reset_melee_overlay_visuals()
+	_apply_melee_weapon_animation_resources(unarmed_definition)
 
 
 func _apply_armed_selection(index: int) -> void:
+	_cancel_attack_drive(true)
 	_reset_fast_chain()
 	if armed_weapons.is_empty():
 		_apply_unarmed_selection()
@@ -7635,6 +7692,7 @@ func _apply_armed_selection(index: int) -> void:
 	combat_loadout_mode = _get_loadout_mode_for_profile(profile)
 	_cancel_reload()
 	_reset_melee_overlay_visuals()
+	_apply_melee_weapon_animation_resources(profile)
 
 
 func _rebuild_armed_weapon_list() -> void:
@@ -7677,7 +7735,13 @@ func _configure_weapon_definition_defaults(
 		profile.weapon_kind = default_kind
 	if profile.primary_intent.is_empty() or (default_kind == "ranged" and profile.primary_intent.begins_with("melee")):
 		profile.primary_intent = default_primary_intent
-	if profile.secondary_intent.is_empty() or (default_kind == "ranged" and profile.secondary_intent.begins_with("melee")):
+	if (
+		default_kind == "ranged"
+		and (
+			profile.secondary_intent.is_empty()
+			or profile.secondary_intent.begins_with("melee")
+		)
+	):
 		profile.secondary_intent = default_secondary_intent
 
 
@@ -8207,6 +8271,164 @@ func _begin_attack_movement_profile(attack_id: String, facing_dir: Vector2) -> v
 		attack_facing_dir = facing_dir.normalized()
 
 
+func _begin_attack_drive(
+	profile: MeleeAttackProfile,
+	direction: Vector2
+) -> void:
+	_cancel_attack_drive(true)
+	if profile == null \
+	or profile.drive_distance_px <= 0.0 \
+	or profile.drive_duration_sec <= 0.0:
+		return
+	var resolved_direction := direction.normalized()
+	if resolved_direction == Vector2.ZERO:
+		return
+	_attack_drive_direction = resolved_direction
+	_attack_drive_delay_remaining = maxf(
+		0.0,
+		profile.drive_delay_sec
+	)
+	_attack_drive_time_remaining = profile.drive_duration_sec
+	_attack_drive_total_duration = profile.drive_duration_sec
+	_attack_drive_distance_total = profile.drive_distance_px
+	_attack_drive_distance_remaining = profile.drive_distance_px
+	_attack_drive_input_influence = clampf(
+		profile.drive_input_influence,
+		0.0,
+		1.0
+	)
+	_attack_drive_falloff_power = maxf(
+		0.1,
+		profile.drive_falloff_power
+	)
+	_attack_drive_stops_on_collision = (
+		profile.drive_stops_on_collision
+	)
+
+
+func _sample_attack_drive_velocity(delta: float) -> Vector2:
+	var drive_delta := maxf(0.0, delta)
+	if _attack_drive_delay_remaining > 0.0:
+		var consumed := minf(
+			drive_delta,
+			_attack_drive_delay_remaining
+		)
+		_attack_drive_delay_remaining -= consumed
+		drive_delta -= consumed
+	if drive_delta <= 0.0:
+		return Vector2.ZERO
+	if _attack_drive_time_remaining <= 0.0 \
+	or _attack_drive_distance_remaining <= 0.0:
+		_cancel_attack_drive(false)
+		return Vector2.ZERO
+
+	var elapsed := (
+		_attack_drive_total_duration
+		- _attack_drive_time_remaining
+	)
+	var ratio := clampf(
+		elapsed / maxf(
+			0.001,
+			_attack_drive_total_duration
+		),
+		0.0,
+		1.0
+	)
+	var peak_speed := (
+		_attack_drive_distance_total
+		* (_attack_drive_falloff_power + 1.0)
+		/ maxf(0.001, _attack_drive_total_duration)
+	)
+	var current_speed := peak_speed * pow(
+		1.0 - ratio,
+		_attack_drive_falloff_power
+	)
+	var frame_distance := minf(
+		_attack_drive_distance_remaining,
+		current_speed * drive_delta
+	)
+	_attack_drive_distance_remaining -= frame_distance
+	_attack_drive_time_remaining = maxf(
+		0.0,
+		_attack_drive_time_remaining - drive_delta
+	)
+	if frame_distance <= 0.0:
+		return Vector2.ZERO
+	return (
+		_attack_drive_direction
+		* frame_distance
+		/ maxf(0.0001, delta)
+	)
+
+
+func _filter_locomotion_for_attack_drive(
+	target_velocity: Vector2
+) -> Vector2:
+	if _attack_drive_direction == Vector2.ZERO:
+		return target_velocity
+	var forward_amount := target_velocity.dot(
+		_attack_drive_direction
+	)
+	var lateral_velocity := (
+		target_velocity
+		- _attack_drive_direction * forward_amount
+	)
+	var retained_forward := (
+		maxf(0.0, forward_amount)
+		* _attack_drive_input_influence
+	)
+	return (
+		lateral_velocity * _attack_drive_input_influence
+		+ _attack_drive_direction * retained_forward
+	)
+
+
+func _check_attack_drive_collision() -> void:
+	if not _attack_drive_stops_on_collision \
+	or _attack_drive_direction == Vector2.ZERO:
+		return
+	for collision_index in range(get_slide_collision_count()):
+		var collision := get_slide_collision(collision_index)
+		if collision == null:
+			continue
+		var blocking_dot := collision.get_normal().dot(
+			_attack_drive_direction
+		)
+		if blocking_dot < -0.35:
+			_cancel_attack_drive(false)
+			return
+
+
+func _cancel_attack_drive(
+	remove_last_velocity: bool = true
+) -> void:
+	if remove_last_velocity:
+		velocity -= _last_attack_drive_velocity
+	_attack_drive_direction = Vector2.ZERO
+	_attack_drive_delay_remaining = 0.0
+	_attack_drive_time_remaining = 0.0
+	_attack_drive_total_duration = 0.0
+	_attack_drive_distance_total = 0.0
+	_attack_drive_distance_remaining = 0.0
+	_attack_drive_input_influence = 0.0
+	_attack_drive_falloff_power = 1.0
+	_attack_drive_stops_on_collision = true
+	_last_attack_drive_velocity = Vector2.ZERO
+
+
+func get_attack_drive_status() -> Dictionary:
+	return {
+		"active": _attack_drive_direction != Vector2.ZERO,
+		"direction": _attack_drive_direction,
+		"delay_remaining": _attack_drive_delay_remaining,
+		"time_remaining": _attack_drive_time_remaining,
+		"distance_total": _attack_drive_distance_total,
+		"distance_remaining": _attack_drive_distance_remaining,
+		"input_influence": _attack_drive_input_influence,
+		"stops_on_collision": _attack_drive_stops_on_collision,
+	}
+
+
 func _resolve_current_attack_id() -> String:
 	if _active_melee_attack_profile != null and not String(_active_melee_attack_profile.attack_id).is_empty():
 		return String(_active_melee_attack_profile.attack_id)
@@ -8292,7 +8514,10 @@ func _update_pending_ranged_shot(delta: float) -> void:
 func _ensure_runtime_body_animations() -> void:
 	if animated_sprite == null or animated_sprite.sprite_frames == null:
 		return
-	var runtime_frames := animated_sprite.sprite_frames.duplicate() as SpriteFrames
+	var runtime_frames := (
+		animated_sprite.sprite_frames.duplicate(true)
+		as SpriteFrames
+	)
 	if runtime_frames == null:
 		return
 	var changed := false
@@ -8999,6 +9224,75 @@ func _apply_active_weapon_frames() -> void:
 		primary_weapon_sprite.sprite_frames = primary_weapon_frames_resource
 
 
+func _install_weapon_body_frames(
+	source_frames: SpriteFrames
+) -> void:
+	if source_frames == null \
+	or animated_sprite == null \
+	or animated_sprite.sprite_frames == null:
+		return
+	var destination: SpriteFrames = animated_sprite.sprite_frames
+	for animation_name in source_frames.get_animation_names():
+		if destination.has_animation(animation_name):
+			destination.remove_animation(animation_name)
+		destination.add_animation(animation_name)
+		destination.set_animation_loop(
+			animation_name,
+			source_frames.get_animation_loop(animation_name)
+		)
+		destination.set_animation_speed(
+			animation_name,
+			source_frames.get_animation_speed(animation_name)
+		)
+		var frame_count := source_frames.get_frame_count(
+			animation_name
+		)
+		for frame_index in range(frame_count):
+			destination.add_frame(
+				animation_name,
+				source_frames.get_frame_texture(
+					animation_name,
+					frame_index
+				),
+				source_frames.get_frame_duration(
+					animation_name,
+					frame_index
+				)
+			)
+
+
+func _apply_melee_weapon_animation_resources(
+	weapon_definition: OperatorWeaponDefinition
+) -> void:
+	if weapon_definition != null \
+	and weapon_definition.body_frames_resource != null:
+		_install_weapon_body_frames(
+			weapon_definition.body_frames_resource
+		)
+	if melee_weapon_overlay_sprite == null:
+		return
+	if weapon_definition != null \
+	and weapon_definition.melee_overlay_frames_resource != null:
+		melee_weapon_overlay_sprite.sprite_frames = (
+			weapon_definition.melee_overlay_frames_resource
+		)
+	elif _default_melee_overlay_frames != null:
+		melee_weapon_overlay_sprite.sprite_frames = (
+			_default_melee_overlay_frames
+		)
+	if melee_fx_overlay_sprite == null:
+		return
+	if weapon_definition != null \
+	and weapon_definition.melee_fx_frames_resource != null:
+		melee_fx_overlay_sprite.sprite_frames = (
+			weapon_definition.melee_fx_frames_resource
+		)
+	elif _default_melee_fx_frames != null:
+		melee_fx_overlay_sprite.sprite_frames = (
+			_default_melee_fx_frames
+		)
+
+
 func _refresh_primary_weapon_state() -> void:
 	_apply_active_weapon_frames()
 	if use_tiny_rpg_placeholder_soldier:
@@ -9089,6 +9383,7 @@ func play_portal_arrival_animation() -> bool:
 func set_portal_transition_locked(locked: bool) -> void:
 	_portal_transition_locked = locked
 	if locked:
+		_cancel_attack_drive(true)
 		velocity = Vector2.ZERO
 		is_sprinting = false
 		_reset_fast_chain()
@@ -9097,6 +9392,7 @@ func set_portal_transition_locked(locked: bool) -> void:
 func set_arrn_stabilization_locked(locked: bool) -> void:
 	_arrn_stabilization_locked = locked
 	if locked:
+		_cancel_attack_drive(true)
 		velocity = Vector2.ZERO
 		is_sprinting = false
 		_reset_fast_chain()
@@ -10374,6 +10670,7 @@ func finish_damage_reaction_presentation() -> void:
 
 
 func _interrupt_active_combat_for_damage_reaction() -> void:
+	_cancel_attack_drive(true)
 	_reset_fast_chain()
 	_melee_active = false
 	_melee_attack_kind = ""
@@ -10396,6 +10693,7 @@ func _interrupt_active_combat_for_damage_reaction() -> void:
 func _handle_death() -> void:
 	if _is_dead:
 		return
+	_cancel_attack_drive(true)
 	_reset_fast_chain()
 	var last_live_weapon_status := get_weapon_status()
 	_is_dead = true

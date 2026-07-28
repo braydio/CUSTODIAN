@@ -1,0 +1,68 @@
+[gd_resource type="Resource" script_class="OperatorWeaponDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/actors/operator/operator_weapon_definition.gd" id="1_definition"]
+[ext_resource type="SpriteFrames" path="res://game/actors/operator/sword_cleaver_held_frames.tres" id="2_held"]
+[ext_resource type="SpriteFrames" path="res://game/actors/operator/sword_cleaver_body_frames.tres" id="3_body"]
+[ext_resource type="SpriteFrames" path="res://game/actors/operator/sword_cleaver_weapon_overlay_frames.tres" id="4_weapon"]
+[ext_resource type="SpriteFrames" path="res://game/actors/operator/sword_cleaver_fx_frames.tres" id="5_fx"]
+[ext_resource type="Resource" path="res://game/actors/operator/attacks/sword_cleaver_fast_01.tres" id="6_fast_01"]
+[ext_resource type="Resource" path="res://game/actors/operator/attacks/sword_cleaver_fast_02.tres" id="7_fast_02"]
+[ext_resource type="Resource" path="res://game/actors/operator/attacks/sword_cleaver_fast_03.tres" id="8_fast_03"]
+[ext_resource type="Script" path="res://game/systems/combat/melee_attack_profile.gd" id="9_profile_script"]
+
+[resource]
+script = ExtResource("1_definition")
+weapon_id = &"sword_cleaver"
+weapon_type = &"melee_1h_heavy"
+display_name = "Sword-Cleaver"
+weapon_kind = "melee"
+primary_intent = "melee_fast"
+secondary_intent = ""
+frames_resource = ExtResource("2_held")
+body_frames_resource = ExtResource("3_body")
+melee_overlay_frames_resource = ExtResource("4_weapon")
+melee_fx_frames_resource = ExtResource("5_fx")
+animation_map = {
+"melee_fast": "sword_cleaver_fast_01",
+"sword_cleaver_fast_01": "sword_cleaver_fast_01",
+"sword_cleaver_fast_02": "sword_cleaver_fast_02",
+"sword_cleaver_fast_03": "sword_cleaver_fast_03",
+"melee_stance": "sword_cleaver_stance"
+}
+hit_windows = {
+"sword_cleaver_fast_01": {
+"frames": [6]
+},
+"sword_cleaver_fast_02": {
+"frames": [6]
+},
+"sword_cleaver_fast_03": {
+"frames": [6]
+}
+}
+fx_map = {
+"sword_cleaver_fast_01": {
+"fx_anim": "sword_cleaver_fast_01_fx",
+"weapon_anim": "sword_cleaver_fast_01_weapon"
+},
+"sword_cleaver_fast_02": {
+"fx_anim": "sword_cleaver_fast_02_fx",
+"weapon_anim": "sword_cleaver_fast_02_weapon"
+},
+"sword_cleaver_fast_03": {
+"fx_anim": "sword_cleaver_fast_03_fx",
+"weapon_anim": "sword_cleaver_fast_03_weapon"
+}
+}
+fast_attack_profile = ExtResource("6_fast_01")
+fast_chain_keys = PackedStringArray("sword_cleaver_fast_01", "sword_cleaver_fast_02", "sword_cleaver_fast_03")
+fast_chain_attack_profiles = Array[ExtResource("9_profile_script")]([ExtResource("6_fast_01"), ExtResource("7_fast_02"), ExtResource("8_fast_03")])
+fast_chain_commit_frames = PackedInt32Array(6, 6, 6)
+fast_chain_stamina_costs = PackedFloat32Array(7, 8, 11)
+fast_chain_loops = true
+fast_chain_has_integrated_recovery = true
+right_hand_socket_position = Vector2(10, -11)
+weapon_socket_position = Vector2(10, -11)
+weapon_sprite_position = Vector2(-8, -4)
+weapon_sprite_scale = Vector2(1, 1)
+weapon_sprite_rotation_degrees = 34.0

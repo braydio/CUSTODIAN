@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="MeleeAttackProfile" format=3]
+
+[ext_resource type="Script" path="res://game/systems/combat/melee_attack_profile.gd" id="1_profile"]
+
+[resource]
+script = ExtResource("1_profile")
+attack_id = &"sword_cleaver_fast_02"
+attack_kind = "fast"
+damage = 15.0
+range_px = 70.0
+arc_degrees = 88.0
+knockback_force = 46.0
+windup_sec = 0.09
+active_sec = 0.13
+recovery_sec = 0.20
+cooldown_sec = 0.46
+cancel_start_sec = 0.30
+movement_profile = "mobile"
+startup_move_mult = 0.50
+active_move_mult = 0.22
+recovery_move_mult = 0.66
+turn_locked = true
+drive_distance_px = 11.0
+drive_delay_sec = 0.12
+drive_duration_sec = 0.17
+drive_input_influence = 0.18
+drive_falloff_power = 1.45
+drive_stops_on_collision = true
+hit_stop_scale = 0.84
+hit_stop_duration = 0.034
+camera_shake_power = 1.4
+animation_key = &"sword_cleaver_fast_02"
+fallback_animation = &"sword_cleaver_fast_02"
+hit_window_frames = PackedInt32Array(6)
+wound_up_before_hit = false

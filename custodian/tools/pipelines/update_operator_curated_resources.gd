@@ -10,6 +10,12 @@ const MODULAR_HEAD_FRAMES_PATH := "res://game/actors/operator/operator_modular_h
 const WEAPON_FRAMES_PATH := "res://game/actors/operator/operator_weapon_frames.tres"
 const MELEE_OVERLAY_FRAMES_PATH := "res://game/actors/operator/operator_melee_overlay_frames.tres"
 const RANGED_FX_FRAMES_PATH := "res://game/actors/operator/operator_ranged_fx_frames.tres"
+const VIGIL_DAGGER_BODY_FRAMES_PATH := "res://game/actors/operator/vigil_pattern_dagger_body_frames.tres"
+const VIGIL_DAGGER_WEAPON_FRAMES_PATH := "res://game/actors/operator/vigil_pattern_dagger_melee_overlay_frames.tres"
+const VIGIL_DAGGER_FX_FRAMES_PATH := "res://game/actors/operator/vigil_pattern_dagger_fx_frames.tres"
+const SWORD_CLEAVER_BODY_FRAMES_PATH := "res://game/actors/operator/sword_cleaver_body_frames.tres"
+const SWORD_CLEAVER_WEAPON_FRAMES_PATH := "res://game/actors/operator/sword_cleaver_weapon_overlay_frames.tres"
+const SWORD_CLEAVER_FX_FRAMES_PATH := "res://game/actors/operator/sword_cleaver_fx_frames.tres"
 
 const BASE_WALK_SHEET := "res://content/sprites/operator/runtime/animation_base/body/core_locomotion/walking_base.png"
 const BASE_RUN_SHEET := "res://content/sprites/operator/runtime/animation_base/body/core_locomotion/running_base.png"
@@ -96,6 +102,14 @@ const UNARMED_BODYSLAM_KNOCKDOWN_EAST_BODY_SHEET := "res://content/sprites/opera
 const UNARMED_BODYSLAM_KNOCKDOWN_WEST_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__full_body_combat__unarmed__bodyslam_knockdown_01__w__12f__96.png"
 const UNARMED_BODYSLAM_KNOCKDOWN_EAST_FX_SHEET := "res://content/sprites/operator/runtime/overlays/unarmed/operator__combat_fx__unarmed__bodyslam_knockdown_01__e__12f__96.png"
 const UNARMED_BODYSLAM_KNOCKDOWN_WEST_FX_SHEET := "res://content/sprites/operator/runtime/overlays/unarmed/operator__combat_fx__unarmed__bodyslam_knockdown_01__w__12f__96.png"
+const MELEE_CHAIN_01_BODY_EAST_SHEET := "res://content/sprites/operator/runtime/body/melee_1h/shared/operator__body__melee_1h__chain_01__e__10f__156x96.png"
+const MELEE_CHAIN_01_BODY_WEST_SHEET := "res://content/sprites/operator/runtime/body/melee_1h/shared/operator__body__melee_1h__chain_01__w__10f__156x96.png"
+const MELEE_CHAIN_01_FX_EAST_SHEET := "res://content/sprites/operator/runtime/fx/melee_1h/shared/operator__fx__melee_1h__chain_01__e__10f__156x96.png"
+const MELEE_CHAIN_01_FX_WEST_SHEET := "res://content/sprites/operator/runtime/fx/melee_1h/shared/operator__fx__melee_1h__chain_01__w__10f__156x96.png"
+const VIGIL_DAGGER_CHAIN_01_EAST_SHEET := "res://content/sprites/operator/runtime/weapon/melee_1h/vigil_pattern_dagger/operator__weapon__vigil_pattern_dagger__chain_01__e__10f__156x96.png"
+const VIGIL_DAGGER_CHAIN_01_WEST_SHEET := "res://content/sprites/operator/runtime/weapon/melee_1h/vigil_pattern_dagger/operator__weapon__vigil_pattern_dagger__chain_01__w__10f__156x96.png"
+const SWORD_CLEAVER_CHAIN_01_EAST_SHEET := "res://content/sprites/operator/runtime/weapon/melee_1h/sword_cleaver/operator__weapon__sword_cleaver__chain_01__e__10f__156x96.png"
+const SWORD_CLEAVER_CHAIN_01_WEST_SHEET := "res://content/sprites/operator/runtime/weapon/melee_1h/sword_cleaver/operator__weapon__sword_cleaver__chain_01__w__10f__156x96.png"
 var _had_rebuild_error := false
 
 const WALK_BASE_SLICES := [
@@ -184,6 +198,12 @@ func _init() -> void:
 	var weapon_frames := load(WEAPON_FRAMES_PATH) as SpriteFrames
 	var melee_overlay_frames := load(MELEE_OVERLAY_FRAMES_PATH) as SpriteFrames
 	var ranged_fx_frames := load(RANGED_FX_FRAMES_PATH) as SpriteFrames
+	var vigil_dagger_body_frames := SpriteFrames.new()
+	var vigil_dagger_weapon_frames := SpriteFrames.new()
+	var vigil_dagger_fx_frames := SpriteFrames.new()
+	var sword_cleaver_body_frames := SpriteFrames.new()
+	var sword_cleaver_weapon_frames := SpriteFrames.new()
+	var sword_cleaver_fx_frames := SpriteFrames.new()
 
 	if body_frames == null or modular_lower_body_frames == null or modular_upper_body_frames == null or modular_sidearm_frames == null or modular_upper_fx_frames == null or modular_cape_frames == null or modular_head_frames == null or weapon_frames == null or melee_overlay_frames == null or ranged_fx_frames == null:
 		push_error("Failed to load one or more operator SpriteFrames resources.")
@@ -340,6 +360,48 @@ func _init() -> void:
 
 	_replace_animation(ranged_fx_frames, "ranged_2h_fire_fx", FIRE_BODY_SHEET, 4, 2, 96, 96, 14.0, false)
 	_replace_animation(ranged_fx_frames, "ranged_2h_reload_fx", OPERATOR_RELOADING_SHEET, 4, 1, 96, 96, 10.0, false)
+	_populate_melee_chain_frames(
+		vigil_dagger_body_frames,
+		"vigil_dagger",
+		"body",
+		MELEE_CHAIN_01_BODY_EAST_SHEET,
+		MELEE_CHAIN_01_BODY_WEST_SHEET
+	)
+	_populate_melee_chain_frames(
+		vigil_dagger_weapon_frames,
+		"vigil_dagger",
+		"weapon",
+		VIGIL_DAGGER_CHAIN_01_EAST_SHEET,
+		VIGIL_DAGGER_CHAIN_01_WEST_SHEET
+	)
+	_populate_melee_chain_frames(
+		vigil_dagger_fx_frames,
+		"vigil_dagger",
+		"fx",
+		MELEE_CHAIN_01_FX_EAST_SHEET,
+		MELEE_CHAIN_01_FX_WEST_SHEET
+	)
+	_populate_melee_chain_frames(
+		sword_cleaver_body_frames,
+		"sword_cleaver",
+		"body",
+		MELEE_CHAIN_01_BODY_EAST_SHEET,
+		MELEE_CHAIN_01_BODY_WEST_SHEET
+	)
+	_populate_melee_chain_frames(
+		sword_cleaver_weapon_frames,
+		"sword_cleaver",
+		"weapon",
+		SWORD_CLEAVER_CHAIN_01_EAST_SHEET,
+		SWORD_CLEAVER_CHAIN_01_WEST_SHEET
+	)
+	_populate_melee_chain_frames(
+		sword_cleaver_fx_frames,
+		"sword_cleaver",
+		"fx",
+		MELEE_CHAIN_01_FX_EAST_SHEET,
+		MELEE_CHAIN_01_FX_WEST_SHEET
+	)
 	if _had_rebuild_error:
 		quit(1)
 		return
@@ -354,7 +416,50 @@ func _init() -> void:
 	ResourceSaver.save(weapon_frames, WEAPON_FRAMES_PATH)
 	ResourceSaver.save(melee_overlay_frames, MELEE_OVERLAY_FRAMES_PATH)
 	ResourceSaver.save(ranged_fx_frames, RANGED_FX_FRAMES_PATH)
+	ResourceSaver.save(vigil_dagger_body_frames, VIGIL_DAGGER_BODY_FRAMES_PATH)
+	ResourceSaver.save(vigil_dagger_weapon_frames, VIGIL_DAGGER_WEAPON_FRAMES_PATH)
+	ResourceSaver.save(vigil_dagger_fx_frames, VIGIL_DAGGER_FX_FRAMES_PATH)
+	ResourceSaver.save(sword_cleaver_body_frames, SWORD_CLEAVER_BODY_FRAMES_PATH)
+	ResourceSaver.save(sword_cleaver_weapon_frames, SWORD_CLEAVER_WEAPON_FRAMES_PATH)
+	ResourceSaver.save(sword_cleaver_fx_frames, SWORD_CLEAVER_FX_FRAMES_PATH)
 	quit()
+
+
+func _populate_melee_chain_frames(
+	sprite_frames: SpriteFrames,
+	weapon_prefix: String,
+	layer: String,
+	east_sheet: String,
+	west_sheet: String
+) -> void:
+	for link in range(1, 4):
+		var base := "%s_fast_%02d" % [weapon_prefix, link]
+		if layer == "weapon":
+			base += "_weapon"
+		elif layer == "fx":
+			base += "_fx"
+		_replace_animation(
+			sprite_frames,
+			"%s_right" % base,
+			east_sheet,
+			10,
+			0,
+			156,
+			96,
+			18.0,
+			false
+		)
+		_replace_animation(
+			sprite_frames,
+			"%s_left" % base,
+			west_sheet,
+			10,
+			0,
+			156,
+			96,
+			18.0,
+			false
+		)
 
 
 func _replace_animation(

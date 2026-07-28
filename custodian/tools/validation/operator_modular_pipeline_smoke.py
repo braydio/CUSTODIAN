@@ -48,10 +48,14 @@ def main() -> int:
         walk = root / "operator__modular_lower_body__unarmed__walk_01__s__5f__96.png"
         ranged = root / "operator__modular_upper_body__stance__ranged_2h__e__5f__96.png"
         ranged_weapon = root / "operator__modular_ranged_weapon__ranged_2h__relaxed_carbine_mk1_01__e__5f__96.png"
-        chain_fx = root / "operator__modular_upper_fx__melee_1h__chain_01__e__9f__156x96.png"
+        chain_fx = root / "operator__modular_upper_fx__melee_1h__chain_01__e__10f__156x96.png"
+        chain_weapon_dagger = root / "operator__modular_weapon_vigil_dagger__melee_1h__chain_01__e__10f__156x96.png"
+        chain_weapon_cleaver = root / "operator__modular_weapon_cleaver__melee_1h__chain_01__e__10f__156x96.png"
         for path in (canonical, legacy, cape, head, walk, ranged, ranged_weapon):
             _write_strip(path)
-        Image.new("RGBA", (9 * 156, 96), (255, 255, 255, 255)).save(chain_fx)
+        Image.new("RGBA", (10 * 156, 96), (255, 255, 255, 255)).save(chain_fx)
+        Image.new("RGBA", (10 * 156, 96), (255, 255, 255, 255)).save(chain_weapon_dagger)
+        Image.new("RGBA", (10 * 156, 96), (255, 255, 255, 255)).save(chain_weapon_cleaver)
         _write_strip(cape_alias, frames=11)
         _write_strip(legacy_collision, frames=4)
         rectangular = root / "operator__body__melee_1h__e__8f__156x96.png"
@@ -126,6 +130,20 @@ def main() -> int:
         parsed_chain_fx = builder._parse_generic_modular_source(chain_fx)
         assert parsed_chain_fx is not None
         assert parsed_chain_fx[0:3] == ("upper_fx", "melee_1h", "chain_01")
+        dagger_info = manifests._inspect_sheet(chain_weapon_dagger)
+        cleaver_info = manifests._inspect_sheet(chain_weapon_cleaver)
+        assert manifests._build_post_process(dagger_info) == ["operator_modular_runtime"]
+        assert manifests._build_post_process(cleaver_info) == ["operator_modular_runtime"]
+        assert builder._parse_generic_modular_source(chain_weapon_dagger)[0:3] == (
+            "weapon_vigil_pattern_dagger",
+            "melee_1h",
+            "chain_01",
+        )
+        assert builder._parse_generic_modular_source(chain_weapon_cleaver)[0:3] == (
+            "weapon_sword_cleaver",
+            "melee_1h",
+            "chain_01",
+        )
         rectangular_manifest = manifests._build_manifest(rectangular)
         assert rectangular_manifest["frame_size"] == [156, 96]
         assert rectangular_manifest["outputs"][0]["select"]["count"] == 8
@@ -166,9 +184,52 @@ def main() -> int:
         ) in relative
         assert (
             "upper_fx/actions/melee_1h/chain_01/"
-            "operator__modular_upper_fx__melee_1h__chain_01__e__9f__96.png"
+            "operator__modular_upper_fx__melee_1h__chain_01__e__10f__96.png"
         ) in relative
         assert not any("ranged_2h/stance_01" in path for path in relative)
+        assert not any("weapon_vigil_pattern_dagger" in path for path in relative)
+        assert not any("weapon_sword_cleaver" in path for path in relative)
+
+        chain_root = root / "chain_01"
+        chain_root.mkdir(parents=True, exist_ok=True)
+        chain_lower = chain_root / "operator__modular_lower_body__melee_1h__chain_01__e__10f__156x96.png"
+        chain_upper = chain_root / "operator__modular_upper_body__melee_1h__chain_01__e__10f__156x96.png"
+        chain_fx_runtime = chain_root / chain_fx.name
+        chain_dagger_runtime = chain_root / chain_weapon_dagger.name
+        chain_cleaver_runtime = chain_root / chain_weapon_cleaver.name
+        for path in (
+            chain_lower,
+            chain_upper,
+            chain_fx_runtime,
+            chain_dagger_runtime,
+            chain_cleaver_runtime,
+        ):
+            Image.new("RGBA", (10 * 156, 96), (255, 255, 255, 255)).save(path)
+        action_outputs = builder._build_melee_1h_chain_runtime(
+            root,
+            module_root,
+            dry_run=True,
+        )
+        action_relative = {
+            path.relative_to(module_root).as_posix()
+            for path in action_outputs
+        }
+        assert (
+            "body/melee_1h/shared/"
+            "operator__body__melee_1h__chain_01__e__10f__156x96.png"
+        ) in action_relative
+        assert (
+            "fx/melee_1h/shared/"
+            "operator__fx__melee_1h__chain_01__e__10f__156x96.png"
+        ) in action_relative
+        assert (
+            "weapon/melee_1h/vigil_pattern_dagger/"
+            "operator__weapon__vigil_pattern_dagger__chain_01__e__10f__156x96.png"
+        ) in action_relative
+        assert (
+            "weapon/melee_1h/sword_cleaver/"
+            "operator__weapon__sword_cleaver__chain_01__e__10f__156x96.png"
+        ) in action_relative
 
         generated_new = module_root / (
             "lower_body/actions/unarmed/block_loop_01/"

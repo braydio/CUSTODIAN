@@ -24,6 +24,20 @@ class_name MeleeAttackProfile
 @export var recovery_move_mult: float = 0.85
 @export var turn_locked: bool = false
 
+@export_category("Attack Drive")
+## Maximum world-space displacement contributed by this attack.
+@export var drive_distance_px: float = 0.0
+## Time from attack start before forward drive begins.
+@export var drive_delay_sec: float = 0.0
+## Duration over which the attack contributes forward movement.
+@export var drive_duration_sec: float = 0.0
+## Fraction of normal movement input retained during the drive.
+@export_range(0.0, 1.0, 0.05) var drive_input_influence: float = 0.20
+## Higher values front-load the drive and produce stronger deceleration.
+@export_range(0.1, 4.0, 0.1) var drive_falloff_power: float = 1.5
+## Cancel unused displacement when the drive encounters blocking geometry.
+@export var drive_stops_on_collision: bool = true
+
 @export_category("Feel")
 @export var hit_stop_scale: float = 0.88
 @export var hit_stop_duration: float = 0.028

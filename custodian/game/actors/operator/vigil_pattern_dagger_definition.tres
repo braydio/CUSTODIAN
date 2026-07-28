@@ -1,0 +1,68 @@
+[gd_resource type="Resource" script_class="OperatorWeaponDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/actors/operator/operator_weapon_definition.gd" id="1_definition"]
+[ext_resource type="SpriteFrames" path="res://game/actors/operator/vigil_pattern_dagger_frames.tres" id="2_held_frames"]
+[ext_resource type="SpriteFrames" path="res://game/actors/operator/vigil_pattern_dagger_body_frames.tres" id="3_body_frames"]
+[ext_resource type="SpriteFrames" path="res://game/actors/operator/vigil_pattern_dagger_melee_overlay_frames.tres" id="4_overlay_frames"]
+[ext_resource type="Resource" path="res://game/actors/operator/attacks/vigil_pattern_dagger_fast_01.tres" id="5_fast_attack"]
+[ext_resource type="SpriteFrames" path="res://game/actors/operator/vigil_pattern_dagger_fx_frames.tres" id="6_fx_frames"]
+[ext_resource type="Resource" path="res://game/actors/operator/attacks/vigil_pattern_dagger_fast_02.tres" id="7_fast_attack_02"]
+[ext_resource type="Resource" path="res://game/actors/operator/attacks/vigil_pattern_dagger_fast_03.tres" id="8_fast_attack_03"]
+[ext_resource type="Script" path="res://game/systems/combat/melee_attack_profile.gd" id="9_profile_script"]
+
+[resource]
+script = ExtResource("1_definition")
+weapon_id = &"vigil_pattern_dagger"
+weapon_type = &"melee_1h"
+display_name = "Vigil-Pattern Dagger"
+weapon_kind = "melee"
+primary_intent = "melee_fast"
+secondary_intent = ""
+frames_resource = ExtResource("2_held_frames")
+body_frames_resource = ExtResource("3_body_frames")
+melee_overlay_frames_resource = ExtResource("4_overlay_frames")
+melee_fx_frames_resource = ExtResource("6_fx_frames")
+animation_map = {
+"melee_fast": "vigil_dagger_fast_01",
+"vigil_dagger_fast_01": "vigil_dagger_fast_01",
+"vigil_dagger_fast_02": "vigil_dagger_fast_02",
+"vigil_dagger_fast_03": "vigil_dagger_fast_03",
+"melee_stance": "vigil_dagger_stance"
+}
+hit_windows = {
+"vigil_dagger_fast_01": {
+"frames": [6]
+},
+"vigil_dagger_fast_02": {
+"frames": [6]
+},
+"vigil_dagger_fast_03": {
+"frames": [6]
+}
+}
+fx_map = {
+"vigil_dagger_fast_01": {
+"fx_anim": "vigil_dagger_fast_01_fx",
+"weapon_anim": "vigil_dagger_fast_01_weapon"
+},
+"vigil_dagger_fast_02": {
+"fx_anim": "vigil_dagger_fast_02_fx",
+"weapon_anim": "vigil_dagger_fast_02_weapon"
+},
+"vigil_dagger_fast_03": {
+"fx_anim": "vigil_dagger_fast_03_fx",
+"weapon_anim": "vigil_dagger_fast_03_weapon"
+}
+}
+fast_attack_profile = ExtResource("5_fast_attack")
+fast_chain_keys = PackedStringArray("vigil_dagger_fast_01", "vigil_dagger_fast_02", "vigil_dagger_fast_03")
+fast_chain_attack_profiles = Array[ExtResource("9_profile_script")]([ExtResource("5_fast_attack"), ExtResource("7_fast_attack_02"), ExtResource("8_fast_attack_03")])
+fast_chain_commit_frames = PackedInt32Array(6, 6, 6)
+fast_chain_stamina_costs = PackedFloat32Array(5, 6, 8)
+fast_chain_loops = true
+fast_chain_has_integrated_recovery = true
+right_hand_socket_position = Vector2(10, -11)
+weapon_socket_position = Vector2(10, -11)
+weapon_sprite_position = Vector2(-5, -2)
+weapon_sprite_scale = Vector2(1, 1)
+weapon_sprite_rotation_degrees = 32.0

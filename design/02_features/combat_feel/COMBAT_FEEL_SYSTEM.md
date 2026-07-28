@@ -61,7 +61,7 @@ Use input buffering and cancel windows:
 
 ### Godot implementation
 
-Primary script: `custodian/entities/operator/operator.gd`
+Primary script: `custodian/game/actors/operator/operator.gd`
 
 Implemented in first slice:
 
@@ -76,16 +76,22 @@ Implemented in first slice:
   - `_try_melee_attack()` starts immediately if available, otherwise buffers input
   - `_update_melee_attack()` consumes buffered input once cancel window is reached
 
-Current chain model:
+Current weapon split:
 
-- Fallen Star Katana fast attacks use the authored-frame three-link contract in
-  `OPERATOR_MELEE_FAST_CHAIN.md`: `Fast 01 -> Fast 02 -> Fast 03 -> Fast 01`.
-- One distinct primary press advances one link; holding does not repeat.
-- The first queued fast/heavy command commits only at the configured visible
-  frame. A post-contact dodge waits for the final stance frame.
-- Legacy profiles without `fast_chain_keys` retain their existing time-based
-  buffered fast/heavy fallback.
-- `heavy -> fast/heavy` remains buffered through the shared legacy profile.
+- Vigil-Pattern Dagger is the default melee baseline. Its three semantic fast
+  links provisionally reuse the revised 10-frame Chain 01 body/weapon/FX
+  motion while retaining per-link profiles and 7/9/11 px drive.
+- Sword-Cleaver is an optional independent weapon with its own overlays,
+  profiles, stamina, and 9/11/14 px drive. Its held art, dedicated Fast 02/03,
+  and heavy action remain deferred.
+- Profile-owned attack drive advances the `CharacterBody2D` through collision
+  at attack start; each weapon definition may provide a profile per chain link.
+- Fallen Star Katana retains its separate authored-frame three-link contract
+  in `OPERATOR_MELEE_FAST_CHAIN.md`: `Fast 01 -> Fast 02 -> Fast 03 -> Fast 01`.
+- One distinct primary press advances or repeats the selected weapon's
+  configured chain; holding does not repeat.
+- Legacy profiles without `fast_chain_keys` retain their time-based buffered
+  fast/heavy fallback.
 
 ### Animation requirements
 
@@ -106,16 +112,21 @@ Required events:
 
 Current runtime hookup:
 
+- The default dagger and optional cleaver use separate E/W ten-frame body,
+  weapon-overlay, and FX strips at 18 FPS. Their provisional shared Chain 01
+  contact is zero-based frame 5 and repeat commit is frame 6.
 - The Katana source master is the verified `3432x96` 22-frame strip under
   `content/sprites/operator/new_operator/modular/chain_attack/`.
 - Runtime body slices are `7/7/8` frames under
   `content/sprites/operator/runtime/body/melee_1h/` and register dynamically as
   three non-looping 18 FPS animations.
-- The body master includes the body and weapon but not the attack VFX. Each
+- The Katana body master includes the body and weapon but not the attack VFX. Each
   link loads its directional `modular_upper_fx` pipeline output as a separate
   synchronized overlay; no additional weapon overlay is played.
-- melee idle stance now uses the authored body clip `res://assets/sprites/operator/runtime/body/melee_2h/operator_body_melee_2h_stance.png`
-- socketed `fallen_star_katana` remains active for non-authored melee movement/fallback poses
+- melee idle stance uses the authored body clip
+  `res://content/sprites/operator/runtime/body/melee_2h/operator_body_melee_2h_stance.png`
+- socketed `vigil_pattern_dagger` is the default non-attack melee presentation;
+  the Katana uses its own held resource when separately equipped
 - Katana fast damage/commit indices are `5, 5, 6` (zero-based), with exactly
   one damage event per link.
 
@@ -295,7 +306,7 @@ On successful hit:
 
 Primary scripts:
 
-- `custodian/entities/operator/operator.gd`
+- `custodian/game/actors/operator/operator.gd`
 - `custodian/scenes/camera.gd`
 
 Runtime behavior implemented:
@@ -351,8 +362,8 @@ Events should align with frame 2 start and frame 3 end.
 
 Primary runtime files:
 
-- `custodian/entities/operator/operator.tscn`
-- `custodian/entities/operator/operator.gd`
+- `custodian/game/actors/operator/operator.tscn`
+- `custodian/game/actors/operator/operator.gd`
 
 Implemented behavior:
 
@@ -446,7 +457,7 @@ No new logic animation dependency except sprint readability.
 
 Primary runtime file:
 
-- `custodian/entities/operator/operator.gd`
+- `custodian/game/actors/operator/operator.gd`
 
 Implemented behavior:
 

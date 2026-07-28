@@ -42,6 +42,10 @@ MODULAR_LAYER_OUTPUTS = {
     "modular_wardrobe_cape": "wardrobe_cape",
 }
 KNOWN_LOADOUTS = {"unarmed", "sidearm", "ranged_2h", "melee_1h"}
+MELEE_WEAPON_LAYER_IDS = {
+    "modular_weapon_cleaver": "sword_cleaver",
+    "modular_weapon_vigil_dagger": "vigil_pattern_dagger",
+}
 
 
 @dataclass(frozen=True)
@@ -81,6 +85,7 @@ def main() -> int:
     generated.extend(_build_ranged_2h_stance_modules(source_root, module_root, args.dry_run))
     generated.extend(_build_full_dodge_runtime(source_root, DODGE_ROOT, args.dry_run))
     generated.extend(_build_fast_attack_runtime(source_root, action_root, args.dry_run))
+    generated.extend(_build_melee_1h_chain_runtime(source_root, RUNTIME_ROOT, args.dry_run))
     generated.extend(_build_generic_action_modules(source_root, module_root, args.dry_run))
     if args.remove_superseded:
         _remove_superseded_generated(generated, args.dry_run)
@@ -475,11 +480,137 @@ def _build_generic_action_modules(source_root: Path, module_root: Path, dry_run:
     return generated
 
 
+def _build_melee_1h_chain_runtime(
+    source_root: Path,
+    runtime_root: Path,
+    dry_run: bool,
+) -> list[Path]:
+    generated: list[Path] = []
+    chain_root = source_root / "chain_01"
+
+    for direction in ("e", "w"):
+        lower = _find_melee_chain_part(
+            chain_root,
+            "modular_lower_body",
+            "chain_01",
+            direction,
+        )
+        upper = _find_melee_chain_part(
+            chain_root,
+            "modular_upper_body",
+            "chain_01",
+            direction,
+        )
+        if lower is not None and upper is not None:
+            lower_spec = _sheet_spec_from_path(lower, direction)
+            upper_spec = _sheet_spec_from_path(upper, direction)
+            if lower_spec.frames != upper_spec.frames:
+                raise ValueError(
+                    "melee Chain 01 body layers must have matching frame counts: "
+                    f"{lower.name} ({lower_spec.frames}) != "
+                    f"{upper.name} ({upper_spec.frames})"
+                )
+            output = (
+                runtime_root
+                / "body/melee_1h/shared"
+                / (
+                    "operator__body__melee_1h__chain_01"
+                    f"__{direction}__{lower_spec.frames}f__156x96.png"
+                )
+            )
+            if not dry_run:
+                output.parent.mkdir(parents=True, exist_ok=True)
+                _composite_horizontal_strips(
+                    lower,
+                    upper,
+                    output,
+                    frames=lower_spec.frames,
+                    target_frame_width=156,
+                    target_frame_height=96,
+                )
+            generated.append(output)
+
+        fx = _find_melee_chain_part(
+            chain_root,
+            "modular_upper_fx",
+            "chain_01",
+            direction,
+        )
+        if fx is not None:
+            fx_spec = _sheet_spec_from_path(fx, direction)
+            output = (
+                runtime_root
+                / "fx/melee_1h/shared"
+                / (
+                    "operator__fx__melee_1h__chain_01"
+                    f"__{direction}__{fx_spec.frames}f__156x96.png"
+                )
+            )
+            if not dry_run:
+                output.parent.mkdir(parents=True, exist_ok=True)
+                _write_or_copy_sheet(
+                    fx,
+                    output,
+                    fx_spec.frames,
+                    target_frame_width=156,
+                    target_frame_height=96,
+                )
+            generated.append(output)
+
+        for source_layer, weapon_id in MELEE_WEAPON_LAYER_IDS.items():
+            weapon = _find_melee_chain_part(
+                chain_root,
+                source_layer,
+                "chain_01",
+                direction,
+            )
+            if weapon is None:
+                continue
+            weapon_spec = _sheet_spec_from_path(weapon, direction)
+            output = (
+                runtime_root
+                / f"weapon/melee_1h/{weapon_id}"
+                / (
+                    f"operator__weapon__{weapon_id}__chain_01"
+                    f"__{direction}__{weapon_spec.frames}f__156x96.png"
+                )
+            )
+            if not dry_run:
+                output.parent.mkdir(parents=True, exist_ok=True)
+                _write_or_copy_sheet(
+                    weapon,
+                    output,
+                    weapon_spec.frames,
+                    target_frame_width=156,
+                    target_frame_height=96,
+                )
+            generated.append(output)
+
+    return generated
+
+
+def _find_melee_chain_part(
+    root: Path,
+    layer: str,
+    action: str,
+    direction: str,
+) -> Path | None:
+    matches = sorted(
+        root.glob(
+            f"operator__{layer}__melee_1h__{action}"
+            f"__{direction}__*f__156x96.png"
+        )
+    )
+    return matches[0] if matches else None
+
+
 def _parse_generic_modular_source(source: Path) -> tuple[str, str, str, SheetSpec, int] | None:
     parts = source.stem.split("__")
     if len(parts) < 6 or parts[0] != "operator":
         return None
     output_layer = MODULAR_LAYER_OUTPUTS.get(parts[1])
+    if output_layer is None and parts[1] in MELEE_WEAPON_LAYER_IDS:
+        output_layer = "weapon_%s" % MELEE_WEAPON_LAYER_IDS[parts[1]]
     if output_layer is None:
         return None
     try:
@@ -540,6 +671,12 @@ def _canonical_action_name(action: str) -> str:
 
 
 def _has_specialized_builder(output_layer: str, loadout: str, action: str) -> bool:
+    if (
+        output_layer.startswith("weapon_")
+        and loadout == "melee_1h"
+        and action.startswith("chain_")
+    ):
+        return True
     if loadout == "sidearm":
         return True
     if loadout == "ranged_2h" and action == "stance_01":
