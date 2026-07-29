@@ -1,0 +1,199 @@
+{
+	"counters": {},
+	"engine": {
+		"frames_per_second": 1.0,
+		"time_scale": 1.0,
+		"version": {
+			"build": "arch_linux",
+			"hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+			"hex": 263937,
+			"major": 4,
+			"minor": 7,
+			"patch": 1,
+			"status": "stable",
+			"string": "4.7.1-stable (arch_linux)",
+			"timestamp": 1783976428
+		}
+	},
+	"events": [
+		{
+			"data": {},
+			"kind": "observatory_cleared",
+			"time_msec": 1297,
+			"uptime_sec": 0.007
+		},
+		{
+			"data": {
+				"moment_tick": 0,
+				"seed": 104729
+			},
+			"kind": "moment_forge_smoke_started",
+			"time_msec": 1297,
+			"uptime_sec": 0.007
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "input_press",
+					"name": "attack_primary",
+					"tick": 4
+				},
+				"moment_tick": 4,
+				"result": {
+					"action": "input_press",
+					"ok": true,
+					"tick": 4
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 1332,
+			"uptime_sec": 0.042
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "input_release",
+					"name": "attack_primary",
+					"tick": 5
+				},
+				"moment_tick": 5,
+				"result": {
+					"action": "input_release",
+					"ok": true,
+					"tick": 5
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 1353,
+			"uptime_sec": 0.063
+		},
+		{
+			"data": {
+				"moment_tick": 30,
+				"stable": {
+					"action_count": 2,
+					"completed": true,
+					"duration_ticks": 30,
+					"operator_x": 2.0,
+					"physics_steps": 30,
+					"seed": 104729
+				}
+			},
+			"kind": "moment_forge_smoke_completed",
+			"time_msec": 1774,
+			"uptime_sec": 0.484
+		}
+	],
+	"export_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/../reports/moment_forge/_validation/runtime_smoke_271125/telemetry.json",
+	"exported_at": "2026-07-29 12:23:34",
+	"gauges": {
+		"active_enemies": 0,
+		"active_projectiles": 0,
+		"ambient_critters": 0,
+		"collision_shape_count": 1,
+		"collision_shape_count_enemies": 0,
+		"collision_shape_count_foliage": 0,
+		"collision_shape_count_peak": 1,
+		"collision_shape_count_projectiles": 0,
+		"collision_shape_count_ruin_props": 0,
+		"collision_shape_count_runtime_walls": 0,
+		"director_behavior_agents": 0,
+		"fps": 1.0,
+		"heat_player_presence_cells": 1,
+		"heatmap_cells": 1,
+		"heatmap_samples": 1,
+		"interest_active": 0,
+		"interest_background": 0,
+		"interest_dormant": 0,
+		"interest_nearby": 0,
+		"legacy_combat_agents": 0,
+		"loaded_procgen_root_count": 0,
+		"loaded_world_branch_count": 0,
+		"node_count": 63,
+		"node_count_collision": 2,
+		"node_count_peak": 63,
+		"node_count_procgen": 0,
+		"node_count_props": 0,
+		"node_count_ui": 26,
+		"node_count_vfx": 0,
+		"node_count_world": 0,
+		"observatory_full_tree_scan_count": 1,
+		"physics_body_count": 0,
+		"physics_body_count_foliage": 0,
+		"physics_body_count_peak": 0,
+		"physics_body_count_ruin_props": 0,
+		"physics_body_count_runtime_walls": 0,
+		"physics_process_enabled_node_count": 1,
+		"player_alive": true,
+		"player_dead": false,
+		"player_health": 100.0,
+		"player_material": "unknown",
+		"player_material_footstep_noise_mult": 1.0,
+		"player_position": {
+			"x": 2,
+			"y": 0
+		},
+		"process_enabled_node_count": 14,
+		"uptime_sec": 0.48
+	},
+	"heatmap": {
+		"cell_count": 1,
+		"cell_size_px": 64.0,
+		"cells": {
+			"0,0": {
+				"by_type": {
+					"presence": 1.0
+				},
+				"cell": {
+					"x": 0,
+					"y": 0
+				},
+				"first_seen_sec": 0.353,
+				"last_seen_sec": 0.353,
+				"sample_count": 1,
+				"total": 1.0,
+				"world": {
+					"x": 0.0,
+					"y": 0.0
+				}
+			}
+		},
+		"event_type_counts": {
+			"presence": 1.0
+		},
+		"schema": "custodian.sector_heatmap.v1",
+		"total_samples": 1
+	},
+	"material_intelligence": {
+		"contact_counts_by_kind": {},
+		"contact_counts_by_material": {},
+		"default_cell_size_px": 64.0,
+		"material_counts": {},
+		"override_cell_count": 0,
+		"schema": "custodian.material_intelligence.summary.v1",
+		"total_contacts": 0
+	},
+	"metadata": {
+		"project_name": "CUSTODIAN",
+		"project_version": ""
+	},
+	"scene": {
+		"name": "MomentForgeRuntimeSmokeRoot",
+		"path": ""
+	},
+	"schema": "custodian.dev_observatory.session.v1",
+	"session": {
+		"boot_time_msec": 1290,
+		"counter_count": 0,
+		"dropped_event_count": 0,
+		"event_buffer_saturated": false,
+		"event_capacity": 300,
+		"event_count": 5,
+		"gauge_count": 45,
+		"observatory_enabled": false,
+		"total_events_logged": 5,
+		"uptime_sec": 0.484,
+		"warning_count": 0
+	},
+	"warnings": []
+}

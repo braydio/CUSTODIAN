@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "id": "vista/sundered_keep_first_reveal",
+  "description": "First Sundered Keep approach reveal with fog, moonlight, and music evidence.",
+  "scene": "res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn",
+  "seed": 104729,
+  "duration_ticks": 240,
+  "simulation": {"physics_hz": 60, "warmup_ticks": 4, "max_wall_seconds": 30, "pause_during_setup": true},
+  "capture": {"width": 1280, "height": 720, "fps": 60, "audio": true, "start_tick": 0, "end_tick": 239, "contact_sheet_ticks": [0, 36, 72, 108, 156, 228], "required_keyframes": true, "background": "opaque"},
+  "setup": {
+    "remove_nodes": [],
+    "roles": {"approach": {"node_path": "."}},
+    "spawns": [],
+    "properties": [],
+    "processing": [],
+    "fixture": {"id": "sundered_keep_world_vista", "config": {"review": "first_reveal"}}
+  },
+  "timeline": [{"tick": 16, "action": "capture_marker", "name": "first_reveal_threshold"}, {"tick": 238, "action": "finish"}],
+  "probes": [{"id": "approach_state", "role": "approach", "fields": ["visible"], "ticks": [0, 72, 156, 238], "required": true}],
+  "assertions": [{"type": "role_exists", "role": "approach", "severity": "error"}, {"type": "no_unreleased_inputs", "severity": "error"}, {"type": "output_exists", "path": "telemetry.json", "severity": "error"}],
+  "stable_fingerprint": {"event_payload_fields": {}, "counters": [], "probes": ["approach_state"], "position_quantum_px": 0.25, "float_quantum": 0.0001},
+  "tags": ["vista", "sundered_keep_vista", "moonlight", "fog", "music"]
+}

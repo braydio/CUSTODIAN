@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "id": "healing/field_patch_commit",
+  "description": "Field Patch presentation and health commit from reduced integrity.",
+  "scene": "res://scenes/debug/combat_playground.tscn",
+  "seed": 104729,
+  "duration_ticks": 150,
+  "simulation": {"physics_hz": 60, "warmup_ticks": 2, "max_wall_seconds": 24, "pause_during_setup": true},
+  "capture": {"width": 1280, "height": 720, "fps": 60, "audio": true, "start_tick": 0, "end_tick": 149, "contact_sheet_ticks": [0, 12, 30, 60, 90, 132], "required_keyframes": true, "background": "opaque"},
+  "setup": {
+    "remove_nodes": ["World/Enemies/EnemyGrunt1", "World/Enemies/EnemyGrunt2", "World/Enemies/EnemyGrunt3", "World/DroneManager"],
+    "roles": {"operator": {"node_path": "World/Operator"}},
+    "spawns": [],
+    "properties": [{"role": "operator", "property": "global_position", "value": [640, 380]}, {"role": "operator", "property": "health", "value": 45.0}, {"role": "operator", "property": "field_patch_count", "value": 1}],
+    "processing": [],
+    "fixture": {"id": "combat_playground", "config": {"healing_fixture": true}}
+  },
+  "timeline": [{"tick": 12, "action": "input_tap", "name": "use_field_patch", "hold_ticks": 1}, {"tick": 90, "action": "capture_marker", "name": "expected_heal_commit"}, {"tick": 148, "action": "finish"}],
+  "probes": [{"id": "operator_health", "role": "operator", "fields": ["health", "global_position"], "ticks": [0, 12, 60, 90, 148], "required": true}],
+  "assertions": [{"type": "role_exists", "role": "operator", "severity": "error"}, {"type": "no_unreleased_inputs", "severity": "error"}, {"type": "output_exists", "path": "telemetry.json", "severity": "error"}, {"type": "event_count", "event": "field_patch_started", "op": "gte", "value": 1, "severity": "warning"}],
+  "stable_fingerprint": {"event_payload_fields": {}, "counters": ["field_patch_started"], "probes": ["operator_health"], "position_quantum_px": 0.25, "float_quantum": 0.0001},
+  "tags": ["healing", "field_patch", "operator_animation", "combat_audio"]
+}

@@ -1568,17 +1568,6 @@ func _apply_underlay_stamp_placement(
 	sprite.set_meta("type", "underlay_stamp")
 	sprite.set_meta("source_rect_cells", source_rect_cells)
 	layer.add_child(sprite)
-	for y in range(
-		target_cell.y,
-		target_cell.y + source_rect_cells.size.y
-	):
-		for x in range(
-			target_cell.x,
-			target_cell.x + source_rect_cells.size.x
-		):
-			var cell := Vector2i(x, y)
-			if not _minimap_wall_cells.has(cell):
-				_minimap_floor_cells[cell] = true
 	return true
 
 
@@ -2997,6 +2986,7 @@ func _build_great_hall_marine_ambush() -> void:
 	marine.name = "GreatHallDashMarine"
 	marine.position = _tile_center(GREAT_HALL_MARINE_SPAWN_TILE)
 	marine.set("enemy_name", "GREAT HALL MARINE")
+	marine.set("melee_impact_audio_profile", &"hallway_reverb")
 	marine.set("damage", 18.0)
 	marine.set("damage_interval", 1.4)
 	marine.set("attack_windup_duration", 0.30)

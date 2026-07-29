@@ -1,0 +1,26 @@
+{
+  "id": "sundered_keep_vista_approach",
+  "origin_cell": [0, 0],
+  "blend_width_tiles": 16,
+  "bands": [
+    {
+      "id": "vista_threshold",
+      "distance_min": 0,
+      "distance_max": 99999,
+      "height_bias": 9,
+      "ascent_gain": 9,
+      "style_weights": {
+        "wind_cut_stair": 0.25,
+        "ridge_trail": 0.20,
+        "collapsed_keep_exterior": 0.35,
+        "ruined_observatory": 0.20
+      },
+      "faction_presence": {
+        "iconoclast": 0.20,
+        "cult_mechanist": 0.35,
+        "scavenger": 0.10
+      },
+      "story_room_chance": 0.0
+    }
+  ]
+}

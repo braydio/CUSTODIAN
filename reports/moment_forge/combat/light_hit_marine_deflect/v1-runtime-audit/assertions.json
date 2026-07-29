@@ -1,0 +1,37 @@
+[
+	{
+		"actual": true,
+		"expected": {
+			"role": "target",
+			"severity": "error",
+			"type": "role_exists"
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "role_exists"
+	},
+	{
+		"actual": false,
+		"expected": {
+			"severity": "error",
+			"type": "no_unreleased_inputs"
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "no_unreleased_inputs"
+	},
+	{
+		"actual": true,
+		"expected": {
+			"path": "telemetry.json",
+			"severity": "error",
+			"type": "output_exists"
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "output_exists"
+	}
+]

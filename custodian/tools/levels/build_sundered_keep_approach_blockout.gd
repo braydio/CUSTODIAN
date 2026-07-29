@@ -96,11 +96,11 @@ func _init() -> void:
 # ---------------------------------------------------------------------------
 func _build_underlay(parent: Node2D, owner: Node) -> void:
 	_sprite_rect(parent, owner, "OceanUnderlay",
-		BG + "ocean_underlay.png",
+		BG + "shared/underlay/ocean_underlay.png",
 		Rect2(-900, -700, 2100, 1400), 0)
 
 	_sprite_rect(parent, owner, "CliffDepthUnderlay",
-		BG + "cliff_depth_underlay.png",
+		BG + "shared/underlay/cliff_depth_underlay.png",
 		Rect2(-500, -440, 520, 540), 1)
 
 	_sprite_rect(parent, owner, "FogUnderlay",
@@ -164,19 +164,19 @@ func _build_vista(parent: Node2D, owner: Node) -> void:
 	parent.modulate.a = 0.0
 
 	_sprite_rect(parent, owner, "HorizonSky",
-		BG + "horizon_sky.png",
+		BG + "shared/horizon/horizon_sky.png",
 		Rect2(-900, -700, 2100, 380), 0)
 
 	_sprite_rect(parent, owner, "FarSea",
-		BG + "far_sea.png",
+		BG + "shared/horizon/far_sea.png",
 		Rect2(-900, -520, 2100, 260), 1)
 
 	_sprite_rect(parent, owner, "DistantSunderedKeep",
-		BG + "distant_sundered_keep.png",
+		BG + "shared/landmarks/distant_sundered_keep.png",
 		Rect2(-260, -670, 540, 250), 2)
 
 	_sprite_rect(parent, owner, "VistaFogBand",
-		BG + "vista_fog_band.png",
+		BG + "shared/horizon/vista_fog_band.png",
 		Rect2(-900, -380, 2100, 160), 3)
 
 

@@ -13,6 +13,11 @@ Tune combat feel for: {{weapon_or_enemy_type}}
 - Update `CURRENT_STATE.md` if behavior changes.
 - Update `FILE_INDEX.md` if ownership or entrypoints change.
 - Follow `custodian/docs/ai_context/VALIDATION_RECIPES.md`.
+- Run `python3 custodian/tools/iteration/run_moment.py --changed`, select the
+  smallest relevant combat scenario, and use `--capture-mode full` when judging
+  weight, contact timing, animation/FX/SFX synchronization, hitstop, recoil, or
+  displacement. Keep focused combat smokes for stable logic and never accept a
+  baseline automatically.
 
 ## Context Files
 - `custodian/AGENTS.md` — Local routing and working rules

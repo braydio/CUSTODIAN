@@ -154,7 +154,7 @@ All from existing Sundered Keep content paths:
 - `res://content/tiles/sundered_keep/entrance/cliffs/` — cliff rock
 - `res://content/runtime/sundered_keep/props/` — return mooring props
 - `res://content/tiles/sundered_keep/return_mooring/` — mooring floor tiles
-- `res://content/audio/music/return_causeway/return_causeway_01.ogg` — music track
+- `res://content/audio/music/return_causeway/return_causeway_01.ogg` and `hall_still_answers.ogg` — ordered looping Causeway playlist; the latter is the runtime encode of authored `hall_still_answers_01.wav`
 
 ## Acceptance Criteria
 - [ ] Player spawns on arrival beach at correct position

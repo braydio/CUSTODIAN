@@ -1,7 +1,7 @@
 extends SceneTree
 
 const RETURN_CAUSEWAY_SCENE := preload("res://game/world/sundered_keep/return_causeway/ReturnCausewayApproach.tscn")
-const DISTANT_KEEP_TEXTURE_PATH := "res://content/backgrounds/sundered_keep/distant_sundered_keep.png"
+const DISTANT_KEEP_TEXTURE_PATH := "res://content/backgrounds/sundered_keep/shared/landmarks/distant_sundered_keep.png"
 const REQUIRED_LAYER_PATHS := [
 	"BaseDepth/DistantKeep_Parallax2D",
 ]

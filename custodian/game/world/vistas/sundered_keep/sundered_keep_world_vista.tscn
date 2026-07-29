@@ -1,8 +1,8 @@
 [gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://game/world/vistas/sundered_keep/sundered_keep_world_vista.gd" id="1_script"]
-[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/approach/first_vista_base_storm_horizon.png" id="2_storm"]
-[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/distant_sundered_keep_landmark_v2.png" id="3_keep"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/approach/underlay/first_vista_base_storm_horizon.png" id="2_storm"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/shared/landmarks/distant_sundered_keep_landmark_v2.png" id="3_keep"]
 [ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/approach/fog/first_vista_reveal_veil.png" id="4_fog"]
 [ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/world_vista/sundered_keep_world_vista_cliff_lip.png" id="5_lip"]
 

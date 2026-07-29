@@ -94,6 +94,8 @@ enum VisualBackend {
 @export var stagger_damage_threshold: float = 24.0
 @export var crit_damage_threshold: float = 48.0
 @export var resists_light_flinch: bool = false
+@export_enum("body", "robot_metal", "scorched", "shrumb", "hallway_reverb")
+var melee_impact_audio_profile: String = "body"
 @export var crit_hit_duration: float = 0.8
 @export var crit_recovery_duration: float = 0.625
 @export var assault_staging_duration_min: float = 1.25
@@ -1853,6 +1855,10 @@ func take_damage(
 	if health <= 0:
 		die()
 	return _damage_result(applied_damage, true)
+
+
+func get_melee_impact_audio_profile(_hit_strength: int) -> StringName:
+	return StringName(melee_impact_audio_profile)
 
 
 func _damage_result(

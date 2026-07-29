@@ -126,7 +126,7 @@ These commands map to scripts under `~/.codex/scripts/`.
 
 - When gameplay work requires a new or updated animation asset, explicitly ask the user to implement/provide that animation.
 - For each requested animation, include:
-  - exact save path under `custodian/assets/sprites/...`
+  - exact save path under `custodian/content/sprites/...`
   - short description of the animation intent (what it should communicate in gameplay)
 - Do not silently invent missing production art assets; wire placeholders only when explicitly approved.
 - Treat multi-animation or multi-direction master sheets as source assets, not direct runtime assets.
@@ -14946,43 +14946,43 @@ All animations are 8-directional (8dir) unless noted. Left-facing variants use f
 Each sprite strip should be requested with a clear save path:
 
 ```
-custodian/assets/sprites/enemies/grunt/grunt_idle_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_idle_8dir.png
   - 8 directions, 4 frames each
   - Alerted but not attacking; breathing idle
 
-custodian/assets/sprites/enemies/grunt/grunt_walk_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_walk_8dir.png
   - 8 directions, 6 frames each
   - Standard patrol/chase movement
 
-custodian/assets/sprites/enemies/grunt/grunt_melee_windup_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_melee_windup_8dir.png
   - 8 directions, 3 frames each
   - Shoulder/torso commitment before strike
 
-custodian/assets/sprites/enemies/grunt/grunt_melee_strike_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_melee_strike_8dir.png
   - 8 directions, 3 frames each
   - Fast active frame, readable arc
 
-custodian/assets/sprites/enemies/grunt/grunt_ranged_aim_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_ranged_aim_8dir.png
   - 8 directions, 3 frames each
   - Weapon raised, strong readable aim line
 
-custodian/assets/sprites/enemies/grunt/grunt_ranged_fire_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_ranged_fire_8dir.png
   - 8 directions, 2 frames each
   - Muzzle flash should be a separate FX overlay, not baked in
 
-custodian/assets/sprites/enemies/grunt/grunt_flinch_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_flinch_8dir.png
   - 8 directions, 2 frames each
   - Small impact reaction
 
-custodian/assets/sprites/enemies/grunt/grunt_stagger_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_stagger_8dir.png
   - 8 directions, 4 frames each
   - Bigger readable recoil, clear punish window
 
-custodian/assets/sprites/enemies/grunt/grunt_sabotage_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_sabotage_8dir.png
   - 8 directions, 6 frames each
   - Hands working on console/turret/wiring; interruptible
 
-custodian/assets/sprites/enemies/grunt/grunt_death_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_death_8dir.png
   - 8 directions, 6 frames each
   - Short collapse, not too flashy
 ```
@@ -24898,7 +24898,7 @@ These commands map to scripts under `~/.codex/scripts/`.
 
 - When gameplay work requires a new or updated animation asset, explicitly ask the user to implement/provide that animation.
 - For each requested animation, include:
-  - exact save path under `custodian/assets/sprites/...`
+  - exact save path under `custodian/content/sprites/...`
   - short description of the animation intent (what it should communicate in gameplay)
 - Do not silently invent missing production art assets; wire placeholders only when explicitly approved.
 - Treat multi-animation or multi-direction master sheets as source assets, not direct runtime assets.
@@ -39673,43 +39673,43 @@ All animations are 8-directional (8dir) unless noted. Left-facing variants use f
 Each sprite strip should be requested with a clear save path:
 
 ```
-custodian/assets/sprites/enemies/grunt/grunt_idle_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_idle_8dir.png
   - 8 directions, 4 frames each
   - Alerted but not attacking; breathing idle
 
-custodian/assets/sprites/enemies/grunt/grunt_walk_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_walk_8dir.png
   - 8 directions, 6 frames each
   - Standard patrol/chase movement
 
-custodian/assets/sprites/enemies/grunt/grunt_melee_windup_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_melee_windup_8dir.png
   - 8 directions, 3 frames each
   - Shoulder/torso commitment before strike
 
-custodian/assets/sprites/enemies/grunt/grunt_melee_strike_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_melee_strike_8dir.png
   - 8 directions, 3 frames each
   - Fast active frame, readable arc
 
-custodian/assets/sprites/enemies/grunt/grunt_ranged_aim_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_ranged_aim_8dir.png
   - 8 directions, 3 frames each
   - Weapon raised, strong readable aim line
 
-custodian/assets/sprites/enemies/grunt/grunt_ranged_fire_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_ranged_fire_8dir.png
   - 8 directions, 2 frames each
   - Muzzle flash should be a separate FX overlay, not baked in
 
-custodian/assets/sprites/enemies/grunt/grunt_flinch_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_flinch_8dir.png
   - 8 directions, 2 frames each
   - Small impact reaction
 
-custodian/assets/sprites/enemies/grunt/grunt_stagger_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_stagger_8dir.png
   - 8 directions, 4 frames each
   - Bigger readable recoil, clear punish window
 
-custodian/assets/sprites/enemies/grunt/grunt_sabotage_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_sabotage_8dir.png
   - 8 directions, 6 frames each
   - Hands working on console/turret/wiring; interruptible
 
-custodian/assets/sprites/enemies/grunt/grunt_death_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_death_8dir.png
   - 8 directions, 6 frames each
   - Short collapse, not too flashy
 ```
@@ -49952,7 +49952,7 @@ These commands map to scripts under `~/.codex/scripts/`.
 
 - When gameplay work requires a new or updated animation asset, explicitly ask the user to implement/provide that animation.
 - For each requested animation, include:
-  - exact save path under `custodian/assets/sprites/...`
+  - exact save path under `custodian/content/sprites/...`
   - short description of the animation intent (what it should communicate in gameplay)
 - Do not silently invent missing production art assets; wire placeholders only when explicitly approved.
 - Treat multi-animation or multi-direction master sheets as source assets, not direct runtime assets.
@@ -64772,43 +64772,43 @@ All animations are 8-directional (8dir) unless noted. Left-facing variants use f
 Each sprite strip should be requested with a clear save path:
 
 ```
-custodian/assets/sprites/enemies/grunt/grunt_idle_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_idle_8dir.png
   - 8 directions, 4 frames each
   - Alerted but not attacking; breathing idle
 
-custodian/assets/sprites/enemies/grunt/grunt_walk_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_walk_8dir.png
   - 8 directions, 6 frames each
   - Standard patrol/chase movement
 
-custodian/assets/sprites/enemies/grunt/grunt_melee_windup_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_melee_windup_8dir.png
   - 8 directions, 3 frames each
   - Shoulder/torso commitment before strike
 
-custodian/assets/sprites/enemies/grunt/grunt_melee_strike_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_melee_strike_8dir.png
   - 8 directions, 3 frames each
   - Fast active frame, readable arc
 
-custodian/assets/sprites/enemies/grunt/grunt_ranged_aim_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_ranged_aim_8dir.png
   - 8 directions, 3 frames each
   - Weapon raised, strong readable aim line
 
-custodian/assets/sprites/enemies/grunt/grunt_ranged_fire_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_ranged_fire_8dir.png
   - 8 directions, 2 frames each
   - Muzzle flash should be a separate FX overlay, not baked in
 
-custodian/assets/sprites/enemies/grunt/grunt_flinch_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_flinch_8dir.png
   - 8 directions, 2 frames each
   - Small impact reaction
 
-custodian/assets/sprites/enemies/grunt/grunt_stagger_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_stagger_8dir.png
   - 8 directions, 4 frames each
   - Bigger readable recoil, clear punish window
 
-custodian/assets/sprites/enemies/grunt/grunt_sabotage_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_sabotage_8dir.png
   - 8 directions, 6 frames each
   - Hands working on console/turret/wiring; interruptible
 
-custodian/assets/sprites/enemies/grunt/grunt_death_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_death_8dir.png
   - 8 directions, 6 frames each
   - Short collapse, not too flashy
 ```
@@ -74724,7 +74724,7 @@ These commands map to scripts under `~/.codex/scripts/`.
 
 - When gameplay work requires a new or updated animation asset, explicitly ask the user to implement/provide that animation.
 - For each requested animation, include:
-  - exact save path under `custodian/assets/sprites/...`
+  - exact save path under `custodian/content/sprites/...`
   - short description of the animation intent (what it should communicate in gameplay)
 - Do not silently invent missing production art assets; wire placeholders only when explicitly approved.
 - Treat multi-animation or multi-direction master sheets as source assets, not direct runtime assets.
@@ -89499,43 +89499,43 @@ All animations are 8-directional (8dir) unless noted. Left-facing variants use f
 Each sprite strip should be requested with a clear save path:
 
 ```
-custodian/assets/sprites/enemies/grunt/grunt_idle_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_idle_8dir.png
   - 8 directions, 4 frames each
   - Alerted but not attacking; breathing idle
 
-custodian/assets/sprites/enemies/grunt/grunt_walk_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_walk_8dir.png
   - 8 directions, 6 frames each
   - Standard patrol/chase movement
 
-custodian/assets/sprites/enemies/grunt/grunt_melee_windup_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_melee_windup_8dir.png
   - 8 directions, 3 frames each
   - Shoulder/torso commitment before strike
 
-custodian/assets/sprites/enemies/grunt/grunt_melee_strike_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_melee_strike_8dir.png
   - 8 directions, 3 frames each
   - Fast active frame, readable arc
 
-custodian/assets/sprites/enemies/grunt/grunt_ranged_aim_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_ranged_aim_8dir.png
   - 8 directions, 3 frames each
   - Weapon raised, strong readable aim line
 
-custodian/assets/sprites/enemies/grunt/grunt_ranged_fire_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_ranged_fire_8dir.png
   - 8 directions, 2 frames each
   - Muzzle flash should be a separate FX overlay, not baked in
 
-custodian/assets/sprites/enemies/grunt/grunt_flinch_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_flinch_8dir.png
   - 8 directions, 2 frames each
   - Small impact reaction
 
-custodian/assets/sprites/enemies/grunt/grunt_stagger_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_stagger_8dir.png
   - 8 directions, 4 frames each
   - Bigger readable recoil, clear punish window
 
-custodian/assets/sprites/enemies/grunt/grunt_sabotage_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_sabotage_8dir.png
   - 8 directions, 6 frames each
   - Hands working on console/turret/wiring; interruptible
 
-custodian/assets/sprites/enemies/grunt/grunt_death_8dir.png
+custodian/content/sprites/enemies/grunt/grunt_death_8dir.png
   - 8 directions, 6 frames each
   - Short collapse, not too flashy
 ```

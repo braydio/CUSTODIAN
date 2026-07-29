@@ -146,6 +146,41 @@ godot --headless --quit
 
 Known caveat: current headless validation may exit with existing object/resource leak warnings. Treat new parse errors, missing resources, broken script loads, or changed fatal errors as blockers.
 
+### Moment Forge — Selection And Evidence
+
+```bash
+# Select scenarios for current worktree changes
+python3 custodian/tools/iteration/run_moment.py --changed
+
+# Select scenarios for committed branch changes
+python3 custodian/tools/iteration/run_moment.py --changed --base origin/main
+
+# Deterministic gameplay assertions only
+python3 custodian/tools/iteration/run_moment.py <scenario-id> \
+  --capture-mode none
+
+# Telemetry and authored-tick keyframes
+python3 custodian/tools/iteration/run_moment.py <scenario-id> \
+  --capture-mode evidence
+
+# Full audiovisual review
+python3 custodian/tools/iteration/run_moment.py <scenario-id> \
+  --capture-mode full
+
+# Repeatability proof
+python3 custodian/tools/iteration/run_moment.py <scenario-id> \
+  --capture-mode none \
+  --repeat 2 \
+  --require-identical-stable-fingerprint
+
+# Complete focused suite
+bash custodian/tools/validation/run_moment_forge_suite.sh
+```
+
+Full captures are not a default CI requirement. Advisory pixel and audio
+differences must not fail CI — only stable assertions and deterministic metrics
+are validation authority.
+
 For Operator combat-resource feedback, compact HUD pressure state, and weapon-local presentation isolation:
 
 ```bash
@@ -153,6 +188,7 @@ cd custodian
 env HOME=/tmp/custodian-godot-home godot --headless --path . --import --quit
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/ranged_combat_balance_smoke.gd
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/combat_resource_feedback_smoke.gd
+env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/combat_impact_audio_smoke.gd
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_primary_ranged_modular_fire_smoke.gd
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_weapon_socket_smoke.gd
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_ranged_ready_input_smoke.gd
@@ -164,7 +200,7 @@ env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tool
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/codex_task_fixes_smoke.gd
 ```
 
-The focused feedback smoke validates progress fields, dry/reload priority, held-input debounce, hot/critical/overheat/recovery transitions, monotonic reload transfer, per-weapon persistence, zero presentation `NoiseEventBus` emissions, and read-only HUD consumption. The modular fire and ready-input smokes additionally validate raise/lower direction retargeting without progress reset, committed shot direction, recovery-to-current-aim, posture/readiness status, upper/weapon direction plus frame-clock synchronization, missed-parry silence, and exactly one positional `parry_success_01.wav` cue on confirmed parry success. The charged-roll smoke validates tier selection, proportional speed, longer vulnerable recovery, stamina, invariant iframes, vulnerable charge, and hold/release input; the dodge-charge-feedback smoke validates asset/frame contracts, delayed ratio-driven presentation, compression/latch/release/rejection behavior, and temporary stamina-label copy. The Dodge Flow smoke validates active/late input windows, charge-derived Flow, directional retention, uncapped links, fixed iframe clocks, speed/travel/recovery modifiers, atlas entry frames, final cooldown, exit carry/decay, stamina constraints, signals, and telemetry. The overlap and modular-fast smokes preserve iframe/recovery classification and tap roll-exit compatibility. The socket smoke validates generated Carbine phase-1 metadata, socket-derived muzzle/draw order, transition timing, and camera-owned zoom/lead cancellation. Missing optional authored vent/HUD art warns without failing because the V1 presenter supplies a procedural vent and label fallback.
+The focused feedback smoke validates progress fields, dry/reload priority, held-input debounce, hot/critical/overheat/recovery transitions, monotonic reload transfer, per-weapon persistence, zero presentation `NoiseEventBus` emissions, and read-only HUD consumption. The impact-audio smoke validates all authored combat renders plus ordered Return Causeway playlist retention and advancement, target profile assignments, light/heavy body selection, and Shrumb variant cycling. The modular fire and ready-input smokes additionally validate raise/lower direction retargeting without progress reset, committed shot direction, recovery-to-current-aim, posture/readiness status, upper/weapon direction plus frame-clock synchronization, missed-parry silence, and exactly one positional `parry_success_01.wav` cue on confirmed parry success. The charged-roll smoke validates tier selection, proportional speed, longer vulnerable recovery, stamina, invariant iframes, vulnerable charge, and hold/release input; the dodge-charge-feedback smoke validates asset/frame contracts, delayed ratio-driven presentation, compression/latch/release/rejection behavior, and temporary stamina-label copy. The Dodge Flow smoke validates active/late input windows, charge-derived Flow, directional retention, uncapped links, fixed iframe clocks, speed/travel/recovery modifiers, atlas entry frames, final cooldown, exit carry/decay, stamina constraints, signals, and telemetry. The overlap and modular-fast smokes preserve iframe/recovery classification and tap roll-exit compatibility. The socket smoke validates generated Carbine phase-1 metadata, socket-derived muzzle/draw order, transition timing, and camera-owned zoom/lead cancellation. Missing optional authored vent/HUD art warns without failing because the V1 presenter supplies a procedural vent and label fallback.
 
 For allied drone fire/formation/guard-anchor commands:
 
@@ -336,7 +372,7 @@ godot --headless --script tools/validation/sundered_keep_underlay_collision_mapp
 godot --headless --script tools/validation/sundered_keep_underlay_gameplay_tile_mapper_smoke.gd
 ```
 
-This loads `res://scenes/debug/sundered_keep_production_underlay_debug.tscn`, verifies the scene uses only the active main underlay texture without instantiating `SunderedKeepMap` or authored tile sprites, confirms the real Operator/controller/projectile/camera runtime shell, checks gameplay camera zoom/bounds rather than authoring-review zoom, and validates the companion collision mapper against the canonical world-space segment JSON. The gameplay-tile mapper smoke additionally proves the separate review scene loads the same 127 rails, exposes a stable unique `01–99` live-asset palette in an `11x9` staging grid, retains the shared 32 px coordinate system, converts the reviewed `5048×3500` underlay region into fractional source cells, serializes and previews multi-cell stamps, removes stamps by covered cell, and applies them to production `FloorDetail` without creating collision.
+This loads `res://scenes/debug/sundered_keep_production_underlay_debug.tscn`, verifies the scene uses only the active main underlay texture without instantiating `SunderedKeepMap` or authored tile sprites, confirms the real Operator/controller/projectile/camera runtime shell, checks gameplay camera zoom/bounds rather than authoring-review zoom, and validates the companion collision mapper against the canonical world-space segment JSON. The gameplay-tile mapper smoke additionally proves the separate review scene loads the same 127 rails, exposes a stable unique `01–99` live-asset palette in an `11x9` staging grid, retains the shared 32 px coordinate system, converts the reviewed `5048×3500` underlay region into fractional source cells, serializes and previews multi-cell stamps, removes stamps by covered cell, treats Shift-drag as one undoable/redoable edit, makes live reload undoable, and applies sampled graphics to production `FloorDetail` without creating collision or minimap authority.
 
 For the Sundered Keep overlay-authoring guide pipeline:
 

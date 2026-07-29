@@ -1,50 +1,16 @@
-# AGENTS.md
+# AGENTS.md — HISTORICAL (Drive-Era Design Copy)
 
-## CUSTODIAN Design Governance (Post-Pivot)
+**This is a preserved historical copy from the Python-terminal era.**
 
-CUSTODIAN runtime authority is Godot-native (`custodian/`).
-Design canon remains in `python-sim/design/` with explicit active-vs-legacy classification.
+Do not use it as an active authority. The live design governance is:
 
-## Canonical Layers
+1. **Root `AGENTS.md`** — repository router
+2. **`custodian/AGENTS.md`** — mandatory local primer for all Godot work
+3. **`design/02_features/`** — active Godot feature specification hierarchy
 
-### Active Code Layer
+The retired `design/20_features/` tree and all Python-era path conventions in
+this file are historical reference only. Active implementation specs live under
+`design/02_features/`, and the active AI context pack lives in
+`custodian/docs/ai_context/`.
 
-- `custodian/` (Godot 4.x runtime)
-
-### Active Design Layer
-
-- `design/MASTER_DESIGN_DOCTRINE.md`
-- `design/00_foundations/*`
-- `design/30_playable_game/*`
-- `../custodian/docs/*`
-- `../custodian/docs/ai_context/*`
-
-### Legacy Design Layer
-
-- `design/10_systems/*`
-- `design/20_features/*`
-
-Use `design/DOC_STATUS.md` for status authority.
-
-## Archive Rules
-
-- Terminal-contract docs belong in `design/archive/terminal-deprecated/`.
-- Historical material belongs in `design/archive/`.
-
-## Update Rules
-
-When active architecture/behavior changes:
-
-1. Update impacted active docs.
-2. Update `design/CHANGELOG.md`.
-3. Update `design/DEVLOG.md`.
-4. Update `../custodian/docs/ai_context/CURRENT_STATE.md`.
-5. Keep status labels in `DOC_STATUS.md` accurate.
-
-## Determinism Rule
-
-- Fixed-step simulation constraints must remain explicit in `00_foundations/SIMULATION_RULES.md`.
-
-## Principle
-
-If legacy docs conflict with active docs, active docs win.
+This file exists only to prevent stale routing; it should never direct new work.

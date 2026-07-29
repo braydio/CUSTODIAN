@@ -83,11 +83,17 @@ const PAIRED_EXECUTION_FRAME_DURATIONS := {
 const PAIRED_EXECUTION_DAMAGE_FRAMES := {&"s": 4, &"e": 4, &"w": 4}
 const PAIRED_EXECUTION_HIT_STOP_DURATION := 0.11
 const PAIRED_EXECUTION_IMPACT_SOUND := preload("res://addons/Sound FX Starter Pack Vol. 1/Motions and Impacts/Impact Vox Hammer.wav")
-const MELEE_CONTACT_SOUND: AudioStream = preload("res://content/audio/sfx/combat/melee_contact_01.wav")
-const MELEE_HEAVY_HIT_SOUND: AudioStream = preload("res://content/audio/sfx/combat/melee_heavy_hit_01.wav")
+const HIT_LIGHT_BODY_SOUND: AudioStream = preload("res://content/audio/sfx/combat/hit_light_body_01.wav")
+const HIT_MEDIUM_BODY_SOUND: AudioStream = preload("res://content/audio/sfx/combat/hit_medium_body_01.wav")
+const HIT_ROBOT_METAL_SOUND: AudioStream = preload("res://content/audio/sfx/combat/hit_robot_metal_01.wav")
+const HIT_SCORCHED_SOUND: AudioStream = preload("res://content/audio/sfx/combat/hit_scorched_01.wav")
+const HIT_HALLWAY_REVERB_SOUND: AudioStream = preload("res://content/audio/sfx/combat/hit_hallway_reverb_01.wav")
+const SHRUMB_HIT_SOUNDS: Array[AudioStream] = [
+	preload("res://content/audio/sfx/combat/shrumb_hit_01.wav"),
+	preload("res://content/audio/sfx/combat/shrumb_hit_02.wav"),
+]
 const CRITICAL_IMPACT_SOUND: AudioStream = preload("res://content/audio/sfx/combat/critical_hit_composite_01.wav")
 const KNOCKDOWN_SOUND: AudioStream = preload("res://content/audio/sfx/combat/operator_heavy_knockdown_01.wav")
-const MELEE_MISS_SOUND: AudioStream = preload("res://content/audio/sfx/combat/melee_miss_01.wav")
 const MELEE_GRAZE_SOUND: AudioStream = preload("res://content/audio/sfx/combat/melee_graze_01.wav")
 const DODGE_ROLL_SOUND: AudioStream = preload("res://content/audio/sfx/combat/dodge_roll_01.wav")
 const CRITICAL_WINDUP_SOUND: AudioStream = preload("res://content/audio/sfx/combat/critical_windup_01.wav")
@@ -454,6 +460,7 @@ var _melee_arc_current: float = 0.0
 var _melee_hitbox_active: bool = false
 var _melee_hit_targets: Dictionary = {}
 var _melee_miss_sfx_played: bool = false
+var _melee_impact_audio_variant_cursors: Dictionary = {}
 var _critical_attack_target: Node2D = null
 var _critical_attack_damage: float = 0.0
 var _paired_execution_active: bool = false
@@ -4767,12 +4774,18 @@ func _apply_melee_hitbox_tick() -> void:
 			enemy.move_and_slide()
 		hit_count += 1
 		_spawn_melee_impact(impact_position)
+		_play_melee_impact_sfx(
+			enemy,
+			impact_position,
+			melee_hit_strength
+		)
 	if hit_count > 0:
 		_on_melee_hit_confirmed()
 		print("MELEE HIT: ", hit_count, " target(s), damage=", _melee_damage_current)
 	elif not _melee_miss_sfx_played:
 		_melee_miss_sfx_played = true
-		_play_combat_sfx(MELEE_MISS_SOUND, global_position, -4.0)
+		# MISS SFX REMOVED — awaiting replacement (was MELEE_MISS_SOUND, too loud)
+		# _play_combat_sfx(MELEE_MISS_SOUND, global_position, -4.0)
 
 
 func _get_melee_forward_direction() -> Vector2:
@@ -5148,6 +5161,52 @@ func _play_combat_sfx(stream: AudioStream, position: Vector2, volume_db: float =
 	player.finished.connect(player.queue_free)
 	player.play()
 	return player
+
+
+func _play_melee_impact_sfx(
+	target: Node,
+	impact_position: Vector2,
+	hit_strength: int
+) -> AudioStreamPlayer2D:
+	var stream := _select_melee_impact_sound(target, hit_strength)
+	if stream == null:
+		return null
+	var player := _play_combat_sfx(stream, impact_position, -2.0, 560.0)
+	if player != null:
+		player.name = "MeleeImpactAudio"
+	return player
+
+
+func _select_melee_impact_sound(
+	target: Node,
+	hit_strength: int
+) -> AudioStream:
+	var profile: StringName = &"body"
+	if target != null and target.has_method("get_melee_impact_audio_profile"):
+		profile = StringName(
+			target.call("get_melee_impact_audio_profile", hit_strength)
+		)
+
+	var candidates: Array[AudioStream] = []
+	match profile:
+		&"shrumb":
+			candidates = SHRUMB_HIT_SOUNDS
+		&"robot_metal":
+			candidates = [HIT_ROBOT_METAL_SOUND]
+		&"scorched":
+			candidates = [HIT_SCORCHED_SOUND]
+		&"hallway_reverb":
+			candidates = [HIT_HALLWAY_REVERB_SOUND]
+		_:
+			candidates = [
+				HIT_MEDIUM_BODY_SOUND
+				if hit_strength == CombatConstants.HitStrength.HEAVY
+				else HIT_LIGHT_BODY_SOUND
+			]
+
+	var cursor := int(_melee_impact_audio_variant_cursors.get(profile, 0))
+	_melee_impact_audio_variant_cursors[profile] = cursor + 1
+	return candidates[posmod(cursor, candidates.size())]
 
 
 func _play_low_health_warning() -> AudioStreamPlayer2D:
@@ -6225,10 +6284,6 @@ func _estimate_node_contact_radius(target: Node, fallback_radius: float = 12.0) 
 func _on_melee_hit_confirmed() -> void:
 	_notify_camera_attack_impact(_melee_forward, _melee_attack_kind == "heavy")
 	_apply_hit_stop()
-	if _melee_attack_kind == "heavy":
-		_play_combat_sfx(MELEE_HEAVY_HIT_SOUND, global_position, -2.0)
-	else:
-		_play_combat_sfx(MELEE_CONTACT_SOUND, global_position, -2.0)
 
 
 func _trigger_camera_shake() -> void:

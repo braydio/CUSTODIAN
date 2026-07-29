@@ -1,13 +1,101 @@
-[gd_resource type="Resource" load_steps=7 format=3]
+[gd_resource type="Resource" script_class="HumanoidCutoutRigSkin" format=3 uid="uid://c34s1vtn51d7a"]
 
-[ext_resource type="Script" path="res://game/actors/enemies/visuals/humanoid_cutout_rig_skin.gd" id="1_skin"]
-[ext_resource type="Script" path="res://game/actors/enemies/visuals/humanoid_cutout_rig_profile.gd" id="2_profile"]
-[ext_resource type="Texture2D" path="res://content/sprites/enemies/enemy_humanoid_cutout_test/runtime/body/rig/enemy_humanoid_cutout_test__rig_atlas__base__s__5x4__96.png" id="3_s"]
-[ext_resource type="Texture2D" path="res://content/sprites/enemies/enemy_humanoid_cutout_test/runtime/body/rig/enemy_humanoid_cutout_test__rig_atlas__base__n__5x4__96.png" id="4_n"]
-[ext_resource type="Texture2D" path="res://content/sprites/enemies/enemy_humanoid_cutout_test/runtime/body/rig/enemy_humanoid_cutout_test__rig_atlas__base__e__5x4__96.png" id="5_e"]
+[ext_resource type="Script" uid="uid://d0vty0n26whdi" path="res://game/actors/enemies/visuals/humanoid_cutout_rig_skin.gd" id="1_skin"]
+[ext_resource type="Script" uid="uid://laycp3i8og0j" path="res://game/actors/enemies/visuals/humanoid_cutout_rig_profile.gd" id="2_profile"]
+[ext_resource type="Texture2D" uid="uid://orkn1w5difd7" path="res://content/sprites/enemies/enemy_humanoid_cutout_test/runtime/body/rig/enemy_humanoid_cutout_test__rig_atlas__base__s__5x4__96.png" id="3_s"]
+[ext_resource type="Texture2D" uid="uid://2bdyithmp2u" path="res://content/sprites/enemies/enemy_humanoid_cutout_test/runtime/body/rig/enemy_humanoid_cutout_test__rig_atlas__base__n__5x4__96.png" id="4_n"]
+[ext_resource type="Texture2D" uid="uid://c657qcw33q2xr" path="res://content/sprites/enemies/enemy_humanoid_cutout_test/runtime/body/rig/enemy_humanoid_cutout_test__rig_atlas__base__e__5x4__96.png" id="5_e"]
 
 [sub_resource type="Resource" id="Resource_profile"]
 script = ExtResource("2_profile")
+south_draw_order = {
+"back_attachment": -45,
+"cape": -50,
+"foot_back": -28,
+"foot_front": 32,
+"forearm_back": -39,
+"forearm_front": 41,
+"front_attachment": 60,
+"hand_back": -38,
+"hand_front": 42,
+"head": 20,
+"pelvis": 0,
+"reserved": 70,
+"shin_back": -29,
+"shin_front": 31,
+"thigh_back": -30,
+"thigh_front": 30,
+"torso": 10,
+"upper_arm_back": -40,
+"upper_arm_front": 40,
+"weapon": 50
+}
+north_draw_order = {
+"back_attachment": -45,
+"cape": -50,
+"foot_back": -28,
+"foot_front": 32,
+"forearm_back": -39,
+"forearm_front": 41,
+"front_attachment": 60,
+"hand_back": -38,
+"hand_front": 42,
+"head": 20,
+"pelvis": 0,
+"reserved": 70,
+"shin_back": -29,
+"shin_front": 31,
+"thigh_back": -30,
+"thigh_front": 30,
+"torso": 10,
+"upper_arm_back": -40,
+"upper_arm_front": 40,
+"weapon": 50
+}
+east_draw_order = {
+"back_attachment": -45,
+"cape": -50,
+"foot_back": -28,
+"foot_front": 32,
+"forearm_back": -39,
+"forearm_front": 41,
+"front_attachment": 60,
+"hand_back": -38,
+"hand_front": 42,
+"head": 20,
+"pelvis": 0,
+"reserved": 70,
+"shin_back": -29,
+"shin_front": 31,
+"thigh_back": -30,
+"thigh_front": 30,
+"torso": 10,
+"upper_arm_back": -40,
+"upper_arm_front": 40,
+"weapon": 50
+}
+west_draw_order = {
+"back_attachment": -45,
+"cape": -50,
+"foot_back": -28,
+"foot_front": 32,
+"forearm_back": -39,
+"forearm_front": 41,
+"front_attachment": 60,
+"hand_back": -38,
+"hand_front": 42,
+"head": 20,
+"pelvis": 0,
+"reserved": 70,
+"shin_back": -29,
+"shin_front": 31,
+"thigh_back": -30,
+"thigh_front": 30,
+"torso": 10,
+"upper_arm_back": -40,
+"upper_arm_front": 40,
+"weapon": 50
+}
 
 [resource]
 script = ExtResource("1_skin")

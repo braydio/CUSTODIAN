@@ -13,6 +13,11 @@ Implement the next slice of: {{feature_name}}
 - Update `CURRENT_STATE.md` if behavior changes.
 - Update `FILE_INDEX.md` if ownership or entrypoints change.
 - Follow `custodian/docs/ai_context/VALIDATION_RECIPES.md`.
+- When the diff can affect a repeatable gameplay or presentation moment and
+  Moment Forge is available, run
+  `python3 custodian/tools/iteration/run_moment.py --changed`, review its
+  reasons, and execute the smallest relevant scenario. Record the scenario,
+  mode, report path, or a specific not-run reason.
 
 ## Context Files
 - `custodian/AGENTS.md` — Local routing and working rules

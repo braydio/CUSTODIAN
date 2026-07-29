@@ -28,33 +28,33 @@ const USE_ROUTE_MASTER := true
 
 const APPROACH_ROUTE_MASTER := "res://content/sprites/world/return_causeway/path/sundered_keep_approach_route_master.png"
 
-const APPROACH_OCEAN_VOID_UNDERLAY := "res://content/backgrounds/sundered_keep/approach/approach_ocean_void_underlay.png"
-const APPROACH_CLIFF_SPIRES_UNDERLAY := "res://content/backgrounds/sundered_keep/approach/approach_cliff_spires_underlay.png"
-const APPROACH_ROUTE_CONTACT_SHADOW := "res://content/backgrounds/sundered_keep/approach/approach_route_contact_shadow.png"
-const APPROACH_EDGE_MIST_WRAP := "res://content/backgrounds/sundered_keep/approach/approach_edge_mist_wrap.png"
+const APPROACH_OCEAN_VOID_UNDERLAY := "res://content/backgrounds/sundered_keep/approach/underlay/approach_ocean_void_underlay.png"
+const APPROACH_CLIFF_SPIRES_UNDERLAY := "res://content/backgrounds/sundered_keep/approach/underlay/approach_cliff_spires_underlay.png"
+const APPROACH_ROUTE_CONTACT_SHADOW := "res://content/backgrounds/sundered_keep/approach/underlay/approach_route_contact_shadow.png"
+const APPROACH_EDGE_MIST_WRAP := "res://content/backgrounds/sundered_keep/approach/occlusion/approach_edge_mist_wrap.png"
 const FIRST_VISTA_BASE_STORM_HORIZON := (
-	"res://content/backgrounds/sundered_keep/approach/"
+	"res://content/backgrounds/sundered_keep/approach/underlay/"
 	+ "first_vista_base_storm_horizon.png"
 )
 const FIRST_VISTA_REVEAL_VEIL := (
 	"res://content/backgrounds/sundered_keep/approach/fog/"
 	+ "first_vista_reveal_veil.png"
 )
-const APPROACH_FINAL_GATE_SHADOW_VEIL := "res://content/backgrounds/sundered_keep/approach/approach_final_gate_shadow_veil.png"
+const APPROACH_FINAL_GATE_SHADOW_VEIL := "res://content/backgrounds/sundered_keep/approach/occlusion/approach_final_gate_shadow_veil.png"
 
 const APPROACH_FOG_STRIP_01 := "res://content/backgrounds/sundered_keep/approach/fog/approach_fog_strip_01.png"
 const APPROACH_FOG_STRIP_02 := "res://content/backgrounds/sundered_keep/approach/fog/approach_fog_strip_02.png"
 const APPROACH_FOG_STRIP_03 := "res://content/backgrounds/sundered_keep/approach/fog/approach_fog_strip_03.png"
 
-const GRAND_VISTA_PANORAMA := "res://content/backgrounds/sundered_keep/grand_vista/grand_vista_panorama.png"
-const GRAND_VISTA_FOG := "res://content/backgrounds/sundered_keep/grand_vista/grand_vista_fog_overlay.png"
-const GRAND_VISTA_PARAPET := "res://content/backgrounds/sundered_keep/grand_vista/grand_vista_foreground_parapet.png"
-const GRAND_VISTA_VIGNETTE := "res://content/backgrounds/sundered_keep/grand_vista/grand_vista_shadow_vignette.png"
-const GRAND_VISTA_SPRAY := "res://content/backgrounds/sundered_keep/grand_vista/grand_vista_ocean_spray_overlay.png"
-const GRAND_VISTA_HORIZON_SEAM_FOG := "res://content/backgrounds/sundered_keep/grand_vista/grand_vista_horizon_seam_fog.png"
-const GRAND_VISTA_PATH_CONTACT_SHADOW := "res://content/backgrounds/sundered_keep/grand_vista/grand_vista_path_contact_shadow.png"
-const GRAND_VISTA_FOREGROUND_EDGE_MASK := "res://content/backgrounds/sundered_keep/grand_vista/grand_vista_foreground_edge_mask.png"
-const GRAND_VISTA_EDGE_SPRAY_WRAP := "res://content/backgrounds/sundered_keep/grand_vista/grand_vista_edge_spray_wrap.png"
+const GRAND_VISTA_PANORAMA := "res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_panorama.png"
+const GRAND_VISTA_FOG := "res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_fog_overlay.png"
+const GRAND_VISTA_PARAPET := "res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_foreground_parapet.png"
+const GRAND_VISTA_VIGNETTE := "res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_shadow_vignette.png"
+const GRAND_VISTA_SPRAY := "res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_ocean_spray_overlay.png"
+const GRAND_VISTA_HORIZON_SEAM_FOG := "res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_horizon_seam_fog.png"
+const GRAND_VISTA_PATH_CONTACT_SHADOW := "res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_path_contact_shadow.png"
+const GRAND_VISTA_FOREGROUND_EDGE_MASK := "res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_foreground_edge_mask.png"
+const GRAND_VISTA_EDGE_SPRAY_WRAP := "res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_edge_spray_wrap.png"
 
 const MAINLAND_APPROACH_PATH := "res://content/sprites/world/return_causeway/path/mainland_approach_path.png"
 const HILL_CLIMB_PATH := "res://content/sprites/world/return_causeway/path/hill_climb_path.png"

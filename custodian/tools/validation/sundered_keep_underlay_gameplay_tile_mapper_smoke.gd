@@ -47,6 +47,12 @@ func _init() -> void:
 		errors.append("mapper missing underlay stamp loader")
 	if not mapper.has_method("_place_underlay_stamp"):
 		errors.append("mapper missing underlay stamp placement")
+	if not mapper.has_method("_begin_paint_drag"):
+		errors.append("mapper missing repeated drag painting")
+	if not mapper.has_method("_undo") or not mapper.has_method("_redo"):
+		errors.append("mapper missing undo/redo")
+	if not mapper.has_method("_reload_mapping_document"):
+		errors.append("mapper missing live mapping reload")
 	if state.get("map_size", Vector2.ZERO) as Vector2 != Vector2(
 		3584.0,
 		2560.0
@@ -151,15 +157,31 @@ func _init() -> void:
 
 	mapper.set("_selection_start_cell", Vector2i(10, 12))
 	mapper.set("_selection_end_cell", Vector2i(13, 15))
+	mapper.set("_underlay_select_mode", true)
 	mapper.call("_load_underlay_selection_as_stamp")
 	state = mapper.call("get_gameplay_tile_mapper_state") as Dictionary
 	if str(state.get("paint_source", "")) != "UNDERLAY_STAMP":
 		errors.append("paint source did not switch to underlay stamp")
+	if bool(state.get("underlay_select_mode", true)):
+		errors.append("source selection did not exit after stamp capture")
 	var active_stamp := (
 		state.get("active_underlay_stamp", {}) as Dictionary
 	)
 	if active_stamp.get("source_rect_cells", []) != [10, 12, 4, 4]:
 		errors.append("active underlay stamp did not retain selected source cells")
+	mapper.set("_mouse_world", Vector2(20, 22) * 32.0 + Vector2.ONE)
+	mapper.call("_refresh_active_stamp_preview")
+	state = mapper.call("get_gameplay_tile_mapper_state") as Dictionary
+	var active_preview := state.get("active_stamp_preview") as Sprite2D
+	if (
+		active_preview == null
+		or not active_preview.visible
+		or not active_preview.region_enabled
+		or not active_preview.region_rect.size.is_equal_approx(
+			source_cell_size * 4.0
+		)
+	):
+		errors.append("active stamp cursor preview is missing or malformed")
 
 	mapper.call("_place_underlay_stamp", Vector2i(20, 22))
 	var document := mapper.call("_mapping_document") as Dictionary
@@ -190,6 +212,20 @@ func _init() -> void:
 			found_region_preview = true
 	if not found_region_preview:
 		errors.append("underlay stamp did not build a region-enabled preview")
+	mapper.call("_undo")
+	state = mapper.call("get_gameplay_tile_mapper_state") as Dictionary
+	if (
+		(state.get("placements", []) as Array).size()
+		!= initial_placement_count
+	):
+		errors.append("undo did not revert underlay stamp placement")
+	mapper.call("_redo")
+	state = mapper.call("get_gameplay_tile_mapper_state") as Dictionary
+	if (
+		(state.get("placements", []) as Array).size()
+		!= initial_placement_count + 1
+	):
+		errors.append("redo did not restore underlay stamp placement")
 	mapper.call("_remove_top_placement", Vector2i(22, 24))
 	state = mapper.call("get_gameplay_tile_mapper_state") as Dictionary
 	if (
@@ -197,6 +233,49 @@ func _init() -> void:
 		!= initial_placement_count
 	):
 		errors.append("stamp footprint removal did not remove top placement")
+
+	state = mapper.call("get_gameplay_tile_mapper_state") as Dictionary
+	var undo_before_drag := int(state.get("undo_count", 0))
+	mapper.call("_begin_paint_drag", Vector2(20, 22) * 32.0 + Vector2.ONE)
+	mapper.call("_continue_paint_drag", Vector2(22, 22) * 32.0 + Vector2.ONE)
+	mapper.call("_finish_paint_drag")
+	state = mapper.call("get_gameplay_tile_mapper_state") as Dictionary
+	if (
+		(state.get("placements", []) as Array).size()
+		!= initial_placement_count + 3
+	):
+		errors.append("Shift-drag contract did not paint every crossed cell")
+	if int(state.get("undo_count", 0)) != undo_before_drag + 1:
+		errors.append("repeated drag painting created more than one undo state")
+	mapper.call("_undo")
+	state = mapper.call("get_gameplay_tile_mapper_state") as Dictionary
+	if (
+		(state.get("placements", []) as Array).size()
+		!= initial_placement_count
+	):
+		errors.append("one undo did not revert the complete paint drag")
+	mapper.call("_redo")
+	state = mapper.call("get_gameplay_tile_mapper_state") as Dictionary
+	if (
+		(state.get("placements", []) as Array).size()
+		!= initial_placement_count + 3
+	):
+		errors.append("redo did not restore the complete paint drag")
+	mapper.call("_reload_mapping_document")
+	state = mapper.call("get_gameplay_tile_mapper_state") as Dictionary
+	if (
+		(state.get("placements", []) as Array).size()
+		!= initial_placement_count
+	):
+		errors.append("live reload did not restore the saved mapping")
+	mapper.call("_undo")
+	state = mapper.call("get_gameplay_tile_mapper_state") as Dictionary
+	if (
+		(state.get("placements", []) as Array).size()
+		!= initial_placement_count + 3
+	):
+		errors.append("reload was not captured as an undoable edit")
+	mapper.call("_reload_mapping_document")
 
 	var runtime_map := SUNDERED_KEEP_MAP_SCRIPT.new()
 	runtime_map.set("map_size_tiles", Vector2i(112, 80))
@@ -216,6 +295,11 @@ func _init() -> void:
 	if not applied:
 		errors.append("production consumer rejected a valid underlay stamp")
 	else:
+		var minimap_floor_cells := (
+			runtime_map.get("_minimap_floor_cells") as Dictionary
+		)
+		if not minimap_floor_cells.is_empty():
+			errors.append("production stamp created minimap floor authority")
 		var palette_applied := bool(runtime_map.call(
 			"_apply_palette_gameplay_tile_placement",
 			{

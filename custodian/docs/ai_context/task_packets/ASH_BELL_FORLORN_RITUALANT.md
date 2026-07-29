@@ -3,10 +3,13 @@
 ## Packet Status
 
 - Status: complete
+- Completion scope: authored-footprint procgen authority reservation only; this
+  does not mark the Forlorn-Ritualant encounter, combat kit, presentation, or
+  production assets complete.
 - Owner: agent
 - Agent/session: codex-2026-06-12-authored-authority
 - Created: 2026-06-12
-- Last updated: 2026-06-12
+- Last updated: 2026-07-28
 
 ## Task
 

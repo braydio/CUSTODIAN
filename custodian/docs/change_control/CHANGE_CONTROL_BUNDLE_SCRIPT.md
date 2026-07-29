@@ -126,7 +126,7 @@ These commands map to scripts under `~/.codex/scripts/`.
 
 - When gameplay work requires a new or updated animation asset, explicitly ask the user to implement/provide that animation.
 - For each requested animation, include:
-  - exact save path under `custodian/assets/sprites/...`
+  - exact save path under `custodian/content/sprites/...`
   - short description of the animation intent (what it should communicate in gameplay)
 - Do not silently invent missing production art assets; wire placeholders only when explicitly approved.
 - Treat multi-animation or multi-direction master sheets as source assets, not direct runtime assets.

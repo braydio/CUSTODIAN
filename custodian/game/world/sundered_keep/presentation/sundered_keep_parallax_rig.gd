@@ -31,9 +31,9 @@ const FOREGROUND_ARCH_PATH := \
 	"res://content/backgrounds/sundered_keep/approach/parallax/foreground_ruined_arch.png"
 
 const DISTANT_KEEP_PATH := \
-	"res://content/backgrounds/sundered_keep/distant_sundered_keep.png"
+	"res://content/backgrounds/sundered_keep/shared/landmarks/distant_sundered_keep.png"
 const DISTANT_KEEP_LANDMARK_PATH := \
-	"res://content/backgrounds/sundered_keep/distant_sundered_keep_landmark_v2.png"
+	"res://content/backgrounds/sundered_keep/shared/landmarks/distant_sundered_keep_landmark_v2.png"
 
 const STRIP_OVERLAP_PX := 96.0
 

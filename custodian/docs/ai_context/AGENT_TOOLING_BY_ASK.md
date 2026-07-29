@@ -1,8 +1,38 @@
 # Agent Tooling By Ask
 
-Last updated: 2026-06-19
+Last updated: 2026-07-28
 
 Purpose: give agents a fast routing table for which repo tools to use for a specific ask. This complements `VALIDATION_RECIPES.md`: use this file to pick the tool, then use validation recipes to decide how much proof is needed.
+
+## Deterministic Gameplay Moment Review
+
+Use Moment Forge when the ask is experiential and repeatability matters:
+compare combat timing, impact audio, displacement, healing synchronization,
+animation/VFX alignment, or a vista presentation.
+
+```bash
+python3 custodian/tools/iteration/run_moment.py --list
+python3 custodian/tools/iteration/run_moment.py --changed
+python3 custodian/tools/iteration/run_moment.py combat/light_hit_grunt --capture-mode evidence
+python3 custodian/tools/iteration/run_moment.py combat/light_hit_grunt --capture-mode full
+python3 custodian/tools/iteration/run_moment.py combat/light_hit_grunt \
+  --baseline reports/moment_forge/baselines/combat/light_hit_grunt/approved
+python3 custodian/tools/iteration/run_moment.py combat/light_hit_grunt \
+  --capture-mode full --accept-baseline approved --yes
+```
+
+How it relates to other validation:
+
+- Focused smoke tests prove stable deterministic logic. Moment Forge proves
+  repeatable timing and audiovisual presentation.
+- `--changed` suggests relevant scenarios based on the worktree diff but does
+  not approve execution. Review the matched paths and reasons before running.
+- `--capture-mode full` is appropriate for game-feel and synchronization
+  judgment; use `none` or `evidence` for narrower checks.
+- Baseline approval is a human decision. The tool never accepts or replaces a
+  baseline automatically.
+- Generated reports under `reports/moment_forge/` are review-only evidence,
+  not runtime authority.
 
 ## Modular Operator Asset Audit
 

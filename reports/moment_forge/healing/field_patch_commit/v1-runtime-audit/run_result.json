@@ -1,0 +1,105 @@
+{
+	"actions": [
+		{
+			"action": "input_tap",
+			"ok": true,
+			"tick": 12
+		},
+		{
+			"action": "capture_marker",
+			"ok": true,
+			"tick": 90
+		},
+		{
+			"action": "finish",
+			"finish": true,
+			"ok": true,
+			"tick": 148
+		}
+	],
+	"assertions": [
+		{
+			"actual": true,
+			"expected": {
+				"role": "operator",
+				"severity": "error",
+				"type": "role_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "role_exists"
+		},
+		{
+			"actual": false,
+			"expected": {
+				"severity": "error",
+				"type": "no_unreleased_inputs"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "no_unreleased_inputs"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"path": "telemetry.json",
+				"severity": "error",
+				"type": "output_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "output_exists"
+		},
+		{
+			"actual": 0,
+			"expected": {
+				"event": "field_patch_started",
+				"op": "gte",
+				"severity": "warning",
+				"type": "event_count",
+				"value": 1.0
+			},
+			"message": "",
+			"passed": false,
+			"severity": "warning",
+			"type": "event_count"
+		}
+	],
+	"capture_failures": [],
+	"capture_mode": "none",
+	"completed": true,
+	"completed_tick": 148,
+	"failures": [],
+	"keyframes": [],
+	"markers": [
+		{
+			"data": {},
+			"name": "expected_heal_commit",
+			"tick": 90
+		}
+	],
+	"passed": true,
+	"probe_failures": [],
+	"runtime": {
+		"godot": {
+			"build": "arch_linux",
+			"hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+			"hex": 263937,
+			"major": 4,
+			"minor": 7,
+			"patch": 1,
+			"status": "stable",
+			"string": "4.7.1-stable (arch_linux)",
+			"timestamp": 1783976428
+		},
+		"physics_hz": 60,
+		"renderer": "vulkan"
+	},
+	"scenario_id": "healing/field_patch_commit",
+	"scenario_path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/healing/field_patch_commit/v1-runtime-audit/scenario.snapshot.json",
+	"schema": "custodian.moment_forge.run_result.v1",
+	"seed": 104729
+}

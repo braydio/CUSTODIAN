@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "rules": [
+    {
+      "id": "combat_audio",
+      "include": [
+        "custodian/content/audio/sfx/combat/**/*.wav",
+        "custodian/content/audio/sfx/combat/*.wav",
+        "custodian/game/**/audio*.gd"
+      ],
+      "exclude": ["**/*.import"],
+      "tags": ["combat_audio"],
+      "priority": 70,
+      "reason": "Combat audio changed."
+    },
+    {
+      "id": "operator_fast_attack",
+      "include": [
+        "custodian/content/sprites/operator/**/*fast*__*.png",
+        "custodian/game/actors/operator/**/*.gd",
+        "custodian/game/actors/operator/*.gd"
+      ],
+      "exclude": ["**/*.import", "reports/**"],
+      "tags": ["fast_attack", "operator_animation", "parry", "field_patch"],
+      "priority": 90,
+      "reason": "Operator action presentation or authority changed."
+    },
+    {
+      "id": "operator_heavy_attack",
+      "include": [
+        "custodian/content/sprites/operator/**/*heavy*__*.png",
+        "custodian/game/actors/operator/**/*.gd",
+        "custodian/game/actors/operator/*.gd"
+      ],
+      "exclude": ["**/*.import"],
+      "tags": ["heavy_attack"],
+      "priority": 85,
+      "reason": "Operator heavy-attack presentation or authority changed."
+    },
+    {
+      "id": "grunt",
+      "include": [
+        "custodian/game/actors/enemies/enemy_grunt*",
+        "custodian/content/sprites/enemies/enemy_grunt/**"
+      ],
+      "exclude": ["**/*.import"],
+      "tags": ["grunt"],
+      "priority": 65,
+      "reason": "Grunt behavior or presentation changed."
+    },
+    {
+      "id": "marine",
+      "include": [
+        "custodian/game/actors/enemies/enemy_marine*",
+        "custodian/content/sprites/enemies/enemy_marine/**"
+      ],
+      "exclude": ["**/*.import"],
+      "tags": ["marine", "armor_deflect"],
+      "priority": 75,
+      "reason": "Marine armor/deflect behavior or presentation changed."
+    },
+    {
+      "id": "field_patch",
+      "include": [
+        "custodian/content/audio/sfx/healing/**",
+        "custodian/game/actors/operator/**/*field_patch*",
+        "custodian/game/actors/operator/operator.gd"
+      ],
+      "exclude": ["**/*.import"],
+      "scenario_ids": ["healing/field_patch_commit"],
+      "priority": 85,
+      "reason": "Field Patch behavior or presentation changed."
+    },
+    {
+      "id": "sundered_keep_world_vista",
+      "include": [
+        "custodian/game/world/vistas/sundered_keep/**",
+        "custodian/game/world/approaches/sundered_keep/**",
+        "custodian/content/backgrounds/sundered_keep/**",
+        "design/05_levels/SUNDERED_KEEP_WORLD_VISTA.md"
+      ],
+      "exclude": ["**/*.import"],
+      "scenario_ids": ["vista/sundered_keep_first_reveal"],
+      "priority": 100,
+      "reason": "Sundered Keep world-Vista behavior or art changed."
+    }
+  ]
+}

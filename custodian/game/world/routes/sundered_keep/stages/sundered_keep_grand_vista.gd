@@ -1,12 +1,12 @@
 extends LevelStage
 
-# Grand vista textures — expected paths for production art.
-# These may not exist yet; the stage builds gracefully when they are missing.
-const GRAND_VISTA_PANORAMA_PATH := "res://content/backgrounds/sundered_keep/grand_vista/grand_vista_panorama.png"
-const GRAND_VISTA_FOG_OVERLAY_PATH := "res://content/backgrounds/sundered_keep/grand_vista/grand_vista_fog_overlay.png"
-const GRAND_VISTA_FOREGROUND_PARAPET_PATH := "res://content/backgrounds/sundered_keep/grand_vista/grand_vista_foreground_parapet.png"
-const GRAND_VISTA_SHADOW_VIGNETTE_PATH := "res://content/backgrounds/sundered_keep/grand_vista/grand_vista_shadow_vignette.png"
-const GRAND_VISTA_OCEAN_SPRAY_PATH := "res://content/backgrounds/sundered_keep/grand_vista/grand_vista_ocean_spray_overlay.png"
+# Grand Vista atmosphere textures. The stage still degrades gracefully if a
+# reviewed plate is temporarily absent during art iteration.
+const GRAND_VISTA_PANORAMA_PATH := "res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_panorama.png"
+const GRAND_VISTA_FOG_OVERLAY_PATH := "res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_fog_overlay.png"
+const GRAND_VISTA_FOREGROUND_PARAPET_PATH := "res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_foreground_parapet.png"
+const GRAND_VISTA_SHADOW_VIGNETTE_PATH := "res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_shadow_vignette.png"
+const GRAND_VISTA_OCEAN_SPRAY_PATH := "res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_ocean_spray_overlay.png"
 
 const RECT_FULL_VISTA := Rect2(Vector2(-900.0, -700.0), Vector2(2100.0, 1400.0))
 const RECT_CAMERA_BOUNDS := Rect2(Vector2(-1050.0, -760.0), Vector2(2450.0, 1650.0))

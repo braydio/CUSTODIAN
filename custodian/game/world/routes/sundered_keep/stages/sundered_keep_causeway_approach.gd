@@ -1,8 +1,8 @@
 extends LevelStage
 class_name SunderedKeepCausewayApproach
 
-const OCEAN_UNDERLAY_PATH := "res://content/backgrounds/sundered_keep/ocean_underlay.png"
-const CLIFF_DEPTH_UNDERLAY_PATH := "res://content/backgrounds/sundered_keep/cliff_depth_underlay.png"
+const OCEAN_UNDERLAY_PATH := "res://content/backgrounds/sundered_keep/shared/underlay/ocean_underlay.png"
+const CLIFF_DEPTH_UNDERLAY_PATH := "res://content/backgrounds/sundered_keep/shared/underlay/cliff_depth_underlay.png"
 
 const MAINLAND_APPROACH_PATH := "res://content/sprites/world/return_causeway/path/mainland_approach_path.png"
 const HILL_CLIMB_PATH := "res://content/sprites/world/return_causeway/path/hill_climb_path.png"

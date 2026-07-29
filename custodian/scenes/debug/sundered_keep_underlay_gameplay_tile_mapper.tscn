@@ -11,6 +11,11 @@ script = ExtResource("1_mapper")
 [node name="PlacedGameplayTiles" type="Node2D" parent="World" unique_id=1882207638]
 z_index = 120
 
+[node name="ActiveStampPreview" type="Sprite2D" parent="World"]
+visible = false
+z_index = 140
+modulate = Color(1, 1, 1, 0.48)
+
 [node name="TilePalette" type="Node2D" parent="World" unique_id=42658027]
 z_index = 200
 

@@ -19,6 +19,7 @@ health = 96.0
 max_health = 96.0
 damage = 15.0
 base_tint = Color(0.38, 0.48, 0.52, 1)
+melee_impact_audio_profile = &"robot_metal"
 attack_windup_duration = 0.45
 material_drop_min = 2
 material_drop_max = 4

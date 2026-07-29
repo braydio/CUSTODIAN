@@ -69,6 +69,51 @@ Use the indexed scripts before inventing one-off commands. `docs/ai_context/FILE
 - Preview/review helpers: use `custodian/tools/pipelines/operator_action_preview.py` and the review tools listed in `docs/ai_context/AGENT_TOOLING_BY_ASK.md`; generated preview output is review-only.
 - Agent memory: check `agentmemory status`, start the worker with `agentmemory` when needed, and use it selectively for durable cross-session decisions or handoffs while keeping repository docs authoritative.
 
+## Moment Forge Selection
+
+Use Moment Forge for repeatable 2–8 second gameplay moments whose acceptance
+depends on timing, audiovisual synchronization, movement/displacement,
+readability, camera composition, or game feel.
+
+1. After changing combat timing, animation playback or assets, VFX, SFX,
+   healing presentation, attack movement, camera behavior, or curated vista
+   presentation, run:
+
+   ```bash
+   python3 custodian/tools/iteration/run_moment.py --changed
+   ```
+
+2. Treat selection output as advice. Run the smallest relevant scenario
+   explicitly; do not invoke every suggestion or use `--execute-suggested`
+   without reviewing the matched paths and reasons.
+
+3. Use:
+
+   * `--capture-mode none` for deterministic assertions and fingerprints;
+   * `--capture-mode evidence` for telemetry and authored-tick keyframes;
+   * `--capture-mode full` when acceptance depends on audiovisual timing,
+     readability, feel, or baseline comparison.
+
+4. Focused smoke tests remain required for stable logic contracts. Moment Forge
+   is additional experiential and regression evidence, not a replacement for
+   narrow validation.
+
+5. Moment Forge may be skipped for docs-only changes, tooling-only work,
+   generated review artifacts, or refactors with no plausible runtime or
+   presentation effect. State `Moment Forge: not run — <reason>` in the
+   completion report.
+
+6. When a repeatable high-value regression lacks a scenario, propose or add the
+   narrowest stable scenario when it belongs to the task. Do not block unrelated
+   work solely because scenario coverage is absent.
+
+7. Never approve or replace a baseline automatically. Baseline acceptance
+   requires explicit developer judgment.
+
+8. Record scenario IDs, capture mode, pass/fail status, and report path under
+   task completion or handoff. Reports belong under `reports/moment_forge/`,
+   never runtime content.
+
 ## Reusable Context Fetch Pipeline
 
 Before editing, run this retrieval pipeline:

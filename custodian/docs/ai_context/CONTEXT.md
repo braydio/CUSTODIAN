@@ -80,6 +80,9 @@ An explicit architecture organization pass is now documented and tracked.
 - Use `custodian/docs/ai_context/VALIDATION_RECIPES.md` for validation command selection.
 - Use `custodian/docs/ai_context/prompts/` for reusable task prompts, and confirm prompt paths before acting.
 - Keep deterministic simulation separate from rendering/UI logic.
+- High-value repeatable combat and presentation regressions should retain focused
+  logic smoke coverage and may receive a Moment Forge scenario for deterministic
+  audiovisual and game-feel evidence.
 - When runtime behavior changes materially, update this directory alongside the relevant design/runtime docs.
 - Do not silently shift authority back to Python-era systems or docs.
 

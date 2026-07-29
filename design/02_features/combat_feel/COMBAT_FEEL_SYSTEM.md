@@ -516,6 +516,12 @@ Implemented feedback refinement:
 - paired critical contact applies a dedicated short camera shake plus its
   directional impact kick
 - the critical low-health warning plays at `-1 dB`
+- confirmed Operator melee contacts now resolve authored positional impact
+  audio from the struck target's presentation-only profile: ordinary body hits
+  distinguish light and heavy strength, drones and Marines use robot/metal,
+  Savage uses scorched, the Great Hall Marine uses the hallway render, and
+  Shrumbs alternate their two authored takes. Runtime pitch shifting remains
+  disabled because no impact family currently has three authored variants.
 
 ## First Playable Combat Slice Asset Checklist
 
@@ -552,7 +558,7 @@ Approximate total: ~60 frames.
 ## Implementation Notes
 
 - Left-facing variants should use flipped right-facing animations unless explicitly overridden.
-- For any missing animation, request user-provided asset implementation and specify save location in `custodian/assets/sprites/...` with a short artistic direction note.
+- For any missing animation, request user-provided asset implementation and specify save location in `custodian/content/sprites/...` with a short artistic direction note.
 
 ## Next Agent Slice
 

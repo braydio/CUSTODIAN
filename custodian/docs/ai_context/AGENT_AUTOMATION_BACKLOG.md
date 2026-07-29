@@ -1,8 +1,22 @@
 # AGENT AUTOMATION BACKLOG
 
-Last updated: 2026-05-03
+Last updated: 2026-07-28
 
 Prioritized automation candidates for CUSTODIAN agent workflow. These are intentionally lightweight checks first; avoid adding a large framework until the simple checks prove insufficient.
+
+## Current Implementation Audit
+
+The five scripts proposed below remain pending. A repository audit on
+2026-07-28 found no implementations at their suggested paths. Existing
+`custodian/tools/agent/change_control_bundle.py` is useful related tooling, but
+it is not an equivalent implementation of these validators.
+
+Moment Forge is now implemented separately under
+`custodian/tools/iteration/`. It was prioritized first because deterministic
+visual/audio/game-feel comparison provides direct production leverage across
+combat, animation, VFX, healing, and vista work. The lightweight documentation
+and Git-safety proposals below remain worthwhile follow-up work rather than
+being implicitly treated as shipped.
 
 ## Priority 1 — AI Context Validator
 

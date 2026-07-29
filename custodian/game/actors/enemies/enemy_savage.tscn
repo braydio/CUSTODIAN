@@ -19,6 +19,7 @@ health = 64.0
 max_health = 64.0
 damage = 10.0
 base_tint = Color(0.48, 0.22, 0.16, 1)
+melee_impact_audio_profile = &"scorched"
 attack_windup_duration = 0.26
 melee_hit_arc_degrees = 115.0
 stagger_duration = 0.45

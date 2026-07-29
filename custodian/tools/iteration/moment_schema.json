@@ -1,0 +1,188 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "custodian.moment_forge.scenario.v1",
+  "title": "CUSTODIAN Moment Forge Scenario V1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "id",
+    "description",
+    "scene",
+    "seed",
+    "duration_ticks",
+    "simulation",
+    "capture",
+    "setup",
+    "timeline",
+    "probes",
+    "assertions",
+    "stable_fingerprint",
+    "tags"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "id": {
+      "type": "string",
+      "maxLength": 120,
+      "pattern": "^[a-z0-9][a-z0-9_/-]*[a-z0-9]$"
+    },
+    "description": {"type": "string", "minLength": 1, "maxLength": 300},
+    "scene": {"type": "string", "pattern": "^res://(?!.*\\.\\.).+\\.(tscn|scn)$"},
+    "seed": {"type": "integer", "minimum": -4611686018427387904, "maximum": 4611686018427387903},
+    "duration_ticks": {"type": "integer", "minimum": 1, "maximum": 1800},
+    "simulation": {
+      "type": "object",
+      "required": ["physics_hz", "warmup_ticks", "max_wall_seconds", "pause_during_setup"],
+      "properties": {
+        "physics_hz": {"const": 60},
+        "warmup_ticks": {"type": "integer", "minimum": 0},
+        "max_wall_seconds": {"type": "number", "minimum": 1, "maximum": 600},
+        "pause_during_setup": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "capture": {
+      "type": "object",
+      "required": [
+        "width",
+        "height",
+        "fps",
+        "audio",
+        "start_tick",
+        "end_tick",
+        "contact_sheet_ticks",
+        "required_keyframes",
+        "background"
+      ],
+      "properties": {
+        "width": {"const": 1280},
+        "height": {"const": 720},
+        "fps": {"const": 60},
+        "audio": {"type": "boolean"},
+        "start_tick": {"type": "integer", "minimum": 0},
+        "end_tick": {"type": "integer", "minimum": 0},
+        "contact_sheet_ticks": {
+          "type": "array",
+          "minItems": 6,
+          "maxItems": 6,
+          "uniqueItems": true,
+          "items": {"type": "integer", "minimum": 0}
+        },
+        "required_keyframes": {"type": "boolean"},
+        "background": {"enum": ["opaque", "transparent"]},
+        "audio_onset_threshold_dbfs": {"type": "number", "minimum": -96, "maximum": 0}
+      },
+      "additionalProperties": false
+    },
+    "setup": {
+      "type": "object",
+      "required": ["remove_nodes", "roles", "spawns", "properties", "processing", "fixture"],
+      "properties": {
+        "remove_nodes": {"type": "array", "items": {"type": "string"}},
+        "roles": {"type": "object", "minProperties": 1},
+        "spawns": {"type": "array", "items": {"type": "object"}},
+        "properties": {"type": "array", "items": {"type": "object"}},
+        "processing": {"type": "array", "items": {"type": "object"}},
+        "fixture": {
+          "type": "object",
+          "required": ["id", "config"],
+          "properties": {
+            "id": {"type": "string", "pattern": "^[a-z0-9_]+$"},
+            "config": {"type": "object"}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "timeline": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["tick", "action"],
+        "properties": {
+          "tick": {"type": "integer", "minimum": 0},
+          "action": {
+            "enum": [
+              "input_press",
+              "input_release",
+              "input_tap",
+              "aim_at_role",
+              "aim_at_world",
+              "set_role_position",
+              "set_role_property",
+              "set_role_physics_enabled",
+              "set_role_process_enabled",
+              "capture_marker",
+              "fixture_command",
+              "finish"
+            ]
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "probes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "role", "fields", "required"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9_]+$"},
+          "role": {"type": "string", "pattern": "^[a-z0-9_]+$"},
+          "fields": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+          "ticks": {"type": "array", "uniqueItems": true, "items": {"type": "integer", "minimum": 0}},
+          "every_ticks": {"type": "integer", "minimum": 1},
+          "start_tick": {"type": "integer", "minimum": 0},
+          "end_tick": {"type": "integer", "minimum": 0},
+          "required": {"type": "boolean"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "assertions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type"],
+        "properties": {
+          "type": {
+            "enum": [
+              "event_count",
+              "warning_count",
+              "counter_value",
+              "probe_compare",
+              "metric_compare",
+              "role_exists",
+              "no_unreleased_inputs",
+              "output_exists",
+              "event_order"
+            ]
+          },
+          "severity": {"enum": ["error", "warning", "info"]}
+        },
+        "additionalProperties": true
+      }
+    },
+    "stable_fingerprint": {
+      "type": "object",
+      "required": ["event_payload_fields", "counters", "probes", "position_quantum_px", "float_quantum"],
+      "properties": {
+        "event_payload_fields": {"type": "object"},
+        "counters": {"type": "array", "items": {"type": "string"}},
+        "probes": {"type": "array", "items": {"type": "string"}},
+        "position_quantum_px": {"type": "number", "exclusiveMinimum": 0},
+        "float_quantum": {"type": "number", "exclusiveMinimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "tags": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^[a-z0-9_]+$"}
+    },
+    "comparison": {"type": "object"}
+  },
+  "additionalProperties": false
+}

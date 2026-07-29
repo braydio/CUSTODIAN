@@ -20,6 +20,7 @@ const PALETTE_COLUMNS := 11
 const PALETTE_ROWS := 9
 const PALETTE_CELL_SIZE := Vector2(176.0, 128.0)
 const PALETTE_TILE_COUNT := 99
+const MAX_UNDO_STATES := 100
 const PALETTE_ROOTS := [
 	"res://content/tiles/sundered_keep/floors",
 	"res://content/tiles/sundered_keep/walls/gothic_castle",
@@ -49,6 +50,7 @@ enum PaintSource {
 @onready var _world: Node2D = $World
 @onready var _camera: Camera2D = $World/Camera2D
 @onready var _placed_root: Node2D = $World/PlacedGameplayTiles
+@onready var _active_stamp_preview: Sprite2D = $World/ActiveStampPreview
 @onready var _palette_root: Node2D = $World/TilePalette
 @onready var _overlay: Node2D = $World/MapperOverlay
 @onready var _hud: Label = $CanvasLayer/Help
@@ -65,6 +67,10 @@ var _has_underlay_selection := false
 var _selection_start_cell := Vector2i.ZERO
 var _selection_end_cell := Vector2i.ZERO
 var _active_underlay_stamp: Dictionary = {}
+var _paint_drag_active := false
+var _paint_drag_last_cell := Vector2i(-1, -1)
+var _undo_stack: Array = []
+var _redo_stack: Array = []
 var _mouse_world := Vector2.ZERO
 var _show_grid := true
 var _show_collision := true
@@ -86,6 +92,7 @@ func _ready() -> void:
 	_build_palette()
 	_load_mapping_document()
 	_rebuild_placement_preview()
+	_refresh_active_stamp_preview()
 	_focus_full_underlay()
 	_update_help()
 	_overlay.queue_redraw()
@@ -96,6 +103,7 @@ func _process(_delta: float) -> void:
 	var current_mouse := _camera.get_global_mouse_position()
 	if not current_mouse.is_equal_approx(_mouse_world):
 		_mouse_world = current_mouse
+		_refresh_active_stamp_preview()
 		_update_help()
 		_overlay.queue_redraw()
 
@@ -118,10 +126,17 @@ func _unhandled_input(event: InputEvent) -> void:
 					_selection_end_cell = _clamped_underlay_cell(point)
 					_selecting_underlay_region = false
 					_load_underlay_selection_as_stamp()
+					_refresh_active_stamp_preview()
 					_overlay.queue_redraw()
 					_update_help()
 					return
+			if not mouse.pressed and _paint_drag_active:
+				_finish_paint_drag()
+				return
 			if mouse.pressed:
+				if mouse.shift_pressed and _is_on_underlay(point):
+					_begin_paint_drag(point)
+					return
 				_handle_left_click(point)
 				return
 		if mouse.button_index == MOUSE_BUTTON_RIGHT and mouse.pressed:
@@ -140,6 +155,11 @@ func _unhandled_input(event: InputEvent) -> void:
 			)
 			_overlay.queue_redraw()
 			_update_help()
+			return
+		if _paint_drag_active:
+			_continue_paint_drag(
+				_camera.get_global_mouse_position()
+			)
 			return
 	elif (
 		event is InputEventKey
@@ -267,17 +287,13 @@ func _handle_left_click(point: Vector2) -> void:
 		_paint_source = PaintSource.PALETTE_TILE
 		_underlay_select_mode = false
 		_selecting_underlay_region = false
+		_refresh_active_stamp_preview()
 		_update_help()
 		_overlay.queue_redraw()
 		return
 	if not _is_on_underlay(point):
 		return
-	if _paint_source == PaintSource.UNDERLAY_STAMP:
-		_place_underlay_stamp(_world_to_tile(point))
-		return
-	if _selected_tile_number <= 0:
-		return
-	_place_selected_tile(_world_to_tile(point))
+	_paint_active_source_at(_world_to_tile(point))
 
 
 func _handle_right_click(point: Vector2) -> void:
@@ -290,10 +306,17 @@ func _handle_right_click(point: Vector2) -> void:
 		_remove_top_placement(_world_to_tile(point))
 
 
-func _place_selected_tile(cell: Vector2i) -> void:
+func _place_selected_tile(
+	cell: Vector2i,
+	record_undo := true
+) -> bool:
 	var item := _palette_item(_selected_tile_number)
 	if item.is_empty():
-		return
+		return false
+	if not Rect2i(Vector2i.ZERO, UNDERLAY_GRID_SIZE).has_point(cell):
+		return false
+	if record_undo:
+		_push_undo_state()
 	var category := str(item["category"])
 	for index in range(_placements.size() - 1, -1, -1):
 		var placement := _placements[index]
@@ -313,16 +336,20 @@ func _place_selected_tile(cell: Vector2i) -> void:
 	_rebuild_placement_preview()
 	_update_help()
 	_overlay.queue_redraw()
+	return true
 
 
-func _place_underlay_stamp(cell: Vector2i) -> void:
+func _place_underlay_stamp(
+	cell: Vector2i,
+	record_undo := true
+) -> bool:
 	if _active_underlay_stamp.is_empty():
-		return
+		return false
 	var raw_rect := (
 		_active_underlay_stamp.get("source_rect_cells", []) as Array
 	)
 	if raw_rect.size() < 4:
-		return
+		return false
 	var stamp_size := Vector2i(int(raw_rect[2]), int(raw_rect[3]))
 	if (
 		cell.x < 0
@@ -330,7 +357,9 @@ func _place_underlay_stamp(cell: Vector2i) -> void:
 		or cell.x + stamp_size.x > UNDERLAY_GRID_SIZE.x
 		or cell.y + stamp_size.y > UNDERLAY_GRID_SIZE.y
 	):
-		return
+		return false
+	if record_undo:
+		_push_undo_state()
 	var placement := _active_underlay_stamp.duplicate(true)
 	placement["cell"] = [cell.x, cell.y]
 	_placements.append(placement)
@@ -338,6 +367,76 @@ func _place_underlay_stamp(cell: Vector2i) -> void:
 	_rebuild_placement_preview()
 	_update_help()
 	_overlay.queue_redraw()
+	return true
+
+
+func _paint_active_source_at(
+	cell: Vector2i,
+	record_undo := true
+) -> bool:
+	if _paint_source == PaintSource.UNDERLAY_STAMP:
+		return _place_underlay_stamp(cell, record_undo)
+	if _selected_tile_number <= 0:
+		return false
+	return _place_selected_tile(cell, record_undo)
+
+
+func _begin_paint_drag(point: Vector2) -> void:
+	var cell := _world_to_tile(point)
+	if not _can_paint_active_source_at(cell):
+		return
+	_push_undo_state()
+	_paint_drag_active = true
+	_paint_drag_last_cell = cell
+	_paint_active_source_at(cell, false)
+
+
+func _continue_paint_drag(point: Vector2) -> void:
+	if not _paint_drag_active or not _is_on_underlay(point):
+		return
+	var cell := _world_to_tile(point)
+	if cell == _paint_drag_last_cell:
+		return
+	var delta := cell - _paint_drag_last_cell
+	var steps := maxi(absi(delta.x), absi(delta.y))
+	var start := _paint_drag_last_cell
+	for step in range(1, steps + 1):
+		var ratio := float(step) / float(steps)
+		var next_cell := Vector2i(
+			roundi(lerpf(float(start.x), float(cell.x), ratio)),
+			roundi(lerpf(float(start.y), float(cell.y), ratio))
+		)
+		_paint_active_source_at(next_cell, false)
+	_paint_drag_last_cell = cell
+
+
+func _finish_paint_drag() -> void:
+	_paint_drag_active = false
+	_paint_drag_last_cell = Vector2i(-1, -1)
+	_update_help()
+	_overlay.queue_redraw()
+
+
+func _can_paint_active_source_at(cell: Vector2i) -> bool:
+	if _paint_source == PaintSource.PALETTE_TILE:
+		return (
+			_selected_tile_number > 0
+			and Rect2i(
+				Vector2i.ZERO,
+				UNDERLAY_GRID_SIZE
+			).has_point(cell)
+		)
+	if _active_underlay_stamp.is_empty():
+		return false
+	var raw_rect := (
+		_active_underlay_stamp.get("source_rect_cells", []) as Array
+	)
+	if raw_rect.size() < 4:
+		return false
+	var stamp_size := Vector2i(int(raw_rect[2]), int(raw_rect[3]))
+	return Rect2i(Vector2i.ZERO, UNDERLAY_GRID_SIZE).encloses(
+		Rect2i(cell, stamp_size)
+	)
 
 
 func _remove_top_placement(cell: Vector2i) -> void:
@@ -353,6 +452,7 @@ func _remove_top_placement(cell: Vector2i) -> void:
 					maxi(1, int(raw_rect[3]))
 				)
 		if Rect2i(placement_cell, placement_size).has_point(cell):
+			_push_undo_state()
 			_placements.remove_at(index)
 			_dirty = true
 			_rebuild_placement_preview()
@@ -370,6 +470,48 @@ func _rebuild_placement_preview() -> void:
 		else:
 			_add_palette_tile_preview(placement)
 	_placed_root.visible = _show_placements
+
+
+func _refresh_active_stamp_preview() -> void:
+	if _active_stamp_preview == null:
+		return
+	_active_stamp_preview.visible = false
+	if (
+		_underlay_texture == null
+		or _underlay_select_mode
+		or _paint_source != PaintSource.UNDERLAY_STAMP
+		or not _is_on_underlay(_mouse_world)
+	):
+		return
+	var raw_rect := (
+		_active_underlay_stamp.get("source_rect_cells", []) as Array
+	)
+	if raw_rect.size() < 4:
+		return
+	var source_rect_cells := Rect2i(
+		Vector2i(int(raw_rect[0]), int(raw_rect[1])),
+		Vector2i(int(raw_rect[2]), int(raw_rect[3]))
+	)
+	var target_cell := _world_to_tile(_mouse_world)
+	if not Rect2i(Vector2i.ZERO, UNDERLAY_GRID_SIZE).encloses(
+		Rect2i(target_cell, source_rect_cells.size)
+	):
+		return
+	var source_rect_px := _source_rect_px_from_cells(source_rect_cells)
+	var target_size_px := Vector2(source_rect_cells.size * TILE_SIZE)
+	_active_stamp_preview.texture = _underlay_texture
+	_active_stamp_preview.region_enabled = true
+	_active_stamp_preview.region_rect = source_rect_px
+	_active_stamp_preview.centered = false
+	_active_stamp_preview.texture_filter = (
+		CanvasItem.TEXTURE_FILTER_NEAREST
+	)
+	_active_stamp_preview.position = Vector2(target_cell * TILE_SIZE)
+	_active_stamp_preview.scale = Vector2(
+		target_size_px.x / maxf(1.0, source_rect_px.size.x),
+		target_size_px.y / maxf(1.0, source_rect_px.size.y)
+	)
+	_active_stamp_preview.visible = true
 
 
 func _add_palette_tile_preview(placement: Dictionary) -> void:
@@ -495,6 +637,9 @@ func _load_underlay_selection_as_stamp() -> void:
 		"category": "underlay_sample",
 	}
 	_paint_source = PaintSource.UNDERLAY_STAMP
+	_underlay_select_mode = false
+	_selecting_underlay_region = false
+	_refresh_active_stamp_preview()
 	_update_help()
 	_overlay.queue_redraw()
 	print(
@@ -543,6 +688,16 @@ func _handle_keyboard_pan() -> void:
 
 
 func _handle_key(event: InputEventKey) -> void:
+	if event.ctrl_pressed:
+		if event.keycode == KEY_Z:
+			if event.shift_pressed:
+				_redo()
+			else:
+				_undo()
+			return
+		if event.keycode == KEY_Y:
+			_redo()
+			return
 	match event.keycode:
 		KEY_C:
 			_copy_mapping_to_clipboard()
@@ -557,9 +712,8 @@ func _handle_key(event: InputEventKey) -> void:
 		KEY_H:
 			_show_help = not _show_help
 			_hud.visible = _show_help
-		KEY_L, KEY_R:
-			_load_mapping_document()
-			_rebuild_placement_preview()
+		KEY_F6, KEY_L, KEY_R:
+			_reload_mapping_document()
 		KEY_P:
 			_focus_palette()
 		KEY_Q:
@@ -568,6 +722,7 @@ func _handle_key(event: InputEventKey) -> void:
 				_paint_source = PaintSource.UNDERLAY_STAMP
 			else:
 				_selecting_underlay_region = false
+			_refresh_active_stamp_preview()
 		KEY_S:
 			_focus_spawn_causeway()
 		KEY_TAB:
@@ -579,9 +734,12 @@ func _handle_key(event: InputEventKey) -> void:
 			if _paint_source == PaintSource.PALETTE_TILE:
 				_underlay_select_mode = false
 				_selecting_underlay_region = false
+			_refresh_active_stamp_preview()
 		KEY_T:
 			_show_placements = not _show_placements
 			_placed_root.visible = _show_placements
+		KEY_DELETE:
+			_clear_placements()
 	_overlay.queue_redraw()
 	_update_help()
 
@@ -702,6 +860,61 @@ func _load_mapping_document() -> void:
 		})
 	_dirty = false
 	_update_help()
+
+
+func _reload_mapping_document() -> void:
+	_push_undo_state()
+	_load_mapping_document()
+	_rebuild_placement_preview()
+	_refresh_active_stamp_preview()
+	_overlay.queue_redraw()
+
+
+func _clear_placements() -> void:
+	if _placements.is_empty():
+		return
+	_push_undo_state()
+	_placements.clear()
+	_dirty = true
+	_rebuild_placement_preview()
+	_update_help()
+	_overlay.queue_redraw()
+
+
+func _push_undo_state() -> void:
+	_undo_stack.append(_placements.duplicate(true))
+	if _undo_stack.size() > MAX_UNDO_STATES:
+		_undo_stack.pop_front()
+	_redo_stack.clear()
+
+
+func _undo() -> void:
+	if _undo_stack.is_empty():
+		return
+	_redo_stack.append(_placements.duplicate(true))
+	_restore_placements(_undo_stack.pop_back() as Array)
+
+
+func _redo() -> void:
+	if _redo_stack.is_empty():
+		return
+	_undo_stack.append(_placements.duplicate(true))
+	if _undo_stack.size() > MAX_UNDO_STATES:
+		_undo_stack.pop_front()
+	_restore_placements(_redo_stack.pop_back() as Array)
+
+
+func _restore_placements(snapshot: Array) -> void:
+	_placements.clear()
+	for raw_placement: Variant in snapshot:
+		if raw_placement is Dictionary:
+			_placements.append(
+				(raw_placement as Dictionary).duplicate(true)
+			)
+	_dirty = true
+	_rebuild_placement_preview()
+	_update_help()
+	_overlay.queue_redraw()
 
 
 func _write_mapping_document() -> bool:
@@ -872,17 +1085,32 @@ func _update_help() -> void:
 	)
 	var active_stamp_text := "none"
 	if not _active_underlay_stamp.is_empty():
-		active_stamp_text = str(
-			_active_underlay_stamp.get("source_rect_cells", [])
+		var raw_stamp_rect := (
+			_active_underlay_stamp.get(
+				"source_rect_cells",
+				[]
+			) as Array
 		)
+		if raw_stamp_rect.size() >= 4:
+			var stamp_width := int(raw_stamp_rect[2])
+			var stamp_height := int(raw_stamp_rect[3])
+			active_stamp_text = (
+				"%dx%d cells / %dx%d gameplay pixels"
+				% [
+					stamp_width,
+					stamp_height,
+					stamp_width * TILE_SIZE,
+					stamp_height * TILE_SIZE,
+				]
+			)
 	_hud.text = "\n".join([
 		"Sundered Keep Underlay + Collision + Gameplay Tile Mapper",
 		"P: numbered 01–99 palette   F: full underlay   S: spawn/causeway",
-		"Q: underlay select mode   Drag: sample region   Q off: paint stamp   Tab: palette/stamp source",
-		"Left-click palette: select   Left-click underlay: place active source on 32 px grid   Right-click: remove top placement / clear palette selection",
-		"WASD/arrows: pan   Wheel/+/-: zoom   G: grid   E: collision rails   T: placed tiles   L/R: reload saved",
-		"C: copy mapping JSON   Enter/U: save mapping JSON   H: help",
-		"Paint source: %s   Active stamp: source_rect_cells=%s   Source-select: %s" % [
+		"Q: sample underlay region   Tab: palette/stamp source   Left-click: place   Shift-drag: repeat",
+		"Right-click underlay: remove top placement   Ctrl+Z: undo   Ctrl+Y/Ctrl+Shift+Z: redo",
+		"WASD/arrows: pan   Wheel: zoom   G: grid   E: collision rails   T: placed tiles",
+		"C: copy JSON   Enter/U: save   F6/L/R: reload saved   Delete: clear (undoable)   H: help",
+		"Paint source: %s   Active stamp: %s   Source-select: %s" % [
 			paint_source_text,
 			active_stamp_text,
 			"ON" if _underlay_select_mode else "OFF",
@@ -937,5 +1165,9 @@ func get_gameplay_tile_mapper_state() -> Dictionary:
 		"show_grid": _show_grid,
 		"show_collision": _show_collision,
 		"show_placements": _show_placements,
+		"active_stamp_preview": _active_stamp_preview,
+		"undo_count": _undo_stack.size(),
+		"redo_count": _redo_stack.size(),
+		"paint_drag_active": _paint_drag_active,
 		"mapping_path": TILE_MAPPING_DATA_PATH,
 	}

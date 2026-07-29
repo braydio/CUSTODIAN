@@ -13,6 +13,7 @@ health = 42.0
 max_health = 42.0
 damage = 10.0
 base_tint = Color(0.96, 0.86, 0.24, 1)
+melee_impact_audio_profile = &"robot_metal"
 uses_directional_charset = true
 directional_charset_sheet_path = "res://content/sprites/additional-charsets/Small-8-Direction-Characters_by_AxulArt/Small-8-Direction-Characters_by_AxulArt2.png"
 directional_charset_row_start = 0

@@ -1,0 +1,38 @@
+{
+  "action_count": 5,
+  "camera": {
+    "position": [
+      420.241394042969,
+      308.044952392578
+    ]
+  },
+  "completed": true,
+  "duration_ticks": 118,
+  "event_count": 5,
+  "media": {
+    "audio": {
+      "available": false
+    },
+    "baseline_audio": null,
+    "visual_diff": null
+  },
+  "operator": {
+    "position": [
+      420.0,
+      360.0
+    ]
+  },
+  "probe_sample_count": 8,
+  "stable_fingerprint": {
+    "algorithm": "sha256",
+    "schema": "custodian.moment_forge.stable_fingerprint.v1",
+    "value": "119ca64c40817fab0e0899898d17572863e121560ee1e9ef4aed99c45406a268"
+  },
+  "target": {
+    "position": [
+      474.0,
+      360.0
+    ]
+  },
+  "warning_count": 0
+}

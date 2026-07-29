@@ -31,7 +31,10 @@ const PARALLAX_RIG_SCRIPT := preload(
 )
 
 # Music.
-const MUSIC_PATH := "res://content/audio/music/return_causeway/return_causeway_01.ogg"
+const MUSIC_PATHS := [
+	"res://content/audio/music/return_causeway/return_causeway_01.ogg",
+	"res://content/audio/music/return_causeway/hall_still_answers.ogg",
+]
 
 # -- Sector Anchor Tiles ------------------------------------------------------
 # These define the key locations used throughout the level. All positions are
@@ -75,6 +78,7 @@ var _backtrack_exit: LevelExit2D = null
 var _return_mooring_active_overlay: Sprite2D = null
 var _buried_terminal_overlay: Sprite2D = null
 var _music_player: AudioStreamPlayer2D = null
+var _music_playlist_index: int = 0
 var _parallax_rig: SunderedKeepParallaxRig = null
 
 
@@ -683,15 +687,44 @@ func _add_travel_gate() -> void:
 # -- Music --------------------------------------------------------------------
 
 func _setup_music() -> void:
-	if not ResourceLoader.exists(MUSIC_PATH):
+	var music_manager := get_node_or_null("/root/MusicManager")
+	if music_manager != null and music_manager.has_method("play_playlist"):
+		music_manager.call("play_playlist", MUSIC_PATHS)
 		return
+
 	_music_player = AudioStreamPlayer2D.new()
 	_music_player.name = "MusicPlayer"
-	_music_player.stream = load(MUSIC_PATH)
-	_music_player.autoplay = true
 	_music_player.volume_db = -6.0
 	_music_player.max_distance = 2000.0
+	_music_player.finished.connect(_advance_local_music_playlist)
 	add_child(_music_player)
+	_music_playlist_index = 0
+	_play_local_music_playlist_index()
+
+
+func _play_local_music_playlist_index() -> void:
+	if _music_player == null or MUSIC_PATHS.is_empty():
+		return
+	for attempt: int in range(MUSIC_PATHS.size()):
+		var index := (_music_playlist_index + attempt) % MUSIC_PATHS.size()
+		var path: String = MUSIC_PATHS[index]
+		var stream := load(path) as AudioStreamOggVorbis
+		if stream == null:
+			continue
+		stream.set_loop(false)
+		stream.set_loop_offset(0.0)
+		_music_playlist_index = index
+		_music_player.stream = stream
+		_music_player.play()
+		return
+
+
+func _advance_local_music_playlist() -> void:
+	_music_playlist_index = (
+		(_music_playlist_index + 1)
+		% MUSIC_PATHS.size()
+	)
+	_play_local_music_playlist_index()
 
 
 # -- Gatehouse Gate Logic -----------------------------------------------------

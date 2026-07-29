@@ -1,9 +1,9 @@
 extends LevelStage
 
-const HORIZON_SKY_PATH := "res://content/backgrounds/sundered_keep/horizon_sky.png"
-const FAR_SEA_PATH := "res://content/backgrounds/sundered_keep/far_sea.png"
-const DISTANT_KEEP_PATH := "res://content/backgrounds/sundered_keep/distant_sundered_keep.png"
-const VISTA_FOG_BAND_PATH := "res://content/backgrounds/sundered_keep/vista_fog_band.png"
+const HORIZON_SKY_PATH := "res://content/backgrounds/sundered_keep/shared/horizon/horizon_sky.png"
+const FAR_SEA_PATH := "res://content/backgrounds/sundered_keep/shared/horizon/far_sea.png"
+const DISTANT_KEEP_PATH := "res://content/backgrounds/sundered_keep/shared/landmarks/distant_sundered_keep.png"
+const VISTA_FOG_BAND_PATH := "res://content/backgrounds/sundered_keep/shared/horizon/vista_fog_band.png"
 
 const RECT_HORIZON_SKY := Rect2(Vector2(-900.0, -700.0), Vector2(2100.0, 380.0))
 const RECT_FAR_SEA := Rect2(Vector2(-900.0, -520.0), Vector2(2100.0, 260.0))

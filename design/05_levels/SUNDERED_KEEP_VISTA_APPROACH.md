@@ -228,22 +228,26 @@ All transitions use `lerp` with `smoothing_speed=5.0`. Fog band starts at `alpha
 
 ## Existing Background Assets
 
-The following painterly matte/background assets already exist at `res://content/backgrounds/sundered_keep/`. They are wide single images (not split L/R pairs). Use linear filtering (not nearest-neighbor) on import.
+The following shared painterly matte/background assets live in role folders
+under `res://content/backgrounds/sundered_keep/shared/`. They are wide single
+images (not split L/R pairs). Use linear filtering (not nearest-neighbor) on
+import.
 
-| File | Size | Scene role |
+| Relative path | Size | Scene role |
 |------|------|------------|
-| `ocean_underlay.png` | 2100×1400 | UnderlayRoot — deep ocean below everything |
-| `cliff_depth_underlay.png` | 520×540 | UnderlayRoot — dark cliff mass |
-| `horizon_sky.png` | 2100×380 | VistaRoot — night/void sky |
-| `horizon_sky_02.png` | 2100×380 | VistaRoot — sky variant |
-| `far_sea.png` | 2100×260 | VistaRoot — dark sea band on horizon |
-| `far_sea_02.png` | 2100×260 | VistaRoot — sea variant |
-| `distant_sundered_keep.png` | 540×250 | Legacy broad distant composition retained for non-Vista compatibility |
-| `distant_sundered_keep_landmark_v2.png` | 1840×854 | Alpha-valid Camera 1 Keep/island landmark only |
-| `vista_fog_band.png` | 2100×160 | VistaRoot/VistaFogBand — seam-hiding fog |
-| `keep_horizon_wide.png` | 1689×787 | Reserve — wider keep matte if needed |
+| `underlay/ocean_underlay.png` | 2100×1400 | UnderlayRoot — deep ocean below everything |
+| `underlay/cliff_depth_underlay.png` | 520×540 | UnderlayRoot — dark cliff mass |
+| `horizon/horizon_sky.png` | 2100×380 | VistaRoot — night/void sky |
+| `horizon/horizon_sky_02.png` | 2100×380 | VistaRoot — sky variant |
+| `horizon/far_sea.png` | 2100×260 | VistaRoot — dark sea band on horizon |
+| `horizon/far_sea_02.png` | 2100×260 | VistaRoot — sea variant |
+| `landmarks/distant_sundered_keep.png` | 540×250 | Legacy broad distant composition retained for non-Vista compatibility |
+| `landmarks/distant_sundered_keep_landmark_v2.png` | 1840×854 | Alpha-valid Camera 1 Keep/island landmark only |
+| `horizon/vista_fog_band.png` | 2100×160 | VistaRoot/VistaFogBand — seam-hiding fog |
+| `landmarks/keep_horizon_wide.png` | 1689×787 | Reserve — wider keep matte if needed |
 
-These live under `content/` not `assets/`. Use `res://content/backgrounds/sundered_keep/` paths.
+These live under `content/`, not `assets/`. See the local background README
+before adding or moving plates.
 
 ## Shared Painterly Parallax Depth
 
@@ -305,11 +309,11 @@ The approach also applies `res://game/world/approaches/sundered_keep/soft_rect_f
 
 | Sprite name | Asset path | Rect | z_index | Tint |
 |---|---|---|---|---|
-| GrandVistaPanorama | `res://content/backgrounds/sundered_keep/grand_vista/grand_vista_panorama.png` | `Rect2(-1280, -920, 2560, 1440)` | 0 | feathered, alpha 0.22 when all 30 fortress parts load; 0.88 fallback |
-| GrandVistaOceanSprayOverlay | `res://content/backgrounds/sundered_keep/grand_vista/grand_vista_ocean_spray_overlay.png` | `Rect2(-1280, -160, 2560, 720)` | 1 | feathered, alpha 0.58 |
-| GrandVistaFogOverlay | `res://content/backgrounds/sundered_keep/grand_vista/grand_vista_fog_overlay.png` | `Rect2(-1280, -520, 2560, 480)` | 2 | feathered, alpha 0.48 |
-| GrandVistaShadowVignette | `res://content/backgrounds/sundered_keep/grand_vista/grand_vista_shadow_vignette.png` | `Rect2(-1280, -920, 2560, 1440)` | 3 | feathered, alpha 0.42 |
-| GrandVistaForegroundParapet | `res://content/backgrounds/sundered_keep/grand_vista/grand_vista_foreground_parapet.png` | `Rect2(-1280, 260, 2560, 360)` | 20 | disabled, alpha 0; removes the chest-like central focal mass while the playable route remains visible |
+| GrandVistaPanorama | `res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_panorama.png` | `Rect2(-1280, -920, 2560, 1440)` | 0 | feathered, alpha 0.22 when all 30 fortress parts load; 0.88 fallback |
+| GrandVistaOceanSprayOverlay | `res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_ocean_spray_overlay.png` | `Rect2(-1280, -160, 2560, 720)` | 1 | feathered, alpha 0.58 |
+| GrandVistaFogOverlay | `res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_fog_overlay.png` | `Rect2(-1280, -520, 2560, 480)` | 2 | feathered, alpha 0.48 |
+| GrandVistaShadowVignette | `res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_shadow_vignette.png` | `Rect2(-1280, -920, 2560, 1440)` | 3 | feathered, alpha 0.42 |
+| GrandVistaForegroundParapet | `res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_foreground_parapet.png` | `Rect2(-1280, 260, 2560, 360)` | 20 | disabled, alpha 0; removes the chest-like central focal mass while the playable route remains visible |
 
 The physical Camera 2 envelope drives the cinematic child and all fortress
 planes. Far architecture appears earliest and remains longest, mid architecture
@@ -334,10 +338,10 @@ Vista/Return Causeway rig.
 
 | Sprite name | Asset path | Rect | z_index | Tint |
 |---|---|---|---|---|
-| GrandVistaHorizonSeamFog | `res://content/backgrounds/sundered_keep/grand_vista/grand_vista_horizon_seam_fog.png` | `Rect2(-1280, -560, 2560, 420)` | 30 | continuous mid-fog band, alpha 0.56 |
-| GrandVistaPathContactShadow | `res://content/backgrounds/sundered_keep/grand_vista/grand_vista_path_contact_shadow.png` | `Rect2(-1280, -160, 2560, 720)` | 35 | alpha 0.50 |
-| GrandVistaEdgeSprayWrap | `res://content/backgrounds/sundered_keep/grand_vista/grand_vista_edge_spray_wrap.png` | `Rect2(-1280, -160, 2560, 720)` | 40 | alpha 0.35 |
-| GrandVistaForegroundEdgeMask | `res://content/backgrounds/sundered_keep/grand_vista/grand_vista_foreground_edge_mask.png` | `Rect2(-1280, 220, 2560, 420)` | 80 | alpha 0.55 |
+| GrandVistaHorizonSeamFog | `res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_horizon_seam_fog.png` | `Rect2(-1280, -560, 2560, 420)` | 30 | continuous mid-fog band, alpha 0.56 |
+| GrandVistaPathContactShadow | `res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_path_contact_shadow.png` | `Rect2(-1280, -160, 2560, 720)` | 35 | alpha 0.50 |
+| GrandVistaEdgeSprayWrap | `res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_edge_spray_wrap.png` | `Rect2(-1280, -160, 2560, 720)` | 40 | alpha 0.35 |
+| GrandVistaForegroundEdgeMask | `res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_foreground_edge_mask.png` | `Rect2(-1280, 220, 2560, 420)` | 80 | alpha 0.55 |
 
 `LabyrinthContactFog`, `LabyrinthMoonRimLight`, and `LabyrinthGateLight` add foreground separation without changing navigation or gameplay authority. Three architecture crops (`WestKeepRoof`, `CentralKeepRoof`, and `ExitKeepRoof`) are removed from the base route-master draw by `route_master_occlusion_mask.gdshader`, redrawn under `RoofOcclusionRoot`, and faded independently by player-only `RoofOccluder2D` zones. This preserves a single route-master source texture while preventing the whole keep plate from fading.
 
@@ -357,14 +361,14 @@ Route-master runtime assets:
 | Role | Asset path | Runtime node |
 |---|---|---|
 | Playable route terrain | `res://content/sprites/world/return_causeway/path/sundered_keep_approach_route_master.png` | `PlayableRoot/ApproachRouteMaster` |
-| Ocean void underlay | `res://content/backgrounds/sundered_keep/approach/approach_ocean_void_underlay.png` | `UnderlayRoot/ApproachOceanVoidUnderlay` |
-| Cliff spires underlay | `res://content/backgrounds/sundered_keep/approach/approach_cliff_spires_underlay.png` | `UnderlayRoot/ApproachCliffSpiresUnderlay` |
-| Route contact shadow | `res://content/backgrounds/sundered_keep/approach/approach_route_contact_shadow.png` | `UnderlayRoot/ApproachRouteContactShadow` |
-| Persistent first-vista storm horizon | `res://content/backgrounds/sundered_keep/approach/first_vista_base_storm_horizon.png` | `UnderlayRoot/FirstVistaBaseStormHorizon` |
-| Isolated first-vista Keep landmark | `res://content/backgrounds/sundered_keep/distant_sundered_keep_landmark_v2.png` | `ParallaxRoot/RevealDepth/DistantKeep_Parallax2D/DistantSunderedKeepLandmark` |
+| Ocean void underlay | `res://content/backgrounds/sundered_keep/approach/underlay/approach_ocean_void_underlay.png` | `UnderlayRoot/ApproachOceanVoidUnderlay` |
+| Cliff spires underlay | `res://content/backgrounds/sundered_keep/approach/underlay/approach_cliff_spires_underlay.png` | `UnderlayRoot/ApproachCliffSpiresUnderlay` |
+| Route contact shadow | `res://content/backgrounds/sundered_keep/approach/underlay/approach_route_contact_shadow.png` | `UnderlayRoot/ApproachRouteContactShadow` |
+| Persistent first-vista storm horizon | `res://content/backgrounds/sundered_keep/approach/underlay/first_vista_base_storm_horizon.png` | `UnderlayRoot/FirstVistaBaseStormHorizon` |
+| Isolated first-vista Keep landmark | `res://content/backgrounds/sundered_keep/shared/landmarks/distant_sundered_keep_landmark_v2.png` | `ParallaxRoot/RevealDepth/DistantKeep_Parallax2D/DistantSunderedKeepLandmark` |
 | First-vista reveal veil | `res://content/backgrounds/sundered_keep/approach/fog/first_vista_reveal_veil.png` | `VistaRoot/FirstVistaMistParallax/ApproachFirstVistaFogVeil` |
-| Edge mist wrap | `res://content/backgrounds/sundered_keep/approach/approach_edge_mist_wrap.png` | `OcclusionRoot/ApproachEdgeMistWrap` |
-| Final gate shadow veil | `res://content/backgrounds/sundered_keep/approach/approach_final_gate_shadow_veil.png` | `OcclusionRoot/ApproachFinalGateShadowVeil` |
+| Edge mist wrap | `res://content/backgrounds/sundered_keep/approach/occlusion/approach_edge_mist_wrap.png` | `OcclusionRoot/ApproachEdgeMistWrap` |
+| Final gate shadow veil | `res://content/backgrounds/sundered_keep/approach/occlusion/approach_final_gate_shadow_veil.png` | `OcclusionRoot/ApproachFinalGateShadowVeil` |
 | Fog strips | `res://content/backgrounds/sundered_keep/approach/fog/approach_fog_strip_0*.png` | `OcclusionRoot/ApproachFogStrip0*` |
 
 The route master is the visible ground. Support layers must not become collision, navigation, terrain metadata, or separate scenes.
@@ -445,8 +449,8 @@ Current `_build_underlay()` creates three visible `Polygon2D` nodes (`OceanUnder
 
 | Sprite name | Asset path | Rect position & size | z_index |
 |---|---|---|---|
-| OceanUnderlay | `res://content/backgrounds/sundered_keep/ocean_underlay.png` | `Rect2(-900, -700, 2100, 1400)` | 0 |
-| CliffDepthUnderlay | `res://content/backgrounds/sundered_keep/cliff_depth_underlay.png` | `Rect2(-500, -440, 520, 540)` | 1 |
+| OceanUnderlay | `res://content/backgrounds/sundered_keep/shared/underlay/ocean_underlay.png` | `Rect2(-900, -700, 2100, 1400)` | 0 |
+| CliffDepthUnderlay | `res://content/backgrounds/sundered_keep/shared/underlay/cliff_depth_underlay.png` | `Rect2(-500, -440, 520, 540)` | 1 |
 | FogUnderlay | `res://content/backgrounds/sundered_keep/approach/playable/underlay_fog_band.png` | `Rect2(-900, -620, 2172, 724)` | 2 |
 
 Use `z_index` within UnderlayRoot to establish draw order: ocean (0), cliff (1), fog (2).
@@ -475,10 +479,10 @@ The VistaFogBand should remain a single `Sprite2D` named `VistaFogBand` so the d
 
 | Sprite name | Asset path | Rect | z_index |
 |---|---|---|---|
-| HorizonSky | `res://content/backgrounds/sundered_keep/horizon_sky.png` | `Rect2(-900, -700, 2100, 380)` | 0 |
-| FarSea | `res://content/backgrounds/sundered_keep/far_sea.png` | `Rect2(-900, -520, 2100, 260)` | 1 |
-| DistantSunderedKeep | `res://content/backgrounds/sundered_keep/distant_sundered_keep.png` | `Rect2(-260, -670, 540, 250)` | 2 |
-| VistaFogBand | `res://content/backgrounds/sundered_keep/vista_fog_band.png` | `Rect2(-900, -380, 2100, 160)` | 3 |
+| HorizonSky | `res://content/backgrounds/sundered_keep/shared/horizon/horizon_sky.png` | `Rect2(-900, -700, 2100, 380)` | 0 |
+| FarSea | `res://content/backgrounds/sundered_keep/shared/horizon/far_sea.png` | `Rect2(-900, -520, 2100, 260)` | 1 |
+| DistantSunderedKeep | `res://content/backgrounds/sundered_keep/shared/landmarks/distant_sundered_keep.png` | `Rect2(-260, -670, 540, 250)` | 2 |
+| VistaFogBand | `res://content/backgrounds/sundered_keep/shared/horizon/vista_fog_band.png` | `Rect2(-900, -380, 2100, 160)` | 3 |
 
 ### Phase 5 — Replace OcclusionRoot Polygon2D with Sprite2D
 

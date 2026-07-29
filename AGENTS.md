@@ -14,6 +14,9 @@ Repository-root path equivalents used by the local primer are:
 - current state/context/index: `custodian/docs/ai_context/`
 - active runtime: `custodian/game/`, `custodian/content/`, and `custodian/project.godot`
 - validation: `custodian/docs/ai_context/VALIDATION_RECIPES.md` and `custodian/tools/validation/`
+- deterministic micro-playtest review: route through `custodian/AGENTS.md`,
+  `design/02_features/debug_ui/MOMENT_FORGE_SYSTEM.md`, and the Moment Forge
+  section of `custodian/docs/ai_context/VALIDATION_RECIPES.md`
 
 If root guidance conflicts with `custodian/AGENTS.md` for Godot runtime work, follow `custodian/AGENTS.md`.
 

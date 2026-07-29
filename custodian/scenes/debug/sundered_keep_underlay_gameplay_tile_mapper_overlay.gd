@@ -162,8 +162,28 @@ func _draw_cursor(state: Dictionary) -> void:
 			floori(point.x / tile_size),
 			floori(point.y / tile_size)
 		)
+		var cursor_size := Vector2i.ONE
+		if (
+			str(state.get("paint_source", "PALETTE_TILE"))
+			== "UNDERLAY_STAMP"
+			and not bool(state.get("underlay_select_mode", false))
+		):
+			var stamp := (
+				state.get("active_underlay_stamp", {}) as Dictionary
+			)
+			var raw_rect := (
+				stamp.get("source_rect_cells", []) as Array
+			)
+			if raw_rect.size() >= 4:
+				cursor_size = Vector2i(
+					maxi(1, int(raw_rect[2])),
+					maxi(1, int(raw_rect[3]))
+				)
 		draw_rect(
-			Rect2(Vector2(cell * tile_size), Vector2.ONE * tile_size),
+			Rect2(
+				Vector2(cell * tile_size),
+				Vector2(cursor_size * tile_size)
+			),
 			Color(1.0, 0.88, 0.24, 0.80),
 			false,
 			2.0

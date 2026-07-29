@@ -1,43 +1,17 @@
-# AGENTS.md
+# AGENTS.md — HISTORICAL (Drive-Era Copy)
 
-CUSTODIAN is now Godot-native. Treat `custodian/` as active implementation and `python-sim/` as design/legacy reference unless explicitly asked otherwise.
+**This is a preserved historical copy from the Python-terminal era.**
 
-## Active Areas
+Do not use it as an active authority. The live GitHub authority is:
 
-- `custodian/`: active Godot 4.x runtime code
-- `custodian/docs/`: active runtime architecture/spec docs
-- `custodian/docs/ai_context/`: active AI context tracker docs
-- `python-sim/design/MASTER_DESIGN_DOCTRINE.md`: locked doctrine
-- `python-sim/design/00_foundations/*`, `python-sim/design/30_playable_game/*`: active design references
+1. **Root `AGENTS.md`** — repository router
+2. **`custodian/AGENTS.md`** — mandatory local primer for all Godot work
+3. **`design/02_features/`** — active feature specification hierarchy (the retired
+   `design/20_features/` tree and this file's Python-era path conventions are
+   historical reference only)
 
-## Legacy Areas
+Active Godot implementation lives in `custodian/`. Active design specs live
+under `design/`, with feature work normalized under `design/02_features/`.
 
-- `python-sim/game/`: terminal-era Python simulation
-- `python-sim/custodian-terminal/`: terminal UI
-- `python-sim/design/10_systems/*` and `python-sim/design/20_features/*`: legacy reference unless explicitly refreshed
-
-See `python-sim/design/DOC_STATUS.md` for canonical status mapping.
-
-## Entrypoint
-
-- `cd custodian && godot`
-
-## Documentation Workflow
-
-When architecture/design changes:
-
-1. Update active docs (`custodian/docs/*`, `python-sim/design/00_foundations/*`, `python-sim/design/30_playable_game/*` as needed).
-2. Update `python-sim/design/CHANGELOG.md`.
-3. Update `python-sim/design/DEVLOG.md`.
-4. Sync `custodian/docs/ai_context/` tracker files.
-
-## AI Context Rule
-
-- `python-sim/ai/` is historical only.
-- The active AI context pack lives in `custodian/docs/ai_context/`.
-
-## Guardrails
-
-- Keep active-vs-legacy labels explicit.
-- Preserve deterministic fixed-step assumptions.
-- Do not delete legacy content unless explicitly requested.
+The `python-sim/` directory is design history and legacy reference. This
+file exists only to prevent stale routing; it should never direct new work.

@@ -94,26 +94,31 @@ Authoring controls:
 - `F`: focus the complete underlay
 - `Q`: toggle underlay source-selection mode
 - left-drag the underlay in source-selection mode: load that region as the
-  active underlay stamp
-- toggle `Q` off after sampling to place copies of the active stamp
+  active underlay stamp and return directly to placement mode
 - `Tab`: switch active paint source between palette tile and underlay stamp
 - left-click a palette cell: select its numbered asset
 - left-click the underlay: place the active palette tile or underlay stamp on
   the shared `32 px` grid
+- `Shift` + left-drag: repeat the active source across every crossed grid cell
 - right-click the underlay: remove the top placement covering that cell
+- `Ctrl+Z`: undo the last logical edit
+- `Ctrl+Y` or `Ctrl+Shift+Z`: redo the last undone edit
 - `G`: toggle the underlay grid
 - `E`: toggle canonical collision rails
 - `T`: toggle placed gameplay tiles
 - `C`: copy the complete mapping document
 - `Enter` or `U`: write the mapping JSON
-- `L` or `R`: discard unsaved preview edits and reload the saved mapping
+- `F6`, `L`, or `R`: reload the saved mapping without restarting the scene
+- `Delete`: clear placements as one undoable edit
 
 Floor and architecture/traversal placements use separate replacement lanes, so
 a floor and a wall module may intentionally share one grid cell. Explicitly
 saving the mapping makes its visual/floor-authoring placements available to the
 Front Gate consumer; unsaved previews remain mapper-local. The underlay PNG
 still never generates collision, and the gameplay-tile mapping never modifies
-the canonical collision JSON.
+the canonical collision JSON. The mapper retains up to 100 complete placement
+snapshots; a repeated drag and a reload each consume one undo state, not one
+state per crossed cell.
 
 ## Overlay Authoring Pipeline
 

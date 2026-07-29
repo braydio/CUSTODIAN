@@ -36,6 +36,7 @@ assault_regroup_speed_multiplier = null
 assault_damage_commit_threshold = null
 assault_commit_detection_multiplier = null
 passive = true
+melee_impact_audio_profile = &"shrumb"
 counts_as_wave_enemy = false
 material_drop_min = null
 material_drop_max = null

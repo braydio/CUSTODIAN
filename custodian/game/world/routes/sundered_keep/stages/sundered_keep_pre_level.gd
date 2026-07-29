@@ -1,7 +1,7 @@
 extends LevelStage
 
-const OCEAN_UNDERLAY_PATH := "res://content/backgrounds/sundered_keep/ocean_underlay.png"
-const CLIFF_DEPTH_UNDERLAY_PATH := "res://content/backgrounds/sundered_keep/cliff_depth_underlay.png"
+const OCEAN_UNDERLAY_PATH := "res://content/backgrounds/sundered_keep/shared/underlay/ocean_underlay.png"
+const CLIFF_DEPTH_UNDERLAY_PATH := "res://content/backgrounds/sundered_keep/shared/underlay/cliff_depth_underlay.png"
 
 const RECT_OCEAN_UNDERLAY := Rect2(Vector2(-900.0, -700.0), Vector2(2100.0, 1400.0))
 const RECT_CLIFF_DEPTH_UNDERLAY := Rect2(Vector2(-500.0, -440.0), Vector2(520.0, 540.0))

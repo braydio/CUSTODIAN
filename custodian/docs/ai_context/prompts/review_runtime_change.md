@@ -16,6 +16,8 @@ Findings first. Prioritize:
 - simulation/UI authority leaks
 - stale docs or paths
 - missing validation
+- missing Moment Forge evidence when the change affects a repeatable
+  audiovisual or game-feel moment
 - unsafe asset or git workflow side effects
 
 ## Context Files
