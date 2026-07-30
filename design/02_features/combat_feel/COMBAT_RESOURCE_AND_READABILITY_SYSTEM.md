@@ -27,6 +27,7 @@ below; this document does not duplicate their runtime ownership.
 | Positional gunshot noise | complete-v1 | `NoiseEventBus` drives local enemy investigation, LOS-loss search, and leash return | `RANGED_COMBAT_BALANCE_AND_STEALTH_SYSTEM.md` |
 | Global attention/escalation | pending | No shared attention meter, alarm network, reinforcement pressure, or ritual acceleration from noise | This document |
 | Sidearm loadout tradeoff | complete-v1 | Recovered P-9 must occupy the Equipment-page sidearm slot; equipped P-9 replaces guard/parry with sidearm-ready | `COMBAT_FEEL_SYSTEM.md`, `SIDEARM_UNLOCK.md` |
+| First strike and initiative | complete-v1 | First eligible Operator hit adds stagger/breach pressure without health damage; equipped Vanguard Seal converts a clean opening into a break-on-hit eight-second damage window | `FIRST_STRIKE_AND_INITIATIVE.md` |
 | Health | complete-v1 | Operator health, damage, death, hit recoil, and HUD/status display are live | `COMBAT_FEEL_SYSTEM.md` |
 | Integrity Reclaim | complete-v1 | Unblocked damage creates independently expiring recoverable integrity; confirmed direct hostile damage restores it at melee/critical/ranged efficiencies through the trailing health-bar segment | `OPERATOR_INTEGRITY_RECLAIM.md` |
 | Field Patch healing/restock | complete-v1 | Operator carries limited Field Patches, uses a timed commit heal, slows during use, restores 35% max health at commit, and interrupts before commit on damage or conflicting actions. Restock v1 is terminal/crafting based through `lattice_field_patch`, with emergency cache pickup fallback materials when full. | This document |
@@ -50,6 +51,8 @@ Completed slices are maintained in their feature homes:
   `design/02_features/combat_feel/COMBAT_FEEL_SYSTEM.md`
 - Sidearm acquisition and equipment gate:
   `design/02_features/operator/SIDEARM_UNLOCK.md`
+- First strike, engagement boundary, and Vanguard Seal:
+  `design/02_features/combat_feel/FIRST_STRIKE_AND_INITIATIVE.md`
 - Physical enemy objectives, vault storage, and theft:
   `design/02_features/enemy_objective/ENEMY_OBJECTIVE_SYSTEM.md`
 - Turret behavior and placement:

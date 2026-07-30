@@ -4,7 +4,7 @@
 **Status:** âœ… IMPLEMENTED + vault-theft v1 in progress
 **Depends On:** Wave Spawning System
 **Last Updated:** 2026-05-25
-**Content Canon Authority:** `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
+**Content Canon Authority:** `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 
 ---
 
@@ -14,7 +14,7 @@ Enemies currently just chase the player. This system gives them **objectives** â
 
 This creates the core defense gameplay: enemies attack your base, not just you.
 
-This file defines base target-priority behavior. For future ideology-driven target selection and behavior-first lore delivery, defer to `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`.
+This file defines base target-priority behavior. For future ideology-driven target selection and behavior-first lore delivery, defer to `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`.
 
 ### Vault Theft Extension
 

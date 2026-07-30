@@ -46,9 +46,9 @@ const SUNDERED_KEEP_MAP_SCRIPT := preload("res://game/world/sundered_keep/sunder
 const WORLD_INGRESS_SITE_SCRIPT := preload("res://game/world/procgen/ingress/world_ingress_site.gd")
 const LEVEL_LOADER_SCRIPT := preload("res://game/world/levels/level_loader.gd")
 const WORLD_INGRESS_SPAWNER_SCRIPT := preload("res://game/world/levels/world_ingress_spawner.gd")
-const SUNDERED_KEEP_WORLD_VISTA_SCENE := preload(
-	"res://game/world/vistas/sundered_keep/"
-	+ "sundered_keep_world_vista.tscn"
+const SUNDERED_KEEP_FRONTAGE_VISUAL_SPAWNER_SCRIPT := preload(
+	"res://game/world/procgen/landmarks/sundered_keep/"
+	+ "sundered_keep_frontage_visual_spawner.gd"
 )
 const SUNDERED_KEEP_LEVEL_ID := &"sundered_keep_front_gate"
 const WORLD_ORIGIN_BRANCH_GROUP := &"world_origin_branch"
@@ -1132,25 +1132,22 @@ func _place_sundered_keep_world_vista(
 			)
 		):
 			continue
-		var vista := (
-			SUNDERED_KEEP_WORLD_VISTA_SCENE.instantiate() as Node2D
+		var visual_spawner := (
+			SUNDERED_KEEP_FRONTAGE_VISUAL_SPAWNER_SCRIPT.new()
 		)
+		var vista := visual_spawner.call(
+			"spawn",
+			landmarks,
+			ingress,
+			map_instance,
+			level_data
+		) as Node2D
 		if vista == null:
 			push_warning(
 				"[ContractWorldLoader] Could not instantiate "
-				+ "Sundered Keep world Vista"
+				+ "Sundered Keep procgen frontage presentation"
 			)
 			return
-		vista.name = "SunderedKeepWorldVista"
-		vista.add_to_group("generated_sundered_keep_world_vista")
-		landmarks.add_child(vista)
-		if vista.has_method("configure"):
-			vista.call(
-				"configure",
-				ingress,
-				map_instance,
-				level_data
-			)
 		return
 
 

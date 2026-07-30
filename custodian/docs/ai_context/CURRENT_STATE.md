@@ -2,8 +2,27 @@
 
 Last updated: 2026-07-29
 
+Documentation updates this session:
+- Created `design/02_features/factions/FACTION_EXPRESSION_SYSTEM.md` — full implementation spec from Faction Continuity Audit findings, covering taxonomy lock, canonical IDs, gameplay boundaries, roster reduction, data model, migration order, and Sundered Keep vertical slice.
+- Remediated terminology drift in 6 documents: fixed "Great Severance" → "the Severing", "The Unarrival" → "the Unnarrival", "Penitents of Static" → "Pale Bell Penitents", `penitent_of_static` → `pale_bell_penitent`, and obsolete directory paths (`03_content/` → `03_world/`, `00_canon/` → `03_world/lore/`).
+- Reduced faction bible in GAME_PROTOCOLS_AND_WORLD_LORE.md to summary+links (canon now in `design/03_world/factions/`, implementation spec in `design/02_features/factions/FACTION_EXPRESSION_SYSTEM.md`, lore authority in `design/03_world/lore/CORE_LORE.md`).
+
 ## Runtime Status
 
+- First Strike and Initiative V1 is live. The first eligible direct
+  Operator hit in an engagement adds 20% stagger/breach pressure with no
+  health-damage bonus. The player-owned fixed-step engagement tracker resolves
+  initiative once across joining/ambush hostiles and ends an engagement after
+  four seconds without living hostile target/pursue/attack/investigate intent.
+  The Vanguard Seal combat relic occupies one constrained `relic` slot and,
+  after a successful claim, grants 8% direct damage plus 15% stagger damage for
+  eight seconds or until direct hostile damage. Inventory saves now persist
+  both sidearm and relic equipment while loading the legacy flat carried-item
+  shape. The Seal is recovered manually from the Gatehouse Core, East Command
+  Cache after the Sundered Keep gatehouse siege reaches `secured`; its opened
+  state persists, equipped ownership blocks duplicate awards, and recovery
+  never auto-equips it. The activation uses a restrained six-frame brass-white
+  closure VFX; a HUD indicator remains conditional on playtest readability.
 - CUSTODIAN Moment Forge is live as a developer-only deterministic
   micro-playtest workbench. Six curated JSON scenarios cover light/heavy combat,
   Marine deflect, parry, Field Patch, and the Sundered Keep first reveal.
@@ -14,10 +33,16 @@ Last updated: 2026-07-29
   simulation authority. Review artifacts stay under `reports/moment_forge/`
   and include telemetry, stable metrics/assertions, contact sheets, optional
   Movie Maker audio/video, advisory visual diffs, and a dependency-free HTML report.
-  The light-hit scenario has passed all three capture modes. Marine deflect,
-  deterministic enemy parry initiation, and the production-sized first-vista
-  traversal still require narrow public fixture calibration before their
-  presentation claims become stable event assertions. This
+  The original light-hit full capture passed the then-current root-position
+  assertions while exposing a legacy/full-body visual-anchor jump. The
+  contaminated Operator sprite transforms are now normalized to `(0, -18)`,
+  a direct-scene transition smoke protects every visual layer, and light/heavy
+  scenarios fail when any visible layer exceeds `0.5 px` anchor delta. The
+  `visual-anchor-fix-final` full rerun measured `0.0 px` at every
+  authored contact-sheet tick, including legacy-body ticks 34 and 40. Marine
+  deflect, deterministic enemy parry initiation, and the production-sized
+  first-vista traversal still require narrow public fixture calibration before
+  their presentation claims become stable event assertions. This
   is curated scenario capture, not the broader arbitrary Developer Replay
   System.
 - The Ash-Bell Forlorn-Ritualant remains a partial encounter foundation, not a
@@ -63,7 +88,7 @@ Last updated: 2026-07-29
 - Operator dodge input now uses bounded tap/hold profiles: release below `0.12s` preserves the fixed 480-speed, 0.20-second tap dodge and its existing roll-exit attack cancel; `0.12s` selects a 1.30× long roll with 1.25× recovery and 20 stamina cost; `0.30s` selects a 1.55× committed roll with 1.60× recovery and 26 stamina cost. All profiles retain the same 0.16-second iframe ceiling. Charge has no invulnerability, cancels on incoming hits/runtime locks, and now holds a dedicated five-frame directional windup by charge ratio. Deterministic Dodge Flow connects released openers to uncapped stamina-limited tap chains: inputs buffer from `0.10–0.20s` or within `0.06s` late recovery, direction retains `100/75/40/0%` Flow across the four turn bands, maximum Flow grants `+12%` peak chain speed, `+18%` integrated travel, and `-35%` recovery without changing active/iframe clocks, and the final link blends explicit exit carry into run/sprint before Flow decays. Clean turns through 90 degrees use the dedicated four-frame link strip over the fixed 0.20-second clock; turns over 90 degrees retain the nine-frame full-dodge pivot, and final settle retains existing exit art. E/S/W charge and link body coverage uses deterministic nearest-sector presentation fallback without changing gameplay direction. Additive charge feedback remains opener-only, while chain links retain the thin Flow-scaled continuation streak.
 - Authored destinations now have a reusable CLI-first level pipeline with hardened lifecycle and live route traversal. World-local `RouteTraversalManager` owns directed profiles, transactional node handoff/rollback, history, generic exit binding, world-origin exfil, and the implemented cache/state policies; post-commit entry rollback synchronously clears target loader authority so failure is immediately retryable. `LevelLoader` remains the low-level stage/activate/deactivate/release service. Registry ingress starts route sessions, and level-only ingress uses an internal `@world_origin → node → @world_origin` route. `WorldIngressSpawner` combines route- and level-owned ingress definitions deterministically. Sundered Keep production is `@world_origin → Front Gate → @world_origin`; its Vista remains in the generated world and never joins the route. The old approach and unfinished Return Causeway remain registered only for isolated `legacy_vista_debug` and `causeway_only` review. Front Gate unload/revisit restores scalar, siege-objective, and Great Hall ambush state without replaying one-shot side effects. Profile validation rejects disconnected enabled participants. Runtime `persistent` route state survives later sessions through `RouteStateStore`, but save-file persistence remains deferred. The scaffold generator can create/append managed routes transactionally and runs full proposed-graph validation before overwrite preflight or writes, including dry-run.
 - The queued feedback fixes are live: scrap-part pickups play `pickup_collect_01.wav`; the critical low-health warning is raised from -4 dB to -1 dB; enemy-side `HEAVY` hit strength guarantees stagger below the critical threshold; paired critical contact applies dedicated camera shake plus its directional kick; and inventory cards expose hover tooltips with item identity, class, quantity, and description.
-- The legacy Vista Approach Camera 1 and Camera 2 remain reversible, position-controlled influence envelopes for `legacy_vista_debug` regression coverage. They no longer own production framing or routing. Production uses the smaller `SunderedKeepWorldVista` one-envelope controller while the Operator and procgen world stay active. Its ingress is resolved at the north map edge, and every seed receives the same local nine-tile-wide authored procgen floor pocket; natural centerline walkability selects placement but never substitutes for cinematic clearance.
+- The legacy Vista Approach Camera 1 and Camera 2 remain reversible, position-controlled influence envelopes for `legacy_vista_debug` regression coverage. They no longer own production framing or routing. Production uses `SunderedKeepProcgenFrontagePresentation` over the continuously active generated world. Its two camera envelopes are sampled at normalized generated-route progress, its terminal ingress is the generated `gate_anchor`, and its playable floor comes only from irregular route/terrace/side-pocket masks.
 - Superseding Camera 1 visual ownership: the position envelope now removes occlusion inside one continuous world instead of crossfading `VistaRoot`. The storm-only `UnderlayRoot/FirstVistaBaseStormHorizon`, ocean underlay, base parallax, and playable route remain continuously visible at alpha 1. An alpha-valid Keep/island landmark rises from 0.08 to 0.92, one controlled fog veil peels from 0.68 to 0.24 over about 121 pixels, and moonlight peaks at 0.20; after handback the Keep remains at 0.82 and fog settles at 0.32. Grand Vista, close fortress, foreground ruins, and the final-gate veil stay hidden during Camera 1. `SunderedKeepRevealDirector` owns prompt timing and reveal signals only, not Camera 1 fog, light, framing, or presentation alpha.
 - Developer Observatory exports now disclose event-ring capacity, cumulative logged events, dropped events, and
   saturation; the analyzer also flags legacy full 300-event exports as potentially wrapped. Projectile roots own their
@@ -106,7 +131,7 @@ Last updated: 2026-07-29
 - Doc-drift remediation: swept all `design/20_features/` references across design docs under `02_features/` and change-control docs, updating 8 files to point to the active `02_features/` paths. Archived/historical references left in place. Only intentional historical/retired references remain.
 - Operator parry-success readability no longer depends on `ModularUpperFxSprite` surviving the 0.03-second success-to-neutral transition. Successful parries now spawn a dedicated world-space one-shot burst and one positional `parry_success_01.wav` cue at the captured contact point; misses and failed/expired attempts remain silent. Modular `PLACEHOLDER_unarmed_parry_success_fx*` remains optional motion dressing with missing-direction warnings. Enemy grunt BREACH/ring timing and all parry simulation timings are unchanged.
 - Allied combat-drone guard commands support hostile and selected Shrumb designation. While `J` is held, a valid hostile or `drone_command_target` Shrumb under the pointer receives a red command reticle; clicking assigns it as the explicit squad target and anchors the order at its position. Empty-ground clicks retain ordinary guard placement, automatic fire-at-will acquisition still skips passive Shrumbs, and explicit targets remain constrained by guard engagement/return/leash rules. `K` now performs a complete return-to-Operator-follow command: it clears guard/target/marker state and restores tactical `FOLLOW`, while preserving fire discipline and close/far/free-roam formation distance.
-- Sundered Keep is the first destination wrapped by the shared `LevelDefinition` / `LevelRegistry` / `LevelLoader` contract. `ContractWorldLoader` places a collision-free `SunderedKeepWorldVista` beside the generated north-edge ingress while procgen remains active; placement orientation and edge distance are propagated as ingress metadata, and every seed claims the same authored overlook pocket after placement. The Vista uses a positive-z, spatially bounded storm/Keep/fog aperture and a dedicated 2048×512 foreground cliff lip to seal distant procgen without hiding the Operator's immediate ground. The aperture width, lip scale, and camera bounds fit the live viewport at cinematic zoom; the storm uses only the parent reveal alpha. The regenerated eight-seed manifest records `authored_pocket: true` for every capture. Human approval remains pending because the current captures expose a rectangular fog-veil boundary and the renderer-backed fixture has no visible Operator stand-in with which to verify lower-quarter framing. Crossing the separate `WorldIngressSite` resolves the production route directly into `front_gate`. The former `vista_approach` node is retained only under `legacy_vista_debug`, and `return_causeway` remains under `causeway_only`. The old four-stage route prototype is retired from production ingress; Gothic Compound, Home, and Ash-Bell are not independently registered destinations yet.
+- Sundered Keep is the first destination wrapped by the shared `LevelDefinition` / `LevelRegistry` / `LevelLoader` contract. Its production approach is now an intent-graph-owned `ASCENT_FIELD` landmark: `sundered_keep_landmark_intent_builder.gd` extends the ascent spine, `sundered_keep_frontage_builder.gd` generates an irregular protected route/terrace/side-pocket/cliff mask, and `ProcGenTilemap` merges those cells before route playability, terrain, sites, dressing, and final audit. The result exports semantic route, gate, camera, visual, encounter, and fortress-exclusion anchors as `sundered_keep_frontage`; no special-room footprint, authored overlook pocket, route-master ground, or mapper collision owns production traversal. `ContractWorldLoader` spawns a collision-free semantic presentation over the live generated world, with two reversible Operator-position camera envelopes, clean aspect-cover storm/void coverage, fortress modules, fog, and final-gate shadow. Unneeded exposed border-wall tiles are pruned only where they protect no generated floor, leaving procgen cliff masks as the natural traversal boundary. `WorldIngressSite` is placed exactly at the generated terminal `gate_anchor` and only crossing it resolves the production route into `front_gate`. The former `vista_approach` node remains `legacy_vista_debug`, `return_causeway` remains `causeway_only`, and the old authored approach/mapper are reference/debug composition artifacts.
 - Active runtime: Godot 4.x project in `custodian/`.
 - Active main scene: `res://scenes/game.tscn`.
 - Authority model: Godot-authoritative runtime with no external gameplay authority.
@@ -204,15 +229,20 @@ Last updated: 2026-07-29
   `SunderedKeepMap` consume the same 127 reviewed capsule rails and seven placement markers. Rails own permanent static
   boundaries; PNG alpha owns none, and duplicate per-tile wall rectangles are suppressed. Dynamic gate, door, blocking-prop,
   and encounter barriers remain independent.
-- Sundered Keep production access follows procgen world Vista → separate `WorldIngressSite` → Front Gate.
-  The Vista itself starts no route; Front Gate exits directly to world origin.
-  The ingress now uses `north_edge_overlook`; every generated map claims a
-  local authored overlook pocket after placement, including naturally
-  walkable edge corridors.
+- Sundered Keep production access follows generated procgen frontage → terminal
+  `WorldIngressSite` → Front Gate. The frontage itself starts no route; Front
+  Gate exits directly to world origin. The ingress uses
+  `procgen_landmark_terminal` and resolves exactly to the generated
+  `sundered_keep_frontage.gate_anchor`; no authored overlook pocket is claimed.
   The old approach is quarantined behind `legacy_vista_debug`, and Return Causeway behind `causeway_only`.
-  World-Vista, ingress, route graph/state, and authored-exit smokes validate physical camera reversal,
-  procgen continuity, direct production entry, debug profiles, cache policy, exits, and nested state restore.
-- Current Severance canon: The world did not collapse because shared context merely faded. The Great Severance is rooted in a supernatural/cosmic provenance wound caused by The Unarrival; information collapse and fragmented history are the observable symptoms, and knowledge recovery is provenance stabilization across object, origin, witness, time, use, and meaning.
+  Frontage, presentation, ingress, route graph/state, and authored-exit smokes
+  validate deterministic irregular generation, physical camera reversal,
+  procgen continuity, direct production entry, debug profiles, cache policy,
+  exits, and nested state restore. The completed renderer review covers eight
+  seeds and 32 frames at 2560×1440 under
+  `reports/sundered_keep_procgen_frontage/`; later human composition polish
+  may refine the reused Vista art without changing procgen authority.
+- Current Severing canon: The world did not collapse because shared context merely faded. The Severing is rooted in a supernatural/cosmic provenance wound caused by the Unnarrival; information collapse and fragmented history are the observable symptoms, and knowledge recovery is provenance stabilization across object, origin, witness, time, use, and meaning. See `design/03_world/lore/CORE_LORE.md` for the canon terminology ladder.
 
 ## Current Implemented Slice
 
@@ -310,7 +340,7 @@ Last updated: 2026-07-29
 - An offline wall tile extraction/composition pipeline now exists under `tools/tiles/`, using canonical source `custodian/content/tiles/walls/source/procgen_wall_modules_source.png` to generate procgen wall source modules, a packed source atlas, metadata, and composed previews under `custodian/assets/tiles/walls/generated/`.
 - Procgen walls now use a generated fixed-grid wall bridge atlas: `tools/tiles/build_procgen_wall_atlas.py` converts extracted wall modules plus optional `32px`-tall passage strips from `custodian/content/tiles/walls/source/wall_passages/` and optional wall-top preprocessing from `custodian/content/tiles/walls/Wall_Tops.png` into `custodian/content/tiles/walls/generated/procgen_wall_tiles_32.png` plus semantic mapping JSON, and `proc_gen_map.tscn` points wall rendering at TileSet source ID `12`. Passage-strip art is exported through `reference_passage_wall_coords` and can appear as deterministic visual variants on ordinary horizontal wall runs; this does not carve walkable openings or change wall collision.
 - Destructible procgen wall collision removal is tile-scoped inside chunk bodies: breaking one wall removes only that tile's runtime shape, and full runtime collision rebuilds detach empty chunks before queue-free so replacements are not skipped.
-- The active Vista Approach lives at `res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn` with a reference/dev blockout at `res://scenes/levels/sundered_keep/sundered_keep_approach_blockout.tscn`. It owns the ocean/sky/far-sea/distant-keep/fog/path/occlusion composition, hero-overlook presentation, vista progress markers, shared-camera presentation framing, mapper-authored perimeter rails, named spawns, and generic `continue`/`return_world` exits. Before route entry, `WorldIngressSite` captures every classified top-level origin branch and hides and processing-disables that exact set for the complete route session; failed entry restores the snapshot immediately, while successful traversal restores it only during exfil. The scene deliberately has no destination path, branch switch, gatehouse key, blocker, or Keep enemy markers; Return Causeway and Front Gate own their local progression.
+- The authored Vista Approach at `res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn` and its collision mapper are retained as reference/debug composition artifacts under `legacy_vista_debug`; they are not production playable-world authority. Production uses the generated frontage described in `design/05_levels/SUNDERED_KEEP_PROCGEN_FRONTAGE.md`. Before the generated gate ingress is crossed, procgen remains active and reverse traversal is ordinary world movement. Once crossed, `WorldIngressSite` captures every classified top-level origin branch and hides and processing-disables that exact set for the complete Front Gate route session; failed entry restores the snapshot immediately, while successful traversal restores it only during exfil.
 - The older Route/Stage presentation prototype (`LevelStage`, `LevelRoute`, and `game/world/routes/sundered_keep/stages/`) remains disconnected and is not the live traversal authority. The live V1 authority is `route_traversal_manager.gd` plus registry JSON; the prototype must not regain destination instancing.
 - Procgen wall collision authority is runtime-body based rather than TileSet-physics based: visible walls are grouped into deterministic `RuntimeWallChunk` bodies with exact per-tile shapes. Streaming reveal creates shapes incrementally, suppresses per-tile debug reconstruction, and coalesces full overlay/shadow/collision-safety/navigation rebuilds to a bounded interval or queue completion. Projectile contact position selects the exact destructible tile; the focused compaction fixture reduces 585 shapes to 28 bodies while retaining neighboring collision after one tile is destroyed.
 - Operator combat is organized as profile-relative primary attacks plus a context-sensitive offhand secondary. Primary maps to fast melee/unarmed or ranged fire depending on loadout; the legacy `Shift+primary` secondary chord still requests heavy melee/unarmed. The actual offhand button (`aim_hold` / `attack_secondary`, right mouse or LT) now resolves by slot context: selected ranged primary holds primary ranged-ready, melee/unarmed plus equipped P-9 holds sidearm-ready, and melee/unarmed with empty or guard-focused offhand holds guard-ready so primary can parry from guard.
@@ -470,7 +500,7 @@ Last updated: 2026-07-29
 - Agent automation backlog: `custodian/docs/ai_context/AGENT_AUTOMATION_BACKLOG.md`.
 - Active runtime docs: `custodian/docs/*`.
 - Godot implementation specs: `design/`.
-- Sundered Keep Approach design doc: `design/05_levels/SUNDERED_KEEP_VISTA_APPROACH.md` (implementation-ready).
+- Sundered Keep production frontage design doc: `design/05_levels/SUNDERED_KEEP_PROCGEN_FRONTAGE.md`. `SUNDERED_KEEP_VISTA_APPROACH.md` and the authored approach runtime are reference/debug composition authority only.
 - Required asset tracker: `REQUIRED_ASSETS.md`.
 - Event design docs: `design/02_features/events/LAST_ROUTEKEEPER_EVENT.md` (spec) and `design/02_features/events/LAST_ROUTEKEEPER_EVENT_CODE.md` (drop-in code) for The Last Routekeeper — a rare, one-time residual-system event inside Sundered Keep where the player recovers B. Chaffee's field-survey trace.
 - Locked doctrine: `python-sim/design/MASTER_DESIGN_DOCTRINE.md`.

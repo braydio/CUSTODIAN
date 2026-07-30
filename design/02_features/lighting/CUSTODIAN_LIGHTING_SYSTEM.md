@@ -65,7 +65,7 @@ Painted multiply-blended contact/cast shadows live under `custodian/content/spri
 grunt use the character contact texture through `blob_shadow.gd`; the gatehouse test uses small/large prop shadows.
 
 The authored profile set now includes exterior, shadowed courtyard, gatehouse interior, Return Causeway moonlight,
-Ash-Bell ember-dark, and Severance anomaly roles under `custodian/content/lighting/profiles/`. These resources are
+Ash-Bell ember-dark, and Severing anomaly roles under `custodian/content/lighting/profiles/`. These resources are
 available to `LightingZone2D`; they do not globally brighten the world.
 
 `TransientLightPool` is for cheap additive sprite flashes such as muzzle flashes, impact sparks, parry flashes, boot

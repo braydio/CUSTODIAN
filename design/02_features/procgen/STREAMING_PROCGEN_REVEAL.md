@@ -4,7 +4,7 @@
 **Status:** In Progress  
 **Created:** 2026-03-26
 **Last Updated:** 2026-04-08
-**Content Canon Authority:** `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
+**Content Canon Authority:** `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 
 ## Goal
 

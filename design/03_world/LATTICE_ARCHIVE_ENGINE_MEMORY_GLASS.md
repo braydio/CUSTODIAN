@@ -95,7 +95,7 @@ object → origin → witness → time → use → meaning → authority
 
 CUSTODIAN's world is not broken because records were lost. It is broken because the relationships that allow records to agree with reality were wounded.
 
-The Great Severance damaged the substrate that lets events be commonly witnessed, remembered, sequenced, inherited, and trusted.
+The Severing damaged the substrate that lets events be commonly witnessed, remembered, sequenced, inherited, and trusted.
 
 ### 3.2 Local Provenance State
 
@@ -137,11 +137,11 @@ authority detaches from origin
 memory detaches from history
 ```
 
-### 4.2 The Unarrival
+### 4.2 The Unnarrival
 
-**The Unarrival** is the deeper impossible source behind the Great Severance: a presence, event, saint, weaponized contradiction, or non-event that cannot fully enter history but still leaves consequences inside it.
+**The Unnarrival** is the deeper impossible source behind the Severing: a presence, event, saint, weaponized contradiction, or non-event that cannot fully enter history but still leaves consequences inside it.
 
-The Unarrival is not to be overexplained in normal player-facing text. It should be encountered through symptoms: records that contradict themselves, artifacts that precede manufacture, witnesses that precede events, and histories that demand continuation without ever having begun.
+The Unnarrival is not to be overexplained in normal player-facing text. It should be encountered through symptoms: records that contradict themselves, artifacts that precede manufacture, witnesses that precede events, and histories that demand continuation without ever having begun.
 
 ### 4.3 Archive Failure
 
@@ -407,7 +407,7 @@ The Archive Engine is the machine-authority system that reinforces it.
 Memory Glass is the Engine's mnemonic command-state substrate.
 Provenance is the relationship between object, origin, witness, time, use, meaning, and authority.
 The Pale breaks those relationships.
-The Unarrival is the impossible root wound behind the Severance.
+The Unnarrival is the impossible root wound behind the Severing.
 When an Archive Engine can no longer reconcile Pale intrusion, its Memory Glass fractures into incompatible histories.
 Those fractures are not just remains of a failed Lattice. They may be one of the ways the Lattice failed.
 

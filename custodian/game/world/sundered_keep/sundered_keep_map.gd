@@ -63,6 +63,11 @@ const SUNDERED_GATE_KEY_FLAVOR := "A corroded winch key stamped with the keep's 
 const SIDEARM_LOCKER_ITEM_NAME := "P-9 Field Sidearm"
 const SIDEARM_LOCKER_PICKUP_MESSAGE := "P-9 FIELD SIDEARM ACQUIRED"
 const SIDEARM_LOCKER_ITEM_ID := &"p9_sidearm"
+const VANGUARD_SEAL_ITEM_ID := &"vanguard_seal"
+const VANGUARD_SEAL_ICON_PATH := (
+	"res://content/ui/inventory/runtime/icons/relics/"
+	+ "vanguard_seal__icon__inventory__default__omni__1f__48.png"
+)
 
 const WALL_ASSET_DIRS := [
 	"res://content/tiles/sundered_keep/entrance/causeway_walls",
@@ -86,6 +91,7 @@ const WALL_ASSET_DIRS := [
 @export var return_mooring_origin_tile: Vector2i = Vector2i(39, 56)
 @export var key_pickup_tile: Vector2i = Vector2i(73, 56)
 @export var sidearm_locker_tile: Vector2i = Vector2i(73, 27)
+@export var vanguard_seal_cache_tile: Vector2i = Vector2i(62, 46)
 @export var routekeeper_trace_tile: Vector2i = Vector2i(37, 53)
 @export var routekeeper_hint_tile: Vector2i = Vector2i(25, 39)
 @export_range(0, 100, 1) var routekeeper_base_spawn_chance_percent := 4
@@ -117,6 +123,12 @@ var _main_gate_interaction: Node2D = null
 var _great_hall_door_interaction: Node2D = null
 var _key_pickup_interaction: Node2D = null
 var _sidearm_locker_interaction: Node2D = null
+var _vanguard_seal_cache_interaction: Node2D = null
+var _vanguard_seal_cache_visual: Node2D = null
+var _vanguard_seal_cache_lid: Polygon2D = null
+var _vanguard_seal_cache_item_sprite: Sprite2D = null
+var _vanguard_seal_cache_power_light: Polygon2D = null
+var _vanguard_seal_cache_pulse: Line2D = null
 var _main_gate_closed_sprite: Sprite2D = null
 var _main_gate_open_sprite: AnimatedSprite2D = null
 var _main_gate_open_frames: SpriteFrames = null
@@ -128,6 +140,7 @@ var _main_gate_open := false
 var _great_hall_door_open := false
 var _has_sundered_gate_key := false
 var _sidearm_locker_opened := false
+var _vanguard_seal_cache_opened := false
 var _return_mooring_created := false
 var _last_routekeeper_event: Node2D = null
 var _last_routekeeper_interaction: Node2D = null
@@ -271,6 +284,7 @@ func capture_route_state() -> Dictionary:
 		"return_mooring_created": _return_mooring_created,
 		"great_hall_door_open": _great_hall_door_open,
 		"sidearm_locker_opened": _sidearm_locker_opened,
+		"vanguard_seal_cache_opened": _vanguard_seal_cache_opened,
 		"routekeeper_trace_recovered": _last_routekeeper_trace_recovered,
 		"siege_started": _siege_started,
 		"siege_wave_index": _siege_wave_index,
@@ -304,6 +318,9 @@ func restore_route_state(state: Dictionary) -> bool:
 		false
 	)
 	_sidearm_locker_opened = bool(state.get("sidearm_locker_opened", false))
+	_vanguard_seal_cache_opened = bool(
+		state.get("vanguard_seal_cache_opened", false)
+	)
 	_last_routekeeper_trace_recovered = bool(state.get("routekeeper_trace_recovered", false))
 	_siege_started = bool(state.get("siege_started", false))
 	_siege_wave_index = int(state.get("siege_wave_index", 0))
@@ -325,6 +342,7 @@ func restore_route_state(state: Dictionary) -> bool:
 	):
 		return false
 	_restore_siege_runtime_after_route_load()
+	_sync_vanguard_seal_cache_state()
 	_refresh_hud_state()
 	return true
 
@@ -470,6 +488,11 @@ func get_sundered_keep_debug_state() -> Dictionary:
 			and _sidearm_locker_interaction != null \
 			and is_instance_valid(_sidearm_locker_interaction) \
 			and _sidearm_locker_interaction.is_in_group("interactable"),
+		"vanguard_seal_cache_tile": vanguard_seal_cache_tile,
+		"vanguard_seal_cache_opened": _vanguard_seal_cache_opened,
+		"vanguard_seal_cache_exists": _vanguard_seal_cache_interaction != null \
+			and is_instance_valid(_vanguard_seal_cache_interaction),
+		"vanguard_seal_cache_available": _is_vanguard_seal_cache_available(),
 		"return_mooring_created": _return_mooring_created,
 		"siege_started": _siege_started,
 		"siege_state": _siege_state,
@@ -574,6 +597,7 @@ func _build_once() -> void:
 	_build_irregular_courtyard()
 	_build_great_hall()
 	_build_sidearm_locker()
+	_build_vanguard_seal_cache_presentation()
 	_build_east_rampart()
 	_build_west_service_path()
 	_build_traversal_stubs()
@@ -673,6 +697,7 @@ func _build_from_level_data(data: Dictionary) -> void:
 	_build_great_hall_marine_ambush()
 	_build_sidearm_locker()
 	_build_siege_runtime_slice()
+	_build_vanguard_seal_cache_presentation()
 	_build_traversal_stubs()
 	_add_return_gate()
 	_apply_underlay_marker_placements()
@@ -1010,6 +1035,8 @@ func _apply_interactable(op: Dictionary) -> void:
 			_great_hall_door_interaction = interactable
 		&"sidearm_locker":
 			_sidearm_locker_interaction = interactable
+		&"vanguard_seal_cache":
+			_vanguard_seal_cache_interaction = interactable
 
 
 func _apply_marker(marker: Dictionary) -> void:
@@ -1026,6 +1053,8 @@ func _apply_marker(marker: Dictionary) -> void:
 			great_hall_door_tile = tile
 		"sidearm_locker":
 			sidearm_locker_tile = tile
+		"vanguard_seal_cache":
+			vanguard_seal_cache_tile = tile
 
 
 func _build_stateful_gates_from_level_data() -> void:
@@ -1812,6 +1841,179 @@ func _build_sidearm_locker() -> void:
 	)
 
 
+func _build_vanguard_seal_cache_presentation() -> void:
+	if _vanguard_seal_cache_visual != null \
+	and is_instance_valid(_vanguard_seal_cache_visual):
+		_sync_vanguard_seal_cache_state()
+		return
+	_vanguard_seal_cache_visual = Node2D.new()
+	_vanguard_seal_cache_visual.name = "VanguardSealCommandCacheVisual"
+	_vanguard_seal_cache_visual.position = (
+		_tile_center(vanguard_seal_cache_tile) + Vector2(0.0, -12.0)
+	)
+	(_layers["PropsStatic"] as Node2D).add_child(_vanguard_seal_cache_visual)
+
+	var shadow := Polygon2D.new()
+	shadow.name = "ScorchedWallShadow"
+	shadow.polygon = PackedVector2Array([
+		Vector2(-17.0, -17.0),
+		Vector2(18.0, -15.0),
+		Vector2(16.0, 15.0),
+		Vector2(-18.0, 17.0),
+	])
+	shadow.color = Color(0.06, 0.045, 0.035, 0.72)
+	_vanguard_seal_cache_visual.add_child(shadow)
+
+	var case_back := Polygon2D.new()
+	case_back.name = "BatteredFieldCache"
+	case_back.polygon = PackedVector2Array([
+		Vector2(-14.0, -13.0),
+		Vector2(14.0, -13.0),
+		Vector2(14.0, 13.0),
+		Vector2(-14.0, 13.0),
+	])
+	case_back.color = Color(0.18, 0.16, 0.125, 1.0)
+	_vanguard_seal_cache_visual.add_child(case_back)
+
+	var recess := Polygon2D.new()
+	recess.name = "EquipmentRecess"
+	recess.polygon = PackedVector2Array([
+		Vector2(-10.0, -9.0),
+		Vector2(10.0, -9.0),
+		Vector2(10.0, 9.0),
+		Vector2(-10.0, 9.0),
+	])
+	recess.color = Color(0.035, 0.035, 0.03, 1.0)
+	_vanguard_seal_cache_visual.add_child(recess)
+
+	var hook := Line2D.new()
+	hook.name = "EquipmentHook"
+	hook.points = PackedVector2Array([
+		Vector2(0.0, -9.0),
+		Vector2(0.0, -4.0),
+		Vector2(3.0, -2.0),
+	])
+	hook.width = 1.5
+	hook.default_color = Color(0.54, 0.43, 0.24, 1.0)
+	_vanguard_seal_cache_visual.add_child(hook)
+
+	_vanguard_seal_cache_item_sprite = Sprite2D.new()
+	_vanguard_seal_cache_item_sprite.name = "VanguardSealOnHook"
+	_vanguard_seal_cache_item_sprite.texture = _load_texture(VANGUARD_SEAL_ICON_PATH)
+	_vanguard_seal_cache_item_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_vanguard_seal_cache_item_sprite.scale = Vector2.ONE * 0.38
+	_vanguard_seal_cache_item_sprite.position = Vector2(0.0, 2.0)
+	_vanguard_seal_cache_visual.add_child(_vanguard_seal_cache_item_sprite)
+
+	_vanguard_seal_cache_lid = Polygon2D.new()
+	_vanguard_seal_cache_lid.name = "PartiallyOpenCacheDoor"
+	_vanguard_seal_cache_lid.polygon = PackedVector2Array([
+		Vector2(-14.0, -13.0),
+		Vector2(14.0, -13.0),
+		Vector2(14.0, 13.0),
+		Vector2(-14.0, 13.0),
+	])
+	_vanguard_seal_cache_lid.color = Color(0.24, 0.215, 0.16, 0.97)
+	_vanguard_seal_cache_visual.add_child(_vanguard_seal_cache_lid)
+
+	var service_mark := Line2D.new()
+	service_mark.name = "SplitRingServiceInsignia"
+	service_mark.width = 1.5
+	service_mark.default_color = Color(0.68, 0.53, 0.27, 0.92)
+	var service_points := PackedVector2Array()
+	for point_index in range(13):
+		var angle := lerpf(-2.45, 2.45, float(point_index) / 12.0)
+		service_points.append(Vector2(cos(angle), sin(angle)) * 5.0)
+	service_mark.points = service_points
+	_vanguard_seal_cache_lid.add_child(service_mark)
+
+	_vanguard_seal_cache_power_light = Polygon2D.new()
+	_vanguard_seal_cache_power_light.name = "CommandCachePowerLight"
+	_vanguard_seal_cache_power_light.polygon = PackedVector2Array([
+		Vector2(-1.5, -1.5),
+		Vector2(1.5, -1.5),
+		Vector2(1.5, 1.5),
+		Vector2(-1.5, 1.5),
+	])
+	_vanguard_seal_cache_power_light.position = Vector2(9.0, 8.0)
+	_vanguard_seal_cache_visual.add_child(_vanguard_seal_cache_power_light)
+
+	_vanguard_seal_cache_pulse = Line2D.new()
+	_vanguard_seal_cache_pulse.name = "SecuredActivationPulse"
+	_vanguard_seal_cache_pulse.width = 2.0
+	_vanguard_seal_cache_pulse.default_color = Color(0.95, 0.63, 0.22, 0.0)
+	var pulse_points := PackedVector2Array()
+	for point_index in range(17):
+		var angle := TAU * float(point_index) / 16.0
+		pulse_points.append(Vector2(cos(angle), sin(angle)) * 17.0)
+	_vanguard_seal_cache_pulse.points = pulse_points
+	_vanguard_seal_cache_visual.add_child(_vanguard_seal_cache_pulse)
+	_sync_vanguard_seal_cache_state()
+
+
+func _is_vanguard_seal_cache_available() -> bool:
+	return not _vanguard_seal_cache_opened \
+		and _siege_state == "secured" \
+		and _vanguard_seal_cache_interaction != null \
+		and is_instance_valid(_vanguard_seal_cache_interaction) \
+		and _vanguard_seal_cache_interaction.is_in_group("interactable")
+
+
+func _sync_vanguard_seal_cache_state(play_activation_pulse := false) -> void:
+	var available := not _vanguard_seal_cache_opened and _siege_state == "secured"
+	if _vanguard_seal_cache_interaction != null \
+	and is_instance_valid(_vanguard_seal_cache_interaction):
+		if available:
+			_vanguard_seal_cache_interaction.add_to_group("interactable")
+		else:
+			_vanguard_seal_cache_interaction.remove_from_group("interactable")
+		_vanguard_seal_cache_interaction.visible = not _vanguard_seal_cache_opened
+	if _vanguard_seal_cache_lid != null:
+		_vanguard_seal_cache_lid.position = (
+			Vector2(18.0, -4.0) if available or _vanguard_seal_cache_opened
+			else Vector2.ZERO
+		)
+		_vanguard_seal_cache_lid.rotation = (
+			-0.18 if available or _vanguard_seal_cache_opened else 0.0
+		)
+	if _vanguard_seal_cache_item_sprite != null:
+		_vanguard_seal_cache_item_sprite.visible = (
+			available and not _vanguard_seal_cache_opened
+		)
+	if _vanguard_seal_cache_power_light != null:
+		_vanguard_seal_cache_power_light.color = (
+			Color(1.0, 0.58, 0.16, 1.0) if available
+			else Color(0.14, 0.11, 0.08, 0.8)
+		)
+	if play_activation_pulse and available:
+		_play_vanguard_seal_cache_activation_pulse()
+
+
+func _disable_vanguard_seal_cache() -> void:
+	_sync_vanguard_seal_cache_state()
+
+
+func _play_vanguard_seal_cache_activation_pulse() -> void:
+	if _vanguard_seal_cache_pulse == null:
+		return
+	_vanguard_seal_cache_pulse.scale = Vector2.ONE * 0.65
+	_vanguard_seal_cache_pulse.modulate = Color(1.0, 0.68, 0.24, 0.9)
+	var tween := create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(
+		_vanguard_seal_cache_pulse,
+		"scale",
+		Vector2.ONE * 1.35,
+		0.55
+	).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.tween_property(
+		_vanguard_seal_cache_pulse,
+		"modulate:a",
+		0.0,
+		0.55
+	).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+
+
 func _build_irregular_courtyard() -> void:
 	_fill_polygon_spans({
 		27: [Vector2i(25, 53)],
@@ -2459,6 +2661,14 @@ func _update_hud_prompt() -> void:
 			input_hint,
 			UI_CATALOG.ICON_OBJECTIVE
 		)
+	elif target == _vanguard_seal_cache_interaction \
+	and _is_vanguard_seal_cache_available():
+		_hud.show_interaction(
+			"CUSTODIAN COMMAND CACHE",
+			"Recover Vanguard Seal",
+			input_hint,
+			UI_CATALOG.ICON_OBJECTIVE
+		)
 	elif target == _last_routekeeper_interaction and not _last_routekeeper_trace_recovered:
 		_hud.show_interaction(
 			"ROUTEKEEPER TRACE",
@@ -2489,6 +2699,8 @@ func _handle_sundered_interaction(kind: StringName, actor: Node) -> void:
 			_try_open_great_hall_door()
 		&"sidearm_locker":
 			_grant_sidearm_locker(actor)
+		&"vanguard_seal_cache":
+			_recover_vanguard_seal()
 		&"last_routekeeper_trace":
 			_recover_last_routekeeper_trace()
 		&"repair_gatehouse":
@@ -2539,6 +2751,53 @@ func _grant_sidearm_locker(_actor: Node) -> void:
 		)
 	_refresh_hud_state()
 	print("[SunderedKeep] %s: %s recovered from sealed field-retention locker." % [SIDEARM_LOCKER_PICKUP_MESSAGE, SIDEARM_LOCKER_ITEM_NAME])
+
+
+func _recover_vanguard_seal() -> void:
+	if _vanguard_seal_cache_opened or _siege_state != "secured":
+		return
+	var inventory := get_node_or_null("/root/InventoryManager")
+	if inventory == null:
+		push_warning(
+			"[SunderedKeep] InventoryManager unavailable for Vanguard Seal"
+		)
+		return
+	if not _player_has_vanguard_seal(inventory):
+		if not inventory.has_method("add_item"):
+			push_warning(
+				"[SunderedKeep] InventoryManager cannot award Vanguard Seal"
+			)
+			return
+		inventory.call("add_item", VANGUARD_SEAL_ITEM_ID, 1)
+	_vanguard_seal_cache_opened = true
+	_disable_vanguard_seal_cache()
+	if _hud != null and is_instance_valid(_hud):
+		_hud.show_interaction(
+			"VANGUARD SEAL RECOVERED",
+			"Equip through Inventory → Relics",
+			_get_interact_prompt_key(),
+			UI_CATALOG.ICON_OBJECTIVE
+		)
+	_refresh_hud_state()
+	print(
+		"[SunderedKeep] The gatehouse cache recognized the secured Custodian "
+		+ "position and released the field seal assigned to its previous keeper."
+	)
+
+
+func _player_has_vanguard_seal(inventory: Node = null) -> bool:
+	var inventory_ref := inventory
+	if inventory_ref == null:
+		inventory_ref = get_node_or_null("/root/InventoryManager")
+	if inventory_ref == null:
+		return false
+	if inventory_ref.has_method("has_item") \
+	and bool(inventory_ref.call("has_item", VANGUARD_SEAL_ITEM_ID, 1)):
+		return true
+	if inventory_ref.has_method("get_equipped"):
+		return StringName(inventory_ref.call("get_equipped", &"relic")) \
+			== VANGUARD_SEAL_ITEM_ID
+	return false
 
 
 func _try_open_main_gate() -> void:
@@ -2769,6 +3028,7 @@ func _complete_siege() -> void:
 	_siege_state = "secured"
 	if _siege_timer != null:
 		_siege_timer.stop()
+	_sync_vanguard_seal_cache_state(true)
 	_update_siege_debug_label()
 	_refresh_hud_state()
 	print("[SunderedKeep] Siege secured: enemy pressure stopped.")

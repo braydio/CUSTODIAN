@@ -2,19 +2,15 @@ extends SceneTree
 
 const VISTA_SCENE := preload(
 	"res://game/world/vistas/sundered_keep/"
-	+ "sundered_keep_world_vista.tscn"
+	+ "sundered_keep_procgen_vista_presentation.tscn"
 )
 const TEST_CAMERA := preload(
 	"res://tools/validation/fixtures/level_lifecycle_test_camera.gd"
 )
-const CAMERA_CONTROLLER := preload("res://game/world/camera.gd")
 
 
 class FakeMap:
 	extends Node2D
-
-	func global_to_minimap_tile(point: Vector2) -> Vector2i:
-		return Vector2i(floori(point.x / 32.0), floori(point.y / 32.0))
 
 	func get_runtime_tile_size() -> Vector2:
 		return Vector2(32.0, 32.0)
@@ -42,25 +38,17 @@ func _run() -> void:
 	procgen.add_child(map_instance)
 	var operator := Node2D.new()
 	operator.name = "Operator"
-	operator.global_position = Vector2(1536.0, 640.0)
 	world.add_child(operator)
 	var camera := TEST_CAMERA.new()
 	camera.name = "Camera2D"
 	camera.runtime_map = map_instance
 	world.add_child(camera)
-	var route_spy := Node.new()
-	route_spy.name = "RouteTraversalManager"
-	world.add_child(route_spy)
 	var ingress := Area2D.new()
 	ingress.name = "SunderedKeepIngressSite"
-	ingress.global_position = Vector2(1536.0, 256.0)
+	ingress.global_position = Vector2(74, 14) * 32.0
 	ingress.set_meta(
 		"world_ingress_outward_direction",
 		Vector2i.UP
-	)
-	ingress.set_meta(
-		"world_ingress_edge_distance_tiles",
-		8
 	)
 	world.add_child(ingress)
 	var landmarks := Node2D.new()
@@ -73,173 +61,218 @@ func _run() -> void:
 		"configure",
 		ingress,
 		map_instance,
-		{"map_size": Vector2i(96, 96)}
+		_frontage_level_data()
 	)
 	await process_frame
 
 	var original_parent := operator.get_parent()
 	var original_ingress_position := ingress.global_position
-	var influence_start := vista.get_node("CameraInfluenceStart") as Marker2D
-	var apex := vista.get_node("CameraApex") as Marker2D
-	var return_complete := vista.get_node("CameraReturnComplete") as Marker2D
+	var first_start := vista.get_node(
+		"FirstCameraInfluenceStart"
+	) as Marker2D
+	var first_apex := vista.get_node("FirstRevealApex") as Marker2D
+	var first_return := vista.get_node(
+		"FirstCameraReturnComplete"
+	) as Marker2D
+	var frontage_start := vista.get_node(
+		"FrontageRevealStart"
+	) as Marker2D
+	var frontage_apex := vista.get_node("FrontageApex") as Marker2D
+	var gameplay_return := vista.get_node("GameplayReturn") as Marker2D
 
-	operator.global_position = influence_start.global_position
-	vista.call("_process", 0.0)
-	_assert_weight(vista, 0.0, "gameplay start", errors)
-	operator.global_position = apex.global_position
-	vista.call("_process", 0.0)
-	_assert_weight(vista, 1.0, "camera apex", errors)
-	var state := vista.call("get_world_vista_debug_state") as Dictionary
-	if state.get("outward_direction") != Vector2.UP:
-		errors.append("production world Vista was not oriented north")
-	var edge_distance := int(
-		ingress.get_meta(
-			"world_ingress_edge_distance_tiles",
-			-1
-		)
+	_assert_camera_weight(vista, operator, first_start, 0.0, "entry", errors)
+	_assert_camera_weight(
+		vista,
+		operator,
+		first_apex,
+		1.0,
+		"first reveal",
+		errors
 	)
-	if edge_distance < 0 or edge_distance > 8:
-		errors.append(
-			"Vista ingress was not placed near the north map edge"
-		)
-	var storm := vista.get_node(
-		"HorizonPresentation/StormParallax/StormHorizon"
-	) as Sprite2D
-	if storm.z_index <= 0:
-		errors.append(
-			"horizon aperture remained beneath procgen presentation"
-		)
-	if (
-		not storm.region_enabled
-		or storm.region_rect.size.x < 2600.0
-		or storm.region_rect.size.y < 1200.0
-	):
-		errors.append(
-			"horizon aperture did not restrict storm coverage"
-		)
-	var lip := vista.get_node("ForegroundCliffLip") as Sprite2D
-	if lip.texture == null:
-		errors.append("Vista has no foreground separation asset")
-	elif lip.texture.get_size() != Vector2(2048.0, 512.0):
-		errors.append("Vista foreground separator is not 2048x512")
+	if not camera.presentation_framing:
+		errors.append("first reveal did not acquire shared-camera framing")
+	_assert_camera_weight(
+		vista,
+		operator,
+		first_return,
+		0.0,
+		"first return",
+		errors
+	)
+	_assert_camera_weight(
+		vista,
+		operator,
+		frontage_start,
+		0.0,
+		"frontage entry",
+		errors
+	)
+	_assert_camera_weight(
+		vista,
+		operator,
+		frontage_apex,
+		1.0,
+		"frontage apex",
+		errors
+	)
+	_assert_camera_weight(
+		vista,
+		operator,
+		gameplay_return,
+		0.0,
+		"gameplay return",
+		errors
+	)
+	if camera.presentation_framing:
+		errors.append("camera framing remained active after frontage return")
+
+	# The two envelopes are physically reversible and never take route authority.
+	_assert_camera_weight(
+		vista,
+		operator,
+		frontage_apex,
+		1.0,
+		"reverse frontage apex",
+		errors
+	)
+	_assert_camera_weight(
+		vista,
+		operator,
+		frontage_start,
+		0.0,
+		"reverse frontage entry",
+		errors
+	)
+	_assert_camera_weight(
+		vista,
+		operator,
+		first_apex,
+		1.0,
+		"reverse first apex",
+		errors
+	)
+	_assert_camera_weight(
+		vista,
+		operator,
+		first_start,
+		0.0,
+		"reverse world traversal",
+		errors
+	)
+
 	vista.call(
 		"_fit_presentation_to_viewport",
 		Vector2(2560.0, 1440.0)
 	)
 	vista.call("_update_presentation_bounds")
-	vista.call("_process", 0.0)
-	state = vista.call("get_world_vista_debug_state") as Dictionary
-	var expected_safety_width := 2560.0 / 0.78 + 192.0
-	if float(
-		state.get("fitted_safety_width", 0.0)
-	) < expected_safety_width - 0.01:
-		errors.append(
-			"Vista did not fit presentation width for 2560x1440"
-		)
-	if float(
-		state.get("cliff_lip_world_width", 0.0)
-	) < expected_safety_width - 0.01:
-		errors.append(
-			"foreground separator did not cover ultrawide safety width"
-		)
-	var fitted_storm_size := state.get(
-		"storm_region_size",
-		Vector2.ZERO
-	) as Vector2
-	if fitted_storm_size.x < expected_safety_width - 0.01:
-		errors.append(
-			"horizon aperture did not cover ultrawide safety width"
-		)
-	vista.call("_apply_visual_weight", 0.35)
-	if not is_equal_approx(storm.modulate.a, 1.0):
-		errors.append(
-			"storm child alpha multiplied the parent reveal"
-		)
-	var horizon := vista.get_node(
-		"HorizonPresentation"
-	) as Node2D
-	if (
-		horizon.modulate.a <= 0.0
-		or horizon.modulate.a >= 1.0
-	):
-		errors.append(
-			"partial reveal did not remain on HorizonPresentation"
-		)
-	vista.call("_process", 0.0)
-	var bounds := state.get("presentation_bounds", Rect2()) as Rect2
-	if bounds.size.x <= 0.0 or bounds.size.y <= 0.0:
-		errors.append("Vista did not provide presentation bounds")
-	if camera.get_presentation_bounds_override() != bounds:
-		errors.append("camera did not receive the Vista bounds override")
-	if not camera.presentation_framing:
-		errors.append("camera framing was not active at apex")
-	if camera.follow_target != vista.get_node("CameraPresentationAnchor"):
-		errors.append("camera did not follow the presentation anchor")
-
-	operator.global_position = return_complete.global_position
-	vista.call("_process", 0.0)
-	_assert_weight(vista, 0.0, "return complete", errors)
-	if camera.presentation_framing:
-		errors.append("camera framing remained active after return")
-	if camera.get_presentation_bounds_override().size != Vector2.ZERO:
-		errors.append("camera bounds override remained after return")
-
-	operator.global_position = apex.global_position
-	vista.call("_process", 0.0)
-	_assert_weight(vista, 1.0, "reverse apex", errors)
-	operator.global_position = influence_start.global_position
-	vista.call("_process", 0.0)
-	_assert_weight(vista, 0.0, "reverse gameplay", errors)
-
-	if operator.get_parent() != original_parent:
-		errors.append("Vista reparented Operator")
-	if ingress.global_position != original_ingress_position:
-		errors.append("Vista moved the real Keep ingress")
-	if not procgen.visible or procgen.process_mode == Node.PROCESS_MODE_DISABLED:
-		errors.append("Vista hid or disabled ProcGenRuntime")
-	if _contains_collision(vista):
-		errors.append("Vista owns collision instead of world-map terrain")
+	var state := vista.call("get_world_vista_debug_state") as Dictionary
+	var coverage := state.get("viewport_coverage", Vector2.ZERO) as Vector2
+	if coverage.x < 2560.0 / 0.74 or coverage.y < 1440.0 / 0.74:
+		errors.append("presentation does not cover 2560x1440 cinematic view")
+	var storm := vista.get_node(
+		"HorizonPresentation/StormHorizon"
+	) as Sprite2D
+	var fitted_storm_size := (
+		storm.texture.get_size() * storm.scale
+		if storm.texture != null
+		else Vector2.ZERO
+	)
+	if storm.region_enabled \
+			or fitted_storm_size.x < coverage.x \
+			or fitted_storm_size.y < coverage.y:
+		errors.append("storm horizon does not cover maximum viewport")
+	var void_underlay := vista.get_node(
+		"HorizonPresentation/VoidUnderlay"
+	) as Polygon2D
+	if void_underlay.polygon.size() < 4 or void_underlay.z_index >= 0:
+		errors.append("presentation has no deliberate void underlay")
+	for path in [
+		"HorizonPresentation/DistantKeep",
+		"FortressPresentation/OuterWall",
+		"FortressPresentation/CentralCitadel",
+	]:
+		var sprite := vista.get_node(path) as Sprite2D
+		if sprite.texture == null or sprite.z_index >= 0:
+			errors.append("%s is not a behind-gameplay visual layer" % path)
+	if vista.get_node(
+		"ForegroundPresentation/GateShadow"
+	).get("z_index") <= 0:
+		errors.append("gate shadow is not a foreground occluder")
+	if vista.find_child("ForegroundCliffLip", true, false) != null:
+		errors.append("production presentation retained the seam-hiding cliff lip")
 	if vista.find_child("GrandVistaCinematicRoot", true, false) != null:
-		errors.append("world Vista retained the grand-vista stage")
-
-	var camera_math := CAMERA_CONTROLLER.new()
-	var visible_half := camera_math.call(
-		"calculate_visible_half_view",
-		Vector2(1920.0, 1080.0),
-		Vector2(0.78, 0.78)
-	) as Vector2
-	if visible_half.x <= 960.0 or visible_half.y <= 540.0:
-		errors.append("zoomed-out camera bounds do not divide by zoom")
-	camera_math.free()
+		errors.append("production presentation retained a fixed cinematic stage")
+	if _contains_collision(vista):
+		errors.append("presentation owns collision instead of procgen")
+	if operator.get_parent() != original_parent:
+		errors.append("presentation reparented Operator")
+	if ingress.global_position != original_ingress_position:
+		errors.append("presentation moved the generated terminal ingress")
+	if not procgen.visible \
+			or procgen.process_mode == Node.PROCESS_MODE_DISABLED:
+		errors.append("presentation hid or disabled generated world")
+	if state.get("frontage", {}).has("footprint_rect"):
+		errors.append("presentation received rectangular floor authority")
 
 	game_root.queue_free()
 	if errors.is_empty():
 		print("[SunderedKeepWorldVistaSmoke] PASS")
 		quit(0)
 		return
-	for error: String in errors:
+	for error in errors:
 		push_error("[SunderedKeepWorldVistaSmoke] %s" % error)
 	quit(1)
 
 
-func _assert_weight(
+func _frontage_level_data() -> Dictionary:
+	return {
+		"map_size": Vector2i(96, 96),
+		"sundered_keep_frontage": {
+			"landmark_id": &"sundered_keep_frontage",
+			"gate_anchor": Vector2i(74, 14),
+			"fortress_outward_direction": Vector2i.UP,
+			"camera_semantic_anchors": {
+				"frontage_entry": Vector2i(48, 58),
+				"first_influence_start": Vector2i(52, 51),
+				"first_reveal_apex": Vector2i(56, 44),
+				"first_return_complete": Vector2i(60, 37),
+				"frontage_reveal_start": Vector2i(65, 30),
+				"frontage_apex": Vector2i(69, 23),
+				"gameplay_return": Vector2i(72, 17),
+				"gate_threshold": Vector2i(74, 14),
+			},
+			"visual_module_anchors": {
+				"fortress_front_anchor": Vector2i(74, 6),
+			},
+		},
+	}
+
+
+func _assert_camera_weight(
 	vista: Node,
+	operator: Node2D,
+	marker: Marker2D,
 	expected: float,
 	label: String,
 	errors: Array[String]
 ) -> void:
+	operator.global_position = marker.global_position
+	vista.call("_process", 0.0)
 	var state := vista.call("get_world_vista_debug_state") as Dictionary
 	if not is_equal_approx(
 		float(state.get("camera_weight", -1.0)),
 		expected
 	):
-		errors.append("%s weight did not equal %.1f" % [label, expected])
+		errors.append("%s camera weight did not equal %.1f" % [
+			label,
+			expected,
+		])
 
 
 func _contains_collision(node: Node) -> bool:
 	if node is CollisionObject2D or node is CollisionShape2D:
 		return true
-	for child: Node in node.get_children():
+	for child in node.get_children():
 		if _contains_collision(child):
 			return true
 	return false

@@ -5,7 +5,7 @@
 **Created:** 2026-04-06
 **Author:** PAI-OpenCode
 **Last Updated:** 2026-07-20
-**Content Canon Authority:** `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
+**Content Canon Authority:** `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 
 ---
 
@@ -15,7 +15,7 @@ The Command Terminal is the player's primary interface for strategic decision-ma
 
 This specification supersedes the earlier `COMMAND_TERMINAL_UI.md` concept and `ROADMAP_COMMAND_TERMINAL.md` roadmap, incorporating the full four-zone layout, thirteen-page structure, and mode-dependent behavior.
 
-This file is the implementation authority for terminal structure. For player-facing lore tone, confidence language, archive semantics, and the rule that systems should speak in procedure rather than exposition, defer to `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`.
+This file is the implementation authority for terminal structure. For player-facing lore tone, confidence language, archive semantics, and the rule that systems should speak in procedure rather than exposition, defer to `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`.
 
 ---
 

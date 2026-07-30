@@ -78,6 +78,10 @@ const LEDGER_GAP := 8
 const EQUIPMENT_WEAPON_DEFINITIONS := {
 	"p9_sidearm": "res://game/actors/operator/sidearm_pistol_definition.tres",
 }
+const EQUIPMENT_SLOT_BY_ITEM := {
+	"p9_sidearm": &"sidearm",
+	"vanguard_seal": &"relic",
+}
 
 @export var inventory: Inventory
 
@@ -160,6 +164,10 @@ var _equipment_slot_icon: TextureRect
 var _equipment_slot_name: Label
 var _equipment_slot_status: Label
 var _equipment_action_button: Button
+var _relic_slot_icon: TextureRect
+var _relic_slot_name: Label
+var _relic_slot_status: Label
+var _relic_action_button: Button
 var _equipment_available_list: VBoxContainer
 var _equipment_available_empty: Label
 
@@ -923,6 +931,56 @@ func _build_equipment_page() -> Control:
 	info_stack.add_child(button_container)
 	
 	active_stack.add_child(slot_card)
+
+	# Constrained relic slot card. This is intentionally one slot rather than a
+	# generalized talisman/loadout expansion.
+	var relic_card := _panel(true, Vector2(0, 0))
+	relic_card.name = "RelicSlotCard"
+	relic_card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var relic_margin := MarginContainer.new()
+	relic_margin.add_theme_constant_override("margin_left", 16)
+	relic_margin.add_theme_constant_override("margin_top", 12)
+	relic_margin.add_theme_constant_override("margin_right", 16)
+	relic_margin.add_theme_constant_override("margin_bottom", 12)
+	relic_card.add_child(relic_margin)
+	var relic_row := HBoxContainer.new()
+	relic_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	relic_row.add_theme_constant_override("separation", 16)
+	relic_margin.add_child(relic_row)
+	var relic_icon_container := MarginContainer.new()
+	relic_icon_container.custom_minimum_size = Vector2(80, 80)
+	relic_row.add_child(relic_icon_container)
+	_relic_slot_icon = TextureRect.new()
+	_relic_slot_icon.name = "RelicSlotIcon"
+	_relic_slot_icon.custom_minimum_size = Vector2(64, 64)
+	_relic_slot_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_relic_slot_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	_relic_slot_icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	relic_icon_container.add_child(_relic_slot_icon)
+	var relic_info := VBoxContainer.new()
+	relic_info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	relic_info.add_theme_constant_override("separation", 4)
+	relic_row.add_child(relic_info)
+	relic_info.add_child(_label("RELIC SLOT", SYSTEM_TECH, 12))
+	_relic_slot_name = _label("EMPTY", Palette.MUTED_TEXT, 17)
+	_relic_slot_name.name = "RelicSlotName"
+	relic_info.add_child(_relic_slot_name)
+	_relic_slot_status = _label(
+		"No combat relic equipped.",
+		Palette.MUTED_TEXT,
+		12
+	)
+	_relic_slot_status.name = "RelicSlotStatus"
+	_relic_slot_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	relic_info.add_child(_relic_slot_status)
+	_relic_action_button = Button.new()
+	_relic_action_button.name = "RelicActionButton"
+	_relic_action_button.custom_minimum_size = Vector2(180, 34)
+	_relic_action_button.disabled = true
+	_apply_button_style(_relic_action_button)
+	_relic_action_button.pressed.connect(_on_relic_action_pressed)
+	relic_info.add_child(_relic_action_button)
+	active_stack.add_child(relic_card)
 	body.add_child(active_panel)
 
 	var available_panel := _section_panel(Vector2(420, 0))
@@ -971,13 +1029,18 @@ func _on_resource_ledger_changed(_snapshot: Dictionary) -> void:
 func _connect_live_inventory() -> void:
 	_inventory_manager = get_node_or_null("/root/InventoryManager")
 	if _inventory_manager != null and _inventory_manager.has_signal("inventory_changed"):
-		var callback := Callable(self, "_refresh_entries")
+		var callback := Callable(self, "_on_inventory_changed")
 		if not _inventory_manager.is_connected("inventory_changed", callback):
 			_inventory_manager.connect("inventory_changed", callback)
 	if _inventory_manager != null and _inventory_manager.has_signal("equipment_changed"):
 		var equip_callback := Callable(self, "_on_equipment_changed")
 		if not _inventory_manager.is_connected("equipment_changed", equip_callback):
 			_inventory_manager.connect("equipment_changed", equip_callback)
+
+
+func _on_inventory_changed() -> void:
+	_refresh_entries()
+	_refresh_equipment_page()
 
 
 func _on_equipment_changed(_slot_name: StringName, _item_id: StringName) -> void:
@@ -996,6 +1059,8 @@ func _refresh_equipment_page() -> void:
 		_equipment_slot_status.text = "Inventory manager unavailable."
 		_equipment_action_button.disabled = true
 		_equipment_action_button.visible = false
+		if _relic_action_button != null:
+			_relic_action_button.disabled = true
 		return
 	
 	var equipped_id := str(_inventory_manager.call("get_equipped", &"sidearm"))
@@ -1013,16 +1078,66 @@ func _refresh_equipment_page() -> void:
 		_equipment_action_button.disabled = not sidearm_available
 		_equipment_action_button.visible = true
 	else:
-		# Equipped
 		var definition := ItemCatalog.get_definition(StringName(equipped_id))
 		var display_name := str(definition.get("display_name", equipped_id))
-		_equipment_slot_icon.texture = Assets.item_portrait(StringName(equipped_id))
+		_equipment_slot_icon.texture = Assets.item_portrait(
+			StringName(equipped_id)
+		)
 		_equipment_slot_name.text = display_name.to_upper()
 		_equipment_slot_name.modulate = Palette.GOLD_TEXT
-		_equipment_slot_status.text = str(definition.get("description", "No description available."))
+		_equipment_slot_status.text = str(
+			definition.get("description", "No description available.")
+		)
 		_equipment_action_button.text = "UNEQUIP"
 		_equipment_action_button.disabled = false
 		_equipment_action_button.visible = true
+
+	_refresh_relic_slot()
+
+
+func _refresh_relic_slot() -> void:
+	if (
+		_relic_slot_icon == null
+		or _relic_slot_name == null
+		or _relic_slot_status == null
+		or _relic_action_button == null
+	):
+		return
+	var equipped_id := str(_inventory_manager.call("get_equipped", &"relic"))
+	if equipped_id.is_empty():
+		var available := bool(
+			_inventory_manager.call("has_item", &"vanguard_seal", 1)
+		)
+		_relic_slot_icon.texture = (
+			Assets.item_portrait(&"vanguard_seal")
+			if available else Assets.texture("icon_unknown")
+		)
+		_relic_slot_name.text = (
+			"VANGUARD SEAL / AVAILABLE" if available else "EMPTY"
+		)
+		_relic_slot_name.modulate = (
+			Palette.BODY_TEXT if available else Palette.MUTED_TEXT
+		)
+		_relic_slot_status.text = (
+			"Claim initiative to gain a brief direct-damage and stagger advantage."
+			if available else "No combat relic recovered."
+		)
+		_relic_action_button.text = (
+			"EQUIP RELIC" if available else "NO RELIC AVAILABLE"
+		)
+		_relic_action_button.disabled = not available
+		return
+	var definition := ItemCatalog.get_definition(StringName(equipped_id))
+	_relic_slot_icon.texture = Assets.item_portrait(StringName(equipped_id))
+	_relic_slot_name.text = str(
+		definition.get("display_name", equipped_id)
+	).to_upper()
+	_relic_slot_name.modulate = Palette.GOLD_TEXT
+	_relic_slot_status.text = str(
+		definition.get("description", "No description available.")
+	)
+	_relic_action_button.text = "UNEQUIP"
+	_relic_action_button.disabled = false
 
 
 func _rebuild_available_equipment() -> void:
@@ -1034,16 +1149,13 @@ func _rebuild_available_equipment() -> void:
 		_equipment_available_list.remove_child(child)
 		child.queue_free()
 
-	var equipped_id := ""
-	if _inventory_manager != null and _inventory_manager.has_method("get_equipped"):
-		equipped_id = str(_inventory_manager.call("get_equipped", &"sidearm"))
-
 	var available: Array[Dictionary] = []
 	for entry in _entries:
-		var definition: Dictionary = entry.get("definition", {})
-		if str(definition.get("category", "carried")) != "equipment":
+		var item_id := StringName(str(entry.get("item_id", "")))
+		var slot_name := _get_equipment_slot_for_item(item_id)
+		if slot_name == &"":
 			continue
-		if str(entry.get("item_id", "")) == equipped_id:
+		if str(_inventory_manager.call("get_equipped", slot_name)) == String(item_id):
 			continue
 		available.append(entry)
 
@@ -1146,6 +1258,25 @@ func _on_equipment_action_pressed() -> void:
 	_refresh_equipment_page()
 
 
+func _on_relic_action_pressed() -> void:
+	if _inventory_manager == null:
+		return
+	var equipped_id := StringName(
+		str(_inventory_manager.call("get_equipped", &"relic"))
+	)
+	if equipped_id == &"":
+		_equip_item_to_slot(&"vanguard_seal", &"relic")
+		return
+	if not bool(_inventory_manager.call("unequip_slot", &"relic")):
+		return
+	record_history_entry(
+		"EQUIPMENT",
+		"Vanguard Seal returned to carried inventory.",
+		SYSTEM_TECH
+	)
+	_refresh_equipment_page()
+
+
 func _on_equip_button_pressed() -> void:
 	if _inventory_manager == null or not _inventory_manager.has_method("equip_item"):
 		return
@@ -1167,6 +1298,17 @@ func _equip_item_to_slot(item_id: StringName, slot_name: StringName) -> void:
 		push_warning("[InventoryUI] Slot %s already filled" % slot_name)
 		return
 	
+	if slot_name == &"relic":
+		if bool(_inventory_manager.call("equip_item", item_id, slot_name)):
+			record_history_entry(
+				"EQUIPMENT",
+				"%s equipped to relic slot." % str(item_id),
+				Palette.GREEN_SIGNAL
+			)
+			_refresh_equipment_page()
+			_refresh_entries()
+		return
+
 	# Find the mapping to weapon definition
 	var def_path := str(EQUIPMENT_WEAPON_DEFINITIONS.get(item_id, ""))
 	if def_path.is_empty():
@@ -1206,9 +1348,7 @@ func _equip_item_to_slot(item_id: StringName, slot_name: StringName) -> void:
 ## Given an equipment item_id, return which equipment slot it belongs in.
 ## Override this to add new slot mappings.
 func _get_equipment_slot_for_item(item_id: StringName) -> StringName:
-	if EQUIPMENT_WEAPON_DEFINITIONS.has(item_id):
-		return &"sidearm"
-	return &""
+	return StringName(EQUIPMENT_SLOT_BY_ITEM.get(String(item_id), &""))
 
 
 func _load_resource_defs() -> void:
@@ -1624,12 +1764,6 @@ func _item_icon_material(item_id: String) -> Material:
 func _show_equip_button_if_applicable(entry: Dictionary) -> void:
 	if _ledger_detail_equip_button == null or _inventory_manager == null:
 		return
-	var category := str(entry.get("definition", {}).get("category", "carried"))
-	if category != "equipment":
-		_ledger_detail_equip_button.visible = false
-		_ledger_detail_equip_button.disabled = true
-		return
-	
 	var item_id := StringName(str(entry["item_id"]))
 	var slot_name := _get_equipment_slot_for_item(item_id)
 	if slot_name == &"":

@@ -20,10 +20,22 @@ func _init() -> void:
 	]:
 		_assert(_has_zone(level_data, zone_id), "missing authored cheat-sheet zone: %s" % zone_id)
 	for critical_key in [
-		"interactables", "markers", "interior_occlusion_regions", "underpass_regions", "shore_walk_regions",
+		"interior_occlusion_regions", "underpass_regions", "shore_walk_regions",
 		"return_mooring_origin_tile", "key_pickup_tile", "main_gate_tile", "great_hall_door_tile",
 	]:
 		_assert(level_data.get(critical_key) == preserved_level_data.get(critical_key), "gameplay-critical V1 metadata changed silently: %s" % critical_key)
+	for preserved_interactable in preserved_level_data.get("interactables", []):
+		_assert(
+			(level_data.get("interactables", []) as Array).has(preserved_interactable),
+			"pre-relayout interactable was not preserved: %s"
+			% str((preserved_interactable as Dictionary).get("name", ""))
+		)
+	for preserved_marker in preserved_level_data.get("markers", []):
+		_assert(
+			(level_data.get("markers", []) as Array).has(preserved_marker),
+			"pre-relayout marker was not preserved: %s"
+			% str((preserved_marker as Dictionary).get("id", ""))
+		)
 	for coverage in level_data.get("blocker_visual_coverage", []):
 		_assert(not (coverage as Dictionary).get("visible_coverage", []).is_empty(), "blocker lacks authored visible coverage: %s" % str((coverage as Dictionary).get("blocker_name", "")))
 	for placeholder_id in [
@@ -47,13 +59,14 @@ func _init() -> void:
 	_assert(int(state["missing_assets"]) == 0, "large layout has missing asset references")
 	_assert(int(state["floor_sprites"]) > 500, "large layout placed too few floor sprites")
 	_assert(int(state["wall_sprites"]) > 40, "large layout placed too few wall sprites")
-	_assert(int(state["interactable_areas"]) >= 4, "expected mooring, key, gate, and Great Hall interactables")
+	_assert(int(state["interactable_areas"]) >= 6, "expected mooring, key, gate, Great Hall, P-9, and Vanguard cache interactables")
 	_assert(state["main_gate_open"] == false, "main gate must start closed")
 	_assert(state["great_hall_door_open"] == false, "Great Hall door must start closed")
 	_assert(state["return_mooring_created"] == true, "return mooring module was not created")
 	_assert(map.get_node_or_null("ReturnMooringInteraction") != null, "return mooring interaction missing")
 	_assert(map.get_node_or_null("SunderedGateKeyPickup") != null, "Sundered Gate Key pickup missing")
 	_assert(map.get_node_or_null("MainGateInteraction") != null, "main gate interaction missing")
+	_assert(map.get_node_or_null("VanguardSealCache") != null, "Vanguard Seal cache interaction missing")
 	_assert(map.get_node_or_null("Collision/PrefabGatehouseGateBlocker") != null, "closed prefab gate blocker missing")
 	var mapped_collision := map.get_node_or_null(
 		"MappedUnderlayBounds/UnderlayBoundaryCollision"

@@ -13,7 +13,11 @@ var _items: Dictionary = {}
 var _equipment_slots: Dictionary = {}
 
 const SIDEARM_SLOT := &"sidearm"
-const DEFAULT_EQUIPMENT_SLOTS: Array[StringName] = [&"sidearm"]
+const RELIC_SLOT := &"relic"
+const DEFAULT_EQUIPMENT_SLOTS: Array[StringName] = [
+	SIDEARM_SLOT,
+	RELIC_SLOT,
+]
 
 
 func add_item(item_id: StringName, amount: int = 1) -> int:
@@ -69,6 +73,7 @@ func clear() -> void:
 	_equipment_slots.clear()
 	inventory_changed.emit()
 	equipment_changed.emit(SIDEARM_SLOT, &"")
+	equipment_changed.emit(RELIC_SLOT, &"")
 
 
 ## Equipment API — extensible slot-based system for equipping items.
@@ -131,16 +136,37 @@ func get_all_equipped() -> Dictionary:
 
 
 func to_save_dict() -> Dictionary:
-	var out := {}
+	var item_data := {}
 	for key in _items.keys():
-		out[String(key)] = int(_items[key])
-	return out
+		item_data[String(key)] = int(_items[key])
+	var equipment_data := {}
+	_init_equipment_slots()
+	for slot_name in DEFAULT_EQUIPMENT_SLOTS:
+		equipment_data[String(slot_name)] = String(
+			_equipment_slots.get(slot_name, &"")
+		)
+	return {
+		"items": item_data,
+		"equipment_slots": equipment_data,
+	}
 
 
 func from_save_dict(data: Dictionary) -> void:
 	_items.clear()
-	for key in data.keys():
-		var amount := int(data[key])
+	_equipment_slots.clear()
+	_init_equipment_slots()
+	var item_data: Dictionary = data.get("items", data)
+	for key in item_data.keys():
+		var amount := int(item_data[key])
 		if amount > 0:
 			_items[StringName(str(key))] = amount
+	var equipment_data: Dictionary = data.get("equipment_slots", {})
+	for slot_name in DEFAULT_EQUIPMENT_SLOTS:
+		var item_id := StringName(str(equipment_data.get(String(slot_name), "")))
+		_equipment_slots[slot_name] = item_id
 	inventory_changed.emit()
+	for slot_name in DEFAULT_EQUIPMENT_SLOTS:
+		equipment_changed.emit(
+			slot_name,
+			StringName(_equipment_slots.get(slot_name, &""))
+		)

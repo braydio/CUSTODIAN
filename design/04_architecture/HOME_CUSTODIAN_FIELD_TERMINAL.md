@@ -195,7 +195,7 @@ RETURN TO POST.
 RETURN TO POST.
 ```
 
-The player does not know what happened. The game does not explain the Severance. It gives one concrete command.
+The player does not know what happened. The game does not explain the Severing. It gives one concrete command.
 
 ### Beat 2 — Following the command
 
@@ -509,7 +509,7 @@ Best combination:
 Early game term: understandable.
 Deep lore term: weirder.
 
-## How to connect it to The Unarrival
+## How to connect it to the Unnarrival
 
 The terminal should contain one impossible record, but not enough to explain it.
 
@@ -528,7 +528,7 @@ FAILURE PRECEDES INSTALLATION.
 INSTALLATION RECORD UNARRIVED.
 ```
 
-The player should not know what “Unarrived” means yet. The terminal may not even use the noun “The Unarrival” yet. It should classify the problem as:
+The player should not know what "Unarrived" means yet. The terminal may not even use the noun "the Unnarrival" yet. It should classify the problem as:
 
 ```text
 UNFILED ORIGIN STATE

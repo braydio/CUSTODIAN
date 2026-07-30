@@ -9,7 +9,7 @@
 **Blocks:** Campaign Flow & Game Loop, Integration Contract, Biome Runtime Expansion
 **Runtime Target:** Godot 4.x (`custodian/`)
 **Last Updated:** 2026-04-08
-**Content Canon Authority:** `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
+**Content Canon Authority:** `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 
 ---
 
@@ -63,7 +63,7 @@ It must preserve four already-established truths:
 3. contract/procgen world promotion is already part of the runtime baseline 
 4. designer-authored room-template hybrid generation is already an active implementation path via Edgar/Tiled room templates, not just raw noise fields 
 
-This file is the **region-construction authority**. For the fiction meaning of Contracts, legibility classes, factions, procedural lore stack, and environmental storytelling rules, defer to `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`.
+This file is the **region-construction authority**. For the fiction meaning of Contracts, legibility classes, factions, procedural lore stack, and environmental storytelling rules, defer to `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`.
 
 ---
 

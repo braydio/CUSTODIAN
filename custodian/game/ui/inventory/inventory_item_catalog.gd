@@ -4,6 +4,7 @@ extends RefCounted
 const ITEM_FILES := [
 	"res://content/items/shrumb_drops/shrumb_drops.json",
 	"res://content/items/lore/ash_bell_items.json",
+	"res://content/items/relics/combat_relics.json",
 ]
 
 static var _definitions: Dictionary = {}

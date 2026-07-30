@@ -4,7 +4,7 @@ Status: in progress
 Owner: procgen/runtime
 Runtime target: Godot 4 (`custodian/`)
 Last Updated: 2026-04-08
-Content Canon Authority: `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
+Content Canon Authority: `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 
 ## Purpose
 
@@ -13,7 +13,7 @@ Pair PixelPlanets with `procgen/proc_gen_map` so one deterministic contract seed
 1. CUSTODIAN contracted planet
 2. CUSTODIAN map instance (plus level data)
 
-This file is the planet/runtime coupling authority. For content-facing world identity, procedural lore stack targets, and the rule that the contracted world should feel like a recoverable place rather than a generic procgen slice, defer to `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`.
+This file is the planet/runtime coupling authority. For content-facing world identity, procedural lore stack targets, and the rule that the contracted world should feel like a recoverable place rather than a generic procgen slice, defer to `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`.
 
 ## Integration Approach
 

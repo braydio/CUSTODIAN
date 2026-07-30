@@ -48,6 +48,7 @@ func _run() -> void:
 		"return_mooring_created",
 		"great_hall_door_open",
 		"sidearm_locker_opened",
+		"vanguard_seal_cache_opened",
 		"routekeeper_trace_recovered",
 		"siege_started",
 		"siege_wave_index",
@@ -83,6 +84,7 @@ func _run() -> void:
 		"return_mooring_created": true,
 		"great_hall_door_open": true,
 		"sidearm_locker_opened": true,
+		"vanguard_seal_cache_opened": true,
 		"routekeeper_trace_recovered": true,
 		"siege_started": true,
 		"siege_wave_index": 2,
@@ -168,6 +170,7 @@ func _assert_restored_state(
 	for property_name in [
 		"_key_pickup_interaction",
 		"_sidearm_locker_interaction",
+		"_vanguard_seal_cache_interaction",
 		"_main_gate_interaction",
 		"_great_hall_door_interaction",
 	]:

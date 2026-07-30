@@ -9,7 +9,7 @@
 **Blocks:** Integration Contract, end-to-end playable campaign loop
 **Runtime Target:** Godot 4.x (`custodian/`)
 **Last Updated:** 2026-04-08
-**Content Canon Authority:** `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
+**Content Canon Authority:** `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 
 ---
 
@@ -48,7 +48,7 @@ This is the document that answers:
 - how does failure propagate?
 - what actually constitutes one “run,” one “campaign,” one “cycle,” and one “return”?
 
-This file is the **macro-loop authority**. For the fiction meaning of Contracts, Campaigns, the Great Severance, The Unarrival, faction worldview, and lore-delivery constraints, defer to `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`.
+This file is the **macro-loop authority**. For the fiction meaning of Contracts, Campaigns, the Severing, the Unnarrival, faction worldview, and lore-delivery constraints, defer to `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`.
 
 ---
 
@@ -104,7 +104,7 @@ Campaigns should not collapse into binary success/failure. Existing design direc
 
 The game should support repeated cycles of selection, deployment, outcome, and return, but not in the form of endless stat inflation. Persistent gain should be primarily interpretive and doctrinal, not raw combat power.
 
-This interpretive gain must align with the revised Severance canon: information collapse is the symptom, while the deeper wound is broken provenance. Campaign rewards can therefore expose recovered facts, but the strongest rewards should clarify origin, witness, sequence, use, or meaning.
+This interpretive gain must align with the revised Severing canon: information collapse is the symptom, while the deeper wound is broken provenance. Campaign rewards can therefore expose recovered facts, but the strongest rewards should clarify origin, witness, sequence, use, or meaning.
 
 ### 3.6 Keep Runtime Ownership Clear
 
@@ -167,7 +167,7 @@ The compound is the lived-in, immediate home context where the player physically
 
 A campaign region is an instantiated world built from a chosen scenario, played through, resolved, and destroyed.
 
-Campaign regions should be authored and generated as places with recoverable evidence, not as abstract combat arenas. This should remain compatible with the procedural lore stack in `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`.
+Campaign regions should be authored and generated as places with recoverable evidence, not as abstract combat arenas. This should remain compatible with the procedural lore stack in `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`.
 
 The Campaign Flow system must connect all three without blurring them.
 

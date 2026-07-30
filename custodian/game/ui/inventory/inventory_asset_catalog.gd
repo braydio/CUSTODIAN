@@ -9,6 +9,7 @@ const PLACEHOLDER_SVG_ICON_PATTERN := "res://content/ui/inventory/icons/icon_%s.
 const FALLBACK_ICON := "res://content/ui/inventory/icons/icon_placeholder.png"
 const SPECIAL_ITEM_PORTRAITS := {
 	"p9_sidearm": "res://content/weapons/p9_custodian_sidearm/runtime/portrait/p9_custodian_sidearm__portrait__inventory__default__omni__1f__512.png",
+	"vanguard_seal": "res://content/ui/inventory/runtime/icons/relics/vanguard_seal__icon__inventory__default__omni__1f__48.png",
 }
 const SPECIAL_ITEM_HUD_ICONS := {
 	"p9_sidearm": "res://content/weapons/p9_custodian_sidearm/runtime/portrait/p9_custodian_sidearm__icon__hud__default__omni__1f__64.png",

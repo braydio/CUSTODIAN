@@ -4,14 +4,14 @@
 > **Post-collapse name:** Sundern Keep (also rendered as *Sundered Keep* in runtime data)
 > **Design ID:** sundered_keep
 > **Status:** Design reference — not all elements are implemented in runtime
-> **Cross-reference:** See `design/00_canon/CORE_LORE.md` for master lore canon, `design/03_content/factions/` for faction profiles
-> **Terminology note:** "Penitents of Static" corrected to "Pale Bell Penitents" (early) per ASH_BELL_AND_DESIGN_GUIDANCE.md. "The Severance" corrected to "The Severing" (public term). "Unnarrival" → "Unnarrival" (canonical spelling).
+> **Cross-reference:** See `design/03_world/lore/CORE_LORE.md` for master lore canon, `design/03_world/factions/` for faction profiles, `design/02_features/factions/FACTION_EXPRESSION_SYSTEM.md` for faction implementation and taxonomy
+> **Terminology note:** "Penitents of Static" → "Pale Bell Penitents" (early); "The Severance" → "the Severing" (public term); "The Unarrival" → "the Unnarrival" (canonical spelling). See `design/03_world/lore/CORE_LORE.md` for the terminology ladder.
 
 ---
 
 ## One-Line Identity
 
-**Sundern Keep is a continuity fortress built to hold a strategic Lattice aperture, now temporally adrift after the Great Severing caused several incompatible versions of the same keep to converge into one playable ruin.**
+**Sundern Keep is a continuity fortress built to hold a strategic Lattice aperture, now temporally adrift after the Severing caused several incompatible versions of the same keep to converge into one playable ruin.**
 
 It looks like a castle because later cultures misunderstood it as a fortress-monastery. It was originally:
 
@@ -38,7 +38,7 @@ It was connected to verified transit: personnel, packets, tools, archive matter,
 The keep is not stable territory. It is a bounded Lattice field whose local history keeps trying to resolve into a single version, but never fully can. CUSTODIAN is about keeping Lattice reality pockets alive long enough for meaning to exist inside them — not permanently saving the world.
 
 ### Provenance Failure
-Its main wound is not "time travel" in the simple sense. The keep has broken relationships between **object, origin, witness, time, use, and meaning**. This is consistent with the canon Severing framework: The Unnarrival damaged reality's ability to maintain shared cause, memory, witness, and origin; information collapse is the observable symptom; knowledge recovery is provenance stabilization.
+Its main wound is not "time travel" in the simple sense. The keep has broken relationships between **object, origin, witness, time, use, and meaning**. This is consistent with the canon Severing framework: the Unnarrival damaged reality's ability to maintain shared cause, memory, witness, and origin; information collapse is the observable symptom; knowledge recovery is provenance stabilization.
 
 ---
 
@@ -52,7 +52,7 @@ It was something like:
 
 Its job was to protect and adjudicate a major transit node. Anything passing through had to be verified: personnel, archive freight, field operators, sealed records, dead matter, machine cores, and emergency command authority.
 
-Then the Great Severing hit.
+Then the Severing hit.
 
 The keep did not simply collapse. It was caught mid-function. Its systems were verifying transit, sealing gates, routing authority, and preserving witness records when The Unnarrival damaged the causal substrate. Because of this, different procedural states of the keep became lodged together.
 
@@ -95,7 +95,7 @@ The West Gate prevented the breach.
 The West Gate was built because the breach had already been prevented.
 ```
 
-This lets the keep tie directly into The Unnarrival without revealing what The Unnarrival is. The Unnarrival remains ambiguous, appearing through events without origins, artifacts that precede manufacture, sealed rooms with fresh blood, saints awaited after their relics exist, and similar scars.
+This lets the keep tie directly into the Unnarrival without revealing what the Unnarrival is. The Unnarrival remains ambiguous, appearing through events without origins, artifacts that precede manufacture, sealed rooms with fresh blood, saints awaited after their relics exist, and similar scars.
 
 ---
 

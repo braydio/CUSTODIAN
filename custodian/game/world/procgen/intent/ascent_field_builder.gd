@@ -10,6 +10,7 @@ const TERRACE_MIN_SIZE := Vector2i(18, 12)
 const SPAWN_PAD_SIZE := Vector2i(20, 16)
 const EXIT_PAD_SIZE := Vector2i(22, 16)
 const SAFE_PAD_SIZE := Vector2i(18, 14)
+const SUNDERED_KEEP_FRONTAGE_TAG := "sundered_keep_frontage_generated"
 
 
 func build_field(graph, map_size: Vector2i, seed: int = 0) -> Dictionary:
@@ -29,6 +30,9 @@ func build_field(graph, map_size: Vector2i, seed: int = 0) -> Dictionary:
 		var from_node = graph.get_node_by_id(edge.from_id)
 		var to_node = graph.get_node_by_id(edge.to_id)
 		if from_node == null or to_node == null:
+			continue
+		if _is_sundered_keep_frontage_generated_node(from_node) \
+				or _is_sundered_keep_frontage_generated_node(to_node):
 			continue
 		if edge.kind == 0:
 			var width := _route_width_for_edge(edge, seed)
@@ -54,6 +58,8 @@ func build_field(graph, map_size: Vector2i, seed: int = 0) -> Dictionary:
 			)
 
 	for node in graph.nodes:
+		if _is_sundered_keep_frontage_generated_node(node):
+			continue
 		var kind_name := IntentNodeScript.kind_to_string(node.kind)
 		if _is_main_route_node(node):
 			var size := _terrace_size_for_node(node, seed)
@@ -142,6 +148,10 @@ func _is_main_route_node(node) -> bool:
 			or node.kind == IntentNodeScript.NodeKind.MAIN_ROUTE \
 			or node.kind == IntentNodeScript.NodeKind.ASCENT_BEAT \
 			or node.kind == IntentNodeScript.NodeKind.EXIT_GATE
+
+
+func _is_sundered_keep_frontage_generated_node(node) -> bool:
+	return node.tags.has(SUNDERED_KEEP_FRONTAGE_TAG)
 
 
 func _region_from_node(node, rect: Rect2i, fallback_kind: String) -> Dictionary:

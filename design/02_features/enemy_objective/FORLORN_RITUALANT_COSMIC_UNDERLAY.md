@@ -2,7 +2,7 @@
 
 Status: implemented first pass — 2026-06-24
 
-The Forlorn Ritualant room uses a world-space cosmic underlay to make the broken Ash-Bell chamber read as a cave-room suspended over the Unarrival void. This is presentation-only scene layering, not gameplay authority.
+The Forlorn Ritualant room uses a world-space cosmic underlay to make the broken Ash-Bell chamber read as a cave-room suspended over the Unnarrival void. This is presentation-only scene layering, not gameplay authority.
 
 Runtime files:
 

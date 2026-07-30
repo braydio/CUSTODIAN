@@ -197,8 +197,25 @@ env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tool
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_dodge_flow_smoke.gd
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_dodge_overlap_telemetry_smoke.gd
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_modular_fast_attack_smoke.gd
+env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_visual_anchor_smoke.gd
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/codex_task_fixes_smoke.gd
 ```
+
+For universal initiative, Vanguard Seal, relic equipment, and equipment-save
+persistence:
+
+```bash
+cd custodian
+env HOME=/tmp/custodian-godot-home godot --headless --path . --import --quit
+env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/initiative_vanguard_seal_smoke.gd
+env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/inventory_ui_smoke.gd
+env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/sundered_keep_vanguard_seal_acquisition_smoke.gd
+```
+
+The Sundered Keep acquisition smoke validates the authored East Command Cache
+marker and interaction, dormant/contested lock states, secured activation,
+single manual award, equipped-item duplicate protection, route persistence,
+Gatehouse Core traversal, and independent P-9 locker availability.
 
 The focused feedback smoke validates progress fields, dry/reload priority, held-input debounce, hot/critical/overheat/recovery transitions, monotonic reload transfer, per-weapon persistence, zero presentation `NoiseEventBus` emissions, and read-only HUD consumption. The impact-audio smoke validates all authored combat renders plus ordered Return Causeway playlist retention and advancement, target profile assignments, light/heavy body selection, and Shrumb variant cycling. The modular fire and ready-input smokes additionally validate raise/lower direction retargeting without progress reset, committed shot direction, recovery-to-current-aim, posture/readiness status, upper/weapon direction plus frame-clock synchronization, missed-parry silence, and exactly one positional `parry_success_01.wav` cue on confirmed parry success. The charged-roll smoke validates tier selection, proportional speed, longer vulnerable recovery, stamina, invariant iframes, vulnerable charge, and hold/release input; the dodge-charge-feedback smoke validates asset/frame contracts, delayed ratio-driven presentation, compression/latch/release/rejection behavior, and temporary stamina-label copy. The Dodge Flow smoke validates active/late input windows, charge-derived Flow, directional retention, uncapped links, fixed iframe clocks, speed/travel/recovery modifiers, atlas entry frames, final cooldown, exit carry/decay, stamina constraints, signals, and telemetry. The overlap and modular-fast smokes preserve iframe/recovery classification and tap roll-exit compatibility. The socket smoke validates generated Carbine phase-1 metadata, socket-derived muzzle/draw order, transition timing, and camera-owned zoom/lead cancellation. Missing optional authored vent/HUD art warns without failing because the V1 presenter supplies a procedural vent and label fallback.
 
@@ -298,33 +315,41 @@ connection samples at each of 96, 136, and 176 pixels. The focused reaction smok
 
 For Sundered Keep asset wiring specifically:
 
-For the registered Sundered Keep world Vista and direct Front Gate ingress:
+For the procgen-generated Sundered Keep frontage and terminal Front Gate
+ingress:
 
 ```bash
 cd custodian
 godot --headless --path . --script res://tools/validation/sundered_keep_ingress_smoke.gd
+godot --headless --path . --script res://tools/validation/sundered_keep_procgen_frontage_smoke.gd
 godot --headless --path . --script res://tools/validation/sundered_keep_world_vista_smoke.gd
 godot --headless --path . --script res://tools/validation/world_origin_branch_contract_smoke.gd
 bash tools/validation/run_route_pipeline_suite.sh
 godot --display-driver x11 --rendering-driver opengl3 \
   --audio-driver Dummy --path . \
-  --script res://tools/validation/sundered_keep_world_vista_seed_review.gd
+  --script res://tools/validation/sundered_keep_procgen_frontage_seed_review.gd
 ```
 
-The world-Vista smoke proves a single forward/reverse physical camera envelope,
-fixed north-edge orientation, a bounded positive-z horizon aperture, dedicated
-foreground separation, procgen and Operator continuity, collision-free
-landmark ownership, temporary camera bounds, and correct zoomed-out coverage
-math. The renderer-backed seed review produces eight apex PNGs and a manifest
-under `reports/sundered_keep_world_vista/`; it uses an actual renderer because
-Godot's dummy headless driver cannot read back a viewport texture. The ingress
-smoke proves
-the landmark starts no route and that only crossing the separate ingress hides
-origin branches and stages Front Gate. The route suite proves direct production
-entry/exfil, quarantine of `legacy_vista_debug` and `causeway_only`, loader and
-spawn authority, rollback, state policy, and authored exits. The old approach,
-continuity, parallax, and polish smokes remain legacy experiment regressions;
-they no longer define production acceptance.
+The frontage smoke reviews 24 seeds for exactly one intent landmark,
+deterministic and meaningfully variable irregular masks, route
+attachment/width/reachability/reverse traversal, ordered semantic camera
+anchors, generated terminal ingress, dressing/site clearance, post-dressing
+playability, exposed-border pruning, and exclusion of special-room,
+route-master, and rectangular authored authority. The presentation smoke proves
+both forward/reverse physical camera envelopes, semantic module placement,
+collision-free ownership, procgen and Operator continuity, and complete
+2560×1440 storm/void coverage without the old cliff-lip seam.
+
+The renderer-backed review writes four PNGs per seed—world overview, first
+reveal, frontage apex, and gate approach—plus a manifest under
+`reports/sundered_keep_procgen_frontage/`. It requires a real renderer because
+Godot's dummy headless driver cannot read back viewport textures. The ingress
+smoke proves the generated frontage starts no route and that only crossing its
+terminal gate hides origin branches and stages Front Gate. The route suite
+proves direct production entry/exfil, quarantine of `legacy_vista_debug` and
+`causeway_only`, loader/spawn authority, rollback, state policy, and authored
+exits. Old approach, continuity, parallax, and polish smokes remain reference
+experiment regressions; they no longer define production acceptance.
 
 For the reusable authored-level scaffold and registry ingress pipeline:
 

@@ -155,13 +155,24 @@ func _handle_body_hit(body: Node, impact_position: Vector2, surface_normal: Vect
 		return true
 	if body == shooter:
 		return false
+	var base_damage := get_scaled_damage()
+	var hit_modifiers := _prepare_operator_direct_hit(body)
+	var direct_damage := (
+		base_damage
+		* float(hit_modifiers.get("direct_damage_multiplier", 1.0))
+	)
+	var reaction_damage := (
+		base_damage
+		* float(hit_modifiers.get("stagger_damage_multiplier", 1.0))
+	)
 	if body.has_method("receive_projectile_hit") and (_is_world_blocker(body) or _can_hit(body)):
 		var result_variant: Variant
 		if body.is_in_group("runtime_wall_chunk"):
-			result_variant = body.call("receive_projectile_hit", get_scaled_damage(), team, impact_position)
+			result_variant = body.call("receive_projectile_hit", direct_damage, team, impact_position)
 		else:
-			result_variant = body.call("receive_projectile_hit", get_scaled_damage(), team)
+			result_variant = body.call("receive_projectile_hit", direct_damage, team)
 		var was_blocked: bool = _extract_blocked_result(result_variant)
+		_confirm_operator_direct_hit(result_variant, hit_modifiers)
 		_report_operator_confirmed_damage(result_variant, body)
 		_apply_game_feel(body, 0.0)
 		if was_blocked:
@@ -178,14 +189,18 @@ func _handle_body_hit(body: Node, impact_position: Vector2, surface_normal: Vect
 		return false
 
 	if body.has_method("take_damage"):
-		var final_damage: float = get_scaled_damage()
+		var final_damage: float = direct_damage
 		if crit_chance > 0.0 and randf() < crit_chance:
 			final_damage *= crit_multiplier
+			reaction_damage *= crit_multiplier
 		var bullet_hit_strength := CombatConstants.HitStrength.HEAVY if final_damage >= damage * 1.5 else CombatConstants.HitStrength.LIGHT
-		var damage_result: Variant = body.take_damage(
+		var damage_result: Variant = _call_take_damage(
+			body,
 			final_damage,
-			bullet_hit_strength
+			bullet_hit_strength,
+			reaction_damage
 		)
+		_confirm_operator_direct_hit(damage_result, hit_modifiers)
 		_report_operator_confirmed_damage(damage_result, body)
 		_apply_game_feel(body, 60.0)
 		_spawn_impact_at(impact_position, surface_normal)
@@ -197,6 +212,73 @@ func _handle_body_hit(body: Node, impact_position: Vector2, surface_normal: Vect
 		queue_free()
 		return true
 	return false
+
+
+func _prepare_operator_direct_hit(target: Node) -> Dictionary:
+	if (
+		team == "player"
+		and shooter != null
+		and is_instance_valid(shooter)
+		and target != null
+		and target.is_in_group("enemy")
+		and shooter.has_method("prepare_operator_direct_hit")
+	):
+		return shooter.call(
+			"prepare_operator_direct_hit",
+			target,
+			&"ranged"
+		)
+	return {
+		"direct_damage_multiplier": 1.0,
+		"stagger_damage_multiplier": 1.0,
+	}
+
+
+func _call_take_damage(
+	target: Node,
+	direct_damage: float,
+	hit_strength: int,
+	reaction_damage: float
+) -> Variant:
+	var argument_count := 0
+	for method_variant in target.get_method_list():
+		var method := method_variant as Dictionary
+		if StringName(str(method.get("name", ""))) == &"take_damage":
+			argument_count = (method.get("args", []) as Array).size()
+			break
+	if argument_count >= 3:
+		return target.call(
+			"take_damage",
+			direct_damage,
+			hit_strength,
+			reaction_damage
+		)
+	return target.call("take_damage", direct_damage, hit_strength)
+
+
+func _confirm_operator_direct_hit(
+	result_variant: Variant,
+	prepared_hit: Dictionary
+) -> void:
+	if (
+		team != "player"
+		or shooter == null
+		or not is_instance_valid(shooter)
+		or not shooter.has_method("confirm_operator_direct_hit")
+		or not (result_variant is Dictionary)
+	):
+		return
+	var result := result_variant as Dictionary
+	shooter.call(
+		"confirm_operator_direct_hit",
+		float(
+			result.get(
+				"applied_damage",
+				result.get("damage_applied", 0.0)
+			)
+		),
+		prepared_hit
+	)
 
 
 func _report_operator_confirmed_damage(

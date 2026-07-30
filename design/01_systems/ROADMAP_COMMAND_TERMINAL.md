@@ -2,7 +2,7 @@
 
 **Last Updated:** 2026-07-20
 **Implementation Authority:** `design/02_features/terminal/COMMAND_TERMINAL_SPEC.md`
-**Content Canon Authority:** `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
+**Content Canon Authority:** `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 **Audit:** `design/02_features/terminal/TERMINAL_DESIGN_AUDIT.md`
 
 This roadmap is retained for historical reference. Implementation and player-facing language follow the newer authority docs above. The checkbox list below was replaced with a page maturity matrix on 2026-07-20.

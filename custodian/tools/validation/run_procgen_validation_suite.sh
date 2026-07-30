@@ -40,6 +40,7 @@ run_step terrain_ballistics_smoke godot --headless --path . --script res://tools
 run_step procgen_terrain_required_cells_smoke godot --headless --path . --script res://tools/validation/procgen_terrain_required_cells_smoke.gd
 run_step procgen_playability_smoke godot --headless --path . --script res://tools/validation/procgen_playability_smoke.gd
 run_step procgen_route_clearance_smoke godot --headless --path . --script res://tools/validation/procgen_route_clearance_smoke.gd
+run_step sundered_keep_procgen_frontage_smoke godot --headless --path . --script res://tools/validation/sundered_keep_procgen_frontage_smoke.gd
 run_step procgen_foliage_spawner_smoke godot --headless --path . --script res://tools/validation/procgen_foliage_spawner_smoke.gd
 run_step prop_collision_alignment_smoke godot --headless --path . --script res://tools/validation/prop_collision_alignment_smoke.gd
 run_step procgen_stuck_pocket_smoke godot --headless --path . --script res://tools/validation/procgen_stuck_pocket_smoke.gd

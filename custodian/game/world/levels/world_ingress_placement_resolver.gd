@@ -11,6 +11,13 @@ func resolve(
 	var strategy := str(
 		placement.get("strategy", "near_compound_ingress")
 	)
+	if strategy == "procgen_landmark_terminal":
+		return _resolve_procgen_landmark_terminal(
+			placement,
+			level_data,
+			map_instance,
+			occupied_tiles
+		)
 	if strategy == "north_edge_overlook":
 		return _resolve_north_edge_overlook(
 			placement,
@@ -42,6 +49,69 @@ func resolve(
 		"tile": Vector2i.ZERO,
 		"anchor": anchor,
 		"reason": "no valid tile within search radius",
+	}
+
+
+func _resolve_procgen_landmark_terminal(
+	placement: Dictionary,
+	level_data: Dictionary,
+	map_instance: Node,
+	occupied_tiles: Array[Vector2i]
+) -> Dictionary:
+	var landmark_key := str(
+		placement.get("landmark_data_key", "sundered_keep_frontage")
+	)
+	var frontage: Dictionary = level_data.get(landmark_key, {})
+	if frontage.is_empty():
+		return {
+			"ok": false,
+			"reason": "missing generated landmark data: %s" % landmark_key,
+		}
+	var gate_variant: Variant = frontage.get("gate_anchor")
+	if not gate_variant is Vector2i:
+		return {
+			"ok": false,
+			"reason": "generated landmark has no gate_anchor",
+		}
+	var gate_anchor := gate_variant as Vector2i
+	if not _is_walkable(gate_anchor, level_data, map_instance):
+		return {
+			"ok": false,
+			"tile": gate_anchor,
+			"reason": "generated landmark gate_anchor is not walkable",
+		}
+	var minimum_spacing := maxi(
+		1,
+		int(placement.get("minimum_spacing_tiles", 10))
+	)
+	if not _has_spacing(
+		gate_anchor,
+		occupied_tiles,
+		minimum_spacing
+	):
+		return {
+			"ok": false,
+			"tile": gate_anchor,
+			"reason": "generated landmark gate_anchor violates ingress spacing",
+		}
+	var outward: Variant = frontage.get(
+		"fortress_outward_direction",
+		Vector2i.UP
+	)
+	return {
+		"ok": true,
+		"tile": gate_anchor,
+		"anchor": frontage.get("overlook_anchor", gate_anchor),
+		"outward_direction": (
+			outward as Vector2i if outward is Vector2i else Vector2i.UP
+		),
+		"edge_distance_tiles": gate_anchor.y,
+		"generated_landmark_id": frontage.get(
+			"landmark_id",
+			StringName(landmark_key)
+		),
+		"generated_terminal_anchor": true,
+		"requires_authored_pocket": false,
 	}
 
 

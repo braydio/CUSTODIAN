@@ -2,7 +2,7 @@
 
 Status: implemented first pass — 2026-06-24
 
-The Forlorn Ritualant encounter uses a visual-only shader FX layer to make the broken Ash-Bell chamber read as suspended over the Unarrival void. This is world-space presentation, not gameplay, collision, navigation, or simulation authority.
+The Forlorn Ritualant encounter uses a visual-only shader FX layer to make the broken Ash-Bell chamber read as suspended over the Unnarrival void. This is world-space presentation, not gameplay, collision, navigation, or simulation authority.
 
 Runtime files:
 

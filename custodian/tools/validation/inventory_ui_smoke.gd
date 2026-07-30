@@ -207,6 +207,10 @@ func _initialize() -> void:
 	inventory_ui.call("_select_page", "equipment")
 	await process_frame
 	_assert(equipment_page != null and equipment_page.visible, "equipment page did not become visible")
+	_assert(
+		_find_node_named(inventory_ui, "RelicSlotCard") != null,
+		"Equipment page should expose the constrained relic slot"
+	)
 	var equipment_action := _find_node_named(inventory_ui, "EquipmentActionButton") as Button
 	var available_p9 := _find_node_named(inventory_ui, "AvailableEquipment_p9_sidearm") as Button
 	_assert(available_p9 != null, "available Equipment column should list the carried P-9")
@@ -225,6 +229,43 @@ func _initialize() -> void:
 	await process_frame
 	_assert(str(inventory_manager.call("get_equipped", &"sidearm")).is_empty(), "equipment page should clear the sidearm slot")
 	_assert(not mock_operator.sidearm_equipped, "unequip should disable the Operator sidearm gate")
+	inventory_manager.call("add_item", &"vanguard_seal", 1)
+	await process_frame
+	var available_relic := _find_node_named(
+		inventory_ui,
+		"AvailableEquipment_vanguard_seal"
+	) as Button
+	var relic_action := _find_node_named(
+		inventory_ui,
+		"RelicActionButton"
+	) as Button
+	_assert(
+		available_relic != null,
+		"available Equipment column should list the carried Vanguard Seal"
+	)
+	_assert(
+		relic_action != null
+		and relic_action.text == "EQUIP RELIC"
+		and not relic_action.disabled,
+		"relic slot should offer the carried Vanguard Seal"
+	)
+	relic_action.emit_signal("pressed")
+	await process_frame
+	_assert(
+		str(inventory_manager.call("get_equipped", &"relic"))
+		== "vanguard_seal",
+		"relic action should fill the constrained relic slot"
+	)
+	_assert(
+		relic_action.text == "UNEQUIP",
+		"filled relic slot should offer unequip"
+	)
+	relic_action.emit_signal("pressed")
+	await process_frame
+	_assert(
+		str(inventory_manager.call("get_equipped", &"relic")).is_empty(),
+		"relic action should return the Vanguard Seal to inventory"
+	)
 	inventory_ui.call("_select_page", "ledger")
 	await process_frame
 	if resource_ledger != null:

@@ -88,12 +88,13 @@ Uses the current Black Reliquary/CUSTODIAN style:
 - brass/gold reliquary frame
 - compact category rail, fixed-layout carried-object cards, and structured detail inspector
 - functional P-9 sidearm equip/unequip on the Equipment page
+- one constrained combat relic slot with Vanguard Seal equip/unequip
 - live text for all item names, quantities, classifications, and descriptions
 - production image assets resolved through `inventory_asset_catalog.gd`
 
 ## Future Enhancements (Not Implemented)
 
-- Additional equipment slots beyond the live sidearm slot
+- Additional equipment slots beyond the live sidearm and relic slots
 - Drag-and-drop
 - Item rarities with visual effects
 - Scroll bar for more slots

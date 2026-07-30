@@ -300,6 +300,16 @@ func _run_ticks() -> bool:
 
 
 func _build_metrics(completed: bool) -> Dictionary:
+	var visible_anchor_delta_px := 0.0
+	var visible_anchor_samples := 0
+	for record: Dictionary in probes.records:
+		var values := record.get("values", {}) as Dictionary
+		if values.has("visible_visual_anchor_delta_px"):
+			visible_anchor_delta_px = maxf(
+				visible_anchor_delta_px,
+				float(values.visible_visual_anchor_delta_px)
+			)
+			visible_anchor_samples += 1
 	var metrics := {
 		"completed": completed,
 		"duration_ticks": current_tick,
@@ -307,6 +317,13 @@ func _build_metrics(completed: bool) -> Dictionary:
 		"warning_count": warnings.size(),
 		"action_count": driver.results.size(),
 		"probe_sample_count": probes.records.size(),
+		"stable": {
+			"completed_tick": current_tick,
+			"visible_visual_anchor_delta_px": (
+				visible_anchor_delta_px if visible_anchor_samples > 0 else null
+			),
+			"visible_visual_anchor_sample_count": visible_anchor_samples,
+		},
 	}
 	for role_name: String in roles:
 		var node := roles[role_name] as Node

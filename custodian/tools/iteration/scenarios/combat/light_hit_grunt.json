@@ -26,13 +26,20 @@
     {"tick": 118, "action": "finish"}
   ],
   "probes": [
-    {"id": "operator_state", "role": "operator", "fields": ["global_position"], "ticks": [0, 30, 72, 118], "required": true},
+    {"id": "operator_state", "role": "operator", "fields": ["global_position", "visible_visual_anchor_delta_px", "visible_visual_anchor_nodes"], "ticks": [0, 24, 30, 34, 40, 72, 118], "required": true},
     {"id": "target_state", "role": "target", "fields": ["global_position"], "ticks": [0, 34, 72, 118], "required": true}
   ],
   "assertions": [
     {"type": "role_exists", "role": "target", "severity": "error"},
     {"type": "no_unreleased_inputs", "severity": "error"},
     {"type": "output_exists", "path": "telemetry.json", "severity": "error"},
+    {"type": "probe_compare", "probe": "operator_state", "tick": 0, "field": "visible_visual_anchor_delta_px", "op": "lte", "value": 0.5, "severity": "error"},
+    {"type": "probe_compare", "probe": "operator_state", "tick": 24, "field": "visible_visual_anchor_delta_px", "op": "lte", "value": 0.5, "severity": "error"},
+    {"type": "probe_compare", "probe": "operator_state", "tick": 30, "field": "visible_visual_anchor_delta_px", "op": "lte", "value": 0.5, "severity": "error"},
+    {"type": "probe_compare", "probe": "operator_state", "tick": 34, "field": "visible_visual_anchor_delta_px", "op": "lte", "value": 0.5, "severity": "error"},
+    {"type": "probe_compare", "probe": "operator_state", "tick": 40, "field": "visible_visual_anchor_delta_px", "op": "lte", "value": 0.5, "severity": "error"},
+    {"type": "probe_compare", "probe": "operator_state", "tick": 72, "field": "visible_visual_anchor_delta_px", "op": "lte", "value": 0.5, "severity": "error"},
+    {"type": "probe_compare", "probe": "operator_state", "tick": 118, "field": "visible_visual_anchor_delta_px", "op": "lte", "value": 0.5, "severity": "error"},
     {"type": "warning_count", "op": "eq", "value": 0, "severity": "warning"}
   ],
   "stable_fingerprint": {"event_payload_fields": {}, "counters": [], "probes": ["operator_state", "target_state"], "position_quantum_px": 0.25, "float_quantum": 0.0001},

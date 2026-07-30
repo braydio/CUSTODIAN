@@ -54,6 +54,7 @@ func update_perception(enemy: Node2D, profile: Resource, blackboard: Node, delta
 	var noise_radius := float(snapshot.get("noise_radius_px", 0.0))
 	if not visible and noise_radius > 0.0 and distance <= min(float(profile.get("hearing_range_px")) + noise_radius, float(profile.get("hearing_range_px")) * 2.5):
 		last_known_position = operator_position
+		blackboard.operator_ref = operator
 		blackboard.investigation_position = operator_position
 		blackboard.set("investigation_timer", float(profile.get("investigation_memory_sec")))
 		blackboard.is_suspicious = true
@@ -84,6 +85,12 @@ func _on_noise_emitted(event: Variant) -> void:
 		return
 	if event.get("source_team") != &"player" and event.get("source_team") != &"neutral":
 		return
+	if event.get("source_team") == &"player":
+		var source_variant: Variant = event.get("source")
+		if source_variant is Node and (source_variant as Node).is_in_group("player"):
+			_current_blackboard.operator_ref = source_variant
+		elif get_tree() != null:
+			_current_blackboard.operator_ref = get_tree().get_first_node_in_group("player")
 	var event_position: Vector2 = event.get("position")
 	var distance: float = _current_enemy.global_position.distance_to(event_position)
 	var effective_radius: float = float(event.get("radius_px"))

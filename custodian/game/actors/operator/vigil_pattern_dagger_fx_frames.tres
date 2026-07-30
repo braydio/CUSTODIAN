@@ -1,7 +1,7 @@
-[gd_resource type="SpriteFrames" format=3]
+[gd_resource type="SpriteFrames" format=3 uid="uid://badcxkqf6kmcg"]
 
-[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/fx/melee_1h/shared/operator__fx__melee_1h__chain_01__w__10f__156x96.png" id="1_unsmi"]
-[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/fx/melee_1h/shared/operator__fx__melee_1h__chain_01__e__10f__156x96.png" id="2_cykvp"]
+[ext_resource type="Texture2D" uid="uid://ckeyvgpbjv7q7" path="res://content/sprites/operator/runtime/fx/melee_1h/shared/operator__fx__melee_1h__chain_01__w__10f__156x96.png" id="1_unsmi"]
+[ext_resource type="Texture2D" uid="uid://clqeuufkvqjkl" path="res://content/sprites/operator/runtime/fx/melee_1h/shared/operator__fx__melee_1h__chain_01__e__10f__156x96.png" id="2_cykvp"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_m2ky3"]
 atlas = ExtResource("1_unsmi")

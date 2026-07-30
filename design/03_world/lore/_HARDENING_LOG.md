@@ -11,20 +11,20 @@
 
 | Document | Lines | Purpose |
 |----------|-------|---------|
-| `00_canon/CORE_LORE.md` | 273 | Master lore canon — single source of truth |
-| `03_content/factions/_FACTION_OVERVIEW.md` | 90 | Cross-faction reference and implementation guide |
-| `03_content/factions/PALE_BELL_PENITENTS.md` | 244 | Corrected faction profile (most changed) |
-| `03_content/factions/THE_INDEXERS.md` | 125 | Faction profile (verified correct) |
-| `03_content/factions/THE_LEASEHOLDERS.md` | 125 | Faction profile (verified correct) |
-| `03_content/factions/THE_CHOIR_OF_PROVENANCE.md` | 119 | Faction profile (verified correct) |
-| `03_content/factions/THE_BURIED_KINS.md` | 121 | Faction profile (1 fix: Severance→Severing) |
-| `03_content/factions/FERAL_DEFENSE_REMNANTS.md` | 124 | Faction profile (verified correct) |
+| `03_world/lore/CORE_LORE.md` | 273 | Master lore canon — single source of truth |
+| `03_world/factions/_FACTION_OVERVIEW.md` | 90 | Cross-faction reference and implementation guide |
+| `03_world/factions/PALE_BELL_PENITENTS.md` | 244 | Corrected faction profile (most changed) |
+| `03_world/factions/THE_INDEXERS.md` | 125 | Faction profile (verified correct) |
+| `03_world/factions/THE_LEASEHOLDERS.md` | 125 | Faction profile (verified correct) |
+| `03_world/factions/THE_CHOIR_OF_PROVENANCE.md` | 119 | Faction profile (verified correct) |
+| `03_world/factions/THE_BURIED_KINS.md` | 121 | Faction profile (1 fix: Severance→Severing) |
+| `03_world/factions/FERAL_DEFENSE_REMNANTS.md` | 124 | Faction profile (verified correct) |
 
 ## What Was Modified
 
 | Document | Change |
 |----------|--------|
-| `03_content/locations/SUNDERN_KEEP_LORE.md` | "Penitents of Static" → "Pale Bell Penitents"; "Severance" → "Severing"; "Unarrival" → "Unnarrival"; +cross-reference note |
+| `03_world/locations/SUNDERN_KEEP_LORE.md` | "Penitents of Static" → "Pale Bell Penitents"; "Severance" → "Severing"; "Unarrival" → "Unnarrival"; +cross-reference note |
 
 ## Key Corrections Baked In
 
@@ -36,3 +36,9 @@
 ## Pre-design Docs Status
 
 Pre-design files in `pre-design/` remain on disk for reference but are superseded for canon decisions. The individual visual templates (FACTION_PROFILE_*) remain useful as artist-facing briefs. A `_HARDENING_COMPLETE.md` marker has been placed in `pre-design/` to document this.
+
+## Post-Hardening Additions
+
+| Document | Lines | Purpose |
+|----------|-------|---------|
+| `02_features/factions/FACTION_EXPRESSION_SYSTEM.md` | ~500 | Faction implementation spec — data model, taxonomy lock, gameplay boundaries, migration order, runtime ownership, Buried Kins relationship layer, Sundered Keep vertical slice. Created 2026-07-29 from Faction Continuity Audit findings. |

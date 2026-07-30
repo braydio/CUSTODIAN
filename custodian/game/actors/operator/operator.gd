@@ -32,6 +32,12 @@ const CombatConstants = preload("res://game/systems/combat/combat_constants.gd")
 const OperatorIntegrityReclaim = preload(
 	"res://game/actors/operator/combat/operator_integrity_reclaim.gd"
 )
+const EngagementTrackerScript = preload(
+	"res://game/systems/combat/engagement_tracker.gd"
+)
+const INITIATIVE_CLAIMED_VFX_SCENE := preload(
+	"res://game/vfx/initiative_claimed_vfx.tscn"
+)
 const SPEED := 150.0
 const BULLET_SCENE := preload("res://game/actors/projectiles/bullet.tscn")
 const MUZZLE_FLASH_SCENE := preload("res://game/actors/effects/muzzle_flash.tscn")
@@ -572,6 +578,7 @@ var _field_patch_prompt_critical := false
 var _integrity_reclaim: RefCounted = OperatorIntegrityReclaim.new()
 var _integrity_reclaim_restore_serial := 0
 var _integrity_reclaim_last_restore := 0.0
+var _engagement_tracker: EngagementTracker = null
 var _last_damage_kind: StringName = &""
 var _last_enemy_attack_kind: StringName = &""
 var _body_recoil_offset := Vector2.ZERO
@@ -803,6 +810,16 @@ func _exit_tree() -> void:
 
 func _ready():
 	add_to_group("player")
+	_engagement_tracker = EngagementTrackerScript.new()
+	_engagement_tracker.name = "EngagementTracker"
+	add_child(_engagement_tracker)
+	_engagement_tracker.configure(
+		self,
+		get_node_or_null("/root/InventoryManager")
+	)
+	_engagement_tracker.vanguard_seal_activated.connect(
+		_on_vanguard_seal_activated
+	)
 	# Sync with ControllableActor base class
 	current_health = health
 	_integrity_reclaim.call("configure", max_health)
@@ -1175,6 +1192,8 @@ func _input(event: InputEvent) -> void:
 func _physics_process(delta):
 	apply_debug_resource_overrides()
 	_advance_integrity_reclaim(delta)
+	if _engagement_tracker != null:
+		_engagement_tracker.advance_fixed(delta)
 	if _paired_execution_active:
 		if _is_dead:
 			_cleanup_paired_execution(false, &"operator_dead")
@@ -4730,11 +4749,34 @@ func _apply_melee_hitbox_tick() -> void:
 			melee_hit_strength = CombatConstants.HitStrength.HEAVY
 		elif _active_melee_attack_profile != null and _active_melee_attack_profile.attack_kind == "heavy":
 			melee_hit_strength = CombatConstants.HitStrength.HEAVY
-		var damage_result_variant: Variant = enemy.take_damage(
-			_melee_damage_current,
-			melee_hit_strength
+		var hit_modifiers := prepare_operator_direct_hit(
+			enemy,
+			&"unarmed" if _get_active_weapon_state_key() == "unarmed" else &"melee"
+		)
+		var direct_damage := (
+			_melee_damage_current
+			* float(hit_modifiers.get("direct_damage_multiplier", 1.0))
+		)
+		var stagger_damage := (
+			_melee_damage_current
+			* float(hit_modifiers.get("stagger_damage_multiplier", 1.0))
+		)
+		var damage_result_variant: Variant = _call_hostile_take_damage(
+			enemy,
+			direct_damage,
+			melee_hit_strength,
+			stagger_damage
 		)
 		if damage_result_variant is Dictionary:
+			confirm_operator_direct_hit(
+				float(
+					(damage_result_variant as Dictionary).get(
+						"applied_damage",
+						0.0
+					)
+				),
+				hit_modifiers
+			)
 			var reclaim_kind := (
 				&"unarmed"
 				if _get_active_weapon_state_key() == "unarmed"
@@ -4758,7 +4800,7 @@ func _apply_melee_hitbox_tick() -> void:
 			{
 				"weapon": String(_melee_attack_key),
 				"attack_kind": _melee_attack_kind,
-				"damage": _melee_damage_current,
+				"damage": direct_damage,
 				"target": String(enemy.name),
 			}
 		)
@@ -5534,7 +5576,15 @@ func _apply_paired_execution_impact() -> void:
 	if _paired_execution_damage_applied:
 		return
 	_paired_execution_damage_applied = true
-	var damage_result: Dictionary = _paired_execution_target.call("apply_parry_critical_execution_damage", self, _critical_attack_damage, {
+	var hit_modifiers := prepare_operator_direct_hit(
+		_paired_execution_target,
+		&"unarmed"
+	)
+	var direct_damage := (
+		_critical_attack_damage
+		* float(hit_modifiers.get("direct_damage_multiplier", 1.0))
+	)
+	var damage_result: Dictionary = _paired_execution_target.call("apply_parry_critical_execution_damage", self, direct_damage, {
 		"execution_token": _paired_execution_token,
 		"impact_position": _paired_execution_anchor,
 		"frame": _paired_execution_damage_frame,
@@ -5542,6 +5592,10 @@ func _apply_paired_execution_impact() -> void:
 	if not bool(damage_result.get("critical", false)):
 		_cleanup_paired_execution(false, &"damage_rejected")
 		return
+	confirm_operator_direct_hit(
+		float(damage_result.get("damage_applied", 0.0)),
+		hit_modifiers
+	)
 	report_confirmed_damage_dealt(
 		float(damage_result.get("damage_applied", 0.0)),
 		_damage_result_reclaim_context(damage_result, &"critical")
@@ -6568,6 +6622,70 @@ func restore_health(amount: float) -> void:
 	_obs_accumulate(&"player_healing_amount_total", maxf(0.0, current_health - health_before))
 	health_changed.emit(current_health, max_health)
 	update_visuals()
+
+
+func prepare_operator_direct_hit(
+	target: Node,
+	damage_kind: StringName
+) -> Dictionary:
+	if _engagement_tracker == null:
+		return {
+			"eligible": false,
+			"direct_damage_multiplier": 1.0,
+			"stagger_damage_multiplier": 1.0,
+		}
+	return _engagement_tracker.prepare_direct_operator_hit(
+		target,
+		damage_kind
+	)
+
+
+func get_engagement_status() -> Dictionary:
+	return (
+		_engagement_tracker.get_status()
+		if _engagement_tracker != null else {}
+	)
+
+
+func confirm_operator_direct_hit(
+	applied_damage: float,
+	prepared_hit: Dictionary
+) -> bool:
+	return (
+		_engagement_tracker.confirm_direct_operator_hit(
+			applied_damage,
+			prepared_hit
+		)
+		if _engagement_tracker != null else false
+	)
+
+
+func _call_hostile_take_damage(
+	target: Node,
+	direct_damage: float,
+	hit_strength: int,
+	stagger_damage: float
+) -> Variant:
+	var argument_count := 0
+	for method_variant in target.get_method_list():
+		var method := method_variant as Dictionary
+		if StringName(str(method.get("name", ""))) == &"take_damage":
+			argument_count = (method.get("args", []) as Array).size()
+			break
+	if argument_count >= 3:
+		return target.call(
+			"take_damage",
+			direct_damage,
+			hit_strength,
+			stagger_damage
+		)
+	return target.call("take_damage", direct_damage, hit_strength)
+
+
+func _on_vanguard_seal_activated(_duration_sec: float) -> void:
+	var effect := INITIATIVE_CLAIMED_VFX_SCENE.instantiate() as Node2D
+	if effect != null:
+		add_child(effect)
 
 
 func report_confirmed_damage_dealt(
@@ -10220,6 +10338,17 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", attacker_
 		resolved_hit_direction = -visual_idle_direction.normalized() if visual_idle_direction.length_squared() > 0.001 else Vector2.DOWN
 	hit_context["hit_direction"] = resolved_hit_direction
 	hit_context["hit_kind"] = hit_kind
+	hit_context["direct_hostile"] = (
+		hit_kind not in [&"dot", &"damage_over_time", &"hazard", &"environment"]
+		and (
+			attacker_team == "enemy"
+			or (
+				attacker != null
+				and is_instance_valid(attacker)
+				and attacker.is_in_group("enemy")
+			)
+		)
+	)
 	hit_context["reclaim_eligible"] = (
 		attacker_team == "enemy"
 		or (
@@ -10352,6 +10481,12 @@ func take_damage(amount: float, trigger_reaction: bool = true, damage_context: D
 	current_health = health
 	health_changed.emit(current_health, max_health)
 	var applied_damage := maxf(0.0, health_before - health)
+	if (
+		applied_damage > 0.0
+		and bool(damage_context.get("direct_hostile", false))
+		and _engagement_tracker != null
+	):
+		_engagement_tracker.notify_direct_hostile_damage(applied_damage)
 	if health > 0.0:
 		var reclaim_context := damage_context.duplicate(true)
 		reclaim_context["target_health_before"] = health_before

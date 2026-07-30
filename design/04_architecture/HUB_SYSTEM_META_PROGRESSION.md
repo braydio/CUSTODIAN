@@ -9,7 +9,7 @@
 **Blocks:** Campaign Flow, World Transition, Region Generation, Integration Contract
 **Runtime Target:** Godot 4.x (`custodian/`)
 **Last Updated:** 2026-04-08
-**Content Canon Authority:** `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
+**Content Canon Authority:** `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 
 ---
 
@@ -19,7 +19,7 @@ Define the Hub as the persistent strategic and epistemic layer that exists acros
 
 This file locks the Hub as a **knowledge-state machine** rather than a resource economy. The Hub tracks what is known, suspected, lost, and pattern-repeated. Persistent rewards are not raw buffs; they are interpretive leverage that changes what can be understood, surfaced, or chosen later. 
 
-This file is the **system authority** for Hub structure and behavior. For fiction semantics, tone, faction lore, Great Severance framing, and player-facing interpretive language, defer to `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`.
+This file is the **system authority** for Hub structure and behavior. For fiction semantics, tone, faction lore, Severing framing, and player-facing interpretive language, defer to `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`.
 
 ---
 
@@ -31,9 +31,9 @@ The Hub implementation must remain aligned with the following content-facing rul
 - Contracts are bounded historical interventions, not ordinary quests.
 - Campaigns are transient operational worlds whose outcomes mutate the historical record.
 - Hub outputs should present confidence-bearing interpretation rather than omniscient fact when surfaced to the player.
-- Archive loss is existential because the Severance is a provenance wound, not ordinary information loss.
+- Archive loss is existential because the Severing is a provenance wound, not ordinary information loss.
 - "Shared context collapse" is symptom-level language. The Hub's deeper job is stabilizing provenance across object, origin, witness, time, use, and meaning.
-- The Hub may classify anomalies as `Unarrived`, but should not explain The Unarrival directly as settled cosmology.
+- The Hub may classify anomalies as `Unarrived`, but should not explain the Unnarrival directly as settled cosmology.
 
 ---
 
@@ -825,7 +825,7 @@ History can feed:
 
 The prior roadmap already sketches the correct terminal-style Hub interface showing archive losses, campaign streak, and three offers with region ID, difficulty, threat, objective, and reward. 
 
-Player-facing Hub language should follow the confidence protocol defined in `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`. Favor terms such as `Approximate`, `High Confidence`, `Contested`, `Corrupted`, and `Sealed` over flat omniscient statements.
+Player-facing Hub language should follow the confidence protocol defined in `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`. Favor terms such as `Approximate`, `High Confidence`, `Contested`, `Corrupted`, and `Sealed` over flat omniscient statements.
 
 ### 26.1 Required UI Responsibilities
 

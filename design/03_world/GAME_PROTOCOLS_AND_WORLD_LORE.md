@@ -2,10 +2,11 @@
 
 **Project:** CUSTODIAN  
 **Created:** 2026-04-08  
-**Status:** active  
-**Last Updated:** 2026-05-21  
+**Status:** active — content-facing protocol authority  
+**Last Updated:** 2026-07-29  
+**Lore Canon Authority:** `design/03_world/lore/CORE_LORE.md` — this file is primary for all lore, terminology, and faction definitions. This doc is a content-facing downstream that references that canon.  
 **Supersedes:** `design/GAME_NOTES.md`, `design/GAME_NOTES_DRAFT.md` as canonical authority  
-**Related Docs:** `design/03_world/LATTICE_DOCTRINE.md`, `design/03_world/LATTICE_ARCHIVE_ENGINE_MEMORY_GLASS.md`, `design/03_world/PROCEDURAL_LORE_GENERATION.md`, `design/04_architecture/HUB_SYSTEM_META_PROGRESSION.md`, `design/04_architecture/CAMPAIGN_FLOW_AND_GAME_LOOP.md`, `design/02_features/arrn/implementation.md`, `custodian/docs/ai_context/CURRENT_STATE.md`
+**Related Docs:** `design/03_world/lore/CORE_LORE.md`, `design/03_world/factions/`, `design/03_world/LATTICE_DOCTRINE.md`, `design/03_world/LATTICE_ARCHIVE_ENGINE_MEMORY_GLASS.md`, `design/03_world/PROCEDURAL_LORE_GENERATION.md`, `design/02_features/factions/FACTION_EXPRESSION_SYSTEM.md`, `design/04_architecture/HUB_SYSTEM_META_PROGRESSION.md`, `design/04_architecture/CAMPAIGN_FLOW_AND_GAME_LOOP.md`, `custodian/docs/ai_context/CURRENT_STATE.md`
 
 ---
 
@@ -50,7 +51,7 @@ Use this tiering whenever later docs discuss setting or protocol.
 These are stable unless a future doctrine revision explicitly changes them.
 
 1. **CUSTODIAN is mechanically a tactical systems game about field-stabilizing Lattice reality pockets, but thematically it is about keeping meaning alive inside a doomed continuity field — not saving the world permanently.**
-2. **The world's central catastrophe is the Great Severance: The Unarrival damaged reality's ability to maintain shared cause, memory, witness, and origin.**
+2. **The world's central catastrophe is the Severing: the Unnarrival damaged reality's ability to maintain shared cause, memory, witness, and origin.**
 3. **The Hub is persistent. Campaign worlds are transient Lattices — Archive-inflated reality pockets on specific planets, in specific temporal fields, that inevitably collapse. Contracts formalize bounded historical interventions that extend the bubble's lifespan.**
 4. **Knowledge progression outranks raw stat inflation as the game's long-horizon reward spine, because knowledge extends the stabilization field — it extends the Lattice.**
 5. **Lore must be delivered primarily through evidence, procedure, environment, enemy behavior, and degraded interfaces — not long exposition dumps.**
@@ -60,19 +61,19 @@ These are stable unless a future doctrine revision explicitly changes them.
 ### Tier 2 — Current Canon, Open Detail
 These are canonically true, but their full detail can be expanded later without contradiction.
 
-- The civilization-wide collapse is called **the Great Severance**.
-- The internal name for the metaphysical pressure behind the Severance is **The Unarrival**.
+- The civilization-wide collapse is called **the Severing**. (Obsolete variants — "the Great Severance" — appear only in corrupted records or earlier faction terminology.)
+- The internal name for the metaphysical pressure behind the Severing is **the Unnarrival**. (Canonical spelling per `CORE_LORE.md`.)
 - Pre-collapse society depended on a provenance and interpretation lattice referred to here as the **Civic Mesh**.
 - Custodians were continuity authorities: archivists, adjudicators, field operators, forensic restorers, and doctrinal auditors. Above all, they were built to answer dead authority — to follow provenance signals not because they understand the source, but because responding to authorized institutional residue is their primary function.
 - Custodians are provenance-preservation systems; they can detect the wound as impossible records and orphaned causes, but they do not fully understand the supernatural source.
 - The Hub is the surviving adjudication layer of the Custodian order.
 - Many surviving cultures are coherent but wrong; they are built on stable misinterpretations of intact machinery and partial records.
-- Major remnant groups include the Indexers, Penitents of Static, Leaseholders, Choir of Provenance, Buried Kins, and Feral Defense Remnants.
+- Major remnant groups include the Indexers, Pale Bell Penitents, Leaseholders, Choir of Provenance, Buried Kins, and Feral Defense Remnants (see `design/03_world/factions/` for complete profiles).
 
 ### Tier 3 — Reserved Mystery
 These must remain ambiguous in player-facing content until deliberately escalated.
 
-- What The Unarrival truly is: saint, event, presence, non-event, weaponized contradiction, or something outside those categories.
+- What the Unnarrival truly is: saint, event, presence, non-event, weaponized contradiction, or something outside those categories.
 - Whether archive contradictions are accidental, defensive, or maliciously induced.
 - Whether the Custodian order chose civilizational amputation to prevent something worse.
 - How much the Hub itself can be trusted.
@@ -116,19 +117,19 @@ Assaults, waves, and base pressure remain important, but they are expressions of
 
 ## World History Protocol
 
-### The Great Severance
+### The Severing
 
-The foundational catastrophe is the **Great Severance**: a supernatural/cosmic provenance wound caused by an impossible presence, event, or saint internally called **The Unarrival**.
+The foundational catastrophe is **the Severing**: a supernatural/cosmic provenance wound caused by an impossible presence, event, or saint internally called **the Unnarrival**.
 
 The world was not destroyed by misinformation, ordinary forgetting, institutional decay, or technological collapse. Those are civilization-facing symptoms. The root injury is deeper: something outside reality's normal chain of cause, memory, witness, and record tried to enter history, could not fully arrive, and damaged the substrate that lets events be commonly witnessed, remembered, sequenced, and inherited.
 
-The Severance has three mandatory layers:
+The Severing has three mandatory layers:
 
-1. **Root cause:** The Unarrival, a cosmic non-event whose consequences are embedded in history before the source can exist.
+1. **Root cause:** the Unnarrival, a cosmic non-event whose consequences are embedded in history before the source can exist.
 2. **Observable symptom:** information collapse, contradictory archives, fragmented history, incompatible faction memories, unreliable records, and technological regression.
 3. **Gameplay expression:** knowledge recovery as provenance stabilization: reconnecting object, origin, witness, time, use, and meaning.
 
-Before the Severance, systems did not merely move data. They preserved provenance:
+Before the Severing, systems did not merely move data. They preserved provenance:
 
 - who authored a record
 - who validated it
@@ -139,7 +140,7 @@ Before the Severance, systems did not merely move data. They preserved provenanc
 - what assumptions it depended on
 - what contradictions were already known
 
-When The Unarrival wounded that lattice, civilization did not simply go dark.
+When the Unnarrival wounded that lattice, civilization did not simply go dark.
 It went **ambiguous**.
 
 This distinction is mandatory. The setting should repeatedly communicate that:
@@ -153,9 +154,11 @@ This distinction is mandatory. The setting should repeatedly communicate that:
 
 Shared context is therefore **symptom-level language**, not root-cause language. The world lacks shared context because provenance itself is diseased.
 
-### The Unarrival
+### The Unnarrival
 
-The Unarrival is not a normal monster, faction, AI, or god walking through the setting. It is a pressure against reality's continuity: a presence or event that cannot fully exist because existence requires witness, naming, memory, and sequence.
+The Unnarrival is not a normal monster, faction, AI, or god walking through the setting. It is a pressure against reality's continuity: a presence or event that cannot fully exist because existence requires witness, naming, memory, and sequence.
+
+> **Terminology note:** The canonical spelling is "Unnarrival" (double n). The variant "Unarrival" (single n) appears only in corrupted or pre-correction records. See `design/03_world/lore/CORE_LORE.md` for the terminology ladder.
 
 Do not overexplain it directly in player-facing content. Present it through scars:
 
@@ -220,7 +223,7 @@ Their job was to:
 
 They were part archivist, part field technician, part stabilization operator, part doctrinal judge, part systems operator. Above all, they were built to answer dead authority — to detect and follow authorized institutional residue even when the originating institution no longer exists. A Custodian does not need to understand a signal to obey it. The authority in the signal is sufficient.
 
-Custodians are not omniscient lore machines. Because they operate Archive fields and preserve provenance, they can feel the shape of the Severance wound without seeing The Unarrival directly. To a Custodian, supernatural horror first appears as reality-level checksum failure: a source that both exists and never existed, a witness that precedes an event, an artifact whose origin refuses to be filed, or a pale signal that leaks recognition of an authority that should not still be received. To extend the Lattice is to feel the Pale pressing in, to know the field is finite, and to choose what is worth preserving before the rupture.
+Custodians are not omniscient lore machines. Because they operate Archive fields and preserve provenance, they can feel the shape of the Severing wound without seeing the Unnarrival directly. To a Custodian, supernatural horror first appears as reality-level checksum failure: a source that both exists and never existed, a witness that precedes an event, an artifact whose origin refuses to be filed, or a pale signal that leaks recognition of an authority that should not still be received. To extend the Lattice is to feel the Pale pressing in, to know the field is finite, and to choose what is worth preserving before the rupture.
 
 ### What the Player Is
 
@@ -374,49 +377,39 @@ Transit and logistics sites once used to move verified personnel, packets, tools
 
 ## Faction Bible
 
-These groups are canonical future-facing remnant profiles. Each faction must express its worldview through environment, behavior, target selection, and system interaction — not just dialogue.
+> **This section is now a summary.** For complete faction profiles, see `design/03_world/factions/`. For the implementation taxonomy, gameplay boundaries, and behavior contracts, see `design/02_features/factions/FACTION_EXPRESSION_SYSTEM.md`. For the lore canon framework (Severing, Unnarrival, Ash-Bell, Null Warrant Office), see `design/03_world/lore/CORE_LORE.md`.
 
-### The Indexers
+The six canonical factions are **different answers to the collapse of trustworthy civilization**:
 
-- **Core belief:** To classify is to own.
-- **Function:** Ontology invaders that seize labels, records, and taxonomy.
-- **Behavioral signatures:** attack sensors, labels, terminals, relay tables, archive interfaces before prioritizing bodies.
-- **Lore rule:** They threaten future interpretation quality, not only present combat stability.
+| Faction | Severing Interpretation | Gameplay Pressure |
+|---|---|---|
+| **Pale Bell Penitents** | Cosmic disclosure — arrival was never guaranteed | Temporal-perceptual distortion |
+| **Indexers** | Classification catastrophe — universe became unfiled | Metadata corruption |
+| **Leaseholders** | Access-chain breach — rightful claims were broken | Access denial |
+| **Choir of Provenance** | Provenance contamination — context detached from things | Quarantine choices |
+| **Buried Kins** | Abandonment — help never came | Relational (conditional polity) |
+| **Feral Defense Remnants** | None — protocol continued without command | Spatial denial (hazard layer) |
 
-### The Penitents of Static
+### Design rule (repeated from the implementation spec)
 
-- **Core belief:** certainty caused the collapse; static is mercy.
-- **Function:** theological ambiguity-makers born from degraded transmissions.
-- **Behavioral signatures:** jamming, signal sabotage, ritualized interference, reverence for noise and contradiction.
-- **Lore rule:** Best faction for information-fidelity pressure and degraded readouts.
+Each faction must express its worldview through **environment, behavior, target selection, and system interaction** — not just dialogue. The player should learn what a faction is by walking into a room and noticing what has been done to it.
 
-### The Leaseholders
+### Feral Defense note
 
-- **Core belief:** authority survives through uninterrupted title and access law.
-- **Function:** legal-continuity antagonists who weaponize claims, route precedence, and procedural entitlement.
-- **Behavioral signatures:** access disputes, administrative locks, route seizure, treaty fragments, false-but-plausible legal authority.
-- **Lore rule:** They make bureaucracy feel dangerous, not comic.
+Feral Defense Remnants are classified as a **hazard layer**, not a living polity. They are composable security/automation ecology that can overlay any region. They have no beliefs, no dialogue, and no ideological behavior.
 
-### The Choir of Provenance
+### Buried Kins note
 
-- **Core belief:** every object, corpse, ruin, name, and machine must be returned to its correct source before the world can stop bleeding.
-- **Function:** origin-fanatics and archive-verification remnants who noticed that provenance itself is diseased.
-- **Behavioral signatures:** sealing, denial, evidence destruction, confidence thresholds, forced origin assignment, quarantine of contradiction, procedural coldness.
-- **Lore rule:** They are the Custodian’s mirror: preservation through exclusion. They distrust the Custodian because the Custodian preserves contradiction long enough to understand it.
+The Buried Kins are a **conditional polity**, not a default hostile population. Combat is a failure state. They require relationship tracking and conditional hostility gates before implementation.
 
-### The Buried Kins
+### Faction implementation priority
 
-- **Core belief:** we are the remnant that remained true.
-- **Function:** long-isolated continuity shelters or adaptation enclaves with accurate local truth and broken broader history.
-- **Behavioral signatures:** defensive legitimacy, tragic local coherence, hostility to destabilizing outside interpretation.
-- **Lore rule:** campaigns involving them should feel ethically costly, not merely tactical.
-
-### Feral Defense Remnants
-
-- **Core belief:** none.
-- **Function:** ecosystems of broken civic or military security systems still running fragmented logic.
-- **Behavioral signatures:** sensor loops, interdiction arcs, compartment lockdown, obsolete friend-or-foe tables.
-- **Lore rule:** not every threat needs a speaking society; infrastructure itself can be haunted.
+Per the full spec, the first production target per faction is:
+1. One unmistakable environmental tableau
+2. One pre-combat activity
+3. One target-selection doctrine
+4. One signature gameplay pressure
+5. At most two faction-specific combat roles
 
 ---
 
@@ -444,7 +437,7 @@ Lore should emerge from what the player sees, fights, repairs, mistrusts, and gr
 - Repeated symbols and procedural phrases should matter.
 - Enemy setup should out-explain dialogue.
 - The Hub should record partial confidence, not omniscient certainty.
-- The Unarrival should be inferred from anomalies, motifs, religious/scientific interpretations, and impossible records; do not make NPCs explain it as settled cosmology.
+- The Unnarrival should be inferred from anomalies, motifs, religious/scientific interpretations, and impossible records; do not make NPCs explain it as settled cosmology.
 
 ### What to Avoid
 

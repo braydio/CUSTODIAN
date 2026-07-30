@@ -2556,6 +2556,16 @@
 		51
 	  ],
 	  "distance": 96.0
+	},
+	{
+	  "name": "VanguardSealCache",
+	  "kind": "vanguard_seal_cache",
+	  "prompt": "OPEN CUSTODIAN COMMAND CACHE",
+	  "tile": [
+		62,
+		46
+	  ],
+	  "distance": 72.0
 	}
   ],
   "blockers": [],
@@ -2621,6 +2631,13 @@
 	  "tile": [
 		73,
 		27
+	  ]
+	},
+	{
+	  "id": "vanguard_seal_cache",
+	  "tile": [
+		62,
+		46
 	  ]
 	},
 	{

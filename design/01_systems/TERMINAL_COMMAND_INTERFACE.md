@@ -3,7 +3,7 @@
 **Status:** superseded-reference
 **Authority:** `design/02_features/terminal/COMMAND_TERMINAL_SPEC.md`
 **Last Updated:** 2026-04-08
-**Content Canon Authority:** `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
+**Content Canon Authority:** `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 
 > **Note:** This document is retained as reference material only. The canonical implementation authority is `design/02_features/terminal/COMMAND_TERMINAL_SPEC.md`. Do not use this file for implementation decisions.
 
@@ -20,7 +20,7 @@ This spec assumes:
 - Simulation/game state remains deterministic and separate from presentation
 - Raw status text remains canonical and reusable across transcript and status page
 
-This file is the shell/interface authority. For archive tone, contract-fiction semantics, confidence language, and procedural machine phrasing, defer to `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`.
+This file is the shell/interface authority. For archive tone, contract-fiction semantics, confidence language, and procedural machine phrasing, defer to `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`.
 
 ---
 

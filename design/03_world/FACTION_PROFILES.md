@@ -5,7 +5,7 @@
 FACTION IDENTITY:
 The Choir of Provenance is a severe archival verification force: austere, doctrinal, quiet, old, and unnervingly preserved. They are not flamboyant cultists and not glossy robots. They should feel like ancient procedure given form: restraint, quarantine, validation, seal enforcement, and purity of origin.
 
-They are origin-fanatics, not generic lore keepers. The Choir has noticed that provenance itself is diseased after the Severance. They believe every object, corpse, ruin, name, and machine must be returned to its correct source before the world can stop bleeding. They are hostile to Custodians because Custodians preserve contradiction long enough to understand it, while the Choir prefers to purge, seal, or overwrite contradictions that fail their confidence threshold.
+They are origin-fanatics, not generic lore keepers. The Choir has noticed that provenance itself is diseased after the Severing. They believe every object, corpse, ruin, name, and machine must be returned to its correct source before the world can stop bleeding. They are hostile to Custodians because Custodians preserve contradiction long enough to understand it, while the Choir prefers to purge, seal, or overwrite contradictions that fail their confidence threshold.
 
 VISUAL DIRECTION:
 

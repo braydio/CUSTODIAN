@@ -3,7 +3,7 @@
 **Status:** concept archive  
 **Last Updated:** 2026-04-08  
 **Implementation Authority:** `design/02_features/terminal/COMMAND_TERMINAL_SPEC.md`  
-**Content Canon Authority:** `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
+**Content Canon Authority:** `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 
 This file is preserved as an inspiration/concept sheet, not the current implementation spec.
 

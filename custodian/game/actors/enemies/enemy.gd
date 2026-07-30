@@ -1822,7 +1822,8 @@ func apply_difficulty_modifiers(hp_scale: float, damage_scale: float):
 
 func take_damage(
 	amount: float,
-	hit_strength: int = CombatConstants.HitStrength.LIGHT
+	hit_strength: int = CombatConstants.HitStrength.LIGHT,
+	reaction_damage: float = -1.0
 ) -> Dictionary:
 	var health_before := maxf(0.0, health)
 	if dead or health_before <= 0.0:
@@ -1840,7 +1841,10 @@ func take_damage(
 			applied_damage
 		)
 	_on_assault_damage_taken(applied_damage)
-	_apply_reaction(applied_damage, hit_strength)
+	_apply_reaction(
+		reaction_damage if reaction_damage >= 0.0 else applied_damage,
+		hit_strength
+	)
 	update_visuals()
 	_spawn_damage_popup(applied_damage)
 	

@@ -4,7 +4,8 @@
 **Status:** In Progress (Runtime Slice + Telemetry + behavior-variable v1)
 **Depends On:** Wave Spawning System
 **Last Updated:** 2026-05-25
-**Content Canon Authority:** `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
+**Content Canon Authority:** `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`  
+**Faction Behavior Authority:** `design/02_features/factions/FACTION_EXPRESSION_SYSTEM.md`
 
 ---
 
@@ -17,7 +18,7 @@ The Enemy Behavior Director sits above the WaveManager and Enemy AI, acting as t
 
 This mirrors the legacy Python assault orchestration layer, which modeled lanes, objectives, and escalation. The Godot implementation borrows these core patterns but is adapted for native architecture.
 
-This file is the runtime behavior authority for assault orchestration. For faction ideology, behavior-first lore delivery, and the rule that enemy activity should reveal belief before dialogue does, defer to `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`.
+This file is the runtime behavior authority for assault orchestration. For faction ideology, behavior-first lore delivery, and the rule that enemy activity should reveal belief before dialogue does, defer to `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md` and `design/02_features/factions/FACTION_EXPRESSION_SYSTEM.md`.
 
 ### Runtime Slice Delivered (2026-03-08 to 2026-03-10)
 

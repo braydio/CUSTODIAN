@@ -24,6 +24,14 @@ const FACTION_SITE_PLACER_SCRIPT := preload("res://game/world/procgen/factions/f
 const STORY_ROOM_PLACER_SCRIPT := preload("res://game/world/procgen/story/story_room_placer.gd")
 const ASCENT_SPINE_BUILDER_SCRIPT := preload("res://game/world/procgen/intent/ascent_spine_builder.gd")
 const ASCENT_FIELD_BUILDER_SCRIPT := preload("res://game/world/procgen/intent/ascent_field_builder.gd")
+const SUNDERED_KEEP_LANDMARK_INTENT_BUILDER_SCRIPT := preload(
+	"res://game/world/procgen/landmarks/sundered_keep/"
+	+ "sundered_keep_landmark_intent_builder.gd"
+)
+const SUNDERED_KEEP_FRONTAGE_BUILDER_SCRIPT := preload(
+	"res://game/world/procgen/landmarks/sundered_keep/"
+	+ "sundered_keep_frontage_builder.gd"
+)
 const ROUTE_PLAYABILITY_FIELD_SCRIPT := preload(
 	"res://game/world/procgen/playability/route_playability_field.gd"
 )
@@ -605,6 +613,7 @@ var _ascent_field_summary: Dictionary = {}
 var _ascent_field_main_route_cells: Array[Vector2i] = []
 var _ascent_field_main_route_centerline_cells: Array[Vector2i] = []
 var _ascent_field_vista_cells: Array[Vector2i] = []
+var _sundered_keep_frontage: Dictionary = {}
 var _route_playability_result: Dictionary = {}
 var _route_playability_audit: Dictionary = {}
 var _world_progress_marker_parent: Node2D = null
@@ -947,6 +956,8 @@ func _fill_tilemaps() -> void:
 		_marks["props_foliage"] = 0
 		_marks["props_visual"] = 0
 	_last = Time.get_ticks_msec()
+	_enforce_route_playability_walkability(map_size)
+	_enforce_runtime_blocker_route_clearance()
 	_run_route_playability_audit()
 	_marks["playability_audit"] = Time.get_ticks_msec() - _last
 	_last = Time.get_ticks_msec()
@@ -3466,6 +3477,15 @@ func _fill_ascent_field_substrate(map_size: Vector2i) -> void:
 		return
 	var builder := ASCENT_FIELD_BUILDER_SCRIPT.new()
 	var field: Dictionary = builder.call("build_field", _worldgen_intent_graph, map_size, procgen_node.seed if procgen_node != null else 0)
+	var frontage_builder := SUNDERED_KEEP_FRONTAGE_BUILDER_SCRIPT.new()
+	_sundered_keep_frontage = frontage_builder.call(
+		"build_frontage",
+		_worldgen_intent_graph,
+		field,
+		map_size,
+		procgen_node.seed if procgen_node != null else 0
+	)
+	_merge_sundered_keep_frontage_into_ascent_field(field)
 	_worldgen_reserved_regions = field.get("reserved_regions", [])
 	_ascent_field_summary = field.get("debug_summary", {})
 	_ascent_field_main_route_cells = field.get("main_route_cells", [])
@@ -3477,6 +3497,155 @@ func _fill_ascent_field_substrate(map_size: Vector2i) -> void:
 	_build_route_playability(field, map_size)
 	_worldgen_intent_floor_cells = field.get("floor_cells", {})
 	_apply_ascent_field_authority(field, map_size)
+	_apply_sundered_keep_frontage_region_metadata()
+
+
+func _merge_sundered_keep_frontage_into_ascent_field(
+	field: Dictionary
+) -> void:
+	if _sundered_keep_frontage.is_empty():
+		return
+	var floor_cells: Dictionary = field.get("floor_cells", {})
+	var wall_cells: Dictionary = field.get("wall_cells", {})
+	for cell_variant in (
+		_sundered_keep_frontage.get("floor_cells", {}) as Dictionary
+	).keys():
+		if not cell_variant is Vector2i:
+			continue
+		floor_cells[cell_variant] = true
+		wall_cells.erase(cell_variant)
+	for cell_variant in (
+		_sundered_keep_frontage.get("cliff_cells", {}) as Dictionary
+	).keys():
+		if not cell_variant is Vector2i or floor_cells.has(cell_variant):
+			continue
+		wall_cells[cell_variant] = true
+	var removed_border_tiles := _prune_undressed_border_wall_lines(
+		wall_cells,
+		floor_cells,
+		procgen_node.map_size if procgen_node != null else Vector2i.ZERO
+	)
+	field["floor_cells"] = floor_cells
+	field["wall_cells"] = wall_cells
+
+	var route_cells: Dictionary = {}
+	for cell_variant in field.get("main_route_cells", []):
+		if cell_variant is Vector2i:
+			route_cells[cell_variant] = true
+	for cell_variant in (
+		_sundered_keep_frontage.get(
+			"primary_route_cells",
+			{}
+		) as Dictionary
+	).keys():
+		if cell_variant is Vector2i:
+			route_cells[cell_variant] = true
+	field["main_route_cells"] = _dict_keys_as_vector2i_array(route_cells)
+
+	var centerline: Array[Vector2i] = []
+	for cell_variant in field.get("main_route_centerline_cells", []):
+		if cell_variant is Vector2i:
+			centerline.append(cell_variant)
+	for cell_variant in _sundered_keep_frontage.get("route_centerline", []):
+		if cell_variant is Vector2i and not centerline.has(cell_variant):
+			centerline.append(cell_variant)
+	field["main_route_centerline_cells"] = centerline
+
+	var vista_cells: Array[Vector2i] = []
+	for cell_variant in field.get("vista_cells", []):
+		if cell_variant is Vector2i:
+			vista_cells.append(cell_variant)
+	var overlook: Variant = _sundered_keep_frontage.get(
+		"overlook_anchor",
+		Vector2i.ZERO
+	)
+	if overlook is Vector2i and not vista_cells.has(overlook):
+		vista_cells.append(overlook)
+	field["vista_cells"] = vista_cells
+
+	var summary: Dictionary = field.get("debug_summary", {})
+	summary["sundered_keep_frontage"] = (
+		_sundered_keep_frontage.get("debug_summary", {}) as Dictionary
+	).duplicate(true)
+	summary["sundered_keep_pruned_border_wall_tiles"] = (
+		removed_border_tiles
+	)
+	field["debug_summary"] = summary
+
+
+func _prune_undressed_border_wall_lines(
+	wall_cells: Dictionary,
+	floor_cells: Dictionary,
+	map_size: Vector2i
+) -> int:
+	if map_size.x <= 0 or map_size.y <= 0:
+		return 0
+	var removed := 0
+	for cell_variant in wall_cells.keys():
+		if not cell_variant is Vector2i:
+			continue
+		var cell := cell_variant as Vector2i
+		if cell.x > 0 and cell.y > 0 \
+				and cell.x < map_size.x - 1 \
+				and cell.y < map_size.y - 1:
+			continue
+		var protects_floor := false
+		for y in range(-2, 3):
+			for x in range(-2, 3):
+				if floor_cells.has(cell + Vector2i(x, y)):
+					protects_floor = true
+					break
+			if protects_floor:
+				break
+		if protects_floor:
+			continue
+		wall_cells.erase(cell)
+		removed += 1
+	return removed
+
+
+func _apply_sundered_keep_frontage_region_metadata() -> void:
+	if _sundered_keep_frontage.is_empty():
+		return
+	var hard_clearance: Dictionary = _sundered_keep_frontage.get(
+		"hard_clearance_cells",
+		{}
+	)
+	var terrace_cells: Dictionary = _sundered_keep_frontage.get(
+		"terrace_cells",
+		{}
+	)
+	var side_pocket_cells: Dictionary = _sundered_keep_frontage.get(
+		"side_pocket_cells",
+		{}
+	)
+	for cell_variant in (
+		_sundered_keep_frontage.get("floor_cells", {}) as Dictionary
+	).keys():
+		if not cell_variant is Vector2i:
+			continue
+		var cell := cell_variant as Vector2i
+		var region_type := "sundered_keep_frontage_floor"
+		var zone := "fortress_approach"
+		if hard_clearance.has(cell):
+			region_type = "sundered_keep_primary_route"
+			zone = "protected_route"
+		elif side_pocket_cells.has(cell):
+			region_type = "sundered_keep_side_pocket"
+			zone = "optional_pocket"
+		elif terrace_cells.has(cell):
+			region_type = "sundered_keep_terrace"
+			zone = "frontage_terrace"
+		_set_region_tile(cell, region_type, zone)
+	for cell_variant in (
+		_sundered_keep_frontage.get("cliff_cells", {}) as Dictionary
+	).keys():
+		if cell_variant is Vector2i:
+			_set_region_tile(
+				cell_variant as Vector2i,
+				"sundered_keep_cliff",
+				"natural_boundary"
+			)
 
 
 func _build_route_playability(
@@ -3569,6 +3738,9 @@ func _enforce_route_playability_walkability(
 		"hard_clearance_cells",
 		{}
 	).duplicate()
+	for cell_variant in _ascent_field_main_route_cells:
+		if cell_variant is Vector2i:
+			hard_clearance[cell_variant] = true
 	for cell_variant in _main_road_tiles.keys():
 		if cell_variant is Vector2i:
 			hard_clearance[cell_variant] = true
@@ -3595,7 +3767,12 @@ func _enforce_route_playability_walkability(
 				ELEVATION_MAP_SCRIPT.TRAVERSAL_WALKABLE
 			)
 		)
-		if traversal != ELEVATION_MAP_SCRIPT.TRAVERSAL_BLOCKED \
+		var needs_floor_authority := (
+			_generated_wall_cells.has(cell)
+			or not _generated_floor_cells.has(cell)
+		)
+		if not needs_floor_authority \
+				and traversal != ELEVATION_MAP_SCRIPT.TRAVERSAL_BLOCKED \
 				and traversal != ELEVATION_MAP_SCRIPT.TRAVERSAL_LEDGE \
 				and traversal != ELEVATION_MAP_SCRIPT.TRAVERSAL_DROP:
 			continue
@@ -3680,6 +3857,17 @@ func _build_worldgen_intent_graph(map_size: Vector2i, force_ascent_field_origin:
 		"route_beat_count": worldgen_intent_route_beat_count,
 		"world_progress_profile": _world_progress_profile,
 	})
+	var keep_intent_builder := (
+		SUNDERED_KEEP_LANDMARK_INTENT_BUILDER_SCRIPT.new()
+	)
+	keep_intent_builder.call(
+		"add_sundered_keep_intent",
+		_worldgen_intent_graph,
+		{
+			"seed": procgen_node.seed if procgen_node != null else 0,
+			"map_size": map_size,
+		}
+	)
 
 	var reserver := REGION_FOOTPRINT_RESERVER_SCRIPT.new()
 	var reservations: Dictionary = reserver.call("build_reservations", _worldgen_intent_graph, map_size)
@@ -3759,12 +3947,16 @@ func _place_faction_ambient_sites(map_size: Vector2i) -> void:
 	_faction_activity_sites.clear()
 	if _world_progress_profile == null or _faction_site_placer == null:
 		return
+	var protected_cells := _collect_terrain_required_cells(map_size)
+	protected_cells.append_array(
+		_get_sundered_keep_site_exclusion_cells()
+	)
 	_faction_activity_sites = _faction_site_placer.call("place_sites", {
 		"seed": _tile_noise_hash(Vector2i(661, 911)),
 		"map_size": map_size,
 		"floor_cells": _dict_keys_as_vector2i_array(_generated_floor_cells),
 		"blocked_cells": _dict_keys_as_vector2i_array(_generated_wall_cells),
-		"required_cells": _collect_terrain_required_cells(map_size),
+		"required_cells": protected_cells,
 		"count": faction_ambient_site_count,
 		"world_progress_profile": _world_progress_profile,
 	})
@@ -3781,12 +3973,16 @@ func _place_story_rooms(map_size: Vector2i) -> void:
 	_story_room_sites.clear()
 	if _world_progress_profile == null or _story_room_placer == null:
 		return
+	var protected_cells := _collect_terrain_required_cells(map_size)
+	protected_cells.append_array(
+		_get_sundered_keep_site_exclusion_cells()
+	)
 	_story_room_sites = _story_room_placer.call("place_story_rooms", {
 		"seed": _tile_noise_hash(Vector2i(1201, 1709)),
 		"map_size": map_size,
 		"floor_cells": _dict_keys_as_vector2i_array(_generated_floor_cells),
 		"blocked_cells": _dict_keys_as_vector2i_array(_generated_wall_cells),
-		"required_cells": _collect_terrain_required_cells(map_size),
+		"required_cells": protected_cells,
 		"count": story_room_count,
 		"world_progress_profile": _world_progress_profile,
 		"faction_sites": _faction_activity_sites,
@@ -3798,6 +3994,19 @@ func _place_story_rooms(map_size: Vector2i) -> void:
 		if get_region_type_at_tile(cell) == "exterior":
 			_set_region_tile(cell, "story_room_%s" % String(room.get("story_id", "unknown")), "story_room")
 		_spawn_placeholder_marker(cell, Vector2i(3, 2), "StoryRoom_%s" % String(room.get("story_id", "unknown")))
+
+
+func _get_sundered_keep_site_exclusion_cells() -> Array[Vector2i]:
+	var result: Array[Vector2i] = []
+	for cell_variant in (
+		_sundered_keep_frontage.get(
+			"fortress_exclusion_cells",
+			{}
+		) as Dictionary
+	).keys():
+		if cell_variant is Vector2i:
+			result.append(cell_variant as Vector2i)
+	return result
 
 
 func _find_or_create_world_progress_marker_parent() -> Node2D:
@@ -3819,6 +4028,7 @@ func _clear_world_progression_runtime() -> void:
 	_ascent_field_main_route_cells.clear()
 	_ascent_field_main_route_centerline_cells.clear()
 	_ascent_field_vista_cells.clear()
+	_sundered_keep_frontage.clear()
 	_route_playability_result.clear()
 	_route_playability_audit.clear()
 	_faction_activity_sites.clear()
@@ -5843,6 +6053,47 @@ func _is_route_hard_clearance_cell(pos: Vector2i) -> bool:
 		{}
 	)
 	return hard_clearance.has(pos)
+
+
+func _enforce_runtime_blocker_route_clearance() -> void:
+	if _route_playability_result.is_empty():
+		return
+	var protected_route: Dictionary = _route_playability_result.get(
+		"hard_clearance_cells",
+		{}
+	).duplicate()
+	for cell_variant in _ascent_field_main_route_cells:
+		if cell_variant is Vector2i:
+			protected_route[cell_variant] = true
+	var rejected_ids: Array[String] = []
+	for owner_id_variant in _runtime_prop_blocker_sources.keys():
+		var owner_id := str(owner_id_variant)
+		var source: Dictionary = _runtime_prop_blocker_sources[
+			owner_id_variant
+		]
+		var owner := source.get("owner", null) as Node
+		if owner is ProceduralProp and _is_portal_prop(
+			owner as ProceduralProp
+		):
+			continue
+		for cell_variant in source.get("cells", []):
+			if cell_variant is Vector2i \
+					and protected_route.has(cell_variant as Vector2i):
+				rejected_ids.append(owner_id)
+				break
+	for owner_id in rejected_ids:
+		var source: Dictionary = _runtime_prop_blocker_sources.get(
+			owner_id,
+			{}
+		)
+		var owner := source.get("owner", null) as Node
+		if owner != null and is_instance_valid(owner):
+			_disable_collision_shapes(owner)
+			owner.queue_free()
+		_unregister_runtime_prop_blocker_id(owner_id)
+		_obs_increment(
+			&"procgen_runtime_blockers_cleared_for_route"
+		)
 
 
 func _run_route_playability_audit() -> void:
@@ -8147,6 +8398,7 @@ func get_level_data() -> Dictionary:
 		"route_playability": _route_playability_result.duplicate(true),
 		"route_playability_audit": _route_playability_audit.duplicate(true),
 		"vista_cells": _ascent_field_vista_cells.duplicate(),
+		"sundered_keep_frontage": _sundered_keep_frontage.duplicate(true),
 		"worldgen_reserved_regions": _worldgen_reserved_regions.duplicate(true),
 		"faction_activity_sites": _faction_activity_sites.duplicate(true),
 		"story_room_sites": _story_room_sites.duplicate(true),

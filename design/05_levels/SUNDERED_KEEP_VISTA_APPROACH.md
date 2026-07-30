@@ -1,5 +1,11 @@
 # Sundered Keep Vista Approach
 
+> **Production clarification (2026-07-30):** this is a reference/debug
+> composition and collision-authoring artifact, not production playable-world
+> authority. The production approach is specified by
+> `design/05_levels/SUNDERED_KEEP_PROCGEN_FRONTAGE.md`; procgen owns all
+> frontage floor, terrain, collision, side paths, and traversal.
+
 - **Status:** superseded / debug-only under `legacy_vista_debug`
 - **Owner:** authored level / rendering / camera
 - **Runtime:** `custodian/` Godot 4.x

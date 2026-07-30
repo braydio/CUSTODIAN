@@ -5,7 +5,7 @@
 **Created:** 2026-03-27  
 **Status:** Runtime V1 Implemented  
 **Last Updated:** 2026-05-15
-**Content Canon Authority:** `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
+**Content Canon Authority:** `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 
 ---
 

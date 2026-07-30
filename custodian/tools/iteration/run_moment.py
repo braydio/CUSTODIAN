@@ -543,6 +543,11 @@ def _run_once(
     command_log["argv"] = command
     _write_json(output_dir / "logs" / "command.json", command_log)
     timeout = max(float(scenario["simulation"]["max_wall_seconds"]) + 10.0, 30.0)
+    if capture_mode == "full":
+        # Movie Maker writes one lossless PNG per rendered frame. Encoding can
+        # be substantially slower than simulation on otherwise valid machines,
+        # so supervise media capture separately from the authored runtime limit.
+        timeout = max(timeout, float(scenario["duration_ticks"]) * 1.25)
     try:
         completed = subprocess.run(
             command,

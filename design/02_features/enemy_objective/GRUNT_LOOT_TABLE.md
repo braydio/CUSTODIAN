@@ -11,7 +11,7 @@ Design rule:
 
 > Common drops build the base. Rare drops build the world.
 
-Common drops help the player survive through fabrication and repair. Rare drops help the player understand what is wrong through identity, provenance, and Severance clues.
+Common drops help the player survive through fabrication and repair. Rare drops help the player understand what is wrong through identity, provenance, and Severing clues.
 
 ## Drop Identity
 
@@ -30,7 +30,7 @@ Common drops help the player survive through fabrication and repair. Rare drops 
 | `cracked_field_tag` | Cracked Field Tag | 1 | 15% | Lore/provenance clue for faction identity, patrol routes, assault hints, or enemy database confidence. |
 | `power_components` | Power Components | 1 | 10% | Scarce repair/power routing material from better-equipped grunts or intact relay fragments. |
 | `memory_glass_fragment` | Memory Glass Fragment | 1 | 4% | Rare knowledge/research item containing an impossible historical contradiction. |
-| `white_thread_knot` | White Thread Knot | 1 | 1% | Rare supernatural Severance clue tied to Ash-Bell, Unarrival, or Choir-adjacent content. |
+| `white_thread_knot` | White Thread Knot | 1 | 1% | Rare supernatural Severing clue tied to Ash-Bell, the Unnarrival, or Choir-adjacent content. |
 
 ## Flavor Anchors
 

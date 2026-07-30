@@ -1,6 +1,13 @@
 # Sundered Keep World Vista
 
-- **Status:** review — implementation complete; seed composition review and tuning pending
+> **Superseded production authority (2026-07-30):** see
+> `design/05_levels/SUNDERED_KEEP_PROCGEN_FRONTAGE.md`. The nine-tile authored
+> overlook pocket and cliff-lip-as-map-seam design below are retained only as
+> implementation history. Production now requires an intent-graph-owned
+> procgen landmark region with authored visual identity and a generated
+> terminal transition to Front Gate.
+
+- **Status:** superseded — historical World Vista V1
 - **Owner:** generated world landmark presentation / shared camera
 - **Runtime:** `custodian/` Godot 4.x
 - **Scene:** `custodian/game/world/vistas/sundered_keep/sundered_keep_world_vista.tscn`

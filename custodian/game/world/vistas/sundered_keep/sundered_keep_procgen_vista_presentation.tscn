@@ -1,0 +1,95 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://game/world/vistas/sundered_keep/sundered_keep_procgen_vista_presentation.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/approach/underlay/first_vista_base_storm_horizon.png" id="2_storm"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/shared/landmarks/distant_sundered_keep_landmark_v2.png" id="3_keep"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/approach/fog/first_vista_reveal_veil.png" id="4_fog"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/grand_vista/fortress_components/distant_fortress_central_citadel_01.png" id="6_citadel"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/grand_vista/fortress_components/distant_fortress_outer_wall_01.png" id="7_wall"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_horizon_seam_fog.png" id="8_frontage_fog"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/approach/occlusion/approach_final_gate_shadow_veil.png" id="9_gate_shadow"]
+
+[node name="SunderedKeepProcgenFrontagePresentation" type="Node2D"]
+script = ExtResource("1_script")
+y_sort_enabled = false
+
+[node name="HorizonPresentation" type="Node2D" parent="."]
+y_sort_enabled = false
+
+[node name="VoidUnderlay" type="Polygon2D" parent="HorizonPresentation"]
+z_as_relative = false
+z_index = -150
+polygon = PackedVector2Array(-4096, -4096, 4096, -4096, 4096, 4096, -4096, 4096)
+color = Color(0.025, 0.039, 0.052, 1)
+
+[node name="StormHorizon" type="Sprite2D" parent="HorizonPresentation"]
+position = Vector2(0, -120)
+z_as_relative = false
+z_index = -140
+texture = ExtResource("2_storm")
+texture_filter = 1
+
+[node name="DistantKeep" type="Sprite2D" parent="HorizonPresentation"]
+position = Vector2(190, -220)
+scale = Vector2(0.34, 0.34)
+z_as_relative = false
+z_index = -130
+texture = ExtResource("3_keep")
+texture_filter = 1
+
+[node name="RevealFog" type="Sprite2D" parent="HorizonPresentation"]
+position = Vector2(0, -40)
+z_as_relative = false
+z_index = -120
+texture = ExtResource("4_fog")
+texture_filter = 1
+
+[node name="FortressPresentation" type="Node2D" parent="."]
+y_sort_enabled = false
+
+[node name="OuterWall" type="Sprite2D" parent="FortressPresentation"]
+position = Vector2(-150, -80)
+scale = Vector2(0.55, 0.55)
+z_as_relative = false
+z_index = -90
+texture = ExtResource("7_wall")
+texture_filter = 1
+
+[node name="CentralCitadel" type="Sprite2D" parent="FortressPresentation"]
+position = Vector2(160, -150)
+scale = Vector2(0.52, 0.52)
+z_as_relative = false
+z_index = -80
+texture = ExtResource("6_citadel")
+texture_filter = 1
+
+[node name="FrontageFog" type="Sprite2D" parent="FortressPresentation"]
+position = Vector2(0, 30)
+z_as_relative = false
+z_index = -70
+texture = ExtResource("8_frontage_fog")
+texture_filter = 1
+
+[node name="ForegroundPresentation" type="Node2D" parent="."]
+
+[node name="GateShadow" type="Sprite2D" parent="ForegroundPresentation"]
+position = Vector2(0, -32)
+z_as_relative = false
+z_index = 18
+texture = ExtResource("9_gate_shadow")
+texture_filter = 1
+
+[node name="CameraPresentationAnchor" type="Marker2D" parent="."]
+[node name="FrontageEntry" type="Marker2D" parent="."]
+[node name="FirstCameraInfluenceStart" type="Marker2D" parent="."]
+[node name="FirstRevealApex" type="Marker2D" parent="."]
+[node name="FirstCameraReturnComplete" type="Marker2D" parent="."]
+[node name="FrontageRevealStart" type="Marker2D" parent="."]
+[node name="FrontageApex" type="Marker2D" parent="."]
+[node name="GameplayReturn" type="Marker2D" parent="."]
+[node name="GateThreshold" type="Marker2D" parent="."]
+
+[node name="CameraInfluenceStart" type="Marker2D" parent="."]
+[node name="CameraApex" type="Marker2D" parent="."]
+[node name="CameraReturnStart" type="Marker2D" parent="."]
+[node name="CameraReturnComplete" type="Marker2D" parent="."]

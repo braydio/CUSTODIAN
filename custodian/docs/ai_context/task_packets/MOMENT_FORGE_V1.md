@@ -30,6 +30,8 @@ or production authority.
 - Ranked, reasoned changed-file routing with branch-base support.
 - Split schema, router, report, and Godot runtime smoke checks.
 - Review output confinement to `reports/moment_forge/`.
+- Derived visible-Operator visual-anchor probes; light/heavy combat scenarios
+  now fail stable assertions above `0.5 px` at every authored review tick.
 
 ## Validation
 

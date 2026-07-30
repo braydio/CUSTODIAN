@@ -9,7 +9,7 @@
 **Supports:** Campaign Flow, World Transition, Repair Gameplay, Sector Damage, Turret Placement, Power Routing, Defensive Readability
 **Runtime Target:** Godot 4.x (`custodian/`)
 **Last Updated:** 2026-04-08
-**Content Canon Authority:** `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
+**Content Canon Authority:** `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 
 ---
 
@@ -33,7 +33,7 @@ This system is not just “better walls.” It is the structural substrate for:
 
 The compound is the home-state world context. If it remains a mostly decorative or loosely inferred arrangement, every system built on top of it becomes vague. This file defines how the compound becomes a real runtime object.
 
-This file is the structural authority for the compound. For tone, institutional residue, machine-language presentation, and environmental storytelling rules, defer to `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`.
+This file is the structural authority for the compound. For tone, institutional residue, machine-language presentation, and environmental storytelling rules, defer to `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`.
 
 ---
 

@@ -57,6 +57,26 @@ func _init() -> void:
 		"compound_rect": Rect2i(40, 40, 10, 10),
 		"compound_ingress": [Vector2i(45, 40)],
 		"player_spawn": Vector2i(12, 12),
+		"floor_cells": [Vector2i(74, 14)],
+		"sundered_keep_frontage": {
+			"landmark_id": &"sundered_keep_frontage",
+			"gate_anchor": Vector2i(74, 14),
+			"fortress_outward_direction": Vector2i.UP,
+			"overlook_anchor": Vector2i(62, 34),
+			"camera_semantic_anchors": {
+				"frontage_entry": Vector2i(52, 52),
+				"first_influence_start": Vector2i(56, 45),
+				"first_reveal_apex": Vector2i(60, 38),
+				"first_return_complete": Vector2i(64, 32),
+				"frontage_reveal_start": Vector2i(68, 26),
+				"frontage_apex": Vector2i(71, 21),
+				"gameplay_return": Vector2i(73, 17),
+				"gate_threshold": Vector2i(74, 14),
+			},
+			"visual_module_anchors": {
+				"fortress_front_anchor": Vector2i(74, 6),
+			},
+		},
 	}
 
 	await process_frame
@@ -79,7 +99,9 @@ func _init() -> void:
 	var ingress := world.get_node_or_null("SunderedKeepIngressSite") as Area2D
 	var landmarks := world.get_node_or_null("WorldLandmarks") as Node2D
 	var vista := (
-		landmarks.get_node_or_null("SunderedKeepWorldVista") as Node2D
+		landmarks.get_node_or_null(
+			"SunderedKeepProcgenFrontagePresentation"
+		) as Node2D
 		if landmarks != null
 		else null
 	)
@@ -88,9 +110,11 @@ func _init() -> void:
 	elif not landmarks.is_in_group(&"world_origin_branch"):
 		errors.append("WorldLandmarks missing world_origin_branch")
 	if vista == null:
-		errors.append("generated Sundered Keep world Vista missing")
+		errors.append("generated Sundered Keep procgen frontage missing")
 	elif not vista.is_in_group("generated_sundered_keep_world_vista"):
 		errors.append("world Vista missing generated landmark group")
+	elif not vista.is_in_group("generated_sundered_keep_procgen_frontage"):
+		errors.append("frontage presentation missing procgen landmark group")
 	if ingress == null:
 		errors.append("SunderedKeepIngressSite missing")
 	else:

@@ -4,7 +4,9 @@
 **Created:** 2026-04-08  
 **Status:** active  
 **Last Updated:** 2026-04-08  
-**Parent Canon Authority:** `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`  
+**Lore Canon Authority:** `design/03_world/lore/CORE_LORE.md`  
+**Content Protocol Authority:** `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`  
+**Faction Spec Authority:** `design/02_features/factions/FACTION_EXPRESSION_SYSTEM.md`  
 **Primary Downstream Consumers:** `design/04_architecture/REGION_GENERATION_SYSTEM.md`, `design/02_features/pixel_planet/PIXEL_PLANET_CONTRACT_SYSTEM.md`, `design/02_features/procgen/AUTHORED_TILED_ROOM_PIPELINE.md`, `design/02_features/enemy_director/implementation.md`, `design/02_features/terminal/COMMAND_TERMINAL_SPEC.md`
 
 ---
@@ -19,7 +21,7 @@ Use this doc when deciding:
 
 - which world-identity fields a generated region should carry
 - how rooms should expose provenance and reuse
-- how rooms should expose impossible provenance without explaining The Unarrival directly
+- how rooms should expose impossible provenance without explaining the Unnarrival directly
 - how inspect text should sound
 - how machine messages should sound
 - how faction ideology should affect behavior and dressing
@@ -91,7 +93,7 @@ This payload can exist at more than one level:
 - encounter-level
 - inspect-pool-level
 
-`provenance_failure` is optional in the first runtime pass, but it is the key field for the revised Severance model. It should describe the impossible relationship, not explain the cosmic source. Good values name symptoms such as `artifact_without_origin`, `witness_precedes_event`, `machine_command_from_future`, `settlement_remembers_false_war`, or `saint_relic_precedes_arrival`.
+`provenance_failure` is optional in the first runtime pass, but it is the key field for the revised Severing model. It should describe the impossible relationship, not explain the cosmic source. Good values name symptoms such as `artifact_without_origin`, `witness_precedes_event`, `machine_command_from_future`, `settlement_remembers_false_war`, or `saint_relic_precedes_arrival`.
 
 ### Minimum Viable Runtime Requirement
 
@@ -157,7 +159,7 @@ Generation implications:
 - machine language should classify contradictions coldly
 - local factions should offer mutually incompatible but locally coherent explanations
 - physical evidence should imply wrong-order age, impossible ownership, or orphaned cause
-- avoid exposition naming The Unarrival unless the content is deliberately late-game or sealed
+- avoid exposition naming the Unnarrival unless the content is deliberately late-game or sealed
 
 ---
 
@@ -211,7 +213,7 @@ Recommended values:
 
 Recommended first-pass values:
 - `indexer`
-- `penitent_of_static`
+- `pale_bell_penitent`
 - `leaseholder`
 - `choir_of_provenance`
 - `buried_kin`
@@ -219,7 +221,7 @@ Recommended first-pass values:
 - `opportunist_scavenger`
 - `quarantine_zealot`
 
-These values should stay compatible with later faction systems without requiring full faction implementation today.
+> **Faction ID note:** These values match the canonical IDs in `design/02_features/factions/FACTION_EXPRESSION_SYSTEM.md` and `design/03_world/factions/`. The obsolete ID `penitent_of_static` is retired. Runtime code that uses `penitent_of_static` must migrate to `pale_bell_penitent`.
 
 ---
 
@@ -265,7 +267,7 @@ Each authored or generated room should eventually be able to expose:
     "original_function": "personnel_intake_facility",
     "damage_signature": "systemic_fire",
     "reuse_signature": "ritual_proving_ground",
-    "occupant_ideology": "penitent_of_static",
+    "occupant_ideology": "pale_bell_penitent",
     "tableau_slots": ["centerpiece", "wall_marker", "floor_scatter"],
     "inspect_pool": "intake_fire_ritual"
 }
@@ -370,18 +372,19 @@ Behavior cues:
 - claim archive interfaces
 - prioritize classification infrastructure
 
-### `penitent_of_static`
+### `pale_bell_penitent`
 Environment cues:
 - interference shrines
 - cable braids
 - speaker clusters
 - intentionally noisy spaces
+- temporal distortion markers
 
 Behavior cues:
 - jam sensors
 - linger near humming machinery
 - corrupt relay or signal surfaces
-- ritualize ambiguity
+- ritualize temporal and signal ambiguity
 
 ### `leaseholder`
 Environment cues:
