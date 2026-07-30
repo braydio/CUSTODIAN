@@ -67,7 +67,7 @@ The generic special-room system remains live for other encounters. Its documenta
 
 - Existing room footprint: `35x27` tiles at `32 px` per tile (`1120x864 px`).
 - Authored camera bounds: `1120x864 px` centered on the chamber.
-- Entry spawn: south interior landing at `(0, 344)`.
+- Entry spawn: south interior landing at `(0, 224)`, north of the encounter scene's internal south-exit trigger.
 - World-return exit: south threshold at `(0, 404)`.
 - Boundary rails enclose the chamber with a `192 px` south opening.
 - The existing Ritualant scene is instanced at `(0, 0)` without modification.
