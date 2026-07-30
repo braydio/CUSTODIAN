@@ -1,0 +1,108 @@
+{
+  "assertions": [
+    {
+      "role": "approach",
+      "severity": "error",
+      "type": "role_exists"
+    },
+    {
+      "severity": "error",
+      "type": "no_unreleased_inputs"
+    },
+    {
+      "path": "telemetry.json",
+      "severity": "error",
+      "type": "output_exists"
+    }
+  ],
+  "capture": {
+    "audio": true,
+    "background": "opaque",
+    "contact_sheet_ticks": [
+      0,
+      36,
+      72,
+      108,
+      156,
+      228
+    ],
+    "end_tick": 239,
+    "fps": 60,
+    "height": 720,
+    "required_keyframes": true,
+    "start_tick": 0,
+    "width": 1280
+  },
+  "description": "First Sundered Keep approach reveal with fog, moonlight, and music evidence.",
+  "duration_ticks": 240,
+  "id": "vista/sundered_keep_first_reveal",
+  "probes": [
+    {
+      "fields": [
+        "visible"
+      ],
+      "id": "approach_state",
+      "required": true,
+      "role": "approach",
+      "ticks": [
+        0,
+        72,
+        156,
+        238
+      ]
+    }
+  ],
+  "scene": "res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn",
+  "schema_version": 1,
+  "seed": 104729,
+  "setup": {
+    "fixture": {
+      "config": {
+        "review": "first_reveal"
+      },
+      "id": "sundered_keep_world_vista"
+    },
+    "processing": [],
+    "properties": [],
+    "remove_nodes": [],
+    "roles": {
+      "approach": {
+        "node_path": "."
+      }
+    },
+    "spawns": []
+  },
+  "simulation": {
+    "max_wall_seconds": 30,
+    "pause_during_setup": true,
+    "physics_hz": 60,
+    "warmup_ticks": 4
+  },
+  "stable_fingerprint": {
+    "counters": [],
+    "event_payload_fields": {},
+    "float_quantum": 0.0001,
+    "position_quantum_px": 0.25,
+    "probes": [
+      "approach_state"
+    ]
+  },
+  "tags": [
+    "vista",
+    "sundered_keep_vista",
+    "moonlight",
+    "fog",
+    "music"
+  ],
+  "timeline": [
+    {
+      "action": "capture_marker",
+      "name": "first_reveal_threshold",
+      "tick": 16
+    },
+    {
+      "action": "finish",
+      "tick": 238
+    }
+  ]
+}

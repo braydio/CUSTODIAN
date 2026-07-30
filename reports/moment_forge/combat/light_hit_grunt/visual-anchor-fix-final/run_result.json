@@ -1,0 +1,263 @@
+{
+	"actions": [
+		{
+			"action": "input_tap",
+			"ok": true,
+			"tick": 2
+		},
+		{
+			"action": "aim_at_role",
+			"ok": true,
+			"tick": 20
+		},
+		{
+			"action": "input_tap",
+			"ok": true,
+			"tick": 30
+		},
+		{
+			"action": "capture_marker",
+			"ok": true,
+			"tick": 34
+		},
+		{
+			"action": "finish",
+			"finish": true,
+			"ok": true,
+			"tick": 118
+		}
+	],
+	"assertions": [
+		{
+			"actual": true,
+			"expected": {
+				"role": "target",
+				"severity": "error",
+				"type": "role_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "role_exists"
+		},
+		{
+			"actual": false,
+			"expected": {
+				"severity": "error",
+				"type": "no_unreleased_inputs"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "no_unreleased_inputs"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"path": "telemetry.json",
+				"severity": "error",
+				"type": "output_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "output_exists"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 0.0,
+				"type": "probe_compare",
+				"value": 0.5
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 24.0,
+				"type": "probe_compare",
+				"value": 0.5
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 30.0,
+				"type": "probe_compare",
+				"value": 0.5
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 34.0,
+				"type": "probe_compare",
+				"value": 0.5
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 40.0,
+				"type": "probe_compare",
+				"value": 0.5
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 72.0,
+				"type": "probe_compare",
+				"value": 0.5
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 118.0,
+				"type": "probe_compare",
+				"value": 0.5
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0,
+			"expected": {
+				"op": "eq",
+				"severity": "warning",
+				"type": "warning_count",
+				"value": 0.0
+			},
+			"message": "",
+			"passed": true,
+			"severity": "warning",
+			"type": "warning_count"
+		}
+	],
+	"capture_failures": [],
+	"capture_mode": "full",
+	"completed": true,
+	"completed_tick": 118,
+	"failures": [],
+	"keyframes": [
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/visual-anchor-fix-final/keyframes/tick_000000.png",
+			"render_frame": 4,
+			"sha256": "24a8e51fa00b7162bfae06804880fa5f0fcb6ef27d96e00027ab9781357ccd97",
+			"tick": 0
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/visual-anchor-fix-final/keyframes/tick_000024.png",
+			"render_frame": 28,
+			"sha256": "29a69e3858881f2558c7e9a39433c2fae1f64dc96b4c402a661d6a146c05c2dc",
+			"tick": 24
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/visual-anchor-fix-final/keyframes/tick_000030.png",
+			"render_frame": 34,
+			"sha256": "8aa17ffab6679e29a6d23c8e9f0f823f823edcaa1d577d6676aedbef65cbc1f2",
+			"tick": 30
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/visual-anchor-fix-final/keyframes/tick_000034.png",
+			"render_frame": 38,
+			"sha256": "8aba4acfbab148309e05da8d99651cccb02dedb268ec612e86d17d9eb0ac4b78",
+			"tick": 34
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/visual-anchor-fix-final/keyframes/tick_000040.png",
+			"render_frame": 44,
+			"sha256": "5dd9521144fe53e8aac1a2ff1072c113ef7f119400d25aeb4f2f554c1dcae3c1",
+			"tick": 40
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/visual-anchor-fix-final/keyframes/tick_000072.png",
+			"render_frame": 76,
+			"sha256": "5cd179781d9d98250b07f781c9d5ab873fb3140842bb27f0c306585edd526b44",
+			"tick": 72
+		}
+	],
+	"markers": [
+		{
+			"data": {},
+			"name": "expected_contact",
+			"tick": 34
+		}
+	],
+	"passed": true,
+	"probe_failures": [],
+	"runtime": {
+		"godot": {
+			"build": "arch_linux",
+			"hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+			"hex": 263937,
+			"major": 4,
+			"minor": 7,
+			"patch": 1,
+			"status": "stable",
+			"string": "4.7.1-stable (arch_linux)",
+			"timestamp": 1783976428
+		},
+		"physics_hz": 60,
+		"renderer": "vulkan"
+	},
+	"scenario_id": "combat/light_hit_grunt",
+	"scenario_path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/visual-anchor-fix-final/scenario.snapshot.json",
+	"schema": "custodian.moment_forge.run_result.v1",
+	"seed": 104729
+}

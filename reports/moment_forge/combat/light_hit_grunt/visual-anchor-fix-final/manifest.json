@@ -1,0 +1,141 @@
+{
+  "artifacts": {
+    "assertions": "assertions.json",
+    "audio": "audio_mix.wav",
+    "contact_sheet": "current_contact_sheet.png",
+    "metrics": "metrics.json",
+    "probes": "probes.json",
+    "report": "index.html",
+    "telemetry": "telemetry.json",
+    "timeline": "timeline.json",
+    "video": "current.mp4",
+    "visual_diff": "visual_diff.png"
+  },
+  "baseline": {
+    "status": "incompatible_manual_only"
+  },
+  "baseline_compatibility": {
+    "contact_sheet_ticks": [
+      0,
+      24,
+      30,
+      34,
+      40,
+      72
+    ],
+    "end_tick": 119,
+    "fps": 60,
+    "height": 720,
+    "metrics_schema_major": 1,
+    "scenario_id": "combat/light_hit_grunt",
+    "scenario_schema_version": 1,
+    "scenario_sha256": "96b3f759ccf2b41b548259ed4fddec6e20389910497307cd287ef5258262111a",
+    "start_tick": 0,
+    "width": 1280
+  },
+  "capture": {
+    "audio_requested": true,
+    "fps": 60,
+    "height": 720,
+    "mode": "full",
+    "synchronization": "verified",
+    "width": 1280
+  },
+  "generated_at": "2026-07-29T18:17:20.229769-04:00",
+  "media": {
+    "audio_metrics": {
+      "available": true,
+      "channels": 2,
+      "duration_sec": 2.033333333333333,
+      "frames": 97600,
+      "noise_floor_dbfs": -27.04351479587883,
+      "onset_ms": null,
+      "onset_threshold_dbfs": -15.043514795878831,
+      "peak_dbfs": -16.270469398587103,
+      "peak_time_ms": 1061.1666666666667,
+      "rms_dbfs": -26.958464070463357,
+      "sample_rate": 48000,
+      "sample_width": 2
+    },
+    "audio_state": {
+      "available": true,
+      "canonical_available": true,
+      "conversion": "ffmpeg",
+      "requested": true
+    },
+    "ffmpeg_available": true,
+    "visual_diff": {
+      "changed_pixel_bbox": null,
+      "changed_pixel_ratio": 0.004182219328703704,
+      "different": false,
+      "luminance_delta": -0.0020742910879647525,
+      "luminance_mean_baseline": 62.84837112991898,
+      "luminance_mean_current": 62.846296838831016,
+      "mean_absolute_channel_delta": 0.12895284770447532
+    }
+  },
+  "repository": {
+    "branch": "main",
+    "changed_files": [
+      "M custodian/docs/ai_context/CURRENT_STATE.md",
+      " M custodian/docs/ai_context/FILE_INDEX.md",
+      " M custodian/docs/ai_context/VALIDATION_RECIPES.md",
+      " M custodian/docs/ai_context/task_packets/MOMENT_FORGE_V1.md",
+      " M custodian/game/actors/operator/operator.tscn",
+      " M custodian/tools/iteration/godot/moment_probe_collector.gd",
+      " M custodian/tools/iteration/godot/moment_runner.gd",
+      " M custodian/tools/iteration/run_moment.py",
+      " M custodian/tools/iteration/scenarios/combat/heavy_hit_grunt.json",
+      " M custodian/tools/iteration/scenarios/combat/light_hit_grunt.json",
+      "?? custodian/tools/validation/operator_visual_anchor_smoke.gd",
+      "?? custodian/tools/validation/operator_visual_anchor_smoke.gd.uid",
+      "?? fix_operator_visual_anchor.patch",
+      "?? reports/moment_forge/combat/heavy_hit_grunt/visual-anchor-probe-smoke/",
+      "?? reports/moment_forge/combat/light_hit_grunt/20260729T173311-0400/",
+      "?? reports/moment_forge/combat/light_hit_grunt/visual-anchor-fix-final/",
+      "?? reports/moment_forge/combat/light_hit_grunt/visual-anchor-fix-regression-2/",
+      "?? reports/moment_forge/combat/light_hit_grunt/visual-anchor-fix-regression/",
+      "?? reports/moment_forge/combat/light_hit_grunt/visual-anchor-fix/",
+      "?? reports/moment_forge/combat/light_hit_grunt/visual-anchor-metric-smoke/",
+      "?? reports/moment_forge/combat/light_hit_grunt/visual-anchor-probe-smoke/"
+    ],
+    "commit": "aa80639d67d6535233756e5a35b82e1a3d524c03",
+    "dirty": true,
+    "root": "/home/braydenchaffee/Projects/CUSTODIAN"
+  },
+  "run_id": "visual-anchor-fix-final",
+  "runtime": {
+    "godot": {
+      "build": "arch_linux",
+      "hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+      "hex": 263937,
+      "major": 4,
+      "minor": 7,
+      "patch": 1,
+      "status": "stable",
+      "string": "4.7.1-stable (arch_linux)",
+      "timestamp": 1783976428
+    },
+    "physics_hz": 60,
+    "renderer": "vulkan"
+  },
+  "scenario": {
+    "id": "combat/light_hit_grunt",
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/visual-anchor-fix-final/scenario.snapshot.json",
+    "schema_version": 1,
+    "sha256": "96b3f759ccf2b41b548259ed4fddec6e20389910497307cd287ef5258262111a"
+  },
+  "schema": "custodian.moment_forge.run_manifest.v1",
+  "stable_assertions_passed": true,
+  "stable_fingerprint": {
+    "algorithm": "sha256",
+    "schema": "custodian.moment_forge.stable_fingerprint.v1",
+    "value": "210d948083742d7f0b7b6ccc2ba1942d46dfb4ed5d1edba720cea7d1f614fc11"
+  },
+  "status": "passed",
+  "tools": {
+    "ffmpeg": "/usr/bin/ffmpeg",
+    "pillow": "12.3.0",
+    "python": "3.14.6"
+  }
+}

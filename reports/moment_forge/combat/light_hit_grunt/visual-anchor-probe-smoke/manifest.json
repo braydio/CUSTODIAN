@@ -1,0 +1,113 @@
+{
+  "artifacts": {
+    "assertions": "assertions.json",
+    "audio": null,
+    "contact_sheet": null,
+    "metrics": "metrics.json",
+    "probes": "probes.json",
+    "report": "index.html",
+    "telemetry": "telemetry.json",
+    "timeline": "timeline.json",
+    "video": null,
+    "visual_diff": null
+  },
+  "baseline": {
+    "status": "not_requested"
+  },
+  "baseline_compatibility": {
+    "contact_sheet_ticks": [
+      0,
+      24,
+      30,
+      34,
+      40,
+      72
+    ],
+    "end_tick": 119,
+    "fps": 60,
+    "height": 720,
+    "metrics_schema_major": 1,
+    "scenario_id": "combat/light_hit_grunt",
+    "scenario_schema_version": 1,
+    "scenario_sha256": "3b41dd2bc3f6ea474814c5ffb3244231d40e10f0575a0d0754d6b9dcd22d12a3",
+    "start_tick": 0,
+    "width": 1280
+  },
+  "capture": {
+    "audio_requested": true,
+    "fps": 60,
+    "height": 720,
+    "mode": "none",
+    "synchronization": "not_requested",
+    "width": 1280
+  },
+  "generated_at": "2026-07-29T18:12:43.092597-04:00",
+  "media": {
+    "audio_metrics": {
+      "available": false
+    },
+    "audio_state": {
+      "available": false,
+      "conversion": "source_missing",
+      "requested": true
+    },
+    "ffmpeg_available": true,
+    "visual_diff": null
+  },
+  "repository": {
+    "branch": "main",
+    "changed_files": [
+      "M custodian/docs/ai_context/VALIDATION_RECIPES.md",
+      " M custodian/game/actors/operator/operator.tscn",
+      " M custodian/tools/iteration/godot/moment_probe_collector.gd",
+      " M custodian/tools/iteration/run_moment.py",
+      " M custodian/tools/iteration/scenarios/combat/heavy_hit_grunt.json",
+      " M custodian/tools/iteration/scenarios/combat/light_hit_grunt.json",
+      "?? custodian/tools/validation/operator_visual_anchor_smoke.gd",
+      "?? custodian/tools/validation/operator_visual_anchor_smoke.gd.uid",
+      "?? fix_operator_visual_anchor.patch",
+      "?? reports/moment_forge/combat/light_hit_grunt/20260729T173311-0400/",
+      "?? reports/moment_forge/combat/light_hit_grunt/visual-anchor-fix-regression/",
+      "?? reports/moment_forge/combat/light_hit_grunt/visual-anchor-fix/",
+      "?? reports/moment_forge/combat/light_hit_grunt/visual-anchor-probe-smoke/"
+    ],
+    "commit": "aa80639d67d6535233756e5a35b82e1a3d524c03",
+    "dirty": true,
+    "root": "/home/braydenchaffee/Projects/CUSTODIAN"
+  },
+  "run_id": "visual-anchor-probe-smoke",
+  "runtime": {
+    "godot": {
+      "build": "arch_linux",
+      "hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+      "hex": 263937,
+      "major": 4,
+      "minor": 7,
+      "patch": 1,
+      "status": "stable",
+      "string": "4.7.1-stable (arch_linux)",
+      "timestamp": 1783976428
+    },
+    "physics_hz": 60,
+    "renderer": "vulkan"
+  },
+  "scenario": {
+    "id": "combat/light_hit_grunt",
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/visual-anchor-probe-smoke/scenario.snapshot.json",
+    "schema_version": 1,
+    "sha256": "3b41dd2bc3f6ea474814c5ffb3244231d40e10f0575a0d0754d6b9dcd22d12a3"
+  },
+  "schema": "custodian.moment_forge.run_manifest.v1",
+  "stable_assertions_passed": true,
+  "stable_fingerprint": {
+    "algorithm": "sha256",
+    "schema": "custodian.moment_forge.stable_fingerprint.v1",
+    "value": "0f7ae797c0128c3e2d44805415947f18831b0b14ed3ad5fb87a50954388879d0"
+  },
+  "status": "partial_media",
+  "tools": {
+    "ffmpeg": "/usr/bin/ffmpeg",
+    "pillow": "12.3.0",
+    "python": "3.14.6"
+  }
+}

@@ -1,0 +1,129 @@
+[
+	{
+		"data": {
+			"authored_action": {
+				"action": "input_tap",
+				"hold_ticks": 1.0,
+				"name": "toggle_unarmed",
+				"tick": 2.0
+			},
+			"moment_tick": 2,
+			"result": {
+				"action": "input_tap",
+				"ok": true,
+				"tick": 2
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 2
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "aim_at_role",
+				"role": "operator",
+				"target_role": "target",
+				"tick": 20.0
+			},
+			"moment_tick": 20,
+			"result": {
+				"action": "aim_at_role",
+				"ok": true,
+				"tick": 20
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 20
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "input_tap",
+				"hold_ticks": 1.0,
+				"name": "attack_primary",
+				"tick": 30.0
+			},
+			"moment_tick": 30,
+			"result": {
+				"action": "input_tap",
+				"ok": true,
+				"tick": 30
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 30
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "capture_marker",
+				"name": "expected_contact",
+				"tick": 34.0
+			},
+			"moment_tick": 34,
+			"result": {
+				"action": "capture_marker",
+				"ok": true,
+				"tick": 34
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 34
+	},
+	{
+		"data": {
+			"attack_objective": "breach_command",
+			"enemy": "GRUNT",
+			"from": "staging",
+			"health": 68.0,
+			"max_health": 78.0,
+			"position": "(474.0, 360.0)",
+			"target": "",
+			"to": "commit"
+		},
+		"kind": "enemy_assault_state_changed",
+		"tick": 48
+	},
+	{
+		"data": {
+			"amount": 10.0,
+			"kind": "rejected",
+			"reason": "no_recoverable_room"
+		},
+		"kind": "player_reclaim_rejected",
+		"tick": 48
+	},
+	{
+		"data": {
+			"attack_kind": "fast",
+			"bullet_impact_fx": "default",
+			"contact_kind": "melee_impact",
+			"damage": 10.0,
+			"footstep_noise_mult": 1.0,
+			"material_id": "unknown",
+			"melee_impact_fx": "default",
+			"position": "(460.0, 360.0)",
+			"target": "EnemyGrunt1",
+			"weapon": "unarmed_fast_1"
+		},
+		"kind": "material_contact",
+		"tick": 48
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "finish",
+				"tick": 118.0
+			},
+			"moment_tick": 118,
+			"result": {
+				"action": "finish",
+				"finish": true,
+				"ok": true,
+				"tick": 118
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 118
+	}
+]

@@ -1,0 +1,46 @@
+{
+  "argv": [
+    "/usr/bin/godot",
+    "--path",
+    "/home/braydenchaffee/Projects/CUSTODIAN/custodian",
+    "--fixed-fps",
+    "60",
+    "--headless",
+    "--script",
+    "res://tools/iteration/godot/moment_runner.gd",
+    "--",
+    "--custodian-dev",
+    "--observe",
+    "--moment-forge",
+    "--moment-scenario",
+    "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/heavy_hit_grunt/visual-anchor-probe-smoke/scenario.snapshot.json",
+    "--moment-output",
+    "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/heavy_hit_grunt/visual-anchor-probe-smoke",
+    "--moment-capture-mode",
+    "none"
+  ],
+  "capture_mode": "none",
+  "repository": {
+    "branch": "main",
+    "changed_files": [
+      "M custodian/docs/ai_context/VALIDATION_RECIPES.md",
+      " M custodian/game/actors/operator/operator.tscn",
+      " M custodian/tools/iteration/godot/moment_probe_collector.gd",
+      " M custodian/tools/iteration/run_moment.py",
+      " M custodian/tools/iteration/scenarios/combat/heavy_hit_grunt.json",
+      " M custodian/tools/iteration/scenarios/combat/light_hit_grunt.json",
+      "?? custodian/tools/validation/operator_visual_anchor_smoke.gd",
+      "?? custodian/tools/validation/operator_visual_anchor_smoke.gd.uid",
+      "?? fix_operator_visual_anchor.patch",
+      "?? reports/moment_forge/combat/heavy_hit_grunt/visual-anchor-probe-smoke/",
+      "?? reports/moment_forge/combat/light_hit_grunt/20260729T173311-0400/",
+      "?? reports/moment_forge/combat/light_hit_grunt/visual-anchor-fix-regression-2/",
+      "?? reports/moment_forge/combat/light_hit_grunt/visual-anchor-fix-regression/",
+      "?? reports/moment_forge/combat/light_hit_grunt/visual-anchor-fix/",
+      "?? reports/moment_forge/combat/light_hit_grunt/visual-anchor-probe-smoke/"
+    ],
+    "commit": "aa80639d67d6535233756e5a35b82e1a3d524c03",
+    "dirty": true
+  },
+  "scenario_sha256": "ad507118cc3518809c096ed05dec5c312dce73916f411b3d2fdc86ddd677a133"
+}

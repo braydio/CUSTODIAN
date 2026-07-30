@@ -1,5 +1,6 @@
 {
   "schema": "custodian.sundered_keep.level_tilemap.v1",
+  "mapper_schema": "custodian.sundered_keep.mapper.v1",
   "level_id": "sundered_keep_front_gate_large",
   "display_name": "Sundered Keep - Front Gate",
   "tile_size": 32,
@@ -37,42 +38,6 @@
 	"expand_camera_bounds": false
   },
   "authoring_mask_path": "res://content/levels/sundered_keep/sundered_keep_overlay_authoring.json",
-  "start_tile": [
-	56,
-	76
-  ],
-  "return_gate_tile": [
-	42,
-	58
-  ],
-  "main_gate_tile": [
-	54,
-	50
-  ],
-  "great_hall_door_tile": [
-	55,
-	30
-  ],
-  "upper_stair_tile": [
-	79,
-	31
-  ],
-  "lower_stair_tile": [
-	30,
-	45
-  ],
-  "hatch_tile": [
-	42,
-	40
-  ],
-  "return_mooring_origin_tile": [
-	39,
-	56
-  ],
-  "key_pickup_tile": [
-	73,
-	56
-  ],
   "layers": [
 	"Underlay",
 	"TerrainBase",
@@ -2534,8 +2499,134 @@
 		7
 	  ],
 	  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_void_edge"
+	},
+	{
+	  "type": "stamp_prefab",
+	  "layer": "Traversal",
+	  "asset_id": "stone_stairs_up_n",
+	  "category": "stairs",
+	  "tile": [
+		79,
+		31
+	  ]
+	},
+	{
+	  "type": "stamp_prefab",
+	  "layer": "Traversal",
+	  "asset_id": "stone_stairs_down_s",
+	  "category": "stairs",
+	  "tile": [
+		30,
+		45
+	  ]
+	},
+	{
+	  "type": "stamp_prefab",
+	  "layer": "Traversal",
+	  "asset_id": "floor_hatch_closed_01",
+	  "category": "stairs",
+	  "tile": [
+		42,
+		40
+	  ]
+	},
+	{
+	  "type": "stamp_prop",
+	  "layer": "PropsStatic",
+	  "asset_id": "prop_crate_stack_wet_01",
+	  "category": "props",
+	  "tile": [
+		73,
+		26
+	  ]
+	},
+	{
+	  "type": "blocker_rect",
+	  "name": "PrefabGatehouseGateBlocker",
+	  "role": "main_gate",
+	  "rect": [
+		55,
+		50,
+		6,
+		3
+	  ]
+	},
+	{
+	  "type": "blocker_rect",
+	  "name": "GreatHallDoorBlocker",
+	  "role": "great_hall_door",
+	  "rect": [
+		55,
+		30,
+		2,
+		1
+	  ]
 	}
   ],
+  "mapper_placements": [],
+  "siege": {
+	"schema": "custodian.sundered_keep.gatehouse_siege.v1",
+	"pressure_interval_seconds": 5.0,
+	"pressure_damage_base": 9.0,
+	"pressure_damage_per_wave": 2.0,
+	"repair_amount": 35.0,
+	"objectives": [
+	  {
+		"id": "gatehouse_core",
+		"label": "Gatehouse Core",
+		"group": "command_post",
+		"tile_offset_from": "main_gate",
+		"tile_offset": [2, 4],
+		"hp": 180.0,
+		"repair_kind": "repair_gatehouse",
+		"repair_prompt": "REPAIR GATEHOUSE CORE",
+		"repair_tile_offset": [2, 7],
+		"repair_distance": 96.0
+	  },
+	  {
+		"id": "return_mooring",
+		"label": "Return Mooring",
+		"group": "power_node",
+		"tile_offset_from": "return_mooring_origin",
+		"tile_offset": [2, 2],
+		"hp": 140.0,
+		"repair_kind": "repair_mooring",
+		"repair_prompt": "REPAIR RETURN MOORING",
+		"repair_tile_offset": [2, 4],
+		"repair_distance": 82.0
+	  }
+	],
+	"spawns": [
+	  {
+		"lane": "sundered_keep",
+		"tile_offset_from": "main_gate",
+		"tile_offset": [-7, -1]
+	  },
+	  {
+		"lane": "sundered_keep",
+		"tile_offset_from": "main_gate",
+		"tile_offset": [8, -1]
+	  },
+	  {
+		"lane": "sundered_keep",
+		"tile_offset_from": "great_hall_door",
+		"tile_offset": [0, 6]
+	  }
+	],
+	"waves": [
+	  {"composition": ["drone", "drone", "grunt"]},
+	  {"composition": ["grunt", "drone", "fast", "drone"]},
+	  {"composition": ["grunt", "grunt", "heavy"]}
+	],
+	"extra_wave_pressure_ticks": [2, 5],
+	"defense_turret": {
+	  "tile_offset_from": "main_gate",
+	  "tile_offset": [-5, 4],
+	  "range": 360.0,
+	  "damage": 9.0,
+	  "power_required": false
+	}
+  },
   "interactables": [
 	{
 	  "name": "SunderedGateKeyPickup",
@@ -2558,6 +2649,26 @@
 	  "distance": 96.0
 	},
 	{
+	  "name": "GreatHallDoorInteraction",
+	  "kind": "great_hall_door",
+	  "prompt": "OPEN GREAT HALL DOOR",
+	  "tile": [
+		56,
+		31
+	  ],
+	  "distance": 88.0
+	},
+	{
+	  "name": "SidearmLockerInteraction",
+	  "kind": "sidearm_locker",
+	  "prompt": "OPEN FIELD-RETENTION LOCKER",
+	  "tile": [
+		73,
+		27
+	  ],
+	  "distance": 76.0
+	},
+	{
 	  "name": "VanguardSealCache",
 	  "kind": "vanguard_seal_cache",
 	  "prompt": "OPEN CUSTODIAN COMMAND CACHE",
@@ -2573,7 +2684,7 @@
 	{
 	  "id": "spawn",
 	  "tile": [
-		56,
+		54,
 		76
 	  ]
 	},
@@ -2592,6 +2703,13 @@
 	  ]
 	},
 	{
+	  "id": "return_mooring_origin",
+	  "tile": [
+		39,
+		56
+	  ]
+	},
+	{
 	  "id": "key_winch",
 	  "tile": [
 		73,
@@ -2603,6 +2721,13 @@
 	  "tile": [
 		54,
 		50
+	  ]
+	},
+	{
+	  "id": "main_gate_prefab",
+	  "tile": [
+		56,
+		58
 	  ]
 	},
 	{
@@ -2624,6 +2749,48 @@
 	  "tile": [
 		56,
 		20
+	  ]
+	},
+	{
+	  "id": "upper_stair",
+	  "tile": [
+		79,
+		31
+	  ]
+	},
+	{
+	  "id": "lower_stair",
+	  "tile": [
+		30,
+		45
+	  ]
+	},
+	{
+	  "id": "hatch",
+	  "tile": [
+		42,
+		40
+	  ]
+	},
+	{
+	  "id": "great_hall_marine_spawn",
+	  "tile": [
+		71,
+		27
+	  ]
+	},
+	{
+	  "id": "routekeeper_trace",
+	  "tile": [
+		37,
+		53
+	  ]
+	},
+	{
+	  "id": "routekeeper_hint",
+	  "tile": [
+		25,
+		39
 	  ]
 	},
 	{
@@ -2656,7 +2823,7 @@
 	}
   ],
   "layout_revision": "cheatsheet_relayout_v1",
-  "layout_generator": "custodian/tools/levels/generate_sundered_keep_front_gate_layout.py",
+  "layout_generator": "res://scenes/debug/sundered_keep_mapper.tscn",
   "layout_zones": [
 	{
 	  "id": "approach_bridge_h1",

@@ -1,0 +1,149 @@
+[
+	{
+		"actual": true,
+		"expected": {
+			"role": "target",
+			"severity": "error",
+			"type": "role_exists"
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "role_exists"
+	},
+	{
+		"actual": false,
+		"expected": {
+			"severity": "error",
+			"type": "no_unreleased_inputs"
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "no_unreleased_inputs"
+	},
+	{
+		"actual": true,
+		"expected": {
+			"path": "telemetry.json",
+			"severity": "error",
+			"type": "output_exists"
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "output_exists"
+	},
+	{
+		"actual": 0.0,
+		"expected": {
+			"field": "visible_visual_anchor_delta_px",
+			"op": "lte",
+			"probe": "operator_state",
+			"severity": "error",
+			"tick": 0.0,
+			"type": "probe_compare",
+			"value": 0.5
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "probe_compare"
+	},
+	{
+		"actual": 0.0,
+		"expected": {
+			"field": "visible_visual_anchor_delta_px",
+			"op": "lte",
+			"probe": "operator_state",
+			"severity": "error",
+			"tick": 28.0,
+			"type": "probe_compare",
+			"value": 0.5
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "probe_compare"
+	},
+	{
+		"actual": 0.0,
+		"expected": {
+			"field": "visible_visual_anchor_delta_px",
+			"op": "lte",
+			"probe": "operator_state",
+			"severity": "error",
+			"tick": 42.0,
+			"type": "probe_compare",
+			"value": 0.5
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "probe_compare"
+	},
+	{
+		"actual": 0.0,
+		"expected": {
+			"field": "visible_visual_anchor_delta_px",
+			"op": "lte",
+			"probe": "operator_state",
+			"severity": "error",
+			"tick": 50.0,
+			"type": "probe_compare",
+			"value": 0.5
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "probe_compare"
+	},
+	{
+		"actual": 0.0,
+		"expected": {
+			"field": "visible_visual_anchor_delta_px",
+			"op": "lte",
+			"probe": "operator_state",
+			"severity": "error",
+			"tick": 62.0,
+			"type": "probe_compare",
+			"value": 0.5
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "probe_compare"
+	},
+	{
+		"actual": 0.0,
+		"expected": {
+			"field": "visible_visual_anchor_delta_px",
+			"op": "lte",
+			"probe": "operator_state",
+			"severity": "error",
+			"tick": 100.0,
+			"type": "probe_compare",
+			"value": 0.5
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "probe_compare"
+	},
+	{
+		"actual": 0.0,
+		"expected": {
+			"field": "visible_visual_anchor_delta_px",
+			"op": "lte",
+			"probe": "operator_state",
+			"severity": "error",
+			"tick": 148.0,
+			"type": "probe_compare",
+			"value": 0.5
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "probe_compare"
+	}
+]

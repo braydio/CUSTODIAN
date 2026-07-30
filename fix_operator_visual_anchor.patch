@@ -1,0 +1,42 @@
+diff --git a/custodian/game/actors/operator/operator.tscn b/custodian/game/actors/operator/operator.tscn
+index 4b3c2d0..8bf1ff3 100644
+--- a/custodian/game/actors/operator/operator.tscn
++++ b/custodian/game/actors/operator/operator.tscn
+@@ -6,14 +6,13 @@ shadow_texture = ExtResource("29_contact_shadow")
+ [node name="DodgeFXBackSprite" type="AnimatedSprite2D" parent="."]
+ visible = false
+ z_index = -1
+-position = Vector2(297.99997, 2.000002)
+-offset = Vector2(0, 114)
++position = Vector2(0, -18)
++offset = Vector2(0, 0)
+ 
+ [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1317416612]
+-position = Vector2(297.99997, 2.000002)
+-rotation = -0.00045306538
++position = Vector2(0, -18)
+ sprite_frames = ExtResource("25_runtime_frames")
+-offset = Vector2(0, 114)
++offset = Vector2(0, 0)
+ 
+ [node name="ModularCapeSprite" type="AnimatedSprite2D" parent="."]
+ visible = false
+@@ -28,14 +27,14 @@ sprite_frames = ExtResource("33_modular_upper_fx_frames")
+ 
+ [node name="MeleeWeaponOverlaySprite" type="AnimatedSprite2D" parent="." unique_id=1317416613]
+ visible = false
+-position = Vector2(297.99997, 2.000002)
++position = Vector2(0, -18)
+ sprite_frames = ExtResource("27_melee_overlay_frames")
+ animation = &"melee_2h_fast_weapon"
+-offset = Vector2(0, 114)
++offset = Vector2(0, 0)
+ 
+ [node name="MeleeFxOverlaySprite" type="AnimatedSprite2D" parent="." unique_id=1317416614]
+ visible = false
+-position = Vector2(297.99997, 2.000002)
++position = Vector2(0, -18)
+ sprite_frames = ExtResource("27_melee_overlay_frames")
+ animation = &"melee_2h_fast_fx"
+-offset = Vector2(0, 114)
++offset = Vector2(0, 0)

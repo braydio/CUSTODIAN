@@ -1,0 +1,151 @@
+{
+	"actions": [
+		{
+			"action": "input_tap",
+			"ok": true,
+			"tick": 2
+		},
+		{
+			"action": "aim_at_role",
+			"ok": true,
+			"tick": 20
+		},
+		{
+			"action": "input_tap",
+			"ok": true,
+			"tick": 30
+		},
+		{
+			"action": "capture_marker",
+			"ok": true,
+			"tick": 34
+		},
+		{
+			"action": "finish",
+			"finish": true,
+			"ok": true,
+			"tick": 118
+		}
+	],
+	"assertions": [
+		{
+			"actual": true,
+			"expected": {
+				"role": "target",
+				"severity": "error",
+				"type": "role_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "role_exists"
+		},
+		{
+			"actual": false,
+			"expected": {
+				"severity": "error",
+				"type": "no_unreleased_inputs"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "no_unreleased_inputs"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"path": "telemetry.json",
+				"severity": "error",
+				"type": "output_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "output_exists"
+		},
+		{
+			"actual": 0,
+			"expected": {
+				"op": "eq",
+				"severity": "warning",
+				"type": "warning_count",
+				"value": 0.0
+			},
+			"message": "",
+			"passed": true,
+			"severity": "warning",
+			"type": "warning_count"
+		}
+	],
+	"capture_failures": [],
+	"capture_mode": "full",
+	"completed": true,
+	"completed_tick": 118,
+	"failures": [],
+	"keyframes": [
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/20260729T173311-0400/keyframes/tick_000000.png",
+			"render_frame": 4,
+			"sha256": "c3eb06c60031cc382295722c36149d6b7683e0e665b15a081e54cf5a859ac18b",
+			"tick": 0
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/20260729T173311-0400/keyframes/tick_000024.png",
+			"render_frame": 28,
+			"sha256": "7fc4f51a078c168a43fafd9cf3d2a61ccd8193aae7c05e683f307d2cbb2fef03",
+			"tick": 24
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/20260729T173311-0400/keyframes/tick_000030.png",
+			"render_frame": 34,
+			"sha256": "402a0a9ef15d39a8f866fc0502944fb843a7620664211d411cf2b71c80b6db84",
+			"tick": 30
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/20260729T173311-0400/keyframes/tick_000034.png",
+			"render_frame": 38,
+			"sha256": "a78fb597c4549ffc55728c77e0039efd15dc78f3dca90d81bc85bb6e4e4c9556",
+			"tick": 34
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/20260729T173311-0400/keyframes/tick_000040.png",
+			"render_frame": 44,
+			"sha256": "aeaa107bf73baa51e6d294b3b1c09bb94008e0229d38daa8ad0d8236504b1675",
+			"tick": 40
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/20260729T173311-0400/keyframes/tick_000072.png",
+			"render_frame": 76,
+			"sha256": "7997e8d280f741813b01b9ee592621fc2659125542dcb5d38f74e6c85ab2ca31",
+			"tick": 72
+		}
+	],
+	"markers": [
+		{
+			"data": {},
+			"name": "expected_contact",
+			"tick": 34
+		}
+	],
+	"passed": true,
+	"probe_failures": [],
+	"runtime": {
+		"godot": {
+			"build": "arch_linux",
+			"hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+			"hex": 263937,
+			"major": 4,
+			"minor": 7,
+			"patch": 1,
+			"status": "stable",
+			"string": "4.7.1-stable (arch_linux)",
+			"timestamp": 1783976428
+		},
+		"physics_hz": 60,
+		"renderer": "vulkan"
+	},
+	"scenario_id": "combat/light_hit_grunt",
+	"scenario_path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/20260729T173311-0400/scenario.snapshot.json",
+	"schema": "custodian.moment_forge.run_result.v1",
+	"seed": 104729
+}

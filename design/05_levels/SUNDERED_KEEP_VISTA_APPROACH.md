@@ -49,13 +49,11 @@ Ingress transitions must be deferred out of `Area2D.body_entered` physics callba
 
 ## Collision Mapping Debug Scene
 
-Use `res://scenes/debug/sundered_keep_approach_collision_mapper.tscn` to map exact approach collision points against the active underlay/path art. The scene loads the production `sundered_keep_approach.tscn`, draws existing `BOUNDARY_SEGMENTS`, and accepts clicked points as one connected polyline: A, B, C, D exports A->B, B->C, and C->D.
-
-Controls:
-
-- Left click: add a point.
-- Right click: remove the last point.
-- `C`: copy connected polyline segments as `BOUNDARY_SEGMENTS` source entries.
+The former Keep-specific approach collision mapper has been retired. The old
+approach is a reference/debug composition artifact and is not an independently
+authored production level. Use the generic `level_collision_poi_mapper.tscn`
+only for historical inspection. All production Front Gate authoring routes
+through `sundered_keep_mapper.tscn`.
 - `WASD` / arrow keys: pan.
 - Mouse wheel / `+` / `-`: zoom around the cursor.
 - `L`: focus the final horizontal traverse.

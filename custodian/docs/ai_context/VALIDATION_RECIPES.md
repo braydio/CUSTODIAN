@@ -393,11 +393,14 @@ For the walkable Sundered Keep underlay-only gameplay debug scene:
 ```bash
 cd custodian
 godot --headless --script tools/validation/sundered_keep_underlay_gameplay_debug_smoke.gd
-godot --headless --script tools/validation/sundered_keep_underlay_collision_mapper_smoke.gd
-godot --headless --script tools/validation/sundered_keep_underlay_gameplay_tile_mapper_smoke.gd
+godot --headless --script tools/validation/sundered_keep_mapper_smoke.gd
 ```
 
-This loads `res://scenes/debug/sundered_keep_production_underlay_debug.tscn`, verifies the scene uses only the active main underlay texture without instantiating `SunderedKeepMap` or authored tile sprites, confirms the real Operator/controller/projectile/camera runtime shell, checks gameplay camera zoom/bounds rather than authoring-review zoom, and validates the companion collision mapper against the canonical world-space segment JSON. The gameplay-tile mapper smoke additionally proves the separate review scene loads the same 127 rails, exposes a stable unique `01–99` live-asset palette in an `11x9` staging grid, retains the shared 32 px coordinate system, converts the reviewed `5048×3500` underlay region into fractional source cells, serializes and previews multi-cell stamps, removes stamps by covered cell, treats Shift-drag as one undoable/redoable edit, makes live reload undoable, and applies sampled graphics to production `FloorDetail` without creating collision or minimap authority.
+The underlay debug smoke retains the focused underlay-only runtime check.
+The unified mapper smoke proves the tool previews the actual production Keep,
+owns the level and collision documents, retains 127 rails and the 01–99
+palette/stamp/undo toolset, and exposes complete spatial and siege placement
+authority.
 
 For the Sundered Keep overlay-authoring guide pipeline:
 

@@ -6,7 +6,7 @@ const SCENE_PATHS := [
 ]
 const UNDERLAY_TEXTURE := "res://content/masters/sundered_keep/sundered_keep_main_overlay.png"
 const GAMEPLAY_CAMERA_ZOOM := Vector2(0.84, 0.84)
-const SPAWN_TILE := Vector2i(56, 76)
+const SPAWN_TILE := Vector2i(54, 76)
 
 var _failures: Array[String] = []
 

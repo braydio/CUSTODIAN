@@ -132,7 +132,7 @@
     [[1920.1, 2990.8], [1868.8, 2938.1]]
   ],
   "markers": {
-    "spawn": {"kind": "spawn", "label": "SPAWN", "position": [1808.0, 2448.0]},
+    "spawn": {"kind": "spawn", "label": "SPAWN", "position": [1744.0, 2448.0]},
     "return_causeway": {"kind": "return_causeway", "label": "RETURN CAUSEWAY", "position": [1792.0, 2320.0]},
     "gatehouse_key": {"kind": "key", "label": "GATEHOUSE KEY", "position": [2336.0, 1792.0]},
     "main_gate": {"kind": "gate", "label": "RAISING GATE", "position": [1792.0, 1600.0]},

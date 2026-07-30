@@ -1,7 +1,7 @@
 # Sundered Keep Large Front Gate
 
-Status: implemented first pass
-Last updated: 2026-07-26
+Status: implemented — unified production mapper authority
+Last updated: 2026-07-30
 
 ## Goal
 
@@ -49,38 +49,44 @@ The active front-gate JSON may declare:
 The image remains presentation-only and never generates collision from alpha.
 Reviewed manual rails now provide the corresponding static-boundary authority.
 
-The playable underlay debug scene now supports explicit mapped boundary rails for manual review:
+The production Keep has one authoring tool:
 
-- scene: `custodian/scenes/debug/sundered_keep_production_underlay_debug.tscn`
-- mapper: `custodian/scenes/debug/sundered_keep_underlay_collision_mapper.tscn`
+- mapper: `custodian/scenes/debug/sundered_keep_mapper.tscn`
+- production level data: `custodian/content/levels/sundered_keep/sundered_keep_front_gate_large.json`
 - canonical data: `custodian/content/levels/sundered_keep/sundered_keep_underlay_collision.json`
 
 `sundered_keep_underlay_collision.json` is the canonical static-boundary source
-shared by the mapper, debug review scene, and production `SunderedKeepMap`.
+written by the unified mapper and consumed by production `SunderedKeepMap`.
 Its capsule rails own permanent exterior walls, cliff edges, inaccessible art
-masses, the walkable silhouette, and permanent route boundaries. Dynamic gate,
-door, prop, encounter, and temporary-state blockers remain separate; the old
-per-tile rectangular wall blockers are suppressed when mapped rails are active.
+masses, the walkable silhouette, permanent prop obstruction, and permanent
+route boundaries. Per-wall and per-prop collision generation is suppressed.
+The only runtime-created blockers are stateful Main Gate and Great Hall door
+bodies, and their rectangles are mapper-authored `blocker_rect` records.
 
 The same JSON owns reviewed placement markers for spawn, Vista backtrack,
 gatehouse key, Main Gate, approved forward progression, and the first two siege
 spawn lanes. Runtime marker diamonds and labels remain debug-only.
 
-## Underlay Gameplay Tile Mapper
+## Unified Mapper Features
 
-The collision-underlay pair now has a separate gameplay-tile authoring scene:
+The mapper instantiates the actual production `SunderedKeepMap`, rather than a
+blank or legacy approach scene. It combines the unique tools from the retired
+approach-collision, underlay-collision, and gameplay-tile mappers:
 
-- scene: `custodian/scenes/debug/sundered_keep_underlay_gameplay_tile_mapper.tscn`
-- mapping data: `custodian/content/levels/sundered_keep/sundered_keep_underlay_gameplay_tiles.json`
-- validation: `custodian/tools/validation/sundered_keep_underlay_gameplay_tile_mapper_smoke.gd`
+- 127 capsule-rail collision editing;
+- exact runtime marker editing;
+- stable `01–99` floor/wall/gate/door/stair palette;
+- underlay-region stamp sampling;
+- repeated drag painting, topmost removal, and 100-state undo/redo;
+- live reload and complete JSON copy/save;
+- generic selection and relocation for every spatial `ops`, interactable,
+  marker, elevation, underpass, shore, occlusion, zone, and blocker record;
+- mapper control of siege objective, repair, spawn, and defense-turret offsets.
 
-The mapper instantiates the same reviewed underlay debug scene and its 127
-canonical collision rails. It does not reuse the current Front Gate gameplay
-layout. Instead, it provides a blank adjacent staging area containing a stable
-`01–99` palette of live Sundered Keep floor, wall, gate, door, and stair assets.
-The palette is arranged as an `11x9` review grid. A second paint source can
-drag-sample any rectangular set of visible underlay cells and reuse that region
-as a multi-cell stamp without cropping or exporting a PNG.
+Saved palette and underlay-stamp placements live in the production level JSON's
+`mapper_placements` array. Siege configuration is also inline in that document.
+The retired separate gameplay-placement JSON and siege configuration JSON are
+not runtime inputs.
 
 The reviewed source region is `5048×3500` pixels mapped across the `112×80`
 gameplay grid. Source rectangles therefore use fractional source-cell sizes
@@ -106,8 +112,10 @@ Authoring controls:
 - `G`: toggle the underlay grid
 - `E`: toggle canonical collision rails
 - `T`: toggle placed gameplay tiles
-- `C`: copy the complete mapping document
-- `Enter` or `U`: write the mapping JSON
+- `K` / `Shift+K`: cycle tile, collision, marker, and feature modes
+- `[` / `]`: cycle the selected marker or production feature
+- `C`: copy the complete unified authoring document
+- `Enter` or `U`: write production level and collision data
 - `F6`, `L`, or `R`: reload the saved mapping without restarting the scene
 - `Delete`: clear placements as one undoable edit
 
@@ -175,8 +183,7 @@ cd custodian
 godot --headless --script res://tools/validation/sundered_keep_asset_smoke.gd
 godot --headless --script res://tools/validation/sundered_keep_layout_smoke.gd
 godot --headless --script res://tools/validation/sundered_keep_large_layout_smoke.gd
-godot --headless --script res://tools/validation/sundered_keep_underlay_collision_mapper_smoke.gd
-godot --headless --script res://tools/validation/sundered_keep_underlay_gameplay_tile_mapper_smoke.gd
+godot --headless --script res://tools/validation/sundered_keep_mapper_smoke.gd
 ```
 
 Also useful after manifest changes:
@@ -226,26 +233,6 @@ PY
 
 ## Next Agent Slice
 
-Goal: use palette tiles and sampled underlay-region stamps to author and
-visually approve the gameplay composition against the fixed underlay/collision
-pair.
-
-Files:
-
-- `custodian/scenes/debug/sundered_keep_underlay_gameplay_tile_mapper.tscn`
-- `custodian/content/levels/sundered_keep/sundered_keep_underlay_gameplay_tiles.json`
-- `custodian/content/levels/sundered_keep/sundered_keep_underlay_collision.json`
-
-Constraints:
-
-- Keep the underlay and canonical collision rails fixed during tile review.
-- Refer to palette assets by their stable `01–99` numbers.
-- Keep sampled stamps as source-cell rectangles; do not crop or export new PNGs.
-- Saved placements are consumed as visual/floor-authoring sprites only and must
-  not create collision, blockers, navigation, or elevation authority.
-
-Acceptance:
-
-- the complete mapped gameplay tile composition follows the underlay silhouette
-- placed floor/wall/traversal modules remain aligned to the shared 32 px grid
-- debug and production collision remain shape-for-shape identical
+Use the unified production mapper for subsequent Front Gate layout changes.
+Do not reintroduce a Sundered Keep-specific secondary mapper, layout generator,
+separate gameplay-placement document, or runtime procedural fallback.

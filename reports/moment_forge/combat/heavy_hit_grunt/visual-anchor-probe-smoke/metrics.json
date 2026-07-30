@@ -1,0 +1,32 @@
+{
+  "action_count": 5,
+  "completed": true,
+  "duration_ticks": 148,
+  "event_count": 5,
+  "media": {
+    "audio": {
+      "available": false
+    },
+    "baseline_audio": null,
+    "visual_diff": null
+  },
+  "operator": {
+    "position": [
+      420.0,
+      360.0
+    ]
+  },
+  "probe_sample_count": 11,
+  "stable_fingerprint": {
+    "algorithm": "sha256",
+    "schema": "custodian.moment_forge.stable_fingerprint.v1",
+    "value": "1a51a7b0bba4dd2bbe68c94056d3fb19ade44a92a36744514c211e08b710ff50"
+  },
+  "target": {
+    "position": [
+      480.0,
+      360.0
+    ]
+  },
+  "warning_count": 0
+}

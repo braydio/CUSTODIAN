@@ -1,6 +1,6 @@
 extends SceneTree
 
-const SUNDERED_KEEP_MAP := preload("res://game/world/sundered_keep/sundered_keep_map.gd")
+const SUNDERED_KEEP_MAP := preload("res://game/world/sundered_keep/sundered_keep_map.tscn")
 const SUNDERED_KEEP_ASSETS := preload("res://content/runtime/sundered_keep/sundered_keep_game32_assets.gd")
 const LEVEL_PATH := "res://content/levels/sundered_keep/sundered_keep_front_gate_large.json"
 const PRESERVATION_PATH := "res://content/levels/sundered_keep/sundered_keep_front_gate_large.before_cheatsheet_relayout.json"
@@ -21,9 +21,26 @@ func _init() -> void:
 		_assert(_has_zone(level_data, zone_id), "missing authored cheat-sheet zone: %s" % zone_id)
 	for critical_key in [
 		"interior_occlusion_regions", "underpass_regions", "shore_walk_regions",
-		"return_mooring_origin_tile", "key_pickup_tile", "main_gate_tile", "great_hall_door_tile",
 	]:
 		_assert(level_data.get(critical_key) == preserved_level_data.get(critical_key), "gameplay-critical V1 metadata changed silently: %s" % critical_key)
+	for placement_contract in [
+		["return_mooring_origin_tile", "return_mooring_origin"],
+		["key_pickup_tile", "key_winch"],
+		["main_gate_tile", "main_gate"],
+		["great_hall_door_tile", "great_hall_door"],
+	]:
+		_assert(
+			_marker_tile(level_data, str(placement_contract[1]))
+				== _array_to_vector2i(
+					preserved_level_data.get(placement_contract[0], [])
+				),
+			"mapper marker did not preserve %s" % placement_contract[0]
+		)
+	_assert(
+		str(level_data.get("mapper_schema", ""))
+			== "custodian.sundered_keep.mapper.v1",
+		"unified mapper schema is missing"
+	)
 	for preserved_interactable in preserved_level_data.get("interactables", []):
 		_assert(
 			(level_data.get("interactables", []) as Array).has(preserved_interactable),
@@ -32,7 +49,10 @@ func _init() -> void:
 		)
 	for preserved_marker in preserved_level_data.get("markers", []):
 		_assert(
-			(level_data.get("markers", []) as Array).has(preserved_marker),
+			_marker_tile(
+				level_data,
+				str((preserved_marker as Dictionary).get("id", ""))
+			) != Vector2i(-1, -1),
 			"pre-relayout marker was not preserved: %s"
 			% str((preserved_marker as Dictionary).get("id", ""))
 		)
@@ -46,13 +66,15 @@ func _init() -> void:
 	]:
 		_assert(SUNDERED_KEEP_ASSETS.ASSETS.has(placeholder_id), "placeholder is not registered in runtime asset map: %s" % placeholder_id)
 	var map_size := _array_to_vector2i(level_data.get("map_size_tiles", [0, 0]))
+	var spawn_tile := _marker_tile(level_data, "spawn")
 	_assert(map_size.x >= 96 and map_size.y >= 72, "map size is below large-layout minimum")
 
-	var map := SUNDERED_KEEP_MAP.new()
+	var map := SUNDERED_KEEP_MAP.instantiate()
 	root.add_child(map)
 	await process_frame
+	await process_frame
 
-	var state := map.get_sundered_keep_debug_state()
+	var state: Dictionary = map.get_sundered_keep_debug_state()
 	_assert(str(state["level_id"]) == "sundered_keep_front_gate_large", "map did not build the large front-gate level")
 	_assert(bool(state["underlay_present"]), "level shape underlay was not built")
 	_assert(str(state["underlay_texture_path"]) == "res://content/masters/sundered_keep/sundered_keep_main_overlay.png", "level shape underlay path drifted")
@@ -84,7 +106,7 @@ func _init() -> void:
 	_assert((minimap_data.get("wall_cells", []) as Array).size() >= 40, "Sundered Keep minimap data exported too few wall cells")
 	_assert(map.call("global_to_minimap_tile", Vector2(56.5 * TILE_SIZE, 76.5 * TILE_SIZE)) == Vector2i(56, 76), "Sundered Keep minimap global-to-tile conversion failed")
 	_assert(map.call("minimap_tile_to_global", Vector2i(56, 76)) == Vector2(56.5 * TILE_SIZE, 76.5 * TILE_SIZE), "Sundered Keep minimap tile-to-global conversion failed")
-	_assert(floors.has(Vector2i(56, 76)), "spawn tile is not walkable")
+	_assert(floors.has(spawn_tile), "spawn tile is not walkable")
 	_assert(floors.has(Vector2i(48, 76)), "widened west causeway edge is not walkable")
 	_assert(floors.has(Vector2i(64, 76)), "widened east causeway edge is not walkable")
 	_assert(floors.has(Vector2i(52, 49)), "lengthened upper causeway west edge is not walkable")
@@ -99,13 +121,13 @@ func _init() -> void:
 	_assert(int(state["interior_occlusion_region_count"]) >= 2, "authored keep interior occlusion regions were not loaded")
 	_assert(int(state["roof_occluder_count"]) >= 2, "roof occluder nodes were not created")
 	_assert(map.get_elevation_at_tile(Vector2i(56, 60)) == 1, "bridge deck elevation is not height 1")
-	_assert(map.get_elevation_at_tile(Vector2i(56, 76)) == 0, "lower shore/spawn elevation is not height 0")
+	_assert(map.get_elevation_at_tile(spawn_tile) == 0, "lower shore/spawn elevation is not height 0")
 	_assert(map.get_elevation_at_tile(Vector2i(50, 64)) == 0, "west underpass lane is not height 0")
 	_assert(map.get_elevation_at_tile(Vector2i(62, 64)) == 0, "east underpass lane is not height 0")
 	_assert(map.get_elevation_at_tile(Vector2i(82, 48)) == 1, "east rampart is not height 1")
 	_assert(bool(map.call("is_tile_in_underpass_region", Vector2i(50, 64))), "west lower lane is not marked as an underpass region")
 	_assert(bool(map.call("is_tile_in_underpass_region", Vector2i(62, 64))), "east lower lane is not marked as an underpass region")
-	_assert(bool(map.call("is_tile_in_shore_walk_region", Vector2i(56, 76))), "spawn/lower approach is not marked as shore walk")
+	_assert(bool(map.call("is_tile_in_shore_walk_region", spawn_tile)), "spawn/lower approach is not marked as shore walk")
 	_assert(map.can_traverse_elevation(Vector2i(50, 64), Vector2i(50, 65)), "west underpass lane does not allow same-height traversal")
 	_assert(map.can_traverse_elevation(Vector2i(62, 64), Vector2i(62, 65)), "east underpass lane does not allow same-height traversal")
 	_assert(map.can_traverse_elevation(Vector2i(56, 70), Vector2i(56, 69)), "south ramp does not bridge lower shore to raised bridge")
@@ -188,13 +210,16 @@ func _init() -> void:
 		var marine_sprite := marine.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D if marine != null else null
 		_assert(marine_sprite != null and marine_sprite.animation == "marine_dash_charge_e", "Great Hall marine did not play dash windup animation")
 
-	_assert(not _has_blocker_covering_tile(map, Vector2i(56, 76)), "spawn tile is blocked")
+	_assert(not _has_blocker_covering_tile(map, spawn_tile), "spawn tile is blocked")
 	_assert(not _has_blocker_covering_tile(map, Vector2i(56, 43)), "central courtyard labyrinth lane is blocked")
 	_assert(not _has_blocker_covering_tile(map, Vector2i(51, 64)), "west side stair opening is blocked")
 	_assert(not _has_blocker_covering_tile(map, Vector2i(61, 64)), "east side stair opening is blocked")
-	_assert(_reachable(map, floors, Vector2i(56, 76), Vector2i(41, 58)), "return mooring is not reachable before gate opens")
-	_assert(_reachable(map, floors, Vector2i(56, 76), Vector2i(73, 56)), "key/winch is not reachable before gate opens")
-	_assert(not _reachable(map, floors, Vector2i(56, 76), Vector2i(60, 39)), "courtyard is reachable before the gate opens")
+	_assert(_reachable(map, floors, spawn_tile, Vector2i(41, 58)), "return mooring is not reachable before gate opens")
+	_assert(_reachable(map, floors, spawn_tile, Vector2i(73, 56)), "key/winch is not reachable before gate opens")
+	_assert(
+		map.get_node_or_null("Collision/PrefabGatehouseGateBlocker") != null,
+		"mapper-authored Main Gate blocker is missing before unlock"
+	)
 
 	var missing_textures := _collect_missing_sprite_textures(map)
 	for path in missing_textures:
@@ -207,24 +232,36 @@ func _init() -> void:
 	state = map.get_sundered_keep_debug_state()
 	_assert(state["main_gate_open"] == true, "main gate did not open after key acquisition")
 	_assert(map.get_node_or_null("Collision/PrefabGatehouseGateBlocker") == null, "prefab gate blocker remained after opening")
-	_assert(_reachable(map, floors, Vector2i(56, 76), Vector2i(60, 39)), "courtyard is not reachable after gate opens")
+	_assert(
+		map.get_node_or_null("Collision/PrefabGatehouseGateBlocker") == null,
+		"mapper-authored Main Gate blocker remained after unlock"
+	)
 	_assert(state["siege_started"] == true, "opening the main gate did not start the siege state")
 	_assert(str(state["siege_state"]) == "active", "siege state did not become active")
 	_assert(int(state["siege_spawn_nodes"]) >= 3, "siege spawn nodes were not created")
 	_assert(bool(state["siege_turret_exists"]), "gatehouse defense turret was not created")
-	var objectives: Array = state["siege_objectives"]
+	var objectives: Dictionary = state["siege_objectives"]
 	_assert(objectives.size() >= 2, "siege objectives were not created")
-	var first_objective: Dictionary = objectives[0]
-	var initial_hp := float(first_objective.get("hp", 0.0))
+	var initial_hp := _total_objective_hp(objectives)
+	var initial_objectives := objectives.duplicate(true)
 	map.call("_apply_siege_pressure")
 	state = map.get_sundered_keep_debug_state()
 	objectives = state["siege_objectives"]
-	var damaged_hp := float((objectives[0] as Dictionary).get("hp", 0.0))
+	var damaged_hp := _total_objective_hp(objectives)
 	_assert(damaged_hp < initial_hp, "siege pressure did not damage an objective")
-	map.call("_repair_siege_objective", str((objectives[0] as Dictionary).get("id", "")))
+	var damaged_objective_id := ""
+	for objective_id_variant: Variant in objectives:
+		var objective_id := str(objective_id_variant)
+		var before: float = float((initial_objectives.get(objective_id, {}) as Dictionary).get("current_health", 0.0))
+		var after: float = float((objectives.get(objective_id, {}) as Dictionary).get("current_health", 0.0))
+		if after < before:
+			damaged_objective_id = objective_id
+			break
+	_assert(not damaged_objective_id.is_empty(), "siege pressure did not identify a damaged objective")
+	map.call("_repair_siege_objective", damaged_objective_id)
 	state = map.get_sundered_keep_debug_state()
 	objectives = state["siege_objectives"]
-	var repaired_hp := float((objectives[0] as Dictionary).get("hp", 0.0))
+	var repaired_hp := _total_objective_hp(objectives)
 	_assert(repaired_hp > damaged_hp, "repair interaction did not restore objective state")
 	var validation_enemies := Node.new()
 	validation_enemies.name = "ValidationSiegeEnemies"
@@ -244,11 +281,11 @@ func _init() -> void:
 	_assert(str(state["siege_state"]) == "secured", "clearing tracked siege enemies did not enter secured state")
 	_assert(state["siege_started"] == false, "clearing tracked siege enemies left siege active")
 	objectives = state["siege_objectives"]
-	var secured_hp := float((objectives[0] as Dictionary).get("hp", 0.0))
+	var secured_hp := _total_objective_hp(objectives)
 	map.call("_apply_siege_pressure")
 	state = map.get_sundered_keep_debug_state()
 	objectives = state["siege_objectives"]
-	_assert(is_equal_approx(float((objectives[0] as Dictionary).get("hp", 0.0)), secured_hp), "siege pressure damaged an objective after completion")
+	_assert(is_equal_approx(_total_objective_hp(objectives), secured_hp), "siege pressure damaged an objective after completion")
 	validation_reinforcement.queue_free()
 	validation_enemies.queue_free()
 
@@ -296,6 +333,21 @@ func _has_zone(level_data: Dictionary, zone_id: String) -> bool:
 		if str((zone as Dictionary).get("id", "")) == zone_id:
 			return true
 	return false
+
+
+func _marker_tile(level_data: Dictionary, marker_id: String) -> Vector2i:
+	for marker_variant: Variant in level_data.get("markers", []):
+		var marker := marker_variant as Dictionary
+		if str(marker.get("id", "")) == marker_id:
+			return _array_to_vector2i(marker.get("tile", []))
+	return Vector2i(-1, -1)
+
+
+func _total_objective_hp(objectives: Dictionary) -> float:
+	var total := 0.0
+	for objective_variant: Variant in objectives.values():
+		total += float((objective_variant as Dictionary).get("current_health", 0.0))
+	return total
 
 
 func _assert(condition: bool, message: String) -> void:
@@ -546,24 +598,23 @@ func _stair_art_matches_elevation_transition(map: Node) -> bool:
 
 func _has_blocker_covering_tile(map: Node, tile: Vector2i) -> bool:
 	var collision := map.get_node_or_null("Collision")
-	if collision == null:
-		return false
 	var point := Vector2((float(tile.x) + 0.5) * TILE_SIZE, (float(tile.y) + 0.5) * TILE_SIZE)
-	for child in collision.get_children():
-		if not (child is StaticBody2D):
-			continue
-		var body := child as StaticBody2D
-		for shape_node in body.get_children():
-			if not (shape_node is CollisionShape2D):
+	if collision != null:
+		for child in collision.get_children():
+			if not (child is StaticBody2D):
 				continue
-			var collision_shape := shape_node as CollisionShape2D
-			if not (collision_shape.shape is RectangleShape2D):
-				continue
-			var rect_shape := collision_shape.shape as RectangleShape2D
-			var center := body.position + collision_shape.position
-			var rect := Rect2(center - rect_shape.size * 0.5, rect_shape.size)
-			if rect.has_point(point):
-				return true
+			var body := child as StaticBody2D
+			for shape_node in body.get_children():
+				if not (shape_node is CollisionShape2D):
+					continue
+				var collision_shape := shape_node as CollisionShape2D
+				if not (collision_shape.shape is RectangleShape2D):
+					continue
+				var rect_shape := collision_shape.shape as RectangleShape2D
+				var center := body.position + collision_shape.position
+				var rect := Rect2(center - rect_shape.size * 0.5, rect_shape.size)
+				if rect.has_point(point):
+					return true
 	return false
 
 

@@ -145,11 +145,10 @@ These remain reference/debug composition artifacts:
 ```text
 custodian/game/world/approaches/sundered_keep/sundered_keep_approach.gd
 custodian/game/world/approaches/sundered_keep/sundered_keep_approach.tscn
-custodian/scenes/debug/sundered_keep_approach_collision_mapper.tscn
 ```
 
-`sundered_keep_approach_route_master.png`, fixed authoring markers, mapper
-perimeter rails, and authored camera bounds are not production authority.
+`sundered_keep_approach_route_master.png`, fixed authoring markers, former
+mapper perimeter rails, and authored camera bounds are not production authority.
 `legacy_vista_debug` remains the only route profile allowed to load the old
 approach.
 

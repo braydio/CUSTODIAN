@@ -52,9 +52,15 @@ git diff -- custodian/content/levels/sundered_keep/sundered_keep_front_gate_larg
 ```
 Do not delete existing markers, objectives, encounters, asset references, occlusion regions, roof/cutaway metadata, gate/key/progression data, or Return Mooring metadata unless replacing them with an equivalent or better version.  
 If a field’s purpose is unclear, preserve it and add a TODO note in the docs rather than deleting it.  
-Core goal: Rework the V1 slice so the playable authored map actually follows the cheat-sheet layout. Preserve the working V1 systems, but improve the geometry, walls, floors, elevation metadata, blocker coverage, bridge approach, lower shore pathing, and Great Hall floorplan.  
-Implementation requirement: Prefer a deterministic level-layout generator instead of hand-editing hundreds of JSON operations.  
-Create:  
+Core goal: Rework the V1 slice so the playable authored map actually follows the cheat-sheet layout. Preserve the working V1 systems, but improve the geometry, walls, floors, elevation metadata, blocker coverage, bridge approach, lower shore pathing, and Great Hall floorplan.
+
+> **Current authority (2026-07-30):** The generator instructions below are
+> retained as historical task context. Production spatial edits now route
+> exclusively through `custodian/scenes/debug/sundered_keep_mapper.tscn`;
+> `generate_sundered_keep_front_gate_layout.py` has been retired.
+
+Historical implementation requirement: Prefer a deterministic level-layout generator instead of hand-editing hundreds of JSON operations.  
+Historical create target:  
 ```
 custodian/tools/levels/generate_sundered_keep_front_gate_layout.py
 

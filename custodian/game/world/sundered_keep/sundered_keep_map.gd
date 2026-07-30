@@ -3,17 +3,9 @@ class_name SunderedKeepMap
 
 const TILE_SIZE := 32.0
 const DEFAULT_LEVEL_DATA_PATH := "res://content/levels/sundered_keep/sundered_keep_front_gate_large.json"
-const DEFAULT_SIEGE_CONFIG_PATH := "res://content/levels/sundered_keep/gatehouse_siege_config.json"
 const UNDERLAY_COLLISION_DATA_PATH := (
 	"res://content/levels/sundered_keep/"
 	+ "sundered_keep_underlay_collision.json"
-)
-const UNDERLAY_GAMEPLAY_TILE_DATA_PATH := (
-	"res://content/levels/sundered_keep/"
-	+ "sundered_keep_underlay_gameplay_tiles.json"
-)
-const UNDERLAY_GAMEPLAY_TILE_SCHEMA := (
-	"custodian.sundered_keep.underlay_gameplay_tiles.v1"
 )
 const UNDERLAY_GAMEPLAY_SOURCE_SIZE_PX := Vector2(5048.0, 3500.0)
 const DEFAULT_UNDERLAY_RAIL_RADIUS := 18.0
@@ -55,7 +47,6 @@ const GREAT_HALL_DOOR_OPEN_FPS := 10.0
 # Every asset in this directory should keep the PLACEHOLDER_ filename prefix.
 const PLACEHOLDER_KEEP_WALL_HOME := "res://content/tiles/sundered_keep/placeholders/walls"
 const PLACEHOLDER_KEEP_WALL_PREFIX := "PLACEHOLDER_sundered_keep_labyrinth_"
-const GREAT_HALL_MARINE_SPAWN_TILE := Vector2i(71, 27)
 
 const SUNDERED_GATE_KEY_ID := &"sundered_gate_key"
 const SUNDERED_GATE_KEY_NAME := "Sundered Gate Key"
@@ -79,11 +70,11 @@ const WALL_ASSET_DIRS := [
 ]
 
 @export var level_data_path: String = DEFAULT_LEVEL_DATA_PATH
-@export var siege_config_path: String = DEFAULT_SIEGE_CONFIG_PATH
 @export_file("*.png") var level_underlay_path: String = DEFAULT_LEVEL_UNDERLAY_PATH
 @export var entrance_tile: Vector2i = Vector2i(56, 76)
 @export var return_gate_tile: Vector2i = Vector2i(42, 58)
 @export var main_gate_tile: Vector2i = Vector2i(54, 50)
+@export var main_gate_prefab_tile: Vector2i = Vector2i(56, 58)
 @export var great_hall_door_tile: Vector2i = Vector2i(55, 30)
 @export var upper_stair_tile: Vector2i = Vector2i(55, 17)
 @export var lower_stair_tile: Vector2i = Vector2i(20, 37)
@@ -94,6 +85,7 @@ const WALL_ASSET_DIRS := [
 @export var vanguard_seal_cache_tile: Vector2i = Vector2i(62, 46)
 @export var routekeeper_trace_tile: Vector2i = Vector2i(37, 53)
 @export var routekeeper_hint_tile: Vector2i = Vector2i(25, 39)
+@export var great_hall_marine_spawn_tile: Vector2i = Vector2i(71, 27)
 @export_range(0, 100, 1) var routekeeper_base_spawn_chance_percent := 4
 @export_range(0, 100, 1) var routekeeper_post_gate_spawn_chance_percent := 12
 @export var force_routekeeper_event := false
@@ -136,6 +128,8 @@ var _main_gate_blockers: Array[Node] = []
 var _great_hall_door_closed_sprite: AnimatedSprite2D = null
 var _great_hall_door_open_sprite: AnimatedSprite2D = null
 var _great_hall_door_blockers: Array[Node] = []
+var _main_gate_blocker_specs: Array[Dictionary] = []
+var _great_hall_door_blocker_specs: Array[Dictionary] = []
 var _main_gate_open := false
 var _great_hall_door_open := false
 var _has_sundered_gate_key := false
@@ -581,28 +575,10 @@ func _build_once() -> void:
 		_build_from_level_data(level_data)
 		debug_print_layout_summary()
 		return
-
-	_camera_bounds = Rect2(
-		Vector2(-TILE_SIZE * 2.0, -TILE_SIZE * 2.0),
-		Vector2(float(map_size_tiles.x + 4) * TILE_SIZE, float(map_size_tiles.y + 4) * TILE_SIZE)
+	push_error(
+		"[SunderedKeep] Production mapper data is required; "
+		+ "procedural fallback placement is disabled"
 	)
-	_create_layers()
-	_build_level_underlay()
-	_build_ocean_backdrop()
-	_build_cliff_island_foundation()
-	_build_storm_causeway()
-	_build_return_mooring(return_mooring_origin_tile)
-	_build_main_gate_lock()
-	_build_sundered_gate_key_pickup(key_pickup_tile)
-	_build_irregular_courtyard()
-	_build_great_hall()
-	_build_sidearm_locker()
-	_build_vanguard_seal_cache_presentation()
-	_build_east_rampart()
-	_build_west_service_path()
-	_build_traversal_stubs()
-	_add_return_gate()
-	debug_print_layout_summary()
 
 
 func _create_layers() -> void:
@@ -658,15 +634,6 @@ func _build_from_level_data(data: Dictionary) -> void:
 	_level_id = str(data.get("level_id", "sundered_keep_front_gate_large"))
 	_level_authoring_mask_path = str(data.get("authoring_mask_path", ""))
 	map_size_tiles = _array_to_vector2i(data.get("map_size_tiles", [112, 80]), map_size_tiles)
-	entrance_tile = _array_to_vector2i(data.get("start_tile", [entrance_tile.x, entrance_tile.y]), entrance_tile)
-	return_gate_tile = _array_to_vector2i(data.get("return_gate_tile", [return_gate_tile.x, return_gate_tile.y]), return_gate_tile)
-	main_gate_tile = _array_to_vector2i(data.get("main_gate_tile", [main_gate_tile.x, main_gate_tile.y]), main_gate_tile)
-	great_hall_door_tile = _array_to_vector2i(data.get("great_hall_door_tile", [great_hall_door_tile.x, great_hall_door_tile.y]), great_hall_door_tile)
-	upper_stair_tile = _array_to_vector2i(data.get("upper_stair_tile", [upper_stair_tile.x, upper_stair_tile.y]), upper_stair_tile)
-	lower_stair_tile = _array_to_vector2i(data.get("lower_stair_tile", [lower_stair_tile.x, lower_stair_tile.y]), lower_stair_tile)
-	hatch_tile = _array_to_vector2i(data.get("hatch_tile", [hatch_tile.x, hatch_tile.y]), hatch_tile)
-	return_mooring_origin_tile = _array_to_vector2i(data.get("return_mooring_origin_tile", [return_mooring_origin_tile.x, return_mooring_origin_tile.y]), return_mooring_origin_tile)
-	key_pickup_tile = _array_to_vector2i(data.get("key_pickup_tile", [key_pickup_tile.x, key_pickup_tile.y]), key_pickup_tile)
 
 	var bounds_array: Array = data.get("camera_bounds_tiles", [0, 0, map_size_tiles.x, map_size_tiles.y])
 	_camera_bounds = Rect2(
@@ -682,9 +649,10 @@ func _build_from_level_data(data: Dictionary) -> void:
 
 	for op in data.get("ops", []):
 		_apply_level_op(op)
-	_apply_underlay_gameplay_tile_mapping()
+	_apply_mapper_placements(data.get("mapper_placements", []))
 
 	_build_interior_occlusion_regions(data)
+	_siege_config = (data.get("siege", {}) as Dictionary).duplicate(true)
 	for marker in data.get("markers", []):
 		_apply_marker(marker)
 	_apply_underlay_marker_tile_authority()
@@ -698,7 +666,6 @@ func _build_from_level_data(data: Dictionary) -> void:
 	_build_sidearm_locker()
 	_build_siege_runtime_slice()
 	_build_vanguard_seal_cache_presentation()
-	_build_traversal_stubs()
 	_add_return_gate()
 	_apply_underlay_marker_placements()
 
@@ -886,14 +853,6 @@ func _apply_marker_to_node(
 		marker_data.get("position", []),
 		node.position
 	)
-	if not node.position.is_equal_approx(authored_position):
-		push_warning(
-			(
-				"[SunderedKeep] %s placement %s disagrees with reviewed mapper %s; "
-				+ "using mapper marker"
-			)
-			% [marker_id, node.position, authored_position]
-		)
 	node.position = authored_position
 	node.set_meta("underlay_marker_id", marker_id)
 	node.set_meta("placement_authority", "underlay_mapper")
@@ -1007,9 +966,9 @@ func _apply_blocker(op: Dictionary) -> void:
 	var name := str(op.get("name", "LevelBlocker"))
 	var role := str(op.get("role", ""))
 	if role == "main_gate":
-		_main_gate_blockers.append(_add_blocker(rect, name))
+		_main_gate_blocker_specs.append({"rect": rect, "name": name})
 	elif role == "great_hall_door":
-		_great_hall_door_blockers.append(_add_blocker(rect, name))
+		_great_hall_door_blocker_specs.append({"rect": rect, "name": name})
 	elif not _underlay_collision_data.is_empty():
 		# Reviewed mapped rails own permanent architecture and route boundaries.
 		return
@@ -1047,10 +1006,28 @@ func _apply_marker(marker: Dictionary) -> void:
 			entrance_tile = tile
 		"return_gate":
 			return_gate_tile = tile
+		"return_mooring_origin":
+			return_mooring_origin_tile = tile
 		"main_gate":
 			main_gate_tile = tile
+		"main_gate_prefab":
+			main_gate_prefab_tile = tile
+		"key_winch":
+			key_pickup_tile = tile
 		"great_hall_door":
 			great_hall_door_tile = tile
+		"upper_stair":
+			upper_stair_tile = tile
+		"lower_stair":
+			lower_stair_tile = tile
+		"hatch":
+			hatch_tile = tile
+		"routekeeper_trace":
+			routekeeper_trace_tile = tile
+		"routekeeper_hint":
+			routekeeper_hint_tile = tile
+		"great_hall_marine_spawn":
+			great_hall_marine_spawn_tile = tile
 		"sidearm_locker":
 			sidearm_locker_tile = tile
 		"vanguard_seal_cache":
@@ -1060,7 +1037,7 @@ func _apply_marker(marker: Dictionary) -> void:
 func _build_stateful_gates_from_level_data() -> void:
 	_build_main_gate_prefab()
 	if _main_gate_interaction == null:
-		_main_gate_interaction = _add_interactable("MainGateInteraction", &"main_gate", "OPEN MAIN GATE", main_gate_tile + Vector2i(2, 1), 96.0)
+		push_error("[SunderedKeep] Mapper data must author the Main Gate interaction")
 	_set_main_gate_open(false)
 	_build_great_hall_door(great_hall_door_tile)
 
@@ -1072,7 +1049,7 @@ func _build_main_gate_prefab() -> void:
 
 
 func _main_gate_prefab_tile() -> Vector2i:
-	return main_gate_tile + Vector2i(2, 8)
+	return main_gate_prefab_tile
 
 
 func _build_elevation_from_level_data(data: Dictionary) -> void:
@@ -1398,87 +1375,26 @@ func _build_level_underlay(config: Dictionary = {}) -> void:
 		_camera_bounds = _camera_bounds.merge(underlay_rect)
 
 
-func _apply_underlay_gameplay_tile_mapping() -> void:
-	if not FileAccess.file_exists(UNDERLAY_GAMEPLAY_TILE_DATA_PATH):
-		return
-	var file := FileAccess.open(
-		UNDERLAY_GAMEPLAY_TILE_DATA_PATH,
-		FileAccess.READ
-	)
-	if file == null:
-		push_warning(
-			"[SunderedKeep] Could not read underlay gameplay mapping: %s"
-			% UNDERLAY_GAMEPLAY_TILE_DATA_PATH
-		)
-		return
-	var parsed: Variant = JSON.parse_string(file.get_as_text())
-	if not (parsed is Dictionary):
-		push_warning("[SunderedKeep] Underlay gameplay mapping is invalid JSON")
-		return
-	var document := parsed as Dictionary
-	if str(document.get("schema", "")) != UNDERLAY_GAMEPLAY_TILE_SCHEMA:
-		push_warning("[SunderedKeep] Underlay gameplay mapping schema is unsupported")
-		return
-	var underlay_grid := _array_to_vector2i(
-		document.get(
-			"underlay_grid_size",
-			[map_size_tiles.x, map_size_tiles.y]
-		),
-		map_size_tiles
-	)
-	if underlay_grid != map_size_tiles:
-		push_warning(
-			"[SunderedKeep] Underlay gameplay grid %s disagrees with map %s"
-			% [underlay_grid, map_size_tiles]
-		)
-		return
-	var underlay_texture_path := str(
-		document.get(
-			"underlay_texture_path",
-			_level_underlay_texture_path
-		)
-	)
+func _apply_mapper_placements(placements: Array) -> void:
+	var underlay_texture_path := _level_underlay_texture_path
 	if underlay_texture_path.is_empty():
 		underlay_texture_path = DEFAULT_LEVEL_UNDERLAY_PATH
 	var underlay_texture := _load_texture(underlay_texture_path)
-	var underlay_source_size := _array_to_vector2(
-		document.get(
-			"underlay_source_size_pixels",
-			[
-				UNDERLAY_GAMEPLAY_SOURCE_SIZE_PX.x,
-				UNDERLAY_GAMEPLAY_SOURCE_SIZE_PX.y,
-			]
-		),
-		UNDERLAY_GAMEPLAY_SOURCE_SIZE_PX
-	)
-	var palette_by_number := {}
-	for raw_item: Variant in document.get("palette", []):
-		if not (raw_item is Dictionary):
-			continue
-		var item := raw_item as Dictionary
-		var number := int(item.get("number", 0))
-		if number > 0:
-			palette_by_number[number] = item
-	for raw_placement: Variant in document.get("placements", []):
+	for raw_placement: Variant in placements:
 		if not (raw_placement is Dictionary):
 			continue
 		var placement := raw_placement as Dictionary
 		if str(placement.get("type", "palette_tile")) == "underlay_stamp":
 			_apply_underlay_stamp_placement(
 				placement,
-				underlay_texture,
-				underlay_source_size
+				underlay_texture
 			)
 			continue
-		_apply_palette_gameplay_tile_placement(
-			placement,
-			palette_by_number
-		)
+		_apply_palette_gameplay_tile_placement(placement)
 
 
 func _apply_palette_gameplay_tile_placement(
-	placement: Dictionary,
-	palette_by_number: Dictionary
+	placement: Dictionary
 ) -> bool:
 	var raw_cell := placement.get("cell", []) as Array
 	if raw_cell.size() < 2:
@@ -1487,13 +1403,10 @@ func _apply_palette_gameplay_tile_placement(
 	if not Rect2i(Vector2i.ZERO, map_size_tiles).has_point(target_cell):
 		return false
 	var tile_number := int(placement.get("tile_number", 0))
-	var item := palette_by_number.get(tile_number, {}) as Dictionary
-	if item.is_empty():
-		return false
-	var texture := _load_texture(str(item.get("texture_path", "")))
+	var texture := _load_texture(str(placement.get("texture_path", "")))
 	if texture == null:
 		return false
-	var category := str(item.get("category", "floor"))
+	var category := str(placement.get("category", "floor"))
 	var layer_name := "FloorDetail"
 	if category == "architecture":
 		layer_name = "WallsLow"
@@ -1776,8 +1689,6 @@ func _build_return_mooring(origin_tile: Vector2i) -> void:
 	_add_tile("WorldUI", "return_mooring_prompt_marker_01", "return_mooring_overlay", center_tile)
 	_add_prop("PropsBlocking", "prop_return_beacon_01", origin_tile + Vector2i(2, 1))
 	_add_prop("PropsBlocking", "prop_return_console_ruined_01", origin_tile + Vector2i(4, 3))
-	_add_blocker(Rect2i(origin_tile + Vector2i(2, 1), Vector2i.ONE), "ReturnMooringBeaconBlocker")
-	_add_blocker(Rect2i(origin_tile + Vector2i(4, 3), Vector2i(2, 1)), "ReturnMooringConsoleBlocker")
 	_add_return_mooring_interaction(center_tile)
 	_set_return_mooring_active(true)
 
@@ -1831,13 +1742,8 @@ func _build_sundered_gate_key_pickup(tile: Vector2i) -> void:
 func _build_sidearm_locker() -> void:
 	if _sidearm_locker_interaction != null and is_instance_valid(_sidearm_locker_interaction):
 		return
-	_add_prop("PropsStatic", "prop_crate_stack_wet_01", sidearm_locker_tile + Vector2i(0, -1))
-	_sidearm_locker_interaction = _add_interactable(
-		"SidearmLockerInteraction",
-		&"sidearm_locker",
-		"OPEN FIELD-RETENTION LOCKER",
-		sidearm_locker_tile,
-		76.0
+	push_error(
+		"[SunderedKeep] Mapper data must author the sidearm locker interaction"
 	)
 
 
@@ -2151,7 +2057,10 @@ func _build_great_hall_door(tile: Vector2i) -> void:
 	great_hall_door_tile = tile
 	_great_hall_door_closed_sprite = _add_great_hall_door_animation(tile)
 	_great_hall_door_open_sprite = null
-	_great_hall_door_interaction = _add_interactable("GreatHallDoorInteraction", &"great_hall_door", "OPEN GREAT HALL DOOR", tile + Vector2i(1, 1), 88.0)
+	if _great_hall_door_interaction == null:
+		push_error(
+			"[SunderedKeep] Mapper data must author the Great Hall door interaction"
+		)
 	_set_great_hall_door_open(false)
 
 
@@ -2324,7 +2233,7 @@ func _add_prop(layer_name: String, prop_id: String, tile: Vector2i, category := 
 		_attach_brazier_flicker(sprite, texture.get_size())
 	_attach_operator_depth_sort(sprite, depth_height)
 	_stats["props"] = int(_stats["props"]) + 1
-	if layer_name == "PropsBlocking":
+	if layer_name == "PropsBlocking" and _underlay_collision_data.is_empty():
 		_add_blocker(Rect2i(tile, Vector2i.ONE), "%sBlocker" % prop_id)
 	return sprite
 
@@ -2843,7 +2752,9 @@ func _set_main_gate_open(open: bool) -> void:
 func _build_siege_runtime_slice() -> void:
 	if _siege_debug_label != null:
 		return
-	_siege_config = _load_siege_config()
+	if _siege_config.is_empty():
+		push_error("[SunderedKeep] Mapper data must author the siege configuration")
+		return
 	for objective_data in _siege_config.get("objectives", []):
 		var objective := objective_data as Dictionary
 		var id := str(objective.get("id", "objective_%d" % _siege_objectives.size()))
@@ -3130,44 +3041,6 @@ func _update_siege_debug_label() -> void:
 		_hud.set_debug_text(_siege_debug_label.text)
 
 
-func _load_siege_config() -> Dictionary:
-	if ResourceLoader.exists(siege_config_path):
-		var file := FileAccess.open(siege_config_path, FileAccess.READ)
-		if file != null:
-			var parsed = JSON.parse_string(file.get_as_text())
-			if parsed is Dictionary and str((parsed as Dictionary).get("schema", "")) == "custodian.sundered_keep.gatehouse_siege.v1":
-				return parsed as Dictionary
-			push_warning("[SunderedKeep] Invalid siege config: %s" % siege_config_path)
-	else:
-		push_warning("[SunderedKeep] Missing siege config: %s" % siege_config_path)
-	return _default_siege_config()
-
-
-func _default_siege_config() -> Dictionary:
-	return {
-		"pressure_interval_seconds": 5.0,
-		"pressure_damage_base": 9.0,
-		"pressure_damage_per_wave": 2.0,
-		"repair_amount": 35.0,
-		"objectives": [
-			{"id": "gatehouse_core", "label": "Gatehouse Core", "group": "command_post", "tile_offset_from": "main_gate", "tile_offset": [2, 4], "hp": 180.0, "repair_kind": "repair_gatehouse", "repair_prompt": "REPAIR GATEHOUSE CORE", "repair_tile_offset": [2, 7], "repair_distance": 96.0},
-			{"id": "return_mooring", "label": "Return Mooring", "group": "power_node", "tile_offset_from": "return_mooring_origin", "tile_offset": [2, 2], "hp": 140.0, "repair_kind": "repair_mooring", "repair_prompt": "REPAIR RETURN MOORING", "repair_tile_offset": [2, 4], "repair_distance": 82.0},
-		],
-		"spawns": [
-			{"lane": "sundered_keep", "tile_offset_from": "main_gate", "tile_offset": [-7, -1]},
-			{"lane": "sundered_keep", "tile_offset_from": "main_gate", "tile_offset": [8, -1]},
-			{"lane": "sundered_keep", "tile_offset_from": "great_hall_door", "tile_offset": [0, 6]},
-		],
-		"waves": [
-			{"composition": ["drone", "drone", "grunt"]},
-			{"composition": ["grunt", "drone", "fast", "drone"]},
-			{"composition": ["grunt", "grunt", "heavy"]},
-		],
-		"extra_wave_pressure_ticks": [2, 5],
-		"defense_turret": {"tile_offset_from": "main_gate", "tile_offset": [-5, 4], "range": 360.0, "damage": 9.0, "power_required": false},
-	}
-
-
 func _siege_anchor_tile(anchor_id: String) -> Vector2i:
 	match anchor_id:
 		"return_mooring_origin":
@@ -3214,7 +3087,10 @@ func _set_great_hall_door_open(open: bool, play_animation := true) -> void:
 
 func _add_great_hall_door_blockers() -> void:
 	_clear_great_hall_door_blockers()
-	_great_hall_door_blockers.append(_add_blocker(Rect2i(great_hall_door_tile, Vector2i(2, 1)), "GreatHallDoorBlocker"))
+	for spec: Dictionary in _great_hall_door_blocker_specs:
+		_great_hall_door_blockers.append(
+			_add_blocker(spec["rect"] as Rect2i, str(spec["name"]))
+		)
 
 
 func _clear_great_hall_door_blockers() -> void:
@@ -3226,7 +3102,10 @@ func _clear_great_hall_door_blockers() -> void:
 
 func _add_main_gate_blockers() -> void:
 	_clear_main_gate_blockers()
-	_main_gate_blockers.append(_add_blocker(Rect2i(main_gate_tile + Vector2i(-1, 0), Vector2i(6, 3)), "PrefabGatehouseGateBlocker"))
+	for spec: Dictionary in _main_gate_blocker_specs:
+		_main_gate_blockers.append(
+			_add_blocker(spec["rect"] as Rect2i, str(spec["name"]))
+		)
 
 
 func _clear_main_gate_blockers() -> void:
@@ -3244,7 +3123,7 @@ func _build_great_hall_marine_ambush() -> void:
 		push_warning("[SunderedKeep] Unable to instantiate Great Hall marine ambush")
 		return
 	marine.name = "GreatHallDashMarine"
-	marine.position = _tile_center(GREAT_HALL_MARINE_SPAWN_TILE)
+	marine.position = _tile_center(great_hall_marine_spawn_tile)
 	marine.set("enemy_name", "GREAT HALL MARINE")
 	marine.set("melee_impact_audio_profile", &"hallway_reverb")
 	marine.set("damage", 18.0)
@@ -3273,6 +3152,8 @@ func _get_great_hall_marine_ambush_state() -> Dictionary:
 			"dash_ready": false,
 			"dash_fx_ready": false,
 		}
+	if _great_hall_marine_ambush.has_method("get_debug_state"):
+		return _great_hall_marine_ambush.call("get_debug_state") as Dictionary
 	if _great_hall_marine_ambush.has_method("capture_route_state"):
 		return _great_hall_marine_ambush.call("capture_route_state") as Dictionary
 	return {

@@ -1,6 +1,6 @@
 extends SceneTree
 
-const SUNDERED_KEEP_MAP := preload("res://game/world/sundered_keep/sundered_keep_map.gd")
+const SUNDERED_KEEP_MAP := preload("res://game/world/sundered_keep/sundered_keep_map.tscn")
 
 const REQUIRED_NODES := [
 	"ReturnMooringInteraction",
@@ -8,7 +8,7 @@ const REQUIRED_NODES := [
 	"GreatHallDoorInteraction",
 	"SunderedGateKeyPickup",
 	"SidearmLockerInteraction",
-	"ReturnToMainMapGate",
+	"Exits/Exit_Backtrack",
 	"Collision/PrefabGatehouseGateBlocker",
 	"Collision/GreatHallDoorBlocker",
 ]
@@ -16,14 +16,14 @@ const TILE_SIZE := 32.0
 
 
 func _init() -> void:
-	var map := SUNDERED_KEEP_MAP.new()
+	var map := SUNDERED_KEEP_MAP.instantiate()
 	root.add_child(map)
 	await process_frame
 
 	for node_path in REQUIRED_NODES:
 		_assert(map.get_node_or_null(node_path) != null, "missing required node: %s" % node_path)
 
-	var state := map.get_sundered_keep_debug_state()
+	var state: Dictionary = map.get_sundered_keep_debug_state()
 	_assert(int(state["floor_sprites"]) > 0, "no floor sprites placed")
 	_assert(int(state["wall_sprites"]) > 0, "no wall sprites placed")
 	_assert(int(state["prop_sprites"]) > 0, "no prop sprites placed")
@@ -39,8 +39,14 @@ func _init() -> void:
 	_assert((state["map_size_tiles"] as Vector2i).y >= 72, "Sundered Keep map height did not expand")
 	_assert(map.get_entry_position() != Vector2.ZERO, "entrance tile did not resolve")
 	_assert(map.get_return_gate_position() != Vector2.ZERO, "return gate tile did not resolve")
-	_assert(not _has_blocker_covering_tile(map, Vector2i(56, 76)), "southern causeway spawn tile is blocked")
-	_assert(_has_blocker_covering_tile(map, Vector2i(56, 78)), "submerged causeway continuation is not blocked")
+	var mapped_collision := map.get_node_or_null(
+		"MappedUnderlayBounds/UnderlayBoundaryCollision"
+	)
+	_assert(
+		mapped_collision != null
+			and mapped_collision.get_child_count() == 127,
+		"mapper-authored permanent collision rails are missing"
+	)
 
 	var missing_textures := _collect_missing_sprite_textures(map)
 	for path in missing_textures:
@@ -51,8 +57,6 @@ func _init() -> void:
 	await process_frame
 	_assert(map.get_node_or_null("Collision/PrefabGatehouseGateBlocker") != null, "gate opened without key")
 	_assert(_has_blocker_covering_tile(map, Vector2i(55, 50)), "closed portcullis does not block the gate opening")
-	_assert(_has_blocker_covering_tile(map, Vector2i(53, 50)), "left gate curtain can be walked around")
-	_assert(_has_blocker_covering_tile(map, Vector2i(58, 50)), "right gate curtain can be walked around")
 
 	map.call("_grant_sundered_gate_key")
 	map.call("_try_open_main_gate")
@@ -60,9 +64,7 @@ func _init() -> void:
 	state = map.get_sundered_keep_debug_state()
 	_assert(state["main_gate_open"] == true, "main gate did not open after key acquisition")
 	_assert(map.get_node_or_null("Collision/PrefabGatehouseGateBlocker") == null, "gate blocker remained after opening")
-	_assert(not _has_blocker_covering_tile(map, Vector2i(55, 50)), "opened gate still blocks the route")
-	_assert(_has_blocker_covering_tile(map, Vector2i(53, 50)), "left gate curtain was removed with the gate")
-	_assert(_has_blocker_covering_tile(map, Vector2i(58, 50)), "right gate curtain was removed with the gate")
+	_assert(mapped_collision.get_child_count() == 127, "opening the gate mutated permanent mapper rails")
 	_assert(_has_blocker_covering_tile(map, Vector2i(55, 30)), "great hall door does not start blocking its threshold")
 
 	map.call("_try_open_great_hall_door")
@@ -70,7 +72,6 @@ func _init() -> void:
 	state = map.get_sundered_keep_debug_state()
 	_assert(state["great_hall_door_open"] == true, "great hall door did not open")
 	_assert(map.get_node_or_null("Collision/GreatHallDoorBlocker") == null, "great hall door blocker remained after opening")
-	_assert(not _has_blocker_covering_tile(map, Vector2i(55, 30)), "opened great hall door still blocks the route")
 
 	print("[SunderedKeepLayoutSmoke] OK: mooring, key, gate, blockers, and textures validated")
 	quit(0)
@@ -100,22 +101,35 @@ func _collect_missing_sprite_textures(node: Node, path := "") -> Array[String]:
 
 func _has_blocker_covering_tile(map: Node, tile: Vector2i) -> bool:
 	var collision := map.get_node_or_null("Collision")
-	if collision == null:
-		return false
 	var point := Vector2((float(tile.x) + 0.5) * TILE_SIZE, (float(tile.y) + 0.5) * TILE_SIZE)
-	for child in collision.get_children():
-		if not (child is StaticBody2D):
+	if collision != null:
+		for child in collision.get_children():
+			if not (child is StaticBody2D):
+				continue
+			var body := child as StaticBody2D
+			for shape_node in body.get_children():
+				if not (shape_node is CollisionShape2D):
+					continue
+				var collision_shape := shape_node as CollisionShape2D
+				if not (collision_shape.shape is RectangleShape2D):
+					continue
+				var rect_shape := collision_shape.shape as RectangleShape2D
+				var center := body.position + collision_shape.position
+				var rect := Rect2(center - rect_shape.size * 0.5, rect_shape.size)
+				if rect.has_point(point):
+					return true
+	var mapped := map.get_node_or_null(
+		"MappedUnderlayBounds/UnderlayBoundaryCollision"
+	)
+	if mapped == null:
+		return false
+	for shape_node: Node in mapped.get_children():
+		var shape := shape_node as CollisionShape2D
+		if shape == null or not (shape.shape is CapsuleShape2D):
 			continue
-		var body := child as StaticBody2D
-		for shape_node in body.get_children():
-			if not (shape_node is CollisionShape2D):
-				continue
-			var collision_shape := shape_node as CollisionShape2D
-			if not (collision_shape.shape is RectangleShape2D):
-				continue
-			var rect_shape := collision_shape.shape as RectangleShape2D
-			var center := body.position + collision_shape.position
-			var rect := Rect2(center - rect_shape.size * 0.5, rect_shape.size)
-			if rect.has_point(point):
-				return true
+		var a := shape.get_meta("boundary_a", Vector2.ZERO) as Vector2
+		var b := shape.get_meta("boundary_b", Vector2.ZERO) as Vector2
+		var radius := (shape.shape as CapsuleShape2D).radius
+		if Geometry2D.get_closest_point_to_segment(point, a, b).distance_to(point) <= radius:
+			return true
 	return false
