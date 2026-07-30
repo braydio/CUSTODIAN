@@ -55,9 +55,13 @@ func _on_contract_generated(contract: Dictionary) -> void:
 	var map_data: Dictionary = contract.get("map", {})
 	var level_data: Dictionary = map_data.get("level_data", {})
 	var sites: Array = level_data.get("special_room_sites", [])
+	for site_variant: Variant in sites:
+		var site := site_variant as Dictionary
+		if str(site.get("id", "")) == "ash_bell_forlorn_ritualant_room":
+			push_error("[special_room_insertion_smoke] Ritualant was still inserted through procgen")
+			_failed = true
 	if sites.is_empty():
-		push_error("[special_room_insertion_smoke] No special room sites inserted")
-		_failed = true
+		print("[special_room_insertion_smoke] PASS: no registered special-room definitions")
 	else:
 		print("[special_room_insertion_smoke] inserted_sites=", sites)
 	_done = true
