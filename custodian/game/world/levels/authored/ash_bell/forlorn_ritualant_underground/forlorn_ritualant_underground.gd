@@ -14,7 +14,7 @@ const AUTHORING_MARKERS := {
 		"node_name": "Spawn_DescentLanding",
 		"label": "LOWER DESCENT LANDING",
 		"kind": "spawn",
-		"position": Vector2(0.0, 344.0),
+		"position": Vector2(0.0, 224.0),
 	},
 	"return_world": {
 		"node_name": "Return_CaveMouth",
