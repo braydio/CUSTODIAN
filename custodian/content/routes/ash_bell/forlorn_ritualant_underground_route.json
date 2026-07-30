@@ -1,0 +1,58 @@
+{
+  "schema": "custodian.route_definition.v1",
+  "route_id": "forlorn_ritualant_underground",
+  "display_name": "Forlorn Ritualant — Underground",
+  "world_context": "campaign_region",
+  "default_profile": "production",
+  "tags": ["authored", "world_ingress", "ash_bell", "underground", "ritual_site"],
+  "ingress": {
+    "ingress_id": "forlorn_ritualant_underground",
+    "prompt_text": "DESCEND TO THE EMPTY BELL",
+    "interaction_distance": 84.0,
+    "route_profile": "production",
+    "placement": {
+      "strategy": "north_edge_overlook",
+      "priority": 140,
+      "minimum_spacing_tiles": 14,
+      "max_edge_distance_tiles": 8,
+      "approach_depth_tiles": 10,
+      "lateral_search_tiles": 32
+    }
+  },
+  "nodes": [
+    {
+      "node_id": "ritual_cavern",
+      "level_id": "forlorn_ritualant_underground"
+    }
+  ],
+  "edges": [
+    {
+      "edge_id": "descend_to_ritual_cavern",
+      "from_node_id": "@world_origin",
+      "exit_id": "enter",
+      "to_node_id": "ritual_cavern",
+      "target_spawn_id": "Spawn_DescentLanding",
+      "direction": "forward",
+      "transition_style": "fade"
+    },
+    {
+      "edge_id": "ritual_cavern_exfil",
+      "from_node_id": "ritual_cavern",
+      "exit_id": "return_world",
+      "to_node_id": "@world_origin",
+      "target_spawn_id": "",
+      "direction": "exfil",
+      "transition_style": "fade"
+    }
+  ],
+  "profiles": [
+    {
+      "profile_id": "production",
+      "entry_edge_id": "descend_to_ritual_cavern",
+      "enabled_edge_ids": [
+        "descend_to_ritual_cavern",
+        "ritual_cavern_exfil"
+      ]
+    }
+  ]
+}
