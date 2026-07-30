@@ -28,6 +28,8 @@ func _run() -> void:
 		var authored_level := level as AuthoredLevel2D
 		if not authored_level.has_spawn(&"Spawn_DescentLanding"):
 			errors.append("Spawn_DescentLanding does not resolve")
+		elif authored_level.get_spawn_position(&"Spawn_DescentLanding") != Vector2(0.0, 224.0):
+			errors.append("Spawn_DescentLanding is not clear of the internal exit trigger")
 		if authored_level.get_camera_bounds().size != Vector2(1120.0, 864.0):
 			errors.append("authored chamber camera bounds are not 1120x864")
 
@@ -38,21 +40,25 @@ func _run() -> void:
 		errors.append("return_world authored exit is missing")
 
 	var levels: RefCounted = LEVEL_REGISTRY_SCRIPT.new()
-	if not levels.call("load_index"):
+	var levels_loaded := bool(levels.call("load_index"))
+	if not levels_loaded:
 		for error: String in levels.call("get_errors"):
 			errors.append("level registry: %s" % error)
 	elif levels.call("get_level", &"forlorn_ritualant_underground") == null:
 		errors.append("authored Underground level is not registered")
 
 	var routes: RefCounted = ROUTE_REGISTRY_SCRIPT.new()
-	if errors.is_empty() and not routes.call(
-		"load_index",
-		ROUTE_REGISTRY_SCRIPT.DEFAULT_INDEX_PATH,
-		levels
-	):
-		for error: String in routes.call("get_errors"):
-			errors.append("route registry: %s" % error)
-	else:
+	var routes_loaded := false
+	if levels_loaded:
+		routes_loaded = bool(routes.call(
+			"load_index",
+			ROUTE_REGISTRY_SCRIPT.DEFAULT_INDEX_PATH,
+			levels
+		))
+		if not routes_loaded:
+			for error: String in routes.call("get_errors"):
+				errors.append("route registry: %s" % error)
+	if routes_loaded:
 		var route := routes.call(
 			"get_route",
 			&"forlorn_ritualant_underground"
