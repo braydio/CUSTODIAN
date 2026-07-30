@@ -1,0 +1,60 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://game/world/levels/authored/ash_bell/forlorn_ritualant_underground/forlorn_ritualant_underground.gd" id="1_level"]
+[ext_resource type="PackedScene" path="res://game/world/events/ash_bell/forlorn_ritualant_site.tscn" id="2_ritualant"]
+[ext_resource type="Script" path="res://game/world/levels/level_exit_2d.gd" id="3_exit"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_return"]
+size = Vector2(192, 64)
+
+[node name="ForlornRitualantUnderground" type="Node2D"]
+script = ExtResource("1_level")
+draw_placeholder_grid = false
+placeholder_canvas_size = Vector2(1120, 864)
+camera_bounds = Rect2(-560, -432, 1120, 864)
+
+[node name="UnderlayRoot" type="Node2D" parent="."]
+
+[node name="BackgroundRoot" type="Node2D" parent="."]
+
+[node name="PlayableRoot" type="Node2D" parent="."]
+
+[node name="ForlornRitualantSite" parent="PlayableRoot" instance=ExtResource("2_ritualant")]
+
+[node name="PropsRoot" type="Node2D" parent="."]
+
+[node name="OcclusionRoot" type="Node2D" parent="."]
+
+[node name="Collision" type="Node2D" parent="."]
+
+[node name="PathBoundaryCollision" type="StaticBody2D" parent="Collision"]
+collision_layer = 1
+collision_mask = 1
+
+[node name="Markers" type="Node2D" parent="."]
+
+[node name="Spawn_DescentLanding" type="Marker2D" parent="Markers"]
+position = Vector2(0, 344)
+
+[node name="Return_CaveMouth" type="Marker2D" parent="Markers"]
+position = Vector2(0, 404)
+
+[node name="POIRoot" type="Node2D" parent="."]
+
+[node name="EventMarkers" type="Node2D" parent="."]
+
+[node name="EventRuntime" type="Node2D" parent="."]
+
+[node name="Exits" type="Node2D" parent="."]
+
+[node name="Exit_ReturnWorld" type="Area2D" parent="Exits"]
+position = Vector2(0, 404)
+script = ExtResource("3_exit")
+exit_id = &"return_world"
+prompt_text = "ASCEND TO SURFACE"
+arrival_guard_radius = 96.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Exits/Exit_ReturnWorld"]
+shape = SubResource("RectangleShape2D_return")
+
+[node name="NavigationRoot" type="Node2D" parent="."]
