@@ -1,78 +1,115 @@
-# Ash-Bell Forlorn-Ritualant Authority Reservation
+# Ash-Bell Forlorn-Ritualant Underground Migration
 
 ## Packet Status
 
-- Status: complete
-- Completion scope: authored-footprint procgen authority reservation only; this
-  does not mark the Forlorn-Ritualant encounter, combat kit, presentation, or
-  production assets complete.
+- Status: complete implementation; runtime validation pending local Godot execution
+- Completion scope: authority migration from procgen special-room insertion to a fixed authored Underground route and level wrapper
 - Owner: agent
-- Agent/session: codex-2026-06-12-authored-authority
+- Agent/session: ChatGPT-2026-07-30-underground-migration
 - Created: 2026-06-12
-- Last updated: 2026-07-28
+- Last updated: 2026-07-30
 
 ## Task
 
-Fix procgen authority clashes beneath authored/special-room scenes and wire the Ash-Bell dev spawner to reserve its canonical `35x27` room footprint before instantiation.
+Remove the Forlorn-Ritualant encounter from procgen room insertion and make it a fixed authored Underground destination immediately, while preserving the existing encounter scene as its gameplay/presentation authority.
 
 ## Outcome
 
-`ProcGenTilemap` exposes one reusable authored-footprint claim API that replaces procgen wall, collision, elevation, foliage, road-decal, and region authority with authored-scene floor authority; Ash-Bell uses it before becoming active.
+The old `35x27` special-room JSON was deleted. A registered authored level now instances the existing `ForlornRitualantSite`, and a registered one-node route enters it through a deterministic exterior cave ingress and returns to world origin through a scene-owned `return_world` exit.
+
+Procgen retains only exterior ingress placement. It no longer inserts, clears, reserves, or reports the Ritualant chamber in `special_room_sites`.
 
 ## Authority
 
 - Root routing: `AGENTS.md`
 - Local routing: `custodian/AGENTS.md`
-- Active design/spec docs: `design/02_features/enemy_objective/FORLORN_RITUALANT_ENCOUNTER_DETAILED_SPEC.md`
-- Active runtime/docs files: `custodian/game/world/procgen/proc_gen_tilemap.gd`, `custodian/game/world/events/ash_bell/ash_bell_dev_spawner.gd`
-- Historical reference only: `custodian/docs/ai_context/task_packets/archived/ASH_BELL_FORLORN_RITUALANT.md`
+- Migration decision: `design/05_levels/FORLORN_RITUALANT_UNDERGROUND_MIGRATION.md`
+- Staged-descent expansion: `design/05_levels/FORLORN_RITUALANT_APPROACH.md`
+- Authored-level architecture: `design/04_architecture/AUTHORED_LEVEL_AUTHORING_PIPELINE.md`
+- Existing encounter authority: `custodian/game/world/events/ash_bell/forlorn_ritualant_site.tscn`
 
-## Work Surface
+## Runtime Surface
 
-- Files or folders expected to change: procgen tilemap, Ash-Bell dev spawner, focused validation, AI context docs
-- Files or folders expected to be read but not changed: Ash-Bell authored scene and special-room JSON
-- Out-of-scope areas: changing authored Ash-Bell collision, generic special-room placement policy
+```text
+custodian/game/world/levels/authored/ash_bell/forlorn_ritualant_underground/
+  forlorn_ritualant_underground.gd
+  forlorn_ritualant_underground.tscn
+
+custodian/content/levels/ash_bell/
+  forlorn_ritualant_underground.json
+
+custodian/content/routes/ash_bell/
+  forlorn_ritualant_underground_route.json
+
+custodian/tools/validation/levels/
+  forlorn_ritualant_underground_smoke.gd
+```
+
+Registry changes:
+
+- `custodian/content/levels/levels.json`
+- `custodian/content/routes/routes.json`
+
+Retired:
+
+- `custodian/content/procgen/special_rooms/ash_bell_forlorn_ritualant_room.json`
+
+## Runtime Contract
+
+- Route ID: `forlorn_ritualant_underground`
+- Route node: `ritual_cavern`
+- Named spawn: `Spawn_DescentLanding`
+- Spawn position: `(0, 224)`, deliberately north of the existing encounter scene's internal south-exit trigger
+- Route exit: `return_world`
+- Chamber/camera footprint: `1120x864 px` (`35x27` at `32 px`)
+- Procgen placement role: exterior `north_edge_overlook` ingress only
+- Lifecycle: `snapshot_and_unload` / `session`
 
 ## Constraints
 
-- Determinism concerns: the claimed rectangle must derive only from explicit center, size, and margin inputs.
-- Simulation/UI boundary concerns: procgen/elevation authority is cleared before authored-scene collision becomes active.
-- Asset requirements: none.
-- Compatibility or migration concerns: road wall clearing must retain road metadata while authored claims remove it.
-- Clarifying questions or assumptions: the canonical room footprint is `35x27`.
+- The persistent Operator remains owned by the main world and is transferred through `LevelLoader` / `RouteTraversalManager`.
+- The production Underground scene contains no Operator, gameplay camera, HUD, or global director.
+- The existing Ash-Bell event scripts and scene remain untouched as encounter-content authority.
+- No production art is invented for V1.
+- The later cave antechamber, lift descent, lower landing, and pre-arena reveal must extend this authored route rather than reintroduce special-room insertion.
 
-## Implementation Plan
+## Validation
 
-1. Add centralized authored-scene floor claim and authority report APIs to `ProcGenTilemap`.
-2. Wire Ash-Bell dev placement to reserve authority before adding its scene.
-3. Add focused smoke coverage and update current-state/index documentation.
+Added:
 
-## Acceptance
+`custodian/tools/validation/levels/forlorn_ritualant_underground_smoke.gd`
 
-- Runtime behavior: claimed cells have floor visuals/metadata, no procgen wall/collision authority, walkable height-0 elevation, and authored region metadata.
-- Documentation: current state, file index, and packet describe the live contract.
-- Path/reference validation: indexed validation and runtime files exist.
-- Manual validation: Ash-Bell room is enterable without invisible procgen blockers.
-- Automated/headless validation: authored authority, roads, Ash-Bell, terrain, elevation, and full boot checks.
+It checks:
+
+- retired procgen JSON is absent
+- production scene extends `AuthoredLevel2D`
+- named spawn resolves at the safe landing
+- camera bounds remain `1120x864`
+- existing Ritualant site is instanced
+- scene-owned `return_world` exit exists
+- level and route registries resolve the destination and `ritual_cavern` node
+
+Also updated `special_room_insertion_smoke.gd` so an empty definition set is valid and any future Ritualant procgen insertion fails loudly.
+
+Run locally:
+
+```bash
+cd custodian
+godot --headless --path . --script res://tools/validation/levels/forlorn_ritualant_underground_smoke.gd
+godot --headless --path . --script res://tools/validation/route_registry_contract_smoke.gd
+godot --headless --path . --script res://tools/validation/special_room_insertion_smoke.gd
+```
+
+These commands were not executed through the GitHub connector because it does not provide a repository checkout or Godot runtime.
 
 ## Drift Review
 
-- Does `custodian/docs/ai_context/CURRENT_STATE.md` need an update? Yes.
-- Does `custodian/docs/ai_context/CONTEXT.md` need an update? No.
-- Does `custodian/docs/ai_context/FILE_INDEX.md` need an update? Yes.
-- Does `custodian/AGENTS.md` need an update? No.
-- Do any design docs need an update? No.
+- `design/02_features/procgen/SPECIAL_ROOM_INSERTION.md`: corrected; Ritualant is now documented as retired from procgen.
+- `custodian/docs/ai_context/CURRENT_STATE.md`: requires an updated Ritualant runtime-status paragraph.
+- `custodian/docs/ai_context/FILE_INDEX.md`: should index the new level, route, migration doc, and smoke.
+- `design/02_features/enemy_objective/FORLORN_RITUALANT_ENCOUNTER_DETAILED_SPEC.md`: its procgen placement language is superseded by the migration decision and should be marked as historical placement guidance.
+- `custodian/docs/ai_context/CONTEXT.md`: no architecture change beyond the already-live authored-level/route pipeline; no update required.
 
-## Completion Notes
+## Next Production Slice
 
-- Implemented: Added `ProcGenTilemap.claim_procgen_floor_rect_for_authored_scene_world/tiles`, shared procgen wall-authority clearing, authored floor/elevation/region forcing, stale road-authority clearing, collision/overlay/shadow/navigation refresh, debug authority reporting, and Ash-Bell pre-instantiation reservation of its canonical `35x27` footprint.
-- Validated: `procgen_authored_scene_authority_smoke.gd` passes against a real generated visible wall/runtime body; `procgen_placeholder_roads_smoke.gd` passes; `elevation_map_smoke.gd` passes; full headless boot passes and logs Ash-Bell placement followed by navigation rebuild; focused `git diff --check` passes.
-- Deferred: Generic special-room insertion should call the new API. The previously noted `terrain_builder_smoke.gd` missing TileSet source `32` issue is now resolved. Existing `ash_bell_scene_smoke.gd` currently times out after calling the now-missing `ForlornRitualantSite.take_clapper()` method from unrelated current-worktree Ash-Bell changes.
-
-## Next Steps
-
-- Next action: use the reservation API from future generic special-room insertion.
-- Best starting files: `custodian/game/world/procgen/proc_gen_tilemap.gd`
-- Required context: this packet and the active Forlorn-Ritualant spec
-- Validation to run: focused authored authority smoke and full boot
-- Blockers or open questions: none
+Expand the fixed route with the staged sequence already specified in `FORLORN_RITUALANT_APPROACH.md`: cave mouth, compression corridor, lift chamber, 4–8 second descent, lower landing, pre-arena reveal, then the existing Ritualant chamber. Future assets belong under `custodian/content/tiles/encounters/ritualant_set/underground/`.
