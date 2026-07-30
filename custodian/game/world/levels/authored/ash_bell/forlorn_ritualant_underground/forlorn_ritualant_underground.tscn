@@ -34,7 +34,7 @@ collision_mask = 1
 [node name="Markers" type="Node2D" parent="."]
 
 [node name="Spawn_DescentLanding" type="Marker2D" parent="Markers"]
-position = Vector2(0, 344)
+position = Vector2(0, 224)
 
 [node name="Return_CaveMouth" type="Marker2D" parent="Markers"]
 position = Vector2(0, 404)
