@@ -2,13 +2,13 @@
 
 ## Status
 
-Live V1 — 2026-06-24.
+Live V1 — 2026-06-24. No production special-room definitions are currently registered.
 
 ## Purpose
 
 Special rooms are authored encounter scenes inserted into the generated contract map after a procgen layout has been accepted. They are not debug spawners and are not metadata-only story-room markers.
 
-V1 exists to let authored encounters such as the Ash-Bell / Forlorn-Ritualant site appear in the normal main-game runtime while preserving deterministic procgen and existing gameplay authority.
+V1 preserves a deterministic insertion path for future encounters that genuinely belong inside a generated map. It is not the correct authority for fixed destinations with their own traversal, lifecycle, or route identity.
 
 ## Runtime Contract
 
@@ -39,15 +39,27 @@ V1 placement is deterministic from the accepted map seed. A special room candida
 
 The full footprint does not need to already be walkable. The authored-footprint claim API intentionally clears procgen walls, road/decal authority, foliage, blocked elevation, and region metadata before forcing walkable authored floor authority.
 
-## Current Live Definition
+## Current Production Definitions
 
-- `res://content/procgen/special_rooms/ash_bell_forlorn_ritualant_room.json`
-  - scene: `res://game/world/events/ash_bell/forlorn_ritualant_site.tscn`
-  - footprint: `35x27`
-  - max instances per run: `1`
+None.
+
+## Retired Definition: Forlorn Ritualant
+
+The former definition:
+
+`res://content/procgen/special_rooms/ash_bell_forlorn_ritualant_room.json`
+
+was deleted on 2026-07-30. The Forlorn-Ritualant is now a fixed authored Underground destination loaded through:
+
+- level: `res://content/levels/ash_bell/forlorn_ritualant_underground.json`
+- route: `res://content/routes/ash_bell/forlorn_ritualant_underground_route.json`
+- scene: `res://game/world/levels/authored/ash_bell/forlorn_ritualant_underground/forlorn_ritualant_underground.tscn`
+
+Procgen may place the exterior cave ingress, but it no longer inserts or clears a `35x27` encounter footprint.
 
 ## Non-goals
 
+- Do not use special-room insertion for authored destinations that need route lifecycle or fixed spatial sequencing.
 - Do not invent campaign completion flags in this V1.
 - Do not convert `rarity` into probabilistic hiding yet; it is metadata for future weighting.
 - Do not move gameplay/collision authority into JSON. Authored scenes and `ProcGenTilemap` remain the runtime authorities.
@@ -59,6 +71,7 @@ Use:
 ```bash
 cd custodian
 godot --headless --path . --script res://tools/validation/special_room_insertion_smoke.gd
+godot --headless --path . --script res://tools/validation/levels/forlorn_ritualant_underground_smoke.gd
 ```
 
-The smoke fails if contract generation completes without a `special_room_sites` entry.
+With no registered production definitions, the generic smoke validates that contract generation remains healthy and that the Ritualant is never reported in `special_room_sites`. The focused Underground smoke validates its replacement authored level and route.
