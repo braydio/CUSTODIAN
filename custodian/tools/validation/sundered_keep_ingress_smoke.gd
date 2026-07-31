@@ -177,10 +177,10 @@ func _init() -> void:
 			approach = level_loader.call("get_active_level_instance") as Node
 		if approach == null:
 			errors.append("WorldIngressSite did not enter the registered authored route")
-		elif String(level_loader.call("get_active_level_id")) != "sundered_keep_front_gate":
+		elif String(level_loader.call("get_active_level_id")) != "sundered_keep_vista_approach":
 			errors.append("LevelLoader active level ID is wrong")
-		if route_manager == null or String(route_manager.call("get_current_node_id")) != "front_gate":
-			errors.append("production ingress did not start the Front Gate route node")
+		if route_manager == null or String(route_manager.call("get_current_node_id")) != "vista_approach":
+			errors.append("production ingress did not start Approach and Outskirts")
 		if runtime_container != null and runtime_container.visible:
 			errors.append("WorldIngressSite did not hide ProcGenRuntime while approach is active")
 		if runtime_container != null \
@@ -190,13 +190,13 @@ func _init() -> void:
 			errors.append("WorldIngressSite did not hide ConnectedMaps while approach is active")
 		if connected_maps.process_mode != Node.PROCESS_MODE_DISABLED:
 			errors.append("WorldIngressSite did not disable ConnectedMaps processing while approach is active")
-		_assert_origin_sector_isolated(sectors, "Front Gate", errors)
+		_assert_origin_sector_isolated(sectors, "Approach and Outskirts", errors)
 		await physics_frame
 		if _origin_sector_has_wall_collision(world, sectors):
 			errors.append("origin sector wall collision remained active during Front Gate")
 		if route_manager != null:
-			if not bool(route_manager.call("request_exit", &"exfil", actor)):
-				errors.append("Front Gate route exfil to @world_origin failed")
+			if not bool(route_manager.call("request_exit", &"return_world", actor)):
+				errors.append("Approach return to @world_origin failed")
 			if not sectors.visible \
 			or sectors.process_mode != Node.PROCESS_MODE_ALWAYS:
 				errors.append("origin sector was not restored exactly after route exfil")

@@ -315,41 +315,26 @@ connection samples at each of 96, 136, and 176 pixels. The focused reaction smok
 
 For Sundered Keep asset wiring specifically:
 
-For the procgen-generated Sundered Keep frontage and terminal Front Gate
-ingress:
+For the production Sundered Keep authored ingress, continuous exterior, and
+Front Gate handoff:
 
 ```bash
 cd custodian
-godot --headless --path . --script res://tools/validation/sundered_keep_ingress_smoke.gd
-godot --headless --path . --script res://tools/validation/sundered_keep_procgen_frontage_smoke.gd
-godot --headless --path . --script res://tools/validation/sundered_keep_world_vista_smoke.gd
+godot --headless --path . --script res://tools/validation/sundered_keep_playable_blackout_transition_smoke.gd
+godot --headless --path . --script res://tools/validation/sundered_keep_approach_outskirts_mapper_smoke.gd
+godot --headless --path . --script res://tools/validation/sundered_keep_approach_continuity_smoke.gd
+godot --headless --path . --script res://tools/validation/sundered_keep_checkpoint_occlusion_smoke.gd
+godot --headless --path . --script res://tools/validation/sundered_keep_causeway_handoff_smoke.gd
 godot --headless --path . --script res://tools/validation/world_origin_branch_contract_smoke.gd
 bash tools/validation/run_route_pipeline_suite.sh
-godot --display-driver x11 --rendering-driver opengl3 \
-  --audio-driver Dummy --path . \
-  --script res://tools/validation/sundered_keep_procgen_frontage_seed_review.gd
 ```
 
-The frontage smoke reviews 24 seeds for exactly one intent landmark,
-deterministic and meaningfully variable irregular masks, route
-attachment/width/reachability/reverse traversal, ordered semantic camera
-anchors, generated terminal ingress, dressing/site clearance, post-dressing
-playability, exposed-border pruning, and exclusion of special-room,
-route-master, and rectangular authored authority. The presentation smoke proves
-both forward/reverse physical camera envelopes, semantic module placement,
-collision-free ownership, procgen and Operator continuity, and complete
-2560×1440 storm/void coverage without the old cliff-lip seam.
-
-The renderer-backed review writes four PNGs per seed—world overview, first
-reveal, frontage apex, and gate approach—plus a manifest under
-`reports/sundered_keep_procgen_frontage/`. It requires a real renderer because
-Godot's dummy headless driver cannot read back viewport textures. The ingress
-smoke proves the generated frontage starts no route and that only crossing its
-terminal gate hides origin branches and stages Front Gate. The route suite
-proves direct production entry/exfil, quarantine of `legacy_vista_debug` and
-`causeway_only`, loader/spawn authority, rollback, state policy, and authored
-exits. Old approach, continuity, parallax, and polish smokes remain reference
-experiment regressions; they no longer define production acceptance.
+These smokes prove deferred procgen isolation, the visible/contact-shadow
+blackout bridge, production Approach/Outskirts mapper authority, all seven
+continuous subregions, checkpoint roof cutaway without foliage ownership,
+opaque beach mist/spray coverage, and the existing Front Gate `EntrySpawn`.
+The former procgen-frontage and stage-cut route smokes remain regression and
+historical coverage; they no longer define production routing acceptance.
 
 For the reusable authored-level scaffold and registry ingress pipeline:
 

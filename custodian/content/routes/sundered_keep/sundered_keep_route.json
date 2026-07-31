@@ -24,23 +24,23 @@
   ],
   "edges": [
     {"edge_id": "enter_keep", "from_node_id": "@world_origin", "exit_id": "enter", "to_node_id": "front_gate", "target_spawn_id": "EntrySpawn", "direction": "forward", "transition_style": "fade"},
-    {"edge_id": "enter_vista", "from_node_id": "@world_origin", "exit_id": "enter", "to_node_id": "vista_approach", "target_spawn_id": "EntrySpawn", "direction": "forward", "transition_style": "fade"},
+    {"edge_id": "enter_vista", "from_node_id": "@world_origin", "exit_id": "enter", "to_node_id": "vista_approach", "target_spawn_id": "EntrySpawn", "direction": "forward", "transition_style": "playable_blackout"},
     {"edge_id": "enter_causeway_debug", "from_node_id": "@world_origin", "exit_id": "enter", "to_node_id": "return_causeway", "target_spawn_id": "OperatorSpawn", "direction": "forward", "transition_style": "fade"},
     {"edge_id": "vista_to_causeway", "from_node_id": "vista_approach", "exit_id": "continue", "to_node_id": "return_causeway", "target_spawn_id": "OperatorSpawn", "direction": "forward", "transition_style": "fade"},
-    {"edge_id": "vista_to_keep_direct", "from_node_id": "vista_approach", "exit_id": "continue", "to_node_id": "front_gate", "target_spawn_id": "EntrySpawn", "direction": "forward", "transition_style": "fade"},
+    {"edge_id": "vista_to_keep_direct", "from_node_id": "vista_approach", "exit_id": "continue", "to_node_id": "front_gate", "target_spawn_id": "EntrySpawn", "direction": "forward", "transition_style": "occluded_handoff"},
     {"edge_id": "vista_exfil", "from_node_id": "vista_approach", "exit_id": "return_world", "to_node_id": "@world_origin", "target_spawn_id": "", "direction": "exfil", "transition_style": "fade"},
     {"edge_id": "causeway_to_keep", "from_node_id": "return_causeway", "exit_id": "continue", "to_node_id": "front_gate", "target_spawn_id": "EntrySpawn", "direction": "forward", "transition_style": "fade"},
     {"edge_id": "causeway_to_vista", "from_node_id": "return_causeway", "exit_id": "backtrack", "to_node_id": "vista_approach", "target_spawn_id": "ReturnTopdown", "direction": "back", "transition_style": "fade"},
     {"edge_id": "causeway_exfil_debug", "from_node_id": "return_causeway", "exit_id": "backtrack", "to_node_id": "@world_origin", "target_spawn_id": "", "direction": "exfil", "transition_style": "fade"},
     {"edge_id": "keep_to_causeway", "from_node_id": "front_gate", "exit_id": "backtrack", "to_node_id": "return_causeway", "target_spawn_id": "KeepReturnSpawn", "direction": "back", "transition_style": "fade"},
-    {"edge_id": "keep_to_vista_direct", "from_node_id": "front_gate", "exit_id": "backtrack", "to_node_id": "vista_approach", "target_spawn_id": "ReturnTopdown", "direction": "back", "transition_style": "fade"},
+    {"edge_id": "keep_to_vista_direct", "from_node_id": "front_gate", "exit_id": "backtrack", "to_node_id": "vista_approach", "target_spawn_id": "ReturnTopdown", "direction": "back", "transition_style": "occluded_handoff"},
     {"edge_id": "keep_exfil", "from_node_id": "front_gate", "exit_id": "exfil", "to_node_id": "@world_origin", "target_spawn_id": "", "direction": "exfil", "transition_style": "fade"}
   ],
   "profiles": [
     {
       "profile_id": "production",
-      "entry_edge_id": "enter_keep",
-      "enabled_edge_ids": ["enter_keep", "keep_exfil"]
+      "entry_edge_id": "enter_vista",
+      "enabled_edge_ids": ["enter_vista", "vista_to_keep_direct", "keep_to_vista_direct", "vista_exfil", "keep_exfil"]
     },
     {
       "profile_id": "debug_direct_keep",

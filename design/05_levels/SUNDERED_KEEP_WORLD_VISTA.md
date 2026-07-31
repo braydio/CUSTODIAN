@@ -1,7 +1,7 @@
 # Sundered Keep World Vista
 
 > **Superseded production authority (2026-07-30):** see
-> `design/05_levels/SUNDERED_KEEP_PROCGEN_FRONTAGE.md`. The nine-tile authored
+> `design/05_levels/SUNDERED_KEEP_VISTA_APPROACH.md`. The nine-tile authored
 > overlook pocket and cliff-lip-as-map-seam design below are retained only as
 > implementation history. Production now requires an intent-graph-owned
 > procgen landmark region with authored visual identity and a generated
@@ -49,8 +49,9 @@ The Vista:
 - reverses solely from the Operator's physical position.
 
 The nearby `WorldIngressSite` remains the actual level boundary. Crossing it
-uses the production `enter_keep` edge and a short fade directly into
-`front_gate`.
+uses the production `enter_vista` edge and a playable blackout bridge into the
+authored Approach and Outskirts. Front Gate is reached later through the beach
+mist handoff.
 
 ## Scene Contract
 
@@ -124,9 +125,8 @@ Production and `debug_direct_keep` use only:
 @world_origin -> front_gate -> @world_origin
 ```
 
-The former authored approach is retained under `legacy_vista_debug` for
-debugging and historical validation. Return Causeway remains isolated under
-`causeway_only`.
+The authored approach is the production route node. Return Causeway remains
+isolated under `causeway_only`.
 
 ## Validation
 

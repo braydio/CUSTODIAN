@@ -25,6 +25,18 @@ const FORTRESS_VISTA_SCRIPT := preload(
 )
 
 const USE_ROUTE_MASTER := true
+const APPROACH_LAYOUT_DATA := (
+	"res://content/levels/sundered_keep/"
+	+ "sundered_keep_approach_outskirts.json"
+)
+const APPROACH_COLLISION_DATA := (
+	"res://content/levels/sundered_keep/"
+	+ "sundered_keep_approach_collision.json"
+)
+const APPROACH_OCCLUSION_DATA := (
+	"res://content/levels/sundered_keep/"
+	+ "sundered_keep_approach_occlusion.json"
+)
 
 const APPROACH_ROUTE_MASTER := "res://content/sprites/world/return_causeway/path/sundered_keep_approach_route_master.png"
 
@@ -307,11 +319,19 @@ var vista_debug_probe: CanvasLayer = null
 var _continue_exit: LevelExit2D = null
 var _return_world_exit: LevelExit2D = null
 var _final_fog_coverage_rect := Rect2()
+var _layout_document: Dictionary = {}
+var _collision_document: Dictionary = {}
+var _occlusion_document: Dictionary = {}
+var _runtime_authoring_markers: Dictionary = {}
+var _runtime_boundary_segments: Array = []
+var _runtime_roof_records: Array = []
+var _subregions_root: Node2D = null
 
 
 func _ready() -> void:
 	add_to_group("sundered_keep_approach")
 	add_to_group("world_ingress_approach")
+	_load_mapper_authority()
 	_remove_stale_proxy_nodes()
 	_ensure_roots()
 	_build_visuals()
@@ -380,6 +400,8 @@ func _ensure_roots() -> void:
 	event_runtime_root = _ensure_plain_node2d("EventRuntimeRoot")
 	sequence_triggers_root = _ensure_plain_node2d("SequenceTriggers")
 	roof_occlusion_root = _ensure_node2d_root("RoofOcclusionRoot", 90)
+	_subregions_root = _ensure_plain_node2d("AuthoredSubregions")
+	_build_authored_subregions()
 
 	entry_spawn = _ensure_marker("EntrySpawn", _route_point(ENTRY_SPAWN_POS))
 	reveal_start = _ensure_marker("RevealStart", _route_point(REVEAL_START_POS))
@@ -687,8 +709,8 @@ func _build_visuals() -> void:
 		var route_master := _add_fitted_sprite(
 			playable_root,
 			"ApproachRouteMaster",
-			APPROACH_ROUTE_MASTER,
-			_route_rect(RECT_ROUTE_MASTER),
+			_get_route_floor_texture_path(),
+			_route_rect(_get_route_floor_rect()),
 			0,
 			Color.WHITE
 		)
@@ -802,10 +824,12 @@ func _build_labyrinth_roof_occlusion(route_master: Sprite2D) -> void:
 	var rendered_rect := _route_rect(RECT_ROUTE_MASTER)
 	var material := ShaderMaterial.new()
 	material.shader = ROUTE_MASTER_OCCLUSION_SHADER
-	var roof_names := LABYRINTH_ROOF_RECTS.keys()
-	for index in roof_names.size():
-		var roof_name := str(roof_names[index])
-		var roof_rect := LABYRINTH_ROOF_RECTS[roof_name] as Rect2
+	for index in _runtime_roof_records.size():
+		var roof_record := _runtime_roof_records[index] as Dictionary
+		var roof_rect := _rect_from_array(
+			roof_record.get("roof_rect", []),
+			Rect2()
+		)
 		material.set_shader_parameter(
 			"cutout_%d" % index,
 			_runtime_rect_to_uv(roof_rect, rendered_rect)
@@ -813,9 +837,13 @@ func _build_labyrinth_roof_occlusion(route_master: Sprite2D) -> void:
 	route_master.material = material
 
 	var texture_size := route_master.texture.get_size()
-	for index in roof_names.size():
-		var roof_name := str(roof_names[index])
-		var roof_rect := LABYRINTH_ROOF_RECTS[roof_name] as Rect2
+	for index in _runtime_roof_records.size():
+		var roof_record := _runtime_roof_records[index] as Dictionary
+		var roof_name := str(roof_record.get("id", "ApproachRoof%02d" % index))
+		var roof_rect := _rect_from_array(
+			roof_record.get("roof_rect", []),
+			Rect2()
+		)
 		var source_region := _runtime_rect_to_source_region(
 			roof_rect,
 			rendered_rect,
@@ -837,7 +865,10 @@ func _build_labyrinth_roof_occlusion(route_master: Sprite2D) -> void:
 		roof_sprite.set_meta("coverage_rect", roof_rect)
 		roof_occlusion_root.add_child(roof_sprite)
 
-		var zone_rect := LABYRINTH_OCCLUSION_ZONES[roof_name] as Rect2
+		var zone_rect := _rect_from_array(
+			roof_record.get("fade_region", []),
+			roof_rect
+		)
 		var occluder := ROOF_OCCLUDER_SCRIPT.new() as Area2D
 		occluder.name = "%sOccluder" % roof_name
 		occluder.position = zone_rect.get_center()
@@ -852,6 +883,7 @@ func _build_labyrinth_roof_occlusion(route_master: Sprite2D) -> void:
 		shape_node.shape = shape
 		occluder.add_child(shape_node)
 		roof_occlusion_root.add_child(occluder)
+		occluder.set("faded_alpha", float(roof_record.get("faded_alpha", 0.08)))
 		occluder.call("configure", [roof_sprite] as Array[CanvasItem])
 
 
@@ -1086,7 +1118,7 @@ func _build_collision() -> void:
 	collision_root.add_child(body)
 
 	var index := 1
-	for segment_variant: Variant in BOUNDARY_SEGMENTS:
+	for segment_variant: Variant in _runtime_boundary_segments:
 		var segment := segment_variant as Array
 		if segment.size() < 2:
 			continue
@@ -1420,11 +1452,13 @@ func _is_player_body(body: Node) -> bool:
 
 
 func _get_authoring_marker_position(marker_id: String, fallback: Vector2) -> Vector2:
-	var marker_data: Variant = AUTHORING_MARKERS.get(marker_id, {})
+	var marker_data: Variant = _runtime_authoring_markers.get(marker_id, {})
 	if marker_data is Dictionary:
 		var position: Variant = (marker_data as Dictionary).get("position", fallback)
 		if position is Vector2:
 			return position
+		if position is Array and (position as Array).size() >= 2:
+			return Vector2(float(position[0]), float(position[1]))
 	return fallback
 
 
@@ -1478,9 +1512,9 @@ func refresh_route_camera(_actor: Node) -> bool:
 
 func get_authoring_marker_state() -> Dictionary:
 	var result := {}
-	for marker_id: String in AUTHORING_MARKERS.keys():
-		var marker_data := AUTHORING_MARKERS[marker_id] as Dictionary
-		var source_position := marker_data.get("position", Vector2.ZERO) as Vector2
+	for marker_id: String in _runtime_authoring_markers.keys():
+		var marker_data := _runtime_authoring_markers[marker_id] as Dictionary
+		var source_position := _get_authoring_marker_position(marker_id, Vector2.ZERO)
 		var runtime_position := _route_point(source_position)
 		result[marker_id] = {
 			"kind": str(marker_data.get("kind", marker_id)),
@@ -1492,17 +1526,17 @@ func get_authoring_marker_state() -> Dictionary:
 
 
 func get_boundary_segments() -> Array:
-	return BOUNDARY_SEGMENTS
+	return _runtime_boundary_segments
 
 
 func get_authoring_markers() -> Dictionary:
-	return AUTHORING_MARKERS
+	return _runtime_authoring_markers
 
 
 func get_authoring_marker_schema() -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
-	for marker_id: String in AUTHORING_MARKERS.keys():
-		var data := (AUTHORING_MARKERS[marker_id] as Dictionary).duplicate(true)
+	for marker_id: String in _runtime_authoring_markers.keys():
+		var data := (_runtime_authoring_markers[marker_id] as Dictionary).duplicate(true)
 		data["id"] = marker_id
 		result.append(data)
 	return result
@@ -1529,3 +1563,117 @@ func _route_point(point: Vector2) -> Vector2:
 
 func _route_rect(rect: Rect2) -> Rect2:
 	return Rect2(_route_point(rect.position), rect.size)
+
+
+func _load_mapper_authority() -> void:
+	_layout_document = _read_json_dictionary(APPROACH_LAYOUT_DATA)
+	_collision_document = _read_json_dictionary(APPROACH_COLLISION_DATA)
+	_occlusion_document = _read_json_dictionary(APPROACH_OCCLUSION_DATA)
+	_runtime_authoring_markers = _decode_markers(
+		_layout_document.get("markers", {})
+	)
+	_runtime_boundary_segments = _decode_segments(
+		_collision_document.get("segments", [])
+	)
+	_runtime_roof_records = (
+		_occlusion_document.get("roof_occluders", []) as Array
+	).duplicate(true)
+	if _runtime_authoring_markers.is_empty():
+		push_error("[SunderedKeepApproach] Mapper layout has no markers")
+	if _runtime_boundary_segments.is_empty():
+		push_error("[SunderedKeepApproach] Mapper collision has no rails")
+
+
+func _read_json_dictionary(path: String) -> Dictionary:
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		push_error("[SunderedKeepApproach] Missing mapper authority: %s" % path)
+		return {}
+	var parsed: Variant = JSON.parse_string(file.get_as_text())
+	if parsed is Dictionary:
+		return parsed as Dictionary
+	push_error("[SunderedKeepApproach] Invalid mapper JSON: %s" % path)
+	return {}
+
+
+func _decode_markers(source: Variant) -> Dictionary:
+	var decoded: Dictionary = {}
+	if not (source is Dictionary):
+		return decoded
+	for marker_id: String in (source as Dictionary).keys():
+		var record := ((source as Dictionary)[marker_id] as Dictionary).duplicate(true)
+		var raw_position := record.get("position", []) as Array
+		if raw_position.size() >= 2:
+			record["position"] = Vector2(
+				float(raw_position[0]),
+				float(raw_position[1])
+			)
+		decoded[marker_id] = record
+	return decoded
+
+
+func _decode_segments(source: Variant) -> Array:
+	var decoded: Array = []
+	if not (source is Array):
+		return decoded
+	for raw_segment: Variant in source:
+		if not (raw_segment is Array) or (raw_segment as Array).size() < 2:
+			continue
+		var raw_a := (raw_segment as Array)[0] as Array
+		var raw_b := (raw_segment as Array)[1] as Array
+		if raw_a.size() < 2 or raw_b.size() < 2:
+			continue
+		decoded.append([
+			Vector2(float(raw_a[0]), float(raw_a[1])),
+			Vector2(float(raw_b[0]), float(raw_b[1])),
+		])
+	return decoded
+
+
+func _rect_from_array(source: Variant, fallback: Rect2) -> Rect2:
+	if not (source is Array) or (source as Array).size() < 4:
+		return fallback
+	var values := source as Array
+	return Rect2(
+		float(values[0]),
+		float(values[1]),
+		float(values[2]),
+		float(values[3])
+	)
+
+
+func _build_authored_subregions() -> void:
+	if _subregions_root == null:
+		return
+	_clear_children(_subregions_root)
+	for raw_region: Variant in _layout_document.get("subregions", []):
+		if not (raw_region is Dictionary):
+			continue
+		var record := raw_region as Dictionary
+		var region := Node2D.new()
+		region.name = str(record.get("node_name", record.get("id", "Region")))
+		region.set_meta("region_id", str(record.get("id", "")))
+		region.set_meta("region_kind", str(record.get("kind", "approach_subregion")))
+		region.set_meta("authoring_rect", _rect_from_array(record.get("rect", []), Rect2()))
+		_subregions_root.add_child(region)
+
+
+func get_mapper_authority_paths() -> PackedStringArray:
+	return PackedStringArray([
+		APPROACH_LAYOUT_DATA,
+		APPROACH_COLLISION_DATA,
+		APPROACH_OCCLUSION_DATA,
+	])
+
+
+func _get_route_floor_texture_path() -> String:
+	var route_floor := _layout_document.get("route_floor", {}) as Dictionary
+	return str(route_floor.get("texture_path", APPROACH_ROUTE_MASTER))
+
+
+func _get_route_floor_rect() -> Rect2:
+	var route_floor := _layout_document.get("route_floor", {}) as Dictionary
+	return _rect_from_array(
+		route_floor.get("rect", []),
+		RECT_ROUTE_MASTER
+	)

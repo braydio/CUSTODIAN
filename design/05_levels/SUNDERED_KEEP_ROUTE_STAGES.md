@@ -1,6 +1,6 @@
 # Sundered Keep Route / Stage System
 
-- **Status:** prototype/retired from production ingress; retained only for smoke coverage and possible future reference
+- **Status:** prototype/retired; forbidden for the production exterior
 - **Owner:** world / connected maps
 - **Runtime:** `custodian/` Godot 4.x
 - **Route controller:** `custodian/game/world/routes/sundered_keep/sundered_keep_approach_route.gd`
@@ -12,7 +12,12 @@
 
 A lightweight Route/Stage level-organization layer that wraps a linear sequence of authored scenes (stages) behind a single route controller. The world map and level registry know the route controller, not the substages. Each stage is a standalone scene under `routes/<route_name>/stages/`.
 
-This route is retired from the configured production ingress. It remains a smoke-covered prototype of the Route/Stage organization layer. The implementation is still **stage-cut based**: `LevelRoute` queue-frees one stage and instantiates the next. Production uses the generated-world landmark defined by `SUNDERED_KEEP_WORLD_VISTA.md` and must not reconnect this prototype.
+This route is retired from the configured production ingress. It remains a
+smoke-covered prototype of the Route/Stage organization layer. The
+implementation is still **stage-cut based**: `LevelRoute` queue-frees one stage
+and instantiates the next. Production instead uses one continuous authored
+Approach and Outskirts scene from blackout arrival through the beach. These
+prototype stages must not be reconnected.
 
 ## Architecture
 

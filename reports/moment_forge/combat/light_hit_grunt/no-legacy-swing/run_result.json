@@ -1,0 +1,263 @@
+{
+	"actions": [
+		{
+			"action": "input_tap",
+			"ok": true,
+			"tick": 2
+		},
+		{
+			"action": "aim_at_role",
+			"ok": true,
+			"tick": 20
+		},
+		{
+			"action": "input_tap",
+			"ok": true,
+			"tick": 30
+		},
+		{
+			"action": "capture_marker",
+			"ok": true,
+			"tick": 34
+		},
+		{
+			"action": "finish",
+			"finish": true,
+			"ok": true,
+			"tick": 118
+		}
+	],
+	"assertions": [
+		{
+			"actual": true,
+			"expected": {
+				"role": "target",
+				"severity": "error",
+				"type": "role_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "role_exists"
+		},
+		{
+			"actual": false,
+			"expected": {
+				"severity": "error",
+				"type": "no_unreleased_inputs"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "no_unreleased_inputs"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"path": "telemetry.json",
+				"severity": "error",
+				"type": "output_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "output_exists"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 0.0,
+				"type": "probe_compare",
+				"value": 0.5
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 24.0,
+				"type": "probe_compare",
+				"value": 0.5
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 30.0,
+				"type": "probe_compare",
+				"value": 0.5
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 34.0,
+				"type": "probe_compare",
+				"value": 0.5
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 40.0,
+				"type": "probe_compare",
+				"value": 0.5
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 72.0,
+				"type": "probe_compare",
+				"value": 0.5
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 118.0,
+				"type": "probe_compare",
+				"value": 0.5
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0,
+			"expected": {
+				"op": "eq",
+				"severity": "warning",
+				"type": "warning_count",
+				"value": 0.0
+			},
+			"message": "",
+			"passed": true,
+			"severity": "warning",
+			"type": "warning_count"
+		}
+	],
+	"capture_failures": [],
+	"capture_mode": "full",
+	"completed": true,
+	"completed_tick": 118,
+	"failures": [],
+	"keyframes": [
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/no-legacy-swing/keyframes/tick_000000.png",
+			"render_frame": 4,
+			"sha256": "9185691506a236839c94bd773f818a272b57c9baeea3daebd0fb08e619ca6d4d",
+			"tick": 0
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/no-legacy-swing/keyframes/tick_000024.png",
+			"render_frame": 28,
+			"sha256": "20d5c64811e22a12e11f56ad57a847fb13fe51e6811a34609fe85894c783d2a4",
+			"tick": 24
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/no-legacy-swing/keyframes/tick_000030.png",
+			"render_frame": 34,
+			"sha256": "d476d462469b2acb2b97d6d8c29819bb6f16a8ba1878c7dd19c6976500c90ae6",
+			"tick": 30
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/no-legacy-swing/keyframes/tick_000034.png",
+			"render_frame": 38,
+			"sha256": "a348c17b11527396c2b8373ab727a70f3e15e0dd01d49b3369d2df2edeb2b0a1",
+			"tick": 34
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/no-legacy-swing/keyframes/tick_000040.png",
+			"render_frame": 44,
+			"sha256": "38de10fe717a5277cb38b5f0c3ccd8c19bfafe9d985aeb90e03c2e0f9b41bb61",
+			"tick": 40
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/no-legacy-swing/keyframes/tick_000072.png",
+			"render_frame": 76,
+			"sha256": "1b2917bb4835f4b8a082a6b7b64078dd9e26ce96c2012304318d5094d6de7e3d",
+			"tick": 72
+		}
+	],
+	"markers": [
+		{
+			"data": {},
+			"name": "expected_contact",
+			"tick": 34
+		}
+	],
+	"passed": true,
+	"probe_failures": [],
+	"runtime": {
+		"godot": {
+			"build": "arch_linux",
+			"hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+			"hex": 263937,
+			"major": 4,
+			"minor": 7,
+			"patch": 1,
+			"status": "stable",
+			"string": "4.7.1-stable (arch_linux)",
+			"timestamp": 1783976428
+		},
+		"physics_hz": 60,
+		"renderer": "vulkan"
+	},
+	"scenario_id": "combat/light_hit_grunt",
+	"scenario_path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/no-legacy-swing/scenario.snapshot.json",
+	"schema": "custodian.moment_forge.run_result.v1",
+	"seed": 104729
+}

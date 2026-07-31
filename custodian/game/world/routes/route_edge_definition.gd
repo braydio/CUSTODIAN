@@ -3,6 +3,11 @@ extends RefCounted
 
 const WORLD_ORIGIN := &"@world_origin"
 const DIRECTIONS := [&"forward", &"back", &"lateral", &"exfil"]
+const TRANSITION_STYLES := [
+	&"fade",
+	&"playable_blackout",
+	&"occluded_handoff",
+]
 
 var edge_id: StringName = &""
 var from_node_id: StringName = &""
@@ -35,6 +40,8 @@ func validate() -> PackedStringArray:
 		errors.append("to_node_id is required")
 	if not DIRECTIONS.has(direction):
 		errors.append("direction is invalid: %s" % direction)
+	if not TRANSITION_STYLES.has(transition_style):
+		errors.append("transition_style is invalid: %s" % transition_style)
 	if to_node_id == WORLD_ORIGIN and direction != &"exfil":
 		errors.append("an @world_origin target requires direction exfil")
 	if to_node_id != WORLD_ORIGIN and target_spawn_id.is_empty():

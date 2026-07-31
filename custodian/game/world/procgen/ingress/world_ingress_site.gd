@@ -24,6 +24,8 @@ var _sprite: Sprite2D = null
 var _main_map: Node = null
 var _entry_snapshot: Dictionary = {}
 var _awaiting_body_exit_after_return := false
+var _deferred_origin_isolation := false
+var _deferred_presentation_profile: StringName = &"gameplay"
 
 
 func _ready() -> void:
@@ -153,7 +155,19 @@ func _enter_approach(actor: Node) -> void:
 		if definition != null:
 			presentation_profile = definition.call("get_presentation_profile") as StringName
 	_entry_snapshot = capture_world_origin(actor)
-	isolate_world_origin(actor, presentation_profile)
+	var transition_style: StringName = (
+		route_manager.call(
+			"get_route_entry_transition_style",
+			route_id,
+			route_profile
+		) as StringName
+		if has_route
+		else &"fade"
+	)
+	_deferred_origin_isolation = transition_style == &"playable_blackout"
+	_deferred_presentation_profile = presentation_profile
+	if not _deferred_origin_isolation:
+		isolate_world_origin(actor, presentation_profile)
 	var context := {
 		"parent": world,
 		"main_map": _main_map,
@@ -212,6 +226,13 @@ func isolate_world_origin(actor: Node, presentation_profile: StringName) -> void
 			(branch as CanvasItem).visible = false
 		branch.process_mode = Node.PROCESS_MODE_DISABLED
 	_set_world_presentation_profile(actor, presentation_profile)
+
+
+func complete_deferred_origin_isolation(actor: Node) -> void:
+	if not _deferred_origin_isolation:
+		return
+	isolate_world_origin(actor, _deferred_presentation_profile)
+	_deferred_origin_isolation = false
 
 
 func _restore_failed_approach_entry(actor: Node) -> void:
@@ -293,6 +314,8 @@ func reset_after_level_return() -> void:
 	_triggered = false
 	_approach_enter_deferred = false
 	_entry_snapshot.clear()
+	_deferred_origin_isolation = false
+	_deferred_presentation_profile = &"gameplay"
 	_awaiting_body_exit_after_return = true
 	monitorable = true
 	# Rebuild the overlap set after this Area spent the route session inside a
@@ -318,6 +341,7 @@ func _capture_origin_state(actor: Node) -> Dictionary:
 			"node": branch,
 			"path": String(branch.get_path()),
 			"visible": (branch as CanvasItem).visible if branch is CanvasItem else true,
+			"modulate": (branch as CanvasItem).modulate if branch is CanvasItem else Color.WHITE,
 			"process_mode": branch.process_mode,
 		})
 	var ui := get_node_or_null("/root/GameRoot/UI")
@@ -394,6 +418,10 @@ func _restore_branch_state(branch_state: Dictionary) -> void:
 		return
 	if branch is CanvasItem:
 		(branch as CanvasItem).visible = bool(branch_state.get("visible", true))
+		(branch as CanvasItem).modulate = branch_state.get(
+			"modulate",
+			Color.WHITE
+		) as Color
 	branch.process_mode = int(branch_state.get("process_mode", Node.PROCESS_MODE_INHERIT))
 
 

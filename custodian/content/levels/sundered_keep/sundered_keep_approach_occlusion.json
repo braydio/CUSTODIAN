@@ -1,0 +1,36 @@
+{
+  "schema": "custodian.sundered_keep.approach_occlusion.v1",
+  "layout_generator": "res://scenes/debug/sundered_keep_approach_mapper.tscn",
+  "roof_occluders": [
+    {
+      "id": "WestKeepRoof",
+      "roof_rect": [515.0, -445.0, 460.0, 210.0],
+      "fade_region": [565.0, -250.0, 330.0, 190.0],
+      "faded_alpha": 0.08,
+      "foreground_arch_persists": true
+    },
+    {
+      "id": "CentralKeepRoof",
+      "roof_rect": [900.0, -455.0, 360.0, 235.0],
+      "fade_region": [860.0, -235.0, 300.0, 205.0],
+      "faded_alpha": 0.08,
+      "foreground_arch_persists": true
+    },
+    {
+      "id": "ExitKeepRoof",
+      "roof_rect": [1120.0, -355.0, 280.0, 260.0],
+      "fade_region": [1090.0, -220.0, 250.0, 220.0],
+      "faded_alpha": 0.08,
+      "foreground_arch_persists": true
+    }
+  ],
+  "handoff_occlusion": {
+    "marker_id": "beach_handoff",
+    "minimum_coverage_alpha": 0.98,
+    "textures": [
+      "res://content/backgrounds/sundered_keep/approach/occlusion/approach_edge_mist_wrap.png",
+      "res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_edge_spray_wrap.png",
+      "res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_ocean_spray_overlay.png"
+    ]
+  }
+}

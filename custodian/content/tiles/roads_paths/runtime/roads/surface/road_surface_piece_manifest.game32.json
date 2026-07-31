@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "asset_pack": "custodian_runtime_road_surface_pieces",
+  "export_root": "res://content/tiles/roads_paths/runtime/roads/surface",
+  "piece_count": 15,
+  "tile_contract": {
+    "tile_size": [32, 32],
+    "placement_model": "filled_surface_topology",
+    "surface_roles": [
+      "center",
+      "edge_n",
+      "edge_e",
+      "edge_s",
+      "edge_w",
+      "outer_corner_nw",
+      "outer_corner_ne",
+      "outer_corner_sw",
+      "outer_corner_se",
+      "inner_corner_nw",
+      "inner_corner_ne",
+      "inner_corner_sw",
+      "inner_corner_se"
+    ]
+  },
+  "procgen_notes": {
+    "purpose": "One 32x32 base decal per generated main-road surface tile, classified from the filled road mask.",
+    "path_contract": "Footpaths remain on their separate connection-bitmask manifest."
+  },
+  "pieces": [
+    {
+      "id": "road_center_01",
+      "file": "pieces/road_center_01_32.png",
+      "surface_role": "center",
+      "tile_size": [32, 32]
+    },
+    {
+      "id": "road_center_02",
+      "file": "pieces/road_center_02_32.png",
+      "surface_role": "center",
+      "tile_size": [32, 32]
+    },
+    {
+      "id": "road_center_03",
+      "file": "pieces/road_center_03_32.png",
+      "surface_role": "center",
+      "tile_size": [32, 32]
+    },
+    {
+      "id": "road_edge_n_01",
+      "file": "pieces/road_edge_n_01_32.png",
+      "surface_role": "edge_n",
+      "tile_size": [32, 32]
+    },
+    {
+      "id": "road_edge_e_01",
+      "file": "pieces/road_edge_e_01_32.png",
+      "surface_role": "edge_e",
+      "tile_size": [32, 32]
+    },
+    {
+      "id": "road_edge_s_01",
+      "file": "pieces/road_edge_s_01_32.png",
+      "surface_role": "edge_s",
+      "tile_size": [32, 32]
+    },
+    {
+      "id": "road_edge_w_01",
+      "file": "pieces/road_edge_w_01_32.png",
+      "surface_role": "edge_w",
+      "tile_size": [32, 32]
+    },
+    {
+      "id": "road_outer_corner_nw_01",
+      "file": "pieces/road_outer_corner_nw_01_32.png",
+      "surface_role": "outer_corner_nw",
+      "tile_size": [32, 32]
+    },
+    {
+      "id": "road_outer_corner_ne_01",
+      "file": "pieces/road_outer_corner_ne_01_32.png",
+      "surface_role": "outer_corner_ne",
+      "tile_size": [32, 32]
+    },
+    {
+      "id": "road_outer_corner_sw_01",
+      "file": "pieces/road_outer_corner_sw_01_32.png",
+      "surface_role": "outer_corner_sw",
+      "tile_size": [32, 32]
+    },
+    {
+      "id": "road_outer_corner_se_01",
+      "file": "pieces/road_outer_corner_se_01_32.png",
+      "surface_role": "outer_corner_se",
+      "tile_size": [32, 32]
+    },
+    {
+      "id": "road_inner_corner_nw_01",
+      "file": "pieces/road_inner_corner_nw_01_32.png",
+      "surface_role": "inner_corner_nw",
+      "tile_size": [32, 32]
+    },
+    {
+      "id": "road_inner_corner_ne_01",
+      "file": "pieces/road_inner_corner_ne_01_32.png",
+      "surface_role": "inner_corner_ne",
+      "tile_size": [32, 32]
+    },
+    {
+      "id": "road_inner_corner_sw_01",
+      "file": "pieces/road_inner_corner_sw_01_32.png",
+      "surface_role": "inner_corner_sw",
+      "tile_size": [32, 32]
+    },
+    {
+      "id": "road_inner_corner_se_01",
+      "file": "pieces/road_inner_corner_se_01_32.png",
+      "surface_role": "inner_corner_se",
+      "tile_size": [32, 32]
+    }
+  ]
+}

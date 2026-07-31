@@ -1,24 +1,26 @@
 # Sundered Keep Vista Approach
 
-> **Production clarification (2026-07-30):** this is a reference/debug
-> composition and collision-authoring artifact, not production playable-world
-> authority. The production approach is specified by
-> `design/05_levels/SUNDERED_KEEP_PROCGEN_FRONTAGE.md`; procgen owns all
-> frontage floor, terrain, collision, side paths, and traversal.
-
-- **Status:** superseded / debug-only under `legacy_vista_debug`
+- **Status:** production authority
 - **Owner:** authored level / rendering / camera
 - **Runtime:** `custodian/` Godot 4.x
 - **Production runtime scene:** `custodian/game/world/approaches/sundered_keep/sundered_keep_approach.tscn`
 
-## Superseded Production Role
+## Production Role
 
-The production landmark reveal now lives in the generated world. See
-`design/05_levels/SUNDERED_KEEP_WORLD_VISTA.md`.
+The production route is:
 
-This authored approach remains loadable for focused visual experiments and
-historical validation only. It must not be restored to the production ingress
-without explicit design review.
+```text
+procgen campaign world
+→ playable_blackout
+→ one continuous authored Approach and Outskirts scene
+→ occluded_handoff at the causeway foot
+→ Sundered Keep Front Gate
+```
+
+`TransitionArrival`, `FirstVistaApproach`, `ShoreParish`,
+`NearVistaTraverse`, `CausewayCheckpoint`, `BeachApproach`, and
+`CausewayFootExit` are subregions of this scene, never separately loaded
+stages. The Operator and shared Camera2D remain persistent at both handoffs.
 
 ## Summary
 
@@ -28,7 +30,7 @@ A playable first Sundered Keep slice built from the former approach scene. The p
 
 ## Runtime Ingress Chain
 
-The retained `legacy_vista_debug` profile uses:
+The production profile uses:
 
 ```
 @world_origin
@@ -36,10 +38,9 @@ The retained `legacy_vista_debug` profile uses:
   -> front_gate
 ```
 
-Production bypasses this node and enters Front Gate directly. `RouteTraversalManager`
-and `LevelLoader` stage this scene only for `legacy_vista_debug`. The unfinished
-Return Causeway remains registered only for the isolated `causeway_only` debug
-profile and must not be promoted without explicit user review.
+`RouteTraversalManager` and `LevelLoader` stage this scene for production. The
+unfinished Return Causeway remains registered only for the isolated
+`causeway_only` debug profile.
 
 `WorldIngressSite` captures every direct child of `World` assigned to `world_origin_branch`, then hides and processing-disables the captured branches for the full route session. The Operator, Camera2D, shared lighting, LevelLoader, and RouteTraversalManager remain persistent. Node-to-node traversal never restores origin content; exact captured branch visibility and process modes are restored only during route exfil to `@world_origin`.
 
@@ -47,13 +48,13 @@ profile and must not be promoted without explicit user review.
 
 Ingress transitions must be deferred out of `Area2D.body_entered` physics callbacks before instancing this scene. The approach also defers its dynamic `StaticBody2D` boundary rails and final exit `Area2D` setup by one frame so Godot does not register or toggle physics shapes while flushing queries.
 
-## Collision Mapping Debug Scene
+## Production Mapper
 
-The former Keep-specific approach collision mapper has been retired. The old
-approach is a reference/debug composition artifact and is not an independently
-authored production level. Use the generic `level_collision_poi_mapper.tscn`
-only for historical inspection. All production Front Gate authoring routes
-through `sundered_keep_mapper.tscn`.
+Approach/outskirts authoring routes through
+`custodian/scenes/debug/sundered_keep_approach_mapper.tscn`. It previews this
+production scene and writes the approach layout, collision, and occlusion JSON
+documents under `content/levels/sundered_keep/`. Main Keep authoring remains
+owned independently by `sundered_keep_mapper.tscn`.
 - `WASD` / arrow keys: pan.
 - Mouse wheel / `+` / `-`: zoom around the cursor.
 - `L`: focus the final horizontal traverse.
@@ -73,7 +74,11 @@ The same mapper now has marker mode for route and presentation authoring:
 - `C`: copy the full `AUTHORING_MARKERS` block.
 - `Enter` / `U`: apply marker positions back to `sundered_keep_approach.gd`.
 
-`AUTHORING_MARKERS` is the stable authoring contract for Vista reference points. Keep key, gate, encounter, and siege markers belong to the Sundered Keep map, not this presentation route. The runtime endpoint is positioned by `LEVEL_EXIT_POS`; its authored `continue` exit resolves directly to Front Gate in production.
+The `markers` section of `sundered_keep_approach_outskirts.json` is the stable
+authoring contract for route and presentation reference points. Keep key, gate,
+encounter, and siege markers belong to the Sundered Keep map, not this exterior.
+The mapper-authored `level_exit` / `beach_handoff` marker owns the runtime
+endpoint; its authored `continue` exit resolves directly to Front Gate.
 
 For Camera 1 tuning, place `FirstCameraControlStart`,
 `RevealControlStart` (the apex), `RevealControlEnd` (return start), and

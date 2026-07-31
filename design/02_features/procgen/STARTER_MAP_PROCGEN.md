@@ -6,7 +6,17 @@ Your repo guidance says active runtime is `custodian/`, Godot-native specs belon
 
 ## Main Map Road Surface Slice
 
-The live contract map should also generate a modest functional road/path network outside the gothic compound using the resized road-piece exports at `custodian/content/tiles/roads_paths/runtime/roads/` and footpath exports at `custodian/content/tiles/roads_paths/runtime/paths/`. The exported pieces are variable-size road/path stamps mapped by `road_piece_manifest.game32.json` and `path_piece_manifest.game32.json`, not fixed `32x32` TileMap cells. The raw sheets, raw slices, and `Pathways.json` role map stay under `custodian/content/tiles/roads_paths/source/`. This is not the ornate connected-map gothic compound road grammar; it is a low-decoration tactical route pass that:
+The live contract map also generates a modest functional road/path network
+outside the gothic compound. Wide roads render through the fixed 32×32
+filled-surface role pack at
+`custodian/content/tiles/roads_paths/runtime/roads/surface/`; narrow footpaths
+remain on their connection-bitmask manifest. The road centerline owns
+generation and connectivity, while the complete `_main_road_tiles` mask owns
+visual roles: center, edge, outer corner, and inner corner. Lane-offset roles
+are retired as base-road presentation authority. Raw sheets, raw slices, and
+`Pathways.json` stay under `custodian/content/tiles/roads_paths/source/`. This
+is not the ornate connected-map gothic compound road grammar; it is a
+low-decoration tactical route pass that:
 
 - carves a readable road from the player-side spawn area toward compound ingress and constructed-interior thresholds
 - repairs the road graph after carving so spawn, edge access, compound ingress, connector end, and constructed-base thresholds stay in one connected road component

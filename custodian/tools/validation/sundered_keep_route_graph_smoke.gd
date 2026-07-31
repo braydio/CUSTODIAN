@@ -47,7 +47,10 @@ func _validate_registry(errors: Array[String]) -> void:
 		errors.append("route missing")
 		return
 	var expected := [
-		[&"production", &"@world_origin", &"enter", &"front_gate"],
+		[&"production", &"@world_origin", &"enter", &"vista_approach"],
+		[&"production", &"vista_approach", &"continue", &"front_gate"],
+		[&"production", &"front_gate", &"backtrack", &"vista_approach"],
+		[&"production", &"vista_approach", &"return_world", &"@world_origin"],
 		[&"production", &"front_gate", &"exfil", &"@world_origin"],
 		[&"debug_direct_keep", &"@world_origin", &"enter", &"front_gate"],
 		[&"legacy_vista_debug", &"@world_origin", &"enter", &"vista_approach"],
@@ -76,14 +79,40 @@ func _run_production_chain(errors: Array[String]) -> void:
 	var manager: Node = runtime.manager
 	var loader: Node = runtime.loader
 	var actor: CharacterBody2D = runtime.actor
+	var actor_id := actor.get_instance_id()
+	var camera_id := (runtime.camera as Node).get_instance_id()
+	actor.stamina = 73.0
 	runtime.ingress.set("_triggered", true)
 	runtime.ingress.call("_enter_approach", actor)
-	_assert_active(runtime, &"front_gate", &"EntrySpawn", errors)
+	_assert_active(runtime, &"vista_approach", &"EntrySpawn", errors)
+	if actor.get_instance_id() != actor_id:
+		errors.append("playable blackout replaced the Operator instance")
+	if (runtime.camera as Node).get_instance_id() != camera_id:
+		errors.append("playable blackout replaced the shared Camera2D")
+	if not is_equal_approx(actor.stamina, 73.0):
+		errors.append("playable blackout changed Operator stamina")
 	var session: RefCounted = manager.call("get_active_session")
-	if session.cached_instances.has(&"return_causeway") \
-	or session.cached_instances.has(&"vista_approach"):
-		errors.append("production activated or cached a legacy route node")
-	_transition_to_world(runtime, &"exfil", errors)
+	if session.cached_instances.has(&"return_causeway"):
+		errors.append("production activated or cached Return Causeway")
+	actor.velocity = Vector2(12.0, -40.0)
+	var handoff_velocity := actor.velocity
+	_transition(runtime, &"continue", &"front_gate", &"EntrySpawn", errors)
+	if actor.get_instance_id() != actor_id:
+		errors.append("mist handoff replaced the Operator instance")
+	if (runtime.camera as Node).get_instance_id() != camera_id:
+		errors.append("mist handoff replaced the shared Camera2D")
+	if actor.velocity != handoff_velocity:
+		errors.append("mist handoff did not preserve Operator velocity")
+	if not is_equal_approx(actor.stamina, 73.0):
+		errors.append("mist handoff changed Operator stamina")
+	_transition(
+		runtime,
+		&"backtrack",
+		&"vista_approach",
+		&"ReturnTopdown",
+		errors
+	)
+	_transition_to_world(runtime, &"return_world", errors)
 	_cleanup_runtime(runtime)
 	await process_frame
 
@@ -289,7 +318,7 @@ func _assert_active(
 		var profile_id: StringName = manager.call("get_active_session").profile_id
 		if profile_id == &"causeway_only" and exit_node.exit_id == &"continue":
 			should_be_enabled = false
-		if profile_id in [&"production", &"debug_direct_keep"] \
+		if profile_id == &"debug_direct_keep" \
 		and node_id == &"front_gate" \
 		and exit_node.exit_id == &"backtrack":
 			should_be_enabled = false

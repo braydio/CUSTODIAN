@@ -1,0 +1,97 @@
+{
+  "schema": "custodian.sundered_keep.approach_outskirts.v1",
+  "level_id": "sundered_keep_vista_approach",
+  "display_name": "Sundered Keep — Approach and Outskirts",
+  "layout_generator": "res://scenes/debug/sundered_keep_approach_mapper.tscn",
+  "production_scene": "res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn",
+  "tile_size": 32,
+  "route_floor": {
+    "kind": "authored_route_master",
+    "texture_path": "res://content/sprites/world/return_causeway/path/sundered_keep_approach_route_master.png",
+    "rect": [-620.0, -660.0, 2048.0, 1706.0],
+    "vertical_runtime_offset": 180.0
+  },
+  "markers": {
+    "spawn": {
+      "node_name": "EntrySpawn",
+      "label": "TRANSITION ARRIVAL",
+      "kind": "spawn",
+      "position": [-159.4, 667.0]
+    },
+    "return_causeway": {
+      "node_name": "ReturnTopdown",
+      "label": "RETURN CAUSEWAY",
+      "kind": "return_causeway",
+      "position": [751.4, -286.8]
+    },
+    "level_exit": {
+      "node_name": "LevelExit",
+      "label": "CAUSEWAY FOOT HANDOFF",
+      "kind": "level_exit",
+      "position": [914.9, -273.5]
+    },
+    "first_reveal_trigger": {
+      "node_name": "FirstCameraControlStart",
+      "label": "FIRST CAMERA CONTROL START",
+      "kind": "camera_control",
+      "position": [-356.0, -202.0]
+    },
+    "first_reveal_camera_anchor": {
+      "node_name": "FirstRevealCameraAnchor",
+      "label": "FIRST CAMERA ANCHOR",
+      "kind": "camera_anchor",
+      "position": [-70.5, -583.3]
+    },
+    "reveal_control_start": {
+      "node_name": "RevealControlStart",
+      "label": "REVEAL CONTROL START",
+      "kind": "camera_control",
+      "position": [-257.4, -321.9]
+    },
+    "reveal_control_end": {
+      "node_name": "RevealControlEnd",
+      "label": "REVEAL CONTROL END",
+      "kind": "camera_control",
+      "position": [-162.5, -380.6]
+    },
+    "return_to_gameplay_trigger": {
+      "node_name": "FirstCameraReturnComplete",
+      "label": "FIRST CAMERA RETURN COMPLETE",
+      "kind": "camera_control",
+      "position": [113.6, -370.2]
+    },
+    "second_reveal_trigger": {
+      "node_name": "SecondVistaRevealTrigger",
+      "label": "NEAR VISTA REVEAL",
+      "kind": "presentation_trigger",
+      "position": [236.3, -346.4]
+    },
+    "second_reveal_camera_anchor": {
+      "node_name": "SecondVistaCameraAnchor",
+      "label": "NEAR VISTA CAMERA ANCHOR",
+      "kind": "camera_anchor",
+      "position": [664.5, -660.0]
+    },
+    "checkpoint_entry": {
+      "node_name": "CheckpointEntry",
+      "label": "RUINED CAUSEWAY CHECKPOINT",
+      "kind": "region_anchor",
+      "position": [560.0, -300.0]
+    },
+    "beach_handoff": {
+      "node_name": "BeachHandoff",
+      "label": "BEACH MIST HANDOFF",
+      "kind": "handoff",
+      "position": [914.9, -273.5]
+    }
+  },
+  "subregions": [
+    {"id": "transition_arrival", "node_name": "TransitionArrival", "kind": "transition", "rect": [-330.0, 430.0, 420.0, 430.0]},
+    {"id": "first_vista_approach", "node_name": "FirstVistaApproach", "kind": "vista", "rect": [-470.0, -360.0, 560.0, 820.0]},
+    {"id": "shore_parish", "node_name": "ShoreParish", "kind": "return_parish", "rect": [-40.0, -420.0, 350.0, 300.0]},
+    {"id": "near_vista_traverse", "node_name": "NearVistaTraverse", "kind": "vista", "rect": [250.0, -430.0, 300.0, 280.0]},
+    {"id": "causeway_checkpoint", "node_name": "CausewayCheckpoint", "kind": "cutaway_interior", "rect": [500.0, -450.0, 330.0, 300.0]},
+    {"id": "beach_approach", "node_name": "BeachApproach", "kind": "shore", "rect": [790.0, -390.0, 250.0, 280.0]},
+    {"id": "causeway_foot_exit", "node_name": "CausewayFootExit", "kind": "occluded_handoff", "rect": [880.0, -360.0, 120.0, 180.0]}
+  ]
+}

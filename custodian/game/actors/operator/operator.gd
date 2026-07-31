@@ -6292,7 +6292,7 @@ func _update_melee_recovery(delta: float) -> void:
 	_reset_melee_overlay_visuals()
 
 
-func _spawn_melee_impact(pos: Vector2):
+func _spawn_melee_impact(pos: Vector2) -> void:
 	var parent = get_node_or_null("/root/GameRoot/World/Projectiles")
 	var target = parent if parent else get_tree().current_scene
 	
@@ -6300,12 +6300,44 @@ func _spawn_melee_impact(pos: Vector2):
 	if spark:
 		target.add_child(spark)
 		spark.global_position = pos
-	
+	if _active_melee_attack_has_authored_fx():
+		return
 	var swing = MELEE_SWING_SCENE.instantiate()
 	if swing:
 		target.add_child(swing)
 		swing.global_position = pos
 		swing.set_direction(_melee_forward if _melee_forward != Vector2.ZERO else aim_direction)
+
+
+func _active_melee_attack_has_authored_fx() -> bool:
+	if modular_upper_fx_sprite != null \
+			and modular_upper_fx_sprite.visible \
+			and not String(modular_upper_fx_sprite.animation).is_empty():
+		return true
+	if melee_fx_overlay_sprite != null \
+			and melee_fx_overlay_sprite.visible \
+			and not String(melee_fx_overlay_sprite.animation).is_empty():
+		return true
+	var weapon_definition: OperatorWeaponDefinition = (
+		_active_attack_profile
+		if _active_attack_profile != null
+		else _get_equipped_primary_weapon_definition()
+	)
+	if weapon_definition == null or not (weapon_definition.fx_map is Dictionary):
+		return false
+	var overlay_data: Variant = weapon_definition.fx_map.get(_melee_attack_key, {})
+	if not (overlay_data is Dictionary):
+		return false
+	var fx_animation := StringName(str((overlay_data as Dictionary).get("fx_anim", "")))
+	if fx_animation.is_empty() or melee_fx_overlay_sprite == null:
+		return false
+	fx_animation = AnimationResolver.resolve(
+		String(fx_animation),
+		_melee_forward,
+		melee_fx_overlay_sprite
+	)
+	return melee_fx_overlay_sprite.sprite_frames != null \
+		and melee_fx_overlay_sprite.sprite_frames.has_animation(fx_animation)
 
 
 func _resolve_melee_impact_position(target: Node2D) -> Vector2:

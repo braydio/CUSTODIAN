@@ -2,7 +2,7 @@
 
 ## Packet Status
 
-- Status: complete
+- Status: superseded
 - Owner: agent
 - Agent/session: Codex 2026-06-05
 - Created: 2026-06-05
@@ -15,6 +15,11 @@ Update procgen road visual stamping and placeholder metadata for upcoming 32x32 
 ## Outcome
 
 Road generation keeps the existing deterministic walkability/collision surface but chooses road overlay sprites by lane-offset role instead of only connection bitmask, so future labeled 32x32 road tiles can replace placeholders without changing generation logic.
+
+> Superseded 2026-07-30 by
+> `ROAD_SURFACE_ROLE_RENDERER.md`. Lane roles remain historical implementation
+> context only; active road presentation is classified from the filled road
+> surface.
 
 ## Authority
 

@@ -31,6 +31,9 @@ const ROUTE_SESSION_SCRIPT := preload("res://game/world/routes/route_session.gd"
 const TRANSITION_CONTEXT_SCRIPT := preload("res://game/world/routes/route_transition_context.gd")
 const STATE_STORE_SCRIPT := preload("res://game/world/routes/route_state_store.gd")
 const LEVEL_LOADER_SCRIPT := preload("res://game/world/levels/level_loader.gd")
+const PLAYABLE_BLACKOUT_TRANSITION_SCRIPT := preload(
+	"res://game/world/routes/transitions/playable_blackout_transition.gd"
+)
 const ROUTE_FADE_OUT_DURATION := 0.22
 const ROUTE_FADE_IN_DURATION := 0.28
 
@@ -147,6 +150,12 @@ func transition_via_edge(edge_id: StringName, actor: Node) -> bool:
 		return _transition_failure(edge_id, "edge source does not match current node")
 	if actor == null or actor != _active_session.actor:
 		return _transition_failure(edge_id, "actor does not match active route actor")
+	if edge.transition_style == &"playable_blackout":
+		_run_playable_blackout_transition(edge, actor)
+		return true
+	if edge.transition_style == &"occluded_handoff":
+		_run_occluded_handoff(edge, actor)
+		return true
 	if _should_use_visual_fade(edge):
 		_run_faded_transition(edge, actor)
 		return true
@@ -197,6 +206,27 @@ func get_route_entry_presentation_profile(route_id: StringName, profile_id: Stri
 	var node := route.call("get_node_definition", edge.to_node_id) as RefCounted if edge != null else null
 	var definition := _level_loader.call("get_definition", node.level_id) as RefCounted if node != null else null
 	return definition.call("get_presentation_profile") as StringName if definition != null else &"gameplay"
+
+
+func get_route_entry_transition_style(
+	route_id: StringName,
+	profile_id: StringName = &""
+) -> StringName:
+	if not ensure_registry():
+		return &"fade"
+	var route := _route_registry.call("get_route", route_id) as RefCounted
+	if route == null:
+		return &"fade"
+	var resolved_profile: StringName = (
+		profile_id
+		if not profile_id.is_empty()
+		else route.default_profile
+	)
+	var profile := route.call("get_profile", resolved_profile) as RefCounted
+	if profile == null:
+		return &"fade"
+	var edge := route.call("get_edge", profile.entry_edge_id) as RefCounted
+	return edge.transition_style if edge != null else &"fade"
 
 
 func _start_route_definition(route: RefCounted, actor: Node, context: Dictionary) -> bool:
@@ -299,6 +329,12 @@ func _transition_to_node(
 		return _rollback(context, target, not reused, source_level_id, source_loader_context, "target instance is unavailable")
 	_set_phase(TransitionPhase.ACTIVATING_TARGET)
 	_clear_camera_presentation_for_handoff()
+	if (
+		edge.transition_style == &"playable_blackout"
+		and DisplayServer.get_name() != "headless"
+		and target is CanvasItem
+	):
+		(target as CanvasItem).modulate.a = 0.0
 	var commit: Dictionary
 	if reused:
 		commit = _level_loader.call("activate_existing_level", target_node.level_id, target, actor, edge.target_spawn_id, target_runtime_context, source)
@@ -611,6 +647,140 @@ func _run_faded_transition(
 	)
 	if succeeded:
 		_unlock_actor(actor, actor_mode)
+	_visual_transition_active = false
+
+
+func _run_playable_blackout_transition(
+	edge: RefCounted,
+	actor: Node
+) -> void:
+	if DisplayServer.get_name() == "headless":
+		var headless_actor_mode := actor.process_mode
+		var headless_ingress: Node = _active_session.origin_ingress
+		if (
+			headless_ingress != null
+			and headless_ingress.has_method(
+				"complete_deferred_origin_isolation"
+			)
+		):
+			headless_ingress.call(
+				"complete_deferred_origin_isolation",
+				actor
+			)
+		if edge.to_node_id == WORLD_ORIGIN:
+			_transition_to_world(edge, actor, headless_actor_mode)
+		else:
+			_transition_to_node(edge, actor, headless_actor_mode)
+		return
+	_visual_transition_active = true
+	var controller := PLAYABLE_BLACKOUT_TRANSITION_SCRIPT.new() as Node
+	controller.name = "PlayableBlackoutTransition"
+	get_tree().root.add_child(controller)
+	var world_parent: Node = _active_session.parent
+	controller.call("begin_blackout", actor as Node2D, world_parent)
+	var ingress: Node = _active_session.origin_ingress
+	var branches: Array = _active_session.origin_snapshot.get("branches", [])
+	await controller.call(
+		"fade_origin_branches",
+		branches,
+		0.30
+	)
+	if (
+		ingress != null
+		and is_instance_valid(ingress)
+		and ingress.has_method("complete_deferred_origin_isolation")
+	):
+		ingress.call("complete_deferred_origin_isolation", actor)
+	if not _prestage_playable_blackout_target(edge):
+		controller.call("finish_blackout")
+		controller.queue_free()
+		_visual_transition_active = false
+		return
+	await controller.call("wait_for_bridge_run")
+	var actor_mode := actor.process_mode
+	var succeeded := _transition_to_node(edge, actor, actor_mode)
+	if succeeded and _active_session.current_instance is CanvasItem:
+		await controller.call(
+			"fade_target_in",
+			_active_session.current_instance as CanvasItem,
+			0.34
+		)
+	controller.call("finish_blackout")
+	controller.queue_free()
+	_visual_transition_active = false
+
+
+func _prestage_playable_blackout_target(edge: RefCounted) -> bool:
+	if _active_session.cached_instances.has(edge.to_node_id):
+		return true
+	var target_node := _active_route.call(
+		"get_node_definition",
+		edge.to_node_id
+	) as RefCounted
+	if target_node == null:
+		return _transition_failure(
+			edge.edge_id,
+			"playable blackout target node is unavailable"
+		)
+	var stage: Dictionary = _level_loader.call(
+		"stage_level",
+		target_node.level_id,
+		_active_session.parent,
+		{
+			"parent": _active_session.parent,
+			"origin_ingress": _active_session.origin_ingress,
+			"source_state": _active_session.origin_snapshot,
+			"target_spawn_id": edge.target_spawn_id,
+			"route_id": _active_session.route_id,
+			"route_node_id": edge.to_node_id,
+			"route_profile": _active_session.profile_id,
+			"compatibility_connection": false,
+		}
+	)
+	if not bool(stage.get("succeeded", false)):
+		return _transition_failure(
+			edge.edge_id,
+			str(stage.get("reason", "playable blackout target staging failed"))
+		)
+	var target := stage.get("instance") as Node
+	if target == null:
+		return _transition_failure(
+			edge.edge_id,
+			"playable blackout staged no target instance"
+		)
+	if target is CanvasItem:
+		(target as CanvasItem).modulate.a = 0.0
+	_active_session.cached_instances[edge.to_node_id] = target
+	return true
+
+
+func _run_occluded_handoff(
+	edge: RefCounted,
+	actor: Node
+) -> void:
+	if DisplayServer.get_name() == "headless":
+		var headless_actor_mode := actor.process_mode
+		if edge.to_node_id == WORLD_ORIGIN:
+			_transition_to_world(edge, actor, headless_actor_mode)
+		else:
+			_transition_to_node(edge, actor, headless_actor_mode)
+		return
+	_visual_transition_active = true
+	var controller := PLAYABLE_BLACKOUT_TRANSITION_SCRIPT.new() as Node
+	controller.name = "OccludedRouteHandoff"
+	get_tree().root.add_child(controller)
+	controller.call("begin_occluded_handoff")
+	await controller.call("fade_handoff_to", 1.0, 0.22)
+	var actor_mode := actor.process_mode
+	var succeeded := (
+		_transition_to_world(edge, actor, actor_mode)
+		if edge.to_node_id == WORLD_ORIGIN
+		else _transition_to_node(edge, actor, actor_mode)
+	)
+	if succeeded:
+		await controller.call("fade_handoff_to", 0.0, 0.28)
+	controller.call("finish_handoff")
+	controller.queue_free()
 	_visual_transition_active = false
 
 
