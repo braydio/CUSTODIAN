@@ -90,6 +90,14 @@ func _run() -> void:
 			% seed_value
 		)
 		var hard: Dictionary = frontage.get("hard_clearance_cells", {})
+		var presentation_clearance: Dictionary = frontage.get(
+			"presentation_clearance_cells",
+			{}
+		)
+		_assert(
+			not presentation_clearance.is_empty(),
+			"seed %d has no presentation clearance" % seed_value
+		)
 		var cliffs: Dictionary = frontage.get("cliff_cells", {})
 		for cell in hard.keys():
 			if cliffs.has(cell):
@@ -284,12 +292,32 @@ func _assert_integrated_procgen_result() -> void:
 	)
 	var hard: Dictionary = frontage.get("hard_clearance_cells", {})
 	for cell in hard.keys():
+		if not bool(map.call("is_sundered_keep_frontage_protected", cell)):
+			_errors.append("canonical frontage protection omitted %s" % cell)
+			break
+		if bool(map.call("debug_can_place_foliage_at", cell)):
+			_errors.append("foliage candidate admitted protected frontage %s" % cell)
+			break
 		if map.call("has_runtime_prop_blocker_at_tile", cell):
 			_errors.append(
 				"integrated mandatory route has a runtime prop blocker at %s"
 				% cell
 			)
 			break
+	for spawn_cell in map.call("get_corridor_spawn_points", 256):
+		if bool(map.call("is_sundered_keep_frontage_protected", spawn_cell)):
+			_errors.append(
+				"ordinary corridor spawn overlaps protected frontage at %s"
+				% spawn_cell
+			)
+			break
+	var summary: Dictionary = frontage.get("debug_summary", {})
+	for key in [
+		"frontage_required_floor_cell_missing_visual",
+		"frontage_required_floor_cell_blocked",
+		"frontage_required_floor_cell_ocean_exposed",
+	]:
+		_assert(int(summary.get(key, -1)) == 0, "%s remained after frontage floor audit" % key)
 	for site_key in ["faction_activity_sites", "story_room_sites"]:
 		for site_variant in level_data.get(site_key, []):
 			var site := site_variant as Dictionary

@@ -1,0 +1,51 @@
+[gd_resource type="SpriteFrames" load_steps=7 format=3]
+
+[ext_resource type="Texture2D" path="res://content/sprites/effects/combat/unarmed/combat_fx__unarmed_fast_contact_01__e__5f__96.png" id="1_contact"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_contact_0"]
+atlas = ExtResource("1_contact")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_contact_1"]
+atlas = ExtResource("1_contact")
+region = Rect2(96, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_contact_2"]
+atlas = ExtResource("1_contact")
+region = Rect2(192, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_contact_3"]
+atlas = ExtResource("1_contact")
+region = Rect2(288, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_contact_4"]
+atlas = ExtResource("1_contact")
+region = Rect2(384, 0, 96, 96)
+
+[resource]
+animations = [{
+"frames": [],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_contact_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_contact_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_contact_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_contact_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_contact_4")
+}],
+"loop": false,
+"name": &"contact",
+"speed": 24.0
+}]

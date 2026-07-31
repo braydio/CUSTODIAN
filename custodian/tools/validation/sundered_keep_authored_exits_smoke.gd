@@ -18,7 +18,11 @@ const CASES: Array[Dictionary] = [
 	{
 		"scene": "res://game/world/sundered_keep/sundered_keep_map.tscn",
 		"exits": {
-			"Exits/Exit_Backtrack": {"id": &"backtrack", "size": Vector2(88.0, 88.0)},
+			"Exits/Exit_Backtrack": {
+				"id": &"backtrack",
+				"size": Vector2(88.0, 88.0),
+				"arrival_guard_radius": 144.0,
+			},
 			"Exits/Exit_Exfil": {"id": &"exfil", "size": Vector2(88.0, 88.0)},
 		},
 	},
@@ -62,6 +66,11 @@ func _validate_scene(test_case: Dictionary, errors: Array[String]) -> void:
 		var rectangle := collision.shape as RectangleShape2D
 		if rectangle == null or not rectangle.size.is_equal_approx(expected.size):
 			errors.append("%s has wrong rectangle dimensions" % node_path)
+		if expected.has("arrival_guard_radius") and not is_equal_approx(
+			route_exit.arrival_guard_radius,
+			float(expected.arrival_guard_radius)
+		):
+			errors.append("%s has wrong arrival guard radius" % node_path)
 	instance.free()
 
 

@@ -1,0 +1,80 @@
+{
+  "action_count": 7,
+  "camera": {
+    "position": [
+      420.224426269531,
+      308.044738769531
+    ]
+  },
+  "completed": true,
+  "duration_ticks": 148,
+  "event_count": 11,
+  "media": {
+    "audio": {
+      "available": true,
+      "channels": 2,
+      "duration_sec": 2.533333333333333,
+      "frames": 121600,
+      "noise_floor_dbfs": -27.04351479587883,
+      "onset_ms": 1486.1041666666667,
+      "onset_threshold_dbfs": -15.043514795878831,
+      "peak_dbfs": -14.745708615161107,
+      "peak_time_ms": 1486.2083333333333,
+      "rms_dbfs": -26.919805320500775,
+      "sample_rate": 48000,
+      "sample_width": 2
+    },
+    "baseline_audio": {
+      "available": true,
+      "channels": 2,
+      "duration_sec": 2.033333333333333,
+      "frames": 97600,
+      "noise_floor_dbfs": -27.04351479587883,
+      "onset_ms": null,
+      "onset_threshold_dbfs": -15.043514795878831,
+      "peak_dbfs": -15.28007198644703,
+      "peak_time_ms": 1088.2291666666667,
+      "rms_dbfs": -26.863684102509005,
+      "sample_rate": 48000,
+      "sample_width": 2
+    },
+    "visual_diff": {
+      "changed_pixel_bbox": [
+        53,
+        9,
+        2778,
+        740
+      ],
+      "changed_pixel_ratio": 0.028812391493055554,
+      "different": true,
+      "luminance_delta": 0.5740585214120415,
+      "luminance_mean_baseline": 62.890787760416664,
+      "luminance_mean_current": 63.464846281828706,
+      "mean_absolute_channel_delta": 1.2628597608024692
+    }
+  },
+  "operator": {
+    "position": [
+      420.0,
+      360.0
+    ]
+  },
+  "probe_sample_count": 14,
+  "stable": {
+    "completed_tick": 148,
+    "visible_visual_anchor_delta_px": 0.0,
+    "visible_visual_anchor_sample_count": 8
+  },
+  "stable_fingerprint": {
+    "algorithm": "sha256",
+    "schema": "custodian.moment_forge.stable_fingerprint.v1",
+    "value": "08f315494c4e405b8579632d8c99bec92735fb691448351c75a891067457fa3e"
+  },
+  "target": {
+    "position": [
+      458.933319091797,
+      360.0
+    ]
+  },
+  "warning_count": 0
+}

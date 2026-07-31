@@ -42,6 +42,9 @@ const SPEED := 150.0
 const BULLET_SCENE := preload("res://game/actors/projectiles/bullet.tscn")
 const MUZZLE_FLASH_SCENE := preload("res://game/actors/effects/muzzle_flash.tscn")
 @export var impact_scene: PackedScene = preload("res://game/actors/effects/impact_spark.tscn")
+const UNARMED_FAST_CONTACT_SCENE := preload(
+	"res://game/actors/effects/unarmed_fast_contact.tscn"
+)
 const MELEE_SWING_SCENE := preload("res://game/actors/effects/melee_swing.tscn")
 const TARGET_RING_SCENE := preload("res://game/actors/effects/target_ring.tscn")
 const DAMAGE_POPUP_SCENE := preload("res://game/actors/ui/damage_popup.tscn")
@@ -6295,11 +6298,34 @@ func _update_melee_recovery(delta: float) -> void:
 func _spawn_melee_impact(pos: Vector2) -> void:
 	var parent = get_node_or_null("/root/GameRoot/World/Projectiles")
 	var target = parent if parent else get_tree().current_scene
-	
-	var spark = impact_scene.instantiate()
+
+	var contact_profile: OperatorWeaponDefinition = (
+		_active_attack_profile
+		if _active_attack_profile != null
+		else get_current_combat_profile()
+	)
+	var is_unarmed_fast_contact := (
+		_melee_attack_kind == "fast"
+		and _is_attack_profile_unarmed(contact_profile)
+	)
+	var contact_scene := (
+		UNARMED_FAST_CONTACT_SCENE
+		if is_unarmed_fast_contact
+		else impact_scene
+	)
+	var spark = contact_scene.instantiate()
 	if spark:
 		target.add_child(spark)
 		spark.global_position = pos
+		if is_unarmed_fast_contact:
+			var contact_direction := (
+				_melee_forward
+				if _melee_forward.length_squared() > 0.0001
+				else aim_direction
+			)
+			spark.rotation = contact_direction.angle()
+	if is_unarmed_fast_contact:
+		return
 	if _active_melee_attack_has_authored_fx():
 		return
 	var swing = MELEE_SWING_SCENE.instantiate()

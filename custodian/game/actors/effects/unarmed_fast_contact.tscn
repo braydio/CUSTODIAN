@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/actors/effects/impact_spark.gd" id="1_script"]
+[ext_resource type="SpriteFrames" path="res://game/actors/effects/unarmed_fast_contact_frames.tres" id="2_frames"]
+
+[node name="UnarmedFastContactVfx" type="Node2D"]
+script = ExtResource("1_script")
+animation_name = &"contact"
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+centered = true
+sprite_frames = ExtResource("2_frames")
+animation = &"contact"

@@ -266,7 +266,8 @@ func _start_route_definition(route: RefCounted, actor: Node, context: Dictionary
 func _transition_to_node(
 	edge: RefCounted,
 	actor: Node,
-	prelocked_actor_mode: int = -1
+	prelocked_actor_mode: int = -1,
+	defer_actor_unlock := false
 ) -> bool:
 	var context: RefCounted = TRANSITION_CONTEXT_SCRIPT.new()
 	context.route_id = _active_session.route_id
@@ -367,7 +368,8 @@ func _transition_to_node(
 	_active_session.current_instance = target
 	_active_session.last_edge_id = edge.edge_id
 	_active_session.history.append(edge.edge_id)
-	_unlock_actor(actor, context.actor_process_mode)
+	if not defer_actor_unlock:
+		_unlock_actor(actor, context.actor_process_mode)
 	_set_phase(TransitionPhase.COMPLETE)
 	route_node_entered.emit(_active_session.route_id, edge.to_node_id, target)
 	_observe(&"route_node_entered", {"route_id": String(_active_session.route_id), "profile_id": String(_active_session.profile_id), "node_id": String(edge.to_node_id), "edge_id": String(edge.edge_id)})
@@ -654,23 +656,46 @@ func _run_playable_blackout_transition(
 	edge: RefCounted,
 	actor: Node
 ) -> void:
+	var ingress: Node = _active_session.origin_ingress
+	if (
+		ingress != null
+		and is_instance_valid(ingress)
+		and ingress.has_method("suspend_world_objective_presentation")
+	):
+		ingress.call("suspend_world_objective_presentation", actor)
 	if DisplayServer.get_name() == "headless":
 		var headless_actor_mode := actor.process_mode
-		var headless_ingress: Node = _active_session.origin_ingress
 		if (
-			headless_ingress != null
-			and headless_ingress.has_method(
+			ingress != null
+			and ingress.has_method(
 				"complete_deferred_origin_isolation"
 			)
 		):
-			headless_ingress.call(
+			ingress.call(
 				"complete_deferred_origin_isolation",
 				actor
 			)
+		_lock_actor_preserving_velocity(actor)
+		var headless_succeeded := false
 		if edge.to_node_id == WORLD_ORIGIN:
-			_transition_to_world(edge, actor, headless_actor_mode)
+			headless_succeeded = _transition_to_world(
+				edge,
+				actor,
+				headless_actor_mode
+			)
 		else:
-			_transition_to_node(edge, actor, headless_actor_mode)
+			headless_succeeded = _transition_to_node(
+				edge,
+				actor,
+				headless_actor_mode,
+				true
+			)
+		if headless_succeeded and _validate_playable_blackout_completion(
+			edge,
+			actor,
+			_active_session.current_instance
+		):
+			_unlock_actor(actor, headless_actor_mode)
 		return
 	_visual_transition_active = true
 	var controller := PLAYABLE_BLACKOUT_TRANSITION_SCRIPT.new() as Node
@@ -678,7 +703,6 @@ func _run_playable_blackout_transition(
 	get_tree().root.add_child(controller)
 	var world_parent: Node = _active_session.parent
 	controller.call("begin_blackout", actor as Node2D, world_parent)
-	var ingress: Node = _active_session.origin_ingress
 	var branches: Array = _active_session.origin_snapshot.get("branches", [])
 	await controller.call(
 		"fade_origin_branches",
@@ -698,16 +722,100 @@ func _run_playable_blackout_transition(
 		return
 	await controller.call("wait_for_bridge_run")
 	var actor_mode := actor.process_mode
-	var succeeded := _transition_to_node(edge, actor, actor_mode)
-	if succeeded and _active_session.current_instance is CanvasItem:
+	_lock_actor_preserving_velocity(actor)
+	var succeeded := _transition_to_node(edge, actor, actor_mode, true)
+	var target: Node = (
+		_active_session.current_instance
+		if succeeded else null
+	)
+	var completion_valid := (
+		succeeded
+		and _validate_playable_blackout_completion(
+			edge,
+			actor,
+			target
+		)
+	)
+	if completion_valid and target is CanvasItem:
 		await controller.call(
 			"fade_target_in",
-			_active_session.current_instance as CanvasItem,
+			target as CanvasItem,
 			0.34
 		)
+	if not completion_valid:
+		push_error(
+			"[RouteTraversalManager] Playable blackout retained because "
+			+ "the authored target did not finalize safely"
+		)
+		return
+	_unlock_actor(actor, actor_mode)
 	controller.call("finish_blackout")
 	controller.queue_free()
 	_visual_transition_active = false
+
+
+func _validate_playable_blackout_completion(
+	edge: RefCounted,
+	actor: Node,
+	target: Node
+) -> bool:
+	if target == null or not is_instance_valid(target):
+		push_error(
+			"[RouteTraversalManager] Blackout target is unavailable"
+		)
+		return false
+	if _active_session.current_node_id != edge.to_node_id:
+		push_error(
+			"[RouteTraversalManager] Blackout ended before route node "
+			+ "finalization: expected=%s actual=%s"
+			% [
+				String(edge.to_node_id),
+				String(_active_session.current_node_id),
+			]
+		)
+		return false
+	if _active_session.current_instance != target:
+		push_error(
+			"[RouteTraversalManager] Blackout target is not the active "
+			+ "route instance"
+		)
+		return false
+	if target.has_method("is_visual_ready") \
+			and not bool(target.call("is_visual_ready")):
+		push_error(
+			"[RouteTraversalManager] Blackout target visuals are not ready"
+		)
+		return false
+	if target.has_method("finalize_blackout_arrival") \
+			and not bool(target.call("finalize_blackout_arrival", actor)):
+		push_error(
+			"[RouteTraversalManager] Blackout target rejected final "
+			+ "camera authority"
+		)
+		return false
+	var camera := get_node_or_null(
+		"/root/GameRoot/World/Camera2D"
+	)
+	if camera == null:
+		return false
+	if camera.has_method("get_runtime_map") \
+			and camera.call("get_runtime_map") != target:
+		push_error(
+			"[RouteTraversalManager] Camera retained stale runtime map"
+		)
+		return false
+	if camera.has_method("has_presentation_framing") \
+			and bool(camera.call("has_presentation_framing")):
+		push_error(
+			"[RouteTraversalManager] Camera retained presentation framing"
+		)
+		return false
+	if camera.get("follow_target") != actor:
+		push_error(
+			"[RouteTraversalManager] Camera retained presentation anchor"
+		)
+		return false
+	return true
 
 
 func _prestage_playable_blackout_target(edge: RefCounted) -> bool:
@@ -851,6 +959,10 @@ func _clear_camera_presentation_for_handoff() -> void:
 func _lock_actor(actor: Node) -> void:
 	if actor is CharacterBody2D:
 		(actor as CharacterBody2D).velocity = Vector2.ZERO
+	actor.process_mode = Node.PROCESS_MODE_DISABLED
+
+
+func _lock_actor_preserving_velocity(actor: Node) -> void:
 	actor.process_mode = Node.PROCESS_MODE_DISABLED
 
 

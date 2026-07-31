@@ -1,6 +1,8 @@
 extends Node2D
 class_name SunderedKeepApproach
 
+signal approach_visuals_ready
+
 const SOFT_RECT_FEATHER_SHADER := preload("res://game/world/approaches/sundered_keep/soft_rect_feather.gdshader")
 const REVEAL_DIRECTOR_SCRIPT := preload("res://game/world/approaches/sundered_keep/sundered_keep_reveal_director.gd")
 const PARALLAX_LAYER_SCRIPT := preload(
@@ -326,6 +328,7 @@ var _runtime_authoring_markers: Dictionary = {}
 var _runtime_boundary_segments: Array = []
 var _runtime_roof_records: Array = []
 var _subregions_root: Node2D = null
+var _approach_visuals_ready := false
 
 
 func _ready() -> void:
@@ -367,6 +370,38 @@ func _finish_physics_setup() -> void:
 	_build_sequence_triggers()
 	if reveal_director != null:
 		reveal_director.refresh_bindings()
+	_mark_approach_visuals_ready()
+
+
+func is_visual_ready() -> bool:
+	return _approach_visuals_ready
+
+
+func _mark_approach_visuals_ready() -> void:
+	var required_nodes: Array[Node] = [
+		playable_root,
+		vista_root,
+		playable_root.get_node_or_null("ApproachRouteMaster")
+			if playable_root != null else null,
+		underlay_root.get_node_or_null("ApproachRouteShadow")
+			if underlay_root != null else null,
+		collision_root.get_node_or_null("PathBoundaryCollision")
+			if collision_root != null else null,
+		markers_root.get_node_or_null("EntrySpawn")
+			if markers_root != null else null,
+	]
+	for required_node in required_nodes:
+		if required_node == null:
+			push_error(
+				"[SunderedKeepApproach] Required visual or traversal node "
+				+ "missing; arrival remains covered"
+			)
+			_approach_visuals_ready = false
+			return
+	if _approach_visuals_ready:
+		return
+	_approach_visuals_ready = true
+	approach_visuals_ready.emit()
 
 
 func _remove_stale_proxy_nodes() -> void:
@@ -392,6 +427,7 @@ func _ensure_roots() -> void:
 	vista_root = _ensure_node2d_root("VistaRoot", -200)
 	_grand_vista_root = _ensure_node2d_root("GrandVistaRoot", -220)
 	_grand_vista_root.modulate.a = 1.0
+	_grand_vista_root.visible = false
 	playable_root = _ensure_node2d_root("PlayableRoot", 0)
 	occlusion_root = _ensure_node2d_root("OcclusionRoot", 100)
 	collision_root = _ensure_plain_node2d("Collision")
@@ -443,9 +479,33 @@ func _ensure_roots() -> void:
 			)
 		)
 	)
-	second_vista_start = _ensure_marker("SecondVistaStart", _route_point(SECOND_VISTA_START_POS))
-	second_vista_full = _ensure_marker("SecondVistaFull", _route_point(SECOND_VISTA_FULL_POS))
-	second_vista_end = _ensure_marker("SecondVistaEnd", _route_point(SECOND_VISTA_END_POS))
+	second_vista_start = _ensure_marker(
+		"SecondVistaStart",
+		_route_point(
+			_get_authoring_marker_position(
+				"second_vista_start",
+				SECOND_VISTA_START_POS
+			)
+		)
+	)
+	second_vista_full = _ensure_marker(
+		"SecondVistaFull",
+		_route_point(
+			_get_authoring_marker_position(
+				"second_vista_full",
+				SECOND_VISTA_FULL_POS
+			)
+		)
+	)
+	second_vista_end = _ensure_marker(
+		"SecondVistaEnd",
+		_route_point(
+			_get_authoring_marker_position(
+				"second_vista_end",
+				SECOND_VISTA_END_POS
+			)
+		)
+	)
 	traverse_end = _ensure_marker("TraverseEnd", _route_point(TRAVERSE_END_POS))
 	return_topdown = _ensure_marker("ReturnTopdown", _route_point(RETURN_TOPDOWN_POS))
 	first_reveal_camera_anchor = _ensure_marker(
@@ -559,7 +619,7 @@ func _build_visuals() -> void:
 		_add_fitted_sprite(underlay_root, "ApproachCliffSpiresUnderlay", APPROACH_CLIFF_SPIRES_UNDERLAY, RECT_APPROACH_UNDERLAY, -20, Color(1.0, 1.0, 1.0, 0.42)),
 		Vector4(0.12, 0.12, 0.14, 0.22)
 	)
-	_add_fitted_sprite(underlay_root, "ApproachRouteContactShadow", APPROACH_ROUTE_CONTACT_SHADOW, _route_rect(RECT_ROUTE_MASTER), -5, Color(1.0, 1.0, 1.0, 0.85))
+	_add_fitted_sprite(underlay_root, "ApproachRouteShadow", APPROACH_ROUTE_CONTACT_SHADOW, _route_rect(RECT_ROUTE_MASTER), -5, Color.WHITE)
 
 	var first_vista_mist := _add_parallax_layer(
 		vista_root,
@@ -706,6 +766,7 @@ func _build_visuals() -> void:
 	)
 
 	if USE_ROUTE_MASTER:
+		_build_authored_visual_overlays("ground_overlay")
 		var route_master := _add_fitted_sprite(
 			playable_root,
 			"ApproachRouteMaster",
@@ -717,6 +778,8 @@ func _build_visuals() -> void:
 		_build_labyrinth_roof_occlusion(route_master)
 	else:
 		_build_legacy_path_chunks()
+	_build_authored_visual_overlays("background_detail")
+	_build_authored_visual_overlays("animated_sheet")
 
 	_add_fitted_sprite(occlusion_root, "ApproachEdgeMistWrap", APPROACH_EDGE_MIST_WRAP, _route_rect(RECT_ROUTE_MASTER), 5, Color(1.0, 1.0, 1.0, 0.10))
 	_add_fitted_sprite(occlusion_root, "ApproachFogStrip01", APPROACH_FOG_STRIP_01, _route_rect(RECT_FOG_STRIP_01), 8, Color(1.0, 1.0, 1.0, 0.10))
@@ -724,15 +787,84 @@ func _build_visuals() -> void:
 	_add_fitted_sprite(occlusion_root, "ApproachFogStrip03", APPROACH_FOG_STRIP_03, _route_rect(RECT_FOG_STRIP_03), 10, Color(1.0, 1.0, 1.0, 0.06))
 	_add_labyrinth_depth_pass()
 	_add_reveal_moonlight_cue()
-	_final_fog_coverage_rect = _compute_final_fog_coverage_rect()
-	_add_fitted_sprite(
-		occlusion_root,
-		"ApproachFinalGateShadowVeil",
-		APPROACH_FINAL_GATE_SHADOW_VEIL,
-		_final_fog_coverage_rect,
-		20,
-		Color(1.0, 1.0, 1.0, 0.0)
+	# Production uses a normal route fade. The former full-screen final veil is
+	# intentionally not built because it made the player navigate while hidden.
+	_final_fog_coverage_rect = Rect2()
+
+
+func _build_authored_visual_overlays(kind: String) -> void:
+	for overlay_variant in _layout_document.get("visual_overlays", []):
+		if not overlay_variant is Dictionary:
+			continue
+		var overlay := overlay_variant as Dictionary
+		if str(overlay.get("kind", "")) != kind:
+			continue
+		var target_rect := _route_rect(
+			_rect_from_array(overlay.get("rect", []), Rect2())
+		)
+		if target_rect.size.x <= 0.0 or target_rect.size.y <= 0.0:
+			continue
+		var parent := underlay_root if kind != "ground_overlay" else playable_root
+		if kind == "animated_sheet":
+			_add_authored_animated_overlay(parent, overlay, target_rect)
+		else:
+			var sprite := _add_fitted_sprite(
+				parent,
+				str(overlay.get("id", "AuthoredOverlay")).to_pascal_case(),
+				str(overlay.get("texture_path", "")),
+				target_rect,
+				int(overlay.get("z_index", -1)),
+				Color.WHITE
+			)
+			sprite.set_meta("authored_overlay_id", str(overlay.get("id", "")))
+			sprite.set_meta("semantic_subregion", str(overlay.get("semantic_subregion", "")))
+			sprite.set_meta("collision_authority", false)
+
+
+func _add_authored_animated_overlay(
+	parent: Node2D,
+	overlay: Dictionary,
+	target_rect: Rect2
+) -> AnimatedSprite2D:
+	var sprite := AnimatedSprite2D.new()
+	sprite.name = str(overlay.get("id", "AnimatedOverlay")).to_pascal_case()
+	sprite.centered = false
+	sprite.position = target_rect.position
+	sprite.z_as_relative = true
+	sprite.z_index = int(overlay.get("z_index", -1))
+	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	var texture := load(str(overlay.get("texture_path", ""))) as Texture2D
+	var frame_size_data := overlay.get("frame_size", [1, 1]) as Array
+	var frame_size := Vector2(
+		float(frame_size_data[0]),
+		float(frame_size_data[1])
 	)
+	var frames := SpriteFrames.new()
+	frames.add_animation(&"loop")
+	frames.set_animation_speed(&"loop", float(overlay.get("fps", 7.0)))
+	frames.set_animation_loop(&"loop", bool(overlay.get("loop", true)))
+	var frame_count := int(overlay.get("frame_count", 1))
+	if texture != null:
+		for frame_index in frame_count:
+			var atlas := AtlasTexture.new()
+			atlas.atlas = texture
+			atlas.region = Rect2(
+				Vector2(frame_size.x * float(frame_index), 0.0),
+				frame_size
+			)
+			frames.add_frame(&"loop", atlas)
+	sprite.sprite_frames = frames
+	sprite.scale = Vector2(
+		target_rect.size.x / maxf(1.0, frame_size.x),
+		target_rect.size.y / maxf(1.0, frame_size.y)
+	)
+	sprite.modulate.a = clampf(float(overlay.get("maximum_alpha", 0.3)), 0.0, 0.3)
+	sprite.set_meta("authored_overlay_id", str(overlay.get("id", "")))
+	sprite.set_meta("semantic_subregion", str(overlay.get("semantic_subregion", "")))
+	sprite.set_meta("collision_authority", false)
+	parent.add_child(sprite)
+	sprite.play(&"loop")
+	return sprite
 
 
 func _add_parallax_layer(
@@ -1380,8 +1512,8 @@ func _ensure_vista_controller() -> void:
 	vista_controller.fog_underlay_path = NodePath("")
 	vista_controller.occlusion_root_path = NodePath("../OcclusionRoot")
 	vista_controller.cliff_occluder_path = NodePath("../OcclusionRoot/ApproachEdgeMistWrap")
-	vista_controller.wall_shadow_occluder_path = NodePath("../OcclusionRoot/ApproachFinalGateShadowVeil")
-	vista_controller.final_gate_shadow_veil_path = NodePath("../OcclusionRoot/ApproachFinalGateShadowVeil")
+	vista_controller.wall_shadow_occluder_path = NodePath("")
+	vista_controller.final_gate_shadow_veil_path = NodePath("")
 	vista_controller.distant_keep_path = NodePath(
 		"../ParallaxRoot/RevealDepth/"
 		+ "DistantKeep_Parallax2D/"
@@ -1498,15 +1630,37 @@ func prepare_route_deactivation(_context: Dictionary) -> void:
 
 
 func complete_route_activation(_context: Dictionary) -> bool:
+	if not _approach_visuals_ready:
+		_finish_physics_setup()
 	_refresh_camera()
 	_apply_initial_camera_state()
 	_apply_vista_presentation_mode()
-	return true
+	return _approach_visuals_ready
 
 
-func refresh_route_camera(_actor: Node) -> bool:
+func refresh_route_camera(actor: Node) -> bool:
 	_refresh_camera()
 	_apply_initial_camera_state()
+	return finalize_blackout_arrival(actor)
+
+
+func finalize_blackout_arrival(actor: Node) -> bool:
+	if not _approach_visuals_ready or not (actor is Node2D):
+		return false
+	var camera := get_node_or_null("/root/GameRoot/World/Camera2D")
+	if camera == null:
+		return false
+	if camera.has_method("set_runtime_map"):
+		camera.call("set_runtime_map", self)
+	if camera.has_method("clear_presentation_framing"):
+		camera.call("clear_presentation_framing", true)
+	if camera.has_method("set_follow_target"):
+		camera.call("set_follow_target", actor)
+	if camera.has_method("snap_to_player_spawn"):
+		camera.call(
+			"snap_to_player_spawn",
+			(actor as Node2D).global_position
+		)
 	return true
 
 

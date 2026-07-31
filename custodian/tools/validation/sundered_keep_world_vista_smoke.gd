@@ -111,8 +111,8 @@ func _run() -> void:
 		vista,
 		operator,
 		frontage_apex,
-		1.0,
-		"frontage apex",
+		0.0,
+		"disabled frontage camera apex",
 		errors
 	)
 	_assert_camera_weight(
@@ -126,13 +126,14 @@ func _run() -> void:
 	if camera.presentation_framing:
 		errors.append("camera framing remained active after frontage return")
 
-	# The two envelopes are physically reversible and never take route authority.
+	# The one production envelope is physically reversible. Later frontage
+	# progress may animate visuals but never takes camera authority.
 	_assert_camera_weight(
 		vista,
 		operator,
 		frontage_apex,
-		1.0,
-		"reverse frontage apex",
+		0.0,
+		"reverse disabled frontage camera apex",
 		errors
 	)
 	_assert_camera_weight(
@@ -167,7 +168,7 @@ func _run() -> void:
 	vista.call("_update_presentation_bounds")
 	var state := vista.call("get_world_vista_debug_state") as Dictionary
 	var coverage := state.get("viewport_coverage", Vector2.ZERO) as Vector2
-	if coverage.x < 2560.0 / 0.74 or coverage.y < 1440.0 / 0.74:
+	if coverage.x < 2560.0 / 0.78 or coverage.y < 1440.0 / 0.78:
 		errors.append("presentation does not cover 2560x1440 cinematic view")
 	var storm := vista.get_node(
 		"HorizonPresentation/StormHorizon"

@@ -3,7 +3,7 @@
 **Project:** CUSTODIAN
 **Status:** complete-v1
 **Runtime target:** Godot 4.x (`custodian/`)
-**Last updated:** 2026-07-23
+**Last updated:** 2026-07-31
 
 ## Purpose
 
@@ -139,6 +139,12 @@ Gate. The unfinished Return Causeway is quarantined behind `causeway_only`,
 which enters it from world origin and exfils without connecting to production.
 It must not be promoted without explicit user review. Route data, not scene
 booleans, selects these edges.
+
+All enabled Sundered Keep production edges use the ordinary `fade` transaction.
+The route does not enable `playable_blackout` or `occluded_handoff`: procgen owns
+playable terrain through its generated frontage terminal, the authored approach
+owns readable terrain immediately after its entry spawn, and Front Gate owns a
+protected arrival apron immediately after its entry spawn.
 
 Within its isolated debug profile, Return Causeway places `OperatorSpawn` five tiles north of its southern
 `backtrack` exit. That reverse exit uses a 192 px arrival guard, so activating the

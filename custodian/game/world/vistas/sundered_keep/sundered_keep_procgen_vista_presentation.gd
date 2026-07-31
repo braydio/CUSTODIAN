@@ -8,9 +8,7 @@ const CAMERA_DIRECTOR := preload(
 
 const GAMEPLAY_ZOOM := Vector2(0.90, 0.90)
 const FIRST_REVEAL_ZOOM := Vector2(0.78, 0.78)
-const FRONTAGE_REVEAL_ZOOM := Vector2(0.74, 0.74)
 const FIRST_REVEAL_OFFSET := Vector2(0.0, -120.0)
-const FRONTAGE_REVEAL_OFFSET := Vector2(80.0, -138.0)
 const VIEWPORT_SAFETY_MARGIN := Vector2(256.0, 224.0)
 
 @export var operator_path := NodePath("/root/GameRoot/World/Operator")
@@ -210,21 +208,11 @@ func _evaluate_camera() -> void:
 	var frontage_weight := float(
 		_camera_state.get("frontage_weight", 0.0)
 	)
-	var camera_weight := maxf(first_weight, frontage_weight)
-	var first_focus := (
-		_world_anchors["first_reveal_apex"] as Vector2
-		+ Vector2(0.0, -160.0)
-	)
-	var frontage_focus := (
-		_world_anchors["gate_threshold"] as Vector2
-		+ Vector2(70.0, -190.0)
-	)
-	var focus := first_focus
-	if frontage_weight > first_weight:
-		focus = frontage_focus
+	var camera_weight := first_weight
+	var focus := _operator.global_position + Vector2(0.0, -220.0)
 	_presentation_anchor.global_position = _operator.global_position.lerp(
 		focus,
-		camera_weight
+		camera_weight * 0.68
 	)
 	_apply_visual_state(first_weight, frontage_weight)
 	_apply_camera_state(first_weight, frontage_weight)
@@ -285,7 +273,7 @@ func _apply_camera_state(
 ) -> void:
 	if _camera == null:
 		return
-	var weight := maxf(first_weight, frontage_weight)
+	var weight := first_weight
 	if weight <= 0.001:
 		if _camera_owned:
 			_release_camera()
@@ -298,20 +286,11 @@ func _apply_camera_state(
 			"set_presentation_bounds_override",
 			_presentation_bounds
 		)
-	var target_zoom := GAMEPLAY_ZOOM
-	var target_offset := Vector2.ZERO
-	if frontage_weight > first_weight:
-		target_zoom = GAMEPLAY_ZOOM.lerp(
-			FRONTAGE_REVEAL_ZOOM,
-			frontage_weight
-		)
-		target_offset = FRONTAGE_REVEAL_OFFSET * frontage_weight
-	else:
-		target_zoom = GAMEPLAY_ZOOM.lerp(
-			FIRST_REVEAL_ZOOM,
-			first_weight
-		)
-		target_offset = FIRST_REVEAL_OFFSET * first_weight
+	var target_zoom := GAMEPLAY_ZOOM.lerp(
+		FIRST_REVEAL_ZOOM,
+		first_weight
+	)
+	var target_offset := FIRST_REVEAL_OFFSET * first_weight
 	if _camera.has_method("set_presentation_framing"):
 		_camera.call(
 			"set_presentation_framing",
@@ -343,8 +322,8 @@ func _fit_presentation_to_viewport(
 	if viewport_size.x <= 0.0 or viewport_size.y <= 0.0:
 		return
 	_viewport_coverage = Vector2(
-		viewport_size.x / FRONTAGE_REVEAL_ZOOM.x,
-		viewport_size.y / FRONTAGE_REVEAL_ZOOM.y
+		viewport_size.x / FIRST_REVEAL_ZOOM.x,
+		viewport_size.y / FIRST_REVEAL_ZOOM.y
 	) + VIEWPORT_SAFETY_MARGIN
 	if _storm.texture != null:
 		var texture_size := _storm.texture.get_size()

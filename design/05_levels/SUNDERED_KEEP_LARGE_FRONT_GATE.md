@@ -1,7 +1,7 @@
 # Sundered Keep Large Front Gate
 
-Status: implemented — unified production mapper authority
-Last updated: 2026-07-30
+Status: implemented — production underlay and unified mapper authority
+Last updated: 2026-07-31
 
 ## Goal
 
@@ -30,7 +30,7 @@ storm ocean
 ## Runtime Behavior
 
 - `custodian/game/world/sundered_keep/sundered_keep_tilemap_loader.gd` loads `custodian.sundered_keep.level_tilemap.v1` JSON.
-- `custodian/game/world/sundered_keep/sundered_keep_map.gd` applies level ops to Sprite2D layers, supports a top-level `underlay` world-space image contract, and keeps simulation/state behavior local to the map script.
+- `custodian/game/world/sundered_keep/sundered_keep_map.gd` builds the production PNG underlay first, applies only retained functional ops and intentional `mapper_placements`, and keeps simulation/state behavior local to the map script.
 - Return Mooring behavior remains diegetic return travel through existing connected-map return logic.
 - The Main Gate still starts closed, checks `sundered_gate_key`, swaps closed/open portcullis sprites, and removes the portcullis collision blocker after opening.
 - Side gatehouse blockers remain after the portcullis opens so the player cannot walk around the gate curtain.
@@ -48,6 +48,29 @@ The active front-gate JSON may declare:
 
 The image remains presentation-only and never generates collision from alpha.
 Reviewed manual rails now provide the corresponding static-boundary authority.
+
+The southern arrival also declares the visual-only
+`sundered_keep_front_gate_south_arrival_apron_01.png` overlay. It deliberately
+extends presentation coverage beneath the entry framing but owns no collision,
+navigation, spawn, or route authority. `EntrySpawn` is protected by the authored
+144 px arrival guard so the persistent Operator cannot immediately request the
+backtrack exit before leaving the arrival area.
+
+The production PNG at
+`custodian/content/masters/sundered_keep/sundered_keep_main_overlay.png` is the
+visual base authority. The former `fill_rect`, `fill_weighted_rect`,
+`paint_cells`, `stamp_wall`, `stamp_prop`, and `stamp_prefab` records are
+archived at
+`custodian/content/levels/sundered_keep/archive/sundered_keep_front_gate_legacy_visual_ops.json`.
+That archive is historical reference only and is never loaded at runtime.
+
+`mapper_placements` is the sole editable visual-overlay authority. It remains
+explicitly present and empty after the migration so the sparse production view
+can be rebuilt deliberately through palette tiles and sampled underlay stamps.
+Collision rails, markers, elevation, interactions, siege configuration, and
+stateful modules remain separate functional authority. In particular,
+`return_mooring_3x3_01` remains a retained `stamp_module` because it owns live
+return behavior and its associated state presentation.
 
 The production Keep has one authoring tool:
 
@@ -81,12 +104,22 @@ approach-collision, underlay-collision, and gameplay-tile mappers:
 - live reload and complete JSON copy/save;
 - generic selection and relocation for every spatial `ops`, interactable,
   marker, elevation, underpass, shore, occlusion, zone, and blocker record;
+- on-map feature outlines and hit selection, with `Shift+Left` relocation and
+  `N` creation/duplication for the selected spatial record type;
+- linked feature-bundle placement for Return Mooring, keeping its module,
+  origin/interaction markers, shore region, layout zone, and relative siege
+  objective aligned as one selectable feature;
 - mapper control of siege objective, repair, spawn, and defense-turret offsets.
 
 Saved palette and underlay-stamp placements live in the production level JSON's
 `mapper_placements` array. Siege configuration is also inline in that document.
 The retired separate gameplay-placement JSON and siege configuration JSON are
 not runtime inputs.
+
+The mapper does not import or reconstruct placements from archived visual ops.
+Right-click and Delete act only on manual `mapper_placements`; gameplay feature
+records remain selectable functional data and are reported separately in the
+mapper HUD.
 
 The reviewed source region is `5048×3500` pixels mapped across the `112×80`
 gameplay grid. Source rectangles therefore use fractional source-cell sizes
@@ -114,10 +147,25 @@ Authoring controls:
 - `T`: toggle placed gameplay tiles
 - `K` / `Shift+K`: cycle tile, collision, marker, and feature modes
 - `[` / `]`: cycle the selected marker or production feature
+- feature mode left-click: select the smallest authored feature under the
+  cursor; every feature shows an outline and anchor
+- feature mode `Shift` + left-click: move/place the complete selected feature
+- feature mode `N`: create another instance of the selected feature type at
+  the cursor; singleton records relocate instead of creating conflicting
+  duplicate authority
+- feature-mode `Ctrl+Z` / `Ctrl+Y`: undo or redo complete level-document
+  feature edits independently from the visual-placement history
+- Return Mooring is exposed as `bundle/return_mooring`; moving or placing it
+  updates the complete linked gameplay bundle rather than only its art module
 - `C`: copy the complete unified authoring document
 - `Enter` or `U`: write production level and collision data
-- `F6`, `L`, or `R`: reload the saved mapping without restarting the scene
+- `F6`, `L`, or `R`: reload the saved mapping and production preview without
+  restarting the scene
 - `Delete`: clear placements as one undoable edit
+
+Saving reloads the actual production preview from the written JSON so moved or
+created gameplay features are immediately reviewed through the same runtime
+consumer the player receives.
 
 Floor and architecture/traversal placements use separate replacement lanes, so
 a floor and a wall module may intentionally share one grid cell. Explicitly
@@ -180,6 +228,8 @@ Run from the repository root:
 
 ```bash
 cd custodian
+python tools/maintenance/strip_sundered_keep_legacy_visual_ops.py
+godot --headless --script res://tools/validation/sundered_keep_underlay_visual_authority_smoke.gd
 godot --headless --script res://tools/validation/sundered_keep_asset_smoke.gd
 godot --headless --script res://tools/validation/sundered_keep_layout_smoke.gd
 godot --headless --script res://tools/validation/sundered_keep_large_layout_smoke.gd

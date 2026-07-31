@@ -32,7 +32,7 @@
 [ext_resource type="Texture2D" uid="uid://cqqf4wvpa46ix" path="res://content/sprites/operator/runtime/actions/dodge_charge/body/operator__body__full__dodge_charge_windup_01__e__5f__96.png" id="20_6buar"]
 [ext_resource type="Texture2D" uid="uid://ckkh1grngqeno" path="res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__fast_01__n__6f__96.png" id="20_6crlg"]
 [ext_resource type="Texture2D" uid="uid://dlngwf5dgscbe" path="res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__fast_01__s__6f__96.png" id="20_t1wqq"]
-[ext_resource type="Texture2D" uid="uid://df0q1a1msp6v6" path="res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__arrival_01__s__9f__96.png" id="21_0wshn"]
+[ext_resource type="Texture2D" uid="uid://dxrc50w30eg8q" path="res://content/sprites/operator/runtime/full_body/operator__full_body__unarmed__arrival_01__s__13f__96.png" id="21_0wshn"]
 [ext_resource type="Texture2D" uid="uid://dt61mspmiahk8" path="res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__heavy_01__e__7f__96.png" id="21_8hg34"]
 [ext_resource type="Texture2D" uid="uid://bhaqukkok5xy3" path="res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__light_hitreact_01__s__3f__96.png" id="23_xew6v"]
 [ext_resource type="Texture2D" uid="uid://dggvk5hlly303" path="res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__stance_01__e__6f__96.png" id="24_1uben"]
@@ -3296,6 +3296,22 @@ region = Rect2(5184, 0, 96, 96)
 atlas = ExtResource("17_2pr6a")
 region = Rect2(5280, 0, 96, 96)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_arr0"]
+atlas = ExtResource("21_0wshn")
+region = Rect2(864, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_arr1"]
+atlas = ExtResource("21_0wshn")
+region = Rect2(960, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_arr2"]
+atlas = ExtResource("21_0wshn")
+region = Rect2(1056, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_arr3"]
+atlas = ExtResource("21_0wshn")
+region = Rect2(1152, 0, 96, 96)
+
 [resource]
 animations = [{
 "frames": [{
@@ -4637,6 +4653,18 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_tyine")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_arr0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_arr1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_arr2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_arr3")
 }],
 "loop": 0,
 "name": &"unarmed_arrival",
@@ -4669,6 +4697,18 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_nxdeo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_arr0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_arr1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_arr2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_arr3")
 }],
 "loop": 0,
 "name": &"unarmed_arrival_down",

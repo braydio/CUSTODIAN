@@ -112,6 +112,21 @@ The firing sprites already exist as 50-frame sheets. Need to slice and wire:
 
 ## Gaps / Missing Assets
 
+### Integrated — Sundered Keep Parish Route Correction (2026-07-31)
+
+The supplied route-correction pack is imported and wired into production:
+
+| File Path | Size | Frames | Runtime role |
+|----------|------|--------|--------------|
+| `content/sprites/world/return_causeway/path/overlays/sundered_keep_shore_parish_northbound_ground_01.png` | 768×1024 | 1 | Shore Parish northbound ground |
+| `content/sprites/world/return_causeway/path/overlays/sundered_keep_outer_wall_east_traverse_ground_01.png` | 1024×640 | 1 | Outer-wall east traverse ground |
+| `content/backgrounds/sundered_keep/approach/near_detail/sundered_keep_outer_wall_checkpoint_detail_01.png` | 2048×1024 | 1 | Close checkpoint detail |
+| `content/backgrounds/sundered_keep/approach/fog/outer_wall_checkpoint_fog_ribbon_01.png` | 9216×384 | 6 | Local restrained fog ribbon |
+| `content/masters/sundered_keep/overlays/sundered_keep_front_gate_south_arrival_apron_01.png` | 2048×1024 | 1 | Front Gate south-arrival coverage |
+
+These assets are visual-only. Mapper/procgen data remains authoritative for
+floor, collision, route, navigation, and spawn protection.
+
 ### High Priority
 1. **Per-turret idle sprites** — all turrets share `turret_sandbag_1frame.png`. Need 4 unique 96×96 idle sprites.
 2. **Barricade scene + sprite** — `barricade_light` recipe outputs a build token but no scene/sprite exists.

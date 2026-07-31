@@ -24,13 +24,10 @@
       "foreground_arch_persists": true
     }
   ],
-  "handoff_occlusion": {
-    "marker_id": "beach_handoff",
-    "minimum_coverage_alpha": 0.98,
-    "textures": [
-      "res://content/backgrounds/sundered_keep/approach/occlusion/approach_edge_mist_wrap.png",
-      "res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_edge_spray_wrap.png",
-      "res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_ocean_spray_overlay.png"
-    ]
+  "local_checkpoint_fog": {
+    "overlay_id": "outer_wall_checkpoint_fog",
+    "maximum_route_alpha": 0.3,
+    "full_screen": false,
+    "transition_authority": false
   }
 }

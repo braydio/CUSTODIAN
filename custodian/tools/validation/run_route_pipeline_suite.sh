@@ -20,8 +20,9 @@ tests=(
   sundered_keep_authored_exits_smoke.gd
   sundered_keep_no_direct_transition_authority_smoke.gd
   sundered_keep_parallax_depth_smoke.gd
-  sundered_keep_first_vista_continuity_smoke.gd
-  sundered_keep_vista_polish_smoke.gd
+  sundered_keep_approach_smoke.gd
+  sundered_keep_approach_outskirts_mapper_smoke.gd
+  sundered_keep_parish_route_correction_smoke.gd
   level_scaffold_route_generator_smoke.gd
 )
 

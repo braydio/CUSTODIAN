@@ -50,6 +50,7 @@ func _run() -> void:
 	_validate_roll_exit_ingest_registration()
 	_validate_runtime_phase_playback(operator)
 	_validate_fast_attack_entry_points(operator)
+	_validate_unarmed_contact_vfx(operator, root)
 
 	operator.queue_free()
 	if _failed:
@@ -187,6 +188,45 @@ func _validate_fast_attack_entry_points(operator: Node) -> void:
 	operator.call("_start_dodge_recovery")
 	_assert_true(not bool(operator.get("_dodge_fast_attack_buffered")), "roll recovery entry should consume the buffered fast attack")
 	_assert_true(bool(operator.get("_melee_active")), "buffered fast attack should begin as the roll exits")
+
+
+func _validate_unarmed_contact_vfx(operator: Node, scene_root: Node2D) -> void:
+	operator.set("using_unarmed", true)
+	operator.set("combat_loadout_mode", "melee")
+	operator.set("primary_weapon_equipped", false)
+	operator.set("_melee_attack_kind", "fast")
+	operator.set("_melee_forward", Vector2.UP)
+	var contact_position := Vector2(180.0, 220.0)
+	operator.call("_spawn_melee_impact", contact_position)
+	var contact := scene_root.get_node_or_null("UnarmedFastContactVfx") as Node2D
+	_assert_true(contact != null, "confirmed unarmed fast contact should spawn authored contact VFX")
+	_assert_true(
+		scene_root.get_node_or_null("MeleeSwing") == null,
+		"authored unarmed contact VFX should suppress the procedural swing fallback"
+	)
+	if contact == null:
+		return
+	_assert_true(
+		contact.global_position.is_equal_approx(contact_position),
+		"authored contact VFX should spawn at the resolved contact point"
+	)
+	_assert_true(
+		is_equal_approx(contact.rotation, Vector2.UP.angle()),
+		"east-authored contact VFX should rotate into the attack direction"
+	)
+	var sprite := contact.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
+	_assert_true(sprite != null and sprite.sprite_frames != null, "authored contact VFX should own SpriteFrames")
+	if sprite != null and sprite.sprite_frames != null:
+		_assert_true(sprite.animation == &"contact", "authored contact VFX should play contact")
+		_assert_true(
+			sprite.sprite_frames.get_frame_count(&"contact") == 5,
+			"authored contact VFX should retain all five source frames"
+		)
+		_assert_true(
+			not sprite.sprite_frames.get_animation_loop(&"contact"),
+			"authored contact VFX must remain a one-shot"
+		)
+	contact.queue_free()
 
 
 func _source_png_path(layer: String, action: String, dir: String) -> String:

@@ -1,10 +1,6 @@
 class_name PlayableBlackoutBridge2D
 extends Node2D
 
-const CONTACT_SHADOW_TEXTURE := preload(
-	"res://content/backgrounds/sundered_keep/approach/underlay/"
-	+ "approach_route_contact_shadow.png"
-)
 const RUN_LENGTH := 320.0
 const CORRIDOR_HALF_WIDTH := 56.0
 
@@ -13,7 +9,8 @@ var _run_direction := Vector2.UP
 var _start_position := Vector2.ZERO
 var _backdrop_layer: CanvasLayer
 var _backdrop: ColorRect
-var _contact_shadow: Sprite2D
+var _contact_shadow: Polygon2D
+var _route_ribbon: Line2D
 var _collision_body: StaticBody2D
 
 
@@ -24,6 +21,7 @@ func begin(actor: Node2D) -> void:
 	z_as_relative = false
 	z_index = -1
 	_build_backdrop()
+	_build_route_ribbon()
 	_build_contact_shadow()
 	_build_corridor()
 	set_process(true)
@@ -64,13 +62,44 @@ func _build_backdrop() -> void:
 	_backdrop_layer.add_child(_backdrop)
 
 
+func _build_route_ribbon() -> void:
+	var route_points := PackedVector2Array([
+		_start_position - _run_direction * 64.0,
+		_start_position + _run_direction * (RUN_LENGTH + 96.0),
+	])
+	_route_ribbon = Line2D.new()
+	_route_ribbon.name = "BlackoutRouteRibbon"
+	_route_ribbon.width = 76.0
+	_route_ribbon.default_color = Color(0.11, 0.14, 0.16, 0.92)
+	_route_ribbon.z_as_relative = false
+	_route_ribbon.z_index = -3
+	_route_ribbon.points = route_points
+	add_child(_route_ribbon)
+
+	var center_read := Line2D.new()
+	center_read.name = "BlackoutRouteCenterRead"
+	center_read.width = 7.0
+	center_read.default_color = Color(0.30, 0.35, 0.37, 0.68)
+	center_read.z_as_relative = false
+	center_read.z_index = -2
+	center_read.points = route_points
+	add_child(center_read)
+
+
 func _build_contact_shadow() -> void:
-	_contact_shadow = Sprite2D.new()
-	_contact_shadow.name = "BlackoutRouteContactShadow"
-	_contact_shadow.texture = CONTACT_SHADOW_TEXTURE
-	_contact_shadow.centered = true
-	_contact_shadow.scale = Vector2(0.18, 0.24)
-	_contact_shadow.modulate = Color(0.76, 0.82, 0.86, 0.72)
+	_contact_shadow = Polygon2D.new()
+	_contact_shadow.name = "OperatorContactShadow"
+	_contact_shadow.polygon = PackedVector2Array([
+		Vector2(-22.0, 0.0),
+		Vector2(-15.0, -7.0),
+		Vector2(0.0, -10.0),
+		Vector2(15.0, -7.0),
+		Vector2(22.0, 0.0),
+		Vector2(15.0, 7.0),
+		Vector2(0.0, 10.0),
+		Vector2(-15.0, 7.0),
+	])
+	_contact_shadow.color = Color(0.02, 0.025, 0.03, 0.68)
 	_contact_shadow.z_as_relative = false
 	_contact_shadow.z_index = -1
 	add_child(_contact_shadow)

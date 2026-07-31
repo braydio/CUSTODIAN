@@ -35,6 +35,11 @@ const MARKER_KINDS := [
 	"enemy_spawn_west",
 	"enemy_spawn_gate",
 ]
+const RETURN_MOORING_MARKER_IDS := [
+	"return_mooring",
+	"return_mooring_origin",
+]
+const RETURN_MOORING_BUNDLE_SIZE := Vector2i(8, 8)
 const PALETTE_ROOTS := [
 	"res://content/tiles/sundered_keep/floors",
 	"res://content/tiles/sundered_keep/walls/gothic_castle",
@@ -100,6 +105,8 @@ var _paint_drag_active := false
 var _paint_drag_last_cell := Vector2i(-1, -1)
 var _undo_stack: Array = []
 var _redo_stack: Array = []
+var _feature_undo_stack: Array[Dictionary] = []
+var _feature_redo_stack: Array[Dictionary] = []
 var _mouse_world := Vector2.ZERO
 var _show_grid := true
 var _show_collision := true
@@ -151,7 +158,10 @@ func _unhandled_input(event: InputEvent) -> void:
 			return
 		if _authoring_mode != AuthoringMode.TILES and mouse.pressed:
 			if mouse.button_index == MOUSE_BUTTON_LEFT:
-				_handle_authoring_left_click(point)
+				_handle_authoring_left_click(
+					point,
+					mouse.shift_pressed
+				)
 			elif mouse.button_index == MOUSE_BUTTON_RIGHT:
 				_handle_authoring_right_click()
 			return
@@ -207,6 +217,8 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _load_underlay_collision_pair() -> void:
+	if _underlay_scene != null and is_instance_valid(_underlay_scene):
+		_underlay_scene.free()
 	_underlay_scene = PRODUCTION_LEVEL_SCENE.instantiate() as Node2D
 	if _underlay_scene == null:
 		push_error(
@@ -254,15 +266,25 @@ func _read_json_dictionary(path: String) -> Dictionary:
 	return {}
 
 
-func _handle_authoring_left_click(point: Vector2) -> void:
+func _handle_authoring_left_click(
+	point: Vector2,
+	move_feature := false
+) -> void:
 	match _authoring_mode:
 		AuthoringMode.COLLISION:
 			_draft_points.append(point)
+			_dirty = true
 		AuthoringMode.MARKERS:
 			_draft_markers[_selected_marker_id()] = point
+			_dirty = true
 		AuthoringMode.FEATURES:
-			_move_selected_feature(_world_to_tile(point))
-	_dirty = true
+			var target_tile := _world_to_tile(point)
+			if move_feature:
+				_move_selected_feature(target_tile)
+			else:
+				var feature_index := _feature_index_at_tile(target_tile)
+				if feature_index >= 0:
+					_selected_feature_index = feature_index
 	_update_help()
 	_overlay.queue_redraw()
 
@@ -316,6 +338,19 @@ func _cycle_active_authoring_item(direction: int) -> void:
 
 func _collect_feature_entries() -> Array[Dictionary]:
 	var entries: Array[Dictionary] = []
+	var mooring_anchor := _return_mooring_bundle_anchor()
+	entries.append({
+		"section": "bundle",
+		"index": 0,
+		"kind": "return_mooring",
+		"label": "bundle/return_mooring",
+		"placed": _has_return_mooring_bundle(),
+		"anchor": mooring_anchor,
+		"bounds": Rect2i(
+			mooring_anchor,
+			RETURN_MOORING_BUNDLE_SIZE
+		),
+	})
 	var spatial_sections := [
 		"ops",
 		"interactables",
@@ -334,32 +369,119 @@ func _collect_feature_entries() -> Array[Dictionary]:
 			var record := records[index] as Dictionary
 			if not _record_has_spatial_authority(record):
 				continue
+			if _is_return_mooring_member(section, record):
+				continue
 			entries.append({
 				"section": section,
 				"index": index,
 				"label": _feature_label(section, record, index),
+				"anchor": _record_anchor(record),
+				"bounds": _record_bounds(record),
 			})
 	var siege := _level_document.get("siege", {}) as Dictionary
 	for index in (siege.get("objectives", []) as Array).size():
 		var objective := (siege.get("objectives", []) as Array)[index] as Dictionary
+		if str(objective.get("id", "")) == "return_mooring":
+			continue
 		entries.append({
 			"section": "siege.objectives",
 			"index": index,
 			"label": "siege/objective/%s" % str(objective.get("id", index)),
+			"anchor": _siege_record_anchor(objective),
+			"bounds": Rect2i(
+				_siege_record_anchor(objective),
+				Vector2i.ONE
+			),
 		})
 	for index in (siege.get("spawns", []) as Array).size():
 		entries.append({
 			"section": "siege.spawns",
 			"index": index,
 			"label": "siege/spawn/%02d" % index,
+			"anchor": _siege_record_anchor(
+				(siege.get("spawns", []) as Array)[index] as Dictionary
+			),
+			"bounds": Rect2i(
+				_siege_record_anchor(
+					(siege.get("spawns", []) as Array)[index] as Dictionary
+				),
+				Vector2i.ONE
+			),
 		})
 	if siege.has("defense_turret"):
 		entries.append({
 			"section": "siege.defense_turret",
 			"index": 0,
 			"label": "siege/defense_turret",
+			"anchor": _siege_record_anchor(
+				siege.get("defense_turret", {}) as Dictionary
+			),
+			"bounds": Rect2i(
+				_siege_record_anchor(
+					siege.get("defense_turret", {}) as Dictionary
+				),
+				Vector2i.ONE
+			),
 		})
 	return entries
+
+
+func _is_return_mooring_member(
+	section: String,
+	record: Dictionary
+) -> bool:
+	if (
+		section == "ops"
+		and str(record.get("module_id", ""))
+			== "return_mooring_3x3_01"
+	):
+		return true
+	if (
+		section == "markers"
+		and RETURN_MOORING_MARKER_IDS.has(
+			str(record.get("id", ""))
+		)
+	):
+		return true
+	if (
+		section == "shore_walk_regions"
+		and str(record.get("id", ""))
+			== "return_mooring_lower_shore"
+	):
+		return true
+	return (
+		section == "layout_zones"
+		and str(record.get("id", "")) == "return_mooring"
+	)
+
+
+func _has_return_mooring_bundle() -> bool:
+	for record_variant: Variant in _level_document.get("ops", []):
+		var record := record_variant as Dictionary
+		if str(record.get("module_id", "")) == "return_mooring_3x3_01":
+			return true
+	return false
+
+
+func _return_mooring_bundle_anchor() -> Vector2i:
+	for record_variant: Variant in _level_document.get("ops", []):
+		var record := record_variant as Dictionary
+		if str(record.get("module_id", "")) == "return_mooring_3x3_01":
+			return _record_anchor(record)
+	for marker_variant: Variant in _level_document.get("markers", []):
+		var marker := marker_variant as Dictionary
+		if str(marker.get("id", "")) == "return_mooring_origin":
+			return _record_anchor(marker)
+	return Vector2i.ZERO
+
+
+func _siege_record_anchor(record: Dictionary) -> Vector2i:
+	return (
+		_siege_anchor_from_document(
+			str(record.get("tile_offset_from", "main_gate"))
+		)
+		+ _array_to_vector2i(record.get("tile_offset", [0, 0]))
+	)
 
 
 func _record_has_spatial_authority(record: Dictionary) -> bool:
@@ -393,14 +515,80 @@ func _selected_feature() -> Dictionary:
 	)]
 
 
-func _move_selected_feature(target_tile: Vector2i) -> void:
+func _feature_index_at_tile(tile: Vector2i) -> int:
+	var nearest_index := -1
+	var nearest_distance := INF
+	var nearest_area := 1_000_000
+	for index in _feature_entries.size():
+		var entry := _feature_entries[index]
+		var bounds := entry.get(
+			"bounds",
+			Rect2i(
+				entry.get("anchor", Vector2i.ZERO) as Vector2i,
+				Vector2i.ONE
+			)
+		) as Rect2i
+		var anchor := entry.get(
+			"anchor",
+			bounds.position
+		) as Vector2i
+		var distance := Vector2(tile).distance_to(Vector2(anchor))
+		var contains := bounds.has_point(tile)
+		if not contains and distance > 1.5:
+			continue
+		var area := bounds.size.x * bounds.size.y
+		if (
+			nearest_index < 0
+			or contains and area < nearest_area
+			or contains and area == nearest_area
+				and distance < nearest_distance
+			or not contains and nearest_area >= 1_000_000
+				and distance < nearest_distance
+		):
+			nearest_index = index
+			nearest_distance = distance
+			nearest_area = area if contains else 1_000_000
+	return nearest_index
+
+
+func select_feature_at_tile(tile: Vector2i) -> bool:
+	var index := _feature_index_at_tile(tile)
+	if index < 0:
+		return false
+	_selected_feature_index = index
+	_update_help()
+	_overlay.queue_redraw()
+	return true
+
+
+func select_feature_by_label(label: String) -> bool:
+	for index in _feature_entries.size():
+		if str(_feature_entries[index].get("label", "")) == label:
+			_selected_feature_index = index
+			_update_help()
+			_overlay.queue_redraw()
+			return true
+	return false
+
+
+func _move_selected_feature(
+	target_tile: Vector2i,
+	record_undo := true
+) -> void:
 	var entry := _selected_feature()
 	if entry.is_empty():
 		return
+	if record_undo:
+		_push_feature_undo_state()
 	var section := str(entry.get("section", ""))
 	var index := int(entry.get("index", -1))
+	if section == "bundle":
+		if str(entry.get("kind", "")) == "return_mooring":
+			_place_return_mooring_bundle(target_tile)
+		return
 	if section.begins_with("siege."):
 		_move_selected_siege_feature(section, index, target_tile)
+		_finish_feature_edit(str(entry.get("label", "")))
 		return
 	var records: Array = _level_document.get(section, [])
 	if index < 0 or index >= records.size():
@@ -410,7 +598,152 @@ func _move_selected_feature(target_tile: Vector2i) -> void:
 	_translate_record(record, delta)
 	records[index] = record
 	_level_document[section] = records
+	_finish_feature_edit(str(entry.get("label", "")))
+
+
+func move_selected_feature_to_tile(target_tile: Vector2i) -> bool:
+	if _selected_feature().is_empty():
+		return false
+	_move_selected_feature(target_tile)
+	return true
+
+
+func create_selected_feature_at_tile(target_tile: Vector2i) -> bool:
+	var entry := _selected_feature()
+	if entry.is_empty():
+		return false
+	_push_feature_undo_state()
+	if str(entry.get("section", "")) == "bundle":
+		_place_return_mooring_bundle(target_tile)
+		return true
+	var section := str(entry.get("section", ""))
+	var index := int(entry.get("index", -1))
+	if section == "siege.defense_turret":
+		_move_selected_siege_feature(section, index, target_tile)
+		_finish_feature_edit(str(entry.get("label", "")))
+		return true
+	if section.begins_with("siege."):
+		return _duplicate_siege_feature(entry, target_tile)
+	var records: Array = _level_document.get(section, [])
+	if index < 0 or index >= records.size():
+		return false
+	var source := records[index] as Dictionary
+	if _is_singleton_feature(section, source):
+		_move_selected_feature(target_tile, false)
+		return true
+	var record := source.duplicate(true)
+	_translate_record(record, target_tile - _record_anchor(record))
+	_uniquify_feature_identity(section, record)
+	records.append(record)
+	_level_document[section] = records
+	_finish_feature_edit(_feature_label(section, record, records.size() - 1))
+	return true
+
+
+func _is_singleton_feature(
+	section: String,
+	record: Dictionary
+) -> bool:
+	if section == "markers":
+		return true
+	if section == "interactables":
+		return str(record.get("kind", "")) in [
+			"main_gate",
+			"great_hall_door",
+			"sundered_gate_key",
+			"sidearm_locker",
+			"vanguard_seal_cache",
+		]
+	if section == "ops":
+		return (
+			not str(record.get("role", "")).is_empty()
+			or str(record.get("type", "")) == "stamp_module"
+		)
+	return false
+
+
+func _duplicate_siege_feature(
+	entry: Dictionary,
+	target_tile: Vector2i
+) -> bool:
+	var section := str(entry.get("section", ""))
+	var key := section.get_slice(".", 1)
+	var index := int(entry.get("index", -1))
+	var siege := (
+		_level_document.get("siege", {}) as Dictionary
+	).duplicate(true)
+	var records := (siege.get(key, []) as Array).duplicate(true)
+	if index < 0 or index >= records.size():
+		return false
+	var record := (records[index] as Dictionary).duplicate(true)
+	var base := _siege_anchor_from_document(
+		str(record.get("tile_offset_from", "main_gate"))
+	)
+	record["tile_offset"] = [
+		target_tile.x - base.x,
+		target_tile.y - base.y,
+	]
+	if record.has("id"):
+		record["id"] = _unique_identity(
+			records,
+			"id",
+			str(record.get("id", "feature"))
+		)
+	records.append(record)
+	siege[key] = records
+	_level_document["siege"] = siege
+	_finish_feature_edit(
+		"siege/%s/%s" % [
+			key.trim_suffix("s"),
+			str(record.get("id", records.size() - 1)),
+		]
+	)
+	return true
+
+
+func _uniquify_feature_identity(
+	section: String,
+	record: Dictionary
+) -> void:
+	var records := _level_document.get(section, []) as Array
+	for key in ["id", "name"]:
+		if record.has(key):
+			record[key] = _unique_identity(
+				records,
+				key,
+				str(record.get(key, "feature"))
+			)
+
+
+func _unique_identity(
+	records: Array,
+	key: String,
+	base: String
+) -> String:
+	var used := {}
+	for record_variant: Variant in records:
+		var record := record_variant as Dictionary
+		used[str(record.get(key, ""))] = true
+	var suffix := 2
+	var candidate := "%s_copy_%02d" % [base, suffix]
+	while used.has(candidate):
+		suffix += 1
+		candidate = "%s_copy_%02d" % [base, suffix]
+	return candidate
+
+
+func _finish_feature_edit(preferred_label: String = "") -> void:
+	_dirty = true
 	_feature_entries = _collect_feature_entries()
+	if not preferred_label.is_empty():
+		select_feature_by_label(preferred_label)
+	_selected_feature_index = clampi(
+		_selected_feature_index,
+		0,
+		maxi(0, _feature_entries.size() - 1)
+	)
+	_update_help()
+	_overlay.queue_redraw()
 
 
 func _move_selected_siege_feature(
@@ -496,6 +829,51 @@ func _record_anchor(record: Dictionary) -> Vector2i:
 	return Vector2i.ZERO
 
 
+func _record_bounds(record: Dictionary) -> Rect2i:
+	for key in ["rect", "interior_rect", "roof_rect"]:
+		var value := record.get(key, []) as Array
+		if value.size() >= 4:
+			return Rect2i(
+				Vector2i(int(value[0]), int(value[1])),
+				Vector2i(
+					maxi(1, int(value[2])),
+					maxi(1, int(value[3]))
+				)
+			)
+	var cells := record.get("cells", []) as Array
+	if not cells.is_empty():
+		var initialized := false
+		var minimum := Vector2i.ZERO
+		var maximum := Vector2i.ZERO
+		for cell_variant: Variant in cells:
+			var cell_values := cell_variant as Array
+			if cell_values.size() < 2:
+				continue
+			var cell := Vector2i(
+				int(cell_values[0]),
+				int(cell_values[1])
+			)
+			if not initialized:
+				minimum = cell
+				maximum = cell
+				initialized = true
+			else:
+				minimum = Vector2i(
+					mini(minimum.x, cell.x),
+					mini(minimum.y, cell.y)
+				)
+				maximum = Vector2i(
+					maxi(maximum.x, cell.x),
+					maxi(maximum.y, cell.y)
+				)
+		if initialized:
+			return Rect2i(
+				minimum,
+				maximum - minimum + Vector2i.ONE
+			)
+	return Rect2i(_record_anchor(record), Vector2i.ONE)
+
+
 func _translate_record(record: Dictionary, delta: Vector2i) -> void:
 	for key in ["tile", "origin"]:
 		var value := record.get(key, []) as Array
@@ -520,6 +898,134 @@ func _translate_record(record: Dictionary, delta: Vector2i) -> void:
 					int(cell[1]) + delta.y,
 				])
 		record["cells"] = translated_cells
+
+
+func _place_return_mooring_bundle(target_tile: Vector2i) -> void:
+	if _has_return_mooring_bundle():
+		var delta := target_tile - _return_mooring_bundle_anchor()
+		_translate_return_mooring_bundle(delta)
+	else:
+		_create_return_mooring_bundle(target_tile)
+	_finish_feature_edit("bundle/return_mooring")
+
+
+func _translate_return_mooring_bundle(delta: Vector2i) -> void:
+	if delta == Vector2i.ZERO:
+		return
+	for section in [
+		"ops",
+		"markers",
+		"shore_walk_regions",
+		"layout_zones",
+	]:
+		var records := _level_document.get(section, []) as Array
+		for index in records.size():
+			var record := records[index] as Dictionary
+			if not _is_return_mooring_member(section, record):
+				continue
+			var translated := record.duplicate(true)
+			_translate_record(translated, delta)
+			records[index] = translated
+		_level_document[section] = records
+
+
+func _create_return_mooring_bundle(origin: Vector2i) -> void:
+	var ops := _level_document.get("ops", []) as Array
+	ops.append({
+		"type": "stamp_module",
+		"module_id": "return_mooring_3x3_01",
+		"origin": [origin.x, origin.y],
+	})
+	_level_document["ops"] = ops
+
+	var markers := _level_document.get("markers", []) as Array
+	for marker_data in [
+		{"id": "return_mooring", "offset": Vector2i(2, 2)},
+		{"id": "return_mooring_origin", "offset": Vector2i.ZERO},
+	]:
+		if _records_have_identity(
+			markers,
+			"id",
+			str(marker_data["id"])
+		):
+			continue
+		var offset := marker_data["offset"] as Vector2i
+		markers.append({
+			"id": str(marker_data["id"]),
+			"tile": [
+				origin.x + offset.x,
+				origin.y + offset.y,
+			],
+		})
+	_level_document["markers"] = markers
+
+	var shore_regions := (
+		_level_document.get("shore_walk_regions", []) as Array
+	)
+	if not _records_have_identity(
+		shore_regions,
+		"id",
+		"return_mooring_lower_shore"
+	):
+		shore_regions.append({
+			"id": "return_mooring_lower_shore",
+			"rect": [origin.x, origin.y + 1, 8, 7],
+		})
+	_level_document["shore_walk_regions"] = shore_regions
+
+	var layout_zones := (
+		_level_document.get("layout_zones", []) as Array
+	)
+	if not _records_have_identity(
+		layout_zones,
+		"id",
+		"return_mooring"
+	):
+		layout_zones.append({
+			"id": "return_mooring",
+			"rect": [origin.x, origin.y, 8, 8],
+			"height": 0,
+			"role": "return_travel",
+		})
+	_level_document["layout_zones"] = layout_zones
+
+	var siege := (
+		_level_document.get("siege", {}) as Dictionary
+	).duplicate(true)
+	var objectives := (siege.get("objectives", []) as Array).duplicate(true)
+	var has_objective := false
+	for objective_variant: Variant in objectives:
+		var objective := objective_variant as Dictionary
+		if str(objective.get("id", "")) == "return_mooring":
+			has_objective = true
+			break
+	if not has_objective:
+		objectives.append({
+			"id": "return_mooring",
+			"label": "Return Mooring",
+			"group": "power_node",
+			"tile_offset_from": "return_mooring_origin",
+			"tile_offset": [2, 2],
+			"hp": 140.0,
+			"repair_kind": "repair_mooring",
+			"repair_prompt": "REPAIR RETURN MOORING",
+			"repair_tile_offset": [2, 4],
+			"repair_distance": 82.0,
+		})
+		siege["objectives"] = objectives
+		_level_document["siege"] = siege
+
+
+func _records_have_identity(
+	records: Array,
+	key: String,
+	value: String
+) -> bool:
+	for record_variant: Variant in records:
+		var record := record_variant as Dictionary
+		if str(record.get(key, "")) == value:
+			return true
+	return false
 
 
 func _build_palette() -> void:
@@ -1031,13 +1537,22 @@ func _handle_keyboard_pan() -> void:
 func _handle_key(event: InputEventKey) -> void:
 	if event.ctrl_pressed:
 		if event.keycode == KEY_Z:
-			if event.shift_pressed:
-				_redo()
+			if _authoring_mode == AuthoringMode.FEATURES:
+				if event.shift_pressed:
+					_redo_feature_edit()
+				else:
+					_undo_feature_edit()
 			else:
-				_undo()
+				if event.shift_pressed:
+					_redo()
+				else:
+					_undo()
 			return
 		if event.keycode == KEY_Y:
-			_redo()
+			if _authoring_mode == AuthoringMode.FEATURES:
+				_redo_feature_edit()
+			else:
+				_redo()
 			return
 	match event.keycode:
 		KEY_C:
@@ -1046,6 +1561,11 @@ func _handle_key(event: InputEventKey) -> void:
 			_write_mapping_document()
 		KEY_K:
 			_cycle_authoring_mode(-1 if event.shift_pressed else 1)
+		KEY_N:
+			if _authoring_mode == AuthoringMode.FEATURES:
+				create_selected_feature_at_tile(
+					_world_to_tile(_mouse_world)
+				)
 		KEY_BRACKETLEFT:
 			_cycle_active_authoring_item(-1)
 		KEY_BRACKETRIGHT:
@@ -1071,7 +1591,8 @@ func _handle_key(event: InputEventKey) -> void:
 				_selecting_underlay_region = false
 			_refresh_active_stamp_preview()
 		KEY_S:
-			_focus_spawn_causeway()
+			if event.shift_pressed:
+				_focus_spawn_causeway()
 		KEY_TAB:
 			_paint_source = (
 				PaintSource.UNDERLAY_STAMP
@@ -1200,9 +1721,11 @@ func _load_mapping_document() -> void:
 
 func _reload_mapping_document() -> void:
 	_push_undo_state()
+	_push_feature_undo_state()
 	_load_level_document()
 	_load_collision_document()
 	_load_mapping_document()
+	_load_underlay_collision_pair()
 	_rebuild_placement_preview()
 	_refresh_active_stamp_preview()
 	_overlay.queue_redraw()
@@ -1255,6 +1778,37 @@ func _restore_placements(snapshot: Array) -> void:
 	_overlay.queue_redraw()
 
 
+func _push_feature_undo_state() -> void:
+	_feature_undo_stack.append(_level_document.duplicate(true))
+	if _feature_undo_stack.size() > MAX_UNDO_STATES:
+		_feature_undo_stack.pop_front()
+	_feature_redo_stack.clear()
+
+
+func _undo_feature_edit() -> void:
+	if _feature_undo_stack.is_empty():
+		return
+	_feature_redo_stack.append(_level_document.duplicate(true))
+	_restore_feature_document(_feature_undo_stack.pop_back())
+
+
+func _redo_feature_edit() -> void:
+	if _feature_redo_stack.is_empty():
+		return
+	_feature_undo_stack.append(_level_document.duplicate(true))
+	if _feature_undo_stack.size() > MAX_UNDO_STATES:
+		_feature_undo_stack.pop_front()
+	_restore_feature_document(_feature_redo_stack.pop_back())
+
+
+func _restore_feature_document(snapshot: Dictionary) -> void:
+	var preferred_label := str(
+		_selected_feature().get("label", "")
+	)
+	_level_document = snapshot.duplicate(true)
+	_finish_feature_edit(preferred_label)
+
+
 func _write_mapping_document() -> bool:
 	if _level_document.is_empty():
 		return false
@@ -1269,6 +1823,7 @@ func _write_mapping_document() -> bool:
 	if not _write_json_dictionary(COLLISION_DATA_PATH, _collision_document):
 		return false
 	_dirty = false
+	_load_underlay_collision_pair()
 	print(
 		"[SunderedKeepMapper] Saved %d mapped placement(s), %d collision "
 		+ "segments, and production feature authority"
@@ -1473,10 +2028,11 @@ func _update_help() -> void:
 		"Sundered Keep Production Level Mapper — mode %s"
 			% AuthoringMode.keys()[_authoring_mode],
 		"K / Shift+K: cycle tiles, collision, markers, features   [ ]: selected marker/feature",
-		"P: numbered 01–99 palette   F: full underlay   S: spawn/causeway",
+		"P: numbered 01–99 palette   F: full underlay   Shift+S: spawn/causeway",
 		"Tile mode — Q: sample underlay   Tab: palette/stamp   Left: place   Shift-drag: repeat",
 		"Collision mode — Left: append rail point   Right: undo point",
-		"Marker mode — Left: move marker   Feature mode — Left: move complete authored record",
+		"Marker mode — Left: move marker   Feature mode — Left: select on map   Shift+Left: move/place",
+		"Feature mode — N: create another selected feature (singletons relocate)",
 		"Right-click underlay: remove top placement   Ctrl+Z: undo   Ctrl+Y/Ctrl+Shift+Z: redo",
 		"WASD/arrows: pan   Wheel: zoom   G: grid   E: collision rails   T: placed tiles",
 		"C: copy unified JSON   Enter/U: save production data   F6/L/R: reload   H: help",
@@ -1485,16 +2041,17 @@ func _update_help() -> void:
 			active_stamp_text,
 			"ON" if _underlay_select_mode else "OFF",
 		],
-		"Selected: %s   placements: %d%s" % [
+		"Selected: %s   manual visual placements: %d%s" % [
 			selected_text,
 			_placements.size(),
 			"   UNSAVED" if _dirty else "",
 		],
-		"Marker: %s   Feature: %s   mapped feature records: %d" % [
+		"Marker: %s   Feature: %s   gameplay feature records: %d" % [
 			_selected_marker_id(),
 			str(_selected_feature().get("label", "none")),
 			_feature_entries.size(),
 		],
+		"Static legacy visual ops are disabled; visual additions are mapper-authored.",
 		"Mouse world: (%.1f, %.1f)   cell: %s" % [
 			_mouse_world.x,
 			_mouse_world.y,
@@ -1543,6 +2100,8 @@ func get_sundered_keep_mapper_state() -> Dictionary:
 		"active_stamp_preview": _active_stamp_preview,
 		"undo_count": _undo_stack.size(),
 		"redo_count": _redo_stack.size(),
+		"feature_undo_count": _feature_undo_stack.size(),
+		"feature_redo_count": _feature_redo_stack.size(),
 		"paint_drag_active": _paint_drag_active,
 		"mapping_path": LEVEL_DATA_PATH,
 		"collision_path": COLLISION_DATA_PATH,
@@ -1552,9 +2111,15 @@ func get_sundered_keep_mapper_state() -> Dictionary:
 		"selected_marker": _selected_marker_id(),
 		"collision_document": _collision_document,
 		"feature_count": _feature_entries.size(),
+		"feature_entries": _feature_entries,
+		"selected_feature_index": _selected_feature_index,
 		"selected_feature": _selected_feature(),
 	}
 
 
 func get_gameplay_tile_mapper_state() -> Dictionary:
 	return get_sundered_keep_mapper_state()
+
+
+func get_feature_authoring_document() -> Dictionary:
+	return _level_document.duplicate(true)

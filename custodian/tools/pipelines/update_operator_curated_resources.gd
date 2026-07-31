@@ -95,7 +95,7 @@ const UNARMED_RUN_SOUTHWEST_BODY_SHEET := "res://content/sprites/operator/runtim
 const UNARMED_STANCE_EAST_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__stance_01__e__6f__96.png"
 const UNARMED_STANCE_WEST_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__stance_01__w__6f__96.png"
 const UNARMED_DEATH_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__death_01__omni__6f__96.png"
-const UNARMED_ARRIVAL_SOUTH_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__arrival_01__s__9f__96.png"
+const UNARMED_ARRIVAL_FULL_BODY_SHEET := "res://content/sprites/operator/runtime/full_body/operator__full_body__unarmed__arrival_01__s__13f__96.png"
 const UNARMED_LIGHT_HITREACT_SOUTH_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__light_hitreact_01__s__3f__96.png"
 const UNARMED_LIGHT_HITREACT_FX_SOUTH_SHEET := "res://content/sprites/operator/runtime/overlay/unarmed/operator__fx__unarmed__light_hitreact_01__s__3f__96.png"
 const UNARMED_BODYSLAM_KNOCKDOWN_EAST_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__full_body_combat__unarmed__bodyslam_knockdown_01__e__12f__96.png"
@@ -301,8 +301,10 @@ func _init() -> void:
 	_replace_animation_entries(modular_head_frames, _build_modular_head_entries(&"hooded"))
 	_replace_animation_entries(modular_head_frames, _build_modular_idle_hitreact_entries("head", "hooded"))
 	_replace_animation_if_exists(body_frames, "unarmed_death", UNARMED_DEATH_BODY_SHEET, 6, 0, 96, 96, 7.0, false)
-	_replace_animation_if_exists(body_frames, "unarmed_arrival", UNARMED_ARRIVAL_SOUTH_BODY_SHEET, 9, 0, 96, 96, 12.0, false)
-	_replace_animation_if_exists(body_frames, "unarmed_arrival_down", UNARMED_ARRIVAL_SOUTH_BODY_SHEET, 9, 0, 96, 96, 12.0, false)
+	# Full-body south arrival (arms baked in); supersedes the old 9-frame
+	# body-only arrival sheet.
+	_replace_animation_if_exists(body_frames, "unarmed_arrival", UNARMED_ARRIVAL_FULL_BODY_SHEET, 13, 0, 96, 96, 12.0, false)
+	_replace_animation_if_exists(body_frames, "unarmed_arrival_down", UNARMED_ARRIVAL_FULL_BODY_SHEET, 13, 0, 96, 96, 12.0, false)
 	_replace_animation(body_frames, "death", BASE_DEATH_SHEET, 9, 0, 128, 128, 7.0, false)
 	_replace_animation_if_exists(body_frames, "ranged_2h_stance", RANGED_STANCE_EAST_BODY_SHEET, 12, 0, 96, 96, 8.0, true)
 	_replace_animation_if_exists(body_frames, "ranged_2h_run_right", RANGED_RUN_BODY_SHEET, 5, 0, 96, 96, 14.0, true)

@@ -128,6 +128,10 @@ func _handle_key(event: InputEventKey) -> void:
 			_draft_markers.clear() if _marker_mode else _draft_points.clear()
 		KEY_M:
 			_marker_mode = not _marker_mode
+		KEY_PAGEUP:
+			_cycle_selected_marker(-1)
+		KEY_PAGEDOWN:
+			_cycle_selected_marker(1)
 		KEY_V:
 			_show_draft = not _show_draft
 		KEY_EQUAL, KEY_PLUS:
@@ -140,6 +144,16 @@ func _handle_key(event: InputEventKey) -> void:
 				_marker_mode = true
 	_update_help()
 	_overlay.queue_redraw()
+
+
+func _cycle_selected_marker(direction: int) -> void:
+	if _marker_schema.is_empty():
+		return
+	_selected_marker_index = posmod(
+		_selected_marker_index + direction,
+		_marker_schema.size()
+	)
+	_marker_mode = true
 
 
 func _add_point(point: Vector2) -> void:
@@ -327,7 +341,7 @@ func _update_help() -> void:
 		return
 	_hud.text = "\n".join([
 		mapper_title,
-		"Mode: %s   M: toggle collision/marker   1-9: marker type   Selected: %s" % ["MARKER" if _marker_mode else "COLLISION", _selected_marker_id()],
+		"Mode: %s   M: toggle collision/marker   1-9: marker type   PgUp/PgDn: previous/next   Selected: %s" % ["MARKER" if _marker_mode else "COLLISION", _selected_marker_id()],
 		"Marker keys: %s" % _marker_shortcuts_text(),
 		"Collision mode: Left click add rail point   Right click undo   C copy rails   Enter/U apply rails",
 		"Marker mode: Left click place selected marker   Right click clear selected marker   C copy markers   Enter/U apply markers",

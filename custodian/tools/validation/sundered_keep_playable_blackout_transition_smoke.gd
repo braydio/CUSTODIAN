@@ -19,8 +19,8 @@ func _init() -> void:
 		errors
 	)
 	_check(
-		str(entry.get("transition_style", "")) == "playable_blackout",
-		"enter_vista is not playable_blackout",
+		str(entry.get("transition_style", "")) == "fade",
+		"production enter_vista still uses playable blackout",
 		errors
 	)
 	var manager_text := _read_text(MANAGER_PATH)
@@ -28,6 +28,8 @@ func _init() -> void:
 	var bridge_text := _read_text(BRIDGE_PATH)
 	for token in [
 		"_run_playable_blackout_transition",
+		"_validate_playable_blackout_completion",
+		"_lock_actor_preserving_velocity",
 		"wait_for_bridge_run",
 		"fade_origin_branches",
 	]:
@@ -37,9 +39,16 @@ func _init() -> void:
 		"world ingress isolates procgen before blackout coverage",
 		errors
 	)
+	_check(
+		ingress_text.contains("suspend_world_objective_presentation"),
+		"world objective presentation is not suspended for the approach",
+		errors
+	)
 	for token in [
 		"BlackWorldSpaceBackdrop",
-		"BlackoutRouteContactShadow",
+		"BlackoutRouteRibbon",
+		"BlackoutRouteCenterRead",
+		"OperatorContactShadow",
 		"BlackoutRouteRails",
 	]:
 		_check(bridge_text.contains(token), "bridge missing %s" % token, errors)

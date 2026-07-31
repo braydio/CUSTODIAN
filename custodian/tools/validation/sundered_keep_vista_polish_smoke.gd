@@ -28,20 +28,30 @@ class PresentationCamera:
 	var framing_offset := Vector2.ZERO
 	var framing_zoom := Vector2.ONE
 	var runtime_map: Node
+	var presentation_framing := false
 
 	func set_follow_target(target: Node2D) -> void:
 		follow_target = target
 
 	func set_presentation_framing(
-		_active: bool,
+		active: bool,
 		target_offset := Vector2.ZERO,
 		target_zoom := Vector2.ONE
 	) -> void:
+		presentation_framing = active
 		framing_offset = target_offset
 		framing_zoom = target_zoom
 
 	func set_runtime_map(map: Node) -> void:
 		runtime_map = map
+
+	func clear_presentation_framing(
+		_restore_operator_follow := true
+	) -> void:
+		presentation_framing = false
+
+	func has_presentation_framing() -> bool:
+		return presentation_framing
 
 
 func _init() -> void:
@@ -465,8 +475,15 @@ func _assert_first_camera_sample(
 	)
 	if presentation_anchor.global_position.distance_to(expected_anchor) > 0.05:
 		errors.append("%s presentation anchor mismatch" % context)
-	if camera.follow_target != presentation_anchor:
-		errors.append("%s camera did not follow presentation anchor" % context)
+	var expected_follow: Node2D = (
+		actor
+		if camera_weight <= 0.001
+		else presentation_anchor
+	)
+	if camera.follow_target != expected_follow:
+		errors.append("%s camera follow authority mismatch" % context)
+	if camera_weight <= 0.001 and camera.presentation_framing:
+		errors.append("%s retained presentation framing" % context)
 	if vista_root != null and vista_root.modulate.a < 0.99:
 		errors.append("%s VistaRoot should remain continuously visible" % context)
 	if base_horizon != null and base_horizon.modulate.a < 0.99:
@@ -701,8 +718,8 @@ func _check_second_reveal(
 		actor.global_position
 	) > 1.0:
 		errors.append("second reveal anchor teleported before its blend")
-	if camera.follow_target != presentation_anchor:
-		errors.append("camera did not transfer continuously to presentation anchor")
+	if camera.follow_target != actor:
+		errors.append("camera left Operator before second blend began")
 	if (
 		fortress_far == null
 		or fortress_mid == null
@@ -818,9 +835,9 @@ func _check_second_reveal(
 		)
 	):
 		await director.second_reveal_completed
-	if camera.follow_target != presentation_anchor:
+	if camera.follow_target != actor:
 		errors.append(
-			"second handback did not preserve presentation-anchor follow"
+			"second handback did not restore Operator follow"
 		)
 	elif presentation_anchor.global_position.distance_to(
 		actor.global_position

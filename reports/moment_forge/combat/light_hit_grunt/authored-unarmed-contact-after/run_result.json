@@ -1,0 +1,263 @@
+{
+	"actions": [
+		{
+			"action": "input_tap",
+			"ok": true,
+			"tick": 2
+		},
+		{
+			"action": "aim_at_role",
+			"ok": true,
+			"tick": 20
+		},
+		{
+			"action": "input_tap",
+			"ok": true,
+			"tick": 30
+		},
+		{
+			"action": "capture_marker",
+			"ok": true,
+			"tick": 34
+		},
+		{
+			"action": "finish",
+			"finish": true,
+			"ok": true,
+			"tick": 118
+		}
+	],
+	"assertions": [
+		{
+			"actual": true,
+			"expected": {
+				"role": "target",
+				"severity": "error",
+				"type": "role_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "role_exists"
+		},
+		{
+			"actual": false,
+			"expected": {
+				"severity": "error",
+				"type": "no_unreleased_inputs"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "no_unreleased_inputs"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"path": "telemetry.json",
+				"severity": "error",
+				"type": "output_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "output_exists"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 0.0,
+				"type": "probe_compare",
+				"value": 0.5
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 24.0,
+				"type": "probe_compare",
+				"value": 0.5
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 30.0,
+				"type": "probe_compare",
+				"value": 0.5
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 34.0,
+				"type": "probe_compare",
+				"value": 0.5
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 40.0,
+				"type": "probe_compare",
+				"value": 0.5
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 72.0,
+				"type": "probe_compare",
+				"value": 0.5
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 118.0,
+				"type": "probe_compare",
+				"value": 0.5
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0,
+			"expected": {
+				"op": "eq",
+				"severity": "warning",
+				"type": "warning_count",
+				"value": 0.0
+			},
+			"message": "",
+			"passed": true,
+			"severity": "warning",
+			"type": "warning_count"
+		}
+	],
+	"capture_failures": [],
+	"capture_mode": "full",
+	"completed": true,
+	"completed_tick": 118,
+	"failures": [],
+	"keyframes": [
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/authored-unarmed-contact-after/keyframes/tick_000000.png",
+			"render_frame": 4,
+			"sha256": "7dc37e5c9e7d6c79927948c52cf64b0ce758af0cfbcc484752f898aa7d697d82",
+			"tick": 0
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/authored-unarmed-contact-after/keyframes/tick_000024.png",
+			"render_frame": 28,
+			"sha256": "a997a50b227cddaca79acc023173eb1d92d93d4ca75e696fd29f0735d42e3f2c",
+			"tick": 24
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/authored-unarmed-contact-after/keyframes/tick_000030.png",
+			"render_frame": 34,
+			"sha256": "c9bd8dd1ad10258b3e23563ca88f9b93955f58037f02e03c7612cf67e434bd08",
+			"tick": 30
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/authored-unarmed-contact-after/keyframes/tick_000034.png",
+			"render_frame": 38,
+			"sha256": "b3acdfab051f73507d97abbe07c6c611357139ececddce24933bb7b0b2c5bed7",
+			"tick": 34
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/authored-unarmed-contact-after/keyframes/tick_000040.png",
+			"render_frame": 44,
+			"sha256": "c9b4844d45326536274e16f25b3f38162f858e5d6f868886432d3a403de3a36e",
+			"tick": 40
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/authored-unarmed-contact-after/keyframes/tick_000072.png",
+			"render_frame": 76,
+			"sha256": "5f0e3c8bea62afd3126779e1127de29ee175d5b11617eeaf3680d61ef8f3b587",
+			"tick": 72
+		}
+	],
+	"markers": [
+		{
+			"data": {},
+			"name": "expected_contact",
+			"tick": 34
+		}
+	],
+	"passed": true,
+	"probe_failures": [],
+	"runtime": {
+		"godot": {
+			"build": "arch_linux",
+			"hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+			"hex": 263937,
+			"major": 4,
+			"minor": 7,
+			"patch": 1,
+			"status": "stable",
+			"string": "4.7.1-stable (arch_linux)",
+			"timestamp": 1783976428
+		},
+		"physics_hz": 60,
+		"renderer": "vulkan"
+	},
+	"scenario_id": "combat/light_hit_grunt",
+	"scenario_path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/authored-unarmed-contact-after/scenario.snapshot.json",
+	"schema": "custodian.moment_forge.run_result.v1",
+	"seed": 104729
+}

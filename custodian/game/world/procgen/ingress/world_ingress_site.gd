@@ -26,6 +26,7 @@ var _entry_snapshot: Dictionary = {}
 var _awaiting_body_exit_after_return := false
 var _deferred_origin_isolation := false
 var _deferred_presentation_profile: StringName = &"gameplay"
+var _world_objective_presentation_suspended := false
 
 
 func _ready() -> void:
@@ -235,6 +236,16 @@ func complete_deferred_origin_isolation(actor: Node) -> void:
 	_deferred_origin_isolation = false
 
 
+func suspend_world_objective_presentation(actor: Node = null) -> void:
+	_world_objective_presentation_suspended = true
+	_set_world_presentation_profile(actor, &"vista_approach")
+
+
+func restore_world_objective_presentation(actor: Node = null) -> void:
+	_world_objective_presentation_suspended = false
+	_set_world_presentation_profile(actor, &"gameplay")
+
+
 func _restore_failed_approach_entry(actor: Node) -> void:
 	var result := restore_world_origin(actor, _entry_snapshot)
 	if not bool(result.get("succeeded", false)):
@@ -285,6 +296,7 @@ func restore_world_origin(actor: Node, source_state: Dictionary = {}) -> Diction
 		_restore_branch_state(branch_state as Dictionary)
 	var ui_mode := StringName(str(snapshot.get("ui_mode", "gameplay")))
 	_set_world_presentation_profile(actor, ui_mode)
+	_world_objective_presentation_suspended = false
 	(actor as Node2D).global_position = snapshot.get("actor_position") as Vector2
 	if camera != null and camera.has_method("set_presentation_framing"):
 		camera.call(
@@ -316,6 +328,7 @@ func reset_after_level_return() -> void:
 	_entry_snapshot.clear()
 	_deferred_origin_isolation = false
 	_deferred_presentation_profile = &"gameplay"
+	_world_objective_presentation_suspended = false
 	_awaiting_body_exit_after_return = true
 	monitorable = true
 	# Rebuild the overlap set after this Area spent the route session inside a

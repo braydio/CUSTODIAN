@@ -27,7 +27,7 @@ func _draw() -> void:
 		_draw_collision(state)
 	_draw_collision_draft(state)
 	_draw_markers(state)
-	_draw_selected_feature(state)
+	_draw_features(state)
 	_draw_underlay_selection(state)
 	_draw_cursor(state)
 
@@ -175,22 +175,65 @@ func _draw_markers(state: Dictionary) -> void:
 		)
 
 
-func _draw_selected_feature(state: Dictionary) -> void:
+func _draw_features(state: Dictionary) -> void:
 	if str(state.get("authoring_mode", "")) != "FEATURES":
 		return
-	var feature := state.get("selected_feature", {}) as Dictionary
-	if feature.is_empty():
-		return
-	var point := state.get("mouse_world", Vector2.ZERO) as Vector2
-	draw_string(
-		ThemeDB.fallback_font,
-		point + Vector2(18.0, 24.0),
-		str(feature.get("label", "feature")),
-		HORIZONTAL_ALIGNMENT_LEFT,
-		-1.0,
-		14,
-		Color(0.72, 1.0, 0.62, 1.0)
-	)
+	var tile_size := int(state.get("tile_size", 32))
+	var entries := state.get("feature_entries", []) as Array
+	var selected_index := int(state.get("selected_feature_index", -1))
+	for index in entries.size():
+		var feature := entries[index] as Dictionary
+		var bounds := feature.get(
+			"bounds",
+			Rect2i(
+				feature.get("anchor", Vector2i.ZERO) as Vector2i,
+				Vector2i.ONE
+			)
+		) as Rect2i
+		var rect := Rect2(
+			Vector2(bounds.position * tile_size),
+			Vector2(bounds.size * tile_size)
+		)
+		var selected := index == selected_index
+		var bundle := str(feature.get("section", "")) == "bundle"
+		var color := (
+			Color(0.40, 1.0, 0.62, 1.0)
+			if selected
+			else (
+				Color(1.0, 0.72, 0.20, 0.72)
+				if bundle
+				else Color(0.42, 0.86, 1.0, 0.52)
+			)
+		)
+		draw_rect(
+			rect,
+			Color(color.r, color.g, color.b, 0.10 if selected else 0.035),
+			true
+		)
+		draw_rect(rect, color, false, 4.0 if selected else 1.5)
+		var anchor := feature.get(
+			"anchor",
+			bounds.position
+		) as Vector2i
+		var anchor_point := (
+			Vector2(anchor * tile_size)
+			+ Vector2.ONE * float(tile_size) * 0.5
+		)
+		draw_circle(
+			anchor_point,
+			7.0 if selected else 4.0,
+			color
+		)
+		if selected or bundle:
+			draw_string(
+				ThemeDB.fallback_font,
+				rect.position + Vector2(5.0, -6.0),
+				str(feature.get("label", "feature")),
+				HORIZONTAL_ALIGNMENT_LEFT,
+				-1.0,
+				14 if selected else 12,
+				color
+			)
 
 
 func _draw_underlay_selection(state: Dictionary) -> void:

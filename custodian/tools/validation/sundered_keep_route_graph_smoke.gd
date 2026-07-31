@@ -86,32 +86,25 @@ func _run_production_chain(errors: Array[String]) -> void:
 	runtime.ingress.call("_enter_approach", actor)
 	_assert_active(runtime, &"vista_approach", &"EntrySpawn", errors)
 	if actor.get_instance_id() != actor_id:
-		errors.append("playable blackout replaced the Operator instance")
+		errors.append("ingress fade replaced the Operator instance")
 	if (runtime.camera as Node).get_instance_id() != camera_id:
-		errors.append("playable blackout replaced the shared Camera2D")
+		errors.append("ingress fade replaced the shared Camera2D")
 	if not is_equal_approx(actor.stamina, 73.0):
-		errors.append("playable blackout changed Operator stamina")
+		errors.append("ingress fade changed Operator stamina")
 	var session: RefCounted = manager.call("get_active_session")
 	if session.cached_instances.has(&"return_causeway"):
 		errors.append("production activated or cached Return Causeway")
 	actor.velocity = Vector2(12.0, -40.0)
-	var handoff_velocity := actor.velocity
 	_transition(runtime, &"continue", &"front_gate", &"EntrySpawn", errors)
 	if actor.get_instance_id() != actor_id:
-		errors.append("mist handoff replaced the Operator instance")
+		errors.append("fade handoff replaced the Operator instance")
 	if (runtime.camera as Node).get_instance_id() != camera_id:
-		errors.append("mist handoff replaced the shared Camera2D")
-	if actor.velocity != handoff_velocity:
-		errors.append("mist handoff did not preserve Operator velocity")
+		errors.append("fade handoff replaced the shared Camera2D")
 	if not is_equal_approx(actor.stamina, 73.0):
-		errors.append("mist handoff changed Operator stamina")
-	_transition(
-		runtime,
-		&"backtrack",
-		&"vista_approach",
-		&"ReturnTopdown",
-		errors
-	)
+		errors.append("fade handoff changed Operator stamina")
+	await _assert_front_gate_arrival_guard(runtime, errors)
+	if await _trigger_physics_exit(runtime, &"backtrack", &"vista_approach", errors):
+		_assert_active(runtime, &"vista_approach", &"ReturnTopdown", errors)
 	_transition_to_world(runtime, &"return_world", errors)
 	_cleanup_runtime(runtime)
 	await process_frame
@@ -259,6 +252,30 @@ func _trigger_physics_exit(
 		int(counters.body_entered) > 0
 		and int(counters.transition_requested) > 0
 	)
+
+
+func _assert_front_gate_arrival_guard(
+	runtime: Dictionary,
+	errors: Array[String]
+) -> void:
+	var active: Node = runtime.loader.call("get_active_level_instance")
+	var backtrack_exit := _find_exit(active, &"backtrack")
+	if backtrack_exit == null:
+		errors.append("Front Gate arrival guard test could not find backtrack exit")
+		return
+	if not is_equal_approx(backtrack_exit.arrival_guard_radius, 144.0):
+		errors.append("Front Gate backtrack exit does not use a 144px arrival guard")
+	if not backtrack_exit.is_actor_arrival_guarded(runtime.actor):
+		errors.append("Front Gate backtrack arrival guard was not armed")
+	var spawn := active.get_node_or_null("EntrySpawn") as Node2D
+	if spawn == null:
+		errors.append("Front Gate arrival guard test could not find EntrySpawn")
+	elif spawn.global_position.distance_to(backtrack_exit.global_position) < 128.0:
+		errors.append("Front Gate EntrySpawn is less than 128px inside the exit")
+	for _frame in range(Engine.physics_ticks_per_second):
+		await physics_frame
+	if runtime.manager.call("get_current_node_id") != &"front_gate":
+		errors.append("Front Gate backtracked during its one-second arrival guard")
 
 
 func _assert_active(

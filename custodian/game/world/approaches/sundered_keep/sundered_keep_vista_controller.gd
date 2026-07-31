@@ -226,7 +226,7 @@ func complete_first_reveal() -> void:
 
 
 func begin_second_reveal() -> void:
-	# Compatibility/event hook only. Camera 2 is physically evaluated.
+	# Semantic compatibility only. Production Camera 2 is disabled.
 	_apply_progress(_compute_route_progress())
 
 
@@ -607,7 +607,8 @@ func _apply_camera_progress(t: float) -> void:
 	if _first_return_progress < 0.999:
 		_apply_first_camera_envelope()
 		return
-	_apply_second_camera_envelope(t)
+	_apply_gameplay_camera_progress(t)
+	_release_camera_to_gameplay()
 
 
 func _segment_progress(
@@ -735,32 +736,16 @@ func _evaluate_second_camera_envelope() -> Dictionary:
 
 
 func _update_second_camera_envelope_state() -> void:
-	var envelope := _evaluate_second_camera_envelope()
-	_second_enter_progress = float(
-		envelope.get("enter_progress", 0.0)
-	)
-	_second_return_progress = float(
-		envelope.get("return_progress", 0.0)
-	)
-	_second_enter_weight = float(
-		envelope.get("enter_weight", 0.0)
-	)
-	_second_return_weight = float(
-		envelope.get("return_weight", 0.0)
-	)
-	_second_camera_weight = float(
-		envelope.get("camera_weight", 0.0)
-	)
-	_second_camera_phase = _get_second_camera_phase(
-		_second_enter_progress,
-		_second_return_progress
-	)
-
-	# Legacy fields remain position-derived for debug and event compatibility.
-	_second_reveal_weight = _second_enter_weight
-	_second_progress_weight = _second_return_progress
-	_second_return_to_play_weight = _second_return_weight
-	_second_reveal_complete = _second_return_progress >= 0.999
+	_second_enter_progress = 0.0
+	_second_return_progress = 0.0
+	_second_enter_weight = 0.0
+	_second_return_weight = 0.0
+	_second_camera_weight = 0.0
+	_second_camera_phase = "SECOND_DISABLED"
+	_second_reveal_weight = 0.0
+	_second_progress_weight = 0.0
+	_second_return_to_play_weight = 0.0
+	_second_reveal_complete = false
 
 
 func _get_second_camera_phase(
@@ -800,6 +785,10 @@ func _apply_first_camera_envelope() -> void:
 		or _presentation_anchor == null
 	):
 		return
+	if _first_camera_weight <= 0.001:
+		_presentation_anchor.global_position = _player.global_position
+		_release_camera_to_gameplay()
+		return
 
 	_presentation_anchor.global_position = (
 		_player.global_position.lerp(
@@ -835,6 +824,10 @@ func _apply_second_camera_envelope(t: float) -> void:
 		or _second_reveal_camera_anchor == null
 		or _presentation_anchor == null
 	):
+		return
+	if _second_camera_weight <= 0.001:
+		_presentation_anchor.global_position = _player.global_position
+		_release_camera_to_gameplay()
 		return
 	_presentation_anchor.global_position = (
 		_player.global_position.lerp(
@@ -924,57 +917,25 @@ func _set_camera_target(target_offset: Vector2, target_zoom: Vector2) -> void:
 		_camera.call("set_presentation_framing", true, target_offset, target_zoom)
 
 
+func _release_camera_to_gameplay() -> void:
+	if _camera == null or not is_instance_valid(_camera):
+		_camera = get_node_or_null(camera_path) as Camera2D
+	if _camera == null:
+		return
+	if _camera.has_method("clear_presentation_framing"):
+		_camera.call("clear_presentation_framing", true)
+	if _player != null and _camera.has_method("set_follow_target"):
+		_camera.call("set_follow_target", _player)
+
+
 func _get_second_cinematic_alpha() -> float:
-	return _smootherstep_range(
-		0.08,
-		0.92,
-		_second_camera_weight
-	)
+	return 0.0
 
 
 func _get_fortress_layer_alphas(
 	exit_shadow_alpha: float
 ) -> Vector3:
-	var far_reveal := _smootherstep_range(
-		0.0,
-		0.55,
-		_second_enter_weight
-	)
-	var mid_reveal := _smootherstep_range(
-		0.18,
-		0.88,
-		_second_enter_weight
-	)
-	var near_reveal := _smootherstep_range(
-		0.48,
-		1.0,
-		_second_enter_weight
-	)
-	var far_alpha := lerpf(
-		far_reveal * 0.66,
-		0.58,
-		_second_return_weight
-	)
-	var mid_alpha := lerpf(
-		mid_reveal * 0.96,
-		0.42,
-		_smootherstep_range(0.08, 1.0, _second_return_weight)
-	)
-	var near_alpha := lerpf(
-		near_reveal * 0.68,
-		0.10,
-		_smootherstep_range(0.0, 0.68, _second_return_weight)
-	)
-	var final_fade := 1.0 - smoothstep(
-		0.05,
-		0.85,
-		exit_shadow_alpha
-	)
-	return Vector3(
-		far_alpha,
-		mid_alpha,
-		near_alpha
-	) * final_fade
+	return Vector3.ZERO
 
 
 func _is_second_camera_active() -> bool:

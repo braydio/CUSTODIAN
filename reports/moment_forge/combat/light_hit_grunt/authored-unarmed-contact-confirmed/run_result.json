@@ -1,0 +1,279 @@
+{
+	"actions": [
+		{
+			"action": "input_tap",
+			"ok": true,
+			"tick": 2
+		},
+		{
+			"action": "aim_at_role",
+			"ok": true,
+			"tick": 20
+		},
+		{
+			"action": "input_tap",
+			"ok": true,
+			"tick": 30
+		},
+		{
+			"action": "capture_marker",
+			"ok": true,
+			"tick": 34
+		},
+		{
+			"action": "finish",
+			"finish": true,
+			"ok": true,
+			"tick": 118
+		}
+	],
+	"assertions": [
+		{
+			"actual": true,
+			"expected": {
+				"role": "target",
+				"severity": "error",
+				"type": "role_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "role_exists"
+		},
+		{
+			"actual": false,
+			"expected": {
+				"severity": "error",
+				"type": "no_unreleased_inputs"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "no_unreleased_inputs"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"path": "telemetry.json",
+				"severity": "error",
+				"type": "output_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "output_exists"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 0.0,
+				"type": "probe_compare",
+				"value": 0.5
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 24.0,
+				"type": "probe_compare",
+				"value": 0.5
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 30.0,
+				"type": "probe_compare",
+				"value": 0.5
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 34.0,
+				"type": "probe_compare",
+				"value": 0.5
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 40.0,
+				"type": "probe_compare",
+				"value": 0.5
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 72.0,
+				"type": "probe_compare",
+				"value": 0.5
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 118.0,
+				"type": "probe_compare",
+				"value": 0.5
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 78.0,
+			"expected": {
+				"field": "health",
+				"op": "lt",
+				"probe": "target_state",
+				"severity": "error",
+				"tick": 72.0,
+				"type": "probe_compare",
+				"value": 78.0
+			},
+			"message": "",
+			"passed": false,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0,
+			"expected": {
+				"op": "eq",
+				"severity": "warning",
+				"type": "warning_count",
+				"value": 0.0
+			},
+			"message": "",
+			"passed": true,
+			"severity": "warning",
+			"type": "warning_count"
+		}
+	],
+	"capture_failures": [],
+	"capture_mode": "full",
+	"completed": true,
+	"completed_tick": 118,
+	"failures": [],
+	"keyframes": [
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/authored-unarmed-contact-confirmed/keyframes/tick_000000.png",
+			"render_frame": 4,
+			"sha256": "bec52a0219554b029a0f3d84adeef5ef69614abfd91a698feeb408b5ca7f59b0",
+			"tick": 0
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/authored-unarmed-contact-confirmed/keyframes/tick_000030.png",
+			"render_frame": 34,
+			"sha256": "d07670b20878f666717c71563b833725ea92c16bd11ac5fc6c606c49a858cf5a",
+			"tick": 30
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/authored-unarmed-contact-confirmed/keyframes/tick_000044.png",
+			"render_frame": 48,
+			"sha256": "2b2437a1a22eaf592441ea1bbd5872128c8662d6f97ef712860e1af6a0970bef",
+			"tick": 44
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/authored-unarmed-contact-confirmed/keyframes/tick_000048.png",
+			"render_frame": 52,
+			"sha256": "a0f754f7f67d3179176dba5c2fbe376c4e7d1402c0b971376e72145f8432ac5f",
+			"tick": 48
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/authored-unarmed-contact-confirmed/keyframes/tick_000052.png",
+			"render_frame": 56,
+			"sha256": "1bbd9c8b1d4656271f6b0620eeba26cb830a81cb28535a65e42450320cf99e1f",
+			"tick": 52
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/authored-unarmed-contact-confirmed/keyframes/tick_000072.png",
+			"render_frame": 76,
+			"sha256": "312edad1faaa92256f9bfa50685994f4b599b141f5e7d2f7734e31da821c46ed",
+			"tick": 72
+		}
+	],
+	"markers": [
+		{
+			"data": {},
+			"name": "expected_contact",
+			"tick": 34
+		}
+	],
+	"passed": false,
+	"probe_failures": [],
+	"runtime": {
+		"godot": {
+			"build": "arch_linux",
+			"hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+			"hex": 263937,
+			"major": 4,
+			"minor": 7,
+			"patch": 1,
+			"status": "stable",
+			"string": "4.7.1-stable (arch_linux)",
+			"timestamp": 1783976428
+		},
+		"physics_hz": 60,
+		"renderer": "vulkan"
+	},
+	"scenario_id": "combat/light_hit_grunt",
+	"scenario_path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/authored-unarmed-contact-confirmed/scenario.snapshot.json",
+	"schema": "custodian.moment_forge.run_result.v1",
+	"seed": 104729
+}

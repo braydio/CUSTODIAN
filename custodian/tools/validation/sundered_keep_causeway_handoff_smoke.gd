@@ -1,56 +1,41 @@
 extends SceneTree
 
 const ROUTE_PATH := "res://content/routes/sundered_keep/sundered_keep_route.json"
-const OCCLUSION_PATH := (
-	"res://content/levels/sundered_keep/sundered_keep_approach_occlusion.json"
-)
 const FRONT_GATE_PATH := "res://content/levels/sundered_keep/front_gate.json"
-const TRANSITION_PATH := (
-	"res://game/world/routes/transitions/playable_blackout_transition.gd"
-)
 
 
 func _init() -> void:
 	var errors: Array[String] = []
 	var route := _read_json(ROUTE_PATH)
-	var edge := _find_record(
+	var forward_edge := _find_record(
 		route.get("edges", []),
 		"edge_id",
 		"vista_to_keep_direct"
 	)
 	_check(
-		str(edge.get("transition_style", "")) == "occluded_handoff",
-		"approach-to-gate edge is not mist occluded",
+		str(forward_edge.get("transition_style", "")) == "fade",
+		"approach-to-gate edge still uses an occluded handoff",
 		errors
 	)
 	_check(
-		str(edge.get("target_spawn_id", "")) == "EntrySpawn",
+		str(forward_edge.get("target_spawn_id", "")) == "EntrySpawn",
 		"handoff does not target the existing causeway spawn",
+		errors
+	)
+	var reverse_edge := _find_record(
+		route.get("edges", []),
+		"edge_id",
+		"keep_to_vista_direct"
+	)
+	_check(
+		str(reverse_edge.get("transition_style", "")) == "fade",
+		"gate-to-approach edge still uses an occluded handoff",
 		errors
 	)
 	var front_gate := _read_json(FRONT_GATE_PATH)
 	_check(
 		(front_gate.get("spawns", []) as Array).has("EntrySpawn"),
 		"Front Gate no longer declares EntrySpawn",
-		errors
-	)
-	var occlusion := _read_json(OCCLUSION_PATH)
-	var handoff := occlusion.get("handoff_occlusion", {}) as Dictionary
-	for texture_path: Variant in handoff.get("textures", []):
-		_check(
-			FileAccess.file_exists(str(texture_path)),
-			"missing handoff coverage asset %s" % texture_path,
-			errors
-		)
-	var transition_text := _read_text(TRANSITION_PATH)
-	_check(
-		transition_text.contains("MistAndSprayCoverage"),
-		"handoff does not construct foreground mist coverage",
-		errors
-	)
-	_check(
-		float(handoff.get("minimum_coverage_alpha", 0.0)) >= 0.98,
-		"handoff coverage contract is not opaque",
 		errors
 	)
 	_finish(errors)

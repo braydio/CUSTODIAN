@@ -161,6 +161,7 @@ var _minimap_floor_cells: Dictionary = {}
 var _minimap_wall_cells: Dictionary = {}
 var _level_id := ""
 var _level_underlay_sprite: Sprite2D = null
+var _arrival_overlay_sprite: Sprite2D = null
 var _level_underlay_rect_tiles := Rect2i()
 var _level_underlay_texture_path := ""
 var _level_authoring_mask_path := ""
@@ -453,6 +454,11 @@ func get_sundered_keep_debug_state() -> Dictionary:
 		"map_size_tiles": map_size_tiles,
 		"underlay_present": _level_underlay_sprite != null and is_instance_valid(_level_underlay_sprite),
 		"underlay_texture_path": _level_underlay_texture_path,
+		"arrival_overlay_present": _arrival_overlay_sprite != null and is_instance_valid(_arrival_overlay_sprite),
+		"arrival_overlay_rect": (
+			_arrival_overlay_sprite.get_meta("coverage_rect", Rect2())
+			if _arrival_overlay_sprite != null else Rect2()
+		),
 		"underlay_rect_tiles": _level_underlay_rect_tiles,
 		"authoring_mask_path": _level_authoring_mask_path,
 		"floor_sprites": int(_stats["floors"]),
@@ -642,6 +648,7 @@ func _build_from_level_data(data: Dictionary) -> void:
 	)
 	_create_layers_from_names(data.get("layers", []))
 	_build_level_underlay(data.get("underlay", {}))
+	_build_arrival_overlay(data.get("arrival_overlay", {}))
 	_build_mapped_underlay_collision()
 	_build_ocean_backdrop()
 	_build_elevation_from_level_data(data)
@@ -1373,6 +1380,39 @@ func _build_level_underlay(config: Dictionary = {}) -> void:
 	if bool(config.get("expand_camera_bounds", false)):
 		var underlay_rect := Rect2(_tile_top_left(rect_tiles.position), Vector2(rect_tiles.size) * TILE_SIZE)
 		_camera_bounds = _camera_bounds.merge(underlay_rect)
+
+
+func _build_arrival_overlay(config: Dictionary = {}) -> void:
+	_arrival_overlay_sprite = null
+	if config.is_empty():
+		return
+	var layer := _layers.get("Underlay", null) as Node2D
+	if layer == null:
+		return
+	var texture := _load_texture(str(config.get("texture_path", "")))
+	var rect_data := config.get("rect_pixels", []) as Array
+	if texture == null or rect_data.size() < 4:
+		return
+	var coverage := Rect2(
+		Vector2(float(rect_data[0]), float(rect_data[1])),
+		Vector2(float(rect_data[2]), float(rect_data[3]))
+	)
+	var sprite := Sprite2D.new()
+	sprite.name = "FrontGateSouthArrivalApron"
+	sprite.centered = false
+	sprite.texture = texture
+	sprite.position = coverage.position
+	sprite.scale = Vector2(
+		coverage.size.x / maxf(1.0, float(texture.get_width())),
+		coverage.size.y / maxf(1.0, float(texture.get_height()))
+	)
+	sprite.z_as_relative = true
+	sprite.z_index = int(config.get("z_index", -118)) - layer.z_index
+	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	sprite.set_meta("coverage_rect", coverage)
+	sprite.set_meta("collision_authority", false)
+	layer.add_child(sprite)
+	_arrival_overlay_sprite = sprite
 
 
 func _apply_mapper_placements(placements: Array) -> void:

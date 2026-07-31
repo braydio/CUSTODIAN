@@ -4,42 +4,46 @@
   "description": "Operator fast strike against a stationary grunt.",
   "scene": "res://scenes/debug/combat_playground.tscn",
   "seed": 104729,
-  "duration_ticks": 120,
+  "duration_ticks": 150,
   "simulation": {"physics_hz": 60, "warmup_ticks": 2, "max_wall_seconds": 20, "pause_during_setup": true},
-  "capture": {"width": 1280, "height": 720, "fps": 60, "audio": true, "start_tick": 0, "end_tick": 119, "contact_sheet_ticks": [0, 24, 30, 34, 40, 72], "required_keyframes": true, "background": "opaque"},
+  "capture": {"width": 1280, "height": 720, "fps": 60, "audio": true, "start_tick": 0, "end_tick": 149, "contact_sheet_ticks": [0, 60, 76, 81, 82, 100], "required_keyframes": true, "background": "opaque"},
   "setup": {
     "remove_nodes": ["World/Enemies/EnemyGrunt2", "World/Enemies/EnemyGrunt3", "World/DroneManager"],
     "roles": {"operator": {"node_path": "World/Operator"}, "target": {"node_path": "World/Enemies/EnemyGrunt1"}, "camera": {"node_path": "World/Camera2D"}},
     "spawns": [],
     "properties": [
       {"role": "operator", "property": "global_position", "value": [420, 360]},
-      {"role": "target", "property": "global_position", "value": [474, 360]}
+      {"role": "target", "property": "global_position", "value": [458, 360]}
     ],
     "processing": [{"role": "target", "physics": false, "process": false}],
     "fixture": {"id": "combat_playground", "config": {"stationary_target": true}}
   },
   "timeline": [
     {"tick": 2, "action": "input_tap", "name": "toggle_unarmed", "hold_ticks": 1},
-    {"tick": 20, "action": "aim_at_role", "role": "operator", "target_role": "target"},
-    {"tick": 30, "action": "input_tap", "name": "attack_primary", "hold_ticks": 1},
-    {"tick": 34, "action": "capture_marker", "name": "expected_contact"},
-    {"tick": 118, "action": "finish"}
+    {"tick": 50, "action": "aim_at_role", "role": "operator", "target_role": "target"},
+    {"tick": 55, "action": "input_press", "name": "aim_right"},
+    {"tick": 60, "action": "input_tap", "name": "attack_primary", "hold_ticks": 1},
+    {"tick": 72, "action": "capture_marker", "name": "expected_contact"},
+    {"tick": 80, "action": "input_release", "name": "aim_right"},
+    {"tick": 148, "action": "finish"}
   ],
   "probes": [
-    {"id": "operator_state", "role": "operator", "fields": ["global_position", "visible_visual_anchor_delta_px", "visible_visual_anchor_nodes"], "ticks": [0, 24, 30, 34, 40, 72, 118], "required": true},
-    {"id": "target_state", "role": "target", "fields": ["global_position"], "ticks": [0, 34, 72, 118], "required": true}
+    {"id": "operator_state", "role": "operator", "fields": ["global_position", "visible_visual_anchor_delta_px", "visible_visual_anchor_nodes"], "ticks": [0, 54, 60, 68, 72, 76, 100, 148], "required": true},
+    {"id": "target_state", "role": "target", "fields": ["global_position", "health"], "ticks": [0, 68, 72, 76, 100, 148], "required": true}
   ],
   "assertions": [
     {"type": "role_exists", "role": "target", "severity": "error"},
     {"type": "no_unreleased_inputs", "severity": "error"},
     {"type": "output_exists", "path": "telemetry.json", "severity": "error"},
     {"type": "probe_compare", "probe": "operator_state", "tick": 0, "field": "visible_visual_anchor_delta_px", "op": "lte", "value": 0.5, "severity": "error"},
-    {"type": "probe_compare", "probe": "operator_state", "tick": 24, "field": "visible_visual_anchor_delta_px", "op": "lte", "value": 0.5, "severity": "error"},
-    {"type": "probe_compare", "probe": "operator_state", "tick": 30, "field": "visible_visual_anchor_delta_px", "op": "lte", "value": 0.5, "severity": "error"},
-    {"type": "probe_compare", "probe": "operator_state", "tick": 34, "field": "visible_visual_anchor_delta_px", "op": "lte", "value": 0.5, "severity": "error"},
-    {"type": "probe_compare", "probe": "operator_state", "tick": 40, "field": "visible_visual_anchor_delta_px", "op": "lte", "value": 0.5, "severity": "error"},
+    {"type": "probe_compare", "probe": "operator_state", "tick": 54, "field": "visible_visual_anchor_delta_px", "op": "lte", "value": 0.5, "severity": "error"},
+    {"type": "probe_compare", "probe": "operator_state", "tick": 60, "field": "visible_visual_anchor_delta_px", "op": "lte", "value": 0.5, "severity": "error"},
+    {"type": "probe_compare", "probe": "operator_state", "tick": 68, "field": "visible_visual_anchor_delta_px", "op": "lte", "value": 0.5, "severity": "error"},
     {"type": "probe_compare", "probe": "operator_state", "tick": 72, "field": "visible_visual_anchor_delta_px", "op": "lte", "value": 0.5, "severity": "error"},
-    {"type": "probe_compare", "probe": "operator_state", "tick": 118, "field": "visible_visual_anchor_delta_px", "op": "lte", "value": 0.5, "severity": "error"},
+    {"type": "probe_compare", "probe": "operator_state", "tick": 76, "field": "visible_visual_anchor_delta_px", "op": "lte", "value": 0.5, "severity": "error"},
+    {"type": "probe_compare", "probe": "operator_state", "tick": 100, "field": "visible_visual_anchor_delta_px", "op": "lte", "value": 0.5, "severity": "error"},
+    {"type": "probe_compare", "probe": "operator_state", "tick": 148, "field": "visible_visual_anchor_delta_px", "op": "lte", "value": 0.5, "severity": "error"},
+    {"type": "probe_compare", "probe": "target_state", "tick": 100, "field": "health", "op": "lt", "value": 78, "severity": "error"},
     {"type": "warning_count", "op": "eq", "value": 0, "severity": "warning"}
   ],
   "stable_fingerprint": {"event_payload_fields": {}, "counters": [], "probes": ["operator_state", "target_state"], "position_quantum_px": 0.25, "float_quantum": 0.0001},

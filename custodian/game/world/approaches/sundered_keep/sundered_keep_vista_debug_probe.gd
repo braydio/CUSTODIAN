@@ -232,6 +232,13 @@ func _refresh_readout() -> void:
 		and _camera.has_method("has_presentation_framing")
 		else false
 	)
+	var handoff_contract := _get_handoff_contract_state(
+		follow_target,
+		runtime_map,
+		presentation_active,
+		camera_distance,
+		operator_position
+	)
 	var rows: Array[String] = [
 		"VISTA LIVE PROBE",
 		"route=%s profile=%s node=%s"
@@ -251,13 +258,7 @@ func _refresh_readout() -> void:
 			str(_camera.zoom if _camera != null else Vector2.ZERO),
 		],
 		"handoff_contract=%s"
-		% _get_handoff_contract_state(
-			follow_target,
-			runtime_map,
-			presentation_active,
-			camera_distance,
-			operator_position
-		),
+		% handoff_contract,
 		"alpha vista=%.2f cinematic=%.2f fortress far/mid/near=%.2f/%.2f/%.2f"
 		% [
 			_alpha_at("VistaRoot"),
@@ -329,12 +330,13 @@ func _refresh_readout() -> void:
 		and profile_id != "production"
 		else Color.WHITE
 	)
-	_update_phase_banner(choreography, reveal)
+	_update_phase_banner(choreography, reveal, handoff_contract)
 
 
 func _update_phase_banner(
 	choreography: Dictionary,
-	reveal: Dictionary
+	reveal: Dictionary,
+	handoff_contract: String
 ) -> void:
 	if _phase_banner == null:
 		return
@@ -348,6 +350,18 @@ func _update_phase_banner(
 	var phase := String(choreography.get("phase", "UNKNOWN"))
 	var banner_text := phase
 	var banner_color := Color(0.82, 0.90, 1.0, 1.0)
+	if (
+		phase in ["GAMEPLAY_AFTER", "GAMEPLAY"]
+		and handoff_contract != "PASS"
+	):
+		_phase_banner.text = (
+			"HANDOFF CONTRACT FAILURE — " + handoff_contract
+		)
+		_phase_banner.add_theme_color_override(
+			"font_color",
+			Color(1.0, 0.16, 0.12, 1.0)
+		)
+		return
 	match phase:
 		"GAMEPLAY_BEFORE":
 			banner_text = "CAMERA 1 — GAMEPLAY BEFORE"
@@ -541,9 +555,9 @@ func _get_handoff_contract_state(
 	camera_distance: float,
 	operator_position: Vector2
 ) -> String:
-	if presentation_active:
-		return "PRESENTATION_ACTIVE"
 	var failures: Array[String] = []
+	if presentation_active:
+		failures.append("presentation")
 	if runtime_map != _approach:
 		failures.append("runtime_map")
 	if follow_target != _operator:

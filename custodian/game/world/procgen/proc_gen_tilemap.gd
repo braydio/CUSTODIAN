@@ -927,6 +927,7 @@ func _fill_tilemaps() -> void:
 	else:
 		_marks["floor_value_clusters"] = 0
 	_last = Time.get_ticks_msec()
+	_audit_sundered_keep_frontage_required_floor()
 
 	if enable_streaming_reveal:
 		_prepare_streaming_reveal()
@@ -3641,6 +3642,87 @@ func _apply_sundered_keep_frontage_region_metadata() -> void:
 			)
 
 
+func is_sundered_keep_frontage_protected(cell: Vector2i) -> bool:
+	if _sundered_keep_frontage.is_empty():
+		return false
+	for key in [
+		"primary_route_cells",
+		"hard_clearance_cells",
+		"fortress_exclusion_cells",
+		"presentation_clearance_cells",
+	]:
+		if (_sundered_keep_frontage.get(key, {}) as Dictionary).has(cell):
+			return true
+	return false
+
+
+func _get_sundered_keep_frontage_protected_cells() -> Dictionary:
+	var protected: Dictionary = {}
+	for key in [
+		"primary_route_cells",
+		"hard_clearance_cells",
+		"fortress_exclusion_cells",
+		"presentation_clearance_cells",
+	]:
+		for cell_variant in (
+			_sundered_keep_frontage.get(key, {}) as Dictionary
+		).keys():
+			if cell_variant is Vector2i:
+				protected[cell_variant] = true
+	return protected
+
+
+func _audit_sundered_keep_frontage_required_floor() -> Dictionary:
+	var report := {
+		"frontage_required_floor_cell_missing_visual": 0,
+		"frontage_required_floor_cell_blocked": 0,
+		"frontage_required_floor_cell_ocean_exposed": 0,
+		"repaired_missing_visual": 0,
+		"repaired_blocked": 0,
+	}
+	if _sundered_keep_frontage.is_empty():
+		return report
+	var required: Dictionary = {}
+	for key in ["primary_route_cells", "hard_clearance_cells"]:
+		for cell_variant in (
+			_sundered_keep_frontage.get(key, {}) as Dictionary
+		).keys():
+			if cell_variant is Vector2i:
+				required[cell_variant] = true
+	for cell_variant in required.keys():
+		var cell := cell_variant as Vector2i
+		var missing_visual := (
+			floor_tilemap == null
+			or floor_tilemap.get_cell_source_id(cell) < 0
+		)
+		var blocked := _generated_wall_cells.has(cell)
+		if missing_visual:
+			report["repaired_missing_visual"] += 1
+		if blocked:
+			report["repaired_blocked"] += 1
+		if missing_visual or blocked or not _generated_floor_cells.has(cell):
+			_set_floor_tile_and_generated_state(
+				cell,
+				"sundered_keep_primary_route",
+				"protected_route"
+			)
+			_apply_terrain_tile_visual(
+				cell,
+				_deterministic_connector_repair_tile_id(cell)
+			)
+		if floor_tilemap == null or floor_tilemap.get_cell_source_id(cell) < 0:
+			report["frontage_required_floor_cell_missing_visual"] += 1
+			report["frontage_required_floor_cell_ocean_exposed"] += 1
+		if _generated_wall_cells.has(cell):
+			report["frontage_required_floor_cell_blocked"] += 1
+	var summary := (
+		_sundered_keep_frontage.get("debug_summary", {}) as Dictionary
+	).duplicate(true)
+	summary.merge(report, true)
+	_sundered_keep_frontage["debug_summary"] = summary
+	return report
+
+
 func _build_route_playability(
 	field: Dictionary,
 	map_size: Vector2i
@@ -5518,6 +5600,13 @@ func _ensure_foliage_spawner() -> void:
 
 
 func _build_foliage_spawner_context(map_size: Vector2i = Vector2i.ZERO) -> Dictionary:
+	var protected_route_cells := (
+		_route_playability_result.get("hard_clearance_cells", {}) as Dictionary
+	).duplicate()
+	protected_route_cells.merge(
+		_get_sundered_keep_frontage_protected_cells(),
+		true
+	)
 	return {
 		"host": self,
 		"map_size": map_size,
@@ -5546,10 +5635,7 @@ func _build_foliage_spawner_context(map_size: Vector2i = Vector2i.ZERO) -> Dicti
 			"centerline_distance",
 			{}
 		),
-		"route_hard_clearance_cells": _route_playability_result.get(
-			"hard_clearance_cells",
-			{}
-		),
+		"route_hard_clearance_cells": protected_route_cells,
 		"route_shoulder_cells": _route_playability_result.get(
 			"shoulder_cells",
 			{}
@@ -5928,6 +6014,8 @@ func _is_protected_ruin_prop_blocker_cell(cell: Vector2i) -> bool:
 
 
 func _get_ruin_prop_protected_zone_type(cell: Vector2i) -> StringName:
+	if is_sundered_keep_frontage_protected(cell):
+		return &"sundered_keep_frontage"
 	if _is_inside_required_route_clearance(cell, 0):
 		return &"required_route"
 	var spawn_tile := get_player_spawn()
@@ -8311,6 +8399,9 @@ func get_corridor_spawn_points(count: int = 5) -> Array[Vector2i]:
 		):
 			if cell_variant is Vector2i \
 					and is_valid_spawn_cell(cell_variant as Vector2i) \
+					and not is_sundered_keep_frontage_protected(
+						cell_variant as Vector2i
+					) \
 					and not hard_clearance.has(cell_variant as Vector2i):
 				encounter_cells.append(cell_variant as Vector2i)
 		encounter_cells.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
@@ -8341,7 +8432,8 @@ func get_corridor_spawn_points(count: int = 5) -> Array[Vector2i]:
 				neighbor_count += 1
 
 		if neighbor_count <= 1:
-			if is_valid_spawn_cell(pos):
+			if is_valid_spawn_cell(pos) \
+					and not is_sundered_keep_frontage_protected(pos):
 				dead_ends.append(pos)
 
 	dead_ends.shuffle()

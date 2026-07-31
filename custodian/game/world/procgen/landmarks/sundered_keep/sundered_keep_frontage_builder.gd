@@ -126,6 +126,19 @@ func build_frontage(
 		map_size
 	)
 	_merge_lookup(fortress_exclusion_cells, soft_clearance_cells)
+	var presentation_clearance_cells: Dictionary = {}
+	var presentation_limit := maxi(
+		1,
+		int(round(float(route_centerline.size()) * 0.52))
+	)
+	for index in presentation_limit:
+		_add_disc(
+			presentation_clearance_cells,
+			route_centerline[index],
+			8,
+			map_size
+		)
+	_merge_lookup(presentation_clearance_cells, hard_clearance_cells)
 
 	var camera_anchors := {
 		"frontage_entry": _sample_centerline(route_centerline, 0.00),
@@ -170,6 +183,7 @@ func build_frontage(
 		"side_pocket_cells": side_pocket_cells,
 		"cliff_cells": cliff_cells,
 		"fortress_exclusion_cells": fortress_exclusion_cells,
+		"presentation_clearance_cells": presentation_clearance_cells,
 		"overlook_anchor": semantic["overlook_anchor"],
 		"side_pocket_anchors": [side_pocket_anchor],
 		"encounter_pocket_anchors": [encounter_anchor],

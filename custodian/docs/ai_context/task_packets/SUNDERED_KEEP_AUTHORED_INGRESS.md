@@ -34,8 +34,17 @@ captures origin state but defers branch isolation for `playable_blackout`.
 `LevelLoader` continues to stage and activate levels while preserving the
 persistent Operator and Camera2D.
 
+The blackout bridge now owns a fixed directional ribbon plus an independent
+Operator contact shadow. Arrival is fail-closed: control and blackout coverage
+are released only after route-session identity, approach visual readiness,
+camera runtime-map ownership, Operator follow, cleared presentation framing,
+and suspended procgen objective presentation all validate. The approach's
+position-driven vista controller releases the camera whenever its current
+envelope has zero influence.
+
 ## Validation
 
-Run the five `sundered_keep_{playable_blackout_transition,
+Run `sundered_keep_approach_control_return_smoke.gd` and the five
+`sundered_keep_{playable_blackout_transition,
 approach_outskirts_mapper,approach_continuity,checkpoint_occlusion,
 causeway_handoff}_smoke.gd` scripts plus the route pipeline suite.

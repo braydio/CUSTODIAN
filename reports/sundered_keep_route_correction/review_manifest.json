@@ -1,0 +1,21 @@
+{
+  "schema": "custodian.sundered_keep.route_correction_review.v1",
+  "status": "review",
+  "viewport": [2560, 1440],
+  "reviewed_seed": 1,
+  "captures": [
+    "procgen_normal_gameplay.png",
+    "procgen_first_reveal_apex.png",
+    "procgen_reverse_south_camera_released.png",
+    "procgen_generated_frontage_exit.png",
+    "parish_arrival_northbound.png",
+    "parish_close_detail_reveal.png",
+    "parish_long_east_traverse.png",
+    "front_gate_arrival_clear.png"
+  ],
+  "automated_findings": [
+    "Authored Parish composites show visible rectangular or repeating seam artifacts.",
+    "Front Gate arrival framing exposes gray overscan below the southern apron."
+  ],
+  "human_approved": false
+}

@@ -315,26 +315,43 @@ connection samples at each of 96, 136, and 176 pixels. The focused reaction smok
 
 For Sundered Keep asset wiring specifically:
 
-For the production Sundered Keep authored ingress, continuous exterior, and
-Front Gate handoff:
+For the production Sundered Keep generated frontage, Shore Parish / Outer Wall,
+and Front Gate correction:
 
 ```bash
 cd custodian
-godot --headless --path . --script res://tools/validation/sundered_keep_playable_blackout_transition_smoke.gd
+godot --headless --path . --script res://tools/validation/sundered_keep_procgen_frontage_smoke.gd
+godot --headless --path . --script res://tools/validation/sundered_keep_world_vista_smoke.gd
+godot --headless --path . --script res://tools/validation/sundered_keep_approach_smoke.gd
 godot --headless --path . --script res://tools/validation/sundered_keep_approach_outskirts_mapper_smoke.gd
-godot --headless --path . --script res://tools/validation/sundered_keep_approach_continuity_smoke.gd
-godot --headless --path . --script res://tools/validation/sundered_keep_checkpoint_occlusion_smoke.gd
-godot --headless --path . --script res://tools/validation/sundered_keep_causeway_handoff_smoke.gd
-godot --headless --path . --script res://tools/validation/world_origin_branch_contract_smoke.gd
+godot --headless --path . --script res://tools/validation/sundered_keep_parish_route_correction_smoke.gd
+godot --headless --path . --script res://tools/validation/sundered_keep_large_layout_smoke.gd
+godot --headless --path . --script res://tools/validation/sundered_keep_route_graph_smoke.gd
+godot --headless --path . --script res://tools/validation/route_profile_selection_smoke.gd
+bash tools/validation/run_procgen_validation_suite.sh
 bash tools/validation/run_route_pipeline_suite.sh
 ```
 
-These smokes prove deferred procgen isolation, the visible/contact-shadow
-blackout bridge, production Approach/Outskirts mapper authority, all seven
-continuous subregions, checkpoint roof cutaway without foliage ownership,
-opaque beach mist/spray coverage, and the existing Front Gate `EntrySpawn`.
-The former procgen-frontage and stage-cut route smokes remain regression and
-historical coverage; they no longer define production routing acceptance.
+These smokes prove protected procgen floor/corridor authority, exactly one
+world-side camera reveal, fade-only production edges, production Parish mapper
+authority, supplied ground/detail/local-fog wiring, continuous eastward rails,
+the Front Gate arrival apron and 144 px guard, deterministic frontage output,
+and route/profile connectivity.
+
+Graphical evidence requires an active X11/Wayland renderer; Godot's `headless`
+display driver is dummy-only and cannot export viewport pixels:
+
+```bash
+godot --display-driver x11 --rendering-method gl_compatibility --path . \
+  --script res://tools/validation/sundered_keep_procgen_frontage_seed_review.gd \
+  -- --output-dir res://../reports/sundered_keep_route_correction --seeds 1
+godot --display-driver x11 --rendering-method gl_compatibility --path . \
+  --script res://tools/validation/sundered_keep_route_correction_review.gd \
+  -- --output-dir res://../reports/sundered_keep_route_correction
+```
+
+Review frames must be 2560×1440 and require human approval. A successful image
+export does not promote the task packet beyond `review`.
 
 For the reusable authored-level scaffold and registry ingress pipeline:
 
@@ -384,8 +401,9 @@ godot --headless --script tools/validation/sundered_keep_mapper_smoke.gd
 The underlay debug smoke retains the focused underlay-only runtime check.
 The unified mapper smoke proves the tool previews the actual production Keep,
 owns the level and collision documents, retains 127 rails and the 01–99
-palette/stamp/undo toolset, and exposes complete spatial and siege placement
-authority.
+palette/stamp/undo toolset, exposes on-map selection/movement/creation for
+complete spatial and siege placement authority, and keeps Return Mooring's
+linked records aligned under one bundle operation.
 
 For the Sundered Keep overlay-authoring guide pipeline:
 

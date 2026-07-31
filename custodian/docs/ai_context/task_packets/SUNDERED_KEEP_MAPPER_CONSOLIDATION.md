@@ -18,7 +18,13 @@
   anchors, marine spawn, gate prefab, interactables, spatial regions, and siege
   anchors are mapper-visible records. Runtime code now attaches behavior to
   these records rather than supplying fallback placement.
+- Feature editing: Features mode draws every spatial record on-map, selects by
+  clicking, relocates with `Shift+Left`, and creates from the selected record
+  type with `N`, with feature-document undo/redo. Singleton authorities
+  relocate rather than duplicate. Return Mooring is a linked bundle whose
+  module, markers, shore/zone records, and siege-relative behavior move
+  together.
 - Validation: `sundered_keep_mapper_smoke.gd`, large-layout smoke, Keep
   interaction/state smokes, and the route pipeline suite.
-- Deferred: human visual editing inside the unified mapper; no second
-  Sundered Keep mapper should be introduced.
+- Deferred: human approval of authored placements; no second Sundered Keep
+  mapper should be introduced.

@@ -1,0 +1,295 @@
+{
+	"actions": [
+		{
+			"action": "input_tap",
+			"ok": true,
+			"tick": 2
+		},
+		{
+			"action": "aim_at_role",
+			"ok": true,
+			"tick": 50
+		},
+		{
+			"action": "input_tap",
+			"ok": true,
+			"tick": 60
+		},
+		{
+			"action": "capture_marker",
+			"ok": true,
+			"tick": 72
+		},
+		{
+			"action": "finish",
+			"finish": true,
+			"ok": true,
+			"tick": 148
+		}
+	],
+	"assertions": [
+		{
+			"actual": true,
+			"expected": {
+				"role": "target",
+				"severity": "error",
+				"type": "role_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "role_exists"
+		},
+		{
+			"actual": false,
+			"expected": {
+				"severity": "error",
+				"type": "no_unreleased_inputs"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "no_unreleased_inputs"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"path": "telemetry.json",
+				"severity": "error",
+				"type": "output_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "output_exists"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 0.0,
+				"type": "probe_compare",
+				"value": 0.5
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 54.0,
+				"type": "probe_compare",
+				"value": 0.5
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 60.0,
+				"type": "probe_compare",
+				"value": 0.5
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 68.0,
+				"type": "probe_compare",
+				"value": 0.5
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 72.0,
+				"type": "probe_compare",
+				"value": 0.5
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 76.0,
+				"type": "probe_compare",
+				"value": 0.5
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 100.0,
+				"type": "probe_compare",
+				"value": 0.5
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0.0,
+			"expected": {
+				"field": "visible_visual_anchor_delta_px",
+				"op": "lte",
+				"probe": "operator_state",
+				"severity": "error",
+				"tick": 148.0,
+				"type": "probe_compare",
+				"value": 0.5
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 78.0,
+			"expected": {
+				"field": "health",
+				"op": "lt",
+				"probe": "target_state",
+				"severity": "error",
+				"tick": 100.0,
+				"type": "probe_compare",
+				"value": 78.0
+			},
+			"message": "",
+			"passed": false,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": 0,
+			"expected": {
+				"op": "eq",
+				"severity": "warning",
+				"type": "warning_count",
+				"value": 0.0
+			},
+			"message": "",
+			"passed": true,
+			"severity": "warning",
+			"type": "warning_count"
+		}
+	],
+	"capture_failures": [],
+	"capture_mode": "full",
+	"completed": true,
+	"completed_tick": 148,
+	"failures": [],
+	"keyframes": [
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/authored-unarmed-contact-confirmed-v2/keyframes/tick_000000.png",
+			"render_frame": 4,
+			"sha256": "5f8165b9186a0fa23d5b938f989320d126684771fb61d635bbe8a1419bd5459c",
+			"tick": 0
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/authored-unarmed-contact-confirmed-v2/keyframes/tick_000060.png",
+			"render_frame": 64,
+			"sha256": "919e0244c1a9b921a68075777b878e70355a855005e2b8c75524a1ecd3695282",
+			"tick": 60
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/authored-unarmed-contact-confirmed-v2/keyframes/tick_000068.png",
+			"render_frame": 72,
+			"sha256": "47952d18ae9a13f5bb9a44b235514ec2571cc888e267646bd7a9ba177322c981",
+			"tick": 68
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/authored-unarmed-contact-confirmed-v2/keyframes/tick_000072.png",
+			"render_frame": 76,
+			"sha256": "5f658e85fac59daad6a2e2219d11790b427af5f5b5a76b70594ecc36589f9ebb",
+			"tick": 72
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/authored-unarmed-contact-confirmed-v2/keyframes/tick_000076.png",
+			"render_frame": 80,
+			"sha256": "433f86b0e3a3725d5dd588e78b6cedbe076575665c26eee2ee52ba08c1e43d49",
+			"tick": 76
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/authored-unarmed-contact-confirmed-v2/keyframes/tick_000100.png",
+			"render_frame": 104,
+			"sha256": "6942b8819ffb7f2466f2e0ec7d85ffd90615a16609cd00e5905e84c29540f228",
+			"tick": 100
+		}
+	],
+	"markers": [
+		{
+			"data": {},
+			"name": "expected_contact",
+			"tick": 72
+		}
+	],
+	"passed": false,
+	"probe_failures": [],
+	"runtime": {
+		"godot": {
+			"build": "arch_linux",
+			"hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+			"hex": 263937,
+			"major": 4,
+			"minor": 7,
+			"patch": 1,
+			"status": "stable",
+			"string": "4.7.1-stable (arch_linux)",
+			"timestamp": 1783976428
+		},
+		"physics_hz": 60,
+		"renderer": "vulkan"
+	},
+	"scenario_id": "combat/light_hit_grunt",
+	"scenario_path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/authored-unarmed-contact-confirmed-v2/scenario.snapshot.json",
+	"schema": "custodian.moment_forge.run_result.v1",
+	"seed": 104729
+}

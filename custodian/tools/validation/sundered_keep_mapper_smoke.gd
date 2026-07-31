@@ -27,21 +27,47 @@ func _run() -> void:
 	var state := mapper.call("get_sundered_keep_mapper_state") as Dictionary
 	_assert(str(state.get("mapping_path", "")) == LEVEL_PATH, "mapper does not edit production level data")
 	_assert(str(state.get("collision_path", "")) == COLLISION_PATH, "mapper does not own production collision data")
-	_assert(int(state.get("feature_count", 0)) >= 200, "mapper does not expose complete authored feature records")
+	_assert(int(state.get("feature_count", 0)) >= 50, "mapper does not expose retained gameplay feature records")
+	_assert((state.get("placements", []) as Array).is_empty(), "mapper did not start with zero manual placements")
 	_assert((state.get("palette", []) as Array).size() == 99, "mapper lost the 01-99 tile palette")
 	_assert(mapper.has_method("_load_underlay_selection_as_stamp"), "mapper lost underlay stamp sampling")
 	_assert(mapper.has_method("_begin_paint_drag"), "mapper lost drag painting")
 	_assert(mapper.has_method("_undo") and mapper.has_method("_redo"), "mapper lost undo/redo")
 	_assert(mapper.has_method("_apply_collision_drafts"), "mapper cannot author collision rails")
 	_assert(mapper.has_method("_move_selected_feature"), "mapper cannot move production features")
+	_assert(
+		mapper.has_method("select_feature_at_tile")
+		and mapper.has_method("select_feature_by_label"),
+		"mapper cannot select production features spatially"
+	)
+	_assert(
+		mapper.has_method("create_selected_feature_at_tile"),
+		"mapper cannot create production features"
+	)
+	var feature_entries := state.get("feature_entries", []) as Array
+	_assert(
+		not feature_entries.is_empty()
+		and _has_feature_label(
+			feature_entries,
+			"bundle/return_mooring"
+		),
+		"Return Mooring is not exposed as a complete feature bundle"
+	)
+	for entry_variant: Variant in feature_entries:
+		var entry := entry_variant as Dictionary
+		_assert(
+			entry.has("anchor") and entry.has("bounds"),
+			"feature lacks spatial selection metadata: %s"
+			% str(entry.get("label", "unknown"))
+		)
+	_test_feature_authoring(mapper)
+	# Historical/debug mapper scenes may remain on disk, but only the unified
+	# mapper's production documents may be runtime authority.
 	for retired_path in [
-		"res://scenes/debug/sundered_keep_approach_collision_mapper.tscn",
-		"res://scenes/debug/sundered_keep_underlay_collision_mapper.tscn",
-		"res://scenes/debug/sundered_keep_underlay_gameplay_tile_mapper.tscn",
 		"res://content/levels/sundered_keep/sundered_keep_underlay_gameplay_tiles.json",
 		"res://content/levels/sundered_keep/gatehouse_siege_config.json",
 	]:
-		_assert(not FileAccess.file_exists(retired_path), "retired mapper authority still exists: %s" % retired_path)
+		_assert(not FileAccess.file_exists(retired_path), "retired runtime data authority still exists: %s" % retired_path)
 
 	var level := _read_json(LEVEL_PATH)
 	var collision := _read_json(COLLISION_PATH)
@@ -94,6 +120,155 @@ func _read_json(path: String) -> Dictionary:
 func _assert(condition: bool, message: String) -> void:
 	if not condition:
 		_errors.append(message)
+
+
+func _has_feature_label(entries: Array, label: String) -> bool:
+	for entry_variant: Variant in entries:
+		if str((entry_variant as Dictionary).get("label", "")) == label:
+			return true
+	return false
+
+
+func _test_feature_authoring(mapper: Node) -> void:
+	_assert(
+		bool(mapper.call(
+			"select_feature_by_label",
+			"bundle/return_mooring"
+		)),
+		"Return Mooring bundle cannot be selected"
+	)
+	var target := Vector2i(20, 50)
+	_assert(
+		bool(mapper.call("move_selected_feature_to_tile", target)),
+		"Return Mooring bundle cannot be moved"
+	)
+	var moved := mapper.call(
+		"get_feature_authoring_document"
+	) as Dictionary
+	_assert(
+		_find_record_origin(
+			moved.get("ops", []) as Array,
+			"module_id",
+			"return_mooring_3x3_01"
+		) == target,
+		"Return Mooring module did not move with its bundle"
+	)
+	_assert(
+		_find_record_origin(
+			moved.get("markers", []) as Array,
+			"id",
+			"return_mooring_origin"
+		) == target,
+		"Return Mooring origin marker did not move with its bundle"
+	)
+	_assert(
+		_find_record_origin(
+			moved.get("markers", []) as Array,
+			"id",
+			"return_mooring"
+		) == target + Vector2i(2, 2),
+		"Return Mooring interaction marker lost its bundle offset"
+	)
+	_assert(
+		_find_record_origin(
+			moved.get("shore_walk_regions", []) as Array,
+			"id",
+			"return_mooring_lower_shore"
+		) == target + Vector2i(0, 1),
+		"Return Mooring shore region did not move with its bundle"
+	)
+	_assert(
+		bool(mapper.call(
+			"select_feature_at_tile",
+			target + Vector2i(2, 2)
+		)),
+		"moved Return Mooring cannot be selected from the map"
+	)
+	var selected_state := mapper.call(
+		"get_sundered_keep_mapper_state"
+	) as Dictionary
+	_assert(
+		str(
+			(selected_state.get(
+				"selected_feature",
+				{}
+			) as Dictionary).get("label", "")
+		) == "bundle/return_mooring",
+		"Return Mooring map hit selected a partial overlapping record"
+	)
+
+	var shore_label := (
+		"shore_walk_regions/lower_storm_shore_approach"
+	)
+	_assert(
+		bool(mapper.call("select_feature_by_label", shore_label)),
+		"generic shore feature cannot be selected"
+	)
+	var before_count := (
+		moved.get("shore_walk_regions", []) as Array
+	).size()
+	_assert(
+		bool(mapper.call(
+			"create_selected_feature_at_tile",
+			Vector2i(8, 8)
+		)),
+		"generic spatial feature cannot be created"
+	)
+	var created := mapper.call(
+		"get_feature_authoring_document"
+	) as Dictionary
+	var created_shores := (
+		created.get("shore_walk_regions", []) as Array
+	)
+	_assert(
+		created_shores.size() == before_count + 1,
+		"feature creation did not append a production record"
+	)
+	_assert(
+		_find_record_origin(
+			created_shores,
+			"id",
+			"lower_storm_shore_approach_copy_02"
+		) == Vector2i(8, 8),
+		"created feature lacks a unique identity or requested position"
+	)
+	mapper.call("_undo_feature_edit")
+	var undone := mapper.call(
+		"get_feature_authoring_document"
+	) as Dictionary
+	_assert(
+		(undone.get("shore_walk_regions", []) as Array).size()
+			== before_count,
+		"feature creation is not undoable"
+	)
+	mapper.call("_redo_feature_edit")
+	var redone := mapper.call(
+		"get_feature_authoring_document"
+	) as Dictionary
+	_assert(
+		(redone.get("shore_walk_regions", []) as Array).size()
+			== before_count + 1,
+		"feature creation is not redoable"
+	)
+
+
+func _find_record_origin(
+	records: Array,
+	key: String,
+	value: String
+) -> Vector2i:
+	for record_variant: Variant in records:
+		var record := record_variant as Dictionary
+		if str(record.get(key, "")) != value:
+			continue
+		for spatial_key in ["origin", "tile", "rect"]:
+			var position := record.get(spatial_key, []) as Array
+			if position.size() >= 2:
+				return Vector2i(
+					int(position[0]),
+					int(position[1])
+				)
+	return Vector2i(-999, -999)
 
 
 func _has_marker(level: Dictionary, marker_id: String) -> bool:

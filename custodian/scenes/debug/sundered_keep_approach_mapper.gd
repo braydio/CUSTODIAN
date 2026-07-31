@@ -18,6 +18,7 @@ const OCCLUSION_DATA_PATH := (
 func get_supported_authoring_features() -> PackedStringArray:
 	return PackedStringArray([
 		"route_floor_stamps",
+		"authored_visual_overlays",
 		"perimeter_collision_rails",
 		"checkpoint_interior_collision",
 		"spawn_exit_markers",
@@ -119,6 +120,31 @@ func save_route_floor(
 		"vertical_runtime_offset": 180.0,
 		"tile_size": tile_size,
 	}
+	return _write_json(LAYOUT_DATA_PATH, document)
+
+
+func save_visual_overlay(overlay_record: Dictionary) -> bool:
+	var overlay_id := str(overlay_record.get("id", ""))
+	if overlay_id.is_empty():
+		push_warning("[SunderedKeepApproachMapper] Overlay id is required")
+		return false
+	var document := _read_json(LAYOUT_DATA_PATH)
+	var overlays := document.get("visual_overlays", []) as Array
+	var normalized := overlay_record.duplicate(true)
+	if normalized.has("runtime_rect"):
+		var runtime_rect := normalized["runtime_rect"] as Rect2
+		normalized.erase("runtime_rect")
+		normalized["rect"] = _authoring_rect_array(runtime_rect)
+	normalized["collision_authority"] = false
+	var replaced := false
+	for index in overlays.size():
+		if str((overlays[index] as Dictionary).get("id", "")) == overlay_id:
+			overlays[index] = normalized
+			replaced = true
+			break
+	if not replaced:
+		overlays.append(normalized)
+	document["visual_overlays"] = overlays
 	return _write_json(LAYOUT_DATA_PATH, document)
 
 
