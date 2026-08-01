@@ -228,6 +228,7 @@ func _validate_animation_set(
 	if frames == null:
 		return
 	for animation: StringName in animations:
+		var expected_frames := 8 if "fast_02" in String(animation) else 10
 		_assert(
 			frames.has_animation(animation),
 			"%s animation %s is missing" % [label, animation]
@@ -235,9 +236,9 @@ func _validate_animation_set(
 		if not frames.has_animation(animation):
 			continue
 		_assert(
-			frames.get_frame_count(animation) == 10,
-			"%s animation %s is not ten frames"
-			% [label, animation]
+			frames.get_frame_count(animation) == expected_frames,
+			"%s animation %s has %d frames; expected %d"
+			% [label, animation, frames.get_frame_count(animation), expected_frames]
 		)
 		_assert_close(
 			frames.get_animation_speed(animation),
@@ -250,12 +251,19 @@ func _validate_animation_set(
 			"%s animation %s must not loop"
 			% [label, animation]
 		)
-		for frame_index in range(10):
+		for frame_index in range(expected_frames):
 			_assert_atlas_region(
 				frames.get_frame_texture(animation, frame_index),
 				Vector2(156, 96),
 				"%s %s frame %d"
 				% [label, animation, frame_index]
+			)
+		if "fast_02" in String(animation):
+			var atlas := frames.get_frame_texture(animation, 0) as AtlasTexture
+			_assert(
+				atlas != null and "chain_02" in atlas.atlas.resource_path,
+				"%s animation %s is not bound to authored Chain 02"
+				% [label, animation]
 			)
 
 
@@ -323,6 +331,23 @@ func _validate_attack_playback(operator: Node) -> void:
 			)
 		),
 		"dagger contact opened before zero-based frame 5"
+	)
+	operator.call("_interrupt_active_combat_for_damage_reaction")
+	operator.set("_melee_fast_combo_step", 1)
+	operator.set("melee_cooldown_remaining", 0.0)
+	operator.set("stamina", 100.0)
+	operator.call("_start_fast_attack")
+	_assert(
+		body.animation == &"vigil_dagger_fast_02_right",
+		"dagger chain step 2 did not play the authored Chain 02 body"
+	)
+	_assert(
+		overlay.animation == &"vigil_dagger_fast_02_weapon_right",
+		"dagger chain step 2 did not play the authored Chain 02 dagger"
+	)
+	_assert(
+		fx.animation == &"vigil_dagger_fast_02_fx_right",
+		"dagger chain step 2 did not play the authored Chain 02 FX"
 	)
 	operator.call("_interrupt_active_combat_for_damage_reaction")
 

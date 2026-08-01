@@ -1,0 +1,131 @@
+{
+  "artifacts": {
+    "assertions": "assertions.json",
+    "audio": "audio_mix.wav",
+    "contact_sheet": "current_contact_sheet.png",
+    "metrics": "metrics.json",
+    "probes": "probes.json",
+    "report": "index.html",
+    "telemetry": "telemetry.json",
+    "timeline": "timeline.json",
+    "video": "current.mp4",
+    "visual_diff": null
+  },
+  "baseline": {
+    "status": "not_requested"
+  },
+  "baseline_compatibility": {
+    "contact_sheet_ticks": [
+      0,
+      60,
+      76,
+      81,
+      82,
+      100
+    ],
+    "end_tick": 149,
+    "fps": 60,
+    "height": 720,
+    "metrics_schema_major": 1,
+    "scenario_id": "combat/light_hit_grunt",
+    "scenario_schema_version": 1,
+    "scenario_sha256": "e7e779625b7b9e4d706c419b249d1441bf8b6e1b4ee30cfb6709092f9a0bed0f",
+    "start_tick": 0,
+    "width": 1280
+  },
+  "capture": {
+    "audio_requested": true,
+    "fps": 60,
+    "height": 720,
+    "mode": "full",
+    "synchronization": "verified",
+    "width": 1280
+  },
+  "generated_at": "2026-08-01T08:00:23.211688-04:00",
+  "media": {
+    "audio_metrics": {
+      "available": true,
+      "channels": 2,
+      "duration_sec": 2.533333333333333,
+      "frames": 121600,
+      "noise_floor_dbfs": -27.04351479587883,
+      "onset_ms": 1762.5,
+      "onset_threshold_dbfs": -15.043514795878831,
+      "peak_dbfs": -14.355074924535998,
+      "peak_time_ms": 1775.4895833333333,
+      "rms_dbfs": -26.86930493434758,
+      "sample_rate": 48000,
+      "sample_width": 2
+    },
+    "audio_state": {
+      "available": true,
+      "canonical_available": true,
+      "conversion": "ffmpeg",
+      "requested": true
+    },
+    "ffmpeg_available": true,
+    "visual_diff": null
+  },
+  "repository": {
+    "branch": "main",
+    "changed_files": [
+      "M custodian/content/audio/sfx/combat/hit_hallway_reverb_01.wav",
+      " M custodian/content/audio/sfx/combat/hit_light_body_01.wav",
+      " M custodian/content/audio/sfx/combat/hit_robot_metal_01.wav",
+      " M custodian/content/audio/sfx/combat/shrumb_hit_01.wav",
+      " M custodian/content/audio/sfx/combat/shrumb_hit_02.wav",
+      " M custodian/docs/ai_context/CURRENT_STATE.md",
+      " M custodian/docs/ai_context/VALIDATION_RECIPES.md",
+      " M custodian/game/actors/operator/operator.gd",
+      " M custodian/tools/validation/combat_impact_audio_smoke.gd",
+      " M design/02_features/combat_feel/COMBAT_FEEL_SYSTEM.md",
+      "?? custodian/content/audio/sfx/combat/hit_medium_body_01-1.wav",
+      "?? custodian/content/audio/sfx/combat/hit_medium_body_01-1.wav.import",
+      "?? custodian/content/audio/sfx/combat/melee_swing_fast_01-1.wav",
+      "?? custodian/content/audio/sfx/combat/melee_swing_fast_01-1.wav.import",
+      "?? custodian/content/audio/sfx/combat/swing_fast_02.wav",
+      "?? custodian/content/audio/sfx/combat/swing_fast_02.wav.import",
+      "?? custodian/content/audio/sfx/combat/swing_fast_03.wav",
+      "?? custodian/content/audio/sfx/combat/swing_fast_03.wav.import",
+      "?? reports/moment_forge/combat/light_hit_grunt/melee-swing-audio/"
+    ],
+    "commit": "268b55b0884d5b84b28edb81d9c19e9a83982466",
+    "dirty": true,
+    "root": "/home/braydenchaffee/Projects/CUSTODIAN"
+  },
+  "run_id": "melee-swing-audio",
+  "runtime": {
+    "godot": {
+      "build": "arch_linux",
+      "hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+      "hex": 263937,
+      "major": 4,
+      "minor": 7,
+      "patch": 1,
+      "status": "stable",
+      "string": "4.7.1-stable (arch_linux)",
+      "timestamp": 1783976428
+    },
+    "physics_hz": 60,
+    "renderer": "vulkan"
+  },
+  "scenario": {
+    "id": "combat/light_hit_grunt",
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/melee-swing-audio/scenario.snapshot.json",
+    "schema_version": 1,
+    "sha256": "e7e779625b7b9e4d706c419b249d1441bf8b6e1b4ee30cfb6709092f9a0bed0f"
+  },
+  "schema": "custodian.moment_forge.run_manifest.v1",
+  "stable_assertions_passed": true,
+  "stable_fingerprint": {
+    "algorithm": "sha256",
+    "schema": "custodian.moment_forge.stable_fingerprint.v1",
+    "value": "6cb944d5f964d435ea75dfd2afd18dc6f97ce3928194aee1ca82e00dd4936e55"
+  },
+  "status": "passed",
+  "tools": {
+    "ffmpeg": "/usr/bin/ffmpeg",
+    "pillow": "12.3.0",
+    "python": "3.14.6"
+  }
+}

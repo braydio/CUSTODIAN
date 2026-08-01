@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bnqkc0vwrm0bd"]
 
-[ext_resource type="Script" path="res://scenes/debug/sundered_keep_mapper.gd" id="1_mapper"]
-[ext_resource type="Script" path="res://scenes/debug/sundered_keep_mapper_overlay.gd" id="2_overlay"]
+[ext_resource type="Script" uid="uid://6qxnhwdl4jhj" path="res://scenes/debug/sundered_keep_mapper.gd" id="1_mapper"]
+[ext_resource type="Script" uid="uid://c7cakvmem2ytv" path="res://scenes/debug/sundered_keep_mapper_overlay.gd" id="2_overlay"]
 
 [node name="SunderedKeepMapper" type="Node2D" unique_id=1020535489]
 script = ExtResource("1_mapper")

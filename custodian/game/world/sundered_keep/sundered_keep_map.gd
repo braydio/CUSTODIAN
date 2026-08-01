@@ -2958,11 +2958,21 @@ func _track_new_siege_enemy(enemy_container: Node, existing_enemy_ids: Dictionar
 		_siege_live_enemies[instance_id] = child
 		if _siege_wave_index == 1:
 			_siege_required_enemy_ids[instance_id] = true
+		if child.has_signal("enemy_died"):
+			child.connect("enemy_died", _on_siege_enemy_died.bind(instance_id), CONNECT_ONE_SHOT)
 		child.tree_exited.connect(_on_siege_enemy_tree_exited.bind(instance_id), CONNECT_ONE_SHOT)
 		return
 
 
+func _on_siege_enemy_died(_enemy: Node, instance_id: int) -> void:
+	_retire_siege_enemy(instance_id)
+
+
 func _on_siege_enemy_tree_exited(instance_id: int) -> void:
+	_retire_siege_enemy(instance_id)
+
+
+func _retire_siege_enemy(instance_id: int) -> void:
 	_siege_live_enemies.erase(instance_id)
 	_siege_required_enemy_ids.erase(instance_id)
 	if not _siege_wave_spawning:

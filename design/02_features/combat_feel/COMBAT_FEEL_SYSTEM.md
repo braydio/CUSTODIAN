@@ -129,6 +129,12 @@ Current runtime hookup:
   the Katana uses its own held resource when separately equipped
 - Katana fast damage/commit indices are `5, 5, 6` (zero-based), with exactly
   one damage event per link.
+- Armed fast attacks emit one positional swing cue when each chain link starts.
+  Chain links 1–3 use `melee_swing_fast_01-1.wav`, `swing_fast_02.wav`, and
+  `swing_fast_03.wav` respectively. The cue is attack-owned rather than
+  hit-owned, so confirmed contact layers the existing material-specific impact
+  render while a miss still retains the authored air movement. Unarmed attacks
+  do not use these blade-swing files.
 
 #### Heavy attack
 

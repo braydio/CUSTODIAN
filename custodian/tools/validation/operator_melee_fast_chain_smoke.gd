@@ -18,7 +18,7 @@ const ANIMATIONS := [
 	&"melee_2h_fast_3_right",
 ]
 const FRAME_COUNTS := [7, 7, 8]
-const FX_FRAME_COUNTS := [10, 7, 8]
+const FX_FRAME_COUNTS := [10, 8, 8]
 const COMMIT_FRAMES := [5, 5, 6]
 const FX_ANIMATION_BASES := [
 	"melee_2h_fast_1_fx",

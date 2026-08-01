@@ -341,7 +341,7 @@ Last updated: 2026-07-26
 - `custodian/game/actors/storage/vault_storage.tscn` — vault storage scene used by debug fallback vault placement, now rendering stable runtime storage sprites instead of a ColorRect placeholder
 - `custodian/game/actors/items/stolen_resource_pickup.gd` — recoverable stolen-resource bundle that returns payloads to `VaultManager` when picked up by the player
 - `custodian/game/actors/items/stolen_resource_pickup.tscn` — placeholder pickup scene for dropped stolen vault resources
-- `custodian/game/actors/enemies/enemy.gd` — shared active enemy actor, including guaranteed heavy-hit stagger, target-owned presentation-only melee-impact audio profiles, grunt parry-critical phases with independent-root open/recover locking, normal-target suppression, atomic reservation, zero-offset shared-root execution, exactly-once paired damage, lethal/nonlethal cleanup, and the opt-in presentation-only `AUTHORED_FRAMES`/`HUMANOID_CUTOUT` backend boundary (authored frames remain default)
+- `custodian/game/actors/enemies/enemy.gd` — shared active enemy actor, including combat behavior, explicit alive/dying/lootable/empty corpse lifecycle, roll-once structured corpse payload construction, final-death-frame persistence and empty-corpse cleanup, plus the opt-in presentation-only `AUTHORED_FRAMES`/`HUMANOID_CUTOUT` backend boundary
 - `custodian/game/actors/enemies/visuals/humanoid_cutout_rig_{2d,skin,profile}.gd` and `humanoid_cutout_rig_2d.tscn` — reusable nearest-filtered rigid Node2D/Sprite2D humanoid paper-doll rig, data-only directional skin, inspector-editable 96×96 pivot/draw-order profile, fixed 20-cell atlas slicing, stable cardinal selection, and visual-only semantic animation API
 - `custodian/game/actors/enemies/visuals/animations/humanoid_cutout_default_animation_library.tres` — generic pivot-only idle, run, light-attack, hit-react, and death motion library
 - `custodian/game/actors/enemies/dev/{enemy_humanoid_cutout_test,humanoid_cutout_rig_review}.tscn` — isolated geometric-dev-skin enemy plus keyboard/button review scene with gameplay-size and 3× nearest previews
@@ -358,7 +358,9 @@ Last updated: 2026-07-26
 - `custodian/game/actors/enemies/components/enemy_blackboard.gd` — enemy-local behavior memory for Operator sightings, objective target, carried loot, morale, patrol, and investigation state
 - `custodian/game/actors/enemies/components/enemy_perception_component.gd` — Operator vision/noise detection accumulator with suspicion, notice, and lost-target signals
 - `custodian/game/actors/enemies/components/enemy_objective_sensor.gd` — transparent objective scoring for Operator engagement, vault storage theft, loot escape, and investigation
-- `custodian/game/actors/enemies/components/enemy_loot_carrier.gd` — carried stolen-resource payload component that spawns recoverable pickups on drop/death
+- `custodian/game/actors/enemies/components/enemy_loot_carrier.gd` — carried stolen-resource payload component; `take_payload()` transfers ownership into a corpse payload at death, while detached drops remain compatibility behavior for hit/panic paths
+- `custodian/game/actors/enemies/components/enemy_corpse_loot.gd` — corpse-bound structured reward owner, proximity collection guard, ResourceLedger/VaultManager/GameState delivery boundary, marker controller, and per-corpse hue restoration
+- `custodian/game/vfx/loot/loot_corpse_marker.{gd,tscn}` / `loot_corpse_marker_frames.tres` / `loot_corpse_hue.gdshader` — separate reveal, persistent beacon/ring, collection-collapse, and highlight-only corpse tint presentation
 - `custodian/game/actors/enemies/enemy_behavior_state_machine.gd` — compact finite state controller for idle, patrol, investigate, notice, engage, seek/open/steal storage, escape with loot, flee, stunned, and dead behavior
 - `custodian/game/actors/enemies/states/` — plain enemy state script surface matching the behavior state names for future state-specific expansion
 - `custodian/game/enemies/procgen/enemy_variant_profile.gd` — data-only procedural enemy profile resource generated from seed, biome, threat, family, tier, and affixes
@@ -452,8 +454,10 @@ Last updated: 2026-07-26
 - `design/02_features/combat_feel/CRITICAL_OPEN_OPTIONAL_VFX.md` — implemented optional-polish contract for the posture-break opening flash and unconsumed critical-window closure effect
 - `design/02_features/combat_feel/COMBAT_FEEL_UPGRADE.md` — ordered combat feel implementation lane after sprite pipeline cleanup
 - `design/02_features/animation/ENEMY_GRUNT_RUNTIME_WIRING.md` — implementation note documenting the `enemy_grunt` scene, current partial art coverage, and wave wiring acceptance
-- `design/02_features/enemy_objective/GRUNT_LOOT_TABLE.md` — first lore-specced practical salvage and provenance-clue table for baseline grunts, using `ResourceLedger` ids with generic material pickup fallback
+- `design/02_features/enemy_objective/GRUNT_LOOT_TABLE.md` — practical salvage/provenance table for baseline grunts; successful rolls remain corpse-bound until collection
+- `design/02_features/loot/LOOTABLE_CORPSE_BEACON_SYSTEM.md` — lifecycle, payload delivery, VFX, cleanup, persistence limitation, asset contract, and validation authority for lootable corpses
 - `custodian/tools/validation/authored_vault_grunt_loot_marine_smoke.gd` — focused headless smoke check for typed grunt loot, marine 8-direction idle frame wiring, heavy dash tuning/export availability, and gothic compound authored vault-room placement
+- `custodian/tools/validation/lootable_corpse_beacon_smoke.gd` — focused roll-once/deliver-once corpse payload, marker phase, duplicate-collection, cleanup immunity, and typed/carried reward destination smoke
 - `custodian/tools/validation/fabrication_terminal_readability_smoke.gd` — focused headless smoke check for the FABRICATION translation layer, structured cost rows, consumable category, ready-build placement alias, and readable next-action output
 - `custodian/tools/validation/fabrication_terminal_command_smoke.gd` — focused headless smoke check for uppercase terminal fabrication commands resolving to lowercase recipe/resource ids before pipeline and ledger lookups.
 - `custodian/tools/validation/fabrication_terminal_clickable_smoke.gd` — focused headless smoke check for flat work-order composition, highlighted selection/detail synchronization, structured detail, collapsed empty status, and Craft-button job start
@@ -764,6 +768,15 @@ Last updated: 2026-07-26
 - `design/02_features/events/LAST_ROUTEKEEPER_EVENT_CODE.md` — drop-in GDScript, map patches, autoload config, and REQUIRED_ASSETS.md entries for The Last Routekeeper
 
 ## Legacy Reference Only
+
+## Elevated Procgen Presentation
+
+- `design/02_features/procgen/ELEVATED_WORLD_PRESENTATION.md` — upper-plane, cliff, void, forest-depth, streaming, and determinism authority.
+- `custodian/game/world/procgen/presentation/procgen_depth_backdrop.gd` — global repeating forest/mist region derived from authoritative generated floor bounds.
+- `custodian/content/tiles/procgen/elevated_world/source/` — reference-only concept montages; never runtime atlases.
+- `custodian/content/tiles/procgen/elevated_world/archive/pre_elevated_world_v1/` — pre-pass runtime art archive; never runtime-loaded.
+- `custodian/tools/validation/elevated_world_asset_contract_smoke.gd` — image, alpha, TileSet semantic-ID, scene, and no-collision contract.
+- `custodian/tools/validation/elevated_world_seed_review.gd` — fixed-seed presentation geometry and route summary.
 
 - `python-sim/game/` — legacy simulation
 - `python-sim/custodian-terminal/` — legacy terminal UI

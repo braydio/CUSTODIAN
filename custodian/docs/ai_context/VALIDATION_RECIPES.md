@@ -217,7 +217,7 @@ marker and interaction, dormant/contested lock states, secured activation,
 single manual award, equipped-item duplicate protection, route persistence,
 Gatehouse Core traversal, and independent P-9 locker availability.
 
-The focused feedback smoke validates progress fields, dry/reload priority, held-input debounce, hot/critical/overheat/recovery transitions, monotonic reload transfer, per-weapon persistence, zero presentation `NoiseEventBus` emissions, and read-only HUD consumption. The impact-audio smoke validates all authored combat renders plus ordered Return Causeway playlist retention and advancement, target profile assignments, light/heavy body selection, and Shrumb variant cycling. The modular fire and ready-input smokes additionally validate raise/lower direction retargeting without progress reset, committed shot direction, recovery-to-current-aim, posture/readiness status, upper/weapon direction plus frame-clock synchronization, missed-parry silence, and exactly one positional `parry_success_01.wav` cue on confirmed parry success. The charged-roll smoke validates tier selection, proportional speed, longer vulnerable recovery, stamina, invariant iframes, vulnerable charge, and hold/release input; the dodge-charge-feedback smoke validates asset/frame contracts, delayed ratio-driven presentation, compression/latch/release/rejection behavior, and temporary stamina-label copy. The Dodge Flow smoke validates active/late input windows, charge-derived Flow, directional retention, uncapped links, fixed iframe clocks, speed/travel/recovery modifiers, atlas entry frames, final cooldown, exit carry/decay, stamina constraints, signals, and telemetry. The overlap and modular-fast smokes preserve iframe/recovery classification and tap roll-exit compatibility. The socket smoke validates generated Carbine phase-1 metadata, socket-derived muzzle/draw order, transition timing, and camera-owned zoom/lead cancellation. Missing optional authored vent/HUD art warns without failing because the V1 presenter supplies a procedural vent and label fallback.
+The focused feedback smoke validates progress fields, dry/reload priority, held-input debounce, hot/critical/overheat/recovery transitions, monotonic reload transfer, per-weapon persistence, zero presentation `NoiseEventBus` emissions, and read-only HUD consumption. The impact-audio smoke validates the three ordered fast-melee swing renders and positional player plus all authored contact renders, ordered Return Causeway playlist retention and advancement, target profile assignments, light/heavy body selection, and Shrumb variant cycling. The modular fire and ready-input smokes additionally validate raise/lower direction retargeting without progress reset, committed shot direction, recovery-to-current-aim, posture/readiness status, upper/weapon direction plus frame-clock synchronization, missed-parry silence, and exactly one positional `parry_success_01.wav` cue on confirmed parry success. The charged-roll smoke validates tier selection, proportional speed, longer vulnerable recovery, stamina, invariant iframes, vulnerable charge, and hold/release input; the dodge-charge-feedback smoke validates asset/frame contracts, delayed ratio-driven presentation, compression/latch/release/rejection behavior, and temporary stamina-label copy. The Dodge Flow smoke validates active/late input windows, charge-derived Flow, directional retention, uncapped links, fixed iframe clocks, speed/travel/recovery modifiers, atlas entry frames, final cooldown, exit carry/decay, stamina constraints, signals, and telemetry. The overlap and modular-fast smokes preserve iframe/recovery classification and tap roll-exit compatibility. The socket smoke validates generated Carbine phase-1 metadata, socket-derived muzzle/draw order, transition timing, and camera-owned zoom/lead cancellation. Missing optional authored vent/HUD art warns without failing because the V1 presenter supplies a procedural vent and label fallback.
 
 For allied drone fire/formation/guard-anchor commands:
 
@@ -921,6 +921,20 @@ Findings should prioritize:
 - unsafe staging or commit assumptions
 
 ## When Validation Is Deferred
+
+## Elevated Procgen World
+
+From `custodian/`:
+
+```bash
+godot --headless --path . --script res://tools/validation/elevated_world_asset_contract_smoke.gd
+godot --headless --path . --script res://tools/validation/elevated_world_seed_review.gd
+godot --headless --path . --script res://tools/validation/procgen_terrain_required_cells_smoke.gd
+godot --headless --path . --script res://tools/validation/procgen_road_surface_roles_smoke.gd
+godot --headless --path . --script res://tools/validation/procgen_route_clearance_smoke.gd
+```
+
+The asset smoke proves the source/archive exclusion and stable TileSet semantics. The seed review prints five deterministic geometry summaries; it does not replace renderer-backed visual review.
 
 If a feasible validation step cannot run, record it in the task packet completion notes when a packet exists, or in the final handoff otherwise:
 

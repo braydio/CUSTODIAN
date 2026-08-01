@@ -9,6 +9,9 @@ const CAUSEWAY_MUSIC_PATHS := [
 	"res://content/audio/music/return_causeway/hall_still_answers.ogg",
 ]
 const REQUIRED_AUDIO_PATHS := [
+	"res://content/audio/sfx/combat/melee_swing_fast_01-1.wav",
+	"res://content/audio/sfx/combat/swing_fast_02.wav",
+	"res://content/audio/sfx/combat/swing_fast_03.wav",
 	"res://content/audio/sfx/combat/hit_light_body_01.wav",
 	"res://content/audio/sfx/combat/hit_medium_body_01.wav",
 	"res://content/audio/sfx/combat/hit_robot_metal_01.wav",
@@ -97,6 +100,32 @@ func _run() -> void:
 	await process_frame
 	var body_target := _ProfileTarget.new(&"body")
 	var shrumb_target := _ProfileTarget.new(&"shrumb")
+	var swing_paths := [
+		"melee_swing_fast_01-1.wav",
+		"swing_fast_02.wav",
+		"swing_fast_03.wav",
+	]
+	for step in range(swing_paths.size()):
+		var swing := operator.call(
+			"_select_melee_fast_swing_sound",
+			step
+		) as AudioStream
+		_assert(
+			swing != null
+				and swing.resource_path.ends_with(swing_paths[step]),
+			"Fast melee chain step %d did not resolve %s"
+				% [step, swing_paths[step]]
+		)
+	var swing_player := operator.call(
+		"_play_melee_fast_swing_sfx",
+		1
+	) as AudioStreamPlayer2D
+	_assert(
+		swing_player != null
+			and swing_player.name == "MeleeSwingAudio"
+			and swing_player.max_distance == 520.0,
+		"Fast melee swing did not create the positional audio player"
+	)
 	var light := operator.call(
 		"_select_melee_impact_sound",
 		body_target,

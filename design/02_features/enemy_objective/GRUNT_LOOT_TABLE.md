@@ -47,9 +47,11 @@ Common drops help the player survive through fabrication and repair. Rare drops 
 - Enemy exports:
   - `loot_table_id = "practical_salvage_x_grunt"`
   - `loot_table = Array[Dictionary]`
-- Award path:
-  - If `/root/ResourceLedger` exists, each successful roll calls `ResourceLedger.add(resource_id, amount)`.
-  - If the ledger is missing or no typed table is configured, the existing generic material pickup path remains available.
+- Corpse-bound delivery path:
+  - Each successful roll is determined exactly once at death and stored in the corpse payload's `resource_ledger` channel.
+  - Nothing is deposited at death. `EnemyCorpseLoot` calls `ResourceLedger.add(resource_id, amount)` only when the Operator collects the corpse beacon.
+  - Carried stolen resources use the same corpse payload's distinct `vault_recovery` channel; generic fallback materials use `legacy_materials`.
+  - The channels preserve their existing `ResourceLedger`, `VaultManager`, and `GameState` destinations without spawning detached pickups during standard enemy death.
 - Canonical resource/provenance ids are defined in:
   - `res://autoload/resource_ledger.gd`
   - `res://content/resources/resource_defs.json`

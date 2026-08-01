@@ -57,7 +57,7 @@ upper_fx/actions/melee_1h/chain_02/
 upper_fx/actions/melee_1h/chain_03/
 ```
 
-The runtime registers the E/W `10/7/8` FX strips at 18 FPS, maps them to
+The runtime registers the E/W `10/8/8` FX strips at 18 FPS, maps them to
 `melee_fast_1/2/3`, and synchronizes their visible frame to the authoritative
 body frame. The Katana weapon overlay remains empty because the weapon is
 already present in the body presentation.

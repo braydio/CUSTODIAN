@@ -486,19 +486,40 @@ def _build_melee_1h_chain_runtime(
     dry_run: bool,
 ) -> list[Path]:
     generated: list[Path] = []
-    chain_root = source_root / "chain_01"
+    for chain_index in range(1, 4):
+        chain_id = f"chain_{chain_index:02d}"
+        chain_root = source_root / chain_id
+        if not chain_root.exists():
+            continue
+        generated.extend(
+            _build_melee_1h_chain_link_runtime(
+                chain_root,
+                runtime_root,
+                chain_id,
+                dry_run,
+            )
+        )
+    return generated
 
+
+def _build_melee_1h_chain_link_runtime(
+    chain_root: Path,
+    runtime_root: Path,
+    chain_id: str,
+    dry_run: bool,
+) -> list[Path]:
+    generated: list[Path] = []
     for direction in ("e", "w"):
         lower = _find_melee_chain_part(
             chain_root,
             "modular_lower_body",
-            "chain_01",
+            chain_id,
             direction,
         )
         upper = _find_melee_chain_part(
             chain_root,
             "modular_upper_body",
-            "chain_01",
+            chain_id,
             direction,
         )
         if lower is not None and upper is not None:
@@ -506,7 +527,7 @@ def _build_melee_1h_chain_runtime(
             upper_spec = _sheet_spec_from_path(upper, direction)
             if lower_spec.frames != upper_spec.frames:
                 raise ValueError(
-                    "melee Chain 01 body layers must have matching frame counts: "
+                    f"melee {chain_id} body layers must have matching frame counts: "
                     f"{lower.name} ({lower_spec.frames}) != "
                     f"{upper.name} ({upper_spec.frames})"
                 )
@@ -514,7 +535,7 @@ def _build_melee_1h_chain_runtime(
                 runtime_root
                 / "body/melee_1h/shared"
                 / (
-                    "operator__body__melee_1h__chain_01"
+                    f"operator__body__melee_1h__{chain_id}"
                     f"__{direction}__{lower_spec.frames}f__156x96.png"
                 )
             )
@@ -533,7 +554,7 @@ def _build_melee_1h_chain_runtime(
         fx = _find_melee_chain_part(
             chain_root,
             "modular_upper_fx",
-            "chain_01",
+            chain_id,
             direction,
         )
         if fx is not None:
@@ -542,7 +563,7 @@ def _build_melee_1h_chain_runtime(
                 runtime_root
                 / "fx/melee_1h/shared"
                 / (
-                    "operator__fx__melee_1h__chain_01"
+                    f"operator__fx__melee_1h__{chain_id}"
                     f"__{direction}__{fx_spec.frames}f__156x96.png"
                 )
             )
@@ -561,7 +582,7 @@ def _build_melee_1h_chain_runtime(
             weapon = _find_melee_chain_part(
                 chain_root,
                 source_layer,
-                "chain_01",
+                chain_id,
                 direction,
             )
             if weapon is None:
@@ -571,7 +592,7 @@ def _build_melee_1h_chain_runtime(
                 runtime_root
                 / f"weapon/melee_1h/{weapon_id}"
                 / (
-                    f"operator__weapon__{weapon_id}__chain_01"
+                    f"operator__weapon__{weapon_id}__{chain_id}"
                     f"__{direction}__{weapon_spec.frames}f__156x96.png"
                 )
             )

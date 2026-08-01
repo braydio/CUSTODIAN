@@ -15,13 +15,15 @@ Sword-Cleaver and Fallen Star Katana.
 | Link | Presentation | Drive | Stamina |
 |---|---|---:|---:|
 | Fast 01 | Shared 10-frame Chain 01 + dagger overlay | 7 px | 5 |
-| Fast 02 | Provisional Chain 01 reuse | 9 px | 6 |
+| Fast 02 | Dedicated 8-frame Chain 02 body, dagger, and FX | 9 px | 6 |
 | Fast 03 | Provisional Chain 01 reuse | 11 px | 8 |
 
 All links have distinct semantic animation names and attack profiles. Body,
 dagger, and FX use separate synchronized 156×96 `SpriteFrames` resources at
-18 FPS. Contact is provisionally zero-based frame 5 and commit is frame 6,
-matching the revised lunge sequence.
+18 FPS. Fast 02 is sourced from the authored modular lower-body, upper-body,
+Vigil dagger, and upper-FX Chain 02 layers; the pipeline composites and binds
+their E/W eight-frame runtime strips. Contact remains zero-based frame 5 and
+commit remains frame 6.
 
 The held weapon remains the native 24×24 dagger texture. Heavy remains disabled
 through an empty `secondary_intent`.
@@ -58,7 +60,7 @@ content/sprites/operator/runtime/weapon/melee_1h/vigil_pattern_dagger/
 
 ## Next Agent Slice
 
-Goal: replace provisional Fast 02/03 reuse with dedicated authored sheets.
+Goal: replace provisional Fast 03 reuse with dedicated authored sheets.
 
 Constraints: preserve semantic keys/profiles and do not map Katana content onto
 the dagger.

@@ -146,6 +146,7 @@ enum WorldShapeMode {
 @export var floor_tilemap: TileMapLayer
 @export var walls_tilemap: TileMapLayer
 @export var nav_region: NavigationRegion2D
+@export var depth_backdrop: ProcgenDepthBackdrop
 @export var world_shape_mode: WorldShapeMode = WorldShapeMode.ASCENT_FIELD
 @export var generation_evaluation_mode: bool = false
 @export var generation_output_enabled: bool = true
@@ -928,6 +929,7 @@ func _fill_tilemaps() -> void:
 		_marks["floor_value_clusters"] = 0
 	_last = Time.get_ticks_msec()
 	_audit_sundered_keep_frontage_required_floor()
+	_refresh_depth_backdrop()
 
 	if enable_streaming_reveal:
 		_prepare_streaming_reveal()
@@ -5407,6 +5409,23 @@ func _apply_terrain_visuals(terrain_result: Dictionary) -> void:
 
 
 func _resolve_live_terrain_visual_tile_id(cell: Vector2i, tile_id: String) -> String:
+	# ASCENT_FIELD keeps its simulation/elevation semantics while the live
+	# campaign presentation reads as a natural upper plateau and cliff depth.
+	match tile_id:
+		"ground_flat_32":
+			return "rock_ground_flat_32"
+		"elevated_floor_32":
+			return "rock_plateau_raised_32"
+		"elevation_edge_north_32":
+			return "cliff_edge_north_32"
+		"elevation_edge_south_32":
+			return "cliff_edge_south_32"
+		"elevation_edge_east_32":
+			return "cliff_edge_east_32"
+		"elevation_edge_west_32":
+			return "cliff_edge_west_32"
+		"cliff_shadow_32":
+			return "chasm_void_32"
 	if tile_id == "cliff_chasm_drop_32":
 		return "chasm_void_32" if _tile_noise_hash(cell) % 2 == 0 else "collapsed_gap_32"
 	return tile_id
@@ -7420,6 +7439,17 @@ func _apply_foliage_occlusion_material(material: ShaderMaterial, active_centers:
 		if bubble_index < bubble_count:
 			center = active_centers[bubble_index]
 		material.set_shader_parameter("bubble_center_%d" % bubble_index, center)
+
+
+func _refresh_depth_backdrop() -> void:
+	if depth_backdrop == null:
+		return
+
+	var cells: Array = []
+	for cell_variant: Variant in _generated_floor_cells.keys():
+		cells.append(cell_variant)
+
+	depth_backdrop.configure_from_cells(cells)
 
 
 func _prepare_streaming_reveal() -> void:

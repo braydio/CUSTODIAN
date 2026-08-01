@@ -1,7 +1,7 @@
-[gd_resource type="SpriteFrames" format=3]
+[gd_resource type="SpriteFrames" format=3 uid="uid://bdpnivaeysgdb"]
 
-[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/curated/body/ranged_2h/fire_body.png" id="1_fire"]
-[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/curated/body/ranged_2h/operator_reloading.png" id="2_reload"]
+[ext_resource type="Texture2D" uid="uid://dq3plr8cwaw78" path="res://content/sprites/operator/runtime/curated/body/ranged_2h/fire_body.png" id="1_fire"]
+[ext_resource type="Texture2D" uid="uid://cvpkw2im1oht2" path="res://content/sprites/operator/runtime/curated/body/ranged_2h/operator_reloading.png" id="2_reload"]
 
 [sub_resource type="Image" id="Image_3i6gm"]
 data = {

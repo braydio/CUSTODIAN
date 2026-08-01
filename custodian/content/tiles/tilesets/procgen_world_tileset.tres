@@ -275,53 +275,53 @@ texture_region_size = Vector2i(32, 32)
 7:6/0 = 0
 7:7/0 = 0
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_bridge_broken_segment_32"]
-texture = ExtResource("100_chasm_bridge_bridge_broken_segment_32")
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_chasm_void_32"]
+texture = ExtResource("122_chasm_bridge_chasm_void_32")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_bridge_metal_mid_horizontal_32"]
-texture = ExtResource("101_chasm_bridge_bridge_metal_mid_horizontal_32")
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_chasm_edge_n_32"]
+texture = ExtResource("111_chasm_bridge_chasm_edge_n_32")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_bridge_metal_mid_vertical_32"]
-texture = ExtResource("102_chasm_bridge_bridge_metal_mid_vertical_32")
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_chasm_edge_s_32"]
+texture = ExtResource("112_chasm_bridge_chasm_edge_s_32")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_bridge_stone_mid_horizontal_32"]
-texture = ExtResource("103_chasm_bridge_bridge_stone_mid_horizontal_32")
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_chasm_edge_e_32"]
+texture = ExtResource("110_chasm_bridge_chasm_edge_e_32")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_bridge_stone_mid_vertical_32"]
-texture = ExtResource("104_chasm_bridge_bridge_stone_mid_vertical_32")
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_chasm_edge_w_32"]
+texture = ExtResource("113_chasm_bridge_chasm_edge_w_32")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_bridge_stone_start_e_32"]
-texture = ExtResource("105_chasm_bridge_bridge_stone_start_e_32")
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_chasm_outer_corner_ne_32"]
+texture = ExtResource("118_chasm_bridge_chasm_outer_corner_ne_32")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_bridge_stone_start_n_32"]
-texture = ExtResource("106_chasm_bridge_bridge_stone_start_n_32")
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_chasm_outer_corner_nw_32"]
+texture = ExtResource("119_chasm_bridge_chasm_outer_corner_nw_32")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_bridge_stone_start_s_32"]
-texture = ExtResource("107_chasm_bridge_bridge_stone_start_s_32")
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_chasm_outer_corner_se_32"]
+texture = ExtResource("120_chasm_bridge_chasm_outer_corner_se_32")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_bridge_stone_start_w_32"]
-texture = ExtResource("108_chasm_bridge_bridge_stone_start_w_32")
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_chasm_outer_corner_sw_32"]
+texture = ExtResource("121_chasm_bridge_chasm_outer_corner_sw_32")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_broken_gap_edge_32"]
-texture = ExtResource("109_chasm_bridge_broken_gap_edge_32")
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_chasm_inner_corner_ne_32"]
+texture = ExtResource("114_chasm_bridge_chasm_inner_corner_ne_32")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 
@@ -393,31 +393,6 @@ texture_region_size = Vector2i(32, 32)
 1:6/size_in_atlas = Vector2i(2, 2)
 1:6/0 = 0
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_chasm_edge_e_32"]
-texture = ExtResource("110_chasm_bridge_chasm_edge_e_32")
-texture_region_size = Vector2i(32, 32)
-0:0/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_chasm_edge_n_32"]
-texture = ExtResource("111_chasm_bridge_chasm_edge_n_32")
-texture_region_size = Vector2i(32, 32)
-0:0/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_chasm_edge_s_32"]
-texture = ExtResource("112_chasm_bridge_chasm_edge_s_32")
-texture_region_size = Vector2i(32, 32)
-0:0/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_chasm_edge_w_32"]
-texture = ExtResource("113_chasm_bridge_chasm_edge_w_32")
-texture_region_size = Vector2i(32, 32)
-0:0/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_chasm_inner_corner_ne_32"]
-texture = ExtResource("114_chasm_bridge_chasm_inner_corner_ne_32")
-texture_region_size = Vector2i(32, 32)
-0:0/0 = 0
-
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_chasm_inner_corner_nw_32"]
 texture = ExtResource("115_chasm_bridge_chasm_inner_corner_nw_32")
 texture_region_size = Vector2i(32, 32)
@@ -433,13 +408,38 @@ texture = ExtResource("117_chasm_bridge_chasm_inner_corner_sw_32")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_chasm_outer_corner_ne_32"]
-texture = ExtResource("118_chasm_bridge_chasm_outer_corner_ne_32")
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_collapsed_gap_32"]
+texture = ExtResource("123_chasm_bridge_collapsed_gap_32")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_chasm_outer_corner_nw_32"]
-texture = ExtResource("119_chasm_bridge_chasm_outer_corner_nw_32")
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_broken_gap_edge_32"]
+texture = ExtResource("109_chasm_bridge_broken_gap_edge_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_bridge_stone_mid_horizontal_32"]
+texture = ExtResource("103_chasm_bridge_bridge_stone_mid_horizontal_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_bridge_stone_mid_vertical_32"]
+texture = ExtResource("104_chasm_bridge_bridge_stone_mid_vertical_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_bridge_stone_start_n_32"]
+texture = ExtResource("106_chasm_bridge_bridge_stone_start_n_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_bridge_stone_start_s_32"]
+texture = ExtResource("107_chasm_bridge_bridge_stone_start_s_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_bridge_stone_start_e_32"]
+texture = ExtResource("105_chasm_bridge_bridge_stone_start_e_32")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 
@@ -541,23 +541,23 @@ texture_region_size = Vector2i(32, 32)
 12:5/0 = 0
 13:5/0 = 0
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_chasm_outer_corner_se_32"]
-texture = ExtResource("120_chasm_bridge_chasm_outer_corner_se_32")
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_bridge_stone_start_w_32"]
+texture = ExtResource("108_chasm_bridge_bridge_stone_start_w_32")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_chasm_outer_corner_sw_32"]
-texture = ExtResource("121_chasm_bridge_chasm_outer_corner_sw_32")
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_bridge_metal_mid_horizontal_32"]
+texture = ExtResource("101_chasm_bridge_bridge_metal_mid_horizontal_32")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_chasm_void_32"]
-texture = ExtResource("122_chasm_bridge_chasm_void_32")
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_bridge_metal_mid_vertical_32"]
+texture = ExtResource("102_chasm_bridge_bridge_metal_mid_vertical_32")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_collapsed_gap_32"]
-texture = ExtResource("123_chasm_bridge_collapsed_gap_32")
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_bridge_broken_segment_32"]
+texture = ExtResource("100_chasm_bridge_bridge_broken_segment_32")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 
@@ -1286,27 +1286,27 @@ sources/96 = SubResource("TileSetAtlasSource_ascent_stair_west_metal_32")
 sources/97 = SubResource("TileSetAtlasSource_ascent_stair_west_stone_32")
 sources/98 = SubResource("TileSetAtlasSource_ascent_terrain_landing_industrial_32")
 sources/99 = SubResource("TileSetAtlasSource_ascent_terrain_landing_stone_32")
-sources/100 = SubResource("TileSetAtlasSource_chasm_bridge_bridge_broken_segment_32")
-sources/101 = SubResource("TileSetAtlasSource_chasm_bridge_bridge_metal_mid_horizontal_32")
-sources/102 = SubResource("TileSetAtlasSource_chasm_bridge_bridge_metal_mid_vertical_32")
-sources/103 = SubResource("TileSetAtlasSource_chasm_bridge_bridge_stone_mid_horizontal_32")
-sources/104 = SubResource("TileSetAtlasSource_chasm_bridge_bridge_stone_mid_vertical_32")
-sources/105 = SubResource("TileSetAtlasSource_chasm_bridge_bridge_stone_start_e_32")
-sources/106 = SubResource("TileSetAtlasSource_chasm_bridge_bridge_stone_start_n_32")
-sources/107 = SubResource("TileSetAtlasSource_chasm_bridge_bridge_stone_start_s_32")
-sources/108 = SubResource("TileSetAtlasSource_chasm_bridge_bridge_stone_start_w_32")
-sources/109 = SubResource("TileSetAtlasSource_chasm_bridge_broken_gap_edge_32")
-sources/110 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_edge_e_32")
-sources/111 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_edge_n_32")
-sources/112 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_edge_s_32")
-sources/113 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_edge_w_32")
-sources/114 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_inner_corner_ne_32")
-sources/115 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_inner_corner_nw_32")
-sources/116 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_inner_corner_se_32")
-sources/117 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_inner_corner_sw_32")
-sources/118 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_outer_corner_ne_32")
-sources/119 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_outer_corner_nw_32")
-sources/120 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_outer_corner_se_32")
-sources/121 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_outer_corner_sw_32")
-sources/122 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_void_32")
-sources/123 = SubResource("TileSetAtlasSource_chasm_bridge_collapsed_gap_32")
+sources/100 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_void_32")
+sources/101 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_edge_n_32")
+sources/102 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_edge_s_32")
+sources/103 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_edge_e_32")
+sources/104 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_edge_w_32")
+sources/105 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_outer_corner_ne_32")
+sources/106 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_outer_corner_nw_32")
+sources/107 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_outer_corner_se_32")
+sources/108 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_outer_corner_sw_32")
+sources/109 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_inner_corner_ne_32")
+sources/110 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_inner_corner_nw_32")
+sources/111 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_inner_corner_se_32")
+sources/112 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_inner_corner_sw_32")
+sources/113 = SubResource("TileSetAtlasSource_chasm_bridge_collapsed_gap_32")
+sources/114 = SubResource("TileSetAtlasSource_chasm_bridge_broken_gap_edge_32")
+sources/115 = SubResource("TileSetAtlasSource_chasm_bridge_bridge_stone_mid_horizontal_32")
+sources/116 = SubResource("TileSetAtlasSource_chasm_bridge_bridge_stone_mid_vertical_32")
+sources/117 = SubResource("TileSetAtlasSource_chasm_bridge_bridge_stone_start_n_32")
+sources/118 = SubResource("TileSetAtlasSource_chasm_bridge_bridge_stone_start_s_32")
+sources/119 = SubResource("TileSetAtlasSource_chasm_bridge_bridge_stone_start_e_32")
+sources/120 = SubResource("TileSetAtlasSource_chasm_bridge_bridge_stone_start_w_32")
+sources/121 = SubResource("TileSetAtlasSource_chasm_bridge_bridge_metal_mid_horizontal_32")
+sources/122 = SubResource("TileSetAtlasSource_chasm_bridge_bridge_metal_mid_vertical_32")
+sources/123 = SubResource("TileSetAtlasSource_chasm_bridge_bridge_broken_segment_32")

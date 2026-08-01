@@ -104,6 +104,11 @@ const SHRUMB_HIT_SOUNDS: Array[AudioStream] = [
 const CRITICAL_IMPACT_SOUND: AudioStream = preload("res://content/audio/sfx/combat/critical_hit_composite_01.wav")
 const KNOCKDOWN_SOUND: AudioStream = preload("res://content/audio/sfx/combat/operator_heavy_knockdown_01.wav")
 const MELEE_GRAZE_SOUND: AudioStream = preload("res://content/audio/sfx/combat/melee_graze_01.wav")
+const MELEE_FAST_SWING_SOUNDS: Array[AudioStream] = [
+	preload("res://content/audio/sfx/combat/melee_swing_fast_01-1.wav"),
+	preload("res://content/audio/sfx/combat/swing_fast_02.wav"),
+	preload("res://content/audio/sfx/combat/swing_fast_03.wav"),
+]
 const DODGE_ROLL_SOUND: AudioStream = preload("res://content/audio/sfx/combat/dodge_roll_01.wav")
 const CRITICAL_WINDUP_SOUND: AudioStream = preload("res://content/audio/sfx/combat/critical_windup_01.wav")
 const FIELD_PATCH_SOUND: AudioStream = preload("res://content/audio/sfx/healing/field_patch_composite.wav")
@@ -138,12 +143,12 @@ const MELEE_FAST_CHAIN_FX_SHEETS := {
 		"frames": 10,
 	},
 	&"melee_2h_fast_2_fx_right": {
-		"path": "res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/melee_1h/chain_02/operator__modular_upper_fx__melee_1h__chain_02__e__7f__96.png",
-		"frames": 7,
+		"path": "res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/melee_1h/chain_02/operator__modular_upper_fx__melee_1h__chain_02__e__8f__96.png",
+		"frames": 8,
 	},
 	&"melee_2h_fast_2_fx_left": {
-		"path": "res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/melee_1h/chain_02/operator__modular_upper_fx__melee_1h__chain_02__w__7f__96.png",
-		"frames": 7,
+		"path": "res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/melee_1h/chain_02/operator__modular_upper_fx__melee_1h__chain_02__w__8f__96.png",
+		"frames": 8,
 	},
 	&"melee_2h_fast_3_fx_right": {
 		"path": "res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/melee_1h/chain_03/operator__modular_upper_fx__melee_1h__chain_03__e__8f__96.png",
@@ -4347,6 +4352,7 @@ func _start_fast_attack() -> void:
 	_dodge_fast_attack_presentation_active = false
 	_melee_attack_kind = "fast"
 	var attack_profile: MeleeAttackProfile = _begin_melee_attack_profile("fast")
+	var is_unarmed_attack := _is_attack_profile_unarmed(_active_attack_profile)
 	_notify_camera_attack_windup(false)
 	if _has_authored_fast_chain():
 		var chain_keys := _get_fast_chain_keys()
@@ -4402,6 +4408,8 @@ func _start_fast_attack() -> void:
 			_melee_attack_key,
 			fallback_name
 		)
+		if not is_unarmed_attack:
+			_play_melee_fast_swing_sfx(_melee_fast_combo_step)
 		_melee_duration = _get_current_melee_animation_duration(
 			0.45,
 			0.24,
@@ -4420,7 +4428,6 @@ func _start_fast_attack() -> void:
 	var next_fast_key := "melee_fast_1"
 	var fallback_animation: StringName = &"melee_2h_fast"
 	var next_duration := 0.42
-	var is_unarmed_attack := _is_attack_profile_unarmed(_active_attack_profile)
 	if _melee_fast_combo_step >= 1 and animated_sprite and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation("melee_2h_fast_2_right"):
 		next_fast_key = "melee_fast_2"
 		fallback_animation = &"melee_2h_fast_2"
@@ -4455,6 +4462,10 @@ func _start_fast_attack() -> void:
 			"skipped_phase": "windup",
 			"dodge_cooldown_remaining": _dodge_cooldown_remaining,
 		})
+	if not is_unarmed_attack:
+		_play_melee_fast_swing_sfx(
+			clampi(_melee_fast_combo_step - 1, 0, 2)
+		)
 
 	# A roll-exit fast attack owns a dedicated full-body presentation when the
 	# ingested strip is available. Gameplay remains on the ordinary fast-attack
@@ -5219,6 +5230,36 @@ func _play_melee_impact_sfx(
 	var player := _play_combat_sfx(stream, impact_position, -2.0, 560.0)
 	if player != null:
 		player.name = "MeleeImpactAudio"
+	return player
+
+
+func _select_melee_fast_swing_sound(chain_step: int = -1) -> AudioStream:
+	if MELEE_FAST_SWING_SOUNDS.is_empty():
+		return null
+	var resolved_step := (
+		_melee_fast_combo_step
+		if chain_step < 0
+		else chain_step
+	)
+	return MELEE_FAST_SWING_SOUNDS[
+		clampi(resolved_step, 0, MELEE_FAST_SWING_SOUNDS.size() - 1)
+	]
+
+
+func _play_melee_fast_swing_sfx(
+	chain_step: int = -1
+) -> AudioStreamPlayer2D:
+	var stream := _select_melee_fast_swing_sound(chain_step)
+	if stream == null:
+		return null
+	var player := _play_combat_sfx(
+		stream,
+		global_position,
+		-2.0,
+		520.0
+	)
+	if player != null:
+		player.name = "MeleeSwingAudio"
 	return player
 
 

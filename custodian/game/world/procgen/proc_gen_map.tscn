@@ -4,16 +4,20 @@
 [ext_resource type="TileSet" uid="uid://dmi7ehjmoiqcf" path="res://content/tiles/tilesets/procgen_world_tileset.tres" id="2"]
 [ext_resource type="Script" uid="uid://dhph4w3w8vsll" path="res://game/world/procgen/procgen.gd" id="3_7iafn"]
 [ext_resource type="Script" uid="uid://gy2k3e1i24lq" path="res://game/systems/core/systems/shadow_system.gd" id="4_shadow_system"]
+[ext_resource type="Script" path="res://game/world/procgen/presentation/procgen_depth_backdrop.gd" id="depth_backdrop_script"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/procgen/endless_forest/endless_forest_depth_backdrop_512.png" id="forest_depth_texture"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/procgen/endless_forest/endless_forest_depth_mist_512.png" id="forest_depth_mist"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_1"]
 
-[node name="ProcGenMap" type="Node2D" unique_id=531661722 node_paths=PackedStringArray("procgen_node", "floor_tilemap", "walls_tilemap", "nav_region")]
+[node name="ProcGenMap" type="Node2D" unique_id=531661722 node_paths=PackedStringArray("procgen_node", "floor_tilemap", "walls_tilemap", "nav_region", "depth_backdrop")]
 scale = Vector2(2, 2)
 script = ExtResource("1")
 procgen_node = NodePath("ProcGen2")
 floor_tilemap = NodePath("NavigationRegion2D/Floor")
 walls_tilemap = NodePath("NavigationRegion2D/Walls")
 nav_region = NodePath("NavigationRegion2D")
+depth_backdrop = NodePath("DepthBackdrop")
 floor_source_id = 10
 walls_source_id = 12
 reference_vertical_wall_coords = Array[Vector2i]([Vector2i(15, 0)])
@@ -78,6 +82,12 @@ interior_doorway_source_ids = Array[int]([28, 29])
 interior_wall_source_ids = Array[int]([16, 30, 31])
 interior_wall_source_id = 16
 interior_wall_corner_source_id = 17
+
+[node name="DepthBackdrop" type="Node2D" parent="."]
+z_index = -300
+script = ExtResource("depth_backdrop_script")
+forest_texture = ExtResource("forest_depth_texture")
+mist_texture = ExtResource("forest_depth_mist")
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="." unique_id=2086078231]
 navigation_polygon = SubResource("NavigationPolygon_1")

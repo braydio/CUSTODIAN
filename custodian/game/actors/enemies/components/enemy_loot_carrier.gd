@@ -18,6 +18,12 @@ func clear_payload() -> void:
 	carried_resources.clear()
 
 
+func take_payload() -> Dictionary:
+	var payload := carried_resources.duplicate(true)
+	clear_payload()
+	return payload
+
+
 func drop_payload(owner_enemy: Node) -> void:
 	if carried_resources.is_empty() or owner_enemy == null:
 		return
