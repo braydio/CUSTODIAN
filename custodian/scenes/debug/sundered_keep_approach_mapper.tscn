@@ -6,6 +6,7 @@
 [node name="SunderedKeepApproachMapper" type="Node2D" unique_id=786431777]
 script = ExtResource("1_mapper")
 target_scene_path = "res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn"
+target_preview_config_path = "res://content/levels/sundered_keep/sundered_keep_approach_mapper_preview.json"
 target_instance_name = "ProductionApproachAndOutskirtsPreview"
 mapper_title = "Sundered Keep Approach and Outskirts Mapper"
 initial_camera_position = Vector2(420, 80)

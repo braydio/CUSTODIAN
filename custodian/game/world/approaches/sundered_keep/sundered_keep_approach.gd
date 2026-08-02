@@ -278,19 +278,25 @@ var _runtime_boundary_segments: Array = []
 var _runtime_roof_records: Array = []
 var _subregions_root: Node2D = null
 var _approach_visuals_ready := false
+var _mapper_preview_config: Dictionary = {}
 
 
 func _ready() -> void:
 	add_to_group("sundered_keep_approach")
 	add_to_group("world_ingress_approach")
+	_mapper_preview_config = get_meta("mapper_preview_config", {}) as Dictionary
 	_load_mapper_authority()
 	_remove_stale_proxy_nodes()
 	_ensure_roots()
 	_build_visuals()
-	_ensure_vista_controller()
-	_ensure_reveal_director()
-	_ensure_debug_probe()
-	_apply_vista_presentation_mode()
+	if _preview_option("vista_controller", true):
+		_ensure_vista_controller()
+	if _preview_option("reveal_director", true):
+		_ensure_reveal_director()
+	if _preview_option("debug_probe", true):
+		_ensure_debug_probe()
+	if not _is_mapper_preview():
+		_apply_vista_presentation_mode()
 	call_deferred("_finish_physics_setup")
 
 
@@ -316,10 +322,13 @@ func _finish_physics_setup() -> void:
 		return
 	_build_collision()
 	_build_event_markers()
-	_build_sequence_triggers()
+	if _preview_option("sequence_triggers", true):
+		_build_sequence_triggers()
 	if reveal_director != null:
 		reveal_director.refresh_bindings()
 	_mark_approach_visuals_ready()
+	if _is_mapper_preview() and not _preview_option("live_processing", false):
+		process_mode = Node.PROCESS_MODE_DISABLED
 
 
 func is_visual_ready() -> bool:
@@ -327,6 +336,11 @@ func is_visual_ready() -> bool:
 
 
 func _mark_approach_visuals_ready() -> void:
+	if _is_mapper_preview():
+		_approach_visuals_ready = markers_root != null and collision_root != null
+		if _approach_visuals_ready:
+			approach_visuals_ready.emit()
+		return
 	var required_nodes: Array[Node] = [
 		playable_root,
 		vista_root,
@@ -550,6 +564,9 @@ func _build_visuals() -> void:
 	vista_root.modulate.a = 0.0
 	_grand_vista_root.modulate.a = 1.0
 	occlusion_root.modulate.a = 1.0
+	if _is_mapper_preview():
+		_build_mapper_preview_visuals()
+		return
 
 	if parallax_root != null:
 		parallax_root.show_far_cliff_islands = (
@@ -761,6 +778,89 @@ func _build_visuals() -> void:
 	# Production uses a normal route fade. The former full-screen final veil is
 	# intentionally not built because it made the player navigate while hidden.
 	_final_fog_coverage_rect = Rect2()
+
+
+func _build_mapper_preview_visuals() -> void:
+	_add_backdrop_void_fill()
+	if _preview_option("parallax", false) and parallax_root != null:
+		parallax_root.build(
+			SunderedKeepParallaxRig.Profile.VISTA_APPROACH,
+			RECT_CAMERA_BOUNDS
+		)
+	if _preview_option("base_underlays", false):
+		_add_fitted_sprite(
+			underlay_root, "ApproachOceanVoidUnderlay",
+			APPROACH_OCEAN_VOID_UNDERLAY, RECT_APPROACH_UNDERLAY, -30, Color.WHITE
+		)
+		_add_fitted_sprite(
+			underlay_root, "FirstVistaBaseStormHorizon",
+			FIRST_VISTA_BASE_STORM_HORIZON, RECT_FIRST_VISTA_HORIZON, -25, Color.WHITE
+		)
+		_add_fitted_sprite(
+			underlay_root, "ApproachCliffSpiresUnderlay",
+			APPROACH_CLIFF_SPIRES_UNDERLAY, RECT_APPROACH_UNDERLAY, -20,
+			Color(1.0, 1.0, 1.0, 0.42)
+		)
+	if _preview_option("route_contact_shadow", false):
+		_add_fitted_sprite(
+			underlay_root, "ApproachRouteShadow", APPROACH_ROUTE_CONTACT_SHADOW,
+			_route_rect(RECT_ROUTE_MASTER), -5, Color.WHITE
+		)
+	if _preview_option("first_vista_presentation", false):
+		_add_fitted_sprite(
+			vista_root, "ApproachFirstVistaFogVeil", FIRST_VISTA_REVEAL_VEIL,
+			RECT_FIRST_VISTA_FOG_VEIL, 10, Color(1.0, 1.0, 1.0, 0.68)
+		)
+	if _preview_option("grand_vista_presentation", false):
+		var fortress_far := _ensure_child_node2d_root(
+			_grand_vista_root, "MapperFortressFar", 4
+		)
+		var fortress_mid := _ensure_child_node2d_root(
+			_grand_vista_root, "MapperFortressMid", 8
+		)
+		var fortress_near := _ensure_child_node2d_root(
+			_grand_vista_root, "MapperFortressNear", 16
+		)
+		var fortress_builder := FORTRESS_VISTA_SCRIPT.new()
+		fortress_builder.name = "FortressVistaComposer"
+		_grand_vista_root.add_child(fortress_builder)
+		fortress_builder.build(fortress_far, fortress_mid, fortress_near)
+	if _preview_option("authored_ground_overlays", true):
+		_build_authored_visual_overlays("ground_overlay")
+	if _preview_option("route_master", true):
+		var route_master := _add_fitted_sprite(
+			playable_root, "ApproachRouteMaster", _get_route_floor_texture_path(),
+			_route_rect(_get_route_floor_rect()), 0, Color.WHITE
+		)
+		if _preview_option("roof_occlusion", false):
+			_build_labyrinth_roof_occlusion(route_master)
+	if _preview_option("authored_background_overlays", false):
+		_build_authored_visual_overlays("background_detail")
+	if _preview_option("animated_overlays", false):
+		_build_authored_visual_overlays("animated_sheet")
+	if _preview_option("edge_mist_wrap", false):
+		_add_fitted_sprite(
+			occlusion_root, "ApproachEdgeMistWrap", APPROACH_EDGE_MIST_WRAP,
+			_route_rect(RECT_ROUTE_MASTER), 5, Color(1.0, 1.0, 1.0, 0.10)
+		)
+	if _preview_option("fog_strips", false):
+		_add_fitted_sprite(occlusion_root, "ApproachFogStrip01", APPROACH_FOG_STRIP_01, _route_rect(RECT_FOG_STRIP_01), 8, Color(1.0, 1.0, 1.0, 0.10))
+		_add_fitted_sprite(occlusion_root, "ApproachFogStrip02", APPROACH_FOG_STRIP_02, _route_rect(RECT_FOG_STRIP_02), 9, Color(1.0, 1.0, 1.0, 0.08))
+		_add_fitted_sprite(occlusion_root, "ApproachFogStrip03", APPROACH_FOG_STRIP_03, _route_rect(RECT_FOG_STRIP_03), 10, Color(1.0, 1.0, 1.0, 0.06))
+	if _preview_option("lights", false):
+		_add_labyrinth_depth_pass()
+		_add_reveal_moonlight_cue()
+	_final_fog_coverage_rect = Rect2()
+
+
+func _is_mapper_preview() -> bool:
+	return bool(_mapper_preview_config.get("enabled", false))
+
+
+func _preview_option(option: String, production_default: bool) -> bool:
+	if not _is_mapper_preview():
+		return production_default
+	return bool(_mapper_preview_config.get(option, production_default))
 
 
 func _build_authored_visual_overlays(kind: String) -> void:
@@ -1324,6 +1424,8 @@ func _build_event_markers() -> void:
 
 
 func _build_authored_vista_enemies() -> void:
+	if not _preview_option("authored_enemies", true):
+		return
 	var enemies_root := Node2D.new()
 	enemies_root.name = "AuthoredEnemies"
 	event_runtime_root.add_child(enemies_root)

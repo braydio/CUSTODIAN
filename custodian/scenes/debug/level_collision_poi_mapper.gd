@@ -3,6 +3,7 @@ extends Node2D
 
 @export_file("*.tscn") var target_scene_path: String
 @export_file("*.gd") var target_script_path: String
+@export_file("*.json") var target_preview_config_path: String
 @export var target_instance_name := "LevelUnderReview"
 @export var mapper_title := "Level Collision / POI Mapper"
 @export var initial_camera_position := Vector2.ZERO
@@ -75,6 +76,15 @@ func _load_target_level() -> void:
 		push_error("[LevelCollisionPoiMapper] Target root must be Node2D")
 		return
 	_target_level.name = target_instance_name
+	if not target_preview_config_path.is_empty():
+		var config_file := FileAccess.open(
+			target_preview_config_path,
+			FileAccess.READ
+		)
+		if config_file != null:
+			var parsed: Variant = JSON.parse_string(config_file.get_as_text())
+			if parsed is Dictionary:
+				_target_level.set_meta("mapper_preview_config", parsed)
 	_world.add_child(_target_level)
 
 

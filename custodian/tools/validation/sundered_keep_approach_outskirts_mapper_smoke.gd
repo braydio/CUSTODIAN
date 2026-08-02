@@ -11,6 +11,10 @@ const AUTHORITY_PATHS := [
 	"res://content/levels/sundered_keep/sundered_keep_approach_collision.json",
 	"res://content/levels/sundered_keep/sundered_keep_approach_occlusion.json",
 ]
+const PREVIEW_CONFIG_PATH := (
+	"res://content/levels/sundered_keep/"
+	+ "sundered_keep_approach_mapper_preview.json"
+)
 
 
 func _init() -> void:
@@ -27,6 +31,22 @@ func _run() -> void:
 	await process_frame
 	for path in AUTHORITY_PATHS:
 		_check(FileAccess.file_exists(path), "missing mapper authority %s" % path, errors)
+	var preview_config_file := FileAccess.open(PREVIEW_CONFIG_PATH, FileAccess.READ)
+	_check(preview_config_file != null, "missing mapper preview config", errors)
+	if preview_config_file != null:
+		var parsed_preview: Variant = JSON.parse_string(preview_config_file.get_as_text())
+		_check(parsed_preview is Dictionary, "invalid mapper preview config", errors)
+		if parsed_preview is Dictionary:
+			var preview := parsed_preview as Dictionary
+			for expensive_toggle in [
+				"route_contact_shadow", "edge_mist_wrap", "grand_vista_presentation",
+				"animated_overlays", "authored_enemies", "debug_probe",
+			]:
+				_check(
+					not bool(preview.get(expensive_toggle, true)),
+					"expensive mapper default enabled: %s" % expensive_toggle,
+					errors
+				)
 	_check(
 		mapper.call("get_production_preview_scene_path") == (
 			"res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn"
