@@ -7180,7 +7180,7 @@ func _load_foliage_textures() -> void:
 func _load_interior_prop_textures() -> void:
 	_interior_prop_textures.clear()
 	var files := DirAccess.get_files_at(INTERIOR_RUNTIME_DIR)
-	files.sort()
+ss	files.sort()
 	for file_name in files:
 		if not file_name.ends_with(".png"):
 			continue
