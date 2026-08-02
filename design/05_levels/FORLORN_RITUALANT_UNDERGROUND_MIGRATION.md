@@ -72,6 +72,12 @@ The generic special-room system remains live for other encounters. Its documenta
 - Boundary rails enclose the chamber with a `192 px` south opening.
 - The existing Ritualant scene is instanced at `(0, 0)` without modification.
 
+## Room Mapper
+
+Open `res://scenes/debug/forlorn_ritualant_underground_mapper.tscn` to edit the chamber rails and its three authoritative spatial records: `descent_landing`, `return_world`, and `encounter_origin`. Press `M` to switch between collision and marker modes, use `1`–`3` or Page Up/Page Down to select a record, left-click to place it, and press Enter or `U` to write the matching constants in the authored-level script.
+
+The return record directly positions `Exit_ReturnWorld`; there is intentionally no second `Return_CaveMouth` marker. The landing directly positions `Spawn_DescentLanding`, and the encounter origin directly positions the instanced `ForlornRitualantSite`.
+
 ## Presentation Scope
 
 V1 performs the authority migration immediately. It does not pretend the full staged descent is finished. The later entrance antechamber, lift ride, lower landing, and pre-arena reveal remain governed by `design/05_levels/FORLORN_RITUALANT_APPROACH.md` and should expand this authored route, never restore special-room insertion.

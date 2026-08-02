@@ -246,8 +246,8 @@ Use this whenever you are restructuring docs, moving asset guidance, consolidati
 - Keep deterministic gameplay logic separate from presentation logic.
 - Do not silently promote legacy Python docs back into active authority.
 - When changing behavior or architecture, update docs as part of the same task.
-- Treat Dear ImGui as CUSTODIAN dev tooling only. Use `custodian/debug/debug_bus.gd`, `debug_snapshot_collector.gd`, and `debug_imgui_console.gd` for Director Console work; do not build player HUD, terminal, inventory, dialogue, or pause-menu UI in ImGui.
-- Debug ImGui panels must consume read-only snapshots from `DebugBus`. Mutation must go through debug overrides or queued commands that gameplay systems drain at safe boundaries, never direct per-frame panel writes into deterministic systems.
+- Dear ImGui and Better Terrain are retired from this repository. Use the Godot `Control`-based F12 debug screen, `DebugBus`, `DebugSnapshotCollector`, and `DevObservatory`; do not reintroduce either plugin without a new active design decision.
+- Debug surfaces must consume read-only snapshots from `DebugBus`. Mutation must go through debug overrides or queued commands that gameplay systems drain at safe boundaries, never direct per-frame UI writes into deterministic systems.
 - New debug instrumentation should route through `DevObservatory` (`/root/DevObservatory`), not raw `print()` or ad-hoc labels. Use `log_event` for state transitions, `increment`/`set_counter` for counts, `set_gauge` for live values, and `mark_warning` for anomalies. Keep it observability-only — never let observatory state influence simulation, generation, AI, collision, navigation, combat, or saves. See `design/02_features/debug_ui/DEVELOPER_OBSERVATORY_SYSTEM.md` for the full pattern and examples.
 
 ## Design Codex Governance

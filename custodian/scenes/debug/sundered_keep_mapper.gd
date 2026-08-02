@@ -146,7 +146,7 @@ func _process(_delta: float) -> void:
 		_overlay.queue_redraw()
 
 
-func _unhandled_input(event: InputEvent) -> void:
+func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		var mouse := event as InputEventMouseButton
 		var point := _camera.get_global_mouse_position()
@@ -227,6 +227,9 @@ func _load_underlay_collision_pair() -> void:
 		return
 	_underlay_scene.name = "ProductionSunderedKeepPreview"
 	_world.add_child(_underlay_scene)
+	# The preview must build its authored visuals, but it must not run gameplay
+	# controllers or consume the mapper's pointer/keyboard authoring input.
+	_underlay_scene.process_mode = Node.PROCESS_MODE_DISABLED
 
 
 func _load_level_document() -> void:
@@ -1310,6 +1313,7 @@ func _remove_top_placement(cell: Vector2i) -> void:
 
 func _rebuild_placement_preview() -> void:
 	for child: Node in _placed_root.get_children():
+		_placed_root.remove_child(child)
 		child.queue_free()
 	for placement: Dictionary in _placements:
 		if str(placement.get("type", "palette_tile")) == "underlay_stamp":

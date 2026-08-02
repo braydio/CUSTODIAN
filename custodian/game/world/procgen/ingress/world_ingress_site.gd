@@ -6,6 +6,7 @@ const COMPAT_WORLD_ORIGIN_BRANCH_PATHS := [
 	NodePath("/root/GameRoot/World/ProcGenRuntime"),
 	NodePath("/root/GameRoot/World/ConnectedMaps"),
 ]
+const RETURN_OVERLAP_REBUILD_GRACE_MSEC := 250
 
 @export var ingress_id: StringName
 @export var level_id: StringName = &""
@@ -24,6 +25,7 @@ var _sprite: Sprite2D = null
 var _main_map: Node = null
 var _entry_snapshot: Dictionary = {}
 var _awaiting_body_exit_after_return := false
+var _return_overlap_poll_after_msec := 0
 var _deferred_origin_isolation := false
 var _deferred_presentation_profile: StringName = &"gameplay"
 var _world_objective_presentation_suspended := false
@@ -103,15 +105,23 @@ func _on_body_entered(body: Node) -> void:
 func _on_body_exited(body: Node) -> void:
 	if _awaiting_body_exit_after_return and _is_player_body(body):
 		_awaiting_body_exit_after_return = false
+		_return_overlap_poll_after_msec = 0
 
 
 func _physics_process(_delta: float) -> void:
 	if not _awaiting_body_exit_after_return or not monitoring:
 		return
+	# Monitoring was just toggled to rebuild an overlap that lived inside a
+	# disabled world branch. Physics may report an empty set for a frame before
+	# emitting the rebuilt body_entered signal; clearing here would immediately
+	# re-enter the route and replay the lift descent.
+	if Time.get_ticks_msec() < _return_overlap_poll_after_msec:
+		return
 	for body: Node2D in get_overlapping_bodies():
 		if _is_player_body(body):
 			return
 	_awaiting_body_exit_after_return = false
+	_return_overlap_poll_after_msec = 0
 
 
 func _enter_approach_deferred(body: Node) -> void:
@@ -156,6 +166,11 @@ func _enter_approach(actor: Node) -> void:
 		if definition != null:
 			presentation_profile = definition.call("get_presentation_profile") as StringName
 	_entry_snapshot = capture_world_origin(actor)
+	if has_method("_play_entry_presentation"):
+		await call("_play_entry_presentation", actor)
+		if actor == null or not is_instance_valid(actor):
+			_restore_failed_approach_entry(actor)
+			return
 	var transition_style: StringName = (
 		route_manager.call(
 			"get_route_entry_transition_style",
@@ -330,6 +345,9 @@ func reset_after_level_return() -> void:
 	_deferred_presentation_profile = &"gameplay"
 	_world_objective_presentation_suspended = false
 	_awaiting_body_exit_after_return = true
+	_return_overlap_poll_after_msec = (
+		Time.get_ticks_msec() + RETURN_OVERLAP_REBUILD_GRACE_MSEC
+	)
 	monitorable = true
 	# Rebuild the overlap set after this Area spent the route session inside a
 	# processing-disabled origin branch. Without the toggle, PhysicsServer may

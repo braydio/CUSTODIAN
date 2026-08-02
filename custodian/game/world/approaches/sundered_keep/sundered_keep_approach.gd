@@ -232,6 +232,9 @@ const BOUNDARY_SEGMENTS := [
 @export var show_near_edge_mist := false
 @export var show_foreground_ruined_arch := false
 
+@export_group("Production Performance")
+@export var enable_authored_vista_enemies := false
+
 var underlay_root: Node2D = null
 var parallax_root: SunderedKeepParallaxRig = null
 var vista_root: Node2D = null
@@ -725,18 +728,6 @@ func _build_visuals() -> void:
 		Vector4(0.08, 0.08, 0.08, 0.08)
 	)
 	_apply_soft_rect_feather(
-		_add_fitted_sprite(labyrinth_near, "GrandVistaForegroundParapet", GRAND_VISTA_PARAPET, RECT_GRAND_VISTA_PARAPET, 20, Color(0.90, 0.94, 1.0, 0.0)),
-		Vector4(0.08, 0.08, 0.18, 0.08)
-	)
-	var foreground_parapet := labyrinth_near.get_node_or_null(
-		"GrandVistaForegroundParapet"
-	)
-	if foreground_parapet != null:
-		foreground_parapet.set_meta(
-			"disabled_for_cinematic_focal_axis",
-			true
-		)
-	_apply_soft_rect_feather(
 		_add_fitted_sprite(labyrinth_mist, "GrandVistaHorizonSeamFog", GRAND_VISTA_HORIZON_SEAM_FOG, RECT_GRAND_VISTA_HORIZON_SEAM_FOG, 30, Color(0.78, 0.86, 0.94, 0.56)),
 		Vector4(0.10, 0.10, 0.28, 0.30)
 	)
@@ -769,10 +760,6 @@ func _build_visuals() -> void:
 	_build_authored_visual_overlays("background_detail")
 	_build_authored_visual_overlays("animated_sheet")
 
-	_add_fitted_sprite(occlusion_root, "ApproachEdgeMistWrap", APPROACH_EDGE_MIST_WRAP, _route_rect(RECT_ROUTE_MASTER), 5, Color(1.0, 1.0, 1.0, 0.10))
-	_add_fitted_sprite(occlusion_root, "ApproachFogStrip01", APPROACH_FOG_STRIP_01, _route_rect(RECT_FOG_STRIP_01), 8, Color(1.0, 1.0, 1.0, 0.10))
-	_add_fitted_sprite(occlusion_root, "ApproachFogStrip02", APPROACH_FOG_STRIP_02, _route_rect(RECT_FOG_STRIP_02), 9, Color(1.0, 1.0, 1.0, 0.08))
-	_add_fitted_sprite(occlusion_root, "ApproachFogStrip03", APPROACH_FOG_STRIP_03, _route_rect(RECT_FOG_STRIP_03), 10, Color(1.0, 1.0, 1.0, 0.06))
 	_add_labyrinth_depth_pass()
 	_add_reveal_moonlight_cue()
 	# Production uses a normal route fade. The former full-screen final veil is
@@ -1008,8 +995,8 @@ func _add_labyrinth_light(
 	gradient.offsets = PackedFloat32Array([0.0, 1.0])
 
 	var texture := GradientTexture2D.new()
-	texture.width = 1024
-	texture.height = 1024
+	texture.width = 256
+	texture.height = 256
 	texture.fill = GradientTexture2D.FILL_RADIAL
 	texture.fill_from = Vector2(0.5, 0.5)
 	texture.fill_to = Vector2(1.0, 0.5)
@@ -1424,6 +1411,8 @@ func _build_event_markers() -> void:
 
 
 func _build_authored_vista_enemies() -> void:
+	if not enable_authored_vista_enemies:
+		return
 	if not _preview_option("authored_enemies", true):
 		return
 	var enemies_root := Node2D.new()
@@ -1637,7 +1626,7 @@ func _ensure_vista_controller() -> void:
 	)
 	vista_controller.fog_underlay_path = NodePath("")
 	vista_controller.occlusion_root_path = NodePath("../OcclusionRoot")
-	vista_controller.cliff_occluder_path = NodePath("../OcclusionRoot/ApproachEdgeMistWrap")
+	vista_controller.cliff_occluder_path = NodePath("")
 	vista_controller.wall_shadow_occluder_path = NodePath("")
 	vista_controller.final_gate_shadow_veil_path = NodePath("")
 	vista_controller.distant_keep_path = NodePath(
@@ -1683,10 +1672,10 @@ func _ensure_reveal_director() -> void:
 	reveal_director.entry_marker_path = NodePath("../Markers/EntrySpawn")
 	reveal_director.threshold_marker_path = NodePath("../Markers/RevealStart")
 	reveal_director.vista_controller_path = NodePath("../VistaController")
-	reveal_director.near_fog_path = NodePath("../OcclusionRoot/ApproachFogStrip01")
-	reveal_director.mid_fog_path = NodePath("../OcclusionRoot/ApproachFogStrip02")
-	reveal_director.far_fog_path = NodePath("../OcclusionRoot/ApproachFogStrip03")
-	reveal_director.edge_mist_path = NodePath("../OcclusionRoot/ApproachEdgeMistWrap")
+	reveal_director.near_fog_path = NodePath("")
+	reveal_director.mid_fog_path = NodePath("")
+	reveal_director.far_fog_path = NodePath("")
+	reveal_director.edge_mist_path = NodePath("")
 	reveal_director.reveal_light_path = NodePath("../OcclusionRoot/RevealMoonlightCue")
 	reveal_director.destination_prompt_path = NodePath("../EventRuntimeRoot/LevelExitAffordance")
 	reveal_director.refresh_bindings()

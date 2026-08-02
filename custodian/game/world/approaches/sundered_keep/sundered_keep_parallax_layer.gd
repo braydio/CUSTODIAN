@@ -27,6 +27,8 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	if not is_visible_in_tree():
+		return
 	_elapsed += maxf(delta, 0.0)
 
 	if _camera == null or not is_instance_valid(_camera):

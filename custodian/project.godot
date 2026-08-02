@@ -28,8 +28,6 @@ DevMode="*res://game/systems/debug/dev_mode.gd"
 DevConsole="*uid://ccoijpiv8l45j"
 DebugBus="*res://debug/debug_bus.gd"
 DebugSnapshotCollector="*res://debug/debug_snapshot_collector.gd"
-DebugImguiConsole="*res://debug/debug_imgui_console.gd"
-BetterTerrain="*uid://6gj10atdkou3"
 InventoryManager="*res://game/systems/core/systems/inventory_manager.gd"
 VaultManager="*res://game/systems/core/systems/vault_manager.gd"
 CognitiveState="*res://game/systems/cognitive/cognitive_state_system.gd"
@@ -50,7 +48,6 @@ WorldHistory="*res://game/systems/world/world_history.gd"
 SimulationInterestManager="*res://game/systems/simulation/simulation_interest_manager.gd"
 SectorHeatmap="*res://game/systems/world/sector_heatmap.gd"
 MaterialIntelligence="*res://game/systems/world/material_intelligence.gd"
-ImGui="*uid://csvdmevoaejje"
 
 [custodian]
 
@@ -72,7 +69,7 @@ window/stretch/mode="canvas_items"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/better-terrain/plugin.cfg", "res://addons/dear-imgui-godot/plugin.cfg", "res://addons/debug_console/plugin.cfg", "res://addons/dev-console/plugin.cfg", "res://addons/fightengine/plugin.cfg", "res://addons/godot_ai/plugin.cfg", "res://addons/godotdev_nvim_node_copy/plugin.cfg", "res://addons/indie_game_components/plugin.cfg", "res://addons/shader_library/plugin.cfg")
+enabled=PackedStringArray("res://addons/dev-console/plugin.cfg", "res://addons/fightengine/plugin.cfg", "res://addons/godot_ai/plugin.cfg", "res://addons/godotdev_nvim_node_copy/plugin.cfg", "res://addons/indie_game_components/plugin.cfg", "res://addons/shader_library/plugin.cfg")
 
 [input]
 

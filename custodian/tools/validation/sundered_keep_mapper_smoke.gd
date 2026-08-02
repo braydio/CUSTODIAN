@@ -34,6 +34,7 @@ func _run() -> void:
 	_assert(mapper.has_method("_begin_paint_drag"), "mapper lost drag painting")
 	_assert(mapper.has_method("_undo") and mapper.has_method("_redo"), "mapper lost undo/redo")
 	_assert(mapper.has_method("_apply_collision_drafts"), "mapper cannot author collision rails")
+	_test_immediate_placement_preview(mapper)
 	_assert(mapper.has_method("_move_selected_feature"), "mapper cannot move production features")
 	_assert(
 		mapper.has_method("select_feature_at_tile")
@@ -96,6 +97,11 @@ func _run() -> void:
 
 	var preview := state.get("underlay_scene") as Node
 	_assert(preview != null and preview.name == "ProductionSunderedKeepPreview", "mapper does not preview actual runtime level")
+	_assert(
+		preview != null
+		and preview.process_mode == Node.PROCESS_MODE_DISABLED,
+		"production preview can still consume mapper authoring input"
+	)
 	_assert(preview != null and preview.get_node_or_null("MappedUnderlayBounds/UnderlayBoundaryCollision") != null, "runtime preview did not consume mapper collision")
 	var runtime_state := preview.call("get_sundered_keep_debug_state") as Dictionary
 	_assert(int(runtime_state.get("blocker_bodies", 0)) == 2, "runtime created permanent non-mapper blocker bodies")
@@ -127,6 +133,37 @@ func _has_feature_label(entries: Array, label: String) -> bool:
 		if str((entry_variant as Dictionary).get("label", "")) == label:
 			return true
 	return false
+
+
+func _test_immediate_placement_preview(mapper: Node) -> void:
+	var placed_root := mapper.get_node("World/PlacedGameplayTiles") as Node2D
+	_assert(placed_root.z_as_relative == false, "placement preview is not absolute-depth")
+	mapper.set("_selected_tile_number", 1)
+	_assert(
+		bool(mapper.call("_place_selected_tile", Vector2i(10, 10))),
+		"palette tile could not be placed in mapper memory"
+	)
+	_assert(
+		placed_root.get_child_count() == 1
+		and placed_root.get_child(0) is Sprite2D,
+		"palette placement did not create an immediate visible preview sprite"
+	)
+	mapper.set("_active_underlay_stamp", {
+		"type": "underlay_stamp",
+		"source_rect_cells": [0, 0, 2, 2],
+		"tile_size": 32,
+		"category": "underlay_sample",
+	})
+	_assert(
+		bool(mapper.call("_place_underlay_stamp", Vector2i(14, 10))),
+		"underlay stamp could not be placed in mapper memory"
+	)
+	_assert(
+		placed_root.get_child_count() == 2
+		and placed_root.get_child(1) is Sprite2D,
+		"underlay placement did not create an immediate visible preview sprite"
+	)
+	mapper.call("_clear_placements")
 
 
 func _test_feature_authoring(mapper: Node) -> void:

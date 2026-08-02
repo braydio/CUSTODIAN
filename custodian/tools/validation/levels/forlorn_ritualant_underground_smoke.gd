@@ -38,6 +38,16 @@ func _run() -> void:
 	var exit := level.get_node_or_null("Exits/Exit_ReturnWorld") as LevelExit2D
 	if exit == null or exit.exit_id != &"return_world":
 		errors.append("return_world authored exit is missing")
+	var marker_state := level.call("get_authoring_marker_state") as Dictionary
+	if marker_state.size() != 3:
+		errors.append("underground mapper must expose exactly three authoritative records")
+	for marker_id: String in ["descent_landing", "return_world", "encounter_origin"]:
+		if not marker_state.has(marker_id):
+			errors.append("underground mapper is missing %s" % marker_id)
+	if level.find_child("Return_CaveMouth", true, false) != null:
+		errors.append("duplicate return marker still exists beside authoritative exit")
+	if not FileAccess.file_exists("res://scenes/debug/forlorn_ritualant_underground_mapper.tscn"):
+		errors.append("Forlorn Ritualant room mapper scene is missing")
 
 	var levels: RefCounted = LEVEL_REGISTRY_SCRIPT.new()
 	var levels_loaded := bool(levels.call("load_index"))

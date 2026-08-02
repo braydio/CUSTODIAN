@@ -12,9 +12,8 @@ const MID_HERO := Color(0.86, 0.89, 0.94, 1.0)
 const MID_SECONDARY := Color(0.74, 0.79, 0.86, 0.96)
 const NEAR_COLOR := Color(0.68, 0.74, 0.82, 1.0)
 
-# The source directory is a composition kit. All components stay instantiated
-# for hitch-free review, but the primary hero shot intentionally uses 17
-# overlapping pieces arranged into western, central, eastern, and remote wards.
+# The source directory is a composition kit. Production instantiates only
+# the seventeen components used by the approved hero composition.
 const HERO_VISIBLE_COMPONENTS := {
 	"distant_fortress_outer_wall_01": true,
 	"distant_fortress_central_citadel_01": true,
@@ -83,6 +82,12 @@ func build(
 	}
 	var built := 0
 	for data: Dictionary in PLACEMENTS:
+		var component_id := str(data["id"])
+		# Do not load textures or create nodes for composition-kit pieces that
+		# are never displayed by the approved production shot.
+		if not HERO_VISIBLE_COMPONENTS.has(component_id):
+			built += 1
+			continue
 		var plane := str(data["plane"])
 		var parent := parents.get(plane) as Node2D
 		if parent == null:
@@ -94,7 +99,7 @@ func build(
 			push_error("[FortressVista] Missing texture: %s" % path)
 			continue
 		var sprite := Sprite2D.new()
-		sprite.name = str(data["id"]).to_pascal_case()
+		sprite.name = component_id.to_pascal_case()
 		sprite.texture = texture
 		sprite.centered = false
 		sprite.position = Vector2(
@@ -111,11 +116,9 @@ func build(
 			"modulate",
 			Color.WHITE
 		) as Color
-		sprite.visible = HERO_VISIBLE_COMPONENTS.has(
-			str(data["id"])
-		)
+		sprite.visible = true
 		sprite.set_meta("presentation_only", true)
-		sprite.set_meta("fortress_component", str(data["id"]))
+		sprite.set_meta("fortress_component", component_id)
 		sprite.set_meta(
 			"fortress_precinct",
 			str(data.get("precinct", "support"))
@@ -123,10 +126,6 @@ func build(
 		sprite.set_meta(
 			"labyrinth_route_hint",
 			str(data.get("route_hint", ""))
-		)
-		sprite.set_meta(
-			"disabled_for_primary_composition",
-			not sprite.visible
 		)
 		parent.add_child(sprite)
 		built += 1

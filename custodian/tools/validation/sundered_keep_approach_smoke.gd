@@ -57,6 +57,27 @@ func _run() -> void:
 		"full-screen final navigation veil is still built",
 		errors
 	)
+	for removed_overlay: String in [
+		"ApproachEdgeMistWrap",
+		"ApproachFogStrip01",
+		"ApproachFogStrip02",
+		"ApproachFogStrip03",
+	]:
+		_check(
+			approach.get_node_or_null("OcclusionRoot/" + removed_overlay) == null,
+			"retired full-route overlay is still built: %s" % removed_overlay,
+			errors
+		)
+	for light_name: String in ["LabyrinthMoonRimLight", "LabyrinthGateLight"]:
+		var light := approach.get_node_or_null("OcclusionRoot/" + light_name) as PointLight2D
+		_check(light != null, "missing %s" % light_name, errors)
+		if light != null and light.texture is GradientTexture2D:
+			var radial := light.texture as GradientTexture2D
+			_check(
+				radial.width == 256 and radial.height == 256,
+				"%s radial texture exceeds 256x256" % light_name,
+				errors
+			)
 	var grand_root := approach.get_node_or_null("GrandVistaRoot") as CanvasItem
 	_check(grand_root != null and not grand_root.visible, "duplicate whole-Keep Vista remains visible", errors)
 
@@ -79,22 +100,7 @@ func _run() -> void:
 	var authored_enemies := approach.get_tree().get_nodes_in_group(
 		"authored_vista_enemy"
 	)
-	_check(authored_enemies.size() == 2, "expected one grunt in each vista section", errors)
-	var expected_subregions := {
-		"first_vista_approach": Rect2(-470.0, -180.0, 560.0, 820.0),
-		"near_vista_traverse": Rect2(250.0, -250.0, 520.0, 280.0),
-	}
-	for enemy_variant: Variant in authored_enemies:
-		if not (enemy_variant is Node2D):
-			continue
-		var enemy := enemy_variant as Node2D
-		var subregion_id := str(enemy.get_meta("subregion_id", ""))
-		_check(
-			expected_subregions.has(subregion_id)
-			and (expected_subregions[subregion_id] as Rect2).has_point(enemy.position),
-			"authored vista enemy is outside its declared subregion",
-			errors
-		)
+	_check(authored_enemies.is_empty(), "authored vista enemies should default off", errors)
 
 	game_root.queue_free()
 	approach.queue_free()

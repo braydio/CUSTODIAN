@@ -7,6 +7,10 @@ const ROUTE_REGISTRY_SCRIPT := preload("res://game/world/routes/route_registry.g
 const ROUTE_MANAGER_SCRIPT := preload("res://game/world/routes/route_traversal_manager.gd")
 const PLACEMENT_RESOLVER_SCRIPT := preload("res://game/world/levels/world_ingress_placement_resolver.gd")
 const WORLD_INGRESS_SITE_SCRIPT := preload("res://game/world/procgen/ingress/world_ingress_site.gd")
+const ASH_BELL_LIFT_INGRESS_SITE_SCRIPT := preload(
+	"res://game/world/approaches/ash_bell/"
+	+ "ash_bell_lift_ingress_site.gd"
+)
 
 @export_file("*.json") var registry_index_path := "res://content/levels/levels.json"
 @export var fallback_tile_size := 16.0
@@ -162,7 +166,10 @@ func _definition_precedes(a: Dictionary, b: Dictionary) -> bool:
 func _create_ingress(record: Dictionary, map_instance: Node) -> Area2D:
 	var definition: RefCounted = record.get("definition") as RefCounted
 	var ingress_definition: RefCounted = record.get("ingress") as RefCounted
-	var ingress := WORLD_INGRESS_SITE_SCRIPT.new() as Area2D
+	var ingress_script: Script = WORLD_INGRESS_SITE_SCRIPT
+	if str(record.get("identity")) == "forlorn_ritualant_underground":
+		ingress_script = ASH_BELL_LIFT_INGRESS_SITE_SCRIPT
+	var ingress := ingress_script.new() as Area2D
 	if ingress == null:
 		return null
 	ingress.name = "%sIngressSite" % String(ingress_definition.ingress_id).to_pascal_case()

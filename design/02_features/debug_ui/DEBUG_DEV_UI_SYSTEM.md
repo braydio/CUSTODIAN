@@ -14,8 +14,8 @@ Replace print/debug spam with a deterministic-safe, opt-in dev layer that keeps 
 - **No print spam** from gameplay systems. Debug data is written to a bus, not to console/render.
 - **No debug draw inside systems.** All overlays rendered by a dedicated dev layer.
 - **Opt-in and toggleable.** Debug UI and overlays can be fully disabled.
-- **Dear ImGui is dev tooling only.** Do not use ImGui for the player HUD, terminal UI, inventory, dialogue, pause menus, or any shipped game-facing interface.
-- **Debug mutation is queued.** ImGui panels may write to debug overrides or `DebugBus.queue_command(...)`; gameplay systems apply commands only at explicit safe boundaries.
+- **Godot-native UI only.** The former Dear ImGui dependency is retired; use the F12 `Control`-based debug screen and Observatory surfaces.
+- **Debug mutation is queued.** Debug panels may write to debug overrides or `DebugBus.queue_command(...)`; gameplay systems apply commands only at explicit safe boundaries.
 
 ## Architecture (One-Way Data Flow)
 
@@ -28,7 +28,7 @@ DebugBus (autoload singleton)
     ↓
 DebugSnapshotCollector (post-tick/read-only snapshots)
     ↓
-DebugImguiConsole / DevUI
+Godot Control DevUI
     ↓
 DebugDraw (Node2D overlays)
 ```
@@ -39,8 +39,7 @@ Current runtime assets:
 
 - `custodian/debug/debug_bus.gd` (autoload singleton)
 - `custodian/debug/debug_snapshot_collector.gd` (autoload singleton)
-- `custodian/debug/debug_imgui_console.gd` (autoload singleton)
-- `custodian/addons/dear-imgui-godot/` (third-party Dear ImGui plugin for dev panels)
+- `custodian/game/ui/hud/debug_screen.tscn` (F12 Godot-native diagnostics)
 
 Planned/additional runtime assets:
 
@@ -93,9 +92,11 @@ Rules:
 - Overlays are frame-scoped; cleared once per frame by controller.
 - Debug commands are not applied by UI code. Runtime systems drain and apply them at safe boundaries.
 
-## Dear ImGui Director Console
+## Retired Dear ImGui Director Console
 
-Dear ImGui is the approved front-end for fast CUSTODIAN developer tooling. It is immediate-mode debug UI, not game UI. The first live slice is the **CUSTODIAN Director Console**:
+The former Dear ImGui Director Console, plugin, autoload, and focused smoke were removed. F12 `debug_hud` and F9/F10 Developer Observatory surfaces are the supported developer interfaces. `DebugBus` and `DebugSnapshotCollector` remain available as read-only data infrastructure for Godot-native consumers.
+
+Historical controls were:
 
 - F3 toggles `/root/DebugBus.enabled`.
 - Shift+F3 toggles minimal stats mode.
@@ -111,10 +112,10 @@ Gameplay systems
     -> read-only snapshot methods / groups
     -> DebugSnapshotCollector
     -> DebugBus
-    -> DebugImguiConsole
+    -> retired Director Console
 ```
 
-If a panel needs a dev action such as spawning, seed regeneration, or profile swapping, it must queue a command on `DebugBus` instead of directly mutating core systems from ImGui layout code.
+If a panel needs a dev action such as spawning, seed regeneration, or profile swapping, it must queue a command on `DebugBus` instead of directly mutating core systems from UI code.
 
 ## Input Model
 

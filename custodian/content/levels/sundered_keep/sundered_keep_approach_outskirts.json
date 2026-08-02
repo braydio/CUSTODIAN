@@ -40,8 +40,8 @@
       "label": "FIRST CAMERA ANCHOR",
       "node_name": "FirstRevealCameraAnchor",
       "position": [
-        948.635375976562,
-        -400.81787109375
+        1683.21081542969,
+        1010.84912109375
       ]
     },
     "first_reveal_trigger": {
@@ -49,8 +49,8 @@
       "label": "FIRST CAMERA CONTROL START",
       "node_name": "FirstCameraControlStart",
       "position": [
-        -745.242065429688,
-        790.17822265625
+        -751.959716796875,
+        788.656005859375
       ]
     },
     "level_exit": {
@@ -85,8 +85,8 @@
       "label": "FIRST CAMERA RETURN COMPLETE",
       "node_name": "FirstCameraReturnComplete",
       "position": [
-        -1105.80041503906,
-        -558.499267578125
+        -779.05078125,
+        19.6277465820312
       ]
     },
     "reveal_control_end": {
@@ -130,8 +130,8 @@
       "label": "NEAR VISTA CAMERA ANCHOR",
       "node_name": "SecondVistaCameraAnchor",
       "position": [
-        -1391.9814453125,
-        -1356.25744628906
+        -1419.4951171875,
+        -1174.82885742188
       ]
     },
     "second_reveal_trigger": {
@@ -139,8 +139,8 @@
       "label": "NEAR VISTA REVEAL",
       "node_name": "SecondVistaRevealTrigger",
       "position": [
-        -923.821655273438,
-        -333.819274902344
+        -1059.23876953125,
+        -469.026245117188
       ]
     },
     "second_vista_end": {
@@ -148,8 +148,8 @@
       "label": "SECOND CAMERA RETURN COMPLETE",
       "node_name": "SecondVistaEnd",
       "position": [
-        -1014.58306884766,
-        -447.09521484375
+        -630.4296875,
+        -973.258239746094
       ]
     },
     "second_vista_full": {
@@ -157,8 +157,8 @@
       "label": "SECOND CAMERA APEX",
       "node_name": "SecondVistaFull",
       "position": [
-        -959.7041015625,
-        -390.80908203125
+        -1087.00988769531,
+        -719.309265136719
       ]
     },
     "second_vista_start": {
@@ -166,8 +166,8 @@
       "label": "SECOND CAMERA BLEND START",
       "node_name": "SecondVistaStart",
       "position": [
-        -925.932373046875,
-        -357.037353515625
+        -1085.20556640625,
+        -519.816345214844
       ]
     },
     "spawn": {
@@ -184,8 +184,8 @@
       "label": "TRAVERSE END",
       "node_name": "TraverseEnd",
       "position": [
-        915.0,
-        -305.0
+        -716.192749023438,
+        -931.746765136719
       ]
     }
   },

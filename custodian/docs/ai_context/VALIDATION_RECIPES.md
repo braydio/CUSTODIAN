@@ -540,15 +540,6 @@ rig settings, darker `LightingZone2D`, major-geometry `LightOccluder2D` polygons
 flash pool. The second command checks live `game.tscn` lighting/profile/atmosphere wiring, UI layer separation, runtime
 fog/cosmic propagation, the combined foliage wind/occlusion shader contract, and representative persistent light rigs.
 
-For the Dear ImGui Director Console dev-tooling layer:
-
-```bash
-cd custodian
-godot --headless --script res://tools/validation/director_console_imgui_smoke.gd
-```
-
-This validates the `/root/ImGui` plugin autoload, the F3 debug bus autoload, the read-only snapshot collector autoload, and the Director Console front-end wiring without requiring a rendered editor window.
-
 For TerrainBuilder/procgen connectivity changes:
 
 ```bash

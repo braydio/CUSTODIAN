@@ -540,9 +540,9 @@ func _check_fortress_composition(
 		errors.append("FortressVistaRoot must use the 0.82 hierarchy scale")
 
 	var expected_counts := {
-		"FortressFarParallax": 4,
-		"FortressMidParallax": 18,
-		"FortressNearParallax": 8,
+		"FortressFarParallax": 3,
+		"FortressMidParallax": 13,
+		"FortressNearParallax": 1,
 	}
 	var grand_root := scene.get_node_or_null("GrandVistaRoot") as Node2D
 	var playable_root := scene.get_node_or_null("PlayableRoot") as Node2D
@@ -619,11 +619,11 @@ func _check_fortress_composition(
 			):
 				errors.append("%s does not remain below PlayableRoot" % sprite.name)
 
-	if component_count != 30:
-		errors.append("fortress component total expected 30, got %d" % component_count)
-	if visible_component_count < 14 or visible_component_count > 18:
+	if component_count != 17:
+		errors.append("fortress component total expected 17, got %d" % component_count)
+	if visible_component_count != 17:
 		errors.append(
-			"primary composition should expose 14–18 parts, got %d"
+			"primary composition should expose exactly 17 parts, got %d"
 			% visible_component_count
 		)
 	for precinct in [
@@ -641,17 +641,8 @@ func _check_fortress_composition(
 		"GrandVistaRoot/GrandVistaCinematicRoot/"
 		+ "LabyrinthNearRoot/GrandVistaForegroundParapet"
 	) as CanvasItem
-	if (
-		foreground_parapet == null
-		or foreground_parapet.modulate.a > 0.01
-		or not bool(
-			foreground_parapet.get_meta(
-				"disabled_for_cinematic_focal_axis",
-				false
-			)
-		)
-	):
-		errors.append("central foreground chest/parapet focal mass remains active")
+	if foreground_parapet != null:
+		errors.append("invisible foreground parapet is still instantiated")
 	if _contains_gameplay_authority(fortress_root):
 		errors.append("FortressVistaRoot contains gameplay authority")
 

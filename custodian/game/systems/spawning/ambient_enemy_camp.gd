@@ -7,7 +7,7 @@ class_name AmbientEnemyCamp
 @export var enemy_count_max: int = 4
 @export var spawn_radius_px: float = 96.0
 @export var leash_radius_px: float = 700.0
-@export var activation_range_px: float = 1200.0
+@export var activation_range_px: float = 650.0
 @export var initially_active: bool = true
 @export var respawn_enabled: bool = false
 @export var faction_id: StringName = &"hostile"
@@ -55,6 +55,7 @@ func spawn_camp() -> void:
 				behavior.call("setup_ambient_home", global_position, camp_id, leash_radius_px)
 		_spawned_enemies.append(enemy)
 	_spawned = true
+	set_process(false)
 
 
 func _prune_enemies() -> void:

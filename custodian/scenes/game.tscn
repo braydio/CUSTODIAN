@@ -342,8 +342,8 @@ script = ExtResource("28_contract_loader")
 [node name="AmbientEnemySpawner" type="Node" parent="."]
 script = ExtResource("207_ambient_spawner")
 enemy_scene = ExtResource("18_grunt_enemy")
-max_generated_camps = 2
-max_active_ambient_enemies = 4
+max_generated_camps = 1
+max_active_ambient_enemies = 2
 enemies_per_camp_min = 2
 enemies_per_camp_max = 2
 

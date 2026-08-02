@@ -154,17 +154,17 @@ func play_second_reveal() -> void:
 		if _near_fog != null
 		else 0.0
 	)
-	var anticipation := create_tween() \
-		.set_trans(Tween.TRANS_CUBIC) \
-		.set_ease(Tween.EASE_IN)
 	if _near_fog != null:
+		var anticipation := create_tween() \
+			.set_trans(Tween.TRANS_CUBIC) \
+			.set_ease(Tween.EASE_IN)
 		anticipation.tween_property(
 			_near_fog,
 			"modulate:a",
 			minf(near_fog_alpha + 0.06, 1.0),
 			second_reveal_anticipation_duration
 		)
-	await anticipation.finished
+		await anticipation.finished
 	if _near_fog != null:
 		var settle := create_tween() \
 			.set_trans(Tween.TRANS_CUBIC) \

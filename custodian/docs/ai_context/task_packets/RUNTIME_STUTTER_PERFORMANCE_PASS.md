@@ -14,7 +14,7 @@
 - Owner: gameplay systems / procgen / world presentation / developer tooling
 - Agent/session: Codex `/root`
 - Created: 2026-07-19
-- Last updated: 2026-07-19
+- Last updated: 2026-08-02
 
 ## Work Surface
 
@@ -44,3 +44,9 @@
 - Best starting files: `game/world/procgen/runtime_wall_chunk.gd`, `game/systems/simulation/simulation_interest_manager.gd`, and the Observatory export.
 - Validation run: focused Observatory, foliage, telemetry, drone, procgen collision/authority, atmosphere, ballistics, and startup smokes listed in `VALIDATION_RECIPES.md`.
 - Blockers or open questions: none for this slice; release export stripping remains separately scoped.
+
+## 2026-08-02 Authored Approach Follow-Up
+
+Later Sundered Keep vista work expanded the production workload beyond the original packet. The conservative follow-up now instantiates only the approved seventeen fortress components, skips invisible parallax processing, removes the alpha-zero Grand Vista parapet, reduces two procedural radial lights from `1024x1024` to `256x256`, disables route-master mipmaps, removes the three static route fog strips and route-wide edge-mist wrap, and defaults the two authored vista grunts off.
+
+The ocean underlay and remaining visible Grand Vista treatments are intentionally retained. Lazy construction of the hidden Grand Vista remains a separate architectural pass rather than part of this completed trim.

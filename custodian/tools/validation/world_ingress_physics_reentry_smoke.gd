@@ -33,12 +33,22 @@ func _run() -> void:
 	else:
 		first.call("return_to_main", actor)
 		await process_frame
+	# The monitoring rebuild may briefly expose an empty overlap set. The
+	# return guard must survive that window instead of starting descent again.
+	for _frame in range(20):
+		await physics_frame
+	if loader.call("get_active_level_instance") != null:
+		errors.append("return overlap rebuild immediately re-entered the level")
+	if not bool(ingress.get("_awaiting_body_exit_after_return")):
+		errors.append("return guard cleared before Operator left ingress")
 	actor.global_position = origin_position + Vector2(512.0, 0.0)
 	await physics_frame
 	await physics_frame
+	if bool(ingress.get("_awaiting_body_exit_after_return")):
+		errors.append("return guard did not clear after Operator left ingress")
 	actor.global_position = origin_position
-	await physics_frame
-	await physics_frame
+	for _frame in range(6):
+		await physics_frame
 	var second: Node = loader.call("get_active_level_instance") as Node
 	if second == null:
 		errors.append("physical leave/re-enter did not activate a second level")

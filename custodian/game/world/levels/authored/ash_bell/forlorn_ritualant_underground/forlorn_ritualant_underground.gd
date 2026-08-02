@@ -17,10 +17,16 @@ const AUTHORING_MARKERS := {
 		"position": Vector2(0.0, 224.0),
 	},
 	"return_world": {
-		"node_name": "Return_CaveMouth",
+		"node_name": "Exit_ReturnWorld",
 		"label": "ASCEND TO SURFACE",
 		"kind": "level_exit",
 		"position": Vector2(0.0, 404.0),
+	},
+	"encounter_origin": {
+		"node_name": "ForlornRitualantSite",
+		"label": "RITUALANT ENCOUNTER ORIGIN",
+		"kind": "encounter",
+		"position": Vector2(0.0, 0.0),
 	},
 }
 

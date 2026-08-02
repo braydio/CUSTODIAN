@@ -1,52 +1,922 @@
 {
-  "schema": "custodian.sundered_keep.level_tilemap.v1",
-  "mapper_schema": "custodian.sundered_keep.mapper.v1",
-  "level_id": "sundered_keep_front_gate_large",
-  "display_name": "Sundered Keep - Front Gate",
-  "tile_size": 32,
-  "map_size_tiles": [
-	112,
-	80
-  ],
-  "camera_bounds_tiles": [
-	0,
-	0,
-	112,
-	80
-  ],
-  "underlay": {
-	"texture_path": "res://content/masters/sundered_keep/sundered_keep_main_overlay.png",
-	"rect_tiles": [
-	  0,
-	  0,
-	  112,
-	  80
-	],
-	"source_rect_pixels": [
-	  0,
-	  0,
-	  5048,
-	  3500
-	],
-	"z_index": -120,
-	"modulate": [
-	  1.0,
-	  1.0,
-	  1.0,
-	  1.0
-	],
-	"expand_camera_bounds": false
-  },
   "arrival_overlay": {
-	"id": "front_gate_south_arrival_apron",
-	"texture_path": "res://content/masters/sundered_keep/overlays/sundered_keep_front_gate_south_arrival_apron_01.png",
-	"rect_pixels": [720.0, 1800.0, 2048.0, 1024.0],
-	"z_index": -118,
-	"filtering": "linear",
+	"anchor_marker": "spawn",
 	"collision_authority": false,
-	"anchor_marker": "spawn"
+	"filtering": "linear",
+	"id": "front_gate_south_arrival_apron",
+	"rect_pixels": [
+	  720.0,
+	  1800.0,
+	  2048.0,
+	  1024.0
+	],
+	"texture_path": "res://content/masters/sundered_keep/overlays/sundered_keep_front_gate_south_arrival_apron_01.png",
+	"z_index": -118.0
   },
   "authoring_mask_path": "res://content/levels/sundered_keep/sundered_keep_overlay_authoring.json",
+  "blocker_visual_coverage": [
+	{
+	  "blocker_name": "SubmergedCausewayBlocker",
+	  "intent": "fortress_wall_or_edge",
+	  "rect": [
+		48.0,
+		78.0,
+		17.0,
+		2.0
+	  ],
+	  "visible_coverage": [
+		{
+		  "asset_id": "entrance_causeway_broken_gap_01",
+		  "layer": "TerrainBase",
+		  "rect": [
+			48.0,
+			78.0,
+			17.0,
+			2.0
+		  ]
+		}
+	  ]
+	},
+	{
+	  "blocker_name": "BridgeWestParapetNorthBlocker",
+	  "intent": "fortress_wall_or_edge",
+	  "rect": [
+		51.0,
+		50.0,
+		1.0,
+		12.0
+	  ],
+	  "visible_coverage": [
+		{
+		  "asset_id": "causeway_keep_wall_face_plain_01",
+		  "layer": "WallsLow",
+		  "rect": [
+			51.0,
+			50.0,
+			1.0,
+			12.0
+		  ]
+		},
+		{
+		  "asset_id": "causeway_wall_parapet_edge_e_01",
+		  "layer": "WallsHigh",
+		  "rect": [
+			51.0,
+			51.0,
+			1.0,
+			11.0
+		  ]
+		},
+		{
+		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_wall_straight_s",
+		  "layer": "WallsHigh",
+		  "rect": [
+			38.0,
+			50.0,
+			16.0,
+			1.0
+		  ]
+		}
+	  ]
+	},
+	{
+	  "blocker_name": "BridgeWestParapetSouthBlocker",
+	  "intent": "fortress_wall_or_edge",
+	  "rect": [
+		51.0,
+		66.0,
+		1.0,
+		4.0
+	  ],
+	  "visible_coverage": [
+		{
+		  "asset_id": "causeway_keep_wall_face_plain_01",
+		  "layer": "WallsLow",
+		  "rect": [
+			51.0,
+			66.0,
+			1.0,
+			4.0
+		  ]
+		},
+		{
+		  "asset_id": "causeway_wall_parapet_edge_e_01",
+		  "layer": "WallsHigh",
+		  "rect": [
+			51.0,
+			66.0,
+			1.0,
+			3.0
+		  ]
+		}
+	  ]
+	},
+	{
+	  "blocker_name": "BridgeEastParapetNorthBlocker",
+	  "intent": "fortress_wall_or_edge",
+	  "rect": [
+		61.0,
+		50.0,
+		1.0,
+		12.0
+	  ],
+	  "visible_coverage": [
+		{
+		  "asset_id": "causeway_keep_wall_face_plain_01",
+		  "layer": "WallsLow",
+		  "rect": [
+			61.0,
+			50.0,
+			1.0,
+			12.0
+		  ]
+		},
+		{
+		  "asset_id": "causeway_wall_parapet_edge_e_01",
+		  "layer": "WallsHigh",
+		  "rect": [
+			61.0,
+			51.0,
+			1.0,
+			11.0
+		  ]
+		},
+		{
+		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_wall_straight_s",
+		  "layer": "WallsHigh",
+		  "rect": [
+			58.0,
+			50.0,
+			17.0,
+			1.0
+		  ]
+		}
+	  ]
+	},
+	{
+	  "blocker_name": "BridgeEastParapetSouthBlocker",
+	  "intent": "fortress_wall_or_edge",
+	  "rect": [
+		61.0,
+		66.0,
+		1.0,
+		4.0
+	  ],
+	  "visible_coverage": [
+		{
+		  "asset_id": "causeway_keep_wall_face_plain_01",
+		  "layer": "WallsLow",
+		  "rect": [
+			61.0,
+			66.0,
+			1.0,
+			4.0
+		  ]
+		},
+		{
+		  "asset_id": "causeway_wall_parapet_edge_e_01",
+		  "layer": "WallsHigh",
+		  "rect": [
+			61.0,
+			66.0,
+			1.0,
+			3.0
+		  ]
+		}
+	  ]
+	},
+	{
+	  "blocker_name": "PrefabGatehouseWestCurtainBlocker",
+	  "intent": "fortress_wall_or_edge",
+	  "rect": [
+		38.0,
+		50.0,
+		16.0,
+		1.0
+	  ],
+	  "visible_coverage": [
+		{
+		  "asset_id": "causeway_keep_wall_face_plain_01",
+		  "layer": "WallsLow",
+		  "rect": [
+			51.0,
+			50.0,
+			1.0,
+			12.0
+		  ]
+		},
+		{
+		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_wall_straight_s",
+		  "layer": "WallsHigh",
+		  "rect": [
+			38.0,
+			50.0,
+			16.0,
+			1.0
+		  ]
+		},
+		{
+		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_wall_pier",
+		  "layer": "WallsHigh",
+		  "rect": [
+			49.0,
+			44.0,
+			1.0,
+			8.0
+		  ]
+		}
+	  ]
+	},
+	{
+	  "blocker_name": "PrefabGatehouseEastCurtainBlocker",
+	  "intent": "fortress_wall_or_edge",
+	  "rect": [
+		58.0,
+		50.0,
+		17.0,
+		1.0
+	  ],
+	  "visible_coverage": [
+		{
+		  "asset_id": "causeway_keep_wall_face_plain_01",
+		  "layer": "WallsLow",
+		  "rect": [
+			61.0,
+			50.0,
+			1.0,
+			12.0
+		  ]
+		},
+		{
+		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_wall_straight_s",
+		  "layer": "WallsHigh",
+		  "rect": [
+			58.0,
+			50.0,
+			17.0,
+			1.0
+		  ]
+		},
+		{
+		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_wall_pier",
+		  "layer": "WallsHigh",
+		  "rect": [
+			63.0,
+			44.0,
+			1.0,
+			8.0
+		  ]
+		}
+	  ]
+	},
+	{
+	  "blocker_name": "PrefabGatehouseWestPierBlocker",
+	  "intent": "fortress_wall_or_edge",
+	  "rect": [
+		49.0,
+		44.0,
+		1.0,
+		8.0
+	  ],
+	  "visible_coverage": [
+		{
+		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_wall_straight_s",
+		  "layer": "WallsHigh",
+		  "rect": [
+			38.0,
+			50.0,
+			16.0,
+			1.0
+		  ]
+		},
+		{
+		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_wall_pier",
+		  "layer": "WallsHigh",
+		  "rect": [
+			49.0,
+			44.0,
+			1.0,
+			8.0
+		  ]
+		}
+	  ]
+	},
+	{
+	  "blocker_name": "PrefabGatehouseEastPierBlocker",
+	  "intent": "fortress_wall_or_edge",
+	  "rect": [
+		63.0,
+		44.0,
+		1.0,
+		8.0
+	  ],
+	  "visible_coverage": [
+		{
+		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_wall_straight_s",
+		  "layer": "WallsHigh",
+		  "rect": [
+			58.0,
+			50.0,
+			17.0,
+			1.0
+		  ]
+		},
+		{
+		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_wall_pier",
+		  "layer": "WallsHigh",
+		  "rect": [
+			63.0,
+			44.0,
+			1.0,
+			8.0
+		  ]
+		}
+	  ]
+	},
+	{
+	  "blocker_name": "LabyrinthWestInnerSpineBlocker",
+	  "intent": "fortress_wall_or_edge",
+	  "rect": [
+		45.0,
+		35.0,
+		1.0,
+		7.0
+	  ],
+	  "visible_coverage": [
+		{
+		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_wall_pier",
+		  "layer": "WallsHigh",
+		  "rect": [
+			45.0,
+			35.0,
+			1.0,
+			7.0
+		  ]
+		}
+	  ]
+	},
+	{
+	  "blocker_name": "LabyrinthEastInnerSpineBlocker",
+	  "intent": "fortress_wall_or_edge",
+	  "rect": [
+		67.0,
+		35.0,
+		1.0,
+		7.0
+	  ],
+	  "visible_coverage": [
+		{
+		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_wall_pier",
+		  "layer": "WallsHigh",
+		  "rect": [
+			67.0,
+			35.0,
+			1.0,
+			7.0
+		  ]
+		}
+	  ]
+	},
+	{
+	  "blocker_name": "LabyrinthSouthCrossWallWestBlocker",
+	  "intent": "fortress_wall_or_edge",
+	  "rect": [
+		38.0,
+		43.0,
+		10.0,
+		1.0
+	  ],
+	  "visible_coverage": [
+		{
+		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_wall_straight_s",
+		  "layer": "WallsHigh",
+		  "rect": [
+			38.0,
+			43.0,
+			10.0,
+			1.0
+		  ]
+		}
+	  ]
+	},
+	{
+	  "blocker_name": "LabyrinthSouthCrossWallEastBlocker",
+	  "intent": "fortress_wall_or_edge",
+	  "rect": [
+		65.0,
+		43.0,
+		10.0,
+		1.0
+	  ],
+	  "visible_coverage": [
+		{
+		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_wall_straight_s",
+		  "layer": "WallsHigh",
+		  "rect": [
+			65.0,
+			43.0,
+			10.0,
+			1.0
+		  ]
+		}
+	  ]
+	},
+	{
+	  "blocker_name": "LowerWestOceanBlocker",
+	  "intent": "ocean_boundary",
+	  "rect": [
+		0.0,
+		60.0,
+		39.0,
+		20.0
+	  ],
+	  "visible_coverage": [
+		{
+		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_void_edge",
+		  "layer": "WallsLow",
+		  "rect": [
+			38.0,
+			60.0,
+			1.0,
+			20.0
+		  ]
+		},
+		{
+		  "asset_id": "cliff_edge_s",
+		  "layer": "TerrainEdges",
+		  "rect": [
+			22.0,
+			60.0,
+			14.0,
+			1.0
+		  ]
+		}
+	  ]
+	},
+	{
+	  "blocker_name": "LowerEastOceanBlocker",
+	  "intent": "ocean_boundary",
+	  "rect": [
+		79.0,
+		55.0,
+		33.0,
+		25.0
+	  ],
+	  "visible_coverage": [
+		{
+		  "asset_id": "storm_ocean_backdrop",
+		  "layer": "StormOceanBackdrop",
+		  "rect": [
+			79.0,
+			55.0,
+			33.0,
+			25.0
+		  ]
+		}
+	  ]
+	},
+	{
+	  "blocker_name": "WestOceanBoundary",
+	  "intent": "ocean_boundary",
+	  "rect": [
+		0.0,
+		0.0,
+		18.0,
+		80.0
+	  ],
+	  "visible_coverage": [
+		{
+		  "asset_id": "storm_ocean_backdrop",
+		  "layer": "StormOceanBackdrop",
+		  "rect": [
+			0.0,
+			0.0,
+			18.0,
+			80.0
+		  ]
+		}
+	  ]
+	},
+	{
+	  "blocker_name": "EastOceanBoundary",
+	  "intent": "ocean_boundary",
+	  "rect": [
+		94.0,
+		0.0,
+		18.0,
+		80.0
+	  ],
+	  "visible_coverage": [
+		{
+		  "asset_id": "storm_ocean_backdrop",
+		  "layer": "StormOceanBackdrop",
+		  "rect": [
+			94.0,
+			0.0,
+			18.0,
+			80.0
+		  ]
+		}
+	  ]
+	},
+	{
+	  "blocker_name": "NorthOceanBoundary",
+	  "intent": "ocean_boundary",
+	  "rect": [
+		0.0,
+		0.0,
+		112.0,
+		8.0
+	  ],
+	  "visible_coverage": [
+		{
+		  "asset_id": "storm_ocean_backdrop",
+		  "layer": "StormOceanBackdrop",
+		  "rect": [
+			0.0,
+			0.0,
+			112.0,
+			8.0
+		  ]
+		}
+	  ]
+	},
+	{
+	  "blocker_name": "GreatHallCollapsedOceanBlocker",
+	  "intent": "ocean_boundary",
+	  "rect": [
+		76.0,
+		20.0,
+		6.0,
+		7.0
+	  ],
+	  "visible_coverage": [
+		{
+		  "asset_id": "ocean_foam_edge_w",
+		  "layer": "TerrainEdges",
+		  "rect": [
+			76.0,
+			20.0,
+			1.0,
+			7.0
+		  ]
+		},
+		{
+		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_void_edge",
+		  "layer": "WallsLow",
+		  "rect": [
+			81.0,
+			20.0,
+			1.0,
+			7.0
+		  ]
+		},
+		{
+		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_void_edge",
+		  "layer": "WallsLow",
+		  "rect": [
+			81.0,
+			20.0,
+			1.0,
+			7.0
+		  ]
+		}
+	  ]
+	},
+	{
+	  "blocker_name": "WestServiceYardOuterWallBlocker",
+	  "intent": "fortress_wall_or_edge",
+	  "rect": [
+		28.0,
+		38.0,
+		1.0,
+		10.0
+	  ],
+	  "visible_coverage": [
+		{
+		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_wall_straight_s",
+		  "layer": "WallsHigh",
+		  "rect": [
+			28.0,
+			38.0,
+			1.0,
+			10.0
+		  ]
+		}
+	  ]
+	},
+	{
+	  "blocker_name": "WestServiceYardNorthWallBlocker",
+	  "intent": "fortress_wall_or_edge",
+	  "rect": [
+		29.0,
+		34.0,
+		9.0,
+		1.0
+	  ],
+	  "visible_coverage": [
+		{
+		  "asset_id": "rampart_parapet_e",
+		  "layer": "WallsHigh",
+		  "rect": [
+			34.0,
+			33.0,
+			1.0,
+			9.0
+		  ]
+		},
+		{
+		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_wall_straight_s",
+		  "layer": "WallsHigh",
+		  "rect": [
+			29.0,
+			34.0,
+			9.0,
+			1.0
+		  ]
+		}
+	  ]
+	}
+  ],
+  "blockers": [],
+  "camera_bounds_tiles": [
+	0.0,
+	0.0,
+	112.0,
+	80.0
+  ],
+  "display_name": "Sundered Keep - Front Gate",
+  "elevation_regions": [
+	{
+	  "height": 0.0,
+	  "id": "lower_shore_and_mooring",
+	  "rect": [
+		38.0,
+		55.0,
+		41.0,
+		25.0
+	  ],
+	  "traversal_type": "walkable"
+	},
+	{
+	  "height": 0.0,
+	  "id": "west_service_yard_ground",
+	  "rect": [
+		22.0,
+		35.0,
+		16.0,
+		26.0
+	  ],
+	  "traversal_type": "walkable"
+	},
+	{
+	  "height": 0.0,
+	  "id": "courtyard_ground",
+	  "rect": [
+		35.0,
+		31.0,
+		43.0,
+		24.0
+	  ],
+	  "traversal_type": "walkable"
+	},
+	{
+	  "height": 0.0,
+	  "id": "great_hall_ground",
+	  "rect": [
+		39.0,
+		9.0,
+		36.0,
+		23.0
+	  ],
+	  "traversal_type": "walkable"
+	},
+	{
+	  "height": 1.0,
+	  "id": "raised_gatehouse_bridge",
+	  "rect": [
+		52.0,
+		49.0,
+		9.0,
+		21.0
+	  ],
+	  "traversal_type": "walkable"
+	},
+	{
+	  "height": 1.0,
+	  "id": "gatehouse_core_deck",
+	  "rect": [
+		50.0,
+		44.0,
+		13.0,
+		8.0
+	  ],
+	  "traversal_type": "walkable"
+	},
+	{
+	  "height": 1.0,
+	  "id": "east_rampart_high_ground",
+	  "rect": [
+		78.0,
+		35.0,
+		10.0,
+		19.0
+	  ],
+	  "traversal_type": "walkable"
+	},
+	{
+	  "direction": "south",
+	  "height": 1.0,
+	  "id": "south_bridge_ramp",
+	  "rect": [
+		54.0,
+		69.0,
+		5.0,
+		1.0
+	  ],
+	  "traversal_type": "ramp"
+	},
+	{
+	  "direction": "west",
+	  "height": 1.0,
+	  "id": "west_bridge_side_stairs",
+	  "rect": [
+		52.0,
+		63.0,
+		1.0,
+		3.0
+	  ],
+	  "traversal_type": "stair"
+	},
+	{
+	  "direction": "east",
+	  "height": 1.0,
+	  "id": "east_bridge_side_stairs",
+	  "rect": [
+		60.0,
+		63.0,
+		1.0,
+		3.0
+	  ],
+	  "traversal_type": "stair"
+	},
+	{
+	  "direction": "north",
+	  "height": 1.0,
+	  "id": "gatehouse_courtyard_stairs",
+	  "rect": [
+		54.0,
+		47.0,
+		5.0,
+		2.0
+	  ],
+	  "traversal_type": "stair"
+	},
+	{
+	  "direction": "east",
+	  "height": 1.0,
+	  "id": "east_rampart_stairs",
+	  "rect": [
+		76.0,
+		42.0,
+		2.0,
+		4.0
+	  ],
+	  "traversal_type": "stair"
+	},
+	{
+	  "height": 1.0,
+	  "id": "west_bridge_parapet_north",
+	  "rect": [
+		51.0,
+		50.0,
+		1.0,
+		12.0
+	  ],
+	  "traversal_type": "blocked"
+	},
+	{
+	  "height": 1.0,
+	  "id": "west_bridge_parapet_south",
+	  "rect": [
+		51.0,
+		66.0,
+		1.0,
+		4.0
+	  ],
+	  "traversal_type": "blocked"
+	},
+	{
+	  "height": 1.0,
+	  "id": "east_bridge_parapet_north",
+	  "rect": [
+		61.0,
+		50.0,
+		1.0,
+		12.0
+	  ],
+	  "traversal_type": "blocked"
+	},
+	{
+	  "height": 1.0,
+	  "id": "east_bridge_parapet_south",
+	  "rect": [
+		61.0,
+		66.0,
+		1.0,
+		4.0
+	  ],
+	  "traversal_type": "blocked"
+	}
+  ],
+  "interactables": [
+	{
+	  "distance": 76.0,
+	  "kind": "sundered_gate_key",
+	  "name": "SunderedGateKeyPickup",
+	  "prompt": "SUNDERED GATE KEY",
+	  "tile": [
+		73.0,
+		56.0
+	  ]
+	},
+	{
+	  "distance": 96.0,
+	  "kind": "main_gate",
+	  "name": "MainGateInteraction",
+	  "prompt": "OPEN MAIN GATE",
+	  "tile": [
+		56.0,
+		51.0
+	  ]
+	},
+	{
+	  "distance": 88.0,
+	  "kind": "great_hall_door",
+	  "name": "GreatHallDoorInteraction",
+	  "prompt": "OPEN GREAT HALL DOOR",
+	  "tile": [
+		56.0,
+		31.0
+	  ]
+	},
+	{
+	  "distance": 76.0,
+	  "kind": "sidearm_locker",
+	  "name": "SidearmLockerInteraction",
+	  "prompt": "OPEN FIELD-RETENTION LOCKER",
+	  "tile": [
+		73.0,
+		27.0
+	  ]
+	},
+	{
+	  "distance": 72.0,
+	  "kind": "vanguard_seal_cache",
+	  "name": "VanguardSealCache",
+	  "prompt": "OPEN CUSTODIAN COMMAND CACHE",
+	  "tile": [
+		62.0,
+		46.0
+	  ]
+	}
+  ],
+  "interior_occlusion_regions": [
+	{
+	  "cutaway_alpha": 0.08,
+	  "exterior_alpha": 0.88,
+	  "id": "great_hall",
+	  "interior_rect": [
+		39.0,
+		12.0,
+		36.0,
+		17.0
+	  ],
+	  "roof_rect": [
+		38.0,
+		9.0,
+		38.0,
+		21.0
+	  ]
+	},
+	{
+	  "cutaway_alpha": 0.06,
+	  "exterior_alpha": 0.86,
+	  "id": "great_hall_right_turn_hallway",
+	  "interior_rect": [
+		56.0,
+		26.0,
+		18.0,
+		3.0
+	  ],
+	  "roof_rect": [
+		56.0,
+		24.0,
+		20.0,
+		6.0
+	  ]
+	}
+  ],
   "layers": [
 	"Underlay",
 	"TerrainBase",
@@ -64,972 +934,12 @@
 	"RoofOccluders",
     "Collision"
   ],
-  "elevation_regions": [
-	{
-	  "id": "lower_shore_and_mooring",
-	  "rect": [
-		38,
-		55,
-		41,
-		25
-	  ],
-	  "height": 0,
-	  "traversal_type": "walkable"
-	},
-	{
-	  "id": "west_service_yard_ground",
-	  "rect": [
-		22,
-		35,
-		16,
-		26
-	  ],
-	  "height": 0,
-	  "traversal_type": "walkable"
-	},
-	{
-	  "id": "courtyard_ground",
-	  "rect": [
-		35,
-		31,
-		43,
-		24
-	  ],
-	  "height": 0,
-	  "traversal_type": "walkable"
-	},
-	{
-	  "id": "great_hall_ground",
-	  "rect": [
-		39,
-		9,
-		36,
-		23
-	  ],
-	  "height": 0,
-	  "traversal_type": "walkable"
-	},
-	{
-	  "id": "raised_gatehouse_bridge",
-	  "rect": [
-		52,
-		49,
-		9,
-		21
-	  ],
-	  "height": 1,
-	  "traversal_type": "walkable"
-	},
-	{
-	  "id": "gatehouse_core_deck",
-	  "rect": [
-		50,
-		44,
-		13,
-		8
-	  ],
-	  "height": 1,
-	  "traversal_type": "walkable"
-	},
-	{
-	  "id": "east_rampart_high_ground",
-	  "rect": [
-		78,
-		35,
-		10,
-		19
-	  ],
-	  "height": 1,
-	  "traversal_type": "walkable"
-	},
-	{
-	  "id": "south_bridge_ramp",
-	  "rect": [
-		54,
-		69,
-		5,
-		1
-	  ],
-	  "height": 1,
-	  "traversal_type": "ramp",
-	  "direction": "south"
-	},
-	{
-	  "id": "west_bridge_side_stairs",
-	  "rect": [
-		52,
-		63,
-		1,
-		3
-	  ],
-	  "height": 1,
-	  "traversal_type": "stair",
-	  "direction": "west"
-	},
-	{
-	  "id": "east_bridge_side_stairs",
-	  "rect": [
-		60,
-		63,
-		1,
-		3
-	  ],
-	  "height": 1,
-	  "traversal_type": "stair",
-	  "direction": "east"
-	},
-	{
-	  "id": "gatehouse_courtyard_stairs",
-	  "rect": [
-		54,
-		47,
-		5,
-		2
-	  ],
-	  "height": 1,
-	  "traversal_type": "stair",
-	  "direction": "north"
-	},
-	{
-	  "id": "east_rampart_stairs",
-	  "rect": [
-		76,
-		42,
-		2,
-		4
-	  ],
-	  "height": 1,
-	  "traversal_type": "stair",
-	  "direction": "east"
-	},
-	{
-	  "id": "west_bridge_parapet_north",
-	  "rect": [
-		51,
-		50,
-		1,
-		12
-	  ],
-	  "height": 1,
-	  "traversal_type": "blocked"
-	},
-	{
-	  "id": "west_bridge_parapet_south",
-	  "rect": [
-		51,
-		66,
-		1,
-		4
-	  ],
-	  "height": 1,
-	  "traversal_type": "blocked"
-	},
-	{
-	  "id": "east_bridge_parapet_north",
-	  "rect": [
-		61,
-		50,
-		1,
-		12
-	  ],
-	  "height": 1,
-	  "traversal_type": "blocked"
-	},
-	{
-	  "id": "east_bridge_parapet_south",
-	  "rect": [
-		61,
-		66,
-		1,
-		4
-	  ],
-	  "height": 1,
-	  "traversal_type": "blocked"
-	}
-  ],
-  "underpass_regions": [
-	{
-	  "id": "west_shadowed_underbridge_walk",
-	  "rect": [
-		49,
-		62,
-		3,
-		8
-	  ],
-	  "shadow_alpha": 0.42
-	},
-	{
-	  "id": "east_shadowed_underbridge_walk",
-	  "rect": [
-		61,
-		62,
-		3,
-		8
-	  ],
-	  "shadow_alpha": 0.42
-	}
-  ],
-  "shore_walk_regions": [
-	{
-	  "id": "lower_storm_shore_approach",
-	  "rect": [
-		48,
-		70,
-		17,
-		8
-	  ]
-	},
-	{
-	  "id": "return_mooring_lower_shore",
-	  "rect": [
-		39,
-		57,
-		8,
-		7
-	  ]
-	},
-	{
-	  "id": "key_winch_lower_shore",
-	  "rect": [
-		69,
-		55,
-		9,
-		8
-	  ]
-	}
-  ],
-  "interior_occlusion_regions": [
-	{
-	  "id": "great_hall",
-	  "interior_rect": [
-		39,
-		12,
-		36,
-		17
-	  ],
-	  "roof_rect": [
-		38,
-		9,
-		38,
-		21
-	  ],
-	  "exterior_alpha": 0.88,
-	  "cutaway_alpha": 0.08
-	},
-	{
-	  "id": "great_hall_right_turn_hallway",
-	  "interior_rect": [
-		56,
-		26,
-		18,
-		3
-	  ],
-	  "roof_rect": [
-		56,
-		24,
-		20,
-		6
-	  ],
-	  "exterior_alpha": 0.86,
-	  "cutaway_alpha": 0.06
-	}
-  ],
-  "ops": [
-	{
-	  "type": "stamp_module",
-	  "module_id": "return_mooring_3x3_01",
-	  "origin": [
-		39,
-		56
-	  ]
-	},
-	{
-	  "type": "blocker_rect",
-	  "name": "SubmergedCausewayBlocker",
-	  "rect": [
-		48,
-		78,
-		17,
-		2
-	  ]
-	},
-	{
-	  "type": "blocker_rect",
-	  "name": "BridgeWestParapetNorthBlocker",
-	  "rect": [
-		51,
-		50,
-		1,
-		12
-	  ]
-	},
-	{
-	  "type": "blocker_rect",
-	  "name": "BridgeWestParapetSouthBlocker",
-	  "rect": [
-		51,
-		66,
-		1,
-		4
-	  ]
-	},
-	{
-	  "type": "blocker_rect",
-	  "name": "BridgeEastParapetNorthBlocker",
-	  "rect": [
-		61,
-		50,
-		1,
-		12
-	  ]
-	},
-	{
-	  "type": "blocker_rect",
-	  "name": "BridgeEastParapetSouthBlocker",
-	  "rect": [
-		61,
-		66,
-		1,
-		4
-	  ]
-	},
-	{
-	  "type": "blocker_rect",
-	  "name": "PrefabGatehouseWestCurtainBlocker",
-	  "rect": [
-		38,
-		50,
-		16,
-		1
-	  ]
-	},
-	{
-	  "type": "blocker_rect",
-	  "name": "PrefabGatehouseEastCurtainBlocker",
-	  "rect": [
-		58,
-		50,
-		17,
-		1
-	  ]
-	},
-	{
-	  "type": "blocker_rect",
-	  "name": "PrefabGatehouseWestPierBlocker",
-	  "rect": [
-		49,
-		44,
-		1,
-		8
-	  ]
-	},
-	{
-	  "type": "blocker_rect",
-	  "name": "PrefabGatehouseEastPierBlocker",
-	  "rect": [
-		63,
-		44,
-		1,
-		8
-	  ]
-	},
-	{
-	  "type": "blocker_rect",
-	  "name": "LabyrinthWestInnerSpineBlocker",
-	  "rect": [
-		45,
-		35,
-		1,
-		7
-	  ]
-	},
-	{
-	  "type": "blocker_rect",
-	  "name": "LabyrinthEastInnerSpineBlocker",
-	  "rect": [
-		67,
-		35,
-		1,
-		7
-	  ]
-	},
-	{
-	  "type": "blocker_rect",
-	  "name": "LabyrinthSouthCrossWallWestBlocker",
-	  "rect": [
-		38,
-		43,
-		10,
-		1
-	  ]
-	},
-	{
-	  "type": "blocker_rect",
-	  "name": "LabyrinthSouthCrossWallEastBlocker",
-	  "rect": [
-		65,
-		43,
-		10,
-		1
-	  ]
-	},
-	{
-	  "type": "blocker_rect",
-	  "name": "LowerWestOceanBlocker",
-	  "rect": [
-		0,
-		60,
-		39,
-		20
-	  ]
-	},
-	{
-	  "type": "blocker_rect",
-	  "name": "LowerEastOceanBlocker",
-	  "rect": [
-		79,
-		55,
-		33,
-		25
-	  ]
-	},
-	{
-	  "type": "blocker_rect",
-	  "name": "WestOceanBoundary",
-	  "rect": [
-		0,
-		0,
-		18,
-		80
-	  ]
-	},
-	{
-	  "type": "blocker_rect",
-	  "name": "EastOceanBoundary",
-	  "rect": [
-		94,
-		0,
-		18,
-		80
-	  ]
-	},
-	{
-	  "type": "blocker_rect",
-	  "name": "NorthOceanBoundary",
-	  "rect": [
-		0,
-		0,
-		112,
-		8
-	  ]
-	},
-	{
-	  "type": "blocker_rect",
-	  "name": "GreatHallCollapsedOceanBlocker",
-	  "rect": [
-		76,
-		20,
-		6,
-		7
-	  ]
-	},
-	{
-	  "type": "blocker_rect",
-	  "generated_by": "cheatsheet_relayout_v1",
-	  "name": "WestServiceYardOuterWallBlocker",
-	  "rect": [
-		28,
-		38,
-		1,
-		10
-	  ]
-	},
-	{
-	  "type": "blocker_rect",
-	  "generated_by": "cheatsheet_relayout_v1",
-	  "name": "WestServiceYardNorthWallBlocker",
-	  "rect": [
-		29,
-		34,
-		9,
-		1
-	  ]
-	},
-	{
-	  "type": "blocker_rect",
-	  "name": "PrefabGatehouseGateBlocker",
-	  "role": "main_gate",
-	  "rect": [
-		55,
-		50,
-		6,
-		3
-	  ]
-	},
-	{
-	  "type": "blocker_rect",
-	  "name": "GreatHallDoorBlocker",
-	  "role": "great_hall_door",
-	  "rect": [
-		55,
-		30,
-		2,
-		1
-	  ]
-	}
-  ],
-  "mapper_placements": [],
-  "siege": {
-	"schema": "custodian.sundered_keep.gatehouse_siege.v1",
-	"pressure_interval_seconds": 5.0,
-	"pressure_damage_base": 9.0,
-	"pressure_damage_per_wave": 2.0,
-	"repair_amount": 35.0,
-	"objectives": [
-	  {
-		"id": "gatehouse_core",
-		"label": "Gatehouse Core",
-		"group": "command_post",
-		"tile_offset_from": "main_gate",
-		"tile_offset": [
-		  2,
-		  4
-		],
-		"hp": 180.0,
-		"repair_kind": "repair_gatehouse",
-		"repair_prompt": "REPAIR GATEHOUSE CORE",
-		"repair_tile_offset": [
-		  2,
-		  7
-		],
-		"repair_distance": 96.0
-	  },
-	  {
-		"id": "return_mooring",
-		"label": "Return Mooring",
-		"group": "power_node",
-		"tile_offset_from": "return_mooring_origin",
-		"tile_offset": [
-		  2,
-		  2
-		],
-		"hp": 140.0,
-		"repair_kind": "repair_mooring",
-		"repair_prompt": "REPAIR RETURN MOORING",
-		"repair_tile_offset": [
-		  2,
-		  4
-		],
-		"repair_distance": 82.0
-	  }
-	],
-	"spawns": [
-	  {
-		"lane": "sundered_keep",
-		"tile_offset_from": "main_gate",
-		"tile_offset": [
-		  -7,
-		  -1
-		]
-	  },
-	  {
-		"lane": "sundered_keep",
-		"tile_offset_from": "main_gate",
-		"tile_offset": [
-		  8,
-		  -1
-		]
-	  },
-	  {
-		"lane": "sundered_keep",
-		"tile_offset_from": "great_hall_door",
-		"tile_offset": [
-		  0,
-		  6
-		]
-	  }
-	],
-	"waves": [
-	  {
-		"composition": [
-		  "drone",
-		  "drone",
-          "grunt"
-		]
-	  },
-	  {
-		"composition": [
-		  "grunt",
-		  "drone",
-		  "fast",
-          "drone"
-		]
-	  },
-	  {
-		"composition": [
-		  "grunt",
-		  "grunt",
-          "heavy"
-		]
-	  }
-	],
-	"extra_wave_pressure_ticks": [
-	  2,
-	  5
-	],
-	"defense_turret": {
-	  "tile_offset_from": "main_gate",
-	  "tile_offset": [
-		-5,
-		4
-	  ],
-	  "range": 360.0,
-	  "damage": 9.0,
-	  "power_required": false
-	}
-  },
-  "interactables": [
-	{
-	  "name": "SunderedGateKeyPickup",
-	  "kind": "sundered_gate_key",
-	  "prompt": "SUNDERED GATE KEY",
-	  "tile": [
-		73,
-		56
-	  ],
-	  "distance": 76.0
-	},
-	{
-	  "name": "MainGateInteraction",
-	  "kind": "main_gate",
-	  "prompt": "OPEN MAIN GATE",
-	  "tile": [
-		56,
-		51
-	  ],
-	  "distance": 96.0
-	},
-	{
-	  "name": "GreatHallDoorInteraction",
-	  "kind": "great_hall_door",
-	  "prompt": "OPEN GREAT HALL DOOR",
-	  "tile": [
-		56,
-		31
-	  ],
-	  "distance": 88.0
-	},
-	{
-	  "name": "SidearmLockerInteraction",
-	  "kind": "sidearm_locker",
-	  "prompt": "OPEN FIELD-RETENTION LOCKER",
-	  "tile": [
-		73,
-		27
-	  ],
-	  "distance": 76.0
-	},
-	{
-	  "name": "VanguardSealCache",
-	  "kind": "vanguard_seal_cache",
-	  "prompt": "OPEN CUSTODIAN COMMAND CACHE",
-	  "tile": [
-		62,
-		46
-	  ],
-	  "distance": 72.0
-	}
-  ],
-  "blockers": [],
-  "markers": [
-	{
-	  "id": "spawn",
-	  "tile": [
-		54,
-		76
-	  ]
-	},
-	{
-	  "id": "return_gate",
-	  "tile": [
-		42,
-		58
-	  ]
-	},
-	{
-	  "id": "return_mooring",
-	  "tile": [
-		41,
-		58
-	  ]
-	},
-	{
-	  "id": "return_mooring_origin",
-	  "tile": [
-		39,
-		56
-	  ]
-	},
-	{
-	  "id": "key_winch",
-	  "tile": [
-		73,
-		56
-	  ]
-	},
-	{
-	  "id": "main_gate",
-	  "tile": [
-		54,
-		50
-	  ]
-	},
-	{
-	  "id": "main_gate_prefab",
-	  "tile": [
-		56,
-		58
-	  ]
-	},
-	{
-	  "id": "courtyard",
-	  "tile": [
-		56,
-		39
-	  ]
-	},
-	{
-	  "id": "great_hall_door",
-	  "tile": [
-		55,
-		30
-	  ]
-	},
-	{
-	  "id": "great_hall",
-	  "tile": [
-		56,
-		20
-	  ]
-	},
-	{
-	  "id": "upper_stair",
-	  "tile": [
-		79,
-		31
-	  ]
-	},
-	{
-	  "id": "lower_stair",
-	  "tile": [
-		30,
-		45
-	  ]
-	},
-	{
-	  "id": "hatch",
-	  "tile": [
-		42,
-		40
-	  ]
-	},
-	{
-	  "id": "great_hall_marine_spawn",
-	  "tile": [
-		71,
-		27
-	  ]
-	},
-	{
-	  "id": "routekeeper_trace",
-	  "tile": [
-		37,
-		53
-	  ]
-	},
-	{
-	  "id": "routekeeper_hint",
-	  "tile": [
-		25,
-		39
-	  ]
-	},
-	{
-	  "id": "sidearm_locker",
-	  "tile": [
-		73,
-		27
-	  ]
-	},
-	{
-	  "id": "vanguard_seal_cache",
-	  "tile": [
-		62,
-		46
-	  ]
-	},
-	{
-	  "id": "west_service_path",
-	  "tile": [
-		30,
-		50
-	  ]
-	},
-	{
-	  "id": "east_rampart",
-	  "tile": [
-		82,
-		48
-	  ]
-	}
+  "layout_generator": "res://scenes/debug/sundered_keep_mapper.tscn",
+  "layout_limitations": [
+	"V1 does not support true same-coordinate stacked traversal.",
+    "Under-bridge traversal uses adjacent height-0 shore lanes plus visual shadow/occlusion overlays."
   ],
   "layout_revision": "cheatsheet_relayout_v1",
-  "layout_generator": "res://scenes/debug/sundered_keep_mapper.tscn",
-  "layout_zones": [
-	{
-	  "id": "approach_bridge_h1",
-	  "rect": [
-		52,
-		49,
-		9,
-		21
-	  ],
-	  "height": 1,
-	  "role": "main_route"
-	},
-	{
-	  "id": "lower_shore_h0",
-	  "rect": [
-		38,
-		55,
-		41,
-		25
-	  ],
-	  "height": 0,
-	  "role": "lower_route"
-	},
-	{
-	  "id": "west_underbridge_lane_h0",
-	  "rect": [
-		49,
-		62,
-		3,
-		8
-	  ],
-	  "height": 0,
-	  "role": "underpass"
-	},
-	{
-	  "id": "east_underbridge_lane_h0",
-	  "rect": [
-		61,
-		62,
-		3,
-		8
-	  ],
-	  "height": 0,
-	  "role": "underpass"
-	},
-	{
-	  "id": "return_mooring",
-	  "rect": [
-		39,
-		56,
-		8,
-		8
-	  ],
-	  "height": 0,
-	  "role": "return_travel"
-	},
-	{
-	  "id": "gatehouse_core",
-	  "rect": [
-		38,
-		44,
-		37,
-		15
-	  ],
-	  "height": 1,
-	  "role": "gate_progression"
-	},
-	{
-	  "id": "main_gate_threshold",
-	  "rect": [
-		54,
-		49,
-		4,
-		3
-	  ],
-	  "height": 1,
-	  "role": "locked_threshold"
-	},
-	{
-	  "id": "courtyard",
-	  "rect": [
-		35,
-		32,
-		43,
-		15
-	  ],
-	  "height": 0,
-	  "role": "combat_arena"
-	},
-	{
-	  "id": "west_service_yard",
-	  "rect": [
-		22,
-		35,
-		16,
-		26
-	  ],
-	  "height": 0,
-	  "role": "utility_route"
-	},
-	{
-	  "id": "east_rampart",
-	  "rect": [
-		73,
-		35,
-		15,
-		19
-	  ],
-	  "height": 1,
-	  "role": "high_ground_route"
-	},
-	{
-	  "id": "great_hall_exterior_roof",
-	  "rect": [
-		38,
-		9,
-		38,
-		21
-	  ],
-	  "height": 0,
-	  "role": "roof_occluder"
-	},
-	{
-	  "id": "great_hall_interior",
-	  "rect": [
-		39,
-		12,
-		36,
-		17
-	  ],
-	  "height": 0,
-	  "role": "interior"
-	},
-	{
-	  "id": "great_hall_right_turn_hallway",
-	  "rect": [
-		56,
-		26,
-		18,
-		3
-	  ],
-	  "height": 0,
-	  "role": "marine_ambush_route"
-	}
-  ],
   "layout_routes": [
 	{
 	  "id": "main_route",
@@ -1066,632 +976,758 @@
 	  ]
 	}
   ],
-  "layout_limitations": [
-	"V1 does not support true same-coordinate stacked traversal.",
-    "Under-bridge traversal uses adjacent height-0 shore lanes plus visual shadow/occlusion overlays."
+  "layout_zones": [
+	{
+	  "height": 1.0,
+	  "id": "approach_bridge_h1",
+	  "rect": [
+		52.0,
+		49.0,
+		9.0,
+		21.0
+	  ],
+	  "role": "main_route"
+	},
+	{
+	  "height": 0.0,
+	  "id": "lower_shore_h0",
+	  "rect": [
+		38.0,
+		55.0,
+		41.0,
+		25.0
+	  ],
+	  "role": "lower_route"
+	},
+	{
+	  "height": 0.0,
+	  "id": "west_underbridge_lane_h0",
+	  "rect": [
+		49.0,
+		62.0,
+		3.0,
+		8.0
+	  ],
+	  "role": "underpass"
+	},
+	{
+	  "height": 0.0,
+	  "id": "east_underbridge_lane_h0",
+	  "rect": [
+		61.0,
+		62.0,
+		3.0,
+		8.0
+	  ],
+	  "role": "underpass"
+	},
+	{
+	  "height": 0.0,
+	  "id": "return_mooring",
+	  "rect": [
+		39.0,
+		56.0,
+		8.0,
+		8.0
+	  ],
+	  "role": "return_travel"
+	},
+	{
+	  "height": 1.0,
+	  "id": "gatehouse_core",
+	  "rect": [
+		38.0,
+		44.0,
+		37.0,
+		15.0
+	  ],
+	  "role": "gate_progression"
+	},
+	{
+	  "height": 1.0,
+	  "id": "main_gate_threshold",
+	  "rect": [
+		54.0,
+		49.0,
+		4.0,
+		3.0
+	  ],
+	  "role": "locked_threshold"
+	},
+	{
+	  "height": 0.0,
+	  "id": "courtyard",
+	  "rect": [
+		35.0,
+		32.0,
+		43.0,
+		15.0
+	  ],
+	  "role": "combat_arena"
+	},
+	{
+	  "height": 0.0,
+	  "id": "west_service_yard",
+	  "rect": [
+		22.0,
+		35.0,
+		16.0,
+		26.0
+	  ],
+	  "role": "utility_route"
+	},
+	{
+	  "height": 1.0,
+	  "id": "east_rampart",
+	  "rect": [
+		73.0,
+		35.0,
+		15.0,
+		19.0
+	  ],
+	  "role": "high_ground_route"
+	},
+	{
+	  "height": 0.0,
+	  "id": "great_hall_exterior_roof",
+	  "rect": [
+		38.0,
+		9.0,
+		38.0,
+		21.0
+	  ],
+	  "role": "roof_occluder"
+	},
+	{
+	  "height": 0.0,
+	  "id": "great_hall_interior",
+	  "rect": [
+		39.0,
+		12.0,
+		36.0,
+		17.0
+	  ],
+	  "role": "interior"
+	},
+	{
+	  "height": 0.0,
+	  "id": "great_hall_right_turn_hallway",
+	  "rect": [
+		56.0,
+		26.0,
+		18.0,
+		3.0
+	  ],
+	  "role": "marine_ambush_route"
+	}
   ],
-  "blocker_visual_coverage": [
+  "level_id": "sundered_keep_front_gate_large",
+  "map_size_tiles": [
+	112.0,
+	80.0
+  ],
+  "mapper_placements": [
 	{
-	  "blocker_name": "SubmergedCausewayBlocker",
-	  "rect": [
-		48,
-		78,
-		17,
-		2
+	  "category": "underlay_sample",
+	  "cell": [
+		59,
+		37
 	  ],
-	  "visible_coverage": [
-		{
-		  "layer": "TerrainBase",
-		  "asset_id": "entrance_causeway_broken_gap_01",
-		  "rect": [
-			48,
-			78,
-			17,
-			2
-		  ]
-		}
-	  ],
-	  "intent": "fortress_wall_or_edge"
-	},
-	{
-	  "blocker_name": "BridgeWestParapetNorthBlocker",
-	  "rect": [
-		51,
-		50,
+	  "source_rect_cells": [
+		62,
+		36,
 		1,
-		12
-	  ],
-	  "visible_coverage": [
-		{
-		  "rect": [
-			51,
-			50,
-			1,
-			12
-		  ],
-		  "asset_id": "causeway_keep_wall_face_plain_01",
-		  "layer": "WallsLow"
-		},
-		{
-		  "rect": [
-			51,
-			51,
-			1,
-			11
-		  ],
-		  "asset_id": "causeway_wall_parapet_edge_e_01",
-		  "layer": "WallsHigh"
-		},
-		{
-		  "rect": [
-			38,
-			50,
-			16,
-			1
-		  ],
-		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_wall_straight_s",
-		  "layer": "WallsHigh"
-		}
-	  ],
-	  "intent": "fortress_wall_or_edge"
-	},
-	{
-	  "blocker_name": "BridgeWestParapetSouthBlocker",
-	  "rect": [
-		51,
-		66,
-		1,
-		4
-	  ],
-	  "visible_coverage": [
-		{
-		  "rect": [
-			51,
-			66,
-			1,
-			4
-		  ],
-		  "asset_id": "causeway_keep_wall_face_plain_01",
-		  "layer": "WallsLow"
-		},
-		{
-		  "rect": [
-			51,
-			66,
-			1,
-			3
-		  ],
-		  "asset_id": "causeway_wall_parapet_edge_e_01",
-		  "layer": "WallsHigh"
-		}
-	  ],
-	  "intent": "fortress_wall_or_edge"
-	},
-	{
-	  "blocker_name": "BridgeEastParapetNorthBlocker",
-	  "rect": [
-		61,
-		50,
-		1,
-		12
-	  ],
-	  "visible_coverage": [
-		{
-		  "rect": [
-			61,
-			50,
-			1,
-			12
-		  ],
-		  "asset_id": "causeway_keep_wall_face_plain_01",
-		  "layer": "WallsLow"
-		},
-		{
-		  "rect": [
-			61,
-			51,
-			1,
-			11
-		  ],
-		  "asset_id": "causeway_wall_parapet_edge_e_01",
-		  "layer": "WallsHigh"
-		},
-		{
-		  "rect": [
-			58,
-			50,
-			17,
-			1
-		  ],
-		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_wall_straight_s",
-		  "layer": "WallsHigh"
-		}
-	  ],
-	  "intent": "fortress_wall_or_edge"
-	},
-	{
-	  "blocker_name": "BridgeEastParapetSouthBlocker",
-	  "rect": [
-		61,
-		66,
-		1,
-		4
-	  ],
-	  "visible_coverage": [
-		{
-		  "rect": [
-			61,
-			66,
-			1,
-			4
-		  ],
-		  "asset_id": "causeway_keep_wall_face_plain_01",
-		  "layer": "WallsLow"
-		},
-		{
-		  "rect": [
-			61,
-			66,
-			1,
-			3
-		  ],
-		  "asset_id": "causeway_wall_parapet_edge_e_01",
-		  "layer": "WallsHigh"
-		}
-	  ],
-	  "intent": "fortress_wall_or_edge"
-	},
-	{
-	  "blocker_name": "PrefabGatehouseWestCurtainBlocker",
-	  "rect": [
-		38,
-		50,
-		16,
 		1
 	  ],
-	  "visible_coverage": [
-		{
-		  "rect": [
-			51,
-			50,
-			1,
-			12
-		  ],
-		  "asset_id": "causeway_keep_wall_face_plain_01",
-		  "layer": "WallsLow"
-		},
-		{
-		  "rect": [
-			38,
-			50,
-			16,
-			1
-		  ],
-		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_wall_straight_s",
-		  "layer": "WallsHigh"
-		},
-		{
-		  "rect": [
-			49,
-			44,
-			1,
-			8
-		  ],
-		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_wall_pier",
-		  "layer": "WallsHigh"
-		}
-	  ],
-	  "intent": "fortress_wall_or_edge"
+	  "tile_size": 32,
+	  "type": "underlay_stamp"
 	},
 	{
-	  "blocker_name": "PrefabGatehouseEastCurtainBlocker",
-	  "rect": [
-		58,
-		50,
-		17,
+	  "category": "underlay_sample",
+	  "cell": [
+		59,
+		37
+	  ],
+	  "source_rect_cells": [
+		62,
+		36,
+		1,
 		1
 	  ],
-	  "visible_coverage": [
-		{
-		  "rect": [
-			61,
-			50,
-			1,
-			12
-		  ],
-		  "asset_id": "causeway_keep_wall_face_plain_01",
-		  "layer": "WallsLow"
-		},
-		{
-		  "rect": [
-			58,
-			50,
-			17,
-			1
-		  ],
-		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_wall_straight_s",
-		  "layer": "WallsHigh"
-		},
-		{
-		  "rect": [
-			63,
-			44,
-			1,
-			8
-		  ],
-		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_wall_pier",
-		  "layer": "WallsHigh"
-		}
-	  ],
-	  "intent": "fortress_wall_or_edge"
+	  "tile_size": 32,
+	  "type": "underlay_stamp"
+	}
+  ],
+  "mapper_schema": "custodian.sundered_keep.mapper.v1",
+  "markers": [
+	{
+	  "id": "spawn",
+	  "tile": [
+		54.0,
+		76.0
+	  ]
 	},
 	{
-	  "blocker_name": "PrefabGatehouseWestPierBlocker",
-	  "rect": [
-		49,
-		44,
-		1,
-		8
-	  ],
-	  "visible_coverage": [
-		{
-		  "rect": [
-			38,
-			50,
-			16,
-			1
-		  ],
-		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_wall_straight_s",
-		  "layer": "WallsHigh"
-		},
-		{
-		  "rect": [
-			49,
-			44,
-			1,
-			8
-		  ],
-		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_wall_pier",
-		  "layer": "WallsHigh"
-		}
-	  ],
-	  "intent": "fortress_wall_or_edge"
+	  "id": "return_gate",
+	  "tile": [
+		42.0,
+		58.0
+	  ]
 	},
 	{
-	  "blocker_name": "PrefabGatehouseEastPierBlocker",
-	  "rect": [
-		63,
-		44,
-		1,
-		8
-	  ],
-	  "visible_coverage": [
-		{
-		  "rect": [
-			58,
-			50,
-			17,
-			1
-		  ],
-		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_wall_straight_s",
-		  "layer": "WallsHigh"
-		},
-		{
-		  "rect": [
-			63,
-			44,
-			1,
-			8
-		  ],
-		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_wall_pier",
-		  "layer": "WallsHigh"
-		}
-	  ],
-	  "intent": "fortress_wall_or_edge"
+	  "id": "return_mooring",
+	  "tile": [
+		41.0,
+		58.0
+	  ]
 	},
 	{
-	  "blocker_name": "LabyrinthWestInnerSpineBlocker",
-	  "rect": [
-		45,
-		35,
-		1,
-		7
-	  ],
-	  "visible_coverage": [
-		{
-		  "rect": [
-			45,
-			35,
-			1,
-			7
-		  ],
-		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_wall_pier",
-		  "layer": "WallsHigh"
-		}
-	  ],
-	  "intent": "fortress_wall_or_edge"
+	  "id": "return_mooring_origin",
+	  "tile": [
+		39.0,
+		56.0
+	  ]
 	},
 	{
-	  "blocker_name": "LabyrinthEastInnerSpineBlocker",
-	  "rect": [
-		67,
-		35,
-		1,
-		7
-	  ],
-	  "visible_coverage": [
-		{
-		  "rect": [
-			67,
-			35,
-			1,
-			7
-		  ],
-		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_wall_pier",
-		  "layer": "WallsHigh"
-		}
-	  ],
-	  "intent": "fortress_wall_or_edge"
+	  "id": "key_winch",
+	  "tile": [
+		73.0,
+		56.0
+	  ]
 	},
 	{
-	  "blocker_name": "LabyrinthSouthCrossWallWestBlocker",
-	  "rect": [
-		38,
-		43,
-		10,
-		1
-	  ],
-	  "visible_coverage": [
-		{
-		  "rect": [
-			38,
-			43,
-			10,
-			1
-		  ],
-		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_wall_straight_s",
-		  "layer": "WallsHigh"
-		}
-	  ],
-	  "intent": "fortress_wall_or_edge"
+	  "id": "main_gate",
+	  "tile": [
+		54.0,
+		50.0
+	  ]
 	},
 	{
-	  "blocker_name": "LabyrinthSouthCrossWallEastBlocker",
-	  "rect": [
-		65,
-		43,
-		10,
-		1
-	  ],
-	  "visible_coverage": [
-		{
-		  "rect": [
-			65,
-			43,
-			10,
-			1
-		  ],
-		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_wall_straight_s",
-		  "layer": "WallsHigh"
-		}
-	  ],
-	  "intent": "fortress_wall_or_edge"
+	  "id": "main_gate_prefab",
+	  "tile": [
+		56.0,
+		58.0
+	  ]
 	},
 	{
-	  "blocker_name": "LowerWestOceanBlocker",
-	  "rect": [
-		0,
-		60,
-		39,
-		20
-	  ],
-	  "visible_coverage": [
-		{
-		  "rect": [
-			38,
-			60,
-			1,
-			20
-		  ],
-		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_void_edge",
-		  "layer": "WallsLow"
-		},
-		{
-		  "rect": [
-			22,
-			60,
-			14,
-			1
-		  ],
-		  "asset_id": "cliff_edge_s",
-		  "layer": "TerrainEdges"
-		}
-	  ],
-	  "intent": "ocean_boundary"
+	  "id": "courtyard",
+	  "tile": [
+		56.0,
+		39.0
+	  ]
 	},
 	{
-	  "blocker_name": "LowerEastOceanBlocker",
-	  "rect": [
-		79,
-		55,
-		33,
-		25
-	  ],
-	  "visible_coverage": [
-		{
-		  "layer": "StormOceanBackdrop",
-		  "asset_id": "storm_ocean_backdrop",
-		  "rect": [
-			79,
-			55,
-			33,
-			25
-		  ]
-		}
-	  ],
-	  "intent": "ocean_boundary"
+	  "id": "great_hall_door",
+	  "tile": [
+		55.0,
+		30.0
+	  ]
 	},
 	{
-	  "blocker_name": "WestOceanBoundary",
-	  "rect": [
-		0,
-		0,
-		18,
-		80
-	  ],
-	  "visible_coverage": [
-		{
-		  "layer": "StormOceanBackdrop",
-		  "asset_id": "storm_ocean_backdrop",
-		  "rect": [
-			0,
-			0,
-			18,
-			80
-		  ]
-		}
-	  ],
-	  "intent": "ocean_boundary"
+	  "id": "great_hall",
+	  "tile": [
+		56.0,
+		20.0
+	  ]
 	},
 	{
-	  "blocker_name": "EastOceanBoundary",
-	  "rect": [
-		94,
-		0,
-		18,
-		80
-	  ],
-	  "visible_coverage": [
-		{
-		  "layer": "StormOceanBackdrop",
-		  "asset_id": "storm_ocean_backdrop",
-		  "rect": [
-			94,
-			0,
-			18,
-			80
-		  ]
-		}
-	  ],
-	  "intent": "ocean_boundary"
+	  "id": "upper_stair",
+	  "tile": [
+		79.0,
+		31.0
+	  ]
 	},
 	{
-	  "blocker_name": "NorthOceanBoundary",
-	  "rect": [
-		0,
-		0,
-		112,
-		8
-	  ],
-	  "visible_coverage": [
-		{
-		  "layer": "StormOceanBackdrop",
-		  "asset_id": "storm_ocean_backdrop",
-		  "rect": [
-			0,
-			0,
-			112,
-			8
-		  ]
-		}
-	  ],
-	  "intent": "ocean_boundary"
+	  "id": "lower_stair",
+	  "tile": [
+		30.0,
+		45.0
+	  ]
 	},
 	{
-	  "blocker_name": "GreatHallCollapsedOceanBlocker",
-	  "rect": [
-		76,
-		20,
-		6,
-		7
-	  ],
-	  "visible_coverage": [
-		{
-		  "rect": [
-			76,
-			20,
-			1,
-			7
-		  ],
-		  "asset_id": "ocean_foam_edge_w",
-		  "layer": "TerrainEdges"
-		},
-		{
-		  "rect": [
-			81,
-			20,
-			1,
-			7
-		  ],
-		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_void_edge",
-		  "layer": "WallsLow"
-		},
-		{
-		  "rect": [
-			81,
-			20,
-			1,
-			7
-		  ],
-		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_void_edge",
-		  "layer": "WallsLow"
-		}
-	  ],
-	  "intent": "ocean_boundary"
+	  "id": "hatch",
+	  "tile": [
+		42.0,
+		40.0
+	  ]
 	},
 	{
-	  "blocker_name": "WestServiceYardOuterWallBlocker",
-	  "rect": [
-		28,
-		38,
-		1,
-		10
-	  ],
-	  "visible_coverage": [
-		{
-		  "rect": [
-			28,
-			38,
-			1,
-			10
-		  ],
-		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_wall_straight_s",
-		  "layer": "WallsHigh"
-		}
-	  ],
-	  "intent": "fortress_wall_or_edge"
+	  "id": "great_hall_marine_spawn",
+	  "tile": [
+		71.0,
+		27.0
+	  ]
 	},
 	{
-	  "blocker_name": "WestServiceYardNorthWallBlocker",
+	  "id": "routekeeper_trace",
+	  "tile": [
+		37.0,
+		53.0
+	  ]
+	},
+	{
+	  "id": "routekeeper_hint",
+	  "tile": [
+		25.0,
+		39.0
+	  ]
+	},
+	{
+	  "id": "sidearm_locker",
+	  "tile": [
+		73.0,
+		27.0
+	  ]
+	},
+	{
+	  "id": "vanguard_seal_cache",
+	  "tile": [
+		62.0,
+		46.0
+	  ]
+	},
+	{
+	  "id": "west_service_path",
+	  "tile": [
+		30.0,
+		50.0
+	  ]
+	},
+	{
+	  "id": "east_rampart",
+	  "tile": [
+		82.0,
+		48.0
+	  ]
+	}
+  ],
+  "ops": [
+	{
+	  "module_id": "return_mooring_3x3_01",
+	  "origin": [
+		39.0,
+		56.0
+	  ],
+	  "type": "stamp_module"
+	},
+	{
+	  "name": "SubmergedCausewayBlocker",
 	  "rect": [
-		29,
-		34,
-		9,
-		1
+		48.0,
+		78.0,
+		17.0,
+		2.0
 	  ],
-	  "visible_coverage": [
-		{
-		  "rect": [
-			34,
-			33,
-			1,
-			9
-		  ],
-		  "asset_id": "rampart_parapet_e",
-		  "layer": "WallsHigh"
-		},
-		{
-		  "rect": [
-			29,
-			34,
-			9,
-			1
-		  ],
-		  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_wall_straight_s",
-		  "layer": "WallsHigh"
-		}
+	  "type": "blocker_rect"
+	},
+	{
+	  "name": "BridgeWestParapetNorthBlocker",
+	  "rect": [
+		51.0,
+		50.0,
+		1.0,
+		12.0
 	  ],
-	  "intent": "fortress_wall_or_edge"
+	  "type": "blocker_rect"
+	},
+	{
+	  "name": "BridgeWestParapetSouthBlocker",
+	  "rect": [
+		51.0,
+		66.0,
+		1.0,
+		4.0
+	  ],
+	  "type": "blocker_rect"
+	},
+	{
+	  "name": "BridgeEastParapetNorthBlocker",
+	  "rect": [
+		61.0,
+		50.0,
+		1.0,
+		12.0
+	  ],
+	  "type": "blocker_rect"
+	},
+	{
+	  "name": "BridgeEastParapetSouthBlocker",
+	  "rect": [
+		61.0,
+		66.0,
+		1.0,
+		4.0
+	  ],
+	  "type": "blocker_rect"
+	},
+	{
+	  "name": "PrefabGatehouseWestCurtainBlocker",
+	  "rect": [
+		38.0,
+		50.0,
+		16.0,
+		1.0
+	  ],
+	  "type": "blocker_rect"
+	},
+	{
+	  "name": "PrefabGatehouseEastCurtainBlocker",
+	  "rect": [
+		58.0,
+		50.0,
+		17.0,
+		1.0
+	  ],
+	  "type": "blocker_rect"
+	},
+	{
+	  "name": "PrefabGatehouseWestPierBlocker",
+	  "rect": [
+		49.0,
+		44.0,
+		1.0,
+		8.0
+	  ],
+	  "type": "blocker_rect"
+	},
+	{
+	  "name": "PrefabGatehouseEastPierBlocker",
+	  "rect": [
+		63.0,
+		44.0,
+		1.0,
+		8.0
+	  ],
+	  "type": "blocker_rect"
+	},
+	{
+	  "name": "LabyrinthWestInnerSpineBlocker",
+	  "rect": [
+		45.0,
+		35.0,
+		1.0,
+		7.0
+	  ],
+	  "type": "blocker_rect"
+	},
+	{
+	  "name": "LabyrinthEastInnerSpineBlocker",
+	  "rect": [
+		67.0,
+		35.0,
+		1.0,
+		7.0
+	  ],
+	  "type": "blocker_rect"
+	},
+	{
+	  "name": "LabyrinthSouthCrossWallWestBlocker",
+	  "rect": [
+		38.0,
+		43.0,
+		10.0,
+		1.0
+	  ],
+	  "type": "blocker_rect"
+	},
+	{
+	  "name": "LabyrinthSouthCrossWallEastBlocker",
+	  "rect": [
+		65.0,
+		43.0,
+		10.0,
+		1.0
+	  ],
+	  "type": "blocker_rect"
+	},
+	{
+	  "name": "LowerWestOceanBlocker",
+	  "rect": [
+		0.0,
+		60.0,
+		39.0,
+		20.0
+	  ],
+	  "type": "blocker_rect"
+	},
+	{
+	  "name": "LowerEastOceanBlocker",
+	  "rect": [
+		79.0,
+		55.0,
+		33.0,
+		25.0
+	  ],
+	  "type": "blocker_rect"
+	},
+	{
+	  "name": "WestOceanBoundary",
+	  "rect": [
+		0.0,
+		0.0,
+		18.0,
+		80.0
+	  ],
+	  "type": "blocker_rect"
+	},
+	{
+	  "name": "EastOceanBoundary",
+	  "rect": [
+		94.0,
+		0.0,
+		18.0,
+		80.0
+	  ],
+	  "type": "blocker_rect"
+	},
+	{
+	  "name": "NorthOceanBoundary",
+	  "rect": [
+		0.0,
+		0.0,
+		112.0,
+		8.0
+	  ],
+	  "type": "blocker_rect"
+	},
+	{
+	  "name": "GreatHallCollapsedOceanBlocker",
+	  "rect": [
+		76.0,
+		20.0,
+		6.0,
+		7.0
+	  ],
+	  "type": "blocker_rect"
+	},
+	{
+	  "generated_by": "cheatsheet_relayout_v1",
+	  "name": "WestServiceYardOuterWallBlocker",
+	  "rect": [
+		28.0,
+		38.0,
+		1.0,
+		10.0
+	  ],
+	  "type": "blocker_rect"
+	},
+	{
+	  "generated_by": "cheatsheet_relayout_v1",
+	  "name": "WestServiceYardNorthWallBlocker",
+	  "rect": [
+		29.0,
+		34.0,
+		9.0,
+		1.0
+	  ],
+	  "type": "blocker_rect"
+	},
+	{
+	  "name": "PrefabGatehouseGateBlocker",
+	  "rect": [
+		55.0,
+		50.0,
+		6.0,
+		3.0
+	  ],
+	  "role": "main_gate",
+	  "type": "blocker_rect"
+	},
+	{
+	  "name": "GreatHallDoorBlocker",
+	  "rect": [
+		55.0,
+		30.0,
+		2.0,
+		1.0
+	  ],
+	  "role": "great_hall_door",
+	  "type": "blocker_rect"
+	}
+  ],
+  "schema": "custodian.sundered_keep.level_tilemap.v1",
+  "shore_walk_regions": [
+	{
+	  "id": "lower_storm_shore_approach",
+	  "rect": [
+		48.0,
+		70.0,
+		17.0,
+		8.0
+	  ]
+	},
+	{
+	  "id": "return_mooring_lower_shore",
+	  "rect": [
+		39.0,
+		57.0,
+		8.0,
+		7.0
+	  ]
+	},
+	{
+	  "id": "key_winch_lower_shore",
+	  "rect": [
+		69.0,
+		55.0,
+		9.0,
+		8.0
+	  ]
+	}
+  ],
+  "siege": {
+	"defense_turret": {
+	  "damage": 9.0,
+	  "power_required": false,
+	  "range": 360.0,
+	  "tile_offset": [
+		-5.0,
+		4.0
+	  ],
+	  "tile_offset_from": "main_gate"
+	},
+	"extra_wave_pressure_ticks": [
+	  2.0,
+	  5.0
+	],
+	"objectives": [
+	  {
+		"group": "command_post",
+		"hp": 180.0,
+		"id": "gatehouse_core",
+		"label": "Gatehouse Core",
+		"repair_distance": 96.0,
+		"repair_kind": "repair_gatehouse",
+		"repair_prompt": "REPAIR GATEHOUSE CORE",
+		"repair_tile_offset": [
+		  2.0,
+		  7.0
+		],
+		"tile_offset": [
+		  2.0,
+		  4.0
+		],
+		"tile_offset_from": "main_gate"
+	  },
+	  {
+		"group": "power_node",
+		"hp": 140.0,
+		"id": "return_mooring",
+		"label": "Return Mooring",
+		"repair_distance": 82.0,
+		"repair_kind": "repair_mooring",
+		"repair_prompt": "REPAIR RETURN MOORING",
+		"repair_tile_offset": [
+		  2.0,
+		  4.0
+		],
+		"tile_offset": [
+		  2.0,
+		  2.0
+		],
+		"tile_offset_from": "return_mooring_origin"
+	  }
+	],
+	"pressure_damage_base": 9.0,
+	"pressure_damage_per_wave": 2.0,
+	"pressure_interval_seconds": 5.0,
+	"repair_amount": 35.0,
+	"schema": "custodian.sundered_keep.gatehouse_siege.v1",
+	"spawns": [
+	  {
+		"lane": "sundered_keep",
+		"tile_offset": [
+		  -7.0,
+		  -1.0
+		],
+		"tile_offset_from": "main_gate"
+	  },
+	  {
+		"lane": "sundered_keep",
+		"tile_offset": [
+		  8.0,
+		  -1.0
+		],
+		"tile_offset_from": "main_gate"
+	  },
+	  {
+		"lane": "sundered_keep",
+		"tile_offset": [
+		  0.0,
+		  6.0
+		],
+		"tile_offset_from": "great_hall_door"
+	  }
+	],
+	"waves": [
+	  {
+		"composition": [
+		  "drone",
+		  "drone",
+          "grunt"
+		]
+	  },
+	  {
+		"composition": [
+		  "grunt",
+		  "drone",
+		  "fast",
+          "drone"
+		]
+	  },
+	  {
+		"composition": [
+		  "grunt",
+		  "grunt",
+          "heavy"
+		]
+	  }
+	]
+  },
+  "tile_size": 32.0,
+  "underlay": {
+	"expand_camera_bounds": false,
+	"modulate": [
+	  1.0,
+	  1.0,
+	  1.0,
+	  1.0
+	],
+	"rect_tiles": [
+	  0.0,
+	  0.0,
+	  112.0,
+	  80.0
+	],
+	"source_rect_pixels": [
+	  0.0,
+	  0.0,
+	  5048.0,
+	  3500.0
+	],
+	"texture_path": "res://content/masters/sundered_keep/sundered_keep_main_overlay.png",
+	"z_index": -120.0
+  },
+  "underpass_regions": [
+	{
+	  "id": "west_shadowed_underbridge_walk",
+	  "rect": [
+		49.0,
+		62.0,
+		3.0,
+		8.0
+	  ],
+	  "shadow_alpha": 0.42
+	},
+	{
+	  "id": "east_shadowed_underbridge_walk",
+	  "rect": [
+		61.0,
+		62.0,
+		3.0,
+		8.0
+	  ],
+	  "shadow_alpha": 0.42
 	}
   ]
 }

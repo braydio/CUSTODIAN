@@ -98,4 +98,4 @@ Passing headless checks:
 - `enemy_savage_smoke.gd`
 - `sundered_keep_vanguard_seal_acquisition_smoke.gd`
 
-Godot script/class import completes without feature parse errors. The editor import still reports pre-existing Better Terrain/dear-imgui UID/plugin shutdown diagnostics. Status remains `review`, rather than `complete`, because the four source sheets required for authoritative art normalization are absent and the current beacon/collapse frame contracts do not match the requested production strips.
+Godot script/class import completes without feature parse errors. The former Better Terrain/dear-imgui editor diagnostics were removed with those retired plugins. Status remains `review`, rather than `complete`, because the four source sheets required for authoritative art normalization are absent and the current beacon/collapse frame contracts do not match the requested production strips.

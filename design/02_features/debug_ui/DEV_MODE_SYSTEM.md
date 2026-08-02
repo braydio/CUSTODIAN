@@ -48,7 +48,7 @@ all builds. Infinite health ignores incoming damage; infinite stamina prevents
 spending and clears sprint exhaustion. A small status overlay remains visible
 while any playtest control is active.
 
-`DebugBus`, `DebugSnapshotCollector`, `DebugImguiConsole`, and `DevObservatory` disable their eligible input/process work when the corresponding capability is unavailable. Observatory event/counter/gauge accumulation is disabled outside development eligibility. Explicit Observatory export remains callable and forces one current runtime snapshot.
+`DebugBus`, `DebugSnapshotCollector`, the F12 debug screen, and `DevObservatory` disable their eligible input/process work when the corresponding capability is unavailable. The former Dear ImGui console is retired. Observatory event/counter/gauge accumulation is disabled outside development eligibility. Explicit Observatory export remains callable and forces one current runtime snapshot.
 
 The native `ImGui` extension remains an unconditional autoload in V1; its CUSTODIAN console consumer does not connect or draw outside debug-UI eligibility. A future `DevBootstrap` may instantiate/remove the entire debug stack per export.
 
