@@ -76,6 +76,26 @@ func _run() -> void:
 	_check(exit_source.x >= 1220.0 and exit_source.x <= 1280.0, "Parish exit was not extended east", errors)
 	_check(return_source.x >= 1100.0, "reverse spawn was not extended with the traverse", errors)
 
+	var authored_enemies := approach.get_tree().get_nodes_in_group(
+		"authored_vista_enemy"
+	)
+	_check(authored_enemies.size() == 2, "expected one grunt in each vista section", errors)
+	var expected_subregions := {
+		"first_vista_approach": Rect2(-470.0, -180.0, 560.0, 820.0),
+		"near_vista_traverse": Rect2(250.0, -250.0, 520.0, 280.0),
+	}
+	for enemy_variant: Variant in authored_enemies:
+		if not (enemy_variant is Node2D):
+			continue
+		var enemy := enemy_variant as Node2D
+		var subregion_id := str(enemy.get_meta("subregion_id", ""))
+		_check(
+			expected_subregions.has(subregion_id)
+			and (expected_subregions[subregion_id] as Rect2).has_point(enemy.position),
+			"authored vista enemy is outside its declared subregion",
+			errors
+		)
+
 	game_root.queue_free()
 	approach.queue_free()
 	await process_frame

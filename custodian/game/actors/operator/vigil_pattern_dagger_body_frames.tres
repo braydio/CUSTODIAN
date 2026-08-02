@@ -1,4 +1,4 @@
-[gd_resource type="SpriteFrames" format=3 uid="uid://d083gqbuy6l5c"]
+[gd_resource type="SpriteFrames" format=3 uid="uid://de6jpnthji2rj"]
 
 [ext_resource type="Texture2D" uid="uid://bvbm8drupggok" path="res://content/sprites/operator/runtime/body/melee_1h/shared/operator__body__melee_1h__chain_01__w__10f__156x96.png" id="1_ff0ak"]
 [ext_resource type="Texture2D" uid="uid://c22ni8m7wm7hg" path="res://content/sprites/operator/runtime/body/melee_1h/shared/operator__body__melee_1h__chain_01__e__10f__156x96.png" id="2_2nd7r"]

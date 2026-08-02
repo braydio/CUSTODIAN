@@ -22,7 +22,7 @@ Keep ranged weapons strong in deliberate bursts without allowing unlimited scree
 - Operator stealth snapshots include sneak, sprint, firing, dodge, velocity, visibility, and movement-noise state. Gunshots use events rather than the ambient snapshot.
 - Existing enemy perception retains raycast LOS and now consumes noise events. Enemies investigate the event position rather than receiving permanent knowledge of the Operator.
 - Existing enemy behavior now tracks last seen/heard positions, pursuit memory, deterministic search offsets, home position, camp ID, and a leash. Hard leash applies after LOS is broken.
-- `AmbientEnemyCamp` supports authored activation-limited camps; `AmbientEnemySpawner` supports procgen/authored marker groups. The main test scene contains two hostile grunt camps outside wave spawning.
+- `AmbientEnemyCamp` supports authored activation-limited camps; `AmbientEnemySpawner` supports procgen/authored marker groups. Successful contract generation deterministically places two separated walkable camp markers, each configured for two hostile grunts outside wave spawning. The Sundered Keep approach layout separately authors one grunt in each vista subregion.
 - `get_weapon_status()` exposes canonical ammo, heat, overheat, noise, suppression, range values, and whether a ranged magazine is currently active while retaining legacy keys.
 - `get_weapon_status()` also exposes reload/overheat progress, warning and overheat thresholds, decay delay, effective heat-per-shot, shots-to-overheat, and weapon-independent heat bands. Discrete `weapon_feedback_event` transitions drive presentation without polling sticky failure state.
 - The compact HUD preserves magazine/reserve counts and adds one priority-driven pressure row for heat, hot/critical, reload, dry, and vent recovery. A child `WeaponFeedbackPresenter` owns local-only dry/reload/heat audio, critical tint, and procedural barrel vent VFX; none of these cues emit `NoiseEventBus` events.
@@ -84,6 +84,8 @@ The authored primary sequence is `relaxed -> raising -> ready -> firing -> recov
 - `custodian/game/actors/enemies/enemy_behavior_state_machine.gd`
 - `custodian/game/systems/spawning/ambient_enemy_camp.gd`
 - `custodian/game/systems/spawning/ambient_enemy_spawner.gd`
+- `custodian/game/systems/core/systems/contract_world_loader.gd`
+- `custodian/game/world/approaches/sundered_keep/sundered_keep_approach.gd`
 - `custodian/game/actors/items/ammo_cache.gd`
 - `custodian/scenes/game.tscn`
 - `custodian/tools/validation/combat_resource_feedback_smoke.gd`

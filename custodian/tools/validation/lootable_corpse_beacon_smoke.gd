@@ -33,16 +33,48 @@ func _validate_marker_contract(root: Node) -> void:
 	var marker := MARKER_SCENE.instantiate()
 	root.add_child(marker)
 	var reveal := marker.get_node("Reveal") as AnimatedSprite2D
-	var beacon := marker.get_node("Beacon") as AnimatedSprite2D
+	var beam_lower := marker.get_node("BeamLower") as AnimatedSprite2D
+	var beam_tip := marker.get_node("BeamTip") as AnimatedSprite2D
 	var ring := marker.get_node("GroundRing") as AnimatedSprite2D
 	var collapse := marker.get_node("CollectCollapse") as AnimatedSprite2D
+	_assert_true(marker.z_index == 0, "marker root must inherit corpse depth at z_index 0")
+	_assert_true(marker.z_as_relative, "marker root must use relative corpse depth")
+	_assert_true(ring.z_as_relative and ring.z_index <= 0, "ground ring must remain at or below corpse depth")
+	_assert_true(beam_lower.z_as_relative and beam_lower.z_index == 0, "lower beam must inherit corpse depth")
+	_assert_true(beam_lower.animation == &"beacon_lower_loop", "lower beam must use its cropped loop")
+	_assert_true(not beam_tip.z_as_relative, "beam tip must use absolute depth")
+	_assert_true(beam_tip.z_index > 100, "beam tip must remain above ordinary world sprites")
+	_assert_true(beam_tip.animation == &"beacon_tip_loop", "beam tip must use its cropped loop")
+	_assert_true(reveal.z_as_relative and reveal.z_index == 0, "reveal must remain at corpse depth")
+	_assert_true(collapse.z_as_relative and collapse.z_index == 0, "collection collapse must remain at corpse depth")
 	_assert_true(reveal.sprite_frames.get_frame_count(&"reveal") == 8, "reveal must expose 8 frames")
 	_assert_true(ring.sprite_frames.get_frame_count(&"ground_ring_loop") == 6, "ground ring must expose 6 frames")
 	# Intake limitation is intentional and documented: current workspace art has
 	# 9 beacon cells and 8 collapse cells rather than the requested 8/6 source.
-	_assert_true(beacon.sprite_frames.get_frame_count(&"beacon_loop") == 9, "current review beacon must expose all 9 supplied cells")
+	_assert_true(beam_lower.sprite_frames.get_frame_count(&"beacon_loop") == 9, "compatibility beacon loop must retain all 9 supplied cells")
+	_assert_true(beam_lower.sprite_frames.get_frame_count(&"beacon_lower_loop") == 9, "lower beam must expose all 9 supplied cells")
+	_assert_true(beam_tip.sprite_frames.get_frame_count(&"beacon_tip_loop") == 9, "beam tip must expose all 9 supplied cells")
+	_assert_true(is_equal_approx(beam_lower.sprite_frames.get_animation_speed(&"beacon_lower_loop"), 9.0), "lower beam must run at 9 FPS")
+	_assert_true(is_equal_approx(beam_tip.sprite_frames.get_animation_speed(&"beacon_tip_loop"), 9.0), "beam tip must run at 9 FPS")
+	_validate_beam_crops(beam_lower.sprite_frames)
+	for category in [&"common_salvage", &"power", &"signal", &"anomaly"]:
+		marker.call("set_category", category)
+		_assert_true(beam_lower.modulate == beam_tip.modulate, "%s hue must affect both beam pieces" % category)
+		_assert_true(is_equal_approx(beam_lower.scale.y, beam_tip.scale.y), "%s scale must affect both beam pieces" % category)
+		var lower_top := beam_lower.position.y - 68.0 * beam_lower.scale.y
+		var tip_bottom := beam_tip.position.y + 16.0 * beam_tip.scale.y
+		_assert_true(tip_bottom + 0.01 >= lower_top + 8.0 * beam_lower.scale.y, "%s beam scale must preserve the scaled 8 px lower/tip overlap" % category)
 	_assert_true(collapse.sprite_frames.get_frame_count(&"collect_collapse") == 8, "current review collapse must expose all 8 supplied cells")
 	marker.queue_free()
+
+
+func _validate_beam_crops(frames: SpriteFrames) -> void:
+	for frame_index in range(9):
+		var lower := frames.get_frame_texture(&"beacon_lower_loop", frame_index) as AtlasTexture
+		var tip := frames.get_frame_texture(&"beacon_tip_loop", frame_index) as AtlasTexture
+		var source_x := float(frame_index * 48)
+		_assert_true(lower != null and lower.region == Rect2(source_x, 24.0, 48.0, 136.0), "lower crop %d must use source Y 24-159" % frame_index)
+		_assert_true(tip != null and tip.region == Rect2(source_x, 0.0, 48.0, 32.0), "tip crop %d must use source Y 0-31" % frame_index)
 
 
 func _validate_corpse_delivery(root: Node) -> void:
@@ -87,7 +119,8 @@ func _validate_corpse_delivery(root: Node) -> void:
 	var marker := corpse_loot.get_node_or_null("LootCorpseMarker")
 	_assert_true(marker != null, "corpse marker must exist after reveal")
 	if marker != null:
-		_assert_true((marker.get_node("Beacon") as AnimatedSprite2D).visible, "reveal must transition to beacon loop")
+		_assert_true((marker.get_node("BeamLower") as AnimatedSprite2D).visible, "reveal must show the lower beam")
+		_assert_true((marker.get_node("BeamTip") as AnimatedSprite2D).visible, "reveal must show the beam tip")
 		_assert_true((marker.get_node("GroundRing") as AnimatedSprite2D).visible, "reveal must transition to ground-ring loop")
 
 	var collector := CharacterBody2D.new()
@@ -98,11 +131,20 @@ func _validate_corpse_delivery(root: Node) -> void:
 	var second_collect := bool(corpse_loot.call("collect", collector))
 	_assert_true(first_collect, "first proximity collection must succeed")
 	_assert_true(not second_collect, "second collection must award nothing")
+	if marker != null:
+		var lower := marker.get_node("BeamLower") as AnimatedSprite2D
+		var tip := marker.get_node("BeamTip") as AnimatedSprite2D
+		_assert_true(not lower.visible and not lower.is_playing(), "collection must hide and stop the lower beam")
+		_assert_true(not tip.visible and not tip.is_playing(), "collection must hide and stop the beam tip")
 	_assert_true(int(ledger.call("get_amount", "ruin_scrap")) == rolled_ruin_scrap, "typed loot must reach ResourceLedger")
 	_assert_true(int(_vault_recovery_seen.get(&"power_components", 0)) == 1, "carried loot must reach VaultManager")
 	_assert_true(int(game_state.get("materials")) == materials_before, "zero legacy materials must not change GameState")
 	_assert_true(int(grunt.get("life_state")) == 3, "collected corpse must enter EMPTY_CORPSE")
 	_assert_true(not bool(corpse_loot.call("has_loot")), "collected corpse payload must be empty")
+	if marker != null:
+		await marker.tree_exited
+		await process_frame
+		_assert_true(not is_instance_valid(marker), "marker must free after collection collapse")
 	collector.queue_free()
 	grunt.queue_free()
 

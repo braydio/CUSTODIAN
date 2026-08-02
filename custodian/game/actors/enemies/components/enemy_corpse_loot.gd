@@ -40,6 +40,8 @@ func activate(payload: Dictionary, visual_owner: CanvasItem) -> void:
 	_marker = MARKER_SCENE.instantiate() as LootCorpseMarker
 	if _marker != null:
 		_marker.position = marker_offset
+		_marker.z_as_relative = true
+		_marker.z_index = 0
 		add_child(_marker)
 		_marker.activate({"category": _category_for_payload()})
 	monitorable = true

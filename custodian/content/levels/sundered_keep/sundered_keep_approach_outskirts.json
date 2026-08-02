@@ -1,121 +1,359 @@
 {
-  "schema": "custodian.sundered_keep.approach_outskirts.v1",
-  "level_id": "sundered_keep_vista_approach",
+  "authored_enemies": [
+    {
+      "behavior_profile": "raider_grunt",
+      "enemy_type": "grunt",
+      "id": "first_vista_grunt",
+      "subregion_id": "first_vista_approach"
+    },
+    {
+      "behavior_profile": "raider_grunt",
+      "enemy_type": "grunt",
+      "id": "near_vista_grunt",
+      "subregion_id": "near_vista_traverse"
+    }
+  ],
   "display_name": "Sundered Keep — Shore Parish / Outer Wall Approach",
   "layout_generator": "res://scenes/debug/sundered_keep_approach_mapper.tscn",
-  "production_scene": "res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn",
-  "tile_size": 32,
-  "route_floor": {
-    "kind": "authored_route_master",
-    "texture_path": "res://content/sprites/world/return_causeway/path/sundered_keep_approach_route_master.png",
-    "rect": [-620.0, -660.0, 2048.0, 1706.0],
-    "vertical_runtime_offset": 180.0
-  },
-  "visual_overlays": [
-    {"id": "shore_parish_northbound_ground", "kind": "ground_overlay", "texture_path": "res://content/sprites/world/return_causeway/path/overlays/sundered_keep_shore_parish_northbound_ground_01.png", "rect": [-544.0, -660.0, 768.0, 1024.0], "z_role": "below_route_floor", "z_index": -12, "filtering": "linear", "semantic_subregion": "shore_parish", "collision_authority": false},
-    {"id": "outer_wall_east_traverse_ground", "kind": "ground_overlay", "texture_path": "res://content/sprites/world/return_causeway/path/overlays/sundered_keep_outer_wall_east_traverse_ground_01.png", "rect": [280.0, -625.0, 1024.0, 640.0], "z_role": "below_route_floor", "z_index": -11, "filtering": "linear", "semantic_subregion": "causeway_checkpoint", "collision_authority": false},
-    {"id": "outer_wall_checkpoint_detail", "kind": "background_detail", "texture_path": "res://content/backgrounds/sundered_keep/approach/near_detail/sundered_keep_outer_wall_checkpoint_detail_01.png", "rect": [120.0, -980.0, 2048.0, 1024.0], "z_role": "presentation_background", "z_index": -2, "filtering": "linear", "semantic_subregion": "causeway_checkpoint", "collision_authority": false},
-    {"id": "outer_wall_checkpoint_fog", "kind": "animated_sheet", "texture_path": "res://content/backgrounds/sundered_keep/approach/fog/outer_wall_checkpoint_fog_ribbon_01.png", "rect": [260.0, -520.0, 1536.0, 384.0], "frame_size": [1536, 384], "frame_count": 6, "fps": 7.0, "loop": true, "maximum_alpha": 0.3, "z_role": "local_atmosphere_below_operator", "z_index": -1, "filtering": "linear", "semantic_subregion": "causeway_checkpoint", "collision_authority": false}
-  ],
+  "level_id": "sundered_keep_vista_approach",
   "markers": {
-    "spawn": {
-      "node_name": "EntrySpawn",
-      "label": "TRANSITION ARRIVAL",
-      "kind": "spawn",
-      "position": [-159.4, 667.0]
-    },
-    "return_causeway": {
-      "node_name": "ReturnTopdown",
-      "label": "RETURN CAUSEWAY",
-      "kind": "return_causeway",
-      "position": [1120.0, -286.8]
-    },
-    "level_exit": {
-      "node_name": "LevelExit",
-      "label": "CAUSEWAY FOOT HANDOFF",
-      "kind": "level_exit",
-      "position": [1240.0, -273.5]
-    },
-    "first_reveal_trigger": {
-      "node_name": "FirstCameraControlStart",
-      "label": "FIRST CAMERA CONTROL START",
-      "kind": "camera_control",
-      "position": [-356.0, -202.0]
-    },
-    "first_reveal_camera_anchor": {
-      "node_name": "FirstRevealCameraAnchor",
-      "label": "FIRST CAMERA ANCHOR",
-      "kind": "camera_anchor",
-      "position": [-70.5, -583.3]
-    },
-    "reveal_control_start": {
-      "node_name": "RevealControlStart",
-      "label": "REVEAL CONTROL START",
-      "kind": "camera_control",
-      "position": [-257.4, -321.9]
-    },
-    "reveal_control_end": {
-      "node_name": "RevealControlEnd",
-      "label": "REVEAL CONTROL END",
-      "kind": "camera_control",
-      "position": [-162.5, -380.6]
-    },
-    "return_to_gameplay_trigger": {
-      "node_name": "FirstCameraReturnComplete",
-      "label": "FIRST CAMERA RETURN COMPLETE",
-      "kind": "camera_control",
-      "position": [113.6, -370.2]
-    },
-    "second_vista_start": {
-      "node_name": "SecondVistaStart",
-      "label": "SECOND CAMERA BLEND START",
-      "kind": "camera_control",
-      "position": [300.0, -305.0]
-    },
-    "second_vista_full": {
-      "node_name": "SecondVistaFull",
-      "label": "SECOND CAMERA APEX",
-      "kind": "camera_control",
-      "position": [700.0, -305.0]
-    },
-    "second_vista_end": {
-      "node_name": "SecondVistaEnd",
-      "label": "SECOND CAMERA RETURN COMPLETE",
-      "kind": "camera_control",
-      "position": [980.0, -305.0]
-    },
-    "second_reveal_trigger": {
-      "node_name": "SecondVistaRevealTrigger",
-      "label": "NEAR VISTA REVEAL",
-      "kind": "presentation_trigger",
-      "position": [236.3, -346.4]
-    },
-    "second_reveal_camera_anchor": {
-      "node_name": "SecondVistaCameraAnchor",
-      "label": "NEAR VISTA CAMERA ANCHOR",
-      "kind": "camera_anchor",
-      "position": [664.5, -660.0]
+    "beach_handoff": {
+      "kind": "handoff",
+      "label": "BEACH MIST HANDOFF",
+      "node_name": "BeachHandoff",
+      "position": [
+        1260.66552734375,
+        -277.152954101562
+      ]
     },
     "checkpoint_entry": {
-      "node_name": "CheckpointEntry",
-      "label": "RUINED CAUSEWAY CHECKPOINT",
       "kind": "region_anchor",
-      "position": [860.0, -300.0]
+      "label": "RUINED CAUSEWAY CHECKPOINT",
+      "node_name": "CheckpointEntry",
+      "position": [
+        1370.29956054688,
+        -855.515380859375
+      ]
     },
-    "beach_handoff": {
-      "node_name": "BeachHandoff",
-      "label": "BEACH MIST HANDOFF",
-      "kind": "handoff",
-      "position": [1240.0, -273.5]
+    "first_reveal_camera_anchor": {
+      "kind": "camera_anchor",
+      "label": "FIRST CAMERA ANCHOR",
+      "node_name": "FirstRevealCameraAnchor",
+      "position": [
+        948.635375976562,
+        -400.81787109375
+      ]
+    },
+    "first_reveal_trigger": {
+      "kind": "camera_control",
+      "label": "FIRST CAMERA CONTROL START",
+      "node_name": "FirstCameraControlStart",
+      "position": [
+        -745.242065429688,
+        790.17822265625
+      ]
+    },
+    "level_exit": {
+      "kind": "level_exit",
+      "label": "CAUSEWAY FOOT HANDOFF",
+      "node_name": "LevelExit",
+      "position": [
+        1326.97729492188,
+        -662.278198242188
+      ]
+    },
+    "mid_gameplay_start": {
+      "kind": "camera_control",
+      "label": "MID GAMEPLAY START",
+      "node_name": "MidGameplayStart",
+      "position": [
+        50.0,
+        -235.0
+      ]
+    },
+    "return_causeway": {
+      "kind": "return_causeway",
+      "label": "RETURN CAUSEWAY",
+      "node_name": "ReturnTopdown",
+      "position": [
+        1120.0,
+        -286.8
+      ]
+    },
+    "return_to_gameplay_trigger": {
+      "kind": "camera_control",
+      "label": "FIRST CAMERA RETURN COMPLETE",
+      "node_name": "FirstCameraReturnComplete",
+      "position": [
+        -1105.80041503906,
+        -558.499267578125
+      ]
+    },
+    "reveal_control_end": {
+      "kind": "camera_control",
+      "label": "REVEAL CONTROL END",
+      "node_name": "RevealControlEnd",
+      "position": [
+        -761.752258300781,
+        274.318176269531
+      ]
+    },
+    "reveal_control_start": {
+      "kind": "camera_control",
+      "label": "REVEAL CONTROL START",
+      "node_name": "RevealControlStart",
+      "position": [
+        -746.273559570312,
+        507.905944824219
+      ]
+    },
+    "reveal_full": {
+      "kind": "camera_control",
+      "label": "FIRST REVEAL FULL",
+      "node_name": "RevealFull",
+      "position": [
+        -759.641540527344,
+        381.965576171875
+      ]
+    },
+    "reveal_start": {
+      "kind": "camera_control",
+      "label": "FIRST REVEAL THRESHOLD",
+      "node_name": "RevealStart",
+      "position": [
+        -745.570007324219,
+        451.619750976562
+      ]
+    },
+    "second_reveal_camera_anchor": {
+      "kind": "camera_anchor",
+      "label": "NEAR VISTA CAMERA ANCHOR",
+      "node_name": "SecondVistaCameraAnchor",
+      "position": [
+        -1391.9814453125,
+        -1356.25744628906
+      ]
+    },
+    "second_reveal_trigger": {
+      "kind": "presentation_trigger",
+      "label": "NEAR VISTA REVEAL",
+      "node_name": "SecondVistaRevealTrigger",
+      "position": [
+        -923.821655273438,
+        -333.819274902344
+      ]
+    },
+    "second_vista_end": {
+      "kind": "camera_control",
+      "label": "SECOND CAMERA RETURN COMPLETE",
+      "node_name": "SecondVistaEnd",
+      "position": [
+        -1014.58306884766,
+        -447.09521484375
+      ]
+    },
+    "second_vista_full": {
+      "kind": "camera_control",
+      "label": "SECOND CAMERA APEX",
+      "node_name": "SecondVistaFull",
+      "position": [
+        -959.7041015625,
+        -390.80908203125
+      ]
+    },
+    "second_vista_start": {
+      "kind": "camera_control",
+      "label": "SECOND CAMERA BLEND START",
+      "node_name": "SecondVistaStart",
+      "position": [
+        -925.932373046875,
+        -357.037353515625
+      ]
+    },
+    "spawn": {
+      "kind": "spawn",
+      "label": "TRANSITION ARRIVAL",
+      "node_name": "EntrySpawn",
+      "position": [
+        -744.055847167969,
+        1351.4521484375
+      ]
+    },
+    "traverse_end": {
+      "kind": "camera_control",
+      "label": "TRAVERSE END",
+      "node_name": "TraverseEnd",
+      "position": [
+        915.0,
+        -305.0
+      ]
     }
   },
+  "production_scene": "res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn",
+  "route_floor": {
+    "kind": "authored_route_master",
+    "rect": [
+      -1644.0,
+      -1513.0,
+      4096.0,
+      3412.0
+    ],
+    "texture_path": "res://content/sprites/world/return_causeway/path/sundered_keep_approach_route_master.png",
+    "vertical_runtime_offset": 180.0
+  },
+  "schema": "custodian.sundered_keep.approach_outskirts.v1",
   "subregions": [
-    {"id": "transition_arrival", "node_name": "TransitionArrival", "kind": "transition", "rect": [-330.0, 430.0, 420.0, 430.0]},
-    {"id": "first_vista_approach", "node_name": "FirstVistaApproach", "kind": "vista", "rect": [-470.0, -360.0, 560.0, 820.0]},
-    {"id": "shore_parish", "node_name": "ShoreParish", "kind": "return_parish", "rect": [-40.0, -420.0, 350.0, 300.0]},
-    {"id": "near_vista_traverse", "node_name": "NearVistaTraverse", "kind": "vista", "rect": [250.0, -430.0, 520.0, 280.0]},
-    {"id": "causeway_checkpoint", "node_name": "CausewayCheckpoint", "kind": "cutaway_interior", "rect": [700.0, -450.0, 430.0, 300.0]},
-    {"id": "beach_approach", "node_name": "BeachApproach", "kind": "shore", "rect": [1080.0, -390.0, 260.0, 280.0]},
-    {"id": "causeway_foot_exit", "node_name": "CausewayFootExit", "kind": "fade_handoff", "rect": [1200.0, -360.0, 120.0, 180.0]}
+    {
+      "id": "transition_arrival",
+      "kind": "transition",
+      "node_name": "TransitionArrival",
+      "rect": [
+        -330.0,
+        430.0,
+        420.0,
+        430.0
+      ]
+    },
+    {
+      "id": "first_vista_approach",
+      "kind": "vista",
+      "node_name": "FirstVistaApproach",
+      "rect": [
+        -470.0,
+        -360.0,
+        560.0,
+        820.0
+      ]
+    },
+    {
+      "id": "shore_parish",
+      "kind": "return_parish",
+      "node_name": "ShoreParish",
+      "rect": [
+        -40.0,
+        -420.0,
+        350.0,
+        300.0
+      ]
+    },
+    {
+      "id": "near_vista_traverse",
+      "kind": "vista",
+      "node_name": "NearVistaTraverse",
+      "rect": [
+        250.0,
+        -430.0,
+        520.0,
+        280.0
+      ]
+    },
+    {
+      "id": "causeway_checkpoint",
+      "kind": "cutaway_interior",
+      "node_name": "CausewayCheckpoint",
+      "rect": [
+        700.0,
+        -450.0,
+        430.0,
+        300.0
+      ]
+    },
+    {
+      "id": "beach_approach",
+      "kind": "shore",
+      "node_name": "BeachApproach",
+      "rect": [
+        1080.0,
+        -390.0,
+        260.0,
+        280.0
+      ]
+    },
+    {
+      "id": "causeway_foot_exit",
+      "kind": "fade_handoff",
+      "node_name": "CausewayFootExit",
+      "rect": [
+        1200.0,
+        -360.0,
+        120.0,
+        180.0
+      ]
+    }
+  ],
+  "tile_size": 32.0,
+  "visual_overlays": [
+    {
+      "collision_authority": false,
+      "filtering": "linear",
+      "id": "shore_parish_northbound_ground",
+      "kind": "ground_overlay",
+      "rect": [
+        -544.0,
+        -660.0,
+        768.0,
+        1024.0
+      ],
+      "semantic_subregion": "shore_parish",
+      "texture_path": "res://content/sprites/world/return_causeway/path/overlays/sundered_keep_shore_parish_northbound_ground_01.png",
+      "z_index": -12.0,
+      "z_role": "below_route_floor"
+    },
+    {
+      "collision_authority": false,
+      "filtering": "linear",
+      "id": "outer_wall_east_traverse_ground",
+      "kind": "ground_overlay",
+      "rect": [
+        280.0,
+        -625.0,
+        1024.0,
+        640.0
+      ],
+      "semantic_subregion": "causeway_checkpoint",
+      "texture_path": "res://content/sprites/world/return_causeway/path/overlays/sundered_keep_outer_wall_east_traverse_ground_01.png",
+      "z_index": -11.0,
+      "z_role": "below_route_floor"
+    },
+    {
+      "collision_authority": false,
+      "filtering": "linear",
+      "id": "outer_wall_checkpoint_detail",
+      "kind": "background_detail",
+      "rect": [
+        120.0,
+        -980.0,
+        2048.0,
+        1024.0
+      ],
+      "semantic_subregion": "causeway_checkpoint",
+      "texture_path": "res://content/backgrounds/sundered_keep/approach/near_detail/sundered_keep_outer_wall_checkpoint_detail_01.png",
+      "z_index": -2.0,
+      "z_role": "presentation_background"
+    },
+    {
+      "collision_authority": false,
+      "filtering": "linear",
+      "fps": 7.0,
+      "frame_count": 6.0,
+      "frame_size": [
+        1536.0,
+        384.0
+      ],
+      "id": "outer_wall_checkpoint_fog",
+      "kind": "animated_sheet",
+      "loop": true,
+      "maximum_alpha": 0.3,
+      "rect": [
+        260.0,
+        -520.0,
+        1536.0,
+        384.0
+      ],
+      "semantic_subregion": "causeway_checkpoint",
+      "texture_path": "res://content/backgrounds/sundered_keep/approach/fog/outer_wall_checkpoint_fog_ribbon_01.png",
+      "z_index": -1.0,
+      "z_role": "local_atmosphere_below_operator"
+    }
   ]
 }

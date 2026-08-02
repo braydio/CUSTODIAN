@@ -1,4 +1,4 @@
-[gd_resource type="SpriteFrames" format=3 uid="uid://mcibk8clvw0q"]
+[gd_resource type="SpriteFrames" format=3 uid="uid://der8cvd4nsmur"]
 
 [ext_resource type="Texture2D" uid="uid://b5p6knh20a6ix" path="res://content/sprites/operator/runtime/weapon/melee_1h/vigil_pattern_dagger/operator__weapon__vigil_pattern_dagger__chain_01__w__10f__156x96.png" id="1_nsl03"]
 [ext_resource type="Texture2D" uid="uid://dplil3d250p50" path="res://content/sprites/operator/runtime/weapon/melee_1h/vigil_pattern_dagger/operator__weapon__vigil_pattern_dagger__chain_01__e__10f__156x96.png" id="2_jvvwu"]

@@ -5,6 +5,21 @@ func _draw() -> void:
 	super()
 	if _mapper == null:
 		return
+	var state := _mapper.call("get_collision_mapper_state") as Dictionary
+	if bool(state.get("zone_mode", false)):
+		var draft_rect := state.get("zone_draft_rect", Rect2()) as Rect2
+		if draft_rect.size != Vector2.ZERO:
+			draw_rect(draft_rect, Color(1.0, 0.55, 0.18, 0.22), true)
+			draw_rect(draft_rect, Color(1.0, 0.70, 0.24, 1.0), false, 3.0)
+			draw_string(
+				ThemeDB.fallback_font,
+				draft_rect.position + Vector2(8.0, 18.0),
+				"EDIT: %s" % str(state.get("selected_zone", "none")),
+				HORIZONTAL_ALIGNMENT_LEFT,
+				-1.0,
+				12,
+				Color(1.0, 0.84, 0.48, 1.0)
+			)
 	var level := _mapper.get("_target_level") as Node
 	if level == null:
 		return

@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://bw8yg4urje182"]
 
-[ext_resource type="Script" path="res://scenes/debug/sundered_keep_approach_mapper.gd" id="1_mapper"]
-[ext_resource type="Script" path="res://scenes/debug/sundered_keep_approach_mapper_overlay.gd" id="2_overlay"]
+[ext_resource type="Script" uid="uid://ca5xoa8brv4dt" path="res://scenes/debug/sundered_keep_approach_mapper.gd" id="1_mapper"]
+[ext_resource type="Script" uid="uid://dl8ijbnr20ec7" path="res://scenes/debug/sundered_keep_approach_mapper_overlay.gd" id="2_overlay"]
 
-[node name="SunderedKeepApproachMapper" type="Node2D"]
+[node name="SunderedKeepApproachMapper" type="Node2D" unique_id=786431777]
 script = ExtResource("1_mapper")
 target_scene_path = "res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn"
 target_instance_name = "ProductionApproachAndOutskirtsPreview"
@@ -11,19 +11,19 @@ mapper_title = "Sundered Keep Approach and Outskirts Mapper"
 initial_camera_position = Vector2(420, 80)
 initial_camera_zoom = Vector2(0.42, 0.42)
 
-[node name="World" type="Node2D" parent="."]
+[node name="World" type="Node2D" parent="." unique_id=1801774629]
 
-[node name="Camera2D" type="Camera2D" parent="World"]
+[node name="Camera2D" type="Camera2D" parent="World" unique_id=1181744393]
 position = Vector2(420, 80)
 zoom = Vector2(0.42, 0.42)
 
-[node name="CollisionOverlay" type="Node2D" parent="World"]
+[node name="CollisionOverlay" type="Node2D" parent="World" unique_id=1877063091]
 z_index = 500
 script = ExtResource("2_overlay")
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1504432946]
 
-[node name="Help" type="Label" parent="CanvasLayer"]
+[node name="Help" type="Label" parent="CanvasLayer" unique_id=1797542355]
 offset_left = 16.0
 offset_top = 16.0
 offset_right = 1180.0

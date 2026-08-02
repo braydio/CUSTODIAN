@@ -44,6 +44,42 @@ func _run() -> void:
 		"production approach did not consume mapper collision rails",
 		errors
 	)
+	var marker_state := approach.call("get_authoring_marker_state") as Dictionary
+	var spawn_state := marker_state.get("spawn", {}) as Dictionary
+	var source_spawn := spawn_state.get("source_position", Vector2.ZERO) as Vector2
+	var runtime_spawn := spawn_state.get("runtime_position", Vector2.ZERO) as Vector2
+	var entry_spawn := approach.get_node_or_null("Markers/EntrySpawn") as Marker2D
+	_check(entry_spawn != null, "production approach EntrySpawn is missing", errors)
+	if entry_spawn != null:
+		_check(
+			entry_spawn.position.is_equal_approx(runtime_spawn),
+			"runtime EntrySpawn does not honor mapper spawn %s -> %s"
+			% [source_spawn, runtime_spawn],
+			errors
+		)
+	var mapper_state := mapper.call("get_collision_mapper_state") as Dictionary
+	var marker_report := mapper.call("get_marker_authority_report") as Dictionary
+	_check(
+		int(marker_report.get("marker_count", 0)) == 19,
+		"canonical marker set does not contain all 19 approach markers",
+		errors
+	)
+	_check(
+		(marker_report.get("errors", []) as Array).is_empty(),
+		"duplicate or invalid markers remain: %s"
+		% str(marker_report.get("errors", [])),
+		errors
+	)
+	_check(
+		marker_state.size() == int(marker_report.get("marker_count", -1)),
+		"runtime and mapper marker authorities do not match",
+		errors
+	)
+	_check(
+		(mapper_state.get("zone_records", []) as Array).size() >= 7,
+		"approach mapper did not load authored feature zones",
+		errors
+	)
 	var directory := DirAccess.open("res://scenes/debug")
 	var mapper_scenes: Array[String] = []
 	if directory != null:
@@ -51,9 +87,8 @@ func _run() -> void:
 			if filename.begins_with("sundered_keep") and filename.ends_with("_mapper.tscn"):
 				mapper_scenes.append(filename)
 	_check(
-		mapper_scenes.size() == 2,
-		"expected exactly production Keep and approach mapper scenes: %s"
-		% str(mapper_scenes),
+		mapper_scenes.count("sundered_keep_approach_mapper.tscn") == 1,
+		"approach mapper scene is missing or duplicated: %s" % str(mapper_scenes),
 		errors
 	)
 	_finish(errors)

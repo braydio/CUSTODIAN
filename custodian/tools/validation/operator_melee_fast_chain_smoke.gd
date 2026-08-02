@@ -178,8 +178,8 @@ func _validate_runtime_registration(operator: Node) -> void:
 		)
 		_assert_close(
 			sprite.sprite_frames.get_animation_speed(animation),
-			18.0,
-			"%s is not registered at 18 FPS" % animation
+			17.0,
+			"%s is not registered at 17 FPS" % animation
 		)
 		_assert(
 			not sprite.sprite_frames.get_animation_loop(animation),
@@ -209,13 +209,18 @@ func _validate_runtime_registration(operator: Node) -> void:
 			)
 			_assert_close(
 				fx_sprite.sprite_frames.get_animation_speed(animation),
-				18.0,
-				"%s is not registered at 18 FPS" % animation
+				17.0,
+				"%s is not registered at 17 FPS" % animation
 			)
 			_assert(
 				not fx_sprite.sprite_frames.get_animation_loop(animation),
 				"%s must not loop internally" % animation
 			)
+	_assert(
+		sprite.sprite_frames.has_animation(&"melee_stance")
+		and sprite.sprite_frames.get_frame_count(&"melee_stance") == 1,
+		"melee_stance is not the one-frame chain 01 placeholder"
+	)
 
 
 func _validate_single_press_settle(operator: Node) -> void:

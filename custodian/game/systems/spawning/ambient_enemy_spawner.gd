@@ -9,6 +9,8 @@ const CAMP_SCRIPT := preload("res://game/systems/spawning/ambient_enemy_camp.gd"
 @export var min_camp_spacing_px: float = 700.0
 @export var max_generated_camps: int = 3
 @export var max_active_ambient_enemies: int = 12
+@export_range(1, 8, 1) var enemies_per_camp_min: int = 2
+@export_range(1, 8, 1) var enemies_per_camp_max: int = 2
 
 
 func _ready() -> void:
@@ -22,7 +24,11 @@ func spawn_from_markers() -> int:
 	var accepted: Array[Vector2] = []
 	var created := 0
 	for marker in get_tree().get_nodes_in_group(marker_group):
-		if created >= max_generated_camps or not (marker is Node2D):
+		if created >= max_generated_camps:
+			break
+		if not (marker is Node2D) or (marker as Node).is_queued_for_deletion():
+			continue
+		if (created + 1) * maxi(1, enemies_per_camp_min) > max_active_ambient_enemies:
 			break
 		var position := (marker as Node2D).global_position
 		if player != null and position.distance_to(player.global_position) < min_distance_from_player_start_px:
@@ -37,6 +43,9 @@ func spawn_from_markers() -> int:
 		var camp := CAMP_SCRIPT.new() as AmbientEnemyCamp
 		camp.camp_id = StringName("generated_camp_%d" % created)
 		camp.enemy_scene = enemy_scene
+		camp.enemy_count_min = enemies_per_camp_min
+		camp.enemy_count_max = maxi(enemies_per_camp_min, enemies_per_camp_max)
+		camp.add_to_group("generated_procgen_ambient_camp")
 		(marker as Node2D).add_child(camp)
 		camp.global_position = position
 		accepted.append(position)

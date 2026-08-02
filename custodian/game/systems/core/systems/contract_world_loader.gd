@@ -25,6 +25,11 @@ class_name ContractWorldLoader
 @export var place_gothic_compound_connection: bool = true
 @export var place_registered_level_connections: bool = true
 @export var place_sundered_keep_connection: bool = true
+@export var place_ambient_enemy_camps_from_contract: bool = true
+@export var ambient_enemy_spawner_path: NodePath = NodePath("/root/GameRoot/AmbientEnemySpawner")
+@export_range(0, 6, 1) var ambient_enemy_camp_count: int = 2
+@export_range(8, 96, 1) var ambient_enemy_min_distance_tiles: int = 26
+@export_range(8, 128, 1) var ambient_enemy_camp_spacing_tiles: int = 44
 @export var place_debug_sundered_keep_gateway: bool = false
 @export var debug_start_near_sundered_keep_entrance: bool = false
 @export var debug_sundered_keep_start_offset: Vector2 = Vector2(48.0, 0.0)
@@ -52,6 +57,8 @@ const SUNDERED_KEEP_FRONTAGE_VISUAL_SPAWNER_SCRIPT := preload(
 )
 const SUNDERED_KEEP_LEVEL_ID := &"sundered_keep_front_gate"
 const WORLD_ORIGIN_BRANCH_GROUP := &"world_origin_branch"
+const AMBIENT_ENEMY_MARKER_GROUP := &"ambient_enemy_camp_marker"
+const GENERATED_AMBIENT_ENEMY_MARKER_GROUP := &"generated_procgen_ambient_enemy_marker"
 const SECTOR_TILE_PX := 24.0
 const PROCGEN_SECTOR_LAYOUT := {
 	"ARCHIVE": 0,
@@ -166,6 +173,8 @@ func _on_contract_generated(contract: Dictionary) -> void:
 		_position_expedition_resource_nodes(level_data, map_instance)
 	if place_arrn_relays_from_contract:
 		_position_arrn_relays(level_data, map_instance)
+	if place_ambient_enemy_camps_from_contract:
+		_place_ambient_enemy_camps(level_data, map_instance)
 	if place_gothic_compound_connection:
 		_place_gothic_compound_connection(level_data, map_instance)
 	if place_registered_level_connections:
@@ -176,6 +185,90 @@ func _on_contract_generated(contract: Dictionary) -> void:
 		_refresh_camera(map_instance)
 	_rebuild_navigation(map_instance)
 	_mark_contract_ready()
+
+
+func _place_ambient_enemy_camps(level_data: Dictionary, map_instance: Node) -> void:
+	for existing in get_tree().get_nodes_in_group(GENERATED_AMBIENT_ENEMY_MARKER_GROUP):
+		if existing is Node and is_instance_valid(existing):
+			(existing as Node).queue_free()
+	if ambient_enemy_camp_count <= 0:
+		return
+	var candidates := _build_ambient_enemy_candidate_tiles(level_data, map_instance)
+	if candidates.is_empty():
+		push_warning("[ContractWorldLoader] No walkable ambient enemy camp candidates")
+		return
+	var chosen: Array[Vector2i] = []
+	var spacing_sq := ambient_enemy_camp_spacing_tiles * ambient_enemy_camp_spacing_tiles
+	for tile in candidates:
+		var sufficiently_spaced := true
+		for existing_tile in chosen:
+			if tile.distance_squared_to(existing_tile) < spacing_sq:
+				sufficiently_spaced = false
+				break
+		if not sufficiently_spaced:
+			continue
+		var marker := Marker2D.new()
+		marker.name = "AmbientEnemyCampMarker_%02d" % (chosen.size() + 1)
+		marker.add_to_group(AMBIENT_ENEMY_MARKER_GROUP)
+		marker.add_to_group(GENERATED_AMBIENT_ENEMY_MARKER_GROUP)
+		marker.set_meta("camp_tile", tile)
+		map_instance.add_child(marker)
+		marker.global_position = _tile_to_world(map_instance, tile)
+		chosen.append(tile)
+		if chosen.size() >= ambient_enemy_camp_count:
+			break
+	var spawner := get_node_or_null(ambient_enemy_spawner_path)
+	if spawner != null and spawner.has_method("spawn_from_markers"):
+		spawner.call("spawn_from_markers")
+
+
+func _build_ambient_enemy_candidate_tiles(
+	level_data: Dictionary,
+	map_instance: Node
+) -> Array[Vector2i]:
+	var candidates: Array[Vector2i] = []
+	var seen: Dictionary = {}
+	var raw_tiles: Array = []
+	for candidate_key in [
+		"vista_cells",
+		"main_route_cells",
+		"random_floor_tiles",
+		"floor_cells",
+	]:
+		raw_tiles.append_array(level_data.get(candidate_key, []) as Array)
+	var player_spawn: Variant = level_data.get("player_spawn")
+	var spawn_tile := player_spawn as Vector2i if player_spawn is Vector2i else Vector2i.ZERO
+	var min_distance_sq := ambient_enemy_min_distance_tiles * ambient_enemy_min_distance_tiles
+	var compound_rect: Rect2i = level_data.get("compound_rect", Rect2i()) as Rect2i
+	for raw_tile in raw_tiles:
+		if not (raw_tile is Vector2i):
+			continue
+		var tile := raw_tile as Vector2i
+		if seen.has(tile):
+			continue
+		seen[tile] = true
+		if tile.distance_squared_to(spawn_tile) < min_distance_sq:
+			continue
+		if compound_rect.has_area() and compound_rect.has_point(tile):
+			continue
+		if not _is_walkable_floor_tile(map_instance, tile):
+			continue
+		if _count_walkable_neighbors(map_instance, tile) < 3:
+			continue
+		candidates.append(tile)
+	candidates.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		var a_score := _ambient_enemy_tile_score(a, spawn_tile)
+		var b_score := _ambient_enemy_tile_score(b, spawn_tile)
+		if a_score == b_score:
+			return a.x == b.x and a.y < b.y or a.x < b.x
+		return a_score < b_score
+	)
+	return candidates
+
+
+func _ambient_enemy_tile_score(tile: Vector2i, spawn_tile: Vector2i) -> int:
+	var stable_hash: int = absi((tile.x * 73856093) ^ (tile.y * 19349663))
+	return int(tile.distance_squared_to(spawn_tile)) + stable_hash % 997
 
 
 func _apply_contract_lighting_profile(world_profile: Dictionary) -> void:

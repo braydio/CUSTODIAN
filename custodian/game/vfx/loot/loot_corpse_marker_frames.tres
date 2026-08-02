@@ -41,6 +41,78 @@ region = Rect2(336, 0, 48, 160)
 atlas = ExtResource("2")
 region = Rect2(384, 0, 48, 160)
 
+[sub_resource type="AtlasTexture" id="bl0"]
+atlas = ExtResource("2")
+region = Rect2(0, 24, 48, 136)
+
+[sub_resource type="AtlasTexture" id="bl1"]
+atlas = ExtResource("2")
+region = Rect2(48, 24, 48, 136)
+
+[sub_resource type="AtlasTexture" id="bl2"]
+atlas = ExtResource("2")
+region = Rect2(96, 24, 48, 136)
+
+[sub_resource type="AtlasTexture" id="bl3"]
+atlas = ExtResource("2")
+region = Rect2(144, 24, 48, 136)
+
+[sub_resource type="AtlasTexture" id="bl4"]
+atlas = ExtResource("2")
+region = Rect2(192, 24, 48, 136)
+
+[sub_resource type="AtlasTexture" id="bl5"]
+atlas = ExtResource("2")
+region = Rect2(240, 24, 48, 136)
+
+[sub_resource type="AtlasTexture" id="bl6"]
+atlas = ExtResource("2")
+region = Rect2(288, 24, 48, 136)
+
+[sub_resource type="AtlasTexture" id="bl7"]
+atlas = ExtResource("2")
+region = Rect2(336, 24, 48, 136)
+
+[sub_resource type="AtlasTexture" id="bl8"]
+atlas = ExtResource("2")
+region = Rect2(384, 24, 48, 136)
+
+[sub_resource type="AtlasTexture" id="bt0"]
+atlas = ExtResource("2")
+region = Rect2(0, 0, 48, 32)
+
+[sub_resource type="AtlasTexture" id="bt1"]
+atlas = ExtResource("2")
+region = Rect2(48, 0, 48, 32)
+
+[sub_resource type="AtlasTexture" id="bt2"]
+atlas = ExtResource("2")
+region = Rect2(96, 0, 48, 32)
+
+[sub_resource type="AtlasTexture" id="bt3"]
+atlas = ExtResource("2")
+region = Rect2(144, 0, 48, 32)
+
+[sub_resource type="AtlasTexture" id="bt4"]
+atlas = ExtResource("2")
+region = Rect2(192, 0, 48, 32)
+
+[sub_resource type="AtlasTexture" id="bt5"]
+atlas = ExtResource("2")
+region = Rect2(240, 0, 48, 32)
+
+[sub_resource type="AtlasTexture" id="bt6"]
+atlas = ExtResource("2")
+region = Rect2(288, 0, 48, 32)
+
+[sub_resource type="AtlasTexture" id="bt7"]
+atlas = ExtResource("2")
+region = Rect2(336, 0, 48, 32)
+
+[sub_resource type="AtlasTexture" id="bt8"]
+atlas = ExtResource("2")
+region = Rect2(384, 0, 48, 32)
+
 [sub_resource type="AtlasTexture" id="c0"]
 atlas = ExtResource("3")
 region = Rect2(0, 0, 96, 160)
@@ -161,6 +233,70 @@ animations = [{
 }],
 "loop": 1,
 "name": &"beacon_loop",
+"speed": 9.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("bl0")
+}, {
+"duration": 1.0,
+"texture": SubResource("bl1")
+}, {
+"duration": 1.0,
+"texture": SubResource("bl2")
+}, {
+"duration": 1.0,
+"texture": SubResource("bl3")
+}, {
+"duration": 1.0,
+"texture": SubResource("bl4")
+}, {
+"duration": 1.0,
+"texture": SubResource("bl5")
+}, {
+"duration": 1.0,
+"texture": SubResource("bl6")
+}, {
+"duration": 1.0,
+"texture": SubResource("bl7")
+}, {
+"duration": 1.0,
+"texture": SubResource("bl8")
+}],
+"loop": 1,
+"name": &"beacon_lower_loop",
+"speed": 9.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("bt0")
+}, {
+"duration": 1.0,
+"texture": SubResource("bt1")
+}, {
+"duration": 1.0,
+"texture": SubResource("bt2")
+}, {
+"duration": 1.0,
+"texture": SubResource("bt3")
+}, {
+"duration": 1.0,
+"texture": SubResource("bt4")
+}, {
+"duration": 1.0,
+"texture": SubResource("bt5")
+}, {
+"duration": 1.0,
+"texture": SubResource("bt6")
+}, {
+"duration": 1.0,
+"texture": SubResource("bt7")
+}, {
+"duration": 1.0,
+"texture": SubResource("bt8")
+}],
+"loop": 1,
+"name": &"beacon_tip_loop",
 "speed": 9.0
 }, {
 "frames": [{

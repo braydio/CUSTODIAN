@@ -49,7 +49,7 @@
 [ext_resource type="PackedScene" path="res://game/ui/minimap/minimap_panel.tscn" id="200_minimap"]
 [ext_resource type="PackedScene" path="res://game/ui/inventory/inventory_ui.tscn" id="201_inventory_ui"]
 [ext_resource type="Script" uid="uid://brku67e23m54l" path="res://game/systems/drone/drone_manager.gd" id="206_drone_manager"]
-[ext_resource type="Script" uid="uid://brgprv506ntpi" path="res://game/systems/spawning/ambient_enemy_camp.gd" id="207_ambient_camp"]
+[ext_resource type="Script" path="res://game/systems/spawning/ambient_enemy_spawner.gd" id="207_ambient_spawner"]
 [ext_resource type="PackedScene" path="res://scenes/debug/dev_observatory_overlay.tscn" id="208_observatory_overlay"]
 [ext_resource type="PackedScene" path="res://game/actors/allies/allied_infantry_droid.tscn" id="209_allied_droid"]
 [ext_resource type="Script" path="res://game/world/lighting/world_lighting_director.gd" id="210_lighting_director"]
@@ -268,20 +268,6 @@ placeholder_melee_hitbox_radius = 22.0
 placeholder_healthbar_top = -54.0
 placeholder_healthbar_bottom = -48.0
 
-[node name="AmbientHostileCampEast" type="Node2D" parent="World" unique_id=1994972853 groups=["world_origin_branch"]]
-position = Vector2(1220, -500)
-script = ExtResource("207_ambient_camp")
-camp_id = &"east_road_watch"
-enemy_scene = ExtResource("18_grunt_enemy")
-enemy_count_max = 3
-
-[node name="AmbientHostileCampWest" type="Node2D" parent="World" unique_id=1275453240 groups=["world_origin_branch"]]
-position = Vector2(-220, -500)
-script = ExtResource("207_ambient_camp")
-camp_id = &"west_ruin_watch"
-enemy_scene = ExtResource("18_grunt_enemy")
-enemy_count_max = 3
-
 [node name="PlayerController" type="Node" parent="World" unique_id=2047803985]
 script = ExtResource("42_player_controller")
 operator_path = NodePath("../Operator")
@@ -352,6 +338,14 @@ initial_delay = 25.0
 
 [node name="ContractWorldLoader" type="Node" parent="." unique_id=1201129447]
 script = ExtResource("28_contract_loader")
+
+[node name="AmbientEnemySpawner" type="Node" parent="."]
+script = ExtResource("207_ambient_spawner")
+enemy_scene = ExtResource("18_grunt_enemy")
+max_generated_camps = 2
+max_active_ambient_enemies = 4
+enemies_per_camp_min = 2
+enemies_per_camp_max = 2
 
 [node name="AmbientCritterManager" type="Node" parent="." unique_id=292901155]
 script = ExtResource("34_ambient_critters")

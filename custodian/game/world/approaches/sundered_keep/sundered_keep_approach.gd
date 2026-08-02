@@ -25,7 +25,10 @@ const FORTRESS_VISTA_SCRIPT := preload(
 	"res://game/world/approaches/sundered_keep/"
 	+ "sundered_keep_fortress_vista.gd"
 )
-
+const APPROACH_OUTSKIRTS_MAStER := (
+	"res://content/backgrounds/sundered_keep/approach/underlay/"
+	+ "sundered_keep_approach_outskirts_master.png"
+)
 const USE_ROUTE_MASTER := true
 const APPROACH_LAYOUT_DATA := (
 	"res://content/levels/sundered_keep/"
@@ -38,6 +41,9 @@ const APPROACH_COLLISION_DATA := (
 const APPROACH_OCCLUSION_DATA := (
 	"res://content/levels/sundered_keep/"
 	+ "sundered_keep_approach_occlusion.json"
+)
+const AUTHORED_GRUNT_SCENE := preload(
+	"res://game/actors/enemies/enemy_grunt.tscn"
 )
 
 const APPROACH_ROUTE_MASTER := "res://content/sprites/world/return_causeway/path/sundered_keep_approach_route_master.png"
@@ -79,16 +85,22 @@ const FORTRESS_WALL_MASS_PATH := "res://content/sprites/world/return_causeway/pa
 const ROUTE_VERTICAL_OFFSET := 180.0
 const BOUNDARY_RAIL_RADIUS := 10.0
 
-const RECT_ROUTE_MASTER := Rect2(Vector2(-620.0, -660.0), Vector2(2048.0, 1706.0))
-const RECT_APPROACH_UNDERLAY := Rect2(Vector2(-1536.0, -1236.0), Vector2(3392.0, 2718.0))
+const RECT_ROUTE_MASTER := Rect2(Vector2(-1644.0, -1513.0), Vector2(4096.0, 3412.0))
+const RECT_APPROACH_UNDERLAY := Rect2(
+Vector2(-1536.0, -1236.0),
+Vector2(4608.0, 3072.0)
+)
 const RECT_FIRST_VISTA_HORIZON := Rect2(Vector2(-1000.0, -980.0), Vector2(2600.0, 1460.0))
 const RECT_FIRST_VISTA_FOG_VEIL := Rect2(Vector2(-1000.0, -360.0), Vector2(2600.0, 720.0))
 const RECT_FINAL_GATE_SHADOW_VEIL := Rect2(Vector2(-1000.0, -520.0), Vector2(2600.0, 900.0))
 const RECT_FOG_STRIP_01 := Rect2(Vector2(-880.0, -430.0), Vector2(1500.0, 520.0))
 const RECT_FOG_STRIP_02 := Rect2(Vector2(-260.0, -420.0), Vector2(1500.0, 520.0))
 const RECT_FOG_STRIP_03 := Rect2(Vector2(320.0, -410.0), Vector2(1500.0, 520.0))
-const RECT_CAMERA_BOUNDS := Rect2(Vector2(-1280.0, -980.0), Vector2(2880.0, 2206.0))
-const RECT_BACKDROP_VOID_FILL := Rect2(Vector2(-2048.0, -1748.0), Vector2(4416.0, 3742.0))
+const RECT_CAMERA_BOUNDS := Rect2(Vector2(-1280.0, -980.0), Vector2(4096.0, 2560.0))
+const RECT_BACKDROP_VOID_FILL := Rect2(
+	Vector2(-2048.0, -1748.0),
+	Vector2(5632.0, 4096.0)
+)
 const BACKDROP_VOID_COLOR := Color(0.018, 0.043, 0.057, 1.0)
 const RECT_GRAND_VISTA_PANORAMA := Rect2(Vector2(-1280.0, -920.0), Vector2(2560.0, 1440.0))
 const RECT_GRAND_VISTA_SPRAY := Rect2(Vector2(-1280.0, -160.0), Vector2(2560.0, 720.0))
@@ -211,69 +223,6 @@ const BOUNDARY_SEGMENTS := [
 	[Vector2(-410.4, 692.8), Vector2(-347.9, 591.7)],
 	[Vector2(-347.9, 591.7), Vector2(-213.8, 512.5)],
 ]
-
-const AUTHORING_MARKERS := {
-	"spawn": {
-		"node_name": "EntrySpawn",
-		"label": "SPAWN",
-		"kind": "spawn",
-		"position": Vector2(-159.4, 667.0),
-	},
-	"return_causeway": {
-		"node_name": "ReturnTopdown",
-		"label": "RETURN CAUSEWAY",
-		"kind": "return_causeway",
-		"position": Vector2(751.4, -286.8),
-	},
-	"level_exit": {
-		"node_name": "LevelExit",
-		"label": "LEVEL EXIT",
-		"kind": "level_exit",
-		"position": Vector2(914.9, -273.5),
-	},
-	"first_reveal_trigger": {
-		"node_name": "FirstCameraControlStart",
-		"label": "FIRST CAMERA CONTROL START",
-		"kind": "camera_control",
-		"position": Vector2(-356.0, -202.0),
-	},
-	"first_reveal_camera_anchor": {
-		"node_name": "FirstRevealCameraAnchor",
-		"label": "FIRST CAMERA ANCHOR",
-		"kind": "camera_anchor",
-		"position": Vector2(-70.5, -583.3),
-	},
-	"reveal_control_start": {
-		"node_name": "RevealControlStart",
-		"label": "REVEAL CONTROL START",
-		"kind": "camera_control",
-		"position": Vector2(-257.4, -321.9),
-	},
-	"reveal_control_end": {
-		"node_name": "RevealControlEnd",
-		"label": "REVEAL CONTROL END",
-		"kind": "camera_control",
-		"position": Vector2(-162.5, -380.6),
-	},
-	"return_to_gameplay_trigger": {
-		"node_name": "FirstCameraReturnComplete",
-		"label": "FIRST CAMERA RETURN COMPLETE",
-		"kind": "camera_control",
-		"position": Vector2(113.6, -370.2),
-	},
-	"second_reveal_trigger": {
-		"node_name": "SecondVistaRevealTrigger",
-		"label": "SECOND REVEAL TRIGGER",
-		"kind": "presentation_trigger",
-		"position": Vector2(236.3, -346.4),
-	},
-	"second_reveal_camera_anchor": {
-		"node_name": "SecondVistaCameraAnchor",
-		"label": "SECOND CAMERA ANCHOR",
-		"kind": "camera_anchor",
-		"position": Vector2(664.5, -660.0),
-	},
-}
 
 @export_group("Shared Parallax Review Gates")
 @export var show_far_cliff_islands := false
@@ -439,10 +388,24 @@ func _ensure_roots() -> void:
 	_subregions_root = _ensure_plain_node2d("AuthoredSubregions")
 	_build_authored_subregions()
 
-	entry_spawn = _ensure_marker("EntrySpawn", _route_point(ENTRY_SPAWN_POS))
-	reveal_start = _ensure_marker("RevealStart", _route_point(REVEAL_START_POS))
-	reveal_full = _ensure_marker("RevealFull", _route_point(REVEAL_FULL_POS))
-	mid_gameplay_start = _ensure_marker("MidGameplayStart", _route_point(MID_GAMEPLAY_START_POS))
+	entry_spawn = _ensure_marker(
+		"EntrySpawn",
+		_route_point(_get_authoring_marker_position("spawn", ENTRY_SPAWN_POS))
+	)
+	reveal_start = _ensure_marker(
+		"RevealStart",
+		_route_point(_get_authoring_marker_position("reveal_start", REVEAL_START_POS))
+	)
+	reveal_full = _ensure_marker(
+		"RevealFull",
+		_route_point(_get_authoring_marker_position("reveal_full", REVEAL_FULL_POS))
+	)
+	mid_gameplay_start = _ensure_marker(
+		"MidGameplayStart",
+		_route_point(
+			_get_authoring_marker_position("mid_gameplay_start", MID_GAMEPLAY_START_POS)
+		)
+	)
 	reveal_control_start = _ensure_marker(
 		"RevealControlStart",
 		_route_point(
@@ -506,8 +469,16 @@ func _ensure_roots() -> void:
 			)
 		)
 	)
-	traverse_end = _ensure_marker("TraverseEnd", _route_point(TRAVERSE_END_POS))
-	return_topdown = _ensure_marker("ReturnTopdown", _route_point(RETURN_TOPDOWN_POS))
+	traverse_end = _ensure_marker(
+		"TraverseEnd",
+		_route_point(_get_authoring_marker_position("traverse_end", TRAVERSE_END_POS))
+	)
+	return_topdown = _ensure_marker(
+		"ReturnTopdown",
+		_route_point(
+			_get_authoring_marker_position("return_causeway", RETURN_TOPDOWN_POS)
+		)
+	)
 	first_reveal_camera_anchor = _ensure_marker(
 		"FirstRevealCameraAnchor",
 		_route_point(
@@ -1349,6 +1320,59 @@ func _build_event_markers() -> void:
 	# Keep-specific key, gate, enemy-spawn, and authoring-marker runtime was
 	# previously placed here by mistake and made the vista route impassable.
 	_bind_authored_route_exits()
+	_build_authored_vista_enemies()
+
+
+func _build_authored_vista_enemies() -> void:
+	var enemies_root := Node2D.new()
+	enemies_root.name = "AuthoredEnemies"
+	event_runtime_root.add_child(enemies_root)
+	var subregions := _authored_subregion_rects()
+	for raw_enemy: Variant in _layout_document.get("authored_enemies", []):
+		if not (raw_enemy is Dictionary):
+			continue
+		var record := raw_enemy as Dictionary
+		if str(record.get("enemy_type", "")) != "grunt":
+			push_warning(
+				"[SunderedKeepApproach] Unsupported authored enemy type: %s"
+				% str(record.get("enemy_type", ""))
+			)
+			continue
+		var subregion_id := str(record.get("subregion_id", ""))
+		if not subregions.has(subregion_id):
+			push_warning(
+				"[SunderedKeepApproach] Authored enemy has unknown subregion: %s"
+				% subregion_id
+			)
+			continue
+		var enemy := AUTHORED_GRUNT_SCENE.instantiate() as Node2D
+		if enemy == null:
+			continue
+		var encounter_id := str(record.get("id", "vista_grunt"))
+		enemy.name = encounter_id.to_pascal_case()
+		enemy.position = _route_point((subregions[subregion_id] as Rect2).get_center())
+		enemy.set_meta("authored_encounter_id", encounter_id)
+		enemy.set_meta("subregion_id", subregion_id)
+		enemy.add_to_group("authored_vista_enemy")
+		enemies_root.add_child(enemy)
+		if enemy.has_method("set_behavior_profile"):
+			enemy.call(
+				"set_behavior_profile",
+				StringName(str(record.get("behavior_profile", "raider_grunt")))
+			)
+
+
+func _authored_subregion_rects() -> Dictionary:
+	var result: Dictionary = {}
+	for raw_region: Variant in _layout_document.get("subregions", []):
+		if not (raw_region is Dictionary):
+			continue
+		var record := raw_region as Dictionary
+		result[str(record.get("id", ""))] = _rect_from_array(
+			record.get("rect", []),
+			Rect2()
+		)
+	return result
 
 
 func _add_event_marker(marker_id: String, marker_data: Dictionary) -> Marker2D:
@@ -1689,7 +1713,9 @@ func get_authoring_markers() -> Dictionary:
 
 func get_authoring_marker_schema() -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
-	for marker_id: String in _runtime_authoring_markers.keys():
+	var marker_ids := _runtime_authoring_markers.keys()
+	marker_ids.sort()
+	for marker_id: String in marker_ids:
 		var data := (_runtime_authoring_markers[marker_id] as Dictionary).duplicate(true)
 		data["id"] = marker_id
 		result.append(data)

@@ -57,15 +57,18 @@ upper_fx/actions/melee_1h/chain_02/
 upper_fx/actions/melee_1h/chain_03/
 ```
 
-The runtime registers the E/W `10/8/8` FX strips at 18 FPS, maps them to
+The runtime registers the E/W `10/8/8` FX strips at 17 FPS, maps them to
 `melee_fast_1/2/3`, and synchronizes their visible frame to the authoritative
 body frame. The Katana weapon overlay remains empty because the weapon is
 already present in the body presentation.
 
 ## Timing
 
-All three animations are non-looping and registered at 18 FPS with body
+All three animations are non-looping and registered at 17 FPS with body
 `speed_scale = 1.0`.
+
+Until a dedicated stance strip is authored, `melee_stance` is a one-frame
+placeholder cropped from frame zero of the Fast 01 east body strip.
 
 | Link | Frames | Damage frame | Commit frame | Stamina |
 |---|---:|---:|---:|---:|

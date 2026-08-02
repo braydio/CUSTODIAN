@@ -7180,7 +7180,7 @@ func _load_foliage_textures() -> void:
 func _load_interior_prop_textures() -> void:
 	_interior_prop_textures.clear()
 	var files := DirAccess.get_files_at(INTERIOR_RUNTIME_DIR)
-ss	files.sort()
+	files.sort()
 	for file_name in files:
 		if not file_name.ends_with(".png"):
 			continue
@@ -7672,7 +7672,7 @@ func _spawn_runtime_wall_body(tile: Vector2i, refresh_debug: bool = true, publis
 	var body: StaticBody2D
 	if destructible_runtime_walls:
 		var segment := RUNTIME_WALL_SEGMENT_SCRIPT.new()
-		segment.setup(self, tile)
+		segment.call("setup", self, tile)
 		body = segment
 	else:
 		body = StaticBody2D.new()

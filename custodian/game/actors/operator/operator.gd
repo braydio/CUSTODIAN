@@ -117,7 +117,8 @@ const DAMAGE_TAKEN_SOUND: AudioStream = preload("res://content/audio/sfx/combat/
 const DODGE_FAST_ATTACK_FRAME_COUNT := 11
 const DODGE_FAST_ATTACK_FPS := 20.0
 const DODGE_FAST_ATTACK_HIT_FRAME := 4
-const MELEE_FAST_CHAIN_FPS := 18.0
+const MELEE_FAST_CHAIN_FPS := 17.0
+const MELEE_STANCE_PLACEHOLDER_ANIMATION := &"melee_stance"
 const MELEE_FAST_CHAIN_FRAME_SIZE := Vector2i(156, 96)
 const MELEE_FAST_CHAIN_BODY_SHEETS := {
 	&"melee_2h_fast_1_right": {
@@ -8897,7 +8898,25 @@ func _register_melee_fast_chain_body_animations(
 			MELEE_FAST_CHAIN_FPS
 		)
 		changed = true
+	changed = _register_melee_stance_placeholder(runtime_frames) or changed
 	return changed
+
+
+func _register_melee_stance_placeholder(runtime_frames: SpriteFrames) -> bool:
+	var spec := MELEE_FAST_CHAIN_BODY_SHEETS[&"melee_2h_fast_1_right"] as Dictionary
+	var texture := _load_optional_texture(String(spec.get("path", "")), null)
+	if texture == null or Vector2i(texture.get_width(), texture.get_height()) != Vector2i(1092, 96):
+		return false
+	if runtime_frames.has_animation(MELEE_STANCE_PLACEHOLDER_ANIMATION):
+		runtime_frames.remove_animation(MELEE_STANCE_PLACEHOLDER_ANIMATION)
+	runtime_frames.add_animation(MELEE_STANCE_PLACEHOLDER_ANIMATION)
+	runtime_frames.set_animation_loop(MELEE_STANCE_PLACEHOLDER_ANIMATION, true)
+	runtime_frames.set_animation_speed(MELEE_STANCE_PLACEHOLDER_ANIMATION, 1.0)
+	var atlas := AtlasTexture.new()
+	atlas.atlas = texture
+	atlas.region = Rect2(0.0, 0.0, 156.0, 96.0)
+	runtime_frames.add_frame(MELEE_STANCE_PLACEHOLDER_ANIMATION, atlas)
+	return true
 
 
 func _ensure_melee_fast_chain_fx_animations() -> void:

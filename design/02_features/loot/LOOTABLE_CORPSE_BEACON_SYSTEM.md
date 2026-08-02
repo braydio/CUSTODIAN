@@ -46,7 +46,7 @@ The legacy `dead` flag remains as a compatibility view. `life_state` is authorit
 
 ## Visual phases
 
-`loot_corpse_marker.tscn` separates four phases: one-shot reveal, persistent beacon and ground-ring loops, and a one-shot collection collapse. Category hue is applied through `loot_corpse_hue.gdshader` or a controlled modulation fallback. Materials are duplicated per corpse and restored at collection. Presentation never owns loot state or reward delivery.
+`loot_corpse_marker.tscn` separates four phases: one-shot reveal, persistent beacon and ground-ring loops, and a one-shot collection collapse. The persistent presentation is split into a depth-inheriting `GroundRing`, a depth-inheriting `BeamLower`, and an absolute-depth `BeamTip` used only as a small readability indicator. The lower beam and tip are overlapping `AtlasTexture` crops of the existing nine-frame beacon strip; no new production art or detached world actor is introduced. Category hue is applied through `loot_corpse_hue.gdshader` or a controlled modulation fallback. Materials are duplicated per corpse and restored at collection. Presentation never owns loot state or reward delivery.
 
 Default category is muted amber-white. `power`, `signal`, and `anomaly` may tune color, beam scale, and pulse strength without requiring colored sprite variants.
 
