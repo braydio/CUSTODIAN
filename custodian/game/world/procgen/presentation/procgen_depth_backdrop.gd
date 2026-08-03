@@ -37,8 +37,36 @@ func _ready() -> void:
 	visible = false
 
 
-func configure_from_cells(cells: Array) -> void:
-	configure_from_chasm_cells(cells)
+func configure_from_cells(world_cells: Array) -> void:
+	# Compatibility path for the general procgen world. The existing caller
+	# supplies generated world/floor cells to establish presentation bounds;
+	# it does not yet guarantee explicit chasm cells.
+	_clear_regions()
+
+	var decoded_cells: Array[Vector2i] = []
+
+	for value: Variant in world_cells:
+		var cell := _decode_cell(value)
+
+		if cell == Vector2i(-2147483648, -2147483648):
+			continue
+
+		decoded_cells.append(cell)
+
+	if decoded_cells.is_empty():
+		visible = false
+		push_warning(
+			"[ProcgenDepthBackdrop] No world cells received; backdrop hidden."
+		)
+		return
+
+	_create_world_bounds_stack(decoded_cells)
+	visible = true
+
+	print(
+		"[ProcgenDepthBackdrop] World fallback active: cells=%d"
+		% decoded_cells.size()
+	)
 
 
 func configure_from_chasm_cells(chasm_cells: Array) -> void:
@@ -76,6 +104,60 @@ func get_region_debug_state() -> Array[Dictionary]:
 			"scale": (child as Node2D).scale.x,
 		})
 	return result
+
+
+func _create_world_bounds_stack(
+	world_cells: Array[Vector2i]
+) -> void:
+	var bounds := _cell_bounds(world_cells)
+	var expanded := bounds.grow(24)
+
+	var world_rect := Rect2(
+		Vector2(expanded.position * TILE_SIZE),
+		Vector2(expanded.size * TILE_SIZE)
+	)
+
+	var region := Node2D.new()
+	region.name = "WorldDepthBackdrop"
+	region.position = world_rect.get_center()
+	region.set_meta("world_cell_bounds", bounds)
+	_regions_root.add_child(region)
+
+	var texture_size := Vector2(1536.0, 1024.0)
+
+	if canopy_texture != null:
+		texture_size = Vector2(canopy_texture.get_size())
+
+	var cover_scale := maxf(
+		world_rect.size.x / texture_size.x,
+		world_rect.size.y / texture_size.y
+	)
+
+	region.scale = Vector2.ONE * cover_scale
+
+	_create_layer(
+		region,
+		"FarHaze",
+		far_haze_texture,
+		far_haze_alpha,
+		-3
+	)
+
+	_create_layer(
+		region,
+		"CanopyMass",
+		canopy_texture,
+		canopy_alpha,
+		-2
+	)
+
+	_create_layer(
+		region,
+		"WallGrowth",
+		wall_growth_texture,
+		wall_growth_alpha,
+		-1
+	)
 
 
 func _create_region_stack(

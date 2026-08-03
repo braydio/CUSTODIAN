@@ -7580,9 +7580,7 @@ func _apply_foliage_occlusion_material(material: ShaderMaterial, active_centers:
 func _refresh_depth_backdrop() -> void:
 	if depth_backdrop == null:
 		return
-	depth_backdrop.configure_from_chasm_cells(
-		_get_chasm_presentation_cells()
-	)
+	depth_backdrop.configure_from_cells(_generated_floor_cells.keys())
 
 
 func _get_chasm_presentation_cells() -> Array:

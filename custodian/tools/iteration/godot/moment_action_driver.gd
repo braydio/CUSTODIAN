@@ -169,6 +169,10 @@ func _fixture_command(action: Dictionary, result: Dictionary) -> void:
 			"place_operator_at_reveal_progress",
 			"begin_authored_walkthrough",
 		],
+		"ash_bell_lift": [
+			"begin_lift_descent",
+			"reset_lift_exterior",
+		],
 	}
 	if command not in allowed.get(fixture_id, []):
 		result.ok = false

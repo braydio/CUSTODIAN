@@ -82,7 +82,22 @@
       "exclude": ["**/*.import"],
       "scenario_ids": ["vista/sundered_keep_first_reveal"],
       "priority": 100,
-      "reason": "Sundered Keep world-Vista behavior or art changed."
-    }
+		"reason": "Sundered Keep world-Vista behavior or art changed."
+	},
+	{
+		"id": "ash_bell_lift",
+		"include": [
+			"custodian/game/world/approaches/ash_bell/**",
+			"custodian/assets/sprites/world/ingress/ash_bell/**",
+			"custodian/content/sprites/world/ingress/ash_bell/**",
+			"custodian/tools/validation/fixtures/ash_bell_lift_moment.*",
+			"custodian/tools/iteration/scenarios/traversal/ash_bell_lift_exterior_descent.json",
+			"design/05_levels/ASH_BELL_LIFT_INGRESS_PRESENTATION.md"
+		],
+		"exclude": ["**/*.import", "reports/**"],
+		"scenario_ids": ["traversal/ash_bell_lift_exterior_descent"],
+		"priority": 110,
+		"reason": "Ash Bell lift traversal behavior or landmark art changed."
+	}
   ]
 }

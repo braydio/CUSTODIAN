@@ -25,7 +25,7 @@ The contact-shadow composition is retained at `content/backgrounds/procgen/endle
 
 ## Streaming And Determinism
 
-The backdrop is configured once per complete generation from complete chasm semantics before streaming reveal. Its localized region stacks remain stable while terrain chunks reveal. It does not participate in simulation or per-tile reveal and therefore does not alter deterministic fingerprints. Runtime images use linear filtering without mipmaps, disabled repeat, and lossless compression so canopy crowns remain readable.
+The live general-world compatibility path is configured once per complete generation from authoritative generated-floor cells. Those cells establish the complete world bounds for one far-haze, canopy, and near-wall-growth stack behind opaque generated terrain; gaps reveal the underlay. This fallback remains necessary until procgen exports reliable, complete abyss semantics. `configure_from_chasm_cells()` retains the localized-region implementation for that later handoff, but is not the live general-world call path. The backdrop does not participate in simulation or per-tile reveal and therefore does not alter deterministic fingerprints. Runtime images use linear filtering without mipmaps, disabled repeat, and lossless compression.
 
 ## Candidate Promotion And Runtime Visibility
 

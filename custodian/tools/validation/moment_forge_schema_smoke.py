@@ -20,7 +20,8 @@ def rejected(candidate: dict) -> bool:
 
 def main() -> int:
     scenarios = load_scenarios()
-    assert len(scenarios) == 6
+    assert len(scenarios) == 7
+    assert "traversal/ash_bell_lift_exterior_descent" in scenarios
     sample = copy.deepcopy(next(iter(scenarios.values())))
     sample.pop("_source_path", None)
     duplicate_tick = copy.deepcopy(sample)

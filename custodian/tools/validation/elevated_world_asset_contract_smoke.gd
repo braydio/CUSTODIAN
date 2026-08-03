@@ -61,6 +61,21 @@ func _run() -> void:
 	var backdrop := map.get_node_or_null("DepthBackdrop") as ProcgenDepthBackdrop
 	assert(backdrop != null)
 	_assert_no_physics_or_navigation(backdrop)
+	backdrop.configure_from_cells([
+		Vector2i(-12, -8),
+		Vector2i(20, 14),
+	])
+	await process_frame
+	assert(backdrop.visible)
+	var fallback_regions := (
+		backdrop.get_node("ChasmPresentationRoot").get_children()
+	)
+	assert(fallback_regions.size() == 1)
+	var fallback := fallback_regions[0] as Node2D
+	assert(fallback != null and fallback.name == "WorldDepthBackdrop")
+	assert(fallback.get_meta("world_cell_bounds", Rect2i()) == Rect2i(-12, -8, 33, 23))
+	assert(fallback.get_child_count() == 3)
+
 	backdrop.configure_from_chasm_cells([
 		Vector2i(-2, 4), Vector2i(-1, 4),
 		Vector2i(-2, 5), Vector2i(-1, 5),
