@@ -66,6 +66,22 @@ func _run() -> void:
 	if not ResourceLoader.exists(OVERLAY_SCENE_PATH):
 		failures.append("canonical observatory overlay scene missing")
 
+	observatory.set_enabled(true)
+	observatory.set_performance_capture_enabled(true)
+	observatory.call("_sample_frame_time", 0.010)
+	observatory.call("_sample_frame_time", 0.020)
+	observatory.call("_sample_frame_time", 0.040)
+	observatory.call("_sample_runtime_gauges")
+	var performance_summary := observatory.get_performance_summary()
+	if int(performance_summary.get("sample_count", 0)) != 3:
+		failures.append("performance capture must retain frame-time samples")
+	if not is_equal_approx(float(performance_summary.get("frame_ms_p95", 0.0)), 40.0):
+		failures.append("performance capture P95 is incorrect")
+	if int(performance_summary.get("hitch_count", 0)) != 1:
+		failures.append("performance capture hitch count is incorrect")
+	if not observatory.gauges.has(&"performance_draw_calls") or not observatory.gauges.has(&"procgen_reveal_queue"):
+		failures.append("performance renderer/procgen gauges are missing")
+
 	observatory.max_events = 3
 	for event_index in range(5):
 		observatory.log_event("buffer_test", {"index": event_index})
@@ -102,6 +118,7 @@ func _run() -> void:
 		"scene",
 		"counters",
 		"gauges",
+		"performance",
 		"heatmap",
 		"material_intelligence",
 		"warnings",

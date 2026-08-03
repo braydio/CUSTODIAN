@@ -14,11 +14,14 @@ Provide a developer-only observability surface that makes live simulation state,
 - `DevMode` owns runtime eligibility. Outside development eligibility, Observatory input, overlay creation, continuous sampling, and telemetry accumulation are disabled.
 - `F9` toggles a lightweight observatory overlay.
 - `F10` exports the current bounded telemetry session as JSON.
+- `Tab` / `Shift+Tab` cycles the F9 overlay through Overview, Performance, Warnings, Events, and World/Procgen pages.
 - The overlay is presentation-only. It reads counters, gauges, and recent events; it does not mutate gameplay state.
 - Systems may report events, counters, and gauges, but gameplay authority remains in the existing runtime owners.
 - Bounded event/counter ingestion remains available while the overlay is hidden, but recursive runtime sampling does not run.
 - Enabling the overlay samples at the configured interval with one consolidated scene-tree traversal per sample. F10 export forces exactly one current snapshot before serialization.
 - Explicit export remains callable even when continuous sampling is unavailable and still forces its final snapshot.
+- The Performance page alone retains a bounded 600-sample per-frame frame-time ring. Other pages retain the existing 0.25-second consolidated scan without per-frame history, and closing F9 disables performance capture.
+- Performance summaries expose current, rolling-average, P95, P99, worst frame time, 33.333 ms hitch count, 50 ms severe-hitch count, draw calls, rendered objects, scene ownership counts, active combat populations, procgen reveal queue, and loaded world/procgen roots. F10 embeds the bounded summary in the session export.
 
 ## Initial Slice
 
@@ -257,6 +260,7 @@ write to the export or change runtime state.
 - With F9 hidden, periodic processing performs zero full scene-tree scans.
 - With F9 visible, one sampling interval performs one consolidated scene-tree scan.
 - Export forces one current runtime snapshot even when the overlay is hidden.
+- Performance sampling occurs only while the F9 Performance page is selected, remains capped at 600 frames, and introduces no additional scene-tree traversal.
 
 ## Next Agent Slice
 

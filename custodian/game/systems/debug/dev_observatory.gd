@@ -9,6 +9,9 @@ const INPUT_ACTION := "debug_observatory"
 const EXPORT_INPUT_ACTION := "debug_observatory_export"
 const DEFAULT_EXPORT_DIR := "user://dev_observatory"
 const DEFAULT_EXPORT_PATH := "user://dev_observatory/latest_session.json"
+const FRAME_SAMPLE_CAPACITY := 600
+const HITCH_THRESHOLD_MS := 33.333
+const SEVERE_HITCH_THRESHOLD_MS := 50.0
 
 @export var max_events := 300
 @export var sample_interval := 0.25
@@ -25,6 +28,7 @@ var last_export_path := ""
 var last_export_absolute_path := ""
 var last_export_time := ""
 var last_export_error := ""
+var performance_capture_enabled := false
 
 var _sample_accum := 0.0
 var _overlay: CanvasLayer = null
@@ -32,6 +36,10 @@ var _boot_time_msec := 0
 var _runtime_tree_scan_count := 0
 var _telemetry_allowed := true
 var _force_snapshot_write := false
+var _frame_time_samples_ms: PackedFloat32Array = []
+var _frame_time_worst_ms := 0.0
+var _hitch_count := 0
+var _severe_hitch_count := 0
 
 
 func _ready() -> void:
@@ -68,6 +76,8 @@ func _input(event: InputEvent) -> void:
 func _process(delta: float) -> void:
 	if not enabled or not _dev_allows(&"observatory_sampling"):
 		return
+	if performance_capture_enabled:
+		_sample_frame_time(delta)
 	_sample_accum += delta
 	if _sample_accum >= sample_interval:
 		_sample_accum = 0.0
@@ -85,6 +95,8 @@ func set_enabled(value: bool) -> void:
 		return
 
 	enabled = value
+	if not enabled:
+		performance_capture_enabled = false
 	_sample_accum = 0.0
 
 	if _overlay != null:
@@ -174,7 +186,62 @@ func clear() -> void:
 	counters.clear()
 	gauges.clear()
 	warnings.clear()
+	_frame_time_samples_ms.clear()
+	_frame_time_worst_ms = 0.0
+	_hitch_count = 0
+	_severe_hitch_count = 0
 	log_event(&"observatory_cleared")
+
+
+func set_performance_capture_enabled(value: bool) -> void:
+	performance_capture_enabled = value and enabled
+
+
+func get_performance_summary() -> Dictionary:
+	var current_ms := 0.0
+	if not _frame_time_samples_ms.is_empty():
+		current_ms = _frame_time_samples_ms[-1]
+	return {
+		"sample_count": _frame_time_samples_ms.size(),
+		"sample_capacity": FRAME_SAMPLE_CAPACITY,
+		"frame_ms_current": current_ms,
+		"frame_ms_average": _average(_frame_time_samples_ms),
+		"frame_ms_p95": _percentile(_frame_time_samples_ms, 0.95),
+		"frame_ms_p99": _percentile(_frame_time_samples_ms, 0.99),
+		"frame_ms_worst": _frame_time_worst_ms,
+		"hitch_count": _hitch_count,
+		"severe_hitch_count": _severe_hitch_count,
+	}
+
+
+func _sample_frame_time(delta: float) -> void:
+	var frame_ms := maxf(delta, 0.0) * 1000.0
+	_frame_time_samples_ms.append(frame_ms)
+	if _frame_time_samples_ms.size() > FRAME_SAMPLE_CAPACITY:
+		_frame_time_samples_ms.remove_at(0)
+	_frame_time_worst_ms = maxf(_frame_time_worst_ms, frame_ms)
+	if frame_ms >= HITCH_THRESHOLD_MS:
+		_hitch_count += 1
+	if frame_ms >= SEVERE_HITCH_THRESHOLD_MS:
+		_severe_hitch_count += 1
+
+
+func _average(values: PackedFloat32Array) -> float:
+	if values.is_empty():
+		return 0.0
+	var total := 0.0
+	for value in values:
+		total += value
+	return total / float(values.size())
+
+
+func _percentile(values: PackedFloat32Array, percentile: float) -> float:
+	if values.is_empty():
+		return 0.0
+	var sorted_values := Array(values)
+	sorted_values.sort()
+	var index := ceili(clampf(percentile, 0.0, 1.0) * float(sorted_values.size())) - 1
+	return float(sorted_values[clampi(index, 0, sorted_values.size() - 1)])
 
 
 func get_recent_events(limit: int = 20, kind_filter: StringName = &"") -> Array[Dictionary]:
@@ -335,6 +402,7 @@ func _build_export_payload(path: String) -> Dictionary:
 			"warning_count": warnings.size(),
 			"observatory_enabled": enabled,
 		},
+		"performance": _json_safe(get_performance_summary()),
 		"scene": {
 			"name": scene_name,
 			"path": scene_path,
@@ -452,6 +520,15 @@ func _ensure_parent_dir(path: String) -> bool:
 func _sample_runtime_gauges() -> void:
 	set_gauge(&"fps", Engine.get_frames_per_second())
 	set_gauge(&"uptime_sec", snappedf(get_uptime_sec(), 0.01))
+	_publish_performance_gauges()
+	set_gauge(
+		&"performance_draw_calls",
+		int(Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME))
+	)
+	set_gauge(
+		&"performance_rendered_objects",
+		int(Performance.get_monitor(Performance.RENDER_TOTAL_OBJECTS_IN_FRAME))
+	)
 
 	var tree := get_tree()
 	if tree == null:
@@ -491,6 +568,18 @@ func _sample_runtime_gauges() -> void:
 	set_gauge(&"active_projectiles", _count_active_projectiles(tree))
 	_sample_player_gauges(tree)
 	_sample_enemy_gauges(enemies)
+
+
+func _publish_performance_gauges() -> void:
+	var summary := get_performance_summary()
+	set_gauge(&"performance_frame_ms_current", float(summary["frame_ms_current"]))
+	set_gauge(&"performance_frame_ms_average", float(summary["frame_ms_average"]))
+	set_gauge(&"performance_frame_ms_p95", float(summary["frame_ms_p95"]))
+	set_gauge(&"performance_frame_ms_p99", float(summary["frame_ms_p99"]))
+	set_gauge(&"performance_frame_ms_worst", float(summary["frame_ms_worst"]))
+	set_gauge(&"performance_hitch_count", int(summary["hitch_count"]))
+	set_gauge(&"performance_severe_hitch_count", int(summary["severe_hitch_count"]))
+	set_gauge(&"performance_frame_sample_count", int(summary["sample_count"]))
 
 
 func _sample_player_gauges(tree: SceneTree) -> void:
@@ -652,6 +741,7 @@ func _collect_node_stats(root_node: Node) -> Dictionary:
 		"physics_process_enabled_node_count": 0,
 		"loaded_world_branch_count": 0,
 		"loaded_procgen_root_count": 0,
+		"procgen_reveal_queue": 0,
 	}
 	var stack: Array[Node] = [root_node]
 	while not stack.is_empty():
@@ -662,6 +752,10 @@ func _collect_node_stats(root_node: Node) -> Dictionary:
 			stats["loaded_world_branch_count"] += 1
 		if node_name == &"ProcGenRuntime":
 			stats["loaded_procgen_root_count"] += 1
+		if "_streaming_reveal_queue" in node:
+			var reveal_queue: Variant = node.get("_streaming_reveal_queue")
+			if reveal_queue is Array:
+				stats["procgen_reveal_queue"] += reveal_queue.size()
 		var path := str(node.get_path()).to_lower()
 		if path.begins_with("/root/gameroot/world"):
 			stats["node_count_world"] += 1
