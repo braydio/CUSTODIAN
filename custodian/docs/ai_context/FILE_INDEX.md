@@ -799,3 +799,7 @@ Last updated: 2026-07-26
 - `python-sim/custodian-terminal/` — legacy terminal UI
 - `python-sim/ai/` — historical AI context pack, superseded by `custodian/docs/ai_context/`
 - `python-sim/design/archive/` — historical design/archive material
+- `design/02_features/enemy_navigation/ENEMY_NAVIGATION_AND_PURSUIT_SYSTEM.md` — active authority for budgeted ambient activation, enemy path queries, grid smoothing, perception tiers, spatial separation, instrumentation, and deferred crowd-scale flow fields.
+- `custodian/game/systems/core/systems/enemy_navigation_broker.gd` — NavigationSystem-owned FIFO/coalescing broker capped at two synchronous enemy A* searches per physics frame.
+- `custodian/game/systems/simulation/enemy_spatial_index.gd` — shared 64 px enemy buckets refreshed at 10 Hz for stable local separation candidates.
+- `custodian/tools/validation/ambient_enemy_navigation_perf_smoke.gd` — focused spawn/prewarm/path-budget/spatial-index instrumentation contract.

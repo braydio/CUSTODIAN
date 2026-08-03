@@ -40,22 +40,62 @@ func spawn_camp() -> void:
 	var count := maxi(0, enemy_count_min + stable_offset)
 	var parent := get_parent()
 	for index in count:
-		var enemy := enemy_scene.instantiate() as Node2D
-		if enemy == null:
-			continue
-		parent.add_child(enemy)
 		var angle := TAU * float(index) / float(maxi(1, count))
 		var radius := spawn_radius_px * (0.55 + 0.45 * float((index % 3) + 1) / 3.0)
-		enemy.global_position = global_position + Vector2.RIGHT.rotated(angle) * radius
-		var behavior := enemy.get_node_or_null("EnemyBehaviorStateMachine")
-		if behavior != null:
-			if behavior.has_method("setup_profile"):
-				behavior.call("setup_profile", behavior_profile_id)
-			if behavior.has_method("setup_ambient_home"):
-				behavior.call("setup_ambient_home", global_position, camp_id, leash_radius_px)
-		_spawned_enemies.append(enemy)
+		var spawn_position := (
+			global_position
+			+ Vector2.RIGHT.rotated(angle) * radius
+		)
+		var spawner := get_tree().get_first_node_in_group(
+			"ambient_enemy_spawn_scheduler"
+		)
+		if spawner != null and spawner.has_method("queue_enemy_spawn"):
+			spawner.call(
+				"queue_enemy_spawn",
+				enemy_scene,
+				parent,
+				spawn_position,
+				global_position,
+				camp_id,
+				leash_radius_px,
+				behavior_profile_id,
+				Callable(self, "_on_enemy_spawned")
+			)
+		else:
+			_spawn_enemy_immediately(parent, spawn_position)
 	_spawned = true
 	set_process(false)
+
+
+func _spawn_enemy_immediately(parent: Node, spawn_position: Vector2) -> void:
+	var enemy := enemy_scene.instantiate() as Node2D
+	if enemy == null or not parent is Node2D:
+		return
+	# Set the transform before add_child() so _ready() captures the real home.
+	enemy.position = (parent as Node2D).to_local(spawn_position)
+	parent.add_child(enemy)
+	_configure_spawned_enemy(enemy)
+
+
+func _on_enemy_spawned(enemy: Node2D) -> void:
+	_configure_spawned_enemy(enemy)
+
+
+func _configure_spawned_enemy(enemy: Node2D) -> void:
+	if enemy == null:
+		return
+	var behavior := enemy.get_node_or_null("EnemyBehaviorStateMachine")
+	if behavior != null:
+		if behavior.has_method("setup_profile"):
+			behavior.call("setup_profile", behavior_profile_id)
+		if behavior.has_method("setup_ambient_home"):
+			behavior.call(
+				"setup_ambient_home",
+				global_position,
+				camp_id,
+				leash_radius_px
+			)
+	_spawned_enemies.append(enemy)
 
 
 func _prune_enemies() -> void:

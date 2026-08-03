@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bwndjdxw4vr3b"
-path="res://.godot/imported/operator__modular_lower_body__melee_1h__chain_03__e__8f__156x96.png-5eefc9c9b718eb826c9989e836bb72b8.ctex"
+uid="uid://c6uxlr3xo8okt"
+path="res://.godot/imported/operator__modular_weapon_vigil_dagger__melee_1h__chain_03__e__10f__156x96.png-d5bf9c76c5113db6af7451c9e8790488.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/operator/new_operator/modular/chain_03/operator__modular_lower_body__melee_1h__chain_03__e__8f__156x96.png"
-dest_files=["res://.godot/imported/operator__modular_lower_body__melee_1h__chain_03__e__8f__156x96.png-5eefc9c9b718eb826c9989e836bb72b8.ctex"]
+source_file="res://content/sprites/_pipeline/archive/operator__modular_weapon_vigil_dagger__melee_1h__chain_03__e__10f__156x96.png"
+dest_files=["res://.godot/imported/operator__modular_weapon_vigil_dagger__melee_1h__chain_03__e__10f__156x96.png-d5bf9c76c5113db6af7451c9e8790488.ctex"]
 
 [params]
 

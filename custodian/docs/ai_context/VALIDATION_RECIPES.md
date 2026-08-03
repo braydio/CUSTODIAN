@@ -900,6 +900,26 @@ godot --headless --path . --script res://tools/validation/turret_placement_smoke
 
 The save/restore smoke proves the versioned `InfrastructureRegistry` boundary. It does not imply project-wide save-manager integration.
 
+## Ambient Enemy Navigation Performance
+
+Use after changing ambient camp activation, enemy navigation queries, pursuit
+smoothing, perception cadence, simulation tiers, or separation indexing.
+
+```bash
+cd custodian
+godot --headless --path . \
+  --script res://tools/validation/ambient_enemy_navigation_perf_smoke.gd
+godot --headless --path . \
+  --script res://tools/validation/enemy_behavior_vault_smoke.gd
+```
+
+The focused smoke proves one queued ambient instantiation per scheduler tick,
+pre-ready spawn transforms, the two-query navigation-broker budget, stable
+local spatial lookup, and availability of spawn/prewarm/A* timing snapshots.
+Use a renderer-backed Developer Observatory capture to allocate real-machine
+frame percentages; headless microseconds are regression evidence, not a player
+hardware performance guarantee.
+
 ## Review Validation
 
 Use for code review, docs drift review, or handoff review.

@@ -1,9 +1,9 @@
-[gd_resource type="SpriteFrames" format=3 uid="uid://b1lidd3fosfvw"]
+[gd_resource type="SpriteFrames" format=3]
 
-[ext_resource type="Texture2D" uid="uid://ckeyvgpbjv7q7" path="res://content/sprites/operator/runtime/fx/melee_1h/shared/operator__fx__melee_1h__chain_01__w__10f__156x96.png" id="1_m2ky3"]
-[ext_resource type="Texture2D" uid="uid://clqeuufkvqjkl" path="res://content/sprites/operator/runtime/fx/melee_1h/shared/operator__fx__melee_1h__chain_01__e__10f__156x96.png" id="2_w60em"]
-[ext_resource type="Texture2D" uid="uid://cvxjw42np6ajg" path="res://content/sprites/operator/runtime/fx/melee_1h/shared/operator__fx__melee_1h__chain_02__w__8f__156x96.png" id="3_pkfp8"]
-[ext_resource type="Texture2D" uid="uid://ffjfocsbwp0i" path="res://content/sprites/operator/runtime/fx/melee_1h/shared/operator__fx__melee_1h__chain_02__e__8f__156x96.png" id="4_py4l8"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/fx/melee_1h/shared/operator__fx__melee_1h__chain_01__w__10f__156x96.png" id="1_m2ky3"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/fx/melee_1h/shared/operator__fx__melee_1h__chain_01__e__10f__156x96.png" id="2_w60em"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/fx/melee_1h/shared/operator__fx__melee_1h__chain_02__w__8f__156x96.png" id="3_pkfp8"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/fx/melee_1h/shared/operator__fx__melee_1h__chain_02__e__8f__156x96.png" id="4_py4l8"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0gqvw"]
 atlas = ExtResource("1_m2ky3")

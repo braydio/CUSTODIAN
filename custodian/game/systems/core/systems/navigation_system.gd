@@ -1,6 +1,13 @@
 extends Node
 class_name NavigationSystem
 
+const ENEMY_NAVIGATION_BROKER_SCRIPT := preload(
+	"res://game/systems/core/systems/enemy_navigation_broker.gd"
+)
+const ENEMY_SPATIAL_INDEX_SCRIPT := preload(
+	"res://game/systems/simulation/enemy_spatial_index.gd"
+)
+
 ## AStar2D-based navigation connected to floor tilemap.
 ## Provides pathfinding for enemies through the compound.
 
@@ -17,11 +24,21 @@ var walls_tilemap: TileMapLayer
 var runtime_blocker_provider: Node
 var _walkable_tiles: Dictionary = {}  # Vector2i -> bool
 var _initialized: bool = false
+var navigation_revision := 0
+var enemy_navigation_broker: EnemyNavigationBroker
+var enemy_spatial_index: EnemySpatialIndex
 
 var _init_deferred: bool = false
 
 func _ready() -> void:
 	add_to_group("navigation")
+	enemy_navigation_broker = ENEMY_NAVIGATION_BROKER_SCRIPT.new()
+	enemy_navigation_broker.name = "EnemyNavigationBroker"
+	add_child(enemy_navigation_broker)
+	enemy_navigation_broker.configure(self)
+	enemy_spatial_index = ENEMY_SPATIAL_INDEX_SCRIPT.new()
+	enemy_spatial_index.name = "EnemySpatialIndex"
+	add_child(enemy_spatial_index)
 	# Defer initialization to allow procgen to finish
 	call_deferred("_initialize_navigation_deferred")
 
@@ -78,6 +95,7 @@ func _initialize_navigation() -> void:
 	_walkable_tiles.clear()
 	_build_navigation_graph()
 	_initialized = true
+	navigation_revision += 1
 	navigation_ready.emit()
 	print("[NavigationSystem] Initialized with ", _walkable_tiles.size(), " walkable tiles")
 
@@ -193,6 +211,10 @@ func _connect_adjacent_cells(cell: Vector2i) -> void:
 
 
 func get_path_to_target(start: Vector2, target: Vector2) -> PackedVector2Array:
+	return compute_path_immediate(start, target)
+
+
+func compute_path_immediate(start: Vector2, target: Vector2) -> PackedVector2Array:
 	if not _initialized or astar == null:
 		return PackedVector2Array([start, target])
 	
@@ -217,7 +239,88 @@ func get_path_to_target(start: Vector2, target: Vector2) -> PackedVector2Array:
 	if path_points.is_empty():
 		return PackedVector2Array([start, target])
 	
-	return path_points
+	return smooth_path(path_points)
+
+
+func smooth_path(raw_path: PackedVector2Array) -> PackedVector2Array:
+	if raw_path.size() <= 2:
+		return raw_path
+	var result := PackedVector2Array([raw_path[0]])
+	var anchor := 0
+	while anchor < raw_path.size() - 1:
+		var selected := anchor + 1
+		for candidate in range(raw_path.size() - 1, anchor, -1):
+			if has_grid_line_of_sight(raw_path[anchor], raw_path[candidate], 1):
+				selected = candidate
+				break
+		result.append(raw_path[selected])
+		anchor = selected
+	return result
+
+
+func has_grid_line_of_sight(
+	start: Vector2,
+	target: Vector2,
+	clearance_cells := 0
+) -> bool:
+	if floor_tilemap == null or _walkable_tiles.is_empty():
+		return false
+	var start_cell := floor_tilemap.local_to_map(
+		floor_tilemap.to_local(start)
+	)
+	var target_cell := floor_tilemap.local_to_map(
+		floor_tilemap.to_local(target)
+	)
+	var x := start_cell.x
+	var y := start_cell.y
+	var dx := absi(target_cell.x - start_cell.x)
+	var dy := absi(target_cell.y - start_cell.y)
+	var step_x := 1 if start_cell.x < target_cell.x else -1
+	var step_y := 1 if start_cell.y < target_cell.y else -1
+	var error := dx - dy
+	while true:
+		if not _cell_has_clearance(Vector2i(x, y), clearance_cells):
+			return false
+		if x == target_cell.x and y == target_cell.y:
+			return true
+		var doubled_error := error * 2
+		if doubled_error > -dy:
+			error -= dy
+			x += step_x
+		if doubled_error < dx:
+			error += dx
+			y += step_y
+	return false
+
+
+func _cell_has_clearance(cell: Vector2i, clearance_cells: int) -> bool:
+	for y_offset in range(-clearance_cells, clearance_cells + 1):
+		for x_offset in range(-clearance_cells, clearance_cells + 1):
+			if not _walkable_tiles.has(
+				cell + Vector2i(x_offset, y_offset)
+			):
+				return false
+	return true
+
+
+func request_enemy_path(
+	requester: Node,
+	start: Vector2,
+	target: Vector2,
+	callback: Callable
+) -> bool:
+	if enemy_navigation_broker == null:
+		return false
+	return enemy_navigation_broker.request_path(
+		requester,
+		start,
+		target,
+		callback
+	)
+
+
+func get_navigation_revision() -> int:
+	return navigation_revision
 
 
 func _get_nearest_walkable(cell: Vector2i) -> Vector2i:

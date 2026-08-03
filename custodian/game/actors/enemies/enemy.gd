@@ -210,6 +210,7 @@ var melee_impact_audio_profile: String = "body"
 @export var savage_pounce_hit_forward_reach_px: float = 30.0
 @export var savage_pounce_hit_lateral_reach_px: float = 22.0
 var simulation_tier: String = "active"
+var _simulation_tier_accum := 0.0
 @export var marine_dash_enabled: bool = false
 @export var marine_dash_windup_time: float = 0.32
 @export var marine_dash_time: float = 0.18
@@ -371,6 +372,12 @@ var path_refresh_timer: float = 0.0
 var path_refresh_interval: float = 0.5
 var use_pathfinding: bool = true
 var path_tolerance: float = 16.0
+var _path_request_pending := false
+var _last_path_target_cell := Vector2i(2147483647, 2147483647)
+var _path_navigation_revision := -1
+var _separation_candidate_checks := 0
+var _direct_nav_los_timer := 0.0
+var _direct_nav_los_clear := false
 
 const TARGET_PRIORITY := {
 	"command_post": 1,
@@ -434,6 +441,10 @@ func _ready():
 	_grunt_falcon_punch_decision_credit = maxf(0.0, 1.0 - clampf(grunt_falcon_punch_chance, 0.0, 1.0))
 	_refresh_target()
 	_initialize_navigation()
+	var stable_spawn_ordinal := int(get_meta("stable_spawn_ordinal", 0))
+	path_refresh_timer = (
+		float(stable_spawn_ordinal % 11) / 11.0 * path_refresh_interval
+	)
 	if behavior_state_machine_enabled and behavior_state_machine != null and behavior_state_machine.has_method("setup_profile"):
 		behavior_state_machine.call("setup_profile", behavior_profile_id)
 	_setup_health_bar_style()
@@ -489,6 +500,13 @@ func _physics_process(delta):
 	if dead:
 		_update_empty_corpse_cleanup(delta)
 		return
+	var tier_interval := _simulation_tier_interval()
+	if tier_interval > 0.0:
+		_simulation_tier_accum += delta
+		if _simulation_tier_accum < tier_interval:
+			return
+		delta = _simulation_tier_accum
+		_simulation_tier_accum = 0.0
 	_update_threat_highlight_visual(delta)
 	_savage_pounce_cooldown_timer = maxf(0.0, _savage_pounce_cooldown_timer - delta)
 	_grunt_falcon_punch_cooldown_timer = maxf(0.0, _grunt_falcon_punch_cooldown_timer - delta)
@@ -1699,10 +1717,38 @@ func _apply_variant_collision(profile: Resource) -> void:
 
 
 func _get_pathfinding_direction(target_pos: Vector2, delta: float) -> Vector2:
+	_direct_nav_los_timer -= delta
+	if _direct_nav_los_timer <= 0.0:
+		_direct_nav_los_timer = 0.15
+		_direct_nav_los_clear = (
+			navigation_system != null
+			and navigation_system.has_method("has_grid_line_of_sight")
+			and bool(navigation_system.call(
+				"has_grid_line_of_sight",
+				global_position,
+				target_pos,
+				0
+			))
+		)
+	if _direct_nav_los_clear:
+		current_path = PackedVector2Array()
+		path_follow_index = 0
+		return (target_pos - global_position).normalized()
 	# Refresh path periodically
 	path_refresh_timer -= delta
 	_stuck_repath_cooldown_timer = maxf(0.0, _stuck_repath_cooldown_timer - delta)
-	if path_refresh_timer <= 0.0 or current_path.is_empty():
+	var target_cell := _navigation_cell(target_pos)
+	var navigation_revision := _current_navigation_revision()
+	var target_moved := (
+		_last_path_target_cell.x == 2147483647
+		or target_cell.distance_to(_last_path_target_cell) >= 2.0
+	)
+	var needs_repath := (
+		current_path.is_empty()
+		or navigation_revision != _path_navigation_revision
+		or target_moved
+	)
+	if path_refresh_timer <= 0.0 and needs_repath and not _path_request_pending:
 		path_refresh_timer = path_refresh_interval
 		_refresh_path(target_pos)
 	
@@ -1772,7 +1818,32 @@ func _refresh_path(target_pos: Vector2) -> void:
 		current_path = PackedVector2Array()
 		return
 	
+	if navigation_system.has_method("request_enemy_path"):
+		_path_request_pending = bool(navigation_system.call(
+			"request_enemy_path",
+			self,
+			global_position,
+			target_pos,
+			Callable(self, "_on_navigation_path_ready")
+		))
+		if _path_request_pending:
+			return
 	var path = navigation_system.get_path_to_target(global_position, target_pos)
+	_apply_navigation_path(path, target_pos)
+
+
+func _on_navigation_path_ready(
+	path: PackedVector2Array,
+	target_pos: Vector2
+) -> void:
+	_path_request_pending = false
+	_apply_navigation_path(path, target_pos)
+
+
+func _apply_navigation_path(
+	path: PackedVector2Array,
+	target_pos: Vector2
+) -> void:
 	
 	# Filter out points too close to current position
 	if not path.is_empty():
@@ -1782,6 +1853,21 @@ func _refresh_path(target_pos: Vector2) -> void:
 	
 	current_path = path
 	path_follow_index = 0
+	_last_path_target_cell = _navigation_cell(target_pos)
+	_path_navigation_revision = _current_navigation_revision()
+
+
+func _navigation_cell(world_position: Vector2) -> Vector2i:
+	if navigation_system != null and navigation_system.get("floor_tilemap") is TileMapLayer:
+		var tilemap := navigation_system.get("floor_tilemap") as TileMapLayer
+		return tilemap.local_to_map(tilemap.to_local(world_position))
+	return Vector2i.ZERO
+
+
+func _current_navigation_revision() -> int:
+	if navigation_system != null and navigation_system.has_method("get_navigation_revision"):
+		return int(navigation_system.call("get_navigation_revision"))
+	return 0
 
 
 func _get_direction_along_path(target_pos: Vector2) -> Vector2:
@@ -2120,6 +2206,16 @@ func set_simulation_tier(tier: String) -> void:
 	_obs_increment(StringName("enemy_sim_tier_%s" % simulation_tier), 1)
 
 
+func _simulation_tier_interval() -> float:
+	match simulation_tier:
+		"nearby":
+			return 0.10
+		"background":
+			return 0.50
+		_:
+			return 0.0
+
+
 func counts_for_wave_cap() -> bool:
 	return counts_as_wave_enemy and not passive
 
@@ -2216,9 +2312,15 @@ func _apply_enemy_spacing_to_direction(direction: Vector2) -> Vector2:
 func _get_enemy_separation_vector(radius_px: float = 34.0) -> Vector2:
 	var push := Vector2.ZERO
 	var radius := maxf(0.01, radius_px)
-	for candidate in get_tree().get_nodes_in_group("enemy"):
+	var candidates: Array = get_tree().get_nodes_in_group("enemy")
+	var spatial_index := get_tree().get_first_node_in_group("enemy_spatial_index")
+	if spatial_index != null and spatial_index.has_method("get_nearby_enemies"):
+		candidates = spatial_index.call("get_nearby_enemies", global_position)
+	var candidate_checks := 0
+	for candidate in candidates:
 		if candidate == self or not (candidate is Node2D):
 			continue
+		candidate_checks += 1
 		var other := candidate as Node2D
 		if _is_target_destroyed(other):
 			continue
@@ -2232,7 +2334,18 @@ func _get_enemy_separation_vector(radius_px: float = 34.0) -> Vector2:
 			delta = Vector2.LEFT if self_path < other_path else Vector2.RIGHT
 			distance = 0.0
 		push += delta.normalized() * ((radius - distance) / radius)
+	_obs_increment("enemy_separation_candidate_checks", candidate_checks)
+	_separation_candidate_checks += candidate_checks
 	return push
+
+
+func get_navigation_performance_snapshot() -> Dictionary:
+	return {
+		"separation_candidate_checks": _separation_candidate_checks,
+		"path_request_pending": _path_request_pending,
+		"path_point_count": current_path.size(),
+		"simulation_tier": simulation_tier,
+	}
 
 
 func behavior_attack_target() -> void:

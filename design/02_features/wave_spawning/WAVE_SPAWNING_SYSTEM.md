@@ -3,7 +3,9 @@
 **Created:** 2026-03-05
 **Status:** ✅ IMPLEMENTED
 **Godot-Native:** Yes
-**Files:** `custodian/core/systems/wave_manager.gd`, `spawn_node.gd`
+**Live files:** `custodian/game/systems/spawning/wave_manager.gd`, `spawn_node.gd`, `ambient_enemy_spawner.gd`, and `ambient_enemy_camp.gd`
+
+> Runtime note: the embedded code later in this document is historical setup reference, not a verbatim copy of the live scripts. Live wave and ambient spawning use the paths above. Ambient camps submit combat actors to one global scheduler, which creates at most one actor per physics frame with its transform assigned before tree entry. Enemy navigation and pursuit authority is documented in `design/02_features/enemy_navigation/ENEMY_NAVIGATION_AND_PURSUIT_SYSTEM.md`.
 
 ---
 

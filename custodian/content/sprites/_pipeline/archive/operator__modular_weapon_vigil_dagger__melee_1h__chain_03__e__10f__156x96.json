@@ -1,0 +1,22 @@
+{
+  "source": "operator__modular_weapon_vigil_dagger__melee_1h__chain_03__e__10f__156x96.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "operator/new_operator/modular/chain_03/operator__modular_weapon_vigil_dagger__melee_1h__chain_03__e__10f__156x96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 10
+      }
+    }
+  ],
+  "frame_size": [
+    156,
+    96
+  ],
+  "post_process": [
+    "operator_modular_runtime"
+  ]
+}

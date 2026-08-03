@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b7qlcxcjlafqm"
-path="res://.godot/imported/operator__modular_upper_body__melee_1h__chain_03__w__8f__96.png-dbfdef8cd59696705f9cfb64f7875424.ctex"
+uid="uid://cr501isfd65oi"
+path="res://.godot/imported/operator__modular_lower_body__melee_1h__chain_03__e__10f__156x96.png-2eac5b9579f7485774ed586fd195598b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/operator/runtime/modules/new_operator/upper_body/actions/melee_1h/chain_03/operator__modular_upper_body__melee_1h__chain_03__w__8f__96.png"
-dest_files=["res://.godot/imported/operator__modular_upper_body__melee_1h__chain_03__w__8f__96.png-dbfdef8cd59696705f9cfb64f7875424.ctex"]
+source_file="res://content/sprites/effects/loot_marker/runtime/fx/interaction/operator__modular_lower_body__melee_1h__chain_03__e__10f__156x96.png"
+dest_files=["res://.godot/imported/operator__modular_lower_body__melee_1h__chain_03__e__10f__156x96.png-2eac5b9579f7485774ed586fd195598b.ctex"]
 
 [params]
 

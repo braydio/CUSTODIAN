@@ -13,6 +13,10 @@ var _was_alerted := false
 var _current_enemy: Node2D = null
 var _current_profile: Resource = null
 var _current_blackboard: Node = null
+var _perception_accum := 0.0
+var _perception_phase_initialized := false
+var _los_query_count := 0
+var _los_query_total_usec := 0
 
 
 func _ready() -> void:
@@ -27,9 +31,19 @@ func update_perception(enemy: Node2D, profile: Resource, blackboard: Node, delta
 	_current_enemy = enemy
 	_current_profile = profile
 	_current_blackboard = blackboard
+	var interval := _perception_interval(enemy)
+	if not _perception_phase_initialized:
+		var ordinal := int(enemy.get_meta("stable_spawn_ordinal", 0))
+		_perception_accum = float(ordinal % 17) / 17.0 * interval
+		_perception_phase_initialized = true
+	_perception_accum += maxf(0.0, delta)
+	if _perception_accum < interval:
+		return
+	var perception_delta := _perception_accum
+	_perception_accum = 0.0
 	var operator := _find_operator(enemy)
 	if operator == null:
-		_decay(profile, delta)
+		_decay(profile, perception_delta)
 		return
 
 	var snapshot := _get_operator_snapshot(operator)
@@ -47,9 +61,9 @@ func update_perception(enemy: Node2D, profile: Resource, blackboard: Node, delta
 		blackboard.pursuit_timer = float(profile.get("lost_sight_memory_sec"))
 		var visibility_mult := float(snapshot.get("visibility_mult", 1.0))
 		var distance_mult := _distance_detection_mult(distance, profile.vision_range_px)
-		detection_meter = clampf(detection_meter + float(profile.get("detection_gain_per_sec")) * visibility_mult * distance_mult * delta, 0.0, 1.0)
+		detection_meter = clampf(detection_meter + float(profile.get("detection_gain_per_sec")) * visibility_mult * distance_mult * perception_delta, 0.0, 1.0)
 	else:
-		_decay(profile, delta)
+		_decay(profile, perception_delta)
 
 	var noise_radius := float(snapshot.get("noise_radius_px", 0.0))
 	if not visible and noise_radius > 0.0 and distance <= min(float(profile.get("hearing_range_px")) + noise_radius, float(profile.get("hearing_range_px")) * 2.5):
@@ -155,13 +169,44 @@ func _is_in_vision_arc(enemy: Node2D, target_position: Vector2, profile: Resourc
 
 
 func _has_line_of_sight(enemy: Node2D, target: Node2D) -> bool:
+	var started := Time.get_ticks_usec()
 	var space := enemy.get_world_2d().direct_space_state
 	var query := PhysicsRayQueryParameters2D.create(enemy.global_position, target.global_position)
 	query.exclude = [enemy.get_rid(), target.get_rid()]
 	query.collide_with_areas = false
 	query.collide_with_bodies = true
 	var hit := space.intersect_ray(query)
+	var elapsed := Time.get_ticks_usec() - started
+	_los_query_count += 1
+	_los_query_total_usec += elapsed
+	var observatory := get_node_or_null("/root/DevObservatory")
+	if observatory != null:
+		if observatory.has_method("increment"):
+			observatory.call("increment", "enemy_los_query_count", 1)
+			observatory.call("increment", "enemy_los_query_total_usec", elapsed)
+		if observatory.has_method("set_gauge"):
+			observatory.call("set_gauge", "enemy_los_query_last_usec", elapsed)
 	return hit.is_empty()
+
+
+func get_performance_snapshot() -> Dictionary:
+	return {
+		"los_query_count": _los_query_count,
+		"los_query_total_usec": _los_query_total_usec,
+	}
+
+
+func _perception_interval(enemy: Node2D) -> float:
+	var tier := String(enemy.get("simulation_tier"))
+	match tier:
+		"nearby":
+			return 0.30
+		"background":
+			return 1.0
+		"dormant":
+			return INF
+		_:
+			return 0.10
 
 
 func _distance_detection_mult(distance: float, range_px: float) -> float:
