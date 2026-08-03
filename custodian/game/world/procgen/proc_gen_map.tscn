@@ -13,7 +13,6 @@
 [node name="ProcGenMap" type="Node2D" unique_id=531661722 node_paths=PackedStringArray("procgen_node", "floor_tilemap", "walls_tilemap", "nav_region", "depth_backdrop")]
 scale = Vector2(2, 2)
 script = ExtResource("1")
-debug_enable_sundered_keep_procgen_frontage = false
 procgen_node = NodePath("ProcGen2")
 floor_tilemap = NodePath("NavigationRegion2D/Floor")
 walls_tilemap = NodePath("NavigationRegion2D/Walls")

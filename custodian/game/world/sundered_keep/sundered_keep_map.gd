@@ -2694,7 +2694,7 @@ func _grant_sidearm_locker(_actor: Node) -> void:
 	if _hud != null and is_instance_valid(_hud):
 		_hud.show_interaction(
 			SIDEARM_LOCKER_PICKUP_MESSAGE,
-			"Custodian service imprint accepted / equip from Equipment",
+			"Recovered from a sealed Custodian creche",
 			_get_interact_prompt_key(),
 			UI_CATALOG.ICON_OBJECTIVE
 		)

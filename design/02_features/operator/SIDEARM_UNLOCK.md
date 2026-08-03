@@ -43,6 +43,8 @@ The P-9 Sidearm is the first sidearm unlock. Before the player loots it from the
 Lore:
 The chest is a sealed Custodian field-retention locker. The item is the “P-9 Field Sidearm,” a compact emergency weapon recognized by Custodian service imprint. It is fast to draw, low recoil, short range, less accurate, and weaker than a standard ranged primary.
 
+> **Lore cross-reference:** The field-retention locker is an expression of the crèche locker system: lockers are keyed to Custodian **designations**, and a locker releases the designation's assigned equipment (here, the P-9) without confirming that the person bearing the designation is the person it was assigned to. Canon and the recommended acquisition presentation (`P-9 FIELD SIDEARM RECOVERED / DESIGNATION MATCH CONFIRMED`) live in `design/03_world/lore/CRECHE_AND_LOCKER_LORE.md`. Adoption of that presentation text is a downstream implementation choice, not changed here.
+
 Implementation notes:
 
 - Current repo already has `sidearm_pistol_definition.tres`, `pistol_mk1.json`, and sidearm fallback logic.

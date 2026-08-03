@@ -1,24 +1,24 @@
 # Sundered Keep Parish Route Correction
 
-- **Status:** superseded by authored-vista isolation correction
+- **Status:** review
 - **Authority:** `design/05_levels/SUNDERED_KEEP_PROCGEN_FRONTAGE.md`, `design/05_levels/SUNDERED_KEEP_VISTA_APPROACH.md`, `design/05_levels/SUNDERED_KEEP_LARGE_FRONT_GATE.md`
 - **User brief:** repository-root `CODEX_IMPLEMENT_SUNDERED_KEEP_PARISH_ROUTE_CORRECTION.md`
 - **Asset source:** repository-root `CUSTODIAN_parish_outer_wall_asset_pack.zip`
 
 ## Goal
 
-The former goal of shipping a generated frontage and distant reveal inside the
-live procgen world is superseded. Production now places only a compact ingress
-on ordinary generated ground, fades into the authored Vista Approach / Shore
-Parish, then fades into Front Gate.
+Ship a generated playable frontage and clipped distant reveal in the live
+procgen world, then enter the authored Vista Approach / Shore Parish through
+the generated terminal before continuing to Front Gate.
 
 ## Scope
 
-- Disable procgen frontage geometry and presentation behind explicit debug
-  flags.
-- Place the registered ingress through `north_edge_overlook`.
-- Keep all ocean, storm, fortress, route-master, reveal, collision, enemies,
-  and set dressing inside the authored approach.
+- Keep procgen frontage floor/collision/navigation and terminal ingress in
+  production through `procgen_landmark_terminal`.
+- Keep the procgen distant reveal presentation-only, below gameplay, and
+  clipped outside generated playable-floor bounds.
+- Keep Shore Parish, near-Keep route, local collision/enemies/dressing, and
+  Front Gate handoff inside the authored approach.
 - Integrate the supplied northbound, eastbound, checkpoint-detail, local-fog,
   and Front Gate arrival-apron assets.
 - Extend mapper-owned Parish markers, subregions, rails, and exit eastward.
@@ -36,8 +36,8 @@ Parish, then fades into Front Gate.
 
 ## Acceptance
 
-- No generated Sundered Keep presentation or frontage authority in production
-  procgen.
+- Generated Sundered Keep frontage remains playable production authority and
+  its distant presentation cannot cover the playable floor.
 - The production ingress stands on valid procgen floor and enters the authored
   approach rather than Front Gate directly.
 - Procgen visibility/processing and Operator/camera state restore on return or
@@ -56,7 +56,7 @@ Parish, then fades into Front Gate.
 The generated-frontage completion notes and captures below are retained as
 historical evidence for the archived experiment; they are not current
 production acceptance authority. Runtime/data isolation validation is tracked
-by `sundered_keep_procgen_vista_isolation_smoke.gd` and the authored first-
+by `sundered_keep_procgen_vista_layering_smoke.gd` and the authored first-
 reveal Moment Forge capture.
 
 Historical implementation notes:

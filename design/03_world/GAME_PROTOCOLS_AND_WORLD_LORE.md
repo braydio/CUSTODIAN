@@ -6,7 +6,7 @@
 **Last Updated:** 2026-07-29  
 **Lore Canon Authority:** `design/03_world/lore/CORE_LORE.md` — this file is primary for all lore, terminology, and faction definitions. This doc is a content-facing downstream that references that canon.  
 **Supersedes:** `design/GAME_NOTES.md`, `design/GAME_NOTES_DRAFT.md` as canonical authority  
-**Related Docs:** `design/03_world/lore/CORE_LORE.md`, `design/03_world/factions/`, `design/03_world/LATTICE_DOCTRINE.md`, `design/03_world/LATTICE_ARCHIVE_ENGINE_MEMORY_GLASS.md`, `design/03_world/PROCEDURAL_LORE_GENERATION.md`, `design/02_features/factions/FACTION_EXPRESSION_SYSTEM.md`, `design/04_architecture/HUB_SYSTEM_META_PROGRESSION.md`, `design/04_architecture/CAMPAIGN_FLOW_AND_GAME_LOOP.md`, `custodian/docs/ai_context/CURRENT_STATE.md`
+**Related Docs:** `design/03_world/lore/CORE_LORE.md`, `design/03_world/lore/CRECHE_AND_LOCKER_LORE.md`, `design/03_world/factions/`, `design/03_world/LATTICE_DOCTRINE.md`, `design/03_world/LATTICE_ARCHIVE_ENGINE_MEMORY_GLASS.md`, `design/03_world/PROCEDURAL_LORE_GENERATION.md`, `design/02_features/factions/FACTION_EXPRESSION_SYSTEM.md`, `design/04_architecture/HUB_SYSTEM_META_PROGRESSION.md`, `design/04_architecture/CAMPAIGN_FLOW_AND_GAME_LOOP.md`, `custodian/docs/ai_context/CURRENT_STATE.md`
 
 ---
 
@@ -224,6 +224,8 @@ Their job was to:
 They were part archivist, part field technician, part stabilization operator, part doctrinal judge, part systems operator. Above all, they were built to answer dead authority — to detect and follow authorized institutional residue even when the originating institution no longer exists. A Custodian does not need to understand a signal to obey it. The authority in the signal is sufficient.
 
 Custodians are not omniscient lore machines. Because they operate Archive fields and preserve provenance, they can feel the shape of the Severing wound without seeing the Unnarrival directly. To a Custodian, supernatural horror first appears as reality-level checksum failure: a source that both exists and never existed, a witness that precedes an event, an artifact whose origin refuses to be filed, or a pale signal that leaks recognition of an authority that should not still be received. To extend the Lattice is to feel the Pale pressing in, to know the field is finite, and to choose what is worth preserving before the rupture.
+
+Lost, damaged, or long-absent Custodians were returned to service through institutional recovery sites called **crèches** — processing centers that reissue a designation and its equipment without confirming continuity of personhood. See `design/03_world/lore/CRECHE_AND_LOCKER_LORE.md` for the full canon, including the rule that a designation-keyed locker (such as the one holding the P-9 sidearm) releases assigned equipment without proving who the person bearing the designation is.
 
 ### What the Player Is
 

@@ -44,6 +44,8 @@ func _refresh() -> void:
 	var observatory := get_node_or_null("/root/DevObservatory")
 	if observatory == null:
 		return
+	if observatory.has_method("set_performance_capture_enabled"):
+		observatory.call("set_performance_capture_enabled", _page_index == 1)
 
 	var lines: PackedStringArray = []
 	lines.append("[b]CUSTODIAN // DEVELOPER OBSERVATORY[/b]")

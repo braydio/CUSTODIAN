@@ -5,14 +5,15 @@ Last updated: 2026-08-03
 
 ## Purpose
 
-The Sundered Keep Vista Approach is the authored first destination between the
-ordinary generated campaign ingress and the existing Sundered Keep Front Gate.
+The Sundered Keep Vista Approach is the authored Shore Parish destination after
+the generated playable frontage and before the existing Front Gate.
 
 Production traversal is:
 
 ```text
 procgen campaign world
-→ compact ingress on valid generated ground
+→ generated playable frontage and distant Keep reveal
+→ terminal ingress on the generated gate anchor
 → short normal fade
 → authored Sundered Keep Vista Approach / Shore Parish
 → short normal fade
@@ -25,10 +26,11 @@ than separately loaded route stages.
 
 ## Ownership boundary
 
-Procgen owns ordinary generated terrain, ordinary collision/dressing, and the
-compact walkable ingress pocket. It owns no Sundered Keep vista presentation.
+Procgen owns the playable generated frontage, its floor/collision/navigation,
+shore boundary, props/enemies, terminal ingress, and the clipped distant Keep
+reveal. Its presentation root remains below gameplay and owns no physics.
 
-The authored approach owns:
+The authored approach begins after that terminal and owns:
 
 - ocean and storm presentation;
 - distant and close fortress presentation;
@@ -105,11 +107,11 @@ local ribbon with two drifting noise fields and feathered vertical edges,
 never a transition veil, and is clamped to a maximum authored tint alpha of
 `0.30`. The retired `9216x384` six-frame sheet is not production content.
 
-Ocean/storm and fortress layers belong only inside this authored scene. No
-equivalent stack may be parented under `ProcGenRuntime`, `WorldLandmarks`, or
-`ContractMap`. Their images own no physics; mapper-authored perimeter rails
-prevent departure from the top-down route. No floor or ocean collider is
-added.
+The authored scene owns its own Shore Parish ocean/storm and near-fortress
+layers. The separate procgen distant-reveal stack may live under
+`WorldLandmarks`, but it must remain clipped outside playable frontage, below
+generated terrain, and free of collision/navigation. Authored images likewise
+own no physics; mapper-authored perimeter rails constrain the authored route.
 
 ## Mapper authority
 
@@ -171,12 +173,12 @@ complete. A successful file export alone is not visual approval.
 
 ## Acceptance criteria
 
-- Procgen shows ordinary terrain with no Sundered Keep ocean/storm/fortress
-  presentation before entry.
+- Procgen shows the generated playable Sundered Keep frontage and clipped
+  distant reveal before entry without covering its walkable floor.
 - Procgen is hidden and processing-disabled while the authored approach is
   active, then restored exactly on return or entry failure.
-- The authored approach exclusively owns the reveal and restores Operator
-  camera follow and presentation bounds on exit.
+- The authored approach owns Shore Parish and its local reveal, then restores
+  Operator camera follow and presentation bounds on exit.
 - Parish arrival is readable and northbound.
 - The close checkpoint detail does not become another world-scale cinematic.
 - The long east traverse is playable and collision-complete.

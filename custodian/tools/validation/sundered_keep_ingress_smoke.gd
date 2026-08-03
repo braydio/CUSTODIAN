@@ -3,7 +3,6 @@ extends SceneTree
 const CONTRACT_WORLD_LOADER_SCRIPT := preload("res://game/systems/core/systems/contract_world_loader.gd")
 const SECTOR_SCENE := preload("res://game/actors/sector/sector.tscn")
 const TEST_CAMERA_SCRIPT := preload("res://tools/validation/fixtures/level_lifecycle_test_camera.gd")
-const OVERLOOK_POCKET_MAP_SCRIPT := preload("res://tools/validation/fixtures/world_overlook_pocket_map.gd")
 
 
 func _init() -> void:
@@ -20,7 +19,7 @@ func _init() -> void:
 	world.add_child(contract_map)
 	contract_map.add_user_signal("contract_generated")
 
-	var map_instance := OVERLOOK_POCKET_MAP_SCRIPT.new()
+	var map_instance := Node2D.new()
 	map_instance.name = "GeneratedMap"
 	contract_map.add_child(map_instance)
 
@@ -52,14 +51,33 @@ func _init() -> void:
 	loader.set("world_path", NodePath("/root/GameRoot/World"))
 	loader.set("fallback_tile_size", 16.0)
 	loader.set("place_debug_sundered_keep_gateway", false)
-	loader.set("debug_spawn_sundered_keep_procgen_vista", false)
 
 	var level_data := {
 		"map_size": Vector2i(96, 96),
 		"compound_rect": Rect2i(40, 40, 10, 10),
 		"compound_ingress": [Vector2i(45, 40)],
 		"player_spawn": Vector2i(12, 12),
-		"floor_cells": _floor_cells(),
+		"floor_cells": [Vector2i(74, 14)],
+		"sundered_keep_frontage": {
+			"landmark_id": &"sundered_keep_frontage",
+			"gate_anchor": Vector2i(74, 14),
+			"fortress_outward_direction": Vector2i.UP,
+			"overlook_anchor": Vector2i(62, 34),
+			"floor_cells": {Vector2i(74, 14): true},
+			"camera_semantic_anchors": {
+				"frontage_entry": Vector2i(52, 52),
+				"first_influence_start": Vector2i(56, 45),
+				"first_reveal_apex": Vector2i(60, 38),
+				"first_return_complete": Vector2i(64, 32),
+				"frontage_reveal_start": Vector2i(68, 26),
+				"frontage_apex": Vector2i(71, 21),
+				"gameplay_return": Vector2i(73, 17),
+				"gate_threshold": Vector2i(74, 14),
+			},
+			"visual_module_anchors": {
+				"fortress_front_anchor": Vector2i(74, 6),
+			},
+		},
 	}
 
 	await process_frame
@@ -81,13 +99,20 @@ func _init() -> void:
 		errors.append("origin sector fixture did not create its expected wall collision")
 	var ingress := world.get_node_or_null("SunderedKeepIngressSite") as Area2D
 	var landmarks := world.get_node_or_null("WorldLandmarks") as Node2D
-	if landmarks != null:
-		for child: Node in landmarks.get_children():
-			if (
-				child.is_in_group("generated_sundered_keep_world_vista")
-				or child.is_in_group("generated_sundered_keep_procgen_frontage")
-			):
-				errors.append("production world retained generated Keep presentation")
+	var vista := (
+		landmarks.get_node_or_null("SunderedKeepProcgenFrontagePresentation") as Node2D
+		if landmarks != null else null
+	)
+	if landmarks == null:
+		errors.append("WorldLandmarks branch missing")
+	elif not landmarks.is_in_group(&"world_origin_branch"):
+		errors.append("WorldLandmarks missing world_origin_branch")
+	if vista == null:
+		errors.append("generated Sundered Keep procgen frontage missing")
+	elif not vista.is_in_group("generated_sundered_keep_world_vista"):
+		errors.append("world Vista missing generated landmark group")
+	elif not vista.is_in_group("generated_sundered_keep_procgen_frontage"):
+		errors.append("frontage presentation missing procgen landmark group")
 	if ingress == null:
 		errors.append("SunderedKeepIngressSite missing")
 	else:
@@ -107,7 +132,20 @@ func _init() -> void:
 		if route_manager == null:
 			errors.append("registered ingress did not create RouteTraversalManager")
 		elif route_manager.call("has_active_route"):
-			errors.append("ingress started a route before crossing")
+			errors.append("world Vista started a route before ingress crossing")
+		if vista != null:
+			var state := vista.call("get_world_vista_debug_state") as Dictionary
+			var clip_bounds: Rect2 = state.get("vista_clip_bounds", Rect2())
+			var playable_bounds: Rect2 = state.get("playable_floor_bounds", Rect2())
+			if clip_bounds.has_area() and playable_bounds.has_area() and clip_bounds.intersects(playable_bounds):
+				errors.append("vista clip overlaps playable frontage floor bounds")
+			if int(state.get("vista_root_z_index", 0)) >= 0:
+				errors.append("vista presentation does not render behind gameplay")
+			for descendant in _all_descendants(vista):
+				if descendant is CollisionObject2D or descendant is CollisionShape2D \
+				or descendant is CollisionPolygon2D or descendant is NavigationRegion2D:
+					errors.append("vista presentation owns collision/navigation: %s" % descendant.name)
+					break
 		ingress.call("_enter_approach", actor)
 		await process_frame
 		var level_loader := world.get_node_or_null("LevelLoader")
@@ -202,15 +240,15 @@ func _origin_sector_has_wall_collision(world: Node2D, sectors: Node2D) -> bool:
 	return false
 
 
-func _floor_cells() -> Array[Vector2i]:
-	var cells: Array[Vector2i] = []
-	for y in range(2, 16):
-		cells.append(Vector2i(45, y))
-	for y in range(38, 44):
-		cells.append(Vector2i(45, y))
-	cells.append(Vector2i(44, 40))
-	cells.append(Vector2i(46, 40))
-	return cells
+func _all_descendants(node: Node) -> Array[Node]:
+	var result: Array[Node] = []
+	var pending: Array[Node] = [node]
+	while not pending.is_empty():
+		var current: Node = pending.pop_back()
+		result.append(current)
+		for child in current.get_children():
+			pending.append(child)
+	return result
 
 
 func _fail(message: String) -> void:

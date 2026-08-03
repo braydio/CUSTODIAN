@@ -1,21 +1,22 @@
 # Sundered Keep Procgen Frontage
 
-- **Status:** debug-only / archived experiment
-- **Owner:** retained Sundered Keep procgen frontage debug tooling
+- **Status:** active production authority; layering review required
+- **Owner:** generated Sundered Keep frontage and distant reveal
 - **Runtime:** `custodian/` Godot 4.x
 - **Last updated:** 2026-08-03
 
 ## Production Boundary
 
-The generated frontage, its large distant-reveal presentation, and its
-`sundered_keep_frontage` ascent-field authority are not production content.
-They are retained only behind explicit debug exports for controlled comparison.
+The generated frontage, its collision-safe terrain authority, and its distant
+reveal presentation are production content. The presentation is subordinate to
+generated gameplay geometry and may never cover the playable frontage.
 
 Production traversal is:
 
 ```text
-ordinary generated campaign terrain
--> compact walkable Sundered Keep ingress pocket
+generated campaign terrain
+-> generated playable Sundered Keep frontage and distant reveal
+-> terminal ingress at the generated gate anchor
 -> ordinary fade
 -> authored Sundered Keep Vista Approach
 -> ordinary fade
@@ -24,41 +25,32 @@ ordinary generated campaign terrain
 
 ## Production Procgen Ownership
 
-Procgen owns only:
+Procgen owns:
 
-- ordinary generated terrain;
-- a compact walkable ingress pocket when no suitable north-edge overlook
-  already exists;
-- registered route ingress placement.
+- playable generated frontage floor, cliff/blocker, navigation, prop, and enemy
+  placement authority;
+- the generated shore/cliff boundary;
+- the distant ocean/storm/fortress reveal presentation;
+- registered terminal ingress placement at `sundered_keep_frontage.gate_anchor`.
 
-The ingress uses the `north_edge_overlook` strategy on valid generated floor.
+The ingress uses `procgen_landmark_terminal` with the
+`sundered_keep_frontage` landmark data key.
 It starts the `sundered_keep` route with the `production` profile. Production
 continues to enter `sundered_keep_vista_approach`; it must not bypass that
 authored level by selecting the direct-keep debug edge.
 
-Procgen does not own Sundered Keep ocean, storm, fortress, reveal-camera,
-route-master, authored collision, enemy, foliage, or set-dressing content.
-Ordinary procgen collision, enemies, foliage, and props remain confined to the
-live generated world and are isolated while the authored route is active.
+The procgen vista owns presentation only. `VistaPresentationRoot` has absolute
+negative depth, contains no collision or navigation descendants, and clips its
+ocean/storm/fortress imagery to the exterior side of the generated gate
+boundary. It must not cover generated playable-floor bounds. Gameplay remains
+owned by generated floor/collision/navigation and ordinary actor systems.
 
-## Archived Experiment
+## Authored approach boundary
 
-The retained frontage builder can still generate route, terrace, cliff,
-camera, clearance, and landmark metadata for debug comparison. It is gated by:
-
-```text
-ProcGenMap.debug_enable_sundered_keep_procgen_frontage
-ContractWorldLoader.debug_spawn_sundered_keep_procgen_vista
-```
-
-Both exports default to `false` and are explicitly `false` in their production
-scene owners. Production must neither merge frontage cells into `ASCENT_FIELD`
-nor instantiate `SunderedKeepProcgenFrontagePresentation` under
-`WorldLandmarks`.
-
-Presentation art never owns playable ground, collision, or navigation. Do not
-make this experiment production-safe by adding ocean collision, changing draw
-order, or selectively hiding generated actors.
+After the terminal ingress, the authored Vista Approach owns Shore Parish,
+the near-Keep route, outer-wall checkpoint, east traverse, local collision and
+dressing, and the Front Gate handoff. It does not replace the generated world
+frontage or distant reveal.
 
 ## Lifecycle
 
@@ -74,18 +66,18 @@ Run from the repository root:
 ```bash
 env HOME=/tmp/custodian-godot-home godot --headless --path custodian --import --quit
 env HOME=/tmp/custodian-godot-home godot --headless --path custodian \
-  --script res://tools/validation/sundered_keep_procgen_vista_isolation_smoke.gd
+  --script res://tools/validation/sundered_keep_procgen_vista_layering_smoke.gd
 env HOME=/tmp/custodian-godot-home godot --headless --path custodian \
   --script res://tools/validation/sundered_keep_ingress_smoke.gd
 ```
 
-Acceptance requires ordinary procgen terrain before entry, no generated Keep
-presentation in the procgen branches, a production ingress on valid floor,
-exclusive authored-vista ownership during traversal, usable authored boundary
-rails, and exact world/camera restoration on exit or failure.
+Acceptance requires generated playable frontage, a terminal ingress on its gate
+anchor, collision/navigation-free vista presentation below gameplay, an
+exterior clip disjoint from playable floor bounds, authored-approach activation,
+and exact world/camera restoration on exit or failure.
 
 ## Next Agent Slice
 
-Keep the archived builder and presentation debug-only. Any future work on the
-production arrival belongs in the compact ingress-pocket resolver or the
-authored Vista Approach, without restoring frontage ownership to procgen.
+Visually review the generated shore cutoff across production seeds and viewport
+sizes. Extend the clip geometry only from generated boundary metadata; do not
+replace procgen gameplay authority with a full-map presentation plate.

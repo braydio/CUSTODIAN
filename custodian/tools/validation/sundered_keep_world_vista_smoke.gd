@@ -171,7 +171,7 @@ func _run() -> void:
 	if coverage.x < 2560.0 / 0.78 or coverage.y < 1440.0 / 0.78:
 		errors.append("presentation does not cover 2560x1440 cinematic view")
 	var storm := vista.get_node(
-		"HorizonPresentation/StormHorizon"
+		"VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/StormHorizon"
 	) as Sprite2D
 	var fitted_storm_size := (
 		storm.texture.get_size() * storm.scale
@@ -183,22 +183,24 @@ func _run() -> void:
 			or fitted_storm_size.y < coverage.y:
 		errors.append("storm horizon does not cover maximum viewport")
 	var void_underlay := vista.get_node(
-		"HorizonPresentation/VoidUnderlay"
+		"VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/VoidUnderlay"
 	) as Polygon2D
-	if void_underlay.polygon.size() < 4 or void_underlay.z_index >= 0:
+	if void_underlay.polygon.size() < 4:
 		errors.append("presentation has no deliberate void underlay")
+	var vista_root := vista.get_node("VistaPresentationRoot") as Node2D
+	if vista_root.z_as_relative or vista_root.z_index >= 0:
+		errors.append("vista presentation root is not absolutely behind gameplay")
 	for path in [
-		"HorizonPresentation/DistantKeep",
-		"FortressPresentation/OuterWall",
-		"FortressPresentation/CentralCitadel",
+		"VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/DistantKeep",
+		"VistaPresentationRoot/ExteriorVistaClip/FortressPresentation/OuterWall",
+		"VistaPresentationRoot/ExteriorVistaClip/FortressPresentation/CentralCitadel",
 	]:
 		var sprite := vista.get_node(path) as Sprite2D
-		if sprite.texture == null or sprite.z_index >= 0:
+		if sprite.texture == null or not vista_root.is_ancestor_of(sprite):
 			errors.append("%s is not a behind-gameplay visual layer" % path)
-	if vista.get_node(
-		"ForegroundPresentation/GateShadow"
-	).get("z_index") <= 0:
-		errors.append("gate shadow is not a foreground occluder")
+	var clip := vista.get_node("VistaPresentationRoot/ExteriorVistaClip") as Polygon2D
+	if clip.clip_children != CanvasItem.CLIP_CHILDREN_ONLY:
+		errors.append("vista presentation is not clipped outside gameplay")
 	if vista.find_child("ForegroundCliffLip", true, false) != null:
 		errors.append("production presentation retained the seam-hiding cliff lip")
 	if vista.find_child("GrandVistaCinematicRoot", true, false) != null:

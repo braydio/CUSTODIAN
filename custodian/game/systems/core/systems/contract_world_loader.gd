@@ -33,11 +33,6 @@ class_name ContractWorldLoader
 @export var place_debug_sundered_keep_gateway: bool = false
 @export var debug_start_near_sundered_keep_entrance: bool = false
 @export var debug_sundered_keep_start_offset: Vector2 = Vector2(48.0, 0.0)
-# Production keeps the procgen world free of the generated Sundered Keep
-# frontage presentation: the authored vista approach owns all ocean/storm and
-# fortress presentation. When true, the loader re-enables the legacy generated
-# procgen vista for debug/review of the retained frontage builder.
-@export var debug_spawn_sundered_keep_procgen_vista: bool = false
 @export_range(0, 7, 1) var tutorial_resource_node_count: int = 3
 @export_range(2, 64, 1) var tutorial_resource_min_distance_tiles: int = 10
 @export_range(4, 96, 1) var tutorial_resource_max_distance_tiles: int = 42
@@ -1182,8 +1177,6 @@ func _place_registered_world_ingresses(level_data: Dictionary, map_instance: Nod
 	var world := get_node_or_null(world_path) as Node2D
 	if world == null:
 		return
-	_remove_generated_sundered_keep_procgen_vistas(world)
-
 	var spawner := world.get_node_or_null("WorldIngressSpawner")
 	if spawner == null:
 		spawner = WORLD_INGRESS_SPAWNER_SCRIPT.new()
@@ -1200,15 +1193,12 @@ func _place_registered_world_ingresses(level_data: Dictionary, map_instance: Nod
 			loader
 		) as Array
 	)
-	# Retained only for explicit presentation debugging. Production must never
-	# put the ocean/storm/fortress presentation inside the active procgen world.
-	if debug_spawn_sundered_keep_procgen_vista:
-		_place_sundered_keep_world_vista(
-			world,
-			placed_ingresses,
-			map_instance,
-			level_data
-		)
+	_place_sundered_keep_world_vista(
+		world,
+		placed_ingresses,
+		map_instance,
+		level_data
+	)
 
 
 func _place_sundered_keep_world_vista(
@@ -1252,21 +1242,6 @@ func _place_sundered_keep_world_vista(
 			)
 			return
 		return
-
-
-func _remove_generated_sundered_keep_procgen_vistas(world: Node2D) -> void:
-	var landmarks := world.get_node_or_null("WorldLandmarks")
-	if landmarks == null:
-		return
-
-	for child: Node in landmarks.get_children():
-		if (
-			child.is_in_group("generated_sundered_keep_world_vista")
-			or child.is_in_group("generated_sundered_keep_procgen_frontage")
-		):
-			# Immediate removal is intentional: contract regeneration must not
-			# leave the full-screen presentation alive for another frame.
-			child.free()
 
 
 func _ensure_level_loader(world: Node) -> Node:

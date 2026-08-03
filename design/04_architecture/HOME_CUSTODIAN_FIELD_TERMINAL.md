@@ -6,6 +6,8 @@
 **Runtime Slice:** `res://scenes/home_custodian_begin.tscn`
 **Validation:** `res://tools/validation/custodian_home_begin_smoke.gd`
 
+> **Lore cross-reference:** The terminal-recognition phase described in this doc is where the crèche recognizes or issues the player's Custodian designation. The fiction of crèches and designation-keyed crèche lockers (including what the locker does — and does not — prove about the person carrying the designation) is canon in `design/03_world/lore/CRECHE_AND_LOCKER_LORE.md`.
+
 The first objective should feel like **returning to a forgotten post** — not investigating a curiosity. The Custodian does not inherit power. It refuses to relinquish residual authority.
 
 This document was moved from `design/CUSTODIAN_BEGINS.md` into the Home architecture set because it defines the first piece of home-state gameplay: the Custodian Field Terminal as the initial anchor for archive, repair, scanning, and later base progression.

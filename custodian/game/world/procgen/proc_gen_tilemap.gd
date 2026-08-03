@@ -151,12 +151,6 @@ enum WorldShapeMode {
 @export var generation_evaluation_mode: bool = false
 @export var generation_output_enabled: bool = true
 @export var debug_log_terrain_source_usage: bool = false
-# Production procgen owns only ordinary terrain and a compact walkable
-# ingress pocket; the authored vista approach owns all Sundered Keep
-# presentation. When true, the retained Sundered Keep frontage builder runs
-# and merges its route/terrace/cliff/clearance cells into the ascent field
-# for debug/review only.
-@export var debug_enable_sundered_keep_procgen_frontage: bool = false
 @export var enable_final_foliage: bool = true
 @export var foliage_deferred_spawn_enabled: bool = true
 @export_range(64, 4096, 64) var foliage_spawn_batch_size: int = 512
@@ -3479,20 +3473,15 @@ func _fill_ascent_field_substrate(map_size: Vector2i) -> void:
 		return
 	var builder := ASCENT_FIELD_BUILDER_SCRIPT.new()
 	var field: Dictionary = builder.call("build_field", _worldgen_intent_graph, map_size, procgen_node.seed if procgen_node != null else 0)
-	_sundered_keep_frontage.clear()
-
-	if debug_enable_sundered_keep_procgen_frontage:
-		var frontage_builder := (
-			SUNDERED_KEEP_FRONTAGE_BUILDER_SCRIPT.new()
-		)
-		_sundered_keep_frontage = frontage_builder.call(
-			"build_frontage",
-			_worldgen_intent_graph,
-			field,
-			map_size,
-			procgen_node.seed if procgen_node != null else 0
-		)
-		_merge_sundered_keep_frontage_into_ascent_field(field)
+	var frontage_builder := SUNDERED_KEEP_FRONTAGE_BUILDER_SCRIPT.new()
+	_sundered_keep_frontage = frontage_builder.call(
+		"build_frontage",
+		_worldgen_intent_graph,
+		field,
+		map_size,
+		procgen_node.seed if procgen_node != null else 0
+	)
+	_merge_sundered_keep_frontage_into_ascent_field(field)
 	_worldgen_reserved_regions = field.get("reserved_regions", [])
 	_ascent_field_summary = field.get("debug_summary", {})
 	_ascent_field_main_route_cells = field.get("main_route_cells", [])
@@ -3504,8 +3493,7 @@ func _fill_ascent_field_substrate(map_size: Vector2i) -> void:
 	_build_route_playability(field, map_size)
 	_worldgen_intent_floor_cells = field.get("floor_cells", {})
 	_apply_ascent_field_authority(field, map_size)
-	if debug_enable_sundered_keep_procgen_frontage:
-		_apply_sundered_keep_frontage_region_metadata()
+	_apply_sundered_keep_frontage_region_metadata()
 
 
 func _merge_sundered_keep_frontage_into_ascent_field(

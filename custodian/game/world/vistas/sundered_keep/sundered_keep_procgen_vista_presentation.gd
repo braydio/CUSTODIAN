@@ -14,22 +14,30 @@ const VIEWPORT_SAFETY_MARGIN := Vector2(256.0, 224.0)
 @export var operator_path := NodePath("/root/GameRoot/World/Operator")
 @export var camera_path := NodePath("/root/GameRoot/World/Camera2D")
 
-@onready var _horizon := $HorizonPresentation as Node2D
+@onready var _vista_root := $VistaPresentationRoot as Node2D
+@onready var _exterior_clip := (
+	$VistaPresentationRoot/ExteriorVistaClip as Polygon2D
+)
+@onready var _horizon := (
+	$VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation as Node2D
+)
 @onready var _storm := (
-	$HorizonPresentation/StormHorizon as Sprite2D
+	$VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/StormHorizon as Sprite2D
 )
 @onready var _distant_keep := (
-	$HorizonPresentation/DistantKeep as Sprite2D
+	$VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/DistantKeep as Sprite2D
 )
 @onready var _reveal_fog := (
-	$HorizonPresentation/RevealFog as Sprite2D
+	$VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/RevealFog as Sprite2D
 )
-@onready var _fortress := $FortressPresentation as Node2D
+@onready var _fortress := (
+	$VistaPresentationRoot/ExteriorVistaClip/FortressPresentation as Node2D
+)
 @onready var _frontage_fog := (
-	$FortressPresentation/FrontageFog as Sprite2D
+	$VistaPresentationRoot/ExteriorVistaClip/FortressPresentation/FrontageFog as Sprite2D
 )
 @onready var _gate_shadow := (
-	$ForegroundPresentation/GateShadow as Sprite2D
+	$VistaPresentationRoot/ExteriorVistaClip/GateShadow as Sprite2D
 )
 @onready var _presentation_anchor := (
 	$CameraPresentationAnchor as Marker2D
@@ -48,6 +56,8 @@ var _camera_owned := false
 var _camera_state: Dictionary = {}
 var _presentation_bounds := Rect2()
 var _viewport_coverage := Vector2.ZERO
+var _vista_clip_bounds := Rect2()
+var _playable_floor_bounds := Rect2()
 
 
 func _ready() -> void:
@@ -174,18 +184,19 @@ func _layout_from_semantic_anchors() -> void:
 	_fortress.global_position = fortress_anchor
 	var wall_anchor: Variant = visual.get("wall_run_anchor")
 	if wall_anchor is Vector2i:
-		$FortressPresentation/OuterWall.global_position = (
+		_fortress.get_node("OuterWall").global_position = (
 			_tile_to_world(wall_anchor as Vector2i)
 			+ Vector2(0.0, -80.0)
 		)
 	var tower_anchor: Variant = visual.get("tower_anchor_a")
 	if tower_anchor is Vector2i:
-		$FortressPresentation/CentralCitadel.global_position = (
+		_fortress.get_node("CentralCitadel").global_position = (
 			_tile_to_world(tower_anchor as Vector2i)
 			+ Vector2(120.0, -150.0)
 		)
 	_gate_shadow.global_position = _world_anchors["gate_threshold"]
 	_fit_presentation_to_viewport()
+	_configure_exterior_clip()
 	_update_presentation_bounds()
 	_configured = true
 	if _operator != null:
@@ -350,12 +361,63 @@ func _update_presentation_bounds() -> void:
 	)
 
 
+func _configure_exterior_clip() -> void:
+	var floor_cells: Dictionary = _frontage.get("floor_cells", {})
+	_playable_floor_bounds = Rect2()
+	var first_floor := true
+	var tile_size := _runtime_tile_size()
+	for cell_variant in floor_cells.keys():
+		if not cell_variant is Vector2i:
+			continue
+		var center := _tile_to_world(cell_variant as Vector2i)
+		var cell_rect := Rect2(center - tile_size * 0.5, tile_size)
+		if first_floor:
+			_playable_floor_bounds = cell_rect
+			first_floor = false
+		else:
+			_playable_floor_bounds = _playable_floor_bounds.merge(cell_rect)
+	var gate_center := _world_anchors.get("gate_threshold", Vector2.ZERO) as Vector2
+	var outward: Vector2i = _frontage.get("fortress_outward_direction", Vector2i.UP)
+	var map_size: Vector2i = _level_data.get("map_size", Vector2i(176, 176))
+	var map_origin := _tile_to_world(Vector2i.ZERO) - tile_size * 0.5
+	var margin := maxf(_viewport_coverage.x, _viewport_coverage.y)
+	if outward == Vector2i.UP:
+		_vista_clip_bounds = Rect2(
+			Vector2(map_origin.x - margin, map_origin.y - margin),
+			Vector2(float(map_size.x) * tile_size.x + margin * 2.0, maxf(1.0, gate_center.y - tile_size.y * 0.5 - 0.5 - (map_origin.y - margin)))
+		)
+	else:
+		# Current production frontage faces north. Other directions retain a
+		# conservative exterior-only box until their authored mask exists.
+		_vista_clip_bounds = Rect2(
+			Vector2(map_origin.x - margin, map_origin.y - margin),
+			Vector2(float(map_size.x) * tile_size.x + margin * 2.0, maxf(1.0, gate_center.y - tile_size.y * 0.5 - 0.5 - (map_origin.y - margin)))
+		)
+	var local_rect := Rect2(
+		_exterior_clip.to_local(_vista_clip_bounds.position),
+		_vista_clip_bounds.size
+	)
+	_exterior_clip.polygon = PackedVector2Array([
+		local_rect.position,
+		local_rect.position + Vector2(local_rect.size.x, 0.0),
+		local_rect.end,
+		local_rect.position + Vector2(0.0, local_rect.size.y),
+	])
+
+
+func _runtime_tile_size() -> Vector2:
+	if _map_instance != null and _map_instance.has_method("get_runtime_tile_size"):
+		return _map_instance.call("get_runtime_tile_size") as Vector2
+	return Vector2(16.0, 16.0)
+
+
 func _on_viewport_size_changed() -> void:
 	if not is_node_ready():
 		return
 	_fit_presentation_to_viewport()
 	if not _configured:
 		return
+	_configure_exterior_clip()
 	_update_presentation_bounds()
 	if _camera_owned and _camera != null \
 			and _camera.has_method("set_presentation_bounds_override"):
@@ -406,6 +468,9 @@ func get_world_vista_debug_state() -> Dictionary:
 		"camera_weight": float(_camera_state.get("camera_weight", 0.0)),
 		"presentation_bounds": _presentation_bounds,
 		"viewport_coverage": _viewport_coverage,
+		"vista_clip_bounds": _vista_clip_bounds,
+		"playable_floor_bounds": _playable_floor_bounds,
+		"vista_root_z_index": _vista_root.z_index,
 		"semantic_anchors": _world_anchors.duplicate(true),
 		"frontage": _frontage.duplicate(true),
 		"operator": _operator,

@@ -1,0 +1,111 @@
+extends SceneTree
+
+const PRESENTATION_SCENE := preload(
+	"res://game/world/vistas/sundered_keep/"
+	+ "sundered_keep_procgen_vista_presentation.tscn"
+)
+const ROUTE_PATH := "res://content/routes/sundered_keep/sundered_keep_route.json"
+
+var _errors: Array[String] = []
+
+
+func _init() -> void:
+	call_deferred("_run")
+
+
+func _run() -> void:
+	_assert_route_authority()
+	var host := Node2D.new()
+	host.name = "SunderedKeepProcgenVistaLayeringSmokeRoot"
+	root.add_child(host)
+	var map_instance := Node2D.new()
+	map_instance.name = "GeneratedMap"
+	host.add_child(map_instance)
+	var ingress := Node2D.new()
+	ingress.name = "SunderedKeepIngressSite"
+	host.add_child(ingress)
+	var presentation := PRESENTATION_SCENE.instantiate() as Node2D
+	host.add_child(presentation)
+	var frontage := _frontage_fixture()
+	var level_data := {
+		"map_size": Vector2i(96, 96),
+		"floor_cells": [Vector2i(74, 14)],
+		"sundered_keep_frontage": frontage,
+	}
+	presentation.call("configure", ingress, map_instance, level_data)
+	await process_frame
+
+	_assert(not frontage.is_empty(), "generated level data must retain sundered_keep_frontage")
+	_assert((frontage.get("floor_cells", {}) as Dictionary).has(Vector2i(74, 14)), "frontage gate floor must be generated walkable authority")
+	var vista_root := presentation.get_node_or_null("VistaPresentationRoot") as Node2D
+	var clip := presentation.get_node_or_null("VistaPresentationRoot/ExteriorVistaClip") as Polygon2D
+	_assert(vista_root != null and vista_root.z_index < 0 and not vista_root.z_as_relative, "vista root must use absolute depth behind gameplay")
+	_assert(clip != null and clip.clip_children == CanvasItem.CLIP_CHILDREN_ONLY, "vista must use its exterior-facing clip")
+	for node in _all_descendants(presentation):
+		_assert(not (node is CollisionObject2D or node is CollisionShape2D or node is CollisionPolygon2D or node is NavigationRegion2D), "vista presentation must not own collision/navigation: %s" % node.name)
+		if node is Sprite2D:
+			_assert(vista_root != null and vista_root.is_ancestor_of(node), "vista sprite escaped presentation-only root: %s" % node.name)
+	var state := presentation.call("get_world_vista_debug_state") as Dictionary
+	var clip_bounds: Rect2 = state.get("vista_clip_bounds", Rect2())
+	var playable_bounds: Rect2 = state.get("playable_floor_bounds", Rect2())
+	_assert(clip_bounds.has_area(), "vista exterior clip bounds must be configured")
+	_assert(playable_bounds.has_area(), "playable frontage bounds must be configured")
+	_assert(not clip_bounds.intersects(playable_bounds), "ocean/storm clip must not cover playable frontage floor bounds")
+
+	host.queue_free()
+	if _errors.is_empty():
+		print("[SunderedKeepProcgenVistaLayeringSmoke] PASS")
+		quit(0)
+		return
+	for error in _errors:
+		push_error("[SunderedKeepProcgenVistaLayeringSmoke] %s" % error)
+	quit(1)
+
+
+func _assert_route_authority() -> void:
+	var file := FileAccess.open(ROUTE_PATH, FileAccess.READ)
+	var parsed: Variant = JSON.parse_string(file.get_as_text()) if file != null else null
+	_assert(parsed is Dictionary, "production route JSON must parse")
+	if not parsed is Dictionary:
+		return
+	var placement := ((parsed as Dictionary).get("ingress", {}) as Dictionary).get("placement", {}) as Dictionary
+	_assert(String(placement.get("strategy", "")) == "procgen_landmark_terminal", "production ingress must use procgen_landmark_terminal")
+	_assert(String(placement.get("landmark_data_key", "")) == "sundered_keep_frontage", "production ingress must resolve generated frontage metadata")
+
+
+func _frontage_fixture() -> Dictionary:
+	return {
+		"landmark_id": &"sundered_keep_frontage",
+		"gate_anchor": Vector2i(74, 14),
+		"fortress_outward_direction": Vector2i.UP,
+		"floor_cells": {Vector2i(74, 14): true},
+		"camera_semantic_anchors": {
+			"frontage_entry": Vector2i(52, 52),
+			"first_influence_start": Vector2i(56, 45),
+			"first_reveal_apex": Vector2i(60, 38),
+			"first_return_complete": Vector2i(64, 32),
+			"frontage_reveal_start": Vector2i(68, 26),
+			"frontage_apex": Vector2i(71, 21),
+			"gameplay_return": Vector2i(73, 17),
+			"gate_threshold": Vector2i(74, 14),
+		},
+		"visual_module_anchors": {
+			"fortress_front_anchor": Vector2i(74, 6),
+		},
+	}
+
+
+func _all_descendants(node: Node) -> Array[Node]:
+	var result: Array[Node] = []
+	var pending: Array[Node] = [node]
+	while not pending.is_empty():
+		var current: Node = pending.pop_back()
+		result.append(current)
+		for child in current.get_children():
+			pending.append(child)
+	return result
+
+
+func _assert(condition: bool, message: String) -> void:
+	if not condition:
+		_errors.append(message)
