@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bmk4dho4av4oj"
-path="res://.godot/imported/outer_wall_checkpoint_fog_ribbon_01.png-939de769234f3da4745890a806174679.ctex"
+uid="uid://b2b1rgqoi52q6"
+path="res://.godot/imported/loot_marker__fx__interaction__collect_collapse__omni__8f__96x160.png-d69ebef03af791203dc960b7603e9d6e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/backgrounds/sundered_keep/approach/fog/outer_wall_checkpoint_fog_ribbon_01.png"
-dest_files=["res://.godot/imported/outer_wall_checkpoint_fog_ribbon_01.png-939de769234f3da4745890a806174679.ctex"]
+source_file="res://content/sprites/effects/loot_marker/runtime/fx/interaction/loot_marker__fx__interaction__collect_collapse__omni__8f__96x160.png"
+dest_files=["res://.godot/imported/loot_marker__fx__interaction__collect_collapse__omni__8f__96x160.png-d69ebef03af791203dc960b7603e9d6e.ctex"]
 
 [params]
 

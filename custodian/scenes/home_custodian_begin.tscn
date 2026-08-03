@@ -17,6 +17,12 @@ script = ExtResource("1_home")
 
 [node name="World" type="Node2D" parent="." unique_id=2088348928]
 
+[node name="Collision" type="Node2D" parent="."]
+
+[node name="PathBoundaryCollision" type="StaticBody2D" parent="Collision"]
+collision_layer = 1
+collision_mask = 1
+
 [node name="RoadOfWitnessesPrototype" type="Node2D" parent="World" unique_id=1958478777]
 script = ExtResource("6_road")
 

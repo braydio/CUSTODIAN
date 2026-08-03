@@ -11,10 +11,12 @@
     "interaction_distance": 92.0,
     "route_profile": "production",
     "placement": {
-      "strategy": "procgen_landmark_terminal",
-      "landmark_data_key": "sundered_keep_frontage",
+      "strategy": "north_edge_overlook",
       "priority": 200,
-      "minimum_spacing_tiles": 10
+      "minimum_spacing_tiles": 10,
+      "max_edge_distance_tiles": 8,
+      "approach_depth_tiles": 10,
+      "lateral_search_tiles": 28
     }
   },
   "nodes": [

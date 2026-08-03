@@ -57,6 +57,21 @@ Runtime behavior:
 - Witness contact changes objective state to terminal stabilization and unlocks a partial archive/status readout placeholder.
 - Missing production art/audio is tracked in `REQUIRED_ASSETS.md`; the current scene uses existing assets as fallbacks.
 
+## Home mapper
+
+Open `res://scenes/debug/home_custodian_begin_mapper.tscn` to author the Home
+beginning perimeter and its initial spatial records. The mapper currently owns:
+
+- `operator_spawn` — the Custodian wake position;
+- `field_terminal` — the first objective terminal position;
+- `BOUNDARY_SEGMENTS` — the outer authored traversal rails.
+
+Press `M` to switch between collision and marker modes, `1`/`2` or Page
+Up/Page Down to select a marker, left-click to place, and Enter/`U` to apply.
+Applying writes `custodian_home_begin.gd`, updates the live preview, and records
+marker positions in `home_custodian_begin.tscn`. Target gameplay CanvasLayers
+are hidden only inside the mapper preview so the authoring help remains usable.
+
 ## Objective name
 
 ### Primary — locked

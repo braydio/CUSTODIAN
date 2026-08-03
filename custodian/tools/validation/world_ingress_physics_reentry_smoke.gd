@@ -33,6 +33,11 @@ func _run() -> void:
 	else:
 		first.call("return_to_main", actor)
 		await process_frame
+	# Monitoring rebuilds may report a synthetic exit for an actor that is
+	# still standing inside the ingress. That event must not unlock descent.
+	ingress.call("_on_body_exited", actor)
+	if not bool(ingress.get("_awaiting_body_exit_after_return")):
+		errors.append("synthetic return body_exited cleared the ingress guard")
 	# The monitoring rebuild may briefly expose an empty overlap set. The
 	# return guard must survive that window instead of starting descent again.
 	for _frame in range(20):

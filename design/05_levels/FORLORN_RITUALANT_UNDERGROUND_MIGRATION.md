@@ -28,7 +28,7 @@ The new authored Underground wrapper owns level lifecycle, named spawn, camera b
 
 ```text
 Generated world
-  -> north-edge cave ingress: DESCEND TO THE EMPTY BELL
+  -> north-edge cave ingress: TRAVERSE THE DERELICT LIFT
   -> route: forlorn_ritualant_underground
   -> node: ritual_cavern
   -> spawn: Spawn_DescentLanding
@@ -75,6 +75,14 @@ The generic special-room system remains live for other encounters. Its documenta
 ## Room Mapper
 
 Open `res://scenes/debug/forlorn_ritualant_underground_mapper.tscn` to edit the chamber rails and its three authoritative spatial records: `descent_landing`, `return_world`, and `encounter_origin`. Press `M` to switch between collision and marker modes, use `1`–`3` or Page Up/Page Down to select a record, left-click to place it, and press Enter or `U` to write the matching constants in the authored-level script.
+
+Enter/`U` also applies the new rails or markers to the running mapper preview
+immediately. Marker positions are written into
+`forlorn_ritualant_underground.tscn` as well as the script authority, so the
+authored scene and runtime constants do not present conflicting coordinates.
+Collision rails remain generated from `BOUNDARY_SEGMENTS`; the mapper writes
+that production authority rather than baking duplicate collision children into
+the scene.
 
 The return record directly positions `Exit_ReturnWorld`; there is intentionally no second `Return_CaveMouth` marker. The landing directly positions `Spawn_DescentLanding`, and the encounter origin directly positions the instanced `ForlornRitualantSite`.
 

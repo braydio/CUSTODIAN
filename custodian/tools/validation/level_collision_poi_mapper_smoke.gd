@@ -30,6 +30,10 @@ func _run() -> void:
 	var marker_text := str(mapper.call("_format_authoring_markers_const"))
 	if not marker_text.contains("\"node_name\"") or not marker_text.contains("\"spawn\""):
 		errors.append("marker formatter omitted generic schema data")
+	var scene_text := "[gd_scene format=3]\n\n[node name=\"Spawn_Main\" type=\"Marker2D\" parent=\".\"]\nposition = Vector2(1, 2)\n"
+	var scene_replaced := str(mapper.call("_replace_scene_node_position", scene_text, "Spawn_Main", Vector2(9.0, 11.0)))
+	if not scene_replaced.contains("position = Vector2(9.0, 11.0)"):
+		errors.append("scene marker position replacement failed")
 	_finish(errors)
 
 

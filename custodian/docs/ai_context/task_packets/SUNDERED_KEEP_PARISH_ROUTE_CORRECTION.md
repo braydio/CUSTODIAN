@@ -1,20 +1,24 @@
 # Sundered Keep Parish Route Correction
 
-- **Status:** review
+- **Status:** superseded by authored-vista isolation correction
 - **Authority:** `design/05_levels/SUNDERED_KEEP_PROCGEN_FRONTAGE.md`, `design/05_levels/SUNDERED_KEEP_VISTA_APPROACH.md`, `design/05_levels/SUNDERED_KEEP_LARGE_FRONT_GATE.md`
 - **User brief:** repository-root `CODEX_IMPLEMENT_SUNDERED_KEEP_PARISH_ROUTE_CORRECTION.md`
 - **Asset source:** repository-root `CUSTODIAN_parish_outer_wall_asset_pack.zip`
 
 ## Goal
 
-Ship the production route as generated frontage with one distant reveal,
-ordinary fade into the authored Shore Parish with one close-detail reveal and
-a longer grounded checkpoint traverse, then ordinary fade into Front Gate.
+The former goal of shipping a generated frontage and distant reveal inside the
+live procgen world is superseded. Production now places only a compact ingress
+on ordinary generated ground, fades into the authored Vista Approach / Shore
+Parish, then fades into Front Gate.
 
 ## Scope
 
-- Materialize and protect procgen frontage floor/corridor authority.
-- Remove the second procgen and authored Parish camera pulls.
+- Disable procgen frontage geometry and presentation behind explicit debug
+  flags.
+- Place the registered ingress through `north_edge_overlook`.
+- Keep all ocean, storm, fortress, route-master, reveal, collision, enemies,
+  and set dressing inside the authored approach.
 - Integrate the supplied northbound, eastbound, checkpoint-detail, local-fog,
   and Front Gate arrival-apron assets.
 - Extend mapper-owned Parish markers, subregions, rails, and exit eastward.
@@ -32,9 +36,12 @@ a longer grounded checkpoint traverse, then ordinary fade into Front Gate.
 
 ## Acceptance
 
-- No water-walking or ordinary blockers in protected frontage cells.
-- Exactly one procgen reveal and one Parish reveal release camera authority in
-  both directions.
+- No generated Sundered Keep presentation or frontage authority in production
+  procgen.
+- The production ingress stands on valid procgen floor and enters the authored
+  approach rather than Front Gate directly.
+- Procgen visibility/processing and Operator/camera state restore on return or
+  failure.
 - No playable black corridor or full-screen navigable fog.
 - Parish exit is at least 300 world pixels farther east with continuous mapped
   collision and visual ground.
@@ -46,7 +53,16 @@ a longer grounded checkpoint traverse, then ordinary fade into Front Gate.
 
 ## Completion Notes
 
-Runtime/data implementation and focused structural validation are complete.
+The generated-frontage completion notes and captures below are retained as
+historical evidence for the archived experiment; they are not current
+production acceptance authority. Runtime/data isolation validation is tracked
+by `sundered_keep_procgen_vista_isolation_smoke.gd` and the authored first-
+reveal Moment Forge capture.
+
+Historical implementation notes:
+
+Runtime/data implementation and focused structural validation were complete
+for the now-superseded generated-frontage direction.
 The supplied five assets are imported and mapper/runtime-wired. Production
 edges are ordinary fades, procgen exposes one camera envelope and protected
 frontage cells, Parish owns four visual overlay records and 45 collision rails,

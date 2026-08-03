@@ -86,6 +86,14 @@ func _load_target_level() -> void:
 			if parsed is Dictionary:
 				_target_level.set_meta("mapper_preview_config", parsed)
 	_world.add_child(_target_level)
+	_hide_target_canvas_layers(_target_level)
+
+
+func _hide_target_canvas_layers(node: Node) -> void:
+	for child in node.get_children():
+		if child is CanvasLayer:
+			(child as CanvasLayer).visible = false
+		_hide_target_canvas_layers(child)
 
 
 func _refresh_marker_schema() -> void:
@@ -204,14 +212,147 @@ func _apply_draft_segments_to_runtime_collision_map() -> bool:
 	if lines.is_empty():
 		push_warning("[LevelCollisionPoiMapper] No complete draft segments to apply")
 		return false
-	return _replace_target_script(_format_boundary_segments_const(lines), "")
+	var applied := _replace_target_script(_format_boundary_segments_const(lines), "")
+	if applied:
+		_apply_draft_segments_to_preview()
+	return applied
 
 
 func _apply_draft_markers_to_runtime_marker_map() -> bool:
 	if _draft_markers.is_empty():
 		push_warning("[LevelCollisionPoiMapper] No draft markers to apply")
 		return false
-	return _replace_target_script("", _format_authoring_markers_const())
+	var applied := _replace_target_script("", _format_authoring_markers_const())
+	if applied:
+		_apply_draft_markers_to_preview()
+		_write_marker_positions_to_target_scene()
+	return applied
+
+
+func _apply_draft_segments_to_preview() -> void:
+	if _target_level == null:
+		return
+	var boundary := _target_level.get_node_or_null("Collision/PathBoundaryCollision") as StaticBody2D
+	if boundary == null:
+		boundary = _target_level.find_child("PathBoundaryCollision", true, false) as StaticBody2D
+	if boundary == null:
+		return
+	for child in boundary.get_children():
+		child.queue_free()
+	var index := 1
+	var point_index := 1
+	while point_index < _draft_points.size():
+		_add_preview_boundary_segment(
+			boundary,
+			"BoundarySegment_%03d" % index,
+			_draft_points[point_index - 1],
+			_draft_points[point_index]
+		)
+		index += 1
+		point_index += 1
+
+
+func _add_preview_boundary_segment(parent: StaticBody2D, node_name: String, a: Vector2, b: Vector2) -> void:
+	var direction := b - a
+	var shape := CapsuleShape2D.new()
+	shape.radius = 10.0
+	shape.height = maxf(direction.length() + 20.0, 20.0)
+	var collision := CollisionShape2D.new()
+	collision.name = node_name
+	collision.shape = shape
+	collision.position = (a + b) * 0.5
+	if direction.length_squared() > 0.001:
+		collision.rotation = direction.angle() - PI * 0.5
+	collision.set_meta("boundary_a", a)
+	collision.set_meta("boundary_b", b)
+	parent.add_child(collision)
+
+
+func _apply_draft_markers_to_preview() -> void:
+	if _target_level == null:
+		return
+	for schema: Dictionary in _marker_schema:
+		var marker_id := str(schema.get("id", ""))
+		if not _draft_markers.has(marker_id):
+			continue
+		var node := _target_level.find_child(str(schema.get("node_name", "")), true, false) as Node2D
+		if node != null:
+			node.global_position = _draft_markers[marker_id] as Vector2
+
+
+func _write_marker_positions_to_target_scene() -> bool:
+	var absolute := ProjectSettings.globalize_path(target_scene_path)
+	if target_scene_path.is_empty() or not FileAccess.file_exists(absolute):
+		return false
+	var file := FileAccess.open(absolute, FileAccess.READ)
+	if file == null:
+		return false
+	var text := file.get_as_text()
+	file.close()
+	var replaced := text
+	for schema: Dictionary in _marker_schema:
+		var marker_id := str(schema.get("id", ""))
+		if not _draft_markers.has(marker_id):
+			continue
+		replaced = _replace_scene_node_position(
+			replaced,
+			str(schema.get("node_name", "")),
+			_to_source_point(_draft_markers[marker_id] as Vector2)
+		)
+	if replaced == text:
+		return true
+	return _atomic_write_scene_verified(absolute, replaced)
+
+
+func _replace_scene_node_position(text: String, node_name: String, point: Vector2) -> String:
+	var header_token := "[node name=\"%s\"" % node_name
+	var header_start := text.find(header_token)
+	if header_start < 0:
+		push_warning("[LevelCollisionPoiMapper] Scene node not found: %s" % node_name)
+		return text
+	var block_end := text.find("\n[node ", header_start + 1)
+	if block_end < 0:
+		block_end = text.length()
+	var block := text.substr(header_start, block_end - header_start)
+	var position_line := "position = %s" % _fmt_vec(point)
+	var position_start := block.find("\nposition = ")
+	if position_start >= 0:
+		var line_end := block.find("\n", position_start + 1)
+		if line_end < 0:
+			line_end = block.length()
+		block = block.substr(0, position_start + 1) + position_line + block.substr(line_end)
+	else:
+		var header_end := block.find("\n")
+		block = block.substr(0, header_end + 1) + position_line + "\n" + block.substr(header_end + 1)
+	return text.substr(0, header_start) + block + text.substr(block_end)
+
+
+func _atomic_write_scene_verified(path: String, text: String) -> bool:
+	if not text.begins_with("[gd_scene"):
+		return false
+	var temp_path := "%s.mapper-tmp.tscn" % path.trim_suffix(".tscn")
+	var file := FileAccess.open(temp_path, FileAccess.WRITE)
+	if file == null:
+		return false
+	file.store_string(text)
+	file.close()
+	var load_path := ProjectSettings.localize_path(temp_path)
+	var packed := ResourceLoader.load(load_path, "PackedScene", ResourceLoader.CACHE_MODE_IGNORE) as PackedScene
+	if packed == null:
+		DirAccess.remove_absolute(temp_path)
+		push_warning("[LevelCollisionPoiMapper] Refusing invalid scene write")
+		return false
+	var backup_path := "%s.mapper-backup" % path
+	DirAccess.remove_absolute(backup_path)
+	if DirAccess.rename_absolute(path, backup_path) != OK:
+		DirAccess.remove_absolute(temp_path)
+		return false
+	if DirAccess.rename_absolute(temp_path, path) != OK:
+		DirAccess.rename_absolute(backup_path, path)
+		return false
+	DirAccess.remove_absolute(backup_path)
+	print("[LevelCollisionPoiMapper] Updated scene markers in %s" % target_scene_path)
+	return true
 
 
 func _replace_target_script(boundary_replacement: String, marker_replacement: String) -> bool:

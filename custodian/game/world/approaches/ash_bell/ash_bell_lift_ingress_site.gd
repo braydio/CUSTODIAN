@@ -9,6 +9,10 @@ const PRESENTATION_SCENE := preload(
 var _presentation: AshBellLiftIngressPresentation
 
 
+func _init() -> void:
+	requires_explicit_interaction = true
+
+
 func _ensure_visual() -> void:
 	_presentation = (
 		PRESENTATION_SCENE.instantiate()

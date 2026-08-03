@@ -18,6 +18,7 @@ const RETURN_OVERLAP_REBUILD_GRACE_MSEC := 250
 @export var prompt_text: String = "APPROACH"
 @export_range(32.0, 192.0, 1.0) var interaction_distance: float = 92.0
 @export var allow_legacy_registered_fallback := false
+@export var requires_explicit_interaction := false
 
 var _triggered := false
 var _approach_enter_deferred := false
@@ -26,6 +27,7 @@ var _main_map: Node = null
 var _entry_snapshot: Dictionary = {}
 var _awaiting_body_exit_after_return := false
 var _return_overlap_poll_after_msec := 0
+var _return_guarded_actor: WeakRef
 var _deferred_origin_isolation := false
 var _deferred_presentation_profile: StringName = &"gameplay"
 var _world_objective_presentation_suspended := false
@@ -34,6 +36,8 @@ var _world_objective_presentation_suspended := false
 func _ready() -> void:
 	add_to_group("world_ingress_site")
 	add_to_group(WORLD_ORIGIN_BRANCH_GROUP)
+	if requires_explicit_interaction:
+		add_to_group("interactable")
 	body_entered.connect(_on_body_entered)
 	body_exited.connect(_on_body_exited)
 	_ensure_collision()
@@ -88,6 +92,18 @@ func get_interaction_distance() -> float:
 
 
 func _on_body_entered(body: Node) -> void:
+	if requires_explicit_interaction:
+		return
+	_request_approach_entry(body)
+
+
+func interact(actor: Node) -> void:
+	if not requires_explicit_interaction:
+		return
+	_request_approach_entry(actor)
+
+
+func _request_approach_entry(body: Node) -> void:
 	if _awaiting_body_exit_after_return:
 		return
 	if _triggered:
@@ -103,9 +119,17 @@ func _on_body_entered(body: Node) -> void:
 
 
 func _on_body_exited(body: Node) -> void:
-	if _awaiting_body_exit_after_return and _is_player_body(body):
-		_awaiting_body_exit_after_return = false
-		_return_overlap_poll_after_msec = 0
+	if not _awaiting_body_exit_after_return or not _is_player_body(body):
+		return
+	# Rebuilding Area2D monitoring after a disabled world branch may emit a
+	# synthetic body_exited before the overlap set is populated again. Keep the
+	# return lock until both the rebuild grace has elapsed and the live Operator
+	# has actually moved clear of the ingress.
+	if Time.get_ticks_msec() < _return_overlap_poll_after_msec:
+		return
+	if not _has_return_actor_left_ingress(body as Node2D):
+		return
+	_clear_return_overlap_guard()
 
 
 func _physics_process(_delta: float) -> void:
@@ -117,11 +141,20 @@ func _physics_process(_delta: float) -> void:
 	# re-enter the route and replay the lift descent.
 	if Time.get_ticks_msec() < _return_overlap_poll_after_msec:
 		return
+	var guarded_actor := (
+		_return_guarded_actor.get_ref() as Node2D
+		if _return_guarded_actor != null
+		else null
+	)
+	if guarded_actor != null and is_instance_valid(guarded_actor):
+		if not _has_return_actor_left_ingress(guarded_actor):
+			return
+		_clear_return_overlap_guard()
+		return
 	for body: Node2D in get_overlapping_bodies():
 		if _is_player_body(body):
 			return
-	_awaiting_body_exit_after_return = false
-	_return_overlap_poll_after_msec = 0
+	_clear_return_overlap_guard()
 
 
 func _enter_approach_deferred(body: Node) -> void:
@@ -345,6 +378,8 @@ func reset_after_level_return() -> void:
 	_deferred_presentation_profile = &"gameplay"
 	_world_objective_presentation_suspended = false
 	_awaiting_body_exit_after_return = true
+	var actor := get_tree().get_first_node_in_group("player") as Node2D
+	_return_guarded_actor = weakref(actor) if actor != null else null
 	_return_overlap_poll_after_msec = (
 		Time.get_ticks_msec() + RETURN_OVERLAP_REBUILD_GRACE_MSEC
 	)
@@ -359,6 +394,20 @@ func reset_after_level_return() -> void:
 func _resume_origin_monitoring_after_return() -> void:
 	if is_inside_tree():
 		monitoring = true
+
+
+func _has_return_actor_left_ingress(actor: Node2D) -> bool:
+	if actor == null or not is_instance_valid(actor):
+		return true
+	# The generated ingress uses a circular trigger. Include a small body-radius
+	# margin so the guard cannot clear while the Operator still touches it.
+	return actor.global_position.distance_to(global_position) > interaction_distance + 32.0
+
+
+func _clear_return_overlap_guard() -> void:
+	_awaiting_body_exit_after_return = false
+	_return_overlap_poll_after_msec = 0
+	_return_guarded_actor = null
 
 
 func is_triggered() -> bool:

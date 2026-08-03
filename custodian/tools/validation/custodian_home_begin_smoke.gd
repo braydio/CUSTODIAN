@@ -5,6 +5,7 @@ const HOME_SCRIPT := "res://game/world/home/custodian_home_begin.gd"
 const TERMINAL_SCRIPT := "res://game/world/home/field_terminal_interactable.gd"
 const ROAD_MAP := "res://content/levels/hub/Road_of_Witnesses_Tilemap.png"
 const HUD_SCENE := "res://game/ui/hud/custodian_hud.tscn"
+const HOME_MAPPER := "res://scenes/debug/home_custodian_begin_mapper.tscn"
 
 var _failures: Array[String] = []
 
@@ -15,8 +16,10 @@ func _initialize() -> void:
 	_check_exists(TERMINAL_SCRIPT)
 	_check_exists(ROAD_MAP)
 	_check_exists(HUD_SCENE)
+	_check_exists(HOME_MAPPER)
 	_check_scene_loads(HOME_SCENE)
 	_check_scene_loads(HUD_SCENE)
+	_check_scene_loads(HOME_MAPPER)
 	if _failures.is_empty():
 		print("[custodian_home_begin_smoke] PASS")
 		quit(0)
@@ -45,6 +48,8 @@ func _check_scene_loads(path: String) -> void:
 		_check_hud_instance(instance)
 	if path == HOME_SCENE:
 		_check_home_instance(instance)
+	if path == HOME_MAPPER:
+		_check_home_mapper(instance)
 	instance.queue_free()
 
 
@@ -56,6 +61,7 @@ func _check_home_instance(instance: Node) -> void:
 		"World/SignalNeedle",
 		"World/Camera2D",
 		"CustodianHUD",
+		"Collision/PathBoundaryCollision",
 	]:
 		if instance.get_node_or_null(NodePath(node_path)) == null:
 			_failures.append("Home scene missing node: %s" % node_path)
@@ -65,6 +71,16 @@ func _check_home_instance(instance: Node) -> void:
 	for method_name in ["get_interaction_prompt", "get_interaction_position", "get_interaction_distance", "interact", "establish_witness"]:
 		if not terminal.has_method(method_name):
 			_failures.append("FieldTerminal missing method: %s" % method_name)
+	for method_name in ["get_boundary_segments", "get_authoring_marker_schema", "get_authoring_marker_state"]:
+		if not instance.has_method(method_name):
+			_failures.append("Home scene missing mapper contract: %s" % method_name)
+
+
+func _check_home_mapper(instance: Node) -> void:
+	if instance.get("target_scene_path") != HOME_SCENE:
+		_failures.append("Home mapper target scene drifted")
+	if instance.get("target_script_path") != HOME_SCRIPT:
+		_failures.append("Home mapper target script drifted")
 
 
 func _check_hud_instance(instance: Node) -> void:

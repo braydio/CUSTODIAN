@@ -836,8 +836,8 @@
 	  "name": "SunderedGateKeyPickup",
 	  "prompt": "SUNDERED GATE KEY",
 	  "tile": [
-		73.0,
-		56.0
+		66,
+		67
 	  ]
 	},
 	{
@@ -846,8 +846,8 @@
 	  "name": "MainGateInteraction",
 	  "prompt": "OPEN MAIN GATE",
 	  "tile": [
-		56.0,
-		51.0
+		57,
+		54
 	  ]
 	},
 	{
@@ -856,8 +856,8 @@
 	  "name": "GreatHallDoorInteraction",
 	  "prompt": "OPEN GREAT HALL DOOR",
 	  "tile": [
-		56.0,
-		31.0
+		68,
+		31
 	  ]
 	},
 	{
@@ -866,8 +866,8 @@
 	  "name": "SidearmLockerInteraction",
 	  "prompt": "OPEN FIELD-RETENTION LOCKER",
 	  "tile": [
-		73.0,
-		27.0
+		64,
+		30
 	  ]
 	},
 	{
@@ -1025,10 +1025,10 @@
 	  "height": 0.0,
 	  "id": "return_mooring",
 	  "rect": [
-		39.0,
-		56.0,
-		8.0,
-		8.0
+		66,
+		62,
+		8,
+		8
 	  ],
 	  "role": "return_travel"
 	},
@@ -1156,6 +1156,66 @@
 	  ],
 	  "tile_size": 32,
 	  "type": "underlay_stamp"
+	},
+	{
+	  "category": "underlay_sample",
+	  "cell": [
+		60,
+		61
+	  ],
+	  "source_rect_cells": [
+		60,
+		62,
+		1,
+		1
+	  ],
+	  "tile_size": 32,
+	  "type": "underlay_stamp"
+	},
+	{
+	  "category": "underlay_sample",
+	  "cell": [
+		57,
+		60
+	  ],
+	  "source_rect_cells": [
+		57,
+		61,
+		1,
+		1
+	  ],
+	  "tile_size": 32,
+	  "type": "underlay_stamp"
+	},
+	{
+	  "category": "underlay_sample",
+	  "cell": [
+		63,
+		63
+	  ],
+	  "source_rect_cells": [
+		57,
+		61,
+		1,
+		1
+	  ],
+	  "tile_size": 32,
+	  "type": "underlay_stamp"
+	},
+	{
+	  "category": "underlay_sample",
+	  "cell": [
+		63,
+		62
+	  ],
+	  "source_rect_cells": [
+		63,
+		63,
+		1,
+		1
+	  ],
+	  "tile_size": 32,
+	  "type": "underlay_stamp"
 	}
   ],
   "mapper_schema": "custodian.sundered_keep.mapper.v1",
@@ -1170,29 +1230,29 @@
 	{
 	  "id": "return_gate",
 	  "tile": [
-		42.0,
-		58.0
+		66,
+		64
 	  ]
 	},
 	{
 	  "id": "return_mooring",
 	  "tile": [
-		41.0,
-		58.0
+		68,
+		64
 	  ]
 	},
 	{
 	  "id": "return_mooring_origin",
 	  "tile": [
-		39.0,
-		56.0
+		66,
+		62
 	  ]
 	},
 	{
 	  "id": "key_winch",
 	  "tile": [
-		73.0,
-		56.0
+		81,
+		47
 	  ]
 	},
 	{
@@ -1305,8 +1365,8 @@
 	{
 	  "module_id": "return_mooring_3x3_01",
 	  "origin": [
-		39.0,
-		56.0
+		66,
+		62
 	  ],
 	  "type": "stamp_module"
 	},
@@ -1536,10 +1596,10 @@
 	{
 	  "name": "GreatHallDoorBlocker",
 	  "rect": [
-		55.0,
-		30.0,
-		2.0,
-		1.0
+		69,
+		31,
+		2,
+		1
 	  ],
 	  "role": "great_hall_door",
 	  "type": "blocker_rect"
@@ -1559,10 +1619,10 @@
 	{
 	  "id": "return_mooring_lower_shore",
 	  "rect": [
-		39.0,
-		57.0,
-		8.0,
-		7.0
+		66,
+		63,
+		8,
+		7
 	  ]
 	},
 	{
@@ -1581,8 +1641,8 @@
 	  "power_required": false,
 	  "range": 360.0,
 	  "tile_offset": [
-		-5.0,
-		4.0
+		7,
+		-4
 	  ],
 	  "tile_offset_from": "main_gate"
 	},
@@ -1657,6 +1717,22 @@
 		  6.0
 		],
 		"tile_offset_from": "great_hall_door"
+	  },
+	  {
+		"lane": "sundered_keep",
+		"tile_offset": [
+		  5,
+		  -13
+		],
+		"tile_offset_from": "main_gate"
+	  },
+	  {
+		"lane": "sundered_keep",
+		"tile_offset": [
+		  8,
+		  -13
+		],
+		"tile_offset_from": "main_gate"
 	  }
 	],
 	"waves": [

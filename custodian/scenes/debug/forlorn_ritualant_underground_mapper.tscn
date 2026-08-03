@@ -1,29 +1,28 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://cat7vgtadw4fu"]
 
-[ext_resource type="Script" path="res://scenes/debug/level_collision_poi_mapper.gd" id="1_mapper"]
-[ext_resource type="Script" path="res://scenes/debug/level_collision_poi_mapper_overlay.gd" id="2_overlay"]
+[ext_resource type="Script" uid="uid://dioq6k227ollc" path="res://scenes/debug/level_collision_poi_mapper.gd" id="1_mapper"]
+[ext_resource type="Script" uid="uid://cupgm0odfm377" path="res://scenes/debug/level_collision_poi_mapper_overlay.gd" id="2_overlay"]
 
-[node name="ForlornRitualantUndergroundMapper" type="Node2D"]
+[node name="ForlornRitualantUndergroundMapper" type="Node2D" unique_id=1142025961]
 script = ExtResource("1_mapper")
 target_scene_path = "res://game/world/levels/authored/ash_bell/forlorn_ritualant_underground/forlorn_ritualant_underground.tscn"
 target_script_path = "res://game/world/levels/authored/ash_bell/forlorn_ritualant_underground/forlorn_ritualant_underground.gd"
 target_instance_name = "ForlornRitualantRoomPreview"
 mapper_title = "Forlorn Ritualant Underground Room Mapper"
-initial_camera_position = Vector2(0, 0)
 initial_camera_zoom = Vector2(0.72, 0.72)
 
-[node name="World" type="Node2D" parent="."]
+[node name="World" type="Node2D" parent="." unique_id=2093688581]
 
-[node name="Camera2D" type="Camera2D" parent="World"]
+[node name="Camera2D" type="Camera2D" parent="World" unique_id=1313131870]
 zoom = Vector2(0.72, 0.72)
 
-[node name="CollisionOverlay" type="Node2D" parent="World"]
+[node name="CollisionOverlay" type="Node2D" parent="World" unique_id=1739690672]
 z_index = 500
 script = ExtResource("2_overlay")
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=201720863]
 
-[node name="Help" type="Label" parent="CanvasLayer"]
+[node name="Help" type="Label" parent="CanvasLayer" unique_id=730232005]
 offset_left = 16.0
 offset_top = 16.0
 offset_right = 1180.0

@@ -56,7 +56,7 @@ Source intake belongs under `custodian/content/sprites/_pipeline/aseprite/loot_m
 
 Required production strips are 768x96 (8x96 reveal), 384x160 (8x48x160 beacon), 576x160 (6x96x160 collapse), and 576x96 (6x96 ring), with bottom-center alignment, nearest filtering, no mipmaps, `omni`, and no mirroring.
 
-Implementation review on 2026-08-01 found that the four requested 1536x1024 source files were absent from the workspace. Existing reveal and ring runtime strips match the contract; the existing beacon is 9 frames/432x160 and collapse is 8 cells/768x160. Those two files must not be presented as successfully normalized production art until the missing sources are supplied or the intended frame-selection contract is confirmed.
+Implementation review on 2026-08-03 confirmed that the live runtime sheets are internally consistent at 8-frame/768x96 reveal, 9-frame/432x160 beacon, 8-frame/768x160 collapse, and 6-frame/576x96 ring. The collapse now uses the accurately named `loot_marker__fx__interaction__collect_collapse__omni__8f__96x160.png`; the obsolete duplicate whose filename falsely claimed six frames was removed. The four requested 1536x1024 source files remain absent, so the beacon and collapse must not be presented as normalized to the requested 8/6 production contract until those sources are supplied or the intended frame-selection contract is confirmed.
 
 ## Corpse simulation and cleanup
 

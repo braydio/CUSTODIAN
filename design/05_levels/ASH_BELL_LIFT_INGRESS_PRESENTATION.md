@@ -18,8 +18,11 @@ generated `WorldIngressSite`; it is not part of
   scrolling shaft, two chains, lift, dust, lamp, foreground occluder, and local
   cliff collision.
 - `ash_bell_lift_ingress_presentation.gd` owns the 1.05-second travel presentation,
-  temporary Operator placement/process/Z state, 176 px lift travel, 384 px
-  shaft scroll, staged cave-lip occlusion, and reusable reset.
+  detached rider-puppet lifecycle, 176 px lift travel, 384 px shaft scroll,
+  staged cave-lip occlusion, and reusable reset.
+- `operator_presentation_rig_2d.tscn` is a reusable visual-only snapshot rig.
+  It clones the Operator's currently visible body/equipment presentation leaves
+  without copying gameplay scripts, collision, input, health, or inventory.
 - `ash_bell_lift_ingress_site.gd` specializes only the
   `forlorn_ritualant_underground` world ingress.
 - `WorldIngressSite` captures the origin snapshot before awaiting an optional
@@ -32,21 +35,32 @@ generated `WorldIngressSite`; it is not part of
 ```text
 surface trigger
   -> capture origin snapshot
-  -> snap Operator to RiderAnchor
+  -> explicit Interact: TRAVERSE THE DERELICT LIFT
+  -> capture visible Operator presentation into detached rider puppet
+  -> hide live Operator visual leaves without moving its CharacterBody2D
+  -> attach puppet to RiderAnchor in a restrained lift-braced pose
   -> vibrate platform + burst dust
-  -> move lift and Operator downward
+  -> move lift and puppet downward
   -> scroll shaft upward behind them
-  -> Operator crosses behind the foreground lip after entering the shaft
-  -> restore temporary Operator process/Z state
+  -> puppet crosses behind the foreground lip after entering the shaft
+  -> free puppet and restore live Operator visual leaves
   -> start existing fade route
   -> load Underground at Spawn_DescentLanding
 ```
 
-Return restoration uses the pre-descent snapshot, then reverses the lift travel
-so the live Operator rises from behind the lip onto the parked platform. The
-occluder is between the platform and rider instead of above the entire modular
-Operator. Reset restores the parked lift, shaft region, idle platform, and dust
-frame so the ingress can be used again after the Operator exits its trigger overlap.
+Return restoration uses the pre-descent snapshot, leaving the live Operator at
+the captured surface position. A second detached puppet begins on the lowered
+lift, rises through the staged cave-lip occlusion, and is freed before the live
+visual leaves are restored. The live CharacterBody2D position, process mode,
+and Z state are never changed by either presentation. Cancellation, failed
+capture, teardown, and ordinary completion all restore the recorded visibility
+state. The return ingress guard tracks the restored Operator's actual distance
+and ignores synthetic `body_exited` signals caused by rebuilding Area2D
+monitoring, so descent cannot immediately retrigger.
+
+The specialized Ash Bell ingress is an explicit `interactable`; entering its
+Area2D does not begin traversal. Generic world ingresses retain their existing
+body-entry behavior.
 
 ## Art and import contract
 

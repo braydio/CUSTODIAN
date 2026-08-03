@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://bmt1hns8i7hmg" path="res://content/sprites/effects/loot_marker/runtime/fx/interaction/loot_marker__fx__interaction__reveal__omni__8f__96.png" id="1"]
 [ext_resource type="Texture2D" uid="uid://b06hf12t5543a" path="res://content/sprites/effects/loot_marker/runtime/fx/interaction/loot_marker__fx__interaction__beacon_loop__9f__48x160.png" id="2"]
-[ext_resource type="Texture2D" uid="uid://cmdd14vr2su4h" path="res://content/sprites/effects/loot_marker/runtime/fx/interaction/loot_marker__fx__interaction__collect_collapse__omni__6f__96x160.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://b2b1rgqoi52q6" path="res://content/sprites/effects/loot_marker/runtime/fx/interaction/loot_marker__fx__interaction__collect_collapse__omni__8f__96x160.png" id="3"]
 [ext_resource type="Texture2D" uid="uid://dplbk607vi7b7" path="res://content/sprites/effects/loot_marker/runtime/fx/interaction/loot_marker__fx__interaction__ground_ring_loop__omni__6f__96.png" id="4"]
 
 [sub_resource type="AtlasTexture" id="b0"]

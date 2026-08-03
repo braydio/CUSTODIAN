@@ -338,6 +338,7 @@ initial_delay = 25.0
 
 [node name="ContractWorldLoader" type="Node" parent="." unique_id=1201129447]
 script = ExtResource("28_contract_loader")
+debug_spawn_sundered_keep_procgen_vista = false
 
 [node name="AmbientEnemySpawner" type="Node" parent="."]
 script = ExtResource("207_ambient_spawner")

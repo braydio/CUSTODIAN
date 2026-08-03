@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/actors/operator/presentation/operator_presentation_rig_2d.gd" id="1_rig"]
+
+[node name="OperatorPresentationRig2D" type="Node2D"]
+script = ExtResource("1_rig")
+
+[node name="PoseRoot" type="Node2D" parent="."]
+
+[node name="PartsRoot" type="Node2D" parent="PoseRoot"]

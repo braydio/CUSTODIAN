@@ -3,6 +3,12 @@ extends SceneTree
 const GRUNT_SCENE := preload("res://game/actors/enemies/enemy_grunt.tscn")
 const MARKER_SCENE := preload("res://game/vfx/loot/loot_corpse_marker.tscn")
 const VAULT_STORAGE_SCENE := preload("res://game/actors/storage/vault_storage.tscn")
+const LOOT_FX_ROOT := "res://content/sprites/effects/loot_marker/runtime/fx/interaction/"
+const REVEAL_TEXTURE := LOOT_FX_ROOT + "loot_marker__fx__interaction__reveal__omni__8f__96.png"
+const BEACON_TEXTURE := LOOT_FX_ROOT + "loot_marker__fx__interaction__beacon_loop__9f__48x160.png"
+const COLLAPSE_TEXTURE := LOOT_FX_ROOT + "loot_marker__fx__interaction__collect_collapse__omni__8f__96x160.png"
+const OBSOLETE_COLLAPSE_TEXTURE := LOOT_FX_ROOT + "loot_marker__fx__interaction__collect_collapse__omni__6f__96x160.png"
+const RING_TEXTURE := LOOT_FX_ROOT + "loot_marker__fx__interaction__ground_ring_loop__omni__6f__96.png"
 
 var _failed := false
 var _vault_recovery_seen: Dictionary = {}
@@ -30,6 +36,7 @@ func _run() -> void:
 
 
 func _validate_marker_contract(root: Node) -> void:
+	_validate_runtime_sheets()
 	var marker := MARKER_SCENE.instantiate()
 	root.add_child(marker)
 	var reveal := marker.get_node("Reveal") as AnimatedSprite2D
@@ -66,6 +73,28 @@ func _validate_marker_contract(root: Node) -> void:
 		_assert_true(tip_bottom + 0.01 >= lower_top + 8.0 * beam_lower.scale.y, "%s beam scale must preserve the scaled 8 px lower/tip overlap" % category)
 	_assert_true(collapse.sprite_frames.get_frame_count(&"collect_collapse") == 8, "current review collapse must expose all 8 supplied cells")
 	marker.queue_free()
+
+
+func _validate_runtime_sheets() -> void:
+	_assert_texture_size(REVEAL_TEXTURE, Vector2i(768, 96))
+	_assert_texture_size(BEACON_TEXTURE, Vector2i(432, 160))
+	_assert_texture_size(COLLAPSE_TEXTURE, Vector2i(768, 160))
+	_assert_texture_size(RING_TEXTURE, Vector2i(576, 96))
+	_assert_true(
+		not ResourceLoader.exists(OBSOLETE_COLLAPSE_TEXTURE),
+		"obsolete collapse sheet with the false 6-frame filename must remain retired"
+	)
+
+
+func _assert_texture_size(path: String, expected_size: Vector2i) -> void:
+	var texture := load(path) as Texture2D
+	_assert_true(texture != null, "%s must load as a Texture2D" % path)
+	if texture == null:
+		return
+	_assert_true(
+		Vector2i(texture.get_size()) == expected_size,
+		"%s must be %s, got %s" % [path, expected_size, Vector2i(texture.get_size())]
+	)
 
 
 func _validate_beam_crops(frames: SpriteFrames) -> void:
@@ -127,10 +156,19 @@ func _validate_corpse_delivery(root: Node) -> void:
 	collector.name = "Operator"
 	collector.add_to_group("player")
 	root.add_child(collector)
-	var first_collect := bool(corpse_loot.call("collect", collector))
+	var ledger_before_collection := int(ledger.call("get_amount", "ruin_scrap"))
+	corpse_loot.call("_on_body_entered", collector)
 	var second_collect := bool(corpse_loot.call("collect", collector))
-	_assert_true(first_collect, "first proximity collection must succeed")
+	_assert_true(
+		int(ledger.call("get_amount", "ruin_scrap")) > ledger_before_collection,
+		"body_entered proximity collection must succeed"
+	)
 	_assert_true(not second_collect, "second collection must award nothing")
+	await process_frame
+	_assert_true(
+		not corpse_loot.monitoring and not corpse_loot.monitorable,
+		"collection must defer-disable both Area2D monitoring flags"
+	)
 	if marker != null:
 		var lower := marker.get_node("BeamLower") as AnimatedSprite2D
 		var tip := marker.get_node("BeamTip") as AnimatedSprite2D

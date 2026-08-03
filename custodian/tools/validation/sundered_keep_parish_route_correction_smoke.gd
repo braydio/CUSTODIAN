@@ -13,7 +13,6 @@ const ASSETS := {
 	"res://content/sprites/world/return_causeway/path/overlays/sundered_keep_shore_parish_northbound_ground_01.png": Vector2i(768, 1024),
 	"res://content/sprites/world/return_causeway/path/overlays/sundered_keep_outer_wall_east_traverse_ground_01.png": Vector2i(1024, 640),
 	"res://content/backgrounds/sundered_keep/approach/near_detail/sundered_keep_outer_wall_checkpoint_detail_01.png": Vector2i(2048, 1024),
-	"res://content/backgrounds/sundered_keep/approach/fog/outer_wall_checkpoint_fog_ribbon_01.png": Vector2i(9216, 384),
 	"res://content/masters/sundered_keep/overlays/sundered_keep_front_gate_south_arrival_apron_01.png": Vector2i(2048, 1024),
 }
 
@@ -47,8 +46,11 @@ func _run() -> void:
 	var exit_x := float((parish["markers"]["level_exit"]["position"] as Array)[0])
 	_check(exit_x >= 1220.0 and exit_x <= 1280.0, "Parish exit is not at the extended terminal", errors)
 	var fog_record := _overlay(overlays, "outer_wall_checkpoint_fog")
-	_check(int(fog_record.get("frame_count", 0)) == 6, "fog metadata is not six frames", errors)
-	_check(float(fog_record.get("maximum_alpha", 1.0)) <= 0.3, "fog alpha exceeds 0.30", errors)
+	_check(str(fog_record.get("kind", "")) == "procedural_fog_ribbon", "fog metadata is not procedural", errors)
+	_check(not fog_record.has("texture_path"), "procedural fog still references an authored texture", errors)
+	var fog_tint := fog_record.get("fog_tint", []) as Array
+	_check(fog_tint.size() == 4 and float(fog_tint[3]) <= 0.3, "fog alpha exceeds 0.30", errors)
+	_check(not ResourceLoader.exists("res://content/backgrounds/sundered_keep/approach/fog/outer_wall_checkpoint_fog_ribbon_01.png"), "retired fog sheet still exists", errors)
 
 	var game_root := Node2D.new()
 	game_root.name = "GameRoot"
@@ -66,8 +68,8 @@ func _run() -> void:
 	root.add_child(approach)
 	await process_frame
 	await process_frame
-	var fog := approach.get_node_or_null("UnderlayRoot/OuterWallCheckpointFog") as AnimatedSprite2D
-	_check(fog != null and fog.sprite_frames.get_frame_count(&"loop") == 6, "runtime fog animation contract failed", errors)
+	var fog := approach.get_node_or_null("UnderlayRoot/OuterWallCheckpointFog") as Sprite2D
+	_check(fog is ProceduralFogRibbon2D and fog.material is ShaderMaterial, "runtime procedural fog contract failed", errors)
 	var controller := approach.get_node_or_null("VistaController")
 	var camera_state := controller.call("get_reveal_choreography_state") as Dictionary if controller != null else {}
 	_check(str(camera_state.get("second_camera_phase", "")) == "SECOND_DISABLED", "Parish Camera 2 is not disabled", errors)

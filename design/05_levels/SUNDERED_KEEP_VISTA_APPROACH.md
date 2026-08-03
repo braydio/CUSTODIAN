@@ -1,20 +1,20 @@
 # Sundered Keep — Shore Parish / Outer Wall Approach
 
 Status: active production authority; renderer review required
-Last updated: 2026-07-31
+Last updated: 2026-08-03
 
 ## Purpose
 
-The Shore Parish / Outer Wall Approach is the authored middle leg between the
-generated campaign frontage and the existing Sundered Keep Front Gate.
+The Sundered Keep Vista Approach is the authored first destination between the
+ordinary generated campaign ingress and the existing Sundered Keep Front Gate.
 
 Production traversal is:
 
 ```text
 procgen campaign world
-→ generated Sundered Keep frontage and distant reveal
+→ compact ingress on valid generated ground
 → short normal fade
-→ authored Shore Parish / Outer Wall Approach
+→ authored Sundered Keep Vista Approach / Shore Parish
 → short normal fade
 → Sundered Keep Front Gate
 ```
@@ -25,17 +25,17 @@ than separately loaded route stages.
 
 ## Ownership boundary
 
-Procgen owns the playable world through the generated frontage exit. It owns
-terrain, navigation, collision, spawn rejection, dressing rejection, the
-distant landmark, and the single world-side camera reveal.
+Procgen owns ordinary generated terrain, ordinary collision/dressing, and the
+compact walkable ingress pocket. It owns no Sundered Keep vista presentation.
 
 The authored approach owns:
 
-- the northbound Shore Parish floor;
-- the close outer-wall checkpoint composition;
-- the long eastbound traverse;
-- local collision rails and subregion metadata;
-- a restrained local fog ribbon;
+- ocean and storm presentation;
+- distant and close fortress presentation;
+- route-master ground, including the northbound Parish and east traverse;
+- the authored camera reveal;
+- authored boundary collision and subregion metadata;
+- approach enemies and set dressing;
 - the route exit to Front Gate.
 
 The Front Gate owns its southern arrival apron, protected spawn area, gatehouse
@@ -45,11 +45,11 @@ siege, and all Keep-interior progression.
 
 The persistent shared gameplay camera is the only production camera.
 
-The procgen leg may temporarily apply one reversible distant-reveal influence.
-The camera must be fully released before the generated frontage exit. The
-authored approach does not run a second presentation camera or a second
-fortress reveal. Historical `SecondVista*` markers may remain as semantic
-layout anchors, but their controller weights are always zero.
+The authored approach owns the destination reveal while it is active. The
+persistent shared camera remains the only gameplay camera and must restore
+Operator follow and cleared presentation bounds on return. Historical
+`SecondVista*` markers may remain semantic layout anchors, but they do not
+grant procgen any reveal or framing authority.
 
 The approach must not contain a child `Camera2D`, leave presentation framing
 active, or switch the gameplay camera to a different follow target.
@@ -58,7 +58,7 @@ active, or switch the gameplay camera to a different follow target.
 
 Both production handoffs use the ordinary route `fade` style:
 
-- `@world_origin -> vista_approach` at the generated frontage terminal;
+- `@world_origin -> vista_approach` at the generated-ground ingress;
 - `vista_approach -> front_gate` at the east end of the authored approach.
 
 There is no playable blackout corridor, operator-following shadow road,
@@ -94,17 +94,22 @@ content/sprites/world/return_causeway/path/overlays/
 content/backgrounds/sundered_keep/approach/near_detail/
   sundered_keep_outer_wall_checkpoint_detail_01.png
 
-content/backgrounds/sundered_keep/approach/fog/
-  outer_wall_checkpoint_fog_ribbon_01.png
+game/world/approaches/sundered_keep/
+  procedural_fog_ribbon_2d.gd
+  procedural_fog_ribbon_band.gdshader
 ```
 
 The ground overlays are playable presentation underlays only; collision and
-route authority remain in mapper data. The fog ribbon is a six-frame local
-effect, never a transition veil, and is clamped to a maximum alpha of `0.30`.
+route authority remain in mapper data. The checkpoint fog is a shader-driven
+local ribbon with two drifting noise fields and feathered vertical edges,
+never a transition veil, and is clamped to a maximum authored tint alpha of
+`0.30`. The retired `9216x384` six-frame sheet is not production content.
 
-The old Grand Vista component stack is retained as reference material but is
-hidden in production. It has no floor, collision, transition, or camera
-authority.
+Ocean/storm and fortress layers belong only inside this authored scene. No
+equivalent stack may be parented under `ProcGenRuntime`, `WorldLandmarks`, or
+`ContractMap`. Their images own no physics; mapper-authored perimeter rails
+prevent departure from the top-down route. No floor or ocean collider is
+added.
 
 ## Mapper authority
 
@@ -166,8 +171,12 @@ complete. A successful file export alone is not visual approval.
 
 ## Acceptance criteria
 
-- Procgen remains active through one generated frontage and one distant reveal.
-- Camera authority is released before the first fade.
+- Procgen shows ordinary terrain with no Sundered Keep ocean/storm/fortress
+  presentation before entry.
+- Procgen is hidden and processing-disabled while the authored approach is
+  active, then restored exactly on return or entry failure.
+- The authored approach exclusively owns the reveal and restores Operator
+  camera follow and presentation bounds on exit.
 - Parish arrival is readable and northbound.
 - The close checkpoint detail does not become another world-scale cinematic.
 - The long east traverse is playable and collision-complete.

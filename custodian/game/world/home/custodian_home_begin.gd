@@ -1,6 +1,28 @@
 extends Node2D
 class_name CustodianHomeBegin
 
+const BOUNDARY_SEGMENTS := [
+	[Vector2(-627.0, -627.0), Vector2(627.0, -627.0)],
+	[Vector2(627.0, -627.0), Vector2(627.0, 627.0)],
+	[Vector2(627.0, 627.0), Vector2(-627.0, 627.0)],
+	[Vector2(-627.0, 627.0), Vector2(-627.0, -627.0)],
+]
+
+const AUTHORING_MARKERS := {
+	"operator_spawn": {
+		"node_name": "Operator",
+		"label": "CUSTODIAN WAKE SPAWN",
+		"kind": "spawn",
+		"position": Vector2(-6.0, 482.0),
+	},
+	"field_terminal": {
+		"node_name": "FieldTerminal",
+		"label": "FIELD TERMINAL",
+		"kind": "objective",
+		"position": Vector2(0.0, -430.0),
+	},
+}
+
 const Catalog := preload("res://game/ui/theme/black_reliquary_asset_catalog.gd")
 const Palette := preload("res://game/ui/theme/black_reliquary_palette.gd")
 
@@ -14,6 +36,7 @@ var _last_signal_band := -1
 
 
 func _ready() -> void:
+	_apply_authoring_contract()
 	if terminal != null:
 		if terminal.has_signal("witness_established"):
 			terminal.connect("witness_established", _on_witness_established)
@@ -21,6 +44,70 @@ func _ready() -> void:
 			terminal.connect("terminal_access_requested", _on_terminal_access_requested)
 	_configure_hud()
 	_update_signal_state(true)
+
+
+func get_boundary_segments() -> Array:
+	return BOUNDARY_SEGMENTS
+
+
+func get_authoring_markers() -> Dictionary:
+	return AUTHORING_MARKERS
+
+
+func get_authoring_marker_schema() -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for marker_id: Variant in AUTHORING_MARKERS.keys():
+		var data := (AUTHORING_MARKERS[marker_id] as Dictionary).duplicate(true)
+		data["id"] = str(marker_id)
+		result.append(data)
+	return result
+
+
+func get_authoring_marker_state() -> Dictionary:
+	var result := {}
+	for marker_id: Variant in AUTHORING_MARKERS.keys():
+		var data := AUTHORING_MARKERS[marker_id] as Dictionary
+		result[str(marker_id)] = {
+			"kind": str(data.get("kind", marker_id)),
+			"label": str(data.get("label", marker_id)),
+			"node_name": str(data.get("node_name", "")),
+			"source_position": data.get("position", Vector2.ZERO),
+			"runtime_position": data.get("position", Vector2.ZERO),
+		}
+	return result
+
+
+func _apply_authoring_contract() -> void:
+	for marker_id: Variant in AUTHORING_MARKERS.keys():
+		var data := AUTHORING_MARKERS[marker_id] as Dictionary
+		var node := find_child(str(data.get("node_name", "")), true, false) as Node2D
+		if node != null:
+			node.position = data.get("position", Vector2.ZERO) as Vector2
+	var boundary := get_node_or_null("Collision/PathBoundaryCollision") as StaticBody2D
+	if boundary == null:
+		return
+	for child in boundary.get_children():
+		child.queue_free()
+	var index := 1
+	for segment: Array in BOUNDARY_SEGMENTS:
+		_add_boundary_segment(boundary, "BoundarySegment_%03d" % index, segment[0], segment[1])
+		index += 1
+
+
+func _add_boundary_segment(parent: StaticBody2D, node_name: String, a: Vector2, b: Vector2) -> void:
+	var direction := b - a
+	var shape := CapsuleShape2D.new()
+	shape.radius = 10.0
+	shape.height = direction.length() + 20.0
+	var collision := CollisionShape2D.new()
+	collision.name = node_name
+	collision.shape = shape
+	collision.position = (a + b) * 0.5
+	if direction.length_squared() > 0.001:
+		collision.rotation = direction.angle() - PI * 0.5
+	collision.set_meta("boundary_a", a)
+	collision.set_meta("boundary_b", b)
+	parent.add_child(collision)
 
 
 func _process(_delta: float) -> void:

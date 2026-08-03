@@ -333,17 +333,15 @@
     },
     {
       "collision_authority": false,
-      "filtering": "linear",
-      "fps": 7.0,
-      "frame_count": 6.0,
-      "frame_size": [
-        1536.0,
-        384.0
+      "density": 1.0,
+      "fog_tint": [
+        0.78,
+        0.84,
+        0.9,
+        0.22
       ],
       "id": "outer_wall_checkpoint_fog",
-      "kind": "animated_sheet",
-      "loop": true,
-      "maximum_alpha": 0.3,
+      "kind": "procedural_fog_ribbon",
       "rect": [
         260.0,
         -520.0,
@@ -351,7 +349,6 @@
         384.0
       ],
       "semantic_subregion": "causeway_checkpoint",
-      "texture_path": "res://content/backgrounds/sundered_keep/approach/fog/outer_wall_checkpoint_fog_ribbon_01.png",
       "z_index": -1.0,
       "z_role": "local_atmosphere_below_operator"
     }

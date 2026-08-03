@@ -52,8 +52,12 @@ func collect(collector: Node) -> bool:
 	if _collected or not has_loot() or not _is_valid_collector(collector):
 		return false
 	_collected = true
-	monitoring = false
-	monitorable = false
+	# Collection commonly runs inside Area2D.body_entered. Godot blocks direct
+	# monitoring/monitorable changes while flushing an in/out signal, so defer
+	# only the physics-server flags. `_collected` closes the reward boundary
+	# immediately and keeps same-frame overlaps from awarding twice.
+	set_deferred("monitoring", false)
+	set_deferred("monitorable", false)
 	var awarded := _payload.duplicate(true)
 	_payload.clear()
 	_award_payload(awarded)

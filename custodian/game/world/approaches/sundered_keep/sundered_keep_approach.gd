@@ -25,6 +25,9 @@ const FORTRESS_VISTA_SCRIPT := preload(
 	"res://game/world/approaches/sundered_keep/"
 	+ "sundered_keep_fortress_vista.gd"
 )
+const PROCEDURAL_FOG_RIBBON_SCRIPT := preload(
+	"res://game/world/approaches/sundered_keep/procedural_fog_ribbon_2d.gd"
+)
 const APPROACH_OUTSKIRTS_MAStER := (
 	"res://content/backgrounds/sundered_keep/approach/underlay/"
 	+ "sundered_keep_approach_outskirts_master.png"
@@ -758,7 +761,7 @@ func _build_visuals() -> void:
 	else:
 		_build_legacy_path_chunks()
 	_build_authored_visual_overlays("background_detail")
-	_build_authored_visual_overlays("animated_sheet")
+	_build_authored_visual_overlays("procedural_fog_ribbon")
 
 	_add_labyrinth_depth_pass()
 	_add_reveal_moonlight_cue()
@@ -824,7 +827,7 @@ func _build_mapper_preview_visuals() -> void:
 	if _preview_option("authored_background_overlays", false):
 		_build_authored_visual_overlays("background_detail")
 	if _preview_option("animated_overlays", false):
-		_build_authored_visual_overlays("animated_sheet")
+		_build_authored_visual_overlays("procedural_fog_ribbon")
 	if _preview_option("edge_mist_wrap", false):
 		_add_fitted_sprite(
 			occlusion_root, "ApproachEdgeMistWrap", APPROACH_EDGE_MIST_WRAP,
@@ -863,7 +866,20 @@ func _build_authored_visual_overlays(kind: String) -> void:
 		if target_rect.size.x <= 0.0 or target_rect.size.y <= 0.0:
 			continue
 		var parent := underlay_root if kind != "ground_overlay" else playable_root
-		if kind == "animated_sheet":
+		if kind == "procedural_fog_ribbon":
+			_add_procedural_fog_ribbon(
+				parent,
+				str(overlay.get("id", "ProceduralFogRibbon")).to_pascal_case(),
+				target_rect,
+				int(overlay.get("z_index", -1)),
+				_color_from_array(
+					overlay.get("fog_tint", [0.78, 0.84, 0.90, 0.22]),
+					Color(0.78, 0.84, 0.90, 0.22)
+				),
+				float(overlay.get("density", 1.0)),
+				overlay
+			)
+		elif kind == "animated_sheet":
 			_add_authored_animated_overlay(parent, overlay, target_rect)
 		else:
 			var sprite := _add_fitted_sprite(
@@ -877,6 +893,31 @@ func _build_authored_visual_overlays(kind: String) -> void:
 			sprite.set_meta("authored_overlay_id", str(overlay.get("id", "")))
 			sprite.set_meta("semantic_subregion", str(overlay.get("semantic_subregion", "")))
 			sprite.set_meta("collision_authority", false)
+
+
+func _add_procedural_fog_ribbon(
+	parent: Node2D,
+	node_name: String,
+	rect: Rect2,
+	z: int,
+	tint: Color,
+	density: float,
+	overlay: Dictionary
+) -> ProceduralFogRibbon2D:
+	var ribbon := PROCEDURAL_FOG_RIBBON_SCRIPT.new() as ProceduralFogRibbon2D
+	ribbon.name = node_name
+	ribbon.position = rect.position
+	ribbon.ribbon_size = rect.size
+	ribbon.fog_tint = tint
+	ribbon.density = density
+	ribbon.z_as_relative = true
+	ribbon.z_index = z
+	ribbon.set_meta("coverage_rect", rect)
+	ribbon.set_meta("authored_overlay_id", str(overlay.get("id", "")))
+	ribbon.set_meta("semantic_subregion", str(overlay.get("semantic_subregion", "")))
+	ribbon.set_meta("collision_authority", false)
+	parent.add_child(ribbon)
+	return ribbon
 
 
 func _add_authored_animated_overlay(
@@ -1298,19 +1339,43 @@ func _apply_vista_presentation_mode() -> void:
 
 
 func _build_collision() -> void:
+	if collision_root == null:
+		push_error(
+			"[SunderedKeepApproach] Collision root is unavailable."
+		)
+		return
 	_clear_children(collision_root)
+
+	if _runtime_boundary_segments.is_empty():
+		push_error(
+			"[SunderedKeepApproach] Authored collision contains no "
+			+ "boundary segments."
+		)
+		return
 
 	var body := StaticBody2D.new()
 	body.name = "PathBoundaryCollision"
-	# Project world/terrain solids currently use layer 1; Operator collision is expected to include it.
 	body.collision_layer = 1
 	body.collision_mask = 1
 	collision_root.add_child(body)
 
+	var built_segment_count := 0
 	var index := 1
 	for segment_variant: Variant in _runtime_boundary_segments:
+		if not segment_variant is Array:
+			push_warning(
+				"[SunderedKeepApproach] Ignoring non-array collision "
+				+ "segment at index %d." % index
+			)
+			index += 1
+			continue
 		var segment := segment_variant as Array
 		if segment.size() < 2:
+			push_warning(
+				"[SunderedKeepApproach] Ignoring incomplete collision "
+				+ "segment at index %d." % index
+			)
+			index += 1
 			continue
 		_add_boundary_segment(
 			body,
@@ -1318,7 +1383,53 @@ func _build_collision() -> void:
 			_route_point(segment[0] as Vector2),
 			_route_point(segment[1] as Vector2)
 		)
+		built_segment_count += 1
 		index += 1
+	body.set_meta(
+		"authored_boundary_segment_count",
+		built_segment_count
+	)
+
+	if built_segment_count == 0:
+		push_error(
+			"[SunderedKeepApproach] No usable boundary collision "
+			+ "segments were constructed."
+		)
+	elif built_segment_count != _runtime_boundary_segments.size():
+		push_warning(
+			"[SunderedKeepApproach] Built %d of %d authored collision "
+			+ "segments."
+			% [
+				built_segment_count,
+				_runtime_boundary_segments.size(),
+			]
+		)
+
+
+func get_boundary_collision_shape_count() -> int:
+	if collision_root == null:
+		return 0
+	var body := collision_root.get_node_or_null(
+		"PathBoundaryCollision"
+	) as StaticBody2D
+	# A deferred rebuild can briefly leave the previous queued-for-deletion
+	# body holding the canonical name. Prefer the newly built metadata-bearing
+	# body in that overlap window so validation observes the live rails.
+	if body == null or not body.has_meta("authored_boundary_segment_count"):
+		for child: Node in collision_root.get_children():
+			if (
+				child is StaticBody2D
+				and child.has_meta("authored_boundary_segment_count")
+			):
+				body = child as StaticBody2D
+				break
+	if body == null:
+		return 0
+	var count := 0
+	for child: Node in body.get_children():
+		if child is CollisionShape2D:
+			count += 1
+	return count
 
 
 func _build_sequence_triggers() -> void:
@@ -1906,6 +2017,18 @@ func _rect_from_array(source: Variant, fallback: Rect2) -> Rect2:
 		return fallback
 	var values := source as Array
 	return Rect2(
+		float(values[0]),
+		float(values[1]),
+		float(values[2]),
+		float(values[3])
+	)
+
+
+func _color_from_array(source: Variant, fallback: Color) -> Color:
+	if not (source is Array) or (source as Array).size() < 4:
+		return fallback
+	var values := source as Array
+	return Color(
 		float(values[0]),
 		float(values[1]),
 		float(values[2]),

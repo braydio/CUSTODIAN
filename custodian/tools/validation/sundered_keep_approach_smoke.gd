@@ -46,12 +46,12 @@ func _run() -> void:
 			_check(not bool(sprite.get_meta("collision_authority", true)), "%s owns collision" % path, errors)
 	var fog := approach.get_node_or_null(
 		"UnderlayRoot/OuterWallCheckpointFog"
-	) as AnimatedSprite2D
-	_check(fog != null, "local checkpoint fog animation is missing", errors)
+	) as Sprite2D
+	_check(fog is ProceduralFogRibbon2D, "local checkpoint procedural fog ribbon is missing", errors)
 	if fog != null:
-		_check(fog.sprite_frames.get_frame_count(&"loop") == 6, "checkpoint fog is not six frames", errors)
-		_check(is_equal_approx(fog.sprite_frames.get_animation_speed(&"loop"), 7.0), "checkpoint fog speed drifted", errors)
-		_check(fog.modulate.a <= 0.3001, "checkpoint fog exceeds route readability alpha", errors)
+		_check(fog.material is ShaderMaterial, "checkpoint fog has no procedural shader", errors)
+		_check(fog.get_meta("coverage_rect", Rect2()).size == Vector2(1536.0, 384.0), "checkpoint fog coverage drifted", errors)
+		_check((fog as ProceduralFogRibbon2D).fog_tint.a <= 0.3001, "checkpoint fog exceeds route readability alpha", errors)
 	_check(
 		approach.get_node_or_null("OcclusionRoot/ApproachFinalGateShadowVeil") == null,
 		"full-screen final navigation veil is still built",
