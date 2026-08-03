@@ -1,5 +1,9 @@
 extends SceneTree
 
+# LEGACY / DEBUG-ONLY visual-contract check for retired staged route scenes.
+# Production renderer acceptance uses the registered procgen frontage ->
+# authored Vista Approach -> return lifecycle instead.
+
 const VISTA_ONE := preload("res://game/world/routes/sundered_keep/stages/sundered_keep_vista_one.tscn")
 const PRE_LEVEL := preload("res://game/world/routes/sundered_keep/stages/sundered_keep_pre_level.tscn")
 const GRAND_VISTA := preload("res://game/world/routes/sundered_keep/stages/sundered_keep_grand_vista.tscn")

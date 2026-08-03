@@ -5,8 +5,9 @@
 [ext_resource type="Script" uid="uid://dhph4w3w8vsll" path="res://game/world/procgen/procgen.gd" id="3_7iafn"]
 [ext_resource type="Script" uid="uid://gy2k3e1i24lq" path="res://game/systems/core/systems/shadow_system.gd" id="4_shadow_system"]
 [ext_resource type="Script" path="res://game/world/procgen/presentation/procgen_depth_backdrop.gd" id="depth_backdrop_script"]
-[ext_resource type="Texture2D" path="res://content/backgrounds/procgen/endless_forest/endless_forest_depth_backdrop_512.png" id="forest_depth_texture"]
-[ext_resource type="Texture2D" path="res://content/backgrounds/procgen/endless_forest/endless_forest_depth_mist_512.png" id="forest_depth_mist"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/procgen/endless_forest/endless_forest_depth_haze_1536x1024.png" id="forest_far_haze"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/procgen/endless_forest/endless_forest_canopy_mass_1536x1024.png" id="forest_canopy"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/procgen/endless_forest/endless_forest_wall_growth_1536x1024.png" id="forest_wall_growth"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_1"]
 
@@ -86,8 +87,12 @@ interior_wall_corner_source_id = 17
 [node name="DepthBackdrop" type="Node2D" parent="."]
 z_index = -300
 script = ExtResource("depth_backdrop_script")
-forest_texture = ExtResource("forest_depth_texture")
-mist_texture = ExtResource("forest_depth_mist")
+far_haze_texture = ExtResource("forest_far_haze")
+canopy_texture = ExtResource("forest_canopy")
+wall_growth_texture = ExtResource("forest_wall_growth")
+far_haze_alpha = 0.3
+canopy_alpha = 0.9
+wall_growth_alpha = 0.48
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="." unique_id=2086078231]
 navigation_polygon = SubResource("NavigationPolygon_1")

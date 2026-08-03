@@ -2,6 +2,15 @@ extends SceneTree
 
 const MAP_SCENE := preload("res://game/world/procgen/proc_gen_map.tscn")
 const TILESET := preload("res://content/tiles/tilesets/procgen_world_tileset.tres")
+const RUNTIME_BACKGROUNDS := [
+	"res://content/backgrounds/procgen/endless_forest/endless_forest_depth_haze_1536x1024.png",
+	"res://content/backgrounds/procgen/endless_forest/endless_forest_canopy_mass_1536x1024.png",
+	"res://content/backgrounds/procgen/endless_forest/endless_forest_wall_growth_1536x1024.png",
+]
+const CONTACT_SHADOW_SOURCE := (
+	"res://content/backgrounds/procgen/endless_forest/source/"
+	+ "endless_forest_chasm_contact_shadow_source_1536x1024.png"
+)
 
 const EXPECTED := {
 	44: "rock_ground_flat_32.png", 45: "rock_plateau_raised_32.png",
@@ -41,18 +50,53 @@ func _run() -> void:
 		if source_id in range(46, 58) or source_id in range(101, 113):
 			assert(_has_transparency(image), "%s must contain true alpha" % path)
 
-	_assert_image_size("res://content/backgrounds/procgen/endless_forest/endless_forest_depth_backdrop_512.png", Vector2i(512, 512))
-	_assert_image_size("res://content/backgrounds/procgen/endless_forest/endless_forest_depth_mist_512.png", Vector2i(512, 512))
+	for path: String in RUNTIME_BACKGROUNDS:
+		_assert_image_size(path, Vector2i(1536, 1024))
+		_assert_import_settings(path + ".import", false)
+	_assert_image_size(CONTACT_SHADOW_SOURCE, Vector2i(1536, 1024))
+	_assert_import_settings(CONTACT_SHADOW_SOURCE + ".import", false)
 
 	var map := MAP_SCENE.instantiate()
 	root.add_child(map)
 	var backdrop := map.get_node_or_null("DepthBackdrop") as ProcgenDepthBackdrop
 	assert(backdrop != null)
 	_assert_no_physics_or_navigation(backdrop)
-	backdrop.configure_from_cells([Vector2i(-2, 4), Vector2i(7, 12)])
+	backdrop.configure_from_chasm_cells([
+		Vector2i(-2, 4), Vector2i(-1, 4),
+		Vector2i(-2, 5), Vector2i(-1, 5),
+		Vector2i(7, 12), Vector2i(8, 12),
+		Vector2i(7, 13), Vector2i(8, 13),
+	])
 	await process_frame
-	var forest := backdrop.get_node_or_null("EndlessForestDepth") as Sprite2D
-	assert(forest != null and forest.region_rect.size.x > 0.0 and forest.region_rect.size.y > 0.0)
+	assert(backdrop.visible)
+	assert(backdrop.z_index == -300 and not backdrop.z_as_relative)
+	var regions := backdrop.get_node("ChasmPresentationRoot").get_children()
+	assert(regions.size() == 2)
+	for region_variant: Variant in regions:
+		var region := region_variant as Node2D
+		assert(region != null)
+		assert(region.scale.x >= 0.75 and region.scale.x <= 1.25)
+		assert(is_equal_approx(region.scale.x, region.scale.y))
+		var layers := [
+			region.get_node_or_null("FarHaze") as Sprite2D,
+			region.get_node_or_null("CanopyMass") as Sprite2D,
+			region.get_node_or_null("WallGrowth") as Sprite2D,
+		]
+		for index in layers.size():
+			var layer := layers[index] as Sprite2D
+			assert(layer != null and layer.texture != null)
+			assert(not layer.region_enabled, "Forest compositions must not repeat")
+			assert(layer.texture_repeat == CanvasItem.TEXTURE_REPEAT_DISABLED)
+			assert(layer.texture_filter == CanvasItem.TEXTURE_FILTER_LINEAR)
+			assert(layer.centered)
+			assert(layer.z_index == index - 3)
+	assert(is_equal_approx(backdrop.far_haze_alpha, 0.30))
+	assert(is_equal_approx(backdrop.canopy_alpha, 0.90))
+	assert(is_equal_approx(backdrop.wall_growth_alpha, 0.48))
+	assert(
+		_find_texture_path(map, CONTACT_SHADOW_SOURCE).is_empty(),
+		"Contact-shadow source must not be wired globally"
+	)
 	map.queue_free()
 	print("elevated_world_asset_contract_smoke: PASS sources=%d" % EXPECTED.size())
 	quit(0)
@@ -61,6 +105,25 @@ func _run() -> void:
 func _assert_image_size(path: String, expected: Vector2i) -> void:
 	var image := Image.load_from_file(ProjectSettings.globalize_path(path))
 	assert(image != null and image.get_size() == expected, "%s must be %s" % [path, expected])
+
+
+func _assert_import_settings(path: String, mipmaps: bool) -> void:
+	var text := FileAccess.get_file_as_string(ProjectSettings.globalize_path(path))
+	assert(not text.is_empty(), "Missing import metadata: %s" % path)
+	assert("compress/mode=0" in text, "%s must use lossless compression" % path)
+	assert(
+		("mipmaps/generate=true" if mipmaps else "mipmaps/generate=false") in text,
+		"%s mipmap setting mismatch" % path
+	)
+
+
+func _find_texture_path(node: Node, path: String) -> String:
+	for child: Node in node.find_children("*", "", true, false):
+		if child is Sprite2D:
+			var texture := (child as Sprite2D).texture
+			if texture != null and texture.resource_path == path:
+				return texture.resource_path
+	return ""
 
 
 func _has_transparency(image: Image) -> bool:

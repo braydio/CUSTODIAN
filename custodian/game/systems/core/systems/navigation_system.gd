@@ -292,3 +292,28 @@ func rebuild() -> void:
 		return
 	_initialize_navigation()
 	navigation_dirty.emit()
+
+
+func get_navigation_authority_debug_snapshot() -> Dictionary:
+	var authoritative_floor_count := 0
+	if (
+		runtime_blocker_provider != null
+		and is_instance_valid(runtime_blocker_provider)
+		and runtime_blocker_provider.has_method(
+			"debug_get_generated_floor_cells"
+		)
+	):
+		var authoritative: Dictionary = runtime_blocker_provider.call(
+			"debug_get_generated_floor_cells"
+		)
+		authoritative_floor_count = authoritative.size()
+	return {
+		"authoritative_floor_count": authoritative_floor_count,
+		"painted_floor_count": (
+			floor_tilemap.get_used_cells().size()
+			if floor_tilemap != null
+			else 0
+		),
+		"navigation_point_count": _walkable_tiles.size(),
+		"initialized": _initialized,
+	}

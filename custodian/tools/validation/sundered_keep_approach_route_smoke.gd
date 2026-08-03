@@ -1,5 +1,9 @@
 extends SceneTree
 
+# LEGACY / DEBUG-ONLY self-test for the retired pre-registry LevelRoute
+# scaffold. This is not a production acceptance test and must not drive API
+# changes into the current Front Gate authored level.
+
 const ROUTE_SCENE := preload("res://game/world/routes/sundered_keep/sundered_keep_approach_route.tscn")
 const VISTA_ONE := preload("res://game/world/routes/sundered_keep/stages/sundered_keep_vista_one.tscn")
 const PRE_LEVEL := preload("res://game/world/routes/sundered_keep/stages/sundered_keep_pre_level.tscn")

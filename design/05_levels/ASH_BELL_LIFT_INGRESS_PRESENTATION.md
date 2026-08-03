@@ -1,6 +1,6 @@
 # Ash Bell Lift Ingress Presentation
 
-Status: implemented V1
+Status: implemented V1.1; corrected exterior presentation awaiting final art review
 Owner: world presentation / authored-level ingress
 Runtime target: Godot 4 (`custodian/`)
 
@@ -14,8 +14,9 @@ generated `WorldIngressSite`; it is not part of
 
 ## Runtime ownership
 
-- `ash_bell_lift_ingress_presentation.tscn` owns the surface cave shell,
-  scrolling shaft, two chains, lift, dust, lamp, foreground occluder, and local
+- `ash_bell_lift_ingress_presentation.tscn` owns the surface cliff, irregular
+  dark mouth, threshold, two chains, parked lift, restrained dust, lamp,
+  authored foreground cave mask, traversal-only scrolling shaft, and local
   cliff collision.
 - `ash_bell_lift_ingress_presentation.gd` owns the 1.05-second travel presentation,
   detached rider-puppet lifecycle, 176 px lift travel, 384 px shaft scroll,
@@ -40,6 +41,7 @@ surface trigger
   -> hide live Operator visual leaves without moving its CharacterBody2D
   -> attach puppet to RiderAnchor in a restrained lift-braced pose
   -> vibrate platform + burst dust
+  -> reveal the masked shaft during the first 25 percent of travel
   -> move lift and puppet downward
   -> scroll shaft upward behind them
   -> puppet crosses behind the foreground lip after entering the shaft
@@ -61,6 +63,33 @@ monitoring, so descent cannot immediately retrigger.
 The specialized Ash Bell ingress is an explicit `interactable`; entering its
 Area2D does not begin traversal. Generic world ingresses retain their existing
 body-entry behavior.
+
+## Exterior and traversal modes
+
+The parked world landmark is an exterior cliff composition, not an exposed
+level-editor cutaway. While idle, `ShaftWindow` is hidden and transparent. The
+player sees the cliff mass, an irregular `DarkMouth`, the parked platform and
+short chain sections, the lamp, the entrance threshold, and foreground rock and
+timber geometry. `EntranceThresholdMarker` shares the parked `LiftRoot` origin;
+`InteractionApproachMarker` sits 72 px toward the exterior so approach and
+boarding read as a continuous floor.
+
+After explicit interaction, the shaft window becomes visible and fades in over
+the first 25 percent of descent. Its children are clipped by an irregular
+`Polygon2D`, while the authored `EntranceMask` rises over the lift and detached
+rider once they pass beneath the cave lip. Return ascent reverses this staging
+and hides the shaft again when the lift reaches its parked position. Reset and
+cancellation also restore the exterior-only state.
+
+The current platform renders at approximately 173 px wide. The burst dust
+renders at approximately 96×58 px, 34 percent alpha, behind the platform. The
+768×512 cliff remains landmark-scale while the functional entrance stays sized
+around the 96 px Operator. Corrected authored rock assets may replace the
+temporary mask polygons without changing their scene ownership or traversal
+contract.
+
+The former always-exposed rectangular shaft cutaway is superseded and must not
+be restored.
 
 ## Art and import contract
 
@@ -87,5 +116,7 @@ godot --headless --path custodian \
 ```
 
 The focused smoke verifies asset dimensions/import settings, animation
-contracts, node placement/Z, actor-state restoration, reset, snapshot ordering,
-and specialized spawner selection.
+contracts, exterior-only idle state, irregular shaft clipping, platform and
+threshold alignment, restrained dust, traversal reveal and cave-lip ordering,
+actor-state restoration, reset, snapshot ordering, explicit interaction, and
+specialized versus generic spawner behavior.

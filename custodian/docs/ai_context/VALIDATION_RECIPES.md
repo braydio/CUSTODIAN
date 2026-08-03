@@ -375,13 +375,21 @@ godot --headless --path . --script res://tools/validation/level_camera_rebind_sm
 
 These checks prove named-spawn success/failure without actor mutation, every registered entry scene's spawn/presentation/lifecycle and mapper boundary contract, generic mapper dynamic schema and Sundered compatibility, deterministic multi-ingress spacing/identity, alternate-root scaffold dry-run/creation/duplicate rejection/managed regeneration/unmanaged rejection/registry sorting, exact procgen/connected branch and camera restoration, loader/ingress cleanup, real physics-driven repeat entry, profile selection, atomic actor/camera/UI rollback, immediate outgoing-level deactivation, fail-closed rejected returns, and non-committing destroyed-origin failure. The existing `sundered_keep_ingress_smoke.gd` exercises `ContractWorldLoader`'s registry-driven placement path rather than the deprecated Sundered-specific helper.
 
-For the experimental route/stage wrapper:
+For Sundered Keep production ingress and return acceptance:
 
 ```bash
 cd custodian
-godot --headless --path . --script res://tools/validation/sundered_keep_approach_route_smoke.gd
-godot --headless --path . --script res://tools/validation/sundered_keep_approach_route_visual_smoke.gd
+godot --headless --path . --script res://tools/validation/sundered_keep_ingress_smoke.gd
+godot --headless --path . --script res://tools/validation/sundered_keep_procgen_vista_layering_smoke.gd
+godot --headless --path . --script res://tools/validation/route_registry_contract_smoke.gd
+godot --headless --path . --script res://tools/validation/authored_level_ingress_return_smoke.gd
 ```
+
+The retired `sundered_keep_approach_route.tscn` and its
+`sundered_keep_approach_route_smoke.gd` / `_visual_smoke.gd` tests are
+legacy/debug-only historical comparison surfaces. They are excluded from
+production acceptance. In particular, their old `configure_connection()`
+expectation must not be added to the current Front Gate map.
 
 ```bash
 cd custodian

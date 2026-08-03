@@ -11,11 +11,15 @@ const OPERATOR_PRESENTATION_RIG_SCENE := preload(
 
 @onready var lift_root: Node2D = $LiftRoot
 @onready var rider_anchor: Marker2D = $LiftRoot/RiderAnchor
+@onready var entrance_threshold_marker: Marker2D = $EntranceThresholdMarker
+@onready var interaction_approach_marker: Marker2D = $InteractionApproachMarker
+@onready var shaft_window: Polygon2D = $ShaftWindow
 @onready var shaft_scroll: Sprite2D = $ShaftWindow/ShaftScroll
 @onready var platform_idle: Sprite2D = $LiftRoot/PlatformIdle
 @onready var platform_vibrate: AnimatedSprite2D = $LiftRoot/PlatformVibrate
 @onready var dust_burst: AnimatedSprite2D = $DustBurst
-@onready var foreground_occluder: Sprite2D = $ForegroundOccluder
+@onready var entrance_mask: Node2D = $EntranceMask
+@onready var foreground_occluder: Sprite2D = $EntranceMask/ForegroundOccluder
 @onready var lamp: AnimatedSprite2D = $Lamp
 
 var _playing := false
@@ -32,7 +36,12 @@ func _ready() -> void:
 		shaft_scroll.region_rect = Rect2(0.0, 0.0, 256.0, 320.0)
 	_shaft_start_rect = shaft_scroll.region_rect
 	platform_vibrate.visible = false
-	foreground_occluder.z_index = 0
+	shaft_window.visible = false
+	shaft_window.modulate.a = 0.0
+	dust_burst.visible = false
+	entrance_mask.z_index = 0
+	if not dust_burst.animation_finished.is_connected(_on_dust_finished):
+		dust_burst.animation_finished.connect(_on_dust_finished)
 	lamp.play(&"flicker")
 
 
@@ -48,14 +57,17 @@ func play_descent(actor: Node2D) -> void:
 	platform_idle.visible = false
 	platform_vibrate.visible = true
 	platform_vibrate.play(&"vibrate")
-	foreground_occluder.z_index = 20
+	entrance_mask.z_index = 20
+	shaft_window.visible = true
+	shaft_window.modulate.a = 0.0
+	dust_burst.visible = true
 	dust_burst.play(&"burst")
 	var lift_target_y := lift_root.position.y + descent_distance
 	var shaft_start_y := shaft_scroll.region_rect.position.y
 	var shaft_target_y := shaft_start_y - shaft_scroll_distance
-	var reveal_duration := descent_duration * 0.42
+	var reveal_duration := descent_duration * 0.25
 	var hide_duration := descent_duration - reveal_duration
-	var reveal_distance := descent_distance * 0.42
+	var reveal_distance := descent_distance * 0.25
 	_active_tween = create_tween().set_parallel(true)
 	_active_tween.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	_active_tween.tween_property(
@@ -67,9 +79,10 @@ func play_descent(actor: Node2D) -> void:
 	_active_tween.tween_method(
 		_set_shaft_scroll_y,
 		shaft_start_y,
-		lerpf(shaft_start_y, shaft_target_y, 0.42),
+		lerpf(shaft_start_y, shaft_target_y, 0.25),
 		reveal_duration
 	)
+	_active_tween.tween_property(shaft_window, "modulate:a", 1.0, reveal_duration)
 	await _active_tween.finished
 	if not _playing or _presentation_rig == null:
 		return
@@ -92,7 +105,7 @@ func play_descent(actor: Node2D) -> void:
 	if not _playing:
 		return
 	_restore_operator_presentation()
-	foreground_occluder.z_index = 0
+	entrance_mask.z_index = 0
 	_playing = false
 	_active_tween = null
 
@@ -112,7 +125,9 @@ func play_ascent(actor: Node2D) -> void:
 	platform_idle.visible = false
 	platform_vibrate.visible = true
 	platform_vibrate.play(&"vibrate")
-	foreground_occluder.z_index = 20
+	shaft_window.visible = true
+	shaft_window.modulate.a = 1.0
+	entrance_mask.z_index = 20
 	_presentation_rig.z_as_relative = false
 	_presentation_rig.z_index = 0
 	var hidden_duration := descent_duration * 0.58
@@ -162,7 +177,9 @@ func play_ascent(actor: Node2D) -> void:
 	platform_vibrate.visible = false
 	platform_idle.visible = true
 	_restore_operator_presentation()
-	foreground_occluder.z_index = 0
+	shaft_window.visible = false
+	shaft_window.modulate.a = 0.0
+	entrance_mask.z_index = 0
 	_playing = false
 	_active_tween = null
 
@@ -171,10 +188,13 @@ func reset_presentation() -> void:
 	cancel_presentation()
 	lift_root.position = _lift_start_position
 	shaft_scroll.region_rect = _shaft_start_rect
+	shaft_window.visible = false
+	shaft_window.modulate.a = 0.0
 	platform_vibrate.stop()
 	platform_vibrate.visible = false
 	platform_idle.visible = true
-	foreground_occluder.z_index = 0
+	entrance_mask.z_index = 0
+	dust_burst.visible = false
 	dust_burst.stop()
 	dust_burst.frame = 0
 
@@ -185,7 +205,9 @@ func cancel_presentation() -> void:
 	_active_tween = null
 	_restore_operator_presentation()
 	_playing = false
-	foreground_occluder.z_index = 0
+	shaft_window.visible = false
+	shaft_window.modulate.a = 0.0
+	entrance_mask.z_index = 0
 
 
 func is_playing() -> bool:
@@ -194,6 +216,10 @@ func is_playing() -> bool:
 
 func has_presentation_puppet() -> bool:
 	return _presentation_rig != null and is_instance_valid(_presentation_rig)
+
+
+func get_presentation_puppet() -> OperatorPresentationRig2D:
+	return _presentation_rig if has_presentation_puppet() else null
 
 
 func _create_presentation_rig(actor: Node2D) -> bool:
@@ -228,6 +254,10 @@ func _set_shaft_scroll_y(value: float) -> void:
 	var rect := shaft_scroll.region_rect
 	rect.position.y = value
 	shaft_scroll.region_rect = rect
+
+
+func _on_dust_finished() -> void:
+	dust_burst.visible = false
 
 
 func _exit_tree() -> void:

@@ -1,6 +1,12 @@
 extends LevelRoute
 class_name SunderedKeepApproachRoute
 
+# LEGACY / DEBUG-ONLY: pre-registry staged route retained for historical visual
+# comparison. Production Sundered Keep traversal is owned by the registered
+# `sundered_keep` route through WorldIngressSite and RouteTraversalManager.
+# Do not adapt current authored levels to this scaffold's configure_connection
+# handoff contract.
+
 const VISTA_ONE := preload("res://game/world/routes/sundered_keep/stages/sundered_keep_vista_one.tscn")
 const PRE_LEVEL := preload("res://game/world/routes/sundered_keep/stages/sundered_keep_pre_level.tscn")
 const GRAND_VISTA := preload("res://game/world/routes/sundered_keep/stages/sundered_keep_grand_vista.tscn")

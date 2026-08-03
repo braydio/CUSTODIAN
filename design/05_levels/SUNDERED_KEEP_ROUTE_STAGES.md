@@ -6,7 +6,7 @@
 - **Route controller:** `custodian/game/world/routes/sundered_keep/sundered_keep_approach_route.gd`
 - **Stage scenes:** `custodian/game/world/routes/sundered_keep/stages/*.tscn`
 - **Base classes:** `custodian/game/world/routes/level_stage.gd`, `custodian/game/world/routes/level_route.gd`
-- **Validation:** `custodian/tools/validation/sundered_keep_approach_route_smoke.gd`, `custodian/tools/validation/sundered_keep_approach_route_visual_smoke.gd`
+- **Legacy self-tests:** `custodian/tools/validation/sundered_keep_approach_route_smoke.gd`, `custodian/tools/validation/sundered_keep_approach_route_visual_smoke.gd` (excluded from production acceptance)
 
 ## Summary
 
@@ -122,27 +122,25 @@ front_gate (sundered_keep_map.tscn)
 - Stage scenes should remain thin — all substantive logic lives in the `.gd` script, the `.tscn` is a minimal stub (script + EntrySpawn + CameraBounds).
 - The current route-stage flow remains visually discontinuous by design because substages are separate scenes. It is retired from production; do not reconnect it unless vista_one/pre_level/grand_vista/causeway_approach are redesigned as one continuous authored route.
 
+## Production acceptance boundary
+
+Leave this stage-cut route disconnected. Do not repair its obsolete final-target
+handoff by adding `configure_connection()` to the current Front Gate map.
+Production acceptance uses:
+
+- `sundered_keep_ingress_smoke.gd`;
+- `sundered_keep_procgen_vista_layering_smoke.gd`;
+- `route_registry_contract_smoke.gd`;
+- authored-level ingress/return lifecycle validation;
+- renderer review of procgen frontage → authored Vista Approach → return.
+
+The two legacy route-stage smokes may be run manually when reviewing those
+historical scenes, but their failures do not gate production and must not drive
+changes to `WorldIngressSite`, `RouteTraversalManager`, `LevelLoader`, the Ash
+Bell specialization, or current authored destinations.
+
 ## Next Agent Slice
 
-### Goal
-Leave this stage-cut route disconnected. A future replacement may reuse its ideas only after conversion into one continuous authored approach.
-
-### Files
-- `custodian/game/world/routes/sundered_keep/sundered_keep_approach_route.gd`
-- `custodian/game/world/routes/sundered_keep/stages/*.gd`
-- `custodian/game/world/approaches/sundered_keep/sundered_keep_approach.gd` — reference model for one-scene layered traversal
-- `custodian/tools/validation/sundered_keep_approach_route_smoke.gd`
-- `custodian/tools/validation/sundered_keep_approach_route_visual_smoke.gd`
-
-### Constraints
-- Preserve `LevelDefinition` / `LevelLoader` entry and final `SunderedKeepMap` handoff.
-- Keep base underlay/backdrop always visible; never bind `VistaController.vista_root_path` to `UnderlayRoot`.
-- Keep collision rails and exit trigger deterministic and separate from presentation layers.
-- Deterministic fixed-step simulation is a hard constraint — route advancement must not introduce frame-dependent behavior.
-
-### Acceptance
-- Route smoke test passes.
-- Route visual smoke test passes.
-- The player experiences one continuous walk/vista/traverse before the final front-gate map transition.
-- No route beat queue-frees and replaces the visible approach during ordinary traversal.
-- Final target map (`SunderedKeepMap`) still receives working `configure_connection()` and `enter_from_main()` calls with correct return position.
+No production work is queued for this legacy scaffold. Keep it only while its
+historical visual comparisons remain useful; otherwise remove the route scene,
+stages, and both self-tests together in a separately authorized cleanup.

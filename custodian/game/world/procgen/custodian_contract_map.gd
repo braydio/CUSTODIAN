@@ -689,9 +689,10 @@ func _generate_final_map_level_data(map_instance: ProcGenTilemap) -> Dictionary:
 		print("[CustodianContractMap] FINAL_VISUAL_ALREADY_READY")
 		return map_instance.get_level_data()
 	var _final_start := Time.get_ticks_msec()
-	map_instance.generation_evaluation_mode = false
-	var level_data := await _generate_map_level_data(map_instance)
-	print("[CustodianContractMap] FINAL_VISUAL_END total=%.1fs" % [
+	var level_data: Dictionary = (
+		map_instance.promote_evaluated_candidate_to_final()
+	)
+	print("[CustodianContractMap] FINAL_PROMOTION_END total=%.1fs" % [
 		(Time.get_ticks_msec() - _final_start) / 1000.0
 	])
 	return level_data

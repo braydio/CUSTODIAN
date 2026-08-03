@@ -4,3 +4,4 @@
 
 [node name="SunderedKeepApproachRoute" type="Node2D"]
 script = ExtResource("1_route")
+editor_description = "LEGACY / DEBUG-ONLY pre-registry staged route. Not part of Sundered Keep production traversal or acceptance."

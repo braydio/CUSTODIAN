@@ -84,8 +84,13 @@ func _validate_scene(
 	errors: Array[String]
 ) -> void:
 	var vibrate := presentation.get_node("LiftRoot/PlatformVibrate") as AnimatedSprite2D
+	var platform := presentation.get_node("LiftRoot/PlatformIdle") as Sprite2D
 	var dust := presentation.get_node("DustBurst") as AnimatedSprite2D
 	var lamp := presentation.get_node("Lamp") as AnimatedSprite2D
+	var shaft_window := presentation.get_node("ShaftWindow") as Polygon2D
+	var entrance_mask := presentation.get_node("EntranceMask") as Node2D
+	var threshold := presentation.get_node("EntranceThresholdMarker") as Marker2D
+	var approach := presentation.get_node("InteractionApproachMarker") as Marker2D
 	_check(vibrate.sprite_frames.get_frame_count(&"vibrate") == 4, "vibrate frame count drifted", errors)
 	_check(is_equal_approx(vibrate.sprite_frames.get_animation_speed(&"vibrate"), 10.0), "vibrate FPS drifted", errors)
 	_check(vibrate.sprite_frames.get_animation_loop(&"vibrate"), "vibrate must loop", errors)
@@ -95,7 +100,28 @@ func _validate_scene(
 	_check(lamp.sprite_frames.get_frame_count(&"flicker") == 8, "lamp frame count drifted", errors)
 	_check((presentation.get_node("ChainLeft") as Node2D).position == Vector2(-42, -126), "left chain placement drifted", errors)
 	_check((presentation.get_node("ChainRight") as Node2D).position == Vector2(42, -126), "right chain placement drifted", errors)
-	_check((presentation.get_node("ForegroundOccluder") as CanvasItem).z_index == 0, "parked foreground occluder must remain behind the Operator", errors)
+	_check(not shaft_window.visible, "shaft interior must be hidden while parked", errors)
+	_check(is_zero_approx(shaft_window.modulate.a), "parked shaft retained visible opacity", errors)
+	_check(shaft_window.clip_children == CanvasItem.CLIP_CHILDREN_ONLY, "shaft window lost its irregular child mask", errors)
+	_check(presentation.get_node_or_null("DarkMouth") != null, "idle cave mouth is missing", errors)
+	_check(presentation.get_node_or_null("EntranceMask/TopRockOverhang") != null, "top mouth overhang is missing", errors)
+	_check(presentation.get_node_or_null("EntranceMask/LeftMouthRock") != null, "left mouth breakup is missing", errors)
+	_check(presentation.get_node_or_null("EntranceMask/RightMouthRock") != null, "right mouth breakup is missing", errors)
+	_check(presentation.get_node_or_null("EntranceMask/LowerCaveLip") != null, "foreground cave lip is missing", errors)
+	_check(entrance_mask.z_index == 0, "parked entrance mask must remain behind the Operator", errors)
+	_check(presentation.lift_root.position == threshold.position, "parked platform is not aligned to its threshold", errors)
+	_check(approach.position.y > threshold.position.y, "interaction approach is not outside the platform threshold", errors)
+	var platform_width := float(platform.texture.get_width()) * platform.scale.x
+	_check(platform_width >= 150.0 and platform_width <= 190.0, "parked platform width is outside the Operator-scale target", errors)
+	var dust_size := Vector2(
+		float(dust.sprite_frames.get_frame_texture(&"burst", 0).get_width()) * dust.scale.x,
+		float(dust.sprite_frames.get_frame_texture(&"burst", 0).get_height()) * dust.scale.y
+	)
+	_check(dust_size.x >= 80.0 and dust_size.x <= 112.0, "dust width is outside the restrained target", errors)
+	_check(dust_size.y >= 48.0 and dust_size.y <= 64.0, "dust height is outside the restrained target", errors)
+	_check(dust.modulate.a >= 0.25 and dust.modulate.a <= 0.40, "dust opacity is outside the restrained target", errors)
+	_check(not dust.visible, "dust must not remain visible while idle", errors)
+	_check(dust.z_index < presentation.lift_root.z_index, "dust must render behind the platform", errors)
 	_check((presentation.get_node("Lamp") as CanvasItem).z_index == 110, "lamp Z drifted", errors)
 
 
@@ -184,7 +210,7 @@ func _validate_lift_travel(
 	_check(not presentation.has_presentation_puppet(), "descent puppet was not freed", errors)
 	_check(actor.process_mode == Node.PROCESS_MODE_ALWAYS, "actor process mode was not restored", errors)
 	_check(actor.z_index == 7 and actor.z_as_relative, "actor Z state was not restored", errors)
-	_check(presentation.foreground_occluder.z_index == 0, "descent left the foreground occluder above the restored Operator", errors)
+	_check(presentation.entrance_mask.z_index == 0, "descent left the entrance mask above the restored Operator", errors)
 	var restored_position := Vector2(311.0, 277.0)
 	actor.position = restored_position
 	await presentation.play_ascent(actor)
@@ -194,13 +220,19 @@ func _validate_lift_travel(
 	_check(actor.process_mode == Node.PROCESS_MODE_ALWAYS, "ascent did not restore actor process mode", errors)
 	_check(visual.visible, "ascent did not restore the live Operator visual", errors)
 	_check(not presentation.has_presentation_puppet(), "ascent puppet was not freed", errors)
-	_check(presentation.foreground_occluder.z_index == 0, "ascent placed the foreground occluder above the restored Operator", errors)
+	_check(presentation.entrance_mask.z_index == 0, "ascent placed the entrance mask above the restored Operator", errors)
+	_check(not presentation.shaft_window.visible, "ascent left the shaft exposed in the parked state", errors)
 	presentation.reset_presentation()
 	presentation.descent_duration = 1.0
 	presentation.play_descent(actor)
 	await process_frame
 	_check(not visual.visible, "live Operator visual was not hidden during descent", errors)
 	_check(presentation.has_presentation_puppet(), "descent did not create a puppet", errors)
+	_check(presentation.shaft_window.visible, "shaft did not become visible after accepted traversal", errors)
+	_check(presentation.entrance_mask.z_index == 20, "foreground cave mask was not raised during traversal", errors)
+	await create_timer(0.3).timeout
+	var puppet := presentation.get_presentation_puppet()
+	_check(puppet != null and puppet.z_index < presentation.entrance_mask.z_index, "foreground cave lip does not occlude the descending rider", errors)
 	presentation.cancel_presentation()
 	await process_frame
 	_check(visual.visible, "cancellation did not restore the live Operator visual", errors)
@@ -210,6 +242,8 @@ func _validate_lift_travel(
 	_check(presentation.lift_root.position == lift_start, "presentation did not reset lift", errors)
 	_check(presentation.platform_idle.visible, "idle platform not restored", errors)
 	_check(not presentation.platform_vibrate.visible, "vibration remained visible", errors)
+	_check(not presentation.shaft_window.visible, "reset did not hide the shaft interior", errors)
+	_check(not presentation.dust_burst.visible, "reset did not hide the dust burst", errors)
 	actor.queue_free()
 	var invalid_source := Node2D.new()
 	root.add_child(invalid_source)
@@ -230,7 +264,9 @@ func _validate_specialized_spawner(errors: Array[String]) -> void:
 		"definition": MockRouteDefinition.new(),
 		"ingress": MockIngressDefinition.new(),
 	}
-	var ingress := spawner.call("_create_ingress", record, Node.new()) as Area2D
+	var world_owner := Node.new()
+	root.add_child(world_owner)
+	var ingress := spawner.call("_create_ingress", record, world_owner) as Area2D
 	_check(ingress is AshBellLiftIngressSite, "spawner did not select Ash Bell lift ingress", errors)
 	if ingress != null:
 		root.add_child(ingress)
@@ -249,6 +285,7 @@ func _validate_specialized_spawner(errors: Array[String]) -> void:
 			errors
 		)
 		ingress.queue_free()
+	world_owner.queue_free()
 	spawner.queue_free()
 	var generic := WorldIngressSite.new()
 	root.add_child(generic)

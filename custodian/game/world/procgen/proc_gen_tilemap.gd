@@ -381,6 +381,7 @@ var _region_tiles: Dictionary = {}
 var _wall_health: Dictionary = {}
 var _generated_floor_cells: Dictionary = {}
 var _generated_wall_cells: Dictionary = {}
+var _evaluated_candidate_ready: bool = false
 var _runtime_prop_blocker_cells: Dictionary = {}
 var _runtime_prop_blocker_sources: Dictionary = {}
 var _revealed_chunks: Dictionary = {}
@@ -776,6 +777,8 @@ func _on_procgen_finished() -> void:
 	])
 	var _t_start := Time.get_ticks_msec()
 	_fill_tilemaps()
+	_evaluated_candidate_ready = generation_evaluation_mode \
+		and not _generated_floor_cells.is_empty()
 	var _t_fill := Time.get_ticks_msec() - _t_start
 	_refresh_shadows()
 	var _t_shadows := Time.get_ticks_msec() - _t_start - _t_fill
@@ -805,6 +808,74 @@ func _on_procgen_finished() -> void:
 	if _t_nav > 0:
 		print("[ProcGen]   nav_bake: %d ms" % _t_nav)
 	print("[ProcGen]   TOTAL: %d ms" % (Time.get_ticks_msec() - _t_start))
+
+
+## Promotes the accepted evaluation result without clearing or regenerating
+## its structural TileMaps, semantic dictionaries, terrain, roads, or regions.
+## Only work deliberately skipped by EVAL_CANDIDATE is completed here.
+func promote_evaluated_candidate_to_final() -> Dictionary:
+	if not generation_evaluation_mode:
+		return get_level_data()
+	if not _evaluated_candidate_ready or _generated_floor_cells.is_empty():
+		push_error(
+			"[ProcGenTilemap] Cannot promote: evaluated candidate state is unavailable."
+		)
+		return {}
+
+	var started := Time.get_ticks_msec()
+	var marks: Dictionary = {}
+	var phase_started := started
+	var map_size: Vector2i = procgen_node.map_size
+	generation_evaluation_mode = false
+
+	_apply_floor_value_clusters(
+		_last_terrain_result,
+		int(procgen_node.seed)
+	)
+	marks["floor_value_clusters"] = Time.get_ticks_msec() - phase_started
+
+	phase_started = Time.get_ticks_msec()
+	if not enable_streaming_reveal and enable_final_foliage:
+		_generate_foliage(map_size)
+	marks["foliage_finalize"] = Time.get_ticks_msec() - phase_started
+
+	phase_started = Time.get_ticks_msec()
+	_generate_ruin_props(map_size)
+	marks["ruin_props"] = Time.get_ticks_msec() - phase_started
+
+	phase_started = Time.get_ticks_msec()
+	_generate_interior_props(map_size)
+	marks["interior_props"] = Time.get_ticks_msec() - phase_started
+
+	phase_started = Time.get_ticks_msec()
+	_enforce_route_playability_walkability(map_size)
+	_enforce_runtime_blocker_route_clearance()
+	_run_route_playability_audit()
+	marks["playability_audit"] = Time.get_ticks_msec() - phase_started
+
+	phase_started = Time.get_ticks_msec()
+	if not enable_streaming_reveal:
+		_rebuild_horizontal_wall_overlays()
+	_refresh_shadows()
+	_refresh_navigation_after_wall_change(true)
+	if auto_bake_nav and nav_region != null:
+		nav_region.bake_navigation_polygon(false)
+	marks["presentation_navigation"] = Time.get_ticks_msec() - phase_started
+
+	_evaluated_candidate_ready = false
+	_publish_generation_complexity_gauges()
+	var data: Dictionary = get_level_data()
+	level_data_ready.emit(data)
+
+	print("[ProcGenTilemap] PROMOTE_EVALUATED_CANDIDATE")
+	for label_variant: Variant in marks:
+		var label := String(label_variant)
+		print("[ProcGen]   promote_%s: %d ms" % [label, marks[label]])
+	print(
+		"[ProcGen]   PROMOTION TOTAL: %d ms"
+		% (Time.get_ticks_msec() - started)
+	)
+	return data
 
 
 func _fill_tilemaps() -> void:
@@ -877,15 +948,33 @@ func _fill_tilemaps() -> void:
 	_last = Time.get_ticks_msec()
 
 	if elevation_metadata_enabled:
+		var terrain_phase_started := Time.get_ticks_msec()
 		_apply_terrain_builder(map_size)
+		_marks["terrain_apply_builder"] = Time.get_ticks_msec() - terrain_phase_started
+		terrain_phase_started = Time.get_ticks_msec()
 		_enforce_route_playability_walkability(map_size)
+		_marks["terrain_route_walkability"] = Time.get_ticks_msec() - terrain_phase_started
+		terrain_phase_started = Time.get_ticks_msec()
 		_protect_compound_ingress_tiles(map_size)
+		_marks["terrain_ingress_protection"] = Time.get_ticks_msec() - terrain_phase_started
+		terrain_phase_started = Time.get_ticks_msec()
 		_enforce_road_walkability(map_size)
+		_marks["terrain_road_walkability"] = Time.get_ticks_msec() - terrain_phase_started
+		terrain_phase_started = Time.get_ticks_msec()
 		_repair_road_surface_components(map_size, maxi(1, intent_main_road_half_width - 1))
+		_marks["terrain_road_repair"] = Time.get_ticks_msec() - terrain_phase_started
+		terrain_phase_started = Time.get_ticks_msec()
 		_apply_compound_connector_elevation(map_size)
+		_marks["terrain_connector_elevation"] = Time.get_ticks_msec() - terrain_phase_started
+		terrain_phase_started = Time.get_ticks_msec()
 		_prune_small_edge_road_components(map_size)
+		_marks["terrain_edge_prune"] = Time.get_ticks_msec() - terrain_phase_started
+		terrain_phase_started = Time.get_ticks_msec()
 		_refresh_road_path_visuals()
+		_marks["terrain_road_visual_refresh"] = Time.get_ticks_msec() - terrain_phase_started
+		terrain_phase_started = Time.get_ticks_msec()
 		_capture_generated_tile_state(map_size)
+		_marks["terrain_state_capture"] = Time.get_ticks_msec() - terrain_phase_started
 	_marks["terrain_elevation"] = Time.get_ticks_msec() - _last
 	_last = Time.get_ticks_msec()
 
@@ -904,18 +993,38 @@ func _fill_tilemaps() -> void:
 	_last = Time.get_ticks_msec()
 
 	if intent_main_roads_enabled:
+		var roads2_phase_started := Time.get_ticks_msec()
 		if route_presentation_enabled:
 			_stamp_ascent_route_presentation(map_size)
 		_repair_road_surface_components(map_size, maxi(1, intent_main_road_half_width - 1))
+		_marks["roads2_surface_repair"] = Time.get_ticks_msec() - roads2_phase_started
+		roads2_phase_started = Time.get_ticks_msec()
 		_enforce_road_walkability(map_size)
+		_marks["roads2_walkability"] = Time.get_ticks_msec() - roads2_phase_started
+		roads2_phase_started = Time.get_ticks_msec()
 		_ensure_connected_parking_zone(map_size)
+		_marks["roads2_parking_first"] = Time.get_ticks_msec() - roads2_phase_started
+		roads2_phase_started = Time.get_ticks_msec()
 		_prune_small_edge_road_components(map_size)
+		_marks["roads2_edge_prune"] = Time.get_ticks_msec() - roads2_phase_started
+		roads2_phase_started = Time.get_ticks_msec()
 		_refresh_road_path_visuals()
+		_marks["roads2_visual_refresh_first"] = Time.get_ticks_msec() - roads2_phase_started
+		roads2_phase_started = Time.get_ticks_msec()
 		_refresh_compound_connector_pack_visuals(map_size)
+		_marks["roads2_connector_visuals"] = Time.get_ticks_msec() - roads2_phase_started
+		roads2_phase_started = Time.get_ticks_msec()
 		_prune_small_disconnected_road_components(32)
+		_marks["roads2_component_prune"] = Time.get_ticks_msec() - roads2_phase_started
+		roads2_phase_started = Time.get_ticks_msec()
 		_ensure_connected_parking_zone(map_size)
+		_marks["roads2_parking_second"] = Time.get_ticks_msec() - roads2_phase_started
+		roads2_phase_started = Time.get_ticks_msec()
 		_refresh_road_path_visuals()
+		_marks["roads2_visual_refresh_second"] = Time.get_ticks_msec() - roads2_phase_started
+		roads2_phase_started = Time.get_ticks_msec()
 		_capture_generated_tile_state(map_size)
+		_marks["roads2_state_capture"] = Time.get_ticks_msec() - roads2_phase_started
 	_marks["roads_pass2"] = Time.get_ticks_msec() - _last
 	_last = Time.get_ticks_msec()
 
@@ -1114,12 +1223,17 @@ func _apply_floor_value_clusters(result: Dictionary, seed: int) -> void:
 		if fleck_noise < 0.14 and dominant_score < 0.30:
 			continue
 		var source_id := int(dominant_cluster["source_id"])
-		var existing_source := floor_tilemap.get_cell_source_id(cell)
+		var existing_data := _generated_floor_cells.get(cell, {}) as Dictionary
+		var existing_source := int(existing_data.get("source_id", -1))
 		if source_id == existing_source:
 			var current_index := variant_sources.find(source_id)
 			source_id = variant_sources[(current_index + 1) % variant_sources.size()]
 		var atlas := _floor_value_cluster_atlas_coord(cell, source_id, int(dominant_cluster["salt"]))
-		floor_tilemap.set_cell(cell, source_id, atlas, 0)
+		# Streaming reveal may have this authoritative cell intentionally
+		# unpainted. Update semantic tile data now and repaint only cells that
+		# are already visible; later reveal reads the updated dictionary.
+		if floor_tilemap.get_cell_source_id(cell) >= 0:
+			floor_tilemap.set_cell(cell, source_id, atlas, 0)
 		_generated_floor_cells[cell] = {
 			"source_id": source_id,
 			"atlas": atlas,
@@ -5731,7 +5845,9 @@ func _clear_foliage() -> void:
 
 
 func _generate_ruin_props(map_size: Vector2i) -> void:
+	var timing_started := Time.get_ticks_msec()
 	_clear_ruin_props()
+	var clear_ms := Time.get_ticks_msec() - timing_started
 	if not enable_ruin_prop_spawning:
 		return
 	if _ruin_prop_parent == null:
@@ -5742,10 +5858,12 @@ func _generate_ruin_props(map_size: Vector2i) -> void:
 		return
 
 	var candidate_tiles: Array[Vector2i] = []
+	timing_started = Time.get_ticks_msec()
 	for tile_variant in _generated_floor_cells.keys():
 		var tile := tile_variant as Vector2i
 		if _should_place_ruin_prop(tile, map_size):
 			candidate_tiles.append(tile)
+	var prepare_ms := Time.get_ticks_msec() - timing_started
 
 	if candidate_tiles.is_empty():
 		if ruin_prop_debug_logging:
@@ -5766,12 +5884,15 @@ func _generate_ruin_props(map_size: Vector2i) -> void:
 	_ruin_prop_scatterer.force_collision_debug = ruin_prop_force_collision_debug
 	_ruin_prop_parent.add_child(_ruin_prop_scatterer)
 
+	timing_started = Time.get_ticks_msec()
 	var spawned := _ruin_prop_scatterer.scatter_on_tiles(
 		candidate_tiles,
 		Callable(self, "_ruin_prop_tile_to_world"),
 		{},
 		Callable(self, "_validate_ruin_prop_candidate")
 	)
+	var spawn_ms := Time.get_ticks_msec() - timing_started
+	timing_started = Time.get_ticks_msec()
 	_configure_portal_pair(candidate_tiles, spawned, map_size)
 	_reject_ruin_props_after_route_finalization(spawned)
 	_obs_gauge(&"procgen_scattered_prop_count", spawned.size())
@@ -5782,6 +5903,11 @@ func _generate_ruin_props(map_size: Vector2i) -> void:
 			_enforce_ruin_prop_blocker_clearance(prop)
 			_observe_ruin_prop_collision(prop)
 	validate_no_stuck_pockets(runtime_blocker_remediate_stuck_pockets)
+	var finalize_ms := Time.get_ticks_msec() - timing_started
+	print(
+		"[ProcGen] ruin_props clear=%dms prepare=%dms spawn=%dms finalize=%dms"
+		% [clear_ms, prepare_ms, spawn_ms, finalize_ms]
+	)
 	if ruin_prop_debug_logging:
 		print("[RuinProps] Placed %d props under %s" % [spawned.size(), _ruin_prop_parent.get_path()])
 
@@ -6862,7 +6988,9 @@ func _attach_portal_light_rig(prop: ProceduralProp, portal_definition: PropDefin
 
 
 func _generate_interior_props(map_size: Vector2i) -> void:
+	var timing_started := Time.get_ticks_msec()
 	_clear_interior_props()
+	var clear_ms := Time.get_ticks_msec() - timing_started
 	if not interior_prop_spawning_enabled or interior_prop_count <= 0:
 		return
 	if _ruin_prop_parent == null:
@@ -6874,6 +7002,7 @@ func _generate_interior_props(map_size: Vector2i) -> void:
 			print("[InteriorProps] No props_*.png textures found in %s" % INTERIOR_RUNTIME_DIR)
 		return
 
+	timing_started = Time.get_ticks_msec()
 	var candidate_tiles := _build_intentional_interior_prop_candidates(map_size)
 	if candidate_tiles.is_empty():
 		for tile_variant in _generated_floor_cells.keys():
@@ -6883,8 +7012,10 @@ func _generate_interior_props(map_size: Vector2i) -> void:
 	candidate_tiles.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
 		return _tile_noise_hash(a + Vector2i(1501, 271)) < _tile_noise_hash(b + Vector2i(1501, 271))
 	)
+	var prepare_ms := Time.get_ticks_msec() - timing_started
 
 	var placed_tiles: Array[Vector2i] = []
+	timing_started = Time.get_ticks_msec()
 	for tile in candidate_tiles:
 		if _interior_prop_nodes.size() >= interior_prop_count:
 			break
@@ -6892,6 +7023,11 @@ func _generate_interior_props(map_size: Vector2i) -> void:
 			continue
 		_place_interior_prop(tile)
 		placed_tiles.append(tile)
+	var spawn_ms := Time.get_ticks_msec() - timing_started
+	print(
+		"[ProcGen] interior_props clear=%dms prepare=%dms spawn=%dms"
+		% [clear_ms, prepare_ms, spawn_ms]
+	)
 
 	if interior_prop_debug_logging:
 		print("[InteriorProps] Placed %d props under %s" % [_interior_prop_nodes.size(), _ruin_prop_parent.get_path()])
@@ -7444,12 +7580,35 @@ func _apply_foliage_occlusion_material(material: ShaderMaterial, active_centers:
 func _refresh_depth_backdrop() -> void:
 	if depth_backdrop == null:
 		return
+	depth_backdrop.configure_from_chasm_cells(
+		_get_chasm_presentation_cells()
+	)
 
-	var cells: Array = []
-	for cell_variant: Variant in _generated_floor_cells.keys():
-		cells.append(cell_variant)
 
-	depth_backdrop.configure_from_cells(cells)
+func _get_chasm_presentation_cells() -> Array:
+	var cells: Dictionary = {}
+	for cell_variant: Variant in _generated_wall_cells.keys():
+		if not cell_variant is Vector2i:
+			continue
+		var data := _generated_wall_cells[cell_variant] as Dictionary
+		var source_id := int(data.get("source_id", -1))
+		if source_id == 58 or (source_id >= 100 and source_id <= 114):
+			cells[cell_variant] = true
+
+	var tile_by_cell := (
+		_last_terrain_result.get("tile_by_cell", {}) as Dictionary
+	)
+	for cell_variant: Variant in tile_by_cell.keys():
+		if not cell_variant is Vector2i:
+			continue
+		var tile_id := String(tile_by_cell[cell_variant])
+		if (
+			"chasm" in tile_id
+			or tile_id == "collapsed_gap_32"
+			or tile_id == "broken_gap_edge_32"
+		):
+			cells[cell_variant] = true
+	return cells.keys()
 
 
 func _prepare_streaming_reveal() -> void:
