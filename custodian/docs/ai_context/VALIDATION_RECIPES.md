@@ -911,6 +911,10 @@ godot --headless --path . \
   --script res://tools/validation/ambient_enemy_navigation_perf_smoke.gd
 godot --headless --path . \
   --script res://tools/validation/enemy_behavior_vault_smoke.gd
+
+# Optional threshold-free real-actor scaling report (longer-running).
+godot --headless --path . \
+  --script res://tools/validation/ambient_enemy_full_actor_perf_bench.gd
 ```
 
 The focused smoke proves one queued ambient instantiation per scheduler tick,

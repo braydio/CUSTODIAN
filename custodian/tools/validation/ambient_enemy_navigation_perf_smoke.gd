@@ -9,6 +9,7 @@ const NAVIGATION_SYSTEM_SCRIPT := preload(
 const SPATIAL_INDEX_SCRIPT := preload(
 	"res://game/systems/simulation/enemy_spatial_index.gd"
 )
+const GENERATED_CAMP_GROUP := &"generated_procgen_ambient_camp"
 
 var _path_callback_count := 0
 
@@ -109,6 +110,32 @@ func _run() -> void:
 	var nearby := spatial_index.get_nearby_enemies(Vector2(100.0, 200.0))
 	assert(not nearby.is_empty())
 	assert(nearby.size() <= spawned_nodes.size())
+
+	var marker := Marker2D.new()
+	marker.name = "AmbientCampIdempotencyMarker"
+	marker.position = Vector2(2000.0, 2000.0)
+	marker.add_to_group(spawner.marker_group)
+	test_root.add_child(marker)
+	spawner.max_generated_camps = 1
+	spawner.max_active_ambient_enemies = 2
+	spawner.enemies_per_camp_min = 2
+	spawner.enemies_per_camp_max = 2
+	assert(spawner.spawn_from_markers() == 1)
+	assert(spawner.spawn_from_markers() == 0)
+	var generated_camps := marker.get_children().filter(
+		func(child: Node) -> bool:
+			return child.is_in_group(GENERATED_CAMP_GROUP)
+	)
+	assert(generated_camps.size() == 1)
+	var observatory := root.get_node_or_null("/root/DevObservatory")
+	if observatory != null:
+		assert(
+			int(observatory.counters.get(
+				"ambient_enemy_duplicate_marker_suppressed",
+				0
+			))
+			>= 1
+		)
 
 	var spawn_snapshot := spawner.get_performance_snapshot()
 	print(

@@ -1,6 +1,6 @@
 # FILE INDEX — CUSTODIAN
 
-Last updated: 2026-07-26
+Last updated: 2026-08-03
 
 ## Local Entry And Workflow
 
@@ -804,3 +804,4 @@ Last updated: 2026-07-26
 - `custodian/game/systems/core/systems/enemy_navigation_broker.gd` — NavigationSystem-owned FIFO/coalescing broker capped at two synchronous enemy A* searches per physics frame.
 - `custodian/game/systems/simulation/enemy_spatial_index.gd` — shared 64 px enemy buckets refreshed at 10 Hz for stable local separation candidates.
 - `custodian/tools/validation/ambient_enemy_navigation_perf_smoke.gd` — focused spawn/prewarm/path-budget/spatial-index instrumentation contract.
+- `custodian/tools/validation/ambient_enemy_full_actor_perf_bench.gd` — threshold-free headless benchmark using the real grunt scene at baseline and 1/2/4/8 live actors; writes frame/engine timing JSON under `user://performance/`.

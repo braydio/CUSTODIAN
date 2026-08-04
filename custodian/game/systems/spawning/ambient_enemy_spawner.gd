@@ -5,6 +5,8 @@ const CAMP_SCRIPT := preload("res://game/systems/spawning/ambient_enemy_camp.gd"
 const GRUNT_ANIMATION_LIBRARY := preload(
 	"res://game/enemies/procgen/grunt_animation_library.gd"
 )
+const GENERATED_CAMP_GROUP := &"generated_procgen_ambient_camp"
+const CAMP_CREATED_META := &"ambient_enemy_camp_created"
 
 @export var enemy_scene: PackedScene
 @export var marker_group: StringName = &"ambient_enemy_camp_marker"
@@ -135,37 +137,75 @@ func _obs_set_gauge(gauge_name: String, value: Variant) -> void:
 func spawn_from_markers() -> int:
 	if enemy_scene == null:
 		return 0
+
 	var player := get_tree().get_first_node_in_group("player") as Node2D
 	var accepted: Array[Vector2] = []
 	var created := 0
-	for marker in get_tree().get_nodes_in_group(marker_group):
+
+	for marker_variant in get_tree().get_nodes_in_group(marker_group):
 		if created >= max_generated_camps:
 			break
-		if not (marker is Node2D) or (marker as Node).is_queued_for_deletion():
+
+		var marker := marker_variant as Node2D
+		if marker == null or marker.is_queued_for_deletion():
 			continue
+
+		# ContractWorldLoader and the deferred startup call may both request
+		# marker processing. A marker may create exactly one generated camp.
+		if bool(marker.get_meta(CAMP_CREATED_META, false)):
+			_obs_increment("ambient_enemy_duplicate_marker_suppressed")
+			continue
+		if _marker_has_generated_camp(marker):
+			marker.set_meta(CAMP_CREATED_META, true)
+			_obs_increment("ambient_enemy_duplicate_marker_suppressed")
+			continue
+
 		if (created + 1) * maxi(1, enemies_per_camp_min) > max_active_ambient_enemies:
 			break
-		var position := (marker as Node2D).global_position
-		if player != null and position.distance_to(player.global_position) < min_distance_from_player_start_px:
+
+		var marker_position := marker.global_position
+		if (
+			player != null
+			and marker_position.distance_to(player.global_position)
+			< min_distance_from_player_start_px
+		):
 			continue
+
 		var too_close := false
-		for existing in accepted:
-			if position.distance_to(existing) < min_camp_spacing_px:
+		for existing_position in accepted:
+			if (
+				marker_position.distance_to(existing_position)
+				< min_camp_spacing_px
+			):
 				too_close = true
 				break
 		if too_close:
 			continue
+
 		var camp := CAMP_SCRIPT.new() as AmbientEnemyCamp
 		camp.camp_id = StringName("generated_camp_%d" % created)
 		camp.enemy_scene = enemy_scene
 		camp.enemy_count_min = enemies_per_camp_min
-		camp.enemy_count_max = maxi(enemies_per_camp_min, enemies_per_camp_max)
-		camp.add_to_group("generated_procgen_ambient_camp")
-		(marker as Node2D).add_child(camp)
-		camp.global_position = position
-		accepted.append(position)
+		camp.enemy_count_max = maxi(
+			enemies_per_camp_min,
+			enemies_per_camp_max
+		)
+		camp.position = Vector2.ZERO
+		camp.add_to_group(GENERATED_CAMP_GROUP)
+
+		marker.set_meta(CAMP_CREATED_META, true)
+		marker.add_child(camp)
+
+		accepted.append(marker_position)
 		created += 1
 	return created
+
+
+func _marker_has_generated_camp(marker: Node) -> bool:
+	for child in marker.get_children():
+		if child is Node and child.is_in_group(GENERATED_CAMP_GROUP):
+			return true
+	return false
 
 
 func get_active_enemy_count() -> int:
