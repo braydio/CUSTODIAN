@@ -71,7 +71,13 @@ func _run() -> void:
 	observatory.call("_sample_frame_time", 0.010)
 	observatory.call("_sample_frame_time", 0.020)
 	observatory.call("_sample_frame_time", 0.040)
-	observatory.call("_sample_runtime_gauges")
+	var scans_before_lightweight_sample := int(
+		observatory.get("_runtime_tree_scan_count")
+	)
+	observatory.call("_sample_runtime_gauges", false)
+	if int(observatory.get("_runtime_tree_scan_count")) != scans_before_lightweight_sample:
+		failures.append("lightweight performance sampling must not scan the scene tree")
+	observatory.call("_sample_runtime_gauges", true)
 	var performance_summary := observatory.get_performance_summary()
 	if int(performance_summary.get("sample_count", 0)) != 3:
 		failures.append("performance capture must retain frame-time samples")
@@ -81,6 +87,14 @@ func _run() -> void:
 		failures.append("performance capture hitch count is incorrect")
 	if not observatory.gauges.has(&"performance_draw_calls") or not observatory.gauges.has(&"procgen_reveal_queue"):
 		failures.append("performance renderer/procgen gauges are missing")
+	if not observatory.gauges.has(&"observatory_scan_usec"):
+		failures.append("explicit tree scans must expose observatory_scan_usec")
+	if not observatory.gauges.get(&"node_class_histogram", {}) is Dictionary:
+		failures.append("explicit tree scan class histogram is missing")
+	observatory.set_enabled(false)
+	if not observatory.performance_capture_enabled:
+		failures.append("performance capture must continue after closing F9")
+	observatory.set_enabled(true)
 
 	observatory.max_events = 3
 	for event_index in range(5):

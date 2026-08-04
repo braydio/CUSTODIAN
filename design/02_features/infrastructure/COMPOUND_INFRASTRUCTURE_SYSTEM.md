@@ -828,4 +828,5 @@ custodian/content/fabrication/fab_recipes.json
 - Migration steps identify compatibility boundaries.
 - The transaction order for placement and construction is atomic.
 - Power allocation and reserve formulas are deterministic.
+- Minimum, standard, and overdrive passes accumulate final per-consumer grants in memory; the grid calls `apply_power_allocation()` exactly once per enabled consumer per distribution tick. Stable allocation/tier/output state emits neither `allocation_changed` nor duplicate Observatory tier transitions.
 - Every Milestone 1 acceptance criterion maps to a focused smoke test.

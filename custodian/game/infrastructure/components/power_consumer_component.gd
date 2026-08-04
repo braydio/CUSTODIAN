@@ -62,7 +62,9 @@ func is_power_consumer_enabled() -> bool:
 
 
 func apply_power_allocation(amount: float) -> void:
+	var previous_allocation := allocated_power
 	var previous_tier := power_tier
+	var previous_output := effective_output
 	allocated_power = maxf(0.0, amount)
 	if not enabled or not _active or allocated_power + 0.0001 < minimum_power:
 		power_tier = &"offline"
@@ -77,7 +79,17 @@ func apply_power_allocation(amount: float) -> void:
 		power_tier = &"standard"
 		effective_output = 1.0
 	effective_output *= _get_integrity_modifier()
-	allocation_changed.emit(allocated_power, power_tier, effective_output)
+	var state_changed := (
+		not is_equal_approx(previous_allocation, allocated_power)
+		or previous_tier != power_tier
+		or not is_equal_approx(previous_output, effective_output)
+	)
+	if state_changed:
+		allocation_changed.emit(
+			allocated_power,
+			power_tier,
+			effective_output
+		)
 	if previous_tier != power_tier:
 		_observe_tier_change(previous_tier)
 

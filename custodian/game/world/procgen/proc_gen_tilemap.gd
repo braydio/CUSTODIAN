@@ -597,6 +597,7 @@ var _foliage_deferred_start_msec: int = 0
 var _interior_prop_textures: Array[Texture2D] = []
 var _fruit_texture: Texture2D = null
 var _fruit_sprites: Array[Node2D] = []
+var _presentation_gauge_accum := 0.0
 var _foliage_spawner: ProcgenFoliageSpawner = null
 var _planet_world_profile: Dictionary = {}
 var _world_progress_profile = null
@@ -670,6 +671,10 @@ func _process(delta: float) -> void:
 		_process_foliage_spawn_queue()
 	if not _is_attached_to_runtime_world():
 		return
+	_presentation_gauge_accum += delta
+	if _presentation_gauge_accum >= 0.5:
+		_presentation_gauge_accum = 0.0
+		_publish_presentation_node_gauges()
 
 	if _streaming_player == null or not is_instance_valid(_streaming_player):
 		_streaming_player = get_tree().get_first_node_in_group("player") as Node2D
@@ -691,6 +696,16 @@ func _process(delta: float) -> void:
 
 	if enable_streaming_reveal:
 		_process_streaming_reveal_queue(delta)
+
+
+func _publish_presentation_node_gauges() -> void:
+	_obs_gauge(&"procgen_foliage_sprite_count", _foliage_nodes.size())
+	_obs_gauge(&"procgen_road_decal_count", _road_piece_nodes.size())
+	_obs_gauge(
+		&"procgen_interior_prop_count",
+		_interior_prop_nodes.size()
+	)
+	_obs_gauge(&"procgen_fruit_sprite_count", _fruit_sprites.size())
 
 
 func _process_foliage_spawn_queue() -> void:

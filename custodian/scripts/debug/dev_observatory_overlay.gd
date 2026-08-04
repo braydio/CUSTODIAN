@@ -30,7 +30,11 @@ func _input(event: InputEvent) -> void:
 
 func _process(delta: float) -> void:
 	_accum += delta
-	if _accum < refresh_interval:
+	var current_refresh_interval := (
+		maxf(0.25, refresh_interval)
+		if _page_index == 1 else refresh_interval
+	)
+	if _accum < current_refresh_interval:
 		return
 
 	_accum = 0.0
@@ -46,6 +50,13 @@ func _refresh() -> void:
 		return
 	if observatory.has_method("set_performance_capture_enabled"):
 		observatory.call("set_performance_capture_enabled", _page_index == 1)
+	if observatory.has_method("set_performance_page_active"):
+		observatory.call("set_performance_page_active", _page_index == 1)
+	if observatory.has_method("set_runtime_tree_sampling_enabled"):
+		observatory.call(
+			"set_runtime_tree_sampling_enabled",
+			_page_index == 4
+		)
 
 	var lines: PackedStringArray = []
 	lines.append("[b]CUSTODIAN // DEVELOPER OBSERVATORY[/b]")
@@ -77,6 +88,13 @@ func _set_page(index: int) -> void:
 	var observatory := get_node_or_null("/root/DevObservatory")
 	if observatory != null and observatory.has_method("set_performance_capture_enabled"):
 		observatory.call("set_performance_capture_enabled", _page_index == 1)
+	if observatory != null and observatory.has_method("set_performance_page_active"):
+		observatory.call("set_performance_page_active", _page_index == 1)
+	if observatory != null and observatory.has_method("set_runtime_tree_sampling_enabled"):
+		observatory.call(
+			"set_runtime_tree_sampling_enabled",
+			_page_index == 4
+		)
 	_refresh()
 
 
@@ -126,6 +144,10 @@ func _append_performance(lines: PackedStringArray, observatory: Node) -> void:
 		["world roots", &"loaded_world_branch_count"], ["procgen roots", &"loaded_procgen_root_count"],
 	]:
 		lines.append("  %s: %s" % [item[0], _gauge(observatory, item[1])])
+	lines.append(
+		"  last explicit tree scan: %sus"
+		% _gauge(observatory, &"observatory_scan_usec")
+	)
 
 
 func _append_warnings(lines: PackedStringArray, observatory: Node) -> void:

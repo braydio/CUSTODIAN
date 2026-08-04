@@ -105,7 +105,7 @@ func _distribute_power(delta: float = 1.0 / 60.0) -> void:
 				sector.apply_power_allocation(float(sector.standard_power_required))
 			continue
 
-	var consumers: Array = []
+	var consumers: Array[Node] = []
 	for sector in sectors:
 		if not is_instance_valid(sector):
 			continue
@@ -132,20 +132,21 @@ func _distribute_power(delta: float = 1.0 / 60.0) -> void:
 		return a_priority > b_priority
 	)
 
+	var allocations: Dictionary = {}
+	for consumer in consumers:
+		allocations[consumer.get_instance_id()] = 0.0
+
 	power_requested_rate = 0.0
 	for consumer in consumers:
 		power_requested_rate += _get_consumer_standard_power(consumer)
 		var min_required := _get_consumer_minimum_power(consumer)
 		if available >= min_required:
-			consumer.call("apply_power_allocation", min_required)
+			allocations[consumer.get_instance_id()] = min_required
 			available -= min_required
-		else:
-			consumer.call("apply_power_allocation", 0.0)
 
 	for consumer in consumers:
-		if available <= 0.0:
-			break
-		var current_allocation := _get_consumer_allocation(consumer)
+		var id := consumer.get_instance_id()
+		var current_allocation := float(allocations[id])
 		if current_allocation + 0.0001 < _get_consumer_minimum_power(consumer):
 			continue
 		var standard_required := _get_consumer_standard_power(consumer)
@@ -153,21 +154,30 @@ func _distribute_power(delta: float = 1.0 / 60.0) -> void:
 		if additional_required <= 0.0:
 			continue
 		var granted: float = min(additional_required, available)
-		consumer.call("apply_power_allocation", current_allocation + granted)
+		allocations[id] = current_allocation + granted
 		available -= granted
 
 	for consumer in consumers:
 		if available <= 0.0:
 			break
+		var id := consumer.get_instance_id()
 		var overdrive_required := _get_consumer_overdrive_power(consumer)
 		if overdrive_required <= 0.0:
 			continue
-		var current_allocation := _get_consumer_allocation(consumer)
+		var current_allocation := float(allocations[id])
 		if current_allocation + 0.0001 < _get_consumer_standard_power(consumer):
 			continue
 		var granted := minf(maxf(0.0, overdrive_required - current_allocation), available)
-		consumer.call("apply_power_allocation", current_allocation + granted)
+		allocations[id] = current_allocation + granted
 		available -= granted
+
+	# Publish one authoritative final state per consumer. Intermediate minimum,
+	# standard, and overdrive calculations must never create false tier changes.
+	for consumer in consumers:
+		consumer.call(
+			"apply_power_allocation",
+			float(allocations[consumer.get_instance_id()])
+		)
 
 	if total_power < 50.0 and not _low_power_warned:
 		print("WARNING: Low power! ", total_power, " remaining")

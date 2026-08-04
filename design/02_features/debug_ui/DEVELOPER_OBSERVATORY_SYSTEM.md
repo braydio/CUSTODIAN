@@ -18,9 +18,9 @@ Provide a developer-only observability surface that makes live simulation state,
 - The overlay is presentation-only. It reads counters, gauges, and recent events; it does not mutate gameplay state.
 - Systems may report events, counters, and gauges, but gameplay authority remains in the existing runtime owners.
 - Bounded event/counter ingestion remains available while the overlay is hidden, but recursive runtime sampling does not run.
-- Enabling the overlay samples at the configured interval with one consolidated scene-tree traversal per sample. F10 export forces exactly one current snapshot before serialization.
+- Enabling the overlay samples cheap frame/engine/group gauges at the configured interval. Recursive scene-tree traversal runs only on the World/Procgen page or during F10 export; `observatory_scan_usec` exposes its cost. F10 export forces exactly one current snapshot before serialization.
 - Explicit export remains callable even when continuous sampling is unavailable and still forces its final snapshot.
-- The Performance page alone retains a bounded 600-sample per-frame frame-time ring. Other pages retain the existing 0.25-second consolidated scan without per-frame history, and closing F9 disables performance capture.
+- Selecting the Performance page starts a bounded 600-sample per-frame frame-time ring. Capture continues when F9 closes so the overlay UI and tree scanner can be excluded from the measured interval; selecting another page stops it. The Performance page never requests recursive ownership sampling.
 - Performance summaries expose current, rolling-average, P95, P99, worst frame time, 33.333 ms hitch count, 50 ms severe-hitch count, draw calls, rendered objects, scene ownership counts, active combat populations, procgen reveal queue, and loaded world/procgen roots. F10 embeds the bounded summary in the session export.
 
 ## Initial Slice
@@ -121,7 +121,7 @@ These are good candidates for observatory telemetry when they appear in gameplay
 
 - **Do not** put high-frequency per-frame spam into `log_event`. Use gauges for continuous state and only log events on transitions: "stuck started," "stuck resolved," "stuck rescue fired," "falcon overlap detected."
 - Temporary `print()` / `debug_draw()` is allowed for local visual debugging, but any useful playtest artifact should also appear in `DevObservatory` so F10 session exports capture it for post-run analysis.
-- Recursive runtime ownership statistics are an overlay/export diagnostic, not a background service. Hidden sampling must perform zero full-tree scans; enabled sampling must not separately traverse for loaded world/procgen counts.
+- Recursive runtime ownership statistics are a World/Procgen-page/export diagnostic, not a background or Performance-page service. Hidden and Performance-page sampling must perform zero full-tree scans. Each explicit scan records duration, a node-class histogram, and top-level subtree counts.
 
 ### Live procgen stuck-pocket telemetry
 
@@ -182,6 +182,9 @@ write to the export or change runtime state.
 - Infrastructure power-tier telemetry compares the previous and resolved tier
   and emits only on an actual transition. Stable allocation recalculation must
   not produce another `infrastructure_power_tier_changed` event.
+- The grid calculates minimum, standard, and overdrive grants before publishing
+  one final allocation per consumer. `allocation_changed` emits only when the
+  allocation, resolved tier, or effective output actually changes.
 - Enemy-to-player damage and enemy attacks retain their existing shared-ID
   incoming-hit and terminal-outcome telemetry. These signals are observational
   mirrors of authoritative outcomes and do not alter combat.
@@ -258,9 +261,10 @@ write to the export or change runtime state.
 - No new simulation authority is introduced into the overlay.
 - `F10` writes timestamped and stable session JSON without clearing the event buffer.
 - With F9 hidden, periodic processing performs zero full scene-tree scans.
-- With F9 visible, one sampling interval performs one consolidated scene-tree scan.
+- With F9 on Overview, Performance, Warnings, or Events, periodic processing performs zero full scene-tree scans.
+- With the World/Procgen page visible, one sampling interval performs one consolidated scene-tree scan and records `observatory_scan_usec` plus class/subtree histograms.
 - Export forces one current runtime snapshot even when the overlay is hidden.
-- Performance sampling occurs only while the F9 Performance page is selected, remains capped at 600 frames, and introduces no additional scene-tree traversal.
+- Performance sampling starts on the F9 Performance page, continues after F9 closes, remains capped at 600 frames, and introduces no scene-tree traversal.
 
 ## Next Agent Slice
 

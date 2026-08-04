@@ -29,6 +29,8 @@ var last_export_absolute_path := ""
 var last_export_time := ""
 var last_export_error := ""
 var performance_capture_enabled := false
+var performance_page_active := false
+var runtime_tree_sampling_enabled := false
 
 var _sample_accum := 0.0
 var _overlay: CanvasLayer = null
@@ -74,14 +76,19 @@ func _input(event: InputEvent) -> void:
 
 
 func _process(delta: float) -> void:
-	if not enabled or not _dev_allows(&"observatory_sampling"):
+	if not _dev_allows(&"observatory_sampling"):
 		return
 	if performance_capture_enabled:
 		_sample_frame_time(delta)
+	if not enabled:
+		return
 	_sample_accum += delta
 	if _sample_accum >= sample_interval:
 		_sample_accum = 0.0
-		_sample_runtime_gauges()
+		_sample_runtime_gauges(
+			runtime_tree_sampling_enabled,
+			not performance_page_active
+		)
 
 
 func toggle() -> void:
@@ -95,8 +102,6 @@ func set_enabled(value: bool) -> void:
 		return
 
 	enabled = value
-	if not enabled:
-		performance_capture_enabled = false
 	_sample_accum = 0.0
 
 	if _overlay != null:
@@ -194,7 +199,19 @@ func clear() -> void:
 
 
 func set_performance_capture_enabled(value: bool) -> void:
-	performance_capture_enabled = value and enabled
+	performance_capture_enabled = (
+		value and _dev_allows(&"observatory_sampling")
+	)
+
+
+func set_performance_page_active(value: bool) -> void:
+	performance_page_active = value and enabled
+
+
+func set_runtime_tree_sampling_enabled(value: bool) -> void:
+	runtime_tree_sampling_enabled = (
+		value and enabled and _dev_allows(&"observatory_sampling")
+	)
 
 
 func get_performance_summary() -> Dictionary:
@@ -296,7 +313,7 @@ func export_session_json(path: String = DEFAULT_EXPORT_PATH) -> String:
 	# F10/export must retain a current final snapshot even though hidden
 	# Observatory presentation performs no periodic scene-tree sampling.
 	_force_snapshot_write = true
-	_sample_runtime_gauges()
+	_sample_runtime_gauges(true, true)
 	_force_snapshot_write = false
 	var resolved_path := path.strip_edges()
 	if resolved_path.is_empty():
@@ -517,7 +534,10 @@ func _ensure_parent_dir(path: String) -> bool:
 	return result == OK or DirAccess.dir_exists_absolute(absolute_dir)
 
 
-func _sample_runtime_gauges() -> void:
+func _sample_runtime_gauges(
+	include_tree_scan := false,
+	include_runtime_details := true
+) -> void:
 	set_gauge(&"fps", Engine.get_frames_per_second())
 	set_gauge(&"uptime_sec", snappedf(get_uptime_sec(), 0.01))
 	_publish_performance_gauges()
@@ -529,6 +549,8 @@ func _sample_runtime_gauges() -> void:
 		&"performance_rendered_objects",
 		int(Performance.get_monitor(Performance.RENDER_TOTAL_OBJECTS_IN_FRAME))
 	)
+	if not include_runtime_details:
+		return
 
 	var tree := get_tree()
 	if tree == null:
@@ -548,16 +570,31 @@ func _sample_runtime_gauges() -> void:
 				int(summary.get("total_samples", 0))
 			)
 
-	var node_stats := _collect_node_stats(tree.root)
-	_runtime_tree_scan_count += 1
-	set_gauge(&"observatory_full_tree_scan_count", _runtime_tree_scan_count)
-	for stat_name in node_stats.keys():
-		set_gauge(StringName(str(stat_name)), node_stats[stat_name])
-	for peak_name in ["node_count", "physics_body_count", "collision_shape_count"]:
-		var gauge_name := StringName("%s_peak" % peak_name)
-		set_gauge(gauge_name, maxi(int(gauges.get(gauge_name, 0)), int(node_stats.get(peak_name, 0))))
-	set_gauge(&"loaded_world_branch_count", int(node_stats.get("loaded_world_branch_count", 0)))
-	set_gauge(&"loaded_procgen_root_count", int(node_stats.get("loaded_procgen_root_count", 0)))
+	if include_tree_scan:
+		var scan_started := Time.get_ticks_usec()
+		var node_stats := _collect_node_stats(tree.root)
+		var scan_usec := Time.get_ticks_usec() - scan_started
+		_runtime_tree_scan_count += 1
+		set_gauge(&"observatory_scan_usec", scan_usec)
+		set_gauge(
+			&"observatory_full_tree_scan_count",
+			_runtime_tree_scan_count
+		)
+		for stat_name in node_stats.keys():
+			set_gauge(StringName(str(stat_name)), node_stats[stat_name])
+		for peak_name in [
+			"node_count",
+			"physics_body_count",
+			"collision_shape_count",
+		]:
+			var gauge_name := StringName("%s_peak" % peak_name)
+			set_gauge(
+				gauge_name,
+				maxi(
+					int(gauges.get(gauge_name, 0)),
+					int(node_stats.get(peak_name, 0))
+				)
+			)
 
 	var enemies := _get_unique_group_nodes(["enemy", "enemies"])
 	set_gauge(&"active_enemies", enemies.size())
@@ -742,11 +779,27 @@ func _collect_node_stats(root_node: Node) -> Dictionary:
 		"loaded_world_branch_count": 0,
 		"loaded_procgen_root_count": 0,
 		"procgen_reveal_queue": 0,
+		"node_class_histogram": {},
+		"top_level_subtree_counts": {},
 	}
-	var stack: Array[Node] = [root_node]
+	var stack: Array[Dictionary] = [{
+		"node": root_node,
+		"top_branch": String(root_node.name),
+	}]
 	while not stack.is_empty():
-		var node: Node = stack.pop_back()
+		var entry := stack.pop_back() as Dictionary
+		var node := entry["node"] as Node
+		var top_branch := String(entry["top_branch"])
 		stats["node_count"] += 1
+		var class_histogram := stats["node_class_histogram"] as Dictionary
+		var node_class_name := node.get_class()
+		class_histogram[node_class_name] = int(
+			class_histogram.get(node_class_name, 0)
+		) + 1
+		var subtree_counts := stats["top_level_subtree_counts"] as Dictionary
+		subtree_counts[top_branch] = int(
+			subtree_counts.get(top_branch, 0)
+		) + 1
 		var node_name := StringName(node.name)
 		if node_name == &"ProcGenRuntime" or node_name == &"ConnectedMaps":
 			stats["loaded_world_branch_count"] += 1
@@ -797,7 +850,13 @@ func _collect_node_stats(root_node: Node) -> Dictionary:
 			stats["physics_process_enabled_node_count"] += 1
 		for child in node.get_children():
 			if child is Node:
-				stack.append(child)
+				stack.append({
+					"node": child,
+					"top_branch": (
+						String(child.name)
+						if node == root_node else top_branch
+					),
+				})
 	return stats
 
 

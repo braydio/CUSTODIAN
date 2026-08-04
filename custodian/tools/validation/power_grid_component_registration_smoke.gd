@@ -53,12 +53,27 @@ func _run() -> void:
 		"Field Fabricator PowerConsumer node is missing."
 	)
 	if power_consumer != null:
+		var allocation_signal_state := {"count": 0}
+		power_consumer.allocation_changed.connect(
+			func(
+				_allocated_power: float,
+				_power_tier: StringName,
+				_effective_output: float
+			) -> void:
+				allocation_signal_state["count"] += 1
+		)
 		var stable_allocation := float(
 			power_consumer.get("allocated_power")
 		)
 		power_consumer.call(
 			"apply_power_allocation",
 			stable_allocation
+		)
+		for _frame in 10:
+			power.call("_process", 1.0 / 60.0)
+		_require(
+			int(allocation_signal_state["count"]) == 0,
+			"Stable grid recalculation emitted allocation_changed."
 		)
 		power_consumer.call(
 			"apply_power_allocation",
@@ -71,6 +86,21 @@ func _run() -> void:
 	_require(
 		tier_events_after == tier_events_before,
 		"Stable power allocation emitted a duplicate tier-change event."
+	)
+	var transition_events_before := tier_events_after
+	source.output_rate = 0.0
+	power.total_power = 0.0
+	power.call("_process", 1.0 / 60.0)
+	source.output_rate = 120.0
+	power.total_power = 100.0
+	power.call("_process", 1.0 / 60.0)
+	var transition_events_after := _count_observatory_events(
+		observatory,
+		&"infrastructure_power_tier_changed"
+	)
+	_require(
+		transition_events_after == transition_events_before + 2,
+		"Offline/standard cycle must emit exactly two final tier transitions."
 	)
 	game_root.queue_free()
 	await process_frame
