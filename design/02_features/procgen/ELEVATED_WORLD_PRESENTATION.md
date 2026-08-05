@@ -11,7 +11,7 @@ The deterministic `ASCENT_FIELD` campaign world is presented as a bright, walkab
 - Procgen retains authority over geometry, floor cells, roads, paths, elevation, navigation, collision, and streaming reveal.
 - `ProcgenDepthBackdrop` owns only the global far-haze, canopy, and near-wall-growth presentation.
 - The backdrop has no collision or navigation and never creates reachable forest terrain.
-- Bounds come from the authoritative generated floor dictionary before streaming clears visible TileMap cells.
+- The general compatibility stack records generated-floor bounds for diagnostics, but its visual placement is native-scale and camera-following. It is not scaled to the full world rectangle.
 
 ## Visual Contract
 
@@ -25,7 +25,7 @@ The contact-shadow composition is retained at `content/backgrounds/procgen/endle
 
 ## Streaming And Determinism
 
-The live general-world compatibility path is configured once per complete generation from authoritative generated-floor cells. Those cells establish the complete world bounds for one far-haze, canopy, and near-wall-growth stack behind opaque generated terrain; gaps reveal the underlay. This fallback remains necessary until procgen exports reliable, complete abyss semantics. `configure_from_chasm_cells()` retains the localized-region implementation for that later handoff, but is not the live general-world call path. The backdrop does not participate in simulation or per-tile reveal and therefore does not alter deterministic fingerprints. Runtime images use linear filtering without mipmaps, disabled repeat, and lossless compression.
+The live general-world compatibility path is configured once per complete generation from authoritative generated-floor cells, retaining those bounds only as metadata. One native-scale far-haze, canopy, and near-wall-growth stack follows the active camera with a small overscan, so authored edge pockets such as Ash Bell cannot expose a finite left/right seam. This remains a distant underlay rather than geographically fixed treetop terrain. `configure_from_chasm_cells()` retains the localized-region implementation for a later semantic handoff, but is not the live general-world call path. The backdrop does not participate in simulation or per-tile reveal and therefore does not alter deterministic fingerprints. Runtime images use linear filtering without mipmaps, disabled repeat, and lossless compression.
 
 ## Candidate Promotion And Runtime Visibility
 

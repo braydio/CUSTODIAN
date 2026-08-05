@@ -23,11 +23,13 @@ func _on_body_entered(body: Node):
 		else:
 			var amount := 999999 if debug_refill else _resolve_pickup_amount()
 			gained = int(body.call("add_ammo_type", ammo_type, amount))
+		_show_loot_toast(StringName(ammo_type), "Ammo Recovered", gained, Color(0.7, 1.0, 0.7, 1.0), null, ammo_type.to_upper())
 		_spawn_typed_pickup_popup(gained)
 		_play_pickup_tone()
 		queue_free()
 	elif body and body.has_method("add_ammo"):
 		var gained = body.add_ammo(max(standard_ammo, _resolve_pickup_amount()), heavy_ammo)
+		_show_loot_toast(&"ammo", "Ammo Recovered", int(gained.get("standard", 0)) + int(gained.get("heavy", 0)), Color(0.7, 1.0, 0.7, 1.0))
 		_spawn_pickup_popup(int(gained.get("standard", 0)), int(gained.get("heavy", 0)))
 		_play_pickup_tone()
 		queue_free()
@@ -101,3 +103,9 @@ func _play_pickup_tone():
 
 	var t = get_tree().create_timer(0.2)
 	t.timeout.connect(player.queue_free)
+
+
+func _show_loot_toast(item_id: StringName, display_name: String, amount: int, accent: Color, icon: Texture2D = null, detail: String = "") -> void:
+	var queue := get_tree().get_first_node_in_group("loot_toast_queue")
+	if queue != null:
+		queue.call("push_pickup", item_id, display_name, amount, accent, icon, detail)

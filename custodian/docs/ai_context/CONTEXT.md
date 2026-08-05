@@ -136,3 +136,6 @@ On significant architecture or behavior changes, update:
 - `custodian/AGENTS.md` when local routing, migration flow, or operating rules change
 
 Optionally also update legacy changelog/devlog material for historical continuity.
+# Current simulation migration contract
+
+Macro-game extraction is now scaffolded under `game/state/` and `game/systems/simulation/`. Use `design/04_architecture/PYTHON_SIM_TO_GODOT_MIGRATION.md` as authority. Keep Hub persistent, CampaignSession/WorldSimulationState transient, and route campaign completion through CampaignOutcome. Do not launch Python from Godot or expand GameState into a second world-state monolith.

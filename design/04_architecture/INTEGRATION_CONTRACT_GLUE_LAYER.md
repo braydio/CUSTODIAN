@@ -1436,4 +1436,6 @@ That is the full game architecture.
 ## Still To Go
 
 * None in this 7-file expansion set
+# Simulation integration boundary
 
+Integration adapters translate typed simulation commands/events and immutable snapshots into existing scene systems. They must not become a second source of truth. `WaveManager` is a physical spawn adapter for simulation assault plans, while sector/structure bindings project `WorldSimulationState`. Campaign-to-Hub mutation is restricted to `CampaignOutcome`. See `PYTHON_SIM_TO_GODOT_MIGRATION.md`.

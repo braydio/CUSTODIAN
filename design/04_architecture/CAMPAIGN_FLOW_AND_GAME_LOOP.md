@@ -1380,3 +1380,6 @@ That is the minimum viable Campaign Flow and Game Loop.
 ## Still To Go
 
 - [7] Integration Contract (Glue Layer)
+# Runtime simulation boundary
+
+Campaign lifecycle is represented as `HubState → CampaignScenario → CampaignSession → CampaignOutcome → HubState`. The campaign world is disposable. Its deterministic systems run through the 60 Hz `SimulationKernel`; scene nodes and UI consume snapshots/events and cannot mutate Hub state directly. Python remains an executable specification only; Godot owns runtime execution. See `PYTHON_SIM_TO_GODOT_MIGRATION.md`.

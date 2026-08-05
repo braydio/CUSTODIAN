@@ -124,6 +124,8 @@ func place_at(context: Dictionary, pos: Vector2i) -> bool:
 func _should_place_foliage(context: Dictionary, pos: Vector2i) -> bool:
 	if float(context.get("foliage_density", 0.0)) <= 0.0:
 		return false
+	if _call_bool(context, "is_inside_world_ingress_dressing_clearance", pos):
+		return false
 	if _is_route_hard_clearance(context, pos):
 		return false
 	if _call_bool(context, "is_road_surface_tile", pos) or _call_bool(context, "is_parking_zone_tile", pos):

@@ -18,10 +18,15 @@ Provide a developer-only observability surface that makes live simulation state,
 - The overlay is presentation-only. It reads counters, gauges, and recent events; it does not mutate gameplay state.
 - Systems may report events, counters, and gauges, but gameplay authority remains in the existing runtime owners.
 - Bounded event/counter ingestion remains available while the overlay is hidden, but recursive runtime sampling does not run.
-- Enabling the overlay samples cheap frame/engine/group gauges at the configured interval. Recursive scene-tree traversal runs only on the World/Procgen page or during F10 export; `observatory_scan_usec` exposes its cost. F10 export forces exactly one current snapshot before serialization.
+- `F9` is one non-echo pressed-edge, two-state presentation toggle owned only by `DevObservatory`. It never pauses the tree, changes time scale, owns capture, exports, or scans the scene tree. The overlay owns only visible Tab / Shift+Tab page cycling.
+- Cheap frame/engine/group gauges may be sampled without recursive traversal. Recursive scene-tree traversal runs only for an explicit World/Procgen snapshot and the single final F10 snapshot; hidden sampling and ordinary overlay refresh perform no tree scan. `observatory_scan_usec` exposes scan cost.
 - Explicit export remains callable even when continuous sampling is unavailable and still forces its final snapshot.
-- Selecting the Performance page starts a bounded 600-sample per-frame frame-time ring. Capture continues when F9 closes so the overlay UI and tree scanner can be excluded from the measured interval; selecting another page stops it. The Performance page never requests recursive ownership sampling.
-- Performance summaries expose current, rolling-average, P95, P99, worst frame time, 33.333 ms hitch count, 50 ms severe-hitch count, draw calls, rendered objects, scene ownership counts, active combat populations, procgen reveal queue, and loaded world/procgen roots. F10 embeds the bounded summary in the session export.
+- The Performance Incident Recorder samples wall-clock frame time continuously, independent of overlay visibility or page selection. F11 starts/stops an incident with a 180-frame pre-roll; Shift+F11 advances `baseline -> spawn -> pursuit -> combat_whiff -> combat_hit -> recovery`; F10 freezes and exports the incident. Opening F9 freezes an active incident first with reason `observatory_overlay_opened`, invalidates the wall-clock origin, and only then renders the frozen report. Closing F9 does not start another incident.
+- Focus, pause, overlay, incident, and reset boundaries invalidate the wall-clock origin. Samples at or above 2000 ms are retained as bounded `external_stalls` evidence but excluded from gameplay averages, percentiles, worst frames, hitch counters, and automatic-trigger logic. Scaled gameplay delta and time scale remain separate fields.
+- Automatic capture follows `ARMED -> CAPTURING -> DEGRADED_LATCHED -> REARMING -> ARMED`. One degraded episode can auto-trigger once; rearming requires three continuous seconds below 25 ms. Manual capture remains available while latched.
+- Every incident sample retains wall frame time, scaled gameplay delta, time scale, process/physics monitors, render monitors, leak gauges, phase, and aggregated subsystem spans. Enemy and Operator spans identify behavior, perception, navigation, movement, combat, overlap, damage, VFX, audio, and animation costs without per-actor event spam. The recorder keeps twenty worst-frame dossiers with recent event/warning context and phase-boundary lifetime deltas.
+- The Performance page displays recorder state, phase, wall-clock statistics, process/physics split, population/lifetime gauges, top spans, and a deterministic likely-owner classification. Page selection never starts or stops capture and never requests recursive sampling. Performance refresh is capped at 2 Hz, other pages at 4 Hz; unchanged text is not reassigned, counter rows cap at 24, recent events at 10, values at 120 characters, and large dictionaries are summarized for F10 export.
+- F10 freezes capture before one explicit final tree snapshot, builds one `custodian.dev_observatory.performance_incident.v1` payload, and serializes that same frozen payload to timestamped and stable paths. The payload retains at most 600 gameplay samples, 20 worst-frame dossiers, and 20 external stalls. The analyzer reports phases, aggregate spans, worst gameplay frames, external stalls, lifetime deltas, and likely owner while remaining compatible with legacy exports.
 
 ## Initial Slice
 
@@ -264,7 +269,7 @@ write to the export or change runtime state.
 - With F9 on Overview, Performance, Warnings, or Events, periodic processing performs zero full scene-tree scans.
 - With the World/Procgen page visible, one sampling interval performs one consolidated scene-tree scan and records `observatory_scan_usec` plus class/subtree histograms.
 - Export forces one current runtime snapshot even when the overlay is hidden.
-- Performance sampling starts on the F9 Performance page, continues after F9 closes, remains capped at 600 frames, and introduces no scene-tree traversal.
+- Performance incident capture is independent of every F9 page, remains capped at 600 gameplay frames, and introduces no scene-tree traversal. Opening F9 freezes an active incident before rendering its report.
 
 ## Next Agent Slice
 

@@ -1,0 +1,19 @@
+{
+  "schema": "custodian.python_sim.world_commands.v1",
+  "commands": [
+    {
+      "kind": "set_policy",
+      "payload": {
+        "repair_intensity": 3,
+        "defense_readiness": 2
+      }
+    },
+    {
+      "kind": "damage_structure",
+      "payload": {
+        "structure_id": "COMMAND_CORE",
+        "amount": 7
+      }
+    }
+  ]
+}

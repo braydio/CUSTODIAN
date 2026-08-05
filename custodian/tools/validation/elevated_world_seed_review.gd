@@ -13,6 +13,10 @@ func _run() -> void:
 		var map := MAP_SCENE.instantiate()
 		root.add_child(map)
 		var tilemap := map as ProcGenTilemap
+		assert(
+			not tilemap.intent_main_roads_enabled,
+			"Production ProcGenMap must keep wide road generation disabled."
+		)
 		var procgen := map.get_node("ProcGen2") as ProcGen
 		procgen.generate_seed = false
 		procgen.seed = seed
@@ -38,7 +42,11 @@ func _run() -> void:
 		var cliff_count := _count_layer_sources(floor_layer, 46, 59) + _count_layer_sources(wall_layer, 46, 59)
 		var void_count := _count_layer_sources(floor_layer, 100, 114) + _count_layer_sources(wall_layer, 100, 114)
 		assert(not floors.is_empty() and bounds.size != Vector2i.ZERO)
-		assert(not roads.is_empty(), "Seed %d has no road/path presentation" % seed)
+		assert(
+			roads.is_empty(),
+			"Seed %d unexpectedly generated %d wide-road tiles"
+			% [seed, roads.size()]
+		)
 		assert(bool(audit.get("ok", false)), "Seed %d route invalid: %s" % [seed, audit])
 		var spawn := level_data.get("player_spawn", Vector2i(-1, -1)) as Vector2i
 		assert(spawn != Vector2i(-1, -1) and floors.has(spawn), "Seed %d spawn is not valid floor: %s" % [seed, spawn])

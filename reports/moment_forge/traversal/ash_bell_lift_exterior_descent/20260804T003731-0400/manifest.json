@@ -1,0 +1,129 @@
+{
+  "artifacts": {
+    "assertions": "assertions.json",
+    "audio": "audio_mix.wav",
+    "contact_sheet": "current_contact_sheet.png",
+    "metrics": "metrics.json",
+    "probes": "probes.json",
+    "report": "index.html",
+    "telemetry": "telemetry.json",
+    "timeline": "timeline.json",
+    "video": "current.mp4",
+    "visual_diff": null
+  },
+  "baseline": {
+    "status": "not_requested"
+  },
+  "baseline_compatibility": {
+    "contact_sheet_ticks": [
+      0,
+      19,
+      28,
+      38,
+      70,
+      120
+    ],
+    "end_tick": 131,
+    "fps": 60,
+    "height": 720,
+    "metrics_schema_major": 1,
+    "scenario_id": "traversal/ash_bell_lift_exterior_descent",
+    "scenario_schema_version": 1,
+    "scenario_sha256": "917e78a482affa4c282a44aa487eb8e22ea5be38c1ce7cd51bbe34e6e1fc9399",
+    "start_tick": 0,
+    "width": 1280
+  },
+  "capture": {
+    "audio_requested": false,
+    "fps": 60,
+    "height": 720,
+    "mode": "full",
+    "synchronization": "verified",
+    "width": 1280
+  },
+  "generated_at": "2026-08-04T00:37:39.962470-04:00",
+  "media": {
+    "audio_metrics": {
+      "available": true,
+      "channels": 2,
+      "duration_sec": 2.2666666666666666,
+      "frames": 108800,
+      "noise_floor_dbfs": -27.04351479587883,
+      "onset_ms": null,
+      "onset_threshold_dbfs": -15.043514795878831,
+      "peak_dbfs": -15.33877109055924,
+      "peak_time_ms": 2112.6041666666665,
+      "rms_dbfs": -26.913049717008537,
+      "sample_rate": 48000,
+      "sample_width": 2
+    },
+    "audio_state": {
+      "available": true,
+      "canonical_available": true,
+      "conversion": "ffmpeg",
+      "requested": false
+    },
+    "ffmpeg_available": true,
+    "visual_diff": null
+  },
+  "repository": {
+    "branch": "main",
+    "changed_files": [
+      "M custodian/content/routes/ash_bell/forlorn_ritualant_underground_route.json",
+      " M custodian/docs/ai_context/CURRENT_STATE.md",
+      " M custodian/docs/ai_context/FILE_INDEX.md",
+      " M custodian/game/world/approaches/ash_bell/ash_bell_lift_ingress_presentation.gd",
+      " M custodian/game/world/approaches/ash_bell/ash_bell_lift_ingress_presentation.tscn",
+      " M custodian/game/world/approaches/ash_bell/ash_bell_lift_ingress_site.gd",
+      " M custodian/tools/validation/ash_bell_lift_ingress_presentation_smoke.gd",
+      " M design/05_levels/ASH_BELL_LIFT_INGRESS_PRESENTATION.md",
+      "?? custodian/assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_platform_back__idle__s__1f__128x128.png",
+      "?? custodian/assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_platform_back__idle__s__1f__128x128.png.import",
+      "?? custodian/assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_platform_back__vibrate__s__4f__128x128.png",
+      "?? custodian/assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_platform_back__vibrate__s__4f__128x128.png.import",
+      "?? custodian/assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_platform_front_lip__idle__s__1f__128x128.png",
+      "?? custodian/assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_platform_front_lip__idle__s__1f__128x128.png.import",
+      "?? custodian/assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_platform_front_lip__vibrate__s__4f__128x128.png",
+      "?? custodian/assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_platform_front_lip__vibrate__s__4f__128x128.png.import",
+      "?? reports/moment_forge/traversal/ash_bell_lift_exterior_descent/20260804T003731-0400/"
+    ],
+    "commit": "567b1b947ca33bb386f6a6ca5e09fbe4da606b83",
+    "dirty": true,
+    "root": "/home/braydenchaffee/Projects/CUSTODIAN"
+  },
+  "run_id": "20260804T003731-0400",
+  "runtime": {
+    "godot": {
+      "build": "arch_linux",
+      "hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+      "hex": 263937,
+      "major": 4,
+      "minor": 7,
+      "patch": 1,
+      "status": "stable",
+      "string": "4.7.1-stable (arch_linux)",
+      "timestamp": 1783976428
+    },
+    "physics_hz": 60,
+    "renderer": "vulkan"
+  },
+  "scenario": {
+    "id": "traversal/ash_bell_lift_exterior_descent",
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/traversal/ash_bell_lift_exterior_descent/20260804T003731-0400/scenario.snapshot.json",
+    "schema_version": 1,
+    "sha256": "917e78a482affa4c282a44aa487eb8e22ea5be38c1ce7cd51bbe34e6e1fc9399"
+  },
+  "schema": "custodian.moment_forge.run_manifest.v1",
+  "stable_assertions_passed": true,
+  "stable_fingerprint": {
+    "algorithm": "sha256",
+    "schema": "custodian.moment_forge.stable_fingerprint.v1",
+    "value": "a45a96df8d4d5e2bfa39f9c27872e92a072a029e8c765a16ea927f84d7681c70"
+  },
+  "status": "passed",
+  "tools": {
+    "ffmpeg": "/usr/bin/ffmpeg",
+    "pillow": "12.3.0",
+    "python": "3.14.6"
+  }
+}

@@ -468,12 +468,17 @@ var _dodge_fast_attack_presentation_active: bool = false
 var _buffered_attack_kind: String = ""
 var _buffered_attack_timer: float = 0.0
 var _buffered_dodge_direction: Vector2 = Vector2.ZERO
+var _melee_swing_sfx_played := false
+var _melee_swing_sfx_frames_played: Dictionary = {}
+var _melee_animation_finished := false
 var _hit_stop_active: bool = false
 var _melee_damage_current: float = 0.0
 var _melee_range_current: float = 0.0
 var _melee_arc_current: float = 0.0
 var _melee_hitbox_active: bool = false
 var _melee_hit_targets: Dictionary = {}
+var _active_melee_contact: Dictionary = {}
+var _active_melee_contact_id: StringName = &"default"
 var _melee_miss_sfx_played: bool = false
 var _melee_impact_audio_variant_cursors: Dictionary = {}
 var _critical_attack_target: Node2D = null
@@ -3641,6 +3646,17 @@ func _try_melee_attack(intent: String = ""):
 			return
 		_request_attack_state(requested_kind)
 		return
+	if requested_kind == "fast" \
+	and _melee_active \
+	and _melee_attack_kind == "fast" \
+	and _has_authored_fast_chain() \
+	and not _is_fast_chain_queue_window_open():
+		_obs_log(&"player_melee_fast_chain_input_rejected", {
+			"step": _melee_fast_combo_step,
+			"frame": animated_sprite.frame if animated_sprite != null else -1,
+			"reason": "outside_rhythm_window",
+		})
+		return
 	_buffer_attack(requested_kind)
 
 
@@ -4137,10 +4153,21 @@ func _buffer_attack(kind: String) -> void:
 		return
 	_buffered_attack_kind = kind
 	_buffered_attack_timer = melee_input_buffer_time
+	if kind == "fast" and _melee_active and _has_authored_fast_chain():
+		_emit_weapon_feedback(&"melee_rhythm_latched")
+		_obs_log(&"player_melee_fast_chain_input_latched", {
+			"step": _melee_fast_combo_step,
+			"frame": animated_sprite.frame if animated_sprite != null else -1,
+			"commit_frame": _get_fast_chain_commit_frame(),
+		})
 
 
 func _update_attack_buffer(delta: float) -> void:
 	if _buffered_attack_kind.is_empty():
+		return
+	if _melee_active \
+	and _melee_attack_kind == "fast" \
+	and _has_authored_fast_chain():
 		return
 	_buffered_attack_timer = max(0.0, _buffered_attack_timer - delta)
 	if _buffered_attack_timer <= 0.0:
@@ -4185,6 +4212,36 @@ func _get_fast_chain_commit_frame() -> int:
 	if index < 0 or index >= weapon.fast_chain_commit_frames.size():
 		return -1
 	return int(weapon.fast_chain_commit_frames[index])
+
+
+func _fast_chain_commits_on_animation_finished() -> bool:
+	var window := _get_active_melee_hit_window()
+	var weapon := _get_fast_chain_weapon()
+	if weapon != null and weapon.hit_windows is Dictionary:
+		window = weapon.hit_windows.get(_melee_attack_key, window)
+	return bool(window.get("commit_on_animation_finished", false))
+
+
+func _get_fast_chain_frame_value(values: PackedInt32Array, fallback: int) -> int:
+	if _melee_fast_combo_step < 0 or _melee_fast_combo_step >= values.size():
+		return fallback
+	return int(values[_melee_fast_combo_step])
+
+
+func _is_fast_chain_queue_window_open() -> bool:
+	var weapon := _get_fast_chain_weapon()
+	if weapon == null or animated_sprite == null:
+		return false
+	var frame: int = animated_sprite.frame
+	var open_frame := _get_fast_chain_frame_value(
+		weapon.fast_chain_queue_open_frames,
+		0
+	)
+	var close_frame := _get_fast_chain_frame_value(
+		weapon.fast_chain_queue_close_frames,
+		_get_fast_chain_commit_frame()
+	)
+	return frame >= open_frame and frame <= close_frame
 
 
 func _get_fast_chain_stamina_cost_for_step(step: int) -> float:
@@ -4287,6 +4344,7 @@ func get_melee_fast_chain_status() -> Dictionary:
 		"step": _melee_fast_combo_step,
 		"attack_key": _melee_attack_key,
 		"commit_frame": _get_fast_chain_commit_frame(),
+		"queue_window_open": _is_fast_chain_queue_window_open(),
 		"buffered_command": _buffered_attack_kind,
 		"stamina_cost": _get_fast_chain_stamina_cost(),
 		"direction": _melee_forward,
@@ -4384,6 +4442,9 @@ func _start_fast_attack() -> void:
 		if stamina_cost > 0.0:
 			_spend_stamina(stamina_cost, &"fast_attack")
 		_melee_elapsed = 0.0
+		_melee_swing_sfx_played = false
+		_melee_swing_sfx_frames_played.clear()
+		_melee_animation_finished = false
 		_melee_forward = _get_fast_chain_forward_direction()
 		_begin_attack_movement_profile(
 			_resolve_current_attack_id(),
@@ -4409,12 +4470,10 @@ func _start_fast_attack() -> void:
 			_melee_attack_key,
 			fallback_name
 		)
-		if not is_unarmed_attack:
-			_play_melee_fast_swing_sfx(_melee_fast_combo_step)
 		_melee_duration = _get_current_melee_animation_duration(
 			0.45,
 			0.24,
-			0.50
+			0.70
 		)
 		_lock_melee_cooldown(_melee_duration + 0.04)
 		_obs_log(&"player_melee_fast_chain_step_started", {
@@ -4627,6 +4686,32 @@ func _update_melee_attack(delta: float) -> void:
 		disable_hitbox()
 		return
 	_melee_elapsed += delta
+	if _melee_attack_kind == "fast" \
+	and _has_authored_fast_chain() \
+	and animated_sprite != null:
+		var swing_weapon := _get_fast_chain_weapon()
+		var swing_window: Dictionary = swing_weapon.hit_windows.get(
+			_melee_attack_key,
+			{}
+		)
+		var swing_frames: Array = swing_window.get("swing_frames", [])
+		if swing_frames.is_empty():
+			swing_frames = [_get_fast_chain_frame_value(
+				swing_weapon.fast_chain_queue_open_frames,
+				3
+			)]
+		for swing_frame_variant: Variant in swing_frames:
+			var swing_frame := int(swing_frame_variant)
+			if animated_sprite.frame < swing_frame \
+			or _melee_swing_sfx_frames_played.has(swing_frame):
+				continue
+			var audio_started: int = get_node_or_null("/root/DevObservatory").perf_span_begin() if get_node_or_null("/root/DevObservatory") != null else 0
+			_play_melee_fast_swing_sfx(_melee_fast_combo_step)
+			var obs := get_node_or_null("/root/DevObservatory")
+			if obs != null:
+				obs.perf_span_end(&"operator_melee_audio", audio_started)
+			_melee_swing_sfx_frames_played[swing_frame] = true
+			_melee_swing_sfx_played = true
 
 	_update_melee_hitbox_transform()
 	_sync_melee_hitbox_window_from_animation()
@@ -4642,7 +4727,9 @@ func _update_melee_attack(delta: float) -> void:
 			if animated_sprite != null
 			else -1
 		)
-		if _buffered_attack_kind == "dodge":
+		if _fast_chain_commits_on_animation_finished():
+			pass
+		elif _buffered_attack_kind == "dodge":
 			var final_frame := -1
 			if animated_sprite != null \
 			and animated_sprite.sprite_frames != null:
@@ -4656,7 +4743,7 @@ func _update_melee_attack(delta: float) -> void:
 				_start_buffered_fast_chain_dodge()
 				return
 			return
-		if commit_frame >= 0 and presentation_frame >= commit_frame:
+		elif commit_frame >= 0 and presentation_frame >= commit_frame:
 			var buffered_kind := _consume_buffered_attack()
 			if buffered_kind == "fast":
 				if _advance_fast_chain_step():
@@ -4674,6 +4761,27 @@ func _update_melee_attack(delta: float) -> void:
 
 	if _melee_elapsed < _melee_duration:
 		return
+	if _fast_chain_commits_on_animation_finished() \
+	and not _melee_animation_finished:
+		return
+
+	if _melee_attack_kind == "fast" \
+	and _has_authored_fast_chain() \
+	and _fast_chain_commits_on_animation_finished() \
+	and not _buffered_attack_kind.is_empty():
+		var buffered_finisher_input := _consume_buffered_attack()
+		if buffered_finisher_input == "fast":
+			if _advance_fast_chain_step():
+				_request_attack_state("fast")
+				return
+			_reset_fast_chain()
+		elif buffered_finisher_input == "dodge":
+			_start_buffered_fast_chain_dodge()
+			return
+		elif buffered_finisher_input == "heavy":
+			_reset_fast_chain()
+			_request_attack_state("heavy")
+			return
 
 	if _melee_attack_kind == "fast" and _buffered_attack_kind.is_empty():
 		var weapon := _get_fast_chain_weapon()
@@ -4728,6 +4836,11 @@ func _apply_melee_hitbox_tick() -> void:
 		return
 	if weapon_hitbox == null:
 		return
+	var obs := get_node_or_null("/root/DevObservatory")
+	var overlap_started: int = obs.perf_span_begin() if obs != null else 0
+	var overlapping_bodies := weapon_hitbox.get_overlapping_bodies()
+	if obs != null:
+		obs.perf_span_end(&"operator_melee_overlap_query", overlap_started)
 	var weapon_definition = _active_attack_profile if _active_attack_profile != null else _get_equipped_primary_weapon_definition()
 	var window: Dictionary = _get_active_melee_hit_window()
 	if weapon_definition != null and weapon_definition.hit_windows is Dictionary:
@@ -4735,8 +4848,13 @@ func _apply_melee_hitbox_tick() -> void:
 		if not weapon_window.is_empty():
 			window = weapon_window
 	var active_directions := _get_melee_active_hit_directions(animated_sprite.frame if animated_sprite else 0, window)
+	var active_contact := _get_melee_contact_for_frame(
+		animated_sprite.frame if animated_sprite else 0,
+		window
+	)
+	var contact_id := StringName(active_contact.get("id", "default"))
 	var hit_count := 0
-	for body in weapon_hitbox.get_overlapping_bodies():
+	for body in overlapping_bodies:
 		if not (body is Node2D):
 			continue
 		var enemy = body as Node2D
@@ -4745,7 +4863,8 @@ func _apply_melee_hitbox_tick() -> void:
 		if not enemy.has_method("take_damage"):
 			continue
 		var enemy_id: int = enemy.get_instance_id()
-		if _melee_hit_targets.has(enemy_id):
+		var contact_key := "%s:%s" % [str(enemy_id), String(contact_id)]
+		if _melee_hit_targets.has(contact_key):
 			continue
 		var to_enemy = enemy.global_position - global_position
 		var dist = to_enemy.length()
@@ -4770,18 +4889,23 @@ func _apply_melee_hitbox_tick() -> void:
 		)
 		var direct_damage := (
 			_melee_damage_current
+			* float(active_contact.get("damage_multiplier", 1.0))
 			* float(hit_modifiers.get("direct_damage_multiplier", 1.0))
 		)
 		var stagger_damage := (
 			_melee_damage_current
+			* float(active_contact.get("stagger_multiplier", 1.0))
 			* float(hit_modifiers.get("stagger_damage_multiplier", 1.0))
 		)
+		var damage_started: int = obs.perf_span_begin() if obs != null else 0
 		var damage_result_variant: Variant = _call_hostile_take_damage(
 			enemy,
 			direct_damage,
 			melee_hit_strength,
 			stagger_damage
 		)
+		if obs != null:
+			obs.perf_span_end(&"operator_melee_damage", damage_started)
 		if damage_result_variant is Dictionary:
 			confirm_operator_direct_hit(
 				float(
@@ -4819,23 +4943,38 @@ func _apply_melee_hitbox_tick() -> void:
 				"target": String(enemy.name),
 			}
 		)
-		_melee_hit_targets[enemy_id] = true
+		_melee_hit_targets[contact_key] = true
 		var knockback_dir := global_position.direction_to(enemy.global_position)
 		var knockback_force: float = _active_melee_attack_profile.knockback_force if _active_melee_attack_profile != null else (melee_fast_knockback_force if _melee_attack_kind == "fast" else melee_heavy_knockback_force)
 		if _melee_attack_kind == "fast":
 			knockback_force *= _get_fast_chain_knockback_multiplier()
+		knockback_force *= float(active_contact.get("knockback_multiplier", 1.0))
 		if enemy.has_method("apply_melee_impact"):
-			enemy.apply_melee_impact(_melee_attack_kind, knockback_dir, knockback_force)
+			enemy.apply_melee_impact(
+				(
+					"%s:%s" % [_melee_attack_key, String(contact_id)]
+					if not _melee_attack_key.is_empty()
+					else _melee_attack_kind
+				),
+				knockback_dir,
+				knockback_force
+			)
 		else:
 			enemy.velocity = knockback_dir * knockback_force
 			enemy.move_and_slide()
 		hit_count += 1
+		var vfx_started: int = obs.perf_span_begin() if obs != null else 0
 		_spawn_melee_impact(impact_position)
+		if obs != null:
+			obs.perf_span_end(&"operator_melee_impact_vfx", vfx_started)
+		var audio_started: int = obs.perf_span_begin() if obs != null else 0
 		_play_melee_impact_sfx(
 			enemy,
 			impact_position,
 			melee_hit_strength
 		)
+		if obs != null:
+			obs.perf_span_end(&"operator_melee_audio", audio_started)
 	if hit_count > 0:
 		_on_melee_hit_confirmed()
 		print("MELEE HIT: ", hit_count, " target(s), damage=", _melee_damage_current)
@@ -5215,9 +5354,20 @@ func _play_combat_sfx(stream: AudioStream, position: Vector2, volume_db: float =
 		return null
 	parent.add_child(player)
 	player.global_position = position
+	player.add_to_group("combat_audio")
+	var obs := get_node_or_null("/root/DevObservatory")
+	if obs != null and obs.has_method("adjust_gauge"):
+		obs.adjust_gauge(&"active_combat_audio", 1)
+		player.tree_exiting.connect(_on_observatory_audio_exit)
 	player.finished.connect(player.queue_free)
 	player.play()
 	return player
+
+
+func _on_observatory_audio_exit() -> void:
+	var obs := get_node_or_null("/root/DevObservatory")
+	if obs != null and obs.has_method("adjust_gauge"):
+		obs.adjust_gauge(&"active_combat_audio", -1)
 
 
 func _play_melee_impact_sfx(
@@ -6037,7 +6187,13 @@ func _get_current_melee_animation_duration(fallback_duration: float, min_duratio
 	if fps <= 0.001:
 		return fallback_duration
 	var frame_count: int = animated_sprite.sprite_frames.get_frame_count(animation_name)
-	return clampf(float(frame_count) / fps, min_duration, max_duration)
+	var authored_frame_units := 0.0
+	for frame_index in range(frame_count):
+		authored_frame_units += animated_sprite.sprite_frames.get_frame_duration(
+			animation_name,
+			frame_index
+		)
+	return clampf(authored_frame_units / fps, min_duration, max_duration)
 
 
 func _lock_melee_cooldown(duration: float) -> void:
@@ -6078,8 +6234,12 @@ func _update_melee_hitbox_transform() -> void:
 
 
 func _sync_melee_hitbox_window_from_animation() -> void:
+	var obs := get_node_or_null("/root/DevObservatory")
+	var animation_started: int = obs.perf_span_begin() if obs != null else 0
 	if animated_sprite == null or not _melee_active:
 		disable_hitbox()
+		if obs != null:
+			obs.perf_span_end(&"operator_animation_sync", animation_started)
 		return
 	var frame: int = animated_sprite.frame
 	var weapon_definition = _get_equipped_primary_weapon_definition()
@@ -6090,13 +6250,21 @@ func _sync_melee_hitbox_window_from_animation() -> void:
 		var weapon_window: Dictionary = weapon_definition.hit_windows.get(_melee_attack_key, {})
 		if not weapon_window.is_empty():
 			window = weapon_window
+	_active_melee_contact = _get_melee_contact_for_frame(frame, window)
+	_active_melee_contact_id = StringName(
+		_active_melee_contact.get("id", "default")
+	)
 	if _is_melee_hit_frame_active(frame, window):
 		enable_hitbox()
 	else:
 		disable_hitbox()
+	if obs != null:
+		obs.perf_span_end(&"operator_animation_sync", animation_started)
 
 
 func _is_melee_hit_frame_active(frame: int, window: Dictionary) -> bool:
+	if window.has("contacts"):
+		return not _get_melee_contact_for_frame(frame, window).is_empty()
 	var authored_frame: int = frame + 1
 	if window.has("frames"):
 		var active_frames = window.get("frames", [])
@@ -6108,6 +6276,24 @@ func _is_melee_hit_frame_active(frame: int, window: Dictionary) -> bool:
 	var active_start: int = int(window.get("start", 0))
 	var active_end: int = int(window.get("end", -1))
 	return authored_frame >= active_start and authored_frame <= active_end
+
+
+func _get_melee_contact_for_frame(frame: int, window: Dictionary) -> Dictionary:
+	var authored_frame := frame + 1
+	var contacts: Variant = window.get("contacts", [])
+	if not (contacts is Array):
+		return {}
+	for contact_variant: Variant in contacts:
+		if not (contact_variant is Dictionary):
+			continue
+		var contact := contact_variant as Dictionary
+		var frames: Variant = contact.get("frames", [])
+		if not (frames is Array):
+			continue
+		for active_frame: Variant in frames:
+			if int(active_frame) == authored_frame:
+				return contact
+	return {}
 
 
 func _get_melee_active_hit_directions(frame: int, window: Dictionary) -> Array[String]:
@@ -6436,7 +6622,13 @@ func _estimate_node_contact_radius(target: Node, fallback_radius: float = 12.0) 
 
 
 func _on_melee_hit_confirmed() -> void:
-	_notify_camera_attack_impact(_melee_forward, _melee_attack_kind == "heavy")
+	_notify_camera_attack_impact(
+		_melee_forward,
+		bool(_active_melee_contact.get(
+			"camera_heavy",
+			_melee_attack_kind == "heavy"
+		))
+	)
 	_apply_hit_stop()
 
 
@@ -6489,6 +6681,12 @@ func _apply_hit_stop() -> void:
 		configured_duration = _get_fast_chain_hit_stop_duration(
 			configured_duration
 		)
+	configured_scale = float(
+		_active_melee_contact.get("hit_stop_scale", configured_scale)
+	)
+	configured_duration = float(
+		_active_melee_contact.get("hit_stop_duration", configured_duration)
+	)
 	var target_scale: float = clamp(configured_scale if configured_scale > 0.0 else melee_hit_stop_scale, 0.01, 1.0)
 	Engine.time_scale = min(previous_scale, target_scale)
 	await get_tree().create_timer(configured_duration if configured_duration > 0.0 else melee_hit_stop_duration, true, false, true).timeout
@@ -6955,13 +7153,7 @@ func _handle_dodge_input(delta: float = 0.0) -> void:
 	and _melee_active \
 	and _melee_attack_kind == "fast" \
 	and _has_authored_fast_chain():
-		var commit_frame := _get_fast_chain_commit_frame()
-		var presentation_frame: int = (
-			animated_sprite.frame
-			if animated_sprite != null
-			else -1
-		)
-		if presentation_frame >= commit_frame \
+		if _is_fast_chain_queue_window_open() \
 		and _buffered_attack_kind.is_empty():
 			_buffered_dodge_direction = _resolve_dodge_direction()
 			_buffer_attack("dodge")
@@ -9704,6 +9896,8 @@ func _on_operator_animation_finished() -> void:
 		return
 	
 	var finished_animation := String(animated_sprite.animation)
+	if _melee_active and finished_animation == String(animated_sprite.animation):
+		_melee_animation_finished = true
 	if _portal_arrival_animation_active and (finished_animation == String(PORTAL_ARRIVAL_ANIMATION) or finished_animation == String(PORTAL_ARRIVAL_DOWN_ANIMATION)):
 		_portal_arrival_animation_active = false
 		animated_sprite.speed_scale = 1.0

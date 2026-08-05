@@ -1,0 +1,21 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/ui/loot/loot_toast_queue.gd" id="1_queue"]
+
+[node name="LootToastQueue" type="Control"]
+offset_left = 18.0
+offset_top = 126.0
+offset_right = 338.0
+offset_bottom = 390.0
+mouse_filter = 2
+script = ExtResource("1_queue")
+
+[node name="Entries" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 6
+mouse_filter = 2

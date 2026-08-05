@@ -40,6 +40,25 @@ var _errors: Array[String] = []
 var _fixture_root: Node2D
 
 
+class DaggerTarget:
+	extends CharacterBody2D
+
+	var damages: Array[float] = []
+	var impact_kinds: Array[String] = []
+	var impact_forces: Array[float] = []
+
+	func _ready() -> void:
+		add_to_group("enemy")
+
+	func take_damage(amount: float, _hit_strength: int = 0, _stagger_damage: float = 0.0) -> Dictionary:
+		damages.append(amount)
+		return {"applied_damage": amount, "eligible_hostile": true, "target_was_alive": true, "target_health_before": 100.0, "target_health_after": 100.0 - amount}
+
+	func apply_melee_impact(kind: String, _direction: Vector2, force: float) -> void:
+		impact_kinds.append(kind)
+		impact_forces.append(force)
+
+
 func _init() -> void:
 	call_deferred("_run")
 
@@ -55,6 +74,7 @@ func _run() -> void:
 	_validate_default_scene(operator)
 	_validate_frame_resources(operator)
 	_validate_attack_playback(operator)
+	await _validate_two_contact_finisher(operator)
 	await _validate_open_space_drive(operator)
 	await _validate_wall_truncation(operator)
 	await _validate_cancellation_paths()
@@ -123,9 +143,15 @@ func _validate_definition() -> void:
 	)
 	_assert(
 		DAGGER_DEFINITION.fast_chain_commit_frames
-		== PackedInt32Array([6, 6, 6]),
-		"dagger provisional commit frames are not 6, 6, 6"
+		== PackedInt32Array([6, 6, 8]),
+		"dagger commit frames are not 6, 6, 8"
 	)
+	_assert(DAGGER_DEFINITION.fast_chain_queue_open_frames == PackedInt32Array([3, 2, 6]), "dagger queue-open rhythm frames drifted")
+	_assert(DAGGER_DEFINITION.fast_chain_queue_close_frames == PackedInt32Array([8, 7, 8]), "dagger queue-close rhythm frames drifted")
+	_assert(DAGGER_DEFINITION.fast_chain_loops, "queued finisher continuation must return to Fast 01")
+	var finisher_window := DAGGER_DEFINITION.hit_windows.get("vigil_dagger_fast_03", {}) as Dictionary
+	_assert((finisher_window.get("contacts", []) as Array).size() == 2, "dagger finisher does not own two contacts")
+	_assert(bool(finisher_window.get("commit_on_animation_finished", false)), "dagger finisher continuation is not animation-finished owned")
 	_assert(
 		DAGGER_DEFINITION.fast_chain_attack_profiles.size() == 3,
 		"dagger does not expose three per-link profiles"
@@ -141,8 +167,8 @@ func _validate_definition() -> void:
 	)
 	_assert_close(
 		DAGGER_PROFILE.drive_duration_sec,
-		0.16,
-		"dagger drive duration is not 0.16 s"
+		0.167,
+		"dagger drive duration is not frame-aligned"
 	)
 	_assert_close(
 		DAGGER_PROFILE.drive_input_influence,
@@ -228,7 +254,8 @@ func _validate_animation_set(
 	if frames == null:
 		return
 	for animation: StringName in animations:
-		var expected_frames := 8 if "fast_02" in String(animation) else 10
+		var expected_frames := 9 if "fast_03" in String(animation) else (8 if "fast_02" in String(animation) else 10)
+		var expected_fps := 18.0
 		_assert(
 			frames.has_animation(animation),
 			"%s animation %s is missing" % [label, animation]
@@ -242,8 +269,8 @@ func _validate_animation_set(
 		)
 		_assert_close(
 			frames.get_animation_speed(animation),
-			18.0,
-			"%s animation %s is not 18 FPS"
+			expected_fps,
+			"%s animation %s has the wrong authored rate"
 			% [label, animation]
 		)
 		_assert(
@@ -258,12 +285,19 @@ func _validate_animation_set(
 				"%s %s frame %d"
 				% [label, animation, frame_index]
 			)
-		if "fast_02" in String(animation):
+		if "fast_02" in String(animation) or "fast_03" in String(animation):
 			var atlas := frames.get_frame_texture(animation, 0) as AtlasTexture
+			var expected_source := "chain_02" if "fast_02" in String(animation) else "chain_03"
 			_assert(
-				atlas != null and "chain_02" in atlas.atlas.resource_path,
-				"%s animation %s is not bound to authored Chain 02"
-				% [label, animation]
+				atlas != null and expected_source in atlas.atlas.resource_path,
+				"%s animation %s is not bound to authored %s"
+				% [label, animation, expected_source]
+			)
+		if "fast_03" in String(animation):
+			_assert_close(
+				frames.get_frame_duration(animation, 8),
+				1.5,
+				"%s animation %s final-frame hold drifted" % [label, animation]
 			)
 
 
@@ -339,17 +373,82 @@ func _validate_attack_playback(operator: Node) -> void:
 	operator.call("_start_fast_attack")
 	_assert(
 		body.animation == &"vigil_dagger_fast_02_right",
-		"dagger chain step 2 did not play the authored Chain 02 body"
+		"dagger chain step 2 did not play authored Chain 02 body"
 	)
 	_assert(
 		overlay.animation == &"vigil_dagger_fast_02_weapon_right",
-		"dagger chain step 2 did not play the authored Chain 02 dagger"
+		"dagger chain step 2 did not play authored Chain 02 dagger"
 	)
 	_assert(
 		fx.animation == &"vigil_dagger_fast_02_fx_right",
-		"dagger chain step 2 did not play the authored Chain 02 FX"
+		"dagger chain step 2 did not play authored Chain 02 FX"
 	)
 	operator.call("_interrupt_active_combat_for_damage_reaction")
+	operator.set("_melee_fast_combo_step", 2)
+	operator.set("melee_cooldown_remaining", 0.0)
+	operator.set("stamina", 100.0)
+	operator.call("_start_fast_attack")
+	_assert(body.animation == &"vigil_dagger_fast_03_right", "dagger finisher did not play authored Chain 03 body")
+	var finisher_window := DAGGER_DEFINITION.hit_windows.get("vigil_dagger_fast_03", {}) as Dictionary
+	_assert(bool(operator.call("_is_melee_hit_frame_active", 4, finisher_window)), "finisher cut 01 is not active on runtime frame 4")
+	_assert(bool(operator.call("_is_melee_hit_frame_active", 8, finisher_window)), "finisher cut 02 is not active on runtime frame 8")
+	_assert(not bool(operator.call("_is_melee_hit_frame_active", 7, finisher_window)), "finisher hitbox opens between authored contacts")
+	var cut_01 := operator.call("_get_melee_contact_for_frame", 4, finisher_window) as Dictionary
+	var cut_02 := operator.call("_get_melee_contact_for_frame", 8, finisher_window) as Dictionary
+	_assert(String(cut_01.get("id", "")) == "cut_01", "runtime frame 4 does not resolve cut_01")
+	_assert(String(cut_02.get("id", "")) == "cut_02", "runtime frame 8 does not resolve cut_02")
+	_assert_close(float(cut_01.get("damage_multiplier", 0.0)), 0.36, "cut_01 damage share drifted")
+	_assert_close(float(cut_02.get("damage_multiplier", 0.0)), 0.64, "cut_02 damage share drifted")
+	operator.call("_interrupt_active_combat_for_damage_reaction")
+
+
+func _validate_two_contact_finisher(operator: Node) -> void:
+	operator.call("_interrupt_active_combat_for_damage_reaction")
+	operator.set("_melee_fast_combo_step", 2)
+	operator.set("melee_cooldown_remaining", 0.0)
+	operator.set("stamina", 100.0)
+	(operator as Node2D).global_position = Vector2.ZERO
+	operator.set("aim_direction", Vector2.RIGHT)
+	var target := DaggerTarget.new()
+	var shape := CollisionShape2D.new()
+	var circle := CircleShape2D.new()
+	circle.radius = 10.0
+	shape.shape = circle
+	target.add_child(shape)
+	target.global_position = Vector2(45.0, 0.0)
+	_fixture_root.add_child(target)
+	operator.call("_start_fast_attack")
+	var sprite := operator.get("animated_sprite") as AnimatedSprite2D
+	sprite.pause()
+	for contact_frame in [4, 8]:
+		sprite.set_frame_and_progress(contact_frame, 0.0)
+		operator.call("_sync_melee_hitbox_window_from_animation")
+		operator.call("enable_hitbox")
+		await physics_frame
+		await physics_frame
+		operator.call("_apply_melee_hitbox_tick")
+		operator.call("_apply_melee_hitbox_tick")
+	_assert(target.damages.size() == 2, "Fast 03 did not damage one target exactly once per contact")
+	if target.damages.size() == 2:
+		_assert_close(target.damages[0], 5.04, "cut_01 damage is not 36% of 14")
+		_assert_close(target.damages[1], 8.96, "cut_02 damage is not 64% of 14")
+	_assert(target.impact_kinds == ["vigil_dagger_fast_03:cut_01", "vigil_dagger_fast_03:cut_02"], "finisher impacts lost contact identity")
+	if target.impact_forces.size() == 2:
+		_assert(target.impact_forces[0] < target.impact_forces[1] * 0.2, "cut_01 displaced the target like the payoff cut")
+	operator.call("_buffer_attack", "fast")
+	operator.set("_melee_elapsed", float(operator.get("_melee_duration")) + 0.01)
+	operator.set("_melee_animation_finished", false)
+	operator.call("_update_melee_attack", 0.0)
+	_assert(String(operator.get("_buffered_attack_kind")) == "fast", "frame 8 consumed continuation before animation_finished")
+	_assert(int(operator.get("_melee_fast_combo_step")) == 2, "frame 8 advanced the chain before its finishing hold")
+	operator.set("_melee_animation_finished", true)
+	operator.call("_update_melee_attack", 0.0)
+	_assert(String(operator.get("_buffered_attack_kind")).is_empty(), "animation_finished did not consume queued Fast 01")
+	_assert(int(operator.get("_melee_fast_combo_step")) == 0, "animation_finished did not wrap the queued finisher to Fast 01")
+	operator.call("_interrupt_active_combat_for_damage_reaction")
+	target.queue_free()
+	await create_timer(0.06, true, false, true).timeout
+	await process_frame
 
 
 func _validate_open_space_drive(operator: Node) -> void:

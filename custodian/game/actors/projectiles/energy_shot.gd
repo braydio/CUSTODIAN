@@ -23,8 +23,19 @@ var pulse_phase := 0.0
 
 
 func _ready():
+	add_to_group("projectiles")
+	var obs := get_node_or_null("/root/DevObservatory")
+	if obs != null and obs.has_method("adjust_gauge"):
+		obs.adjust_gauge(&"active_projectiles", 1)
+		tree_exiting.connect(_on_observatory_exit)
 	_apply_visual_style()
 	body_entered.connect(_on_body_entered)
+
+
+func _on_observatory_exit() -> void:
+	var obs := get_node_or_null("/root/DevObservatory")
+	if obs != null and obs.has_method("adjust_gauge"):
+		obs.adjust_gauge(&"active_projectiles", -1)
 
 
 func set_direction(dir: Vector2):

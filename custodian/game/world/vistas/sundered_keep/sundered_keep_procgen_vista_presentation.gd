@@ -10,6 +10,8 @@ const GAMEPLAY_ZOOM := Vector2(0.90, 0.90)
 const FIRST_REVEAL_ZOOM := Vector2(0.78, 0.78)
 const FIRST_REVEAL_OFFSET := Vector2(0.0, -120.0)
 const VIEWPORT_SAFETY_MARGIN := Vector2(256.0, 224.0)
+const VISTA_HORIZONTAL_MARGIN := 320.0
+const VISTA_OPERATOR_ACTIVATION_MARGIN := 160.0
 
 @export var operator_path := NodePath("/root/GameRoot/World/Operator")
 @export var camera_path := NodePath("/root/GameRoot/World/Camera2D")
@@ -210,6 +212,13 @@ func _assign_marker(name: String, world_position: Vector2) -> void:
 
 
 func _evaluate_camera() -> void:
+	if not _is_operator_inside_frontage_influence():
+		_camera_state.clear()
+		_apply_visual_state(0.0, 0.0)
+		_release_camera()
+		_vista_root.visible = false
+		return
+	_vista_root.visible = true
 	_camera_state = _director.call(
 		"evaluate",
 		_operator.global_position,
@@ -227,6 +236,14 @@ func _evaluate_camera() -> void:
 	)
 	_apply_visual_state(first_weight, frontage_weight)
 	_apply_camera_state(first_weight, frontage_weight)
+
+
+func _is_operator_inside_frontage_influence() -> bool:
+	if _operator == null or not _playable_floor_bounds.has_area():
+		return false
+	return _playable_floor_bounds.grow(
+		VISTA_OPERATOR_ACTIVATION_MARGIN
+	).has_point(_operator.global_position)
 
 
 func _apply_visual_state(
@@ -378,20 +395,23 @@ func _configure_exterior_clip() -> void:
 			_playable_floor_bounds = _playable_floor_bounds.merge(cell_rect)
 	var gate_center := _world_anchors.get("gate_threshold", Vector2.ZERO) as Vector2
 	var outward: Vector2i = _frontage.get("fortress_outward_direction", Vector2i.UP)
-	var map_size: Vector2i = _level_data.get("map_size", Vector2i(176, 176))
 	var map_origin := _tile_to_world(Vector2i.ZERO) - tile_size * 0.5
-	var margin := maxf(_viewport_coverage.x, _viewport_coverage.y)
+	var frontage_visual_bounds := _playable_floor_bounds.grow(
+		VISTA_HORIZONTAL_MARGIN
+	)
+	var exterior_top := map_origin.y - maxf(_viewport_coverage.y, 512.0)
+	var exterior_bottom := gate_center.y - tile_size.y * 0.5 - 0.5
 	if outward == Vector2i.UP:
 		_vista_clip_bounds = Rect2(
-			Vector2(map_origin.x - margin, map_origin.y - margin),
-			Vector2(float(map_size.x) * tile_size.x + margin * 2.0, maxf(1.0, gate_center.y - tile_size.y * 0.5 - 0.5 - (map_origin.y - margin)))
+			Vector2(frontage_visual_bounds.position.x, exterior_top),
+			Vector2(frontage_visual_bounds.size.x, maxf(1.0, exterior_bottom - exterior_top))
 		)
 	else:
 		# Current production frontage faces north. Other directions retain a
 		# conservative exterior-only box until their authored mask exists.
 		_vista_clip_bounds = Rect2(
-			Vector2(map_origin.x - margin, map_origin.y - margin),
-			Vector2(float(map_size.x) * tile_size.x + margin * 2.0, maxf(1.0, gate_center.y - tile_size.y * 0.5 - 0.5 - (map_origin.y - margin)))
+			Vector2(frontage_visual_bounds.position.x, exterior_top),
+			Vector2(frontage_visual_bounds.size.x, maxf(1.0, exterior_bottom - exterior_top))
 		)
 	var local_rect := Rect2(
 		_exterior_clip.to_local(_vista_clip_bounds.position),

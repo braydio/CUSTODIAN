@@ -1,6 +1,6 @@
 # Ash Bell Lift Ingress Presentation
 
-Status: implemented V1.1; corrected exterior presentation awaiting final art review
+Status: implemented V1.3; procgen dressing clearance and landmark depth bands integrated
 Owner: world presentation / authored-level ingress
 Runtime target: Godot 4 (`custodian/`)
 
@@ -16,11 +16,11 @@ generated `WorldIngressSite`; it is not part of
 
 - `ash_bell_lift_ingress_presentation.tscn` owns the surface cliff, irregular
   dark mouth, threshold, two chains, parked lift, restrained dust, lamp,
-  authored foreground cave mask, traversal-only scrolling shaft, and local
-  cliff collision.
+  authored foreground cave mask, traversal-only scrolling shaft, local cliff
+  collision, and the five-piece boarding enclosure.
 - `ash_bell_lift_ingress_presentation.gd` owns the 1.05-second travel presentation,
   detached rider-puppet lifecycle, 176 px lift travel, 384 px shaft scroll,
-  staged cave-lip occlusion, and reusable reset.
+  staged cave-lip occlusion, constant rider depth, and reusable reset.
 - `operator_presentation_rig_2d.tscn` is a reusable visual-only snapshot rig.
   It clones the Operator's currently visible body/equipment presentation leaves
   without copying gameplay scripts, collision, input, health, or inventory.
@@ -30,6 +30,10 @@ generated `WorldIngressSite`; it is not part of
   entry presentation. Route start and its existing fade happen afterward.
 - `WorldIngressSpawner` selects the specialized site by exact route identity;
   every other route retains the generic ingress.
+- The presentation exports an `832x608` world-space dressing-clearance
+  footprint independently of its compact authored overlook floor. The procgen
+  host purges existing foliage and ruin props, filters deferred foliage, and
+  rejects later placement inside that footprint.
 
 ## Sequence contract
 
@@ -44,7 +48,9 @@ surface trigger
   -> reveal the masked shaft during the first 25 percent of travel
   -> move lift and puppet downward
   -> scroll shaft upward behind them
-  -> puppet crosses behind the foreground lip after entering the shaft
+  -> platform back, rider, and front lip share world z=2
+  -> scene-tree order keeps rails behind and the front lip over rider boots
+  -> cave-mouth mask covers the lift and rider during deep descent
   -> free puppet and restore live Operator visual leaves
   -> start existing fade route
   -> load Underground at Spawn_DescentLanding
@@ -61,8 +67,10 @@ and ignores synthetic `body_exited` signals caused by rebuilding Area2D
 monitoring, so descent cannot immediately retrigger.
 
 The specialized Ash Bell ingress is an explicit `interactable`; entering its
-Area2D does not begin traversal. Generic world ingresses retain their existing
-body-entry behavior.
+Area2D does not begin traversal. Its interaction position is `BoardingMarker`
+at `(0, -26)`, its interaction distance is 56 px, and `interact()` accepts the
+Operator only inside the local boarding rectangle `x=-42..42`, `y=-54..18`.
+Generic world ingresses retain their existing body-entry behavior.
 
 ## Exterior and traversal modes
 
@@ -74,6 +82,12 @@ timber geometry. `EntranceThresholdMarker` shares the parked `LiftRoot` origin;
 `InteractionApproachMarker` sits 72 px toward the exterior so approach and
 boarding read as a continuous floor.
 
+`BoardingBounds` is real `StaticBody2D` authority rather than an interaction
+trigger. A rear stop, two side rails, and two front wings enclose the parked
+platform while leaving a centered 64 px front opening. The Operator can board
+from the exterior but cannot walk behind the shaft, through the side rails, or
+stand over either front corner.
+
 After explicit interaction, the shaft window becomes visible and fades in over
 the first 25 percent of descent. Its children are clipped by an irregular
 `Polygon2D`, while the authored `EntranceMask` rises over the lift and detached
@@ -81,7 +95,15 @@ rider once they pass beneath the cave lip. Return ascent reverses this staging
 and hides the shaft again when the lift reaches its parked position. Reset and
 cancellation also restore the exterior-only state.
 
-The current platform renders at approximately 173 px wide. The burst dust
+The current platform renders at approximately 173 px wide. Its idle and
+vibration art are alpha-split from the original platform into back/deck/rail
+and front-lip nodes. Absolute, non-y-sorted depth bands are rear mass `-8`,
+threshold `0`, entrance structure `4`, lift/rider `6`, foreground cave
+occluders `8` while idle and `20` during travel, and lamp/dust FX `10`.
+Ordinary procgen foliage remains at `1`; it is removed beneath the structure,
+while the entrance shell and localized cave lip retain intentional actor
+occlusion. The entire mountain mass must never be raised as one foreground
+plate. The rider uses `RiderAnchor (0, -26)`. The burst dust
 renders at approximately 96×58 px, 34 percent alpha, behind the platform. The
 768×512 cliff remains landmark-scale while the functional entrance stays sized
 around the 96 px Operator. Corrected authored rock assets may replace the
@@ -108,6 +130,8 @@ godot --headless --path custodian --import --quit
 godot --headless --path custodian \
   --script res://tools/validation/ash_bell_lift_ingress_presentation_smoke.gd
 godot --headless --path custodian \
+  --script res://tools/validation/ash_bell_sundered_keep_two_ingress_renderer_smoke.gd
+godot --headless --path custodian \
   --script res://tools/validation/levels/forlorn_ritualant_underground_smoke.gd
 godot --headless --path custodian \
   --script res://tools/validation/world_ingress_physics_reentry_smoke.gd
@@ -117,6 +141,8 @@ godot --headless --path custodian \
 
 The focused smoke verifies asset dimensions/import settings, animation
 contracts, exterior-only idle state, irregular shaft clipping, platform and
-threshold alignment, restrained dust, traversal reveal and cave-lip ordering,
-actor-state restoration, reset, snapshot ordering, explicit interaction, and
-specialized versus generic spawner behavior.
+threshold alignment, boarding collision dimensions and front opening,
+off-platform interaction rejection, constant rider depth, split rail/front-lip
+ordering, restrained dust, traversal reveal and cave-lip ordering, actor-state
+restoration, reset, snapshot ordering, explicit interaction, and specialized
+versus generic spawner behavior.

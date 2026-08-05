@@ -7,7 +7,12 @@ Your repo guidance says active runtime is `custodian/`, Godot-native specs belon
 ## Main Map Road Surface Slice
 
 The live contract map also generates a modest functional road/path network
-outside the gothic compound. Wide roads render through the fixed 32×32
+outside the gothic compound. Wide generated roads are currently disabled in
+production because their repair, parking, refresh, and capture passes impose
+disproportionate startup cost and the visual result is not approved. The code
+remains available behind `intent_main_roads_enabled` for explicit debug
+comparison. Narrow interest footpaths and required route/playability authority
+remain active. When enabled for debug, wide roads render through the fixed 32×32
 filled-surface role pack at
 `custodian/content/tiles/roads_paths/runtime/roads/surface/`; narrow footpaths
 remain on their connection-bitmask manifest. The road centerline owns

@@ -1,0 +1,163 @@
+{
+  "assertions": [
+    {
+      "role": "presentation",
+      "severity": "error",
+      "type": "role_exists"
+    },
+    {
+      "role": "operator",
+      "severity": "error",
+      "type": "role_exists"
+    },
+    {
+      "field": "shaft_visible",
+      "op": "eq",
+      "probe": "lift_state",
+      "severity": "error",
+      "tick": 0,
+      "type": "probe_compare",
+      "value": false
+    },
+    {
+      "field": "shaft_visible",
+      "op": "eq",
+      "probe": "lift_state",
+      "severity": "error",
+      "tick": 28,
+      "type": "probe_compare",
+      "value": true
+    },
+    {
+      "field": "puppet_active",
+      "op": "eq",
+      "probe": "lift_state",
+      "severity": "error",
+      "tick": 38,
+      "type": "probe_compare",
+      "value": true
+    },
+    {
+      "field": "shaft_visible",
+      "op": "eq",
+      "probe": "lift_state",
+      "severity": "error",
+      "tick": 120,
+      "type": "probe_compare",
+      "value": false
+    },
+    {
+      "severity": "error",
+      "type": "no_unreleased_inputs"
+    },
+    {
+      "path": "telemetry.json",
+      "severity": "error",
+      "type": "output_exists"
+    }
+  ],
+  "capture": {
+    "audio": false,
+    "background": "opaque",
+    "contact_sheet_ticks": [
+      0,
+      19,
+      28,
+      38,
+      70,
+      120
+    ],
+    "end_tick": 131,
+    "fps": 60,
+    "height": 720,
+    "required_keyframes": true,
+    "start_tick": 0,
+    "width": 1280
+  },
+  "description": "Ash Bell exterior landmark, traversal-only shaft reveal, cave-lip descent occlusion, and parked reset comparison.",
+  "duration_ticks": 132,
+  "id": "traversal/ash_bell_lift_exterior_descent",
+  "probes": [
+    {
+      "fields": [
+        "shaft_visible",
+        "lift_position",
+        "puppet_active"
+      ],
+      "id": "lift_state",
+      "required": true,
+      "role": "fixture",
+      "ticks": [
+        0,
+        28,
+        38,
+        70,
+        120
+      ]
+    }
+  ],
+  "scene": "res://tools/validation/fixtures/ash_bell_lift_moment.tscn",
+  "schema_version": 1,
+  "seed": 104729,
+  "setup": {
+    "fixture": {
+      "config": {
+        "review": "exterior_descent_reset"
+      },
+      "id": "ash_bell_lift"
+    },
+    "processing": [],
+    "properties": [],
+    "remove_nodes": [],
+    "roles": {
+      "fixture": {
+        "node_path": "."
+      },
+      "operator": {
+        "node_path": "Operator"
+      },
+      "presentation": {
+        "node_path": "AshBellLiftIngressPresentation"
+      }
+    },
+    "spawns": []
+  },
+  "simulation": {
+    "max_wall_seconds": 30,
+    "pause_during_setup": true,
+    "physics_hz": 60,
+    "warmup_ticks": 4
+  },
+  "stable_fingerprint": {
+    "counters": [],
+    "event_payload_fields": {},
+    "float_quantum": 0.0001,
+    "position_quantum_px": 0.25,
+    "probes": [
+      "lift_state"
+    ]
+  },
+  "tags": [
+    "traversal",
+    "ash_bell",
+    "lift",
+    "world_ingress",
+    "operator_presentation"
+  ],
+  "timeline": [
+    {
+      "action": "fixture_command",
+      "name": "begin_lift_descent",
+      "tick": 20
+    },
+    {
+      "action": "fixture_command",
+      "name": "reset_lift_exterior",
+      "tick": 96
+    },
+    {
+      "action": "finish",
+      "tick": 130
+    }
+  ]
+}

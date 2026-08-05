@@ -222,6 +222,46 @@ def _format_duration(seconds: float) -> str:
     return f"{minutes:d}m {remainder:02d}s"
 
 
+def _append_performance_incident_section(lines: list[str], payload: Mapping[str, Any]) -> None:
+    incident = _mapping(payload.get("performance_incident"))
+    lines.extend(["", "PERFORMANCE INCIDENT", "-" * 48])
+    if not incident:
+        lines.append("  performance incident unavailable in this schema/export")
+        return
+    summary = _mapping(incident.get("summary"))
+    start = _mapping(incident.get("start_snapshot"))
+    duration = max(0.0, _number(incident.get("ended_uptime_sec")) - _number(incident.get("started_uptime_sec")))
+    for label, value in (
+        ("state", incident.get("state", "unknown")), ("trigger", incident.get("trigger", "unknown")),
+        ("duration", f"{duration:.3f}s"), ("gameplay sample count", incident.get("samples_retained", summary.get("sample_count", 0))),
+        ("external stalls excluded", len(_records(incident.get("external_stalls")))),
+        ("overlay visible at start", start.get("overlay_visible", "unknown")),
+        ("application focused at start", start.get("application_focused", "unknown")),
+        ("tree paused at start", start.get("tree_paused", "unknown")),
+    ):
+        lines.append(f"  {label:<30} {_format_value(value)}")
+    lines.append("  NOTE: external stalls are excluded from gameplay average/percentile/worst calculations.")
+    lines.extend(["", "  Phase summaries", "    phase | avg | p95 | p99 | process | physics | unaccounted"])
+    for name, raw in _mapping(incident.get("phase_summaries")).items():
+        row = _mapping(raw)
+        lines.append(f"    {name} | {_number(row.get('average_ms')):.2f} | {_number(row.get('p95_ms')):.2f} | {_number(row.get('p99_ms')):.2f} | {_number(row.get('process_ms')):.2f} | {_number(row.get('physics_ms')):.2f} | {_number(row.get('unaccounted_ms')):.2f}")
+    lines.extend(["", "  Top aggregated spans", "    name | total ms | max ms | calls"])
+    for row in _records(incident.get("top_spans")):
+        lines.append(f"    {row.get('name', '')} | {_number(row.get('total_ms')):.2f} | {_number(row.get('max_ms')):.2f} | {int(_number(row.get('count')))}")
+    lines.extend(["", "  Worst gameplay frames", "    wall ms | phase | process | physics | unaccounted | living enemies | top span"])
+    for row in _records(incident.get("worst_frames")):
+        spans = _records(row.get("top_subsystem_spans")); top_span = spans[0].get("name", "") if spans else ""
+        lines.append(f"    {_number(row.get('wall_frame_ms')):.2f} | {row.get('phase', '')} | {_number(row.get('process_ms')):.2f} | {_number(row.get('physics_ms')):.2f} | {_number(row.get('unaccounted_ms')):.2f} | {int(_number(row.get('living_enemies')))} | {top_span}")
+    lines.extend(["", "  External stalls", "    duration | reason | focused | paused | overlay visible"])
+    for row in _records(incident.get("external_stalls")):
+        lines.append(f"    {_number(row.get('duration_ms')):.2f} | {row.get('reason', '')} | {row.get('application_focused', '')} | {row.get('tree_paused', '')} | {row.get('overlay_visible', '')}")
+    lines.extend(["", "  Lifetime deltas"])
+    for key, value in _mapping(incident.get("deltas", incident.get("lifetime_deltas"))).items():
+        lines.append(f"    {key:<28} {_format_value(value)}")
+    owner = _mapping(incident.get("likely_owner"))
+    lines.extend(["", "  Likely owner", f"    classification: {owner.get('classification', 'unclassified')}", f"    confidence/evidence: {_format_value(owner.get('evidence', 'none'), 120)}"])
+
+
 def _format_value(value: Any, max_length: int = 88) -> str:
     if isinstance(value, float):
         text = f"{value:.3f}".rstrip("0").rstrip(".")
@@ -669,6 +709,8 @@ def build_report(
         "ENEMY ATTACK LIFECYCLE (UNIQUE ATTACK IDs IN RETAINED EVENTS)",
         "  " + _ordered_counts(attack_lifecycle, ["started", "active", "terminal"]),
     ])
+
+    _append_performance_incident_section(lines, payload)
 
     _append_material_intelligence_section(lines, payload, events, gauges)
     _append_heatmap_section(

@@ -21,6 +21,7 @@ func _on_body_entered(body: Node) -> void:
 	var game_state := get_node_or_null("/root/GameState")
 	if game_state != null and game_state.has_method("add_materials"):
 		game_state.call("add_materials", material_amount)
+	_show_loot_toast(&"parts", "Recovered Parts", material_amount, Color(0.95, 0.82, 0.45, 1.0))
 	_spawn_pickup_popup()
 	_play_pickup_tone()
 	queue_free()
@@ -56,3 +57,9 @@ func _play_pickup_tone() -> void:
 		get_tree().current_scene.add_child(player)
 	player.finished.connect(player.queue_free)
 	player.play()
+
+
+func _show_loot_toast(item_id: StringName, display_name: String, amount: int, accent: Color, icon: Texture2D = null, detail: String = "") -> void:
+	var queue := get_tree().get_first_node_in_group("loot_toast_queue")
+	if queue != null:
+		queue.call("push_pickup", item_id, display_name, amount, accent, icon, detail)

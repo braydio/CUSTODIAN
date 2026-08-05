@@ -8,7 +8,7 @@
   "ingress": {
     "ingress_id": "forlorn_ritualant_underground",
     "prompt_text": "TRAVERSE THE DERELICT LIFT",
-    "interaction_distance": 84.0,
+		"interaction_distance": 56.0,
     "route_profile": "production",
     "placement": {
       "strategy": "north_edge_overlook",

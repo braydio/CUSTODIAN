@@ -7,11 +7,26 @@ signal warning_logged(message: String, data: Dictionary)
 const OVERLAY_SCENE_PATH := "res://scenes/debug/dev_observatory_overlay.tscn"
 const INPUT_ACTION := "debug_observatory"
 const EXPORT_INPUT_ACTION := "debug_observatory_export"
+const PERFORMANCE_CAPTURE_INPUT_ACTION := "debug_observatory_perf_capture"
+const PERFORMANCE_PHASE_INPUT_ACTION := "debug_observatory_perf_phase"
 const DEFAULT_EXPORT_DIR := "user://dev_observatory"
 const DEFAULT_EXPORT_PATH := "user://dev_observatory/latest_session.json"
 const FRAME_SAMPLE_CAPACITY := 600
 const HITCH_THRESHOLD_MS := 33.333
 const SEVERE_HITCH_THRESHOLD_MS := 50.0
+const PERF_PREROLL_FRAMES := 180
+const PERF_POSTROLL_SEC := 8.0
+const PERF_WORST_FRAME_CAPACITY := 20
+const PERF_AUTO_TRIGGER_FRAME_MS := 50.0
+const PERF_AUTO_TRIGGER_COUNT := 3
+const PERF_EXTERNAL_STALL_THRESHOLD_MS := 2000.0
+const PERF_EXTERNAL_STALL_CAPACITY := 20
+const PERF_RECOVERY_THRESHOLD_MS := 25.0
+const PERF_REARM_DURATION_SEC := 3.0
+const PERF_STATE_ARMED := &"ARMED"
+const PERF_STATE_CAPTURING := &"CAPTURING"
+const PERF_STATE_DEGRADED_LATCHED := &"DEGRADED_LATCHED"
+const PERF_STATE_REARMING := &"REARMING"
 
 @export var max_events := 300
 @export var sample_interval := 0.25
@@ -31,6 +46,8 @@ var last_export_error := ""
 var performance_capture_enabled := false
 var performance_page_active := false
 var runtime_tree_sampling_enabled := false
+var performance_incident_active := false
+var performance_incident_phase := "baseline"
 
 var _sample_accum := 0.0
 var _overlay: CanvasLayer = null
@@ -42,11 +59,36 @@ var _frame_time_samples_ms: PackedFloat32Array = []
 var _frame_time_worst_ms := 0.0
 var _hitch_count := 0
 var _severe_hitch_count := 0
+var _last_wall_frame_usec := 0
+var _skip_next_wall_sample_reason: StringName = &"startup"
+var _application_focused := true
+var _focus_out_usec := 0
+var _last_tree_paused := false
+var _frame_performance_spans: Dictionary = {}
+var _frame_samples: Array[Dictionary] = []
+var _performance_preroll: Array[Dictionary] = []
+var _performance_worst_frames: Array[Dictionary] = []
+var _performance_phase_snapshots: Array[Dictionary] = []
+var _performance_incident_started_uptime := 0.0
+var _performance_incident_ended_uptime := 0.0
+var _performance_postroll_remaining := 0.0
+var _performance_auto_triggered := false
+var _performance_incident_state: StringName = PERF_STATE_ARMED
+var _performance_incident_trigger: StringName = &""
+var _performance_auto_trigger_count := 0
+var _performance_manual_trigger_count := 0
+var _performance_external_stalls: Array[Dictionary] = []
+var _performance_samples_dropped := 0
+var _performance_rearm_progress_sec := 0.0
+var _performance_start_snapshot: Dictionary = {}
+var _performance_end_snapshot: Dictionary = {}
+var _manual_capture_return_state: StringName = PERF_STATE_ARMED
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_boot_time_msec = Time.get_ticks_msec()
+	_last_tree_paused = get_tree().paused if get_tree() != null else false
 	_telemetry_allowed = _dev_allows(&"dev")
 	set_process_input(_dev_allows(&"debug_ui"))
 	set_process(_dev_allows(&"observatory_sampling"))
@@ -64,13 +106,24 @@ func _ready() -> void:
 func _input(event: InputEvent) -> void:
 	if not _dev_allows(&"debug_ui"):
 		return
+	var key_event := event as InputEventKey
+	if key_event != null and key_event.echo:
+		return
 	if event.is_action_pressed(INPUT_ACTION):
-		toggle()
 		get_viewport().set_input_as_handled()
+		toggle()
 		return
 
 	if event.is_action_pressed(EXPORT_INPUT_ACTION):
 		export_timestamped_session_json()
+		get_viewport().set_input_as_handled()
+		return
+	if event.is_action_pressed(PERFORMANCE_PHASE_INPUT_ACTION):
+		mark_performance_phase()
+		get_viewport().set_input_as_handled()
+		return
+	if event.is_action_pressed(PERFORMANCE_CAPTURE_INPUT_ACTION):
+		toggle_performance_incident()
 		get_viewport().set_input_as_handled()
 		return
 
@@ -78,8 +131,15 @@ func _input(event: InputEvent) -> void:
 func _process(delta: float) -> void:
 	if not _dev_allows(&"observatory_sampling"):
 		return
-	if performance_capture_enabled:
-		_sample_frame_time(delta)
+	var tree_paused := get_tree().paused if get_tree() != null else false
+	if tree_paused != _last_tree_paused:
+		_invalidate_wall_clock(&"pause" if tree_paused else &"resume")
+		_last_tree_paused = tree_paused
+	_sample_frame_time(delta)
+	if performance_incident_active and _performance_postroll_remaining > 0.0:
+		_performance_postroll_remaining = maxf(0.0, _performance_postroll_remaining - delta)
+		if _performance_postroll_remaining <= 0.0:
+			stop_performance_incident()
 	if not enabled:
 		return
 	_sample_accum += delta
@@ -101,6 +161,13 @@ func set_enabled(value: bool) -> void:
 	if enabled == value:
 		return
 
+	var started_usec := Time.get_ticks_usec()
+	var visible_before := enabled
+	var paused_before := get_tree().paused if get_tree() != null else false
+	var scale_before := Engine.time_scale
+	if value and performance_incident_active:
+		stop_performance_incident(&"observatory_overlay_opened")
+	_invalidate_wall_clock(&"overlay_open" if value else &"overlay_close")
 	enabled = value
 	_sample_accum = 0.0
 
@@ -108,7 +175,44 @@ func set_enabled(value: bool) -> void:
 		_overlay.visible = enabled
 
 	toggled.emit(enabled)
-	log_event(&"observatory_toggled", {"enabled": enabled})
+	var paused_after := get_tree().paused if get_tree() != null else false
+	var scale_after := Engine.time_scale
+	var overlay_build_usec := int(gauges.get(&"observatory_overlay_build_usec", 0))
+	log_event(&"observatory_overlay_toggled", {
+		"requested_visible": value, "visible_before": visible_before,
+		"visible_after": enabled, "tree_paused_before": paused_before,
+		"tree_paused_after": paused_after, "time_scale_before": scale_before,
+		"time_scale_after": scale_after, "application_focused": _application_focused,
+		"toggle_usec": Time.get_ticks_usec() - started_usec,
+		"overlay_build_usec": overlay_build_usec,
+		"overlay_text_character_count": int(gauges.get(&"observatory_overlay_text_chars", 0)),
+		"overlay_line_count": int(gauges.get(&"observatory_overlay_line_count", 0)),
+	})
+	if paused_before != paused_after or not is_equal_approx(scale_before, scale_after):
+		mark_warning("F9 changed gameplay timing state.", {"paused_before": paused_before, "paused_after": paused_after, "time_scale_before": scale_before, "time_scale_after": scale_after})
+
+
+func _notification(what: int) -> void:
+	match what:
+		NOTIFICATION_APPLICATION_FOCUS_OUT:
+			_application_focused = false
+			_focus_out_usec = Time.get_ticks_usec()
+			_invalidate_wall_clock(&"focus_out")
+		NOTIFICATION_APPLICATION_FOCUS_IN:
+			_handle_focus_in(Time.get_ticks_usec())
+
+
+func _handle_focus_in(focus_in_usec: int) -> void:
+	if _focus_out_usec > 0 and focus_in_usec - _focus_out_usec >= int(PERF_EXTERNAL_STALL_THRESHOLD_MS * 1000.0):
+		_record_external_stall({"wall_frame_ms": float(focus_in_usec - _focus_out_usec) / 1000.0, "uptime_sec": get_uptime_sec(), "phase": performance_incident_phase, "application_focused": false, "tree_paused": get_tree().paused if get_tree() != null else false, "overlay_visible": enabled, "time_scale": Engine.time_scale}, &"focus_out")
+	_focus_out_usec = 0
+	_application_focused = true
+	_invalidate_wall_clock(&"focus_in")
+
+
+func _invalidate_wall_clock(reason: StringName) -> void:
+	_last_wall_frame_usec = 0
+	_skip_next_wall_sample_reason = reason
 
 
 func log_event(kind: StringName, data: Dictionary = {}) -> void:
@@ -135,6 +239,29 @@ func increment(name: StringName, amount: int = 1) -> void:
 	if not _telemetry_allowed:
 		return
 	counters[name] = int(counters.get(name, 0)) + amount
+
+
+func adjust_gauge(name: StringName, amount: int) -> void:
+	set_gauge(name, int(gauges.get(name, 0)) + amount)
+
+
+func perf_span_begin() -> int:
+	if not performance_incident_active:
+		return 0
+	return Time.get_ticks_usec()
+
+
+func perf_span_end(span_name: StringName, started_usec: int) -> void:
+	if started_usec <= 0:
+		return
+	var elapsed_usec := maxi(0, Time.get_ticks_usec() - started_usec)
+	var bucket: Dictionary = _frame_performance_spans.get(span_name, {
+		"count": 0, "total_usec": 0, "max_usec": 0,
+	})
+	bucket["count"] = int(bucket["count"]) + 1
+	bucket["total_usec"] = int(bucket["total_usec"]) + elapsed_usec
+	bucket["max_usec"] = maxi(int(bucket["max_usec"]), elapsed_usec)
+	_frame_performance_spans[span_name] = bucket
 
 
 func accumulate(name: StringName, amount: float) -> void:
@@ -195,13 +322,23 @@ func clear() -> void:
 	_frame_time_worst_ms = 0.0
 	_hitch_count = 0
 	_severe_hitch_count = 0
+	_frame_samples.clear()
+	_performance_preroll.clear()
+	_performance_worst_frames.clear()
+	_performance_phase_snapshots.clear()
+	_frame_performance_spans.clear()
+	_performance_external_stalls.clear()
+	_performance_samples_dropped = 0
+	_performance_rearm_progress_sec = 0.0
+	_performance_incident_state = PERF_STATE_ARMED
+	_invalidate_wall_clock(&"capture_reset")
 	log_event(&"observatory_cleared")
 
 
 func set_performance_capture_enabled(value: bool) -> void:
-	performance_capture_enabled = (
-		value and _dev_allows(&"observatory_sampling")
-	)
+	# Compatibility shim: capture lifecycle is owned by the incident recorder,
+	# never by page selection.
+	performance_capture_enabled = value and _dev_allows(&"observatory_sampling")
 
 
 func set_performance_page_active(value: bool) -> void:
@@ -228,19 +365,327 @@ func get_performance_summary() -> Dictionary:
 		"frame_ms_worst": _frame_time_worst_ms,
 		"hitch_count": _hitch_count,
 		"severe_hitch_count": _severe_hitch_count,
+		"incident_active": performance_incident_active,
+		"incident_phase": performance_incident_phase,
+		"incident_sample_count": _frame_samples.size(),
 	}
 
 
 func _sample_frame_time(delta: float) -> void:
-	var frame_ms := maxf(delta, 0.0) * 1000.0
-	_frame_time_samples_ms.append(frame_ms)
+	_sample_frame_time_from_ticks(Time.get_ticks_usec(), delta)
+
+
+func _sample_frame_time_from_ticks(now_usec: int, scaled_delta: float) -> void:
+	if _last_wall_frame_usec == 0:
+		_last_wall_frame_usec = now_usec
+		_skip_next_wall_sample_reason = &""
+		return
+	var wall_frame_ms := float(now_usec - _last_wall_frame_usec) / 1000.0
+	_last_wall_frame_usec = now_usec
+	var sample := {
+		"uptime_sec": get_uptime_sec(),
+		"phase": performance_incident_phase,
+		"wall_frame_ms": wall_frame_ms,
+		"scaled_delta_ms": maxf(scaled_delta, 0.0) * 1000.0,
+		"time_scale": Engine.time_scale,
+		"application_focused": _application_focused,
+		"tree_paused": get_tree().paused if get_tree() != null else false,
+		"overlay_visible": enabled,
+		"process_ms": float(Performance.get_monitor(Performance.TIME_PROCESS)) * 1000.0,
+		"physics_ms": float(Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS)) * 1000.0,
+		"node_count": int(Performance.get_monitor(Performance.OBJECT_NODE_COUNT)),
+		"draw_calls": int(Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME)),
+		"rendered_objects": int(Performance.get_monitor(Performance.RENDER_TOTAL_OBJECTS_IN_FRAME)),
+		"living_enemies": int(gauges.get("living_enemies", gauges.get("active_enemies", 0))),
+		"corpse_enemies": int(gauges.get("corpse_enemies", 0)),
+		"enemy_active": int(gauges.get("enemy_tier_active", 0)),
+		"enemy_nearby": int(gauges.get("enemy_tier_nearby", 0)),
+		"enemy_dormant": int(gauges.get("enemy_tier_dormant", 0)),
+		"active_vfx": int(gauges.get("active_vfx", 0)),
+		"active_audio_players": int(gauges.get("active_combat_audio", 0)),
+		"active_combat_audio": int(gauges.get("active_combat_audio", 0)),
+		"active_projectiles": int(gauges.get("active_projectiles", 0)),
+		"spans": _frame_performance_spans.duplicate(true),
+	}
+	if wall_frame_ms >= PERF_EXTERNAL_STALL_THRESHOLD_MS:
+		_record_external_stall(sample, _skip_next_wall_sample_reason)
+		_frame_performance_spans.clear()
+		return
+	_record_frame_sample(sample)
+	_frame_performance_spans.clear()
+	if not performance_incident_active:
+		_performance_preroll.append(sample)
+		while _performance_preroll.size() > PERF_PREROLL_FRAMES:
+			_performance_preroll.pop_front()
+		_auto_trigger_if_needed()
+	else:
+		if _frame_samples.size() >= FRAME_SAMPLE_CAPACITY:
+			_performance_samples_dropped += 1
+		else:
+			_frame_samples.append(sample)
+		_record_worst_frame(sample)
+	_update_incident_rearm(sample)
+
+
+func _record_external_stall(sample: Dictionary, reason: StringName = &"") -> void:
+	var stall := {
+		"duration_ms": float(sample.get("wall_frame_ms", 0.0)),
+		"uptime_sec": float(sample.get("uptime_sec", get_uptime_sec())),
+		"phase": sample.get("phase", performance_incident_phase),
+		"reason": String(reason) if reason != &"" else "external_or_unclassified_stall",
+		"application_focused": bool(sample.get("application_focused", _application_focused)),
+		"tree_paused": bool(sample.get("tree_paused", false)),
+		"overlay_visible": bool(sample.get("overlay_visible", enabled)),
+		"time_scale": float(sample.get("time_scale", Engine.time_scale)),
+	}
+	_performance_external_stalls.append(stall)
+	if _performance_external_stalls.size() > PERF_EXTERNAL_STALL_CAPACITY:
+		_performance_external_stalls.pop_front()
+	set_gauge(&"performance_incident_external_stall_count", _performance_external_stalls.size())
+	log_event(&"performance_external_stall", stall)
+
+func _record_frame_sample(sample: Dictionary) -> void:
+	_frame_time_samples_ms.append(float(sample.get("wall_frame_ms", 0.0)))
 	if _frame_time_samples_ms.size() > FRAME_SAMPLE_CAPACITY:
 		_frame_time_samples_ms.remove_at(0)
-	_frame_time_worst_ms = maxf(_frame_time_worst_ms, frame_ms)
-	if frame_ms >= HITCH_THRESHOLD_MS:
+	_frame_time_worst_ms = maxf(_frame_time_worst_ms, float(sample.get("wall_frame_ms", 0.0)))
+	if float(sample.get("wall_frame_ms", 0.0)) >= HITCH_THRESHOLD_MS:
 		_hitch_count += 1
-	if frame_ms >= SEVERE_HITCH_THRESHOLD_MS:
+	if float(sample.get("wall_frame_ms", 0.0)) >= SEVERE_HITCH_THRESHOLD_MS:
 		_severe_hitch_count += 1
+
+
+func toggle_performance_incident() -> void:
+	if performance_incident_active:
+		stop_performance_incident()
+	else:
+		start_performance_incident()
+
+
+func start_performance_incident(trigger: StringName = &"manual") -> void:
+	if performance_incident_active:
+		return
+	performance_incident_active = true
+	performance_capture_enabled = true
+	_performance_incident_trigger = trigger
+	if trigger == &"automatic":
+		_performance_auto_trigger_count += 1
+	else:
+		_performance_manual_trigger_count += 1
+		_manual_capture_return_state = _performance_incident_state if _performance_incident_state in [PERF_STATE_DEGRADED_LATCHED, PERF_STATE_REARMING] else PERF_STATE_ARMED
+	_set_incident_state(PERF_STATE_CAPTURING)
+	_performance_postroll_remaining = 0.0
+	_performance_incident_started_uptime = get_uptime_sec()
+	_performance_incident_ended_uptime = 0.0
+	_frame_samples = _performance_preroll.duplicate(true)
+	_performance_samples_dropped = 0
+	_performance_external_stalls.clear()
+	_performance_start_snapshot = _cheap_incident_snapshot()
+	_performance_worst_frames.clear()
+	for sample in _frame_samples:
+		_record_worst_frame(sample)
+	_performance_phase_snapshots = [{"phase": performance_incident_phase, "uptime_sec": get_uptime_sec(), "gauges": gauges.duplicate(true), "deltas": {}}]
+	_invalidate_wall_clock(&"incident_start")
+	log_event(&"performance_incident_started", {"phase": performance_incident_phase, "trigger": trigger, "preroll_samples": _frame_samples.size()})
+
+
+func stop_performance_incident(reason: StringName = &"manual") -> void:
+	if not performance_incident_active:
+		return
+	performance_incident_active = false
+	performance_capture_enabled = false
+	_performance_incident_ended_uptime = get_uptime_sec()
+	_performance_end_snapshot = _cheap_incident_snapshot()
+	_performance_postroll_remaining = 0.0
+	_set_incident_state(PERF_STATE_DEGRADED_LATCHED if _performance_incident_trigger == &"automatic" else _manual_capture_return_state)
+	_invalidate_wall_clock(&"incident_stop")
+	log_event(&"performance_incident_stopped", {"reason": reason, "samples": _frame_samples.size(), "worst_frames": _performance_worst_frames.size()})
+
+
+func _set_incident_state(value: StringName) -> void:
+	if _performance_incident_state == value:
+		return
+	var previous := _performance_incident_state
+	_performance_incident_state = value
+	set_gauge(&"performance_incident_state", String(value))
+	log_event(&"performance_incident_state_changed", {"from": previous, "to": value})
+
+
+func _update_incident_rearm(sample: Dictionary) -> void:
+	if _performance_incident_state != PERF_STATE_DEGRADED_LATCHED and _performance_incident_state != PERF_STATE_REARMING:
+		return
+	var healthy := float(sample.get("wall_frame_ms", 0.0)) < PERF_RECOVERY_THRESHOLD_MS
+	if not healthy:
+		_performance_rearm_progress_sec = 0.0
+		_set_incident_state(PERF_STATE_DEGRADED_LATCHED)
+		return
+	_set_incident_state(PERF_STATE_REARMING)
+	_performance_rearm_progress_sec += float(sample.get("wall_frame_ms", 0.0)) / 1000.0
+	set_gauge(&"performance_incident_rearm_progress_sec", _performance_rearm_progress_sec)
+	if _performance_rearm_progress_sec >= PERF_REARM_DURATION_SEC:
+		_performance_rearm_progress_sec = 0.0
+		_performance_auto_triggered = false
+		_set_incident_state(PERF_STATE_ARMED)
+
+
+func _cheap_incident_snapshot() -> Dictionary:
+	return {
+		"uptime_sec": get_uptime_sec(), "overlay_visible": enabled,
+		"application_focused": _application_focused,
+		"tree_paused": get_tree().paused if get_tree() != null else false,
+		"time_scale": Engine.time_scale, "gauges": gauges.duplicate(true),
+	}
+
+
+func get_performance_incident_report() -> Dictionary:
+	var first := _frame_samples[0] if not _frame_samples.is_empty() else {}
+	var last := _frame_samples[-1] if not _frame_samples.is_empty() else {}
+	var deltas := {}
+	for key in ["node_count", "living_enemies", "corpse_enemies", "active_vfx", "active_audio_players", "draw_calls", "rendered_objects"]:
+		deltas["%s_delta" % key] = int(last.get(key, 0)) - int(first.get(key, 0))
+	deltas["active_audio_delta"] = deltas.get("active_audio_players_delta", 0)
+	var gameplay_values := PackedFloat32Array()
+	for sample in _frame_samples:
+		gameplay_values.append(float(sample.get("wall_frame_ms", 0.0)))
+	var summary := {
+		"sample_count": _frame_samples.size(), "frame_ms_average": _average(gameplay_values),
+		"frame_ms_p95": _percentile(gameplay_values, 0.95), "frame_ms_p99": _percentile(gameplay_values, 0.99),
+		"frame_ms_worst": _percentile(gameplay_values, 1.0), "hitch_count": _count_threshold(gameplay_values, HITCH_THRESHOLD_MS),
+		"severe_hitch_count": _count_threshold(gameplay_values, SEVERE_HITCH_THRESHOLD_MS),
+	}
+	var top_spans := _aggregate_top_spans(_frame_samples)
+	var likely := _classify_incident({"lifetime_deltas": deltas, "physics_ms": float(last.get("physics_ms", 0.0)), "process_ms": float(last.get("process_ms", 0.0))}, top_spans)
+	return {
+		"schema": "custodian.dev_observatory.performance_incident.v1",
+		"state": String(_performance_incident_state), "trigger": String(_performance_incident_trigger),
+		"started_uptime_sec": _performance_incident_started_uptime,
+		"ended_uptime_sec": _performance_incident_ended_uptime if _performance_incident_ended_uptime > 0.0 else get_uptime_sec(),
+		"phase_summaries": _build_phase_summaries(), "summary": summary,
+		"worst_frames": _performance_worst_frames.duplicate(true),
+		"external_stalls": _performance_external_stalls.duplicate(true),
+		"start_snapshot": _performance_start_snapshot.duplicate(true), "end_snapshot": _performance_end_snapshot.duplicate(true),
+		"deltas": deltas, "lifetime_deltas": deltas, "likely_owner": {"classification": likely, "evidence": top_spans},
+		"top_spans": top_spans, "phase_snapshots": _performance_phase_snapshots.duplicate(true),
+		"samples_retained": _frame_samples.size(), "samples_dropped": _performance_samples_dropped,
+	}
+
+
+func _count_threshold(values: PackedFloat32Array, threshold: float) -> int:
+	var count := 0
+	for value in values:
+		if value >= threshold:
+			count += 1
+	return count
+
+
+func _aggregate_top_spans(samples: Array[Dictionary]) -> Array[Dictionary]:
+	var aggregate := {}
+	for sample in samples:
+		for name in (sample.get("spans", {}) as Dictionary).keys():
+			var source: Dictionary = sample.get("spans", {})[name]
+			var bucket: Dictionary = aggregate.get(name, {"count": 0, "total_usec": 0, "max_usec": 0})
+			bucket.count += int(source.get("count", 0))
+			bucket.total_usec += int(source.get("total_usec", 0))
+			bucket.max_usec = maxi(int(bucket.max_usec), int(source.get("max_usec", 0)))
+			aggregate[name] = bucket
+	return _top_spans(aggregate)
+
+
+func _build_phase_summaries() -> Dictionary:
+	var phases := {}
+	for sample in _frame_samples:
+		var name := String(sample.get("phase", "unknown"))
+		var bucket: Dictionary = phases.get(name, {"values": PackedFloat32Array(), "process": 0.0, "physics": 0.0})
+		(bucket.values as PackedFloat32Array).append(float(sample.get("wall_frame_ms", 0.0)))
+		bucket.process += float(sample.get("process_ms", 0.0))
+		bucket.physics += float(sample.get("physics_ms", 0.0))
+		phases[name] = bucket
+	var output := {}
+	for name in phases:
+		var bucket: Dictionary = phases[name]
+		var values: PackedFloat32Array = bucket.values
+		var count := maxi(1, values.size())
+		var process_avg := float(bucket.process) / count
+		var physics_avg := float(bucket.physics) / count
+		output[name] = {"average_ms": _average(values), "p95_ms": _percentile(values, 0.95), "p99_ms": _percentile(values, 0.99), "process_ms": process_avg, "physics_ms": physics_avg, "unaccounted_ms": maxf(0.0, _average(values) - process_avg - physics_avg)}
+	return output
+
+
+func _top_spans(spans_variant: Variant) -> Array[Dictionary]:
+	var rows: Array[Dictionary] = []
+	if not (spans_variant is Dictionary):
+		return rows
+	for key in (spans_variant as Dictionary).keys():
+		var bucket: Dictionary = spans_variant[key]
+		rows.append({"name": String(key), "count": int(bucket.get("count", 0)), "total_ms": float(bucket.get("total_usec", 0)) / 1000.0, "max_ms": float(bucket.get("max_usec", 0)) / 1000.0})
+	rows.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return float(a.total_ms) > float(b.total_ms))
+	if rows.size() > 5:
+		rows.resize(5)
+	return rows
+
+
+func _classify_incident(summary: Dictionary, top_spans: Array[Dictionary]) -> String:
+	var deltas: Dictionary = summary.get("lifetime_deltas", {})
+	if int(deltas.get("active_vfx_delta", 0)) > 5:
+		return "probable VFX lifetime leak"
+	if int(deltas.get("active_audio_players_delta", 0)) > 5:
+		return "probable combat audio lifetime leak"
+	if float(summary.get("physics_ms", 0.0)) > float(summary.get("process_ms", 0.0)):
+		return "physics / collision dominated"
+	for span in top_spans:
+		if String(span.get("name", "")).begins_with("enemy_") and float(span.get("total_ms", 0.0)) > 8.0:
+			return "enemy actor script dominated"
+	if int(deltas.get("draw_calls_delta", 0)) > 50:
+		return "rendering / presentation dominated"
+	return "unclassified — inspect worst-frame spans"
+
+
+func mark_performance_phase(phase_name: String = "") -> String:
+	var names := ["baseline", "spawn", "pursuit", "combat_whiff", "combat_hit", "recovery"]
+	var next_phase := phase_name.strip_edges()
+	if next_phase.is_empty():
+		var current_index := names.find(performance_incident_phase)
+		next_phase = names[(current_index + 1) % names.size()]
+	performance_incident_phase = next_phase
+	var phase_deltas := {}
+	if not _performance_phase_snapshots.is_empty():
+		var previous_gauges: Dictionary = _performance_phase_snapshots[-1].get("gauges", {})
+		for key in ["node_count", "living_enemies", "corpse_enemies", "active_vfx", "active_combat_audio", "draw_calls", "rendered_objects"]:
+			phase_deltas["%s_delta" % key] = int(gauges.get(key, 0)) - int(previous_gauges.get(key, 0))
+	_performance_phase_snapshots.append({"phase": next_phase, "uptime_sec": get_uptime_sec(), "gauges": gauges.duplicate(true), "deltas": phase_deltas})
+	log_event(&"performance_incident_phase", {"phase": next_phase})
+	return next_phase
+
+
+func _record_worst_frame(sample: Dictionary) -> void:
+	if float(sample.get("wall_frame_ms", 0.0)) < HITCH_THRESHOLD_MS:
+		return
+	var dossier := sample.duplicate(true)
+	dossier["unaccounted_ms"] = maxf(0.0, float(sample.get("wall_frame_ms", 0.0)) - float(sample.get("process_ms", 0.0)) - float(sample.get("physics_ms", 0.0)))
+	dossier["top_subsystem_spans"] = _top_spans(sample.get("spans", {}))
+	dossier["recent_transition_events"] = get_recent_events(8)
+	_performance_worst_frames.append(dossier)
+	_performance_worst_frames.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		return float(a.get("wall_frame_ms", 0.0)) > float(b.get("wall_frame_ms", 0.0))
+	)
+	if _performance_worst_frames.size() > PERF_WORST_FRAME_CAPACITY:
+		_performance_worst_frames.resize(PERF_WORST_FRAME_CAPACITY)
+
+
+func _auto_trigger_if_needed() -> void:
+	if _performance_incident_state != PERF_STATE_ARMED or _performance_auto_triggered or _performance_preroll.size() < 30:
+		return
+	var severe_count := 0
+	for index in range(maxi(0, _performance_preroll.size() - 60), _performance_preroll.size()):
+		if float(_performance_preroll[index].get("wall_frame_ms", 0.0)) >= PERF_AUTO_TRIGGER_FRAME_MS:
+			severe_count += 1
+	var total := 0.0
+	for index in range(maxi(0, _performance_preroll.size() - 30), _performance_preroll.size()):
+		total += float(_performance_preroll[index].get("wall_frame_ms", 0.0))
+	if severe_count >= PERF_AUTO_TRIGGER_COUNT or total / 30.0 >= HITCH_THRESHOLD_MS:
+		_performance_auto_triggered = true
+		start_performance_incident(&"automatic")
+		_performance_postroll_remaining = PERF_POSTROLL_SEC
 
 
 func _average(values: PackedFloat32Array) -> float:
@@ -310,8 +755,10 @@ func get_summary() -> Dictionary:
 
 
 func export_session_json(path: String = DEFAULT_EXPORT_PATH) -> String:
-	# F10/export must retain a current final snapshot even though hidden
-	# Observatory presentation performs no periodic scene-tree sampling.
+	# Freeze the incident before the explicit final tree scan so export work is
+	# never included in the captured frame stream.
+	if performance_incident_active:
+		stop_performance_incident()
 	_force_snapshot_write = true
 	_sample_runtime_gauges(true, true)
 	_force_snapshot_write = false
@@ -327,6 +774,13 @@ func export_session_json(path: String = DEFAULT_EXPORT_PATH) -> String:
 		return ""
 
 	var payload := _build_export_payload(resolved_path)
+	if not _write_export_payload(resolved_path, payload):
+		return ""
+	_record_export_success(resolved_path)
+	return resolved_path
+
+
+func _write_export_payload(resolved_path: String, payload: Dictionary) -> bool:
 	var file := FileAccess.open(resolved_path, FileAccess.WRITE)
 	if file == null:
 		var error_code := FileAccess.get_open_error()
@@ -335,7 +789,7 @@ func export_session_json(path: String = DEFAULT_EXPORT_PATH) -> String:
 			"path": resolved_path,
 			"error": error_code,
 		})
-		return ""
+		return false
 
 	file.store_string(JSON.stringify(payload, "\t"))
 	var write_error := file.get_error()
@@ -346,8 +800,11 @@ func export_session_json(path: String = DEFAULT_EXPORT_PATH) -> String:
 			"path": resolved_path,
 			"error": write_error,
 		})
-		return ""
+		return false
+	return true
 
+
+func _record_export_success(resolved_path: String) -> void:
 	last_export_path = resolved_path
 	last_export_absolute_path = ProjectSettings.globalize_path(resolved_path)
 	last_export_time = Time.get_datetime_string_from_system(false, true)
@@ -362,9 +819,6 @@ func export_session_json(path: String = DEFAULT_EXPORT_PATH) -> String:
 	})
 	print("[DevObservatory] Session exported: %s" % last_export_absolute_path)
 
-	return resolved_path
-
-
 func export_timestamped_session_json() -> String:
 	var stamp := Time.get_datetime_string_from_system(false, true)
 	stamp = stamp.replace("-", "")
@@ -373,15 +827,23 @@ func export_timestamped_session_json() -> String:
 	stamp = stamp.replace(" ", "_")
 
 	var timestamped_path := "%s/session_%s.json" % [DEFAULT_EXPORT_DIR, stamp]
-	var exported_path := export_session_json(timestamped_path)
-
-	if not exported_path.is_empty():
-		# Keep one stable path available for tools without directory discovery.
-		export_session_json(DEFAULT_EXPORT_PATH)
-		last_export_path = exported_path
-		last_export_absolute_path = ProjectSettings.globalize_path(exported_path)
-
-	return exported_path
+	if performance_incident_active:
+		stop_performance_incident(&"export")
+	_invalidate_wall_clock(&"capture_reset")
+	_force_snapshot_write = true
+	_sample_runtime_gauges(true, true)
+	_force_snapshot_write = false
+	if not _ensure_parent_dir(timestamped_path) or not _ensure_parent_dir(DEFAULT_EXPORT_PATH):
+		return ""
+	var payload := _build_export_payload(timestamped_path)
+	if not _write_export_payload(timestamped_path, payload):
+		return ""
+	var latest_payload := payload.duplicate(true)
+	latest_payload["export_path"] = DEFAULT_EXPORT_PATH
+	if not _write_export_payload(DEFAULT_EXPORT_PATH, latest_payload):
+		return ""
+	_record_export_success(timestamped_path)
+	return timestamped_path
 
 
 func _build_export_payload(path: String) -> Dictionary:
@@ -420,6 +882,7 @@ func _build_export_payload(path: String) -> Dictionary:
 			"observatory_enabled": enabled,
 		},
 		"performance": _json_safe(get_performance_summary()),
+		"performance_incident": _json_safe(get_performance_incident_report()),
 		"scene": {
 			"name": scene_name,
 			"path": scene_path,
@@ -603,6 +1066,8 @@ func _sample_runtime_gauges(
 	set_gauge(&"legacy_combat_agents", maxi(0, enemies.size() - director_agents))
 	set_gauge(&"ambient_critters", tree.get_nodes_in_group("ambient_critter").size())
 	set_gauge(&"active_projectiles", _count_active_projectiles(tree))
+	set_gauge(&"active_vfx", tree.get_nodes_in_group("vfx").size())
+	set_gauge(&"active_combat_audio", tree.get_nodes_in_group("combat_audio").size())
 	_sample_player_gauges(tree)
 	_sample_enemy_gauges(enemies)
 
@@ -617,6 +1082,13 @@ func _publish_performance_gauges() -> void:
 	set_gauge(&"performance_hitch_count", int(summary["hitch_count"]))
 	set_gauge(&"performance_severe_hitch_count", int(summary["severe_hitch_count"]))
 	set_gauge(&"performance_frame_sample_count", int(summary["sample_count"]))
+	set_gauge(&"performance_process_ms", float(Performance.get_monitor(Performance.TIME_PROCESS)) * 1000.0)
+	set_gauge(&"performance_physics_ms", float(Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS)) * 1000.0)
+	set_gauge(&"performance_incident_state", String(_performance_incident_state))
+	set_gauge(&"performance_incident_auto_trigger_count", _performance_auto_trigger_count)
+	set_gauge(&"performance_incident_manual_trigger_count", _performance_manual_trigger_count)
+	set_gauge(&"performance_incident_external_stall_count", _performance_external_stalls.size())
+	set_gauge(&"performance_incident_rearm_progress_sec", _performance_rearm_progress_sec)
 
 
 func _sample_player_gauges(tree: SceneTree) -> void:
@@ -703,10 +1175,16 @@ func _sample_player_gauges(tree: SceneTree) -> void:
 
 
 func _sample_enemy_gauges(enemies: Array) -> void:
+	var living := 0
+	var corpses := 0
 	var legacy_sample: Dictionary = {}
 	for enemy in enemies:
 		if enemy == null or not is_instance_valid(enemy):
 			continue
+		if "dead" in enemy and bool(enemy.get("dead")):
+			corpses += 1
+		else:
+			living += 1
 		if enemy.is_in_group("enemy_behavior_agent") and enemy.has_method("get_behavior_snapshot"):
 			var snapshot: Variant = enemy.call("get_behavior_snapshot")
 			if snapshot is Dictionary:
@@ -718,6 +1196,8 @@ func _sample_enemy_gauges(enemies: Array) -> void:
 				legacy_sample = snapshot
 	if not legacy_sample.is_empty():
 		set_gauge(&"legacy_enemy_sample", legacy_sample)
+	set_gauge(&"living_enemies", living)
+	set_gauge(&"corpse_enemies", corpses)
 
 
 func _get_unique_group_nodes(group_names: Array) -> Array:
@@ -881,6 +1361,8 @@ func _get_collision_owner_category(node: Node) -> StringName:
 func _ensure_input_actions() -> void:
 	_ensure_action_key(INPUT_ACTION, KEY_F9)
 	_ensure_action_key(EXPORT_INPUT_ACTION, KEY_F10)
+	_ensure_action_key(PERFORMANCE_CAPTURE_INPUT_ACTION, KEY_F11)
+	_ensure_action_key_with_shift(PERFORMANCE_PHASE_INPUT_ACTION, KEY_F11)
 
 
 func _ensure_action_key(action: StringName, keycode: Key) -> void:
@@ -893,6 +1375,20 @@ func _ensure_action_key(action: StringName, keycode: Key) -> void:
 	var key := InputEventKey.new()
 	key.keycode = keycode
 	key.key_label = keycode
+	InputMap.action_add_event(action, key)
+
+
+func _ensure_action_key_with_shift(action: StringName, keycode: Key) -> void:
+	if not InputMap.has_action(action):
+		InputMap.add_action(action)
+	for event in InputMap.action_get_events(action):
+		var key_event := event as InputEventKey
+		if key_event != null and key_event.keycode == keycode and key_event.shift_pressed:
+			return
+	var key := InputEventKey.new()
+	key.keycode = keycode
+	key.key_label = keycode
+	key.shift_pressed = true
 	InputMap.action_add_event(action, key)
 
 

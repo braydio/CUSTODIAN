@@ -1,0 +1,200 @@
+{
+	"actions": [
+		{
+			"action": "fixture_command",
+			"ok": true,
+			"response": true,
+			"tick": 20
+		},
+		{
+			"action": "fixture_command",
+			"ok": true,
+			"response": true,
+			"tick": 96
+		},
+		{
+			"action": "finish",
+			"finish": true,
+			"ok": true,
+			"tick": 130
+		}
+	],
+	"assertions": [
+		{
+			"actual": true,
+			"expected": {
+				"role": "presentation",
+				"severity": "error",
+				"type": "role_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "role_exists"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"role": "operator",
+				"severity": "error",
+				"type": "role_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "role_exists"
+		},
+		{
+			"actual": false,
+			"expected": {
+				"field": "shaft_visible",
+				"op": "eq",
+				"probe": "lift_state",
+				"severity": "error",
+				"tick": 0.0,
+				"type": "probe_compare",
+				"value": false
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"field": "shaft_visible",
+				"op": "eq",
+				"probe": "lift_state",
+				"severity": "error",
+				"tick": 28.0,
+				"type": "probe_compare",
+				"value": true
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"field": "puppet_active",
+				"op": "eq",
+				"probe": "lift_state",
+				"severity": "error",
+				"tick": 38.0,
+				"type": "probe_compare",
+				"value": true
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": false,
+			"expected": {
+				"field": "shaft_visible",
+				"op": "eq",
+				"probe": "lift_state",
+				"severity": "error",
+				"tick": 120.0,
+				"type": "probe_compare",
+				"value": false
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": false,
+			"expected": {
+				"severity": "error",
+				"type": "no_unreleased_inputs"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "no_unreleased_inputs"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"path": "telemetry.json",
+				"severity": "error",
+				"type": "output_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "output_exists"
+		}
+	],
+	"capture_failures": [],
+	"capture_mode": "full",
+	"completed": true,
+	"completed_tick": 130,
+	"failures": [],
+	"keyframes": [
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/traversal/ash_bell_lift_exterior_descent/20260804T003731-0400/keyframes/tick_000000.png",
+			"render_frame": 6,
+			"sha256": "6d1569eff86af8709d3b259e63fe12d9346f0e9ae30781d619f720b2ca1240c2",
+			"tick": 0
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/traversal/ash_bell_lift_exterior_descent/20260804T003731-0400/keyframes/tick_000019.png",
+			"render_frame": 25,
+			"sha256": "212786cf38964f388db002243a1018d4d3d68981c066152a7e252012db254da4",
+			"tick": 19
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/traversal/ash_bell_lift_exterior_descent/20260804T003731-0400/keyframes/tick_000028.png",
+			"render_frame": 34,
+			"sha256": "da84260f1d679ab3f22fb99f8be3c481f26d0e4055f68ca6ba385e9e00019494",
+			"tick": 28
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/traversal/ash_bell_lift_exterior_descent/20260804T003731-0400/keyframes/tick_000038.png",
+			"render_frame": 44,
+			"sha256": "986a6537dd510cbab64f647dc405a3ff291412c1199d3d5cdfe7908335e27172",
+			"tick": 38
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/traversal/ash_bell_lift_exterior_descent/20260804T003731-0400/keyframes/tick_000070.png",
+			"render_frame": 76,
+			"sha256": "f5bc2ca2c3568a030b7b5854522486bccf8c5ea141d27a94ff8ff7875815eaaf",
+			"tick": 70
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/traversal/ash_bell_lift_exterior_descent/20260804T003731-0400/keyframes/tick_000120.png",
+			"render_frame": 126,
+			"sha256": "212786cf38964f388db002243a1018d4d3d68981c066152a7e252012db254da4",
+			"tick": 120
+		}
+	],
+	"markers": [],
+	"passed": true,
+	"probe_failures": [],
+	"runtime": {
+		"godot": {
+			"build": "arch_linux",
+			"hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+			"hex": 263937,
+			"major": 4,
+			"minor": 7,
+			"patch": 1,
+			"status": "stable",
+			"string": "4.7.1-stable (arch_linux)",
+			"timestamp": 1783976428
+		},
+		"physics_hz": 60,
+		"renderer": "vulkan"
+	},
+	"scenario_id": "traversal/ash_bell_lift_exterior_descent",
+	"scenario_path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/traversal/ash_bell_lift_exterior_descent/20260804T003731-0400/scenario.snapshot.json",
+	"schema": "custodian.moment_forge.run_result.v1",
+	"seed": 104729
+}

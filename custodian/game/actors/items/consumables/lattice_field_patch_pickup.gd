@@ -23,9 +23,11 @@ func _on_body_entered(body: Node) -> void:
 
 	var gained := int(body.call("add_field_patches", patch_amount))
 	if gained > 0:
+		_show_loot_toast(&"field_patch", "Field Patch", gained, Color(0.55, 0.95, 0.78, 1.0))
 		_spawn_pickup_popup("+%d FIELD PATCH" % gained, Color(0.55, 0.95, 0.78, 1.0))
 	else:
 		_grant_fallback_materials()
+		_show_loot_toast(&"field_patch_materials", "Field Patch Full", 1, Color(0.95, 0.82, 0.45, 1.0), null, "Materials recovered")
 		_spawn_pickup_popup("FIELD PATCH FULL // MATERIALS", Color(0.95, 0.82, 0.45, 1.0))
 	_play_pickup_tone()
 	queue_free()
@@ -88,3 +90,9 @@ func _play_pickup_tone() -> void:
 
 	var timer := get_tree().create_timer(0.2)
 	timer.timeout.connect(player.queue_free)
+
+
+func _show_loot_toast(item_id: StringName, display_name: String, amount: int, accent: Color, icon: Texture2D = null, detail: String = "") -> void:
+	var queue := get_tree().get_first_node_in_group("loot_toast_queue")
+	if queue != null:
+		queue.call("push_pickup", item_id, display_name, amount, accent, icon, detail)

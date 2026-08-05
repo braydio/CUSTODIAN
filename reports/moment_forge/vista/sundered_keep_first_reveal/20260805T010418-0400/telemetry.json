@@ -1,0 +1,222 @@
+{
+	"counters": {},
+	"engine": {
+		"frames_per_second": 1.0,
+		"time_scale": 1.0,
+		"version": {
+			"build": "arch_linux",
+			"hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+			"hex": 263937,
+			"major": 4,
+			"minor": 7,
+			"patch": 1,
+			"status": "stable",
+			"string": "4.7.1-stable (arch_linux)",
+			"timestamp": 1783976428
+		}
+	},
+	"events": [
+		{
+			"data": {},
+			"kind": "observatory_cleared",
+			"time_msec": 2433,
+			"uptime_sec": 1.249
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "capture_marker",
+					"name": "first_reveal_threshold",
+					"tick": 16.0
+				},
+				"moment_tick": 16,
+				"result": {
+					"action": "capture_marker",
+					"ok": true,
+					"tick": 16
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 2434,
+			"uptime_sec": 1.25
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "finish",
+					"tick": 238.0
+				},
+				"moment_tick": 238,
+				"result": {
+					"action": "finish",
+					"finish": true,
+					"ok": true,
+					"tick": 238
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 2442,
+			"uptime_sec": 1.258
+		}
+	],
+	"export_path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/vista/sundered_keep_first_reveal/20260805T010418-0400/telemetry.json",
+	"exported_at": "2026-08-05 01:04:21",
+	"gauges": {
+		"active_enemies": 0,
+		"active_projectiles": 0,
+		"ambient_critters": 0,
+		"collision_shape_count": 89,
+		"collision_shape_count_enemies": 0,
+		"collision_shape_count_foliage": 0,
+		"collision_shape_count_peak": 89,
+		"collision_shape_count_projectiles": 0,
+		"collision_shape_count_ruin_props": 0,
+		"collision_shape_count_runtime_walls": 0,
+		"director_behavior_agents": 0,
+		"fps": 1.0,
+		"heat_player_presence_cells": 0,
+		"heatmap_cells": 0,
+		"heatmap_samples": 0,
+		"legacy_combat_agents": 0,
+		"loaded_procgen_root_count": 0,
+		"loaded_world_branch_count": 0,
+		"node_class_histogram": {
+			"Area2D": 8,
+			"Button": 2,
+			"CanvasLayer": 5,
+			"CollisionShape2D": 89,
+			"ColorRect": 9,
+			"Control": 2,
+			"HBoxContainer": 2,
+			"Label": 13,
+			"Line2D": 1,
+			"LineEdit": 2,
+			"MarginContainer": 2,
+			"Marker2D": 17,
+			"Node": 29,
+			"Node2D": 35,
+			"Panel": 4,
+			"Parallax2D": 1,
+			"PointLight2D": 3,
+			"Polygon2D": 3,
+			"RichTextLabel": 3,
+			"Sprite2D": 41,
+			"StaticBody2D": 1,
+			"VBoxContainer": 2,
+			"Window": 1
+		},
+		"node_count": 275,
+		"node_count_collision": 98,
+		"node_count_peak": 275,
+		"node_count_procgen": 0,
+		"node_count_props": 0,
+		"node_count_ui": 46,
+		"node_count_vfx": 0,
+		"node_count_world": 0,
+		"observatory_full_tree_scan_count": 1,
+		"observatory_scan_usec": 1981,
+		"performance_draw_calls": 0,
+		"performance_frame_ms_average": 0.0,
+		"performance_frame_ms_current": 0.0,
+		"performance_frame_ms_p95": 0.0,
+		"performance_frame_ms_p99": 0.0,
+		"performance_frame_ms_worst": 0.0,
+		"performance_frame_sample_count": 0,
+		"performance_hitch_count": 0,
+		"performance_rendered_objects": 0,
+		"performance_severe_hitch_count": 0,
+		"physics_body_count": 1,
+		"physics_body_count_foliage": 0,
+		"physics_body_count_peak": 1,
+		"physics_body_count_ruin_props": 0,
+		"physics_body_count_runtime_walls": 0,
+		"physics_process_enabled_node_count": 0,
+		"process_enabled_node_count": 23,
+		"procgen_reveal_queue": 0,
+		"top_level_subtree_counts": {
+			"ARRNManager": 1,
+			"BuildInventory": 1,
+			"CognitiveState": 1,
+			"CommandRegistry": 1,
+			"DebugBus": 1,
+			"DebugConsoleLayer": 8,
+			"DebugCore": 1,
+			"DebugSnapshotCollector": 1,
+			"DevConsole": 12,
+			"DevMode": 3,
+			"DevObservatory": 1,
+			"DevObservatoryOverlay": 4,
+			"FabPipeline": 1,
+			"GameConsoleManager": 1,
+			"GameState": 1,
+			"GameStats": 1,
+			"InfrastructureRegistry": 1,
+			"InventoryManager": 1,
+			"MaterialIntelligence": 1,
+			"MusicManager": 1,
+			"NoiseEventBus": 1,
+			"ResourceLedger": 1,
+			"SectorHeatmap": 1,
+			"SimulationInterestManager": 1,
+			"SunderedKeepApproach": 222,
+			"VaultManager": 1,
+			"WorldEventMemory": 1,
+			"WorldHistory": 1,
+			"WorldStateGraph": 1,
+			"_mcp_game_helper": 1,
+			"root": 1
+		},
+		"uptime_sec": 1.26
+	},
+	"heatmap": {
+		"cell_count": 0,
+		"cell_size_px": 64.0,
+		"cells": {},
+		"event_type_counts": {},
+		"schema": "custodian.sector_heatmap.v1",
+		"total_samples": 0
+	},
+	"material_intelligence": {
+		"contact_counts_by_kind": {},
+		"contact_counts_by_material": {},
+		"default_cell_size_px": 64.0,
+		"material_counts": {},
+		"override_cell_count": 0,
+		"schema": "custodian.material_intelligence.summary.v1",
+		"total_contacts": 0
+	},
+	"metadata": {
+		"project_name": "CUSTODIAN",
+		"project_version": ""
+	},
+	"performance": {
+		"frame_ms_average": 0.0,
+		"frame_ms_current": 0.0,
+		"frame_ms_p95": 0.0,
+		"frame_ms_p99": 0.0,
+		"frame_ms_worst": 0.0,
+		"hitch_count": 0,
+		"sample_capacity": 600,
+		"sample_count": 0,
+		"severe_hitch_count": 0
+	},
+	"scene": {
+		"name": "SunderedKeepApproach",
+		"path": "res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn"
+	},
+	"schema": "custodian.dev_observatory.session.v1",
+	"session": {
+		"boot_time_msec": 1184,
+		"counter_count": 0,
+		"dropped_event_count": 0,
+		"event_buffer_saturated": false,
+		"event_capacity": 300,
+		"event_count": 3,
+		"gauge_count": 49,
+		"observatory_enabled": false,
+		"total_events_logged": 3,
+		"uptime_sec": 1.26,
+		"warning_count": 0
+	},
+	"warnings": []
+}

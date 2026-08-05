@@ -80,6 +80,17 @@ This validates:
 - no stale `design/03_architecture` references remain inside `design/04_architecture/`
 - reports line counts for overburdened coordinator files (warning only)
 
+For the Python-to-Godot simulation extraction scaffold:
+
+```bash
+cd custodian
+godot --headless --path . --script res://tools/validation/world_simulation_kernel_smoke.gd
+cd ..
+python3 python-sim/tools/export_godot_parity_fixtures.py
+```
+
+The kernel smoke proves same-seed command determinism, fixed-step pause/resume, typed structure damage, logistics/power execution, snapshots, and fingerprints. The Python command is an offline fixture oracle; it is never a Godot runtime dependency.
+
 ## Idea Codex Index Validation
 
 Use after adding, removing, or graduating cards from `design/90_codex/`.
@@ -240,6 +251,8 @@ cd custodian
 godot --headless --path . --script res://tools/validation/dev_observatory_smoke.gd
 godot --headless --path . --script res://tools/validation/dev_observatory_audit_smoke.gd
 godot --headless --path . --script res://tools/validation/dev_observatory_director_population_smoke.gd
+godot --headless --path . --script res://tools/validation/dev_observatory_performance_incident_smoke.gd
+godot --headless --path . --script res://tools/validation/loot_toast_queue_smoke.gd
 godot --headless --path . --script res://tools/validation/operator_ammo_reconciliation_smoke.gd
 godot --headless --path . --script res://tools/validation/operator_dodge_overlap_telemetry_smoke.gd
 godot --headless --path . --script res://tools/validation/dev_mode_smoke.gd
@@ -248,8 +261,12 @@ godot --headless --path . --script res://tools/validation/material_intelligence_
 godot --headless --path . --script res://tools/validation/power_grid_component_registration_smoke.gd
 ```
 
+The base Observatory smoke asserts exclusive F9 ownership, immediate visibility alternation, unchanged pause/time scale, zero F9 scans, and one scan per export. The incident smoke injects explicit microsecond ticks (never sleeps for a synthetic stall) and verifies external-stall exclusion, time-scale independence, and the three-second recovery rearm contract. In a restricted environment, point `XDG_DATA_HOME` at a writable temporary directory.
+
 This proves bounded telemetry storage, F9/F10 action registration, stable and timestamped JSON output, JSON-safe Variant
 conversion, event-buffer retention, success-event logging, failure-warning routing, numeric accumulation, and basic heatmap accumulation.
+The performance-incident smoke additionally proves wall-clock timing under time scale, capture with the overlay hidden,
+phase snapshots, aggregated spans, capped worst-frame dossiers, lifecycle deltas, classification, and frozen incident export.
 The audit smoke additionally proves hidden Observatory processing performs no recursive runtime scans, visible sampling performs one consolidated scan, export forces a current snapshot, reconciles a shared enemy attack ID through incoming-hit/player-damage events, proves a
 live bullet owns a projectile-classified collision shape, and checks cumulative damage/healing/chip amounts, ranged
 failure/cancellation categories, performance/leak peaks, last-live post-death context, Field Patch prompt
@@ -381,6 +398,7 @@ For Sundered Keep production ingress and return acceptance:
 cd custodian
 godot --headless --path . --script res://tools/validation/sundered_keep_ingress_smoke.gd
 godot --headless --path . --script res://tools/validation/sundered_keep_procgen_vista_layering_smoke.gd
+godot --headless --path . --script res://tools/validation/ash_bell_sundered_keep_two_ingress_renderer_smoke.gd
 godot --headless --path . --script res://tools/validation/route_registry_contract_smoke.gd
 godot --headless --path . --script res://tools/validation/authored_level_ingress_return_smoke.gd
 ```
@@ -495,14 +513,19 @@ godot --headless --path . \
   --script res://tools/validation/operator_sword_cleaver_smoke.gd
 godot --headless --path . \
   --script res://tools/validation/operator_melee_fast_chain_smoke.gd
+godot --headless --path . \
+  --script res://tools/validation/enemy_engagement_coordinator_smoke.gd
 godot --headless --path . --quit \
   --scene res://scenes/game.tscn
 ```
 
-The dagger smoke validates the default definition, three-link resources,
-contact/commit timing, synchronized E/W body/weapon/FX playback, bounded
-movement, input filtering, wall truncation, no snapback, and interruption
-cancellation. The cleaver smoke validates its explicit override, independent
+The dagger smoke validates the default definition, authored Chain 02/03 runtime
+mapping, the nine-frame/18 FPS Fast 03 presentation and `1.5x` finishing hold,
+two contact-owned hits against one target, per-contact damage/knockback/dedupe,
+animation-finished continuation, synchronized E/W body/weapon/FX playback,
+bounded movement, input filtering, wall truncation, no snapback, and interruption
+cancellation. The engagement smoke proves single nearby committed permission,
+interruption transfer, and unconstrained distant attackers. The cleaver smoke validates its explicit override, independent
 per-link profiles, synchronized provisional Chain 01 reuse, bounded finisher
 drive, and the unchanged dagger default. The Katana smoke remains the separate
 later-weapon regression.

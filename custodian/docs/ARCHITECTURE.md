@@ -309,3 +309,6 @@ The following files own too many concerns and are the first extraction targets:
 - `docs/ai_context/task_packets/ARCHITECTURE_ORGANIZATION_PASS.md` — migration plan
 - `design/04_architecture/INTEGRATION_CONTRACT_GLUE_LAYER.md` — cross-system integration contract
 - `design/04_architecture/CAMPAIGN_FLOW_AND_GAME_LOOP.md` — intended macro campaign loop
+# Deterministic simulation extraction
+
+The macro-game migration is governed by `design/04_architecture/PYTHON_SIM_TO_GODOT_MIGRATION.md`. Godot remains the sole runtime authority: pure campaign/world state is under `game/state/`, deterministic kernel systems under `game/systems/simulation/`, and future scene bindings under `game/world/bindings/`. The Python simulation is a parity oracle, never a subprocess or synchronized runtime. `GameState` remains a compatibility phase/failure façade while state lifetimes are extracted.

@@ -71,6 +71,7 @@ func _on_body_entered(body: Node) -> void:
 	if cognitive != null:
 		cognitive.add_from_item(item_id, quantity)
 
+	_show_loot_toast(item_id, _get_display_name(), quantity, ITEM_COLORS.get(item_id, Color.WHITE), ITEM_ANIMATION_TEXTURES.get(item_id, null), "Cognitive imprint secured")
 	_spawn_pickup_popup()
 	_play_pickup_tone()
 	print("[CognitivePickup] %s +%d" % [_get_display_name(), quantity])
@@ -153,3 +154,9 @@ func _play_pickup_tone() -> void:
 
 	var timer = get_tree().create_timer(0.2)
 	timer.timeout.connect(player.queue_free)
+
+
+func _show_loot_toast(item_id: StringName, display_name: String, amount: int, accent: Color, icon: Texture2D = null, detail: String = "") -> void:
+	var queue := get_tree().get_first_node_in_group("loot_toast_queue")
+	if queue != null:
+		queue.call("push_pickup", item_id, display_name, amount, accent, icon, detail)

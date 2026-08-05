@@ -296,7 +296,10 @@ enum WorldShapeMode {
 @export var intent_spawn_clearing_half_extents_tiles: Vector2i = Vector2i(5, 4)
 @export var intent_soft_paths_enabled: bool = true
 @export_range(0, 4, 1) var intent_soft_path_width: int = 1
-@export var intent_main_roads_enabled: bool = true
+## Archived production experiment. Wide generated roads remain available for
+## explicit debug comparison, but production uses ordinary terrain and narrow
+## interest paths without the expensive road repair/parking/decal passes.
+@export var intent_main_roads_enabled: bool = false
 @export_range(1, 5, 1) var intent_main_road_half_width: int = 2
 @export var intent_parking_zone_half_extents_tiles: Vector2i = Vector2i(4, 3)
 @export var road_piece_decals_enabled: bool = true
@@ -592,6 +595,7 @@ var _foliage_nodes: Dictionary = {}
 var _foliage_locally_inspected_tiles: Dictionary = {}
 var _foliage_textures: Array[Texture2D] = []
 var _pending_foliage_tiles: Array[Vector2i] = []
+var _world_ingress_dressing_clearance_rects: Array[Rect2i] = []
 var _foliage_spawn_generation: int = 0
 var _foliage_deferred_start_msec: int = 0
 var _interior_prop_textures: Array[Texture2D] = []
@@ -950,13 +954,14 @@ func _fill_tilemaps() -> void:
 
 	if intent_main_roads_enabled:
 		_carve_main_roads(map_size)
-	if route_presentation_enabled:
+	if intent_main_roads_enabled and route_presentation_enabled:
 		_stamp_ascent_route_presentation(map_size)
 	if use_cohesive_wall_visuals:
 		_apply_wall_visuals(map_size)
 	_protect_compound_ingress_tiles(map_size)
 	_enforce_road_walkability(map_size)
-	_prune_small_edge_road_components(map_size)
+	if intent_main_roads_enabled:
+		_prune_small_edge_road_components(map_size)
 	_refresh_road_path_visuals()
 	_capture_generated_tile_state(map_size)
 	_marks["roads_walls_capture"] = Time.get_ticks_msec() - _last
@@ -976,13 +981,16 @@ func _fill_tilemaps() -> void:
 		_enforce_road_walkability(map_size)
 		_marks["terrain_road_walkability"] = Time.get_ticks_msec() - terrain_phase_started
 		terrain_phase_started = Time.get_ticks_msec()
-		_repair_road_surface_components(map_size, maxi(1, intent_main_road_half_width - 1))
+		if intent_main_roads_enabled:
+			_repair_road_surface_components(map_size, maxi(1, intent_main_road_half_width - 1))
 		_marks["terrain_road_repair"] = Time.get_ticks_msec() - terrain_phase_started
 		terrain_phase_started = Time.get_ticks_msec()
-		_apply_compound_connector_elevation(map_size)
+		if intent_main_roads_enabled:
+			_apply_compound_connector_elevation(map_size)
 		_marks["terrain_connector_elevation"] = Time.get_ticks_msec() - terrain_phase_started
 		terrain_phase_started = Time.get_ticks_msec()
-		_prune_small_edge_road_components(map_size)
+		if intent_main_roads_enabled:
+			_prune_small_edge_road_components(map_size)
 		_marks["terrain_edge_prune"] = Time.get_ticks_msec() - terrain_phase_started
 		terrain_phase_started = Time.get_ticks_msec()
 		_refresh_road_path_visuals()
@@ -1001,7 +1009,7 @@ func _fill_tilemaps() -> void:
 	if story_rooms_enabled:
 		_place_story_rooms(map_size)
 		_stamp_worldgen_story_room_geometry()
-	if _parking_zone_center != Vector2i.ZERO:
+	if intent_main_roads_enabled and _parking_zone_center != Vector2i.ZERO:
 		_stamp_parking_zone(_parking_zone_center, map_size)
 	_enforce_route_playability_walkability(map_size)
 	_marks["progress_faction_story"] = Time.get_ticks_msec() - _last
@@ -2377,10 +2385,15 @@ func _protect_compound_ingress_tiles(map_size: Vector2i) -> void:
 	for ingress in _last_compound_ingress:
 		if not _is_tile_inside_map(ingress, map_size, 1):
 			continue
-		_set_road_path_tile(ingress, "road")
-		_main_road_tiles[ingress] = true
-		_road_centerline_tiles[ingress] = true
-		_road_visual_tiles[ingress] = true
+		if intent_main_roads_enabled:
+			_set_road_path_tile(ingress, "road")
+			_main_road_tiles[ingress] = true
+			_road_centerline_tiles[ingress] = true
+			_road_visual_tiles[ingress] = true
+		else:
+			# Compound access remains valid generated floor without promoting the
+			# ingress into wide-road presentation authority.
+			_set_floor_tile(ingress)
 		_set_region_tile(ingress, "compound_ingress", "compound_approach")
 
 
@@ -2522,6 +2535,42 @@ func claim_world_overlook_pocket(
 	_clear_prop_visuals_in_rect(clearance)
 	_queue_navigation_rebuild()
 	return footprint
+
+
+func claim_world_ingress_dressing_clearance(world_rect: Rect2) -> Rect2i:
+	if not world_rect.has_area():
+		return Rect2i()
+	var minimum_tile := _global_to_tile(world_rect.position)
+	var maximum_tile := _global_to_tile(world_rect.end - Vector2.ONE)
+	var tile_rect := Rect2i(
+		minimum_tile,
+		maximum_tile - minimum_tile + Vector2i.ONE
+	)
+	_world_ingress_dressing_clearance_rects.append(tile_rect)
+
+	var retained_pending: Array[Vector2i] = []
+	for tile: Vector2i in _pending_foliage_tiles:
+		if not tile_rect.has_point(tile):
+			retained_pending.append(tile)
+	_pending_foliage_tiles.assign(retained_pending)
+
+	for tile_variant: Variant in _foliage_nodes.keys():
+		if tile_variant is Vector2i and tile_rect.has_point(tile_variant as Vector2i):
+			_remove_foliage(tile_variant as Vector2i)
+	_clear_runtime_prop_sources_in_rect(tile_rect)
+	_clear_prop_visuals_in_rect(tile_rect)
+	return tile_rect
+
+
+func is_inside_world_ingress_dressing_clearance(tile: Vector2i) -> bool:
+	for rect: Rect2i in _world_ingress_dressing_clearance_rects:
+		if rect.has_point(tile):
+			return true
+	return false
+
+
+func clear_world_ingress_dressing_clearances() -> void:
+	_world_ingress_dressing_clearance_rects.clear()
 
 
 func _clear_runtime_prop_sources_in_rect(rect: Rect2i) -> void:
@@ -5834,6 +5883,10 @@ func _build_foliage_spawner_context(map_size: Vector2i = Vector2i.ZERO) -> Dicti
 		"is_parking_zone_tile": Callable(self, "is_parking_zone_tile"),
 		"is_indoor_tile": Callable(self, "is_indoor_tile"),
 		"is_inside_combat_readability_clearance": Callable(self, "_is_inside_combat_readability_spawn_clearance"),
+		"is_inside_world_ingress_dressing_clearance": Callable(
+			self,
+			"is_inside_world_ingress_dressing_clearance"
+		),
 		"get_region_type_at_tile": Callable(self, "get_region_type_at_tile"),
 		"get_region_data_at_tile": Callable(self, "get_region_data_at_tile"),
 		"set_region_tile": Callable(self, "_set_region_tile"),

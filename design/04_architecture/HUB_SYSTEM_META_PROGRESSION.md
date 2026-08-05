@@ -117,6 +117,10 @@ It does define the Hub-side data model those systems must respect.
 
 ## 6. Core Principle: The Hub Is a Knowledge State Machine
 
+### Runtime migration boundary
+
+The active runtime implementation uses `HubState` as persistent data and `CampaignSession`/`WorldSimulationState` as disposable campaign data. Campaign completion produces a `CampaignOutcome`; only that distilled packet may mutate Hub state. See `PYTHON_SIM_TO_GODOT_MIGRATION.md` for the fixed-step and command/event contract. Do not place transient campaign references in persistent state.
+
 This is the single most important conceptual lock.
 
 The Hub tracks:

@@ -114,6 +114,12 @@ const MELEE_CHAIN_02_FX_EAST_SHEET := "res://content/sprites/operator/runtime/fx
 const MELEE_CHAIN_02_FX_WEST_SHEET := "res://content/sprites/operator/runtime/fx/melee_1h/shared/operator__fx__melee_1h__chain_02__w__8f__156x96.png"
 const VIGIL_DAGGER_CHAIN_02_EAST_SHEET := "res://content/sprites/operator/runtime/weapon/melee_1h/vigil_pattern_dagger/operator__weapon__vigil_pattern_dagger__chain_02__e__8f__156x96.png"
 const VIGIL_DAGGER_CHAIN_02_WEST_SHEET := "res://content/sprites/operator/runtime/weapon/melee_1h/vigil_pattern_dagger/operator__weapon__vigil_pattern_dagger__chain_02__w__8f__156x96.png"
+const MELEE_CHAIN_03_BODY_EAST_SHEET := "res://content/sprites/operator/runtime/body/melee_1h/shared/operator__body__melee_1h__chain_03__e__10f__156x96.png"
+const MELEE_CHAIN_03_BODY_WEST_SHEET := "res://content/sprites/operator/runtime/body/melee_1h/shared/operator__body__melee_1h__chain_03__w__10f__156x96.png"
+const MELEE_CHAIN_03_FX_EAST_SHEET := "res://content/sprites/operator/runtime/modular_fx/operator__modular_fx__melee_1h__chain_03__e__10f__156x96.png"
+const MELEE_CHAIN_03_FX_WEST_SHEET := "res://content/sprites/operator/runtime/modular_fx/operator__modular_fx__melee_1h__chain_03__w__10f__156x96.png"
+const VIGIL_DAGGER_CHAIN_03_EAST_SHEET := "res://content/sprites/operator/runtime/weapon/melee_1h/vigil_pattern_dagger/operator__weapon__vigil_pattern_dagger__chain_03__e__10f__156x96.png"
+const VIGIL_DAGGER_CHAIN_03_WEST_SHEET := "res://content/sprites/operator/runtime/weapon/melee_1h/vigil_pattern_dagger/operator__weapon__vigil_pattern_dagger__chain_03__w__10f__156x96.png"
 const SWORD_CLEAVER_CHAIN_01_EAST_SHEET := "res://content/sprites/operator/runtime/weapon/melee_1h/sword_cleaver/operator__weapon__sword_cleaver__chain_01__e__10f__156x96.png"
 const SWORD_CLEAVER_CHAIN_01_WEST_SHEET := "res://content/sprites/operator/runtime/weapon/melee_1h/sword_cleaver/operator__weapon__sword_cleaver__chain_01__w__10f__156x96.png"
 var _had_rebuild_error := false
@@ -194,6 +200,10 @@ const UNARMED_FAST_RECOVERY_BODY_SLICES := [
 ]
 
 func _init() -> void:
+	if "--vigil-dagger-only" in OS.get_cmdline_user_args():
+		_rebuild_vigil_dagger_frames_only()
+		quit(0 if not _had_rebuild_error else 1)
+		return
 	var body_frames := load(BODY_FRAMES_PATH) as SpriteFrames
 	var modular_lower_body_frames := _load_or_create_sprite_frames(MODULAR_LOWER_BODY_FRAMES_PATH)
 	var modular_upper_body_frames := _load_or_create_sprite_frames(MODULAR_UPPER_BODY_FRAMES_PATH)
@@ -401,6 +411,21 @@ func _init() -> void:
 		vigil_dagger_fx_frames, "vigil_dagger", "fx", 2,
 		MELEE_CHAIN_02_FX_EAST_SHEET, MELEE_CHAIN_02_FX_WEST_SHEET, 8
 	)
+	_replace_melee_chain_link(
+		vigil_dagger_body_frames, "vigil_dagger", "body", 3,
+		MELEE_CHAIN_03_BODY_EAST_SHEET, MELEE_CHAIN_03_BODY_WEST_SHEET, 9
+	)
+	_replace_melee_chain_link(
+		vigil_dagger_weapon_frames, "vigil_dagger", "weapon", 3,
+		VIGIL_DAGGER_CHAIN_03_EAST_SHEET, VIGIL_DAGGER_CHAIN_03_WEST_SHEET, 9
+	)
+	_replace_melee_chain_link(
+		vigil_dagger_fx_frames, "vigil_dagger", "fx", 3,
+		MELEE_CHAIN_03_FX_EAST_SHEET, MELEE_CHAIN_03_FX_WEST_SHEET, 9
+	)
+	_set_melee_chain_final_frame_duration(vigil_dagger_body_frames, "vigil_dagger", "body", 3, 1.5)
+	_set_melee_chain_final_frame_duration(vigil_dagger_weapon_frames, "vigil_dagger", "weapon", 3, 1.5)
+	_set_melee_chain_final_frame_duration(vigil_dagger_fx_frames, "vigil_dagger", "fx", 3, 1.5)
 	_populate_melee_chain_frames(
 		sword_cleaver_body_frames,
 		"sword_cleaver",
@@ -443,6 +468,27 @@ func _init() -> void:
 	ResourceSaver.save(sword_cleaver_weapon_frames, SWORD_CLEAVER_WEAPON_FRAMES_PATH)
 	ResourceSaver.save(sword_cleaver_fx_frames, SWORD_CLEAVER_FX_FRAMES_PATH)
 	quit()
+
+
+func _rebuild_vigil_dagger_frames_only() -> void:
+	var body_frames := SpriteFrames.new()
+	var weapon_frames := SpriteFrames.new()
+	var fx_frames := SpriteFrames.new()
+	_populate_melee_chain_frames(body_frames, "vigil_dagger", "body", MELEE_CHAIN_01_BODY_EAST_SHEET, MELEE_CHAIN_01_BODY_WEST_SHEET)
+	_populate_melee_chain_frames(weapon_frames, "vigil_dagger", "weapon", VIGIL_DAGGER_CHAIN_01_EAST_SHEET, VIGIL_DAGGER_CHAIN_01_WEST_SHEET)
+	_populate_melee_chain_frames(fx_frames, "vigil_dagger", "fx", MELEE_CHAIN_01_FX_EAST_SHEET, MELEE_CHAIN_01_FX_WEST_SHEET)
+	_replace_melee_chain_link(body_frames, "vigil_dagger", "body", 2, MELEE_CHAIN_02_BODY_EAST_SHEET, MELEE_CHAIN_02_BODY_WEST_SHEET, 8)
+	_replace_melee_chain_link(weapon_frames, "vigil_dagger", "weapon", 2, VIGIL_DAGGER_CHAIN_02_EAST_SHEET, VIGIL_DAGGER_CHAIN_02_WEST_SHEET, 8)
+	_replace_melee_chain_link(fx_frames, "vigil_dagger", "fx", 2, MELEE_CHAIN_02_FX_EAST_SHEET, MELEE_CHAIN_02_FX_WEST_SHEET, 8)
+	_replace_melee_chain_link(body_frames, "vigil_dagger", "body", 3, MELEE_CHAIN_03_BODY_EAST_SHEET, MELEE_CHAIN_03_BODY_WEST_SHEET, 9)
+	_replace_melee_chain_link(weapon_frames, "vigil_dagger", "weapon", 3, VIGIL_DAGGER_CHAIN_03_EAST_SHEET, VIGIL_DAGGER_CHAIN_03_WEST_SHEET, 9)
+	_replace_melee_chain_link(fx_frames, "vigil_dagger", "fx", 3, MELEE_CHAIN_03_FX_EAST_SHEET, MELEE_CHAIN_03_FX_WEST_SHEET, 9)
+	_set_melee_chain_final_frame_duration(body_frames, "vigil_dagger", "body", 3, 1.5)
+	_set_melee_chain_final_frame_duration(weapon_frames, "vigil_dagger", "weapon", 3, 1.5)
+	_set_melee_chain_final_frame_duration(fx_frames, "vigil_dagger", "fx", 3, 1.5)
+	ResourceSaver.save(body_frames, VIGIL_DAGGER_BODY_FRAMES_PATH)
+	ResourceSaver.save(weapon_frames, VIGIL_DAGGER_WEAPON_FRAMES_PATH)
+	ResourceSaver.save(fx_frames, VIGIL_DAGGER_FX_FRAMES_PATH)
 
 
 func _populate_melee_chain_frames(
@@ -498,6 +544,44 @@ func _replace_melee_chain_link(
 		base += "_fx"
 	_replace_animation(sprite_frames, "%s_right" % base, east_sheet, frame_count, 0, 156, 96, 18.0, false)
 	_replace_animation(sprite_frames, "%s_left" % base, west_sheet, frame_count, 0, 156, 96, 18.0, false)
+
+
+func _set_melee_chain_link_speed(
+	sprite_frames: SpriteFrames,
+	weapon_prefix: String,
+	layer: String,
+	link: int,
+	fps: float
+) -> void:
+	var base := "%s_fast_%02d" % [weapon_prefix, link]
+	if layer == "weapon":
+		base += "_weapon"
+	elif layer == "fx":
+		base += "_fx"
+	for suffix in ["right", "left"]:
+		var animation := StringName("%s_%s" % [base, suffix])
+		if sprite_frames.has_animation(animation):
+			sprite_frames.set_animation_speed(animation, fps)
+
+
+func _set_melee_chain_final_frame_duration(
+	sprite_frames: SpriteFrames,
+	weapon_prefix: String,
+	layer: String,
+	link: int,
+	duration: float
+) -> void:
+	var base := "%s_fast_%02d" % [weapon_prefix, link]
+	if layer == "weapon":
+		base += "_weapon"
+	elif layer == "fx":
+		base += "_fx"
+	for suffix in ["right", "left"]:
+		var animation := StringName("%s_%s" % [base, suffix])
+		if sprite_frames.has_animation(animation):
+			var final_index := sprite_frames.get_frame_count(animation) - 1
+			if final_index >= 0:
+				sprite_frames.set_frame(animation, final_index, sprite_frames.get_frame_texture(animation, final_index), duration)
 
 
 func _replace_animation(

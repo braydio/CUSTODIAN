@@ -37,7 +37,27 @@ hit_windows = {
 "frames": [6]
 },
 "vigil_dagger_fast_03": {
-"frames": [6]
+"commit_on_animation_finished": true,
+"swing_frames": [3, 7],
+"contacts": [{
+"id": "cut_01",
+"frames": [5],
+"damage_multiplier": 0.36,
+"stagger_multiplier": 0.45,
+"knockback_multiplier": 0.12,
+"hit_stop_scale": 0.55,
+"hit_stop_duration": 0.022,
+"camera_heavy": false
+}, {
+"id": "cut_02",
+"frames": [9],
+"damage_multiplier": 0.64,
+"stagger_multiplier": 1.0,
+"knockback_multiplier": 1.0,
+"hit_stop_scale": 0.30,
+"hit_stop_duration": 0.043,
+"camera_heavy": true
+}]
 }
 }
 fx_map = {
@@ -57,7 +77,9 @@ fx_map = {
 fast_attack_profile = ExtResource("5_fast_attack")
 fast_chain_keys = PackedStringArray("vigil_dagger_fast_01", "vigil_dagger_fast_02", "vigil_dagger_fast_03")
 fast_chain_attack_profiles = Array[ExtResource("9_profile_script")]([ExtResource("5_fast_attack"), ExtResource("7_fast_attack_02"), ExtResource("8_fast_attack_03")])
-fast_chain_commit_frames = PackedInt32Array(6, 6, 6)
+fast_chain_queue_open_frames = PackedInt32Array(3, 2, 6)
+fast_chain_queue_close_frames = PackedInt32Array(8, 7, 8)
+fast_chain_commit_frames = PackedInt32Array(6, 6, 8)
 fast_chain_stamina_costs = PackedFloat32Array(5, 6, 8)
 fast_chain_loops = true
 fast_chain_has_integrated_recovery = true

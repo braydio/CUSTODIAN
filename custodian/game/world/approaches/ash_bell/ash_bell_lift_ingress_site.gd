@@ -25,6 +25,28 @@ func _ensure_visual() -> void:
 	add_child(_presentation)
 
 
+func get_interaction_position() -> Vector2:
+	if _presentation != null:
+		return _presentation.get_boarding_position()
+	return global_position
+
+
+func get_procgen_dressing_clearance_world_rect() -> Rect2:
+	if _presentation == null:
+		return Rect2()
+	return _presentation.get_procgen_dressing_clearance_world_rect()
+
+
+func interact(actor: Node) -> void:
+	if not (actor is Node2D):
+		return
+	if _presentation == null:
+		return
+	if not _presentation.is_actor_boarded(actor as Node2D):
+		return
+	super.interact(actor)
+
+
 func _play_entry_presentation(actor: Node) -> void:
 	if _presentation == null or not (actor is Node2D):
 		return

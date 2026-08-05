@@ -72,8 +72,15 @@ func _run() -> void:
 	)
 	assert(fallback_regions.size() == 1)
 	var fallback := fallback_regions[0] as Node2D
-	assert(fallback != null and fallback.name == "WorldDepthBackdrop")
+	assert(fallback != null and fallback.name == "CameraDepthBackdrop")
 	assert(fallback.get_meta("world_cell_bounds", Rect2i()) == Rect2i(-12, -8, 33, 23))
+	assert(is_equal_approx(fallback.scale.x, 1.08))
+	var camera := Camera2D.new()
+	camera.global_position = Vector2(321, 654)
+	root.add_child(camera)
+	camera.enabled = true
+	backdrop.call("_process", 0.6)
+	assert(fallback.global_position.is_equal_approx(camera.global_position))
 	assert(fallback.get_child_count() == 3)
 
 	backdrop.configure_from_chasm_cells([

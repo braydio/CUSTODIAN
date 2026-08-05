@@ -19,6 +19,7 @@ floor_tilemap = NodePath("NavigationRegion2D/Floor")
 walls_tilemap = NodePath("NavigationRegion2D/Walls")
 nav_region = NodePath("NavigationRegion2D")
 depth_backdrop = NodePath("DepthBackdrop")
+intent_main_roads_enabled = false
 floor_source_id = 10
 walls_source_id = 12
 reference_vertical_wall_coords = Array[Vector2i]([Vector2i(15, 0)])

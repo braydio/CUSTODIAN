@@ -7,6 +7,12 @@ extends Node2D
 
 
 func _ready() -> void:
+	add_to_group("vfx")
+	var obs := get_node_or_null("/root/DevObservatory")
+	if obs != null and obs.has_method("adjust_gauge"):
+		obs.adjust_gauge(&"active_vfx", 1)
+	if not tree_exiting.is_connected(_on_observatory_exit):
+		tree_exiting.connect(_on_observatory_exit)
 	z_as_relative = false
 	z_index = 20
 	if animated_sprite == null or animated_sprite.sprite_frames == null:
@@ -24,6 +30,12 @@ func _ready() -> void:
 	animated_sprite.play(playback_animation)
 	if not animated_sprite.animation_finished.is_connected(queue_free):
 		animated_sprite.animation_finished.connect(queue_free)
+
+
+func _on_observatory_exit() -> void:
+	var obs := get_node_or_null("/root/DevObservatory")
+	if obs != null and obs.has_method("adjust_gauge"):
+		obs.adjust_gauge(&"active_vfx", -1)
 
 
 func configure_impact(direction: Vector2, surface_normal: Vector2 = Vector2.ZERO) -> void:

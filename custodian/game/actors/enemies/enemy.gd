@@ -95,6 +95,8 @@ enum LifeState {
 @export var strong_attack_multiplier: float = 3.0
 @export var attack_objective: String = "breach_command"
 @export var attack_windup_duration: float = 0.10
+@export var attack_recovery_duration: float = 0.40
+@export var attack_tracking_lock_sec: float = 0.12
 @export var hit_recoil_duration: float = 0.12
 @export var melee_hit_range_grace_multiplier: float = 1.15
 @export var melee_hit_range_grace_px: float = 10.0
@@ -400,8 +402,16 @@ const OBJECTIVE_GROUPS := {
 @onready var humanoid_cutout_rig: HumanoidCutoutRig2D = get_node_or_null("HumanoidCutoutRig2D") as HumanoidCutoutRig2D
 @onready var behavior_state_machine = $EnemyBehaviorStateMachine if has_node("EnemyBehaviorStateMachine") else null
 var _visual_backend_fallbacks_reported: Dictionary = {}
+var _observatory_population_registered := false
+var _observatory_corpse_registered := false
 
 func _ready():
+	var obs := get_node_or_null("/root/DevObservatory")
+	if obs != null and obs.has_method("adjust_gauge"):
+		obs.adjust_gauge(&"living_enemies", 1)
+		_observatory_population_registered = true
+	if not tree_exiting.is_connected(_on_observatory_exit):
+		tree_exiting.connect(_on_observatory_exit)
 	add_to_group("enemies")
 	add_to_group("enemy")
 	add_to_group("interest_managed")
@@ -423,7 +433,7 @@ func _ready():
 			else:
 				animated_sprite.scale = _get_custom_ambient_scale_for_animation(CUSTOM_AMBIENT_SOUTH_ANIMATION) if _uses_custom_ambient_animation_set() else directional_charset_scale
 			_base_sprite_scale = animated_sprite.scale
-		_update_directional_animation(_last_move_direction, false)
+	_update_directional_animation(_last_move_direction, false)
 	if animated_sprite:
 		_base_sprite_scale = animated_sprite.scale
 	if custom_enemy_fx_sprite:
@@ -458,6 +468,14 @@ func _setup_health_bar_style() -> void:
 	health_bar.custom_minimum_size = Vector2(48, 8)
 	health_bar.offset_left = -24.0
 	health_bar.offset_top = health_bar_vertical_offset
+
+
+func _on_observatory_exit() -> void:
+	var obs := get_node_or_null("/root/DevObservatory")
+	if obs == null or not obs.has_method("adjust_gauge") or not _observatory_population_registered:
+		return
+	obs.adjust_gauge(&"corpse_enemies" if _observatory_corpse_registered else &"living_enemies", -1)
+	_observatory_population_registered = false
 	health_bar.offset_right = 24.0
 	health_bar.offset_bottom = health_bar_vertical_offset + 8.0
 	
@@ -497,13 +515,21 @@ func _initialize_navigation() -> void:
 		push_warning("[Enemy] ", enemy_name, " no navigation system found, using direct movement")
 
 func _physics_process(delta):
+	var obs := get_node_or_null("/root/DevObservatory")
+	var total_started: int = obs.perf_span_begin() if obs != null else 0
 	if dead:
+		var corpse_started: int = obs.perf_span_begin() if obs != null else 0
 		_update_empty_corpse_cleanup(delta)
+		if obs != null:
+			obs.perf_span_end(&"enemy_corpse", corpse_started)
+			obs.perf_span_end(&"enemy_total", total_started)
 		return
 	var tier_interval := _simulation_tier_interval()
 	if tier_interval > 0.0:
 		_simulation_tier_accum += delta
 		if _simulation_tier_accum < tier_interval:
+			if obs != null:
+				obs.perf_span_end(&"enemy_total", total_started)
 			return
 		delta = _simulation_tier_accum
 		_simulation_tier_accum = 0.0
@@ -512,28 +538,59 @@ func _physics_process(delta):
 	_grunt_falcon_punch_cooldown_timer = maxf(0.0, _grunt_falcon_punch_cooldown_timer - delta)
 	_grunt_falcon_punch_recent_parry_timer = maxf(0.0, _grunt_falcon_punch_recent_parry_timer - delta)
 	if _update_savage_attack(delta):
+		if obs != null:
+			obs.perf_span_end(&"enemy_combat", total_started)
+			obs.perf_span_end(&"enemy_total", total_started)
 		return
 	if _update_grunt_falcon_punch_attack(delta):
+		if obs != null:
+			obs.perf_span_end(&"enemy_combat", total_started)
+			obs.perf_span_end(&"enemy_total", total_started)
 		return
 	if _update_marine_dash_attack(delta):
+		if obs != null:
+			obs.perf_span_end(&"enemy_combat", total_started)
+			obs.perf_span_end(&"enemy_total", total_started)
 		return
 	if _update_reaction_timers(delta):
+		if obs != null:
+			obs.perf_span_end(&"enemy_combat", total_started)
+			obs.perf_span_end(&"enemy_total", total_started)
 		return
 	if _update_attack_windup(delta):
+		if obs != null:
+			obs.perf_span_end(&"enemy_combat", total_started)
+			obs.perf_span_end(&"enemy_total", total_started)
 		return
 	if behavior_state_machine_enabled and behavior_state_machine != null and behavior_state_machine.has_method("physics_update"):
+		var behavior_started: int = obs.perf_span_begin() if obs != null else 0
 		if bool(behavior_state_machine.call("physics_update", self, delta)):
+			if obs != null:
+				obs.perf_span_end(&"enemy_behavior", behavior_started)
+				obs.perf_span_end(&"enemy_total", total_started)
 			return
+		if obs != null:
+			obs.perf_span_end(&"enemy_behavior", behavior_started)
 	if passive:
+		var passive_started: int = obs.perf_span_begin() if obs != null else 0
 		_update_passive_behavior(delta)
+		if obs != null:
+			obs.perf_span_end(&"enemy_behavior", passive_started)
+			obs.perf_span_end(&"enemy_total", total_started)
 		return
 	if _update_assault_state(delta):
+		if obs != null:
+			obs.perf_span_end(&"enemy_behavior", total_started)
+			obs.perf_span_end(&"enemy_total", total_started)
 		return
 
 	target_refresh_timer -= delta
 	if target_refresh_timer <= 0.0 or target == null or not is_instance_valid(target) or _is_target_destroyed(target):
 		target_refresh_timer = retarget_interval
+		var perception_started: int = obs.perf_span_begin() if obs != null else 0
 		_refresh_target()
+		if obs != null:
+			obs.perf_span_end(&"enemy_perception", perception_started)
 
 	if target:
 		var target_pos = target.global_position
@@ -545,27 +602,47 @@ func _physics_process(delta):
 			
 			# Use pathfinding if available and target is far enough
 			if use_pathfinding and navigation_system != null and navigation_system.has_method("get_path_to_target"):
+				var navigation_started: int = obs.perf_span_begin() if obs != null else 0
 				direction = _get_pathfinding_direction(target_pos, delta)
+				if obs != null:
+					obs.perf_span_end(&"enemy_navigation", navigation_started)
 			else:
 				# Direct movement (fallback)
 				direction = (target_pos - global_position).normalized()
 			
+			var separation_started: int = obs.perf_span_begin() if obs != null else 0
 			direction = _apply_enemy_spacing_to_direction(direction)
+			if obs != null:
+				obs.perf_span_end(&"enemy_separation", separation_started)
 			velocity = direction * speed
 			_limit_pursuit_inward_velocity(target_pos, attack_range, delta)
+			var movement_started: int = obs.perf_span_begin() if obs != null else 0
 			move_and_slide()
+			if obs != null:
+				obs.perf_span_end(&"enemy_move_and_slide", movement_started)
 			_update_stuck_reroute(target_pos, delta)
 			_last_move_direction = direction if direction.length_squared() > 0.0001 else _last_move_direction
 			if _uses_directional_animation_set():
+				var animation_started: int = obs.perf_span_begin() if obs != null else 0
 				_update_directional_animation(_last_move_direction, true)
+				if obs != null:
+					obs.perf_span_end(&"enemy_animation", animation_started)
 		else:
 			velocity = Vector2.ZERO
 			var direction = (target_pos - global_position).normalized()
 			if direction.length_squared() > 0.0001:
 				_last_move_direction = direction
 			if _uses_directional_animation_set():
+				var animation_started: int = obs.perf_span_begin() if obs != null else 0
 				_update_directional_animation(_last_move_direction, false)
+				if obs != null:
+					obs.perf_span_end(&"enemy_animation", animation_started)
+			var combat_started: int = obs.perf_span_begin() if obs != null else 0
 			_attack_target(delta)
+			if obs != null:
+				obs.perf_span_end(&"enemy_combat", combat_started)
+	if obs != null:
+		obs.perf_span_end(&"enemy_total", total_started)
 		
 func _attack_target(delta: float):
 	if _should_use_savage_attacks():
@@ -911,7 +988,12 @@ func _update_grunt_falcon_punch_attack(delta: float) -> bool:
 			if _uses_custom_enemy_animation_set():
 				_update_custom_enemy_animation(_grunt_falcon_punch_direction, true, false)
 			if _grunt_falcon_punch_timer <= 0.0:
-				_start_grunt_falcon_punch_leap()
+				if _try_claim_engagement_token(
+					grunt_falcon_punch_leap_time
+					+ grunt_falcon_punch_impact_lock_time
+					+ grunt_falcon_punch_recovery_time
+				):
+					_start_grunt_falcon_punch_leap()
 		&"leap":
 			_update_grunt_falcon_punch_leap(delta)
 		&"impact_lock":
@@ -1016,6 +1098,7 @@ func _finish_grunt_falcon_punch_attack(result_override: StringName = &"") -> voi
 	_grunt_falcon_punch_current_distance = grunt_falcon_punch_distance_px
 	_grunt_falcon_punch_attack_id = ""
 	_grunt_falcon_punch_impact_confirmed = false
+	_release_engagement_token()
 	velocity = Vector2.ZERO
 	if _uses_directional_animation_set():
 		_update_directional_animation(_last_move_direction, false)
@@ -1555,6 +1638,8 @@ func _refresh_target():
 	target = _find_best_target()
 
 func _find_best_target() -> Node2D:
+	var obs := get_node_or_null("/root/DevObservatory")
+	var sensor_started: int = obs.perf_span_begin() if obs != null else 0
 	var best: Node2D = null
 	var best_priority := 999
 	var best_distance := INF
@@ -1576,6 +1661,8 @@ func _find_best_target() -> Node2D:
 				best_distance = dist
 	if best == null:
 		best = _find_nearest_ambient_critter_target()
+	if obs != null:
+		obs.perf_span_end(&"enemy_objective_sensor", sensor_started)
 	return best
 
 
@@ -2023,6 +2110,11 @@ func die():
 		return
 	life_state = LifeState.DYING
 	dead = true
+	var obs := get_node_or_null("/root/DevObservatory")
+	if obs != null and obs.has_method("adjust_gauge") and _observatory_population_registered and not _observatory_corpse_registered:
+		obs.adjust_gauge(&"living_enemies", -1)
+		obs.adjust_gauge(&"corpse_enemies", 1)
+		_observatory_corpse_registered = true
 	velocity = Vector2.ZERO
 	_pending_corpse_payload = _build_corpse_payload_once()
 	_play_enemy_death_sfx()
@@ -2694,10 +2786,34 @@ func _update_attack_windup(delta: float) -> bool:
 		return false
 	_attack_windup_timer = max(0.0, _attack_windup_timer - delta)
 	velocity = Vector2.ZERO
+	if _attack_windup_timer > maxf(0.0, attack_tracking_lock_sec):
+		_capture_pending_attack_context()
 	if _attack_windup_timer > 0.0:
+		return true
+	if not _try_claim_engagement_token(attack_recovery_duration):
 		return true
 	_execute_queued_attack()
 	return true
+
+
+func _try_claim_engagement_token(hold_duration_sec: float) -> bool:
+	if target == null or not is_instance_valid(target) or not (target is Node2D):
+		return false
+	var coordinator := get_node_or_null("/root/EnemyEngagementCoordinator")
+	if coordinator == null:
+		return true
+	return bool(coordinator.call(
+		"request_committed_attack",
+		self,
+		target as Node2D,
+		hold_duration_sec
+	))
+
+
+func _release_engagement_token() -> void:
+	var coordinator := get_node_or_null("/root/EnemyEngagementCoordinator")
+	if coordinator != null:
+		coordinator.call("release_committed_attack", self)
 
 
 func _execute_queued_attack() -> void:
@@ -2832,6 +2948,7 @@ func _cancel_pending_attack_with_result(result: StringName, reason: StringName) 
 		_obs_increment(&"enemy_attack_interrupted_by_death")
 	elif reason == &"parry":
 		_obs_increment(&"enemy_attack_interrupted_by_parry")
+	_release_engagement_token()
 	_clear_pending_attack_context()
 
 
@@ -3018,7 +3135,33 @@ func apply_melee_impact(attack_kind: String, knockback_direction: Vector2, knock
 		return
 	_custom_ambient_knockout_flip_h = knockback_direction.x > 0.0
 	_last_move_direction = knockback_direction if knockback_direction.length_squared() > 0.0001 else _last_move_direction
-	if attack_kind == "heavy":
+	var attack_parts := attack_kind.split(":", false, 1)
+	var base_attack_kind := attack_parts[0] if not attack_parts.is_empty() else attack_kind
+	var contact_id := attack_parts[1] if attack_parts.size() > 1 else ""
+	var is_dagger_finisher := base_attack_kind == "vigil_dagger_fast_03"
+	var is_dagger_finisher_catch := is_dagger_finisher and contact_id == "cut_01"
+	var is_dagger_link_two := base_attack_kind == "vigil_dagger_fast_02"
+	var is_dagger_link_one := base_attack_kind == "vigil_dagger_fast_01"
+	if is_dagger_finisher_catch \
+	and custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT):
+		_recoil_timer = maxf(_recoil_timer, 0.12)
+		_cancel_pending_attack_with_result(&"interrupted", &"dagger_finisher_catch")
+	elif is_dagger_finisher and custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT):
+		_stagger_timer = maxf(_stagger_timer, 0.33)
+		_recoil_timer = 0.0
+		_cancel_pending_attack_with_result(&"interrupted", &"dagger_finisher")
+	elif is_dagger_finisher and custom_enemy_animation_set == String(CUSTOM_ENEMY_MARINE):
+		_recoil_timer = maxf(_recoil_timer, 0.22)
+		_cancel_pending_attack_with_result(&"interrupted", &"dagger_finisher")
+	elif is_dagger_finisher and custom_enemy_animation_set == String(CUSTOM_ENEMY_SAVAGE):
+		if _savage_chain_phase.is_empty() and _savage_pounce_phase.is_empty():
+			_recoil_timer = maxf(_recoil_timer, 0.20)
+			_cancel_pending_attack_with_result(&"interrupted", &"dagger_finisher")
+	elif (is_dagger_link_one or is_dagger_link_two) \
+	and custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT):
+		_recoil_timer = maxf(_recoil_timer, 0.18 if is_dagger_link_two else 0.16)
+		_cancel_pending_attack_with_result(&"interrupted", &"dagger_chain")
+	elif attack_kind == "heavy":
 		_stagger_timer = max(_stagger_timer, stagger_duration * 1.2)
 		_recoil_timer = 0.0
 	else:
@@ -3421,6 +3564,7 @@ func _start_stagger_reaction() -> void:
 	_recoil_timer = 0.0
 	_attack_windup_timer = 0.0
 	_cancel_pending_attack_with_result(&"interrupted", &"stagger")
+	_release_engagement_token()
 	_finish_grunt_falcon_punch_attack()
 	_finish_marine_dash_attack()
 	velocity = Vector2.ZERO

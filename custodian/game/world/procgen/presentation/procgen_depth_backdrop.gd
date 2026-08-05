@@ -25,7 +25,15 @@ const CARDINAL_NEIGHBORS: Array[Vector2i] = [
 @export_range(0.0, 1.0, 0.01) var canopy_alpha := 0.90
 @export_range(0.0, 1.0, 0.01) var wall_growth_alpha := 0.48
 
+@export_group("Camera Backdrop")
+@export var follow_camera := true
+@export var camera_overscan_scale := 1.08
+@export var camera_search_interval_sec := 0.5
+
 var _regions_root: Node2D
+var _camera: Camera2D
+var _camera_search_elapsed := 0.0
+var _world_stack: Node2D
 
 
 func _ready() -> void:
@@ -34,7 +42,22 @@ func _ready() -> void:
 	_regions_root = Node2D.new()
 	_regions_root.name = "ChasmPresentationRoot"
 	add_child(_regions_root)
+	set_process(true)
 	visible = false
+
+
+func _process(delta: float) -> void:
+	if not follow_camera or _world_stack == null:
+		return
+	if _camera == null or not is_instance_valid(_camera):
+		_camera_search_elapsed += delta
+		if _camera_search_elapsed < camera_search_interval_sec:
+			return
+		_camera_search_elapsed = 0.0
+		_camera = get_viewport().get_camera_2d()
+	if _camera == null:
+		return
+	_world_stack.global_position = _camera.global_position
 
 
 func configure_from_cells(world_cells: Array) -> void:
@@ -110,33 +133,15 @@ func _create_world_bounds_stack(
 	world_cells: Array[Vector2i]
 ) -> void:
 	var bounds := _cell_bounds(world_cells)
-	var expanded := bounds.grow(24)
-
-	var world_rect := Rect2(
-		Vector2(expanded.position * TILE_SIZE),
-		Vector2(expanded.size * TILE_SIZE)
-	)
-
-	var region := Node2D.new()
-	region.name = "WorldDepthBackdrop"
-	region.position = world_rect.get_center()
-	region.set_meta("world_cell_bounds", bounds)
-	_regions_root.add_child(region)
-
-	var texture_size := Vector2(1536.0, 1024.0)
-
-	if canopy_texture != null:
-		texture_size = Vector2(canopy_texture.get_size())
-
-	var cover_scale := maxf(
-		world_rect.size.x / texture_size.x,
-		world_rect.size.y / texture_size.y
-	)
-
-	region.scale = Vector2.ONE * cover_scale
+	_world_stack = Node2D.new()
+	_world_stack.name = "CameraDepthBackdrop"
+	_world_stack.position = Vector2.ZERO
+	_world_stack.scale = Vector2.ONE * clampf(camera_overscan_scale, 1.0, 1.08)
+	_world_stack.set_meta("world_cell_bounds", bounds)
+	_regions_root.add_child(_world_stack)
 
 	_create_layer(
-		region,
+		_world_stack,
 		"FarHaze",
 		far_haze_texture,
 		far_haze_alpha,
@@ -144,7 +149,7 @@ func _create_world_bounds_stack(
 	)
 
 	_create_layer(
-		region,
+		_world_stack,
 		"CanopyMass",
 		canopy_texture,
 		canopy_alpha,
@@ -152,7 +157,7 @@ func _create_world_bounds_stack(
 	)
 
 	_create_layer(
-		region,
+		_world_stack,
 		"WallGrowth",
 		wall_growth_texture,
 		wall_growth_alpha,
@@ -260,6 +265,9 @@ func _decode_cell(value: Variant) -> Vector2i:
 
 
 func _clear_regions() -> void:
+	_world_stack = null
+	_camera = null
+	_camera_search_elapsed = 0.0
 	if _regions_root == null:
 		return
 	for child: Node in _regions_root.get_children():

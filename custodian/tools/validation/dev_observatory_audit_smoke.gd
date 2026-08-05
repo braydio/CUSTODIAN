@@ -24,8 +24,12 @@ func _run() -> void:
 		failures.append("hidden Observatory performed a periodic full-tree scan")
 	observatory.set_enabled(true)
 	observatory.call("_process", float(observatory.sample_interval))
+	if int(observatory.get("_runtime_tree_scan_count")) != hidden_scan_count:
+		failures.append("ordinary visible Observatory page performed a full-tree scan")
+	observatory.set_runtime_tree_sampling_enabled(true)
+	observatory.call("_process", float(observatory.sample_interval))
 	if int(observatory.get("_runtime_tree_scan_count")) != hidden_scan_count + 1:
-		failures.append("visible Observatory did not perform exactly one scan for one sample")
+		failures.append("explicit World/Procgen sampling did not perform exactly one scan")
 	observatory.set_enabled(false)
 	var game_root := Node2D.new()
 	game_root.name = "GameRoot"
@@ -160,7 +164,7 @@ func _run() -> void:
 	]:
 		if not node_stats.has(gauge_name):
 			failures.append("split collision gauge missing: %s" % gauge_name)
-	observatory.call("_sample_runtime_gauges")
+	observatory.call("_sample_runtime_gauges", true)
 	for peak_gauge in ["node_count_peak", "physics_body_count_peak", "collision_shape_count_peak", "loaded_world_branch_count", "loaded_procgen_root_count"]:
 		if not observatory.gauges.has(peak_gauge):
 			failures.append("performance/leak gauge missing: %s" % peak_gauge)

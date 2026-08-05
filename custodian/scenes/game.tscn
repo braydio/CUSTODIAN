@@ -47,6 +47,7 @@
 [ext_resource type="Script" uid="uid://brs7i5frcn2w5" path="res://game/systems/core/systems/terminal_deployment.gd" id="101_terminal_deployment"]
 [ext_resource type="PackedScene" path="res://game/ui/hud/components/ranged_reticle.tscn" id="102_ranged_reticle"]
 [ext_resource type="PackedScene" path="res://game/ui/minimap/minimap_panel.tscn" id="200_minimap"]
+[ext_resource type="PackedScene" path="res://game/ui/loot/loot_toast_queue.tscn" id="202_loot_toast_queue"]
 [ext_resource type="PackedScene" path="res://game/ui/inventory/inventory_ui.tscn" id="201_inventory_ui"]
 [ext_resource type="Script" uid="uid://brku67e23m54l" path="res://game/systems/drone/drone_manager.gd" id="206_drone_manager"]
 [ext_resource type="Script" path="res://game/systems/spawning/ambient_enemy_spawner.gd" id="207_ambient_spawner"]
@@ -358,6 +359,8 @@ script = ExtResource("8_ui")
 terminal_contract_node_path = NodePath("../World/ContractMap")
 
 [node name="Minimap" parent="UI" unique_id=999000001 instance=ExtResource("200_minimap")]
+
+[node name="LootToastQueue" parent="UI" instance=ExtResource("202_loot_toast_queue")]
 
 [node name="PowerDisplay" type="Panel" parent="UI" unique_id=449160537]
 offset_left = 360.0

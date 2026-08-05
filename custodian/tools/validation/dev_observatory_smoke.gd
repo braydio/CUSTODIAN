@@ -63,14 +63,31 @@ func _run() -> void:
 		failures.append("debug_observatory_export must be bound to F10")
 	if _action_contains_key("pause", KEY_F9):
 		failures.append("pause must not be bound to F9")
+	var f9_owners: Array[StringName] = []
+	for action in InputMap.get_actions():
+		if _action_contains_key(action, KEY_F9):
+			f9_owners.append(action)
+	if f9_owners != [&"debug_observatory"]:
+		failures.append("F9 must be owned only by debug_observatory; found %s" % f9_owners)
 	if not ResourceLoader.exists(OVERLAY_SCENE_PATH):
 		failures.append("canonical observatory overlay scene missing")
 
+	var paused_before_toggle: bool = paused
+	var scale_before_toggle := Engine.time_scale
+	var scans_before_toggles := int(observatory.get("_runtime_tree_scan_count"))
+	for expected in [true, false, true, false]:
+		observatory.set_enabled(expected)
+		if observatory.enabled != expected or observatory.get("_overlay").visible != expected:
+			failures.append("set_enabled did not immediately alternate overlay visibility")
+	if paused != paused_before_toggle or not is_equal_approx(Engine.time_scale, scale_before_toggle):
+		failures.append("F9 visibility changes must not alter pause or time scale")
+	if int(observatory.get("_runtime_tree_scan_count")) != scans_before_toggles:
+		failures.append("F9 visibility changes must not scan the scene tree")
 	observatory.set_enabled(true)
 	observatory.set_performance_capture_enabled(true)
-	observatory.call("_sample_frame_time", 0.010)
-	observatory.call("_sample_frame_time", 0.020)
-	observatory.call("_sample_frame_time", 0.040)
+	observatory.call("_record_frame_sample", {"wall_frame_ms": 10.0, "scaled_delta_ms": 10.0, "time_scale": 1.0})
+	observatory.call("_record_frame_sample", {"wall_frame_ms": 20.0, "scaled_delta_ms": 20.0, "time_scale": 1.0})
+	observatory.call("_record_frame_sample", {"wall_frame_ms": 40.0, "scaled_delta_ms": 40.0, "time_scale": 1.0})
 	var scans_before_lightweight_sample := int(
 		observatory.get("_runtime_tree_scan_count")
 	)

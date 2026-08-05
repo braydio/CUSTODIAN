@@ -29,6 +29,10 @@ func place_all(
 	_last_placements.clear()
 	_last_errors.clear()
 	_clear_generated(world)
+	if map_instance != null and map_instance.has_method(
+		"clear_world_ingress_dressing_clearances"
+	):
+		map_instance.call("clear_world_ingress_dressing_clearances")
 	var definitions: Array = []
 	if definitions_override.is_empty():
 		var registry: RefCounted = LEVEL_REGISTRY_SCRIPT.new()
@@ -116,6 +120,7 @@ func place_all(
 			int(result.get("edge_distance_tiles", -1))
 		)
 		world.add_child(ingress)
+		_apply_ingress_dressing_clearance(map_instance, ingress)
 		occupied_tiles.append(tile)
 		placed.append(ingress)
 		_last_placements[str(record.get("identity"))] = tile
@@ -125,6 +130,27 @@ func place_all(
 			"tile": [tile.x, tile.y],
 		})
 	return placed
+
+
+func _apply_ingress_dressing_clearance(
+	map_instance: Node,
+	ingress: Node
+) -> void:
+	if (
+		map_instance == null
+		or ingress == null
+		or not ingress.has_method("get_procgen_dressing_clearance_world_rect")
+		or not map_instance.has_method("claim_world_ingress_dressing_clearance")
+	):
+		return
+	var world_rect := ingress.call(
+		"get_procgen_dressing_clearance_world_rect"
+	) as Rect2
+	if world_rect.has_area():
+		map_instance.call(
+			"claim_world_ingress_dressing_clearance",
+			world_rect
+		)
 
 
 func _author_overlook_pocket(
