@@ -95,15 +95,15 @@ func _run() -> void:
 		vista,
 		operator,
 		first_return,
-		0.0,
-		"first return",
+		1.0,
+		"continuous first reveal",
 		errors
 	)
 	_assert_camera_weight(
 		vista,
 		operator,
 		frontage_start,
-		0.0,
+		1.0,
 		"frontage entry",
 		errors
 	)
@@ -111,8 +111,8 @@ func _run() -> void:
 		vista,
 		operator,
 		frontage_apex,
-		0.0,
-		"disabled frontage camera apex",
+		1.0,
+		"fortress camera apex",
 		errors
 	)
 	_assert_camera_weight(
@@ -126,21 +126,20 @@ func _run() -> void:
 	if camera.presentation_framing:
 		errors.append("camera framing remained active after frontage return")
 
-	# The one production envelope is physically reversible. Later frontage
-	# progress may animate visuals but never takes camera authority.
+	# The continuous production envelope is physically reversible.
 	_assert_camera_weight(
 		vista,
 		operator,
 		frontage_apex,
-		0.0,
-		"reverse disabled frontage camera apex",
+		1.0,
+		"reverse fortress camera apex",
 		errors
 	)
 	_assert_camera_weight(
 		vista,
 		operator,
 		frontage_start,
-		0.0,
+		1.0,
 		"reverse frontage entry",
 		errors
 	)
@@ -228,12 +227,17 @@ func _run() -> void:
 
 
 func _frontage_level_data() -> Dictionary:
+	var floor_cells: Dictionary = {}
+	for y in range(14, 59):
+		for x in range(46, 77):
+			floor_cells[Vector2i(x, y)] = true
 	return {
 		"map_size": Vector2i(96, 96),
 		"sundered_keep_frontage": {
 			"landmark_id": &"sundered_keep_frontage",
 			"gate_anchor": Vector2i(74, 14),
 			"fortress_outward_direction": Vector2i.UP,
+			"floor_cells": floor_cells,
 			"camera_semantic_anchors": {
 				"frontage_entry": Vector2i(48, 58),
 				"first_influence_start": Vector2i(52, 51),
@@ -260,7 +264,7 @@ func _assert_camera_weight(
 	errors: Array[String]
 ) -> void:
 	operator.global_position = marker.global_position
-	vista.call("_process", 0.0)
+	vista.call("_process", 1.0)
 	var state := vista.call("get_world_vista_debug_state") as Dictionary
 	if not is_equal_approx(
 		float(state.get("camera_weight", -1.0)),

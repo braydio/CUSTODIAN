@@ -2,6 +2,10 @@
 
 Last updated: 2026-07-03
 
+## Deterministic Campaign-World Runtime
+
+`WorldSimulationRuntime` is the sole owner of the 60 Hz clock, kernel, active campaign session/world, snapshots, commands, and resolution. Python is offline fixture generation only. Strategic power belongs to `PowerSimulationSystem`; the scene power system remains local delivery. Bindings are snapshot consumers and command producers. `GameState` remains a compatibility façade.
+
 ## Runtime Authority
 
 Godot is the only authoritative runtime for active gameplay.

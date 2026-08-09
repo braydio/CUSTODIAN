@@ -149,6 +149,9 @@ func _process(delta: float) -> void:
 			runtime_tree_sampling_enabled,
 			not performance_page_active
 		)
+		# Deliberate World/Procgen sampling is a one-shot request. Overlay page
+		# selection never sets this flag.
+		runtime_tree_sampling_enabled = false
 
 
 func toggle() -> void:
@@ -330,6 +333,12 @@ func clear() -> void:
 	_performance_external_stalls.clear()
 	_performance_samples_dropped = 0
 	_performance_rearm_progress_sec = 0.0
+	performance_incident_active = false
+	performance_capture_enabled = false
+	_performance_auto_triggered = false
+	_performance_incident_trigger = &""
+	_performance_auto_trigger_count = 0
+	_performance_manual_trigger_count = 0
 	_performance_incident_state = PERF_STATE_ARMED
 	_invalidate_wall_clock(&"capture_reset")
 	log_event(&"observatory_cleared")
@@ -346,6 +355,8 @@ func set_performance_page_active(value: bool) -> void:
 
 
 func set_runtime_tree_sampling_enabled(value: bool) -> void:
+	# Compatibility API for explicit diagnostics. A true value is consumed by
+	# the next visible sampling pass and cannot become a periodic recursive scan.
 	runtime_tree_sampling_enabled = (
 		value and enabled and _dev_allows(&"observatory_sampling")
 	)

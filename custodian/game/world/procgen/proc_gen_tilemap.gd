@@ -12,6 +12,9 @@ extends Node
 
 const RUNTIME_WALL_SEGMENT_SCRIPT := preload("res://game/world/procgen/runtime_wall_segment.gd")
 const RUNTIME_WALL_CHUNK_SCRIPT := preload("res://game/world/procgen/runtime_wall_chunk.gd")
+const RUNTIME_WALKABLE_BOUNDARY_CHUNK_SCRIPT := preload(
+	"res://game/world/procgen/runtime_walkable_boundary_chunk.gd"
+)
 const ELEVATION_MAP_SCRIPT := preload("res://game/world/elevation/elevation_map.gd")
 const TERRAIN_BUILDER_SCRIPT := preload("res://game/world/procgen/terrain/terrain_builder.gd")
 const TERRAIN_BALLISTICS_SCRIPT := preload("res://game/world/procgen/terrain/terrain_ballistics.gd")
@@ -914,6 +917,7 @@ func _fill_tilemaps() -> void:
 		_clear_ruin_props()
 		_clear_horizontal_wall_overlays()
 		_clear_runtime_wall_collision()
+		_clear_runtime_walkable_boundary()
 		_clear_world_progression_runtime()
 		_rebuild_runtime_wall_collision_debug()
 	_marks["setup_clear"] = Time.get_ticks_msec() - _last
@@ -1093,6 +1097,7 @@ func _fill_tilemaps() -> void:
 	_last = Time.get_ticks_msec()
 	_enforce_route_playability_walkability(map_size)
 	_enforce_runtime_blocker_route_clearance()
+	_rebuild_runtime_walkable_boundary()
 	_run_route_playability_audit()
 	_marks["playability_audit"] = Time.get_ticks_msec() - _last
 	_last = Time.get_ticks_msec()
@@ -5112,6 +5117,96 @@ func _rebuild_runtime_wall_collision(map_size: Vector2i) -> void:
 	_publish_runtime_wall_body_gauges(collision_root)
 	if show_runtime_wall_collision_debug:
 		_rebuild_runtime_wall_collision_debug()
+
+
+func _rebuild_runtime_walkable_boundary() -> void:
+	if walls_tilemap == null:
+		return
+	_clear_runtime_walkable_boundary()
+	if _generated_floor_cells.is_empty():
+		return
+	var boundary := RUNTIME_WALKABLE_BOUNDARY_CHUNK_SCRIPT.new() as StaticBody2D
+	boundary.call("setup")
+	walls_tilemap.add_child(boundary)
+	var tile_size := Vector2(16.0, 16.0)
+	if walls_tilemap.tile_set != null:
+		tile_size = Vector2(walls_tilemap.tile_set.tile_size)
+	var thickness := maxf(2.0, minf(tile_size.x, tile_size.y) * 0.20)
+	var horizontal := _collect_walkable_frontier_runs(true)
+	var vertical := _collect_walkable_frontier_runs(false)
+	for run_variant in horizontal:
+		var run := run_variant as Dictionary
+		var start: Vector2i = run["start"]
+		var length := int(run["length"])
+		var side := int(run["side"])
+		var first_center := walls_tilemap.map_to_local(start)
+		var last_center := walls_tilemap.map_to_local(
+			start + Vector2i(length - 1, 0)
+		)
+		boundary.call("add_segment", (
+			(first_center + last_center) * 0.5
+			+ Vector2(0.0, float(side) * tile_size.y * 0.5)
+		), Vector2(float(length) * tile_size.x, thickness))
+	for run_variant in vertical:
+		var run := run_variant as Dictionary
+		var start: Vector2i = run["start"]
+		var length := int(run["length"])
+		var side := int(run["side"])
+		var first_center := walls_tilemap.map_to_local(start)
+		var last_center := walls_tilemap.map_to_local(
+			start + Vector2i(0, length - 1)
+		)
+		boundary.call("add_segment", (
+			(first_center + last_center) * 0.5
+			+ Vector2(float(side) * tile_size.x * 0.5, 0.0)
+		), Vector2(thickness, float(length) * tile_size.y))
+
+
+func _collect_walkable_frontier_runs(horizontal: bool) -> Array[Dictionary]:
+	var edges: Dictionary = {}
+	for cell_variant in _generated_floor_cells.keys():
+		var cell := cell_variant as Vector2i
+		var directions := [Vector2i.UP, Vector2i.DOWN] if horizontal else [Vector2i.LEFT, Vector2i.RIGHT]
+		for direction in directions:
+			if _generated_floor_cells.has(cell + direction):
+				continue
+			var side: int = direction.y if horizontal else direction.x
+			var fixed := cell.y if horizontal else cell.x
+			var varying := cell.x if horizontal else cell.y
+			edges[Vector3i(fixed, side, varying)] = true
+	var grouped: Dictionary = {}
+	for key_variant in edges.keys():
+		var key := key_variant as Vector3i
+		var group_key := Vector2i(key.x, key.y)
+		if not grouped.has(group_key):
+			grouped[group_key] = [] as Array[int]
+		(grouped[group_key] as Array[int]).append(key.z)
+	var runs: Array[Dictionary] = []
+	for group_variant in grouped.keys():
+		var group := group_variant as Vector2i
+		var values := grouped[group] as Array[int]
+		values.sort()
+		var run_start := values[0]
+		var previous := values[0]
+		for index in range(1, values.size() + 1):
+			if index < values.size() and values[index] == previous + 1:
+				previous = values[index]
+				continue
+			var start := Vector2i(run_start, group.x) if horizontal else Vector2i(group.x, run_start)
+			runs.append({"start": start, "length": previous - run_start + 1, "side": group.y})
+			if index < values.size():
+				run_start = values[index]
+				previous = values[index]
+	return runs
+
+
+func _clear_runtime_walkable_boundary() -> void:
+	if walls_tilemap == null:
+		return
+	var existing := walls_tilemap.get_node_or_null("RuntimeWalkableBoundary")
+	if existing != null:
+		walls_tilemap.remove_child(existing)
+		existing.queue_free()
 
 
 func _is_floor_like_tile(pos: Vector2i) -> bool:

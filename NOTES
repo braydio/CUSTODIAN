@@ -1,0 +1,17 @@
+GAMEPLAY NOTES
+
+1. Resource gathering needs to have pickup toast notifs.
+
+2. Still need to authorthe procgen void endless forest underlay playable land cliffs + work on world display/presentation of procgen
+
+3. Teleporter portals - we should figure an actual gameplay use. Right now they are neat structures from procgen, can break procgenby generating 1portal atspawn, 1portal at sundered keep transport terminal. 
+
+4. We need to wire in the custodian home/lost terminal signal seeking game level as the pre-procgen level
+
+5. Need to be able to test sundered keep level without having to run all theway there
+
+6. Shrumbs need to respect tile nav
+
+7. Maybe the cognitifve residue/drops of the shrumb can be coveted and sought affter by enemies, who will path to, pick up, and get bonuses from the cognitive residues (within reason , not omniscient sensing of cognitive residue)
+
+

@@ -53,6 +53,24 @@ func validate(
 			errors.append("gate anchor is unreachable from frontage entry")
 		if not _is_reverse_connected(centerline, reachable):
 			errors.append("frontage is not reverse traversable")
+		var commit_cells: Dictionary = frontage.get("vista_commit_cells", {})
+		if commit_cells.is_empty():
+			errors.append("frontage has no vista commit-line authority")
+		else:
+			var without_commit := floor_cells.duplicate()
+			for cell in commit_cells.keys():
+				without_commit.erase(cell)
+			var bypass_reachable := _collect_reachable(
+				centerline[0],
+				without_commit
+			)
+			if bypass_reachable.has(gate):
+				errors.append(
+					"frontage has a terminal bypass around the vista commit line"
+				)
+	var apron: Dictionary = frontage.get("terminal_apron_cells", {})
+	if apron.is_empty() or (gate is Vector2i and not apron.has(gate)):
+		errors.append("terminal apron is missing generated gate authority")
 	var camera_anchors: Dictionary = frontage.get(
 		"camera_semantic_anchors",
 		{}
@@ -87,6 +105,11 @@ func stable_fingerprint(frontage: Dictionary) -> String:
 	values.append(
 		"cliff=%d" % (
 			frontage.get("cliff_cells", {}) as Dictionary
+		).size()
+	)
+	values.append(
+		"commit=%d" % (
+			frontage.get("vista_commit_cells", {}) as Dictionary
 		).size()
 	)
 	return "%08x" % abs("|".join(values).hash())

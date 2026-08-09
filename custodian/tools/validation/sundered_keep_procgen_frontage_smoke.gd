@@ -99,6 +99,16 @@ func _run() -> void:
 			"seed %d has no presentation clearance" % seed_value
 		)
 		var cliffs: Dictionary = frontage.get("cliff_cells", {})
+		_assert(
+			not (frontage.get("vista_commit_cells", {}) as Dictionary).is_empty(),
+			"seed %d has no mandatory vista commit line" % seed_value
+		)
+		_assert(
+			(frontage.get("terminal_apron_cells", {}) as Dictionary).has(
+				frontage.get("gate_anchor")
+			),
+			"seed %d terminal apron does not own the gate" % seed_value
+		)
 		for cell in hard.keys():
 			if cliffs.has(cell):
 				_errors.append(

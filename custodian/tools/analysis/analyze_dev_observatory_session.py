@@ -225,7 +225,12 @@ def _format_duration(seconds: float) -> str:
 def _append_performance_incident_section(lines: list[str], payload: Mapping[str, Any]) -> None:
     incident = _mapping(payload.get("performance_incident"))
     lines.extend(["", "PERFORMANCE INCIDENT", "-" * 48])
-    if not incident:
+    required_v1_fields = {"state", "summary", "external_stalls", "start_snapshot"}
+    if (
+        not incident
+        or incident.get("schema") != "custodian.dev_observatory.performance_incident.v1"
+        or not required_v1_fields.issubset(incident)
+    ):
         lines.append("  performance incident unavailable in this schema/export")
         return
     summary = _mapping(incident.get("summary"))

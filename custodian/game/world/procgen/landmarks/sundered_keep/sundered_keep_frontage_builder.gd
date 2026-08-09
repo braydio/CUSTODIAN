@@ -150,6 +150,24 @@ func build_frontage(
 		"gameplay_return": _sample_centerline(route_centerline, 0.90),
 		"gate_threshold": gate_anchor,
 	}
+	var vista_commit_cells := _cross_section_cells(
+		eroded_floor,
+		route_centerline,
+		0.56,
+		1
+	)
+	var mandatory_separator_cells: Dictionary = {}
+	for cell_variant in vista_commit_cells.keys():
+		var cell := cell_variant as Vector2i
+		for direction in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
+			var neighbor: Vector2i = cell + direction
+			if not eroded_floor.has(neighbor):
+				mandatory_separator_cells[neighbor] = true
+	var terminal_apron_cells: Dictionary = {}
+	_add_disc(terminal_apron_cells, gate_anchor, 5, map_size)
+	for cell_variant in terminal_apron_cells.keys():
+		if not eroded_floor.has(cell_variant):
+			terminal_apron_cells.erase(cell_variant)
 	var visual_anchors := {
 		"fortress_front_anchor": gate_anchor + Vector2i.UP * 8,
 		"tower_anchor_a": gate_anchor + Vector2i(-10, -7),
@@ -181,6 +199,9 @@ func build_frontage(
 		"soft_clearance_cells": soft_clearance_cells,
 		"terrace_cells": terrace_cells,
 		"side_pocket_cells": side_pocket_cells,
+		"vista_commit_cells": vista_commit_cells,
+		"mandatory_separator_cells": mandatory_separator_cells,
+		"terminal_apron_cells": terminal_apron_cells,
 		"cliff_cells": cliff_cells,
 		"fortress_exclusion_cells": fortress_exclusion_cells,
 		"presentation_clearance_cells": presentation_clearance_cells,
@@ -197,11 +218,46 @@ func build_frontage(
 			"terrace_cells": terrace_cells.size(),
 			"side_pocket_cells": side_pocket_cells.size(),
 			"cliff_cells": cliff_cells.size(),
+			"vista_commit_cells": vista_commit_cells.size(),
 			"rectangular_authored_footprint": false,
 			"special_room_owned": false,
 			"route_master_ground": false,
 		},
 	}
+
+
+func _cross_section_cells(
+	floor_cells: Dictionary,
+	centerline: Array[Vector2i],
+	progress: float,
+	half_depth: int
+) -> Dictionary:
+	var result: Dictionary = {}
+	if centerline.size() < 3:
+		return result
+	var index := clampi(
+		int(round(progress * float(centerline.size() - 1))),
+		1,
+		centerline.size() - 2
+	)
+	var center := centerline[index]
+	var tangent := centerline[index + 1] - centerline[index - 1]
+	var normal := Vector2i(-signi(tangent.y), signi(tangent.x))
+	if normal == Vector2i.ZERO:
+		normal = Vector2i.RIGHT
+	var pending: Array[Vector2i] = []
+	for depth in range(-half_depth, half_depth + 1):
+		var slice_center := center + Vector2i(signi(tangent.x), signi(tangent.y)) * depth
+		pending.append(slice_center)
+		for direction in [normal, -normal]:
+			var cursor: Vector2i = slice_center + direction
+			while floor_cells.has(cursor):
+				pending.append(cursor)
+				cursor += direction
+	for cell in pending:
+		if floor_cells.has(cell):
+			result[cell] = true
+	return result
 
 
 func _collect_semantic_nodes(graph) -> Dictionary:

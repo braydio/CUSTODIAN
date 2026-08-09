@@ -2,6 +2,10 @@
 
 Canonical validation guide for CUSTODIAN agent work.
 
+## Python-to-Godot Deterministic World Migration
+
+Run `bash custodian/tools/validation/run_world_simulation_migration_suite.sh` from repository root. It rejects tracked Python caches; tests and regenerates fixtures twice; runs Godot import, internal kernel, actual Python projection parity, snapshot restore, campaign exactly-once, repair/fabrication, and real live-scene smokes; then runs architecture ownership validation. The kernel smoke is Godot-internal determinism, while `world_simulation_python_parity_smoke.gd` is cross-runtime parity.
+
 Use the narrowest recipe that proves the change, then broaden only when the change affects shared runtime behavior, scenes, imports, or workflow routing.
 
 ## Route Traversal V1
@@ -261,7 +265,7 @@ godot --headless --path . --script res://tools/validation/material_intelligence_
 godot --headless --path . --script res://tools/validation/power_grid_component_registration_smoke.gd
 ```
 
-The base Observatory smoke asserts exclusive F9 ownership, immediate visibility alternation, unchanged pause/time scale, zero F9 scans, and one scan per export. The incident smoke injects explicit microsecond ticks (never sleeps for a synthetic stall) and verifies external-stall exclusion, time-scale independence, and the three-second recovery rearm contract. In a restricted environment, point `XDG_DATA_HOME` at a writable temporary directory.
+The base Observatory smoke asserts exclusive F9 ownership, one non-echo pressed-edge visibility alternation, unchanged pause/time scale, page-independent capture, zero F9/page scans, one-shot explicit World sampling, and one scan per export. The incident smoke injects explicit microsecond ticks (never sleeps for a synthetic stall), verifies 51-second external-stall exclusion, retains an ordinary focused gameplay hitch, proves time-scale independence, prevents automatic retriggering during sustained degradation, and verifies the three-second recovery rearm contract. In a restricted environment, point `XDG_DATA_HOME` at a writable temporary directory.
 
 This proves bounded telemetry storage, F9/F10 action registration, stable and timestamped JSON output, JSON-safe Variant
 conversion, event-buffer retention, success-event logging, failure-warning routing, numeric accumulation, and basic heatmap accumulation.
@@ -338,6 +342,8 @@ and Front Gate correction:
 ```bash
 cd custodian
 godot --headless --path . --script res://tools/validation/sundered_keep_procgen_frontage_smoke.gd
+godot --headless --path . --script res://tools/validation/procgen_walkable_boundary_smoke.gd
+godot --headless --path . --script res://tools/validation/sundered_keep_frontage_bypass_smoke.gd
 godot --headless --path . --script res://tools/validation/sundered_keep_world_vista_smoke.gd
 godot --headless --path . --script res://tools/validation/sundered_keep_approach_smoke.gd
 godot --headless --path . --script res://tools/validation/sundered_keep_approach_outskirts_mapper_smoke.gd
@@ -349,8 +355,10 @@ bash tools/validation/run_procgen_validation_suite.sh
 bash tools/validation/run_route_pipeline_suite.sh
 ```
 
-These smokes prove protected procgen floor/corridor authority, exactly one
-world-side camera reveal, fade-only production edges, production Parish mapper
+These smokes prove protected procgen floor/corridor authority, a merged
+non-destructible physical frontier around authoritative walkable cells, no
+terminal bypass around the generated vista commit line, one continuous
+world-side horizon-to-fortress camera reveal, fade-only production edges, production Parish mapper
 authority, supplied ground/detail/local-fog wiring, continuous eastward rails,
 the Front Gate arrival apron and 144 px guard, deterministic frontage output,
 and route/profile connectivity.

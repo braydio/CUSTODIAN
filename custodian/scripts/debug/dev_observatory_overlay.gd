@@ -52,13 +52,6 @@ func _refresh() -> void:
 	var observatory := get_node_or_null("/root/DevObservatory")
 	if observatory == null:
 		return
-	if observatory.has_method("set_performance_page_active"):
-		observatory.call("set_performance_page_active", _page_index == 1)
-	if observatory.has_method("set_runtime_tree_sampling_enabled"):
-		observatory.call(
-			"set_runtime_tree_sampling_enabled",
-			_page_index == 4
-		)
 
 	var build_started := Time.get_ticks_usec()
 	var lines: PackedStringArray = []
@@ -96,14 +89,6 @@ func _refresh() -> void:
 
 func _set_page(index: int) -> void:
 	_page_index = clampi(index, 0, PAGES.size() - 1)
-	var observatory := get_node_or_null("/root/DevObservatory")
-	if observatory != null and observatory.has_method("set_performance_page_active"):
-		observatory.call("set_performance_page_active", _page_index == 1)
-	if observatory != null and observatory.has_method("set_runtime_tree_sampling_enabled"):
-		observatory.call(
-			"set_runtime_tree_sampling_enabled",
-			_page_index == 4
-		)
 	_refresh()
 
 

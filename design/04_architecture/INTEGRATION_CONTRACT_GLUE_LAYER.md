@@ -2,6 +2,8 @@
 
 # Integration Contract (Glue Layer)
 
+> Runtime update (2026-08-08): `WorldSimulationRuntime` is the sole live deterministic campaign-world owner. Bindings observe immutable snapshots and queue typed commands. `GameState` is compatibility-only; Python is offline-only. Hub mutation uses stable, exactly-once `CampaignOutcome` packets and `CampaignHistory` is the single history owner.
+
 **Project:** CUSTODIAN
 **Status:** Final Core Architecture Spec for the 7-file campaign/runtime expansion set
 **Priority:** Critical

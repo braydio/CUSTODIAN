@@ -11,30 +11,37 @@ func evaluate(
 		anchors.get("first_influence_start", Vector2.ZERO),
 		anchors.get("first_reveal_apex", Vector2.ZERO)
 	)
-	var first_return := _segment_progress(
+	var first_return := 0.0
+	var frontage_enter := _segment_progress(
 		operator_position,
-		anchors.get("first_reveal_apex", Vector2.ZERO),
-		anchors.get("first_return_complete", Vector2.ZERO)
+		anchors.get("frontage_reveal_start", Vector2.ZERO),
+		anchors.get("frontage_apex", Vector2.ZERO)
 	)
-	var first_weight := (
-		_smootherstep(first_enter)
-		* (1.0 - _smootherstep(first_return))
+	var frontage_return := _segment_progress(
+		operator_position,
+		anchors.get("frontage_apex", Vector2.ZERO),
+		anchors.get("gameplay_return", Vector2.ZERO)
 	)
+	var first_weight := _smootherstep(first_enter)
+	var frontage_weight := _smootherstep(frontage_enter)
+	var camera_weight := first_weight * (1.0 - _smootherstep(frontage_return))
 	var corridor_distance := _distance_to_segment(
 		operator_position,
 		anchors.get("first_influence_start", Vector2.ZERO),
-		anchors.get("first_return_complete", Vector2.ZERO)
+		anchors.get("gameplay_return", Vector2.ZERO)
 	)
 	if corridor_distance > 256.0:
 		first_weight = 0.0
+		frontage_weight = 0.0
+		camera_weight = 0.0
 	return {
 		"first_enter_progress": first_enter,
 		"first_return_progress": first_return,
-		"frontage_enter_progress": 0.0,
-		"frontage_return_progress": 0.0,
+		"frontage_enter_progress": frontage_enter,
+		"frontage_return_progress": frontage_return,
 		"first_weight": first_weight,
-		"frontage_weight": 0.0,
-		"camera_weight": first_weight,
+		"frontage_weight": frontage_weight,
+		"camera_weight": camera_weight,
 	}
 
 

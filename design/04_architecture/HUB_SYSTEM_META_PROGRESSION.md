@@ -2,6 +2,8 @@
 
 # Hub System (Meta Progression)
 
+> Runtime update (2026-08-08): `HubState.history: CampaignHistory` is the single mutable history owner. Persistent `applied_outcome_ids` rejects duplicate outcomes atomically, and transient world objects never enter Hub state.
+
 **Project:** CUSTODIAN
 **Status:** Required Early
 **Priority:** Critical, but after runtime world/camera stabilization

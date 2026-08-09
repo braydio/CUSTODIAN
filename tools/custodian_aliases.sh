@@ -66,11 +66,12 @@ matchpal() {
     --strength "$strength" --max-colors "$max_colors"
 }
 
-# -- Convert source art to pixel art and choose among three previews
-#    Usage: pixelart <source> [output] [--size 96x96] [--colors 24]
+# -- Convert a spritesheet to pixel art frame-by-frame and reassemble it
+#    Filename must end in '__<frames>f__<size>', e.g. operator__run__8f__96
+#    Usage: pixelart <source> [output] [--frames N] [--size 96] [--colors 24] [--choose 1|2|3] [--force]
 pixelart() {
   _update_usage "pixelart"
-  python3 "${CUSTODIAN_GODOT}/tools/art/source_to_pixel_art.py" "$@"
+  python3 "${CUSTODIAN_GODOT}/tools/art/spritesheet_pixelart.py" "$@"
 }
 
 # -- Batch-match all fast_strike_01 palettes to their fast_windup_01 counterparts
@@ -128,7 +129,7 @@ clisting() {
   echo "    runjson        generate JSON sidecar manifests (live)"
   echo "    runsprite      run sprite ingest pipeline"
   echo "    opingest       focused operator ingest (dry run; --apply to write)"
-  echo "    pixelart       source art -> three pixel-art previews -> chosen PNG"
+  echo "    pixelart       spritesheet -> frame-by-frame pixel art -> chosen PNG"
   echo "    matchpal       match sprite palette to a reference (CIE LAB)"
   echo "    batchstrike    batch-match fast_strike palettes to fast_windup"
   echo "    listbox        list current assets in pipeline inbox"

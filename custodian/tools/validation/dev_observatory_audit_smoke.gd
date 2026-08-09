@@ -30,6 +30,9 @@ func _run() -> void:
 	observatory.call("_process", float(observatory.sample_interval))
 	if int(observatory.get("_runtime_tree_scan_count")) != hidden_scan_count + 1:
 		failures.append("explicit World/Procgen sampling did not perform exactly one scan")
+	observatory.call("_process", float(observatory.sample_interval))
+	if int(observatory.get("_runtime_tree_scan_count")) != hidden_scan_count + 1:
+		failures.append("explicit World/Procgen sampling was not consumed as one-shot")
 	observatory.set_enabled(false)
 	var game_root := Node2D.new()
 	game_root.name = "GameRoot"

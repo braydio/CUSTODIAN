@@ -2,6 +2,8 @@
 
 Last updated: 2026-08-01
 
+Simulation boundary update (2026-08-08): use `WorldSimulationRuntime` and typed command ingress for live campaign-world access. Never launch Python from Godot. `GameState`, local power, `WaveManager`, and `FabPipeline` are compatibility/adapters. Validate with `run_world_simulation_migration_suite.sh`.
+
 ## Purpose
 
 Operational handoff summary for active Godot implementation work.

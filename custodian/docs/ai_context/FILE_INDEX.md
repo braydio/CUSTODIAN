@@ -2,6 +2,18 @@
 
 Last updated: 2026-08-04
 
+## Deterministic World Runtime Integration
+
+- `game/systems/simulation/world_simulation_runtime.gd` — sole live runtime owner.
+- `game/systems/simulation/simulation_{clock,kernel,command,event,invariants,canonical_json,parity_contract,policy_tables}.gd` — deterministic core.
+- `game/systems/simulation/{power,logistics,repair,fabrication}_simulation_system.gd` — implemented macro systems.
+- `game/state/world/` simulation state, identity, snapshot/migration, policies, sectors, structures, jobs, and assault plan — pure state.
+- `game/state/run/default_campaign_scenario_factory.gd` and campaign session/outcome plus persistent Hub/history — bootstrap and exactly-once lifecycle.
+- `game/world/bindings/` simulation binding files — non-authoritative adapters.
+- `tools/validation/run_world_simulation_migration_suite.sh` and `*simulation*smoke.gd`/`campaign_outcome_exactly_once_smoke.gd` — validation.
+- `docs/ai_context/task_packets/PYTHON_SIM_GODOT_RUNTIME_INTEGRATION.md` — task packet.
+- `python-sim/tools/{export_godot_parity_fixtures,world_parity_contract}.py` and `python-sim/tests/test_godot_parity_export.py` — offline parity fixture contract.
+
 ## Local Entry And Workflow
 
 - `custodian/AGENTS.md` — mandatory local primer for routing, context retrieval, docs-drift review, and migration execution
@@ -237,8 +249,9 @@ Last updated: 2026-08-04
 - `custodian/tools/validation/{authored_level_ingress_return_smoke,authored_level_reentry_smoke,level_presentation_profile_smoke,level_entry_rollback_smoke,world_ingress_physics_reentry_smoke,level_return_single_authority_smoke,level_return_rejected_smoke,level_origin_destroyed_smoke,level_camera_rebind_smoke,world_origin_branch_contract_smoke}.gd` — focused authored lifecycle coverage for exact grouped-origin branch/camera restoration, leaking-sector isolation, static main-scene classification, loader/ingress cleanup, private-method-free physics re-entry, registry-selected presentation, atomic failed-spawn rollback, same-frame single authority, fail-closed rejected returns, and destroyed-origin rollback
 - `.github/workflows/godot-level-pipeline.yml` — repository-root CI workflow pinned to Godot 4.7 that imports the project and runs the authored-level lifecycle, registry, named-spawn, and Sundered regressions
 - `custodian/game/world/levels/world_ingress_spawner.gd` and `world_ingress_placement_resolver.gd` — deterministic registry-driven procgen ingress creation and spatial policy; production `ContractWorldLoader` delegates authored destination placement here, and the spawner selects the Ash Bell lift specialization only for the Forlorn Ritualant Underground identity
-- `custodian/game/world/procgen/landmarks/sundered_keep/{sundered_keep_landmark_intent_builder,sundered_keep_frontage_builder,sundered_keep_frontage_validator}.gd` — deterministic V1 landmark intent, irregular route/terrace/side-pocket/cliff generation, and structural/reachability/camera-order validation
+- `custodian/game/world/procgen/landmarks/sundered_keep/{sundered_keep_landmark_intent_builder,sundered_keep_frontage_builder,sundered_keep_frontage_validator}.gd` — deterministic V1 landmark intent, irregular route/terrace/side-pocket/cliff generation, commit-line/terminal-apron semantics, and structural/reachability/no-bypass/camera-order validation
 - `custodian/game/world/procgen/landmarks/sundered_keep/{sundered_keep_frontage_visual_spawner,sundered_keep_frontage_camera_director}.gd` — production generated-frontage presentation spawn and camera-envelope helpers
+- `custodian/game/world/procgen/runtime_walkable_boundary_chunk.gd` — merged non-destructible collision segments derived from final authoritative generated floor frontiers; independent of visual/destructible wall dressing
 - `custodian/game/world/vistas/sundered_keep/sundered_keep_procgen_vista_presentation.tscn` and `.gd` — production collision-free distant ocean/storm/fortress presentation, horizontally clipped to generated frontage influence, hidden unless the Operator is inside that influence, and rendered below generated gameplay
 - `custodian/game/world/vistas/sundered_keep/sundered_keep_world_vista.tscn` and `.gd` — superseded presentation-only overlook implementation retained as historical reference
 - `custodian/tools/validation/sundered_keep_procgen_frontage_smoke.gd` — 24-seed structural/determinism/variation smoke plus integrated generated-map checks for route width, reachability, dressing/site exclusion, terminal ingress, border-wall pruning, and forbidden authored authority
@@ -404,7 +417,7 @@ Last updated: 2026-08-04
 - `custodian/tools/validation/terminal_overview_layout_smoke.gd` — focused 1366×768 Overview contract proving compact chip-header fit, explicit scroll hierarchy, pinned More/actions, wheel and hidden-focus behavior, compact summaries, live-map fill, clickable diagnosis cards, boot collapse, command/transcript containment, full modal scrim, and no page-level/horizontal scrolling
 - `custodian/game/ui/terminal/fabrication_terminal_view_model.gd` — player-facing fabrication translation layer that turns raw recipe/resource/build-token state into work orders, structured resource need/have/missing rows, selected detail, queue summaries, ready builds, and command help for the terminal HUD
 - `custodian/game/ui/hud/debug_screen.tscn` and `.gd` — dedicated read-only tabbed debug screen opened by F12 or `debug_hud`, with runtime/player/combat/world/systems/inventory snapshots.
-- `custodian/scenes/debug/dev_observatory_overlay.tscn` / `custodian/scripts/debug/dev_observatory_overlay.gd` — mouse/focus-ignoring bounded F9 presentation; Tab/Shift+Tab cycles pages without owning F9 or capture, with 2/4 Hz refresh caps and text-complexity metrics.
+- `custodian/scenes/debug/dev_observatory_overlay.tscn` / `custodian/scripts/debug/dev_observatory_overlay.gd` — mouse/focus-ignoring bounded F9 presentation; Tab/Shift+Tab cycles pages without calling capture or runtime-sampling setters, with 2/4 Hz refresh caps and text-complexity metrics.
 - `custodian/game/ui/intel_demo/intel_fidelity_demo.tscn` and `.gd` — dev-only playable/readable intel-fidelity demo scene that shows actual sector truth beside the player-facing projection at different fidelity levels; not wired into the live terminal, minimap, combat, enemies, or main scene.
 - `custodian/game/ui/theme/black_reliquary_palette.gd` — shared Black Reliquary HUD palette constants.
 - `custodian/game/ui/theme/black_reliquary_styles.gd` — reusable Black Reliquary UI style helpers, NinePatch configuration, texture loading, and fallback panel styles.

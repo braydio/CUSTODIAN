@@ -1,53 +1,37 @@
 # Python Simulation → Godot Migration Contract
 
-Status: active implementation authority for the simulation extraction slices.
+Status: active implementation authority. Updated 2026-08-08.
 
 ## Authority and lifetime
 
-Godot is the only runtime authority. Python is a deterministic executable specification and golden-master source; it is never launched by the game and is not a second simulation. `HubState` persists across campaigns, `CampaignSession` and `WorldSimulationState` are disposable run data, and `CampaignOutcome` is the only campaign-to-Hub mutation packet. The existing `GameState` autoload remains a compatibility phase/failure façade during migration.
-
-Pure state lives under `custodian/game/state/`. Deterministic systems live under `custodian/game/systems/`. Scene bindings are projections of snapshots and events; they do not own simulation truth. Input becomes typed commands queued into the kernel.
-
-### Path normalization
-
-Older architecture prose may show `custodian/core/systems/...`. That is a retired proposal path, not a directory to recreate. New state belongs under `custodian/game/state/`, simulation systems under `custodian/game/systems/simulation/` (or an existing `game/systems/<domain>/` owner), and scene adapters under `custodian/game/world/bindings/`. Existing runtime files retain their actual `custodian/game/systems/core/systems/` paths until an independently scoped extraction moves them.
+Godot is the sole live runtime authority. Python is an offline executable specification and deterministic fixture generator; the game never imports, launches, or communicates with Python. `WorldSimulationRuntime` owns the one clock, kernel, campaign session/world, latest snapshot, command ingress, and resolution boundary. `GameState` remains a compatibility phase/tick/failure façade and is advanced once per successful authoritative fixed step. Hub state persists independently and accepts campaign mutation only through a sealed `CampaignOutcome`.
 
 ## Clock and ordering
 
-The authoritative clock remains 60 Hz with `1/60` fixed delta. A macro tick is every 60 simulation ticks. Each fixed step drains commands in sequence order, runs fixed systems, advances the tick, and emits a snapshot. Macro systems then run in this order:
+`fixed_tick` advances once per authoritative 1/60-second step. After each group of 60 fixed steps, macro systems resolve the outgoing interval, then `world_tick` increments, invariants and critical failure are evaluated, and an immutable snapshot is emitted. World tick 100 therefore corresponds to fixed tick 6000. Presentation catch-up is bounded to eight steps; excess presentation time is discarded and counted only in clock diagnostics. Headless determinism drives `SimulationKernel` directly.
 
-1. relays
-2. power/load aggregation
-3. logistics
-4. systemic events
-5. assault progression/resolution
-6. repairs
-7. fabrication
-8. wear
-9. fidelity
-10. invariant validation
-11. failure evaluation
+Implemented macro order is strategic policy power, Python-compatible logistics, repairs, and fabrication. Relay, systemic-event, and strategic-assault slots remain deferred.
 
-The first scaffold implements the fixed-step clock, power calculation, logistics calculation, command/event types, snapshots, and invariant validation. Later slices add the remaining ordered systems without changing this contract.
+## Identity and adapter boundaries
 
-## Compatibility boundaries
+`WorldIdentityContract` owns normalized macro IDs and explicit scene mapping. `DEFENSE` maps to `DEFENSE_GRID`; scene transit maps to `T_NORTH`/`T_SOUTH`. Unknown identities produce bounded diagnostics. Bindings consume snapshots and submit typed commands only.
 
-`WaveManager` consumes an `AssaultSpawnPlan` and reports physical outcomes; it does not decide strategic threat. Existing power, fabrication, sector, and structure nodes may remain adapters while their authoritative values move into state. Direct scene mutation is permitted only as a temporary preview fallback and must not be used by production command paths.
+Strategic power load lives in `PowerSimulationSystem`. Existing scene power remains local physical delivery. `WaveManager` remains physical spawn execution behind a typed plan bridge. `FabPipeline` remains a delivery/presentation adapter and does not advance simulation jobs.
 
-F10/save/export scans and rendering are outside the simulation step. A tactical pause stops simulation steps but may continue presentation and command queuing. Commands queued while paused do not mutate state until resumed.
+## Python parity v2
 
-## Python parity
+Fixtures for seeds 1/2 and world ticks 0/1/10/100 include the scheduled command stream, normalized projection, and shared SHA-256. Covered fields: seed, world tick, materials, inventory/stocks under a limited bootstrap, policy levels and dictionaries, strategic power load, and logistics. The fixture bootstrap disables ambient fabrication because that Python algorithm is not ported.
 
-Parity fixtures contain structured snapshots, not prose: seed, tick, threat, sectors, structures, power/load, logistics, policies, inventories, queues, assault, failure, and fingerprint. A same-seed command stream must produce the same Godot snapshot fingerprint across repeated runs. The fixture exporter and broader subsystem ports are subsequent slices; no Python runtime dependency is introduced.
+Not parity-covered: ambient threat, RNG events, prose, topology, relays, assaults, wear, fidelity, repair/fabrication progression, and failure. Pure Godot tests cover commands, pause retention, catch-up, snapshots/restore, Command Post failure, repair/fabrication foundations, and exactly-once outcomes.
 
-## First vertical-slice acceptance
+## Current status
 
-The first playable target is “Command Post Under Pressure”: deterministic seed, ambient threat, power/load, logistics pressure, policies, repair/fabrication queues, assault plan bridge, structure damage, Command Post failure, stabilization, and snapshot save/reload. Existing art and scene systems are reused. No new art is required.
+- Live runtime authority: yes.
+- Python parity coverage: policies, resources, limited-bootstrap inventory/stocks, power load, logistics.
+- Pure Godot deterministic coverage: snapshots, commands, campaign lifecycle, critical failure, repair/fabrication foundations.
+- Adapter-only: local power delivery, physical WaveManager spawning, FabPipeline delivery.
+- Not yet ported: relays, systemic random events, full assaults, wear, fidelity, ambient fabrication, full Python repairs.
 
 ## Next Agent Slice
 
-Goal: add the Python fixture exporter and parity comparison harness, then port relay/event/assault state without wiring scene authority.
-
-Files: `python-sim/tools/export_godot_parity_fixtures.py`, `custodian/tools/validation/fixtures/world_simulation/`, `custodian/tools/validation/world_simulation_kernel_smoke.gd`, and the next pure systems under `custodian/game/systems/simulation/`.
-
-Constraints: preserve the fixed-step order, do not launch Python from Godot, do not expand `GameState`, and do not mutate Hub state from a transient campaign world.
+Port relay state first in macro order, then deterministic event weighting and strategic assault state before expanding parity. Keep one runtime owner, never launch Python from Godot, and add fields to parity only after exact algorithm matches. Acceptance requires repeated command-trace determinism, exact restore, focused cross-runtime comparison, and asserted macro order.

@@ -1,281 +1,106 @@
 {
-  "fingerprint": {
-    "doctrine_profile_id": "WAVES",
-    "economy_profile_id": "BASELINE_STATIC",
-    "event_catalog_hash": "15b0e8b0070361e2",
-    "faction_profile_hash": "d224bacd4b521d2f",
-    "fingerprint_hash": "c825280e8530027b",
-    "schema_version": 1,
-    "seed": 1,
-    "text_seed": 4020802858041527836,
-    "topology_profile_id": "TP_NORTH_PRESSURE_A"
-  },
-  "fixture_schema": "custodian.python_sim.world_parity.v1",
-  "seed": 1,
-  "state": {
-    "active_repairs": [],
-    "active_task": null,
-    "ambient_fabrication": {
-      "power_factor": 0.841,
-      "progress": {
-        "ARCHIVE": 6.75,
-        "DEFENSE": 3.681,
-        "DRONES": 12.0,
-        "REPAIRS": 1.681
+  "checkpoint_world_tick": 100,
+  "commands": [
+    {
+      "at_world_tick": 0,
+      "kind": "set_policy",
+      "payload": {
+        "defense_readiness": 2,
+        "repair_intensity": 3,
+        "surveillance_coverage": 2
       },
-      "rate": 0.422,
-      "supply_factor": 1.0
+      "sequence": 1
     },
-    "archive_limit": 3,
-    "archive_losses": 0,
-    "assault": "NONE",
-    "defense": {
-      "allocation": {
-        "COMMAND": 1.0,
-        "PERIMETER": 1.0,
-        "POWER": 1.0,
-        "SENSORS": 1.0
+    {
+      "at_world_tick": 0,
+      "kind": "set_fabrication_allocation",
+      "payload": {
+        "category": "DEFENSE",
+        "level": 0
       },
-      "doctrine": "BALANCED",
-      "drone_perimeter_repair_policy": "AUTO",
-      "readiness": 0.7667660296296296
+      "sequence": 2
     },
-    "dev_mode": false,
-    "drone_perimeter_repair_policy": "AUTO",
-    "event_context": {
-      "last_assault_tick": null,
-      "last_event_category": "ENVIRONMENTAL",
-      "recent_events": [
-        "Iconoclast shrumb cell perimeter probe",
-        "Atmospheric processors cycling within tolerance.",
-        "Microfracture detected in sector plating",
-        "Iconoclast shrumb cell perimeter probe",
-        "Thermal anomaly in intake systems"
-      ],
-      "ticks_since_assault": 100,
-      "ticks_since_hostile": 100
+    {
+      "at_world_tick": 0,
+      "kind": "set_fabrication_allocation",
+      "payload": {
+        "category": "DRONES",
+        "level": 0
+      },
+      "sequence": 3
     },
-    "fabrication_queue": [],
-    "failed": false,
-    "field_action": "IDLE",
-    "focused_sector": null,
-    "hardened": false,
+    {
+      "at_world_tick": 0,
+      "kind": "set_fabrication_allocation",
+      "payload": {
+        "category": "REPAIRS",
+        "level": 0
+      },
+      "sequence": 4
+    },
+    {
+      "at_world_tick": 0,
+      "kind": "set_fabrication_allocation",
+      "payload": {
+        "category": "ARCHIVE",
+        "level": 0
+      },
+      "sequence": 5
+    }
+  ],
+  "commands_schema": "custodian.simulation_commands.v2",
+  "fixture_schema": "custodian.python_sim.godot_port_parity.v2",
+  "projection": {
     "inventory": {
       "ASSEMBLIES": 0,
-      "COMPONENTS": 2,
+      "COMPONENTS": 0,
       "MODULES": 0,
-      "SCRAP": 4
+      "SCRAP": 12
     },
     "logistics": {
-      "load": 1.8,
-      "multiplier": 1.0,
-      "pressure": 0.0,
-      "throughput": 3.0
+      "load": 1.89,
+      "multiplier": 1,
+      "pressure": 0,
+      "throughput": 3
     },
-    "next_structure_id": 1,
-    "operator_log": [],
-    "player_location": "COMMAND",
-    "player_mode": "COMMAND",
     "policies": {
       "defense_readiness": 2,
       "fabrication_allocation": {
-        "ARCHIVE": 2,
-        "DEFENSE": 2,
-        "DRONES": 2,
-        "REPAIRS": 2
+        "ARCHIVE": 0,
+        "DEFENSE": 0,
+        "DRONES": 0,
+        "REPAIRS": 0
       },
-      "fortification": {
+      "repair_intensity": 3,
+      "sector_fortification": {
         "ARCHIVE": 0,
         "COMMAND": 0,
         "COMMS": 0,
-        "DEFENSE GRID": 0,
+        "DEFENSE_GRID": 0,
         "FABRICATION": 0,
         "GATEWAY": 0,
         "HANGAR": 0,
         "POWER": 0,
         "STORAGE": 0
       },
-      "repair_intensity": 2,
-      "surveillance_coverage": 2
+      "surveillance_coverage": 2,
+      "transit_fortification": {
+        "T_NORTH": 0,
+        "T_SOUTH": 0
+      }
     },
-    "power_load": 4.0,
-    "relays": {
-      "benefits": {
-        "archival_synthesis": 0,
-        "fab_blueprints_archive": 0,
-        "logistics_optimization": 0,
-        "remote_repair_discount": 0,
-        "signal_reconstruction_i": 0,
-        "signal_reconstruction_ii": 0,
-        "threat_forecast_bonus": 0
-      },
-      "dormancy_pressure": 0,
-      "knowledge_index": {
-        "RELAY_RECOVERY": 0
-      },
-      "last_sync_time": null,
-      "nodes": {
-        "R_ARCHIVE": {
-          "last_stabilized_time": null,
-          "risk_profile": "FRINGE",
-          "sector": "ARCHIVE",
-          "stability": 40.0,
-          "stability_ticks_required": 4,
-          "status": "UNKNOWN"
-        },
-        "R_GATEWAY": {
-          "last_stabilized_time": null,
-          "risk_profile": "FRINGE",
-          "sector": "GATEWAY",
-          "stability": 40.0,
-          "stability_ticks_required": 4,
-          "status": "UNKNOWN"
-        },
-        "R_NORTH": {
-          "last_stabilized_time": null,
-          "risk_profile": "TRANSIT",
-          "sector": "T_NORTH",
-          "stability": 30.0,
-          "stability_ticks_required": 3,
-          "status": "LOCATED"
-        },
-        "R_SOUTH": {
-          "last_stabilized_time": null,
-          "risk_profile": "TRANSIT",
-          "sector": "T_SOUTH",
-          "stability": 30.0,
-          "stability_ticks_required": 3,
-          "status": "LOCATED"
-        }
-      },
-      "packets_pending": 0
-    },
+    "power_load": 4.2,
     "resources": {
       "materials": 3
     },
-    "run_fingerprint": {
-      "doctrine_profile_id": "WAVES",
-      "economy_profile_id": "BASELINE_STATIC",
-      "event_catalog_hash": "15b0e8b0070361e2",
-      "faction_profile_hash": "d224bacd4b521d2f",
-      "fingerprint_hash": "c825280e8530027b",
-      "schema_version": 1,
-      "seed": 1,
-      "text_seed": 4020802858041527836,
-      "topology_profile_id": "TP_NORTH_PRESSURE_A"
-    },
-    "sector_grids": {
-      "ARCHIVE": {
-        "cells": {},
-        "height": 12,
-        "width": 12
-      },
-      "COMMAND": {
-        "cells": {},
-        "height": 12,
-        "width": 12
-      },
-      "COMMS": {
-        "cells": {},
-        "height": 12,
-        "width": 12
-      },
-      "DEFENSE GRID": {
-        "cells": {},
-        "height": 12,
-        "width": 12
-      },
-      "FABRICATION": {
-        "cells": {},
-        "height": 12,
-        "width": 12
-      },
-      "GATEWAY": {
-        "cells": {},
-        "height": 12,
-        "width": 12
-      },
-      "HANGAR": {
-        "cells": {},
-        "height": 12,
-        "width": 12
-      },
-      "POWER": {
-        "cells": {},
-        "height": 12,
-        "width": 12
-      },
-      "STORAGE": {
-        "cells": {},
-        "height": 12,
-        "width": 12
-      }
-    },
-    "sectors": [
-      {
-        "id": "CM",
-        "name": "COMMS",
-        "status": "STABLE"
-      },
-      {
-        "id": "DF",
-        "name": "DEFENSE GRID",
-        "status": "STABLE"
-      },
-      {
-        "id": "CC",
-        "name": "COMMAND",
-        "status": "STABLE"
-      },
-      {
-        "id": "PW",
-        "name": "POWER",
-        "status": "STABLE"
-      },
-      {
-        "id": "FB",
-        "name": "FABRICATION",
-        "status": "STABLE"
-      },
-      {
-        "id": "AR",
-        "name": "ARCHIVE",
-        "status": "STABLE"
-      },
-      {
-        "id": "ST",
-        "name": "STORAGE",
-        "status": "STABLE"
-      },
-      {
-        "id": "HG",
-        "name": "HANGAR",
-        "status": "STABLE"
-      },
-      {
-        "id": "GS",
-        "name": "GATEWAY",
-        "status": "STABLE"
-      }
-    ],
+    "schema_version": 2,
     "seed": 1,
-    "snapshot_version": 7,
     "stocks": {
       "repair_drones": 0,
-      "turret_ammo": 8
+      "turret_ammo": 6
     },
-    "structure_instances": {},
-    "text_seed": 4020802858041527836,
-    "threat": "LOW",
-    "time": 100,
-    "topology_profile": {
-      "profile_id": "TP_NORTH_PRESSURE_A",
-      "summary": "North ingress pressure elevated. South Transit interception is more favorable."
-    },
-    "transit_fort_levels": {
-      "T_NORTH": 0,
-      "T_SOUTH": 0
-    }
+    "world_tick": 100
   },
-  "tick": 100
+  "projection_sha256": "96e59aa4d11c889ab5145ce9b42918dd1cd04638a7c2fbc492d21b3fcf1ae8ed",
+  "seed": 1
 }

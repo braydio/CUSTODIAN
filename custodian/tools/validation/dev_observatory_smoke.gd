@@ -83,6 +83,34 @@ func _run() -> void:
 		failures.append("F9 visibility changes must not alter pause or time scale")
 	if int(observatory.get("_runtime_tree_scan_count")) != scans_before_toggles:
 		failures.append("F9 visibility changes must not scan the scene tree")
+	var f9_press := InputEventKey.new()
+	f9_press.keycode = KEY_F9
+	f9_press.pressed = true
+	var visible_before_input: bool = observatory.enabled
+	observatory.call("_input", f9_press)
+	if observatory.enabled == visible_before_input:
+		failures.append("one F9 pressed edge did not immediately toggle visibility")
+	var f9_echo := InputEventKey.new()
+	f9_echo.keycode = KEY_F9
+	f9_echo.pressed = true
+	f9_echo.echo = true
+	var visible_before_echo: bool = observatory.enabled
+	observatory.call("_input", f9_echo)
+	if observatory.enabled != visible_before_echo:
+		failures.append("echoed F9 edge toggled Observatory")
+	var overlay: CanvasLayer = observatory.get("_overlay")
+	var overlay_observatory := root.get_node_or_null("DevObservatory")
+	if overlay_observatory == null:
+		overlay_observatory = observatory
+	var incident_state_before_pages: StringName = overlay_observatory.get("_performance_incident_state")
+	var incident_active_before_pages: bool = overlay_observatory.performance_incident_active
+	var scans_before_pages := int(overlay_observatory.get("_runtime_tree_scan_count"))
+	for page_index in range(5):
+		overlay.call("_set_page", page_index)
+	if overlay_observatory.get("_performance_incident_state") != incident_state_before_pages or overlay_observatory.performance_incident_active != incident_active_before_pages:
+		failures.append("overlay page changes must not own incident lifecycle")
+	if int(overlay_observatory.get("_runtime_tree_scan_count")) != scans_before_pages:
+		failures.append("overlay page changes must not scan the scene tree")
 	observatory.set_enabled(true)
 	observatory.set_performance_capture_enabled(true)
 	observatory.call("_record_frame_sample", {"wall_frame_ms": 10.0, "scaled_delta_ms": 10.0, "time_scale": 1.0})
@@ -177,6 +205,8 @@ func _run() -> void:
 		failures.append("Node metadata was not converted safely")
 
 	var timestamped_path: String = observatory.export_timestamped_session_json()
+	if int(observatory.get("_runtime_tree_scan_count")) != runtime_scans_before_export + 2:
+		failures.append("one timestamped F10 export must perform exactly one final tree scan")
 	var timestamped_name := timestamped_path.get_file()
 	var timestamp_regex := RegEx.create_from_string("^session_[0-9]{8}_[0-9]{6}\\.json$")
 	if timestamped_path.is_empty() or timestamp_regex.search(timestamped_name) == null or not FileAccess.file_exists(timestamped_path):

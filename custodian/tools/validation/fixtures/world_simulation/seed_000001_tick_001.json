@@ -1,0 +1,106 @@
+{
+  "checkpoint_world_tick": 1,
+  "commands": [
+    {
+      "at_world_tick": 0,
+      "kind": "set_policy",
+      "payload": {
+        "defense_readiness": 2,
+        "repair_intensity": 3,
+        "surveillance_coverage": 2
+      },
+      "sequence": 1
+    },
+    {
+      "at_world_tick": 0,
+      "kind": "set_fabrication_allocation",
+      "payload": {
+        "category": "DEFENSE",
+        "level": 0
+      },
+      "sequence": 2
+    },
+    {
+      "at_world_tick": 0,
+      "kind": "set_fabrication_allocation",
+      "payload": {
+        "category": "DRONES",
+        "level": 0
+      },
+      "sequence": 3
+    },
+    {
+      "at_world_tick": 0,
+      "kind": "set_fabrication_allocation",
+      "payload": {
+        "category": "REPAIRS",
+        "level": 0
+      },
+      "sequence": 4
+    },
+    {
+      "at_world_tick": 0,
+      "kind": "set_fabrication_allocation",
+      "payload": {
+        "category": "ARCHIVE",
+        "level": 0
+      },
+      "sequence": 5
+    }
+  ],
+  "commands_schema": "custodian.simulation_commands.v2",
+  "fixture_schema": "custodian.python_sim.godot_port_parity.v2",
+  "projection": {
+    "inventory": {
+      "ASSEMBLIES": 0,
+      "COMPONENTS": 0,
+      "MODULES": 0,
+      "SCRAP": 12
+    },
+    "logistics": {
+      "load": 1.89,
+      "multiplier": 1,
+      "pressure": 0,
+      "throughput": 3
+    },
+    "policies": {
+      "defense_readiness": 2,
+      "fabrication_allocation": {
+        "ARCHIVE": 0,
+        "DEFENSE": 0,
+        "DRONES": 0,
+        "REPAIRS": 0
+      },
+      "repair_intensity": 3,
+      "sector_fortification": {
+        "ARCHIVE": 0,
+        "COMMAND": 0,
+        "COMMS": 0,
+        "DEFENSE_GRID": 0,
+        "FABRICATION": 0,
+        "GATEWAY": 0,
+        "HANGAR": 0,
+        "POWER": 0,
+        "STORAGE": 0
+      },
+      "surveillance_coverage": 2,
+      "transit_fortification": {
+        "T_NORTH": 0,
+        "T_SOUTH": 0
+      }
+    },
+    "power_load": 4.2,
+    "resources": {
+      "materials": 3
+    },
+    "schema_version": 2,
+    "seed": 1,
+    "stocks": {
+      "repair_drones": 0,
+      "turret_ammo": 6
+    },
+    "world_tick": 1
+  },
+  "projection_sha256": "b033919137cfe7cfd2cd98963ef609e35eae89016f1a593005c725de882cd269",
+  "seed": 1
+}

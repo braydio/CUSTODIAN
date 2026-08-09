@@ -1,18 +1,14 @@
 class_name PowerSimulationSystem
 extends RefCounted
 
-const BASE_GENERATION := 4.0
+func step_macro(state: WorldSimulationState) -> void:
+	var p := state.policies
+	var strategic_load: float = 1.0 + SimulationPolicyTables.DEFENSE_POWER_DRAW[p.defense_readiness] + SimulationPolicyTables.SURVEILLANCE_POWER[p.surveillance_coverage] + SimulationPolicyTables.REPAIR_POWER_MULT[p.repair_intensity]
+	for level in p.sector_fortification.values(): strategic_load += SimulationPolicyTables.FORTIFICATION_POWER[clampi(int(level), 0, 4)]
+	for level in p.transit_fortification.values(): strategic_load += SimulationPolicyTables.FORTIFICATION_POWER[clampi(int(level), 0, 4)]
+	state.power_load = snappedf(strategic_load, 0.001)
 
-func step(state, _fixed_dt: float) -> void:
-	var structure_count: int = state.structures.size()
-	var damaged_count: int = 0
-	for key in state.structures:
-		var structure = state.structures[key]
-		if structure.hp <= 0:
-			damaged_count += 1
-	var generation := BASE_GENERATION * (1.0 + float(state.policies.repair_intensity) * 0.02)
-	var load := maxf(0.0, float(structure_count - damaged_count) * 0.15)
-	state.power_load = load / maxf(generation, 0.001)
-	for key in state.sectors:
-		var sector = state.sectors[key]
-		sector.power = clampf(1.0 - maxf(0.0, state.power_load - 1.0), 0.0, 1.0)
+static func blackout_event_weight_multiplier(state: WorldSimulationState) -> int:
+	return maxi(1, 1 + int(maxf(0.0, state.power_load - 3.5) * 2.0))
+static func blackout_event_chance_bonus(state: WorldSimulationState) -> float:
+	return minf(0.12, maxf(0.0, state.power_load - 4.0) * 0.02)

@@ -12,6 +12,9 @@ const FIRST_REVEAL_OFFSET := Vector2(0.0, -120.0)
 const VIEWPORT_SAFETY_MARGIN := Vector2(256.0, 224.0)
 const VISTA_HORIZONTAL_MARGIN := 320.0
 const VISTA_OPERATOR_ACTIVATION_MARGIN := 160.0
+const FORTRESS_APEX_HOLD_SECONDS := 0.9
+const MOONLIGHT_FRAME_SECONDS := 1.0 / 15.0
+const MOONLIGHT_FRAME_COUNT := 6
 
 @export var operator_path := NodePath("/root/GameRoot/World/Operator")
 @export var camera_path := NodePath("/root/GameRoot/World/Camera2D")
@@ -38,6 +41,9 @@ const VISTA_OPERATOR_ACTIVATION_MARGIN := 160.0
 @onready var _frontage_fog := (
 	$VistaPresentationRoot/ExteriorVistaClip/FortressPresentation/FrontageFog as Sprite2D
 )
+@onready var _moonlight_sweep := (
+	$VistaPresentationRoot/ExteriorVistaClip/FortressPresentation/MoonlightSweep as Sprite2D
+)
 @onready var _gate_shadow := (
 	$VistaPresentationRoot/ExteriorVistaClip/GateShadow as Sprite2D
 )
@@ -60,6 +66,9 @@ var _presentation_bounds := Rect2()
 var _viewport_coverage := Vector2.ZERO
 var _vista_clip_bounds := Rect2()
 var _playable_floor_bounds := Rect2()
+var _apex_hold_remaining := 0.0
+var _moonlight_elapsed := -1.0
+var _moonlight_played := false
 
 
 func _ready() -> void:
@@ -98,14 +107,14 @@ func configure(
 		_layout_from_semantic_anchors()
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	if not _configured:
 		return
 	_resolve_runtime_nodes()
 	if _operator == null:
 		_release_camera()
 		return
-	_evaluate_camera()
+	_evaluate_camera(delta)
 
 
 func _resolve_runtime_nodes() -> void:
@@ -202,7 +211,7 @@ func _layout_from_semantic_anchors() -> void:
 	_update_presentation_bounds()
 	_configured = true
 	if _operator != null:
-		_evaluate_camera()
+		_evaluate_camera(0.0)
 
 
 func _assign_marker(name: String, world_position: Vector2) -> void:
@@ -211,7 +220,7 @@ func _assign_marker(name: String, world_position: Vector2) -> void:
 		marker.global_position = world_position
 
 
-func _evaluate_camera() -> void:
+func _evaluate_camera(delta: float = 0.0) -> void:
 	if not _is_operator_inside_frontage_influence():
 		_camera_state.clear()
 		_apply_visual_state(0.0, 0.0)
@@ -229,13 +238,47 @@ func _evaluate_camera() -> void:
 		_camera_state.get("frontage_weight", 0.0)
 	)
 	var camera_weight := first_weight
-	var focus := _operator.global_position + Vector2(0.0, -220.0)
+	camera_weight = float(_camera_state.get("camera_weight", first_weight))
+	var frontage_enter := float(
+		_camera_state.get("frontage_enter_progress", 0.0)
+	)
+	if frontage_enter >= 0.98 and not _moonlight_played:
+		_apex_hold_remaining = FORTRESS_APEX_HOLD_SECONDS
+		_moonlight_elapsed = 0.0
+		_moonlight_played = true
+	if _apex_hold_remaining > 0.0:
+		_apex_hold_remaining = maxf(0.0, _apex_hold_remaining - delta)
+		camera_weight = maxf(camera_weight, 1.0)
+		_camera_state["camera_weight"] = camera_weight
+	_update_moonlight(delta)
+	var reveal_focus := (
+		_world_anchors["first_reveal_apex"] as Vector2
+	) + Vector2(0.0, -300.0)
+	var fortress_focus := (
+		_world_anchors["gate_threshold"] as Vector2
+	) + Vector2(0.0, -360.0)
+	var focus := reveal_focus.lerp(fortress_focus, frontage_enter)
 	_presentation_anchor.global_position = _operator.global_position.lerp(
 		focus,
-		camera_weight * 0.68
+		camera_weight * 0.78
 	)
 	_apply_visual_state(first_weight, frontage_weight)
-	_apply_camera_state(first_weight, frontage_weight)
+	_apply_camera_state(camera_weight, frontage_weight)
+
+
+func _update_moonlight(delta: float) -> void:
+	if _moonlight_elapsed < 0.0:
+		return
+	_moonlight_elapsed += delta
+	var frame := int(floor(_moonlight_elapsed / MOONLIGHT_FRAME_SECONDS))
+	if frame >= MOONLIGHT_FRAME_COUNT:
+		_moonlight_sweep.visible = false
+		_moonlight_elapsed = -1.0
+		return
+	_moonlight_sweep.visible = true
+	_moonlight_sweep.region_rect = Rect2(
+		float(frame * 1024), 0.0, 1024.0, 512.0
+	)
 
 
 func _is_operator_inside_frontage_influence() -> bool:
@@ -316,9 +359,9 @@ func _apply_camera_state(
 		)
 	var target_zoom := GAMEPLAY_ZOOM.lerp(
 		FIRST_REVEAL_ZOOM,
-		first_weight
+		weight
 	)
-	var target_offset := FIRST_REVEAL_OFFSET * first_weight
+	var target_offset := FIRST_REVEAL_OFFSET * weight
 	if _camera.has_method("set_presentation_framing"):
 		_camera.call(
 			"set_presentation_framing",

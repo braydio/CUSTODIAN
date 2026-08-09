@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://game/world/vistas/sundered_keep/sundered_keep_procgen_vista_presentation.gd" id="1_script"]
 [ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/approach/underlay/first_vista_base_storm_horizon.png" id="2_storm"]
@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/grand_vista/fortress_components/distant_fortress_outer_wall_01.png" id="7_wall"]
 [ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_horizon_seam_fog.png" id="8_frontage_fog"]
 [ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/approach/occlusion/approach_final_gate_shadow_veil.png" id="9_gate_shadow"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/approach/light/first_vista_moonlight_sweep_01__6f__1024x512.png" id="10_moonlight"]
 
 [node name="SunderedKeepProcgenFrontagePresentation" type="Node2D"]
 script = ExtResource("1_script")
@@ -39,7 +40,7 @@ texture_filter = 1
 
 [node name="DistantKeep" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation"]
 position = Vector2(190, -220)
-scale = Vector2(0.34, 0.34)
+scale = Vector2(0.44, 0.44)
 z_index = 20
 texture = ExtResource("3_keep")
 texture_filter = 1
@@ -71,6 +72,15 @@ texture_filter = 1
 position = Vector2(0, 30)
 z_index = 50
 texture = ExtResource("8_frontage_fog")
+texture_filter = 1
+
+[node name="MoonlightSweep" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/FortressPresentation"]
+visible = false
+position = Vector2(0, -180)
+z_index = 52
+texture = ExtResource("10_moonlight")
+region_enabled = true
+region_rect = Rect2(0, 0, 1024, 512)
 texture_filter = 1
 
 [node name="GateShadow" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip"]

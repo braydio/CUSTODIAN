@@ -18,7 +18,6 @@ func _run() -> void:
 	if observatory == null:
 		quit(1)
 		return
-	observatory.set("_performance_auto_triggered", true)
 	observatory.call("clear")
 	observatory.call("_record_frame_sample", {"wall_frame_ms": 10.0})
 	observatory.call("_record_frame_sample", {"wall_frame_ms": 20.0})
@@ -28,6 +27,13 @@ func _run() -> void:
 	_assert(after_stall.get("sample_count") == baseline.get("sample_count"), "external stall contaminated gameplay sample count")
 	_assert(after_stall.get("frame_ms_worst") == baseline.get("frame_ms_worst"), "external stall contaminated gameplay worst frame")
 	_assert((observatory.get("_performance_external_stalls") as Array).size() == 1, "51-second sample was not retained as an external stall")
+	var hitches_before_giant := int((observatory.call("get_performance_summary") as Dictionary).get("hitch_count", 0))
+	observatory.call("_invalidate_wall_clock", &"test_external_stall")
+	observatory.call("_sample_frame_time_from_ticks", 100000, 0.016)
+	observatory.call("_sample_frame_time_from_ticks", 51100000, 0.016)
+	var after_giant_ticks := observatory.call("get_performance_summary") as Dictionary
+	_assert(int(after_giant_ticks.get("hitch_count", 0)) == hitches_before_giant, "51-second tick sample incremented gameplay hitch counters")
+	_assert(not bool(observatory.get("performance_incident_active")), "51-second tick sample auto-triggered an incident")
 	observatory.call("_invalidate_wall_clock", &"focus_out")
 	observatory.call("_sample_frame_time_from_ticks", 1000000, 0.5)
 	_assert(int(observatory.get("_last_wall_frame_usec")) == 1000000, "focus boundary did not reset wall-clock origin")
@@ -39,7 +45,18 @@ func _run() -> void:
 	observatory.set("_focus_out_usec", 1000000)
 	observatory.call("_handle_focus_in", 6000000)
 	_assert((observatory.get("_performance_external_stalls") as Array).size() == stalls_before_focus + 1, "focus loss duration was not retained as an external stall")
-	observatory.set("_performance_incident_state", &"DEGRADED_LATCHED")
+	observatory.call("clear")
+	observatory.call("_invalidate_wall_clock", &"automatic_trigger_test")
+	observatory.call("_sample_frame_time_from_ticks", 1000000, 0.06)
+	for index in range(30):
+		observatory.call("_sample_frame_time_from_ticks", 1060000 + index * 60000, 0.06)
+	_assert(bool(observatory.get("performance_incident_active")), "degraded gameplay did not auto-trigger an incident")
+	_assert(int(observatory.get("_performance_auto_trigger_count")) == 1, "automatic trigger count was not exactly one")
+	observatory.call("stop_performance_incident", &"automatic_window_complete")
+	for index in range(60):
+		observatory.call("_sample_frame_time_from_ticks", 3000000 + index * 60000, 0.06)
+	_assert(not bool(observatory.get("performance_incident_active")), "degraded latch retriggered automatic capture")
+	_assert(int(observatory.get("_performance_auto_trigger_count")) == 1, "degraded latch incremented automatic trigger count")
 	for index in range(188):
 		observatory.call("_update_incident_rearm", {"wall_frame_ms": 16.0})
 	_assert(observatory.get("_performance_incident_state") == &"ARMED", "three healthy seconds did not rearm automatic capture")
