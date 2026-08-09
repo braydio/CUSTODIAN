@@ -45,6 +45,15 @@ may vary below the commit line, but removing the intended commit passage must
 disconnect the world-side frontage entry from `gate_anchor`. The terminal apron
 must contain the gate anchor.
 
+It also emits one bounded north-facing `sundered_keep_frontage_ocean` surface
+claim using the `sundered_keep_cosmic_ocean` profile. The claim derives its
+lateral and inward extent from generated camera/gate semantics and owns no
+floor, collision, navigation, or wall state. After final floor remediation,
+central procgen classification resolves the claim into `ocean_cells`; all other
+non-floor cells remain chasm. Near-field 32×32 water and unambiguous cardinal
+foam edges are visual-only and bridge generated coastline into the existing
+large vista ocean/storm presentation.
+
 The ingress uses `procgen_landmark_terminal` with the
 `sundered_keep_frontage` landmark data key.
 It starts the `sundered_keep` route with the `production` profile. Production
@@ -90,6 +99,10 @@ env HOME=/tmp/custodian-godot-home godot --headless --path custodian \
   --script res://tools/validation/sundered_keep_procgen_vista_layering_smoke.gd
 env HOME=/tmp/custodian-godot-home godot --headless --path custodian \
   --script res://tools/validation/procgen_walkable_boundary_smoke.gd
+env HOME=/tmp/custodian-godot-home godot --headless --path custodian \
+  --script res://tools/validation/procgen_nonwalkable_surface_smoke.gd
+env HOME=/tmp/custodian-godot-home godot --headless --path custodian \
+  --script res://tools/validation/procgen_ocean_tileset_smoke.gd
 env HOME=/tmp/custodian-godot-home godot --headless --path custodian \
   --script res://tools/validation/sundered_keep_frontage_bypass_smoke.gd
 env HOME=/tmp/custodian-godot-home godot --headless --path custodian \

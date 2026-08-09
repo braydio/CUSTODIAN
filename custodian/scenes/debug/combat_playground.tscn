@@ -5,6 +5,9 @@
 [ext_resource type="PackedScene" path="res://game/actors/allies/allied_infantry_droid.tscn" id="7_droid"]
 [ext_resource type="Script" uid="uid://brku67e23m54l" path="res://game/systems/drone/drone_manager.gd" id="8_drone_mgr"]
 [ext_resource type="Script" uid="uid://cyoadqv7g5hc6" path="res://game/world/camera.gd" id="9_camera"]
+[ext_resource type="Script" path="res://game/ui/hud/ui.gd" id="10_ui"]
+[ext_resource type="PackedScene" path="res://game/ui/hud/components/ranged_reticle.tscn" id="11_ranged_reticle"]
+[ext_resource type="PackedScene" path="res://game/ui/hud/components/ranged_ballistic_pip.tscn" id="12_ballistic_pip"]
 
 [sub_resource type="RectangleShape2D" id="wall_horiz"]
 size = Vector2(800, 12)
@@ -104,6 +107,13 @@ polygon = PackedVector2Array(-400, -250, 400, -250, 400, 250, -400, 250)
 [node name="Camera2D" type="Camera2D" parent="World" unique_id=1270439915]
 zoom = Vector2(1.5, 1.5)
 script = ExtResource("9_camera")
+
+[node name="UI" type="CanvasLayer" parent="."]
+script = ExtResource("10_ui")
+
+[node name="RangedReticle" parent="UI" instance=ExtResource("11_ranged_reticle")]
+
+[node name="RangedBallisticPip" parent="UI" instance=ExtResource("12_ballistic_pip")]
 
 [node name="DroneManager" type="Node" parent="World" unique_id=2136447624]
 script = ExtResource("8_drone_mgr")

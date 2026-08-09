@@ -1,6 +1,6 @@
 # FILE INDEX — CUSTODIAN
 
-Last updated: 2026-08-04
+Last updated: 2026-08-09
 
 ## Deterministic World Runtime Integration
 
@@ -252,10 +252,13 @@ Last updated: 2026-08-04
 - `custodian/game/world/procgen/landmarks/sundered_keep/{sundered_keep_landmark_intent_builder,sundered_keep_frontage_builder,sundered_keep_frontage_validator}.gd` — deterministic V1 landmark intent, irregular route/terrace/side-pocket/cliff generation, commit-line/terminal-apron semantics, and structural/reachability/no-bypass/camera-order validation
 - `custodian/game/world/procgen/landmarks/sundered_keep/{sundered_keep_frontage_visual_spawner,sundered_keep_frontage_camera_director}.gd` — production generated-frontage presentation spawn and camera-envelope helpers
 - `custodian/game/world/procgen/runtime_walkable_boundary_chunk.gd` — merged non-destructible collision segments derived from final authoritative generated floor frontiers; independent of visual/destructible wall dressing
-- `custodian/game/world/vistas/sundered_keep/sundered_keep_procgen_vista_presentation.tscn` and `.gd` — production collision-free distant ocean/storm/fortress presentation, horizontally clipped to generated frontage influence, hidden unless the Operator is inside that influence, and rendered below generated gameplay
+- `design/02_features/procgen/NONWALKABLE_SURFACE_REGIONS.md`, `custodian/game/world/procgen/terrain/nonwalkable_surface_classifier.gd`, and `custodian/docs/ai_context/task_packets/PROCGEN_NONWALKABLE_SURFACES.md` — active complete non-floor CHASM/OCEAN authority, deterministic claim classifier, and implementation/evidence handoff
+- `custodian/game/world/procgen/proc_gen_map.tscn` `NonWalkableSurfaceBase` / `NonWalkableSurfaceOverlay` — absolute-depth, presentation-only ocean fill/shore TileMaps; semantic cells and RuntimeWalkableBoundary remain authority
+- `custodian/game/world/vistas/sundered_keep/sundered_keep_procgen_vista_presentation.tscn` and `.gd` — production collision-free distant ocean/storm/fortress presentation, horizontally clipped from resolved ocean geography with floor-derived fallback, hidden unless the Operator is inside frontage influence, and rendered below generated gameplay
 - `custodian/game/world/vistas/sundered_keep/sundered_keep_world_vista.tscn` and `.gd` — superseded presentation-only overlook implementation retained as historical reference
 - `custodian/tools/validation/sundered_keep_procgen_frontage_smoke.gd` — 24-seed structural/determinism/variation smoke plus integrated generated-map checks for route width, reachability, dressing/site exclusion, terminal ingress, border-wall pruning, and forbidden authored authority
 - `custodian/tools/validation/sundered_keep_procgen_vista_layering_smoke.gd` — production authority/layering smoke for generated frontage route placement, collision-free clipped vista hierarchy, negative presentation depth, and non-overlap with playable-floor bounds
+- `custodian/tools/validation/{procgen_nonwalkable_surface_smoke,procgen_ocean_tileset_smoke}.gd` — complete/exclusive deterministic surface classification with wall independence, plus five-source 32×32 static visual-only ocean TileSet validation
 - `custodian/tools/validation/sundered_keep_world_vista_smoke.gd` — semantic presentation smoke proving both forward/reverse camera envelopes, 2560×1440 storm/void coverage, behind-gameplay fortress layers, procgen/Operator continuity, and no collision, cliff-lip, fixed stage, or rectangular authority
 - `custodian/tools/validation/sundered_keep_procgen_frontage_seed_review.gd` — renderer-backed eight-seed 2560×1440 review tool writing overview, first-reveal, frontage-apex, and gate-approach PNGs plus `manifest.json` under `reports/sundered_keep_procgen_frontage/`; the old World Vista reviewer path is a compatibility entry point
 - `custodian/tools/level_authoring/` — CLI scaffold request/generator/entry script, `route_validation_registry_view.gd`, and templates for managed production/playtest/authoring levels, collision-backed exits, transactional route create/append, and full proposed-graph validation before writes
@@ -463,18 +466,21 @@ Last updated: 2026-08-04
 - `custodian/game/actors/operator/operator.tscn` — Operator scene with body/weapon layers, exact weapon sockets, collision/hitbox roots, health bar, and presentation-only weapon/dodge-charge feedback children
 - `custodian/game/vfx/combat/dodge_charge_feedback.gd` / `.tscn` — non-authoritative charge presentation consumer for ratio-selected ring art, compression, latch, origin burst, trail, one maximum afterimage, controller pulse, rejection contraction, and tiny camera impulse
 - `custodian/game/actors/operator/operator_weapon_definition.gd` — weapon/combat profile resource schema and JSON accessor boundary, including independent held/body/melee-overlay `SpriteFrames`, ammo/heat/noise/projectile/sound values, intents, combat multipliers, melee profiles, and data-driven fast-chain keys/commit frames/stamina/recovery flags
-- `custodian/game/actors/operator/vigil_pattern_dagger_{definition,frames,body_frames,melee_overlay_frames,fx_frames}.tres` and `attacks/vigil_pattern_dagger_fast_{01,02,03}.tres` — default dagger fast chain with synchronized 10-frame body/weapon/FX resources and per-link 7/9/11 px drive
+- `custodian/game/actors/operator/vigil_pattern_dagger_{definition,frames,body_frames,melee_overlay_frames,fx_frames}.tres` and `attacks/vigil_pattern_dagger_fast_{01,02,03}.tres` — default dagger Fast 01 plus dedicated eight-frame Fast 02 and nine-frame two-contact Fast 03, unchanged 7/9/11 px authored drive, and opt-in bounded soft-target assist
 - `custodian/game/actors/operator/sword_cleaver_{definition,held_frames,body_frames,weapon_overlay_frames,fx_frames}.tres` and `attacks/sword_cleaver_fast_{01,02,03}.tres` — optional cleaver fast chain using the provisional shared Chain 01 motion, weapon-specific overlays, and per-link 9/11/14 px drive; held/heavy art remains deferred
 - `custodian/game/actors/operator/fallen_star_katana_definition.tres` — separate later Katana profile with the authored `melee_fast_1/2/3` chain, zero-based `5/5/6` damage/commit frames, `7/8/10` stamina progression, looping back to Fast 01, integrated recovery, and zero drive pending Katana-specific tuning
 - `design/02_features/combat_feel/OPERATOR_MELEE_ATTACK_DRIVE.md` — universal bounded CharacterBody2D attack-momentum ownership, input filtering, collision, cancellation, and limitations
 - `design/02_features/weapons/{VIGIL_PATTERN_DAGGER,FALLEN_STAR_KATANA}.md` — weapon-specific baseline and later-weapon contracts
 - `design/02_features/combat_feel/OPERATOR_MELEE_FAST_CHAIN.md` — implemented Katana three-link authority for source/runtime asset ownership, command buffering, authored-frame commitment, direction, recovery, resets, and validation
 - `custodian/game/actors/operator/animations/operator_weapon_socket_library.gd` — strict generated-JSON loader, eight-way aim-sector resolver, and typed frame-socket decoder for Operator ranged weapon placement
+- `custodian/game/systems/combat/ranged_ballistic_aim_resolver.gd` — pure bounded-correction, alignment, target-depth prediction, terrain-first obstruction, and physical-axis aim-solution helper
 - `custodian/content/data/operator/generated/operator_weapon_sockets.generated.json` — generated Carbine phase-1 `e/w/se/sw` per-frame grip/support/muzzle/ejection/angle/draw-order authority
 - `custodian/tools/aseprite/export_operator_weapon_sockets.lua` — Aseprite named-slice exporter for operator-local per-tag/per-frame socket JSON
 - `custodian/game/actors/operator/components/weapon_feedback_presenter.gd` — presentation-only consumer of Operator weapon feedback events; plays configured local audio, flashes the weapon sprite, and spawns barrel vent VFX while logging missing assets loudly and never touching gameplay state or `NoiseEventBus`
 - `custodian/game/actors/operator/carbine_rifle_mk1_definition.tres` — starter ranged weapon definition; secondary intent is `ranged_ready`, while primary fire is requested only during held ranged-ready
 - `custodian/game/systems/combat/melee_attack_profile.gd` — reusable melee attack physics profile for damage, range, arc, knockback, timing, input movement, bounded attack drive, hit-stop, camera shake, animation fallback, and hit-window data
+- `custodian/game/systems/combat/melee_target_resolver.gd` and `design/02_features/combat_feel/MELEE_TARGETING_AND_RANGE_READABILITY.md` — deterministic aim-relative scoring/hysteresis, shared reach and pre-commit assist math, and active no-homing ownership contract
+- `custodian/tools/validation/{operator_melee_soft_targeting,melee_target_ring_readability}_smoke.gd` — focused selection, hysteresis, correction/drive bounds, reach model, and progressive procedural-ring validation
 - `custodian/game/actors/operator/attacks/*.tres` — default operator melee/Fists attack profile resources wired into weapon definitions
 - `custodian/game/actors/operator/unarmed_definition.tres` — Fists/unarmed combat profile used by `toggle_unarmed`, now referencing unarmed fast/heavy attack profiles
 - `custodian/project.godot` — canonical runtime input bindings, including WASD/left-stick movement, mouse/right-stick aim, `fire_primary` / compatibility `attack_primary` on left mouse / Xbox RT, context-sensitive offhand secondary `aim_hold` / compatibility `attack_secondary` on right mouse / Xbox LT for ranged-ready, sidearm-ready, or guard-ready by slot context, `dodge` on Space / Xbox B, `interact` on E / Xbox A, `reload` on R / Xbox X, inventory on Tab/I / Xbox Y, `use_field_patch` on keyboard P, quick item and item cycling, pause, map, `toggle_unarmed`, and `build` on keyboard B
@@ -521,6 +527,11 @@ Last updated: 2026-08-04
 - `custodian/tools/validation/operator_primary_ranged_modular_fire_smoke.gd` — focused headless smoke for raise/lower direction retargeting with preserved progress, committed fire direction, recovery resolution, posture sequence, upper/weapon direction and frame synchronization, muzzle alignment, and cleanup
 - `custodian/tools/validation/operator_weapon_socket_smoke.gd` — focused Carbine socket/camera smoke covering eight-way resolution, phase-1 art and frame metadata coverage, socket-derived muzzle, direction-aware draw order, asymmetric transition timing, additive aim camera lead/zoom/shake, and exact cancellation return
 - `custodian/game/ui/hud/components/ranged_reticle.gd` / `.tscn` — procedural read-only ranged posture reticle driven by canonical `get_weapon_status()` values
+- `custodian/game/ui/hud/components/ranged_ballistic_pip.gd` / `.tscn` — procedural 16x16 read-only physical-axis prediction cue, distinct from cursor intent and enemy TargetRing presentation
+- `custodian/docs/ai_context/task_packets/RANGED_BALLISTIC_AIM_RESOLUTION.md` — implementation/review packet for release-time weapon authority and dual-reticle validation
+- `custodian/tools/validation/operator_ranged_ballistic_aim_smoke.gd` — committed-intent/release-axis, muzzle, correction, prediction, spread-baseline, and snap-fire regression coverage
+- `custodian/tools/validation/ranged_ballistic_reticle_smoke.gd` — procedural pip state and intent/prediction separation coverage
+- `custodian/tools/iteration/scenarios/combat/ranged_ballistic_alignment.json` — deterministic full-capture Carbine cursor-reversal/snap-fire alignment review
 - `custodian/tools/validation/wave_manager_debug_grunt_spawn_gate_smoke.gd` — focused WaveManager smoke proving the startup debug grunt stays despawned inside the Operator spawn threshold and appears once after the Operator crosses it
 - `design/02_features/operator/UNARMED_TOGGLE.md` — unarmed/Fists selection behavior, state rules, and acceptance tests
 - `design/02_features/operator/UNARMED_TOGGLE_CODE.md` — implementation notes for the unarmed/Fists profile selection system
@@ -825,6 +836,7 @@ Last updated: 2026-08-04
 - `custodian/game/systems/simulation/enemy_spatial_index.gd` — shared 64 px enemy buckets refreshed at 10 Hz for stable local separation candidates.
 - `custodian/tools/validation/ambient_enemy_navigation_perf_smoke.gd` — focused spawn/prewarm/path-budget/spatial-index instrumentation contract.
 - `custodian/tools/validation/ambient_enemy_full_actor_perf_bench.gd` — threshold-free headless benchmark using the real grunt scene at baseline and 1/2/4/8 live actors; writes frame/engine timing JSON under `user://performance/`.
+- `custodian/tools/validation/enemy_runtime_attribution_perf_bench.gd` — clean-state, threshold-free 0/1/2/4/8/10 real-grunt attribution benchmark with six diagnostic tier mixes, director/legacy comparison, engine monitors, inclusive/nested enemy spans, and JSON output at `user://performance/enemy_runtime_attribution_perf_bench.json`.
 # Simulation extraction scaffold
 
 - `design/04_architecture/PYTHON_SIM_TO_GODOT_MIGRATION.md` — authority contract for Python-as-spec/Godot-runtime migration, state lifetimes, fixed-step ordering, compatibility boundaries, and first vertical slice.

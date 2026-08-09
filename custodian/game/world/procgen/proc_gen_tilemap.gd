@@ -17,6 +17,10 @@ const RUNTIME_WALKABLE_BOUNDARY_CHUNK_SCRIPT := preload(
 )
 const ELEVATION_MAP_SCRIPT := preload("res://game/world/elevation/elevation_map.gd")
 const TERRAIN_BUILDER_SCRIPT := preload("res://game/world/procgen/terrain/terrain_builder.gd")
+const TERRAIN_TILE_IDS_SCRIPT := preload("res://game/world/procgen/terrain/terrain_tile_ids.gd")
+const NONWALKABLE_SURFACE_CLASSIFIER_SCRIPT := preload(
+	"res://game/world/procgen/terrain/nonwalkable_surface_classifier.gd"
+)
 const TERRAIN_BALLISTICS_SCRIPT := preload("res://game/world/procgen/terrain/terrain_ballistics.gd")
 const REQUIRED_CELL_CLASSIFIER_SCRIPT := preload("res://game/world/procgen/diagnostics/procgen_required_cell_classifier.gd")
 const PRETERRAIN_DIAGNOSTICS_SCRIPT := preload("res://game/world/procgen/diagnostics/procgen_preterrain_diagnostics.gd")
@@ -139,6 +143,20 @@ const TERRAIN_TILESET_SOURCES := {
 	"bridge_metal_mid_vertical_32": {"source_id": 122, "layer": "floor"},
 	"bridge_broken_segment_32": {"source_id": 123, "layer": "floor"},
 }
+const NONWALKABLE_SURFACE_TILESET_SOURCES := {
+	"sundered_keep_ocean_dark_water_01": 124,
+	"sundered_keep_ocean_foam_edge_n": 125,
+	"sundered_keep_ocean_foam_edge_e": 126,
+	"sundered_keep_ocean_foam_edge_s": 127,
+	"sundered_keep_ocean_foam_edge_w": 128,
+}
+const NONWALKABLE_SURFACE_CARDINALS: Array[Vector2i] = [
+	Vector2i.UP,
+	Vector2i.RIGHT,
+	Vector2i.DOWN,
+	Vector2i.LEFT,
+]
+const SUNDERED_KEEP_OCEAN_CLAIM_ID := &"sundered_keep_frontage_ocean"
 
 enum WorldShapeMode {
 	LEGACY_CAVE,
@@ -150,6 +168,8 @@ enum WorldShapeMode {
 @export var walls_tilemap: TileMapLayer
 @export var nav_region: NavigationRegion2D
 @export var depth_backdrop: ProcgenDepthBackdrop
+@export var nonwalkable_surface_base_tilemap: TileMapLayer
+@export var nonwalkable_surface_overlay_tilemap: TileMapLayer
 @export var world_shape_mode: WorldShapeMode = WorldShapeMode.ASCENT_FIELD
 @export var generation_evaluation_mode: bool = false
 @export var generation_output_enabled: bool = true
@@ -387,6 +407,11 @@ var _region_tiles: Dictionary = {}
 var _wall_health: Dictionary = {}
 var _generated_floor_cells: Dictionary = {}
 var _generated_wall_cells: Dictionary = {}
+var _surface_kind_by_cell: Dictionary = {}
+var _chasm_cells: Dictionary = {}
+var _ocean_cells: Dictionary = {}
+var _surface_claim_cells: Dictionary = {}
+var _nonwalkable_surface_summary: Dictionary = {}
 var _evaluated_candidate_ready: bool = false
 var _runtime_prop_blocker_cells: Dictionary = {}
 var _runtime_prop_blocker_sources: Dictionary = {}
@@ -1097,7 +1122,10 @@ func _fill_tilemaps() -> void:
 	_last = Time.get_ticks_msec()
 	_enforce_route_playability_walkability(map_size)
 	_enforce_runtime_blocker_route_clearance()
+	_rebuild_nonwalkable_surface_regions(map_size)
+	_rebuild_nonwalkable_surface_visuals()
 	_rebuild_runtime_walkable_boundary()
+	_audit_sundered_keep_frontage_required_floor()
 	_run_route_playability_audit()
 	_marks["playability_audit"] = Time.get_ticks_msec() - _last
 	_last = Time.get_ticks_msec()
@@ -3861,7 +3889,9 @@ func _audit_sundered_keep_frontage_required_floor() -> Dictionary:
 	var report := {
 		"frontage_required_floor_cell_missing_visual": 0,
 		"frontage_required_floor_cell_blocked": 0,
-		"frontage_required_floor_cell_ocean_exposed": 0,
+		"frontage_required_floor_cell_surface_overlap": 0,
+		"frontage_required_floor_cell_ocean_overlap": 0,
+		"frontage_required_floor_cell_chasm_overlap": 0,
 		"repaired_missing_visual": 0,
 		"repaired_blocked": 0,
 	}
@@ -3897,15 +3927,116 @@ func _audit_sundered_keep_frontage_required_floor() -> Dictionary:
 			)
 		if floor_tilemap == null or floor_tilemap.get_cell_source_id(cell) < 0:
 			report["frontage_required_floor_cell_missing_visual"] += 1
-			report["frontage_required_floor_cell_ocean_exposed"] += 1
 		if _generated_wall_cells.has(cell):
 			report["frontage_required_floor_cell_blocked"] += 1
+		if _ocean_cells.has(cell):
+			report["frontage_required_floor_cell_ocean_overlap"] += 1
+			report["frontage_required_floor_cell_surface_overlap"] += 1
+		elif _chasm_cells.has(cell):
+			report["frontage_required_floor_cell_chasm_overlap"] += 1
+			report["frontage_required_floor_cell_surface_overlap"] += 1
 	var summary := (
 		_sundered_keep_frontage.get("debug_summary", {}) as Dictionary
 	).duplicate(true)
 	summary.merge(report, true)
 	_sundered_keep_frontage["debug_summary"] = summary
 	return report
+
+
+func _collect_nonwalkable_surface_claims() -> Array[Dictionary]:
+	var claims: Array[Dictionary] = []
+	if not _sundered_keep_frontage.is_empty():
+		for claim_variant in _sundered_keep_frontage.get("surface_claims", []):
+			if claim_variant is Dictionary:
+				claims.append((claim_variant as Dictionary).duplicate(true))
+	return claims
+
+
+func _rebuild_nonwalkable_surface_regions(map_size: Vector2i) -> void:
+	_surface_kind_by_cell.clear()
+	_chasm_cells.clear()
+	_ocean_cells.clear()
+	_surface_claim_cells.clear()
+	_nonwalkable_surface_summary.clear()
+	var classifier := NONWALKABLE_SURFACE_CLASSIFIER_SCRIPT.new()
+	var result: Dictionary = classifier.call(
+		"classify",
+		map_size,
+		_generated_floor_cells,
+		_collect_nonwalkable_surface_claims()
+	)
+	_surface_kind_by_cell = (
+		result.get("kind_by_cell", {}) as Dictionary
+	).duplicate(true)
+	_chasm_cells = (
+		result.get("chasm_cells", {}) as Dictionary
+	).duplicate(true)
+	_ocean_cells = (
+		result.get("ocean_cells", {}) as Dictionary
+	).duplicate(true)
+	_surface_claim_cells = (
+		result.get("claim_cells_by_id", {}) as Dictionary
+	).duplicate(true)
+	_nonwalkable_surface_summary = (
+		result.get("summary", {}) as Dictionary
+	).duplicate(true)
+	if not _sundered_keep_frontage.is_empty():
+		_sundered_keep_frontage["ocean_cells"] = (
+			_surface_claim_cells.get(SUNDERED_KEEP_OCEAN_CLAIM_ID, {}) \
+			as Dictionary
+		).duplicate(true)
+
+
+func _clear_nonwalkable_surface_visuals() -> void:
+	if nonwalkable_surface_base_tilemap != null:
+		nonwalkable_surface_base_tilemap.clear()
+	if nonwalkable_surface_overlay_tilemap != null:
+		nonwalkable_surface_overlay_tilemap.clear()
+
+
+func _rebuild_nonwalkable_surface_visuals() -> void:
+	_clear_nonwalkable_surface_visuals()
+	if nonwalkable_surface_base_tilemap == null \
+			or nonwalkable_surface_overlay_tilemap == null:
+		return
+	var fill_id := int(NONWALKABLE_SURFACE_TILESET_SOURCES.get(
+		TERRAIN_TILE_IDS_SCRIPT.ocean("fill"), -1
+	))
+	if fill_id < 0:
+		return
+	for cell_variant in _ocean_cells.keys():
+		var cell := cell_variant as Vector2i
+		if _generated_floor_cells.has(cell):
+			continue
+		nonwalkable_surface_base_tilemap.set_cell(
+			cell, fill_id, Vector2i.ZERO, 0
+		)
+		var floor_directions: Array[Vector2i] = []
+		for direction in NONWALKABLE_SURFACE_CARDINALS:
+			if _generated_floor_cells.has(cell + direction):
+				floor_directions.append(direction)
+		if floor_directions.size() != 1:
+			continue
+		var shore_key := _ocean_shore_key_for_floor_direction(
+			floor_directions[0]
+		)
+		var shore_id := int(NONWALKABLE_SURFACE_TILESET_SOURCES.get(
+			TERRAIN_TILE_IDS_SCRIPT.ocean(shore_key), -1
+		))
+		if shore_id >= 0:
+			nonwalkable_surface_overlay_tilemap.set_cell(
+				cell, shore_id, Vector2i.ZERO, 0
+			)
+
+
+func _ocean_shore_key_for_floor_direction(direction: Vector2i) -> String:
+	if direction == Vector2i.UP:
+		return "shore_n"
+	if direction == Vector2i.RIGHT:
+		return "shore_e"
+	if direction == Vector2i.DOWN:
+		return "shore_s"
+	return "shore_w"
 
 
 func _build_route_playability(
@@ -4280,6 +4411,12 @@ func _find_or_create_world_progress_marker_parent() -> Node2D:
 
 
 func _clear_world_progression_runtime() -> void:
+	_surface_kind_by_cell.clear()
+	_chasm_cells.clear()
+	_ocean_cells.clear()
+	_surface_claim_cells.clear()
+	_nonwalkable_surface_summary.clear()
+	_clear_nonwalkable_surface_visuals()
 	_world_progress_samples.clear()
 	_worldgen_intent_graph = null
 	_worldgen_reserved_regions.clear()
@@ -4393,6 +4530,30 @@ func debug_get_generated_floor_cells() -> Dictionary:
 
 func debug_get_generated_wall_cells() -> Dictionary:
 	return _generated_wall_cells.duplicate(true)
+
+
+func get_nonwalkable_surface_kind_at_tile(cell: Vector2i) -> StringName:
+	return StringName(_surface_kind_by_cell.get(cell, &""))
+
+
+func is_ocean_tile(cell: Vector2i) -> bool:
+	return _ocean_cells.has(cell)
+
+
+func is_chasm_tile(cell: Vector2i) -> bool:
+	return _chasm_cells.has(cell)
+
+
+func debug_get_ocean_cells() -> Dictionary:
+	return _ocean_cells.duplicate(true)
+
+
+func debug_get_chasm_cells() -> Dictionary:
+	return _chasm_cells.duplicate(true)
+
+
+func debug_get_nonwalkable_surface_summary() -> Dictionary:
+	return _nonwalkable_surface_summary.duplicate(true)
 
 
 func debug_get_route_playability() -> Dictionary:
@@ -5041,6 +5202,8 @@ func is_valid_spawn_cell(tile: Vector2i) -> bool:
 	if _generated_floor_cells.is_empty() and procgen_node != null:
 		return not procgen_node.is_full_at(tile)
 	if not _generated_floor_cells.has(tile):
+		return false
+	if _ocean_cells.has(tile) or _chasm_cells.has(tile):
 		return false
 	if _generated_wall_cells.has(tile):
 		return false
@@ -7329,6 +7492,9 @@ func _remove_foliage(pos: Vector2i) -> void:
 
 
 func _should_place_foliage(pos: Vector2i) -> bool:
+	if not _generated_floor_cells.has(pos) \
+			or _ocean_cells.has(pos) or _chasm_cells.has(pos):
+		return false
 	_ensure_foliage_spawner()
 	return _foliage_spawner.can_place_at(_build_foliage_spawner_context(), pos)
 
@@ -8832,6 +8998,11 @@ func get_level_data() -> Dictionary:
 		"terrain_builder": _get_terrain_builder_level_data(),
 		"floor_cells": _dict_keys_as_vector2i_array(_generated_floor_cells),
 		"wall_cells": _dict_keys_as_vector2i_array(_generated_wall_cells),
+		"ocean_cells": _dict_keys_as_vector2i_array(_ocean_cells),
+		"chasm_cells": _dict_keys_as_vector2i_array(_chasm_cells),
+		"nonwalkable_surface_summary": (
+			_nonwalkable_surface_summary.duplicate(true)
+		),
 		"runtime_prop_blocker_cells": _dict_keys_as_vector2i_array(_runtime_prop_blocker_cells),
 		"runtime_prop_blocker_source_count": _runtime_prop_blocker_sources.size(),
 		"world_profile": get_planet_world_profile(),

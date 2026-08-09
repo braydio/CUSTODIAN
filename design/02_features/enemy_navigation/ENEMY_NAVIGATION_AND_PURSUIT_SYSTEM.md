@@ -48,6 +48,38 @@ For threshold-free real-actor scaling evidence, run
 0/1/2/4/8 live actors and writes JSON under `user://performance/`; it is a
 comparison fixture, not a hardware-independent pass/fail gate.
 
+### Runtime attribution contract
+
+Enemy performance diagnosis must measure before changing interest-tier tuning.
+During an active Developer Observatory performance incident, or through an
+explicit benchmark-only collection seam, the real enemy actor reports one
+non-overlapping `enemy_total` wall-clock span and nested diagnostic spans for
+behavior, perception, objective sensing, navigation, separation, movement
+preparation, `move_and_slide`, combat, animation, presentation, health UI, and
+corpse work. Per-tier total spans distinguish active, nearby, background, and
+dormant cost. Child spans explain `enemy_total`; they must not be added to it as
+independent frame cost.
+
+The diagnostic benchmark owns no gameplay tuning. It creates clean populations
+for each 0/1/2/4/8/10 actor run and uses a benchmark-only tier override for the
+8-actor tier matrix. It records wall time, Godot process/physics monitors,
+render/object/physics counts, enemy spans, and the derived residual separately.
+Headless results establish CPU scaling only; they are not evidence of graphical
+renderer cost or a hardware-independent FPS requirement.
+
+Current tier behavior is explicit:
+
+- active actors run their parent physics callback every physics step;
+- nearby actors retain physics processing but execute the parent simulation at
+  10 Hz;
+- background actors retain physics processing but execute it at 2 Hz;
+- dormant actors disable the parent `Enemy._physics_process()` callback and
+  therefore do not run behavior, perception, navigation, movement, combat, or
+  parent-owned animation synchronization;
+- child visual nodes may retain engine-owned animation playback unless their
+  own processing contract disables it. That presentation/server cost is not
+  equivalent to enemy script simulation and must be measured separately.
+
 ## Deferred crowd scale
 
 Engagement slots, simultaneous-melee authorization, shared objective flow fields, and navigation-revision path caches remain the next scale phase for large assaults. They must not replace individual paths for stuck recovery, investigation points, or unusual destinations.

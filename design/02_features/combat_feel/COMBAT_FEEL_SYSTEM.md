@@ -78,9 +78,10 @@ Implemented in first slice:
 
 Current weapon split:
 
-- Vigil-Pattern Dagger is the default melee baseline. Its three semantic fast
-  links provisionally reuse the revised 10-frame Chain 01 body/weapon/FX
-  motion while retaining per-link profiles and 7/9/11 px drive.
+- Vigil-Pattern Dagger is the default melee baseline. Fast 01 uses Chain 01,
+  Fast 02 uses its dedicated eight-frame Chain 02, and Fast 03 uses its
+  dedicated nine-frame, two-contact Chain 03. Each retains an independent
+  profile and 7/9/11 px authored drive.
 - Sword-Cleaver is an optional independent weapon with its own overlays,
   profiles, stamina, and 9/11/14 px drive. Its held art, dedicated Fast 02/03,
   and heavy action remain deferred.
@@ -112,9 +113,10 @@ Required events:
 
 Current runtime hookup:
 
-- The default dagger and optional cleaver use separate E/W ten-frame body,
-  weapon-overlay, and FX strips at 18 FPS. Their provisional shared Chain 01
-  contact is zero-based frame 5 and repeat commit is frame 6.
+- The default dagger uses dedicated E/W Fast 01/02/03 body, weapon-overlay,
+  and FX strips at 18 FPS; Fast 02 is eight frames and Fast 03 is the
+  nine-frame two-contact finisher. The optional cleaver retains its separate
+  provisional shared Chain 01 presentation.
 - The Katana source master is the verified `3432x96` 22-frame strip under
   `content/sprites/operator/new_operator/modular/chain_attack/`.
 - Runtime body slices are `7/7/8` frames under

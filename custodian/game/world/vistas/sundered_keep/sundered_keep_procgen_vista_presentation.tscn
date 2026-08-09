@@ -30,7 +30,7 @@ y_sort_enabled = false
 [node name="VoidUnderlay" type="Polygon2D" parent="VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation"]
 z_index = 0
 polygon = PackedVector2Array(-4096, -4096, 4096, -4096, 4096, 4096, -4096, 4096)
-color = Color(0.025, 0.039, 0.052, 1)
+color = Color(0.025, 0.039, 0.052, 0)
 
 [node name="StormHorizon" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation"]
 position = Vector2(0, -120)

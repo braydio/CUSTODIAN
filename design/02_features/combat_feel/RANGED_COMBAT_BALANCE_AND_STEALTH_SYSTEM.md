@@ -9,6 +9,14 @@ Authority brief: `design/COMBAT_BALANCE.md`
 
 Keep ranged weapons strong in deliberate bursts without allowing unlimited screen-clearing. The runtime combines finite carried ammunition, range and accuracy pressure, per-weapon heat, positional gunshot noise, sight/hearing perception, loss-of-contact search, and hostile ambient camps. Ammo is strategic scarcity; heat is immediate firing pressure; noise creates world consequences.
 
+## Physical Aim Authority
+
+Accepted aim direction commits the authored fire presentation. The transformed
+frame-aware weapon axis at the actual release frame is the projectile baseline.
+Weapon spread is applied after that baseline, and the physical projectile owns
+actual collision. Cursor reversal cannot twist a committed fire pose, but aim
+alignment never gates snap-fire.
+
 ## Implemented In This Pass
 
 - Ammo is stored by canonical type (`kinetic_light`, `kinetic_heavy`, `energy_cell`, `shell`, `scrap_charge`) with the legacy `kinetic` alias normalized to `kinetic_light`.

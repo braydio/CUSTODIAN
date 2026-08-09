@@ -517,11 +517,13 @@ func _initialize_navigation() -> void:
 func _physics_process(delta):
 	var obs := get_node_or_null("/root/DevObservatory")
 	var total_started: int = obs.perf_span_begin() if obs != null else 0
+	var tier_span_name := StringName("enemy_%s_total" % simulation_tier)
 	if dead:
 		var corpse_started: int = obs.perf_span_begin() if obs != null else 0
 		_update_empty_corpse_cleanup(delta)
 		if obs != null:
 			obs.perf_span_end(&"enemy_corpse", corpse_started)
+			obs.perf_span_end(tier_span_name, total_started)
 			obs.perf_span_end(&"enemy_total", total_started)
 		return
 	var tier_interval := _simulation_tier_interval()
@@ -529,44 +531,69 @@ func _physics_process(delta):
 		_simulation_tier_accum += delta
 		if _simulation_tier_accum < tier_interval:
 			if obs != null:
+				obs.perf_span_end(tier_span_name, total_started)
 				obs.perf_span_end(&"enemy_total", total_started)
 			return
 		delta = _simulation_tier_accum
 		_simulation_tier_accum = 0.0
+	var presentation_started: int = obs.perf_span_begin() if obs != null else 0
 	_update_threat_highlight_visual(delta)
+	if obs != null:
+		obs.perf_span_end(&"enemy_presentation", presentation_started)
 	_savage_pounce_cooldown_timer = maxf(0.0, _savage_pounce_cooldown_timer - delta)
 	_grunt_falcon_punch_cooldown_timer = maxf(0.0, _grunt_falcon_punch_cooldown_timer - delta)
 	_grunt_falcon_punch_recent_parry_timer = maxf(0.0, _grunt_falcon_punch_recent_parry_timer - delta)
+	var combat_started: int = obs.perf_span_begin() if obs != null else 0
 	if _update_savage_attack(delta):
 		if obs != null:
-			obs.perf_span_end(&"enemy_combat", total_started)
+			obs.perf_span_end(&"enemy_combat", combat_started)
+			obs.perf_span_end(tier_span_name, total_started)
 			obs.perf_span_end(&"enemy_total", total_started)
 		return
+	if obs != null:
+		obs.perf_span_end(&"enemy_combat", combat_started)
+	combat_started = obs.perf_span_begin() if obs != null else 0
 	if _update_grunt_falcon_punch_attack(delta):
 		if obs != null:
-			obs.perf_span_end(&"enemy_combat", total_started)
+			obs.perf_span_end(&"enemy_combat", combat_started)
+			obs.perf_span_end(tier_span_name, total_started)
 			obs.perf_span_end(&"enemy_total", total_started)
 		return
+	if obs != null:
+		obs.perf_span_end(&"enemy_combat", combat_started)
+	combat_started = obs.perf_span_begin() if obs != null else 0
 	if _update_marine_dash_attack(delta):
 		if obs != null:
-			obs.perf_span_end(&"enemy_combat", total_started)
+			obs.perf_span_end(&"enemy_combat", combat_started)
+			obs.perf_span_end(tier_span_name, total_started)
 			obs.perf_span_end(&"enemy_total", total_started)
 		return
+	if obs != null:
+		obs.perf_span_end(&"enemy_combat", combat_started)
+	combat_started = obs.perf_span_begin() if obs != null else 0
 	if _update_reaction_timers(delta):
 		if obs != null:
-			obs.perf_span_end(&"enemy_combat", total_started)
+			obs.perf_span_end(&"enemy_combat", combat_started)
+			obs.perf_span_end(tier_span_name, total_started)
 			obs.perf_span_end(&"enemy_total", total_started)
 		return
+	if obs != null:
+		obs.perf_span_end(&"enemy_combat", combat_started)
+	combat_started = obs.perf_span_begin() if obs != null else 0
 	if _update_attack_windup(delta):
 		if obs != null:
-			obs.perf_span_end(&"enemy_combat", total_started)
+			obs.perf_span_end(&"enemy_combat", combat_started)
+			obs.perf_span_end(tier_span_name, total_started)
 			obs.perf_span_end(&"enemy_total", total_started)
 		return
+	if obs != null:
+		obs.perf_span_end(&"enemy_combat", combat_started)
 	if behavior_state_machine_enabled and behavior_state_machine != null and behavior_state_machine.has_method("physics_update"):
 		var behavior_started: int = obs.perf_span_begin() if obs != null else 0
 		if bool(behavior_state_machine.call("physics_update", self, delta)):
 			if obs != null:
 				obs.perf_span_end(&"enemy_behavior", behavior_started)
+				obs.perf_span_end(tier_span_name, total_started)
 				obs.perf_span_end(&"enemy_total", total_started)
 			return
 		if obs != null:
@@ -576,11 +603,13 @@ func _physics_process(delta):
 		_update_passive_behavior(delta)
 		if obs != null:
 			obs.perf_span_end(&"enemy_behavior", passive_started)
+			obs.perf_span_end(tier_span_name, total_started)
 			obs.perf_span_end(&"enemy_total", total_started)
 		return
 	if _update_assault_state(delta):
 		if obs != null:
 			obs.perf_span_end(&"enemy_behavior", total_started)
+			obs.perf_span_end(tier_span_name, total_started)
 			obs.perf_span_end(&"enemy_total", total_started)
 		return
 
@@ -637,11 +666,12 @@ func _physics_process(delta):
 				_update_directional_animation(_last_move_direction, false)
 				if obs != null:
 					obs.perf_span_end(&"enemy_animation", animation_started)
-			var combat_started: int = obs.perf_span_begin() if obs != null else 0
+			var attack_started: int = obs.perf_span_begin() if obs != null else 0
 			_attack_target(delta)
 			if obs != null:
-				obs.perf_span_end(&"enemy_combat", combat_started)
+				obs.perf_span_end(&"enemy_combat", attack_started)
 	if obs != null:
+		obs.perf_span_end(tier_span_name, total_started)
 		obs.perf_span_end(&"enemy_total", total_started)
 		
 func _attack_target(delta: float):
@@ -2083,6 +2113,8 @@ func _damage_result(
 	}
 
 func update_visuals():
+	var obs := get_node_or_null("/root/DevObservatory")
+	var health_ui_started: int = obs.perf_span_begin() if obs != null else 0
 	if health_bar:
 		health_bar.value = (health / max_health) * 100.0
 		
@@ -2095,7 +2127,9 @@ func update_visuals():
 				fill_style.bg_color = Color(0.85, 0.7, 0.2, 1.0)
 			else:
 				fill_style.bg_color = Color(0.9, 0.25, 0.2, 1.0)
-	
+	if obs != null:
+		obs.perf_span_end(&"enemy_health_ui", health_ui_started)
+	var presentation_started: int = obs.perf_span_begin() if obs != null else 0
 	if visual:
 		var health_pct = health / max_health
 		if health_pct > 0.5:
@@ -2104,6 +2138,8 @@ func update_visuals():
 			visual.modulate = base_tint.lerp(Color(1.0, 0.65, 0.25, 1.0), 0.35)
 		else:
 			visual.modulate = base_tint.darkened(0.35)
+	if obs != null:
+		obs.perf_span_end(&"enemy_presentation", presentation_started)
 
 func die():
 	if life_state != LifeState.ALIVE:
@@ -2298,6 +2334,30 @@ func set_simulation_tier(tier: String) -> void:
 	_obs_increment(StringName("enemy_sim_tier_%s" % simulation_tier), 1)
 
 
+func force_diagnostic_simulation_tier(tier: String) -> void:
+	## Benchmark-only seam. Production classification continues to be owned by
+	## SimulationInterestManager through set_simulation_tier().
+	assert(["active", "nearby", "background", "dormant"].has(tier))
+	set_simulation_tier(tier)
+
+
+func get_runtime_cost_state() -> Dictionary:
+	var perception := get_node_or_null("EnemyPerceptionComponent")
+	var objective_sensor := get_node_or_null("EnemyObjectiveSensor")
+	return {
+		"simulation_tier": simulation_tier,
+		"process_enabled": is_processing(),
+		"physics_process_enabled": is_physics_processing(),
+		"behavior_enabled": behavior_state_machine_enabled and behavior_state_machine != null and bool(behavior_state_machine.get("enabled")),
+		"perception_enabled": perception != null and simulation_tier != "dormant",
+		"objective_sensor_enabled": objective_sensor != null and simulation_tier != "dormant",
+		"navigation_enabled": use_pathfinding and simulation_tier != "dormant",
+		"movement_enabled": is_physics_processing(),
+		"presentation_enabled": (animated_sprite != null and animated_sprite.visible) or (humanoid_cutout_rig != null and humanoid_cutout_rig.visible),
+		"health_ui_enabled": health_bar != null and health_bar.visible,
+	}
+
+
 func _simulation_tier_interval() -> float:
 	match simulation_tier:
 		"nearby":
@@ -2369,27 +2429,49 @@ func get_last_move_direction() -> Vector2:
 
 
 func behavior_stop() -> void:
+	var obs := get_node_or_null("/root/DevObservatory")
+	var started: int = obs.perf_span_begin() if obs != null else 0
 	velocity = Vector2.ZERO
 	if _uses_directional_animation_set():
 		_update_directional_animation(_last_move_direction, false)
+	if obs != null:
+		obs.perf_span_end(&"enemy_animation", started)
 
 
 func behavior_move_toward(target_position: Vector2, desired_speed: float) -> void:
+	var obs := get_node_or_null("/root/DevObservatory")
+	var prepare_started: int = obs.perf_span_begin() if obs != null else 0
 	var direction := Vector2.ZERO
 	if use_pathfinding and navigation_system != null and navigation_system.has_method("get_path_to_target"):
+		var navigation_started: int = obs.perf_span_begin() if obs != null else 0
 		direction = _get_pathfinding_direction(target_position, get_physics_process_delta_time())
+		if obs != null:
+			obs.perf_span_end(&"enemy_navigation", navigation_started)
 	else:
 		direction = (target_position - global_position).normalized()
 	if direction.length_squared() <= 0.0001:
+		if obs != null:
+			obs.perf_span_end(&"enemy_movement_prepare", prepare_started)
 		behavior_stop()
 		return
+	var separation_started: int = obs.perf_span_begin() if obs != null else 0
 	direction = _apply_enemy_spacing_to_direction(direction)
+	if obs != null:
+		obs.perf_span_end(&"enemy_separation", separation_started)
 	velocity = direction * desired_speed
+	if obs != null:
+		obs.perf_span_end(&"enemy_movement_prepare", prepare_started)
+	var move_started: int = obs.perf_span_begin() if obs != null else 0
 	move_and_slide()
+	if obs != null:
+		obs.perf_span_end(&"enemy_move_and_slide", move_started)
 	_update_stuck_reroute(target_position, get_physics_process_delta_time())
 	_last_move_direction = direction
 	if _uses_directional_animation_set():
+		var animation_started: int = obs.perf_span_begin() if obs != null else 0
 		_update_directional_animation(_last_move_direction, true)
+		if obs != null:
+			obs.perf_span_end(&"enemy_animation", animation_started)
 
 
 func _apply_enemy_spacing_to_direction(direction: Vector2) -> Vector2:
@@ -2441,6 +2523,8 @@ func get_navigation_performance_snapshot() -> Dictionary:
 
 
 func behavior_attack_target() -> void:
+	var obs := get_node_or_null("/root/DevObservatory")
+	var started: int = obs.perf_span_begin() if obs != null else 0
 	if target == null:
 		behavior_stop()
 		return
@@ -2451,6 +2535,8 @@ func behavior_attack_target() -> void:
 	if _uses_directional_animation_set():
 		_update_directional_animation(_last_move_direction, false)
 	_attack_target(get_physics_process_delta_time())
+	if obs != null:
+		obs.perf_span_end(&"enemy_combat", started)
 
 
 func _ensure_behavior_components() -> void:

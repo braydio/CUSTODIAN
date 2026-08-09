@@ -66,6 +66,7 @@ var _presentation_bounds := Rect2()
 var _viewport_coverage := Vector2.ZERO
 var _vista_clip_bounds := Rect2()
 var _playable_floor_bounds := Rect2()
+var _ocean_bounds := Rect2()
 var _apex_hold_remaining := 0.0
 var _moonlight_elapsed := -1.0
 var _moonlight_played := false
@@ -436,12 +437,17 @@ func _configure_exterior_clip() -> void:
 			first_floor = false
 		else:
 			_playable_floor_bounds = _playable_floor_bounds.merge(cell_rect)
+	_ocean_bounds = _cell_world_bounds(
+		_frontage.get("ocean_cells", {}) as Dictionary,
+		tile_size
+	)
 	var gate_center := _world_anchors.get("gate_threshold", Vector2.ZERO) as Vector2
 	var outward: Vector2i = _frontage.get("fortress_outward_direction", Vector2i.UP)
 	var map_origin := _tile_to_world(Vector2i.ZERO) - tile_size * 0.5
-	var frontage_visual_bounds := _playable_floor_bounds.grow(
-		VISTA_HORIZONTAL_MARGIN
+	var geographic_bounds := (
+		_ocean_bounds if _ocean_bounds.has_area() else _playable_floor_bounds
 	)
+	var frontage_visual_bounds := geographic_bounds.grow(VISTA_HORIZONTAL_MARGIN)
 	var exterior_top := map_origin.y - maxf(_viewport_coverage.y, 512.0)
 	var exterior_bottom := gate_center.y - tile_size.y * 0.5 - 0.5
 	if outward == Vector2i.UP:
@@ -466,6 +472,22 @@ func _configure_exterior_clip() -> void:
 		local_rect.end,
 		local_rect.position + Vector2(0.0, local_rect.size.y),
 	])
+
+
+func _cell_world_bounds(cells: Dictionary, tile_size: Vector2) -> Rect2:
+	var bounds := Rect2()
+	var first := true
+	for cell_variant in cells.keys():
+		if not cell_variant is Vector2i:
+			continue
+		var center := _tile_to_world(cell_variant as Vector2i)
+		var cell_rect := Rect2(center - tile_size * 0.5, tile_size)
+		if first:
+			bounds = cell_rect
+			first = false
+		else:
+			bounds = bounds.merge(cell_rect)
+	return bounds
 
 
 func _runtime_tile_size() -> Vector2:
@@ -533,6 +555,10 @@ func get_world_vista_debug_state() -> Dictionary:
 		"viewport_coverage": _viewport_coverage,
 		"vista_clip_bounds": _vista_clip_bounds,
 		"playable_floor_bounds": _playable_floor_bounds,
+		"ocean_bounds": _ocean_bounds,
+		"ocean_cell_count": (
+			_frontage.get("ocean_cells", {}) as Dictionary
+		).size(),
 		"vista_root_z_index": _vista_root.z_index,
 		"semantic_anchors": _world_anchors.duplicate(true),
 		"frontage": _frontage.duplicate(true),

@@ -1,6 +1,6 @@
 GAMEPLAY NOTES
 
-1. Resource gathering needs to have pickup toast notifs.
+1. Resource gathering needs to have pickup toast notifs. Also, shrumb pickups are using spritesheets instead of authored item icon portraits in the pickup toasts. 
 
 2. Still need to authorthe procgen void endless forest underlay playable land cliffs + work on world display/presentation of procgen
 
@@ -14,4 +14,12 @@ GAMEPLAY NOTES
 
 7. Maybe the cognitifve residue/drops of the shrumb can be coveted and sought affter by enemies, who will path to, pick up, and get bonuses from the cognitive residues (within reason , not omniscient sensing of cognitive residue)
 
+8. Mobs currently do not respeoct nav 100% -- instances of enemies spawning in void psace, shrumbs too. appearrs that edges of nav boundaries are 'walls' preventing traversal rather than not allowing anyone to walk there? 
+
+9. Cognitive Effect UI/Exposure: Currently there is no way fore the player to see the cognitive effects stacked from the pickups. Do we mean this? How should we expose the effects? In the inventory? See inventory item: 
+
+10. Invewntory Item; Layout for items needs revamp - thinkinig of dark souls At a Glance view (initial) vs. detail view (toggled) Equipment has stat breakdowns, consumables have... i forget... but our UI is okay so far, feels incomplete.
+
+
+11. Sometimes the enemies stand too close for the melee weapon, they are like inside the hit box? And it is hardto reposition to get back to where they can be hit. Should this be intentinoal? Should we prompt a close-range sidearm use for this, with a knockback? Or is that tedious?
 

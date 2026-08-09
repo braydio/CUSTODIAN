@@ -67,7 +67,11 @@ func physics_update(enemy: Node2D, delta: float) -> bool:
 	_rescore_timer -= delta
 	if blackboard.investigation_timer > 0.0:
 		blackboard.investigation_timer = maxf(0.0, blackboard.investigation_timer - delta)
+	var observatory := enemy.get_node_or_null("/root/DevObservatory")
+	var perception_started: int = observatory.perf_span_begin() if observatory != null else 0
 	perception.update_perception(enemy, profile, blackboard, delta)
+	if observatory != null:
+		observatory.perf_span_end(&"enemy_perception", perception_started)
 	blackboard.is_carrying_loot = loot_carrier.is_carrying_loot()
 	blackboard.carried_resources = loot_carrier.carried_resources.duplicate(true)
 
@@ -192,7 +196,7 @@ func _update_idle(enemy: Node2D, _delta: float) -> void:
 		_rescore_timer = idle_rescore_interval_sec
 		if _try_claim_nearby_ambient_anchor(enemy):
 			return
-		var objective: Dictionary = objective_sensor.call("choose_objective", enemy, profile, blackboard)
+		var objective: Dictionary = _choose_objective_measured(enemy)
 		_apply_objective_choice(objective)
 
 
@@ -204,7 +208,7 @@ func _update_patrol(enemy: Node2D, _delta: float) -> void:
 	enemy.call("behavior_move_toward", _patrol_target, profile.patrol_speed)
 	if _rescore_timer <= 0.0:
 		_rescore_timer = idle_rescore_interval_sec
-		_apply_objective_choice(objective_sensor.call("choose_objective", enemy, profile, blackboard))
+		_apply_objective_choice(_choose_objective_measured(enemy))
 
 
 func _update_ambient_activity(enemy: Node2D, delta: float) -> void:
@@ -322,7 +326,7 @@ func _update_seek_objective(enemy: Node2D, _delta: float) -> void:
 		return
 	var storage := blackboard.get("target_storage") as Node2D
 	if storage == null or not is_instance_valid(storage):
-		_apply_objective_choice(objective_sensor.choose_objective(enemy, profile, blackboard))
+		_apply_objective_choice(_choose_objective_measured(enemy))
 		return
 	var sabotaging: bool = blackboard.current_objective_type == &"vault_storage_sabotage"
 	if sabotaging and storage.has_method("is_destroyed") and bool(storage.call("is_destroyed")):
@@ -434,11 +438,20 @@ func _evaluate_interrupts(enemy: Node2D) -> bool:
 	if blackboard.is_suspicious and blackboard.investigation_timer > 0.0:
 		change_state(INVESTIGATE)
 		return true
-	var objective: Dictionary = objective_sensor.call("choose_objective", enemy, profile, blackboard)
+	var objective: Dictionary = _choose_objective_measured(enemy)
 	if float(objective.get("score", 0.0)) > 0.0:
 		_apply_objective_choice(objective)
 		return current_state != IDLE and current_state != PATROL
 	return false
+
+
+func _choose_objective_measured(enemy: Node2D) -> Dictionary:
+	var observatory := enemy.get_node_or_null("/root/DevObservatory")
+	var started: int = observatory.perf_span_begin() if observatory != null else 0
+	var result: Dictionary = objective_sensor.call("choose_objective", enemy, profile, blackboard)
+	if observatory != null:
+		observatory.perf_span_end(&"enemy_objective_sensor", started)
+	return result
 
 
 func _evaluate_operator_interrupt_for_storage() -> bool:

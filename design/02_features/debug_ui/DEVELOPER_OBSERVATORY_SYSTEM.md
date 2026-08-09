@@ -258,6 +258,10 @@ write to the export or change runtime state.
 - Player damage, guarded chip damage, and healing amounts use cumulative counters so event-ring wrapping cannot understate session totals. Retained-event damage remains explicitly labeled as a tail-window value.
 - `player_alive` / `player_dead` and last-live weapon, ammunition, and stamina gauges prevent post-death snapshots from being interpreted as balance evidence.
 - Procgen generation/map/wall-body gauges, global node/physics/collision peaks, and loaded world/procgen root counts distinguish proportional collision cost from cleanup or handoff leakage.
+- Active performance incidents retain bounded aggregate enemy attribution spans:
+  one inclusive `enemy_total`, per-tier inclusive totals, and nested subsystem
+  distribution. Reports present the inclusive total and child distribution
+  separately so nested timing is never double-counted.
 
 ## Acceptance
 

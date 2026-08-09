@@ -18,6 +18,12 @@ Sword-Cleaver and Fallen Star Katana.
 | Fast 02 | Dedicated 8-frame Chain 02 connective body, dagger, and FX | 9 px | 6 |
 | Fast 03 | Dedicated 9-frame Chain 03 two-contact finisher body, dagger, and FX | 11 px | 8 |
 
+Soft targeting preserves those authored drives and adds only a pre-commit
+assist: Fast 01 permits 12 degrees and up to 3 px, Fast 02 permits 13 degrees
+and up to 4 px, and Fast 03 permits 14 degrees and up to 5 px. The escalating
+assist is a subtle increase in commitment, not a larger hitbox or mid-swing
+tracking. Each link freezes its corrected facing and resolved drive at commit.
+
 All links have distinct semantic animation names and attack profiles. Body,
 dagger, and FX use separate synchronized 156×96 `SpriteFrames` resources.
 Runtime semantics follow the authored numbering: Chain 02 is Fast 02 and the

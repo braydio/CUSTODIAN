@@ -4,7 +4,7 @@
 
 Live runtime authority: yes. One `WorldSimulationRuntime` in `game.tscn` owns clock, kernel, session/world, snapshots, command ingress, and resolution. Python parity v2 covers seeds 1/2 at ticks 0/1/10/100 for resources, limited-bootstrap inventory/stocks, policies, strategic power load, and logistics with canonical SHA-256; Python remains offline only. Pure Godot coverage includes commands, pause/catch-up, snapshot restore, Command Post failure, repair/fabrication foundations, and exactly-once outcomes. Adapter-only systems are local power delivery, physical `WaveManager` spawning, and `FabPipeline` delivery. Relays, systemic random events, full assaults, wear, fidelity, ambient fabrication, and full Python repair semantics are not yet ported.
 
-Last updated: 2026-08-04
+Last updated: 2026-08-09
 
 Documentation updates this session:
 - Created `design/02_features/factions/FACTION_EXPRESSION_SYSTEM.md` — full implementation spec from Faction Continuity Audit findings, covering taxonomy lock, canonical IDs, gameplay boundaries, roster reduction, data model, migration order, and Sundered Keep vertical slice.
@@ -13,6 +13,24 @@ Documentation updates this session:
 
 ## Runtime Status
 
+- Melee mode now uses deterministic aim-relative soft targeting rather than
+  nearest-enemy selection. A weapon-aware reach model, 42/58-degree
+  acquire/retain cones, score hysteresis, and a progressive procedural ring
+  establish a stable passive target frame. Vigil dagger links revalidate once
+  at commit, permit bounded 12/13/14-degree facing correction and additive
+  3/4/5 px assist on top of unchanged 7/9/11 px authored drive, then freeze.
+  Existing `move_and_slide()` drive, hitbox damage, and parry-critical capture
+  remain separate authorities; hard lock remains deferred.
+- Primary Carbine fire now separates accepted trigger intent from release-time
+  ballistic authority. The committed fire sector survives cursor reversal,
+  while the zero-spread projectile baseline is sampled from the current
+  frame-aware grip-to-muzzle axis at release and spread applies afterward.
+  Phase-1 fine correction is absolute, bounded to ±24 degrees, and pursues the
+  desired correction with a frame-rate-independent response of 20.0. The existing
+  48x48 ranged reticle remains cursor/controller intent; a separate procedural
+  16x16 ballistic pip predicts current muzzle-axis depth/obstruction without
+  damage authority. Physical `bullet.gd` travel and collision remain final.
+- Procgen now classifies every final in-map non-floor cell as explicit `chasm` or claimed `ocean` semantic state without consulting wall dressing. Sundered Keep emits the first bounded north-facing ocean claim; resolved cells paint visual-only 32×32 dark water and unambiguous cardinal foam on absolute-depth surface layers while the existing final-floor `RuntimeWalkableBoundary` remains physical authority. Ocean/chasm sets export through level data and survive accepted-candidate promotion unchanged. The seam-safe camera-following depth backdrop remains live rather than switching to finite connected-region stacks.
 - Generated procgen walkable floor now has a global non-destructible cardinal-edge collision frontier built after final playability remediation; contiguous edges merge into one runtime body rather than filling void cells, and visual/destructible cliff walls no longer act as the traversal security perimeter. Sundered Keep frontages emit and validate a separating vista commit line plus terminal apron across production seeds. Its procgen camera now keeps one continuous horizon-to-fortress envelope through the 90% return anchor, targets generated Keep semantics, holds fortress apex for 0.9 seconds without freezing movement, scales the distant Keep to 0.44, and plays the existing six-frame moonlight sweep once at fortress apex.
 
 - Developer Observatory owns one non-echo F9 presentation edge and never pauses or changes time scale. Its wall-clock Performance Incident Recorder is independent of overlay pages; opening F9 freezes an active incident before bounded rendering. Focus, pause, overlay, capture, and reset boundaries invalidate the clock origin, while >=2-second external stalls remain exported but cannot contaminate gameplay statistics or auto-triggering. Automatic capture latches for one degraded episode and rearms only after three continuous seconds below 25 ms. F10 performs one final tree scan, builds one frozen `custodian.dev_observatory.performance_incident.v1` payload, and writes it to both timestamped and stable paths. The overlay refreshes at 2 Hz on Performance and 4 Hz elsewhere, avoids unchanged text assignment, caps rows/events/value length, and exposes build/text/line/refresh gauges.
@@ -79,8 +97,8 @@ Documentation updates this session:
   `content/_aseprite/backgrounds/sundered_keep/approach/light/first_vista_moonlight_sweep_01.aseprite`.
   It uses the exact live Keep silhouette as its
   alpha/edge authority, peaks as a restrained cold additive exposure lift,
-  and settles nearly transparent. Runtime controller wiring remains the next
-  vista slice.
+  and settles nearly transparent. The procgen vista controller now plays it
+  once at fortress apex as part of the live continuous reveal envelope.
 - Sundered Keep painterly backgrounds now use a role-based layout documented by
   `content/backgrounds/sundered_keep/README.md`: shared underlays, horizons,
   and landmarks; Approach underlay, fog, light, occlusion, parallax, playable,
@@ -166,6 +184,7 @@ Documentation updates this session:
 - State root: `GameState` and `GameStats` autoloads plus world/system nodes under `GameRoot`.
 - First observability foundation is live as a developer-facing runtime layer: `DevObservatory` toggles from `F9` in the main game scene, `SectorHeatmap` samples player presence and accumulates damage/death channels, `WorldHistory` journals sector-scoped runtime events in memory, `WorldStateGraph` exposes keyed reactive world truth, and `SimulationInterestManager` classifies opt-in nodes by squared distance at 5 Hz without taking gameplay authority away from their owners. Enemy active simulation remains full-rate, nearby simulation runs at 10 Hz, background simulation at 2 Hz, and dormant physics is disabled until the always-running manager reactivates it. Screen visibility remains presentation-only.
 - Ambient hostile activation is globally budgeted through `AmbientEnemySpawner`: grunt animation/FX frames prewarm during startup, queued actors receive their transform and stable spawn ordinal before tree entry, and at most one full ambient actor is instantiated per physics frame. Contract-loader and deferred-start marker processing is idempotent per marker through metadata plus generated-child detection; suppressed duplicate requests increment `ambient_enemy_duplicate_marker_suppressed`. `NavigationSystem` owns an `EnemyNavigationBroker` capped at two A* searches per physics frame plus a shared 64 px `EnemySpatialIndex`. Enemy paths repath on empty/stuck/revision/two-cell target movement, use throttled direct grid visibility and clearance-aware waypoint smoothing, and stagger initial work by stable spawn ordinal. Perception runs at 10 Hz active, approximately 3.3 Hz nearby, 1 Hz background, and off dormant; enemy simulation cadence is full active, 10 Hz nearby, 2 Hz background, and disabled dormant. Spawn/A*/LOS/separation/tier metrics feed `DevObservatory` only. Large-assault engagement slots and shared flow fields remain deferred.
+- Enemy runtime attribution is diagnostic-only and live. The real actor emits incident-gated inclusive total/per-tier spans plus nested behavior, perception, objective, navigation, separation, movement, combat, and animation spans. `enemy_runtime_attribution_perf_bench.gd` rebuilds each 0/1/2/4/8/10 population, tests six forced 8-actor tier mixes through a benchmark-only seam, compares director and legacy paths, and writes threshold-free JSON to `user://performance/`. On the current headless host, ten active grunts measured about 0.36 ms/frame of inclusive enemy script work and eight dormant grunts measured 0.00 ms/frame; this rejects enemy script work as the owner of the observed renderer-backed ~145 ms frame but does not measure graphical render synchronization.
 - Developer Observatory instrumentation expands the existing `res://game/systems/debug/dev_observatory.gd` autoload rather than adding a duplicate. Ranged trigger/request/shot/failure metrics now use stable failure reasons and empty/state/internal categories; enemy-to-Operator melee events share attack IDs and damage/health reconciliation fields. Dodge timing, Field Patch attempts/rejections/low-health availability, stamina causes/exhaustion, world-state metadata, procgen rescue forensics, and node ownership/performance gauges are captured without changing gameplay balance. Director-profile and legacy combat populations are reported separately. The analyzer labels total versus displayed warnings honestly.
 - Navigation Combat Heatmap Reporting v1 extends the existing `SectorHeatmap` autoload into a bounded, exportable developer-analysis artifact. It samples 64 px player-presence cells, aggregates damage, death, ranged, dodge, Field Patch, enemy-kill, and resolved incoming/enemy-attack outcomes by event type, and embeds a JSON-safe snapshot plus cell/sample gauges in Developer Observatory exports. The session analyzer reports top, danger, and combat cells. Legacy F9 channel queries remain compatible, and no heatmap data influences combat, movement, AI, director, collision, or world-state authority.
 - Developer Observatory session export is live on the same autoload. `F10` / `debug_observatory_export`, `DevObservatory.export_session_json()`, and `export_timestamped_session_json()` write bounded JSON playtest artifacts to `user://dev_observatory/latest_session.json` and `user://dev_observatory/session_YYYYMMDD_HHMMSS.json`. Payloads contain schema/export metadata, project and engine metadata, current scene, uptime/session counts, events, counters, gauges, and warnings with JSON-safe Variant conversion. Export preserves the event buffer, logs `observatory_session_exported` on success, prints the absolute path, retains it in the F9 overlay, and routes directory/open/write failures through `mark_warning(...)`. Hidden F9 and all non-World pages perform no periodic recursive runtime sampling; World/Procgen and export each request a consolidated scan that records `observatory_scan_usec`, node-class histogram, and top-level subtree counts.
@@ -501,7 +520,7 @@ Documentation updates this session:
 - Some terminal pages still use placeholder or lightly-derived summaries instead of full live runtime controls/data.
 - Forest Shrumb cognitive modifiers are exposed as getters only; player movement, combat feel, enemy accuracy/tracking, instinct actions, and full inventory UI are intentionally not integrated in v1.
 - Terminal page rendering still lives largely inside `custodian/game/ui/hud/ui.gd`; command routing, snapshot aggregation, and preview boundaries have been split, but page renderers/theme resources still need follow-up extraction.
-- Observatory/telemetry is only a first slice. It does not yet render world-space heatmap overlays, persist history to disk, drive terminal-facing history views, or provide an abstract background simulation tick. Dormant physics suppression is live; background throttling awaits that ownership path.
+- Observatory/telemetry is only a first slice. It does not yet render world-space heatmap overlays, persist history to disk, drive terminal-facing history views, or provide an abstract background simulation tick. Dormant physics suppression and 2 Hz background actor throttling are live; abstract off-scene background simulation remains deferred.
 - The project still exits headless validation with existing object/resource leak warnings that have not yet been cleaned up.
 - Broader infrastructure depth, project-wide save/load wiring, a dedicated construction placement controller/zones, production structure art, and full long-horizon base systems remain incomplete relative to full doctrine scope.
 - The remaining procgen handoff gap is live runtime verification: camera bounds, cursor aim, reachable anchors, and enemy navigation still need an end-to-end boot test in Godot.

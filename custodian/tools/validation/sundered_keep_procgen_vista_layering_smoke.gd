@@ -48,9 +48,13 @@ func _run() -> void:
 	var state := presentation.call("get_world_vista_debug_state") as Dictionary
 	var clip_bounds: Rect2 = state.get("vista_clip_bounds", Rect2())
 	var playable_bounds: Rect2 = state.get("playable_floor_bounds", Rect2())
+	var ocean_bounds: Rect2 = state.get("ocean_bounds", Rect2())
 	_assert(clip_bounds.has_area(), "vista exterior clip bounds must be configured")
 	_assert(playable_bounds.has_area(), "playable frontage bounds must be configured")
+	_assert(ocean_bounds.has_area(), "resolved ocean bounds must be configured")
 	_assert(not clip_bounds.intersects(playable_bounds), "ocean/storm clip must not cover playable frontage floor bounds")
+	_assert(clip_bounds.intersects(ocean_bounds), "vista clip does not correspond to resolved ocean geography")
+	_assert(int(state.get("ocean_cell_count", 0)) > 0, "vista debug state omitted resolved ocean cells")
 
 	host.queue_free()
 	if _errors.is_empty():
@@ -74,11 +78,16 @@ func _assert_route_authority() -> void:
 
 
 func _frontage_fixture() -> Dictionary:
+	var ocean_cells: Dictionary = {}
+	for y in range(0, 14):
+		for x in range(54, 94):
+			ocean_cells[Vector2i(x, y)] = true
 	return {
 		"landmark_id": &"sundered_keep_frontage",
 		"gate_anchor": Vector2i(74, 14),
 		"fortress_outward_direction": Vector2i.UP,
 		"floor_cells": {Vector2i(74, 14): true},
+		"ocean_cells": ocean_cells,
 		"camera_semantic_anchors": {
 			"frontage_entry": Vector2i(52, 52),
 			"first_influence_start": Vector2i(56, 45),

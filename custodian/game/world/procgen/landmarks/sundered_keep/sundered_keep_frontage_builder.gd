@@ -6,6 +6,10 @@ const FRONTAGE_TAG := "sundered_keep_frontage_generated"
 const GRAMMAR_ID := "curved_frontage_v1"
 const MIN_ROUTE_RADIUS := 4
 const SOFT_CLEARANCE_RADIUS := 6
+const OCEAN_CLAIM_ID := &"sundered_keep_frontage_ocean"
+const OCEAN_PROFILE := &"sundered_keep_cosmic_ocean"
+const OCEAN_LATERAL_MARGIN_TILES := 18
+const OCEAN_INWARD_MARGIN_TILES := 6
 
 const NEIGHBORS_8: Array[Vector2i] = [
 	Vector2i(-1, -1),
@@ -185,6 +189,12 @@ func build_frontage(
 			gate_anchor + Vector2i.UP * 2,
 		],
 	}
+	var ocean_claim := _build_ocean_surface_claim(
+		eroded_floor,
+		gate_anchor,
+		camera_anchors,
+		map_size
+	)
 	var encounter_anchor := _sample_centerline(route_centerline, 0.55)
 	return {
 		"schema": "custodian.procgen.sundered_keep_frontage.v1",
@@ -210,6 +220,7 @@ func build_frontage(
 		"encounter_pocket_anchors": [encounter_anchor],
 		"camera_semantic_anchors": camera_anchors,
 		"visual_module_anchors": visual_anchors,
+		"surface_claims": [ocean_claim],
 		"floor_cells": eroded_floor,
 		"debug_summary": {
 			"grammar_id": GRAMMAR_ID,
@@ -219,10 +230,56 @@ func build_frontage(
 			"side_pocket_cells": side_pocket_cells.size(),
 			"cliff_cells": cliff_cells.size(),
 			"vista_commit_cells": vista_commit_cells.size(),
+			"ocean_claim_id": String(OCEAN_CLAIM_ID),
+			"ocean_claim_profile": String(OCEAN_PROFILE),
+			"ocean_claim_bounds": str(ocean_claim.get("bounds", Rect2i())),
 			"rectangular_authored_footprint": false,
 			"special_room_owned": false,
 			"route_master_ground": false,
 		},
+	}
+
+
+func _build_ocean_surface_claim(
+	_floor_cells: Dictionary,
+	gate_anchor: Vector2i,
+	camera_anchors: Dictionary,
+	map_size: Vector2i
+) -> Dictionary:
+	var min_x := gate_anchor.x
+	var max_x := gate_anchor.x
+	for key in [
+		"first_reveal_apex",
+		"frontage_reveal_start",
+		"frontage_apex",
+		"gameplay_return",
+		"gate_threshold",
+	]:
+		var value: Variant = camera_anchors.get(key)
+		if value is Vector2i:
+			var cell := value as Vector2i
+			min_x = mini(min_x, cell.x)
+			max_x = maxi(max_x, cell.x)
+	min_x = maxi(0, min_x - OCEAN_LATERAL_MARGIN_TILES)
+	max_x = mini(map_size.x - 1, max_x + OCEAN_LATERAL_MARGIN_TILES)
+	var reveal_start: Vector2i = camera_anchors.get(
+		"frontage_reveal_start", gate_anchor
+	)
+	var bottom_y := clampi(
+		reveal_start.y + OCEAN_INWARD_MARGIN_TILES,
+		gate_anchor.y + 4,
+		map_size.y - 1
+	)
+	return {
+		"id": OCEAN_CLAIM_ID,
+		"kind": &"ocean",
+		"profile": OCEAN_PROFILE,
+		"seed_edge": &"north",
+		"must_touch_map_edge": true,
+		"bounds": Rect2i(
+			Vector2i(min_x, 0),
+			Vector2i(max_x - min_x + 1, bottom_y + 1)
+		),
 	}
 
 

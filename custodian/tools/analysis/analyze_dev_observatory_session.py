@@ -266,6 +266,51 @@ def _append_performance_incident_section(lines: list[str], payload: Mapping[str,
     owner = _mapping(incident.get("likely_owner"))
     lines.extend(["", "  Likely owner", f"    classification: {owner.get('classification', 'unclassified')}", f"    confidence/evidence: {_format_value(owner.get('evidence', 'none'), 120)}"])
 
+    gauges = _mapping(payload.get("gauges"))
+    spans = _mapping(incident.get("aggregate_spans"))
+    sample_count = max(1, int(_number(incident.get("samples_retained"), 1)))
+
+    def span_ms_per_frame(name: str) -> float:
+        return _number(_mapping(spans.get(name)).get("total_usec")) / 1000.0 / sample_count
+
+    lines.extend(["", "ENEMY RUNTIME ATTRIBUTION", "-" * 48, "", "  Population"])
+    for label, key in (
+        ("living", "living_enemies"), ("active", "enemy_tier_active"),
+        ("nearby", "enemy_tier_nearby"), ("background", "enemy_tier_background"),
+        ("dormant", "enemy_tier_dormant"), ("director", "director_behavior_agents"),
+        ("legacy", "legacy_combat_agents"),
+    ):
+        lines.append(f"    {label:<18} {int(_number(gauges.get(key)))}")
+    lines.extend(["", "  This incident"])
+    for label, name in (
+        ("enemy total", "enemy_total"), ("enemy active", "enemy_active_total"),
+        ("enemy nearby", "enemy_nearby_total"), ("enemy background", "enemy_background_total"),
+        ("enemy dormant", "enemy_dormant_total"),
+    ):
+        lines.append(f"    {label:<24} {span_ms_per_frame(name):.3f} ms/frame")
+    lines.extend(["", "  Subsystem distribution"])
+    for label, name in (
+        ("behavior", "enemy_behavior"), ("perception", "enemy_perception"),
+        ("objective", "enemy_objective_sensor"), ("navigation", "enemy_navigation"),
+        ("separation", "enemy_separation"), ("movement prepare", "enemy_movement_prepare"),
+        ("move_and_slide", "enemy_move_and_slide"), ("combat", "enemy_combat"),
+        ("animation", "enemy_animation"), ("presentation", "enemy_presentation"),
+    ):
+        lines.append(f"    {label:<24} {span_ms_per_frame(name):.3f} ms/frame")
+    phase_rows = _mapping(incident.get("phase_summaries"))
+    phase = _mapping(next(iter(phase_rows.values()), {}))
+    wall = _number(phase.get("average_ms"))
+    process = _number(phase.get("process_ms"))
+    physics = _number(phase.get("physics_ms"))
+    lines.extend([
+        "", "  Wall-time attribution",
+        f"    {'wall':<24} {wall:.3f} ms/frame",
+        f"    {'Godot process':<24} {process:.3f} ms/frame",
+        f"    {'Godot physics':<24} {physics:.3f} ms/frame",
+        f"    {'enemy total (nested)':<24} {span_ms_per_frame('enemy_total'):.3f} ms/frame",
+        f"    {'unaccounted':<24} {max(0.0, wall - process - physics):.3f} ms/frame",
+    ])
+
 
 def _format_value(value: Any, max_length: int = 88) -> str:
     if isinstance(value, float):

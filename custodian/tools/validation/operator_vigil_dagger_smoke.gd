@@ -175,6 +175,13 @@ func _validate_definition() -> void:
 		0.20,
 		"dagger input influence is not 20%"
 	)
+	var expected_assist := [[12.0, 3.0, 7.0], [13.0, 4.0, 9.0], [14.0, 5.0, 11.0]]
+	for index in range(DAGGER_DEFINITION.fast_chain_attack_profiles.size()):
+		var profile := DAGGER_DEFINITION.fast_chain_attack_profiles[index] as MeleeAttackProfile
+		_assert(profile.target_assist_enabled, "dagger link %d target assist is disabled" % (index + 1))
+		_assert_close(profile.target_aim_correction_degrees, expected_assist[index][0], "dagger correction tuning drifted")
+		_assert_close(profile.target_drive_bonus_max_px, expected_assist[index][1], "dagger assist drive tuning drifted")
+		_assert_close(profile.drive_distance_px, expected_assist[index][2], "dagger base drive was mutated by assist")
 
 
 func _validate_default_scene(operator: Node) -> void:

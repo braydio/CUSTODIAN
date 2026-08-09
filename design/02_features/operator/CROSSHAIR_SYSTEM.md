@@ -45,24 +45,23 @@ A future authored ready sound may play once on `raising -> ready`; direction ret
 
 ## Intent and Ballistic Feedback (two indicators)
 
-Design authority: the reticle shows both what the player wants and where the
-gun actually points right now. One indicator cannot carry both meanings
-without pretending the reticle is a guaranteed hit position. V1 renders the
-intent reticle only; the ballistic pip below is the presentation target of
-this contract.
+The ranged aiming presentation has two complementary cues. The existing
+procedural ranged reticle remains player intent; the smaller ballistic pip is
+read-only prediction from the current frame-aware muzzle and physical weapon
+axis. Neither cue is hit authority.
 
 ### Target / intent indicator
 
-Follows the cursor or acquired enemy and answers "this is what I'm trying to
-aim at." The existing `target_ring` is this semantic target indicator; its
-normal versus strike-zone presentation is intent presentation, not ballistic
-authority.
+Follows mouse/controller desired aim, communicates posture/readiness/recoil,
+and is not a hit guarantee. `TargetRing` remains separate enemy-selection and
+melee strike-zone feedback.
 
 ### Ballistic pip
 
-A much smaller marker answers "if you pull the trigger right now, the gun is
-pointing here." Raycast from the muzzle along the actual weapon/barrel
-direction:
+A procedural 16x16 marker answers "where does the current weapon centerline
+pass through my intended target depth?" It is projected from the current
+frame-aware muzzle, follows traversal/fine-angle lag and obstruction, predicts
+only, and never deals damage:
 
 ```text
                        desired target
@@ -115,4 +114,11 @@ the missing piece a single cursor-authoritative reticle cannot provide.
 - `operator_primary_ranged_modular_fire_smoke.gd` validates transition retargeting, committed fire direction, recovery direction, posture sequence, and upper/weapon direction plus frame agreement.
 - `operator_ranged_ready_input_smoke.gd` validates readiness gating and exposed status.
 - Main-scene parse/boot validates reticle scene wiring.
-- Ballistic pip: manual acceptance required for settle timing, pip visual states, and wall-obstruction presentation; smoke-level checks are deferred until the pip exists.
+- `operator_ranged_ballistic_aim_smoke.gd` validates committed intent versus
+  release-frame axis, physical muzzle origin, bounded/non-accumulating
+  correction, target-depth prediction, obstruction, and snap-fire.
+- `ranged_ballistic_reticle_smoke.gd` validates procedural aligned/tracking/
+  obstructed pip state and read-only separation from the intent reticle.
+- Moment Forge `combat/ranged_ballistic_alignment` provides full-capture review
+  of cursor reversal, pip/intent separation, physical projectile travel, and
+  subsequent alignment.

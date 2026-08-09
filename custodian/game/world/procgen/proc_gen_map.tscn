@@ -11,7 +11,7 @@
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_1"]
 
-[node name="ProcGenMap" type="Node2D" unique_id=531661722 node_paths=PackedStringArray("procgen_node", "floor_tilemap", "walls_tilemap", "nav_region", "depth_backdrop")]
+[node name="ProcGenMap" type="Node2D" unique_id=531661722 node_paths=PackedStringArray("procgen_node", "floor_tilemap", "walls_tilemap", "nav_region", "depth_backdrop", "nonwalkable_surface_base_tilemap", "nonwalkable_surface_overlay_tilemap")]
 scale = Vector2(2, 2)
 script = ExtResource("1")
 procgen_node = NodePath("ProcGen2")
@@ -19,6 +19,8 @@ floor_tilemap = NodePath("NavigationRegion2D/Floor")
 walls_tilemap = NodePath("NavigationRegion2D/Walls")
 nav_region = NodePath("NavigationRegion2D")
 depth_backdrop = NodePath("DepthBackdrop")
+nonwalkable_surface_base_tilemap = NodePath("NavigationRegion2D/NonWalkableSurfaceBase")
+nonwalkable_surface_overlay_tilemap = NodePath("NavigationRegion2D/NonWalkableSurfaceOverlay")
 intent_main_roads_enabled = false
 floor_source_id = 10
 walls_source_id = 12
@@ -49,12 +51,14 @@ interior_wall_source_ids = Array[int]([16, 30, 31])
 interior_wall_source_id = 16
 interior_wall_corner_source_id = 17
 
-[node name="ProcGen" type="Node" parent="." unique_id=206276379 node_paths=PackedStringArray("procgen_node", "floor_tilemap", "walls_tilemap", "nav_region")]
+[node name="ProcGen" type="Node" parent="." unique_id=206276379 node_paths=PackedStringArray("procgen_node", "floor_tilemap", "walls_tilemap", "nav_region", "nonwalkable_surface_base_tilemap", "nonwalkable_surface_overlay_tilemap")]
 script = ExtResource("1")
 procgen_node = NodePath("../ProcGen2")
 floor_tilemap = NodePath("../NavigationRegion2D/Floor")
 walls_tilemap = NodePath("../NavigationRegion2D/Walls")
 nav_region = NodePath("../NavigationRegion2D")
+nonwalkable_surface_base_tilemap = NodePath("../NavigationRegion2D/NonWalkableSurfaceBase")
+nonwalkable_surface_overlay_tilemap = NodePath("../NavigationRegion2D/NonWalkableSurfaceOverlay")
 generation_output_enabled = false
 floor_source_id = 10
 walls_source_id = 12
@@ -97,6 +101,18 @@ wall_growth_alpha = 0.48
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="." unique_id=2086078231]
 navigation_polygon = SubResource("NavigationPolygon_1")
+
+[node name="NonWalkableSurfaceBase" type="TileMapLayer" parent="NavigationRegion2D"]
+z_as_relative = false
+z_index = -90
+y_sort_enabled = false
+tile_set = ExtResource("2")
+
+[node name="NonWalkableSurfaceOverlay" type="TileMapLayer" parent="NavigationRegion2D"]
+z_as_relative = false
+z_index = -70
+y_sort_enabled = false
+tile_set = ExtResource("2")
 
 [node name="Floor" type="TileMapLayer" parent="NavigationRegion2D" unique_id=1495522250]
 tile_set = ExtResource("2")

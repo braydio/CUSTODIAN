@@ -8,6 +8,15 @@ const CARDINALS: Array[Vector2i] = [
 	Vector2i.UP,
 	Vector2i.DOWN,
 ]
+const OCEAN_CLAIM_ID := &"sundered_keep_frontage_ocean"
+const OCEAN_PROFILE := &"sundered_keep_cosmic_ocean"
+const FORBIDDEN_CLAIM_KEYS := [
+	"walkable",
+	"navigation",
+	"collision_shape",
+	"static_body",
+	"floor_cells",
+]
 
 
 func validate(
@@ -77,6 +86,7 @@ func validate(
 	)
 	if not _camera_anchors_are_ordered(centerline, camera_anchors):
 		errors.append("camera semantic anchors are not ordered")
+	_validate_surface_claim(frontage, camera_anchors, errors)
 	var summary: Dictionary = frontage.get("debug_summary", {})
 	if bool(summary.get("rectangular_authored_footprint", true)):
 		errors.append("frontage reports rectangular authored authority")
@@ -112,7 +122,60 @@ func stable_fingerprint(frontage: Dictionary) -> String:
 			frontage.get("vista_commit_cells", {}) as Dictionary
 		).size()
 	)
+	for claim_variant in frontage.get("surface_claims", []):
+		if not claim_variant is Dictionary:
+			continue
+		var claim := claim_variant as Dictionary
+		values.append(
+			"claim=%s:%s:%s:%s:%s" % [
+				String(claim.get("id", &"")),
+				String(claim.get("kind", &"")),
+				String(claim.get("profile", &"")),
+				String(claim.get("seed_edge", &"")),
+				str(claim.get("bounds", Rect2i())),
+			]
+		)
 	return "%08x" % abs("|".join(values).hash())
+
+
+func _validate_surface_claim(
+	frontage: Dictionary,
+	camera_anchors: Dictionary,
+	errors: Array[String]
+) -> void:
+	var claims: Array = frontage.get("surface_claims", [])
+	if claims.size() != 1 or not claims[0] is Dictionary:
+		errors.append("frontage must emit exactly one ocean surface claim")
+		return
+	var claim := claims[0] as Dictionary
+	if StringName(claim.get("id", &"")) != OCEAN_CLAIM_ID:
+		errors.append("frontage ocean claim id is invalid")
+	if StringName(claim.get("kind", &"")) != &"ocean":
+		errors.append("frontage surface claim is not ocean")
+	if StringName(claim.get("profile", &"")) != OCEAN_PROFILE:
+		errors.append("frontage ocean claim profile is invalid")
+	if StringName(claim.get("seed_edge", &"")) != &"north":
+		errors.append("frontage ocean claim is not north seeded")
+	var bounds_variant: Variant = claim.get("bounds")
+	if not bounds_variant is Rect2i:
+		errors.append("frontage ocean claim bounds are not Rect2i")
+		return
+	var bounds := bounds_variant as Rect2i
+	if not bounds.has_area() or bounds.position.y != 0:
+		errors.append("frontage ocean claim must have north-edge area")
+	for key in ["frontage_reveal_start", "frontage_apex", "gameplay_return", "gate_threshold"]:
+		var anchor: Variant = camera_anchors.get(key)
+		if anchor is Vector2i and (
+			(anchor as Vector2i).x < bounds.position.x
+			or (anchor as Vector2i).x >= bounds.end.x
+		):
+			errors.append("frontage ocean claim does not laterally span %s" % key)
+	for forbidden_key in FORBIDDEN_CLAIM_KEYS:
+		if claim.has(forbidden_key):
+			errors.append(
+				"frontage surface claim contains traversal authority: %s"
+				% forbidden_key
+			)
 
 
 func _result(

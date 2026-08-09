@@ -1,0 +1,4381 @@
+{
+	"counters": {
+		"enemy_assault_state_commit": 2,
+		"enemy_reactions_flinch": 2
+	},
+	"engine": {
+		"frames_per_second": 23.0,
+		"time_scale": 1.0,
+		"version": {
+			"build": "arch_linux",
+			"hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+			"hex": 263937,
+			"major": 4,
+			"minor": 7,
+			"patch": 1,
+			"status": "stable",
+			"string": "4.7.1-stable (arch_linux)",
+			"timestamp": 1783976428
+		}
+	},
+	"events": [
+		{
+			"data": {},
+			"kind": "observatory_cleared",
+			"time_msec": 3970,
+			"uptime_sec": 1.91
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "input_tap",
+					"hold_ticks": 1.0,
+					"name": "toggle_unarmed",
+					"tick": 2.0
+				},
+				"moment_tick": 2,
+				"result": {
+					"action": "input_tap",
+					"ok": true,
+					"tick": 2
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 4198,
+			"uptime_sec": 2.138
+		},
+		{
+			"data": {
+				"from": "ARMED",
+				"to": "CAPTURING"
+			},
+			"kind": "performance_incident_state_changed",
+			"time_msec": 5282,
+			"uptime_sec": 3.222
+		},
+		{
+			"data": {
+				"phase": "baseline",
+				"preroll_samples": 30,
+				"trigger": "automatic"
+			},
+			"kind": "performance_incident_started",
+			"time_msec": 5283,
+			"uptime_sec": 3.223
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "aim_at_role",
+					"role": "operator",
+					"target_role": "aimed_target",
+					"tick": 42.0
+				},
+				"moment_tick": 42,
+				"result": {
+					"action": "aim_at_role",
+					"ok": true,
+					"tick": 42
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 5871,
+			"uptime_sec": 3.811
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "input_press",
+					"name": "move_right",
+					"tick": 48.0
+				},
+				"moment_tick": 48,
+				"result": {
+					"action": "input_press",
+					"ok": true,
+					"tick": 48
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 6124,
+			"uptime_sec": 4.064
+		},
+		{
+			"data": {
+				"angle_error_degrees": 0.19356535994298,
+				"distance": 111.117576599121,
+				"from": "",
+				"score": 0.579690588662665,
+				"to": "EnemyGrunt1"
+			},
+			"kind": "player_melee_soft_target_changed",
+			"time_msec": 6250,
+			"uptime_sec": 4.19
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "input_release",
+					"name": "move_right",
+					"tick": 67.0
+				},
+				"moment_tick": 67,
+				"result": {
+					"action": "input_release",
+					"ok": true,
+					"tick": 67
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 6908,
+			"uptime_sec": 4.848
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "input_tap",
+					"hold_ticks": 1.0,
+					"name": "attack_primary",
+					"tick": 92.0
+				},
+				"moment_tick": 92,
+				"result": {
+					"action": "input_tap",
+					"ok": true,
+					"tick": 92
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 7983,
+			"uptime_sec": 5.923
+		},
+		{
+			"data": {
+				"aim_correction_degrees": 0.0,
+				"assist_drive": 0.0,
+				"assisted_direction": {
+					"x": 0.996240615844727,
+					"y": 0.0866296216845512
+				},
+				"attack_id": "unarmed_fast",
+				"base_drive": 0.0,
+				"input_direction": {
+					"x": 0.996240615844727,
+					"y": 0.0866296216845512
+				},
+				"reliable_contact": false,
+				"resolved_drive": 0.0,
+				"target": "",
+				"target_distance": 0.0
+			},
+			"kind": "player_melee_attack_targeting_committed",
+			"time_msec": 7988,
+			"uptime_sec": 5.928
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "capture_marker",
+					"name": "assisted_contact",
+					"tick": 106.0
+				},
+				"moment_tick": 106,
+				"result": {
+					"action": "capture_marker",
+					"ok": true,
+					"tick": 106
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 8586,
+			"uptime_sec": 6.526
+		},
+		{
+			"data": {
+				"attack_objective": "breach_command",
+				"enemy": "GRUNT",
+				"from": "staging",
+				"health": 68.0,
+				"max_health": 78.0,
+				"position": {
+					"x": 535.0,
+					"y": 370.0
+				},
+				"target": "",
+				"to": "commit"
+			},
+			"kind": "enemy_assault_state_changed",
+			"time_msec": 8767,
+			"uptime_sec": 6.707
+		},
+		{
+			"data": {
+				"amount": 10.0,
+				"kind": "rejected",
+				"reason": "no_recoverable_room"
+			},
+			"kind": "player_reclaim_rejected",
+			"time_msec": 8771,
+			"uptime_sec": 6.711
+		},
+		{
+			"data": {
+				"attack_kind": "fast",
+				"bullet_impact_fx": "default",
+				"contact_kind": "melee_impact",
+				"damage": 10.0,
+				"footstep_noise_mult": 1.0,
+				"material_id": "unknown",
+				"melee_impact_fx": "default",
+				"position": {
+					"x": 521.177062988281,
+					"y": 367.780334472656
+				},
+				"target": "EnemyGrunt1",
+				"weapon": "unarmed_fast_1"
+			},
+			"kind": "material_contact",
+			"time_msec": 8771,
+			"uptime_sec": 6.711
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "aim_at_role",
+					"role": "operator",
+					"target_role": "near_off_aim",
+					"tick": 172.0
+				},
+				"moment_tick": 172,
+				"result": {
+					"action": "aim_at_role",
+					"ok": true,
+					"tick": 172
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 11415,
+			"uptime_sec": 9.355
+		},
+		{
+			"data": {
+				"angle_error_degrees": 0.0,
+				"distance": 60.6623687744141,
+				"from": "EnemyGrunt1",
+				"score": 0.837511512211391,
+				"to": "EnemyGrunt2"
+			},
+			"kind": "player_melee_soft_target_changed",
+			"time_msec": 11419,
+			"uptime_sec": 9.359
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "input_tap",
+					"hold_ticks": 1.0,
+					"name": "attack_primary",
+					"tick": 182.0
+				},
+				"moment_tick": 182,
+				"result": {
+					"action": "input_tap",
+					"ok": true,
+					"tick": 182
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 11833,
+			"uptime_sec": 9.773
+		},
+		{
+			"data": {
+				"aim_correction_degrees": 0.0,
+				"assist_drive": 0.0,
+				"assisted_direction": {
+					"x": -0.869154572486877,
+					"y": -0.49454054236412
+				},
+				"attack_id": "unarmed_fast",
+				"base_drive": 0.0,
+				"input_direction": {
+					"x": -0.869154572486877,
+					"y": -0.49454054236412
+				},
+				"reliable_contact": false,
+				"resolved_drive": 0.0,
+				"target": "",
+				"target_distance": 0.0
+			},
+			"kind": "player_melee_attack_targeting_committed",
+			"time_msec": 11838,
+			"uptime_sec": 9.778
+		},
+		{
+			"data": {
+				"attack_objective": "breach_command",
+				"enemy": "GRUNT",
+				"from": "staging",
+				"health": 68.0,
+				"max_health": 78.0,
+				"position": {
+					"x": 420.0,
+					"y": 330.0
+				},
+				"target": "",
+				"to": "commit"
+			},
+			"kind": "enemy_assault_state_changed",
+			"time_msec": 12624,
+			"uptime_sec": 10.564
+		},
+		{
+			"data": {
+				"amount": 10.0,
+				"kind": "rejected",
+				"reason": "no_recoverable_room"
+			},
+			"kind": "player_reclaim_rejected",
+			"time_msec": 12628,
+			"uptime_sec": 10.568
+		},
+		{
+			"data": {
+				"attack_kind": "fast",
+				"bullet_impact_fx": "default",
+				"contact_kind": "melee_impact",
+				"damage": 10.0,
+				"footstep_noise_mult": 1.0,
+				"material_id": "unknown",
+				"melee_impact_fx": "default",
+				"position": {
+					"x": 432.168151855469,
+					"y": 336.923553466797
+				},
+				"target": "EnemyGrunt2",
+				"weapon": "unarmed_fast_1"
+			},
+			"kind": "material_contact",
+			"time_msec": 12628,
+			"uptime_sec": 10.568
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "finish",
+					"tick": 358.0
+				},
+				"moment_tick": 358,
+				"result": {
+					"action": "finish",
+					"finish": true,
+					"ok": true,
+					"tick": 358
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 19477,
+			"uptime_sec": 17.417
+		},
+		{
+			"data": {
+				"from": "CAPTURING",
+				"to": "DEGRADED_LATCHED"
+			},
+			"kind": "performance_incident_state_changed",
+			"time_msec": 19477,
+			"uptime_sec": 17.417
+		},
+		{
+			"data": {
+				"reason": "manual",
+				"samples": 358,
+				"worst_frames": 20
+			},
+			"kind": "performance_incident_stopped",
+			"time_msec": 19477,
+			"uptime_sec": 17.417
+		}
+	],
+	"export_path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/melee_soft_target_spacing/20260809T153415-0400/telemetry.json",
+	"exported_at": "2026-08-09 15:34:34",
+	"gauges": {
+		"active_combat_audio": 0,
+		"active_enemies": 2,
+		"active_projectiles": 0,
+		"active_vfx": 0,
+		"ambient_critters": 0,
+		"collision_shape_count": 9,
+		"collision_shape_count_enemies": 2,
+		"collision_shape_count_foliage": 0,
+		"collision_shape_count_peak": 9,
+		"collision_shape_count_projectiles": 0,
+		"collision_shape_count_ruin_props": 0,
+		"collision_shape_count_runtime_walls": 0,
+		"corpse_enemies": 0,
+		"director_behavior_agents": 2,
+		"enemy_behavior_sample": {
+			"blackboard": {
+				"alerted": false,
+				"ambient_activity": "none",
+				"ambient_anchor": "",
+				"camp_id": "",
+				"carried_resources": {},
+				"carrying_loot": false,
+				"investigation_position": {
+					"x": 0.0,
+					"y": 0.0
+				},
+				"last_known_operator_position": {
+					"x": 0.0,
+					"y": 0.0
+				},
+				"morale": 97.5,
+				"objective_type": "none",
+				"pursuit_timer": 0.0,
+				"scores": {},
+				"search_timer": 0.0,
+				"suspicious": false,
+				"target_visible": false
+			},
+			"detection": 0.0,
+			"enabled": true,
+			"profile_id": "raider_grunt",
+			"state": "idle",
+			"state_time": 0.0
+		},
+		"enemy_tier_active": 2,
+		"enemy_tier_active_physics_enabled": 0,
+		"enemy_tier_background": 0,
+		"enemy_tier_background_physics_enabled": 0,
+		"enemy_tier_dormant": 0,
+		"enemy_tier_dormant_physics_enabled": 0,
+		"enemy_tier_nearby": 0,
+		"enemy_tier_nearby_physics_enabled": 0,
+		"field_patch_active": false,
+		"field_patches_max": 2,
+		"field_patches_remaining": 1,
+		"fps": 23.0,
+		"heat_player_presence_cells": 2,
+		"heatmap_cells": 3,
+		"heatmap_samples": 13,
+		"interest_active": 2,
+		"interest_background": 0,
+		"interest_dormant": 0,
+		"interest_nearby": 0,
+		"legacy_combat_agents": 0,
+		"legacy_enemy_sample": {
+			"blackboard": {
+				"alerted": false,
+				"ambient_activity": "none",
+				"ambient_anchor": "",
+				"camp_id": "",
+				"carried_resources": {},
+				"carrying_loot": false,
+				"investigation_position": {
+					"x": 0.0,
+					"y": 0.0
+				},
+				"last_known_operator_position": {
+					"x": 0.0,
+					"y": 0.0
+				},
+				"morale": 97.5,
+				"objective_type": "none",
+				"pursuit_timer": 0.0,
+				"scores": {},
+				"search_timer": 0.0,
+				"suspicious": false,
+				"target_visible": false
+			},
+			"detection": 0.0,
+			"enabled": true,
+			"profile_id": "raider_grunt",
+			"state": "idle",
+			"state_time": 0.0
+		},
+		"living_enemies": 2,
+		"loaded_procgen_root_count": 0,
+		"loaded_world_branch_count": 0,
+		"node_class_histogram": {
+			"AnimatedSprite2D": 16,
+			"Area2D": 2,
+			"AudioStreamPlayer": 1,
+			"AudioStreamPlayer2D": 4,
+			"Button": 2,
+			"Camera2D": 1,
+			"Camera3D": 1,
+			"CanvasLayer": 5,
+			"CharacterBody2D": 3,
+			"CollisionShape2D": 9,
+			"ColorRect": 5,
+			"Control": 5,
+			"DirectionalLight3D": 1,
+			"HBoxContainer": 3,
+			"Label": 11,
+			"LineEdit": 2,
+			"MarginContainer": 4,
+			"Marker2D": 6,
+			"MeshInstance3D": 1,
+			"Node": 38,
+			"Node2D": 17,
+			"Node3D": 1,
+			"Panel": 4,
+			"PanelContainer": 1,
+			"Polygon2D": 1,
+			"ProgressBar": 3,
+			"RichTextLabel": 3,
+			"ScrollContainer": 6,
+			"Sprite2D": 6,
+			"StaticBody2D": 4,
+			"SubViewport": 1,
+			"TabContainer": 1,
+			"VBoxContainer": 3,
+			"Window": 1,
+			"WorldEnvironment": 1
+		},
+		"node_count": 173,
+		"node_count_collision": 18,
+		"node_count_peak": 173,
+		"node_count_procgen": 0,
+		"node_count_props": 1,
+		"node_count_ui": 58,
+		"node_count_vfx": 1,
+		"node_count_world": 84,
+		"observatory_full_tree_scan_count": 1,
+		"observatory_scan_usec": 1234,
+		"performance_draw_calls": 18,
+		"performance_frame_ms_average": 43.0770195156502,
+		"performance_frame_ms_current": 41.1500015258789,
+		"performance_frame_ms_p95": 48.298999786377,
+		"performance_frame_ms_p99": 52.6870002746582,
+		"performance_frame_ms_worst": 101.553,
+		"performance_frame_sample_count": 358,
+		"performance_hitch_count": 358,
+		"performance_incident_auto_trigger_count": 1,
+		"performance_incident_external_stall_count": 0,
+		"performance_incident_manual_trigger_count": 0,
+		"performance_incident_rearm_progress_sec": 0.0,
+		"performance_incident_state": "DEGRADED_LATCHED",
+		"performance_physics_ms": 5.202,
+		"performance_process_ms": 1.811,
+		"performance_rendered_objects": 25,
+		"performance_severe_hitch_count": 11,
+		"physics_body_count": 7,
+		"physics_body_count_foliage": 0,
+		"physics_body_count_peak": 7,
+		"physics_body_count_ruin_props": 0,
+		"physics_body_count_runtime_walls": 0,
+		"physics_process_enabled_node_count": 1,
+		"player_active_weapon_id": "",
+		"player_active_weapon_state_key": "",
+		"player_alive": true,
+		"player_ammo_per_shot": 0,
+		"player_dead": false,
+		"player_health": 100.0,
+		"player_last_live_loaded_ammo": 0,
+		"player_last_live_reserve_ammo": 0,
+		"player_last_live_stamina": 100.0,
+		"player_last_live_weapon_id": "",
+		"player_loaded_ammo": 0,
+		"player_magazine_capacity": 0,
+		"player_material": "unknown",
+		"player_material_footstep_noise_mult": 1.0,
+		"player_max_health": 100.0,
+		"player_melee_target_angle_error": 0.00000170754729250319,
+		"player_melee_target_distance": 61.5957107543945,
+		"player_melee_target_proximity": 1.0,
+		"player_melee_target_reliable": 0,
+		"player_melee_target_score": 1.01501146547031,
+		"player_position": {
+			"x": 473,
+			"y": 360
+		},
+		"player_reclaim_active": 0.0,
+		"player_reclaim_packet_count": 0,
+		"player_reclaim_window_remaining": 0.0,
+		"player_reserve_ammo": 0,
+		"player_sprinting": false,
+		"player_stamina": 100.0,
+		"player_stamina_max": 100.0,
+		"player_weapon_heat": 0.0,
+		"player_weapon_overheated": false,
+		"process_enabled_node_count": 21,
+		"procgen_reveal_queue": 0,
+		"top_level_subtree_counts": {
+			"ARRNManager": 1,
+			"BuildInventory": 1,
+			"CognitiveState": 1,
+			"CommandRegistry": 1,
+			"DebugBus": 1,
+			"DebugConsoleLayer": 8,
+			"DebugCore": 1,
+			"DebugSnapshotCollector": 1,
+			"DevConsole": 12,
+			"DevMode": 3,
+			"DevObservatory": 1,
+			"DevObservatoryOverlay": 4,
+			"EnemyEngagementCoordinator": 1,
+			"FabPipeline": 1,
+			"GameConsoleManager": 1,
+			"GameRoot": 118,
+			"GameState": 1,
+			"GameStats": 1,
+			"InfrastructureRegistry": 1,
+			"InventoryManager": 1,
+			"MaterialIntelligence": 1,
+			"MusicManager": 2,
+			"NoiseEventBus": 1,
+			"ResourceLedger": 1,
+			"SectorHeatmap": 1,
+			"SimulationInterestManager": 1,
+			"VaultManager": 1,
+			"WorldEventMemory": 1,
+			"WorldHistory": 1,
+			"WorldStateGraph": 1,
+			"_mcp_game_helper": 1,
+			"root": 1
+		},
+		"uptime_sec": 17.42
+	},
+	"heatmap": {
+		"cell_count": 3,
+		"cell_size_px": 64.0,
+		"cells": {
+			"6,5": {
+				"by_type": {
+					"material_melee_impact": 0.25,
+					"presence": 2.0
+				},
+				"cell": {
+					"x": 6,
+					"y": 5
+				},
+				"first_seen_sec": 3.181,
+				"last_seen_sec": 10.568,
+				"sample_count": 3,
+				"total": 2.25,
+				"world": {
+					"x": 384.0,
+					"y": 320.0
+				}
+			},
+			"7,5": {
+				"by_type": {
+					"presence": 9.0
+				},
+				"cell": {
+					"x": 7,
+					"y": 5
+				},
+				"first_seen_sec": 5.8,
+				"last_seen_sec": 16.487,
+				"sample_count": 9,
+				"total": 9.0,
+				"world": {
+					"x": 448.0,
+					"y": 320.0
+				}
+			},
+			"8,5": {
+				"by_type": {
+					"material_melee_impact": 0.25
+				},
+				"cell": {
+					"x": 8,
+					"y": 5
+				},
+				"first_seen_sec": 6.711,
+				"last_seen_sec": 6.711,
+				"sample_count": 1,
+				"total": 0.25,
+				"world": {
+					"x": 512.0,
+					"y": 320.0
+				}
+			}
+		},
+		"event_type_counts": {
+			"material_melee_impact": 0.5,
+			"presence": 11.0
+		},
+		"schema": "custodian.sector_heatmap.v1",
+		"total_samples": 13
+	},
+	"material_intelligence": {
+		"contact_counts_by_kind": {
+			"melee_impact": 2
+		},
+		"contact_counts_by_material": {
+			"unknown": 2
+		},
+		"default_cell_size_px": 64.0,
+		"material_counts": {},
+		"override_cell_count": 0,
+		"schema": "custodian.material_intelligence.summary.v1",
+		"total_contacts": 2
+	},
+	"metadata": {
+		"project_name": "CUSTODIAN",
+		"project_version": ""
+	},
+	"performance": {
+		"frame_ms_average": 43.0770195156502,
+		"frame_ms_current": 41.1500015258789,
+		"frame_ms_p95": 48.298999786377,
+		"frame_ms_p99": 52.6870002746582,
+		"frame_ms_worst": 101.553,
+		"hitch_count": 358,
+		"incident_active": false,
+		"incident_phase": "baseline",
+		"incident_sample_count": 358,
+		"sample_capacity": 600,
+		"sample_count": 358,
+		"severe_hitch_count": 11
+	},
+	"performance_incident": {
+		"aggregate_spans": {
+			"enemy_health_ui": {
+				"count": 4,
+				"max_usec": 2730,
+				"total_usec": 8756
+			},
+			"enemy_presentation": {
+				"count": 4,
+				"max_usec": 3,
+				"total_usec": 9
+			},
+			"operator_animation_sync": {
+				"count": 31,
+				"max_usec": 33,
+				"total_usec": 422
+			},
+			"operator_melee_audio": {
+				"count": 2,
+				"max_usec": 81,
+				"total_usec": 126
+			},
+			"operator_melee_damage": {
+				"count": 2,
+				"max_usec": 6078,
+				"total_usec": 11860
+			},
+			"operator_melee_impact_vfx": {
+				"count": 2,
+				"max_usec": 73,
+				"total_usec": 114
+			},
+			"operator_melee_overlap_query": {
+				"count": 6,
+				"max_usec": 2,
+				"total_usec": 8
+			}
+		},
+		"deltas": {
+			"active_audio_delta": 0,
+			"active_audio_players_delta": 0,
+			"active_vfx_delta": 0,
+			"corpse_enemies_delta": 0,
+			"draw_calls_delta": -1,
+			"living_enemies_delta": 0,
+			"node_count_delta": 0,
+			"rendered_objects_delta": -1
+		},
+		"end_snapshot": {
+			"application_focused": true,
+			"gauges": {
+				"active_combat_audio": 0,
+				"heat_player_presence_cells": 2,
+				"interest_active": 2,
+				"interest_background": 0,
+				"interest_dormant": 0,
+				"interest_nearby": 0,
+				"performance_incident_state": "CAPTURING",
+				"player_melee_target_angle_error": 0.00000170754729250319,
+				"player_melee_target_distance": 61.5957107543945,
+				"player_melee_target_proximity": 1.0,
+				"player_melee_target_reliable": 0,
+				"player_melee_target_score": 1.01501146547031,
+				"player_reclaim_active": 0.0,
+				"player_reclaim_packet_count": 0,
+				"player_reclaim_window_remaining": 0.0
+			},
+			"overlay_visible": false,
+			"time_scale": 1.0,
+			"tree_paused": false,
+			"uptime_sec": 17.417
+		},
+		"ended_uptime_sec": 17.417,
+		"external_stalls": [],
+		"lifetime_deltas": {
+			"active_audio_delta": 0,
+			"active_audio_players_delta": 0,
+			"active_vfx_delta": 0,
+			"corpse_enemies_delta": 0,
+			"draw_calls_delta": -1,
+			"living_enemies_delta": 0,
+			"node_count_delta": 0,
+			"rendered_objects_delta": -1
+		},
+		"likely_owner": {
+			"classification": "physics / collision dominated",
+			"evidence": [
+				{
+					"count": 2,
+					"max_ms": 6.078,
+					"name": "operator_melee_damage",
+					"total_ms": 11.86
+				},
+				{
+					"count": 4,
+					"max_ms": 2.73,
+					"name": "enemy_health_ui",
+					"total_ms": 8.756
+				},
+				{
+					"count": 31,
+					"max_ms": 0.033,
+					"name": "operator_animation_sync",
+					"total_ms": 0.422
+				},
+				{
+					"count": 2,
+					"max_ms": 0.081,
+					"name": "operator_melee_audio",
+					"total_ms": 0.126
+				},
+				{
+					"count": 2,
+					"max_ms": 0.073,
+					"name": "operator_melee_impact_vfx",
+					"total_ms": 0.114
+				}
+			]
+		},
+		"phase_snapshots": [
+			{
+				"deltas": {},
+				"gauges": {
+					"heat_player_presence_cells": 1,
+					"interest_active": 2,
+					"interest_background": 0,
+					"interest_dormant": 0,
+					"interest_nearby": 0,
+					"performance_incident_state": "CAPTURING",
+					"player_melee_target_angle_error": 0.0,
+					"player_melee_target_distance": 0.0,
+					"player_melee_target_proximity": 0.0,
+					"player_melee_target_reliable": 0,
+					"player_melee_target_score": 0.0,
+					"player_reclaim_active": 0.0,
+					"player_reclaim_packet_count": 0,
+					"player_reclaim_window_remaining": 0.0
+				},
+				"phase": "baseline",
+				"uptime_sec": 3.223
+			}
+		],
+		"phase_summaries": {
+			"baseline": {
+				"average_ms": 0.0,
+				"p95_ms": 0.0,
+				"p99_ms": 0.0,
+				"physics_ms": 1892.02,
+				"process_ms": 1667.013,
+				"unaccounted_ms": 0.0
+			}
+		},
+		"samples_dropped": 0,
+		"samples_retained": 358,
+		"schema": "custodian.dev_observatory.performance_incident.v1",
+		"start_snapshot": {
+			"application_focused": true,
+			"gauges": {
+				"heat_player_presence_cells": 1,
+				"interest_active": 2,
+				"interest_background": 0,
+				"interest_dormant": 0,
+				"interest_nearby": 0,
+				"performance_incident_state": "CAPTURING",
+				"player_melee_target_angle_error": 0.0,
+				"player_melee_target_distance": 0.0,
+				"player_melee_target_proximity": 0.0,
+				"player_melee_target_reliable": 0,
+				"player_melee_target_score": 0.0,
+				"player_reclaim_active": 0.0,
+				"player_reclaim_packet_count": 0,
+				"player_reclaim_window_remaining": 0.0
+			},
+			"overlay_visible": false,
+			"time_scale": 1.0,
+			"tree_paused": false,
+			"uptime_sec": 3.223
+		},
+		"started_uptime_sec": 3.222,
+		"state": "DEGRADED_LATCHED",
+		"summary": {
+			"frame_ms_average": 43.0770195156502,
+			"frame_ms_p95": 48.298999786377,
+			"frame_ms_p99": 52.6870002746582,
+			"frame_ms_worst": 101.553001403809,
+			"hitch_count": 358,
+			"sample_count": 358,
+			"severe_hitch_count": 11
+		},
+		"top_spans": [
+			{
+				"count": 2,
+				"max_ms": 6.078,
+				"name": "operator_melee_damage",
+				"total_ms": 11.86
+			},
+			{
+				"count": 4,
+				"max_ms": 2.73,
+				"name": "enemy_health_ui",
+				"total_ms": 8.756
+			},
+			{
+				"count": 31,
+				"max_ms": 0.033,
+				"name": "operator_animation_sync",
+				"total_ms": 0.422
+			},
+			{
+				"count": 2,
+				"max_ms": 0.081,
+				"name": "operator_melee_audio",
+				"total_ms": 0.126
+			},
+			{
+				"count": 2,
+				"max_ms": 0.073,
+				"name": "operator_melee_impact_vfx",
+				"total_ms": 0.114
+			}
+		],
+		"trigger": "automatic",
+		"worst_frames": [
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 19,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 212,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 4.662,
+				"process_ms": 62.056,
+				"recent_transition_events": [
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 5282,
+						"uptime_sec": 3.222
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "toggle_unarmed",
+								"tick": 2.0
+							},
+							"moment_tick": 2,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 2
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 4198,
+						"uptime_sec": 2.138
+					},
+					{
+						"data": {},
+						"kind": "observatory_cleared",
+						"time_msec": 3970,
+						"uptime_sec": 1.91
+					}
+				],
+				"rendered_objects": 26,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 34.835,
+				"uptime_sec": 2.016,
+				"wall_frame_ms": 101.553
+			},
+			{
+				"active_audio_players": 1,
+				"active_combat_audio": 1,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 20,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 214,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 5.03,
+				"process_ms": 9.413,
+				"recent_transition_events": [
+					{
+						"data": {
+							"attack_kind": "fast",
+							"bullet_impact_fx": "default",
+							"contact_kind": "melee_impact",
+							"damage": 10.0,
+							"footstep_noise_mult": 1.0,
+							"material_id": "unknown",
+							"melee_impact_fx": "default",
+							"position": {
+								"x": 432.168151855469,
+								"y": 336.923553466797
+							},
+							"target": "EnemyGrunt2",
+							"weapon": "unarmed_fast_1"
+						},
+						"kind": "material_contact",
+						"time_msec": 12628,
+						"uptime_sec": 10.568
+					},
+					{
+						"data": {
+							"amount": 10.0,
+							"kind": "rejected",
+							"reason": "no_recoverable_room"
+						},
+						"kind": "player_reclaim_rejected",
+						"time_msec": 12628,
+						"uptime_sec": 10.568
+					},
+					{
+						"data": {
+							"attack_objective": "breach_command",
+							"enemy": "GRUNT",
+							"from": "staging",
+							"health": 68.0,
+							"max_health": 78.0,
+							"position": {
+								"x": 420.0,
+								"y": 330.0
+							},
+							"target": "",
+							"to": "commit"
+						},
+						"kind": "enemy_assault_state_changed",
+						"time_msec": 12624,
+						"uptime_sec": 10.564
+					},
+					{
+						"data": {
+							"aim_correction_degrees": 0.0,
+							"assist_drive": 0.0,
+							"assisted_direction": {
+								"x": -0.869154572486877,
+								"y": -0.49454054236412
+							},
+							"attack_id": "unarmed_fast",
+							"base_drive": 0.0,
+							"input_direction": {
+								"x": -0.869154572486877,
+								"y": -0.49454054236412
+							},
+							"reliable_contact": false,
+							"resolved_drive": 0.0,
+							"target": "",
+							"target_distance": 0.0
+						},
+						"kind": "player_melee_attack_targeting_committed",
+						"time_msec": 11838,
+						"uptime_sec": 9.778
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "attack_primary",
+								"tick": 182.0
+							},
+							"moment_tick": 182,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 182
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11833,
+						"uptime_sec": 9.773
+					},
+					{
+						"data": {
+							"angle_error_degrees": 0.0,
+							"distance": 60.6623687744141,
+							"from": "EnemyGrunt1",
+							"score": 0.837511512211391,
+							"to": "EnemyGrunt2"
+						},
+						"kind": "player_melee_soft_target_changed",
+						"time_msec": 11419,
+						"uptime_sec": 9.359
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "near_off_aim",
+								"tick": 172.0
+							},
+							"moment_tick": 172,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 172
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11415,
+						"uptime_sec": 9.355
+					},
+					{
+						"data": {
+							"attack_kind": "fast",
+							"bullet_impact_fx": "default",
+							"contact_kind": "melee_impact",
+							"damage": 10.0,
+							"footstep_noise_mult": 1.0,
+							"material_id": "unknown",
+							"melee_impact_fx": "default",
+							"position": {
+								"x": 521.177062988281,
+								"y": 367.780334472656
+							},
+							"target": "EnemyGrunt1",
+							"weapon": "unarmed_fast_1"
+						},
+						"kind": "material_contact",
+						"time_msec": 8771,
+						"uptime_sec": 6.711
+					}
+				],
+				"rendered_objects": 30,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 39.511,
+				"uptime_sec": 11.682,
+				"wall_frame_ms": 53.954
+			},
+			{
+				"active_audio_players": 1,
+				"active_combat_audio": 1,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 23,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 216,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 5.372,
+				"process_ms": 1.843,
+				"recent_transition_events": [
+					{
+						"data": {
+							"attack_kind": "fast",
+							"bullet_impact_fx": "default",
+							"contact_kind": "melee_impact",
+							"damage": 10.0,
+							"footstep_noise_mult": 1.0,
+							"material_id": "unknown",
+							"melee_impact_fx": "default",
+							"position": {
+								"x": 432.168151855469,
+								"y": 336.923553466797
+							},
+							"target": "EnemyGrunt2",
+							"weapon": "unarmed_fast_1"
+						},
+						"kind": "material_contact",
+						"time_msec": 12628,
+						"uptime_sec": 10.568
+					},
+					{
+						"data": {
+							"amount": 10.0,
+							"kind": "rejected",
+							"reason": "no_recoverable_room"
+						},
+						"kind": "player_reclaim_rejected",
+						"time_msec": 12628,
+						"uptime_sec": 10.568
+					},
+					{
+						"data": {
+							"attack_objective": "breach_command",
+							"enemy": "GRUNT",
+							"from": "staging",
+							"health": 68.0,
+							"max_health": 78.0,
+							"position": {
+								"x": 420.0,
+								"y": 330.0
+							},
+							"target": "",
+							"to": "commit"
+						},
+						"kind": "enemy_assault_state_changed",
+						"time_msec": 12624,
+						"uptime_sec": 10.564
+					},
+					{
+						"data": {
+							"aim_correction_degrees": 0.0,
+							"assist_drive": 0.0,
+							"assisted_direction": {
+								"x": -0.869154572486877,
+								"y": -0.49454054236412
+							},
+							"attack_id": "unarmed_fast",
+							"base_drive": 0.0,
+							"input_direction": {
+								"x": -0.869154572486877,
+								"y": -0.49454054236412
+							},
+							"reliable_contact": false,
+							"resolved_drive": 0.0,
+							"target": "",
+							"target_distance": 0.0
+						},
+						"kind": "player_melee_attack_targeting_committed",
+						"time_msec": 11838,
+						"uptime_sec": 9.778
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "attack_primary",
+								"tick": 182.0
+							},
+							"moment_tick": 182,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 182
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11833,
+						"uptime_sec": 9.773
+					},
+					{
+						"data": {
+							"angle_error_degrees": 0.0,
+							"distance": 60.6623687744141,
+							"from": "EnemyGrunt1",
+							"score": 0.837511512211391,
+							"to": "EnemyGrunt2"
+						},
+						"kind": "player_melee_soft_target_changed",
+						"time_msec": 11419,
+						"uptime_sec": 9.359
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "near_off_aim",
+								"tick": 172.0
+							},
+							"moment_tick": 172,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 172
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11415,
+						"uptime_sec": 9.355
+					},
+					{
+						"data": {
+							"attack_kind": "fast",
+							"bullet_impact_fx": "default",
+							"contact_kind": "melee_impact",
+							"damage": 10.0,
+							"footstep_noise_mult": 1.0,
+							"material_id": "unknown",
+							"melee_impact_fx": "default",
+							"position": {
+								"x": 521.177062988281,
+								"y": 367.780334472656
+							},
+							"target": "EnemyGrunt1",
+							"weapon": "unarmed_fast_1"
+						},
+						"kind": "material_contact",
+						"time_msec": 8771,
+						"uptime_sec": 6.711
+					}
+				],
+				"rendered_objects": 33,
+				"scaled_delta_ms": 14.6666666666667,
+				"spans": {
+					"enemy_health_ui": {
+						"count": 1,
+						"max_usec": 2290,
+						"total_usec": 2290
+					},
+					"enemy_presentation": {
+						"count": 1,
+						"max_usec": 2,
+						"total_usec": 2
+					},
+					"operator_animation_sync": {
+						"count": 1,
+						"max_usec": 21,
+						"total_usec": 21
+					},
+					"operator_melee_audio": {
+						"count": 1,
+						"max_usec": 45,
+						"total_usec": 45
+					},
+					"operator_melee_damage": {
+						"count": 1,
+						"max_usec": 5782,
+						"total_usec": 5782
+					},
+					"operator_melee_impact_vfx": {
+						"count": 1,
+						"max_usec": 41,
+						"total_usec": 41
+					},
+					"operator_melee_overlap_query": {
+						"count": 1,
+						"max_usec": 2,
+						"total_usec": 2
+					}
+				},
+				"time_scale": 0.88,
+				"top_subsystem_spans": [
+					{
+						"count": 1,
+						"max_ms": 5.782,
+						"name": "operator_melee_damage",
+						"total_ms": 5.782
+					},
+					{
+						"count": 1,
+						"max_ms": 2.29,
+						"name": "enemy_health_ui",
+						"total_ms": 2.29
+					},
+					{
+						"count": 1,
+						"max_ms": 0.045,
+						"name": "operator_melee_audio",
+						"total_ms": 0.045
+					},
+					{
+						"count": 1,
+						"max_ms": 0.041,
+						"name": "operator_melee_impact_vfx",
+						"total_ms": 0.041
+					},
+					{
+						"count": 1,
+						"max_ms": 0.021,
+						"name": "operator_animation_sync",
+						"total_ms": 0.021
+					}
+				],
+				"tree_paused": false,
+				"unaccounted_ms": 46.053,
+				"uptime_sec": 10.614,
+				"wall_frame_ms": 53.268
+			},
+			{
+				"active_audio_players": 1,
+				"active_combat_audio": 1,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 23,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 216,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 5.71,
+				"process_ms": 9.78,
+				"recent_transition_events": [
+					{
+						"data": {
+							"attack_kind": "fast",
+							"bullet_impact_fx": "default",
+							"contact_kind": "melee_impact",
+							"damage": 10.0,
+							"footstep_noise_mult": 1.0,
+							"material_id": "unknown",
+							"melee_impact_fx": "default",
+							"position": {
+								"x": 521.177062988281,
+								"y": 367.780334472656
+							},
+							"target": "EnemyGrunt1",
+							"weapon": "unarmed_fast_1"
+						},
+						"kind": "material_contact",
+						"time_msec": 8771,
+						"uptime_sec": 6.711
+					},
+					{
+						"data": {
+							"amount": 10.0,
+							"kind": "rejected",
+							"reason": "no_recoverable_room"
+						},
+						"kind": "player_reclaim_rejected",
+						"time_msec": 8771,
+						"uptime_sec": 6.711
+					},
+					{
+						"data": {
+							"attack_objective": "breach_command",
+							"enemy": "GRUNT",
+							"from": "staging",
+							"health": 68.0,
+							"max_health": 78.0,
+							"position": {
+								"x": 535.0,
+								"y": 370.0
+							},
+							"target": "",
+							"to": "commit"
+						},
+						"kind": "enemy_assault_state_changed",
+						"time_msec": 8767,
+						"uptime_sec": 6.707
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "capture_marker",
+								"name": "assisted_contact",
+								"tick": 106.0
+							},
+							"moment_tick": 106,
+							"result": {
+								"action": "capture_marker",
+								"ok": true,
+								"tick": 106
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 8586,
+						"uptime_sec": 6.526
+					},
+					{
+						"data": {
+							"aim_correction_degrees": 0.0,
+							"assist_drive": 0.0,
+							"assisted_direction": {
+								"x": 0.996240615844727,
+								"y": 0.0866296216845512
+							},
+							"attack_id": "unarmed_fast",
+							"base_drive": 0.0,
+							"input_direction": {
+								"x": 0.996240615844727,
+								"y": 0.0866296216845512
+							},
+							"reliable_contact": false,
+							"resolved_drive": 0.0,
+							"target": "",
+							"target_distance": 0.0
+						},
+						"kind": "player_melee_attack_targeting_committed",
+						"time_msec": 7988,
+						"uptime_sec": 5.928
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "attack_primary",
+								"tick": 92.0
+							},
+							"moment_tick": 92,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 92
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 7983,
+						"uptime_sec": 5.923
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_release",
+								"name": "move_right",
+								"tick": 67.0
+							},
+							"moment_tick": 67,
+							"result": {
+								"action": "input_release",
+								"ok": true,
+								"tick": 67
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 6908,
+						"uptime_sec": 4.848
+					},
+					{
+						"data": {
+							"angle_error_degrees": 0.19356535994298,
+							"distance": 111.117576599121,
+							"from": "",
+							"score": 0.579690588662665,
+							"to": "EnemyGrunt1"
+						},
+						"kind": "player_melee_soft_target_changed",
+						"time_msec": 6250,
+						"uptime_sec": 4.19
+					}
+				],
+				"rendered_objects": 33,
+				"scaled_delta_ms": 14.6666666666667,
+				"spans": {
+					"enemy_health_ui": {
+						"count": 1,
+						"max_usec": 1324,
+						"total_usec": 1324
+					},
+					"enemy_presentation": {
+						"count": 1,
+						"max_usec": 2,
+						"total_usec": 2
+					},
+					"operator_animation_sync": {
+						"count": 1,
+						"max_usec": 21,
+						"total_usec": 21
+					},
+					"operator_melee_audio": {
+						"count": 1,
+						"max_usec": 81,
+						"total_usec": 81
+					},
+					"operator_melee_damage": {
+						"count": 1,
+						"max_usec": 6078,
+						"total_usec": 6078
+					},
+					"operator_melee_impact_vfx": {
+						"count": 1,
+						"max_usec": 73,
+						"total_usec": 73
+					},
+					"operator_melee_overlap_query": {
+						"count": 1,
+						"max_usec": 1,
+						"total_usec": 1
+					}
+				},
+				"time_scale": 0.88,
+				"top_subsystem_spans": [
+					{
+						"count": 1,
+						"max_ms": 6.078,
+						"name": "operator_melee_damage",
+						"total_ms": 6.078
+					},
+					{
+						"count": 1,
+						"max_ms": 1.324,
+						"name": "enemy_health_ui",
+						"total_ms": 1.324
+					},
+					{
+						"count": 1,
+						"max_ms": 0.081,
+						"name": "operator_melee_audio",
+						"total_ms": 0.081
+					},
+					{
+						"count": 1,
+						"max_ms": 0.073,
+						"name": "operator_melee_impact_vfx",
+						"total_ms": 0.073
+					},
+					{
+						"count": 1,
+						"max_ms": 0.021,
+						"name": "operator_animation_sync",
+						"total_ms": 0.021
+					}
+				],
+				"tree_paused": false,
+				"unaccounted_ms": 37.197,
+				"uptime_sec": 6.756,
+				"wall_frame_ms": 52.687
+			},
+			{
+				"active_audio_players": 1,
+				"active_combat_audio": 1,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 19,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 214,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 5.03,
+				"process_ms": 9.413,
+				"recent_transition_events": [
+					{
+						"data": {
+							"attack_kind": "fast",
+							"bullet_impact_fx": "default",
+							"contact_kind": "melee_impact",
+							"damage": 10.0,
+							"footstep_noise_mult": 1.0,
+							"material_id": "unknown",
+							"melee_impact_fx": "default",
+							"position": {
+								"x": 432.168151855469,
+								"y": 336.923553466797
+							},
+							"target": "EnemyGrunt2",
+							"weapon": "unarmed_fast_1"
+						},
+						"kind": "material_contact",
+						"time_msec": 12628,
+						"uptime_sec": 10.568
+					},
+					{
+						"data": {
+							"amount": 10.0,
+							"kind": "rejected",
+							"reason": "no_recoverable_room"
+						},
+						"kind": "player_reclaim_rejected",
+						"time_msec": 12628,
+						"uptime_sec": 10.568
+					},
+					{
+						"data": {
+							"attack_objective": "breach_command",
+							"enemy": "GRUNT",
+							"from": "staging",
+							"health": 68.0,
+							"max_health": 78.0,
+							"position": {
+								"x": 420.0,
+								"y": 330.0
+							},
+							"target": "",
+							"to": "commit"
+						},
+						"kind": "enemy_assault_state_changed",
+						"time_msec": 12624,
+						"uptime_sec": 10.564
+					},
+					{
+						"data": {
+							"aim_correction_degrees": 0.0,
+							"assist_drive": 0.0,
+							"assisted_direction": {
+								"x": -0.869154572486877,
+								"y": -0.49454054236412
+							},
+							"attack_id": "unarmed_fast",
+							"base_drive": 0.0,
+							"input_direction": {
+								"x": -0.869154572486877,
+								"y": -0.49454054236412
+							},
+							"reliable_contact": false,
+							"resolved_drive": 0.0,
+							"target": "",
+							"target_distance": 0.0
+						},
+						"kind": "player_melee_attack_targeting_committed",
+						"time_msec": 11838,
+						"uptime_sec": 9.778
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "attack_primary",
+								"tick": 182.0
+							},
+							"moment_tick": 182,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 182
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11833,
+						"uptime_sec": 9.773
+					},
+					{
+						"data": {
+							"angle_error_degrees": 0.0,
+							"distance": 60.6623687744141,
+							"from": "EnemyGrunt1",
+							"score": 0.837511512211391,
+							"to": "EnemyGrunt2"
+						},
+						"kind": "player_melee_soft_target_changed",
+						"time_msec": 11419,
+						"uptime_sec": 9.359
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "near_off_aim",
+								"tick": 172.0
+							},
+							"moment_tick": 172,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 172
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11415,
+						"uptime_sec": 9.355
+					},
+					{
+						"data": {
+							"attack_kind": "fast",
+							"bullet_impact_fx": "default",
+							"contact_kind": "melee_impact",
+							"damage": 10.0,
+							"footstep_noise_mult": 1.0,
+							"material_id": "unknown",
+							"melee_impact_fx": "default",
+							"position": {
+								"x": 521.177062988281,
+								"y": 367.780334472656
+							},
+							"target": "EnemyGrunt1",
+							"weapon": "unarmed_fast_1"
+						},
+						"kind": "material_contact",
+						"time_msec": 8771,
+						"uptime_sec": 6.711
+					}
+				],
+				"rendered_objects": 29,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 37.353,
+				"uptime_sec": 11.957,
+				"wall_frame_ms": 51.796
+			},
+			{
+				"active_audio_players": 1,
+				"active_combat_audio": 1,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 19,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 214,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 5.342,
+				"process_ms": 1.674,
+				"recent_transition_events": [
+					{
+						"data": {
+							"attack_kind": "fast",
+							"bullet_impact_fx": "default",
+							"contact_kind": "melee_impact",
+							"damage": 10.0,
+							"footstep_noise_mult": 1.0,
+							"material_id": "unknown",
+							"melee_impact_fx": "default",
+							"position": {
+								"x": 432.168151855469,
+								"y": 336.923553466797
+							},
+							"target": "EnemyGrunt2",
+							"weapon": "unarmed_fast_1"
+						},
+						"kind": "material_contact",
+						"time_msec": 12628,
+						"uptime_sec": 10.568
+					},
+					{
+						"data": {
+							"amount": 10.0,
+							"kind": "rejected",
+							"reason": "no_recoverable_room"
+						},
+						"kind": "player_reclaim_rejected",
+						"time_msec": 12628,
+						"uptime_sec": 10.568
+					},
+					{
+						"data": {
+							"attack_objective": "breach_command",
+							"enemy": "GRUNT",
+							"from": "staging",
+							"health": 68.0,
+							"max_health": 78.0,
+							"position": {
+								"x": 420.0,
+								"y": 330.0
+							},
+							"target": "",
+							"to": "commit"
+						},
+						"kind": "enemy_assault_state_changed",
+						"time_msec": 12624,
+						"uptime_sec": 10.564
+					},
+					{
+						"data": {
+							"aim_correction_degrees": 0.0,
+							"assist_drive": 0.0,
+							"assisted_direction": {
+								"x": -0.869154572486877,
+								"y": -0.49454054236412
+							},
+							"attack_id": "unarmed_fast",
+							"base_drive": 0.0,
+							"input_direction": {
+								"x": -0.869154572486877,
+								"y": -0.49454054236412
+							},
+							"reliable_contact": false,
+							"resolved_drive": 0.0,
+							"target": "",
+							"target_distance": 0.0
+						},
+						"kind": "player_melee_attack_targeting_committed",
+						"time_msec": 11838,
+						"uptime_sec": 9.778
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "attack_primary",
+								"tick": 182.0
+							},
+							"moment_tick": 182,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 182
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11833,
+						"uptime_sec": 9.773
+					},
+					{
+						"data": {
+							"angle_error_degrees": 0.0,
+							"distance": 60.6623687744141,
+							"from": "EnemyGrunt1",
+							"score": 0.837511512211391,
+							"to": "EnemyGrunt2"
+						},
+						"kind": "player_melee_soft_target_changed",
+						"time_msec": 11419,
+						"uptime_sec": 9.359
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "near_off_aim",
+								"tick": 172.0
+							},
+							"moment_tick": 172,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 172
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11415,
+						"uptime_sec": 9.355
+					},
+					{
+						"data": {
+							"attack_kind": "fast",
+							"bullet_impact_fx": "default",
+							"contact_kind": "melee_impact",
+							"damage": 10.0,
+							"footstep_noise_mult": 1.0,
+							"material_id": "unknown",
+							"melee_impact_fx": "default",
+							"position": {
+								"x": 521.177062988281,
+								"y": 367.780334472656
+							},
+							"target": "EnemyGrunt1",
+							"weapon": "unarmed_fast_1"
+						},
+						"kind": "material_contact",
+						"time_msec": 8771,
+						"uptime_sec": 6.711
+					}
+				],
+				"rendered_objects": 29,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 44.02,
+				"uptime_sec": 12.008,
+				"wall_frame_ms": 51.036
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 17,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 212,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 5.372,
+				"process_ms": 1.843,
+				"recent_transition_events": [
+					{
+						"data": {
+							"aim_correction_degrees": 0.0,
+							"assist_drive": 0.0,
+							"assisted_direction": {
+								"x": -0.869154572486877,
+								"y": -0.49454054236412
+							},
+							"attack_id": "unarmed_fast",
+							"base_drive": 0.0,
+							"input_direction": {
+								"x": -0.869154572486877,
+								"y": -0.49454054236412
+							},
+							"reliable_contact": false,
+							"resolved_drive": 0.0,
+							"target": "",
+							"target_distance": 0.0
+						},
+						"kind": "player_melee_attack_targeting_committed",
+						"time_msec": 11838,
+						"uptime_sec": 9.778
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "attack_primary",
+								"tick": 182.0
+							},
+							"moment_tick": 182,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 182
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11833,
+						"uptime_sec": 9.773
+					},
+					{
+						"data": {
+							"angle_error_degrees": 0.0,
+							"distance": 60.6623687744141,
+							"from": "EnemyGrunt1",
+							"score": 0.837511512211391,
+							"to": "EnemyGrunt2"
+						},
+						"kind": "player_melee_soft_target_changed",
+						"time_msec": 11419,
+						"uptime_sec": 9.359
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "near_off_aim",
+								"tick": 172.0
+							},
+							"moment_tick": 172,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 172
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11415,
+						"uptime_sec": 9.355
+					},
+					{
+						"data": {
+							"attack_kind": "fast",
+							"bullet_impact_fx": "default",
+							"contact_kind": "melee_impact",
+							"damage": 10.0,
+							"footstep_noise_mult": 1.0,
+							"material_id": "unknown",
+							"melee_impact_fx": "default",
+							"position": {
+								"x": 521.177062988281,
+								"y": 367.780334472656
+							},
+							"target": "EnemyGrunt1",
+							"weapon": "unarmed_fast_1"
+						},
+						"kind": "material_contact",
+						"time_msec": 8771,
+						"uptime_sec": 6.711
+					},
+					{
+						"data": {
+							"amount": 10.0,
+							"kind": "rejected",
+							"reason": "no_recoverable_room"
+						},
+						"kind": "player_reclaim_rejected",
+						"time_msec": 8771,
+						"uptime_sec": 6.711
+					},
+					{
+						"data": {
+							"attack_objective": "breach_command",
+							"enemy": "GRUNT",
+							"from": "staging",
+							"health": 68.0,
+							"max_health": 78.0,
+							"position": {
+								"x": 535.0,
+								"y": 370.0
+							},
+							"target": "",
+							"to": "commit"
+						},
+						"kind": "enemy_assault_state_changed",
+						"time_msec": 8767,
+						"uptime_sec": 6.707
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "capture_marker",
+								"name": "assisted_contact",
+								"tick": 106.0
+							},
+							"moment_tick": 106,
+							"result": {
+								"action": "capture_marker",
+								"ok": true,
+								"tick": 106
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 8586,
+						"uptime_sec": 6.526
+					}
+				],
+				"rendered_objects": 24,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 43.505,
+				"uptime_sec": 10.213,
+				"wall_frame_ms": 50.72
+			},
+			{
+				"active_audio_players": 1,
+				"active_combat_audio": 1,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 20,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 216,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 5.372,
+				"process_ms": 1.843,
+				"recent_transition_events": [
+					{
+						"data": {
+							"attack_kind": "fast",
+							"bullet_impact_fx": "default",
+							"contact_kind": "melee_impact",
+							"damage": 10.0,
+							"footstep_noise_mult": 1.0,
+							"material_id": "unknown",
+							"melee_impact_fx": "default",
+							"position": {
+								"x": 432.168151855469,
+								"y": 336.923553466797
+							},
+							"target": "EnemyGrunt2",
+							"weapon": "unarmed_fast_1"
+						},
+						"kind": "material_contact",
+						"time_msec": 12628,
+						"uptime_sec": 10.568
+					},
+					{
+						"data": {
+							"amount": 10.0,
+							"kind": "rejected",
+							"reason": "no_recoverable_room"
+						},
+						"kind": "player_reclaim_rejected",
+						"time_msec": 12628,
+						"uptime_sec": 10.568
+					},
+					{
+						"data": {
+							"attack_objective": "breach_command",
+							"enemy": "GRUNT",
+							"from": "staging",
+							"health": 68.0,
+							"max_health": 78.0,
+							"position": {
+								"x": 420.0,
+								"y": 330.0
+							},
+							"target": "",
+							"to": "commit"
+						},
+						"kind": "enemy_assault_state_changed",
+						"time_msec": 12624,
+						"uptime_sec": 10.564
+					},
+					{
+						"data": {
+							"aim_correction_degrees": 0.0,
+							"assist_drive": 0.0,
+							"assisted_direction": {
+								"x": -0.869154572486877,
+								"y": -0.49454054236412
+							},
+							"attack_id": "unarmed_fast",
+							"base_drive": 0.0,
+							"input_direction": {
+								"x": -0.869154572486877,
+								"y": -0.49454054236412
+							},
+							"reliable_contact": false,
+							"resolved_drive": 0.0,
+							"target": "",
+							"target_distance": 0.0
+						},
+						"kind": "player_melee_attack_targeting_committed",
+						"time_msec": 11838,
+						"uptime_sec": 9.778
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "attack_primary",
+								"tick": 182.0
+							},
+							"moment_tick": 182,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 182
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11833,
+						"uptime_sec": 9.773
+					},
+					{
+						"data": {
+							"angle_error_degrees": 0.0,
+							"distance": 60.6623687744141,
+							"from": "EnemyGrunt1",
+							"score": 0.837511512211391,
+							"to": "EnemyGrunt2"
+						},
+						"kind": "player_melee_soft_target_changed",
+						"time_msec": 11419,
+						"uptime_sec": 9.359
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "near_off_aim",
+								"tick": 172.0
+							},
+							"moment_tick": 172,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 172
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11415,
+						"uptime_sec": 9.355
+					},
+					{
+						"data": {
+							"attack_kind": "fast",
+							"bullet_impact_fx": "default",
+							"contact_kind": "melee_impact",
+							"damage": 10.0,
+							"footstep_noise_mult": 1.0,
+							"material_id": "unknown",
+							"melee_impact_fx": "default",
+							"position": {
+								"x": 521.177062988281,
+								"y": 367.780334472656
+							},
+							"target": "EnemyGrunt1",
+							"weapon": "unarmed_fast_1"
+						},
+						"kind": "material_contact",
+						"time_msec": 8771,
+						"uptime_sec": 6.711
+					}
+				],
+				"rendered_objects": 30,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {
+					"enemy_health_ui": {
+						"count": 1,
+						"max_usec": 2412,
+						"total_usec": 2412
+					},
+					"enemy_presentation": {
+						"count": 1,
+						"max_usec": 2,
+						"total_usec": 2
+					}
+				},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [
+					{
+						"count": 1,
+						"max_ms": 2.412,
+						"name": "enemy_health_ui",
+						"total_ms": 2.412
+					},
+					{
+						"count": 1,
+						"max_ms": 0.002,
+						"name": "enemy_presentation",
+						"total_ms": 0.002
+					}
+				],
+				"tree_paused": false,
+				"unaccounted_ms": 43.477,
+				"uptime_sec": 10.9,
+				"wall_frame_ms": 50.692
+			},
+			{
+				"active_audio_players": 1,
+				"active_combat_audio": 1,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 20,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 216,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 5.372,
+				"process_ms": 1.843,
+				"recent_transition_events": [
+					{
+						"data": {
+							"attack_kind": "fast",
+							"bullet_impact_fx": "default",
+							"contact_kind": "melee_impact",
+							"damage": 10.0,
+							"footstep_noise_mult": 1.0,
+							"material_id": "unknown",
+							"melee_impact_fx": "default",
+							"position": {
+								"x": 432.168151855469,
+								"y": 336.923553466797
+							},
+							"target": "EnemyGrunt2",
+							"weapon": "unarmed_fast_1"
+						},
+						"kind": "material_contact",
+						"time_msec": 12628,
+						"uptime_sec": 10.568
+					},
+					{
+						"data": {
+							"amount": 10.0,
+							"kind": "rejected",
+							"reason": "no_recoverable_room"
+						},
+						"kind": "player_reclaim_rejected",
+						"time_msec": 12628,
+						"uptime_sec": 10.568
+					},
+					{
+						"data": {
+							"attack_objective": "breach_command",
+							"enemy": "GRUNT",
+							"from": "staging",
+							"health": 68.0,
+							"max_health": 78.0,
+							"position": {
+								"x": 420.0,
+								"y": 330.0
+							},
+							"target": "",
+							"to": "commit"
+						},
+						"kind": "enemy_assault_state_changed",
+						"time_msec": 12624,
+						"uptime_sec": 10.564
+					},
+					{
+						"data": {
+							"aim_correction_degrees": 0.0,
+							"assist_drive": 0.0,
+							"assisted_direction": {
+								"x": -0.869154572486877,
+								"y": -0.49454054236412
+							},
+							"attack_id": "unarmed_fast",
+							"base_drive": 0.0,
+							"input_direction": {
+								"x": -0.869154572486877,
+								"y": -0.49454054236412
+							},
+							"reliable_contact": false,
+							"resolved_drive": 0.0,
+							"target": "",
+							"target_distance": 0.0
+						},
+						"kind": "player_melee_attack_targeting_committed",
+						"time_msec": 11838,
+						"uptime_sec": 9.778
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "attack_primary",
+								"tick": 182.0
+							},
+							"moment_tick": 182,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 182
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11833,
+						"uptime_sec": 9.773
+					},
+					{
+						"data": {
+							"angle_error_degrees": 0.0,
+							"distance": 60.6623687744141,
+							"from": "EnemyGrunt1",
+							"score": 0.837511512211391,
+							"to": "EnemyGrunt2"
+						},
+						"kind": "player_melee_soft_target_changed",
+						"time_msec": 11419,
+						"uptime_sec": 9.359
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "near_off_aim",
+								"tick": 172.0
+							},
+							"moment_tick": 172,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 172
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11415,
+						"uptime_sec": 9.355
+					},
+					{
+						"data": {
+							"attack_kind": "fast",
+							"bullet_impact_fx": "default",
+							"contact_kind": "melee_impact",
+							"damage": 10.0,
+							"footstep_noise_mult": 1.0,
+							"material_id": "unknown",
+							"melee_impact_fx": "default",
+							"position": {
+								"x": 521.177062988281,
+								"y": 367.780334472656
+							},
+							"target": "EnemyGrunt1",
+							"weapon": "unarmed_fast_1"
+						},
+						"kind": "material_contact",
+						"time_msec": 8771,
+						"uptime_sec": 6.711
+					}
+				],
+				"rendered_objects": 30,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {
+					"operator_animation_sync": {
+						"count": 1,
+						"max_usec": 5,
+						"total_usec": 5
+					}
+				},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [
+					{
+						"count": 1,
+						"max_ms": 0.005,
+						"name": "operator_animation_sync",
+						"total_ms": 0.005
+					}
+				],
+				"tree_paused": false,
+				"unaccounted_ms": 43.121,
+				"uptime_sec": 10.805,
+				"wall_frame_ms": 50.336
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 18,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 212,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 4.915,
+				"process_ms": 1.736,
+				"recent_transition_events": [
+					{
+						"data": {
+							"attack_kind": "fast",
+							"bullet_impact_fx": "default",
+							"contact_kind": "melee_impact",
+							"damage": 10.0,
+							"footstep_noise_mult": 1.0,
+							"material_id": "unknown",
+							"melee_impact_fx": "default",
+							"position": {
+								"x": 432.168151855469,
+								"y": 336.923553466797
+							},
+							"target": "EnemyGrunt2",
+							"weapon": "unarmed_fast_1"
+						},
+						"kind": "material_contact",
+						"time_msec": 12628,
+						"uptime_sec": 10.568
+					},
+					{
+						"data": {
+							"amount": 10.0,
+							"kind": "rejected",
+							"reason": "no_recoverable_room"
+						},
+						"kind": "player_reclaim_rejected",
+						"time_msec": 12628,
+						"uptime_sec": 10.568
+					},
+					{
+						"data": {
+							"attack_objective": "breach_command",
+							"enemy": "GRUNT",
+							"from": "staging",
+							"health": 68.0,
+							"max_health": 78.0,
+							"position": {
+								"x": 420.0,
+								"y": 330.0
+							},
+							"target": "",
+							"to": "commit"
+						},
+						"kind": "enemy_assault_state_changed",
+						"time_msec": 12624,
+						"uptime_sec": 10.564
+					},
+					{
+						"data": {
+							"aim_correction_degrees": 0.0,
+							"assist_drive": 0.0,
+							"assisted_direction": {
+								"x": -0.869154572486877,
+								"y": -0.49454054236412
+							},
+							"attack_id": "unarmed_fast",
+							"base_drive": 0.0,
+							"input_direction": {
+								"x": -0.869154572486877,
+								"y": -0.49454054236412
+							},
+							"reliable_contact": false,
+							"resolved_drive": 0.0,
+							"target": "",
+							"target_distance": 0.0
+						},
+						"kind": "player_melee_attack_targeting_committed",
+						"time_msec": 11838,
+						"uptime_sec": 9.778
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "attack_primary",
+								"tick": 182.0
+							},
+							"moment_tick": 182,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 182
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11833,
+						"uptime_sec": 9.773
+					},
+					{
+						"data": {
+							"angle_error_degrees": 0.0,
+							"distance": 60.6623687744141,
+							"from": "EnemyGrunt1",
+							"score": 0.837511512211391,
+							"to": "EnemyGrunt2"
+						},
+						"kind": "player_melee_soft_target_changed",
+						"time_msec": 11419,
+						"uptime_sec": 9.359
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "near_off_aim",
+								"tick": 172.0
+							},
+							"moment_tick": 172,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 172
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11415,
+						"uptime_sec": 9.355
+					},
+					{
+						"data": {
+							"attack_kind": "fast",
+							"bullet_impact_fx": "default",
+							"contact_kind": "melee_impact",
+							"damage": 10.0,
+							"footstep_noise_mult": 1.0,
+							"material_id": "unknown",
+							"melee_impact_fx": "default",
+							"position": {
+								"x": 521.177062988281,
+								"y": 367.780334472656
+							},
+							"target": "EnemyGrunt1",
+							"weapon": "unarmed_fast_1"
+						},
+						"kind": "material_contact",
+						"time_msec": 8771,
+						"uptime_sec": 6.711
+					}
+				],
+				"rendered_objects": 25,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 43.684,
+				"uptime_sec": 16.802,
+				"wall_frame_ms": 50.335
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 18,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 212,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 4.915,
+				"process_ms": 1.736,
+				"recent_transition_events": [
+					{
+						"data": {
+							"attack_kind": "fast",
+							"bullet_impact_fx": "default",
+							"contact_kind": "melee_impact",
+							"damage": 10.0,
+							"footstep_noise_mult": 1.0,
+							"material_id": "unknown",
+							"melee_impact_fx": "default",
+							"position": {
+								"x": 432.168151855469,
+								"y": 336.923553466797
+							},
+							"target": "EnemyGrunt2",
+							"weapon": "unarmed_fast_1"
+						},
+						"kind": "material_contact",
+						"time_msec": 12628,
+						"uptime_sec": 10.568
+					},
+					{
+						"data": {
+							"amount": 10.0,
+							"kind": "rejected",
+							"reason": "no_recoverable_room"
+						},
+						"kind": "player_reclaim_rejected",
+						"time_msec": 12628,
+						"uptime_sec": 10.568
+					},
+					{
+						"data": {
+							"attack_objective": "breach_command",
+							"enemy": "GRUNT",
+							"from": "staging",
+							"health": 68.0,
+							"max_health": 78.0,
+							"position": {
+								"x": 420.0,
+								"y": 330.0
+							},
+							"target": "",
+							"to": "commit"
+						},
+						"kind": "enemy_assault_state_changed",
+						"time_msec": 12624,
+						"uptime_sec": 10.564
+					},
+					{
+						"data": {
+							"aim_correction_degrees": 0.0,
+							"assist_drive": 0.0,
+							"assisted_direction": {
+								"x": -0.869154572486877,
+								"y": -0.49454054236412
+							},
+							"attack_id": "unarmed_fast",
+							"base_drive": 0.0,
+							"input_direction": {
+								"x": -0.869154572486877,
+								"y": -0.49454054236412
+							},
+							"reliable_contact": false,
+							"resolved_drive": 0.0,
+							"target": "",
+							"target_distance": 0.0
+						},
+						"kind": "player_melee_attack_targeting_committed",
+						"time_msec": 11838,
+						"uptime_sec": 9.778
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "attack_primary",
+								"tick": 182.0
+							},
+							"moment_tick": 182,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 182
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11833,
+						"uptime_sec": 9.773
+					},
+					{
+						"data": {
+							"angle_error_degrees": 0.0,
+							"distance": 60.6623687744141,
+							"from": "EnemyGrunt1",
+							"score": 0.837511512211391,
+							"to": "EnemyGrunt2"
+						},
+						"kind": "player_melee_soft_target_changed",
+						"time_msec": 11419,
+						"uptime_sec": 9.359
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "near_off_aim",
+								"tick": 172.0
+							},
+							"moment_tick": 172,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 172
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11415,
+						"uptime_sec": 9.355
+					},
+					{
+						"data": {
+							"attack_kind": "fast",
+							"bullet_impact_fx": "default",
+							"contact_kind": "melee_impact",
+							"damage": 10.0,
+							"footstep_noise_mult": 1.0,
+							"material_id": "unknown",
+							"melee_impact_fx": "default",
+							"position": {
+								"x": 521.177062988281,
+								"y": 367.780334472656
+							},
+							"target": "EnemyGrunt1",
+							"weapon": "unarmed_fast_1"
+						},
+						"kind": "material_contact",
+						"time_msec": 8771,
+						"uptime_sec": 6.711
+					}
+				],
+				"rendered_objects": 25,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 43.542,
+				"uptime_sec": 16.896,
+				"wall_frame_ms": 50.193
+			},
+			{
+				"active_audio_players": 1,
+				"active_combat_audio": 1,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 20,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 214,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 5.03,
+				"process_ms": 9.413,
+				"recent_transition_events": [
+					{
+						"data": {
+							"attack_kind": "fast",
+							"bullet_impact_fx": "default",
+							"contact_kind": "melee_impact",
+							"damage": 10.0,
+							"footstep_noise_mult": 1.0,
+							"material_id": "unknown",
+							"melee_impact_fx": "default",
+							"position": {
+								"x": 432.168151855469,
+								"y": 336.923553466797
+							},
+							"target": "EnemyGrunt2",
+							"weapon": "unarmed_fast_1"
+						},
+						"kind": "material_contact",
+						"time_msec": 12628,
+						"uptime_sec": 10.568
+					},
+					{
+						"data": {
+							"amount": 10.0,
+							"kind": "rejected",
+							"reason": "no_recoverable_room"
+						},
+						"kind": "player_reclaim_rejected",
+						"time_msec": 12628,
+						"uptime_sec": 10.568
+					},
+					{
+						"data": {
+							"attack_objective": "breach_command",
+							"enemy": "GRUNT",
+							"from": "staging",
+							"health": 68.0,
+							"max_health": 78.0,
+							"position": {
+								"x": 420.0,
+								"y": 330.0
+							},
+							"target": "",
+							"to": "commit"
+						},
+						"kind": "enemy_assault_state_changed",
+						"time_msec": 12624,
+						"uptime_sec": 10.564
+					},
+					{
+						"data": {
+							"aim_correction_degrees": 0.0,
+							"assist_drive": 0.0,
+							"assisted_direction": {
+								"x": -0.869154572486877,
+								"y": -0.49454054236412
+							},
+							"attack_id": "unarmed_fast",
+							"base_drive": 0.0,
+							"input_direction": {
+								"x": -0.869154572486877,
+								"y": -0.49454054236412
+							},
+							"reliable_contact": false,
+							"resolved_drive": 0.0,
+							"target": "",
+							"target_distance": 0.0
+						},
+						"kind": "player_melee_attack_targeting_committed",
+						"time_msec": 11838,
+						"uptime_sec": 9.778
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "attack_primary",
+								"tick": 182.0
+							},
+							"moment_tick": 182,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 182
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11833,
+						"uptime_sec": 9.773
+					},
+					{
+						"data": {
+							"angle_error_degrees": 0.0,
+							"distance": 60.6623687744141,
+							"from": "EnemyGrunt1",
+							"score": 0.837511512211391,
+							"to": "EnemyGrunt2"
+						},
+						"kind": "player_melee_soft_target_changed",
+						"time_msec": 11419,
+						"uptime_sec": 9.359
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "near_off_aim",
+								"tick": 172.0
+							},
+							"moment_tick": 172,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 172
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11415,
+						"uptime_sec": 9.355
+					},
+					{
+						"data": {
+							"attack_kind": "fast",
+							"bullet_impact_fx": "default",
+							"contact_kind": "melee_impact",
+							"damage": 10.0,
+							"footstep_noise_mult": 1.0,
+							"material_id": "unknown",
+							"melee_impact_fx": "default",
+							"position": {
+								"x": 521.177062988281,
+								"y": 367.780334472656
+							},
+							"target": "EnemyGrunt1",
+							"weapon": "unarmed_fast_1"
+						},
+						"kind": "material_contact",
+						"time_msec": 8771,
+						"uptime_sec": 6.711
+					}
+				],
+				"rendered_objects": 30,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 35.493,
+				"uptime_sec": 11.307,
+				"wall_frame_ms": 49.936
+			},
+			{
+				"active_audio_players": 1,
+				"active_combat_audio": 1,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 19,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 214,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 5.342,
+				"process_ms": 1.674,
+				"recent_transition_events": [
+					{
+						"data": {
+							"attack_kind": "fast",
+							"bullet_impact_fx": "default",
+							"contact_kind": "melee_impact",
+							"damage": 10.0,
+							"footstep_noise_mult": 1.0,
+							"material_id": "unknown",
+							"melee_impact_fx": "default",
+							"position": {
+								"x": 432.168151855469,
+								"y": 336.923553466797
+							},
+							"target": "EnemyGrunt2",
+							"weapon": "unarmed_fast_1"
+						},
+						"kind": "material_contact",
+						"time_msec": 12628,
+						"uptime_sec": 10.568
+					},
+					{
+						"data": {
+							"amount": 10.0,
+							"kind": "rejected",
+							"reason": "no_recoverable_room"
+						},
+						"kind": "player_reclaim_rejected",
+						"time_msec": 12628,
+						"uptime_sec": 10.568
+					},
+					{
+						"data": {
+							"attack_objective": "breach_command",
+							"enemy": "GRUNT",
+							"from": "staging",
+							"health": 68.0,
+							"max_health": 78.0,
+							"position": {
+								"x": 420.0,
+								"y": 330.0
+							},
+							"target": "",
+							"to": "commit"
+						},
+						"kind": "enemy_assault_state_changed",
+						"time_msec": 12624,
+						"uptime_sec": 10.564
+					},
+					{
+						"data": {
+							"aim_correction_degrees": 0.0,
+							"assist_drive": 0.0,
+							"assisted_direction": {
+								"x": -0.869154572486877,
+								"y": -0.49454054236412
+							},
+							"attack_id": "unarmed_fast",
+							"base_drive": 0.0,
+							"input_direction": {
+								"x": -0.869154572486877,
+								"y": -0.49454054236412
+							},
+							"reliable_contact": false,
+							"resolved_drive": 0.0,
+							"target": "",
+							"target_distance": 0.0
+						},
+						"kind": "player_melee_attack_targeting_committed",
+						"time_msec": 11838,
+						"uptime_sec": 9.778
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "attack_primary",
+								"tick": 182.0
+							},
+							"moment_tick": 182,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 182
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11833,
+						"uptime_sec": 9.773
+					},
+					{
+						"data": {
+							"angle_error_degrees": 0.0,
+							"distance": 60.6623687744141,
+							"from": "EnemyGrunt1",
+							"score": 0.837511512211391,
+							"to": "EnemyGrunt2"
+						},
+						"kind": "player_melee_soft_target_changed",
+						"time_msec": 11419,
+						"uptime_sec": 9.359
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "near_off_aim",
+								"tick": 172.0
+							},
+							"moment_tick": 172,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 172
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11415,
+						"uptime_sec": 9.355
+					},
+					{
+						"data": {
+							"attack_kind": "fast",
+							"bullet_impact_fx": "default",
+							"contact_kind": "melee_impact",
+							"damage": 10.0,
+							"footstep_noise_mult": 1.0,
+							"material_id": "unknown",
+							"melee_impact_fx": "default",
+							"position": {
+								"x": 521.177062988281,
+								"y": 367.780334472656
+							},
+							"target": "EnemyGrunt1",
+							"weapon": "unarmed_fast_1"
+						},
+						"kind": "material_contact",
+						"time_msec": 8771,
+						"uptime_sec": 6.711
+					}
+				],
+				"rendered_objects": 29,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 42.749,
+				"uptime_sec": 12.057,
+				"wall_frame_ms": 49.765
+			},
+			{
+				"active_audio_players": 1,
+				"active_combat_audio": 1,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 20,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 214,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 5.03,
+				"process_ms": 9.413,
+				"recent_transition_events": [
+					{
+						"data": {
+							"attack_kind": "fast",
+							"bullet_impact_fx": "default",
+							"contact_kind": "melee_impact",
+							"damage": 10.0,
+							"footstep_noise_mult": 1.0,
+							"material_id": "unknown",
+							"melee_impact_fx": "default",
+							"position": {
+								"x": 432.168151855469,
+								"y": 336.923553466797
+							},
+							"target": "EnemyGrunt2",
+							"weapon": "unarmed_fast_1"
+						},
+						"kind": "material_contact",
+						"time_msec": 12628,
+						"uptime_sec": 10.568
+					},
+					{
+						"data": {
+							"amount": 10.0,
+							"kind": "rejected",
+							"reason": "no_recoverable_room"
+						},
+						"kind": "player_reclaim_rejected",
+						"time_msec": 12628,
+						"uptime_sec": 10.568
+					},
+					{
+						"data": {
+							"attack_objective": "breach_command",
+							"enemy": "GRUNT",
+							"from": "staging",
+							"health": 68.0,
+							"max_health": 78.0,
+							"position": {
+								"x": 420.0,
+								"y": 330.0
+							},
+							"target": "",
+							"to": "commit"
+						},
+						"kind": "enemy_assault_state_changed",
+						"time_msec": 12624,
+						"uptime_sec": 10.564
+					},
+					{
+						"data": {
+							"aim_correction_degrees": 0.0,
+							"assist_drive": 0.0,
+							"assisted_direction": {
+								"x": -0.869154572486877,
+								"y": -0.49454054236412
+							},
+							"attack_id": "unarmed_fast",
+							"base_drive": 0.0,
+							"input_direction": {
+								"x": -0.869154572486877,
+								"y": -0.49454054236412
+							},
+							"reliable_contact": false,
+							"resolved_drive": 0.0,
+							"target": "",
+							"target_distance": 0.0
+						},
+						"kind": "player_melee_attack_targeting_committed",
+						"time_msec": 11838,
+						"uptime_sec": 9.778
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "attack_primary",
+								"tick": 182.0
+							},
+							"moment_tick": 182,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 182
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11833,
+						"uptime_sec": 9.773
+					},
+					{
+						"data": {
+							"angle_error_degrees": 0.0,
+							"distance": 60.6623687744141,
+							"from": "EnemyGrunt1",
+							"score": 0.837511512211391,
+							"to": "EnemyGrunt2"
+						},
+						"kind": "player_melee_soft_target_changed",
+						"time_msec": 11419,
+						"uptime_sec": 9.359
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "near_off_aim",
+								"tick": 172.0
+							},
+							"moment_tick": 172,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 172
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11415,
+						"uptime_sec": 9.355
+					},
+					{
+						"data": {
+							"attack_kind": "fast",
+							"bullet_impact_fx": "default",
+							"contact_kind": "melee_impact",
+							"damage": 10.0,
+							"footstep_noise_mult": 1.0,
+							"material_id": "unknown",
+							"melee_impact_fx": "default",
+							"position": {
+								"x": 521.177062988281,
+								"y": 367.780334472656
+							},
+							"target": "EnemyGrunt1",
+							"weapon": "unarmed_fast_1"
+						},
+						"kind": "material_contact",
+						"time_msec": 8771,
+						"uptime_sec": 6.711
+					}
+				],
+				"rendered_objects": 30,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 35.046,
+				"uptime_sec": 11.401,
+				"wall_frame_ms": 49.489
+			},
+			{
+				"active_audio_players": 1,
+				"active_combat_audio": 1,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 21,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 216,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 5.03,
+				"process_ms": 9.413,
+				"recent_transition_events": [
+					{
+						"data": {
+							"attack_kind": "fast",
+							"bullet_impact_fx": "default",
+							"contact_kind": "melee_impact",
+							"damage": 10.0,
+							"footstep_noise_mult": 1.0,
+							"material_id": "unknown",
+							"melee_impact_fx": "default",
+							"position": {
+								"x": 432.168151855469,
+								"y": 336.923553466797
+							},
+							"target": "EnemyGrunt2",
+							"weapon": "unarmed_fast_1"
+						},
+						"kind": "material_contact",
+						"time_msec": 12628,
+						"uptime_sec": 10.568
+					},
+					{
+						"data": {
+							"amount": 10.0,
+							"kind": "rejected",
+							"reason": "no_recoverable_room"
+						},
+						"kind": "player_reclaim_rejected",
+						"time_msec": 12628,
+						"uptime_sec": 10.568
+					},
+					{
+						"data": {
+							"attack_objective": "breach_command",
+							"enemy": "GRUNT",
+							"from": "staging",
+							"health": 68.0,
+							"max_health": 78.0,
+							"position": {
+								"x": 420.0,
+								"y": 330.0
+							},
+							"target": "",
+							"to": "commit"
+						},
+						"kind": "enemy_assault_state_changed",
+						"time_msec": 12624,
+						"uptime_sec": 10.564
+					},
+					{
+						"data": {
+							"aim_correction_degrees": 0.0,
+							"assist_drive": 0.0,
+							"assisted_direction": {
+								"x": -0.869154572486877,
+								"y": -0.49454054236412
+							},
+							"attack_id": "unarmed_fast",
+							"base_drive": 0.0,
+							"input_direction": {
+								"x": -0.869154572486877,
+								"y": -0.49454054236412
+							},
+							"reliable_contact": false,
+							"resolved_drive": 0.0,
+							"target": "",
+							"target_distance": 0.0
+						},
+						"kind": "player_melee_attack_targeting_committed",
+						"time_msec": 11838,
+						"uptime_sec": 9.778
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "attack_primary",
+								"tick": 182.0
+							},
+							"moment_tick": 182,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 182
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11833,
+						"uptime_sec": 9.773
+					},
+					{
+						"data": {
+							"angle_error_degrees": 0.0,
+							"distance": 60.6623687744141,
+							"from": "EnemyGrunt1",
+							"score": 0.837511512211391,
+							"to": "EnemyGrunt2"
+						},
+						"kind": "player_melee_soft_target_changed",
+						"time_msec": 11419,
+						"uptime_sec": 9.359
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "near_off_aim",
+								"tick": 172.0
+							},
+							"moment_tick": 172,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 172
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11415,
+						"uptime_sec": 9.355
+					},
+					{
+						"data": {
+							"attack_kind": "fast",
+							"bullet_impact_fx": "default",
+							"contact_kind": "melee_impact",
+							"damage": 10.0,
+							"footstep_noise_mult": 1.0,
+							"material_id": "unknown",
+							"melee_impact_fx": "default",
+							"position": {
+								"x": 521.177062988281,
+								"y": 367.780334472656
+							},
+							"target": "EnemyGrunt1",
+							"weapon": "unarmed_fast_1"
+						},
+						"kind": "material_contact",
+						"time_msec": 8771,
+						"uptime_sec": 6.711
+					}
+				],
+				"rendered_objects": 31,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 34.459,
+				"uptime_sec": 11.035,
+				"wall_frame_ms": 48.902
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 18,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 212,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 4.355,
+				"process_ms": 9.345,
+				"recent_transition_events": [
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_release",
+								"name": "move_right",
+								"tick": 67.0
+							},
+							"moment_tick": 67,
+							"result": {
+								"action": "input_release",
+								"ok": true,
+								"tick": 67
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 6908,
+						"uptime_sec": 4.848
+					},
+					{
+						"data": {
+							"angle_error_degrees": 0.19356535994298,
+							"distance": 111.117576599121,
+							"from": "",
+							"score": 0.579690588662665,
+							"to": "EnemyGrunt1"
+						},
+						"kind": "player_melee_soft_target_changed",
+						"time_msec": 6250,
+						"uptime_sec": 4.19
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_press",
+								"name": "move_right",
+								"tick": 48.0
+							},
+							"moment_tick": 48,
+							"result": {
+								"action": "input_press",
+								"ok": true,
+								"tick": 48
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 6124,
+						"uptime_sec": 4.064
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "aimed_target",
+								"tick": 42.0
+							},
+							"moment_tick": 42,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 42
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 5871,
+						"uptime_sec": 3.811
+					},
+					{
+						"data": {
+							"phase": "baseline",
+							"preroll_samples": 30,
+							"trigger": "automatic"
+						},
+						"kind": "performance_incident_started",
+						"time_msec": 5283,
+						"uptime_sec": 3.223
+					},
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 5282,
+						"uptime_sec": 3.222
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "toggle_unarmed",
+								"tick": 2.0
+							},
+							"moment_tick": 2,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 2
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 4198,
+						"uptime_sec": 2.138
+					},
+					{
+						"data": {},
+						"kind": "observatory_cleared",
+						"time_msec": 3970,
+						"uptime_sec": 1.91
+					}
+				],
+				"rendered_objects": 25,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 35.084,
+				"uptime_sec": 5.284,
+				"wall_frame_ms": 48.784
+			},
+			{
+				"active_audio_players": 1,
+				"active_combat_audio": 1,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 20,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 214,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 5.03,
+				"process_ms": 9.413,
+				"recent_transition_events": [
+					{
+						"data": {
+							"attack_kind": "fast",
+							"bullet_impact_fx": "default",
+							"contact_kind": "melee_impact",
+							"damage": 10.0,
+							"footstep_noise_mult": 1.0,
+							"material_id": "unknown",
+							"melee_impact_fx": "default",
+							"position": {
+								"x": 432.168151855469,
+								"y": 336.923553466797
+							},
+							"target": "EnemyGrunt2",
+							"weapon": "unarmed_fast_1"
+						},
+						"kind": "material_contact",
+						"time_msec": 12628,
+						"uptime_sec": 10.568
+					},
+					{
+						"data": {
+							"amount": 10.0,
+							"kind": "rejected",
+							"reason": "no_recoverable_room"
+						},
+						"kind": "player_reclaim_rejected",
+						"time_msec": 12628,
+						"uptime_sec": 10.568
+					},
+					{
+						"data": {
+							"attack_objective": "breach_command",
+							"enemy": "GRUNT",
+							"from": "staging",
+							"health": 68.0,
+							"max_health": 78.0,
+							"position": {
+								"x": 420.0,
+								"y": 330.0
+							},
+							"target": "",
+							"to": "commit"
+						},
+						"kind": "enemy_assault_state_changed",
+						"time_msec": 12624,
+						"uptime_sec": 10.564
+					},
+					{
+						"data": {
+							"aim_correction_degrees": 0.0,
+							"assist_drive": 0.0,
+							"assisted_direction": {
+								"x": -0.869154572486877,
+								"y": -0.49454054236412
+							},
+							"attack_id": "unarmed_fast",
+							"base_drive": 0.0,
+							"input_direction": {
+								"x": -0.869154572486877,
+								"y": -0.49454054236412
+							},
+							"reliable_contact": false,
+							"resolved_drive": 0.0,
+							"target": "",
+							"target_distance": 0.0
+						},
+						"kind": "player_melee_attack_targeting_committed",
+						"time_msec": 11838,
+						"uptime_sec": 9.778
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "attack_primary",
+								"tick": 182.0
+							},
+							"moment_tick": 182,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 182
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11833,
+						"uptime_sec": 9.773
+					},
+					{
+						"data": {
+							"angle_error_degrees": 0.0,
+							"distance": 60.6623687744141,
+							"from": "EnemyGrunt1",
+							"score": 0.837511512211391,
+							"to": "EnemyGrunt2"
+						},
+						"kind": "player_melee_soft_target_changed",
+						"time_msec": 11419,
+						"uptime_sec": 9.359
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "near_off_aim",
+								"tick": 172.0
+							},
+							"moment_tick": 172,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 172
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11415,
+						"uptime_sec": 9.355
+					},
+					{
+						"data": {
+							"attack_kind": "fast",
+							"bullet_impact_fx": "default",
+							"contact_kind": "melee_impact",
+							"damage": 10.0,
+							"footstep_noise_mult": 1.0,
+							"material_id": "unknown",
+							"melee_impact_fx": "default",
+							"position": {
+								"x": 521.177062988281,
+								"y": 367.780334472656
+							},
+							"target": "EnemyGrunt1",
+							"weapon": "unarmed_fast_1"
+						},
+						"kind": "material_contact",
+						"time_msec": 8771,
+						"uptime_sec": 6.711
+					}
+				],
+				"rendered_objects": 30,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 33.946,
+				"uptime_sec": 11.449,
+				"wall_frame_ms": 48.389
+			},
+			{
+				"active_audio_players": 1,
+				"active_combat_audio": 1,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 21,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 216,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 5.03,
+				"process_ms": 9.413,
+				"recent_transition_events": [
+					{
+						"data": {
+							"attack_kind": "fast",
+							"bullet_impact_fx": "default",
+							"contact_kind": "melee_impact",
+							"damage": 10.0,
+							"footstep_noise_mult": 1.0,
+							"material_id": "unknown",
+							"melee_impact_fx": "default",
+							"position": {
+								"x": 432.168151855469,
+								"y": 336.923553466797
+							},
+							"target": "EnemyGrunt2",
+							"weapon": "unarmed_fast_1"
+						},
+						"kind": "material_contact",
+						"time_msec": 12628,
+						"uptime_sec": 10.568
+					},
+					{
+						"data": {
+							"amount": 10.0,
+							"kind": "rejected",
+							"reason": "no_recoverable_room"
+						},
+						"kind": "player_reclaim_rejected",
+						"time_msec": 12628,
+						"uptime_sec": 10.568
+					},
+					{
+						"data": {
+							"attack_objective": "breach_command",
+							"enemy": "GRUNT",
+							"from": "staging",
+							"health": 68.0,
+							"max_health": 78.0,
+							"position": {
+								"x": 420.0,
+								"y": 330.0
+							},
+							"target": "",
+							"to": "commit"
+						},
+						"kind": "enemy_assault_state_changed",
+						"time_msec": 12624,
+						"uptime_sec": 10.564
+					},
+					{
+						"data": {
+							"aim_correction_degrees": 0.0,
+							"assist_drive": 0.0,
+							"assisted_direction": {
+								"x": -0.869154572486877,
+								"y": -0.49454054236412
+							},
+							"attack_id": "unarmed_fast",
+							"base_drive": 0.0,
+							"input_direction": {
+								"x": -0.869154572486877,
+								"y": -0.49454054236412
+							},
+							"reliable_contact": false,
+							"resolved_drive": 0.0,
+							"target": "",
+							"target_distance": 0.0
+						},
+						"kind": "player_melee_attack_targeting_committed",
+						"time_msec": 11838,
+						"uptime_sec": 9.778
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "attack_primary",
+								"tick": 182.0
+							},
+							"moment_tick": 182,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 182
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11833,
+						"uptime_sec": 9.773
+					},
+					{
+						"data": {
+							"angle_error_degrees": 0.0,
+							"distance": 60.6623687744141,
+							"from": "EnemyGrunt1",
+							"score": 0.837511512211391,
+							"to": "EnemyGrunt2"
+						},
+						"kind": "player_melee_soft_target_changed",
+						"time_msec": 11419,
+						"uptime_sec": 9.359
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "near_off_aim",
+								"tick": 172.0
+							},
+							"moment_tick": 172,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 172
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11415,
+						"uptime_sec": 9.355
+					},
+					{
+						"data": {
+							"attack_kind": "fast",
+							"bullet_impact_fx": "default",
+							"contact_kind": "melee_impact",
+							"damage": 10.0,
+							"footstep_noise_mult": 1.0,
+							"material_id": "unknown",
+							"melee_impact_fx": "default",
+							"position": {
+								"x": 521.177062988281,
+								"y": 367.780334472656
+							},
+							"target": "EnemyGrunt1",
+							"weapon": "unarmed_fast_1"
+						},
+						"kind": "material_contact",
+						"time_msec": 8771,
+						"uptime_sec": 6.711
+					}
+				],
+				"rendered_objects": 31,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 33.856,
+				"uptime_sec": 11.174,
+				"wall_frame_ms": 48.299
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 18,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 212,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 6.652,
+				"process_ms": 1.794,
+				"recent_transition_events": [
+					{
+						"data": {
+							"angle_error_degrees": 0.19356535994298,
+							"distance": 111.117576599121,
+							"from": "",
+							"score": 0.579690588662665,
+							"to": "EnemyGrunt1"
+						},
+						"kind": "player_melee_soft_target_changed",
+						"time_msec": 6250,
+						"uptime_sec": 4.19
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_press",
+								"name": "move_right",
+								"tick": 48.0
+							},
+							"moment_tick": 48,
+							"result": {
+								"action": "input_press",
+								"ok": true,
+								"tick": 48
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 6124,
+						"uptime_sec": 4.064
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "aimed_target",
+								"tick": 42.0
+							},
+							"moment_tick": 42,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 42
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 5871,
+						"uptime_sec": 3.811
+					},
+					{
+						"data": {
+							"phase": "baseline",
+							"preroll_samples": 30,
+							"trigger": "automatic"
+						},
+						"kind": "performance_incident_started",
+						"time_msec": 5283,
+						"uptime_sec": 3.223
+					},
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 5282,
+						"uptime_sec": 3.222
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "toggle_unarmed",
+								"tick": 2.0
+							},
+							"moment_tick": 2,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 2
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 4198,
+						"uptime_sec": 2.138
+					},
+					{
+						"data": {},
+						"kind": "observatory_cleared",
+						"time_msec": 3970,
+						"uptime_sec": 1.91
+					}
+				],
+				"rendered_objects": 25,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 39.722,
+				"uptime_sec": 4.448,
+				"wall_frame_ms": 48.168
+			},
+			{
+				"active_audio_players": 1,
+				"active_combat_audio": 1,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": true,
+				"corpse_enemies": 0,
+				"draw_calls": 19,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 214,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 5.03,
+				"process_ms": 9.413,
+				"recent_transition_events": [
+					{
+						"data": {
+							"attack_kind": "fast",
+							"bullet_impact_fx": "default",
+							"contact_kind": "melee_impact",
+							"damage": 10.0,
+							"footstep_noise_mult": 1.0,
+							"material_id": "unknown",
+							"melee_impact_fx": "default",
+							"position": {
+								"x": 432.168151855469,
+								"y": 336.923553466797
+							},
+							"target": "EnemyGrunt2",
+							"weapon": "unarmed_fast_1"
+						},
+						"kind": "material_contact",
+						"time_msec": 12628,
+						"uptime_sec": 10.568
+					},
+					{
+						"data": {
+							"amount": 10.0,
+							"kind": "rejected",
+							"reason": "no_recoverable_room"
+						},
+						"kind": "player_reclaim_rejected",
+						"time_msec": 12628,
+						"uptime_sec": 10.568
+					},
+					{
+						"data": {
+							"attack_objective": "breach_command",
+							"enemy": "GRUNT",
+							"from": "staging",
+							"health": 68.0,
+							"max_health": 78.0,
+							"position": {
+								"x": 420.0,
+								"y": 330.0
+							},
+							"target": "",
+							"to": "commit"
+						},
+						"kind": "enemy_assault_state_changed",
+						"time_msec": 12624,
+						"uptime_sec": 10.564
+					},
+					{
+						"data": {
+							"aim_correction_degrees": 0.0,
+							"assist_drive": 0.0,
+							"assisted_direction": {
+								"x": -0.869154572486877,
+								"y": -0.49454054236412
+							},
+							"attack_id": "unarmed_fast",
+							"base_drive": 0.0,
+							"input_direction": {
+								"x": -0.869154572486877,
+								"y": -0.49454054236412
+							},
+							"reliable_contact": false,
+							"resolved_drive": 0.0,
+							"target": "",
+							"target_distance": 0.0
+						},
+						"kind": "player_melee_attack_targeting_committed",
+						"time_msec": 11838,
+						"uptime_sec": 9.778
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "attack_primary",
+								"tick": 182.0
+							},
+							"moment_tick": 182,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 182
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11833,
+						"uptime_sec": 9.773
+					},
+					{
+						"data": {
+							"angle_error_degrees": 0.0,
+							"distance": 60.6623687744141,
+							"from": "EnemyGrunt1",
+							"score": 0.837511512211391,
+							"to": "EnemyGrunt2"
+						},
+						"kind": "player_melee_soft_target_changed",
+						"time_msec": 11419,
+						"uptime_sec": 9.359
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "near_off_aim",
+								"tick": 172.0
+							},
+							"moment_tick": 172,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 172
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11415,
+						"uptime_sec": 9.355
+					},
+					{
+						"data": {
+							"attack_kind": "fast",
+							"bullet_impact_fx": "default",
+							"contact_kind": "melee_impact",
+							"damage": 10.0,
+							"footstep_noise_mult": 1.0,
+							"material_id": "unknown",
+							"melee_impact_fx": "default",
+							"position": {
+								"x": 521.177062988281,
+								"y": 367.780334472656
+							},
+							"target": "EnemyGrunt1",
+							"weapon": "unarmed_fast_1"
+						},
+						"kind": "material_contact",
+						"time_msec": 8771,
+						"uptime_sec": 6.711
+					}
+				],
+				"rendered_objects": 29,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 33.595,
+				"uptime_sec": 11.905,
+				"wall_frame_ms": 48.038
+			}
+		]
+	},
+	"scene": {
+		"name": "GameRoot",
+		"path": "res://scenes/debug/combat_playground.tscn"
+	},
+	"schema": "custodian.dev_observatory.session.v1",
+	"session": {
+		"boot_time_msec": 2060,
+		"counter_count": 2,
+		"dropped_event_count": 0,
+		"event_buffer_saturated": false,
+		"event_capacity": 300,
+		"event_count": 24,
+		"gauge_count": 107,
+		"observatory_enabled": false,
+		"total_events_logged": 24,
+		"uptime_sec": 17.419,
+		"warning_count": 0
+	},
+	"warnings": []
+}

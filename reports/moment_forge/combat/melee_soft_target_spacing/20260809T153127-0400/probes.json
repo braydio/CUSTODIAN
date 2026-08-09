@@ -1,0 +1,265 @@
+{
+	"failures": [],
+	"records": [
+		{
+			"id": "operator_state",
+			"role": "operator",
+			"tick": 0,
+			"values": {
+				"_attack_drive_direction": [
+					0.0,
+					0.0
+				],
+				"_melee_forward": [
+					1.0,
+					0.0
+				],
+				"global_position": [
+					420.0,
+					360.0
+				],
+				"visible_visual_anchor_delta_px": 0.0
+			}
+		},
+		{
+			"id": "aimed_target_state",
+			"role": "aimed_target",
+			"tick": 0,
+			"values": {
+				"global_position": [
+					540.0,
+					370.0
+				],
+				"health": 78.0
+			}
+		},
+		{
+			"id": "operator_state",
+			"role": "operator",
+			"tick": 30,
+			"values": {
+				"_attack_drive_direction": [
+					0.0,
+					0.0
+				],
+				"_melee_forward": [
+					1.0,
+					0.0
+				],
+				"global_position": [
+					449.333343505859,
+					360.0
+				],
+				"visible_visual_anchor_delta_px": 0.0
+			}
+		},
+		{
+			"id": "operator_state",
+			"role": "operator",
+			"tick": 60,
+			"values": {
+				"_attack_drive_direction": [
+					0.0,
+					0.0
+				],
+				"_melee_forward": [
+					1.0,
+					0.0
+				],
+				"global_position": [
+					465.583343505859,
+					360.0
+				],
+				"visible_visual_anchor_delta_px": 0.0
+			}
+		},
+		{
+			"id": "aimed_target_state",
+			"role": "aimed_target",
+			"tick": 60,
+			"values": {
+				"global_position": [
+					540.0,
+					370.0
+				],
+				"health": 78.0
+			}
+		},
+		{
+			"id": "operator_state",
+			"role": "operator",
+			"tick": 68,
+			"values": {
+				"_attack_drive_direction": [
+					0.0,
+					0.0
+				],
+				"_melee_forward": [
+					1.0,
+					0.0
+				],
+				"global_position": [
+					465.583343505859,
+					360.0
+				],
+				"visible_visual_anchor_delta_px": 0.0
+			}
+		},
+		{
+			"id": "operator_state",
+			"role": "operator",
+			"tick": 76,
+			"values": {
+				"_attack_drive_direction": [
+					0.0,
+					0.0
+				],
+				"_melee_forward": [
+					1.0,
+					0.0
+				],
+				"global_position": [
+					465.583343505859,
+					360.0
+				],
+				"visible_visual_anchor_delta_px": 0.0
+			}
+		},
+		{
+			"id": "aimed_target_state",
+			"role": "aimed_target",
+			"tick": 76,
+			"values": {
+				"global_position": [
+					540.0,
+					370.0
+				],
+				"health": 78.0
+			}
+		},
+		{
+			"id": "operator_state",
+			"role": "operator",
+			"tick": 95,
+			"values": {
+				"_attack_drive_direction": [
+					0.0,
+					0.0
+				],
+				"_melee_forward": [
+					1.0,
+					0.0
+				],
+				"global_position": [
+					465.583343505859,
+					360.0
+				],
+				"visible_visual_anchor_delta_px": 0.0
+			}
+		},
+		{
+			"id": "aimed_target_state",
+			"role": "aimed_target",
+			"tick": 95,
+			"values": {
+				"global_position": [
+					540.0,
+					370.0
+				],
+				"health": 78.0
+			}
+		},
+		{
+			"id": "operator_state",
+			"role": "operator",
+			"tick": 140,
+			"values": {
+				"_attack_drive_direction": [
+					0.0,
+					0.0
+				],
+				"_melee_forward": [
+					1.0,
+					0.0
+				],
+				"global_position": [
+					465.583343505859,
+					360.0
+				],
+				"visible_visual_anchor_delta_px": 0.0
+			}
+		},
+		{
+			"id": "operator_state",
+			"role": "operator",
+			"tick": 150,
+			"values": {
+				"_attack_drive_direction": [
+					0.0,
+					0.0
+				],
+				"_melee_forward": [
+					1.0,
+					0.0
+				],
+				"global_position": [
+					465.583343505859,
+					360.0
+				],
+				"visible_visual_anchor_delta_px": 0.0
+			}
+		},
+		{
+			"id": "operator_state",
+			"role": "operator",
+			"tick": 180,
+			"values": {
+				"_attack_drive_direction": [
+					0.0,
+					0.0
+				],
+				"_melee_forward": [
+					1.0,
+					0.0
+				],
+				"global_position": [
+					465.583343505859,
+					360.0
+				],
+				"visible_visual_anchor_delta_px": 0.0
+			}
+		},
+		{
+			"id": "aimed_target_state",
+			"role": "aimed_target",
+			"tick": 180,
+			"values": {
+				"global_position": [
+					540.0,
+					370.0
+				],
+				"health": 78.0
+			}
+		},
+		{
+			"id": "operator_state",
+			"role": "operator",
+			"tick": 240,
+			"values": {
+				"_attack_drive_direction": [
+					0.0,
+					0.0
+				],
+				"_melee_forward": [
+					1.0,
+					0.0
+				],
+				"global_position": [
+					465.583343505859,
+					360.0
+				],
+				"visible_visual_anchor_delta_px": 0.0
+			}
+		}
+	]
+}

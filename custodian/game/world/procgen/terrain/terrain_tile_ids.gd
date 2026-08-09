@@ -102,6 +102,14 @@ const CHASM := {
 	"broken_gap_edge": "broken_gap_edge_32",
 }
 
+const OCEAN := {
+	"fill": "sundered_keep_ocean_dark_water_01",
+	"shore_n": "sundered_keep_ocean_foam_edge_n",
+	"shore_e": "sundered_keep_ocean_foam_edge_e",
+	"shore_s": "sundered_keep_ocean_foam_edge_s",
+	"shore_w": "sundered_keep_ocean_foam_edge_w",
+}
+
 const BRIDGE := {
 	"stone_mid_horizontal": "bridge_stone_mid_horizontal_32",
 	"stone_mid_vertical": "bridge_stone_mid_vertical_32",
@@ -133,6 +141,13 @@ static func ascent(key: String, fallback: String = "existing_floor") -> String:
 
 static func chasm(key: String, fallback: String = "existing_wall") -> String:
 	return String(CHASM.get(key, fallback))
+
+
+static func ocean(
+	key: String,
+	fallback: String = "sundered_keep_ocean_dark_water_01"
+) -> String:
+	return String(OCEAN.get(key, fallback))
 
 
 static func bridge(key: String, fallback: String = "existing_floor") -> String:

@@ -2,6 +2,8 @@
 
 Status: complete
 
+Last updated: 2026-08-09
+
 ## Purpose
 
 The deterministic `ASCENT_FIELD` campaign world is presented as a bright, walkable upper plateau bounded by hard cliff lips and vertical fascia. Chasm cells form an impassable, darker depth layer. A low-contrast endless forest composition sits beneath and beyond that depth as scenery only.
@@ -25,7 +27,16 @@ The contact-shadow composition is retained at `content/backgrounds/procgen/endle
 
 ## Streaming And Determinism
 
+Procgen now exports complete deterministic `chasm_cells` semantics for every
+in-map non-floor cell not replaced by an explicit surface claim. These
+semantics are structural state and remain independent of wall dressing.
+
 The live general-world compatibility path is configured once per complete generation from authoritative generated-floor cells, retaining those bounds only as metadata. One native-scale far-haze, canopy, and near-wall-growth stack follows the active camera with a small overscan, so authored edge pockets such as Ash Bell cannot expose a finite left/right seam. This remains a distant underlay rather than geographically fixed treetop terrain. `configure_from_chasm_cells()` retains the localized-region implementation for a later semantic handoff, but is not the live general-world call path. The backdrop does not participate in simulation or per-tile reveal and therefore does not alter deterministic fingerprints. Runtime images use linear filtering without mipmaps, disabled repeat, and lossless compression.
+
+This deferral is intentional: one 1536×1024 stack per connected region with a
+maximum 1.25 scale cannot safely cover a large connected map-wide chasm. A
+later mask/tiled/region-safe presentation may consume explicit chasm semantics
+only after it proves finite backdrop edges cannot become visible.
 
 ## Candidate Promotion And Runtime Visibility
 

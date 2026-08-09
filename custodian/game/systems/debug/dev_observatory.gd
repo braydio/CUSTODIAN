@@ -411,6 +411,7 @@ func _sample_frame_time_from_ticks(now_usec: int, scaled_delta: float) -> void:
 		"corpse_enemies": int(gauges.get("corpse_enemies", 0)),
 		"enemy_active": int(gauges.get("enemy_tier_active", 0)),
 		"enemy_nearby": int(gauges.get("enemy_tier_nearby", 0)),
+		"enemy_background": int(gauges.get("enemy_tier_background", 0)),
 		"enemy_dormant": int(gauges.get("enemy_tier_dormant", 0)),
 		"active_vfx": int(gauges.get("active_vfx", 0)),
 		"active_audio_players": int(gauges.get("active_combat_audio", 0)),
@@ -564,7 +565,8 @@ func get_performance_incident_report() -> Dictionary:
 		"frame_ms_worst": _percentile(gameplay_values, 1.0), "hitch_count": _count_threshold(gameplay_values, HITCH_THRESHOLD_MS),
 		"severe_hitch_count": _count_threshold(gameplay_values, SEVERE_HITCH_THRESHOLD_MS),
 	}
-	var top_spans := _aggregate_top_spans(_frame_samples)
+	var aggregate_spans := _aggregate_spans(_frame_samples)
+	var top_spans := _top_spans(aggregate_spans)
 	var likely := _classify_incident({"lifetime_deltas": deltas, "physics_ms": float(last.get("physics_ms", 0.0)), "process_ms": float(last.get("process_ms", 0.0))}, top_spans)
 	return {
 		"schema": "custodian.dev_observatory.performance_incident.v1",
@@ -576,7 +578,8 @@ func get_performance_incident_report() -> Dictionary:
 		"external_stalls": _performance_external_stalls.duplicate(true),
 		"start_snapshot": _performance_start_snapshot.duplicate(true), "end_snapshot": _performance_end_snapshot.duplicate(true),
 		"deltas": deltas, "lifetime_deltas": deltas, "likely_owner": {"classification": likely, "evidence": top_spans},
-		"top_spans": top_spans, "phase_snapshots": _performance_phase_snapshots.duplicate(true),
+		"top_spans": top_spans, "aggregate_spans": aggregate_spans,
+		"phase_snapshots": _performance_phase_snapshots.duplicate(true),
 		"samples_retained": _frame_samples.size(), "samples_dropped": _performance_samples_dropped,
 	}
 
@@ -590,6 +593,10 @@ func _count_threshold(values: PackedFloat32Array, threshold: float) -> int:
 
 
 func _aggregate_top_spans(samples: Array[Dictionary]) -> Array[Dictionary]:
+	return _top_spans(_aggregate_spans(samples))
+
+
+func _aggregate_spans(samples: Array[Dictionary]) -> Dictionary:
 	var aggregate := {}
 	for sample in samples:
 		for name in (sample.get("spans", {}) as Dictionary).keys():
@@ -599,7 +606,7 @@ func _aggregate_top_spans(samples: Array[Dictionary]) -> Array[Dictionary]:
 			bucket.total_usec += int(source.get("total_usec", 0))
 			bucket.max_usec = maxi(int(bucket.max_usec), int(source.get("max_usec", 0)))
 			aggregate[name] = bucket
-	return _top_spans(aggregate)
+	return aggregate
 
 
 func _build_phase_summaries() -> Dictionary:
@@ -1189,6 +1196,9 @@ func _sample_enemy_gauges(enemies: Array) -> void:
 	var living := 0
 	var corpses := 0
 	var legacy_sample: Dictionary = {}
+	var behavior_sample: Dictionary = {}
+	var tier_counts := {"active": 0, "nearby": 0, "background": 0, "dormant": 0}
+	var physics_enabled_by_tier := {"active": 0, "nearby": 0, "background": 0, "dormant": 0}
 	for enemy in enemies:
 		if enemy == null or not is_instance_valid(enemy):
 			continue
@@ -1196,17 +1206,27 @@ func _sample_enemy_gauges(enemies: Array) -> void:
 			corpses += 1
 		else:
 			living += 1
-		if enemy.is_in_group("enemy_behavior_agent") and enemy.has_method("get_behavior_snapshot"):
+		if enemy.has_method("get_runtime_cost_state"):
+			var cost_state: Dictionary = enemy.call("get_runtime_cost_state")
+			var tier := String(cost_state.get("simulation_tier", "active"))
+			if tier_counts.has(tier):
+				tier_counts[tier] += 1
+				physics_enabled_by_tier[tier] += int(bool(cost_state.get("physics_process_enabled", false)))
+		if behavior_sample.is_empty() and enemy.is_in_group("enemy_behavior_agent") and enemy.has_method("get_behavior_snapshot"):
 			var snapshot: Variant = enemy.call("get_behavior_snapshot")
 			if snapshot is Dictionary:
-				set_gauge(&"enemy_behavior_sample", snapshot)
-				return
+				behavior_sample = snapshot
 		elif legacy_sample.is_empty() and enemy.has_method("get_behavior_snapshot"):
 			var snapshot: Variant = enemy.call("get_behavior_snapshot")
 			if snapshot is Dictionary:
 				legacy_sample = snapshot
 	if not legacy_sample.is_empty():
 		set_gauge(&"legacy_enemy_sample", legacy_sample)
+	if not behavior_sample.is_empty():
+		set_gauge(&"enemy_behavior_sample", behavior_sample)
+	for tier in tier_counts:
+		set_gauge(StringName("enemy_tier_%s" % tier), tier_counts[tier])
+		set_gauge(StringName("enemy_tier_%s_physics_enabled" % tier), physics_enabled_by_tier[tier])
 	set_gauge(&"living_enemies", living)
 	set_gauge(&"corpse_enemies", corpses)
 

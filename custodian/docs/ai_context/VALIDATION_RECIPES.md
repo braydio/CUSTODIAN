@@ -206,6 +206,8 @@ env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tool
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/combat_impact_audio_smoke.gd
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_primary_ranged_modular_fire_smoke.gd
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_weapon_socket_smoke.gd
+env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_ranged_ballistic_aim_smoke.gd
+env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/ranged_ballistic_reticle_smoke.gd
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_ranged_ready_input_smoke.gd
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_charged_long_roll_smoke.gd
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_dodge_charge_feedback_smoke.gd
@@ -342,6 +344,8 @@ and Front Gate correction:
 ```bash
 cd custodian
 godot --headless --path . --script res://tools/validation/sundered_keep_procgen_frontage_smoke.gd
+godot --headless --path . --script res://tools/validation/procgen_nonwalkable_surface_smoke.gd
+godot --headless --path . --script res://tools/validation/procgen_ocean_tileset_smoke.gd
 godot --headless --path . --script res://tools/validation/procgen_walkable_boundary_smoke.gd
 godot --headless --path . --script res://tools/validation/sundered_keep_frontage_bypass_smoke.gd
 godot --headless --path . --script res://tools/validation/sundered_keep_world_vista_smoke.gd
@@ -355,7 +359,8 @@ bash tools/validation/run_procgen_validation_suite.sh
 bash tools/validation/run_route_pipeline_suite.sh
 ```
 
-These smokes prove protected procgen floor/corridor authority, a merged
+These smokes prove complete exclusive deterministic chasm/ocean semantics,
+visual-only 32×32 Sundered ocean TileSet sources, protected procgen floor/corridor authority, a merged
 non-destructible physical frontier around authoritative walkable cells, no
 terminal bypass around the generated vista commit line, one continuous
 world-side horizon-to-fortress camera reveal, fade-only production edges, production Parish mapper
@@ -516,6 +521,10 @@ For Vigil-Pattern Dagger, Sword-Cleaver, or generic melee attack-drive changes:
 ```bash
 cd custodian
 godot --headless --path . \
+  --script res://tools/validation/operator_melee_soft_targeting_smoke.gd
+godot --headless --path . \
+  --script res://tools/validation/melee_target_ring_readability_smoke.gd
+godot --headless --path . \
   --script res://tools/validation/operator_vigil_dagger_smoke.gd
 godot --headless --path . \
   --script res://tools/validation/operator_sword_cleaver_smoke.gd
@@ -527,7 +536,9 @@ godot --headless --path . --quit \
   --scene res://scenes/game.tscn
 ```
 
-The dagger smoke validates the default definition, authored Chain 02/03 runtime
+The soft-targeting smokes validate aim-over-nearest selection, retention and
+switch hysteresis, shared reach/correction/assist-drive bounds, and passive
+far/approach/reliable ring states. The dagger smoke validates the default definition, authored Chain 02/03 runtime
 mapping, the nine-frame/18 FPS Fast 03 presentation and `1.5x` finishing hold,
 two contact-owned hits against one target, per-contact damage/knockback/dedupe,
 animation-finished continuation, synchronized E/W body/weapon/FX playback,
@@ -946,6 +957,10 @@ godot --headless --path . \
 # Optional threshold-free real-actor scaling report (longer-running).
 godot --headless --path . \
   --script res://tools/validation/ambient_enemy_full_actor_perf_bench.gd
+
+# Clean-state population, tier-matrix, and director/legacy attribution report.
+godot --headless --path . \
+  --script res://tools/validation/enemy_runtime_attribution_perf_bench.gd
 ```
 
 The focused smoke proves one queued ambient instantiation per scheduler tick,
@@ -954,6 +969,12 @@ local spatial lookup, and availability of spawn/prewarm/A* timing snapshots.
 Use a renderer-backed Developer Observatory capture to allocate real-machine
 frame percentages; headless microseconds are regression evidence, not a player
 hardware performance guarantee.
+
+The attribution benchmark rebuilds every case, warms for 180 frames, measures
+300 frames, prints a compact table, and writes
+`user://performance/enemy_runtime_attribution_perf_bench.json`. Read inclusive
+`enemy_total` and per-tier totals separately from their nested subsystem
+distribution; do not sum them together. It applies no hardware FPS threshold.
 
 ## Review Validation
 

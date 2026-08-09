@@ -11,6 +11,11 @@ attack. It advances the `CharacterBody2D` through velocity,
 `move_and_slide()`, and collision resolution; it never tweens or restores the
 Operator position and never magnetically tracks a target.
 
+Soft targeting may resolve one bounded facing correction and one additive
+drive-distance override before an attack link commits. Once drive begins its
+direction and distance are immutable: target movement cannot steer it, no
+homing occurs, and collision remains authoritative.
+
 `MeleeAttackProfile` owns distance, delay, duration, retained input influence,
 falloff, and collision-stop policy. `OperatorWeaponDefinition` may supply one
 profile per fast-chain link. `operator.gd` consumes both contracts generically.

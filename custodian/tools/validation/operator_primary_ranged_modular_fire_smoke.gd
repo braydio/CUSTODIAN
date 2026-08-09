@@ -149,8 +149,10 @@ func _init() -> void:
 				break
 
 	operator.set("aim_direction", Vector2.RIGHT)
-	if not bool(operator.call("_begin_modular_primary_ranged_fire_presentation")):
+	if not bool(operator.call("_begin_modular_primary_ranged_fire_presentation", Vector2.RIGHT)):
 		failures.append("primary ranged modular fire presentation did not start")
+	if not (operator.get("_primary_ranged_action_direction") as Vector2).is_equal_approx(Vector2.RIGHT):
+		failures.append("accepted ranged intent was not stored as presentation commitment")
 
 	_check_layer(lower, &"unarmed_idle_right", "lower", failures)
 	_check_layer(upper, &"ranged_2h_fire_upper_right", "upper", failures)
@@ -163,6 +165,9 @@ func _init() -> void:
 	_check_layer(lower, &"unarmed_idle_right", "committed fire lower", failures)
 	_check_layer(upper, &"ranged_2h_fire_upper_right", "committed fire upper", failures)
 	_check_layer(weapon, &"ranged_2h_fire_weapon_right", "committed fire weapon", failures)
+	var committed_axis: Vector2 = operator.call("_get_current_ranged_weapon_axis", Vector2.RIGHT)
+	if committed_axis.x <= 0.0:
+		failures.append("release-time physical weapon axis snapped to reversed cursor")
 
 	if weapon != null:
 		var muzzle_position: Vector2 = operator.call("_get_ranged_muzzle_position", Vector2.RIGHT)

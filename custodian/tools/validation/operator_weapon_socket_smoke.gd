@@ -75,6 +75,31 @@ func _init() -> void:
 	var barrel := operator.get_node("PrimaryWeaponSocket/Barrel") as Node2D
 	var resolved_muzzle: Vector2 = operator.call("_get_ranged_muzzle_position", Vector2.RIGHT)
 	_expect(resolved_muzzle.distance_to(barrel.global_position) < 0.01, "projectile origin did not match frame-aware muzzle")
+	var physical_axis: Vector2 = operator.call("_get_current_ranged_weapon_axis", Vector2.RIGHT)
+	var expected_axis: Vector2 = (
+		operator.get_node("PrimaryWeaponSocket") as Node2D
+	).global_position.direction_to(barrel.global_position)
+	_expect(physical_axis.dot(expected_axis) > 0.999, "frame-aware grip and muzzle did not produce ballistic axis")
+	_expect(is_equal_approx(float(definition.fine_aim_limit_degrees), 24.0), "Carbine fine correction limit is not 24 degrees")
+	_expect(is_equal_approx(float(operator.get("ranged_weapon_aim_response")), 20.0), "Carbine aim response is not 20")
+	var base_rotation := (operator.get_node("PrimaryWeaponSocket") as Node2D).rotation
+	operator.set("aim_direction", Vector2.RIGHT.rotated(deg_to_rad(20.0)))
+	await process_frame
+	operator.call("_sync_primary_ranged_weapon_frame_to_upper")
+	var corrected_rotation := (operator.get_node("PrimaryWeaponSocket") as Node2D).rotation
+	_expect(corrected_rotation > base_rotation, "fine correction did not chase the cursor")
+	_expect(corrected_rotation < base_rotation + deg_to_rad(20.0), "fine correction snapped instantly instead of converging")
+	for index in range(300):
+		operator.call("_sync_primary_ranged_weapon_frame_to_upper")
+	_expect(is_equal_approx((operator.get_node("PrimaryWeaponSocket") as Node2D).rotation, corrected_rotation), "repeated same-frame socket queries accelerated correction")
+	for index in range(24):
+		await process_frame
+		operator.call("_sync_primary_ranged_weapon_frame_to_upper")
+	var settled_rotation := (operator.get_node("PrimaryWeaponSocket") as Node2D).rotation
+	_expect(settled_rotation > corrected_rotation, "fine correction did not continue converging across frames")
+	_expect(settled_rotation <= base_rotation + deg_to_rad(20.0), "fine correction overshot cursor angle")
+	operator.set("aim_direction", Vector2.RIGHT)
+	operator.call("_sync_primary_ranged_weapon_frame_to_upper")
 	var ejection := operator.get_node("PrimaryWeaponSocket/EjectionSocket") as Node2D
 	var resolved_ejection: Vector2 = operator.call("get_ranged_ejection_position")
 	_expect(resolved_ejection.distance_to(ejection.global_position) < 0.01, "ejection origin did not match frame-aware socket")

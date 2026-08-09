@@ -109,6 +109,16 @@ func _run() -> void:
 			),
 			"seed %d terminal apron does not own the gate" % seed_value
 		)
+		var claims: Array = frontage.get("surface_claims", [])
+		_assert(claims.size() == 1, "seed %d must emit one ocean claim" % seed_value)
+		if claims.size() == 1 and claims[0] is Dictionary:
+			var claim := claims[0] as Dictionary
+			_assert(StringName(claim.get("id", &"")) == &"sundered_keep_frontage_ocean", "seed %d ocean claim id mismatch" % seed_value)
+			_assert(StringName(claim.get("kind", &"")) == &"ocean", "seed %d ocean claim kind mismatch" % seed_value)
+			_assert(StringName(claim.get("profile", &"")) == &"sundered_keep_cosmic_ocean", "seed %d ocean claim profile mismatch" % seed_value)
+			_assert(StringName(claim.get("seed_edge", &"")) == &"north", "seed %d ocean claim is not north seeded" % seed_value)
+			var bounds: Variant = claim.get("bounds")
+			_assert(bounds is Rect2i and (bounds as Rect2i).has_area() and (bounds as Rect2i).position.y == 0, "seed %d ocean claim bounds are invalid" % seed_value)
 		for cell in hard.keys():
 			if cliffs.has(cell):
 				_errors.append(
@@ -294,14 +304,24 @@ func _assert_integrated_procgen_result() -> void:
 		{}
 	)
 	_assert(not frontage.is_empty(), "integrated level data omitted frontage")
+	var ocean := _cell_lookup(level_data.get("ocean_cells", []))
+	var chasm := _cell_lookup(level_data.get("chasm_cells", []))
+	_assert(not ocean.is_empty(), "integrated level data omitted ocean cells")
+	_assert(not chasm.is_empty(), "integrated level data omitted chasm cells")
 	var gate: Variant = frontage.get("gate_anchor")
 	_assert(
 		gate is Vector2i \
 			and map.call("is_runtime_walkable_after_props", gate),
 		"integrated gate anchor is not ordinary procgen walkable floor"
 	)
+	if gate is Vector2i:
+		_assert(not ocean.has(gate), "integrated gate anchor overlaps ocean")
+		_assert(not chasm.has(gate), "integrated gate anchor overlaps chasm")
 	var hard: Dictionary = frontage.get("hard_clearance_cells", {})
 	for cell in hard.keys():
+		if ocean.has(cell) or chasm.has(cell):
+			_errors.append("hard-clearance floor overlaps non-walkable surface at %s" % cell)
+			break
 		if not bool(map.call("is_sundered_keep_frontage_protected", cell)):
 			_errors.append("canonical frontage protection omitted %s" % cell)
 			break
@@ -314,7 +334,41 @@ func _assert_integrated_procgen_result() -> void:
 				% cell
 			)
 			break
+	for cell in (frontage.get("terminal_apron_cells", {}) as Dictionary).keys():
+		if ocean.has(cell) or chasm.has(cell):
+			_errors.append("terminal apron overlaps non-walkable surface at %s" % cell)
+			break
+	var frontage_ocean := frontage.get("ocean_cells", {}) as Dictionary
+	_assert(not frontage_ocean.is_empty(), "integrated frontage has no resolved ocean")
+	var ocean_base := map.get_node_or_null(
+		"NavigationRegion2D/NonWalkableSurfaceBase"
+	) as TileMapLayer
+	var ocean_overlay := map.get_node_or_null(
+		"NavigationRegion2D/NonWalkableSurfaceOverlay"
+	) as TileMapLayer
+	_assert(ocean_base != null and not ocean_base.get_used_cells().is_empty(), "integrated near-field ocean fill was not painted")
+	_assert(ocean_overlay != null and not ocean_overlay.get_used_cells().is_empty(), "integrated cardinal shore foam was not painted")
+	var touches_north := false
+	for cell_variant in frontage_ocean.keys():
+		var cell := cell_variant as Vector2i
+		if not ocean.has(cell):
+			_errors.append("frontage ocean cell missing from global ocean at %s" % cell)
+			break
+		if cell.y == 0:
+			touches_north = true
+		_assert(not bool(map.call("debug_can_place_foliage_at", cell)), "foliage admitted ocean at %s" % cell)
+		if ocean_base != null:
+			_assert(ocean_base.get_cell_source_id(cell) >= 0, "resolved ocean lacks fill visual at %s" % cell)
+	for floor_cell_variant in map.debug_get_generated_floor_cells().keys():
+		var floor_cell := floor_cell_variant as Vector2i
+		if ocean_base != null and ocean_base.get_cell_source_id(floor_cell) >= 0:
+			_errors.append("ocean visual painted authoritative floor at %s" % floor_cell)
+			break
+	_assert(touches_north, "frontage ocean does not touch its north seed edge")
 	for spawn_cell in map.call("get_corridor_spawn_points", 256):
+		if ocean.has(spawn_cell) or chasm.has(spawn_cell):
+			_errors.append("ordinary corridor spawn overlaps non-walkable surface at %s" % spawn_cell)
+			break
 		if bool(map.call("is_sundered_keep_frontage_protected", spawn_cell)):
 			_errors.append(
 				"ordinary corridor spawn overlaps protected frontage at %s"
@@ -325,7 +379,9 @@ func _assert_integrated_procgen_result() -> void:
 	for key in [
 		"frontage_required_floor_cell_missing_visual",
 		"frontage_required_floor_cell_blocked",
-		"frontage_required_floor_cell_ocean_exposed",
+		"frontage_required_floor_cell_surface_overlap",
+		"frontage_required_floor_cell_ocean_overlap",
+		"frontage_required_floor_cell_chasm_overlap",
 	]:
 		_assert(int(summary.get(key, -1)) == 0, "%s remained after frontage floor audit" % key)
 	for site_key in ["faction_activity_sites", "story_room_sites"]:
@@ -368,6 +424,14 @@ func _assert_integrated_procgen_result() -> void:
 		"integrated frontage retained a visible rectangular border wall"
 	)
 	map.queue_free()
+
+
+func _cell_lookup(cells: Array) -> Dictionary:
+	var result: Dictionary = {}
+	for cell_variant in cells:
+		if cell_variant is Vector2i:
+			result[cell_variant] = true
+	return result
 
 
 func _read_text(path: String) -> String:

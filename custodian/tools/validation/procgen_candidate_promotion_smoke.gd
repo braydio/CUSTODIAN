@@ -54,6 +54,8 @@ func _run() -> void:
 	var walls_before := _cell_fingerprint(
 		tilemap.debug_get_generated_wall_cells()
 	)
+	var ocean_before := _semantic_cell_fingerprint(tilemap.debug_get_ocean_cells())
+	var chasm_before := _semantic_cell_fingerprint(tilemap.debug_get_chasm_cells())
 	var terrain_before: Dictionary = (
 		tilemap.get_level_data().get("terrain_builder", {}) as Dictionary
 	).duplicate(true)
@@ -81,6 +83,14 @@ func _run() -> void:
 		_cell_fingerprint(tilemap.debug_get_generated_wall_cells())
 		== walls_before,
 		"Promotion changed accepted wall authority."
+	)
+	assert(
+		_semantic_cell_fingerprint(tilemap.debug_get_ocean_cells()) == ocean_before,
+		"Promotion changed accepted ocean semantics."
+	)
+	assert(
+		_semantic_cell_fingerprint(tilemap.debug_get_chasm_cells()) == chasm_before,
+		"Promotion changed accepted chasm semantics."
 	)
 	assert(
 		promoted.get("terrain_builder", {}) == terrain_before,
@@ -170,5 +180,15 @@ func _cell_fingerprint(cells: Dictionary) -> PackedStringArray:
 				int(data.get("alternative", 0)),
 			]
 		)
+	rows.sort()
+	return rows
+
+
+func _semantic_cell_fingerprint(cells: Dictionary) -> PackedStringArray:
+	var rows := PackedStringArray()
+	for cell_variant in cells.keys():
+		if cell_variant is Vector2i:
+			var cell := cell_variant as Vector2i
+			rows.append("%d,%d" % [cell.x, cell.y])
 	rows.sort()
 	return rows

@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/world/presentation/authored_underlay_plate_loader.gd" id="1_loader"]
+
+[node name="AuthoredUnderlayPlateSet" type="Node2D"]
+script = ExtResource("1_loader")
+manifest_path = "res://content/backgrounds/authored_underlays/sundered_keep_main/sundered_keep_main.plates.json"
+streaming_enabled = true
+preload_margin_world = 768.000000
+unload_margin_world = 1536.000000
+max_loads_per_tick = 2
+
+[node name="PlateRoot" type="Node2D" parent="."]

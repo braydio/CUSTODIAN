@@ -38,6 +38,14 @@ class_name MeleeAttackProfile
 ## Cancel unused displacement when the drive encounters blocking geometry.
 @export var drive_stops_on_collision: bool = true
 
+@export_category("Target Assist")
+@export var target_assist_enabled: bool = false
+@export var target_acquire_extra_px: float = 0.0
+@export_range(0.0, 90.0, 1.0) var target_assist_cone_degrees: float = 30.0
+@export_range(0.0, 45.0, 1.0) var target_aim_correction_degrees: float = 0.0
+@export var target_drive_bonus_max_px: float = 0.0
+@export_range(0.0, 1.0, 0.05) var target_reliable_drive_fraction: float = 0.75
+
 @export_category("Feel")
 @export var hit_stop_scale: float = 0.88
 @export var hit_stop_duration: float = 0.028

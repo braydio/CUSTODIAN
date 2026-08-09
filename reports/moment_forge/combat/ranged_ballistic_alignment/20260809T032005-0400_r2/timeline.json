@@ -1,0 +1,200 @@
+[
+	{
+		"data": {
+			"authored_action": {
+				"action": "aim_at_role",
+				"role": "operator",
+				"target_role": "target_a",
+				"tick": 4.0
+			},
+			"moment_tick": 4,
+			"result": {
+				"action": "aim_at_role",
+				"ok": true,
+				"tick": 4
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 4
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "input_press",
+				"name": "aim_hold",
+				"tick": 8.0
+			},
+			"moment_tick": 8,
+			"result": {
+				"action": "input_press",
+				"ok": true,
+				"tick": 8
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 8
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "input_tap",
+				"hold_ticks": 1.0,
+				"name": "attack_primary",
+				"tick": 68.0
+			},
+			"moment_tick": 68,
+			"result": {
+				"action": "input_tap",
+				"ok": true,
+				"tick": 68
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 68
+	},
+	{
+		"data": {
+			"event_id": "fire",
+			"weapon": "carbine_mk1"
+		},
+		"kind": "player_weapon_feedback",
+		"tick": 68
+	},
+	{
+		"data": {
+			"accepted_aim_direction": "(0.988936, -0.14834)",
+			"aim_error_degrees": 36.9035220359481,
+			"ballistic_direction": "(0.903679, -0.42821)",
+			"damage": 11.0,
+			"direction": "(0.904859, -0.425712)",
+			"final_shot_direction": "(0.904859, -0.425712)",
+			"loaded_ammo": 23,
+			"muzzle": "(450.2968, 327.6438)",
+			"position": "(420.0, 360.0)",
+			"predicted_impact": "(522.689, 293.3406)",
+			"radius": 3.0,
+			"reserve_ammo": 48,
+			"speed": 900.0,
+			"spread_deg": 2.38,
+			"weapon": "carbine_mk1"
+		},
+		"kind": "player_ranged_shot",
+		"tick": 68
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "aim_at_role",
+				"role": "operator",
+				"target_role": "target_b",
+				"tick": 69.0
+			},
+			"moment_tick": 69,
+			"result": {
+				"action": "aim_at_role",
+				"ok": true,
+				"tick": 69
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 69
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "capture_marker",
+				"name": "committed_snap_release",
+				"tick": 72.0
+			},
+			"moment_tick": 72,
+			"result": {
+				"action": "capture_marker",
+				"ok": true,
+				"tick": 72
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 72
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "input_tap",
+				"hold_ticks": 1.0,
+				"name": "attack_primary",
+				"tick": 112.0
+			},
+			"moment_tick": 112,
+			"result": {
+				"action": "input_tap",
+				"ok": true,
+				"tick": 112
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 112
+	},
+	{
+		"data": {
+			"event_id": "fire",
+			"weapon": "carbine_mk1"
+		},
+		"kind": "player_weapon_feedback",
+		"tick": 112
+	},
+	{
+		"data": {
+			"accepted_aim_direction": "(-0.988936, 0.14834)",
+			"aim_error_degrees": 37.0669173949846,
+			"ballistic_direction": "(-0.986703, -0.162534)",
+			"damage": 11.0,
+			"direction": "(-0.979727, -0.20034)",
+			"final_shot_direction": "(-0.979727, -0.20034)",
+			"loaded_ammo": 22,
+			"muzzle": "(386.9197, 336.5509)",
+			"position": "(420.0, 360.0)",
+			"predicted_impact": "(302.5449, 322.6523)",
+			"radius": 3.0,
+			"reserve_ammo": 48,
+			"speed": 900.0,
+			"spread_deg": 2.38,
+			"weapon": "carbine_mk1"
+		},
+		"kind": "player_ranged_shot",
+		"tick": 112
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "input_release",
+				"name": "aim_hold",
+				"tick": 150.0
+			},
+			"moment_tick": 150,
+			"result": {
+				"action": "input_release",
+				"ok": true,
+				"tick": 150
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 150
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "finish",
+				"tick": 178.0
+			},
+			"moment_tick": 178,
+			"result": {
+				"action": "finish",
+				"finish": true,
+				"ok": true,
+				"tick": 178
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 178
+	}
+]

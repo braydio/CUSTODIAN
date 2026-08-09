@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Moment Forge — combat/melee_soft_target_spacing</title>
+<style>
+:root{color-scheme:dark;--bg:#090d13;--panel:#111925;--line:#2d425a;--text:#dce8f2;--muted:#8ca0b4;--cyan:#66d9ef;--red:#ff6b72;--green:#72d69b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,sans-serif}main{max-width:1600px;margin:auto;padding:24px}code{color:var(--cyan)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.panel{background:var(--panel);border:1px solid var(--line);padding:16px;border-radius:8px;overflow:auto;margin-bottom:16px}video,img{width:100%;height:auto;background:#000}table{width:100%;border-collapse:collapse}th,td{padding:7px 9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.pass{color:var(--green)}.fail{color:var(--red)}.muted{color:var(--muted)}button,input{margin:4px}@media(max-width:900px){.grid{grid-template-columns:1fr}}
+</style></head><body><main>
+<h1>CUSTODIAN Moment Forge</h1>
+<p><code>combat/melee_soft_target_spacing</code> — Aim-relative dagger target selection, progressive range ring, and per-link committed assist.</p>
+<p>Status: <b>partial_media</b> · fingerprint <code>389bc14a3abee471</code></p>
+<section class="panel"><button id="playBoth">Play both</button><button id="pauseBoth">Pause</button><label>Scrub <input id="scrub" type="range" min="0" max="1000" value="0"></label>
+<div class="grid"><div><h2>Baseline</h2><p class='muted'>Unavailable.</p></div><div><h2>Current</h2><p class='muted'>Unavailable.</p></div></div></section>
+<div class="grid"><section class="panel"><h2>Baseline contact sheet</h2><p class='muted'>Unavailable.</p></section><section class="panel"><h2>Current contact sheet</h2><p class='muted'>Unavailable.</p></section></div>
+<section class="panel"><h2>Visual difference (advisory)</h2><p class='muted'>Unavailable.</p></section>
+<section class="panel"><h2>Assertions</h2><ul><li class='pass'><b>role_exists</b> [error]: </li>
+<li class='pass'><b>role_exists</b> [error]: </li>
+<li class='pass'><b>no_unreleased_inputs</b> [error]: </li>
+<li class='pass'><b>output_exists</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li></ul></section>
+<section class="panel"><h2>Metric deltas</h2><table><thead><tr><th>Metric</th><th>Baseline</th><th>Current</th><th>Delta</th></tr></thead><tbody><tr><td>completed_tick</td><td>None</td><td>358</td><td>None</td></tr>
+<tr><td>visible_visual_anchor_delta_px</td><td>None</td><td>0.0</td><td>None</td></tr>
+<tr><td>visible_visual_anchor_sample_count</td><td>None</td><td>10</td><td>None</td></tr></tbody></table></section>
+<section class="panel"><h2>Tick-enriched timeline</h2><table><thead><tr><th>Tick</th><th>Kind</th><th>Evidence</th></tr></thead><tbody><tr><td>2</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;input_tap&quot;, &quot;hold_ticks&quot;: 1.0, &quot;name&quot;: &quot;toggle_unarmed&quot;, &quot;tick&quot;: 2.0}, &quot;moment_tick&quot;: 2, &quot;result&quot;: {&quot;action&quot;: &quot;input_tap&quot;, &quot;ok&quot;: true, &quot;tick&quot;: 2}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 2}</code></td></tr>
+<tr><td>4</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;input_tap&quot;, &quot;hold_ticks&quot;: 1.0, &quot;name&quot;: &quot;toggle_unarmed&quot;, &quot;tick&quot;: 4.0}, &quot;moment_tick&quot;: 4, &quot;result&quot;: {&quot;action&quot;: &quot;input_tap&quot;, &quot;ok&quot;: true, &quot;tick&quot;: 4}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 4}</code></td></tr>
+<tr><td>8</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;aim_at_role&quot;, &quot;role&quot;: &quot;operator&quot;, &quot;target_role&quot;: &quot;aimed_target&quot;, &quot;tick&quot;: 8.0}, &quot;moment_tick&quot;: 8, &quot;result&quot;: {&quot;action&quot;: &quot;aim_at_role&quot;, &quot;ok&quot;: true, &quot;tick&quot;: 8}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 8}</code></td></tr>
+<tr><td>16</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;input_press&quot;, &quot;name&quot;: &quot;move_right&quot;, &quot;tick&quot;: 16.0}, &quot;moment_tick&quot;: 16, &quot;result&quot;: {&quot;action&quot;: &quot;input_press&quot;, &quot;ok&quot;: true, &quot;tick&quot;: 16}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 16}</code></td></tr>
+<tr><td>35</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;input_release&quot;, &quot;name&quot;: &quot;move_right&quot;, &quot;tick&quot;: 35.0}, &quot;moment_tick&quot;: 35, &quot;result&quot;: {&quot;action&quot;: &quot;input_release&quot;, &quot;ok&quot;: true, &quot;tick&quot;: 35}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 35}</code></td></tr>
+<tr><td>62</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;input_tap&quot;, &quot;hold_ticks&quot;: 1.0, &quot;name&quot;: &quot;attack_primary&quot;, &quot;tick&quot;: 62.0}, &quot;moment_tick&quot;: 62, &quot;result&quot;: {&quot;action&quot;: &quot;input_tap&quot;, &quot;ok&quot;: true, &quot;tick&quot;: 62}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 62}</code></td></tr>
+<tr><td>76</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;capture_marker&quot;, &quot;name&quot;: &quot;assisted_contact&quot;, &quot;tick&quot;: 76.0}, &quot;moment_tick&quot;: 76, &quot;result&quot;: {&quot;action&quot;: &quot;capture_marker&quot;, &quot;ok&quot;: true, &quot;tick&quot;: 76}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 76}</code></td></tr>
+<tr><td>132</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;aim_at_role&quot;, &quot;role&quot;: &quot;operator&quot;, &quot;target_role&quot;: &quot;near_off_aim&quot;, &quot;tick&quot;: 132.0}, &quot;moment_tick&quot;: 132, &quot;result&quot;: {&quot;action&quot;: &quot;aim_at_role&quot;, &quot;ok&quot;: true, &quot;tick&quot;: 132}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 132}</code></td></tr>
+<tr><td>142</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;input_tap&quot;, &quot;hold_ticks&quot;: 1.0, &quot;name&quot;: &quot;attack_primary&quot;, &quot;tick&quot;: 142.0}, &quot;moment_tick&quot;: 142, &quot;result&quot;: {&quot;action&quot;: &quot;input_tap&quot;, &quot;ok&quot;: true, &quot;tick&quot;: 142}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 142}</code></td></tr>
+<tr><td>358</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;finish&quot;, &quot;tick&quot;: 358.0}, &quot;moment_tick&quot;: 358, &quot;result&quot;: {&quot;action&quot;: &quot;finish&quot;, &quot;finish&quot;: true, &quot;ok&quot;: true, &quot;tick&quot;: 358}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 358}</code></td></tr></tbody></table></section>
+<section class="panel"><h2>Provenance</h2><pre>{
+  &quot;capture&quot;: {
+    &quot;audio_requested&quot;: true,
+    &quot;fps&quot;: 60,
+    &quot;height&quot;: 720,
+    &quot;mode&quot;: &quot;none&quot;,
+    &quot;synchronization&quot;: &quot;not_requested&quot;,
+    &quot;width&quot;: 1280
+  },
+  &quot;repository&quot;: {
+    &quot;branch&quot;: &quot;main&quot;,
+    &quot;changed_files&quot;: [
+      &quot;M NOTES&quot;,
+      &quot; M custodian/content/sprites/operator/new_operator/modular/idle/operator__modular_head__hooded__idle_01__s__5f__96.png&quot;,
+      &quot; M custodian/content/sprites/operator/new_operator/modular/idle/operator__modular_upper_body__unarmed__idle_01__s__5f__96.png&quot;,
+      &quot; M custodian/content/sprites/operator/new_operator/modular/idle/operator__modular_upper_body__unarmed__idle_hitreact_01__s__5f__96.png&quot;,
+      &quot; M custodian/content/tiles/tilesets/procgen_world_tileset.tres&quot;,
+      &quot; M custodian/content/weapons/data/carbine_mk1.json&quot;,
+      &quot; M custodian/docs/ai_context/CONTEXT.md&quot;,
+      &quot; M custodian/docs/ai_context/CURRENT_STATE.md&quot;,
+      &quot; M custodian/docs/ai_context/FILE_INDEX.md&quot;,
+      &quot; M custodian/docs/ai_context/VALIDATION_RECIPES.md&quot;,
+      &quot; M custodian/game/actors/effects/target_ring.gd&quot;,
+      &quot; M custodian/game/actors/enemies/enemy.gd&quot;,
+      &quot; M custodian/game/actors/enemies/enemy_behavior_state_machine.gd&quot;,
+      &quot; M custodian/game/actors/operator/attacks/vigil_pattern_dagger_fast_01.tres&quot;,
+      &quot; M custodian/game/actors/operator/attacks/vigil_pattern_dagger_fast_02.tres&quot;,
+      &quot; M custodian/game/actors/operator/attacks/vigil_pattern_dagger_fast_03.tres&quot;,
+      &quot; M custodian/game/actors/operator/carbine_rifle_mk1_definition.tres&quot;,
+      &quot; M custodian/game/actors/operator/operator.gd&quot;,
+      &quot; M custodian/game/systems/combat/melee_attack_profile.gd&quot;,
+      &quot; M custodian/game/systems/debug/dev_observatory.gd&quot;,
+      &quot; M custodian/game/ui/hud/ui.gd&quot;,
+      &quot; M custodian/game/world/procgen/landmarks/sundered_keep/sundered_keep_frontage_builder.gd&quot;,
+      &quot; M custodian/game/world/procgen/landmarks/sundered_keep/sundered_keep_frontage_validator.gd&quot;,
+      &quot; M custodian/game/world/procgen/proc_gen_map.tscn&quot;,
+      &quot; M custodian/game/world/procgen/proc_gen_tilemap.gd&quot;,
+      &quot; M custodian/game/world/procgen/terrain/terrain_tile_ids.gd&quot;,
+      &quot; M custodian/game/world/vistas/sundered_keep/sundered_keep_procgen_vista_presentation.gd&quot;,
+      &quot; M custodian/game/world/vistas/sundered_keep/sundered_keep_procgen_vista_presentation.tscn&quot;,
+      &quot; M custodian/scenes/debug/combat_playground.tscn&quot;,
+      &quot; M custodian/scenes/game.tscn&quot;,
+      &quot; M custodian/tools/analysis/analyze_dev_observatory_session.py&quot;,
+      &quot; M custodian/tools/iteration/godot/moment_runner.gd&quot;,
+      &quot; M custodian/tools/validation/operator_primary_ranged_modular_fire_smoke.gd&quot;,
+      &quot; M custodian/tools/validation/operator_vigil_dagger_smoke.gd&quot;,
+      &quot; M custodian/tools/validation/operator_weapon_socket_smoke.gd&quot;,
+      &quot; M custodian/tools/validation/procgen_candidate_promotion_smoke.gd&quot;,
+      &quot; M custodian/tools/validation/sundered_keep_procgen_frontage_smoke.gd&quot;,
+      &quot; M custodian/tools/validation/sundered_keep_procgen_vista_layering_smoke.gd&quot;,
+      &quot; M design/02_features/combat_feel/COMBAT_FEEL_SYSTEM.md&quot;,
+      &quot; M design/02_features/combat_feel/OPERATOR_MELEE_ATTACK_DRIVE.md&quot;,
+      &quot; M design/02_features/combat_feel/RANGED_COMBAT_BALANCE_AND_STEALTH_SYSTEM.md&quot;,
+      &quot; M design/02_features/debug_ui/DEVELOPER_OBSERVATORY_SYSTEM.md&quot;,
+      &quot; M design/02_features/enemy_navigation/ENEMY_NAVIGATION_AND_PURSUIT_SYSTEM.md&quot;,
+      &quot; M design/02_features/operator/CROSSHAIR_SYSTEM.md&quot;,
+      &quot; M design/02_features/operator_modular_weapon/HYBRID_WEAPON_SOCKET_SYSTEM.md&quot;,
+      &quot; M design/02_features/procgen/ELEVATED_WORLD_PRESENTATION.md&quot;,
+      &quot; M design/02_features/weapons/VIGIL_PATTERN_DAGGER.md&quot;,
+      &quot; M design/05_levels/SUNDERED_KEEP_PROCGEN_FRONTAGE.md&quot;,
+      &quot;?? art_source/&quot;,
+      &quot;?? custodian/content/backgrounds/authored_underlays/&quot;,
+      &quot;?? custodian/content/sprites/_pipeline/inbox/operator__modular_head__hooded__idle_01__s__5f__96.png&quot;,
+      &quot;?? custodian/content/sprites/_pipeline/inbox/operator__modular_head__hooded__idle_01__s__5f__96.png.import&quot;,
+      &quot;?? custodian/content/sprites/_pipeline/inbox/operator__modular_upper_body__unarmed__idle_01__s__5f__96.png&quot;,
+      &quot;?? custodian/content/sprites/_pipeline/inbox/operator__modular_upper_body__unarmed__idle_01__s__5f__96.png.import&quot;,
+      &quot;?? custodian/content/sprites/_pipeline/inbox/operator__modular_upper_body__unarmed__idle_hitreact_01__s__5f__96.png&quot;,
+      &quot;?? custodian/content/sprites/_pipeline/inbox/operator__modular_upper_body__unarmed__idle_hitreact_01__s__5f__96.png.import&quot;,
+      &quot;?? custodian/docs/ai_context/task_packets/MELEE_SOFT_TARGETING_AND_RANGE_READABILITY.md&quot;,
+      &quot;?? custodian/docs/ai_context/task_packets/PROCGEN_NONWALKABLE_SURFACES.md&quot;,
+      &quot;?? custodian/docs/ai_context/task_packets/RANGED_BALLISTIC_AIM_RESOLUTION.md&quot;,
+      &quot;?? custodian/game/systems/combat/melee_target_resolver.gd&quot;,
+      &quot;?? custodian/game/systems/combat/melee_target_resolver.gd.uid&quot;,
+      &quot;?? custodian/game/systems/combat/ranged_ballistic_aim_resolver.gd&quot;,
+      &quot;?? custodian/game/systems/combat/ranged_ballistic_aim_resolver.gd.uid&quot;,
+      &quot;?? custodian/game/ui/hud/components/ranged_ballistic_pip.gd&quot;,
+      &quot;?? custodian/game/ui/hud/components/ranged_ballistic_pip.gd.uid&quot;,
+      &quot;?? custodian/game/ui/hud/components/ranged_ballistic_pip.tscn&quot;,
+      &quot;?? custodian/game/world/presentation/generated/&quot;,
+      &quot;?? custodian/game/world/procgen/terrain/nonwalkable_surface_classifier.gd&quot;,
+      &quot;?? custodian/game/world/procgen/terrain/nonwalkable_surface_classifier.gd.uid&quot;,
+      &quot;?? custodian/scenes/debug/generated/&quot;,
+      &quot;?? custodian/tools/art/operator_transfer_cloth_chest.lua&quot;,
+      &quot;?? custodian/tools/iteration/scenarios/combat/melee_soft_target_spacing.json&quot;,
+      &quot;?? custodian/tools/iteration/scenarios/combat/ranged_ballistic_alignment.json&quot;,
+      &quot;?? custodian/tools/validation/enemy_runtime_attribution_perf_bench.gd&quot;,
+      &quot;?? custodian/tools/validation/enemy_runtime_attribution_perf_bench.gd.uid&quot;,
+      &quot;?? custodian/tools/validation/melee_target_ring_readability_smoke.gd&quot;,
+      &quot;?? custodian/tools/validation/melee_target_ring_readability_smoke.gd.uid&quot;,
+      &quot;?? custodian/tools/validation/operator_melee_soft_targeting_smoke.gd&quot;,
+      &quot;?? custodian/tools/validation/operator_melee_soft_targeting_smoke.gd.uid&quot;,
+      &quot;?? custodian/tools/validation/operator_ranged_ballistic_aim_smoke.gd&quot;,
+      &quot;?? custodian/tools/validation/operator_ranged_ballistic_aim_smoke.gd.uid&quot;,
+      &quot;?? custodian/tools/validation/procgen_nonwalkable_surface_smoke.gd&quot;,
+      &quot;?? custodian/tools/validation/procgen_nonwalkable_surface_smoke.gd.uid&quot;,
+      &quot;?? custodian/tools/validation/procgen_ocean_tileset_smoke.gd&quot;,
+      &quot;?? custodian/tools/validation/procgen_ocean_tileset_smoke.gd.uid&quot;,
+      &quot;?? custodian/tools/validation/ranged_ballistic_reticle_smoke.gd&quot;,
+      &quot;?? custodian/tools/validation/ranged_ballistic_reticle_smoke.gd.uid&quot;,
+      &quot;?? design/02_features/combat_feel/MELEE_TARGETING_AND_RANGE_READABILITY.md&quot;,
+      &quot;?? design/02_features/procgen/NONWALKABLE_SURFACE_REGIONS.md&quot;,
+      &quot;?? reports/moment_forge/combat/melee_soft_target_spacing/&quot;,
+      &quot;?? reports/moment_forge/combat/ranged_ballistic_alignment/&quot;,
+      &quot;?? reports/moment_forge/vista/sundered_keep_first_reveal/20260809T022553-0400/&quot;
+    ],
+    &quot;commit&quot;: &quot;6e413eecc40d1532483c7c444bbe58bd466e15c1&quot;,
+    &quot;dirty&quot;: true,
+    &quot;root&quot;: &quot;/home/braydenchaffee/Projects/CUSTODIAN&quot;
+  },
+  &quot;runtime&quot;: {
+    &quot;godot&quot;: {
+      &quot;build&quot;: &quot;arch_linux&quot;,
+      &quot;hash&quot;: &quot;a13da4feb8d8aefc283c3763d33a2f170a18d541&quot;,
+      &quot;hex&quot;: 263937,
+      &quot;major&quot;: 4,
+      &quot;minor&quot;: 7,
+      &quot;patch&quot;: 1,
+      &quot;status&quot;: &quot;stable&quot;,
+      &quot;string&quot;: &quot;4.7.1-stable (arch_linux)&quot;,
+      &quot;timestamp&quot;: 1783976428
+    },
+    &quot;physics_hz&quot;: 60,
+    &quot;renderer&quot;: &quot;vulkan&quot;
+  },
+  &quot;scenario&quot;: {
+    &quot;id&quot;: &quot;combat/melee_soft_target_spacing&quot;,
+    &quot;path&quot;: &quot;/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/melee_soft_target_spacing/20260809T153127-0400/scenario.snapshot.json&quot;,
+    &quot;schema_version&quot;: 1,
+    &quot;sha256&quot;: &quot;99105522389899b423645ad3a04393f2085386ed4fc826313f1657727c4ac662&quot;
+  }
+}</pre></section>
+</main><script>
+const videos=[...document.querySelectorAll('video')],scrub=document.getElementById('scrub');
+document.getElementById('playBoth').onclick=()=>videos.forEach(v=>v.play());
+document.getElementById('pauseBoth').onclick=()=>videos.forEach(v=>v.pause());
+scrub.oninput=()=>videos.forEach(v=>{if(Number.isFinite(v.duration))v.currentTime=v.duration*Number(scrub.value)/1000});
+</script></body></html>

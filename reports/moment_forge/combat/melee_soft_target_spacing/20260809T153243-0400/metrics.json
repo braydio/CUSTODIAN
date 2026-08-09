@@ -1,0 +1,49 @@
+{
+  "action_count": 10,
+  "aimed_target": {
+    "position": [
+      540.0,
+      370.0
+    ]
+  },
+  "camera": {
+    "position": [
+      465.58349609375,
+      307.999877929688
+    ]
+  },
+  "completed": true,
+  "duration_ticks": 358,
+  "event_count": 10,
+  "media": {
+    "audio": {
+      "available": false
+    },
+    "baseline_audio": null,
+    "visual_diff": null
+  },
+  "near_off_aim": {
+    "position": [
+      420.0,
+      330.0
+    ]
+  },
+  "operator": {
+    "position": [
+      465.583343505859,
+      360.0
+    ]
+  },
+  "probe_sample_count": 15,
+  "stable": {
+    "completed_tick": 358,
+    "visible_visual_anchor_delta_px": 0.0,
+    "visible_visual_anchor_sample_count": 10
+  },
+  "stable_fingerprint": {
+    "algorithm": "sha256",
+    "schema": "custodian.moment_forge.stable_fingerprint.v1",
+    "value": "c7fec35ac378e66c5b7413e161c134e226c202dc2199dabbe55f52ec82d10487"
+  },
+  "warning_count": 0
+}

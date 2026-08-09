@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "id": "combat/ranged_ballistic_alignment",
+  "description": "Committed Carbine snap-fire keeps the physical weapon axis while intent reverses.",
+  "scene": "res://scenes/debug/combat_playground.tscn",
+  "seed": 104729,
+  "duration_ticks": 180,
+  "simulation": {"physics_hz": 60, "warmup_ticks": 2, "max_wall_seconds": 25, "pause_during_setup": true},
+  "capture": {"width": 1280, "height": 720, "fps": 60, "audio": true, "start_tick": 0, "end_tick": 179, "contact_sheet_ticks": [0, 68, 72, 82, 110, 160], "required_keyframes": true, "background": "opaque"},
+  "setup": {
+    "remove_nodes": ["World/Enemies/EnemyGrunt3", "World/DroneManager"],
+    "roles": {
+      "operator": {"node_path": "World/Operator"},
+      "target_a": {"node_path": "World/Enemies/EnemyGrunt1"},
+      "target_b": {"node_path": "World/Enemies/EnemyGrunt2"},
+      "camera": {"node_path": "World/Camera2D"}
+    },
+    "spawns": [],
+    "properties": [
+      {"role": "operator", "property": "global_position", "value": [420, 360]},
+      {"role": "operator", "property": "combat_loadout_mode", "value": "ranged"},
+      {"role": "operator", "property": "using_unarmed", "value": false},
+      {"role": "operator", "property": "primary_weapon_equipped", "value": true},
+      {"role": "operator", "property": "arrow_aim_enabled", "value": true},
+      {"role": "target_a", "property": "global_position", "value": [620, 330]},
+      {"role": "target_b", "property": "global_position", "value": [220, 390]}
+    ],
+    "processing": [
+      {"role": "target_a", "physics": false, "process": false},
+      {"role": "target_b", "physics": false, "process": false}
+    ],
+    "fixture": {"id": "combat_playground", "config": {"stationary_target": true}}
+  },
+  "timeline": [
+    {"tick": 4, "action": "aim_at_role", "role": "operator", "target_role": "target_a"},
+    {"tick": 8, "action": "input_press", "name": "aim_hold"},
+    {"tick": 68, "action": "input_tap", "name": "attack_primary", "hold_ticks": 1},
+    {"tick": 69, "action": "aim_at_role", "role": "operator", "target_role": "target_b"},
+    {"tick": 72, "action": "capture_marker", "name": "committed_snap_release"},
+    {"tick": 112, "action": "input_tap", "name": "attack_primary", "hold_ticks": 1},
+    {"tick": 150, "action": "input_release", "name": "aim_hold"},
+    {"tick": 178, "action": "finish"}
+  ],
+  "probes": [
+    {"id": "operator_aim", "role": "operator", "fields": ["global_position", "aim_direction", "_primary_ranged_action_direction", "visible_visual_anchor_delta_px"], "ticks": [30, 68, 72, 82, 110, 160], "required": true}
+  ],
+  "assertions": [
+    {"type": "role_exists", "role": "operator", "severity": "error"},
+    {"type": "no_unreleased_inputs", "severity": "error"},
+    {"type": "output_exists", "path": "telemetry.json", "severity": "error"},
+    {"type": "probe_compare", "probe": "operator_aim", "tick": 72, "field": "visible_visual_anchor_delta_px", "op": "lte", "value": 1.0, "severity": "error"}
+  ],
+  "stable_fingerprint": {"event_payload_fields": {"player_ranged_shot": ["accepted_aim_direction", "ballistic_direction", "final_shot_direction", "aim_error_degrees"]}, "counters": ["player_ranged_shots_fired"], "probes": ["operator_aim"], "position_quantum_px": 0.25, "float_quantum": 0.0001},
+  "tags": ["combat", "ranged", "ballistic_aim", "snap_fire", "operator_animation", "ranged_reticle"]
+}

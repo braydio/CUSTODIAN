@@ -34,6 +34,7 @@ weapon_socket_position_down = Vector2(12, -6)
 muzzle_socket_position_down = Vector2(24, 2)
 socket_data_path = "res://content/data/operator/generated/operator_weapon_sockets.generated.json"
 production_socket_data_required = true
+fine_aim_limit_degrees = 24.0
 directional_weapon_textures = {
 "e": ExtResource("tex_e"),
 "w": ExtResource("tex_w"),

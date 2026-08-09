@@ -166,6 +166,7 @@ const SECTOR_DISPLAY_NAMES := {
 @onready var supply_drop_label = get_node_or_null("SupplyDropLabel")
 @onready var crosshair_label = get_node_or_null("Crosshair")
 @onready var ranged_reticle = get_node_or_null("RangedReticle")
+@onready var ranged_ballistic_pip = get_node_or_null("RangedBallisticPip")
 @onready var interaction_label = get_node_or_null("InteractionLabel")
 @onready var minimap = get_node_or_null("Minimap")
 
@@ -1504,7 +1505,7 @@ func _process(delta):
 
 
 func _update_crosshair() -> void:
-	if crosshair_label == null and ranged_reticle == null:
+	if crosshair_label == null and ranged_reticle == null and ranged_ballistic_pip == null:
 		return
 	if _main_hud_hidden or _terminal_open or _placement_mode_active:
 		_hide_aim_reticles()
@@ -1515,6 +1516,8 @@ func _update_crosshair() -> void:
 		if bool(command_state.get("active", false)) and crosshair_label != null:
 			if ranged_reticle != null:
 				ranged_reticle.visible = false
+			if ranged_ballistic_pip != null:
+				ranged_ballistic_pip.visible = false
 			var command_world_position: Vector2 = command_state.get("world_position", Vector2.ZERO)
 			var command_screen_position := get_viewport().get_canvas_transform() * command_world_position
 			var command_size := Vector2.ZERO
@@ -1537,7 +1540,10 @@ func _update_crosshair() -> void:
 			var ranged_screen_position := _get_ranged_reticle_screen_position(weapon_status, operator_ref)
 			if ranged_screen_position != Vector2.INF:
 				ranged_reticle.position = ranged_screen_position - ranged_reticle.size * 0.5
+			_update_ranged_ballistic_pip(weapon_status)
 			return
+	if ranged_ballistic_pip != null:
+		ranged_ballistic_pip.visible = false
 	var aim_mode = str(weapon_status.get("aim_mode", "mouse"))
 	if aim_mode != "arrows":
 		if crosshair_label != null:
@@ -1604,11 +1610,43 @@ func _get_ranged_reticle_screen_position(weapon_status: Dictionary, operator_ref
 	return screen_position
 
 
+func _get_ranged_ballistic_pip_screen_position(
+	weapon_status: Dictionary
+) -> Vector2:
+	var world_position: Vector2 = weapon_status.get(
+		"ranged_predicted_world_position",
+		Vector2.INF
+	)
+	if not world_position.is_finite():
+		return Vector2.INF
+	var screen_position := get_viewport().get_canvas_transform() * world_position
+	var viewport_rect := get_viewport().get_visible_rect()
+	var margin := CROSSHAIR_SCREEN_MARGIN
+	if screen_position.x < -margin or screen_position.y < -margin \
+	or screen_position.x > viewport_rect.size.x + margin \
+	or screen_position.y > viewport_rect.size.y + margin:
+		return Vector2.INF
+	return screen_position
+
+
+func _update_ranged_ballistic_pip(weapon_status: Dictionary) -> void:
+	if ranged_ballistic_pip == null:
+		return
+	if ranged_ballistic_pip.has_method("set_weapon_status"):
+		ranged_ballistic_pip.call("set_weapon_status", weapon_status)
+	var screen_position := _get_ranged_ballistic_pip_screen_position(weapon_status)
+	ranged_ballistic_pip.visible = screen_position != Vector2.INF
+	if ranged_ballistic_pip.visible:
+		ranged_ballistic_pip.position = screen_position - ranged_ballistic_pip.size * 0.5
+
+
 func _hide_aim_reticles() -> void:
 	if crosshair_label != null:
 		crosshair_label.visible = false
 	if ranged_reticle != null:
 		ranged_reticle.visible = false
+	if ranged_ballistic_pip != null:
+		ranged_ballistic_pip.visible = false
 
 
 func _get_essential_hud_nodes() -> Array:
@@ -1664,6 +1702,8 @@ func _set_main_hud_hidden(hidden: bool) -> void:
 		crosshair_label.visible = false
 	if ranged_reticle:
 		ranged_reticle.visible = false
+	if ranged_ballistic_pip:
+		ranged_ballistic_pip.visible = false
 	_set_external_gameplay_overlays_hidden(effective_hidden)
 
 

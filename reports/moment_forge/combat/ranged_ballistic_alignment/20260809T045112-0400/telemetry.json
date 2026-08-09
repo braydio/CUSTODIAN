@@ -1,0 +1,4117 @@
+{
+	"counters": {
+		"player_ranged_fire_requests": 2,
+		"player_ranged_request_fired": 2,
+		"player_ranged_shots_fired": 2,
+		"player_ranged_trigger_samples": 2
+	},
+	"engine": {
+		"frames_per_second": 1.0,
+		"time_scale": 1.0,
+		"version": {
+			"build": "arch_linux",
+			"hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+			"hex": 263937,
+			"major": 4,
+			"minor": 7,
+			"patch": 1,
+			"status": "stable",
+			"string": "4.7.1-stable (arch_linux)",
+			"timestamp": 1783976428
+		}
+	},
+	"events": [
+		{
+			"data": {},
+			"kind": "observatory_cleared",
+			"time_msec": 3884,
+			"uptime_sec": 1.893
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "aim_at_role",
+					"role": "operator",
+					"target_role": "target_a",
+					"tick": 4.0
+				},
+				"moment_tick": 4,
+				"result": {
+					"action": "aim_at_role",
+					"ok": true,
+					"tick": 4
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 7129,
+			"uptime_sec": 5.138
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "input_press",
+					"name": "aim_hold",
+					"tick": 8.0
+				},
+				"moment_tick": 8,
+				"result": {
+					"action": "input_press",
+					"ok": true,
+					"tick": 8
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 11128,
+			"uptime_sec": 9.137
+		},
+		{
+			"data": {
+				"from": "ARMED",
+				"to": "CAPTURING"
+			},
+			"kind": "performance_incident_state_changed",
+			"time_msec": 32144,
+			"uptime_sec": 30.153
+		},
+		{
+			"data": {
+				"phase": "baseline",
+				"preroll_samples": 30,
+				"trigger": "automatic"
+			},
+			"kind": "performance_incident_started",
+			"time_msec": 32145,
+			"uptime_sec": 30.154
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "input_tap",
+					"hold_ticks": 1.0,
+					"name": "attack_primary",
+					"tick": 68.0
+				},
+				"moment_tick": 68,
+				"result": {
+					"action": "input_tap",
+					"ok": true,
+					"tick": 68
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 71161,
+			"uptime_sec": 69.17
+		},
+		{
+			"data": {
+				"event_id": "fire",
+				"weapon": "carbine_mk1"
+			},
+			"kind": "player_weapon_feedback",
+			"time_msec": 71167,
+			"uptime_sec": 69.176
+		},
+		{
+			"data": {
+				"accepted_aim_direction": {
+					"x": 0.988936364650726,
+					"y": -0.148340448737144
+				},
+				"aim_error_degrees": 37.6108542972468,
+				"ballistic_direction": {
+					"x": 0.899673700332642,
+					"y": -0.436562925577164
+				},
+				"damage": 11.0,
+				"direction": {
+					"x": 0.900876462459564,
+					"y": -0.434075623750687
+				},
+				"final_shot_direction": {
+					"x": 0.900876462459564,
+					"y": -0.434075623750687
+				},
+				"loaded_ammo": 23,
+				"muzzle": {
+					"x": 450.162567138672,
+					"y": 327.363739013672
+				},
+				"position": {
+					"x": 420.0,
+					"y": 360.0
+				},
+				"predicted_impact": {
+					"x": 522.402954101562,
+					"y": 292.309387207031
+				},
+				"radius": 3.0,
+				"reserve_ammo": 48,
+				"speed": 900.0,
+				"spread_deg": 2.38,
+				"weapon": "carbine_mk1"
+			},
+			"kind": "player_ranged_shot",
+			"time_msec": 71169,
+			"uptime_sec": 69.178
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "aim_at_role",
+					"role": "operator",
+					"target_role": "target_b",
+					"tick": 69.0
+				},
+				"moment_tick": 69,
+				"result": {
+					"action": "aim_at_role",
+					"ok": true,
+					"tick": 69
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 73144,
+			"uptime_sec": 71.153
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "capture_marker",
+					"name": "committed_snap_release",
+					"tick": 72.0
+				},
+				"moment_tick": 72,
+				"result": {
+					"action": "capture_marker",
+					"ok": true,
+					"tick": 72
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 75159,
+			"uptime_sec": 73.168
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "input_tap",
+					"hold_ticks": 1.0,
+					"name": "attack_primary",
+					"tick": 112.0
+				},
+				"moment_tick": 112,
+				"result": {
+					"action": "input_tap",
+					"ok": true,
+					"tick": 112
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 115176,
+			"uptime_sec": 113.185
+		},
+		{
+			"data": {
+				"event_id": "fire",
+				"weapon": "carbine_mk1"
+			},
+			"kind": "player_weapon_feedback",
+			"time_msec": 115181,
+			"uptime_sec": 113.19
+		},
+		{
+			"data": {
+				"accepted_aim_direction": {
+					"x": -0.988936364650726,
+					"y": 0.148340448737144
+				},
+				"aim_error_degrees": 36.3691657941607,
+				"ballistic_direction": {
+					"x": -0.988166272640228,
+					"y": -0.153386637568474
+				},
+				"damage": 11.0,
+				"direction": {
+					"x": -0.981540322303772,
+					"y": -0.191255390644073
+				},
+				"final_shot_direction": {
+					"x": -0.981540322303772,
+					"y": -0.191255390644073
+				},
+				"loaded_ammo": 22,
+				"muzzle": {
+					"x": 386.870635986328,
+					"y": 336.857543945312
+				},
+				"position": {
+					"x": 420.0,
+					"y": 360.0
+				},
+				"predicted_impact": {
+					"x": 302.55419921875,
+					"y": 323.769653320312
+				},
+				"radius": 3.0,
+				"reserve_ammo": 48,
+				"speed": 900.0,
+				"spread_deg": 2.38,
+				"weapon": "carbine_mk1"
+			},
+			"kind": "player_ranged_shot",
+			"time_msec": 115182,
+			"uptime_sec": 113.191
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "input_release",
+					"name": "aim_hold",
+					"tick": 150.0
+				},
+				"moment_tick": 150,
+				"result": {
+					"action": "input_release",
+					"ok": true,
+					"tick": 150
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 153182,
+			"uptime_sec": 151.191
+		},
+		{
+			"data": {
+				"authored_action": {
+					"action": "finish",
+					"tick": 178.0
+				},
+				"moment_tick": 178,
+				"result": {
+					"action": "finish",
+					"finish": true,
+					"ok": true,
+					"tick": 178
+				}
+			},
+			"kind": "moment_forge_action",
+			"time_msec": 181195,
+			"uptime_sec": 179.204
+		},
+		{
+			"data": {
+				"from": "CAPTURING",
+				"to": "DEGRADED_LATCHED"
+			},
+			"kind": "performance_incident_state_changed",
+			"time_msec": 181196,
+			"uptime_sec": 179.205
+		},
+		{
+			"data": {
+				"reason": "manual",
+				"samples": 177,
+				"worst_frames": 20
+			},
+			"kind": "performance_incident_stopped",
+			"time_msec": 181196,
+			"uptime_sec": 179.205
+		}
+	],
+	"export_path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/ranged_ballistic_alignment/20260809T045112-0400/telemetry.json",
+	"exported_at": "2026-08-09 04:54:13",
+	"gauges": {
+		"active_combat_audio": 0,
+		"active_enemies": 2,
+		"active_projectiles": 0,
+		"active_vfx": 0,
+		"ambient_critters": 0,
+		"collision_shape_count": 9,
+		"collision_shape_count_enemies": 2,
+		"collision_shape_count_foliage": 0,
+		"collision_shape_count_peak": 9,
+		"collision_shape_count_projectiles": 0,
+		"collision_shape_count_ruin_props": 0,
+		"collision_shape_count_runtime_walls": 0,
+		"corpse_enemies": 0,
+		"director_behavior_agents": 2,
+		"enemy_behavior_sample": {
+			"blackboard": {
+				"alerted": false,
+				"ambient_activity": "none",
+				"ambient_anchor": "",
+				"camp_id": "",
+				"carried_resources": {},
+				"carrying_loot": false,
+				"investigation_position": {
+					"x": 0.0,
+					"y": 0.0
+				},
+				"last_known_operator_position": {
+					"x": 0.0,
+					"y": 0.0
+				},
+				"morale": 100.0,
+				"objective_type": "none",
+				"pursuit_timer": 0.0,
+				"scores": {},
+				"search_timer": 0.0,
+				"suspicious": false,
+				"target_visible": false
+			},
+			"detection": 0.0,
+			"enabled": true,
+			"profile_id": "raider_grunt",
+			"state": "idle",
+			"state_time": 0.0
+		},
+		"enemy_tier_active": 2,
+		"enemy_tier_active_physics_enabled": 0,
+		"enemy_tier_background": 0,
+		"enemy_tier_background_physics_enabled": 0,
+		"enemy_tier_dormant": 0,
+		"enemy_tier_dormant_physics_enabled": 0,
+		"enemy_tier_nearby": 0,
+		"enemy_tier_nearby_physics_enabled": 0,
+		"field_patch_active": false,
+		"field_patches_max": 2,
+		"field_patches_remaining": 1,
+		"fps": 1.0,
+		"heat_player_presence_cells": 1,
+		"heatmap_cells": 2,
+		"heatmap_samples": 7,
+		"interest_active": 2,
+		"interest_background": 0,
+		"interest_dormant": 0,
+		"interest_nearby": 0,
+		"legacy_combat_agents": 0,
+		"legacy_enemy_sample": {
+			"blackboard": {
+				"alerted": false,
+				"ambient_activity": "none",
+				"ambient_anchor": "",
+				"camp_id": "",
+				"carried_resources": {},
+				"carrying_loot": false,
+				"investigation_position": {
+					"x": 0.0,
+					"y": 0.0
+				},
+				"last_known_operator_position": {
+					"x": 0.0,
+					"y": 0.0
+				},
+				"morale": 100.0,
+				"objective_type": "none",
+				"pursuit_timer": 0.0,
+				"scores": {},
+				"search_timer": 0.0,
+				"suspicious": false,
+				"target_visible": false
+			},
+			"detection": 0.0,
+			"enabled": true,
+			"profile_id": "raider_grunt",
+			"state": "idle",
+			"state_time": 0.0
+		},
+		"living_enemies": 2,
+		"loaded_procgen_root_count": 0,
+		"loaded_world_branch_count": 0,
+		"node_class_histogram": {
+			"AnimatedSprite2D": 16,
+			"Area2D": 2,
+			"AudioStreamPlayer": 1,
+			"AudioStreamPlayer2D": 4,
+			"Button": 2,
+			"Camera2D": 1,
+			"Camera3D": 1,
+			"CanvasLayer": 5,
+			"CharacterBody2D": 3,
+			"CollisionShape2D": 9,
+			"ColorRect": 5,
+			"Control": 5,
+			"DirectionalLight3D": 1,
+			"HBoxContainer": 3,
+			"Label": 11,
+			"LineEdit": 2,
+			"MarginContainer": 4,
+			"Marker2D": 6,
+			"MeshInstance3D": 1,
+			"Node": 38,
+			"Node2D": 17,
+			"Node3D": 1,
+			"Panel": 4,
+			"PanelContainer": 1,
+			"Polygon2D": 1,
+			"ProgressBar": 3,
+			"RichTextLabel": 3,
+			"ScrollContainer": 6,
+			"Sprite2D": 6,
+			"StaticBody2D": 4,
+			"SubViewport": 1,
+			"TabContainer": 1,
+			"VBoxContainer": 3,
+			"Window": 1,
+			"WorldEnvironment": 1
+		},
+		"node_count": 173,
+		"node_count_collision": 18,
+		"node_count_peak": 173,
+		"node_count_procgen": 0,
+		"node_count_props": 1,
+		"node_count_ui": 58,
+		"node_count_vfx": 1,
+		"node_count_world": 84,
+		"observatory_full_tree_scan_count": 1,
+		"observatory_scan_usec": 1213,
+		"performance_draw_calls": 18,
+		"performance_frame_ms_average": 990.080204419497,
+		"performance_frame_ms_current": 1010.26300048828,
+		"performance_frame_ms_p95": 1021.80902099609,
+		"performance_frame_ms_p99": 1040.25305175781,
+		"performance_frame_ms_worst": 1973.411,
+		"performance_frame_sample_count": 177,
+		"performance_hitch_count": 177,
+		"performance_incident_auto_trigger_count": 1,
+		"performance_incident_external_stall_count": 0,
+		"performance_incident_manual_trigger_count": 0,
+		"performance_incident_rearm_progress_sec": 0.0,
+		"performance_incident_state": "DEGRADED_LATCHED",
+		"performance_physics_ms": 4.07,
+		"performance_process_ms": 935.392,
+		"performance_rendered_objects": 18,
+		"performance_severe_hitch_count": 176,
+		"physics_body_count": 7,
+		"physics_body_count_foliage": 0,
+		"physics_body_count_peak": 7,
+		"physics_body_count_ruin_props": 0,
+		"physics_body_count_runtime_walls": 0,
+		"physics_process_enabled_node_count": 1,
+		"player_active_weapon_id": "carbine_mk1",
+		"player_active_weapon_state_key": "carbine_mk1",
+		"player_alive": true,
+		"player_ammo_per_shot": 1,
+		"player_dead": false,
+		"player_health": 100.0,
+		"player_last_live_loaded_ammo": 22,
+		"player_last_live_reserve_ammo": 48,
+		"player_last_live_stamina": 100.0,
+		"player_last_live_weapon_id": "carbine_mk1",
+		"player_loaded_ammo": 22,
+		"player_magazine_capacity": 24,
+		"player_material": "unknown",
+		"player_material_footstep_noise_mult": 1.0,
+		"player_max_health": 100.0,
+		"player_position": {
+			"x": 420,
+			"y": 360
+		},
+		"player_ranged_aim_error_degrees": 36.3691657941607,
+		"player_ranged_ballistic_alignment_ratio": 0.0,
+		"player_ranged_ballistic_obstructed": 0,
+		"player_ranged_requests_pending": 0,
+		"player_reclaim_active": 0.0,
+		"player_reclaim_packet_count": 0,
+		"player_reclaim_window_remaining": 0.0,
+		"player_recoil": 0.45,
+		"player_reserve_ammo": 48,
+		"player_sprinting": false,
+		"player_stamina": 100.0,
+		"player_stamina_max": 100.0,
+		"player_weapon_heat": 0.0,
+		"player_weapon_overheated": false,
+		"process_enabled_node_count": 21,
+		"procgen_reveal_queue": 0,
+		"top_level_subtree_counts": {
+			"ARRNManager": 1,
+			"BuildInventory": 1,
+			"CognitiveState": 1,
+			"CommandRegistry": 1,
+			"DebugBus": 1,
+			"DebugConsoleLayer": 8,
+			"DebugCore": 1,
+			"DebugSnapshotCollector": 1,
+			"DevConsole": 12,
+			"DevMode": 3,
+			"DevObservatory": 1,
+			"DevObservatoryOverlay": 4,
+			"EnemyEngagementCoordinator": 1,
+			"FabPipeline": 1,
+			"GameConsoleManager": 1,
+			"GameRoot": 118,
+			"GameState": 1,
+			"GameStats": 1,
+			"InfrastructureRegistry": 1,
+			"InventoryManager": 1,
+			"MaterialIntelligence": 1,
+			"MusicManager": 2,
+			"NoiseEventBus": 1,
+			"ResourceLedger": 1,
+			"SectorHeatmap": 1,
+			"SimulationInterestManager": 1,
+			"VaultManager": 1,
+			"WorldEventMemory": 1,
+			"WorldHistory": 1,
+			"WorldStateGraph": 1,
+			"_mcp_game_helper": 1,
+			"root": 1
+		},
+		"uptime_sec": 179.21
+	},
+	"heatmap": {
+		"cell_count": 2,
+		"cell_size_px": 64.0,
+		"cells": {
+			"6,5": {
+				"by_type": {
+					"presence": 5.0,
+					"shot_fired": 1.0
+				},
+				"cell": {
+					"x": 6,
+					"y": 5
+				},
+				"first_seen_sec": 28.148,
+				"last_seen_sec": 152.198,
+				"sample_count": 6,
+				"total": 6.0,
+				"world": {
+					"x": 384.0,
+					"y": 320.0
+				}
+			},
+			"7,5": {
+				"by_type": {
+					"shot_fired": 1.0
+				},
+				"cell": {
+					"x": 7,
+					"y": 5
+				},
+				"first_seen_sec": 69.178,
+				"last_seen_sec": 69.178,
+				"sample_count": 1,
+				"total": 1.0,
+				"world": {
+					"x": 448.0,
+					"y": 320.0
+				}
+			}
+		},
+		"event_type_counts": {
+			"presence": 5.0,
+			"shot_fired": 2.0
+		},
+		"schema": "custodian.sector_heatmap.v1",
+		"total_samples": 7
+	},
+	"material_intelligence": {
+		"contact_counts_by_kind": {},
+		"contact_counts_by_material": {},
+		"default_cell_size_px": 64.0,
+		"material_counts": {},
+		"override_cell_count": 0,
+		"schema": "custodian.material_intelligence.summary.v1",
+		"total_contacts": 0
+	},
+	"metadata": {
+		"project_name": "CUSTODIAN",
+		"project_version": ""
+	},
+	"performance": {
+		"frame_ms_average": 990.080204419497,
+		"frame_ms_current": 1010.26300048828,
+		"frame_ms_p95": 1021.80902099609,
+		"frame_ms_p99": 1040.25305175781,
+		"frame_ms_worst": 1973.411,
+		"hitch_count": 177,
+		"incident_active": false,
+		"incident_phase": "baseline",
+		"incident_sample_count": 177,
+		"sample_capacity": 600,
+		"sample_count": 177,
+		"severe_hitch_count": 176
+	},
+	"performance_incident": {
+		"aggregate_spans": {
+			"operator_animation_sync": {
+				"count": 21,
+				"max_usec": 3,
+				"total_usec": 50
+			}
+		},
+		"deltas": {
+			"active_audio_delta": 0,
+			"active_audio_players_delta": 0,
+			"active_vfx_delta": 0,
+			"corpse_enemies_delta": 0,
+			"draw_calls_delta": 0,
+			"living_enemies_delta": 0,
+			"node_count_delta": 0,
+			"rendered_objects_delta": 0
+		},
+		"end_snapshot": {
+			"application_focused": false,
+			"gauges": {
+				"active_projectiles": 0,
+				"heat_player_presence_cells": 1,
+				"interest_active": 2,
+				"interest_background": 0,
+				"interest_dormant": 0,
+				"interest_nearby": 0,
+				"performance_incident_state": "CAPTURING",
+				"player_loaded_ammo": 22,
+				"player_ranged_aim_error_degrees": 36.3691657941607,
+				"player_ranged_ballistic_alignment_ratio": 0.0,
+				"player_ranged_ballistic_obstructed": 0,
+				"player_ranged_requests_pending": 0,
+				"player_reclaim_active": 0.0,
+				"player_reclaim_packet_count": 0,
+				"player_reclaim_window_remaining": 0.0,
+				"player_recoil": 0.45,
+				"player_reserve_ammo": 48
+			},
+			"overlay_visible": false,
+			"time_scale": 1.0,
+			"tree_paused": false,
+			"uptime_sec": 179.205
+		},
+		"ended_uptime_sec": 179.205,
+		"external_stalls": [],
+		"lifetime_deltas": {
+			"active_audio_delta": 0,
+			"active_audio_players_delta": 0,
+			"active_vfx_delta": 0,
+			"corpse_enemies_delta": 0,
+			"draw_calls_delta": 0,
+			"living_enemies_delta": 0,
+			"node_count_delta": 0,
+			"rendered_objects_delta": 0
+		},
+		"likely_owner": {
+			"classification": "unclassified — inspect worst-frame spans",
+			"evidence": [
+				{
+					"count": 21,
+					"max_ms": 0.003,
+					"name": "operator_animation_sync",
+					"total_ms": 0.05
+				}
+			]
+		},
+		"phase_snapshots": [
+			{
+				"deltas": {},
+				"gauges": {
+					"heat_player_presence_cells": 1,
+					"interest_active": 2,
+					"interest_background": 0,
+					"interest_dormant": 0,
+					"interest_nearby": 0,
+					"performance_incident_state": "CAPTURING",
+					"player_ranged_aim_error_degrees": 37.5278575680619,
+					"player_ranged_ballistic_alignment_ratio": 0.0,
+					"player_ranged_ballistic_obstructed": 0,
+					"player_reclaim_active": 0.0,
+					"player_reclaim_packet_count": 0,
+					"player_reclaim_window_remaining": 0.0
+				},
+				"phase": "baseline",
+				"uptime_sec": 30.154
+			}
+		],
+		"phase_summaries": {
+			"baseline": {
+				"average_ms": 0.0,
+				"p95_ms": 0.0,
+				"p99_ms": 0.0,
+				"physics_ms": 738.83,
+				"process_ms": 164783.829,
+				"unaccounted_ms": 0.0
+			}
+		},
+		"samples_dropped": 0,
+		"samples_retained": 177,
+		"schema": "custodian.dev_observatory.performance_incident.v1",
+		"start_snapshot": {
+			"application_focused": false,
+			"gauges": {
+				"heat_player_presence_cells": 1,
+				"interest_active": 2,
+				"interest_background": 0,
+				"interest_dormant": 0,
+				"interest_nearby": 0,
+				"performance_incident_state": "CAPTURING",
+				"player_ranged_aim_error_degrees": 37.5278575680619,
+				"player_ranged_ballistic_alignment_ratio": 0.0,
+				"player_ranged_ballistic_obstructed": 0,
+				"player_reclaim_active": 0.0,
+				"player_reclaim_packet_count": 0,
+				"player_reclaim_window_remaining": 0.0
+			},
+			"overlay_visible": false,
+			"time_scale": 1.0,
+			"tree_paused": false,
+			"uptime_sec": 30.154
+		},
+		"started_uptime_sec": 30.153,
+		"state": "DEGRADED_LATCHED",
+		"summary": {
+			"frame_ms_average": 990.080204419497,
+			"frame_ms_p95": 1021.80902099609,
+			"frame_ms_p99": 1040.25305175781,
+			"frame_ms_worst": 1973.41101074219,
+			"hitch_count": 177,
+			"sample_count": 177,
+			"severe_hitch_count": 176
+		},
+		"top_spans": [
+			{
+				"count": 21,
+				"max_ms": 0.003,
+				"name": "operator_animation_sync",
+				"total_ms": 0.05
+			}
+		],
+		"trigger": "automatic",
+		"worst_frames": [
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": false,
+				"corpse_enemies": 0,
+				"draw_calls": 18,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 212,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 4.095,
+				"process_ms": 1.481,
+				"recent_transition_events": [
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 32144,
+						"uptime_sec": 30.153
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_press",
+								"name": "aim_hold",
+								"tick": 8.0
+							},
+							"moment_tick": 8,
+							"result": {
+								"action": "input_press",
+								"ok": true,
+								"tick": 8
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11128,
+						"uptime_sec": 9.137
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "target_a",
+								"tick": 4.0
+							},
+							"moment_tick": 4,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 4
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 7129,
+						"uptime_sec": 5.138
+					},
+					{
+						"data": {},
+						"kind": "observatory_cleared",
+						"time_msec": 3884,
+						"uptime_sec": 1.893
+					}
+				],
+				"rendered_objects": 18,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 1967.835,
+				"uptime_sec": 4.139,
+				"wall_frame_ms": 1973.411
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 1,
+				"active_vfx": 0,
+				"application_focused": false,
+				"corpse_enemies": 0,
+				"draw_calls": 23,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 215,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 4.083,
+				"process_ms": 989.408,
+				"recent_transition_events": [
+					{
+						"data": {
+							"authored_action": {
+								"action": "capture_marker",
+								"name": "committed_snap_release",
+								"tick": 72.0
+							},
+							"moment_tick": 72,
+							"result": {
+								"action": "capture_marker",
+								"ok": true,
+								"tick": 72
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 75159,
+						"uptime_sec": 73.168
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "target_b",
+								"tick": 69.0
+							},
+							"moment_tick": 69,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 69
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 73144,
+						"uptime_sec": 71.153
+					},
+					{
+						"data": {
+							"accepted_aim_direction": {
+								"x": 0.988936364650726,
+								"y": -0.148340448737144
+							},
+							"aim_error_degrees": 37.6108542972468,
+							"ballistic_direction": {
+								"x": 0.899673700332642,
+								"y": -0.436562925577164
+							},
+							"damage": 11.0,
+							"direction": {
+								"x": 0.900876462459564,
+								"y": -0.434075623750687
+							},
+							"final_shot_direction": {
+								"x": 0.900876462459564,
+								"y": -0.434075623750687
+							},
+							"loaded_ammo": 23,
+							"muzzle": {
+								"x": 450.162567138672,
+								"y": 327.363739013672
+							},
+							"position": {
+								"x": 420.0,
+								"y": 360.0
+							},
+							"predicted_impact": {
+								"x": 522.402954101562,
+								"y": 292.309387207031
+							},
+							"radius": 3.0,
+							"reserve_ammo": 48,
+							"speed": 900.0,
+							"spread_deg": 2.38,
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_ranged_shot",
+						"time_msec": 71169,
+						"uptime_sec": 69.178
+					},
+					{
+						"data": {
+							"event_id": "fire",
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_weapon_feedback",
+						"time_msec": 71167,
+						"uptime_sec": 69.176
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "attack_primary",
+								"tick": 68.0
+							},
+							"moment_tick": 68,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 68
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 71161,
+						"uptime_sec": 69.17
+					},
+					{
+						"data": {
+							"phase": "baseline",
+							"preroll_samples": 30,
+							"trigger": "automatic"
+						},
+						"kind": "performance_incident_started",
+						"time_msec": 32145,
+						"uptime_sec": 30.154
+					},
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 32144,
+						"uptime_sec": 30.153
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_press",
+								"name": "aim_hold",
+								"tick": 8.0
+							},
+							"moment_tick": 8,
+							"result": {
+								"action": "input_press",
+								"ok": true,
+								"tick": 8
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11128,
+						"uptime_sec": 9.137
+					}
+				],
+				"rendered_objects": 309,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {
+					"operator_animation_sync": {
+						"count": 1,
+						"max_usec": 3,
+						"total_usec": 3
+					}
+				},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [
+					{
+						"count": 1,
+						"max_ms": 0.003,
+						"name": "operator_animation_sync",
+						"total_ms": 0.003
+					}
+				],
+				"tree_paused": false,
+				"unaccounted_ms": 46.762,
+				"uptime_sec": 85.202,
+				"wall_frame_ms": 1040.253
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": false,
+				"corpse_enemies": 0,
+				"draw_calls": 18,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 212,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 4.105,
+				"process_ms": 953.667,
+				"recent_transition_events": [
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 32144,
+						"uptime_sec": 30.153
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_press",
+								"name": "aim_hold",
+								"tick": 8.0
+							},
+							"moment_tick": 8,
+							"result": {
+								"action": "input_press",
+								"ok": true,
+								"tick": 8
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11128,
+						"uptime_sec": 9.137
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "target_a",
+								"tick": 4.0
+							},
+							"moment_tick": 4,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 4
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 7129,
+						"uptime_sec": 5.138
+					},
+					{
+						"data": {},
+						"kind": "observatory_cleared",
+						"time_msec": 3884,
+						"uptime_sec": 1.893
+					}
+				],
+				"rendered_objects": 18,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 71.014,
+				"uptime_sec": 6.171,
+				"wall_frame_ms": 1028.786
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": false,
+				"corpse_enemies": 0,
+				"draw_calls": 22,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 212,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 4.164,
+				"process_ms": 951.867,
+				"recent_transition_events": [
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 32144,
+						"uptime_sec": 30.153
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_press",
+								"name": "aim_hold",
+								"tick": 8.0
+							},
+							"moment_tick": 8,
+							"result": {
+								"action": "input_press",
+								"ok": true,
+								"tick": 8
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11128,
+						"uptime_sec": 9.137
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "target_a",
+								"tick": 4.0
+							},
+							"moment_tick": 4,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 4
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 7129,
+						"uptime_sec": 5.138
+					},
+					{
+						"data": {},
+						"kind": "observatory_cleared",
+						"time_msec": 3884,
+						"uptime_sec": 1.893
+					}
+				],
+				"rendered_objects": 308,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 71.2950000000001,
+				"uptime_sec": 16.176,
+				"wall_frame_ms": 1027.326
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 1,
+				"active_vfx": 0,
+				"application_focused": false,
+				"corpse_enemies": 0,
+				"draw_calls": 23,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 217,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 4.175,
+				"process_ms": 976.245,
+				"recent_transition_events": [
+					{
+						"data": {
+							"authored_action": {
+								"action": "capture_marker",
+								"name": "committed_snap_release",
+								"tick": 72.0
+							},
+							"moment_tick": 72,
+							"result": {
+								"action": "capture_marker",
+								"ok": true,
+								"tick": 72
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 75159,
+						"uptime_sec": 73.168
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "target_b",
+								"tick": 69.0
+							},
+							"moment_tick": 69,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 69
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 73144,
+						"uptime_sec": 71.153
+					},
+					{
+						"data": {
+							"accepted_aim_direction": {
+								"x": 0.988936364650726,
+								"y": -0.148340448737144
+							},
+							"aim_error_degrees": 37.6108542972468,
+							"ballistic_direction": {
+								"x": 0.899673700332642,
+								"y": -0.436562925577164
+							},
+							"damage": 11.0,
+							"direction": {
+								"x": 0.900876462459564,
+								"y": -0.434075623750687
+							},
+							"final_shot_direction": {
+								"x": 0.900876462459564,
+								"y": -0.434075623750687
+							},
+							"loaded_ammo": 23,
+							"muzzle": {
+								"x": 450.162567138672,
+								"y": 327.363739013672
+							},
+							"position": {
+								"x": 420.0,
+								"y": 360.0
+							},
+							"predicted_impact": {
+								"x": 522.402954101562,
+								"y": 292.309387207031
+							},
+							"radius": 3.0,
+							"reserve_ammo": 48,
+							"speed": 900.0,
+							"spread_deg": 2.38,
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_ranged_shot",
+						"time_msec": 71169,
+						"uptime_sec": 69.178
+					},
+					{
+						"data": {
+							"event_id": "fire",
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_weapon_feedback",
+						"time_msec": 71167,
+						"uptime_sec": 69.176
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "attack_primary",
+								"tick": 68.0
+							},
+							"moment_tick": 68,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 68
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 71161,
+						"uptime_sec": 69.17
+					},
+					{
+						"data": {
+							"phase": "baseline",
+							"preroll_samples": 30,
+							"trigger": "automatic"
+						},
+						"kind": "performance_incident_started",
+						"time_msec": 32145,
+						"uptime_sec": 30.154
+					},
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 32144,
+						"uptime_sec": 30.153
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_press",
+								"name": "aim_hold",
+								"tick": 8.0
+							},
+							"moment_tick": 8,
+							"result": {
+								"action": "input_press",
+								"ok": true,
+								"tick": 8
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11128,
+						"uptime_sec": 9.137
+					}
+				],
+				"rendered_objects": 273,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {
+					"operator_animation_sync": {
+						"count": 1,
+						"max_usec": 2,
+						"total_usec": 2
+					}
+				},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [
+					{
+						"count": 1,
+						"max_ms": 0.002,
+						"name": "operator_animation_sync",
+						"total_ms": 0.002
+					}
+				],
+				"tree_paused": false,
+				"unaccounted_ms": 45.755,
+				"uptime_sec": 75.204,
+				"wall_frame_ms": 1026.175
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": false,
+				"corpse_enemies": 0,
+				"draw_calls": 23,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 212,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 3.97,
+				"process_ms": 952.043,
+				"recent_transition_events": [
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_release",
+								"name": "aim_hold",
+								"tick": 150.0
+							},
+							"moment_tick": 150,
+							"result": {
+								"action": "input_release",
+								"ok": true,
+								"tick": 150
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 153182,
+						"uptime_sec": 151.191
+					},
+					{
+						"data": {
+							"accepted_aim_direction": {
+								"x": -0.988936364650726,
+								"y": 0.148340448737144
+							},
+							"aim_error_degrees": 36.3691657941607,
+							"ballistic_direction": {
+								"x": -0.988166272640228,
+								"y": -0.153386637568474
+							},
+							"damage": 11.0,
+							"direction": {
+								"x": -0.981540322303772,
+								"y": -0.191255390644073
+							},
+							"final_shot_direction": {
+								"x": -0.981540322303772,
+								"y": -0.191255390644073
+							},
+							"loaded_ammo": 22,
+							"muzzle": {
+								"x": 386.870635986328,
+								"y": 336.857543945312
+							},
+							"position": {
+								"x": 420.0,
+								"y": 360.0
+							},
+							"predicted_impact": {
+								"x": 302.55419921875,
+								"y": 323.769653320312
+							},
+							"radius": 3.0,
+							"reserve_ammo": 48,
+							"speed": 900.0,
+							"spread_deg": 2.38,
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_ranged_shot",
+						"time_msec": 115182,
+						"uptime_sec": 113.191
+					},
+					{
+						"data": {
+							"event_id": "fire",
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_weapon_feedback",
+						"time_msec": 115181,
+						"uptime_sec": 113.19
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "attack_primary",
+								"tick": 112.0
+							},
+							"moment_tick": 112,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 112
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 115176,
+						"uptime_sec": 113.185
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "capture_marker",
+								"name": "committed_snap_release",
+								"tick": 72.0
+							},
+							"moment_tick": 72,
+							"result": {
+								"action": "capture_marker",
+								"ok": true,
+								"tick": 72
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 75159,
+						"uptime_sec": 73.168
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "target_b",
+								"tick": 69.0
+							},
+							"moment_tick": 69,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 69
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 73144,
+						"uptime_sec": 71.153
+					},
+					{
+						"data": {
+							"accepted_aim_direction": {
+								"x": 0.988936364650726,
+								"y": -0.148340448737144
+							},
+							"aim_error_degrees": 37.6108542972468,
+							"ballistic_direction": {
+								"x": 0.899673700332642,
+								"y": -0.436562925577164
+							},
+							"damage": 11.0,
+							"direction": {
+								"x": 0.900876462459564,
+								"y": -0.434075623750687
+							},
+							"final_shot_direction": {
+								"x": 0.900876462459564,
+								"y": -0.434075623750687
+							},
+							"loaded_ammo": 23,
+							"muzzle": {
+								"x": 450.162567138672,
+								"y": 327.363739013672
+							},
+							"position": {
+								"x": 420.0,
+								"y": 360.0
+							},
+							"predicted_impact": {
+								"x": 522.402954101562,
+								"y": 292.309387207031
+							},
+							"radius": 3.0,
+							"reserve_ammo": 48,
+							"speed": 900.0,
+							"spread_deg": 2.38,
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_ranged_shot",
+						"time_msec": 71169,
+						"uptime_sec": 69.178
+					},
+					{
+						"data": {
+							"event_id": "fire",
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_weapon_feedback",
+						"time_msec": 71167,
+						"uptime_sec": 69.176
+					}
+				],
+				"rendered_objects": 309,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 69.1639999999999,
+				"uptime_sec": 158.215,
+				"wall_frame_ms": 1025.177
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 1,
+				"active_vfx": 0,
+				"application_focused": false,
+				"corpse_enemies": 0,
+				"draw_calls": 23,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 215,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 4.774,
+				"process_ms": 951.86,
+				"recent_transition_events": [
+					{
+						"data": {
+							"accepted_aim_direction": {
+								"x": -0.988936364650726,
+								"y": 0.148340448737144
+							},
+							"aim_error_degrees": 36.3691657941607,
+							"ballistic_direction": {
+								"x": -0.988166272640228,
+								"y": -0.153386637568474
+							},
+							"damage": 11.0,
+							"direction": {
+								"x": -0.981540322303772,
+								"y": -0.191255390644073
+							},
+							"final_shot_direction": {
+								"x": -0.981540322303772,
+								"y": -0.191255390644073
+							},
+							"loaded_ammo": 22,
+							"muzzle": {
+								"x": 386.870635986328,
+								"y": 336.857543945312
+							},
+							"position": {
+								"x": 420.0,
+								"y": 360.0
+							},
+							"predicted_impact": {
+								"x": 302.55419921875,
+								"y": 323.769653320312
+							},
+							"radius": 3.0,
+							"reserve_ammo": 48,
+							"speed": 900.0,
+							"spread_deg": 2.38,
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_ranged_shot",
+						"time_msec": 115182,
+						"uptime_sec": 113.191
+					},
+					{
+						"data": {
+							"event_id": "fire",
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_weapon_feedback",
+						"time_msec": 115181,
+						"uptime_sec": 113.19
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "attack_primary",
+								"tick": 112.0
+							},
+							"moment_tick": 112,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 112
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 115176,
+						"uptime_sec": 113.185
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "capture_marker",
+								"name": "committed_snap_release",
+								"tick": 72.0
+							},
+							"moment_tick": 72,
+							"result": {
+								"action": "capture_marker",
+								"ok": true,
+								"tick": 72
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 75159,
+						"uptime_sec": 73.168
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "target_b",
+								"tick": 69.0
+							},
+							"moment_tick": 69,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 69
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 73144,
+						"uptime_sec": 71.153
+					},
+					{
+						"data": {
+							"accepted_aim_direction": {
+								"x": 0.988936364650726,
+								"y": -0.148340448737144
+							},
+							"aim_error_degrees": 37.6108542972468,
+							"ballistic_direction": {
+								"x": 0.899673700332642,
+								"y": -0.436562925577164
+							},
+							"damage": 11.0,
+							"direction": {
+								"x": 0.900876462459564,
+								"y": -0.434075623750687
+							},
+							"final_shot_direction": {
+								"x": 0.900876462459564,
+								"y": -0.434075623750687
+							},
+							"loaded_ammo": 23,
+							"muzzle": {
+								"x": 450.162567138672,
+								"y": 327.363739013672
+							},
+							"position": {
+								"x": 420.0,
+								"y": 360.0
+							},
+							"predicted_impact": {
+								"x": 522.402954101562,
+								"y": 292.309387207031
+							},
+							"radius": 3.0,
+							"reserve_ammo": 48,
+							"speed": 900.0,
+							"spread_deg": 2.38,
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_ranged_shot",
+						"time_msec": 71169,
+						"uptime_sec": 69.178
+					},
+					{
+						"data": {
+							"event_id": "fire",
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_weapon_feedback",
+						"time_msec": 71167,
+						"uptime_sec": 69.176
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "attack_primary",
+								"tick": 68.0
+							},
+							"moment_tick": 68,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 68
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 71161,
+						"uptime_sec": 69.17
+					}
+				],
+				"rendered_objects": 309,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 68.2239999999999,
+				"uptime_sec": 127.204,
+				"wall_frame_ms": 1024.858
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": false,
+				"corpse_enemies": 0,
+				"draw_calls": 22,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 212,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 4.143,
+				"process_ms": 951.871,
+				"recent_transition_events": [
+					{
+						"data": {
+							"phase": "baseline",
+							"preroll_samples": 30,
+							"trigger": "automatic"
+						},
+						"kind": "performance_incident_started",
+						"time_msec": 32145,
+						"uptime_sec": 30.154
+					},
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 32144,
+						"uptime_sec": 30.153
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_press",
+								"name": "aim_hold",
+								"tick": 8.0
+							},
+							"moment_tick": 8,
+							"result": {
+								"action": "input_press",
+								"ok": true,
+								"tick": 8
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11128,
+						"uptime_sec": 9.137
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "target_a",
+								"tick": 4.0
+							},
+							"moment_tick": 4,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 4
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 7129,
+						"uptime_sec": 5.138
+					},
+					{
+						"data": {},
+						"kind": "observatory_cleared",
+						"time_msec": 3884,
+						"uptime_sec": 1.893
+					}
+				],
+				"rendered_objects": 308,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 67.132,
+				"uptime_sec": 54.184,
+				"wall_frame_ms": 1023.146
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": false,
+				"corpse_enemies": 0,
+				"draw_calls": 22,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 212,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 4.037,
+				"process_ms": 942.863,
+				"recent_transition_events": [
+					{
+						"data": {
+							"authored_action": {
+								"action": "capture_marker",
+								"name": "committed_snap_release",
+								"tick": 72.0
+							},
+							"moment_tick": 72,
+							"result": {
+								"action": "capture_marker",
+								"ok": true,
+								"tick": 72
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 75159,
+						"uptime_sec": 73.168
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "target_b",
+								"tick": 69.0
+							},
+							"moment_tick": 69,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 69
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 73144,
+						"uptime_sec": 71.153
+					},
+					{
+						"data": {
+							"accepted_aim_direction": {
+								"x": 0.988936364650726,
+								"y": -0.148340448737144
+							},
+							"aim_error_degrees": 37.6108542972468,
+							"ballistic_direction": {
+								"x": 0.899673700332642,
+								"y": -0.436562925577164
+							},
+							"damage": 11.0,
+							"direction": {
+								"x": 0.900876462459564,
+								"y": -0.434075623750687
+							},
+							"final_shot_direction": {
+								"x": 0.900876462459564,
+								"y": -0.434075623750687
+							},
+							"loaded_ammo": 23,
+							"muzzle": {
+								"x": 450.162567138672,
+								"y": 327.363739013672
+							},
+							"position": {
+								"x": 420.0,
+								"y": 360.0
+							},
+							"predicted_impact": {
+								"x": 522.402954101562,
+								"y": 292.309387207031
+							},
+							"radius": 3.0,
+							"reserve_ammo": 48,
+							"speed": 900.0,
+							"spread_deg": 2.38,
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_ranged_shot",
+						"time_msec": 71169,
+						"uptime_sec": 69.178
+					},
+					{
+						"data": {
+							"event_id": "fire",
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_weapon_feedback",
+						"time_msec": 71167,
+						"uptime_sec": 69.176
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "attack_primary",
+								"tick": 68.0
+							},
+							"moment_tick": 68,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 68
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 71161,
+						"uptime_sec": 69.17
+					},
+					{
+						"data": {
+							"phase": "baseline",
+							"preroll_samples": 30,
+							"trigger": "automatic"
+						},
+						"kind": "performance_incident_started",
+						"time_msec": 32145,
+						"uptime_sec": 30.154
+					},
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 32144,
+						"uptime_sec": 30.153
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_press",
+								"name": "aim_hold",
+								"tick": 8.0
+							},
+							"moment_tick": 8,
+							"result": {
+								"action": "input_press",
+								"ok": true,
+								"tick": 8
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11128,
+						"uptime_sec": 9.137
+					}
+				],
+				"rendered_objects": 308,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 74.9089999999999,
+				"uptime_sec": 109.2,
+				"wall_frame_ms": 1021.809
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": false,
+				"corpse_enemies": 0,
+				"draw_calls": 23,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 212,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 4.076,
+				"process_ms": 944.986,
+				"recent_transition_events": [
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_release",
+								"name": "aim_hold",
+								"tick": 150.0
+							},
+							"moment_tick": 150,
+							"result": {
+								"action": "input_release",
+								"ok": true,
+								"tick": 150
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 153182,
+						"uptime_sec": 151.191
+					},
+					{
+						"data": {
+							"accepted_aim_direction": {
+								"x": -0.988936364650726,
+								"y": 0.148340448737144
+							},
+							"aim_error_degrees": 36.3691657941607,
+							"ballistic_direction": {
+								"x": -0.988166272640228,
+								"y": -0.153386637568474
+							},
+							"damage": 11.0,
+							"direction": {
+								"x": -0.981540322303772,
+								"y": -0.191255390644073
+							},
+							"final_shot_direction": {
+								"x": -0.981540322303772,
+								"y": -0.191255390644073
+							},
+							"loaded_ammo": 22,
+							"muzzle": {
+								"x": 386.870635986328,
+								"y": 336.857543945312
+							},
+							"position": {
+								"x": 420.0,
+								"y": 360.0
+							},
+							"predicted_impact": {
+								"x": 302.55419921875,
+								"y": 323.769653320312
+							},
+							"radius": 3.0,
+							"reserve_ammo": 48,
+							"speed": 900.0,
+							"spread_deg": 2.38,
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_ranged_shot",
+						"time_msec": 115182,
+						"uptime_sec": 113.191
+					},
+					{
+						"data": {
+							"event_id": "fire",
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_weapon_feedback",
+						"time_msec": 115181,
+						"uptime_sec": 113.19
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "attack_primary",
+								"tick": 112.0
+							},
+							"moment_tick": 112,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 112
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 115176,
+						"uptime_sec": 113.185
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "capture_marker",
+								"name": "committed_snap_release",
+								"tick": 72.0
+							},
+							"moment_tick": 72,
+							"result": {
+								"action": "capture_marker",
+								"ok": true,
+								"tick": 72
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 75159,
+						"uptime_sec": 73.168
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "target_b",
+								"tick": 69.0
+							},
+							"moment_tick": 69,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 69
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 73144,
+						"uptime_sec": 71.153
+					},
+					{
+						"data": {
+							"accepted_aim_direction": {
+								"x": 0.988936364650726,
+								"y": -0.148340448737144
+							},
+							"aim_error_degrees": 37.6108542972468,
+							"ballistic_direction": {
+								"x": 0.899673700332642,
+								"y": -0.436562925577164
+							},
+							"damage": 11.0,
+							"direction": {
+								"x": 0.900876462459564,
+								"y": -0.434075623750687
+							},
+							"final_shot_direction": {
+								"x": 0.900876462459564,
+								"y": -0.434075623750687
+							},
+							"loaded_ammo": 23,
+							"muzzle": {
+								"x": 450.162567138672,
+								"y": 327.363739013672
+							},
+							"position": {
+								"x": 420.0,
+								"y": 360.0
+							},
+							"predicted_impact": {
+								"x": 522.402954101562,
+								"y": 292.309387207031
+							},
+							"radius": 3.0,
+							"reserve_ammo": 48,
+							"speed": 900.0,
+							"spread_deg": 2.38,
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_ranged_shot",
+						"time_msec": 71169,
+						"uptime_sec": 69.178
+					},
+					{
+						"data": {
+							"event_id": "fire",
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_weapon_feedback",
+						"time_msec": 71167,
+						"uptime_sec": 69.176
+					}
+				],
+				"rendered_objects": 309,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 71.569,
+				"uptime_sec": 156.217,
+				"wall_frame_ms": 1020.631
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": false,
+				"corpse_enemies": 0,
+				"draw_calls": 22,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 212,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 4.243,
+				"process_ms": 940.578,
+				"recent_transition_events": [
+					{
+						"data": {
+							"phase": "baseline",
+							"preroll_samples": 30,
+							"trigger": "automatic"
+						},
+						"kind": "performance_incident_started",
+						"time_msec": 32145,
+						"uptime_sec": 30.154
+					},
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 32144,
+						"uptime_sec": 30.153
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_press",
+								"name": "aim_hold",
+								"tick": 8.0
+							},
+							"moment_tick": 8,
+							"result": {
+								"action": "input_press",
+								"ok": true,
+								"tick": 8
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11128,
+						"uptime_sec": 9.137
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "target_a",
+								"tick": 4.0
+							},
+							"moment_tick": 4,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 4
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 7129,
+						"uptime_sec": 5.138
+					},
+					{
+						"data": {},
+						"kind": "observatory_cleared",
+						"time_msec": 3884,
+						"uptime_sec": 1.893
+					}
+				],
+				"rendered_objects": 308,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 75.791,
+				"uptime_sec": 68.195,
+				"wall_frame_ms": 1020.612
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": false,
+				"corpse_enemies": 0,
+				"draw_calls": 18,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 212,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 4.123,
+				"process_ms": 969.398,
+				"recent_transition_events": [
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_release",
+								"name": "aim_hold",
+								"tick": 150.0
+							},
+							"moment_tick": 150,
+							"result": {
+								"action": "input_release",
+								"ok": true,
+								"tick": 150
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 153182,
+						"uptime_sec": 151.191
+					},
+					{
+						"data": {
+							"accepted_aim_direction": {
+								"x": -0.988936364650726,
+								"y": 0.148340448737144
+							},
+							"aim_error_degrees": 36.3691657941607,
+							"ballistic_direction": {
+								"x": -0.988166272640228,
+								"y": -0.153386637568474
+							},
+							"damage": 11.0,
+							"direction": {
+								"x": -0.981540322303772,
+								"y": -0.191255390644073
+							},
+							"final_shot_direction": {
+								"x": -0.981540322303772,
+								"y": -0.191255390644073
+							},
+							"loaded_ammo": 22,
+							"muzzle": {
+								"x": 386.870635986328,
+								"y": 336.857543945312
+							},
+							"position": {
+								"x": 420.0,
+								"y": 360.0
+							},
+							"predicted_impact": {
+								"x": 302.55419921875,
+								"y": 323.769653320312
+							},
+							"radius": 3.0,
+							"reserve_ammo": 48,
+							"speed": 900.0,
+							"spread_deg": 2.38,
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_ranged_shot",
+						"time_msec": 115182,
+						"uptime_sec": 113.191
+					},
+					{
+						"data": {
+							"event_id": "fire",
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_weapon_feedback",
+						"time_msec": 115181,
+						"uptime_sec": 113.19
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "attack_primary",
+								"tick": 112.0
+							},
+							"moment_tick": 112,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 112
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 115176,
+						"uptime_sec": 113.185
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "capture_marker",
+								"name": "committed_snap_release",
+								"tick": 72.0
+							},
+							"moment_tick": 72,
+							"result": {
+								"action": "capture_marker",
+								"ok": true,
+								"tick": 72
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 75159,
+						"uptime_sec": 73.168
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "target_b",
+								"tick": 69.0
+							},
+							"moment_tick": 69,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 69
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 73144,
+						"uptime_sec": 71.153
+					},
+					{
+						"data": {
+							"accepted_aim_direction": {
+								"x": 0.988936364650726,
+								"y": -0.148340448737144
+							},
+							"aim_error_degrees": 37.6108542972468,
+							"ballistic_direction": {
+								"x": 0.899673700332642,
+								"y": -0.436562925577164
+							},
+							"damage": 11.0,
+							"direction": {
+								"x": 0.900876462459564,
+								"y": -0.434075623750687
+							},
+							"final_shot_direction": {
+								"x": 0.900876462459564,
+								"y": -0.434075623750687
+							},
+							"loaded_ammo": 23,
+							"muzzle": {
+								"x": 450.162567138672,
+								"y": 327.363739013672
+							},
+							"position": {
+								"x": 420.0,
+								"y": 360.0
+							},
+							"predicted_impact": {
+								"x": 522.402954101562,
+								"y": 292.309387207031
+							},
+							"radius": 3.0,
+							"reserve_ammo": 48,
+							"speed": 900.0,
+							"spread_deg": 2.38,
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_ranged_shot",
+						"time_msec": 71169,
+						"uptime_sec": 69.178
+					},
+					{
+						"data": {
+							"event_id": "fire",
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_weapon_feedback",
+						"time_msec": 71167,
+						"uptime_sec": 69.176
+					}
+				],
+				"rendered_objects": 18,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 46.603,
+				"uptime_sec": 163.235,
+				"wall_frame_ms": 1020.124
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 1,
+				"active_vfx": 0,
+				"application_focused": false,
+				"corpse_enemies": 0,
+				"draw_calls": 23,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 215,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 4.241,
+				"process_ms": 942.361,
+				"recent_transition_events": [
+					{
+						"data": {
+							"accepted_aim_direction": {
+								"x": -0.988936364650726,
+								"y": 0.148340448737144
+							},
+							"aim_error_degrees": 36.3691657941607,
+							"ballistic_direction": {
+								"x": -0.988166272640228,
+								"y": -0.153386637568474
+							},
+							"damage": 11.0,
+							"direction": {
+								"x": -0.981540322303772,
+								"y": -0.191255390644073
+							},
+							"final_shot_direction": {
+								"x": -0.981540322303772,
+								"y": -0.191255390644073
+							},
+							"loaded_ammo": 22,
+							"muzzle": {
+								"x": 386.870635986328,
+								"y": 336.857543945312
+							},
+							"position": {
+								"x": 420.0,
+								"y": 360.0
+							},
+							"predicted_impact": {
+								"x": 302.55419921875,
+								"y": 323.769653320312
+							},
+							"radius": 3.0,
+							"reserve_ammo": 48,
+							"speed": 900.0,
+							"spread_deg": 2.38,
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_ranged_shot",
+						"time_msec": 115182,
+						"uptime_sec": 113.191
+					},
+					{
+						"data": {
+							"event_id": "fire",
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_weapon_feedback",
+						"time_msec": 115181,
+						"uptime_sec": 113.19
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "attack_primary",
+								"tick": 112.0
+							},
+							"moment_tick": 112,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 112
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 115176,
+						"uptime_sec": 113.185
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "capture_marker",
+								"name": "committed_snap_release",
+								"tick": 72.0
+							},
+							"moment_tick": 72,
+							"result": {
+								"action": "capture_marker",
+								"ok": true,
+								"tick": 72
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 75159,
+						"uptime_sec": 73.168
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "target_b",
+								"tick": 69.0
+							},
+							"moment_tick": 69,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 69
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 73144,
+						"uptime_sec": 71.153
+					},
+					{
+						"data": {
+							"accepted_aim_direction": {
+								"x": 0.988936364650726,
+								"y": -0.148340448737144
+							},
+							"aim_error_degrees": 37.6108542972468,
+							"ballistic_direction": {
+								"x": 0.899673700332642,
+								"y": -0.436562925577164
+							},
+							"damage": 11.0,
+							"direction": {
+								"x": 0.900876462459564,
+								"y": -0.434075623750687
+							},
+							"final_shot_direction": {
+								"x": 0.900876462459564,
+								"y": -0.434075623750687
+							},
+							"loaded_ammo": 23,
+							"muzzle": {
+								"x": 450.162567138672,
+								"y": 327.363739013672
+							},
+							"position": {
+								"x": 420.0,
+								"y": 360.0
+							},
+							"predicted_impact": {
+								"x": 522.402954101562,
+								"y": 292.309387207031
+							},
+							"radius": 3.0,
+							"reserve_ammo": 48,
+							"speed": 900.0,
+							"spread_deg": 2.38,
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_ranged_shot",
+						"time_msec": 71169,
+						"uptime_sec": 69.178
+					},
+					{
+						"data": {
+							"event_id": "fire",
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_weapon_feedback",
+						"time_msec": 71167,
+						"uptime_sec": 69.176
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "attack_primary",
+								"tick": 68.0
+							},
+							"moment_tick": 68,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 68
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 71161,
+						"uptime_sec": 69.17
+					}
+				],
+				"rendered_objects": 309,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 73.477,
+				"uptime_sec": 132.21,
+				"wall_frame_ms": 1020.079
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": false,
+				"corpse_enemies": 0,
+				"draw_calls": 22,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 212,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 4.112,
+				"process_ms": 951.003,
+				"recent_transition_events": [
+					{
+						"data": {
+							"authored_action": {
+								"action": "capture_marker",
+								"name": "committed_snap_release",
+								"tick": 72.0
+							},
+							"moment_tick": 72,
+							"result": {
+								"action": "capture_marker",
+								"ok": true,
+								"tick": 72
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 75159,
+						"uptime_sec": 73.168
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "target_b",
+								"tick": 69.0
+							},
+							"moment_tick": 69,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 69
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 73144,
+						"uptime_sec": 71.153
+					},
+					{
+						"data": {
+							"accepted_aim_direction": {
+								"x": 0.988936364650726,
+								"y": -0.148340448737144
+							},
+							"aim_error_degrees": 37.6108542972468,
+							"ballistic_direction": {
+								"x": 0.899673700332642,
+								"y": -0.436562925577164
+							},
+							"damage": 11.0,
+							"direction": {
+								"x": 0.900876462459564,
+								"y": -0.434075623750687
+							},
+							"final_shot_direction": {
+								"x": 0.900876462459564,
+								"y": -0.434075623750687
+							},
+							"loaded_ammo": 23,
+							"muzzle": {
+								"x": 450.162567138672,
+								"y": 327.363739013672
+							},
+							"position": {
+								"x": 420.0,
+								"y": 360.0
+							},
+							"predicted_impact": {
+								"x": 522.402954101562,
+								"y": 292.309387207031
+							},
+							"radius": 3.0,
+							"reserve_ammo": 48,
+							"speed": 900.0,
+							"spread_deg": 2.38,
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_ranged_shot",
+						"time_msec": 71169,
+						"uptime_sec": 69.178
+					},
+					{
+						"data": {
+							"event_id": "fire",
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_weapon_feedback",
+						"time_msec": 71167,
+						"uptime_sec": 69.176
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "attack_primary",
+								"tick": 68.0
+							},
+							"moment_tick": 68,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 68
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 71161,
+						"uptime_sec": 69.17
+					},
+					{
+						"data": {
+							"phase": "baseline",
+							"preroll_samples": 30,
+							"trigger": "automatic"
+						},
+						"kind": "performance_incident_started",
+						"time_msec": 32145,
+						"uptime_sec": 30.154
+					},
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 32144,
+						"uptime_sec": 30.153
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_press",
+								"name": "aim_hold",
+								"tick": 8.0
+							},
+							"moment_tick": 8,
+							"result": {
+								"action": "input_press",
+								"ok": true,
+								"tick": 8
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11128,
+						"uptime_sec": 9.137
+					}
+				],
+				"rendered_objects": 308,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 64.216,
+				"uptime_sec": 107.189,
+				"wall_frame_ms": 1019.331
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 1,
+				"active_vfx": 0,
+				"application_focused": false,
+				"corpse_enemies": 0,
+				"draw_calls": 23,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 217,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 4.254,
+				"process_ms": 963.084,
+				"recent_transition_events": [
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "target_b",
+								"tick": 69.0
+							},
+							"moment_tick": 69,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 69
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 73144,
+						"uptime_sec": 71.153
+					},
+					{
+						"data": {
+							"accepted_aim_direction": {
+								"x": 0.988936364650726,
+								"y": -0.148340448737144
+							},
+							"aim_error_degrees": 37.6108542972468,
+							"ballistic_direction": {
+								"x": 0.899673700332642,
+								"y": -0.436562925577164
+							},
+							"damage": 11.0,
+							"direction": {
+								"x": 0.900876462459564,
+								"y": -0.434075623750687
+							},
+							"final_shot_direction": {
+								"x": 0.900876462459564,
+								"y": -0.434075623750687
+							},
+							"loaded_ammo": 23,
+							"muzzle": {
+								"x": 450.162567138672,
+								"y": 327.363739013672
+							},
+							"position": {
+								"x": 420.0,
+								"y": 360.0
+							},
+							"predicted_impact": {
+								"x": 522.402954101562,
+								"y": 292.309387207031
+							},
+							"radius": 3.0,
+							"reserve_ammo": 48,
+							"speed": 900.0,
+							"spread_deg": 2.38,
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_ranged_shot",
+						"time_msec": 71169,
+						"uptime_sec": 69.178
+					},
+					{
+						"data": {
+							"event_id": "fire",
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_weapon_feedback",
+						"time_msec": 71167,
+						"uptime_sec": 69.176
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "attack_primary",
+								"tick": 68.0
+							},
+							"moment_tick": 68,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 68
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 71161,
+						"uptime_sec": 69.17
+					},
+					{
+						"data": {
+							"phase": "baseline",
+							"preroll_samples": 30,
+							"trigger": "automatic"
+						},
+						"kind": "performance_incident_started",
+						"time_msec": 32145,
+						"uptime_sec": 30.154
+					},
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 32144,
+						"uptime_sec": 30.153
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_press",
+								"name": "aim_hold",
+								"tick": 8.0
+							},
+							"moment_tick": 8,
+							"result": {
+								"action": "input_press",
+								"ok": true,
+								"tick": 8
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11128,
+						"uptime_sec": 9.137
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "target_a",
+								"tick": 4.0
+							},
+							"moment_tick": 4,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 4
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 7129,
+						"uptime_sec": 5.138
+					}
+				],
+				"rendered_objects": 273,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 51.724,
+				"uptime_sec": 71.209,
+				"wall_frame_ms": 1019.062
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": false,
+				"corpse_enemies": 0,
+				"draw_calls": 18,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 212,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 4.004,
+				"process_ms": 945.931,
+				"recent_transition_events": [
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_release",
+								"name": "aim_hold",
+								"tick": 150.0
+							},
+							"moment_tick": 150,
+							"result": {
+								"action": "input_release",
+								"ok": true,
+								"tick": 150
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 153182,
+						"uptime_sec": 151.191
+					},
+					{
+						"data": {
+							"accepted_aim_direction": {
+								"x": -0.988936364650726,
+								"y": 0.148340448737144
+							},
+							"aim_error_degrees": 36.3691657941607,
+							"ballistic_direction": {
+								"x": -0.988166272640228,
+								"y": -0.153386637568474
+							},
+							"damage": 11.0,
+							"direction": {
+								"x": -0.981540322303772,
+								"y": -0.191255390644073
+							},
+							"final_shot_direction": {
+								"x": -0.981540322303772,
+								"y": -0.191255390644073
+							},
+							"loaded_ammo": 22,
+							"muzzle": {
+								"x": 386.870635986328,
+								"y": 336.857543945312
+							},
+							"position": {
+								"x": 420.0,
+								"y": 360.0
+							},
+							"predicted_impact": {
+								"x": 302.55419921875,
+								"y": 323.769653320312
+							},
+							"radius": 3.0,
+							"reserve_ammo": 48,
+							"speed": 900.0,
+							"spread_deg": 2.38,
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_ranged_shot",
+						"time_msec": 115182,
+						"uptime_sec": 113.191
+					},
+					{
+						"data": {
+							"event_id": "fire",
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_weapon_feedback",
+						"time_msec": 115181,
+						"uptime_sec": 113.19
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "attack_primary",
+								"tick": 112.0
+							},
+							"moment_tick": 112,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 112
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 115176,
+						"uptime_sec": 113.185
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "capture_marker",
+								"name": "committed_snap_release",
+								"tick": 72.0
+							},
+							"moment_tick": 72,
+							"result": {
+								"action": "capture_marker",
+								"ok": true,
+								"tick": 72
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 75159,
+						"uptime_sec": 73.168
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "target_b",
+								"tick": 69.0
+							},
+							"moment_tick": 69,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 69
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 73144,
+						"uptime_sec": 71.153
+					},
+					{
+						"data": {
+							"accepted_aim_direction": {
+								"x": 0.988936364650726,
+								"y": -0.148340448737144
+							},
+							"aim_error_degrees": 37.6108542972468,
+							"ballistic_direction": {
+								"x": 0.899673700332642,
+								"y": -0.436562925577164
+							},
+							"damage": 11.0,
+							"direction": {
+								"x": 0.900876462459564,
+								"y": -0.434075623750687
+							},
+							"final_shot_direction": {
+								"x": 0.900876462459564,
+								"y": -0.434075623750687
+							},
+							"loaded_ammo": 23,
+							"muzzle": {
+								"x": 450.162567138672,
+								"y": 327.363739013672
+							},
+							"position": {
+								"x": 420.0,
+								"y": 360.0
+							},
+							"predicted_impact": {
+								"x": 522.402954101562,
+								"y": 292.309387207031
+							},
+							"radius": 3.0,
+							"reserve_ammo": 48,
+							"speed": 900.0,
+							"spread_deg": 2.38,
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_ranged_shot",
+						"time_msec": 71169,
+						"uptime_sec": 69.178
+					},
+					{
+						"data": {
+							"event_id": "fire",
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_weapon_feedback",
+						"time_msec": 71167,
+						"uptime_sec": 69.176
+					}
+				],
+				"rendered_objects": 18,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 69.0540000000001,
+				"uptime_sec": 162.214,
+				"wall_frame_ms": 1018.989
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": false,
+				"corpse_enemies": 0,
+				"draw_calls": 22,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 212,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 4.43,
+				"process_ms": 944.012,
+				"recent_transition_events": [
+					{
+						"data": {
+							"accepted_aim_direction": {
+								"x": -0.988936364650726,
+								"y": 0.148340448737144
+							},
+							"aim_error_degrees": 36.3691657941607,
+							"ballistic_direction": {
+								"x": -0.988166272640228,
+								"y": -0.153386637568474
+							},
+							"damage": 11.0,
+							"direction": {
+								"x": -0.981540322303772,
+								"y": -0.191255390644073
+							},
+							"final_shot_direction": {
+								"x": -0.981540322303772,
+								"y": -0.191255390644073
+							},
+							"loaded_ammo": 22,
+							"muzzle": {
+								"x": 386.870635986328,
+								"y": 336.857543945312
+							},
+							"position": {
+								"x": 420.0,
+								"y": 360.0
+							},
+							"predicted_impact": {
+								"x": 302.55419921875,
+								"y": 323.769653320312
+							},
+							"radius": 3.0,
+							"reserve_ammo": 48,
+							"speed": 900.0,
+							"spread_deg": 2.38,
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_ranged_shot",
+						"time_msec": 115182,
+						"uptime_sec": 113.191
+					},
+					{
+						"data": {
+							"event_id": "fire",
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_weapon_feedback",
+						"time_msec": 115181,
+						"uptime_sec": 113.19
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "attack_primary",
+								"tick": 112.0
+							},
+							"moment_tick": 112,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 112
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 115176,
+						"uptime_sec": 113.185
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "capture_marker",
+								"name": "committed_snap_release",
+								"tick": 72.0
+							},
+							"moment_tick": 72,
+							"result": {
+								"action": "capture_marker",
+								"ok": true,
+								"tick": 72
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 75159,
+						"uptime_sec": 73.168
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "target_b",
+								"tick": 69.0
+							},
+							"moment_tick": 69,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 69
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 73144,
+						"uptime_sec": 71.153
+					},
+					{
+						"data": {
+							"accepted_aim_direction": {
+								"x": 0.988936364650726,
+								"y": -0.148340448737144
+							},
+							"aim_error_degrees": 37.6108542972468,
+							"ballistic_direction": {
+								"x": 0.899673700332642,
+								"y": -0.436562925577164
+							},
+							"damage": 11.0,
+							"direction": {
+								"x": 0.900876462459564,
+								"y": -0.434075623750687
+							},
+							"final_shot_direction": {
+								"x": 0.900876462459564,
+								"y": -0.434075623750687
+							},
+							"loaded_ammo": 23,
+							"muzzle": {
+								"x": 450.162567138672,
+								"y": 327.363739013672
+							},
+							"position": {
+								"x": 420.0,
+								"y": 360.0
+							},
+							"predicted_impact": {
+								"x": 522.402954101562,
+								"y": 292.309387207031
+							},
+							"radius": 3.0,
+							"reserve_ammo": 48,
+							"speed": 900.0,
+							"spread_deg": 2.38,
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_ranged_shot",
+						"time_msec": 71169,
+						"uptime_sec": 69.178
+					},
+					{
+						"data": {
+							"event_id": "fire",
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_weapon_feedback",
+						"time_msec": 71167,
+						"uptime_sec": 69.176
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "attack_primary",
+								"tick": 68.0
+							},
+							"moment_tick": 68,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 68
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 71161,
+						"uptime_sec": 69.17
+					}
+				],
+				"rendered_objects": 308,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {
+					"operator_animation_sync": {
+						"count": 1,
+						"max_usec": 2,
+						"total_usec": 2
+					}
+				},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [
+					{
+						"count": 1,
+						"max_ms": 0.002,
+						"name": "operator_animation_sync",
+						"total_ms": 0.002
+					}
+				],
+				"tree_paused": false,
+				"unaccounted_ms": 70.198,
+				"uptime_sec": 150.215,
+				"wall_frame_ms": 1018.64
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 1,
+				"active_vfx": 0,
+				"application_focused": false,
+				"corpse_enemies": 0,
+				"draw_calls": 23,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 215,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 4.198,
+				"process_ms": 949.641,
+				"recent_transition_events": [
+					{
+						"data": {
+							"authored_action": {
+								"action": "capture_marker",
+								"name": "committed_snap_release",
+								"tick": 72.0
+							},
+							"moment_tick": 72,
+							"result": {
+								"action": "capture_marker",
+								"ok": true,
+								"tick": 72
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 75159,
+						"uptime_sec": 73.168
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "target_b",
+								"tick": 69.0
+							},
+							"moment_tick": 69,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 69
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 73144,
+						"uptime_sec": 71.153
+					},
+					{
+						"data": {
+							"accepted_aim_direction": {
+								"x": 0.988936364650726,
+								"y": -0.148340448737144
+							},
+							"aim_error_degrees": 37.6108542972468,
+							"ballistic_direction": {
+								"x": 0.899673700332642,
+								"y": -0.436562925577164
+							},
+							"damage": 11.0,
+							"direction": {
+								"x": 0.900876462459564,
+								"y": -0.434075623750687
+							},
+							"final_shot_direction": {
+								"x": 0.900876462459564,
+								"y": -0.434075623750687
+							},
+							"loaded_ammo": 23,
+							"muzzle": {
+								"x": 450.162567138672,
+								"y": 327.363739013672
+							},
+							"position": {
+								"x": 420.0,
+								"y": 360.0
+							},
+							"predicted_impact": {
+								"x": 522.402954101562,
+								"y": 292.309387207031
+							},
+							"radius": 3.0,
+							"reserve_ammo": 48,
+							"speed": 900.0,
+							"spread_deg": 2.38,
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_ranged_shot",
+						"time_msec": 71169,
+						"uptime_sec": 69.178
+					},
+					{
+						"data": {
+							"event_id": "fire",
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_weapon_feedback",
+						"time_msec": 71167,
+						"uptime_sec": 69.176
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "attack_primary",
+								"tick": 68.0
+							},
+							"moment_tick": 68,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 68
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 71161,
+						"uptime_sec": 69.17
+					},
+					{
+						"data": {
+							"phase": "baseline",
+							"preroll_samples": 30,
+							"trigger": "automatic"
+						},
+						"kind": "performance_incident_started",
+						"time_msec": 32145,
+						"uptime_sec": 30.154
+					},
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 32144,
+						"uptime_sec": 30.153
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_press",
+								"name": "aim_hold",
+								"tick": 8.0
+							},
+							"moment_tick": 8,
+							"result": {
+								"action": "input_press",
+								"ok": true,
+								"tick": 8
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11128,
+						"uptime_sec": 9.137
+					}
+				],
+				"rendered_objects": 309,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 63.23,
+				"uptime_sec": 88.185,
+				"wall_frame_ms": 1017.069
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 0,
+				"active_vfx": 0,
+				"application_focused": false,
+				"corpse_enemies": 0,
+				"draw_calls": 22,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 212,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 4.073,
+				"process_ms": 939.21,
+				"recent_transition_events": [
+					{
+						"data": {
+							"authored_action": {
+								"action": "capture_marker",
+								"name": "committed_snap_release",
+								"tick": 72.0
+							},
+							"moment_tick": 72,
+							"result": {
+								"action": "capture_marker",
+								"ok": true,
+								"tick": 72
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 75159,
+						"uptime_sec": 73.168
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "target_b",
+								"tick": 69.0
+							},
+							"moment_tick": 69,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 69
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 73144,
+						"uptime_sec": 71.153
+					},
+					{
+						"data": {
+							"accepted_aim_direction": {
+								"x": 0.988936364650726,
+								"y": -0.148340448737144
+							},
+							"aim_error_degrees": 37.6108542972468,
+							"ballistic_direction": {
+								"x": 0.899673700332642,
+								"y": -0.436562925577164
+							},
+							"damage": 11.0,
+							"direction": {
+								"x": 0.900876462459564,
+								"y": -0.434075623750687
+							},
+							"final_shot_direction": {
+								"x": 0.900876462459564,
+								"y": -0.434075623750687
+							},
+							"loaded_ammo": 23,
+							"muzzle": {
+								"x": 450.162567138672,
+								"y": 327.363739013672
+							},
+							"position": {
+								"x": 420.0,
+								"y": 360.0
+							},
+							"predicted_impact": {
+								"x": 522.402954101562,
+								"y": 292.309387207031
+							},
+							"radius": 3.0,
+							"reserve_ammo": 48,
+							"speed": 900.0,
+							"spread_deg": 2.38,
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_ranged_shot",
+						"time_msec": 71169,
+						"uptime_sec": 69.178
+					},
+					{
+						"data": {
+							"event_id": "fire",
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_weapon_feedback",
+						"time_msec": 71167,
+						"uptime_sec": 69.176
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "attack_primary",
+								"tick": 68.0
+							},
+							"moment_tick": 68,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 68
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 71161,
+						"uptime_sec": 69.17
+					},
+					{
+						"data": {
+							"phase": "baseline",
+							"preroll_samples": 30,
+							"trigger": "automatic"
+						},
+						"kind": "performance_incident_started",
+						"time_msec": 32145,
+						"uptime_sec": 30.154
+					},
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 32144,
+						"uptime_sec": 30.153
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_press",
+								"name": "aim_hold",
+								"tick": 8.0
+							},
+							"moment_tick": 8,
+							"result": {
+								"action": "input_press",
+								"ok": true,
+								"tick": 8
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11128,
+						"uptime_sec": 9.137
+					}
+				],
+				"rendered_objects": 308,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 72.994,
+				"uptime_sec": 93.194,
+				"wall_frame_ms": 1016.277
+			},
+			{
+				"active_audio_players": 0,
+				"active_combat_audio": 0,
+				"active_projectiles": 1,
+				"active_vfx": 0,
+				"application_focused": false,
+				"corpse_enemies": 0,
+				"draw_calls": 24,
+				"enemy_active": 0,
+				"enemy_background": 0,
+				"enemy_dormant": 0,
+				"enemy_nearby": 0,
+				"living_enemies": 0,
+				"node_count": 217,
+				"overlay_visible": false,
+				"phase": "baseline",
+				"physics_ms": 4.113,
+				"process_ms": 940.306,
+				"recent_transition_events": [
+					{
+						"data": {
+							"accepted_aim_direction": {
+								"x": 0.988936364650726,
+								"y": -0.148340448737144
+							},
+							"aim_error_degrees": 37.6108542972468,
+							"ballistic_direction": {
+								"x": 0.899673700332642,
+								"y": -0.436562925577164
+							},
+							"damage": 11.0,
+							"direction": {
+								"x": 0.900876462459564,
+								"y": -0.434075623750687
+							},
+							"final_shot_direction": {
+								"x": 0.900876462459564,
+								"y": -0.434075623750687
+							},
+							"loaded_ammo": 23,
+							"muzzle": {
+								"x": 450.162567138672,
+								"y": 327.363739013672
+							},
+							"position": {
+								"x": 420.0,
+								"y": 360.0
+							},
+							"predicted_impact": {
+								"x": 522.402954101562,
+								"y": 292.309387207031
+							},
+							"radius": 3.0,
+							"reserve_ammo": 48,
+							"speed": 900.0,
+							"spread_deg": 2.38,
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_ranged_shot",
+						"time_msec": 71169,
+						"uptime_sec": 69.178
+					},
+					{
+						"data": {
+							"event_id": "fire",
+							"weapon": "carbine_mk1"
+						},
+						"kind": "player_weapon_feedback",
+						"time_msec": 71167,
+						"uptime_sec": 69.176
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_tap",
+								"hold_ticks": 1.0,
+								"name": "attack_primary",
+								"tick": 68.0
+							},
+							"moment_tick": 68,
+							"result": {
+								"action": "input_tap",
+								"ok": true,
+								"tick": 68
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 71161,
+						"uptime_sec": 69.17
+					},
+					{
+						"data": {
+							"phase": "baseline",
+							"preroll_samples": 30,
+							"trigger": "automatic"
+						},
+						"kind": "performance_incident_started",
+						"time_msec": 32145,
+						"uptime_sec": 30.154
+					},
+					{
+						"data": {
+							"from": "ARMED",
+							"to": "CAPTURING"
+						},
+						"kind": "performance_incident_state_changed",
+						"time_msec": 32144,
+						"uptime_sec": 30.153
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "input_press",
+								"name": "aim_hold",
+								"tick": 8.0
+							},
+							"moment_tick": 8,
+							"result": {
+								"action": "input_press",
+								"ok": true,
+								"tick": 8
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 11128,
+						"uptime_sec": 9.137
+					},
+					{
+						"data": {
+							"authored_action": {
+								"action": "aim_at_role",
+								"role": "operator",
+								"target_role": "target_a",
+								"tick": 4.0
+							},
+							"moment_tick": 4,
+							"result": {
+								"action": "aim_at_role",
+								"ok": true,
+								"tick": 4
+							}
+						},
+						"kind": "moment_forge_action",
+						"time_msec": 7129,
+						"uptime_sec": 5.138
+					},
+					{
+						"data": {},
+						"kind": "observatory_cleared",
+						"time_msec": 3884,
+						"uptime_sec": 1.893
+					}
+				],
+				"rendered_objects": 310,
+				"scaled_delta_ms": 16.6666666666667,
+				"spans": {},
+				"time_scale": 1.0,
+				"top_subsystem_spans": [],
+				"tree_paused": false,
+				"unaccounted_ms": 71.218,
+				"uptime_sec": 70.19,
+				"wall_frame_ms": 1015.637
+			}
+		]
+	},
+	"scene": {
+		"name": "GameRoot",
+		"path": "res://scenes/debug/combat_playground.tscn"
+	},
+	"schema": "custodian.dev_observatory.session.v1",
+	"session": {
+		"boot_time_msec": 1991,
+		"counter_count": 4,
+		"dropped_event_count": 0,
+		"event_buffer_saturated": false,
+		"event_capacity": 300,
+		"event_count": 17,
+		"gauge_count": 107,
+		"observatory_enabled": false,
+		"total_events_logged": 17,
+		"uptime_sec": 179.206,
+		"warning_count": 0
+	},
+	"warnings": []
+}

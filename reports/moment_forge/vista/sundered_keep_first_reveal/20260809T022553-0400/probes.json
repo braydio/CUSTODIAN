@@ -1,0 +1,37 @@
+{
+	"failures": [],
+	"records": [
+		{
+			"id": "approach_state",
+			"role": "approach",
+			"tick": 0,
+			"values": {
+				"visible": true
+			}
+		},
+		{
+			"id": "approach_state",
+			"role": "approach",
+			"tick": 72,
+			"values": {
+				"visible": true
+			}
+		},
+		{
+			"id": "approach_state",
+			"role": "approach",
+			"tick": 156,
+			"values": {
+				"visible": true
+			}
+		},
+		{
+			"id": "approach_state",
+			"role": "approach",
+			"tick": 238,
+			"values": {
+				"visible": true
+			}
+		}
+	]
+}

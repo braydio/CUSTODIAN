@@ -4,7 +4,7 @@
 **Status:** phase-1 implementation
 **Owner:** gameplay/combat + art pipeline
 **Runtime target:** Godot 4.x (`custodian/`)
-**Last updated:** 2026-07-16
+**Last updated:** 2026-08-09
 
 ## Purpose
 
@@ -103,10 +103,24 @@ and draw order come from socket metadata. Static per-sector texture export is an
 art follow-up that does not change the socket contract.
 
 Aim transition timing is asymmetric: `ranged_raise_duration = 0.22`,
-`ranged_lower_duration = 0.12`, and `ranged_aim_ready_ratio = 0.70`. Fine-angle
-correction stays disabled for the phase-1 Carbine art until socket/contact review
-passes. Camera aim feedback is owned by `custodian/game/world/camera.gd`; the
-Operator only publishes active state and current aim direction.
+`ranged_lower_duration = 0.12`, and `ranged_aim_ready_ratio = 0.70`. Phase-1
+Carbine fine-angle correction is bounded to ±24 degrees: enough to cover the
+±22.5-degree half interval between eight authored body sectors with a small
+overlap. The desired correction pursues intent with a frame-rate-independent
+response of `20.0`; weapon traversal supplies transient weight without leaving
+a permanent angular dead zone. Raising weights the desired correction by
+readiness, firing commits accepted intent, and recovery resumes current intent.
+Every presentation update assigns authored base rotation plus the current
+bounded correction absolutely; correction never accumulates with `+=`, and
+multiple socket queries in one process frame cannot accelerate pursuit. The
+release-time transformed grip-to-muzzle axis is ballistic baseline authority.
+Camera aim feedback is owned by `custodian/game/world/camera.gd`; the Operator
+only publishes active state and current aim direction.
+
+The P-9 sidearm retains accepted presentation direction as its projectile
+baseline because its current compatibility presentation does not expose the
+same reviewed frame-aware grip-to-muzzle axis contract. This fallback is
+explicit and must not be described as physically socket-resolved.
 
 ### Scene node hierarchy (target)
 
@@ -493,7 +507,9 @@ the extracted static art is reviewed.
 2. Replace primary-ranged use of `ModularSidearmSprite` with a dedicated
    `Sprite2D` under `WeaponRoot`; retain the modular node only for sidearm and
    migration compatibility.
-3. Extend socket metadata to `n/ne/s/nw` and enable reviewed fine-angle limits.
+3. Extend production socket metadata to `n/ne/s/nw`; the live ±24-degree
+   pursuit remains reviewed for the covered `e/w/se/sw` production sectors,
+   while uncovered directions retain their explicit compatibility fallback.
 4. Remove primary weapon frame-slaving after the static node passes visual QA.
 
 ### Phase 3 — Reload props and casing presentation

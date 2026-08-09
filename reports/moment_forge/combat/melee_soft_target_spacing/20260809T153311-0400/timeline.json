@@ -1,0 +1,142 @@
+[
+	{
+		"data": {
+			"authored_action": {
+				"action": "aim_at_role",
+				"role": "operator",
+				"target_role": "aimed_target",
+				"tick": 42.0
+			},
+			"moment_tick": 42,
+			"result": {
+				"action": "aim_at_role",
+				"ok": true,
+				"tick": 42
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 42
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "input_press",
+				"name": "move_right",
+				"tick": 48.0
+			},
+			"moment_tick": 48,
+			"result": {
+				"action": "input_press",
+				"ok": true,
+				"tick": 48
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 48
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "input_release",
+				"name": "move_right",
+				"tick": 67.0
+			},
+			"moment_tick": 67,
+			"result": {
+				"action": "input_release",
+				"ok": true,
+				"tick": 67
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 67
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "input_tap",
+				"hold_ticks": 1.0,
+				"name": "attack_primary",
+				"tick": 92.0
+			},
+			"moment_tick": 92,
+			"result": {
+				"action": "input_tap",
+				"ok": true,
+				"tick": 92
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 92
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "capture_marker",
+				"name": "assisted_contact",
+				"tick": 106.0
+			},
+			"moment_tick": 106,
+			"result": {
+				"action": "capture_marker",
+				"ok": true,
+				"tick": 106
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 106
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "aim_at_role",
+				"role": "operator",
+				"target_role": "near_off_aim",
+				"tick": 172.0
+			},
+			"moment_tick": 172,
+			"result": {
+				"action": "aim_at_role",
+				"ok": true,
+				"tick": 172
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 172
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "input_tap",
+				"hold_ticks": 1.0,
+				"name": "attack_primary",
+				"tick": 182.0
+			},
+			"moment_tick": 182,
+			"result": {
+				"action": "input_tap",
+				"ok": true,
+				"tick": 182
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 182
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "finish",
+				"tick": 358.0
+			},
+			"moment_tick": 358,
+			"result": {
+				"action": "finish",
+				"finish": true,
+				"ok": true,
+				"tick": 358
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 358
+	}
+]

@@ -28,7 +28,11 @@ const WalkState = preload("res://game/actors/operator/animations/states/walk_sta
 const SprintState = preload("res://game/actors/operator/animations/states/sprint_state.gd")
 const DeathState = preload("res://game/actors/operator/animations/states/death_state.gd")
 const MeleeAttackProfile = preload("res://game/systems/combat/melee_attack_profile.gd")
+const MeleeTargetResolver = preload("res://game/systems/combat/melee_target_resolver.gd")
 const CombatConstants = preload("res://game/systems/combat/combat_constants.gd")
+const RangedBallisticAimResolver = preload(
+	"res://game/systems/combat/ranged_ballistic_aim_resolver.gd"
+)
 const OperatorIntegrityReclaim = preload(
 	"res://game/actors/operator/combat/operator_integrity_reclaim.gd"
 )
@@ -358,6 +362,16 @@ var last_fire_cooldown := 0.0
 @export var field_patch_move_multiplier: float = 0.35
 @export_group("", "")
 @export var combat_target_range: float = 360.0
+@export_group("Melee Soft Targeting")
+@export var melee_soft_targeting_enabled: bool = true
+@export_range(10.0, 90.0, 1.0) var melee_target_acquire_cone_degrees: float = 42.0
+@export_range(10.0, 120.0, 1.0) var melee_target_retain_cone_degrees: float = 58.0
+@export var melee_target_retain_range_bonus_px: float = 20.0
+@export_range(0.0, 1.0, 0.01) var melee_target_switch_score_margin: float = 0.14
+@export_range(0.0, 1.0, 0.01) var melee_target_current_bonus: float = 0.18
+@export var melee_target_preview_extra_px: float = 48.0
+@export var melee_target_hard_cap_px: float = 180.0
+@export_group("", "")
 @export var use_tiny_rpg_placeholder_soldier: bool = true
 @export var modular_locomotion_layers_enabled: bool = true
 @export var modular_head_profile: StringName = &"hooded"
@@ -370,6 +384,9 @@ var last_fire_cooldown := 0.0
 @export var ranged_raise_duration: float = 0.22
 @export var ranged_lower_duration: float = 0.12
 @export_range(0.0, 1.0) var ranged_aim_ready_ratio: float = 0.70
+@export_range(0.0, 30.0, 0.5) var ranged_fine_aim_limit_degrees: float = 24.0
+@export_range(1.0, 40.0, 0.5) var ranged_weapon_aim_response: float = 20.0
+@export var ranged_controller_aim_distance: float = 110.0
 @export_group("", "")
 @export_file("*.png") var idle_main_sheet_path := "res://content/sprites/operator/runtime/idle/operator_idle_main.png"
 @export_file("*.png") var ranged_2h_stance_sheet_path := "res://content/sprites/operator/runtime/body/ranged_2h/operator__body__ranged__stance_01__e__12f__96.png"
@@ -528,6 +545,7 @@ var last_ranged_fire_failure: StringName = &""
 var _weapon_failure_feedback_cooldown: float = 0.0
 var _last_weapon_failure_feedback: StringName = &""
 var _pending_ranged_shot: Dictionary = {}
+var _ranged_ballistic_solution: Dictionary = {}
 var _ranged_ready_active: bool = false
 var _ranged_ready_weapon_definition: OperatorWeaponDefinition = null
 var _dodge_active: bool = false
@@ -569,6 +587,11 @@ var _field_patch_committed: bool = false
 var _field_patch_recovery_timer: float = 0.0
 var _field_patch_missing_presentation_warning_emitted: bool = false
 var _combat_target: Node2D = null
+var _melee_soft_target: Node2D = null
+var _melee_soft_target_score: float = 0.0
+var _melee_target_preview: Dictionary = {}
+var _committed_melee_target: Node2D = null
+var _committed_melee_attack_solution: Dictionary = {}
 var _target_ring: Node2D = null
 var _target_ring_pending: bool = false
 var _vista_presentation_mode := false
@@ -635,6 +658,9 @@ var _primary_ranged_action_suffix: StringName = &"right"
 var _weapon_socket_library := WeaponSocketLibrary.new()
 var _active_weapon_socket: Dictionary = {}
 var _weapon_socket_error_key: String = ""
+var _current_weapon_correction: float = 0.0
+var _weapon_correction_initialized: bool = false
+var _weapon_correction_process_frame: int = -1
 var fake_elevation: float = 0.0
 var movement_surface_multiplier: float = 1.0
 var presentation_movement_multiplier: float = 1.0
@@ -651,6 +677,9 @@ var debug_muzzle_pos: Vector2 = Vector2.ZERO
 var debug_support_grip_pos: Vector2 = Vector2.ZERO
 var debug_ejection_pos: Vector2 = Vector2.ZERO
 var debug_projectile_direction: Vector2 = Vector2.RIGHT
+var debug_intent_direction: Vector2 = Vector2.RIGHT
+var debug_ballistic_position: Vector2 = Vector2.ZERO
+var debug_ballistic_obstructed: bool = false
 
 const WEAPON_PROFILES = [
 	{
@@ -1080,7 +1109,14 @@ func _draw():
 	draw_line(debug_right_hand_pos, debug_weapon_socket_pos, Color(1.0, 0.35, 0.35, 0.9), 2.0)
 	draw_line(debug_left_hand_pos, debug_weapon_socket_pos, Color(0.35, 0.8, 1.0, 0.9), 2.0)
 	draw_line(debug_weapon_socket_pos, debug_muzzle_pos, Color(1.0, 0.85, 0.25, 0.9), 2.0)
-	draw_line(debug_muzzle_pos, debug_muzzle_pos + debug_projectile_direction.normalized() * 48.0, Color(1.0, 0.95, 0.35, 0.75), 1.0)
+	draw_line(Vector2.ZERO, debug_intent_direction.normalized() * 48.0, Color.CYAN, 1.0)
+	draw_line(debug_muzzle_pos, debug_muzzle_pos + debug_projectile_direction.normalized() * 48.0, Color.YELLOW, 1.5)
+	draw_line(
+		debug_muzzle_pos,
+		debug_ballistic_position,
+		Color.RED if debug_ballistic_obstructed else Color(1.0, 0.85, 0.2, 0.7),
+		1.0
+	)
 	_draw_socket_marker(debug_right_hand_pos, Color.RED, "RH")
 	_draw_socket_marker(debug_left_hand_pos, Color.BLUE, "LH")
 	_draw_socket_marker(debug_weapon_socket_pos, Color(0.6, 1.0, 0.6, 1.0), "W")
@@ -2214,11 +2250,40 @@ func _apply_frame_aware_primary_weapon_socket() -> bool:
 	var muzzle: Vector2 = socket.muzzle + visual_offset
 	var support: Vector2 = socket.support_grip + visual_offset
 	var ejection: Vector2 = socket.ejection + visual_offset
-	var correction := 0.0
+	var desired_correction := 0.0
 	if weapon_definition != null and weapon_definition.fine_aim_limit_degrees > 0.0:
 		var sector_direction: Vector2 = WeaponSocketLibrary.sector_direction(sector)
-		var error := sector_direction.angle_to(_get_frame_aware_weapon_direction().normalized())
-		correction = clampf(error, deg_to_rad(-weapon_definition.fine_aim_limit_degrees), deg_to_rad(weapon_definition.fine_aim_limit_degrees))
+		var correction_weight := 1.0
+		if _is_primary_ranged_aim_presentation_active():
+			correction_weight = clampf(
+				get_ranged_transition_ratio() / maxf(0.001, ranged_aim_ready_ratio),
+				0.0,
+				1.0
+			)
+		var correction_limit := minf(
+			weapon_definition.fine_aim_limit_degrees,
+			ranged_fine_aim_limit_degrees
+		)
+		desired_correction = RangedBallisticAimResolver.resolve_fine_correction(
+			sector_direction,
+			_get_frame_aware_weapon_direction(),
+			correction_limit,
+			correction_weight
+		)
+	var process_frame := Engine.get_process_frames()
+	if not _weapon_correction_initialized:
+		_current_weapon_correction = 0.0
+		_weapon_correction_initialized = true
+		_weapon_correction_process_frame = process_frame
+	elif process_frame != _weapon_correction_process_frame:
+		_current_weapon_correction = RangedBallisticAimResolver.pursue_correction(
+			_current_weapon_correction,
+			desired_correction,
+			ranged_weapon_aim_response,
+			get_process_delta_time()
+		)
+		_weapon_correction_process_frame = process_frame
+	var correction := _current_weapon_correction
 	var recoil_rotation := 0.0
 	if weapon_definition != null:
 		var recoil_sign := -1.0 if frame_direction.x < 0.0 else 1.0
@@ -2239,10 +2304,10 @@ func _apply_frame_aware_primary_weapon_socket() -> bool:
 	if support_grip_debug != null:
 		support_grip_debug.position = support - grip
 
-	debug_weapon_socket_pos = grip
-	debug_support_grip_pos = support
-	debug_muzzle_pos = muzzle
-	debug_ejection_pos = ejection
+	debug_weapon_socket_pos = to_local(primary_weapon_socket.global_position) if primary_weapon_socket != null else grip
+	debug_support_grip_pos = to_local(support_grip_debug.global_position) if support_grip_debug != null else support
+	debug_muzzle_pos = to_local(barrel.global_position) if barrel != null else muzzle
+	debug_ejection_pos = to_local(ejection_socket.global_position) if ejection_socket != null else ejection
 	debug_projectile_direction = _get_frame_aware_weapon_direction().normalized()
 	queue_redraw()
 	return true
@@ -2388,7 +2453,9 @@ func _get_current_primary_ranged_visual_direction() -> Vector2:
 	return direction.normalized()
 
 
-func _begin_modular_primary_ranged_fire_presentation() -> bool:
+func _begin_modular_primary_ranged_fire_presentation(
+	accepted_direction: Vector2 = Vector2.ZERO
+) -> bool:
 	if not modular_primary_ranged_fire_enabled:
 		return false
 	if not modular_locomotion_layers_enabled:
@@ -2400,7 +2467,9 @@ func _begin_modular_primary_ranged_fire_presentation() -> bool:
 	if modular_lower_body_sprite == null and modular_upper_body_sprite == null and modular_sidearm_sprite == null and modular_upper_fx_sprite == null:
 		return false
 
-	var fire_dir := aim_direction
+	var fire_dir := accepted_direction
+	if fire_dir.length_squared() <= 0.0001:
+		fire_dir = aim_direction
 	if fire_dir.length_squared() <= 0.0001:
 		fire_dir = visual_idle_direction
 	if fire_dir.length_squared() <= 0.0001:
@@ -3366,6 +3435,7 @@ func _request_ranged_shot() -> void:
 			_log_ranged_fire_failure(last_ranged_fire_failure)
 		_try_start_reload()
 		return
+	var accepted_aim_direction := _get_attack_aim_direction()
 	if _is_using_sidearm_ranged():
 		if _sidearm_action_phase != &"held":
 			last_ranged_fire_failure = &"sidearm_not_held"
@@ -3373,7 +3443,7 @@ func _request_ranged_shot() -> void:
 			return
 		_sidearm_action_phase = &"firing"
 		_sidearm_action_phase_started = false
-		_sidearm_action_direction = _get_attack_aim_direction()
+		_sidearm_action_direction = accepted_aim_direction
 	var profile := _get_current_ranged_profile()
 	last_ranged_fire_failure = &""
 	_last_weapon_failure_feedback = &""
@@ -3391,12 +3461,12 @@ func _request_ranged_shot() -> void:
 	_pending_ranged_shot = {
 		"timer": delay,
 		"profile": profile.duplicate(true),
-		"aim_direction": _get_attack_aim_direction(),
+		"accepted_aim_direction": accepted_aim_direction,
 	}
 	_obs_gauge(&"player_ranged_requests_pending", 1)
 	_play_ranged_fire_animation(fire_animation)
 	if not _is_using_sidearm_ranged():
-		_begin_modular_primary_ranged_fire_presentation()
+		_begin_modular_primary_ranged_fire_presentation(accepted_aim_direction)
 	_emit_weapon_feedback(&"fire")
 	if delay <= 0.0:
 		_emit_pending_ranged_shot()
@@ -3406,12 +3476,19 @@ func _emit_pending_ranged_shot() -> void:
 	if _pending_ranged_shot.is_empty():
 		return
 	var profile: Dictionary = _pending_ranged_shot.get("profile", {})
-	var direction: Vector2 = _pending_ranged_shot.get("aim_direction", Vector2.RIGHT)
+	var accepted_direction: Vector2 = _pending_ranged_shot.get(
+		"accepted_aim_direction",
+		Vector2.RIGHT
+	)
 	_pending_ranged_shot.clear()
 	_obs_gauge(&"player_ranged_requests_pending", 0)
-	if direction.length_squared() <= 0.0001:
+	if accepted_direction.length_squared() <= 0.0001:
 		_log_ranged_request_cancelled(&"zero_direction")
 		return
+	_sync_primary_ranged_weapon_frame_to_upper()
+	var spawn_position := _get_ranged_muzzle_position(accepted_direction)
+	var ballistic_direction := _get_current_ranged_weapon_axis(accepted_direction)
+	var ballistic_solution := _resolve_ranged_ballistic_solution(accepted_direction)
 	var spread := float(profile.get("spread", 0.0)) + (current_recoil * 0.2)
 	spread *= _get_movement_spread_multiplier()
 	spread *= _get_heat_spread_multiplier()
@@ -3421,23 +3498,22 @@ func _emit_pending_ranged_shot() -> void:
 		var accuracy_bonus: float = float(cognitive.call("get_player_accuracy_bonus"))
 		spread = max(0.0, spread - accuracy_bonus)
 	var spread_rad := deg_to_rad(randf_range(-spread, spread))
-	direction = direction.rotated(spread_rad)
+	var final_shot_direction := ballistic_direction.rotated(spread_rad).normalized()
 
 	var bullet = _instantiate_ranged_projectile(profile)
 	if bullet == null:
 		_log_ranged_request_cancelled(&"projectile_creation")
 		return
 
-	var spawn_position: Vector2 = _get_ranged_muzzle_position(direction)
-	var muzzle_check := _get_muzzle_obstruction(direction, spawn_position)
+	var muzzle_check := _get_muzzle_obstruction(final_shot_direction, spawn_position)
 	if not muzzle_check.is_empty():
 		_spawn_ranged_impact_at(muzzle_check.get("position", spawn_position))
 		current_recoil += float(profile.get("recoil_kick", 1.2)) * _get_heat_recoil_multiplier()
 		_consume_ammo()
 		_apply_heat_for_shot()
 		_emit_weapon_noise(spawn_position)
-		_spawn_muzzle_flash(direction)
-		_apply_body_recoil_impulse(direction)
+		_spawn_muzzle_flash(final_shot_direction)
+		_apply_body_recoil_impulse(final_shot_direction)
 		_obs_increment(&"player_ranged_shots_blocked", 1)
 		_obs_increment(&"player_ranged_request_muzzle_blocked", 1)
 		_obs_log(&"player_ranged_shot_blocked", {
@@ -3445,7 +3521,12 @@ func _emit_pending_ranged_shot() -> void:
 			"position": global_position,
 			"muzzle": spawn_position,
 			"impact": muzzle_check.get("position", spawn_position),
-			"direction": direction,
+			"accepted_aim_direction": accepted_direction,
+			"ballistic_direction": ballistic_direction,
+			"final_shot_direction": final_shot_direction,
+			"direction": final_shot_direction,
+			"aim_error_degrees": ballistic_solution.get("aim_error_degrees", 0.0),
+			"predicted_impact": ballistic_solution.get("predicted_world_position", spawn_position),
 			"spread_deg": spread,
 			"loaded_ammo": _get_current_loaded_ammo(),
 			"reserve_ammo": _get_current_reserve_ammo(),
@@ -3463,7 +3544,7 @@ func _emit_pending_ranged_shot() -> void:
 		_obs_gauge(&"player_reserve_ammo", _get_current_reserve_ammo())
 		return
 	if bullet.has_method("set_direction"):
-		bullet.set_direction(direction)
+		bullet.set_direction(final_shot_direction)
 	bullet.speed = float(profile.get("speed", 780.0))
 	bullet.damage = float(profile.get("damage", 16.0))
 	bullet.max_range_px = float(profile.get("max_range_px", 320.0))
@@ -3494,15 +3575,20 @@ func _emit_pending_ranged_shot() -> void:
 	_consume_ammo()
 	_apply_heat_for_shot()
 	_emit_weapon_noise(spawn_position)
-	_spawn_muzzle_flash(direction)
-	_apply_body_recoil_impulse(direction)
+	_spawn_muzzle_flash(final_shot_direction)
+	_apply_body_recoil_impulse(final_shot_direction)
 	_obs_increment(&"player_ranged_shots_fired", 1)
 	_obs_increment(&"player_ranged_request_fired", 1)
 	_obs_log(&"player_ranged_shot", {
 		"weapon": _get_active_weapon_state_key(),
 		"position": global_position,
 		"muzzle": spawn_position,
-		"direction": direction,
+		"accepted_aim_direction": accepted_direction,
+		"ballistic_direction": ballistic_direction,
+		"final_shot_direction": final_shot_direction,
+		"direction": final_shot_direction,
+		"aim_error_degrees": ballistic_solution.get("aim_error_degrees", 0.0),
+		"predicted_impact": ballistic_solution.get("predicted_world_position", spawn_position),
 		"damage": bullet.damage,
 		"speed": bullet.speed,
 		"radius": bullet.bullet_radius,
@@ -4287,12 +4373,15 @@ func _advance_fast_chain_step() -> bool:
 func _reset_fast_chain(clear_buffer: bool = true) -> void:
 	_melee_fast_combo_step = 0
 	_melee_fast_chain_direction_active = false
+	_clear_committed_melee_targeting()
 	if clear_buffer:
 		_clear_attack_buffer()
 
 
-func _get_fast_chain_forward_direction() -> Vector2:
-	var requested := _get_melee_forward_direction().normalized()
+func _get_fast_chain_forward_direction(requested_direction: Vector2 = Vector2.ZERO) -> Vector2:
+	var requested := requested_direction.normalized()
+	if requested == Vector2.ZERO:
+		requested = _get_melee_forward_direction().normalized()
 	if requested == Vector2.ZERO:
 		requested = Vector2.RIGHT
 	if not _has_authored_fast_chain():
@@ -4445,14 +4534,23 @@ func _start_fast_attack() -> void:
 		_melee_swing_sfx_played = false
 		_melee_swing_sfx_frames_played.clear()
 		_melee_animation_finished = false
-		_melee_forward = _get_fast_chain_forward_direction()
+		var requested_direction := _get_melee_forward_direction()
+		var targeting_solution := _resolve_melee_attack_solution(
+			attack_profile,
+			requested_direction
+		)
+		_melee_forward = _get_fast_chain_forward_direction(
+			targeting_solution.get("assisted_direction", requested_direction)
+		)
+		_commit_melee_attack_solution(targeting_solution, attack_profile, requested_direction)
 		_begin_attack_movement_profile(
 			_resolve_current_attack_id(),
 			_melee_forward
 		)
 		_begin_attack_drive(
 			attack_profile,
-			_melee_forward
+			_melee_forward,
+			float(targeting_solution.get("resolved_drive_distance", -1.0))
 		)
 		if attack_profile != null:
 			_configure_melee_hitbox(
@@ -4503,9 +4601,16 @@ func _start_fast_attack() -> void:
 		fallback_animation = &"unarmed_attack_fast"
 	_melee_attack_key = next_fast_key
 	_melee_elapsed = 0.0
-	_melee_forward = _get_melee_forward_direction()
+	var requested_direction := _get_melee_forward_direction()
+	var targeting_solution := _resolve_melee_attack_solution(attack_profile, requested_direction)
+	_melee_forward = targeting_solution.get("assisted_direction", requested_direction)
+	_commit_melee_attack_solution(targeting_solution, attack_profile, requested_direction)
 	_begin_attack_movement_profile(_resolve_current_attack_id(), _melee_forward)
-	_begin_attack_drive(attack_profile, _melee_forward)
+	_begin_attack_drive(
+		attack_profile,
+		_melee_forward,
+		float(targeting_solution.get("resolved_drive_distance", -1.0))
+	)
 	if attack_profile != null:
 		_configure_melee_hitbox(attack_profile.damage, attack_profile.range_px, attack_profile.arc_degrees)
 	else:
@@ -4625,13 +4730,20 @@ func _start_heavy_attack() -> void:
 	_melee_attack_kind = "heavy"
 	var is_unarmed_attack := _is_attack_profile_unarmed(_active_attack_profile)
 	_melee_attack_key = "unarmed_heavy" if is_unarmed_attack else "melee_heavy"
-	_begin_melee_attack_profile("heavy")
+	var heavy_profile := _begin_melee_attack_profile("heavy")
 	_notify_camera_attack_windup(true)
 	_play_combat_sfx(CRITICAL_WINDUP_SOUND, global_position, -4.0)
 	_spend_stamina(heavy_attack_stamina_cost, &"heavy_attack")
-	_melee_forward = _get_melee_forward_direction()
+	var requested_direction := _get_melee_forward_direction()
+	var targeting_solution := _resolve_melee_attack_solution(heavy_profile, requested_direction)
+	_melee_forward = targeting_solution.get("assisted_direction", requested_direction)
+	_commit_melee_attack_solution(targeting_solution, heavy_profile, requested_direction)
 	_begin_attack_movement_profile(_resolve_current_attack_id(), _melee_forward)
-	_begin_attack_drive(_active_melee_attack_profile, _melee_forward)
+	_begin_attack_drive(
+		_active_melee_attack_profile,
+		_melee_forward,
+		float(targeting_solution.get("resolved_drive_distance", -1.0))
+	)
 	if not is_unarmed_attack and animated_sprite and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation("melee_2h_heavy_anticipation"):
 		_melee_active = false
 		_melee_heavy_anticipating = true
@@ -8428,9 +8540,160 @@ func _ensure_target_ring_deferred() -> void:
 	_target_ring = ring_node
 
 
+func _get_melee_target_point(target: Node2D) -> Vector2:
+	if target != null and target.has_method("get_melee_target_point"):
+		var result: Variant = target.call("get_melee_target_point")
+		if result is Vector2:
+			return result as Vector2
+	return target.global_position if target != null else global_position
+
+
+func _get_melee_target_input_direction() -> Vector2:
+	var direction := _get_attack_aim_direction()
+	if direction.length_squared() <= 0.0001:
+		direction = aim_direction
+	if direction.length_squared() <= 0.0001:
+		direction = visual_idle_direction
+	if direction.length_squared() <= 0.0001:
+		direction = movement_direction
+	return direction.normalized() if direction.length_squared() > 0.0001 else Vector2.RIGHT
+
+
+func _collect_melee_target_candidates() -> Array[Dictionary]:
+	var candidates: Array[Dictionary] = []
+	for enemy in get_tree().get_nodes_in_group("enemy"):
+		if not enemy is Node2D:
+			continue
+		var target := enemy as Node2D
+		if not is_instance_valid(target):
+			continue
+		if target.has_method("is_passive_enemy") and bool(target.call("is_passive_enemy")):
+			continue
+		if target.has_method("is_dead") and bool(target.call("is_dead")):
+			continue
+		candidates.append({"target": target, "target_point": _get_melee_target_point(target)})
+	return candidates
+
+
+func _get_melee_preview_profile() -> MeleeAttackProfile:
+	return _get_current_melee_attack_profile("fast")
+
+
+func _update_melee_soft_target() -> void:
+	var profile := _get_melee_preview_profile()
+	if profile == null:
+		_melee_soft_target = null
+		_melee_soft_target_score = 0.0
+		_melee_target_preview.clear()
+		return
+	var reach := MeleeTargetResolver.get_reach_model(profile)
+	var preview_reach := minf(
+		melee_target_hard_cap_px,
+		float(reach.assist_reach) + melee_target_preview_extra_px
+	)
+	var old_target := _melee_soft_target
+	var selected := MeleeTargetResolver.select_target(
+		global_position,
+		_get_melee_target_input_direction(),
+		_collect_melee_target_candidates(),
+		_melee_soft_target if is_instance_valid(_melee_soft_target) else null,
+		{
+			"preview_reach": preview_reach,
+			"reliable_reach": reach.reliable_reach,
+			"acquire_cone_degrees": melee_target_acquire_cone_degrees,
+			"retain_cone_degrees": melee_target_retain_cone_degrees,
+			"retain_range_bonus_px": melee_target_retain_range_bonus_px,
+			"switch_margin": melee_target_switch_score_margin,
+			"current_bonus": melee_target_current_bonus,
+		}
+	)
+	_melee_soft_target = selected.get("target") as Node2D
+	_melee_soft_target_score = float(selected.get("score", 0.0))
+	_melee_target_preview = MeleeTargetResolver.build_preview(
+		selected, reach, preview_reach, melee_target_acquire_cone_degrees
+	)
+	if not _melee_target_preview.is_empty() and _melee_soft_target != null:
+		var attack_solution := MeleeTargetResolver.resolve_attack(
+			global_position,
+			_get_melee_target_input_direction(),
+			_melee_soft_target,
+			_get_melee_target_point(_melee_soft_target),
+			profile
+		)
+		var assisted: Vector2 = attack_solution.assisted_direction
+		var target_direction: Vector2 = attack_solution.target_direction
+		var residual_error := absf(rad_to_deg(assisted.angle_to(target_direction)))
+		_melee_target_preview["reliable_contact"] = (
+			attack_solution.target != null
+			and float(attack_solution.target_distance) <= float(attack_solution.reliable_reach)
+			and residual_error <= profile.arc_degrees * 0.5
+		)
+	if old_target != _melee_soft_target:
+		_melee_target_preview["newly_acquired"] = _melee_soft_target != null
+		_obs_log(&"player_melee_soft_target_changed", {
+			"from": old_target.name if is_instance_valid(old_target) else "",
+			"to": _melee_soft_target.name if is_instance_valid(_melee_soft_target) else "",
+			"score": _melee_soft_target_score,
+			"distance": float(_melee_target_preview.get("distance", 0.0)),
+			"angle_error_degrees": float(_melee_target_preview.get("angle_error_degrees", 0.0)),
+		})
+	_obs_gauge(&"player_melee_target_distance", float(_melee_target_preview.get("distance", 0.0)))
+	_obs_gauge(&"player_melee_target_angle_error", float(_melee_target_preview.get("angle_error_degrees", 0.0)))
+	_obs_gauge(&"player_melee_target_score", _melee_soft_target_score)
+	_obs_gauge(&"player_melee_target_proximity", float(_melee_target_preview.get("proximity", 0.0)))
+	_obs_gauge(&"player_melee_target_reliable", 1 if bool(_melee_target_preview.get("reliable_contact", false)) else 0)
+
+
+func _resolve_melee_attack_solution(
+	profile: MeleeAttackProfile,
+	requested_direction: Vector2
+) -> Dictionary:
+	var target := _melee_soft_target if is_instance_valid(_melee_soft_target) else null
+	return MeleeTargetResolver.resolve_attack(
+		global_position,
+		requested_direction,
+		target,
+		_get_melee_target_point(target),
+		profile
+	)
+
+
+func _commit_melee_attack_solution(
+	solution: Dictionary,
+	profile: MeleeAttackProfile,
+	requested_direction: Vector2
+) -> void:
+	_committed_melee_target = solution.get("target") as Node2D
+	_committed_melee_attack_solution = solution.duplicate(true)
+	_obs_log(&"player_melee_attack_targeting_committed", {
+		"attack_id": String(profile.attack_id) if profile != null else _resolve_current_attack_id(),
+		"target": _committed_melee_target.name if is_instance_valid(_committed_melee_target) else "",
+		"input_direction": requested_direction,
+		"assisted_direction": _melee_forward,
+		"aim_correction_degrees": float(solution.get("aim_correction_degrees", 0.0)),
+		"target_distance": float(solution.get("target_distance", 0.0)),
+		"base_drive": profile.drive_distance_px if profile != null else 0.0,
+		"assist_drive": float(solution.get("assist_drive_distance", 0.0)),
+		"resolved_drive": float(solution.get("resolved_drive_distance", 0.0)),
+		"reliable_contact": bool(solution.get("reliable_contact", false)),
+	})
+
+
+func _clear_committed_melee_targeting() -> void:
+	_committed_melee_target = null
+	_committed_melee_attack_solution.clear()
+
+
 func _update_combat_target() -> void:
 	var old_target: Node2D = _combat_target
-	_combat_target = _find_nearest_enemy_target(combat_target_range)
+	if melee_soft_targeting_enabled and _is_melee_loadout_active():
+		_update_melee_soft_target()
+		_combat_target = _melee_soft_target
+	else:
+		_melee_soft_target = null
+		_melee_soft_target_score = 0.0
+		_melee_target_preview.clear()
+		_combat_target = _find_nearest_enemy_target(combat_target_range)
 	if old_target != _combat_target and old_target and is_instance_valid(old_target) and old_target.has_method("set_threat_highlight"):
 		old_target.call("set_threat_highlight", false)
 	if _combat_target and _combat_target.has_method("set_threat_highlight"):
@@ -8454,9 +8717,30 @@ func _update_target_ring() -> void:
 		_target_ring.visible = false
 		return
 	_target_ring.visible = true
-	_target_ring.global_position = _combat_target.global_position
-	if _target_ring.has_method("set_in_strike_zone"):
+	_target_ring.global_position = _get_melee_target_point(_combat_target)
+	if _is_melee_loadout_active() and _target_ring.has_method("set_melee_target_state"):
+		_target_ring.call("set_melee_target_state", _melee_target_preview)
+	elif _target_ring.has_method("set_in_strike_zone"):
 		_target_ring.call("set_in_strike_zone", _is_enemy_in_preview_strike_zone(_combat_target))
+
+
+func get_melee_targeting_status() -> Dictionary:
+	var target_valid := is_instance_valid(_melee_soft_target)
+	return {
+		"active": _is_melee_loadout_active(),
+		"has_target": target_valid,
+		"target_name": _melee_soft_target.name if target_valid else "",
+		"target_instance_id": _melee_soft_target.get_instance_id() if target_valid else 0,
+		"distance": float(_melee_target_preview.get("distance", 0.0)),
+		"angle_error_degrees": float(_melee_target_preview.get("angle_error_degrees", 0.0)),
+		"score": _melee_soft_target_score,
+		"proximity": float(_melee_target_preview.get("proximity", 0.0)),
+		"alignment": float(_melee_target_preview.get("alignment", 0.0)),
+		"reliable_contact": bool(_melee_target_preview.get("reliable_contact", false)),
+		"reliable_reach": float(_melee_target_preview.get("reliable_reach", 0.0)),
+		"assist_reach": float(_melee_target_preview.get("assist_reach", 0.0)),
+		"committed": is_instance_valid(_committed_melee_target),
+	}
 
 
 func set_vista_presentation_mode(enabled: bool) -> void:
@@ -8562,6 +8846,75 @@ func _get_ranged_muzzle_position(direction: Vector2) -> Vector2:
 	if barrel:
 		return barrel.global_position
 	return global_position + direction.normalized() * muzzle_offset
+
+
+func _get_current_ranged_weapon_axis(
+	fallback_direction: Vector2
+) -> Vector2:
+	if _is_using_ranged_2h_primary():
+		_sync_primary_ranged_weapon_frame_to_upper()
+		_apply_frame_aware_primary_weapon_socket()
+		if primary_weapon_socket != null and barrel != null:
+			var physical_axis: Vector2 = primary_weapon_socket.global_position.direction_to(
+				barrel.global_position
+			)
+			if physical_axis.length_squared() > 0.0001:
+				return physical_axis.normalized()
+	var fallback := fallback_direction
+	if fallback.length_squared() <= 0.0001:
+		fallback = _get_attack_aim_direction()
+	return fallback.normalized() if fallback.length_squared() > 0.0001 else Vector2.RIGHT
+
+
+func _get_desired_ranged_aim_world_point() -> Vector2:
+	if not arrow_aim_enabled:
+		return _get_world_mouse_position()
+	var direction := aim_direction
+	if direction.length_squared() <= 0.0001:
+		direction = _get_attack_aim_direction()
+	return global_position + direction.normalized() * ranged_controller_aim_distance
+
+
+func _resolve_ranged_ballistic_solution(
+	fallback_direction: Vector2 = Vector2.ZERO
+) -> Dictionary:
+	var profile := _get_current_ranged_profile()
+	var fallback := fallback_direction
+	if fallback.length_squared() <= 0.0001:
+		fallback = _get_attack_aim_direction()
+	var muzzle := _get_ranged_muzzle_position(fallback)
+	var axis := _get_current_ranged_weapon_axis(fallback)
+	var desired := _get_desired_ranged_aim_world_point()
+	var solution := RangedBallisticAimResolver.solve(
+		get_world_2d().direct_space_state,
+		desired,
+		muzzle,
+		axis,
+		float(profile.get("max_range_px", 320.0)),
+		_get_ranged_fire_ray_exclusions(),
+		_find_terrain_ballistics_provider()
+	)
+	_ranged_ballistic_solution = solution
+	debug_intent_direction = solution.get("intent_direction", fallback)
+	debug_projectile_direction = solution.get("ballistic_direction", axis)
+	debug_ballistic_position = to_local(
+		solution.get("predicted_world_position", muzzle)
+	)
+	debug_ballistic_obstructed = bool(solution.get("obstructed", false))
+	_obs_gauge(
+		&"player_ranged_aim_error_degrees",
+		float(solution.get("aim_error_degrees", 0.0))
+	)
+	_obs_gauge(
+		&"player_ranged_ballistic_alignment_ratio",
+		float(solution.get("alignment_ratio", 1.0))
+	)
+	_obs_gauge(
+		&"player_ranged_ballistic_obstructed",
+		1 if bool(solution.get("obstructed", false)) else 0
+	)
+	queue_redraw()
+	return solution
 
 
 func get_ranged_ejection_position() -> Vector2:
@@ -8738,11 +9091,17 @@ func _begin_attack_movement_profile(attack_id: String, facing_dir: Vector2) -> v
 
 func _begin_attack_drive(
 	profile: MeleeAttackProfile,
-	direction: Vector2
+	direction: Vector2,
+	distance_override: float = -1.0
 ) -> void:
 	_cancel_attack_drive(true)
+	var drive_distance := (
+		profile.drive_distance_px
+		if profile != null and distance_override < 0.0
+		else maxf(0.0, distance_override)
+	)
 	if profile == null \
-	or profile.drive_distance_px <= 0.0 \
+	or drive_distance <= 0.0 \
 	or profile.drive_duration_sec <= 0.0:
 		return
 	var resolved_direction := direction.normalized()
@@ -8755,8 +9114,8 @@ func _begin_attack_drive(
 	)
 	_attack_drive_time_remaining = profile.drive_duration_sec
 	_attack_drive_total_duration = profile.drive_duration_sec
-	_attack_drive_distance_total = profile.drive_distance_px
-	_attack_drive_distance_remaining = profile.drive_distance_px
+	_attack_drive_distance_total = drive_distance
+	_attack_drive_distance_remaining = drive_distance
 	_attack_drive_input_influence = clampf(
 		profile.drive_input_influence,
 		0.0,
@@ -10352,6 +10711,15 @@ func get_weapon_status() -> Dictionary:
 		var weapon_data: Dictionary = display_profile.get_weapon_data()
 		weapon_name = str(weapon_data.get("name", weapon_name)).to_upper()
 	var ranged_posture := get_ranged_posture()
+	var ballistic_solution: Dictionary = {}
+	if ranged_context_active \
+	and ranged_posture not in [&"none", &"relaxed"] \
+	and is_inside_tree():
+		ballistic_solution = _resolve_ranged_ballistic_solution()
+	var ballistic_collider_name := ""
+	var predicted_collider: Variant = ballistic_solution.get("predicted_collider")
+	if predicted_collider is Node and is_instance_valid(predicted_collider):
+		ballistic_collider_name = String((predicted_collider as Node).name)
 	return {
 		"equipped": primary_weapon_equipped,
 		"primary_weapon_id": equipped_primary_weapon_id,
@@ -10375,6 +10743,14 @@ func get_weapon_status() -> Dictionary:
 		"ranged_transition_ratio": get_ranged_transition_ratio(),
 		"ranged_aim_ready_ratio": ranged_aim_ready_ratio,
 		"ranged_aim_accuracy_ratio": clampf(get_ranged_transition_ratio() / maxf(0.001, ranged_aim_ready_ratio), 0.0, 1.0) if _is_primary_ranged_aim_presentation_active() else (1.0 if _is_ranged_ready_active() else 0.0),
+		"ranged_desired_world_point": ballistic_solution.get("desired_world_point", Vector2.INF),
+		"ranged_muzzle_world_position": ballistic_solution.get("muzzle_world_position", Vector2.INF),
+		"ranged_ballistic_direction": ballistic_solution.get("ballistic_direction", Vector2.ZERO),
+		"ranged_predicted_world_position": ballistic_solution.get("predicted_world_position", Vector2.INF),
+		"ranged_aim_error_degrees": float(ballistic_solution.get("aim_error_degrees", 0.0)),
+		"ranged_ballistic_alignment_ratio": float(ballistic_solution.get("alignment_ratio", 0.0)),
+		"ranged_ballistic_obstructed": bool(ballistic_solution.get("obstructed", false)),
+		"ranged_ballistic_collider_name": ballistic_collider_name,
 		"ranged_ready": ranged_posture == &"ready",
 		"can_fire_now": can_fire_ranged_now(),
 		"recoil": current_recoil,

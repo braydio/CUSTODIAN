@@ -99,7 +99,7 @@
     "socket_data_path": "res://content/data/operator/generated/operator_weapon_sockets.generated.json",
     "production_socket_data_required": true,
     "phase_1_sectors": ["e", "w", "se", "sw"],
-    "fine_aim_limit_degrees": 0.0,
+    "fine_aim_limit_degrees": 24.0,
     "recoil_translation_px": 3.0,
     "recoil_rotation_degrees": 2.0
   },
