@@ -6,10 +6,11 @@ class DummyTarget:
 	extends CharacterBody2D
 
 	var hits: Array[Dictionary] = []
+	var attack_contexts: Array[Dictionary] = []
 	var result_mode: StringName = &"damaged"
 	var falcon_impacts: int = 0
 
-	func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker_team: String = "enemy", _attacker: Node2D = null, _hit_direction: Vector2 = Vector2.ZERO) -> Dictionary:
+	func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker_team: String = "enemy", _attacker: Node2D = null, _hit_direction: Vector2 = Vector2.ZERO, _guard_cost: float = -1.0, attack_context: Dictionary = {}) -> Dictionary:
 		var result := {
 			"result": result_mode,
 			"hit_kind": hit_kind,
@@ -19,6 +20,7 @@ class DummyTarget:
 			"applied_damage": amount if result_mode == &"damaged" else 0.0,
 		}
 		hits.append(result)
+		attack_contexts.append(attack_context.duplicate(true))
 		return result
 
 	func apply_enemy_falcon_punch_impact(_direction: Vector2, _knockback_px: float, _victim_hitstop_sec: float) -> void:
@@ -93,6 +95,12 @@ func _run() -> void:
 	await process_frame
 	_assert_true(target.hits.size() == 1, "falcon punch should resolve one hit")
 	_assert_true(String(target.hits[0].get("hit_kind", "")) == "falcon_punch", "falcon punch hit should preserve hit_kind")
+	_assert_true(target.attack_contexts.size() == 1, "falcon punch should pass one authoritative attack context")
+	if not target.attack_contexts.is_empty():
+		var spatial := target.attack_contexts[0]
+		_assert_true(String(spatial.get("contact_model", "")) == "directional_lane", "falcon punch should use normalized directional-lane geometry")
+		_assert_true(bool(spatial.get("spatial_valid", false)), "falcon punch accepted contact should carry spatial_valid=true")
+		_assert_true(not String(spatial.get("attack_id", "")).is_empty(), "falcon punch contact should retain stable attack ID")
 	_assert_true(String(grunt.get("_grunt_falcon_punch_phase")) == "impact_lock", "resolved hit should enter impact lock")
 	_assert_true(target.falcon_impacts == 1, "damaging falcon punch should trigger dedicated Operator impact")
 	_assert_true(grunt.global_position.distance_to(target.global_position) >= 27.9, "falcon contact should preserve minimum body separation")

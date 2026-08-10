@@ -1,63 +1,63 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene format=3 uid="uid://0tq7q51b420p"]
 
-[ext_resource type="Script" path="res://game/world/vistas/sundered_keep/sundered_keep_world_vista.gd" id="1_script"]
-[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/approach/underlay/first_vista_base_storm_horizon.png" id="2_storm"]
-[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/shared/landmarks/distant_sundered_keep_landmark_v2.png" id="3_keep"]
-[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/approach/fog/first_vista_reveal_veil.png" id="4_fog"]
-[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/world_vista/sundered_keep_world_vista_cliff_lip.png" id="5_lip"]
+[ext_resource type="Script" uid="uid://6xmm611sxino" path="res://game/world/vistas/sundered_keep/sundered_keep_world_vista.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://cjb1elrrj8x2y" path="res://content/backgrounds/sundered_keep/approach/underlay/first_vista_base_storm_horizon.png" id="2_storm"]
+[ext_resource type="Texture2D" uid="uid://bcb2ogtoeqnmp" path="res://content/backgrounds/sundered_keep/shared/landmarks/distant_sundered_keep_landmark_v2.png" id="3_keep"]
+[ext_resource type="Texture2D" uid="uid://q02fsxfbtjwf" path="res://content/backgrounds/sundered_keep/approach/fog/first_vista_reveal_veil.png" id="4_fog"]
 
-[node name="SunderedKeepWorldVista" type="Node2D"]
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_3p03e"]
+load_path = "res://.godot/imported/sundered_keep_world_vista_cliff_lip.png-46466244f513588e7feeb467086d5ccf.ctex"
+
+[node name="SunderedKeepWorldVista" type="Node2D" unique_id=1111911734]
 script = ExtResource("1_script")
-y_sort_enabled = false
 
-[node name="HorizonPresentation" type="Node2D" parent="."]
-y_sort_enabled = false
+[node name="HorizonPresentation" type="Node2D" parent="." unique_id=1078952601]
 
-[node name="StormParallax" type="Node2D" parent="HorizonPresentation"]
+[node name="StormParallax" type="Node2D" parent="HorizonPresentation" unique_id=952796223]
 
-[node name="StormHorizon" type="Sprite2D" parent="HorizonPresentation/StormParallax"]
-position = Vector2(0, -220)
-z_as_relative = false
+[node name="StormHorizon" type="Sprite2D" parent="HorizonPresentation/StormParallax" unique_id=646958891]
 z_index = 40
-texture = ExtResource("2_storm")
+z_as_relative = false
 texture_filter = 1
+position = Vector2(0, -220)
+texture = ExtResource("2_storm")
 region_enabled = true
 region_rect = Rect2(0, 0, 2600, 1200)
 
-[node name="KeepParallax" type="Node2D" parent="HorizonPresentation"]
+[node name="KeepParallax" type="Node2D" parent="HorizonPresentation" unique_id=1597520792]
 
-[node name="DistantKeep" type="Sprite2D" parent="HorizonPresentation/KeepParallax"]
+[node name="DistantKeep" type="Sprite2D" parent="HorizonPresentation/KeepParallax" unique_id=1326264323]
+z_index = 50
+z_as_relative = false
+texture_filter = 1
 position = Vector2(170, -180)
 scale = Vector2(0.32, 0.32)
-z_as_relative = false
-z_index = 50
 texture = ExtResource("3_keep")
-texture_filter = 1
 
-[node name="FogParallax" type="Node2D" parent="HorizonPresentation"]
+[node name="FogParallax" type="Node2D" parent="HorizonPresentation" unique_id=616762905]
 
-[node name="FogVeil" type="Sprite2D" parent="HorizonPresentation/FogParallax"]
-position = Vector2(0, -20)
-z_as_relative = false
+[node name="FogVeil" type="Sprite2D" parent="HorizonPresentation/FogParallax" unique_id=432230961]
 z_index = 60
-texture = ExtResource("4_fog")
-texture_filter = 1
-
-[node name="ForegroundCliffLip" type="Sprite2D" parent="."]
-scale = Vector2(1.25, 1)
 z_as_relative = false
-z_index = 80
-texture = ExtResource("5_lip")
 texture_filter = 1
+position = Vector2(0, -20)
+texture = ExtResource("4_fog")
 
-[node name="CameraPresentationAnchor" type="Marker2D" parent="."]
+[node name="ForegroundCliffLip" type="Sprite2D" parent="." unique_id=299840177]
+z_index = 80
+z_as_relative = false
+texture_filter = 1
+scale = Vector2(1.25, 1)
+texture = SubResource("CompressedTexture2D_3p03e")
 
-[node name="CameraInfluenceStart" type="Marker2D" parent="."]
+[node name="CameraPresentationAnchor" type="Marker2D" parent="." unique_id=974584301]
 
-[node name="CameraApex" type="Marker2D" parent="."]
+[node name="CameraInfluenceStart" type="Marker2D" parent="." unique_id=1105994537]
 
-[node name="CameraReturnStart" type="Marker2D" parent="."]
+[node name="CameraApex" type="Marker2D" parent="." unique_id=1007999553]
 
-[node name="CameraReturnComplete" type="Marker2D" parent="."]
+[node name="CameraReturnStart" type="Marker2D" parent="." unique_id=1267013674]
 
-[node name="VistaController" type="Node" parent="."]
+[node name="CameraReturnComplete" type="Marker2D" parent="." unique_id=1074176663]
+
+[node name="VistaController" type="Node" parent="." unique_id=1315943853]

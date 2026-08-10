@@ -8,6 +8,8 @@ const SETTING_HEAVY_DIAGNOSTICS := "custodian/dev/heavy_diagnostics"
 const DEBUG_CAMERA_ACTION := &"debug_free_camera"
 const INFINITE_HEALTH_ACTION := &"debug_infinite_health"
 const INFINITE_STAMINA_ACTION := &"debug_infinite_stamina"
+const ATMOSPHERE_ACTION := &"debug_toggle_atmosphere"
+const ATMOSPHERE_KEY := KEY_F2
 const STATUS_HOLD_SEC := 2.5
 
 var enabled := false
@@ -17,6 +19,7 @@ var heavy_diagnostics_enabled := false
 var debug_free_camera_enabled := false
 var infinite_health_enabled := false
 var infinite_stamina_enabled := false
+var atmosphere_visible := true
 
 var _status_layer: CanvasLayer
 var _status_label: Label
@@ -52,6 +55,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event.is_action_pressed(INFINITE_STAMINA_ACTION):
 		set_infinite_stamina_enabled(not infinite_stamina_enabled)
 		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed(ATMOSPHERE_ACTION):
+		set_atmosphere_visible(not atmosphere_visible)
+		get_viewport().set_input_as_handled()
 
 
 func refresh() -> void:
@@ -77,6 +83,7 @@ func refresh() -> void:
 		debug_free_camera_enabled = false
 		infinite_health_enabled = false
 		infinite_stamina_enabled = false
+		atmosphere_visible = true
 	else:
 		_ensure_status_overlay()
 	capabilities_changed.emit(get_capabilities())
@@ -119,11 +126,33 @@ func set_infinite_stamina_enabled(value: bool) -> void:
 	_set_playtest_control(&"infinite_stamina", value)
 
 
+func set_atmosphere_visible(value: bool) -> void:
+	if value and not debug_ui_enabled:
+		return
+	atmosphere_visible = value
+	_apply_atmosphere_visibility()
+	_status_hold_remaining = STATUS_HOLD_SEC
+	playtest_controls_changed.emit(get_playtest_controls())
+	_update_status_overlay()
+	print("[DevMode] atmosphere: %s" % ("ON" if value else "OFF"))
+
+
+func _apply_atmosphere_visibility() -> void:
+	var atmosphere := get_node_or_null("/root/GameRoot/WorldAtmosphere2D") as CanvasLayer
+	if atmosphere == null and get_tree() != null and get_tree().current_scene != null:
+		atmosphere = get_tree().current_scene.get_node_or_null("WorldAtmosphere2D") as CanvasLayer
+	if atmosphere == null:
+		push_warning("[DevMode] WorldAtmosphere2D not found; F9 state held until the node exists.")
+		return
+	atmosphere.visible = atmosphere_visible
+
+
 func get_playtest_controls() -> Dictionary:
 	return {
 		"debug_free_camera": debug_free_camera_enabled,
 		"infinite_health": infinite_health_enabled,
 		"infinite_stamina": infinite_stamina_enabled,
+		"atmosphere": atmosphere_visible,
 	}
 
 
@@ -160,6 +189,7 @@ func _ensure_input_actions() -> void:
 	_ensure_action_key(DEBUG_CAMERA_ACTION, KEY_F6)
 	_ensure_action_key(INFINITE_HEALTH_ACTION, KEY_F7)
 	_ensure_action_key(INFINITE_STAMINA_ACTION, KEY_F8)
+	_ensure_action_key(ATMOSPHERE_ACTION, KEY_F2)
 
 
 func _ensure_action_key(action: StringName, keycode: Key) -> void:
@@ -204,19 +234,21 @@ func _update_status_overlay() -> void:
 		return
 	var has_active_control := debug_free_camera_enabled \
 		or infinite_health_enabled \
-		or infinite_stamina_enabled
+		or infinite_stamina_enabled \
+		or not atmosphere_visible
 	_status_label.visible = debug_ui_enabled \
 		and (has_active_control or _status_hold_remaining > 0.0)
 	if not _status_label.visible:
 		return
 	var rows: Array[String] = [
-		"PLAYTEST  F6 Camera  F7 Health  F8 Stamina",
-		"Camera: %s | Health: %s | Stamina: %s"
+		"PLAYTEST  F2 Atmo  F6 Camera  F7 Health  F8 Stamina",
+		"Camera: %s | Health: %s | Stamina: %s | Atmo: %s"
 		% [
 			"FREE (arrows / MMB / wheel)"
 				if debug_free_camera_enabled else "follow",
 			"∞" if infinite_health_enabled else "normal",
 			"∞" if infinite_stamina_enabled else "normal",
+			"hidden" if not atmosphere_visible else "on",
 		],
 	]
 	_status_label.text = "\n".join(rows)

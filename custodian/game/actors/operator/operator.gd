@@ -618,6 +618,7 @@ var _integrity_reclaim_last_restore := 0.0
 var _engagement_tracker: EngagementTracker = null
 var _last_damage_kind: StringName = &""
 var _last_enemy_attack_kind: StringName = &""
+var _last_incoming_attack_context: Dictionary = {}
 var _body_recoil_offset := Vector2.ZERO
 var _animated_sprite_base_position := Vector2.ZERO
 var _dodge_fx_back_base_position := Vector2.ZERO
@@ -10949,6 +10950,24 @@ func _log_incoming_hit_result(
 		data["attacker_position"] = attacker.global_position
 	for key in extra.keys():
 		data[key] = extra[key]
+	data["target_health_before"] = data.get("target_health_before", current_health + applied_damage)
+	data["target_health_after"] = current_health
+	data["lethal"] = result == &"damaged" and applied_damage > 0.0 and current_health <= 0.0
+	if applied_damage > 0.0:
+		var model := String(data.get("contact_model", "unknown"))
+		if model == "unknown":
+			_obs_increment(&"enemy_hits_missing_spatial_context")
+		else:
+			_obs_increment(&"enemy_hits_with_spatial_context")
+			if bool(data.get("spatial_valid", false)):
+				_obs_increment(&"enemy_spatial_contact_valid")
+			else:
+				_obs_increment(&"enemy_spatial_contact_violations")
+				_obs_warning("Enemy damaging contact failed authoritative spatial contract", data)
+		if bool(data.lethal):
+			_obs_increment(&"enemy_lethal_hits")
+			if model != "unknown" and not bool(data.get("spatial_valid", false)):
+				_obs_increment(&"enemy_lethal_spatial_violations")
 
 	_obs_increment(&"incoming_hits_total", 1)
 	_obs_increment(StringName("incoming_hit_%s" % String(result)), 1)
@@ -10999,9 +11018,17 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", attacker_
 	var hit_context := attack_context.duplicate(true)
 	hit_context["damage_attempted"] = amount
 	hit_context["target_health_before"] = health_before
+	hit_context["target_position"] = hit_context.get("target_position", global_position)
+	hit_context["contact_position"] = hit_context.get("contact_position", global_position)
+	hit_context["player_dodge_phase"] = String(get_dodge_telemetry_phase())
+	if attacker != null and is_instance_valid(attacker):
+		hit_context["attacker_position"] = hit_context.get("attacker_position", attacker.global_position)
+		hit_context["separation_px"] = hit_context.get("separation_px", attacker.global_position.distance_to(global_position))
+	hit_context["dodge_classification"] = "neutral_hit"
 	if _dodge_charge_active:
 		_obs_increment(&"incoming_hit_during_dodge_charge")
 		_obs_increment(&"incoming_dodge_classification_windup_hit")
+		hit_context["dodge_classification"] = "windup_hit"
 		_obs_log(&"incoming_dodge_timing_classified", hit_context.merged({"classification": "windup_hit"}, true))
 		_cancel_dodge_charge(&"incoming_hit")
 	elif _dodge_active:
@@ -11009,15 +11036,18 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", attacker_
 		if _dodge_iframe_timer > 0.0:
 			_obs_increment(&"incoming_hit_during_iframe")
 			_obs_increment(&"incoming_dodge_classification_iframe_avoid")
+			hit_context["dodge_classification"] = "iframe_avoid"
 			_obs_log(&"incoming_dodge_timing_classified", hit_context.merged({"classification": "iframe_avoid"}, true))
 		else:
 			_obs_increment(&"dodge_timing_miss_late")
 			_obs_increment(&"incoming_dodge_classification_miss_late")
+			hit_context["dodge_classification"] = "miss_late"
 			_obs_log(&"incoming_dodge_timing_classified", hit_context.merged({"classification": "miss_late"}, true))
 	elif _dodge_recovery_active:
 		_obs_increment(&"incoming_hit_during_dodge_recovery")
 		_obs_increment(&"dodge_timing_miss_late")
 		_obs_increment(&"incoming_dodge_classification_recovery_hit")
+		hit_context["dodge_classification"] = "recovery_hit"
 		_obs_log(&"incoming_dodge_timing_classified", hit_context.merged({"classification": "recovery_hit"}, true))
 	var resolved_hit_direction := hit_direction
 	if resolved_hit_direction.length_squared() <= 0.001 and attacker != null and is_instance_valid(attacker):
@@ -11079,14 +11109,13 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", attacker_
 			hit_context["guard_blocked"] = true
 			hit_context["guard_chip"] = true
 			hit_context["reclaim_eligible"] = false
+			_capture_last_incoming_attack_context(hit_context, hit_kind, final_damage, &"blocked")
 			take_damage(final_damage, false, hit_context)
-		_log_incoming_hit_result(&"blocked", hit_kind, amount, final_damage, attacker, {
+		var blocked_context := hit_context.duplicate(true)
+		blocked_context.merge({
 			"guard_damage": final_damage,
-			"attack_id": hit_context.get("attack_id", ""),
-			"attacker_id": hit_context.get("attacker_id", 0),
-			"target_id": hit_context.get("target_id", get_instance_id()),
-			"target_health_before": health_before,
-		})
+		}, true)
+		_log_incoming_hit_result(&"blocked", hit_kind, amount, final_damage, attacker, blocked_context)
 		return {
 			"result": &"blocked",
 			"hit_kind": hit_kind,
@@ -11103,10 +11132,11 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", attacker_
 
 	if _is_failed_parry_hitreact_context():
 		_play_failed_parry_block_hitreact()
+		_capture_last_incoming_attack_context(hit_context, hit_kind, amount, &"damaged")
 		take_damage(amount, false, hit_context)
-		_log_incoming_hit_result(&"damaged", hit_kind, amount, amount, attacker, {
-			"block_hitreact": true,
-		})
+		var failed_parry_context := hit_context.duplicate(true)
+		failed_parry_context["block_hitreact"] = true
+		_log_incoming_hit_result(&"damaged", hit_kind, amount, amount, attacker, failed_parry_context)
 		return {
 			"result": &"damaged",
 			"hit_kind": hit_kind,
@@ -11127,6 +11157,7 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", attacker_
 		_block_active = false
 		_play_block_animation(&"melee_2h_block_exit")
 
+	_capture_last_incoming_attack_context(hit_context, hit_kind, amount, &"damaged")
 	take_damage(amount, true, hit_context)
 	_log_incoming_hit_result(&"damaged", hit_kind, amount, health_before - current_health, attacker, hit_context)
 	return {
@@ -11139,6 +11170,21 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", attacker_
 		"target_health_before": health_before,
 		"target_health_after": current_health,
 	}
+
+
+func _capture_last_incoming_attack_context(hit_context: Dictionary, hit_kind: StringName, amount: float, result: StringName) -> void:
+	_last_incoming_attack_context = hit_context.duplicate(true)
+	var health_before := current_health
+	var health_after := maxf(0.0, health_before - maxf(0.0, amount))
+	var applied_damage := health_before - health_after
+	_last_incoming_attack_context.merge({
+		"hit_kind": String(hit_kind),
+		"result": String(result),
+		"applied_damage": applied_damage,
+		"target_health_before": health_before,
+		"target_health_after": health_after,
+		"lethal": result == &"damaged" and applied_damage > 0.0 and health_after <= 0.0,
+	}, true)
 
 
 func receive_projectile_hit(amount: float, _attacker_team: String = "neutral") -> Dictionary:
@@ -11593,6 +11639,7 @@ func _handle_death() -> void:
 		"last_enemy_attack_kind": String(_last_enemy_attack_kind),
 		"nearest_enemy_count": int(enemy_snapshot.get("nearest_enemy_count", 0)),
 		"active_enemy_count": int(enemy_snapshot.get("active_enemy_count", 0)),
+		"lethal_attack_context": _last_incoming_attack_context.duplicate(true),
 	})
 	if field_patch_count > 0:
 		_obs_increment(&"player_died_with_field_patch_available")

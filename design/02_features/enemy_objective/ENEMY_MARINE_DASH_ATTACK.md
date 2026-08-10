@@ -1,7 +1,7 @@
 # Enemy Marine Dash Attack
 
 Status: implemented-v2
-Last updated: 2026-06-07
+Last updated: 2026-08-10
 
 ## Summary
 
@@ -27,6 +27,16 @@ approach -> launch-band evaluation -> quick/charged windup -> target lock -> das
 - A successful hit biases the next attack toward a quick pressure dash.
 - A miss biases the next attack toward a charged predictive dash.
 - Selection is deterministic from combat state; it does not use random rolls.
+
+## Spatial diagnostics
+
+Each dash owns one stable attack ID from windup through its single hit or whiff
+terminal. The active-window contact decision and telemetry share one directional
+lane snapshot: the unchanged `-4px` backward tolerance, charge-scaled forward
+reach, and charge-scaled lateral reach. Telemetry records both bodies, contact,
+separation, lane utilization, closest approach, damage result, and the Operator's
+canonical dodge classification. This is diagnostic only and does not alter dash
+timing, damage, movement, or contact thresholds.
 
 ## Charge Budget
 

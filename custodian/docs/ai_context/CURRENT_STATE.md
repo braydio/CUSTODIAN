@@ -4,7 +4,7 @@
 
 Live runtime authority: yes. One `WorldSimulationRuntime` in `game.tscn` owns clock, kernel, session/world, snapshots, command ingress, and resolution. Python parity v2 covers seeds 1/2 at ticks 0/1/10/100 for resources, limited-bootstrap inventory/stocks, policies, strategic power load, and logistics with canonical SHA-256; Python remains offline only. Pure Godot coverage includes commands, pause/catch-up, snapshot restore, Command Post failure, repair/fabrication foundations, and exactly-once outcomes. Adapter-only systems are local power delivery, physical `WaveManager` spawning, and `FabPipeline` delivery. Relays, systemic random events, full assaults, wear, fidelity, ambient fabrication, and full Python repair semantics are not yet ported.
 
-Last updated: 2026-08-09
+Last updated: 2026-08-10
 
 Documentation updates this session:
 - Created `design/02_features/factions/FACTION_EXPRESSION_SYSTEM.md` — full implementation spec from Faction Continuity Audit findings, covering taxonomy lock, canonical IDs, gameplay boundaries, roster reduction, data model, migration order, and Sundered Keep vertical slice.
@@ -13,6 +13,12 @@ Documentation updates this session:
 
 ## Runtime Status
 
+- Enemy body hits now carry authoritative spatial contact snapshots through a
+  stable attack ID into Operator dodge/result/lethal telemetry. Marine Dash has
+  one correlated windup-to-terminal ID and exact directional-lane diagnostics;
+  Falcon Punch and direct Savage contacts use the same normalized schema without
+  changing their gates. Heatmaps use contact/target position, and the analyzer
+  reports correlated lethal and suspicious hits while retaining legacy support.
 - Melee mode now uses deterministic aim-relative soft targeting rather than
   nearest-enemy selection. A weapon-aware reach model, 42/58-degree
   acquire/retain cones, score hysteresis, and a progressive procedural ring

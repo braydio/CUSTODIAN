@@ -1,6 +1,13 @@
 # FILE INDEX — CUSTODIAN
 
-Last updated: 2026-08-09
+Last updated: 2026-08-10
+
+## Enemy Hit Spatial Diagnostics
+
+- `game/systems/combat/enemy_hit_spatial_contract.gd` — pure radial/arc and directional-lane contact snapshots shared by gameplay gates and telemetry.
+- `game/actors/enemies/enemy.gd` and `game/actors/operator/operator.gd` — attack-ID lifecycle, authoritative contact propagation, canonical dodge classification, counters, and lethal context.
+- `tools/analysis/analyze_dev_observatory_session.py` — correlated lethal-hit and suspicious-hit reporting with legacy-export compatibility.
+- `tools/validation/enemy_hit_spatial_telemetry_smoke.gd` and `tools/validation/dev_observatory_spatial_report_smoke.py` — boundary, Marine lifecycle, and analyzer coverage.
 
 ## Deterministic World Runtime Integration
 

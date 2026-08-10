@@ -1030,6 +1030,7 @@ func _sample_runtime_gauges(
 		&"performance_rendered_objects",
 		int(Performance.get_monitor(Performance.RENDER_TOTAL_OBJECTS_IN_FRAME))
 	)
+	_sample_render_state_gauges()
 	if not include_runtime_details:
 		return
 
@@ -1088,6 +1089,81 @@ func _sample_runtime_gauges(
 	set_gauge(&"active_combat_audio", tree.get_nodes_in_group("combat_audio").size())
 	_sample_player_gauges(tree)
 	_sample_enemy_gauges(enemies)
+
+
+func _sample_render_state_gauges() -> void:
+	var atmosphere_enabled := false
+
+	var atmospheres := get_tree().get_nodes_in_group(
+		"render_world_atmosphere"
+	)
+	for atmosphere in atmospheres:
+		if atmosphere == null or not is_instance_valid(atmosphere):
+			continue
+
+		if atmosphere.has_method("is_render_enabled"):
+			atmosphere_enabled = bool(
+				atmosphere.call("is_render_enabled")
+			)
+		elif "visible" in atmosphere:
+			atmosphere_enabled = bool(atmosphere.visible)
+
+		if atmosphere_enabled:
+			break
+
+	var directional_enabled := (
+		_count_enabled_render_lights(
+			"render_directional_light"
+		) > 0
+	)
+
+	var point_light_count := _count_enabled_render_lights(
+		"render_point_light"
+	)
+
+	set_gauge(
+		&"render_atmosphere_enabled",
+		atmosphere_enabled
+	)
+	set_gauge(
+		&"render_directional_light_enabled",
+		directional_enabled
+	)
+	set_gauge(
+		&"render_point_light_count",
+		point_light_count
+	)
+
+	var isolation_mode := "production"
+
+	if not atmosphere_enabled and directional_enabled:
+		isolation_mode = "atmosphere_off"
+	elif not directional_enabled:
+		isolation_mode = "lighting_reduced"
+
+	set_gauge(
+		&"render_isolation_mode",
+		isolation_mode
+	)
+
+
+func _count_enabled_render_lights(
+	group_name: StringName
+) -> int:
+	var count := 0
+
+	for node in get_tree().get_nodes_in_group(group_name):
+		var light := node as Light2D
+		if light == null:
+			continue
+		if not light.enabled:
+			continue
+		if not light.is_visible_in_tree():
+			continue
+
+		count += 1
+
+	return count
 
 
 func _publish_performance_gauges() -> void:

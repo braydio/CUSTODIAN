@@ -13,6 +13,7 @@ var _missing_nodes_reported: bool = false
 
 
 func _ready() -> void:
+	add_to_group("render_world_atmosphere")
 	if post_process != null and post_process.material is ShaderMaterial:
 		_material = (post_process.material as ShaderMaterial).duplicate(true) as ShaderMaterial
 		post_process.material = _material
@@ -31,6 +32,10 @@ func _process(_delta: float) -> void:
 
 func get_atmosphere_material() -> ShaderMaterial:
 	return _material
+
+
+func is_render_enabled() -> bool:
+	return visible and post_process != null and post_process.visible
 
 
 func _resolve_runtime_nodes() -> void:

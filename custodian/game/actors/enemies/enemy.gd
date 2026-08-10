@@ -1,6 +1,8 @@
 extends CharacterBody2D
 class_name Enemy
 
+const EnemyHitSpatialContract = preload("res://game/systems/combat/enemy_hit_spatial_contract.gd")
+
 signal enemy_died(enemy: Enemy)
 
 const CombatConstants = preload("res://game/systems/combat/combat_constants.gd")
@@ -337,6 +339,10 @@ var _marine_dash_last_attack_hit: bool = false
 var _marine_dash_reset_timer: float = 0.0
 var _marine_dash_reset_direction: Vector2 = Vector2.UP
 var _marine_dash_reset_side: float = 1.0
+var _marine_dash_attack_id := ""
+var _marine_dash_terminal_emitted := false
+var _marine_dash_closest_approach := INF
+var _marine_dash_last_spatial_context: Dictionary = {}
 var _grunt_falcon_punch_phase: StringName = &""
 var _grunt_falcon_punch_timer: float = 0.0
 var _grunt_falcon_punch_direction: Vector2 = Vector2.RIGHT
@@ -800,13 +806,11 @@ func _try_apply_savage_pounce_hit() -> void:
 	var target_id := int(target_node.get_instance_id())
 	if _savage_pounce_hit_targets.has(target_id):
 		return
-	var to_target := target_node.global_position - global_position
-	var forward_distance := to_target.dot(_savage_pounce_direction)
-	var lateral_distance := absf(to_target.cross(_savage_pounce_direction))
-	if forward_distance < -5.0 or forward_distance > savage_pounce_hit_forward_reach_px or lateral_distance > savage_pounce_hit_lateral_reach_px:
+	var spatial := EnemyHitSpatialContract.directional_lane(global_position, target_node.global_position, _savage_pounce_direction, 5.0, savage_pounce_hit_forward_reach_px, savage_pounce_hit_lateral_reach_px)
+	if not bool(spatial.get("spatial_valid", false)):
 		return
 	_savage_pounce_hit_targets.append(target_id)
-	var hit_result := _apply_enemy_hit_to_target(target_node, savage_pounce_damage, &"savage_pounce")
+	var hit_result := _apply_enemy_hit_to_target(target_node, savage_pounce_damage, &"savage_pounce", -1.0, "", spatial)
 	if bool(hit_result.get("parried", false)):
 		return
 	if float(hit_result.get("applied_damage", 0.0)) > 0.0 and not bool(hit_result.get("blocked", false)):
@@ -882,12 +886,11 @@ func _resolve_savage_chain_hit(hit_damage: float, hit_kind: StringName, guard_st
 		_log_savage_event(&"savage_chain_whiff")
 		return
 	var target_node := target as Node2D
-	var grace_range := 40.0 * melee_hit_range_grace_multiplier + melee_hit_range_grace_px
-	var to_target := target_node.global_position - global_position
-	if to_target.length() > grace_range or _savage_chain_direction.dot(to_target.normalized()) < cos(deg_to_rad(melee_hit_arc_degrees * 0.5)):
+	var spatial := EnemyHitSpatialContract.radial_arc(global_position, target_node.global_position, _savage_chain_direction, 40.0, melee_hit_range_grace_multiplier, melee_hit_range_grace_px, melee_hit_arc_degrees)
+	if not bool(spatial.get("spatial_valid", false)):
 		_log_savage_event(&"savage_chain_whiff")
 		return
-	var hit_result := _apply_enemy_hit_to_target(target_node, hit_damage, hit_kind, guard_stamina_damage)
+	var hit_result := _apply_enemy_hit_to_target(target_node, hit_damage, hit_kind, guard_stamina_damage, "", spatial)
 	_log_savage_event(&"savage_chain_hit", hit_result)
 
 
@@ -1145,12 +1148,8 @@ func _try_apply_grunt_falcon_punch_hit(force_contact_check: bool = false) -> voi
 	var target_id := int(target_node.get_instance_id())
 	if _grunt_falcon_punch_hit_targets.has(target_id):
 		return
-	var to_target := target_node.global_position - global_position
-	var forward_distance := to_target.dot(_grunt_falcon_punch_direction)
-	if forward_distance < -6.0 or forward_distance > grunt_falcon_punch_hit_forward_reach_px:
-		return
-	var lateral_distance := absf(to_target.cross(_grunt_falcon_punch_direction))
-	if lateral_distance > grunt_falcon_punch_hit_lateral_reach_px:
+	var spatial := EnemyHitSpatialContract.directional_lane(global_position, target_node.global_position, _grunt_falcon_punch_direction, 6.0, grunt_falcon_punch_hit_forward_reach_px, grunt_falcon_punch_hit_lateral_reach_px)
+	if not bool(spatial.spatial_valid):
 		return
 	_grunt_falcon_punch_hit_targets.append(target_id)
 	var hit_result := _apply_enemy_hit_to_target(
@@ -1158,7 +1157,8 @@ func _try_apply_grunt_falcon_punch_hit(force_contact_check: bool = false) -> voi
 		damage * grunt_falcon_punch_damage_multiplier,
 		&"falcon_punch",
 		-1.0,
-		_grunt_falcon_punch_attack_id
+		_grunt_falcon_punch_attack_id,
+		spatial
 	)
 	var result_name := StringName(str(hit_result.get("result", &"unknown")))
 	_grunt_falcon_punch_result = result_name
@@ -1190,6 +1190,7 @@ func _try_apply_grunt_falcon_punch_hit(force_contact_check: bool = false) -> voi
 		"blocked": bool(hit_result.get("blocked", false)),
 		"parried": bool(hit_result.get("parried", false)),
 	}, true)
+	resolved_event.merge(spatial, true)
 	_obs_log(&"grunt_falcon_punch_hit_resolved", resolved_event)
 	if bool(hit_result.get("parried", false)):
 		_obs_increment(&"falcon_punch_parried")
@@ -1351,6 +1352,11 @@ func _attack_marine_dash_target(delta: float) -> void:
 
 func _start_marine_dash_windup(direction: Vector2, target_distance: float = -1.0) -> void:
 	_configure_marine_dash_charge(target_distance)
+	_attack_sequence += 1
+	_marine_dash_attack_id = "%s:marine_dash:%s" % [get_instance_id(), _attack_sequence]
+	_marine_dash_terminal_emitted = false
+	_marine_dash_closest_approach = global_position.distance_to((target as Node2D).global_position) if target is Node2D and is_instance_valid(target) else INF
+	_marine_dash_last_spatial_context.clear()
 	_marine_dash_phase = &"windup"
 	_log_marine_dash_event(&"marine_dash_windup")
 	_marine_dash_timer = maxf(0.01, marine_dash_windup_time + marine_dash_charge_extra_windup * _marine_dash_charge_ratio)
@@ -1464,6 +1470,12 @@ func _start_marine_dash_recovery() -> void:
 
 
 func _finish_marine_dash_attack() -> void:
+	if not _marine_dash_attack_id.is_empty() and not _marine_dash_terminal_emitted:
+		var whiff := get_marine_dash_debug_state()
+		whiff.merge(_marine_dash_last_spatial_context, true)
+		whiff.merge({"attack_id": _marine_dash_attack_id, "attacker_id": get_instance_id(), "target_id": target.get_instance_id() if target != null and is_instance_valid(target) else 0, "enemy": enemy_name, "attack_type": "marine_dash", "result": "whiffed", "closest_approach_px": _marine_dash_closest_approach, "attacker_position": global_position, "target_position": (target as Node2D).global_position if target is Node2D and is_instance_valid(target) else Vector2.ZERO}, true)
+		_obs_log(&"marine_dash_whiff", whiff)
+		_marine_dash_terminal_emitted = true
 	_log_marine_dash_event(&"marine_dash_finished")
 	_marine_dash_phase = &""
 	_marine_dash_timer = 0.0
@@ -1474,6 +1486,8 @@ func _finish_marine_dash_attack() -> void:
 	_marine_dash_current_distance = marine_dash_distance_px
 	_marine_dash_current_damage = marine_dash_damage
 	_marine_dash_target_lock_done = false
+	_marine_dash_attack_id = ""
+	_marine_dash_last_spatial_context.clear()
 	_show_marine_dash_telegraph(false)
 	_set_marine_dash_animation_speed(1.0)
 	velocity = Vector2.ZERO
@@ -1492,16 +1506,16 @@ func _try_apply_marine_dash_hit() -> void:
 	var target_id := int(target_node.get_instance_id())
 	if _marine_dash_hit_targets.has(target_id):
 		return
-	var to_target := target_node.global_position - global_position
 	var charge_multiplier := 1.0 + 0.22 * _marine_dash_charge_ratio
-	var forward_distance := to_target.dot(_marine_dash_direction)
-	if forward_distance < -4.0 or forward_distance > marine_dash_hit_forward_reach_px * charge_multiplier:
-		return
-	var lateral_distance := absf(to_target.cross(_marine_dash_direction))
-	if lateral_distance > marine_dash_hit_lateral_reach_px * (1.0 + 0.15 * _marine_dash_charge_ratio):
+	var allowed_forward := marine_dash_hit_forward_reach_px * charge_multiplier
+	var allowed_lateral := marine_dash_hit_lateral_reach_px * (1.0 + 0.15 * _marine_dash_charge_ratio)
+	var spatial := EnemyHitSpatialContract.directional_lane(global_position, target_node.global_position, _marine_dash_direction, 4.0, allowed_forward, allowed_lateral)
+	_marine_dash_closest_approach = minf(_marine_dash_closest_approach, float(spatial.separation_px))
+	_marine_dash_last_spatial_context = spatial.duplicate(true)
+	if not bool(spatial.spatial_valid):
 		return
 	_marine_dash_hit_targets.append(target_id)
-	_apply_marine_dash_hit(target_node)
+	_apply_marine_dash_hit(target_node, spatial)
 
 
 func _is_marine_dash_hit_window_active() -> bool:
@@ -1514,8 +1528,13 @@ func _is_marine_dash_hit_window_active() -> bool:
 	return progress >= active_start and progress <= active_end
 
 
-func _apply_marine_dash_hit(hit_node: Node2D) -> void:
-	var hit_result := _apply_enemy_hit_to_target(hit_node, _marine_dash_current_damage, &"dash")
+func _apply_marine_dash_hit(hit_node: Node2D, spatial: Dictionary) -> void:
+	var hit_result := _apply_enemy_hit_to_target(hit_node, _marine_dash_current_damage, &"dash", -1.0, _marine_dash_attack_id, spatial)
+	var terminal := get_marine_dash_debug_state()
+	terminal.merge(spatial, true)
+	terminal.merge({"attack_id": _marine_dash_attack_id, "attacker_id": get_instance_id(), "target_id": hit_node.get_instance_id(), "enemy": enemy_name, "attack_type": "marine_dash", "damage_attempted": _marine_dash_current_damage, "applied_damage": float(hit_result.get("applied_damage", 0.0)), "closest_approach": _marine_dash_closest_approach, "result": String(hit_result.get("result", ""))}, true)
+	_obs_log(&"marine_dash_hit_resolved", terminal)
+	_marine_dash_terminal_emitted = true
 
 	if bool(hit_result.get("dodged", false)) or bool(hit_result.get("parried", false)) or bool(hit_result.get("block_hitreact", false)):
 		_marine_dash_last_attack_hit = false
@@ -1638,6 +1657,7 @@ func _set_marine_dash_animation_speed(speed_scale: float) -> void:
 
 func get_marine_dash_debug_state() -> Dictionary:
 	return {
+		"attack_id": _marine_dash_attack_id,
 		"phase": String(_marine_dash_phase),
 		"charge_ratio": _marine_dash_charge_ratio,
 		"distance_share": _marine_dash_distance_share,
@@ -1646,6 +1666,7 @@ func get_marine_dash_debug_state() -> Dictionary:
 		"damage": _marine_dash_current_damage,
 		"target_locked": _marine_dash_target_lock_done,
 		"reset_timer": _marine_dash_reset_timer,
+		"closest_approach": _marine_dash_closest_approach,
 	}
 
 
@@ -2253,7 +2274,7 @@ func _obs_log(kind: StringName, data: Dictionary = {}) -> void:
 
 
 func _record_heatmap_event(kind: StringName, data: Dictionary) -> void:
-	var event_position := data.get("position", global_position) as Vector2
+	var event_position := data.get("contact_position", data.get("target_position", data.get("position", global_position))) as Vector2
 	if kind == &"enemy_killed":
 		_heatmap_add(&"enemy_killed", 3.0, event_position)
 		return
@@ -2265,6 +2286,7 @@ func _record_heatmap_event(kind: StringName, data: Dictionary) -> void:
 	if kind not in [
 		&"enemy_attack_resolved",
 		&"grunt_falcon_punch_hit_resolved",
+		&"marine_dash_hit_resolved",
 	]:
 		return
 
@@ -2947,13 +2969,14 @@ func _execute_queued_attack() -> void:
 		_clear_pending_attack_context()
 		return
 
-	var miss_reason := _get_pending_attack_miss_reason(target_node)
+	var spatial := _get_pending_attack_spatial_context(target_node)
+	var miss_reason := StringName(str(spatial.get("spatial_reason", "")))
 	if not miss_reason.is_empty():
 		_obs_increment(&"enemy_attack_whiffs", 1)
 		_obs_increment(&"enemy_attack_result_whiffed", 1)
 		var whiff_counter_suffix := "out_of_range" if miss_reason == &"target_out_of_range" else "out_of_arc"
 		_obs_increment(StringName("enemy_attack_whiffed_%s" % whiff_counter_suffix), 1)
-		_obs_log(&"enemy_attack_whiff", {
+		var whiff_data := {
 			"attack_id": _pending_attack_id,
 			"attacker_id": get_instance_id(),
 			"target_id": target_node.get_instance_id(),
@@ -2968,13 +2991,15 @@ func _execute_queued_attack() -> void:
 			"queued_damage": _pending_attack_damage,
 			"range_px": _pending_attack_range_px,
 			"arc_degrees": _pending_attack_arc_degrees,
-		})
+		}
+		whiff_data.merge(spatial, true)
+		_obs_log(&"enemy_attack_whiff", whiff_data)
 		_clear_pending_attack_context()
 		return
 
-	var hit_result := _apply_enemy_hit_to_target(target_node, _pending_attack_damage, &"melee")
+	var hit_result := _apply_enemy_hit_to_target(target_node, _pending_attack_damage, &"melee", -1.0, _pending_attack_id, spatial)
 	_obs_increment(&"enemy_attacks_resolved", 1)
-	_obs_log(&"enemy_attack_resolved", {
+	var resolved_data := {
 		"attack_id": _pending_attack_id,
 		"attacker_id": get_instance_id(),
 		"target_id": target_node.get_instance_id(),
@@ -2993,7 +3018,9 @@ func _execute_queued_attack() -> void:
 		"dodged": bool(hit_result.get("dodged", false)),
 		"blocked": bool(hit_result.get("blocked", false)),
 		"parried": bool(hit_result.get("parried", false)),
-	})
+	}
+	resolved_data.merge(spatial, true)
+	_obs_log(&"enemy_attack_resolved", resolved_data)
 	var result_name := String(hit_result.get("result", "unknown"))
 	_obs_increment(StringName("enemy_attack_result_%s" % result_name), 1)
 	if bool(hit_result.get("dodged", false)) or bool(hit_result.get("parried", false)):
@@ -3043,21 +3070,13 @@ func _can_pending_attack_connect(target_node: Node2D) -> bool:
 
 
 func _get_pending_attack_miss_reason(target_node: Node2D) -> StringName:
+	return StringName(str(_get_pending_attack_spatial_context(target_node).get("spatial_reason", "")))
+
+
+func _get_pending_attack_spatial_context(target_node: Node2D) -> Dictionary:
 	if _pending_attack_range_px <= 0.0:
 		_pending_attack_range_px = _get_attack_range(target_node)
-
-	var grace_range := _pending_attack_range_px * melee_hit_range_grace_multiplier + melee_hit_range_grace_px
-	var distance := global_position.distance_to(target_node.global_position)
-	if distance > grace_range:
-		return &"target_out_of_range"
-
-	var to_target := (target_node.global_position - global_position).normalized()
-	var dot := _pending_attack_forward.dot(to_target)
-	var angle_rad := deg_to_rad(_pending_attack_arc_degrees * 0.5)
-	if dot < cos(angle_rad):
-		return &"target_out_of_arc"
-
-	return &""
+	return EnemyHitSpatialContract.radial_arc(global_position, target_node.global_position, _pending_attack_forward, _pending_attack_range_px, melee_hit_range_grace_multiplier, melee_hit_range_grace_px, _pending_attack_arc_degrees)
 
 
 func _apply_enemy_hit_to_target(
@@ -3065,7 +3084,8 @@ func _apply_enemy_hit_to_target(
 	amount: float,
 	hit_kind: StringName = &"melee",
 	guard_stamina_cost_override: float = -1.0,
-	attack_id_override: String = ""
+	attack_id_override: String = "",
+	spatial_context: Dictionary = {}
 ) -> Dictionary:
 	if hit_node == null or not is_instance_valid(hit_node):
 		return {
@@ -3089,6 +3109,10 @@ func _apply_enemy_hit_to_target(
 		"hit_strength": _resolve_hit_strength_for_attack(hit_kind, amount),
 		"damage_type": CombatConstants.DamageType.PHYSICAL,
 	}
+	if spatial_context.is_empty():
+		attack_context.merge({"contact_model": "unknown", "attacker_position": global_position, "target_position": (hit_node as Node2D).global_position if hit_node is Node2D else global_position, "contact_position": (hit_node as Node2D).global_position if hit_node is Node2D else global_position, "separation_px": global_position.distance_to((hit_node as Node2D).global_position) if hit_node is Node2D else 0.0}, true)
+	else:
+		attack_context.merge(spatial_context, true)
 
 	if not hit_node.has_method("receive_enemy_hit") and hit_node.has_method("try_parry_incoming_attack"):
 		var parry_result: Variant = hit_node.call("try_parry_incoming_attack", self, hit_direction, {"damage": amount, "hit_kind": hit_kind})

@@ -1,11 +1,11 @@
-[gd_resource type="SpriteFrames" format=3]
+[gd_resource type="SpriteFrames" format=3 uid="uid://cagm5o1esx0qm"]
 
-[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/body/melee_1h/shared/operator__body__melee_1h__chain_01__w__10f__156x96.png" id="1_4kwgf"]
-[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/body/melee_1h/shared/operator__body__melee_1h__chain_01__e__10f__156x96.png" id="2_f552g"]
-[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/body/melee_1h/shared/operator__body__melee_1h__chain_02__w__8f__156x96.png" id="3_ampmc"]
-[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/body/melee_1h/shared/operator__body__melee_1h__chain_02__e__8f__156x96.png" id="4_c2el3"]
-[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/body/melee_1h/shared/operator__body__melee_1h__chain_03__w__10f__156x96.png" id="5_lvqdg"]
-[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/body/melee_1h/shared/operator__body__melee_1h__chain_03__e__10f__156x96.png" id="6_knpx1"]
+[ext_resource type="Texture2D" uid="uid://bvbm8drupggok" path="res://content/sprites/operator/runtime/body/melee_1h/shared/operator__body__melee_1h__chain_01__w__10f__156x96.png" id="1_4kwgf"]
+[ext_resource type="Texture2D" uid="uid://c22ni8m7wm7hg" path="res://content/sprites/operator/runtime/body/melee_1h/shared/operator__body__melee_1h__chain_01__e__10f__156x96.png" id="2_f552g"]
+[ext_resource type="Texture2D" uid="uid://bc3auy4ogevl5" path="res://content/sprites/operator/runtime/body/melee_1h/shared/operator__body__melee_1h__chain_02__w__8f__156x96.png" id="3_ampmc"]
+[ext_resource type="Texture2D" uid="uid://d1t32jmpwc1ey" path="res://content/sprites/operator/runtime/body/melee_1h/shared/operator__body__melee_1h__chain_02__e__8f__156x96.png" id="4_c2el3"]
+[ext_resource type="Texture2D" uid="uid://6f3r8q0krvil" path="res://content/sprites/operator/runtime/body/melee_1h/shared/operator__body__melee_1h__chain_03__w__10f__156x96.png" id="5_lvqdg"]
+[ext_resource type="Texture2D" uid="uid://l072eybx1mmo" path="res://content/sprites/operator/runtime/body/melee_1h/shared/operator__body__melee_1h__chain_03__e__10f__156x96.png" id="6_knpx1"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_xboul"]
 atlas = ExtResource("1_4kwgf")

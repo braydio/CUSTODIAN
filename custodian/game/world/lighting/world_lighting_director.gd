@@ -25,6 +25,9 @@ var _zone_entries: Dictionary = {}
 
 func _ready() -> void:
 	add_to_group("world_lighting_director")
+	if directional_light != null:
+		directional_light.add_to_group("render_directional_light")
+
 	if default_profile != null:
 		apply_profile(default_profile, true)
 

@@ -2,14 +2,15 @@
 
 [ext_resource type="Script" uid="uid://dr83ct4e8mal7" path="res://game/actors/operator/operator_weapon_definition.gd" id="1_weapon_definition"]
 [ext_resource type="SpriteFrames" uid="uid://c4ftqt42qddru" path="res://game/actors/operator/operator_weapon_frames.tres" id="2_weapon_frames"]
+[ext_resource type="Script" uid="uid://7lgg1qag2suc" path="res://game/systems/combat/melee_attack_profile.gd" id="9_s524m"]
 [ext_resource type="Texture2D" uid="uid://dfqgss5p5b1ir" path="res://content/sprites/weapons/carbine_mk1/runtime/carbine_mk1__weapon__aim__e.png" id="tex_e"]
-[ext_resource type="Texture2D" uid="uid://c766gf3sswdvh" path="res://content/sprites/weapons/carbine_mk1/runtime/carbine_mk1__weapon__aim__w.png" id="tex_w"]
-[ext_resource type="Texture2D" uid="uid://cf3saxlikh2c4" path="res://content/sprites/weapons/carbine_mk1/runtime/carbine_mk1__weapon__aim__se.png" id="tex_se"]
-[ext_resource type="Texture2D" uid="uid://dgf842h2481ge" path="res://content/sprites/weapons/carbine_mk1/runtime/carbine_mk1__weapon__aim__sw.png" id="tex_sw"]
 [ext_resource type="Texture2D" uid="uid://blx836o74ukjg" path="res://content/sprites/weapons/carbine_mk1/runtime/carbine_mk1__weapon__aim__n.png" id="tex_n"]
-[ext_resource type="Texture2D" uid="uid://b6cdcd110x68o" path="res://content/sprites/weapons/carbine_mk1/runtime/carbine_mk1__weapon__aim__s.png" id="tex_s"]
 [ext_resource type="Texture2D" uid="uid://4stvit1pibjx" path="res://content/sprites/weapons/carbine_mk1/runtime/carbine_mk1__weapon__aim__ne.png" id="tex_ne"]
 [ext_resource type="Texture2D" uid="uid://cto3gkswjnufe" path="res://content/sprites/weapons/carbine_mk1/runtime/carbine_mk1__weapon__aim__nw.png" id="tex_nw"]
+[ext_resource type="Texture2D" uid="uid://b6cdcd110x68o" path="res://content/sprites/weapons/carbine_mk1/runtime/carbine_mk1__weapon__aim__s.png" id="tex_s"]
+[ext_resource type="Texture2D" uid="uid://cf3saxlikh2c4" path="res://content/sprites/weapons/carbine_mk1/runtime/carbine_mk1__weapon__aim__se.png" id="tex_se"]
+[ext_resource type="Texture2D" uid="uid://dgf842h2481ge" path="res://content/sprites/weapons/carbine_mk1/runtime/carbine_mk1__weapon__aim__sw.png" id="tex_sw"]
+[ext_resource type="Texture2D" uid="uid://c766gf3sswdvh" path="res://content/sprites/weapons/carbine_mk1/runtime/carbine_mk1__weapon__aim__w.png" id="tex_w"]
 
 [resource]
 script = ExtResource("1_weapon_definition")
@@ -34,24 +35,29 @@ weapon_socket_position_down = Vector2(12, -6)
 muzzle_socket_position_down = Vector2(24, 2)
 socket_data_path = "res://content/data/operator/generated/operator_weapon_sockets.generated.json"
 production_socket_data_required = true
-fine_aim_limit_degrees = 24.0
 directional_weapon_textures = {
 "e": ExtResource("tex_e"),
-"w": ExtResource("tex_w"),
+"n": ExtResource("tex_n"),
+"ne": ExtResource("tex_ne"),
+"nw": ExtResource("tex_nw"),
+"s": ExtResource("tex_s"),
 "se": ExtResource("tex_se"),
 "sw": ExtResource("tex_sw"),
-"n": ExtResource("tex_n"),
-"s": ExtResource("tex_s"),
-"ne": ExtResource("tex_ne"),
-"nw": ExtResource("tex_nw")
+"w": ExtResource("tex_w")
 }
 grip_pivot_by_direction = {
 "e": Vector2(0, 0),
-"w": Vector2(0, 0),
+"n": Vector2(0, 0),
+"ne": Vector2(0, 0),
+"nw": Vector2(0, 0),
+"s": Vector2(0, 0),
 "se": Vector2(0, 0),
 "sw": Vector2(0, 0),
-"n": Vector2(0, 0),
-"s": Vector2(0, 0),
-"ne": Vector2(0, 0),
-"nw": Vector2(0, 0)
+"w": Vector2(0, 0)
 }
+fine_aim_limit_degrees = 24.0
+fast_chain_keys = null
+fast_chain_queue_open_frames = null
+fast_chain_queue_close_frames = null
+fast_chain_commit_frames = null
+fast_chain_stamina_costs = null

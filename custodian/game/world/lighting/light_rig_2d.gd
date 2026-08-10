@@ -49,6 +49,9 @@ var _pulse_time := 0.0
 
 
 func _ready() -> void:
+	if point_light != null:
+		point_light.add_to_group("render_point_light")
+
 	_ensure_glow_texture()
 	_apply_light_settings()
 	set_process(pulse_enabled)

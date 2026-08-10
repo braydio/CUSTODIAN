@@ -1,11 +1,10 @@
-[gd_resource type="Resource" script_class="MeleeAttackProfile" format=3]
+[gd_resource type="Resource" script_class="MeleeAttackProfile" format=3 uid="uid://4c3hfw4cvwue"]
 
-[ext_resource type="Script" path="res://game/systems/combat/melee_attack_profile.gd" id="1_profile"]
+[ext_resource type="Script" uid="uid://7lgg1qag2suc" path="res://game/systems/combat/melee_attack_profile.gd" id="1_profile"]
 
 [resource]
 script = ExtResource("1_profile")
 attack_id = &"vigil_dagger_fast_03"
-attack_kind = "fast"
 damage = 14.0
 range_px = 62.0
 arc_degrees = 58.0
@@ -15,27 +14,23 @@ active_sec = 0.056
 recovery_sec = 0.222
 cooldown_sec = 0.556
 cancel_start_sec = 0.333
-movement_profile = "mobile"
 startup_move_mult = 0.44
 active_move_mult = 0.18
-recovery_move_mult = 0.60
+recovery_move_mult = 0.6
 turn_locked = true
 drive_distance_px = 11.0
 drive_delay_sec = 0.167
 drive_duration_sec = 0.167
 drive_input_influence = 0.15
 drive_falloff_power = 1.6
-drive_stops_on_collision = true
 target_assist_enabled = true
 target_acquire_extra_px = 18.0
 target_assist_cone_degrees = 38.0
 target_aim_correction_degrees = 14.0
 target_drive_bonus_max_px = 5.0
-target_reliable_drive_fraction = 0.80
-hit_stop_scale = 0.30
+target_reliable_drive_fraction = 0.8
+hit_stop_scale = 0.3
 hit_stop_duration = 0.043
 camera_shake_power = 1.5
 animation_key = &"vigil_dagger_fast_03"
 fallback_animation = &"vigil_dagger_fast_03"
-hit_window_frames = PackedInt32Array(5, 9)
-wound_up_before_hit = false

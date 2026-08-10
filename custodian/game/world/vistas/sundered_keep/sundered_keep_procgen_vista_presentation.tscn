@@ -1,105 +1,111 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene format=3 uid="uid://dc5ygwps5ag5t"]
 
-[ext_resource type="Script" path="res://game/world/vistas/sundered_keep/sundered_keep_procgen_vista_presentation.gd" id="1_script"]
-[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/approach/underlay/first_vista_base_storm_horizon.png" id="2_storm"]
-[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/shared/landmarks/distant_sundered_keep_landmark_v2.png" id="3_keep"]
-[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/approach/fog/first_vista_reveal_veil.png" id="4_fog"]
-[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/grand_vista/fortress_components/distant_fortress_central_citadel_01.png" id="6_citadel"]
-[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/grand_vista/fortress_components/distant_fortress_outer_wall_01.png" id="7_wall"]
-[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_horizon_seam_fog.png" id="8_frontage_fog"]
-[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/approach/occlusion/approach_final_gate_shadow_veil.png" id="9_gate_shadow"]
-[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/approach/light/first_vista_moonlight_sweep_01__6f__1024x512.png" id="10_moonlight"]
+[ext_resource type="Script" uid="uid://25ih6rdbqfhc" path="res://game/world/vistas/sundered_keep/sundered_keep_procgen_vista_presentation.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://cjb1elrrj8x2y" path="res://content/backgrounds/sundered_keep/approach/underlay/first_vista_base_storm_horizon.png" id="2_storm"]
+[ext_resource type="Texture2D" uid="uid://bcb2ogtoeqnmp" path="res://content/backgrounds/sundered_keep/shared/landmarks/distant_sundered_keep_landmark_v2.png" id="3_keep"]
+[ext_resource type="Texture2D" uid="uid://q02fsxfbtjwf" path="res://content/backgrounds/sundered_keep/approach/fog/first_vista_reveal_veil.png" id="4_fog"]
+[ext_resource type="Texture2D" uid="uid://dhqh17wdi37hm" path="res://content/backgrounds/sundered_keep/grand_vista/fortress_components/distant_fortress_central_citadel_01.png" id="6_citadel"]
+[ext_resource type="Texture2D" uid="uid://bti45xnfj2364" path="res://content/backgrounds/sundered_keep/grand_vista/fortress_components/distant_fortress_outer_wall_01.png" id="7_wall"]
+[ext_resource type="Texture2D" uid="uid://dd74lx6catyrg" path="res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_horizon_seam_fog.png" id="8_frontage_fog"]
+[ext_resource type="Texture2D" uid="uid://cy5yg4c10c6h3" path="res://content/backgrounds/sundered_keep/approach/occlusion/approach_final_gate_shadow_veil.png" id="9_gate_shadow"]
+[ext_resource type="Texture2D" uid="uid://c8cv4x5gf1jlo" path="res://content/backgrounds/sundered_keep/approach/light/first_vista_moonlight_sweep_01__6f__1024x512.png" id="10_moonlight"]
 
-[node name="SunderedKeepProcgenFrontagePresentation" type="Node2D"]
+[node name="SunderedKeepProcgenFrontagePresentation" type="Node2D" unique_id=129696644]
 script = ExtResource("1_script")
-y_sort_enabled = false
 
-[node name="VistaPresentationRoot" type="Node2D" parent="."]
-z_as_relative = false
+[node name="VistaPresentationRoot" type="Node2D" parent="." unique_id=727534333]
 z_index = -100
-y_sort_enabled = false
+z_as_relative = false
 
-[node name="ExteriorVistaClip" type="Polygon2D" parent="VistaPresentationRoot"]
+[node name="ExteriorVistaClip" type="Polygon2D" parent="VistaPresentationRoot" unique_id=1186519249]
 clip_children = 1
 polygon = PackedVector2Array(-4096, -4096, 4096, -4096, 4096, -1, -4096, -1)
-color = Color(1, 1, 1, 1)
 
-[node name="HorizonPresentation" type="Node2D" parent="VistaPresentationRoot/ExteriorVistaClip"]
-y_sort_enabled = false
+[node name="HorizonPresentation" type="Node2D" parent="VistaPresentationRoot/ExteriorVistaClip" unique_id=426527873]
 
-[node name="VoidUnderlay" type="Polygon2D" parent="VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation"]
-z_index = 0
-polygon = PackedVector2Array(-4096, -4096, 4096, -4096, 4096, 4096, -4096, 4096)
+[node name="VoidUnderlay" type="Polygon2D" parent="VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation" unique_id=2089089191]
 color = Color(0.025, 0.039, 0.052, 0)
+polygon = PackedVector2Array(-4096, -4096, 4096, -4096, 4096, 4096, -4096, 4096)
 
-[node name="StormHorizon" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation"]
-position = Vector2(0, -120)
+[node name="StormHorizon" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation" unique_id=1025828558]
 z_index = 10
-texture = ExtResource("2_storm")
 texture_filter = 1
+position = Vector2(0, -120)
+texture = ExtResource("2_storm")
 
-[node name="DistantKeep" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation"]
+[node name="DistantKeep" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation" unique_id=1220255723]
+z_index = 20
+texture_filter = 1
 position = Vector2(190, -220)
 scale = Vector2(0.44, 0.44)
-z_index = 20
 texture = ExtResource("3_keep")
-texture_filter = 1
 
-[node name="RevealFog" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation"]
-position = Vector2(0, -40)
+[node name="RevealFog" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation" unique_id=949326141]
 z_index = 30
-texture = ExtResource("4_fog")
 texture_filter = 1
+position = Vector2(0, -40)
+texture = ExtResource("4_fog")
 
-[node name="FortressPresentation" type="Node2D" parent="VistaPresentationRoot/ExteriorVistaClip"]
-y_sort_enabled = false
+[node name="FortressPresentation" type="Node2D" parent="VistaPresentationRoot/ExteriorVistaClip" unique_id=386873017]
 
-[node name="OuterWall" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/FortressPresentation"]
+[node name="OuterWall" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/FortressPresentation" unique_id=591507919]
+z_index = 40
+texture_filter = 1
 position = Vector2(-150, -80)
 scale = Vector2(0.55, 0.55)
-z_index = 40
 texture = ExtResource("7_wall")
-texture_filter = 1
 
-[node name="CentralCitadel" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/FortressPresentation"]
+[node name="CentralCitadel" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/FortressPresentation" unique_id=462135778]
+z_index = 45
+texture_filter = 1
 position = Vector2(160, -150)
 scale = Vector2(0.52, 0.52)
-z_index = 45
 texture = ExtResource("6_citadel")
-texture_filter = 1
 
-[node name="FrontageFog" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/FortressPresentation"]
-position = Vector2(0, 30)
+[node name="FrontageFog" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/FortressPresentation" unique_id=1605089818]
 z_index = 50
-texture = ExtResource("8_frontage_fog")
 texture_filter = 1
+position = Vector2(0, 30)
+texture = ExtResource("8_frontage_fog")
 
-[node name="MoonlightSweep" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/FortressPresentation"]
+[node name="MoonlightSweep" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/FortressPresentation" unique_id=1828262188]
 visible = false
-position = Vector2(0, -180)
 z_index = 52
+texture_filter = 1
+position = Vector2(0, -180)
 texture = ExtResource("10_moonlight")
 region_enabled = true
 region_rect = Rect2(0, 0, 1024, 512)
-texture_filter = 1
 
-[node name="GateShadow" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip"]
-position = Vector2(0, -32)
+[node name="GateShadow" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip" unique_id=1029578039]
 z_index = 55
-texture = ExtResource("9_gate_shadow")
 texture_filter = 1
+position = Vector2(-8.5, -32)
+scale = Vector2(1.0066407, 1)
+texture = ExtResource("9_gate_shadow")
 
-[node name="CameraPresentationAnchor" type="Marker2D" parent="."]
-[node name="FrontageEntry" type="Marker2D" parent="."]
-[node name="FirstCameraInfluenceStart" type="Marker2D" parent="."]
-[node name="FirstRevealApex" type="Marker2D" parent="."]
-[node name="FirstCameraReturnComplete" type="Marker2D" parent="."]
-[node name="FrontageRevealStart" type="Marker2D" parent="."]
-[node name="FrontageApex" type="Marker2D" parent="."]
-[node name="GameplayReturn" type="Marker2D" parent="."]
-[node name="GateThreshold" type="Marker2D" parent="."]
+[node name="CameraPresentationAnchor" type="Marker2D" parent="." unique_id=196804580]
 
-[node name="CameraInfluenceStart" type="Marker2D" parent="."]
-[node name="CameraApex" type="Marker2D" parent="."]
-[node name="CameraReturnStart" type="Marker2D" parent="."]
-[node name="CameraReturnComplete" type="Marker2D" parent="."]
+[node name="FrontageEntry" type="Marker2D" parent="." unique_id=444950288]
+
+[node name="FirstCameraInfluenceStart" type="Marker2D" parent="." unique_id=787686507]
+
+[node name="FirstRevealApex" type="Marker2D" parent="." unique_id=1710525585]
+
+[node name="FirstCameraReturnComplete" type="Marker2D" parent="." unique_id=363091449]
+
+[node name="FrontageRevealStart" type="Marker2D" parent="." unique_id=1752052492]
+
+[node name="FrontageApex" type="Marker2D" parent="." unique_id=181228759]
+
+[node name="GameplayReturn" type="Marker2D" parent="." unique_id=567531208]
+
+[node name="GateThreshold" type="Marker2D" parent="." unique_id=1025945985]
+
+[node name="CameraInfluenceStart" type="Marker2D" parent="." unique_id=442994096]
+
+[node name="CameraApex" type="Marker2D" parent="." unique_id=151378322]
+
+[node name="CameraReturnStart" type="Marker2D" parent="." unique_id=1392898785]
+
+[node name="CameraReturnComplete" type="Marker2D" parent="." unique_id=1935028319]

@@ -95,11 +95,6 @@
 [ext_resource type="Texture2D" uid="uid://dh5fr7mcsqvum" path="res://content/tiles/terrain/runtime/ascent/terrain_landing_industrial_32.png" id="98_ascent_terrain_landing_industrial_32"]
 [ext_resource type="Texture2D" uid="uid://d03dx3u75mrcx" path="res://content/tiles/terrain/runtime/ascent/terrain_landing_stone_32.png" id="99_ascent_terrain_landing_stone_32"]
 [ext_resource type="Texture2D" uid="uid://b28svah1cq21" path="res://content/tiles/terrain/runtime/chasm_bridge/bridge_broken_segment_32.png" id="100_chasm_bridge_bridge_broken_segment_32"]
-[ext_resource type="Texture2D" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_dark_water_01.png" id="124_sundered_keep_ocean_fill"]
-[ext_resource type="Texture2D" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_edge_n.png" id="125_sundered_keep_ocean_shore_n"]
-[ext_resource type="Texture2D" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_edge_e.png" id="126_sundered_keep_ocean_shore_e"]
-[ext_resource type="Texture2D" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_edge_s.png" id="127_sundered_keep_ocean_shore_s"]
-[ext_resource type="Texture2D" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_edge_w.png" id="128_sundered_keep_ocean_shore_w"]
 [ext_resource type="Texture2D" uid="uid://c1x1kquasa1vc" path="res://content/tiles/terrain/runtime/chasm_bridge/bridge_metal_mid_horizontal_32.png" id="101_chasm_bridge_bridge_metal_mid_horizontal_32"]
 [ext_resource type="Texture2D" uid="uid://bkkcn0o04rdxp" path="res://content/tiles/terrain/runtime/chasm_bridge/bridge_metal_mid_vertical_32.png" id="102_chasm_bridge_bridge_metal_mid_vertical_32"]
 [ext_resource type="Texture2D" uid="uid://diep2ep2dr5nj" path="res://content/tiles/terrain/runtime/chasm_bridge/bridge_stone_mid_horizontal_32.png" id="103_chasm_bridge_bridge_stone_mid_horizontal_32"]
@@ -123,6 +118,11 @@
 [ext_resource type="Texture2D" uid="uid://bv8o2dwunt52w" path="res://content/tiles/terrain/runtime/chasm_bridge/chasm_outer_corner_sw_32.png" id="121_chasm_bridge_chasm_outer_corner_sw_32"]
 [ext_resource type="Texture2D" uid="uid://dm6cpdyhuv3ar" path="res://content/tiles/terrain/runtime/chasm_bridge/chasm_void_32.png" id="122_chasm_bridge_chasm_void_32"]
 [ext_resource type="Texture2D" uid="uid://8jsa1ruw5ry8" path="res://content/tiles/terrain/runtime/chasm_bridge/collapsed_gap_32.png" id="123_chasm_bridge_collapsed_gap_32"]
+[ext_resource type="Texture2D" uid="uid://doivpp1vdcwnp" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_dark_water_01.png" id="124_sundered_keep_ocean_fill"]
+[ext_resource type="Texture2D" uid="uid://b4i1baxicmt3c" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_edge_n.png" id="125_sundered_keep_ocean_shore_n"]
+[ext_resource type="Texture2D" uid="uid://bsavns7r4ov83" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_edge_e.png" id="126_sundered_keep_ocean_shore_e"]
+[ext_resource type="Texture2D" uid="uid://c4khj6vhi4hyh" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_edge_s.png" id="127_sundered_keep_ocean_shore_s"]
+[ext_resource type="Texture2D" uid="uid://d2ltots2sc0xo" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_edge_w.png" id="128_sundered_keep_ocean_shore_w"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_floor"]
 texture = ExtResource("1_floor")
@@ -563,6 +563,31 @@ texture_region_size = Vector2i(32, 32)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_bridge_broken_segment_32"]
 texture = ExtResource("100_chasm_bridge_bridge_broken_segment_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_sundered_keep_ocean_dark_water_01"]
+texture = ExtResource("124_sundered_keep_ocean_fill")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_sundered_keep_ocean_foam_edge_n"]
+texture = ExtResource("125_sundered_keep_ocean_shore_n")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_sundered_keep_ocean_foam_edge_e"]
+texture = ExtResource("126_sundered_keep_ocean_shore_e")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_sundered_keep_ocean_foam_edge_s"]
+texture = ExtResource("127_sundered_keep_ocean_shore_s")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_sundered_keep_ocean_foam_edge_w"]
+texture = ExtResource("128_sundered_keep_ocean_shore_w")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 
@@ -1193,31 +1218,6 @@ texture_region_size = Vector2i(32, 32)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ascent_terrain_landing_stone_32"]
 texture = ExtResource("99_ascent_terrain_landing_stone_32")
-texture_region_size = Vector2i(32, 32)
-0:0/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_sundered_keep_ocean_dark_water_01"]
-texture = ExtResource("124_sundered_keep_ocean_fill")
-texture_region_size = Vector2i(32, 32)
-0:0/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_sundered_keep_ocean_foam_edge_n"]
-texture = ExtResource("125_sundered_keep_ocean_shore_n")
-texture_region_size = Vector2i(32, 32)
-0:0/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_sundered_keep_ocean_foam_edge_e"]
-texture = ExtResource("126_sundered_keep_ocean_shore_e")
-texture_region_size = Vector2i(32, 32)
-0:0/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_sundered_keep_ocean_foam_edge_s"]
-texture = ExtResource("127_sundered_keep_ocean_shore_s")
-texture_region_size = Vector2i(32, 32)
-0:0/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_sundered_keep_ocean_foam_edge_w"]
-texture = ExtResource("128_sundered_keep_ocean_shore_w")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 

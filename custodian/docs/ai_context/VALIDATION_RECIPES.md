@@ -978,6 +978,23 @@ distribution; do not sum them together. It applies no hardware FPS threshold.
 
 ## Review Validation
 
+## Enemy Hit Spatial Diagnostics
+
+From `custodian/`:
+
+```bash
+godot --headless --path . --script res://tools/validation/enemy_hit_spatial_telemetry_smoke.gd
+godot --headless --path . --script res://tools/validation/operator_dodge_overlap_telemetry_smoke.gd
+godot --headless --path . --script res://tools/validation/grunt_falcon_punch_smoke.gd
+python3 tools/validation/dev_observatory_spatial_report_smoke.py
+```
+
+The spatial smoke proves just-inside, exact-boundary, and just-outside behavior
+for both shared contact models plus one-ID Marine hit/whiff terminals. The dodge
+smoke proves canonical dodge classification survives on `incoming_hit_result`.
+The Python smoke proves correlated lethal output and backwards-compatible
+VALID/VIOLATION/UNKNOWN reporting.
+
 Use for code review, docs drift review, or handoff review.
 
 ```bash

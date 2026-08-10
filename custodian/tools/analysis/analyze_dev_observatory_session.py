@@ -117,6 +117,128 @@ def _attack_id(event: Mapping[str, Any]) -> str:
     return str(_event_data(event).get("attack_id", "")).strip()
 
 
+def _spatial_status(data: Mapping[str, Any]) -> str:
+    value = data.get("spatial_valid")
+    if value is True:
+        return "VALID"
+    if value is False:
+        return "VIOLATION"
+    return "UNKNOWN"
+
+
+def _format_position(value: Any) -> str:
+    if isinstance(value, Mapping):
+        return f"({_format_value(value.get('x'))}, {_format_value(value.get('y'))})"
+    if isinstance(value, (list, tuple)) and len(value) >= 2:
+        return f"({_format_value(value[0])}, {_format_value(value[1])})"
+    return _format_value(value)
+
+
+def _merged_attack_record(events: Sequence[Mapping[str, Any]], attack_id: str) -> dict[str, Any]:
+    merged: dict[str, Any] = {}
+    if not attack_id:
+        return merged
+    correlated_kinds = {
+        "incoming_hit_result",
+        "enemy_attack_resolved",
+        "grunt_falcon_punch_hit_resolved",
+        "marine_dash_hit_resolved",
+    }
+    for event in events:
+        if str(event.get("kind", "")) in correlated_kinds and _attack_id(event) == attack_id:
+            merged.update(_event_data(event))
+    return merged
+
+
+def _append_enemy_hit_spatial_sections(lines: list[str], events: Sequence[Mapping[str, Any]]) -> None:
+    lethal: dict[str, Any] = {}
+    for event in events:
+        data = _event_data(event)
+        if str(event.get("kind", "")) == "incoming_hit_result" and bool(data.get("lethal", False)):
+            lethal = dict(data)
+        if str(event.get("kind", "")) == "player_death":
+            context = _mapping(data.get("lethal_attack_context"))
+            if context:
+                lethal = dict(context)
+
+    lines.extend(["", "LETHAL HIT DIAGNOSTIC", "-" * 48])
+    if not lethal:
+        lines.append("  none retained")
+    else:
+        attack_id = str(lethal.get("attack_id", "")).strip()
+        correlated = _merged_attack_record(events, attack_id)
+        correlated.update(lethal)
+        attack = correlated.get("attack_type", correlated.get("hit_kind", "unknown"))
+        damage = correlated.get("applied_damage", correlated.get("damage_applied", correlated.get("damage_attempted")))
+        lines.extend([
+            f"  enemy: {correlated.get('enemy', correlated.get('attacker_name', 'unknown'))}",
+            f"  attack: {attack}",
+            f"  attack ID: {attack_id or 'missing'}",
+            f"  damage: {_format_value(damage)}",
+            "  health: %s -> %s" % (
+                _format_value(correlated.get("target_health_before")),
+                _format_value(correlated.get("target_health_after")),
+            ),
+            f"  attacker position: {_format_position(correlated.get('attacker_position'))}",
+            f"  player position: {_format_position(correlated.get('target_position'))}",
+            f"  contact position: {_format_position(correlated.get('contact_position'))}",
+            f"  separation: {_format_value(correlated.get('separation_px'))}",
+            f"  contact model: {correlated.get('contact_model', 'unknown')}",
+        ])
+        if str(correlated.get("contact_model", "")) == "directional_lane":
+            lines.extend([
+                "  forward/max: %s / %s" % (
+                    _format_value(correlated.get("forward_distance_px")),
+                    _format_value(correlated.get("allowed_forward_px")),
+                ),
+                "  lateral/max: %s / %s" % (
+                    _format_value(correlated.get("lateral_distance_px")),
+                    _format_value(correlated.get("allowed_lateral_px")),
+                ),
+                f"  contact utilization ratio: {_format_value(correlated.get('contact_utilization_ratio'))}",
+            ])
+        elif str(correlated.get("contact_model", "")) == "radial_arc":
+            lines.extend([
+                "  range: %s / %s" % (
+                    _format_value(correlated.get("separation_px")),
+                    _format_value(correlated.get("allowed_range_px")),
+                ),
+                "  arc error/half arc: %s / %s" % (
+                    _format_value(correlated.get("angle_error_degrees")),
+                    _format_value(_number(correlated.get("arc_degrees")) * 0.5),
+                ),
+            ])
+        lines.extend([
+            f"  dodge phase: {correlated.get('player_dodge_phase', 'unknown')}",
+            f"  dodge classification: {correlated.get('dodge_classification', 'unknown')}",
+            f"  spatial validity: {_spatial_status(correlated)}",
+        ])
+
+    suspicious: list[Mapping[str, Any]] = []
+    for event in events:
+        if str(event.get("kind", "")) != "incoming_hit_result":
+            continue
+        data = _event_data(event)
+        if _number(data.get("applied_damage")) <= 0.0:
+            continue
+        if data.get("spatial_valid") is False or not str(data.get("attack_id", "")).strip():
+            suspicious.append(data)
+    lines.extend(["", "SUSPICIOUS HITS", "-" * 48])
+    if not suspicious:
+        lines.append("  none")
+    for data in suspicious:
+        lines.append(
+            "  %s | %s | attack_id=%s | damage=%s | %s"
+            % (
+                data.get("enemy", data.get("attacker_name", "unknown")),
+                data.get("attack_type", data.get("hit_kind", "unknown")),
+                data.get("attack_id", "missing") or "missing",
+                _format_value(data.get("applied_damage")),
+                _spatial_status(data),
+            )
+        )
+
+
 def _enemy_attack_summary(events: Sequence[Mapping[str, Any]]) -> tuple[Counter[str], Counter[str], Counter[str]]:
     """Derive mutually exclusive terminal outcomes and lifecycle counts by attack_id."""
     started_ids: set[str] = set()
@@ -129,15 +251,17 @@ def _enemy_attack_summary(events: Sequence[Mapping[str, Any]]) -> tuple[Counter[
         attack_id = _attack_id(event)
         if not attack_id:
             continue
-        if kind in {"enemy_attack_windup", "grunt_falcon_punch_windup"}:
+        if kind in {"enemy_attack_windup", "grunt_falcon_punch_windup", "marine_dash_windup"}:
             started_ids.add(attack_id)
-        if kind in {"enemy_attack_active", "grunt_falcon_punch_active", "grunt_falcon_punch_leap"}:
+        if kind in {"enemy_attack_active", "grunt_falcon_punch_active", "grunt_falcon_punch_leap", "marine_dash_travel"}:
             active_ids.add(attack_id)
         if kind not in {
             "enemy_attack_resolved",
             "enemy_attack_whiff",
             "enemy_attack_cancelled",
             "grunt_falcon_punch_hit_resolved",
+            "marine_dash_hit_resolved",
+            "marine_dash_whiff",
         }:
             continue
         result = str(data.get("result", "")).strip().lower()
@@ -595,6 +719,8 @@ def build_report(
         "enemy_attack_whiff",
         "enemy_attack_cancelled",
         "grunt_falcon_punch_hit_resolved",
+        "marine_dash_hit_resolved",
+        "marine_dash_whiff",
     }
     terminal_events_total = sum(
         1 for event in events if str(event.get("kind", "")) in terminal_event_kinds
@@ -759,6 +885,8 @@ def build_report(
         "ENEMY ATTACK LIFECYCLE (UNIQUE ATTACK IDs IN RETAINED EVENTS)",
         "  " + _ordered_counts(attack_lifecycle, ["started", "active", "terminal"]),
     ])
+
+    _append_enemy_hit_spatial_sections(lines, events)
 
     _append_performance_incident_section(lines, payload)
 

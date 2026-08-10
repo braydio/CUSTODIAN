@@ -45,6 +45,12 @@ func _run() -> void:
 			"attack_id": "dodge-overlap:%d" % attempt,
 			"attacker_id": 9001,
 			"target_id": operator.get_instance_id(),
+			"contact_model": "directional_lane",
+			"spatial_valid": true,
+			"attacker_position": operator.global_position - Vector2.RIGHT,
+			"target_position": operator.global_position,
+			"contact_position": operator.global_position,
+			"separation_px": 1.0,
 		})
 		if StringName(result.get("result", &"")) != expected_result:
 			failures.append("overlap %d resolved %s instead of %s" % [attempt, result.get("result", ""), expected_result])
@@ -74,6 +80,45 @@ func _run() -> void:
 		failures.append("iframe avoid counter did not reconcile to canonical classifications")
 	if int(observatory.counters.get("dodge_timing_miss_late", 0)) != 12:
 		failures.append("late/recovery legacy timing counter did not reconcile")
+	var incoming: Array = observatory.get_recent_events(30, &"incoming_hit_result")
+	if incoming.size() != 20:
+		failures.append("20 overlaps must retain exactly 20 incoming hit results")
+	var incoming_classifications := {}
+	for event in incoming:
+		var data := (event as Dictionary).get("data", {}) as Dictionary
+		var classification := String(data.get("dodge_classification", ""))
+		incoming_classifications[classification] = int(incoming_classifications.get(classification, 0)) + 1
+		if String(data.get("player_dodge_phase", "")).is_empty():
+			failures.append("incoming result lost canonical player_dodge_phase")
+		if not bool(data.get("spatial_valid", false)):
+			failures.append("incoming result lost authoritative spatial validity")
+	if int(incoming_classifications.get("iframe_avoid", 0)) != 8:
+		failures.append("incoming iframe results lost iframe_avoid classification")
+	if int(incoming_classifications.get("recovery_hit", 0)) != 6:
+		failures.append("incoming recovery hits lost recovery_hit classification")
+
+	operator.current_health = 1.0
+	operator.health = 1.0
+	operator.receive_enemy_hit(2.0, &"dash", "enemy", null, Vector2.RIGHT, -1.0, {
+		"attack_id": "dodge-overlap:lethal",
+		"attack_type": "marine_dash",
+		"contact_model": "directional_lane",
+		"spatial_valid": true,
+		"attacker_position": operator.global_position - Vector2.RIGHT,
+		"target_position": operator.global_position,
+		"contact_position": operator.global_position,
+		"separation_px": 1.0,
+	})
+	var deaths: Array = observatory.get_recent_events(2, &"player_death")
+	if deaths.size() != 1:
+		failures.append("lethal hit should emit one player_death record")
+	else:
+		var death_data := (deaths[0] as Dictionary).get("data", {}) as Dictionary
+		var lethal_context := death_data.get("lethal_attack_context", {}) as Dictionary
+		if String(lethal_context.get("attack_id", "")) != "dodge-overlap:lethal":
+			failures.append("player_death lost lethal attack correlation")
+		if not bool(lethal_context.get("lethal", false)) or float(lethal_context.get("target_health_after", -1.0)) != 0.0:
+			failures.append("player_death lethal context lost predicted health transition")
 
 	if not failures.is_empty():
 		for failure in failures:

@@ -18,6 +18,10 @@ outcomes after their authoritative systems resolve them and never feeds data
 back into movement, combat, AI, world state, procedural generation, or the
 encounter director.
 
+Enemy attack heat is recorded at `contact_position`, falling back to the target
+position and only then to the legacy event position. Attacker origin remains
+available in telemetry but is never substituted for the damage location.
+
 ## Non-goals
 
 - no AI behavior changes
