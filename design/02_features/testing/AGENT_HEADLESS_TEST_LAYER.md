@@ -108,7 +108,10 @@ Rules:
 
 Current vocabulary: `role_exists`, `warning_count`, `event_count`, `counter_value`, `probe_compare`, `metric_compare`, `output_exists`, `event_order`.
 
-Add: `event_field_compare`, `event_exactly_once`, `event_absent`, `event_same_field`, `role_distance_compare`, `probe_stable`, `probe_never`, `probe_changed`, `event_between_ticks`.
+V1 implements: `event_field_compare`, `event_exactly_once`, `event_absent`,
+`event_same_field`, `role_distance_compare`, and `event_between_ticks`.
+`probe_stable`, `probe_never`, and `probe_changed` remain possible follow-up;
+they are not accepted by the live schema.
 
 Examples:
 
@@ -116,7 +119,6 @@ Examples:
 {
   "type": "event_field_compare",
   "event": "marine_dash_hit_resolved",
-  "where": { "data.attack_id": "$last" },
   "field": "data.spatial_valid",
   "op": "eq",
   "value": true
@@ -136,6 +138,8 @@ Examples:
 ```
 
 Effect: a cheapshot bug test becomes a ~20-line JSON scenario instead of a ~200-line GDScript smoke.
+Cross-event correlation uses `event_same_field`; V1 does not implement `$last`
+or any other assertion variable/expression syntax.
 
 ### 4. Standardized read-only actor snapshots
 
@@ -199,7 +203,14 @@ An integration smoke then only proves `real Operator state → resolver inputs �
 | 3 | MOMENT | Deterministic gameplay sequence. Telemetry/assertions, optionally capture. | seconds |
 | 4 | FULL BOOT | Main scene / import / resource regression. Run only when ownership or routing demands it. | — |
 
-`run_validation.py --changed` selects the cheapest proof first; a Tier 0 failure short-circuits higher tiers.
+`run_validation.py --changed` selects the cheapest proof first. It runs all
+siblings within a tier, then marks every higher selected tier `skipped` when
+that tier fails, times out, or encounters infrastructure failure.
+
+Changed-file coverage is explicit. Files ignored as docs, reports, imports, or
+generated metadata are listed separately; every other changed file must match
+at least one manifest owner. An uncovered file makes `coverage.complete=false`,
+prevents a passing result, and exits with code 6 even if selected tests pass.
 
 ## Observatory → Repro Capsule (later phase)
 

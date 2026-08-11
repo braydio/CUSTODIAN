@@ -22,7 +22,9 @@ per-test timeouts, imports once when selected tests require it, parses the
 `CUSTODIAN_TEST_RESULT_JSON:` sentinel from harness-based smokes, and retains
 bounded output tails for legacy tests. Exit codes are `0` pass, `2`
 manifest/configuration error, `3` import/preflight failure, `4` test failure,
-and `5` timeout. Individual commands below remain canonical for direct
+`5` timeout, and `6` uncovered changed-file gap. A structured harness failure
+or unexpected fatal stderr fails the test even if its process exits zero.
+All siblings in a tier run; a bad tier skips every higher tier. Individual commands below remain canonical for direct
 debugging. Moment entries run with capture mode `none`; richer evidence remains
 an explicit `run_moment.py` decision.
 

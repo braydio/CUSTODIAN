@@ -18,7 +18,11 @@ Documentation updates this session:
   of cheap smokes, actor/integration checks, and no-capture moments; it emits
   one bounded JSON result with selection reasons, timings, structured harness
   failures, legacy output tails, warning classifications, and stable timeout /
-  configuration / preflight / failure exit codes. The shared GDScript harness
+  configuration / preflight / failure / coverage-gap exit codes. Non-excluded
+  changed files without manifest ownership prevent a false-green result;
+  structured `passed:false` and unexpected fatal stderr override exit zero,
+  and a failing tier skips higher-cost tiers. Import and test subprocesses have
+  bounded process-group supervision. The shared GDScript harness
   now proves pure-resolver and Observatory-backed actor styles. Moment Forge
   supports six relational event/distance assertions plus shared dotted-path
   debug-snapshot probes; Operator and Enemy expose compact read-only diagnostic

@@ -218,6 +218,11 @@ request `snapshot: "debug"`, which reads allowlisted nested fields from an
 actor's read-only `get_debug_snapshot()` result. Direct property probes remain
 compatibility-only.
 
+Python preflight validates assertion operators, `where` object shape,
+`first|last` selection, event tick bounds/counts, and declared role references.
+V1 intentionally has no `$last` variable and no `probe_stable`, `probe_never`,
+or `probe_changed` assertions; cross-event values use `event_same_field`.
+
 ### 5.1 Run One Scenario
 
 From repository root:

@@ -27,12 +27,25 @@ WARNINGS_PATH = VALIDATION_DIR / "known_headless_warnings.json"
 TIERS = ("unit", "actor", "integration", "moment", "boot")
 TYPES = {"godot_script", "python", "moment"}
 RESULT_PREFIX = "CUSTODIAN_TEST_RESULT_JSON:"
-EXIT_CONFIG, EXIT_PREFLIGHT, EXIT_FAILED, EXIT_TIMEOUT = 2, 3, 4, 5
+EXIT_CONFIG, EXIT_PREFLIGHT, EXIT_FAILED, EXIT_TIMEOUT, EXIT_COVERAGE = 2, 3, 4, 5, 6
 TAIL_LINES = 40
+IMPORT_TIMEOUT_SEC = 120
 
 
 class ManifestError(ValueError):
     pass
+
+
+def owner_patterns(test: dict[str, Any]) -> list[str]:
+    patterns = [str(value) for value in test.get("owners", [])]
+    script = str(test.get("script", ""))
+    if script.startswith("res://"):
+        patterns.append("custodian/" + script.removeprefix("res://"))
+    elif script:
+        patterns.append(script)
+    if test.get("type") == "moment":
+        patterns.append(f"custodian/tools/iteration/scenarios/{test['scenario']}.json")
+    return patterns
 
 
 def load_manifest(path: Path = MANIFEST_PATH) -> list[dict[str, Any]]:
@@ -62,6 +75,35 @@ def load_manifest(path: Path = MANIFEST_PATH) -> list[dict[str, Any]]:
     return tests
 
 
+def load_coverage_excludes(path: Path = MANIFEST_PATH) -> list[str]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    values = payload.get("coverage_excludes", [])
+    if not isinstance(values, list) or any(not isinstance(value, str) for value in values):
+        raise ManifestError("coverage_excludes must be an array of globs")
+    return values
+
+
+def changed_file_coverage(files: list[str], tests: list[dict[str, Any]], excludes: list[str]) -> dict[str, Any]:
+    excluded = sorted(path for path in files if any(fnmatch.fnmatchcase(path, pattern) for pattern in excludes))
+    candidates = [path for path in files if path not in excluded]
+    covered_by: dict[str, list[str]] = {}
+    for path in candidates:
+        owners = sorted(test["id"] for test in tests if any(
+            fnmatch.fnmatchcase(path, pattern) for pattern in owner_patterns(test)
+        ))
+        if owners:
+            covered_by[path] = owners
+    covered = sorted(covered_by)
+    uncovered = sorted(set(candidates).difference(covered))
+    return {
+        "covered_files": covered,
+        "uncovered_files": uncovered,
+        "excluded_files": excluded,
+        "covered_by": covered_by,
+        "complete": not uncovered,
+    }
+
+
 def select_tests(tests: list[dict[str, Any]], *, files: list[str] | None = None,
                  tag: str | None = None, test_id: str | None = None,
                  tier: str | None = None, max_tier: str | None = None) -> list[dict[str, Any]]:
@@ -69,7 +111,7 @@ def select_tests(tests: list[dict[str, Any]], *, files: list[str] | None = None,
     for test in tests:
         reasons: list[str] = []
         if files is not None:
-            matched = sorted({path for path in files if any(fnmatch.fnmatchcase(path, owner) for owner in test.get("owners", []))})
+            matched = sorted({path for path in files if any(fnmatch.fnmatchcase(path, owner) for owner in owner_patterns(test))})
             if not matched:
                 continue
             reasons.extend(f"owner:{path}" for path in matched)
@@ -138,8 +180,16 @@ def execute_test(test: dict[str, Any], patterns: list[dict[str, str]], command: 
     env["HOME"] = "/tmp/custodian-godot-home"
     started = time.monotonic()
     timed_out = False
-    process = subprocess.Popen(resolved_command, cwd=cwd, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                               text=True, start_new_session=True)
+    try:
+        process = subprocess.Popen(resolved_command, cwd=cwd, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                   text=True, start_new_session=True)
+    except OSError as error:
+        return {
+            "id": test["id"], "tier": test["tier"], "status": "infrastructure_error", "exit_code": None,
+            "duration_ms": round((time.monotonic() - started) * 1000), "timeout_sec": None,
+            "selection_reasons": test.get("selection_reasons", []), "failures": [], "structured_result": None,
+            "warnings": [], "stdout_tail": [], "stderr_tail": [], "launch_error": str(error),
+        }
     try:
         stdout, stderr = process.communicate(timeout=float(test.get("timeout_sec", 30)))
         exit_code = process.returncode
@@ -148,30 +198,72 @@ def execute_test(test: dict[str, Any], patterns: list[dict[str, str]], command: 
         os.killpg(process.pid, signal.SIGKILL)
         remaining_stdout, remaining_stderr = process.communicate()
         exit_code = None
-        prefix_stdout = error.stdout.decode() if isinstance(error.stdout, bytes) else (error.stdout or "")
-        prefix_stderr = error.stderr.decode() if isinstance(error.stderr, bytes) else (error.stderr or "")
-        stdout = prefix_stdout + remaining_stdout
-        stderr = prefix_stderr + remaining_stderr
+        stdout = remaining_stdout
+        stderr = remaining_stderr
     harness = parse_harness_result(stdout)
-    status = "timeout" if timed_out else ("passed" if exit_code == 0 else "failed")
+    sentinel_seen = any(line.startswith(RESULT_PREFIX) for line in stdout.splitlines())
+    malformed_sentinel = sentinel_seen and harness is None
+    warnings = classify_warnings(stderr, patterns)
+    structured_failed = harness is not None and not bool(harness.get("passed", False))
+    fatal_stderr = any(item["classification"] == "fatal" for item in warnings)
+    status = "timeout" if timed_out else (
+        "failed" if exit_code != 0 or structured_failed or malformed_sentinel or fatal_stderr else "passed"
+    )
+    failures = harness.get("failures", []) if harness else []
+    if malformed_sentinel:
+        failures = [{"message": "malformed structured test result sentinel", "evidence": {}}]
     return {
         "id": test["id"], "tier": test["tier"], "status": status, "exit_code": exit_code,
         "duration_ms": round((time.monotonic() - started) * 1000),
         "timeout_sec": test.get("timeout_sec") if timed_out else None,
         "selection_reasons": test.get("selection_reasons", []),
-        "failures": harness.get("failures", []) if harness else [],
+        "failures": failures,
         "structured_result": harness,
-        "warnings": classify_warnings(stderr, patterns),
+        "warnings": warnings,
         "stdout_tail": [] if harness and status == "passed" else _tail(stdout),
         "stderr_tail": _tail(stderr),
     }
 
 
-def _run_import() -> tuple[bool, dict[str, Any]]:
+def _run_import(timeout_sec: float = IMPORT_TIMEOUT_SEC, command: list[str] | None = None) -> tuple[bool, dict[str, Any]]:
     env = os.environ.copy(); env["HOME"] = "/tmp/custodian-godot-home"
-    completed = subprocess.run(["godot", "--headless", "--path", str(CUSTODIAN_DIR), "--import", "--quit"],
-                               cwd=REPO_ROOT, env=env, capture_output=True, text=True, check=False)
-    return completed.returncode == 0, {"exit_code": completed.returncode, "stdout_tail": _tail(completed.stdout), "stderr_tail": _tail(completed.stderr)}
+    resolved = command or ["godot", "--headless", "--path", str(CUSTODIAN_DIR), "--import", "--quit"]
+    try:
+        process = subprocess.Popen(resolved, cwd=REPO_ROOT, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                   text=True, start_new_session=True)
+        try:
+            stdout, stderr = process.communicate(timeout=timeout_sec)
+        except subprocess.TimeoutExpired:
+            os.killpg(process.pid, signal.SIGKILL)
+            stdout, stderr = process.communicate()
+            return False, {"status": "timeout", "timeout_sec": timeout_sec, "exit_code": None,
+                           "stdout_tail": _tail(stdout), "stderr_tail": _tail(stderr)}
+    except OSError as error:
+        return False, {"status": "launch_error", "exit_code": None, "error": str(error),
+                       "stdout_tail": [], "stderr_tail": []}
+    return process.returncode == 0, {"status": "passed" if process.returncode == 0 else "failed",
+                                     "exit_code": process.returncode, "stdout_tail": _tail(stdout), "stderr_tail": _tail(stderr)}
+
+
+def execute_tiered(selected: list[dict[str, Any]], patterns: list[dict[str, str]],
+                   executor: Any = execute_test) -> list[dict[str, Any]]:
+    results: list[dict[str, Any]] = []
+    blocked_by = ""
+    for tier in TIERS:
+        tier_tests = [test for test in selected if test["tier"] == tier]
+        if blocked_by:
+            results.extend({
+                "id": test["id"], "tier": tier, "status": "skipped", "exit_code": None, "duration_ms": 0,
+                "timeout_sec": None, "selection_reasons": test.get("selection_reasons", []), "failures": [],
+                "structured_result": None, "warnings": [], "stdout_tail": [], "stderr_tail": [],
+                "skip_reason": "lower_tier_failed", "blocked_by_tier": blocked_by,
+            } for test in tier_tests)
+            continue
+        tier_results = [executor(test, patterns) for test in tier_tests]
+        results.extend(tier_results)
+        if any(result["status"] in {"failed", "timeout", "infrastructure_error"} for result in tier_results):
+            blocked_by = tier
+    return results
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -190,7 +282,7 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     try:
-        tests = load_manifest(); patterns = load_warning_patterns()
+        tests = load_manifest(); patterns = load_warning_patterns(); coverage_excludes = load_coverage_excludes()
     except (OSError, json.JSONDecodeError, ManifestError) as error:
         print(json.dumps({"schema": "custodian.validation.result.v1", "passed": False, "configuration_error": str(error)}))
         return EXIT_CONFIG
@@ -198,6 +290,9 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(tests, indent=2) if args.json else "\n".join(f"{t['tier']:11} {t['id']}" for t in tests))
         return 0
     files = changed_files(args.base, REPO_ROOT) if args.changed else None
+    coverage = changed_file_coverage(files, tests, coverage_excludes) if files is not None else {
+        "covered_files": [], "uncovered_files": [], "excluded_files": [], "covered_by": {}, "complete": True,
+    }
     selected = select_tests(tests, files=files, tag=args.tag, test_id=args.test, tier=args.tier, max_tier=args.max_tier)
     if not any([args.changed, args.tag, args.test, args.tier]):
         print("select tests with --changed, --tag, --test, or --tier", file=sys.stderr)
@@ -211,12 +306,16 @@ def main(argv: list[str] | None = None) -> int:
         if not ok:
             print(json.dumps({"schema":"custodian.validation.result.v1","passed":False,"infrastructure_failure":"import","import":import_result}))
             return EXIT_PREFLIGHT
-    results = [execute_test(test, patterns) for test in selected]
+    results = execute_tiered(selected, patterns)
     payload = {
-        "schema": "custodian.validation.result.v1", "passed": all(item["status"] == "passed" for item in results),
-        "changed_files": files or [], "selected": [item["id"] for item in selected], "tests": results,
+        "schema": "custodian.validation.result.v1",
+        "passed": bool(coverage["complete"]) and all(item["status"] == "passed" for item in results),
+        "changed_files": files or [], "coverage": coverage,
+        "selected": [item["id"] for item in selected], "tests": results,
         "summary": {"selected": len(results), "passed": sum(r["status"] == "passed" for r in results),
-                    "failed": sum(r["status"] == "failed" for r in results), "timed_out": sum(r["status"] == "timeout" for r in results)},
+                    "failed": sum(r["status"] == "failed" for r in results), "timed_out": sum(r["status"] == "timeout" for r in results),
+                    "skipped": sum(r["status"] == "skipped" for r in results),
+                    "infrastructure_errors": sum(r["status"] == "infrastructure_error" for r in results)},
     }
     if args.json:
         print(json.dumps(payload, indent=2))
@@ -227,11 +326,19 @@ def main(argv: list[str] | None = None) -> int:
             for warning in result["warnings"]:
                 if warning["classification"] != "known_warning":
                     print(f"  {warning['classification'].upper()}: {warning['line']}")
+        if not coverage["complete"]:
+            print("\nCOVERAGE GAP")
+            for path in coverage["uncovered_files"]:
+                print(f"  {path}")
         print(f"\n{len(results)} selected\n{payload['summary']['passed']} passed\n{payload['summary']['failed']} failed")
+    if payload["summary"]["infrastructure_errors"]:
+        return EXIT_PREFLIGHT
     if payload["summary"]["timed_out"]:
         return EXIT_TIMEOUT
     if payload["summary"]["failed"]:
         return EXIT_FAILED
+    if not coverage["complete"]:
+        return EXIT_COVERAGE
     return 0
 
 

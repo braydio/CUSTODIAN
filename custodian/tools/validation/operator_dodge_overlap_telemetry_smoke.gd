@@ -116,5 +116,11 @@ func _run() -> void:
 			_harness.expect(false, "player_death lost lethal attack correlation")
 		if not bool(lethal_context.get("lethal", false)) or float(lethal_context.get("target_health_after", -1.0)) != 0.0:
 			_harness.expect(false, "player_death lethal context lost predicted health transition")
+	var recent_lethal: Dictionary = _harness.recent_event(
+		&"incoming_hit_result",
+		func(data: Dictionary) -> bool:
+			return String(data.get("attack_id", "")) == "dodge-overlap:lethal"
+	)
+	_harness.expect(not recent_lethal.is_empty(), "harness recent_event predicate did not receive event data")
 
 	_harness.finish()

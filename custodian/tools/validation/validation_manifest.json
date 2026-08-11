@@ -1,8 +1,23 @@
 {
   "schema_version": 1,
+  "coverage_excludes": [
+    ".gitignore",
+    "*.md",
+    "**/*.md",
+    "AGENTS.md",
+    "custodian/AGENTS.md",
+    "design/**",
+    "custodian/docs/**",
+    "reports/**",
+    ".ai/**",
+    "tmp/**",
+    "custodian/.godot/**",
+    "**/*.import",
+    "**/*.uid"
+  ],
   "tests": [
-    {"id":"validation_runner","type":"python","script":"custodian/tools/validation/validation_runner_smoke.py","tier":"unit","tags":["validation","tooling"],"owners":["custodian/tools/validation/run_validation.py","custodian/tools/validation/validation_manifest.json","custodian/tools/validation/known_headless_warnings.json"],"timeout_sec":10,"needs_import":false},
-    {"id":"moment_forge_schema","type":"python","script":"custodian/tools/validation/moment_forge_schema_smoke.py","tier":"unit","tags":["validation","moment"],"owners":["custodian/tools/iteration/run_moment.py","custodian/tools/iteration/moment_schema.json"],"timeout_sec":10,"needs_import":false},
+    {"id":"validation_runner","type":"python","script":"custodian/tools/validation/validation_runner_smoke.py","tier":"unit","tags":["validation","tooling"],"owners":["custodian/tools/validation/run_validation.py","custodian/tools/validation/validation_manifest.json","custodian/tools/validation/known_headless_warnings.json","custodian/tools/validation/validation_runner_smoke.py"],"timeout_sec":10,"needs_import":false},
+    {"id":"moment_forge_schema","type":"python","script":"custodian/tools/validation/moment_forge_schema_smoke.py","tier":"unit","tags":["validation","moment"],"owners":["custodian/tools/iteration/run_moment.py","custodian/tools/iteration/moment_schema.json","custodian/tools/validation/moment_forge_schema_smoke.py"],"timeout_sec":10,"needs_import":false},
     {"id":"moment_assertion_dsl","type":"godot_script","script":"res://tools/validation/moment_assertion_dsl_smoke.gd","tier":"unit","tags":["validation","moment"],"owners":["custodian/tools/iteration/godot/moment_assertion_evidence.gd","custodian/tools/iteration/godot/moment_value_reader.gd","custodian/tools/iteration/godot/moment_probe_collector.gd"],"timeout_sec":15,"needs_import":false},
     {"id":"operator_melee_soft_targeting","type":"godot_script","script":"res://tools/validation/operator_melee_soft_targeting_smoke.gd","tier":"unit","tags":["combat","operator","melee","targeting"],"owners":["custodian/game/systems/combat/melee_target_resolver.gd","custodian/game/systems/combat/melee_attack_profile.gd","custodian/game/actors/operator/attacks/vigil_pattern_dagger_fast_*.tres","custodian/tools/validation/support/headless_test_harness.gd"],"timeout_sec":15,"needs_import":false},
     {"id":"operator_vigil_dagger","type":"godot_script","script":"res://tools/validation/operator_vigil_dagger_smoke.gd","tier":"actor","tags":["combat","operator","melee","dagger"],"owners":["custodian/game/actors/operator/operator.gd","custodian/game/actors/operator/attacks/vigil_pattern_dagger_*.tres","custodian/game/systems/combat/melee_*.gd"],"timeout_sec":30,"needs_import":false},

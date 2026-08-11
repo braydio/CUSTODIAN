@@ -54,7 +54,8 @@ func recent_event(kind: StringName, predicate: Callable = Callable()) -> Diction
 	var found := events(kind)
 	for event_variant in found:
 		var event := event_variant as Dictionary
-		if not predicate.is_valid() or bool(predicate.call(event)):
+		var data := event.get("data", {}) as Dictionary
+		if not predicate.is_valid() or bool(predicate.call(data)):
 			return event.duplicate(true)
 	return {}
 
@@ -104,7 +105,10 @@ func finish() -> void:
 		for failure in failures:
 			printerr("[%s] %s" % [_test_name, failure.get("message", "failure")])
 	if fixture_root != null and is_instance_valid(fixture_root):
-		fixture_root.queue_free()
+		if _tree.current_scene == fixture_root:
+			_tree.current_scene = null
+		fixture_root.free()
+		fixture_root = null
 	_tree.quit(0 if failures.is_empty() else 1)
 
 

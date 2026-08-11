@@ -259,7 +259,11 @@ def _validate_probes(probes: list[Any], role_ids: set[str], duration: int) -> se
     return probe_ids
 
 
-def _validate_assertions(assertions: list[Any], probe_ids: set[str]) -> None:
+def _validate_assertions(assertions: list[Any], probe_ids: set[str], role_ids: set[str], duration: int) -> None:
+    compare_kinds = {"warning_count", "event_count", "counter_value", "probe_compare", "metric_compare",
+                     "event_field_compare", "role_distance_compare"}
+    compare_ops = {"eq", "ne", "gt", "gte", "lt", "lte"}
+    filtered_event_kinds = {"event_exactly_once", "event_absent", "event_field_compare"}
     for index, raw_assertion in enumerate(assertions):
         if not isinstance(raw_assertion, dict):
             raise ScenarioError("assertions must be objects")
@@ -269,6 +273,8 @@ def _validate_assertions(assertions: list[Any], probe_ids: set[str]) -> None:
         severity = raw_assertion.get("severity", "error")
         if severity not in {"error", "warning", "info"}:
             raise ScenarioError(f"assertion[{index}] has invalid severity")
+        if kind in compare_kinds and raw_assertion.get("op", "eq") not in compare_ops:
+            raise ScenarioError(f"{kind}.op must be one of {sorted(compare_ops)}")
         if kind == "probe_compare":
             references = [raw_assertion.get("probe")]
             value_from = raw_assertion.get("value_from")
@@ -282,14 +288,36 @@ def _validate_assertions(assertions: list[Any], probe_ids: set[str]) -> None:
                 raise ScenarioError("output_exists path must be run-relative")
         if kind in {"event_exactly_once", "event_absent", "event_field_compare", "event_between_ticks"} and not raw_assertion.get("event"):
             raise ScenarioError(f"{kind} requires event")
-        if kind == "event_field_compare" and not raw_assertion.get("field"):
+        if kind in filtered_event_kinds:
+            where = raw_assertion.get("where", {})
+            if not isinstance(where, dict) or any(not isinstance(path, str) or not path for path in where):
+                raise ScenarioError(f"{kind}.where must be an object with dotted-path keys")
+            if any(isinstance(value, str) and value.startswith("$") for value in where.values()):
+                raise ScenarioError(f"{kind}.where does not support correlation variables")
+        if kind == "event_field_compare" and (not isinstance(raw_assertion.get("field"), str) or not raw_assertion.get("field")):
             raise ScenarioError("event_field_compare requires field")
+        if kind == "event_field_compare" and raw_assertion.get("select", "last") not in {"first", "last"}:
+            raise ScenarioError("event_field_compare.select must be first|last")
         if kind == "event_same_field":
             events = raw_assertion.get("events")
-            if not isinstance(events, list) or len(events) < 2 or not raw_assertion.get("field"):
+            if (not isinstance(events, list) or len(events) < 2
+                    or any(not isinstance(event, str) or not event for event in events)
+                    or not isinstance(raw_assertion.get("field"), str) or not raw_assertion.get("field")):
                 raise ScenarioError("event_same_field requires events and field")
-        if kind == "role_distance_compare" and (not raw_assertion.get("role_a") or not raw_assertion.get("role_b")):
-            raise ScenarioError("role_distance_compare requires role_a and role_b")
+        if kind == "event_between_ticks":
+            start_tick = raw_assertion.get("start_tick")
+            end_tick = raw_assertion.get("end_tick")
+            if (not isinstance(start_tick, int) or not isinstance(end_tick, int)
+                    or not 0 <= start_tick <= end_tick < duration):
+                raise ScenarioError("event_between_ticks tick range is invalid")
+            if raw_assertion.get("count_op", "eq") not in compare_ops:
+                raise ScenarioError(f"event_between_ticks.count_op must be one of {sorted(compare_ops)}")
+            if not isinstance(raw_assertion.get("count", 1), int) or raw_assertion.get("count", 1) < 0:
+                raise ScenarioError("event_between_ticks.count must be a nonnegative integer")
+        if kind == "role_distance_compare":
+            role_a, role_b = raw_assertion.get("role_a"), raw_assertion.get("role_b")
+            if role_a not in role_ids or role_b not in role_ids:
+                raise ScenarioError("role_distance_compare references an undefined role")
 
 
 def validate_scenario(
@@ -398,7 +426,7 @@ def validate_scenario(
     role_ids = _validate_setup(_require_object(scenario, "setup"), require_scene)
     _validate_timeline(_require_array(scenario, "timeline"), duration, role_ids)
     probe_ids = _validate_probes(_require_array(scenario, "probes"), role_ids, duration)
-    _validate_assertions(_require_array(scenario, "assertions"), probe_ids)
+    _validate_assertions(_require_array(scenario, "assertions"), probe_ids, role_ids, duration)
     stable = _require_object(scenario, "stable_fingerprint")
     if set(stable).difference(
         {"event_payload_fields", "counters", "probes", "position_quantum_px", "float_quantum"}

@@ -43,17 +43,32 @@ def main() -> int:
     schema = json.loads((ROOT / "custodian/tools/iteration/moment_schema.json").read_text())
     schema_assertions = set(schema["properties"]["assertions"]["items"]["properties"]["type"]["enum"])
     assert schema_assertions == SUPPORTED_ASSERTIONS
+    roles = list(sample["setup"]["roles"])
+    role_a = roles[0]
+    role_b = roles[1] if len(roles) > 1 else roles[0]
     for assertion in [
         {"type": "event_exactly_once", "event": "hit"},
         {"type": "event_absent", "event": "whiff"},
         {"type": "event_field_compare", "event": "hit", "field": "data.valid", "op": "eq", "value": True},
         {"type": "event_same_field", "events": ["hit", "received"], "field": "data.attack_id"},
         {"type": "event_between_ticks", "event": "hit", "start_tick": 1, "end_tick": 2, "count_op": "eq", "count": 1},
-        {"type": "role_distance_compare", "role_a": "operator", "role_b": "target", "op": "lte", "value": 64.0},
+        {"type": "role_distance_compare", "role_a": role_a, "role_b": role_b, "op": "lte", "value": 64.0},
     ]:
         candidate = copy.deepcopy(sample)
         candidate["assertions"] = [assertion]
         validate_scenario(candidate, require_scene=False)
+    for assertion in [
+        {"type": "event_exactly_once", "event": "hit", "where": []},
+        {"type": "event_exactly_once", "event": "hit", "where": {"data.attack_id": "$last"}},
+        {"type": "event_field_compare", "event": "hit", "field": "data.valid", "select": "middle", "value": True},
+        {"type": "event_field_compare", "event": "hit", "field": "data.valid", "op": "approximately", "value": True},
+        {"type": "event_between_ticks", "event": "hit", "start_tick": 2, "end_tick": 1, "count": 1},
+        {"type": "event_between_ticks", "event": "hit", "start_tick": 0, "end_tick": sample["duration_ticks"], "count": 1},
+        {"type": "role_distance_compare", "role_a": role_a, "role_b": "missing_role", "op": "lte", "value": 64.0},
+    ]:
+        candidate = copy.deepcopy(sample)
+        candidate["assertions"] = [assertion]
+        assert rejected(candidate), assertion
     print("Moment Forge schema smoke: PASS")
     return 0
 
