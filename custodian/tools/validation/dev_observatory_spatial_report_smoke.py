@@ -20,6 +20,7 @@ def main() -> int:
         {"kind": "incoming_hit_result", "data": {"attack_id": "marine:7", "enemy": "Marine", "attack_type": "marine_dash", "result": "damaged", "applied_damage": 30.45, "target_health_before": 30.45, "target_health_after": 0.0, "lethal": True, "player_dodge_phase": "recovery", "dodge_classification": "recovery_hit", "spatial_valid": True}},
         {"kind": "player_death", "data": {"lethal_attack_context": {"attack_id": "marine:7", "enemy": "Marine", "attack_type": "marine_dash", "damage_attempted": 30.45, "applied_damage": 30.45, "target_health_before": 30.45, "target_health_after": 0.0, "player_dodge_phase": "recovery", "dodge_classification": "recovery_hit", "spatial_valid": True}}},
         {"kind": "incoming_hit_result", "data": {"attack_id": "bad:1", "enemy": "Synthetic", "result": "damaged", "applied_damage": 2.0, "spatial_valid": False}},
+        {"kind": "incoming_hit_result", "data": {"attack_id": "bogus-range:1", "enemy": "Grunt", "attack_type": "melee", "contact_model": "radial_arc", "result": "damaged", "applied_damage": 5.0, "separation_px": 159.939, "nominal_range_px": 184.0, "base_contact_range_px": 184.0, "allowed_range_px": 221.6, "melee_range_grace_multiplier": 1.15, "melee_range_grace_px": 10.0, "contact_range_source": "falcon_launch_band", "spatial_valid": True}},
         {"kind": "incoming_hit_result", "data": {"enemy": "Legacy", "result": "damaged", "applied_damage": 1.0}},
     ]
     payload = {
@@ -29,7 +30,7 @@ def main() -> int:
         "metadata": {}, "counters": {}, "gauges": {}, "events": events, "warnings": [],
     }
     report = module.build_report(payload, Path("synthetic-spatial.json"), 10, 10)
-    for expected in ["LETHAL HIT DIAGNOSTIC", "SUSPICIOUS HITS", "marine_dash", "30.45", "recovery_hit", "VALID", "VIOLATION", "UNKNOWN"]:
+    for expected in ["LETHAL HIT DIAGNOSTIC", "SUSPICIOUS HITS", "marine_dash", "30.45", "recovery_hit", "VALID", "VIOLATION", "UNKNOWN", "bogus-range:1", "range_sanity=SUSPICIOUS"]:
         assert expected in report, f"missing analyzer output: {expected}"
     print("dev_observatory_spatial_report_smoke: PASS")
     return 0

@@ -1015,6 +1015,7 @@ From `custodian/`:
 
 ```bash
 godot --headless --path . --script res://tools/validation/enemy_hit_spatial_telemetry_smoke.gd
+python3 tools/validation/dev_observatory_spatial_report_smoke.py
 godot --headless --path . --script res://tools/validation/operator_dodge_overlap_telemetry_smoke.gd
 godot --headless --path . --script res://tools/validation/grunt_falcon_punch_smoke.gd
 python3 tools/validation/dev_observatory_spatial_report_smoke.py

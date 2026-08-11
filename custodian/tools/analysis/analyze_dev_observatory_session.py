@@ -126,6 +126,23 @@ def _spatial_status(data: Mapping[str, Any]) -> str:
     return "UNKNOWN"
 
 
+def _melee_range_sanity(data: Mapping[str, Any]) -> str:
+    attack_type = str(data.get("attack_type", data.get("hit_kind", "")))
+    if attack_type != "melee" or str(data.get("contact_model", "")) != "radial_arc":
+        return "NOT_APPLICABLE"
+    source = str(data.get("contact_range_source", "")).strip()
+    base_range = _number(
+        data.get("base_contact_range_px", data.get("nominal_range_px")), -1.0
+    )
+    if source and source not in {"standard_melee", "variant_profile", "structure_melee"}:
+        return "SUSPICIOUS"
+    if base_range > 80.0:
+        return "SUSPICIOUS"
+    if base_range < 0.0:
+        return "UNKNOWN"
+    return "SANE"
+
+
 def _format_position(value: Any) -> str:
     if isinstance(value, Mapping):
         return f"({_format_value(value.get('x'))}, {_format_value(value.get('y'))})"
@@ -203,10 +220,16 @@ def _append_enemy_hit_spatial_sections(lines: list[str], events: Sequence[Mappin
                     _format_value(correlated.get("separation_px")),
                     _format_value(correlated.get("allowed_range_px")),
                 ),
+                f"  base contact range: {_format_value(correlated.get('base_contact_range_px', correlated.get('nominal_range_px')))}",
+                f"  grace multiplier: {_format_value(correlated.get('melee_range_grace_multiplier'))}",
+                f"  grace pixels: {_format_value(correlated.get('melee_range_grace_px'))}",
+                f"  final allowed range: {_format_value(correlated.get('allowed_range_px'))}",
+                f"  contact-range source: {correlated.get('contact_range_source', 'unknown')}",
                 "  arc error/half arc: %s / %s" % (
                     _format_value(correlated.get("angle_error_degrees")),
                     _format_value(_number(correlated.get("arc_degrees")) * 0.5),
                 ),
+                f"  gameplay range sanity: {_melee_range_sanity(correlated)}",
             ])
         lines.extend([
             f"  dodge phase: {correlated.get('player_dodge_phase', 'unknown')}",
@@ -221,20 +244,25 @@ def _append_enemy_hit_spatial_sections(lines: list[str], events: Sequence[Mappin
         data = _event_data(event)
         if _number(data.get("applied_damage")) <= 0.0:
             continue
-        if data.get("spatial_valid") is False or not str(data.get("attack_id", "")).strip():
+        if (
+            data.get("spatial_valid") is False
+            or not str(data.get("attack_id", "")).strip()
+            or _melee_range_sanity(data) == "SUSPICIOUS"
+        ):
             suspicious.append(data)
     lines.extend(["", "SUSPICIOUS HITS", "-" * 48])
     if not suspicious:
         lines.append("  none")
     for data in suspicious:
         lines.append(
-            "  %s | %s | attack_id=%s | damage=%s | %s"
+            "  %s | %s | attack_id=%s | damage=%s | %s | range_sanity=%s"
             % (
                 data.get("enemy", data.get("attacker_name", "unknown")),
                 data.get("attack_type", data.get("hit_kind", "unknown")),
                 data.get("attack_id", "missing") or "missing",
                 _format_value(data.get("applied_damage")),
                 _spatial_status(data),
+                _melee_range_sanity(data),
             )
         )
 

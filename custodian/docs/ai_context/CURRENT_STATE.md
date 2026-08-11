@@ -193,6 +193,7 @@ Documentation updates this session:
   launch/active-start/closest-approach/lateral/dodge/obstruction diagnostics; the focused Falcon smoke samples seven
   stationary attempts at each of 96, 136, and 176 pixels without changing balance values. A separate mixed-population
   smoke deliberately enables two director/profile agents beside one legacy enemy and reconciles both population gauges.
+- Ordinary enemy melee now captures a dedicated contact range rather than reusing AI/special engagement distance. Default player contact is `40px` (`56px` after the existing `1.15x + 10px` grace), while variant-profile and structure ranges retain their explicit sources. Falcon's `88–184px` launch band remains decision-only and cannot inflate a queued swing. Radial telemetry exposes base range, grace, final allowance, and source; the Observatory analyzer separately flags implausible ordinary-melee range contracts even when their supplied geometry reports `VALID`.
 - Observatory signal quality now treats stable infrastructure power tiers as
   gauge/state rather than repeated events: the existing consumer transition
   gate is regression-tested against duplicate emissions. Ranged overheat

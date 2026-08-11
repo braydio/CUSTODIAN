@@ -2,6 +2,7 @@ extends SceneTree
 
 const CONTRACT := preload("res://game/systems/combat/enemy_hit_spatial_contract.gd")
 const MARINE_SCENE := preload("res://game/actors/enemies/enemy_marine.tscn")
+const GRUNT_SCENE := preload("res://game/actors/enemies/enemy_grunt.tscn")
 
 class DummyTarget:
 	extends CharacterBody2D
@@ -30,6 +31,7 @@ func _init() -> void:
 
 func _run() -> void:
 	_test_contract_boundaries()
+	await _test_standard_melee_range_isolation()
 	await _test_marine_hit_and_whiff()
 	if not _failed:
 		print("ENEMY_HIT_SPATIAL_TELEMETRY_SMOKE: PASS")
@@ -54,6 +56,37 @@ func _test_contract_boundaries() -> void:
 	_assert_true(bool(lane_boundary.spatial_valid), "lane exact boundary should be valid")
 	_assert_true(not bool(lane_forward_out.spatial_valid) and String(lane_forward_out.spatial_reason) == "outside_forward_lane", "lane forward overflow should fail")
 	_assert_true(not bool(lane_lateral_out.spatial_valid) and String(lane_lateral_out.spatial_reason) == "outside_lateral_lane", "lane lateral overflow should fail")
+
+
+func _test_standard_melee_range_isolation() -> void:
+	var scene_root := Node2D.new()
+	root.add_child(scene_root)
+	current_scene = scene_root
+	var grunt := GRUNT_SCENE.instantiate()
+	var target := DummyTarget.new()
+	target.add_to_group("player")
+	scene_root.add_child(grunt)
+	scene_root.add_child(target)
+	await process_frame
+	grunt.set_physics_process(false)
+	grunt.global_position = Vector2.ZERO
+	target.global_position = Vector2(159.939, 0.0)
+	grunt.set("target", target)
+	grunt.set("_grunt_falcon_punch_normal_attacks_since_special", 1)
+	grunt.set("_grunt_falcon_punch_decision_credit", 1.0)
+	grunt.set("_grunt_falcon_punch_cooldown_timer", 0.0)
+	grunt.set("_grunt_falcon_punch_recent_parry_timer", 0.0)
+	_assert_true(is_equal_approx(float(grunt.call("_get_attack_range", target)), 184.0), "Falcon eligibility should still expose its 184px AI launch range")
+	grunt.call("_capture_pending_attack_context")
+	_assert_true(is_equal_approx(float(grunt.get("_pending_attack_range_px")), 40.0), "ordinary melee must capture the 40px player contact range")
+	_assert_true(String(grunt.get("_pending_attack_range_source")) == "standard_melee", "ordinary player melee should identify its contact-range source")
+	var spatial := grunt.call("_get_pending_attack_spatial_context", target) as Dictionary
+	_assert_true(not bool(spatial.get("spatial_valid", true)), "159.939px ordinary melee must be rejected")
+	_assert_true(is_equal_approx(float(spatial.get("allowed_range_px", 0.0)), 56.0), "ordinary melee grace should resolve to 56px")
+	_assert_true(is_equal_approx(float(spatial.get("base_contact_range_px", 0.0)), 40.0), "telemetry should retain base melee contact range")
+	_assert_true(String(spatial.get("contact_range_source", "")) == "standard_melee", "telemetry should retain standard melee source")
+	scene_root.queue_free()
+	await process_frame
 
 
 func _test_marine_hit_and_whiff() -> void:

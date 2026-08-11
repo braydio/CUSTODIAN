@@ -5,7 +5,7 @@ Last updated: 2026-08-11
 ## Enemy Hit Spatial Diagnostics
 
 - `game/systems/combat/enemy_hit_spatial_contract.gd` — pure radial/arc and directional-lane contact snapshots shared by gameplay gates and telemetry.
-- `game/actors/enemies/enemy.gd` and `game/actors/operator/operator.gd` — attack-ID lifecycle, authoritative contact propagation, canonical dodge classification, counters, and lethal context.
+- `game/actors/enemies/enemy.gd` and `game/actors/operator/operator.gd` — attack-ID lifecycle, dedicated ordinary-melee contact-range capture distinct from special launch decisions, authoritative contact propagation, canonical dodge classification, counters, and lethal context.
 - `tools/analysis/analyze_dev_observatory_session.py` — correlated lethal-hit, suspicious-hit, and attack-ID-grouped Falcon phase/commitment/presentation reporting with legacy-export compatibility.
 - `tools/validation/enemy_hit_spatial_telemetry_smoke.gd`, `tools/validation/dev_observatory_spatial_report_smoke.py`, and `tools/validation/dev_observatory_falcon_report_smoke.py` — boundary, Marine lifecycle, spatial analyzer, and Falcon diagnostic report coverage.
 

@@ -233,6 +233,7 @@ write to the export or change runtime state.
 ## Enemy Attack Outcome Contract (2026-07-16)
 
 - Enemy attack lifecycle events share a stable `attack_id`, enemy/target IDs, attack type, phase, result, and reason where applicable.
+- Ordinary radial melee telemetry distinguishes `base_contact_range_px` and its `contact_range_source` from the grace-expanded `allowed_range_px`. Valid spatial geometry only proves that gameplay accepted the supplied contract; the analyzer separately marks implausibly large or special-launch-derived ordinary melee ranges as `SUSPICIOUS` even when `spatial_valid` is true.
 - Terminal outcomes are reported once per unique `attack_id` as `damaged`, `blocked`, `parried`, `whiffed`, or
   `cancelled_by_death`. Interruption causes such as parry, hit, and target loss are a separate dimension; range, arc, and
   collision details remain reasons rather than additional terminal-outcome buckets.

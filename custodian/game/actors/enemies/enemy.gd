@@ -303,6 +303,7 @@ var _critical_window_ring_vfx: Node2D = null
 var _windup_attack_is_strong: bool = false
 var _pending_attack_forward: Vector2 = Vector2.DOWN
 var _pending_attack_range_px: float = 0.0
+var _pending_attack_range_source: StringName = &"unknown"
 var _pending_attack_arc_degrees: float = 95.0
 var _attack_sequence: int = 0
 var _pending_attack_id: String = ""
@@ -1835,6 +1836,22 @@ func _get_attack_range(node: Node2D) -> float:
 	return structure_attack_range
 
 
+func _get_standard_melee_contact_range(node: Node2D) -> float:
+	if _variant_profile != null:
+		return float(_variant_profile.get("attack_range"))
+	if node != null and node.is_in_group("player"):
+		return 40.0
+	return structure_attack_range
+
+
+func _get_standard_melee_contact_range_source(node: Node2D) -> StringName:
+	if _variant_profile != null:
+		return &"variant_profile"
+	if node != null and node.is_in_group("player"):
+		return &"standard_melee"
+	return &"structure_melee"
+
+
 func _limit_pursuit_inward_velocity(target_position: Vector2, stop_distance: float, delta: float) -> void:
 	# Character bodies own their movement. Cap only the inward component so a
 	# pursuit step cannot cross the attack boundary and press into a locked target.
@@ -2965,6 +2982,7 @@ func _start_attack_windup(queued_damage: float, is_strong: bool) -> void:
 		"attack_objective": attack_objective,
 		"target": target.name if target != null and is_instance_valid(target) else "",
 		"range_px": _pending_attack_range_px,
+		"contact_range_source": String(_pending_attack_range_source),
 		"arc_degrees": _pending_attack_arc_degrees,
 	})
 	velocity = Vector2.ZERO
@@ -2981,11 +2999,13 @@ func _start_attack_windup(queued_damage: float, is_strong: bool) -> void:
 
 func _capture_pending_attack_context() -> void:
 	_pending_attack_range_px = 40.0
+	_pending_attack_range_source = &"standard_melee"
 	_pending_attack_arc_degrees = melee_hit_arc_degrees
 
 	if target is Node2D:
 		var target_node := target as Node2D
-		_pending_attack_range_px = _get_attack_range(target_node)
+		_pending_attack_range_px = _get_standard_melee_contact_range(target_node)
+		_pending_attack_range_source = _get_standard_melee_contact_range_source(target_node)
 
 		var to_target := target_node.global_position - global_position
 		if to_target.length_squared() > 0.0001:
@@ -3146,6 +3166,7 @@ func _clear_pending_attack_context() -> void:
 	_windup_attack_is_strong = false
 	_pending_attack_forward = Vector2.DOWN
 	_pending_attack_range_px = 0.0
+	_pending_attack_range_source = &"unknown"
 	_pending_attack_arc_degrees = melee_hit_arc_degrees
 	_pending_attack_id = ""
 
@@ -3184,8 +3205,14 @@ func _get_pending_attack_miss_reason(target_node: Node2D) -> StringName:
 
 func _get_pending_attack_spatial_context(target_node: Node2D) -> Dictionary:
 	if _pending_attack_range_px <= 0.0:
-		_pending_attack_range_px = _get_attack_range(target_node)
-	return EnemyHitSpatialContract.radial_arc(global_position, target_node.global_position, _pending_attack_forward, _pending_attack_range_px, melee_hit_range_grace_multiplier, melee_hit_range_grace_px, _pending_attack_arc_degrees)
+		_pending_attack_range_px = _get_standard_melee_contact_range(target_node)
+		_pending_attack_range_source = _get_standard_melee_contact_range_source(target_node)
+	var spatial := EnemyHitSpatialContract.radial_arc(global_position, target_node.global_position, _pending_attack_forward, _pending_attack_range_px, melee_hit_range_grace_multiplier, melee_hit_range_grace_px, _pending_attack_arc_degrees)
+	spatial["base_contact_range_px"] = _pending_attack_range_px
+	spatial["melee_range_grace_multiplier"] = melee_hit_range_grace_multiplier
+	spatial["melee_range_grace_px"] = melee_hit_range_grace_px
+	spatial["contact_range_source"] = String(_pending_attack_range_source)
+	return spatial
 
 
 func _apply_enemy_hit_to_target(

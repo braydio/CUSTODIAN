@@ -363,7 +363,7 @@ func _capture_pending_attack_context() -> void:
 
 	if target is Node2D:
 		var target_node := target as Node2D
-		_pending_attack_range_px = _get_attack_range(target_node)
+		_pending_attack_range_px = _get_standard_melee_contact_range(target_node)
 
 		var to_target := target_node.global_position - global_position
 		if to_target.length_squared() > 0.0001:
@@ -380,6 +380,8 @@ Reason:
 
 - Enemy attacks should commit to the direction/range they had at windup.
 - They should not magically re-aim or gain range at the hit frame.
+- Ordinary melee contact range is distinct from AI engagement and special-attack launch ranges. Falcon Punch's `88–184px` launch band and Marine Dash launch distance may influence pursuit/selection, but must never be captured as the radial contact range of an ordinary queued swing.
+- Runtime telemetry records the base contact range, grace multiplier/pixels, and contact-range source. `spatial_valid` means the supplied geometry contract accepted the contact; it does not by itself certify that the supplied tuning was sane.
 
 ---
 
