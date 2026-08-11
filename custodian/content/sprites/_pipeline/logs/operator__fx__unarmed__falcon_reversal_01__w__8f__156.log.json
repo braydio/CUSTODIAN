@@ -1,0 +1,10 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/operator__fx__unarmed__falcon_reversal_01__w__8f__156.json",
+	"outputs": [
+		"res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__falcon_reversal_01__w__8f__156.png",
+		"res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__falcon_reversal_01__e__8f__156.png"
+	],
+	"post_process": [],
+	"source": "res://content/sprites/_pipeline/inbox/operator__fx__unarmed__falcon_reversal_01__w__8f__156.png",
+	"timestamp_utc": "2026-08-11 13:29:47"
+}

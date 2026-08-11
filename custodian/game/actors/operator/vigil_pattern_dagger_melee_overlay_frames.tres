@@ -1,11 +1,11 @@
-[gd_resource type="SpriteFrames" format=3 uid="uid://c4jebpscurkwh"]
+[gd_resource type="SpriteFrames" format=3]
 
-[ext_resource type="Texture2D" uid="uid://b5p6knh20a6ix" path="res://content/sprites/operator/runtime/weapon/melee_1h/vigil_pattern_dagger/operator__weapon__vigil_pattern_dagger__chain_01__w__10f__156x96.png" id="1_fxpig"]
-[ext_resource type="Texture2D" uid="uid://dplil3d250p50" path="res://content/sprites/operator/runtime/weapon/melee_1h/vigil_pattern_dagger/operator__weapon__vigil_pattern_dagger__chain_01__e__10f__156x96.png" id="2_2sypc"]
-[ext_resource type="Texture2D" uid="uid://c5e3o4gifns35" path="res://content/sprites/operator/runtime/weapon/melee_1h/vigil_pattern_dagger/operator__weapon__vigil_pattern_dagger__chain_02__w__8f__156x96.png" id="3_8o2ci"]
-[ext_resource type="Texture2D" uid="uid://drtindx3hi354" path="res://content/sprites/operator/runtime/weapon/melee_1h/vigil_pattern_dagger/operator__weapon__vigil_pattern_dagger__chain_02__e__8f__156x96.png" id="4_58ei2"]
-[ext_resource type="Texture2D" uid="uid://xcpgb2euvttf" path="res://content/sprites/operator/runtime/weapon/melee_1h/vigil_pattern_dagger/operator__weapon__vigil_pattern_dagger__chain_03__w__10f__156x96.png" id="5_4m266"]
-[ext_resource type="Texture2D" uid="uid://78ugm4cc5gci" path="res://content/sprites/operator/runtime/weapon/melee_1h/vigil_pattern_dagger/operator__weapon__vigil_pattern_dagger__chain_03__e__10f__156x96.png" id="6_goqlx"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/weapon/melee_1h/vigil_pattern_dagger/operator__weapon__vigil_pattern_dagger__chain_01__w__10f__156x96.png" id="1_fxpig"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/weapon/melee_1h/vigil_pattern_dagger/operator__weapon__vigil_pattern_dagger__chain_01__e__10f__156x96.png" id="2_2sypc"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/weapon/melee_1h/vigil_pattern_dagger/operator__weapon__vigil_pattern_dagger__chain_02__w__8f__156x96.png" id="3_8o2ci"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/weapon/melee_1h/vigil_pattern_dagger/operator__weapon__vigil_pattern_dagger__chain_02__e__8f__156x96.png" id="4_58ei2"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/weapon/melee_1h/vigil_pattern_dagger/operator__weapon__vigil_pattern_dagger__chain_03__w__10f__156x96.png" id="5_4m266"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/weapon/melee_1h/vigil_pattern_dagger/operator__weapon__vigil_pattern_dagger__chain_03__e__10f__156x96.png" id="6_goqlx"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bo5h3"]
 atlas = ExtResource("1_fxpig")

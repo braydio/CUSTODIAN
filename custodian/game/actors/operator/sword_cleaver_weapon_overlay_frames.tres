@@ -1,7 +1,7 @@
-[gd_resource type="SpriteFrames" format=3 uid="uid://cgefw2rqpdhlk"]
+[gd_resource type="SpriteFrames" format=3]
 
-[ext_resource type="Texture2D" uid="uid://cor1d3v1qvu40" path="res://content/sprites/operator/runtime/weapon/melee_1h/sword_cleaver/operator__weapon__sword_cleaver__chain_01__w__10f__156x96.png" id="1_7rsh1"]
-[ext_resource type="Texture2D" uid="uid://coyshi4n0tke0" path="res://content/sprites/operator/runtime/weapon/melee_1h/sword_cleaver/operator__weapon__sword_cleaver__chain_01__e__10f__156x96.png" id="2_63ekt"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/weapon/melee_1h/sword_cleaver/operator__weapon__sword_cleaver__chain_01__w__10f__156x96.png" id="1_7rsh1"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/weapon/melee_1h/sword_cleaver/operator__weapon__sword_cleaver__chain_01__e__10f__156x96.png" id="2_63ekt"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_tb05j"]
 atlas = ExtResource("1_7rsh1")

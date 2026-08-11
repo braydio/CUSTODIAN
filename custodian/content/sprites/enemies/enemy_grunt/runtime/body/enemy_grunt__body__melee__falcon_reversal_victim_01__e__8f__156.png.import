@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cttv7hqlvk5mp"
-path="res://.godot/imported/operator__modular_head__hooded__idle_01__s__5f__96.png-78d4e37c1fb26b3c3d9795ef235b74a4.ctex"
+uid="uid://b2eykcw6yduot"
+path="res://.godot/imported/enemy_grunt__body__melee__falcon_reversal_victim_01__e__8f__156.png-65c1dea5550e23e9e2a54363221d5c4b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/_pipeline/inbox/operator__modular_head__hooded__idle_01__s__5f__96.png"
-dest_files=["res://.godot/imported/operator__modular_head__hooded__idle_01__s__5f__96.png-78d4e37c1fb26b3c3d9795ef235b74a4.ctex"]
+source_file="res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__falcon_reversal_victim_01__e__8f__156.png"
+dest_files=["res://.godot/imported/enemy_grunt__body__melee__falcon_reversal_victim_01__e__8f__156.png-65c1dea5550e23e9e2a54363221d5c4b.ctex"]
 
 [params]
 

@@ -1,0 +1,41 @@
+{
+  "source": "enemy_grunt__body__melee__falcon_reversal_victim_01__w__8f__156.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__falcon_reversal_victim_01__w__8f__156.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 8
+      }
+    },
+    {
+      "path": "enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__falcon_reversal_victim_01__w__8f__156.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 8
+      }
+    },
+    {
+      "path": "enemies/enemy_grunt/enemy_grunt__body__melee__falcon_reversal_victim_01__w__8f__156.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 8
+      }
+    }
+  ],
+  "frame_size": [
+    156,
+    156
+  ],
+  "remove_superseded": true,
+  "post_process": [
+    "enemy_runtime_import"
+  ]
+}
