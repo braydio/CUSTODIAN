@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://tools/validation/fixtures/ash_bell_threadway_moment.gd" id="1_fixture"]
+[ext_resource type="PackedScene" path="res://game/world/approaches/ash_bell/ash_bell_lift_ingress_presentation.tscn" id="2_lift"]
+
+[node name="AshBellThreadwayMoment" type="Node2D"]
+script = ExtResource("1_fixture")
+
+[node name="AshBellLiftIngressPresentation" parent="." instance=ExtResource("2_lift")]
+position = Vector2(0, -190)

@@ -1,0 +1,238 @@
+[
+	{
+		"data": {
+			"authored_action": {
+				"action": "input_press",
+				"name": "aim_hold",
+				"tick": 2.0
+			},
+			"moment_tick": 2,
+			"result": {
+				"action": "input_press",
+				"ok": true,
+				"tick": 2
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 2
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "aim_at_world",
+				"actor_role": "operator",
+				"position": [
+					420.0,
+					120.0
+				],
+				"tick": 4.0
+			},
+			"moment_tick": 4,
+			"result": {
+				"action": "aim_at_world",
+				"ok": true,
+				"tick": 4
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 4
+	},
+	{
+		"data": {
+			"from": "ARMED",
+			"to": "CAPTURING"
+		},
+		"kind": "performance_incident_state_changed",
+		"tick": 28
+	},
+	{
+		"data": {
+			"phase": "baseline",
+			"preroll_samples": 30,
+			"trigger": "automatic"
+		},
+		"kind": "performance_incident_started",
+		"tick": 28
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "aim_at_world",
+				"actor_role": "operator",
+				"position": [
+					590.0,
+					190.0
+				],
+				"tick": 38.0
+			},
+			"moment_tick": 38,
+			"result": {
+				"action": "aim_at_world",
+				"ok": true,
+				"tick": 38
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 38
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "aim_at_world",
+				"actor_role": "operator",
+				"position": [
+					660.0,
+					360.0
+				],
+				"tick": 72.0
+			},
+			"moment_tick": 72,
+			"result": {
+				"action": "aim_at_world",
+				"ok": true,
+				"tick": 72
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 72
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "aim_at_world",
+				"actor_role": "operator",
+				"position": [
+					590.0,
+					530.0
+				],
+				"tick": 106.0
+			},
+			"moment_tick": 106,
+			"result": {
+				"action": "aim_at_world",
+				"ok": true,
+				"tick": 106
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 106
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "aim_at_world",
+				"actor_role": "operator",
+				"position": [
+					420.0,
+					600.0
+				],
+				"tick": 140.0
+			},
+			"moment_tick": 140,
+			"result": {
+				"action": "aim_at_world",
+				"ok": true,
+				"tick": 140
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 140
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "aim_at_world",
+				"actor_role": "operator",
+				"position": [
+					250.0,
+					530.0
+				],
+				"tick": 174.0
+			},
+			"moment_tick": 174,
+			"result": {
+				"action": "aim_at_world",
+				"ok": true,
+				"tick": 174
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 174
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "aim_at_world",
+				"actor_role": "operator",
+				"position": [
+					180.0,
+					360.0
+				],
+				"tick": 208.0
+			},
+			"moment_tick": 208,
+			"result": {
+				"action": "aim_at_world",
+				"ok": true,
+				"tick": 208
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 208
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "aim_at_world",
+				"actor_role": "operator",
+				"position": [
+					250.0,
+					190.0
+				],
+				"tick": 242.0
+			},
+			"moment_tick": 242,
+			"result": {
+				"action": "aim_at_world",
+				"ok": true,
+				"tick": 242
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 242
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "input_release",
+				"name": "aim_hold",
+				"tick": 284.0
+			},
+			"moment_tick": 284,
+			"result": {
+				"action": "input_release",
+				"ok": true,
+				"tick": 284
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 284
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "finish",
+				"tick": 290.0
+			},
+			"moment_tick": 290,
+			"result": {
+				"action": "finish",
+				"finish": true,
+				"ok": true,
+				"tick": 290
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 290
+	}
+]

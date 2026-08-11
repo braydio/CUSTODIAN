@@ -262,7 +262,7 @@ func _apply_property(assignment: Dictionary) -> bool:
 		"position", "global_position", "visible", "health", "current_health",
 		"max_health", "field_patch_count", "aim_direction", "facing",
 		"combat_loadout_mode", "using_unarmed", "primary_weapon_equipped",
-		"arrow_aim_enabled",
+		"arrow_aim_enabled", "operator_weapon_socket_debug_enabled",
 	]
 	if node == null or property not in allowed:
 		failures.append("unsafe or unresolved setup property: %s" % assignment)

@@ -39,8 +39,21 @@ func _run() -> void:
 	_assert((frontage.get("floor_cells", {}) as Dictionary).has(Vector2i(74, 14)), "frontage gate floor must be generated walkable authority")
 	var vista_root := presentation.get_node_or_null("VistaPresentationRoot") as Node2D
 	var clip := presentation.get_node_or_null("VistaPresentationRoot/ExteriorVistaClip") as Polygon2D
+	var wall := presentation.get_node_or_null("VistaPresentationRoot/ExteriorVistaClip/FortressPresentation/OuterWall") as Sprite2D
+	var citadel := presentation.get_node_or_null("VistaPresentationRoot/ExteriorVistaClip/FortressPresentation/CentralCitadel") as Sprite2D
 	_assert(vista_root != null and vista_root.z_index < 0 and not vista_root.z_as_relative, "vista root must use absolute depth behind gameplay")
 	_assert(clip != null and clip.clip_children == CanvasItem.CLIP_CHILDREN_ONLY, "vista must use its exterior-facing clip")
+	_assert(presentation.get_node_or_null("VistaPresentationRoot/ExteriorVistaClip/GateShadow") == null, "procgen vista must not restore the route-owned gate-shadow handoff")
+	_assert(wall != null and wall.scale.is_equal_approx(Vector2(0.35, 0.35)), "outer wall must retain reviewed distant scale")
+	_assert(citadel != null and citadel.scale.is_equal_approx(Vector2(0.33, 0.33)), "central citadel must retain reviewed distant scale")
+	_assert(wall != null and wall.modulate.is_equal_approx(Color(0.40, 0.48, 0.58, 1.0)), "outer wall must retain distant secondary palette")
+	_assert(citadel != null and citadel.modulate.is_equal_approx(Color(0.44, 0.51, 0.61, 1.0)), "central citadel must retain distant hero palette")
+	presentation.set("_camera_state", {"first_enter_progress": 1.0, "frontage_enter_progress": 1.0})
+	presentation.call("_apply_visual_state", 1.0, 1.0)
+	var landmark := presentation.get_node_or_null("VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/DistantKeep") as Sprite2D
+	var reveal_fog := presentation.get_node_or_null("VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/RevealFog") as Sprite2D
+	_assert(landmark != null and landmark.modulate.a < 0.4, "first landmark must recede during frontage takeover")
+	_assert(reveal_fog != null and reveal_fog.modulate.a <= 0.051, "first reveal veil must clear before fortress composition")
 	for node in _all_descendants(presentation):
 		_assert(not (node is CollisionObject2D or node is CollisionShape2D or node is CollisionPolygon2D or node is NavigationRegion2D), "vista presentation must not own collision/navigation: %s" % node.name)
 		if node is Sprite2D:

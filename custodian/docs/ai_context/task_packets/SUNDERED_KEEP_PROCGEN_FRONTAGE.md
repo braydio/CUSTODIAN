@@ -1,6 +1,6 @@
 # Sundered Keep Procgen Frontage
 
-- Status: `complete`
+- Status: `runtime complete; visual layering review open`
 - Authority: `design/05_levels/SUNDERED_KEEP_PROCGEN_FRONTAGE.md`
 - Goal: Generate the complete Sundered Keep approach inside the existing
   `ASCENT_FIELD` campaign world and place the Front Gate transition only at the
@@ -25,7 +25,7 @@
 - Owner: procgen intent graph / world landmark presentation
 - Agent/session: Codex
 - Created: 2026-07-30
-- Last updated: 2026-07-30
+- Last updated: 2026-08-10
 
 ## Work Surface
 
@@ -69,9 +69,15 @@
 - Validation completed: focused 24-seed frontage smoke, procgen world-shape
   and route-clearance smokes, terrain-required-cells smoke, world and Keep
   ingress smokes, Vista presentation smoke, full route pipeline suite, and
-  eight-seed 2560×1440 renderer review.
+  eight-seed 2560×1440 renderer review. The 2026-08-10 layering pass removed
+  GateShadow, reduced/cooled the fortress components, crossfaded the initial
+  landmark and reveal veil, and expanded storm coverage across semantic camera
+  travel. Updated captures live in
+  `reports/sundered_keep_layering_review_20260810/`; the final seam-corrected
+  seed-1 proof is in `reports/sundered_keep_layering_review_20260810_final/`.
 - Blockers or open questions: production art may still require later human
   composition tuning; structural V1 uses existing approved Vista assets. The
   existing Moment Forge first-reveal scenario intentionally remains a legacy
   authored-approach regression. Production visual evidence lives in
-  `reports/sundered_keep_procgen_frontage/`.
+  `reports/sundered_keep_procgen_frontage/`. Descending Ward remains deferred:
+  the reviewed skyline reads as a coherent atmospheric landmark without it.

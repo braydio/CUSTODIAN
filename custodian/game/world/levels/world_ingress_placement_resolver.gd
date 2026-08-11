@@ -194,6 +194,7 @@ func _resolve_north_edge_overlook(
 			"anchor": anchor,
 			"outward_direction": Vector2i.UP,
 			"edge_distance_tiles": candidate.y,
+			"unlock_causeway": (placement.get("unlock_causeway", {}) as Dictionary).duplicate(true),
 		}
 		if (
 			map_instance != null
@@ -240,6 +241,7 @@ func _resolve_north_edge_overlook(
 				pocket_width,
 				approach_depth
 			),
+			"unlock_causeway": (placement.get("unlock_causeway", {}) as Dictionary).duplicate(true),
 		}
 
 	return {

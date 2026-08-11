@@ -28,7 +28,9 @@ The new authored Underground wrapper owns level lifecycle, named spawn, camera b
 
 ```text
 Generated world
-  -> north-edge cave ingress: TRAVERSE THE DERELICT LIFT
+  -> isolated north-edge lift pocket
+  -> first White Thread Knot acquisition remembers a permanent surface causeway
+  -> cave ingress: TRAVERSE THE DERELICT LIFT
   -> route: forlorn_ritualant_underground
   -> node: ritual_cavern
   -> spawn: Spawn_DescentLanding
@@ -37,6 +39,13 @@ Generated world
   -> Exit_ReturnWorld
   -> world origin
 ```
+
+This surface gate changes access to the exterior ingress only. Procgen owns the
+isolated pocket and resolved walkable connector; it never owns or restores the
+Ritualant chamber. Any canonical `white_thread_knot` acquisition latches the
+run-level causeway milestone without consuming the item. The Underground's own
+thread interaction remains encounter content and is not the sole prerequisite
+for reaching itself.
 
 ## Runtime Files
 

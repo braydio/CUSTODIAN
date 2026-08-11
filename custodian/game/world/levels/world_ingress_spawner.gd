@@ -119,6 +119,10 @@ func place_all(
 			"world_ingress_edge_distance_tiles",
 			int(result.get("edge_distance_tiles", -1))
 		)
+		ingress.set_meta(
+			"world_ingress_unlock_causeway",
+			(result.get("unlock_causeway", {}) as Dictionary).duplicate(true)
+		)
 		world.add_child(ingress)
 		_apply_ingress_dressing_clearance(map_instance, ingress)
 		occupied_tiles.append(tile)
@@ -167,7 +171,8 @@ func _author_overlook_pocket(
 	return map_instance.call(
 		"claim_world_overlook_pocket",
 		result.get("pocket_center_tile") as Vector2i,
-		result.get("pocket_size_tiles") as Vector2i
+		result.get("pocket_size_tiles") as Vector2i,
+		result.get("unlock_causeway", {}) as Dictionary
 	) as Rect2i
 
 

@@ -1,0 +1,162 @@
+{
+	"actions": [
+		{
+			"action": "input_press",
+			"ok": true,
+			"tick": 2
+		},
+		{
+			"action": "aim_at_world",
+			"ok": true,
+			"tick": 4
+		},
+		{
+			"action": "aim_at_world",
+			"ok": true,
+			"tick": 38
+		},
+		{
+			"action": "aim_at_world",
+			"ok": true,
+			"tick": 72
+		},
+		{
+			"action": "aim_at_world",
+			"ok": true,
+			"tick": 106
+		},
+		{
+			"action": "aim_at_world",
+			"ok": true,
+			"tick": 140
+		},
+		{
+			"action": "aim_at_world",
+			"ok": true,
+			"tick": 174
+		},
+		{
+			"action": "aim_at_world",
+			"ok": true,
+			"tick": 208
+		},
+		{
+			"action": "aim_at_world",
+			"ok": true,
+			"tick": 242
+		},
+		{
+			"action": "input_release",
+			"ok": true,
+			"tick": 284
+		},
+		{
+			"action": "finish",
+			"finish": true,
+			"ok": true,
+			"tick": 290
+		}
+	],
+	"assertions": [
+		{
+			"actual": true,
+			"expected": {
+				"role": "operator",
+				"severity": "error",
+				"type": "role_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "role_exists"
+		},
+		{
+			"actual": false,
+			"expected": {
+				"severity": "error",
+				"type": "no_unreleased_inputs"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "no_unreleased_inputs"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"path": "telemetry.json",
+				"severity": "error",
+				"type": "output_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "output_exists"
+		}
+	],
+	"capture_failures": [],
+	"capture_mode": "full",
+	"completed": true,
+	"completed_tick": 290,
+	"failures": [],
+	"keyframes": [
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/ranged_ballistic_octants/20260810T192638-0400/keyframes/tick_000028.png",
+			"render_frame": 32,
+			"sha256": "42f5bbf1dc22b7fb7f78333fb17aab7f502b333670ef2bba8e889698ef532952",
+			"tick": 28
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/ranged_ballistic_octants/20260810T192638-0400/keyframes/tick_000062.png",
+			"render_frame": 66,
+			"sha256": "7b4d986b704860e8133fa1c608e95e1d35f84b0f34188c5ca0631ec437702b8d",
+			"tick": 62
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/ranged_ballistic_octants/20260810T192638-0400/keyframes/tick_000096.png",
+			"render_frame": 100,
+			"sha256": "152563cd4faad9cfb909972003caf1e0c80dcc937cbcc08dd73cf94ba9b88d61",
+			"tick": 96
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/ranged_ballistic_octants/20260810T192638-0400/keyframes/tick_000164.png",
+			"render_frame": 168,
+			"sha256": "fe1eef8694715c135c3e059d66533f189e128c09c9df56a7afaeb19c9599023d",
+			"tick": 164
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/ranged_ballistic_octants/20260810T192638-0400/keyframes/tick_000232.png",
+			"render_frame": 236,
+			"sha256": "1b31b3e3e6c36740709ad17056a30952c3a773f635dd2a825846c1b6fc7f168b",
+			"tick": 232
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/ranged_ballistic_octants/20260810T192638-0400/keyframes/tick_000266.png",
+			"render_frame": 270,
+			"sha256": "4341b05ab46b8d2780ee5cc3ae3c08c01cd10f7fbabdd2d46f0fd38bcd90d18a",
+			"tick": 266
+		}
+	],
+	"markers": [],
+	"passed": true,
+	"probe_failures": [],
+	"runtime": {
+		"godot": {
+			"build": "arch_linux",
+			"hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+			"hex": 263937,
+			"major": 4,
+			"minor": 7,
+			"patch": 1,
+			"status": "stable",
+			"string": "4.7.1-stable (arch_linux)",
+			"timestamp": 1783976428
+		},
+		"physics_hz": 60,
+		"renderer": "vulkan"
+	},
+	"scenario_id": "combat/ranged_ballistic_octants",
+	"scenario_path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/ranged_ballistic_octants/20260810T192638-0400/scenario.snapshot.json",
+	"schema": "custodian.moment_forge.run_result.v1",
+	"seed": 104729
+}

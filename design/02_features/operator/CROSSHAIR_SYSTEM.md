@@ -93,6 +93,12 @@ Physical Aim Authority Contract):
 - improving: tightens and becomes brighter
 - settled: the two visual states merge (⊕)
 
+Runtime thresholds are explicit: `<=2°` aligned, `<=8°` ordinary tracking,
+`<=20°` lagging/amber, and `>20°` grossly unresolved with lower alpha and a
+wider mark. Obstruction remains a red/orange X and overrides alignment color.
+Angular error selects the discrete V1 grammar so gross error cannot look
+identical to a three-degree tracking offset.
+
 No floating percentage text. The player learns naturally: "the small inner
 mark has not caught up yet -> firing now is a snap shot."
 

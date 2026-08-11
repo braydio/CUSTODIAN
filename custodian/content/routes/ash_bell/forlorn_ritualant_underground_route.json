@@ -16,7 +16,15 @@
       "minimum_spacing_tiles": 14,
       "max_edge_distance_tiles": 8,
       "approach_depth_tiles": 10,
-      "lateral_search_tiles": 32
+      "lateral_search_tiles": 32,
+      "unlock_causeway": {
+        "resource_id": "white_thread_knot",
+        "event_id": "ash_bell_threadway_unlocked",
+        "initially_isolated": true,
+        "gap_depth_tiles": 2,
+        "width_tiles": 3,
+        "max_length_tiles": 18
+      }
     }
   },
   "nodes": [

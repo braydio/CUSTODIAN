@@ -50,7 +50,7 @@ func _init() -> void:
 	var definition = operator.get("primary_weapon_definition")
 	_expect(definition.production_socket_data_required, "Carbine must require production socket data")
 	_expect(not String(definition.socket_data_path).is_empty(), "Carbine socket_data_path is empty")
-	for sector in [&"e", &"w", &"se", &"sw"]:
+	for sector in [&"n", &"ne", &"e", &"se", &"s", &"sw", &"w", &"nw"]:
 		_expect(definition.directional_weapon_textures.get(String(sector)) is Texture2D, "missing Carbine directional texture %s" % sector)
 	_expect(operator.get_node_or_null("PrimaryWeaponSocket/Barrel") != null, "MuzzleSocket/Barrel missing")
 	_expect(operator.get_node_or_null("PrimaryWeaponSocket/EjectionSocket") != null, "EjectionSocket missing")

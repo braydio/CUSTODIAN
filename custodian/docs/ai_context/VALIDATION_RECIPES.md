@@ -209,6 +209,7 @@ env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tool
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_ranged_ballistic_aim_smoke.gd
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/ranged_ballistic_reticle_smoke.gd
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_ranged_ready_input_smoke.gd
+# Full visual review: python3 tools/iteration/run_moment.py combat/ranged_ballistic_octants --capture-mode full
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_charged_long_roll_smoke.gd
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_dodge_charge_feedback_smoke.gd
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_dodge_flow_smoke.gd
@@ -391,6 +392,8 @@ godot --headless --path . --script res://tools/validation/level_named_spawn_smok
 godot --headless --path . --script res://tools/validation/level_registry_contract_smoke.gd
 godot --headless --path . --script res://tools/validation/level_collision_poi_mapper_smoke.gd
 godot --headless --path . --script res://tools/validation/world_ingress_spawner_smoke.gd
+godot --headless --path . --script res://tools/validation/ash_bell_threadway_causeway_smoke.gd
+godot --headless --path . --script res://tools/validation/ash_bell_lift_ingress_presentation_smoke.gd
 godot --headless --path . --script res://tools/validation/level_scaffold_generator_smoke.gd
 godot --headless --path . --script res://tools/validation/authored_level_ingress_return_smoke.gd
 godot --headless --path . --script res://tools/validation/authored_level_reentry_smoke.gd

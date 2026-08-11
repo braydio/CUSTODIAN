@@ -1109,9 +1109,9 @@ func _draw():
 		return
 	draw_line(debug_right_hand_pos, debug_weapon_socket_pos, Color(1.0, 0.35, 0.35, 0.9), 2.0)
 	draw_line(debug_left_hand_pos, debug_weapon_socket_pos, Color(0.35, 0.8, 1.0, 0.9), 2.0)
-	draw_line(debug_weapon_socket_pos, debug_muzzle_pos, Color(1.0, 0.85, 0.25, 0.9), 2.0)
-	draw_line(Vector2.ZERO, debug_intent_direction.normalized() * 48.0, Color.CYAN, 1.0)
-	draw_line(debug_muzzle_pos, debug_muzzle_pos + debug_projectile_direction.normalized() * 48.0, Color.YELLOW, 1.5)
+	draw_line(debug_weapon_socket_pos, debug_muzzle_pos, Color(0.45, 1.0, 0.52, 0.95), 2.0)
+	draw_line(Vector2.ZERO, debug_intent_direction.normalized() * 48.0, Color.YELLOW, 1.0)
+	draw_line(debug_muzzle_pos, debug_muzzle_pos + debug_projectile_direction.normalized() * 48.0, Color.CYAN, 1.5)
 	draw_line(
 		debug_muzzle_pos,
 		debug_ballistic_position,
@@ -1124,6 +1124,27 @@ func _draw():
 	_draw_socket_marker(debug_muzzle_pos, Color.YELLOW, "M")
 	_draw_socket_marker(debug_support_grip_pos, Color.CYAN, "SG")
 	_draw_socket_marker(debug_ejection_pos, Color.ORANGE, "EJ")
+	var font: Font = ThemeDB.fallback_font
+	if font != null and modular_upper_body_sprite != null:
+		var sector := resolve_aim_sector(_get_frame_aware_weapon_direction())
+		var phase := "STANCE"
+		if _is_primary_ranged_fire_presentation_active() or _is_primary_ranged_fire_recover_presentation_active():
+			phase = "FIRE"
+		elif _is_primary_ranged_transition_presentation_active():
+			phase = "AIM"
+		var intent_degrees := rad_to_deg(debug_intent_direction.angle())
+		var socket_degrees := rad_to_deg(debug_projectile_direction.angle())
+		var error_degrees := absf(rad_to_deg(debug_projectile_direction.angle_to(debug_intent_direction)))
+		draw_string(
+			font,
+			Vector2(-52.0, -72.0),
+			"sector:%s phase:%s frame:%d\nintent:%.1f socket:%.1f error:%.1f"
+			% [String(sector).to_upper(), phase, modular_upper_body_sprite.frame, intent_degrees, socket_degrees, error_degrees],
+			HORIZONTAL_ALIGNMENT_LEFT,
+			-1.0,
+			11,
+			Color.WHITE
+		)
 
 
 func _draw_socket_marker(pos: Vector2, color: Color, label: String) -> void:
@@ -8854,8 +8875,13 @@ func _get_current_ranged_weapon_axis(
 ) -> Vector2:
 	if _is_using_ranged_2h_primary():
 		_sync_primary_ranged_weapon_frame_to_upper()
-		_apply_frame_aware_primary_weapon_socket()
-		if primary_weapon_socket != null and barrel != null:
+		var socket_resolved := _apply_frame_aware_primary_weapon_socket()
+		if (
+			socket_resolved
+			and not _active_weapon_socket.is_empty()
+			and primary_weapon_socket != null
+			and barrel != null
+		):
 			var physical_axis: Vector2 = primary_weapon_socket.global_position.direction_to(
 				barrel.global_position
 			)

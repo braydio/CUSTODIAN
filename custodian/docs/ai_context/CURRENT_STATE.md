@@ -13,6 +13,18 @@ Documentation updates this session:
 
 ## Runtime Status
 
+- The Ash-Bell lift now begins on an intentionally isolated north-edge pocket.
+  The first acquisition of canonical `white_thread_knot` from any source
+  latches `ash_bell_threadway_unlocked` in `WorldEventMemory` without consuming
+  the Knot. The specialized ingress asks `ProcGenTilemap` to commit one
+  deterministic, approximately three-cell-wide connector to the main reachable
+  floor, rebuilding surface semantics, frontier collision, navigation, shadows,
+  region data, and canonical minimap floor updates once. Six deterministic
+  persistent dark-stone overlays and the live seven-frame thread/ash resolve
+  effect communicate the change; pre-acquired state skips the reveal and later
+  Knots are no-ops. Underground route and explicit lift boarding remain intact.
+  Moment Forge scenario `traversal/ash_bell_threadway_resolve` captures the
+  locked pocket, staggered materialization, and settled persistent causeway.
 - Enemy body hits now carry authoritative spatial contact snapshots through a
   stable attack ID into Operator dodge/result/lethal telemetry. Marine Dash has
   one correlated windup-to-terminal ID and exact directional-lane diagnostics;
@@ -28,16 +40,27 @@ Documentation updates this session:
   Existing `move_and_slide()` drive, hitbox damage, and parry-critical capture
   remain separate authorities; hard lock remains deferred.
 - Primary Carbine fire now separates accepted trigger intent from release-time
-  ballistic authority. The committed fire sector survives cursor reversal,
-  while the zero-spread projectile baseline is sampled from the current
-  frame-aware grip-to-muzzle axis at release and spread applies afterward.
+  ballistic authority. The committed fire sector survives cursor reversal.
+  Reviewed E/W/SE/SW tracks sample the current frame-aware grip-to-muzzle axis;
+  uncovered N/NE/S/NW animation/frame resolution now fails closed to committed
+  input instead of consuming a stale or generic barrel transform. Complete
+  eight-octant calibration remains open because authored upper-body aim/fire
+  coverage is incomplete.
   Phase-1 fine correction is absolute, bounded to ±24 degrees, and pursues the
   desired correction with a frame-rate-independent response of 20.0. The existing
   48x48 ranged reticle remains cursor/controller intent; a separate procedural
   16x16 ballistic pip predicts current muzzle-axis depth/obstruction without
-  damage authority. Physical `bullet.gd` travel and collision remain final.
+  damage authority and distinguishes aligned, tracking, lagging, unresolved,
+  and obstructed severity. Physical `bullet.gd` travel and collision remain final.
 - Procgen now classifies every final in-map non-floor cell as explicit `chasm` or claimed `ocean` semantic state without consulting wall dressing. Sundered Keep emits the first bounded north-facing ocean claim; resolved cells paint visual-only 32×32 dark water and unambiguous cardinal foam on absolute-depth surface layers while the existing final-floor `RuntimeWalkableBoundary` remains physical authority. Ocean/chasm sets export through level data and survive accepted-candidate promotion unchanged. The seam-safe camera-following depth backdrop remains live rather than switching to finite connected-region stacks.
 - Generated procgen walkable floor now has a global non-destructible cardinal-edge collision frontier built after final playability remediation; contiguous edges merge into one runtime body rather than filling void cells, and visual/destructible cliff walls no longer act as the traversal security perimeter. Sundered Keep frontages emit and validate a separating vista commit line plus terminal apron across production seeds. Its procgen camera now keeps one continuous horizon-to-fortress envelope through the 90% return anchor, targets generated Keep semantics, holds fortress apex for 0.9 seconds without freezing movement, scales the distant Keep to 0.44, and plays the existing six-frame moonlight sweep once at fortress apex.
+- The Sundered Keep procgen vista layering pass now cools and recedes the first
+  landmark during frontage takeover, fades the reveal veil nearly away, and
+  presents the outer wall/citadel as a smaller blue-gray distant mass. The
+  redundant GateShadow plate is removed; the ordinary route fade remains the
+  transition authority. Storm fitting now covers semantic camera travel as well
+  as the viewport, eliminating exposed finite plate edges. Renderer review did
+  not justify adding Descending Ward, so it remains deferred.
 
 - Developer Observatory owns one non-echo F9 presentation edge and never pauses or changes time scale. Its wall-clock Performance Incident Recorder is independent of overlay pages; opening F9 freezes an active incident before bounded rendering. Focus, pause, overlay, capture, and reset boundaries invalidate the clock origin, while >=2-second external stalls remain exported but cannot contaminate gameplay statistics or auto-triggering. Automatic capture latches for one degraded episode and rearms only after three continuous seconds below 25 ms. F10 performs one final tree scan, builds one frozen `custodian.dev_observatory.performance_incident.v1` payload, and writes it to both timestamped and stable paths. The overlay refreshes at 2 Hz on Performance and 4 Hz elsewhere, avoids unchanged text assignment, caps rows/events/value length, and exposes build/text/line/refresh gauges.
 - Loot pickup feedback now has one HUD-owned `LootToastQueue` mounted beneath the top-left HUD. Parts, cognitive items, stolen vault resources, ammo, and Field Patches retain their existing world-space floating text but also publish a shared accent/icon/detail toast; matching entries merge within `0.75s`, four entries remain visible, and stolen resources render one summary detail line. The queue and merge contract have a focused smoke.

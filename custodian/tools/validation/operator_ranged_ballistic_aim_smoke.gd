@@ -43,6 +43,19 @@ func _init() -> void:
 	_expect(axis.x > 0.0, "cursor reversal twisted the committed east weapon axis")
 	_expect((operator.get("_primary_ranged_action_direction") as Vector2).x > 0.0, "fire presentation lost accepted east commitment")
 
+	# Unsupported production octants must use the explicit accepted-direction
+	# fallback. A previously resolved east socket must never remain authority.
+	operator.set("_primary_ranged_action_phase", &"")
+	operator.set("aim_direction", Vector2.UP)
+	upper.play(&"ranged_2h_stance_modular_up")
+	weapon.play(&"ranged_2h_stance_modular_up")
+	var unresolved_axis: Vector2 = operator.call("_get_current_ranged_weapon_axis", Vector2.UP)
+	_expect(unresolved_axis.dot(Vector2.UP) > 0.999, "unresolved north sector consumed stale east barrel authority")
+	operator.set("aim_direction", Vector2.RIGHT)
+	upper.play(&"ranged_2h_stance_modular_right")
+	weapon.play(&"ranged_2h_stance_modular_right")
+	operator.call("_sync_primary_ranged_weapon_frame_to_upper")
+
 	var muzzle: Vector2 = operator.call("_get_ranged_muzzle_position", Vector2.RIGHT)
 	var barrel := operator.get_node("PrimaryWeaponSocket/Barrel") as Node2D
 	_expect(muzzle.distance_to(barrel.global_position) < 0.01, "release muzzle is not frame-aware Barrel")

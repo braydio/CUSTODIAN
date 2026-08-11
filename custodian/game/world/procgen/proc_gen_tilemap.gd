@@ -2552,8 +2552,15 @@ func claim_procgen_floor_rect_for_authored_scene_tiles(
 
 func claim_world_overlook_pocket(
 	center_tile: Vector2i,
-	size_tiles: Vector2i
+	size_tiles: Vector2i,
+	unlock_causeway: Dictionary = {}
 ) -> Rect2i:
+	if bool(unlock_causeway.get("initially_isolated", false)):
+		return _claim_isolated_world_overlook_pocket(
+			center_tile,
+			size_tiles,
+			unlock_causeway
+		)
 	var footprint := claim_procgen_floor_rect_for_authored_scene_tiles(
 		center_tile,
 		size_tiles,
@@ -2567,6 +2574,70 @@ func claim_world_overlook_pocket(
 	_clear_runtime_prop_sources_in_rect(clearance)
 	_clear_prop_visuals_in_rect(clearance)
 	_queue_navigation_rebuild()
+	return footprint
+
+
+func _claim_isolated_world_overlook_pocket(
+	center_tile: Vector2i,
+	size_tiles: Vector2i,
+	unlock_causeway: Dictionary
+) -> Rect2i:
+	var gap_depth := maxi(1, int(unlock_causeway.get("gap_depth_tiles", 2)))
+	var full_size := Vector2i(maxi(5, size_tiles.x), maxi(gap_depth + 3, size_tiles.y))
+	var full_half := Vector2i(
+		int(floor(float(full_size.x) * 0.5)),
+		int(floor(float(full_size.y) * 0.5))
+	)
+	var full_rect := Rect2i(center_tile - full_half, full_size)
+	var island_size := Vector2i(full_size.x, full_size.y - gap_depth)
+	var island_rect := Rect2i(full_rect.position, island_size)
+	var moat_cells: Dictionary = {}
+	for y in range(island_rect.position.y, island_rect.end.y + gap_depth):
+		moat_cells[Vector2i(island_rect.position.x - 1, y)] = true
+		moat_cells[Vector2i(island_rect.end.x, y)] = true
+	for y in range(island_rect.end.y, island_rect.end.y + gap_depth):
+		for x in range(island_rect.position.x - 1, island_rect.end.x + 1):
+			moat_cells[Vector2i(x, y)] = true
+	var map_size := procgen_node.map_size if procgen_node != null else Vector2i(999999, 999999)
+	var required: Dictionary = {}
+	for required_cell in _collect_terrain_required_cells(map_size):
+		required[required_cell] = true
+	for cell_variant in moat_cells.keys():
+		var cell := cell_variant as Vector2i
+		if not _is_tile_inside_map(cell, map_size, 0):
+			continue
+		if required.has(cell) or is_sundered_keep_frontage_protected(cell):
+			return Rect2i()
+	var island_center := island_rect.position + Vector2i(
+		int(floor(float(island_rect.size.x) * 0.5)),
+		int(floor(float(island_rect.size.y) * 0.5))
+	)
+	var footprint := claim_procgen_floor_rect_for_authored_scene_tiles(
+		island_center,
+		island_rect.size,
+		"world_overlook_floor",
+		"world_vista_island",
+		0
+	)
+	if footprint.size == Vector2i.ZERO:
+		return footprint
+	for cell_variant in moat_cells.keys():
+		var cell := cell_variant as Vector2i
+		if not _is_tile_inside_map(cell, map_size, 0):
+			continue
+		_generated_floor_cells.erase(cell)
+		floor_tilemap.erase_cell(cell)
+		_remove_foliage(cell)
+		_clear_procgen_road_authority_at(cell)
+	_rebuild_nonwalkable_surface_regions(map_size)
+	_rebuild_nonwalkable_surface_visuals()
+	_rebuild_runtime_walkable_boundary()
+	_rebuild_horizontal_wall_overlays()
+	_refresh_shadows()
+	_refresh_navigation_after_wall_change(true)
+	var clearance := footprint.grow(1)
+	_clear_runtime_prop_sources_in_rect(clearance)
+	_clear_prop_visuals_in_rect(clearance)
 	return footprint
 
 
@@ -2593,6 +2664,154 @@ func claim_world_ingress_dressing_clearance(world_rect: Rect2) -> Rect2i:
 	_clear_runtime_prop_sources_in_rect(tile_rect)
 	_clear_prop_visuals_in_rect(tile_rect)
 	return tile_rect
+
+
+func resolve_runtime_walkable_connector(
+	start_global_position: Vector2,
+	preferred_direction: Vector2i,
+	width_tiles: int = 3,
+	max_length_tiles: int = 18,
+	region_type: String = "runtime_connector",
+	region_zone: String = "connector"
+) -> Dictionary:
+	if floor_tilemap == null or walls_tilemap == null or procgen_node == null:
+		return {"ok": false, "reason": "missing procgen terrain authority"}
+	var map_size: Vector2i = procgen_node.map_size
+	var start := _global_to_tile(start_global_position)
+	var inward := preferred_direction
+	if inward == Vector2i.ZERO:
+		inward = Vector2i.DOWN
+	if absi(inward.x) >= absi(inward.y):
+		inward = Vector2i(signi(inward.x), 0)
+	else:
+		inward = Vector2i(0, signi(inward.y))
+	var mainland := _runtime_floor_component(get_player_spawn(), map_size)
+	if mainland.has(start):
+		return {
+			"ok": true,
+			"cells": [] as Array[Vector2i],
+			"new_cells": [] as Array[Vector2i],
+			"centerline_cells": [] as Array[Vector2i],
+			"tile_variants": {},
+			"already_connected": true,
+			"reason": "",
+		}
+	var island_anchor := start
+	if not _generated_floor_cells.has(island_anchor):
+		island_anchor = Vector2i(-1, -1)
+		for distance in range(1, max_length_tiles + 1):
+			var candidate := start - inward * distance
+			if not _is_tile_inside_map(candidate, map_size, 0):
+				break
+			if _generated_floor_cells.has(candidate) and not mainland.has(candidate):
+				island_anchor = candidate
+				break
+	if island_anchor.x < 0:
+		return {"ok": false, "reason": "no isolated ingress floor behind approach anchor"}
+	var endpoint := Vector2i(-1, -1)
+	var endpoint_score := 1 << 30
+	for cell_variant in mainland.keys():
+		var cell := cell_variant as Vector2i
+		var delta := cell - island_anchor
+		var forward: int = delta.x * inward.x + delta.y * inward.y
+		if forward <= 0 or forward > max_length_tiles:
+			continue
+		var lateral: int = absi(delta.x * inward.y - delta.y * inward.x)
+		if lateral > maxi(4, int(ceil(float(max_length_tiles) * 0.35))):
+			continue
+		var score: int = forward * 100 + lateral * 400 + cell.y * 2 + cell.x
+		if score < endpoint_score:
+			endpoint_score = score
+			endpoint = cell
+	if endpoint.x < 0:
+		return {"ok": false, "reason": "no mainland endpoint within connector budget"}
+	var centerline := _deterministic_tile_line(island_anchor, endpoint)
+	var half_width: int = maxi(0, int((maxi(1, width_tiles) - 1) / 2))
+	var perpendicular := Vector2i(-inward.y, inward.x)
+	var cells: Dictionary = {}
+	for center in centerline:
+		for offset in range(-half_width, half_width + 1):
+			var cell := center + perpendicular * offset
+			if not _is_tile_inside_map(cell, map_size, 0):
+				return {"ok": false, "reason": "connector left map bounds"}
+			cells[cell] = true
+	var required: Dictionary = {}
+	for required_cell in _collect_terrain_required_cells(map_size):
+		required[required_cell] = true
+	for cell_variant in cells.keys():
+		var cell := cell_variant as Vector2i
+		if _generated_wall_cells.has(cell):
+			return {"ok": false, "reason": "connector intersects constructed wall", "blocked_cell": cell}
+		if not _generated_floor_cells.has(cell) and (
+			required.has(cell) or is_sundered_keep_frontage_protected(cell)
+		):
+			return {"ok": false, "reason": "connector intersects protected route", "blocked_cell": cell}
+	var new_cells: Array[Vector2i] = []
+	var ordered_cells: Array[Vector2i] = []
+	for center in centerline:
+		for offset in range(-half_width, half_width + 1):
+			var cell := center + perpendicular * offset
+			if ordered_cells.has(cell):
+				continue
+			ordered_cells.append(cell)
+			if not _generated_floor_cells.has(cell):
+				new_cells.append(cell)
+			_set_floor_tile_and_generated_state(cell, region_type, region_zone)
+			_remove_foliage(cell)
+			minimap_tile_changed.emit(cell, "floor")
+	_rebuild_nonwalkable_surface_regions(map_size)
+	_rebuild_nonwalkable_surface_visuals()
+	_rebuild_runtime_walkable_boundary()
+	_rebuild_horizontal_wall_overlays()
+	_refresh_shadows()
+	_refresh_navigation_after_wall_change(true)
+	var variants: Dictionary = {}
+	for cell in ordered_cells:
+		variants[cell] = _tile_noise_hash(cell + Vector2i(1709, 2237)) % 6
+	return {
+		"ok": true,
+		"cells": ordered_cells,
+		"new_cells": new_cells,
+		"centerline_cells": centerline,
+		"tile_variants": variants,
+		"already_connected": false,
+		"start_tile": start,
+		"island_anchor_tile": island_anchor,
+		"endpoint_tile": endpoint,
+		"reason": "",
+	}
+
+
+func _runtime_floor_component(origin: Vector2i, map_size: Vector2i) -> Dictionary:
+	var result: Dictionary = {}
+	if not _generated_floor_cells.has(origin):
+		return result
+	var pending: Array[Vector2i] = [origin]
+	result[origin] = true
+	while not pending.is_empty():
+		var cell: Vector2i = pending.pop_front()
+		for direction in NONWALKABLE_SURFACE_CARDINALS:
+			var neighbor: Vector2i = cell + direction
+			if result.has(neighbor) or not _is_tile_inside_map(neighbor, map_size, 0):
+				continue
+			if not _generated_floor_cells.has(neighbor) or _generated_wall_cells.has(neighbor):
+				continue
+			result[neighbor] = true
+			pending.append(neighbor)
+	return result
+
+
+func _deterministic_tile_line(start: Vector2i, endpoint: Vector2i) -> Array[Vector2i]:
+	var result: Array[Vector2i] = [start]
+	var current := start
+	while current != endpoint:
+		var delta := endpoint - current
+		if absi(delta.y) >= absi(delta.x) and delta.y != 0:
+			current.y += signi(delta.y)
+		elif delta.x != 0:
+			current.x += signi(delta.x)
+		result.append(current)
+	return result
 
 
 func is_inside_world_ingress_dressing_clearance(tile: Vector2i) -> bool:

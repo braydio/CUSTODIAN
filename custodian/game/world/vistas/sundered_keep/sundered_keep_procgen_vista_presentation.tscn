@@ -7,7 +7,6 @@
 [ext_resource type="Texture2D" uid="uid://dhqh17wdi37hm" path="res://content/backgrounds/sundered_keep/grand_vista/fortress_components/distant_fortress_central_citadel_01.png" id="6_citadel"]
 [ext_resource type="Texture2D" uid="uid://bti45xnfj2364" path="res://content/backgrounds/sundered_keep/grand_vista/fortress_components/distant_fortress_outer_wall_01.png" id="7_wall"]
 [ext_resource type="Texture2D" uid="uid://dd74lx6catyrg" path="res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_horizon_seam_fog.png" id="8_frontage_fog"]
-[ext_resource type="Texture2D" uid="uid://cy5yg4c10c6h3" path="res://content/backgrounds/sundered_keep/approach/occlusion/approach_final_gate_shadow_veil.png" id="9_gate_shadow"]
 [ext_resource type="Texture2D" uid="uid://c8cv4x5gf1jlo" path="res://content/backgrounds/sundered_keep/approach/light/first_vista_moonlight_sweep_01__6f__1024x512.png" id="10_moonlight"]
 
 [node name="SunderedKeepProcgenFrontagePresentation" type="Node2D" unique_id=129696644]
@@ -52,14 +51,16 @@ texture = ExtResource("4_fog")
 z_index = 40
 texture_filter = 1
 position = Vector2(-150, -80)
-scale = Vector2(0.55, 0.55)
+modulate = Color(0.4, 0.48, 0.58, 1)
+scale = Vector2(0.35, 0.35)
 texture = ExtResource("7_wall")
 
 [node name="CentralCitadel" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/FortressPresentation" unique_id=462135778]
 z_index = 45
 texture_filter = 1
 position = Vector2(160, -150)
-scale = Vector2(0.52, 0.52)
+modulate = Color(0.44, 0.51, 0.61, 1)
+scale = Vector2(0.33, 0.33)
 texture = ExtResource("6_citadel")
 
 [node name="FrontageFog" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/FortressPresentation" unique_id=1605089818]
@@ -76,13 +77,6 @@ position = Vector2(0, -180)
 texture = ExtResource("10_moonlight")
 region_enabled = true
 region_rect = Rect2(0, 0, 1024, 512)
-
-[node name="GateShadow" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip" unique_id=1029578039]
-z_index = 55
-texture_filter = 1
-position = Vector2(-8.5, -32)
-scale = Vector2(1.0066407, 1)
-texture = ExtResource("9_gate_shadow")
 
 [node name="CameraPresentationAnchor" type="Marker2D" parent="." unique_id=196804580]
 

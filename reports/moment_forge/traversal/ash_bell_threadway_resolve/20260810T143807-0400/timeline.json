@@ -1,0 +1,54 @@
+[
+	{
+		"data": {
+			"authored_action": {
+				"action": "fixture_command",
+				"name": "acquire_white_thread_knot",
+				"tick": 18.0
+			},
+			"moment_tick": 18,
+			"result": {
+				"action": "fixture_command",
+				"ok": true,
+				"response": true,
+				"tick": 18
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 18
+	},
+	{
+		"data": {
+			"from": "ARMED",
+			"to": "CAPTURING"
+		},
+		"kind": "performance_incident_state_changed",
+		"tick": 26
+	},
+	{
+		"data": {
+			"phase": "baseline",
+			"preroll_samples": 30,
+			"trigger": "automatic"
+		},
+		"kind": "performance_incident_started",
+		"tick": 26
+	},
+	{
+		"data": {
+			"authored_action": {
+				"action": "finish",
+				"tick": 130.0
+			},
+			"moment_tick": 130,
+			"result": {
+				"action": "finish",
+				"finish": true,
+				"ok": true,
+				"tick": 130
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 130
+	}
+]

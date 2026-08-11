@@ -14,7 +14,8 @@ class PocketMap:
 
 	func claim_world_overlook_pocket(
 		center_tile: Vector2i,
-		size_tiles: Vector2i
+		size_tiles: Vector2i,
+		_unlock_causeway: Dictionary = {}
 	) -> Rect2i:
 		claim_count += 1
 		return Rect2i(

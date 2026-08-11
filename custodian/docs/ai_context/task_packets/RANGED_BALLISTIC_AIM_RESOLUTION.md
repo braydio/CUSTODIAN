@@ -1,6 +1,6 @@
 # Ranged Ballistic Aim Resolution
 
-- Status: `complete`
+- Status: `implemented four-sector vertical slice; eight-octant calibration open`
 - Authority: `design/02_features/operator/CROSSHAIR_SYSTEM.md`, `design/02_features/operator_modular_weapon/HYBRID_WEAPON_SOCKET_SYSTEM.md`, and `design/02_features/combat_feel/RANGED_COMBAT_BALANCE_AND_STEALTH_SYSTEM.md`
 - Prerequisite: completed `OPERATOR_FRAME_AWARE_WEAPON_SOCKETS.md` slice.
 - Goal: separate accepted player intent from release-time physical weapon-axis authority and render an honest, read-only ballistic pip.
@@ -32,6 +32,12 @@
   visible barrel/pip convergence. No baseline was accepted or replaced. Earlier
   no-capture repetitions produced an identical required stable fingerprint
   (`20260809T032001-0400_r1` and `20260809T032005-0400_r2`).
+
+- Follow-up audit found that production frame-aware authority still covers only
+  E/W/SE/SW. Runtime now refuses stale grip-to-muzzle authority when an
+  uncovered octant fails resolution, and the pip implements the documented
+  severity grammar. Full N/NE/S/NW promotion remains blocked on complete
+  authored upper-body stance/aim/fire tracks and painted-barrel calibration.
 
 ## Authority Chain
 

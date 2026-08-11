@@ -1,0 +1,45 @@
+{
+	"failures": [],
+	"records": [
+		{
+			"id": "threadway_state",
+			"role": "fixture",
+			"tick": 0,
+			"values": {
+				"blocker_active": false,
+				"persistent_tiles": 0,
+				"reveal_count": 0
+			}
+		},
+		{
+			"id": "threadway_state",
+			"role": "fixture",
+			"tick": 20,
+			"values": {
+				"blocker_active": true,
+				"persistent_tiles": 18,
+				"reveal_count": 1
+			}
+		},
+		{
+			"id": "threadway_state",
+			"role": "fixture",
+			"tick": 46,
+			"values": {
+				"blocker_active": true,
+				"persistent_tiles": 18,
+				"reveal_count": 1
+			}
+		},
+		{
+			"id": "threadway_state",
+			"role": "fixture",
+			"tick": 110,
+			"values": {
+				"blocker_active": false,
+				"persistent_tiles": 18,
+				"reveal_count": 1
+			}
+		}
+	]
+}

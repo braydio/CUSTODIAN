@@ -11,6 +11,8 @@ const SPAWNER_SCRIPT := preload(
 	"res://game/world/levels/world_ingress_spawner.gd"
 )
 const ASSET_ROOT := "res://assets/sprites/world/ingress/ash_bell/"
+const THREADWAY_ASSET_ROOT := "res://content/sprites/world/ingress/ash_bell/"
+const THREADWAY_TILE_ROOT := THREADWAY_ASSET_ROOT + "source/generated/"
 const ROUTE_PATH := (
 	"res://content/routes/ash_bell/forlorn_ritualant_underground_route.json"
 )
@@ -79,6 +81,33 @@ func _validate_assets(errors: Array[String]) -> void:
 		var import_text := _read_text(ASSET_ROOT + file_name + ".import")
 		_check("compress/mode=0" in import_text, "%s is not lossless" % file_name, errors)
 		_check("mipmaps/generate=false" in import_text, "%s has mipmaps" % file_name, errors)
+	var resolve_name := "ash_bell_threadway_resolve_01__7f__32.png"
+	var resolve_texture := load(THREADWAY_ASSET_ROOT + resolve_name) as Texture2D
+	_check(resolve_texture != null, "missing threadway resolve strip", errors)
+	if resolve_texture != null:
+		_check(
+			Vector2i(resolve_texture.get_width(), resolve_texture.get_height()) == Vector2i(224, 32),
+			"threadway resolve strip must be 7 x 32x32 frames",
+			errors
+		)
+	_validate_threadway_import(THREADWAY_ASSET_ROOT + resolve_name, errors)
+	for tile_index in range(1, 7):
+		var tile_name := "ash_bell_threadway_floor_tiles_6t_32px_%d.png" % tile_index
+		var tile_texture := load(THREADWAY_TILE_ROOT + tile_name) as Texture2D
+		_check(tile_texture != null, "missing threadway floor tile %d" % tile_index, errors)
+		if tile_texture != null:
+			_check(
+				Vector2i(tile_texture.get_width(), tile_texture.get_height()) == Vector2i(32, 32),
+				"threadway floor tile %d is not 32x32" % tile_index,
+				errors
+			)
+		_validate_threadway_import(THREADWAY_TILE_ROOT + tile_name, errors)
+
+
+func _validate_threadway_import(path: String, errors: Array[String]) -> void:
+	var import_text := _read_text(path + ".import")
+	_check("compress/mode=0" in import_text, "%s is not lossless" % path, errors)
+	_check("mipmaps/generate=false" in import_text, "%s has mipmaps" % path, errors)
 
 
 func _validate_scene(

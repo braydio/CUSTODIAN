@@ -117,6 +117,10 @@ func play_descent(actor: Node2D) -> void:
 	_active_tween = null
 
 
+func get_interaction_approach_position() -> Vector2:
+	return interaction_approach_marker.global_position
+
+
 func play_ascent(actor: Node2D) -> void:
 	if _playing or actor == null:
 		return

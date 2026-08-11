@@ -1,6 +1,6 @@
 # Ash Bell Lift Ingress Presentation
 
-Status: implemented V1.3; procgen dressing clearance and landmark depth bands integrated
+Status: implemented V1.4; White Thread threadway gating integrated
 Owner: world presentation / authored-level ingress
 Runtime target: Godot 4 (`custodian/`)
 
@@ -25,7 +25,12 @@ generated `WorldIngressSite`; it is not part of
   It clones the Operator's currently visible body/equipment presentation leaves
   without copying gameplay scripts, collision, input, health, or inventory.
 - `ash_bell_lift_ingress_site.gd` specializes only the
-  `forlorn_ritualant_underground` world ingress.
+  `forlorn_ritualant_underground` world ingress and listens for the canonical
+  White Thread milestone.
+- `ash_bell_threadway_causeway.gd` owns persistent special floor overlays,
+  the restrained mainland-to-lift resolve sequence, and its temporary
+  traversal blocker. `ProcGenTilemap` remains floor, collision, navigation,
+  nonwalkable-surface, shadow, region, and minimap authority.
 - `WorldIngressSite` captures the origin snapshot before awaiting an optional
   entry presentation. Route start and its existing fade happen afterward.
 - `WorldIngressSpawner` selects the specialized site by exact route identity;
@@ -79,8 +84,30 @@ level-editor cutaway. While idle, `ShaftWindow` is hidden and transparent. The
 player sees the cliff mass, an irregular `DarkMouth`, the parked platform and
 short chain sections, the lamp, the entrance threshold, and foreground rock and
 timber geometry. `EntranceThresholdMarker` shares the parked `LiftRoot` origin;
-`InteractionApproachMarker` sits 72 px toward the exterior so approach and
-boarding read as a continuous floor.
+`InteractionApproachMarker` sits 72 px toward the exterior and is the
+ingress-side threadway anchor. Before a White Thread Knot is acquired, its
+authored overlook pocket is intentionally isolated from reachable world floor;
+it is not a promise of continuous floor in the locked state.
+
+## White Thread threadway contract
+
+Any first acquisition of canonical resource `white_thread_knot`, including a
+rare corpse-loot acquisition, marks run-level WorldEventMemory event
+`ash_bell_threadway_unlocked`. The Knot is not consumed. A loaded Ash-Bell site
+then asks `ProcGenTilemap` for one deterministic, approximately three-cell-wide
+connector from the isolated approach toward the main player-reachable floor.
+The resolver rejects map bounds, constructed walls, required route cells, and
+Sundered Keep protected cells.
+
+The complete connector is committed in one terrain transaction. Generated
+floor/wall state, CHASM/OCEAN classification, runtime walkable boundary,
+navigation, shadows, region metadata, and canonical minimap `floor` updates
+are refreshed once for the batch. Presentation overlays use six deterministic
+dark-stone variants. A seven-frame 32 px thread/ash/remembered-stone effect
+travels from mainland toward the lift at 11 FPS with 0.05-second centerline
+stagger; a temporary local blocker prevents entry until it settles. If the
+milestone predates site creation, authoritative floor and persistent overlays
+appear immediately without replaying the reveal. Further Knots are no-ops.
 
 `BoardingBounds` is real `StaticBody2D` authority rather than an interaction
 trigger. A rear stop, two side rails, and two front wings enclose the parked
@@ -113,6 +140,13 @@ contract.
 The former always-exposed rectangular shaft cutaway is superseded and must not
 be restored.
 
+Threadway production art is separately curated under
+`custodian/content/sprites/world/ingress/ash_bell/`: the live resolve strip is
+`ash_bell_threadway_resolve_01__7f__32.png` (224×32), and six individual
+32×32 persistent tiles live under `source/generated/`. The seven-frame strip
+supersedes the earlier six-frame intake description; its final frame provides
+the restrained residue settle.
+
 ## Art and import contract
 
 Runtime art lives under
@@ -129,6 +163,8 @@ entrance shell contains no lift platform or active lamp.
 godot --headless --path custodian --import --quit
 godot --headless --path custodian \
   --script res://tools/validation/ash_bell_lift_ingress_presentation_smoke.gd
+godot --headless --path custodian \
+  --script res://tools/validation/ash_bell_threadway_causeway_smoke.gd
 godot --headless --path custodian \
   --script res://tools/validation/ash_bell_sundered_keep_two_ingress_renderer_smoke.gd
 godot --headless --path custodian \

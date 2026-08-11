@@ -1,0 +1,209 @@
+{
+	"schema": "custodian.sundered_keep_procgen_frontage_review.v1",
+	"seeds": [
+		{
+			"authored_pocket": false,
+			"gate_anchor": [
+				131,
+				18
+			],
+			"grammar_id": "curved_frontage_v1",
+			"ok": true,
+			"outputs": {
+				"first_reveal": "res://../reports/sundered_keep_layering_review_20260810/seed_0001_first_reveal.png",
+				"frontage_apex": "res://../reports/sundered_keep_layering_review_20260810/seed_0001_frontage_apex.png",
+				"gate_approach": "res://../reports/sundered_keep_layering_review_20260810/seed_0001_gate_approach.png",
+				"world_overview": "res://../reports/sundered_keep_layering_review_20260810/seed_0001_world_overview.png"
+			},
+			"overlook_anchor": [
+				116,
+				38
+			],
+			"rectangular_authored_footprint": false,
+			"seed": 1,
+			"viewport": [
+				2560,
+				1440
+			]
+		},
+		{
+			"authored_pocket": false,
+			"gate_anchor": [
+				136,
+				17
+			],
+			"grammar_id": "curved_frontage_v1",
+			"ok": true,
+			"outputs": {
+				"first_reveal": "res://../reports/sundered_keep_layering_review_20260810/seed_0002_first_reveal.png",
+				"frontage_apex": "res://../reports/sundered_keep_layering_review_20260810/seed_0002_frontage_apex.png",
+				"gate_approach": "res://../reports/sundered_keep_layering_review_20260810/seed_0002_gate_approach.png",
+				"world_overview": "res://../reports/sundered_keep_layering_review_20260810/seed_0002_world_overview.png"
+			},
+			"overlook_anchor": [
+				94,
+				38
+			],
+			"rectangular_authored_footprint": false,
+			"seed": 2,
+			"viewport": [
+				2560,
+				1440
+			]
+		},
+		{
+			"authored_pocket": false,
+			"gate_anchor": [
+				145,
+				18
+			],
+			"grammar_id": "curved_frontage_v1",
+			"ok": true,
+			"outputs": {
+				"first_reveal": "res://../reports/sundered_keep_layering_review_20260810/seed_0003_first_reveal.png",
+				"frontage_apex": "res://../reports/sundered_keep_layering_review_20260810/seed_0003_frontage_apex.png",
+				"gate_approach": "res://../reports/sundered_keep_layering_review_20260810/seed_0003_gate_approach.png",
+				"world_overview": "res://../reports/sundered_keep_layering_review_20260810/seed_0003_world_overview.png"
+			},
+			"overlook_anchor": [
+				81,
+				38
+			],
+			"rectangular_authored_footprint": false,
+			"seed": 3,
+			"viewport": [
+				2560,
+				1440
+			]
+		},
+		{
+			"authored_pocket": false,
+			"gate_anchor": [
+				145,
+				19
+			],
+			"grammar_id": "curved_frontage_v1",
+			"ok": true,
+			"outputs": {
+				"first_reveal": "res://../reports/sundered_keep_layering_review_20260810/seed_0004_first_reveal.png",
+				"frontage_apex": "res://../reports/sundered_keep_layering_review_20260810/seed_0004_frontage_apex.png",
+				"gate_approach": "res://../reports/sundered_keep_layering_review_20260810/seed_0004_gate_approach.png",
+				"world_overview": "res://../reports/sundered_keep_layering_review_20260810/seed_0004_world_overview.png"
+			},
+			"overlook_anchor": [
+				88,
+				35
+			],
+			"rectangular_authored_footprint": false,
+			"seed": 4,
+			"viewport": [
+				2560,
+				1440
+			]
+		},
+		{
+			"authored_pocket": false,
+			"gate_anchor": [
+				132,
+				17
+			],
+			"grammar_id": "curved_frontage_v1",
+			"ok": true,
+			"outputs": {
+				"first_reveal": "res://../reports/sundered_keep_layering_review_20260810/seed_0005_first_reveal.png",
+				"frontage_apex": "res://../reports/sundered_keep_layering_review_20260810/seed_0005_frontage_apex.png",
+				"gate_approach": "res://../reports/sundered_keep_layering_review_20260810/seed_0005_gate_approach.png",
+				"world_overview": "res://../reports/sundered_keep_layering_review_20260810/seed_0005_world_overview.png"
+			},
+			"overlook_anchor": [
+				104,
+				37
+			],
+			"rectangular_authored_footprint": false,
+			"seed": 5,
+			"viewport": [
+				2560,
+				1440
+			]
+		},
+		{
+			"authored_pocket": false,
+			"gate_anchor": [
+				138,
+				17
+			],
+			"grammar_id": "curved_frontage_v1",
+			"ok": true,
+			"outputs": {
+				"first_reveal": "res://../reports/sundered_keep_layering_review_20260810/seed_0006_first_reveal.png",
+				"frontage_apex": "res://../reports/sundered_keep_layering_review_20260810/seed_0006_frontage_apex.png",
+				"gate_approach": "res://../reports/sundered_keep_layering_review_20260810/seed_0006_gate_approach.png",
+				"world_overview": "res://../reports/sundered_keep_layering_review_20260810/seed_0006_world_overview.png"
+			},
+			"overlook_anchor": [
+				127,
+				36
+			],
+			"rectangular_authored_footprint": false,
+			"seed": 6,
+			"viewport": [
+				2560,
+				1440
+			]
+		},
+		{
+			"authored_pocket": false,
+			"gate_anchor": [
+				143,
+				18
+			],
+			"grammar_id": "curved_frontage_v1",
+			"ok": true,
+			"outputs": {
+				"first_reveal": "res://../reports/sundered_keep_layering_review_20260810/seed_0007_first_reveal.png",
+				"frontage_apex": "res://../reports/sundered_keep_layering_review_20260810/seed_0007_frontage_apex.png",
+				"gate_approach": "res://../reports/sundered_keep_layering_review_20260810/seed_0007_gate_approach.png",
+				"world_overview": "res://../reports/sundered_keep_layering_review_20260810/seed_0007_world_overview.png"
+			},
+			"overlook_anchor": [
+				122,
+				36
+			],
+			"rectangular_authored_footprint": false,
+			"seed": 7,
+			"viewport": [
+				2560,
+				1440
+			]
+		},
+		{
+			"authored_pocket": false,
+			"gate_anchor": [
+				133,
+				17
+			],
+			"grammar_id": "curved_frontage_v1",
+			"ok": true,
+			"outputs": {
+				"first_reveal": "res://../reports/sundered_keep_layering_review_20260810/seed_0008_first_reveal.png",
+				"frontage_apex": "res://../reports/sundered_keep_layering_review_20260810/seed_0008_frontage_apex.png",
+				"gate_approach": "res://../reports/sundered_keep_layering_review_20260810/seed_0008_gate_approach.png",
+				"world_overview": "res://../reports/sundered_keep_layering_review_20260810/seed_0008_world_overview.png"
+			},
+			"overlook_anchor": [
+				98,
+				35
+			],
+			"rectangular_authored_footprint": false,
+			"seed": 8,
+			"viewport": [
+				2560,
+				1440
+			]
+		}
+	],
+	"viewport": [
+		2560,
+		1440
+	]
+}

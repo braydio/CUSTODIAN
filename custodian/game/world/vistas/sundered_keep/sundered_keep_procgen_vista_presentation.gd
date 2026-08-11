@@ -44,9 +44,6 @@ const MOONLIGHT_FRAME_COUNT := 6
 @onready var _moonlight_sweep := (
 	$VistaPresentationRoot/ExteriorVistaClip/FortressPresentation/MoonlightSweep as Sprite2D
 )
-@onready var _gate_shadow := (
-	$VistaPresentationRoot/ExteriorVistaClip/GateShadow as Sprite2D
-)
 @onready var _presentation_anchor := (
 	$CameraPresentationAnchor as Marker2D
 )
@@ -77,7 +74,6 @@ func _ready() -> void:
 	_director = CAMERA_DIRECTOR.new()
 	_horizon.modulate.a = 0.0
 	_fortress.modulate.a = 0.0
-	_gate_shadow.modulate.a = 0.0
 	_resolve_runtime_nodes()
 	var viewport := get_viewport()
 	if viewport != null and not viewport.size_changed.is_connected(
@@ -206,7 +202,6 @@ func _layout_from_semantic_anchors() -> void:
 			_tile_to_world(tower_anchor as Vector2i)
 			+ Vector2(120.0, -150.0)
 		)
-	_gate_shadow.global_position = _world_anchors["gate_threshold"]
 	_fit_presentation_to_viewport()
 	_configure_exterior_clip()
 	_update_presentation_bounds()
@@ -309,7 +304,12 @@ func _apply_visual_state(
 		maxf(first_visual, frontage_visual)
 	)
 	_storm.modulate.a = 1.0
-	_distant_keep.modulate.a = lerpf(
+	var frontage_takeover := _smootherstep_range(
+		0.18,
+		0.78,
+		frontage_visual
+	)
+	var landmark_reveal := lerpf(
 		0.08,
 		0.94,
 		_smootherstep_range(
@@ -318,7 +318,17 @@ func _apply_visual_state(
 			maxf(first_visual, frontage_visual)
 		)
 	)
-	_reveal_fog.modulate.a = lerpf(0.68, 0.24, first_visual)
+	_distant_keep.modulate = Color(
+		0.76,
+		0.82,
+		0.90,
+		landmark_reveal * lerpf(1.0, 0.35, frontage_takeover)
+	)
+	_reveal_fog.modulate.a = lerpf(
+		0.68,
+		0.05,
+		maxf(first_visual, frontage_takeover)
+	)
 	_reveal_fog.position = Vector2.ZERO.lerp(
 		Vector2(-110.0, 50.0),
 		first_visual
@@ -329,14 +339,6 @@ func _apply_visual_state(
 		frontage_visual
 	)
 	_frontage_fog.modulate.a = lerpf(0.72, 0.30, frontage_visual)
-	var gate_progress := float(
-		_camera_state.get("frontage_return_progress", 0.0)
-	)
-	_gate_shadow.modulate.a = _smootherstep_range(
-		0.55,
-		1.0,
-		gate_progress
-	)
 
 
 func _apply_camera_state(
@@ -398,10 +400,30 @@ func _fit_presentation_to_viewport(
 		viewport_size.y / FIRST_REVEAL_ZOOM.y
 	) + VIEWPORT_SAFETY_MARGIN
 	if _storm.texture != null:
+		var required_coverage := _viewport_coverage
+		if not _world_anchors.is_empty():
+			var reveal_focus := (
+				_world_anchors["first_reveal_apex"] as Vector2
+			) + Vector2(0.0, -300.0)
+			var fortress_focus := (
+				_world_anchors["gate_threshold"] as Vector2
+			) + Vector2(0.0, -360.0)
+			var storm_center := _storm.global_position
+			var subject_offset := Vector2(
+				maxf(
+					absf(reveal_focus.x - storm_center.x),
+					absf(fortress_focus.x - storm_center.x)
+				),
+				maxf(
+					absf(reveal_focus.y - storm_center.y),
+					absf(fortress_focus.y - storm_center.y)
+				)
+			)
+			required_coverage += subject_offset * 2.0
 		var texture_size := _storm.texture.get_size()
 		var cover_scale := maxf(
-			_viewport_coverage.x / maxf(1.0, texture_size.x),
-			_viewport_coverage.y / maxf(1.0, texture_size.y)
+			required_coverage.x / maxf(1.0, texture_size.x),
+			required_coverage.y / maxf(1.0, texture_size.y)
 		)
 		_storm.scale = Vector2.ONE * cover_scale
 

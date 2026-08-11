@@ -5,6 +5,7 @@ const SAFE_PROPERTIES := {
 	"position": true, "global_position": true, "visible": true,
 	"health": true, "current_health": true, "max_health": true,
 	"field_patch_count": true, "aim_direction": true, "facing": true,
+	"operator_weapon_socket_debug_enabled": true,
 }
 
 var roles: Dictionary = {}
@@ -172,6 +173,9 @@ func _fixture_command(action: Dictionary, result: Dictionary) -> void:
 		"ash_bell_lift": [
 			"begin_lift_descent",
 			"reset_lift_exterior",
+		],
+		"ash_bell_threadway": [
+			"acquire_white_thread_knot",
 		],
 	}
 	if command not in allowed.get(fixture_id, []):

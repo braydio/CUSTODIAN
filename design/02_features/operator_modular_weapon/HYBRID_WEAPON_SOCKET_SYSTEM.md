@@ -4,7 +4,7 @@
 **Status:** phase-1 implementation
 **Owner:** gameplay/combat + art pipeline
 **Runtime target:** Godot 4.x (`custodian/`)
-**Last updated:** 2026-08-09
+**Last updated:** 2026-08-10
 
 ## Purpose
 
@@ -24,8 +24,8 @@ anatomically readable silhouettes.
    per-frame grip socket and rotates only within a limited sector correction.
 3. **Frame-aware offsets.** Socket positions are authored per frame (or per
    directional state), not a single static offset for the whole animation.
-4. **Eight-direction quantization.** The weapon sprite has8 directional variants.
-   Fine cursor angle is handled by ±5–12° procedural rotation within each sector.
+4. **Eight-direction quantization.** The weapon definition has eight directional
+   variants. Fine cursor angle is handled by the live ±24° correction envelope.
 5. **Runtime muzzle/eject.** Projectile origin and shell ejection are computed
    from authored socket nodes, not baked into strips.
 6. **Authored recoil.** The body animation plays the large readable recoil. The
@@ -94,6 +94,21 @@ animations are the current modular `stance`, `aim`, and `fire` clips; reverse
 aim playback owns lower presentation until separately authored lower sheets are
 available, and fire recovery consumes the remaining frames of the fire clip.
 
+This remains a four-sector production vertical slice, not complete eight-octant
+physical authority. The live modular upper-body resources currently provide
+aim clips only for E/W/SE/SW, fire clips for those four plus N, and stance clips
+for E/W/SE/SW/N/NE/NW. A complete S octant and complete N/NE/S/NW aim/fire
+families require authored upper/body tracks before matching socket metadata can
+be calibrated honestly. Eight directional weapon textures alone do not satisfy
+that requirement.
+
+When current animation/frame socket resolution fails, the runtime clears the
+active socket and uses the explicit accepted/input direction fallback. It must
+never read a previously resolved or generic `PrimaryWeaponSocket -> Barrel`
+transform as current physical authority. This fail-closed behavior prevents the
+four uncovered octants from inheriting stale barrel direction while retaining
+snap-fire and projectile physics.
+
 The generated source of truth is
 `custodian/content/data/operator/generated/operator_weapon_sockets.generated.json`,
 loaded by `operator_weapon_socket_library.gd`. The existing 96x96 modular weapon
@@ -113,9 +128,16 @@ readiness, firing commits accepted intent, and recovery resumes current intent.
 Every presentation update assigns authored base rotation plus the current
 bounded correction absolutely; correction never accumulates with `+=`, and
 multiple socket queries in one process frame cannot accelerate pursuit. The
-release-time transformed grip-to-muzzle axis is ballistic baseline authority.
+release-time transformed grip-to-muzzle axis is ballistic baseline authority
+only when the current production record resolves; otherwise the explicit
+committed-direction fallback is ballistic baseline.
 Camera aim feedback is owned by `custodian/game/world/camera.gd`; the Operator
 only publishes active state and current aim direction.
+
+With `operator_weapon_socket_debug_enabled`, the overlay renders authored
+grip-to-muzzle authority in green, ballistic direction in cyan, and intent in
+yellow, plus sector, phase, frame, intent angle, socket angle, and error. Painted
+barrel pixels must lie on the green line before a new track is promoted.
 
 The P-9 sidearm retains accepted presentation direction as its projectile
 baseline because its current compatibility presentation does not expose the

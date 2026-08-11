@@ -1,0 +1,20 @@
+[
+  {
+    "baseline": null,
+    "current": 178,
+    "delta": null,
+    "name": "completed_tick"
+  },
+  {
+    "baseline": null,
+    "current": 2.32417941093445,
+    "delta": null,
+    "name": "visible_visual_anchor_delta_px"
+  },
+  {
+    "baseline": null,
+    "current": 6,
+    "delta": null,
+    "name": "visible_visual_anchor_sample_count"
+  }
+]

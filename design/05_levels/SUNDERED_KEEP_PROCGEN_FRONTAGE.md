@@ -75,6 +75,20 @@ instead of using a fixed Operator-relative offset. Traversal remains unlocked;
 the fortress apex receives a 0.9-second minimum presentation hold and triggers
 the existing six-frame moonlight sweep once per presentation instance.
 
+The active layering pass keeps the base storm horizon and moonlight punctuation,
+but treats the first landmark as an atmospheric silhouette rather than a second
+fully opaque fortress. As frontage presentation takes over, the landmark cools
+and recedes, the one-shot reveal veil falls nearly away, and the persistent
+horizon-seam fog becomes the architectural bridge. The outer wall and central
+citadel use the established distant blue-gray palette at reduced `0.35` and
+`0.33` scale. The approach gate-shadow veil is not part of this procgen vista;
+the ordinary route fade owns the generated-frontage-to-authored-approach handoff.
+The existing Descending Ward remains an optional review follow-up rather than an
+automatically stacked layer.
+The storm underlay fit covers the full semantic reveal-to-fortress subject
+travel in addition to the zoomed viewport and safety margin; exposing a finite
+plate edge during the camera handoff is a visual failure.
+
 ## Authored approach boundary
 
 After the terminal ingress, the authored Vista Approach owns Shore Parish,

@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "id": "traversal/ash_bell_threadway_resolve",
+  "description": "An isolated Ash-Bell lift pocket remembers its White Thread causeway from mainland to lift.",
+  "scene": "res://tools/validation/fixtures/ash_bell_threadway_moment.tscn",
+  "seed": 1138,
+  "duration_ticks": 132,
+  "simulation": {"physics_hz": 60, "warmup_ticks": 4, "max_wall_seconds": 30, "pause_during_setup": true},
+  "capture": {"width": 1280, "height": 720, "fps": 60, "audio": false, "start_tick": 0, "end_tick": 131, "contact_sheet_ticks": [0, 18, 30, 46, 68, 110], "required_keyframes": true, "background": "opaque"},
+  "setup": {
+    "remove_nodes": [],
+    "roles": {
+      "fixture": {"node_path": "."},
+      "presentation": {"node_path": "AshBellLiftIngressPresentation"}
+    },
+    "spawns": [],
+    "properties": [],
+    "processing": [],
+    "fixture": {"id": "ash_bell_threadway", "config": {"review": "island_to_resolved"}}
+  },
+  "timeline": [
+    {"tick": 18, "action": "fixture_command", "name": "acquire_white_thread_knot"},
+    {"tick": 130, "action": "finish"}
+  ],
+  "probes": [
+    {"id": "threadway_state", "role": "fixture", "fields": ["persistent_tiles", "reveal_count", "blocker_active"], "ticks": [0, 20, 46, 110], "required": true}
+  ],
+  "assertions": [
+    {"type": "role_exists", "role": "presentation", "severity": "error"},
+    {"type": "probe_compare", "probe": "threadway_state", "tick": 0, "field": "persistent_tiles", "op": "eq", "value": 0, "severity": "error"},
+    {"type": "probe_compare", "probe": "threadway_state", "tick": 20, "field": "reveal_count", "op": "eq", "value": 1, "severity": "error"},
+    {"type": "probe_compare", "probe": "threadway_state", "tick": 20, "field": "blocker_active", "op": "eq", "value": true, "severity": "error"},
+    {"type": "probe_compare", "probe": "threadway_state", "tick": 110, "field": "persistent_tiles", "op": "eq", "value": 18, "severity": "error"},
+    {"type": "probe_compare", "probe": "threadway_state", "tick": 110, "field": "blocker_active", "op": "eq", "value": false, "severity": "error"},
+    {"type": "no_unreleased_inputs", "severity": "error"},
+    {"type": "output_exists", "path": "telemetry.json", "severity": "error"}
+  ],
+  "stable_fingerprint": {"event_payload_fields": {}, "counters": [], "probes": ["threadway_state"], "position_quantum_px": 0.25, "float_quantum": 0.0001},
+  "tags": ["traversal", "ash_bell", "threadway", "white_thread", "world_ingress"]
+}

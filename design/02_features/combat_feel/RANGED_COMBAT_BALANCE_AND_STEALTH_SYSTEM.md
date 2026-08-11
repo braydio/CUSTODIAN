@@ -17,6 +17,12 @@ Weapon spread is applied after that baseline, and the physical projectile owns
 actual collision. Cursor reversal cannot twist a committed fire pose, but aim
 alignment never gates snap-fire.
 
+For reviewed Carbine socket tracks, the release-frame transformed
+grip-to-muzzle axis is baseline authority. If the current octant, animation, or
+frame has no reviewed record, resolution fails closed to committed/input
+direction; a stale socket transform is never reused. This compatibility
+fallback does not make an uncovered octant physically calibrated.
+
 ## Implemented In This Pass
 
 - Ammo is stored by canonical type (`kinetic_light`, `kinetic_heavy`, `energy_cell`, `shell`, `scrap_charge`) with the legacy `kinetic` alias normalized to `kinetic_light`.
