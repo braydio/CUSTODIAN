@@ -1,14 +1,19 @@
-# Ranged Ballistic Aim Resolution
+# Ranged Ballistic Aim Resolution (Retired Authority Experiment)
 
-- Status: `implemented four-sector vertical slice; eight-octant calibration open`
+- Status: `superseded by single player-intent firing authority`
 - Authority: `design/02_features/operator/CROSSHAIR_SYSTEM.md`, `design/02_features/operator_modular_weapon/HYBRID_WEAPON_SOCKET_SYSTEM.md`, and `design/02_features/combat_feel/RANGED_COMBAT_BALANCE_AND_STEALTH_SYSTEM.md`
 - Prerequisite: completed `OPERATOR_FRAME_AWARE_WEAPON_SOCKETS.md` slice.
-- Goal: separate accepted player intent from release-time physical weapon-axis authority and render an honest, read-only ballistic pip.
-- Constraints: preserve snap-fire, committed fire sectors, physical projectiles, target-ring ownership, frame-aware muzzle authority, and unrelated worktree changes.
-- Acceptance: zero-spread Carbine shots follow the release-frame socket axis; spread applies afterward; intent reticle remains cursor-owned; pip predicts from the actual muzzle without damage authority; focused smokes and Moment Forge evidence pass.
-- Deferred: dedicated sidearm physical-axis support unless its live presentation proves the same grip-to-muzzle authority.
+- Historical goal: test release-time physical weapon-axis authority and an
+  honest dual-reticle presentation.
+- Superseding decision: the experiment cost more player explanation and
+  calibration than its weapon-weight benefit justified. Sockets retain muzzle,
+  grip, ejection, layering, and debug ownership; accepted player aim owns the
+  shot distribution center for all ranged weapons.
+- Current acceptance: zero-spread shots travel from the release-frame muzzle
+  through the trigger-time accepted world aim point; spread applies afterward;
+  the intent reticle is the only production ranged reticle.
 
-## Completion
+## Historical Completion and Retirement
 
 - Trigger-time state now stores `accepted_aim_direction` only; the delayed
   release samples the synchronized frame-aware Carbine grip-to-muzzle axis.
@@ -39,13 +44,17 @@
   severity grammar. Full N/NE/S/NW promotion remains blocked on complete
   authored upper-body stance/aim/fire tracks and painted-barrel calibration.
 
+The subsequent simplification retired physical-axis ballistic authority,
+target-depth prediction status, alignment gauges, and the production ballistic
+pip. The resolver remains only where presentation correction/debug calibration
+still consumes its pure helpers; it is not firing authority.
+
 ## Authority Chain
 
 ```text
-player input -> accepted presentation intent
-authored upper pose + frame socket + bounded correction -> weapon axis
-weapon axis + display depth + read-only obstruction query -> ballistic pip
-weapon axis + per-shot spread -> physical projectile
+player input -> accepted world aim point + committed visual sector
+frame-aware socket -> muzzle position
+muzzle-to-accepted-point direction + per-shot spread -> physical projectile
 physical projectile -> actual collision and damage
 ```
 

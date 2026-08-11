@@ -167,7 +167,7 @@ func _init() -> void:
 	_check_layer(weapon, &"ranged_2h_fire_weapon_right", "committed fire weapon", failures)
 	var committed_axis: Vector2 = operator.call("_get_current_ranged_weapon_axis", Vector2.RIGHT)
 	if committed_axis.x <= 0.0:
-		failures.append("release-time physical weapon axis snapped to reversed cursor")
+		failures.append("committed fire socket calibration axis snapped to reversed cursor")
 
 	if weapon != null:
 		var muzzle_position: Vector2 = operator.call("_get_ranged_muzzle_position", Vector2.RIGHT)

@@ -9,19 +9,17 @@ Authority brief: `design/COMBAT_BALANCE.md`
 
 Keep ranged weapons strong in deliberate bursts without allowing unlimited screen-clearing. The runtime combines finite carried ammunition, range and accuracy pressure, per-weapon heat, positional gunshot noise, sight/hearing perception, loss-of-contact search, and hostile ambient camps. Ammo is strategic scarcity; heat is immediate firing pressure; noise creates world consequences.
 
-## Physical Aim Authority
+## Player-Intent Aim Authority
 
-Accepted aim direction commits the authored fire presentation. The transformed
-frame-aware weapon axis at the actual release frame is the projectile baseline.
-Weapon spread is applied after that baseline, and the physical projectile owns
-actual collision. Cursor reversal cannot twist a committed fire pose, but aim
-alignment never gates snap-fire.
+Trigger acceptance captures both the desired world aim point and the nearest
+authored visual sector. The sector commits aim/fire presentation so a later
+cursor reversal cannot twist the shot animation. At projectile release, the
+current frame-aware socket supplies muzzle position; the zero-spread baseline
+is `muzzle.direction_to(accepted_aim_world_position)`. Symmetric spread and
+recoil randomness apply afterward, and the physical projectile owns collision.
 
-For reviewed Carbine socket tracks, the release-frame transformed
-grip-to-muzzle axis is baseline authority. If the current octant, animation, or
-frame has no reviewed record, resolution fails closed to committed/input
-direction; a stale socket transform is never reused. This compatibility
-fallback does not make an uncovered octant physically calibrated.
+Grip-to-muzzle orientation is presentation/debug calibration only. It never
+redirects a shot away from the accepted player aim point and never gates fire.
 
 ## Implemented In This Pass
 
@@ -156,113 +154,26 @@ read-only aim accuracy ratio and becomes tight at the ready threshold.
 
 A future `VehicleWeaponDefinition` should own `weapon_id`, weapon data path, mount socket, fire arc, heat state, ammo source, noise radius, recoil/knockback, and occupant requirement. When an occupied vehicle owns an active weapon, primary fire routes to the vehicle before personal weapon logic. Vehicle ammo, heat, and noise belong to the mount; personal firing is disabled unless the vehicle explicitly supports firing ports. Vehicle weapons reuse `NoiseEventBus` and the heat schema, with a starting noise target of 700 px for light guns and 1000 px for heavy guns. No partial vehicle-fire hook is implemented in V1 because current occupant/input ownership does not expose a complete mount contract.
 
-## Physical Aim Authority Contract
-
-Design authority: the muzzle and barrel pose are the physical source of
-ballistic truth. The cursor is player intent, never a guaranteed hit
-position. Do not bend projectiles toward the mouse so they cross the reticle;
-the "bullet doesn't quite cross the cursor" behavior is intentional game feel
-and must be kept legible, not corrected. The two-indicator feedback UI is the
-implementation target; the ballistic source-of-truth side below matches the
-live Operator behavior.
-
-### Three-part aim contract
+## Single-Aim Authority Contract
 
 ```text
-PLAYER INTENT          "where I want to aim"      -> desired_point
-WEAPON POSE            "where the gun points now" -> barrel_direction
-BALLISTIC SOLUTION     "where a bullet fired NOW
-                        will go"                  -> resolved_hit_point
+accepted player aim point -> zero-spread shot center
+current frame socket      -> muzzle origin
+movement/heat/recoil      -> symmetric spread around the center
+physical projectile       -> travel, collision, and damage
 ```
 
-- bullet origin = actual muzzle
-- bullet direction = actual barrel direction
-- reticle feedback = ballistic solution (predicted impact)
+The trigger-time aim point is committed alongside the authored eight-way fire
+sector. Cursor movement during the release delay cannot flip the fire sprite or
+rewrite the accepted shot. At release, the muzzle is sampled from the current
+frame-aware socket and direction is calculated directly from that muzzle to the
+accepted world point. Muzzle-obstruction checks use the final spread direction.
 
-### Prediction and hit authority are separate
-
-The aim ray predicts; the projectile decides. A predictive muzzle ray along
-the barrel direction produces the ballistic pip, but it never applies damage
-for projectile weapons. The projectile spawns at the muzzle, travels along the
-barrel direction, and its own physics owns the actual impact. If an enemy
-moves between trigger pull and projectile arrival, the bullet can miss; that
-is desirable.
-
-### Visual/ballistic invariant
-
-Whatever direction the rendered weapon appears to point is the direction a
-zero-spread projectile initially travels. The visual barrel and the projectile
-trajectory must agree closely; intentional recoil/spread is layered on
-afterward. Two deviations, treated differently:
-
-- Good: player whipped the aim quickly, the gun has not traversed yet, the
-  shot fires off-angle. Keep.
-- Bad: gun and reticle appear aligned but the projectile leaves 15 degrees
-  sideways because muzzle basis or socket math is wrong. Fix.
-
-### Aim solution
-
-Track per aim sample:
-
-```gdscript
-class_name AimSolution
-
-var desired_point: Vector2
-
-var muzzle_origin: Vector2
-var barrel_direction: Vector2
-
-var ballistic_point: Vector2
-
-var angular_error_degrees: float
-var alignment: float
-
-var obstruction: Object
-var obstructed: bool
-```
-
-```gdscript
-var desired_direction := (
-    desired_point - muzzle_origin
-).normalized()
-
-var alignment := clampf(
-    barrel_direction.dot(desired_direction),
-    -1.0,
-    1.0
-)
-
-var angular_error := rad_to_deg(acos(alignment))
-```
-
-Angular error reads:
-
-```text
-0°      perfectly aimed
-3°      essentially settled
-10°     hurried shot
-25°     obvious snap shot
-60°     gun hasn't traversed yet
-```
-
-### Obstruction
-
-The barrel-ray ballistic pip lands on the wall the muzzle cannot clear, so
-"my target is him, but my current firing solution hits this wall" is visible
-before the trigger is pulled. The projectile still originates at the muzzle
-and collides naturally; players cannot shoot around geometry the muzzle
-cannot physically clear. This is preferable to raycasting from the player
-center or forcing bullets toward the cursor, both of which can let players
-shoot around geometry the muzzle cannot clear.
-
-### Fit with existing runtime
-
-The live Operator already carries the pieces this contract needs:
-`ranged_raise_duration`, `ranged_aim_ready_ratio`,
-`primary_weapon_muzzle_socket_position`, `ranged_muzzle_obstruction_margin`,
-and `ranged_neutral/vertical_rotation_limit_degrees`. Physical/animation-
-driven aim rather than instantly snapping to input is intended, not an
-accident; this contract formalizes it.
+Weapon pose should broadly agree with the cursor, but painted barrel or socket
+angle discrepancies are presentation calibration issues rather than competing
+ballistic authority. Snap-fire remains allowed. Weapon weight is communicated
+through readiness, recoil, heat, movement, and symmetric spread—not by moving
+the shot distribution center away from player intent.
 
 ## Deferred
 
@@ -272,7 +183,8 @@ accident; this contract formalizes it.
 - Large-scale procedural enemy bases and streaming/pooling
 - Advanced squad coordination and sector alarm networks
 - Vehicle-mounted weapon firing
-- Ballistic pip feedback UI (intent + reality two-indicator presentation) per the Physical Aim Authority Contract; runtime publishes the intent reticle only until then
+- Optional tuning that widens symmetric spread after large rapid aim changes,
+  provided the distribution remains centered on accepted player intent
 
 ## Next Agent Slice
 

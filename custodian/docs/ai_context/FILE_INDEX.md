@@ -487,7 +487,7 @@ Last updated: 2026-08-11
 - `design/02_features/weapons/{VIGIL_PATTERN_DAGGER,FALLEN_STAR_KATANA}.md` — weapon-specific baseline and later-weapon contracts
 - `design/02_features/combat_feel/OPERATOR_MELEE_FAST_CHAIN.md` — implemented Katana three-link authority for source/runtime asset ownership, command buffering, authored-frame commitment, direction, recovery, resets, and validation
 - `custodian/game/actors/operator/animations/operator_weapon_socket_library.gd` — strict generated-JSON loader, eight-way aim-sector resolver, and typed frame-socket decoder for Operator ranged weapon placement
-- `custodian/game/systems/combat/ranged_ballistic_aim_resolver.gd` — pure bounded-correction, alignment, target-depth prediction, terrain-first obstruction, and physical-axis aim-solution helper
+- `custodian/game/systems/combat/ranged_ballistic_aim_resolver.gd` — legacy pure correction/prediction helper retained for presentation calibration utilities; no longer projectile-direction or HUD authority
 - `custodian/content/data/operator/generated/operator_weapon_sockets.generated.json` — generated Carbine phase-1 `e/w/se/sw` per-frame grip/support/muzzle/ejection/angle/draw-order authority
 - `custodian/tools/aseprite/export_operator_weapon_sockets.lua` — Aseprite named-slice exporter for operator-local per-tag/per-frame socket JSON
 - `custodian/game/actors/operator/components/weapon_feedback_presenter.gd` — presentation-only consumer of Operator weapon feedback events; plays configured local audio, flashes the weapon sprite, and spawns barrel vent VFX while logging missing assets loudly and never touching gameplay state or `NoiseEventBus`
@@ -542,11 +542,10 @@ Last updated: 2026-08-11
 - `custodian/tools/validation/operator_primary_ranged_modular_fire_smoke.gd` — focused headless smoke for raise/lower direction retargeting with preserved progress, committed fire direction, recovery resolution, posture sequence, upper/weapon direction and frame synchronization, muzzle alignment, and cleanup
 - `custodian/tools/validation/operator_weapon_socket_smoke.gd` — focused Carbine socket/camera smoke covering eight-way resolution, phase-1 art and frame metadata coverage, socket-derived muzzle, direction-aware draw order, asymmetric transition timing, additive aim camera lead/zoom/shake, and exact cancellation return
 - `custodian/game/ui/hud/components/ranged_reticle.gd` / `.tscn` — procedural read-only ranged posture reticle driven by canonical `get_weapon_status()` values
-- `custodian/game/ui/hud/components/ranged_ballistic_pip.gd` / `.tscn` — procedural 16x16 read-only physical-axis prediction cue with aligned/tracking/lagging/unresolved/obstructed severity, distinct from cursor intent and enemy TargetRing presentation
-- `custodian/docs/ai_context/task_packets/RANGED_BALLISTIC_AIM_RESOLUTION.md` — implementation/review packet for release-time weapon authority and dual-reticle validation
-- `custodian/tools/validation/operator_ranged_ballistic_aim_smoke.gd` — committed-intent/release-axis, muzzle, correction, prediction, spread-baseline, and snap-fire regression coverage
-- `custodian/tools/validation/ranged_ballistic_reticle_smoke.gd` — procedural pip state and intent/prediction separation coverage
-- `custodian/tools/iteration/scenarios/combat/ranged_ballistic_alignment.json` — deterministic full-capture Carbine cursor-reversal/snap-fire alignment review
+- `custodian/docs/ai_context/task_packets/RANGED_BALLISTIC_AIM_RESOLUTION.md` — historical physical-axis/dual-reticle experiment packet, now explicitly superseded by single intent authority
+- `custodian/tools/validation/operator_ranged_ballistic_aim_smoke.gd` — zero-spread accepted-point direction, current socketed muzzle origin, and committed visual-sector regression coverage
+- `custodian/tools/validation/ranged_ballistic_reticle_smoke.gd` — single intent-reticle wiring and retired-pip absence coverage
+- `custodian/tools/iteration/scenarios/combat/ranged_ballistic_alignment.json` — historical cursor-reversal/physical-axis review scenario; retained as prior evidence, not current HUD authority
 - `custodian/tools/iteration/scenarios/combat/ranged_ballistic_octants.json` — deterministic full-capture steady-aim review across all eight intent octants with the socket calibration overlay enabled
 - `custodian/tools/validation/wave_manager_debug_grunt_spawn_gate_smoke.gd` — focused WaveManager smoke proving the startup debug grunt stays despawned inside the Operator spawn threshold and appears once after the Operator crosses it
 - `design/02_features/operator/UNARMED_TOGGLE.md` — unarmed/Fists selection behavior, state rules, and acceptance tests

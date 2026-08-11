@@ -103,11 +103,9 @@ be calibrated honestly. Eight directional weapon textures alone do not satisfy
 that requirement.
 
 When current animation/frame socket resolution fails, the runtime clears the
-active socket and uses the explicit accepted/input direction fallback. It must
-never read a previously resolved or generic `PrimaryWeaponSocket -> Barrel`
-transform as current physical authority. This fail-closed behavior prevents the
-four uncovered octants from inheriting stale barrel direction while retaining
-snap-fire and projectile physics.
+active socket and uses existing modular muzzle-position fallback behavior. A
+stale socket must never supply projectile origin. Socket orientation is not
+ballistic direction authority.
 
 The generated source of truth is
 `custodian/content/data/operator/generated/operator_weapon_sockets.generated.json`,
@@ -118,31 +116,20 @@ and draw order come from socket metadata. Static per-sector texture export is an
 art follow-up that does not change the socket contract.
 
 Aim transition timing is asymmetric: `ranged_raise_duration = 0.22`,
-`ranged_lower_duration = 0.12`, and `ranged_aim_ready_ratio = 0.70`. Phase-1
-Carbine fine-angle correction is bounded to ±24 degrees: enough to cover the
-±22.5-degree half interval between eight authored body sectors with a small
-overlap. The desired correction pursues intent with a frame-rate-independent
-response of `20.0`; weapon traversal supplies transient weight without leaving
-a permanent angular dead zone. Raising weights the desired correction by
-readiness, firing commits accepted intent, and recovery resumes current intent.
-Every presentation update assigns authored base rotation plus the current
-bounded correction absolutely; correction never accumulates with `+=`, and
-multiple socket queries in one process frame cannot accelerate pursuit. The
-release-time transformed grip-to-muzzle axis is ballistic baseline authority
-only when the current production record resolves; otherwise the explicit
-committed-direction fallback is ballistic baseline.
+`ranged_lower_duration = 0.12`, and `ranged_aim_ready_ratio = 0.70`. Existing
+bounded fine-angle correction may continue as presentation polish, assigned
+absolutely rather than accumulated. It does not gate fire or determine bullet
+direction. At release, the socket supplies muzzle position while the accepted
+player world aim point supplies the zero-spread direction.
 Camera aim feedback is owned by `custodian/game/world/camera.gd`; the Operator
 only publishes active state and current aim direction.
 
-With `operator_weapon_socket_debug_enabled`, the overlay renders authored
-grip-to-muzzle authority in green, ballistic direction in cyan, and intent in
-yellow, plus sector, phase, frame, intent angle, socket angle, and error. Painted
-barrel pixels must lie on the green line before a new track is promoted.
+With `operator_weapon_socket_debug_enabled`, the overlay retains grip-to-muzzle
+and intent lines plus sector/frame calibration data. These are developer art
+diagnostics, not a second player-facing aim solution.
 
-The P-9 sidearm retains accepted presentation direction as its projectile
-baseline because its current compatibility presentation does not expose the
-same reviewed frame-aware grip-to-muzzle axis contract. This fallback is
-explicit and must not be described as physically socket-resolved.
+The P-9 and Carbine now share the same direction contract: accepted player aim
+owns shot center; the best available weapon socket owns muzzle origin.
 
 ### Scene node hierarchy (target)
 

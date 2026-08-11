@@ -558,7 +558,6 @@ var last_ranged_fire_failure: StringName = &""
 var _weapon_failure_feedback_cooldown: float = 0.0
 var _last_weapon_failure_feedback: StringName = &""
 var _pending_ranged_shot: Dictionary = {}
-var _ranged_ballistic_solution: Dictionary = {}
 var _ranged_ready_active: bool = false
 var _ranged_ready_weapon_definition: OperatorWeaponDefinition = null
 var _dodge_active: bool = false
@@ -692,8 +691,6 @@ var debug_support_grip_pos: Vector2 = Vector2.ZERO
 var debug_ejection_pos: Vector2 = Vector2.ZERO
 var debug_projectile_direction: Vector2 = Vector2.RIGHT
 var debug_intent_direction: Vector2 = Vector2.RIGHT
-var debug_ballistic_position: Vector2 = Vector2.ZERO
-var debug_ballistic_obstructed: bool = false
 
 const WEAPON_PROFILES = [
 	{
@@ -1125,12 +1122,6 @@ func _draw():
 	draw_line(debug_weapon_socket_pos, debug_muzzle_pos, Color(0.45, 1.0, 0.52, 0.95), 2.0)
 	draw_line(Vector2.ZERO, debug_intent_direction.normalized() * 48.0, Color.YELLOW, 1.0)
 	draw_line(debug_muzzle_pos, debug_muzzle_pos + debug_projectile_direction.normalized() * 48.0, Color.CYAN, 1.5)
-	draw_line(
-		debug_muzzle_pos,
-		debug_ballistic_position,
-		Color.RED if debug_ballistic_obstructed else Color(1.0, 0.85, 0.2, 0.7),
-		1.0
-	)
 	_draw_socket_marker(debug_right_hand_pos, Color.RED, "RH")
 	_draw_socket_marker(debug_left_hand_pos, Color.BLUE, "LH")
 	_draw_socket_marker(debug_weapon_socket_pos, Color(0.6, 1.0, 0.6, 1.0), "W")
@@ -2343,7 +2334,12 @@ func _apply_frame_aware_primary_weapon_socket() -> bool:
 	debug_support_grip_pos = to_local(support_grip_debug.global_position) if support_grip_debug != null else support
 	debug_muzzle_pos = to_local(barrel.global_position) if barrel != null else muzzle
 	debug_ejection_pos = to_local(ejection_socket.global_position) if ejection_socket != null else ejection
-	debug_projectile_direction = _get_frame_aware_weapon_direction().normalized()
+	debug_intent_direction = _get_attack_aim_direction().normalized()
+	debug_projectile_direction = (
+		primary_weapon_socket.global_position.direction_to(barrel.global_position)
+		if primary_weapon_socket != null and barrel != null
+		else _get_frame_aware_weapon_direction().normalized()
+	)
 	queue_redraw()
 	return true
 
@@ -3471,6 +3467,7 @@ func _request_ranged_shot() -> void:
 		_try_start_reload()
 		return
 	var accepted_aim_direction := _get_attack_aim_direction()
+	var accepted_aim_world_position := _get_desired_ranged_aim_world_point()
 	if _is_using_sidearm_ranged():
 		if _sidearm_action_phase != &"held":
 			last_ranged_fire_failure = &"sidearm_not_held"
@@ -3497,6 +3494,7 @@ func _request_ranged_shot() -> void:
 		"timer": delay,
 		"profile": profile.duplicate(true),
 		"accepted_aim_direction": accepted_aim_direction,
+		"accepted_aim_world_position": accepted_aim_world_position,
 	}
 	_obs_gauge(&"player_ranged_requests_pending", 1)
 	_play_ranged_fire_animation(fire_animation)
@@ -3515,6 +3513,10 @@ func _emit_pending_ranged_shot() -> void:
 		"accepted_aim_direction",
 		Vector2.RIGHT
 	)
+	var accepted_aim_world_position: Vector2 = _pending_ranged_shot.get(
+		"accepted_aim_world_position",
+		global_position + accepted_direction * ranged_controller_aim_distance
+	)
 	_pending_ranged_shot.clear()
 	_obs_gauge(&"player_ranged_requests_pending", 0)
 	if accepted_direction.length_squared() <= 0.0001:
@@ -3522,8 +3524,11 @@ func _emit_pending_ranged_shot() -> void:
 		return
 	_sync_primary_ranged_weapon_frame_to_upper()
 	var spawn_position := _get_ranged_muzzle_position(accepted_direction)
-	var ballistic_direction := _get_current_ranged_weapon_axis(accepted_direction)
-	var ballistic_solution := _resolve_ranged_ballistic_solution(accepted_direction)
+	var ballistic_direction := spawn_position.direction_to(
+		accepted_aim_world_position
+	)
+	if ballistic_direction.length_squared() <= 0.0001:
+		ballistic_direction = accepted_direction.normalized()
 	var spread := float(profile.get("spread", 0.0)) + (current_recoil * 0.2)
 	spread *= _get_movement_spread_multiplier()
 	spread *= _get_heat_spread_multiplier()
@@ -3557,11 +3562,10 @@ func _emit_pending_ranged_shot() -> void:
 			"muzzle": spawn_position,
 			"impact": muzzle_check.get("position", spawn_position),
 			"accepted_aim_direction": accepted_direction,
+			"accepted_aim_world_position": accepted_aim_world_position,
 			"ballistic_direction": ballistic_direction,
 			"final_shot_direction": final_shot_direction,
 			"direction": final_shot_direction,
-			"aim_error_degrees": ballistic_solution.get("aim_error_degrees", 0.0),
-			"predicted_impact": ballistic_solution.get("predicted_world_position", spawn_position),
 			"spread_deg": spread,
 			"loaded_ammo": _get_current_loaded_ammo(),
 			"reserve_ammo": _get_current_reserve_ammo(),
@@ -3619,11 +3623,10 @@ func _emit_pending_ranged_shot() -> void:
 		"position": global_position,
 		"muzzle": spawn_position,
 		"accepted_aim_direction": accepted_direction,
+		"accepted_aim_world_position": accepted_aim_world_position,
 		"ballistic_direction": ballistic_direction,
 		"final_shot_direction": final_shot_direction,
 		"direction": final_shot_direction,
-		"aim_error_degrees": ballistic_solution.get("aim_error_degrees", 0.0),
-		"predicted_impact": ballistic_solution.get("predicted_world_position", spawn_position),
 		"damage": bullet.damage,
 		"speed": bullet.speed,
 		"radius": bullet.bullet_radius,
@@ -9049,48 +9052,6 @@ func _get_desired_ranged_aim_world_point() -> Vector2:
 	return global_position + direction.normalized() * ranged_controller_aim_distance
 
 
-func _resolve_ranged_ballistic_solution(
-	fallback_direction: Vector2 = Vector2.ZERO
-) -> Dictionary:
-	var profile := _get_current_ranged_profile()
-	var fallback := fallback_direction
-	if fallback.length_squared() <= 0.0001:
-		fallback = _get_attack_aim_direction()
-	var muzzle := _get_ranged_muzzle_position(fallback)
-	var axis := _get_current_ranged_weapon_axis(fallback)
-	var desired := _get_desired_ranged_aim_world_point()
-	var solution := RangedBallisticAimResolver.solve(
-		get_world_2d().direct_space_state,
-		desired,
-		muzzle,
-		axis,
-		float(profile.get("max_range_px", 320.0)),
-		_get_ranged_fire_ray_exclusions(),
-		_find_terrain_ballistics_provider()
-	)
-	_ranged_ballistic_solution = solution
-	debug_intent_direction = solution.get("intent_direction", fallback)
-	debug_projectile_direction = solution.get("ballistic_direction", axis)
-	debug_ballistic_position = to_local(
-		solution.get("predicted_world_position", muzzle)
-	)
-	debug_ballistic_obstructed = bool(solution.get("obstructed", false))
-	_obs_gauge(
-		&"player_ranged_aim_error_degrees",
-		float(solution.get("aim_error_degrees", 0.0))
-	)
-	_obs_gauge(
-		&"player_ranged_ballistic_alignment_ratio",
-		float(solution.get("alignment_ratio", 1.0))
-	)
-	_obs_gauge(
-		&"player_ranged_ballistic_obstructed",
-		1 if bool(solution.get("obstructed", false)) else 0
-	)
-	queue_redraw()
-	return solution
-
-
 func get_ranged_ejection_position() -> Vector2:
 	if _is_using_ranged_2h_primary() and modular_upper_body_sprite != null and modular_upper_body_sprite.visible:
 		_apply_frame_aware_primary_weapon_socket()
@@ -10885,15 +10846,6 @@ func get_weapon_status() -> Dictionary:
 		var weapon_data: Dictionary = display_profile.get_weapon_data()
 		weapon_name = str(weapon_data.get("name", weapon_name)).to_upper()
 	var ranged_posture := get_ranged_posture()
-	var ballistic_solution: Dictionary = {}
-	if ranged_context_active \
-	and ranged_posture not in [&"none", &"relaxed"] \
-	and is_inside_tree():
-		ballistic_solution = _resolve_ranged_ballistic_solution()
-	var ballistic_collider_name := ""
-	var predicted_collider: Variant = ballistic_solution.get("predicted_collider")
-	if predicted_collider is Node and is_instance_valid(predicted_collider):
-		ballistic_collider_name = String((predicted_collider as Node).name)
 	return {
 		"equipped": primary_weapon_equipped,
 		"primary_weapon_id": equipped_primary_weapon_id,
@@ -10917,14 +10869,6 @@ func get_weapon_status() -> Dictionary:
 		"ranged_transition_ratio": get_ranged_transition_ratio(),
 		"ranged_aim_ready_ratio": ranged_aim_ready_ratio,
 		"ranged_aim_accuracy_ratio": clampf(get_ranged_transition_ratio() / maxf(0.001, ranged_aim_ready_ratio), 0.0, 1.0) if _is_primary_ranged_aim_presentation_active() else (1.0 if _is_ranged_ready_active() else 0.0),
-		"ranged_desired_world_point": ballistic_solution.get("desired_world_point", Vector2.INF),
-		"ranged_muzzle_world_position": ballistic_solution.get("muzzle_world_position", Vector2.INF),
-		"ranged_ballistic_direction": ballistic_solution.get("ballistic_direction", Vector2.ZERO),
-		"ranged_predicted_world_position": ballistic_solution.get("predicted_world_position", Vector2.INF),
-		"ranged_aim_error_degrees": float(ballistic_solution.get("aim_error_degrees", 0.0)),
-		"ranged_ballistic_alignment_ratio": float(ballistic_solution.get("alignment_ratio", 0.0)),
-		"ranged_ballistic_obstructed": bool(ballistic_solution.get("obstructed", false)),
-		"ranged_ballistic_collider_name": ballistic_collider_name,
 		"ranged_ready": ranged_posture == &"ready",
 		"can_fire_now": can_fire_ranged_now(),
 		"recoil": current_recoil,

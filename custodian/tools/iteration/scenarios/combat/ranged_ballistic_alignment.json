@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "id": "combat/ranged_ballistic_alignment",
-  "description": "Committed Carbine snap-fire keeps the physical weapon axis while intent reverses.",
+  "description": "Committed Carbine snap-fire keeps its authored visual sector while the projectile remains centered on the trigger-time accepted aim point.",
   "scene": "res://scenes/debug/combat_playground.tscn",
   "seed": 104729,
   "duration_ticks": 180,
@@ -50,6 +50,6 @@
     {"type": "output_exists", "path": "telemetry.json", "severity": "error"},
     {"type": "probe_compare", "probe": "operator_aim", "tick": 72, "field": "visible_visual_anchor_delta_px", "op": "lte", "value": 1.0, "severity": "error"}
   ],
-  "stable_fingerprint": {"event_payload_fields": {"player_ranged_shot": ["accepted_aim_direction", "ballistic_direction", "final_shot_direction", "aim_error_degrees"]}, "counters": ["player_ranged_shots_fired"], "probes": ["operator_aim"], "position_quantum_px": 0.25, "float_quantum": 0.0001},
-  "tags": ["combat", "ranged", "ballistic_aim", "snap_fire", "operator_animation", "ranged_reticle"]
+  "stable_fingerprint": {"event_payload_fields": {"player_ranged_shot": ["accepted_aim_direction", "accepted_aim_world_position", "ballistic_direction", "final_shot_direction"]}, "counters": ["player_ranged_shots_fired"], "probes": ["operator_aim"], "position_quantum_px": 0.25, "float_quantum": 0.0001},
+  "tags": ["combat", "ranged", "intent_aim", "snap_fire", "operator_animation", "ranged_reticle"]
 }

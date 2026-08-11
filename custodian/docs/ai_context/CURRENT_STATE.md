@@ -54,19 +54,16 @@ Documentation updates this session:
   3/4/5 px assist on top of unchanged 7/9/11 px authored drive, then freeze.
   Existing `move_and_slide()` drive, hitbox damage, and parry-critical capture
   remain separate authorities; hard lock remains deferred.
-- Primary Carbine fire now separates accepted trigger intent from release-time
-  ballistic authority. The committed fire sector survives cursor reversal.
-  Reviewed E/W/SE/SW tracks sample the current frame-aware grip-to-muzzle axis;
-  uncovered N/NE/S/NW animation/frame resolution now fails closed to committed
-  input instead of consuming a stale or generic barrel transform. Complete
-  eight-octant calibration remains open because authored upper-body aim/fire
-  coverage is incomplete.
-  Phase-1 fine correction is absolute, bounded to ±24 degrees, and pursues the
-  desired correction with a frame-rate-independent response of 20.0. The existing
-  48x48 ranged reticle remains cursor/controller intent; a separate procedural
-  16x16 ballistic pip predicts current muzzle-axis depth/obstruction without
-  damage authority and distinguishes aligned, tracking, lagging, unresolved,
-  and obstructed severity. Physical `bullet.gd` travel and collision remain final.
+- Ranged fire now uses one player-intent ballistic authority. Trigger acceptance
+  captures the desired world aim point and commits the nearest authored visual
+  sector, so cursor reversal cannot twist the delayed fire animation. At release,
+  frame-aware sockets supply only muzzle position; the zero-spread direction is
+  recomputed from that muzzle through the accepted aim point, then symmetric
+  movement/heat/recoil spread applies. The 48x48 intent reticle is the sole
+  production ranged reticle; the former ballistic pip, prediction status, and
+  alignment gauges are retired. Grip/muzzle/ejection/layering sockets and their
+  debug calibration overlay remain useful presentation infrastructure, while
+  physical `bullet.gd` travel and collision remain final authority.
 - Procgen now classifies every final in-map non-floor cell as explicit `chasm` or claimed `ocean` semantic state without consulting wall dressing. Sundered Keep emits the first bounded north-facing ocean claim; resolved cells paint visual-only 32×32 dark water and unambiguous cardinal foam on absolute-depth surface layers while the existing final-floor `RuntimeWalkableBoundary` remains physical authority. Ocean/chasm sets export through level data and survive accepted-candidate promotion unchanged. The seam-safe camera-following depth backdrop remains live rather than switching to finite connected-region stacks.
 - Generated procgen walkable floor now has a global non-destructible cardinal-edge collision frontier built after final playability remediation; contiguous edges merge into one runtime body rather than filling void cells, and visual/destructible cliff walls no longer act as the traversal security perimeter. Sundered Keep frontages emit and validate a separating vista commit line plus terminal apron across production seeds. Its procgen camera now keeps one continuous horizon-to-fortress envelope through the 90% return anchor, targets generated Keep semantics, holds fortress apex for 0.9 seconds without freezing movement, scales the distant Keep to 0.44, and plays the existing six-frame moonlight sweep once at fortress apex.
 - The Sundered Keep procgen vista layering pass now cools and recedes the first

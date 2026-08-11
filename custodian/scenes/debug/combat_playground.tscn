@@ -7,7 +7,6 @@
 [ext_resource type="Script" uid="uid://cyoadqv7g5hc6" path="res://game/world/camera.gd" id="9_camera"]
 [ext_resource type="Script" path="res://game/ui/hud/ui.gd" id="10_ui"]
 [ext_resource type="PackedScene" path="res://game/ui/hud/components/ranged_reticle.tscn" id="11_ranged_reticle"]
-[ext_resource type="PackedScene" path="res://game/ui/hud/components/ranged_ballistic_pip.tscn" id="12_ballistic_pip"]
 
 [sub_resource type="RectangleShape2D" id="wall_horiz"]
 size = Vector2(800, 12)
@@ -112,8 +111,6 @@ script = ExtResource("9_camera")
 script = ExtResource("10_ui")
 
 [node name="RangedReticle" parent="UI" instance=ExtResource("11_ranged_reticle")]
-
-[node name="RangedBallisticPip" parent="UI" instance=ExtResource("12_ballistic_pip")]
 
 [node name="DroneManager" type="Node" parent="World" unique_id=2136447624]
 script = ExtResource("8_drone_mgr")
