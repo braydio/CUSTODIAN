@@ -52,22 +52,65 @@ func _run() -> void:
 	scene_root.add_child(target)
 	await process_frame
 	grunt.set_physics_process(false)
+	var body_sprite := grunt.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
 	_assert_near(float(grunt.get("grunt_falcon_punch_windup_time")), 0.75, 0.001, "live grunt should use the longer Falcon tell")
+	_assert_near(float(grunt.get("grunt_falcon_punch_tracking_lock_sec")), 0.25, 0.001, "live grunt should lock Falcon tracking for the final quarter-second")
 	_assert_near(float(grunt.get("grunt_falcon_punch_recovery_time")), 0.70, 0.001, "live grunt should use the longer punish recovery")
 	_assert_near(float(grunt.get("grunt_falcon_punch_recovery_speed")), 0.0, 0.001, "live grunt recovery should have zero forward drift")
 	_assert_near(float(grunt.get("grunt_falcon_punch_stop_short_px")), 28.0, 0.001, "live grunt should target a stop-short contact point")
 	_assert_near(float(grunt.get("grunt_falcon_punch_hit_forward_reach_px")), 42.0, 0.001, "live grunt should have practical forward contact grace")
 	_assert_near(float(grunt.get("grunt_falcon_punch_hit_lateral_reach_px")), 30.0, 0.001, "live grunt should have practical lateral contact grace")
+	for animation_name in [&"special_windup_e", &"special_windup_w"]:
+		_assert_true(body_sprite.sprite_frames.get_frame_count(animation_name) == 6, "%s should retain six frames" % animation_name)
+		_assert_near(body_sprite.sprite_frames.get_animation_speed(animation_name), 8.0, 0.0001, "%s should span the 0.75s windup" % animation_name)
+	for animation_name in [&"special_inflight_e", &"special_inflight_w"]:
+		_assert_true(body_sprite.sprite_frames.get_frame_count(animation_name) == 6, "%s should retain six frames" % animation_name)
+		_assert_near(body_sprite.sprite_frames.get_animation_speed(animation_name), 21.428571, 0.0001, "%s should span the 0.28s leap" % animation_name)
+	for animation_name in [&"special_recovery_e", &"special_recovery_w"]:
+		_assert_true(body_sprite.sprite_frames.get_frame_count(animation_name) == 6, "%s should retain six frames" % animation_name)
+		_assert_near(body_sprite.sprite_frames.get_animation_speed(animation_name), 8.571429, 0.0001, "%s should span the 0.70s recovery" % animation_name)
 
 	grunt.global_position = Vector2.ZERO
 	grunt.set("target", target)
 	grunt.set("grunt_falcon_punch_enabled", true)
+	grunt.call("_start_grunt_falcon_punch_windup", Vector2.RIGHT)
+	target.global_position = Vector2(80.0, 80.0)
+	grunt.call("_update_grunt_falcon_punch_attack", 0.20)
+	var early_direction := grunt.get("_grunt_falcon_punch_direction") as Vector2
+	_assert_true(early_direction.y > 0.5, "early Falcon windup should still track target movement")
+	target.global_position = Vector2(112.0, 0.0)
+	grunt.call("_update_grunt_falcon_punch_attack", 0.31)
+	_assert_true(bool(grunt.get("_grunt_falcon_punch_tracking_locked")), "Falcon should lock when the final 0.25s commitment window begins")
+	var locked_direction := grunt.get("_grunt_falcon_punch_locked_direction") as Vector2
+	_assert_true(locked_direction.x > 0.9, "Falcon should capture its eastward direction at commitment")
+	if observatory != null:
+		_assert_true(int(observatory.get("counters").get("falcon_punch_tracking_locks", 0)) == 1, "Falcon tracking lock counter should increment exactly once")
+	target.global_position = Vector2(-112.0, 0.0)
+	grunt.call("_update_grunt_falcon_punch_attack", 0.10)
+	_assert_true((grunt.get("_grunt_falcon_punch_direction") as Vector2).is_equal_approx(locked_direction), "moving behind Falcon after commitment must not retarget it")
+	_assert_true(String(body_sprite.animation) == "special_windup_e", "locked windup presentation should retain its committed direction")
+	grunt.call("_update_grunt_falcon_punch_attack", 0.20)
+	_assert_true(StringName(grunt.get("_grunt_falcon_punch_phase")) == &"leap", "committed Falcon should enter leap")
+	_assert_true((grunt.get("_grunt_falcon_punch_direction") as Vector2).is_equal_approx(locked_direction), "leap must use the locked direction")
+	_assert_true(String(body_sprite.animation) == "special_inflight_e", "leap transition should atomically select its inflight presentation")
+	if observatory != null:
+		var leap_events := observatory.call("get_recent_events", 20, &"grunt_falcon_punch_leap") as Array
+		var leap_data := (leap_events.back() as Dictionary).get("data", {}) as Dictionary if not leap_events.is_empty() else {}
+		_assert_true(String(leap_data.get("presentation_animation", "")) == "special_inflight_e", "leap telemetry should report active inflight presentation")
+		_assert_true(String(leap_data.get("expected_animation", "")) == "special_inflight_e", "leap telemetry should report expected inflight presentation")
+		_assert_true(bool(leap_data.get("presentation_matches_phase", false)), "leap telemetry should confirm phase/presentation agreement")
+		_assert_true(bool(leap_data.get("tracking_locked", false)), "leap telemetry should retain commitment state")
+	grunt.call("_finish_grunt_falcon_punch_attack", &"debug_lock_test_complete")
+	grunt.global_position = Vector2.ZERO
+	target.global_position = Vector2(112.0, 0.0)
 	grunt.set("grunt_falcon_punch_windup_time", 0.02)
+	grunt.set("grunt_falcon_punch_tracking_lock_sec", 0.005)
 	grunt.set("grunt_falcon_punch_leap_time", 0.20)
 	grunt.set("grunt_falcon_punch_impact_lock_time", 0.01)
 	grunt.set("grunt_falcon_punch_recovery_time", 0.04)
 	grunt.set("grunt_falcon_punch_distance_px", 120.0)
 	grunt.set("grunt_falcon_punch_cooldown", 0.0)
+	grunt.set("_grunt_falcon_punch_cooldown_timer", 0.0)
 	grunt.set("grunt_falcon_punch_chance", 1.0)
 	grunt.set("grunt_falcon_punch_after_normal_attacks_min", 0)
 	grunt.set("grunt_falcon_punch_victim_hitstop", 0.0)
@@ -75,7 +118,6 @@ func _run() -> void:
 	grunt.set("_grunt_falcon_punch_decision_credit", 1.0)
 
 	_assert_true(bool(grunt.call("_attack_grunt_falcon_punch_target", 0.016)), "grunt should start falcon-punch attack in launch band")
-	var body_sprite := grunt.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
 	_assert_true(String(grunt.get("_grunt_falcon_punch_phase")) == "windup", "falcon punch should start in windup")
 	_assert_true(body_sprite != null and String(body_sprite.animation) == "special_windup_e", "windup should use special_windup_e")
 	target.global_position = Vector2(80.0, 80.0)

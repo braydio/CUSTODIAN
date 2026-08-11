@@ -61,32 +61,32 @@ const ANIMATION_SPECS := {
 	},
 	"special_windup_e": {
 		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__special_windup_01__e__6f__96.png",
-		"fps": 18.0,
+		"fps": 8.0,
 		"loop": false,
 	},
 	"special_windup_w": {
 		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__special_windup_01__w__6f__96.png",
-		"fps": 18.0,
+		"fps": 8.0,
 		"loop": false,
 	},
 	"special_inflight_e": {
 		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__special_inflight_01__e__6f__96.png",
-		"fps": 18.0,
+		"fps": 21.428571,
 		"loop": false,
 	},
 	"special_inflight_w": {
 		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__special_inflight_01__w__6f__96.png",
-		"fps": 18.0,
+		"fps": 21.428571,
 		"loop": false,
 	},
 	"special_recovery_e": {
 		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__special_recovery_01__e__6f__96.png",
-		"fps": 18.0,
+		"fps": 8.571429,
 		"loop": false,
 	},
 	"special_recovery_w": {
 		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__special_recovery_01__w__6f__96.png",
-		"fps": 18.0,
+		"fps": 8.571429,
 		"loop": false,
 	},
 	"crit_s": {

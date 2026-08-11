@@ -333,6 +333,7 @@ For the local exported-session report tool, run from the repository root:
 ```bash
 python3 -m py_compile custodian/tools/analysis/analyze_dev_observatory_session.py
 python3 custodian/tools/analysis/analyze_dev_observatory_session.py /path/to/latest_session.json
+python3 custodian/tools/validation/dev_observatory_falcon_report_smoke.py
 ```
 
 After sourcing the repo aliases, `obsreport` runs the same analyzer and discovers
@@ -355,9 +356,7 @@ godot --headless --path . --script res://tools/validation/operator_modular_defen
 godot --headless --path . --script res://tools/validation/operator_knockdown_animation_smoke.gd
 ```
 
-The Falcon smoke validates stop-short travel, body/enemy separation, dedicated Operator impact, zero-drift recovery,
-hard parry cancel/lockout, deterministic eligibility, ally-lane rejection, terminal diagnostic fields, and seven stationary
-connection samples at each of 96, 136, and 176 pixels. The focused reaction smoke validates required S/E/W asset dimensions, independent post-knockback roots through enter/hold/recover, normal target-ring suppression through recovery, BREACH/ring lifetime, posture-break/expiry frame timing, offsets, auto-free, and toggle suppression, atomic reservation, approach-owned directional selection with vertical-to-south fallback, zero-offset shared execution roots, zero-local paired layers plus transform restoration, same-tick semantic playback through the nonuniform eight-frame duration table, source-frame-5 exactly-once damage, the 110ms paired contact freeze, final-settle ownership, lethal/nonlethal resolution, and cancellation cleanup. The debug-spawn smoke validates each critical-open/execution-ready preset, opportunity presentation, one-health lethal setup, and unknown-mode rejection. Paired/open and optional-bookend runtime scenes are preloaded and fail loudly if their scene or strip contract is missing; the optional toggle controls playback rather than resource availability.
+The Falcon smoke validates phase-matched six-frame playback, early tracking, the final 250ms immutable commitment, same-transition-tick presentation telemetry, stop-short travel, body/enemy separation, dedicated Operator impact, zero-drift recovery, hard parry cancel/lockout, deterministic eligibility, ally-lane rejection, terminal diagnostic fields, and seven stationary connection samples at each of 96, 136, and 176 pixels. The Python Falcon report smoke validates grouped lifecycle, lock/presentation/spatial output and explicit presentation-desync reporting without requiring a live export. The focused reaction smoke validates required S/E/W asset dimensions, independent post-knockback roots through enter/hold/recover, normal target-ring suppression through recovery, BREACH/ring lifetime, posture-break/expiry frame timing, offsets, auto-free, and toggle suppression, atomic reservation, approach-owned directional selection with vertical-to-south fallback, zero-offset shared execution roots, zero-local paired layers plus transform restoration, same-tick semantic playback through the nonuniform eight-frame duration table, source-frame-5 exactly-once damage, the 110ms paired contact freeze, final-settle ownership, lethal/nonlethal resolution, and cancellation cleanup. The debug-spawn smoke validates each critical-open/execution-ready preset, opportunity presentation, one-health lethal setup, and unknown-mode rejection. Paired/open and optional-bookend runtime scenes are preloaded and fail loudly if their scene or strip contract is missing; the optional toggle controls playback rather than resource availability.
 
 For Sundered Keep asset wiring specifically:
 

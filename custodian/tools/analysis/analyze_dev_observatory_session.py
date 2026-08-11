@@ -668,6 +668,93 @@ def _overheat_failure_summary(
     }
 
 
+def _append_falcon_punch_diagnostics(
+    lines: list[str], events: Sequence[Mapping[str, Any]]
+) -> None:
+    falcon_kinds = {
+        "grunt_falcon_punch_windup",
+        "grunt_falcon_punch_tracking_locked",
+        "grunt_falcon_punch_leap",
+        "grunt_falcon_punch_hit_resolved",
+        "grunt_falcon_punch_impact_lock",
+        "grunt_falcon_punch_recovery",
+        "grunt_falcon_punch_finished",
+        "grunt_falcon_punch_presentation_desync",
+    }
+    grouped: dict[str, list[Mapping[str, Any]]] = {}
+    for event in events:
+        if str(event.get("kind", "")) not in falcon_kinds:
+            continue
+        grouped.setdefault(_attack_id(event) or "legacy/missing", []).append(event)
+
+    lines.extend(["", "FALCON PUNCH DIAGNOSTICS", "-" * 48])
+    if not grouped:
+        lines.append("  none retained")
+        return
+
+    parry_expired = any(str(event.get("kind", "")) == "player_parry_expired" for event in events)
+    failed_react = any(str(event.get("kind", "")) == "player_failed_parry_hitreact" for event in events)
+    falcon_parry = any(
+        str(event.get("kind", "")) in {"falcon_punch_parried", "falcon_reversal_started"}
+        for event in events
+    )
+    for attack_id, attack_events in grouped.items():
+        lifecycle = [str(event.get("kind", "")).removeprefix("grunt_falcon_punch_") for event in attack_events]
+        by_kind = {str(event.get("kind", "")): _event_data(event) for event in attack_events}
+        terminal = by_kind.get("grunt_falcon_punch_hit_resolved", {})
+        merged: dict[str, Any] = {}
+        for event in attack_events:
+            merged.update(_event_data(event))
+        windup = by_kind.get("grunt_falcon_punch_windup", {})
+        leap = by_kind.get("grunt_falcon_punch_leap", {})
+        impact = by_kind.get("grunt_falcon_punch_impact_lock", {})
+        desync = by_kind.get("grunt_falcon_punch_presentation_desync")
+        lines.extend([
+            f"  attack ID                    {attack_id}",
+            f"  lifecycle                    {' -> '.join(lifecycle)}",
+            f"  result                       {terminal.get('result', merged.get('result', 'unknown'))}",
+            f"  launch distance              {_format_value(merged.get('launch_distance'))}",
+            f"  direction                    {_format_position(merged.get('direction'))}",
+        ])
+        if "tracking_locked" in merged or "tracking_lock_sec" in merged:
+            lines.extend([
+                f"  tracking locked              {merged.get('tracking_locked', False)}",
+                f"  tracking lock                final {_format_value(merged.get('tracking_lock_sec'))}s",
+                f"  locked direction             {_format_position(merged.get('locked_direction'))}",
+                f"  lock target position         {_format_position(merged.get('lock_target_position'))}",
+            ])
+        else:
+            lines.append("  tracking lock telemetry      unavailable (legacy session)")
+        lines.extend([
+            "  windup animation/frame       %s / %s" % (windup.get("presentation_animation", "unavailable"), _format_value(windup.get("presentation_frame"))),
+            "  leap animation/frame         %s / %s" % (leap.get("presentation_animation", "unavailable"), _format_value(leap.get("presentation_frame"))),
+            "  impact animation/frame       %s / %s" % (impact.get("presentation_animation", "unavailable"), _format_value(impact.get("presentation_frame"))),
+            f"  expected presentation        {merged.get('expected_animation', 'unavailable')}",
+            f"  presentation matches phase   {merged.get('presentation_matches_phase', 'unavailable')}",
+            f"  closest approach             {_format_value(merged.get('closest_approach'))}",
+            f"  target distance active start {_format_value(merged.get('target_distance_at_active_start'))}",
+            f"  lateral error                {_format_value(merged.get('lateral_error'))}",
+            f"  stop-short distance          {_format_value(merged.get('stop_short_distance'))}",
+            f"  collision obstructed         {merged.get('collision_obstructed', 'unavailable')}",
+            f"  player dodge phase           {merged.get('player_dodge_phase', 'unavailable')}",
+            f"  spatial validity             {_spatial_status(merged)}",
+        ])
+        if desync is None:
+            lines.append("  PRESENTATION DESYNC          no")
+        else:
+            lines.extend([
+                "  PRESENTATION DESYNC          YES",
+                f"    phase                      {desync.get('phase', 'unknown')}",
+                f"    presentation animation     {desync.get('presentation_animation', 'unknown')}",
+                f"    expected animation         {desync.get('expected_animation', 'unknown')}",
+                f"    presentation frame         {_format_value(desync.get('presentation_frame'))}",
+            ])
+        if terminal.get("result") == "damaged" and parry_expired and failed_react and not falcon_parry:
+            lines.append("  parry context                 parry expired before Falcon contact; hit resolved as damage")
+            lines.append("                                (descriptive retained-window context; not exact ID correlation)")
+        lines.append("")
+
+
 def build_report(
     payload: Mapping[str, Any],
     source: Path,
@@ -886,6 +973,7 @@ def build_report(
         "  " + _ordered_counts(attack_lifecycle, ["started", "active", "terminal"]),
     ])
 
+    _append_falcon_punch_diagnostics(lines, events)
     _append_enemy_hit_spatial_sections(lines, events)
 
     _append_performance_incident_section(lines, payload)

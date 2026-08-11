@@ -168,6 +168,7 @@ var melee_impact_audio_profile: String = "body"
 @export var grunt_optional_critical_vfx_enabled: bool = true
 @export var grunt_falcon_punch_enabled: bool = false
 @export var grunt_falcon_punch_windup_time: float = 0.75
+@export var grunt_falcon_punch_tracking_lock_sec: float = 0.25
 @export var grunt_falcon_punch_leap_time: float = 0.28
 @export var grunt_falcon_punch_impact_lock_time: float = 0.08
 @export var grunt_falcon_punch_recovery_time: float = 0.70
@@ -367,6 +368,9 @@ var _grunt_falcon_punch_active_start_target_distance: float = -1.0
 var _grunt_falcon_punch_closest_approach: float = INF
 var _grunt_falcon_punch_lateral_error: float = 0.0
 var _grunt_falcon_punch_collision_obstructed: bool = false
+var _grunt_falcon_punch_tracking_locked: bool = false
+var _grunt_falcon_punch_locked_direction: Vector2 = Vector2.RIGHT
+var _grunt_falcon_punch_lock_target_position: Vector2 = Vector2.ZERO
 var _savage_chain_phase: StringName = &""
 var _savage_chain_timer: float = 0.0
 var _savage_chain_direction: Vector2 = Vector2.RIGHT
@@ -999,6 +1003,9 @@ func _start_grunt_falcon_punch_windup(direction: Vector2) -> void:
 	_grunt_falcon_punch_direction = direction.normalized() if direction.length_squared() > 0.0001 else _last_move_direction.normalized()
 	if _grunt_falcon_punch_direction.length_squared() <= 0.0001:
 		_grunt_falcon_punch_direction = Vector2.RIGHT
+	_grunt_falcon_punch_tracking_locked = false
+	_grunt_falcon_punch_locked_direction = _grunt_falcon_punch_direction
+	_grunt_falcon_punch_lock_target_position = (target as Node2D).global_position if target is Node2D and is_instance_valid(target) else Vector2.ZERO
 	_grunt_falcon_punch_start_position = global_position
 	_grunt_falcon_punch_hit_targets.clear()
 	_last_move_direction = _grunt_falcon_punch_direction
@@ -1007,6 +1014,19 @@ func _start_grunt_falcon_punch_windup(direction: Vector2) -> void:
 		_update_custom_enemy_animation(_grunt_falcon_punch_direction, true, false)
 	_obs_increment(&"falcon_punch_attempts")
 	_log_grunt_falcon_punch_event(&"grunt_falcon_punch_windup")
+	_audit_grunt_falcon_punch_presentation()
+
+
+func _lock_grunt_falcon_punch_tracking() -> void:
+	if _grunt_falcon_punch_tracking_locked:
+		return
+	_grunt_falcon_punch_tracking_locked = true
+	_grunt_falcon_punch_locked_direction = _grunt_falcon_punch_direction
+	if target is Node2D and is_instance_valid(target):
+		_grunt_falcon_punch_lock_target_position = (target as Node2D).global_position
+	_obs_increment(&"falcon_punch_tracking_locks")
+	_log_grunt_falcon_punch_event(&"grunt_falcon_punch_tracking_locked")
+	_audit_grunt_falcon_punch_presentation()
 
 
 func _update_grunt_falcon_punch_attack(delta: float) -> bool:
@@ -1019,7 +1039,14 @@ func _update_grunt_falcon_punch_attack(delta: float) -> bool:
 	_grunt_falcon_punch_timer = maxf(0.0, _grunt_falcon_punch_timer - delta)
 	match _grunt_falcon_punch_phase:
 		&"windup":
-			_retarget_grunt_falcon_punch_windup()
+			if not _grunt_falcon_punch_tracking_locked:
+				_retarget_grunt_falcon_punch_windup()
+				if _grunt_falcon_punch_timer <= clampf(
+					grunt_falcon_punch_tracking_lock_sec,
+					0.0,
+					grunt_falcon_punch_windup_time
+				):
+					_lock_grunt_falcon_punch_tracking()
 			velocity = _grunt_falcon_punch_direction * speed * grunt_falcon_punch_windup_speed_multiplier
 			move_and_slide()
 			_last_move_direction = _grunt_falcon_punch_direction
@@ -1050,18 +1077,22 @@ func _update_grunt_falcon_punch_attack(delta: float) -> bool:
 
 
 func _start_grunt_falcon_punch_leap() -> void:
-	_retarget_grunt_falcon_punch_windup()
+	if not _grunt_falcon_punch_tracking_locked:
+		_retarget_grunt_falcon_punch_windup()
+		_lock_grunt_falcon_punch_tracking()
+	_grunt_falcon_punch_direction = _grunt_falcon_punch_locked_direction
 	_grunt_falcon_punch_phase = &"leap"
 	_grunt_falcon_punch_timer = maxf(0.01, grunt_falcon_punch_leap_time)
 	_grunt_falcon_punch_start_position = global_position
 	_grunt_falcon_punch_current_distance = grunt_falcon_punch_distance_px
-	if target is Node2D and is_instance_valid(target):
-		var desired_contact_point := (target as Node2D).global_position - _grunt_falcon_punch_direction * grunt_falcon_punch_stop_short_px
+	if _grunt_falcon_punch_tracking_locked:
+		var desired_contact_point := _grunt_falcon_punch_lock_target_position - _grunt_falcon_punch_direction * grunt_falcon_punch_stop_short_px
 		var projected_distance := maxf(0.0, (desired_contact_point - global_position).dot(_grunt_falcon_punch_direction))
 		_grunt_falcon_punch_current_distance = minf(grunt_falcon_punch_distance_px, projected_distance)
-	_log_grunt_falcon_punch_event(&"grunt_falcon_punch_leap")
 	if _uses_custom_enemy_animation_set():
 		_update_custom_enemy_animation(_grunt_falcon_punch_direction, false, true)
+	_log_grunt_falcon_punch_event(&"grunt_falcon_punch_leap")
+	_audit_grunt_falcon_punch_presentation()
 
 
 func _retarget_grunt_falcon_punch_windup() -> void:
@@ -1105,9 +1136,10 @@ func _start_grunt_falcon_punch_impact_lock() -> void:
 	_grunt_falcon_punch_phase = &"impact_lock"
 	_grunt_falcon_punch_timer = maxf(0.01, grunt_falcon_punch_impact_lock_time)
 	velocity = Vector2.ZERO
-	_log_grunt_falcon_punch_event(&"grunt_falcon_punch_impact_lock")
 	if _uses_custom_enemy_animation_set():
 		_update_custom_enemy_animation(_grunt_falcon_punch_direction, false, true)
+	_log_grunt_falcon_punch_event(&"grunt_falcon_punch_impact_lock")
+	_audit_grunt_falcon_punch_presentation()
 
 
 func _start_grunt_falcon_punch_recovery() -> void:
@@ -1115,9 +1147,10 @@ func _start_grunt_falcon_punch_recovery() -> void:
 	_grunt_falcon_punch_timer = maxf(0.01, grunt_falcon_punch_recovery_time)
 	velocity = Vector2.ZERO
 	_separate_from_target_after_contact(target as Node2D if target is Node2D else null)
-	_log_grunt_falcon_punch_event(&"grunt_falcon_punch_recovery")
 	if _uses_custom_enemy_animation_set():
 		_update_custom_enemy_animation(_grunt_falcon_punch_direction, false, false)
+	_log_grunt_falcon_punch_event(&"grunt_falcon_punch_recovery")
+	_audit_grunt_falcon_punch_presentation()
 
 
 func _finish_grunt_falcon_punch_attack(result_override: StringName = &"") -> void:
@@ -1136,6 +1169,9 @@ func _finish_grunt_falcon_punch_attack(result_override: StringName = &"") -> voi
 	_grunt_falcon_punch_current_distance = grunt_falcon_punch_distance_px
 	_grunt_falcon_punch_attack_id = ""
 	_grunt_falcon_punch_impact_confirmed = false
+	_grunt_falcon_punch_tracking_locked = false
+	_grunt_falcon_punch_locked_direction = Vector2.RIGHT
+	_grunt_falcon_punch_lock_target_position = Vector2.ZERO
 	_release_engagement_token()
 	velocity = Vector2.ZERO
 	if _uses_directional_animation_set():
@@ -1318,10 +1354,30 @@ func _log_grunt_falcon_punch_event(event_name: StringName) -> void:
 	_obs_log(event_name, _get_grunt_falcon_punch_telemetry())
 
 
+func _audit_grunt_falcon_punch_presentation() -> void:
+	if _grunt_falcon_punch_phase.is_empty() or not _uses_custom_enemy_animation_set() or animated_sprite == null:
+		return
+	var expected := GRUNT_ANIMATION_LIBRARY.get_grunt_falcon_punch_phase_animation(
+		_grunt_falcon_punch_phase,
+		_grunt_falcon_punch_direction
+	)
+	if expected.is_empty() or String(animated_sprite.animation) == String(expected):
+		return
+	_obs_increment(&"falcon_punch_presentation_desync")
+	_obs_log(&"grunt_falcon_punch_presentation_desync", _get_grunt_falcon_punch_telemetry())
+
+
 func _get_grunt_falcon_punch_telemetry() -> Dictionary:
 	var dodge_phase := "unknown"
 	if target != null and is_instance_valid(target) and target.has_method("get_dodge_telemetry_phase"):
 		dodge_phase = String(target.call("get_dodge_telemetry_phase"))
+	var expected_animation := &""
+	if not _grunt_falcon_punch_phase.is_empty():
+		expected_animation = GRUNT_ANIMATION_LIBRARY.get_grunt_falcon_punch_phase_animation(
+			_grunt_falcon_punch_phase,
+			_grunt_falcon_punch_direction
+		)
+	var presentation_animation := String(animated_sprite.animation) if animated_sprite != null else ""
 	return {
 		"attack_id": _grunt_falcon_punch_attack_id,
 		"attacker_id": get_instance_id(),
@@ -1341,6 +1397,18 @@ func _get_grunt_falcon_punch_telemetry() -> Dictionary:
 		"player_dodge_phase": dodge_phase,
 		"collision_obstructed": _grunt_falcon_punch_collision_obstructed,
 		"stop_short_distance": grunt_falcon_punch_stop_short_px,
+		"windup_duration": grunt_falcon_punch_windup_time,
+		"phase_timer_remaining": _grunt_falcon_punch_timer,
+		"windup_progress": clampf(1.0 - (_grunt_falcon_punch_timer / maxf(0.01, grunt_falcon_punch_windup_time)), 0.0, 1.0) if _grunt_falcon_punch_phase == &"windup" else 1.0,
+		"tracking_lock_sec": grunt_falcon_punch_tracking_lock_sec,
+		"tracking_locked": _grunt_falcon_punch_tracking_locked,
+		"locked_direction": _grunt_falcon_punch_locked_direction,
+		"lock_target_position": _grunt_falcon_punch_lock_target_position,
+		"presentation_animation": presentation_animation,
+		"presentation_frame": animated_sprite.frame if animated_sprite != null else -1,
+		"presentation_playing": animated_sprite.is_playing() if animated_sprite != null else false,
+		"expected_animation": String(expected_animation),
+		"presentation_matches_phase": expected_animation.is_empty() or (animated_sprite != null and presentation_animation == String(expected_animation)),
 	}
 
 

@@ -239,6 +239,12 @@ write to the export or change runtime state.
 - Falcon Punch tracks attempts, hits, parries, whiffs, and cancellations separately. Its ordinary `impact_lock` is hit-confirmed; a committed-leap parry hard-cancels Falcon movement, prefers the immediate paired Falcon Reversal when a complete authored direction is available, and otherwise falls back to the ordinary parry-critical opportunity. Neither path may emit a successful-impact lock. Falcon Reversal adds correlated start/impact/completion/cancellation events without replacing the existing `falcon_punch_parried` counter.
 - Falcon Punch terminal telemetry includes launch distance, target distance at active-frame start, closest approach,
   lateral error, player dodge phase, collision obstruction, and configured stop-short distance.
+- Falcon Punch phase telemetry also carries windup progress, the final tracking-lock duration/direction/target point,
+  and the actual versus expected authored animation/frame. Phase-entry events are emitted only after presentation is
+  synchronized. A transition-only `grunt_falcon_punch_presentation_desync` diagnostic records any mismatch without
+  adding per-frame event noise. The text analyzer groups retained Falcon events by `attack_id` under `FALCON PUNCH
+  DIAGNOSTICS`, including lifecycle, lock state, presentation agreement, terminal geometry, and descriptive failed-parry
+  context when the retained window supports it; older exports remain readable with unavailable fields identified.
 - Falcon Punch also publishes mutually exclusive detail counters for damaged, iframe-dodged, blocked, parried, and whiffed terminals.
 - Parry telemetry covers started, active, expired, success, miss-feedback spawn, and failed-parry hit-react transitions. Grunt opportunity telemetry covers vulnerable-window opened, consumed, and expired; paired execution separately counts player critical starts and confirmed hits.
 - Player death snapshots include health, pre-death-reset stamina, carried Field Patches, accumulated low-health patch availability, last damage/attack kinds, nearby enemy count, and active enemy count.
