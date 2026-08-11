@@ -252,6 +252,14 @@ write to the export or change runtime state.
 - The report labels retained terminal-event totals, retained unique terminal IDs, cumulative incoming-hit results, and cumulative whiff terminals separately. Incoming-hit results exclude whiffs.
 - Stuck-pocket remediation warnings include pocket ID, center cell, cell count, blocker source, and remediation action.
 
+## Procgen Render-Isolation Contract (2026-08-11)
+
+- Developer-mode `F2` is the first-stage procgen performance-attribution switch. It replaces the older fullscreen-atmosphere visibility toggle; atmosphere remains at its production default during this test.
+- Every live `ProcGenTilemap` registers in `procgen_render_isolation` and caches only its major presentation owners: `DepthBackdrop`, `Floor`, `Walls`, `NonWalkableSurfaceBase`, and `NonWalkableSurfaceOverlay`.
+- The switch changes `CanvasItem.visible` on those five cached branches only. It never disables `NavigationRegion2D`, generated state, navigation, collision bodies/shapes, AI, enemies, generation, foliage, props, decals, or special-room/vista presentation.
+- Observatory gauges are `render_procgen_major_visuals_enabled`, `render_procgen_floor_enabled`, `render_procgen_walls_enabled`, and `render_procgen_depth_backdrop_enabled`. They report attribution state; they do not control it.
+- Production and developer defaults keep all procgen major visuals enabled. This is diagnostic isolation, not an optimization or shipping graphics option.
+
 ## Field Patch Affordance Contract (2026-07-18)
 
 - Below 50% health with at least one carried patch, the gameplay HUD shows and pulses `FIELD PATCH READY [P]`.

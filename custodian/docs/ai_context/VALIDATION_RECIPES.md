@@ -283,12 +283,13 @@ godot --headless --path . --script res://tools/validation/loot_toast_queue_smoke
 godot --headless --path . --script res://tools/validation/operator_ammo_reconciliation_smoke.gd
 godot --headless --path . --script res://tools/validation/operator_dodge_overlap_telemetry_smoke.gd
 godot --headless --path . --script res://tools/validation/dev_mode_smoke.gd
+godot --headless --path . --script res://tools/validation/procgen_render_isolation_smoke.gd
 godot --headless --path . --script res://tools/validation/sector_heatmap_smoke.gd
 godot --headless --path . --script res://tools/validation/material_intelligence_smoke.gd
 godot --headless --path . --script res://tools/validation/power_grid_component_registration_smoke.gd
 ```
 
-The base Observatory smoke asserts exclusive F9 ownership, one non-echo pressed-edge visibility alternation, unchanged pause/time scale, page-independent capture, zero F9/page scans, one-shot explicit World sampling, and one scan per export. The incident smoke injects explicit microsecond ticks (never sleeps for a synthetic stall), verifies 51-second external-stall exclusion, retains an ordinary focused gameplay hitch, proves time-scale independence, prevents automatic retriggering during sustained degradation, and verifies the three-second recovery rearm contract. In a restricted environment, point `XDG_DATA_HOME` at a writable temporary directory.
+The base Observatory smoke asserts exclusive F9 ownership, one non-echo pressed-edge visibility alternation, unchanged pause/time scale, page-independent capture, zero F9/page scans, one-shot explicit World sampling, and one scan per export. The procgen render-isolation smoke verifies that F2 hides only `DepthBackdrop`, `Floor`, `Walls`, `NonWalkableSurfaceBase`, and `NonWalkableSurfaceOverlay`; navigation, runtime collision, props, foliage, AI, and generated state remain live. The incident smoke injects explicit microsecond ticks (never sleeps for a synthetic stall), verifies 51-second external-stall exclusion, retains an ordinary focused gameplay hitch, proves time-scale independence, prevents automatic retriggering during sustained degradation, and verifies the three-second recovery rearm contract. In a restricted environment, point `XDG_DATA_HOME` at a writable temporary directory.
 
 This proves bounded telemetry storage, F9/F10 action registration, stable and timestamped JSON output, JSON-safe Variant
 conversion, event-buffer retention, success-event logging, failure-warning routing, numeric accumulation, and basic heatmap accumulation.

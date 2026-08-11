@@ -52,6 +52,7 @@ func _init() -> void:
 			failures.append("DevMode must load before debug systems")
 
 	for action_key in [
+		["debug_toggle_procgen_major_visuals", KEY_F2],
 		["debug_free_camera", KEY_F6],
 		["debug_infinite_health", KEY_F7],
 		["debug_infinite_stamina", KEY_F8],
@@ -66,6 +67,7 @@ func _init() -> void:
 			)
 
 	for method_name in [
+		"set_procgen_major_visuals_visible",
 		"set_debug_free_camera_enabled",
 		"set_infinite_health_enabled",
 		"set_infinite_stamina_enabled",

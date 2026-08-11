@@ -663,10 +663,19 @@ var _generation_prop_rejections_protected_zone: int = 0
 var _generation_prop_rejections_stuck_risk: int = 0
 var _generation_prop_rejections_existing_blocker: int = 0
 var _generation_prop_collision_alignment_warnings: int = 0
+var _procgen_major_visuals_visible: bool = true
 
 func _ready() -> void:
 	if not generation_output_enabled:
 		return
+	add_to_group("procgen_render_isolation")
+	_cache_procgen_major_visual_items()
+	var dev_mode := get_node_or_null("/root/DevMode")
+	if dev_mode != null and dev_mode.has_method("get_playtest_controls"):
+		var controls := dev_mode.call("get_playtest_controls") as Dictionary
+		set_procgen_major_visuals_visible(
+			bool(controls.get("procgen_major_visuals", true))
+		)
 	add_to_group("procgen_tilemap")
 	add_to_group("procgen_walkability_provider")
 	add_to_group("terrain_ballistics_provider")
@@ -698,6 +707,53 @@ func _ready() -> void:
 
 	if procgen_node:
 		procgen_node.finished.connect(_on_procgen_finished)
+
+
+func _cache_procgen_major_visual_items() -> void:
+	var map_root := get_parent()
+	if map_root == null:
+		return
+	if depth_backdrop == null:
+		depth_backdrop = map_root.get_node_or_null("DepthBackdrop") as ProcgenDepthBackdrop
+	if floor_tilemap == null:
+		floor_tilemap = map_root.get_node_or_null("NavigationRegion2D/Floor") as TileMapLayer
+	if walls_tilemap == null:
+		walls_tilemap = map_root.get_node_or_null("NavigationRegion2D/Walls") as TileMapLayer
+	if nonwalkable_surface_base_tilemap == null:
+		nonwalkable_surface_base_tilemap = map_root.get_node_or_null(
+			"NavigationRegion2D/NonWalkableSurfaceBase"
+		) as TileMapLayer
+	if nonwalkable_surface_overlay_tilemap == null:
+		nonwalkable_surface_overlay_tilemap = map_root.get_node_or_null(
+			"NavigationRegion2D/NonWalkableSurfaceOverlay"
+		) as TileMapLayer
+
+
+func set_procgen_major_visuals_visible(enabled: bool) -> void:
+	_procgen_major_visuals_visible = enabled
+	_cache_procgen_major_visual_items()
+	for item in [
+		depth_backdrop,
+		floor_tilemap,
+		walls_tilemap,
+		nonwalkable_surface_base_tilemap,
+		nonwalkable_surface_overlay_tilemap,
+	]:
+		var canvas_item := item as CanvasItem
+		if canvas_item != null:
+			canvas_item.visible = enabled
+
+
+func get_procgen_render_isolation_status() -> Dictionary:
+	_cache_procgen_major_visual_items()
+	return {
+		"major_visuals_enabled": _procgen_major_visuals_visible,
+		"floor_enabled": floor_tilemap == null or floor_tilemap.visible,
+		"walls_enabled": walls_tilemap == null or walls_tilemap.visible,
+		"depth_backdrop_enabled": depth_backdrop == null or depth_backdrop.visible,
+		"nonwalkable_base_enabled": nonwalkable_surface_base_tilemap == null or nonwalkable_surface_base_tilemap.visible,
+		"nonwalkable_overlay_enabled": nonwalkable_surface_overlay_tilemap == null or nonwalkable_surface_overlay_tilemap.visible,
+	}
 
 
 func _process(delta: float) -> void:

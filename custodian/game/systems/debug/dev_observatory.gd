@@ -1093,6 +1093,11 @@ func _sample_runtime_gauges(
 
 func _sample_render_state_gauges() -> void:
 	var atmosphere_enabled := false
+	var procgen_major_visuals_enabled := false
+	var procgen_floor_enabled := false
+	var procgen_walls_enabled := false
+	var procgen_depth_backdrop_enabled := false
+	var procgen_map_count := 0
 
 	var atmospheres := get_tree().get_nodes_in_group(
 		"render_world_atmosphere"
@@ -1111,6 +1116,28 @@ func _sample_render_state_gauges() -> void:
 		if atmosphere_enabled:
 			break
 
+	for procgen_map in get_tree().get_nodes_in_group(
+		"procgen_render_isolation"
+	):
+		if procgen_map == null \
+				or not is_instance_valid(procgen_map) \
+				or not procgen_map.has_method(
+					"get_procgen_render_isolation_status"
+				):
+			continue
+		procgen_map_count += 1
+		var status := procgen_map.call(
+			"get_procgen_render_isolation_status"
+		) as Dictionary
+		procgen_major_visuals_enabled = procgen_major_visuals_enabled \
+			or bool(status.get("major_visuals_enabled", false))
+		procgen_floor_enabled = procgen_floor_enabled \
+			or bool(status.get("floor_enabled", false))
+		procgen_walls_enabled = procgen_walls_enabled \
+			or bool(status.get("walls_enabled", false))
+		procgen_depth_backdrop_enabled = procgen_depth_backdrop_enabled \
+			or bool(status.get("depth_backdrop_enabled", false))
+
 	var directional_enabled := (
 		_count_enabled_render_lights(
 			"render_directional_light"
@@ -1126,6 +1153,22 @@ func _sample_render_state_gauges() -> void:
 		atmosphere_enabled
 	)
 	set_gauge(
+		&"render_procgen_major_visuals_enabled",
+		procgen_major_visuals_enabled
+	)
+	set_gauge(
+		&"render_procgen_floor_enabled",
+		procgen_floor_enabled
+	)
+	set_gauge(
+		&"render_procgen_walls_enabled",
+		procgen_walls_enabled
+	)
+	set_gauge(
+		&"render_procgen_depth_backdrop_enabled",
+		procgen_depth_backdrop_enabled
+	)
+	set_gauge(
 		&"render_directional_light_enabled",
 		directional_enabled
 	)
@@ -1136,7 +1179,9 @@ func _sample_render_state_gauges() -> void:
 
 	var isolation_mode := "production"
 
-	if not atmosphere_enabled and directional_enabled:
+	if procgen_map_count > 0 and not procgen_major_visuals_enabled:
+		isolation_mode = "procgen_major_visuals_off"
+	elif not atmosphere_enabled and directional_enabled:
 		isolation_mode = "atmosphere_off"
 	elif not directional_enabled:
 		isolation_mode = "lighting_reduced"
