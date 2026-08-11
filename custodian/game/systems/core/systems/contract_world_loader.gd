@@ -774,6 +774,8 @@ func _build_tutorial_resource_candidate_tiles(level_data: Dictionary, map_instan
 		if seen.has(tile):
 			continue
 		seen[tile] = true
+		if _is_protected_world_presentation_tile(map_instance, tile):
+			continue
 		if not _is_walkable_floor_tile(map_instance, tile):
 			continue
 		if compound_rect.size.x > 0 and compound_rect.size.y > 0 and compound_rect.has_point(tile):
@@ -787,8 +789,13 @@ func _build_tutorial_resource_candidate_tiles(level_data: Dictionary, map_instan
 
 	if candidates.is_empty():
 		for tile_variant in raw_tiles:
-			if tile_variant is Vector2i and _is_walkable_floor_tile(map_instance, tile_variant as Vector2i):
-				candidates.append(tile_variant as Vector2i)
+			if not tile_variant is Vector2i:
+				continue
+			var tile := tile_variant as Vector2i
+			if _is_protected_world_presentation_tile(map_instance, tile):
+				continue
+			if _is_walkable_floor_tile(map_instance, tile):
+				candidates.append(tile)
 	candidates.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
 		var a_score := _stable_resource_tile_score(a, spawn_tile)
 		var b_score := _stable_resource_tile_score(b, spawn_tile)
@@ -870,6 +877,8 @@ func _is_fallback_expedition_resource_candidate(
 ) -> bool:
 	if compound_rect.size.x > 0 and compound_rect.size.y > 0 and compound_rect.has_point(tile):
 		return false
+	if _is_protected_world_presentation_tile(map_instance, tile):
+		return false
 	if road_tiles.has(tile) or parking_tiles.has(tile):
 		return false
 	if _is_excluded_resource_region(_get_map_region_type(map_instance, tile)):
@@ -877,6 +886,17 @@ func _is_fallback_expedition_resource_candidate(
 	if not _is_walkable_floor_tile(map_instance, tile):
 		return false
 	return _count_walkable_neighbors(map_instance, tile) >= 3
+
+
+func _is_protected_world_presentation_tile(
+	map_instance: Node,
+	tile: Vector2i
+) -> bool:
+	return (
+		map_instance != null
+		and map_instance.has_method("is_sundered_keep_frontage_protected")
+		and bool(map_instance.call("is_sundered_keep_frontage_protected", tile))
+	)
 
 
 func _pick_expedition_resource_tile(candidates: Array[Vector2i], placed_tiles: Array[Vector2i], preset_index: int) -> Vector2i:

@@ -23,6 +23,7 @@ const RETURN_OVERLAP_REBUILD_GRACE_MSEC := 250
 var _triggered := false
 var _approach_enter_deferred := false
 var _sprite: Sprite2D = null
+var _marker_diamond: Polygon2D = null
 var _main_map: Node = null
 var _entry_snapshot: Dictionary = {}
 var _awaiting_body_exit_after_return := false
@@ -536,16 +537,23 @@ func _ensure_visual() -> void:
 	_sprite.modulate = Color(0.48, 0.70, 0.86, 0.42)
 	add_child(_sprite)
 
-	var marker := Polygon2D.new()
-	marker.name = "IngressMarkerDiamond"
-	marker.color = Color(0.48, 0.70, 0.86, 0.28)
-	marker.polygon = PackedVector2Array([
+	_marker_diamond = Polygon2D.new()
+	_marker_diamond.name = "IngressMarkerDiamond"
+	_marker_diamond.color = Color(0.48, 0.70, 0.86, 0.28)
+	_marker_diamond.polygon = PackedVector2Array([
 		Vector2(-28, 0),
 		Vector2(0, -16),
 		Vector2(28, 0),
 		Vector2(0, 16),
 	])
-	add_child(marker)
+	add_child(_marker_diamond)
+
+
+func set_ingress_marker_visible(is_visible: bool) -> void:
+	if _sprite != null:
+		_sprite.visible = is_visible
+	if _marker_diamond != null:
+		_marker_diamond.visible = is_visible
 
 
 func _observe(event_name: StringName, payload: Dictionary) -> void:

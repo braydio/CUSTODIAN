@@ -144,17 +144,32 @@ func _capture_seed(seed_value: int) -> void:
 	)
 	var frame_specs := [
 		{
-			"name": "first_reveal",
+			"name": "entry",
+			"marker": "FrontageEntry",
+			"zoom": Vector2(0.90, 0.90),
+		},
+		{
+			"name": "camera_takeover",
+			"marker": "FirstCameraInfluenceStart",
+			"zoom": Vector2(0.86, 0.86),
+		},
+		{
+			"name": "first_reveal_apex",
 			"marker": "FirstRevealApex",
 			"zoom": Vector2(0.78, 0.78),
 		},
 		{
-			"name": "frontage_apex",
+			"name": "fortress_apex",
 			"marker": "FrontageApex",
 			"zoom": Vector2(0.74, 0.74),
 		},
 		{
-			"name": "gate_approach",
+			"name": "gameplay_return",
+			"marker": "GameplayReturn",
+			"zoom": Vector2(0.86, 0.86),
+		},
+		{
+			"name": "terminal_approach",
 			"marker": "GateThreshold",
 			"zoom": Vector2(0.90, 0.90),
 		},
@@ -168,7 +183,7 @@ func _capture_seed(seed_value: int) -> void:
 		) as Marker2D
 		camera.global_position = (
 			focus.global_position
-			if spec["name"] != "gate_approach"
+			if spec["name"] != "terminal_approach"
 			else marker.global_position + Vector2(0.0, -110.0)
 		)
 		camera.zoom = spec["zoom"]

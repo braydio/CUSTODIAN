@@ -98,6 +98,20 @@ func _run() -> void:
 			not presentation_clearance.is_empty(),
 			"seed %d has no presentation clearance" % seed_value
 		)
+		var route_centerline: Array = frontage.get("route_centerline", [])
+		if not route_centerline.is_empty():
+			var gameplay_return_index := clampi(
+				int(round(float(route_centerline.size() - 1) * 0.90)),
+				0,
+				route_centerline.size() - 1
+			)
+			_assert(
+				presentation_clearance.has(
+					route_centerline[gameplay_return_index]
+				),
+				"seed %d presentation clearance ends before gameplay return"
+				% seed_value
+			)
 		var cliffs: Dictionary = frontage.get("cliff_cells", {})
 		_assert(
 			not (frontage.get("vista_commit_cells", {}) as Dictionary).is_empty(),

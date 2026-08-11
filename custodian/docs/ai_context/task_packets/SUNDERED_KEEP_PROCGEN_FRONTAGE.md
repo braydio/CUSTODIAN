@@ -77,6 +77,12 @@
   seed-1 proof is in `reports/sundered_keep_layering_review_20260810_final/`.
 - Blockers or open questions: production art may still require later human
   composition tuning; structural V1 uses existing approved Vista assets. The
+  2026-08-11 cohesion pass reunifies the wall/citadel under one fortress anchor,
+  extends camera-path dressing clearance, suppresses ordinary procgen clutter
+  and the ingress marker during takeover without changing gameplay authority,
+  adds deterministic Keep floor skinning, and replaces opaque foam
+  squares with transparent edge fringes. Renderer evidence remains required
+  before calling coastline/fortress cohesion visually approved. The
   existing Moment Forge first-reveal scenario intentionally remains a legacy
   authored-approach regression. Production visual evidence lives in
   `reports/sundered_keep_procgen_frontage/`. Descending Ward remains deferred:

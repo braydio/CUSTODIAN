@@ -2,6 +2,7 @@ extends SceneTree
 
 const TILESET_PATH := "res://content/tiles/tilesets/procgen_world_tileset.tres"
 const SOURCE_IDS := [124, 125, 126, 127, 128]
+const FRONTAGE_FLOOR_SOURCE_IDS := [129, 130, 131, 132]
 
 var _errors: Array[String] = []
 
@@ -35,6 +36,15 @@ func _run() -> void:
 				_assert(tile_data.get_collision_polygons_count(layer) == 0, "ocean source %d owns collision" % source_id)
 			for layer in range(tile_set.get_navigation_layers_count()):
 				_assert(tile_data.get_navigation_polygon(layer) == null, "ocean source %d owns navigation" % source_id)
+		for source_id in FRONTAGE_FLOOR_SOURCE_IDS:
+			_assert(tile_set.has_source(source_id), "missing Sundered Keep frontage floor source %d" % source_id)
+			if not tile_set.has_source(source_id):
+				continue
+			var source := tile_set.get_source(source_id) as TileSetAtlasSource
+			_assert(source != null and source.texture != null, "frontage floor source %d has no texture" % source_id)
+			if source != null and source.texture != null:
+				_assert(source.texture.get_size() == Vector2(32, 32), "frontage floor source %d is not 32x32" % source_id)
+		_assert_foam_overlay_alpha(tile_set)
 	if _errors.is_empty():
 		print("[ProcgenOceanTilesetSmoke] PASS ids=124-128 size=32x32 frames=1")
 		quit(0)
@@ -47,3 +57,20 @@ func _run() -> void:
 func _assert(condition: bool, message: String) -> void:
 	if not condition:
 		_errors.append(message)
+
+
+func _assert_foam_overlay_alpha(tile_set: TileSet) -> void:
+	for source_id in [125, 126, 127, 128]:
+		var source := tile_set.get_source(source_id) as TileSetAtlasSource
+		var image := source.texture.get_image() if source != null and source.texture != null else null
+		_assert(image != null and not image.is_empty(), "foam overlay failed to load from source %d" % source_id)
+		if image == null or image.is_empty():
+			continue
+		_assert(image.get_size() == Vector2i(32, 32), "foam overlay source %d is not 32x32" % source_id)
+		var occupied := 0
+		for y in range(image.get_height()):
+			for x in range(image.get_width()):
+				if image.get_pixel(x, y).a > 0.01:
+					occupied += 1
+		var coverage := float(occupied) / float(image.get_width() * image.get_height())
+		_assert(coverage <= 0.30, "foam overlay source %d still reads as a full square (%0.3f)" % [source_id, coverage])

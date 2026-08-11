@@ -4,7 +4,7 @@
 
 Live runtime authority: yes. One `WorldSimulationRuntime` in `game.tscn` owns clock, kernel, session/world, snapshots, command ingress, and resolution. Python parity v2 covers seeds 1/2 at ticks 0/1/10/100 for resources, limited-bootstrap inventory/stocks, policies, strategic power load, and logistics with canonical SHA-256; Python remains offline only. Pure Godot coverage includes commands, pause/catch-up, snapshot restore, Command Post failure, repair/fabrication foundations, and exactly-once outcomes. Adapter-only systems are local power delivery, physical `WaveManager` spawning, and `FabPipeline` delivery. Relays, systemic random events, full assaults, wear, fidelity, ambient fabrication, and full Python repair semantics are not yet ported.
 
-Last updated: 2026-08-10
+Last updated: 2026-08-11
 
 Documentation updates this session:
 - Created `design/02_features/factions/FACTION_EXPRESSION_SYSTEM.md` — full implementation spec from Faction Continuity Audit findings, covering taxonomy lock, canonical IDs, gameplay boundaries, roster reduction, data model, migration order, and Sundered Keep vertical slice.
@@ -72,10 +72,20 @@ Documentation updates this session:
 - The Sundered Keep procgen vista layering pass now cools and recedes the first
   landmark during frontage takeover, fades the reveal veil nearly away, and
   presents the outer wall/citadel as a smaller blue-gray distant mass. The
-  redundant GateShadow plate is removed; the ordinary route fade remains the
+  fortress root now owns their world anchor once, preserving the reviewed
+  scene-local composition instead of separating its pieces through gameplay
+  wall/tower anchors. Cinematic clearance follows 94% of the generated route
+  with wider apex protection. Ordinary procgen foliage/ruin-prop/progress-marker
+  presentation and the ingress marker hide only while vista camera authority is
+  active; their collision, interaction, and runtime state remain live. The
+  irregular generated frontage floor is deterministically skinned with existing
+  cliff-rock, wet flagstone, and gate stone tiles; ocean foam is now a narrow
+  transparent fringe rather than four opaque 32x32 water squares. The redundant
+  GateShadow plate is removed; the ordinary route fade remains the
   transition authority. Storm fitting now covers semantic camera travel as well
-  as the viewport, eliminating exposed finite plate edges. Renderer review did
-  not justify adding Descending Ward, so it remains deferred.
+  as the viewport, eliminating exposed finite plate edges. Descending Ward
+  remains deferred; fortress spatial cohesion and coastline integration are
+  still subject to renderer review rather than assumed from headless smokes.
 
 - Developer Observatory owns one non-echo F9 presentation edge and never pauses or changes time scale. Its wall-clock Performance Incident Recorder is independent of overlay pages; opening F9 freezes an active incident before bounded rendering. Focus, pause, overlay, capture, and reset boundaries invalidate the clock origin, while >=2-second external stalls remain exported but cannot contaminate gameplay statistics or auto-triggering. Automatic capture latches for one degraded episode and rearms only after three continuous seconds below 25 ms. F10 performs one final tree scan, builds one frozen `custodian.dev_observatory.performance_incident.v1` payload, and writes it to both timestamped and stable paths. The overlay refreshes at 2 Hz on Performance and 4 Hz elsewhere, avoids unchanged text assignment, caps rows/events/value length, and exposes build/text/line/refresh gauges.
 - Loot pickup feedback now has one HUD-owned `LootToastQueue` mounted beneath the top-left HUD. Parts, cognitive items, stolen vault resources, ammo, and Field Patches retain their existing world-space floating text but also publish a shared accent/icon/detail toast; matching entries merge within `0.75s`, four entries remain visible, and stolen resources render one summary detail line. The queue and merge contract have a focused smoke.

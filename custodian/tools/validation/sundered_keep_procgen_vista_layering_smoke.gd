@@ -48,6 +48,12 @@ func _run() -> void:
 	_assert(citadel != null and citadel.scale.is_equal_approx(Vector2(0.33, 0.33)), "central citadel must retain reviewed distant scale")
 	_assert(wall != null and wall.modulate.is_equal_approx(Color(0.40, 0.48, 0.58, 1.0)), "outer wall must retain distant secondary palette")
 	_assert(citadel != null and citadel.modulate.is_equal_approx(Color(0.44, 0.51, 0.61, 1.0)), "central citadel must retain distant hero palette")
+	_assert(wall != null and wall.position.is_equal_approx(Vector2(-150.0, -80.0)), "outer wall local composition was overwritten by semantic world anchors")
+	_assert(citadel != null and citadel.position.is_equal_approx(Vector2(160.0, -150.0)), "central citadel local composition was overwritten by semantic world anchors")
+	presentation.call("_set_ingress_presentation_visible", false)
+	_assert(not ingress.visible, "ingress presentation must hide during vista camera ownership")
+	presentation.call("_set_ingress_presentation_visible", true)
+	_assert(ingress.visible, "ingress presentation must restore after vista camera release")
 	presentation.set("_camera_state", {"first_enter_progress": 1.0, "frontage_enter_progress": 1.0})
 	presentation.call("_apply_visual_state", 1.0, 1.0)
 	var landmark := presentation.get_node_or_null("VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/DistantKeep") as Sprite2D

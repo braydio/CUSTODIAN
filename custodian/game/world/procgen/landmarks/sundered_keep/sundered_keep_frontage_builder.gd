@@ -133,13 +133,20 @@ func build_frontage(
 	var presentation_clearance_cells: Dictionary = {}
 	var presentation_limit := maxi(
 		1,
-		int(round(float(route_centerline.size()) * 0.52))
+		int(round(float(route_centerline.size()) * 0.94))
 	)
 	for index in presentation_limit:
 		_add_disc(
 			presentation_clearance_cells,
 			route_centerline[index],
-			8,
+			9,
+			map_size
+		)
+	for apex_ratio in [0.32, 0.76]:
+		_add_disc(
+			presentation_clearance_cells,
+			_sample_centerline(route_centerline, apex_ratio),
+			15,
 			map_size
 		)
 	_merge_lookup(presentation_clearance_cells, hard_clearance_cells)

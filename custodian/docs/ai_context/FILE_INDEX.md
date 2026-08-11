@@ -1,6 +1,6 @@
 # FILE INDEX — CUSTODIAN
 
-Last updated: 2026-08-10
+Last updated: 2026-08-11
 
 ## Enemy Hit Spatial Diagnostics
 
@@ -268,13 +268,13 @@ Last updated: 2026-08-10
 - `custodian/game/world/procgen/runtime_walkable_boundary_chunk.gd` — merged non-destructible collision segments derived from final authoritative generated floor frontiers; independent of visual/destructible wall dressing
 - `design/02_features/procgen/NONWALKABLE_SURFACE_REGIONS.md`, `custodian/game/world/procgen/terrain/nonwalkable_surface_classifier.gd`, and `custodian/docs/ai_context/task_packets/PROCGEN_NONWALKABLE_SURFACES.md` — active complete non-floor CHASM/OCEAN authority, deterministic claim classifier, and implementation/evidence handoff
 - `custodian/game/world/procgen/proc_gen_map.tscn` `NonWalkableSurfaceBase` / `NonWalkableSurfaceOverlay` — absolute-depth, presentation-only ocean fill/shore TileMaps; semantic cells and RuntimeWalkableBoundary remain authority
-- `custodian/game/world/vistas/sundered_keep/sundered_keep_procgen_vista_presentation.tscn` and `.gd` — production collision-free distant ocean/storm/fortress presentation, horizontally clipped from resolved ocean geography with floor-derived fallback, hidden unless the Operator is inside frontage influence, and rendered below generated gameplay
+- `custodian/game/world/vistas/sundered_keep/sundered_keep_procgen_vista_presentation.tscn` and `.gd` — production collision-free distant ocean/storm/fortress presentation, horizontally clipped from resolved ocean geography with floor-derived fallback, hidden unless the Operator is inside frontage influence, rendered below generated gameplay, and responsible for camera-owned ingress-marker suppression plus one-root fortress composition
 - `custodian/game/world/vistas/sundered_keep/sundered_keep_world_vista.tscn` and `.gd` — superseded presentation-only overlook implementation retained as historical reference
 - `custodian/tools/validation/sundered_keep_procgen_frontage_smoke.gd` — 24-seed structural/determinism/variation smoke plus integrated generated-map checks for route width, reachability, dressing/site exclusion, terminal ingress, border-wall pruning, and forbidden authored authority
 - `custodian/tools/validation/sundered_keep_procgen_vista_layering_smoke.gd` — production authority/layering smoke for generated frontage route placement, collision-free clipped vista hierarchy, negative presentation depth, and non-overlap with playable-floor bounds
-- `custodian/tools/validation/{procgen_nonwalkable_surface_smoke,procgen_ocean_tileset_smoke}.gd` — complete/exclusive deterministic surface classification with wall independence, plus five-source 32×32 static visual-only ocean TileSet validation
+- `custodian/tools/validation/{procgen_nonwalkable_surface_smoke,procgen_ocean_tileset_smoke}.gd` — complete/exclusive deterministic surface classification with wall independence, plus five-source 32×32 visual-only ocean validation, sparse foam-alpha coverage, and registered Keep frontage floor sources 129–132
 - `custodian/tools/validation/sundered_keep_world_vista_smoke.gd` — semantic presentation smoke proving both forward/reverse camera envelopes, 2560×1440 storm/void coverage, behind-gameplay fortress layers, procgen/Operator continuity, and no collision, cliff-lip, fixed stage, or rectangular authority
-- `custodian/tools/validation/sundered_keep_procgen_frontage_seed_review.gd` — renderer-backed eight-seed 2560×1440 review tool writing overview, first-reveal, frontage-apex, and gate-approach PNGs plus `manifest.json` under `reports/sundered_keep_procgen_frontage/`; the old World Vista reviewer path is a compatibility entry point
+- `custodian/tools/validation/sundered_keep_procgen_frontage_seed_review.gd` — renderer-backed eight-seed 2560×1440 review tool writing entry, camera-takeover, first-reveal-apex, fortress-apex, gameplay-return, terminal-approach, and overview PNGs plus `manifest.json` under `reports/sundered_keep_procgen_frontage/`; the old World Vista reviewer path is a compatibility entry point
 - `custodian/tools/level_authoring/` — CLI scaffold request/generator/entry script, `route_validation_registry_view.gd`, and templates for managed production/playtest/authoring levels, collision-backed exits, transactional route create/append, and full proposed-graph validation before writes
 - `design/04_architecture/AUTHORED_LEVEL_AUTHORING_PIPELINE.md`, `design/04_architecture/ROUTE_TRAVERSAL_SYSTEM.md`, and `design/02_features/level_authoring/AUTHORED_LEVEL_AUTHORING_PIPELINE_CODE.md` — active level and route ownership/implementation contracts
 - `custodian/content/levels/levels.json` and `custodian/content/levels/sundered_keep/{vista_approach,return_causeway,front_gate}.json` — distinct registered Sundered node definitions; Vista Approach and Front Gate are production while Return Causeway is debug-only

@@ -142,6 +142,10 @@ const TERRAIN_TILESET_SOURCES := {
 	"bridge_metal_mid_horizontal_32": {"source_id": 121, "layer": "floor"},
 	"bridge_metal_mid_vertical_32": {"source_id": 122, "layer": "floor"},
 	"bridge_broken_segment_32": {"source_id": 123, "layer": "floor"},
+	"sundered_keep_cliff_rock_floor_01": {"source_id": 129, "layer": "floor"},
+	"sundered_keep_cliff_rock_floor_cracked_01": {"source_id": 130, "layer": "floor"},
+	"sundered_keep_main_courtyard_flagstone_wet_01": {"source_id": 131, "layer": "floor"},
+	"sundered_keep_main_gate_threshold_stone_01": {"source_id": 132, "layer": "floor"},
 }
 const NONWALKABLE_SURFACE_TILESET_SOURCES := {
 	"sundered_keep_ocean_dark_water_01": 124,
@@ -1089,6 +1093,7 @@ func _fill_tilemaps() -> void:
 	else:
 		_marks["floor_value_clusters"] = 0
 	_last = Time.get_ticks_msec()
+	_apply_sundered_keep_frontage_floor_visuals()
 	_audit_sundered_keep_frontage_required_floor()
 	_refresh_depth_backdrop()
 
@@ -4074,6 +4079,41 @@ func _apply_sundered_keep_frontage_region_metadata() -> void:
 			)
 
 
+func _apply_sundered_keep_frontage_floor_visuals() -> void:
+	if _sundered_keep_frontage.is_empty() or floor_tilemap == null:
+		return
+	var gate_anchor: Vector2i = _sundered_keep_frontage.get(
+		"gate_anchor",
+		Vector2i.ZERO
+	)
+	var terminal_apron: Dictionary = _sundered_keep_frontage.get(
+		"terminal_apron_cells",
+		{}
+	)
+	for cell_variant in (
+		_sundered_keep_frontage.get("floor_cells", {}) as Dictionary
+	).keys():
+		if not cell_variant is Vector2i:
+			continue
+		var cell := cell_variant as Vector2i
+		if not _generated_floor_cells.has(cell):
+			continue
+		var distance_to_gate := cell.distance_to(gate_anchor)
+		var tile_id := "sundered_keep_cliff_rock_floor_01"
+		var variation := _tile_noise_hash(cell + Vector2i(2861, 1877)) % 11
+		if terminal_apron.has(cell) or distance_to_gate <= 5.5:
+			tile_id = "sundered_keep_main_gate_threshold_stone_01"
+		elif distance_to_gate <= 18.0:
+			tile_id = (
+				"sundered_keep_main_courtyard_flagstone_wet_01"
+				if variation < 8
+				else "sundered_keep_cliff_rock_floor_cracked_01"
+			)
+		elif variation < 3:
+			tile_id = "sundered_keep_cliff_rock_floor_cracked_01"
+		_apply_terrain_tile_visual(cell, tile_id)
+
+
 func is_sundered_keep_frontage_protected(cell: Vector2i) -> bool:
 	if _sundered_keep_frontage.is_empty():
 		return false
@@ -4086,6 +4126,18 @@ func is_sundered_keep_frontage_protected(cell: Vector2i) -> bool:
 		if (_sundered_keep_frontage.get(key, {}) as Dictionary).has(cell):
 			return true
 	return false
+
+
+func set_sundered_keep_vista_clutter_visible(is_visible: bool) -> void:
+	# Presentation-only suppression while the vista camera owns the frame.
+	# Terrain, collision, navigation, interactions, and spawned state stay live.
+	for parent in [
+		_foliage_parent,
+		_ruin_prop_parent,
+		_world_progress_marker_parent,
+	]:
+		if parent != null and is_instance_valid(parent):
+			(parent as CanvasItem).visible = is_visible
 
 
 func _get_sundered_keep_frontage_protected_cells() -> Dictionary:
@@ -4608,12 +4660,7 @@ func _place_story_rooms(map_size: Vector2i) -> void:
 
 func _get_sundered_keep_site_exclusion_cells() -> Array[Vector2i]:
 	var result: Array[Vector2i] = []
-	for cell_variant in (
-		_sundered_keep_frontage.get(
-			"fortress_exclusion_cells",
-			{}
-		) as Dictionary
-	).keys():
+	for cell_variant in _get_sundered_keep_frontage_protected_cells().keys():
 		if cell_variant is Vector2i:
 			result.append(cell_variant as Vector2i)
 	return result
@@ -7217,6 +7264,8 @@ func _min_distance_squared_to_portals(tile: Vector2i, existing_portals: Array[Pr
 func _is_safe_portal_tile(pos: Vector2i, map_size: Vector2i) -> bool:
 	if not is_valid_spawn_cell(pos):
 		return false
+	if is_sundered_keep_frontage_protected(pos):
+		return false
 	if _is_inside_ruin_prop_clearance(pos):
 		return false
 	if _foliage_nodes.has(pos):
@@ -7336,6 +7385,8 @@ func _has_clear_portal_floor_footprint(pos: Vector2i, map_size: Vector2i) -> boo
 			if tile.x <= 1 or tile.y <= 1 or tile.x >= map_size.x - 2 or tile.y >= map_size.y - 2:
 				return false
 			if not is_valid_spawn_cell(tile):
+				return false
+			if is_sundered_keep_frontage_protected(tile):
 				return false
 			if _generated_wall_cells.has(tile):
 				return false

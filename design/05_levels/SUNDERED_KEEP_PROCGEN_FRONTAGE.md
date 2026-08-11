@@ -3,7 +3,7 @@
 - **Status:** active production authority; layering review required
 - **Owner:** generated Sundered Keep frontage and distant reveal
 - **Runtime:** `custodian/` Godot 4.x
-- **Last updated:** 2026-08-09
+- **Last updated:** 2026-08-11
 
 ## Production Boundary
 
@@ -85,6 +85,22 @@ citadel use the established distant blue-gray palette at reduced `0.35` and
 the ordinary route fade owns the generated-frontage-to-authored-approach handoff.
 The existing Descending Ward remains an optional review follow-up rather than an
 automatically stacked layer.
+The fortress presentation root is positioned once from
+`fortress_front_anchor`; the outer wall and citadel retain their reviewed
+scene-local offsets and are not pulled apart by gameplay-scale wall/tower
+anchors. Generated frontage floor keeps its irregular authoritative footprint
+but uses deterministic Keep cliff-rock, wet flagstone, and gate-threshold
+sources so the Operator reads as standing on land. Cardinal ocean foam sources
+are sparse transparent edge overlays rather than opaque water tiles.
+
+The cinematic dressing-clearance envelope follows 94% of the generated route,
+with wider discs at the first and fortress apexes. Foliage, ruin props,
+interactables using normal spawn eligibility, and corridor encounter selection
+consume the same protected frontage query; encounter content remains available
+in unprotected side pockets. While the vista owns the camera, ordinary procgen
+foliage, ruin-prop, and world-progress presentation layers plus the generated
+ingress marker are hidden without disabling collision, interaction, navigation,
+or spawned runtime state; all are restored when gameplay framing returns.
 The storm underlay fit covers the full semantic reveal-to-fortress subject
 travel in addition to the zoomed viewport and safety margin; exposing a finite
 plate edge during the camera handoff is a visual failure.
@@ -130,7 +146,8 @@ and exact world/camera restoration on exit or failure.
 
 ## Next Agent Slice
 
-Capture and visually approve entry, takeover, first apex, fortress apex,
-gameplay return, and terminal-apron frames across production seeds and viewport
-sizes. Extend clip geometry only from generated boundary metadata; do not
-replace procgen gameplay authority with a full-map presentation plate.
+Review the cohesion pass at entry, takeover, first apex, fortress apex,
+gameplay return, and terminal apron across production seeds and viewport sizes.
+Tune presentation-only local offsets or floor-source weighting only if the
+fortress, shoreline, or land mass still reads poorly; do not alter camera
+choreography, generated floor geometry, route topology, or traversal authority.

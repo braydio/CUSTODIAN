@@ -380,6 +380,13 @@ bash tools/validation/run_procgen_validation_suite.sh
 bash tools/validation/run_route_pipeline_suite.sh
 ```
 
+The ocean TileSet smoke also validates that cardinal foam sources remain sparse
+transparent overlays and that Keep frontage floor sources 129–132 resolve as
+static native 32x32 tiles. For renderer acceptance, use
+`sundered_keep_procgen_frontage_seed_review.gd`; it records entry, camera
+takeover, first reveal apex, fortress apex, gameplay return, and terminal
+approach frames without changing the production camera choreography.
+
 These smokes prove complete exclusive deterministic chasm/ocean semantics,
 visual-only 32×32 Sundered ocean TileSet sources, protected procgen floor/corridor authority, a merged
 non-destructible physical frontier around authoritative walkable cells, no

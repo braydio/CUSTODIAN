@@ -190,18 +190,6 @@ func _layout_from_semantic_anchors() -> void:
 	).lerp(fortress_anchor, 0.55)
 	_horizon.global_position = horizon_anchor
 	_fortress.global_position = fortress_anchor
-	var wall_anchor: Variant = visual.get("wall_run_anchor")
-	if wall_anchor is Vector2i:
-		_fortress.get_node("OuterWall").global_position = (
-			_tile_to_world(wall_anchor as Vector2i)
-			+ Vector2(0.0, -80.0)
-		)
-	var tower_anchor: Variant = visual.get("tower_anchor_a")
-	if tower_anchor is Vector2i:
-		_fortress.get_node("CentralCitadel").global_position = (
-			_tile_to_world(tower_anchor as Vector2i)
-			+ Vector2(120.0, -150.0)
-		)
 	_fit_presentation_to_viewport()
 	_configure_exterior_clip()
 	_update_presentation_bounds()
@@ -352,9 +340,11 @@ func _apply_camera_state(
 		if _camera_owned:
 			_release_camera()
 		return
-	if not _camera_owned and _camera.has_method("set_follow_target"):
-		_camera.call("set_follow_target", _presentation_anchor)
+	if not _camera_owned:
+		if _camera.has_method("set_follow_target"):
+			_camera.call("set_follow_target", _presentation_anchor)
 		_camera_owned = true
+		_set_ingress_presentation_visible(false)
 	if _camera.has_method("set_presentation_bounds_override"):
 		_camera.call(
 			"set_presentation_bounds_override",
@@ -375,6 +365,7 @@ func _apply_camera_state(
 
 
 func _release_camera() -> void:
+	_set_ingress_presentation_visible(true)
 	if _camera == null or not is_instance_valid(_camera):
 		_camera_owned = false
 		return
@@ -385,6 +376,24 @@ func _release_camera() -> void:
 	if _camera.has_method("clear_presentation_bounds_override"):
 		_camera.call("clear_presentation_bounds_override")
 	_camera_owned = false
+
+
+func _set_ingress_presentation_visible(is_visible: bool) -> void:
+	if _map_instance != null \
+			and is_instance_valid(_map_instance) \
+			and _map_instance.has_method(
+				"set_sundered_keep_vista_clutter_visible"
+			):
+		_map_instance.call(
+			"set_sundered_keep_vista_clutter_visible",
+			is_visible
+		)
+	if _ingress == null or not is_instance_valid(_ingress):
+		return
+	if _ingress.has_method("set_ingress_marker_visible"):
+		_ingress.call("set_ingress_marker_visible", is_visible)
+	else:
+		_ingress.visible = is_visible
 
 
 func _fit_presentation_to_viewport(
