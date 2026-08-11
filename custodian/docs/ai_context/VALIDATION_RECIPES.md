@@ -346,6 +346,8 @@ For authored parry critical-open phases and paired execution:
 cd custodian
 godot --headless --path . --import --quit
 godot --headless --path . --script res://tools/validation/grunt_falcon_punch_smoke.gd
+
+godot --headless --path . --script res://tools/validation/grunt_falcon_reversal_smoke.gd
 godot --headless --path . --script res://tools/validation/grunt_parry_crit_reaction_smoke.gd
 godot --headless --path . --script res://tools/validation/debug_grunt_spawn_modes_smoke.gd
 godot --headless --path . --script res://tools/validation/grunt_animation_smoke.gd

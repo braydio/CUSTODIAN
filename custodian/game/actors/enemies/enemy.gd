@@ -48,6 +48,10 @@ const GRUNT_CRITICAL_EXECUTION_VICTIM_ANIMATIONS := {
 	&"e": &"critical_execution_victim_e",
 	&"w": &"critical_execution_victim_w",
 }
+const GRUNT_FALCON_REVERSAL_VICTIM_ANIMATIONS := {
+	&"e": &"falcon_reversal_victim_e",
+	&"w": &"falcon_reversal_victim_w",
+}
 const GRUNT_CRIT_FX_ANIMATION := &"crit_fx_s"
 const GRUNT_FLINCH_FX_ANIMATION := &"flinch_fx_s"
 const GRUNT_DEATH_ANIMATION := &"death_e"
@@ -288,6 +292,7 @@ var _parry_critical_execution_token: int = 0
 var _parry_critical_execution_damage_applied: bool = false
 var _parry_critical_execution_root: Vector2 = Vector2.ZERO
 var _parry_critical_execution_direction: StringName = &"s"
+var _parry_critical_execution_kind: StringName = &"ordinary_critical"
 var _parry_critical_standalone_root: Vector2 = Vector2.ZERO
 var _parry_critical_standalone_root_valid: bool = false
 var _parry_critical_execution_body_original_position: Vector2 = Vector2.ZERO
@@ -1195,6 +1200,15 @@ func _try_apply_grunt_falcon_punch_hit(force_contact_check: bool = false) -> voi
 	if bool(hit_result.get("parried", false)):
 		_obs_increment(&"falcon_punch_parried")
 		_obs_increment(&"enemy_attack_interrupted_by_parry")
+		var incoming_direction := _grunt_falcon_punch_direction
+		if target_node.has_method("try_start_falcon_reversal_from_parry") \
+				and bool(target_node.call(
+					"try_start_falcon_reversal_from_parry",
+					self,
+					incoming_direction
+				)):
+			_grunt_falcon_punch_result = &"parried_reversal"
+			return
 		_separate_from_target_after_contact(target_node)
 		if _grunt_falcon_punch_recent_parry_timer <= 0.0:
 			apply_parry_stagger(-_grunt_falcon_punch_direction, stagger_duration, 70.0)
@@ -3401,6 +3415,56 @@ func get_parry_critical_rejection_reason(
 func reserve_parry_critical(attacker: Node2D) -> Dictionary:
 	if not can_receive_parry_critical_from(attacker):
 		return {}
+	return _reserve_paired_execution(
+		attacker,
+		&"ordinary_critical",
+		_resolve_parry_critical_execution_direction(attacker)
+	)
+
+
+func can_receive_falcon_reversal_from(
+	attacker: Node2D,
+	incoming_direction: Vector2 = Vector2.ZERO
+) -> bool:
+	if dead or custom_enemy_animation_set != String(CUSTOM_ENEMY_GRUNT):
+		return false
+	if _grunt_falcon_punch_phase != &"leap":
+		return false
+	if attacker == null or not is_instance_valid(attacker) or target != attacker:
+		return false
+	if _parry_critical_target != null \
+			or _parry_critical_phase == ParryCriticalPhase.EXECUTING:
+		return false
+	var direction := _resolve_falcon_reversal_direction(incoming_direction)
+	if direction.is_empty():
+		return false
+	var animation_name: StringName = GRUNT_FALCON_REVERSAL_VICTIM_ANIMATIONS.get(
+		direction,
+		&""
+	)
+	return not animation_name.is_empty() and _has_animation(String(animation_name))
+
+
+func reserve_falcon_reversal(
+	attacker: Node2D,
+	incoming_direction: Vector2
+) -> Dictionary:
+	if not can_receive_falcon_reversal_from(attacker, incoming_direction):
+		return {}
+	var direction := _resolve_falcon_reversal_direction(incoming_direction)
+	_grunt_falcon_punch_recent_parry_timer = maxf(
+		_grunt_falcon_punch_recent_parry_timer,
+		grunt_falcon_punch_recent_parry_lockout_sec
+	)
+	_finish_grunt_falcon_punch_attack(&"parried_reversal")
+	return _reserve_paired_execution(attacker, &"falcon_reversal", direction)
+
+
+func _reserve_paired_execution(
+	attacker: Node2D,
+	execution_kind: StringName,
+	direction: StringName
+) -> Dictionary:
 	_parry_critical_execution_token += 1
 	_parry_critical_target = attacker
 	_parry_critical_execution_damage_applied = false
@@ -3408,7 +3472,8 @@ func reserve_parry_critical(attacker: Node2D) -> Dictionary:
 	_parry_critical_phase = ParryCriticalPhase.EXECUTING
 	_parry_critical_phase_timer = 0.0
 	_parry_critical_standalone_root_valid = false
-	_parry_critical_execution_direction = _resolve_parry_critical_execution_direction(attacker)
+	_parry_critical_execution_direction = direction
+	_parry_critical_execution_kind = execution_kind
 	_parry_critical_execution_root = get_parry_critical_execution_anchor()
 	global_position = _parry_critical_execution_root
 	_clear_grunt_critical_open_vfx(false)
@@ -3418,6 +3483,7 @@ func reserve_parry_critical(attacker: Node2D) -> Dictionary:
 		"enemy_id": get_instance_id(),
 		"attacker_id": attacker.get_instance_id(),
 		"execution_token": _parry_critical_execution_token,
+		"execution_kind": String(execution_kind),
 	})
 	return {
 		"token": _parry_critical_execution_token,
@@ -3425,7 +3491,18 @@ func reserve_parry_critical(attacker: Node2D) -> Dictionary:
 		"operator_offset": get_parry_critical_operator_offset(),
 		"facing": get_parry_critical_facing(),
 		"direction": _parry_critical_execution_direction,
+		"execution_kind": execution_kind,
 	}
+
+
+func _resolve_falcon_reversal_direction(
+	incoming_direction: Vector2
+) -> StringName:
+	if incoming_direction.x > 0.0001:
+		return &"w"
+	if incoming_direction.x < -0.0001:
+		return &"e"
+	return &""
 
 
 func begin_parry_critical_execution(attacker: Node2D, execution_data: Dictionary) -> bool:
@@ -3503,7 +3580,7 @@ func finish_parry_critical_execution(attacker: Node2D, result: Dictionary = {}) 
 	_update_custom_enemy_animation(_last_move_direction, false)
 
 
-func cancel_parry_critical_execution(attacker: Node2D, _reason: StringName) -> void:
+func cancel_parry_critical_execution(attacker: Node2D, reason: StringName) -> void:
 	if _parry_critical_phase != ParryCriticalPhase.EXECUTING:
 		return
 	if attacker != null and is_instance_valid(attacker) and attacker != _parry_critical_target:
@@ -3525,6 +3602,7 @@ func _release_parry_critical_execution_owner() -> void:
 	_parry_critical_window_timer = 0.0
 	_parry_critical_execution_damage_applied = false
 	_parry_critical_execution_direction = &"s"
+	_parry_critical_execution_kind = &"ordinary_critical"
 	_clear_grunt_critical_open_vfx(false)
 
 
@@ -3568,6 +3646,11 @@ func _resolve_parry_critical_execution_direction(attacker: Node2D) -> StringName
 
 
 func _get_parry_critical_execution_animation() -> StringName:
+	if _parry_critical_execution_kind == &"falcon_reversal":
+		return GRUNT_FALCON_REVERSAL_VICTIM_ANIMATIONS.get(
+			_parry_critical_execution_direction,
+			&""
+		) as StringName
 	return GRUNT_CRITICAL_EXECUTION_VICTIM_ANIMATIONS.get(
 		_parry_critical_execution_direction,
 		GRUNT_CRITICAL_EXECUTION_VICTIM_ANIMATIONS[&"s"]

@@ -236,7 +236,7 @@ write to the export or change runtime state.
 - Terminal outcomes are reported once per unique `attack_id` as `damaged`, `blocked`, `parried`, `whiffed`, or
   `cancelled_by_death`. Interruption causes such as parry, hit, and target loss are a separate dimension; range, arc, and
   collision details remain reasons rather than additional terminal-outcome buckets.
-- Falcon Punch tracks attempts, hits, parries, whiffs, and cancellations separately. Its ordinary `impact_lock` is hit-confirmed; a parry hard-cancels into the parry-critical branch and must not emit a successful-impact lock.
+- Falcon Punch tracks attempts, hits, parries, whiffs, and cancellations separately. Its ordinary `impact_lock` is hit-confirmed; a committed-leap parry hard-cancels Falcon movement, prefers the immediate paired Falcon Reversal when a complete authored direction is available, and otherwise falls back to the ordinary parry-critical opportunity. Neither path may emit a successful-impact lock. Falcon Reversal adds correlated start/impact/completion/cancellation events without replacing the existing `falcon_punch_parried` counter.
 - Falcon Punch terminal telemetry includes launch distance, target distance at active-frame start, closest approach,
   lateral error, player dodge phase, collision obstruction, and configured stop-short distance.
 - Falcon Punch also publishes mutually exclusive detail counters for damaged, iframe-dodged, blocked, parried, and whiffed terminals.

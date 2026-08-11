@@ -95,6 +95,17 @@ const PAIRED_EXECUTION_FRAME_DURATIONS := {
 }
 const PAIRED_EXECUTION_DAMAGE_FRAMES := {&"s": 4, &"e": 4, &"w": 4}
 const PAIRED_EXECUTION_HIT_STOP_DURATION := 0.11
+const FALCON_REVERSAL_FRAME_SIZE := Vector2i(156, 156)
+const FALCON_REVERSAL_FRAME_DURATIONS := [0.10, 0.10, 0.12, 0.16, 0.10, 0.05, 0.16, 0.22]
+const FALCON_REVERSAL_HIT_STOP_DURATION := 0.13
+const FALCON_REVERSAL_BODY_SHEETS := {
+	&"e": "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__falcon_reversal_01__e__8f__156.png",
+	&"w": "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__falcon_reversal_01__w__8f__156.png",
+}
+const FALCON_REVERSAL_FX_SHEETS := {
+	&"e": "res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__falcon_reversal_01__e__8f__156.png",
+	&"w": "res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__falcon_reversal_01__w__8f__156.png",
+}
 const PAIRED_EXECUTION_IMPACT_SOUND := preload("res://addons/Sound FX Starter Pack Vol. 1/Motions and Impacts/Impact Vox Hammer.wav")
 const HIT_LIGHT_BODY_SOUND: AudioStream = preload("res://content/audio/sfx/combat/hit_light_body_01.wav")
 const HIT_MEDIUM_BODY_SOUND: AudioStream = preload("res://content/audio/sfx/combat/hit_medium_body_01.wav")
@@ -508,6 +519,8 @@ var _paired_execution_frame_elapsed: float = 0.0
 var _paired_execution_frame_count: int = 8
 var _paired_execution_frame_durations: Array = []
 var _paired_execution_damage_frame: int = 4
+var _paired_execution_hit_stop_duration: float = PAIRED_EXECUTION_HIT_STOP_DURATION
+var _paired_execution_kind: StringName = &"ordinary_critical"
 var _paired_execution_hit_stop_remaining: float = 0.0
 var _paired_execution_damage_applied: bool = false
 var _paired_execution_token: int = -1
@@ -5320,9 +5333,17 @@ func _on_parry_success(attacker: Node2D, hit_direction: Vector2, hit_data: Dicti
 
 	if attacker != null and is_instance_valid(attacker):
 		var away_from_operator := global_position.direction_to(attacker.global_position)
-		if attacker.has_method("apply_parry_stagger"):
+		var defers_to_falcon_reversal := (
+			attacker.has_method("can_receive_falcon_reversal_from")
+			and bool(attacker.call(
+				"can_receive_falcon_reversal_from",
+				self,
+				hit_direction
+			))
+		)
+		if not defers_to_falcon_reversal and attacker.has_method("apply_parry_stagger"):
 			attacker.call("apply_parry_stagger", away_from_operator, parry_enemy_stagger_sec, parry_enemy_knockback)
-		elif attacker.has_method("apply_melee_impact"):
+		elif not defers_to_falcon_reversal and attacker.has_method("apply_melee_impact"):
 			attacker.call("apply_melee_impact", "parry", away_from_operator, parry_enemy_knockback)
 
 	_play_parry_animation(&"unarmed_parry_success")
@@ -5705,29 +5726,62 @@ func _start_critical_attack(target: Node2D) -> void:
 	if execution_data.is_empty():
 		_try_melee_attack()
 		return
+	if not _begin_paired_execution(target, execution_data):
+		_try_melee_attack()
+
+
+func try_start_falcon_reversal_from_parry(
+	enemy: Node2D,
+	incoming_direction: Vector2
+) -> bool:
+	if _is_dead or enemy == null or not is_instance_valid(enemy):
+		return false
+	if _paired_execution_active or not enemy.has_method("reserve_falcon_reversal"):
+		return false
+	var execution_data: Dictionary = enemy.call(
+		"reserve_falcon_reversal",
+		self,
+		incoming_direction
+	)
+	if execution_data.is_empty():
+		return false
+	return _begin_paired_execution(enemy, execution_data)
+
+
+func _begin_paired_execution(
+	target: Node2D,
+	execution_data: Dictionary
+) -> bool:
 	var authored_operator_offset: Vector2 = execution_data.get("operator_offset", Vector2.ZERO)
 	if not authored_operator_offset.is_zero_approx():
 		push_error("[PairedExecution] Shared-root execution received non-zero Operator offset: %s" % authored_operator_offset)
 		if OS.is_debug_build():
 			assert(false, "Shared-root paired execution received a non-zero operator offset.")
 		target.call("cancel_parry_critical_execution", self, &"non_zero_shared_root_offset")
-		return
+		return false
 	var execution_direction := StringName(execution_data.get("direction", &"s"))
-	if not PAIRED_EXECUTION_BODY_SHEETS.has(execution_direction):
-		execution_direction = &"s"
-	var body_animation: StringName = PAIRED_EXECUTION_BODY_ANIMATIONS[execution_direction]
-	var body_sheet: String = PAIRED_EXECUTION_BODY_SHEETS[execution_direction]
-	var fx_animation: StringName = PAIRED_EXECUTION_FX_ANIMATIONS[execution_direction]
-	var fx_sheet: String = PAIRED_EXECUTION_FX_SHEETS[execution_direction]
-	_paired_execution_frame_count = int(PAIRED_EXECUTION_FRAME_COUNTS.get(execution_direction, 8))
-	_paired_execution_frame_durations = Array(PAIRED_EXECUTION_FRAME_DURATIONS.get(execution_direction, PAIRED_EXECUTION_FRAME_DURATIONS[&"s"])).duplicate()
-	_paired_execution_damage_frame = int(PAIRED_EXECUTION_DAMAGE_FRAMES.get(execution_direction, 4))
-	if not _ensure_paired_execution_animation(animated_sprite, body_animation, body_sheet, _paired_execution_frame_count):
+	var execution_kind := StringName(execution_data.get("execution_kind", &"ordinary_critical"))
+	var profile := _get_paired_execution_profile(execution_kind, execution_direction)
+	if profile.is_empty():
+		target.call("cancel_parry_critical_execution", self, &"unsupported_execution_profile")
+		return false
+	execution_direction = StringName(profile["direction"])
+	var body_animation: StringName = profile["body_animation"]
+	var body_sheet: String = profile["body_sheet"]
+	var fx_animation: StringName = profile["fx_animation"]
+	var fx_sheet: String = profile["fx_sheet"]
+	var frame_size: Vector2i = profile["frame_size"]
+	_paired_execution_frame_count = int(profile["frame_count"])
+	_paired_execution_frame_durations = Array(profile["frame_durations"]).duplicate()
+	_paired_execution_damage_frame = int(profile["damage_frame"])
+	_paired_execution_hit_stop_duration = float(profile["hit_stop"])
+	_paired_execution_kind = execution_kind
+	if not _ensure_paired_execution_animation(animated_sprite, body_animation, body_sheet, _paired_execution_frame_count, frame_size):
 		target.call("cancel_parry_critical_execution", self, &"operator_body_asset_missing")
-		return
-	if not _ensure_paired_execution_animation(modular_upper_fx_sprite, fx_animation, fx_sheet, _paired_execution_frame_count):
+		return false
+	if not _ensure_paired_execution_animation(modular_upper_fx_sprite, fx_animation, fx_sheet, _paired_execution_frame_count, frame_size):
 		target.call("cancel_parry_critical_execution", self, &"operator_fx_asset_missing")
-		return
+		return false
 	_cancel_attack_drive(true)
 	_active_attack_profile = get_current_combat_profile()
 	_active_melee_attack_profile = _get_current_melee_attack_profile("fast")
@@ -5801,20 +5855,66 @@ func _start_critical_attack(target: Node2D) -> void:
 	_modular_upper_fx_action_animation = fx_animation
 	if not bool(target.call("begin_parry_critical_execution", self, execution_data)):
 		_cleanup_paired_execution(false, &"enemy_begin_rejected")
-		return
+		return false
 	_obs_increment(&"player_critical_attack_started")
 	_obs_log(&"player_critical_attack_started", {
 		"target_id": target.get_instance_id(),
 		"execution_token": _paired_execution_token,
 		"direction": String(_paired_execution_direction),
+		"execution_kind": String(_paired_execution_kind),
 	})
+	if _paired_execution_kind == &"falcon_reversal":
+		_obs_increment(&"falcon_reversal_started")
+		_obs_log(&"falcon_reversal_started", {
+			"enemy_id": target.get_instance_id(),
+			"operator_id": get_instance_id(),
+			"execution_token": _paired_execution_token,
+			"direction": String(_paired_execution_direction),
+		})
 	if OS.is_debug_build():
 		assert(global_position.is_equal_approx(target.global_position), "Paired execution roots diverged on start.")
 	_notify_camera_attack_windup(true)
-	_lock_melee_cooldown(_get_paired_execution_duration() + PAIRED_EXECUTION_HIT_STOP_DURATION + 0.08)
+	_lock_melee_cooldown(_get_paired_execution_duration() + _paired_execution_hit_stop_duration + 0.08)
+	return true
 
 
-func _ensure_paired_execution_animation(sprite: AnimatedSprite2D, animation_name: StringName, sheet_path: String, frame_count: int) -> bool:
+func _get_paired_execution_profile(
+	execution_kind: StringName,
+	direction: StringName
+) -> Dictionary:
+	if execution_kind == &"falcon_reversal":
+		if not FALCON_REVERSAL_BODY_SHEETS.has(direction) \
+				or not FALCON_REVERSAL_FX_SHEETS.has(direction):
+			return {}
+		return {
+			"direction": direction,
+			"body_animation": StringName("operator_falcon_reversal_%s" % String(direction)),
+			"fx_animation": StringName("operator_falcon_reversal_fx_%s" % String(direction)),
+			"body_sheet": FALCON_REVERSAL_BODY_SHEETS[direction],
+			"fx_sheet": FALCON_REVERSAL_FX_SHEETS[direction],
+			"frame_size": FALCON_REVERSAL_FRAME_SIZE,
+			"frame_count": 8,
+			"frame_durations": FALCON_REVERSAL_FRAME_DURATIONS,
+			"damage_frame": 5,
+			"hit_stop": FALCON_REVERSAL_HIT_STOP_DURATION,
+		}
+	if not PAIRED_EXECUTION_BODY_SHEETS.has(direction):
+		direction = &"s"
+	return {
+		"direction": direction,
+		"body_animation": PAIRED_EXECUTION_BODY_ANIMATIONS[direction],
+		"fx_animation": PAIRED_EXECUTION_FX_ANIMATIONS[direction],
+		"body_sheet": PAIRED_EXECUTION_BODY_SHEETS[direction],
+		"fx_sheet": PAIRED_EXECUTION_FX_SHEETS[direction],
+		"frame_size": PAIRED_EXECUTION_FRAME_SIZE,
+		"frame_count": int(PAIRED_EXECUTION_FRAME_COUNTS.get(direction, 8)),
+		"frame_durations": Array(PAIRED_EXECUTION_FRAME_DURATIONS.get(direction, PAIRED_EXECUTION_FRAME_DURATIONS[&"s"])),
+		"damage_frame": int(PAIRED_EXECUTION_DAMAGE_FRAMES.get(direction, 4)),
+		"hit_stop": PAIRED_EXECUTION_HIT_STOP_DURATION,
+	}
+
+
+func _ensure_paired_execution_animation(sprite: AnimatedSprite2D, animation_name: StringName, sheet_path: String, frame_count: int, frame_size: Vector2i) -> bool:
 	if sprite == null or sprite.sprite_frames == null:
 		push_error("[PairedExecution] Required animation owner missing for %s" % sheet_path)
 		return false
@@ -5824,7 +5924,7 @@ func _ensure_paired_execution_animation(sprite: AnimatedSprite2D, animation_name
 		push_error("[PairedExecution] Required asset missing: %s" % sheet_path)
 		return false
 	var texture := load(sheet_path) as Texture2D
-	if texture == null or texture.get_width() != frame_count * PAIRED_EXECUTION_FRAME_SIZE.x or texture.get_height() != PAIRED_EXECUTION_FRAME_SIZE.y:
+	if texture == null or texture.get_width() != frame_count * frame_size.x or texture.get_height() != frame_size.y:
 		push_error("[PairedExecution] Required asset has invalid dimensions: %s" % sheet_path)
 		return false
 	if sprite.sprite_frames.has_animation(animation_name):
@@ -5837,7 +5937,7 @@ func _ensure_paired_execution_animation(sprite: AnimatedSprite2D, animation_name
 	for frame_index in range(frame_count):
 		var atlas := AtlasTexture.new()
 		atlas.atlas = texture
-		atlas.region = Rect2(frame_index * PAIRED_EXECUTION_FRAME_SIZE.x, 0, PAIRED_EXECUTION_FRAME_SIZE.x, PAIRED_EXECUTION_FRAME_SIZE.y)
+		atlas.region = Rect2(frame_index * frame_size.x, 0, frame_size.x, frame_size.y)
 		sprite.sprite_frames.add_frame(animation_name, atlas)
 	return true
 
@@ -5879,7 +5979,7 @@ func _update_paired_execution(delta: float) -> void:
 		if _paired_execution_frame_index == _paired_execution_damage_frame:
 			_apply_paired_execution_impact()
 			if _paired_execution_active:
-				_paired_execution_hit_stop_remaining = PAIRED_EXECUTION_HIT_STOP_DURATION
+				_paired_execution_hit_stop_remaining = _paired_execution_hit_stop_duration
 	if _paired_execution_active:
 		_apply_paired_execution_frame(_paired_execution_frame_index)
 
@@ -5915,6 +6015,7 @@ func _apply_paired_execution_impact() -> void:
 	)
 	var damage_result: Dictionary = _paired_execution_target.call("apply_parry_critical_execution_damage", self, direct_damage, {
 		"execution_token": _paired_execution_token,
+		"execution_kind": _paired_execution_kind,
 		"impact_position": _paired_execution_anchor,
 		"frame": _paired_execution_damage_frame,
 	})
@@ -5935,7 +6036,19 @@ func _apply_paired_execution_impact() -> void:
 		"execution_token": _paired_execution_token,
 		"damage_applied": float(damage_result.get("damage_applied", 0.0)),
 		"lethal": bool(damage_result.get("lethal", false)),
+		"execution_kind": String(_paired_execution_kind),
 	})
+	if _paired_execution_kind == &"falcon_reversal":
+		_obs_increment(&"falcon_reversal_impact")
+		_obs_log(&"falcon_reversal_impact", {
+			"enemy_id": _paired_execution_target.get_instance_id(),
+			"operator_id": get_instance_id(),
+			"execution_token": _paired_execution_token,
+			"direction": String(_paired_execution_direction),
+			"frame": _paired_execution_damage_frame,
+			"damage_applied": float(damage_result.get("damage_applied", 0.0)),
+			"lethal": bool(damage_result.get("lethal", false)),
+		})
 	var camera = _get_world_camera()
 	if camera and camera.has_method("on_execution_impact"):
 		camera.call("on_execution_impact", _paired_execution_direction_vector(_paired_execution_direction))
@@ -5968,6 +6081,7 @@ func _cleanup_paired_execution(completed: bool, reason: StringName) -> void:
 		return
 	var target := _paired_execution_target
 	var token := _paired_execution_token
+	var execution_kind := _paired_execution_kind
 	_paired_execution_active = false
 	_paired_execution_target = null
 	_paired_execution_elapsed = 0.0
@@ -5977,6 +6091,8 @@ func _cleanup_paired_execution(completed: bool, reason: StringName) -> void:
 	_paired_execution_damage_applied = false
 	_paired_execution_token = -1
 	_paired_execution_direction = &"s"
+	_paired_execution_kind = &"ordinary_critical"
+	_paired_execution_hit_stop_duration = PAIRED_EXECUTION_HIT_STOP_DURATION
 	collision_mask = _paired_execution_original_collision_mask
 	collision_layer = _paired_execution_original_collision_layer
 	velocity = Vector2.ZERO
@@ -6004,6 +6120,15 @@ func _cleanup_paired_execution(completed: bool, reason: StringName) -> void:
 			target.call("finish_parry_critical_execution", self, {"execution_token": token})
 		else:
 			target.call("cancel_parry_critical_execution", self, reason)
+	if execution_kind == &"falcon_reversal":
+		var event_name := &"falcon_reversal_completed" if completed else &"falcon_reversal_cancelled"
+		_obs_increment(event_name)
+		_obs_log(event_name, {
+			"enemy_id": target.get_instance_id() if target != null and is_instance_valid(target) else 0,
+			"operator_id": get_instance_id(),
+			"execution_token": token,
+			"reason": String(reason),
+		})
 	if is_inside_tree() and not _is_dead:
 		_update_animation()
 

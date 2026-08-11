@@ -2,6 +2,7 @@ extends RefCounted
 class_name GruntAnimationLibrary
 
 const GRUNT_FRAME_SIZE := Vector2i(96, 96)
+const FALCON_REVERSAL_FRAME_SIZE := Vector2i(156, 156)
 const MARINE_FRAME_SIZE := Vector2i(96, 96)
 const MARINE_DASH_FRAME_SIZE := Vector2i(128, 128)
 const MARINE_DASH_FX_FRAME_SIZE := Vector2i(156, 156)
@@ -128,6 +129,20 @@ const ANIMATION_SPECS := {
 		"fps": 12.0,
 		"loop": false,
 		"required": true,
+	},
+	"falcon_reversal_victim_e": {
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__falcon_reversal_victim_01__e__8f__156.png",
+		"fps": 12.0,
+		"loop": false,
+		"required": true,
+		"frame_size": FALCON_REVERSAL_FRAME_SIZE,
+	},
+	"falcon_reversal_victim_w": {
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__falcon_reversal_victim_01__w__8f__156.png",
+		"fps": 12.0,
+		"loop": false,
+		"required": true,
+		"frame_size": FALCON_REVERSAL_FRAME_SIZE,
 	},
 	"crit_recovery_s": {
 		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__crit_recovery_01__s__5f__96.png",
@@ -301,6 +316,14 @@ static func get_parry_critical_open_animation(phase: StringName) -> StringName:
 
 static func get_parry_critical_execution_victim_animation() -> StringName:
 	return &"critical_execution_victim_s"
+
+
+static func get_falcon_reversal_victim_animation(
+	direction: StringName
+) -> StringName:
+	if direction in [&"e", &"w"]:
+		return StringName("falcon_reversal_victim_%s" % String(direction))
+	return &""
 
 
 static func get_attack_fx_animation(direction: Vector2) -> StringName:

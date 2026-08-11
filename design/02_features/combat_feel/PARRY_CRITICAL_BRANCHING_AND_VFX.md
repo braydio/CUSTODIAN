@@ -17,6 +17,29 @@ Enemy owns vulnerability duration, critical-open phases, BREACH/countdown presen
 
 Principle: Operator owns the attempt and shared presentation clock. Enemy owns the opportunity, consumption, victim state, and damage authority.
 
+## Falcon Reversal Exception
+
+An ordinary successful parry still enters `CRITICAL_OPEN_ENTER`, presents the
+BREACH/countdown opportunity, and waits for deliberate primary input. A
+successful parry against an Enemy Grunt Falcon Punch during its committed leap
+instead prefers the contextual `falcon_reversal` execution immediately. The
+parry itself is the commitment: no second input, critical-open enter/hold, or
+BREACH/countdown presentation occurs. This avoids freezing an airborne Grunt
+into the ordinary standing vulnerability.
+
+Falcon Reversal is not a second execution system. The Operator retains the
+shared clock, input lock, body/FX playback, contact-frame damage request,
+hit-stop, camera feedback, and cleanup. The enemy retains atomic reservation,
+token ownership, victim playback, exactly-once damage, and lethal/nonlethal
+resolution. If the requested authored direction lacks a complete body/victim/FX
+triplet, the Falcon parry safely falls back to the ordinary critical-open flow.
+
+The authored E/W Falcon triplets use eight horizontal `156x156` cells in
+`1248x156` RGBA strips. That larger transparent canvas is required for the
+airborne catch, overhead redirect, and slam. All three layers share one exact
+world root and local `Vector2.ZERO`; runtime must never crop, resize, mirror, or
+independently offset them. Ordinary paired criticals remain `96x96`.
+
 ## Enemy State Contract
 
 ```text
@@ -97,6 +120,11 @@ The south fallback triplet remains eight source frames with the existing nonunif
 | 8 | 7 | final separation and settle | 250 ms |
 
 Damage fires when playback enters source frame 5 (runtime index 4): after `0.60s` on the south schedule and after approximately `0.33s` on east/west. The frame-step loop processes every crossed boundary, so a low-FPS step cannot skip contact. Hit-stop pauses both paired characters on index 4 without changing global time scale. Broad melee-overlap polling is not authoritative for execution damage.
+
+Falcon Reversal uses its own eight-frame schedule: `100, 100, 120, 160, 100,
+50, 160, 220 ms`. Damage fires exactly once when runtime index 5/source frame 6
+is entered, followed by `130 ms` of execution-local hit-stop. Body, victim, and
+FX remain on index 5 for the complete freeze.
 
 ## Control, Interruption, And Cleanup
 
