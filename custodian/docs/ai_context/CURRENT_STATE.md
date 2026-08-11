@@ -13,6 +13,17 @@ Documentation updates this session:
 
 ## Runtime Status
 
+- Agent Headless Validation V1 is live. `tools/validation/run_validation.py`
+  reuses Moment Forge changed-file discovery to select a tier-ordered manifest
+  of cheap smokes, actor/integration checks, and no-capture moments; it emits
+  one bounded JSON result with selection reasons, timings, structured harness
+  failures, legacy output tails, warning classifications, and stable timeout /
+  configuration / preflight / failure exit codes. The shared GDScript harness
+  now proves pure-resolver and Observatory-backed actor styles. Moment Forge
+  supports six relational event/distance assertions plus shared dotted-path
+  debug-snapshot probes; Operator and Enemy expose compact read-only diagnostic
+  snapshots that gameplay never consumes.
+
 - The Ash-Bell lift now begins on an intentionally isolated north-edge pocket.
   The first acquisition of canonical `white_thread_knot` from any source
   latches `ash_bell_threadway_unlocked` in `WorldEventMemory` without consuming

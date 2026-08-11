@@ -1,6 +1,9 @@
 extends SceneTree
 
 const OPERATOR_SCENE := preload("res://game/actors/operator/operator.tscn")
+const HARNESS := preload("res://tools/validation/support/headless_test_harness.gd")
+
+var _harness: RefCounted
 
 
 func _init() -> void:
@@ -8,20 +11,14 @@ func _init() -> void:
 
 
 func _run() -> void:
-	var failures: Array[String] = []
-	var observatory := root.get_node_or_null("DevObservatory")
+	_harness = HARNESS.new()
+	_harness.configure(self, "operator_dodge_overlap_telemetry_smoke")
+	var observatory: Node = _harness.observatory
 	if observatory == null:
-		push_error("[OperatorDodgeOverlapTelemetrySmoke] DevObservatory autoload missing")
-		quit(1)
+		_harness.expect(false, "DevObservatory autoload missing")
+		_harness.finish()
 		return
-	observatory.clear()
-	var scene_root := Node2D.new()
-	scene_root.name = "DodgeOverlapSmokeRoot"
-	root.add_child(scene_root)
-	current_scene = scene_root
-	var operator := OPERATOR_SCENE.instantiate()
-	operator.name = "DodgeOperator"
-	scene_root.add_child(operator)
+	var operator: Node = _harness.instantiate_scene(OPERATOR_SCENE, null, "DodgeOperator")
 	await process_frame
 	operator.current_health = operator.max_health
 	operator.health = operator.max_health
@@ -53,13 +50,13 @@ func _run() -> void:
 			"separation_px": 1.0,
 		})
 		if StringName(result.get("result", &"")) != expected_result:
-			failures.append("overlap %d resolved %s instead of %s" % [attempt, result.get("result", ""), expected_result])
+			_harness.expect(false, "overlap %d resolved %s instead of %s" % [attempt, result.get("result", ""), expected_result])
 
 	operator.set("_dodge_active", false)
 	operator.set("_dodge_recovery_active", false)
 	var classified: Array = observatory.get_recent_events(30, &"incoming_dodge_timing_classified")
 	if classified.size() != 20:
-		failures.append("20 overlapping hits must produce exactly 20 canonical dodge classifications")
+		_harness.expect(false, "20 overlapping hits must produce exactly 20 canonical dodge classifications")
 	var classification_counts := {}
 	var seen_attack_ids := {}
 	for event in classified:
@@ -68,34 +65,34 @@ func _run() -> void:
 		classification_counts[classification] = int(classification_counts.get(classification, 0)) + 1
 		var attack_id := String(data.get("attack_id", ""))
 		if attack_id.is_empty() or seen_attack_ids.has(attack_id):
-			failures.append("canonical dodge classification lost or duplicated attack_id %s" % attack_id)
+			_harness.expect(false, "canonical dodge classification lost or duplicated attack_id %s" % attack_id)
 		seen_attack_ids[attack_id] = true
 	if int(classification_counts.get("iframe_avoid", 0)) != 8:
-		failures.append("iframe overlaps did not classify 8/8 as iframe_avoid")
+		_harness.expect(false, "iframe overlaps did not classify 8/8 as iframe_avoid")
 	if int(classification_counts.get("miss_late", 0)) != 6:
-		failures.append("late active overlaps did not classify 6/6 as miss_late")
+		_harness.expect(false, "late active overlaps did not classify 6/6 as miss_late")
 	if int(classification_counts.get("recovery_hit", 0)) != 6:
-		failures.append("recovery overlaps did not classify 6/6 as recovery_hit")
+		_harness.expect(false, "recovery overlaps did not classify 6/6 as recovery_hit")
 	if int(observatory.counters.get("player_iframe_avoids", 0)) != 8:
-		failures.append("iframe avoid counter did not reconcile to canonical classifications")
+		_harness.expect(false, "iframe avoid counter did not reconcile to canonical classifications")
 	if int(observatory.counters.get("dodge_timing_miss_late", 0)) != 12:
-		failures.append("late/recovery legacy timing counter did not reconcile")
+		_harness.expect(false, "late/recovery legacy timing counter did not reconcile")
 	var incoming: Array = observatory.get_recent_events(30, &"incoming_hit_result")
 	if incoming.size() != 20:
-		failures.append("20 overlaps must retain exactly 20 incoming hit results")
+		_harness.expect(false, "20 overlaps must retain exactly 20 incoming hit results")
 	var incoming_classifications := {}
 	for event in incoming:
 		var data := (event as Dictionary).get("data", {}) as Dictionary
 		var classification := String(data.get("dodge_classification", ""))
 		incoming_classifications[classification] = int(incoming_classifications.get(classification, 0)) + 1
 		if String(data.get("player_dodge_phase", "")).is_empty():
-			failures.append("incoming result lost canonical player_dodge_phase")
+			_harness.expect(false, "incoming result lost canonical player_dodge_phase")
 		if not bool(data.get("spatial_valid", false)):
-			failures.append("incoming result lost authoritative spatial validity")
+			_harness.expect(false, "incoming result lost authoritative spatial validity")
 	if int(incoming_classifications.get("iframe_avoid", 0)) != 8:
-		failures.append("incoming iframe results lost iframe_avoid classification")
+		_harness.expect(false, "incoming iframe results lost iframe_avoid classification")
 	if int(incoming_classifications.get("recovery_hit", 0)) != 6:
-		failures.append("incoming recovery hits lost recovery_hit classification")
+		_harness.expect(false, "incoming recovery hits lost recovery_hit classification")
 
 	operator.current_health = 1.0
 	operator.health = 1.0
@@ -111,19 +108,13 @@ func _run() -> void:
 	})
 	var deaths: Array = observatory.get_recent_events(2, &"player_death")
 	if deaths.size() != 1:
-		failures.append("lethal hit should emit one player_death record")
+		_harness.expect(false, "lethal hit should emit one player_death record")
 	else:
 		var death_data := (deaths[0] as Dictionary).get("data", {}) as Dictionary
 		var lethal_context := death_data.get("lethal_attack_context", {}) as Dictionary
 		if String(lethal_context.get("attack_id", "")) != "dodge-overlap:lethal":
-			failures.append("player_death lost lethal attack correlation")
+			_harness.expect(false, "player_death lost lethal attack correlation")
 		if not bool(lethal_context.get("lethal", false)) or float(lethal_context.get("target_health_after", -1.0)) != 0.0:
-			failures.append("player_death lethal context lost predicted health transition")
+			_harness.expect(false, "player_death lethal context lost predicted health transition")
 
-	if not failures.is_empty():
-		for failure in failures:
-			push_error("[OperatorDodgeOverlapTelemetrySmoke] %s" % failure)
-		quit(1)
-		return
-	print("OPERATOR_DODGE_OVERLAP_TELEMETRY_SMOKE: PASS")
-	quit(0)
+	_harness.finish()

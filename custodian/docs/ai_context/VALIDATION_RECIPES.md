@@ -8,6 +8,24 @@ Run `bash custodian/tools/validation/run_world_simulation_migration_suite.sh` fr
 
 Use the narrowest recipe that proves the change, then broaden only when the change affects shared runtime behavior, scenes, imports, or workflow routing.
 
+## Preferred Agent Entry Point
+
+From repository root, select changed-file-owned tests and receive one bounded,
+machine-readable result:
+
+```bash
+python3 custodian/tools/validation/run_validation.py --changed --json
+```
+
+The manifest orders `unit -> actor -> integration -> moment -> boot`, enforces
+per-test timeouts, imports once when selected tests require it, parses the
+`CUSTODIAN_TEST_RESULT_JSON:` sentinel from harness-based smokes, and retains
+bounded output tails for legacy tests. Exit codes are `0` pass, `2`
+manifest/configuration error, `3` import/preflight failure, `4` test failure,
+and `5` timeout. Individual commands below remain canonical for direct
+debugging. Moment entries run with capture mode `none`; richer evidence remains
+an explicit `run_moment.py` decision.
+
 ## Route Traversal V1
 
 From `custodian/`, run the complete directed-route suite:

@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "patterns": [
+    {"id": "known_exit_object_leak", "pattern": "ObjectDB instances were leaked at exit"},
+    {"id": "known_exit_resource_leak", "pattern": "resources still in use at exit"}
+  ]
+}

@@ -8765,6 +8765,28 @@ func get_melee_targeting_status() -> Dictionary:
 	}
 
 
+## Read-only, JSON-primitivizable diagnostic surface for validation tooling.
+## Gameplay must not consume this snapshot as authority.
+func get_debug_snapshot() -> Dictionary:
+	return {
+		"position": global_position,
+		"health": {"current": current_health, "max": max_health},
+		"dodge": {
+			"phase": String(get_dodge_telemetry_phase()),
+			"active": _dodge_active,
+			"iframe_remaining": _dodge_iframe_timer,
+			"recovery_active": _dodge_recovery_active,
+		},
+		"combat": {
+			"loadout_mode": String(combat_loadout_mode),
+			"attacking": _melee_active or _melee_fast_windup or _melee_recovery_active,
+			"melee_forward": _melee_forward,
+		},
+		"weapon": get_weapon_status(),
+		"melee_targeting": get_melee_targeting_status(),
+	}
+
+
 func set_vista_presentation_mode(enabled: bool) -> void:
 	_vista_presentation_mode = enabled
 	if health_bar != null:

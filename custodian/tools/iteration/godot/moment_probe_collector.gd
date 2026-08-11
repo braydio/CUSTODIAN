@@ -1,6 +1,8 @@
 extends RefCounted
 class_name MomentProbeCollector
 
+const VALUE_READER := preload("res://tools/iteration/godot/moment_value_reader.gd")
+
 var definitions: Array = []
 var roles: Dictionary = {}
 var records: Array[Dictionary] = []
@@ -23,8 +25,15 @@ func sample_tick(tick: int) -> void:
 				failures.append("required probe role unavailable: %s" % role_name)
 			continue
 		var values := {}
+		var snapshot: Variant = null
+		if str(definition.get("snapshot", "")) == "debug":
+			if not node.has_method("get_debug_snapshot"):
+				if bool(definition.get("required", false)):
+					failures.append("required debug snapshot unavailable: %s" % role_name)
+				continue
+			snapshot = node.call("get_debug_snapshot")
 		for field: String in definition.get("fields", []):
-			var value: Variant = _read_field(node, field)
+			var value: Variant = VALUE_READER.dotted(snapshot, field) if snapshot != null else _read_field(node, field)
 			if value == null and bool(definition.get("required", false)):
 				failures.append("required probe field unavailable: %s.%s" % [role_name, field])
 			else:
@@ -129,4 +138,14 @@ func _json_value(value: Variant) -> Variant:
 		return [value.x, value.y]
 	if value is StringName:
 		return str(value)
+	if value is Dictionary:
+		var output := {}
+		for key in value:
+			output[str(key)] = _json_value(value[key])
+		return output
+	if value is Array:
+		var output := []
+		for item in value:
+			output.append(_json_value(item))
+		return output
 	return value

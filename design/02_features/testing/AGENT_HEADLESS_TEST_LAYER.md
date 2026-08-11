@@ -1,8 +1,8 @@
 # Agent Headless Test Layer
 
-Design authority for a thin, standardized headless testing layer that makes the game's validation stack directly usable by AI agents. V1 proposal: items 1–4 are the current implementation brief; the rest is sequenced follow-up.
+Design authority for the thin, standardized headless testing layer that makes the game's validation stack directly usable by AI agents. Items 1–4 are implemented V1; the rest is sequenced follow-up.
 
-Status: **proposed** — no `validation_manifest.json`, `run_validation.py`, or shared harness exists yet. Builds on existing foundations; explicitly does **not** introduce GUT/GdUnit or another parallel framework.
+Status: **implemented V1** — the manifest runner, shared harness, relational Moment Forge assertions, read-only actor snapshots, and dotted snapshot probes are live. Builds on existing foundations; explicitly does **not** introduce GUT/GdUnit or another parallel framework.
 
 ## Why
 
@@ -226,7 +226,7 @@ Invariant (eventual): **zero unexplained headless warnings**. Until the existing
 6. Observatory → combat repro capsule
 7. later: systematic extraction of additional pure gameplay resolvers
 
-Items 1–4 are the current implementation brief; they would noticeably change how effectively agents debug the game.
+Items 1–4 are live. The remaining items are follow-up and must preserve the same ownership split.
 
 ## AI Usage Contract
 
@@ -240,10 +240,7 @@ Expected result: `3 relevant tests / 2 passed / 1 failed`, with per-failure atta
 
 ## Next Agent Slice
 
-- **Goal:** implement items 1–4 (V1): shared harness, manifest + runner, Moment Forge assertion additions, actor debug snapshots with dotted-path probes.
-- **New files:** `custodian/tools/validation/support/headless_test_harness.gd`, `custodian/tools/validation/validation_manifest.json`, `custodian/tools/validation/run_validation.py`.
-- **Extended:** Moment Forge schema + assertions (`custodian/tools/iteration/moment_schema.json`, `design/02_features/debug_ui/MOMENT_FORGE_SYSTEM.md`); `get_debug_snapshot()` on Operator and Enemy; dotted-path snapshot probe support.
-- **Migrate:** first 1–2 private-state-poking smokes (start with `operator_dodge_overlap_telemetry_smoke.gd`) onto the harness.
-- **Constraints:** reuse `changed_file_router.py changed_files()`; fixed-step determinism; observability-only (never influence simulation); per-test timeout; classify warnings, never suppress; tiers 0–4.
-- **Acceptance:** `run_validation.py --changed --json` on a clean tree exits 0 and matches the JSON contract; harness-ported smoke passes; new Moment Forge assertions proven by a scenario; dotted-path snapshot probes resolve; touched docs updated (`MOMENT_FORGE_SYSTEM.md`, `VALIDATION_RECIPES.md`, `FILE_INDEX.md`).
-- **Moment Forge:** not run for the docs-only slice.
+- Expand manifest coverage opportunistically when feature work touches an unregistered high-value smoke.
+- Migrate bespoke smoke scaffolding only when those tests are already being changed.
+- Consider the Observatory repro capsule after the V1 runner has accumulated practical use.
+- Complete warning-baseline cleanup rather than broadening suppression patterns.

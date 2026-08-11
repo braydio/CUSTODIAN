@@ -59,6 +59,12 @@ SUPPORTED_ASSERTIONS = {
     "no_unreleased_inputs",
     "output_exists",
     "event_order",
+    "event_exactly_once",
+    "event_absent",
+    "event_field_compare",
+    "event_same_field",
+    "event_between_ticks",
+    "role_distance_compare",
 }
 ID_PATTERN = re.compile(r"^[a-z0-9][a-z0-9_/-]*[a-z0-9]$")
 TAG_PATTERN = re.compile(r"^[a-z0-9_]+$")
@@ -234,6 +240,8 @@ def _validate_probes(probes: list[Any], role_ids: set[str], duration: int) -> se
             raise ScenarioError("probe IDs must be unique lowercase identifiers")
         if str(raw_probe.get("role", "")) not in role_ids:
             raise ScenarioError(f"probe {probe_id} references an unknown role")
+        if raw_probe.get("snapshot") not in {None, "debug"}:
+            raise ScenarioError(f"probe {probe_id} has invalid snapshot mode")
         fields = raw_probe.get("fields")
         if not isinstance(fields, list) or not fields or any(not isinstance(item, str) for item in fields):
             raise ScenarioError(f"probe {probe_id} requires fields")
@@ -272,6 +280,16 @@ def _validate_assertions(assertions: list[Any], probe_ids: set[str]) -> None:
             path = str(raw_assertion.get("path", ""))
             if not path or ".." in Path(path).parts or Path(path).is_absolute():
                 raise ScenarioError("output_exists path must be run-relative")
+        if kind in {"event_exactly_once", "event_absent", "event_field_compare", "event_between_ticks"} and not raw_assertion.get("event"):
+            raise ScenarioError(f"{kind} requires event")
+        if kind == "event_field_compare" and not raw_assertion.get("field"):
+            raise ScenarioError("event_field_compare requires field")
+        if kind == "event_same_field":
+            events = raw_assertion.get("events")
+            if not isinstance(events, list) or len(events) < 2 or not raw_assertion.get("field"):
+                raise ScenarioError("event_same_field requires events and field")
+        if kind == "role_distance_compare" and (not raw_assertion.get("role_a") or not raw_assertion.get("role_b")):
+            raise ScenarioError("role_distance_compare requires role_a and role_b")
 
 
 def validate_scenario(

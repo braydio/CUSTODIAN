@@ -2,13 +2,15 @@ extends SceneTree
 
 const RESOLVER := preload("res://game/systems/combat/melee_target_resolver.gd")
 const PROFILE := preload("res://game/actors/operator/attacks/vigil_pattern_dagger_fast_01.tres")
+const HARNESS := preload("res://tools/validation/support/headless_test_harness.gd")
 
-var _failures: Array[String] = []
+var _harness: RefCounted
 
 
 func _init() -> void:
-	var root_node := Node2D.new()
-	root.add_child(root_node)
+	_harness = HARNESS.new()
+	_harness.configure(self, "operator_melee_soft_targeting_smoke")
+	var root_node: Node = _harness.fixture_root
 	var near_off_aim := Node2D.new()
 	near_off_aim.name = "NearOffAim"
 	near_off_aim.position = Vector2.RIGHT.rotated(deg_to_rad(80.0)) * 30.0
@@ -70,15 +72,8 @@ func _init() -> void:
 	var preview := RESOLVER.build_preview(selected, reach, 125.0, 42.0)
 	_expect(float(preview.proximity) >= 0.0 and float(preview.proximity) <= 1.0, "preview proximity escaped normalized range")
 
-	if _failures.is_empty():
-		print("operator_melee_soft_targeting_smoke: PASS")
-		quit(0)
-	else:
-		for failure in _failures:
-			push_error(failure)
-		quit(1)
+	_harness.finish()
 
 
 func _expect(condition: bool, message: String) -> void:
-	if not condition:
-		_failures.append(message)
+	_harness.expect(condition, message)

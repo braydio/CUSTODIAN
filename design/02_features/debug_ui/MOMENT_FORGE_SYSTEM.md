@@ -3,11 +3,11 @@
 **Project:** CUSTODIAN  
 **Created:** 2026-07-28  
 **Status:** active — V1 core implemented; scenario calibration remains  
-**Last Updated:** 2026-07-29  
+**Last Updated:** 2026-08-10
 **Owner:** gameplay/tools  
 **Runtime Target:** Godot 4.7 project in `custodian/`  
 **Active Spec Path:** `design/02_features/debug_ui/MOMENT_FORGE_SYSTEM.md`  
-**Repository Basis:** `braydio/CUSTODIAN`, branch `main`, inspected at commit `f25ee5fca746b4d4cb779ed3d54692ada7905009`
+**Repository Basis:** `braydio/CUSTODIAN`, branch `main`, implemented on HEAD `e8dfb2bfd7612ff255bf5b93bac1d5a73943e7e4`
 
 ---
 
@@ -201,6 +201,22 @@ A visual or audio difference is not automatically a defect. Therefore:
 ---
 
 ## 5. Primary Developer Experience
+
+### 5.0 Agent validation entry point
+
+Moment Forge remains the deterministic authored-moment layer. Cheap smoke
+discovery and orchestration are owned by
+`tools/validation/run_validation.py`, whose manifest may select Moment Forge
+entries at the `moment` tier with `--capture-mode none`. The runner reuses the
+existing changed-file router and does not replace scenario routing.
+
+Moment assertions additionally support `event_exactly_once`, `event_absent`,
+`event_field_compare`, `event_same_field`, `event_between_ticks`, and
+`role_distance_compare`. Event filters and fields use shared dotted-path
+lookup; no arbitrary expression or method evaluation is permitted. Probes may
+request `snapshot: "debug"`, which reads allowlisted nested fields from an
+actor's read-only `get_debug_snapshot()` result. Direct property probes remain
+compatibility-only.
 
 ### 5.1 Run One Scenario
 

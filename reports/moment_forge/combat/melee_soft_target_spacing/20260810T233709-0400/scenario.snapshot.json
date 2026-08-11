@@ -1,0 +1,279 @@
+{
+  "assertions": [
+    {
+      "role": "aimed_target",
+      "severity": "error",
+      "type": "role_exists"
+    },
+    {
+      "role": "near_off_aim",
+      "severity": "error",
+      "type": "role_exists"
+    },
+    {
+      "op": "lte",
+      "role_a": "operator",
+      "role_b": "aimed_target",
+      "severity": "error",
+      "type": "role_distance_compare",
+      "value": 180.0
+    },
+    {
+      "event": "unreleased_input_cleanup",
+      "severity": "error",
+      "type": "event_absent"
+    },
+    {
+      "severity": "error",
+      "type": "no_unreleased_inputs"
+    },
+    {
+      "path": "telemetry.json",
+      "severity": "error",
+      "type": "output_exists"
+    },
+    {
+      "field": "visible_visual_anchor_delta_px",
+      "op": "lte",
+      "probe": "operator_state",
+      "severity": "error",
+      "tick": 76,
+      "type": "probe_compare",
+      "value": 1.0
+    }
+  ],
+  "capture": {
+    "audio": true,
+    "background": "opaque",
+    "contact_sheet_ticks": [
+      0,
+      55,
+      75,
+      106,
+      190,
+      240
+    ],
+    "end_tick": 359,
+    "fps": 60,
+    "height": 720,
+    "required_keyframes": true,
+    "start_tick": 0,
+    "width": 1280
+  },
+  "description": "Aim-relative melee target selection and progressive range-ring spacing.",
+  "duration_ticks": 360,
+  "id": "combat/melee_soft_target_spacing",
+  "probes": [
+    {
+      "fields": [
+        "dodge.phase",
+        "combat.loadout_mode",
+        "melee_targeting.reliable_contact"
+      ],
+      "id": "operator_debug",
+      "required": true,
+      "role": "operator",
+      "snapshot": "debug",
+      "ticks": [
+        30
+      ]
+    },
+    {
+      "fields": [
+        "global_position",
+        "_melee_forward",
+        "_attack_drive_direction",
+        "visible_visual_anchor_delta_px"
+      ],
+      "id": "operator_state",
+      "required": true,
+      "role": "operator",
+      "ticks": [
+        0,
+        30,
+        60,
+        68,
+        76,
+        95,
+        140,
+        150,
+        180,
+        240
+      ]
+    },
+    {
+      "fields": [
+        "global_position",
+        "health"
+      ],
+      "id": "aimed_target_state",
+      "required": true,
+      "role": "aimed_target",
+      "ticks": [
+        0,
+        60,
+        95,
+        106,
+        180
+      ]
+    }
+  ],
+  "scene": "res://scenes/debug/combat_playground.tscn",
+  "schema_version": 1,
+  "seed": 104729,
+  "setup": {
+    "fixture": {
+      "config": {
+        "stationary_target": true
+      },
+      "id": "combat_playground"
+    },
+    "processing": [
+      {
+        "physics": false,
+        "process": false,
+        "role": "aimed_target"
+      },
+      {
+        "physics": false,
+        "process": false,
+        "role": "near_off_aim"
+      }
+    ],
+    "properties": [
+      {
+        "property": "global_position",
+        "role": "operator",
+        "value": [
+          420,
+          360
+        ]
+      },
+      {
+        "property": "arrow_aim_enabled",
+        "role": "operator",
+        "value": true
+      },
+      {
+        "property": "global_position",
+        "role": "aimed_target",
+        "value": [
+          535,
+          370
+        ]
+      },
+      {
+        "property": "global_position",
+        "role": "near_off_aim",
+        "value": [
+          420,
+          330
+        ]
+      }
+    ],
+    "remove_nodes": [
+      "World/Enemies/EnemyGrunt3",
+      "World/DroneManager"
+    ],
+    "roles": {
+      "aimed_target": {
+        "node_path": "World/Enemies/EnemyGrunt1"
+      },
+      "camera": {
+        "node_path": "World/Camera2D"
+      },
+      "near_off_aim": {
+        "node_path": "World/Enemies/EnemyGrunt2"
+      },
+      "operator": {
+        "node_path": "World/Operator"
+      }
+    },
+    "spawns": []
+  },
+  "simulation": {
+    "max_wall_seconds": 30,
+    "pause_during_setup": true,
+    "physics_hz": 60,
+    "warmup_ticks": 2
+  },
+  "stable_fingerprint": {
+    "counters": [],
+    "event_payload_fields": {
+      "player_melee_attack_targeting_committed": [
+        "attack_id",
+        "target",
+        "aim_correction_degrees",
+        "resolved_drive"
+      ],
+      "player_melee_soft_target_changed": [
+        "to"
+      ]
+    },
+    "float_quantum": 0.0001,
+    "position_quantum_px": 0.25,
+    "probes": [
+      "operator_state",
+      "aimed_target_state"
+    ]
+  },
+  "tags": [
+    "combat",
+    "melee",
+    "dagger",
+    "soft_target",
+    "range_readability",
+    "operator_animation"
+  ],
+  "timeline": [
+    {
+      "action": "input_tap",
+      "hold_ticks": 1,
+      "name": "toggle_unarmed",
+      "tick": 2
+    },
+    {
+      "action": "aim_at_role",
+      "role": "operator",
+      "target_role": "aimed_target",
+      "tick": 42
+    },
+    {
+      "action": "input_press",
+      "name": "move_right",
+      "tick": 48
+    },
+    {
+      "action": "input_release",
+      "name": "move_right",
+      "tick": 67
+    },
+    {
+      "action": "input_tap",
+      "hold_ticks": 1,
+      "name": "attack_primary",
+      "tick": 92
+    },
+    {
+      "action": "capture_marker",
+      "name": "assisted_contact",
+      "tick": 106
+    },
+    {
+      "action": "aim_at_role",
+      "role": "operator",
+      "target_role": "near_off_aim",
+      "tick": 172
+    },
+    {
+      "action": "input_tap",
+      "hold_ticks": 1,
+      "name": "attack_primary",
+      "tick": 182
+    },
+    {
+      "action": "finish",
+      "tick": 358
+    }
+  ]
+}

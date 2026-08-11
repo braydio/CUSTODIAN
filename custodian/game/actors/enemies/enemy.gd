@@ -2419,6 +2419,33 @@ func get_behavior_snapshot() -> Dictionary:
 	}
 
 
+## Read-only, compact diagnostic surface for validation tooling.
+## Gameplay must not consume this snapshot as authority.
+func get_debug_snapshot() -> Dictionary:
+	var attack_id := _pending_attack_id
+	var attack_type := "melee" if not attack_id.is_empty() else ""
+	var attack_phase := "pending" if not attack_id.is_empty() else "idle"
+	if not _marine_dash_phase.is_empty():
+		attack_id = _marine_dash_attack_id
+		attack_type = "marine_dash"
+		attack_phase = String(_marine_dash_phase)
+	elif not _grunt_falcon_punch_phase.is_empty():
+		attack_id = _grunt_falcon_punch_attack_id
+		attack_type = "falcon_punch"
+		attack_phase = String(_grunt_falcon_punch_phase)
+	return {
+		"position": global_position,
+		"health": {"current": health, "max": max_health},
+		"behavior": get_behavior_snapshot(),
+		"attack": {
+			"id": attack_id,
+			"type": attack_type,
+			"phase": attack_phase,
+			"target_id": target.get_instance_id() if target != null and is_instance_valid(target) else 0,
+		},
+	}
+
+
 func is_carrying_stolen_resources() -> bool:
 	var carrier := get_node_or_null("EnemyLootCarrier")
 	return carrier != null and carrier.has_method("is_carrying_loot") and bool(carrier.call("is_carrying_loot"))

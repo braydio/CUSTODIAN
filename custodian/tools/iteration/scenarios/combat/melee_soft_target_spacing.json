@@ -40,12 +40,15 @@
     {"tick": 358, "action": "finish"}
   ],
   "probes": [
+    {"id": "operator_debug", "role": "operator", "snapshot": "debug", "fields": ["dodge.phase", "combat.loadout_mode", "melee_targeting.reliable_contact"], "ticks": [30], "required": true},
     {"id": "operator_state", "role": "operator", "fields": ["global_position", "_melee_forward", "_attack_drive_direction", "visible_visual_anchor_delta_px"], "ticks": [0, 30, 60, 68, 76, 95, 140, 150, 180, 240], "required": true},
     {"id": "aimed_target_state", "role": "aimed_target", "fields": ["global_position", "health"], "ticks": [0, 60, 95, 106, 180], "required": true}
   ],
   "assertions": [
     {"type": "role_exists", "role": "aimed_target", "severity": "error"},
     {"type": "role_exists", "role": "near_off_aim", "severity": "error"},
+    {"type": "role_distance_compare", "role_a": "operator", "role_b": "aimed_target", "op": "lte", "value": 180.0, "severity": "error"},
+    {"type": "event_absent", "event": "unreleased_input_cleanup", "severity": "error"},
     {"type": "no_unreleased_inputs", "severity": "error"},
     {"type": "output_exists", "path": "telemetry.json", "severity": "error"},
     {"type": "probe_compare", "probe": "operator_state", "tick": 76, "field": "visible_visual_anchor_delta_px", "op": "lte", "value": 1.0, "severity": "error"}
