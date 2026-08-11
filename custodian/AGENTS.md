@@ -250,6 +250,13 @@ Use this whenever you are restructuring docs, moving asset guidance, consolidati
 - Debug surfaces must consume read-only snapshots from `DebugBus`. Mutation must go through debug overrides or queued commands that gameplay systems drain at safe boundaries, never direct per-frame UI writes into deterministic systems.
 - New debug instrumentation should route through `DevObservatory` (`/root/DevObservatory`), not raw `print()` or ad-hoc labels. Use `log_event` for state transitions, `increment`/`set_counter` for counts, `set_gauge` for live values, and `mark_warning` for anomalies. Keep it observability-only — never let observatory state influence simulation, generation, AI, collision, navigation, combat, or saves. See `design/02_features/debug_ui/DEVELOPER_OBSERVATORY_SYSTEM.md` for the full pattern and examples.
 
+## Commit Policy
+
+- Commit completed, validated work at task boundaries without waiting for a per-task instruction.
+- Stage only the files the current task changed; never `git add -A` blindly or sweep in another session's dirty files, secrets, logs, or generated artifacts.
+- Use short, lowercase, comma-joined summaries in the repo's existing style (for example `combat feel authoring, FPS chasing`).
+- Do not push, amend, or force-push unless explicitly asked.
+
 ## Design Codex Governance
 
 `../design/90_codex/` is the project's idea inventory and design memory layer.

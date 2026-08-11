@@ -21,3 +21,13 @@ Repository-root path equivalents used by the local primer are:
 If root guidance conflicts with `custodian/AGENTS.md` for Godot runtime work, follow `custodian/AGENTS.md`.
 
 For long-horizon wanted-feature tracking, use `design/90_codex/` and its tracker at `design/90_codex/TRACKER.md`; codex cards are idea inventory until graduated into active design authority.
+
+## Commit Policy
+
+Agents commit completed work without waiting for a per-task instruction.
+
+- Commit at task boundaries once the change is implemented and validated (parse checks, smoke tests, or the recipe in `custodian/docs/ai_context/VALIDATION_RECIPES.md`).
+- Stage only the files the current task changed. Never `git add -A` blindly: do not sweep in another session's unrelated dirty files, secrets, logs, or generated artifacts.
+- Use short, lowercase, comma-joined summaries in the repo's existing style (for example `combat feel authoring, FPS chasing`).
+- Do not push, amend, or force-push unless explicitly asked.
+- This working tree is shared with other sessions. If unrelated files are dirty alongside yours, commit only your own files so the tree stays reconcilable.
