@@ -2,6 +2,22 @@
 
 Canonical validation guide for CUSTODIAN agent work.
 
+## Instant Replay
+
+Use this focused smoke after changing replay sampling, proxy rendering, pause
+ownership, camera restoration, or replay controls:
+
+```bash
+env HOME=/tmp/custodian-godot-home godot --headless --path custodian \
+  --script res://tools/validation/instant_replay_smoke.gd
+```
+
+It proves that recording captures Operator/projectile presentation, transform
+samples interpolate, replay pauses without mutating the live actor, and exit
+restores both ordinary and pre-existing pause states. Visual review should
+confirm pose fidelity and the 0.7-second rewind-to-forward handoff; replay does
+not promise ambient particles, audio, or simulation rewind.
+
 ## Python-to-Godot Deterministic World Migration
 
 Run `bash custodian/tools/validation/run_world_simulation_migration_suite.sh` from repository root. It rejects tracked Python caches; tests and regenerates fixtures twice; runs Godot import, internal kernel, actual Python projection parity, snapshot restore, campaign exactly-once, repair/fabrication, and real live-scene smokes; then runs architecture ownership validation. The kernel smoke is Godot-internal determinism, while `world_simulation_python_parity_smoke.gd` is cross-runtime parity.

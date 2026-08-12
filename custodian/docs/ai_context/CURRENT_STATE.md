@@ -4,7 +4,7 @@
 
 Live runtime authority: yes. One `WorldSimulationRuntime` in `game.tscn` owns clock, kernel, session/world, snapshots, command ingress, and resolution. Python parity v2 covers seeds 1/2 at ticks 0/1/10/100 for resources, limited-bootstrap inventory/stocks, policies, strategic power load, and logistics with canonical SHA-256; Python remains offline only. Pure Godot coverage includes commands, pause/catch-up, snapshot restore, Command Post failure, repair/fabrication foundations, and exactly-once outcomes. Adapter-only systems are local power delivery, physical `WaveManager` spawning, and `FabPipeline` delivery. Relays, systemic random events, full assaults, wear, fidelity, ambient fabrication, and full Python repair semantics are not yet ported.
 
-Last updated: 2026-08-11
+Last updated: 2026-08-12
 
 Documentation updates this session:
 - Created `design/02_features/factions/FACTION_EXPRESSION_SYSTEM.md` — full implementation spec from Faction Continuity Audit findings, covering taxonomy lock, canonical IDs, gameplay boundaries, roster reduction, data model, migration order, and Sundered Keep vertical slice.
@@ -12,6 +12,16 @@ Documentation updates this session:
 - Reduced faction bible in GAME_PROTOCOLS_AND_WORLD_LORE.md to summary+links (canon now in `design/03_world/factions/`, implementation spec in `design/02_features/factions/FACTION_EXPRESSION_SYSTEM.md`, lore authority in `design/03_world/lore/CORE_LORE.md`).
 
 ## Runtime Status
+
+- Presentation-only Instant Replay V1 is live. The `InstantReplayRecorder`
+  autoload retains a bounded 15-second / 30 Hz visual history of the Operator,
+  enemies, projectiles, opt-in important VFX, and camera. F5 pauses the live
+  SceneTree without restoring gameplay state, hides recorded live roots, and
+  renders interpolated sprite proxies through a rapid rewind and forward
+  replay. Space pauses playback; A/D or the wheel scrubs; 1/2/3 select
+  0.5x/1x/2x. Exit or arrival at NOW restores the exact prior visibility,
+  camera, and pause state. Audio, ambient particles, debris, and gameplay
+  rewind/branching remain outside V1 fidelity.
 
 - Agent Headless Validation V1 is live. `tools/validation/run_validation.py`
   reuses Moment Forge changed-file discovery to select a tier-ordered manifest

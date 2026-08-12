@@ -1,6 +1,14 @@
 # FILE INDEX — CUSTODIAN
 
-Last updated: 2026-08-11
+Last updated: 2026-08-12
+
+## Instant Replay
+
+- `game/systems/replay/instant_replay_recorder.gd` — 30 Hz / 15-second presentation recorder, F5 pause/replay ownership, live-state preservation, proxy rendering, and playback controls.
+- `game/systems/replay/instant_replay_player.gd` and `instant_replay_frame.gd` — replay frame interpolation and bounded presentation-frame contract.
+- `game/ui/replay/instant_replay_overlay.gd` — pause-safe replay state/timeline control legend.
+- `tools/validation/instant_replay_smoke.gd` — sampling, interpolation, actor/projectile capture, pause ownership, and exact restoration regression.
+- `../design/02_features/replay/INSTANT_REPLAY_SYSTEM.md` — active presentation-only replay authority and fidelity boundary.
 
 ## Enemy Hit Spatial Diagnostics
 
