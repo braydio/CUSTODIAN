@@ -9,6 +9,7 @@ const BEACON_TEXTURE := LOOT_FX_ROOT + "loot_marker__fx__interaction__beacon_loo
 const COLLAPSE_TEXTURE := LOOT_FX_ROOT + "loot_marker__fx__interaction__collect_collapse__omni__8f__96x160.png"
 const OBSOLETE_COLLAPSE_TEXTURE := LOOT_FX_ROOT + "loot_marker__fx__interaction__collect_collapse__omni__6f__96x160.png"
 const RING_TEXTURE := LOOT_FX_ROOT + "loot_marker__fx__interaction__ground_ring_loop__omni__6f__96.png"
+const LOOT_TOAST_QUEUE_SCENE := preload("res://game/ui/loot/loot_toast_queue.tscn")
 
 var _failed := false
 var _vault_recovery_seen: Dictionary = {}
@@ -22,6 +23,7 @@ func _run() -> void:
 	var root := Node2D.new()
 	root.name = "LootableCorpseBeaconSmokeRoot"
 	get_root().add_child(root)
+	root.add_child(LOOT_TOAST_QUEUE_SCENE.instantiate())
 	await process_frame
 
 	_validate_marker_contract(root)
@@ -176,6 +178,16 @@ func _validate_corpse_delivery(root: Node) -> void:
 		_assert_true(not tip.visible and not tip.is_playing(), "collection must hide and stop the beam tip")
 	_assert_true(int(ledger.call("get_amount", "ruin_scrap")) == rolled_ruin_scrap, "typed loot must reach ResourceLedger")
 	_assert_true(int(_vault_recovery_seen.get(&"power_components", 0)) == 1, "carried loot must reach VaultManager")
+	var toast_queue := get_first_node_in_group("loot_toast_queue")
+	_assert_true(toast_queue != null, "loot toast queue must be available")
+	if toast_queue != null:
+		var toast_entries := toast_queue.get("_entries") as Array
+		_assert_true(toast_entries.size() == 2, "enemy corpse collection must show typed and recovered-resource toasts")
+		var has_loot_table_toast := false
+		for entry in toast_entries:
+			if entry.get("item_id") == &"ruin_scrap":
+				has_loot_table_toast = true
+		_assert_true(has_loot_table_toast, "enemy loot table resource must produce a pickup toast")
 	_assert_true(int(game_state.get("materials")) == materials_before, "zero legacy materials must not change GameState")
 	_assert_true(int(grunt.get("life_state")) == 3, "collected corpse must enter EMPTY_CORPSE")
 	_assert_true(not bool(corpse_loot.call("has_loot")), "collected corpse payload must be empty")

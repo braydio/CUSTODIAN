@@ -107,14 +107,84 @@ func _award_payload(payload: Dictionary) -> void:
 		var amount := int((payload["resource_ledger"] as Dictionary)[resource_id])
 		if amount > 0 and ledger != null and ledger.has_method("add"):
 			ledger.call("add", String(resource_id), amount)
+			_push_resource_toast(StringName(str(resource_id)), amount)
 	var recovered := payload.get("vault_recovery", {}) as Dictionary
 	var vault := root.get_node_or_null("VaultManager")
 	if not recovered.is_empty() and vault != null and vault.has_method("recover_resources"):
 		vault.call("recover_resources", recovered.duplicate(true))
+		_push_vault_recovery_toast(recovered)
 	var materials := int(payload.get("legacy_materials", 0))
 	var game_state := root.get_node_or_null("GameState")
 	if materials > 0 and game_state != null and game_state.has_method("add_materials"):
 		game_state.call("add_materials", materials)
+		_push_pickup_toast(&"parts", "Recovered Parts", materials, Color(0.95, 0.82, 0.45, 1.0))
+
+
+func _push_resource_toast(resource_id: StringName, amount: int) -> void:
+	var queue := get_tree().get_first_node_in_group("loot_toast_queue")
+	if queue == null or amount <= 0:
+		return
+	queue.call(
+		"push_pickup",
+		resource_id,
+		_resource_display_name(resource_id),
+		amount,
+		_resource_toast_accent(resource_id)
+	)
+
+
+func _push_vault_recovery_toast(resources: Dictionary) -> void:
+	var details: PackedStringArray = []
+	var total := 0
+	for resource_id in resources.keys():
+		var amount := int(resources[resource_id])
+		if amount <= 0:
+			continue
+		details.append("%s ×%d" % [_resource_display_name(StringName(str(resource_id))), amount])
+		total += amount
+	if total > 0:
+		_push_pickup_toast(
+			&"vault_resources",
+			"Vault Resources Recovered",
+			total,
+			Color(0.86, 0.72, 1.0, 1.0),
+			null,
+			" • ".join(details)
+		)
+
+
+func _push_pickup_toast(
+	item_id: StringName,
+	display_name: String,
+	amount: int,
+	accent: Color,
+	icon: Texture2D = null,
+	detail: String = ""
+) -> void:
+	var queue := get_tree().get_first_node_in_group("loot_toast_queue")
+	if queue != null and amount > 0:
+		queue.call("push_pickup", item_id, display_name, amount, accent, icon, detail)
+
+
+func _resource_display_name(resource_id: StringName) -> String:
+	var ledger := get_tree().root.get_node_or_null("ResourceLedger")
+	if ledger != null and ledger.has_method("get_resource_defs"):
+		var definition: Variant = (ledger.call("get_resource_defs") as Dictionary).get(String(resource_id), {})
+		if definition is Dictionary and not str(definition.get("label", "")).is_empty():
+			return str(definition["label"])
+	return String(resource_id).replace("_", " ").capitalize()
+
+
+func _resource_toast_accent(resource_id: StringName) -> Color:
+	match resource_id:
+		&"memory_glass_fragment", &"white_thread_knot":
+			return Color(0.88, 0.96, 1.0, 1.0)
+		&"frayed_signal_filament", &"signal_filament":
+			return Color(0.78, 0.65, 1.0, 1.0)
+		&"power_components", &"spent_charge_cell":
+			return Color(0.64, 0.92, 1.0, 1.0)
+		_:
+			return Color(0.95, 0.82, 0.45, 1.0)
 
 
 func _clean_structured_payload(payload: Dictionary) -> Dictionary:
