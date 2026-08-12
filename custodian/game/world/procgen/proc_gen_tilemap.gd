@@ -161,6 +161,13 @@ const NONWALKABLE_SURFACE_CARDINALS: Array[Vector2i] = [
 	Vector2i.LEFT,
 ]
 const SUNDERED_KEEP_OCEAN_CLAIM_ID := &"sundered_keep_frontage_ocean"
+const SUNDERED_KEEP_CLIFF_EDGE_TEXTURES := {
+	Vector2i.UP: preload("res://content/runtime/sundered_keep/terrain/cliffs/cliff_edge_n.png"),
+	Vector2i.RIGHT: preload("res://content/runtime/sundered_keep/terrain/cliffs/cliff_edge_e.png"),
+	Vector2i.DOWN: preload("res://content/runtime/sundered_keep/terrain/cliffs/cliff_edge_s.png"),
+	Vector2i.LEFT: preload("res://content/runtime/sundered_keep/terrain/cliffs/cliff_edge_w.png"),
+}
+const SUNDERED_KEEP_SURF_ALPHA := 0.34
 
 enum WorldShapeMode {
 	LEGACY_CAVE,
@@ -414,6 +421,7 @@ var _generated_wall_cells: Dictionary = {}
 var _surface_kind_by_cell: Dictionary = {}
 var _chasm_cells: Dictionary = {}
 var _ocean_cells: Dictionary = {}
+var _sundered_keep_coastline_parent: Node2D = null
 var _surface_claim_cells: Dictionary = {}
 var _nonwalkable_surface_summary: Dictionary = {}
 var _evaluated_candidate_ready: bool = false
@@ -4319,6 +4327,10 @@ func _clear_nonwalkable_surface_visuals() -> void:
 		nonwalkable_surface_base_tilemap.clear()
 	if nonwalkable_surface_overlay_tilemap != null:
 		nonwalkable_surface_overlay_tilemap.clear()
+		nonwalkable_surface_overlay_tilemap.self_modulate.a = 1.0
+	if _sundered_keep_coastline_parent != null:
+		_sundered_keep_coastline_parent.free()
+		_sundered_keep_coastline_parent = null
 
 
 func _rebuild_nonwalkable_surface_visuals() -> void:
@@ -4354,6 +4366,57 @@ func _rebuild_nonwalkable_surface_visuals() -> void:
 			nonwalkable_surface_overlay_tilemap.set_cell(
 				cell, shore_id, Vector2i.ZERO, 0
 			)
+	_rebuild_sundered_keep_coastline_presentation()
+
+
+func _rebuild_sundered_keep_coastline_presentation() -> void:
+	if nonwalkable_surface_overlay_tilemap == null \
+			or _sundered_keep_frontage.is_empty():
+		return
+	_sundered_keep_coastline_parent = Node2D.new()
+	_sundered_keep_coastline_parent.name = "SunderedKeepCoastlinePresentation"
+	_sundered_keep_coastline_parent.z_index = 1
+	nonwalkable_surface_overlay_tilemap.add_child(
+		_sundered_keep_coastline_parent
+	)
+	var frontage_floor := (
+		_sundered_keep_frontage.get("floor_cells", {}) as Dictionary
+	)
+	var claimed_ocean := (
+		_sundered_keep_frontage.get("ocean_cells", {}) as Dictionary
+	)
+	for cell_variant in claimed_ocean.keys():
+		if not cell_variant is Vector2i:
+			continue
+		var ocean_cell := cell_variant as Vector2i
+		var floor_direction := Vector2i.ZERO
+		for direction in NONWALKABLE_SURFACE_CARDINALS:
+			if frontage_floor.has(ocean_cell + direction):
+				if floor_direction != Vector2i.ZERO:
+					floor_direction = Vector2i.ZERO
+					break
+				floor_direction = direction
+		if floor_direction == Vector2i.ZERO:
+			continue
+		# Each authored cliff composition spans two cells laterally. Staggering
+		# every other frontier cell avoids turning overlap into a dark rectangle.
+		var tangent_coordinate := (
+			ocean_cell.y
+			if floor_direction.x != 0
+			else ocean_cell.x
+		)
+		if posmod(tangent_coordinate, 2) != 0:
+			continue
+		var sprite := Sprite2D.new()
+		sprite.name = "CliffEdge_%d_%d" % [ocean_cell.x, ocean_cell.y]
+		sprite.texture = SUNDERED_KEEP_CLIFF_EDGE_TEXTURES[floor_direction]
+		sprite.position = nonwalkable_surface_overlay_tilemap.map_to_local(
+			ocean_cell
+		)
+		sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		_sundered_keep_coastline_parent.add_child(sprite)
+	# Foam remains a restrained surf accent beneath the authored rock shelf.
+	nonwalkable_surface_overlay_tilemap.self_modulate.a = SUNDERED_KEEP_SURF_ALPHA
 
 
 func _ocean_shore_key_for_floor_direction(direction: Vector2i) -> String:

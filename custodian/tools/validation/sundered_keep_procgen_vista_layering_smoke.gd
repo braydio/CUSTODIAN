@@ -58,7 +58,10 @@ func _run() -> void:
 	presentation.call("_apply_visual_state", 1.0, 1.0)
 	var landmark := presentation.get_node_or_null("VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/DistantKeep") as Sprite2D
 	var reveal_fog := presentation.get_node_or_null("VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/RevealFog") as Sprite2D
-	_assert(landmark != null and landmark.modulate.a < 0.4, "first landmark must recede during frontage takeover")
+	_assert(landmark != null and landmark.modulate.a <= 0.001, "first landmark must retire completely before fortress apex")
+	presentation.set("_camera_state", {"first_enter_progress": 1.0, "frontage_enter_progress": 0.45})
+	presentation.call("_apply_visual_state", 1.0, 0.45)
+	_assert(landmark != null and landmark.modulate.a <= 0.001, "first landmark remains readable after the fortress takeover begins")
 	_assert(reveal_fog != null and reveal_fog.modulate.a <= 0.051, "first reveal veil must clear before fortress composition")
 	for node in _all_descendants(presentation):
 		_assert(not (node is CollisionObject2D or node is CollisionShape2D or node is CollisionPolygon2D or node is NavigationRegion2D), "vista presentation must not own collision/navigation: %s" % node.name)

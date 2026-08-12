@@ -3,6 +3,12 @@ extends SceneTree
 const TILESET_PATH := "res://content/tiles/tilesets/procgen_world_tileset.tres"
 const SOURCE_IDS := [124, 125, 126, 127, 128]
 const FRONTAGE_FLOOR_SOURCE_IDS := [129, 130, 131, 132]
+const KEEP_CLIFF_PATHS := [
+	"res://content/runtime/sundered_keep/terrain/cliffs/cliff_edge_n.png",
+	"res://content/runtime/sundered_keep/terrain/cliffs/cliff_edge_e.png",
+	"res://content/runtime/sundered_keep/terrain/cliffs/cliff_edge_s.png",
+	"res://content/runtime/sundered_keep/terrain/cliffs/cliff_edge_w.png",
+]
 
 var _errors: Array[String] = []
 
@@ -45,6 +51,7 @@ func _run() -> void:
 			if source != null and source.texture != null:
 				_assert(source.texture.get_size() == Vector2(32, 32), "frontage floor source %d is not 32x32" % source_id)
 		_assert_foam_overlay_alpha(tile_set)
+	_assert_keep_cliff_assets()
 	if _errors.is_empty():
 		print("[ProcgenOceanTilesetSmoke] PASS ids=124-128 size=32x32 frames=1")
 		quit(0)
@@ -74,3 +81,11 @@ func _assert_foam_overlay_alpha(tile_set: TileSet) -> void:
 					occupied += 1
 		var coverage := float(occupied) / float(image.get_width() * image.get_height())
 		_assert(coverage <= 0.30, "foam overlay source %d still reads as a full square (%0.3f)" % [source_id, coverage])
+
+
+func _assert_keep_cliff_assets() -> void:
+	for path in KEEP_CLIFF_PATHS:
+		var texture := load(path) as Texture2D
+		_assert(texture != null, "missing Sundered Keep coastline texture: %s" % path)
+		if texture != null:
+			_assert(texture.get_size() == Vector2(64, 96), "Sundered Keep coastline texture is not 64x96: %s" % path)

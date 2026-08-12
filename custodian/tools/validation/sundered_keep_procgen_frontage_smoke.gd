@@ -362,6 +362,12 @@ func _assert_integrated_procgen_result() -> void:
 	) as TileMapLayer
 	_assert(ocean_base != null and not ocean_base.get_used_cells().is_empty(), "integrated near-field ocean fill was not painted")
 	_assert(ocean_overlay != null and not ocean_overlay.get_used_cells().is_empty(), "integrated cardinal shore foam was not painted")
+	var coastline := map.get_node_or_null(
+		"NavigationRegion2D/NonWalkableSurfaceOverlay/"
+		+ "SunderedKeepCoastlinePresentation"
+	) as Node2D
+	_assert(coastline != null and coastline.get_child_count() > 0, "integrated frontage did not build the authored cliff coastline")
+	_assert(ocean_overlay != null and is_equal_approx(ocean_overlay.self_modulate.a, 0.34), "integrated shore foam is not subordinate to the cliff coastline")
 	var touches_north := false
 	for cell_variant in frontage_ocean.keys():
 		var cell := cell_variant as Vector2i

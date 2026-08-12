@@ -76,9 +76,9 @@ the fortress apex receives a 0.9-second minimum presentation hold and triggers
 the existing six-frame moonlight sweep once per presentation instance.
 
 The active layering pass keeps the base storm horizon and moonlight punctuation,
-but treats the first landmark as an atmospheric silhouette rather than a second
-fully opaque fortress. As frontage presentation takes over, the landmark cools
-and recedes, the one-shot reveal veil falls nearly away, and the persistent
+but treats the first landmark as a temporary atmospheric silhouette rather than
+a second fortress. It retires completely by 42% of frontage takeover, before
+the final fortress becomes dominant. The one-shot reveal veil falls nearly away, and the persistent
 horizon-seam fog becomes the architectural bridge. The outer wall and central
 citadel use the established distant blue-gray palette at reduced `0.35` and
 `0.33` scale. The approach gate-shadow veil is not part of this procgen vista;
@@ -91,7 +91,11 @@ scene-local offsets and are not pulled apart by gameplay-scale wall/tower
 anchors. Generated frontage floor keeps its irregular authoritative footprint
 but uses deterministic Keep cliff-rock, wet flagstone, and gate-threshold
 sources so the Operator reads as standing on land. Cardinal ocean foam sources
-are sparse transparent edge overlays rather than opaque water tiles.
+are sparse transparent edge overlays rather than opaque water tiles. The
+authoritative frontage-floor/ocean frontier also places the existing 64x96
+Sundered Keep cardinal cliff compositions as presentation-only rock shelves;
+foam is held to 34% layer alpha as secondary surf. These sprites add no
+collision, navigation, or terrain authority.
 
 The cinematic dressing-clearance envelope follows 94% of the generated route,
 with wider discs at the first and fortress apexes. Foliage, ruin props,

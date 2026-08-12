@@ -66,8 +66,8 @@ Documentation updates this session:
   physical `bullet.gd` travel and collision remain final authority.
 - Procgen now classifies every final in-map non-floor cell as explicit `chasm` or claimed `ocean` semantic state without consulting wall dressing. Sundered Keep emits the first bounded north-facing ocean claim; resolved cells paint visual-only 32×32 dark water and unambiguous cardinal foam on absolute-depth surface layers while the existing final-floor `RuntimeWalkableBoundary` remains physical authority. Ocean/chasm sets export through level data and survive accepted-candidate promotion unchanged. The seam-safe camera-following depth backdrop remains live rather than switching to finite connected-region stacks.
 - Generated procgen walkable floor now has a global non-destructible cardinal-edge collision frontier built after final playability remediation; contiguous edges merge into one runtime body rather than filling void cells, and visual/destructible cliff walls no longer act as the traversal security perimeter. Sundered Keep frontages emit and validate a separating vista commit line plus terminal apron across production seeds. Its procgen camera now keeps one continuous horizon-to-fortress envelope through the 90% return anchor, targets generated Keep semantics, holds fortress apex for 0.9 seconds without freezing movement, scales the distant Keep to 0.44, and plays the existing six-frame moonlight sweep once at fortress apex.
-- The Sundered Keep procgen vista layering pass now cools and recedes the first
-  landmark during frontage takeover, fades the reveal veil nearly away, and
+- The Sundered Keep procgen vista layering pass now cools and fully retires the
+  first landmark by 42% of frontage takeover, fades the reveal veil nearly away, and
   presents the outer wall/citadel as a smaller blue-gray distant mass. The
   fortress root now owns their world anchor once, preserving the reviewed
   scene-local composition instead of separating its pieces through gameplay
@@ -77,7 +77,10 @@ Documentation updates this session:
   active; their collision, interaction, and runtime state remain live. The
   irregular generated frontage floor is deterministically skinned with existing
   cliff-rock, wet flagstone, and gate stone tiles; ocean foam is now a narrow
-  transparent fringe rather than four opaque 32x32 water squares. The redundant
+  transparent fringe at 34% layer alpha rather than four opaque 32x32 water
+  squares. Existing 64x96 cardinal Keep cliff compositions establish a
+  presentation-only rock shelf along the authoritative floor/ocean frontier;
+  collision, navigation, and topology remain unchanged. The redundant
   GateShadow plate is removed; the ordinary route fade remains the
   transition authority. Storm fitting now covers semantic camera travel as well
   as the viewport, eliminating exposed finite plate edges. Descending Ward

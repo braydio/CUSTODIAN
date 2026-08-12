@@ -297,6 +297,11 @@ func _apply_visual_state(
 		0.78,
 		frontage_visual
 	)
+	var landmark_retire := _smootherstep_range(
+		0.02,
+		0.42,
+		frontage_visual
+	)
 	var landmark_reveal := lerpf(
 		0.08,
 		0.94,
@@ -310,7 +315,7 @@ func _apply_visual_state(
 		0.76,
 		0.82,
 		0.90,
-		landmark_reveal * lerpf(1.0, 0.35, frontage_takeover)
+		landmark_reveal * (1.0 - landmark_retire)
 	)
 	_reveal_fog.modulate.a = lerpf(
 		0.68,
