@@ -1,0 +1,37 @@
+{
+	"schema": "custodian.sundered_keep_procgen_frontage_review.v1",
+	"seeds": [
+		{
+			"authored_pocket": false,
+			"gate_anchor": [
+				131,
+				18
+			],
+			"grammar_id": "curved_frontage_v1",
+			"ok": true,
+			"outputs": {
+				"camera_takeover": "res://../reports/sundered_keep_single_keep_coastline_20260811/seed_0001_camera_takeover.png",
+				"entry": "res://../reports/sundered_keep_single_keep_coastline_20260811/seed_0001_entry.png",
+				"first_reveal_apex": "res://../reports/sundered_keep_single_keep_coastline_20260811/seed_0001_first_reveal_apex.png",
+				"fortress_apex": "res://../reports/sundered_keep_single_keep_coastline_20260811/seed_0001_fortress_apex.png",
+				"gameplay_return": "res://../reports/sundered_keep_single_keep_coastline_20260811/seed_0001_gameplay_return.png",
+				"terminal_approach": "res://../reports/sundered_keep_single_keep_coastline_20260811/seed_0001_terminal_approach.png",
+				"world_overview": "res://../reports/sundered_keep_single_keep_coastline_20260811/seed_0001_world_overview.png"
+			},
+			"overlook_anchor": [
+				116,
+				38
+			],
+			"rectangular_authored_footprint": false,
+			"seed": 1,
+			"viewport": [
+				2560,
+				1440
+			]
+		}
+	],
+	"viewport": [
+		2560,
+		1440
+	]
+}
