@@ -2,6 +2,16 @@
 
 Last updated: 2026-08-12
 
+## Terminal Sensors Intelligence
+
+- `../design/02_features/terminal/SENSORS_INTELLIGENCE_SYSTEM.md` — active player-facing fidelity, forecast, vocabulary, and authority contract.
+- `game/systems/intel/sensor_intelligence_read_model.gd` and `sensor_activity_classifier.gd` — read-only live hostile truth with stable contact identity and operational activity classification.
+- `game/systems/intel/intel_projector.gd` — pure FULL/DEGRADED/FRAGMENTED/LOST information-removal authority for sectors and contacts.
+- `game/ui/terminal/sensors_terminal_view_model.gd` — sole Sensors page semantics, EnemyDirector forecast separation, and compact ARRN network support.
+- `game/ui/terminal/terminal_snapshot.gd`, `game/ui/hud/ui.gd`, and `game/ui/minimap/` — projection integration, terminal rendering, and shared-map hostile truth suppression.
+- `tools/validation/terminal_sensors_{intelligence,layout}_smoke.gd` — stable ID/activity/forecast/leak and safe-layout coverage.
+- `docs/ai_context/task_packets/TERMINAL_SENSORS_INTELLIGENCE_V1.md` — compact implementation packet.
+
 ## Instant Replay
 
 - `game/systems/replay/instant_replay_recorder.gd` — 30 Hz / 15-second presentation recorder, F5 pause/replay ownership, live-state preservation, proxy rendering, and playback controls.
@@ -74,7 +84,7 @@ Last updated: 2026-08-12
 - `custodian/docs/ai_context/task_packets/ASH_BELL_FORLORN_RITUALANT.md` — packet for the first authored Ash-Bell / Forlorn-Ritualant event implementation slice and deferred production asset/procgen integration work
 - `custodian/docs/ai_context/task_packets/SEVERANCE_UNARRIVAL_LORE_REVISION.md` — completed packet for the Severance root-cause canon revision and Forlorn-Ritualant rename pass
 - `design/02_features/vehicles/AUTONOMOUS_COMBAT_DRONES.md` — complete V3 allied combat drone authority, including manager-owned fire discipline, close/far/free-roam formation behavior, and Operator/order-point guard anchors
-- `custodian/docs/ai_context/task_packets/ARRN_RUNTIME_IMPLEMENTATION.md` — completed packet for the first Automated Relay Routing Network runtime implementation
+- `custodian/docs/ai_context/task_packets/archived/ARRN_RUNTIME_IMPLEMENTATION.md` — archived completed packet for the first Automated Relay Routing Network runtime implementation
 - `custodian/docs/ai_context/task_packets/RESOURCE_ID_CANONICALIZATION.md` — completed packet for making CUSTODIAN-flavored resource IDs canonical across node drops, ledger storage, recipes, UI, and docs
 - `custodian/docs/ai_context/task_packets/ENEMY_GRUNT_RUNTIME_WIRING.md` — completed packet for verifying `enemy_grunt` asset usage and wiring it as a live wave-spawned enemy type
 - `custodian/docs/ai_context/task_packets/ENEMY_GRUNT_SPRITE_INGEST_2026_05_17.md` — completed packet for ingesting pending `enemy_grunt` sheets, fixing generated compatibility manifest layout, and expanding directional grunt playback

@@ -60,9 +60,13 @@
 [ext_resource type="PackedScene" path="res://game/infrastructure/structures/field_fabricator_mk1.tscn" id="214_field_fabricator"]
 [ext_resource type="Script" path="res://game/world/levels/level_loader.gd" id="215_level_loader"]
 [ext_resource type="Script" path="res://game/world/routes/route_traversal_manager.gd" id="216_route_manager"]
+[ext_resource type="Script" path="res://game/systems/intel/sensor_intelligence_read_model.gd" id="217_sensor_intelligence"]
 
 [node name="GameRoot" type="Node2D" unique_id=593578645]
 metadata/_edit_vertical_guides_ = [-1047.0]
+
+[node name="SensorIntelligenceReadModel" type="Node" parent="."]
+script = ExtResource("217_sensor_intelligence")
 
 [node name="DebugController" type="Node" parent="." unique_id=744681739]
 script = ExtResource("29_debug_controller")
@@ -1031,7 +1035,7 @@ layout_mode = 2
 text = "GLOBAL POWER"
 
 [node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/PowerWidgets/PowerTopRow/PowerGlobalPanel/Margin/Content" unique_id=-2137803013]
-custom_minimum_size = Vector2(0, 118)
+custom_minimum_size = Vector2(0, 92)
 layout_mode = 2
 bbcode_enabled = true
 fit_content = true
@@ -1057,7 +1061,7 @@ layout_mode = 2
 text = "ROUTING PRESETS"
 
 [node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/PowerWidgets/PowerTopRow/PowerPresetPanel/Margin/Content" unique_id=-2137803008]
-custom_minimum_size = Vector2(0, 118)
+custom_minimum_size = Vector2(0, 92)
 layout_mode = 2
 bbcode_enabled = true
 fit_content = true
@@ -1084,7 +1088,7 @@ layout_mode = 2
 text = "SECTOR ALLOCATION"
 
 [node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/PowerWidgets/PowerAllocationPanel/Margin/Content" unique_id=-2137803003]
-custom_minimum_size = Vector2(0, 214)
+custom_minimum_size = Vector2(0, 122)
 layout_mode = 2
 bbcode_enabled = true
 fit_content = true
@@ -1210,10 +1214,10 @@ theme_override_constants/separation = 6
 
 [node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SensorsWidgets/SensorsTopRow/SensorsFidelityPanel/Margin/Content" unique_id=-2137802980]
 layout_mode = 2
-text = "FIDELITY SUMMARY"
+text = "INTELLIGENCE QUALITY"
 
 [node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SensorsWidgets/SensorsTopRow/SensorsFidelityPanel/Margin/Content" unique_id=-2137802979]
-custom_minimum_size = Vector2(0, 118)
+custom_minimum_size = Vector2(0, 84)
 layout_mode = 2
 bbcode_enabled = true
 fit_content = true
@@ -1236,10 +1240,10 @@ theme_override_constants/separation = 6
 
 [node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SensorsWidgets/SensorsTopRow/SensorsPredictionPanel/Margin/Content" unique_id=-2137802975]
 layout_mode = 2
-text = "PREDICTION STRIP"
+text = "FORECAST"
 
 [node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SensorsWidgets/SensorsTopRow/SensorsPredictionPanel/Margin/Content" unique_id=-2137802974]
-custom_minimum_size = Vector2(0, 118)
+custom_minimum_size = Vector2(0, 84)
 layout_mode = 2
 bbcode_enabled = true
 fit_content = true
@@ -1248,7 +1252,7 @@ scroll_active = false
 [node name="SensorsActivityPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SensorsWidgets" unique_id=-2137802973]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
+size_flags_vertical = 0
 
 [node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SensorsWidgets/SensorsActivityPanel" unique_id=-2137802972]
 layout_mode = 2
@@ -1263,14 +1267,14 @@ theme_override_constants/separation = 6
 
 [node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SensorsWidgets/SensorsActivityPanel/Margin/Content" unique_id=-2137802970]
 layout_mode = 2
-text = "ACTIVITY TAGS"
+text = "CONTACTS / ACTIVITY // SELECTED CONTACT"
 
 [node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SensorsWidgets/SensorsActivityPanel/Margin/Content" unique_id=-2137802969]
-custom_minimum_size = Vector2(0, 214)
+custom_minimum_size = Vector2(0, 96)
 layout_mode = 2
 bbcode_enabled = true
-fit_content = true
-scroll_active = false
+fit_content = false
+scroll_active = true
 
 [node name="IncidentsWidgets" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack" unique_id=-2137802968]
 visible = false

@@ -2,6 +2,21 @@
 
 Canonical validation guide for CUSTODIAN agent work.
 
+## Terminal Sensors Intelligence
+
+```bash
+env HOME=/tmp/custodian-godot-home godot --headless --path custodian \
+  --script res://tools/validation/intel_projector_smoke.gd
+env HOME=/tmp/custodian-godot-home godot --headless --path custodian \
+  --script res://tools/validation/terminal_sensors_intelligence_smoke.gd
+env HOME=/tmp/custodian-godot-home godot --headless --path custodian \
+  --script res://tools/validation/terminal_sensors_layout_smoke.gd
+```
+
+These prove stable hostile identity, behavior activity, physical omission of
+forbidden fidelity fields, separate ingress/objective forecast semantics,
+shared-map projection mode/restoration, and safe terminal layout.
+
 ## Instant Replay
 
 Use this focused smoke after changing replay sampling, proxy rendering, pause

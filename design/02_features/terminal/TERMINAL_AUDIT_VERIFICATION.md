@@ -207,7 +207,7 @@ SECTORS          functional-v1         Sector cards, damage overlays, minimap in
 POWER            readout-partial       Four globals + basic table — needs routing controls, presets, preview
 DEFENSE          readout-scaffold      Turret count + coverage inference — needs asset list, LOS, targeting
 FABRICATION      functional-v1         Most complete page — recipe browse, queue, build progress
-SENSORS          functional-partial    ARRN relay network + threat/hostile data — needs contact model
+SENSORS          functional-v1         Stable contacts, behavior activity, fidelity projection, director forecast, shared-map omission
 INCIDENTS        transcript-scaffold   Last8 transcript entries — needs incident registry + lifecycle
 ARCHIVE          functional-partial    Real ARRN/contract data — STATE field should use snapshot
 RECON            placeholder           Hardcoded HYP-01/02/03
@@ -228,7 +228,7 @@ The original audit's sequence assumed files needed to be created from scratch. S
 4. **Build operational history** — `operational_history.gd`, `history_terminal_view_model.gd` (append-only, filterable)
 5. **Deepen POWER page** — routing controls, preset preview, APPLY ROUTE
 6. **Deepen DEFENSE page** — asset list, LOS, targeting
-7. **Deepen SENSORS page** — contact model with confidence, age, source
+7. **Deepen SENSORS page** — implemented by Sensors Intelligence V1; physical sensor hardware/coverage remains deferred
 8. **Build RECON system** — real hypothesis generation from contract/world data
 9. **Build SETTINGS controls** — actual interactive settings
 10. **Build CONTRACTS browser** — proposal browsing beyond active contract

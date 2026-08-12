@@ -5,6 +5,7 @@ const TerminalSnapshotScript := preload("res://game/ui/terminal/terminal_snapsho
 const TerminalStatusFormatterScript := preload("res://game/ui/terminal/terminal_status_formatter.gd")
 const TerminalOverviewViewModelScript := preload("res://game/ui/terminal/terminal_overview_view_model.gd")
 const TerminalFabricationViewModelScript := preload("res://game/ui/terminal/fabrication_terminal_view_model.gd")
+const SensorsTerminalViewModelScript := preload("res://game/ui/terminal/sensors_terminal_view_model.gd")
 const TerminalMapPreviewScript := preload("res://game/ui/terminal/terminal_map_preview.gd")
 const TerminalPlanetPreviewScript := preload("res://game/ui/terminal/terminal_planet_preview.gd")
 const DebugScreenScene := preload("res://game/ui/hud/debug_screen.tscn")
@@ -296,6 +297,7 @@ var _terminal_log_entries: Array[Dictionary] = []
 var _terminal_history: Array[String] = []
 var _terminal_history_index := 0
 var _terminal_snapshot: Dictionary = {}
+var _terminal_sensor_selected_contact_id := ""
 var _terminal_command_inflight := false
 var _terminal_command_queue: Array[Dictionary] = []
 var _terminal_command_queue_tick := 0.0
@@ -1017,7 +1019,7 @@ func _apply_terminal_page_layout() -> void:
 		var widget_index := terminal_widget_stack.get_index() if terminal_widget_stack != null and terminal_widget_stack.get_parent() == content_column else content_column.get_child_count()
 		content_column.move_child(terminal_map_preview_title_label, widget_index)
 		content_column.move_child(terminal_map_preview, mini(widget_index + 1, content_column.get_child_count() - 1))
-		terminal_map_preview.custom_minimum_size.y = 250.0
+		terminal_map_preview.custom_minimum_size.y = 116.0 if _terminal_current_page == "SENSORS" else 250.0
 	if terminal_planet_preview != null:
 		terminal_planet_preview.custom_minimum_size.y = 144.0
 	if _terminal_main_scroll != null:
@@ -3425,6 +3427,7 @@ func _refresh_snapshot() -> void:
 	_record_terminal_snapshot_events(_terminal_snapshot)
 	_render_terminal_header(_terminal_snapshot)
 	_render_terminal_main_content(_terminal_snapshot)
+	_sync_terminal_sensor_map(_terminal_snapshot)
 	_refresh_contract_previews()
 	_render_terminal_status("LOCAL SNAPSHOT LIVE")
 
@@ -3920,8 +3923,8 @@ func _render_terminal_page(context: Dictionary) -> String:
 			_render_terminal_defense_widgets(snapshot, assault_value, hostile_text)
 			return "DEFENSE READINESS // TURRETS, ASSAULT LANES, COVERAGE"
 		"SENSORS":
-			_render_terminal_sensors_widgets(threat_text, hostile_text, wave_text, assault_value, sector_array, snapshot.get("arrn", {}))
-			return "SENSOR FIDELITY // CONTACTS, THREAT LANES, ACTIVITY"
+			_render_terminal_sensors_widgets(snapshot)
+			return "TRACKS HOSTILE LOCATION, ACTIVITY, AND LIKELY MOVEMENT // ACCURACY DEPENDS ON COMMAND LINK AND COMMS FIDELITY"
 		"INCIDENTS":
 			_render_terminal_incidents_widgets()
 			return "EVENT TRIAGE // RECENT TRANSCRIPT SIGNALS AND ALERTS"
@@ -4268,50 +4271,60 @@ func _render_terminal_defense_widgets(snapshot: Dictionary, assault_value: Varia
 	_set_terminal_rich_text(terminal_defense_coverage_body, "\n".join(_build_terminal_defense_coverage_lines(snapshot.get("sectors", []))))
 
 
-func _render_terminal_sensors_widgets(threat_text: Variant, hostile_text: String, wave_text: String, assault_value: Variant, sector_array: Array, arrn_snapshot: Dictionary) -> void:
-	var arrn_fidelity := str(arrn_snapshot.get("fidelity", "FULL")).to_upper() if not arrn_snapshot.is_empty() else "FULL"
+func _render_terminal_sensors_widgets(snapshot: Dictionary) -> void:
 	var threat_bonus := 0
 	var arrn_manager := _get_arrn_manager()
 	if arrn_manager != null and arrn_manager.has_method("get_threat_warning_tick_bonus"):
 		threat_bonus = int(arrn_manager.call("get_threat_warning_tick_bonus"))
+	var model := SensorsTerminalViewModelScript.build(snapshot, threat_bonus)
+	var network: Dictionary = model.get("network_support", {})
+	var forecast: Dictionary = model.get("forecast", {})
 	_set_terminal_rich_text(terminal_sensors_fidelity_body, "\n".join([
-		_terminal_kv("THREAT", threat_text),
-		_terminal_kv("HOSTILES", hostile_text),
-		_terminal_kv("WAVE", wave_text),
-		_terminal_kv("MODE", "%s COMMAND CLARITY" % arrn_fidelity),
-		_terminal_kv("ARRN", "%d/%d" % [int(arrn_snapshot.get("knowledge_index", 0)), int(arrn_snapshot.get("knowledge_max", 7))]),
+		_terminal_kv("LINK", model.get("fidelity", "LOST")),
+		_terminal_kv("MODE", model.get("terminal_mode", "FIELD")),
+		_terminal_kv("TRACKED", model.get("tracked_count", 0)),
+		_terminal_kv("CURRENT", model.get("current_count", 0)),
+		_terminal_kv("STALE", model.get("stale_count", 0)),
+		"",
+		"NETWORK SUPPORT",
+		_terminal_kv("ARRN", "%d/%d" % [int(network.get("arrn_knowledge", 0)), int(network.get("arrn_max", 7))]),
+		_terminal_kv("RELAYS", "%d/%d STABLE" % [int(network.get("stable_relays", 0)), int(network.get("relay_total", 0))]),
 	]))
 	_set_terminal_rich_text(terminal_sensors_prediction_body, "\n".join([
-		"LIKELY INGRESS AXIS  %s" % str(assault_value),
-		"WAVE PROFILE         %s" % wave_text,
-		"CONTACT CONFIDENCE   %s" % ("RAISED" if threat_bonus > 0 else "HIGH"),
-		"FORECAST BONUS       +%d TICKS" % threat_bonus,
+		_terminal_kv("INGRESS", forecast.get("ingress", "UNCONFIRMED")),
+		_terminal_kv("OBJECTIVE", forecast.get("objective", "UNCONFIRMED")),
+		_terminal_kv("WAVE PROFILE", forecast.get("wave_profile", "NONE PLANNED")),
+		_terminal_kv("CONFIDENCE", forecast.get("confidence", "NONE")),
+		_terminal_kv("EARLY WARNING", "+%d TICKS" % int(forecast.get("early_warning_ticks", 0))),
 	]))
 	var activity_lines: Array[String] = []
-	if not arrn_snapshot.is_empty():
-		activity_lines.append("ARRN RELAY NETWORK")
-		for relay_variant in arrn_snapshot.get("relays", []):
-			if not (relay_variant is Dictionary):
-				continue
-			var relay: Dictionary = relay_variant
-			activity_lines.append("%-10s %-8s %3d%% %s" % [
-				str(relay.get("relay_id", "RELAY")).to_upper(),
-				str(relay.get("status", "UNKNOWN")).to_upper(),
-				int(round(float(relay.get("stability", 0.0)))),
-				str(relay.get("sector_id", "UNKNOWN")).to_upper(),
-			])
-	else:
-		for sector_variant in sector_array:
-			if not (sector_variant is Dictionary):
-				continue
-			var sector: Dictionary = sector_variant
-			activity_lines.append("%-18s -> %s" % [
-				_display_sector_name(str(sector.get("name", "SECTOR"))).to_upper(),
-				str(sector.get("status", "UNKNOWN")).to_upper(),
-			])
+	var contacts := model.get("contacts", []) as Array
+	if not contacts.is_empty():
+		var selected_exists := false
+		for contact: Dictionary in contacts:
+			if String(contact.get("contact_id", "")) == _terminal_sensor_selected_contact_id:
+				selected_exists = true
+		if not selected_exists:
+			_terminal_sensor_selected_contact_id = String((contacts[0] as Dictionary).get("contact_id", ""))
+		activity_lines.append("ID      SECTOR          CLASS        ACTIVITY        CONF")
+	for contact: Dictionary in contacts:
+		var marker := ">" if String(contact.get("contact_id", "")) == _terminal_sensor_selected_contact_id else " "
+		activity_lines.append("%s%-6s %-15s %-12s %-15s %s" % [marker, contact.get("contact_id", ""), contact.get("sector", "UNCONFIRMED"), contact.get("class_label", "UNKNOWN"), contact.get("activity", "UNKNOWN"), contact.get("confidence", "NONE")])
+	for activity: Dictionary in model.get("sector_activity", []):
+		activity_lines.append("%-15s %-22s %s" % [activity.get("sector", "UNCONFIRMED"), activity.get("activity", "ACTIVITY DETECTED"), activity.get("confidence", "LOW")])
 	if activity_lines.is_empty():
-		activity_lines.append("NO SENSOR TAGS AVAILABLE")
+		activity_lines.append(String(model.get("message", "NO CURRENT HOSTILE RETURNS")))
 	_set_terminal_rich_text(terminal_sensors_activity_body, "\n".join(activity_lines))
+
+
+func _sync_terminal_sensor_map(snapshot: Dictionary) -> void:
+	if terminal_map_preview == null:
+		return
+	if _terminal_current_page == "SENSORS":
+		if terminal_map_preview.has_method("set_sensor_intelligence"):
+			terminal_map_preview.call("set_sensor_intelligence", snapshot.get("sensor_intelligence", {}))
+	elif terminal_map_preview.has_method("clear_sensor_intelligence"):
+		terminal_map_preview.call("clear_sensor_intelligence")
 
 
 func _render_terminal_incidents_widgets() -> void:

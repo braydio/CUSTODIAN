@@ -314,21 +314,25 @@ When archive/recon/contract data is surfaced, fidelity and confidence should int
 
 ### 6. SENSORS
 
-**Purpose:** Awareness asymmetry
+**Purpose:** Fidelity-bound tactical intelligence: hostile location, activity,
+return quality/age, and the existing director's likely pressure.
 
-**Layout:**
-- Top: Fidelity summary
-- Left: Sensor asset list
-- Center: Tactical intelligence map
-- Right: Selected contact list
-- Bottom: Prediction strip
+Detailed behavior and authority live in
+`design/02_features/terminal/SENSORS_INTELLIGENCE_SYSTEM.md`.
 
-**Tactical intelligence map display:**
-- Full Command Center + full clarity: hostile positions
-- Otherwise: activity tags by sector (entering, moving through, vandalizing, stealing, indexing, idle/loitering)
+**Layout:** Intelligence Quality/Network Support and Forecast at top; shared
+tactical map; Contacts/Activity and Selected Contact below. V1 does not invent
+a physical sensor-asset list because no production sensor-hardware network owns
+that data yet.
 
-**Activity labels (canonical):**
-- entering, moving through, vandalizing, stealing, indexing, idle, loitering
+**Fidelity:** FULL Command permits exact hostile contacts. DEGRADED uses coarse
+sector/last-known returns. FRAGMENTED aggregates activity by sector. LOST shows
+no usable hostile return. The map and text consume the same projected data.
+
+**Production activity vocabulary:** MOVING THROUGH, SEARCHING, ENGAGING,
+VANDALIZING, STEALING, EXFILTRATING, WITHDRAWING, DISRUPTED, IDLE, LOITERING.
+ENTERING is reserved until real ingress evidence exists. INDEXING is
+RESERVED/FUTURE and must not be emitted without a production Enemy behavior.
 
 ---
 

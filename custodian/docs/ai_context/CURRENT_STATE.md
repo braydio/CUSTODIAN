@@ -13,6 +13,18 @@ Documentation updates this session:
 
 ## Runtime Status
 
+- Terminal Sensors Intelligence V1 is a read-only derived model, not a new
+  simulation authority. Stable `C-###` contacts and live Enemy behavior truth
+  are projected through the existing `TerminalFidelityPolicy` and pure
+  `IntelProjector`: FULL Command permits exact contacts; DEGRADED removes exact
+  position/health/heading and uses coarse markers; FRAGMENTED aggregates sector
+  activity without identity; LOST exposes no hostile count or location. The
+  shared terminal minimap consumes the same projection and suppresses live
+  enemy-node pips in Sensors mode. EnemyDirector ingress, objective, and
+  composition are separate forecast fields; ARRN supplies compact network
+  support and early-warning ticks only. Relays/fidelity remain transitional
+  read-only inputs and are not ported into `WorldSimulationRuntime` by this work.
+
 - Presentation-only Instant Replay V1 is live. The `InstantReplayRecorder`
   autoload retains a bounded 15-second / 30 Hz visual history of the Operator,
   enemies, projectiles, opt-in important VFX, and camera. F5 pauses the live

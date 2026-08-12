@@ -56,6 +56,8 @@ var _dynamic_redraw_accum := 0.0
 var _last_dynamic_signature := ""
 var _world_bounds := Rect2()
 var _overview_mode := false
+var _sensor_intelligence_active := false
+var _sensor_intelligence: Dictionary = {}
 
 
 func _ready() -> void:
@@ -122,6 +124,22 @@ func set_player(node: Node2D) -> void:
 func set_enemies(nodes: Array) -> void:
 	enemy_nodes = _filter_valid_node2d_array(nodes)
 	_request_redraw()
+
+
+func set_sensor_intelligence(intelligence: Dictionary) -> void:
+	_sensor_intelligence_active = true
+	_sensor_intelligence = intelligence.duplicate(true)
+	_request_redraw()
+
+
+func clear_sensor_intelligence() -> void:
+	_sensor_intelligence_active = false
+	_sensor_intelligence.clear()
+	_request_redraw()
+
+
+func is_sensor_intelligence_active() -> bool:
+	return _sensor_intelligence_active
 
 
 func set_objectives(nodes: Array) -> void:
@@ -317,7 +335,10 @@ func _global_to_tile(global_position: Vector2) -> Vector2i:
 func _get_dynamic_signature() -> String:
 	var parts: Array[String] = []
 	_append_node_signature(parts, "p", player_node)
-	_append_nodes_signature(parts, "e", enemy_nodes)
+	if _sensor_intelligence_active:
+		parts.append("sensor:%s" % hash(_sensor_intelligence))
+	else:
+		_append_nodes_signature(parts, "e", enemy_nodes)
 	_append_nodes_signature(parts, "o", objective_nodes)
 	_append_nodes_signature(parts, "c", terminal_nodes)
 	_append_nodes_signature(parts, "v", vehicle_nodes)
@@ -350,6 +371,9 @@ func _draw_player_pip(map_rect: Rect2) -> void:
 
 
 func _draw_enemy_pips(map_rect: Rect2) -> void:
+	if _sensor_intelligence_active:
+		_draw_sensor_intelligence(map_rect)
+		return
 	for enemy in enemy_nodes:
 		if not _is_valid_node2d(enemy):
 			continue
@@ -364,6 +388,20 @@ func _draw_enemy_pips(map_rect: Rect2) -> void:
 				_draw_loot_carrier_marker(panel_pos)
 			else:
 				draw_circle(panel_pos, enemy_pip_radius_px, enemy_color)
+
+
+func _draw_sensor_intelligence(map_rect: Rect2) -> void:
+	for contact: Dictionary in _sensor_intelligence.get("contacts", []):
+		var position_value: Variant = contact.get("world_position", contact.get("coarse_map_position", null))
+		if not position_value is Vector2:
+			continue
+		var tile := _global_to_tile(position_value as Vector2)
+		if not _is_tile_inside(tile):
+			continue
+		var panel_pos := _tile_to_panel(tile, map_rect)
+		var confidence := String(contact.get("confidence", "NONE"))
+		var color := enemy_color if confidence == "HIGH" else Color(enemy_color, 0.55)
+		draw_circle(panel_pos, enemy_pip_radius_px + (1.3 if confidence != "HIGH" else 0.0), color)
 
 
 func _draw_passive_creature_marker(panel_pos: Vector2) -> void:

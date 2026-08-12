@@ -54,6 +54,73 @@ static func project_all_sectors(truth_sectors: Array, fidelity: int) -> Array:
 	return projected
 
 
+static func fidelity_from_name(value: Variant) -> int:
+	match String(value).strip_edges().to_upper():
+		"FULL": return Fidelity.FULL
+		"DEGRADED": return Fidelity.DEGRADED
+		"FRAGMENTED": return Fidelity.FRAGMENTED
+		_: return Fidelity.LOST
+
+
+static func project_contacts(truth_snapshot: Dictionary, fidelity: int, terminal_mode: StringName = &"command", current_tick: int = 0) -> Dictionary:
+	var truth_contacts: Array = truth_snapshot.get("contacts", [])
+	if fidelity == Fidelity.LOST:
+		return {"contacts": [], "sector_activity": [], "message": "NO USABLE NETWORK RETURN", "confidence": "NONE"}
+	if fidelity == Fidelity.FRAGMENTED:
+		var aggregates: Dictionary = {}
+		for contact: Dictionary in truth_contacts:
+			var sector := String(contact.get("sector", "UNCONFIRMED"))
+			if not aggregates.has(sector):
+				aggregates[sector] = {"sector": sector, "activities": {}}
+			var activity := String(contact.get("activity", "ACTIVITY DETECTED"))
+			(aggregates[sector]["activities"] as Dictionary)[activity] = true
+		var sector_activity: Array[Dictionary] = []
+		for sector in aggregates.keys():
+			var activities := (aggregates[sector]["activities"] as Dictionary).keys()
+			activities.sort()
+			sector_activity.append({"sector": sector, "activity": ", ".join(activities), "confidence": "LOW"})
+		sector_activity.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return String(a["sector"]) < String(b["sector"]))
+		return {"contacts": [], "sector_activity": sector_activity, "message": "ACTIVITY RETURNS FRAGMENTED", "confidence": "LOW"}
+	var contacts: Array[Dictionary] = []
+	for truth: Dictionary in truth_contacts:
+		var age_ticks := maxi(0, current_tick - int(truth.get("last_seen_tick", current_tick)))
+		var projected := {
+			"contact_id": truth.get("contact_id", ""),
+			"sector": truth.get("sector", "UNCONFIRMED"),
+			"class_label": truth.get("class_label", "UNKNOWN"),
+			"activity": truth.get("activity", "UNKNOWN"),
+			"stale": bool(truth.get("stale", false)),
+			"confidence": "HIGH" if fidelity == Fidelity.FULL and terminal_mode == &"command" else "MEDIUM",
+		}
+		if fidelity == Fidelity.FULL and terminal_mode == &"command":
+			projected["world_position"] = truth.get("world_position", Vector2.ZERO)
+			projected["health_pct"] = truth.get("health_pct", 0.0)
+			projected["velocity"] = truth.get("velocity", Vector2.ZERO)
+			projected["age_ticks"] = age_ticks
+		else:
+			projected["age_bucket"] = _contact_age_bucket(age_ticks)
+			var position: Vector2 = truth.get("world_position", Vector2.ZERO)
+			projected["coarse_map_position"] = Vector2(
+				roundf(position.x / 256.0) * 256.0,
+				roundf(position.y / 256.0) * 256.0
+			)
+		contacts.append(projected)
+	return {
+		"contacts": contacts,
+		"sector_activity": [],
+		"tracked_count": contacts.size(),
+		"current_count": contacts.size(),
+		"stale_count": 0,
+		"confidence": "HIGH" if fidelity == Fidelity.FULL and terminal_mode == &"command" else "MEDIUM",
+	}
+
+
+static func _contact_age_bucket(age_ticks: int) -> String:
+	if age_ticks <= 30: return "CURRENT"
+	if age_ticks <= 180: return "RECENT"
+	return "STALE"
+
+
 static func _project_full(truth: Dictionary) -> Dictionary:
 	return {
 		"id": truth.get("id", ""),

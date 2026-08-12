@@ -82,6 +82,18 @@ func refresh_now() -> void:
 	_refresh_dynamic_nodes()
 
 
+func set_sensor_intelligence(intelligence: Dictionary) -> void:
+	minimap_view = get_node_or_null(minimap_view_path)
+	if minimap_view != null and minimap_view.has_method("set_sensor_intelligence"):
+		minimap_view.call("set_sensor_intelligence", intelligence)
+
+
+func clear_sensor_intelligence() -> void:
+	minimap_view = get_node_or_null(minimap_view_path)
+	if minimap_view != null and minimap_view.has_method("clear_sensor_intelligence"):
+		minimap_view.call("clear_sensor_intelligence")
+
+
 func set_overview_mode(enabled: bool) -> void:
 	_overview_mode = enabled
 	minimap_view = get_node_or_null(minimap_view_path)

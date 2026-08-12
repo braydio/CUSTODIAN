@@ -2,6 +2,7 @@ extends RefCounted
 class_name TerminalSnapshot
 
 const TerminalFidelityPolicyScript := preload("res://game/ui/terminal/terminal_fidelity_policy.gd")
+const IntelProjectorScript := preload("res://game/systems/intel/intel_projector.gd")
 
 var _fidelity_policy: TerminalFidelityPolicy = TerminalFidelityPolicyScript.new()
 
@@ -24,6 +25,8 @@ func build(ui: Node) -> Dictionary:
 	var simulation_tick := int(game_state.get("tick")) if game_state != null and "tick" in game_state else Engine.get_physics_frames()
 	var simulation_ticks_per_second := 60
 	var system_counts := _collect_system_counts(sectors)
+	var sensor_truth := _collect_sensor_truth(ui)
+	var projected_sensors := IntelProjectorScript.project_contacts(sensor_truth, IntelProjectorScript.fidelity_from_name(fidelity), terminal_mode, simulation_tick)
 	return {
 		"simulation_tick": simulation_tick,
 		"simulation_seconds": float(simulation_tick) / float(simulation_ticks_per_second),
@@ -42,6 +45,8 @@ func build(ui: Node) -> Dictionary:
 			str(director.get("lane", "none")).to_upper(),
 			str(director.get("objective", "none")).to_upper(),
 		] if not director.is_empty() else "?",
+		"director": director,
+		"sensor_intelligence": projected_sensors,
 		"player_mode": "LIVE",
 		"contract_phase": game_state.get_phase_name() if game_state != null else "UNKNOWN",
 		"materials": int(game_state.materials) if game_state != null else 0,
@@ -57,6 +62,15 @@ func build(ui: Node) -> Dictionary:
 		"tactical_entities": collect_tactical_entities(ui),
 		"vault": collect_vault(ui),
 	}
+
+
+func _collect_sensor_truth(ui: Node) -> Dictionary:
+	var model := ui.get_tree().get_first_node_in_group("sensor_intelligence_read_model")
+	if model == null:
+		return {"contacts": []}
+	if model.has_method("collect_now"):
+		model.call("collect_now")
+	return model.call("get_truth_snapshot") if model.has_method("get_truth_snapshot") else {"contacts": []}
 
 
 func collect_infrastructure(ui: Node) -> Array[Dictionary]:
@@ -130,6 +144,8 @@ func collect_enemies(ui: Node) -> Dictionary:
 
 
 func collect_tactical_entities(ui: Node) -> Dictionary:
+	# Internal compatibility truth for non-Sensors pages and legacy preview code.
+	# Player-visible Sensors output must consume sensor_intelligence instead.
 	var entities := {
 		"operator": [],
 		"turrets": [],
