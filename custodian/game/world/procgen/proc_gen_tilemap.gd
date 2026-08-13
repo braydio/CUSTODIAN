@@ -315,10 +315,9 @@ enum WorldShapeMode {
 ## Compound generation (structured base area)
 @export var enable_compound_zone: bool = true
 @export_range(0.1, 0.2, 0.01) var compound_area_ratio: float = 0.14
-@export var compound_min_size: Vector2i = Vector2i(24, 20)
-@export var compound_max_size: Vector2i = Vector2i(42, 34)
+@export var compound_min_size: Vector2i = Vector2i(64, 52)
+@export var compound_max_size: Vector2i = Vector2i(76, 60)
 @export_range(1, 4, 1) var compound_wall_thickness: int = 2
-@export_range(2, 8, 1) var compound_building_count: int = 4
 @export_range(2, 6, 1) var compound_ingress_count: int = 3
 
 ## Layout variation: not cave-like every run
@@ -402,6 +401,13 @@ enum WorldShapeMode {
 var _last_compound_rect: Rect2i = Rect2i()
 var _last_compound_ingress: Array[Vector2i] = []
 var _last_compound_buildings: Array[Rect2i] = []
+var _last_compound_rooms: Array[Dictionary] = []
+var _last_compound_connections: Array[Dictionary] = []
+var _last_compound_corridor_cells: Array[Vector2i] = []
+var _last_compound_courtyard_cells: Array[Vector2i] = []
+var _last_compound_primary_anchor := Vector2i.ZERO
+var _last_compound_terminal_anchor := Vector2i.ZERO
+var _last_compound_diagnostics: Dictionary = {}
 var _last_interior_region_rect: Rect2i = Rect2i()
 var _last_interior_rooms: Array[Rect2i] = []
 var _last_interior_thresholds: Array[Vector2i] = []
@@ -3425,6 +3431,17 @@ func _carve_path_brush(center: Vector2i, width: int, map_size: Vector2i) -> void
 
 func _apply_compound_layout(map_size: Vector2i) -> void:
 	var compound := _build_compound_layout(map_size)
+	if not bool(compound.get("valid", false)):
+		_last_compound_rect = Rect2i()
+		_last_compound_ingress.clear()
+		_last_compound_buildings.clear()
+		_last_compound_rooms.clear()
+		_last_compound_connections.clear()
+		_last_compound_corridor_cells.clear()
+		_last_compound_courtyard_cells.clear()
+		_last_compound_diagnostics = compound.get("diagnostics", {}).duplicate(true)
+		push_warning("[ProcGenTilemap] Semantic compound generation failed: %s" % _last_compound_diagnostics.get("failure_reason", "unknown"))
+		return
 	var rect: Rect2i = compound.get("rect", Rect2i()) as Rect2i
 	var ingress: Array[Vector2i] = compound.get("ingress", []) as Array[Vector2i]
 	var buildings: Array[Rect2i] = compound.get("buildings", []) as Array[Rect2i]
@@ -3432,11 +3449,22 @@ func _apply_compound_layout(map_size: Vector2i) -> void:
 		_last_compound_rect = Rect2i()
 		_last_compound_ingress.clear()
 		_last_compound_buildings.clear()
+		_last_compound_rooms.clear()
+		_last_compound_connections.clear()
+		_last_compound_corridor_cells.clear()
+		_last_compound_courtyard_cells.clear()
 		return
 
 	_last_compound_rect = rect
 	_last_compound_ingress = ingress.duplicate()
 	_last_compound_buildings = buildings.duplicate()
+	_last_compound_rooms = (compound.get("rooms", []) as Array).duplicate(true)
+	_last_compound_connections = (compound.get("connections", []) as Array).duplicate(true)
+	_last_compound_corridor_cells = (compound.get("corridor_cells", []) as Array).duplicate()
+	_last_compound_courtyard_cells = (compound.get("courtyard_cells", []) as Array).duplicate()
+	_last_compound_primary_anchor = compound.get("primary_anchor", Vector2i.ZERO)
+	_last_compound_terminal_anchor = compound.get("terminal_anchor", Vector2i.ZERO)
+	_last_compound_diagnostics = (compound.get("diagnostics", {}) as Dictionary).duplicate(true)
 
 	for x in range(rect.position.x, rect.end.x):
 		for y in range(rect.position.y, rect.end.y):
@@ -3471,20 +3499,48 @@ func _apply_compound_layout(map_size: Vector2i) -> void:
 		_carve_compound_ingress(tile, rect, t)
 		if intent_decorate_compound_ingress:
 			_decorate_compound_ingress(tile, rect)
-
-	for b in buildings:
-		for x in range(b.position.x, b.end.x):
-			for y in range(b.position.y, b.end.y):
-				_set_wall_tile(Vector2i(x, y))
-		var center := b.get_center()
-		var door := Vector2i(int(center.x), b.position.y)
-		_set_floor_tile(door)
-		_set_floor_tile(door + Vector2i(0, -1))
-
+	# Seal pre-existing yard pockets before semantic rooms and corridors are
+	# stamped. Those generated routes are authoritative walkable geometry and
+	# must never be converted back into holes by the legacy yard cleanup pass.
 	_seal_unreachable_compound_pockets(rect, ingress)
 
+	for tile in _last_compound_courtyard_cells:
+		_set_region_tile(tile, "compound_courtyard", "compound")
+	for tile in _last_compound_corridor_cells:
+		if rect.has_point(tile):
+			_set_floor_tile(tile)
+			_set_region_tile(tile, "compound_corridor", "compound")
+
+	for room in _last_compound_rooms:
+		var room_rect: Rect2i = room.get("rect", Rect2i())
+		var doors := {}
+		for door in room.get("door_cells", []):
+			if door is Vector2i:
+				doors[door] = true
+		for x in range(room_rect.position.x, room_rect.end.x):
+			for y in range(room_rect.position.y, room_rect.end.y):
+				var tile := Vector2i(x, y)
+				var perimeter := x == room_rect.position.x or x == room_rect.end.x - 1 \
+					or y == room_rect.position.y or y == room_rect.end.y - 1
+				if perimeter and not doors.has(tile):
+					_set_wall_tile(tile)
+				else:
+					_set_floor_tile(tile)
+				_set_region_tile(tile, "compound_room", String(room.get("type", "room")))
 
 func _build_compound_layout(map_size: Vector2i) -> Dictionary:
+	var bounds_result := _build_compound_bounds_and_ingress(map_size)
+	var planner := PersistentCompoundLayoutPlanner.new()
+	if not planner.load_default_graph():
+		return {"valid": false, "diagnostics": {"failure_reason": "graph_load_failed"}}
+	return planner.generate_layout(
+		_get_generation_seed(),
+		bounds_result.get("rect", Rect2i()),
+		bounds_result.get("ingress", [])
+	)
+
+
+func _build_compound_bounds_and_ingress(map_size: Vector2i) -> Dictionary:
 	var target_area := int(round(float(map_size.x * map_size.y) * compound_area_ratio))
 	var aspect := 1.25 + float(_tile_noise_hash(Vector2i(7, 19)) % 40) / 100.0
 	var width := int(round(sqrt(float(target_area) * aspect)))
@@ -3516,35 +3572,9 @@ func _build_compound_layout(map_size: Vector2i) -> Dictionary:
 			_:
 				ingress.append(Vector2i(rect.end.x - 1, rect.position.y + offset))
 
-	var buildings: Array[Rect2i] = []
-	var inner: Rect2i = rect.grow(-max(3, compound_wall_thickness + 1))
-	var cols: int = 2
-	var rows: int = int(ceil(float(compound_building_count) / float(cols)))
-	var slot_w: int = max(6, int(inner.size.x / cols))
-	var slot_h: int = max(6, int(inner.size.y / max(1, rows)))
-	var presets: Array[Vector2i] = [
-		Vector2i(12, 9), # command-like
-		Vector2i(9, 7),  # power-like
-		Vector2i(10, 7), # defense-like
-		Vector2i(8, 6),  # storage-like
-		Vector2i(9, 6),  # fabrication-like
-	]
-	for i in range(compound_building_count):
-		var col: int = i % cols
-		var row: int = int(i / cols)
-		var preset: Vector2i = presets[i % presets.size()]
-		var bw: int = clamp(preset.x, 4, slot_w - 2)
-		var bh: int = clamp(preset.y, 4, slot_h - 2)
-		var sx: int = inner.position.x + col * slot_w + int((slot_w - bw) * 0.5)
-		var sy: int = inner.position.y + row * slot_h + int((slot_h - bh) * 0.5)
-		var brect := Rect2i(sx, sy, bw, bh)
-		if inner.encloses(brect):
-			buildings.append(brect)
-
 	return {
 		"rect": rect,
 		"ingress": ingress,
-		"buildings": buildings,
 	}
 
 
@@ -5965,7 +5995,7 @@ func _apply_terrain_builder(map_size: Vector2i) -> void:
 		"world_progress_profile": _world_progress_profile,
 		"world_progress_profile_path": world_progress_profile_path,
 		"worldgen_intent_graph": _worldgen_intent_graph,
-		"worldgen_reserved_regions": _worldgen_reserved_regions,
+		"worldgen_reserved_regions": _get_terrain_reserved_regions(),
 		"worldgen_intent_floor_cells": _worldgen_intent_floor_cells,
 		"generation_mode": "EVAL_CANDIDATE" if generation_evaluation_mode else "FINAL_VISUAL",
 	}
@@ -6035,6 +6065,21 @@ func _collect_terrain_required_cell_entries(map_size: Vector2i) -> Array[Diction
 		"intent_graph_required_cells": intent_required_cells,
 		"is_tile_inside_map": Callable(self, "_is_tile_inside_map"),
 	})
+
+
+func _get_terrain_reserved_regions() -> Array[Dictionary]:
+	var result: Array[Dictionary] = _worldgen_reserved_regions.duplicate(true)
+	for cell in _last_compound_corridor_cells:
+		result.append({"rect": Rect2i(cell, Vector2i.ONE), "kind": "compound_corridor", "runtime_height": 0})
+	for room in _last_compound_rooms:
+		var room_rect: Rect2i = room.get("rect", Rect2i())
+		var interior := room_rect.grow(-1)
+		if interior.size.x > 0 and interior.size.y > 0:
+			result.append({"rect": interior, "kind": "compound_room", "runtime_height": 0})
+		for door in room.get("door_cells", []):
+			if door is Vector2i:
+				result.append({"rect": Rect2i(door, Vector2i.ONE), "kind": "compound_door", "runtime_height": 0})
+	return result
 
 
 func _terrain_required_entries_to_cells(entries: Array[Dictionary]) -> Array[Vector2i]:
@@ -9374,6 +9419,14 @@ func get_level_data() -> Dictionary:
 		"compound_rect": _last_compound_rect,
 		"compound_ingress": _last_compound_ingress,
 		"compound_buildings": _last_compound_buildings,
+		"compound_layout_version": 1 if not _last_compound_rooms.is_empty() else 0,
+		"compound_rooms": _last_compound_rooms.duplicate(true),
+		"compound_connections": _last_compound_connections.duplicate(true),
+		"compound_corridor_cells": _last_compound_corridor_cells.duplicate(),
+		"compound_courtyard_cells": _last_compound_courtyard_cells.duplicate(),
+		"compound_primary_anchor": _last_compound_primary_anchor,
+		"compound_terminal_anchor": _last_compound_terminal_anchor,
+		"compound_diagnostics": _last_compound_diagnostics.duplicate(true),
 		"main_road_tiles": get_main_road_tiles(),
 		"parking_zone_tiles": get_parking_zone_tiles(),
 		"road_walk_speed_multiplier": road_walk_speed_multiplier,

@@ -1,6 +1,12 @@
 # Room Templates
 
-This directory contains Tiled room templates for the Edgar-style procedural level generation.
+This directory contains the live semantic compound graph plus the authored Tiled-room pipeline.
+
+## Runtime authority
+
+- `graphs/persistent_compound_layout_v1.json` is the live persistent-compound catalog and topology authority. `PersistentCompoundLayoutPlanner` uses it to reserve deterministic 10–13-room procedural shells, corridors, doors, labels, and Sector associations without requiring authored art.
+- `graphs/default_compound.json` is the dormant legacy EDGAR sample. Its five-type catalog is retained for compatibility/debug callers and is not the live persistent compound.
+- `templates/*.tmj` is the authored-content layer. Those maps can eventually replace procedural interiors within semantic reservations; missing templates do not block V1 generation.
 
 ## Supported Format
 
@@ -19,7 +25,7 @@ Use **`.tmj` only**.
    - `doors_east`: `[{"y": 6, "height": 3}]`
    - `doors_west`: `[{"y": 6, "height": 3}]`
 4. Add room metadata:
-   - `room_type`: `command_post`, `hangar`, `corridor`, `storage`, `landing_pad`
+   - `room_type`: a semantic type from `persistent_compound_layout_v1.json`
    - `min_players`: `1`
    - `max_players`: `4`
    - `floor_index`: `0`
@@ -27,7 +33,7 @@ Use **`.tmj` only**.
 5. Add an object layer named `Markers` for authored anchors.
 6. Save/export as `.tmj` to `custodian/game/world/compound/rooms/templates/`.
 
-## Room Types
+## Legacy EDGAR sample room types
 
 | Type | Purpose | Required |
 |------|---------|----------|
@@ -80,19 +86,27 @@ For `stairs_up` and `stairs_down`, add custom object properties as needed:
 
 Important: stairs are currently authored transitions between separate 2D maps. They do not provide true freeform Z traversal in the live runtime.
 
-## Template Naming
+## Future persistent-compound template naming
 
 - `command_post.tmj`
-- `hangar_large.tmj`
-- `hangar_small.tmj`
-- `corridor_h.tmj`
-- `corridor_v.tmj`
-- `storage.tmj`
-- `landing_pad.tmj`
+- `power_core_a.tmj`
+- `archive_a.tmj`
+- `defense_a.tmj`
+- `storage_a.tmj`
+- `north_transit_a.tmj`
+- `south_transit_a.tmj`
+- `maintenance_a.tmj`
+- `fabrication_a.tmj`
+- `comms_a.tmj`
+- `barracks_a.tmj`
+- `hangar_a.tmj`
+- `vault_a.tmj`
+- `service_annex_a.tmj`
+- `observation_a.tmj`
 
 ## Adding to the Graph
 
-Edit `custodian/game/world/compound/rooms/graphs/default_compound.json` to:
+Edit `custodian/game/world/compound/rooms/graphs/persistent_compound_layout_v1.json` for live persistent-compound semantics. Edit `default_compound.json` only when maintaining the legacy EDGAR sample.
 - Add new room types
 - Adjust room counts
 - Modify connections

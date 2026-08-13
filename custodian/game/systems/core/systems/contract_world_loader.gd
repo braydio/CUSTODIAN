@@ -60,7 +60,7 @@ const WORLD_ORIGIN_BRANCH_GROUP := &"world_origin_branch"
 const AMBIENT_ENEMY_MARKER_GROUP := &"ambient_enemy_camp_marker"
 const GENERATED_AMBIENT_ENEMY_MARKER_GROUP := &"generated_procgen_ambient_enemy_marker"
 const SECTOR_TILE_PX := 24.0
-const PROCGEN_SECTOR_LAYOUT := {
+const LEGACY_PROCGEN_SECTOR_LAYOUT := {
 	"ARCHIVE": 0,
 	"POWER": 1,
 	"DEFENSE": 2,
@@ -405,6 +405,23 @@ func _position_static_sectors_from_contract(level_data: Dictionary, map_instance
 	var sectors_root := get_node_or_null(sectors_container_path)
 	if sectors_root == null:
 		return false
+	var semantic_rooms := _compound_rooms_by_sector_id(level_data)
+	if not semantic_rooms.is_empty():
+		var semantic_positioned := false
+		var ingress_tiles := _vector2i_items(level_data.get("compound_ingress", []))
+		for sector_id in semantic_rooms.keys():
+			var sector_node := sectors_root.get_node_or_null(String(sector_id)) as Node2D
+			if sector_node == null:
+				continue
+			var room: Dictionary = semantic_rooms[sector_id]
+			var sector_rect: Rect2i = room.get("rect", Rect2i())
+			if sector_rect.size.x <= 0 or sector_rect.size.y <= 0:
+				continue
+			_position_sector_node(sector_node, sector_rect, ingress_tiles, map_instance)
+			semantic_positioned = true
+			if String(sector_id) == "DEFENSE":
+				_position_defense_turrets(sector_node, sector_rect)
+		return semantic_positioned
 
 	var building_tiles: Array[Rect2i] = []
 	for item in level_data.get("compound_buildings", []):
@@ -419,8 +436,8 @@ func _position_static_sectors_from_contract(level_data: Dictionary, map_instance
 			ingress_tiles.append(item as Vector2i)
 
 	var positioned_any := false
-	for sector_name in PROCGEN_SECTOR_LAYOUT.keys():
-		var sector_index: int = int(PROCGEN_SECTOR_LAYOUT[sector_name])
+	for sector_name in LEGACY_PROCGEN_SECTOR_LAYOUT.keys():
+		var sector_index: int = int(LEGACY_PROCGEN_SECTOR_LAYOUT[sector_name])
 		if sector_index >= building_tiles.size():
 			continue
 		var sector_node := sectors_root.get_node_or_null(String(sector_name)) as Node2D
@@ -433,6 +450,28 @@ func _position_static_sectors_from_contract(level_data: Dictionary, map_instance
 			_position_defense_turrets(sector_node, sector_rect)
 
 	return positioned_any
+
+
+func _compound_rooms_by_sector_id(level_data: Dictionary) -> Dictionary:
+	var result := {}
+	for room_variant in level_data.get("compound_rooms", []):
+		if not (room_variant is Dictionary):
+			continue
+		var room := room_variant as Dictionary
+		var sector_id := String(room.get("sector_id", "")).strip_edges().to_upper()
+		if sector_id.is_empty() or result.has(sector_id):
+			continue
+		result[sector_id] = room.duplicate(true)
+	return result
+
+
+func _vector2i_items(value: Variant) -> Array[Vector2i]:
+	var result: Array[Vector2i] = []
+	if value is Array:
+		for item in value:
+			if item is Vector2i:
+				result.append(item)
+	return result
 
 
 func _position_sector_node(sector_node: Node2D, sector_rect: Rect2i, ingress_tiles: Array[Vector2i], map_instance: Node) -> void:
@@ -619,9 +658,13 @@ func _position_command_terminal(level_data: Dictionary, map_instance: Node) -> v
 		player_spawn_tile = player_spawn as Vector2i
 
 	var target_tile := Vector2i.ZERO
+	var semantic_anchor: Variant = level_data.get("compound_terminal_anchor", Vector2i.ZERO)
+	if semantic_anchor is Vector2i and semantic_anchor != Vector2i.ZERO:
+		target_tile = semantic_anchor
 	if player_spawn_tile != Vector2i.ZERO:
-		target_tile = player_spawn_tile
-	if compound_rect is Rect2i:
+		if target_tile == Vector2i.ZERO:
+			target_tile = player_spawn_tile
+	if compound_rect is Rect2i and target_tile == Vector2i.ZERO:
 		target_tile = Vector2i((compound_rect as Rect2i).get_center())
 
 	var chosen_tile := _pick_closest_tile(compound_tiles, target_tile)

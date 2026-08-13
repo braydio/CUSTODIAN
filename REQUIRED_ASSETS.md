@@ -185,3 +185,24 @@ The V1 common dry-fire and carbine reload/heat/vent WAVs are supplied, format-ve
 |---|---|---|---|---|
 | needed | Command terminal renamed production sheets | `custodian/content/sprites/environment/props/terminal/runtime/body/command_terminal__*.png` | Replace compatibility fallback to older terminal naming. | Some compatibility copies exist; final canonical art pass remains open. |
 | needed | Terminal UI frames, overlays, icons, pips, button skins | See `custodian/content/ui/terminal/README.md` | Replace placeholder/lightly-derived terminal styling. | Keep UI asset asks synchronized with that README. |
+
+## Persistent Compound Authored Rooms
+
+Persistent Compound V1 is live with procedural semantic shells; these 32×32px Tiled `.tmj` maps are the deferred curated-interior layer, not a runtime blocker. Frame count is not applicable.
+
+| Status | Template | Target canvas |
+|---|---|---|
+| needed | `custodian/game/world/compound/rooms/templates/command_post.tmj` | 16×12 tiles / 512×384px |
+| needed | `custodian/game/world/compound/rooms/templates/power_core_a.tmj` | 14×10 / 448×320px |
+| needed | `custodian/game/world/compound/rooms/templates/archive_a.tmj` | 13×10 / 416×320px |
+| needed | `custodian/game/world/compound/rooms/templates/defense_a.tmj` | 16×11 / 512×352px |
+| needed | `custodian/game/world/compound/rooms/templates/storage_a.tmj` | 12×9 / 384×288px |
+| needed | `custodian/game/world/compound/rooms/templates/{north_transit_a,south_transit_a}.tmj` | 12×8 / 384×256px |
+| needed | `custodian/game/world/compound/rooms/templates/maintenance_a.tmj` | 10×8 / 320×256px |
+| needed | `custodian/game/world/compound/rooms/templates/fabrication_a.tmj` | 14×10 / 448×320px |
+| needed | `custodian/game/world/compound/rooms/templates/comms_a.tmj` | 10×8 / 320×256px |
+| needed | `custodian/game/world/compound/rooms/templates/barracks_a.tmj` | 12×9 / 384×288px |
+| needed | `custodian/game/world/compound/rooms/templates/hangar_a.tmj` | 18×14 / 576×448px |
+| needed | `custodian/game/world/compound/rooms/templates/vault_a.tmj` | 10×7 / 320×224px |
+| needed | `custodian/game/world/compound/rooms/templates/service_annex_a.tmj` | 10×8 / 320×256px |
+| needed | `custodian/game/world/compound/rooms/templates/observation_a.tmj` | 8×7 / 256×224px |

@@ -2,6 +2,16 @@
 
 Canonical validation guide for CUSTODIAN agent work.
 
+## Persistent Compound Layout
+
+```bash
+env HOME=/tmp/custodian-godot-home godot --headless --path custodian --script res://tools/validation/persistent_compound_layout_smoke.gd
+env HOME=/tmp/custodian-godot-home godot --headless --path custodian --script res://tools/validation/persistent_compound_runtime_smoke.gd
+env HOME=/tmp/custodian-godot-home godot --headless --path custodian --script res://tools/validation/persistent_compound_minimap_smoke.gd
+```
+
+These cover seeded topology, live floor/wall/door integration, semantic Sector lookup, and shared minimap compatibility. Pair them with changed-file validation and relevant ingress/terrain tests when ProcGenTilemap changes.
+
 ## Terminal Sensors Intelligence
 
 ```bash

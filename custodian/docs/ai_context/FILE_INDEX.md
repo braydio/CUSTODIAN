@@ -785,6 +785,16 @@ Last updated: 2026-08-12
 
 ## Active Documentation
 
+### Persistent Compound Layout V1
+
+- `design/02_features/procgen/PERSISTENT_COMPOUND_LAYOUT_SYSTEM.md` — active semantic-campus design authority and ownership boundary
+- `custodian/game/world/compound/rooms/persistent_compound_layout_planner.gd` — deterministic layout helper for room selection, placement, topology, doors, and corridors
+- `custodian/game/world/compound/rooms/graphs/persistent_compound_layout_v1.json` — live room catalog, count, footprint, zone, Sector, and connection data
+- `custodian/game/world/procgen/proc_gen_tilemap.gd` — generated physical compound and semantic level-data authority
+- `custodian/game/systems/core/systems/contract_world_loader.gd` — semantic Sector and command-terminal placement consumer; building indices are legacy fallback only
+- `custodian/game/ui/minimap/minimap_view.gd` — shared semantic topology renderer with anonymous-building compatibility fallback
+- `custodian/tools/validation/persistent_compound_{layout,runtime,minimap}_smoke.gd` — deterministic planner, physical integration, and map-consumer coverage
+
 - `custodian/docs/ai_context/CURRENT_STATE.md` — current implementation state
 - `custodian/docs/ai_context/CONTEXT.md` — project primer and working rules
 - `custodian/docs/ai_context/FILE_INDEX.md` — this file

@@ -7,6 +7,7 @@ var graph_name: String = ""
 var rooms: Dictionary = {}
 var connections: Array = []
 var seed_overrides: Dictionary = {}
+var layout_config: Dictionary = {}
 
 var _rng: RandomNumberGenerator
 
@@ -48,6 +49,7 @@ func load_from_dict(data: Dictionary) -> bool:
 	var rooms_value: Variant = data.get("rooms", {})
 	var connections_value: Variant = data.get("connections", [])
 	var seed_overrides_value: Variant = data.get("seed_overrides", {})
+	var layout_value: Variant = data.get("layout", {})
 
 	if not (rooms_value is Dictionary):
 		push_error("[RoomGraph] 'rooms' must be a dictionary")
@@ -60,15 +62,22 @@ func load_from_dict(data: Dictionary) -> bool:
 	if not (seed_overrides_value is Dictionary):
 		push_error("[RoomGraph] 'seed_overrides' must be a dictionary")
 		return false
+	if not (layout_value is Dictionary):
+		push_error("[RoomGraph] 'layout' must be a dictionary")
+		return false
 
 	rooms = (rooms_value as Dictionary).duplicate(true)
 	connections = (connections_value as Array).duplicate(true)
 	seed_overrides = (seed_overrides_value as Dictionary).duplicate(true)
+	layout_config = (layout_value as Dictionary).duplicate(true)
 
 	return validate()
 
 func get_room_config(room_type: String) -> Dictionary:
 	return rooms.get(room_type, {})
+
+func get_layout_config() -> Dictionary:
+	return layout_config.duplicate(true)
 
 func get_available_types() -> Array:
 	var keys := rooms.keys()

@@ -39,6 +39,8 @@ var interior_rooms: Array[Rect2i] = []
 var compound_rect: Rect2i = Rect2i()
 var compound_ingress: Array[Vector2i] = []
 var compound_buildings: Array[Rect2i] = []
+var compound_rooms: Array[Dictionary] = []
+var compound_connections: Array[Dictionary] = []
 var region_tiles: Dictionary = {}
 
 var map_texture: ImageTexture = null
@@ -76,6 +78,8 @@ func set_level_data(data: Dictionary) -> void:
 	compound_rect = data.get("compound_rect", Rect2i())
 	compound_ingress = _as_vector2i_array(data.get("compound_ingress", []))
 	compound_buildings = _as_rect2i_array(data.get("compound_buildings", []))
+	compound_rooms = _as_dictionary_array(data.get("compound_rooms", []))
+	compound_connections = _as_dictionary_array(data.get("compound_connections", []))
 	region_tiles = data.get("region_tiles", {})
 	_mark_map_texture_dirty()
 
@@ -101,6 +105,8 @@ func set_world_bounds(bounds: Rect2) -> void:
 	compound_rect = Rect2i()
 	compound_ingress.clear()
 	compound_buildings.clear()
+	compound_rooms.clear()
+	compound_connections.clear()
 	region_tiles.clear()
 	_mark_map_texture_dirty()
 
@@ -201,6 +207,19 @@ func get_status_summary() -> Dictionary:
 		"turrets": turret_nodes.size(),
 		"relays": relay_nodes.size(),
 		"has_player": player_node != null and is_instance_valid(player_node),
+	}
+
+
+func get_compound_layout_summary() -> Dictionary:
+	var room_types := {}
+	for room in compound_rooms:
+		room_types[String(room.get("type", ""))] = true
+	return {
+		"semantic_layout": not compound_rooms.is_empty(),
+		"room_count": compound_rooms.size(),
+		"connection_count": compound_connections.size(),
+		"unique_room_types": room_types.size(),
+		"legacy_building_count": compound_buildings.size(),
 	}
 
 
@@ -577,9 +596,54 @@ func _draw_compound_overlay(map_rect: Rect2) -> void:
 	if compound_rect.size.x <= 0 or compound_rect.size.y <= 0:
 		return
 	draw_rect(_tile_rect_to_panel(compound_rect, map_rect), compound_color, false, 1.0)
+	if not compound_rooms.is_empty():
+		_draw_compound_connections(map_rect)
+		for room in compound_rooms:
+			var rect: Rect2i = room.get("rect", Rect2i())
+			if rect.size.x <= 0 or rect.size.y <= 0:
+				continue
+			var panel_rect := _tile_rect_to_panel(rect, map_rect)
+			var room_fill := Color(compound_color.r, compound_color.g, compound_color.b, 0.30)
+			if String(room.get("size_class", "standard")) == "major":
+				room_fill = Color(room_color.r, room_color.g, room_color.b, 0.34)
+			draw_rect(panel_rect, room_fill, true)
+			draw_rect(panel_rect, Color(room_color.r, room_color.g, room_color.b, 0.88), false, 1.0)
+			_draw_compound_room_label(room, panel_rect)
+		for ingress in compound_ingress:
+			if _is_tile_inside(ingress):
+				draw_circle(_tile_to_panel(ingress, map_rect), 2.0, objective_color)
+		return
 	for building in compound_buildings:
 		if building.size.x > 0 and building.size.y > 0:
 			draw_rect(_tile_rect_to_panel(building, map_rect), Color(compound_color.r, compound_color.g, compound_color.b, 0.28), true)
+
+
+func _draw_compound_connections(map_rect: Rect2) -> void:
+	for connection in compound_connections:
+		var path := _as_vector2i_array(connection.get("path_cells", []))
+		if path.size() < 2:
+			continue
+		var points := PackedVector2Array()
+		for cell in path:
+			if _is_tile_inside(cell):
+				points.append(_tile_to_panel(cell, map_rect))
+		if points.size() >= 2:
+			draw_polyline(points, Color(room_color.r, room_color.g, room_color.b, 0.62), 1.5, true)
+
+
+func _draw_compound_room_label(room: Dictionary, panel_rect: Rect2) -> void:
+	if not _overview_mode or panel_rect.size.x < 20.0 or panel_rect.size.y < 10.0:
+		return
+	var label := String(room.get("map_label", ""))
+	if label.is_empty():
+		return
+	var font := get_theme_default_font()
+	var font_size := maxi(9, get_theme_default_font_size() - 2)
+	var text_size := font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1.0, font_size)
+	if text_size.x + 4.0 > panel_rect.size.x or text_size.y + 2.0 > panel_rect.size.y:
+		return
+	var position := panel_rect.get_center() - text_size * 0.5 + Vector2(0.0, text_size.y * 0.75)
+	draw_string(font, position, label, HORIZONTAL_ALIGNMENT_LEFT, -1.0, font_size, room_color.lightened(0.25))
 
 
 func _draw_interior_room_overlays(map_rect: Rect2) -> void:
@@ -657,4 +721,13 @@ func _as_rect2i_array(value: Variant) -> Array[Rect2i]:
 		for item in value:
 			if item is Rect2i:
 				result.append(item)
+	return result
+
+
+func _as_dictionary_array(value: Variant) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	if value is Array:
+		for item in value:
+			if item is Dictionary:
+				result.append((item as Dictionary).duplicate(true))
 	return result
