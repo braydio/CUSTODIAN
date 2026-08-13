@@ -596,6 +596,8 @@ Documentation updates this session:
 
 ## Active Gaps
 
+- Sundered Keep procgen frontage now uses topology-aware shoreline foam (straight edges, convex/inner corners, endcaps, and T junctions), boundary-derived 64×96 cliff placements, and a nearest-sampled StormHorizon shader mask that exposes the opaque panorama only through authoritative ocean inside gameplay-map bounds. Its first camera subject is an actual-ocean anchored drowned broken-arch/causeway composition; final OuterWall/CentralCitadel remains the sole Keep. All remain presentation-only. Renderer-backed two-seed capture approval is still open, so overall layering review is not complete.
+
 - Persistent Compound Layout V1 retires the fixed four-building/two-column production layout. ProcGenTilemap now exports deterministic semantic rooms, doors, corridors, anchors, and connections for a standard 10–13-room campus; ContractWorldLoader positions existing Sector nodes by canonical `sector_id` instead of building-array index, and shared MinimapView renders semantic topology with legacy rectangle fallback. Procedural shells are live physical geometry. Curated `.tmj` room interiors remain incomplete and deferred; `default_compound.json` remains a dormant EDGAR sample rather than persistent-world authority.
 
 - Enemy marine heavy dash still needs production directional body strips, matching directional FX overlays, and a five-part sound stack. V1 gameplay is live with the east body/FX fallback, but `REQUIRED_ASSETS.md` now tracks the full `N/NE/E/SE/S/SW/W/NW` asset target plus minimum `E/W/NE/NW/SE/SW` coverage.

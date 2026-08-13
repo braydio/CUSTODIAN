@@ -1,7 +1,13 @@
 extends SceneTree
 
 const TILESET_PATH := "res://content/tiles/tilesets/procgen_world_tileset.tres"
-const SOURCE_IDS := [124, 125, 126, 127, 128]
+const SOURCE_IDS := [124, 125, 126, 127, 128, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148]
+const OBSOLETE_PATHS := [
+	"res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_edge_n_01.png",
+	"res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_edge_e_01.png",
+	"res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_edge_s_01.png",
+	"res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_edge_w_01.png",
+]
 const FRONTAGE_FLOOR_SOURCE_IDS := [129, 130, 131, 132]
 const KEEP_CLIFF_PATHS := [
 	"res://content/runtime/sundered_keep/terrain/cliffs/cliff_edge_n.png",
@@ -18,6 +24,8 @@ func _init() -> void:
 
 
 func _run() -> void:
+	for path in OBSOLETE_PATHS:
+		_assert(not FileAccess.file_exists(path), "obsolete foam variant remains: %s" % path)
 	var tile_set := load(TILESET_PATH) as TileSet
 	_assert(tile_set != null, "procgen world TileSet did not load")
 	if tile_set != null:
@@ -53,7 +61,7 @@ func _run() -> void:
 		_assert_foam_overlay_alpha(tile_set)
 	_assert_keep_cliff_assets()
 	if _errors.is_empty():
-		print("[ProcgenOceanTilesetSmoke] PASS ids=124-128 size=32x32 frames=1")
+		print("[ProcgenOceanTilesetSmoke] PASS ids=124-148 topology=21 visual-only sources")
 		quit(0)
 		return
 	for error in _errors:
@@ -67,7 +75,9 @@ func _assert(condition: bool, message: String) -> void:
 
 
 func _assert_foam_overlay_alpha(tile_set: TileSet) -> void:
-	for source_id in [125, 126, 127, 128]:
+	for source_id in range(125, 149):
+		if source_id in [129, 130, 131, 132]:
+			continue
 		var source := tile_set.get_source(source_id) as TileSetAtlasSource
 		var image := source.texture.get_image() if source != null and source.texture != null else null
 		_assert(image != null and not image.is_empty(), "foam overlay failed to load from source %d" % source_id)
@@ -80,7 +90,7 @@ func _assert_foam_overlay_alpha(tile_set: TileSet) -> void:
 				if image.get_pixel(x, y).a > 0.01:
 					occupied += 1
 		var coverage := float(occupied) / float(image.get_width() * image.get_height())
-		_assert(coverage <= 0.30, "foam overlay source %d still reads as a full square (%0.3f)" % [source_id, coverage])
+		_assert(coverage > 0.0 and coverage < 0.85, "foam overlay source %d has invalid alpha coverage (%0.3f)" % [source_id, coverage])
 
 
 func _assert_keep_cliff_assets() -> void:

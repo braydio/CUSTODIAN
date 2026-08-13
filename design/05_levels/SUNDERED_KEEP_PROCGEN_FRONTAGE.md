@@ -50,9 +50,11 @@ claim using the `sundered_keep_cosmic_ocean` profile. The claim derives its
 lateral and inward extent from generated camera/gate semantics and owns no
 floor, collision, navigation, or wall state. After final floor remediation,
 central procgen classification resolves the claim into `ocean_cells`; all other
-non-floor cells remain chasm. Near-field 32×32 water and unambiguous cardinal
-foam edges are visual-only and bridge generated coastline into the existing
-large vista ocean/storm presentation.
+non-floor cells remain chasm. Near-field 32×32 water and topology-aware foam
+are visual-only and bridge generated coastline into the large vista ocean/storm
+presentation. Straight edges, convex and concave corners, endcaps, and T
+junctions resolve from authoritative floor/ocean neighborhoods without random
+skipping, rotation, scaling, or terrain mutation.
 
 The ingress uses `procgen_landmark_terminal` with the
 `sundered_keep_frontage` landmark data key.
@@ -75,10 +77,14 @@ instead of using a fixed Operator-relative offset. Traversal remains unlocked;
 the fortress apex receives a 0.9-second minimum presentation hold and triggers
 the existing six-frame moonlight sweep once per presentation instance.
 
-The active layering pass keeps the base storm horizon and moonlight punctuation,
-but treats the first landmark as a temporary atmospheric silhouette rather than
-a second fortress. It retires completely by 42% of frontage takeover, before
-the final fortress becomes dominant. The one-shot reveal veil falls nearly away, and the persistent
+The active layering pass keeps the base storm horizon and moonlight punctuation.
+Inside generated gameplay bounds, StormHorizon is nearest-sampled through an
+authoritative ocean-cell mask and is transparent beneath generated land. The
+first camera subject is a deterministic offshore drowned arch/causeway anchored
+to actual ocean at least three cells from floor when space permits. It recedes
+to a faint supporting layer during fortress takeover; the final OuterWall and
+CentralCitadel are the sole Keep representation. The one-shot reveal veil falls
+nearly away, and the persistent
 horizon-seam fog becomes the architectural bridge. The outer wall and central
 citadel use the established distant blue-gray palette at reduced `0.35` and
 `0.33` scale. The approach gate-shadow veil is not part of this procgen vista;
@@ -90,12 +96,18 @@ The fortress presentation root is positioned once from
 scene-local offsets and are not pulled apart by gameplay-scale wall/tower
 anchors. Generated frontage floor keeps its irregular authoritative footprint
 but uses deterministic Keep cliff-rock, wet flagstone, and gate-threshold
-sources so the Operator reads as standing on land. Cardinal ocean foam sources
-are sparse transparent edge overlays rather than opaque water tiles. The
+sources so the Operator reads as standing on land. Topology-aware ocean foam
+sources are sparse transparent overlays rather than opaque water tiles. The
 authoritative frontage-floor/ocean frontier also places the existing 64x96
-Sundered Keep cardinal cliff compositions as presentation-only rock shelves;
+Sundered Keep cardinal cliff compositions from the midpoint between paired
+floor/ocean cells, with explicit per-direction offsets so the lip overlaps land
+and the face falls toward ocean;
 foam is held to 34% layer alpha as secondary surf. These sprites add no
 collision, navigation, or terrain authority.
+
+Renderer approval remains required for this ocean-mask, shoreline-topology,
+boundary-offset, and drowned-ruins pass. Headless validation does not close the
+visual layering review by itself.
 
 The cinematic dressing-clearance envelope follows 94% of the generated route,
 with wider discs at the first and fortress apexes. Foliage, ruin props,

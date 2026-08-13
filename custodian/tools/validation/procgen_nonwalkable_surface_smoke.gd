@@ -3,6 +3,7 @@ extends SceneTree
 const CLASSIFIER := preload(
 	"res://game/world/procgen/terrain/nonwalkable_surface_classifier.gd"
 )
+const SHORE_RESOLVER := preload("res://game/world/procgen/terrain/ocean_shore_topology_resolver.gd")
 const MAP_SIZE := Vector2i(8, 8)
 const CLAIM_ID := &"sundered_keep_frontage_ocean"
 
@@ -70,6 +71,7 @@ func _run() -> void:
 		claim_cells.get(CLAIM_ID, {}) == ocean,
 		"claim_cells_by_id does not exactly match resolved ocean"
 	)
+	_assert_shore_topology()
 
 	if _errors.is_empty():
 		print("[ProcgenNonwalkableSurfaceSmoke] PASS ocean=%d chasm=%d" % [ocean.size(), chasm.size()])
@@ -89,6 +91,15 @@ func _fingerprint(result: Dictionary) -> String:
 			rows.append("%s:%d,%d" % [kind_name, cell.x, cell.y])
 	rows.sort()
 	return "|".join(rows)
+
+
+func _assert_shore_topology() -> void:
+	var cell := Vector2i(4, 4)
+	_assert(SHORE_RESOLVER.resolve(cell, {cell + Vector2i.UP: true, cell + Vector2i(-1, -1): true, cell + Vector2i(1, -1): true}) == ["shore_n"], "straight north shore mapping failed")
+	_assert(SHORE_RESOLVER.resolve(cell, {cell + Vector2i(1, -1): true}) == ["corner_ne"], "convex NE mapping failed")
+	_assert(SHORE_RESOLVER.resolve(cell, {cell + Vector2i.UP: true, cell + Vector2i.RIGHT: true}) == ["inner_corner_ne"], "inner NE mapping failed")
+	_assert(SHORE_RESOLVER.resolve(cell, {cell + Vector2i.UP: true}) == ["endcap_n"], "north endcap mapping failed")
+	_assert(SHORE_RESOLVER.resolve(cell, {cell + Vector2i.UP: true, cell + Vector2i.RIGHT: true, cell + Vector2i.LEFT: true}) == ["t_junction_s"], "south T mapping failed")
 
 
 func _assert(condition: bool, message: String) -> void:

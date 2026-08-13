@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b4dvpxvc0gbw"
-path="res://.godot/imported/ocean_foam_edge_n_01.png-5c5f5d6b57645422cdd96185587ca418.ctex"
+uid="uid://btdxc7e0y22kd"
+path="res://.godot/imported/ocean_foam_endcap_n.png-27927e3cbc28f5307307d36fae324a0e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_edge_n_01.png"
-dest_files=["res://.godot/imported/ocean_foam_edge_n_01.png-5c5f5d6b57645422cdd96185587ca418.ctex"]
+source_file="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_endcap_n.png"
+dest_files=["res://.godot/imported/ocean_foam_endcap_n.png-27927e3cbc28f5307307d36fae324a0e.ctex"]
 
 [params]
 

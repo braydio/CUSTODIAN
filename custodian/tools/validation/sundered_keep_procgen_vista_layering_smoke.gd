@@ -56,12 +56,18 @@ func _run() -> void:
 	_assert(ingress.visible, "ingress presentation must restore after vista camera release")
 	presentation.set("_camera_state", {"first_enter_progress": 1.0, "frontage_enter_progress": 1.0})
 	presentation.call("_apply_visual_state", 1.0, 1.0)
-	var landmark := presentation.get_node_or_null("VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/DistantKeep") as Sprite2D
+	var landmark := presentation.get_node_or_null("VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/DistantKeep")
+	var ruins := presentation.get_node_or_null("VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/OceanRuinsPresentation") as Node2D
+	var arch := presentation.get_node_or_null("VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/OceanRuinsPresentation/BrokenArchWalkway") as Sprite2D
+	var storm := presentation.get_node_or_null("VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/StormHorizon") as Sprite2D
 	var reveal_fog := presentation.get_node_or_null("VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/RevealFog") as Sprite2D
-	_assert(landmark != null and landmark.modulate.a <= 0.001, "first landmark must retire completely before fortress apex")
+	_assert(landmark == null, "procgen DistantKeep must be retired")
+	_assert(ruins != null and arch != null and arch.texture != null, "offshore ruins composition must resolve")
+	_assert(storm != null and storm.material is ShaderMaterial, "StormHorizon must own ocean mask material")
+	_assert(ruins != null and ruins.modulate.a >= 0.20 and ruins.modulate.a <= 0.30, "ruins must recede without fully retiring")
 	presentation.set("_camera_state", {"first_enter_progress": 1.0, "frontage_enter_progress": 0.45})
 	presentation.call("_apply_visual_state", 1.0, 0.45)
-	_assert(landmark != null and landmark.modulate.a <= 0.001, "first landmark remains readable after the fortress takeover begins")
+	_assert(ruins != null and ruins.modulate.a > 0.20, "ruins should remain faint through takeover")
 	_assert(reveal_fog != null and reveal_fog.modulate.a <= 0.051, "first reveal veil must clear before fortress composition")
 	for node in _all_descendants(presentation):
 		_assert(not (node is CollisionObject2D or node is CollisionShape2D or node is CollisionPolygon2D or node is NavigationRegion2D), "vista presentation must not own collision/navigation: %s" % node.name)
@@ -77,6 +83,12 @@ func _run() -> void:
 	_assert(not clip_bounds.intersects(playable_bounds), "ocean/storm clip must not cover playable frontage floor bounds")
 	_assert(clip_bounds.intersects(ocean_bounds), "vista clip does not correspond to resolved ocean geography")
 	_assert(int(state.get("ocean_cell_count", 0)) > 0, "vista debug state omitted resolved ocean cells")
+	_assert(bool(state.get("ocean_mask_configured", false)), "generated ocean mask was not configured")
+	_assert(is_equal_approx(float(presentation.call("get_ocean_mask_alpha", Vector2i(60, 6))), 1.0), "ocean mask sample is not opaque")
+	_assert(is_equal_approx(float(presentation.call("get_ocean_mask_alpha", Vector2i(74, 14))), 0.0), "floor mask sample is not transparent")
+	var ruins_cell: Vector2i = state.get("ocean_ruins_anchor_cell", Vector2i(-1, -1))
+	_assert((frontage.get("ocean_cells", {}) as Dictionary).has(ruins_cell), "ruins anchor is not authoritative ocean")
+	_assert(not (frontage.get("floor_cells", {}) as Dictionary).has(ruins_cell), "ruins anchor overlaps floor")
 
 	host.queue_free()
 	if _errors.is_empty():

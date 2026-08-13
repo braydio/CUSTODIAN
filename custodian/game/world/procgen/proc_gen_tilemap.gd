@@ -18,6 +18,7 @@ const RUNTIME_WALKABLE_BOUNDARY_CHUNK_SCRIPT := preload(
 const ELEVATION_MAP_SCRIPT := preload("res://game/world/elevation/elevation_map.gd")
 const TERRAIN_BUILDER_SCRIPT := preload("res://game/world/procgen/terrain/terrain_builder.gd")
 const TERRAIN_TILE_IDS_SCRIPT := preload("res://game/world/procgen/terrain/terrain_tile_ids.gd")
+const OCEAN_SHORE_TOPOLOGY_RESOLVER := preload("res://game/world/procgen/terrain/ocean_shore_topology_resolver.gd")
 const NONWALKABLE_SURFACE_CLASSIFIER_SCRIPT := preload(
 	"res://game/world/procgen/terrain/nonwalkable_surface_classifier.gd"
 )
@@ -153,6 +154,22 @@ const NONWALKABLE_SURFACE_TILESET_SOURCES := {
 	"sundered_keep_ocean_foam_edge_e": 126,
 	"sundered_keep_ocean_foam_edge_s": 127,
 	"sundered_keep_ocean_foam_edge_w": 128,
+	"sundered_keep_ocean_foam_corner_ne": 133,
+	"sundered_keep_ocean_foam_corner_nw": 134,
+	"sundered_keep_ocean_foam_corner_se": 135,
+	"sundered_keep_ocean_foam_corner_sw": 136,
+	"sundered_keep_ocean_foam_inner_corner_ne": 137,
+	"sundered_keep_ocean_foam_inner_corner_nw": 138,
+	"sundered_keep_ocean_foam_inner_corner_se": 139,
+	"sundered_keep_ocean_foam_inner_corner_sw": 140,
+	"sundered_keep_ocean_foam_endcap_n": 141,
+	"sundered_keep_ocean_foam_endcap_e": 142,
+	"sundered_keep_ocean_foam_endcap_s": 143,
+	"sundered_keep_ocean_foam_endcap_w": 144,
+	"sundered_keep_ocean_foam_t_junction_n": 145,
+	"sundered_keep_ocean_foam_t_junction_e": 146,
+	"sundered_keep_ocean_foam_t_junction_s": 147,
+	"sundered_keep_ocean_foam_t_junction_w": 148,
 }
 const NONWALKABLE_SURFACE_CARDINALS: Array[Vector2i] = [
 	Vector2i.UP,
@@ -168,6 +185,12 @@ const SUNDERED_KEEP_CLIFF_EDGE_TEXTURES := {
 	Vector2i.LEFT: preload("res://content/runtime/sundered_keep/terrain/cliffs/cliff_edge_w.png"),
 }
 const SUNDERED_KEEP_SURF_ALPHA := 0.34
+const SUNDERED_KEEP_CLIFF_BOUNDARY_OFFSETS := {
+	Vector2i.UP: Vector2(0.0, 32.0),
+	Vector2i.RIGHT: Vector2(-18.0, 24.0),
+	Vector2i.DOWN: Vector2(0.0, -24.0),
+	Vector2i.LEFT: Vector2(18.0, 24.0),
+}
 
 enum WorldShapeMode {
 	LEGACY_CAVE,
@@ -4380,22 +4403,19 @@ func _rebuild_nonwalkable_surface_visuals() -> void:
 		nonwalkable_surface_base_tilemap.set_cell(
 			cell, fill_id, Vector2i.ZERO, 0
 		)
-		var floor_directions: Array[Vector2i] = []
-		for direction in NONWALKABLE_SURFACE_CARDINALS:
-			if _generated_floor_cells.has(cell + direction):
-				floor_directions.append(direction)
-		if floor_directions.size() != 1:
-			continue
-		var shore_key := _ocean_shore_key_for_floor_direction(
-			floor_directions[0]
+		var shore_keys: Array[String] = OCEAN_SHORE_TOPOLOGY_RESOLVER.resolve(
+			cell, _generated_floor_cells
 		)
-		var shore_id := int(NONWALKABLE_SURFACE_TILESET_SOURCES.get(
-			TERRAIN_TILE_IDS_SCRIPT.ocean(shore_key), -1
-		))
-		if shore_id >= 0:
-			nonwalkable_surface_overlay_tilemap.set_cell(
-				cell, shore_id, Vector2i.ZERO, 0
-			)
+		for shore_index in range(shore_keys.size()):
+			var shore_id := int(NONWALKABLE_SURFACE_TILESET_SOURCES.get(
+				TERRAIN_TILE_IDS_SCRIPT.ocean(shore_keys[shore_index]), -1
+			))
+			if shore_id < 0:
+				continue
+			if shore_index == 0:
+				nonwalkable_surface_overlay_tilemap.set_cell(cell, shore_id, Vector2i.ZERO, 0)
+			else:
+				_add_extra_shore_overlay(cell, shore_id)
 	_rebuild_sundered_keep_coastline_presentation()
 
 
@@ -4403,15 +4423,13 @@ func _rebuild_sundered_keep_coastline_presentation() -> void:
 	if nonwalkable_surface_overlay_tilemap == null \
 			or _sundered_keep_frontage.is_empty():
 		return
-	_sundered_keep_coastline_parent = Node2D.new()
-	_sundered_keep_coastline_parent.name = "SunderedKeepCoastlinePresentation"
+	if _sundered_keep_coastline_parent == null:
+		_sundered_keep_coastline_parent = Node2D.new()
+		_sundered_keep_coastline_parent.name = "SunderedKeepCoastlinePresentation"
+		nonwalkable_surface_overlay_tilemap.add_child(
+			_sundered_keep_coastline_parent
+		)
 	_sundered_keep_coastline_parent.z_index = 1
-	nonwalkable_surface_overlay_tilemap.add_child(
-		_sundered_keep_coastline_parent
-	)
-	var frontage_floor := (
-		_sundered_keep_frontage.get("floor_cells", {}) as Dictionary
-	)
 	var claimed_ocean := (
 		_sundered_keep_frontage.get("ocean_cells", {}) as Dictionary
 	)
@@ -4421,7 +4439,7 @@ func _rebuild_sundered_keep_coastline_presentation() -> void:
 		var ocean_cell := cell_variant as Vector2i
 		var floor_direction := Vector2i.ZERO
 		for direction in NONWALKABLE_SURFACE_CARDINALS:
-			if frontage_floor.has(ocean_cell + direction):
+			if _generated_floor_cells.has(ocean_cell + direction):
 				if floor_direction != Vector2i.ZERO:
 					floor_direction = Vector2i.ZERO
 					break
@@ -4440,9 +4458,16 @@ func _rebuild_sundered_keep_coastline_presentation() -> void:
 		var sprite := Sprite2D.new()
 		sprite.name = "CliffEdge_%d_%d" % [ocean_cell.x, ocean_cell.y]
 		sprite.texture = SUNDERED_KEEP_CLIFF_EDGE_TEXTURES[floor_direction]
-		sprite.position = nonwalkable_surface_overlay_tilemap.map_to_local(
-			ocean_cell
+		var floor_cell := ocean_cell + floor_direction
+		var ocean_center := nonwalkable_surface_overlay_tilemap.map_to_local(ocean_cell)
+		var floor_center := nonwalkable_surface_overlay_tilemap.map_to_local(floor_cell)
+		var boundary := floor_center.lerp(ocean_center, 0.5)
+		sprite.position = boundary + Vector2(
+			SUNDERED_KEEP_CLIFF_BOUNDARY_OFFSETS.get(floor_direction, Vector2.ZERO)
 		)
+		sprite.set_meta("ocean_cell", ocean_cell)
+		sprite.set_meta("floor_cell", floor_cell)
+		sprite.set_meta("boundary_position", boundary)
 		sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		_sundered_keep_coastline_parent.add_child(sprite)
 	# Foam remains a restrained surf accent beneath the authored rock shelf.
@@ -4457,6 +4482,22 @@ func _ocean_shore_key_for_floor_direction(direction: Vector2i) -> String:
 	if direction == Vector2i.DOWN:
 		return "shore_s"
 	return "shore_w"
+
+
+func _add_extra_shore_overlay(cell: Vector2i, source_id: int) -> void:
+	if _sundered_keep_coastline_parent == null:
+		_sundered_keep_coastline_parent = Node2D.new()
+		_sundered_keep_coastline_parent.name = "SunderedKeepCoastlinePresentation"
+		nonwalkable_surface_overlay_tilemap.add_child(_sundered_keep_coastline_parent)
+	var source := nonwalkable_surface_overlay_tilemap.tile_set.get_source(source_id) as TileSetAtlasSource
+	if source == null or source.texture == null:
+		return
+	var sprite := Sprite2D.new()
+	sprite.name = "ShoreOverlay_%d_%d_%d" % [cell.x, cell.y, source_id]
+	sprite.texture = source.texture
+	sprite.position = nonwalkable_surface_overlay_tilemap.map_to_local(cell)
+	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_sundered_keep_coastline_parent.add_child(sprite)
 
 
 func _build_route_playability(

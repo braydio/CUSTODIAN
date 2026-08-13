@@ -108,6 +108,22 @@ const OCEAN := {
 	"shore_e": "sundered_keep_ocean_foam_edge_e",
 	"shore_s": "sundered_keep_ocean_foam_edge_s",
 	"shore_w": "sundered_keep_ocean_foam_edge_w",
+	"corner_ne": "sundered_keep_ocean_foam_corner_ne",
+	"corner_nw": "sundered_keep_ocean_foam_corner_nw",
+	"corner_se": "sundered_keep_ocean_foam_corner_se",
+	"corner_sw": "sundered_keep_ocean_foam_corner_sw",
+	"inner_corner_ne": "sundered_keep_ocean_foam_inner_corner_ne",
+	"inner_corner_nw": "sundered_keep_ocean_foam_inner_corner_nw",
+	"inner_corner_se": "sundered_keep_ocean_foam_inner_corner_se",
+	"inner_corner_sw": "sundered_keep_ocean_foam_inner_corner_sw",
+	"endcap_n": "sundered_keep_ocean_foam_endcap_n",
+	"endcap_e": "sundered_keep_ocean_foam_endcap_e",
+	"endcap_s": "sundered_keep_ocean_foam_endcap_s",
+	"endcap_w": "sundered_keep_ocean_foam_endcap_w",
+	"t_junction_n": "sundered_keep_ocean_foam_t_junction_n",
+	"t_junction_e": "sundered_keep_ocean_foam_t_junction_e",
+	"t_junction_s": "sundered_keep_ocean_foam_t_junction_s",
+	"t_junction_w": "sundered_keep_ocean_foam_t_junction_w",
 }
 
 const BRIDGE := {

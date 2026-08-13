@@ -2,12 +2,17 @@
 
 [ext_resource type="Script" uid="uid://25ih6rdbqfhc" path="res://game/world/vistas/sundered_keep/sundered_keep_procgen_vista_presentation.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://cjb1elrrj8x2y" path="res://content/backgrounds/sundered_keep/approach/underlay/first_vista_base_storm_horizon.png" id="2_storm"]
-[ext_resource type="Texture2D" uid="uid://bcb2ogtoeqnmp" path="res://content/backgrounds/sundered_keep/shared/landmarks/distant_sundered_keep_landmark_v2.png" id="3_keep"]
+[ext_resource type="Shader" path="res://game/world/vistas/sundered_keep/sundered_keep_ocean_underlay_mask.gdshader" id="3_ocean_mask"]
 [ext_resource type="Texture2D" uid="uid://q02fsxfbtjwf" path="res://content/backgrounds/sundered_keep/approach/fog/first_vista_reveal_veil.png" id="4_fog"]
 [ext_resource type="Texture2D" uid="uid://dhqh17wdi37hm" path="res://content/backgrounds/sundered_keep/grand_vista/fortress_components/distant_fortress_central_citadel_01.png" id="6_citadel"]
 [ext_resource type="Texture2D" uid="uid://bti45xnfj2364" path="res://content/backgrounds/sundered_keep/grand_vista/fortress_components/distant_fortress_outer_wall_01.png" id="7_wall"]
 [ext_resource type="Texture2D" uid="uid://dd74lx6catyrg" path="res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_horizon_seam_fog.png" id="8_frontage_fog"]
 [ext_resource type="Texture2D" uid="uid://c8cv4x5gf1jlo" path="res://content/backgrounds/sundered_keep/approach/light/first_vista_moonlight_sweep_01__6f__1024x512.png" id="10_moonlight"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/grand_vista/fortress_components/broken_arch_walkway_01.png" id="11_broken_arch"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/grand_vista/fortress_components/raised_causeway_02.png" id="12_causeway"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ocean_mask"]
+shader = ExtResource("3_ocean_mask")
 
 [node name="SunderedKeepProcgenFrontagePresentation" type="Node2D" unique_id=129696644]
 script = ExtResource("1_script")
@@ -30,14 +35,33 @@ polygon = PackedVector2Array(-4096, -4096, 4096, -4096, 4096, 4096, -4096, 4096)
 z_index = 10
 texture_filter = 1
 position = Vector2(0, -120)
+material = SubResource("ShaderMaterial_ocean_mask")
 texture = ExtResource("2_storm")
 
-[node name="DistantKeep" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation" unique_id=1220255723]
+[node name="OceanRuinsPresentation" type="Node2D" parent="VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation"]
 z_index = 20
+
+[node name="BrokenArchWalkway" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/OceanRuinsPresentation"]
 texture_filter = 1
-position = Vector2(190, -220)
-scale = Vector2(0.44, 0.44)
-texture = ExtResource("3_keep")
+position = Vector2(0, -38)
+scale = Vector2(0.46, 0.46)
+modulate = Color(0.48, 0.58, 0.70, 0.84)
+texture = ExtResource("11_broken_arch")
+
+[node name="DrownedCauseway" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/OceanRuinsPresentation"]
+texture_filter = 1
+position = Vector2(82, 36)
+scale = Vector2(0.32, 0.32)
+modulate = Color(0.38, 0.48, 0.60, 0.56)
+texture = ExtResource("12_causeway")
+
+[node name="RuinsMist" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/OceanRuinsPresentation"]
+z_index = 2
+texture_filter = 1
+position = Vector2(16, 64)
+scale = Vector2(0.38, 0.18)
+modulate = Color(0.62, 0.70, 0.79, 0.28)
+texture = ExtResource("8_frontage_fog")
 
 [node name="RevealFog" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation" unique_id=949326141]
 z_index = 30

@@ -367,6 +367,20 @@ func _assert_integrated_procgen_result() -> void:
 		+ "SunderedKeepCoastlinePresentation"
 	) as Node2D
 	_assert(coastline != null and coastline.get_child_count() > 0, "integrated frontage did not build the authored cliff coastline")
+	if coastline != null:
+		for cliff in coastline.get_children():
+			if not String(cliff.name).begins_with("CliffEdge_"):
+				continue
+			var ocean_cell: Variant = cliff.get_meta("ocean_cell", null)
+			var floor_cell: Variant = cliff.get_meta("floor_cell", null)
+			var boundary: Variant = cliff.get_meta("boundary_position", null)
+			_assert(ocean_cell is Vector2i and frontage_ocean.has(ocean_cell), "cliff lacks authoritative ocean frontier")
+			_assert(floor_cell is Vector2i and map.debug_get_generated_floor_cells().has(floor_cell), "cliff lacks authoritative floor frontier")
+			if ocean_cell is Vector2i and floor_cell is Vector2i and boundary is Vector2:
+				var ocean_center := ocean_overlay.map_to_local(ocean_cell)
+				var floor_center := ocean_overlay.map_to_local(floor_cell)
+				_assert((boundary as Vector2).is_equal_approx(floor_center.lerp(ocean_center, 0.5)), "cliff anchor is not boundary-derived")
+				_assert(not (cliff as Node2D).position.is_equal_approx(ocean_center), "cliff remains centered on ocean cell")
 	_assert(ocean_overlay != null and is_equal_approx(ocean_overlay.self_modulate.a, 0.34), "integrated shore foam is not subordinate to the cliff coastline")
 	var touches_north := false
 	for cell_variant in frontage_ocean.keys():

@@ -29,8 +29,8 @@ const MOONLIGHT_FRAME_COUNT := 6
 @onready var _storm := (
 	$VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/StormHorizon as Sprite2D
 )
-@onready var _distant_keep := (
-	$VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/DistantKeep as Sprite2D
+@onready var _ocean_ruins := (
+	$VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/OceanRuinsPresentation as Node2D
 )
 @onready var _reveal_fog := (
 	$VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/RevealFog as Sprite2D
@@ -67,6 +67,9 @@ var _ocean_bounds := Rect2()
 var _apex_hold_remaining := 0.0
 var _moonlight_elapsed := -1.0
 var _moonlight_played := false
+var _ocean_mask_texture: ImageTexture = null
+var _ocean_mask_image: Image = null
+var _ocean_ruins_anchor_cell := Vector2i(-1, -1)
 
 
 func _ready() -> void:
@@ -189,9 +192,13 @@ func _layout_from_semantic_anchors() -> void:
 		_world_anchors["first_reveal_apex"] as Vector2
 	).lerp(fortress_anchor, 0.55)
 	_horizon.global_position = horizon_anchor
+	_ocean_ruins_anchor_cell = _select_ocean_ruins_anchor()
+	if _ocean_ruins_anchor_cell.x >= 0:
+		_ocean_ruins.global_position = _tile_to_world(_ocean_ruins_anchor_cell)
 	_fortress.global_position = fortress_anchor
 	_fit_presentation_to_viewport()
 	_configure_exterior_clip()
+	_configure_ocean_underlay_mask()
 	_update_presentation_bounds()
 	_configured = true
 	if _operator != null:
@@ -235,9 +242,12 @@ func _evaluate_camera(delta: float = 0.0) -> void:
 		camera_weight = maxf(camera_weight, 1.0)
 		_camera_state["camera_weight"] = camera_weight
 	_update_moonlight(delta)
-	var reveal_focus := (
-		_world_anchors["first_reveal_apex"] as Vector2
-	) + Vector2(0.0, -300.0)
+	var reveal_subject := (
+		_ocean_ruins.global_position
+		if _ocean_ruins_anchor_cell.x >= 0
+		else _world_anchors["first_reveal_apex"] as Vector2
+	)
+	var reveal_focus := reveal_subject + Vector2(0.0, -20.0)
 	var fortress_focus := (
 		_world_anchors["gate_threshold"] as Vector2
 	) + Vector2(0.0, -360.0)
@@ -297,26 +307,16 @@ func _apply_visual_state(
 		0.78,
 		frontage_visual
 	)
-	var landmark_retire := _smootherstep_range(
-		0.02,
-		0.42,
-		frontage_visual
-	)
-	var landmark_reveal := lerpf(
+	var ruins_reveal := lerpf(
 		0.08,
-		0.94,
+		1.0,
 		_smootherstep_range(
 			0.12,
 			0.86,
 			maxf(first_visual, frontage_visual)
 		)
 	)
-	_distant_keep.modulate = Color(
-		0.76,
-		0.82,
-		0.90,
-		landmark_reveal * (1.0 - landmark_retire)
-	)
+	_ocean_ruins.modulate.a = ruins_reveal * lerpf(1.0, 0.25, frontage_takeover)
 	_reveal_fog.modulate.a = lerpf(
 		0.68,
 		0.05,
@@ -416,9 +416,12 @@ func _fit_presentation_to_viewport(
 	if _storm.texture != null:
 		var required_coverage := _viewport_coverage
 		if not _world_anchors.is_empty():
-			var reveal_focus := (
-				_world_anchors["first_reveal_apex"] as Vector2
-			) + Vector2(0.0, -300.0)
+			var reveal_subject := (
+				_ocean_ruins.global_position
+				if _ocean_ruins_anchor_cell.x >= 0
+				else _world_anchors["first_reveal_apex"] as Vector2
+			)
+			var reveal_focus := reveal_subject + Vector2(0.0, -20.0)
 			var fortress_focus := (
 				_world_anchors["gate_threshold"] as Vector2
 			) + Vector2(0.0, -360.0)
@@ -532,6 +535,91 @@ func _runtime_tile_size() -> Vector2:
 	return Vector2(16.0, 16.0)
 
 
+func _configure_ocean_underlay_mask() -> void:
+	var map_size: Vector2i = _level_data.get("map_size", Vector2i.ZERO)
+	var ocean_cells: Dictionary = _frontage.get("ocean_cells", {})
+	if map_size.x <= 0 or map_size.y <= 0 or ocean_cells.is_empty():
+		_set_ocean_mask_enabled(false)
+		return
+	_ocean_mask_image = Image.create(map_size.x, map_size.y, false, Image.FORMAT_RGBA8)
+	_ocean_mask_image.fill(Color.TRANSPARENT)
+	for cell_variant in ocean_cells.keys():
+		if not cell_variant is Vector2i:
+			continue
+		var cell := cell_variant as Vector2i
+		if cell.x >= 0 and cell.y >= 0 and cell.x < map_size.x and cell.y < map_size.y:
+			_ocean_mask_image.set_pixel(cell.x, cell.y, Color.WHITE)
+	_ocean_mask_texture = ImageTexture.create_from_image(_ocean_mask_image)
+	var material := _storm.material as ShaderMaterial
+	if material == null:
+		return
+	var tile_size := _runtime_tile_size()
+	material.set_shader_parameter("ocean_mask", _ocean_mask_texture)
+	material.set_shader_parameter("mask_world_origin", _tile_to_world(Vector2i.ZERO) - tile_size * 0.5)
+	material.set_shader_parameter("mask_world_size", Vector2(map_size) * tile_size)
+	material.set_shader_parameter("mask_grid_size", Vector2(map_size))
+	material.set_shader_parameter("mask_enabled", true)
+
+
+func _set_ocean_mask_enabled(enabled: bool) -> void:
+	var material := _storm.material as ShaderMaterial
+	if material != null:
+		material.set_shader_parameter("mask_enabled", enabled)
+
+
+func _select_ocean_ruins_anchor() -> Vector2i:
+	var ocean_cells: Dictionary = _frontage.get("ocean_cells", {})
+	var floor_cells := _floor_cell_dictionary()
+	var semantic: Dictionary = _frontage.get("camera_semantic_anchors", {})
+	var target: Vector2i = semantic.get("first_reveal_apex", Vector2i.ZERO)
+	var best := Vector2i(-1, -1)
+	var best_score := INF
+	for cell_variant in ocean_cells.keys():
+		if not cell_variant is Vector2i:
+			continue
+		var cell := cell_variant as Vector2i
+		if floor_cells.has(cell):
+			continue
+		var floor_distance := _nearest_floor_distance(cell, floor_cells, 8)
+		if floor_distance < 6:
+			continue
+		var score := cell.distance_squared_to(target) + absf(float(floor_distance - 10)) * 18.0
+		var stable_before := cell.y < best.y or (cell.y == best.y and cell.x < best.x)
+		if score < best_score or (is_equal_approx(score, best_score) and stable_before):
+			best_score = score
+			best = cell
+	return best
+
+
+func _floor_cell_dictionary() -> Dictionary:
+	var result: Dictionary = (_frontage.get("floor_cells", {}) as Dictionary).duplicate()
+	for cell_variant in _level_data.get("floor_cells", []):
+		if cell_variant is Vector2i:
+			result[cell_variant] = true
+	return result
+
+
+func _nearest_floor_distance(cell: Vector2i, floor_cells: Dictionary, limit: int) -> int:
+	var best := limit + 1
+	for floor_variant in floor_cells.keys():
+		if not floor_variant is Vector2i:
+			continue
+		var floor_cell := floor_variant as Vector2i
+		var distance := absi(cell.x - floor_cell.x) + absi(cell.y - floor_cell.y)
+		best = mini(best, distance)
+		if best <= 1:
+			break
+	return best
+
+
+func get_ocean_mask_alpha(cell: Vector2i) -> float:
+	if _ocean_mask_image == null or _ocean_mask_image.is_empty():
+		return 0.0
+	if cell.x < 0 or cell.y < 0 or cell.x >= _ocean_mask_image.get_width() or cell.y >= _ocean_mask_image.get_height():
+		return 0.0
+	return _ocean_mask_image.get_pixel(cell.x, cell.y).a
+
+
 func _on_viewport_size_changed() -> void:
 	if not is_node_ready():
 		return
@@ -595,6 +683,8 @@ func get_world_vista_debug_state() -> Dictionary:
 		"ocean_cell_count": (
 			_frontage.get("ocean_cells", {}) as Dictionary
 		).size(),
+		"ocean_mask_configured": _ocean_mask_texture != null,
+		"ocean_ruins_anchor_cell": _ocean_ruins_anchor_cell,
 		"vista_root_z_index": _vista_root.z_index,
 		"semantic_anchors": _world_anchors.duplicate(true),
 		"frontage": _frontage.duplicate(true),

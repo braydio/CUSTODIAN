@@ -1,0 +1,12 @@
+# SUNDERED KEEP OCEAN, COASTLINE, AND FIRST-REVEAL RUINS
+
+- Status: `complete`
+- Authority: `design/05_levels/SUNDERED_KEEP_PROCGEN_FRONTAGE.md`
+- Goal: integrate topology-aware shoreline foam, mask the storm underlay to authoritative ocean inside gameplay bounds, boundary-anchor cliff faces, and replace the retired first Keep silhouette with deterministic offshore ruins while preserving camera/final-fortress authority.
+- Files: ocean runtime assets/imports, procgen TileSet and renderer, procgen vista scene/script/shader, narrow review fixture, focused smokes, validation manifest/recipes, active design/current-state/index docs.
+- Constraints: presentation only; do not mutate floor/ocean/chasm classification, collision, navigation, boundary, gate/terminal placement, camera timing/zoom/hold, moonlight, final OuterWall/CentralCitadel composition, or authored Vista Approach.
+- Acceptance: obsolete `_01` foam variants absent; 16 topology pieces validated and registered; deterministic explicit resolver; ocean-only underlay mask inside map; boundary-derived cliffs; actual-ocean ruins anchor and revised first-reveal focus; focused smokes and renderer-backed two-seed evidence.
+- Completion: sources 133–148 register the supplied topology pack; obsolete directional `_01` variants and imports are removed; shoreline selection is deterministic; StormHorizon is quantized against authoritative ocean cells; cliffs carry floor/ocean boundary metadata; and the first subject uses `broken_arch_walkway_01.png` plus `raised_causeway_02.png` at deterministic offshore anchors.
+- Validation: import plus all five focused commands pass. Changed-file routing selected seven tests and all seven passed; its aggregate flag remains false only because unrelated untracked `content/tiles/walls/wall_slices_game32/` intake in the shared worktree has no owner mapping. Renderer-backed seeds 1 and 2 pass with 11 captures each under `reports/sundered_keep_ocean_coastline_first_reveal_approved/`. Moment Forge completed at `reports/moment_forge/vista/sundered_keep_first_reveal/20260813T000240-0400/`.
+- Review: two-seed captures confirm ocean masking, distinct drowned-ruins subject, retained sole final Keep, and boundary-derived cliff/surf placement. Overall Sundered Keep layering review remains an active art-quality review rather than being declared globally complete.
+- Deferred: no archived parallax plate or old review gate enters production; no changes to traversal, generation topology, camera timing/zoom/hold, or the final fortress composition.

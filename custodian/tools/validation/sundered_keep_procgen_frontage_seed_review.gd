@@ -144,7 +144,7 @@ func _capture_seed(seed_value: int) -> void:
 	)
 	var frame_specs := [
 		{
-			"name": "entry",
+			"name": "gameplay_before_takeover",
 			"marker": "FrontageEntry",
 			"zoom": Vector2(0.90, 0.90),
 		},
@@ -154,8 +154,23 @@ func _capture_seed(seed_value: int) -> void:
 			"zoom": Vector2(0.86, 0.86),
 		},
 		{
+			"name": "offshore_ruins_first_reveal",
+			"marker": "FirstRevealApex",
+			"zoom": Vector2(0.78, 0.78),
+		},
+		{
 			"name": "first_reveal_apex",
 			"marker": "FirstRevealApex",
+			"zoom": Vector2(0.78, 0.78),
+		},
+		{
+			"name": "transition_away_from_ruins",
+			"marker": "FirstCameraReturnComplete",
+			"zoom": Vector2(0.80, 0.80),
+		},
+		{
+			"name": "fortress_reveal_start",
+			"marker": "FrontageRevealStart",
 			"zoom": Vector2(0.78, 0.78),
 		},
 		{
@@ -192,6 +207,26 @@ func _capture_seed(seed_value: int) -> void:
 			seed_value,
 			spec["name"]
 		)
+	var coastline := map.get_node_or_null(
+		"NavigationRegion2D/NonWalkableSurfaceOverlay/SunderedKeepCoastlinePresentation"
+	) as Node2D
+	if coastline != null and coastline.get_child_count() > 0:
+		var coast_subject: Node2D = null
+		for child in coastline.get_children():
+			if child is Node2D and str(child.name).begins_with("CliffEdge_"):
+				coast_subject = child as Node2D
+				break
+		if coast_subject == null:
+			coast_subject = coastline.get_child(0) as Node2D
+		presentation.call("_apply_visual_state", 1.0, 0.0)
+		var fortress := presentation.get_node_or_null(
+			"VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/FortressPresentation"
+		) as CanvasItem
+		if fortress != null:
+			fortress.visible = false
+		camera.global_position = coast_subject.global_position + Vector2(0.0, 18.0)
+		camera.zoom = Vector2(2.1, 2.1)
+		outputs["coastline_closeup"] = await _save_frame(viewport, seed_value, "coastline_closeup")
 
 	var ok := true
 	for output in outputs.values():
