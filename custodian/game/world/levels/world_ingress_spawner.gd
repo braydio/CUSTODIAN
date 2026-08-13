@@ -106,6 +106,15 @@ func place_all(
 					}
 				)
 				continue
+			if not _validate_unlock_causeway_contract(map_instance, result):
+				var reason := "%s: authored pocket is not canonically connector-resolvable" % record.get("identity")
+				_last_errors.append(reason)
+				_observe(&"level_ingress_placement_failed", {
+					"identity": str(record.get("identity")),
+					"reason": reason,
+					"connector_diagnostic": result.get("connector_diagnostic", {}),
+				})
+				continue
 		var tile := result.get("tile") as Vector2i
 		var ingress := _create_ingress(record, map_instance)
 		if ingress == null:
@@ -134,6 +143,36 @@ func place_all(
 			"tile": [tile.x, tile.y],
 		})
 	return placed
+
+
+func _validate_unlock_causeway_contract(map_instance: Node, result: Dictionary) -> bool:
+	var config := result.get("unlock_causeway", {}) as Dictionary
+	if config.is_empty() or not bool(config.get("initially_isolated", false)):
+		return true
+	if map_instance == null or not map_instance.has_method("evaluate_runtime_walkable_connector"):
+		return false
+	var tile := result.get("tile", Vector2i.ZERO) as Vector2i
+	var outward := result.get("outward_direction", Vector2i.UP) as Vector2i
+	var plan := map_instance.call(
+		"evaluate_runtime_walkable_connector",
+		_tile_to_world(map_instance, tile),
+		-outward,
+		int(config.get("width_tiles", 3)),
+		int(config.get("max_length_tiles", 18)),
+		"ash_bell_threadway",
+		"white_thread",
+		-1
+	) as Dictionary
+	result["connector_diagnostic"] = plan.duplicate(true)
+	if bool(plan.get("ok", false)):
+		_observe(&"ash_bell_threadway_placement_validated", {
+			"tile": tile,
+			"island_anchor": plan.get("island_anchor_tile"),
+			"endpoint": plan.get("endpoint_tile"),
+			"cell_count": (plan.get("cells", []) as Array).size(),
+		})
+		return true
+	return false
 
 
 func _apply_ingress_dressing_clearance(

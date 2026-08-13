@@ -328,6 +328,7 @@ godot --headless --path . --script res://tools/validation/operator_ammo_reconcil
 godot --headless --path . --script res://tools/validation/operator_dodge_overlap_telemetry_smoke.gd
 godot --headless --path . --script res://tools/validation/dev_mode_smoke.gd
 godot --headless --path . --script res://tools/validation/procgen_render_isolation_smoke.gd
+godot --headless --path . --script res://tools/validation/procgen_runtime_health_smoke.gd
 godot --headless --path . --script res://tools/validation/sector_heatmap_smoke.gd
 godot --headless --path . --script res://tools/validation/material_intelligence_smoke.gd
 godot --headless --path . --script res://tools/validation/power_grid_component_registration_smoke.gd
@@ -468,6 +469,7 @@ godot --headless --path . --script res://tools/validation/level_registry_contrac
 godot --headless --path . --script res://tools/validation/level_collision_poi_mapper_smoke.gd
 godot --headless --path . --script res://tools/validation/world_ingress_spawner_smoke.gd
 godot --headless --path . --script res://tools/validation/ash_bell_threadway_causeway_smoke.gd
+godot --headless --path . --script res://tools/validation/ash_bell_threadway_generation_contract_smoke.gd
 godot --headless --path . --script res://tools/validation/ash_bell_lift_ingress_presentation_smoke.gd
 godot --headless --path . --script res://tools/validation/level_scaffold_generator_smoke.gd
 godot --headless --path . --script res://tools/validation/authored_level_ingress_return_smoke.gd

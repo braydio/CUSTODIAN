@@ -279,6 +279,21 @@ write to the export or change runtime state.
   distribution. Reports present the inclusive total and child distribution
   separately so nested timing is never double-counted.
 
+## Procgen Runtime Mutation Contract (2026-08-13)
+
+`ProcGenTilemap` maintains cached runtime-health counters at the authoritative
+wall, walkable-boundary, navigation, and terrain-commit mutation sites. It logs
+bounded transition events only when those operations occur. Observatory reads
+the compact snapshot at its existing gauge cadence and captures it at incident
+start/end; sampling never triggers a topology operation or recursive scan.
+
+The cached `procgen_runtime_wall_shape_count` is the live shape count owned by
+the active ProcGen map. `collision_shape_count_runtime_walls` is a separate,
+explicit-export recursive scene-tree census across all matching runtime-wall
+ownership. Compact wall chunks mean body/chunk count and shape count are not
+expected to match. Their names remain distinct so stale ownership or a second
+wall system is visible rather than papered over.
+
 ## Acceptance
 
 - `F9` toggles the observatory overlay in `res://scenes/game.tscn`.

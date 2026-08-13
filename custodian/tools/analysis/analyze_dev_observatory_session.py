@@ -418,6 +418,8 @@ def _append_performance_incident_section(lines: list[str], payload: Mapping[str,
     owner = _mapping(incident.get("likely_owner"))
     lines.extend(["", "  Likely owner", f"    classification: {owner.get('classification', 'unclassified')}", f"    confidence/evidence: {_format_value(owner.get('evidence', 'none'), 120)}"])
 
+    _append_procgen_runtime_health(lines, payload, incident)
+
     gauges = _mapping(payload.get("gauges"))
     spans = _mapping(incident.get("aggregate_spans"))
     sample_count = max(1, int(_number(incident.get("samples_retained"), 1)))
@@ -462,6 +464,55 @@ def _append_performance_incident_section(lines: list[str], payload: Mapping[str,
         f"    {'enemy total (nested)':<24} {span_ms_per_frame('enemy_total'):.3f} ms/frame",
         f"    {'unaccounted':<24} {max(0.0, wall - process - physics):.3f} ms/frame",
     ])
+
+
+def _append_procgen_runtime_health(
+    lines: list[str], payload: Mapping[str, Any], incident: Mapping[str, Any]
+) -> None:
+    health = _mapping(payload.get("procgen_runtime_health"))
+    if not health:
+        health = _mapping(_mapping(incident.get("end_snapshot")).get("procgen_runtime_health"))
+    lines.extend(["", "PROCGEN RUNTIME HEALTH", "-" * 48])
+    if not health:
+        lines.append("  unavailable in this schema/export")
+    else:
+        for label, key in (
+            ("generation", "generation_id"), ("map", "map_size"),
+            ("floor cells", "floor_cells"), ("wall cells", "wall_cells"),
+            ("wall chunks", "runtime_wall_chunk_count"), ("wall bodies", "runtime_wall_body_count"),
+            ("wall shapes", "runtime_wall_shape_count"),
+            ("boundary chunks", "walkable_boundary_chunk_count"),
+            ("boundary bodies", "walkable_boundary_body_count"),
+            ("boundary shapes", "walkable_boundary_shape_count"),
+            ("navigation revision", "navigation_revision"),
+            ("navigation pending", "navigation_rebuild_pending"),
+            ("navigation requested", "navigation_rebuild_requested_count"),
+            ("navigation completed", "navigation_rebuild_completed_count"),
+            ("terrain commits", "runtime_terrain_commit_count"),
+            ("connector commits", "runtime_connector_commit_count"),
+            ("topology repairs", "runtime_topology_repair_count"),
+            ("last mutation", "last_mutation_kind"),
+            ("last mutation uptime", "last_mutation_uptime_sec"),
+            ("last mutation usec", "last_mutation_duration_usec"),
+        ):
+            lines.append(f"  {label:<28} {_format_value(health.get(key, 'unavailable'))}")
+    lines.extend(["", "RECENT PROCGEN MUTATIONS", "-" * 48,
+                  "  time | type | reason | duration usec | changed | before -> after"])
+    mutations = _records(incident.get("recent_procgen_mutations"))
+    if not mutations:
+        lines.append("  none retained")
+    for event in mutations:
+        data = _mapping(event.get("data"))
+        lines.append(
+            "  %.3f | %s | %s | %d | %d | %d -> %d"
+            % (
+                _number(event.get("uptime_sec")), event.get("kind", ""),
+                data.get("reason", ""), int(_number(data.get("duration_usec"))),
+                int(_number(data.get("changed_cells"))),
+                int(_number(data.get("before_count"))),
+                int(_number(data.get("after_count"))),
+            )
+        )
 
 
 def _format_value(value: Any, max_length: int = 88) -> str:

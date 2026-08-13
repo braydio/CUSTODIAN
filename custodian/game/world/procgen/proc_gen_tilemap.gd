@@ -696,6 +696,36 @@ var _world_progress_marker_parent: Node2D = null
 var _debug_generation_id: int = 0
 var _runtime_wall_body_peak: int = 0
 var _runtime_wall_shape_count: int = 0
+var _runtime_wall_rebuild_count: int = 0
+var _runtime_wall_last_rebuild_usec: int = 0
+var _runtime_wall_last_rebuild_reason: String = ""
+var _runtime_wall_chunks_created_total: int = 0
+var _runtime_wall_chunks_freed_total: int = 0
+var _runtime_wall_shapes_created_total: int = 0
+var _runtime_wall_shapes_freed_total: int = 0
+var _walkable_boundary_rebuild_count: int = 0
+var _walkable_boundary_last_rebuild_usec: int = 0
+var _walkable_boundary_last_rebuild_reason: String = ""
+var _walkable_boundary_chunks_created_total: int = 0
+var _walkable_boundary_chunks_freed_total: int = 0
+var _walkable_boundary_shape_count: int = 0
+var _navigation_rebuild_requested_count: int = 0
+var _navigation_rebuild_completed_count: int = 0
+var _navigation_last_rebuild_usec: int = 0
+var _navigation_last_rebuild_reason: String = ""
+var _navigation_pending_reason: String = ""
+var _navigation_revision: int = 0
+var _runtime_terrain_commit_count: int = 0
+var _runtime_connector_commit_count: int = 0
+var _runtime_topology_repair_count: int = 0
+var _runtime_terrain_last_commit_usec: int = 0
+var _runtime_terrain_last_commit_reason: String = ""
+var _runtime_terrain_last_changed_cell_count: int = 0
+var _shadow_rebuild_requested_count: int = 0
+var _shadow_last_rebuild_usec: int = 0
+var _last_runtime_mutation_kind: String = ""
+var _last_runtime_mutation_uptime_sec: float = 0.0
+var _last_runtime_mutation_duration_usec: int = 0
 var _generation_prop_rejections_protected_zone: int = 0
 var _generation_prop_rejections_stuck_risk: int = 0
 var _generation_prop_rejections_existing_blocker: int = 0
@@ -2770,7 +2800,41 @@ func resolve_runtime_walkable_connector(
 	width_tiles: int = 3,
 	max_length_tiles: int = 18,
 	region_type: String = "runtime_connector",
-	region_zone: String = "connector"
+	region_zone: String = "connector",
+	lateral_allowance_tiles: int = -1
+) -> Dictionary:
+	return _evaluate_or_commit_runtime_walkable_connector(
+		start_global_position, preferred_direction, width_tiles,
+		max_length_tiles, region_type, region_zone, false,
+		lateral_allowance_tiles
+	)
+
+
+func evaluate_runtime_walkable_connector(
+	start_global_position: Vector2,
+	preferred_direction: Vector2i,
+	width_tiles: int = 3,
+	max_length_tiles: int = 18,
+	region_type: String = "runtime_connector",
+	region_zone: String = "connector",
+	lateral_allowance_tiles: int = -1
+) -> Dictionary:
+	return _evaluate_or_commit_runtime_walkable_connector(
+		start_global_position, preferred_direction, width_tiles,
+		max_length_tiles, region_type, region_zone, true,
+		lateral_allowance_tiles
+	)
+
+
+func _evaluate_or_commit_runtime_walkable_connector(
+	start_global_position: Vector2,
+	preferred_direction: Vector2i,
+	width_tiles: int,
+	max_length_tiles: int,
+	region_type: String,
+	region_zone: String,
+	dry_run: bool,
+	lateral_allowance_tiles: int = -1
 ) -> Dictionary:
 	if floor_tilemap == null or walls_tilemap == null or procgen_node == null:
 		return {"ok": false, "reason": "missing procgen terrain authority"}
@@ -2808,21 +2872,51 @@ func resolve_runtime_walkable_connector(
 		return {"ok": false, "reason": "no isolated ingress floor behind approach anchor"}
 	var endpoint := Vector2i(-1, -1)
 	var endpoint_score := 1 << 30
+	var candidates_before_budget := 0
+	var candidates_after_forward := 0
+	var candidates_after_lateral := 0
+	var nearest_forward := 1 << 30
+	var nearest_lateral := 1 << 30
+	var lateral_budget := lateral_allowance_tiles
+	if lateral_budget < 0:
+		lateral_budget = maxi(4, int(ceil(float(max_length_tiles) * 0.35)))
 	for cell_variant in mainland.keys():
 		var cell := cell_variant as Vector2i
 		var delta := cell - island_anchor
 		var forward: int = delta.x * inward.x + delta.y * inward.y
+		var lateral: int = absi(delta.x * inward.y - delta.y * inward.x)
+		if forward > 0:
+			candidates_before_budget += 1
+			nearest_forward = mini(nearest_forward, forward)
+			nearest_lateral = mini(nearest_lateral, lateral)
 		if forward <= 0 or forward > max_length_tiles:
 			continue
-		var lateral: int = absi(delta.x * inward.y - delta.y * inward.x)
-		if lateral > maxi(4, int(ceil(float(max_length_tiles) * 0.35))):
+		candidates_after_forward += 1
+		if lateral > lateral_budget:
 			continue
+		candidates_after_lateral += 1
 		var score: int = forward * 100 + lateral * 400 + cell.y * 2 + cell.x
 		if score < endpoint_score:
 			endpoint_score = score
 			endpoint = cell
 	if endpoint.x < 0:
-		return {"ok": false, "reason": "no mainland endpoint within connector budget"}
+		var failure := {
+			"ok": false,
+			"reason": "no mainland endpoint within connector budget",
+			"start_tile": start,
+			"island_anchor_tile": island_anchor,
+			"preferred_direction": inward,
+			"normal_max_length": max_length_tiles,
+			"lateral_allowance_tiles": lateral_budget,
+			"mainland_cell_count": mainland.size(),
+			"nearest_forward_mainland_distance": nearest_forward if nearest_forward < (1 << 30) else -1,
+			"nearest_lateral_mainland_distance": nearest_lateral if nearest_lateral < (1 << 30) else -1,
+			"candidate_count_before_budget_filter": candidates_before_budget,
+			"candidate_count_after_forward_filter": candidates_after_forward,
+			"candidate_count_after_lateral_filter": candidates_after_lateral,
+		}
+		_obs_log(&"procgen_runtime_connector_failed", failure)
+		return failure
 	var centerline := _deterministic_tile_line(island_anchor, endpoint)
 	var half_width: int = maxi(0, int((maxi(1, width_tiles) - 1) / 2))
 	var perpendicular := Vector2i(-inward.y, inward.x)
@@ -2844,8 +2938,9 @@ func resolve_runtime_walkable_connector(
 			required.has(cell) or is_sundered_keep_frontage_protected(cell)
 		):
 			return {"ok": false, "reason": "connector intersects protected route", "blocked_cell": cell}
-	var new_cells: Array[Vector2i] = []
+	var variants: Dictionary = {}
 	var ordered_cells: Array[Vector2i] = []
+	var new_cells: Array[Vector2i] = []
 	for center in centerline:
 		for offset in range(-half_width, half_width + 1):
 			var cell := center + perpendicular * offset
@@ -2854,30 +2949,36 @@ func resolve_runtime_walkable_connector(
 			ordered_cells.append(cell)
 			if not _generated_floor_cells.has(cell):
 				new_cells.append(cell)
-			_set_floor_tile_and_generated_state(cell, region_type, region_zone)
-			_remove_foliage(cell)
-			minimap_tile_changed.emit(cell, "floor")
+			variants[cell] = _tile_noise_hash(cell + Vector2i(1709, 2237)) % 6
+	var plan := {
+		"ok": true, "cells": ordered_cells, "new_cells": new_cells,
+		"centerline_cells": centerline, "tile_variants": variants,
+		"already_connected": false, "start_tile": start,
+		"island_anchor_tile": island_anchor, "endpoint_tile": endpoint,
+		"max_length_tiles": max_length_tiles,
+		"lateral_allowance_tiles": lateral_budget, "reason": "",
+	}
+	if dry_run:
+		return plan
+	var commit_started_usec := Time.get_ticks_usec()
+	for cell in ordered_cells:
+		_set_floor_tile_and_generated_state(cell, region_type, region_zone)
+		_remove_foliage(cell)
+		minimap_tile_changed.emit(cell, "floor")
 	_rebuild_nonwalkable_surface_regions(map_size)
 	_rebuild_nonwalkable_surface_visuals()
-	_rebuild_runtime_walkable_boundary()
+	_rebuild_runtime_walkable_boundary("runtime_connector")
 	_rebuild_horizontal_wall_overlays()
 	_refresh_shadows()
-	_refresh_navigation_after_wall_change(true)
-	var variants: Dictionary = {}
-	for cell in ordered_cells:
-		variants[cell] = _tile_noise_hash(cell + Vector2i(1709, 2237)) % 6
-	return {
-		"ok": true,
-		"cells": ordered_cells,
-		"new_cells": new_cells,
-		"centerline_cells": centerline,
-		"tile_variants": variants,
-		"already_connected": false,
-		"start_tile": start,
-		"island_anchor_tile": island_anchor,
-		"endpoint_tile": endpoint,
-		"reason": "",
-	}
+	_refresh_navigation_after_wall_change(true, "runtime_connector")
+	_runtime_terrain_commit_count += 1
+	_runtime_connector_commit_count += 1
+	_runtime_terrain_last_commit_usec = Time.get_ticks_usec() - commit_started_usec
+	_runtime_terrain_last_commit_reason = region_type
+	_runtime_terrain_last_changed_cell_count = new_cells.size()
+	_record_runtime_mutation(&"procgen_runtime_terrain_committed", region_type, _runtime_terrain_last_commit_usec, _generated_floor_cells.size() - new_cells.size(), _generated_floor_cells.size(), new_cells.size())
+	_obs_log(&"procgen_runtime_connector_resolved", _runtime_mutation_payload(region_type, _runtime_terrain_last_commit_usec, 0, ordered_cells.size(), new_cells.size()))
+	return plan
 
 
 func _runtime_floor_component(origin: Vector2i, map_size: Vector2i) -> Dictionary:
@@ -5245,7 +5346,9 @@ func validate_no_stuck_pockets(remediate: bool = true) -> Dictionary:
 					"seed": _get_generation_seed(),
 				})
 	if remediated > 0:
-		_queue_navigation_rebuild()
+		_runtime_topology_repair_count += remediated
+		_record_runtime_mutation(&"procgen_runtime_topology_repaired", "stuck_pocket_collision", 0, flagged.size(), remediated, remediated)
+		_queue_navigation_rebuild("stuck_pocket_collision")
 	_obs_increment(&"procgen_stuck_pockets_detected", flagged.size())
 	_obs_increment(&"procgen_stuck_pockets_remediated", remediated)
 	_obs_increment(&"procgen_validation_pockets_detected", flagged.size())
@@ -5713,7 +5816,9 @@ func get_intensity_at_tile(tile: Vector2i) -> float:
 	return clampf(value, 0.0, 1.0)
 
 
-func _rebuild_runtime_wall_collision(map_size: Vector2i) -> void:
+func _rebuild_runtime_wall_collision(map_size: Vector2i, reason: String = "generation") -> void:
+	var started_usec := Time.get_ticks_usec()
+	var before := _runtime_wall_shape_count
 	var collision_root := walls_tilemap.get_node_or_null("RuntimeWallCollision") as Node2D
 	if collision_root == null:
 		collision_root = Node2D.new()
@@ -5736,17 +5841,24 @@ func _rebuild_runtime_wall_collision(map_size: Vector2i) -> void:
 	_publish_runtime_wall_body_gauges(collision_root)
 	if show_runtime_wall_collision_debug:
 		_rebuild_runtime_wall_collision_debug()
+	_runtime_wall_rebuild_count += 1
+	_runtime_wall_last_rebuild_usec = Time.get_ticks_usec() - started_usec
+	_runtime_wall_last_rebuild_reason = reason
+	_record_runtime_mutation(&"procgen_runtime_wall_rebuilt", reason, _runtime_wall_last_rebuild_usec, before, _runtime_wall_shape_count, absi(_runtime_wall_shape_count - before))
 
 
-func _rebuild_runtime_walkable_boundary() -> void:
+func _rebuild_runtime_walkable_boundary(reason: String = "generation") -> void:
 	if walls_tilemap == null:
 		return
+	var started_usec := Time.get_ticks_usec()
+	var before := _walkable_boundary_shape_count
 	_clear_runtime_walkable_boundary()
 	if _generated_floor_cells.is_empty():
 		return
 	var boundary := RUNTIME_WALKABLE_BOUNDARY_CHUNK_SCRIPT.new() as StaticBody2D
 	boundary.call("setup")
 	walls_tilemap.add_child(boundary)
+	_walkable_boundary_chunks_created_total += 1
 	var tile_size := Vector2(16.0, 16.0)
 	if walls_tilemap.tile_set != null:
 		tile_size = Vector2(walls_tilemap.tile_set.tile_size)
@@ -5779,6 +5891,12 @@ func _rebuild_runtime_walkable_boundary() -> void:
 			(first_center + last_center) * 0.5
 			+ Vector2(float(side) * tile_size.x * 0.5, 0.0)
 		), Vector2(thickness, float(length) * tile_size.y))
+	_walkable_boundary_shape_count = int(boundary.get("segment_count"))
+	_walkable_boundary_rebuild_count += 1
+	_walkable_boundary_last_rebuild_usec = Time.get_ticks_usec() - started_usec
+	_walkable_boundary_last_rebuild_reason = reason
+	_publish_runtime_health_gauges()
+	_record_runtime_mutation(&"procgen_walkable_boundary_rebuilt", reason, _walkable_boundary_last_rebuild_usec, before, _walkable_boundary_shape_count, absi(_walkable_boundary_shape_count - before))
 
 
 func _collect_walkable_frontier_runs(horizontal: bool) -> Array[Dictionary]:
@@ -5824,8 +5942,11 @@ func _clear_runtime_walkable_boundary() -> void:
 		return
 	var existing := walls_tilemap.get_node_or_null("RuntimeWalkableBoundary")
 	if existing != null:
+		_walkable_boundary_chunks_freed_total += 1
+		_walkable_boundary_shape_count = 0
 		walls_tilemap.remove_child(existing)
 		existing.queue_free()
+	_publish_runtime_health_gauges()
 
 
 func _is_floor_like_tile(pos: Vector2i) -> bool:
@@ -5923,23 +6044,34 @@ func _refresh_wall_neighbors(center_tile: Vector2i) -> void:
 				}
 
 
-func _refresh_navigation_after_wall_change(force_immediate: bool = false) -> void:
+func _refresh_navigation_after_wall_change(force_immediate: bool = false, reason: String = "wall_change") -> void:
 	if not force_immediate and enable_streaming_reveal and not _streaming_reveal_queue.is_empty():
 		_navigation_rebuild_pending = true
+		_navigation_pending_reason = reason
+		_publish_runtime_health_gauges()
 		return
-	_queue_navigation_rebuild()
+	_queue_navigation_rebuild(reason)
 
 
-func _queue_navigation_rebuild() -> void:
+func _queue_navigation_rebuild(reason: String = "runtime_mutation") -> void:
 	if _navigation_rebuild_deferred:
+		if _navigation_pending_reason.is_empty():
+			_navigation_pending_reason = reason
 		return
 	_navigation_rebuild_deferred = true
+	_navigation_rebuild_requested_count += 1
+	_navigation_pending_reason = reason
+	_publish_runtime_health_gauges()
 	call_deferred("_flush_navigation_rebuild")
 
 
 func _flush_navigation_rebuild() -> void:
+	var started_usec := Time.get_ticks_usec()
+	var reason := _navigation_pending_reason if not _navigation_pending_reason.is_empty() else "runtime_mutation"
+	_obs_log(&"procgen_navigation_rebuild_started", _runtime_mutation_payload(reason, 0, 0, 0, 0))
 	_navigation_rebuild_deferred = false
 	_navigation_rebuild_pending = false
+	_navigation_pending_reason = ""
 	var rebuilt := false
 	for navigation_node in get_tree().get_nodes_in_group("navigation"):
 		if navigation_node != null and navigation_node.has_method("rebuild"):
@@ -5949,6 +6081,14 @@ func _flush_navigation_rebuild() -> void:
 			rebuilt = true
 	if not rebuilt and nav_region != null:
 		nav_region.bake_navigation_polygon(false)
+		rebuilt = true
+	if rebuilt:
+		_navigation_rebuild_completed_count += 1
+		_navigation_revision += 1
+	_navigation_last_rebuild_usec = Time.get_ticks_usec() - started_usec
+	_navigation_last_rebuild_reason = reason
+	_publish_runtime_health_gauges()
+	_record_runtime_mutation(&"procgen_navigation_rebuild_finished", reason, _navigation_last_rebuild_usec, _navigation_revision - (1 if rebuilt else 0), _navigation_revision, 0)
 
 
 func _capture_generated_tile_state(map_size: Vector2i) -> void:
@@ -8618,10 +8758,12 @@ func _spawn_runtime_wall_body(tile: Vector2i, refresh_debug: bool = true, publis
 			chunk.name = chunk_name
 			chunk.call("setup", self, _runtime_wall_chunk_position(tile), destructible_runtime_walls)
 			collision_root.add_child(chunk)
+			_runtime_wall_chunks_created_total += 1
 		if bool(chunk.call("has_wall_tile", tile)):
 			return
 		chunk.call("add_wall_tile", tile, walls_tilemap.map_to_local(tile) + collision_offset, collision_size)
 		_runtime_wall_shape_count += 1
+		_runtime_wall_shapes_created_total += 1
 		if publish_gauges:
 			_publish_runtime_wall_body_gauges(collision_root)
 		if refresh_debug and show_runtime_wall_collision_debug:
@@ -8647,6 +8789,7 @@ func _spawn_runtime_wall_body(tile: Vector2i, refresh_debug: bool = true, publis
 	body.add_child(shape)
 	collision_root.add_child(body)
 	_runtime_wall_shape_count += 1
+	_runtime_wall_shapes_created_total += 1
 	if publish_gauges:
 		_publish_runtime_wall_body_gauges(collision_root)
 	if refresh_debug and show_runtime_wall_collision_debug:
@@ -8662,7 +8805,9 @@ func _remove_runtime_wall_body(tile: Vector2i, refresh_debug: bool = true, publi
 		if chunk != null and chunk.has_method("remove_wall_tile") and bool(chunk.call("has_wall_tile", tile)):
 			chunk.call("remove_wall_tile", tile)
 			_runtime_wall_shape_count = maxi(0, _runtime_wall_shape_count - 1)
+			_runtime_wall_shapes_freed_total += 1
 			if bool(chunk.call("is_empty")):
+				_runtime_wall_chunks_freed_total += 1
 				collision_root.remove_child(chunk)
 				chunk.queue_free()
 			if publish_gauges:
@@ -8675,6 +8820,7 @@ func _remove_runtime_wall_body(tile: Vector2i, refresh_debug: bool = true, publi
 		collision_root.remove_child(body)
 		body.queue_free()
 		_runtime_wall_shape_count = maxi(0, _runtime_wall_shape_count - 1)
+		_runtime_wall_shapes_freed_total += 1
 		if publish_gauges:
 			_publish_runtime_wall_body_gauges(collision_root)
 	if refresh_debug and show_runtime_wall_collision_debug:
@@ -8722,22 +8868,29 @@ func _publish_runtime_wall_body_gauges(collision_root: Node) -> void:
 	_obs_gauge(&"procgen_runtime_wall_body_count", runtime_wall_count)
 	_obs_gauge(&"procgen_runtime_wall_shape_count", _runtime_wall_shape_count)
 	_obs_gauge(&"procgen_runtime_wall_body_peak", _runtime_wall_body_peak)
+	_publish_runtime_health_gauges()
 
 
 func _clear_runtime_wall_collision() -> void:
+	var removed_shapes := _runtime_wall_shape_count
 	_runtime_wall_shape_count = 0
 	var collision_root := walls_tilemap.get_node_or_null("RuntimeWallCollision") as Node2D
 	if collision_root == null:
 		return
 	for child in collision_root.get_children():
+		if compact_runtime_wall_bodies:
+			_runtime_wall_chunks_freed_total += 1
 		collision_root.remove_child(child)
 		child.queue_free()
+	_runtime_wall_shapes_freed_total += removed_shapes
 	_publish_runtime_wall_body_gauges(collision_root)
 
 
-func _sync_runtime_wall_collision_with_visible_walls() -> void:
+func _sync_runtime_wall_collision_with_visible_walls(reason: String = "visible_wall_sync") -> void:
 	if walls_tilemap == null or not build_runtime_wall_collision:
 		return
+	var started_usec := Time.get_ticks_usec()
+	var before := _runtime_wall_shape_count
 	var collision_root := walls_tilemap.get_node_or_null("RuntimeWallCollision") as Node2D
 	if collision_root == null:
 		collision_root = Node2D.new()
@@ -8756,7 +8909,9 @@ func _sync_runtime_wall_collision_with_visible_walls() -> void:
 				if not visible_wall_tiles.has(tile):
 					child.call("remove_wall_tile", tile)
 					_runtime_wall_shape_count = maxi(0, _runtime_wall_shape_count - 1)
+					_runtime_wall_shapes_freed_total += 1
 			if bool(child.call("is_empty")):
+				_runtime_wall_chunks_freed_total += 1
 				collision_root.remove_child(child)
 				child.queue_free()
 			continue
@@ -8765,9 +8920,14 @@ func _sync_runtime_wall_collision_with_visible_walls() -> void:
 			collision_root.remove_child(child)
 			child.queue_free()
 			_runtime_wall_shape_count = maxi(0, _runtime_wall_shape_count - 1)
+			_runtime_wall_shapes_freed_total += 1
 	_publish_runtime_wall_body_gauges(collision_root)
 	if show_runtime_wall_collision_debug:
 		_rebuild_runtime_wall_collision_debug()
+	_runtime_wall_rebuild_count += 1
+	_runtime_wall_last_rebuild_usec = Time.get_ticks_usec() - started_usec
+	_runtime_wall_last_rebuild_reason = reason
+	_record_runtime_mutation(&"procgen_runtime_wall_rebuilt", reason, _runtime_wall_last_rebuild_usec, before, _runtime_wall_shape_count, absi(_runtime_wall_shape_count - before))
 
 
 func _wall_tile_from_runtime_body_name(body_name: String) -> Vector2i:
@@ -9229,13 +9389,98 @@ func get_runtime_tile_size() -> Vector2:
 	return Vector2(16, 16)
 
 
+func get_runtime_health_snapshot() -> Dictionary:
+	var wall_root := walls_tilemap.get_node_or_null("RuntimeWallCollision") if walls_tilemap != null else null
+	var boundary := walls_tilemap.get_node_or_null("RuntimeWalkableBoundary") if walls_tilemap != null else null
+	var wall_bodies := wall_root.get_child_count() if wall_root != null else 0
+	return {
+		"generation_id": _debug_generation_id,
+		"map_size": procgen_node.map_size if procgen_node != null else Vector2i.ZERO,
+		"floor_cells": _generated_floor_cells.size(),
+		"wall_cells": _generated_wall_cells.size(),
+		"runtime_wall_chunk_count": wall_bodies if compact_runtime_wall_bodies else 0,
+		"runtime_wall_body_count": wall_bodies,
+		"runtime_wall_shape_count": _runtime_wall_shape_count,
+		"runtime_wall_rebuild_count": _runtime_wall_rebuild_count,
+		"walkable_boundary_chunk_count": 1 if boundary != null else 0,
+		"walkable_boundary_body_count": 1 if boundary != null else 0,
+		"walkable_boundary_shape_count": _walkable_boundary_shape_count,
+		"walkable_boundary_rebuild_count": _walkable_boundary_rebuild_count,
+		"navigation_revision": _navigation_revision,
+		"navigation_rebuild_pending": _navigation_rebuild_deferred or _navigation_rebuild_pending,
+		"navigation_rebuild_requested_count": _navigation_rebuild_requested_count,
+		"navigation_rebuild_completed_count": _navigation_rebuild_completed_count,
+		"runtime_terrain_commit_count": _runtime_terrain_commit_count,
+		"runtime_connector_commit_count": _runtime_connector_commit_count,
+		"runtime_topology_repair_count": _runtime_topology_repair_count,
+		"shadow_rebuild_requested_count": _shadow_rebuild_requested_count,
+		"shadow_last_rebuild_usec": _shadow_last_rebuild_usec,
+		"last_mutation_kind": _last_runtime_mutation_kind,
+		"last_mutation_uptime_sec": _last_runtime_mutation_uptime_sec,
+		"last_mutation_duration_usec": _last_runtime_mutation_duration_usec,
+	}
+
+
+func _publish_runtime_health_gauges() -> void:
+	var snapshot := get_runtime_health_snapshot()
+	for key in snapshot.keys():
+		if key == "map_size":
+			continue
+		_obs_gauge(StringName("procgen_%s" % key) if not str(key).begins_with("procgen_") else StringName(key), snapshot[key])
+	_obs_gauge(&"procgen_runtime_wall_last_rebuild_usec", _runtime_wall_last_rebuild_usec)
+	_obs_gauge(&"procgen_runtime_wall_last_rebuild_reason", _runtime_wall_last_rebuild_reason)
+	_obs_gauge(&"procgen_runtime_wall_chunks_created_total", _runtime_wall_chunks_created_total)
+	_obs_gauge(&"procgen_runtime_wall_chunks_freed_total", _runtime_wall_chunks_freed_total)
+	_obs_gauge(&"procgen_runtime_wall_shapes_created_total", _runtime_wall_shapes_created_total)
+	_obs_gauge(&"procgen_runtime_wall_shapes_freed_total", _runtime_wall_shapes_freed_total)
+	_obs_gauge(&"procgen_walkable_boundary_last_rebuild_usec", _walkable_boundary_last_rebuild_usec)
+	_obs_gauge(&"procgen_walkable_boundary_last_rebuild_reason", _walkable_boundary_last_rebuild_reason)
+	_obs_gauge(&"procgen_walkable_boundary_chunks_created_total", _walkable_boundary_chunks_created_total)
+	_obs_gauge(&"procgen_walkable_boundary_chunks_freed_total", _walkable_boundary_chunks_freed_total)
+	_obs_gauge(&"procgen_navigation_last_rebuild_usec", _navigation_last_rebuild_usec)
+	_obs_gauge(&"procgen_navigation_last_rebuild_reason", _navigation_last_rebuild_reason)
+	_obs_gauge(&"procgen_runtime_terrain_last_commit_usec", _runtime_terrain_last_commit_usec)
+	_obs_gauge(&"procgen_runtime_terrain_last_commit_reason", _runtime_terrain_last_commit_reason)
+	_obs_gauge(&"procgen_runtime_terrain_last_changed_cell_count", _runtime_terrain_last_changed_cell_count)
+
+
+func _runtime_mutation_payload(reason: String, duration_usec: int, before_count: int, after_count: int, changed_cells: int) -> Dictionary:
+	return {
+		"generation_id": _debug_generation_id,
+		"reason": reason,
+		"duration_usec": duration_usec,
+		"before_count": before_count,
+		"after_count": after_count,
+		"changed_cells": changed_cells,
+		"floor_cell_count": _generated_floor_cells.size(),
+		"wall_cell_count": _generated_wall_cells.size(),
+	}
+
+
+func _record_runtime_mutation(kind: StringName, reason: String, duration_usec: int, before_count: int, after_count: int, changed_cells: int) -> void:
+	_last_runtime_mutation_kind = String(kind)
+	var observatory := get_node_or_null("/root/DevObservatory")
+	_last_runtime_mutation_uptime_sec = (
+		float(observatory.call("get_uptime_sec"))
+		if observatory != null and observatory.has_method("get_uptime_sec")
+		else float(Time.get_ticks_msec()) / 1000.0
+	)
+	_last_runtime_mutation_duration_usec = duration_usec
+	_publish_runtime_health_gauges()
+	_obs_log(kind, _runtime_mutation_payload(reason, duration_usec, before_count, after_count, changed_cells))
+
+
 func _refresh_shadows() -> void:
 	if shadow_system == null:
 		return
+	var started_usec := Time.get_ticks_usec()
 	if shadow_system.has_method("initialize"):
 		shadow_system.call("initialize", floor_tilemap, walls_tilemap)
 	if shadow_system.has_method("request_regenerate"):
 		shadow_system.call("request_regenerate")
+	_shadow_rebuild_requested_count += 1
+	_shadow_last_rebuild_usec = Time.get_ticks_usec() - started_usec
+	_record_runtime_mutation(&"procgen_shadow_rebuild_requested", "terrain_or_wall_refresh", _shadow_last_rebuild_usec, _shadow_rebuild_requested_count - 1, _shadow_rebuild_requested_count, 0)
 
 
 ## Returns the largest room's center tile (good for player spawn)

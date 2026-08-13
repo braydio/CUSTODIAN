@@ -10,6 +10,8 @@ const THREADWAY_SCRIPT := preload(
 )
 const THREADWAY_EVENT_ID := &"ash_bell_threadway_unlocked"
 const THREADWAY_RESOURCE_ID := "white_thread_knot"
+const THREADWAY_FALLBACK_MAX_LENGTH := 30
+const THREADWAY_FALLBACK_LATERAL_ALLOWANCE := 10
 
 var _presentation: AshBellLiftIngressPresentation
 var _threadway: AshBellThreadwayCauseway = null
@@ -87,6 +89,7 @@ func _resolve_threadway(play_reveal: bool) -> void:
 	if not _main_map.has_method("resolve_runtime_walkable_connector"):
 		push_warning("[AshBellLiftIngressSite] Procgen map has no runtime connector authority")
 		return
+	_threadway_result = {}
 	var config := (
 		get_meta("world_ingress_unlock_causeway", {}) as Dictionary
 	).duplicate(true)
@@ -98,26 +101,70 @@ func _resolve_threadway(play_reveal: bool) -> void:
 		"play_reveal": play_reveal,
 		"position": global_position,
 	})
+	var width := int(config.get("width_tiles", 3))
+	var canonical_length := int(config.get("max_length_tiles", 18))
+	var selected_length := canonical_length
+	var selected_lateral := -1
+	var canonical_plan: Dictionary = {}
+	if _main_map.has_method("evaluate_runtime_walkable_connector"):
+		canonical_plan = _main_map.call(
+			"evaluate_runtime_walkable_connector",
+			_presentation.get_interaction_approach_position(), -outward,
+			width, canonical_length, "ash_bell_threadway", "white_thread", -1
+		) as Dictionary
+		if not bool(canonical_plan.get("ok", false)) and str(canonical_plan.get("reason", "")) == "no mainland endpoint within connector budget":
+			selected_length = maxi(canonical_length, THREADWAY_FALLBACK_MAX_LENGTH)
+			selected_lateral = THREADWAY_FALLBACK_LATERAL_ALLOWANCE
+			var fallback_plan := _main_map.call(
+				"evaluate_runtime_walkable_connector",
+				_presentation.get_interaction_approach_position(), -outward,
+				width, selected_length, "ash_bell_threadway", "white_thread",
+				selected_lateral
+			) as Dictionary
+			if bool(fallback_plan.get("ok", false)):
+				_observe(&"ash_bell_threadway_resolution_fallback", {
+					"canonical_budget": canonical_length,
+					"fallback_budget": selected_length,
+					"fallback_lateral_allowance": selected_lateral,
+					"island_anchor": fallback_plan.get("island_anchor_tile"),
+					"endpoint": fallback_plan.get("endpoint_tile"),
+					"cell_count": (fallback_plan.get("cells", []) as Array).size(),
+				})
+			else:
+				_threadway_result = fallback_plan
+		if not canonical_plan.is_empty() and bool(canonical_plan.get("ok", false)):
+			selected_length = canonical_length
+			selected_lateral = -1
+	if not _threadway_result.is_empty() and not bool(_threadway_result.get("ok", false)):
+		_report_resolution_failure(_threadway_result, canonical_plan)
+		return
 	_threadway_result = _main_map.call(
 		"resolve_runtime_walkable_connector",
 		_presentation.get_interaction_approach_position(),
 		-outward,
-		int(config.get("width_tiles", 3)),
-		int(config.get("max_length_tiles", 18)),
+		width,
+		selected_length,
 		"ash_bell_threadway",
-		"white_thread"
+		"white_thread",
+		selected_lateral
 	) as Dictionary
 	if not bool(_threadway_result.get("ok", false)):
-		push_warning(
-			"[AshBellLiftIngressSite] Threadway resolution failed: %s"
-			% str(_threadway_result.get("reason", "unknown"))
-		)
+		_report_resolution_failure(_threadway_result, canonical_plan)
 		return
 	_threadway = THREADWAY_SCRIPT.new() as AshBellThreadwayCauseway
 	_threadway.name = "AshBellThreadwayCauseway"
 	add_child(_threadway)
 	_threadway.resolution_finished.connect(_on_threadway_resolution_finished)
 	_threadway.configure(_main_map, _threadway_result, play_reveal)
+
+
+func _report_resolution_failure(result: Dictionary, canonical_plan: Dictionary = {}) -> void:
+	var payload := result.duplicate(true)
+	payload["canonical_budget"] = int((get_meta("world_ingress_unlock_causeway", {}) as Dictionary).get("max_length_tiles", 18))
+	if not canonical_plan.is_empty():
+		payload["canonical_diagnostic"] = canonical_plan.duplicate(true)
+	push_warning("[AshBellLiftIngressSite] Threadway resolution failed: %s diagnostic=%s" % [str(result.get("reason", "unknown")), str(payload)])
+	_observe(&"ash_bell_threadway_resolution_failed", payload)
 
 
 func _on_threadway_resolution_finished() -> void:

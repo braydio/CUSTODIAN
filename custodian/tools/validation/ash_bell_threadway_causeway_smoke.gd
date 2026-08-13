@@ -32,7 +32,8 @@ class MockThreadwayMap:
 		_width_tiles: int,
 		_max_length_tiles: int,
 		_region_type: String,
-		_region_zone: String
+		_region_zone: String,
+		_lateral_allowance_tiles: int = -1
 	) -> Dictionary:
 		resolve_count += 1
 		return result.duplicate(true)
@@ -42,6 +43,34 @@ class MockThreadwayMap:
 
 	func tile_to_global_position(cell: Vector2i) -> Vector2:
 		return Vector2(cell) * 32.0 + Vector2(16.0, 16.0)
+
+
+class MockFallbackThreadwayMap:
+	extends MockThreadwayMap
+
+	var evaluated_lengths: Array[int] = []
+	var committed_length := 0
+	var committed_lateral := -1
+
+	func evaluate_runtime_walkable_connector(
+		_start_global_position: Vector2, _preferred_direction: Vector2i,
+		_width_tiles: int, max_length_tiles: int, _region_type: String,
+		_region_zone: String, _lateral_allowance_tiles: int = -1
+	) -> Dictionary:
+		evaluated_lengths.append(max_length_tiles)
+		if max_length_tiles <= 18:
+			return {"ok": false, "reason": "no mainland endpoint within connector budget"}
+		return result.duplicate(true)
+
+	func resolve_runtime_walkable_connector(
+		_start_global_position: Vector2, _preferred_direction: Vector2i,
+		_width_tiles: int, max_length_tiles: int, _region_type: String,
+		_region_zone: String, lateral_allowance_tiles: int = -1
+	) -> Dictionary:
+		resolve_count += 1
+		committed_length = max_length_tiles
+		committed_lateral = lateral_allowance_tiles
+		return result.duplicate(true)
 
 
 var _errors: Array[String] = []
@@ -54,6 +83,7 @@ func _init() -> void:
 func _run() -> void:
 	await _validate_authoritative_connector()
 	await _validate_resource_lifecycle()
+	await _validate_bounded_fallback()
 	if _errors.is_empty():
 		print("[AshBellThreadwayCausewaySmoke] PASS")
 		quit(0)
@@ -209,6 +239,29 @@ func _validate_resource_lifecycle() -> void:
 		_check(pre_threadway.debug_get_reveal_play_count() == 0, "pre-acquired Knot replayed live reveal")
 	pre_site.queue_free()
 	pre_map.queue_free()
+	ledger.call("clear")
+	memory.call("reset_run_events", 0)
+	await process_frame
+
+
+func _validate_bounded_fallback() -> void:
+	var ledger := root.get_node_or_null("ResourceLedger")
+	var memory := root.get_node_or_null("WorldEventMemory")
+	ledger.call("clear")
+	memory.call("reset_run_events", 1138)
+	ledger.call("add", RESOURCE_ID, 1)
+	var map := MockFallbackThreadwayMap.new()
+	root.add_child(map)
+	var site := _make_site(map)
+	root.add_child(site)
+	await process_frame
+	await process_frame
+	_check(map.evaluated_lengths == [18, 30], "fallback did not evaluate canonical then bounded budgets")
+	_check(map.committed_length == 30, "fallback commit did not use bounded 30-tile budget")
+	_check(map.committed_lateral == 10, "fallback commit did not retain bounded lateral allowance")
+	_check(map.resolve_count == 1, "fallback committed more than once")
+	site.queue_free()
+	map.queue_free()
 	ledger.call("clear")
 	memory.call("reset_run_events", 0)
 	await process_frame

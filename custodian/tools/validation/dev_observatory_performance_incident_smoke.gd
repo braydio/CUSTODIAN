@@ -90,7 +90,11 @@ func _run() -> void:
 	observatory.call("adjust_gauge", &"active_combat_audio", -1)
 	_assert(int(observatory.get("gauges").get("active_vfx", -1)) == 0, "temporary VFX gauge did not return to baseline")
 	_assert(int(observatory.get("gauges").get("active_combat_audio", -1)) == 0, "temporary audio gauge did not return to baseline")
-	observatory.call("_record_frame_sample", {"uptime_sec": 1.0, "phase": "spawn", "wall_frame_ms": 147.6, "process_ms": 118.2, "physics_ms": 12.1, "node_count": 100, "living_enemies": 4, "corpse_enemies": 0, "active_vfx": 0, "active_audio_players": 0, "draw_calls": 14, "rendered_objects": 20, "spans": {"enemy_behavior": {"count": 1, "total_usec": 89400, "max_usec": 89400}}})
+	var incident_sample := {"uptime_sec": 1.0, "phase": "spawn", "wall_frame_ms": 147.6, "process_ms": 118.2, "physics_ms": 12.1, "node_count": 100, "living_enemies": 4, "corpse_enemies": 0, "active_vfx": 0, "active_audio_players": 0, "draw_calls": 14, "rendered_objects": 20, "spans": {"enemy_behavior": {"count": 1, "total_usec": 89400, "max_usec": 89400}}}
+	observatory.call("_record_frame_sample", incident_sample)
+	var captured_samples := observatory.get("_frame_samples") as Array
+	captured_samples.append(incident_sample)
+	observatory.set("_frame_samples", captured_samples)
 	observatory.call("_record_worst_frame", {"sample": {"wall_frame_ms": 147.6}, "recent_events": [], "recent_warnings": []})
 	observatory.call("stop_performance_incident")
 	var report := observatory.call("get_performance_incident_report") as Dictionary
@@ -98,6 +102,10 @@ func _run() -> void:
 	_assert((report.get("worst_frames", []) as Array).size() <= 20, "worst-frame cap exceeded")
 	_assert((report.get("phase_snapshots", []) as Array).size() >= 3, "phase snapshots were not retained")
 	_assert(report.has("likely_owner"), "incident classification is missing")
+	var spawn_phase := (report.get("phase_summaries", {}) as Dictionary).get("spawn", {}) as Dictionary
+	_assert(float(spawn_phase.get("process_ms", 0.0)) < 1000.0, "incident process time was summed instead of averaged")
+	_assert(float(spawn_phase.get("physics_ms", 0.0)) < 1000.0, "incident physics time was summed instead of averaged")
+	_assert(float(spawn_phase.get("average_ms", 0.0)) > 0.0, "incident phase frame average was lost")
 	var exported := observatory.call("export_session_json", EXPORT_PATH) as String
 	_assert(exported == EXPORT_PATH, "incident export failed")
 	var file := FileAccess.open(EXPORT_PATH, FileAccess.READ)

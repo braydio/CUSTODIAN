@@ -13,6 +13,18 @@ Documentation updates this session:
 
 ## Runtime Status
 
+- Procgen runtime mutation attribution is now cached at the authoritative wall
+  collision, walkable-boundary, navigation, and terrain-commit paths. F10 and
+  Performance Incident snapshots retain compact health state plus recent
+  bounded mutation events without background tree scans. Recursive
+  `collision_shape_count_runtime_walls` remains an explicit-export census,
+  distinct from the active map's cached compact-body and shape counts.
+- Ash-Bell isolated-pocket placement and White Thread runtime resolution now
+  share one dry-run connector planner. Placement requires the canonical
+  three-wide/18-tile plan; a 30-tile, 10-lateral defensive runtime fallback is
+  bounded by the same protected-route, wall, and map checks and emits structured
+  fallback/failure diagnostics.
+
 - Pickup toast coverage now includes harvesting-node primary and secondary
   yields, using canonical resource labels and single-frame inventory icons.
   Forest Shrumb cognitive pickup toasts use their single-frame 64px item icons

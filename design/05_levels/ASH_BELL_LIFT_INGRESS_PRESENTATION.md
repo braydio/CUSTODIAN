@@ -157,6 +157,18 @@ and nearest CanvasItem filtering. The shaft uses enabled texture repeat and a
 mirrored vertical construction to reduce the scrolling seam. The static
 entrance shell contains no lift platform or active lamp.
 
+## Connector generation contract
+
+White Thread connector placement and runtime resolution share the same
+deterministic dry-run planner. A generated isolated pocket is accepted only
+when the normal three-wide, 18-tile production budget can reach player-reachable
+mainland without crossing bounds, constructed walls, required cells, or
+Sundered Keep protection. Runtime commit uses that exact plan contract. A
+single defensive fallback may extend to 30 tiles with a bounded 10-tile lateral
+allowance for old or degraded layouts; it preserves all safety checks and emits
+structured fallback/failure diagnostics. The pocket remains isolated before
+the first White Thread Knot and the Knot is never consumed.
+
 ## Validation
 
 ```bash

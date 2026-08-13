@@ -546,6 +546,7 @@ func _cheap_incident_snapshot() -> Dictionary:
 		"application_focused": _application_focused,
 		"tree_paused": get_tree().paused if get_tree() != null else false,
 		"time_scale": Engine.time_scale, "gauges": gauges.duplicate(true),
+		"procgen_runtime_health": _get_procgen_runtime_health_snapshot(),
 	}
 
 
@@ -580,8 +581,21 @@ func get_performance_incident_report() -> Dictionary:
 		"deltas": deltas, "lifetime_deltas": deltas, "likely_owner": {"classification": likely, "evidence": top_spans},
 		"top_spans": top_spans, "aggregate_spans": aggregate_spans,
 		"phase_snapshots": _performance_phase_snapshots.duplicate(true),
+		"recent_procgen_mutations": _get_recent_procgen_mutations(16),
 		"samples_retained": _frame_samples.size(), "samples_dropped": _performance_samples_dropped,
 	}
+
+
+func _get_recent_procgen_mutations(limit: int = 16) -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	for index in range(events.size() - 1, -1, -1):
+		var event: Dictionary = events[index]
+		var kind := str(event.get("kind", ""))
+		if kind.begins_with("procgen_runtime_") or kind.begins_with("procgen_walkable_") or kind.begins_with("procgen_navigation_") or kind.begins_with("procgen_shadow_") or kind.begins_with("ash_bell_threadway_resolution_"):
+			out.append(event)
+			if out.size() >= limit:
+				break
+	return out
 
 
 func _count_threshold(values: PackedFloat32Array, threshold: float) -> int:
@@ -614,7 +628,9 @@ func _build_phase_summaries() -> Dictionary:
 	for sample in _frame_samples:
 		var name := String(sample.get("phase", "unknown"))
 		var bucket: Dictionary = phases.get(name, {"values": PackedFloat32Array(), "process": 0.0, "physics": 0.0})
-		(bucket.values as PackedFloat32Array).append(float(sample.get("wall_frame_ms", 0.0)))
+		var values := bucket.values as PackedFloat32Array
+		values.append(float(sample.get("wall_frame_ms", 0.0)))
+		bucket["values"] = values
 		bucket.process += float(sample.get("process_ms", 0.0))
 		bucket.physics += float(sample.get("physics_ms", 0.0))
 		phases[name] = bucket
@@ -911,6 +927,7 @@ func _build_export_payload(path: String) -> Dictionary:
 		"material_intelligence": _json_safe(
 			_get_material_intelligence_snapshot()
 		),
+		"procgen_runtime_health": _json_safe(_get_procgen_runtime_health_snapshot()),
 		"warnings": _json_safe(warnings),
 		"events": _json_safe(events),
 	}
@@ -1190,6 +1207,20 @@ func _sample_render_state_gauges() -> void:
 		&"render_isolation_mode",
 		isolation_mode
 	)
+	var procgen_health := _get_procgen_runtime_health_snapshot()
+	for key in procgen_health.keys():
+		if key == "map_size":
+			continue
+		var gauge_name := StringName("procgen_%s" % key) if not str(key).begins_with("procgen_") else StringName(key)
+		set_gauge(gauge_name, procgen_health[key])
+
+
+func _get_procgen_runtime_health_snapshot() -> Dictionary:
+	var maps := get_tree().get_nodes_in_group("procgen_tilemap") if get_tree() != null else []
+	for map_node in maps:
+		if map_node != null and is_instance_valid(map_node) and map_node.has_method("get_runtime_health_snapshot"):
+			return map_node.call("get_runtime_health_snapshot") as Dictionary
+	return {}
 
 
 func _count_enabled_render_lights(
