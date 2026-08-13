@@ -294,6 +294,19 @@ ownership. Compact wall chunks mean body/chunk count and shape count are not
 expected to match. Their names remain distinct so stale ownership or a second
 wall system is visible rather than papered over.
 
+Analyzer output distinguishes `PROCGEN RUNTIME HEALTH — INCIDENT SNAPSHOT`
+from `PROCGEN RUNTIME HEALTH — CURRENT/LAST KNOWN`. Each snapshot carries
+`snapshot_active`, `snapshot_source`, and `snapshot_captured_uptime_sec`.
+After scene teardown, cached values remain available as explicitly inactive
+last-known evidence instead of masquerading as current state.
+
+Godot process/physics monitor samples are directional evidence and are not
+guaranteed to align exactly with the recorded wall-time frame. Dominant
+unaccounted wall time is classified as server/render/unknown, not proven
+collision. F3 independently removes/restores procgen runtime-wall collision;
+F4 independently clears/hides or restores procgen wall shadows. Both retain
+terrain and navigation authority for degraded-map isolation experiments.
+
 ## Acceptance
 
 - `F9` toggles the observatory overlay in `res://scenes/game.tscn`.

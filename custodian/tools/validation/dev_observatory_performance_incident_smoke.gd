@@ -102,6 +102,11 @@ func _run() -> void:
 	_assert((report.get("worst_frames", []) as Array).size() <= 20, "worst-frame cap exceeded")
 	_assert((report.get("phase_snapshots", []) as Array).size() >= 3, "phase snapshots were not retained")
 	_assert(report.has("likely_owner"), "incident classification is missing")
+	var no_spans: Array[Dictionary] = []
+	var unaccounted_class := observatory.call("_classify_incident", {
+		"lifetime_deltas": {}, "wall_ms": 140.0, "process_ms": 9.0, "physics_ms": 18.0,
+	}, no_spans) as String
+	_assert(unaccounted_class.begins_with("unaccounted wall-time"), "unaccounted wall time was falsely classified as physics/collision")
 	var spawn_phase := (report.get("phase_summaries", {}) as Dictionary).get("spawn", {}) as Dictionary
 	_assert(float(spawn_phase.get("process_ms", 0.0)) < 1000.0, "incident process time was summed instead of averaged")
 	_assert(float(spawn_phase.get("physics_ms", 0.0)) < 1000.0, "incident physics time was summed instead of averaged")

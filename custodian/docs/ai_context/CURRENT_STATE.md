@@ -19,11 +19,18 @@ Documentation updates this session:
   bounded mutation events without background tree scans. Recursive
   `collision_shape_count_runtime_walls` remains an explicit-export census,
   distinct from the active map's cached compact-body and shape counts.
+- Procgen health reports distinguish frozen incident snapshots from active or
+  inactive last-known state. Incident classification treats dominant
+  unaccounted wall time as server/render/unknown; F3 isolates runtime-wall
+  collision and F4 isolates procgen wall shadows independently.
 - Ash-Bell isolated-pocket placement and White Thread runtime resolution now
   share one dry-run connector planner. Placement requires the canonical
   three-wide/18-tile plan; a 30-tile, 10-lateral defensive runtime fallback is
   bounded by the same protected-route, wall, and map checks and emits structured
   fallback/failure diagnostics.
+- Connector-invalid Ash Bell candidates are retried through a bounded,
+  deterministic candidate sequence; placement diagnostics include identity and
+  ingress ID so omission versus successful retry is explicit.
 
 - Pickup toast coverage now includes harvesting-node primary and secondary
   yields, using canonical resource labels and single-frame inventory icons.

@@ -27,6 +27,7 @@ func _run() -> void:
 	var overlay := map.get_node_or_null("NavigationRegion2D/NonWalkableSurfaceOverlay") as CanvasItem
 	var foliage := map.get_node_or_null("NavigationRegion2D/FoliageLayer") as CanvasItem
 	var props := map.get_node_or_null("NavigationRegion2D/PropLayer") as CanvasItem
+	var shadows := map.get_node_or_null("NavigationRegion2D/ShadowOverlay") as CanvasItem
 	_assert_true(controller != null and controller.is_in_group("procgen_render_isolation"), "ProcGen controller must register for render isolation")
 	_assert_true(nav != null and nav.enabled, "navigation must begin enabled")
 
@@ -46,6 +47,16 @@ func _run() -> void:
 	_assert_true(props != null and props.visible, "P1 isolation must not hide props")
 	var direct_status := controller.call("get_procgen_render_isolation_status") as Dictionary
 	_assert_true(not bool(direct_status.get("major_visuals_enabled", true)), "controller status should report major visuals disabled")
+	controller.call("set_runtime_wall_collision_isolation_enabled", false)
+	controller.call("set_wall_shadow_isolation_enabled", false)
+	direct_status = controller.call("get_procgen_render_isolation_status") as Dictionary
+	_assert_true(not bool(direct_status.get("runtime_wall_collision_enabled", true)), "wall collision isolation status did not disable")
+	_assert_true(not bool(direct_status.get("wall_shadows_enabled", true)), "wall shadow isolation status did not disable")
+	_assert_true(shadows != null and not shadows.visible, "wall shadow overlay remained visible")
+	_assert_true(nav.enabled, "collision isolation must not disable navigation")
+	controller.call("set_runtime_wall_collision_isolation_enabled", true)
+	controller.call("set_wall_shadow_isolation_enabled", true)
+	_assert_true(shadows.visible, "wall shadow overlay did not restore")
 
 	var observatory := root.get_node_or_null("DevObservatory")
 	if observatory != null:

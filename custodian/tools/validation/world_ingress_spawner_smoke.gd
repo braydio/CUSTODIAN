@@ -27,6 +27,21 @@ class PocketMap:
 		)
 
 
+class RetryPocketMap:
+	extends PocketMap
+
+	func evaluate_runtime_walkable_connector(
+		_start: Vector2, _direction: Vector2i, _width: int, _length: int,
+		_connector_id: String, _resource_id: String, _lateral: int = -1
+	) -> Dictionary:
+		if claim_count == 1:
+			return {"ok": false, "reason": "no mainland endpoint within connector budget"}
+		return {
+			"ok": true, "cells": [Vector2i.ZERO],
+			"island_anchor_tile": Vector2i.ZERO, "endpoint_tile": Vector2i.DOWN,
+		}
+
+
 func _init() -> void:
 	call_deferred("_run")
 
@@ -122,6 +137,17 @@ func _run() -> void:
 		errors.append(
 			"naturally walkable north-edge overlook did not claim its mandatory pocket"
 		)
+	var retry_map := RetryPocketMap.new()
+	retry_map.name = "RetryPocketMap"
+	world.add_child(retry_map)
+	var retried: Array = spawner.call(
+		"place_all", vista_level_data, retry_map, world, null,
+		[_overlook_definition(true)]
+	)
+	if retried.size() != 1:
+		errors.append("connector-invalid Ash Bell candidate was not retried to placement")
+	if retry_map.claim_count != 2:
+		errors.append("connector-invalid candidate retry count was not deterministic")
 	_finish(errors)
 
 
@@ -148,7 +174,7 @@ func _definition(level_id: String, ingress_id: String, offsets: Array, priority:
 	return definition
 
 
-func _overlook_definition() -> RefCounted:
+func _overlook_definition(with_unlock_contract: bool = false) -> RefCounted:
 	var definition: RefCounted = LEVEL_DEFINITION_SCRIPT.new()
 	definition.call("configure_from_dictionary", {
 		"level_id": "vista_level",
@@ -170,6 +196,10 @@ func _overlook_definition() -> RefCounted:
 				"max_edge_distance_tiles": 8,
 				"approach_depth_tiles": 10,
 				"lateral_search_tiles": 28,
+				"unlock_causeway": {
+					"initially_isolated": true, "width_tiles": 3,
+					"max_length_tiles": 18, "gap_depth_tiles": 2,
+				} if with_unlock_contract else {},
 			},
 		},
 	})

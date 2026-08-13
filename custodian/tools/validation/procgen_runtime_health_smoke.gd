@@ -53,6 +53,8 @@ func _run() -> void:
 	_check(int(after.get("walkable_boundary_shape_count", 0)) > 0, "boundary shape count is empty")
 	var observatory := root.get_node_or_null("DevObservatory")
 	if observatory != null:
+		var active_snapshot := observatory.call("_get_procgen_runtime_health_snapshot") as Dictionary
+		_check(bool(active_snapshot.get("snapshot_active", false)), "loaded procgen snapshot was not marked active")
 		var recent := observatory.call("_get_recent_procgen_mutations", 16) as Array
 		_check(not recent.is_empty(), "procgen mutation history was not retained")
 		var exported := observatory.call(
@@ -62,6 +64,11 @@ func _run() -> void:
 		_check(not exported.is_empty(), "procgen runtime health export failed")
 	map.queue_free()
 	await process_frame
+	if observatory != null:
+		var last_known := observatory.call("_get_procgen_runtime_health_snapshot") as Dictionary
+		_check(not bool(last_known.get("snapshot_active", true)), "teardown snapshot still looks current")
+		_check(int(last_known.get("runtime_terrain_commit_count", 0)) == int(after.get("runtime_terrain_commit_count", -1)), "teardown discarded last-known forensic values")
+		_check(str(last_known.get("snapshot_source", "")).begins_with("unloaded_generation_"), "teardown snapshot source was not identified")
 	if _errors.is_empty():
 		print("[ProcgenRuntimeHealthSmoke] PASS")
 		quit(0)
