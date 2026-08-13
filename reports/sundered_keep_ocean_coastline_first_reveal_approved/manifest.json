@@ -1,0 +1,73 @@
+{
+	"schema": "custodian.sundered_keep_procgen_frontage_review.v1",
+	"seeds": [
+		{
+			"authored_pocket": false,
+			"gate_anchor": [
+				131,
+				18
+			],
+			"grammar_id": "curved_frontage_v1",
+			"ok": true,
+			"outputs": {
+				"camera_takeover": "res://../reports/sundered_keep_ocean_coastline_first_reveal_approved/seed_0001_camera_takeover.png",
+				"coastline_closeup": "res://../reports/sundered_keep_ocean_coastline_first_reveal_approved/seed_0001_coastline_closeup.png",
+				"first_reveal_apex": "res://../reports/sundered_keep_ocean_coastline_first_reveal_approved/seed_0001_first_reveal_apex.png",
+				"fortress_apex": "res://../reports/sundered_keep_ocean_coastline_first_reveal_approved/seed_0001_fortress_apex.png",
+				"fortress_reveal_start": "res://../reports/sundered_keep_ocean_coastline_first_reveal_approved/seed_0001_fortress_reveal_start.png",
+				"gameplay_before_takeover": "res://../reports/sundered_keep_ocean_coastline_first_reveal_approved/seed_0001_gameplay_before_takeover.png",
+				"gameplay_return": "res://../reports/sundered_keep_ocean_coastline_first_reveal_approved/seed_0001_gameplay_return.png",
+				"offshore_ruins_first_reveal": "res://../reports/sundered_keep_ocean_coastline_first_reveal_approved/seed_0001_offshore_ruins_first_reveal.png",
+				"terminal_approach": "res://../reports/sundered_keep_ocean_coastline_first_reveal_approved/seed_0001_terminal_approach.png",
+				"transition_away_from_ruins": "res://../reports/sundered_keep_ocean_coastline_first_reveal_approved/seed_0001_transition_away_from_ruins.png",
+				"world_overview": "res://../reports/sundered_keep_ocean_coastline_first_reveal_approved/seed_0001_world_overview.png"
+			},
+			"overlook_anchor": [
+				116,
+				38
+			],
+			"rectangular_authored_footprint": false,
+			"seed": 1,
+			"viewport": [
+				2560,
+				1440
+			]
+		},
+		{
+			"authored_pocket": false,
+			"gate_anchor": [
+				136,
+				17
+			],
+			"grammar_id": "curved_frontage_v1",
+			"ok": true,
+			"outputs": {
+				"camera_takeover": "res://../reports/sundered_keep_ocean_coastline_first_reveal_approved/seed_0002_camera_takeover.png",
+				"coastline_closeup": "res://../reports/sundered_keep_ocean_coastline_first_reveal_approved/seed_0002_coastline_closeup.png",
+				"first_reveal_apex": "res://../reports/sundered_keep_ocean_coastline_first_reveal_approved/seed_0002_first_reveal_apex.png",
+				"fortress_apex": "res://../reports/sundered_keep_ocean_coastline_first_reveal_approved/seed_0002_fortress_apex.png",
+				"fortress_reveal_start": "res://../reports/sundered_keep_ocean_coastline_first_reveal_approved/seed_0002_fortress_reveal_start.png",
+				"gameplay_before_takeover": "res://../reports/sundered_keep_ocean_coastline_first_reveal_approved/seed_0002_gameplay_before_takeover.png",
+				"gameplay_return": "res://../reports/sundered_keep_ocean_coastline_first_reveal_approved/seed_0002_gameplay_return.png",
+				"offshore_ruins_first_reveal": "res://../reports/sundered_keep_ocean_coastline_first_reveal_approved/seed_0002_offshore_ruins_first_reveal.png",
+				"terminal_approach": "res://../reports/sundered_keep_ocean_coastline_first_reveal_approved/seed_0002_terminal_approach.png",
+				"transition_away_from_ruins": "res://../reports/sundered_keep_ocean_coastline_first_reveal_approved/seed_0002_transition_away_from_ruins.png",
+				"world_overview": "res://../reports/sundered_keep_ocean_coastline_first_reveal_approved/seed_0002_world_overview.png"
+			},
+			"overlook_anchor": [
+				94,
+				38
+			],
+			"rectangular_authored_footprint": false,
+			"seed": 2,
+			"viewport": [
+				2560,
+				1440
+			]
+		}
+	],
+	"viewport": [
+		2560,
+		1440
+	]
+}

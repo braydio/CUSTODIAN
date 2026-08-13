@@ -10,6 +10,10 @@ const INFINITE_HEALTH_ACTION := &"debug_infinite_health"
 const INFINITE_STAMINA_ACTION := &"debug_infinite_stamina"
 const PROCGEN_VISUALS_ACTION := &"debug_toggle_procgen_major_visuals"
 const PROCGEN_VISUALS_KEY := KEY_F2
+const PROCGEN_WALL_COLLISION_ACTION := &"debug_toggle_procgen_wall_collision"
+const PROCGEN_WALL_COLLISION_KEY := KEY_F3
+const PROCGEN_WALL_SHADOWS_ACTION := &"debug_toggle_procgen_wall_shadows"
+const PROCGEN_WALL_SHADOWS_KEY := KEY_F4
 const STATUS_HOLD_SEC := 2.5
 
 var enabled := false
@@ -20,6 +24,8 @@ var debug_free_camera_enabled := false
 var infinite_health_enabled := false
 var infinite_stamina_enabled := false
 var procgen_major_visuals_visible := true
+var procgen_wall_collision_enabled := true
+var procgen_wall_shadows_enabled := true
 
 var _status_layer: CanvasLayer
 var _status_label: Label
@@ -58,6 +64,12 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event.is_action_pressed(PROCGEN_VISUALS_ACTION):
 		set_procgen_major_visuals_visible(not procgen_major_visuals_visible)
 		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed(PROCGEN_WALL_COLLISION_ACTION):
+		set_procgen_wall_collision_enabled(not procgen_wall_collision_enabled)
+		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed(PROCGEN_WALL_SHADOWS_ACTION):
+		set_procgen_wall_shadows_enabled(not procgen_wall_shadows_enabled)
+		get_viewport().set_input_as_handled()
 
 
 func refresh() -> void:
@@ -84,7 +96,10 @@ func refresh() -> void:
 		infinite_health_enabled = false
 		infinite_stamina_enabled = false
 		procgen_major_visuals_visible = true
+		procgen_wall_collision_enabled = true
+		procgen_wall_shadows_enabled = true
 		_apply_procgen_major_visuals_visibility()
+		_apply_procgen_runtime_isolation()
 	else:
 		_ensure_status_overlay()
 	capabilities_changed.emit(get_capabilities())
@@ -149,12 +164,46 @@ func _apply_procgen_major_visuals_visibility() -> void:
 			)
 
 
+func set_procgen_wall_collision_enabled(value: bool) -> void:
+	if value and not debug_ui_enabled:
+		return
+	procgen_wall_collision_enabled = value
+	_apply_procgen_runtime_isolation()
+	_status_hold_remaining = STATUS_HOLD_SEC
+	playtest_controls_changed.emit(get_playtest_controls())
+	_update_status_overlay()
+	print("[DevMode] procgen runtime wall collision: %s" % ("ON" if value else "OFF"))
+
+
+func set_procgen_wall_shadows_enabled(value: bool) -> void:
+	if value and not debug_ui_enabled:
+		return
+	procgen_wall_shadows_enabled = value
+	_apply_procgen_runtime_isolation()
+	_status_hold_remaining = STATUS_HOLD_SEC
+	playtest_controls_changed.emit(get_playtest_controls())
+	_update_status_overlay()
+	print("[DevMode] procgen wall shadows: %s" % ("ON" if value else "OFF"))
+
+
+func _apply_procgen_runtime_isolation() -> void:
+	for procgen_map in get_tree().get_nodes_in_group("procgen_render_isolation"):
+		if procgen_map == null or not is_instance_valid(procgen_map):
+			continue
+		if procgen_map.has_method("set_runtime_wall_collision_isolation_enabled"):
+			procgen_map.call("set_runtime_wall_collision_isolation_enabled", procgen_wall_collision_enabled)
+		if procgen_map.has_method("set_wall_shadow_isolation_enabled"):
+			procgen_map.call("set_wall_shadow_isolation_enabled", procgen_wall_shadows_enabled)
+
+
 func get_playtest_controls() -> Dictionary:
 	return {
 		"debug_free_camera": debug_free_camera_enabled,
 		"infinite_health": infinite_health_enabled,
 		"infinite_stamina": infinite_stamina_enabled,
 		"procgen_major_visuals": procgen_major_visuals_visible,
+		"procgen_wall_collision": procgen_wall_collision_enabled,
+		"procgen_wall_shadows": procgen_wall_shadows_enabled,
 	}
 
 
@@ -192,6 +241,8 @@ func _ensure_input_actions() -> void:
 	_ensure_action_key(INFINITE_HEALTH_ACTION, KEY_F7)
 	_ensure_action_key(INFINITE_STAMINA_ACTION, KEY_F8)
 	_ensure_action_key(PROCGEN_VISUALS_ACTION, PROCGEN_VISUALS_KEY)
+	_ensure_action_key(PROCGEN_WALL_COLLISION_ACTION, PROCGEN_WALL_COLLISION_KEY)
+	_ensure_action_key(PROCGEN_WALL_SHADOWS_ACTION, PROCGEN_WALL_SHADOWS_KEY)
 
 
 func _ensure_action_key(action: StringName, keycode: Key) -> void:
@@ -237,20 +288,24 @@ func _update_status_overlay() -> void:
 	var has_active_control := debug_free_camera_enabled \
 		or infinite_health_enabled \
 		or infinite_stamina_enabled \
-		or not procgen_major_visuals_visible
+		or not procgen_major_visuals_visible \
+		or not procgen_wall_collision_enabled \
+		or not procgen_wall_shadows_enabled
 	_status_label.visible = debug_ui_enabled \
 		and (has_active_control or _status_hold_remaining > 0.0)
 	if not _status_label.visible:
 		return
 	var rows: Array[String] = [
-		"PLAYTEST  F2 Procgen Visuals  F6 Camera  F7 Health  F8 Stamina",
-		"Camera: %s | Health: %s | Stamina: %s | Procgen: %s"
+		"PLAYTEST  F2 Visuals  F3 Wall Collision  F4 Wall Shadows  F6 Camera  F7 Health  F8 Stamina",
+		"Camera: %s | Health: %s | Stamina: %s | Visuals: %s | Collision: %s | Shadows: %s"
 		% [
 			"FREE (arrows / MMB / wheel)"
 				if debug_free_camera_enabled else "follow",
 			"∞" if infinite_health_enabled else "normal",
 			"∞" if infinite_stamina_enabled else "normal",
 			"major visuals hidden" if not procgen_major_visuals_visible else "on",
+			"on" if procgen_wall_collision_enabled else "OFF",
+			"on" if procgen_wall_shadows_enabled else "OFF",
 		],
 	]
 	_status_label.text = "\n".join(rows)

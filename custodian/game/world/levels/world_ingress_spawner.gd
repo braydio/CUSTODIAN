@@ -75,46 +75,15 @@ func place_all(
 		var ingress_definition: RefCounted = record.get("ingress") as RefCounted
 		if ingress_definition == null:
 			continue
-		var result: Dictionary = resolver.call(
-			"resolve",
-			ingress_definition.placement,
-			level_data,
-			map_instance,
-			occupied_tiles
+		var result := _resolve_authored_ingress_candidate(
+			resolver, ingress_definition.placement, level_data, map_instance,
+			occupied_tiles, str(record.get("identity")), String(ingress_definition.ingress_id)
 		)
 		if not bool(result.get("ok", false)):
 			var reason := "%s: %s" % [record.get("identity"), str(result.get("reason", "placement failed"))]
 			_last_errors.append(reason)
-			_observe(&"level_ingress_placement_failed", {"identity": str(record.get("identity")), "reason": reason})
+			_observe(&"level_ingress_placement_failed", {"identity": str(record.get("identity")), "ingress_id": String(ingress_definition.ingress_id), "reason": reason})
 			continue
-		if bool(result.get("requires_authored_pocket", false)):
-			var pocket_result := _author_overlook_pocket(
-				map_instance,
-				result
-			)
-			if pocket_result.size == Vector2i.ZERO:
-				var reason := (
-					"%s: failed to author north-edge overlook pocket"
-					% record.get("identity")
-				)
-				_last_errors.append(reason)
-				_observe(
-					&"level_ingress_placement_failed",
-					{
-						"identity": str(record.get("identity")),
-						"reason": reason,
-					}
-				)
-				continue
-			if not _validate_unlock_causeway_contract(map_instance, result):
-				var reason := "%s: authored pocket is not canonically connector-resolvable" % record.get("identity")
-				_last_errors.append(reason)
-				_observe(&"level_ingress_placement_failed", {
-					"identity": str(record.get("identity")),
-					"reason": reason,
-					"connector_diagnostic": result.get("connector_diagnostic", {}),
-				})
-				continue
 		var tile := result.get("tile") as Vector2i
 		var ingress := _create_ingress(record, map_instance)
 		if ingress == null:
@@ -143,6 +112,45 @@ func place_all(
 			"tile": [tile.x, tile.y],
 		})
 	return placed
+
+
+func _resolve_authored_ingress_candidate(
+	resolver: RefCounted,
+	placement: Dictionary,
+	level_data: Dictionary,
+	map_instance: Node,
+	occupied_tiles: Array[Vector2i],
+	identity: String,
+	ingress_id: String
+) -> Dictionary:
+	var rejected: Array[Vector2i] = []
+	for attempt in range(12):
+		var result := resolver.call(
+			"resolve", placement, level_data, map_instance, occupied_tiles, rejected
+		) as Dictionary
+		if not bool(result.get("ok", false)):
+			return result
+		if not bool(result.get("requires_authored_pocket", false)):
+			return result
+		var tile := result.get("tile", Vector2i.ZERO) as Vector2i
+		var pocket_result := _author_overlook_pocket(map_instance, result)
+		if pocket_result.size != Vector2i.ZERO and _validate_unlock_causeway_contract(map_instance, result):
+			result["placement_attempt"] = attempt + 1
+			return result
+		rejected.append(tile)
+		_observe(&"level_ingress_candidate_rejected", {
+			"identity": identity,
+			"ingress_id": ingress_id,
+			"tile": tile,
+			"attempt": attempt + 1,
+			"reason": "authored pocket is not canonically connector-resolvable",
+			"connector_diagnostic": result.get("connector_diagnostic", {}),
+		})
+	return {
+		"ok": false,
+		"reason": "no canonically connector-resolvable authored pocket after 12 deterministic candidates",
+		"rejected_tiles": rejected,
+	}
 
 
 func _validate_unlock_causeway_contract(map_instance: Node, result: Dictionary) -> bool:

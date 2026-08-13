@@ -19,7 +19,8 @@ script = ExtResource("1_script")
 z_index = 40
 z_as_relative = false
 texture_filter = 1
-position = Vector2(0, -220)
+position = Vector2(-91.00001, -192)
+scale = Vector2(1, 0.89)
 texture = ExtResource("2_storm")
 region_enabled = true
 region_rect = Rect2(0, 0, 2600, 1200)
@@ -30,7 +31,7 @@ region_rect = Rect2(0, 0, 2600, 1200)
 z_index = 50
 z_as_relative = false
 texture_filter = 1
-position = Vector2(170, -180)
+position = Vector2(248, -116)
 scale = Vector2(0.32, 0.32)
 texture = ExtResource("3_keep")
 
@@ -40,14 +41,16 @@ texture = ExtResource("3_keep")
 z_index = 60
 z_as_relative = false
 texture_filter = 1
-position = Vector2(0, -20)
+position = Vector2(-85, -229.00002)
+scale = Vector2(1, 1.3764757)
 texture = ExtResource("4_fog")
 
 [node name="ForegroundCliffLip" type="Sprite2D" parent="." unique_id=299840177]
 z_index = 80
 z_as_relative = false
 texture_filter = 1
-scale = Vector2(1.25, 1)
+position = Vector2(-87.00006, 82)
+scale = Vector2(1.2636719, 1)
 texture = SubResource("CompressedTexture2D_3p03e")
 
 [node name="CameraPresentationAnchor" type="Marker2D" parent="." unique_id=974584301]

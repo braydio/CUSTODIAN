@@ -123,26 +123,26 @@
 [ext_resource type="Texture2D" uid="uid://daguwrwyhmcs7" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_edge_e.png" id="126_sundered_keep_ocean_shore_e"]
 [ext_resource type="Texture2D" uid="uid://ssa4fst6xwi7" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_edge_s.png" id="127_sundered_keep_ocean_shore_s"]
 [ext_resource type="Texture2D" uid="uid://31ov5y7ryl68" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_edge_w.png" id="128_sundered_keep_ocean_shore_w"]
-[ext_resource type="Texture2D" path="res://content/tiles/sundered_keep/floors/cliff_rock_floor_01.png" id="129_sundered_keep_cliff_rock_floor"]
-[ext_resource type="Texture2D" path="res://content/tiles/sundered_keep/floors/cliff_rock_floor_cracked_01.png" id="130_sundered_keep_cliff_rock_floor_cracked"]
-[ext_resource type="Texture2D" path="res://content/tiles/sundered_keep/floors/main_courtyard_flagstone_wet_01.png" id="131_sundered_keep_flagstone_wet"]
-[ext_resource type="Texture2D" path="res://content/tiles/sundered_keep/floors/main_gate_threshold_stone_01.png" id="132_sundered_keep_gate_threshold"]
-[ext_resource type="Texture2D" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_corner_ne.png" id="133_sundered_keep_ocean_corner_ne"]
-[ext_resource type="Texture2D" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_corner_nw.png" id="134_sundered_keep_ocean_corner_nw"]
-[ext_resource type="Texture2D" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_corner_se.png" id="135_sundered_keep_ocean_corner_se"]
-[ext_resource type="Texture2D" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_corner_sw.png" id="136_sundered_keep_ocean_corner_sw"]
-[ext_resource type="Texture2D" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_inner_corner_ne.png" id="137_sundered_keep_ocean_inner_corner_ne"]
-[ext_resource type="Texture2D" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_inner_corner_nw.png" id="138_sundered_keep_ocean_inner_corner_nw"]
-[ext_resource type="Texture2D" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_inner_corner_se.png" id="139_sundered_keep_ocean_inner_corner_se"]
-[ext_resource type="Texture2D" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_inner_corner_sw.png" id="140_sundered_keep_ocean_inner_corner_sw"]
-[ext_resource type="Texture2D" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_endcap_n.png" id="141_sundered_keep_ocean_endcap_n"]
-[ext_resource type="Texture2D" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_endcap_e.png" id="142_sundered_keep_ocean_endcap_e"]
-[ext_resource type="Texture2D" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_endcap_s.png" id="143_sundered_keep_ocean_endcap_s"]
-[ext_resource type="Texture2D" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_endcap_w.png" id="144_sundered_keep_ocean_endcap_w"]
-[ext_resource type="Texture2D" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_t_junction_n.png" id="145_sundered_keep_ocean_t_junction_n"]
-[ext_resource type="Texture2D" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_t_junction_e.png" id="146_sundered_keep_ocean_t_junction_e"]
-[ext_resource type="Texture2D" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_t_junction_s.png" id="147_sundered_keep_ocean_t_junction_s"]
-[ext_resource type="Texture2D" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_t_junction_w.png" id="148_sundered_keep_ocean_t_junction_w"]
+[ext_resource type="Texture2D" uid="uid://e23tj0fcrx53" path="res://content/tiles/sundered_keep/floors/cliff_rock_floor_01.png" id="129_sundered_keep_cliff_rock_floor"]
+[ext_resource type="Texture2D" uid="uid://cyk2e4pv4lf1l" path="res://content/tiles/sundered_keep/floors/cliff_rock_floor_cracked_01.png" id="130_sundered_keep_cliff_rock_floor_cracked"]
+[ext_resource type="Texture2D" uid="uid://b4mvrus3afpk8" path="res://content/tiles/sundered_keep/floors/main_courtyard_flagstone_wet_01.png" id="131_sundered_keep_flagstone_wet"]
+[ext_resource type="Texture2D" uid="uid://c5cdgk8wa5obk" path="res://content/tiles/sundered_keep/floors/main_gate_threshold_stone_01.png" id="132_sundered_keep_gate_threshold"]
+[ext_resource type="Texture2D" uid="uid://8f65rgf2tnk3" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_corner_ne.png" id="133_sundered_keep_ocean_corner_ne"]
+[ext_resource type="Texture2D" uid="uid://bwf8sup724yr4" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_corner_nw.png" id="134_sundered_keep_ocean_corner_nw"]
+[ext_resource type="Texture2D" uid="uid://buiyq71nitpmj" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_corner_se.png" id="135_sundered_keep_ocean_corner_se"]
+[ext_resource type="Texture2D" uid="uid://dd6lvtclr44lm" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_corner_sw.png" id="136_sundered_keep_ocean_corner_sw"]
+[ext_resource type="Texture2D" uid="uid://d0u0f13tar4q0" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_inner_corner_ne.png" id="137_sundered_keep_ocean_inner_corner_ne"]
+[ext_resource type="Texture2D" uid="uid://de37f5gaxg4e3" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_inner_corner_nw.png" id="138_sundered_keep_ocean_inner_corner_nw"]
+[ext_resource type="Texture2D" uid="uid://bxjeu5xnngdev" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_inner_corner_se.png" id="139_sundered_keep_ocean_inner_corner_se"]
+[ext_resource type="Texture2D" uid="uid://deykqdjeitc0w" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_inner_corner_sw.png" id="140_sundered_keep_ocean_inner_corner_sw"]
+[ext_resource type="Texture2D" uid="uid://btdxc7e0y22kd" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_endcap_n.png" id="141_sundered_keep_ocean_endcap_n"]
+[ext_resource type="Texture2D" uid="uid://cfu83k0fahwx4" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_endcap_e.png" id="142_sundered_keep_ocean_endcap_e"]
+[ext_resource type="Texture2D" uid="uid://cqqkxxjjyfntk" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_endcap_s.png" id="143_sundered_keep_ocean_endcap_s"]
+[ext_resource type="Texture2D" uid="uid://bp88vpupdqngd" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_endcap_w.png" id="144_sundered_keep_ocean_endcap_w"]
+[ext_resource type="Texture2D" uid="uid://wlu7idfc8ug2" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_t_junction_n.png" id="145_sundered_keep_ocean_t_junction_n"]
+[ext_resource type="Texture2D" uid="uid://doha25y2d7wte" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_t_junction_e.png" id="146_sundered_keep_ocean_t_junction_e"]
+[ext_resource type="Texture2D" uid="uid://cmh4hc42g8bdu" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_t_junction_s.png" id="147_sundered_keep_ocean_t_junction_s"]
+[ext_resource type="Texture2D" uid="uid://dcg47ksa5ln22" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_t_junction_w.png" id="148_sundered_keep_ocean_t_junction_w"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_floor"]
 texture = ExtResource("1_floor")
@@ -611,6 +611,26 @@ texture = ExtResource("128_sundered_keep_ocean_shore_w")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_sundered_keep_cliff_rock_floor"]
+texture = ExtResource("129_sundered_keep_cliff_rock_floor")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_sundered_keep_cliff_rock_floor_cracked"]
+texture = ExtResource("130_sundered_keep_cliff_rock_floor_cracked")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_sundered_keep_flagstone_wet"]
+texture = ExtResource("131_sundered_keep_flagstone_wet")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_sundered_keep_gate_threshold"]
+texture = ExtResource("132_sundered_keep_gate_threshold")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_sundered_keep_ocean_foam_corner_ne"]
 texture = ExtResource("133_sundered_keep_ocean_corner_ne")
 texture_region_size = Vector2i(32, 32)
@@ -688,26 +708,6 @@ texture_region_size = Vector2i(32, 32)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_sundered_keep_ocean_foam_t_junction_w"]
 texture = ExtResource("148_sundered_keep_ocean_t_junction_w")
-texture_region_size = Vector2i(32, 32)
-0:0/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_sundered_keep_cliff_rock_floor"]
-texture = ExtResource("129_sundered_keep_cliff_rock_floor")
-texture_region_size = Vector2i(32, 32)
-0:0/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_sundered_keep_cliff_rock_floor_cracked"]
-texture = ExtResource("130_sundered_keep_cliff_rock_floor_cracked")
-texture_region_size = Vector2i(32, 32)
-0:0/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_sundered_keep_flagstone_wet"]
-texture = ExtResource("131_sundered_keep_flagstone_wet")
-texture_region_size = Vector2i(32, 32)
-0:0/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_sundered_keep_gate_threshold"]
-texture = ExtResource("132_sundered_keep_gate_threshold")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 

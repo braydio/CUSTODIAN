@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://clor76hm3upr7"
+
+[deps]
+
+files=["res://content/tiles/walls/wall_slices_game32/environment__wall__ruined_stone__manifest.piece.translation", "res://content/tiles/walls/wall_slices_game32/environment__wall__ruined_stone__manifest.row.translation", "res://content/tiles/walls/wall_slices_game32/environment__wall__ruined_stone__manifest.column.translation", "res://content/tiles/walls/wall_slices_game32/environment__wall__ruined_stone__manifest.source.translation", "res://content/tiles/walls/wall_slices_game32/environment__wall__ruined_stone__manifest.source.translation", "res://content/tiles/walls/wall_slices_game32/environment__wall__ruined_stone__manifest.source.translation", "res://content/tiles/walls/wall_slices_game32/environment__wall__ruined_stone__manifest.source.translation", "res://content/tiles/walls/wall_slices_game32/environment__wall__ruined_stone__manifest.output.translation", "res://content/tiles/walls/wall_slices_game32/environment__wall__ruined_stone__manifest.output.translation", "res://content/tiles/walls/wall_slices_game32/environment__wall__ruined_stone__manifest.scale.translation", "res://content/tiles/walls/wall_slices_game32/environment__wall__ruined_stone__manifest.pixel.translation"]
+
+source_file="res://content/tiles/walls/wall_slices_game32/environment__wall__ruined_stone__manifest.csv"
+dest_files=["res://content/tiles/walls/wall_slices_game32/environment__wall__ruined_stone__manifest.piece.translation", "res://content/tiles/walls/wall_slices_game32/environment__wall__ruined_stone__manifest.row.translation", "res://content/tiles/walls/wall_slices_game32/environment__wall__ruined_stone__manifest.column.translation", "res://content/tiles/walls/wall_slices_game32/environment__wall__ruined_stone__manifest.source.translation", "res://content/tiles/walls/wall_slices_game32/environment__wall__ruined_stone__manifest.source.translation", "res://content/tiles/walls/wall_slices_game32/environment__wall__ruined_stone__manifest.source.translation", "res://content/tiles/walls/wall_slices_game32/environment__wall__ruined_stone__manifest.source.translation", "res://content/tiles/walls/wall_slices_game32/environment__wall__ruined_stone__manifest.output.translation", "res://content/tiles/walls/wall_slices_game32/environment__wall__ruined_stone__manifest.output.translation", "res://content/tiles/walls/wall_slices_game32/environment__wall__ruined_stone__manifest.scale.translation", "res://content/tiles/walls/wall_slices_game32/environment__wall__ruined_stone__manifest.pixel.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true

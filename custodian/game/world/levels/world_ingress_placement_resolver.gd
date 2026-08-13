@@ -6,7 +6,8 @@ func resolve(
 	placement: Dictionary,
 	level_data: Dictionary,
 	map_instance: Node,
-	occupied_tiles: Array[Vector2i]
+	occupied_tiles: Array[Vector2i],
+	rejected_tiles: Array[Vector2i] = []
 ) -> Dictionary:
 	var strategy := str(
 		placement.get("strategy", "near_compound_ingress")
@@ -23,7 +24,8 @@ func resolve(
 			placement,
 			level_data,
 			map_instance,
-			occupied_tiles
+			occupied_tiles,
+			rejected_tiles
 		)
 	var anchor := _resolve_anchor(placement, level_data)
 	var minimum_spacing := maxi(1, int(placement.get("minimum_spacing_tiles", 10)))
@@ -119,7 +121,8 @@ func _resolve_north_edge_overlook(
 	placement: Dictionary,
 	level_data: Dictionary,
 	map_instance: Node,
-	occupied_tiles: Array[Vector2i]
+	occupied_tiles: Array[Vector2i],
+	rejected_tiles: Array[Vector2i] = []
 ) -> Dictionary:
 	var map_size := level_data.get(
 		"map_size",
@@ -168,6 +171,8 @@ func _resolve_north_edge_overlook(
 	)
 
 	for candidate: Vector2i in candidates:
+		if rejected_tiles.has(candidate):
+			continue
 		if absi(candidate.x - anchor.x) > lateral_search:
 			continue
 		if not _is_walkable(candidate, level_data, map_instance):
@@ -223,8 +228,11 @@ func _resolve_north_edge_overlook(
 			approach_depth,
 			lateral_search,
 			level_data,
-			map_instance
+			map_instance,
+			rejected_tiles
 		)
+		if authored_candidate == Vector2i(-1, -1):
+			return {"ok": false, "reason": "all deterministic north-edge candidates rejected"}
 		var pocket_width := 9
 		return {
 			"ok": true,
@@ -281,7 +289,8 @@ func _best_north_edge_authoring_candidate(
 	approach_depth: int,
 	lateral_search: int,
 	level_data: Dictionary,
-	map_instance: Node
+	map_instance: Node,
+	rejected_tiles: Array[Vector2i] = []
 ) -> Vector2i:
 	var pocket_half_width := 4
 	var min_x := maxi(
@@ -292,12 +301,11 @@ func _best_north_edge_authoring_candidate(
 		map_size.x - pocket_half_width - 2,
 		anchor.x + lateral_search
 	)
-	var best := Vector2i(
-		clampi(anchor.x, min_x, max_x),
-		max_edge_distance
-	)
+	var best := Vector2i(-1, -1)
 	var best_score := -1
 	for x in range(min_x, max_x + 1):
+		if rejected_tiles.has(Vector2i(x, max_edge_distance)):
+			continue
 		var score := 0
 		for step in range(approach_depth):
 			if _is_walkable(

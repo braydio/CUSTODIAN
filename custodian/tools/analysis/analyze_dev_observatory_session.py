@@ -405,7 +405,12 @@ def _append_performance_incident_section(lines: list[str], payload: Mapping[str,
     lines.extend(["", "  Top aggregated spans", "    name | total ms | max ms | calls"])
     for row in _records(incident.get("top_spans")):
         lines.append(f"    {row.get('name', '')} | {_number(row.get('total_ms')):.2f} | {_number(row.get('max_ms')):.2f} | {int(_number(row.get('count')))}")
-    lines.extend(["", "  Worst gameplay frames", "    wall ms | phase | process | physics | unaccounted | living enemies | top span"])
+    lines.extend([
+        "", "  Worst gameplay frames",
+        "    NOTE: Godot process/physics monitors are sampled asynchronously and are",
+        "    directional evidence, not an exact decomposition of each wall-time frame.",
+        "    wall ms | phase | process | physics | unaccounted | living enemies | top span",
+    ])
     for row in _records(incident.get("worst_frames")):
         spans = _records(row.get("top_subsystem_spans")); top_span = spans[0].get("name", "") if spans else ""
         lines.append(f"    {_number(row.get('wall_frame_ms')):.2f} | {row.get('phase', '')} | {_number(row.get('process_ms')):.2f} | {_number(row.get('physics_ms')):.2f} | {_number(row.get('unaccounted_ms')):.2f} | {int(_number(row.get('living_enemies')))} | {top_span}")
@@ -469,14 +474,67 @@ def _append_performance_incident_section(lines: list[str], payload: Mapping[str,
 def _append_procgen_runtime_health(
     lines: list[str], payload: Mapping[str, Any], incident: Mapping[str, Any]
 ) -> None:
-    health = _mapping(payload.get("procgen_runtime_health"))
-    if not health:
-        health = _mapping(_mapping(incident.get("end_snapshot")).get("procgen_runtime_health"))
-    lines.extend(["", "PROCGEN RUNTIME HEALTH", "-" * 48])
+    incident_health = _mapping(
+        _mapping(incident.get("end_snapshot")).get("procgen_runtime_health")
+    )
+    current_health = _mapping(payload.get("procgen_runtime_health"))
+    if incident_health:
+        _append_procgen_health_block(
+            lines, "PROCGEN RUNTIME HEALTH — INCIDENT SNAPSHOT", incident_health
+        )
+    _append_procgen_health_block(
+        lines, "PROCGEN RUNTIME HEALTH — CURRENT/LAST KNOWN", current_health
+    )
+    lines.extend(["", "RECENT PROCGEN MUTATIONS — INCIDENT RETAINED", "-" * 48,
+                  "  time | type | reason | duration usec | changed | before -> after"])
+    mutations = _records(incident.get("recent_procgen_mutations"))
+    if not mutations:
+        lines.append("  none retained")
+    for event in mutations:
+        data = _mapping(event.get("data"))
+        lines.append(
+            "  %.3f | %s | %s | %d | %d | %d -> %d"
+            % (
+                _number(event.get("uptime_sec")), event.get("kind", ""),
+                data.get("reason", ""), int(_number(data.get("duration_usec"))),
+                int(_number(data.get("changed_cells"))),
+                int(_number(data.get("before_count"))),
+                int(_number(data.get("after_count"))),
+            )
+        )
+    lines.extend(["", "WORLD INGRESS PLACEMENT OUTCOMES", "-" * 48])
+    ingress_events = [
+        event for event in _records(payload.get("events"))
+        if event.get("kind") in (
+            "level_ingress_placed", "level_ingress_placement_failed",
+            "level_ingress_candidate_rejected",
+        )
+    ]
+    if not ingress_events:
+        lines.append("  none retained")
+    for event in ingress_events[-24:]:
+        data = _mapping(event.get("data"))
+        lines.append(
+            "  %.3f | %s | identity=%s | ingress_id=%s | tile=%s | reason=%s"
+            % (
+                _number(event.get("uptime_sec")), event.get("kind", ""),
+                data.get("identity", "unknown"), data.get("ingress_id", "unknown"),
+                _format_value(data.get("tile", "unknown")), data.get("reason", ""),
+            )
+        )
+
+
+def _append_procgen_health_block(
+    lines: list[str], title: str, health: Mapping[str, Any]
+) -> None:
+    lines.extend(["", title, "-" * 48])
     if not health:
         lines.append("  unavailable in this schema/export")
     else:
         for label, key in (
+            ("snapshot active", "snapshot_active"),
+            ("snapshot source", "snapshot_source"),
+            ("captured at uptime", "snapshot_captured_uptime_sec"),
             ("generation", "generation_id"), ("map", "map_size"),
             ("floor cells", "floor_cells"), ("wall cells", "wall_cells"),
             ("wall chunks", "runtime_wall_chunk_count"), ("wall bodies", "runtime_wall_body_count"),
@@ -496,23 +554,6 @@ def _append_procgen_runtime_health(
             ("last mutation usec", "last_mutation_duration_usec"),
         ):
             lines.append(f"  {label:<28} {_format_value(health.get(key, 'unavailable'))}")
-    lines.extend(["", "RECENT PROCGEN MUTATIONS", "-" * 48,
-                  "  time | type | reason | duration usec | changed | before -> after"])
-    mutations = _records(incident.get("recent_procgen_mutations"))
-    if not mutations:
-        lines.append("  none retained")
-    for event in mutations:
-        data = _mapping(event.get("data"))
-        lines.append(
-            "  %.3f | %s | %s | %d | %d | %d -> %d"
-            % (
-                _number(event.get("uptime_sec")), event.get("kind", ""),
-                data.get("reason", ""), int(_number(data.get("duration_usec"))),
-                int(_number(data.get("changed_cells"))),
-                int(_number(data.get("before_count"))),
-                int(_number(data.get("after_count"))),
-            )
-        )
 
 
 def _format_value(value: Any, max_length: int = 88) -> str:

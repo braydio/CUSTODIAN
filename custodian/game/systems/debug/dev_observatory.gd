@@ -83,6 +83,7 @@ var _performance_rearm_progress_sec := 0.0
 var _performance_start_snapshot: Dictionary = {}
 var _performance_end_snapshot: Dictionary = {}
 var _manual_capture_return_state: StringName = PERF_STATE_ARMED
+var _last_procgen_runtime_health: Dictionary = {}
 
 
 func _ready() -> void:
@@ -568,7 +569,12 @@ func get_performance_incident_report() -> Dictionary:
 	}
 	var aggregate_spans := _aggregate_spans(_frame_samples)
 	var top_spans := _top_spans(aggregate_spans)
-	var likely := _classify_incident({"lifetime_deltas": deltas, "physics_ms": float(last.get("physics_ms", 0.0)), "process_ms": float(last.get("process_ms", 0.0))}, top_spans)
+	var likely := _classify_incident({
+		"lifetime_deltas": deltas,
+		"wall_ms": float(summary.get("frame_ms_average", 0.0)),
+		"physics_ms": _average_frame_sample_field("physics_ms"),
+		"process_ms": _average_frame_sample_field("process_ms"),
+	}, top_spans)
 	return {
 		"schema": "custodian.dev_observatory.performance_incident.v1",
 		"state": String(_performance_incident_state), "trigger": String(_performance_incident_trigger),
@@ -664,14 +670,29 @@ func _classify_incident(summary: Dictionary, top_spans: Array[Dictionary]) -> St
 		return "probable VFX lifetime leak"
 	if int(deltas.get("active_audio_players_delta", 0)) > 5:
 		return "probable combat audio lifetime leak"
-	if float(summary.get("physics_ms", 0.0)) > float(summary.get("process_ms", 0.0)):
-		return "physics / collision dominated"
+	var wall_ms := float(summary.get("wall_ms", 0.0))
+	var process_ms := float(summary.get("process_ms", 0.0))
+	var physics_ms := float(summary.get("physics_ms", 0.0))
+	var unaccounted_ms := maxf(0.0, wall_ms - process_ms - physics_ms)
+	if wall_ms > 0.0 and unaccounted_ms >= maxf(process_ms, physics_ms):
+		return "unaccounted wall-time / server-render-unknown dominated"
+	if physics_ms > process_ms and physics_ms >= wall_ms * 0.5:
+		return "physics monitor elevated — collision remains a hypothesis"
 	for span in top_spans:
 		if String(span.get("name", "")).begins_with("enemy_") and float(span.get("total_ms", 0.0)) > 8.0:
 			return "enemy actor script dominated"
 	if int(deltas.get("draw_calls_delta", 0)) > 50:
 		return "rendering / presentation dominated"
 	return "unclassified — inspect worst-frame spans"
+
+
+func _average_frame_sample_field(field_name: String) -> float:
+	if _frame_samples.is_empty():
+		return 0.0
+	var total := 0.0
+	for sample in _frame_samples:
+		total += float(sample.get(field_name, 0.0))
+	return total / float(_frame_samples.size())
 
 
 func mark_performance_phase(phase_name: String = "") -> String:
@@ -1114,6 +1135,8 @@ func _sample_render_state_gauges() -> void:
 	var procgen_floor_enabled := false
 	var procgen_walls_enabled := false
 	var procgen_depth_backdrop_enabled := false
+	var procgen_runtime_wall_collision_enabled := false
+	var procgen_wall_shadows_enabled := false
 	var procgen_map_count := 0
 
 	var atmospheres := get_tree().get_nodes_in_group(
@@ -1154,6 +1177,10 @@ func _sample_render_state_gauges() -> void:
 			or bool(status.get("walls_enabled", false))
 		procgen_depth_backdrop_enabled = procgen_depth_backdrop_enabled \
 			or bool(status.get("depth_backdrop_enabled", false))
+		procgen_runtime_wall_collision_enabled = procgen_runtime_wall_collision_enabled \
+			or bool(status.get("runtime_wall_collision_enabled", false))
+		procgen_wall_shadows_enabled = procgen_wall_shadows_enabled \
+			or bool(status.get("wall_shadows_enabled", false))
 
 	var directional_enabled := (
 		_count_enabled_render_lights(
@@ -1185,6 +1212,8 @@ func _sample_render_state_gauges() -> void:
 		&"render_procgen_depth_backdrop_enabled",
 		procgen_depth_backdrop_enabled
 	)
+	set_gauge(&"procgen_runtime_wall_collision_isolation_enabled", procgen_runtime_wall_collision_enabled)
+	set_gauge(&"procgen_wall_shadow_isolation_enabled", procgen_wall_shadows_enabled)
 	set_gauge(
 		&"render_directional_light_enabled",
 		directional_enabled
@@ -1219,8 +1248,22 @@ func _get_procgen_runtime_health_snapshot() -> Dictionary:
 	var maps := get_tree().get_nodes_in_group("procgen_tilemap") if get_tree() != null else []
 	for map_node in maps:
 		if map_node != null and is_instance_valid(map_node) and map_node.has_method("get_runtime_health_snapshot"):
-			return map_node.call("get_runtime_health_snapshot") as Dictionary
-	return {}
+			var snapshot := (map_node.call("get_runtime_health_snapshot") as Dictionary).duplicate(true)
+			snapshot["snapshot_active"] = true
+			snapshot["snapshot_source"] = str(map_node.get_path())
+			snapshot["snapshot_captured_uptime_sec"] = get_uptime_sec()
+			_last_procgen_runtime_health = snapshot.duplicate(true)
+			return snapshot
+	if _last_procgen_runtime_health.is_empty():
+		return {
+			"snapshot_active": false,
+			"snapshot_source": "none_loaded",
+			"snapshot_captured_uptime_sec": get_uptime_sec(),
+		}
+	var last_known := _last_procgen_runtime_health.duplicate(true)
+	last_known["snapshot_active"] = false
+	last_known["snapshot_source"] = "unloaded_generation_%s" % str(last_known.get("generation_id", "unknown"))
+	return last_known
 
 
 func _count_enabled_render_lights(

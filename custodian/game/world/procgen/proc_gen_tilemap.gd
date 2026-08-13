@@ -731,6 +731,8 @@ var _generation_prop_rejections_stuck_risk: int = 0
 var _generation_prop_rejections_existing_blocker: int = 0
 var _generation_prop_collision_alignment_warnings: int = 0
 var _procgen_major_visuals_visible: bool = true
+var _runtime_wall_collision_isolation_enabled: bool = true
+var _wall_shadow_isolation_enabled: bool = true
 
 func _ready() -> void:
 	if not generation_output_enabled:
@@ -742,6 +744,12 @@ func _ready() -> void:
 		var controls := dev_mode.call("get_playtest_controls") as Dictionary
 		set_procgen_major_visuals_visible(
 			bool(controls.get("procgen_major_visuals", true))
+		)
+		set_runtime_wall_collision_isolation_enabled(
+			bool(controls.get("procgen_wall_collision", true))
+		)
+		set_wall_shadow_isolation_enabled(
+			bool(controls.get("procgen_wall_shadows", true))
 		)
 	add_to_group("procgen_tilemap")
 	add_to_group("procgen_walkability_provider")
@@ -811,6 +819,36 @@ func set_procgen_major_visuals_visible(enabled: bool) -> void:
 			canvas_item.visible = enabled
 
 
+func set_runtime_wall_collision_isolation_enabled(enabled: bool) -> void:
+	if _runtime_wall_collision_isolation_enabled == enabled:
+		return
+	_runtime_wall_collision_isolation_enabled = enabled
+	if enabled:
+		_sync_runtime_wall_collision_with_visible_walls("debug_isolation_reenabled")
+	else:
+		_clear_runtime_wall_collision()
+	_record_runtime_mutation(
+		&"procgen_runtime_wall_collision_isolation_changed",
+		"debug_isolation", 0, 0, 1 if enabled else 0, 0
+	)
+
+
+func set_wall_shadow_isolation_enabled(enabled: bool) -> void:
+	if _wall_shadow_isolation_enabled == enabled:
+		return
+	_wall_shadow_isolation_enabled = enabled
+	if shadow_system != null:
+		shadow_system.visible = enabled
+		if enabled:
+			_refresh_shadows()
+		elif shadow_system.has_method("clear_shadows"):
+			shadow_system.call("clear_shadows")
+	_record_runtime_mutation(
+		&"procgen_shadow_isolation_changed",
+		"debug_isolation", 0, 0, 1 if enabled else 0, 0
+	)
+
+
 func get_procgen_render_isolation_status() -> Dictionary:
 	_cache_procgen_major_visual_items()
 	return {
@@ -820,6 +858,8 @@ func get_procgen_render_isolation_status() -> Dictionary:
 		"depth_backdrop_enabled": depth_backdrop == null or depth_backdrop.visible,
 		"nonwalkable_base_enabled": nonwalkable_surface_base_tilemap == null or nonwalkable_surface_base_tilemap.visible,
 		"nonwalkable_overlay_enabled": nonwalkable_surface_overlay_tilemap == null or nonwalkable_surface_overlay_tilemap.visible,
+		"runtime_wall_collision_enabled": _runtime_wall_collision_isolation_enabled,
+		"wall_shadows_enabled": _wall_shadow_isolation_enabled,
 	}
 
 
@@ -8887,7 +8927,7 @@ func _clear_runtime_wall_collision() -> void:
 
 
 func _sync_runtime_wall_collision_with_visible_walls(reason: String = "visible_wall_sync") -> void:
-	if walls_tilemap == null or not build_runtime_wall_collision:
+	if walls_tilemap == null or not build_runtime_wall_collision or not _runtime_wall_collision_isolation_enabled:
 		return
 	var started_usec := Time.get_ticks_usec()
 	var before := _runtime_wall_shape_count
@@ -9471,7 +9511,7 @@ func _record_runtime_mutation(kind: StringName, reason: String, duration_usec: i
 
 
 func _refresh_shadows() -> void:
-	if shadow_system == null:
+	if shadow_system == null or not _wall_shadow_isolation_enabled:
 		return
 	var started_usec := Time.get_ticks_usec()
 	if shadow_system.has_method("initialize"):
