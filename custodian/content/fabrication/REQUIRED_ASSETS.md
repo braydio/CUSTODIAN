@@ -128,7 +128,7 @@ floor, collision, route, navigation, and spawn protection.
 
 ### High Priority
 1. **Per-turret idle sprites** — all turrets share `turret_sandbag_1frame.png`. Need 4 unique 96×96 idle sprites.
-2. **Barricade scene + sprite** — `barricade_light` recipe outputs a build token but no scene/sprite exists.
+2. **Barricade production art** — the live `res://game/actors/structures/light_barricade.tscn` already provides tactical placement and placeholder presentation; only replacement production sprite art remains outstanding.
 
 ### Medium Priority
 3. **Firing animation wiring** — 50-frame firing sheets exist but turret scenes don't reference them.
@@ -181,5 +181,5 @@ output_type: build_token → BuildInventory.add(output_id)
 output_type: unlock → unlock_completed signal
 output_type: resource → ResourceLedger.add(output_id)
     ↓
-BuildInventory consumed by TurretPlacement
+BuildInventory consumed transactionally by ConstructionPlacementController for permanent infrastructure or TurretPlacement for tactical Ready Builds
 ```

@@ -730,6 +730,49 @@ Capacity decreases and grid state reconciles
 
 Criteria 1–12 and 14 are implemented and covered by focused headless smokes. Criterion 13 is implemented at the versioned `InfrastructureRegistry.capture_state()` / `restore_state()` boundary and verified without duplication, but is not yet connected to a project-wide save manager because no such runtime authority currently exists. For that reason this system remains `active`, not `complete-v1`.
 
+## Construction Placement V1
+
+Construction Placement V1 extracts permanent compound infrastructure from the
+temporary tactical placement bridge. Its first and only production entry is
+`capacitor_bank_mk1`; Basic Turret and Light Barricade remain tactical
+compatibility placeables.
+
+Ownership is explicit:
+
+```text
+FabPipeline
+    owns fabrication jobs
+
+BuildInventory
+    owns unplaced Ready Build tokens
+
+ConstructionPlacementController
+    owns permanent infrastructure preview,
+    placement validation and placement commit
+
+TurretPlacement
+    owns tactical turret placement compatibility
+
+InfrastructureStructure
+    owns construction lifecycle after commit
+
+InfrastructureRegistry
+    owns placed infrastructure identity/services
+
+Power
+    owns grid behavior
+```
+
+Permanent placement uses definition-owned footprints, a 32px origin grid,
+quarter-turn rotation, compatible authored `ConstructionZone2D` bounds,
+complete-footprint floor and occupancy checks, and an atomic Ready Build token
+transaction. The terminal closes completely before world placement begins. A
+small construction HUD and structure-specific ghost own presentation; the
+legacy 120px terminal strip remains tactical compatibility only.
+
+The detailed active implementation contract is
+`design/02_features/infrastructure/CONSTRUCTION_PLACEMENT_V1.md`.
+
 ## Validation Plan
 
 Proposed focused scripts:

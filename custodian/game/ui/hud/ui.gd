@@ -169,6 +169,7 @@ const SECTOR_DISPLAY_NAMES := {
 @onready var ranged_reticle = get_node_or_null("RangedReticle")
 @onready var interaction_label = get_node_or_null("InteractionLabel")
 @onready var minimap = get_node_or_null("Minimap")
+@onready var construction_placement_hud = get_node_or_null("ConstructionPlacementHUD")
 
 @onready var terminal_panel = get_node_or_null("TerminalPanel")
 @onready var terminal_header_eyebrow = get_node_or_null("TerminalPanel/Header/Margin/HeaderRow/Eyebrow")
@@ -325,6 +326,7 @@ var _debug_screen: Control = null
 var _minimap_visible := true
 var _world_presentation_mode: StringName = &"gameplay"
 var _placement_mode_active := false
+var _construction_placement_ui_active := false
 var _last_crosshair_aim_dir := Vector2.ZERO
 var _last_crosshair_screen_pos := Vector2.ZERO
 var _terminal_panel_saved_position := Vector2.ZERO
@@ -1756,6 +1758,37 @@ func exit_placement_mode_ui() -> void:
 		terminal_output.custom_minimum_size.y = _terminal_output_saved_min_height
 	
 	print("[UI] Exited placement mode UI")
+
+
+func enter_construction_placement_ui(snapshot: Dictionary) -> void:
+	_construction_placement_ui_active = true
+	_terminal_fabrication_selected_work_order_id = str(snapshot.get("build_id", ""))
+	if _terminal_open:
+		close_command_terminal()
+	elif terminal_panel != null:
+		terminal_panel.visible = false
+	if terminal_background != null:
+		terminal_background.visible = false
+	_set_main_hud_hidden(false)
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	if construction_placement_hud != null and construction_placement_hud.has_method("show_snapshot"):
+		construction_placement_hud.call("show_snapshot", snapshot)
+
+
+func update_construction_placement_ui(snapshot: Dictionary) -> void:
+	if construction_placement_hud != null and construction_placement_hud.has_method("update_snapshot"):
+		construction_placement_hud.call("update_snapshot", snapshot)
+
+
+func exit_construction_placement_ui(reopen_fabrication_terminal: bool = false) -> void:
+	_construction_placement_ui_active = false
+	if construction_placement_hud != null and construction_placement_hud.has_method("hide_hud"):
+		construction_placement_hud.call("hide_hud")
+	_set_main_hud_hidden(false)
+	if reopen_fabrication_terminal:
+		open_fabricator_terminal()
+	else:
+		Input.mouse_mode = _terminal_previous_mouse_mode
 
 func open_command_terminal(service_url: String = ""):
 	if not _terminal_open:
@@ -5097,6 +5130,17 @@ func _selected_deployable_ready_build_id(ready_builds: Array, selected_work_orde
 
 
 func _start_ready_build_placement(ready_build_id: String) -> bool:
+	var construction = get_node_or_null("/root/GameRoot/World/ConstructionPlacement")
+	if construction != null \
+			and construction.has_method("can_handle_build_token") \
+			and bool(construction.call("can_handle_build_token", StringName(ready_build_id))):
+		_bind_construction_placement_feedback(construction)
+		if bool(construction.call("enter_build_token_placement", StringName(ready_build_id))):
+			_terminal_fabrication_selected_work_order_id = ready_build_id
+			_append_terminal_line("CONSTRUCTION PLACEMENT ACTIVE // %s" % ready_build_id.to_upper(), "success")
+			return true
+		_append_terminal_line("CONSTRUCTION PLACE FAILED // READY BUILD UNAVAILABLE", "warning")
+		return false
 	var turret_placement = get_node_or_null("/root/GameRoot/World/TurretPlacement")
 	if turret_placement == null:
 		_append_terminal_line("BUILD PLACEMENT UNAVAILABLE", "warning")
@@ -5116,6 +5160,38 @@ func _start_ready_build_placement(ready_build_id: String) -> bool:
 		return true
 	_append_terminal_line("BUILD PLACE FAILED // READY BUILD UNAVAILABLE", "warning")
 	return false
+
+
+func _bind_construction_placement_feedback(controller: Node) -> void:
+	var committed_callback := Callable(self, "_on_construction_placement_committed")
+	if controller.has_signal("placement_committed") \
+			and not controller.is_connected("placement_committed", committed_callback):
+		controller.connect("placement_committed", committed_callback)
+	var failed_callback := Callable(self, "_on_construction_placement_failed")
+	if controller.has_signal("placement_failed") \
+			and not controller.is_connected("placement_failed", failed_callback):
+		controller.connect("placement_failed", failed_callback)
+
+
+func _on_construction_placement_committed(_instance: Node2D, build_id: StringName) -> void:
+	var display_name := String(build_id).replace("_mk1", "").replace("_", " ").to_upper()
+	_append_terminal_line("%s FOUNDATION DEPLOYED" % display_name, "success")
+	var toast_queue := get_tree().get_first_node_in_group("loot_toast_queue")
+	if toast_queue != null and toast_queue.has_method("push_pickup"):
+		toast_queue.call(
+			"push_pickup",
+			StringName("construction_%s" % build_id),
+			display_name,
+			1,
+			Color("63e6e2"),
+			null,
+			"FOUNDATION DEPLOYED"
+		)
+	_refresh_snapshot()
+
+
+func _on_construction_placement_failed(build_id: StringName, reason: StringName) -> void:
+	_append_terminal_line("CONSTRUCTION BLOCKED // %s // %s" % [String(build_id).to_upper(), String(reason).replace("_", " ").to_upper()], "warning")
 
 
 func _bind_build_placement_feedback(build_placement: Node) -> void:

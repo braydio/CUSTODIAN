@@ -13,6 +13,15 @@ Documentation updates this session:
 
 ## Runtime Status
 
+- Construction Placement V1 is live for `capacitor_bank_mk1`. Permanent Ready
+  Builds resolve through `ConstructionCatalog` and
+  `ConstructionPlacementController`, use definition-owned 3×2 footprints,
+  quarter-turn rotation, a bounded Fabrication Yard zone, complete-floor and
+  occupancy validation, structure-shaped preview, atomic token commit, and a
+  dedicated construction HUD. The full terminal closes during permanent
+  placement and reopens to FABRICATION only on cancellation. `TurretPlacement`
+  retains Basic Turret and Light Barricade tactical compatibility only.
+
 - Procgen runtime mutation attribution is now cached at the authoritative wall
   collision, walkable-boundary, navigation, and terrain-commit paths. F10 and
   Performance Incident snapshots retain compact health state plus recent

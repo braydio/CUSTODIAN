@@ -1014,6 +1014,9 @@ Use after changes to infrastructure definitions/components, power registration, 
 cd custodian
 godot --headless --path . --script res://tools/validation/power_grid_component_registration_smoke.gd
 godot --headless --path . --script res://tools/validation/construction_placement_contract_smoke.gd
+godot --headless --path . --script res://tools/validation/construction_placement_validator_smoke.gd
+godot --headless --path . --script res://tools/validation/construction_placement_controller_smoke.gd
+godot --headless --path . --script res://tools/validation/construction_placement_ui_smoke.gd
 godot --headless --path . --script res://tools/validation/powered_fabricator_slice_smoke.gd
 godot --headless --path . --script res://tools/validation/infrastructure_save_restore_smoke.gd
 godot --headless --path . --script res://tools/validation/power_rate_units_smoke.gd

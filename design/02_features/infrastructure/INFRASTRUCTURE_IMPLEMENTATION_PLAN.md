@@ -15,7 +15,7 @@ Implement the Powered Fabricator slice without replacing the live sector-power s
 - A prebuilt Field Fabricator is added as an `InfrastructureStructure` with a consumer and `FABRICATION` service.
 - `power.gd` accepts explicit generator/consumer/storage component registration while retaining sector discovery.
 - `total_power`/`max_power` remain compatibility aliases for stored reserve/capacity; new snapshots also expose explicit grid keys.
-- `TurretPlacement` temporarily hosts `capacitor_bank_mk1` placement while the generic construction controller is extracted later.
+- `ConstructionPlacementController` now owns `capacitor_bank_mk1`; `TurretPlacement` retains only Basic Turret and Light Barricade tactical compatibility.
 - The placement commit is the V1 installation interaction: it creates the foundation and starts deterministic assembly.
 - No global save manager exists. `InfrastructureRegistry.capture_state()` and `restore_state()` provide the versioned persistence boundary and are proven with a round-trip smoke.
 
@@ -80,4 +80,4 @@ Existing power-rate, fabrication, terminal, turret placement, and Light Barricad
 
 ## Completion Record
 
-The runtime files, recipe, placement bridge, terminal snapshot, component registration, and four focused smokes listed above are live. Persistence is available as a versioned registry round trip; wiring that payload into a future project-wide save manager is explicitly outside this bounded milestone.
+The runtime files, recipe, dedicated permanent construction controller, terminal snapshot, component registration, and focused smokes are live. Persistence is available as a versioned registry round trip; wiring that payload into a future project-wide save manager is explicitly outside this bounded milestone.

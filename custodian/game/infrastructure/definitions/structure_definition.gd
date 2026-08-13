@@ -11,6 +11,16 @@ extends Resource
 @export var footprint_tiles: Vector2i = Vector2i(2, 2)
 @export var unique_structure: bool = false
 
+@export_category("Placement")
+@export var grid_size: int = 32
+@export var allowed_rotations: Array[int] = [0, 90, 180, 270]
+@export var placement_clearance: float = 12.0
+@export var operator_clearance: float = 40.0
+
+@export_category("Presentation")
+@export var placement_preview_scene: PackedScene
+@export var placement_icon: Texture2D
+
 @export_category("Construction")
 @export var recipe_id: StringName
 @export var construction_time: float = 5.0
@@ -37,4 +47,3 @@ extends Resource
 
 @export_category("Persistence")
 @export var definition_version: int = 1
-

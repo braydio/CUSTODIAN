@@ -500,7 +500,7 @@ This file is for metadata/documentation. Runtime resource counts live in `Resour
 | **Power system** (`power.gd`) | Existing sector-power compatibility boundary | Persistent powered fabrication belongs to `COMPOUND_INFRASTRUCTURE_SYSTEM.md`; callers must migrate away from private `_get_fabrication_effectiveness()` access |
 | **WaveManager** | Fabricated defenses feed into sector/turret placement for wave defense | `turret_basic` and `barricade_light` Ready Builds have live token-gated placement |
 | **Terminal HUD** (`ui.gd`) | Terminal has `_terminal_fabrication_queue` — V1 bridge can enqueue builds | Existing terminal fabrication commands should route through bridge |
-| **Placement system** (`turret_placement.gd`) | Compatibility placement surface for current Ready Builds | Valid Turret/Light Barricade placement consumes one token and spawns the damageable scene; invalid placement preserves the token |
+| **Placement systems** | Construction Placement owns permanent infrastructure; `turret_placement.gd` remains tactical compatibility | Capacitor Bank uses bounded construction zones and full footprints; valid Turret/Light Barricade placement retains the tactical token-safe path |
 
 ### Project Settings
 
@@ -691,6 +691,7 @@ godot --headless --quit
 - Typed fallback remains supported through `FAB START <work_order_id>`, `FAB QUEUE`, `FAB CANCEL`, and `BUILD PLACE <ready_build_id>`.
 - Complete-v1: `turret_basic` and `barricade_light` are deployable Ready Builds. The selected work order is preferred by the PLACE action when its output token is ready.
 - Complete-v1: Light Barricade placement reuses the scene-wired `TurretPlacement` compatibility surface, consumes exactly one token only after a valid site is confirmed, and creates an 80-HP collision obstacle in the `structure`, `buildable_structure`, and `enemy_obstacle` groups.
+- Construction Placement V1: Resource Fabrication does not permit unrestricted survival/base editing. Bounded permanent structure placement is owned by Compound Infrastructure and `ConstructionPlacementController`; `capacitor_bank_mk1` is its first catalog entry.
 - Player-facing terminology should prefer "Work Order", "Ready Build", "In Progress", and "Missing Materials" even when the backend keeps recipe IDs and token IDs unchanged.
 - Deferred: small always-on HUD resource counts and deployment bridges beyond Light Barricade.
 

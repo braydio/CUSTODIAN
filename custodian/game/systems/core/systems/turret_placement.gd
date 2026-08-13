@@ -38,11 +38,6 @@ const BUILD_TOKEN_TO_PLACEABLE := {
 		"kind": "structure",
 		"scene": preload("res://game/actors/structures/light_barricade.tscn"),
 	},
-	"capacitor_bank_mk1": {
-		"placeable_type": "capacitor_bank_mk1",
-		"kind": "structure",
-		"scene": preload("res://game/infrastructure/structures/capacitor_bank_mk1.tscn"),
-	},
 }
 
 const MAX_DEFAULT_TURRETS := 10
@@ -113,6 +108,8 @@ func _create_ghost_preview() -> void:
 func _input(event: InputEvent) -> void:
 	# B key - cycle placement mode or dismantle nearby turret
 	if event is InputEventKey and event.pressed and event.keycode == KEY_B:
+		if _permanent_construction_active():
+			return
 		_handle_build_input()
 		return
 	
@@ -191,6 +188,8 @@ func _process(delta: float) -> void:
 
 
 func enter_placement_mode(turret_type: String) -> bool:
+	if _permanent_construction_active():
+		return false
 	if not TURRET_COSTS.has(turret_type):
 		push_error("[TurretPlacement] Unknown turret type: " + turret_type)
 		return false
@@ -517,6 +516,8 @@ func get_placeable_type_for_build_token(build_token_id: String) -> String:
 
 
 func enter_build_token_placement(build_token_id: String) -> bool:
+	if _permanent_construction_active():
+		return false
 	var definition: Dictionary = BUILD_TOKEN_TO_PLACEABLE.get(build_token_id, {})
 	if definition.is_empty() or not _has_build_token(build_token_id):
 		return false
@@ -545,6 +546,13 @@ func enter_build_token_placement(build_token_id: String) -> bool:
 
 func _get_build_inventory() -> Node:
 	return get_node_or_null("/root/BuildInventory")
+
+
+func _permanent_construction_active() -> bool:
+	var controller := get_tree().get_first_node_in_group("construction_placement_controller")
+	return controller != null \
+		and controller.has_method("is_placing") \
+		and bool(controller.call("is_placing"))
 
 
 func _has_build_token(build_token_id: String) -> bool:

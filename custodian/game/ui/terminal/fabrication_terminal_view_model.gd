@@ -1,6 +1,8 @@
 extends RefCounted
 class_name FabricationTerminalViewModel
 
+const CONSTRUCTION_CATALOG := preload("res://game/infrastructure/construction_catalog.gd")
+
 const CATEGORY_PRIORITY := {
 	"defense": 0,
 	"structure": 1,
@@ -37,7 +39,6 @@ const RECIPE_PURPOSE := {
 const READY_BUILD_ACTIONABLE := {
 	"barricade_light": true,
 	"turret_basic": true,
-	"capacitor_bank_mk1": true,
 }
 
 
@@ -356,6 +357,8 @@ func _pick_deployable_ready_build(ready_builds: Array[Dictionary]) -> Dictionary
 
 
 func _is_ready_build_deployable(recipe_id: String, _recipe: Dictionary) -> bool:
+	if CONSTRUCTION_CATALOG.has_build(StringName(recipe_id)):
+		return true
 	if bool(READY_BUILD_ACTIONABLE.get(recipe_id, false)):
 		return true
 	return false

@@ -400,7 +400,9 @@ Last updated: 2026-08-12
 - `custodian/game/fabrication/fab_job.gd` — lightweight queued fabrication job state with elapsed/duration/progress helpers
 - `custodian/game/fabrication/fab_recipe_database.gd` — reusable JSON recipe database node for fabrication UI/world bridges
 - `custodian/game/fabrication/fabricator_terminal.gd` — Area2D bridge for starting allowed fabrication recipes through `FabPipeline`
-- `custodian/game/systems/core/systems/turret_placement.gd` — scene-wired placement compatibility surface for material/redeploy turrets plus token-driven `turret_basic` and `barricade_light` Ready Builds, shared ghost/site validation, token-safe confirmation, and placement feedback signals
+- `custodian/game/systems/core/systems/turret_placement.gd` — tactical placement compatibility surface for material/redeploy turrets plus token-driven `turret_basic` and `barricade_light`; permanent infrastructure is intentionally excluded
+- `custodian/game/infrastructure/{construction_catalog,construction_placement_controller,construction_placement_validator,construction_placement_preview,construction_zone_2d}.gd` — Construction Placement V1 ownership for permanent Ready Build resolution, full-footprint validation, preview, zones, and atomic commit
+- `custodian/game/ui/construction/` — dedicated permanent construction placement HUD; the normal terminal shell is closed during this mode
 - `custodian/game/actors/structures/light_barricade.gd`, `light_barricade_collision.gd`, and `.tscn` — 80-HP damageable Light Barricade with scene-native placeholder visuals, projectile-forwarding static collision, damage-state presentation, and structure/obstacle groups
 - `custodian/game/resources/resource_node.gd` — harvestable interactable resource node that depletes through operator interaction, deposits primary/secondary yields into `ResourceLedger`, and can build optional looped or harvest-state `AnimatedSprite2D` strips from exported sheet paths or default per-kind 96px harvesting-node sheets; harvest-state nodes show static body frames and flash matching strike FX frames per harvest step when FX strips exist
 - `custodian/game/resources/resource_node.tscn` — reusable visual/collision scene for V1 generated or authored resource nodes, with optional `NodeSprite`, `FxSprite`, and impact FX children used by resource-specific node strip playback
@@ -781,7 +783,8 @@ Last updated: 2026-08-12
 - `custodian/autoload/infrastructure_registry.gd` — structure/service registry, terminal snapshot authority, and versioned capture/restore boundary
 - `custodian/game/infrastructure/` — reusable structure definition/base, power and service components, and Field Fabricator/Capacitor Bank scenes
 - `custodian/content/infrastructure/definitions/` — definition resources for the first Field Fabricator and Capacitor Bank structures
-- `custodian/tools/validation/{power_grid_component_registration,construction_placement_contract,powered_fabricator_slice,infrastructure_save_restore}_smoke.gd` — focused Milestone 1 registration, transaction, full-loop, and persistence validation
+- `custodian/tools/validation/{construction_placement_validator,construction_placement_controller,construction_placement_ui,construction_placement_contract,powered_fabricator_slice}_smoke.gd` — focused Construction Placement V1 footprint, transaction, UI, construction, and commissioned-power validation
+- `design/02_features/infrastructure/CONSTRUCTION_PLACEMENT_V1.md` — active permanent construction placement ownership, transaction, zone, UI, and acceptance contract
 - `design/02_features/power/POWER_SYSTEMS_GODOT.md` — current sector-oriented power implementation summary and compatibility boundary for future infrastructure-grid work
 - `design/04_architecture/SIMPLIFIED_POWER_IN_ROOMS.md` — superseded room-marker proposal retained as historical reference; its conduit-to-generator mapping must not be implemented
 - `design/02_features/arrn/implementation.md` — ARRN implementation roadmap; runtime V1 is implemented with primitive relay visuals and deferred production polish

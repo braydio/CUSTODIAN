@@ -1,7 +1,7 @@
 extends SceneTree
 
 const POWER_SCRIPT := preload("res://game/systems/core/systems/power.gd")
-const PLACEMENT_SCRIPT := preload("res://game/systems/core/systems/turret_placement.gd")
+const PLACEMENT_SCRIPT := preload("res://game/infrastructure/construction_placement_controller.gd")
 
 var _failed := false
 
@@ -29,18 +29,23 @@ func _run() -> void:
 	game_root.add_child(power)
 	power.set_process(false)
 	var placement := PLACEMENT_SCRIPT.new()
-	placement.name = "TurretPlacement"
+	placement.name = "ConstructionPlacement"
 	world.add_child(placement)
+	var zone := ConstructionZone2D.new()
+	zone.size = Vector2(1600, 1600)
+	zone.global_position = Vector2(800, 800)
+	zone.allowed_categories = [&"power"]
+	world.add_child(zone)
 	var blocker := Node2D.new()
 	blocker.global_position = Vector2(200, 200)
 	blocker.add_to_group("structure")
 	world.add_child(blocker)
 	_require(placement.enter_build_token_placement("capacitor_bank_mk1"), "Capacitor Ready Build did not enter placement mode.")
-	_require(not placement.attempt_place_build_at(Vector2(200, 200)), "Occupied site should reject construction.")
+	_require(not placement.attempt_commit_at(Vector2(200, 200)), "Occupied site should reject construction.")
 	_require(build_inventory.get_amount("capacitor_bank_mk1") == 1, "Invalid placement consumed the Ready Build token.")
-	_require(placement.attempt_place_build_at(Vector2(800, 800)), "Valid site did not commit the Capacitor foundation.")
+	_require(placement.attempt_commit_at(Vector2(800, 800)), "Valid site did not commit the Capacitor foundation.")
 	_require(build_inventory.get_amount("capacitor_bank_mk1") == 0, "Valid placement did not consume exactly one token.")
-	var structures := placement.get_placed_structures()
+	var structures := get_nodes_in_group("infrastructure_structure")
 	_require(structures.size() == 1, "Valid placement should create one structure instance.")
 	var bank: Node = structures[0] if not structures.is_empty() else null
 	_require(bank != null and str(bank.get("construction_state")) == "under_construction", "Placed Capacitor should begin as active construction, not an instant finished building.")

@@ -61,6 +61,9 @@
 [ext_resource type="Script" path="res://game/world/levels/level_loader.gd" id="215_level_loader"]
 [ext_resource type="Script" path="res://game/world/routes/route_traversal_manager.gd" id="216_route_manager"]
 [ext_resource type="Script" path="res://game/systems/intel/sensor_intelligence_read_model.gd" id="217_sensor_intelligence"]
+[ext_resource type="Script" path="res://game/infrastructure/construction_placement_controller.gd" id="218_construction_placement"]
+[ext_resource type="Script" path="res://game/infrastructure/construction_zone_2d.gd" id="219_construction_zone"]
+[ext_resource type="PackedScene" path="res://game/ui/construction/construction_placement_hud.tscn" id="220_construction_hud"]
 
 [node name="GameRoot" type="Node2D" unique_id=593578645]
 metadata/_edit_vertical_guides_ = [-1047.0]
@@ -287,6 +290,9 @@ position = Vector2(872, -486)
 [node name="TurretPlacement" type="Node" parent="World" unique_id=1022301412 groups=["world_origin_branch"]]
 script = ExtResource("100_turret_placement")
 
+[node name="ConstructionPlacement" type="Node" parent="World" groups=["world_origin_branch"]]
+script = ExtResource("218_construction_placement")
+
 [node name="TerminalDeployment" type="Node" parent="World" unique_id=1022301413 groups=["world_origin_branch"]]
 script = ExtResource("101_terminal_deployment")
 
@@ -299,6 +305,13 @@ position = Vector2(804, -492)
 
 [node name="FieldFabricatorMk1" parent="World" groups=["world_origin_branch"] instance=ExtResource("214_field_fabricator")]
 position = Vector2(1120, -480)
+
+[node name="FabricationConstructionZone" type="Node2D" parent="World" groups=["world_origin_branch"]]
+position = Vector2(1168, -480)
+script = ExtResource("219_construction_zone")
+zone_id = &"FABRICATION_YARD"
+site_tags = Array[StringName]([&"compound", &"fabrication"])
+allowed_categories = Array[StringName]([&"power", &"fabrication"])
 
 [node name="Camera2D" type="Camera2D" parent="World" unique_id=1332183342]
 position = Vector2(720, -480)
@@ -365,6 +378,8 @@ terminal_contract_node_path = NodePath("../World/ContractMap")
 [node name="Minimap" parent="UI" unique_id=999000001 instance=ExtResource("200_minimap")]
 
 [node name="LootToastQueue" parent="UI" instance=ExtResource("202_loot_toast_queue")]
+
+[node name="ConstructionPlacementHUD" parent="UI" instance=ExtResource("220_construction_hud")]
 
 [node name="PowerDisplay" type="Panel" parent="UI" unique_id=449160537]
 offset_left = 360.0

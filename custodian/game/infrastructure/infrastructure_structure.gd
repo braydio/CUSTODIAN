@@ -68,6 +68,17 @@ func get_structure_id() -> StringName:
 	return definition.structure_id if definition != null else &"unknown_structure"
 
 
+func get_construction_footprint_world_rect() -> Rect2:
+	if definition == null:
+		return Rect2(global_position - Vector2(16.0, 16.0), Vector2(32.0, 32.0))
+	var tiles := definition.footprint_tiles
+	var quarter_turn := posmod(int(round(rotation_degrees / 90.0)), 2) == 1
+	if quarter_turn:
+		tiles = Vector2i(tiles.y, tiles.x)
+	var footprint_size := Vector2(tiles * maxi(1, definition.grid_size))
+	return Rect2(global_position - footprint_size * 0.5, footprint_size)
+
+
 func get_construction_duration() -> float:
 	return maxf(0.0, definition.construction_time if definition != null else 0.0)
 

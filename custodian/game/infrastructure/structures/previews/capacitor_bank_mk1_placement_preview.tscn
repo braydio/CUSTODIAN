@@ -1,0 +1,15 @@
+[gd_scene format=3]
+
+[node name="CapacitorBankMk1PlacementPreview" type="Node2D"]
+
+[node name="Body" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-34, -23, 34, -23, 34, 23, -34, 23)
+color = Color(0.15, 0.22, 0.28, 1)
+
+[node name="CellLeft" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-26, -15, -4, -15, -4, 15, -26, 15)
+color = Color(0.28, 0.7, 0.86, 1)
+
+[node name="CellRight" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(4, -15, 26, -15, 26, 15, 4, 15)
+color = Color(0.28, 0.7, 0.86, 1)

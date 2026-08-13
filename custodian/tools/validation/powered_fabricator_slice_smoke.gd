@@ -1,7 +1,7 @@
 extends SceneTree
 
 const POWER_SCRIPT := preload("res://game/systems/core/systems/power.gd")
-const PLACEMENT_SCRIPT := preload("res://game/systems/core/systems/turret_placement.gd")
+const PLACEMENT_SCRIPT := preload("res://game/infrastructure/construction_placement_controller.gd")
 const FIELD_FABRICATOR_SCENE := preload("res://game/infrastructure/structures/field_fabricator_mk1.tscn")
 const SOURCE_SCRIPT := preload("res://tools/validation/fixtures/power_rate_test_source.gd")
 
@@ -41,8 +41,13 @@ func _run() -> void:
 	var fabricator := FIELD_FABRICATOR_SCENE.instantiate()
 	world.add_child(fabricator)
 	var placement := PLACEMENT_SCRIPT.new()
-	placement.name = "TurretPlacement"
+	placement.name = "ConstructionPlacement"
 	world.add_child(placement)
+	var zone := ConstructionZone2D.new()
+	zone.size = Vector2(1800, 1800)
+	zone.global_position = Vector2(900, 900)
+	zone.allowed_categories = [&"power"]
+	world.add_child(zone)
 	power.call("_process", 1.0 / 60.0)
 	_require(is_equal_approx(fab_pipeline.get_fabrication_rate_multiplier(), 1.0), "Standard-powered Fabricator should run at 1.0x.")
 	resource_ledger.add("structural_alloy", 8)
@@ -54,8 +59,8 @@ func _run() -> void:
 	fab_pipeline.call("_tick_jobs", 6.0)
 	_require(build_inventory.get_amount("capacitor_bank_mk1") == 1, "Completed work order did not create a Capacitor Ready Build.")
 	_require(placement.enter_build_token_placement("capacitor_bank_mk1"), "Ready Build did not enter construction placement.")
-	_require(placement.attempt_place_build_at(Vector2(900, 900)), "Capacitor placement failed at a clear site.")
-	var bank: Node = placement.get_placed_structures()[0]
+	_require(placement.attempt_commit_at(Vector2(900, 900)), "Capacitor placement failed at a clear site.")
+	var bank: Node = get_nodes_in_group("infrastructure_structure").filter(func(node): return node != fabricator)[0]
 	bank.call("complete_construction")
 	power.call("request_grid_refresh")
 	_require(is_equal_approx(power.max_power, 750.0), "Commissioned bank did not increase grid capacity.")
