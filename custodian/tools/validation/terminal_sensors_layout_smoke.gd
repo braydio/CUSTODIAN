@@ -36,6 +36,26 @@ func _run() -> void:
 	_expect(forecast.get_parsed_text().contains("INGRESS") and forecast.get_parsed_text().contains("OBJECTIVE"), "forecast must separate ingress and objective")
 	var minimap_view := preview.find_child("MinimapView", true, false)
 	_expect(minimap_view != null and bool(minimap_view.call("is_sensor_intelligence_active")), "Sensors map must consume projected intelligence")
+	minimap_view.call("set_sensor_intelligence", {"contacts":[], "sector_activity":[{"sector":"STORAGE", "sector_map_position":Vector2.ZERO}]})
+	var fragmented_markers: Dictionary = minimap_view.call("get_sensor_marker_summary")
+	_expect(fragmented_markers["contact_markers"] == 0 and fragmented_markers["sector_activity_markers"] == 1, "FRAGMENTED map must render sector activity without enemy pips")
+	minimap_view.call("set_sensor_intelligence", {"contacts":[], "sector_activity":[]})
+	var lost_markers: Dictionary = minimap_view.call("get_sensor_marker_summary")
+	_expect(lost_markers["contact_markers"] == 0 and lost_markers["sector_activity_markers"] == 0, "LOST map must render no hostile or activity markers")
+	var selection_snapshot := {
+		"fidelity":"FULL", "terminal_mode":&"command", "arrn":{},
+		"sensor_intelligence":{"contacts":[
+			{"contact_id":"C-001", "sector":"STORAGE", "class_label":"GRUNT", "activity":"STEALING", "confidence":"HIGH", "age_ticks":12, "health_pct":0.72, "velocity":Vector2.RIGHT},
+			{"contact_id":"C-002", "sector":"POWER", "class_label":"MARINE", "activity":"ENGAGING", "confidence":"HIGH", "age_ticks":3, "health_pct":1.0, "velocity":Vector2.UP},
+		], "tracked_count":2, "current_count":2, "stale_count":0},
+		"sensor_forecast":{"ingress":"NORTH", "objective":"HOSTILE PRESSURE", "composition":["GRUNT"]},
+	}
+	ui.set("_terminal_snapshot", selection_snapshot)
+	ui.call("_render_terminal_sensors_widgets", selection_snapshot)
+	ui.call("_select_terminal_sensor_contact", "C-002")
+	var activity_body := ui.find_child("SensorsActivityPanel", true, false).find_child("Body", true, false) as RichTextLabel
+	_expect(String(ui.get("_terminal_sensor_selected_contact_id")) == "C-002", "contact link selection must change selected ID")
+	_expect(activity_body.get_parsed_text().contains("SELECTED // C-002") and activity_body.get_parsed_text().contains("HEADING") and activity_body.get_parsed_text().contains("NORTH"), "selected contact must expose FULL detail")
 	ui.call("_set_terminal_page", "OVERVIEW")
 	ui.call("_refresh_snapshot")
 	_expect(not bool(minimap_view.call("is_sensor_intelligence_active")), "leaving Sensors restores ordinary minimap mode")

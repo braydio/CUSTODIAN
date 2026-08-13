@@ -4,14 +4,12 @@ class_name SensorsTerminalViewModel
 
 static func build(snapshot: Dictionary, early_warning_ticks: int = 0) -> Dictionary:
 	var intelligence: Dictionary = snapshot.get("sensor_intelligence", {})
-	var director: Dictionary = snapshot.get("director", {})
+	var director: Dictionary = snapshot.get("sensor_forecast", {})
 	var arrn: Dictionary = snapshot.get("arrn", {})
 	var fidelity := String(snapshot.get("fidelity", "lost")).to_upper()
 	var contacts: Array = intelligence.get("contacts", [])
 	var sector_activity: Array = intelligence.get("sector_activity", [])
-	var ingress := String(director.get("active_lane", ""))
-	if ingress.is_empty():
-		ingress = String(director.get("lane", ""))
+	var ingress := String(director.get("ingress", ""))
 	if ingress.is_empty():
 		ingress = "UNCONFIRMED"
 	var objective := String(director.get("objective", "UNCONFIRMED"))

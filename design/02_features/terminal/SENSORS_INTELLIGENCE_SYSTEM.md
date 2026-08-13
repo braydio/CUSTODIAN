@@ -32,7 +32,9 @@ Living, non-passive enemies receive stable `C-###` IDs for their instance
 lifetime. Truth records include first/last observed simulation ticks, current
 transform/velocity, class, health fraction, behavior state, objective, loot
 state, and deterministic operational activity. Freed/dead actors cease being
-current contacts. The read model never mutates observed nodes.
+current contacts but remain as last-known stale records for a bounded 180-tick
+TTL. Expiry prunes both the record and its instance-ID bookkeeping. The read
+model never mutates observed nodes.
 
 Production activity vocabulary is:
 
@@ -58,10 +60,13 @@ positions by simply forgetting to hide a field.
 
 ## Forecast
 
-EnemyDirector remains planning authority. Ingress is `active_lane`, falling
-back to the planned/last `lane`; objective is a separate field. Composition is
-summarized without invention. Fidelity sets forecast confidence. ARRN threat
-warning contributes only `early_warning_ticks` and never contact confidence.
+EnemyDirector remains planning authority, but `IntelProjector` removes
+player-forbidden forecast truth before the Sensors view model receives it.
+FULL exposes exact ingress/objective/composition; DEGRADED keeps a coarse lane
+and generalized pressure/composition; FRAGMENTED reports only unconfirmed
+ingress, hostile pressure, and unconfirmed composition; LOST reports no return
+for all three. ARRN threat warning contributes only `early_warning_ticks` and
+never contact or forecast confidence.
 
 ## Terminal Presentation
 
@@ -71,12 +76,18 @@ Intelligence Quality/Network Support and Forecast. The lower panel presents
 individual Contacts plus Selected Contact at FULL/DEGRADED, sector activity at
 FRAGMENTED, and signal loss at LOST. The existing terminal tactical map consumes
 the same projected data and never raw enemy nodes while Sensors is active.
+FRAGMENTED map markers use known sector centers and broad low-confidence glyphs,
+never hostile centroids. Contact rows are selectable; FULL details include fine
+age, health, and heading while DEGRADED uses bucketed age and explicitly omits
+health/heading.
 
 ## Validation
 
 Focused semantic projection and terminal layout smokes prove stable IDs,
-activity classification, information omission, forecast separation, ARRN
-isolation, map leakage prevention, and safe 1280x720 / 1366x768 layout.
+stale lifecycle/counts/bookkeeping expiry, activity classification, forecast
+omission at every fidelity, ARRN isolation, FRAGMENTED/LOST map leakage
+prevention, contact selection/details, map restoration, and safe 1280x720 /
+1366x768 layout.
 
 ## Next Agent Slice
 

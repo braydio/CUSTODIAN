@@ -32,7 +32,7 @@ func _init() -> void:
 	var lost: Dictionary = IntelProjectorScript.project_sector(truth, IntelProjectorScript.Fidelity.LOST)
 	_assert_eq(lost["activity"], "SIGNAL LOST", "lost fidelity hides operational detail")
 
-	var contact_truth := {"contacts": [{"contact_id":"C-001", "world_position":Vector2(159, 257), "velocity":Vector2.RIGHT, "sector":"STORAGE", "class_label":"GRUNT", "health_pct":0.5, "activity":&"STEALING", "last_seen_tick":100}]}
+	var contact_truth := {"contacts": [{"contact_id":"C-001", "world_position":Vector2(159, 257), "sector_map_position":Vector2(128, 256), "velocity":Vector2.RIGHT, "sector":"STORAGE", "class_label":"GRUNT", "health_pct":0.5, "activity":&"STEALING", "last_seen_tick":100}]}
 	var full_contacts: Dictionary = IntelProjectorScript.project_contacts(contact_truth, IntelProjectorScript.Fidelity.FULL, &"command", 106)
 	_assert_true((full_contacts["contacts"][0] as Dictionary).has("world_position"), "full command contact exposes exact position")
 	var degraded_contacts: Dictionary = IntelProjectorScript.project_contacts(contact_truth, IntelProjectorScript.Fidelity.DEGRADED, &"command", 106)
@@ -40,8 +40,15 @@ func _init() -> void:
 	_assert_true((degraded_contacts["contacts"][0] as Dictionary).has("coarse_map_position"), "degraded contact carries a snapped map marker")
 	var fragmented_contacts: Dictionary = IntelProjectorScript.project_contacts(contact_truth, IntelProjectorScript.Fidelity.FRAGMENTED, &"command", 106)
 	_assert_true((fragmented_contacts["contacts"] as Array).is_empty() and not (fragmented_contacts["sector_activity"][0] as Dictionary).has("contact_id"), "fragmented projection aggregates without identity")
+	_assert_eq(fragmented_contacts["sector_activity"][0]["sector_map_position"], Vector2(128, 256), "fragmented marker uses semantic sector anchor")
 	var lost_contacts: Dictionary = IntelProjectorScript.project_contacts(contact_truth, IntelProjectorScript.Fidelity.LOST, &"command", 106)
 	_assert_true((lost_contacts["contacts"] as Array).is_empty() and not lost_contacts.has("current_count"), "lost projection omits hostile count and location")
+
+	var director := {"active_lane":"north", "objective":"destroy_power", "composition":["grunt", "marine"]}
+	var fragmented_forecast: Dictionary = IntelProjectorScript.project_forecast(director, IntelProjectorScript.Fidelity.FRAGMENTED)
+	_assert_true(fragmented_forecast["objective"] != "destroy_power" and not (fragmented_forecast["composition"] as Array).has("grunt"), "fragmented forecast omits raw objective and composition")
+	var lost_forecast: Dictionary = IntelProjectorScript.project_forecast(director, IntelProjectorScript.Fidelity.LOST)
+	_assert_eq(lost_forecast, {"ingress":"NO RETURN", "objective":"NO RETURN", "composition":["NO RETURN"]}, "lost forecast omits all raw director forecast")
 
 	print("INTEL PROJECTOR SMOKE: PASS")
 	quit(0)

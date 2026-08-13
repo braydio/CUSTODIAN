@@ -13,9 +13,12 @@ env HOME=/tmp/custodian-godot-home godot --headless --path custodian \
   --script res://tools/validation/terminal_sensors_layout_smoke.gd
 ```
 
-These prove stable hostile identity, behavior activity, physical omission of
-forbidden fidelity fields, separate ingress/objective forecast semantics,
-shared-map projection mode/restoration, and safe terminal layout.
+These prove stable hostile identity plus stale retention/expiry/bookkeeping,
+honest current/stale/tracked counts, behavior activity, physical omission of
+forbidden contact and forecast fields, separate ingress/objective semantics,
+FRAGMENTED semantic-sector markers, LOST marker absence, contact selection and
+fidelity-appropriate details, shared-map projection mode/restoration, and safe
+terminal layout.
 
 ## Instant Replay
 

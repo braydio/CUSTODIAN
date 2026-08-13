@@ -3183,6 +3183,9 @@ func _escape_bbcode(value: String) -> String:
 
 func _on_terminal_activity_meta_clicked(meta: Variant) -> void:
 	var meta_text := str(meta)
+	if meta_text.begins_with("sensor_contact:"):
+		_select_terminal_sensor_contact(meta_text.trim_prefix("sensor_contact:"))
+		return
 	if meta_text.begins_with("terminal_action:"):
 		_handle_terminal_action_link(meta_text.trim_prefix("terminal_action:"))
 		return
@@ -4309,12 +4312,53 @@ func _render_terminal_sensors_widgets(snapshot: Dictionary) -> void:
 		activity_lines.append("ID      SECTOR          CLASS        ACTIVITY        CONF")
 	for contact: Dictionary in contacts:
 		var marker := ">" if String(contact.get("contact_id", "")) == _terminal_sensor_selected_contact_id else " "
-		activity_lines.append("%s%-6s %-15s %-12s %-15s %s" % [marker, contact.get("contact_id", ""), contact.get("sector", "UNCONFIRMED"), contact.get("class_label", "UNKNOWN"), contact.get("activity", "UNKNOWN"), contact.get("confidence", "NONE")])
+		var row := "%s%-6s %-15s %-12s %-15s %s" % [marker, contact.get("contact_id", ""), contact.get("sector", "UNCONFIRMED"), contact.get("class_label", "UNKNOWN"), contact.get("activity", "UNKNOWN"), contact.get("confidence", "NONE")]
+		activity_lines.append("[url=sensor_contact:%s]%s[/url]" % [contact.get("contact_id", ""), row])
+	var selected_contact := _find_terminal_sensor_contact(contacts, _terminal_sensor_selected_contact_id)
+	if not selected_contact.is_empty():
+		activity_lines.append("")
+		activity_lines.append("SELECTED // %s" % selected_contact.get("contact_id", ""))
+		activity_lines.append(_terminal_kv("CLASS", selected_contact.get("class_label", "UNKNOWN")))
+		activity_lines.append(_terminal_kv("SECTOR", selected_contact.get("sector", "UNCONFIRMED")))
+		activity_lines.append(_terminal_kv("ACTIVITY", selected_contact.get("activity", "UNKNOWN")))
+		activity_lines.append(_terminal_kv("CONFIDENCE", selected_contact.get("confidence", "NONE")))
+		if selected_contact.has("age_ticks"):
+			activity_lines.append(_terminal_kv("AGE", "%.1fs" % (float(selected_contact.get("age_ticks", 0)) / 60.0)))
+			activity_lines.append(_terminal_kv("HEALTH", "%d%%" % roundi(float(selected_contact.get("health_pct", 0.0)) * 100.0)))
+			activity_lines.append(_terminal_kv("HEADING", _sensor_heading(selected_contact.get("velocity", Vector2.ZERO))))
+		else:
+			activity_lines.append(_terminal_kv("AGE", selected_contact.get("age_bucket", "UNAVAILABLE")))
+			activity_lines.append(_terminal_kv("HEALTH", "UNAVAILABLE"))
+			activity_lines.append(_terminal_kv("HEADING", "UNAVAILABLE"))
 	for activity: Dictionary in model.get("sector_activity", []):
 		activity_lines.append("%-15s %-22s %s" % [activity.get("sector", "UNCONFIRMED"), activity.get("activity", "ACTIVITY DETECTED"), activity.get("confidence", "LOW")])
 	if activity_lines.is_empty():
 		activity_lines.append(String(model.get("message", "NO CURRENT HOSTILE RETURNS")))
 	_set_terminal_rich_text(terminal_sensors_activity_body, "\n".join(activity_lines))
+
+
+func _select_terminal_sensor_contact(contact_id: String) -> void:
+	var contacts: Array = _terminal_snapshot.get("sensor_intelligence", {}).get("contacts", [])
+	if _find_terminal_sensor_contact(contacts, contact_id).is_empty():
+		return
+	_terminal_sensor_selected_contact_id = contact_id
+	_render_terminal_sensors_widgets(_terminal_snapshot)
+
+
+func _find_terminal_sensor_contact(contacts: Array, contact_id: String) -> Dictionary:
+	for contact: Dictionary in contacts:
+		if String(contact.get("contact_id", "")) == contact_id:
+			return contact
+	return {}
+
+
+func _sensor_heading(velocity_value: Variant) -> String:
+	if not velocity_value is Vector2 or (velocity_value as Vector2).length_squared() < 0.01:
+		return "STATIONARY"
+	var velocity := velocity_value as Vector2
+	if absf(velocity.x) >= absf(velocity.y):
+		return "EAST" if velocity.x >= 0.0 else "WEST"
+	return "SOUTH" if velocity.y >= 0.0 else "NORTH"
 
 
 func _sync_terminal_sensor_map(snapshot: Dictionary) -> void:

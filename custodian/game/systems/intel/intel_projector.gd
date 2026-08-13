@@ -71,14 +71,18 @@ static func project_contacts(truth_snapshot: Dictionary, fidelity: int, terminal
 		for contact: Dictionary in truth_contacts:
 			var sector := String(contact.get("sector", "UNCONFIRMED"))
 			if not aggregates.has(sector):
-				aggregates[sector] = {"sector": sector, "activities": {}}
+				aggregates[sector] = {"sector": sector, "activities": {}, "sector_map_position": contact.get("sector_map_position", null)}
 			var activity := String(contact.get("activity", "ACTIVITY DETECTED"))
 			(aggregates[sector]["activities"] as Dictionary)[activity] = true
 		var sector_activity: Array[Dictionary] = []
 		for sector in aggregates.keys():
 			var activities := (aggregates[sector]["activities"] as Dictionary).keys()
 			activities.sort()
-			sector_activity.append({"sector": sector, "activity": ", ".join(activities), "confidence": "LOW"})
+			var activity_return := {"sector": sector, "activity": ", ".join(activities), "confidence": "LOW"}
+			var anchor: Variant = aggregates[sector].get("sector_map_position", null)
+			if anchor is Vector2:
+				activity_return["sector_map_position"] = anchor
+			sector_activity.append(activity_return)
 		sector_activity.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return String(a["sector"]) < String(b["sector"]))
 		return {"contacts": [], "sector_activity": sector_activity, "message": "ACTIVITY RETURNS FRAGMENTED", "confidence": "LOW"}
 	var contacts: Array[Dictionary] = []
@@ -109,10 +113,37 @@ static func project_contacts(truth_snapshot: Dictionary, fidelity: int, terminal
 		"contacts": contacts,
 		"sector_activity": [],
 		"tracked_count": contacts.size(),
-		"current_count": contacts.size(),
-		"stale_count": 0,
+		"current_count": contacts.filter(func(contact: Dictionary) -> bool: return not bool(contact.get("stale", false))).size(),
+		"stale_count": contacts.filter(func(contact: Dictionary) -> bool: return bool(contact.get("stale", false))).size(),
 		"confidence": "HIGH" if fidelity == Fidelity.FULL and terminal_mode == &"command" else "MEDIUM",
 	}
+
+
+static func project_forecast(director: Dictionary, fidelity: int) -> Dictionary:
+	var ingress := String(director.get("active_lane", director.get("lane", ""))).strip_edges()
+	var objective := String(director.get("objective", "")).strip_edges()
+	var composition: Array = director.get("composition", [])
+	match fidelity:
+		Fidelity.FULL:
+			return {"ingress": ingress if not ingress.is_empty() else "UNCONFIRMED", "objective": objective if not objective.is_empty() else "UNCONFIRMED", "composition": composition.duplicate()}
+		Fidelity.DEGRADED:
+			return {"ingress": ingress if not ingress.is_empty() else "UNCONFIRMED", "objective": _soften_forecast_objective(objective), "composition": _bucket_composition(composition)}
+		Fidelity.FRAGMENTED:
+			return {"ingress": "UNCONFIRMED", "objective": "HOSTILE PRESSURE", "composition": ["COMPOSITION UNCONFIRMED"]}
+		_:
+			return {"ingress": "NO RETURN", "objective": "NO RETURN", "composition": ["NO RETURN"]}
+
+
+static func _soften_forecast_objective(objective: String) -> String:
+	if objective.is_empty() or objective.to_lower() in ["none", "unknown"]:
+		return "UNCONFIRMED"
+	return "HOSTILE PRESSURE"
+
+
+static func _bucket_composition(composition: Array) -> Array:
+	if composition.is_empty():
+		return []
+	return ["MIXED HOSTILES" if composition.size() > 1 else "HOSTILE ELEMENT"]
 
 
 static func _contact_age_bucket(age_ticks: int) -> String:

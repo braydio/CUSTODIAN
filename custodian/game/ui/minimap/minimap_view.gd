@@ -142,6 +142,13 @@ func is_sensor_intelligence_active() -> bool:
 	return _sensor_intelligence_active
 
 
+func get_sensor_marker_summary() -> Dictionary:
+	return {
+		"contact_markers": (_sensor_intelligence.get("contacts", []) as Array).size(),
+		"sector_activity_markers": (_sensor_intelligence.get("sector_activity", []) as Array).filter(func(activity: Dictionary) -> bool: return activity.get("sector_map_position", null) is Vector2).size(),
+	}
+
+
 func set_objectives(nodes: Array) -> void:
 	objective_nodes = _filter_valid_node2d_array(nodes)
 	_request_redraw()
@@ -402,6 +409,19 @@ func _draw_sensor_intelligence(map_rect: Rect2) -> void:
 		var confidence := String(contact.get("confidence", "NONE"))
 		var color := enemy_color if confidence == "HIGH" else Color(enemy_color, 0.55)
 		draw_circle(panel_pos, enemy_pip_radius_px + (1.3 if confidence != "HIGH" else 0.0), color)
+	for activity: Dictionary in _sensor_intelligence.get("sector_activity", []):
+		var anchor: Variant = activity.get("sector_map_position", null)
+		if not anchor is Vector2:
+			continue
+		var tile := _global_to_tile(anchor as Vector2)
+		if not _is_tile_inside(tile):
+			continue
+		var panel_pos := _tile_to_panel(tile, map_rect)
+		var radius := enemy_pip_radius_px + 5.0
+		var color := Color(enemy_color, 0.34)
+		draw_arc(panel_pos, radius, 0.0, TAU, 20, color, 1.5)
+		draw_line(panel_pos + Vector2(-radius * 0.45, 0.0), panel_pos + Vector2(radius * 0.45, 0.0), color, 1.0)
+		draw_line(panel_pos + Vector2(0.0, -radius * 0.45), panel_pos + Vector2(0.0, radius * 0.45), color, 1.0)
 
 
 func _draw_passive_creature_marker(panel_pos: Vector2) -> void:

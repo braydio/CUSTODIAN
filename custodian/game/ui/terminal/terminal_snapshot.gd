@@ -22,11 +22,12 @@ func build(ui: Node) -> Dictionary:
 	var base_fidelity := _fidelity_policy.resolve(terminal_mode, sectors)
 	var arrn := collect_arrn(ui, String(base_fidelity).to_upper())
 	var fidelity := _fidelity_policy.resolve(terminal_mode, sectors, arrn)
-	var simulation_tick := int(game_state.get("tick")) if game_state != null and "tick" in game_state else Engine.get_physics_frames()
+	var simulation_tick := _resolve_simulation_tick(ui, game_state)
 	var simulation_ticks_per_second := 60
 	var system_counts := _collect_system_counts(sectors)
-	var sensor_truth := _collect_sensor_truth(ui)
+	var sensor_truth := _collect_sensor_truth(ui, simulation_tick)
 	var projected_sensors := IntelProjectorScript.project_contacts(sensor_truth, IntelProjectorScript.fidelity_from_name(fidelity), terminal_mode, simulation_tick)
+	var projected_forecast := IntelProjectorScript.project_forecast(director, IntelProjectorScript.fidelity_from_name(fidelity))
 	return {
 		"simulation_tick": simulation_tick,
 		"simulation_seconds": float(simulation_tick) / float(simulation_ticks_per_second),
@@ -46,6 +47,7 @@ func build(ui: Node) -> Dictionary:
 			str(director.get("objective", "none")).to_upper(),
 		] if not director.is_empty() else "?",
 		"director": director,
+		"sensor_forecast": projected_forecast,
 		"sensor_intelligence": projected_sensors,
 		"player_mode": "LIVE",
 		"contract_phase": game_state.get_phase_name() if game_state != null else "UNKNOWN",
@@ -64,13 +66,26 @@ func build(ui: Node) -> Dictionary:
 	}
 
 
-func _collect_sensor_truth(ui: Node) -> Dictionary:
+func _collect_sensor_truth(ui: Node, simulation_tick: int) -> Dictionary:
 	var model := ui.get_tree().get_first_node_in_group("sensor_intelligence_read_model")
 	if model == null:
 		return {"contacts": []}
 	if model.has_method("collect_now"):
-		model.call("collect_now")
+		model.call("collect_now", simulation_tick)
 	return model.call("get_truth_snapshot") if model.has_method("get_truth_snapshot") else {"contacts": []}
+
+
+func _resolve_simulation_tick(ui: Node, game_state: Node) -> int:
+	var runtime := ui.get_node_or_null("/root/GameRoot/WorldSimulationRuntime")
+	if runtime != null and runtime.has_method("current_snapshot"):
+		var snapshot = runtime.call("current_snapshot")
+		if snapshot != null and "fixed_tick" in snapshot:
+			return int(snapshot.fixed_tick)
+	if runtime != null and "clock" in runtime and runtime.clock != null:
+		return int(runtime.clock.fixed_tick)
+	if game_state != null and "tick" in game_state:
+		return int(game_state.get("tick"))
+	return Engine.get_physics_frames()
 
 
 func collect_infrastructure(ui: Node) -> Array[Dictionary]:

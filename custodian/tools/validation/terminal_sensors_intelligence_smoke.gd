@@ -33,11 +33,28 @@ func _run() -> void:
 	_expect(CLASSIFIER.classify("steal_resources") == &"STEALING", "steal classification")
 	_expect(CLASSIFIER.classify("sabotage_storage") == &"VANDALIZING", "sabotage classification")
 	_expect(CLASSIFIER.classify("escape_with_loot") == &"EXFILTRATING", "exfiltration classification")
+	model.stale_contact_ttl_ticks = 5
+	enemy_a.remove_from_group("enemy")
+	model.collect_now(111)
+	var stale_snapshot: Dictionary = model.get_truth_snapshot()
+	_expect(stale_snapshot["tracked_count"] == 2 and stale_snapshot["current_count"] == 1 and stale_snapshot["stale_count"] == 1, "missed observations must remain stale with honest counts")
+	_expect(bool(stale_snapshot["contacts"][0]["stale"]), "missed contact must be marked stale")
+	var original_id: String = stale_snapshot["contacts"][0]["contact_id"]
+	model.collect_now(117)
+	var expired_snapshot: Dictionary = model.get_truth_snapshot()
+	_expect(expired_snapshot["tracked_count"] == 1 and expired_snapshot["stale_count"] == 0, "stale contacts must expire after TTL")
+	enemy_a.add_to_group("enemy")
+	model.collect_now(118)
+	var reacquired_snapshot: Dictionary = model.get_truth_snapshot()
+	var reacquired_id := ""
+	for contact: Dictionary in reacquired_snapshot["contacts"]:
+		if contact["class_label"] == "GRUNT": reacquired_id = contact["contact_id"]
+	_expect(not reacquired_id.is_empty() and reacquired_id != original_id, "expired instance bookkeeping must be pruned before reacquisition")
 
 	var snapshot := {
 		"fidelity":"full", "terminal_mode":&"command",
 		"sensor_intelligence":{"contacts":[], "tracked_count":0, "current_count":0},
-		"director":{"active_lane":"north", "lane":"east", "objective":"destroy_power", "composition":["grunt"]},
+		"sensor_forecast":{"ingress":"north", "objective":"destroy_power", "composition":["grunt"]},
 		"arrn":{"knowledge_index":3, "knowledge_max":7, "relays":[{"status":"STABLE"}]},
 	}
 	var vm: Dictionary = VIEW_MODEL.build(snapshot, 2)
