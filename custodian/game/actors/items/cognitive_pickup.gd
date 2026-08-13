@@ -28,6 +28,12 @@ const ITEM_ANIMATION_TEXTURES := {
 	&"ancient_bearing": preload("res://content/sprites/items/ancient_bearing.png"),
 }
 
+const ITEM_TOAST_ICONS := {
+	&"faint_recollection": preload("res://content/sprites/items/shrumb_drops/faint_recollection_icon_64.png"),
+	&"residual_instinct": preload("res://content/sprites/items/shrumb_drops/residual_instinct_icon_64.png"),
+	&"ancient_bearing": preload("res://content/sprites/items/shrumb_drops/ancient_bearing_icon_64.png"),
+}
+
 @onready var visual: Sprite2D = get_node_or_null("Visual")
 @onready var label: Label = get_node_or_null("Label")
 
@@ -71,7 +77,7 @@ func _on_body_entered(body: Node) -> void:
 	if cognitive != null:
 		cognitive.add_from_item(item_id, quantity)
 
-	_show_loot_toast(item_id, _get_display_name(), quantity, ITEM_COLORS.get(item_id, Color.WHITE), ITEM_ANIMATION_TEXTURES.get(item_id, null), "Cognitive imprint secured")
+	_show_loot_toast(item_id, _get_display_name(), quantity, ITEM_COLORS.get(item_id, Color.WHITE), ITEM_TOAST_ICONS.get(item_id, null), "Cognitive imprint secured")
 	_spawn_pickup_popup()
 	_play_pickup_tone()
 	print("[CognitivePickup] %s +%d" % [_get_display_name(), quantity])

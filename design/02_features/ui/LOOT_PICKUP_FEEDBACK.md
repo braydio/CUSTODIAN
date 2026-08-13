@@ -20,6 +20,11 @@ The queue is presentation-only. Inventory, material, vault, ammo, and consumable
 authorities remain in their existing owning systems. Stolen resources use one
 summary entry listing each recovered resource in the detail line.
 
+Depleting a harvest node pushes one entry for each primary and secondary yield,
+using the resource definition label and its single-frame inventory icon. Forest
+Shrumb cognitive pickups likewise use their single-frame 64px item icons in the
+toast; their animated four-frame sheets remain world-pickup presentation only.
+
 ## Visual contract
 
 Entries are `320×52` panels with a 4px category accent, optional 32px icon,

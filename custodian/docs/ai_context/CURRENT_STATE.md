@@ -13,6 +13,12 @@ Documentation updates this session:
 
 ## Runtime Status
 
+- Pickup toast coverage now includes harvesting-node primary and secondary
+  yields, using canonical resource labels and single-frame inventory icons.
+  Forest Shrumb cognitive pickup toasts use their single-frame 64px item icons
+  while the animated four-frame sheets remain exclusive to world presentation;
+  Residual Instinct icon filenames now match the other Shrumb drop families.
+
 - Terminal Sensors Intelligence V1 is a read-only derived model, not a new
   simulation authority. Stable `C-###` contacts, bounded 180-tick last-known
   stale records, and live Enemy behavior truth

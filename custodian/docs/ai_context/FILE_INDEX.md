@@ -161,7 +161,7 @@ Last updated: 2026-08-12
 - `custodian/game/systems/debug/dev_mode.gd` — release-safe developer capability authority plus F2 procgen-major-visual isolation, F6 free-camera, F7 infinite-health, and F8 infinite-stamina playtest controls and active-state overlay
 - `custodian/game/world/camera.gd` — shared gameplay camera controller; developer mode can temporarily suspend follow/framing/bounds for arrow/MMB pan and wheel zoom, then restore the prior camera state
 - `custodian/game/systems/debug/dev_observatory.gd` — sole F9 presentation owner plus F10 one-snapshot stable/timestamped export; wall-clock Performance Incident Recorder with boundary invalidation, excluded external stalls, degraded/recovery latch, bounded samples/dossiers, phase/span summaries, lifecycle deltas, and likely-owner evidence.
-- `custodian/game/ui/loot/loot_toast_queue.{gd,tscn}` and `loot_toast_entry.{gd,tscn}` — centralized HUD pickup feedback queue with four-entry cap, same-item merge window, shared accent/icon/detail presentation, and timed enter/hold/exit animation.
+- `custodian/game/ui/loot/loot_toast_queue.{gd,tscn}` and `loot_toast_entry.{gd,tscn}` — centralized HUD pickup feedback queue with four-entry cap, same-item merge window, shared accent/icon/detail presentation, timed enter/hold/exit animation, and producers covering loot plus harvesting-node yields.
 - `design/02_features/debug_ui/DEVELOPER_OBSERVATORY_SYSTEM.md` — active observatory authority for the existing DevObservatory autoload, runtime telemetry surfaces, and instrumentation extensions.
 - `design/02_features/ui/LOOT_PICKUP_FEEDBACK.md` — active authority for centralized loot pickup toast routing and presentation.
 - `custodian/game/systems/core/systems/power.gd` and `custodian/game/infrastructure/components/power_consumer_component.gd` — deterministic final-allocation grid authority; allocation passes publish once per consumer and unchanged allocation/tier/output state emits no signal or tier telemetry.
@@ -750,6 +750,7 @@ Last updated: 2026-08-12
 - `custodian/content/sprites/items/faint_recollection.png` — animated 4-frame pickup sheet for Faint Recollection
 - `custodian/content/sprites/items/faded_instinct.png` — animated 4-frame pickup sheet currently used for `residual_instinct`
 - `custodian/content/sprites/items/ancient_bearing.png` — animated 4-frame pickup sheet for Ancient Bearing
+- `custodian/content/sprites/items/shrumb_drops/*_icon_<size>.png` — single-frame Forest Shrumb item icons used by pickup toasts and inventory-scale presentation.
 - `custodian/content/ui/terminal/README.md` — intended terminal PNG asset paths for frames, overlays, icons, pips, and button skins
 
 ## Active Prop Content

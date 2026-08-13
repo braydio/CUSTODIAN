@@ -81,6 +81,9 @@ const DEFAULT_RESOURCE_NODE_KINDS := {
 	"memory_glass_fragment": "shattered_archive_terminal",
 }
 
+const RESOURCE_TOAST_ACCENT := Color(0.58, 0.78, 0.68, 1.0)
+const RESOURCE_ICON_PATTERN := "res://content/ui/inventory/icons/resources/icon_%s.png"
+
 @onready var visual: Polygon2D = get_node_or_null("Visual") as Polygon2D
 @onready var node_sprite: AnimatedSprite2D = get_node_or_null("NodeSprite") as AnimatedSprite2D
 @onready var fx_sprite: AnimatedSprite2D = get_node_or_null("FxSprite") as AnimatedSprite2D
@@ -169,11 +172,37 @@ func _deposit_yields() -> void:
 		return
 
 	ledger.call("add", resource_id, yield_amount)
+	_show_harvest_toast(resource_id, yield_amount, ledger)
 	for secondary_id_variant in secondary_yields.keys():
 		var secondary_id := str(secondary_id_variant)
 		var amount := int(secondary_yields[secondary_id_variant])
 		if amount > 0:
 			ledger.call("add", secondary_id, amount)
+			_show_harvest_toast(secondary_id, amount, ledger)
+
+
+func _show_harvest_toast(harvested_resource_id: String, amount: int, ledger: Node) -> void:
+	var queue := get_tree().get_first_node_in_group("loot_toast_queue")
+	if queue == null:
+		return
+	var display_name := harvested_resource_id.replace("_", " ").capitalize()
+	if ledger.has_method("get_resource_defs"):
+		var resource_defs: Dictionary = ledger.call("get_resource_defs")
+		var resource_def: Dictionary = resource_defs.get(harvested_resource_id, {})
+		display_name = str(resource_def.get("label", display_name))
+	var icon: Texture2D = null
+	var icon_path := RESOURCE_ICON_PATTERN % harvested_resource_id
+	if ResourceLoader.exists(icon_path):
+		icon = load(icon_path) as Texture2D
+	queue.call(
+		"push_pickup",
+		StringName(harvested_resource_id),
+		display_name,
+		amount,
+		RESOURCE_TOAST_ACCENT,
+		icon,
+		"Resource harvested"
+	)
 
 
 func _apply_visual_state() -> void:

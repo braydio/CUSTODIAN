@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d28n6dsba1jfd"
-path="res://.godot/imported/residual_instinct_icon_01_64.png-501b07ee19752a707e95ce7f653bb8f1.ctex"
+uid="uid://blcj7m2t1ly5d"
+path="res://.godot/imported/residual_instinct_icon_32.png-3daf1587e49f834deecc92366734198d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/items/shrumb_drops/residual_instinct_icon_01_64.png"
-dest_files=["res://.godot/imported/residual_instinct_icon_01_64.png-501b07ee19752a707e95ce7f653bb8f1.ctex"]
+source_file="res://content/sprites/items/shrumb_drops/residual_instinct_icon_32.png"
+dest_files=["res://.godot/imported/residual_instinct_icon_32.png-3daf1587e49f834deecc92366734198d.ctex"]
 
 [params]
 
