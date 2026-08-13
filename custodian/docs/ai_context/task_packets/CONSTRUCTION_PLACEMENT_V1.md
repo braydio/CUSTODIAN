@@ -7,7 +7,7 @@
 - Constraints: Capacitor only; preserve tactical turret/barricade flow; no production art; no save migration; no push.
 - Acceptance: user brief sections 27–31.
 - Completed: Design ownership, permanent placement runtime, dedicated UI, transaction safety, behavioral smokes, and changed-file validation.
-- Deferred: later structure catalog, demolition/repositioning, upgrades, cables, construction agents, production art.
+- Deferred: later structure catalog, demolition/repositioning, upgrades, cables, construction agents, production art, an optional broader compound runtime root, and any repo-wide spatial-authority audit.
 
 ## Ownership And Timing
 
@@ -37,9 +37,23 @@
 - `FILE_INDEX.md`: index new runtime/design/test entrypoints.
 - Local routing/readmes: correct `content/fabrication/REQUIRED_ASSETS.md` Light Barricade drift.
 
+## Generated Contract Spatial Authority
+
+- Procgen now owns deterministic `compound_fabricator_anchor` and
+  `compound_construction_zone_anchor` tile-space semantics selected from the
+  finalized compound layout.
+- `ContractWorldLoader` converts those anchors through the procgen map's
+  canonical transform and repositions the existing persistent Field Fabricator
+  and construction-zone nodes without replacing their behavior or state.
+- Both anchors must remain generated floor and outside walls/ocean/chasm;
+  missing or invalid anchors produce a bounded placement diagnostic rather than
+  silently using world origin.
+
 ## Handoff
 
-- Next action: reconcile the fixed world-origin Fabricator yard with the seed-dependent generated compound floor before final production placement review.
-- Best starting files: `game.tscn`, `contract_world_loader.gd`, and the procgen compound anchors returned by `ProcGenTilemap.get_level_data()`.
-- Validation run: changed selector plus new and existing focused smokes pass.
-- Blocker: the production run found no generated floor beneath the fixed `FieldFabricatorMk1` at `(1120, -480)`; the nearest floor was seed-dependent and about 1,000 px away. The bounded zone is intentionally not enlarged to mask that pre-existing authoring mismatch.
+- Next action: production placement review can now use the generated fabrication yard; broader spatial-authority refactors remain optional follow-up work.
+- Best starting files: `persistent_compound_layout_planner.gd`, `proc_gen_tilemap.gd`, `contract_world_loader.gd`, and `contract_world_population_placement_smoke.gd`.
+- Validation: the focused population smoke proves generated-floor containment,
+  canonical transform placement, and same-seed anchor determinism.
+- Resolved blocker: the Field Fabricator and bounded yard no longer retain their
+  fixed world-origin-authored runtime positions in generated contracts.

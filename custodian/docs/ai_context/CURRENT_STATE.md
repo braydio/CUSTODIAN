@@ -21,6 +21,11 @@ Documentation updates this session:
   dedicated construction HUD. The full terminal closes during permanent
   placement and reopens to FABRICATION only on cancellation. `TurretPlacement`
   retains Basic Turret and Light Barricade tactical compatibility only.
+  Procgen now exports deterministic `compound_fabricator_anchor` and
+  `compound_construction_zone_anchor` floor tiles; `ContractWorldLoader` uses
+  the map's canonical transform to position the existing persistent Field
+  Fabricator and yard nodes. Their authored scene transforms are no longer
+  generated-contract spatial authority.
 
 - Procgen runtime mutation attribution is now cached at the authoritative wall
   collision, walkable-boundary, navigation, and terrain-commit paths. F10 and

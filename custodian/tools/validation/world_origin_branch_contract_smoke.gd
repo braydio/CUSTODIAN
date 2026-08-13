@@ -13,8 +13,6 @@ const REQUIRED_ORIGIN_BRANCHES := [
 	"Allies",
 	"Items",
 	"ContractMap",
-	"AmbientHostileCampEast",
-	"AmbientHostileCampWest",
 	"LightBuggy",
 	"WallPlacer",
 	"WallBuildSystem",
@@ -23,6 +21,8 @@ const REQUIRED_ORIGIN_BRANCHES := [
 	"DroneManager",
 	"CommandTerminal",
 	"FieldFabricatorMk1",
+	"FabricationConstructionZone",
+	"ConstructionPlacement",
 ]
 const PERSISTENT_WORLD_NODES := [
 	"LevelLoader",

@@ -7,6 +7,8 @@ class_name ContractWorldLoader
 @export var operator_path: NodePath = NodePath("/root/GameRoot/World/Operator")
 @export var spawn_nodes_path: NodePath = NodePath("/root/GameRoot/World/SpawnNodes")
 @export var command_terminal_path: NodePath = NodePath("/root/GameRoot/World/CommandTerminal")
+@export var field_fabricator_path: NodePath = NodePath("/root/GameRoot/World/FieldFabricatorMk1")
+@export var fabrication_construction_zone_path: NodePath = NodePath("/root/GameRoot/World/FabricationConstructionZone")
 @export var vehicle_root_path: NodePath = NodePath("/root/GameRoot/World")
 @export var items_root_path: NodePath = NodePath("/root/GameRoot/World/Items")
 @export var camera_path: NodePath = NodePath("/root/GameRoot/World/Camera2D")
@@ -16,6 +18,7 @@ class_name ContractWorldLoader
 @export var reposition_operator_from_contract: bool = true
 @export var reposition_spawn_nodes_from_contract: bool = true
 @export var reposition_terminal_from_contract: bool = true
+@export var reposition_construction_population_from_contract: bool = true
 @export var reposition_vehicles_from_contract: bool = true
 @export var reposition_items_from_contract: bool = true
 @export var reposition_camera_from_contract: bool = true
@@ -163,6 +166,8 @@ func _on_contract_generated(contract: Dictionary) -> void:
 		_position_spawn_nodes(level_data, map_instance)
 	if reposition_terminal_from_contract:
 		_position_command_terminal(level_data, map_instance)
+	if reposition_construction_population_from_contract:
+		_position_construction_population(level_data, map_instance)
 	if reposition_vehicles_from_contract:
 		_position_vehicles(level_data, map_instance)
 	if reposition_items_from_contract:
@@ -671,6 +676,66 @@ func _position_command_terminal(level_data: Dictionary, map_instance: Node) -> v
 	if chosen_tile == Vector2i.ZERO:
 		chosen_tile = player_spawn_tile
 	terminal.global_position = _tile_to_world(map_instance, chosen_tile)
+
+
+func _position_construction_population(level_data: Dictionary, map_instance: Node) -> void:
+	_place_population_node(
+		get_node_or_null(field_fabricator_path) as Node2D,
+		level_data,
+		&"compound_fabricator_anchor",
+		&"field_fabricator",
+		map_instance
+	)
+	_place_population_node(
+		get_node_or_null(fabrication_construction_zone_path) as Node2D,
+		level_data,
+		&"compound_construction_zone_anchor",
+		&"construction_zone",
+		map_instance
+	)
+
+
+func _place_population_node(
+	node: Node2D,
+	level_data: Dictionary,
+	anchor_key: StringName,
+	population_role: StringName,
+	map_instance: Node
+) -> void:
+	if node == null:
+		return
+	var anchor: Variant = level_data.get(anchor_key)
+	if not (anchor is Vector2i):
+		_observe_population_placement(&"contract_population_placement_failed", level_data, {
+			"population_role": population_role,
+			"anchor_key": anchor_key,
+			"reason": "missing_or_invalid_tile_anchor",
+		})
+		push_warning("[ContractWorldLoader] Missing Vector2i population anchor %s for %s" % [anchor_key, population_role])
+		return
+	if not map_instance.has_method("tile_to_global_position"):
+		_observe_population_placement(&"contract_population_placement_failed", level_data, {
+			"population_role": population_role,
+			"anchor_key": anchor_key,
+			"reason": "canonical_map_transform_unavailable",
+		})
+		push_warning("[ContractWorldLoader] Map lacks canonical tile_to_global_position for %s" % population_role)
+		return
+	node.global_position = map_instance.call("tile_to_global_position", anchor as Vector2i)
+	_observe_population_placement(&"contract_population_placed", level_data, {
+		"population_role": population_role,
+		"anchor_key": anchor_key,
+		"anchor_tile": anchor,
+	})
+
+
+func _observe_population_placement(event_name: StringName, level_data: Dictionary, payload: Dictionary) -> void:
+	var observatory := get_node_or_null("/root/DevObservatory")
+	if observatory == null or not observatory.has_method("log_event"):
+		return
+	var event_payload := payload.duplicate(true)
+	event_payload["generation_id"] = level_data.get("generation_id", level_data.get("seed", "unknown"))
+	observatory.call("log_event", event_name, event_payload)
 
 
 func _position_item_anchors(level_data: Dictionary, map_instance: Node) -> void:

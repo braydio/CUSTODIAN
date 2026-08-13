@@ -1017,13 +1017,19 @@ godot --headless --path . --script res://tools/validation/construction_placement
 godot --headless --path . --script res://tools/validation/construction_placement_validator_smoke.gd
 godot --headless --path . --script res://tools/validation/construction_placement_controller_smoke.gd
 godot --headless --path . --script res://tools/validation/construction_placement_ui_smoke.gd
+godot --headless --path . --script res://tools/validation/contract_world_population_placement_smoke.gd
 godot --headless --path . --script res://tools/validation/powered_fabricator_slice_smoke.gd
 godot --headless --path . --script res://tools/validation/infrastructure_save_restore_smoke.gd
 godot --headless --path . --script res://tools/validation/power_rate_units_smoke.gd
 godot --headless --path . --script res://tools/validation/turret_placement_smoke.gd
 ```
 
-The save/restore smoke proves the versioned `InfrastructureRegistry` boundary. It does not imply project-wide save-manager integration.
+The population-placement smoke runs deterministic procgen twice and proves the
+two persistent construction nodes match their semantic anchors through the
+canonical map transform while those anchors remain authoritative generated
+floor outside walls, ocean, and chasm. The save/restore smoke proves the
+versioned `InfrastructureRegistry` boundary. It does not imply project-wide
+save-manager integration.
 
 ## Ambient Enemy Navigation Performance
 

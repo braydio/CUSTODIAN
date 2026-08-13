@@ -430,6 +430,8 @@ var _last_compound_corridor_cells: Array[Vector2i] = []
 var _last_compound_courtyard_cells: Array[Vector2i] = []
 var _last_compound_primary_anchor := Vector2i.ZERO
 var _last_compound_terminal_anchor := Vector2i.ZERO
+var _last_compound_fabricator_anchor := Vector2i.ZERO
+var _last_compound_construction_zone_anchor := Vector2i.ZERO
 var _last_compound_diagnostics: Dictionary = {}
 var _last_interior_region_rect: Rect2i = Rect2i()
 var _last_interior_rooms: Array[Rect2i] = []
@@ -3603,6 +3605,8 @@ func _apply_compound_layout(map_size: Vector2i) -> void:
 		_last_compound_connections.clear()
 		_last_compound_corridor_cells.clear()
 		_last_compound_courtyard_cells.clear()
+		_last_compound_fabricator_anchor = Vector2i.ZERO
+		_last_compound_construction_zone_anchor = Vector2i.ZERO
 		_last_compound_diagnostics = compound.get("diagnostics", {}).duplicate(true)
 		push_warning("[ProcGenTilemap] Semantic compound generation failed: %s" % _last_compound_diagnostics.get("failure_reason", "unknown"))
 		return
@@ -3617,6 +3621,8 @@ func _apply_compound_layout(map_size: Vector2i) -> void:
 		_last_compound_connections.clear()
 		_last_compound_corridor_cells.clear()
 		_last_compound_courtyard_cells.clear()
+		_last_compound_fabricator_anchor = Vector2i.ZERO
+		_last_compound_construction_zone_anchor = Vector2i.ZERO
 		return
 
 	_last_compound_rect = rect
@@ -3628,6 +3634,8 @@ func _apply_compound_layout(map_size: Vector2i) -> void:
 	_last_compound_courtyard_cells = (compound.get("courtyard_cells", []) as Array).duplicate()
 	_last_compound_primary_anchor = compound.get("primary_anchor", Vector2i.ZERO)
 	_last_compound_terminal_anchor = compound.get("terminal_anchor", Vector2i.ZERO)
+	_last_compound_fabricator_anchor = compound.get("fabricator_anchor", Vector2i.ZERO)
+	_last_compound_construction_zone_anchor = compound.get("construction_zone_anchor", Vector2i.ZERO)
 	_last_compound_diagnostics = (compound.get("diagnostics", {}) as Dictionary).duplicate(true)
 
 	for x in range(rect.position.x, rect.end.x):
@@ -9735,6 +9743,7 @@ func _world_shape_mode_name() -> String:
 
 func get_level_data() -> Dictionary:
 	return {
+		"generation_id": _debug_generation_id,
 		"map_size": procgen_node.map_size,
 		"tile_size": get_runtime_tile_size(),
 		"player_spawn": get_player_spawn(),
@@ -9752,6 +9761,8 @@ func get_level_data() -> Dictionary:
 		"compound_courtyard_cells": _last_compound_courtyard_cells.duplicate(),
 		"compound_primary_anchor": _last_compound_primary_anchor,
 		"compound_terminal_anchor": _last_compound_terminal_anchor,
+		"compound_fabricator_anchor": _last_compound_fabricator_anchor,
+		"compound_construction_zone_anchor": _last_compound_construction_zone_anchor,
 		"compound_diagnostics": _last_compound_diagnostics.duplicate(true),
 		"main_road_tiles": get_main_road_tiles(),
 		"parking_zone_tiles": get_parking_zone_tiles(),

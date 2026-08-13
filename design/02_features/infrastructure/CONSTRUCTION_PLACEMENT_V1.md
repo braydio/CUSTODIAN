@@ -77,9 +77,24 @@ successful commit returns to ordinary world HUD without reopening the terminal.
 ## Initial Zone
 
 `FabricationConstructionZone` is a bounded 384×320, 32px-aligned yard centered
-near the authored Field Fabricator. It supports power/fabrication categories
-and compound/fabrication site tags. Its faint boundary is visible only during
-permanent construction mode.
+on generated compound service-area floor near the Field Fabricator. It supports
+power/fabrication categories and compound/fabrication site tags. Its faint
+boundary is visible only during permanent construction mode.
+
+## Generated Contract Spatial Authority
+
+Procgen owns semantic tile anchors for persistent contract-world population.
+`ContractWorldLoader` owns their canonical tile-to-world conversion and applies
+the resulting runtime transforms to the existing authored nodes. The Field
+Fabricator and `FabricationConstructionZone` own behavior after placement, but
+do not author their runtime positions when generated contract authority is
+present; scene transforms are editor/fallback defaults only.
+
+The level-data keys are `compound_fabricator_anchor` and
+`compound_construction_zone_anchor`. Both are deterministic `Vector2i` values
+inside authoritative generated floor and outside generated walls, ocean, and
+chasm authority. A missing or invalid anchor is diagnosed once and never
+silently converted to world origin.
 
 ## Out of Scope
 
@@ -97,3 +112,5 @@ demolition/refunds, save migration, builders/drones, and production art.
 - Tactical turret/barricade behavior remains intact.
 - Focused controller, validator, UI, construction, fabrication, power, and
   tactical regressions pass.
+- Persistent construction population matches its semantic anchors through the
+  procgen map's canonical transform, and both anchors remain generated floor.

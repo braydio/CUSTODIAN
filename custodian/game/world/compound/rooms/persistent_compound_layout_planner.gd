@@ -77,6 +77,15 @@ func generate_layout(seed: int, compound_rect: Rect2i, ingress: Array[Vector2i] 
 	var command := _room_by_type(rooms, COMMAND_TYPE)
 	var command_rect: Rect2i = command.get("rect", Rect2i())
 	var terminal_anchor := command_rect.position + Vector2i(command_rect.size.x / 2, command_rect.size.y / 2)
+	var fabricator_anchor := _pick_fabricator_anchor(rooms)
+	var construction_zone_anchor := _pick_construction_zone_anchor(
+		compound_rect,
+		inner,
+		rooms,
+		fabricator_anchor
+	)
+	if fabricator_anchor == Vector2i.ZERO or construction_zone_anchor == Vector2i.ZERO:
+		return _invalid("population_anchor_placement_failed", compound_rect, ingress)
 
 	return {
 		"valid": true,
@@ -90,6 +99,8 @@ func generate_layout(seed: int, compound_rect: Rect2i, ingress: Array[Vector2i] 
 		"buildings": buildings,
 		"primary_anchor": terminal_anchor,
 		"terminal_anchor": terminal_anchor,
+		"fabricator_anchor": fabricator_anchor,
+		"construction_zone_anchor": construction_zone_anchor,
 		"diagnostics": {
 			"target_room_count": target,
 			"actual_room_count": rooms.size(),
@@ -101,6 +112,53 @@ func generate_layout(seed: int, compound_rect: Rect2i, ingress: Array[Vector2i] 
 			"fallbacks_used": 0,
 		},
 	}
+
+
+func _pick_fabricator_anchor(rooms: Array[Dictionary]) -> Vector2i:
+	for preferred_type in ["fabrication", "maintenance", "service_annex"]:
+		var room := _room_by_type(rooms, preferred_type)
+		var rect: Rect2i = room.get("rect", Rect2i())
+		if rect.size.x >= 3 and rect.size.y >= 3:
+			return Vector2i(rect.get_center())
+	return Vector2i.ZERO
+
+
+func _pick_construction_zone_anchor(
+	compound_rect: Rect2i,
+	inner: Rect2i,
+	rooms: Array[Dictionary],
+	fabricator_anchor: Vector2i
+) -> Vector2i:
+	# Reserve a valid initial Capacitor footprint within the larger behavioral
+	# zone; the zone's remaining area is still validated against live floor at use.
+	const ZONE_SIZE := Vector2i(3, 2)
+	var candidates: Array[Dictionary] = []
+	for y in range(inner.position.y, inner.end.y - ZONE_SIZE.y + 1):
+		for x in range(inner.position.x, inner.end.x - ZONE_SIZE.x + 1):
+			var zone_rect := Rect2i(Vector2i(x, y), ZONE_SIZE)
+			if _overlaps_any(zone_rect, rooms):
+				continue
+			var center := Vector2i(zone_rect.get_center())
+			var edge_clearance := mini(
+				mini(zone_rect.position.x - compound_rect.position.x, compound_rect.end.x - zone_rect.end.x),
+				mini(zone_rect.position.y - compound_rect.position.y, compound_rect.end.y - zone_rect.end.y)
+			)
+			candidates.append({
+				"anchor": center,
+				"score": -center.distance_squared_to(fabricator_anchor) + edge_clearance * 64,
+			})
+	if candidates.is_empty():
+		return Vector2i.ZERO
+	candidates.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		var score_a := int(a.get("score", 0))
+		var score_b := int(b.get("score", 0))
+		if score_a != score_b:
+			return score_a > score_b
+		var anchor_a: Vector2i = a.get("anchor", Vector2i.ZERO)
+		var anchor_b: Vector2i = b.get("anchor", Vector2i.ZERO)
+		return anchor_a.y < anchor_b.y if anchor_a.y != anchor_b.y else anchor_a.x < anchor_b.x
+	)
+	return candidates[0].get("anchor", Vector2i.ZERO)
 
 
 func _select_assignments(target: int) -> Array[Dictionary]:
