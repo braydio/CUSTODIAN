@@ -431,10 +431,9 @@ The ocean TileSet smoke also validates all 20 shoreline foam sources (straight,
 convex corner, inner corner, endcap, and T-junction) as native 32x32 alpha
 overlays with no collision/navigation, and verifies Keep frontage floor sources
 129–132. For renderer acceptance, use
-`sundered_keep_procgen_frontage_seed_review.gd`; it records entry, takeover,
-offshore-ruins reveal, first apex, ruins departure, fortress reveal/apex,
-gameplay return, terminal approach, and a boundary-cliff close-up without
-changing production camera choreography.
+`sundered_keep_procgen_frontage_seed_review.gd`; it records exact
+`S=0/4/8/12/16/20/24/28/32/36/52` route-distance frames plus a
+boundary-cliff close-up without changing production camera choreography.
 
 These smokes prove complete exclusive deterministic chasm/ocean semantics,
 visual-only 32×32 Sundered ocean TileSet sources, protected procgen floor/corridor authority, a merged

@@ -270,10 +270,11 @@ func _camera_anchors_are_ordered(
 	var ordered_names := [
 		"frontage_entry",
 		"first_influence_start",
-		"first_reveal_apex",
-		"first_return_complete",
 		"frontage_reveal_start",
+		"first_reveal_apex",
 		"frontage_apex",
+		"vista_apex_plateau_end",
+		"first_return_complete",
 		"gameplay_return",
 		"gate_threshold",
 	]

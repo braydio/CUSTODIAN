@@ -39,32 +39,34 @@ polygon = PackedVector2Array(-4096, -4096, 4096, -4096, 4096, 4096, -4096, 4096)
 z_index = 10
 texture_filter = 1
 material = SubResource("ShaderMaterial_ocean_mask")
-position = Vector2(0, -10)
+position = Vector2(302.9999, -10)
+scale = Vector2(1.2299999, 1)
 texture = ExtResource("2_storm")
 
 [node name="OceanRuinsPresentation" type="Node2D" parent="VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation" unique_id=857477374]
-z_index = 20
+z_index = 22
 
 [node name="BrokenArchWalkway" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/OceanRuinsPresentation" unique_id=128493547]
 modulate = Color(0.48, 0.58, 0.7, 0.84)
 texture_filter = 1
-position = Vector2(-950, -86)
-scale = Vector2(0.46, 0.46)
+position = Vector2(-160, -20)
+scale = Vector2(0.3, 0.3)
 texture = ExtResource("11_broken_arch")
 
 [node name="DrownedCauseway" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/OceanRuinsPresentation" unique_id=1777123341]
 modulate = Color(0.38, 0.48, 0.6, 0.56)
 texture_filter = 1
-position = Vector2(82, 36)
-scale = Vector2(0.32, 0.32)
+z_index = -1
+position = Vector2(135, 62)
+scale = Vector2(0.26, 0.26)
 texture = ExtResource("12_causeway")
 
 [node name="RuinsMist" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/OceanRuinsPresentation" unique_id=1918310898]
-modulate = Color(0.62, 0.7, 0.79, 0.28)
+modulate = Color(0.62, 0.7, 0.79, 0.16)
 z_index = 2
 texture_filter = 1
-position = Vector2(16, 64)
-scale = Vector2(0.38, 0.18)
+position = Vector2(0, 82)
+scale = Vector2(0.34, 0.14)
 texture = ExtResource("8_frontage_fog")
 
 [node name="RevealFog" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation" unique_id=949326141]
@@ -78,28 +80,31 @@ texture = ExtResource("4_fog")
 
 [node name="OuterWall" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/FortressPresentation" unique_id=591507919]
 modulate = Color(0.4, 0.48, 0.58, 1)
-z_index = 40
+z_index = 14
 texture_filter = 1
-position = Vector2(368, -42)
-scale = Vector2(0.18696173, 0.17464133)
+position = Vector2(-170, 30)
+scale = Vector2(0.24, 0.24)
 texture = ExtResource("7_wall")
 
 [node name="CentralCitadel" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/FortressPresentation" unique_id=462135778]
 modulate = Color(0.44, 0.51, 0.61, 1)
-z_index = 45
+z_index = 15
 texture_filter = 1
-position = Vector2(616, -61.000004)
-scale = Vector2(0.2925917, 0.18732856)
+position = Vector2(145, -80)
+scale = Vector2(0.22, 0.22)
 texture = ExtResource("6_citadel")
 
 [node name="FrontageFog" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/FortressPresentation" unique_id=1605089818]
-z_index = 50
+z_index = 16
 texture_filter = 1
-position = Vector2(124, 6)
+position = Vector2(0, 90)
+scale = Vector2(0.38, 0.16)
 texture = ExtResource("8_frontage_fog")
 
 [node name="MoonlightSweep" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/FortressPresentation" unique_id=1828262188]
-z_index = 52
+visible = false
+modulate = Color(1, 1, 1, 0.32)
+z_index = 28
 texture_filter = 1
 position = Vector2(0, -180)
 texture = ExtResource("10_moonlight")

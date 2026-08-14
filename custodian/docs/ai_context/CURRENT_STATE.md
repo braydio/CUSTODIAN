@@ -131,7 +131,7 @@ Documentation updates this session:
   debug calibration overlay remain useful presentation infrastructure, while
   physical `bullet.gd` travel and collision remain final authority.
 - Procgen now classifies every final in-map non-floor cell as explicit `chasm` or claimed `ocean` semantic state without consulting wall dressing. Sundered Keep emits the first bounded north-facing ocean claim; resolved cells paint visual-only 32×32 dark water and unambiguous cardinal foam on absolute-depth surface layers while the existing final-floor `RuntimeWalkableBoundary` remains physical authority. Ocean/chasm sets export through level data and survive accepted-candidate promotion unchanged. The seam-safe camera-following depth backdrop remains live rather than switching to finite connected-region stacks.
-- Generated procgen walkable floor now has a global non-destructible cardinal-edge collision frontier built after final playability remediation; contiguous edges merge into one runtime body rather than filling void cells, and visual/destructible cliff walls no longer act as the traversal security perimeter. Sundered Keep frontages emit and validate a separating vista commit line plus terminal apron across production seeds. Its procgen camera now keeps one continuous horizon-to-fortress envelope through the 90% return anchor, targets generated Keep semantics, holds fortress apex for 0.9 seconds without freezing movement, scales the distant Keep to 0.44, and plays the existing six-frame moonlight sweep once at fortress apex.
+- Generated procgen walkable floor now has a global non-destructible cardinal-edge collision frontier built after final playability remediation; contiguous edges merge into one runtime body rather than filling void cells, and visual/destructible cliff walls no longer act as the traversal security perimeter. Sundered Keep frontages emit and validate a separating vista commit line plus terminal apron across production seeds. Their procgen cinematic now uses polyline tile-arc distance: influence begins 52 cells before the gate, one fixed ruins/Keep composition owns the spatial `S16-S24` apex, moonlight fires once at `S20`, and camera authority returns at `S36`, leaving 16 route cells of ordinary play before the `S52` terminal. There is no percentage choreography, second camera subject, or timed fortress hold; physical scenery remains continuously visible and persists in subdued form after return.
 - The Sundered Keep procgen vista layering pass now cools and fully retires the
   first landmark by 42% of frontage takeover, fades the reveal veil nearly away, and
   presents the outer wall/citadel as a smaller blue-gray distant mass. The
@@ -218,7 +218,7 @@ Documentation updates this session:
   It uses the exact live Keep silhouette as its
   alpha/edge authority, peaks as a restrained cold additive exposure lift,
   and settles nearly transparent. The procgen vista controller now plays it
-  once at fortress apex as part of the live continuous reveal envelope.
+  once at `S20` inside the fixed-composition spatial apex without moving camera.
 - Sundered Keep painterly backgrounds now use a role-based layout documented by
   `content/backgrounds/sundered_keep/README.md`: shared underlays, horizons,
   and landmarks; Approach underlay, fog, light, occlusion, parallax, playable,
@@ -635,7 +635,7 @@ Documentation updates this session:
 
 ## Active Gaps
 
-- Sundered Keep procgen frontage now uses topology-aware shoreline foam (straight edges, convex/inner corners, endcaps, and T junctions), boundary-derived 64×96 cliff placements, and a nearest-sampled StormHorizon shader mask that exposes the opaque panorama only through authoritative ocean inside gameplay-map bounds. Its first camera subject is an actual-ocean anchored drowned broken-arch/causeway composition; final OuterWall/CentralCitadel remains the sole Keep. All remain presentation-only. Renderer-backed two-seed capture approval is still open, so overall layering review is not complete.
+- Sundered Keep procgen frontage now uses topology-aware shoreline foam (straight edges, convex/inner corners, endcaps, and T junctions), boundary-derived 64×96 cliff placements, and a nearest-sampled StormHorizon shader mask that exposes the opaque panorama only through authoritative ocean inside gameplay-map bounds. An actual-ocean anchored drowned broken-arch/causeway and the final OuterWall/CentralCitadel coexist in the one fixed procgen vista composition. All remain presentation-only. Exact-distance renderer captures exist for seeds 1, 17, and 71, while overall art-direction approval remains open.
 
 - Persistent Compound Layout V1 retires the fixed four-building/two-column production layout. ProcGenTilemap now exports deterministic semantic rooms, doors, corridors, anchors, and connections for a standard 10–13-room campus; ContractWorldLoader positions existing Sector nodes by canonical `sector_id` instead of building-array index, and shared MinimapView renders semantic topology with legacy rectangle fallback. Procedural shells are live physical geometry. Curated `.tmj` room interiors remain incomplete and deferred; `default_compound.json` remains a dormant EDGAR sample rather than persistent-world authority.
 

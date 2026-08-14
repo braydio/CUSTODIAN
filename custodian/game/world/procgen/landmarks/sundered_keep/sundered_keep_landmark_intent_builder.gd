@@ -47,6 +47,12 @@ func add_sundered_keep_intent(
 		gate_x,
 		clampi(18 + rng.randi_range(-1, 2), 16, map_size.y - 12)
 	)
+	# Preserve seed-driven lateral variation while reserving enough route depth
+	# for the fixed 52-cell vista contract before deriving intermediate beats.
+	terminal.cell.y = maxi(
+		terminal.cell.y,
+		mini(map_size.y - 12, gate.y + 56)
+	)
 	var lateral_sign := 1 if gate.x >= terminal.cell.x else -1
 	var delta: Vector2i = gate - terminal.cell
 	var overlook: Vector2i = terminal.cell + Vector2i(

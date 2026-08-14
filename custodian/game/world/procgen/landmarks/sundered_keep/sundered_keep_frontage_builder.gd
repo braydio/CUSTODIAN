@@ -10,6 +10,7 @@ const OCEAN_CLAIM_ID := &"sundered_keep_frontage_ocean"
 const OCEAN_PROFILE := &"sundered_keep_cosmic_ocean"
 const OCEAN_LATERAL_MARGIN_TILES := 18
 const OCEAN_INWARD_MARGIN_TILES := 6
+const VISTA_CONTRACT := preload("res://game/world/procgen/landmarks/sundered_keep/sundered_keep_vista_contract.gd")
 
 const NEIGHBORS_8: Array[Vector2i] = [
 	Vector2i(-1, -1),
@@ -38,6 +39,18 @@ func build_frontage(
 	if route_anchors.size() < 2:
 		return {}
 	var route_centerline := _build_curved_centerline(route_anchors, map_size)
+	var cumulative_arc := _centerline_cumulative_arc(route_centerline)
+	var cinematic_samples := {
+		"first_influence_start": _sample_centerline_from_gate_distance(route_centerline, cumulative_arc, VISTA_CONTRACT.INFLUENCE_START_FROM_GATE_CELLS),
+		"frontage_reveal_start": _sample_centerline_from_gate_distance(route_centerline, cumulative_arc, VISTA_CONTRACT.KEEP_DISCOVERY_FROM_GATE_CELLS),
+		"first_reveal_apex": _sample_centerline_from_gate_distance(route_centerline, cumulative_arc, VISTA_CONTRACT.VISTA_APEX_FROM_GATE_CELLS),
+		"vista_apex": _sample_centerline_from_gate_distance(route_centerline, cumulative_arc, VISTA_CONTRACT.VISTA_APEX_FROM_GATE_CELLS),
+		"frontage_apex": _sample_centerline_from_gate_distance(route_centerline, cumulative_arc, VISTA_CONTRACT.MOONLIGHT_FROM_GATE_CELLS),
+		"moonlight_anchor": _sample_centerline_from_gate_distance(route_centerline, cumulative_arc, VISTA_CONTRACT.MOONLIGHT_FROM_GATE_CELLS),
+		"vista_apex_plateau_end": _sample_centerline_from_gate_distance(route_centerline, cumulative_arc, VISTA_CONTRACT.APEX_PLATEAU_END_FROM_GATE_CELLS),
+		"first_return_complete": _sample_centerline_from_gate_distance(route_centerline, cumulative_arc, VISTA_CONTRACT.GAMEPLAY_RETURN_FROM_GATE_CELLS),
+		"gameplay_return": _sample_centerline_from_gate_distance(route_centerline, cumulative_arc, VISTA_CONTRACT.GAMEPLAY_RETURN_FROM_GATE_CELLS),
+	}
 	var primary_route_cells: Dictionary = {}
 	var hard_clearance_cells: Dictionary = {}
 	var soft_clearance_cells: Dictionary = {}
@@ -131,10 +144,7 @@ func build_frontage(
 	)
 	_merge_lookup(fortress_exclusion_cells, soft_clearance_cells)
 	var presentation_clearance_cells: Dictionary = {}
-	var presentation_limit := maxi(
-		1,
-		int(round(float(route_centerline.size()) * 0.94))
-	)
+	var presentation_limit := mini(route_centerline.size(), int((cinematic_samples["gameplay_return"] as Dictionary)["index"]) + 1)
 	for index in presentation_limit:
 		_add_disc(
 			presentation_clearance_cells,
@@ -142,10 +152,10 @@ func build_frontage(
 			9,
 			map_size
 		)
-	for apex_ratio in [0.32, 0.76]:
+	for apex_name in ["vista_apex", "vista_apex_plateau_end"]:
 		_add_disc(
 			presentation_clearance_cells,
-			_sample_centerline(route_centerline, apex_ratio),
+			(cinematic_samples[apex_name] as Dictionary)["cell"],
 			15,
 			map_size
 		)
@@ -153,13 +163,19 @@ func build_frontage(
 
 	var camera_anchors := {
 		"frontage_entry": _sample_centerline(route_centerline, 0.00),
-		"first_influence_start": _sample_centerline(route_centerline, 0.18),
-		"first_reveal_apex": _sample_centerline(route_centerline, 0.32),
-		"first_return_complete": _sample_centerline(route_centerline, 0.46),
-		"frontage_reveal_start": _sample_centerline(route_centerline, 0.62),
-		"frontage_apex": _sample_centerline(route_centerline, 0.76),
-		"gameplay_return": _sample_centerline(route_centerline, 0.90),
 		"gate_threshold": gate_anchor,
+	}
+	var camera_semantic_indices := {"frontage_entry": 0, "gate_threshold": route_centerline.size() - 1}
+	for semantic_name in cinematic_samples:
+		camera_anchors[semantic_name] = (cinematic_samples[semantic_name] as Dictionary)["cell"]
+		camera_semantic_indices[semantic_name] = int((cinematic_samples[semantic_name] as Dictionary)["index"])
+	var camera_distance_contract := {
+		"influence_start_from_gate": float((cinematic_samples["first_influence_start"] as Dictionary)["actual_distance_from_gate"]),
+		"keep_discovery_from_gate": float((cinematic_samples["frontage_reveal_start"] as Dictionary)["actual_distance_from_gate"]),
+		"vista_apex_from_gate": float((cinematic_samples["vista_apex"] as Dictionary)["actual_distance_from_gate"]),
+		"moonlight_from_gate": float((cinematic_samples["moonlight_anchor"] as Dictionary)["actual_distance_from_gate"]),
+		"apex_end_from_gate": float((cinematic_samples["vista_apex_plateau_end"] as Dictionary)["actual_distance_from_gate"]),
+		"gameplay_return_from_gate": float((cinematic_samples["gameplay_return"] as Dictionary)["actual_distance_from_gate"]),
 	}
 	var vista_commit_cells := _cross_section_cells(
 		eroded_floor,
@@ -226,6 +242,9 @@ func build_frontage(
 		"side_pocket_anchors": [side_pocket_anchor],
 		"encounter_pocket_anchors": [encounter_anchor],
 		"camera_semantic_anchors": camera_anchors,
+		"camera_semantic_indices": camera_semantic_indices,
+		"camera_distance_contract": camera_distance_contract,
+		"cinematic_route_arc_total": cumulative_arc[-1] if not cumulative_arc.is_empty() else 0.0,
 		"visual_module_anchors": visual_anchors,
 		"surface_claims": [ocean_claim],
 		"floor_cells": eroded_floor,
@@ -479,6 +498,39 @@ func _sample_centerline(
 		centerline.size() - 1
 	)
 	return centerline[index]
+
+
+func _centerline_cumulative_arc(centerline: Array[Vector2i]) -> PackedFloat32Array:
+	var cumulative := PackedFloat32Array()
+	if centerline.is_empty():
+		return cumulative
+	cumulative.append(0.0)
+	for index in range(1, centerline.size()):
+		cumulative.append(cumulative[-1] + Vector2(centerline[index] - centerline[index - 1]).length())
+	return cumulative
+
+
+func _sample_centerline_from_gate_distance(
+	centerline: Array[Vector2i],
+	cumulative: PackedFloat32Array,
+	distance_from_gate_cells: float
+) -> Dictionary:
+	if centerline.is_empty() or cumulative.is_empty():
+		return {"cell": Vector2i.ZERO, "index": 0, "actual_distance_from_gate": 0.0}
+	var total := cumulative[-1]
+	var target_arc := maxf(0.0, total - distance_from_gate_cells)
+	var best_index := 0
+	var best_delta := INF
+	for index in range(cumulative.size()):
+		var delta := absf(cumulative[index] - target_arc)
+		if delta < best_delta:
+			best_delta = delta
+			best_index = index
+	return {
+		"cell": centerline[best_index],
+		"index": best_index,
+		"actual_distance_from_gate": total - cumulative[best_index],
+	}
 
 
 func _merge_lookup(target: Dictionary, source: Dictionary) -> void:

@@ -68,26 +68,27 @@ ocean/storm/fortress imagery to the exterior side of the generated gate
 boundary. It must not cover generated playable-floor bounds. Gameplay remains
 owned by generated floor/collision/navigation and ordinary actor systems.
 
-The world-side camera uses one continuous spatial envelope: takeover begins at
-`first_influence_start`, the horizon resolves at `first_reveal_apex`, fortress
-presentation begins at `frontage_reveal_start`, fortress composition reaches
-its apex at `frontage_apex`, and authority returns by `gameplay_return`.
-Presentation targets interpolate from the reveal apex toward the generated gate
-instead of using a fixed Operator-relative offset. Traversal remains unlocked;
-the fortress apex receives a 0.9-second minimum presentation hold and triggers
-the existing six-frame moonlight sweep once per presentation instance.
+The world-side camera uses one route-arc-distance contract shared by generation,
+camera projection, presentation, and validation. Influence starts 52 cells
+before the gate (`S=0`), Keep discovery begins visually at `S=8`, and one fixed
+ruins/Keep composition reaches its apex 36 cells before the gate (`S=16`). The
+apex remains spatially stable through `S=24`; moonlight fires once at `S=20`
+without moving the camera. Framing is fully released at `S=36`, leaving 16
+route-arc cells of ordinary play before the gate at `S=52`. There is no timed
+hold or second fortress camera subject. Traversal remains unlocked.
 
 The active layering pass keeps the base storm horizon and moonlight punctuation.
 Inside generated gameplay bounds, StormHorizon is nearest-sampled through an
 authoritative ocean-cell mask and is transparent beneath generated land. The
-first camera subject is a deterministic offshore drowned arch/causeway anchored
-to actual ocean at least three cells from floor when space permits. It recedes
-to a faint supporting layer during fortress takeover; the final OuterWall and
-CentralCitadel are the sole Keep representation. The one-shot reveal veil falls
-nearly away, and the persistent
+drowned arch/causeway and Keep coexist in one fixed composition. The ruins
+anchor targets authoritative ocean ten cells composition-left and nine cells
+outward from the vista apex, with at least six cells of floor separation. The
+final OuterWall and CentralCitadel are the sole Keep representation. The reveal
+veil stays out of runtime use, and the persistent
 horizon-seam fog becomes the architectural bridge. The outer wall and central
-citadel use the established distant blue-gray palette at reduced `0.35` and
-`0.33` scale. The approach gate-shadow veil is not part of this procgen vista;
+citadel use the established distant blue-gray palette at uniform `0.24` and
+`0.22` scale. Ruins and Keep remain subdued scenery after camera return. The
+approach gate-shadow veil is not part of this procgen vista;
 the ordinary route fade owns the generated-frontage-to-authored-approach handoff.
 The existing Descending Ward remains an optional review follow-up rather than an
 automatically stacked layer.
@@ -109,16 +110,16 @@ Renderer approval remains required for this ocean-mask, shoreline-topology,
 boundary-offset, and drowned-ruins pass. Headless validation does not close the
 visual layering review by itself.
 
-The cinematic dressing-clearance envelope follows 94% of the generated route,
-with wider discs at the first and fortress apexes. Foliage, ruin props,
+The cinematic dressing-clearance envelope follows the centerline through
+gameplay return, with wider discs at the single apex plateau. Foliage, ruin props,
 interactables using normal spawn eligibility, and corridor encounter selection
 consume the same protected frontage query; encounter content remains available
 in unprotected side pockets. While the vista owns the camera, ordinary procgen
 foliage, ruin-prop, and world-progress presentation layers plus the generated
 ingress marker are hidden without disabling collision, interaction, navigation,
 or spawned runtime state; all are restored when gameplay framing returns.
-The storm underlay fit covers the full semantic reveal-to-fortress subject
-travel in addition to the zoomed viewport and safety margin; exposing a finite
+The storm underlay fit covers the fixed vista focus at apex zoom plus the
+viewport safety margin; exposing a finite
 plate edge during the camera handoff is a visual failure.
 
 ## Authored approach boundary
@@ -162,8 +163,8 @@ and exact world/camera restoration on exit or failure.
 
 ## Next Agent Slice
 
-Review the cohesion pass at entry, takeover, first apex, fortress apex,
-gameplay return, and terminal apron across production seeds and viewport sizes.
+Review exact `S=0/4/8/12/16/20/24/28/32/36/52` frames across production
+seeds and viewport sizes.
 Tune presentation-only local offsets or floor-source weighting only if the
 fortress, shoreline, or land mass still reads poorly; do not alter camera
 choreography, generated floor geometry, route topology, or traversal authority.

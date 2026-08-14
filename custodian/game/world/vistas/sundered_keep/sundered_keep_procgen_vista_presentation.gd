@@ -5,14 +5,11 @@ const CAMERA_DIRECTOR := preload(
 	"res://game/world/procgen/landmarks/sundered_keep/"
 	+ "sundered_keep_frontage_camera_director.gd"
 )
+const VISTA_CONTRACT := preload("res://game/world/procgen/landmarks/sundered_keep/sundered_keep_vista_contract.gd")
 
-const GAMEPLAY_ZOOM := Vector2(0.90, 0.90)
-const FIRST_REVEAL_ZOOM := Vector2(0.78, 0.78)
-const FIRST_REVEAL_OFFSET := Vector2(0.0, -120.0)
 const VIEWPORT_SAFETY_MARGIN := Vector2(256.0, 224.0)
 const VISTA_HORIZONTAL_MARGIN := 320.0
 const VISTA_OPERATOR_ACTIVATION_MARGIN := 160.0
-const FORTRESS_APEX_HOLD_SECONDS := 0.9
 const MOONLIGHT_FRAME_SECONDS := 1.0 / 15.0
 const MOONLIGHT_FRAME_COUNT := 6
 
@@ -64,19 +61,25 @@ var _viewport_coverage := Vector2.ZERO
 var _vista_clip_bounds := Rect2()
 var _playable_floor_bounds := Rect2()
 var _ocean_bounds := Rect2()
-var _apex_hold_remaining := 0.0
 var _moonlight_elapsed := -1.0
 var _moonlight_played := false
 var _ocean_mask_texture: ImageTexture = null
 var _ocean_mask_image: Image = null
 var _ocean_ruins_anchor_cell := Vector2i(-1, -1)
+var _centerline_cells: Array = []
+var _centerline_world := PackedVector2Array()
+var _influence_start_index := 0
+var _vista_focus := Vector2.ZERO
+var _vista_focus_bounded := Vector2.ZERO
+var _cinematic_complete := false
 
 
 func _ready() -> void:
 	add_to_group("sundered_keep_world_vista")
 	_director = CAMERA_DIRECTOR.new()
-	_horizon.modulate.a = 0.0
-	_fortress.modulate.a = 0.0
+	_horizon.modulate.a = 1.0
+	_storm.modulate.a = 1.0
+	_reveal_fog.visible = false
 	_resolve_runtime_nodes()
 	var viewport := get_viewport()
 	if viewport != null and not viewport.size_changed.is_connected(
@@ -138,6 +141,9 @@ func _layout_from_semantic_anchors() -> void:
 		"first_return_complete",
 		"frontage_reveal_start",
 		"frontage_apex",
+		"vista_apex",
+		"vista_apex_plateau_end",
+		"moonlight_anchor",
 		"gameplay_return",
 		"gate_threshold",
 	]
@@ -196,6 +202,15 @@ func _layout_from_semantic_anchors() -> void:
 	if _ocean_ruins_anchor_cell.x >= 0:
 		_ocean_ruins.global_position = _tile_to_world(_ocean_ruins_anchor_cell)
 	_fortress.global_position = fortress_anchor
+	_centerline_cells = _frontage.get("route_centerline", []) as Array
+	_centerline_world = PackedVector2Array()
+	for cell_variant in _centerline_cells:
+		_centerline_world.append(_tile_to_world(cell_variant as Vector2i))
+	var semantic_indices: Dictionary = _frontage.get("camera_semantic_indices", {})
+	_influence_start_index = int(semantic_indices.get("first_influence_start", 0))
+	var ruins_subject := _ocean_ruins.global_position + Vector2(0.0, -32.0)
+	var keep_subject := _fortress.global_position + Vector2(0.0, -96.0)
+	_vista_focus = ruins_subject.lerp(keep_subject, 0.56)
 	_fit_presentation_to_viewport()
 	_configure_exterior_clip()
 	_configure_ocean_underlay_mask()
@@ -214,7 +229,7 @@ func _assign_marker(name: String, world_position: Vector2) -> void:
 func _evaluate_camera(delta: float = 0.0) -> void:
 	if not _is_operator_inside_frontage_influence():
 		_camera_state.clear()
-		_apply_visual_state(0.0, 0.0)
+		_apply_visual_state(VISTA_CONTRACT.S_INFLUENCE_START)
 		_release_camera()
 		_vista_root.visible = false
 		return
@@ -222,42 +237,29 @@ func _evaluate_camera(delta: float = 0.0) -> void:
 	_camera_state = _director.call(
 		"evaluate",
 		_operator.global_position,
-		_world_anchors
+		_centerline_cells,
+		_centerline_world,
+		_influence_start_index
 	) as Dictionary
-	var first_weight := float(_camera_state.get("first_weight", 0.0))
-	var frontage_weight := float(
-		_camera_state.get("frontage_weight", 0.0)
-	)
-	var camera_weight := first_weight
-	camera_weight = float(_camera_state.get("camera_weight", first_weight))
-	var frontage_enter := float(
-		_camera_state.get("frontage_enter_progress", 0.0)
-	)
-	if frontage_enter >= 0.98 and not _moonlight_played:
-		_apex_hold_remaining = FORTRESS_APEX_HOLD_SECONDS
+	var route_s := float(_camera_state.get("route_s_cells", -INF))
+	var camera_weight := float(_camera_state.get("camera_weight", 0.0))
+	if route_s >= VISTA_CONTRACT.S_MOONLIGHT and not _moonlight_played:
 		_moonlight_elapsed = 0.0
 		_moonlight_played = true
-	if _apex_hold_remaining > 0.0:
-		_apex_hold_remaining = maxf(0.0, _apex_hold_remaining - delta)
-		camera_weight = maxf(camera_weight, 1.0)
-		_camera_state["camera_weight"] = camera_weight
 	_update_moonlight(delta)
-	var reveal_subject := (
-		_ocean_ruins.global_position
-		if _ocean_ruins_anchor_cell.x >= 0
-		else _world_anchors["first_reveal_apex"] as Vector2
-	)
-	var reveal_focus := reveal_subject + Vector2(0.0, -20.0)
-	var fortress_focus := (
-		_world_anchors["gate_threshold"] as Vector2
-	) + Vector2(0.0, -360.0)
-	var focus := reveal_focus.lerp(fortress_focus, frontage_enter)
+	var displacement_limit := _runtime_world_cell_size() * VISTA_CONTRACT.MAX_CAMERA_DISPLACEMENT_CELLS
+	var focus_vector := _vista_focus - _operator.global_position
+	_vista_focus_bounded = _vista_focus
+	if focus_vector.length() > displacement_limit:
+		_vista_focus_bounded = _operator.global_position + focus_vector.normalized() * maxf(0.0, displacement_limit - 0.01)
 	_presentation_anchor.global_position = _operator.global_position.lerp(
-		focus,
-		camera_weight * 0.78
+		_vista_focus_bounded,
+		camera_weight
 	)
-	_apply_visual_state(first_weight, frontage_weight)
-	_apply_camera_state(camera_weight, frontage_weight)
+	_apply_visual_state(route_s)
+	if route_s >= VISTA_CONTRACT.S_GAMEPLAY_RETURN:
+		_cinematic_complete = true
+	_apply_camera_state(camera_weight)
 
 
 func _update_moonlight(delta: float) -> void:
@@ -283,65 +285,19 @@ func _is_operator_inside_frontage_influence() -> bool:
 	).has_point(_operator.global_position)
 
 
-func _apply_visual_state(
-	first_weight: float,
-	frontage_weight: float
-) -> void:
-	var first_visual := float(
-		_camera_state.get("first_enter_progress", first_weight)
-	)
-	var frontage_visual := float(
-		_camera_state.get(
-			"frontage_enter_progress",
-			frontage_weight
-		)
-	)
-	_horizon.modulate.a = _smootherstep_range(
-		0.02,
-		0.72,
-		maxf(first_visual, frontage_visual)
-	)
+func _apply_visual_state(route_s: float) -> void:
+	_horizon.modulate.a = 1.0
 	_storm.modulate.a = 1.0
-	var frontage_takeover := _smootherstep_range(
-		0.18,
-		0.78,
-		frontage_visual
-	)
-	var ruins_reveal := lerpf(
-		0.08,
-		1.0,
-		_smootherstep_range(
-			0.12,
-			0.86,
-			maxf(first_visual, frontage_visual)
-		)
-	)
-	_ocean_ruins.modulate.a = ruins_reveal * lerpf(1.0, 0.25, frontage_takeover)
-	_reveal_fog.modulate.a = lerpf(
-		0.68,
-		0.05,
-		maxf(first_visual, frontage_takeover)
-	)
-	_reveal_fog.position = Vector2.ZERO.lerp(
-		Vector2(-110.0, 50.0),
-		first_visual
-	)
-	_fortress.modulate.a = _smootherstep_range(
-		0.08,
-		0.78,
-		frontage_visual
-	)
-	_frontage_fog.modulate.a = lerpf(0.72, 0.30, frontage_visual)
+	_reveal_fog.visible = false
+	_ocean_ruins.modulate.a = VISTA_CONTRACT.sample_spatial_key_curve(VISTA_CONTRACT.RUINS_ALPHA_KEYS, route_s)
+	_fortress.modulate.a = VISTA_CONTRACT.sample_spatial_key_curve(VISTA_CONTRACT.KEEP_ALPHA_KEYS, route_s)
+	_frontage_fog.modulate.a = VISTA_CONTRACT.sample_spatial_key_curve(VISTA_CONTRACT.SEAM_FOG_ALPHA_KEYS, route_s)
 
 
-func _apply_camera_state(
-	first_weight: float,
-	frontage_weight: float
-) -> void:
+func _apply_camera_state(weight: float) -> void:
 	if _camera == null:
 		return
-	var weight := first_weight
-	if weight <= 0.001:
+	if weight <= 0.001 or _cinematic_complete:
 		if _camera_owned:
 			_release_camera()
 		return
@@ -355,11 +311,9 @@ func _apply_camera_state(
 			"set_presentation_bounds_override",
 			_presentation_bounds
 		)
-	var target_zoom := GAMEPLAY_ZOOM.lerp(
-		FIRST_REVEAL_ZOOM,
-		weight
-	)
-	var target_offset := FIRST_REVEAL_OFFSET * weight
+	var zoom_value := float(_camera_state.get("camera_zoom_target", VISTA_CONTRACT.GAMEPLAY_ZOOM))
+	var target_zoom := Vector2.ONE * zoom_value
+	var target_offset := _camera_state.get("camera_offset_target", Vector2.ZERO) as Vector2
 	if _camera.has_method("set_presentation_framing"):
 		_camera.call(
 			"set_presentation_framing",
@@ -410,31 +364,16 @@ func _fit_presentation_to_viewport(
 	if viewport_size.x <= 0.0 or viewport_size.y <= 0.0:
 		return
 	_viewport_coverage = Vector2(
-		viewport_size.x / FIRST_REVEAL_ZOOM.x,
-		viewport_size.y / FIRST_REVEAL_ZOOM.y
+		viewport_size.x / VISTA_CONTRACT.VISTA_APEX_ZOOM,
+		viewport_size.y / VISTA_CONTRACT.VISTA_APEX_ZOOM
 	) + VIEWPORT_SAFETY_MARGIN
 	if _storm.texture != null:
 		var required_coverage := _viewport_coverage
 		if not _world_anchors.is_empty():
-			var reveal_subject := (
-				_ocean_ruins.global_position
-				if _ocean_ruins_anchor_cell.x >= 0
-				else _world_anchors["first_reveal_apex"] as Vector2
-			)
-			var reveal_focus := reveal_subject + Vector2(0.0, -20.0)
-			var fortress_focus := (
-				_world_anchors["gate_threshold"] as Vector2
-			) + Vector2(0.0, -360.0)
 			var storm_center := _storm.global_position
 			var subject_offset := Vector2(
-				maxf(
-					absf(reveal_focus.x - storm_center.x),
-					absf(fortress_focus.x - storm_center.x)
-				),
-				maxf(
-					absf(reveal_focus.y - storm_center.y),
-					absf(fortress_focus.y - storm_center.y)
-				)
+				absf(_vista_focus.x - storm_center.x),
+				absf(_vista_focus.y - storm_center.y)
 			)
 			required_coverage += subject_offset * 2.0
 		var texture_size := _storm.texture.get_size()
@@ -535,6 +474,10 @@ func _runtime_tile_size() -> Vector2:
 	return Vector2(16.0, 16.0)
 
 
+func _runtime_world_cell_size() -> float:
+	return _tile_to_world(Vector2i.RIGHT).distance_to(_tile_to_world(Vector2i.ZERO))
+
+
 func _configure_ocean_underlay_mask() -> void:
 	var map_size: Vector2i = _level_data.get("map_size", Vector2i.ZERO)
 	var ocean_cells: Dictionary = _frontage.get("ocean_cells", {})
@@ -571,7 +514,10 @@ func _select_ocean_ruins_anchor() -> Vector2i:
 	var ocean_cells: Dictionary = _frontage.get("ocean_cells", {})
 	var floor_cells := _floor_cell_dictionary()
 	var semantic: Dictionary = _frontage.get("camera_semantic_anchors", {})
-	var target: Vector2i = semantic.get("first_reveal_apex", Vector2i.ZERO)
+	var apex: Vector2i = semantic.get("vista_apex", Vector2i.ZERO)
+	var outward: Vector2i = _frontage.get("fortress_outward_direction", Vector2i.UP)
+	var tangent_right := Vector2i(-outward.y, outward.x)
+	var target := apex + outward * 9 - tangent_right * 10
 	var best := Vector2i(-1, -1)
 	var best_score := INF
 	for cell_variant in ocean_cells.keys():
@@ -580,10 +526,10 @@ func _select_ocean_ruins_anchor() -> Vector2i:
 		var cell := cell_variant as Vector2i
 		if floor_cells.has(cell):
 			continue
-		var floor_distance := _nearest_floor_distance(cell, floor_cells, 8)
+		var floor_distance := _nearest_floor_distance(cell, floor_cells, 12)
 		if floor_distance < 6:
 			continue
-		var score := cell.distance_squared_to(target) + absf(float(floor_distance - 10)) * 18.0
+		var score := cell.distance_squared_to(target) * 100.0 + absf(float(floor_distance - 9)) * 18.0
 		var stable_before := cell.y < best.y or (cell.y == best.y and cell.x < best.x)
 		if score < best_score or (is_equal_approx(score, best_score) and stable_before):
 			best_score = score
@@ -675,6 +621,21 @@ func get_world_vista_debug_state() -> Dictionary:
 		"configured": _configured,
 		"camera_owned": _camera_owned,
 		"camera_weight": float(_camera_state.get("camera_weight", 0.0)),
+		"route_s_cells": float(_camera_state.get("route_s_cells", 0.0)),
+		"camera_zoom_target": float(_camera_state.get("camera_zoom_target", VISTA_CONTRACT.GAMEPLAY_ZOOM)),
+		"camera_offset_target": _camera_state.get("camera_offset_target", Vector2.ZERO),
+		"vista_focus": _vista_focus,
+		"vista_focus_unclamped": _vista_focus,
+		"vista_focus_bounded": _vista_focus_bounded,
+		"camera_operator_distance": _operator.global_position.distance_to(_vista_focus_bounded) if _operator != null else 0.0,
+		"camera_displacement_limit": _runtime_world_cell_size() * VISTA_CONTRACT.MAX_CAMERA_DISPLACEMENT_CELLS,
+		"ruins_alpha": _ocean_ruins.modulate.a,
+		"keep_alpha": _fortress.modulate.a,
+		"seam_fog_alpha": _frontage_fog.modulate.a,
+		"moonlight_triggered": _moonlight_played,
+		"cinematic_complete": _cinematic_complete,
+		"cinematic_route_arc_total": float(_frontage.get("cinematic_route_arc_total", 0.0)),
+		"distance_to_gate_cells": VISTA_CONTRACT.S_GATE - float(_camera_state.get("route_s_cells", 0.0)),
 		"presentation_bounds": _presentation_bounds,
 		"viewport_coverage": _viewport_coverage,
 		"vista_clip_bounds": _vista_clip_bounds,

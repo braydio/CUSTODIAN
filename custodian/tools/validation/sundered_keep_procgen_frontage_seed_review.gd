@@ -142,71 +142,37 @@ func _capture_seed(seed_value: int) -> void:
 		seed_value,
 		"world_overview"
 	)
-	var frame_specs := [
-		{
-			"name": "gameplay_before_takeover",
-			"marker": "FrontageEntry",
-			"zoom": Vector2(0.90, 0.90),
-		},
-		{
-			"name": "camera_takeover",
-			"marker": "FirstCameraInfluenceStart",
-			"zoom": Vector2(0.86, 0.86),
-		},
-		{
-			"name": "offshore_ruins_first_reveal",
-			"marker": "FirstRevealApex",
-			"zoom": Vector2(0.78, 0.78),
-		},
-		{
-			"name": "first_reveal_apex",
-			"marker": "FirstRevealApex",
-			"zoom": Vector2(0.78, 0.78),
-		},
-		{
-			"name": "transition_away_from_ruins",
-			"marker": "FirstCameraReturnComplete",
-			"zoom": Vector2(0.80, 0.80),
-		},
-		{
-			"name": "fortress_reveal_start",
-			"marker": "FrontageRevealStart",
-			"zoom": Vector2(0.78, 0.78),
-		},
-		{
-			"name": "fortress_apex",
-			"marker": "FrontageApex",
-			"zoom": Vector2(0.74, 0.74),
-		},
-		{
-			"name": "gameplay_return",
-			"marker": "GameplayReturn",
-			"zoom": Vector2(0.86, 0.86),
-		},
-		{
-			"name": "terminal_approach",
-			"marker": "GateThreshold",
-			"zoom": Vector2(0.90, 0.90),
-		},
-	]
-	for spec in frame_specs:
-		var marker := presentation.get_node(spec["marker"]) as Marker2D
-		operator.global_position = marker.global_position
+	var distance_frames: Array[Dictionary] = []
+	for requested_s in [0.0, 4.0, 8.0, 12.0, 16.0, 20.0, 24.0, 28.0, 32.0, 36.0, 52.0]:
+		var cell := _centerline_cell_at_s(frontage, requested_s)
+		operator.global_position = _tile_to_world(map, cell)
 		presentation.call("_process", 0.0)
 		var focus := presentation.get_node(
 			"CameraPresentationAnchor"
 		) as Marker2D
-		camera.global_position = (
-			focus.global_position
-			if spec["name"] != "terminal_approach"
-			else marker.global_position + Vector2(0.0, -110.0)
-		)
-		camera.zoom = spec["zoom"]
-		outputs[spec["name"]] = await _save_frame(
+		var state := presentation.call("get_world_vista_debug_state") as Dictionary
+		camera.global_position = focus.global_position if requested_s < 36.0 else operator.global_position
+		camera.zoom = Vector2.ONE * float(state.get("camera_zoom_target", 0.9))
+		var ruins := presentation.get_node("VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/OceanRuinsPresentation") as Node2D
+		var keep := presentation.get_node("VistaPresentationRoot/ExteriorVistaClip/FortressPresentation") as Node2D
+		var frame_name := "s%02d" % int(requested_s)
+		outputs[frame_name] = await _save_frame(
 			viewport,
 			seed_value,
-			spec["name"]
+			frame_name
 		)
+		distance_frames.append({
+			"requested_s": requested_s,
+			"actual_s": float(state.get("route_s_cells", 0.0)),
+			"camera_weight": float(state.get("camera_weight", 0.0)),
+			"zoom": float(state.get("camera_zoom_target", 0.9)),
+			"camera_offset": _vector2_json(state.get("camera_offset_target", Vector2.ZERO)),
+			"camera_operator_distance": float(state.get("camera_operator_distance", 0.0)),
+			"ruins_alpha": float(state.get("ruins_alpha", 0.0)),
+			"keep_alpha": float(state.get("keep_alpha", 0.0)),
+			"ruins_screen_center": _vector2_json(_world_to_screen(ruins.global_position, camera)),
+			"keep_screen_center": _vector2_json(_world_to_screen(keep.global_position, camera)),
+		})
 	var coastline := map.get_node_or_null(
 		"NavigationRegion2D/NonWalkableSurfaceOverlay/SunderedKeepCoastlinePresentation"
 	) as Node2D
@@ -218,7 +184,7 @@ func _capture_seed(seed_value: int) -> void:
 				break
 		if coast_subject == null:
 			coast_subject = coastline.get_child(0) as Node2D
-		presentation.call("_apply_visual_state", 1.0, 0.0)
+		presentation.call("_apply_visual_state", 0.0)
 		var fortress := presentation.get_node_or_null(
 			"VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/FortressPresentation"
 		) as CanvasItem
@@ -232,7 +198,7 @@ func _capture_seed(seed_value: int) -> void:
 	for output in outputs.values():
 		if str(output).is_empty():
 			ok = false
-	_manifest.append({
+	var seed_summary := {
 		"seed": seed_value,
 		"ok": ok,
 		"viewport": [VIEWPORT_SIZE.x, VIEWPORT_SIZE.y],
@@ -244,9 +210,12 @@ func _capture_seed(seed_value: int) -> void:
 			frontage.get("overlook_anchor", Vector2i.ZERO)
 		),
 		"outputs": outputs,
+		"distance_frames": distance_frames,
 		"rectangular_authored_footprint": false,
 		"authored_pocket": false,
-	})
+	}
+	_manifest.append(seed_summary)
+	_write_seed_summary(seed_value, seed_summary)
 	if not ok:
 		_failures.append("seed %04d failed one or more captures" % seed_value)
 	viewport.queue_free()
@@ -296,9 +265,9 @@ func _save_frame(
 		RenderingServer.force_draw(false)
 		await process_frame
 	var image := viewport.get_texture().get_image()
-	var output_path := _output_dir.path_join(
-		"seed_%04d_%s.png" % [seed_value, frame_name]
-	)
+	var seed_dir := _output_dir.path_join("seed_%03d" % seed_value)
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(seed_dir))
+	var output_path := seed_dir.path_join("%s.png" % frame_name)
 	if image == null or image.is_empty():
 		return ""
 	var error := image.save_png(
@@ -348,6 +317,22 @@ func _tile_to_world(
 	tile: Vector2i
 ) -> Vector2:
 	return map.minimap_tile_to_global(tile)
+
+
+func _centerline_cell_at_s(frontage: Dictionary, requested_s: float) -> Vector2i:
+	var centerline: Array = frontage.get("route_centerline", [])
+	var indices: Dictionary = frontage.get("camera_semantic_indices", {})
+	var start_index := int(indices.get("first_influence_start", 0))
+	var cumulative := 0.0
+	var best_index := start_index
+	var best_delta := absf(requested_s)
+	for index in range(start_index + 1, centerline.size()):
+		cumulative += Vector2((centerline[index] as Vector2i) - (centerline[index - 1] as Vector2i)).length()
+		var delta := absf(cumulative - requested_s)
+		if delta < best_delta:
+			best_delta = delta
+			best_index = index
+	return centerline[best_index] as Vector2i
 
 
 func _load_placement() -> Dictionary:
@@ -406,6 +391,26 @@ func _vector2i_json(value: Variant) -> Array[int]:
 	if value is Vector2i:
 		return [(value as Vector2i).x, (value as Vector2i).y]
 	return [0, 0]
+
+
+func _vector2_json(value: Variant) -> Array[float]:
+	if value is Vector2:
+		return [(value as Vector2).x, (value as Vector2).y]
+	return [0.0, 0.0]
+
+
+func _world_to_screen(world_position: Vector2, camera: Camera2D) -> Vector2:
+	return Vector2(VIEWPORT_SIZE) * 0.5 + (world_position - camera.global_position) * camera.zoom
+
+
+func _write_seed_summary(seed_value: int, summary: Dictionary) -> void:
+	var seed_dir := _output_dir.path_join("seed_%03d" % seed_value)
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(seed_dir))
+	var file := FileAccess.open(seed_dir.path_join("summary.json"), FileAccess.WRITE)
+	if file == null:
+		_failures.append("seed %03d summary could not be written" % seed_value)
+		return
+	file.store_string(JSON.stringify(summary, "\t"))
 
 
 func _finish() -> void:

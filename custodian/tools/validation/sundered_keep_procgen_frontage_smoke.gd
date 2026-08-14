@@ -100,18 +100,27 @@ func _run() -> void:
 		)
 		var route_centerline: Array = frontage.get("route_centerline", [])
 		if not route_centerline.is_empty():
-			var gameplay_return_index := clampi(
-				int(round(float(route_centerline.size() - 1) * 0.90)),
-				0,
-				route_centerline.size() - 1
-			)
+			var indices: Dictionary = frontage.get("camera_semantic_indices", {})
+			var gameplay_return_index := int(indices.get("gameplay_return", -1))
 			_assert(
-				presentation_clearance.has(
+				gameplay_return_index >= 0 and presentation_clearance.has(
 					route_centerline[gameplay_return_index]
 				),
 				"seed %d presentation clearance ends before gameplay return"
 				% seed_value
 			)
+			var distances: Dictionary = frontage.get("camera_distance_contract", {})
+			for contract in [
+				["influence_start_from_gate", 52.0],
+				["keep_discovery_from_gate", 44.0],
+				["vista_apex_from_gate", 36.0],
+				["moonlight_from_gate", 32.0],
+				["apex_end_from_gate", 28.0],
+				["gameplay_return_from_gate", 16.0],
+			]:
+				_assert(absf(float(distances.get(contract[0], -INF)) - float(contract[1])) <= 1.5, "seed %d %s violates route-arc contract: %.3f" % [seed_value, contract[0], float(distances.get(contract[0], -INF))])
+			_assert(float(frontage.get("cinematic_route_arc_total", 0.0)) >= 52.0, "seed %d route cannot fit 52-cell cinematic" % seed_value)
+			print("[SunderedKeepArc] seed=%d total=%.3f distances=%s" % [seed_value, float(frontage.get("cinematic_route_arc_total", 0.0)), distances])
 		var cliffs: Dictionary = frontage.get("cliff_cells", {})
 		_assert(
 			not (frontage.get("vista_commit_cells", {}) as Dictionary).is_empty(),
