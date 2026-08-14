@@ -4,9 +4,10 @@
 
 Live runtime authority: yes. One `WorldSimulationRuntime` in `game.tscn` owns clock, kernel, session/world, snapshots, command ingress, and resolution. Python parity v2 covers seeds 1/2 at ticks 0/1/10/100 for resources, limited-bootstrap inventory/stocks, policies, strategic power load, and logistics with canonical SHA-256; Python remains offline only. Pure Godot coverage includes commands, pause/catch-up, snapshot restore, Command Post failure, repair/fabrication foundations, and exactly-once outcomes. Adapter-only systems are local power delivery, physical `WaveManager` spawning, and `FabPipeline` delivery. Relays, systemic random events, full assaults, wear, fidelity, ambient fabrication, and full Python repair semantics are not yet ported.
 
-Last updated: 2026-08-12
+Last updated: 2026-08-14
 
 Documentation updates this session:
+- Created `design/02_features/combat_feel/OPERATOR_MELEE_PRESENTATION_POSTURE.md` — draft spec for the melee presentation posture axis (sheathed/drawing/ready/relaxed/sheathing), driven by `EngagementTracker.engagement_active` with its 4 s quiet period, defining `melee_draw` as the melee flavor of `equip_weapon`, READY as the combat neutral replacing the single-frame melee stance placeholder, RELAXED as the exploration neutral, and `ready_up`/`relax` as presentation-only transitions that never gate attack input. No new gameplay states; movement stays lower-body-owned while posture is upper-body/loadout-owned.
 - Created `design/02_features/factions/FACTION_EXPRESSION_SYSTEM.md` — full implementation spec from Faction Continuity Audit findings, covering taxonomy lock, canonical IDs, gameplay boundaries, roster reduction, data model, migration order, and Sundered Keep vertical slice.
 - Remediated terminology drift in 6 documents: fixed "Great Severance" → "the Severing", "The Unarrival" → "the Unnarrival", "Penitents of Static" → "Pale Bell Penitents", `penitent_of_static` → `pale_bell_penitent`, and obsolete directory paths (`03_content/` → `03_world/`, `00_canon/` → `03_world/lore/`).
 - Reduced faction bible in GAME_PROTOCOLS_AND_WORLD_LORE.md to summary+links (canon now in `design/03_world/factions/`, implementation spec in `design/02_features/factions/FACTION_EXPRESSION_SYSTEM.md`, lore authority in `design/03_world/lore/CORE_LORE.md`).
