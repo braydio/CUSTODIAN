@@ -143,7 +143,7 @@ func _capture_seed(seed_value: int) -> void:
 		"world_overview"
 	)
 	var distance_frames: Array[Dictionary] = []
-	for requested_s in [0.0, 4.0, 8.0, 12.0, 16.0, 20.0, 24.0, 28.0, 32.0, 36.0, 52.0]:
+	for requested_s in [0.0, 4.0, 8.0, 12.0, 16.0, 20.0, 24.0, 28.0, 32.0, 36.0, 44.0, 52.0]:
 		var cell := _centerline_cell_at_s(frontage, requested_s)
 		operator.global_position = _tile_to_world(map, cell)
 		presentation.call("_process", 0.0)
@@ -170,9 +170,18 @@ func _capture_seed(seed_value: int) -> void:
 			"camera_operator_distance": float(state.get("camera_operator_distance", 0.0)),
 			"ruins_alpha": float(state.get("ruins_alpha", 0.0)),
 			"keep_alpha": float(state.get("keep_alpha", 0.0)),
+			"foreground_cliff_alpha": float(state.get("foreground_cliff_alpha", 0.0)),
 			"ruins_screen_center": _vector2_json(_world_to_screen(ruins.global_position, camera)),
 			"keep_screen_center": _vector2_json(_world_to_screen(keep.global_position, camera)),
+			"ruins_apparent_screen_bounds": _rect2_json(_node_screen_bounds(ruins, camera)),
+			"keep_apparent_screen_bounds": _rect2_json(_node_screen_bounds(keep, camera)),
 		})
+	var outside_cell := _centerline_cell_before_influence(frontage, 8)
+	operator.global_position = _tile_to_world(map, outside_cell)
+	presentation.call("_process", 0.0)
+	camera.global_position = operator.global_position
+	camera.zoom = Vector2(0.9, 0.9)
+	outputs["ordinary_outside_cinematic"] = await _save_frame(viewport, seed_value, "ordinary_outside_cinematic")
 	var coastline := map.get_node_or_null(
 		"NavigationRegion2D/NonWalkableSurfaceOverlay/SunderedKeepCoastlinePresentation"
 	) as Node2D
@@ -211,6 +220,12 @@ func _capture_seed(seed_value: int) -> void:
 		),
 		"outputs": outputs,
 		"distance_frames": distance_frames,
+		"floor_source_counts_after": ((frontage.get("debug_summary", {}) as Dictionary).get("floor_source_counts", {}) as Dictionary).duplicate(true),
+		"floor_source_counts_before": _legacy_floor_source_counts(map, frontage),
+		"macro_cliff_sprite_count": int(coastline.get_meta("macro_cliff_count", 0)) if coastline != null else 0,
+		"macro_cliff_before_count": _legacy_macro_cliff_count(map, frontage),
+		"macro_cliff_average_run_stride": float(coastline.get_meta("macro_cliff_stride", 0.0)) if coastline != null else 0.0,
+		"depth_backdrop_mode": map.depth_backdrop.call("get_debug_mode") if map.depth_backdrop != null else "missing",
 		"rectangular_authored_footprint": false,
 		"authored_pocket": false,
 	}
@@ -335,6 +350,51 @@ func _centerline_cell_at_s(frontage: Dictionary, requested_s: float) -> Vector2i
 	return centerline[best_index] as Vector2i
 
 
+func _centerline_cell_before_influence(frontage: Dictionary, cells_before: int) -> Vector2i:
+	var centerline: Array = frontage.get("route_centerline", [])
+	var indices: Dictionary = frontage.get("camera_semantic_indices", {})
+	var start_index := int(indices.get("first_influence_start", 0))
+	return centerline[maxi(0, start_index - cells_before)] as Vector2i
+
+
+func _legacy_floor_source_counts(map: ProcGenTilemap, frontage: Dictionary) -> Dictionary:
+	var counts := {129: 0, 130: 0, 131: 0, 132: 0}
+	var gate: Vector2i = frontage.get("gate_anchor", Vector2i.ZERO)
+	var apron: Dictionary = frontage.get("terminal_apron_cells", {})
+	for cell_variant in (frontage.get("floor_cells", {}) as Dictionary).keys():
+		var cell := cell_variant as Vector2i
+		var variation := int(map.call("_tile_noise_hash", cell + Vector2i(2861, 1877))) % 11
+		var source_id := 129
+		if apron.has(cell) or cell.distance_to(gate) <= 5.5:
+			source_id = 132
+		elif cell.distance_to(gate) <= 18.0:
+			source_id = 131 if variation < 8 else 130
+		elif variation < 3:
+			source_id = 130
+		counts[source_id] = int(counts[source_id]) + 1
+	return counts
+
+
+func _legacy_macro_cliff_count(map: ProcGenTilemap, frontage: Dictionary) -> int:
+	var count := 0
+	var floor := map.debug_get_generated_floor_cells()
+	for cell_variant in (frontage.get("ocean_cells", {}) as Dictionary).keys():
+		var ocean_cell := cell_variant as Vector2i
+		var floor_direction := Vector2i.ZERO
+		for direction in [Vector2i.UP, Vector2i.RIGHT, Vector2i.DOWN, Vector2i.LEFT]:
+			if floor.has(ocean_cell + direction):
+				if floor_direction != Vector2i.ZERO:
+					floor_direction = Vector2i.ZERO
+					break
+				floor_direction = direction
+		if floor_direction == Vector2i.ZERO:
+			continue
+		var tangent := ocean_cell.y if floor_direction.x != 0 else ocean_cell.x
+		if posmod(tangent, 2) == 0:
+			count += 1
+	return count
+
+
 func _load_placement() -> Dictionary:
 	var source := FileAccess.get_file_as_string(ROUTE_PATH)
 	var parsed: Variant = JSON.parse_string(source)
@@ -397,6 +457,38 @@ func _vector2_json(value: Variant) -> Array[float]:
 	if value is Vector2:
 		return [(value as Vector2).x, (value as Vector2).y]
 	return [0.0, 0.0]
+
+
+func _rect2_json(value: Rect2) -> Dictionary:
+	return {"x": value.position.x, "y": value.position.y, "width": value.size.x, "height": value.size.y}
+
+
+func _node_screen_bounds(node: Node2D, camera: Camera2D) -> Rect2:
+	var bounds := Rect2()
+	var initialized := false
+	for child in _all_descendants(node):
+		if not child is Sprite2D:
+			continue
+		var sprite := child as Sprite2D
+		if sprite.texture == null:
+			continue
+		var center := _world_to_screen(sprite.global_position, camera)
+		var size := sprite.texture.get_size() * sprite.global_scale.abs() * camera.zoom
+		var rect := Rect2(center - size * 0.5, size)
+		bounds = rect if not initialized else bounds.merge(rect)
+		initialized = true
+	return bounds
+
+
+func _all_descendants(node: Node) -> Array[Node]:
+	var result: Array[Node] = []
+	var pending: Array[Node] = [node]
+	while not pending.is_empty():
+		var current: Node = pending.pop_back()
+		result.append(current)
+		for child in current.get_children():
+			pending.append(child)
+	return result
 
 
 func _world_to_screen(world_position: Vector2, camera: Camera2D) -> Vector2:

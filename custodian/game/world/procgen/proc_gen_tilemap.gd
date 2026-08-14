@@ -1258,9 +1258,6 @@ func _fill_tilemaps() -> void:
 	else:
 		_marks["floor_value_clusters"] = 0
 	_last = Time.get_ticks_msec()
-	_apply_sundered_keep_frontage_floor_visuals()
-	_audit_sundered_keep_frontage_required_floor()
-	_refresh_depth_backdrop()
 
 	if enable_streaming_reveal:
 		_prepare_streaming_reveal()
@@ -1293,6 +1290,7 @@ func _fill_tilemaps() -> void:
 	_enforce_route_playability_walkability(map_size)
 	_enforce_runtime_blocker_route_clearance()
 	_rebuild_nonwalkable_surface_regions(map_size)
+	_apply_sundered_keep_frontage_floor_visuals()
 	_rebuild_nonwalkable_surface_visuals()
 	_rebuild_runtime_walkable_boundary()
 	_audit_sundered_keep_frontage_required_floor()
@@ -4348,36 +4346,58 @@ func _apply_sundered_keep_frontage_region_metadata() -> void:
 func _apply_sundered_keep_frontage_floor_visuals() -> void:
 	if _sundered_keep_frontage.is_empty() or floor_tilemap == null:
 		return
-	var gate_anchor: Vector2i = _sundered_keep_frontage.get(
-		"gate_anchor",
-		Vector2i.ZERO
-	)
 	var terminal_apron: Dictionary = _sundered_keep_frontage.get(
 		"terminal_apron_cells",
 		{}
 	)
-	for cell_variant in (
-		_sundered_keep_frontage.get("floor_cells", {}) as Dictionary
-	).keys():
+	var frontage_floor: Dictionary = _sundered_keep_frontage.get("floor_cells", {})
+	var route_floor: Dictionary = _sundered_keep_frontage.get("primary_route_cells", {})
+	var presentation_clearance: Dictionary = _sundered_keep_frontage.get("presentation_clearance_cells", {})
+	var visual_candidates := frontage_floor.duplicate()
+	for cell_variant in presentation_clearance.keys():
+		if cell_variant is Vector2i and _generated_floor_cells.has(cell_variant):
+			visual_candidates[cell_variant] = true
+	var source_counts := {129: 0, 130: 0, 131: 0, 132: 0}
+	for cell_variant in visual_candidates.keys():
 		if not cell_variant is Vector2i:
 			continue
 		var cell := cell_variant as Vector2i
 		if not _generated_floor_cells.has(cell):
 			continue
-		var distance_to_gate := cell.distance_to(gate_anchor)
 		var tile_id := "sundered_keep_cliff_rock_floor_01"
-		var variation := _tile_noise_hash(cell + Vector2i(2861, 1877)) % 11
-		if terminal_apron.has(cell) or distance_to_gate <= 5.5:
-			tile_id = "sundered_keep_main_gate_threshold_stone_01"
-		elif distance_to_gate <= 18.0:
-			tile_id = (
-				"sundered_keep_main_courtyard_flagstone_wet_01"
-				if variation < 8
-				else "sundered_keep_cliff_rock_floor_cracked_01"
-			)
-		elif variation < 3:
+		var variation := _tile_noise_hash(cell + Vector2i(2861, 1877)) % 100
+		var shoreline_adjacent := false
+		for direction in NONWALKABLE_SURFACE_CARDINALS:
+			if _ocean_cells.has(cell + direction):
+				shoreline_adjacent = true
+				break
+		if terminal_apron.has(cell):
+			if variation < 70:
+				tile_id = "sundered_keep_main_gate_threshold_stone_01"
+			elif variation < 90:
+				tile_id = "sundered_keep_main_courtyard_flagstone_wet_01"
+			else:
+				tile_id = "sundered_keep_cliff_rock_floor_cracked_01"
+		elif shoreline_adjacent:
+			if variation >= 75:
+				tile_id = "sundered_keep_cliff_rock_floor_cracked_01"
+		elif frontage_floor.has(cell) and route_floor.has(cell):
+			if variation >= 80:
+				tile_id = "sundered_keep_main_courtyard_flagstone_wet_01"
+			elif variation >= 55:
+				tile_id = "sundered_keep_cliff_rock_floor_cracked_01"
+		elif frontage_floor.has(cell):
+			if variation >= 75:
+				tile_id = "sundered_keep_cliff_rock_floor_cracked_01"
+		elif variation >= 85:
 			tile_id = "sundered_keep_cliff_rock_floor_cracked_01"
 		_apply_terrain_tile_visual(cell, tile_id)
+		var source_id := int((TERRAIN_TILESET_SOURCES.get(tile_id, {}) as Dictionary).get("source_id", -1))
+		if source_counts.has(source_id):
+			source_counts[source_id] = int(source_counts[source_id]) + 1
+	var summary: Dictionary = _sundered_keep_frontage.get("debug_summary", {})
+	summary["floor_source_counts"] = source_counts
+	_sundered_keep_frontage["debug_summary"] = summary
 
 
 func is_sundered_keep_frontage_protected(cell: Vector2i) -> bool:
@@ -4522,6 +4542,7 @@ func _rebuild_nonwalkable_surface_regions(map_size: Vector2i) -> void:
 			_surface_claim_cells.get(SUNDERED_KEEP_OCEAN_CLAIM_ID, {}) \
 			as Dictionary
 		).duplicate(true)
+	_refresh_depth_backdrop()
 
 
 func _clear_nonwalkable_surface_visuals() -> void:
@@ -4582,6 +4603,7 @@ func _rebuild_sundered_keep_coastline_presentation() -> void:
 	var claimed_ocean := (
 		_sundered_keep_frontage.get("ocean_cells", {}) as Dictionary
 	)
+	var frontier_entries: Array[Dictionary] = []
 	for cell_variant in claimed_ocean.keys():
 		if not cell_variant is Vector2i:
 			continue
@@ -4595,15 +4617,11 @@ func _rebuild_sundered_keep_coastline_presentation() -> void:
 				floor_direction = direction
 		if floor_direction == Vector2i.ZERO:
 			continue
-		# Each authored cliff composition spans two cells laterally. Staggering
-		# every other frontier cell avoids turning overlap into a dark rectangle.
-		var tangent_coordinate := (
-			ocean_cell.y
-			if floor_direction.x != 0
-			else ocean_cell.x
-		)
-		if posmod(tangent_coordinate, 2) != 0:
-			continue
+		frontier_entries.append({"ocean_cell": ocean_cell, "floor_direction": floor_direction})
+	var selected_entries := _select_sundered_keep_macro_cliffs(frontier_entries)
+	for entry in selected_entries:
+		var ocean_cell: Vector2i = entry["ocean_cell"]
+		var floor_direction: Vector2i = entry["floor_direction"]
 		var sprite := Sprite2D.new()
 		sprite.name = "CliffEdge_%d_%d" % [ocean_cell.x, ocean_cell.y]
 		sprite.texture = SUNDERED_KEEP_CLIFF_EDGE_TEXTURES[floor_direction]
@@ -4611,9 +4629,10 @@ func _rebuild_sundered_keep_coastline_presentation() -> void:
 		var ocean_center := nonwalkable_surface_overlay_tilemap.map_to_local(ocean_cell)
 		var floor_center := nonwalkable_surface_overlay_tilemap.map_to_local(floor_cell)
 		var boundary := floor_center.lerp(ocean_center, 0.5)
-		sprite.position = boundary + Vector2(
+		sprite.position = (boundary + Vector2(
 			SUNDERED_KEEP_CLIFF_BOUNDARY_OFFSETS.get(floor_direction, Vector2.ZERO)
-		)
+		)).round()
+		sprite.scale = Vector2(0.875, 0.875)
 		sprite.set_meta("ocean_cell", ocean_cell)
 		sprite.set_meta("floor_cell", floor_cell)
 		sprite.set_meta("boundary_position", boundary)
@@ -4621,6 +4640,53 @@ func _rebuild_sundered_keep_coastline_presentation() -> void:
 		_sundered_keep_coastline_parent.add_child(sprite)
 	# Foam remains a restrained surf accent beneath the authored rock shelf.
 	nonwalkable_surface_overlay_tilemap.self_modulate.a = SUNDERED_KEEP_SURF_ALPHA
+	_sundered_keep_coastline_parent.set_meta("macro_cliff_stride", 3.0)
+	_sundered_keep_coastline_parent.set_meta("macro_cliff_count", selected_entries.size())
+
+
+func _select_sundered_keep_macro_cliffs(frontier_entries: Array[Dictionary]) -> Array[Dictionary]:
+	var grouped: Dictionary = {}
+	for entry in frontier_entries:
+		var cell: Vector2i = entry["ocean_cell"]
+		var direction: Vector2i = entry["floor_direction"]
+		var line_coordinate := cell.x if direction.x != 0 else cell.y
+		var key := "%d:%d:%d" % [direction.x, direction.y, line_coordinate]
+		if not grouped.has(key):
+			grouped[key] = []
+		(grouped[key] as Array).append(entry)
+	var selected: Array[Dictionary] = []
+	for key in grouped.keys():
+		var entries: Array = grouped[key]
+		entries.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+			var direction: Vector2i = a["floor_direction"]
+			var a_cell: Vector2i = a["ocean_cell"]
+			var b_cell: Vector2i = b["ocean_cell"]
+			return (a_cell.y if direction.x != 0 else a_cell.x) < (b_cell.y if direction.x != 0 else b_cell.x)
+		)
+		var run: Array[Dictionary] = []
+		var previous_tangent := -2147483648
+		for entry_variant in entries:
+			var entry := entry_variant as Dictionary
+			var direction: Vector2i = entry["floor_direction"]
+			var cell: Vector2i = entry["ocean_cell"]
+			var tangent := cell.y if direction.x != 0 else cell.x
+			if not run.is_empty() and tangent != previous_tangent + 1:
+				_append_sundered_keep_macro_run(run, selected)
+				run.clear()
+			run.append(entry)
+			previous_tangent = tangent
+		_append_sundered_keep_macro_run(run, selected)
+	return selected
+
+
+func _append_sundered_keep_macro_run(run: Array[Dictionary], selected: Array[Dictionary]) -> void:
+	if run.size() < 3:
+		return
+	if run.size() <= 5:
+		selected.append(run[run.size() / 2])
+		return
+	for index in range(1, run.size(), 3):
+		selected.append(run[index])
 
 
 func _ocean_shore_key_for_floor_direction(direction: Vector2i) -> String:
@@ -8571,6 +8637,9 @@ func _apply_foliage_occlusion_material(material: ShaderMaterial, active_centers:
 
 func _refresh_depth_backdrop() -> void:
 	if depth_backdrop == null:
+		return
+	if not _chasm_cells.is_empty():
+		depth_backdrop.configure_from_chasm_cells(_chasm_cells.keys())
 		return
 	depth_backdrop.configure_from_cells(_generated_floor_cells.keys())
 

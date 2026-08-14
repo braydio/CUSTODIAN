@@ -41,6 +41,9 @@ const MOONLIGHT_FRAME_COUNT := 6
 @onready var _moonlight_sweep := (
 	$VistaPresentationRoot/ExteriorVistaClip/FortressPresentation/MoonlightSweep as Sprite2D
 )
+@onready var _foreground_cliff_lip := (
+	$VistaPresentationRoot/ExteriorVistaClip/ForegroundVistaCliffLip as Sprite2D
+)
 @onready var _presentation_anchor := (
 	$CameraPresentationAnchor as Marker2D
 )
@@ -292,6 +295,7 @@ func _apply_visual_state(route_s: float) -> void:
 	_ocean_ruins.modulate.a = VISTA_CONTRACT.sample_spatial_key_curve(VISTA_CONTRACT.RUINS_ALPHA_KEYS, route_s)
 	_fortress.modulate.a = VISTA_CONTRACT.sample_spatial_key_curve(VISTA_CONTRACT.KEEP_ALPHA_KEYS, route_s)
 	_frontage_fog.modulate.a = VISTA_CONTRACT.sample_spatial_key_curve(VISTA_CONTRACT.SEAM_FOG_ALPHA_KEYS, route_s)
+	_foreground_cliff_lip.modulate.a = VISTA_CONTRACT.sample_spatial_key_curve(VISTA_CONTRACT.FOREGROUND_LIP_ALPHA_KEYS, route_s)
 
 
 func _apply_camera_state(weight: float) -> void:
@@ -367,6 +371,19 @@ func _fit_presentation_to_viewport(
 		viewport_size.x / VISTA_CONTRACT.VISTA_APEX_ZOOM,
 		viewport_size.y / VISTA_CONTRACT.VISTA_APEX_ZOOM
 	) + VIEWPORT_SAFETY_MARGIN
+	if _foreground_cliff_lip.texture != null:
+		var visible_world_width := viewport_size.x / VISTA_CONTRACT.VISTA_APEX_ZOOM
+		var required_lip_width := visible_world_width + 192.0
+		var lip_texture_size := _foreground_cliff_lip.texture.get_size()
+		_foreground_cliff_lip.scale = Vector2(
+			maxf(1.0, required_lip_width / maxf(1.0, lip_texture_size.x)),
+			0.80
+		)
+		var visible_world_height := viewport_size.y / VISTA_CONTRACT.VISTA_APEX_ZOOM
+		_foreground_cliff_lip.global_position = Vector2(
+			_vista_focus.x,
+			_vista_focus.y + visible_world_height * 0.27 + lip_texture_size.y * 0.40
+		).round()
 	if _storm.texture != null:
 		var required_coverage := _viewport_coverage
 		if not _world_anchors.is_empty():
@@ -632,6 +649,9 @@ func get_world_vista_debug_state() -> Dictionary:
 		"ruins_alpha": _ocean_ruins.modulate.a,
 		"keep_alpha": _fortress.modulate.a,
 		"seam_fog_alpha": _frontage_fog.modulate.a,
+		"foreground_cliff_alpha": _foreground_cliff_lip.modulate.a,
+		"foreground_cliff_position": _foreground_cliff_lip.global_position,
+		"foreground_cliff_scale": _foreground_cliff_lip.scale,
 		"moonlight_triggered": _moonlight_played,
 		"cinematic_complete": _cinematic_complete,
 		"cinematic_route_arc_total": float(_frontage.get("cinematic_route_arc_total", 0.0)),

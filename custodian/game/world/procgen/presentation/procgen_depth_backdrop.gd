@@ -34,6 +34,7 @@ var _regions_root: Node2D
 var _camera: Camera2D
 var _camera_search_elapsed := 0.0
 var _world_stack: Node2D
+var _debug_mode := "hidden"
 
 
 func _ready() -> void:
@@ -65,6 +66,7 @@ func configure_from_cells(world_cells: Array) -> void:
 	# supplies generated world/floor cells to establish presentation bounds;
 	# it does not yet guarantee explicit chasm cells.
 	_clear_regions()
+	_debug_mode = "world_fallback"
 
 	var decoded_cells: Array[Vector2i] = []
 
@@ -94,6 +96,7 @@ func configure_from_cells(world_cells: Array) -> void:
 
 func configure_from_chasm_cells(chasm_cells: Array) -> void:
 	_clear_regions()
+	_debug_mode = "chasm_regions"
 	var regions := _connected_regions(chasm_cells)
 	var region_index := 1
 	for region_cells: Array[Vector2i] in regions:
@@ -102,6 +105,10 @@ func configure_from_chasm_cells(chasm_cells: Array) -> void:
 		_create_region_stack(region_cells, region_index)
 		region_index += 1
 	visible = region_index > 1
+
+
+func get_debug_mode() -> String:
+	return _debug_mode
 
 
 func set_streaming_chunk_visible(

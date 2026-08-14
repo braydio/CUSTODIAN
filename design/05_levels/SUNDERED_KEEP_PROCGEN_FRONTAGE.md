@@ -56,6 +56,11 @@ presentation. Straight edges, convex and concave corners, endcaps, and T
 junctions resolve from authoritative floor/ocean neighborhoods without random
 skipping, rotation, scaling, or terrain mutation.
 
+The shared depth backdrop consumes the resulting explicit `chasm_cells` through
+connected chasm-region presentation. The camera-following generated-floor
+compatibility stack is reserved for generation modes that genuinely lack
+explicit chasm semantics; ocean and floor never enter the chasm backdrop.
+
 The ingress uses `procgen_landmark_terminal` with the
 `sundered_keep_frontage` landmark data key.
 It starts the `sundered_keep` route with the `production` profile. Production
@@ -86,8 +91,10 @@ outward from the vista apex, with at least six cells of floor separation. The
 final OuterWall and CentralCitadel are the sole Keep representation. The reveal
 veil stays out of runtime use, and the persistent
 horizon-seam fog becomes the architectural bridge. The outer wall and central
-citadel use the established distant blue-gray palette at uniform `0.24` and
-`0.22` scale. Ruins and Keep remain subdued scenery after camera return. The
+citadel use the established distant blue-gray palette at uniform `0.22` and
+`0.205` scale. The drowned arch and causeway use `0.33` and `0.285`. Ruins,
+Keep, and seam fog continue sinking atmospherically from `S36` through `S52`
+while camera authority remains fully released. The
 approach gate-shadow veil is not part of this procgen vista;
 the ordinary route fade owns the generated-frontage-to-authored-approach handoff.
 The existing Descending Ward remains an optional review follow-up rather than an
@@ -96,15 +103,21 @@ The fortress presentation root is positioned once from
 `fortress_front_anchor`; the outer wall and citadel retain their reviewed
 scene-local offsets and are not pulled apart by gameplay-scale wall/tower
 anchors. Generated frontage floor keeps its irregular authoritative footprint
-but uses deterministic Keep cliff-rock, wet flagstone, and gate-threshold
-sources so the Operator reads as standing on land. Topology-aware ocean foam
+but uses semantic presentation zones rather than broad Euclidean gate radii:
+terminal-apron threshold stone, shoreline rock, route-core rock/cracked stone
+with sparse wet flagstone, and a dark rock blend across protected clearance
+floor visible in the cinematic. Topology-aware ocean foam
 sources are sparse transparent overlays rather than opaque water tiles. The
 authoritative frontage-floor/ocean frontier also places the existing 64x96
-Sundered Keep cardinal cliff compositions from the midpoint between paired
-floor/ocean cells, with explicit per-direction offsets so the lip overlaps land
-and the face falls toward ocean;
+Sundered Keep cardinal cliff compositions as sparse `0.875`-scale macro accents
+on straight shoreline runs, with explicit per-direction offsets from the
+floor/ocean midpoint so the lip overlaps land and the face falls toward ocean;
 foam is held to 34% layer alpha as secondary surf. These sprites add no
 collision, navigation, or terrain authority.
+
+The historical 2048×512 World Vista cliff lip is reused only as a low-alpha
+cinematic foreground plane. It grows from zero at `S0`, peaks at `0.42` at
+`S20`, and clears by `S36`; it owns no terrain, collision, or camera authority.
 
 Renderer approval remains required for this ocean-mask, shoreline-topology,
 boundary-offset, and drowned-ruins pass. Headless validation does not close the

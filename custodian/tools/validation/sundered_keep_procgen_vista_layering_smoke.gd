@@ -44,11 +44,13 @@ func _run() -> void:
 	var clip := presentation.get_node_or_null("VistaPresentationRoot/ExteriorVistaClip") as Polygon2D
 	var wall := presentation.get_node_or_null("VistaPresentationRoot/ExteriorVistaClip/FortressPresentation/OuterWall") as Sprite2D
 	var citadel := presentation.get_node_or_null("VistaPresentationRoot/ExteriorVistaClip/FortressPresentation/CentralCitadel") as Sprite2D
+	var foreground_lip := presentation.get_node_or_null("VistaPresentationRoot/ExteriorVistaClip/ForegroundVistaCliffLip") as Sprite2D
 	_assert(vista_root != null and vista_root.z_index < 0 and not vista_root.z_as_relative, "vista root must use absolute depth behind gameplay")
 	_assert(clip != null and clip.clip_children == CanvasItem.CLIP_CHILDREN_ONLY, "vista must use its exterior-facing clip")
 	_assert(presentation.get_node_or_null("VistaPresentationRoot/ExteriorVistaClip/GateShadow") == null, "procgen vista must not restore the route-owned gate-shadow handoff")
-	_assert(wall != null and wall.scale.is_equal_approx(Vector2(0.24, 0.24)), "outer wall baseline scale mismatch")
-	_assert(citadel != null and citadel.scale.is_equal_approx(Vector2(0.22, 0.22)), "central citadel baseline scale mismatch")
+	_assert(wall != null and wall.scale.is_equal_approx(Vector2(0.22, 0.22)), "outer wall baseline scale mismatch")
+	_assert(citadel != null and citadel.scale.is_equal_approx(Vector2(0.205, 0.205)), "central citadel baseline scale mismatch")
+	_assert(foreground_lip != null and foreground_lip.texture != null and foreground_lip.z_index == 26, "historical cliff lip is not a presentation-only foreground plane")
 	_assert(wall != null and wall.modulate.is_equal_approx(Color(0.40, 0.48, 0.58, 1.0)), "outer wall must retain distant secondary palette")
 	_assert(citadel != null and citadel.modulate.is_equal_approx(Color(0.44, 0.51, 0.61, 1.0)), "central citadel must retain distant hero palette")
 	_assert(wall != null and wall.position.is_equal_approx(Vector2(-170.0, 30.0)), "outer wall local composition mismatch")
@@ -67,11 +69,18 @@ func _run() -> void:
 	_assert(landmark == null, "procgen DistantKeep must be retired")
 	_assert(ruins != null and arch != null and arch.texture != null, "offshore ruins composition must resolve")
 	_assert(storm != null and storm.material is ShaderMaterial, "StormHorizon must own ocean mask material")
-	_assert(ruins != null and ruins.modulate.a >= 0.20 and ruins.modulate.a <= 0.30, "ruins must recede without fully retiring")
+	_assert(ruins != null and is_equal_approx(ruins.modulate.a, 0.18), "ruins S36 alpha mismatch")
+	_assert(foreground_lip != null and is_zero_approx(foreground_lip.modulate.a), "foreground lip must clear at S36")
 	presentation.set("_camera_state", {"route_s_cells": 16.0})
 	presentation.call("_apply_visual_state", 16.0)
 	_assert(ruins != null and ruins.modulate.a > 0.20, "ruins should remain faint through takeover")
 	_assert(reveal_fog != null and not reveal_fog.visible, "first reveal veil must remain hidden")
+	_assert(foreground_lip != null and is_equal_approx(foreground_lip.modulate.a, 0.38), "foreground lip S16 alpha mismatch")
+	presentation.call("_apply_visual_state", 44.0)
+	_assert(is_equal_approx(ruins.modulate.a, 0.10), "ruins S44 alpha mismatch")
+	_assert(is_equal_approx((presentation.get_node("VistaPresentationRoot/ExteriorVistaClip/FortressPresentation") as Node2D).modulate.a, 0.14), "Keep S44 alpha mismatch")
+	presentation.call("_apply_visual_state", 52.0)
+	_assert(is_equal_approx(ruins.modulate.a, 0.04), "ruins S52 alpha mismatch")
 	for node in _all_descendants(presentation):
 		_assert(not (node is CollisionObject2D or node is CollisionShape2D or node is CollisionPolygon2D or node is NavigationRegion2D), "vista presentation must not own collision/navigation: %s" % node.name)
 		if node is Sprite2D:

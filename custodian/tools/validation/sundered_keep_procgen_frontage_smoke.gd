@@ -376,10 +376,13 @@ func _assert_integrated_procgen_result() -> void:
 		+ "SunderedKeepCoastlinePresentation"
 	) as Node2D
 	_assert(coastline != null and coastline.get_child_count() > 0, "integrated frontage did not build the authored cliff coastline")
+	var macro_cliff_count := 0
 	if coastline != null:
 		for cliff in coastline.get_children():
 			if not String(cliff.name).begins_with("CliffEdge_"):
 				continue
+			macro_cliff_count += 1
+			_assert((cliff as Node2D).scale.is_equal_approx(Vector2(0.875, 0.875)), "macro cliff does not use 0.875 uniform scale")
 			var ocean_cell: Variant = cliff.get_meta("ocean_cell", null)
 			var floor_cell: Variant = cliff.get_meta("floor_cell", null)
 			var boundary: Variant = cliff.get_meta("boundary_position", null)
@@ -391,6 +394,9 @@ func _assert_integrated_procgen_result() -> void:
 				_assert((boundary as Vector2).is_equal_approx(floor_center.lerp(ocean_center, 0.5)), "cliff anchor is not boundary-derived")
 				_assert(not (cliff as Node2D).position.is_equal_approx(ocean_center), "cliff remains centered on ocean cell")
 	_assert(ocean_overlay != null and is_equal_approx(ocean_overlay.self_modulate.a, 0.34), "integrated shore foam is not subordinate to the cliff coastline")
+	_assert(macro_cliff_count == int(coastline.get_meta("macro_cliff_count", -1)) if coastline != null else false, "macro cliff debug count mismatch")
+	_assert(map.depth_backdrop != null and String(map.depth_backdrop.call("get_debug_mode")) == "chasm_regions", "explicit chasm semantics did not replace world-fallback backdrop")
+	_assert(map.depth_backdrop == null or map.depth_backdrop.find_child("CameraDepthBackdrop", true, false) == null, "camera-following rectangular depth backdrop remains active")
 	var touches_north := false
 	for cell_variant in frontage_ocean.keys():
 		var cell := cell_variant as Vector2i
@@ -419,6 +425,8 @@ func _assert_integrated_procgen_result() -> void:
 			)
 			break
 	var summary: Dictionary = frontage.get("debug_summary", {})
+	var floor_source_counts: Dictionary = summary.get("floor_source_counts", {})
+	_assert(int(floor_source_counts.get(129, 0)) + int(floor_source_counts.get(130, 0)) > int(floor_source_counts.get(131, 0)) + int(floor_source_counts.get(132, 0)), "pale courtyard/threshold material still dominates Keep frontage")
 	for key in [
 		"frontage_required_floor_cell_missing_visual",
 		"frontage_required_floor_cell_blocked",
