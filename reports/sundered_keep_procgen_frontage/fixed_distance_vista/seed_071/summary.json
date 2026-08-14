@@ -1,0 +1,267 @@
+{
+	"authored_pocket": false,
+	"distance_frames": [
+		{
+			"actual_s": 0.0,
+			"camera_offset": [
+				0.0,
+				0.0
+			],
+			"camera_operator_distance": 575.990051269531,
+			"camera_weight": 0.0,
+			"keep_alpha": 0.0199999995529652,
+			"keep_screen_center": [
+				2374.39990234375,
+				-345.599975585938
+			],
+			"requested_s": 0.0,
+			"ruins_alpha": 0.150000005960464,
+			"ruins_screen_center": [
+				1366.40002441406,
+				230.400024414062
+			],
+			"zoom": 0.9
+		},
+		{
+			"actual_s": 3.82842707633972,
+			"camera_offset": [
+				0.0,
+				-15.9881715774536
+			],
+			"camera_operator_distance": 575.989990234375,
+			"camera_weight": 0.149889111181356,
+			"keep_alpha": 0.0659836903214455,
+			"keep_screen_center": [
+				2227.72998046875,
+				-208.384704589844
+			],
+			"requested_s": 4.0,
+			"ruins_alpha": 0.301746159791946,
+			"ruins_screen_center": [
+				1236.517578125,
+				358.022369384766
+			],
+			"zoom": 0.885011088881864
+		},
+		{
+			"actual_s": 8.0710676908493,
+			"camera_offset": [
+				0.0,
+				-48.001636505127
+			],
+			"camera_operator_distance": 575.989990234375,
+			"camera_weight": 0.500017471893671,
+			"keep_alpha": 0.120012558996677,
+			"keep_screen_center": [
+				2016.17700195312,
+				54.3297119140625
+			],
+			"requested_s": 8.0,
+			"ruins_alpha": 0.480014741420746,
+			"ruins_screen_center": [
+				1064.17883300781,
+				598.32861328125
+			],
+			"zoom": 0.849998362009968
+		},
+		{
+			"actual_s": 11.899494767189,
+			"camera_offset": [
+				0.0,
+				-77.9954223632812
+			],
+			"camera_operator_distance": 575.989990234375,
+			"camera_weight": 0.819951132267563,
+			"keep_alpha": 0.349964886903763,
+			"keep_screen_center": [
+				1845.86340332031,
+				267.336151123047
+			],
+			"requested_s": 12.0,
+			"ruins_alpha": 0.749958753585815,
+			"ruins_screen_center": [
+				927.458251953125,
+				792.139099121094
+			],
+			"zoom": 0.820004581349916
+		},
+		{
+			"actual_s": 16.3137083053589,
+			"camera_offset": [
+				0.0,
+				-96.0
+			],
+			"camera_operator_distance": 575.990051269531,
+			"camera_weight": 1.0,
+			"keep_alpha": 0.580683887004852,
+			"keep_screen_center": [
+				1737.93591308594,
+				400.89892578125
+			],
+			"requested_s": 16.0,
+			"ruins_alpha": 0.879829049110413,
+			"ruins_screen_center": [
+				841.935913085938,
+				912.89892578125
+			],
+			"zoom": 0.8
+		},
+		{
+			"actual_s": 19.7279218435287,
+			"camera_offset": [
+				0.0,
+				-96.0
+			],
+			"camera_operator_distance": 575.989990234375,
+			"camera_weight": 1.0,
+			"keep_alpha": 0.739546477794647,
+			"keep_screen_center": [
+				1706.93334960938,
+				443.382568359375
+			],
+			"requested_s": 20.0,
+			"ruins_alpha": 0.840113401412964,
+			"ruins_screen_center": [
+				810.933349609375,
+				955.382568359375
+			],
+			"zoom": 0.8
+		},
+		{
+			"actual_s": 23.5563489198685,
+			"camera_offset": [
+				0.0,
+				-96.0
+			],
+			"camera_operator_distance": 575.989990234375,
+			"camera_weight": 1.0,
+			"keep_alpha": 0.799311518669128,
+			"keep_screen_center": [
+				1681.99096679688,
+				507.394866943359
+			],
+			"requested_s": 24.0,
+			"ruins_alpha": 0.780688464641571,
+			"ruins_screen_center": [
+				785.990966796875,
+				1019.39489746094
+			],
+			"zoom": 0.8
+		},
+		{
+			"actual_s": 27.9705624580383,
+			"camera_offset": [
+				0.0,
+				-72.0000915527344
+			],
+			"camera_operator_distance": 575.990051269531,
+			"camera_weight": 0.780000867242872,
+			"keep_alpha": 0.740000247955322,
+			"keep_screen_center": [
+				1684.0908203125,
+				430.561676025391
+			],
+			"requested_s": 28.0,
+			"ruins_alpha": 0.680000364780426,
+			"ruins_screen_center": [
+				760.090942382812,
+				958.561645507812
+			],
+			"zoom": 0.824999901449674
+		},
+		{
+			"actual_s": 31.3847759962082,
+			"camera_offset": [
+				0.0,
+				-37.0262489318848
+			],
+			"camera_operator_distance": 564.818054199219,
+			"camera_weight": 0.362257978506639,
+			"keep_alpha": 0.584561109542847,
+			"keep_screen_center": [
+				1645.76989746094,
+				229.999633789062
+			],
+			"requested_s": 32.0,
+			"ruins_alpha": 0.485701382160187,
+			"ruins_screen_center": [
+				678.2470703125,
+				782.869812011719
+			],
+			"zoom": 0.863859722929615
+		},
+		{
+			"actual_s": 36.6274166107178,
+			"camera_offset": [
+				0.0,
+				0.0
+			],
+			"camera_operator_distance": 472.888549804688,
+			"camera_weight": 0.0,
+			"keep_alpha": 0.340000003576279,
+			"keep_screen_center": [
+				1539.19995117188,
+				144.0
+			],
+			"requested_s": 36.0,
+			"ruins_alpha": 0.219999998807907,
+			"ruins_screen_center": [
+				531.200012207031,
+				720.0
+			],
+			"zoom": 0.9
+		},
+		{
+			"actual_s": 52.3553384542465,
+			"camera_offset": [
+				0.0,
+				0.0
+			],
+			"camera_operator_distance": 494.607025146484,
+			"camera_weight": 0.0,
+			"keep_alpha": 0.340000003576279,
+			"keep_screen_center": [
+				1280.0,
+				489.600006103516
+			],
+			"requested_s": 52.0,
+			"ruins_alpha": 0.219999998807907,
+			"ruins_screen_center": [
+				272.0,
+				1065.59997558594
+			],
+			"zoom": 0.9
+		}
+	],
+	"gate_anchor": [
+		138,
+		17
+	],
+	"grammar_id": "curved_frontage_v1",
+	"ok": true,
+	"outputs": {
+		"coastline_closeup": "res://../reports/sundered_keep_procgen_frontage/fixed_distance_vista/seed_071/coastline_closeup.png",
+		"s00": "res://../reports/sundered_keep_procgen_frontage/fixed_distance_vista/seed_071/s00.png",
+		"s04": "res://../reports/sundered_keep_procgen_frontage/fixed_distance_vista/seed_071/s04.png",
+		"s08": "res://../reports/sundered_keep_procgen_frontage/fixed_distance_vista/seed_071/s08.png",
+		"s12": "res://../reports/sundered_keep_procgen_frontage/fixed_distance_vista/seed_071/s12.png",
+		"s16": "res://../reports/sundered_keep_procgen_frontage/fixed_distance_vista/seed_071/s16.png",
+		"s20": "res://../reports/sundered_keep_procgen_frontage/fixed_distance_vista/seed_071/s20.png",
+		"s24": "res://../reports/sundered_keep_procgen_frontage/fixed_distance_vista/seed_071/s24.png",
+		"s28": "res://../reports/sundered_keep_procgen_frontage/fixed_distance_vista/seed_071/s28.png",
+		"s32": "res://../reports/sundered_keep_procgen_frontage/fixed_distance_vista/seed_071/s32.png",
+		"s36": "res://../reports/sundered_keep_procgen_frontage/fixed_distance_vista/seed_071/s36.png",
+		"s52": "res://../reports/sundered_keep_procgen_frontage/fixed_distance_vista/seed_071/s52.png",
+		"world_overview": "res://../reports/sundered_keep_procgen_frontage/fixed_distance_vista/seed_071/world_overview.png"
+	},
+	"overlook_anchor": [
+		85,
+		58
+	],
+	"rectangular_authored_footprint": false,
+	"seed": 71,
+	"viewport": [
+		2560,
+		1440
+	]
+}
