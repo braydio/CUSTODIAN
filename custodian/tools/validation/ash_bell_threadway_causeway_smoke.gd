@@ -26,7 +26,7 @@ class MockThreadwayMap:
 		"reason": "",
 	}
 
-	func resolve_runtime_walkable_connector(
+	func evaluate_runtime_walkable_connector(
 		_start_global_position: Vector2,
 		_preferred_direction: Vector2i,
 		_width_tiles: int,
@@ -35,8 +35,15 @@ class MockThreadwayMap:
 		_region_zone: String,
 		_lateral_allowance_tiles: int = -1
 	) -> Dictionary:
-		resolve_count += 1
 		return result.duplicate(true)
+
+	func commit_runtime_walkable_connector_plan(
+		plan: Dictionary,
+		_region_type: String,
+		_region_zone: String
+	) -> Dictionary:
+		resolve_count += 1
+		return plan.duplicate(true)
 
 	func get_runtime_tile_size() -> Vector2:
 		return Vector2(32.0, 32.0)
@@ -62,15 +69,13 @@ class MockFallbackThreadwayMap:
 			return {"ok": false, "reason": "no mainland endpoint within connector budget"}
 		return result.duplicate(true)
 
-	func resolve_runtime_walkable_connector(
-		_start_global_position: Vector2, _preferred_direction: Vector2i,
-		_width_tiles: int, max_length_tiles: int, _region_type: String,
-		_region_zone: String, lateral_allowance_tiles: int = -1
+	func commit_runtime_walkable_connector_plan(
+		plan: Dictionary, _region_type: String, _region_zone: String
 	) -> Dictionary:
 		resolve_count += 1
-		committed_length = max_length_tiles
-		committed_lateral = lateral_allowance_tiles
-		return result.duplicate(true)
+		committed_length = int(plan.get("selected_max_length_tiles", 0))
+		committed_lateral = int(plan.get("selected_lateral_allowance_tiles", -1))
+		return plan.duplicate(true)
 
 
 var _errors: Array[String] = []
@@ -206,15 +211,19 @@ func _validate_resource_lifecycle() -> void:
 	ledger.call("add", RESOURCE_ID, 1)
 	await process_frame
 	_check(memory.call("is_completed", EVENT_ID), "Knot acquisition did not latch WorldEventMemory")
-	_check(live_map.resolve_count == 1, "live Knot did not resolve exactly once")
+	_check(live_map.resolve_count == 0, "live Knot committed terrain before visual resolution")
 	var live_threadway := live_site.call("debug_get_threadway") as AshBellThreadwayCauseway
 	_check(live_threadway != null, "live Knot did not create persistent threadway presentation")
 	if live_threadway != null:
 		_check(live_threadway.debug_get_persistent_tile_count() == 3, "persistent tile count drifted")
+		for child in live_threadway.get_children():
+			if String(child.name).begins_with("ThreadwayFloor_"):
+				_check((child as Sprite2D).z_index == 0, "persistent Threadway floor is not in ground z=0")
 	await create_timer(1.2).timeout
 	if live_threadway != null:
 		_check(live_threadway.debug_get_reveal_play_count() == 1, "live reveal did not play exactly once")
 		_check(not live_threadway.debug_has_temporary_blocker(), "temporary blocker survived reveal")
+	_check(live_map.resolve_count == 1, "live Knot did not commit exactly once after reveal")
 	ledger.call("add", RESOURCE_ID, 1)
 	await process_frame
 	_check(live_map.resolve_count == 1, "second Knot duplicated connector resolution")

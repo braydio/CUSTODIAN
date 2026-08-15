@@ -144,7 +144,8 @@ func _validate_scene(
 	_check(presentation.get_node_or_null("ForegroundOccluderRoot/LeftMouthRock") != null, "left mouth breakup is missing", errors)
 	_check(presentation.get_node_or_null("ForegroundOccluderRoot/RightMouthRock") != null, "right mouth breakup is missing", errors)
 	_check(presentation.get_node_or_null("ForegroundOccluderRoot/LowerCaveLip") != null, "foreground cave lip is missing", errors)
-	_check(entrance_mask.z_index == 8, "parked foreground occluder left z=8", errors)
+	_check(entrance_mask.z_index == 1, "parked cave breakup must remain behind Operator z=2", errors)
+	_check(not presentation.foreground_occluder.visible, "broad cave mask must be hidden while parked", errors)
 	_check(presentation.lift_root.position == threshold.position, "parked platform is not aligned to its threshold", errors)
 	_check(rider_anchor.position == Vector2(0, -26), "rider anchor height drifted", errors)
 	_check(boarding_marker.position == Vector2(0, -26), "boarding marker drifted", errors)
@@ -160,8 +161,8 @@ func _validate_scene(
 	_check(dust.modulate.a >= 0.25 and dust.modulate.a <= 0.40, "dust opacity is outside the restrained target", errors)
 	_check(not dust.visible, "dust must not remain visible while idle", errors)
 	_validate_world_depth_contract(presentation, errors)
-	_check(platform.z_index == 0 and vibrate.z_index == 0, "platform back must inherit LiftRoot z=2", errors)
-	_check(front_idle.z_index == 0 and front_vibrate.z_index == 0, "front lip must inherit LiftRoot z=2", errors)
+	_check(platform.z_index == 1 and vibrate.z_index == 1, "parked platform back must use idle z=1", errors)
+	_check((presentation.get_node("LiftRoot/PlatformFront") as Node2D).z_index == 3, "parked front lip must use idle z=3", errors)
 	var lift_root := presentation.get_node("LiftRoot") as Node2D
 	var rider := presentation.get_node("LiftRoot/RiderAnchor") as Marker2D
 	var platform_front := presentation.get_node("LiftRoot/PlatformFront") as Node2D
@@ -266,7 +267,8 @@ func _validate_lift_travel(
 	_check(not presentation.has_presentation_puppet(), "descent puppet was not freed", errors)
 	_check(actor.process_mode == Node.PROCESS_MODE_ALWAYS, "actor process mode was not restored", errors)
 	_check(actor.z_index == 7 and actor.z_as_relative, "actor Z state was not restored", errors)
-	_check(presentation.entrance_mask.z_index == 8, "descent did not restore the foreground occluder to z=8", errors)
+	_check(presentation.entrance_mask.z_index == 1, "descent did not restore idle cave depth", errors)
+	_check(not presentation.foreground_occluder.visible, "descent left broad cave mask visible while parked", errors)
 	var restored_position := Vector2(311.0, 277.0)
 	actor.position = restored_position
 	await presentation.play_ascent(actor)
@@ -276,7 +278,7 @@ func _validate_lift_travel(
 	_check(actor.process_mode == Node.PROCESS_MODE_ALWAYS, "ascent did not restore actor process mode", errors)
 	_check(visual.visible, "ascent did not restore the live Operator visual", errors)
 	_check(not presentation.has_presentation_puppet(), "ascent puppet was not freed", errors)
-	_check(presentation.entrance_mask.z_index == 8, "ascent did not restore the foreground occluder to z=8", errors)
+	_check(presentation.entrance_mask.z_index == 1, "ascent did not restore idle cave depth", errors)
 	_check(not presentation.shaft_window.visible, "ascent left the shaft exposed in the parked state", errors)
 	presentation.reset_presentation()
 	presentation.descent_duration = 1.0
@@ -286,6 +288,9 @@ func _validate_lift_travel(
 	_check(presentation.has_presentation_puppet(), "descent did not create a puppet", errors)
 	_check(presentation.shaft_window.visible, "shaft did not become visible after accepted traversal", errors)
 	_check(presentation.entrance_mask.z_index == 20, "foreground cave mask did not enter travel z=20", errors)
+	_check(presentation.foreground_occluder.visible, "full cave mask did not activate for travel", errors)
+	_check(presentation.platform_back_vibrate.z_index == 5, "travel platform back did not enter z=5", errors)
+	_check((presentation.get_node("LiftRoot/PlatformFront") as Node2D).z_index == 7, "travel front lip did not enter z=7", errors)
 	await create_timer(0.3).timeout
 	var puppet := presentation.get_presentation_puppet()
 	_check(puppet != null and puppet.z_index == 6, "rider did not retain lift world z=6", errors)
@@ -387,9 +392,9 @@ func _validate_world_depth_contract(
 	var expected := {
 		"RearMassRoot": -8,
 		"ThresholdSurface": 0,
-		"EntranceStructureRoot": 4,
-		"LiftRoot": 6,
-		"ForegroundOccluderRoot": 8,
+		"EntranceStructureRoot": 1,
+		"LiftRoot": 0,
+		"ForegroundOccluderRoot": 1,
 		"DustBurst": 10,
 		"LampFxRoot": 10,
 	}

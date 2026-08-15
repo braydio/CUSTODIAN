@@ -5,6 +5,7 @@ const THREADWAY_SCRIPT := preload(
 )
 
 var _threadway: AshBellThreadwayCauseway = null
+var connector_committed: bool = false
 
 var persistent_tiles: int:
 	get:
@@ -29,6 +30,7 @@ func moment_forge_fixture_command(command: String, _args: Dictionary) -> Variant
 	_threadway = THREADWAY_SCRIPT.new() as AshBellThreadwayCauseway
 	_threadway.name = "AshBellThreadwayCauseway"
 	add_child(_threadway)
+	_threadway.visual_resolution_finished.connect(_on_visual_resolution_finished)
 	var cells: Array[Vector2i] = []
 	var variants: Dictionary = {}
 	for y in range(0, 6):
@@ -47,6 +49,14 @@ func moment_forge_fixture_command(command: String, _args: Dictionary) -> Variant
 		"tile_variants": variants,
 	}, true)
 	return true
+
+
+func _on_visual_resolution_finished() -> void:
+	# The production ingress commits the exact evaluated procgen plan at this
+	# boundary. This isolated fixture records that authority handoff before it
+	# releases the temporary traversal blocker.
+	connector_committed = true
+	_threadway.finish_resolution()
 
 
 func get_runtime_tile_size() -> Vector2:

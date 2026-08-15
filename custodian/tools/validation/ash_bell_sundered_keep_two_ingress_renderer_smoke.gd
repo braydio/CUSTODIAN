@@ -34,13 +34,14 @@ func _run() -> void:
 	var clearance := ash.get_procgen_dressing_clearance_world_rect()
 	_assert(clearance == Rect2(Vector2(-416.0, -432.0), Vector2(832.0, 608.0)), "Ash Bell clearance footprint drifted")
 	_assert((ash.get_node("RearMassRoot") as Node2D).z_index == -8, "rear mass must remain behind foliage")
-	_assert((ash.get_node("EntranceStructureRoot") as Node2D).z_index == 4, "entrance structure must cover ordinary foliage")
-	_assert((ash.get_node("ForegroundOccluderRoot") as Node2D).z_index == 8, "cave lip must cover the threshold actor selectively")
+	_assert((ash.get_node("EntranceStructureRoot") as Node2D).z_index == 1, "entrance structure must remain behind the live Operator")
+	_assert((ash.get_node("ForegroundOccluderRoot") as Node2D).z_index == 1, "idle cave breakup must remain behind the live Operator")
 
 	var operator := Node2D.new()
 	operator.global_position = ash.get_boarding_position()
 	host.add_child(operator)
-	_assert(operator.z_index < (ash.get_node("EntranceStructureRoot") as Node2D).z_index, "Operator threshold band is not readable beneath the arch")
+	operator.z_index = 2
+	_assert(operator.z_index > (ash.get_node("EntranceStructureRoot") as Node2D).z_index, "Operator is not readable in front of idle entrance structure")
 
 	var map := MockMap.new()
 	host.add_child(map)

@@ -2,6 +2,7 @@ extends Node2D
 class_name AshBellThreadwayCauseway
 
 signal resolution_finished
+signal visual_resolution_finished
 
 const RESOLVE_TEXTURE := preload(
 	"res://content/sprites/world/ingress/ash_bell/ash_bell_threadway_resolve_01__7f__32.png"
@@ -41,13 +42,12 @@ func configure(map_instance: Node, connector: Dictionary, play_reveal: bool) -> 
 		sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		sprite.scale = tile_size / SOURCE_TILE_SIZE
 		sprite.z_as_relative = false
-		sprite.z_index = 2
+		sprite.z_index = 0
 		sprite.visible = not play_reveal
 		add_child(sprite)
 		sprite.global_position = _tile_to_global(cell)
 		_persistent_by_tile[cell] = sprite
 	if not play_reveal:
-		resolution_finished.emit()
 		return
 	_build_temporary_blocker(cells, tile_size)
 	_play_resolution.call_deferred(connector)
@@ -65,6 +65,10 @@ func _play_resolution(connector: Dictionary) -> void:
 		_reveal_near_center(center)
 		await get_tree().create_timer(CENTERLINE_STAGGER_SECONDS).timeout
 	await get_tree().create_timer(float(RESOLVE_FRAME_COUNT) / RESOLVE_FPS).timeout
+	visual_resolution_finished.emit()
+
+
+func finish_resolution() -> void:
 	_remove_temporary_blocker()
 	resolution_finished.emit()
 
@@ -85,7 +89,7 @@ func _spawn_resolve_vfx(cell: Vector2i) -> void:
 	effect.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	effect.scale = _runtime_tile_size() / SOURCE_TILE_SIZE
 	effect.z_as_relative = false
-	effect.z_index = 3
+	effect.z_index = 1
 	add_child(effect)
 	effect.global_position = _tile_to_global(cell)
 	effect.animation_finished.connect(effect.queue_free)

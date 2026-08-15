@@ -55,9 +55,8 @@ func _validate_seed(seed: int) -> void:
 	_check(not _component_from(map.get_player_spawn(), before).has(start), seed, "pocket was connected before Knot", plan)
 	_check(bool(plan.get("ok", false)), seed, "canonical dry-run failed", plan)
 	_check(map.debug_get_generated_floor_cells() == before, seed, "dry-run mutated floor", plan)
-	var result := map.resolve_runtime_walkable_connector(
-		map.tile_to_global_position(start), Vector2i.DOWN, 3, 18,
-		"ash_bell_threadway", "white_thread"
+	var result := map.commit_runtime_walkable_connector_plan(
+		plan, "ash_bell_threadway", "white_thread"
 	)
 	_check(bool(result.get("ok", false)), seed, "commit failed", result)
 	var repeat := map.resolve_runtime_walkable_connector(

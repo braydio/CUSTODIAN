@@ -8,8 +8,12 @@ const PROCGEN_DRESSING_CLEARANCE_LOCAL := Rect2(
 	Vector2(-416.0, -432.0),
 	Vector2(832.0, 608.0)
 )
-const LIFT_WORLD_Z := 6
-const FOREGROUND_IDLE_Z := 8
+const LIFT_BACK_IDLE_Z := 1
+const LIFT_FRONT_IDLE_Z := 3
+const LIFT_BACK_TRAVEL_Z := 5
+const RIDER_TRAVEL_Z := 6
+const LIFT_FRONT_TRAVEL_Z := 7
+const FOREGROUND_IDLE_Z := 1
 const FOREGROUND_TRAVEL_Z := 20
 
 @export var descent_distance := 176.0
@@ -49,7 +53,7 @@ func _ready() -> void:
 	shaft_window.visible = false
 	shaft_window.modulate.a = 0.0
 	dust_burst.visible = false
-	entrance_mask.z_index = FOREGROUND_IDLE_Z
+	_set_idle_depth_mode()
 	if not dust_burst.animation_finished.is_connected(_on_dust_finished):
 		dust_burst.animation_finished.connect(_on_dust_finished)
 	lamp.play(&"flicker")
@@ -63,9 +67,9 @@ func play_descent(actor: Node2D) -> void:
 		return
 	_playing = true
 	_presentation_rig.z_as_relative = false
-	_presentation_rig.z_index = LIFT_WORLD_Z
+	_presentation_rig.z_index = RIDER_TRAVEL_Z
 	_set_platform_vibrating(true)
-	entrance_mask.z_index = FOREGROUND_TRAVEL_Z
+	_set_travel_depth_mode()
 	shaft_window.visible = true
 	shaft_window.modulate.a = 0.0
 	dust_burst.visible = true
@@ -112,7 +116,7 @@ func play_descent(actor: Node2D) -> void:
 	if not _playing:
 		return
 	_restore_operator_presentation()
-	entrance_mask.z_index = FOREGROUND_IDLE_Z
+	_set_idle_depth_mode()
 	_playing = false
 	_active_tween = null
 
@@ -136,9 +140,9 @@ func play_ascent(actor: Node2D) -> void:
 	_set_platform_vibrating(true)
 	shaft_window.visible = true
 	shaft_window.modulate.a = 1.0
-	entrance_mask.z_index = FOREGROUND_TRAVEL_Z
+	_set_travel_depth_mode()
 	_presentation_rig.z_as_relative = false
-	_presentation_rig.z_index = LIFT_WORLD_Z
+	_presentation_rig.z_index = RIDER_TRAVEL_Z
 	var hidden_duration := descent_duration * 0.58
 	var reveal_duration := descent_duration - hidden_duration
 	var reveal_lift_y := lerpf(lift_root.position.y, _lift_start_position.y, 0.58)
@@ -185,7 +189,7 @@ func play_ascent(actor: Node2D) -> void:
 	_restore_operator_presentation()
 	shaft_window.visible = false
 	shaft_window.modulate.a = 0.0
-	entrance_mask.z_index = FOREGROUND_IDLE_Z
+	_set_idle_depth_mode()
 	_playing = false
 	_active_tween = null
 
@@ -197,7 +201,7 @@ func reset_presentation() -> void:
 	shaft_window.visible = false
 	shaft_window.modulate.a = 0.0
 	_set_platform_vibrating(false)
-	entrance_mask.z_index = FOREGROUND_IDLE_Z
+	_set_idle_depth_mode()
 	dust_burst.visible = false
 	dust_burst.stop()
 	dust_burst.frame = 0
@@ -211,7 +215,7 @@ func cancel_presentation() -> void:
 	_playing = false
 	shaft_window.visible = false
 	shaft_window.modulate.a = 0.0
-	entrance_mask.z_index = FOREGROUND_IDLE_Z
+	_set_idle_depth_mode()
 
 
 func is_playing() -> bool:
@@ -257,7 +261,7 @@ func _create_presentation_rig(actor: Node2D) -> bool:
 	rider_anchor.add_child(_presentation_rig)
 	_presentation_rig.position = Vector2.ZERO
 	_presentation_rig.z_as_relative = false
-	_presentation_rig.z_index = LIFT_WORLD_Z
+	_presentation_rig.z_index = RIDER_TRAVEL_Z
 	if not _presentation_rig.capture_from_operator(actor):
 		_presentation_rig.free()
 		_presentation_rig = null
@@ -293,6 +297,30 @@ func _set_platform_vibrating(is_vibrating: bool) -> void:
 	else:
 		platform_back_vibrate.stop()
 		front_lip_vibrate.stop()
+
+
+func _set_idle_depth_mode() -> void:
+	lift_root.z_index = 0
+	platform_back_idle.z_as_relative = false
+	platform_back_vibrate.z_as_relative = false
+	platform_back_idle.z_index = LIFT_BACK_IDLE_Z
+	platform_back_vibrate.z_index = LIFT_BACK_IDLE_Z
+	$LiftRoot/PlatformFront.z_as_relative = false
+	$LiftRoot/PlatformFront.z_index = LIFT_FRONT_IDLE_Z
+	entrance_mask.z_index = FOREGROUND_IDLE_Z
+	foreground_occluder.visible = false
+
+
+func _set_travel_depth_mode() -> void:
+	lift_root.z_index = 0
+	platform_back_idle.z_as_relative = false
+	platform_back_vibrate.z_as_relative = false
+	platform_back_idle.z_index = LIFT_BACK_TRAVEL_Z
+	platform_back_vibrate.z_index = LIFT_BACK_TRAVEL_Z
+	$LiftRoot/PlatformFront.z_as_relative = false
+	$LiftRoot/PlatformFront.z_index = LIFT_FRONT_TRAVEL_Z
+	entrance_mask.z_index = FOREGROUND_TRAVEL_Z
+	foreground_occluder.visible = true
 
 
 func _on_dust_finished() -> void:

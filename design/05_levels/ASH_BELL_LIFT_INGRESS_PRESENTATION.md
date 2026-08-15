@@ -99,13 +99,17 @@ connector from the isolated approach toward the main player-reachable floor.
 The resolver rejects map bounds, constructed walls, required route cells, and
 Sundered Keep protected cells.
 
-The complete connector is committed in one terrain transaction. Generated
+The exact connector is first evaluated without mutation and used as the visual
+resolution plan. The special surface and thread effect travel from mainland to
+the lift while a temporary local blocker prevents entry; only after the final
+visual settle is that same plan committed in one terrain transaction. Generated
 floor/wall state, CHASM/OCEAN classification, runtime walkable boundary,
 navigation, shadows, region metadata, and canonical minimap `floor` updates
-are refreshed once for the batch. Presentation overlays use six deterministic
+are refreshed once for the batch, so ordinary procgen floor never precedes the
+materialization. Presentation overlays use six deterministic
 dark-stone variants. A seven-frame 32 px thread/ash/remembered-stone effect
 travels from mainland toward the lift at 11 FPS with 0.05-second centerline
-stagger; a temporary local blocker prevents entry until it settles. If the
+stagger. If the
 milestone predates site creation, authoritative floor and persistent overlays
 appear immediately without replaying the reveal. Further Knots are no-ops.
 
@@ -124,12 +128,16 @@ cancellation also restore the exterior-only state.
 
 The current platform renders at approximately 173 px wide. Its idle and
 vibration art are alpha-split from the original platform into back/deck/rail
-and front-lip nodes. Absolute, non-y-sorted depth bands are rear mass `-8`,
-threshold `0`, entrance structure `4`, lift/rider `6`, foreground cave
-occluders `8` while idle and `20` during travel, and lamp/dust FX `10`.
+and front-lip nodes. Idle world depth is rear mass `-8`, threshold `0`, entrance
+structure and broad cave breakup `1`, platform back/deck `1`, live Operator
+`2`, localized lower cave lip and platform front lip `3`, and lamp/dust FX
+`10`. The broad authored foreground occluder is hidden during ordinary approach.
+Travel promotes the platform back, detached rider, and front lip to absolute
+`5 / 6 / 7`, activates the full cave mask at `20`, then restores the idle
+depth and visibility contract on finish, reset, or cancellation.
 Ordinary procgen foliage remains at `1`; it is removed beneath the structure,
-while the entrance shell and localized cave lip retain intentional actor
-occlusion. The entire mountain mass must never be raised as one foreground
+while only the localized lower cave lip retains intentional actor occlusion.
+The entire mountain mass must never be raised as one foreground
 plate. The rider uses `RiderAnchor (0, -26)`. The burst dust
 renders at approximately 96×58 px, 34 percent alpha, behind the platform. The
 768×512 cliff remains landmark-scale while the functional entrance stays sized

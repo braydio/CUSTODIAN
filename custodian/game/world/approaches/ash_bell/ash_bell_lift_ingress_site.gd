@@ -86,7 +86,10 @@ func _on_resource_added(resource_id: String, _amount: int, new_total: int) -> vo
 func _resolve_threadway(play_reveal: bool) -> void:
 	if _threadway != null or _presentation == null or _main_map == null:
 		return
-	if not _main_map.has_method("resolve_runtime_walkable_connector"):
+	if (
+		not _main_map.has_method("evaluate_runtime_walkable_connector")
+		or not _main_map.has_method("commit_runtime_walkable_connector_plan")
+	):
 		push_warning("[AshBellLiftIngressSite] Procgen map has no runtime connector authority")
 		return
 	_threadway_result = {}
@@ -106,6 +109,7 @@ func _resolve_threadway(play_reveal: bool) -> void:
 	var selected_length := canonical_length
 	var selected_lateral := -1
 	var canonical_plan: Dictionary = {}
+	var selected_plan: Dictionary = {}
 	if _main_map.has_method("evaluate_runtime_walkable_connector"):
 		canonical_plan = _main_map.call(
 			"evaluate_runtime_walkable_connector",
@@ -122,6 +126,7 @@ func _resolve_threadway(play_reveal: bool) -> void:
 				selected_lateral
 			) as Dictionary
 			if bool(fallback_plan.get("ok", false)):
+				selected_plan = fallback_plan
 				_observe(&"ash_bell_threadway_resolution_fallback", {
 					"canonical_budget": canonical_length,
 					"fallback_budget": selected_length,
@@ -135,19 +140,13 @@ func _resolve_threadway(play_reveal: bool) -> void:
 		if not canonical_plan.is_empty() and bool(canonical_plan.get("ok", false)):
 			selected_length = canonical_length
 			selected_lateral = -1
+			selected_plan = canonical_plan
 	if not _threadway_result.is_empty() and not bool(_threadway_result.get("ok", false)):
 		_report_resolution_failure(_threadway_result, canonical_plan)
 		return
-	_threadway_result = _main_map.call(
-		"resolve_runtime_walkable_connector",
-		_presentation.get_interaction_approach_position(),
-		-outward,
-		width,
-		selected_length,
-		"ash_bell_threadway",
-		"white_thread",
-		selected_lateral
-	) as Dictionary
+	_threadway_result = selected_plan
+	_threadway_result["selected_max_length_tiles"] = selected_length
+	_threadway_result["selected_lateral_allowance_tiles"] = selected_lateral
 	if not bool(_threadway_result.get("ok", false)):
 		_report_resolution_failure(_threadway_result, canonical_plan)
 		return
@@ -155,7 +154,25 @@ func _resolve_threadway(play_reveal: bool) -> void:
 	_threadway.name = "AshBellThreadwayCauseway"
 	add_child(_threadway)
 	_threadway.resolution_finished.connect(_on_threadway_resolution_finished)
+	_threadway.visual_resolution_finished.connect(_commit_threadway_plan)
 	_threadway.configure(_main_map, _threadway_result, play_reveal)
+	if not play_reveal:
+		_commit_threadway_plan()
+
+
+func _commit_threadway_plan() -> void:
+	if _threadway == null or _main_map == null:
+		return
+	_threadway_result = _main_map.call(
+		"commit_runtime_walkable_connector_plan",
+		_threadway_result,
+		"ash_bell_threadway",
+		"white_thread"
+	) as Dictionary
+	if not bool(_threadway_result.get("ok", false)):
+		_report_resolution_failure(_threadway_result)
+		return
+	_threadway.finish_resolution()
 
 
 func _report_resolution_failure(result: Dictionary, canonical_plan: Dictionary = {}) -> void:

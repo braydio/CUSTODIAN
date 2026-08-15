@@ -23,14 +23,17 @@
     {"tick": 130, "action": "finish"}
   ],
   "probes": [
-    {"id": "threadway_state", "role": "fixture", "fields": ["persistent_tiles", "reveal_count", "blocker_active"], "ticks": [0, 20, 46, 110], "required": true}
+    {"id": "threadway_state", "role": "fixture", "fields": ["persistent_tiles", "reveal_count", "blocker_active", "connector_committed"], "ticks": [0, 20, 46, 110], "required": true}
   ],
   "assertions": [
     {"type": "role_exists", "role": "presentation", "severity": "error"},
     {"type": "probe_compare", "probe": "threadway_state", "tick": 0, "field": "persistent_tiles", "op": "eq", "value": 0, "severity": "error"},
     {"type": "probe_compare", "probe": "threadway_state", "tick": 20, "field": "reveal_count", "op": "eq", "value": 1, "severity": "error"},
     {"type": "probe_compare", "probe": "threadway_state", "tick": 20, "field": "blocker_active", "op": "eq", "value": true, "severity": "error"},
+    {"type": "probe_compare", "probe": "threadway_state", "tick": 20, "field": "connector_committed", "op": "eq", "value": false, "severity": "error"},
+    {"type": "probe_compare", "probe": "threadway_state", "tick": 46, "field": "connector_committed", "op": "eq", "value": false, "severity": "error"},
     {"type": "probe_compare", "probe": "threadway_state", "tick": 110, "field": "persistent_tiles", "op": "eq", "value": 18, "severity": "error"},
+    {"type": "probe_compare", "probe": "threadway_state", "tick": 110, "field": "connector_committed", "op": "eq", "value": true, "severity": "error"},
     {"type": "probe_compare", "probe": "threadway_state", "tick": 110, "field": "blocker_active", "op": "eq", "value": false, "severity": "error"},
     {"type": "no_unreleased_inputs", "severity": "error"},
     {"type": "output_exists", "path": "telemetry.json", "severity": "error"}

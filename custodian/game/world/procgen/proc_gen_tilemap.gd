@@ -2843,11 +2843,14 @@ func resolve_runtime_walkable_connector(
 	region_zone: String = "connector",
 	lateral_allowance_tiles: int = -1
 ) -> Dictionary:
-	return _evaluate_or_commit_runtime_walkable_connector(
+	var plan := _evaluate_or_commit_runtime_walkable_connector(
 		start_global_position, preferred_direction, width_tiles,
-		max_length_tiles, region_type, region_zone, false,
+		max_length_tiles, region_type, region_zone, true,
 		lateral_allowance_tiles
 	)
+	if not bool(plan.get("ok", false)):
+		return plan
+	return commit_runtime_walkable_connector_plan(plan, region_type, region_zone)
 
 
 func evaluate_runtime_walkable_connector(
@@ -3000,8 +3003,37 @@ func _evaluate_or_commit_runtime_walkable_connector(
 	}
 	if dry_run:
 		return plan
+	return commit_runtime_walkable_connector_plan(plan, region_type, region_zone)
+
+
+func commit_runtime_walkable_connector_plan(
+	plan: Dictionary,
+	region_type: String = "runtime_connector",
+	region_zone: String = "connector"
+) -> Dictionary:
+	if not bool(plan.get("ok", false)):
+		return {"ok": false, "reason": "cannot commit invalid connector plan"}
+	if bool(plan.get("already_connected", false)):
+		return plan
+	if floor_tilemap == null or walls_tilemap == null or procgen_node == null:
+		return {"ok": false, "reason": "missing procgen terrain authority"}
+	var map_size: Vector2i = procgen_node.map_size
+	var ordered_cells: Array = plan.get("cells", [])
+	var planned_new_cells: Array = plan.get("new_cells", [])
+	for cell_variant in ordered_cells:
+		if not cell_variant is Vector2i:
+			return {"ok": false, "reason": "connector plan contains invalid cell"}
+		var cell := cell_variant as Vector2i
+		if not _is_tile_inside_map(cell, map_size, 0):
+			return {"ok": false, "reason": "connector plan left map bounds", "blocked_cell": cell}
+		if _generated_wall_cells.has(cell):
+			return {"ok": false, "reason": "connector plan became blocked", "blocked_cell": cell}
 	var commit_started_usec := Time.get_ticks_usec()
-	for cell in ordered_cells:
+	var committed_new_cells := 0
+	for cell_variant in ordered_cells:
+		var cell := cell_variant as Vector2i
+		if not _generated_floor_cells.has(cell):
+			committed_new_cells += 1
 		_set_floor_tile_and_generated_state(cell, region_type, region_zone)
 		_remove_foliage(cell)
 		minimap_tile_changed.emit(cell, "floor")
@@ -3015,10 +3047,13 @@ func _evaluate_or_commit_runtime_walkable_connector(
 	_runtime_connector_commit_count += 1
 	_runtime_terrain_last_commit_usec = Time.get_ticks_usec() - commit_started_usec
 	_runtime_terrain_last_commit_reason = region_type
-	_runtime_terrain_last_changed_cell_count = new_cells.size()
-	_record_runtime_mutation(&"procgen_runtime_terrain_committed", region_type, _runtime_terrain_last_commit_usec, _generated_floor_cells.size() - new_cells.size(), _generated_floor_cells.size(), new_cells.size())
-	_obs_log(&"procgen_runtime_connector_resolved", _runtime_mutation_payload(region_type, _runtime_terrain_last_commit_usec, 0, ordered_cells.size(), new_cells.size()))
-	return plan
+	_runtime_terrain_last_changed_cell_count = committed_new_cells
+	_record_runtime_mutation(&"procgen_runtime_terrain_committed", region_type, _runtime_terrain_last_commit_usec, _generated_floor_cells.size() - committed_new_cells, _generated_floor_cells.size(), committed_new_cells)
+	_obs_log(&"procgen_runtime_connector_resolved", _runtime_mutation_payload(region_type, _runtime_terrain_last_commit_usec, 0, ordered_cells.size(), committed_new_cells))
+	var result := plan.duplicate(true)
+	result["new_cells"] = planned_new_cells
+	result["committed_new_cell_count"] = committed_new_cells
+	return result
 
 
 func _runtime_floor_component(origin: Vector2i, map_size: Vector2i) -> Dictionary:
