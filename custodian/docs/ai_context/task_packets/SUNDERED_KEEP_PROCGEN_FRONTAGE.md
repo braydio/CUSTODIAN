@@ -92,3 +92,9 @@
   two-cell wet-rock shore skin, and cools cliff faces. Generic post-bounds
   camera containment now keeps the Operator in the requested safe frame while
   retaining the 18-cell request cap and near-edge composition.
+  The shared compositor/editor-lab slice extracts all Sundered shoreline
+  presentation planning from `ProcGenTilemap`, adds ordered arc-distance runs
+  and the dark glue ribbon, and makes production and lab plan fingerprints
+  identical for the same cells, seed, and controls. The permanent `@tool` scene
+  is the routine tuning surface; seeds 1, 17, and 71 are stored as compact
+  production fixtures, while Moment Forge remains the runtime approval gate.

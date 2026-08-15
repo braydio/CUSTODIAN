@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c01ryc64xkry4"
-path="res://.godot/imported/incoming_melee_stance-sheet_pixel_4f_128x128.png-df3fdcd99dcbb5ba2e0564148055cc1a.ctex"
+uid="uid://b8yrl8khjybnq"
+path="res://.godot/imported/operator__modular_weapon_vigil_dagger__melee_1h__draw_01__e__4f__128x96.png-147d4baa7a355608eab96125e9a26d7b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/incoming/incoming_melee_stance-sheet_pixel_4f_128x128.png"
-dest_files=["res://.godot/imported/incoming_melee_stance-sheet_pixel_4f_128x128.png-df3fdcd99dcbb5ba2e0564148055cc1a.ctex"]
+source_file="res://content/sprites/operator/new_operator/modular/draw_01/operator__modular_weapon_vigil_dagger__melee_1h__draw_01__e__4f__128x96.png"
+dest_files=["res://.godot/imported/operator__modular_weapon_vigil_dagger__melee_1h__draw_01__e__4f__128x96.png-147d4baa7a355608eab96125e9a26d7b.ctex"]
 
 [params]
 

@@ -146,10 +146,15 @@ Documentation updates this session:
   semantic dark-rock skin. The first two Manhattan bands inland use
   deterministic `70/30` rock/cracked and `45/35/20`
   rock/cracked/wet-flagstone skins; farther floor preserves the frontage and
-  terminal-apron selection. Ocean foam is a 22%-alpha fringe beneath the cliff
-  face rather than four opaque 32x32 water squares. Existing 64x96 cardinal
-  Keep cliff compositions occupy every 32px step of clean straight frontier
-  runs, forming an overlapping continuous cooled band. The historical World
+  terminal-apron selection. `SunderedKeepShorelineCompositor` now owns one
+  ordered, directed floor/ocean boundary plan shared by production ProcGen and
+  the permanent `@tool` shoreline lab. Foam is a 22%-alpha fringe derived from
+  that plan. Existing 64x96 cardinal cliffs are sampled every 32 world pixels
+  of shoreline arc, bend samples overlap, and a non-antialiased 40px dark glue
+  ribbon prevents transparent gaps from exposing ocean. The lab supplies eight
+  synthetic shapes plus compact production fixtures for seeds 1, 17, and 71,
+  live Inspector rebuilding, false color, fixture save, and PNG capture without
+  booting the game. The historical World
   Vista cliff lip is
   reused only as a low-alpha `S0-S36` cinematic foreground plane; scenery fades
   farther from `S36-S52` after camera release;

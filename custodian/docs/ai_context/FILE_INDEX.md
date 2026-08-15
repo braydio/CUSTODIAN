@@ -798,6 +798,10 @@ Last updated: 2026-08-12
 - `custodian/game/world/compound/rooms/persistent_compound_layout_planner.gd` — deterministic layout helper for room selection, placement, topology, doors, and corridors
 - `custodian/game/world/compound/rooms/graphs/persistent_compound_layout_v1.json` — live room catalog, count, footprint, zone, Sector, and connection data
 - `custodian/game/world/procgen/proc_gen_tilemap.gd` — generated physical compound and semantic level-data authority
+- `custodian/game/world/procgen/terrain/sundered_keep_shoreline_compositor.gd` — shared deterministic Sundered Keep presentation planner/renderer for ordered boundary runs, arc-distance cliffs, foam, glue ribbon, coastal floor bands, and compact fixture serialization; owns no gameplay topology
+- `custodian/tools/visual_labs/sundered_keep_shoreline_lab.tscn` and `.gd` — permanent `@tool` editor/F6 shoreline workbench using the production compositor, eight synthetic presets, three captured production fixtures, live controls, false color, fixture save, and PNG capture
+- `custodian/tools/visual_labs/README.md` — normal editor-first visual-lab workflow; Moment Forge remains the final runtime evidence gate
+- `custodian/tools/validation/sundered_keep_shoreline_compositor_smoke.gd` — shared-plan identity, boundary/run/arc, foam/floor authority, fixture determinism, and presentation-only validation across synthetic and production shapes
 - `custodian/game/systems/core/systems/contract_world_loader.gd` — semantic Sector, command-terminal, Field Fabricator, and construction-zone placement consumer; building indices are legacy fallback only
 - `custodian/game/ui/minimap/minimap_view.gd` — shared semantic topology renderer with anonymous-building compatibility fallback
 - `custodian/tools/validation/persistent_compound_{layout,runtime,minimap}_smoke.gd` — deterministic planner, physical integration, and map-consumer coverage

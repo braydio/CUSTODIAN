@@ -114,12 +114,18 @@ The first two Manhattan-distance floor bands from authoritative ocean use a
 deterministically hashed wet-rock skin: distance one is `70/30` rock/cracked;
 distance two is `45/35/20` rock/cracked/wet flagstone. Beyond that band,
 terminal-apron threshold stone and the existing frontage selection remain
-authoritative. Topology-aware ocean foam sources are transparent overlays
-rather than opaque water tiles. The authoritative frontage-floor/ocean frontier
-places the existing 64x96 cardinal cliff compositions at every 32px frontier
-step on clean straight runs, producing an overlapping continuous band with
-organic corner overpainting. Explicit per-direction offsets keep the lip on
-land and face over ocean. Cliff sprites use the cooled baseline
+authoritative. `SunderedKeepShorelineCompositor` is the single presentation
+planner for both production procgen and the editor visual lab. It extracts
+directed floor/ocean boundary segments, orders them into runs with cumulative
+world-space arc distance, and derives the coastal floor band, foam topology,
+glue ribbon, and cliff placements from that shared frontier. Topology-aware
+ocean foam sources are transparent overlays rather than opaque water tiles.
+The compositor samples the existing 64x96 cardinal cliff compositions every
+32 world pixels along shoreline arc, with 8–16px bend overlap and no sprite
+rotation. A presentation-only, non-antialiased 40px dark ribbon sits beneath
+the detailed cliff art so transparent gaps cannot expose ocean or foam.
+Explicit per-direction offsets keep the lip on land and face over ocean. Cliff
+sprites use the cooled baseline
 `Color(0.72, 0.77, 0.84, 0.96)` and render above foam; foam is held to 22% layer
 alpha beneath the cliff band. These sprites add no collision, navigation, or
 terrain authority.
@@ -131,6 +137,15 @@ cinematic foreground plane. It grows from zero at `S0`, peaks at `0.42` at
 Renderer approval remains required for this ocean-mask, shoreline-topology,
 boundary-offset, and drowned-ruins pass. Headless validation does not close the
 visual layering review by itself.
+
+Routine shoreline tuning uses
+`res://tools/visual_labs/sundered_keep_shoreline_lab.tscn`. Opening the `@tool`
+scene renders the shared compositor directly in Godot's 2D editor; Inspector
+controls cover synthetic shapes, captured production fixtures, seed, spacing,
+overlap, foam, shore width, modulation, visibility, false color, reset, fixture
+save, and PNG capture. F6 runs only the lab scene with pan/zoom. Full-game boot
+and shell commands are not part of the normal art loop; Moment Forge remains
+the final production regression/evidence gate.
 
 The cinematic dressing-clearance envelope follows the centerline through
 gameplay return, with wider discs at the single apex plateau. Foliage, ruin props,
@@ -168,6 +183,8 @@ env HOME=/tmp/custodian-godot-home godot --headless --path custodian \
   --script res://tools/validation/sundered_keep_procgen_vista_layering_smoke.gd
 env HOME=/tmp/custodian-godot-home godot --headless --path custodian \
   --script res://tools/validation/camera_presentation_subject_constraint_smoke.gd
+env HOME=/tmp/custodian-godot-home godot --headless --path custodian \
+  --script res://tools/validation/sundered_keep_shoreline_compositor_smoke.gd
 env HOME=/tmp/custodian-godot-home godot --headless --path custodian \
   --script res://tools/validation/procgen_walkable_boundary_smoke.gd
 env HOME=/tmp/custodian-godot-home godot --headless --path custodian \

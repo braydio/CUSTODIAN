@@ -18,7 +18,9 @@ const RUNTIME_WALKABLE_BOUNDARY_CHUNK_SCRIPT := preload(
 const ELEVATION_MAP_SCRIPT := preload("res://game/world/elevation/elevation_map.gd")
 const TERRAIN_BUILDER_SCRIPT := preload("res://game/world/procgen/terrain/terrain_builder.gd")
 const TERRAIN_TILE_IDS_SCRIPT := preload("res://game/world/procgen/terrain/terrain_tile_ids.gd")
-const OCEAN_SHORE_TOPOLOGY_RESOLVER := preload("res://game/world/procgen/terrain/ocean_shore_topology_resolver.gd")
+const SUNDERED_KEEP_SHORELINE_COMPOSITOR := preload(
+	"res://game/world/procgen/terrain/sundered_keep_shoreline_compositor.gd"
+)
 const NONWALKABLE_SURFACE_CLASSIFIER_SCRIPT := preload(
 	"res://game/world/procgen/terrain/nonwalkable_surface_classifier.gd"
 )
@@ -178,21 +180,6 @@ const NONWALKABLE_SURFACE_CARDINALS: Array[Vector2i] = [
 	Vector2i.LEFT,
 ]
 const SUNDERED_KEEP_OCEAN_CLAIM_ID := &"sundered_keep_frontage_ocean"
-const SUNDERED_KEEP_CLIFF_EDGE_TEXTURES := {
-	Vector2i.UP: preload("res://content/runtime/sundered_keep/terrain/cliffs/cliff_edge_n.png"),
-	Vector2i.RIGHT: preload("res://content/runtime/sundered_keep/terrain/cliffs/cliff_edge_e.png"),
-	Vector2i.DOWN: preload("res://content/runtime/sundered_keep/terrain/cliffs/cliff_edge_s.png"),
-	Vector2i.LEFT: preload("res://content/runtime/sundered_keep/terrain/cliffs/cliff_edge_w.png"),
-}
-const SUNDERED_KEEP_SURF_ALPHA := 0.22
-const SUNDERED_KEEP_CLIFF_MODULATE := Color(0.72, 0.77, 0.84, 0.96)
-const SUNDERED_KEEP_CLIFF_BOUNDARY_OFFSETS := {
-	Vector2i.UP: Vector2(0.0, 32.0),
-	Vector2i.RIGHT: Vector2(-18.0, 24.0),
-	Vector2i.DOWN: Vector2(0.0, -24.0),
-	Vector2i.LEFT: Vector2(18.0, 24.0),
-}
-
 enum WorldShapeMode {
 	LEGACY_CAVE,
 	ASCENT_FIELD,
@@ -455,6 +442,7 @@ var _chasm_cells: Dictionary = {}
 var _ocean_cells: Dictionary = {}
 var _sundered_keep_coastline_parent: Node2D = null
 var _sundered_keep_shore_overlay_parent: Node2D = null
+var _sundered_keep_shoreline_plan: Dictionary = {}
 var _surface_claim_cells: Dictionary = {}
 var _nonwalkable_surface_summary: Dictionary = {}
 var _evaluated_candidate_ready: bool = false
@@ -4394,14 +4382,6 @@ func _apply_sundered_keep_frontage_floor_visuals() -> void:
 	for cell_variant in presentation_clearance.keys():
 		if cell_variant is Vector2i and _generated_floor_cells.has(cell_variant):
 			visual_candidates[cell_variant] = true
-	for cell_variant in _generated_floor_cells.keys():
-		if cell_variant is Vector2i \
-				and _sundered_keep_ocean_manhattan_distance(
-					cell_variant as Vector2i,
-					2
-				) <= 2:
-			visual_candidates[cell_variant] = true
-	var source_counts := {129: 0, 130: 0, 131: 0, 132: 0}
 	for cell_variant in visual_candidates.keys():
 		if not cell_variant is Vector2i:
 			continue
@@ -4410,18 +4390,7 @@ func _apply_sundered_keep_frontage_floor_visuals() -> void:
 			continue
 		var tile_id := "sundered_keep_cliff_rock_floor_01"
 		var variation := _tile_noise_hash(cell + Vector2i(2861, 1877)) % 100
-		var shoreline_distance := _sundered_keep_ocean_manhattan_distance(cell, 2)
-		if shoreline_distance == 1:
-			if variation >= 70:
-				tile_id = "sundered_keep_cliff_rock_floor_cracked_01"
-		elif shoreline_distance == 2:
-			if variation < 45:
-				tile_id = "sundered_keep_cliff_rock_floor_01"
-			elif variation < 80:
-				tile_id = "sundered_keep_cliff_rock_floor_cracked_01"
-			else:
-				tile_id = "sundered_keep_main_courtyard_flagstone_wet_01"
-		elif terminal_apron.has(cell):
+		if terminal_apron.has(cell):
 			if variation < 70:
 				tile_id = "sundered_keep_main_gate_threshold_stone_01"
 			elif variation < 90:
@@ -4439,7 +4408,21 @@ func _apply_sundered_keep_frontage_floor_visuals() -> void:
 		elif variation >= 85:
 			tile_id = "sundered_keep_cliff_rock_floor_cracked_01"
 		_apply_terrain_tile_visual(cell, tile_id)
-		var source_id := int((TERRAIN_TILESET_SOURCES.get(tile_id, {}) as Dictionary).get("source_id", -1))
+	_sundered_keep_shoreline_plan = _build_sundered_keep_shoreline_plan()
+	for entry_variant in _sundered_keep_shoreline_plan.get("floor_band", []):
+		var entry := entry_variant as Dictionary
+		var cell := entry.get("cell", Vector2i.ZERO) as Vector2i
+		var source_id := int(entry.get("source_id", -1))
+		if source_id == 129:
+			_apply_terrain_tile_visual(cell, "sundered_keep_cliff_rock_floor_01")
+		elif source_id == 130:
+			_apply_terrain_tile_visual(cell, "sundered_keep_cliff_rock_floor_cracked_01")
+		elif source_id == 131:
+			_apply_terrain_tile_visual(cell, "sundered_keep_main_courtyard_flagstone_wet_01")
+		visual_candidates[cell] = true
+	var source_counts := {129: 0, 130: 0, 131: 0, 132: 0}
+	for cell_variant in visual_candidates.keys():
+		var source_id := floor_tilemap.get_cell_source_id(cell_variant as Vector2i)
 		if source_counts.has(source_id):
 			source_counts[source_id] = int(source_counts[source_id]) + 1
 	var summary: Dictionary = _sundered_keep_frontage.get("debug_summary", {})
@@ -4447,15 +4430,25 @@ func _apply_sundered_keep_frontage_floor_visuals() -> void:
 	_sundered_keep_frontage["debug_summary"] = summary
 
 
-func _sundered_keep_ocean_manhattan_distance(cell: Vector2i, max_distance: int) -> int:
-	for distance in range(1, max_distance + 1):
-		for x_offset in range(-distance, distance + 1):
-			var y_offset := distance - absi(x_offset)
-			if _ocean_cells.has(cell + Vector2i(x_offset, y_offset)):
-				return distance
-			if y_offset > 0 and _ocean_cells.has(cell + Vector2i(x_offset, -y_offset)):
-				return distance
-	return max_distance + 1
+func _build_sundered_keep_shoreline_plan() -> Dictionary:
+	if _sundered_keep_frontage.is_empty():
+		return {}
+	var seed_value := 0
+	if procgen_node != null and "seed" in procgen_node:
+		seed_value = int(procgen_node.seed)
+	var cell_world_size := 32.0
+	if floor_tilemap != null:
+		cell_world_size = floor_tilemap.to_global(
+			floor_tilemap.map_to_local(Vector2i.RIGHT)
+		).distance_to(floor_tilemap.to_global(
+			floor_tilemap.map_to_local(Vector2i.ZERO)
+		))
+	return SUNDERED_KEEP_SHORELINE_COMPOSITOR.build_plan(
+		_generated_floor_cells,
+		_ocean_cells,
+		seed_value,
+		{"cell_world_size": cell_world_size}
+	)
 
 
 func is_sundered_keep_frontage_protected(cell: Vector2i) -> bool:
@@ -4634,19 +4627,18 @@ func _rebuild_nonwalkable_surface_visuals() -> void:
 		nonwalkable_surface_base_tilemap.set_cell(
 			cell, fill_id, Vector2i.ZERO, 0
 		)
-		var shore_keys: Array[String] = OCEAN_SHORE_TOPOLOGY_RESOLVER.resolve(
-			cell, _generated_floor_cells
+	_sundered_keep_shoreline_plan = _build_sundered_keep_shoreline_plan()
+	if _sundered_keep_shore_overlay_parent == null:
+		_sundered_keep_shore_overlay_parent = Node2D.new()
+		_sundered_keep_shore_overlay_parent.name = "SunderedKeepExtraShoreOverlays"
+		nonwalkable_surface_overlay_tilemap.add_child(
+			_sundered_keep_shore_overlay_parent
 		)
-		for shore_index in range(shore_keys.size()):
-			var shore_id := int(NONWALKABLE_SURFACE_TILESET_SOURCES.get(
-				TERRAIN_TILE_IDS_SCRIPT.ocean(shore_keys[shore_index]), -1
-			))
-			if shore_id < 0:
-				continue
-			if shore_index == 0:
-				nonwalkable_surface_overlay_tilemap.set_cell(cell, shore_id, Vector2i.ZERO, 0)
-			else:
-				_add_extra_shore_overlay(cell, shore_id)
+	SUNDERED_KEEP_SHORELINE_COMPOSITOR.apply_foam(
+		_sundered_keep_shoreline_plan,
+		nonwalkable_surface_overlay_tilemap,
+		_sundered_keep_shore_overlay_parent
+	)
 	_rebuild_sundered_keep_coastline_presentation()
 
 
@@ -4662,117 +4654,29 @@ func _rebuild_sundered_keep_coastline_presentation() -> void:
 		)
 	_sundered_keep_coastline_parent.z_as_relative = false
 	_sundered_keep_coastline_parent.z_index = -60
-	var claimed_ocean := (
-		_sundered_keep_frontage.get("ocean_cells", {}) as Dictionary
-	)
-	var frontier_entries: Array[Dictionary] = []
-	for cell_variant in claimed_ocean.keys():
-		if not cell_variant is Vector2i:
-			continue
-		var ocean_cell := cell_variant as Vector2i
-		var floor_direction := Vector2i.ZERO
-		for direction in NONWALKABLE_SURFACE_CARDINALS:
-			if _generated_floor_cells.has(ocean_cell + direction):
-				if floor_direction != Vector2i.ZERO:
-					floor_direction = Vector2i.ZERO
-					break
-				floor_direction = direction
-		if floor_direction == Vector2i.ZERO:
-			continue
-		frontier_entries.append({"ocean_cell": ocean_cell, "floor_direction": floor_direction})
-	var selected_entries := _select_sundered_keep_macro_cliffs(frontier_entries)
-	for entry in selected_entries:
-		var ocean_cell: Vector2i = entry["ocean_cell"]
-		var floor_direction: Vector2i = entry["floor_direction"]
-		var sprite := Sprite2D.new()
-		sprite.name = "CliffEdge_%d_%d" % [ocean_cell.x, ocean_cell.y]
-		sprite.texture = SUNDERED_KEEP_CLIFF_EDGE_TEXTURES[floor_direction]
-		var floor_cell := ocean_cell + floor_direction
-		var ocean_center := nonwalkable_surface_overlay_tilemap.map_to_local(ocean_cell)
-		var floor_center := nonwalkable_surface_overlay_tilemap.map_to_local(floor_cell)
-		var boundary := floor_center.lerp(ocean_center, 0.5)
-		sprite.position = (boundary + Vector2(
-			SUNDERED_KEEP_CLIFF_BOUNDARY_OFFSETS.get(floor_direction, Vector2.ZERO)
-		)).round()
-		sprite.modulate = SUNDERED_KEEP_CLIFF_MODULATE
-		sprite.z_index = 1
-		sprite.set_meta("ocean_cell", ocean_cell)
-		sprite.set_meta("floor_cell", floor_cell)
-		sprite.set_meta("boundary_position", boundary)
-		sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-		_sundered_keep_coastline_parent.add_child(sprite)
-	# Foam remains a restrained surf accent beneath the authored rock shelf.
-	nonwalkable_surface_overlay_tilemap.self_modulate.a = SUNDERED_KEEP_SURF_ALPHA
-	_sundered_keep_coastline_parent.set_meta("macro_cliff_stride", 1.0)
-	_sundered_keep_coastline_parent.set_meta("macro_cliff_count", selected_entries.size())
-
-
-func _select_sundered_keep_macro_cliffs(frontier_entries: Array[Dictionary]) -> Array[Dictionary]:
-	var grouped: Dictionary = {}
-	for entry in frontier_entries:
-		var cell: Vector2i = entry["ocean_cell"]
-		var direction: Vector2i = entry["floor_direction"]
-		var line_coordinate := cell.x if direction.x != 0 else cell.y
-		var key := "%d:%d:%d" % [direction.x, direction.y, line_coordinate]
-		if not grouped.has(key):
-			grouped[key] = []
-		(grouped[key] as Array).append(entry)
-	var selected: Array[Dictionary] = []
-	for key in grouped.keys():
-		var entries: Array = grouped[key]
-		entries.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
-			var direction: Vector2i = a["floor_direction"]
-			var a_cell: Vector2i = a["ocean_cell"]
-			var b_cell: Vector2i = b["ocean_cell"]
-			return (a_cell.y if direction.x != 0 else a_cell.x) < (b_cell.y if direction.x != 0 else b_cell.x)
+	var local_cell_size := Vector2(16.0, 16.0)
+	if nonwalkable_surface_overlay_tilemap.tile_set != null:
+		local_cell_size = Vector2(
+			nonwalkable_surface_overlay_tilemap.tile_set.tile_size
 		)
-		var run: Array[Dictionary] = []
-		var previous_tangent := -2147483648
-		for entry_variant in entries:
-			var entry := entry_variant as Dictionary
-			var direction: Vector2i = entry["floor_direction"]
-			var cell: Vector2i = entry["ocean_cell"]
-			var tangent := cell.y if direction.x != 0 else cell.x
-			if not run.is_empty() and tangent != previous_tangent + 1:
-				_append_sundered_keep_macro_run(run, selected)
-				run.clear()
-			run.append(entry)
-			previous_tangent = tangent
-		_append_sundered_keep_macro_run(run, selected)
-	return selected
-
-
-func _append_sundered_keep_macro_run(run: Array[Dictionary], selected: Array[Dictionary]) -> void:
-	if run.size() < 3:
-		return
-	selected.append_array(run)
-
-
-func _ocean_shore_key_for_floor_direction(direction: Vector2i) -> String:
-	if direction == Vector2i.UP:
-		return "shore_n"
-	if direction == Vector2i.RIGHT:
-		return "shore_e"
-	if direction == Vector2i.DOWN:
-		return "shore_s"
-	return "shore_w"
-
-
-func _add_extra_shore_overlay(cell: Vector2i, source_id: int) -> void:
-	if _sundered_keep_shore_overlay_parent == null:
-		_sundered_keep_shore_overlay_parent = Node2D.new()
-		_sundered_keep_shore_overlay_parent.name = "SunderedKeepExtraShoreOverlays"
-		nonwalkable_surface_overlay_tilemap.add_child(_sundered_keep_shore_overlay_parent)
-	var source := nonwalkable_surface_overlay_tilemap.tile_set.get_source(source_id) as TileSetAtlasSource
-	if source == null or source.texture == null:
-		return
-	var sprite := Sprite2D.new()
-	sprite.name = "ShoreOverlay_%d_%d_%d" % [cell.x, cell.y, source_id]
-	sprite.texture = source.texture
-	sprite.position = nonwalkable_surface_overlay_tilemap.map_to_local(cell)
-	sprite.z_index = 0
-	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	_sundered_keep_shore_overlay_parent.add_child(sprite)
+	var presentation_scale := _sundered_keep_coastline_parent.global_transform.get_scale()
+	var result: Dictionary = SUNDERED_KEEP_SHORELINE_COMPOSITOR.build_cliff_presentation(
+		_sundered_keep_shoreline_plan,
+		_sundered_keep_coastline_parent,
+		local_cell_size,
+		presentation_scale
+	)
+	_sundered_keep_coastline_parent.set_meta("macro_cliff_stride", 1.0)
+	_sundered_keep_coastline_parent.set_meta(
+		"macro_cliff_count",
+		int(result.get("cliff_count", 0))
+	)
+	_sundered_keep_coastline_parent.set_meta(
+		"shoreline_plan_fingerprint",
+		SUNDERED_KEEP_SHORELINE_COMPOSITOR.plan_fingerprint(
+			_sundered_keep_shoreline_plan
+		)
+	)
 
 
 func _build_route_playability(
@@ -5281,6 +5185,59 @@ func debug_get_ocean_cells() -> Dictionary:
 
 func debug_get_chasm_cells() -> Dictionary:
 	return _chasm_cells.duplicate(true)
+
+
+func debug_get_sundered_keep_shoreline_plan() -> Dictionary:
+	return _sundered_keep_shoreline_plan.duplicate(true)
+
+
+func debug_save_sundered_keep_shoreline_fixture(output_path: String) -> Error:
+	if _sundered_keep_frontage.is_empty() or _ocean_cells.is_empty():
+		return ERR_UNCONFIGURED
+	var seed_value := 0
+	if procgen_node != null and "seed" in procgen_node:
+		seed_value = int(procgen_node.seed)
+	var file := FileAccess.open(output_path, FileAccess.WRITE)
+	if file == null:
+		return FileAccess.get_open_error()
+	file.store_string(SUNDERED_KEEP_SHORELINE_COMPOSITOR.fixture_to_json(
+		seed_value,
+		_generated_floor_cells,
+		_ocean_cells,
+		{
+			"frontage_floor_rect": _cell_dictionary_bounds(
+				_sundered_keep_frontage.get("floor_cells", {}) as Dictionary
+			),
+			"ocean_rect": _cell_dictionary_bounds(_ocean_cells),
+		}
+	))
+	file.close()
+	return OK
+
+
+func _cell_dictionary_bounds(cells: Dictionary) -> Dictionary:
+	var initialized := false
+	var minimum := Vector2i.ZERO
+	var maximum := Vector2i.ZERO
+	for cell_variant in cells.keys():
+		if not cell_variant is Vector2i:
+			continue
+		var cell := cell_variant as Vector2i
+		if not initialized:
+			minimum = cell
+			maximum = cell
+			initialized = true
+		else:
+			minimum = Vector2i(mini(minimum.x, cell.x), mini(minimum.y, cell.y))
+			maximum = Vector2i(maxi(maximum.x, cell.x), maxi(maximum.y, cell.y))
+	if not initialized:
+		return {}
+	return {
+		"x": minimum.x,
+		"y": minimum.y,
+		"width": maximum.x - minimum.x + 1,
+		"height": maximum.y - minimum.y + 1,
+	}
 
 
 func debug_get_nonwalkable_surface_summary() -> Dictionary:

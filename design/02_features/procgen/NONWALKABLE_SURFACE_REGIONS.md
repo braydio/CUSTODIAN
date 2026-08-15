@@ -72,11 +72,13 @@ semantics and defense-in-depth diagnostics; they do not replace floor checks.
 
 ### Visuals
 
-Two absolute-depth TileMap layers present non-walkable surfaces. V1 paints only
-Sundered Keep ocean: a static 32×32 dark-water fill plus a single directional
-foam tile where an ocean cell has exactly one cardinal floor neighbor. Ambiguous
-two-or-more-neighbor corners receive no invented overlay. The five registered
-TileSet sources are visual-only.
+Two absolute-depth TileMap layers present non-walkable surfaces. Sundered Keep
+ocean uses a static 32×32 dark-water fill. Its
+`SunderedKeepShorelineCompositor` consumes the authoritative floor/ocean
+frontier once, then plans topology-aware foam, ordered shoreline runs, the
+presentation-only glue ribbon, cardinal cliff art, and coastal floor skin from
+that shared boundary. All registered TileSet sources and compositor nodes are
+visual-only.
 
 Near-field generated ocean connects the walkable coastline to the existing
 large Sundered Keep vista ocean/storm plate. The vista may use resolved ocean

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://eyb72s8rxt1m"
-path="res://.godot/imported/incoming_melee_stance_pixel_1f_128x128.png-1eb31c0142c80303dab564dcb5d29223.ctex"
+uid="uid://tlv62oyj26ad"
+path="res://.godot/imported/operator__modular_lower_body__melee_1h__draw_01__w__4f__128x96.png-6b8d89f1842e1cdb22f051bc4b00252a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/incoming/incoming_melee_stance_pixel_1f_128x128.png"
-dest_files=["res://.godot/imported/incoming_melee_stance_pixel_1f_128x128.png-1eb31c0142c80303dab564dcb5d29223.ctex"]
+source_file="res://content/sprites/operator/runtime/modules/new_operator/lower_body/actions/melee_1h/draw_01/operator__modular_lower_body__melee_1h__draw_01__w__4f__128x96.png"
+dest_files=["res://.godot/imported/operator__modular_lower_body__melee_1h__draw_01__w__4f__128x96.png-6b8d89f1842e1cdb22f051bc4b00252a.ctex"]
 
 [params]
 

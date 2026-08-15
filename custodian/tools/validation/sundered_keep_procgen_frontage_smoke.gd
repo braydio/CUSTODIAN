@@ -24,6 +24,9 @@ const INGRESS_RESOLVER := preload(
 const PROCGEN_MAP_SCENE := preload(
 	"res://game/world/procgen/proc_gen_map.tscn"
 )
+const SHORELINE_COMPOSITOR := preload(
+	"res://game/world/procgen/terrain/sundered_keep_shoreline_compositor.gd"
+)
 
 const MAP_SIZE := Vector2i(176, 176)
 const REVIEW_SEEDS := [
@@ -377,26 +380,43 @@ func _assert_integrated_procgen_result() -> void:
 	_assert(coastline != null and coastline.get_child_count() > 0, "integrated frontage did not build the authored cliff coastline")
 	_assert(coastline != null and not coastline.z_as_relative and coastline.z_index == -60, "cliff coastline is not between foam and generated floor")
 	var macro_cliff_count := 0
+	var glue_ribbon_count := 0
 	if coastline != null:
 		for cliff in coastline.get_children():
+			if String(cliff.name).begins_with("CliffGlueRibbon_"):
+				glue_ribbon_count += 1
+				_assert(cliff is Line2D and not (cliff as Line2D).antialiased, "cliff glue ribbon is not a pixel-stable Line2D")
+				continue
 			if not String(cliff.name).begins_with("CliffEdge_"):
 				continue
 			macro_cliff_count += 1
 			_assert((cliff as CanvasItem).modulate.is_equal_approx(Color(0.72, 0.77, 0.84, 0.96)), "macro cliff baseline modulation mismatch")
 			_assert((cliff as CanvasItem).z_index > 0, "macro cliff is not layered above surf")
-			var ocean_cell: Variant = cliff.get_meta("ocean_cell", null)
-			var floor_cell: Variant = cliff.get_meta("floor_cell", null)
-			var boundary: Variant = cliff.get_meta("boundary_position", null)
-			_assert(ocean_cell is Vector2i and frontage_ocean.has(ocean_cell), "cliff lacks authoritative ocean frontier")
-			_assert(floor_cell is Vector2i and map.debug_get_generated_floor_cells().has(floor_cell), "cliff lacks authoritative floor frontier")
-			if ocean_cell is Vector2i and floor_cell is Vector2i and boundary is Vector2:
-				var ocean_center := ocean_overlay.map_to_local(ocean_cell)
-				var floor_center := ocean_overlay.map_to_local(floor_cell)
-				_assert((boundary as Vector2).is_equal_approx(floor_center.lerp(ocean_center, 0.5)), "cliff anchor is not boundary-derived")
-				_assert(not (cliff as Node2D).position.is_equal_approx(ocean_center), "cliff remains centered on ocean cell")
+			_assert(String(cliff.get_meta("facing", "")) in ["n", "e", "s", "w"], "cliff lacks cardinal compositor facing")
+			_assert(float(cliff.get_meta("arc_distance_px", -1.0)) >= 0.0, "cliff lacks shoreline arc-distance placement")
 	_assert(ocean_overlay != null and is_equal_approx(ocean_overlay.self_modulate.a, 0.22), "integrated shore foam is not subordinate to the cliff coastline")
 	_assert(coastline != null and is_equal_approx(float(coastline.get_meta("macro_cliff_stride", 0.0)), 1.0), "clean cliff runs are not composed at every frontier step")
+	_assert(glue_ribbon_count > 0, "continuous cliff glue ribbon was not built")
 	_assert(macro_cliff_count == int(coastline.get_meta("macro_cliff_count", -1)) if coastline != null else false, "macro cliff debug count mismatch")
+	var shoreline_plan: Dictionary = map.call("debug_get_sundered_keep_shoreline_plan")
+	_assert(not (shoreline_plan.get("runs", []) as Array).is_empty(), "production compositor emitted no ordered shoreline runs")
+	_assert(String(coastline.get_meta("shoreline_plan_fingerprint", "")) != "", "production coastline omitted shared-plan fingerprint")
+	var cell_world_size := map.floor_tilemap.to_global(
+		map.floor_tilemap.map_to_local(Vector2i.RIGHT)
+	).distance_to(map.floor_tilemap.to_global(
+		map.floor_tilemap.map_to_local(Vector2i.ZERO)
+	))
+	var independently_composed := SHORELINE_COMPOSITOR.build_plan(
+		map.debug_get_generated_floor_cells(),
+		map.debug_get_ocean_cells(),
+		int(map.procgen_node.seed),
+		{"cell_world_size": cell_world_size}
+	)
+	_assert(
+		SHORELINE_COMPOSITOR.plan_fingerprint(shoreline_plan) \
+			== SHORELINE_COMPOSITOR.plan_fingerprint(independently_composed),
+		"production ProcGen plan diverged from shared shoreline compositor"
+	)
 	_assert(map.depth_backdrop != null and String(map.depth_backdrop.call("get_debug_mode")) == "chasm_regions", "explicit chasm semantics did not replace world-fallback backdrop")
 	_assert(map.depth_backdrop == null or map.depth_backdrop.find_child("CameraDepthBackdrop", true, false) == null, "camera-following rectangular depth backdrop remains active")
 	var touches_north := false
