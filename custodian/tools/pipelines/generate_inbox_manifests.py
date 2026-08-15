@@ -174,6 +174,12 @@ def _inspect_sheet(png_path: Path) -> SheetInfo:
     layer = parts[1]
     action_group = parts[2]
 
+    if owner == "operator" and layer == "modular_weapon":
+        raise RuntimeError(
+            f"{basename}: generic modular_weapon is ambiguous; use a weapon-owned layer such as "
+            "modular_weapon_vigil_dagger or modular_weapon_cleaver"
+        )
+
     # Variant and direction may contain underscores; work backwards from the end.
     # Expected tail: <direction>__<frames>f__<size>
     # The frames token is always the second-to-last segment.

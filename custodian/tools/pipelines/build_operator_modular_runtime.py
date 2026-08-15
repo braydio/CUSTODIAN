@@ -468,14 +468,28 @@ def _build_generic_action_modules(source_root: Path, module_root: Path, dry_run:
 
     generated: list[Path] = []
     for (output_layer, loadout, action, _), (_, spec) in sorted(candidates.items()):
+        preserve_canvas = loadout == "melee_1h" and action == "draw_01"
+        target_width = spec.frame_width if preserve_canvas else 96
+        target_height = spec.frame_height if preserve_canvas else 96
+        size_token = (
+            f"{target_width}x{target_height}"
+            if target_width != target_height
+            else str(target_width)
+        )
         output_name = (
             f"operator__modular_{output_layer}__{loadout}__{action}"
-            f"__{spec.direction}__{spec.frames}f__96.png"
+            f"__{spec.direction}__{spec.frames}f__{size_token}.png"
         )
         output = module_root / output_layer / "actions" / loadout / action / output_name
         if not dry_run:
             output.parent.mkdir(parents=True, exist_ok=True)
-            _write_or_copy_sheet(spec.path, output, spec.frames, target_frame_width=96, target_frame_height=96)
+            _write_or_copy_sheet(
+                spec.path,
+                output,
+                spec.frames,
+                target_frame_width=target_width,
+                target_frame_height=target_height,
+            )
         generated.append(output)
     return generated
 

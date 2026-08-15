@@ -51,11 +51,17 @@ def main() -> int:
         chain_fx = root / "operator__modular_upper_fx__melee_1h__chain_01__e__10f__156x96.png"
         chain_weapon_dagger = root / "operator__modular_weapon_vigil_dagger__melee_1h__chain_01__e__10f__156x96.png"
         chain_weapon_cleaver = root / "operator__modular_weapon_cleaver__melee_1h__chain_01__e__10f__156x96.png"
+        draw_lower = root / "draw_01/operator__modular_lower_body__melee_1h__draw_01__e__4f__128x96.png"
+        draw_upper = root / "draw_01/operator__modular_upper_body__melee_1h__draw_01__e__4f__128x96.png"
+        draw_weapon = root / "draw_01/operator__modular_weapon_vigil_dagger__melee_1h__draw_01__e__4f__128x96.png"
         for path in (canonical, legacy, cape, head, walk, ranged, ranged_weapon):
             _write_strip(path)
         Image.new("RGBA", (10 * 156, 96), (255, 255, 255, 255)).save(chain_fx)
         Image.new("RGBA", (10 * 156, 96), (255, 255, 255, 255)).save(chain_weapon_dagger)
         Image.new("RGBA", (10 * 156, 96), (255, 255, 255, 255)).save(chain_weapon_cleaver)
+        for path in (draw_lower, draw_upper, draw_weapon):
+            path.parent.mkdir(parents=True, exist_ok=True)
+            Image.new("RGBA", (4 * 128, 96), (255, 255, 255, 255)).save(path)
         _write_strip(cape_alias, frames=11)
         _write_strip(legacy_collision, frames=4)
         rectangular = root / "operator__body__melee_1h__e__8f__156x96.png"
@@ -144,6 +150,11 @@ def main() -> int:
             "melee_1h",
             "chain_01",
         )
+        draw_manifest = manifests._build_manifest(draw_weapon)
+        assert draw_manifest["frame_size"] == [128, 96]
+        assert manifests._operator_modular_loadout_action(
+            manifests._inspect_sheet(draw_weapon)
+        ) == ("melee_1h", "draw_01")
         rectangular_manifest = manifests._build_manifest(rectangular)
         assert rectangular_manifest["frame_size"] == [156, 96]
         assert rectangular_manifest["outputs"][0]["select"]["count"] == 8
@@ -187,8 +198,23 @@ def main() -> int:
             "operator__modular_upper_fx__melee_1h__chain_01__e__10f__96.png"
         ) in relative
         assert not any("ranged_2h/stance_01" in path for path in relative)
-        assert not any("weapon_vigil_pattern_dagger" in path for path in relative)
+        assert not any(
+            "weapon_vigil_pattern_dagger" in path and "/chain_" in path
+            for path in relative
+        )
         assert not any("weapon_sword_cleaver" in path for path in relative)
+        assert (
+            "lower_body/actions/melee_1h/draw_01/"
+            "operator__modular_lower_body__melee_1h__draw_01__e__4f__128x96.png"
+        ) in relative
+        assert (
+            "upper_body/actions/melee_1h/draw_01/"
+            "operator__modular_upper_body__melee_1h__draw_01__e__4f__128x96.png"
+        ) in relative
+        assert (
+            "weapon_vigil_pattern_dagger/actions/melee_1h/draw_01/"
+            "operator__modular_weapon_vigil_pattern_dagger__melee_1h__draw_01__e__4f__128x96.png"
+        ) in relative
 
         chain_root = root / "chain_01"
         chain_root.mkdir(parents=True, exist_ok=True)
