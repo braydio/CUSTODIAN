@@ -490,6 +490,7 @@ For Sundered Keep production ingress and return acceptance:
 cd custodian
 godot --headless --path . --script res://tools/validation/sundered_keep_ingress_smoke.gd
 godot --headless --path . --script res://tools/validation/sundered_keep_procgen_vista_layering_smoke.gd
+godot --headless --path . --script res://tools/validation/camera_presentation_subject_constraint_smoke.gd
 godot --headless --path . --script res://tools/validation/ash_bell_sundered_keep_two_ingress_renderer_smoke.gd
 godot --headless --path . --script res://tools/validation/route_registry_contract_smoke.gd
 godot --headless --path . --script res://tools/validation/authored_level_ingress_return_smoke.gd

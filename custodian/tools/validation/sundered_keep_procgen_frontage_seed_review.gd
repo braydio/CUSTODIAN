@@ -153,6 +153,7 @@ func _capture_seed(seed_value: int) -> void:
 		var state := presentation.call("get_world_vista_debug_state") as Dictionary
 		camera.global_position = focus.global_position if requested_s < 36.0 else operator.global_position
 		camera.zoom = Vector2.ONE * float(state.get("camera_zoom_target", 0.9))
+		state = presentation.call("get_world_vista_debug_state") as Dictionary
 		var ruins := presentation.get_node("VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/OceanRuinsPresentation") as Node2D
 		var keep := presentation.get_node("VistaPresentationRoot/ExteriorVistaClip/FortressPresentation") as Node2D
 		var frame_name := "s%02d" % int(requested_s)
@@ -168,6 +169,9 @@ func _capture_seed(seed_value: int) -> void:
 			"zoom": float(state.get("camera_zoom_target", 0.9)),
 			"camera_offset": _vector2_json(state.get("camera_offset_target", Vector2.ZERO)),
 			"camera_operator_distance": float(state.get("camera_operator_distance", 0.0)),
+			"operator_screen_normalized": _vector2_json(state.get("operator_screen_normalized", Vector2.ZERO)),
+			"operator_inside_safe_frame": bool(state.get("operator_inside_safe_frame", false)),
+			"operator_screen_edge_distance_px": float(state.get("operator_screen_edge_distance_px", 0.0)),
 			"ruins_alpha": float(state.get("ruins_alpha", 0.0)),
 			"keep_alpha": float(state.get("keep_alpha", 0.0)),
 			"foreground_cliff_alpha": float(state.get("foreground_cliff_alpha", 0.0)),
@@ -183,7 +187,7 @@ func _capture_seed(seed_value: int) -> void:
 	camera.zoom = Vector2(0.9, 0.9)
 	outputs["ordinary_outside_cinematic"] = await _save_frame(viewport, seed_value, "ordinary_outside_cinematic")
 	var coastline := map.get_node_or_null(
-		"NavigationRegion2D/NonWalkableSurfaceOverlay/SunderedKeepCoastlinePresentation"
+		"NavigationRegion2D/SunderedKeepCoastlinePresentation"
 	) as Node2D
 	if coastline != null and coastline.get_child_count() > 0:
 		var coast_subject: Node2D = null

@@ -372,17 +372,18 @@ func _assert_integrated_procgen_result() -> void:
 	_assert(ocean_base != null and not ocean_base.get_used_cells().is_empty(), "integrated near-field ocean fill was not painted")
 	_assert(ocean_overlay != null and not ocean_overlay.get_used_cells().is_empty(), "integrated cardinal shore foam was not painted")
 	var coastline := map.get_node_or_null(
-		"NavigationRegion2D/NonWalkableSurfaceOverlay/"
-		+ "SunderedKeepCoastlinePresentation"
+		"NavigationRegion2D/SunderedKeepCoastlinePresentation"
 	) as Node2D
 	_assert(coastline != null and coastline.get_child_count() > 0, "integrated frontage did not build the authored cliff coastline")
+	_assert(coastline != null and not coastline.z_as_relative and coastline.z_index == -60, "cliff coastline is not between foam and generated floor")
 	var macro_cliff_count := 0
 	if coastline != null:
 		for cliff in coastline.get_children():
 			if not String(cliff.name).begins_with("CliffEdge_"):
 				continue
 			macro_cliff_count += 1
-			_assert((cliff as Node2D).scale.is_equal_approx(Vector2(0.875, 0.875)), "macro cliff does not use 0.875 uniform scale")
+			_assert((cliff as CanvasItem).modulate.is_equal_approx(Color(0.72, 0.77, 0.84, 0.96)), "macro cliff baseline modulation mismatch")
+			_assert((cliff as CanvasItem).z_index > 0, "macro cliff is not layered above surf")
 			var ocean_cell: Variant = cliff.get_meta("ocean_cell", null)
 			var floor_cell: Variant = cliff.get_meta("floor_cell", null)
 			var boundary: Variant = cliff.get_meta("boundary_position", null)
@@ -393,7 +394,8 @@ func _assert_integrated_procgen_result() -> void:
 				var floor_center := ocean_overlay.map_to_local(floor_cell)
 				_assert((boundary as Vector2).is_equal_approx(floor_center.lerp(ocean_center, 0.5)), "cliff anchor is not boundary-derived")
 				_assert(not (cliff as Node2D).position.is_equal_approx(ocean_center), "cliff remains centered on ocean cell")
-	_assert(ocean_overlay != null and is_equal_approx(ocean_overlay.self_modulate.a, 0.34), "integrated shore foam is not subordinate to the cliff coastline")
+	_assert(ocean_overlay != null and is_equal_approx(ocean_overlay.self_modulate.a, 0.22), "integrated shore foam is not subordinate to the cliff coastline")
+	_assert(coastline != null and is_equal_approx(float(coastline.get_meta("macro_cliff_stride", 0.0)), 1.0), "clean cliff runs are not composed at every frontier step")
 	_assert(macro_cliff_count == int(coastline.get_meta("macro_cliff_count", -1)) if coastline != null else false, "macro cliff debug count mismatch")
 	_assert(map.depth_backdrop != null and String(map.depth_backdrop.call("get_debug_mode")) == "chasm_regions", "explicit chasm semantics did not replace world-fallback backdrop")
 	_assert(map.depth_backdrop == null or map.depth_backdrop.find_child("CameraDepthBackdrop", true, false) == null, "camera-following rectangular depth backdrop remains active")

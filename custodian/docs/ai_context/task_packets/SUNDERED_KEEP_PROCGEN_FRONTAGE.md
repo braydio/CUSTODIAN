@@ -25,7 +25,7 @@
 - Owner: procgen intent graph / world landmark presentation
 - Agent/session: Codex
 - Created: 2026-07-30
-- Last updated: 2026-08-10
+- Last updated: 2026-08-15
 
 ## Work Surface
 
@@ -87,3 +87,8 @@
   authored-approach regression. Production visual evidence lives in
   `reports/sundered_keep_procgen_frontage/`. Descending Ward remains deferred:
   the reviewed skyline reads as a coherent atmospheric landmark without it.
+  The 2026-08-15 coastline-fusion slice replaces sparse cliff accents with an
+  every-step overlapping band, lowers foam to `0.22`, adds the deterministic
+  two-cell wet-rock shore skin, and cools cliff faces. Generic post-bounds
+  camera containment now keeps the Operator in the requested safe frame while
+  retaining the 18-cell request cap and near-edge composition.

@@ -12,6 +12,7 @@ const VISTA_HORIZONTAL_MARGIN := 320.0
 const VISTA_OPERATOR_ACTIVATION_MARGIN := 160.0
 const MOONLIGHT_FRAME_SECONDS := 1.0 / 15.0
 const MOONLIGHT_FRAME_COUNT := 6
+const OPERATOR_SAFE_FRAME := Vector4(0.04, 0.06, 0.04, 0.08)
 
 @export var operator_path := NodePath("/root/GameRoot/World/Operator")
 @export var camera_path := NodePath("/root/GameRoot/World/Camera2D")
@@ -310,6 +311,12 @@ func _apply_camera_state(weight: float) -> void:
 			_camera.call("set_follow_target", _presentation_anchor)
 		_camera_owned = true
 		_set_ingress_presentation_visible(false)
+	if _camera.has_method("set_presentation_subject_constraint"):
+		_camera.call(
+			"set_presentation_subject_constraint",
+			_operator,
+			OPERATOR_SAFE_FRAME
+		)
 	if _camera.has_method("set_presentation_bounds_override"):
 		_camera.call(
 			"set_presentation_bounds_override",
@@ -332,6 +339,8 @@ func _release_camera() -> void:
 	if _camera == null or not is_instance_valid(_camera):
 		_camera_owned = false
 		return
+	if _camera.has_method("clear_presentation_subject_constraint"):
+		_camera.call("clear_presentation_subject_constraint")
 	if _camera.has_method("clear_presentation_framing"):
 		_camera.call("clear_presentation_framing", true)
 	elif _operator != null and _camera.has_method("set_follow_target"):
@@ -632,8 +641,40 @@ func _smootherstep_range(
 	return t * t * t * (t * (t * 6.0 - 15.0) + 10.0)
 
 
+func _get_operator_screen_debug_state() -> Dictionary:
+	if _camera != null \
+			and is_instance_valid(_camera) \
+			and _camera.has_method("get_presentation_subject_debug_state"):
+		return _camera.call("get_presentation_subject_debug_state") as Dictionary
+	var viewport_size := get_viewport_rect().size
+	if _camera == null or _operator == null \
+			or viewport_size.x <= 0.0 or viewport_size.y <= 0.0:
+		return {
+			"operator_screen_normalized": Vector2.ZERO,
+			"operator_inside_safe_frame": false,
+			"operator_screen_edge_distance_px": 0.0,
+		}
+	var screen_position := viewport_size * 0.5 \
+		+ (_operator.global_position - _camera.get_screen_center_position()) \
+		* _camera.zoom
+	var normalized := screen_position / viewport_size
+	var safe_epsilon := 0.0001
+	return {
+		"operator_screen_normalized": normalized,
+		"operator_inside_safe_frame": normalized.x >= OPERATOR_SAFE_FRAME.x - safe_epsilon \
+			and normalized.x <= 1.0 - OPERATOR_SAFE_FRAME.z + safe_epsilon \
+			and normalized.y >= OPERATOR_SAFE_FRAME.y - safe_epsilon \
+			and normalized.y <= 1.0 - OPERATOR_SAFE_FRAME.w + safe_epsilon,
+		"operator_screen_edge_distance_px": minf(
+			minf(screen_position.x, viewport_size.x - screen_position.x),
+			minf(screen_position.y, viewport_size.y - screen_position.y)
+		),
+	}
+
+
 func get_world_vista_debug_state() -> Dictionary:
 	var state := _camera_state.duplicate(true)
+	var subject_state := _get_operator_screen_debug_state()
 	state.merge({
 		"configured": _configured,
 		"camera_owned": _camera_owned,
@@ -673,5 +714,8 @@ func get_world_vista_debug_state() -> Dictionary:
 		"camera": _camera,
 		"ingress": _ingress,
 		"map_instance": _map_instance,
+		"operator_screen_normalized": subject_state.get("operator_screen_normalized", Vector2.ZERO),
+		"operator_inside_safe_frame": subject_state.get("operator_inside_safe_frame", false),
+		"operator_screen_edge_distance_px": subject_state.get("operator_screen_edge_distance_px", 0.0),
 	}, true)
 	return state

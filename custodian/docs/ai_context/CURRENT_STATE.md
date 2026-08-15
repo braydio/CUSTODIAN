@@ -143,15 +143,21 @@ Documentation updates this session:
   presentation and the ingress marker hide only while vista camera authority is
   active; their collision, interaction, and runtime state remain live. The
   irregular generated frontage floor and protected cinematic clearance use a
-  semantic dark-rock skin; wet flagstone punctuates the route and threshold
-  stone concentrates in the terminal apron. Ocean foam remains a narrow
-  transparent fringe at 34% layer alpha rather than four opaque 32x32 water
-  squares. Existing 64x96 cardinal Keep cliff compositions are sparse,
-  `0.875`-scale macro accents on straight floor/ocean frontier runs, layered
-  above continuous topology treatment. The historical World Vista cliff lip is
+  semantic dark-rock skin. The first two Manhattan bands inland use
+  deterministic `70/30` rock/cracked and `45/35/20`
+  rock/cracked/wet-flagstone skins; farther floor preserves the frontage and
+  terminal-apron selection. Ocean foam is a 22%-alpha fringe beneath the cliff
+  face rather than four opaque 32x32 water squares. Existing 64x96 cardinal
+  Keep cliff compositions occupy every 32px step of clean straight frontier
+  runs, forming an overlapping continuous cooled band. The historical World
+  Vista cliff lip is
   reused only as a low-alpha `S0-S36` cinematic foreground plane; scenery fades
   farther from `S36-S52` after camera release;
-  collision, navigation, and topology remain unchanged. The redundant
+  collision, navigation, and topology remain unchanged. The camera retains its
+  18-cell focus-request cap and adds a generic post-bounds subject constraint:
+  during Keep ownership the Operator stays inside normalized `x=0.04..0.96`,
+  `y=0.06..0.92`, with screen-position/safe-frame/edge-distance telemetry; the
+  constraint clears on release. The redundant
   GateShadow plate is removed; the ordinary route fade remains the
   transition authority. Storm fitting now covers semantic camera travel as well
   as the viewport, eliminating exposed finite plate edges. Descending Ward

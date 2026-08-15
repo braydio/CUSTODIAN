@@ -3,7 +3,7 @@
 - **Status:** active production authority; layering review required
 - **Owner:** generated Sundered Keep frontage and distant reveal
 - **Runtime:** `custodian/` Godot 4.x
-- **Last updated:** 2026-08-11
+- **Last updated:** 2026-08-15
 
 ## Production Boundary
 
@@ -80,7 +80,13 @@ ruins/Keep composition reaches its apex 36 cells before the gate (`S=16`). The
 apex remains spatially stable through `S=24`; moonlight fires once at `S=20`
 without moving the camera. Framing is fully released at `S=36`, leaving 16
 route-arc cells of ordinary play before the gate at `S=52`. There is no timed
-hold or second fortress camera subject. Traversal remains unlocked.
+hold or second fortress camera subject. Traversal remains unlocked. The
+existing 18-cell focus-displacement cap remains the coarse request guard.
+During camera ownership, `CameraController` also keeps the Operator inside the
+final rendered normalized safe frame `x=0.04..0.96`, `y=0.06..0.92`. This
+subject constraint runs after presentation smoothing and bounds clamping,
+overrides presentation-bound purity when necessary, clears on release, and
+does not bias the Operator toward center.
 
 The active layering pass keeps the base storm horizon and moonlight punctuation.
 Inside generated gameplay bounds, StormHorizon is nearest-sampled through an
@@ -103,17 +109,20 @@ The fortress presentation root is positioned once from
 `fortress_front_anchor`; the outer wall and citadel retain their reviewed
 scene-local offsets and are not pulled apart by gameplay-scale wall/tower
 anchors. Generated frontage floor keeps its irregular authoritative footprint
-but uses semantic presentation zones rather than broad Euclidean gate radii:
-terminal-apron threshold stone, shoreline rock, route-core rock/cracked stone
-with sparse wet flagstone, and a dark rock blend across protected clearance
-floor visible in the cinematic. Topology-aware ocean foam
-sources are sparse transparent overlays rather than opaque water tiles. The
-authoritative frontage-floor/ocean frontier also places the existing 64x96
-Sundered Keep cardinal cliff compositions as sparse `0.875`-scale macro accents
-on straight shoreline runs, with explicit per-direction offsets from the
-floor/ocean midpoint so the lip overlaps land and the face falls toward ocean;
-foam is held to 34% layer alpha as secondary surf. These sprites add no
-collision, navigation, or terrain authority.
+but uses semantic presentation zones rather than broad Euclidean gate radii.
+The first two Manhattan-distance floor bands from authoritative ocean use a
+deterministically hashed wet-rock skin: distance one is `70/30` rock/cracked;
+distance two is `45/35/20` rock/cracked/wet flagstone. Beyond that band,
+terminal-apron threshold stone and the existing frontage selection remain
+authoritative. Topology-aware ocean foam sources are transparent overlays
+rather than opaque water tiles. The authoritative frontage-floor/ocean frontier
+places the existing 64x96 cardinal cliff compositions at every 32px frontier
+step on clean straight runs, producing an overlapping continuous band with
+organic corner overpainting. Explicit per-direction offsets keep the lip on
+land and face over ocean. Cliff sprites use the cooled baseline
+`Color(0.72, 0.77, 0.84, 0.96)` and render above foam; foam is held to 22% layer
+alpha beneath the cliff band. These sprites add no collision, navigation, or
+terrain authority.
 
 The historical 2048×512 World Vista cliff lip is reused only as a low-alpha
 cinematic foreground plane. It grows from zero at `S0`, peaks at `0.42` at
@@ -157,6 +166,8 @@ Run from the repository root:
 env HOME=/tmp/custodian-godot-home godot --headless --path custodian --import --quit
 env HOME=/tmp/custodian-godot-home godot --headless --path custodian \
   --script res://tools/validation/sundered_keep_procgen_vista_layering_smoke.gd
+env HOME=/tmp/custodian-godot-home godot --headless --path custodian \
+  --script res://tools/validation/camera_presentation_subject_constraint_smoke.gd
 env HOME=/tmp/custodian-godot-home godot --headless --path custodian \
   --script res://tools/validation/procgen_walkable_boundary_smoke.gd
 env HOME=/tmp/custodian-godot-home godot --headless --path custodian \

@@ -591,7 +591,8 @@ Last updated: 2026-08-12
 - `custodian/game/actors/base/vehicle_base.gd` — legacy/compatibility vehicle base retained for older scenes and references
 - `custodian/game/actors/vehicles/light_buggy.tscn` — first production vehicle scene, now backed by `PilotableVehicle` and registry ID `custodian_ground_buggy_scout_light`
 - `custodian/game/systems/core/player_controller.gd` — input router for Operator vs vehicle control, including guarded vehicle actions and camera follow-target handoff
-- `custodian/game/world/camera.gd` — world camera controller with `set_follow_target(target)` for Operator/vehicle follow switching, map-bound clamping, manual middle-mouse panning, and movement-input recovery back to Operator follow
+- `custodian/game/world/camera.gd` — world camera controller with `set_follow_target(target)` for Operator/vehicle follow switching, map-bound clamping, manual middle-mouse panning, movement-input recovery, and optional final post-bounds presentation-subject safe-frame containment
+- `custodian/tools/validation/camera_presentation_subject_constraint_smoke.gd` — focused rendered-viewport smoke for generic presentation-subject containment, telemetry, and clear behavior
 - `custodian/game/actors/terminal/command_terminal.gd` — in-world `command_terminal` prop interaction and activation/deactivation animation, with fallback compatibility to the older `computer_terminal` sheets and the authored `builder_terminal` pickup/deploy sheet
 - `custodian/game/systems/core/systems/terminal_deployment.gd` — deployable terminal pickup/redeploy runtime for the in-world command terminal prop
 - `custodian/docs/TERMINAL_VIEW_LOCAL_MODE.md` — terminal-related runtime doc reference

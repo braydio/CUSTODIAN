@@ -169,6 +169,8 @@ var _presentation_framing_active := false
 var _presentation_offset := Vector2.ZERO
 var _presentation_zoom := Vector2.ONE
 var _presentation_bounds_override := Rect2()
+var _presentation_subject: Node2D = null
+var _presentation_subject_inset := Vector4(0.04, 0.06, 0.04, 0.08)
 var _debug_free_camera_active := false
 var _debug_saved_state: Dictionary = {}
 
@@ -208,6 +210,7 @@ func _process(delta):
 	if _presentation_framing_active:
 		_update_presentation_framing(delta)
 		_clamp_to_bounds()
+		_keep_presentation_subject_in_view()
 		return
 	_restore_follow_on_player_movement()
 	_update_movement(delta)
@@ -241,6 +244,81 @@ func set_presentation_framing(active: bool, framing_offset := Vector2.ZERO, fram
 
 func has_presentation_framing() -> bool:
 	return _presentation_framing_active
+
+
+func set_presentation_subject_constraint(
+	subject: Node2D,
+	inset := Vector4(0.04, 0.06, 0.04, 0.08)
+) -> void:
+	_presentation_subject = subject
+	_presentation_subject_inset = Vector4(
+		clampf(inset.x, 0.0, 0.49),
+		clampf(inset.y, 0.0, 0.49),
+		clampf(inset.z, 0.0, 0.49),
+		clampf(inset.w, 0.0, 0.49)
+	)
+
+
+func clear_presentation_subject_constraint() -> void:
+	_presentation_subject = null
+
+
+func get_presentation_subject_debug_state() -> Dictionary:
+	var viewport_size := get_viewport_rect().size
+	if _presentation_subject == null \
+			or not is_instance_valid(_presentation_subject) \
+			or viewport_size.x <= 0.0 \
+			or viewport_size.y <= 0.0:
+		return {
+			"operator_screen_normalized": Vector2.ZERO,
+			"operator_inside_safe_frame": false,
+			"operator_screen_edge_distance_px": 0.0,
+		}
+	var screen_position := viewport_size * 0.5 \
+		+ (_presentation_subject.global_position - get_screen_center_position()) * zoom
+	var normalized := screen_position / viewport_size
+	var safe_epsilon := 0.0001
+	var inside := normalized.x >= _presentation_subject_inset.x - safe_epsilon \
+		and normalized.x <= 1.0 - _presentation_subject_inset.z + safe_epsilon \
+		and normalized.y >= _presentation_subject_inset.y - safe_epsilon \
+		and normalized.y <= 1.0 - _presentation_subject_inset.w + safe_epsilon
+	return {
+		"operator_screen_normalized": normalized,
+		"operator_inside_safe_frame": inside,
+		"operator_screen_edge_distance_px": minf(
+			minf(screen_position.x, viewport_size.x - screen_position.x),
+			minf(screen_position.y, viewport_size.y - screen_position.y)
+		),
+	}
+
+
+func _keep_presentation_subject_in_view() -> void:
+	if _presentation_subject == null or not is_instance_valid(_presentation_subject):
+		return
+	var viewport_size := get_viewport_rect().size
+	if viewport_size.x <= 0.0 or viewport_size.y <= 0.0:
+		return
+	var screen_center := get_screen_center_position()
+	var screen_position := viewport_size * 0.5 \
+		+ (_presentation_subject.global_position - screen_center) * zoom
+	var safe_min := Vector2(
+		viewport_size.x * _presentation_subject_inset.x,
+		viewport_size.y * _presentation_subject_inset.y
+	)
+	var safe_max := Vector2(
+		viewport_size.x * (1.0 - _presentation_subject_inset.z),
+		viewport_size.y * (1.0 - _presentation_subject_inset.w)
+	)
+	var clamped_screen := screen_position.clamp(safe_min, safe_max)
+	var screen_correction := screen_position - clamped_screen
+	if screen_correction.is_zero_approx():
+		return
+	global_position += Vector2(
+		screen_correction.x / maxf(zoom.x, 0.001),
+		screen_correction.y / maxf(zoom.y, 0.001)
+	)
+	# This is a hard rendered-frame guarantee. Engine smoothing may not defer it.
+	reset_smoothing()
 
 
 func _update_presentation_framing(delta: float) -> void:
@@ -810,6 +888,7 @@ func clear_presentation_framing(
 	_presentation_offset = Vector2.ZERO
 	_presentation_zoom = Vector2.ONE
 	_presentation_bounds_override = Rect2()
+	clear_presentation_subject_constraint()
 
 	if restore_operator_follow:
 		if operator_ref == null or not is_instance_valid(operator_ref):
