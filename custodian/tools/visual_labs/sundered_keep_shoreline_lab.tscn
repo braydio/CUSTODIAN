@@ -34,4 +34,3 @@ tile_set = ExtResource("2_tileset")
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(640, 360)
 enabled = true
-
