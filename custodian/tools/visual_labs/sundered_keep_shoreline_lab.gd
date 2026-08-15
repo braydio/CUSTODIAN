@@ -63,9 +63,9 @@ const CAPTURE_DIRECTORY := "res://../reports/visual_labs/sundered_keep_shoreline
 		cliff_spacing_px = value
 		_queue_rebuild()
 
-@export_range(0.0, 32.0, 1.0) var cliff_overlap_px := 16.0:
+@export_range(0.0, 32.0, 1.0) var corner_overlap_px := 16.0:
 	set(value):
-		cliff_overlap_px = value
+		corner_overlap_px = value
 		_queue_rebuild()
 
 @export_range(0.05, 0.5, 0.01) var foam_alpha := 0.22:
@@ -185,7 +185,7 @@ func reset_defaults() -> void:
 	shape_preset = ShapePreset.CONCAVE_COVE
 	seed = 17
 	cliff_spacing_px = 32.0
-	cliff_overlap_px = 16.0
+	corner_overlap_px = 16.0
 	foam_alpha = 0.22
 	shore_band_width_cells = 2
 	cliff_modulate = Color(0.72, 0.77, 0.84, 0.96)
@@ -263,6 +263,22 @@ func get_ocean_cells() -> Dictionary:
 	return _ocean_cells.duplicate(true)
 
 
+func get_render_context() -> Dictionary:
+	var preview_root := get_node_or_null("PreviewRoot") as Node2D
+	var floor_layer := get_node_or_null("PreviewRoot/Floor") as TileMapLayer
+	var local_tile_size := Vector2(TILESET.tile_size)
+	var preview_root_scale := preview_root.global_transform.get_scale() \
+		if preview_root != null else Vector2.ONE
+	var world_cell_size := _resolve_world_cell_size(floor_layer)
+	return {
+		"local_tile_size": local_tile_size,
+		"preview_root_scale": preview_root_scale,
+		"world_cell_size": world_cell_size,
+		"cliff_spacing_world_px": cliff_spacing_px,
+		"effective_cliff_samples_per_cell": world_cell_size / cliff_spacing_px,
+	}
+
+
 func _queue_rebuild() -> void:
 	if _rebuild_queued:
 		return
@@ -274,34 +290,39 @@ func _rebuild() -> void:
 	_rebuild_queued = false
 	if not is_inside_tree():
 		return
-	var cells := _load_or_generate_cells()
-	_floor_cells = cells.get("floor_cells", {}) as Dictionary
-	_ocean_cells = cells.get("ocean_cells", {}) as Dictionary
-	var effective_seed := int(cells.get("seed", seed))
-	_plan = SHORELINE_COMPOSITOR.build_plan(
-		_floor_cells,
-		_ocean_cells,
-		effective_seed,
-		{
-			"cell_world_size": 32.0,
-			"cliff_spacing_px": cliff_spacing_px,
-			"cliff_overlap_px": cliff_overlap_px,
-			"foam_alpha": foam_alpha,
-			"shore_band_width_cells": shore_band_width_cells,
-			"cliff_modulate": cliff_modulate,
-		}
-	)
+	var preview_root := get_node_or_null("PreviewRoot") as Node2D
 	var ocean_layer := get_node_or_null("PreviewRoot/OceanBase") as TileMapLayer
 	var foam_layer := get_node_or_null("PreviewRoot/Foam") as TileMapLayer
 	var floor_layer := get_node_or_null("PreviewRoot/Floor") as TileMapLayer
 	var extra_foam := get_node_or_null("PreviewRoot/Foam/ExtraFoam") as Node2D
 	var cliffs := get_node_or_null("PreviewRoot/CliffPresentation") as Node2D
-	var preview_root := get_node_or_null("PreviewRoot") as Node2D
-	if ocean_layer == null or foam_layer == null or floor_layer == null \
-			or extra_foam == null or cliffs == null or preview_root == null:
+	if preview_root == null or ocean_layer == null or foam_layer == null \
+			or floor_layer == null or extra_foam == null or cliffs == null:
 		return
+	var cells := _load_or_generate_cells()
+	_floor_cells = cells.get("floor_cells", {}) as Dictionary
+	_ocean_cells = cells.get("ocean_cells", {}) as Dictionary
+	var effective_seed := int(cells.get("seed", seed))
+	var world_cell_size := _resolve_world_cell_size(floor_layer)
+	_plan = SHORELINE_COMPOSITOR.build_plan(
+		_floor_cells,
+		_ocean_cells,
+		effective_seed,
+		{
+			"cell_world_size": world_cell_size,
+			"cliff_spacing_px": cliff_spacing_px,
+			"cliff_overlap_px": corner_overlap_px,
+			"foam_alpha": foam_alpha,
+			"shore_band_width_cells": shore_band_width_cells,
+			"cliff_modulate": cliff_modulate,
+		}
+	)
+	var local_fixture_center := _cell_bounds_center(
+		_floor_cells,
+		_ocean_cells
+	) * Vector2(TILESET.tile_size)
 	preview_root.position = Vector2(640.0, 360.0) \
-		- _cell_bounds_center(_floor_cells, _ocean_cells) * 32.0
+		- preview_root.transform.basis_xform(local_fixture_center)
 	ocean_layer.clear()
 	floor_layer.clear()
 	for cell_variant in _ocean_cells.keys():
@@ -314,7 +335,7 @@ func _rebuild() -> void:
 		_plan,
 		cliffs,
 		Vector2(TILESET.tile_size),
-		(get_node("PreviewRoot") as Node2D).global_transform.get_scale(),
+		preview_root.global_transform.get_scale(),
 		show_glue_ribbon,
 		show_cliffs
 	)
@@ -323,6 +344,16 @@ func _rebuild() -> void:
 	foam_layer.visible = show_foam
 	cliffs.visible = show_cliffs or show_glue_ribbon
 	_apply_false_color(ocean_layer, foam_layer, floor_layer, cliffs)
+
+
+func _resolve_world_cell_size(tilemap: TileMapLayer) -> float:
+	if tilemap == null:
+		return float(TILESET.tile_size.x)
+	var origin_local := tilemap.map_to_local(Vector2i.ZERO)
+	var right_local := tilemap.map_to_local(Vector2i.RIGHT)
+	var origin_world := tilemap.to_global(origin_local)
+	var right_world := tilemap.to_global(right_local)
+	return origin_world.distance_to(right_world)
 
 
 func _apply_false_color(

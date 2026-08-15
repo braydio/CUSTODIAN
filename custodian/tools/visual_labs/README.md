@@ -19,6 +19,17 @@ The lab and `ProcGenTilemap` both use
 `SunderedKeepShorelineCompositor`. The lab contains no alternate coastline
 renderer or topology resolver.
 
+Most current procgen tile-art regions are 32px, but the shared `TileSet` grid is
+currently 16px. Production `ProcGenMap` runs under a 2x world transform, so its
+generated TileMap cells are currently 32px apart in world space. The lab
+intentionally mirrors that root scale and derives its cell world size from the
+live `TileMapLayer` transform; changing either root scale or the TileSet grid
+does not require changing compositor constants. `cliff_spacing_px` is a
+world-space distance, so its 32px default currently yields one cliff sample per
+generated cell. The Inspector's `corner_overlap_px` control is extra
+transition/corner overlap and is passed through the compositor's existing
+`cliff_overlap_px` compatibility option.
+
 Fixtures live under `fixtures/sundered_keep_shorelines/` and contain only a
 seed, floor cells, ocean cells, and optional bounds. Captures are written to
 `reports/visual_labs/sundered_keep_shoreline/`.
