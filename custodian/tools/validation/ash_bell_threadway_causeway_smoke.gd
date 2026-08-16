@@ -12,16 +12,18 @@ class MockThreadwayMap:
 	extends Node2D
 
 	var resolve_count := 0
+	var committed_render_base_floor_visual := true
 	var result := {
 		"ok": true,
-		"cells": [Vector2i(5, 5), Vector2i(5, 6), Vector2i(5, 7)],
-		"new_cells": [Vector2i(5, 6), Vector2i(5, 7)],
+		"cells": [
+			Vector2i(4, 5), Vector2i(5, 5), Vector2i(6, 5),
+			Vector2i(4, 6), Vector2i(5, 6), Vector2i(6, 6),
+			Vector2i(4, 7), Vector2i(5, 7), Vector2i(6, 7),
+		],
+		"new_cells": [Vector2i(4, 6), Vector2i(5, 6), Vector2i(6, 6)],
 		"centerline_cells": [Vector2i(5, 5), Vector2i(5, 6), Vector2i(5, 7)],
-		"tile_variants": {
-			Vector2i(5, 5): 0,
-			Vector2i(5, 6): 1,
-			Vector2i(5, 7): 2,
-		},
+		"tile_variants": {},
+		"route_seed": 17,
 		"already_connected": false,
 		"reason": "",
 	}
@@ -33,16 +35,19 @@ class MockThreadwayMap:
 		_max_length_tiles: int,
 		_region_type: String,
 		_region_zone: String,
-		_lateral_allowance_tiles: int = -1
+		_lateral_allowance_tiles: int = -1,
+		_routing_profile: StringName = &"direct"
 	) -> Dictionary:
 		return result.duplicate(true)
 
 	func commit_runtime_walkable_connector_plan(
 		plan: Dictionary,
 		_region_type: String,
-		_region_zone: String
+		_region_zone: String,
+		render_base_floor_visual: bool = true
 	) -> Dictionary:
 		resolve_count += 1
+		committed_render_base_floor_visual = render_base_floor_visual
 		return plan.duplicate(true)
 
 	func get_runtime_tile_size() -> Vector2:
@@ -62,7 +67,8 @@ class MockFallbackThreadwayMap:
 	func evaluate_runtime_walkable_connector(
 		_start_global_position: Vector2, _preferred_direction: Vector2i,
 		_width_tiles: int, max_length_tiles: int, _region_type: String,
-		_region_zone: String, _lateral_allowance_tiles: int = -1
+		_region_zone: String, _lateral_allowance_tiles: int = -1,
+		_routing_profile: StringName = &"direct"
 	) -> Dictionary:
 		evaluated_lengths.append(max_length_tiles)
 		if max_length_tiles <= 18:
@@ -70,9 +76,11 @@ class MockFallbackThreadwayMap:
 		return result.duplicate(true)
 
 	func commit_runtime_walkable_connector_plan(
-		plan: Dictionary, _region_type: String, _region_zone: String
+		plan: Dictionary, _region_type: String, _region_zone: String,
+		render_base_floor_visual: bool = true
 	) -> Dictionary:
 		resolve_count += 1
+		committed_render_base_floor_visual = render_base_floor_visual
 		committed_length = int(plan.get("selected_max_length_tiles", 0))
 		committed_lateral = int(plan.get("selected_lateral_allowance_tiles", -1))
 		return plan.duplicate(true)
@@ -131,6 +139,7 @@ func _validate_authoritative_connector() -> void:
 		{
 			"initially_isolated": true,
 			"gap_depth_tiles": 2,
+			"render_base_floor_visual": false,
 		}
 	)
 	_check(island.has_area(), "isolated Ash-Bell pocket was not authored")
@@ -151,13 +160,21 @@ func _validate_authoritative_connector() -> void:
 			if terrain_kind == "floor":
 				minimap_updates.append(cell)
 	)
-	var first: Dictionary = map.resolve_runtime_walkable_connector(
+	var first_plan: Dictionary = map.evaluate_runtime_walkable_connector(
 		start_global,
 		Vector2i.DOWN,
 		3,
 		18,
 		"ash_bell_threadway",
-		"white_thread"
+		"white_thread",
+		-1,
+		&"threadway_organic"
+	)
+	var first: Dictionary = map.commit_runtime_walkable_connector_plan(
+		first_plan,
+		"ash_bell_threadway",
+		"white_thread",
+		false
 	)
 	_check(bool(first.get("ok", false)), "authoritative connector failed: %s" % first.get("reason", ""))
 	var cells: Array = first.get("cells", [])
@@ -171,6 +188,12 @@ func _validate_authoritative_connector() -> void:
 		_check(not walls.has(cell), "connector retained a generated wall: %s" % cell)
 		_check(not map.is_ocean_tile(cell), "connector retained ocean semantics: %s" % cell)
 		_check(not map.is_chasm_tile(cell), "connector retained chasm semantics: %s" % cell)
+		_check(map.floor_tilemap.get_cell_source_id(cell) == -1, "connector exposed generic floor visual: %s" % cell)
+	for x in range(island.position.x, island.end.x):
+		for y in range(island.position.y, island.end.y):
+			var island_cell := Vector2i(x, y)
+			_check(floor.has(island_cell), "isolated pocket lost semantic floor: %s" % island_cell)
+			_check(map.floor_tilemap.get_cell_source_id(island_cell) == -1, "isolated pocket exposed generic floor visual: %s" % island_cell)
 	_check(
 		_component_from(Vector2i(20, 18), floor).has(Vector2i(20, 5)),
 		"resolved connector did not join mainland to ingress island"
@@ -215,15 +238,32 @@ func _validate_resource_lifecycle() -> void:
 	var live_threadway := live_site.call("debug_get_threadway") as AshBellThreadwayCauseway
 	_check(live_threadway != null, "live Knot did not create persistent threadway presentation")
 	if live_threadway != null:
-		_check(live_threadway.debug_get_persistent_tile_count() == 3, "persistent tile count drifted")
+		_check(live_threadway.debug_get_persistent_tile_count() == 9, "persistent tile count drifted")
+		_check(live_threadway.debug_get_visible_persistent_tile_count() == 0, "persistent tiles appeared at reveal start")
 		for child in live_threadway.get_children():
 			if String(child.name).begins_with("ThreadwayFloor_"):
 				_check((child as Sprite2D).z_index == 0, "persistent Threadway floor is not in ground z=0")
+	await create_timer(0.18).timeout
+	if live_threadway != null:
+		_check(live_threadway.debug_get_visible_persistent_tile_count() == 0, "persistent tile appeared before its VFX completed")
+		var active_cells := live_threadway.debug_get_spawned_cells()
+		_check(not active_cells.is_empty(), "directed wave spawned no effects")
+		if not active_cells.is_empty():
+			var completed_cell := active_cells[0]
+			live_threadway.debug_finish_resolve_cell(completed_cell)
+			_check(live_threadway.debug_get_visible_persistent_tile_count() == 1, "finishing one VFX did not reveal exactly one tile")
+			_check(live_threadway.debug_get_resolved_cells() == [completed_cell], "neighbor resolved when one tile completed")
 	await create_timer(1.2).timeout
 	if live_threadway != null:
 		_check(live_threadway.debug_get_reveal_play_count() == 1, "live reveal did not play exactly once")
 		_check(not live_threadway.debug_has_temporary_blocker(), "temporary blocker survived reveal")
+		_check(live_threadway.debug_get_spawned_cells().size() == 9, "not every full-width cell received VFX")
+		_check(live_threadway.debug_get_resolved_cells().size() == 9, "visual completion missed planned cells")
+		_check(live_threadway.debug_get_visible_persistent_tile_count() == 9, "resolved road retained hidden tiles")
+		var delays := live_threadway.debug_get_reveal_delays()
+		_check(delays.size() == 9, "reveal scheduler omitted cells")
 	_check(live_map.resolve_count == 1, "live Knot did not commit exactly once after reveal")
+	_check(not live_map.committed_render_base_floor_visual, "live Threadway commit painted generic base floor")
 	ledger.call("add", RESOURCE_ID, 1)
 	await process_frame
 	_check(live_map.resolve_count == 1, "second Knot duplicated connector resolution")
@@ -246,6 +286,8 @@ func _validate_resource_lifecycle() -> void:
 	_check(pre_threadway != null, "pre-acquired Knot did not create presentation")
 	if pre_threadway != null:
 		_check(pre_threadway.debug_get_reveal_play_count() == 0, "pre-acquired Knot replayed live reveal")
+		_check(pre_threadway.debug_get_visible_persistent_tile_count() == 9, "pre-acquired Threadway was not immediately visible")
+	_check(not pre_map.committed_render_base_floor_visual, "pre-acquired Threadway painted generic base floor")
 	pre_site.queue_free()
 	pre_map.queue_free()
 	ledger.call("clear")
@@ -286,6 +328,8 @@ func _make_site(map_instance: Node) -> Area2D:
 		"initially_isolated": true,
 		"width_tiles": 3,
 		"max_length_tiles": 18,
+		"routing_profile": "threadway_organic",
+		"render_base_floor_visual": false,
 	})
 	return site
 

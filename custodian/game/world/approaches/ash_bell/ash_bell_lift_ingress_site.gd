@@ -105,6 +105,7 @@ func _resolve_threadway(play_reveal: bool) -> void:
 		"position": global_position,
 	})
 	var width := int(config.get("width_tiles", 3))
+	var routing_profile := StringName(config.get("routing_profile", "direct"))
 	var canonical_length := int(config.get("max_length_tiles", 18))
 	var selected_length := canonical_length
 	var selected_lateral := -1
@@ -114,7 +115,8 @@ func _resolve_threadway(play_reveal: bool) -> void:
 		canonical_plan = _main_map.call(
 			"evaluate_runtime_walkable_connector",
 			_presentation.get_interaction_approach_position(), -outward,
-			width, canonical_length, "ash_bell_threadway", "white_thread", -1
+			width, canonical_length, "ash_bell_threadway", "white_thread", -1,
+			routing_profile
 		) as Dictionary
 		if not bool(canonical_plan.get("ok", false)) and str(canonical_plan.get("reason", "")) == "no mainland endpoint within connector budget":
 			selected_length = maxi(canonical_length, THREADWAY_FALLBACK_MAX_LENGTH)
@@ -123,7 +125,8 @@ func _resolve_threadway(play_reveal: bool) -> void:
 				"evaluate_runtime_walkable_connector",
 				_presentation.get_interaction_approach_position(), -outward,
 				width, selected_length, "ash_bell_threadway", "white_thread",
-				selected_lateral
+					selected_lateral,
+					routing_profile
 			) as Dictionary
 			if bool(fallback_plan.get("ok", false)):
 				selected_plan = fallback_plan
@@ -167,7 +170,11 @@ func _commit_threadway_plan() -> void:
 		"commit_runtime_walkable_connector_plan",
 		_threadway_result,
 		"ash_bell_threadway",
-		"white_thread"
+		"white_thread",
+		bool((get_meta("world_ingress_unlock_causeway", {}) as Dictionary).get(
+			"render_base_floor_visual",
+			true
+		))
 	) as Dictionary
 	if not bool(_threadway_result.get("ok", false)):
 		_report_resolution_failure(_threadway_result)

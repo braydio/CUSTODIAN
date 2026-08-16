@@ -64,7 +64,7 @@ func _validate_assets(errors: Array[String]) -> void:
 		"ash_bell__underground_ingress__lift_platform_front_lip__idle__s__1f__128x128.png": Vector2i(128, 128),
 		"ash_bell__underground_ingress__lift_platform_front_lip__vibrate__s__4f__128x128.png": Vector2i(256, 256),
 		"ash_bell__underground_ingress__shaft_scroll_tile__idle__s__1f__256x512.png": Vector2i(256, 512),
-		"ash_bell__underground_ingress__foreground_occluder__idle__s__1f__256x256.png": Vector2i(256, 256),
+		"ash_bell__underground_ingress__foreground_occluder__idle__s__1f__256x256.png": Vector2i(512, 764),
 		"ash_bell__underground_ingress__lift_chain__idle__s__1f__64x256.png": Vector2i(64, 256),
 		"ash_bell__underground_ingress_fx__descent_dust__burst__omni__6f__192x192.png": Vector2i(576, 384),
 		"ash_bell__underground_ingress__entrance_shell__idle__s__1f__256x256.png": Vector2i(256, 256),
@@ -122,6 +122,9 @@ func _validate_scene(
 	var lamp := presentation.get_node("LampFxRoot/Lamp") as AnimatedSprite2D
 	var shaft_window := presentation.get_node("RearMassRoot/ShaftWindow") as Polygon2D
 	var entrance_mask := presentation.get_node("ForegroundOccluderRoot") as Node2D
+	var travel_geometry := presentation.get_node(
+		"ForegroundOccluderRoot/TravelOcclusionGeometry"
+	) as Node2D
 	var threshold := presentation.get_node("EntranceThresholdMarker") as Marker2D
 	var approach := presentation.get_node("InteractionApproachMarker") as Marker2D
 	var rider_anchor := presentation.get_node("LiftRoot/RiderAnchor") as Marker2D
@@ -140,12 +143,20 @@ func _validate_scene(
 	_check(is_zero_approx(shaft_window.modulate.a), "parked shaft retained visible opacity", errors)
 	_check(shaft_window.clip_children == CanvasItem.CLIP_CHILDREN_ONLY, "shaft window lost its irregular child mask", errors)
 	_check(presentation.get_node_or_null("RearMassRoot/DarkMouth") != null, "idle cave mouth is missing", errors)
-	_check(presentation.get_node_or_null("ForegroundOccluderRoot/TopRockOverhang") != null, "top mouth overhang is missing", errors)
-	_check(presentation.get_node_or_null("ForegroundOccluderRoot/LeftMouthRock") != null, "left mouth breakup is missing", errors)
-	_check(presentation.get_node_or_null("ForegroundOccluderRoot/RightMouthRock") != null, "right mouth breakup is missing", errors)
-	_check(presentation.get_node_or_null("ForegroundOccluderRoot/LowerCaveLip") != null, "foreground cave lip is missing", errors)
+	for plate_name in ["TopRockOverhang", "LeftMouthRock", "RightMouthRock", "LowerCaveLip"]:
+		_check(
+			presentation.get_node_or_null(
+				"ForegroundOccluderRoot/TravelOcclusionGeometry/" + plate_name
+			) is Polygon2D,
+			"temporary occlusion plate is missing: %s" % plate_name,
+			errors
+		)
+	_check(not travel_geometry.visible, "solid temporary occlusion geometry is visible while idle", errors)
 	_check(entrance_mask.z_index == 1, "parked cave breakup must remain behind Operator z=2", errors)
 	_check(not presentation.foreground_occluder.visible, "broad cave mask must be hidden while parked", errors)
+	_check((presentation.get_node("EntranceStructureRoot/EntranceShell") as Sprite2D).visible, "entrance shell is hidden while idle", errors)
+	_check(presentation.lift_root.visible, "lift is hidden while idle", errors)
+	_check((presentation.get_node("RearMassRoot/MountainCliff") as Sprite2D).visible, "mountain is hidden while idle", errors)
 	_check(presentation.lift_root.position == threshold.position, "parked platform is not aligned to its threshold", errors)
 	_check(rider_anchor.position == Vector2(0, -26), "rider anchor height drifted", errors)
 	_check(boarding_marker.position == Vector2(0, -26), "boarding marker drifted", errors)
@@ -289,6 +300,7 @@ func _validate_lift_travel(
 	_check(presentation.shaft_window.visible, "shaft did not become visible after accepted traversal", errors)
 	_check(presentation.entrance_mask.z_index == 20, "foreground cave mask did not enter travel z=20", errors)
 	_check(presentation.foreground_occluder.visible, "full cave mask did not activate for travel", errors)
+	_check(not presentation.travel_occlusion_geometry.visible, "solid temporary geometry activated during travel", errors)
 	_check(presentation.platform_back_vibrate.z_index == 5, "travel platform back did not enter z=5", errors)
 	_check((presentation.get_node("LiftRoot/PlatformFront") as Node2D).z_index == 7, "travel front lip did not enter z=7", errors)
 	await create_timer(0.3).timeout
@@ -300,6 +312,8 @@ func _validate_lift_travel(
 	_check(visual.visible, "cancellation did not restore the live Operator visual", errors)
 	_check(not presentation.has_presentation_puppet(), "cancellation did not free the puppet", errors)
 	_check(actor.position == restored_position, "cancellation moved the live Operator body", errors)
+	_check(not presentation.travel_occlusion_geometry.visible, "cancellation exposed temporary occlusion geometry", errors)
+	_check(not presentation.foreground_occluder.visible, "cancellation left textured travel occlusion visible", errors)
 	presentation.reset_presentation()
 	_check(presentation.lift_root.position == lift_start, "presentation did not reset lift", errors)
 	_check(presentation.platform_back_idle.visible and presentation.front_lip_idle.visible, "idle platform layers not restored", errors)
@@ -369,9 +383,7 @@ func _validate_boarding_bounds(
 	if bounds == null:
 		return
 	var expected := {
-		"BackStop": [Vector2(0, -62), Vector2(152, 16)],
-		"LeftRailStop": [Vector2(-80, -8), Vector2(16, 92)],
-		"RightRailStop": [Vector2(80, -8), Vector2(16, 92)],
+		"BackStop": [Vector2(0.5, -36), Vector2(223, 16)],
 		"LeftFrontWing": [Vector2(-56, 38), Vector2(48, 18)],
 		"RightFrontWing": [Vector2(56, 38), Vector2(48, 18)],
 	}

@@ -18,13 +18,20 @@ const FLOOR_TEXTURES: Array[Texture2D] = [
 const SOURCE_TILE_SIZE := Vector2(32.0, 32.0)
 const RESOLVE_FRAME_COUNT := 7
 const RESOLVE_FPS := 11.0
-const CENTERLINE_STAGGER_SECONDS := 0.05
+const WAVE_STEP_SECONDS := 0.065
+const LOCAL_JITTER_MAX_MILLISECONDS := 100
 
 var _map_instance: Node = null
 var _persistent_by_tile: Dictionary = {}
 var _temporary_blocker: StaticBody2D = null
 var _reveal_play_count := 0
 var _resolve_frames: SpriteFrames = null
+var _planned_cells: Dictionary = {}
+var _spawned_cells: Dictionary = {}
+var _resolved_cells: Dictionary = {}
+var _active_effects: Dictionary = {}
+var _reveal_delay_by_cell: Dictionary = {}
+var _visual_completion_emitted := false
 
 
 func configure(map_instance: Node, connector: Dictionary, play_reveal: bool) -> void:
@@ -55,17 +62,36 @@ func configure(map_instance: Node, connector: Dictionary, play_reveal: bool) -> 
 
 func _play_resolution(connector: Dictionary) -> void:
 	_reveal_play_count += 1
+	_planned_cells.clear()
+	_spawned_cells.clear()
+	_resolved_cells.clear()
+	_active_effects.clear()
+	_reveal_delay_by_cell.clear()
+	_visual_completion_emitted = false
+	var cells: Array = connector.get("cells", [])
 	var centerline: Array = connector.get("centerline_cells", [])
-	centerline.reverse()
-	for center_variant in centerline:
-		if not center_variant is Vector2i:
+	var supplied_progress := connector.get("centerline_progress_by_cell", {}) as Dictionary
+	var route_seed := int(connector.get("route_seed", 0))
+	for cell_variant in cells:
+		if not cell_variant is Vector2i:
 			continue
-		var center := center_variant as Vector2i
-		_spawn_resolve_vfx(center)
-		_reveal_near_center(center)
-		await get_tree().create_timer(CENTERLINE_STAGGER_SECONDS).timeout
-	await get_tree().create_timer(float(RESOLVE_FRAME_COUNT) / RESOLVE_FPS).timeout
-	visual_resolution_finished.emit()
+		var cell := cell_variant as Vector2i
+		if _planned_cells.has(cell):
+			continue
+		_planned_cells[cell] = true
+		var island_progress := int(supplied_progress.get(
+			cell,
+			_nearest_centerline_index(cell, centerline)
+		))
+		var mainland_progress := maxi(0, centerline.size() - 1 - island_progress)
+		var jitter_milliseconds := _deterministic_cell_hash(cell, route_seed) \
+			% (LOCAL_JITTER_MAX_MILLISECONDS + 1)
+		var delay := float(mainland_progress) * WAVE_STEP_SECONDS \
+			+ float(jitter_milliseconds) / 1000.0
+		_reveal_delay_by_cell[cell] = delay
+		_resolve_cell_after_delay(cell, delay)
+	if _planned_cells.is_empty():
+		_emit_visual_completion_once.call_deferred()
 
 
 func finish_resolution() -> void:
@@ -73,7 +99,17 @@ func finish_resolution() -> void:
 	resolution_finished.emit()
 
 
+func _resolve_cell_after_delay(cell: Vector2i, delay: float) -> void:
+	if delay > 0.0:
+		await get_tree().create_timer(delay).timeout
+	if not is_inside_tree() or _resolved_cells.has(cell):
+		return
+	_spawn_resolve_vfx(cell)
+
+
 func _spawn_resolve_vfx(cell: Vector2i) -> void:
+	if _spawned_cells.has(cell):
+		return
 	if _resolve_frames == null:
 		_resolve_frames = SpriteFrames.new()
 		_resolve_frames.add_animation(&"resolve")
@@ -90,17 +126,55 @@ func _spawn_resolve_vfx(cell: Vector2i) -> void:
 	effect.scale = _runtime_tile_size() / SOURCE_TILE_SIZE
 	effect.z_as_relative = false
 	effect.z_index = 1
+	effect.set_meta("threadway_cell", cell)
 	add_child(effect)
 	effect.global_position = _tile_to_global(cell)
-	effect.animation_finished.connect(effect.queue_free)
+	_spawned_cells[cell] = true
+	_active_effects[cell] = effect
+	effect.animation_finished.connect(
+		_on_cell_resolve_finished.bind(cell, effect),
+		CONNECT_ONE_SHOT
+	)
 	effect.play(&"resolve")
 
 
-func _reveal_near_center(center: Vector2i) -> void:
-	for cell_variant in _persistent_by_tile.keys():
-		var cell := cell_variant as Vector2i
-		if cell.distance_squared_to(center) <= 2:
-			(_persistent_by_tile[cell] as Sprite2D).visible = true
+func _on_cell_resolve_finished(cell: Vector2i, effect: AnimatedSprite2D) -> void:
+	if _resolved_cells.has(cell):
+		return
+	_resolved_cells[cell] = true
+	_active_effects.erase(cell)
+	var persistent := _persistent_by_tile.get(cell) as Sprite2D
+	if persistent != null:
+		persistent.visible = true
+	if is_instance_valid(effect):
+		effect.queue_free()
+	if _resolved_cells.size() == _planned_cells.size():
+		_emit_visual_completion_once()
+
+
+func _emit_visual_completion_once() -> void:
+	if _visual_completion_emitted:
+		return
+	_visual_completion_emitted = true
+	visual_resolution_finished.emit()
+
+
+func _nearest_centerline_index(cell: Vector2i, centerline: Array) -> int:
+	var best_index := 0
+	var best_distance := 1 << 30
+	for index in range(centerline.size()):
+		if not centerline[index] is Vector2i:
+			continue
+		var distance := cell.distance_squared_to(centerline[index] as Vector2i)
+		if distance < best_distance:
+			best_distance = distance
+			best_index = index
+	return best_index
+
+
+func _deterministic_cell_hash(cell: Vector2i, route_seed: int) -> int:
+	var value := cell.x * 73856093 ^ cell.y * 19349663 ^ route_seed * 83492791
+	return absi(value)
 
 
 func _build_temporary_blocker(cells: Array, tile_size: Vector2) -> void:
@@ -147,3 +221,40 @@ func debug_get_reveal_play_count() -> int:
 
 func debug_has_temporary_blocker() -> bool:
 	return _temporary_blocker != null
+
+
+func debug_get_visible_persistent_tile_count() -> int:
+	var count := 0
+	for sprite_variant in _persistent_by_tile.values():
+		var sprite := sprite_variant as Sprite2D
+		if sprite != null and sprite.visible:
+			count += 1
+	return count
+
+
+func debug_get_active_resolve_effect_count() -> int:
+	return _active_effects.size()
+
+
+func debug_get_spawned_cells() -> Array[Vector2i]:
+	var result: Array[Vector2i] = []
+	for cell_variant in _spawned_cells.keys():
+		result.append(cell_variant as Vector2i)
+	return result
+
+
+func debug_get_resolved_cells() -> Array[Vector2i]:
+	var result: Array[Vector2i] = []
+	for cell_variant in _resolved_cells.keys():
+		result.append(cell_variant as Vector2i)
+	return result
+
+
+func debug_get_reveal_delays() -> Dictionary:
+	return _reveal_delay_by_cell.duplicate(true)
+
+
+func debug_finish_resolve_cell(cell: Vector2i) -> void:
+	var effect := _active_effects.get(cell) as AnimatedSprite2D
+	if effect != null:
+		_on_cell_resolve_finished(cell, effect)

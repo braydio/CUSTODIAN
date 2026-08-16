@@ -9,7 +9,11 @@ var connector_committed: bool = false
 
 var persistent_tiles: int:
 	get:
-		return 0 if _threadway == null else _threadway.debug_get_persistent_tile_count()
+		return 0 if _threadway == null else _threadway.debug_get_visible_persistent_tile_count()
+
+var active_resolve_effects: int:
+	get:
+		return 0 if _threadway == null else _threadway.debug_get_active_resolve_effect_count()
 
 var reveal_count: int:
 	get:
@@ -25,28 +29,56 @@ func _ready() -> void:
 
 
 func moment_forge_fixture_command(command: String, _args: Dictionary) -> Variant:
+	if command == "walk_operator_across":
+		var operator := get_node_or_null("Operator") as Node2D
+		if operator == null:
+			return false
+		create_tween().tween_property(operator, "position", Vector2(640, 292), 1.0)
+		return true
+	if command == "stand_at_lift_entrance":
+		var operator := get_node_or_null("Operator") as Node2D
+		if operator == null:
+			return false
+		operator.position = Vector2(640, 292)
+		return true
 	if command != "acquire_white_thread_knot" or _threadway != null:
 		return false
 	_threadway = THREADWAY_SCRIPT.new() as AshBellThreadwayCauseway
 	_threadway.name = "AshBellThreadwayCauseway"
 	add_child(_threadway)
 	_threadway.visual_resolution_finished.connect(_on_visual_resolution_finished)
+	var centerline: Array[Vector2i] = [
+		Vector2i(0, 0), Vector2i(0, 1), Vector2i(1, 1), Vector2i(1, 2),
+		Vector2i(1, 3), Vector2i(0, 3), Vector2i(0, 4), Vector2i(0, 5),
+	]
 	var cells: Array[Vector2i] = []
 	var variants: Dictionary = {}
-	for y in range(0, 6):
-		for x in range(-1, 2):
-			var cell := Vector2i(x, y)
-			cells.append(cell)
-			variants[cell] = posmod(x * 11 + y * 7, 6)
+	var progress_by_cell: Dictionary = {}
+	for index in range(centerline.size()):
+		var center := centerline[index]
+		var tangents: Array[Vector2i] = []
+		if index > 0:
+			tangents.append(center - centerline[index - 1])
+		if index + 1 < centerline.size():
+			var outgoing := centerline[index + 1] - center
+			if not tangents.has(outgoing):
+				tangents.append(outgoing)
+		for tangent in tangents:
+			var perpendicular := Vector2i(-tangent.y, tangent.x)
+			for offset in range(-1, 2):
+				var cell := center + perpendicular * offset
+				if not progress_by_cell.has(cell):
+					cells.append(cell)
+					variants[cell] = posmod(cell.x * 11 + cell.y * 7, 6)
+					progress_by_cell[cell] = index
 	_threadway.configure(self, {
 		"ok": true,
 		"cells": cells,
 		"new_cells": cells,
-		"centerline_cells": [
-			Vector2i(0, 0), Vector2i(0, 1), Vector2i(0, 2),
-			Vector2i(0, 3), Vector2i(0, 4), Vector2i(0, 5),
-		],
+		"centerline_cells": centerline,
+		"centerline_progress_by_cell": progress_by_cell,
 		"tile_variants": variants,
+		"route_seed": 1138,
 	}, true)
 	return true
 
@@ -70,10 +102,6 @@ func tile_to_global_position(cell: Vector2i) -> Vector2:
 
 
 func _draw() -> void:
-	draw_rect(Rect2(-640, -360, 1280, 720), Color("10151c"))
-	draw_rect(Rect2(-640, 88, 1280, 272), Color("292821"))
-	draw_colored_polygon(PackedVector2Array([
-		Vector2(-150, -250), Vector2(150, -250), Vector2(150, -54),
-		Vector2(82, -24), Vector2(-82, -24), Vector2(-150, -54),
-	]), Color("343229"))
-	draw_rect(Rect2(-640, 68, 1280, 20), Color("191b1d"))
+	draw_rect(Rect2(0, 0, 1280, 720), Color("10151c"))
+	draw_rect(Rect2(0, 452, 1280, 268), Color("292821"))
+	draw_rect(Rect2(0, 452, 1280, 20), Color("191b1d"))

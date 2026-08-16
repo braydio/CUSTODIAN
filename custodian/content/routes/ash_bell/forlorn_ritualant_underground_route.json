@@ -23,7 +23,9 @@
         "initially_isolated": true,
         "gap_depth_tiles": 2,
         "width_tiles": 3,
-        "max_length_tiles": 18
+        "max_length_tiles": 18,
+        "routing_profile": "threadway_organic",
+        "render_base_floor_visual": false
       }
     }
   },

@@ -169,7 +169,8 @@ func _validate_unlock_causeway_contract(map_instance: Node, result: Dictionary) 
 		int(config.get("max_length_tiles", 18)),
 		"ash_bell_threadway",
 		"white_thread",
-		-1
+		-1,
+		StringName(config.get("routing_profile", "direct"))
 	) as Dictionary
 	result["connector_diagnostic"] = plan.duplicate(true)
 	if bool(plan.get("ok", false)):

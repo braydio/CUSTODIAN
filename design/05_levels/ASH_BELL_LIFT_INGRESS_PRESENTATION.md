@@ -17,7 +17,7 @@ generated `WorldIngressSite`; it is not part of
 - `ash_bell_lift_ingress_presentation.tscn` owns the surface cliff, irregular
   dark mouth, threshold, two chains, parked lift, restrained dust, lamp,
   authored foreground cave mask, traversal-only scrolling shaft, local cliff
-  collision, and the five-piece boarding enclosure.
+  collision, and the current three-piece boarding enclosure.
 - `ash_bell_lift_ingress_presentation.gd` owns the 1.05-second travel presentation,
   detached rider-puppet lifecycle, 176 px lift travel, 384 px shaft scroll,
   staged cave-lip occlusion, constant rider depth, and reusable reset.
@@ -100,24 +100,27 @@ The resolver rejects map bounds, constructed walls, required route cells, and
 Sundered Keep protected cells.
 
 The exact connector is first evaluated without mutation and used as the visual
-resolution plan. The special surface and thread effect travel from mainland to
-the lift while a temporary local blocker prevents entry; only after the final
-visual settle is that same plan committed in one terrain transaction. Generated
+resolution plan. Every full-width authored floor cell owns one seven-frame
+resolve effect and becomes visible only when that effect finishes. Progress
+bands advance from mainland toward the lift every `0.065` seconds with a
+deterministic `0..0.10` second per-cell jitter, so neighboring effects overlap
+as a directed wave rather than random scatter or a rigid scan. A temporary
+local blocker prevents entry; only after every effect reports completion is
+that same plan committed in one terrain transaction. Generated
 floor/wall state, CHASM/OCEAN classification, runtime walkable boundary,
 navigation, shadows, region metadata, and canonical minimap `floor` updates
-are refreshed once for the batch, so ordinary procgen floor never precedes the
-materialization. Presentation overlays use six deterministic
+are refreshed once for the batch. Ash Bell opts out of rendering generic base
+Floor TileMap cells for both its isolated pocket and committed connector while
+retaining all semantic terrain authority. The authored Threadway sprites are
+the only visible traversal surface. Presentation overlays use six deterministic
 dark-stone variants. A seven-frame 32 px thread/ash/remembered-stone effect
-travels from mainland toward the lift at 11 FPS with 0.05-second centerline
-stagger. If the
+travels from mainland toward the lift at 11 FPS. If the
 milestone predates site creation, authoritative floor and persistent overlays
 appear immediately without replaying the reveal. Further Knots are no-ops.
 
 `BoardingBounds` is real `StaticBody2D` authority rather than an interaction
-trigger. A rear stop, two side rails, and two front wings enclose the parked
-platform while leaving a centered 64 px front opening. The Operator can board
-from the exterior but cannot walk behind the shaft, through the side rails, or
-stand over either front corner.
+trigger. A broad rear stop and two front wings constrain the parked platform
+while leaving a centered front opening.
 
 After explicit interaction, the shaft window becomes visible and fades in over
 the first 25 percent of descent. Its children are clipped by an irregular
@@ -129,9 +132,11 @@ cancellation also restore the exterior-only state.
 The current platform renders at approximately 173 px wide. Its idle and
 vibration art are alpha-split from the original platform into back/deck/rail
 and front-lip nodes. Idle world depth is rear mass `-8`, threshold `0`, entrance
-structure and broad cave breakup `1`, platform back/deck `1`, live Operator
-`2`, localized lower cave lip and platform front lip `3`, and lamp/dust FX
-`10`. The broad authored foreground occluder is hidden during ordinary approach.
+structure and platform back/deck `1`, live Operator `2`, platform front lip `3`,
+and lamp/dust FX `10`. Temporary solid Polygon2D cave plates remain grouped as
+non-production-visible geometry; they are hidden in idle, travel, reset, and
+cancellation states. The broad authored foreground occluder is hidden during
+ordinary approach.
 Travel promotes the platform back, detached rider, and front lip to absolute
 `5 / 6 / 7`, activates the full cave mask at `20`, then restores the idle
 depth and visibility contract on finish, reset, or cancellation.
@@ -141,9 +146,8 @@ The entire mountain mass must never be raised as one foreground
 plate. The rider uses `RiderAnchor (0, -26)`. The burst dust
 renders at approximately 96×58 px, 34 percent alpha, behind the platform. The
 768×512 cliff remains landmark-scale while the functional entrance stays sized
-around the 96 px Operator. Corrected authored rock assets may replace the
-temporary mask polygons without changing their scene ownership or traversal
-contract.
+around the 96 px Operator. The authored alpha occluder, rather than raw solid
+polygons, provides the travel cave-lip cover.
 
 The former always-exposed rectangular shaft cutaway is superseded and must not
 be restored.
@@ -168,7 +172,14 @@ entrance shell contains no lift platform or active lamp.
 ## Connector generation contract
 
 White Thread connector placement and runtime resolution share the same
-deterministic dry-run planner. A generated isolated pocket is accepted only
+deterministic dry-run planner and optional `threadway_organic` routing profile.
+That profile derives a direct, one-sided dogleg, or shallow-S candidate from the
+procgen seed and endpoint coordinates, tries the selected restrained shape
+before the direct fallback, and limits intentional lateral drift to one through
+three tiles. Width expansion follows each segment's local tangent and unions
+incoming/outgoing perpendicular bands at bends before the complete widened
+candidate is safety-checked. Generic connectors retain direct routing. A
+generated isolated pocket is accepted only
 when the normal three-wide, 18-tile production budget can reach player-reachable
 mainland without crossing bounds, constructed walls, required cells, or
 Sundered Keep protection. Runtime commit uses that exact plan contract. A
@@ -201,10 +212,12 @@ godot --headless --path custodian \
   --script res://tools/validation/authored_level_ingress_return_smoke.gd
 ```
 
-The focused smoke verifies asset dimensions/import settings, animation
+The focused smokes verify asset dimensions/import settings, animation
 contracts, exterior-only idle state, irregular shaft clipping, platform and
 threshold alignment, boarding collision dimensions and front opening,
 off-platform interaction rejection, constant rider depth, split rail/front-lip
 ordering, restrained dust, traversal reveal and cave-lip ordering, actor-state
-restoration, reset, snapshot ordering, explicit interaction, and specialized
-versus generic spawner behavior.
+restoration, reset, snapshot ordering, explicit interaction, specialized versus
+generic spawner behavior, per-cell resolve completion, full-width VFX coverage,
+directed stagger, authored-only visible floor, deterministic shaped routing,
+and connected width-three bends.

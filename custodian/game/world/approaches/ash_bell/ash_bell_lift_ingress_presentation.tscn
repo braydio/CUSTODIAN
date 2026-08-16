@@ -328,15 +328,18 @@ z_as_relative = false
 z_index = 1
 y_sort_enabled = false
 
-[node name="TopRockOverhang" type="Polygon2D" parent="ForegroundOccluderRoot" unique_id=70458689]
+[node name="TravelOcclusionGeometry" type="Node2D" parent="ForegroundOccluderRoot"]
+visible = false
+
+[node name="TopRockOverhang" type="Polygon2D" parent="ForegroundOccluderRoot/TravelOcclusionGeometry" unique_id=70458689]
 color = Color(0.105, 0.105, 0.1, 1)
 polygon = PackedVector2Array(-146, -284, 146, -284, 142, -225, 111, -244, 74, -232, 31, -247, -12, -237, -58, -248, -101, -232, -139, -214)
 
-[node name="LeftMouthRock" type="Polygon2D" parent="ForegroundOccluderRoot" unique_id=286913333]
+[node name="LeftMouthRock" type="Polygon2D" parent="ForegroundOccluderRoot/TravelOcclusionGeometry" unique_id=286913333]
 color = Color(0.12, 0.115, 0.105, 1)
 polygon = PackedVector2Array(-151, -246, -112, -236, -102, -167, -114, -102, -104, -39, -126, 18, -160, 34)
 
-[node name="RightMouthRock" type="Polygon2D" parent="ForegroundOccluderRoot" unique_id=1878343542]
+[node name="RightMouthRock" type="Polygon2D" parent="ForegroundOccluderRoot/TravelOcclusionGeometry" unique_id=1878343542]
 color = Color(0.12, 0.115, 0.105, 1)
 polygon = PackedVector2Array(151, -246, 112, -236, 101, -168, 116, -105, 105, -42, 128, 17, 160, 34)
 
@@ -348,7 +351,7 @@ polygon = PackedVector2Array(-103, -224, -88, -227, -78, -18, -94, -15)
 color = Color(0.16, 0.115, 0.075, 1)
 polygon = PackedVector2Array(88, -227, 103, -224, 94, -15, 78, -18)
 
-[node name="LowerCaveLip" type="Polygon2D" parent="ForegroundOccluderRoot" unique_id=1203281903]
+[node name="LowerCaveLip" type="Polygon2D" parent="ForegroundOccluderRoot/TravelOcclusionGeometry" unique_id=1203281903]
 z_as_relative = false
 z_index = 3
 color = Color(0.135, 0.13, 0.12, 1)

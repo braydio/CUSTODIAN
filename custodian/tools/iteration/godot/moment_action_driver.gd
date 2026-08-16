@@ -176,6 +176,8 @@ func _fixture_command(action: Dictionary, result: Dictionary) -> void:
 		],
 		"ash_bell_threadway": [
 			"acquire_white_thread_knot",
+			"walk_operator_across",
+			"stand_at_lift_entrance",
 		],
 	}
 	if command not in allowed.get(fixture_id, []):

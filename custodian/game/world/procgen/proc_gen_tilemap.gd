@@ -2662,14 +2662,16 @@ func claim_procgen_floor_rect_for_authored_scene_world(
 	size_tiles: Vector2i,
 	region_type: String = "authored_scene_floor",
 	zone: String = "authored_scene",
-	margin_tiles: int = 1
+	margin_tiles: int = 1,
+	render_base_floor_visual: bool = true
 ) -> Rect2i:
 	return claim_procgen_floor_rect_for_authored_scene_tiles(
 		_global_to_tile(global_center),
 		size_tiles,
 		region_type,
 		zone,
-		margin_tiles
+		margin_tiles,
+		render_base_floor_visual
 	)
 
 
@@ -2678,7 +2680,8 @@ func claim_procgen_floor_rect_for_authored_scene_tiles(
 	size_tiles: Vector2i,
 	region_type: String = "authored_scene_floor",
 	zone: String = "authored_scene",
-	margin_tiles: int = 1
+	margin_tiles: int = 1,
+	render_base_floor_visual: bool = true
 ) -> Rect2i:
 	if floor_tilemap == null or walls_tilemap == null:
 		return Rect2i()
@@ -2698,7 +2701,13 @@ func claim_procgen_floor_rect_for_authored_scene_tiles(
 			if procgen_node != null and not _is_tile_inside_map(tile, map_size, 0):
 				continue
 			_clear_procgen_road_authority_at(tile)
-			_force_authored_scene_floor_authority(tile, region_type, zone, false)
+			_force_authored_scene_floor_authority(
+				tile,
+				region_type,
+				zone,
+				false,
+				render_base_floor_visual
+			)
 
 	if build_runtime_wall_collision:
 		_sync_runtime_wall_collision_with_visible_walls()
@@ -2724,7 +2733,8 @@ func claim_world_overlook_pocket(
 		size_tiles,
 		"world_overlook_floor",
 		"world_vista",
-		1
+		1,
+		bool(unlock_causeway.get("render_base_floor_visual", true))
 	)
 	if footprint.size == Vector2i.ZERO:
 		return footprint
@@ -2775,7 +2785,8 @@ func _claim_isolated_world_overlook_pocket(
 		island_rect.size,
 		"world_overlook_floor",
 		"world_vista_island",
-		0
+		0,
+		bool(unlock_causeway.get("render_base_floor_visual", true))
 	)
 	if footprint.size == Vector2i.ZERO:
 		return footprint
@@ -2831,12 +2842,14 @@ func resolve_runtime_walkable_connector(
 	max_length_tiles: int = 18,
 	region_type: String = "runtime_connector",
 	region_zone: String = "connector",
-	lateral_allowance_tiles: int = -1
+	lateral_allowance_tiles: int = -1,
+	routing_profile: StringName = &"direct"
 ) -> Dictionary:
 	var plan := _evaluate_or_commit_runtime_walkable_connector(
 		start_global_position, preferred_direction, width_tiles,
 		max_length_tiles, region_type, region_zone, true,
-		lateral_allowance_tiles
+		lateral_allowance_tiles,
+		routing_profile
 	)
 	if not bool(plan.get("ok", false)):
 		return plan
@@ -2850,12 +2863,14 @@ func evaluate_runtime_walkable_connector(
 	max_length_tiles: int = 18,
 	region_type: String = "runtime_connector",
 	region_zone: String = "connector",
-	lateral_allowance_tiles: int = -1
+	lateral_allowance_tiles: int = -1,
+	routing_profile: StringName = &"direct"
 ) -> Dictionary:
 	return _evaluate_or_commit_runtime_walkable_connector(
 		start_global_position, preferred_direction, width_tiles,
 		max_length_tiles, region_type, region_zone, true,
-		lateral_allowance_tiles
+		lateral_allowance_tiles,
+		routing_profile
 	)
 
 
@@ -2867,7 +2882,8 @@ func _evaluate_or_commit_runtime_walkable_connector(
 	region_type: String,
 	region_zone: String,
 	dry_run: bool,
-	lateral_allowance_tiles: int = -1
+	lateral_allowance_tiles: int = -1,
+	routing_profile: StringName = &"direct"
 ) -> Dictionary:
 	if floor_tilemap == null or walls_tilemap == null or procgen_node == null:
 		return {"ok": false, "reason": "missing procgen terrain authority"}
@@ -2950,42 +2966,61 @@ func _evaluate_or_commit_runtime_walkable_connector(
 		}
 		_obs_log(&"procgen_runtime_connector_failed", failure)
 		return failure
-	var centerline := _deterministic_tile_line(island_anchor, endpoint)
-	var half_width: int = maxi(0, int((maxi(1, width_tiles) - 1) / 2))
-	var perpendicular := Vector2i(-inward.y, inward.x)
-	var cells: Dictionary = {}
-	for center in centerline:
-		for offset in range(-half_width, half_width + 1):
-			var cell := center + perpendicular * offset
-			if not _is_tile_inside_map(cell, map_size, 0):
-				return {"ok": false, "reason": "connector left map bounds"}
-			cells[cell] = true
 	var required: Dictionary = {}
 	for required_cell in _collect_terrain_required_cells(map_size):
 		required[required_cell] = true
-	for cell_variant in cells.keys():
-		var cell := cell_variant as Vector2i
-		if _generated_wall_cells.has(cell):
-			return {"ok": false, "reason": "connector intersects constructed wall", "blocked_cell": cell}
-		if not _generated_floor_cells.has(cell) and (
-			required.has(cell) or is_sundered_keep_frontage_protected(cell)
-		):
-			return {"ok": false, "reason": "connector intersects protected route", "blocked_cell": cell}
+	var route_seed := int(procgen_node.seed) if "seed" in procgen_node else 0
+	var half_width: int = maxi(0, int((maxi(1, width_tiles) - 1) / 2))
+	var route_candidates := _connector_centerline_candidates(
+		island_anchor,
+		endpoint,
+		inward,
+		routing_profile,
+		route_seed
+	)
+	var centerline: Array[Vector2i] = []
+	var expansion: Dictionary = {}
+	var selected_shape := "direct"
+	var last_failure := {"ok": false, "reason": "no safe connector route"}
+	for candidate_variant in route_candidates:
+		var candidate := candidate_variant as Dictionary
+		var candidate_centerline := candidate.get("centerline", []) as Array[Vector2i]
+		if candidate_centerline.size() - 1 > max_length_tiles:
+			last_failure = {"ok": false, "reason": "connector route exceeds length budget"}
+			continue
+		var candidate_expansion := _expand_connector_width(
+			candidate_centerline,
+			half_width,
+			inward,
+			routing_profile == &"threadway_organic"
+		)
+		var safety := _validate_connector_cells(
+			candidate_expansion.get("ordered_cells", []) as Array[Vector2i],
+			map_size,
+			required
+		)
+		if bool(safety.get("ok", false)):
+			centerline = candidate_centerline
+			expansion = candidate_expansion
+			selected_shape = str(candidate.get("shape", "direct"))
+			break
+		last_failure = safety
+	if centerline.is_empty():
+		return last_failure
 	var variants: Dictionary = {}
-	var ordered_cells: Array[Vector2i] = []
+	var ordered_cells := expansion.get("ordered_cells", []) as Array[Vector2i]
 	var new_cells: Array[Vector2i] = []
-	for center in centerline:
-		for offset in range(-half_width, half_width + 1):
-			var cell := center + perpendicular * offset
-			if ordered_cells.has(cell):
-				continue
-			ordered_cells.append(cell)
-			if not _generated_floor_cells.has(cell):
-				new_cells.append(cell)
-			variants[cell] = _tile_noise_hash(cell + Vector2i(1709, 2237)) % 6
+	for cell in ordered_cells:
+		if not _generated_floor_cells.has(cell):
+			new_cells.append(cell)
+		var variant_hash := _tile_noise_hash(cell + Vector2i(1709, 2237)) % 11
+		variants[cell] = 5 if variant_hash == 10 else variant_hash % 5
 	var plan := {
 		"ok": true, "cells": ordered_cells, "new_cells": new_cells,
 		"centerline_cells": centerline, "tile_variants": variants,
+		"centerline_progress_by_cell": expansion.get("progress_by_cell", {}),
+		"routing_profile": routing_profile, "route_shape": selected_shape,
+		"route_seed": route_seed,
 		"already_connected": false, "start_tile": start,
 		"island_anchor_tile": island_anchor, "endpoint_tile": endpoint,
 		"max_length_tiles": max_length_tiles,
@@ -2999,7 +3034,8 @@ func _evaluate_or_commit_runtime_walkable_connector(
 func commit_runtime_walkable_connector_plan(
 	plan: Dictionary,
 	region_type: String = "runtime_connector",
-	region_zone: String = "connector"
+	region_zone: String = "connector",
+	render_base_floor_visual: bool = true
 ) -> Dictionary:
 	if not bool(plan.get("ok", false)):
 		return {"ok": false, "reason": "cannot commit invalid connector plan"}
@@ -3024,7 +3060,12 @@ func commit_runtime_walkable_connector_plan(
 		var cell := cell_variant as Vector2i
 		if not _generated_floor_cells.has(cell):
 			committed_new_cells += 1
-		_set_floor_tile_and_generated_state(cell, region_type, region_zone)
+		_set_floor_tile_and_generated_state(
+			cell,
+			region_type,
+			region_zone,
+			render_base_floor_visual
+		)
 		_remove_foliage(cell)
 		minimap_tile_changed.emit(cell, "floor")
 	_rebuild_nonwalkable_surface_regions(map_size)
@@ -3076,6 +3117,140 @@ func _deterministic_tile_line(start: Vector2i, endpoint: Vector2i) -> Array[Vect
 			current.x += signi(delta.x)
 		result.append(current)
 	return result
+
+
+func _connector_centerline_candidates(
+	start: Vector2i,
+	endpoint: Vector2i,
+	inward: Vector2i,
+	routing_profile: StringName,
+	route_seed: int
+) -> Array[Dictionary]:
+	var direct := _deterministic_tile_line(start, endpoint)
+	if routing_profile != &"threadway_organic":
+		return [{"shape": "direct", "centerline": direct}]
+	var hash := absi(
+		route_seed * 83492791
+		^ start.x * 73856093
+		^ start.y * 19349663
+		^ endpoint.x * 122949829
+		^ endpoint.y * 4256249
+	)
+	var shape_index := hash % 4
+	var candidates: Array[Dictionary] = []
+	var ordered_shapes: Array[int] = [shape_index, 1, 2, 3, 0]
+	for candidate_shape in ordered_shapes:
+		if candidate_shape == 0:
+			if not candidates.any(func(item: Dictionary) -> bool: return item.shape == "direct"):
+				candidates.append({"shape": "direct", "centerline": direct})
+			continue
+		var candidate := _organic_connector_candidate(
+			start, endpoint, inward, candidate_shape, hash
+		)
+		if not candidates.any(
+			func(item: Dictionary) -> bool: return item.shape == candidate.shape
+		):
+			candidates.append(candidate)
+	return candidates
+
+
+func _organic_connector_candidate(
+	start: Vector2i,
+	endpoint: Vector2i,
+	inward: Vector2i,
+	shape_index: int,
+	hash: int
+) -> Dictionary:
+	var perpendicular := Vector2i(-inward.y, inward.x)
+	var route_delta := endpoint - start
+	var forward := maxi(1, route_delta.x * inward.x + route_delta.y * inward.y)
+	var drift := 1 + int(hash / 4) % 3
+	var sign := -1 if shape_index == 1 else 1
+	var waypoints: Array[Vector2i]
+	if shape_index in [1, 2]:
+		waypoints = [
+			start + inward * maxi(1, int(forward / 3)) + perpendicular * drift * sign,
+			start + inward * maxi(2, int(forward * 2 / 3)) + perpendicular * drift * sign,
+		]
+		return {
+			"shape": "left_dogleg" if sign < 0 else "right_dogleg",
+			"centerline": _tile_line_via_waypoints(start, endpoint, waypoints),
+		}
+	waypoints = [
+		start + inward * maxi(1, int(forward / 3)) + perpendicular * drift,
+		start + inward * maxi(2, int(forward * 2 / 3)) - perpendicular * drift,
+	]
+	return {
+		"shape": "shallow_s",
+		"centerline": _tile_line_via_waypoints(start, endpoint, waypoints),
+	}
+
+
+func _tile_line_via_waypoints(
+	start: Vector2i,
+	endpoint: Vector2i,
+	waypoints: Array[Vector2i]
+) -> Array[Vector2i]:
+	var result: Array[Vector2i] = [start]
+	var leg_start := start
+	for leg_end in waypoints + [endpoint]:
+		var leg := _deterministic_tile_line(leg_start, leg_end)
+		for index in range(1, leg.size()):
+			if result[-1] != leg[index]:
+				result.append(leg[index])
+		leg_start = leg_end
+	return result
+
+
+func _expand_connector_width(
+	centerline: Array[Vector2i],
+	half_width: int,
+	default_tangent: Vector2i,
+	follow_local_tangents: bool
+) -> Dictionary:
+	var ordered_cells: Array[Vector2i] = []
+	var progress_by_cell: Dictionary = {}
+	for index in range(centerline.size()):
+		var center := centerline[index]
+		var tangents: Array[Vector2i] = []
+		if follow_local_tangents and index > 0:
+			tangents.append(center - centerline[index - 1])
+		if follow_local_tangents and index + 1 < centerline.size():
+			var outgoing := centerline[index + 1] - center
+			if not tangents.has(outgoing):
+				tangents.append(outgoing)
+		if tangents.is_empty():
+			tangents.append(default_tangent)
+		for tangent in tangents:
+			var perpendicular := Vector2i(-tangent.y, tangent.x)
+			for offset in range(-half_width, half_width + 1):
+				var cell := center + perpendicular * offset
+				if not progress_by_cell.has(cell):
+					ordered_cells.append(cell)
+					progress_by_cell[cell] = index
+				else:
+					progress_by_cell[cell] = mini(int(progress_by_cell[cell]), index)
+	return {
+		"ordered_cells": ordered_cells,
+		"progress_by_cell": progress_by_cell,
+	}
+
+
+func _validate_connector_cells(
+	cells: Array[Vector2i],
+	map_size: Vector2i,
+	required: Dictionary
+) -> Dictionary:
+	for cell in cells:
+		if not _is_tile_inside_map(cell, map_size, 0):
+			return {"ok": false, "reason": "connector left map bounds", "blocked_cell": cell}
+		if _generated_wall_cells.has(cell):
+			return {"ok": false, "reason": "connector intersects constructed wall", "blocked_cell": cell}
+		if not _generated_floor_cells.has(cell) and (
+			required.has(cell) or is_sundered_keep_frontage_protected(cell)
+		):
+			return {"ok": false, "reason": "connector intersects protected route", "blocked_cell": cell}
+	return {"ok": true}
 
 
 func is_inside_world_ingress_dressing_clearance(tile: Vector2i) -> bool:
@@ -3134,7 +3309,13 @@ func _clear_prop_visuals_in_rect(rect: Rect2i) -> void:
 			stack.append(child)
 
 
-func _force_authored_scene_floor_authority(tile: Vector2i, region_type: String, zone: String, refresh_collision_debug: bool = true) -> void:
+func _force_authored_scene_floor_authority(
+	tile: Vector2i,
+	region_type: String,
+	zone: String,
+	refresh_collision_debug: bool = true,
+	render_base_floor_visual: bool = true
+) -> void:
 	var source_id := _select_floor_source_id(tile)
 	var atlas := _select_floor_coord(tile)
 	_generated_floor_cells[tile] = {
@@ -3142,7 +3323,10 @@ func _force_authored_scene_floor_authority(tile: Vector2i, region_type: String, 
 		"atlas": atlas,
 		"alternative": 0,
 	}
-	floor_tilemap.set_cell(tile, source_id, atlas, 0)
+	if render_base_floor_visual:
+		floor_tilemap.set_cell(tile, source_id, atlas, 0)
+	else:
+		floor_tilemap.erase_cell(tile)
 	_clear_procgen_wall_authority_at(tile, refresh_collision_debug)
 	_ensure_elevation_map()
 	elevation_map.call(
@@ -7587,7 +7771,12 @@ func _is_tile_currently_visible(tile: Vector2i) -> bool:
 	return _revealed_chunks.has(_tile_to_chunk(tile))
 
 
-func _set_floor_tile_and_generated_state(pos: Vector2i, region_type: String = "", zone: String = "") -> void:
+func _set_floor_tile_and_generated_state(
+	pos: Vector2i,
+	region_type: String = "",
+	zone: String = "",
+	render_base_floor_visual: bool = true
+) -> void:
 	if floor_tilemap == null or walls_tilemap == null:
 		return
 	var source_id := _select_floor_source_id(pos)
@@ -7601,11 +7790,13 @@ func _set_floor_tile_and_generated_state(pos: Vector2i, region_type: String = ""
 	_clear_road_blocking_wall(pos)
 	if not region_type.is_empty():
 		_set_region_tile(pos, region_type, zone)
-	if _is_tile_currently_visible(pos):
+	if render_base_floor_visual and _is_tile_currently_visible(pos):
 		floor_tilemap.set_cell(pos, source_id, atlas, 0)
 		walls_tilemap.erase_cell(pos)
 		if build_runtime_wall_collision:
 			_remove_runtime_wall_body(pos)
+	elif not render_base_floor_visual:
+		floor_tilemap.erase_cell(pos)
 
 
 func _stamp_portal_plaza(center: Vector2i, map_size: Vector2i) -> void:

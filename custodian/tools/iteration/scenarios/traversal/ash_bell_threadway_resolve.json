@@ -4,9 +4,9 @@
   "description": "An isolated Ash-Bell lift pocket remembers its White Thread causeway from mainland to lift.",
   "scene": "res://tools/validation/fixtures/ash_bell_threadway_moment.tscn",
   "seed": 1138,
-  "duration_ticks": 132,
+  "duration_ticks": 200,
   "simulation": {"physics_hz": 60, "warmup_ticks": 4, "max_wall_seconds": 30, "pause_during_setup": true},
-  "capture": {"width": 1280, "height": 720, "fps": 60, "audio": false, "start_tick": 0, "end_tick": 131, "contact_sheet_ticks": [0, 18, 30, 46, 68, 110], "required_keyframes": true, "background": "opaque"},
+  "capture": {"width": 1280, "height": 720, "fps": 60, "audio": false, "start_tick": 0, "end_tick": 199, "contact_sheet_ticks": [0, 24, 52, 76, 145, 190], "required_keyframes": true, "background": "opaque"},
   "setup": {
     "remove_nodes": [],
     "roles": {
@@ -20,10 +20,12 @@
   },
   "timeline": [
     {"tick": 18, "action": "fixture_command", "name": "acquire_white_thread_knot"},
-    {"tick": 130, "action": "finish"}
+    {"tick": 120, "action": "fixture_command", "name": "walk_operator_across"},
+    {"tick": 185, "action": "fixture_command", "name": "stand_at_lift_entrance"},
+    {"tick": 198, "action": "finish"}
   ],
   "probes": [
-    {"id": "threadway_state", "role": "fixture", "fields": ["persistent_tiles", "reveal_count", "blocker_active", "connector_committed"], "ticks": [0, 20, 46, 110], "required": true}
+    {"id": "threadway_state", "role": "fixture", "fields": ["persistent_tiles", "active_resolve_effects", "reveal_count", "blocker_active", "connector_committed"], "ticks": [0, 20, 46, 68, 110, 190], "required": true}
   ],
   "assertions": [
     {"type": "role_exists", "role": "presentation", "severity": "error"},
@@ -32,7 +34,9 @@
     {"type": "probe_compare", "probe": "threadway_state", "tick": 20, "field": "blocker_active", "op": "eq", "value": true, "severity": "error"},
     {"type": "probe_compare", "probe": "threadway_state", "tick": 20, "field": "connector_committed", "op": "eq", "value": false, "severity": "error"},
     {"type": "probe_compare", "probe": "threadway_state", "tick": 46, "field": "connector_committed", "op": "eq", "value": false, "severity": "error"},
-    {"type": "probe_compare", "probe": "threadway_state", "tick": 110, "field": "persistent_tiles", "op": "eq", "value": 18, "severity": "error"},
+    {"type": "probe_compare", "probe": "threadway_state", "tick": 46, "field": "persistent_tiles", "op": "eq", "value": 0, "severity": "error"},
+    {"type": "probe_compare", "probe": "threadway_state", "tick": 68, "field": "active_resolve_effects", "op": "gt", "value": 0, "severity": "error"},
+    {"type": "probe_compare", "probe": "threadway_state", "tick": 110, "field": "persistent_tiles", "op": "eq", "value": 20, "severity": "error"},
     {"type": "probe_compare", "probe": "threadway_state", "tick": 110, "field": "connector_committed", "op": "eq", "value": true, "severity": "error"},
     {"type": "probe_compare", "probe": "threadway_state", "tick": 110, "field": "blocker_active", "op": "eq", "value": false, "severity": "error"},
     {"type": "no_unreleased_inputs", "severity": "error"},

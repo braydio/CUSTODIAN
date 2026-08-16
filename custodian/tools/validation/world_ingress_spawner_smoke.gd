@@ -32,7 +32,8 @@ class RetryPocketMap:
 
 	func evaluate_runtime_walkable_connector(
 		_start: Vector2, _direction: Vector2i, _width: int, _length: int,
-		_connector_id: String, _resource_id: String, _lateral: int = -1
+		_connector_id: String, _resource_id: String, _lateral: int = -1,
+		_routing_profile: StringName = &"direct"
 	) -> Dictionary:
 		if claim_count == 1:
 			return {"ok": false, "reason": "no mainland endpoint within connector budget"}

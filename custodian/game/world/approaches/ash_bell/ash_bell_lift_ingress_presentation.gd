@@ -33,6 +33,9 @@ const FOREGROUND_TRAVEL_Z := 20
 @onready var front_lip_vibrate: AnimatedSprite2D = $LiftRoot/PlatformFront/FrontLipVibrate
 @onready var dust_burst: AnimatedSprite2D = $DustBurst
 @onready var entrance_mask: Node2D = $ForegroundOccluderRoot
+@onready var travel_occlusion_geometry: Node2D = (
+	$ForegroundOccluderRoot/TravelOcclusionGeometry
+)
 @onready var foreground_occluder: Sprite2D = $ForegroundOccluderRoot/ForegroundOccluder
 @onready var lamp: AnimatedSprite2D = $LampFxRoot/Lamp
 
@@ -308,6 +311,7 @@ func _set_idle_depth_mode() -> void:
 	$LiftRoot/PlatformFront.z_as_relative = false
 	$LiftRoot/PlatformFront.z_index = LIFT_FRONT_IDLE_Z
 	entrance_mask.z_index = FOREGROUND_IDLE_Z
+	travel_occlusion_geometry.visible = false
 	foreground_occluder.visible = false
 
 
@@ -320,6 +324,7 @@ func _set_travel_depth_mode() -> void:
 	$LiftRoot/PlatformFront.z_as_relative = false
 	$LiftRoot/PlatformFront.z_index = LIFT_FRONT_TRAVEL_Z
 	entrance_mask.z_index = FOREGROUND_TRAVEL_Z
+	travel_occlusion_geometry.visible = false
 	foreground_occluder.visible = true
 
 

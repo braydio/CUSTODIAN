@@ -4,6 +4,7 @@ const PROCGEN_MAP_SCENE := preload("res://game/world/procgen/proc_gen_map.tscn")
 const SEED_COUNT := 16
 
 var _errors: Array[String] = []
+var _route_shapes: Dictionary = {}
 
 
 func _init() -> void:
@@ -13,6 +14,7 @@ func _init() -> void:
 func _run() -> void:
 	for seed in range(SEED_COUNT):
 		await _validate_seed(seed)
+	_check(_route_shapes.size() >= 2, -1, "organic profile did not produce multiple deterministic shapes", _route_shapes)
 	if _errors.is_empty():
 		print("[AshBellThreadwayGenerationContractSmoke] PASS seeds=%d" % SEED_COUNT)
 		quit(0)
@@ -43,25 +45,59 @@ func _validate_seed(seed: int) -> void:
 	)
 	var pocket := map.claim_world_overlook_pocket(
 		Vector2i(24, 6), Vector2i(9, 10),
-		{"initially_isolated": true, "gap_depth_tiles": 2}
+		{
+			"initially_isolated": true,
+			"gap_depth_tiles": 2,
+			"render_base_floor_visual": false,
+		}
 	)
 	var start := Vector2i(24, 10)
 	var before := map.debug_get_generated_floor_cells()
 	var plan := map.evaluate_runtime_walkable_connector(
 		map.tile_to_global_position(start), Vector2i.DOWN, 3, 18,
-		"ash_bell_threadway", "white_thread"
+		"ash_bell_threadway", "white_thread", -1, &"threadway_organic"
+	)
+	var repeated_plan := map.evaluate_runtime_walkable_connector(
+		map.tile_to_global_position(start), Vector2i.DOWN, 3, 18,
+		"ash_bell_threadway", "white_thread", -1, &"threadway_organic"
 	)
 	_check(pocket.has_area(), seed, "pocket placement failed", plan)
 	_check(not _component_from(map.get_player_spawn(), before).has(start), seed, "pocket was connected before Knot", plan)
 	_check(bool(plan.get("ok", false)), seed, "canonical dry-run failed", plan)
+	_check(
+		plan.get("centerline_cells", []) == repeated_plan.get("centerline_cells", [])
+		and plan.get("cells", []) == repeated_plan.get("cells", [])
+		and plan.get("tile_variants", {}) == repeated_plan.get("tile_variants", {}),
+		seed,
+		"same seed/input produced different connector plan",
+		plan
+	)
 	_check(map.debug_get_generated_floor_cells() == before, seed, "dry-run mutated floor", plan)
+	var shape := str(plan.get("route_shape", "missing"))
+	_route_shapes[shape] = int(_route_shapes.get(shape, 0)) + 1
+	var planned_cells := plan.get("cells", []) as Array
+	var planned_set: Dictionary = {}
+	for cell_variant in planned_cells:
+		planned_set[cell_variant as Vector2i] = true
+	_check(
+		_component_from((plan.get("island_anchor_tile") as Vector2i), planned_set).size() == planned_set.size(),
+		seed,
+		"width-three connector contains a disconnected turn hole",
+		plan
+	)
+	_check(
+		(plan.get("centerline_progress_by_cell", {}) as Dictionary).size() == planned_cells.size(),
+		seed,
+		"curved width cells lack deterministic progress mapping",
+		plan
+	)
 	var result := map.commit_runtime_walkable_connector_plan(
-		plan, "ash_bell_threadway", "white_thread"
+		plan, "ash_bell_threadway", "white_thread", false
 	)
 	_check(bool(result.get("ok", false)), seed, "commit failed", result)
 	var repeat := map.resolve_runtime_walkable_connector(
 		map.tile_to_global_position(start), Vector2i.DOWN, 3, 18,
-		"ash_bell_threadway", "white_thread"
+		"ash_bell_threadway", "white_thread", -1, &"threadway_organic"
 	)
 	_check(bool(repeat.get("already_connected", false)), seed, "repeat was not a no-op", repeat)
 	map.queue_free()
