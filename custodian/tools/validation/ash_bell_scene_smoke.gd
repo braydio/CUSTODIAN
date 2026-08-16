@@ -22,6 +22,12 @@ func _run() -> void:
 
 	root.add_child(scene)
 	await process_frame
+	var ledger := root.get_node_or_null("ResourceLedger")
+	if ledger != null:
+		ledger.call("clear")
+		ledger.call("add", "white_thread_knot", 1)
+		scene.event_state.has_thread_knot = true
+	var knot_before := int(ledger.call("get_amount", "white_thread_knot")) if ledger != null else 1
 
 	var dialogue_callback := Callable(scene, "_on_request_dialogue")
 	if scene.request_dialogue.is_connected(dialogue_callback):
@@ -50,7 +56,11 @@ func _run() -> void:
 		return
 
 	if not event_state.has_thread_knot:
-		push_error("Ash-Bell thread interaction did not update state.")
+		push_error("Ash-Bell scene did not inherit upstream Knot state.")
+		quit(1)
+		return
+	if ledger != null and int(ledger.call("get_amount", "white_thread_knot")) != knot_before:
+		push_error("Ash-Bell thread interaction duplicated the White Thread Knot.")
 		quit(1)
 		return
 

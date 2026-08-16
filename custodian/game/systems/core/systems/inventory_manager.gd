@@ -14,6 +14,7 @@ var _equipment_slots: Dictionary = {}
 
 const SIDEARM_SLOT := &"sidearm"
 const RELIC_SLOT := &"relic"
+const CANONICAL_RESOURCE_ITEMS: Array[StringName] = [&"white_thread_knot"]
 const DEFAULT_EQUIPMENT_SLOTS: Array[StringName] = [
 	SIDEARM_SLOT,
 	RELIC_SLOT,
@@ -23,6 +24,18 @@ const DEFAULT_EQUIPMENT_SLOTS: Array[StringName] = [
 func add_item(item_id: StringName, amount: int = 1) -> int:
 	if item_id == &"" or amount <= 0:
 		return get_count(item_id)
+	if CANONICAL_RESOURCE_ITEMS.has(item_id):
+		var ledger := get_node_or_null("/root/ResourceLedger")
+		if ledger == null:
+			push_warning("[InventoryManager] ResourceLedger unavailable for %s" % item_id)
+			return 0
+		var old_resource_total := int(ledger.call("get_amount", String(item_id)))
+		ledger.call("add", String(item_id), amount)
+		var new_resource_total := int(ledger.call("get_amount", String(item_id)))
+		item_added.emit(item_id, amount, new_resource_total)
+		item_count_changed.emit(item_id, old_resource_total, new_resource_total)
+		inventory_changed.emit()
+		return new_resource_total
 
 	var old_total := get_count(item_id)
 	var new_total := old_total + amount
@@ -38,6 +51,18 @@ func add_item(item_id: StringName, amount: int = 1) -> int:
 func remove_item(item_id: StringName, amount: int = 1) -> bool:
 	if item_id == &"" or amount <= 0:
 		return false
+	if CANONICAL_RESOURCE_ITEMS.has(item_id):
+		var ledger := get_node_or_null("/root/ResourceLedger")
+		if ledger == null:
+			return false
+		var old_resource_total := int(ledger.call("get_amount", String(item_id)))
+		if old_resource_total < amount or not bool(ledger.call("pay", {String(item_id): amount})):
+			return false
+		var new_resource_total := int(ledger.call("get_amount", String(item_id)))
+		item_removed.emit(item_id, amount, new_resource_total)
+		item_count_changed.emit(item_id, old_resource_total, new_resource_total)
+		inventory_changed.emit()
+		return true
 
 	var old_total := get_count(item_id)
 	if old_total < amount:
@@ -61,6 +86,9 @@ func has_item(item_id: StringName, amount: int = 1) -> bool:
 
 
 func get_count(item_id: StringName) -> int:
+	if CANONICAL_RESOURCE_ITEMS.has(item_id):
+		var ledger := get_node_or_null("/root/ResourceLedger")
+		return int(ledger.call("get_amount", String(item_id))) if ledger != null else 0
 	return int(_items.get(item_id, 0))
 
 
@@ -158,6 +186,11 @@ func from_save_dict(data: Dictionary) -> void:
 	var item_data: Dictionary = data.get("items", data)
 	for key in item_data.keys():
 		var amount := int(item_data[key])
+		if CANONICAL_RESOURCE_ITEMS.has(StringName(str(key))):
+			var ledger := get_node_or_null("/root/ResourceLedger")
+			if ledger != null and amount > int(ledger.call("get_amount", str(key))):
+				ledger.call("add", str(key), amount - int(ledger.call("get_amount", str(key))))
+			continue
 		if amount > 0:
 			_items[StringName(str(key))] = amount
 	var equipment_data: Dictionary = data.get("equipment_slots", {})

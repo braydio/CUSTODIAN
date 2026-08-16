@@ -1,6 +1,7 @@
-# NOTE FOR DEVELOPING AGENT: I HATE THE WORD CLAPPER. PLEASE SUBSTITUTE ANOTHER WORD THAT SERVES A SIMILAR PURPoS
+# Terminology authority
 
-IMPLEMENT THE FOLLOWING CHANGES TO REMOVE THE WORD CLAPPER
+`Stilling Pin` is the canonical term throughout active Ash-Bell guidance and
+runtime. Older bell-component terminology is retired.
 
 ## Best replacement: **The Stilling Pin**
 
@@ -31,21 +32,21 @@ Not a key. Not a weapon.
 A thing driven into stone when the dead must stay counted.
 ```
 
-It also fits your existing event structure: the code originally had `has_clapper`, `TAKE_CLAPPER`, `RING_CLAPPER`, `bronze_clapper_pickup`, and `clapper_swing`, so this can replace the clapper without redesigning the whole event.
+It also fits your existing event structure: the code originally had `has_stilling_pin`, `TAKE_STILLING_PIN`, `SET_STILLING_PIN`, `stilling_pin_pickup`, and `stilling_pin_strike`, so this can replace the stilling pin without redesigning the whole event.
 
 Rename path:
 
 ```text
-has_clapper
+has_stilling_pin
 → has_stilling_pin
 
-TAKE_CLAPPER
+TAKE_STILLING_PIN
 → TAKE_STILLING_PIN
 
-RING_CLAPPER
+SET_STILLING_PIN
 → SET_STILLING_PIN
 
-bronze_clapper_pickup
+stilling_pin_pickup
 → stilling_pin_pickup
 
 RING SILENCE
@@ -57,7 +58,7 @@ RING SILENCE
 Instead of:
 
 ```text
-TAKE BELL-CLAPPER
+TAKE STILLING PIN
 RING SILENCE
 ```
 

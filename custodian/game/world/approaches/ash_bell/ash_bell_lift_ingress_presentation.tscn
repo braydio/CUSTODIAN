@@ -12,6 +12,7 @@
 [ext_resource type="Texture2D" uid="uid://bkb7s6ki1pusj" path="res://content/sprites/world/ingress/ash_bell/ash_bell__underground_ingress_fx__warning_lamp__loop__omni__8f__64.png" id="10_lamp"]
 [ext_resource type="Texture2D" uid="uid://cj433lt0htlej" path="res://assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_platform_front_lip__idle__s__1f__128x128.png" id="11_platform_front_idle"]
 [ext_resource type="Texture2D" uid="uid://bab872ehr0u6r" path="res://assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_platform_front_lip__vibrate__s__4f__128x128.png" id="12_platform_front_vibrate"]
+[ext_resource type="PackedScene" path="res://game/world/approaches/ash_bell/ash_bell_lift_platform_assembly.tscn" id="13_lift_assembly"]
 
 [sub_resource type="AtlasTexture" id="Atlas_platform_0"]
 atlas = ExtResource("7_platform_back_vibrate")
@@ -258,45 +259,7 @@ position = Vector2(42, -126)
 scale = Vector2(0.8, 0.8)
 texture = ExtResource("5_chain")
 
-[node name="LiftRoot" type="Node2D" parent="." unique_id=501635164]
-z_as_relative = false
-z_index = 0
-y_sort_enabled = false
-
-[node name="PlatformBackIdle" type="Sprite2D" parent="LiftRoot" unique_id=1870406787]
-z_as_relative = false
-z_index = 1
-texture_filter = 1
-scale = Vector2(1.35, 1.35)
-texture = ExtResource("6_platform_back_idle")
-
-[node name="PlatformBackVibrate" type="AnimatedSprite2D" parent="LiftRoot" unique_id=1007177312]
-visible = false
-z_as_relative = false
-z_index = 1
-texture_filter = 1
-scale = Vector2(1.35, 1.35)
-sprite_frames = SubResource("SpriteFrames_platform")
-animation = &"vibrate"
-
-[node name="RiderAnchor" type="Marker2D" parent="LiftRoot" unique_id=1549346653]
-position = Vector2(0, -26)
-
-[node name="PlatformFront" type="Node2D" parent="LiftRoot" unique_id=169270869]
-z_as_relative = false
-z_index = 3
-
-[node name="FrontLipIdle" type="Sprite2D" parent="LiftRoot/PlatformFront" unique_id=2081946263]
-texture_filter = 1
-scale = Vector2(1.35, 1.35)
-texture = ExtResource("11_platform_front_idle")
-
-[node name="FrontLipVibrate" type="AnimatedSprite2D" parent="LiftRoot/PlatformFront" unique_id=1651466325]
-visible = false
-texture_filter = 1
-scale = Vector2(1.35, 1.35)
-sprite_frames = SubResource("SpriteFrames_front_lip")
-animation = &"vibrate"
+[node name="LiftRoot" parent="." instance=ExtResource("13_lift_assembly")]
 
 [node name="BoardingMarker" type="Marker2D" parent="." unique_id=1414137815]
 position = Vector2(0, -26)

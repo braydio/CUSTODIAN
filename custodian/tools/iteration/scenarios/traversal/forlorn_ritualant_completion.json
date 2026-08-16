@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "id": "traversal/forlorn_ritualant_completion",
+  "description": "Lower-lift arrival, Ritualant reveal/dialogue/ritual, hostile grammar, and deliberate return-ascent review.",
+  "scene": "res://tools/validation/fixtures/forlorn_ritualant_completion_moment.tscn",
+  "seed": 104729,
+  "duration_ticks": 600,
+  "simulation": {"physics_hz": 60, "warmup_ticks": 4, "max_wall_seconds": 40, "pause_during_setup": true},
+  "capture": {"width": 1280, "height": 720, "fps": 60, "audio": false, "start_tick": 0, "end_tick": 599, "contact_sheet_ticks": [0, 125, 260, 330, 400, 555], "required_keyframes": true, "background": "opaque"},
+  "setup": {
+    "remove_nodes": [],
+    "roles": {
+      "fixture": {"node_path": "."},
+      "level": {"node_path": "ForlornRitualantUnderground"},
+      "operator": {"node_path": "Operator"},
+      "ritualant": {"node_path": "ForlornRitualantUnderground/PlayableRoot/ForlornRitualantSite/NPCs/ForlornRitualant"}
+    },
+    "spawns": [], "properties": [], "processing": [],
+    "fixture": {"id": "forlorn_ritualant_completion", "config": {"review": "full_encounter_spine"}}
+  },
+  "timeline": [
+    {"tick": 45, "action": "fixture_command", "name": "approach_reveal"},
+    {"tick": 105, "action": "fixture_command", "name": "first_dialogue"},
+    {"tick": 170, "action": "fixture_command", "name": "touch_thread"},
+    {"tick": 235, "action": "fixture_command", "name": "thread_pull"},
+    {"tick": 305, "action": "fixture_command", "name": "ninth_answer"},
+    {"tick": 375, "action": "fixture_command", "name": "orra_late"},
+    {"tick": 445, "action": "fixture_command", "name": "return_lift"},
+    {"tick": 510, "action": "fixture_command", "name": "begin_return"},
+    {"tick": 598, "action": "finish"}
+  ],
+  "probes": [
+    {"id": "encounter_state", "role": "fixture", "fields": ["checkpoint", "active_attack"], "ticks": [0, 60, 125, 190, 260, 330, 400, 480, 555], "required": true}
+  ],
+  "assertions": [
+    {"type": "role_exists", "role": "level", "severity": "error"},
+    {"type": "role_exists", "role": "operator", "severity": "error"},
+    {"type": "role_exists", "role": "ritualant", "severity": "error"},
+    {"type": "probe_compare", "probe": "encounter_state", "tick": 260, "field": "active_attack", "op": "eq", "value": "thread_pull", "severity": "error"},
+    {"type": "probe_compare", "probe": "encounter_state", "tick": 330, "field": "active_attack", "op": "eq", "value": "ninth_answer", "severity": "error"},
+    {"type": "probe_compare", "probe": "encounter_state", "tick": 400, "field": "active_attack", "op": "eq", "value": "orra_late", "severity": "error"},
+    {"type": "no_unreleased_inputs", "severity": "error"},
+    {"type": "output_exists", "path": "telemetry.json", "severity": "error"}
+  ],
+  "stable_fingerprint": {"event_payload_fields": {}, "counters": [], "probes": ["encounter_state"], "position_quantum_px": 0.25, "float_quantum": 0.0001},
+  "tags": ["traversal", "ash_bell", "forlorn_ritualant", "combat", "dialogue", "lift"]
+}

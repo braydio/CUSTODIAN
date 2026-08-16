@@ -85,6 +85,20 @@
 		"reason": "Sundered Keep world-Vista behavior or art changed."
 	},
 	{
+		"id": "forlorn_ritualant_completion",
+		"include": [
+			"custodian/game/world/events/ash_bell/**",
+			"custodian/game/world/levels/authored/ash_bell/forlorn_ritualant_underground/**",
+			"custodian/content/dialogue/ash_bell/forlorn_ritualant_dialogue.json",
+			"custodian/tools/validation/fixtures/forlorn_ritualant_completion_moment.*",
+			"custodian/tools/iteration/scenarios/traversal/forlorn_ritualant_completion.json"
+		],
+		"exclude": ["**/*.import", "reports/**"],
+		"scenario_ids": ["traversal/forlorn_ritualant_completion"],
+		"priority": 115,
+		"reason": "Forlorn Ritualant dialogue, combat, lower-lift, or departure presentation changed."
+	},
+	{
 		"id": "ash_bell_lift",
 		"include": [
 			"custodian/game/world/approaches/ash_bell/**",

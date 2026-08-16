@@ -23,87 +23,110 @@
     "proximity_intro": [
       {
         "speaker": "Forlorn-Ritualant",
-        "text": "Do not speak during the toll.",
+        "text": "Stop. Outside the white.",
         "delay": 0.0
       },
       {
         "speaker": "Forlorn-Ritualant",
-        "text": "The west gate was shut before the third ringing.",
+        "text": "The count is not finished.",
         "delay": 2.5
       },
       {
         "speaker": "Forlorn-Ritualant",
-        "text": "Mothers pressed their children beneath the banners.",
+        "text": "Keep your boots clear of the thread.",
         "delay": 3.0
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "And still the ash came.",
-        "delay": 2.0
       }
     ],
     "first_interaction": [
       {
         "speaker": "Forlorn-Ritualant",
-        "text": "The Fountain should be beneath us."
+        "text": "Custodian. Good. Count with me."
       },
       {
         "speaker": "Forlorn-Ritualant",
-        "text": "Dry stone. Black water. Names counted without mouths."
+        "text": "Bell above. Fountain below. West gate to our left. Black banners at the doors."
       },
       {
         "speaker": "Forlorn-Ritualant",
-        "text": "But the basin is gone."
+        "text": "The bell is wrong."
       },
       {
         "speaker": "Forlorn-Ritualant",
-        "text": "Then the dead are uncounted."
+        "text": "The basin is wrong."
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "There is no west gate."
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "Do not tell me this is another chapel."
       }
     ],
     "ask_bell": [
       {
         "speaker": "Forlorn-Ritualant",
-        "text": "There were eight for the living."
+        "text": "The one above us is a chapel bell."
       },
       {
         "speaker": "Forlorn-Ritualant",
-        "text": "One for the misplaced."
+        "text": "Bronze. Rope. Tower. Ordinary things."
       },
       {
         "speaker": "Forlorn-Ritualant",
-        "text": "The Ninth had no bronze, no rope, no tower."
+        "text": "The Ninth was never cast."
       },
       {
         "speaker": "Forlorn-Ritualant",
-        "text": "Yet all knelt when it answered."
+        "text": "We heard it after the order was given."
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "No."
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "Before."
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "That was why we gave the order."
       }
     ],
     "ask_thread": [
       {
         "speaker": "Forlorn-Ritualant",
-        "text": "For the wrist."
+        "text": "Name first. Wrist second."
       },
       {
         "speaker": "Forlorn-Ritualant",
-        "text": "For the name."
+        "text": "After Bellfall, the ledgers kept names that bodies no longer answered to."
       },
       {
         "speaker": "Forlorn-Ritualant",
-        "text": "For the poor child who wakes before her mother is born."
+        "text": "We tied the living. We tied the dead."
       },
       {
         "speaker": "Forlorn-Ritualant",
-        "text": "When the thread snaps, Orra knows you are loose."
+        "text": "When neither arrived, we tied the empty shroud."
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "If yours pulls tight, stop walking."
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "If it snaps, do not answer anyone behind you."
       }
     ],
     "ask_orra": [
       {
         "speaker": "Forlorn-Ritualant",
-        "text": "Saint Orra comes late."
+        "text": "Orra is not who you call before a death."
       },
       {
         "speaker": "Forlorn-Ritualant",
-        "text": "After the blade."
+        "text": "She is who you call when the death arrives first."
       },
       {
         "speaker": "Forlorn-Ritualant",
@@ -111,15 +134,19 @@
       },
       {
         "speaker": "Forlorn-Ritualant",
-        "text": "After the gate is shut."
+        "text": "After the gate."
       },
       {
         "speaker": "Forlorn-Ritualant",
-        "text": "She blesses only what cannot be saved."
+        "text": "Too late to save."
       },
       {
         "speaker": "Forlorn-Ritualant",
-        "text": "Do not pray for her arrival."
+        "text": "In time to witness who was missed."
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "If she arrives while you're still breathing, you've been counted wrong."
       }
     ],
     "attack_response": [
@@ -139,11 +166,15 @@
       },
       {
         "speaker": "Forlorn-Ritualant",
-        "text": "Not the thread."
+        "text": "That wasn't a cord."
       },
       {
         "speaker": "Forlorn-Ritualant",
-        "text": "The Unarrived will come looking."
+        "text": "That was a name."
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "Do not turn around."
       }
     ],
     "peaceful_exit": [
@@ -155,6 +186,45 @@
         "speaker": "Forlorn-Ritualant",
         "text": "Some gates are closed by footsteps."
       }
-    ]
+    ],
+    "stabilized_exit": [
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "The count holds."
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "Go."
+      }
+    ],
+    "inspect_fountain": [
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "This is a basin. It is not the Fountain."
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "Wrong lip. Wrong depth. No east fracture."
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "Someone built this where the Fountain should be."
+      }
+    ],
+    "set_stilling_pin": [
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "The pin finds the basin."
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "The count may still hold."
+      }
+    ],
+    "pin_strike_bark": [{"speaker":"Forlorn-Ritualant","text":"Still."}],
+    "thread_pull_bark": [{"speaker":"Forlorn-Ritualant","text":"Back to the count."}],
+    "ninth_answer_bark": [{"speaker":"Forlorn-Ritualant","text":"Answer nothing."}],
+    "orra_late_windup_bark": [{"speaker":"Forlorn-Ritualant","text":"Too early."}],
+    "orra_late_resolve_bark": [{"speaker":"Forlorn-Ritualant","text":"Now."}]
   }
 }

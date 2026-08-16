@@ -179,6 +179,16 @@ func _fixture_command(action: Dictionary, result: Dictionary) -> void:
 			"walk_operator_across",
 			"stand_at_lift_entrance",
 		],
+		"forlorn_ritualant_completion": [
+			"approach_reveal",
+			"first_dialogue",
+			"touch_thread",
+			"thread_pull",
+			"ninth_answer",
+			"orra_late",
+			"return_lift",
+			"begin_return",
+		],
 	}
 	if command not in allowed.get(fixture_id, []):
 		result.ok = false

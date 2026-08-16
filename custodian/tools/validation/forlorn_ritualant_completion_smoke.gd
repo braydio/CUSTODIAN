@@ -1,0 +1,205 @@
+extends SceneTree
+
+const SITE_SCENE := preload("res://game/world/events/ash_bell/forlorn_ritualant_site.tscn")
+const UNDERGROUND_SCENE := preload(
+	"res://game/world/levels/authored/ash_bell/forlorn_ritualant_underground/forlorn_ritualant_underground.tscn"
+)
+const SURFACE_LIFT_SCENE := preload(
+	"res://game/world/approaches/ash_bell/ash_bell_lift_ingress_presentation.tscn"
+)
+const LIFT_ASSEMBLY_PATH := "res://game/world/approaches/ash_bell/ash_bell_lift_platform_assembly.tscn"
+const KNOT_DESCRIPTION := "A funerary knot of unnaturally clean white thread. Names were tied into these before the dead were counted. The fibers pull taut near places that do not agree with their own history."
+
+
+class FakeOperator:
+	extends Node2D
+	var damage_taken := 0.0
+	var speed_multiplier_calls := 0
+
+	func take_damage(amount: float) -> void:
+		damage_taken += amount
+
+	func apply_external_speed_multiplier(_multiplier: float, _duration: float) -> void:
+		speed_multiplier_calls += 1
+
+
+var errors: Array[String] = []
+
+
+func _init() -> void:
+	call_deferred("_run")
+
+
+func _run() -> void:
+	_validate_canonical_data()
+	await _validate_encounter_runtime()
+	await _validate_lower_lift()
+	if errors.is_empty():
+		print("[ForlornRitualantCompletionSmoke] PASS")
+		quit(0)
+		return
+	for error in errors:
+		push_error("[ForlornRitualantCompletionSmoke] %s" % error)
+	quit(1)
+
+
+func _validate_canonical_data() -> void:
+	var resources := _json("res://content/resources/resource_defs.json")
+	var items := _json("res://content/items/lore/ash_bell_items.json")
+	_check(str((resources.get("white_thread_knot", {}) as Dictionary).get("description", "")) == KNOT_DESCRIPTION, "resource Knot description drifted")
+	var item_description := ""
+	for item_variant in items.get("items", []):
+		var item := item_variant as Dictionary
+		if str(item.get("id", "")) == "white_thread_knot":
+			item_description = str(item.get("description", ""))
+	_check(item_description == KNOT_DESCRIPTION, "inventory Knot description drifted")
+	var dialogue := _json("res://content/dialogue/ash_bell/forlorn_ritualant_dialogue.json")
+	_check((dialogue.get("nodes", {}) as Dictionary).has("ninth_answer_bark"), "dialogue data lacks Ninth Answer bark")
+
+
+func _validate_encounter_runtime() -> void:
+	var ledger := root.get_node_or_null("ResourceLedger")
+	var inventory := root.get_node_or_null("InventoryManager")
+	var memory := root.get_node_or_null("WorldEventMemory")
+	ledger.call("clear")
+	inventory.call("clear")
+	inventory.call("add_item", &"white_thread_knot", 1)
+	_check(int(ledger.call("get_amount", "white_thread_knot")) == 1, "Inventory Knot grant did not route to ResourceLedger")
+	_check(int(inventory.call("get_count", &"white_thread_knot")) == 1, "inventory view did not read canonical Knot quantity")
+	_check(not (inventory.call("get_all_items") as Dictionary).has(&"white_thread_knot"), "InventoryManager retained a second Knot quantity")
+	var site := SITE_SCENE.instantiate() as ForlornRitualantSite
+	root.add_child(site)
+	var actor := FakeOperator.new()
+	actor.name = "Operator"
+	actor.add_to_group("player")
+	root.add_child(actor)
+	await process_frame
+	_check(site.event_state.has_thread_knot, "site did not inherit upstream Knot")
+	var before := int(ledger.call("get_amount", "white_thread_knot"))
+	site.touch_thread()
+	_check(int(ledger.call("get_amount", "white_thread_knot")) == before, "touch_thread granted duplicate Knot")
+	_check(site.dialogue_presenter != null and site.dialogue_presenter.get_current_text().find("Forlorn-Ritualant waits beneath no bell") < 0, "obsolete no-bell production text remains")
+	_check(site.dialogue_presenter.get_parent() == site, "production dialogue presenter remained debug-owned")
+	site.dialogue_presenter.start(&"first_interaction", actor)
+	var first_line := site.dialogue_presenter.get_current_text()
+	site.dialogue_presenter.advance()
+	_check(site.dialogue_presenter.get_current_text() != first_line, "dialogue did not advance on explicit input contract")
+	actor.global_position = site.global_position + Vector2(400.0, 0.0)
+	site.dialogue_presenter._process(0.0)
+	_check(not site.dialogue_presenter.is_active(), "dialogue did not cancel outside interaction range")
+	actor.global_position = site.global_position
+	site.ask_about_bell()
+	_check(bool(memory.call("is_completed", &"knowledge_ash_bell_ninth_bell")), "knowledge unlock was not persisted")
+	var pin_interactable := site.get_node("Props/StillingPinPickup") as AshBellInteractable
+	_check(pin_interactable.can_interact(actor), "Stilling Pin did not unlock from the Bell conversation branch")
+	var hazard := site.get_node("Props/WhiteThreadHazard") as WhiteThreadHazard
+	site.event_state.set_thread_tension(20, &"smoke_low")
+	hazard._apply_slow(actor)
+	_check(actor.speed_multiplier_calls == 0, "White Thread applied permanent low-tension slow")
+	site.event_state.set_thread_tension(60, &"smoke_threshold")
+	hazard._apply_slow(actor)
+	_check(actor.speed_multiplier_calls == 1, "White Thread did not apply slow at authored threshold")
+
+	var npc := site.get_node("NPCs/ForlornRitualant") as ForlornRitualantNPC
+	npc.target = actor
+	npc.site = site
+	npc.phase = ForlornRitualantNPC.Phase.HOSTILE
+	npc.pin_windup_seconds = 0.03
+	actor.global_position = npc.global_position + Vector2(150.0, 0.0)
+	npc.debug_force_attack(&"pin_strike")
+	await create_timer(0.08).timeout
+	_check(actor.damage_taken == 0.0, "Pin Strike damaged an out-of-range target")
+	npc.thread_pull_windup_seconds = 0.03
+	actor.global_position = npc.global_position + Vector2(120.0, 0.0)
+	var pull_start := actor.global_position
+	npc.debug_force_attack(&"thread_pull")
+	await create_timer(0.08).timeout
+	_check(actor.global_position.distance_to(npc.global_position) < pull_start.distance_to(npc.global_position), "Thread Pull did not provide bounded midrange control")
+
+	npc.ninth_answer_windup_seconds = 0.06
+	npc.debug_force_attack(&"ninth_answer")
+	await create_timer(0.02).timeout
+	_check(site.ghost_procession.visible, "Ninth Answer lane was not telegraphed")
+	actor.global_position.x += 90.0
+	var damage_before := actor.damage_taken
+	await create_timer(0.08).timeout
+	_check(actor.damage_taken == damage_before, "Ninth Answer hit after leaving telegraphed lane")
+
+	npc.orra_late_delay_seconds = 0.05
+	var orra_start := actor.global_position
+	npc.debug_force_attack(&"orra_late")
+	await create_timer(0.02).timeout
+	_check(site.unarrived_apparition.visible, "Orra Comes Late did not appear behind target")
+	actor.global_position = orra_start + Vector2(80.0, 0.0)
+	var pressure_before := site.event_state.silence_pressure
+	await create_timer(0.08).timeout
+	_check(site.event_state.silence_pressure == pressure_before, "Orra reaction was unavoidable after moving")
+
+	var snap_count := [0]
+	site.event_state.thread_snapped.connect(func() -> void: snap_count[0] += 1)
+	site.event_state.set_thread_tension(100, &"smoke")
+	site.event_state.set_thread_tension(100, &"smoke_repeat")
+	_check(snap_count[0] == 1, "thread snap did not execute exactly once")
+	site.resolve_thread_anchor(&"west")
+	site.resolve_thread_anchor(&"north")
+	site.resolve_thread_anchor(&"east")
+	_check(site.debug_get_resolved_thread_anchor_count() == 3, "three-anchor route did not resolve")
+	_check(site.event_state.resolution == AshBellEventState.Resolution.SITE_STABILIZED, "three anchors did not stabilize site")
+	_check(site.get_departure_lines() == ["The count holds.", "Go."], "stabilized departure lines drifted")
+	site.event_state.set_resolution(AshBellEventState.Resolution.SEEN)
+	_check(site.get_departure_lines() == ["Go gently.", "Some gates are closed by footsteps."], "unresolved departure lines drifted")
+	site.event_state.set_resolution(AshBellEventState.Resolution.SITE_DEFILED)
+	_check(site.get_departure_lines().is_empty(), "defiled site produced impossible Ritualant speech")
+	var contracts := npc.debug_get_animation_contract()
+	_check(contracts.size() == 4, "missing action animation contracts are not explicit")
+	site.queue_free()
+	actor.queue_free()
+	await process_frame
+
+
+func _validate_lower_lift() -> void:
+	var level := UNDERGROUND_SCENE.instantiate() as ForlornRitualantUnderground
+	root.add_child(level)
+	var surface := SURFACE_LIFT_SCENE.instantiate() as AshBellLiftIngressPresentation
+	root.add_child(surface)
+	var exit := level.get_node("Exits/Exit_ReturnWorld") as InteractableLevelExit2D
+	var lift := level.get_node("PropsRoot/LowerLiftAssembly") as AshBellLiftPlatformAssembly
+	var surface_lift := surface.get_node("LiftRoot") as AshBellLiftPlatformAssembly
+	_check(lift.scene_file_path == LIFT_ASSEMBLY_PATH, "lower lift does not instance shared assembly")
+	_check(surface_lift.scene_file_path == LIFT_ASSEMBLY_PATH, "surface lift does not instance shared assembly")
+	var actor := FakeOperator.new()
+	actor.name = "Operator"
+	actor.add_to_group("player")
+	root.add_child(actor)
+	actor.global_position = lift.get_boarding_position()
+	await process_frame
+	var transitions := [0]
+	exit.transition_requested.connect(func(_id: StringName, _actor: Node) -> void: transitions[0] += 1)
+	exit.body_entered.emit(actor)
+	await process_frame
+	_check(transitions[0] == 0, "walking onto lower lift triggered route travel")
+	exit.arm_arrival_guard(actor)
+	_check(not exit.can_interact(actor), "arrival guard allowed immediate lower-lift bounce")
+	actor.global_position = exit.global_position + Vector2(140.0, 0.0)
+	exit._physics_process(0.0)
+	actor.global_position = lift.get_boarding_position()
+	_check(exit.can_interact(actor), "boarded actor cannot interact with lower lift")
+	level.ritualant_site.event_state.set_resolution(AshBellEventState.Resolution.SITE_DEFILED)
+	exit.interact(actor)
+	await create_timer(2.0).timeout
+	_check(transitions[0] == 1, "E-style lower-lift interaction did not request route once")
+	level.queue_free()
+	surface.queue_free()
+	actor.queue_free()
+	await process_frame
+
+
+func _json(path: String) -> Dictionary:
+	var file := FileAccess.open(path, FileAccess.READ)
+	var parsed: Variant = JSON.parse_string(file.get_as_text()) if file != null else null
+	return parsed as Dictionary if parsed is Dictionary else {}
+
+
+func _check(condition: bool, message: String) -> void:
+	if not condition:
+		errors.append(message)

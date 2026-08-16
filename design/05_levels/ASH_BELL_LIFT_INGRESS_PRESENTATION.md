@@ -93,9 +93,12 @@ it is not a promise of continuous floor in the locked state.
 
 Any first acquisition of canonical resource `white_thread_knot`, including a
 rare corpse-loot acquisition, marks run-level WorldEventMemory event
-`ash_bell_threadway_unlocked`. The Knot is not consumed. A loaded Ash-Bell site
-then asks `ProcGenTilemap` for one deterministic, approximately three-cell-wide
-connector from the isolated approach toward the main player-reachable floor.
+`ash_bell_threadway_unlocked`. The Knot is not consumed. This is an eligibility
+milestone, not terrain mutation. An unlocked-but-unresolved road stays pending
+until the Operator enters the production reveal audience around the approach.
+The loaded site then asks `ProcGenTilemap` for one deterministic, approximately
+three-cell-wide connector from the isolated approach toward the main
+player-reachable floor.
 The resolver rejects map bounds, constructed walls, required route cells, and
 Sundered Keep protected cells.
 
@@ -114,9 +117,15 @@ Floor TileMap cells for both its isolated pocket and committed connector while
 retaining all semantic terrain authority. The authored Threadway sprites are
 the only visible traversal surface. Presentation overlays use six deterministic
 dark-stone variants. A seven-frame 32 px thread/ash/remembered-stone effect
-travels from mainland toward the lift at 11 FPS. If the
-milestone predates site creation, authoritative floor and persistent overlays
-appear immediately without replaying the reveal. Further Knots are no-ops.
+travels from mainland toward the lift at 11 FPS. Only after this witnessed
+sequence finishes does the site mark `ash_bell_threadway_resolved`. Save/reload
+preserves unlocked-only state as pending. A previously resolved road restores
+terrain and overlays immediately without replay. Further Knots are no-ops.
+
+The lift platform back, rider anchor, and front lip live in the shared passive
+`ash_bell_lift_platform_assembly.tscn`. Both the surface presentation and the
+authored lower landing instance that scene, so they are two termini of the same
+physical lift rather than independent visual copies.
 
 `BoardingBounds` is real `StaticBody2D` authority rather than an interaction
 trigger. A broad rear stop and two front wings constrain the parked platform

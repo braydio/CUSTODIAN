@@ -28,8 +28,8 @@ func _run() -> void:
 		var authored_level := level as AuthoredLevel2D
 		if not authored_level.has_spawn(&"Spawn_DescentLanding"):
 			errors.append("Spawn_DescentLanding does not resolve")
-		elif authored_level.get_spawn_position(&"Spawn_DescentLanding") != Vector2(0.0, 224.0):
-			errors.append("Spawn_DescentLanding is not clear of the internal exit trigger")
+		elif authored_level.get_spawn_position(&"Spawn_DescentLanding") != Vector2(0.0, 332.0):
+			errors.append("Spawn_DescentLanding is not on the lower lift")
 		if authored_level.get_camera_bounds().size != Vector2(1120.0, 864.0):
 			errors.append("authored chamber camera bounds are not 1120x864")
 
@@ -38,6 +38,14 @@ func _run() -> void:
 	var exit := level.get_node_or_null("Exits/Exit_ReturnWorld") as LevelExit2D
 	if exit == null or exit.exit_id != &"return_world":
 		errors.append("return_world authored exit is missing")
+	elif exit.trigger_on_body_entered:
+		errors.append("lower lift still triggers travel on body entry")
+	elif not exit.is_in_group("interactable"):
+		errors.append("lower lift exit is not interactable")
+	if level.get_node_or_null("PropsRoot/LowerLiftAssembly") == null:
+		errors.append("shared lower lift assembly is missing")
+	if level.find_child("ExitTrigger", true, false) != null:
+		errors.append("legacy encounter exit trigger still competes with authored route")
 	var marker_state := level.call("get_authoring_marker_state") as Dictionary
 	if marker_state.size() != 3:
 		errors.append("underground mapper must expose exactly three authoritative records")

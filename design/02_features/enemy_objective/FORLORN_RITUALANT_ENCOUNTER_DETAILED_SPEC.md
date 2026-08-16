@@ -1,4 +1,16 @@
-Below is a **game scene implementation spec** for a curated Ash-Bell encounter that can be dropped into your procgen world as a rare authored room. I’m treating the Ash-Bell source as canonical: internally it is “The Ash-Bell Continuity,” but the player should **not** be told that label or be told “alternate universe.” The repeated motifs should surface through matching contradictions: Ninth Bell, ash, Dry Fountain, black banners, white thread, and Saint Orra / the Unarrived Saint.
+> **Active-authority correction (2026-08-15):** this is encounter-content
+> guidance for the fixed authored Underground route, never a procgen room. The
+> visible broken bell is an ordinary chapel bell; the Ninth Bell was never cast.
+> The visible basin is physically real but is the wrong basin where the
+> remembered Fountain should be. `Stilling Pin` is canonical terminology, and
+> White Thread Knot ownership is an upstream ResourceLedger milestone; chamber
+> thread interaction never grants it. Older procgen, empty-bell, missing-basin,
+> retired bell-component, or in-room Knot-pickup passages below are historical
+> and superseded by this correction plus the authored-route documents.
+
+This is the implementation spec for the fixed authored Ash-Bell Underground
+encounter. The player-facing motifs remain Ninth Bell, ash, Dry Fountain,
+black banners, white thread, and Saint Orra / the Unarrived Saint.
 
 Repo/process note: your active runtime is Godot under `custodian/`, with active docs in `custodian/docs/` and Godot implementation specs under `design/`; AGENTS also says runtime behavior changes should update design docs first, then relevant AI context docs. Your tree map confirms the current project already has `custodian/content`, `custodian/assets`, `custodian/addons`, and Godot plugin/runtime structure available for this kind of feature work.
 
@@ -8,7 +20,11 @@ Repo/process note: your active runtime is Godot under `custodian/`, with active 
 
 ## 0. One-line pitch
 
-A ruined chapel chamber appears in the explorable world: an empty bell-frame, a kneeling drifter, black banners, white thread, a missing fountain, and a funeral ritual for a saint who “arrives too late.” The player is never told what is happening. The encounter teaches that some temporal drifters remember the same catastrophe.
+A ruined chapel chamber contains an ordinary broken chapel bell, the wrong
+physical basin, a kneeling drifter, black banners, white thread, and a funeral
+ritual for a saint who “arrives too late.” The player is never told what is
+happening. The encounter teaches that some temporal drifters remember the same
+catastrophe.
 
 ## 1. Design goal
 
@@ -291,7 +307,8 @@ Description:
 
 A massive oxidized iron bell-frame without a bell. It should look too heavy for the room. The frame has four vertical supports, a cracked yoke, and an empty hook where a bell should hang. Pale ash accumulates on top surfaces. A few strands of white thread climb from the floor to the hook.
 
-Important: no bell. No silhouette of a missing bell unless extremely subtle.
+Important: the visible broken bell is an ordinary chapel bell. It is not the
+Ninth Bell, which had no bronze, rope, tower, or physical casting.
 
 ## 5.2 Stilling Pin
 

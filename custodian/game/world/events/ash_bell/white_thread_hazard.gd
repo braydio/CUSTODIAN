@@ -3,6 +3,7 @@ extends Area2D
 
 @export var site_path: NodePath
 @export var slow_multiplier: float = 0.88
+@export_range(0, 100, 1) var slow_tension_threshold: int = 60
 @export var tension_tick_interval: float = 0.75
 
 ## Optional child/node visual for the actual white thread line.
@@ -80,6 +81,10 @@ func _infer_move_kind(body: Node) -> StringName:
 
 
 func _apply_slow(body: Node) -> void:
+	if site == null or site.event_state == null:
+		return
+	if site.event_state.thread_tension < slow_tension_threshold:
+		return
 	if body.has_method("apply_external_speed_multiplier"):
 		body.call("apply_external_speed_multiplier", slow_multiplier, 0.15)
 

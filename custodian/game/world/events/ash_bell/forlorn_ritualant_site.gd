@@ -44,70 +44,15 @@ signal request_knowledge_unlock(knowledge_id: StringName)
 @onready var ghost_procession: Node2D = get_node_or_null(ghost_procession_path)
 @onready var debug_label: Label = get_node_or_null(debug_label_path)
 @onready var dialogue_label: Label = get_node_or_null(dialogue_label_path)
+@onready var dialogue_presenter: ForlornRitualantDialoguePresenter = (
+	get_node_or_null("DialoguePresentation")
+)
 
 @onready var silence_veil: CanvasItem = get_node_or_null(silence_veil_path)
 @onready var pressure_halo: CanvasItem = get_node_or_null(pressure_halo_path)
 @onready var thread_visual: CanvasItem = get_node_or_null(thread_visual_path)
 @onready var fountain_ring: CanvasItem = get_node_or_null(fountain_ring_path)
 @onready var bell_shadow: CanvasItem = get_node_or_null(bell_shadow_path)
-
-const DIALOGUE := {
-	&"proximity_intro": [
-		"Do not speak during the toll.",
-		"The west gate was shut before the third ringing.",
-		"Mothers pressed their children beneath the banners.",
-		"And still the ash came.",
-	],
-	&"first_interaction": [
-		"The Fountain should be beneath us.",
-		"Dry stone. Black water. Names counted without mouths.",
-		"But the basin is gone.",
-		"Then the dead are uncounted.",
-	],
-	&"ask_bell": [
-		"There were eight for the living.",
-		"One for the misplaced.",
-		"The Ninth had no bronze, no rope, no tower.",
-		"Yet all knelt when it answered.",
-	],
-	&"ask_thread": [
-		"For the wrist.",
-		"For the name.",
-		"For the poor child who wakes before her mother is born.",
-		"When the thread snaps, Orra knows you are loose.",
-	],
-	&"ask_orra": [
-		"Saint Orra comes late.",
-		"After the blade.",
-		"After the order.",
-		"After the gate is shut.",
-		"She blesses only what cannot be saved.",
-		"Do not pray for her arrival.",
-		"That is how the Bell learns your name.",
-	],
-	&"attack_response": [
-		"Ahh, Custodian.",
-		"So fear found you early.",
-	],
-	&"cut_thread_response": [
-		"No.",
-		"Not the thread.",
-		"The Unarrived will come looking.",
-	],
-	&"inspect_fountain": [
-		"The basin is dry.",
-		"It still remembers what held it.",
-	],
-	&"set_stilling_pin": [
-		"The pin finds the basin.",
-		"Orra will know you passed this way.",
-		"The dead are counted.",
-	],
-	&"peaceful_exit": [
-		"Go gently.",
-		"Some gates are closed by footsteps.",
-	],
-}
 
 var _intro_triggered: bool = false
 var _player_inside_fountain: bool = false
@@ -116,17 +61,25 @@ var _completed: bool = false
 var _dialogue_sequence: int = 0
 
 var _fountain_stabilize_time: float = 0.0
+var _followup_index := 0
+var _thread_snap_handled := false
+var _resolved_thread_anchors: Dictionary = {}
 
 
 func _ready() -> void:
 	add_to_group("ash_bell_site")
 	if event_state == null:
 		event_state = AshBellEventState.new()
+	var ledger := get_node_or_null("/root/ResourceLedger")
+	event_state.has_thread_knot = (
+		ledger != null and int(ledger.call("get_amount", "white_thread_knot")) > 0
+	)
 
 	event_state.pressure_changed.connect(_on_pressure_changed)
 	event_state.fountain_state_changed.connect(_on_fountain_state_changed)
 	event_state.resolution_changed.connect(_on_resolution_changed)
 	event_state.knowledge_unlocked.connect(_on_knowledge_unlocked)
+	event_state.thread_snapped.connect(_handle_thread_snap_once)
 	request_dialogue.connect(_on_request_dialogue)
 	request_item_grant.connect(_on_request_item_grant)
 	request_knowledge_unlock.connect(_on_request_knowledge_unlock)
@@ -169,6 +122,18 @@ func trigger_intro() -> void:
 
 
 func interact_with_ritualant() -> void:
+	if dialogue_presenter != null and dialogue_presenter.is_active():
+		dialogue_presenter.advance()
+		return
+	if event_state.has_seen_dialogue(&"first_interaction"):
+		var followups: Array[StringName] = [&"ask_bell", &"ask_thread", &"ask_orra"]
+		var next_id := followups[_followup_index % followups.size()]
+		_followup_index += 1
+		match next_id:
+			&"ask_bell": ask_about_bell()
+			&"ask_thread": ask_about_thread()
+			&"ask_orra": ask_about_orra()
+		return
 	event_state.mark_dialogue_seen(&"first_interaction")
 	event_state.set_resolution(AshBellEventState.Resolution.SPOKE_TO_RITUALANT)
 	event_state.set_fountain_state(AshBellEventState.FountainState.GHOST)
@@ -195,12 +160,10 @@ func ask_about_orra() -> void:
 
 
 func touch_thread() -> void:
-	event_state.has_thread_knot = true
 	event_state.calm_thread(12)
 	event_state.add_silence_pressure(-4, &"thread_touched")
 	event_state.set_resolution(AshBellEventState.Resolution.TOUCHED_THREAD)
 	event_state.unlock_knowledge(&"ash_bell_white_thread")
-	request_item_grant.emit(&"white_thread_knot")
 
 	if event_state.fountain_state == AshBellEventState.FountainState.GHOST:
 		event_state.set_fountain_state(AshBellEventState.FountainState.CRACKED_ANCHORED)
@@ -214,8 +177,7 @@ func cut_thread() -> void:
 	event_state.set_resolution(AshBellEventState.Resolution.CUT_THREAD)
 	event_state.add_silence_pressure(25, &"thread_cut")
 	request_dialogue.emit(dialogue_id, &"cut_thread_response")
-	_show_unarrived_apparition()
-	_start_hostile_phase()
+	_handle_thread_snap_once()
 
 
 func take_stilling_pin() -> void:
@@ -290,19 +252,70 @@ func exit_site() -> void:
 	if event_state.ritualant_hostile:
 		return
 
-	if event_state.resolution == AshBellEventState.Resolution.SPOKE_TO_RITUALANT \
-			or event_state.resolution == AshBellEventState.Resolution.TOUCHED_THREAD \
-			or event_state.resolution == AshBellEventState.Resolution.TOOK_STILLING_PIN:
-		if peaceful_exit_requires_thread_touch and not event_state.has_thread_knot:
-			return
+	request_dialogue.emit(dialogue_id, &"peaceful_exit")
+	_complete_if_ready()
 
-		request_dialogue.emit(dialogue_id, &"peaceful_exit")
-		_complete_if_ready()
+
+func can_depart_site() -> bool:
+	return not event_state.ritualant_hostile
+
+
+func play_departure_epilogue() -> void:
+	if event_state.resolution == AshBellEventState.Resolution.SITE_DEFILED \
+			or event_state.resolution == AshBellEventState.Resolution.RITUALANT_DISSOLVED:
+		await get_tree().create_timer(1.0).timeout
+		return
+	var node_id := (
+		&"stabilized_exit"
+		if event_state.resolution == AshBellEventState.Resolution.SITE_STABILIZED
+		else &"peaceful_exit"
+	)
+	request_dialogue.emit(dialogue_id, node_id)
+	if dialogue_presenter != null and dialogue_presenter.is_active():
+		await dialogue_presenter.sequence_finished
+
+
+func get_departure_lines() -> Array[String]:
+	if event_state.resolution == AshBellEventState.Resolution.SITE_DEFILED \
+			or event_state.resolution == AshBellEventState.Resolution.RITUALANT_DISSOLVED:
+		return []
+	if event_state.resolution == AshBellEventState.Resolution.SITE_STABILIZED:
+		return ["The count holds.", "Go."]
+	return ["Go gently.", "Some gates are closed by footsteps."]
+
+
+func resolve_thread_anchor(anchor_id: StringName) -> void:
+	if anchor_id == &"" or _resolved_thread_anchors.has(anchor_id):
+		return
+	_resolved_thread_anchors[anchor_id] = true
+	event_state.calm_thread(18)
+	event_state.add_silence_pressure(-8, &"thread_anchor")
+	if _resolved_thread_anchors.size() >= 3:
+		stabilize_site()
+
+
+func debug_get_resolved_thread_anchor_count() -> int:
+	return _resolved_thread_anchors.size()
+
+
+func is_thread_anchor_resolved(anchor_id: StringName) -> bool:
+	return _resolved_thread_anchors.has(anchor_id)
+
+
+func _handle_thread_snap_once() -> void:
+	if _thread_snap_handled:
+		return
+	_thread_snap_handled = true
+	_show_unarrived_apparition()
+	_start_hostile_phase()
 
 
 func stabilize_site() -> void:
+	event_state.ritualant_hostile = false
 	event_state.set_resolution(AshBellEventState.Resolution.SITE_STABILIZED)
 	event_state.unlock_knowledge(&"ash_bell_bellfall_containment")
+	if forlorn_ritualant != null and forlorn_ritualant.has_method("dissolve"):
+		forlorn_ritualant.call("dissolve")
 	_complete_if_ready()
 
 
@@ -350,6 +363,33 @@ func _trigger_ghost_procession() -> void:
 		ghost_procession.call("play_once")
 	else:
 		ghost_procession.visible = true
+
+
+func begin_ninth_answer_lane(lane_world_x: float) -> void:
+	if ghost_procession == null:
+		return
+	ghost_procession.global_position.x = lane_world_x
+	ghost_procession.visible = true
+	ghost_procession.modulate = Color(0.75, 0.82, 1.0, 0.28)
+
+
+func end_ninth_answer_lane() -> void:
+	if ghost_procession != null:
+		ghost_procession.visible = false
+
+
+func begin_orra_late(behind_world_position: Vector2) -> void:
+	if unarrived_apparition == null:
+		return
+	unarrived_apparition.global_position = behind_world_position
+	unarrived_apparition.visible = true
+	unarrived_apparition.modulate.a = 0.35
+
+
+func resolve_orra_late(caught: bool) -> void:
+	if caught:
+		event_state.add_silence_pressure(10, &"orra_misplaced")
+	_show_unarrived_apparition()
 
 
 func _set_initial_visibility() -> void:
@@ -490,18 +530,11 @@ func _complete_if_ready() -> void:
 
 
 func _on_request_dialogue(_dialogue_id: StringName, node_id: StringName) -> void:
-	_dialogue_sequence += 1
-	var sequence := _dialogue_sequence
-	var lines: Array = DIALOGUE.get(node_id, [])
-	if lines.is_empty():
-		return
-
-	for line_index in range(lines.size()):
-		if sequence != _dialogue_sequence:
-			return
-		_set_dialogue_text("Forlorn-Ritualant: %s" % String(lines[line_index]))
-		if line_index < lines.size() - 1:
-			await get_tree().create_timer(2.0).timeout
+	var actor := get_tree().get_first_node_in_group("player") as Node2D
+	if actor == null:
+		actor = get_tree().get_first_node_in_group("operator") as Node2D
+	if dialogue_presenter != null:
+		dialogue_presenter.start(node_id, actor)
 
 
 func _on_request_item_grant(item_id: StringName) -> void:
@@ -514,7 +547,11 @@ func _on_request_item_grant(item_id: StringName) -> void:
 
 
 func _on_request_knowledge_unlock(knowledge_id: StringName) -> void:
-	print("[AshBell] knowledge unlock requested: ", knowledge_id)
+	var memory := get_node_or_null("/root/WorldEventMemory")
+	if memory != null:
+		memory.call("mark_completed", StringName("knowledge_%s" % String(knowledge_id)), {
+			"source": "forlorn_ritualant",
+		})
 
 
 func _set_dialogue_text(text: String) -> void:

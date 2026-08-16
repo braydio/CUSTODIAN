@@ -20,7 +20,7 @@ const FOREGROUND_TRAVEL_Z := 20
 @export var descent_duration := 1.05
 @export var shaft_scroll_distance := 384.0
 
-@onready var lift_root: Node2D = $LiftRoot
+@onready var lift_root: AshBellLiftPlatformAssembly = $LiftRoot
 @onready var rider_anchor: Marker2D = $LiftRoot/RiderAnchor
 @onready var boarding_marker: Marker2D = $BoardingMarker
 @onready var entrance_threshold_marker: Marker2D = $EntranceThresholdMarker
@@ -245,12 +245,7 @@ func get_procgen_dressing_clearance_world_rect() -> Rect2:
 
 
 func is_actor_boarded(actor: Node2D) -> bool:
-	var local_position := to_local(actor.global_position)
-	return (
-		absf(local_position.x) <= 42.0
-		and local_position.y >= -54.0
-		and local_position.y <= 18.0
-	)
+	return lift_root != null and lift_root.is_actor_boarded(actor)
 
 
 func _create_presentation_rig(actor: Node2D) -> bool:
@@ -290,26 +285,13 @@ func _set_shaft_scroll_y(value: float) -> void:
 
 
 func _set_platform_vibrating(is_vibrating: bool) -> void:
-	platform_back_idle.visible = not is_vibrating
-	front_lip_idle.visible = not is_vibrating
-	platform_back_vibrate.visible = is_vibrating
-	front_lip_vibrate.visible = is_vibrating
-	if is_vibrating:
-		platform_back_vibrate.play(&"vibrate")
-		front_lip_vibrate.play(&"vibrate")
-	else:
-		platform_back_vibrate.stop()
-		front_lip_vibrate.stop()
+	if lift_root != null:
+		lift_root.set_vibrating(is_vibrating)
 
 
 func _set_idle_depth_mode() -> void:
 	lift_root.z_index = 0
-	platform_back_idle.z_as_relative = false
-	platform_back_vibrate.z_as_relative = false
-	platform_back_idle.z_index = LIFT_BACK_IDLE_Z
-	platform_back_vibrate.z_index = LIFT_BACK_IDLE_Z
-	$LiftRoot/PlatformFront.z_as_relative = false
-	$LiftRoot/PlatformFront.z_index = LIFT_FRONT_IDLE_Z
+	lift_root.set_depths(LIFT_BACK_IDLE_Z, LIFT_FRONT_IDLE_Z)
 	entrance_mask.z_index = FOREGROUND_IDLE_Z
 	travel_occlusion_geometry.visible = false
 	foreground_occluder.visible = false
@@ -317,12 +299,7 @@ func _set_idle_depth_mode() -> void:
 
 func _set_travel_depth_mode() -> void:
 	lift_root.z_index = 0
-	platform_back_idle.z_as_relative = false
-	platform_back_vibrate.z_as_relative = false
-	platform_back_idle.z_index = LIFT_BACK_TRAVEL_Z
-	platform_back_vibrate.z_index = LIFT_BACK_TRAVEL_Z
-	$LiftRoot/PlatformFront.z_as_relative = false
-	$LiftRoot/PlatformFront.z_index = LIFT_FRONT_TRAVEL_Z
+	lift_root.set_depths(LIFT_BACK_TRAVEL_Z, LIFT_FRONT_TRAVEL_Z)
 	entrance_mask.z_index = FOREGROUND_TRAVEL_Z
 	travel_occlusion_geometry.visible = false
 	foreground_occluder.visible = true

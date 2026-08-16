@@ -5,6 +5,7 @@ signal pressure_changed(silence_pressure: int, thread_tension: int)
 signal fountain_state_changed(new_state: int)
 signal resolution_changed(new_resolution: int)
 signal knowledge_unlocked(knowledge_id: StringName)
+signal thread_snapped
 
 enum FountainState {
 	ABSENT,
@@ -38,6 +39,7 @@ var has_stilling_pin: bool = false
 var has_thread_knot: bool = false
 var apparition_seen: bool = false
 var ritualant_hostile: bool = false
+var _thread_snap_emitted := false
 
 
 func add_silence_pressure(amount: int, reason: StringName = &"unknown") -> void:
@@ -65,6 +67,7 @@ func add_thread_tension(amount: int, reason: StringName = &"unknown") -> void:
 	if thread_tension >= 100:
 		set_resolution(Resolution.CUT_THREAD)
 		add_silence_pressure(25, &"thread_snap")
+		_emit_thread_snap_once()
 
 
 func calm_thread(amount: int) -> void:
@@ -87,6 +90,14 @@ func set_thread_tension(value: int, reason: StringName = &"unknown") -> void:
 
 	if thread_tension >= 100:
 		set_resolution(Resolution.CUT_THREAD)
+		_emit_thread_snap_once()
+
+
+func _emit_thread_snap_once() -> void:
+	if _thread_snap_emitted:
+		return
+	_thread_snap_emitted = true
+	thread_snapped.emit()
 
 
 func set_silence_pressure(value: int, reason: StringName = &"unknown") -> void:

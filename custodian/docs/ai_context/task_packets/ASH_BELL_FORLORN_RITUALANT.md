@@ -1,9 +1,9 @@
-# Ash-Bell Forlorn-Ritualant Underground Migration
+# Ash-Bell Forlorn-Ritualant Authored Encounter
 
 ## Packet Status
 
-- Status: complete implementation; runtime validation pending local Godot execution
-- Completion scope: authority migration from procgen special-room insertion to a fixed authored Underground route and level wrapper
+- Status: route migration complete; encounter completion V2 implemented and under visual polish
+- Completion scope: authored route plus witnessed Threadway access, shared lift termini, explicit travel, data dialogue, and four-action Ritualant encounter
 - Owner: agent
 - Agent/session: ChatGPT-2026-07-30-underground-migration
 - Created: 2026-06-12
@@ -112,4 +112,23 @@ These commands were not executed through the GitHub connector because it does no
 
 ## Next Production Slice
 
-Expand the fixed route with the staged sequence already specified in `FORLORN_RITUALANT_APPROACH.md`: cave mouth, compression corridor, lift chamber, 4–8 second descent, lower landing, pre-arena reveal, then the existing Ritualant chamber. Future assets belong under `custodian/content/tiles/encounters/ritualant_set/underground/`.
+Replace the named temporary animation fallbacks for Ninth Answer, Orra Comes
+Late, dissolve, and violent death; replace the procession band with authored
+silhouettes; then tune the lower-landing environmental composition in Moment
+Forge. The route and interaction authority are no longer deferred.
+
+## Completion V2 Contract
+
+- Knot acquisition records `ash_bell_threadway_unlocked`; it does not mutate
+  terrain off-screen.
+- A nearby audience witnesses the Threadway, whose completed VFX latches the
+  separate `ash_bell_threadway_resolved` milestone and commits terrain once.
+- Surface and underground instance one `ash_bell_lift_platform_assembly.tscn`.
+- Both termini require boarding plus E; lower body entry never travels.
+- Lower departure rises into black, plays state-aware epilogue, then hands off
+  to the existing surface ascent.
+- Dialogue comes from `forlorn_ritualant_dialogue.json` and advances by E.
+- The broken chapel bell and wrong basin are intentional physical evidence.
+- Chamber thread changes ritual state and never grants another Knot.
+- Pin Strike, Thread Pull, Ninth Answer, Orra Comes Late, survival, and three
+  anchors have reachable runtime contracts.

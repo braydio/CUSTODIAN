@@ -11,12 +11,15 @@ enum InteractionKind {
 	TAKE_STILLING_PIN,
 	DRY_FOUNTAIN,
 	SET_STILLING_PIN,
+	THREAD_ANCHOR,
 }
 
 @export var interaction_kind: int = InteractionKind.RITUALANT
 @export var site_path: NodePath
 @export var interaction_distance: float = 84.0
 @export var prompt_text: String = ""
+@export var conversation_followup_legacy := false
+@export var anchor_id: StringName
 
 ## If true, child visuals under this Area2D are hidden while the interaction is locked.
 @export var hide_when_locked: bool = true
@@ -31,6 +34,12 @@ var _last_available: bool = true
 
 
 func _ready() -> void:
+	if conversation_followup_legacy:
+		monitoring = false
+		monitorable = false
+		visible = false
+		set_process(false)
+		return
 	add_to_group("interactable")
 	_refresh_availability(true)
 
@@ -61,7 +70,7 @@ func can_interact(_actor: Node = null) -> bool:
 
 		InteractionKind.TOUCH_THREAD:
 			return state.resolution >= AshBellEventState.Resolution.SPOKE_TO_RITUALANT \
-				and not state.has_thread_knot \
+				and state.has_thread_knot \
 				and not state.ritualant_hostile
 
 		InteractionKind.CUT_THREAD:
@@ -70,7 +79,8 @@ func can_interact(_actor: Node = null) -> bool:
 				and state.resolution != AshBellEventState.Resolution.CUT_THREAD
 
 		InteractionKind.TAKE_STILLING_PIN:
-			return state.resolution >= AshBellEventState.Resolution.SPOKE_TO_RITUALANT \
+			return state.has_seen_dialogue(&"ask_bell") \
+				and not state.ritualant_hostile \
 				and not state.has_stilling_pin
 
 		InteractionKind.DRY_FOUNTAIN:
@@ -81,6 +91,9 @@ func can_interact(_actor: Node = null) -> bool:
 			return state.has_stilling_pin \
 				and state.resolution >= AshBellEventState.Resolution.TOOK_STILLING_PIN \
 				and state.resolution != AshBellEventState.Resolution.SET_STILLING_PIN
+
+		InteractionKind.THREAD_ANCHOR:
+			return state.ritualant_hostile and not site.is_thread_anchor_resolved(anchor_id)
 
 		_:
 			return true
@@ -112,6 +125,8 @@ func get_interaction_prompt() -> String:
 			return "INSPECT DRY FOUNTAIN"
 		InteractionKind.SET_STILLING_PIN:
 			return "SET PIN IN BASIN"
+		InteractionKind.THREAD_ANCHOR:
+			return "ANCHOR WHITE THREAD"
 		_:
 			return "INTERACT"
 
@@ -159,6 +174,9 @@ func interact(actor: Node) -> void:
 
 		InteractionKind.SET_STILLING_PIN:
 			site.set_stilling_pin()
+
+		InteractionKind.THREAD_ANCHOR:
+			site.resolve_thread_anchor(anchor_id)
 
 
 func _refresh_availability(force: bool) -> void:

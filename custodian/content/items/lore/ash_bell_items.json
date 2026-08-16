@@ -18,7 +18,7 @@
       "type": "lore_relic",
       "stackable": true,
       "tags": ["ash_bell", "white_thread", "saint_orra"],
-      "description": "A talisman, symbol, artifact of many origins. It has religious, military, civic, and other contexts.",
+      "description": "A funerary knot of unnaturally clean white thread. Names were tied into these before the dead were counted. The fibers pull taut near places that do not agree with their own history.",
       "mechanical_effects": {
         "unlock_knowledge_node": "ash_bell_white_thread",
         "reduce_future_drifter_ambiguity": 0.05

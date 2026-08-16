@@ -1,6 +1,6 @@
 # Forlorn Ritualant — Underground Authored-Route Migration
 
-**Status:** implemented V1  
+**Status:** route migration complete; encounter completion V2 implemented
 **Decision date:** 2026-07-30
 
 ## Decision
@@ -29,14 +29,15 @@ The new authored Underground wrapper owns level lifecycle, named spawn, camera b
 ```text
 Generated world
   -> isolated north-edge lift pocket
-  -> first White Thread Knot acquisition remembers a permanent surface causeway
+  -> White Thread Knot acquisition latches a pending surface causeway
+  -> player approaches and witnesses the permanent Threadway resolve
   -> cave ingress: TRAVERSE THE DERELICT LIFT
   -> route: forlorn_ritualant_underground
   -> node: ritual_cavern
-  -> spawn: Spawn_DescentLanding
+  -> spawn: Spawn_DescentLanding on the lower terminus of the same lift
   -> authored Underground wrapper
   -> instanced ForlornRitualantSite
-  -> Exit_ReturnWorld
+  -> board lower lift + E: Exit_ReturnWorld
   -> world origin
 ```
 
@@ -72,14 +73,15 @@ Delete:
 
 The generic special-room system remains live for other encounters. Its documentation must describe the Ritualant definition as retired rather than current.
 
-## V1 Spatial Contract
+## Authored Spatial Contract
 
 - Existing room footprint: `35x27` tiles at `32 px` per tile (`1120x864 px`).
 - Authored camera bounds: `1120x864 px` centered on the chamber.
-- Entry spawn: south interior landing at `(0, 224)`, north of the encounter scene's internal south-exit trigger.
-- World-return exit: south threshold at `(0, 404)`.
+- Entry spawn: `(0, 332)`, on the lower lift walk-off position.
+- World-return interaction: `(0, 358)`, on the shared lower lift assembly.
 - Boundary rails enclose the chamber with a `192 px` south opening.
-- The existing Ritualant scene is instanced at `(0, 0)` without modification.
+- The Ritualant scene remains instanced at `(0, 0)`; the old internal exit
+  trigger is retired because the authored wrapper owns travel.
 
 ## Room Mapper
 
@@ -97,7 +99,13 @@ The return record directly positions `Exit_ReturnWorld`; there is intentionally 
 
 ## Presentation Scope
 
-V1 performs the authority migration immediately. It does not pretend the full staged descent is finished. The later entrance antechamber, lift ride, lower landing, and pre-arena reveal remain governed by `design/05_levels/FORLORN_RITUALANT_APPROACH.md` and should expand this authored route, never restore special-room insertion.
+The surface and underground levels now share one lift-platform assembly. The
+lower terminus provides a short south-to-north landing approach; departure
+requires boarding plus E, raises the platform into full black, plays the
+resolution-appropriate epilogue, and hands the route off while black so the
+existing surface ascent reads as the continuation of one journey. Additional
+cavern dressing remains art polish, never a reason to restore special-room
+insertion.
 
 ## Assets
 

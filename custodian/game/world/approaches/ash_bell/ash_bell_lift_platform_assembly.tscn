@@ -1,0 +1,76 @@
+[gd_scene load_steps=13 format=3]
+
+[ext_resource type="Script" path="res://game/world/approaches/ash_bell/ash_bell_lift_platform_assembly.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_platform_back__idle__s__1f__128x128.png" id="2_back_idle"]
+[ext_resource type="Texture2D" path="res://assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_platform_back__vibrate__s__4f__128x128.png" id="3_back_vibrate"]
+[ext_resource type="Texture2D" path="res://assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_platform_front_lip__idle__s__1f__128x128.png" id="4_front_idle"]
+[ext_resource type="Texture2D" path="res://assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_platform_front_lip__vibrate__s__4f__128x128.png" id="5_front_vibrate"]
+
+[sub_resource type="AtlasTexture" id="Back0"]
+atlas = ExtResource("3_back_vibrate")
+region = Rect2(0, 0, 128, 128)
+[sub_resource type="AtlasTexture" id="Back1"]
+atlas = ExtResource("3_back_vibrate")
+region = Rect2(128, 0, 128, 128)
+[sub_resource type="AtlasTexture" id="Back2"]
+atlas = ExtResource("3_back_vibrate")
+region = Rect2(0, 128, 128, 128)
+[sub_resource type="AtlasTexture" id="Back3"]
+atlas = ExtResource("3_back_vibrate")
+region = Rect2(128, 128, 128, 128)
+[sub_resource type="SpriteFrames" id="BackFrames"]
+animations = [{"frames":[{"duration":1.0,"texture":SubResource("Back0")},{"duration":1.0,"texture":SubResource("Back1")},{"duration":1.0,"texture":SubResource("Back2")},{"duration":1.0,"texture":SubResource("Back3")}],"loop":true,"name":&"vibrate","speed":10.0}]
+
+[sub_resource type="AtlasTexture" id="Front0"]
+atlas = ExtResource("5_front_vibrate")
+region = Rect2(0, 0, 128, 128)
+[sub_resource type="AtlasTexture" id="Front1"]
+atlas = ExtResource("5_front_vibrate")
+region = Rect2(128, 0, 128, 128)
+[sub_resource type="AtlasTexture" id="Front2"]
+atlas = ExtResource("5_front_vibrate")
+region = Rect2(0, 128, 128, 128)
+[sub_resource type="AtlasTexture" id="Front3"]
+atlas = ExtResource("5_front_vibrate")
+region = Rect2(128, 128, 128, 128)
+[sub_resource type="SpriteFrames" id="FrontFrames"]
+animations = [{"frames":[{"duration":1.0,"texture":SubResource("Front0")},{"duration":1.0,"texture":SubResource("Front1")},{"duration":1.0,"texture":SubResource("Front2")},{"duration":1.0,"texture":SubResource("Front3")}],"loop":true,"name":&"vibrate","speed":10.0}]
+
+[node name="AshBellLiftPlatformAssembly" type="Node2D"]
+script = ExtResource("1_script")
+z_as_relative = false
+
+[node name="PlatformBackIdle" type="Sprite2D" parent="."]
+z_as_relative = false
+z_index = 1
+texture_filter = 1
+scale = Vector2(1.35, 1.35)
+texture = ExtResource("2_back_idle")
+
+[node name="PlatformBackVibrate" type="AnimatedSprite2D" parent="."]
+visible = false
+z_as_relative = false
+z_index = 1
+texture_filter = 1
+scale = Vector2(1.35, 1.35)
+sprite_frames = SubResource("BackFrames")
+animation = &"vibrate"
+
+[node name="RiderAnchor" type="Marker2D" parent="."]
+position = Vector2(0, -26)
+
+[node name="PlatformFront" type="Node2D" parent="."]
+z_as_relative = false
+z_index = 3
+
+[node name="FrontLipIdle" type="Sprite2D" parent="PlatformFront"]
+texture_filter = 1
+scale = Vector2(1.35, 1.35)
+texture = ExtResource("4_front_idle")
+
+[node name="FrontLipVibrate" type="AnimatedSprite2D" parent="PlatformFront"]
+visible = false
+texture_filter = 1
+scale = Vector2(1.35, 1.35)
+sprite_frames = SubResource("FrontFrames")
+animation = &"vibrate"

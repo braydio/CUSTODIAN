@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://1a3fhraa5vab" path="res://game/world/events/ash_bell/forlorn_ritualant_site.gd" id="1_site"]
 [ext_resource type="Script" uid="uid://dbcasxp4tc1gk" path="res://game/world/events/ash_bell/forlorn_ritualant_npc.gd" id="2_npc"]
 [ext_resource type="Script" uid="uid://cf3qh3ejcbmpq" path="res://game/world/events/ash_bell/ash_bell_interactable.gd" id="3_interactable"]
+[ext_resource type="Script" path="res://game/world/events/ash_bell/forlorn_ritualant_dialogue_presenter.gd" id="38_dialogue_presenter"]
 [ext_resource type="Script" uid="uid://ccv8ls026wv1q" path="res://game/world/events/ash_bell/white_thread_hazard.gd" id="4_thread"]
 [ext_resource type="Script" uid="uid://c5gb0sly0vtfh" path="res://game/world/events/ash_bell/ash_bell_trigger.gd" id="5_trigger"]
 [ext_resource type="Script" uid="uid://ckp0rt645spmt" path="res://game/world/events/ash_bell/ash_bell_stagecraft.gd" id="6_stagecraft"]
@@ -88,7 +89,7 @@ unarrived_apparition_path = NodePath("VFX/UnarrivedApparition")
 stilling_pin_pickup_path = NodePath("Props/StillingPinPickup")
 ghost_procession_path = NodePath("VFX/GhostProcession")
 debug_label_path = NodePath("Debug/AshBellDebugLabel")
-dialogue_label_path = NodePath("Debug/DialogueContainer/AshBellDialogueLabel")
+dialogue_label_path = NodePath("DialoguePresentation/AshBellDialogueLabel")
 silence_veil_path = NodePath("FX/SilenceVeil")
 pressure_halo_path = NodePath("FX/PressureHalo")
 thread_visual_path = NodePath("FX/ThreadVisual")
@@ -214,6 +215,36 @@ prompt_text = "SET PIN IN BASIN"
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Props/SetStillingPinInteract" unique_id=435349878]
 shape = SubResource("CircleShape2D_interact")
 
+[node name="ThreadAnchorWest" type="Area2D" parent="Props"]
+position = Vector2(-150, -78)
+script = ExtResource("3_interactable")
+interaction_kind = 9
+site_path = NodePath("../..")
+anchor_id = &"west"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Props/ThreadAnchorWest"]
+shape = SubResource("CircleShape2D_interact")
+
+[node name="ThreadAnchorNorth" type="Area2D" parent="Props"]
+position = Vector2(0, -210)
+script = ExtResource("3_interactable")
+interaction_kind = 9
+site_path = NodePath("../..")
+anchor_id = &"north"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Props/ThreadAnchorNorth"]
+shape = SubResource("CircleShape2D_interact")
+
+[node name="ThreadAnchorEast" type="Area2D" parent="Props"]
+position = Vector2(150, -78)
+script = ExtResource("3_interactable")
+interaction_kind = 9
+site_path = NodePath("../..")
+anchor_id = &"east"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Props/ThreadAnchorEast"]
+shape = SubResource("CircleShape2D_interact")
+
 [node name="BlackBanners" type="Node2D" parent="Props" unique_id=340412067]
 
 [node name="CandleWest" type="Sprite2D" parent="Props/BlackBanners" unique_id=1641799443]
@@ -281,6 +312,7 @@ shape = SubResource("CircleShape2D_interact")
 [node name="AskBellInteract" type="Area2D" parent="NPCs" unique_id=271793634]
 position = Vector2(-40, -140)
 script = ExtResource("3_interactable")
+conversation_followup_legacy = true
 interaction_kind = 1
 site_path = NodePath("../..")
 prompt_text = "ASK: BELL?"
@@ -291,6 +323,7 @@ shape = SubResource("CircleShape2D_interact")
 [node name="AskThreadInteract" type="Area2D" parent="NPCs" unique_id=1435024224]
 position = Vector2(0, -170)
 script = ExtResource("3_interactable")
+conversation_followup_legacy = true
 interaction_kind = 2
 site_path = NodePath("../..")
 prompt_text = "ASK: THREAD?"
@@ -301,6 +334,7 @@ shape = SubResource("CircleShape2D_interact")
 [node name="AskOrraInteract" type="Area2D" parent="NPCs" unique_id=323304799]
 position = Vector2(40, -140)
 script = ExtResource("3_interactable")
+conversation_followup_legacy = true
 interaction_kind = 3
 site_path = NodePath("../..")
 prompt_text = "ASK: ORRA?"
@@ -336,15 +370,6 @@ site_path = NodePath("../..")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/DryFountainZone" unique_id=101333452]
 shape = SubResource("RectangleShape2D_fountain")
-
-[node name="ExitTrigger" type="Area2D" parent="Triggers" unique_id=2141076623]
-position = Vector2(0, 320)
-script = ExtResource("5_trigger")
-trigger_kind = 2
-site_path = NodePath("../..")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/ExitTrigger" unique_id=682861400]
-shape = SubResource("RectangleShape2D_exit")
 
 [node name="VFX" type="Node2D" parent="." unique_id=957109267]
 
@@ -419,10 +444,13 @@ process_material = SubResource("ParticleProcessMaterial_ash_down")
 
 [node name="Debug" type="Node2D" parent="." unique_id=409010644]
 
-[node name="DialogueContainer" type="Node2D" parent="Debug" unique_id=1722286022]
+[node name="DialoguePresentation" type="Node2D" parent="." unique_id=1722286022]
+visible = false
+script = ExtResource("38_dialogue_presenter")
+site_path = NodePath("..")
 position = Vector2(0, 210)
 
-[node name="Background" type="ColorRect" parent="Debug/DialogueContainer" unique_id=636911536]
+[node name="Background" type="ColorRect" parent="DialoguePresentation" unique_id=636911536]
 z_index = 1
 offset_left = -304.0
 offset_top = -78.0
@@ -430,12 +458,12 @@ offset_right = 296.0
 offset_bottom = -14.0
 color = Color(0, 0, 0, 0.75)
 
-[node name="AshBellDialogueLabel" type="Label" parent="Debug/DialogueContainer" unique_id=1592804111]
+[node name="AshBellDialogueLabel" type="Label" parent="DialoguePresentation" unique_id=1592804111]
 offset_left = -258.0
 offset_top = -68.0
 offset_right = 302.0
 offset_bottom = -24.0
-text = "Forlorn-Ritualant waits beneath no bell."
+text = ""
 label_settings = SubResource("LabelSettings_dialogue")
 horizontal_alignment = 1
 vertical_alignment = 1

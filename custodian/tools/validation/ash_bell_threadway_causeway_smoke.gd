@@ -5,6 +5,7 @@ const SITE_SCRIPT := preload(
 	"res://game/world/approaches/ash_bell/ash_bell_lift_ingress_site.gd"
 )
 const EVENT_ID := &"ash_bell_threadway_unlocked"
+const RESOLVED_EVENT_ID := &"ash_bell_threadway_resolved"
 const RESOURCE_ID := "white_thread_knot"
 
 
@@ -226,6 +227,11 @@ func _validate_resource_lifecycle() -> void:
 	memory.call("reset_run_events", 1138)
 	var live_map := MockThreadwayMap.new()
 	root.add_child(live_map)
+	var live_actor := Node2D.new()
+	live_actor.name = "Operator"
+	live_actor.add_to_group("player")
+	live_actor.global_position = Vector2(2000.0, 2000.0)
+	root.add_child(live_actor)
 	var live_site := _make_site(live_map)
 	root.add_child(live_site)
 	await process_frame
@@ -234,7 +240,11 @@ func _validate_resource_lifecycle() -> void:
 	ledger.call("add", RESOURCE_ID, 1)
 	await process_frame
 	_check(memory.call("is_completed", EVENT_ID), "Knot acquisition did not latch WorldEventMemory")
+	_check(not memory.call("is_completed", RESOLVED_EVENT_ID), "off-screen Knot silently marked Threadway resolved")
 	_check(live_map.resolve_count == 0, "live Knot committed terrain before visual resolution")
+	_check(live_site.call("debug_get_threadway") == null, "off-screen Knot started Threadway presentation")
+	live_actor.global_position = Vector2(0.0, 72.0)
+	await process_frame
 	var live_threadway := live_site.call("debug_get_threadway") as AshBellThreadwayCauseway
 	_check(live_threadway != null, "live Knot did not create persistent threadway presentation")
 	if live_threadway != null:
@@ -263,17 +273,24 @@ func _validate_resource_lifecycle() -> void:
 		var delays := live_threadway.debug_get_reveal_delays()
 		_check(delays.size() == 9, "reveal scheduler omitted cells")
 	_check(live_map.resolve_count == 1, "live Knot did not commit exactly once after reveal")
+	_check(memory.call("is_completed", RESOLVED_EVENT_ID), "completed reveal did not latch resolved milestone")
 	_check(not live_map.committed_render_base_floor_visual, "live Threadway commit painted generic base floor")
 	ledger.call("add", RESOURCE_ID, 1)
 	await process_frame
 	_check(live_map.resolve_count == 1, "second Knot duplicated connector resolution")
 	live_site.queue_free()
 	live_map.queue_free()
+	live_actor.queue_free()
 	await process_frame
 
 	ledger.call("clear")
 	memory.call("reset_run_events", 1138)
 	ledger.call("add", RESOURCE_ID, 1)
+	var pre_actor := Node2D.new()
+	pre_actor.name = "Operator"
+	pre_actor.add_to_group("player")
+	pre_actor.global_position = Vector2(2000.0, 2000.0)
+	root.add_child(pre_actor)
 	var pre_map := MockThreadwayMap.new()
 	root.add_child(pre_map)
 	var pre_site := _make_site(pre_map)
@@ -281,15 +298,32 @@ func _validate_resource_lifecycle() -> void:
 	await process_frame
 	await process_frame
 	_check(memory.call("is_completed", EVENT_ID), "pre-acquired Knot was not latched on site load")
-	_check(pre_map.resolve_count == 1, "pre-acquired Knot did not resolve on load")
+	_check(pre_map.resolve_count == 0, "pre-acquired Knot resolved off-screen on load")
 	var pre_threadway := pre_site.call("debug_get_threadway") as AshBellThreadwayCauseway
-	_check(pre_threadway != null, "pre-acquired Knot did not create presentation")
-	if pre_threadway != null:
-		_check(pre_threadway.debug_get_reveal_play_count() == 0, "pre-acquired Knot replayed live reveal")
-		_check(pre_threadway.debug_get_visible_persistent_tile_count() == 9, "pre-acquired Threadway was not immediately visible")
-	_check(not pre_map.committed_render_base_floor_visual, "pre-acquired Threadway painted generic base floor")
+	_check(pre_threadway == null, "pre-acquired pending Knot created presentation off-screen")
 	pre_site.queue_free()
 	pre_map.queue_free()
+	pre_actor.queue_free()
+	await process_frame
+
+	ledger.call("clear")
+	memory.call("reset_run_events", 1138)
+	ledger.call("add", RESOURCE_ID, 1)
+	memory.call("mark_completed", EVENT_ID)
+	memory.call("mark_completed", RESOLVED_EVENT_ID)
+	var restored_map := MockThreadwayMap.new()
+	root.add_child(restored_map)
+	var restored_site := _make_site(restored_map)
+	root.add_child(restored_site)
+	await process_frame
+	await process_frame
+	var restored_threadway := restored_site.call("debug_get_threadway") as AshBellThreadwayCauseway
+	_check(restored_map.resolve_count == 1, "resolved Threadway did not restore terrain")
+	_check(restored_threadway != null, "resolved Threadway did not restore presentation")
+	if restored_threadway != null:
+		_check(restored_threadway.debug_get_reveal_play_count() == 0, "resolved Threadway replayed reveal")
+	restored_site.queue_free()
+	restored_map.queue_free()
 	ledger.call("clear")
 	memory.call("reset_run_events", 0)
 	await process_frame
@@ -301,18 +335,25 @@ func _validate_bounded_fallback() -> void:
 	ledger.call("clear")
 	memory.call("reset_run_events", 1138)
 	ledger.call("add", RESOURCE_ID, 1)
+	var actor := Node2D.new()
+	actor.name = "Operator"
+	actor.add_to_group("player")
+	actor.global_position = Vector2.ZERO
+	root.add_child(actor)
 	var map := MockFallbackThreadwayMap.new()
 	root.add_child(map)
 	var site := _make_site(map)
 	root.add_child(site)
 	await process_frame
 	await process_frame
+	await create_timer(1.5).timeout
 	_check(map.evaluated_lengths == [18, 30], "fallback did not evaluate canonical then bounded budgets")
 	_check(map.committed_length == 30, "fallback commit did not use bounded 30-tile budget")
 	_check(map.committed_lateral == 10, "fallback commit did not retain bounded lateral allowance")
 	_check(map.resolve_count == 1, "fallback committed more than once")
 	site.queue_free()
 	map.queue_free()
+	actor.queue_free()
 	ledger.call("clear")
 	memory.call("reset_run_events", 0)
 	await process_frame

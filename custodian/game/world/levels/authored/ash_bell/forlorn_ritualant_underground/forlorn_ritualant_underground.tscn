@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://game/world/levels/authored/ash_bell/forlorn_ritualant_underground/forlorn_ritualant_underground.gd" id="1_level"]
 [ext_resource type="PackedScene" path="res://game/world/events/ash_bell/forlorn_ritualant_site.tscn" id="2_ritualant"]
-[ext_resource type="Script" path="res://game/world/levels/level_exit_2d.gd" id="3_exit"]
+[ext_resource type="Script" path="res://game/world/levels/interactable_level_exit_2d.gd" id="3_exit"]
+[ext_resource type="PackedScene" path="res://game/world/approaches/ash_bell/ash_bell_lift_platform_assembly.tscn" id="4_lift"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_return"]
 size = Vector2(192, 64)
@@ -23,6 +24,9 @@ camera_bounds = Rect2(-560, -432, 1120, 864)
 
 [node name="PropsRoot" type="Node2D" parent="."]
 
+[node name="LowerLiftAssembly" parent="PropsRoot" instance=ExtResource("4_lift")]
+position = Vector2(0, 358)
+
 [node name="OcclusionRoot" type="Node2D" parent="."]
 
 [node name="Collision" type="Node2D" parent="."]
@@ -34,7 +38,7 @@ collision_mask = 1
 [node name="Markers" type="Node2D" parent="."]
 
 [node name="Spawn_DescentLanding" type="Marker2D" parent="Markers"]
-position = Vector2(0, 224)
+position = Vector2(0, 332)
 
 [node name="POIRoot" type="Node2D" parent="."]
 
@@ -45,13 +49,46 @@ position = Vector2(0, 224)
 [node name="Exits" type="Node2D" parent="."]
 
 [node name="Exit_ReturnWorld" type="Area2D" parent="Exits"]
-position = Vector2(0, 404)
+position = Vector2(0, 358)
 script = ExtResource("3_exit")
 exit_id = &"return_world"
 prompt_text = "ASCEND TO SURFACE"
 arrival_guard_radius = 96.0
+boarding_authority_path = NodePath("../../PropsRoot/LowerLiftAssembly")
+departure_controller_path = NodePath("../..")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Exits/Exit_ReturnWorld"]
 shape = SubResource("RectangleShape2D_return")
 
 [node name="NavigationRoot" type="Node2D" parent="."]
+
+[node name="DepartureOverlay" type="CanvasLayer" parent="."]
+layer = 90
+
+[node name="Black" type="ColorRect" parent="DepartureOverlay"]
+modulate = Color(1, 1, 1, 0)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Epilogue" type="Label" parent="DepartureOverlay"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -360.0
+offset_top = 180.0
+offset_right = 360.0
+offset_bottom = 250.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.86, 0.84, 0.76, 1)
+theme_override_font_sizes/font_size = 22
+text = ""
+horizontal_alignment = 1

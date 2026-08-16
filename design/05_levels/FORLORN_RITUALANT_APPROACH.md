@@ -1,6 +1,7 @@
 # Forlorn Ritualant — Encounter Approach & Staged Descent
 
-**Design doc** — 2026-07-09
+**Status:** traversal/lower-lift V2 implemented; environmental-art polish remains
+**Design doc** — 2026-07-09, reconciled 2026-08-15
 
 ## Overview
 
@@ -113,7 +114,8 @@ Visible in environmental symptoms, not just a background decal.
 - Repeated bell iconography
 - Worn prayer circles
 - Offerings long turned to ash
-- Maybe a bronze clapper or bell fragment nearby
+- The visible broken chapel bell is ordinary bronze hardware. The Ninth Bell
+  was never cast; `Stilling Pin` is the canonical ritual-tool term.
 
 ---
 

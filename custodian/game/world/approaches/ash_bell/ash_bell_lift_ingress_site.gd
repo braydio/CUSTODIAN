@@ -9,13 +9,17 @@ const THREADWAY_SCRIPT := preload(
 	"res://game/world/approaches/ash_bell/ash_bell_threadway_causeway.gd"
 )
 const THREADWAY_EVENT_ID := &"ash_bell_threadway_unlocked"
+const THREADWAY_RESOLVED_EVENT_ID := &"ash_bell_threadway_resolved"
 const THREADWAY_RESOURCE_ID := "white_thread_knot"
 const THREADWAY_FALLBACK_MAX_LENGTH := 30
 const THREADWAY_FALLBACK_LATERAL_ALLOWANCE := 10
+const THREADWAY_REVEAL_AUDIENCE_RADIUS := 760.0
 
 var _presentation: AshBellLiftIngressPresentation
 var _threadway: AshBellThreadwayCauseway = null
 var _threadway_result: Dictionary = {}
+var _threadway_unlocked := false
+var _threadway_resolved := false
 
 
 func _ready() -> void:
@@ -26,6 +30,7 @@ func _ready() -> void:
 	):
 		ledger.resource_added.connect(_on_resource_added)
 	call_deferred("_initialize_threadway_state")
+	set_process(true)
 
 
 func _init() -> void:
@@ -53,15 +58,16 @@ func get_interaction_position() -> Vector2:
 func _initialize_threadway_state() -> void:
 	var memory := get_node_or_null("/root/WorldEventMemory")
 	var ledger := get_node_or_null("/root/ResourceLedger")
-	var completed := memory != null and bool(memory.call("is_completed", THREADWAY_EVENT_ID))
+	_threadway_unlocked = memory != null and bool(memory.call("is_completed", THREADWAY_EVENT_ID))
+	_threadway_resolved = memory != null and bool(memory.call("is_completed", THREADWAY_RESOLVED_EVENT_ID))
 	var pre_acquired := ledger != null and int(ledger.call("get_amount", THREADWAY_RESOURCE_ID)) > 0
-	if not completed and pre_acquired and memory != null:
+	if not _threadway_unlocked and pre_acquired and memory != null:
 		memory.call("mark_completed", THREADWAY_EVENT_ID, {
 			"resource_id": THREADWAY_RESOURCE_ID,
 			"source": "resource_acquisition",
 		})
-		completed = true
-	if completed:
+		_threadway_unlocked = true
+	if _threadway_resolved:
 		_resolve_threadway(false)
 
 
@@ -69,8 +75,8 @@ func _on_resource_added(resource_id: String, _amount: int, new_total: int) -> vo
 	if resource_id != THREADWAY_RESOURCE_ID or new_total <= 0:
 		return
 	var memory := get_node_or_null("/root/WorldEventMemory")
-	var already_completed := memory != null and bool(memory.call("is_completed", THREADWAY_EVENT_ID))
-	if not already_completed and memory != null:
+	var already_unlocked := memory != null and bool(memory.call("is_completed", THREADWAY_EVENT_ID))
+	if not already_unlocked and memory != null:
 		memory.call("mark_completed", THREADWAY_EVENT_ID, {
 			"resource_id": THREADWAY_RESOURCE_ID,
 			"source": "resource_acquisition",
@@ -79,8 +85,21 @@ func _on_resource_added(resource_id: String, _amount: int, new_total: int) -> vo
 			"resource_id": THREADWAY_RESOURCE_ID,
 			"source": "resource_acquisition",
 		})
-	if _threadway == null:
-		_resolve_threadway(not already_completed)
+	_threadway_unlocked = true
+
+
+func _process(_delta: float) -> void:
+	if not _threadway_unlocked or _threadway_resolved or _threadway != null:
+		return
+	var actor := get_tree().get_first_node_in_group("player") as Node2D
+	if actor == null:
+		actor = get_tree().get_first_node_in_group("operator") as Node2D
+	if actor == null or _presentation == null:
+		return
+	var audience_center := _presentation.get_interaction_approach_position()
+	if actor.global_position.distance_to(audience_center) > THREADWAY_REVEAL_AUDIENCE_RADIUS:
+		return
+	_resolve_threadway(true)
 
 
 func _resolve_threadway(play_reveal: bool) -> void:
@@ -192,6 +211,13 @@ func _report_resolution_failure(result: Dictionary, canonical_plan: Dictionary =
 
 
 func _on_threadway_resolution_finished() -> void:
+	_threadway_resolved = true
+	var memory := get_node_or_null("/root/WorldEventMemory")
+	if memory != null:
+		memory.call("mark_completed", THREADWAY_RESOLVED_EVENT_ID, {
+			"resource_id": THREADWAY_RESOURCE_ID,
+			"cell_count": (_threadway_result.get("cells", []) as Array).size(),
+		})
 	_observe(&"ash_bell_threadway_resolved", {
 		"position": global_position,
 		"cell_count": (_threadway_result.get("cells", []) as Array).size(),
@@ -212,6 +238,18 @@ func debug_get_threadway_result() -> Dictionary:
 
 func debug_get_threadway() -> AshBellThreadwayCauseway:
 	return _threadway
+
+
+func debug_is_threadway_unlocked() -> bool:
+	return _threadway_unlocked
+
+
+func debug_is_threadway_resolved() -> bool:
+	return _threadway_resolved
+
+
+func debug_get_reveal_audience_radius() -> float:
+	return THREADWAY_REVEAL_AUDIENCE_RADIUS
 
 
 func get_procgen_dressing_clearance_world_rect() -> Rect2:

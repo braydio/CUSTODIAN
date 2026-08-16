@@ -6,6 +6,8 @@ signal defeated_violent
 signal attack_started
 signal stilling_pin_impact
 signal thread_pull_started
+signal ninth_answer_started
+signal orra_late_started
 
 enum Phase {
 	KNEELING,
@@ -18,7 +20,14 @@ enum Phase {
 @export var max_hp: int = 160
 @export var move_speed: float = 42.0
 @export var attack_range: float = 46.0
+@export var thread_pull_range: float = 184.0
 @export var attack_cooldown: float = 2.2
+@export var pin_windup_seconds := 0.42
+@export var thread_pull_windup_seconds := 0.58
+@export var ninth_answer_windup_seconds := 0.9
+@export var orra_late_delay_seconds := 1.05
+@export var pin_damage := 8.0
+@export var ninth_answer_damage := 10.0
 @export var survive_to_dissolve_seconds: float = 90.0
 @export var target_path: NodePath
 @export var site_path: NodePath
@@ -33,6 +42,9 @@ var phase: int = Phase.KNEELING
 var hp: int
 var _attack_timer: float = 0.0
 var _hostile_elapsed: float = 0.0
+var _attack_in_progress := false
+var _attack_count := 0
+var _last_attack := &""
 
 
 func _ready() -> void:
@@ -63,7 +75,10 @@ func _physics_process(delta: float) -> void:
 
 	var to_target := target.global_position - global_position
 	var distance := to_target.length()
-	if distance > attack_range:
+	if _attack_in_progress:
+		velocity = Vector2.ZERO
+		return
+	if distance > thread_pull_range:
 		velocity = to_target.normalized() * move_speed
 		move_and_slide()
 		return
@@ -115,7 +130,9 @@ func dissolve() -> void:
 	velocity = Vector2.ZERO
 	_play_anim(&"dissolve")
 	if site != null:
-		site.event_state.set_resolution(AshBellEventState.Resolution.RITUALANT_DISSOLVED)
+		site.event_state.ritualant_hostile = false
+		if site.event_state.resolution != AshBellEventState.Resolution.SITE_STABILIZED:
+			site.event_state.set_resolution(AshBellEventState.Resolution.RITUALANT_DISSOLVED)
 	defeated_nonlethal.emit()
 	await get_tree().create_timer(1.25).timeout
 	phase = Phase.GONE
@@ -133,34 +150,122 @@ func die_violently() -> void:
 
 func _choose_attack(distance: float) -> void:
 	_attack_timer = attack_cooldown
-	# Keep the close-range attack on pin strike; reserve thread pull for spacing control.
+	_attack_count += 1
+	if _attack_count % 5 == 0:
+		_orra_comes_late()
+		return
+	if _attack_count % 3 == 0:
+		_ninth_answer()
+		return
 	if distance <= attack_range:
 		_pin_strike()
 		return
-
-	if site != null and site.event_state.thread_tension >= 60:
+	if distance <= thread_pull_range:
 		_thread_pull()
 		return
 
-	_pin_strike()
-
 
 func _pin_strike() -> void:
+	_attack_in_progress = true
+	_last_attack = &"pin_strike"
 	attack_started.emit()
 	_play_anim(&"pin_strike")
-	await get_tree().create_timer(0.42).timeout
+	_bark(&"pin_strike_bark")
+	await get_tree().create_timer(pin_windup_seconds).timeout
+	if phase != Phase.HOSTILE:
+		_attack_in_progress = false
+		return
 	stilling_pin_impact.emit()
-	if site != null:
+	var contact_valid := (
+		target != null
+		and is_instance_valid(target)
+		and target.global_position.distance_to(global_position) <= attack_range
+	)
+	if contact_valid and site != null:
 		site.event_state.add_silence_pressure(8, &"pin_strike")
-	if target != null and target.has_method("take_damage"):
-		target.call("take_damage", 8.0)
+	if contact_valid and target.has_method("take_damage"):
+		target.call("take_damage", pin_damage)
+	_finish_attack()
 
 
 func _thread_pull() -> void:
+	_attack_in_progress = true
+	_last_attack = &"thread_pull"
 	thread_pull_started.emit()
 	_play_anim(&"thread_pull")
+	_bark(&"thread_pull_bark")
+	var target_start := target.global_position if target != null else Vector2.ZERO
+	await get_tree().create_timer(thread_pull_windup_seconds).timeout
+	if phase != Phase.HOSTILE or target == null or not is_instance_valid(target):
+		_attack_in_progress = false
+		return
+	var radial := (target_start - global_position).normalized()
+	var lateral_escape := absf((target.global_position - target_start).cross(radial))
+	if lateral_escape <= 28.0 and target.global_position.distance_to(global_position) <= thread_pull_range + 24.0:
+		target.global_position = target.global_position.move_toward(global_position, 56.0)
 	if site != null:
 		site.event_state.add_thread_tension(5, &"ritualant_thread_pull")
+	_finish_attack()
+
+
+func _ninth_answer() -> void:
+	_attack_in_progress = true
+	_last_attack = &"ninth_answer"
+	ninth_answer_started.emit()
+	_play_anim(&"ninth_answer")
+	_bark(&"ninth_answer_bark")
+	var lane_x := target.global_position.x if target != null else global_position.x
+	if site != null:
+		site.begin_ninth_answer_lane(lane_x)
+	await get_tree().create_timer(ninth_answer_windup_seconds).timeout
+	if phase == Phase.HOSTILE and target != null and is_instance_valid(target):
+		if absf(target.global_position.x - lane_x) <= 30.0 and target.has_method("take_damage"):
+			target.call("take_damage", ninth_answer_damage)
+	if site != null:
+		site.end_ninth_answer_lane()
+	_finish_attack()
+
+
+func _orra_comes_late() -> void:
+	_attack_in_progress = true
+	_last_attack = &"orra_late"
+	orra_late_started.emit()
+	_play_anim(&"orra_late")
+	_bark(&"orra_late_windup_bark")
+	var target_start := target.global_position if target != null else Vector2.ZERO
+	var behind := target_start + Vector2(0.0, 42.0)
+	if site != null:
+		site.begin_orra_late(behind)
+	await get_tree().create_timer(orra_late_delay_seconds).timeout
+	if phase == Phase.HOSTILE and target != null and is_instance_valid(target):
+		var caught := target.global_position.distance_to(target_start) <= 44.0
+		if site != null:
+			site.resolve_orra_late(caught)
+		_bark(&"orra_late_resolve_bark")
+	_finish_attack()
+
+
+func _finish_attack() -> void:
+	_attack_in_progress = false
+	if phase == Phase.HOSTILE:
+		_play_anim(&"hostile_idle")
+
+
+func _bark(node_id: StringName) -> void:
+	if site != null:
+		site.request_dialogue.emit(site.dialogue_id, node_id)
+
+
+func debug_force_attack(attack_id: StringName) -> void:
+	match attack_id:
+		&"pin_strike": _pin_strike()
+		&"thread_pull": _thread_pull()
+		&"ninth_answer": _ninth_answer()
+		&"orra_late": _orra_comes_late()
+
+
+func debug_get_last_attack() -> StringName:
+	return _last_attack
 
 
 func _play_anim(anim_name: StringName) -> void:
@@ -168,6 +273,24 @@ func _play_anim(anim_name: StringName) -> void:
 		return
 	if animated_sprite.sprite_frames != null and animated_sprite.sprite_frames.has_animation(anim_name):
 		animated_sprite.play(anim_name)
+		return
+	var fallback := {
+		&"ninth_answer": &"thread_pull",
+		&"orra_late": &"thread_pull",
+		&"dissolve": &"dissolve",
+		&"death_violent": &"hostile_idle",
+	}.get(anim_name, &"hostile_idle") as StringName
+	if animated_sprite.sprite_frames != null and animated_sprite.sprite_frames.has_animation(fallback):
+		animated_sprite.play(fallback)
+
+
+func debug_get_animation_contract() -> Dictionary:
+	return {
+		"ninth_answer": "10f_128_missing_fallback_thread_pull",
+		"orra_late": "8f_128_missing_fallback_thread_pull",
+		"dissolve": "10f_128_missing_fallback_existing_dissolve",
+		"death_violent": "8f_128_missing_fallback_hostile_idle",
+	}
 
 
 func _set_visual_color(color: Color) -> void:
