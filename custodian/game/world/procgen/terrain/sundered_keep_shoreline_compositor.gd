@@ -5,6 +5,9 @@ class_name SunderedKeepShorelineCompositor
 const OCEAN_SHORE_TOPOLOGY_RESOLVER := preload(
 	"res://game/world/procgen/terrain/ocean_shore_topology_resolver.gd"
 )
+const CLIFF_CATALOG := preload(
+	"res://game/world/procgen/terrain/sundered_keep_cliff_asset_catalog.gd"
+)
 
 const DEFAULT_CELL_WORLD_SIZE := 32.0
 const DEFAULT_CLIFF_SPACING_PX := 32.0
@@ -18,13 +21,6 @@ const DEFAULT_GLUE_COLOR := Color(0.12, 0.15, 0.18, 0.92)
 const FLOOR_SOURCE_ROCK := 129
 const FLOOR_SOURCE_CRACKED := 130
 const FLOOR_SOURCE_WET := 131
-
-const CLIFF_TEXTURES := {
-	"n": preload("res://content/runtime/sundered_keep/terrain/cliffs/cliff_edge_n.png"),
-	"e": preload("res://content/runtime/sundered_keep/terrain/cliffs/cliff_edge_e.png"),
-	"s": preload("res://content/runtime/sundered_keep/terrain/cliffs/cliff_edge_s.png"),
-	"w": preload("res://content/runtime/sundered_keep/terrain/cliffs/cliff_edge_w.png"),
-}
 
 const CLIFF_OFFSETS_WORLD := {
 	"n": Vector2(0.0, 32.0),
@@ -92,7 +88,14 @@ static func build_plan(
 	)
 	var segments := _extract_segments(floor_cells, ocean_cells, cell_world_size)
 	var runs := _order_segments_into_runs(segments)
-	var cliffs := _build_cliff_placements(runs, spacing, overlap, cell_world_size)
+	var cliffs := _build_cliff_placements(
+		runs,
+		floor_cells,
+		seed,
+		spacing,
+		cell_world_size,
+		maxf(0.0, float(options.get("corner_exclusion_px", spacing * 0.75)))
+	)
 	var foam := _build_foam_plan(segments, floor_cells, ocean_cells)
 	var floor_band := _build_floor_band_plan(
 		floor_cells,
@@ -101,7 +104,7 @@ static func build_plan(
 		shore_band_width
 	)
 	return {
-		"schema": "custodian.sundered_keep.shoreline_plan.v1",
+		"schema": "custodian.sundered_keep.shoreline_plan.v2",
 		"seed": seed,
 		"cell_world_size": cell_world_size,
 		"cliff_spacing_px": spacing,
@@ -222,18 +225,30 @@ static func build_cliff_presentation(
 		for entry_variant in plan.get("cliffs", []):
 			var entry := entry_variant as Dictionary
 			var facing := String(entry.get("facing", "n"))
+			var asset_key := String(entry.get("asset_key", "edge_%s" % facing))
+			var spec := CLIFF_CATALOG.get_spec(asset_key)
+			if spec.is_empty():
+				continue
 			var sprite := Sprite2D.new()
-			sprite.name = "CliffEdge_%04d_%s" % [cliff_count, facing]
-			sprite.texture = CLIFF_TEXTURES.get(facing) as Texture2D
+			sprite.name = "Cliff_%04d_%s" % [cliff_count, asset_key]
+			sprite.texture = spec.get("texture") as Texture2D
+			sprite.centered = false
 			var grid_position := entry.get("position_grid", Vector2.ZERO) as Vector2
-			var world_offset := CLIFF_OFFSETS_WORLD.get(facing, Vector2.ZERO) as Vector2
+			var kind := String(entry.get("kind", "edge"))
+			var world_offset := Vector2.ZERO
+			if kind in ["edge", "face_slice"]:
+				world_offset = CLIFF_OFFSETS_WORLD.get(facing, Vector2.ZERO) as Vector2
 			sprite.position = grid_position * local_cell_size + world_offset * local_per_world
+			sprite.offset = -(spec.get("pivot_px", Vector2.ZERO) as Vector2)
 			sprite.scale = Vector2.ONE / safe_scale
 			sprite.modulate = plan.get("cliff_modulate", DEFAULT_CLIFF_MODULATE) as Color
 			sprite.z_index = 1
 			sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 			sprite.set_meta("facing", facing)
+			sprite.set_meta("kind", kind)
+			sprite.set_meta("asset_key", asset_key)
 			sprite.set_meta("arc_distance_px", float(entry.get("arc_distance_px", 0.0)))
+			sprite.set_meta("run_index", int(entry.get("run_index", 0)))
 			presentation_root.add_child(sprite)
 			cliff_count += 1
 	return {"ribbon_count": ribbon_count, "cliff_count": cliff_count}
@@ -243,7 +258,8 @@ static func fixture_to_json(
 	seed: int,
 	floor_cells: Dictionary,
 	ocean_cells: Dictionary,
-	optional_bounds: Dictionary = {}
+	optional_bounds: Dictionary = {},
+	vista_context: Dictionary = {}
 ) -> String:
 	return JSON.stringify({
 		"schema": "custodian.sundered_keep.shoreline_fixture.v1",
@@ -251,6 +267,7 @@ static func fixture_to_json(
 		"floor_cells": _sorted_cell_arrays(floor_cells),
 		"ocean_cells": _sorted_cell_arrays(ocean_cells),
 		"bounds": optional_bounds,
+		"vista_context": vista_context,
 	}, "\t") + "\n"
 
 
@@ -264,6 +281,7 @@ static func fixture_from_json(text: String) -> Dictionary:
 		"floor_cells": _cell_dictionary(data.get("floor_cells", [])),
 		"ocean_cells": _cell_dictionary(data.get("ocean_cells", [])),
 		"bounds": (data.get("bounds", {}) as Dictionary).duplicate(true),
+		"vista_context": (data.get("vista_context", {}) as Dictionary).duplicate(true),
 	}
 
 
@@ -406,75 +424,187 @@ static func _choose_next_segment(
 
 static func _build_cliff_placements(
 	runs: Array[Dictionary],
+	floor_cells: Dictionary,
+	seed: int,
 	spacing: float,
-	overlap: float,
-	cell_world_size: float
+	cell_world_size: float,
+	corner_exclusion: float
 ) -> Array[Dictionary]:
 	var placements: Array[Dictionary] = []
-	var seen: Dictionary = {}
 	for run in runs:
+		var corners := _classify_run_corners(run, floor_cells, cell_world_size)
+		var exclusions: Array[float] = []
+		for corner_variant in corners:
+			var corner := corner_variant as Dictionary
+			exclusions.append(float(corner["arc_distance_px"]))
+			placements.append(corner)
 		var length := float(run.get("length_px", 0.0))
 		var distance := 0.0
+		var sample_index := 0
+		var recent_assets: Array[String] = []
+		var since_canonical := 0
 		while distance < length - 0.001 or (is_zero_approx(distance) and is_zero_approx(length)):
-			_append_cliff_sample(run, distance, cell_world_size, placements, seen)
+			if not _inside_corner_exclusion(
+				distance, exclusions, length, bool(run.get("closed", false)), corner_exclusion
+			):
+				var sample := _sample_run(run, distance, cell_world_size)
+				if not sample.is_empty():
+					var facing := String(sample.get("facing", "n"))
+					var asset_key := "edge_%s" % facing
+					var kind := "edge"
+					if facing in ["n", "s"]:
+						asset_key = _select_straight_asset(
+							seed,
+							int(run.get("index", 0)),
+							sample_index,
+							facing,
+							recent_assets,
+							since_canonical
+						)
+						kind = "face_slice" if asset_key.begins_with("face_slice") else "edge"
+					if kind == "edge":
+						since_canonical = 0
+					else:
+						since_canonical += 1
+					recent_assets.append(asset_key)
+					if recent_assets.size() > 3:
+						recent_assets.pop_front()
+					placements.append(_placement_from_sample(
+						run, distance, sample, kind, asset_key, cell_world_size
+					))
 			distance += spacing
-		var segments := run.get("segments", []) as Array
-		for segment_index in range(1, segments.size()):
-			var previous := segments[segment_index - 1] as Dictionary
-			var current := segments[segment_index] as Dictionary
-			if String(previous["facing"]) == String(current["facing"]):
-				continue
-			var corner_distance := float(current["cumulative_arc_distance"])
-			_append_cliff_sample(
-				run,
-				maxf(0.0, corner_distance - overlap * 0.5),
-				cell_world_size,
-				placements,
-				seen
-			)
-			_append_cliff_sample(
-				run,
-				minf(length, corner_distance + overlap * 0.5),
-				cell_world_size,
-				placements,
-				seen
-			)
+			sample_index += 1
 	placements.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
 		if int(a["run_index"]) != int(b["run_index"]):
 			return int(a["run_index"]) < int(b["run_index"])
-		return float(a["arc_distance_px"]) < float(b["arc_distance_px"])
+		if not is_equal_approx(float(a["arc_distance_px"]), float(b["arc_distance_px"])):
+			return float(a["arc_distance_px"]) < float(b["arc_distance_px"])
+		return String(a["kind"]) < String(b["kind"])
 	)
 	return placements
 
 
-static func _append_cliff_sample(
+static func _placement_from_sample(
 	run: Dictionary,
 	distance: float,
-	cell_world_size: float,
-	placements: Array[Dictionary],
-	seen: Dictionary
-) -> void:
-	var sample := _sample_run(run, distance, cell_world_size)
-	if sample.is_empty():
-		return
-	var position_grid := sample["position_grid"] as Vector2
-	var key := "%d:%0.3f:%0.3f:%s" % [
-		int(run.get("index", 0)),
-		position_grid.x,
-		position_grid.y,
-		String(sample["facing"]),
-	]
-	if seen.has(key):
-		return
-	seen[key] = true
-	placements.append({
+	sample: Dictionary,
+	kind: String,
+	asset_key: String,
+	cell_world_size: float
+) -> Dictionary:
+	var position_grid := sample.get("position_grid", Vector2.ZERO) as Vector2
+	return {
+		"kind": kind,
+		"asset_key": asset_key,
 		"run_index": int(run.get("index", 0)),
 		"arc_distance_px": clampf(distance, 0.0, float(run.get("length_px", 0.0))),
 		"position_grid": position_grid,
 		"position_world": position_grid * cell_world_size,
 		"facing": sample["facing"],
 		"outward_normal": sample["outward_normal"],
-	})
+		"corner_vertex_grid": null,
+	}
+
+
+static func _classify_run_corners(
+	run: Dictionary,
+	floor_cells: Dictionary,
+	cell_world_size: float
+) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	var segments := run.get("segments", []) as Array
+	if segments.size() < 2:
+		return result
+	var first_index := 0 if bool(run.get("closed", false)) else 1
+	for current_index in range(first_index, segments.size()):
+		var previous_index := posmod(current_index - 1, segments.size())
+		var previous := segments[previous_index] as Dictionary
+		var current := segments[current_index] as Dictionary
+		if String(previous["facing"]) == String(current["facing"]):
+			continue
+		var vertex := current["start_grid"] as Vector2
+		var topology := _classify_vertex(vertex, floor_cells)
+		if topology.is_empty():
+			continue
+		var kind := String(topology["kind"])
+		var direction := String(topology["direction"])
+		var distance := float(current.get("cumulative_arc_distance", 0.0))
+		var facing := String(current.get("facing", "n"))
+		result.append({
+			"kind": kind,
+			"asset_key": "%s_%s" % [kind, direction],
+			"run_index": int(run.get("index", 0)),
+			"arc_distance_px": distance,
+			"position_grid": vertex,
+			"position_world": vertex * cell_world_size,
+			"facing": facing,
+			"outward_normal": current.get("outward_normal", Vector2.ZERO),
+			"corner_vertex_grid": vertex,
+		})
+	return result
+
+
+static func _classify_vertex(vertex: Vector2, floor_cells: Dictionary) -> Dictionary:
+	var origin := Vector2i(roundi(vertex.x), roundi(vertex.y))
+	var quadrants := {
+		"nw": origin + Vector2i(-1, -1),
+		"ne": origin + Vector2i(0, -1),
+		"sw": origin + Vector2i(-1, 0),
+		"se": origin,
+	}
+	var occupied: Array[String] = []
+	var empty: Array[String] = []
+	for direction in ["ne", "nw", "se", "sw"]:
+		if floor_cells.has(quadrants[direction]):
+			occupied.append(direction)
+		else:
+			empty.append(direction)
+	if occupied.size() == 1:
+		return {"kind": "outer_corner", "direction": occupied[0]}
+	if occupied.size() == 3:
+		return {"kind": "inner_corner", "direction": empty[0]}
+	return {}
+
+
+static func _inside_corner_exclusion(
+	distance: float,
+	corners: Array[float],
+	length: float,
+	closed: bool,
+	exclusion: float
+) -> bool:
+	for corner_distance in corners:
+		var delta := absf(distance - corner_distance)
+		if closed:
+			delta = minf(delta, maxf(0.0, length - delta))
+		if delta < exclusion - 0.001:
+			return true
+	return false
+
+
+static func _select_straight_asset(
+	seed: int,
+	run_index: int,
+	sample_index: int,
+	facing: String,
+	recent: Array[String],
+	since_canonical: int
+) -> String:
+	var canonical := "edge_%s" % facing
+	if since_canonical >= 3:
+		return canonical
+	var hash := absi(seed * 83492791 ^ run_index * 73856093 ^ sample_index * 19349663)
+	var roll := hash % 100
+	var selected := canonical
+	if roll >= 45 and roll < 75:
+		selected = "face_slice_01"
+	elif roll >= 75 and roll < 90:
+		selected = "face_slice_wet_01"
+	elif roll >= 90:
+		selected = "face_slice_mossy_01"
+	if recent.size() >= 2 and recent[-1] == selected and recent[-2] == selected:
+		return canonical
+	return selected
 
 
 static func _sample_run(
@@ -734,7 +864,14 @@ static func _normalized_cliffs(values: Variant) -> Array:
 	var result := []
 	for value_variant in values as Array:
 		var value := value_variant as Dictionary
-		result.append([value["position_grid"], value["facing"], value["arc_distance_px"]])
+		result.append([
+			value["kind"],
+			value["asset_key"],
+			value["position_grid"],
+			value["facing"],
+			value["arc_distance_px"],
+			value.get("corner_vertex_grid"),
+		])
 	return result
 
 

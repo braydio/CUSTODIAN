@@ -1,10 +1,18 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://tools/visual_labs/sundered_keep_shoreline_lab.gd" id="1_lab"]
 [ext_resource type="TileSet" path="res://content/tiles/tilesets/procgen_world_tileset.tres" id="2_tileset"]
+[ext_resource type="PackedScene" path="res://game/world/vistas/sundered_keep/sundered_keep_vista_art_bundle.tscn" id="3_vista_bundle"]
 
 [node name="SunderedKeepShorelineLab" type="Node2D"]
 script = ExtResource("1_lab")
+
+[node name="ProductionContextRoot" type="Node2D" parent="."]
+visible = false
+z_index = -100
+z_as_relative = false
+
+[node name="VistaArtBundle" parent="ProductionContextRoot" instance=ExtResource("3_vista_bundle")]
 
 [node name="PreviewRoot" type="Node2D" parent="."]
 position = Vector2(640, 360)

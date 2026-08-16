@@ -7,6 +7,9 @@ const LAB_SCENE := preload(
 	"res://tools/visual_labs/sundered_keep_shoreline_lab.tscn"
 )
 const PROCGEN_SCENE := preload("res://game/world/procgen/proc_gen_map.tscn")
+const CLIFF_CATALOG := preload(
+	"res://game/world/procgen/terrain/sundered_keep_cliff_asset_catalog.gd"
+)
 const FIXTURE_PATHS := [
 	"res://tools/visual_labs/fixtures/sundered_keep_shorelines/seed_001.json",
 	"res://tools/visual_labs/fixtures/sundered_keep_shorelines/seed_017.json",
@@ -23,6 +26,7 @@ func _init() -> void:
 
 
 func _run() -> void:
+	_assert_catalog_contract()
 	var production := PROCGEN_SCENE.instantiate() as Node2D
 	var lab := LAB_SCENE.instantiate() as Node2D
 	root.add_child(lab)
@@ -77,6 +81,7 @@ func _run() -> void:
 			preset,
 			lab_world_cell_size
 		)
+	await _assert_vocabulary_and_context(lab)
 	for fixture_path in FIXTURE_PATHS:
 		var file := FileAccess.open(fixture_path, FileAccess.READ)
 		_assert(file != null, "missing production shoreline fixture %s" % fixture_path)
@@ -153,16 +158,22 @@ func _run() -> void:
 		17,
 		lab.call("get_floor_cells") as Dictionary,
 		lab.call("get_ocean_cells") as Dictionary,
-		{"fixture": true}
+		{"fixture": true},
+		{"gate_threshold": [4, 5]}
 	)
 	var fixture := COMPOSITOR.fixture_from_json(fixture_text)
 	_assert(int(fixture.get("seed", -1)) == 17, "fixture seed did not round-trip")
 	_assert((fixture.get("floor_cells", {}) as Dictionary).size() == (lab.call("get_floor_cells") as Dictionary).size(), "fixture floor cells did not round-trip")
 	_assert((fixture.get("ocean_cells", {}) as Dictionary).size() == (lab.call("get_ocean_cells") as Dictionary).size(), "fixture ocean cells did not round-trip")
+	var roundtrip_gate := (fixture.get("vista_context", {}) as Dictionary).get("gate_threshold", []) as Array
+	_assert(roundtrip_gate.size() == 2 and int(roundtrip_gate[0]) == 4 and int(roundtrip_gate[1]) == 5, "fixture vista context did not round-trip")
 
 	var presentation := lab.get_node("PreviewRoot/CliffPresentation") as Node2D
 	for descendant in _all_descendants(presentation):
 		_assert(not (descendant is CollisionObject2D or descendant is CollisionShape2D or descendant is NavigationRegion2D), "lab compositor introduced gameplay authority")
+	var context_root := lab.get_node("ProductionContextRoot") as Node2D
+	for descendant in _all_descendants(context_root):
+		_assert(not (descendant is CollisionObject2D or descendant is CollisionShape2D or descendant is NavigationRegion2D or descendant is NavigationObstacle2D), "lab context introduced gameplay authority")
 
 	lab.queue_free()
 	production.free()
@@ -170,7 +181,7 @@ func _run() -> void:
 	if _errors.is_empty():
 		print(
 			"[SunderedKeepShorelineCompositorSmoke] PASS "
-			+ "presets=8 production_cell=%.2f lab_cell=%.2f " % [
+			+ "presets=8 vocabulary=15 production_cell=%.2f lab_cell=%.2f " % [
 				production_world_cell_size,
 				lab_world_cell_size,
 			]
@@ -226,6 +237,8 @@ func _assert_plan_contract(
 	for cliff_variant in cliffs:
 		var cliff := cliff_variant as Dictionary
 		_assert(String(cliff["facing"]) in ["n", "e", "s", "w"], "cliff facing is not cardinal")
+		_assert(String(cliff.get("kind", "")) in ["edge", "face_slice", "inner_corner", "outer_corner"], "cliff kind is invalid")
+		_assert(not String(cliff.get("asset_key", "")).is_empty(), "cliff asset key is missing")
 	for foam_variant in foam:
 		var foam_entry := foam_variant as Dictionary
 		_assert(ocean_cells.has(foam_entry["cell"]), "foam escaped authoritative ocean")
@@ -251,6 +264,103 @@ func _plan_options(cell_world_size: float) -> Dictionary:
 		"shore_band_width_cells": 2,
 		"cliff_modulate": Color(0.72, 0.77, 0.84, 0.96),
 	}
+
+
+func _assert_catalog_contract() -> void:
+	var specs := CLIFF_CATALOG.all_specs()
+	_assert(specs.size() == 15, "cliff catalog must expose exactly the existing 15-piece vocabulary")
+	var counts := {"edge": 0, "face_slice": 0, "inner_corner": 0, "outer_corner": 0}
+	for key in CLIFF_CATALOG.KEYS:
+		var spec := specs.get(key, {}) as Dictionary
+		_assert(not spec.is_empty(), "missing catalog spec %s" % key)
+		_assert(spec.get("texture") is Texture2D, "catalog texture failed to load: %s" % key)
+		_assert((spec.get("canvas_px", Vector2.ZERO) as Vector2).is_equal_approx(Vector2(64, 96)), "catalog canvas drifted: %s" % key)
+		_assert((spec.get("pivot_px", Vector2.ZERO) as Vector2).is_equal_approx(Vector2(32, 94)), "catalog pivot drifted: %s" % key)
+		var kind := String(spec.get("kind", ""))
+		counts[kind] = int(counts.get(kind, 0)) + 1
+	_assert(counts == {"edge": 4, "face_slice": 3, "inner_corner": 4, "outer_corner": 4}, "catalog kind counts mismatch: %s" % counts)
+
+
+func _assert_vocabulary_and_context(lab: Node2D) -> void:
+	lab.set("shape_preset", 9)
+	lab.set("seed", 17)
+	await process_frame
+	await process_frame
+	var plan := lab.call("get_shoreline_plan") as Dictionary
+	var corners := {"inner_corner": {}, "outer_corner": {}}
+	var slices: Dictionary = {}
+	for cliff_variant in plan.get("cliffs", []):
+		var cliff := cliff_variant as Dictionary
+		var kind := String(cliff.get("kind", ""))
+		var key := String(cliff.get("asset_key", ""))
+		if kind in corners:
+			(corners[kind] as Dictionary)[key.get_slice("_", 2)] = true
+		if kind == "face_slice":
+			slices[key] = true
+			_assert(String(cliff.get("facing", "")) in ["n", "s"], "face slice appeared on E/W run")
+	for kind in corners:
+		_assert((corners[kind] as Dictionary).size() == 4, "%s did not exercise all orientations: %s" % [kind, corners[kind]])
+	for seed_value in range(1, 65):
+		var varied := COMPOSITOR.build_plan(
+			lab.call("get_floor_cells") as Dictionary,
+			lab.call("get_ocean_cells") as Dictionary,
+			seed_value,
+			_plan_options(float((lab.call("get_render_context") as Dictionary).get("world_cell_size", 32.0)))
+		)
+		for cliff_variant in varied.get("cliffs", []):
+			var cliff := cliff_variant as Dictionary
+			if String(cliff.get("kind", "")) == "face_slice":
+				slices[String(cliff.get("asset_key", ""))] = true
+	_assert(slices.size() == 3, "deterministic seed range did not exercise all face slices: %s" % slices)
+	var length_by_run: Dictionary = {}
+	for run_variant in plan.get("runs", []):
+		var run := run_variant as Dictionary
+		length_by_run[int(run.get("index", 0))] = float(run.get("length_px", 0.0))
+	for corner_variant in plan.get("cliffs", []):
+		var corner := corner_variant as Dictionary
+		if not String(corner.get("kind", "")).ends_with("corner"):
+			continue
+		for sample_variant in plan.get("cliffs", []):
+			var sample := sample_variant as Dictionary
+			if String(sample.get("kind", "")) in ["inner_corner", "outer_corner"] \
+					or int(sample.get("run_index", -1)) != int(corner.get("run_index", -2)):
+				continue
+			var delta := absf(float(sample["arc_distance_px"]) - float(corner["arc_distance_px"]))
+			var run_length := float(length_by_run.get(int(corner["run_index"]), 0.0))
+			delta = minf(delta, maxf(0.0, run_length - delta))
+			_assert(delta >= 24.0 - 0.01, "straight sample entered corner exclusion: %s vs %s" % [corner, sample])
+	var fingerprint_before := COMPOSITOR.plan_fingerprint(plan)
+	var positions_before := _cliff_global_positions(lab)
+	lab.set("production_context_mode", 1)
+	await process_frame
+	await process_frame
+	_assert(COMPOSITOR.plan_fingerprint(lab.call("get_shoreline_plan")) == fingerprint_before, "context changed shoreline fingerprint")
+	_assert(_cliff_global_positions(lab) == positions_before, "context moved cliff presentation")
+	var floor_cells := lab.call("get_floor_cells") as Dictionary
+	var ocean_cells := lab.call("get_ocean_cells") as Dictionary
+	var floor_sample := floor_cells.keys()[0] as Vector2i
+	var ocean_sample := ocean_cells.keys()[0] as Vector2i
+	_assert(is_zero_approx(float(lab.call("get_ocean_mask_alpha", floor_sample))), "storm mask leaked onto floor")
+	_assert(is_equal_approx(float(lab.call("get_ocean_mask_alpha", ocean_sample)), 1.0), "storm mask omitted ocean")
+	_assert(lab.get_node_or_null("ProductionContextRoot/VistaArtBundle") != null, "lab does not instance shared vista bundle")
+	lab.set("production_fixture_path", FIXTURE_PATHS[0])
+	lab.set("shape_preset", 8)
+	lab.set("production_context_mode", 2)
+	await process_frame
+	await process_frame
+	var full_context := lab.call("get_render_context") as Dictionary
+	_assert(String(full_context.get("context_warning", "")).is_empty(), "production fixture did not enable authoritative Full Vista")
+	_assert((lab.get_node("ProductionContextRoot/VistaArtBundle/ExteriorVistaClip/FortressPresentation") as Node2D).visible, "Full Vista did not expose shared Keep context")
+	lab.set("production_context_mode", 0)
+
+
+func _cliff_global_positions(lab: Node2D) -> Array[Vector2]:
+	var result: Array[Vector2] = []
+	var root_node := lab.get_node("PreviewRoot/CliffPresentation") as Node2D
+	for child in root_node.get_children():
+		if child is Sprite2D:
+			result.append((child as Sprite2D).global_position)
+	return result
 
 
 func _resolve_world_cell_size(tilemap: TileMapLayer) -> float:

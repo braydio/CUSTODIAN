@@ -42530,5 +42530,27 @@
 		]
 	],
 	"schema": "custodian.sundered_keep.shoreline_fixture.v1",
-	"seed": 17
+	"seed": 17,
+	"vista_context": {
+		"foreground_lip_anchor": [
+			127,
+			34
+		],
+		"fortress_anchor": [
+			134,
+			9
+		],
+		"gate_threshold": [
+			134,
+			17
+		],
+		"ruins_anchor": [
+			117,
+			42
+		],
+		"vista_focus": [
+			126.520004272461,
+			23.5200004577637
+		]
+	}
 }

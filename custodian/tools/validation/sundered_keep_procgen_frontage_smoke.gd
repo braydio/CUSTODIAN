@@ -387,13 +387,14 @@ func _assert_integrated_procgen_result() -> void:
 				glue_ribbon_count += 1
 				_assert(cliff is Line2D and not (cliff as Line2D).antialiased, "cliff glue ribbon is not a pixel-stable Line2D")
 				continue
-			if not String(cliff.name).begins_with("CliffEdge_"):
+			if not String(cliff.name).begins_with("Cliff_"):
 				continue
 			macro_cliff_count += 1
 			_assert((cliff as CanvasItem).modulate.is_equal_approx(Color(0.72, 0.77, 0.84, 0.96)), "macro cliff baseline modulation mismatch")
 			_assert((cliff as CanvasItem).z_index > 0, "macro cliff is not layered above surf")
 			_assert(String(cliff.get_meta("facing", "")) in ["n", "e", "s", "w"], "cliff lacks cardinal compositor facing")
 			_assert(float(cliff.get_meta("arc_distance_px", -1.0)) >= 0.0, "cliff lacks shoreline arc-distance placement")
+			_assert(String(cliff.get_meta("kind", "")) in ["edge", "face_slice", "inner_corner", "outer_corner"], "cliff lacks compositor kind metadata")
 	_assert(ocean_overlay != null and is_equal_approx(ocean_overlay.self_modulate.a, 0.22), "integrated shore foam is not subordinate to the cliff coastline")
 	_assert(coastline != null and is_equal_approx(float(coastline.get_meta("macro_cliff_stride", 0.0)), 1.0), "clean cliff runs are not composed at every frontier step")
 	_assert(glue_ribbon_count > 0, "continuous cliff glue ribbon was not built")

@@ -1,23 +1,7 @@
-[gd_scene format=3 uid="uid://dc5ygwps5ag5t"]
+[gd_scene load_steps=3 format=3 uid="uid://dc5ygwps5ag5t"]
 
 [ext_resource type="Script" uid="uid://25ih6rdbqfhc" path="res://game/world/vistas/sundered_keep/sundered_keep_procgen_vista_presentation.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://cjb1elrrj8x2y" path="res://content/backgrounds/sundered_keep/approach/underlay/first_vista_base_storm_horizon.png" id="2_storm"]
-[ext_resource type="Shader" uid="uid://bdx2rgcp3e2hb" path="res://game/world/vistas/sundered_keep/sundered_keep_ocean_underlay_mask.gdshader" id="3_ocean_mask"]
-[ext_resource type="Texture2D" uid="uid://q02fsxfbtjwf" path="res://content/backgrounds/sundered_keep/approach/fog/first_vista_reveal_veil.png" id="4_fog"]
-[ext_resource type="Texture2D" uid="uid://dhqh17wdi37hm" path="res://content/backgrounds/sundered_keep/grand_vista/fortress_components/distant_fortress_central_citadel_01.png" id="6_citadel"]
-[ext_resource type="Texture2D" uid="uid://bti45xnfj2364" path="res://content/backgrounds/sundered_keep/grand_vista/fortress_components/distant_fortress_outer_wall_01.png" id="7_wall"]
-[ext_resource type="Texture2D" uid="uid://dd74lx6catyrg" path="res://content/backgrounds/sundered_keep/grand_vista/atmosphere/grand_vista_horizon_seam_fog.png" id="8_frontage_fog"]
-[ext_resource type="Texture2D" uid="uid://c8cv4x5gf1jlo" path="res://content/backgrounds/sundered_keep/approach/light/first_vista_moonlight_sweep_01__6f__1024x512.png" id="10_moonlight"]
-[ext_resource type="Texture2D" uid="uid://cc7vif4fkkyos" path="res://content/backgrounds/sundered_keep/grand_vista/fortress_components/broken_arch_walkway_01.png" id="11_broken_arch"]
-[ext_resource type="Texture2D" uid="uid://ck5f02ags3ufb" path="res://content/backgrounds/sundered_keep/grand_vista/fortress_components/raised_causeway_02.png" id="12_causeway"]
-[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/world_vista/sundered_keep_world_vista_cliff_lip.png" id="13_cliff_lip"]
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_ocean_mask"]
-shader = ExtResource("3_ocean_mask")
-shader_parameter/mask_world_origin = Vector2(0, 0)
-shader_parameter/mask_world_size = Vector2(0, 0)
-shader_parameter/mask_grid_size = Vector2(0, 0)
-shader_parameter/mask_enabled = false
+[ext_resource type="PackedScene" path="res://game/world/vistas/sundered_keep/sundered_keep_vista_art_bundle.tscn" id="2_bundle"]
 
 [node name="SunderedKeepProcgenFrontagePresentation" type="Node2D" unique_id=129696644]
 script = ExtResource("1_script")
@@ -26,98 +10,7 @@ script = ExtResource("1_script")
 z_index = -100
 z_as_relative = false
 
-[node name="ExteriorVistaClip" type="Polygon2D" parent="VistaPresentationRoot" unique_id=1186519249]
-clip_children = 1
-polygon = PackedVector2Array(-4096, -4096, 4096, -4096, 4096, -1, -4096, -1)
-
-[node name="HorizonPresentation" type="Node2D" parent="VistaPresentationRoot/ExteriorVistaClip" unique_id=426527873]
-
-[node name="VoidUnderlay" type="Polygon2D" parent="VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation" unique_id=2089089191]
-color = Color(0.025, 0.039, 0.052, 0)
-polygon = PackedVector2Array(-4096, -4096, 4096, -4096, 4096, 4096, -4096, 4096)
-
-[node name="StormHorizon" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation" unique_id=1025828558]
-z_index = 10
-texture_filter = 1
-material = SubResource("ShaderMaterial_ocean_mask")
-position = Vector2(302.9999, -10)
-scale = Vector2(1.2299999, 1)
-texture = ExtResource("2_storm")
-
-[node name="OceanRuinsPresentation" type="Node2D" parent="VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation" unique_id=857477374]
-z_index = 22
-
-[node name="BrokenArchWalkway" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/OceanRuinsPresentation" unique_id=128493547]
-modulate = Color(0.48, 0.58, 0.7, 0.84)
-texture_filter = 1
-position = Vector2(-160, -20)
-scale = Vector2(0.33, 0.33)
-texture = ExtResource("11_broken_arch")
-
-[node name="DrownedCauseway" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/OceanRuinsPresentation" unique_id=1777123341]
-modulate = Color(0.38, 0.48, 0.6, 0.56)
-texture_filter = 1
-z_index = -1
-position = Vector2(135, 62)
-scale = Vector2(0.285, 0.285)
-texture = ExtResource("12_causeway")
-
-[node name="RuinsMist" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/OceanRuinsPresentation" unique_id=1918310898]
-modulate = Color(0.62, 0.7, 0.79, 0.16)
-z_index = 2
-texture_filter = 1
-position = Vector2(0, 82)
-scale = Vector2(0.34, 0.14)
-texture = ExtResource("8_frontage_fog")
-
-[node name="RevealFog" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation" unique_id=949326141]
-visible = false
-z_index = 30
-texture_filter = 1
-position = Vector2(0, -40)
-texture = ExtResource("4_fog")
-
-[node name="FortressPresentation" type="Node2D" parent="VistaPresentationRoot/ExteriorVistaClip" unique_id=386873017]
-
-[node name="OuterWall" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/FortressPresentation" unique_id=591507919]
-modulate = Color(0.4, 0.48, 0.58, 1)
-z_index = 14
-texture_filter = 1
-position = Vector2(-170, 30)
-scale = Vector2(0.22, 0.22)
-texture = ExtResource("7_wall")
-
-[node name="CentralCitadel" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/FortressPresentation" unique_id=462135778]
-modulate = Color(0.44, 0.51, 0.61, 1)
-z_index = 15
-texture_filter = 1
-position = Vector2(145, -80)
-scale = Vector2(0.205, 0.205)
-texture = ExtResource("6_citadel")
-
-[node name="FrontageFog" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/FortressPresentation" unique_id=1605089818]
-z_index = 16
-texture_filter = 1
-position = Vector2(0, 90)
-scale = Vector2(0.38, 0.16)
-texture = ExtResource("8_frontage_fog")
-
-[node name="MoonlightSweep" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip/FortressPresentation" unique_id=1828262188]
-visible = false
-modulate = Color(1, 1, 1, 0.32)
-z_index = 28
-texture_filter = 1
-position = Vector2(0, -180)
-texture = ExtResource("10_moonlight")
-region_enabled = true
-region_rect = Rect2(0, 0, 1024, 512)
-
-[node name="ForegroundVistaCliffLip" type="Sprite2D" parent="VistaPresentationRoot/ExteriorVistaClip"]
-modulate = Color(1, 1, 1, 0)
-z_index = 26
-texture_filter = 1
-scale = Vector2(1, 0.8)
-texture = ExtResource("13_cliff_lip")
+[node name="VistaArtBundle" parent="VistaPresentationRoot" instance=ExtResource("2_bundle")]
 
 [node name="CameraPresentationAnchor" type="Marker2D" parent="." unique_id=196804580]
 

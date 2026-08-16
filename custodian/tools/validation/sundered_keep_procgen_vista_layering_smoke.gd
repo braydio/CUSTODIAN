@@ -41,13 +41,15 @@ func _run() -> void:
 	_assert(not frontage.is_empty(), "generated level data must retain sundered_keep_frontage")
 	_assert((frontage.get("floor_cells", {}) as Dictionary).has(Vector2i(74, 14)), "frontage gate floor must be generated walkable authority")
 	var vista_root := presentation.get_node_or_null("VistaPresentationRoot") as Node2D
-	var clip := presentation.get_node_or_null("VistaPresentationRoot/ExteriorVistaClip") as Polygon2D
-	var wall := presentation.get_node_or_null("VistaPresentationRoot/ExteriorVistaClip/FortressPresentation/OuterWall") as Sprite2D
-	var citadel := presentation.get_node_or_null("VistaPresentationRoot/ExteriorVistaClip/FortressPresentation/CentralCitadel") as Sprite2D
-	var foreground_lip := presentation.get_node_or_null("VistaPresentationRoot/ExteriorVistaClip/ForegroundVistaCliffLip") as Sprite2D
+	var bundle := presentation.get_node_or_null("VistaPresentationRoot/VistaArtBundle") as Node2D
+	var clip := presentation.get_node_or_null("VistaPresentationRoot/VistaArtBundle/ExteriorVistaClip") as Polygon2D
+	var wall := presentation.get_node_or_null("VistaPresentationRoot/VistaArtBundle/ExteriorVistaClip/FortressPresentation/OuterWall") as Sprite2D
+	var citadel := presentation.get_node_or_null("VistaPresentationRoot/VistaArtBundle/ExteriorVistaClip/FortressPresentation/CentralCitadel") as Sprite2D
+	var foreground_lip := presentation.get_node_or_null("VistaPresentationRoot/VistaArtBundle/ExteriorVistaClip/ForegroundVistaCliffLip") as Sprite2D
+	_assert(bundle != null and bundle.scene_file_path.ends_with("sundered_keep_vista_art_bundle.tscn"), "production does not instance shared vista art bundle")
 	_assert(vista_root != null and vista_root.z_index < 0 and not vista_root.z_as_relative, "vista root must use absolute depth behind gameplay")
 	_assert(clip != null and clip.clip_children == CanvasItem.CLIP_CHILDREN_ONLY, "vista must use its exterior-facing clip")
-	_assert(presentation.get_node_or_null("VistaPresentationRoot/ExteriorVistaClip/GateShadow") == null, "procgen vista must not restore the route-owned gate-shadow handoff")
+	_assert(presentation.get_node_or_null("VistaPresentationRoot/VistaArtBundle/ExteriorVistaClip/GateShadow") == null, "procgen vista must not restore the route-owned gate-shadow handoff")
 	_assert(wall != null and wall.scale.is_equal_approx(Vector2(0.22, 0.22)), "outer wall baseline scale mismatch")
 	_assert(citadel != null and citadel.scale.is_equal_approx(Vector2(0.205, 0.205)), "central citadel baseline scale mismatch")
 	_assert(foreground_lip != null and foreground_lip.texture != null and foreground_lip.z_index == 26, "historical cliff lip is not a presentation-only foreground plane")
@@ -61,11 +63,11 @@ func _run() -> void:
 	_assert(ingress.visible, "ingress presentation must restore after vista camera release")
 	presentation.set("_camera_state", {"route_s_cells": 36.0})
 	presentation.call("_apply_visual_state", 36.0)
-	var landmark := presentation.get_node_or_null("VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/DistantKeep")
-	var ruins := presentation.get_node_or_null("VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/OceanRuinsPresentation") as Node2D
-	var arch := presentation.get_node_or_null("VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/OceanRuinsPresentation/BrokenArchWalkway") as Sprite2D
-	var storm := presentation.get_node_or_null("VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/StormHorizon") as Sprite2D
-	var reveal_fog := presentation.get_node_or_null("VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/RevealFog") as Sprite2D
+	var landmark := presentation.get_node_or_null("VistaPresentationRoot/VistaArtBundle/ExteriorVistaClip/HorizonPresentation/DistantKeep")
+	var ruins := presentation.get_node_or_null("VistaPresentationRoot/VistaArtBundle/ExteriorVistaClip/HorizonPresentation/OceanRuinsPresentation") as Node2D
+	var arch := presentation.get_node_or_null("VistaPresentationRoot/VistaArtBundle/ExteriorVistaClip/HorizonPresentation/OceanRuinsPresentation/BrokenArchWalkway") as Sprite2D
+	var storm := presentation.get_node_or_null("VistaPresentationRoot/VistaArtBundle/ExteriorVistaClip/HorizonPresentation/StormHorizon") as Sprite2D
+	var reveal_fog := presentation.get_node_or_null("VistaPresentationRoot/VistaArtBundle/ExteriorVistaClip/HorizonPresentation/RevealFog") as Sprite2D
 	_assert(landmark == null, "procgen DistantKeep must be retired")
 	_assert(ruins != null and arch != null and arch.texture != null, "offshore ruins composition must resolve")
 	_assert(storm != null and storm.material is ShaderMaterial, "StormHorizon must own ocean mask material")
@@ -78,7 +80,7 @@ func _run() -> void:
 	_assert(foreground_lip != null and is_equal_approx(foreground_lip.modulate.a, 0.38), "foreground lip S16 alpha mismatch")
 	presentation.call("_apply_visual_state", 44.0)
 	_assert(is_equal_approx(ruins.modulate.a, 0.10), "ruins S44 alpha mismatch")
-	_assert(is_equal_approx((presentation.get_node("VistaPresentationRoot/ExteriorVistaClip/FortressPresentation") as Node2D).modulate.a, 0.14), "Keep S44 alpha mismatch")
+	_assert(is_equal_approx((presentation.get_node("VistaPresentationRoot/VistaArtBundle/ExteriorVistaClip/FortressPresentation") as Node2D).modulate.a, 0.14), "Keep S44 alpha mismatch")
 	presentation.call("_apply_visual_state", 52.0)
 	_assert(is_equal_approx(ruins.modulate.a, 0.04), "ruins S52 alpha mismatch")
 	for node in _all_descendants(presentation):

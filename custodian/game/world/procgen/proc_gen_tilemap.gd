@@ -5393,10 +5393,45 @@ func debug_save_sundered_keep_shoreline_fixture(output_path: String) -> Error:
 				_sundered_keep_frontage.get("floor_cells", {}) as Dictionary
 			),
 			"ocean_rect": _cell_dictionary_bounds(_ocean_cells),
-		}
+		},
+		_sundered_keep_fixture_vista_context()
 	))
 	file.close()
 	return OK
+
+
+func _sundered_keep_fixture_vista_context() -> Dictionary:
+	var semantic := _sundered_keep_frontage.get("camera_semantic_anchors", {}) as Dictionary
+	var visual := _sundered_keep_frontage.get("visual_module_anchors", {}) as Dictionary
+	var gate: Vector2i = semantic.get("gate_threshold", Vector2i.ZERO)
+	var fortress: Vector2i = visual.get("fortress_front_anchor", gate + Vector2i.UP * 8)
+	var apex: Vector2i = semantic.get("vista_apex", gate + Vector2i.DOWN * 16)
+	var ruins := _fixture_ocean_ruins_anchor(apex)
+	var focus := Vector2(ruins).lerp(Vector2(fortress), 0.56)
+	var lip := Vector2i(roundi(focus.x), roundi(focus.y + 10.0))
+	return {
+		"gate_threshold": [gate.x, gate.y],
+		"fortress_anchor": [fortress.x, fortress.y],
+		"ruins_anchor": [ruins.x, ruins.y],
+		"vista_focus": [focus.x, focus.y],
+		"foreground_lip_anchor": [lip.x, lip.y],
+	}
+
+
+func _fixture_ocean_ruins_anchor(apex: Vector2i) -> Vector2i:
+	var target := apex + Vector2i.UP * 9 - Vector2i.RIGHT * 10
+	var best := target
+	var best_score := INF
+	for cell_variant in _ocean_cells.keys():
+		var cell := cell_variant as Vector2i
+		if _generated_floor_cells.has(cell):
+			continue
+		var score := cell.distance_squared_to(target)
+		var stable_before := cell.y < best.y or (cell.y == best.y and cell.x < best.x)
+		if score < best_score or (is_equal_approx(score, best_score) and stable_before):
+			best = cell
+			best_score = score
+	return best
 
 
 func _cell_dictionary_bounds(cells: Dictionary) -> Dictionary:

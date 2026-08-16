@@ -149,11 +149,19 @@ Documentation updates this session:
   terminal-apron selection. `SunderedKeepShorelineCompositor` now owns one
   ordered, directed floor/ocean boundary plan shared by production ProcGen and
   the permanent `@tool` shoreline lab. Foam is a 22%-alpha fringe derived from
-  that plan. Existing 64x96 cardinal cliffs are sampled every 32 world pixels
-  of shoreline arc, bend samples overlap, and a non-antialiased 40px dark glue
-  ribbon prevents transparent gaps from exposing ocean. The lab supplies eight
-  synthetic shapes plus compact production fixtures for seeds 1, 17, and 71,
-  live Inspector rebuilding, false color, fixture save, and PNG capture without
+  that plan. Its presentation-only catalog now uses the existing four cardinal
+  edges, three horizontal face slices, four inner corners, and four outer
+  corners. Occupancy around each boundary vertex determines corner kind and
+  orientation; corner entries suppress adjacent straight samples within 75% of
+  spacing, while deterministic `45/30/15/10` edge/base/wet/mossy selection
+  reduces repetition on N/S-facing runs. A non-antialiased 40px dark glue
+  ribbon still prevents transparent gaps from exposing ocean. The lab derives
+  cell distance from its live transformed grid, supplies controlled vocabulary
+  and synthetic shapes plus production fixtures for seeds 1, 17, and 71, and
+  can instance the same passive vista-art bundle used by production. Its storm
+  mode uses the shared authoritative ocean-cell mask; optional context changes
+  perception only and never the shoreline plan. Live Inspector rebuilding,
+  false color, topology diagnostics, fixture save, and PNG capture work without
   booting the game. The historical World
   Vista cliff lip is
   reused only as a low-alpha `S0-S36` cinematic foreground plane; scenery fades

@@ -6,6 +6,9 @@ const CAMERA_DIRECTOR := preload(
 	+ "sundered_keep_frontage_camera_director.gd"
 )
 const VISTA_CONTRACT := preload("res://game/world/procgen/landmarks/sundered_keep/sundered_keep_vista_contract.gd")
+const OCEAN_MASK_BUILDER := preload(
+	"res://game/world/vistas/sundered_keep/sundered_keep_ocean_mask_builder.gd"
+)
 
 const VIEWPORT_SAFETY_MARGIN := Vector2(256.0, 224.0)
 const VISTA_HORIZONTAL_MARGIN := 320.0
@@ -19,31 +22,31 @@ const OPERATOR_SAFE_FRAME := Vector4(0.04, 0.06, 0.04, 0.08)
 
 @onready var _vista_root := $VistaPresentationRoot as Node2D
 @onready var _exterior_clip := (
-	$VistaPresentationRoot/ExteriorVistaClip as Polygon2D
+	$VistaPresentationRoot/VistaArtBundle/ExteriorVistaClip as Polygon2D
 )
 @onready var _horizon := (
-	$VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation as Node2D
+	$VistaPresentationRoot/VistaArtBundle/ExteriorVistaClip/HorizonPresentation as Node2D
 )
 @onready var _storm := (
-	$VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/StormHorizon as Sprite2D
+	$VistaPresentationRoot/VistaArtBundle/ExteriorVistaClip/HorizonPresentation/StormHorizon as Sprite2D
 )
 @onready var _ocean_ruins := (
-	$VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/OceanRuinsPresentation as Node2D
+	$VistaPresentationRoot/VistaArtBundle/ExteriorVistaClip/HorizonPresentation/OceanRuinsPresentation as Node2D
 )
 @onready var _reveal_fog := (
-	$VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/RevealFog as Sprite2D
+	$VistaPresentationRoot/VistaArtBundle/ExteriorVistaClip/HorizonPresentation/RevealFog as Sprite2D
 )
 @onready var _fortress := (
-	$VistaPresentationRoot/ExteriorVistaClip/FortressPresentation as Node2D
+	$VistaPresentationRoot/VistaArtBundle/ExteriorVistaClip/FortressPresentation as Node2D
 )
 @onready var _frontage_fog := (
-	$VistaPresentationRoot/ExteriorVistaClip/FortressPresentation/FrontageFog as Sprite2D
+	$VistaPresentationRoot/VistaArtBundle/ExteriorVistaClip/FortressPresentation/FrontageFog as Sprite2D
 )
 @onready var _moonlight_sweep := (
-	$VistaPresentationRoot/ExteriorVistaClip/FortressPresentation/MoonlightSweep as Sprite2D
+	$VistaPresentationRoot/VistaArtBundle/ExteriorVistaClip/FortressPresentation/MoonlightSweep as Sprite2D
 )
 @onready var _foreground_cliff_lip := (
-	$VistaPresentationRoot/ExteriorVistaClip/ForegroundVistaCliffLip as Sprite2D
+	$VistaPresentationRoot/VistaArtBundle/ExteriorVistaClip/ForegroundVistaCliffLip as Sprite2D
 )
 @onready var _presentation_anchor := (
 	$CameraPresentationAnchor as Marker2D
@@ -510,24 +513,17 @@ func _configure_ocean_underlay_mask() -> void:
 	if map_size.x <= 0 or map_size.y <= 0 or ocean_cells.is_empty():
 		_set_ocean_mask_enabled(false)
 		return
-	_ocean_mask_image = Image.create(map_size.x, map_size.y, false, Image.FORMAT_RGBA8)
-	_ocean_mask_image.fill(Color.TRANSPARENT)
-	for cell_variant in ocean_cells.keys():
-		if not cell_variant is Vector2i:
-			continue
-		var cell := cell_variant as Vector2i
-		if cell.x >= 0 and cell.y >= 0 and cell.x < map_size.x and cell.y < map_size.y:
-			_ocean_mask_image.set_pixel(cell.x, cell.y, Color.WHITE)
-	_ocean_mask_texture = ImageTexture.create_from_image(_ocean_mask_image)
-	var material := _storm.material as ShaderMaterial
-	if material == null:
-		return
 	var tile_size := _runtime_tile_size()
-	material.set_shader_parameter("ocean_mask", _ocean_mask_texture)
-	material.set_shader_parameter("mask_world_origin", _tile_to_world(Vector2i.ZERO) - tile_size * 0.5)
-	material.set_shader_parameter("mask_world_size", Vector2(map_size) * tile_size)
-	material.set_shader_parameter("mask_grid_size", Vector2(map_size))
-	material.set_shader_parameter("mask_enabled", true)
+	var mask := OCEAN_MASK_BUILDER.build(
+		_floor_cell_dictionary(),
+		ocean_cells,
+		map_size,
+		_tile_to_world(Vector2i.ZERO) - tile_size * 0.5,
+		tile_size
+	)
+	_ocean_mask_image = mask.get("image") as Image
+	_ocean_mask_texture = mask.get("texture") as ImageTexture
+	OCEAN_MASK_BUILDER.apply_to_sprite(_storm, mask)
 
 
 func _set_ocean_mask_enabled(enabled: bool) -> void:

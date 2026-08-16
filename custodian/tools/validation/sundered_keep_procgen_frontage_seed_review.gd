@@ -154,8 +154,8 @@ func _capture_seed(seed_value: int) -> void:
 		camera.global_position = focus.global_position if requested_s < 36.0 else operator.global_position
 		camera.zoom = Vector2.ONE * float(state.get("camera_zoom_target", 0.9))
 		state = presentation.call("get_world_vista_debug_state") as Dictionary
-		var ruins := presentation.get_node("VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/OceanRuinsPresentation") as Node2D
-		var keep := presentation.get_node("VistaPresentationRoot/ExteriorVistaClip/FortressPresentation") as Node2D
+		var ruins := presentation.get_node("VistaPresentationRoot/VistaArtBundle/ExteriorVistaClip/HorizonPresentation/OceanRuinsPresentation") as Node2D
+		var keep := presentation.get_node("VistaPresentationRoot/VistaArtBundle/ExteriorVistaClip/FortressPresentation") as Node2D
 		var frame_name := "s%02d" % int(requested_s)
 		outputs[frame_name] = await _save_frame(
 			viewport,
@@ -192,14 +192,14 @@ func _capture_seed(seed_value: int) -> void:
 	if coastline != null and coastline.get_child_count() > 0:
 		var coast_subject: Node2D = null
 		for child in coastline.get_children():
-			if child is Node2D and str(child.name).begins_with("CliffEdge_"):
+			if child is Node2D and str(child.name).begins_with("Cliff_"):
 				coast_subject = child as Node2D
 				break
 		if coast_subject == null:
 			coast_subject = coastline.get_child(0) as Node2D
 		presentation.call("_apply_visual_state", 0.0)
 		var fortress := presentation.get_node_or_null(
-			"VistaPresentationRoot/ExteriorVistaClip/HorizonPresentation/FortressPresentation"
+			"VistaPresentationRoot/VistaArtBundle/ExteriorVistaClip/FortressPresentation"
 		) as CanvasItem
 		if fortress != null:
 			fortress.visible = false
