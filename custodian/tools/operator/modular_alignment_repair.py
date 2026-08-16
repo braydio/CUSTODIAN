@@ -578,6 +578,8 @@ def resolve_aseprite(explicit: Path | None) -> Path:
 
 def launch_editor(aseprite: Path, source: Path, input_fn: Callable[[str], str] = input) -> None:
     started = time.monotonic()
+    print("  partner overlay: File > Scripts > operator_pair_reference")
+    print("      (pastes the paired sheet into a non-exported reference layer)")
     process = subprocess.Popen([str(aseprite), str(source)])
     process.wait()
     if time.monotonic() - started < 2.0:

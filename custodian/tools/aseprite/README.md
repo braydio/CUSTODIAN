@@ -22,3 +22,17 @@ Use source names such as
 `enemy_raider__rig_source__base__s__96.aseprite` and runtime names such as
 `enemy_raider__rig_atlas__base__s__5x4__96.png`. Author south, north, and east;
 west is optional when the Godot skin enables east-to-west mirroring.
+
+## Operator modular alignment reference
+
+`operator_pair_reference.lua` helps the alignment-repair conveyor
+(`tools/operator/modular_alignment_repair.py`). While an editable source sheet
+is open in Aseprite, run `File > Scripts > operator_pair_reference.lua` and the
+script derives the paired sheet from the open filename (swaps
+`lower_body`↔`upper_body`, maps `source/animations/` → `runtime/animations/`),
+opens it, and pastes it into a new `pair_reference` layer.
+
+The pasted layer is a reference layer: visible on canvas for lining up the
+seam, but never exported into the saved PNG, so the partner cannot be baked
+into the editable source. Install by copying into your Aseprite scripts folder
+(`~/.config/aseprite/scripts/`).
