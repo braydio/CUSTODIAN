@@ -115,6 +115,34 @@ opnext() {
   python3 "${CUSTODIAN_GODOT}/tools/operator/operator_next_actions_report.py" "$@"
 }
 
+# -- Interactive Operator V2 alignment repair conveyor (pass --report-only for analysis only)
+oprepair() {
+  _update_usage "oprepair"
+  python3 "${CUSTODIAN_GODOT}/tools/operator/modular_alignment_repair.py" "$@"
+}
+
+# -- Alignment repair analysis only (never launches Aseprite, never writes pixels)
+oprepair-report() {
+  _update_usage "oprepair-report"
+  python3 "${CUSTODIAN_GODOT}/tools/operator/modular_alignment_repair.py" --report-only --no-open "$@"
+}
+
+# -- Run the Operator alignment repair regression smoke suite
+oprepair-smoke() {
+  _update_usage "oprepair-smoke"
+  python3 "${CUSTODIAN_GODOT}/tools/validation/operator_modular_alignment_repair_smoke.py" "$@"
+}
+
+# -- Run CUSTODIAN validation (defaults to --changed --json for the shared-tree ask)
+opvalidate() {
+  _update_usage "opvalidate"
+  if [[ $# -eq 0 ]]; then
+    python3 "${CUSTODIAN_GODOT}/tools/validation/run_validation.py" --changed --json
+  else
+    python3 "${CUSTODIAN_GODOT}/tools/validation/run_validation.py" "$@"
+  fi
+}
+
 # List all commands ───────────────────────────────────────────────────────
 clisting() {
   echo "Custodian commands:"
@@ -139,10 +167,14 @@ clisting() {
   echo "    opcontract     report animation completeness vs production contract"
   echo "    opaudit        audit modular sprite sources for missing/extra assets"
   echo "    opnext         prioritized next-actions report (fit + contract)"
+  echo "    oprepair       interactive Operator V2 alignment repair conveyor"
+  echo "    oprepair-report alignment repair analysis only (no Aseprite, no writes)"
+  echo "    oprepair-smoke run the alignment repair regression smoke suite"
   echo "    opcolor        show operator color guide"
   echo ""
   echo "  Debug & Reporting"
   echo "    obsreport      analyze a Developer Observatory session"
+  echo "    opvalidate     run CUSTODIAN validation (defaults to --changed --json)"
   echo ""
   echo "  Misc"
   echo "    promptmenu     run the prompt menu interactively"
@@ -158,7 +190,7 @@ alias_usage() {
     return
   fi
   echo "Custodian alias usage counts:"
-  for cmd in dryjson runjson runsprite opingest obsreport listbox pixelart matchpal batchstrike opcolor promptmenu opcombo opcontract opaudit opnext clisting; do
+  for cmd in dryjson runjson runsprite opingest obsreport listbox pixelart matchpal batchstrike opcolor promptmenu opcombo opcontract opaudit opnext oprepair oprepair-report oprepair-smoke opvalidate clisting; do
     local count
     count=$(grep -c "$cmd" "$usage_file" 2>/dev/null || echo 0)
     printf "  %-12s %d\n" "${cmd}:" "${count}"
@@ -167,5 +199,5 @@ alias_usage() {
   echo "Total: $(wc -l <"${usage_file}") invocations"
 }
 
-echo "  Custodian commands ready: croot, cgodot, cpack, opcolor, dryjson, runjson, runsprite, opingest, obsreport, listbox, pixelart, matchpal, batchstrike, promptmenu, opcombo, opcontract, opaudit, opnext, clisting"
+echo "  Custodian commands ready: croot, cgodot, cpack, opcolor, dryjson, runjson, runsprite, opingest, obsreport, listbox, pixelart, matchpal, batchstrike, promptmenu, opcombo, opcontract, opaudit, opnext, oprepair, oprepair-report, oprepair-smoke, opvalidate, clisting"
 echo "  Type 'clisting' for all commands with descriptions, 'alias_usage' for usage counts."
