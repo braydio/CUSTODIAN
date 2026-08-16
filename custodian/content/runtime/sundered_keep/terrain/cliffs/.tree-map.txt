@@ -1,0 +1,56 @@
+Directory Tree Mapping
+/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/runtime/sundered_keep/terrain/cliffs
+├── cliff_edge_e.game32.json
+├── cliff_edge_e.png
+├── cliff_edge_e.png.import
+├── cliff_edge_n.game32.json
+├── cliff_edge_n.png
+├── cliff_edge_n.png.import
+├── cliff_edge_s.game32.json
+├── cliff_edge_s.png
+├── cliff_edge_s.png.import
+├── cliff_edge_w.game32.json
+├── cliff_edge_w.png
+├── cliff_edge_w.png.import
+├── cliff_face_slice_01.game32.json
+├── cliff_face_slice_01.png
+├── cliff_face_slice_01.png.import
+├── cliff_face_slice_mossy_01.game32.json
+├── cliff_face_slice_mossy_01.png
+├── cliff_face_slice_mossy_01.png.import
+├── cliff_face_slice_wet_01.game32.json
+├── cliff_face_slice_wet_01.png
+├── cliff_face_slice_wet_01.png.import
+├── cliff_inner_corner_ne.game32.json
+├── cliff_inner_corner_ne.png
+├── cliff_inner_corner_ne.png.import
+├── cliff_inner_corner_nw.game32.json
+├── cliff_inner_corner_nw.png
+├── cliff_inner_corner_nw.png.import
+├── cliff_inner_corner_se.game32.json
+├── cliff_inner_corner_se.png
+├── cliff_inner_corner_se.png.import
+├── cliff_inner_corner_sw.game32.json
+├── cliff_inner_corner_sw.png
+├── cliff_inner_corner_sw.png.import
+├── cliff_outer_corner_ne.game32.json
+├── cliff_outer_corner_ne.png
+├── cliff_outer_corner_ne.png.import
+├── cliff_outer_corner_nw.game32.json
+├── cliff_outer_corner_nw.png
+├── cliff_outer_corner_nw.png.import
+├── cliff_outer_corners__4f_128x128.png
+├── cliff_outer_corners__4f_128x128.png.import
+├── cliff_outer_corner_se.game32.json
+├── cliff_outer_corner_se.png
+├── cliff_outer_corner_se.png.import
+├── cliff_outer_corner_sw.game32.json
+├── cliff_outer_corner_sw.png
+├── cliff_outer_corner_sw.png.import
+├── cliffs_inner_corners_4f_128x128.png
+├── cliffs_inner_corners_4f_128x128.png.import
+└── source
+    ├── cliff_inner_corners__4f__source_sheet__512.png
+    ├── cliff_inner_corners__4f__source_sheet__512.png.import
+    ├── cliff_outer_corners__4f__source_sheet__512.png
+    └── cliff_outer_corners__4f__source_sheet__512.png.import
