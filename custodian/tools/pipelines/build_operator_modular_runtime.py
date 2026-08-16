@@ -57,6 +57,156 @@ class SheetSpec:
     frame_height: int
 
 
+@dataclass(frozen=True)
+class RuntimeModuleIdentity:
+    layer: str
+    loadout: str
+    action: str
+    direction: str
+    frames: int
+    frame_width: int
+    frame_height: int
+    family: str
+
+    @property
+    def semantic_id(self) -> str:
+        return "|".join((self.layer, self.loadout, self.action, self.direction))
+
+
+@dataclass(frozen=True)
+class RuntimeSourceResolution:
+    runtime_path: Path
+    identity: RuntimeModuleIdentity
+    selected_source: Path | None
+    candidates: tuple[Path, ...]
+    builder_family: str
+
+
+def identify_runtime_module(runtime_path: Path, module_root: Path = MODULE_ROOT) -> RuntimeModuleIdentity:
+    """Parse one generated lower/upper module using the builder's live naming contract."""
+    runtime_path = runtime_path.resolve()
+    parts = runtime_path.stem.split("__")
+    if len(parts) < 7 or parts[0] != "operator" or not parts[1].startswith("modular_"):
+        raise ValueError(f"not a generated modular runtime sheet: {runtime_path}")
+    layer = parts[1].removeprefix("modular_")
+    if layer not in {"lower_body", "upper_body"}:
+        raise ValueError(f"alignment repair only supports lower/upper body modules: {runtime_path}")
+    loadout = parts[2]
+    action = "__".join(parts[3:-3])
+    direction = parts[-3]
+    frames = int(parts[-2].removesuffix("f"))
+    with Image.open(runtime_path) as image:
+        frame_width = image.width // frames
+        frame_height = image.height
+    try:
+        relative = runtime_path.relative_to(module_root.resolve()).as_posix()
+    except ValueError:
+        relative = runtime_path.as_posix()
+    if "/locomotion/" in f"/{relative}":
+        family = "locomotion"
+    elif "/actions/unarmed/fast_attack/" in f"/{relative}":
+        family = "fast_attack"
+    elif "/actions/sidearm/" in f"/{relative}":
+        family = "sidearm"
+    elif "/actions/ranged_2h/stance_01/" in f"/{relative}":
+        family = "ranged"
+    else:
+        family = "generic"
+    return RuntimeModuleIdentity(layer, loadout, action, direction, frames, frame_width, frame_height, family)
+
+
+def resolve_source_for_runtime_module(
+    runtime_path: Path,
+    source_root: Path = SOURCE_ROOT,
+    module_root: Path = MODULE_ROOT,
+) -> RuntimeSourceResolution:
+    """Expose the source candidate that the current builder would actually consume."""
+    identity = identify_runtime_module(runtime_path, module_root)
+    selected: Path | None = None
+    candidates: list[Path] = []
+    if identity.family == "locomotion":
+        fallbacks = {
+            "run_01": ("action_01",),
+            "walk_01": ("action_01", "run_01"),
+            "idle_01": ("action_01", "run_01"),
+        }.get(identity.action, ())
+        spec = (
+            _resolve_lower_source(source_root, identity.action, identity.direction, fallbacks)
+            if identity.layer == "lower_body"
+            else _resolve_upper_source(source_root, identity.action, identity.direction, fallbacks)
+        )
+        selected = spec.path if spec else None
+    elif identity.family == "fast_attack":
+        selected = _find_part(source_root / "fast_attack", identity.layer, identity.action, identity.direction)
+    elif identity.family == "sidearm":
+        prefix = f"operator__modular_{identity.layer}__sidearm__{identity.action}__{identity.direction}__"
+        matches = sorted((source_root / "sidearm").glob(prefix + "*f__*.png"))
+        selected = matches[0] if matches else None
+    elif identity.family == "ranged":
+        ranged = source_root / "ranged"
+        prefixes = [
+            f"operator__modular_{identity.layer}__ranged_2h__stance_01",
+            f"operator__modular_{identity.layer}__stance__ranged_2h",
+        ]
+        matches = sorted(
+            path for prefix in prefixes
+            for path in ranged.glob(f"{prefix}__{identity.direction}__*f__*.png")
+        )
+        selected = matches[0] if matches else None
+    else:
+        ranked: list[tuple[int, Path]] = []
+        for source in sorted(source_root.rglob("operator__*.png")):
+            parsed = _parse_generic_modular_source(source)
+            if parsed is None:
+                continue
+            layer, loadout, action, spec, priority = parsed
+            if (layer, loadout, action, spec.direction) == (
+                identity.layer, identity.loadout, identity.action, identity.direction
+            ):
+                ranked.append((priority, source))
+        if ranked:
+            best_priority = max(item[0] for item in ranked)
+            selected = sorted(path for priority, path in ranked if priority == best_priority)[0]
+
+    # Candidate enumeration is semantic, canvas-size agnostic, and intentionally
+    # broader than selection so repair can back up exact competitors.
+    for source in sorted(source_root.rglob("operator__*.png")):
+        try:
+            parsed = _parse_generic_modular_source(source)
+        except (OSError, ValueError):
+            parsed = None
+        if parsed is not None:
+            layer, loadout, action, spec, _priority = parsed
+            if (layer, loadout, action, spec.direction) == (
+                identity.layer, identity.loadout, identity.action, identity.direction
+            ):
+                candidates.append(source)
+                continue
+        tokens = source.stem.split("__")
+        if (
+            f"modular_{identity.layer}" in tokens
+            and identity.action in tokens
+            and identity.direction in tokens
+            and (identity.loadout in tokens or identity.loadout == "unarmed")
+        ):
+            candidates.append(source)
+    if selected is not None and selected not in candidates:
+        candidates.append(selected)
+    return RuntimeSourceResolution(runtime_path, identity, selected, tuple(sorted(set(candidates))), identity.family)
+
+
+def build_runtime_module_from_source(source: Path, runtime_path: Path, identity: RuntimeModuleIdentity) -> None:
+    """Apply the same single-layer normalization used by every module builder."""
+    runtime_path.parent.mkdir(parents=True, exist_ok=True)
+    _write_or_copy_sheet(
+        source,
+        runtime_path,
+        frames=identity.frames,
+        target_frame_width=identity.frame_width,
+        target_frame_height=identity.frame_height,
+    )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Build stable runtime assets from modular operator source sheets.")
     parser.add_argument("--source-root", type=Path, default=SOURCE_ROOT)

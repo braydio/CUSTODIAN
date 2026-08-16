@@ -105,4 +105,21 @@ The legacy body `AnimatedSprite2D` remains the timing/source-of-truth sprite for
 
 Missing true source sheets are tracked in `REQUIRED_ASSETS.md`.
 
+## Legacy source reconciliation
+
+Runtime modules are generated output, but older modular source is not assumed to
+reproduce every current runtime sheet. Before manual alignment repair,
+`custodian/tools/operator/modular_alignment_repair.py` asks the production
+builder which source it would consume and proves the result with an RGBA pixel
+digest. A matching source remains canonical. If source is missing or stale, the
+tool backs up and quarantines only exact builder-active competitors, promotes
+the current runtime-normalized sheet into the builder-recognized source
+location, and requires a pixel-exact builder roundtrip before opening Aseprite.
+This promotion deliberately retains a `96px` runtime canvas where applicable;
+it does not attempt to reconstruct discarded `128px` source pixels.
+
+`content/sprites/_pipeline/archive/` is processed intake recovery material. It
+is not version history or canonical art and is diagnostic-only while a readable
+runtime sheet exists.
+
 The builder normalizes sidearm source strips to `96px` runtime frames. Shared-inbox files must still declare their true source frame size in the filename; for example, a `640x128` five-frame source should end in `__5f__128.png`. Sidearm FX should use the canonical `modular_upper_fx` layer token. Existing source files named `modular_upper_body__sidearm__fx_*` are accepted as compatibility input and emitted as `modular_upper_fx` runtime modules.
