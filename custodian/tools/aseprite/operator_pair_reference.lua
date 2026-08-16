@@ -70,6 +70,12 @@ local function main()
     )
   end
 
+  local previous_active = app.activeLayer
+  app.activeLayer = target.layers[1]
+  app.command.NewLayer{ reference = true }
+  local layer = app.activeLayer
+  layer.name = "pair_reference"
+
   local partner = app.open(partner_file)
   if not partner then
     return app.alert("Could not open paired sheet:\n" .. partner_file)
@@ -79,10 +85,6 @@ local function main()
   if src_layers == nil or #src_layers == 0 then
     return app.alert("Paired sheet has no layers:\n" .. partner_file)
   end
-
-  local layer = target:newLayer()
-  layer.name = "pair_reference"
-  layer.isReference = true
 
   local src_layer = src_layers[1]
   local n = math.min(#target.frames, #partner.frames)
@@ -99,6 +101,7 @@ local function main()
   end
 
   app.activeSprite = target
+  app.activeLayer = previous_active or target.layers[#target.layers]
 
   if pasted == 0 then
     return app.alert("Paired sheet frames could not be copied.")
