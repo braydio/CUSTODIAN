@@ -36,7 +36,7 @@ How it relates to other validation:
 
 ## Modular Operator Asset Audit
 
-Use this section when the ask is about new Operator modular animation drops, missing modular parts, upper/lower visual fit, or source/runtime review for `custodian/content/sprites/operator/new_operator/modular/`.
+Use this section when the ask is about new Operator modular animation drops, missing modular parts, upper/lower visual fit, or source/runtime review for `custodian/content/sprites/operator/source/animations/` (V2 editable source tree).
 
 ### Production Coverage Contract
 
@@ -105,7 +105,7 @@ python3 custodian/tools/operator/check_operator_modular_assets.py --json-out ope
 
 What it does:
 
-- Scans the modular Operator source root, defaulting to `custodian/content/sprites/operator/new_operator/modular`.
+- Scans the modular Operator source root, defaulting to `custodian/content/sprites/operator/source/animations`.
 - Expands an editable expected asset set from inside the script or from `--expected-json`.
 - Reports missing expected files, wrong-folder matches, malformed names, unexpected Operator PNGs, and dimension mismatches.
 - Can write JSON with `--json-out` and Markdown with `--md-out`.
@@ -201,7 +201,7 @@ Use:
 
 ```bash
 python3 custodian/tools/operator/review_modular_body_pairs.py \
-  --root custodian/content/sprites/operator/new_operator/modular/fast_attack \
+  --root custodian/content/sprites/operator/source/animations/unarmed/attack \
   --out .ai/modular_body_pair_review_fast_attack \
   --fit-debug
 ```

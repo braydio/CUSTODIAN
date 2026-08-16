@@ -14,6 +14,7 @@ import subprocess
 import sys
 import time
 import webbrowser
+from collections import defaultdict
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from types import SimpleNamespace
@@ -22,6 +23,7 @@ from typing import Callable
 from PIL import Image
 
 from operator_asset_reconciliation import (
+    BUILDER as OPERATOR_BUILDER,
     DEFAULT_WORKSPACE,
     MODULE_ROOT,
     REPO_ROOT,
@@ -127,38 +129,114 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
+def alpha_runs_on_row(
+    image: Image.Image,
+    y: int,
+    x_min: int,
+    x_max: int,
+) -> list[tuple[int, int]]:
+    """Return contiguous inclusive X runs where alpha > 0 on row `y`."""
+    alpha = image.convert("RGBA").getchannel("A")
+    if y < 0 or y >= alpha.height:
+        return []
+    x0 = max(0, x_min)
+    x1 = min(alpha.width - 1, x_max)
+    if x1 < x0:
+        return []
+    row = alpha.crop((x0, y, x1 + 1, y + 1)).tobytes()
+    runs: list[tuple[int, int]] = []
+    start: int | None = None
+    for offset, value in enumerate(row):
+        if value > 0:
+            if start is None:
+                start = x0 + offset
+        elif start is not None:
+            runs.append((start, x0 + offset - 1))
+            start = None
+    if start is not None:
+        runs.append((start, x1))
+    return runs
+
+
+def substantial_runs(
+    image: Image.Image,
+    y: int,
+    x_min: int,
+    x_max: int,
+    min_width: int,
+) -> list[tuple[int, int]]:
+    """alpha_runs_on_row() filtered to runs of width >= min_width."""
+    return [
+        (start, end)
+        for start, end in alpha_runs_on_row(image, y, x_min, x_max)
+        if end - start + 1 >= min_width
+    ]
+
+
 def connector_debug(lower_frame: Image.Image, upper_frame: Image.Image) -> dict:
     base = CHECKER.edge_contact_debug(lower_frame, upper_frame)
-    upper_rows = [row for row in base["upper_lowest_3_rows"] if row["width"] > 0]
-    lower_rows = [row for row in base["lower_top_3_rows"] if row["width"] > 0]
+    frame_width = lower_frame.width
+    frame_height = lower_frame.height
+    min_connector_width = max(5, round(frame_width * 0.07))
 
-    def seam_span(rows: list[dict]) -> tuple[int, int] | None:
-        if not rows:
-            return None
-        # The median edge-row span rejects a single dangling hand/weapon pixel.
-        centers = [((row["x_min"] + row["x_max"]) / 2, row) for row in rows]
-        median_center = statistics.median(item[0] for item in centers)
-        return min(centers, key=lambda item: abs(item[0] - median_center))[1]["x_min"], min(
-            centers, key=lambda item: abs(item[0] - median_center)
-        )[1]["x_max"]
+    lower_connector = None
+    lower_y = None
+    for y in range(frame_height):
+        runs = substantial_runs(
+            lower_frame, y, round(frame_width * 0.25), round(frame_width * 0.75),
+            min_connector_width,
+        )
+        if runs:
+            lower_connector = min(
+                runs, key=lambda run: abs(((run[0] + run[1]) / 2) - frame_width / 2)
+            )
+            lower_y = y
+            break
 
-    upper_span = seam_span(upper_rows)
-    lower_span = seam_span(lower_rows)
+    upper_connector = None
+    upper_y = None
+    if lower_connector is not None and lower_y is not None:
+        lower_width = lower_connector[1] - lower_connector[0] + 1
+        lower_center = (lower_connector[0] + lower_connector[1]) / 2
+        upper_x_min = max(0, round(lower_center - max(12, 2 * lower_width)))
+        upper_x_max = min(frame_width - 1, round(lower_center + max(12, 2 * lower_width)))
+        y_lo = max(0, lower_y - max(24, frame_height // 4))
+        y_hi = min(frame_height - 1, lower_y + max(8, frame_height // 12))
+        expected_seam = lower_y - 1
+        candidates: list[tuple[int, int, tuple[int, int], int]] = []
+        for y in range(y_lo, y_hi + 1):
+            for run in substantial_runs(upper_frame, y, upper_x_min, upper_x_max, min_connector_width):
+                candidates.append((abs(y - expected_seam), run[1] - run[0] + 1, run, y))
+        if candidates:
+            _distance, _width, upper_connector, upper_y = min(
+                candidates,
+                key=lambda item: (
+                    item[0],
+                    -item[1],
+                    abs((((item[2][0] + item[2][1]) / 2) - lower_center)),
+                ),
+            )
+
+    vertical_gap = None
     center_delta = None
     overlap = 0.0
     confidence = 0.0
-    if upper_span and lower_span:
-        center_delta = ((upper_span[0] + upper_span[1]) / 2) - ((lower_span[0] + lower_span[1]) / 2)
-        overlap = float(max(0, min(upper_span[1], lower_span[1]) - max(upper_span[0], lower_span[0]) + 1))
-        minimum_width = min(upper_span[1] - upper_span[0] + 1, lower_span[1] - lower_span[0] + 1)
-        confidence = min(1.0, minimum_width / 8.0) * (1.0 if overlap > 0 else 0.65)
+    if lower_connector is not None and upper_connector is not None and lower_y is not None and upper_y is not None:
+        vertical_gap = lower_y - upper_y - 1
+        upper_center = (upper_connector[0] + upper_connector[1]) / 2
+        lower_center = (lower_connector[0] + lower_connector[1]) / 2
+        center_delta = upper_center - lower_center
+        overlap = max(0, min(upper_connector[1], lower_connector[1]) - max(upper_connector[0], lower_connector[0]) + 1)
+        upper_width = upper_connector[1] - upper_connector[0] + 1
+        lower_width = lower_connector[1] - lower_connector[0] + 1
+        confidence = min(1.0, min(upper_width, lower_width) / max(8.0, min_connector_width * 1.5))
     return {
         **base,
-        "connector_upper_span": list(upper_span) if upper_span else None,
-        "connector_lower_span": list(lower_span) if lower_span else None,
-        "connector_vertical_gap_px": base["vertical_gap_px"],
+        "connector_upper_span": list(upper_connector) if upper_connector else None,
+        "connector_lower_span": list(lower_connector) if lower_connector else None,
+        "connector_vertical_gap_px": vertical_gap,
         "connector_center_delta_px": center_delta,
-        "connector_overlap_px": overlap,
+        "connector_overlap_px": float(overlap),
         "connector_confidence": round(confidence, 3),
     }
 
@@ -195,6 +273,77 @@ def discover_sheets(runtime_root: Path, selector: str = "all") -> tuple[list, li
     return layers[0], layers[1]
 
 
+def v2_pair_key(path: Path) -> tuple[str, str, str, str]:
+    identity = OPERATOR_BUILDER.identify_runtime_module(
+        path.resolve(),
+        MODULE_ROOT,
+    )
+    return (
+        identity.loadout,
+        identity.family,
+        identity.action,
+        identity.direction,
+    )
+
+
+def _sheet_frame_height(sheet) -> int:
+    with Image.open(sheet.source_path) as image:
+        return image.height
+
+
+def find_exact_v2_pair_jobs(lower: list, upper: list) -> tuple[list, list]:
+    """Pair lower/upper runtime sheets by exact V2 profile/group/action/direction.
+
+    The repair conveyor never fans an action across partners. A key with more
+    than one sheet on either side, or a frame-count/canvas mismatch, becomes a
+    missing record instead of a guess.
+    """
+    lower_by_key: dict[tuple[str, str, str, str], list] = defaultdict(list)
+    upper_by_key: dict[tuple[str, str, str, str], list] = defaultdict(list)
+    for sheet in lower:
+        lower_by_key[v2_pair_key(sheet.source_path)].append(sheet)
+    for sheet in upper:
+        upper_by_key[v2_pair_key(sheet.source_path)].append(sheet)
+    jobs: list = []
+    missing: list = []
+    for key in sorted(set(lower_by_key) | set(upper_by_key)):
+        lower_sheets = lower_by_key.get(key, [])
+        upper_sheets = upper_by_key.get(key, [])
+        if len(lower_sheets) == 1 and len(upper_sheets) == 1:
+            lower_sheet, upper_sheet = lower_sheets[0], upper_sheets[0]
+            if (
+                lower_sheet.frame_count != upper_sheet.frame_count
+                or lower_sheet.frame_w != upper_sheet.frame_w
+                or _sheet_frame_height(lower_sheet) != _sheet_frame_height(upper_sheet)
+            ):
+                missing.append({
+                    "upper": upper_sheet.workspace_path.name,
+                    "reason": (
+                        f"V2 pair frame count/canvas mismatch for "
+                        f"{key}; refusing repair analysis."
+                    ),
+                })
+                continue
+            jobs.append(CHECKER.PairJob(
+                lower=lower_sheet,
+                upper=upper_sheet,
+                output_id="",
+                pair_mode="runtime_direction_exact",
+            ))
+            continue
+        for sheet in lower_sheets:
+            missing.append({
+                "lower": sheet.workspace_path.name,
+                "reason": f"No exact V2 upper counterpart (profile/group/action/direction {key}).",
+            })
+        for sheet in upper_sheets:
+            missing.append({
+                "upper": sheet.workspace_path.name,
+                "reason": f"No exact V2 lower counterpart (profile/group/action/direction {key}).",
+            })
+    return jobs, missing
+
+
 def analyze(
     runtime_root: Path,
     selector: str,
@@ -203,11 +352,7 @@ def analyze(
     preview_root: Path | None = None,
 ) -> dict:
     lower, upper = discover_sheets(runtime_root, selector)
-    domains = sorted({sheet.domain for sheet in lower})
-    if CHECKER.runtime_direction(selector):
-        jobs, missing = CHECKER.find_direction_pair_jobs(lower, upper)
-    else:
-        jobs, missing = CHECKER.find_pair_jobs(lower, upper, domains)
+    jobs, missing = find_exact_v2_pair_jobs(lower, upper)
     findings: list[FrameFinding] = []
     pair_records: list[dict] = []
     preview_args = SimpleNamespace(
@@ -232,9 +377,10 @@ def analyze(
             metrics = connector_debug(lower_frame, upper_frame)
             gap = metrics["connector_vertical_gap_px"]
             delta = metrics["connector_center_delta_px"]
-            flagged = (
+            confident = metrics["connector_confidence"] >= 0.35
+            flagged = confident and (
                 (gap is not None and abs(gap) >= gap_threshold)
-                or (delta is not None and metrics["connector_confidence"] >= 0.35 and abs(delta) >= center_threshold)
+                or (delta is not None and abs(delta) >= center_threshold)
             )
             flagged_count += int(flagged)
             findings.append(FrameFinding(
@@ -312,6 +458,10 @@ def score_suspicions(findings: list[FrameFinding]) -> list[AssetSuspicion]:
     return sorted(output, key=lambda item: (order[item.confidence], -item.maximum_violation, -item.distinct_partner_assets, item.runtime_path))
 
 
+def runtime_record_key(path: Path) -> str:
+    return str(path.expanduser().resolve())
+
+
 def build_queue(
     report: dict,
     records: dict[str, EditableSourceRecord],
@@ -321,8 +471,7 @@ def build_queue(
     for raw in report["suspicions"]:
         runtime = Path(raw["runtime_path"])
         identity = CHECKER.parse_modular_png_name(runtime)
-        semantic = "|".join((f"{identity['part']}_body", identity.get("variant") or "unarmed", identity["anim_id"], identity["direction"]))
-        provenance = records.get(semantic)
+        provenance = records.get(runtime_record_key(runtime))
         source = provenance.editable_path if provenance and provenance.editable_path else str(runtime)
         source_candidate = Path(source)
         if not source_candidate.is_absolute():
@@ -339,6 +488,7 @@ def build_queue(
                 with Image.open(source_path) as source_image:
                     source_width = source_image.width // source_frames
                     source_height = source_image.height
+            semantic = "|".join((identity["part"], identity["variant"], identity["anim_id"], identity["direction"]))
             existing = QueueEntry(
                 id=semantic, source_path=source, runtime_paths=[], layer=raw["layer"],
                 direction=raw["direction"], action=raw["action"], confidence=raw["confidence"],
@@ -443,7 +593,7 @@ def validate_entry_source(entry: QueueEntry) -> None:
 
 def run_builder(repo_root: Path) -> None:
     subprocess.run(
-        [sys.executable, str(BUILDER_PATH), "--remove-superseded"],
+        [sys.executable, str(BUILDER_PATH), "--strict", "--remove-superseded"],
         cwd=repo_root, check=True,
     )
 
@@ -474,6 +624,97 @@ def persist_state(workspace: Path, queue: list[QueueEntry], current_id: str | No
     })
 
 
+def reconcile_suspicions(
+    report: dict,
+    reconciler: SourceReconciler,
+    *,
+    dry_run: bool,
+) -> dict[str, EditableSourceRecord]:
+    """Reconcile every current suspicion, keyed by resolved runtime path."""
+    records: dict[str, EditableSourceRecord] = {}
+    for suspicion in report["suspicions"]:
+        runtime = Path(suspicion["runtime_path"])
+        try:
+            record = reconciler.reconcile(runtime, dry_run=dry_run)
+        except Exception as exc:
+            identity = CHECKER.parse_modular_png_name(runtime)
+            semantic = "|".join((identity["part"], identity["variant"], identity["anim_id"], identity["direction"]))
+            record = EditableSourceRecord(
+                semantic, str(runtime), None, [], None, "unresolved", "", None, None,
+                None, f"MATERIALIZATION_FAILED: {exc}", [], [],
+            )
+        records[runtime_record_key(runtime)] = record
+    return records
+
+
+def merge_live_queue(
+    active_queue: list[QueueEntry],
+    prior_queue: list[QueueEntry],
+    *,
+    just_edited_source: str | None = None,
+) -> list[QueueEntry]:
+    """Merge a freshly computed active queue with the prior live queue.
+
+    New active suspects enter pending. Active entries override prior
+    fixed/resolved status. Skipped and unresolved statuses survive while the
+    source is still active, except the just-edited item reopens pending.
+    Prior entries that disappeared resolve as fixed/skipped when appropriate,
+    otherwise resolved_by_partner.
+    """
+    active_keys = {entry.source_path for entry in active_queue}
+    prior_by_key: dict[str, QueueEntry] = {}
+    for item in prior_queue:
+        prior_by_key.setdefault(item.source_path, item)
+
+    for entry in active_queue:
+        prior = prior_by_key.get(entry.source_path)
+        if prior is None:
+            entry.status = "pending"
+            continue
+        if entry.source_path == just_edited_source:
+            entry.status = "pending"
+        elif prior.status == "skipped":
+            entry.status = "skipped"
+        elif prior.status == "unresolved":
+            entry.status = "unresolved"
+        else:
+            entry.status = "pending"
+
+    historical: list[QueueEntry] = []
+    for path, prior in prior_by_key.items():
+        if path in active_keys:
+            continue
+        if path == just_edited_source:
+            prior.status = "fixed"
+        elif prior.status not in {"fixed", "skipped"}:
+            prior.status = "resolved_by_partner"
+        historical.append(prior)
+
+    return active_queue + historical
+
+
+def refresh_live_queue(
+    args: argparse.Namespace,
+    reconciler: SourceReconciler,
+    prior_queue: list[QueueEntry],
+    just_edited_source: str | None = None,
+) -> tuple[dict, list[QueueEntry]]:
+    report = analyze(
+        args.runtime_root,
+        args.selector,
+        args.gap_threshold,
+        args.center_threshold,
+    )
+    records = reconcile_suspicions(report, reconciler, dry_run=False)
+    active = build_queue(report, records, args.repo_root)
+    merged = merge_live_queue(
+        active,
+        prior_queue,
+        just_edited_source=just_edited_source,
+    )
+    return report, merged
+
+
 def interactive_loop(
     args: argparse.Namespace,
     report: dict,
@@ -485,17 +726,17 @@ def interactive_loop(
     input_fn: Callable[[str], str] = input,
 ) -> None:
     aseprite = resolve_aseprite(args.aseprite)
-    index = 0
-    while index < len(queue):
-        entry = queue[index]
-        if entry.status in {"fixed", "skipped", "resolved_by_partner"}:
-            index += 1
-            continue
+    while True:
+        entry = next(
+            (item for item in queue if item.status == "pending"),
+            None,
+        )
+        if entry is None:
+            break
         source = Path(entry.source_path)
         if not source.exists() or not entry.roundtrip_pass:
             entry.status = "unresolved"
             persist_state(args.workspace, queue, entry.id)
-            index += 1
             continue
         if not args.no_backup:
             reconciler.backup_before_edit(source)
@@ -504,7 +745,7 @@ def interactive_loop(
         entry.source_hash = before
         persist_state(args.workspace, queue, entry.id)
         write_report(args.workspace, report, queue)
-        print(f"\n[{index + 1}/{len(queue)}] {entry.confidence.upper()} {entry.layer} / {entry.action} / {entry.direction}")
+        print(f"[PENDING] {entry.confidence.upper()} {entry.layer} / {entry.action} / {entry.direction}")
         print(f"  bad frames: {','.join(map(str, entry.flagged_frames))}")
         print(f"  opening canonical editable source: {source}")
         editor_runner(aseprite, source)
@@ -518,7 +759,6 @@ def interactive_loop(
             if choice == "s":
                 entry.status = "skipped"
                 persist_state(args.workspace, queue)
-                index += 1
             else:
                 entry.status = "pending"
             continue
@@ -530,34 +770,39 @@ def interactive_loop(
             print(f"STOP: {exc}")
             return
         builder_runner(args.repo_root)
-        refreshed = analyze(args.runtime_root, args.selector, args.gap_threshold, args.center_threshold)
-        active_paths = {item["runtime_path"] for item in refreshed["suspicions"]}
-        if not any(path in active_paths for path in entry.runtime_paths):
-            entry.status = "fixed"
-            entry.source_hash = after
+        refreshed_report, refreshed_queue = refresh_live_queue(
+            args,
+            reconciler,
+            queue,
+            just_edited_source=entry.source_path,
+        )
+        queue[:] = refreshed_queue
+        report = refreshed_report
+        refreshed_entry = next(
+            (item for item in queue if item.source_path == entry.source_path),
+            None,
+        )
+        if refreshed_entry is None or refreshed_entry.status in {"fixed", "resolved_by_partner"}:
             print("PASS — corrected asset now fits all tested connector combinations")
-            # Partner corrections can clear other suspects without opening them.
-            for other in queue:
-                if other.status == "pending" and not any(path in active_paths for path in other.runtime_paths):
-                    other.status = "resolved_by_partner"
-            report = refreshed
             persist_state(args.workspace, queue)
             write_report(args.workspace, report, queue)
-            index += 1
             continue
-        entry.status = "unresolved"
-        persist_state(args.workspace, queue, entry.id)
-        write_report(args.workspace, refreshed, queue)
+        refreshed_entry.status = "unresolved"
+        persist_state(args.workspace, queue, refreshed_entry.id)
+        write_report(args.workspace, report, queue)
         choice = (input_fn("Still outside connector thresholds. [r] reopen [n] next [s] skip [q] save and quit: ") or "r").lower()
         if choice == "q":
             return
         if choice == "s":
-            entry.status = "skipped"
-            index += 1
+            refreshed_entry.status = "skipped"
         elif choice == "n":
-            index += 1
+            refreshed_entry.status = "unresolved"
         else:
-            entry.status = "pending"
+            refreshed_entry.status = "pending"
+    fixed = sum(1 for item in queue if item.status in {"fixed", "resolved_by_partner"})
+    unresolved = sum(1 for item in queue if item.status == "unresolved")
+    skipped = sum(1 for item in queue if item.status == "skipped")
+    print(f"Queue drained: {fixed} fixed, {unresolved} unresolved, {skipped} skipped")
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -582,28 +827,15 @@ def main(argv: list[str] | None = None) -> int:
         repo_root=args.repo_root, source_root=args.source_root,
         module_root=args.runtime_root, workspace=args.workspace,
     )
-    records: dict[str, EditableSourceRecord] = {}
-    for suspicion in report["suspicions"]:
-        runtime = Path(suspicion["runtime_path"])
-        try:
-            record = reconciler.reconcile(
-                runtime,
-                dry_run=args.dry_run or args.report_only,
-            )
-        except Exception as exc:
-            identity = CHECKER.parse_modular_png_name(runtime)
-            semantic = "|".join((f"{identity['part']}_body", identity.get("variant") or "unarmed", identity["anim_id"], identity["direction"]))
-            record = EditableSourceRecord(
-                semantic, str(runtime), None, [], None, "unresolved", "", None, None,
-                None, f"MATERIALIZATION_FAILED: {exc}", [], [],
-            )
-        records[record.semantic_id] = record
+    records = reconcile_suspicions(
+        report, reconciler, dry_run=args.dry_run or args.report_only
+    )
     queue = build_queue(report, records, args.repo_root)
     if args.resume:
         merge_prior_state(queue, args.workspace)
     print(f"Suspect source sheets: {len(queue)}")
     if args.dry_run:
-        print(f"Builder: {sys.executable} {BUILDER_PATH} --remove-superseded")
+        print(f"Builder: {sys.executable} {BUILDER_PATH} --strict --remove-superseded")
         try:
             print(f"Aseprite: {resolve_aseprite(args.aseprite)}")
         except RuntimeError as exc:

@@ -45,8 +45,8 @@ class AlignmentRepairSmoke(unittest.TestCase):
     def tearDown(self) -> None:
         self.temp.cleanup()
 
-    def runtime(self, layer: str = "upper_body", action: str = "run_01", size: int = 96) -> Path:
-        path = self.module / "unarmed" / "locomotion" / action / f"operator__{layer}__unarmed__locomotion__{action}__e__2f__{size}.png"
+    def runtime(self, layer: str = "upper_body", action: str = "run_01", size: int = 96, profile: str = "unarmed", group: str = "locomotion") -> Path:
+        path = self.module / profile / group / action / f"operator__{layer}__{profile}__{group}__{action}__e__2f__{size}.png"
         sheet(path, size=size)
         return path
 
@@ -61,6 +61,20 @@ class AlignmentRepairSmoke(unittest.TestCase):
             repo_root=self.root, source_root=self.source, module_root=self.module,
             archive_root=self.root / "archive", workspace=self.workspace, build_one=build_one,
         )
+
+    def suspicion(self, runtime: Path, layer: str = "upper", action: str = "run_01", direction: str = "e") -> dict:
+        return {
+            "runtime_path": str(runtime), "layer": layer, "action": action, "direction": direction,
+            "confidence": "high", "flagged_frames": [0, 1], "implicated_pairs": ["pair-a"],
+            "median_signed_vertical_gap": 4, "median_signed_connector_x_delta": 6,
+        }
+
+    def report(self, suspicions: list) -> dict:
+        return {
+            "runtime_sheets": 0, "lower_sheets": 0, "upper_sheets": 0,
+            "pairings": 0, "pair_frames": 0, "flagged_pairings": 0,
+            "missing": [], "pairs": [], "findings": [], "suspicions": suspicions,
+        }
 
     def test_existing_roundtrip_match(self) -> None:
         runtime = self.runtime()
@@ -124,6 +138,25 @@ class AlignmentRepairSmoke(unittest.TestCase):
         self.assertLess(abs(metrics["connector_center_delta_px"]), 1)
         self.assertGreater(metrics["connector_overlap_px"], 0)
 
+    def test_connector_ignores_narrow_appendage_below_waist(self) -> None:
+        lower = Image.new("RGBA", (96, 96), (0, 0, 0, 0))
+        upper = Image.new("RGBA", (96, 96), (0, 0, 0, 0))
+        draw = ImageDraw.Draw(lower)
+        draw.rectangle((43, 48, 53, 80), fill="white")
+        draw.rectangle((30, 55, 33, 70), fill="white")
+        ImageDraw.Draw(upper).rectangle((43, 20, 53, 47), fill="white")
+        metrics = repair.connector_debug(lower, upper)
+        self.assertEqual(metrics["connector_lower_span"], [43, 53])
+        self.assertEqual(metrics["connector_vertical_gap_px"], 0)
+
+    def test_connector_reports_true_seam_gap(self) -> None:
+        lower = Image.new("RGBA", (96, 96), (0, 0, 0, 0))
+        upper = Image.new("RGBA", (96, 96), (0, 0, 0, 0))
+        ImageDraw.Draw(lower).rectangle((43, 48, 53, 80), fill="white")
+        ImageDraw.Draw(upper).rectangle((43, 20, 53, 40), fill="white")
+        metrics = repair.connector_debug(lower, upper)
+        self.assertGreaterEqual(metrics["connector_vertical_gap_px"], 3)
+
     def test_queue_deduplicates_editable_source_deterministically(self) -> None:
         runtime = self.runtime()
         source = self.source_path()
@@ -137,9 +170,61 @@ class AlignmentRepairSmoke(unittest.TestCase):
             "confidence": "high", "flagged_frames": [0, 1], "implicated_pairs": ["a", "b"],
             "median_signed_vertical_gap": 4, "median_signed_connector_x_delta": 6,
         }
-        queue = repair.build_queue({"suspicions": [suspicion, suspicion]}, {identity: record})
+        queue = repair.build_queue({"suspicions": [suspicion, suspicion]}, {repair.runtime_record_key(runtime): record})
         self.assertEqual(len(queue), 1)
         self.assertEqual(queue[0].implicated_pairs, ["a", "b"])
+        self.assertEqual(Path(queue[0].source_path).resolve(), source.resolve())
+        self.assertTrue(queue[0].roundtrip_pass)
+
+    def test_v2_queue_uses_runtime_path_provenance_key(self) -> None:
+        runtime = self.runtime()
+        source = self.source_path()
+        record = reconciliation.EditableSourceRecord(
+            "upper_body|unarmed|run_01|e", str(runtime), str(source), [str(source)], str(source),
+            "promoted_from_runtime", "same", "same", "same", None, "runtime promoted source", [], [],
+        )
+        suspicion = self.suspicion(runtime)
+        by_semantic = {"upper_body|unarmed|run_01|e": record}
+        by_path = {repair.runtime_record_key(runtime): record}
+        semantic_queue = repair.build_queue({"suspicions": [suspicion]}, by_semantic)
+        path_queue = repair.build_queue({"suspicions": [suspicion]}, by_path)
+        self.assertEqual(Path(semantic_queue[0].source_path).resolve(), runtime.resolve())
+        self.assertEqual(Path(path_queue[0].source_path).resolve(), source.resolve())
+        self.assertEqual(path_queue[0].resolution, "promoted_from_runtime")
+        self.assertTrue(path_queue[0].roundtrip_pass)
+
+    def test_v2_pairing_never_crosses_animation_profile(self) -> None:
+        lower_unarmed = self.runtime("lower_body", "run_01")
+        upper_unarmed = self.runtime("upper_body", "run_01")
+        lower_melee = self.runtime("lower_body", "run_01", profile="melee_1h")
+        upper_melee = self.runtime("upper_body", "run_01", profile="melee_1h")
+        jobs, missing = repair.find_exact_v2_pair_jobs(
+            [repair._sheet(lower_unarmed), repair._sheet(lower_melee)],
+            [repair._sheet(upper_unarmed), repair._sheet(upper_melee)],
+        )
+        self.assertEqual(missing, [])
+        self.assertEqual(len(jobs), 2)
+        for job in jobs:
+            self.assertEqual(
+                repair.v2_pair_key(job.lower.source_path),
+                repair.v2_pair_key(job.upper.source_path),
+            )
+
+    def test_v2_pairing_never_crosses_action_group(self) -> None:
+        lower_locomotion = self.runtime("lower_body", "run_01")
+        upper_attack = self.runtime("upper_body", "run_01", group="attack")
+        jobs, missing = repair.find_exact_v2_pair_jobs(
+            [repair._sheet(lower_locomotion)], [repair._sheet(upper_attack)]
+        )
+        self.assertEqual(jobs, [])
+        self.assertEqual(len(missing), 2)
+        lower_run = self.runtime("lower_body", "run_01")
+        upper_walk = self.runtime("upper_body", "walk_01")
+        jobs_same_group, missing_same_group = repair.find_exact_v2_pair_jobs(
+            [repair._sheet(lower_run)], [repair._sheet(upper_walk)]
+        )
+        self.assertEqual(jobs_same_group, [])
+        self.assertEqual(len(missing_same_group), 2)
 
     def test_dimension_validation_stops_resized_sheet(self) -> None:
         path = self.source_path()
@@ -228,6 +313,70 @@ class AlignmentRepairSmoke(unittest.TestCase):
             repair.analyze = original_analyze
         self.assertEqual(entry.status, "fixed")
         self.assertEqual(builds, [self.root])
+
+    def test_live_queue_adds_new_suspect_after_refresh(self) -> None:
+        runtime_a = self.runtime()
+        source_a = self.source_path()
+        runtime_b = self.runtime("lower_body", "walk_01")
+        source_b = self.source_path("lower_body", "walk_01")
+        prior = repair.QueueEntry(
+            "upper_body|unarmed|run_01|e", str(source_a), [str(runtime_a)], "upper", "e", "run_01",
+            "high", [0], ["pair-a"], 4, 6, status="fixed",
+            source_frame_count=2, source_frame_width=96, source_frame_height=96,
+        )
+        args = SimpleNamespace(
+            runtime_root=self.module, selector="all", gap_threshold=3,
+            center_threshold=5, repo_root=self.root,
+        )
+        report = self.report([
+            self.suspicion(runtime_a),
+            self.suspicion(runtime_b, layer="lower", action="walk_01"),
+        ])
+        original_analyze = repair.analyze
+        try:
+            repair.analyze = lambda *_args, **_kwargs: report
+            _fresh_report, refreshed = repair.refresh_live_queue(args, self.reconciler(), [prior])
+        finally:
+            repair.analyze = original_analyze
+        self.assertEqual(len(refreshed), 2)
+        new_entry = next(item for item in refreshed if item.id != prior.id)
+        self.assertEqual(Path(new_entry.source_path).resolve(), source_b.resolve())
+        self.assertEqual(new_entry.status, "pending")
+
+    def test_live_queue_marks_disappeared_partner_resolved(self) -> None:
+        source = self.source_path()
+        runtime = self.runtime()
+        prior = repair.QueueEntry(
+            "upper_body|unarmed|run_01|e", str(source), [str(runtime)], "upper", "e", "run_01",
+            "high", [0], ["pair-a"], 4, 6, status="unresolved",
+            source_frame_count=2, source_frame_width=96, source_frame_height=96,
+        )
+        args = SimpleNamespace(
+            runtime_root=self.module, selector="all", gap_threshold=3,
+            center_threshold=5, repo_root=self.root,
+        )
+        original_analyze = repair.analyze
+        try:
+            repair.analyze = lambda *_args, **_kwargs: self.report([])
+            _fresh_report, refreshed = repair.refresh_live_queue(args, self.reconciler(), [prior])
+        finally:
+            repair.analyze = original_analyze
+        self.assertEqual(len(refreshed), 1)
+        self.assertEqual(refreshed[0].status, "resolved_by_partner")
+
+    def test_run_builder_uses_strict_mode(self) -> None:
+        calls = []
+        original_run = repair.subprocess.run
+        try:
+            repair.subprocess.run = lambda *args, **_kwargs: calls.append(args) or SimpleNamespace()
+            repair.run_builder(self.root)
+        finally:
+            repair.subprocess.run = original_run
+        self.assertEqual(len(calls), 1)
+        command = calls[0][0]
+        self.assertEqual(command[0], sys.executable)
+        self.assertIn("--strict", command)
+        self.assertIn("--remove-superseded", command)
 
 
 if __name__ == "__main__":

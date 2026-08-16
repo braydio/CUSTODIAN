@@ -149,16 +149,23 @@ enemy_grunt__body__reaction__stagger__s__5f__96.png
 hit_spark__fx__impact__default__omni__4f__64.png
 ```
 
-Modular Operator sheets use a deliberate specialization:
+Modular Operator sheets use the canonical 8-field V2 grammar:
 
 ```text
-operator__<modular_layer>__<loadout>__<action>__<direction>__<frames>f__<frame_size>.png
+operator__<layer>__<animation_profile>__<action_group>__<action>__<direction>__<frames>f__<frame_size>.png
 ```
 
-The inbox routes all supported modular layers through `operator_modular_runtime`. Purpose-built actions keep
-their existing builders; other modular actions are normalized into stable runtime modules below
-`operator/runtime/modules/new_operator/<layer>/actions/<loadout>/<action>/`. This does not automatically add
-new Operator gameplay states or playback mappings.
+Layers are `lower_body`, `upper_body`, `full_body`, `head`, `cape`, `fx`, and `weapon`. Animation profiles are
+`shared`, `unarmed`, `melee_1h`, `melee_1h_dagger`, `melee_1h_heavy`, `sidearm`, and `ranged_2h`; action
+groups are `locomotion`, `posture`, `attack`, `defense`, `reaction`, `interaction`, `transition`, `cosmetic`,
+and `presentation`. The grammar, aliases, and semantic identity are owned by
+`custodian/tools/pipelines/operator_asset_schema.py`. Editable source sheets live under
+`content/sprites/operator/source/animations/<profile>/<group>/<action>/`, and `build_operator_runtime.py`
+emits runtime sheets under `content/sprites/operator/runtime/animations/<profile>/<group>/<action>/` plus the
+generated catalog at `content/data/operator/generated/operator_animation_catalog.generated.json`. The inbox
+routes supported modular layers through the `operator_modular_runtime` post-process hook, and legacy
+`operator__modular_*` names normalize into V2 through `operator_asset_schema.py`. Building the runtime does
+not automatically add new Operator gameplay states or playback mappings.
 
 Composited Operator reaction pairs are a supported authored alias: `full_body_combat` routes to the live body domain and `combat_fx` routes to the synchronized overlay domain. Runtime playback remains an explicit gameplay/presentation wiring step.
 
@@ -225,7 +232,7 @@ Primary scripts:
 - `custodian/tools/pipelines/generate_inbox_manifests.py`
 - `custodian/tools/pipelines/ingest.py`
 - `custodian/tools/pipelines/ingest_runtime.gd`
-- `custodian/tools/pipelines/build_operator_modular_runtime.py`
+- `custodian/tools/pipelines/build_operator_runtime.py`
 - `custodian/tools/pipelines/operator_action_preview.py`
 - `custodian/tools/pipelines/scaffold_character_contract.py`
 - `custodian/tools/pipelines/reload_assets.py`
@@ -242,8 +249,8 @@ Current post-process support:
 
 `operator_curated_resources` rebuilds operator runtime `SpriteFrames` after curated body/overlay outputs are
 updated. `operator_modular_runtime` normalizes supported modular Operator source sheets from
-`res://content/sprites/operator/new_operator/modular/` into generated runtime modules below
-`res://content/sprites/operator/runtime/modules/new_operator/` and current action-runtime compatibility strips.
+`res://content/sprites/operator/source/animations/` into generated runtime sheets below
+`res://content/sprites/operator/runtime/animations/` through `build_operator_runtime.py`.
 `enemy_runtime_import` and `vehicle_runtime_import` run import/resource refresh steps for the active enemy and
 vehicle runtime domains.
 
@@ -260,7 +267,7 @@ Artifact distinction:
 
 - source sheets are intake PNGs or authored modular PNGs
 - runtime strips are PNGs under the live `content/sprites/<domain>/runtime/` paths
-- generated modules are Operator layer strips under `operator/runtime/modules/new_operator/`
+- generated modules are Operator layer strips under `operator/runtime/animations/`
 - curated resources are Godot `.tres` `SpriteFrames` rebuilt by explicit scripts
 - QA preview images are inspection artifacts and must not become runtime dependencies
 
@@ -294,10 +301,10 @@ When Operator modular source already exists outside the inbox, pass
 The flag respects `--dry-run` and `--remove-superseded`. Modular Operator manifests continue to request the
 same build automatically through their `operator_modular_runtime` post-process hook.
 
-For already-authored Operator modular source sheets in `content/sprites/operator/new_operator/modular/`:
+For already-authored Operator modular source sheets in `content/sprites/operator/source/animations/`:
 
-1. Run `python custodian/tools/pipelines/build_operator_modular_runtime.py --dry-run --remove-superseded`
-2. Run `python custodian/tools/pipelines/build_operator_modular_runtime.py --remove-superseded`
+1. Run `python custodian/tools/pipelines/build_operator_runtime.py --dry-run --remove-superseded`
+2. Run `python custodian/tools/pipelines/build_operator_runtime.py --strict --remove-superseded`
 3. Run `python custodian/tools/validation/operator_animation_contract_report.py`
 4. Generate QA previews with `operator_action_preview.py` when visual inspection is needed
 5. Register any new gameplay playback deliberately in runtime/state-machine code and curated resources

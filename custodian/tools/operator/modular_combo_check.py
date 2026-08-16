@@ -87,7 +87,7 @@ MODULAR_NAME_RE = re.compile(
 )
 
 FRAME_META_RE = re.compile(
-    r"__(?P<frames>\d+)f__(?P<frame_w>\d+)$",
+    r"__(?P<frames>\d+)f__(?P<frame_w>\d+)(?:x\d+)?$",
     re.IGNORECASE,
 )
 
@@ -943,7 +943,7 @@ def sheet_meta(path: Path, img: Image.Image) -> Tuple[int, int, List[str]]:
 
     raise ValueError(
         f"Cannot infer frame metadata for {path.name}. "
-        f"Need JSON or filename ending like __5f__96.png."
+        f"Need JSON or filename ending like __5f__96.png or __5f__128x96.png."
     )
 
 
