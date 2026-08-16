@@ -1,93 +1,89 @@
 [gd_resource type="SpriteFrames" format=3 uid="uid://d3itlr6p4p7l3"]
 
-[ext_resource type="Texture2D" uid="uid://etauk0q4f20s" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/aim_01/operator__lower_body__ranged_2h__cosmetic__aim_01__e__5f__96.png" id="1_1bdxc"]
-[ext_resource type="Texture2D" uid="uid://doycbcyp4r1ot" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__s__5f__96.png" id="1_ld52m"]
-[ext_resource type="Texture2D" uid="uid://bqk4h8cumd3d2" path="res://content/sprites/operator/runtime/animations/unarmed/interaction/field_patch_use_01/operator__lower_body__unarmed__interaction__field_patch_use_01__e__14f__96.png" id="1_n1sok"]
-[ext_resource type="Texture2D" uid="uid://cymiiwsbhqbbc" path="res://content/sprites/operator/runtime/animations/ranged_2h/posture/stance_01/operator__lower_body__ranged_2h__posture__stance_01__e__5f__96.png" id="1_st8ca"]
-[ext_resource type="Texture2D" uid="uid://kg2qjxar717x" path="res://content/sprites/operator/runtime/animations/sidearm/posture/draw_sidearm_01/operator__lower_body__sidearm__posture__draw_sidearm_01__se__5f__96.png" id="1_tmeqr"]
-[ext_resource type="Texture2D" uid="uid://dyo5qgaijsjcn" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__sw__5f__96.png" id="2_3em5y"]
-[ext_resource type="Texture2D" uid="uid://cshke5w6fcso" path="res://content/sprites/operator/runtime/animations/sidearm/cosmetic/fire_sidearm_01/operator__lower_body__sidearm__cosmetic__fire_sidearm_01__se__5f__96.png" id="2_6ntwd"]
-[ext_resource type="Texture2D" uid="uid://crppw1a46n8rv" path="res://content/sprites/operator/runtime/animations/ranged_2h/posture/stance_01/operator__lower_body__ranged_2h__posture__stance_01__w__5f__96.png" id="2_cgcyt"]
-[ext_resource type="Texture2D" uid="uid://dg1wccqwvptch" path="res://content/sprites/operator/runtime/animations/unarmed/interaction/field_patch_use_01/operator__lower_body__unarmed__interaction__field_patch_use_01__w__14f__96.png" id="2_fr6hd"]
-[ext_resource type="Texture2D" uid="uid://bw4uhpxa7lt16" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/aim_01/operator__lower_body__ranged_2h__cosmetic__aim_01__sw__5f__96.png" id="2_gwpkp"]
-[ext_resource type="Texture2D" uid="uid://cvn7hmc321868" path="res://content/sprites/operator/runtime/animations/sidearm/posture/draw_sidearm_01/operator__lower_body__sidearm__posture__draw_sidearm_01__sw__5f__96.png" id="2_ji6ju"]
-[ext_resource type="Texture2D" uid="uid://dwtnwxnav67ww" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__se__5f__96.png" id="3_0dy6c"]
-[ext_resource type="Texture2D" uid="uid://cl223udv8y26t" path="res://content/sprites/operator/runtime/animations/sidearm/cosmetic/fire_sidearm_01/operator__lower_body__sidearm__cosmetic__fire_sidearm_01__ne__5f__96.png" id="3_4ip1h"]
-[ext_resource type="Texture2D" uid="uid://dtd3ub7miel4t" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_hitreact_01/operator__lower_body__unarmed__locomotion__idle_hitreact_01__s__5f__96.png" id="3_6x6s8"]
-[ext_resource type="Texture2D" uid="uid://ccangv16cnsiu" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/aim_01/operator__lower_body__ranged_2h__cosmetic__aim_01__se__5f__96.png" id="3_8oeh4"]
-[ext_resource type="Texture2D" uid="uid://cgytqnukdc587" path="res://content/sprites/operator/runtime/animations/ranged_2h/posture/stance_01/operator__lower_body__ranged_2h__posture__stance_01__n__5f__96.png" id="3_86wa3"]
-[ext_resource type="Texture2D" uid="uid://bv6ejwvo6uif1" path="res://content/sprites/operator/runtime/animations/sidearm/posture/draw_sidearm_01/operator__lower_body__sidearm__posture__draw_sidearm_01__nw__5f__96.png" id="3_s3b7r"]
-[ext_resource type="Texture2D" uid="uid://dithk1lrw1h6s" path="res://content/sprites/operator/runtime/animations/sidearm/posture/draw_sidearm_01/operator__lower_body__sidearm__posture__draw_sidearm_01__ne__5f__96.png" id="4_cegw0"]
-[ext_resource type="Texture2D" uid="uid://cu3xferjaiqpx" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/aim_01/operator__lower_body__ranged_2h__cosmetic__aim_01__w__5f__96.png" id="4_igukl"]
-[ext_resource type="Texture2D" uid="uid://c80fqckcxhxs4" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_hitreact_01/operator__lower_body__unarmed__locomotion__idle_hitreact_01__n__5f__96.png" id="4_jxjab"]
-[ext_resource type="Texture2D" uid="uid://dpthqq8rbr6bt" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__w__5f__96.png" id="4_tmeqr"]
-[ext_resource type="Texture2D" uid="uid://dxsbpo6gjsspe" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__e__5f__96.png" id="5_6ntwd"]
-[ext_resource type="Texture2D" uid="uid://ka5lg47rmoye" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/fire_01/operator__lower_body__ranged_2h__cosmetic__fire_01__e__6f__96.png" id="5_iembs"]
-[ext_resource type="Texture2D" uid="uid://d03datgysm57a" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__n__5f__96.png" id="6_4ip1h"]
-[ext_resource type="Texture2D" uid="uid://c2kif1n88mvih" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/fire_01/operator__lower_body__ranged_2h__cosmetic__fire_01__sw__5f__96.png" id="6_rc8mh"]
-[ext_resource type="Texture2D" uid="uid://crkqsxkpcnuaq" path="res://content/sprites/operator/runtime/animations/sidearm/cosmetic/fire_sidearm_01/operator__lower_body__sidearm__cosmetic__fire_sidearm_01__sw__5f__96.png" id="6_st8ca"]
-[ext_resource type="Texture2D" uid="uid://ciqgs76dvj20e" path="res://content/sprites/operator/runtime/animations/sidearm/cosmetic/fire_sidearm_01/operator__lower_body__sidearm__cosmetic__fire_sidearm_01__nw__5f__96.png" id="7_cgcyt"]
-[ext_resource type="Texture2D" uid="uid://b2ra1v7y0dqd3" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__nw__5f__96.png" id="7_sxigw"]
-[ext_resource type="Texture2D" uid="uid://bnp6qofkpjfbt" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/fire_01/operator__lower_body__ranged_2h__cosmetic__fire_01__se__5f__96.png" id="7_vmp4k"]
-[ext_resource type="Texture2D" uid="uid://5aeoeye0fd6j" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/fire_01/operator__lower_body__ranged_2h__cosmetic__fire_01__w__6f__96.png" id="8_8hur8"]
-[ext_resource type="Texture2D" uid="uid://dyisnws1o0v1g" path="res://content/sprites/operator/runtime/animations/ranged_2h/posture/stance_01/operator__lower_body__ranged_2h__posture__stance_01__sw__5f__96.png" id="9_iv5e2"]
-[ext_resource type="Texture2D" uid="uid://clrintxyt05uu" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__s__5f__96.png" id="9_ji6ju"]
-[ext_resource type="Texture2D" uid="uid://dojnolw486dpe" path="res://content/sprites/operator/runtime/animations/ranged_2h/posture/relaxed_01/operator__lower_body__ranged_2h__posture__relaxed_01__e__5f__96.png" id="9_n1sok"]
-[ext_resource type="Texture2D" uid="uid://ch3dnqwo7th01" path="res://content/sprites/operator/runtime/animations/ranged_2h/posture/stance_01/operator__lower_body__ranged_2h__posture__stance_01__se__5f__96.png" id="10_c2afv"]
-[ext_resource type="Texture2D" uid="uid://e034yd1u0kx7" path="res://content/sprites/operator/runtime/animations/ranged_2h/posture/relaxed_01/operator__lower_body__ranged_2h__posture__relaxed_01__w__5f__96.png" id="10_fr6hd"]
-[ext_resource type="Texture2D" uid="uid://cubhipgwl3isx" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__sw__5f__96.png" id="10_s3b7r"]
-[ext_resource type="Texture2D" uid="uid://baxt7fa1masal" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__se__5f__96.png" id="11_cegw0"]
-[ext_resource type="Texture2D" uid="uid://cey3nu54prfkv" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/fire_01/operator__lower_body__ranged_2h__cosmetic__fire_01__n__5f__96.png" id="11_fr6hd"]
-[ext_resource type="Texture2D" uid="uid://d0nlnbpak1441" path="res://content/sprites/operator/runtime/animations/unarmed/defense/block_enter_01/operator__lower_body__unarmed__defense__block_enter_01__e__4f__96.png" id="12_qcjgg"]
-[ext_resource type="Texture2D" uid="uid://dsdcwygigu074" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__w__5f__96.png" id="12_st8ca"]
-[ext_resource type="Texture2D" uid="uid://f2fxtc2irk77" path="res://content/sprites/operator/runtime/animations/unarmed/defense/block_enter_01/operator__lower_body__unarmed__defense__block_enter_01__w__4f__96.png" id="13_04nt5"]
-[ext_resource type="Texture2D" uid="uid://4o1jalkexmcq" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__e__5f__96.png" id="13_cgcyt"]
-[ext_resource type="Texture2D" uid="uid://cjnajkan3176h" path="res://content/sprites/operator/runtime/animations/unarmed/defense/block_hit_01/operator__lower_body__unarmed__defense__block_hit_01__e__5f__96.png" id="14_pulro"]
-[ext_resource type="Texture2D" uid="uid://dmth0kv476rbr" path="res://content/sprites/operator/runtime/animations/unarmed/defense/block_hit_01/operator__lower_body__unarmed__defense__block_hit_01__w__5f__96.png" id="15_sqws8"]
-[ext_resource type="Texture2D" uid="uid://dvw5wegh45d18" path="res://content/sprites/operator/runtime/animations/unarmed/defense/block_hold_01/operator__lower_body__unarmed__defense__block_hold_01__e__5f__96.png" id="16_elm1p"]
-[ext_resource type="Texture2D" uid="uid://qmwq756bj8aq" path="res://content/sprites/operator/runtime/animations/unarmed/defense/block_hold_01/operator__lower_body__unarmed__defense__block_hold_01__w__5f__96.png" id="17_3qcr5"]
-[ext_resource type="Texture2D" uid="uid://ylt1i4h5lao6" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__sw__5f__96.png" id="18_qcjgg"]
-[ext_resource type="Texture2D" uid="uid://305psxxnw341" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__se__5f__96.png" id="19_04nt5"]
-[ext_resource type="Texture2D" uid="uid://b2lij3qwib362" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__w__5f__96.png" id="20_pulro"]
-[ext_resource type="Texture2D" uid="uid://cthf4n55pku3k" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__e__5f__96.png" id="21_sqws8"]
-[ext_resource type="Texture2D" uid="uid://cad0tfjasyq1t" path="res://content/sprites/operator/runtime/animations/unarmed/defense/parry_01/operator__lower_body__unarmed__defense__parry_01__n__5f__96.png" id="26_04nt5"]
-[ext_resource type="Texture2D" uid="uid://cp1peeflc8q3u" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__lower_body__unarmed__attack__fast_recovery_01__s__3f__96.png" id="28_2vse1"]
-[ext_resource type="Texture2D" uid="uid://bc1nw1j7g04rh" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__lower_body__unarmed__attack__fast_recovery_01__sw__3f__96.png" id="29_ofr7y"]
-[ext_resource type="Texture2D" uid="uid://b7ikufgf5axl8" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__lower_body__unarmed__attack__fast_recovery_01__se__3f__96.png" id="30_n1sok"]
-[ext_resource type="Texture2D" uid="uid://bk67vd7eejl6x" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__lower_body__unarmed__attack__fast_recovery_01__w__3f__96.png" id="31_fr6hd"]
-[ext_resource type="Texture2D" uid="uid://djigoahstbom2" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__lower_body__unarmed__attack__fast_recovery_01__e__3f__96.png" id="32_d2gv3"]
-[ext_resource type="Texture2D" uid="uid://cd74c7df7dj8d" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__lower_body__unarmed__attack__fast_recovery_01__n__3f__96.png" id="33_6x6s8"]
-[ext_resource type="Texture2D" uid="uid://dxmrg5akq5ofv" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__lower_body__unarmed__attack__fast_recovery_01__nw__3f__96.png" id="34_jxjab"]
-[ext_resource type="Texture2D" uid="uid://cg3oo662jqyul" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__lower_body__unarmed__attack__fast_recovery_01__ne__3f__96.png" id="35_5l8qu"]
-[ext_resource type="Texture2D" uid="uid://cfl3qyfwk1m48" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__lower_body__unarmed__attack__fast_strike_01__s__3f__96.png" id="36_icf0v"]
-[ext_resource type="Texture2D" uid="uid://cgwyn8d3enpyd" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__lower_body__unarmed__attack__fast_strike_01__sw__3f__96.png" id="37_q1yvi"]
-[ext_resource type="Texture2D" uid="uid://ehk5dymlfk6q" path="res://content/sprites/operator/runtime/animations/unarmed/defense/parry_01/operator__lower_body__unarmed__defense__parry_01__e__5f__96.png" id="38_d14aw"]
-[ext_resource type="Texture2D" uid="uid://bnxerwh325yqj" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__lower_body__unarmed__attack__fast_strike_01__se__3f__96.png" id="38_swhsq"]
-[ext_resource type="Texture2D" uid="uid://vsoac1nc60g5" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__lower_body__unarmed__attack__fast_strike_01__w__3f__96.png" id="39_fpnv7"]
-[ext_resource type="Texture2D" uid="uid://cixjt4uegy06k" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__lower_body__unarmed__attack__fast_strike_01__e__3f__96.png" id="40_g761y"]
-[ext_resource type="Texture2D" uid="uid://deoulmdbyw606" path="res://content/sprites/operator/runtime/animations/unarmed/interaction/success_01/operator__lower_body__unarmed__interaction__success_01__w__5f__96.png" id="41_iv5e2"]
-[ext_resource type="Texture2D" uid="uid://7f0vh6c2cr4c" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__lower_body__unarmed__attack__fast_strike_01__n__3f__96.png" id="41_xukf3"]
-[ext_resource type="Texture2D" uid="uid://jyfnt8vueapa" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__lower_body__unarmed__attack__fast_strike_01__nw__3f__96.png" id="42_3jyeq"]
-[ext_resource type="Texture2D" uid="uid://crtlwfoh3242f" path="res://content/sprites/operator/runtime/animations/unarmed/attack/parry_recovery_01/operator__lower_body__unarmed__attack__parry_recovery_01__e__5f__96.png" id="42_c2afv"]
-[ext_resource type="Texture2D" uid="uid://dj78w8vlbt5v8" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__lower_body__unarmed__attack__fast_strike_01__ne__3f__96.png" id="43_hr4tk"]
-[ext_resource type="Texture2D" uid="uid://dg8bq6sacipqg" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_windup_01/operator__lower_body__unarmed__attack__fast_windup_01__s__3f__96.png" id="44_vs2mt"]
-[ext_resource type="Texture2D" uid="uid://mkjdp32st62x" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_windup_01/operator__lower_body__unarmed__attack__fast_windup_01__sw__3f__96.png" id="45_2fmvg"]
-[ext_resource type="Texture2D" uid="uid://cadn3orqrbm6l" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__s__5f__96.png" id="45_gwpkp"]
-[ext_resource type="Texture2D" uid="uid://d0aqs815i8obk" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_windup_01/operator__lower_body__unarmed__attack__fast_windup_01__se__3f__96.png" id="46_vrvos"]
-[ext_resource type="Texture2D" uid="uid://b0w4vxns2t1ks" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_windup_01/operator__lower_body__unarmed__attack__fast_windup_01__w__3f__96.png" id="47_nnmlu"]
-[ext_resource type="Texture2D" uid="uid://xl83vj7qkeqc" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_windup_01/operator__lower_body__unarmed__attack__fast_windup_01__e__3f__96.png" id="48_4dn6i"]
-[ext_resource type="Texture2D" uid="uid://cnsk7m3ru0u8c" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__lower_body__unarmed__attack__fast_recovery_01__n__3f__96.png" id="49_pdrxk"]
-[ext_resource type="Texture2D" uid="uid://cydxf4sgw6myu" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_windup_01/operator__lower_body__unarmed__attack__fast_windup_01__nw__3f__96.png" id="50_arc78"]
-[ext_resource type="Texture2D" uid="uid://dkiqb6j85h6h4" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_windup_01/operator__lower_body__unarmed__attack__fast_windup_01__ne__3f__96.png" id="51_1muxx"]
-[ext_resource type="Texture2D" uid="uid://dfbdcxpeceu73" path="res://content/sprites/operator/runtime/animations/unarmed/defense/parry_01/operator__lower_body__unarmed__defense__parry_01__w__6f__96.png" id="63_2vse1"]
-[ext_resource type="Texture2D" uid="uid://bnf5fc3h36iwg" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__ne__6f__96.png" id="66_6x6s8"]
-[ext_resource type="Texture2D" uid="uid://ch0uwyb8qd6dk" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__n__8f__96.png" id="77_6x6s8"]
-[ext_resource type="Texture2D" uid="uid://dav8yfgbjredv" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__nw__6f__96.png" id="78_5l8qu"]
-[ext_resource type="Texture2D" uid="uid://bsdkyw70rackl" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__ne__6f__96.png" id="79_icf0v"]
-[ext_resource type="Texture2D" uid="uid://b7apwpxk7ltf7" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__n__8f__96.png" id="82_n1sok"]
-[ext_resource type="Texture2D" uid="uid://f31kld7wtiqv" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__nw__6f__96.png" id="86_q1yvi"]
-[ext_resource type="Texture2D" uid="uid://b48irdcyjfy16" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__ne__6f__96.png" id="87_swhsq"]
-[ext_resource type="Texture2D" uid="uid://dt6nc5dl88wxp" path="res://content/sprites/operator/runtime/animations/melee_1h/posture/stance_01/operator__lower_body__melee_1h__posture__stance_01__e__1f__96.png" id="88_melee1h"]
+[ext_resource type="Texture2D" uid="uid://b1irvrjqjgchu" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/aim_01/operator__lower_body__ranged_2h__cosmetic__aim_01__e__5f__96.png" id="1_1bdxc"]
+[ext_resource type="Texture2D" uid="uid://dpr3qx4eav8c" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__s__5f__96.png" id="1_ld52m"]
+[ext_resource type="Texture2D" uid="uid://i0tvjeba80g7" path="res://content/sprites/operator/runtime/animations/unarmed/interaction/field_patch_use_01/operator__lower_body__unarmed__interaction__field_patch_use_01__e__14f__96.png" id="1_n1sok"]
+[ext_resource type="Texture2D" uid="uid://udf27xvjrwwm" path="res://content/sprites/operator/runtime/animations/ranged_2h/posture/stance_01/operator__lower_body__ranged_2h__posture__stance_01__e__5f__96.png" id="1_st8ca"]
+[ext_resource type="Texture2D" uid="uid://xw22botvjmmk" path="res://content/sprites/operator/runtime/animations/sidearm/posture/draw_sidearm_01/operator__lower_body__sidearm__posture__draw_sidearm_01__se__5f__96.png" id="1_tmeqr"]
+[ext_resource type="Texture2D" uid="uid://b408vmmw2e2s0" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__sw__5f__96.png" id="2_3em5y"]
+[ext_resource type="Texture2D" uid="uid://bt8ge0dhshi6x" path="res://content/sprites/operator/runtime/animations/sidearm/cosmetic/fire_sidearm_01/operator__lower_body__sidearm__cosmetic__fire_sidearm_01__se__5f__96.png" id="2_6ntwd"]
+[ext_resource type="Texture2D" uid="uid://bmrceiubgdnjp" path="res://content/sprites/operator/runtime/animations/ranged_2h/posture/stance_01/operator__lower_body__ranged_2h__posture__stance_01__w__5f__96.png" id="2_cgcyt"]
+[ext_resource type="Texture2D" uid="uid://br5ckeqhhw3pa" path="res://content/sprites/operator/runtime/animations/unarmed/interaction/field_patch_use_01/operator__lower_body__unarmed__interaction__field_patch_use_01__w__14f__96.png" id="2_fr6hd"]
+[ext_resource type="Texture2D" uid="uid://dgd1qqyokwfp" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/aim_01/operator__lower_body__ranged_2h__cosmetic__aim_01__sw__5f__96.png" id="2_gwpkp"]
+[ext_resource type="Texture2D" uid="uid://nwt7kkdxtyci" path="res://content/sprites/operator/runtime/animations/sidearm/posture/draw_sidearm_01/operator__lower_body__sidearm__posture__draw_sidearm_01__sw__5f__96.png" id="2_ji6ju"]
+[ext_resource type="Texture2D" uid="uid://dj8rsailx36oc" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__se__5f__96.png" id="3_0dy6c"]
+[ext_resource type="Texture2D" uid="uid://c4kj8yyud8xtg" path="res://content/sprites/operator/runtime/animations/sidearm/cosmetic/fire_sidearm_01/operator__lower_body__sidearm__cosmetic__fire_sidearm_01__ne__5f__96.png" id="3_4ip1h"]
+[ext_resource type="Texture2D" uid="uid://7ssd24qucd2k" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_hitreact_01/operator__lower_body__unarmed__locomotion__idle_hitreact_01__s__5f__96.png" id="3_6x6s8"]
+[ext_resource type="Texture2D" uid="uid://b4muqn7orm35v" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/aim_01/operator__lower_body__ranged_2h__cosmetic__aim_01__se__5f__96.png" id="3_8oeh4"]
+[ext_resource type="Texture2D" uid="uid://b2pt4t8dk8fo7" path="res://content/sprites/operator/runtime/animations/ranged_2h/posture/stance_01/operator__lower_body__ranged_2h__posture__stance_01__n__5f__96.png" id="3_86wa3"]
+[ext_resource type="Texture2D" uid="uid://13k38ceedy6g" path="res://content/sprites/operator/runtime/animations/sidearm/posture/draw_sidearm_01/operator__lower_body__sidearm__posture__draw_sidearm_01__nw__5f__96.png" id="3_s3b7r"]
+[ext_resource type="Texture2D" uid="uid://bbcxlkbjyj0bk" path="res://content/sprites/operator/runtime/animations/sidearm/posture/draw_sidearm_01/operator__lower_body__sidearm__posture__draw_sidearm_01__ne__5f__96.png" id="4_cegw0"]
+[ext_resource type="Texture2D" uid="uid://c57rljy74mjt0" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/aim_01/operator__lower_body__ranged_2h__cosmetic__aim_01__w__5f__96.png" id="4_igukl"]
+[ext_resource type="Texture2D" uid="uid://blqd8ne2ncvua" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_hitreact_01/operator__lower_body__unarmed__locomotion__idle_hitreact_01__n__5f__96.png" id="4_jxjab"]
+[ext_resource type="Texture2D" uid="uid://ctadmb2q6qrdl" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__w__5f__96.png" id="4_tmeqr"]
+[ext_resource type="Texture2D" uid="uid://bvljpmub627b3" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__e__5f__96.png" id="5_6ntwd"]
+[ext_resource type="Texture2D" uid="uid://ctjnco7rlytjd" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/fire_01/operator__lower_body__ranged_2h__cosmetic__fire_01__e__6f__96.png" id="5_iembs"]
+[ext_resource type="Texture2D" uid="uid://cp3fthih3sy6h" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__n__5f__96.png" id="6_4ip1h"]
+[ext_resource type="Texture2D" uid="uid://b3sywhnljineu" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/fire_01/operator__lower_body__ranged_2h__cosmetic__fire_01__sw__5f__96.png" id="6_rc8mh"]
+[ext_resource type="Texture2D" uid="uid://bbgy5e762g7nl" path="res://content/sprites/operator/runtime/animations/sidearm/cosmetic/fire_sidearm_01/operator__lower_body__sidearm__cosmetic__fire_sidearm_01__sw__5f__96.png" id="6_st8ca"]
+[ext_resource type="Texture2D" uid="uid://dk5ytqbnpn03k" path="res://content/sprites/operator/runtime/animations/sidearm/cosmetic/fire_sidearm_01/operator__lower_body__sidearm__cosmetic__fire_sidearm_01__nw__5f__96.png" id="7_cgcyt"]
+[ext_resource type="Texture2D" uid="uid://d4cyauseefwfc" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__nw__5f__96.png" id="7_sxigw"]
+[ext_resource type="Texture2D" uid="uid://do4pu87xkggt6" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/fire_01/operator__lower_body__ranged_2h__cosmetic__fire_01__se__5f__96.png" id="7_vmp4k"]
+[ext_resource type="Texture2D" uid="uid://dwa761qoe5dgh" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/fire_01/operator__lower_body__ranged_2h__cosmetic__fire_01__w__6f__96.png" id="8_8hur8"]
+[ext_resource type="Texture2D" uid="uid://cchulmmlb3s1x" path="res://content/sprites/operator/runtime/animations/ranged_2h/posture/stance_01/operator__lower_body__ranged_2h__posture__stance_01__sw__5f__96.png" id="9_iv5e2"]
+[ext_resource type="Texture2D" uid="uid://bfu1g7nhw63cs" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__s__5f__96.png" id="9_ji6ju"]
+[ext_resource type="Texture2D" uid="uid://bed4q8vmcepfi" path="res://content/sprites/operator/runtime/animations/ranged_2h/posture/relaxed_01/operator__lower_body__ranged_2h__posture__relaxed_01__e__5f__96.png" id="9_n1sok"]
+[ext_resource type="Texture2D" uid="uid://cfcrer01wxn31" path="res://content/sprites/operator/runtime/animations/ranged_2h/posture/stance_01/operator__lower_body__ranged_2h__posture__stance_01__se__5f__96.png" id="10_c2afv"]
+[ext_resource type="Texture2D" uid="uid://b71fsg5885t5u" path="res://content/sprites/operator/runtime/animations/ranged_2h/posture/relaxed_01/operator__lower_body__ranged_2h__posture__relaxed_01__w__5f__96.png" id="10_fr6hd"]
+[ext_resource type="Texture2D" uid="uid://dihbbkxbx51rc" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__sw__5f__96.png" id="10_s3b7r"]
+[ext_resource type="Texture2D" uid="uid://dbhng644ilypu" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__se__5f__96.png" id="11_cegw0"]
+[ext_resource type="Texture2D" uid="uid://1bk5inwvtdpp" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/fire_01/operator__lower_body__ranged_2h__cosmetic__fire_01__n__5f__96.png" id="11_fr6hd"]
+[ext_resource type="Texture2D" uid="uid://dh1wclqxkht7t" path="res://content/sprites/operator/runtime/animations/unarmed/defense/block_enter_01/operator__lower_body__unarmed__defense__block_enter_01__e__4f__96.png" id="12_qcjgg"]
+[ext_resource type="Texture2D" uid="uid://bci2qb2rofv0j" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__w__5f__96.png" id="12_st8ca"]
+[ext_resource type="Texture2D" uid="uid://c4a5nifrknjcw" path="res://content/sprites/operator/runtime/animations/unarmed/defense/block_enter_01/operator__lower_body__unarmed__defense__block_enter_01__w__4f__96.png" id="13_04nt5"]
+[ext_resource type="Texture2D" uid="uid://c2rob76db8bha" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__e__5f__96.png" id="13_cgcyt"]
+[ext_resource type="Texture2D" uid="uid://6ekvlsn7dpdd" path="res://content/sprites/operator/runtime/animations/unarmed/defense/block_hit_01/operator__lower_body__unarmed__defense__block_hit_01__e__5f__96.png" id="14_pulro"]
+[ext_resource type="Texture2D" uid="uid://co3crejx2quws" path="res://content/sprites/operator/runtime/animations/unarmed/defense/block_hit_01/operator__lower_body__unarmed__defense__block_hit_01__w__5f__96.png" id="15_sqws8"]
+[ext_resource type="Texture2D" uid="uid://bb3f5jb8qty70" path="res://content/sprites/operator/runtime/animations/unarmed/defense/block_hold_01/operator__lower_body__unarmed__defense__block_hold_01__e__5f__96.png" id="16_elm1p"]
+[ext_resource type="Texture2D" uid="uid://spoumer5wffa" path="res://content/sprites/operator/runtime/animations/unarmed/defense/block_hold_01/operator__lower_body__unarmed__defense__block_hold_01__w__5f__96.png" id="17_3qcr5"]
+[ext_resource type="Texture2D" uid="uid://cayyilu83xje6" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__sw__5f__96.png" id="18_qcjgg"]
+[ext_resource type="Texture2D" uid="uid://dt40oscwj4la5" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__se__5f__96.png" id="19_04nt5"]
+[ext_resource type="Texture2D" uid="uid://bjevyshevq3q6" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__w__5f__96.png" id="20_pulro"]
+[ext_resource type="Texture2D" uid="uid://7igytby6xjvj" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__e__5f__96.png" id="21_sqws8"]
+[ext_resource type="Texture2D" uid="uid://dd768ylak8scc" path="res://content/sprites/operator/runtime/animations/unarmed/defense/parry_01/operator__lower_body__unarmed__defense__parry_01__n__5f__96.png" id="26_04nt5"]
+[ext_resource type="Texture2D" uid="uid://lrf1dp50bxok" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__lower_body__unarmed__attack__fast_recovery_01__s__3f__96.png" id="28_2vse1"]
+[ext_resource type="Texture2D" uid="uid://cffel2o1t3wfm" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__lower_body__unarmed__attack__fast_recovery_01__sw__3f__96.png" id="29_ofr7y"]
+[ext_resource type="Texture2D" uid="uid://7qojol00fysy" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__lower_body__unarmed__attack__fast_recovery_01__se__3f__96.png" id="30_n1sok"]
+[ext_resource type="Texture2D" uid="uid://d0wjmxwn25xop" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__lower_body__unarmed__attack__fast_recovery_01__w__3f__96.png" id="31_fr6hd"]
+[ext_resource type="Texture2D" uid="uid://dy26knc33omqh" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__lower_body__unarmed__attack__fast_recovery_01__e__3f__96.png" id="32_d2gv3"]
+[ext_resource type="Texture2D" uid="uid://bmvkvbi4rsayv" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__lower_body__unarmed__attack__fast_recovery_01__nw__3f__96.png" id="34_jxjab"]
+[ext_resource type="Texture2D" uid="uid://bh6ovd6ke7ewd" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__lower_body__unarmed__attack__fast_recovery_01__ne__3f__96.png" id="35_5l8qu"]
+[ext_resource type="Texture2D" uid="uid://dfodusvrw4t" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__lower_body__unarmed__attack__fast_strike_01__s__3f__96.png" id="36_icf0v"]
+[ext_resource type="Texture2D" uid="uid://ty84yu8koxk1" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__lower_body__unarmed__attack__fast_strike_01__sw__3f__96.png" id="37_q1yvi"]
+[ext_resource type="Texture2D" uid="uid://b74enw613hto4" path="res://content/sprites/operator/runtime/animations/unarmed/defense/parry_01/operator__lower_body__unarmed__defense__parry_01__e__5f__96.png" id="38_d14aw"]
+[ext_resource type="Texture2D" uid="uid://d3e61gego2ln8" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__lower_body__unarmed__attack__fast_strike_01__se__3f__96.png" id="38_swhsq"]
+[ext_resource type="Texture2D" uid="uid://di1y5f74ynuto" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__lower_body__unarmed__attack__fast_strike_01__w__3f__96.png" id="39_fpnv7"]
+[ext_resource type="Texture2D" uid="uid://dc6bieq6sqd3x" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__lower_body__unarmed__attack__fast_strike_01__e__3f__96.png" id="40_g761y"]
+[ext_resource type="Texture2D" uid="uid://dskdh8w6mn2um" path="res://content/sprites/operator/runtime/animations/unarmed/interaction/success_01/operator__lower_body__unarmed__interaction__success_01__w__5f__96.png" id="41_iv5e2"]
+[ext_resource type="Texture2D" uid="uid://ijnp6tuistqd" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__lower_body__unarmed__attack__fast_strike_01__n__3f__96.png" id="41_xukf3"]
+[ext_resource type="Texture2D" uid="uid://cadv608sbys0j" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__lower_body__unarmed__attack__fast_strike_01__nw__3f__96.png" id="42_3jyeq"]
+[ext_resource type="Texture2D" uid="uid://bm4uhsxkpn12o" path="res://content/sprites/operator/runtime/animations/unarmed/attack/parry_recovery_01/operator__lower_body__unarmed__attack__parry_recovery_01__e__5f__96.png" id="42_c2afv"]
+[ext_resource type="Texture2D" uid="uid://n3gkst73himh" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__lower_body__unarmed__attack__fast_strike_01__ne__3f__96.png" id="43_hr4tk"]
+[ext_resource type="Texture2D" uid="uid://d3m51aivpcdcd" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_windup_01/operator__lower_body__unarmed__attack__fast_windup_01__s__3f__96.png" id="44_vs2mt"]
+[ext_resource type="Texture2D" uid="uid://d1oymwb513brr" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_windup_01/operator__lower_body__unarmed__attack__fast_windup_01__sw__3f__96.png" id="45_2fmvg"]
+[ext_resource type="Texture2D" uid="uid://c1mfv4pbrs5n2" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__s__5f__96.png" id="45_gwpkp"]
+[ext_resource type="Texture2D" uid="uid://ddbmboa0sm3k" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_windup_01/operator__lower_body__unarmed__attack__fast_windup_01__se__3f__96.png" id="46_vrvos"]
+[ext_resource type="Texture2D" uid="uid://bk7mxyed8lrmb" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_windup_01/operator__lower_body__unarmed__attack__fast_windup_01__w__3f__96.png" id="47_nnmlu"]
+[ext_resource type="Texture2D" uid="uid://vm0f4mv3upof" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_windup_01/operator__lower_body__unarmed__attack__fast_windup_01__e__3f__96.png" id="48_4dn6i"]
+[ext_resource type="Texture2D" uid="uid://dbh4pamrsrt0m" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__lower_body__unarmed__attack__fast_recovery_01__n__3f__96.png" id="49_pdrxk"]
+[ext_resource type="Texture2D" uid="uid://d0144eag72wsg" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_windup_01/operator__lower_body__unarmed__attack__fast_windup_01__nw__3f__96.png" id="50_arc78"]
+[ext_resource type="Texture2D" uid="uid://bbab6bgd4mm38" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_windup_01/operator__lower_body__unarmed__attack__fast_windup_01__ne__3f__96.png" id="51_1muxx"]
+[ext_resource type="Texture2D" uid="uid://r5uoln326pf2" path="res://content/sprites/operator/runtime/animations/unarmed/defense/parry_01/operator__lower_body__unarmed__defense__parry_01__w__6f__96.png" id="63_2vse1"]
+[ext_resource type="Texture2D" uid="uid://cx88o2ou15v5t" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__n__8f__96.png" id="77_6x6s8"]
+[ext_resource type="Texture2D" uid="uid://c0kcj8wao5opc" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__n__8f__96.png" id="82_n1sok"]
+[ext_resource type="Texture2D" uid="uid://dihdkb18o5xh1" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__nw__6f__96.png" id="86_q1yvi"]
+[ext_resource type="Texture2D" uid="uid://c1efl2tfm1raa" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__ne__6f__96.png" id="87_swhsq"]
+[ext_resource type="Texture2D" uid="uid://bso24vuedduh8" path="res://content/sprites/operator/runtime/animations/melee_1h/posture/stance_01/operator__lower_body__melee_1h__posture__stance_01__e__1f__96.png" id="88_melee1h"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jxjab"]
 atlas = ExtResource("1_n1sok")
@@ -1154,15 +1150,15 @@ atlas = ExtResource("32_d2gv3")
 region = Rect2(192, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_j6tui"]
-atlas = ExtResource("33_6x6s8")
+atlas = ExtResource("49_pdrxk")
 region = Rect2(0, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_itxoh"]
-atlas = ExtResource("33_6x6s8")
+atlas = ExtResource("49_pdrxk")
 region = Rect2(96, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ddfha"]
-atlas = ExtResource("33_6x6s8")
+atlas = ExtResource("49_pdrxk")
 region = Rect2(192, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ksk3t"]
@@ -1566,27 +1562,27 @@ atlas = ExtResource("7_sxigw")
 region = Rect2(384, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_t6y58"]
-atlas = ExtResource("66_6x6s8")
+atlas = ExtResource("87_swhsq")
 region = Rect2(0, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fg501"]
-atlas = ExtResource("66_6x6s8")
+atlas = ExtResource("87_swhsq")
 region = Rect2(96, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_mgidp"]
-atlas = ExtResource("66_6x6s8")
+atlas = ExtResource("87_swhsq")
 region = Rect2(192, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4xild"]
-atlas = ExtResource("66_6x6s8")
+atlas = ExtResource("87_swhsq")
 region = Rect2(288, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ngcxr"]
-atlas = ExtResource("66_6x6s8")
+atlas = ExtResource("87_swhsq")
 region = Rect2(384, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_58peb"]
-atlas = ExtResource("66_6x6s8")
+atlas = ExtResource("87_swhsq")
 region = Rect2(480, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_m16qi"]
@@ -1930,51 +1926,51 @@ atlas = ExtResource("77_6x6s8")
 region = Rect2(672, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_aldml"]
-atlas = ExtResource("78_5l8qu")
+atlas = ExtResource("86_q1yvi")
 region = Rect2(0, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ljyya"]
-atlas = ExtResource("78_5l8qu")
+atlas = ExtResource("86_q1yvi")
 region = Rect2(96, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_o3048"]
-atlas = ExtResource("78_5l8qu")
+atlas = ExtResource("86_q1yvi")
 region = Rect2(192, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6v75r"]
-atlas = ExtResource("78_5l8qu")
+atlas = ExtResource("86_q1yvi")
 region = Rect2(288, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7se3m"]
-atlas = ExtResource("78_5l8qu")
+atlas = ExtResource("86_q1yvi")
 region = Rect2(384, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_pw25n"]
-atlas = ExtResource("78_5l8qu")
+atlas = ExtResource("86_q1yvi")
 region = Rect2(480, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_rhjbm"]
-atlas = ExtResource("79_icf0v")
+atlas = ExtResource("87_swhsq")
 region = Rect2(0, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vgand"]
-atlas = ExtResource("79_icf0v")
+atlas = ExtResource("87_swhsq")
 region = Rect2(96, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wk7yy"]
-atlas = ExtResource("79_icf0v")
+atlas = ExtResource("87_swhsq")
 region = Rect2(192, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_feo6r"]
-atlas = ExtResource("79_icf0v")
+atlas = ExtResource("87_swhsq")
 region = Rect2(288, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5iq4k"]
-atlas = ExtResource("79_icf0v")
+atlas = ExtResource("87_swhsq")
 region = Rect2(384, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cb56x"]
-atlas = ExtResource("79_icf0v")
+atlas = ExtResource("87_swhsq")
 region = Rect2(480, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_v22au"]

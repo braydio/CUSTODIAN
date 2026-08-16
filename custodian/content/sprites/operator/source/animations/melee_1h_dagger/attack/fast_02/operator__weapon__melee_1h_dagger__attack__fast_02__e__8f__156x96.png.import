@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c8ieluimeg5kc"
-path="res://.godot/imported/operator__lower_body__melee_1h__attack__fast_02__w__8f__96.png-5b4a72470a4935cf5823492c00a9f33b.ctex"
+uid="uid://bappv8qghp2un"
+path="res://.godot/imported/operator__weapon__melee_1h_dagger__attack__fast_02__e__8f__156x96.png-303fc0b79057d61cef941f8c65598b79.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/operator/source/animations/melee_1h/attack/fast_02/operator__lower_body__melee_1h__attack__fast_02__w__8f__96.png"
-dest_files=["res://.godot/imported/operator__lower_body__melee_1h__attack__fast_02__w__8f__96.png-5b4a72470a4935cf5823492c00a9f33b.ctex"]
+source_file="res://content/sprites/operator/source/animations/melee_1h_dagger/attack/fast_02/operator__weapon__melee_1h_dagger__attack__fast_02__e__8f__156x96.png"
+dest_files=["res://.godot/imported/operator__weapon__melee_1h_dagger__attack__fast_02__e__8f__156x96.png-303fc0b79057d61cef941f8c65598b79.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bsb0f341hucat"
-path="res://.godot/imported/operator__lower_body__melee_1h__attack__fast_02__e__8f__96.png-a6ce35bcecc25b2a2a1b62339446fe03.ctex"
+uid="uid://ckpnpg3ggyxg8"
+path="res://.godot/imported/operator__lower_body__melee_1h__attack__fast_02__e__8f__156x96.png-8ad26b77e0126321561ed73e37e0ddf8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/operator/source/animations/melee_1h/attack/fast_02/operator__lower_body__melee_1h__attack__fast_02__e__8f__96.png"
-dest_files=["res://.godot/imported/operator__lower_body__melee_1h__attack__fast_02__e__8f__96.png-a6ce35bcecc25b2a2a1b62339446fe03.ctex"]
+source_file="res://content/sprites/operator/source/animations/melee_1h/attack/fast_02/operator__lower_body__melee_1h__attack__fast_02__e__8f__156x96.png"
+dest_files=["res://.godot/imported/operator__lower_body__melee_1h__attack__fast_02__e__8f__156x96.png-8ad26b77e0126321561ed73e37e0ddf8.ctex"]
 
 [params]
 

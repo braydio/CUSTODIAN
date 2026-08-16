@@ -1,31 +1,30 @@
 [gd_resource type="SpriteFrames" format=3 uid="uid://gev4vvtwxx8o"]
 
-[ext_resource type="Texture2D" uid="uid://c72peu0faummh" path="res://content/sprites/operator/runtime/animations/sidearm/posture/draw_sidearm_01/operator__weapon__sidearm__posture__draw_sidearm_01__se__5f__96.png" id="1_2ob6c"]
-[ext_resource type="Texture2D" uid="uid://dknfyelkqrale" path="res://content/sprites/operator/runtime/animations/ranged_2h/posture/stance_01/operator__weapon__ranged_2h__posture__stance_01__e__5f__96.png" id="1_aflv3"]
-[ext_resource type="Texture2D" uid="uid://poi5jtq5r46v" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/aim_01/operator__weapon__ranged_2h__cosmetic__aim_01__e__5f__96.png" id="1_ledfu"]
-[ext_resource type="Texture2D" uid="uid://d20vsfn7gq4fc" path="res://content/sprites/operator/runtime/animations/ranged_2h/posture/stance_01/operator__weapon__ranged_2h__posture__stance_01__w__5f__96.png" id="2_cwdr7"]
-[ext_resource type="Texture2D" uid="uid://beefgh332r0v1" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/aim_01/operator__weapon__ranged_2h__cosmetic__aim_01__sw__5f__96.png" id="2_d0ytv"]
-[ext_resource type="Texture2D" uid="uid://danpctu0mdxou" path="res://content/sprites/operator/runtime/animations/sidearm/cosmetic/fire_sidearm_01/operator__weapon__sidearm__cosmetic__fire_sidearm_01__se__5f__96.png" id="2_gioow"]
-[ext_resource type="Texture2D" uid="uid://clkayqxndr05x" path="res://content/sprites/operator/runtime/animations/sidearm/posture/draw_sidearm_01/operator__weapon__sidearm__posture__draw_sidearm_01__sw__5f__96.png" id="2_qkht3"]
-[ext_resource type="Texture2D" uid="uid://c45sqfk05vmvn" path="res://content/sprites/operator/runtime/animations/ranged_2h/posture/stance_01/operator__weapon__ranged_2h__posture__stance_01__n__5f__96.png" id="3_beyj7"]
-[ext_resource type="Texture2D" uid="uid://df3cq7bufxjga" path="res://content/sprites/operator/runtime/animations/sidearm/cosmetic/fire_sidearm_01/operator__weapon__sidearm__cosmetic__fire_sidearm_01__ne__5f__96.png" id="3_cgiiv"]
-[ext_resource type="Texture2D" uid="uid://cq7cxtvemq82y" path="res://content/sprites/operator/runtime/animations/sidearm/posture/draw_sidearm_01/operator__weapon__sidearm__posture__draw_sidearm_01__nw__5f__96.png" id="3_rtk06"]
-[ext_resource type="Texture2D" uid="uid://8m2dwiomtd6v" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/aim_01/operator__weapon__ranged_2h__cosmetic__aim_01__se__5f__96.png" id="3_xum8y"]
-[ext_resource type="Texture2D" uid="uid://caop04ccdbo6l" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/aim_01/operator__weapon__ranged_2h__cosmetic__aim_01__w__5f__96.png" id="4_w67n1"]
-[ext_resource type="Texture2D" uid="uid://bxgo7kcgvi1gh" path="res://content/sprites/operator/runtime/animations/sidearm/posture/draw_sidearm_01/operator__weapon__sidearm__posture__draw_sidearm_01__ne__5f__96.png" id="4_xd84y"]
-[ext_resource type="Texture2D" uid="uid://l7vtvv02ijao" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/fire_01/operator__weapon__ranged_2h__cosmetic__fire_01__e__6f__96.png" id="5_ledfu"]
-[ext_resource type="Texture2D" uid="uid://ca5emqydeyujx" path="res://content/sprites/operator/runtime/animations/sidearm/cosmetic/fire_sidearm_01/operator__weapon__sidearm__cosmetic__fire_sidearm_01__sw__5f__96.png" id="6_aflv3"]
-[ext_resource type="Texture2D" uid="uid://c17b0uw6ns57q" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/fire_01/operator__weapon__ranged_2h__cosmetic__fire_01__sw__5f__96.png" id="6_yb07i"]
-[ext_resource type="Texture2D" uid="uid://1gk853agillw" path="res://content/sprites/operator/runtime/animations/sidearm/cosmetic/fire_sidearm_01/operator__weapon__sidearm__cosmetic__fire_sidearm_01__nw__5f__96.png" id="7_cwdr7"]
-[ext_resource type="Texture2D" uid="uid://dlhpodvmhsieq" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/fire_01/operator__weapon__ranged_2h__cosmetic__fire_01__se__5f__96.png" id="7_hgsja"]
-[ext_resource type="Texture2D" uid="uid://d3gdyc46j83or" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/fire_01/operator__weapon__ranged_2h__cosmetic__fire_01__w__6f__96.png" id="8_xum8y"]
-[ext_resource type="Texture2D" uid="uid://cm7g2gfixvha1" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/fire_01/operator__weapon__ranged_2h__cosmetic__fire_01__n__5f__96.png" id="9_7ix11"]
-[ext_resource type="Texture2D" uid="uid://c7nohsoo4i627" path="res://content/sprites/operator/runtime/animations/ranged_2h/posture/stance_01/operator__weapon__ranged_2h__posture__stance_01__sw__5f__96.png" id="9_i417n"]
-[ext_resource type="Texture2D" uid="uid://caq74l7ar0s4f" path="res://content/sprites/operator/runtime/animations/ranged_2h/posture/relaxed_01_legacy_15a8b537/operator__weapon__ranged_2h__posture__relaxed_01_legacy_15a8b537__e__5f__96.png" id="9_w67n1"]
-[ext_resource type="Texture2D" uid="uid://dsoae55nqk42g" path="res://content/sprites/operator/runtime/animations/ranged_2h/posture/stance_01/operator__weapon__ranged_2h__posture__stance_01__se__5f__96.png" id="10_cxdx7"]
-[ext_resource type="Texture2D" uid="uid://dl458r1j4328h" path="res://content/sprites/operator/runtime/animations/ranged_2h/posture/relaxed_01_legacy_74659c90/operator__weapon__ranged_2h__posture__relaxed_01_legacy_74659c90__w__5f__96.png" id="11_yb07i"]
-[ext_resource type="Texture2D" uid="uid://cejc6cmnf7331" path="res://content/sprites/operator/runtime/animations/ranged_2h/posture/stance_01/operator__weapon__ranged_2h__posture__stance_01__n__5f__96.png" id="13_mwn45"]
-[ext_resource type="Texture2D" uid="uid://b1w4w41n5dwpc" path="res://content/sprites/operator/runtime/animations/ranged_2h/posture/stance_01/operator__weapon__ranged_2h__posture__stance_01__ne__5f__96.png" id="15_w67n1"]
+[ext_resource type="Texture2D" uid="uid://f5ph71by224a" path="res://content/sprites/operator/runtime/animations/sidearm/posture/draw_sidearm_01/operator__weapon__sidearm__posture__draw_sidearm_01__se__5f__96.png" id="1_2ob6c"]
+[ext_resource type="Texture2D" uid="uid://dvg04br33sohd" path="res://content/sprites/operator/runtime/animations/ranged_2h/posture/stance_01/operator__weapon__ranged_2h__posture__stance_01__e__5f__96.png" id="1_aflv3"]
+[ext_resource type="Texture2D" uid="uid://oto0h3pe82vh" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/aim_01/operator__weapon__ranged_2h__cosmetic__aim_01__e__5f__96.png" id="1_ledfu"]
+[ext_resource type="Texture2D" uid="uid://b7iw4gjs73cqu" path="res://content/sprites/operator/runtime/animations/ranged_2h/posture/stance_01/operator__weapon__ranged_2h__posture__stance_01__w__5f__96.png" id="2_cwdr7"]
+[ext_resource type="Texture2D" uid="uid://b3irit77vqqfe" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/aim_01/operator__weapon__ranged_2h__cosmetic__aim_01__sw__5f__96.png" id="2_d0ytv"]
+[ext_resource type="Texture2D" uid="uid://cuy31svop6bpv" path="res://content/sprites/operator/runtime/animations/sidearm/cosmetic/fire_sidearm_01/operator__weapon__sidearm__cosmetic__fire_sidearm_01__se__5f__96.png" id="2_gioow"]
+[ext_resource type="Texture2D" uid="uid://bjuxou3ifossx" path="res://content/sprites/operator/runtime/animations/sidearm/posture/draw_sidearm_01/operator__weapon__sidearm__posture__draw_sidearm_01__sw__5f__96.png" id="2_qkht3"]
+[ext_resource type="Texture2D" uid="uid://cuxlw3dq61ila" path="res://content/sprites/operator/runtime/animations/sidearm/cosmetic/fire_sidearm_01/operator__weapon__sidearm__cosmetic__fire_sidearm_01__ne__5f__96.png" id="3_cgiiv"]
+[ext_resource type="Texture2D" uid="uid://c316hadoq8n03" path="res://content/sprites/operator/runtime/animations/sidearm/posture/draw_sidearm_01/operator__weapon__sidearm__posture__draw_sidearm_01__nw__5f__96.png" id="3_rtk06"]
+[ext_resource type="Texture2D" uid="uid://dxbtiounubs2f" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/aim_01/operator__weapon__ranged_2h__cosmetic__aim_01__se__5f__96.png" id="3_xum8y"]
+[ext_resource type="Texture2D" uid="uid://d3rmccbncmw3o" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/aim_01/operator__weapon__ranged_2h__cosmetic__aim_01__w__5f__96.png" id="4_w67n1"]
+[ext_resource type="Texture2D" uid="uid://cgotmvjthkt7a" path="res://content/sprites/operator/runtime/animations/sidearm/posture/draw_sidearm_01/operator__weapon__sidearm__posture__draw_sidearm_01__ne__5f__96.png" id="4_xd84y"]
+[ext_resource type="Texture2D" uid="uid://dfey1njpl404r" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/fire_01/operator__weapon__ranged_2h__cosmetic__fire_01__e__6f__96.png" id="5_ledfu"]
+[ext_resource type="Texture2D" uid="uid://dh6cbinwa1w8f" path="res://content/sprites/operator/runtime/animations/sidearm/cosmetic/fire_sidearm_01/operator__weapon__sidearm__cosmetic__fire_sidearm_01__sw__5f__96.png" id="6_aflv3"]
+[ext_resource type="Texture2D" uid="uid://dd2m0tlhnxa8g" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/fire_01/operator__weapon__ranged_2h__cosmetic__fire_01__sw__5f__96.png" id="6_yb07i"]
+[ext_resource type="Texture2D" uid="uid://bqspdeukgr7ax" path="res://content/sprites/operator/runtime/animations/sidearm/cosmetic/fire_sidearm_01/operator__weapon__sidearm__cosmetic__fire_sidearm_01__nw__5f__96.png" id="7_cwdr7"]
+[ext_resource type="Texture2D" uid="uid://dhof0de61unxi" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/fire_01/operator__weapon__ranged_2h__cosmetic__fire_01__se__5f__96.png" id="7_hgsja"]
+[ext_resource type="Texture2D" uid="uid://ca6nsp2jgcdol" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/fire_01/operator__weapon__ranged_2h__cosmetic__fire_01__w__6f__96.png" id="8_xum8y"]
+[ext_resource type="Texture2D" uid="uid://brjba4jubdprl" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/fire_01/operator__weapon__ranged_2h__cosmetic__fire_01__n__5f__96.png" id="9_7ix11"]
+[ext_resource type="Texture2D" uid="uid://qiq6jbhi62hq" path="res://content/sprites/operator/runtime/animations/ranged_2h/posture/stance_01/operator__weapon__ranged_2h__posture__stance_01__sw__5f__96.png" id="9_i417n"]
+[ext_resource type="Texture2D" uid="uid://10xgrdfvfqh2" path="res://content/sprites/operator/runtime/animations/ranged_2h/posture/relaxed_01_legacy_15a8b537/operator__weapon__ranged_2h__posture__relaxed_01_legacy_15a8b537__e__5f__96.png" id="9_w67n1"]
+[ext_resource type="Texture2D" uid="uid://cxol3abarmvhe" path="res://content/sprites/operator/runtime/animations/ranged_2h/posture/stance_01/operator__weapon__ranged_2h__posture__stance_01__se__5f__96.png" id="10_cxdx7"]
+[ext_resource type="Texture2D" uid="uid://bdmc4ixvwqwl1" path="res://content/sprites/operator/runtime/animations/ranged_2h/posture/relaxed_01_legacy_74659c90/operator__weapon__ranged_2h__posture__relaxed_01_legacy_74659c90__w__5f__96.png" id="11_yb07i"]
+[ext_resource type="Texture2D" uid="uid://hhc6od01p3f0" path="res://content/sprites/operator/runtime/animations/ranged_2h/posture/stance_01/operator__weapon__ranged_2h__posture__stance_01__n__5f__96.png" id="13_mwn45"]
+[ext_resource type="Texture2D" uid="uid://bsg3bsgt3p78s" path="res://content/sprites/operator/runtime/animations/ranged_2h/posture/stance_01/operator__weapon__ranged_2h__posture__stance_01__ne__5f__96.png" id="15_w67n1"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_yb07i"]
 atlas = ExtResource("1_ledfu")
@@ -420,23 +419,23 @@ atlas = ExtResource("1_aflv3")
 region = Rect2(384, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_m4iis"]
-atlas = ExtResource("3_beyj7")
+atlas = ExtResource("13_mwn45")
 region = Rect2(0, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jckps"]
-atlas = ExtResource("3_beyj7")
+atlas = ExtResource("13_mwn45")
 region = Rect2(96, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_utrus"]
-atlas = ExtResource("3_beyj7")
+atlas = ExtResource("13_mwn45")
 region = Rect2(192, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jqxy2"]
-atlas = ExtResource("3_beyj7")
+atlas = ExtResource("13_mwn45")
 region = Rect2(288, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_iwmxq"]
-atlas = ExtResource("3_beyj7")
+atlas = ExtResource("13_mwn45")
 region = Rect2(384, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_dd7aa"]

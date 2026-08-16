@@ -1,0 +1,23 @@
+{
+  "source": "operator__modular_upper_body__melee_1h__idle_ready_01__e__4f__96.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "operator/source/animations/melee_1h/locomotion/idle_ready_01/operator__upper_body__melee_1h__locomotion__idle_ready_01__e__4f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 4
+      }
+    }
+  ],
+  "post_process": [
+    "operator_runtime_build"
+  ],
+  "frame_size": [
+    96,
+    96
+  ],
+  "remove_superseded": true
+}

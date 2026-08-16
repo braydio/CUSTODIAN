@@ -1,11 +1,11 @@
 [gd_resource type="SpriteFrames" format=3 uid="uid://cagm5o1esx0qm"]
 
-[ext_resource type="Texture2D" uid="uid://bvbm8drupggok" path="res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01/operator__full_body__melee_1h__attack__fast_01__w__10f__156x96.png" id="1_4kwgf"]
-[ext_resource type="Texture2D" uid="uid://c22ni8m7wm7hg" path="res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01/operator__full_body__melee_1h__attack__fast_01__e__10f__156x96.png" id="2_f552g"]
-[ext_resource type="Texture2D" uid="uid://bc3auy4ogevl5" path="res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_02/operator__full_body__melee_1h__attack__fast_02__w__8f__156x96.png" id="3_ampmc"]
-[ext_resource type="Texture2D" uid="uid://d1t32jmpwc1ey" path="res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_02/operator__full_body__melee_1h__attack__fast_02__e__8f__156x96.png" id="4_c2el3"]
-[ext_resource type="Texture2D" uid="uid://6f3r8q0krvil" path="res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_03/operator__full_body__melee_1h__attack__fast_03__w__10f__156x96.png" id="5_lvqdg"]
-[ext_resource type="Texture2D" uid="uid://l072eybx1mmo" path="res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_03/operator__full_body__melee_1h__attack__fast_03__e__10f__156x96.png" id="6_knpx1"]
+[ext_resource type="Texture2D" uid="uid://b2q6kjeddkbss" path="res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01/operator__full_body__melee_1h__attack__fast_01__w__10f__156x96.png" id="1_4kwgf"]
+[ext_resource type="Texture2D" uid="uid://33sfdwuihuf2" path="res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01/operator__full_body__melee_1h__attack__fast_01__e__10f__156x96.png" id="2_f552g"]
+[ext_resource type="Texture2D" uid="uid://b3gljkrmu5xeq" path="res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_02/operator__full_body__melee_1h__attack__fast_02__w__8f__156x96.png" id="3_ampmc"]
+[ext_resource type="Texture2D" uid="uid://lv35x8chgjso" path="res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_02/operator__full_body__melee_1h__attack__fast_02__e__8f__156x96.png" id="4_c2el3"]
+[ext_resource type="Texture2D" uid="uid://brb7gp6imixv8" path="res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_03/operator__full_body__melee_1h__attack__fast_03__w__10f__156x96.png" id="5_lvqdg"]
+[ext_resource type="Texture2D" uid="uid://7g4rrlkmlsjj" path="res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_03/operator__full_body__melee_1h__attack__fast_03__e__10f__156x96.png" id="6_knpx1"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_xboul"]
 atlas = ExtResource("1_4kwgf")

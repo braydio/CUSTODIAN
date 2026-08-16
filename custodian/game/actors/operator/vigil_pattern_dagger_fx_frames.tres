@@ -1,11 +1,11 @@
 [gd_resource type="SpriteFrames" format=3 uid="uid://udmq21grsxa7"]
 
-[ext_resource type="Texture2D" uid="uid://ckeyvgpbjv7q7" path="res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01/operator__fx__melee_1h__attack__fast_01__w__10f__156x96.png" id="1_pkfp8"]
-[ext_resource type="Texture2D" uid="uid://clqeuufkvqjkl" path="res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01/operator__fx__melee_1h__attack__fast_01__e__10f__156x96.png" id="2_py4l8"]
-[ext_resource type="Texture2D" uid="uid://cvxjw42np6ajg" path="res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_02/operator__fx__melee_1h__attack__fast_02__w__8f__156x96.png" id="3_0gqvw"]
-[ext_resource type="Texture2D" uid="uid://ffjfocsbwp0i" path="res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_02/operator__fx__melee_1h__attack__fast_02__e__8f__156x96.png" id="4_2jw6m"]
-[ext_resource type="Texture2D" uid="uid://b3n271xtks2ln" path="res://content/sprites/operator/runtime/animations/melee_1h/cosmetic/legacy_operator_modular_fx_melee_1h_chain_03_w_10f_156x96/operator__fx__melee_1h__cosmetic__legacy_operator_modular_fx_melee_1h_chain_03_w_10f_156x96__omni__1f__1560x96.png" id="5_6qhp1"]
-[ext_resource type="Texture2D" uid="uid://hdd0jldm18st" path="res://content/sprites/operator/runtime/animations/melee_1h/cosmetic/legacy_operator_modular_fx_melee_1h_chain_03_e_10f_156x96/operator__fx__melee_1h__cosmetic__legacy_operator_modular_fx_melee_1h_chain_03_e_10f_156x96__omni__1f__1560x96.png" id="6_uec4v"]
+[ext_resource type="Texture2D" uid="uid://buayo7suy1n3d" path="res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01/operator__fx__melee_1h__attack__fast_01__w__10f__156x96.png" id="1_pkfp8"]
+[ext_resource type="Texture2D" uid="uid://chi5ajwvlj7g0" path="res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01/operator__fx__melee_1h__attack__fast_01__e__10f__156x96.png" id="2_py4l8"]
+[ext_resource type="Texture2D" uid="uid://cby77obso315c" path="res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_02/operator__fx__melee_1h__attack__fast_02__w__8f__156x96.png" id="3_0gqvw"]
+[ext_resource type="Texture2D" uid="uid://dkrk4kptxfhps" path="res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_02/operator__fx__melee_1h__attack__fast_02__e__8f__156x96.png" id="4_2jw6m"]
+[ext_resource type="Texture2D" uid="uid://ceep570rbrxy8" path="res://content/sprites/operator/runtime/animations/melee_1h/cosmetic/legacy_operator_modular_fx_melee_1h_chain_03_w_10f_156x96/operator__fx__melee_1h__cosmetic__legacy_operator_modular_fx_melee_1h_chain_03_w_10f_156x96__omni__1f__1560x96.png" id="5_6qhp1"]
+[ext_resource type="Texture2D" uid="uid://dtybvwjocjp8w" path="res://content/sprites/operator/runtime/animations/melee_1h/cosmetic/legacy_operator_modular_fx_melee_1h_chain_03_e_10f_156x96/operator__fx__melee_1h__cosmetic__legacy_operator_modular_fx_melee_1h_chain_03_e_10f_156x96__omni__1f__1560x96.png" id="6_uec4v"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_q1dp2"]
 atlas = ExtResource("1_pkfp8")

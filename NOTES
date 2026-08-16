@@ -8,8 +8,6 @@ GAMEPLAY NOTES
 
 4. We need to wire in the custodian home/lost terminal signal seeking game level as the pre-procgen level
 
-5. Need to be able to test sundered keep level without having to run all theway there
-
 6. Shrumbs need to respect tile nav
 
 7. Maybe the cognitifve residue/drops of the shrumb can be coveted and sought affter by enemies, who will path to, pick up, and get bonuses from the cognitive residues (within reason , not omniscient sensing of cognitive residue)
@@ -17,9 +15,22 @@ GAMEPLAY NOTES
 8. Mobs currently do not respeoct nav 100% -- instances of enemies spawning in void psace, shrumbs too. appearrs that edges of nav boundaries are 'walls' preventing traversal rather than not allowing anyone to walk there? 
 
 9. Cognitive Effect UI/Exposure: Currently there is no way fore the player to see the cognitive effects stacked from the pickups. Do we mean this? How should we expose the effects? In the inventory? See inventory item: 
+  - 9a. What about like a shader effect -- on cognitive item pickup we do like a flash of it, and when the threshold amount is reached we doa  full overlay of the shader. Different effect for each cognitive axis.
+
 
 10. Invewntory Item; Layout for items needs revamp - thinkinig of dark souls At a Glance view (initial) vs. detail view (toggled) Equipment has stat breakdowns, consumables have... i forget... but our UI is okay so far, feels incomplete.
 
 
 11. Sometimes the enemies stand too close for the melee weapon, they are like inside the hit box? And it is hardto reposition to get back to where they can be hit. Should this be intentinoal? Should we prompt a close-range sidearm use for this, with a knockback? Or is that tedious?
 
+12. The terminal on some pages - any page with a scrollbar middle section i think - the map  / second half seciton will on terminal uptate flip with the item on top and vv. its super annoying.
+  - DEFENSE
+  - POWER
+  - SENSORS
+
+13. Should have like a command terminal tutorial -- maybe step one, let power drain completely. Have the terminal walk player through the repair.
+
+14. The custodian light buggy is cumbersome. Also upon boarding, the exit button does not work. Custodian is stuck within.
+
+
+15. The VISTA world vista camera bouncy-balls annoyingly and fast upon approach.
