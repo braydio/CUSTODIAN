@@ -517,6 +517,7 @@ Last updated: 2026-08-12
 - `custodian/game/systems/combat/ranged_ballistic_aim_resolver.gd` — legacy pure correction/prediction helper retained for presentation calibration utilities; no longer projectile-direction or HUD authority
 - `custodian/content/data/operator/generated/operator_weapon_sockets.generated.json` — generated Carbine phase-1 `e/w/se/sw` per-frame grip/support/muzzle/ejection/angle/draw-order authority
 - `custodian/tools/aseprite/export_operator_weapon_sockets.lua` — Aseprite named-slice exporter for operator-local per-tag/per-frame socket JSON
+- `custodian/tools/aseprite/operator_pair_reference.lua` — Scripts-menu helper for the alignment-repair conveyor: derives the paired sheet from the open source filename and pastes it into a non-exported reference layer for seam alignment
 - `custodian/game/actors/operator/components/weapon_feedback_presenter.gd` — presentation-only consumer of Operator weapon feedback events; plays configured local audio, flashes the weapon sprite, and spawns barrel vent VFX while logging missing assets loudly and never touching gameplay state or `NoiseEventBus`
 - `custodian/game/actors/operator/carbine_rifle_mk1_definition.tres` — starter ranged weapon definition; secondary intent is `ranged_ready`, while primary fire is requested only during held ranged-ready
 - `custodian/game/systems/combat/melee_attack_profile.gd` — reusable melee attack physics profile for damage, range, arc, knockback, timing, input movement, bounded attack drive, hit-stop, camera shake, animation fallback, and hit-window data
