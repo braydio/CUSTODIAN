@@ -1,7 +1,7 @@
 [gd_resource type="SpriteFrames" format=3 uid="uid://xxehj88m77jp"]
 
-[ext_resource type="Texture2D" uid="uid://dq3plr8cwaw78" path="res://content/sprites/operator/runtime/curated/body/ranged_2h/fire_body.png" id="1_fire"]
-[ext_resource type="Texture2D" uid="uid://cvpkw2im1oht2" path="res://content/sprites/operator/runtime/curated/body/ranged_2h/operator_reloading.png" id="2_reload"]
+[ext_resource type="Texture2D" uid="uid://dq3plr8cwaw78" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/legacy_fire_body/operator__full_body__ranged_2h__cosmetic__legacy_fire_body__omni__1f__384x288.png" id="1_fire"]
+[ext_resource type="Texture2D" uid="uid://cvpkw2im1oht2" path="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/legacy_operator_body_ranged_2h_reloading/operator__full_body__ranged_2h__cosmetic__legacy_operator_body_ranged_2h_reloading__omni__1f__384x192.png" id="2_reload"]
 
 [sub_resource type="Image" id="Image_3i6gm"]
 data = {

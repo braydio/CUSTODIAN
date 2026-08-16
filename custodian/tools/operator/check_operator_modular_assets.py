@@ -3,8 +3,8 @@
 Audit CUSTODIAN operator modular sprite sources.
 
 Default roots tried from repo root:
-  custodian/content/sprites/operator/new_operator/modular
-  content/sprites/operator/new_operator/modular
+  custodian/content/sprites/operator/source/animations
+  content/sprites/operator/source/animations
   sprites/operator/new_operator/modular
 
 Examples:
@@ -27,8 +27,8 @@ DIRS8 = ["n", "ne", "e", "se", "s", "sw", "w", "nw"]
 DIR_ORDER = {d: i for i, d in enumerate(DIRS8 + ["omni"])}
 VALID_DIRS = set(DIR_ORDER)
 ROOT_CANDIDATES = [
-    "custodian/content/sprites/operator/new_operator/modular",
-    "content/sprites/operator/new_operator/modular",
+    "custodian/content/sprites/operator/source/animations",
+    "content/sprites/operator/source/animations",
     "sprites/operator/new_operator/modular",
 ]
 

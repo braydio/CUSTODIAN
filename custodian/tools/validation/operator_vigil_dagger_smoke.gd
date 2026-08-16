@@ -294,11 +294,12 @@ func _validate_animation_set(
 			)
 		if "fast_02" in String(animation) or "fast_03" in String(animation):
 			var atlas := frames.get_frame_texture(animation, 0) as AtlasTexture
-			var expected_source := "chain_02" if "fast_02" in String(animation) else "chain_03"
+			var expected_action := "fast_02" if "fast_02" in String(animation) else "fast_03"
+			var legacy_source := "chain_02" if "fast_02" in String(animation) else "chain_03"
 			_assert(
-				atlas != null and expected_source in atlas.atlas.resource_path,
-				"%s animation %s is not bound to authored %s"
-				% [label, animation, expected_source]
+				atlas != null and (expected_action in atlas.atlas.resource_path or legacy_source in atlas.atlas.resource_path),
+				"%s animation %s is not bound to its authored V2 action or preserved legacy source"
+				% [label, animation]
 			)
 		if "fast_03" in String(animation):
 			_assert_close(

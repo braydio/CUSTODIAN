@@ -8,7 +8,7 @@ from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_DIR = SCRIPT_DIR.parent.parent
-OPERATOR_RUNTIME_BUILDER = SCRIPT_DIR / "build_operator_modular_runtime.py"
+OPERATOR_RUNTIME_BUILDER = SCRIPT_DIR / "build_operator_runtime.py"
 USAGE = """\
 Usage: python custodian/tools/pipelines/ingest.py [options]
 
@@ -18,7 +18,7 @@ Options:
   --skip-post                 Skip manifest post-process hooks.
   --no-mirror                 Do not generate horizontal direction counterparts.
   --remove-superseded         Remove older canonical sibling outputs.
-  --build-operator-runtime    Rebuild Operator modular runtime after successful ingest.
+  --build-operator-runtime    Rebuild Operator V2 runtime/catalog after successful ingest.
   -h, --help                  Show this help.
 """
 

@@ -8,14 +8,14 @@ const DAMAGE_TIME := 0.10 + 0.10 + 0.12 + 0.16 + 0.10
 const HIT_STOP := 0.13
 const ASSET_TRIPLETS := {
 	"e": [
-		"res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__falcon_reversal_01__e__8f__156.png",
+		"res://content/sprites/operator/runtime/animations/unarmed/cosmetic/falcon_reversal_01/operator__full_body__unarmed__cosmetic__falcon_reversal_01__e__8f__156.png",
 		"res://content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__falcon_reversal_victim_01__e__8f__156.png",
-		"res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__falcon_reversal_01__e__8f__156.png",
+		"res://content/sprites/operator/runtime/animations/unarmed/cosmetic/falcon_reversal_01/operator__fx__unarmed__cosmetic__falcon_reversal_01__e__8f__156.png",
 	],
 	"w": [
-		"res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__falcon_reversal_01__w__8f__156.png",
+		"res://content/sprites/operator/runtime/animations/unarmed/cosmetic/falcon_reversal_01/operator__full_body__unarmed__cosmetic__falcon_reversal_01__w__8f__156.png",
 		"res://content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__falcon_reversal_victim_01__w__8f__156.png",
-		"res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__falcon_reversal_01__w__8f__156.png",
+		"res://content/sprites/operator/runtime/animations/unarmed/cosmetic/falcon_reversal_01/operator__fx__unarmed__cosmetic__falcon_reversal_01__w__8f__156.png",
 	],
 }
 

@@ -17,12 +17,12 @@ const REQUIRED_ASSETS := [
 	"res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__critical_execution_victim_01__s__8f__96.png",
 	"res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__critical_execution_victim_01__e__12f__96.png",
 	"res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__critical_execution_victim_01__w__12f__96.png",
-	"res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__s__8f__96.png",
-	"res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__e__12f__96.png",
-	"res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__w__12f__96.png",
-	"res://content/sprites/operator/runtime/fx/unarmed/operator__fx__unarmed__critical_execution_01__s__8f__96.png",
-	"res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__critical_execution_01__e__12f__96.png",
-	"res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__critical_execution_01__w__12f__96.png",
+	"res://content/sprites/operator/runtime/animations/unarmed/cosmetic/critical_execution_01/operator__full_body__unarmed__cosmetic__critical_execution_01__s__8f__96.png",
+	"res://content/sprites/operator/runtime/animations/unarmed/cosmetic/critical_execution_01/operator__full_body__unarmed__cosmetic__critical_execution_01__e__12f__96.png",
+	"res://content/sprites/operator/runtime/animations/unarmed/cosmetic/critical_execution_01/operator__full_body__unarmed__cosmetic__critical_execution_01__w__12f__96.png",
+	"res://content/sprites/operator/runtime/animations/unarmed/cosmetic/critical_execution_01/operator__fx__unarmed__cosmetic__critical_execution_01__s__8f__96.png",
+	"res://content/sprites/operator/runtime/animations/unarmed/cosmetic/critical_execution_01/operator__fx__unarmed__cosmetic__critical_execution_01__e__12f__96.png",
+	"res://content/sprites/operator/runtime/animations/unarmed/cosmetic/critical_execution_01/operator__fx__unarmed__cosmetic__critical_execution_01__w__12f__96.png",
 ]
 
 const PHASE_NONE := 0

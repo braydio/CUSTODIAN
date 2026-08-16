@@ -67,6 +67,11 @@ from typing import Dict, List, Optional, Tuple
 
 from PIL import Image, ImageDraw, ImageFont
 
+PIPELINE_DIR = Path(__file__).resolve().parents[1] / "pipelines"
+if str(PIPELINE_DIR) not in sys.path:
+    sys.path.insert(0, str(PIPELINE_DIR))
+from operator_asset_schema import parse_filename as parse_operator_v2_filename
+
 HASH_SHEET_RE = re.compile(r"__[0-9a-f]{8}__sheet$", re.IGNORECASE)
 SHEET_RE = re.compile(r"__sheet$", re.IGNORECASE)
 
@@ -296,7 +301,7 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help=(
             "Runtime module root containing lower_body/ and upper_body/. Default: "
-            "<repo>/custodian/content/sprites/operator/runtime/modules/new_operator"
+            "<repo>/custodian/content/sprites/operator/runtime/animations"
         ),
     )
 
@@ -532,27 +537,33 @@ def stage_runtime_domain(args: argparse.Namespace) -> Tuple[Path, List[str]]:
         args.runtime_root.expanduser().resolve()
         if args.runtime_root is not None
         else repo_root
-        / "custodian/content/sprites/operator/runtime/modules/new_operator"
+        / "custodian/content/sprites/operator/runtime/animations"
     )
-
-    lower_root = runtime_root / "lower_body"
-    upper_root = runtime_root / "upper_body"
-    if not lower_root.is_dir() or not upper_root.is_dir():
-        raise RuntimeError(
-            "Runtime module root must contain lower_body/ and upper_body/: "
-            f"{runtime_root}"
-        )
-
-    lower_source = resolve_runtime_directory(lower_root, args.domain, "lower-body")
-    upper_source = resolve_runtime_directory(upper_root, args.domain, "upper-body")
 
     slug = domain_slug(args.domain)
     stage_root = repo_root / ".ai/operator_modular_combo_sources" / slug
     if stage_root.exists():
         shutil.rmtree(stage_root)
 
-    copy_runtime_domain(lower_source, stage_root / "lower")
-    copy_runtime_domain(upper_source, stage_root / "upper")
+    lower_count = 0
+    upper_count = 0
+    for path in sorted(runtime_root.rglob("*.png")):
+        try:
+            meta = parse_modular_png_name(path)
+        except ValueError:
+            continue
+        if args.domain.lower() not in {str(meta["anim_id"]).lower(), animation_domain(str(meta["anim_id"]))} and args.domain.lower() not in path.as_posix().lower():
+            continue
+        if meta["part"] == "lower_body":
+            (stage_root / "lower").mkdir(parents=True, exist_ok=True)
+            shutil.copy2(path, stage_root / "lower" / path.name)
+            lower_count += 1
+        elif meta["part"] == "upper_body":
+            (stage_root / "upper").mkdir(parents=True, exist_ok=True)
+            shutil.copy2(path, stage_root / "upper" / path.name)
+            upper_count += 1
+    if not lower_count or not upper_count:
+        raise RuntimeError(f"No synchronized V2 lower/upper sheets for {args.domain}: {runtime_root}")
 
     # Stage extra layers
     extra_layer_names = []
@@ -573,8 +584,7 @@ def stage_runtime_domain(args: argparse.Namespace) -> Tuple[Path, List[str]]:
     inferred = inferred_domains_from_pngs(stage_root / "lower")
 
     print(f"runtime domain: {args.domain}")
-    print(f"lower source:  {lower_source}")
-    print(f"upper source:  {upper_source}")
+    print(f"runtime source: {runtime_root}")
     print(f"staged source: {stage_root}")
     print(f"lower domains: {','.join(inferred)}")
 
@@ -590,23 +600,30 @@ def stage_runtime_direction(
         args.runtime_root.expanduser().resolve()
         if args.runtime_root is not None
         else repo_root
-        / "custodian/content/sprites/operator/runtime/modules/new_operator"
+        / "custodian/content/sprites/operator/runtime/animations"
     )
-
-    lower_root = runtime_root / "lower_body"
-    upper_root = runtime_root / "upper_body"
-    if not lower_root.is_dir() or not upper_root.is_dir():
-        raise RuntimeError(
-            "Runtime module root must contain lower_body/ and upper_body/: "
-            f"{runtime_root}"
-        )
 
     stage_root = repo_root / ".ai/operator_modular_combo_sources" / direction
     if stage_root.exists():
         shutil.rmtree(stage_root)
 
-    lower_count = copy_runtime_direction(lower_root, stage_root / "lower", direction)
-    upper_count = copy_runtime_direction(upper_root, stage_root / "upper", direction)
+    lower_count = 0
+    upper_count = 0
+    for path in sorted(runtime_root.rglob("*.png")):
+        try:
+            meta = parse_modular_png_name(path)
+        except ValueError:
+            continue
+        if meta["direction"] != direction:
+            continue
+        if meta["part"] == "lower_body":
+            (stage_root / "lower").mkdir(parents=True, exist_ok=True)
+            shutil.copy2(path, stage_root / "lower" / path.name)
+            lower_count += 1
+        elif meta["part"] == "upper_body":
+            (stage_root / "upper").mkdir(parents=True, exist_ok=True)
+            shutil.copy2(path, stage_root / "upper" / path.name)
+            upper_count += 1
     if lower_count == 0 or upper_count == 0:
         raise RuntimeError(
             f"Direction '{direction}' needs runtime PNGs in both body layers; "
@@ -729,6 +746,17 @@ def split_middle_for_upper_variant(part: str, middle: str) -> Tuple[Optional[str
 
 
 def parse_modular_png_name(path: Path) -> Dict:
+    try:
+        key = parse_operator_v2_filename(path)
+    except ValueError:
+        key = None
+    if key is not None:
+        return {
+            "identity": path.stem, "actor": key.owner, "part": key.layer,
+            "variant": key.animation_profile, "anim_id": key.action,
+            "direction": key.direction, "frames": key.frames,
+            "frame_w": key.frame_width,
+        }
     clean = strip_export_suffix(path.stem)
     clean = sanitize_id(clean)
 
@@ -1860,8 +1888,8 @@ def run_fit_debug_on_existing(args: argparse.Namespace) -> int:
     updated = []
     repo_root = args.repo_root.expanduser().resolve()
     operator_roots = [
-        repo_root / "custodian/content/sprites/operator/new_operator/modular",
-        repo_root / "custodian/content/sprites/operator/runtime/modules/new_operator",
+        repo_root / "custodian/content/sprites/operator/source/animations",
+        repo_root / "custodian/content/sprites/operator/runtime/animations",
     ]
     canonical_candidates = [
         path

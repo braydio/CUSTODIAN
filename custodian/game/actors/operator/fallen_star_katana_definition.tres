@@ -9,6 +9,8 @@
 script = ExtResource("1_weapon_definition")
 weapon_id = &"fallen_star_katana"
 weapon_type = &"melee_1h"
+animation_profile = &"melee_1h"
+weapon_presentation_mode = "hybrid"
 display_name = "Fallen Star Katana"
 frames_resource = ExtResource("2_weapon_frames")
 animation_map = {

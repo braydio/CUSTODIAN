@@ -13,6 +13,7 @@ signal dodge_flow_changed(value: float, direction: Vector2)
 signal integrity_reclaim_changed(status: Dictionary)
 
 const AnimationResolver = preload("res://game/actors/operator/animations/animation_resolver.gd")
+const OperatorAnimationCatalog = preload("res://game/actors/operator/animations/operator_animation_catalog.gd")
 const DirectionalAnimationFallback = preload(
 	"res://game/systems/presentation/directional_animation_fallback.gd"
 )
@@ -55,25 +56,25 @@ const DAMAGE_POPUP_SCENE := preload("res://game/actors/ui/damage_popup.tscn")
 const PARRY_CONTACT_SPARK_VFX_SCENE := preload("res://game/vfx/combat/parry_contact_spark_vfx.tscn")
 const PARRY_SUCCESS_BURST_VFX_SCENE := preload("res://game/vfx/combat/parry_success_burst_vfx.tscn")
 const PARRY_SUCCESS_SOUND: AudioStream = preload("res://content/audio/sfx/combat/parry_success_01.wav")
-const CRITICAL_ATTACK_RIGHT_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__parry_miss_01__e__8f__96.png"
-const CRITICAL_ATTACK_LEFT_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__parry_miss_01__w__8f__96.png"
+const CRITICAL_ATTACK_RIGHT_SHEET := "res://content/sprites/operator/runtime/animations/unarmed/defense/parry_miss_01/operator__full_body__unarmed__defense__parry_miss_01__e__8f__96.png"
+const CRITICAL_ATTACK_LEFT_SHEET := "res://content/sprites/operator/runtime/animations/unarmed/defense/parry_miss_01/operator__full_body__unarmed__defense__parry_miss_01__w__8f__96.png"
 const CRITICAL_ATTACK_FRAME_COUNT := 8
 const CRITICAL_ATTACK_FRAME_SIZE := Vector2i(96, 96)
 const CRITICAL_ATTACK_FPS := 15.0
-const CRITICAL_HITSPARK_RIGHT_SHEET := "res://content/sprites/operator/new_operator/modular/critical/operator__fx__critical_hitspark_01__e__8f__156x96.png"
-const CRITICAL_HITSPARK_LEFT_SHEET := "res://content/sprites/operator/new_operator/modular/critical/operator__fx__critical_hitspark_01__w__8f__156x96.png"
+const CRITICAL_HITSPARK_RIGHT_SHEET := "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_operator_fx_critical_hitspark_01_e_8f_156x96/operator__fx__unarmed__cosmetic__legacy_operator_fx_critical_hitspark_01_e_8f_156x96__omni__1f__1248x96.png"
+const CRITICAL_HITSPARK_LEFT_SHEET := "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_operator_fx_critical_hitspark_01_w_8f_156x96/operator__fx__unarmed__cosmetic__legacy_operator_fx_critical_hitspark_01_w_8f_156x96__omni__1f__1248x96.png"
 const CRITICAL_HITSPARK_FRAME_COUNT := 8
 const CRITICAL_HITSPARK_FRAME_SIZE := Vector2i(156, 96)
 const CRITICAL_HITSPARK_FPS := 15.0
 const PAIRED_EXECUTION_BODY_SHEETS := {
-	&"s": "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__s__8f__96.png",
-	&"e": "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__e__12f__96.png",
-	&"w": "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__w__12f__96.png",
+	&"s": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/critical_execution_01/operator__full_body__unarmed__cosmetic__critical_execution_01__s__8f__96.png",
+	&"e": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/critical_execution_01/operator__full_body__unarmed__cosmetic__critical_execution_01__e__12f__96.png",
+	&"w": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/critical_execution_01/operator__full_body__unarmed__cosmetic__critical_execution_01__w__12f__96.png",
 }
 const PAIRED_EXECUTION_FX_SHEETS := {
-	&"s": "res://content/sprites/operator/runtime/fx/unarmed/operator__fx__unarmed__critical_execution_01__s__8f__96.png",
-	&"e": "res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__critical_execution_01__e__12f__96.png",
-	&"w": "res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__critical_execution_01__w__12f__96.png",
+	&"s": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/critical_execution_01/operator__fx__unarmed__cosmetic__critical_execution_01__s__8f__96.png",
+	&"e": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/critical_execution_01/operator__fx__unarmed__cosmetic__critical_execution_01__e__12f__96.png",
+	&"w": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/critical_execution_01/operator__fx__unarmed__cosmetic__critical_execution_01__w__12f__96.png",
 }
 const PAIRED_EXECUTION_BODY_ANIMATIONS := {
 	&"s": &"operator_critical_execution_s",
@@ -99,12 +100,12 @@ const FALCON_REVERSAL_FRAME_SIZE := Vector2i(156, 156)
 const FALCON_REVERSAL_FRAME_DURATIONS := [0.10, 0.10, 0.12, 0.16, 0.10, 0.05, 0.16, 0.22]
 const FALCON_REVERSAL_HIT_STOP_DURATION := 0.13
 const FALCON_REVERSAL_BODY_SHEETS := {
-	&"e": "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__falcon_reversal_01__e__8f__156.png",
-	&"w": "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__falcon_reversal_01__w__8f__156.png",
+	&"e": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/falcon_reversal_01/operator__full_body__unarmed__cosmetic__falcon_reversal_01__e__8f__156.png",
+	&"w": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/falcon_reversal_01/operator__full_body__unarmed__cosmetic__falcon_reversal_01__w__8f__156.png",
 }
 const FALCON_REVERSAL_FX_SHEETS := {
-	&"e": "res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__falcon_reversal_01__e__8f__156.png",
-	&"w": "res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__falcon_reversal_01__w__8f__156.png",
+	&"e": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/falcon_reversal_01/operator__fx__unarmed__cosmetic__falcon_reversal_01__e__8f__156.png",
+	&"w": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/falcon_reversal_01/operator__fx__unarmed__cosmetic__falcon_reversal_01__w__8f__156.png",
 }
 const PAIRED_EXECUTION_IMPACT_SOUND := preload("res://addons/Sound FX Starter Pack Vol. 1/Motions and Impacts/Impact Vox Hammer.wav")
 const HIT_LIGHT_BODY_SOUND: AudioStream = preload("res://content/audio/sfx/combat/hit_light_body_01.wav")
@@ -137,41 +138,41 @@ const MELEE_STANCE_PLACEHOLDER_ANIMATION := &"melee_stance"
 const MELEE_FAST_CHAIN_FRAME_SIZE := Vector2i(156, 96)
 const MELEE_FAST_CHAIN_BODY_SHEETS := {
 	&"melee_2h_fast_1_right": {
-		"path": "res://content/sprites/operator/runtime/body/melee_1h/operator__body__melee__fast_01__e__7f__156x96.png",
+		"path": "res://content/sprites/operator/runtime/animations/melee_1h/attack/legacy_operator_body_melee_fast_01_e_7f_156x96/operator__full_body__melee_1h__attack__legacy_operator_body_melee_fast_01_e_7f_156x96__omni__1f__1092x96.png",
 		"frames": 7,
 	},
 	&"melee_2h_fast_2_right": {
-		"path": "res://content/sprites/operator/runtime/body/melee_1h/operator__body__melee__fast_02__e__7f__156x96.png",
+		"path": "res://content/sprites/operator/runtime/animations/melee_1h/attack/legacy_operator_body_melee_fast_02_e_7f_156x96/operator__full_body__melee_1h__attack__legacy_operator_body_melee_fast_02_e_7f_156x96__omni__1f__1092x96.png",
 		"frames": 7,
 	},
 	&"melee_2h_fast_3_right": {
-		"path": "res://content/sprites/operator/runtime/body/melee_1h/operator__body__melee__fast_03__e__8f__156x96.png",
+		"path": "res://content/sprites/operator/runtime/animations/melee_1h/attack/legacy_operator_body_melee_fast_03_e_8f_156x96/operator__full_body__melee_1h__attack__legacy_operator_body_melee_fast_03_e_8f_156x96__omni__1f__1248x96.png",
 		"frames": 8,
 	},
 }
 const MELEE_FAST_CHAIN_FX_SHEETS := {
 	&"melee_2h_fast_1_fx_right": {
-		"path": "res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/melee_1h/chain_01/operator__modular_upper_fx__melee_1h__chain_01__e__10f__96.png",
+		"path": "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01_legacy_7f7c22c3/operator__fx__melee_1h__attack__fast_01_legacy_7f7c22c3__e__10f__96.png",
 		"frames": 10,
 	},
 	&"melee_2h_fast_1_fx_left": {
-		"path": "res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/melee_1h/chain_01/operator__modular_upper_fx__melee_1h__chain_01__w__10f__96.png",
+		"path": "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01_legacy_3865ae8b/operator__fx__melee_1h__attack__fast_01_legacy_3865ae8b__w__10f__96.png",
 		"frames": 10,
 	},
 	&"melee_2h_fast_2_fx_right": {
-		"path": "res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/melee_1h/chain_02/operator__modular_upper_fx__melee_1h__chain_02__e__8f__96.png",
+		"path": "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_02_legacy_c1da49f3/operator__fx__melee_1h__attack__fast_02_legacy_c1da49f3__e__8f__96.png",
 		"frames": 8,
 	},
 	&"melee_2h_fast_2_fx_left": {
-		"path": "res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/melee_1h/chain_02/operator__modular_upper_fx__melee_1h__chain_02__w__8f__96.png",
+		"path": "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_02_legacy_04ab0f51/operator__fx__melee_1h__attack__fast_02_legacy_04ab0f51__w__8f__96.png",
 		"frames": 8,
 	},
 	&"melee_2h_fast_3_fx_right": {
-		"path": "res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/melee_1h/chain_03/operator__modular_upper_fx__melee_1h__chain_03__e__8f__96.png",
+		"path": "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_03_legacy_7010c688/operator__fx__melee_1h__attack__fast_03_legacy_7010c688__e__8f__96.png",
 		"frames": 8,
 	},
 	&"melee_2h_fast_3_fx_left": {
-		"path": "res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/melee_1h/chain_03/operator__modular_upper_fx__melee_1h__chain_03__w__8f__96.png",
+		"path": "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_03_legacy_99791341/operator__fx__melee_1h__attack__fast_03_legacy_99791341__w__8f__96.png",
 		"frames": 8,
 	},
 }
@@ -399,10 +400,10 @@ var last_fire_cooldown := 0.0
 @export_range(1.0, 40.0, 0.5) var ranged_weapon_aim_response: float = 20.0
 @export var ranged_controller_aim_distance: float = 110.0
 @export_group("", "")
-@export_file("*.png") var idle_main_sheet_path := "res://content/sprites/operator/runtime/idle/operator_idle_main.png"
-@export_file("*.png") var ranged_2h_stance_sheet_path := "res://content/sprites/operator/runtime/body/ranged_2h/operator__body__ranged__stance_01__e__12f__96.png"
-@export_file("*.png") var ranged_2h_aim_sheet_path := "res://content/sprites/operator/runtime/body/ranged_2h/operator_body_ranged_2h_aim_raise.png"
-@export_file("*.png") var ranged_2h_fire_walk_sheet_path := "res://content/sprites/operator/runtime/curated/body/ranged_2h/firing_slow_walk.png"
+@export_file("*.png") var idle_main_sheet_path := "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_front_idle_loop/operator__full_body__unarmed__cosmetic__legacy_front_idle_loop__omni__1f__480x96.png"
+@export_file("*.png") var ranged_2h_stance_sheet_path := "res://content/sprites/operator/runtime/animations/unarmed/posture/stance_01/operator__full_body__unarmed__posture__stance_01__e__12f__96.png"
+@export_file("*.png") var ranged_2h_aim_sheet_path := "res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/legacy_operator_body_ranged_2h_aim_raise/operator__full_body__ranged_2h__cosmetic__legacy_operator_body_ranged_2h_aim_raise__omni__1f__288x96.png"
+@export_file("*.png") var ranged_2h_fire_walk_sheet_path := "res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/legacy_firing_slow_walk/operator__full_body__ranged_2h__cosmetic__legacy_firing_slow_walk__omni__1f__672x96.png"
 @export_group("Knight Test Skin", "knight_test")
 @export var knight_test_skin_enabled: bool = false
 @export_dir var knight_test_sprite_dir := "res://dev/test_sprites/Knight"
@@ -754,21 +755,21 @@ const DODGE_STEP_ANIMATION := &"operator_dodge_step"
 const DODGE_RECOVERY_ANIMATION := &"operator_dodge_recovery"
 const DODGE_BACKSTEP_ANIMATION := &"operator_dodge_backstep"
 const DODGE_BACKSTEP_RECOVERY_ANIMATION := &"operator_dodge_backstep_recovery"
-const DODGE_STEP_RUNTIME_SHEET_PATH := "res://content/sprites/operator/runtime/body/locomotion/operator__body__locomotion__dodge__n__4f__96.png"
-const DODGE_RECOVERY_RUNTIME_SHEET_PATH := "res://content/sprites/operator/runtime/body/locomotion/operator__body__locomotion__dodge_recovery__n__4f__96.png"
-const DODGE_BACKSTEP_RUNTIME_SHEET_PATH := "res://content/sprites/operator/runtime/body/locomotion/operator__body__locomotion__dodge_backstep__s__4f__96.png"
-const DODGE_BACKSTEP_RECOVERY_RUNTIME_SHEET_PATH := "res://content/sprites/operator/runtime/body/locomotion/operator__body__locomotion__dodge_backstep_recovery__s__4f__96.png"
-const DODGE_STEP_SHEET_PATH := "res://content/sprites/operator/new_operator/modular/dodge/operator__body__full__dodge_step_01__n__5f__96.png"
+const DODGE_STEP_RUNTIME_SHEET_PATH := ""
+const DODGE_RECOVERY_RUNTIME_SHEET_PATH := ""
+const DODGE_BACKSTEP_RUNTIME_SHEET_PATH := ""
+const DODGE_BACKSTEP_RECOVERY_RUNTIME_SHEET_PATH := ""
+const DODGE_STEP_SHEET_PATH := ""
 const DODGE_STEP_FX_ANIMATION := &"operator_dodge_step_fx"
-const DODGE_STEP_FX_SHEET_PATH := "res://content/sprites/operator/new_operator/modular/dodge/operator__fx__full__dodge_step_01__n__5f__96.png"
+const DODGE_STEP_FX_SHEET_PATH := ""
 const DODGE_FULL_NORTH_ANIMATION := &"operator_dodge_full_north"
 const DODGE_FULL_SOUTH_ANIMATION := &"operator_dodge_full_south"
-const DODGE_FULL_NORTH_SHEET_PATH := "res://content/sprites/operator/runtime/actions/dodge/body/operator__body__full__dodge_01__n__9f__96.png"
-const DODGE_FULL_SOUTH_SHEET_PATH := "res://content/sprites/operator/runtime/actions/dodge/body/operator__body__full__dodge_01__s__9f__96.png"
+const DODGE_FULL_NORTH_SHEET_PATH := "res://content/sprites/operator/runtime/animations/shared/transition/dodge_01/operator__full_body__shared__transition__dodge_01__n__9f__96.png"
+const DODGE_FULL_SOUTH_SHEET_PATH := "res://content/sprites/operator/runtime/animations/shared/transition/dodge_01/operator__full_body__shared__transition__dodge_01__s__9f__96.png"
 const DODGE_FULL_NORTH_FX_ANIMATION := &"operator_dodge_full_fx_north"
 const DODGE_FULL_SOUTH_FX_ANIMATION := &"operator_dodge_full_fx_south"
-const DODGE_FULL_NORTH_FX_SHEET_PATH := "res://content/sprites/operator/runtime/actions/dodge/fx/operator__fx__full__dodge_01__n__9f__96.png"
-const DODGE_FULL_SOUTH_FX_SHEET_PATH := "res://content/sprites/operator/runtime/actions/dodge/fx/operator__fx__full__dodge_01__s__9f__96.png"
+const DODGE_FULL_NORTH_FX_SHEET_PATH := "res://content/sprites/operator/runtime/animations/shared/transition/dodge_01/operator__fx__shared__transition__dodge_01__n__9f__96.png"
+const DODGE_FULL_SOUTH_FX_SHEET_PATH := "res://content/sprites/operator/runtime/animations/shared/transition/dodge_01/operator__fx__shared__transition__dodge_01__s__9f__96.png"
 const DODGE_FULL_SEQUENCE_FPS := 25.0
 const DODGE_CHARGE_WINDUP_BASE := &"operator_dodge_charge_windup"
 const DODGE_CHAIN_LINK_BASE := &"operator_dodge_chain_link"
@@ -855,6 +856,7 @@ const KNIGHT_TEST_ANIMATION_SPECS := {
 @onready var weapon_hitbox: Area2D = $HitboxRoot/WeaponHitbox if has_node("HitboxRoot/WeaponHitbox") else null
 @onready var weapon_hitbox_shape: CollisionShape2D = $HitboxRoot/WeaponHitbox/CollisionShape2D if has_node("HitboxRoot/WeaponHitbox/CollisionShape2D") else null
 @onready var weapon_factory: Node = get_node_or_null("/root/GameRoot/World/WeaponDefinitionFactory")
+var _animation_catalog := OperatorAnimationCatalog.new()
 
 func _exit_tree() -> void:
 	_set_ranged_aim_camera_active(false)
@@ -864,6 +866,8 @@ func _exit_tree() -> void:
 
 func _ready():
 	add_to_group("player")
+	if not _animation_catalog.load_catalog():
+		push_error("[Operator] generated animation catalog could not be loaded")
 	_engagement_tracker = EngagementTrackerScript.new()
 	_engagement_tracker.name = "EngagementTracker"
 	add_child(_engagement_tracker)

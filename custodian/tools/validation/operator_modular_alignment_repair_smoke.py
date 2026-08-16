@@ -39,20 +39,20 @@ class AlignmentRepairSmoke(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory(prefix="operator-alignment-repair-smoke-")
         self.root = Path(self.temp.name)
         self.source = self.root / "source"
-        self.module = self.root / "modules/new_operator"
+        self.module = self.root / "runtime/animations"
         self.workspace = self.root / ".ai"
 
     def tearDown(self) -> None:
         self.temp.cleanup()
 
     def runtime(self, layer: str = "upper_body", action: str = "run_01", size: int = 96) -> Path:
-        path = self.module / layer / "locomotion" / action / f"operator__modular_{layer}__unarmed__{action}__e__2f__{size}.png"
+        path = self.module / "unarmed" / "locomotion" / action / f"operator__{layer}__unarmed__locomotion__{action}__e__2f__{size}.png"
         sheet(path, size=size)
         return path
 
     def source_path(self, layer: str = "upper_body", action: str = "run_01", size: int = 96) -> Path:
-        directory = self.source / action.removesuffix("_01")
-        path = directory / f"operator__modular_{layer}__unarmed__{action}__e__2f__{size}.png"
+        directory = self.source / "unarmed" / "locomotion" / action
+        path = directory / f"operator__{layer}__unarmed__locomotion__{action}__e__2f__{size}.png"
         sheet(path, size=size)
         return path
 

@@ -219,7 +219,7 @@ def priority_for(score: int) -> str:
 
 def report_commands(group_id: str) -> tuple[list[str], list[str]]:
     implementation = [
-        "python custodian/tools/pipelines/build_operator_modular_runtime.py --remove-superseded",
+        "python custodian/tools/pipelines/build_operator_runtime.py --remove-superseded",
         "python custodian/tools/validation/operator_animation_contract_report.py",
         "python custodian/tools/validation/operator_modular_pipeline_smoke.py",
     ]
@@ -439,7 +439,7 @@ def write_markdown(report: dict[str, Any], path: Path) -> None:
         "# Operator Modular Next Actions",
         "",
         "> Generated artifact—not project authority. Production priority comes from "
-        "`operator_modular_core.json`; visual evidence comes from the combo-check manifest.",
+        "`operator_animation_core.json`; visual evidence comes from the combo-check manifest.",
         "",
         f"Generated: `{report['generated_at_utc']}`  ",
         f"Commit: `{report['commit_sha']}`  ",
@@ -489,11 +489,11 @@ def main() -> int:
     contract_path = (
         args.contract.expanduser().resolve()
         if args.contract is not None
-        else repo_root / "custodian/tools/validation/contracts/operator_modular_core.json"
+        else repo_root / "custodian/tools/validation/contracts/operator_animation_core.json"
     )
     contract = json.loads(contract_path.read_text(encoding="utf-8"))
     expected = reporter.expand_contract(contract)
-    source_root = repo_root / "custodian/content/sprites/operator/new_operator/modular"
+    source_root = repo_root / "custodian/content/sprites/operator/source/animations"
     runtime_root = repo_root / "custodian/content/sprites/operator/runtime"
     assets = reporter.scan_assets(source_root, runtime_root, owner="operator")
     contract_report = reporter.build_report(contract, expected, assets)

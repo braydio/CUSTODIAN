@@ -1,0 +1,45 @@
+{
+  "schema": "custodian.operator_animation_contract.v2",
+  "directions": ["s", "se", "e", "ne", "n", "nw", "w", "sw"],
+  "profiles": ["shared", "unarmed", "melee_1h", "melee_1h_dagger", "melee_1h_heavy", "sidearm", "ranged_2h"],
+  "groups": [
+    {
+      "id": "unarmed_locomotion",
+      "required": true,
+      "entries": [
+        {"animation_profile": "unarmed", "action_group": "locomotion", "action": "idle_01", "layer": "lower_body", "directions": ["s", "se", "e", "n", "nw", "w", "sw"]},
+        {"animation_profile": "unarmed", "action_group": "locomotion", "action": "idle_01", "layer": "upper_body", "directions": ["s", "se", "e", "n", "nw", "w", "sw"]},
+        {"animation_profile": "unarmed", "action_group": "locomotion", "action": "run_01", "layer": "lower_body"},
+        {"animation_profile": "unarmed", "action_group": "locomotion", "action": "run_01", "layer": "upper_body"}
+      ]
+    },
+    {
+      "id": "known_optional_locomotion_gaps",
+      "required": false,
+      "entries": [
+        {"animation_profile": "unarmed", "action_group": "locomotion", "action": "idle_01", "layer": "lower_body", "directions": ["ne"]},
+        {"animation_profile": "unarmed", "action_group": "locomotion", "action": "idle_01", "layer": "upper_body", "directions": ["ne"]}
+      ]
+    },
+    {
+      "id": "melee_profiles",
+      "required": false,
+      "entries": [
+        {"animation_profile": "melee_1h", "action_group": "posture", "action": "draw_01", "layer": "upper_body", "directions": ["e", "w"]},
+        {"animation_profile": "melee_1h", "action_group": "posture", "action": "idle_ready_01", "layer": "upper_body", "directions": ["e", "w"]},
+        {"animation_profile": "melee_1h", "action_group": "posture", "action": "idle_relaxed_01", "layer": "upper_body", "directions": ["e", "w"]},
+        {"animation_profile": "melee_1h", "action_group": "attack", "action": "fast_01", "layer": "full_body", "directions": ["e", "w"]},
+        {"animation_profile": "melee_1h_dagger", "action_group": "attack", "action": "fast_01", "layer": "full_body", "directions": ["e", "w"]},
+        {"animation_profile": "melee_1h_heavy", "action_group": "attack", "action": "fast_01", "layer": "full_body", "directions": ["e", "w"]}
+      ]
+    },
+    {
+      "id": "weapon_profiles",
+      "required": false,
+      "entries": [
+        {"animation_profile": "sidearm", "action_group": "posture", "action": "draw_sidearm_01", "layer": "upper_body", "directions": ["ne", "nw", "se", "sw"]},
+        {"animation_profile": "ranged_2h", "action_group": "posture", "action": "stance_01", "layer": "upper_body", "directions": ["e", "n", "w"]}
+      ]
+    }
+  ]
+}

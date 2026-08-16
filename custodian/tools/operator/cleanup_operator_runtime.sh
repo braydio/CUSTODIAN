@@ -168,8 +168,8 @@ fi
 
 log ""
 log "Next validation commands:"
-log "  python3 custodian/tools/pipelines/build_operator_modular_runtime.py --remove-superseded"
+log "  python3 custodian/tools/pipelines/build_operator_runtime.py --remove-superseded"
 log "  godot --headless --path custodian --import --quit"
-log "  godot --headless --path custodian --script res://tools/pipelines/update_operator_curated_resources.gd"
+log "  godot --headless --path custodian --script res://tools/pipelines/build_operator_animation_resources.gd"
 log "  godot --headless --path custodian --script res://tools/validation/operator_modular_layers_smoke.gd"
 log "  python3 custodian/tools/validation/operator_animation_contract_report.py --json > $REPORT_ROOT/operator_animation_contract_report_$STAMP.json"

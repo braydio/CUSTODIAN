@@ -17,7 +17,7 @@ def main() -> int:
         "--path",
         str(PROJECT_DIR),
         "--script",
-        "res://tools/pipelines/update_operator_curated_resources.gd",
+        "res://tools/pipelines/build_operator_animation_resources.gd",
     ]
     result = subprocess.run(command, capture_output=True, text=True, check=False)
     if result.stdout:

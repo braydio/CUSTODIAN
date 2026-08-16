@@ -15,7 +15,7 @@ import sys
 from pathlib import Path
 
 TOOL = Path(__file__).resolve().parent / "match_sprite_palette.py"
-SOURCE_DIR = Path(__file__).resolve().parents[2] / "content/sprites/operator/new_operator/modular/fast_attack"
+SOURCE_DIR = Path(__file__).resolve().parents[2] / "content/sprites/operator/source/animations/fast_attack"
 DIRECTIONS = ("e", "n", "ne", "nw", "s", "se", "sw", "w")
 LAYERS = ("upper_body", "lower_body", "upper_fx")
 STRENGTH = 0.9

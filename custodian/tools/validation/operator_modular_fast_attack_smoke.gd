@@ -114,13 +114,13 @@ func _validate_roll_exit_ingest_registration() -> void:
 	var cape_frames := load("res://game/actors/operator/operator_modular_cape_frames.tres") as SpriteFrames
 	for direction in ["e", "w"]:
 		var suffix := "right" if direction == "e" else "left"
-		var body_path := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__dodge_fast_attack_01__%s__11f__96.png" % direction
-		var fx_path := "res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__dodge_fast_attack_01__%s__11f__96.png" % direction
+		var body_path := "res://content/sprites/operator/runtime/animations/unarmed/attack/dodge_fast_attack_01/operator__full_body__unarmed__attack__dodge_fast_attack_01__%s__11f__96.png" % direction
+		var fx_path := "res://content/sprites/operator/runtime/animations/unarmed/attack/dodge_fast_attack_01/operator__fx__unarmed__attack__dodge_fast_attack_01__%s__11f__96.png" % direction
 		if FileAccess.file_exists(body_path):
 			_assert_playable(body_frames, StringName("unarmed_dodge_fast_attack_%s" % suffix), "roll-exit body should be registered")
 		if FileAccess.file_exists(fx_path):
 			_assert_playable(fx_frames, StringName("unarmed_dodge_fast_attack_fx_%s" % suffix), "roll-exit FX should be registered")
-	var cape_path := "res://content/sprites/operator/runtime/modules/new_operator/wardrobe_cape/actions/unarmed/dodge_fast_attack_01/operator__modular_wardrobe_cape__unarmed__dodge_fast_attack_01__w__11f__96.png"
+	var cape_path := "res://content/sprites/operator/runtime/animations/unarmed/attack/dodge_fast_attack_01/operator__cape__unarmed__attack__dodge_fast_attack_01__w__11f__96.png"
 	if FileAccess.file_exists(cape_path):
 		_assert_playable(cape_frames, &"unarmed_dodge_fast_attack_cape_left", "west roll-exit cape should be registered")
 
@@ -230,11 +230,11 @@ func _validate_unarmed_contact_vfx(operator: Node, scene_root: Node2D) -> void:
 
 
 func _source_png_path(layer: String, action: String, dir: String) -> String:
-	return "res://content/sprites/operator/new_operator/modular/fast_attack/operator__modular_%s__unarmed__%s__%s__3f__96.png" % [layer, action, dir]
+	return "res://content/sprites/operator/source/animations/fast_attack/operator__modular_%s__unarmed__%s__%s__3f__96.png" % [layer, action, dir]
 
 
 func _runtime_png_path(layer: String, action: String, dir: String) -> String:
-	return "res://content/sprites/operator/runtime/modules/new_operator/%s/actions/unarmed/fast_attack/%s/operator__modular_%s__unarmed__%s__%s__3f__96.png" % [layer, action, layer, action, dir]
+	return "res://content/sprites/operator/runtime/animations/%s/actions/unarmed/fast_attack/%s/operator__modular_%s__unarmed__%s__%s__3f__96.png" % [layer, action, layer, action, dir]
 
 
 func _assert_layer_animation(operator: Node, sprite_property: String, base: String, dir: String) -> void:

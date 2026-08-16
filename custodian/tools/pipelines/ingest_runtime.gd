@@ -1,8 +1,7 @@
 extends SceneTree
 
 const SUPPORTED_IMAGE_EXTENSIONS := [".png"]
-const POST_PROCESS_OPERATOR_CURATED := "operator_curated_resources"
-const POST_PROCESS_OPERATOR_MODULAR_RUNTIME := "operator_modular_runtime"
+const POST_PROCESS_OPERATOR_RUNTIME_BUILD := "operator_runtime_build"
 const POST_PROCESS_ENEMY_RUNTIME_IMPORT := "enemy_runtime_import"
 const POST_PROCESS_VEHICLE_RUNTIME_IMPORT := "vehicle_runtime_import"
 const POST_PROCESS_ACTOR_SPRITEFRAMES_PREFIX := "actor_spriteframes:"
@@ -594,35 +593,13 @@ func _run_post_process(step: String, cleanup_superseded: bool) -> Dictionary:
 		return _run_actor_spriteframes_post_process(step)
 
 	match step:
-		POST_PROCESS_OPERATOR_CURATED:
-			if _dry_run:
-				print("[DRY RUN] post_process %s" % step)
-				return {"ok": true}
-			var output: Array = []
-			var exit_code := OS.execute(
-				"godot",
-				[
-					"--headless",
-					"--path",
-					_project_root,
-					"--log-file",
-					_project_root.path_join(".godot/sprite_pipeline_post_process.log"),
-					"--script",
-					"res://tools/pipelines/update_operator_curated_resources.gd"
-				],
-				output,
-				true
-			)
-			if exit_code != 0:
-				return {"ok": false, "error": "operator curated rebuild failed:\n%s" % "\n".join(output)}
-			return {"ok": true}
-		POST_PROCESS_OPERATOR_MODULAR_RUNTIME:
+		POST_PROCESS_OPERATOR_RUNTIME_BUILD:
 			if _dry_run:
 				print("[DRY RUN] post_process %s" % step)
 				return {"ok": true}
 			var build_output: Array = []
 			var build_args := [
-				ProjectSettings.globalize_path("res://tools/pipelines/build_operator_modular_runtime.py")
+				ProjectSettings.globalize_path("res://tools/pipelines/build_operator_runtime.py")
 			]
 			var build_exit_code := OS.execute(
 				"python3",
@@ -642,7 +619,7 @@ func _run_post_process(step: String, cleanup_superseded: bool) -> Dictionary:
 					"--log-file",
 					_project_root.path_join(".godot/sprite_pipeline_post_process.log"),
 					"--script",
-					"res://tools/pipelines/update_operator_curated_resources.gd"
+					"res://tools/pipelines/build_operator_animation_resources.gd"
 				],
 				curated_output,
 				true
@@ -654,7 +631,7 @@ func _run_post_process(step: String, cleanup_superseded: bool) -> Dictionary:
 				var cleanup_exit_code := OS.execute(
 					"python3",
 					[
-						ProjectSettings.globalize_path("res://tools/pipelines/build_operator_modular_runtime.py"),
+						ProjectSettings.globalize_path("res://tools/pipelines/build_operator_runtime.py"),
 						"--remove-superseded"
 					],
 					cleanup_output,

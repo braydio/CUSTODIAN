@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://tools/validation/fixtures/ash_bell_threadway_moment.gd" id="1_fixture"]
 [ext_resource type="PackedScene" path="res://game/world/approaches/ash_bell/ash_bell_lift_ingress_presentation.tscn" id="2_lift"]
-[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__idle_01__s__8f__96.png" id="3_operator"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__full_body__unarmed__locomotion__idle_01__s__8f__96.png" id="3_operator"]
 
 [sub_resource type="AtlasTexture" id="Atlas_operator"]
 atlas = ExtResource("3_operator")

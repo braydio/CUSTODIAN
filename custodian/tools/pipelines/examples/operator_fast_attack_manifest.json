@@ -23,6 +23,6 @@
     }
   ],
   "post_process": [
-    "operator_curated_resources"
+    "operator_runtime_build"
   ]
 }

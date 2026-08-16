@@ -83,9 +83,9 @@ fi
 
 echo "== Operator modular runtime build =="
 if [[ "$APPLY" -eq 1 ]]; then
-  python3 custodian/tools/pipelines/build_operator_modular_runtime.py
+  python3 custodian/tools/pipelines/build_operator_runtime.py
 else
-  python3 custodian/tools/pipelines/build_operator_modular_runtime.py --dry-run --remove-superseded
+  python3 custodian/tools/pipelines/build_operator_runtime.py --dry-run --remove-superseded
 fi
 echo ""
 
@@ -105,11 +105,11 @@ else
 fi
 
 echo "== Operator curated resource update =="
-godot --headless --path custodian --script res://tools/pipelines/update_operator_curated_resources.gd
+godot --headless --path custodian --script res://tools/pipelines/build_operator_animation_resources.gd
 echo ""
 
 echo "== Operator superseded runtime cleanup =="
-python3 custodian/tools/pipelines/build_operator_modular_runtime.py --remove-superseded
+python3 custodian/tools/pipelines/build_operator_runtime.py --remove-superseded
 echo ""
 
 if [[ "$NO_VALIDATE" -eq 0 ]]; then

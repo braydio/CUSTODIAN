@@ -34,7 +34,7 @@ from operator_asset_reconciliation import (
 
 
 CHECKER_PATH = Path(__file__).with_name("modular_combo_check.py")
-BUILDER_PATH = REPO_ROOT / "custodian/tools/pipelines/build_operator_modular_runtime.py"
+BUILDER_PATH = REPO_ROOT / "custodian/tools/pipelines/build_operator_runtime.py"
 
 
 def _load_checker():
@@ -178,10 +178,12 @@ def discover_sheets(runtime_root: Path, selector: str = "all") -> tuple[list, li
     layers: list[list] = []
     for layer in ("lower_body", "upper_body"):
         sheets = []
-        for path in sorted((runtime_root / layer).rglob("*.png")):
+        for path in sorted(runtime_root.rglob("*.png")):
             try:
                 sheet = _sheet(path.resolve())
             except ValueError:
+                continue
+            if sheet.part != layer:
                 continue
             haystack = f"{path.as_posix()} {sheet.anim_id} {sheet.domain} {sheet.direction}".lower()
             if selector not in {"", "all"} and direction is None and selector not in haystack:
@@ -625,7 +627,7 @@ def main(argv: list[str] | None = None) -> int:
     subprocess.run(["godot", "--headless", "--path", str(REPO_ROOT / "custodian"), "--import", "--quit"], check=True)
     subprocess.run([
         "godot", "--headless", "--path", str(REPO_ROOT / "custodian"),
-        "--script", "res://tools/pipelines/update_operator_curated_resources.gd",
+        "--script", "res://tools/pipelines/build_operator_animation_resources.gd",
     ], check=True)
     return 0
 

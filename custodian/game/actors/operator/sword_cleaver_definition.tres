@@ -14,6 +14,8 @@
 script = ExtResource("1_definition")
 weapon_id = &"sword_cleaver"
 weapon_type = &"melee_1h_heavy"
+animation_profile = &"melee_1h_heavy"
+weapon_presentation_mode = "authored_overlay"
 display_name = "Sword-Cleaver"
 weapon_kind = "melee"
 primary_intent = "melee_fast"

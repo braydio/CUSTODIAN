@@ -21,7 +21,7 @@ Example:
 
   # Fast attack suite with FX
   python tools/review_modular_body_pairs.py \
-    --root custodian/content/sprites/operator/new_operator/modular/fast_attack \
+    --root custodian/content/sprites/operator/source/animations/fast_attack \
     --out .ai/fast_attack_fx_review \
     --open
 

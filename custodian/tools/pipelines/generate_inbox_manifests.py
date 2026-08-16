@@ -10,6 +10,8 @@ from pathlib import Path
 
 from PIL import Image
 
+from operator_asset_schema import canonical_source_path, normalize_legacy_filename, parse_filename
+
 
 PROJECT_DIR = Path(__file__).resolve().parents[2]
 PIPELINE_DIR = PROJECT_DIR / "content" / "sprites" / "_pipeline"
@@ -140,6 +142,30 @@ def _resolve_targets(requested: list[str]) -> list[Path]:
 
 
 def _build_manifest(png_path: Path, *, remove_superseded: bool = False) -> dict:
+    key = None
+    if png_path.name.startswith("operator__"):
+        try:
+            key = parse_filename(png_path)
+        except ValueError:
+            key = normalize_legacy_filename(png_path)
+            print(f"[LEGACY INPUT] {png_path.name} -> {canonical_source_path(key)}", file=sys.stderr)
+    if key is not None and (key.owner == "operator" or key.layer == "weapon"):
+        target = canonical_source_path(key).relative_to("content/sprites").as_posix()
+        output = {
+            "path": target,
+            "layout": "copy" if key.frames == 1 else "horizontal_strip",
+        }
+        if key.frames > 1:
+            output["select"] = {"type": "range", "start": 0, "count": key.frames}
+        manifest = {
+            "source": png_path.name, "mode": "copy" if key.frames == 1 else "strip",
+            "outputs": [output], "post_process": ["operator_runtime_build"],
+        }
+        if key.frames > 1:
+            manifest["frame_size"] = [key.frame_width, key.frame_height]
+        if remove_superseded:
+            manifest["remove_superseded"] = True
+        return manifest
     info = _inspect_sheet(png_path)
     manifest: dict = {
         "source": png_path.name,
@@ -566,9 +592,9 @@ def _is_operator_modular_sheet(info: SheetInfo) -> bool:
 def _build_post_process(info: SheetInfo) -> list[str]:
     post_process: list[str] = []
     if info.owner == "operator" and info.layer in {"body", "full_body_combat", "combat_fx"}:
-        post_process.append("operator_curated_resources")
+        post_process.append("operator_runtime_build")
     if _is_operator_modular_sheet(info) or _is_operator_modular_sidearm_weapon(info):
-        post_process.append("operator_modular_runtime")
+        post_process.append("operator_runtime_build")
     if info.owner == "enemy" or info.owner.startswith("enemy_") or info.owner == "drone":
         post_process.append("enemy_runtime_import")
     if _is_allied_actor_owner(info.owner):

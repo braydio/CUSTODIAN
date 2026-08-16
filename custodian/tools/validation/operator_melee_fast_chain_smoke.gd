@@ -8,9 +8,9 @@ const KATANA_DEFINITION := preload(
 )
 
 const BODY_PATHS := [
-	"res://content/sprites/operator/runtime/body/melee_1h/operator__body__melee__fast_01__e__7f__156x96.png",
-	"res://content/sprites/operator/runtime/body/melee_1h/operator__body__melee__fast_02__e__7f__156x96.png",
-	"res://content/sprites/operator/runtime/body/melee_1h/operator__body__melee__fast_03__e__8f__156x96.png",
+	"res://content/sprites/operator/runtime/animations/melee_1h/attack/legacy_operator_body_melee_fast_01_e_7f_156x96/operator__full_body__melee_1h__attack__legacy_operator_body_melee_fast_01_e_7f_156x96__omni__1f__1092x96.png",
+	"res://content/sprites/operator/runtime/animations/melee_1h/attack/legacy_operator_body_melee_fast_02_e_7f_156x96/operator__full_body__melee_1h__attack__legacy_operator_body_melee_fast_02_e_7f_156x96__omni__1f__1092x96.png",
+	"res://content/sprites/operator/runtime/animations/melee_1h/attack/legacy_operator_body_melee_fast_03_e_8f_156x96/operator__full_body__melee_1h__attack__legacy_operator_body_melee_fast_03_e_8f_156x96__omni__1f__1248x96.png",
 ]
 const ANIMATIONS := [
 	&"melee_2h_fast_1_right",
@@ -112,7 +112,7 @@ func _select_katana(operator: Node) -> void:
 
 func _validate_source_and_definition() -> void:
 	var source := load(
-		"res://content/sprites/operator/new_operator/modular/chain_attack/"
+		"res://content/sprites/operator/source/legacy/masters/new_operator/modular/chain_attack/"
 		+ "operator__full_body_source__melee_1h__chain_attack_01__e__22f__156x96.png"
 	) as Texture2D
 	_assert(source != null, "22-frame source master is missing")

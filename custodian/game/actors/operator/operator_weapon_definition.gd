@@ -12,6 +12,10 @@ const MeleeAttackProfile = preload("res://game/systems/combat/melee_attack_profi
 @export_file("*.json") var weapon_data_path: String = ""
 @export var frames_resource: SpriteFrames
 
+@export_group("Animation Presentation")
+@export var animation_profile: StringName = &""
+@export_enum("socketed_static", "authored_overlay", "hybrid") var weapon_presentation_mode: String = "hybrid"
+
 @export_group("Weapon Animation Resources")
 @export var body_frames_resource: SpriteFrames
 @export var melee_overlay_frames_resource: SpriteFrames
@@ -133,6 +137,12 @@ const MeleeAttackProfile = preload("res://game/systems/combat/melee_attack_profi
 @export var reload_timer: float = 0.0
 
 var _cached_weapon_data: Dictionary = {}
+
+
+func get_animation_profile() -> StringName:
+	if not animation_profile.is_empty():
+		return animation_profile
+	return weapon_type
 
 
 func get_weapon_data() -> Dictionary:

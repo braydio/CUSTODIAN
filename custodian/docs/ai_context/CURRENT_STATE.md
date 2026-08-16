@@ -735,3 +735,9 @@ Documentation updates this session:
 ## Idea Codex
 
 `design/90_codex/` is a non-authoritative idea inventory. Cards preserve ideas and graduation history but never serve as active implementation specs. Graduated cards use `Graduated to:`, `Runtime status:`, and `Runtime path:` pointers; the linked active specs and this file remain build truth. `tools/validate_design_codex.py` checks index coverage, required metadata, graduation links, referenced paths, runtime-status agreement, and packaging-directory residue.
+# Operator asset pipeline V2 (2026-08-16)
+
+- Operator source authority is `content/sprites/operator/source/animations`; generated runtime authority is `content/sprites/operator/runtime/animations`.
+- `operator_asset_schema.py` is the sole Python identity parser; `build_operator_runtime.py` is the sole runtime builder and produces `operator_animation_catalog.generated.json`.
+- Gameplay weapon type and reusable animation profile are separate. Presentation modes are socketed static, authored overlay, and hybrid. Weapon-specific art is weapon-owned.
+- Historical Operator trees were hash/reference migrated into canonical assets or `source/legacy`; old runtime roots are rejected by `operator_runtime_path_audit.py`.

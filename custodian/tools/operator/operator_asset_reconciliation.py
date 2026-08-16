@@ -19,11 +19,11 @@ from PIL import Image
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 CUSTODIAN_ROOT = REPO_ROOT / "custodian"
-SOURCE_ROOT = CUSTODIAN_ROOT / "content/sprites/operator/new_operator/modular"
-MODULE_ROOT = CUSTODIAN_ROOT / "content/sprites/operator/runtime/modules/new_operator"
+SOURCE_ROOT = CUSTODIAN_ROOT / "content/sprites/operator/source/animations"
+MODULE_ROOT = CUSTODIAN_ROOT / "content/sprites/operator/runtime/animations"
 ARCHIVE_ROOT = CUSTODIAN_ROOT / "content/sprites/_pipeline/archive"
 DEFAULT_WORKSPACE = REPO_ROOT / ".ai/operator_modular_alignment_repair"
-BUILDER_PATH = CUSTODIAN_ROOT / "tools/pipelines/build_operator_modular_runtime.py"
+BUILDER_PATH = CUSTODIAN_ROOT / "tools/pipelines/build_operator_runtime.py"
 
 
 def _load_builder():
@@ -110,14 +110,7 @@ def verify_source_roundtrip(
 
 def choose_materialized_source_path(runtime_path: Path, source_root: Path, module_root: Path) -> Path:
     identity = BUILDER.identify_runtime_module(runtime_path, module_root)
-    family_dir = {
-        "locomotion": identity.action.removesuffix("_01"),
-        "fast_attack": "fast_attack",
-        "sidearm": "sidearm",
-        "ranged": "ranged",
-        "generic": f"actions/{identity.loadout}/{identity.action}",
-    }[identity.family]
-    return source_root / family_dir / runtime_path.name
+    return source_root / identity.loadout / identity.family / identity.action / runtime_path.name
 
 
 class SourceReconciler:

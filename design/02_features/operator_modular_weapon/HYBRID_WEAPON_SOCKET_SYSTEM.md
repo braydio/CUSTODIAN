@@ -600,3 +600,8 @@ paired execution presentation and required metadata failure policy.
 Acceptance: All eight static textures and frame tracks validate; primary ranged
 no longer needs animated weapon strips; muzzle/ejection/contact remain aligned;
 no visual regressions in ranged combat.
+# Implementation status — Operator Asset Pipeline V2
+
+The hybrid body/socket architecture is implemented on the V2 semantic asset pipeline. `weapon_type` remains gameplay classification while `animation_profile` selects reusable body motion. Weapon presentation explicitly supports `socketed_static`, `authored_overlay`, and `hybrid`; weapon-owned held art and action overrides live outside the Operator body tree. The generated animation catalog is runtime path authority, while the existing per-frame weapon socket catalog remains socket authority.
+
+Normal one-handed swords reuse `melee_1h`. Vigil uses `melee_1h_dagger` with authored overlays, and Sword-Cleaver uses `melee_1h_heavy`. Rectangular canvases are preserved from their declared filename contract without action-specific cropping.
