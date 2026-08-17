@@ -174,6 +174,35 @@ func _assert_camera_director_contract() -> void:
 	var world := PackedVector2Array([Vector2(0, 0), Vector2(128, 0), Vector2(256, 128), Vector2(384, 128)])
 	var projection := director.call("project_onto_centerline", Vector2(256, 140), cells, world) as Dictionary
 	_assert(absf(float(projection.get("route_arc_cells", 0.0)) - (4.0 + sqrt(32.0))) < 0.01, "curved/off-center polyline projection lost tile arc length")
+	var parallel_cells: Array = [
+		Vector2i(0, 0), Vector2i(8, 0), Vector2i(16, 16),
+		Vector2i(24, 16), Vector2i(32, 16), Vector2i(32, 12),
+		Vector2i(16, 12), Vector2i(0, 12), Vector2i(0, 4),
+		Vector2i(8, 4),
+	]
+	var parallel_world := PackedVector2Array([
+		Vector2(0, 0), Vector2(256, 0), Vector2(512, 512),
+		Vector2(768, 512), Vector2(1024, 512), Vector2(1024, 384),
+		Vector2(512, 384), Vector2(0, 384), Vector2(0, 128),
+		Vector2(256, 128),
+	])
+	var continuous := director.call(
+		"project_onto_centerline", Vector2(128, 124), parallel_cells, parallel_world, 0
+	) as Dictionary
+	_assert(int(continuous.get("segment_index", -1)) == 0, "local projection continuity jumped to a parallel route section")
+	var escape_cells: Array = []
+	var escape_world := PackedVector2Array()
+	for index in range(10):
+		escape_cells.append(Vector2i(index * 8, 0))
+		escape_world.append(Vector2(index * 256, 0))
+	var escaped := director.call(
+		"project_onto_centerline", Vector2(2304, 0), escape_cells, escape_world, 0
+	) as Dictionary
+	_assert(int(escaped.get("segment_index", -1)) == 8, "distant projection did not escape to the global closest segment")
+	var evaluated := director.call(
+		"evaluate", Vector2(128, 124), parallel_cells, parallel_world, 0, 0
+	) as Dictionary
+	_assert(int(evaluated.get("segment_index", -1)) == 0, "camera evaluation omitted continuous segment identity")
 	for key in VISTA_CONTRACT.CAMERA_WEIGHT_KEYS:
 		var s := float(key[0])
 		_assert(is_equal_approx(VISTA_CONTRACT.sample_spatial_key_curve(VISTA_CONTRACT.CAMERA_WEIGHT_KEYS, s), float(key[1])), "camera weight key mismatch at S%.0f" % s)

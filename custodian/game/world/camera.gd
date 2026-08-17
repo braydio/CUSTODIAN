@@ -209,8 +209,6 @@ func _process(delta):
 		return
 	if _presentation_framing_active:
 		_update_presentation_framing(delta)
-		_clamp_to_bounds()
-		_keep_presentation_subject_in_view()
 		return
 	_restore_follow_on_player_movement()
 	_update_movement(delta)
@@ -292,44 +290,56 @@ func get_presentation_subject_debug_state() -> Dictionary:
 	}
 
 
-func _keep_presentation_subject_in_view() -> void:
-	if _presentation_subject == null or not is_instance_valid(_presentation_subject):
-		return
-	var viewport_size := get_viewport_rect().size
-	if viewport_size.x <= 0.0 or viewport_size.y <= 0.0:
-		return
-	var screen_center := get_screen_center_position()
-	var screen_position := viewport_size * 0.5 \
-		+ (_presentation_subject.global_position - screen_center) * zoom
-	var safe_min := Vector2(
-		viewport_size.x * _presentation_subject_inset.x,
-		viewport_size.y * _presentation_subject_inset.y
-	)
-	var safe_max := Vector2(
-		viewport_size.x * (1.0 - _presentation_subject_inset.z),
-		viewport_size.y * (1.0 - _presentation_subject_inset.w)
-	)
-	var clamped_screen := screen_position.clamp(safe_min, safe_max)
-	var screen_correction := screen_position - clamped_screen
-	if screen_correction.is_zero_approx():
-		return
-	global_position += Vector2(
-		screen_correction.x / maxf(zoom.x, 0.001),
-		screen_correction.y / maxf(zoom.y, 0.001)
-	)
-	# This is a hard rendered-frame guarantee. Engine smoothing may not defer it.
-	reset_smoothing()
-
-
 func _update_presentation_framing(delta: float) -> void:
 	target_zoom = _presentation_zoom
 	_update_zoom(delta)
 	var target := _get_follow_target()
 	if target == null:
 		return
-	var target_position := target.global_position + _presentation_offset
+	var desired_position := target.global_position + _presentation_offset
+	desired_position = _constrain_presentation_position_to_subject(
+		desired_position
+	)
+	desired_position = _clamp_camera_position_to_active_bounds(
+		desired_position
+	)
 	var weight := clampf(follow_lerp_speed * delta, 0.0, 1.0)
-	global_position = global_position.lerp(target_position, weight)
+	global_position = global_position.lerp(desired_position, weight)
+
+
+func _constrain_presentation_position_to_subject(
+	desired_position: Vector2
+) -> Vector2:
+	if _presentation_subject == null \
+			or not is_instance_valid(_presentation_subject):
+		return desired_position
+
+	var viewport_size := get_viewport_rect().size
+	if viewport_size.x <= 0.0 or viewport_size.y <= 0.0:
+		return desired_position
+
+	var safe_min_px := Vector2(
+		viewport_size.x * _presentation_subject_inset.x,
+		viewport_size.y * _presentation_subject_inset.y
+	)
+	var safe_max_px := Vector2(
+		viewport_size.x * (1.0 - _presentation_subject_inset.z),
+		viewport_size.y * (1.0 - _presentation_subject_inset.w)
+	)
+	var half_viewport := viewport_size * 0.5
+	var safe_camera_min := Vector2(
+		_presentation_subject.global_position.x \
+			- (safe_max_px.x - half_viewport.x) / maxf(zoom.x, 0.001),
+		_presentation_subject.global_position.y \
+			- (safe_max_px.y - half_viewport.y) / maxf(zoom.y, 0.001)
+	)
+	var safe_camera_max := Vector2(
+		_presentation_subject.global_position.x \
+			- (safe_min_px.x - half_viewport.x) / maxf(zoom.x, 0.001),
+		_presentation_subject.global_position.y \
+			- (safe_min_px.y - half_viewport.y) / maxf(zoom.y, 0.001)
+	)
+	return desired_position.clamp(safe_camera_min, safe_camera_max)
 
 
 func _unhandled_input(event):
@@ -1029,6 +1039,10 @@ func _rebuild_bounds_from_procgen() -> bool:
 
 
 func _clamp_to_bounds():
+	global_position = _clamp_camera_position_to_active_bounds(global_position)
+
+
+func _clamp_camera_position_to_active_bounds(candidate: Vector2) -> Vector2:
 	var active_bounds := (
 		_presentation_bounds_override
 		if _presentation_bounds_override.size.x > 0.0
@@ -1036,10 +1050,10 @@ func _clamp_to_bounds():
 		else map_bounds
 	)
 	if active_bounds.size.x <= 0.0 or active_bounds.size.y <= 0.0:
-		return
+		return candidate
 	var viewport_size = get_viewport_rect().size
 	if viewport_size.x <= 0.0 or viewport_size.y <= 0.0:
-		return
+		return candidate
 	
 	var half_view := calculate_visible_half_view(viewport_size, zoom)
 	var slack_ratio = clamp(edge_view_slack_ratio, 0.0, 0.95)
@@ -1051,18 +1065,15 @@ func _clamp_to_bounds():
 	var y_max = active_bounds.position.y + active_bounds.size.y - clamp_half_view.y
 	
 	if x_min > x_max:
-		global_position.x = (
-			active_bounds.position.x + active_bounds.size.x * 0.5
-		)
+		candidate.x = active_bounds.position.x + active_bounds.size.x * 0.5
 	else:
-		global_position.x = clamp(global_position.x, x_min, x_max)
+		candidate.x = clamp(candidate.x, x_min, x_max)
 	
 	if y_min > y_max:
-		global_position.y = (
-			active_bounds.position.y + active_bounds.size.y * 0.5
-		)
+		candidate.y = active_bounds.position.y + active_bounds.size.y * 0.5
 	else:
-		global_position.y = clamp(global_position.y, y_min, y_max)
+		candidate.y = clamp(candidate.y, y_min, y_max)
+	return candidate
 
 
 # ═══════════════════════════════════════════════════════════════════════════════

@@ -79,6 +79,7 @@ var _influence_start_index := 0
 var _vista_focus := Vector2.ZERO
 var _vista_focus_bounded := Vector2.ZERO
 var _cinematic_complete := false
+var _last_projection_segment_index := -1
 
 
 func _ready() -> void:
@@ -112,6 +113,8 @@ func configure(
 	_frontage = (
 		_level_data.get("sundered_keep_frontage", {}) as Dictionary
 	).duplicate(true)
+	_last_projection_segment_index = -1
+	_cinematic_complete = false
 	_resolve_runtime_nodes()
 	if is_node_ready():
 		_layout_from_semantic_anchors()
@@ -236,6 +239,7 @@ func _assign_marker(name: String, world_position: Vector2) -> void:
 func _evaluate_camera(delta: float = 0.0) -> void:
 	if not _is_operator_inside_frontage_influence():
 		_camera_state.clear()
+		_last_projection_segment_index = -1
 		_apply_visual_state(VISTA_CONTRACT.S_INFLUENCE_START)
 		_release_camera()
 		_vista_root.visible = false
@@ -246,8 +250,12 @@ func _evaluate_camera(delta: float = 0.0) -> void:
 		_operator.global_position,
 		_centerline_cells,
 		_centerline_world,
-		_influence_start_index
+		_influence_start_index,
+		_last_projection_segment_index
 	) as Dictionary
+	_last_projection_segment_index = int(
+		_camera_state.get("segment_index", _last_projection_segment_index)
+	)
 	var route_s := float(_camera_state.get("route_s_cells", -INF))
 	var camera_weight := float(_camera_state.get("camera_weight", 0.0))
 	if route_s >= VISTA_CONTRACT.S_MOONLIGHT and not _moonlight_played:
@@ -338,6 +346,7 @@ func _apply_camera_state(weight: float) -> void:
 
 
 func _release_camera() -> void:
+	_last_projection_segment_index = -1
 	_set_ingress_presentation_visible(true)
 	if _camera == null or not is_instance_valid(_camera):
 		_camera_owned = false

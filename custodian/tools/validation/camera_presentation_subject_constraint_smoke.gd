@@ -21,7 +21,7 @@ func _run() -> void:
 	world.add_child(subject)
 	var camera := CAMERA_SCRIPT.new() as CameraController
 	camera.enabled = true
-	camera.position_smoothing_enabled = true
+	camera.position_smoothing_enabled = false
 	camera.global_position = Vector2.ZERO
 	camera.zoom = Vector2.ONE
 	world.add_child(camera)
@@ -32,20 +32,31 @@ func _run() -> void:
 		subject,
 		Vector4(0.04, 0.06, 0.04, 0.08)
 	)
-	camera.call("_keep_presentation_subject_in_view")
-	await process_frame
-	var state := camera.get_presentation_subject_debug_state()
-	var normalized: Vector2 = state.get(
-		"operator_screen_normalized",
-		Vector2(-1.0, -1.0)
+	var constrained := camera.call(
+		"_constrain_presentation_position_to_subject",
+		Vector2.ZERO
+	) as Vector2
+	var viewport_size := camera.get_viewport_rect().size
+	var half_viewport := viewport_size * 0.5
+	var expected := Vector2(
+		subject.global_position.x - (viewport_size.x * 0.96 - half_viewport.x) / camera.zoom.x,
+		subject.global_position.y - (viewport_size.y * 0.92 - half_viewport.y) / camera.zoom.y
 	)
-	_assert(bool(state.get("operator_inside_safe_frame", false)), "subject escaped the final safe frame: %s" % state)
-	_assert(normalized.x >= 0.04 - 0.001 and normalized.x <= 0.96 + 0.001, "subject x was not constrained to 4%-96%")
-	_assert(normalized.y >= 0.06 - 0.001 and normalized.y <= 0.92 + 0.001, "subject y was not constrained to 6%-92%")
-	_assert(float(state.get("operator_screen_edge_distance_px", 0.0)) >= 40.0 - 0.5, "edge-distance telemetry does not match the safe frame")
+	_assert(
+		constrained.is_equal_approx(expected),
+		"desired camera center was not constrained to the subject safe frame: %s" % constrained
+	)
+	var unclamped := camera.call(
+		"_clamp_camera_position_to_active_bounds",
+		Vector2(1200.0, -50.0)
+	) as Vector2
+	_assert(
+		unclamped.is_equal_approx(Vector2(1200.0, -50.0)),
+		"unbounded presentation clamp must preserve its candidate"
+	)
 
 	camera.clear_presentation_subject_constraint()
-	state = camera.get_presentation_subject_debug_state()
+	var state := camera.get_presentation_subject_debug_state()
 	_assert(not bool(state.get("operator_inside_safe_frame", true)), "cleared subject constraint still reports active containment")
 
 	viewport.queue_free()
