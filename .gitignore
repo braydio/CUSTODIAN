@@ -135,3 +135,5 @@ rclone-git-sync.sh
 # =======================
 .ai/
 repomix-output.*
+# Added by code-review-graph
+.code-review-graph/

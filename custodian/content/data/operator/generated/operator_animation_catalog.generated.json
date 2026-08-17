@@ -865,6 +865,38 @@
         }
       }
     },
+    "melee_1h_dagger/attack/fast_02/e": {
+      "profile": "melee_1h_dagger",
+      "group": "attack",
+      "action": "fast_02",
+      "direction": "e",
+      "layers": {
+        "weapon": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_dagger/attack/fast_02/operator__weapon__melee_1h_dagger__attack__fast_02__e__8f__156x96.png",
+          "frames": 8,
+          "frame_size": [
+            156,
+            96
+          ]
+        }
+      }
+    },
+    "melee_1h_dagger/attack/fast_02/w": {
+      "profile": "melee_1h_dagger",
+      "group": "attack",
+      "action": "fast_02",
+      "direction": "w",
+      "layers": {
+        "weapon": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_dagger/attack/fast_02/operator__weapon__melee_1h_dagger__attack__fast_02__w__8f__156x96.png",
+          "frames": 8,
+          "frame_size": [
+            156,
+            96
+          ]
+        }
+      }
+    },
     "melee_1h_dagger/posture/draw_01/e": {
       "profile": "melee_1h_dagger",
       "group": "posture",
