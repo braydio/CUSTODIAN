@@ -1,0 +1,129 @@
+{
+  "schema": "custodian.enemy_animation_contract.v1",
+  "description": "Reusable minimum animation capability contract for production humanoid enemies using authored sprite strips.",
+  "filename_grammar": "<enemy_id>__<layer>__<action_group>__<action>__<direction>__<frames>f__<frame_size>.png",
+  "runtime_root": "content/sprites/enemies/<enemy_id>/runtime",
+  "directions": ["s", "se", "e", "ne", "n", "nw", "w", "sw"],
+  "layers": ["body", "fx", "weapon"],
+  "default_enforced_enemies": ["enemy_grunt"],
+  "base_humanoid": {
+    "required": [
+      {
+        "id": "idle",
+        "layer": "body",
+        "action_groups": ["locomotion"],
+        "actions": ["idle_01"],
+        "min_direction_count": 1,
+        "min_frames": 2
+      },
+      {
+        "id": "move",
+        "layer": "body",
+        "action_groups": ["locomotion"],
+        "actions": ["run_01", "walk_01"],
+        "min_direction_count": 2,
+        "min_frames": 4
+      },
+      {
+        "id": "primary_attack",
+        "layer": "body",
+        "action_groups": ["melee", "unarmed", "ranged"],
+        "actions": ["fast_01", "attack_01", "shoot_01"],
+        "min_direction_count": 1,
+        "min_frames": 4
+      },
+      {
+        "id": "flinch",
+        "layer": "body",
+        "action_groups": ["reaction", "melee", "unarmed", "ranged"],
+        "actions": ["flinch_01"],
+        "min_direction_count": 1,
+        "min_frames": 3
+      },
+      {
+        "id": "stagger",
+        "layer": "body",
+        "action_groups": ["reaction", "melee", "unarmed", "ranged"],
+        "actions": ["stagger_01"],
+        "min_direction_count": 1,
+        "min_frames": 4
+      },
+      {
+        "id": "death",
+        "layer": "body",
+        "action_groups": ["reaction", "melee", "unarmed", "ranged"],
+        "actions": ["death_01"],
+        "min_direction_count": 1,
+        "min_frames": 4
+      }
+    ],
+    "optional": [
+      {
+        "id": "alternate_attack_02",
+        "layer": "body",
+        "action_groups": ["melee", "unarmed", "ranged"],
+        "actions": ["attack_02", "fast_02"],
+        "min_direction_count": 1,
+        "min_frames": 4
+      },
+      {
+        "id": "alternate_attack_03",
+        "layer": "body",
+        "action_groups": ["melee", "unarmed", "ranged"],
+        "actions": ["attack_03", "fast_03"],
+        "min_direction_count": 1,
+        "min_frames": 4
+      },
+      {
+        "id": "knockdown",
+        "layer": "body",
+        "action_groups": ["reaction", "melee", "unarmed", "ranged"],
+        "actions": ["knockdown_01"],
+        "min_direction_count": 1,
+        "min_frames": 4
+      },
+      {
+        "id": "alternate_death",
+        "layer": "body",
+        "action_groups": ["reaction", "melee", "unarmed", "ranged"],
+        "actions": ["death_02"],
+        "min_direction_count": 1,
+        "min_frames": 4
+      },
+      {
+        "id": "alert",
+        "layer": "body",
+        "action_groups": ["posture", "locomotion", "melee", "unarmed", "ranged"],
+        "actions": ["alert_01"],
+        "min_direction_count": 1,
+        "min_frames": 2
+      },
+      {
+        "id": "ready",
+        "layer": "body",
+        "action_groups": ["posture", "melee", "unarmed", "ranged"],
+        "actions": ["ready_01", "idle_ready_01"],
+        "min_direction_count": 1,
+        "min_frames": 2
+      },
+      {
+        "id": "primary_attack_fx",
+        "layer": "fx",
+        "action_groups": ["melee", "unarmed", "ranged"],
+        "actions": ["fast_01", "attack_01", "shoot_01"],
+        "min_direction_count": 1,
+        "min_frames": 1
+      }
+    ]
+  },
+  "policy": {
+    "weapon_layer_required": false,
+    "fx_required": false,
+    "notes": [
+      "Weapon art may be baked into body strips for fixed-loadout enemies; a separate weapon layer is optional.",
+      "Attack FX are optional presentation and must not own gameplay hit timing.",
+      "The base contract expresses capabilities, not a requirement that every enemy use identical action groups.",
+      "Reaction actions are accepted from the legacy combat group as well as the preferred reaction group during migration."
+    ]
+  }
+}
