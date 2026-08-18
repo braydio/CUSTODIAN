@@ -1,7 +1,7 @@
 [gd_resource type="SpriteFrames" format=3 uid="uid://cgefw2rqpdhlk"]
 
-[ext_resource type="Texture2D" uid="uid://cor1d3v1qvu40" path="res://content/sprites/weapons/sword_cleaver/operator/melee_1h_heavy/overrides/cosmetic/legacy_operator_weapon_sword_cleaver_chain_01_w_10f_156x96/sword_cleaver__weapon__melee_1h_heavy__cosmetic__legacy_operator_weapon_sword_cleaver_chain_01_w_10f_156x96__omni__1f__1560x96.png" id="1_7rsh1"]
-[ext_resource type="Texture2D" uid="uid://coyshi4n0tke0" path="res://content/sprites/weapons/sword_cleaver/operator/melee_1h_heavy/overrides/cosmetic/legacy_operator_weapon_sword_cleaver_chain_01_e_10f_156x96/sword_cleaver__weapon__melee_1h_heavy__cosmetic__legacy_operator_weapon_sword_cleaver_chain_01_e_10f_156x96__omni__1f__1560x96.png" id="2_63ekt"]
+[ext_resource type="Texture2D" uid="uid://4wo2lg7kd57p" path="res://content/sprites/weapons/sword_cleaver/operator/melee_1h_heavy/overrides/cosmetic/legacy_operator_weapon_sword_cleaver_chain_01_w_10f_156x96/sword_cleaver__weapon__melee_1h_heavy__cosmetic__legacy_operator_weapon_sword_cleaver_chain_01_w_10f_156x96__omni__1f__1560x96.png" id="1_7rsh1"]
+[ext_resource type="Texture2D" uid="uid://bss42au8l2noj" path="res://content/sprites/weapons/sword_cleaver/operator/melee_1h_heavy/overrides/cosmetic/legacy_operator_weapon_sword_cleaver_chain_01_e_10f_156x96/sword_cleaver__weapon__melee_1h_heavy__cosmetic__legacy_operator_weapon_sword_cleaver_chain_01_e_10f_156x96__omni__1f__1560x96.png" id="2_63ekt"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_tb05j"]
 atlas = ExtResource("1_7rsh1")
