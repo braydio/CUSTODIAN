@@ -6,7 +6,22 @@ This repository contains multiple eras of the project. For all active Godot work
 2. the matching implementation spec under `design/`
 3. `custodian/docs/ai_context/CURRENT_STATE.md`
 
-Active Godot feature specifications live under `design/02_features/`. Do not add new work to the retired `design/20_features/` tree. The legacy Python simulation and its AI context are historical reference only.
+Active Godot feature specifications live under `design/02_features/`. Do not add new work to the retired `design/20_features/` tree.
+
+## Historical Archive Boundary
+
+`python-sim/` is a historical pre-Godot archive. It is not an active runtime,
+design, architecture, implementation, validation, tooling, or source-of-truth
+dependency. Do not include it in an active authority chain. Consult it only
+when a task explicitly requires historical archaeology; it never overrides
+current design or runtime.
+
+The active authority chain is:
+
+1. `design/`
+2. `custodian/docs/ai_context/`
+3. `custodian/docs/`
+4. live runtime and content under `custodian/`
 
 Repository-root path equivalents used by the local primer are:
 
@@ -14,6 +29,7 @@ Repository-root path equivalents used by the local primer are:
 - current state/context/index: `custodian/docs/ai_context/`
 - active runtime: `custodian/game/`, `custodian/content/`, and `custodian/project.godot`
 - validation: `custodian/docs/ai_context/VALIDATION_RECIPES.md` and `custodian/tools/validation/`
+- active project doctrine: `design/00_meta/MASTER_DESIGN_DOCTRINE.md`
 - deterministic micro-playtest review: route through `custodian/AGENTS.md`,
   `design/02_features/debug_ui/MOMENT_FORGE_SYSTEM.md`, and the Moment Forge
   section of `custodian/docs/ai_context/VALIDATION_RECIPES.md`

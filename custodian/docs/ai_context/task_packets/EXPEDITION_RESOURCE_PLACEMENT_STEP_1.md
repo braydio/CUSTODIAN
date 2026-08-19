@@ -22,7 +22,6 @@ Generated contract maps include a deterministic, non-respawning, far-from-compou
 - Local routing: `custodian/AGENTS.md`
 - Active design/spec docs: `design/02_features/resource_collection/RESOURCE_COLLECTION_PLAN.md`, `design/02_features/resource_fabrication/RESOURCE_FABRICATION_SYSTEM.md`
 - Active runtime/docs files: `custodian/game/systems/core/systems/contract_world_loader.gd`, `custodian/game/resources/resource_node.gd`, `REQUIRED_ASSETS.md`
-- Historical reference only: `python-sim/`
 
 ## Work Surface
 

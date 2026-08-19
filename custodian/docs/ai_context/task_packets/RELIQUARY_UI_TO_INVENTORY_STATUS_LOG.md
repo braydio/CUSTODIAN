@@ -25,7 +25,6 @@ Move the Black Reliquary play HUD clutter into the inventory overlay and turn th
 - Local routing: `custodian/AGENTS.md`
 - Active design/spec docs: `design/02_features/world_expansion/THE_SUNDERED_KEEP_LEVEL_SET.md`
 - Active runtime/docs files: `custodian/game/ui/hud/custodian_hud.gd`, `custodian/game/ui/hud/custodian_hud.tscn`, `custodian/game/ui/inventory/inventory_ui.gd`, `custodian/game/ui/inventory/inventory_ui.tscn`, `custodian/game/ui/hud/ui.gd`
-- Historical reference only: `python-sim/`
 
 ## Work Surface
 

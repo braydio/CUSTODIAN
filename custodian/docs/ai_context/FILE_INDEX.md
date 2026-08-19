@@ -37,7 +37,7 @@ Last updated: 2026-08-12
 - `game/world/bindings/` simulation binding files — non-authoritative adapters.
 - `tools/validation/run_world_simulation_migration_suite.sh` and `*simulation*smoke.gd`/`campaign_outcome_exactly_once_smoke.gd` — validation.
 - `docs/ai_context/task_packets/PYTHON_SIM_GODOT_RUNTIME_INTEGRATION.md` — task packet.
-- `python-sim/tools/{export_godot_parity_fixtures,world_parity_contract}.py` and `python-sim/tests/test_godot_parity_export.py` — offline parity fixture contract.
+- `tools/validation/fixtures/world_simulation/` — checked-in parity fixtures retained as Godot migration evidence; the active suite validates the Godot contract without invoking a retired runtime.
 
 ## Local Entry And Workflow
 
@@ -892,10 +892,8 @@ Last updated: 2026-08-12
 - `custodian/tools/validation/elevated_world_asset_contract_smoke.gd` — image, alpha, TileSet semantic-ID, scene, and no-collision contract.
 - `custodian/tools/validation/elevated_world_seed_review.gd` — fixed-seed presentation geometry and route summary.
 
-- `python-sim/game/` — legacy simulation
-- `python-sim/custodian-terminal/` — legacy terminal UI
-- `python-sim/ai/` — historical AI context pack, superseded by `custodian/docs/ai_context/`
-- `python-sim/design/archive/` — historical design/archive material
+- `../design/00_meta/MASTER_DESIGN_DOCTRINE.md` — active project-wide doctrine
+- `tools/validate_historical_archive_boundaries.py` — guards active Godot-era paths from historical-archive dependencies
 - `design/02_features/enemy_navigation/ENEMY_NAVIGATION_AND_PURSUIT_SYSTEM.md` — active authority for budgeted ambient activation, enemy path queries, grid smoothing, perception tiers, spatial separation, instrumentation, and deferred crowd-scale flow fields.
 - `custodian/game/systems/core/systems/enemy_navigation_broker.gd` — NavigationSystem-owned FIFO/coalescing broker capped at two synchronous enemy A* searches per physics frame.
 - `custodian/game/systems/simulation/enemy_spatial_index.gd` — shared 64 px enemy buckets refreshed at 10 Hz for stable local separation candidates.

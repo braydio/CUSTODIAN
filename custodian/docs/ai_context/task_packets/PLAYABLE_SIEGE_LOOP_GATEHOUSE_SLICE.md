@@ -27,18 +27,12 @@ Active design authority:
 - `design/00_meta/`
 - `design/01_systems/`
 - `design/02_features/`
-- `design/03_architecture/`
-- `design/20_levels/in_progress/`
-- `python-sim/design/MASTER_DESIGN_DOCTRINE.md` as locked master doctrine/reference
+- `design/04_architecture/`
+- `design/05_levels/`
+- `design/00_meta/MASTER_DESIGN_DOCTRINE.md`
 - `custodian/docs/ai_context/` for active AI context tracking
 
-Legacy reference only:
-
-- `python-sim/game/`
-- `python-sim/custodian-terminal/`
-- `python-sim/ai/`
-
-Do not treat legacy Python runtime as active gameplay authority.
+Historical archive material is outside this packet's implementation scope.
 
 ## Objective
 
@@ -67,7 +61,7 @@ Do not bind large master sheets directly into runtime animation resources.
 
 Do not rewrite the whole player, enemy, map, inventory, or procgen architecture unless discovery proves there is no usable existing structure.
 
-Do not move active runtime authority back into `python-sim/`.
+Do not introduce dependencies outside the active Godot-era authority chain.
 
 Do not silently ignore documentation drift.
 

@@ -25,7 +25,6 @@ runtime module paths and registered for follow-up primary-ranged modular present
 - Local routing: `custodian/AGENTS.md`
 - Active design/spec docs: `design/02_features/combat_feel/COMBAT_FEEL_SYSTEM.md`
 - Active runtime/docs files: `custodian/game/actors/operator/operator.gd`, Operator sprite pipeline and focused smokes
-- Historical reference only: `python-sim/`
 
 ## Work Surface
 

@@ -22,7 +22,6 @@ The modular operator source suite can be rebuilt into stable runtime module fold
 - Local routing: `custodian/AGENTS.md`
 - Active design/spec docs: `design/02_features/operator/UNARMED_TOGGLE.md`, `design/02_features/combat_feel/COMBAT_FEEL_SYSTEM.md`, `custodian/docs/ASSET_LAYOUT_CONVENTION.md`
 - Active runtime/docs files: `custodian/tools/pipelines/update_operator_curated_resources.gd`, `custodian/game/actors/operator/operator_runtime_frames.tres`, `custodian/docs/ai_context/CURRENT_STATE.md`, `custodian/docs/ai_context/FILE_INDEX.md`
-- Historical reference only: `python-sim/`
 
 ## Work Surface
 

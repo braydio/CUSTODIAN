@@ -1,6 +1,6 @@
 # Assault Design (Godot)
 
-> Ported from `python-sim/design/10_systems/assault/ASSAULT_DESIGN.md`
+> Godot-era assault implementation contract.
 > Phase: In Progress
 
 ---

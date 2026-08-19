@@ -585,14 +585,6 @@ custodian/
 
 # Reference Files
 
-## Python Source (Migration Reference)
-
-- `python-sim/game/simulations/world_state/core/hub.py` - Full Hub logic
-- `python-sim/game/simulations/world_state/core/config.py` - Sector definitions
-- `python-sim/game/simulations/world_state/core/state.py` - GameState integration
-
----
-
 # Next Steps
 
 1. **Start with Hub data classes** - Translate Python dataclasses to GDScript

@@ -24,7 +24,6 @@ west service yard, east rampart, and Great Hall exterior/interior spaces.
 - Local routing: `custodian/AGENTS.md`
 - Active design/spec docs: `design/02_features/world_expansion/THE_SUNDERED_KEEP_LEVEL_SET.md`
 - Active runtime/docs files: `custodian/game/world/sundered_keep/`, `custodian/content/levels/sundered_keep/`, `custodian/docs/ai_context/`
-- Historical reference only: `python-sim/`
 
 ## Work Surface
 

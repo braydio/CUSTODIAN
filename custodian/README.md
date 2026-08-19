@@ -73,17 +73,19 @@ custodian/
 ## In-Game Command Terminal
 
 - Command sector includes an interactable terminal prop.
-- Terminal UI is rendered inside Godot and mirrors legacy boot/command/snapshot flow.
-- Default service endpoint is `http://127.0.0.1:7331` (`python-sim/custodian-terminal/server.py`).
+- Terminal UI is rendered inside Godot and consumes the Godot-owned local
+  snapshot and command boundaries.
+- The terminal is self-contained; it has no external service dependency.
 
 ## Legacy Reference
 
-Legacy terminal-era implementation is preserved in `../python-sim/`.
-It is reference/debug context only and not the active runtime authority.
+The retired pre-Godot implementation is preserved in `../python-sim/` as a
+historical artifact only. It has no active design, implementation, runtime,
+validation, tooling, or source-of-truth authority.
 
 ## Design Doctrine
 
 Canonical doctrine is maintained in:
 
-- `../python-sim/design/MASTER_DESIGN_DOCTRINE.md`
+- `../design/00_meta/MASTER_DESIGN_DOCTRINE.md`
 - `AGENTS.md`

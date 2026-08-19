@@ -22,7 +22,6 @@ Vault storage has a stable runtime asset domain, visible storage state art, dama
 - Local routing: `custodian/AGENTS.md`
 - Active design/spec docs: `design/02_features/enemy_objective/ENEMY_OBJECTIVE_SYSTEM.md`, `design/02_features/enemy_objective/GRUNT_COMBAT_PROFILE.md`, `design/02_features/_requests/RESOURCE_LOOP_AND_STORAGE_RAIDING.md`
 - Active runtime/docs files: `custodian/game/actors/storage/`, `custodian/game/systems/core/systems/vault_manager.gd`, `custodian/game/actors/enemies/`, `custodian/content/sprites/environment/props/vault_storage/runtime/`
-- Historical reference only: `python-sim/`
 
 ## Work Surface
 

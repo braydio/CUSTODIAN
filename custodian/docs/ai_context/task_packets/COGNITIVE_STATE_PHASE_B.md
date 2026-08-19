@@ -41,7 +41,6 @@ Wire cognitive state modifiers (Phase B) into game systems and fix debug panel b
 - Local routing: `custodian/docs/ai_context/CURRENT_STATE.md`, `docs/ai_context/FILE_INDEX.md`
 - Active design/spec docs: `../design/THE_TRAGEDY_OF_THE_FOREST_SHRUMB_GAMEPLAY_CORE.md`
 - Active runtime/docs files: `custodian/game/systems/cognitive/cognitive_state_system.gd`
-- Historical reference only: `../python-sim/design/`
 
 ## Work Surface
 

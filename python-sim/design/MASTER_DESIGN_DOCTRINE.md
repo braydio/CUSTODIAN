@@ -1,5 +1,12 @@
 # CUSTODIAN — MASTER DESIGN DOCTRINE v2.0
 
+> **HISTORICAL ARTIFACT — PRE-GODOT ARCHIVE**
+>
+> This is the original doctrine from the retired pre-Godot implementation. It
+> is retained for project history only and has no active design, architecture,
+> runtime, validation, or tooling authority. Current project doctrine lives at
+> `design/00_meta/MASTER_DESIGN_DOCTRINE.md`.
+
 > **This document formally locks the core design decisions for CUSTODIAN. It supersedes all prior architecture assumptions.**
 
 **Last Updated:** 2026-03-03

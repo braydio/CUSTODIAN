@@ -7,12 +7,12 @@ Simulation boundary update (2026-08-08): use `WorldSimulationRuntime` and typed 
 ## Purpose
 
 Operational handoff summary for active Godot implementation work.
-Use this directory as the current AI-facing context pack, not `python-sim/ai/`.
+Use this directory as the current AI-facing context pack.
 Use `custodian/AGENTS.md` as the first local stop before using this pack.
 
 ## One-Paragraph Summary
 
-CUSTODIAN is a Godot-native tactical base-defense game with an embodied operator, deterministic runtime simulation, contract-driven deployment, and an in-world command terminal. The active game lives in `custodian/`, the active implementation specs live in `design/`, and the old Python simulation/terminal stack remains preserved only as migration and design history.
+CUSTODIAN is a Godot-native tactical base-defense game with an embodied operator, deterministic runtime simulation, contract-driven deployment, and an in-world command terminal. The active game lives in `custodian/` and the active implementation specs live in `design/`.
 
 ## Current Lore Canon
 

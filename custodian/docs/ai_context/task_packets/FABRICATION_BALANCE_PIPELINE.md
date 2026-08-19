@@ -22,7 +22,6 @@ The repo has a deterministic CLI that reads current fabrication recipes and reso
 - Local routing: `custodian/AGENTS.md`
 - Active design/spec docs: `design/02_features/resource_fabrication/RESOURCE_FABRICATION_SYSTEM.md`, `design/02_features/enemy_objective/GRUNT_LOOT_TABLE.md`
 - Active runtime/docs files: `custodian/content/fabrication/fab_recipes.json`, `custodian/content/resources/resource_defs.json`, `custodian/autoload/fab_pipeline.gd`, `custodian/autoload/resource_ledger.gd`, `custodian/docs/ai_context/CURRENT_STATE.md`, `custodian/docs/ai_context/FILE_INDEX.md`
-- Historical reference only: `python-sim/`
 
 ## Work Surface
 

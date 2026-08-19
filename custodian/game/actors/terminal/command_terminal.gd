@@ -11,7 +11,7 @@ const COMMAND_TERMINAL_PICKUP_TEXTURE_PATH := "res://content/sprites/environment
 const COMPAT_COMMAND_TERMINAL_PICKUP_TEXTURE_PATH := "res://content/sprites/environment/props/terminal/runtime/body/command_terminal__body__interaction__pickup__omni__4f__48.png"
 const COMPAT_COMMAND_TERMINAL_PICKUP_ALT_TEXTURE_PATH := "res://content/sprites/environment/props/terminal/runtime/body/computer_terminal__body__interaction__pick-up__omni__4f__48.png"
 
-@export var launch_url: String = "http://127.0.0.1:7331"
+@export var launch_url: String = "LOCAL://GAME_STATE"
 @export var prompt_text: String = "ACCESS CUSTODIAN INTERFACE"
 @export var interact_distance: float = 88.0
 @export var activation_texture: Texture2D = null

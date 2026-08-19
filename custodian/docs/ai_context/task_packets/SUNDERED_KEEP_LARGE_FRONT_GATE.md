@@ -22,7 +22,6 @@ Sundered Keep now builds from `custodian/content/levels/sundered_keep/sundered_k
 - Local routing: `custodian/AGENTS.md`
 - Active design/spec docs: `design/SUNDERED_KEEP_WORK.md`, `design/20_levels/in_progress/SUNDERED_KEEP_LARGE_FRONT_GATE.md`
 - Active runtime/docs files: `custodian/game/world/sundered_keep/`, `custodian/content/levels/sundered_keep/`, `custodian/docs/ai_context/`
-- Historical reference only: `python-sim/`
 
 ## Work Surface
 

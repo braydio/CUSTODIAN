@@ -22,7 +22,6 @@ The Godot runtime has a reachable connected Sundered Keep map with game32-backed
 - Local routing: `custodian/AGENTS.md`
 - Active design/spec docs: `design/SUNDERED_KEEP_PHASE_1.md`, `design/02_features/world_expansion/THE_SUNDERED_KEEP_LEVEL_SET.md`
 - Active runtime/docs files: `custodian/game/world/gothic_compound/gothic_compound_map.gd`, `custodian/game/world/gothic_compound/gothic_compound_travel_gate.gd`, `custodian/game/systems/core/systems/contract_world_loader.gd`, `custodian/docs/ai_context/CURRENT_STATE.md`, `custodian/docs/ai_context/FILE_INDEX.md`
-- Historical reference only: legacy Python runtime under `python-sim/`
 
 ## Work Surface
 

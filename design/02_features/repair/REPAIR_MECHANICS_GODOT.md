@@ -1,6 +1,6 @@
 # Repair Mechanics (Godot)
 
-> Ported from `python-sim/design/10_systems/infrastructure/REPAIR_MECHANICS.md`
+> Godot-era repair implementation contract.
 > Phase: In Progress
 
 ---

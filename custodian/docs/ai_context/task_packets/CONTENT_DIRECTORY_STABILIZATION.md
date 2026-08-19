@@ -22,7 +22,6 @@ Stabilize `res://content/` organization so asset sources, runtime files, legacy 
 - Local routing: `custodian/AGENTS.md`
 - Active design/spec docs: `custodian/docs/ASSET_LAYOUT_CONVENTION.md`
 - Active runtime/docs files: `custodian/docs/ai_context/CURRENT_STATE.md`, `custodian/docs/ai_context/FILE_INDEX.md`, `custodian/docs/ai_context/VALIDATION_RECIPES.md`
-- Historical reference only: `python-sim/`
 
 ## Work Surface
 

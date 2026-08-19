@@ -29,9 +29,9 @@ Read these in order before making changes:
 If a conflict appears, prefer this authority order:
 
 1. `../design/`
-2. `../python-sim/design/MASTER_DESIGN_DOCTRINE.md`
-3. `docs/*`
-4. legacy Python-era design or AI docs only as historical reference
+2. `docs/ai_context/`
+3. `docs/`
+4. live runtime and content under `custodian/`
 
 ## Current Design And Development State
 
@@ -130,8 +130,10 @@ Before editing, run this retrieval pipeline:
    Read `docs/ai_context/VALIDATION_RECIPES.md` and any matching prompt template in `docs/ai_context/prompts/`.
 6. Pull adjacent context.
    Read neighboring docs, scene files, READMEs, and directly related scripts/assets.
-7. Pull historical context only if still unresolved.
-   Use `../python-sim/` or archived docs only to explain intent, not to override active authority.
+7. Do not consult historical pre-Godot material unless the task explicitly
+   requires archaeology or an active document identifies a specific unresolved
+   migration question. Historical material never overrides active design or
+   runtime.
 8. Record any mismatch immediately.
    If names, paths, behavior, or ownership disagree, treat that as drift and remediate before or alongside the main change.
 

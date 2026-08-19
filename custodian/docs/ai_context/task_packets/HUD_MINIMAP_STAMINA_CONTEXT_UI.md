@@ -22,7 +22,6 @@ The player can hide/show the minimap without losing the existing expand toggle. 
 - Local routing: `custodian/AGENTS.md`
 - Active design/spec docs: user request in current session
 - Active runtime/docs files: `custodian/scenes/game.tscn`, `custodian/game/ui/hud/ui.gd`, `custodian/project.godot`
-- Historical reference only: `python-sim/`
 
 ## Work Surface
 

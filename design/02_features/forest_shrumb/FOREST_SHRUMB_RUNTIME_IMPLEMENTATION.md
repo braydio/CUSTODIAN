@@ -549,7 +549,7 @@ Implement v1 only:
 9. Do not implement full inventory UI.
 10. Do not implement auto-attack.
 11. Do not duplicate death/drop behavior.
-12. Do not modify legacy python-sim runtime.
+12. Do not modify historical archive material as part of active runtime work.
 13. Update CURRENT_STATE.md, FILE_INDEX.md, and CONTEXT.md after runtime changes.
 
 Validate by running the Godot project if feasible.

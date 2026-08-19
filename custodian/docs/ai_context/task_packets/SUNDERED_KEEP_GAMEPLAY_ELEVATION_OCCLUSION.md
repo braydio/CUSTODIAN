@@ -22,7 +22,6 @@ The Sundered Keep front-gate JSON now declares lower-shore, underpass, and inter
 - Local routing: `custodian/AGENTS.md`
 - Active design/spec docs: `design/GAMEPLAY.md`, `design/ELEVATION.md`
 - Active runtime/docs files: `custodian/game/world/sundered_keep/`, `custodian/content/levels/sundered_keep/`, `custodian/docs/ai_context/`
-- Historical reference only: `python-sim/`
 
 ## Work Surface
 

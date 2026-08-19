@@ -22,7 +22,6 @@ Agents and the user can run one command after a task to produce a clearly labele
 - Local routing: `custodian/AGENTS.md`
 - Active design/spec docs: none required for this utility
 - Active runtime/docs files: `custodian/tools/agent/`, `custodian/docs/change_control/`, `custodian/docs/ai_context/FILE_INDEX.md`
-- Historical reference only: `python-sim/`
 
 ## Work Surface
 

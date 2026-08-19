@@ -53,7 +53,7 @@ Do **not** put every melee stat directly into `OperatorWeaponDefinition` as flat
 
 - Root routing: `custodian/AGENTS.md`
 - Local routing: `custodian/docs/ai_context/CURRENT_STATE.md`
-- Active design/spec docs: `python-sim/design/MASTER_DESIGN_DOCTRINE.md` (combat model §V)
+- Active design/spec docs: `design/00_meta/MASTER_DESIGN_DOCTRINE.md` (play model)
 - Active runtime/docs files:
   - `custodian/game/actors/operator/operator.gd`
   - `custodian/game/actors/operator/operator_weapon_definition.gd`
@@ -62,7 +62,6 @@ Do **not** put every melee stat directly into `OperatorWeaponDefinition` as flat
   - `custodian/game/actors/operator/animations/states/attack_heavy_state.gd`
   - `custodian/game/actors/operator/animations/states/attack_light_state.gd`
 - Container for new resources: `custodian/game/systems/combat/`
-- Historical reference only: `python-sim/`
 
 ## Work Surface
 
@@ -312,7 +311,7 @@ This avoids breaking scenes where `operator.tscn` has stale/null overrides. Remo
 - `custodian/docs/ai_context/CONTEXT.md` — Check if melee architecture section needs refresh.
 - `custodian/docs/ai_context/FILE_INDEX.md` — Needs update: add `melee_attack_profile.gd` and new `.tres` files.
 - `custodian/AGENTS.md` — No change expected.
-- Design docs — `python-sim/design/MASTER_DESIGN_DOCTRINE.md` § Combat Model is already locked at the right abstraction level; no change needed.
+- Design docs — `design/00_meta/MASTER_DESIGN_DOCTRINE.md` already establishes the combat abstraction; no doctrine change needed.
 
 ## Completion Notes
 

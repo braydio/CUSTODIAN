@@ -80,7 +80,6 @@ const DEBUG_GRUNT_SPAWN_MODES := [
 	&"execution_lethal",
 ]
 
-const DEFAULT_TERMINAL_SERVICE_URL := "http://127.0.0.1:7331"
 const TERMINAL_LOCAL_LINK := "LOCAL://GAME_STATE"
 const TERMINAL_BOOT_LINES := [
 	"[ SYSTEM POWER: UNSTABLE ]",
@@ -292,7 +291,7 @@ var _terminal_ready := false
 var _terminal_boot_started := false
 var _terminal_boot_complete := false
 var _terminal_previous_mouse_mode := Input.MOUSE_MODE_VISIBLE
-var _terminal_service_url := DEFAULT_TERMINAL_SERVICE_URL
+var _terminal_service_url := TERMINAL_LOCAL_LINK
 var _terminal_lines: Array[String] = []
 var _terminal_log_entries: Array[Dictionary] = []
 var _terminal_history: Array[String] = []
@@ -6942,8 +6941,8 @@ func _request_json(requester: HTTPRequest, path: String, method: int, payload: V
 	if requester == null:
 		return {"ok": false, "error": "REQUEST NODE MISSING"}
 	var base = _terminal_service_url.strip_edges()
-	if base.is_empty():
-		base = DEFAULT_TERMINAL_SERVICE_URL
+	if base.is_empty() or base == TERMINAL_LOCAL_LINK:
+		return {"ok": false, "error": "LOCAL TERMINAL DOES NOT USE HTTP"}
 	if base.ends_with("/"):
 		base = base.substr(0, base.length() - 1)
 	var url = "%s%s" % [base, path]

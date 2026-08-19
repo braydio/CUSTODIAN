@@ -22,7 +22,6 @@ The runtime accepts a two-phase dodge (`dodge` then `dodge_recovery`) with optio
 - Local routing: `custodian/AGENTS.md`
 - Active design/spec docs: `design/02_features/combat_feel/COMBAT_FEEL_SYSTEM.md`
 - Active runtime/docs files: `custodian/game/actors/operator/operator.gd`, `custodian/tools/pipelines/*`, `REQUIRED_ASSETS.md`
-- Historical reference only: `python-sim/`
 
 ## Work Surface
 

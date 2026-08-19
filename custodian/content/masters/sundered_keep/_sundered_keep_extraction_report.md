@@ -22,7 +22,7 @@
 - `OK` `active_ai_context` → `/home/braydenchaffee/Projects/CUSTODIAN/custodian/docs/ai_context`
 - `OK` `active_ai_context_current_state` → `/home/braydenchaffee/Projects/CUSTODIAN/custodian/docs/ai_context/CURRENT_STATE.md`
 - `OK` `godot_native_design_specs` → `/home/braydenchaffee/Projects/CUSTODIAN/design`
-- `OK` `locked_master_doctrine` → `/home/braydenchaffee/Projects/CUSTODIAN/python-sim/design/MASTER_DESIGN_DOCTRINE.md`
+- `OK` `active_master_doctrine` → `/home/braydenchaffee/Projects/CUSTODIAN/design/00_meta/MASTER_DESIGN_DOCTRINE.md`
 - `OK` `sundered_master_source_dir` → `/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep`
 - `OK` `sundered_floor_tiles.png` → `/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/sundered_floor_tiles.png`
 - `OK` `sundered_walls_gates.png` → `/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/sundered_walls_gates.png`

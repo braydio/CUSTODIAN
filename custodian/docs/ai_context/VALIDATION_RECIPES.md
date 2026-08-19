@@ -154,10 +154,21 @@ For the Python-to-Godot simulation extraction scaffold:
 cd custodian
 godot --headless --path . --script res://tools/validation/world_simulation_kernel_smoke.gd
 cd ..
-python3 python-sim/tools/export_godot_parity_fixtures.py
+bash custodian/tools/validation/run_world_simulation_migration_suite.sh
 ```
 
-The kernel smoke proves same-seed command determinism, fixed-step pause/resume, typed structure damage, logistics/power execution, snapshots, and fingerprints. The Python command is an offline fixture oracle; it is never a Godot runtime dependency.
+The kernel smoke proves same-seed command determinism, fixed-step pause/resume, typed structure damage, logistics/power execution, snapshots, and fingerprints. The migration suite validates checked-in fixtures and Godot contract smokes without invoking a retired runtime.
+
+## Historical Archive Boundary Validation
+
+Run after changing design, active Godot runtime/content, tooling, or current AI context:
+
+```bash
+python3 custodian/tools/validation/validate_historical_archive_boundaries.py
+```
+
+This rejects references to the retired Python archive from active paths. Archived
+task packets are excluded so historical records remain intact.
 
 ## Idea Codex Index Validation
 

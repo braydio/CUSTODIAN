@@ -22,7 +22,6 @@ Resource nodes use resource-specific idle/depleted sprite strips whenever compat
 - Local routing: `custodian/AGENTS.md`
 - Active design/spec docs: `design/02_features/resource_fabrication/RESOURCE_FABRICATION_SYSTEM.md`, `design/03_content/RESOURCE_COLLECTION_ASSET_SPEC.md`
 - Active runtime/docs files: `custodian/game/resources/resource_node.gd`, `custodian/game/systems/core/systems/contract_world_loader.gd`, `custodian/content/sprites/props/harvesting_nodes/`
-- Historical reference only: `python-sim/`
 
 ## Work Surface
 

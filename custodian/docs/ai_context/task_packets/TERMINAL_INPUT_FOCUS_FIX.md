@@ -22,7 +22,6 @@ When the terminal is open and ready, letter/number/punctuation keys should reach
 - Local routing: `custodian/AGENTS.md`
 - Active design/spec docs: `design/02_features/terminal/COMMAND_TERMINAL_SPEC.md`, `design/02_features/terminal/TERMINAL_PLANET_GLOBE_PREVIEW.md`
 - Active runtime/docs files: `custodian/game/ui/hud/ui.gd`, `custodian/scenes/game.tscn`, `custodian/docs/ai_context/CURRENT_STATE.md`, `custodian/docs/ai_context/FILE_INDEX.md`
-- Historical reference only: `python-sim/`
 
 ## Work Surface
 

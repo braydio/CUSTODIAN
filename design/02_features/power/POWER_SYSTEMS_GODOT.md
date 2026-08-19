@@ -1,7 +1,7 @@
 # Power Systems Design
 
 **Status:** implemented-v1 / V2 design pending
-**Source:** Legacy Python `python-sim/design/10_systems/infrastructure/POWER_SYSTEMS.md`  
+**Authority:** Godot-era power implementation and the linked V2 authority below.
 **Last Updated:** 2026-07-20
 **V2 Authority:** `design/02_features/infrastructure/COMPOUND_INFRASTRUCTURE_SYSTEM.md`
 

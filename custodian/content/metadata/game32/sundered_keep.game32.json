@@ -8670,8 +8670,8 @@
         "type": "dir"
       },
       {
-        "key": "locked_master_doctrine",
-        "path": "/home/braydenchaffee/Projects/CUSTODIAN/python-sim/design/MASTER_DESIGN_DOCTRINE.md",
+        "key": "active_master_doctrine",
+        "path": "/home/braydenchaffee/Projects/CUSTODIAN/design/00_meta/MASTER_DESIGN_DOCTRINE.md",
         "exists": true,
         "type": "file"
       },

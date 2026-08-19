@@ -522,14 +522,6 @@ custodian/
 
 ## Reference Files
 
-### Python Source (Migration Reference)
-
-- `python-sim/game/simulations/world_state/core/relays.py` - Core logic
-- `python-sim/game/simulations/world_state/terminal/commands/relay.py` - Commands
-- `python-sim/game/simulations/world_state/core/power.py` - Fidelity integration
-
----
-
 ## Status Log
 
 | Date | Action | Notes |

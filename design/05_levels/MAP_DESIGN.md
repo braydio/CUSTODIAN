@@ -19,7 +19,7 @@ Use the attached image as the visual/layout target:
 Repository authority:
 - Follow `AGENTS.md` and `custodian/AGENTS.md`.
 - Active runtime is Godot under `custodian/`.
-- Do not treat `python-sim/` as active gameplay authority.
+- Follow the active authority chain in `custodian/AGENTS.md`.
 - Keep simulation/runtime changes deterministic.
 - For gameplay/runtime changes, update active design docs and AI context docs.
 

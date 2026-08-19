@@ -22,7 +22,6 @@ When a fail condition calls `GameState.trigger_game_over(...)`, the world pauses
 - Local routing: `custodian/AGENTS.md`
 - Active design/spec docs: `design/02_features/game_over/GAME_OVER_FLOW.md`
 - Active runtime/docs files: `custodian/game/systems/core/state/game_state.gd`, `custodian/game/ui/`, `custodian/project.godot`, `custodian/docs/ai_context/`
-- Historical reference only: legacy Python runtime under `python-sim/`
 
 ## Work Surface
 

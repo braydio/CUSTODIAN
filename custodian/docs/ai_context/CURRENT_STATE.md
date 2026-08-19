@@ -1,5 +1,13 @@
 # CURRENT STATE — CUSTODIAN
 
+## Historical Archive Boundary Migration (2026-08-19)
+
+Completed: active doctrine now lives at
+`design/00_meta/MASTER_DESIGN_DOCTRINE.md`; the Godot terminal is self-contained
+and no longer targets an external archived service; active validation no longer
+executes the retired runtime. `validate_historical_archive_boundaries.py`
+guards active design, runtime, tooling, content, and current AI-context paths.
+
 ## Simulation integration status
 
 Live runtime authority: yes. One `WorldSimulationRuntime` in `game.tscn` owns clock, kernel, session/world, snapshots, command ingress, and resolution. Python parity v2 covers seeds 1/2 at ticks 0/1/10/100 for resources, limited-bootstrap inventory/stocks, policies, strategic power load, and logistics with canonical SHA-256; Python remains offline only. Pure Godot coverage includes commands, pause/catch-up, snapshot restore, Command Post failure, repair/fabrication foundations, and exactly-once outcomes. Adapter-only systems are local power delivery, physical `WaveManager` spawning, and `FabPipeline` delivery. Relays, systemic random events, full assaults, wear, fidelity, ambient fabrication, and full Python repair semantics are not yet ported.
@@ -670,11 +678,10 @@ Documentation updates this session:
 - Procgen streaming now batches navigation rebuilds around reveal completion instead of rebuilding navigation every reveal frame during world bring-up.
 - Vehicle enter/exit prompt authority now routes through `PlayerController` first so the HUD can surface vehicle interaction prompts without depending on the operator node alone. While piloted, `PlayerController` sends movement/actions to `PilotableVehicle`; while unpiloted, the Operator keeps native control.
 
-## Legacy Scope
+## Historical Archive Boundary
 
-- `python-sim/game/` and `python-sim/custodian-terminal/` remain preserved legacy reference only.
-- Legacy Python terminal contracts are not runtime authority.
-- Legacy AI tracker files under `python-sim/ai/` are historical reference, not the active update target.
+- The retired pre-Godot implementation is preserved as a historical archive.
+- Active Godot runtime, design, validation, tooling, and current AI context have no dependency on that archive.
 
 ## Active Gaps
 
@@ -739,8 +746,8 @@ Documentation updates this session:
 - Sundered Keep production authority is split by role: procgen owns the playable generated frontage, floor/collision/navigation, distant reveal, actors/dressing, and terminal ingress; `design/05_levels/SUNDERED_KEEP_VISTA_APPROACH.md` owns Shore Parish through the outer-wall east traverse and Front Gate handoff. Standard short fades connect them. The playable-blackout bridge and full-screen occluded handoff are not production route authority.
 - Required asset tracker: `REQUIRED_ASSETS.md`.
 - Event design docs: `design/02_features/events/LAST_ROUTEKEEPER_EVENT.md` (spec) and `design/02_features/events/LAST_ROUTEKEEPER_EVENT_CODE.md` (drop-in code) for The Last Routekeeper — a rare, one-time residual-system event inside Sundered Keep where the player recovers B. Chaffee's field-survey trace.
-- Locked doctrine: `python-sim/design/MASTER_DESIGN_DOCTRINE.md`.
-- Use `python-sim/design/DOC_STATUS.md` to resolve active-vs-legacy conflicts in older docs.
+- Project doctrine: `design/00_meta/MASTER_DESIGN_DOCTRINE.md`.
+- Resolve design conflicts through the active authority chain in `custodian/AGENTS.md`.
 - Active migration/drift workflow: `custodian/docs/AGENT_MIGRATION_PLAYBOOK.md`.
 
 ## Idea Codex

@@ -25,7 +25,6 @@ Map the cosmic ocean game32 art pack into the live Sundered Keep ocean runtime s
 - Local routing: `custodian/AGENTS.md`
 - Active design/spec docs: `design/02_features/world_expansion/THE_SUNDERED_KEEP_LEVEL_SET.md`
 - Active runtime/docs files: `custodian/content/runtime/sundered_keep/`, `custodian/docs/ai_context/CURRENT_STATE.md`, `custodian/docs/ai_context/FILE_INDEX.md`
-- Historical reference only: `python-sim/`
 
 ## Work Surface
 

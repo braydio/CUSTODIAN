@@ -22,7 +22,6 @@ The generated contract map exposes a readable but modest road network outside th
 - Local routing: `custodian/AGENTS.md`
 - Active design/spec docs: `design/02_features/procgen/STARTER_MAP_PROCGEN.md`, `design/02_features/vehicles/VEHICLES.md`
 - Active runtime/docs files: `custodian/game/world/procgen/proc_gen_tilemap.gd`, `custodian/game/systems/core/systems/contract_world_loader.gd`, `custodian/game/actors/operator/operator.gd`, `custodian/game/actors/base/vehicle_base.gd`
-- Historical reference only: `python-sim/`
 
 ## Work Surface
 

@@ -22,7 +22,6 @@ The first production vehicle can be defined by registry ID, validated, spawned t
 - Local routing: `custodian/AGENTS.md`
 - Active design/spec docs: `design/02_features/vehicles/VEHICLES.md`
 - Active runtime/docs files: `custodian/game/systems/core/player_controller.gd`, `custodian/game/actors/vehicles/light_buggy.tscn`, `custodian/game/world/camera.gd`, `custodian/docs/ai_context/CURRENT_STATE.md`, `custodian/docs/ai_context/FILE_INDEX.md`
-- Historical reference only: `python-sim/`, superseded vehicle docs listed by the vehicle spec
 
 ## Work Surface
 
