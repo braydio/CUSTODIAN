@@ -109,6 +109,13 @@ opaudit() {
   python3 "${CUSTODIAN_GODOT}/tools/operator/check_operator_modular_assets.py" "$@"
 }
 
+# -- Audit PNG sprite sheets (generates vertical audit sheet)
+pngaudit() {
+  _update_usage "pngaudit"
+  local dir="${1:-.}"
+  (cd "$dir" && python3 "${CUSTODIAN_GODOT}/tools/validation/png_audit.py" "${@:2}")
+}
+
 # -- Generate prioritized next-actions report (fit + contract joined)
 opnext() {
   _update_usage "opnext"
