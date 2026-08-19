@@ -25,10 +25,10 @@ The player should rarely be told what a faction is. They should learn by seeing 
 
 | Faction | Severing Interpretation | Failure Mode | Gameplay Pressure | Environmental Footprint |
 |---------|------------------------|--------------|-------------------|------------------------|
-| **Pale Bell Penitents** | Cosmic disclosure — arrival was never guaranteed | Sacred ambiguity | Temporal-perceptual distortion | Listening shrines, ash circles, dead speakers, sealed-door altars |
+| **Pale Bell Penitents** | Ash-Bell's operational Unarrival revealed sacred non-arrival | Theology mistaken for universal truth | Temporal-perceptual distortion | Listening shrines, nine-station circles, dead speakers, sealed-door altars |
 | **Indexers** | Classification catastrophe — universe became unfiled | False certainty | Corrupted information, mislabeled knowledge | Relabeled rooms, sorted salvage, tagged corpses, altered terminals |
 | **Leaseholders** | Access-chain breach — rightful claims were broken | Dead authority | Route/system denial, locked access | Claim seals, locked doors, impounded goods, legal barricades |
-| **Choir of Provenance** | Provenance contamination — context detached from things | Purity without mercy | Sealed choices, moral friction | Quarantine geometry, sealed artifacts, preserved evidence, sterile zones |
+| **Choir of Provenance** | Reciprocal continuity exchange became an origin-quarantine emergency | Purity without mercy | Sealed choices, moral friction | Origin markers, quarantine geometry, sealed imports, sterile zones |
 | **Buried Kins** | Abandonment — help never came | Survival identity as total truth | Defensive habitation, moral hesitation | Repaired homes, ration shelves, domestic life inside dead infrastructure |
 | **Feral Defense Remnants** | None — protocol continued without command | Obsolete procedure | Spatial denial, old automated violence | Patrol routes, warning lights, sealed checkpoints, active turrets |
 
@@ -70,10 +70,10 @@ Faction profiles then modify: prop pools, enemy behaviors, room tags, inspect te
 
 See individual files in this directory for complete faction profiles:
 
-- `PALE_BELL_PENITENTS.md` — Signal ascetics who worship the failure of arrival
+- `PALE_BELL_PENITENTS.md` — Signal ascetics who turn the operational Ash-Bell Unarrival into theology
 - `THE_INDEXERS.md` — Classification invaders who overwrite meaning with taxonomy
 - `THE_LEASEHOLDERS.md` — Armed legal continuity from a dead interstellar bureaucracy
-- `THE_CHOIR_OF_PROVENANCE.md` — Ancient verification authority narrowed into severity
+- `THE_CHOIR_OF_PROVENANCE.md` — Continuity-origin quarantine authority narrowed into extremism
 - `THE_BURIED_KINS.md` — Sealed shelter survivors who kept the lights on
 - `FERAL_DEFENSE_REMNANTS.md` — Broken security enforcing rules no one remembers
 

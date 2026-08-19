@@ -1,119 +1,160 @@
 # The Choir of Provenance
 
 > **Status:** Canonical faction profile
-> **Source:** MAJOR_FACTION_PROFILES.md (pre-design) — verified correct, no corrections needed
+> **Source:** MAJOR_FACTION_PROFILES.md (pre-design), revised for Reciprocal Continuity canon
 > **Visual design template:** pre-design/FACTION_PROFILE_THE_CHOIR_OF_PROVENANCE.md
 
 ---
 
 ## Core Concept
 
-The Choir of Provenance is ancient verification authority narrowed into severity. They are what happens when archive validation, chain-of-trust systems, quarantine doctrine, and custodial enforcement survive without the compassion, context, or political restraint that once governed them.
+The Choir of Provenance is an ancient continuity-origin verification authority narrowed into extremism. Its archive validators, transit inspectors, quarantine systems, and custodial enforcers once determined where people and objects came from and whether cross-continuity exchange was safe.
 
-They are not evil in a simple way. They are terrifying because they may be the most correct faction. They would rather seal a world than restore a corrupted truth.
+After the Severing and the Ash-Bell Unarrival, the institution abandoned proportionality. The Choir now treats uncertain or foreign continuity origin as a quarantine threat. They would rather seal a community than risk allowing an imported chain to spread.
+
+They are not defenders of a metaphysical substance called provenance. They are continuity-origin quarantine extremists using real verification disciplines without compassion, context, or political restraint.
 
 ---
 
 ## Core Belief
 
-> "Only verified continuity may survive."
+> “Only verified continuity may survive.”
 
-If a fact cannot be proven, it must be contained. If an artifact's provenance is contaminated, it must be sealed. If a people's history rests on corrupted inheritance, that history must not be allowed to propagate.
+If an origin cannot be established, contain it. If an artifact entered through an overlap, isolate it. If records disagree about which continuity owns a person, route, or structure, prevent either claim from propagating until adjudication is complete.
+
+Their vocabulary of provenance refers to evidence and chain of custody: origin, source integrity, witness, handling, and continuity membership.
 
 ---
 
-## Relationship to the Severing / Unnarrival
+## Relationship to the Severing
 
-The Choir believes the Severing was provenance contamination. Things arrived without context. Contexts arrived without things. Records detached from evidence. Evidence attached to false histories. Completion itself became dangerous.
+The Choir interprets the Severing as uncontrolled continuity exchange and verification collapse. Records detached from their local evidence; imported evidence entered native histories; witnesses and counterparts made mutually exclusive but honest claims.
 
-Their answer is quarantine. They do not worship the Unnarrival. They fear its residue.
+Their answer is quarantine. They fear real continuity anomalies, especially reciprocal overlaps that can move material in both directions. They do not need cosmic provenance metaphysics to justify their severity.
 
 ---
 
 ## What They Are Right About
 
-They understand the danger of restoring corrupted knowledge. They know that not every recovered thing should be trusted. A broken truth can infect future interpretation.
+- Neighboring continuities and imported material are real.
+- Some anomalies remain active after visible transit ends.
+- A plausible object can still carry dangerous foreign systems, organisms, authority, or routing behavior.
+- Cross-continuity records can falsely corroborate one another if origin is ignored.
+- Restoration under uncertainty can reopen a route or misidentify an imported command as local authority.
 
 ---
 
 ## What They Are Wrong About
 
-They would rather preserve purity than life. They mistake total quarantine for wisdom. They may seal away the only thing that could help because it cannot be proven clean.
+They treat uncertainty, foreign origin, and contamination as interchangeable.
+
+They would rather preserve origin purity than life. They may imprison imported civilians, destroy useful records, seal harmless overlap architecture, or erase mixed communities because no single continuity can claim them cleanly. Their procedures begin with legitimate diagnostics and end in collective punishment.
 
 ---
 
 ## Relationship to Ash-Bell
 
-They may have sealed the most complete Ash-Bell records — not because they do not matter, but because they matter too much. The Choir may know that a full reconstruction of the Ash-Bell command chain could complete a dangerous route of meaning.
+The Choir holds some of the most complete Ash-Bell records because its predecessors monitored continuity-port traffic during the Open Interval.
+
+They classify the Ash-Bell coupling as a reciprocal quarantine breach:
+
+- Ash-Bell people and objects entered the active continuity
+- active-continuity material entered Ash-Bell
+- station Answers created misleading cross-continuity corroboration
+- paired sites retained imported geometry after closure
+- the West Gate seal ended stable exchange but left unresolved imports
+
+The Choir may know whether Precentor Orra's last Answer came from Ash-Bell, the active continuity, or both. They withhold it because releasing origin keys could identify surviving imports or reactivate dormant station logic—not because completing a chain of meaning summons a hidden recipient.
 
 ---
 
-## Relationship to the Unnarrival
+## Relationship to the Pale Bell Penitents
 
-They know the term but quarantine it. To them, Unnarrival terminology is not merely cultural. It is contaminated classification pointing toward a chain that may be unsafe to complete.
+The Choir regards Penitent rites as uncontrolled handling of quarantine evidence. Penitents ring reconstructed station frames, gather imported objects, repeat Answer sequences, and occupy overlap sites. Even when the rites are merely symbolic, the Choir treats them as potential route activation.
 
----
-
-## Relationship to the Hidden Entity
-
-The Choir is one of the only factions that may truly suspect the deeper horror. They might not call it a monster. They might only know: the final recipient must remain removed, the route must not be completed, some provenance chains are hostile when whole, certain facts become dangerous when connected. They may oppose the Custodian for good reasons.
+The Penitents see Choir seals as proof of sacred refusal. The Choir sees Penitent worship as a containment breach with armed congregants.
 
 ---
 
-## Transitive Relationship to the Custodian
+## Relationship to the Custodian
 
-The Custodian restores under uncertainty. The Choir seals under uncertainty. Both are preservation strategies. They conflict because they choose different risks.
+The Custodian restores and adjudicates under uncertainty. The Choir seals under uncertainty. Both are preservation strategies, but they choose different risks.
+
+The Choir may cooperate when the Custodian:
+
+- isolates an active overlap
+- distinguishes native, imported, mixed, and unknown origin
+- preserves evidence without publishing unsafe route data
+- prevents a foreign authority token from gaining local control
+
+They become antagonists when the Custodian prioritizes people over quarantine, recognizes mixed-continuity communities, or opens sealed evidence to reconstruct the truth.
 
 ---
 
 ## Visual Identity
 
-Austere, preserved, quiet, old. Sealed robes, structured tabards, rigid armor frames, archive lock devices, serial bands, purity markers, faceless visors, scanner apertures, restraint tools, provenance seals. They should not be grimy — old but maintained. Not glossy. Ancient institutional preservation.
+Austere, preserved, quiet, and old. Sealed robes, structured tabards, rigid armor frames, archive locks, serial bands, origin markers, faceless visors, scanner apertures, restraint tools, and quarantine seals. They should look maintained rather than grimy: ancient institutional preservation, not glossy science fiction.
 
-**Color language:** Bone white, charcoal, dark iron, faded institutional gray, dull bronze, cold cyan, pale green, minimal red seal markings.
+**Color language:** Bone white, charcoal, dark iron, faded institutional gray, dull bronze, cold cyan, pale green, minimal red quarantine markings.
 
 ---
 
 ## Unit Archetypes
 
 | Unit | Role | Description |
-|------|------|-------------|
-| Seal Enforcer | Basic melee | Staff, restraint blade, seal hammer, or quarantine baton. |
-| Verifier | Basic ranged | Precision weapon, scan-lance, archive rifle. |
-| Quarantine Heavy | Heavy | Barrier frame, sealed armor, denial field. |
-| Retrieval Unit | Fast scout | Narrow silhouette, precise motion, captures objects or targets. |
-| Provenance Technician | Support | Scans, validates, shields, seals, or marks contamination. |
-| Canonical Guard | Elite | Disciplined, formal, intimidating. |
-| Adjudicator | Leader | Monastic authority silhouette. Calm, unreadable, final. |
-| Archive Warden | Special | Heavy seal-bearing construct or ancient enforcement body. |
+|---|---|---|
+| **Seal Enforcer** | Basic melee | Staff, restraint blade, seal hammer, or quarantine baton. |
+| **Verifier** | Basic ranged | Precision weapon and origin-scanning aperture. |
+| **Quarantine Heavy** | Heavy | Barrier frame, sealed armor, denial field. |
+| **Retrieval Unit** | Fast scout | Captures imported objects or designated people. |
+| **Origin Technician** | Support | Scans, validates, shields, seals, and marks continuity status. |
+| **Canonical Guard** | Elite | Disciplined escort for verified records and adjudicators. |
+| **Adjudicator** | Leader | Calm authority empowered to classify, release, or seal. |
+| **Archive Warden** | Special | Heavy seal-bearing construct protecting origin evidence. |
 
 ---
 
 ## Environmental Footprint
 
-The Choir does not occupy spaces casually — they quarantine them. They leave seal geometry, intact barriers, contamination marks, sealed doors, preserved evidence zones, locked artifacts, sterilized chambers, old institutional lights reactivated, silent scanning devices, bodies covered or isolated (not looted). Their spaces should feel colder and more controlled than other factions.
+The Choir quarantines rather than occupies. They leave:
+
+- seal geometry and intact barriers
+- continuity-origin markers
+- imported/native/mixed/unknown sorting fields
+- sealed doors and preserved evidence zones
+- locked artifacts and sterilized chambers
+- old institutional lights reactivated
+- silent scanners and custody rails
+- bodies covered, isolated, and tagged rather than looted
+- routes marked `FOREIGN ORIGIN`, `MIXED SOURCE`, or `RELEASE DENIED`
+
+Their spaces should feel colder and more controlled than other faction spaces.
 
 ---
 
-## Inspect Lines
+## Diagnostics and Inspect Lines
 
-- "PROVENANCE REJECTED."
-- "THE OBJECT IS PRESENT. ITS CONTEXT IS NOT."
-- "THE MACHINE WAS DISABLED CAREFULLY."
-- "THEY PRESERVED THE ROOM BY KILLING IT."
-- "THE FINAL RECIPIENT HAS BEEN REMOVED."
-- "THE RECORD IS SAFER INCOMPLETE."
+- `ORIGIN: UNRESOLVED.`
+- `SOURCE INTEGRITY: CONTESTED.`
+- `CONTINUITY ANOMALY: RECIPROCAL OVERLAP.`
+- `PROVENANCE STATUS: IMPORTED / QUARANTINED.`
+- `THE OBJECT IS PRESENT. ITS LOCAL ORIGIN IS NOT.`
+- `THE MACHINE WAS DISABLED CAREFULLY.`
+- `THEY PRESERVED THE ROOM BY KILLING IT.`
+- `THE RECORD IS HELD PENDING ORIGIN REVIEW.`
 
 ---
 
 ## Enemy Behavior
 
-**Pre-combat:** Scan objects, stand guard over sealed items, mark contamination, close doors, ignore loot, destroy corrupted data, escort sealed containers.
+**Pre-combat:** Scan objects, compare origin marks, guard sealed items, close doors, destroy unsafe route data, escort containers, and segregate people or evidence by continuity classification.
 
-**In combat:** Isolate the player, protect sealed objects, deny access, disable corrupted machinery, retreat only after quarantine success, kill only when necessary to preserve containment.
+**In combat:** Isolate the player, deny access, protect sealed objects, disable anomaly-linked machinery, retrieve imported artifacts, and retreat after quarantine succeeds. They kill when they judge containment impossible, not for loot.
 
 ---
 
 ## Gameplay Identity
 
-The Choir attacks choice. They force the player to decide: open a sealed thing or respect quarantine, recover useful but contaminated knowledge, fight or avoid escalation, publish low-confidence truth or bury it, preserve lives or preserve provenance. **Their damage is moral and archival.**
+The Choir attacks choice. They force decisions about opening sealed things, using imported technology, publishing uncertain origin findings, protecting displaced people, and risking renewed coupling for useful knowledge.
+
+Their damage is moral, archival, and territorial. Their threat comes from applying defensible quarantine logic without humane limits.

@@ -20,8 +20,8 @@ This file exists to bridge the gap between high-level canon and runtime-facing s
 Use this doc when deciding:
 
 - which world-identity fields a generated region should carry
-- how rooms should expose provenance and reuse
-- how rooms should expose impossible provenance without explaining the Unnarrival directly
+- how rooms should expose origin, source integrity, provenance status, and reuse
+- how rooms should expose continuity anomalies without explaining their full source directly
 - how inspect text should sound
 - how machine messages should sound
 - how faction ideology should affect behavior and dressing
@@ -76,7 +76,10 @@ Every generated region should be able to carry a lore payload like this, whether
     "world_legibility_class": "stable_misinterpretation",
     "original_function": "relay_maintenance_site",
     "collapse_mode": "controlled_sealing",
-    "provenance_failure": "command_packet_precedes_sender",
+    "continuity_anomaly": "reciprocal_overlap",
+    "origin": "ash_bell",
+    "source_integrity": "cross_continuity_corroborated",
+    "provenance_status": "imported_quarantined",
     "post_collapse_reuse": "salvage_nest",
     "present_ideology": "indexer",
     "surviving_truth": "site_once_routed_authenticated_traffic",
@@ -93,7 +96,14 @@ This payload can exist at more than one level:
 - encounter-level
 - inspect-pool-level
 
-`provenance_failure` is optional in the first runtime pass, but it is the key field for the revised Severing model. It should describe the impossible relationship, not explain the cosmic source. Good values name symptoms such as `artifact_without_origin`, `witness_precedes_event`, `machine_command_from_future`, `settlement_remembers_false_war`, or `saint_relic_precedes_arrival`.
+The continuity field family replaces the retired `provenance_failure` field:
+
+- `continuity_anomaly` describes the observed relationship, such as `none`, `reciprocal_overlap`, `one_way_import`, `paired_site`, or `displaced_witness`.
+- `origin` records the best-supported continuity or locality, such as `local`, `ash_bell`, `mixed`, or `unknown`.
+- `source_integrity` records evidentiary quality, such as `intact`, `cross_continuity_corroborated`, `contested`, `degraded`, or `fabricated`.
+- `provenance_status` records handling status, such as `native_verified`, `imported_verified`, `imported_quarantined`, `mixed_origin`, or `unresolved`.
+
+These fields distinguish a real neighboring-continuity import from damaged, falsified, or unknown evidence. They describe diagnostics, not cosmic metaphysics.
 
 ### Minimum Viable Runtime Requirement
 

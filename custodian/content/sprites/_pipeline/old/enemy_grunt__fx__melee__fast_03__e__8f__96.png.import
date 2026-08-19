@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bvli0glgtsf5v"
-path="res://.godot/imported/enemy_grunt__fx__melee__stagger_01__e__6f__96.png-4fbec330073e72894eee56686bde7152.ctex"
+uid="uid://csmm2cy76pj3r"
+path="res://.godot/imported/enemy_grunt__fx__melee__fast_03__e__8f__96.png-fc79ebd188945071cd77f6fe00be9f25.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/_pipeline/inbox/enemy_grunt__fx__melee__stagger_01__e__6f__96.png"
-dest_files=["res://.godot/imported/enemy_grunt__fx__melee__stagger_01__e__6f__96.png-4fbec330073e72894eee56686bde7152.ctex"]
+source_file="res://content/sprites/_pipeline/old/enemy_grunt__fx__melee__fast_03__e__8f__96.png"
+dest_files=["res://.godot/imported/enemy_grunt__fx__melee__fast_03__e__8f__96.png-fc79ebd188945071cd77f6fe00be9f25.ctex"]
 
 [params]
 
