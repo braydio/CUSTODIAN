@@ -1,3 +1,5 @@
+> **Historical implementation guidance.** Live runtime files are authoritative for implemented encounter behavior. Lore interpretation is governed by RECIPROCAL_CONTINUITY_DOCTRINE.md and CORE_LORE.md.
+
 # Terminology authority
 
 `Stilling Pin` is the canonical term throughout active Ash-Bell guidance and

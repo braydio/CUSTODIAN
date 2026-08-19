@@ -89,7 +89,7 @@ func _validate_encounter_runtime() -> void:
 	_check(not site.dialogue_presenter.is_active(), "dialogue did not cancel outside interaction range")
 	actor.global_position = site.global_position
 	site.ask_about_bell()
-	_check(bool(memory.call("is_completed", &"knowledge_ash_bell_ninth_bell")), "knowledge unlock was not persisted")
+	_check(bool(memory.call("is_completed", &"knowledge_ash_bell_ninth_answer")), "knowledge unlock was not persisted")
 	var pin_interactable := site.get_node("Props/StillingPinPickup") as AshBellInteractable
 	_check(pin_interactable.can_interact(actor), "Stilling Pin did not unlock from the Bell conversation branch")
 	var hazard := site.get_node("Props/WhiteThreadHazard") as WhiteThreadHazard

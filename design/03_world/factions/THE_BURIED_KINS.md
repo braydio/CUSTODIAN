@@ -24,7 +24,7 @@ They believe survival is legitimacy. Their tools, rituals, family structures, an
 
 ---
 
-## Relationship to the Severing / Unnarrival
+## Relationship to the Severing
 
 The Buried Kins understand the Severing as abandonment. Not cosmic theory — lived fact. The convoy did not arrive. The relief team did not arrive. The promised reopening did not arrive. So they remained.
 
@@ -50,9 +50,9 @@ They may be descendants of those harmed by Ash-Bell authority. For them, Ash-Bel
 
 ---
 
-## Relationship to the Unnarrival
+## Relationship to Continuity Catastrophe
 
-They may not use the word early. To them, the Unnarrival is not abstract — it is the shape of their lives. Later, if exposed, the term may be painful because it formalizes what they already knew: help did not come because arrival itself failed, was denied, or was prevented.
+They may not use the word early. To them, the continuity catastrophe is not abstract — it is the shape of their lives. Later, if exposed, the term may be painful because it formalizes what they already knew: help did not come because routes were severed, institutions collapsed, and arrival itself became impossible.
 
 ---
 

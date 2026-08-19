@@ -1,10 +1,14 @@
-> **Active-authority correction (2026-08-15):** this is encounter-content
+> **Active-authority correction (2026-08-18):** this is encounter-content
 > guidance for the fixed authored Underground route, never a procgen room. The
-> visible broken bell is an ordinary chapel bell; the Ninth Bell was never cast.
-> The visible basin is physically real but is the wrong basin where the
-> remembered Fountain should be. `Stilling Pin` is canonical terminology, and
-> White Thread Knot ownership is an upstream ResourceLedger milestone; chamber
-> thread interaction never grants it. Older procgen, empty-bell, missing-basin,
+> visible broken bell is an ordinary chapel bell; the historical "Ninth Bell"
+> was never a literal ninth cast bell — it is survivor/religious language
+> derived from Station IX and its missing Ninth Answer during the Ash-Bell
+> Unarrival. The visible basin is physically real but is the wrong basin where
+> the remembered Dry Fountain should be. `Stilling Pin` is canonical
+> terminology, and White Thread Knot ownership is an upstream ResourceLedger
+> milestone; chamber thread interaction never grants it. The encounter is a
+> ritualized reenactment of the Open Interval, not a manifestation of
+> metaphysical provenance failure. Older procgen, empty-bell, missing-basin,
 > retired bell-component, or in-room Knot-pickup passages below are historical
 > and superseded by this correction plus the authored-route documents.
 

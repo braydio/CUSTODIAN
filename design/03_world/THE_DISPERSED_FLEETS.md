@@ -31,7 +31,7 @@ No wreckage. No emergency beacon. No faint scrambled burst from a dying comms ar
 
 The public was told the expeditions were delayed. Then that contact was intermittent. Then that they were presumed lost to an unidentified spatial anomaly. The coordinated disappearance of every ship sent to investigate the disturbance was classified, compartmentalized, and eventually buried under the cascading collapses of the institutions that had launched them.
 
-The truth — what little of it can be reconstructed — is that the fleets were the first large-scale human structures to encounter the full, unshielded force of the Unnarrival's signature. The Severing was not yet a settled wound; it was still rippling outward, still destabilizing the fundamental relationships between position, identity, and continuity. The ships and their crews did not burn, did not shatter, did not drift into the void.
+The truth — what little of it can be reconstructed — is that the fleets were the first large-scale human structures to encounter the full, unshielded force of the Severing's propagation hazard. The Severing was not yet a settled wound; it was still rippling outward, still destabilizing the fundamental relationships between position, identity, and continuity. The ships and their crews did not burn, did not shatter, did not drift into the void.
 
 They were dispersed. Scattered across the quantum architecture of the event itself — their matter, their signal, their crews, their collective purpose unstitched from a single trajectory and redistributed into the folds of a wound that did not respect spatial or causal location.
 
@@ -53,7 +53,7 @@ These are design hooks, not committed plot. They exist to be chosen among or con
 
 #### Revelation Path A: They All Went to the Same Place
 
-The fleets were dispersed, but not randomly. The Unnarrival's signature scattered them along a single causal axis — a "bearing" in provenance-space that deposits dispersed matter at a consistent destination. If that destination could be located, it may hold the combined remnants of every expedition: a graveyard, a prison, a seed, or something none of the living factions have words for.
+The fleets were dispersed, but not randomly. The propagation hazard scattered them along a single causal axis — a "bearing" in continuity-space that deposits dispersed matter at a consistent destination. If that destination could be located, it may hold the combined remnants of every expedition: a graveyard, a prison, a seed, or something none of the living factions have words for.
 
 This would make the Dispersed Fleets a gnomic fixed point in the setting — unreachable through normal transit, but potentially accessible through the same kind of provenance-stabilization logic the Custodian uses to extend Lattice bubbles. Finding the destination would not mean finding survivors. But it would mean finding an answer.
 
@@ -65,7 +65,7 @@ This faction would be uniquely positioned within the setting:
 - They carry institutional memory from every pre-Severing power, making them an unprecedented source of lost knowledge.
 - They may not even recognize themselves as "descendants of fleets" — they may have their own origin mythology that encodes the dispersal event in symbolic terms.
 - Their relationship to the Custodian is unpredictable: ally, rival, claimant, or something that does not map to any existing faction dynamic.
-- The Unnarrival did not just destroy those fleets. It *made* whatever they became.
+- The Severing did not just destroy those fleets. It *made* whatever they became.
 
 #### Revelation Path C: The Wound Still Holds Them
 

@@ -33,9 +33,9 @@ The Hub implementation must remain aligned with the following content-facing rul
 - Contracts are bounded historical interventions, not ordinary quests.
 - Campaigns are transient operational worlds whose outcomes mutate the historical record.
 - Hub outputs should present confidence-bearing interpretation rather than omniscient fact when surfaced to the player.
-- Archive loss is existential because the Severing is a provenance wound, not ordinary information loss.
-- "Shared context collapse" is symptom-level language. The Hub's deeper job is stabilizing provenance across object, origin, witness, time, use, and meaning.
-- The Hub may classify anomalies as `Unarrived`, but should not explain the Unnarrival directly as settled cosmology.
+- Archive loss is existential because the Severing destroyed Lattice infrastructure and severed continuity routes.
+- "Shared context collapse" is symptom-level language. The Hub's deeper job is classifying continuity anomalies, identifying continuity origins, and stabilizing Lattice infrastructure.
+- The Hub may classify anomalies by continuity origin, but should not explain the full Ash-Bell terminology directly as settled cosmology.
 
 ---
 

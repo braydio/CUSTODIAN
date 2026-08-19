@@ -42,3 +42,27 @@ Pre-design files in `pre-design/` remain on disk for reference but are supersede
 | Document | Lines | Purpose |
 |----------|-------|---------|
 | `02_features/factions/FACTION_EXPRESSION_SYSTEM.md` | ~500 | Faction implementation spec — data model, taxonomy lock, gameplay boundaries, migration order, runtime ownership, Buried Kins relationship layer, Sundered Keep vertical slice. Created 2026-07-29 from Faction Continuity Audit findings. |
+
+---
+
+## 2026-08-18 — Reciprocal Continuity Reauthoring
+
+Superseded the June 2026 provenance-root cosmology.
+
+Previous lock:
+- `Unnarrival` double-n
+- Unnarrival as cosmic root wound
+- Non-Recipient as hidden anti-arrival entity
+- provenance as reality-level continuity substrate
+
+New lock:
+- `Unarrival` single-n
+- Unarrival originates in Ash-Bell Station IX terminology
+- Severing tied to reciprocal Lattice continuity hazard
+- provenance is forensic / continuity-origin evidence
+- Non-Recipient retired as confirmed entity
+- Ash-Bell continuity remains physically real
+- Null Warrant retained
+- Reciprocal Continuity Doctrine is highest authority for this domain
+
+See: `design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md`

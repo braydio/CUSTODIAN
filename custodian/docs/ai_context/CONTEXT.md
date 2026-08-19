@@ -16,9 +16,19 @@ CUSTODIAN is a Godot-native tactical base-defense game with an embodied operator
 
 ## Current Lore Canon
 
-The Severing is no longer framed as a collapse caused by lost shared context. The internal root cause is the Unnarrival: a supernatural/cosmic provenance wound that damaged reality's ability to maintain shared cause, memory, witness, and origin. Shared-context collapse, contradictory archives, and fragmented histories are symptoms. Knowledge recovery should be treated as provenance stabilization across object, origin, witness, time, use, and meaning.
+CUSTODIAN uses the Reciprocal Continuity model.
 
-> **Terminology note:** "Great Severance" is an obsolete variant (appears only in corrupted or earlier faction records). The canonical spelling is "the Severing" for the public catastrophe and "the Unnarrival" (double n) for the impossible root cause. See `design/03_world/lore/CORE_LORE.md` for the full terminology ladder.
+The old civilization learned to use Lattice technology to establish access between adjacent continuities. Such paths are not fundamentally one-way: any continuity that can be reached may potentially establish or exploit a return path.
+
+The Severing was the civilization-scale fragmentation, collapse or deliberate amputation of that network during a continuity propagation hazard. Its exact initiating cause remains unresolved.
+
+The Pale and cross-continuity bleed are real cosmological phenomena.
+
+Provenance is forensic evidence lineage and continuity-origin verification, not a metaphysical substrate.
+
+Unarrival is an Ash-Bell term originating in the Station IX failure during the Ash-Bell Unarrival and later generalized by religious traditions.
+
+See: `design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md`.
 
 ## Canonical Runtime Facts
 

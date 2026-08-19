@@ -12,7 +12,7 @@
     "parallel world"
   ],
   "motifs": [
-    "ninth_bell",
+    "ninth_answer",
     "dry_fountain",
     "black_banners",
     "white_thread",
@@ -78,19 +78,19 @@
       },
       {
         "speaker": "Forlorn-Ritualant",
-        "text": "We heard it after the order was given."
+        "text": "Nine stations. Eight Answers."
       },
       {
         "speaker": "Forlorn-Ritualant",
-        "text": "No."
+        "text": "Station Nine was Orra's."
       },
       {
         "speaker": "Forlorn-Ritualant",
-        "text": "Before."
+        "text": "We waited for the Ninth."
       },
       {
         "speaker": "Forlorn-Ritualant",
-        "text": "That was why we gave the order."
+        "text": "It came late."
       }
     ],
     "ask_thread": [
@@ -100,15 +100,19 @@
       },
       {
         "speaker": "Forlorn-Ritualant",
-        "text": "After Bellfall, the ledgers kept names that bodies no longer answered to."
+        "text": "During the Silence we counted who crossed."
       },
       {
         "speaker": "Forlorn-Ritualant",
-        "text": "We tied the living. We tied the dead."
+        "text": "The living. The dead."
       },
       {
         "speaker": "Forlorn-Ritualant",
-        "text": "When neither arrived, we tied the empty shroud."
+        "text": "Then people came through who remembered the wrong streets."
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "So we tied everyone."
       },
       {
         "speaker": "Forlorn-Ritualant",
@@ -122,31 +126,39 @@
     "ask_orra": [
       {
         "speaker": "Forlorn-Ritualant",
-        "text": "Orra is not who you call before a death."
+        "text": "She had a post."
       },
       {
         "speaker": "Forlorn-Ritualant",
-        "text": "She is who you call when the death arrives first."
+        "text": "Station Nine."
       },
       {
         "speaker": "Forlorn-Ritualant",
-        "text": "After the order."
+        "text": "They told her to go straight there."
       },
       {
         "speaker": "Forlorn-Ritualant",
-        "text": "After the gate."
+        "text": "She went back for the lower quarter."
       },
       {
         "speaker": "Forlorn-Ritualant",
-        "text": "Too late to save."
+        "text": "Eight stations answered."
       },
       {
         "speaker": "Forlorn-Ritualant",
-        "text": "In time to witness who was missed."
+        "text": "Orra did not."
       },
       {
         "speaker": "Forlorn-Ritualant",
-        "text": "If she arrives while you're still breathing, you've been counted wrong."
+        "text": "Then she came."
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "Late."
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "But she came."
       }
     ],
     "attack_response": [

@@ -4,6 +4,17 @@
 
 Live runtime authority: yes. One `WorldSimulationRuntime` in `game.tscn` owns clock, kernel, session/world, snapshots, command ingress, and resolution. Python parity v2 covers seeds 1/2 at ticks 0/1/10/100 for resources, limited-bootstrap inventory/stocks, policies, strategic power load, and logistics with canonical SHA-256; Python remains offline only. Pure Godot coverage includes commands, pause/catch-up, snapshot restore, Command Post failure, repair/fabrication foundations, and exactly-once outcomes. Adapter-only systems are local power delivery, physical `WaveManager` spawning, and `FabPipeline` delivery. Relays, systemic random events, full assaults, wear, fidelity, ambient fabrication, and full Python repair semantics are not yet ported.
 
+## Reciprocal Continuity Migration (2026-08-18)
+
+Canonical Reciprocal Continuity migration completed. Provenance-as-cosmic-substrate and Unnarrival-as-root-cause retired. Ash-Bell Unarrival / Saint Orra / Return-Path canon now authoritative.
+
+- New highest-authority doctrine: `design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md`
+- Runtime knowledge IDs renamed: `ash_bell_ninth_bell` → `ash_bell_ninth_answer`, `ash_bell_bellfall_containment` → `ash_bell_open_interval`
+- Terminology lock: Unarrival (single-n), not Unnarrival (double-n)
+- No save compatibility required; direct renames applied
+
+Last updated: 2026-08-18
+
 Last updated: 2026-08-14
 
 Documentation updates this session:

@@ -22,9 +22,9 @@ They do not think of themselves as raiders. They think of themselves as restorer
 
 ---
 
-## Relationship to the Severing / Unnarrival
+## Relationship to the Severing
 
-The Indexers believe the Severing happened because the universe was insufficiently classified. To them, Unnarrival was not divine revelation or cosmic horror. It was administrative failure at impossible scale.
+The Indexers believe the Severing happened because the universe was insufficiently classified. To them, the continuity catastrophe was not divine revelation or cosmic horror. It was administrative failure at impossible scale.
 
 Messages failed to arrive because chains were not enforced. People failed to arrive because identities were not pinned. Histories scattered because categories were loose. Truth decayed because records were allowed to remain uncertain.
 
@@ -50,12 +50,12 @@ They are extremely interested in Ash-Bell evidence. They try to seize it, label 
 
 ---
 
-## Relationship to the Unnarrival
+## Relationship to Continuity Hazards
 
 They may encounter the term earlier than the player, but they redact, encode, or misclassify it. Possible Indexer handling:
 - `ARRIVAL FAILURE: CATEGORY SEALED`
 - `ASH-BELL SUBTYPE: NONSTANDARD`
-- `UNNARRIVAL TERM: SUPPRESSED`
+- `UNARRIVAL TERM: SUPPRESSED`
 - `DO NOT USE LOCAL NOMENCLATURE`
 
 ---

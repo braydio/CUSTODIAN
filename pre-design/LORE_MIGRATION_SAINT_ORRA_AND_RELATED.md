@@ -1,3 +1,14 @@
+> **SUPERSEDED / DEVELOPMENT HISTORY**
+>
+> This draft records the first Saint Orra reauthoring pass.
+> Its human-history direction informed the final migration, but its
+> recommendation to reduce or remove the cosmic/multiversal setting
+> was not adopted.
+>
+> Final authority: `design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md`
+
+---
+
 The following is an unedited excerpt of the review covering the re-authoring of the forlorn ritualant scene, the ash bell event, saint orra, and various currently locked canonical lore and design. The following is an initial draft and should be reviewed with any subesequent modifications noted and corrected upon migration and implementation of the new canonical lore.
 
 ---

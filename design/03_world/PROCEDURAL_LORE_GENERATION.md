@@ -5,6 +5,7 @@
 **Status:** active  
 **Last Updated:** 2026-04-08  
 **Lore Canon Authority:** `design/03_world/lore/CORE_LORE.md`  
+**Doctrine Authority:** `design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md`  
 **Content Protocol Authority:** `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`  
 **Faction Spec Authority:** `design/02_features/factions/FACTION_EXPRESSION_SYSTEM.md`  
 **Primary Downstream Consumers:** `design/04_architecture/REGION_GENERATION_SYSTEM.md`, `design/02_features/pixel_planet/PIXEL_PLANET_CONTRACT_SYSTEM.md`, `design/02_features/procgen/AUTHORED_TILED_ROOM_PIPELINE.md`, `design/02_features/enemy_director/implementation.md`, `design/02_features/terminal/COMMAND_TERMINAL_SPEC.md`
@@ -73,15 +74,18 @@ Every generated region should be able to carry a lore payload like this, whether
 
 ```gdscript
 {
-    "world_legibility_class": "stable_misinterpretation",
+    "world_legibility_class": "continuity_overlap",
     "original_function": "relay_maintenance_site",
     "collapse_mode": "controlled_sealing",
-    "continuity_anomaly": "reciprocal_overlap",
-    "origin": "ash_bell",
-    "source_integrity": "cross_continuity_corroborated",
-    "provenance_status": "imported_quarantined",
+
+    "continuity_anomaly": "adjacent_state_overlap",
+    "continuity_origin": "local",
+    "source_integrity": "contradictory",
+    "provenance_status": "incomplete",
+
     "post_collapse_reuse": "salvage_nest",
     "present_ideology": "indexer",
+
     "surviving_truth": "site_once_routed_authenticated_traffic",
     "false_local_interpretation": "relay_chooses_the_worthy",
     "confidence_band": "approximate"
@@ -98,10 +102,10 @@ This payload can exist at more than one level:
 
 The continuity field family replaces the retired `provenance_failure` field:
 
-- `continuity_anomaly` describes the observed relationship, such as `none`, `reciprocal_overlap`, `one_way_import`, `paired_site`, or `displaced_witness`.
-- `origin` records the best-supported continuity or locality, such as `local`, `ash_bell`, `mixed`, or `unknown`.
-- `source_integrity` records evidentiary quality, such as `intact`, `cross_continuity_corroborated`, `contested`, `degraded`, or `fabricated`.
-- `provenance_status` records handling status, such as `native_verified`, `imported_verified`, `imported_quarantined`, `mixed_origin`, or `unresolved`.
+- `continuity_anomaly` describes the observed relationship, such as `none`, `temporal_displacement`, `adjacent_state_overlap`, `imported_structure`, `imported_artifact`, `imported_person`, `memory_bleed`, `topology_overlap`, `residual_coupling`, or `unresolved`.
+- `continuity_origin` records the best-supported continuity, such as `local`, `ash_bell`, `adjacent_known`, `adjacent_unknown`, `mixed`, or `unresolved`.
+- `source_integrity` records evidentiary quality, such as `verified`, `incomplete`, `contradictory`, `altered`, `forged`, `degraded`, or `unknown`.
+- `provenance_status` records verification status, such as `verified`, `partial`, `disputed`, `cross_continuity`, `absent`, or `unknown`.
 
 These fields distinguish a real neighboring-continuity import from damaged, falsified, or unknown evidence. They describe diagnostics, not cosmic metaphysics.
 

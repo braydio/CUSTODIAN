@@ -8,7 +8,7 @@
       "tags": ["ash_bell", "ninth_bell", "continuity"],
       "description": "A small bell the color of cold ash. When moved, it makes no sound. ",
       "mechanical_effects": {
-        "unlock_knowledge_node": "ash_bell_ninth_bell",
+        "unlock_knowledge_node": "ash_bell_ninth_answer",
         "increase_ash_bell_weight": 0.05
       }
     },

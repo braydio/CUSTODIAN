@@ -4,7 +4,7 @@
 **Created:** 2026-04-08  
 **Status:** active — content-facing protocol authority  
 **Last Updated:** 2026-07-29  
-**Lore Canon Authority:** `design/03_world/lore/CORE_LORE.md` — this file is primary for all lore, terminology, and faction definitions. This doc is a content-facing downstream that references that canon.  
+**Lore Canon Authority:** `design/03_world/lore/CORE_LORE.md` — this file is primary for all lore, terminology, and faction definitions. `design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md` is the highest authority for cosmology and continuity physics. This doc is a content-facing downstream that references those authorities.  
 **Supersedes:** `design/GAME_NOTES.md`, `design/GAME_NOTES_DRAFT.md` as canonical authority  
 **Related Docs:** `design/03_world/lore/CORE_LORE.md`, `design/03_world/lore/CRECHE_AND_LOCKER_LORE.md`, `design/03_world/factions/`, `design/03_world/LATTICE_DOCTRINE.md`, `design/03_world/LATTICE_ARCHIVE_ENGINE_MEMORY_GLASS.md`, `design/03_world/PROCEDURAL_LORE_GENERATION.md`, `design/02_features/factions/FACTION_EXPRESSION_SYSTEM.md`, `design/04_architecture/HUB_SYSTEM_META_PROGRESSION.md`, `design/04_architecture/CAMPAIGN_FLOW_AND_GAME_LOOP.md`, `custodian/docs/ai_context/CURRENT_STATE.md`
 
@@ -51,7 +51,7 @@ Use this tiering whenever later docs discuss setting or protocol.
 These are stable unless a future doctrine revision explicitly changes them.
 
 1. **CUSTODIAN is mechanically a tactical systems game about field-stabilizing Lattice reality pockets, but thematically it is about keeping meaning alive inside a doomed continuity field — not saving the world permanently.**
-2. **The world's central catastrophe is the Severing: the Unnarrival damaged reality's ability to maintain shared cause, memory, witness, and origin.**
+2. **The world's central catastrophe is the Severing: the failure, fragmentation, or deliberate destruction of a civilization-scale Lattice network after continuity access became a propagation hazard. The initiating cause remains unresolved.**
 3. **The Hub is persistent. Campaign worlds are transient Lattices — Archive-inflated reality pockets on specific planets, in specific temporal fields, that inevitably collapse. Contracts formalize bounded historical interventions that extend the bubble's lifespan.**
 4. **Knowledge progression outranks raw stat inflation as the game's long-horizon reward spine, because knowledge extends the stabilization field — it extends the Lattice.**
 5. **Lore must be delivered primarily through evidence, procedure, environment, enemy behavior, and degraded interfaces — not long exposition dumps.**
@@ -62,10 +62,10 @@ These are stable unless a future doctrine revision explicitly changes them.
 These are canonically true, but their full detail can be expanded later without contradiction.
 
 - The civilization-wide collapse is called **the Severing**. (Obsolete variants — "the Great Severance" — appear only in corrupted records or earlier faction terminology.)
-- The internal name for the metaphysical pressure behind the Severing is **the Unnarrival**. (Canonical spelling per `CORE_LORE.md`.)
-- Pre-collapse society depended on a provenance and interpretation lattice referred to here as the **Civic Mesh**.
-- Custodians were continuity authorities: archivists, adjudicators, field operators, forensic restorers, and doctrinal auditors. Above all, they were built to answer dead authority — to follow provenance signals not because they understand the source, but because responding to authorized institutional residue is their primary function.
-- Custodians are provenance-preservation systems; they can detect the wound as impossible records and orphaned causes, but they do not fully understand the supernatural source.
+- The internal name for the historical catastrophe at the heart of the Ash-Bell event is **the Ash-Bell Unarrival**, originating from Station IX of the Meridian Office. The canonical spelling is **Unarrival** (single n). See `design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md`.
+- Pre-collapse society depended on a continuity-verification and interpretation lattice referred to here as the **Civic Mesh**.
+- Custodians were continuity authorities: archivists, adjudicators, field operators, forensic restorers, and doctrinal auditors. Above all, they were built to operate, inspect, restore, isolate, and adjudicate Lattice infrastructure.
+- Custodians are continuity authority because they operate, inspect, restore, isolate and adjudicate Lattice infrastructure. A Custodian might examine provenance because "Did this reactor come from our continuity?" is an extremely important engineering question — not because correct paperwork makes the reactor real.
 - The Hub is the surviving adjudication layer of the Custodian order.
 - Many surviving cultures are coherent but wrong; they are built on stable misinterpretations of intact machinery and partial records.
 - Major remnant groups include the Indexers, Pale Bell Penitents, Leaseholders, Choir of Provenance, Buried Kins, and Feral Defense Remnants (see `design/03_world/factions/` for complete profiles).
@@ -73,10 +73,13 @@ These are canonically true, but their full detail can be expanded later without 
 ### Tier 3 — Reserved Mystery
 These must remain ambiguous in player-facing content until deliberately escalated.
 
-- What the Unnarrival truly is: saint, event, presence, non-event, weaponized contradiction, or something outside those categories.
-- Whether archive contradictions are accidental, defensive, or maliciously induced.
-- Whether the Custodian order chose civilizational amputation to prevent something worse.
-- How much the Hub itself can be trusted.
+- What first demonstrated reciprocal traversal?
+- What was Null Warrant containing?
+- Was the Severing deliberate?
+- How many continuity routes survived?
+- Are active Lattice restorations recreating dangerous paths?
+- Is the Pale related to the original hazard?
+- Has anything been following restored routes?
 
 If a future doc treats a Tier 3 item as settled fact, that doc is wrong unless it explicitly marks the change as a new canon lock.
 
@@ -119,29 +122,25 @@ Assaults, waves, and base pressure remain important, but they are expressions of
 
 ### The Severing
 
-The foundational catastrophe is **the Severing**: a supernatural/cosmic provenance wound caused by an impossible presence, event, or saint internally called **the Unnarrival**.
+The foundational catastrophe is **the Severing**: the failure, fragmentation, or deliberate destruction of a civilization-scale Lattice network after continuity access became a propagation hazard. The initiating cause remains unresolved.
 
-The world was not destroyed by misinformation, ordinary forgetting, institutional decay, or technological collapse. Those are civilization-facing symptoms. The root injury is deeper: something outside reality's normal chain of cause, memory, witness, and record tried to enter history, could not fully arrive, and damaged the substrate that lets events be commonly witnessed, remembered, sequenced, and inherited.
+The old civilization learned to use Lattice technology to establish access between adjacent continuities. Such paths are not fundamentally one-way: any continuity reached represented not only a destination, but a potential route back. The reciprocal nature of continuity access was the hazard that ultimately led to the Severing.
 
 The Severing has three mandatory layers:
 
-1. **Root cause:** the Unnarrival, a cosmic non-event whose consequences are embedded in history before the source can exist.
-2. **Observable symptom:** information collapse, contradictory archives, fragmented history, incompatible faction memories, unreliable records, and technological regression.
-3. **Gameplay expression:** knowledge recovery as provenance stabilization: reconnecting object, origin, witness, time, use, and meaning.
+1. **Root cause:** unresolved. The leading hypothesis is a continuity propagation hazard — something propagating through the return paths that had been opened. Whether this was disaster, attack, containment, or all three remains unknown.
+2. **Observable symptom:** isolated continuities, spreading Pale, failed Lattice pockets, cross-continuity debris, contradictory records from different continuity origins, institutional collapse, and technological regression.
+3. **Gameplay expression:** knowledge recovery for Lattice calibration, anomaly classification, route safety, continuity-origin identification, historical reconstruction, and operational decision quality.
 
-Before the Severing, systems did not merely move data. They preserved provenance:
+Before the Severing, the Lattice civilization maintained continuity infrastructure:
 
-- who authored a record
-- who validated it
-- what object, place, or event it referred to
-- who witnessed the relationship
-- what doctrine governed its use
-- where it sat in sequence
-- what assumptions it depended on
-- what contradictions were already known
+- verified transit between continuities
+- route safety and calibration
+- continuity-origin identification
+- authority and containment records
+- field telemetry and diagnostics
 
-When the Unnarrival wounded that lattice, civilization did not simply go dark.
-It went **ambiguous**.
+When the Severing destroyed or amputated much of that network, civilization did not simply go dark. It went **ambiguous**.
 
 This distinction is mandatory. The setting should repeatedly communicate that:
 
@@ -150,56 +149,24 @@ This distinction is mandatory. The setting should repeatedly communicate that:
 - transit survived in fragments
 - archives survived in fragments
 - institutions survived in fragments
-- **shared confidence in what things meant did not**
+- **verified continuity-origin information did not**
 
-Shared context is therefore **symptom-level language**, not root-cause language. The world lacks shared context because provenance itself is diseased.
+Shared context is therefore **symptom-level language**, not root-cause language. The world lacks shared context because continuity routes were severed, institutions collapsed, and cross-continuity debris introduced contradictory material.
 
-### The Unnarrival
+### The Open Interval and Ash-Bell
 
-The Unnarrival is not a normal monster, faction, AI, or god walking through the setting. It is a pressure against reality's continuity: a presence or event that cannot fully exist because existence requires witness, naming, memory, and sequence.
+The Ash-Bell Unarrival is the player's most intimate demonstration of the Severing's physics. During a continuity hazard event, the Meridian Office initiated the Ash-Bell Protocol — a nine-station synchronization procedure. Station IX, commanded by Precentor Orra, failed to answer within its required window. The system classified this as **Unarrival**.
 
-> **Terminology note:** The canonical spelling is "Unnarrival" (double n). The variant "Unarrival" (single n) appears only in corrupted or pre-correction records. See `design/03_world/lore/CORE_LORE.md` for the terminology ladder.
+Orra had deliberately diverted to rescue stranded civilians. Eight stations answered. Station IX did not. The resulting Open Interval physically coupled the Ash-Bell Continuity to the active world. People, matter, memories, and structures crossed. Orra eventually reached Station IX and gave the Ninth Answer, ending the wider coupling — but local catastrophe had already occurred.
 
-Do not overexplain it directly in player-facing content. Present it through scars:
+Do not overexplain Ash-Bell directly in player-facing content. Present it through:
 
-- events without origins
-- names without owners
-- memories without witnesses
-- artifacts that precede manufacture
-- rooms that were always sealed but contain fresh blood
-- factions that remember wars no one else fought
-- saints awaited after their relics already exist
-- bells rung by towers that were never built
-- corpses that behave like records or failed historical corrections
-
-Approved Custodian-facing diagnostic language:
-
-```text
-RECORD CONFLICT:
-SOURCE EXISTS.
-SOURCE NEVER EXISTED.
-SOURCE REQUESTS CONTINUATION.
-
-PROVENANCE FAILURE:
-OBJECT PRECEDES MANUFACTURE.
-WITNESS PRECEDES EVENT.
-EVENT PRECEDES WORLD.
-
-CLASSIFICATION:
-NOT LOST.
-NOT UNKNOWN.
-UNARRIVED.
-```
-
-### World Consequence Rule
-
-As a result, cultures form around **active misunderstandings with material force**.
-Examples:
-
-- a quarantine procedure becomes taboo law
-- a routing protocol becomes prophecy
-- a safety interlock becomes a prison myth
-- a facility classification becomes inherited political title
+- a broken ordinary chapel bell
+- the wrong basin where a fountain should be
+- white thread marking boundaries
+- a ghost procession of continuity drifters
+- a phrase: "Orra Comes Late"
+- ritual timing that echoes station synchronization
 
 Do not write the world as random rubble. Write it as layered, functioning misinterpretation.
 
@@ -214,16 +181,16 @@ Their job was to:
 
 - inflate and maintain Archive stabilization fields (Lattice reality pockets)
 - extend Lattice integrity through knowledge recovery and infrastructure restoration
+- operate, inspect, restore, isolate, and adjudicate Lattice infrastructure
 - recover damaged knowledge
-- reconcile contradiction
-- preserve provenance between object, origin, witness, time, use, and meaning
+- classify continuity anomalies and identify continuity origins
 - authorize or refuse restoration
 - preserve chain-of-trust between systems
-- intervene where local reality had drifted beyond recoverable truth
+- intervene where local reality has been contaminated by cross-continuity material
 
-They were part archivist, part field technician, part stabilization operator, part doctrinal judge, part systems operator. Above all, they were built to answer dead authority — to detect and follow authorized institutional residue even when the originating institution no longer exists. A Custodian does not need to understand a signal to obey it. The authority in the signal is sufficient.
+They were part archivist, part field technician, part stabilization operator, part doctrinal judge, part systems operator. A Custodian examines provenance because "Did this reactor come from our continuity?" is an extremely important engineering question — not because correct paperwork makes the reactor real.
 
-Custodians are not omniscient lore machines. Because they operate Archive fields and preserve provenance, they can feel the shape of the Severing wound without seeing the Unnarrival directly. To a Custodian, supernatural horror first appears as reality-level checksum failure: a source that both exists and never existed, a witness that precedes an event, an artifact whose origin refuses to be filed, or a pale signal that leaks recognition of an authority that should not still be received. To extend the Lattice is to feel the Pale pressing in, to know the field is finite, and to choose what is worth preserving before the rupture.
+Custodians are not omniscient lore machines. Because they operate Lattice infrastructure, they can feel the shape of continuity damage without fully understanding its source. To a Custodian, hazards first appear as continuity anomalies: imported artifacts with no local manufacture record, witnesses from adjacent states, structures that overlap incompatible histories, or route signatures that should not still be active. To extend the Lattice is to feel the Pale pressing in, to know the field is finite, and to choose what is worth preserving before the rupture.
 
 Lost, damaged, or long-absent Custodians were returned to service through institutional recovery sites called **crèches** — processing centers that reissue a designation and its equipment without confirming continuity of personhood. See `design/03_world/lore/CRECHE_AND_LOCKER_LORE.md` for the full canon, including the rule that a designation-keyed locker (such as the one holding the P-9 sidearm) releases assigned equipment without proving who the person bearing the designation is.
 
@@ -247,7 +214,7 @@ The Hub is not a menu shell. In fiction it is the surviving historical adjudicat
 It is:
 
 - part bunker
-- part archive wound
+- part archive
 - part tribunal
 - part decision engine
 
@@ -367,7 +334,7 @@ These classes should influence scenario generation, Hub proposal language, and f
 ## Major Civilizational Remnants
 
 ### Civic Mesh
-The dead provenance-and-interpretation nervous system that once linked worlds. Many “haunted” machine behaviors are just Mesh remnants still trying to validate conditions that no longer exist.
+The dead continuity-verification and interpretation nervous system that once linked worlds. Many “haunted” machine behaviors are just Mesh remnants still trying to validate conditions that no longer exist.
 
 ### Black Archives
 Distributed sealed or damaged archive vaults. Some are intact, some breached, some poisoned by false reconstruction or corrupt cross-reference.
@@ -379,7 +346,7 @@ Transit and logistics sites once used to move verified personnel, packets, tools
 
 ## Faction Bible
 
-> **This section is now a summary.** For complete faction profiles, see `design/03_world/factions/`. For the implementation taxonomy, gameplay boundaries, and behavior contracts, see `design/02_features/factions/FACTION_EXPRESSION_SYSTEM.md`. For the lore canon framework (Severing, Unnarrival, Ash-Bell, Null Warrant Office), see `design/03_world/lore/CORE_LORE.md`.
+> **This section is now a summary.** For complete faction profiles, see `design/03_world/factions/`. For the implementation taxonomy, gameplay boundaries, and behavior contracts, see `design/02_features/factions/FACTION_EXPRESSION_SYSTEM.md`. For the lore canon framework (Severing, Ash-Bell Unarrival, Null Warrant Office), see `design/03_world/lore/CORE_LORE.md` and `design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md`.
 
 The six canonical factions are **different answers to the collapse of trustworthy civilization**:
 
@@ -439,7 +406,7 @@ Lore should emerge from what the player sees, fights, repairs, mistrusts, and gr
 - Repeated symbols and procedural phrases should matter.
 - Enemy setup should out-explain dialogue.
 - The Hub should record partial confidence, not omniscient certainty.
-- The Unnarrival should be inferred from anomalies, motifs, religious/scientific interpretations, and impossible records; do not make NPCs explain it as settled cosmology.
+- Continuity hazards and Ash-Bell history should be inferred from anomalies, motifs, religious/scientific interpretations, and impossible records; do not make NPCs explain the full cosmology as settled truth.
 
 ### What to Avoid
 
@@ -493,7 +460,7 @@ These are approved as the first implementation bridge between current procgen/ru
 
 The following are good later systems and should remain canon targets, but they are **not** the first implementation priority:
 
-- provenance anomaly contracts
+- continuity anomaly contracts
 - contradictory packet triads
 - reconstruction hearings
 - deep hypothesis graphs
@@ -558,10 +525,10 @@ These are approved long-form mysteries and should stay staged.
 
 1. **What happened?** — the player first learns the world suffered interpretive collapse.
 2. **Why are so many systems still coherent?** — the world begins to feel deliberate rather than merely damaged.
-3. **Why do archives contradict one another in patterned ways?** — contradiction appears tied to origin, witness, and sequence, not random data rot.
-4. **What is unarrived?** — motifs such as the Ninth Bell, sealed gates, white thread, impossible saints, and orphaned causes begin to point at one wound.
-5. **Did someone sever provenance intentionally to stop something worse?** — the moral scale of the catastrophe changes.
-6. **Were the Custodians complicit?** — the player’s institution becomes suspect.
+3. **Why do archives contradict one another in patterned ways?** — contradiction appears tied to continuity origin, not random data rot.
+4. **What was Null Warrant containing?** — motifs such as sealed gates, classified routes, and institutional terror begin to point at containment.
+5. **Was the Severing deliberate?** — the moral scale of the catastrophe changes.
+6. **Were the Custodians complicit?** — the player's institution becomes suspect.
 
 Important: the best late-game answer is **not** “the Custodians were secretly evil.”
 The stronger version is that they may have chosen a terrible civilizational amputation to prevent contaminated continuity from spreading.
@@ -582,10 +549,9 @@ These phrases are approved world-language and can recur across docs, UI, or late
 - authorized interpreter
 - bounded historical intervention
 - comparative loss
-- provenance failure
-- orphaned cause
-- unarrived source
-- artifact whose origin refuses to exist
+- continuity anomaly
+- foreign-origin artifact
+- imported structure
 - Lattice
 - field extension
 - Lattice reality pocket

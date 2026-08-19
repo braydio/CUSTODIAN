@@ -1,6 +1,7 @@
 # The Choir of Provenance
 
 > **Status:** Canonical faction profile
+> **Doctrine authority:** `design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md`
 > **Source:** MAJOR_FACTION_PROFILES.md (pre-design), revised for Reciprocal Continuity canon
 > **Visual design template:** pre-design/FACTION_PROFILE_THE_CHOIR_OF_PROVENANCE.md
 
@@ -18,11 +19,21 @@ They are not defenders of a metaphysical substance called provenance. They are c
 
 ## Core Belief
 
-> “Only verified continuity may survive.”
+> "Only verified continuity may survive."
 
 If an origin cannot be established, contain it. If an artifact entered through an overlap, isolate it. If records disagree about which continuity owns a person, route, or structure, prevent either claim from propagating until adjudication is complete.
 
-Their vocabulary of provenance refers to evidence and chain of custody: origin, source integrity, witness, handling, and continuity membership.
+Their obsession is based on a real hazard: foreign matter and unresolved continuity routes can create real containment risks. Their flaw is valuing verified origin more than human life.
+
+They ask:
+
+- Where did this come from?
+- Which continuity?
+- Was it transported intentionally?
+- Does it carry an unresolved route signature?
+- Is this artifact local?
+- Is this person local?
+- What happens if we reconnect the site it came through?
 
 ---
 
@@ -30,7 +41,7 @@ Their vocabulary of provenance refers to evidence and chain of custody: origin, 
 
 The Choir interprets the Severing as uncontrolled continuity exchange and verification collapse. Records detached from their local evidence; imported evidence entered native histories; witnesses and counterparts made mutually exclusive but honest claims.
 
-Their answer is quarantine. They fear real continuity anomalies, especially reciprocal overlaps that can move material in both directions. They do not need cosmic provenance metaphysics to justify their severity.
+Their answer is quarantine. They fear real continuity anomalies, especially reciprocal overlaps that can move material in both directions. They do not need metaphysical assumptions to justify their severity.
 
 ---
 

@@ -22,11 +22,11 @@ They treat every door, terminal, crate, road, machine, and corpse as part of an 
 
 ---
 
-## Relationship to the Severing / Unnarrival
+## Relationship to the Severing
 
 The Leaseholders believe the Severing was an access-chain catastrophe. To them, civilization failed because rightful claims were broken. Ships did not arrive because route authority failed. Relief did not arrive because custody broke. Shelters failed because claims became unresolved.
 
-They interpret the Unnarrival as the greatest breach of contract in history. Their answer is enforcement.
+They interpret the continuity catastrophe as the greatest breach of contract in history. Their answer is enforcement.
 
 ---
 
@@ -54,9 +54,9 @@ They may possess legal fragments that prove parts of the truth while missing the
 
 ---
 
-## Relationship to the Unnarrival
+## Relationship to Continuity Catastrophe
 
-They do not use the term unless exposed to Ash-Bell material. Even then, they reduce it to: route denial, non-arrival claim, failed delivery, access dispute, closure warrant, breach of continuity obligation. They flatten cosmic dread into legal machinery.
+They do not use the term unless exposed to Ash-Bell material. Even then, they reduce it to: route denial, non-arrival claim, failed delivery, access dispute, closure warrant, breach of continuity obligation. They flatten institutional dread into legal machinery.
 
 ---
 

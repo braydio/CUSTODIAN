@@ -143,7 +143,7 @@ func interact_with_ritualant() -> void:
 
 func ask_about_bell() -> void:
 	event_state.mark_dialogue_seen(&"ask_bell")
-	event_state.unlock_knowledge(&"ash_bell_ninth_bell")
+	event_state.unlock_knowledge(&"ash_bell_ninth_answer")
 	request_dialogue.emit(dialogue_id, &"ask_bell")
 
 
@@ -186,7 +186,7 @@ func take_stilling_pin() -> void:
 
 	event_state.has_stilling_pin = true
 	event_state.set_resolution(AshBellEventState.Resolution.TOOK_STILLING_PIN)
-	event_state.unlock_knowledge(&"ash_bell_ninth_bell")
+	event_state.unlock_knowledge(&"ash_bell_ninth_answer")
 	request_item_grant.emit(&"stilling_pin")
 
 	if stilling_pin_pickup != null:
@@ -313,7 +313,7 @@ func _handle_thread_snap_once() -> void:
 func stabilize_site() -> void:
 	event_state.ritualant_hostile = false
 	event_state.set_resolution(AshBellEventState.Resolution.SITE_STABILIZED)
-	event_state.unlock_knowledge(&"ash_bell_bellfall_containment")
+	event_state.unlock_knowledge(&"ash_bell_open_interval")
 	if forlorn_ritualant != null and forlorn_ritualant.has_method("dissolve"):
 		forlorn_ritualant.call("dissolve")
 	_complete_if_ready()

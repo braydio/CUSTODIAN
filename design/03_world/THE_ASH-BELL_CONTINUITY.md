@@ -1,6 +1,7 @@
 # The Ash-Bell Continuity
 
 > **Status:** Canonical world-lore reference
+> **Doctrine authority:** `design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md`
 > **Internal name:** The Ash-Bell Continuity
 > **Player-facing rule:** Characters may name Ash-Bell places and rites, but they do not explain them as an alternate universe.
 
@@ -8,16 +9,17 @@
 
 ## Canonical Truth
 
-The Ash-Bell Continuity is a real neighboring continuity. It is not a metaphor, damaged memory, a possible future, or reality inventing a source for orphaned evidence.
+The Ash-Bell Continuity is a physically real neighboring continuity that became strongly coupled to the active world during the Ash-Bell Unarrival.
 
-During the **Ash-Bell Unarrival**, its continuity-port network and the active CUSTODIAN continuity entered a reciprocal coupling. People, objects, records, structures, and effects can cross the overlap in either direction. The two histories remain distinct, but proximity makes each continuity more likely to import material from the other.
+Residual Lattice relationships continue to pull people, objects, memories, and physical states across that boundary. The two histories remain distinct, but proximity makes each continuity more likely to import material from the other.
 
 Most temporal debris is unpatterned. Ash-Bell recurs because it is adjacent and coupled, not because it is authorial truth for the active world.
 
 Internally:
 
 ```text
-continuity_id: ash_bell
+continuity_origin: ash_bell
+near_continuity_tag: ash_bell
 relationship: adjacent_reciprocal
 coupling_event: ash_bell_unarrival
 ```

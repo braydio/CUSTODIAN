@@ -20,7 +20,7 @@ None. That is the horror. They do not believe. They execute.
 
 ---
 
-## Relationship to the Severing / Unnarrival
+## Relationship to the Severing
 
 Feral Defense Remnants do not understand the Severing. They are what remains when authority fails to arrive but protocol continues. Orders did not update. Command did not arrive. Evacuation did not complete. Recognition tables did not sync. The final override never came. So they continue.
 
@@ -46,11 +46,11 @@ Some remnants still enforce Ash-Bell directives. They may guard sealed doors, ro
 
 ---
 
-## Relationship to the Unnarrival
+## Relationship to Continuity Hazards
 
 They do not use the term intentionally. Late-game systems may contain corrupted command language:
 - `ARRIVAL WINDOW CLOSED`
-- `UNNARRIVAL SAFEGUARD ACTIVE`
+- `UNARRIVAL SAFEGUARD ACTIVE`
 - `DO NOT COMPLETE ROUTE`
 - `RECIPIENT LOCK ACTIVE`
 - `ASH-BELL CORDON MAINTAINED`

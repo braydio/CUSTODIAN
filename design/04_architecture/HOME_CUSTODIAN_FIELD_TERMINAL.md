@@ -526,7 +526,7 @@ Best combination:
 Early game term: understandable.
 Deep lore term: weirder.
 
-## How to connect it to the Unnarrival
+## How to connect it to the continuity catastrophe
 
 The terminal should contain one impossible record, but not enough to explain it.
 
@@ -545,7 +545,7 @@ FAILURE PRECEDES INSTALLATION.
 INSTALLATION RECORD UNARRIVED.
 ```
 
-The player should not know what "Unarrived" means yet. The terminal may not even use the noun "the Unnarrival" yet. It should classify the problem as:
+The player should not know what continuity hazards mean yet. The terminal may not even use the full Ash-Bell terminology yet. It should classify the problem as:
 
 ```text
 UNFILED ORIGIN STATE

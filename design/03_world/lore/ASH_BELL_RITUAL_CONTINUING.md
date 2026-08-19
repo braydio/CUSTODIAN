@@ -1,3 +1,5 @@
+> **Historical implementation guidance.** Live runtime files are authoritative for implemented encounter behavior. Lore interpretation is governed by RECIPROCAL_CONTINUITY_DOCTRINE.md and CORE_LORE.md.
+
 Below are **drop-in code changes** for the existing Ash-Bell / Forlorn Ritualant scene. These target the scripts you pasted: `AshBellEventState`, `AshBellInteractable`, `ForlornRitualantSite`, and `WhiteThreadHazard`. Your current event already has pressure, thread tension, fountain states, hostile phase, ghost procession, ash FX, apparition, and stilling pin pickup wired; these changes make those systems more readable and staged.
 
 ## 1. Replace `ash_bell_interactable.gd`

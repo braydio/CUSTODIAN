@@ -50,7 +50,7 @@ This is the document that answers:
 - how does failure propagate?
 - what actually constitutes one “run,” one “campaign,” one “cycle,” and one “return”?
 
-This file is the **macro-loop authority**. For the fiction meaning of Contracts, Campaigns, the Severing, the Unnarrival, faction worldview, and lore-delivery constraints, defer to `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`.
+This file is the **macro-loop authority**. For the fiction meaning of Contracts, Campaigns, the Severing, faction worldview, and lore-delivery constraints, defer to `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`.
 
 ---
 

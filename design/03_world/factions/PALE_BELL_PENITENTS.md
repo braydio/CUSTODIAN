@@ -1,6 +1,7 @@
 # Pale Bell Penitents
 
 > **Status:** Canonical faction profile
+> **Doctrine authority:** `design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md`
 > **Supersedes:** Penitents of Static section in MAJOR_FACTION_PROFILES.md (pre-design), FACTION_PROFILE_THE_PENITENTS_OF_STATIC.md (naming superseded)
 > **Naming:** “Pale Bell Penitents” is the canonical player-facing name. “Unarrived Penitents” may appear as an internal rank or late sect-name, not as authorial cosmology.
 
@@ -47,6 +48,11 @@ They treat Ash-Bell's Open Interval as a revelation for all existence. Historica
 
 ## What They Are Right About
 
+- The Severing was cosmic.
+- Continuities can bleed.
+- Some routes are dangerous.
+- Ash-Bell was a real continuity catastrophe.
+- Restoration can reopen dangerous connections.
 - The Ash-Bell Unarrival was real.
 - Nine stations exchanged operational Answers.
 - The Ninth Answer was received from both sides of the overlap.
@@ -61,7 +67,14 @@ They often locate continuity-anomaly sites before other factions because their i
 
 ## What They Are Wrong About
 
-They mistake disaster for revelation and operational procedure for liturgy.
+They turn a **specific operational term** into universal theology. Their doctrine:
+
+```text
+Unarrival is not merely what happened at Station IX.
+Unarrival is what existence secretly wants.
+```
+
+That is their religion. Not authorial truth.
 
 - The Ninth Answer was not the voice of the cosmos.
 - Orra's delayed or disputed actions do not make lateness holy.
@@ -70,6 +83,19 @@ They mistake disaster for revelation and operational procedure for liturgy.
 - Ambiguous records do not mean truth should remain unresolved.
 
 Where the Custodian sees displaced context requiring careful reconstruction, the Penitents see sacred distribution. Where survivors see tragedy, they see initiation.
+
+---
+
+## Their Relationship to the Custodian
+
+They oppose the Custodian because:
+
+- the Custodian reconnects things
+- restores Lattice paths
+- forces boundaries to resolve
+- reopens routes
+
+They believe closure and incompletion are sacred mercy.
 
 ---
 
