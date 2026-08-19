@@ -746,6 +746,12 @@ Documentation updates this session:
 ## Idea Codex
 
 `design/90_codex/` is a non-authoritative idea inventory. Cards preserve ideas and graduation history but never serve as active implementation specs. Graduated cards use `Graduated to:`, `Runtime status:`, and `Runtime path:` pointers; the linked active specs and this file remain build truth. `tools/validate_design_codex.py` checks index coverage, required metadata, graduation links, referenced paths, runtime-status agreement, and packaging-directory residue.
+
+## Structure Visual Contract (2026-08-19)
+
+Canonical structure design language: `custodian/design/02_art_direction/CUSTODIAN_STRUCTURE_DESIGN_CONTRACT.md`
+Field Fabricator Mk1 integration proposal: `design/02_features/infrastructure/FIELD_FABRICATOR_VISUAL_INTEGRATION_CODE.md`
+Production sprite path (pending art): `custodian/assets/sprites/infrastructure/fabrication/field_fabricator_mk1/field_fabricator_mk1__idle__128x96.png`
 # Operator asset pipeline V2 (2026-08-16)
 
 - Operator source authority is `content/sprites/operator/source/animations`; generated runtime authority is `content/sprites/operator/runtime/animations`.

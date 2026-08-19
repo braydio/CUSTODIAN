@@ -1,122 +1,164 @@
 # CUSTODIAN STRUCTURE DESIGN CONTRACT
 
-**Status:** proposed lock
+**Status:** review
 **Scope:** all interactable and environmental man-made structures in CUSTODIAN
 **Purpose:** define a stable descriptive language for structures so future asset creation stays in-theme, readable, and production-usable.
+**Anchor implementation:** Field Fabricator Mk1 (Class A — Utility Node)
 
 ---
 
 ## 1. Core Thesis
 
+A Custodian structure is:
+
+> A fortified industrial machine or installation built by an organized ruined authority. It is weathered, functional, and readable first, with restrained holy-tech undertones, a dark steel-and-stone material language, limited teal operational light, and a clear gameplay-facing interaction side.
+
 Custodian structures are:
 
-* **industrial**
-* **fortified**
-* **weathered**
-* **functional**
-* **ritual-adjacent, but not ceremonial**
+* industrial
+* fortified
+* weathered
+* functional
+* austere
+* institutionally designed
+* ritual-adjacent without being shrine-dominant
 
-They are **not** sleek consumer sci-fi, not fantasy cathedral props, and not noisy dieselpunk junk piles.
+They are not:
 
-The world should read as:
-
-> a ruined authority that built durable field infrastructure for survival, production, control, and passage.
-
-That means every structure should feel like it was **built to do a job first**, and only secondarily carries faction identity.
+* generic glossy science-fiction buildings
+* cathedral machines
+* fantasy altars
+* random scrap piles
+* Warhammer-style skull saturation
+* neon cyberpunk machinery
+* hyper-detailed RTS concept-art blobs
+* decoration-first architecture
 
 ---
 
-## 2. Absolute Style Pillars
+## 2. Structure Design Pillars
 
 Every Custodian structure should satisfy these 5 pillars.
 
-### A. Functional First
+### 1. Function before ornament
 
-The player should be able to guess what the object *does* from its shape.
+A player should be able to make a reasonable guess about what a structure does from:
 
-Examples:
+* silhouette
+* major mechanisms
+* access face
+* apertures
+* tanks
+* conduits
+* emitters
+* output surfaces
+* consoles
 
-* fabrication structure should have a chamber, aperture, output bay, console, tool head, or loading face
-* power structure should have coils, tanks, conduits, vents, or transformer-like logic
-* ingress/transport structure should have a clear central focal ring, emitter, platform, or gateway
+Decorative identity comes second.
 
-If the player cannot infer a function, the design has drifted into decorative concept art.
+If a machine's function disappears when faction ornament is removed, redesign it.
 
 ---
 
-### B. Fortified Utility
+### 2. Fortified utility
 
-Custodian structures are **hard-edged and defensible**.
+Preferred physical grammar:
 
-Common form language:
-
-* thick walls
-* armored housings
-* buttressed sides
-* inset recesses
-* framed apertures
+* thick housings
 * reinforced corners
-* plated access panels
-* mechanical brackets
-* retaining rings
-* protected lights, not exposed glassy luxury surfaces
+* inset chambers
+* armored rings
+* heavy panel seams
+* structural clamps
+* retaining braces
+* protected apertures
+* recessed vents
+* guarded lamps
+* anchored bases
+* shallow ramps or service lips
 
-They should feel like they belong in a dangerous world.
-
----
-
-### C. Ruined Authority
-
-The structures should imply a once-organized institutional power.
-
-That means:
-
-* repeated construction grammar
-* consistent insignia placement
-* disciplined silhouettes
-* intentional component hierarchy
-* not improvised scrap heaps
-
-Wear and decay are welcome, but the underlying design should still feel **engineered** rather than chaotic.
+Common infrastructure should feel designed to continue functioning in a hostile environment.
 
 ---
 
-### D. Restrained Mysticism
+### 3. Ruined authority
 
-Custodian can have holy-tech or reliquary undertones, but they must remain **subordinate to utility**.
+These are not improvised post-apocalyptic machines.
+
+They were built by an organized authority with:
+
+* repeatable engineering conventions
+* consistent material usage
+* standardized access logic
+* disciplined insignia placement
+* recognizable construction hierarchy
+
+Damage, grime, corrosion, missing plating, repair scars, and age may obscure this order, but must not erase it.
+
+---
+
+### 4. Restrained holy-tech
 
 Allowed:
 
-* subtle insignia
-* circular seals
-* controlled teal illumination
-* austere heraldic panels
-* grave institutional symbolism
+* small authority seals
+* Custodian insignia
+* circular engineering motifs
+* reliquary-like protective housings
+* grave institutional geometry
+* sparse worn brass
+* subtle processional symmetry in important structures
 
-Not allowed:
+Restricted:
 
-* giant altar energy theatrics
-* overt shrine staging
-* candles / relic clutter everywhere
-* fantasy temple dominance
-* ornament overpowering function
+* candles
+* shrines
+* giant heraldic monuments
+* religious statuary
+* ornate filigree
+* oversized banners
+* glowing runes with no mechanical purpose
+* skull decoration as default faction shorthand
+
+A utility structure should remain a machine.
 
 ---
 
-### E. Readability at Gameplay Scale
+### 5. Gameplay readability
 
-The object must survive being reduced to an in-game structure sprite.
+Every structure must read at actual gameplay scale.
 
-That means:
+Evaluate at:
 
-* strong silhouette
-* 1–2 clear focal features
-* limited clutter
-* readable interaction face
-* readable lit vs unlit state
-* distinguishable faction identity from a distance
+#### Long range
 
-If it only looks good at concept-art zoom, it fails.
+Player sees:
+
+* structure category
+* faction ownership
+* overall operational state
+
+#### Mid range
+
+Player sees:
+
+* front / approach side
+* major functional component
+* interactable status
+
+#### Close range
+
+Player sees:
+
+* vents
+* panels
+* clamps
+* conduits
+* wear
+* small insignia
+* maintenance details
+
+Do not approve an asset based only on enlarged concept-art inspection.
 
 ---
 
@@ -436,228 +478,346 @@ The player should know where to approach without needing trial and error.
 
 Use these classes to keep assets coherent.
 
-## Class A: Utility Nodes
+## Class A — Utility Node
 
 Examples:
 
-* fabricators
-* power units
-* small relays
-* field terminals
+* Field Fabricator
+* Capacitor Bank
+* Repair unit
+* Sensor support hardware
 
-Traits:
+Characteristics:
 
 * compact
-* clear front
-* readable state
-* strong gameplay silhouette
+* immediately functional
+* strong front face
+* minimal ceremony
 
----
-
-## Class B: Transit / Ingress Structures
+## Class B — Transit / Ingress
 
 Examples:
 
-* gates
-* portal assemblies
+* transfer interfaces
 * ingress sites
-* transfer pads
+* controlled gate machinery
 
-Traits:
+Characteristics:
 
-* central focal geometry
-* destination logic
-* ceremonial undertone acceptable
-* more spatially important than Class A
+* stronger central focal geometry
+* clearer destination symbolism
+* moderate ceremonial undertone permitted
 
----
-
-## Class C: Defensive / Authority Structures
+## Class C — Defensive / Authority
 
 Examples:
 
-* wall adjuncts
-* checkpoint systems
-* fortified turrets
-* control stations
+* checkpoints
+* defensive emplacements
+* gate controls
+* fortified command machinery
 
-Traits:
+Characteristics:
 
-* more fortified
-* less delicate
-* stronger frontal authority
+* heavier frontal mass
+* stronger defensive construction
+* more institutional presence
 
----
-
-## Class D: Major Strategic Structures
+## Class D — Strategic / Major
 
 Examples:
 
-* sanctum forges
-* reliquary foundries
+* large foundries
 * compound hubs
+* authority-scale processing structures
 
-Traits:
+Characteristics:
 
-* larger
-* more symbolic
-* may borrow more from shrine/authority language
-* but still function-first
+* increased symbolic weight
+* larger silhouette budget
+* greater architectural complexity
+* holy-tech influence may increase, but function remains legible
 
 ---
 
 # 10. Hard Rejection Rules
 
-If a structure hits these, reject and redo.
+Reject an asset when it primarily reads as:
 
-## Reject if it reads as:
-
-* generic polished sci-fi machine
-* fantasy altar
-* random scrap pile
+* generic sci-fi
+* cathedral
+* shrine
+* altar
+* random junk
 * oversized monument
-* UI icon instead of world object
-* over-detailed concept blob
-* too soft / rounded / toy-like
-* too many lit elements
-* unclear interaction direction
-* function not inferable
+* UI icon
+* visual-effects showcase
+* unreadable detail soup
+* faction-logo delivery device
+
+Also reject when:
+
+* front side is unclear
+* operation is unclear
+* silhouette is weak
+* glow dominates materials
+* concept art cannot survive runtime reduction
+* asset only looks convincing at 1000+ px
 
 ---
 
-# 11. Anchor Example: Compound Fabricator
+# 11. Anchor Example: Field Fabricator Mk1
 
-This is the baseline example for the contract.
+The Field Fabricator Mk1 is the anchor implementation of this contract.
 
-## 11.1 Design identity
+Classification: **Class A — Utility Node**
 
-The **Compound Fabricator** is a **Class A Utility Node**.
+Player read:
 
-It should read as:
+> Compact powered compound machinery used to produce deployable infrastructure packages.
 
-* deployable field infrastructure
-* durable industrial machine
-* medium importance interactable
-* capable of producing compound tools / infrastructure packages
-
-It should **not** read as:
-
-* sacred shrine
-* boss arena device
-* generic 3D printer
-* giant factory hall
+It should appear valuable and technologically capable, but not monumental.
 
 ---
 
-## 11.2 Locked descriptive design
+## 11.1 Locked Field Fabricator Design
 
-The Compound Fabricator should have:
+### Primary mass
 
-### Required components
+A squat armored **circular / horseshoe fabrication chamber** occupying the center-upper portion of the sprite.
 
-* central fabrication chamber or cradle
-* visible tool head / armature / fabrication rig
-* clear front interaction face
-* output tray / front lip / front ramp
-* one side utility cluster
-* one power/storage mass
-* one small display or control panel
-* limited teal/cyan operational lighting
-* Custodian insignia in one or two deliberate positions
+The chamber must visibly contain:
 
-### Optional components
+* fabrication cradle or work plate
+* one mechanical fabrication arm/tool head
+* restrained internal teal illumination
 
-* one signal mast
-* one tank
-* one vent stack
-* one side crate cluster
-* one brace or handrail system
+The machine should appear capable of physically constructing compact equipment.
 
-### Forbidden components
+### Front interaction face
 
-* giant cathedral canopy
-* 4+ ceremonial banners
-* extreme symmetrical ornamentation
-* altar basin dominance
-* more than one heroic smokestack on a utility-class fabricator
-* huge holograms
-* massive exposed hex glyph centerpiece
-* wide open platform with no protected housing
+Bottom-facing.
 
----
+Required:
 
-## 11.3 Best current direction
+* shallow service ramp / loading lip
+* central access lane into chamber
+* compact control interface immediately adjacent to the working face
 
-Of the recent explorations, the **third variation** is the best baseline.
+The player should intuitively approach from below.
 
-Why:
+### Secondary utility mass
 
-* best readable front
-* best deployment / utility feel
-* clear chamber + console + ramp logic
-* strongest "compound infrastructure" read
-* most aligned with the game's world scale
+One side carries a compact service cluster.
 
-Refine it by:
+Preferred components:
 
-* simplifying minor side clutter
-* reducing decorative extras by ~15–25%
-* keeping chamber + ramp + control face as the focal trio
-* preserving the compact heavy footprint
+* single reservoir / power-conditioning cylinder
+* thick protected conduit
+* one vented housing
 
----
+Do not mirror every component symmetrically.
 
-# 12. Production Asset Contract
+### Opposite-side utility mass
 
-## 12.1 Compound Fabricator target asset set
+Use a quieter rectangular service enclosure containing:
 
-### Primary structure sprite
+* ventilation
+* control hardware
+* maintenance panel
+* optionally small signal beacon
 
-**Path:**
-`custodian/content/structures/compound/fabricator/compound_fabricator_mk1__idle.png`
+This side should visually balance the tank without duplicating it.
 
-**Target size:**
+### Fabrication chamber
 
-* concept target: 256×256 working canvas
-* runtime crop target: **96×80** or **112×88**
-* transparent background only
+The chamber is the visual focal point.
 
-### Powered / idle lit
+Geometry:
 
-**Path:**
-`custodian/content/structures/compound/fabricator/compound_fabricator_mk1__powered.png`
+* reinforced partial ring
+* inset inner basin
+* heavy retaining clamps
+* one descending tool head
+* small work surface
 
-### Active / working
+Teal light should originate mostly **inside** the chamber.
 
-**Path:**
-`custodian/content/structures/compound/fabricator/compound_fabricator_mk1__active.png`
+No giant floating holographic cube in normal idle state.
 
-### Optional simple emissive overlay
+An active fabrication animation may briefly display a restrained process projection.
 
-**Path:**
-`custodian/content/structures/compound/fabricator/compound_fabricator_mk1__glow_overlay.png`
+### Heraldry
 
-### Optional 4-frame working animation
+Maximum:
 
-**Path:**
-`custodian/content/structures/compound/fabricator/compound_fabricator_mk1__active__4f__112x88.png`
+* one primary Custodian service seal
+* optionally one secondary small marking
 
-If animated:
+Do not use skulls.
 
-* 4 frames
-* subtle only
-* arm/head motion, chamber pulse, console flicker
-* no giant motion
+Do not use multiple banners.
+
+Do not make the fabricator religious.
 
 ---
 
-## 12.2 Runtime replacement target
+## 11.2 Field Fabricator Color Target
 
-Current placeholder should eventually be replaced in/around:
+Body:
 
-`custodian/game/infrastructure/structures/field_fabricator_mk1.tscn`
+* dark blue-gray / charcoal metal
 
-The current placeholder is useful only as blockout and should no longer define the visual language.
+Structural edging:
+
+* subtly lighter cold steel
+
+Trim:
+
+* sparse aged brass / bronze
+
+Interior:
+
+* dark teal-black recess
+
+Operational emission:
+
+* cyan-teal
+
+Hazard markings:
+
+* extremely restrained faded ochre/yellow where mechanically useful
+
+No bright clean yellow-black industrial theme across the whole machine.
+
+---
+
+## 11.3 Field Fabricator Detail Hierarchy
+
+At gameplay scale the player must see, in order:
+
+1. outer silhouette
+2. central chamber
+3. front ramp/access
+4. internal teal operating state
+5. one side tank / utility mass
+6. small console
+7. minor detail
+
+If vents, bolts, cables, logos, or scratches compete with items 1–4, simplify them.
+
+---
+
+# 12. Runtime Asset Specification
+
+Do not use a giant concept-art PNG directly.
+
+Prepare production sprite art separately.
+
+## 12.1 Canonical runtime canvas
+
+Use:
+
+`128 × 96 px`
+
+This corresponds naturally to the existing `4 × 3` 32px footprint.
+
+The actual painted machine should occupy approximately:
+
+* width: 104–116 px
+* height: 78–90 px
+
+Leave transparent breathing room around the asset.
+
+## 12.2 Origin
+
+Sprite origin:
+
+`Vector2(64, 48)`
+
+World origin should continue representing the logical center of the existing structure.
+
+Do not offset gameplay placement merely to compensate for the artwork.
+
+---
+
+# 13. Required Art Files
+
+Create/use:
+
+`custodian/assets/sprites/infrastructure/fabrication/field_fabricator_mk1/`
+
+Required initial file:
+
+`field_fabricator_mk1__idle__128x96.png`
+
+Transparent RGBA.
+
+No baked checkerboard.
+No background.
+No terrain shadow that extends beyond the machine unless intentionally part of the sprite.
+
+Recommended later:
+
+`field_fabricator_mk1__active__4f__128x96.png`
+
+Optional:
+
+`field_fabricator_mk1__damaged__128x96.png`
+
+Do not invent missing production art.
+
+If these assets have not been supplied, prepare the runtime contract and explicitly report the exact missing asset path.
+
+---
+
+# 14. Active Animation Spec
+
+If/when supplied:
+
+`field_fabricator_mk1__active__4f__128x96.png`
+
+Four horizontal frames.
+
+Each frame:
+
+* 128×96
+
+Animation should be subtle.
+
+Frame intent:
+
+### Frame 1
+
+Idle active chamber.
+Tool head centered.
+Low teal illumination.
+
+### Frame 2
+
+Tool head lowers 1–2 px.
+Chamber light intensifies slightly.
+
+### Frame 3
+
+Fabrication pulse.
+Small restrained spark/process-light event.
+No giant VFX.
+
+### Frame 4
+
+Tool retract begins.
+Glow begins returning toward baseline.
+
+Target playback:
+
+`5–7 FPS`
+
+Loop only while actual fabrication service is visibly working, if runtime exposes that state cleanly.
+
+Do not fake activity continuously if the simulation does not expose a real work state.
+
+For first implementation, powered idle art is sufficient.
 
 ---
 
