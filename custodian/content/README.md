@@ -2,10 +2,10 @@
 
 This directory is the Godot-visible content root. Paths here are `res://content/...`, so moving runtime files requires updating every scene, script, resource, manifest, and `.import` sidecar that references the old path.
 
-New already-runtime-ready files should first be dropped into the persistent intake at
-`custodian/asset_drop/runtime_ready/inbox/`, not directly into this tree. The intake
-router validates ownership paths, protects existing files, archives processed sources,
-and then writes accepted files into their organized `content/` destinations.
+The preferred intake is Asset Pipeline V2: place human-named files in a registered
+family under `custodian/asset_drop/inbox/`, then run `asset plan` and `asset ingest`.
+That Godot-ignored intake delegates to the runtime-ready or specialized sprite backend.
+The legacy `asset_drop/runtime_ready/inbox/` remains available for expert, already-routed drops.
 
 ## Stable Domains
 

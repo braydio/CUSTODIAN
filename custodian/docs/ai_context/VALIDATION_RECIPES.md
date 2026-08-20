@@ -93,6 +93,7 @@ Prefer RTK subcommands for compact output when they support the command shape. R
 - Scene or asset import change: run Godot import before headless boot when feasible.
 - Sprite pipeline change: run dry-run ingest first, then targeted ingest only when outputs are intended.
 - Generic runtime-ready asset intake: run the persistent drop router in dry-run mode before apply.
+- Asset Pipeline V2: run `python3 custodian/tools/validation/asset_pipeline_v2_smoke.py`; focused schema, plan, ingest, replacement, transaction, status, and backend-delegation entrypoints sit beside it.
 - Tile pipeline change: run Python syntax checks plus the relevant tile generator command.
 - Commit/staging task: inspect status with RTK, but do not stage or commit without explicit user approval.
 
@@ -930,6 +931,13 @@ python custodian/tools/pipelines/generate_inbox_manifests.py --dry-run --remove-
 ```
 
 ## Runtime-Ready Asset Drop Validation
+
+For the preferred semantic family intake, run:
+
+```bash
+python3 custodian/tools/validation/asset_pipeline_v2_smoke.py
+python3 custodian/tools/validation/runtime_ready_asset_pipeline_smoke.py
+```
 
 Use for already-runtime-ready assets that do not require specialized sprite processing:
 

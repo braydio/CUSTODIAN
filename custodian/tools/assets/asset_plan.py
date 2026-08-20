@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import hashlib
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+from enum import Enum
 from pathlib import Path
 
 import sys
@@ -20,6 +21,14 @@ from asset_router import resolve_runtime_target, load_kind_schemas, AssetKindSch
 from asset_classifier import classify_input
 
 
+class AssetOperation(str, Enum):
+    CREATE = "create"
+    DUPLICATE = "duplicate"
+    REPLACE = "replace"
+    CONFLICT = "conflict"
+    SKIP = "skip"
+
+
 @dataclass(frozen=True)
 class PlannedAsset:
     source_path: Path
@@ -31,7 +40,7 @@ class PlannedAsset:
     canonical_filename: str
     target_relative_path: Path
     backend: str
-    replacement: bool
+    operation: AssetOperation
     existing_target: Path | None
     warnings: tuple[str, ...]
 
@@ -66,12 +75,14 @@ def generate_plan(
     kind_schemas = load_kind_schemas()
     kind_schema = kind_schemas.get(family.kind)
 
-    if not inbox_dir.exists():
+    if kind_schema is None:
         return AssetPlan(
             family_id=family.id,
             assets=(),
-            errors=(f"inbox directory does not exist: {inbox_dir}",),
+            errors=(f"unsupported asset kind schema: {family.kind}",),
         )
+    if not inbox_dir.exists():
+        return AssetPlan(family_id=family.id, assets=())
 
     png_files = sorted(inbox_dir.glob("*.png"))
     if not png_files:
@@ -119,14 +130,20 @@ def generate_plan(
         target_full = project_dir / target
 
         existing = target_full if target_full.exists() else None
-        replacement = False
+        operation = AssetOperation.CREATE
         if existing:
             old_hash = _file_hash(existing)
             new_hash = _file_hash(png)
             if old_hash == new_hash:
+                operation = AssetOperation.DUPLICATE
                 warnings.append(f"{stem}: duplicate (same hash as existing {target})")
             else:
-                replacement = True
+                operation = AssetOperation.REPLACE
+
+        if state.animation and frames <= 1:
+            errors.append(f"{png.name}: state '{resolution.state_id}' requires animation but source resolves to one frame")
+        if not state.animation and frames > 1:
+            errors.append(f"{png.name}: state '{resolution.state_id}' is static but source resolves to {frames} frames")
 
         backend = _select_backend(state, inspection)
 
@@ -140,7 +157,7 @@ def generate_plan(
             canonical_filename=cf,
             target_relative_path=target,
             backend=backend,
-            replacement=replacement,
+            operation=operation,
             existing_target=existing,
             warnings=(),
         )
@@ -160,7 +177,6 @@ def _make_ambiguous(
     inspection: AssetInspection,
     resolution,
 ) -> PlannedAsset:
-    from .asset_key import AssetKey
     key = AssetKey(
         owner=family.runtime_owner,
         kind=family.kind,
@@ -182,7 +198,7 @@ def _make_ambiguous(
         canonical_filename="",
         target_relative_path=Path(),
         backend="none",
-        replacement=False,
+        operation=AssetOperation.CONFLICT,
         existing_target=None,
         warnings=(),
     )

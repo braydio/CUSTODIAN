@@ -14,6 +14,7 @@ if str(ASSETS_DIR) not in sys.path:
 
 from asset_contract import AssetFamilyContract, AssetStateContract
 from asset_key import AssetKey
+from asset_naming import canonical_filename
 
 SCHEMAS_DIR = Path(__file__).resolve().parents[2] / "content" / "metadata" / "assets" / "schemas"
 
@@ -49,39 +50,17 @@ def resolve_runtime_target(
     kind_schema: AssetKindSchema | None = None,
 ) -> Path:
     """Compute the canonical runtime target path for a planned asset."""
-    filename = _canonical_filename(key)
+    if kind_schema is None:
+        raise ValueError(f"unsupported asset kind schema: {family.kind}")
+    filename = canonical_filename(key)
 
-    if kind_schema is not None:
-        tmpl = kind_schema.runtime_template
-        rel = tmpl.format(
+    tmpl = kind_schema.runtime_template
+    rel = tmpl.format(
             owner=key.owner,
             layer=key.layer,
             action_group=key.action_group,
             variant=key.variant,
             direction=key.direction,
             filename=filename,
-        )
-        return Path("content") / rel
-
-    domain = family.runtime_domain
-    owner = family.runtime_owner
-    return Path("content") / domain / owner / "runtime" / state.layer / filename
-
-
-def _canonical_filename(key: AssetKey) -> str:
-    if key.frame_width == key.frame_height:
-        size = str(key.frame_width)
-    else:
-        size = f"{key.frame_width}x{key.frame_height}"
-
-    return "__".join(
-        (
-            key.owner,
-            key.layer,
-            key.action_group,
-            key.variant,
-            key.direction,
-            f"{key.frames}f",
-            size,
-        )
-    ) + ".png"
+    )
+    return Path("content") / rel

@@ -50,7 +50,13 @@ Rules:
 - `archive/` stores processed intake files
 - Godot runtime scenes do not read directly from `_pipeline/`
 
-## Generic Runtime-Ready Intake
+## Backends Under Asset Pipeline V2
+
+Asset Pipeline V2 is the preferred semantic intake and human UX. It delegates static
+outputs to `runtime_ready_assets.py` and animated/specialized outputs to this manifest
+pipeline. The direct commands below remain supported expert/backend entrypoints.
+
+## Generic Runtime-Ready Backend
 
 Assets that are already runtime-ready but do not need sprite frame parsing, compatibility
 copies, or resource rebuild hooks use the persistent intake surface:
@@ -69,7 +75,7 @@ runtime authority. Paths under `inbox/` mirror their intended destination below
 rejects different existing targets unless replacement is explicitly requested, archives
 processed inputs, writes JSON receipts, and can run a Godot import pass.
 
-This generic intake complements rather than replaces `content/sprites/_pipeline/`.
+This backend complements rather than replaces `content/sprites/_pipeline/`.
 Sprite sheets requiring normalization or post-process hooks must continue through the
 specialized sprite pipeline.
 
@@ -309,7 +315,7 @@ For already-authored Operator modular source sheets in `content/sprites/operator
 4. Generate QA previews with `operator_action_preview.py` when visual inspection is needed
 5. Register any new gameplay playback deliberately in runtime/state-machine code and curated resources
 
-For already runtime-ready non-specialized assets:
+For direct expert use of the runtime-ready backend:
 
 1. Drop the file under `custodian/asset_drop/runtime_ready/inbox/<content-domain>/...`
 2. Run `python custodian/tools/pipelines/runtime_ready_assets.py --dry-run`

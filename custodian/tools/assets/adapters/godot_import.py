@@ -21,7 +21,7 @@ def run_godot_import(project_dir: Path) -> ImportResult:
 
     try:
         result = subprocess.run(
-            [godot_bin, "--headless", "--path", str(project_dir), "--quit"],
+            [godot_bin, "--headless", "--path", str(project_dir), "--import", "--quit"],
             capture_output=True,
             text=True,
             timeout=120,

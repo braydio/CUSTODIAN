@@ -56,6 +56,8 @@ Last updated: 2026-08-12
 - `custodian/tools/agent/change_control_bundle.py` — utility that bundles current git-changed files into `custodian/docs/change_control/<TASK_PACKET_NAME>.md` and copies the markdown bundle to the clipboard when a clipboard command is available
 - `custodian/asset_drop/runtime_ready/README.md` — persistent intake contract for already-runtime-ready assets before they become Godot content authority
 - `custodian/tools/pipelines/runtime_ready_assets.py` — conflict-safe router from the persistent runtime-ready inbox into organized `res://content/` targets, with archives and receipts
+- `custodian/tools/assets/asset.py` — preferred Asset Pipeline V2 CLI; semantic family planning delegates static and animated execution to mature backends
+- `custodian/tools/validation/asset_pipeline_v2_smoke.py` — isolated V2 safety, replacement, rollback, delegation, and status regression suite
 - `custodian/tools/pipelines/watch_runtime_ready_assets.sh` — optional inotify watcher that applies completed runtime-ready drops continuously
 - `custodian/tools/validation/runtime_ready_asset_pipeline_smoke.py` — focused validation for dry-run, routing, archiving, conflict protection, and explicit replacement
 - `custodian/tools/balance/fabrication_balance_pipeline.py` — deterministic offline fabrication/resource simulation pipeline that reads live fab recipes plus scenario JSON and writes a Markdown balance report with JSON-only proposed changes.

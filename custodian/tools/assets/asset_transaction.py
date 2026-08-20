@@ -25,6 +25,8 @@ class TransactionRecord:
     created_targets: list[Path] = field(default_factory=list)
     replaced_targets: list[Path] = field(default_factory=list)
     backups: dict[Path, Path] = field(default_factory=dict)
+    catalog_backup: bytes | None = None
+    archived_inputs: dict[Path, Path] = field(default_factory=dict)
 
 
 def new_job_id() -> str:
@@ -49,30 +51,29 @@ def begin_transaction(
 
     for pa in planned_assets:
         target = project_dir / pa.target_relative_path
-        if target.exists() and pa.replacement:
-            backup = staging_dir / target.name
+        if target.exists() and pa.operation.value == "replace":
+            backup = staging_dir / "backups" / pa.target_relative_path
+            backup.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(target, backup)
             record.backups[target] = backup
             record.replaced_targets.append(target)
 
+    catalog = project_dir / "content/metadata/assets/generated/asset_catalog.generated.json"
+    if catalog.exists():
+        record.catalog_backup = catalog.read_bytes()
     return record, staging_dir
 
 
-def commit_transaction(record: TransactionRecord, project_dir: Path) -> None:
-    """Write the transaction journal."""
+def commit_transaction(record: TransactionRecord, project_dir: Path, receipt: dict) -> None:
+    """Write a repo-relative unified transaction receipt."""
     log_dir = project_dir / "asset_drop" / "logs"
     log_dir.mkdir(parents=True, exist_ok=True)
     log_path = log_dir / f"{record.job_id}.json"
 
-    data = {
-        "job_id": record.job_id,
-        "timestamp": record.timestamp,
-        "staged_files": [str(p) for p in record.staged_files],
-        "created_targets": [str(p) for p in record.created_targets],
-        "replaced_targets": [str(p) for p in record.replaced_targets],
-        "backups": {str(k): str(v) for k, v in record.backups.items()},
-    }
-    log_path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+    log_path.write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8")
+    staging_dir = project_dir / "asset_drop" / "staging" / record.job_id
+    if staging_dir.exists():
+        shutil.rmtree(staging_dir)
 
 
 def rollback_transaction(record: TransactionRecord, project_dir: Path) -> None:
@@ -84,6 +85,18 @@ def rollback_transaction(record: TransactionRecord, project_dir: Path) -> None:
     for target, backup in record.backups.items():
         if backup.exists():
             shutil.copy2(backup, target)
+
+    catalog = project_dir / "content/metadata/assets/generated/asset_catalog.generated.json"
+    if record.catalog_backup is not None:
+        catalog.parent.mkdir(parents=True, exist_ok=True)
+        catalog.write_bytes(record.catalog_backup)
+    elif catalog.exists():
+        catalog.unlink()
+
+    for original, archived in record.archived_inputs.items():
+        if archived.exists():
+            original.parent.mkdir(parents=True, exist_ok=True)
+            shutil.move(str(archived), str(original))
 
     staging_dir = project_dir / "asset_drop" / "staging" / record.job_id
     if staging_dir.exists():

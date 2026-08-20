@@ -56,9 +56,16 @@ For the full content-root domain map, see `res://content/README.md`.
 - `legacy/` folders are historical or compatibility surfaces. Keep them local to the feature they explain, and document why they are retained in a local README when possible.
 - Painterly world backdrops and parallax plates belong under `content/backgrounds/<destination>/`; if they have real Aseprite sources, those sources mirror that path under `content/_aseprite/backgrounds/<destination>/`. Do not create artificial `.aseprite` files for generated PNG plates.
 
-## Persistent Runtime-Ready Drop
+## Preferred Asset Intake
 
-Use `custodian/asset_drop/runtime_ready/inbox/` for new assets that are already ready for
+For registered production families, use the Godot-ignored
+`custodian/asset_drop/inbox/<family>/` surface and the `asset plan`, `asset ingest`, and
+`asset status` commands. Asset Pipeline V2 owns semantic naming/routing and delegates
+execution to the mature backends. Its current production kind support is `world_prop`.
+
+## Direct Runtime-Ready Backend
+
+Expert workflows may use `custodian/asset_drop/runtime_ready/inbox/` for assets already ready for
 Godot import. This intake lives outside `res://` and maps mirrored inbox paths into
 `res://content/`:
 

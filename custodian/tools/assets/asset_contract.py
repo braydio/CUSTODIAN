@@ -71,36 +71,70 @@ def load_all_families(directory: Path | None = None) -> dict[str, AssetFamilyCon
 
 
 def _parse_family(raw: dict[str, Any]) -> AssetFamilyContract:
+    if not isinstance(raw, dict):
+        raise ValueError("family contract root must be an object")
     schema = raw.get("schema")
     if schema != SCHEMA_VERSION:
         raise ValueError(f"Unknown schema '{schema}', expected '{SCHEMA_VERSION}'")
 
-    states_raw = raw.get("states", {})
+    def required_text(container: dict, key: str, context: str) -> str:
+        value = container.get(key)
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError(f"{context}.{key} must be a non-empty string")
+        return value
+
+    family_id = required_text(raw, "id", "family")
+    kind = required_text(raw, "kind", "family")
+    runtime = raw.get("runtime")
+    canvas = raw.get("canvas")
+    if not isinstance(runtime, dict) or not isinstance(canvas, dict):
+        raise ValueError("runtime and canvas must be objects")
+    runtime_domain = required_text(runtime, "domain", "runtime")
+    runtime_owner = required_text(runtime, "owner", "runtime")
+    width, height = canvas.get("width"), canvas.get("height")
+    if not isinstance(width, int) or isinstance(width, bool) or width <= 0:
+        raise ValueError("canvas.width must be a positive integer")
+    if not isinstance(height, int) or isinstance(height, bool) or height <= 0:
+        raise ValueError("canvas.height must be a positive integer")
+    direction = required_text(raw, "direction_policy", "family")
+    if direction not in {"omni", "n", "ne", "e", "se", "s", "sw", "w", "nw", "4dir", "8dir"}:
+        raise ValueError(f"unsupported direction_policy '{direction}'")
+    states_raw = raw.get("states")
+    if not isinstance(states_raw, dict) or not states_raw:
+        raise ValueError("states must be a non-empty object")
     states: dict[str, AssetStateContract] = {}
     for sid, sdata in states_raw.items():
+        if not isinstance(sid, str) or not sid or not isinstance(sdata, dict):
+            raise ValueError("state ids must be non-empty strings and state values must be objects")
         states[sid] = AssetStateContract(
             id=sid,
-            layer=sdata.get("layer", "body"),
-            action_group=sdata.get("action_group", "interaction"),
-            variant=sdata.get("variant", sid),
+            layer=required_text(sdata, "layer", f"states.{sid}"),
+            action_group=required_text(sdata, "action_group", f"states.{sid}"),
+            variant=required_text(sdata, "variant", f"states.{sid}"),
             required=sdata.get("required", False),
             recommended=sdata.get("recommended", False),
             animation=sdata.get("animation", False),
             fps=sdata.get("fps"),
         )
 
-    runtime = raw.get("runtime", {})
-    canvas = raw.get("canvas", {})
+    aliases = raw.get("aliases", {})
+    if not isinstance(aliases, dict):
+        raise ValueError("aliases must be an object")
+    for alias, target in aliases.items():
+        if not isinstance(alias, str) or not alias or target not in states:
+            raise ValueError(f"alias '{alias}' targets unknown state '{target}'")
+    consumers = raw.get("consumers", [])
+    if not isinstance(consumers, list):
+        raise ValueError("consumers must be an array")
+    for index, consumer in enumerate(consumers):
+        if not isinstance(consumer, dict):
+            raise ValueError(f"consumer {index} must be an object")
+        required_text(consumer, "type", f"consumers[{index}]")
+        required_text(consumer, "path", f"consumers[{index}]")
 
     return AssetFamilyContract(
-        id=raw["id"],
-        kind=raw.get("kind", "world_prop"),
-        runtime_domain=runtime.get("domain", "sprites/props"),
-        runtime_owner=runtime.get("owner", raw["id"]),
-        frame_width=canvas.get("width", 128),
-        frame_height=canvas.get("height", 96),
-        direction_policy=raw.get("direction_policy", "omni"),
+        id=family_id, kind=kind, runtime_domain=runtime_domain, runtime_owner=runtime_owner,
+        frame_width=width, frame_height=height, direction_policy=direction,
         states=states,
-        aliases=raw.get("aliases", {}),
-        consumers=tuple(raw.get("consumers", [])),
+        aliases=aliases, consumers=tuple(consumers),
     )

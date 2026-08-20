@@ -1,0 +1,73 @@
+{
+  "schema": "custodian.asset_ingest_job.v1",
+  "job_id": "job_20260820T063604Z_3cb4253e",
+  "timestamp": "2026-08-20T06:36:04.967221+00:00",
+  "family": "field_fabricator_mk1",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/field_fabricator_mk1/active.png",
+      "sha256": "c674b2e735e869ec66335b9df35e32901bd3a3f5f06757c075aaaef8f0e1a838"
+    },
+    {
+      "path": "asset_drop/inbox/field_fabricator_mk1/glow.png",
+      "sha256": "3a876f0deef85073f444094364c2fec61a77200d3d8809a44f4e4957c84d54fc"
+    },
+    {
+      "path": "asset_drop/inbox/field_fabricator_mk1/idle.png",
+      "sha256": "e882738ffc7a6b216610ab5ab7531f3ec64530835522059324c328241ebee97e"
+    }
+  ],
+  "assets": [
+    {
+      "state": "active",
+      "semantic_identity": [
+        "field_fabricator_mk1",
+        "world_prop",
+        "body",
+        "interaction",
+        "fabricate",
+        "omni"
+      ],
+      "operation": "duplicate",
+      "backend": "sprite_ingest",
+      "output": "content/sprites/environment/props/field_fabricator_mk1/runtime/body/field_fabricator_mk1__body__interaction__fabricate__omni__4f__128x96.png",
+      "output_sha256": "c674b2e735e869ec66335b9df35e32901bd3a3f5f06757c075aaaef8f0e1a838"
+    },
+    {
+      "state": "glow",
+      "semantic_identity": [
+        "field_fabricator_mk1",
+        "world_prop",
+        "fx",
+        "interaction",
+        "powered_glow",
+        "omni"
+      ],
+      "operation": "duplicate",
+      "backend": "runtime_ready",
+      "output": "content/sprites/environment/props/field_fabricator_mk1/runtime/fx/field_fabricator_mk1__fx__interaction__powered_glow__omni__1f__128x96.png",
+      "output_sha256": "3a876f0deef85073f444094364c2fec61a77200d3d8809a44f4e4957c84d54fc"
+    },
+    {
+      "state": "idle",
+      "semantic_identity": [
+        "field_fabricator_mk1",
+        "world_prop",
+        "body",
+        "interaction",
+        "idle",
+        "omni"
+      ],
+      "operation": "duplicate",
+      "backend": "runtime_ready",
+      "output": "content/sprites/environment/props/field_fabricator_mk1/runtime/body/field_fabricator_mk1__body__interaction__idle__omni__1f__128x96.png",
+      "output_sha256": "e882738ffc7a6b216610ab5ab7531f3ec64530835522059324c328241ebee97e"
+    }
+  ],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation": [],
+  "result": "success"
+}

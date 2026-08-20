@@ -30,6 +30,7 @@ if str(ASSETS_DIR) not in sys.path:
 
 from asset_contract import AssetFamilyContract, load_all_families, SCHEMA_VERSION
 from asset_plan import generate_plan, PlannedAsset, AssetPlan
+from asset_plan import AssetOperation
 from asset_status import get_family_status, FamilyStatus
 from asset_doctor import run_doctor
 from asset_inspector import inspect_png
@@ -65,8 +66,7 @@ def render_plan(plan: AssetPlan) -> None:
             print(f"    {a.target_relative_path}")
             print(f"    {a.canonical_filename}")
             print(f"    backend: {a.backend}")
-            if a.replacement:
-                print(f"    ** REPLACEMENT **")
+            print(f"    operation: {a.operation.value}")
             print()
         else:
             print(f"  {a.source_path.name}")
@@ -106,6 +106,14 @@ def render_status(status: FamilyStatus) -> None:
         for c in status.consumers:
             path = c.get("path", "?")
             print(f"    {path}")
+
+    print("\n  state lifecycle")
+    for sid, state in status.states.items():
+        print(f"    {sid}: SOURCE_PENDING {'yes' if state.source_pending else 'no'} | "
+              f"ART_PRESENT {'yes' if state.art_present else 'no'} | "
+              f"IMPORTED {'yes' if state.imported else 'no'} | "
+              f"BOUND {'yes' if state.bound else 'no'} | "
+              f"RUNTIME_VERIFIED {'yes' if state.runtime_verified else 'no'}")
 
     print(f"\n  production completeness: {status.completeness}")
     print()
@@ -182,6 +190,18 @@ def cmd_ingest(args, families: dict) -> int:
         print("Plan has errors or ambiguous assets. Aborting.")
         return 2
 
+    if args.dry_run:
+        print("\n(dry run — no transaction started and no files written)")
+        return 0
+
+    if any(a.operation == AssetOperation.REPLACE for a in plan.assets) and not args.replace:
+        print("Replacement requires explicit --replace. Aborting.")
+        return 2
+
+    if not plan.assets:
+        print(f"No pending intake files for {fam.id}.")
+        return 0
+
     if not args.yes:
         answer = input("Apply this plan? [y/N] ").strip().lower()
         if answer not in ("y", "yes"):
@@ -196,32 +216,75 @@ def cmd_ingest(args, families: dict) -> int:
     for planned in plan.assets:
         if planned.backend == "runtime_ready":
             from adapters.runtime_ready import stage_asset
-            result = stage_asset(planned, PROJECT_DIR, dry_run=args.dry_run, replace=args.replace)
+            result = stage_asset(planned, PROJECT_DIR, replace=args.replace, work_dir=staging)
         elif planned.backend == "sprite_ingest":
             from adapters.sprite_ingest import stage_asset
-            result = stage_asset(planned, PROJECT_DIR, dry_run=args.dry_run, replace=args.replace)
+            result = stage_asset(planned, PROJECT_DIR, replace=args.replace, work_dir=staging)
         else:
             print(f"  Unknown backend: {planned.backend}")
             ok = False
             continue
 
         if result.ok:
-            record.created_targets.extend(result.outputs)
+            if result.operation == AssetOperation.CREATE:
+                record.created_targets.extend(result.outputs)
             print(f"  OK: {planned.canonical_filename}")
         else:
             for err in result.errors:
                 print(f"  FAIL: {err}")
             ok = False
 
-    if args.dry_run:
-        print("\n(dry run — no files written)")
-        return 0
-
     if ok:
-        commit_transaction(record, PROJECT_DIR)
-        print(f"\nIngest complete. Job: {job_id}")
-        return 0
-    else:
+        import shutil
+        from asset_catalog import CatalogEntry, file_hash, load_catalog, save_catalog, update_catalog_entry
+        catalog = load_catalog(PROJECT_DIR / "content/metadata/assets/generated/asset_catalog.generated.json")
+        assets_receipt = []
+        for planned in plan.assets:
+            output = PROJECT_DIR / planned.target_relative_path
+            if not output.exists():
+                ok = False
+                print(f"  FAIL: backend output missing: {planned.target_relative_path}")
+                break
+            update_catalog_entry(catalog, fam.id, planned.state_id, CatalogEntry(
+                semantic_identity=list(planned.key.semantic_identity),
+                path=planned.target_relative_path.as_posix(), frames=planned.key.frames,
+                frame_size=[planned.key.frame_width, planned.key.frame_height], sha256=file_hash(output),
+            ))
+            assets_receipt.append({
+                "state": planned.state_id, "semantic_identity": list(planned.key.semantic_identity),
+                "operation": planned.operation.value, "backend": planned.backend,
+                "output": planned.target_relative_path.as_posix(), "output_sha256": file_hash(output),
+            })
+        import_result = None
+        if ok and args.godot_import:
+            from adapters.godot_import import run_godot_import
+            import_result = run_godot_import(PROJECT_DIR)
+            ok = import_result.ok
+            if not ok:
+                print(f"  FAIL: {import_result.detail}")
+        if ok:
+            save_catalog(catalog, PROJECT_DIR / "content/metadata/assets/generated/asset_catalog.generated.json")
+            archive_root = PROJECT_DIR / "asset_drop/archive" / job_id / fam.id
+            for planned in plan.assets:
+                archive = archive_root / planned.source_path.name
+                archive.parent.mkdir(parents=True, exist_ok=True)
+                shutil.move(str(planned.source_path), str(archive))
+                record.archived_inputs[planned.source_path] = archive
+            receipt = {
+                "schema": "custodian.asset_ingest_job.v1", "job_id": job_id,
+                "timestamp": record.timestamp, "family": fam.id,
+                "inputs": [{"path": p.source_path.relative_to(PROJECT_DIR).as_posix(),
+                            "sha256": __import__("hashlib").sha256((record.archived_inputs[p.source_path]).read_bytes()).hexdigest()}
+                           for p in plan.assets],
+                "assets": assets_receipt,
+                "godot_import": {"attempted": bool(args.godot_import),
+                                 "ok": import_result.ok if import_result else None},
+                "validation": [], "result": "success",
+            }
+            commit_transaction(record, PROJECT_DIR, receipt)
+            print(f"\nIngest complete. Job: {job_id}")
+            return 0
+    if not ok:
         from asset_transaction import rollback_transaction
         rollback_transaction(record, PROJECT_DIR)
         print(f"\nIngest failed. Rolled back job: {job_id}")
@@ -259,12 +322,21 @@ def cmd_new(args, families: dict) -> int:
             return 2
         w, h = int(parts[0]), int(parts[1])
 
+    from asset_router import load_kind_schemas
+    kind_schema = load_kind_schemas().get(args.kind)
+    if kind_schema is None:
+        print(f"Unsupported asset kind: {args.kind}")
+        return 2
+    if args.kind != "world_prop":
+        print(f"Asset V2 production support is currently limited to world_prop (got {args.kind})")
+        return 2
+    runtime_domain = "sprites/environment/props"
     contract = {
         "schema": SCHEMA_VERSION,
         "id": fid,
         "kind": args.kind,
         "runtime": {
-            "domain": "sprites/props",
+            "domain": runtime_domain,
             "owner": fid,
         },
         "canvas": {"width": w, "height": h},
@@ -355,6 +427,7 @@ def main() -> int:
     p_ingest.add_argument("--yes", "-y", action="store_true")
     p_ingest.add_argument("--dry-run", action="store_true")
     p_ingest.add_argument("--replace", action="store_true")
+    p_ingest.add_argument("--godot-import", action="store_true")
 
     p_status = sub.add_parser("status", help="Show family production status")
     p_status.add_argument("family", nargs="?")

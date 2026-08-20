@@ -7,7 +7,10 @@ Use this when you need to answer:
 3. How do I ingest or build it into the runtime?
 4. How do I prove the runtime sees the result?
 
-The existing sprite pipeline is the authority. Do not create a second asset tree. `_pipeline/` is intake,
+Asset Pipeline V2 is the preferred human intake for registered families: human-named
+files enter `asset_drop/inbox/<family>/`, then semantic planning delegates animated
+work to the existing sprite pipeline. The direct commands in this cheatsheet remain
+the specialized/expert backend workflow. Do not create a second asset tree. `_pipeline/` is intake,
 debug, archive, and request planning only; runtime scenes should consume files under the normal
 `content/sprites/enemies/<owner>/runtime/...` paths for enemies, `content/sprites/<owner>/runtime/...` for allied actors, and the documented specialized runtime domains for other sprite classes.
 

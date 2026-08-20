@@ -1,69 +1,53 @@
-"""Sprite ingest adapter — wraps the existing sprite pipeline for animated assets."""
-
+"""Animated sprite adapter delegating manifests to the mature Godot ingest backend."""
 from __future__ import annotations
-
-import hashlib
+import json
 import shutil
+import subprocess
 import sys
-from dataclasses import dataclass
 from pathlib import Path
 
 ASSETS_DIR = Path(__file__).resolve().parents[1]
 if str(ASSETS_DIR) not in sys.path:
     sys.path.insert(0, str(ASSETS_DIR))
 
-from asset_plan import PlannedAsset
+from asset_plan import AssetOperation, PlannedAsset
+from adapters.backend_result import BackendResult
 
 
-@dataclass
-class BackendResult:
-    ok: bool
-    outputs: list[Path]
-    errors: list[str]
+def build_manifest(planned: PlannedAsset, staged_source: Path) -> dict:
+    output = planned.target_relative_path.relative_to("content/sprites").as_posix()
+    manifest = {
+        "source": staged_source.name,
+        "mode": "strip" if planned.inspection.layout.value == "horizontal_strip" else "grid",
+        "frame_size": [planned.inspection.frame_width, planned.inspection.frame_height],
+        "outputs": [{"path": output, "layout": "horizontal_strip"}],
+        "auto_mirror": False,
+    }
+    if planned.inspection.layout.value == "grid":
+        manifest.update(columns=planned.inspection.columns, rows=planned.inspection.rows)
+    return manifest
 
 
-def stage_asset(
-    planned: PlannedAsset,
-    project_dir: Path,
-    *,
-    dry_run: bool = False,
-    replace: bool = False,
-) -> BackendResult:
-    """Stage an animated asset to its runtime target.
-
-    For multi-frame assets, copies the source as-is to the canonical location.
-    The existing sprite pipeline (generate_inbox_manifests -> ingest -> ingest_runtime)
-    handles frame splitting when invoked separately.
-
-    This adapter provides the V2 planning/orchestration layer and delegates
-    the heavy lifting to existing backends for actual frame processing.
-    """
+def stage_asset(planned: PlannedAsset, project_dir: Path, *, dry_run: bool = False,
+                replace: bool = False, work_dir: Path | None = None) -> BackendResult:
     target = project_dir / planned.target_relative_path
-    source = planned.source_path
-
-    if target.exists() and not replace:
-        h_src = _hash(source)
-        h_tgt = _hash(target)
-        if h_src == h_tgt:
-            return BackendResult(ok=True, outputs=[target], errors=[])
-        if not planned.replacement:
-            return BackendResult(
-                ok=False,
-                outputs=[],
-                errors=[f"target exists with different content: {target} (use --replace)"],
-            )
-
+    if planned.operation == AssetOperation.CONFLICT:
+        return BackendResult(False, planned.operation, [], [f"unsafe target conflict: {target}"])
+    if planned.operation == AssetOperation.REPLACE and not replace:
+        return BackendResult(False, planned.operation, [], [f"replacement requires --replace: {target}"])
+    if planned.operation == AssetOperation.DUPLICATE:
+        return BackendResult(True, planned.operation, [target], [])
     if dry_run:
-        return BackendResult(ok=True, outputs=[target], errors=[])
-
-    target.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(source, target)
-
-    return BackendResult(ok=True, outputs=[target], errors=[])
-
-
-def _hash(path: Path) -> str:
-    import hashlib
-    h = hashlib.sha256()
-    h.update(path.read_bytes())
-    return h.hexdigest()
+        return BackendResult(True, planned.operation, [target], [])
+    if work_dir is None:
+        return BackendResult(False, planned.operation, [], ["sprite backend requires transaction staging"])
+    staged_source = work_dir / planned.canonical_filename
+    manifest_path = staged_source.with_suffix(".json")
+    shutil.copy2(planned.source_path, staged_source)
+    manifest_path.write_text(json.dumps(build_manifest(planned, staged_source), indent=2) + "\n", encoding="utf-8")
+    command = [sys.executable, str(project_dir / "tools/pipelines/ingest.py"), "--manifest", str(manifest_path), "--no-mirror"]
+    result = subprocess.run(command, cwd=project_dir.parent, capture_output=True, text=True, check=False)
+    if result.returncode != 0 or not target.exists():
+        detail = (result.stderr or result.stdout or "sprite ingest produced no output").strip()
+        return BackendResult(False, planned.operation, [], [detail[-1000:]])
+    return BackendResult(True, planned.operation, [target], [])

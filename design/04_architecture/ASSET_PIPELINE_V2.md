@@ -1,6 +1,6 @@
 # Asset Pipeline V2 — Unified Asset Intake System
 
-**Status:** Active (Milestones 1-4 complete)
+**Status:** Active implementation, hardened world_prop workflow; broader kinds and full backend rollback deferred
 **Scope:** Orchestration layer above existing backends
 **Authority:** This document + `custodian/tools/assets/`
 
@@ -271,6 +271,11 @@ On failure after commit:
 2. Restore replaced targets from backups
 3. Clean staging directory
 
+Only outputs directly declared by the V2 plan, the generated catalog, and archived
+human inputs are covered. Side effects of specialized post-process hooks are not yet
+fully transactional. Pre-existing duplicate outputs are never recorded as creates and
+therefore are never deleted during rollback.
+
 ---
 
 ## Provenance
@@ -282,15 +287,12 @@ Each job logs to `asset_drop/logs/job_<id>.json`:
   "job_id": "job_20260819T120000Z_abc12345",
   "timestamp": "2026-08-19T12:00:00Z",
   "family": "field_fabricator_mk1",
-  "inputs": ["idle.png", "active.png", "glow.png"],
-  "input_hashes": { "idle.png": "sha256...", ... },
-  "canonical_outputs": [
-    "content/sprites/.../field_fabricator_mk1__body__interaction__idle__omni__1f__128x96.png",
-    ...
-  ],
-  "backend": "runtime_ready",
-  "godot_import": "succeeded",
-  "result": "ok"
+  "schema": "custodian.asset_ingest_job.v1",
+  "inputs": [{"path": "asset_drop/inbox/field_fabricator_mk1/idle.png", "sha256": "..."}],
+  "assets": [{"state": "idle", "operation": "create", "backend": "runtime_ready",
+              "output": "content/sprites/...png", "output_sha256": "..."}],
+  "godot_import": {"attempted": false, "ok": null},
+  "result": "success"
 }
 ```
 
@@ -309,7 +311,7 @@ Each job logs to `asset_drop/logs/job_<id>.json`:
       "states": {
         "idle": {
           "semantic_identity": ["field_fabricator_mk1", "world_prop", "body", "interaction", "idle", "omni"],
-          "path": "sprites/environment/props/field_fabricator_mk1/runtime/body/...",
+          "path": "content/sprites/environment/props/field_fabricator_mk1/runtime/body/...",
           "frames": 1,
           "frame_size": [128, 96],
           "sha256": "..."
@@ -336,6 +338,16 @@ Each job logs to `asset_drop/logs/job_<id>.json`:
 | `dryjson`, `runjson`, `runsprite`, `opingest` aliases | Preserved |
 
 The new `asset` command is now the **preferred** human interface.
+
+`asset_drop/.gdignore` keeps all human inbox, staging, archive, and receipt data
+outside Godot resource authority. Successful V2 inputs move to
+`asset_drop/archive/<job_id>/<family>/`; dry-run, ambiguity, conflict, and failure do
+not archive them. `asset ingest --godot-import` explicitly runs headless import.
+
+Status is layered: `SOURCE_PENDING`, `ART_PRESENT`, `IMPORTED`, `BOUND`, and
+`RUNTIME_VERIFIED`. Required completeness uses catalog-backed runtime art, never inbox
+presence. `BOUND` requires a declared consumer to reference the canonical `res://`
+path; runtime verification requires explicit validation evidence.
 
 ---
 
@@ -375,6 +387,7 @@ content/sprites/environment/props/field_fabricator_mk1/runtime/
 3. **No auto-wiring of Godot scenes** — consumer binding remains manual
 4. **Transaction rollback limited to V2-controlled outputs** — GDScript post-process hooks not yet transactional
 5. **No watch mode** — `asset watch` deferred to Milestone 5
+6. **Production kind support is world_prop only** — unsupported kinds fail clearly
 
 ---
 

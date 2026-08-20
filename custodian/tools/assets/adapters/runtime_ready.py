@@ -1,60 +1,29 @@
-"""Runtime-ready adapter — wraps the existing runtime_ready_assets.py backend."""
-
+"""Runtime-ready adapter delegating execution to the mature backend."""
 from __future__ import annotations
-
-import hashlib
-import shutil
 import sys
-from dataclasses import dataclass
 from pathlib import Path
 
 ASSETS_DIR = Path(__file__).resolve().parents[1]
-if str(ASSETS_DIR) not in sys.path:
-    sys.path.insert(0, str(ASSETS_DIR))
+PIPELINES_DIR = ASSETS_DIR.parent / "pipelines"
+for directory in (ASSETS_DIR, PIPELINES_DIR):
+    if str(directory) not in sys.path:
+        sys.path.insert(0, str(directory))
 
-from asset_plan import PlannedAsset
-
-
-@dataclass
-class BackendResult:
-    ok: bool
-    outputs: list[Path]
-    errors: list[str]
+from asset_plan import AssetOperation, PlannedAsset
+from adapters.backend_result import BackendResult
+from runtime_ready_assets import route_asset
 
 
-def stage_asset(
-    planned: PlannedAsset,
-    project_dir: Path,
-    *,
-    dry_run: bool = False,
-    replace: bool = False,
-) -> BackendResult:
-    """Stage a single-frame or pre-processed asset to its runtime target."""
+def stage_asset(planned: PlannedAsset, project_dir: Path, *, dry_run: bool = False,
+                replace: bool = False, work_dir: Path | None = None) -> BackendResult:
     target = project_dir / planned.target_relative_path
-    source = planned.source_path
-
-    if target.exists() and not replace:
-        h_src = _hash(source)
-        h_tgt = _hash(target)
-        if h_src == h_tgt:
-            return BackendResult(ok=True, outputs=[target], errors=[])
-        if not planned.replacement:
-            return BackendResult(
-                ok=False,
-                outputs=[],
-                errors=[f"target exists with different content: {target} (use --replace)"],
-            )
-
-    if dry_run:
-        return BackendResult(ok=True, outputs=[target], errors=[])
-
-    target.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(source, target)
-
-    return BackendResult(ok=True, outputs=[target], errors=[])
-
-
-def _hash(path: Path) -> str:
-    h = hashlib.sha256()
-    h.update(path.read_bytes())
-    return h.hexdigest()
+    if planned.operation == AssetOperation.CONFLICT:
+        return BackendResult(False, planned.operation, [], [f"unsafe target conflict: {target}"])
+    if planned.operation == AssetOperation.REPLACE and not replace:
+        return BackendResult(False, planned.operation, [], [f"replacement requires --replace: {target}"])
+    if planned.operation == AssetOperation.DUPLICATE:
+        return BackendResult(True, planned.operation, [target], [])
+    result = route_asset(planned.source_path, target, apply=not dry_run, replace=replace)
+    if result.status == "rejected":
+        return BackendResult(False, planned.operation, [], [result.detail])
+    return BackendResult(True, planned.operation, [target], [])

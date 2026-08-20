@@ -218,6 +218,12 @@ def _route_source(source: Path, targets: list[Path], *, apply: bool, replace: bo
     return ("replaced", "replaced existing target files") if conflicts else ("copied", "copied to runtime content")
 
 
+def route_asset(source: Path, target: Path, *, apply: bool, replace: bool) -> RouteResult:
+    """Route one resolved asset through the legacy backend's safe write path."""
+    status, detail = _route_source(source, [target], apply=apply, replace=replace)
+    return RouteResult(str(source), [str(target)], status, detail, _sha256(source))
+
+
 def _archive_input(source: Path, relative: Path, archive_dir: Path) -> None:
     target = archive_dir / relative
     target.parent.mkdir(parents=True, exist_ok=True)

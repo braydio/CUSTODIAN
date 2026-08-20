@@ -50,10 +50,15 @@ def classify_input(
                 reason=f"state resolved ({reason}) but image layout is ambiguous",
                 inspection=inspection,
             )
+        confidence = (
+            ResolutionConfidence.INFERRED
+            if reason.startswith("alias ")
+            else ResolutionConfidence.EXACT
+        )
         return AssetResolution(
             family_id=family.id,
             state_id=state_id,
-            confidence=ResolutionConfidence.EXACT,
+            confidence=confidence,
             reason=reason,
             inspection=inspection,
         )
