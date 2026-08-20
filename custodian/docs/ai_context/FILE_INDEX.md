@@ -744,7 +744,6 @@ Last updated: 2026-08-20
 - `custodian/tools/validation/procgen_road_surface_roles_smoke.gd` — validates connected procgen road/parking generation, exact filled-surface role classification, one 32×32 base decal per road tile, manifest coverage, separate path rendering, streaming reconstruction, and no wall/impassable authority on roads; `procgen_placeholder_roads_smoke.gd` remains a compatibility entrypoint.
 - `custodian/content/tiles/roads_paths/runtime/roads/surface/road_surface_piece_manifest.game32.json` — active 15-piece road base-decal contract for center, cardinal edge, outer-corner, and inner-corner surface roles.
 - `custodian/tools/validation/procgen_playability_smoke.gd` — focused unit smoke for route distance bands, pocket clearance, and blocker-aware audit failure/success
-- `custodian/tools/validation/procgen_route_clearance_smoke.gd` — production-map smoke proving primary-route road presentation, hard-clearance foliage rejection, required reachability, and seven-tile post-decoration minimum width
 - `custodian/content/tiles/interiors/runtime/` — runtime-ready `32x32` constructed-interior floor and military wall tiles registered into procgen source lists by naming convention
 - `custodian/content/tiles/interiors/source/` — oversized/reference interior tile source art preserved for slicing or replacement
 - `custodian/content/tiles/interiors/README.md` — interior tile folder layout, runtime/source split, and remaining art needs

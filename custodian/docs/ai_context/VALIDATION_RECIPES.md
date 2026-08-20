@@ -691,7 +691,6 @@ godot --headless --script res://tools/validation/terrain_builder_smoke.gd
 godot --headless --script res://tools/validation/terrain_ballistics_smoke.gd
 godot --headless --script res://tools/validation/procgen_terrain_required_cells_smoke.gd
 godot --headless --path . --script res://tools/validation/procgen_playability_smoke.gd
-godot --headless --path . --script res://tools/validation/procgen_route_clearance_smoke.gd
 godot --headless --path . --script res://tools/validation/terrain_gameplay_art_usage_smoke.gd
 godot --headless --path . --script res://tools/validation/floor_value_clusters_smoke.gd
 godot --headless --path . --script res://tools/validation/procgen_combat_readability_smoke.gd
@@ -699,7 +698,7 @@ godot --headless --path . --script res://tools/validation/procgen_combat_readabi
 
 These commands validate TerrainBuilder determinism, ballistics/traversal
 metadata, bounded required-cell connectivity, playability distance/pocket
-classification, production route presentation and post-decoration clearance,
+classification and blocker-aware clearance,
 gameplay-pack art mappings, floor-value clustering, and combat readability.
 They are part of the default procgen suite.
 For production-sized contract rescue diagnostics, use the slow suite mode from the repository root:
@@ -1133,7 +1132,6 @@ godot --headless --path . --script res://tools/validation/elevated_world_asset_c
 godot --headless --path . --script res://tools/validation/elevated_world_seed_review.gd
 godot --headless --path . --script res://tools/validation/procgen_terrain_required_cells_smoke.gd
 godot --headless --path . --script res://tools/validation/procgen_road_surface_roles_smoke.gd
-godot --headless --path . --script res://tools/validation/procgen_route_clearance_smoke.gd
 ```
 
 The asset smoke proves the source/archive exclusion and stable TileSet semantics. The seed review prints five deterministic geometry summaries; it does not replace renderer-backed visual review.

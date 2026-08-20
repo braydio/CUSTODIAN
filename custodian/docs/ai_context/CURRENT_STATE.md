@@ -2,6 +2,10 @@
 
 ## Map + AI Coherence V1 (2026-08-20)
 
+- The deprecated `procgen_route_clearance_smoke.gd` road-building assertion is
+  retired from active validation. Mechanical route clearance and reachability
+  remain covered by `procgen_playability_smoke.gd` and the blocker-aware audit;
+  road-building presentation is no longer procgen acceptance authority.
 - Enemy behavior decisions use world/camp/spawn identity plus per-channel
   ordinals; patrol, ambient activity, and damage-loot authority no longer use
   wall-clock or state-duration seeds.

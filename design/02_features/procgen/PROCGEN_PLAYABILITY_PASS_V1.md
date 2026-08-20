@@ -161,8 +161,6 @@ the safe, reachable pocket geometry and edge anchors without new assets.
 cd custodian
 godot --headless --path . \
   --script res://tools/validation/procgen_playability_smoke.gd
-godot --headless --path . \
-  --script res://tools/validation/procgen_route_clearance_smoke.gd
 bash tools/validation/run_procgen_validation_suite.sh
 ```
 
