@@ -13,6 +13,7 @@ if str(ASSETS_DIR) not in sys.path:
 from asset_contract import AssetFamilyContract, load_all_families
 from asset_inspector import inspect_png
 from asset_classifier import classify_input
+from asset_catalog import file_hash, load_catalog
 
 
 @dataclass
@@ -31,8 +32,26 @@ def run_doctor(project_dir: Path) -> list[DoctorIssue]:
         _check_consumers(fam, project_dir, issues)
 
     _check_unprocessed_inbox(project_dir, families, issues)
+    _check_catalog(project_dir, families, issues)
 
     return issues
+
+
+def _check_catalog(project_dir: Path, families: dict[str, AssetFamilyContract], issues: list[DoctorIssue]) -> None:
+    catalog = load_catalog(project_dir / "content/metadata/assets/generated/asset_catalog.generated.json")
+    for family_id, family_data in catalog.get("families", {}).items():
+        if family_id not in families:
+            issues.append(DoctorIssue("error", f"catalog references unregistered family: {family_id}"))
+            continue
+        for state_id, entry in family_data.get("states", {}).items():
+            if state_id not in families[family_id].states:
+                issues.append(DoctorIssue("error", f"catalog references unknown state: {family_id}/{state_id}"))
+                continue
+            path = project_dir / str(entry.get("path", ""))
+            if not path.is_file():
+                issues.append(DoctorIssue("error", f"catalog output missing: {family_id}/{state_id}: {entry.get('path')}"))
+            elif entry.get("sha256") != file_hash(path):
+                issues.append(DoctorIssue("error", f"catalog hash mismatch: {family_id}/{state_id}: {entry.get('path')}"))
 
 
 def _check_inbox(fam: AssetFamilyContract, project_dir: Path, issues: list[DoctorIssue]) -> None:
