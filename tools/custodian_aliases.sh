@@ -66,12 +66,11 @@ matchpal() {
     --strength "$strength" --max-colors "$max_colors"
 }
 
-# -- Convert a spritesheet to pixel art frame-by-frame and reassemble it
-#    Filename must end in '__<frames>f__<size>', e.g. operator__run__8f__96
-#    Usage: pixelart <source> [output] [--frames N] [--size 96] [--colors 24] [--choose 1|2|3] [--force]
+# -- Convert single sprites or spritesheets to pixel art (crisp/balanced/clustered)
+#    Usage: pixelart <source> [--size 96] [--choose balanced] [--sheet] [--frames N] [--grid WxH]
 pixelart() {
   _update_usage "pixelart"
-  python3 "${CUSTODIAN_GODOT}/tools/art/spritesheet_pixelart.py" "$@"
+  python3 "${CUSTODIAN_GODOT}/tools/art/custodian_pixelart_converter.py" "$@"
 }
 
 # -- Batch-match all fast_strike_01 palettes to their fast_windup_01 counterparts

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bf3sk43dkxeja"
-path="res://.godot/imported/p9_custodian_sidearm__icon__hud__default__omni__1f__64.png-4e0025c1f2861672dcc533da0038eea6.ctex"
+uid="uid://55af7rigt05l"
+path="res://.godot/imported/grunt_draw_01_pixel_96x96_sheet.png-8ed76cd27f28a925b93c8d5254d5be89.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset_drop/runtime_ready/archive/20260705T100207.446031Z/weapons/p9_custodian_sidearm/runtime/portrait/p9_custodian_sidearm__icon__hud__default__omni__1f__64.png"
-dest_files=["res://.godot/imported/p9_custodian_sidearm__icon__hud__default__omni__1f__64.png-4e0025c1f2861672dcc533da0038eea6.ctex"]
+source_file="res://content/sprites/incoming/grunt_draw_01_pixel_96x96_sheet.png"
+dest_files=["res://.godot/imported/grunt_draw_01_pixel_96x96_sheet.png-8ed76cd27f28a925b93c8d5254d5be89.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bf3b2ae45hl8m"
-path="res://.godot/imported/p9_custodian_sidearm__item_card__inventory__default__omni__1f__256.png-7fa5b0e4253929001ad1e49aadb637c4.ctex"
+uid="uid://b1wuurhverlxm"
+path="res://.godot/imported/grunt_taunt_5f_96.png-14e1b7af5d15d049f29433f16e473f97.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset_drop/runtime_ready/archive/20260705T100207.446031Z/weapons/p9_custodian_sidearm/runtime/portrait/p9_custodian_sidearm__item_card__inventory__default__omni__1f__256.png"
-dest_files=["res://.godot/imported/p9_custodian_sidearm__item_card__inventory__default__omni__1f__256.png-7fa5b0e4253929001ad1e49aadb637c4.ctex"]
+source_file="res://content/sprites/incoming/grunt_taunt_5f_96.png"
+dest_files=["res://.godot/imported/grunt_taunt_5f_96.png-14e1b7af5d15d049f29433f16e473f97.ctex"]
 
 [params]
 
