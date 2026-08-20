@@ -245,10 +245,31 @@ func _definition_precedes(a: Dictionary, b: Dictionary) -> bool:
 func _create_ingress(record: Dictionary, map_instance: Node) -> Area2D:
 	var definition: RefCounted = record.get("definition") as RefCounted
 	var ingress_definition: RefCounted = record.get("ingress") as RefCounted
-	var ingress_script: Script = WORLD_INGRESS_SITE_SCRIPT
-	if str(record.get("identity")) == "forlorn_ritualant_underground":
-		ingress_script = ASH_BELL_LIFT_INGRESS_SITE_SCRIPT
-	var ingress := ingress_script.new() as Area2D
+	var ingress: Area2D = null
+	if not String(ingress_definition.site_scene_path).is_empty():
+		var site_scene := ResourceLoader.load(
+			ingress_definition.site_scene_path
+		) as PackedScene
+		if site_scene != null:
+			ingress = site_scene.instantiate() as Area2D
+		if (
+			ingress == null
+			or not ingress.has_method("configure_route")
+			or not ingress.has_method("configure_level")
+			or not ingress.has_method("apply_ingress_definition")
+		):
+			_last_errors.append(
+				"%s: custom site_scene_path must instantiate an Area2D-compatible WorldIngressSite"
+				% str(record.get("identity"))
+			)
+			if ingress != null:
+				ingress.free()
+			return null
+	else:
+		var ingress_script: Script = WORLD_INGRESS_SITE_SCRIPT
+		if str(record.get("identity")) == "forlorn_ritualant_underground":
+			ingress_script = ASH_BELL_LIFT_INGRESS_SITE_SCRIPT
+		ingress = ingress_script.new() as Area2D
 	if ingress == null:
 		return null
 	ingress.name = "%sIngressSite" % String(ingress_definition.ingress_id).to_pascal_case()

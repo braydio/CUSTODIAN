@@ -2,6 +2,7 @@
   "schema": "custodian.route_registry.v1",
   "definitions": [
     "res://content/routes/ash_bell/forlorn_ritualant_underground_route.json",
+    "res://content/routes/ash_bell/lower_quarter_route.json",
     "res://content/routes/sundered_keep/sundered_keep_route.json"
   ]
 }

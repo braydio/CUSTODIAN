@@ -4,7 +4,8 @@
 
 ## Implementation Status
 
-Current live status in `custodian/scenes/camera.gd`: approximately **80-85% implemented**.
+Current live authority is `custodian/game/world/camera.gd`. Values in this
+document are descriptive of that script, not an independent tuning source.
 
 Implemented in runtime:
 - smooth follow with weighted lerp
@@ -66,7 +67,7 @@ Camera2D (script: CameraController)
 Camera2D:
   - smoothing_enabled = true
   - smoothing_speed = 8.0
-  - zoom = Vector2(0.6, 0.6)
+  - zoom = Vector2(0.84, 0.84)
   - position = player.position
 ```
 
@@ -178,11 +179,12 @@ Each state modifies camera behavior:
 
 | State | Zoom | Smoothing | Bob | Offset |
 |-------|------|-----------|-----|--------|
-| EXPLORE | 0.6 | 0.1 | On | -40px Y |
-| COMBAT | 0.58 | 0.12 | Off | -30px Y |
-| HEAVY_ATTACK | 0.55 | 0.08 | Off | -20px Y |
-| HITSTUN | 0.65 | 0.15 | Off | -50px Y |
-| SECTOR_ENTRY | 0.65 | 0.08 | Off | -40px Y |
+| EXPLORE/idle | 0.84 base | 8.0 follow speed | On | -52px Y |
+| Moving | 0.90 | 8.0 follow speed | On | -52px Y |
+| Melee | 0.80 | 8.0 follow speed | Suppressed as state requires | -52px Y |
+| Heavy attack | 0.74 | transient hold 0.22s | Off | -52px Y |
+| Hitstun | 0.88 | transient hold 0.30s | Off | -52px Y |
+| Sector entry | 0.90 | state-driven | Off | -52px Y |
 
 ---
 
@@ -305,10 +307,17 @@ var threat_center = calculate_threat_centroid()
 
 | Mode | Zoom | Use Case |
 |------|------|----------|
-| TACTICAL | 0.7 | Large-scale exploration |
-| COMBAT | 0.6 | Normal gameplay |
-| HEAVY | 0.55 | Intense combat |
-| FOCUS | 0.5 | Zoomed view |
+| Base | 0.84 | Idle/exploration baseline |
+| Move | 0.90 | Ordinary traversal |
+| Interaction | 0.78 | Interaction focus |
+| Melee / melee move | 0.80 / 0.84 | Close combat |
+| Ranged / ranged move | 0.90 / 0.94 | Ranged stance and movement |
+| Heavy | 0.74 | Heavy-attack emphasis |
+| Hitstun | 0.88 | Damage response |
+| Sector entry | 0.90 | Map handoff |
+
+Ranged aim additionally applies a live `1.07` zoom multiplier and 32 px lead.
+Manual zoom is clamped to `0.1..1.5`.
 
 ### 7.2 Zoom Transitions
 
@@ -404,14 +413,14 @@ func _on_attack_frame(frame: int):
 
 ```gdscript
 # Base Settings
-const BASE_ZOOM = Vector2(0.6, 0.6)
+const BASE_ZOOM = Vector2(0.84, 0.84)
 const LOOKAHEAD_STRENGTH = 40.0  # pixels
 const LERP_SPEED = 0.1
 const BOB_STRENGTH = 2.0
 const BOB_FREQUENCY = 0.005
 
 # Off-center offset
-const PLAYER_OFFSET = Vector2(0, -40)
+const PLAYER_OFFSET = Vector2(0, -52)
 
 # Combat
 const ATTACK_PUSH_LIGHT = 10.0
@@ -446,10 +455,11 @@ Not big effects. This:
 
 ---
 
-## Next Steps
+## Runtime Authority And Follow-Up
 
-1. **Create CameraController.gd** - Drop-in script with all features
-2. **Wire to combat system** - Connect attack states to camera states
-3. **Test and tune** - Adjust values for feel
-
-The goal: **feels insanely good to play** — not "nice camera," but "can't play without it."
+`custodian/game/world/camera.gd` already implements the controller. Future
+tuning must change and validate that runtime file first, then update this design
+summary. Authored levels expose `get_camera_bounds()` and should compose normal
+traversal around the live base/move zoom and `Vector2(0,-52)` player offset;
+short presentation framing remains an explicit override, not ordinary route
+comprehension authority.

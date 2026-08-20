@@ -1,0 +1,48 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://game/world/levels/authored/ash_bell/west_gate_works/west_gate_works.gd" id="1"]
+[ext_resource type="Script" path="res://game/world/levels/authored_blockout_grid_2d.gd" id="2"]
+[ext_resource type="Script" path="res://game/world/levels/authored/ash_bell/common/civic_relay_2d.gd" id="3"]
+[ext_resource type="Script" path="res://game/world/levels/interactable_level_exit_2d.gd" id="4"]
+[sub_resource type="CircleShape2D" id="ExitShape"]
+radius = 40.0
+
+[node name="AshBellWestGateWorks" type="Node2D"]
+script = ExtResource("1")
+camera_bounds = Rect2(-1024, -768, 2048, 1536)
+draw_placeholder_grid = false
+[node name="UnderlayRoot" type="Node2D" parent="."]
+[node name="BackgroundRoot" type="Node2D" parent="."]
+[node name="PlayableRoot" type="Node2D" parent="."]
+[node name="BlockoutGrid" type="Node2D" parent="PlayableRoot"]
+script = ExtResource("2")
+[node name="PropsRoot" type="Node2D" parent="."]
+[node name="DynamicGates" type="Node2D" parent="."]
+[node name="ClosureSlab" type="AnimatableBody2D" parent="DynamicGates"]
+sync_to_physics = false
+[node name="Visual" type="Polygon2D" parent="DynamicGates/ClosureSlab"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DynamicGates/ClosureSlab"]
+[node name="OcclusionRoot" type="Node2D" parent="."]
+[node name="Collision" type="Node2D" parent="."]
+[node name="PathBoundaryCollision" type="StaticBody2D" parent="Collision"]
+[node name="Markers" type="Node2D" parent="."]
+[node name="Spawn_FromLowerQuarter" type="Marker2D" parent="Markers"]
+[node name="POIRoot" type="Node2D" parent="."]
+[node name="GateMotorRelay" type="Area2D" parent="POIRoot"]
+script = ExtResource("3")
+relay_id = &"west_gate_closure_motor"
+prompt_text = "REPAIR WEST GATE CLOSURE MOTOR"
+[node name="EventMarkers" type="Node2D" parent="."]
+[node name="PressureSpawn_GateMotor_01" type="Marker2D" parent="EventMarkers"]
+[node name="PressureSpawn_GateMotor_02" type="Marker2D" parent="EventMarkers"]
+[node name="EventRuntime" type="Node2D" parent="."]
+[node name="Exits" type="Node2D" parent="."]
+[node name="Exit_Backtrack" type="Area2D" parent="Exits"]
+script = ExtResource("4")
+exit_id = &"backtrack"
+prompt_text = "RETURN TO LOWER QUARTER"
+interaction_distance = 72.0
+arrival_guard_radius = 112.0
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Exits/Exit_Backtrack"]
+shape = SubResource("ExitShape")
+[node name="NavigationRoot" type="Node2D" parent="."]

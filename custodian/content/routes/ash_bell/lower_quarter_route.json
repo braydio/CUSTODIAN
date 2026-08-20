@@ -1,0 +1,40 @@
+{
+  "schema": "custodian.route_definition.v1",
+  "route_id": "ash_bell_lower_quarter",
+  "display_name": "Ash-Bell — Lower Quarter / Station IX",
+  "world_context": "campaign_region",
+  "default_profile": "production",
+  "tags": ["authored", "world_ingress", "ash_bell", "lower_quarter", "station_ix"],
+  "ingress": {
+    "ingress_id": "ash_bell_lower_quarter",
+    "prompt_text": "DESCEND TO THE LOWER QUARTER",
+    "interaction_distance": 72.0,
+    "route_profile": "production",
+    "site_scene_path": "res://game/world/approaches/ash_bell/lower_quarter/meridian_transit_ingress_site.tscn",
+    "placement": {
+      "strategy": "near_compound_ingress",
+      "priority": 120,
+      "minimum_spacing_tiles": 18,
+      "search_radius_tiles": 22,
+      "offset_candidates_tiles": [[18, -12], [-18, -12], [24, 4], [-24, 4]]
+    }
+  },
+  "nodes": [
+    {"node_id": "lower_quarter", "level_id": "ash_bell_lower_quarter"},
+    {"node_id": "west_gate_works", "level_id": "ash_bell_west_gate_works"},
+    {"node_id": "station_ix", "level_id": "ash_bell_station_ix"}
+  ],
+  "edges": [
+    {"edge_id": "enter_lower_quarter", "from_node_id": "@world_origin", "exit_id": "enter", "to_node_id": "lower_quarter", "target_spawn_id": "Spawn_FromWorld", "direction": "forward", "transition_style": "fade"},
+    {"edge_id": "lower_quarter_to_west_gate", "from_node_id": "lower_quarter", "exit_id": "west_gate", "to_node_id": "west_gate_works", "target_spawn_id": "Spawn_FromLowerQuarter", "direction": "lateral", "transition_style": "fade"},
+    {"edge_id": "west_gate_to_lower_quarter", "from_node_id": "west_gate_works", "exit_id": "backtrack", "to_node_id": "lower_quarter", "target_spawn_id": "Spawn_FromWestGate", "direction": "back", "transition_style": "fade"},
+    {"edge_id": "lower_quarter_to_station_ix", "from_node_id": "lower_quarter", "exit_id": "station_ix", "to_node_id": "station_ix", "target_spawn_id": "Spawn_FromLowerQuarter", "direction": "forward", "transition_style": "fade"},
+    {"edge_id": "station_ix_to_lower_quarter", "from_node_id": "station_ix", "exit_id": "backtrack", "to_node_id": "lower_quarter", "target_spawn_id": "Spawn_FromStationIX", "direction": "back", "transition_style": "fade"},
+    {"edge_id": "lower_quarter_exfil", "from_node_id": "lower_quarter", "exit_id": "return_world", "to_node_id": "@world_origin", "target_spawn_id": "", "direction": "exfil", "transition_style": "fade"}
+  ],
+  "profiles": [{
+    "profile_id": "production",
+    "entry_edge_id": "enter_lower_quarter",
+    "enabled_edge_ids": ["enter_lower_quarter", "lower_quarter_to_west_gate", "west_gate_to_lower_quarter", "lower_quarter_to_station_ix", "station_ix_to_lower_quarter", "lower_quarter_exfil"]
+  }]
+}

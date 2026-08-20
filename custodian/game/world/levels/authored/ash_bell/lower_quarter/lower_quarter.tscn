@@ -1,0 +1,84 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://game/world/levels/authored/ash_bell/lower_quarter/lower_quarter.gd" id="1"]
+[ext_resource type="Script" path="res://game/world/levels/authored_blockout_grid_2d.gd" id="2"]
+[ext_resource type="Script" path="res://game/world/levels/authored/ash_bell/common/civic_relay_2d.gd" id="3"]
+[ext_resource type="Script" path="res://game/world/levels/authored/ash_bell/common/gated_level_exit_2d.gd" id="4"]
+[ext_resource type="Script" path="res://game/world/levels/interactable_level_exit_2d.gd" id="5"]
+
+[sub_resource type="CircleShape2D" id="ExitShape"]
+radius = 40.0
+
+[node name="AshBellLowerQuarter" type="Node2D"]
+script = ExtResource("1")
+camera_bounds = Rect2(-2048, -1536, 4096, 3072)
+draw_placeholder_grid = false
+
+[node name="UnderlayRoot" type="Node2D" parent="."]
+[node name="BackgroundRoot" type="Node2D" parent="."]
+[node name="PlayableRoot" type="Node2D" parent="."]
+[node name="BlockoutGrid" type="Node2D" parent="PlayableRoot"]
+script = ExtResource("2")
+[node name="PropsRoot" type="Node2D" parent="."]
+[node name="StationIXFacade" type="Marker2D" parent="PropsRoot"]
+[node name="DynamicGates" type="Node2D" parent="."]
+[node name="EvacuationShutter" type="StaticBody2D" parent="DynamicGates"]
+[node name="Visual" type="Polygon2D" parent="DynamicGates/EvacuationShutter"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DynamicGates/EvacuationShutter"]
+[node name="StationIXInterlockGate" type="StaticBody2D" parent="DynamicGates"]
+[node name="Visual" type="Polygon2D" parent="DynamicGates/StationIXInterlockGate"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DynamicGates/StationIXInterlockGate"]
+[node name="DirectPersonnelCollapse" type="StaticBody2D" parent="DynamicGates"]
+[node name="Visual" type="Polygon2D" parent="DynamicGates/DirectPersonnelCollapse"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DynamicGates/DirectPersonnelCollapse"]
+[node name="OcclusionRoot" type="Node2D" parent="."]
+[node name="Collision" type="Node2D" parent="."]
+[node name="PathBoundaryCollision" type="StaticBody2D" parent="Collision"]
+[node name="Markers" type="Node2D" parent="."]
+[node name="Spawn_FromWorld" type="Marker2D" parent="Markers"]
+[node name="Spawn_FromWestGate" type="Marker2D" parent="Markers"]
+[node name="Spawn_FromStationIX" type="Marker2D" parent="Markers"]
+[node name="POIRoot" type="Node2D" parent="."]
+[node name="EvacAnnunciator" type="Area2D" parent="POIRoot"]
+script = ExtResource("3")
+relay_id = &"evac_annunciator"
+prompt_text = "REPAIR EVACUATION ANNUNCIATOR"
+[node name="GatePressureRelay" type="Area2D" parent="POIRoot"]
+script = ExtResource("3")
+relay_id = &"gate_pressure_relay"
+prompt_text = "RESTORE WEST GATE PRESSURE RELAY"
+[node name="StationIXTransitInterlock" type="Area2D" parent="POIRoot"]
+script = ExtResource("3")
+relay_id = &"station_ix_transit_interlock"
+prompt_text = "RESTORE STATION IX TRANSIT INTERLOCK"
+[node name="EventMarkers" type="Node2D" parent="."]
+[node name="PressureSpawn_Arcade_A" type="Marker2D" parent="EventMarkers"]
+[node name="PressureSpawn_Market_A" type="Marker2D" parent="EventMarkers"]
+[node name="PressureSpawn_WrongStreet_A" type="Marker2D" parent="EventMarkers"]
+[node name="PressureSpawn_AnswersCourt_A" type="Marker2D" parent="EventMarkers"]
+[node name="EventRuntime" type="Node2D" parent="."]
+[node name="Exits" type="Node2D" parent="."]
+[node name="Exit_ReturnWorld" type="Area2D" parent="Exits"]
+script = ExtResource("5")
+exit_id = &"return_world"
+prompt_text = "RETURN TO CAMPAIGN REGION"
+interaction_distance = 72.0
+arrival_guard_radius = 112.0
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Exits/Exit_ReturnWorld"]
+shape = SubResource("ExitShape")
+[node name="Exit_WestGateWorks" type="Area2D" parent="Exits"]
+script = ExtResource("4")
+exit_id = &"west_gate"
+prompt_text = "ENTER WEST GATE WORKS"
+interaction_distance = 72.0
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Exits/Exit_WestGateWorks"]
+shape = SubResource("ExitShape")
+[node name="Exit_StationIX" type="Area2D" parent="Exits"]
+script = ExtResource("4")
+exit_id = &"station_ix"
+prompt_text = "ENTER STATION IX"
+interaction_distance = 72.0
+arrival_guard_radius = 112.0
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Exits/Exit_StationIX"]
+shape = SubResource("ExitShape")
+[node name="NavigationRoot" type="Node2D" parent="."]

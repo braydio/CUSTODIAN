@@ -1,0 +1,12 @@
+{
+  "schema": "custodian.level_definition.v1",
+  "level_id": "ash_bell_west_gate_works",
+  "display_name": "Ash-Bell — West Gate Works",
+  "route_scene_path": "res://game/world/levels/authored/ash_bell/west_gate_works/west_gate_works.tscn",
+  "target_scene_path": "res://game/world/levels/authored/ash_bell/west_gate_works/west_gate_works.tscn",
+  "world_context": "campaign_region",
+  "presentation_profile": "gameplay",
+  "spawns": ["Spawn_FromLowerQuarter"],
+  "lifecycle": {"cache_policy": "snapshot_and_unload", "state_policy": "session"},
+  "tags": ["authored", "playable_map", "route_node", "ash_bell", "west_gate"]
+}
