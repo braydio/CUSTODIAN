@@ -19,7 +19,25 @@ The deterministic `ASCENT_FIELD` campaign world is presented as a bright, walkab
 
 Visual order is cold abyss haze, recognizable distant canopy, dark near-wall growth, deep chasm/void, cliff fascia, plateau floor, then roads, paths, props, actors, and effects. Walkable cells remain on the upper plane. Every exposed boundary uses the existing deterministic terrain semantics; this pass does not change topology.
 
-Gameplay terrain files are individual 32x32 PNGs under `content/tiles/mountain_cliffs/` and `content/tiles/terrain/runtime/chasm_bridge/`. IDs 44-59 and 100-114 are stable semantic TileSet IDs. The three runtime forest textures are 1536x1024 non-repeating compositions under `content/backgrounds/procgen/endless_forest/`. Explicit chasm sources and symbolic gap cells are split into connected regions; each meaningful region receives one centered haze/canopy/wall-growth stack clamped to `0.75–1.25` scale. Ordinary generated floor does not create forest presentation.
+Gameplay terrain files are individual 32x32 PNGs under `content/tiles/mountain_cliffs/` and `content/tiles/terrain/runtime/chasm_bridge/`. IDs 44-59 and 100-114 are stable semantic TileSet IDs. The three runtime forest textures are 1536x1024 non-repeating compositions under `content/backgrounds/procgen/endless_forest/`. Both generated-world and explicit-chasm configuration use one native-scale, camera-following haze/canopy/wall-growth stack. Explicit chasm bounds and counts remain diagnostic metadata rather than finite forest placement authority.
+
+## Void Cliff Face Pass 1
+
+- Endless forest remains presentation-only.
+- Explicit chasm semantics remain authoritative structural state, but no longer
+  create finite centered forest compositions in production.
+- `configure_from_cells()` and `configure_from_chasm_cells()` use the same
+  native-scale, camera-following 1536×1024 three-layer composition.
+- Chasm configuration records bounds/count metadata for diagnostics.
+- Chasm cells additionally drive a presentation-only `VoidCliffFace` at
+  absolute z `-120`.
+- The face may paint only authoritative chasm cells: never floor or ocean.
+- It owns no collision, navigation, occupancy, traversal, placement, minimap,
+  simulation, streaming, or wall authority.
+- V1 fascia depth varies deterministically from three to eight cells and uses
+  only TileSet source 45, `rock_plateau_raised_32.png`.
+- Edge/corner/drop art, bottom breakup, roots, variation, and contact-shadow
+  decals are explicitly deferred to Pass 2.
 
 ## Source Versus Runtime Art
 
@@ -31,12 +49,11 @@ Procgen now exports complete deterministic `chasm_cells` semantics for every
 in-map non-floor cell not replaced by an explicit surface claim. These
 semantics are structural state and remain independent of wall dressing.
 
-The live general-world compatibility path is configured once per complete generation from authoritative generated-floor cells, retaining those bounds only as metadata. One native-scale far-haze, canopy, and near-wall-growth stack follows the active camera with a small overscan, so authored edge pockets such as Ash Bell cannot expose a finite left/right seam. This remains a distant underlay rather than geographically fixed treetop terrain. `configure_from_chasm_cells()` retains the localized-region implementation for a later semantic handoff, but is not the live general-world call path. The backdrop does not participate in simulation or per-tile reveal and therefore does not alter deterministic fingerprints. Runtime images use linear filtering without mipmaps, disabled repeat, and lossless compression.
+Both configuration paths retain received cell bounds as metadata and create one native-scale far-haze, canopy, and near-wall-growth stack that follows the active camera with a small overscan. Authored edge pockets and map-wide chasms therefore cannot expose a finite left/right seam. This remains a distant underlay rather than geographically fixed treetop terrain. The backdrop does not participate in simulation or per-tile reveal and therefore does not alter deterministic fingerprints. Runtime images use linear filtering without mipmaps, disabled repeat, and lossless compression.
 
-This deferral is intentional: one 1536×1024 stack per connected region with a
-maximum 1.25 scale cannot safely cover a large connected map-wide chasm. A
-later mask/tiled/region-safe presentation may consume explicit chasm semantics
-only after it proves finite backdrop edges cannot become visible.
+Finite connected-region forest stacks are not production authority: one
+1536×1024 stack centered on a large region cannot safely cover a map-wide
+chasm. Chasm locality is instead expressed by the bounded stone fascia.
 
 ## Candidate Promotion And Runtime Visibility
 

@@ -96,15 +96,28 @@ func configure_from_cells(world_cells: Array) -> void:
 
 func configure_from_chasm_cells(chasm_cells: Array) -> void:
 	_clear_regions()
-	_debug_mode = "chasm_regions"
-	var regions := _connected_regions(chasm_cells)
-	var region_index := 1
-	for region_cells: Array[Vector2i] in regions:
-		if region_cells.size() < minimum_region_tiles:
+	_debug_mode = "chasm_camera_follow"
+	var decoded_cells: Array[Vector2i] = []
+	for value: Variant in chasm_cells:
+		var cell := _decode_cell(value)
+		if cell == Vector2i(-2147483648, -2147483648):
 			continue
-		_create_region_stack(region_cells, region_index)
-		region_index += 1
-	visible = region_index > 1
+		decoded_cells.append(cell)
+	if decoded_cells.is_empty():
+		visible = false
+		push_warning(
+			"[ProcgenDepthBackdrop] No chasm cells received; backdrop hidden."
+		)
+		return
+	_create_world_bounds_stack(decoded_cells)
+	if _world_stack != null:
+		_world_stack.set_meta("chasm_cell_bounds", _cell_bounds(decoded_cells))
+		_world_stack.set_meta("chasm_cell_count", decoded_cells.size())
+	visible = true
+	print(
+		"[ProcgenDepthBackdrop] Chasm camera backdrop active: cells=%d"
+		% decoded_cells.size()
+	)
 
 
 func get_debug_mode() -> String:
@@ -176,6 +189,8 @@ func _create_region_stack(
 	region_cells: Array[Vector2i],
 	region_index: int
 ) -> void:
+	# Retained for non-production archaeology only. Production configuration
+	# uses the seam-safe camera-following world stack.
 	var bounds := _cell_bounds(region_cells)
 	var expanded := bounds.grow(region_padding_tiles)
 	var world_rect := Rect2(

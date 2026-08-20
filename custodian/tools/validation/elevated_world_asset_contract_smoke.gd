@@ -91,13 +91,15 @@ func _run() -> void:
 	])
 	await process_frame
 	assert(backdrop.visible)
+	assert(backdrop.get_debug_mode() == "chasm_camera_follow")
 	assert(backdrop.z_index == -300 and not backdrop.z_as_relative)
 	var regions := backdrop.get_node("ChasmPresentationRoot").get_children()
-	assert(regions.size() == 2)
+	assert(regions.size() == 1)
 	for region_variant: Variant in regions:
 		var region := region_variant as Node2D
 		assert(region != null)
-		assert(region.scale.x >= 0.75 and region.scale.x <= 1.25)
+		assert(region.name == "CameraDepthBackdrop")
+		assert(region.get_meta("chasm_cell_count", 0) == 8)
 		assert(is_equal_approx(region.scale.x, region.scale.y))
 		var layers := [
 			region.get_node_or_null("FarHaze") as Sprite2D,
@@ -112,6 +114,10 @@ func _run() -> void:
 			assert(layer.texture_filter == CanvasItem.TEXTURE_FILTER_LINEAR)
 			assert(layer.centered)
 			assert(layer.z_index == index - 3)
+	camera.global_position = Vector2(12000, -9000)
+	backdrop.call("_process", 0.6)
+	var chasm_stack := regions[0] as Node2D
+	assert(chasm_stack.global_position == camera.global_position)
 	assert(is_equal_approx(backdrop.far_haze_alpha, 0.30))
 	assert(is_equal_approx(backdrop.canopy_alpha, 0.90))
 	assert(is_equal_approx(backdrop.wall_growth_alpha, 0.48))
@@ -119,8 +125,51 @@ func _run() -> void:
 		_find_texture_path(map, CONTACT_SHADOW_SOURCE).is_empty(),
 		"Contact-shadow source must not be wired globally"
 	)
-	map.queue_free()
-	print("elevated_world_asset_contract_smoke: PASS sources=%d" % EXPECTED.size())
+	var face := map.get_node_or_null("VoidCliffFace") as ProcgenVoidCliffFace
+	assert(face != null)
+	assert(not face.z_as_relative and face.z_index == -120)
+	assert(face.tile_set == TILESET)
+	assert(not face.collision_enabled and not face.navigation_enabled)
+	assert(face.body_source_id == 45)
+	var floor_cells: Dictionary = {}
+	var chasm_cells: Dictionary = {}
+	var floor_rect := Rect2i(Vector2i(7, 7), Vector2i(6, 6))
+	var omitted_ocean_rect := Rect2i(Vector2i.ZERO, Vector2i(4, 4))
+	for y in 20:
+		for x in 20:
+			var cell := Vector2i(x, y)
+			if floor_rect.has_point(cell):
+				floor_cells[cell] = true
+			elif not omitted_ocean_rect.has_point(cell):
+				chasm_cells[cell] = true
+	face.min_depth_tiles = 3
+	face.max_depth_tiles = 8
+	face.variation_patch_tiles = 4
+	face.configure_from_surface_cells(floor_cells, chasm_cells, 17)
+	var first_face_cells: Array[Vector2i] = face.get_used_cells()
+	first_face_cells.sort()
+	assert(not first_face_cells.is_empty())
+	for cell in first_face_cells:
+		assert(chasm_cells.has(cell))
+		assert(not floor_cells.has(cell))
+		assert(not omitted_ocean_rect.has_point(cell))
+		assert(face.get_cell_source_id(cell) == 45)
+		var distance := _manhattan_distance_to_rect(cell, floor_rect)
+		assert(distance >= 1 and distance <= 8)
+	face.clear()
+	face.configure_from_surface_cells(floor_cells, chasm_cells, 17)
+	var repeated_face_cells: Array[Vector2i] = face.get_used_cells()
+	repeated_face_cells.sort()
+	assert(repeated_face_cells == first_face_cells)
+	for audio_node: Node in map.find_children("*", "AudioStreamPlayer", true, false):
+		(audio_node as AudioStreamPlayer).stop()
+	camera.free()
+	map.free()
+	await process_frame
+	print(
+		"elevated_world_asset_contract_smoke: PASS sources=%d face_cells=%d"
+		% [EXPECTED.size(), first_face_cells.size()]
+	)
 	quit(0)
 
 
@@ -160,3 +209,9 @@ func _assert_no_physics_or_navigation(node: Node) -> void:
 	for child in node.find_children("*", "", true, false):
 		assert(not child is CollisionObject2D, "Backdrop must not contain collision")
 		assert(not child is NavigationRegion2D, "Backdrop must not contain navigation")
+
+
+func _manhattan_distance_to_rect(cell: Vector2i, rect: Rect2i) -> int:
+	var dx := maxi(maxi(rect.position.x - cell.x, cell.x - (rect.end.x - 1)), 0)
+	var dy := maxi(maxi(rect.position.y - cell.y, cell.y - (rect.end.y - 1)), 0)
+	return dx + dy

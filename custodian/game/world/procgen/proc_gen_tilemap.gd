@@ -193,6 +193,7 @@ enum WorldShapeMode {
 @export var walls_tilemap: TileMapLayer
 @export var nav_region: NavigationRegion2D
 @export var depth_backdrop: ProcgenDepthBackdrop
+@export var void_cliff_face: ProcgenVoidCliffFace
 @export var nonwalkable_surface_base_tilemap: TileMapLayer
 @export var nonwalkable_surface_overlay_tilemap: TileMapLayer
 @export var world_shape_mode: WorldShapeMode = WorldShapeMode.ASCENT_FIELD
@@ -787,6 +788,8 @@ func _cache_procgen_major_visual_items() -> void:
 		return
 	if depth_backdrop == null:
 		depth_backdrop = map_root.get_node_or_null("DepthBackdrop") as ProcgenDepthBackdrop
+	if void_cliff_face == null:
+		void_cliff_face = map_root.get_node_or_null("VoidCliffFace") as ProcgenVoidCliffFace
 	if floor_tilemap == null:
 		floor_tilemap = map_root.get_node_or_null("NavigationRegion2D/Floor") as TileMapLayer
 	if walls_tilemap == null:
@@ -806,6 +809,7 @@ func set_procgen_major_visuals_visible(enabled: bool) -> void:
 	_cache_procgen_major_visual_items()
 	for item in [
 		depth_backdrop,
+		void_cliff_face,
 		floor_tilemap,
 		walls_tilemap,
 		nonwalkable_surface_base_tilemap,
@@ -4785,6 +4789,7 @@ func _rebuild_nonwalkable_surface_regions(map_size: Vector2i) -> void:
 			as Dictionary
 		).duplicate(true)
 	_refresh_depth_backdrop()
+	_refresh_void_cliff_face()
 
 
 func _clear_nonwalkable_surface_visuals() -> void:
@@ -5256,6 +5261,9 @@ func _clear_world_progression_runtime() -> void:
 	_sundered_keep_frontage.clear()
 	_route_playability_result.clear()
 	_route_playability_audit.clear()
+	if void_cliff_face != null:
+		void_cliff_face.clear()
+		void_cliff_face.visible = false
 	_faction_activity_sites.clear()
 	_story_room_sites.clear()
 	_special_room_sites.clear()
@@ -8928,6 +8936,20 @@ func _refresh_depth_backdrop() -> void:
 		depth_backdrop.configure_from_chasm_cells(_chasm_cells.keys())
 		return
 	depth_backdrop.configure_from_cells(_generated_floor_cells.keys())
+
+
+func _refresh_void_cliff_face() -> void:
+	if void_cliff_face == null:
+		return
+	if _generated_floor_cells.is_empty() or _chasm_cells.is_empty():
+		void_cliff_face.clear()
+		void_cliff_face.visible = false
+		return
+	void_cliff_face.configure_from_surface_cells(
+		_generated_floor_cells,
+		_chasm_cells,
+		_get_generation_seed()
+	)
 
 
 func _get_chasm_presentation_cells() -> Array:

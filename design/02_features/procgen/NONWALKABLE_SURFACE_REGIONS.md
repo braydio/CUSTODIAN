@@ -85,10 +85,12 @@ large Sundered Keep vista ocean/storm plate. The vista may use resolved ocean
 bounds for geographic clip coverage but remains collision/navigation-free and
 strictly disjoint from playable floor.
 
-Explicit complete chasm semantics are exported, while the current seam-safe,
-camera-following `ProcgenDepthBackdrop.configure_from_cells()` compatibility
-path remains live. Chasm-driven rendering is deferred until it can tile or mask
-arbitrary connected regions without finite-edge seams.
+Explicit complete chasm semantics feed the seam-safe, camera-following
+`ProcgenDepthBackdrop.configure_from_chasm_cells()` presentation and the
+presentation-only `VoidCliffFace`. The face paints only authoritative chasm
+cells in a deterministic three-to-eight-cell band from floor frontiers; ocean
+and floor stop propagation. `RuntimeWalkableBoundary` remains the sole physical
+authority, and neither visual layer participates in collision or navigation.
 
 ## Candidate And Streaming Contract
 
@@ -118,10 +120,10 @@ V1, matching the global depth backdrop and collision frontier.
 Swimming, drowning, currents, wave physics, aquatic navigation, boats,
 procedural ocean on every planet, additional surface profiles, animated shore
 tiles, new art, minimap redesign, collision replacement, camera/route rewrite,
-and switching the depth backdrop to connected chasm-region stacks are excluded.
+and connected finite chasm-region forest stacks are excluded.
 
 ## Next Agent Slice
 
-After V1 visual approval, design a tiled or mask-based chasm presentation that
-can consume explicit chasm semantics without exposing finite backdrop edges.
-Do not change collision or navigation ownership during that presentation slice.
+Pass 2 may refine fascia edges, corners, drops, bottom breakup, roots,
+variation, and contact shadows without changing collision or navigation
+ownership.
