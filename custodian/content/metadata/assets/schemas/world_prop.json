@@ -1,0 +1,8 @@
+{
+  "kind": "world_prop",
+  "runtime_template": "sprites/environment/props/{owner}/runtime/{layer}/{filename}",
+  "defaults": {
+    "direction": "omni",
+    "layer": "body"
+  }
+}

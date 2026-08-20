@@ -116,6 +116,12 @@ pngaudit() {
   (cd "$dir" && python3 "${CUSTODIAN_GODOT}/tools/validation/png_audit.py" "${@:2}")
 }
 
+# -- Asset Pipeline V2 (unified intake)
+asset() {
+  _update_usage "asset"
+  python3 "${CUSTODIAN_GODOT}/tools/assets/asset.py" "$@"
+}
+
 # -- Generate prioritized next-actions report (fit + contract joined)
 opnext() {
   _update_usage "opnext"

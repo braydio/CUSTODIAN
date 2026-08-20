@@ -1,0 +1,66 @@
+{
+  "schema": "custodian.asset_family.v1",
+  "id": "field_fabricator_mk1",
+  "kind": "world_prop",
+
+  "runtime": {
+    "domain": "sprites/environment/props",
+    "owner": "field_fabricator_mk1"
+  },
+
+  "canvas": {
+    "width": 128,
+    "height": 96
+  },
+
+  "direction_policy": "omni",
+
+  "states": {
+    "idle": {
+      "required": true,
+      "layer": "body",
+      "action_group": "interaction",
+      "variant": "idle"
+    },
+    "active": {
+      "required": true,
+      "layer": "body",
+      "action_group": "interaction",
+      "variant": "fabricate",
+      "animation": true,
+      "fps": 6
+    },
+    "glow": {
+      "required": false,
+      "recommended": true,
+      "layer": "fx",
+      "action_group": "interaction",
+      "variant": "powered_glow"
+    },
+    "damaged": {
+      "required": false,
+      "layer": "body",
+      "action_group": "state",
+      "variant": "damaged"
+    },
+    "destroyed": {
+      "required": false,
+      "layer": "body",
+      "action_group": "state",
+      "variant": "destroyed"
+    }
+  },
+
+  "aliases": {
+    "working": "active",
+    "fabricating": "active",
+    "powered": "glow"
+  },
+
+  "consumers": [
+    {
+      "type": "scene",
+      "path": "res://game/infrastructure/structures/field_fabricator_mk1.tscn"
+    }
+  ]
+}
