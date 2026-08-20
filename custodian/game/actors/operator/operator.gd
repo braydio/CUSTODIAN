@@ -508,6 +508,7 @@ var _melee_hitbox_active: bool = false
 var _melee_hit_targets: Dictionary = {}
 var _active_melee_contact: Dictionary = {}
 var _active_melee_contact_id: StringName = &"default"
+var _melee_prev_animation_frame: int = -1
 var _melee_miss_sfx_played: bool = false
 var _melee_impact_audio_variant_cursors: Dictionary = {}
 var _critical_attack_target: Node2D = null
@@ -4533,6 +4534,7 @@ func _start_fast_attack() -> void:
 	_critical_attack_damage = 0.0
 	_active_attack_profile = get_current_combat_profile()
 	_melee_active = true
+	_melee_prev_animation_frame = -1
 	_parry_neutral_lock_active = false
 	_modular_lower_action_animation = &""
 	_modular_upper_action_animation = &""
@@ -4747,6 +4749,7 @@ func _begin_fast_attack_strike_phase() -> void:
 	# Transition from windup to strike phase.
 	_melee_fast_windup = false
 	_melee_active = true
+	_melee_prev_animation_frame = -1
 	_melee_elapsed = 0.0
 	var attack_profile: MeleeAttackProfile = _active_melee_attack_profile
 	if attack_profile != null:
@@ -4814,6 +4817,7 @@ func _begin_heavy_attack_active_phase() -> void:
 	_melee_heavy_anticipating = false
 	_melee_fast_windup = false
 	_melee_active = true
+	_melee_prev_animation_frame = -1
 	_melee_elapsed = 0.0
 	var attack_profile: MeleeAttackProfile = _active_melee_attack_profile
 	_melee_duration = attack_profile.recovery_sec if attack_profile != null else 0.70
@@ -6504,6 +6508,7 @@ func _sync_melee_hitbox_window_from_animation() -> void:
 	var animation_started: int = obs.perf_span_begin() if obs != null else 0
 	if animated_sprite == null or not _melee_active:
 		disable_hitbox()
+		_melee_prev_animation_frame = -1
 		if obs != null:
 			obs.perf_span_end(&"operator_animation_sync", animation_started)
 		return
@@ -6516,11 +6521,34 @@ func _sync_melee_hitbox_window_from_animation() -> void:
 		var weapon_window: Dictionary = weapon_definition.hit_windows.get(_melee_attack_key, {})
 		if not weapon_window.is_empty():
 			window = weapon_window
-	_active_melee_contact = _get_melee_contact_for_frame(frame, window)
+	var best_contact: Dictionary = {}
+	var hit_found: bool = false
+	if _melee_prev_animation_frame < 0 or _melee_prev_animation_frame == frame:
+		best_contact = _get_melee_contact_for_frame(frame, window)
+		hit_found = not best_contact.is_empty()
+	else:
+		var frame_count: int = animated_sprite.sprite_frames.get_frame_count(
+			animated_sprite.animation
+		)
+		var scan_from: int = _melee_prev_animation_frame + 1
+		if frame < _melee_prev_animation_frame:
+			for f in range(scan_from, frame_count):
+				var c: Dictionary = _get_melee_contact_for_frame(f, window)
+				if not c.is_empty():
+					best_contact = c
+					hit_found = true
+			scan_from = 0
+		for f in range(scan_from, frame + 1):
+			var c: Dictionary = _get_melee_contact_for_frame(f, window)
+			if not c.is_empty():
+				best_contact = c
+				hit_found = true
+	_melee_prev_animation_frame = frame
+	_active_melee_contact = best_contact
 	_active_melee_contact_id = StringName(
 		_active_melee_contact.get("id", "default")
 	)
-	if _is_melee_hit_frame_active(frame, window):
+	if hit_found:
 		enable_hitbox()
 	else:
 		disable_hitbox()
