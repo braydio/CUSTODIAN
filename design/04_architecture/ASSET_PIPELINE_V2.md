@@ -1,6 +1,6 @@
 # Asset Pipeline V2 — Unified Asset Intake System
 
-**Status:** Active implementation, hardened world_prop workflow; broader kinds and full backend rollback deferred
+**Status:** Active production implementation, V2.1 unified non-Operator intake
 **Scope:** Orchestration layer above existing backends
 **Authority:** This document + `custodian/tools/assets/`
 
@@ -382,12 +382,34 @@ content/sprites/environment/props/field_fabricator_mk1/runtime/
 
 ## Known Limitations (V1)
 
-1. **No vertical-strip inference** — only horizontal strips supported
-2. **No grid inference** — requires explicit grid policy in contract
+1. **Grid inference is deliberately not automatic** — grids require explicit columns and rows so ambiguous sheets fail closed.
 3. **No auto-wiring of Godot scenes** — consumer binding remains manual
 4. **Transaction rollback limited to V2-controlled outputs** — GDScript post-process hooks not yet transactional
 5. **No watch mode** — `asset watch` deferred to Milestone 5
-6. **Production kind support is world_prop only** — unsupported kinds fail clearly
+6. **Operator remains delegated** — Operator identity and runtime building remain owned by `OperatorAssetKey` and `build_operator_runtime.py`.
+
+## V2.1 production contract
+
+The `asset` CLI is the normal intake interface for non-Operator art. Registered
+`custodian.asset_kind.v2` data schemas currently cover `world_prop`, `enemy`,
+`tile`, `effect`, `vehicle`, `weapon`, `ui`, and `backdrop`; adding a simple kind
+does not require an `asset.py` branch. Family V2 adds direction requirements,
+automatic mirror policy, explicit copy/horizontal/vertical/grid layouts, and
+per-state canvas overrides while retaining V1 read compatibility.
+
+Plans declare every authored and mirrored output before mutation. The generated
+tooling catalog uses `custodian.asset_catalog.v2` keys of
+`<state_id>::<direction>`, records provenance, and is never gameplay authority.
+Vertical strips are losslessly normalized in transaction staging; grids require
+explicit dimensions. The orchestration layer delegates sprite slicing,
+frame-safe mirroring, and runtime import hooks to the mature sprite backend and
+static copies to the runtime-ready backend.
+
+Consumer gameplay binding remains explicit. Godot's `.godot/` import cache is
+not transactional, and bounded PNG/catalog/archive outputs are rolled back by
+V2. Declared post-process hooks that mutate outputs beyond the plan are reported
+as delegated/non-transactional rather than being presented as rollback-safe. A
+watch daemon is not required.
 
 ---
 

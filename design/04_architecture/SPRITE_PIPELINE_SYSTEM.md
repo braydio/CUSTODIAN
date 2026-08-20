@@ -1,5 +1,11 @@
 # Sprite Pipeline System
 
+Asset Pipeline V2.1 is the preferred human-facing intake layer for non-Operator
+sprites. It delegates manifests, frame extraction, frame-safe directional
+mirroring, and enemy/vehicle runtime refresh to this mature backend rather than
+reimplementing them. Operator keeps its specialized key and runtime builder.
+Direct backend commands remain supported expert/debug entrypoints.
+
 ## Status
 
 - **Type**: Infrastructure Architecture

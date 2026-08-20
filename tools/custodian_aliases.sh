@@ -115,7 +115,7 @@ pngaudit() {
   (cd "$dir" && python3 "${CUSTODIAN_GODOT}/tools/validation/png_audit.py" "${@:2}")
 }
 
-# -- Asset Pipeline V2 (unified intake)
+# -- Asset Pipeline V2.1 (unified non-Operator intake; Operator stays specialized)
 asset() {
   _update_usage "asset"
   python3 "${CUSTODIAN_GODOT}/tools/assets/asset.py" "$@"

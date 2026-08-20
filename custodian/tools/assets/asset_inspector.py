@@ -1,69 +1,23 @@
-"""Image inspection — physical property detection without semantic interpretation."""
-
+"""Physical PNG layout inspection."""
 from __future__ import annotations
-
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-
 from PIL import Image
-
-
-class FrameLayout(str, Enum):
-    COPY = "copy"
-    HORIZONTAL_STRIP = "horizontal_strip"
-    GRID = "grid"
-    AMBIGUOUS = "ambiguous"
-
-
+class FrameLayout(str,Enum):
+    COPY="copy"; HORIZONTAL_STRIP="horizontal_strip"; VERTICAL_STRIP="vertical_strip"; GRID="grid"; AMBIGUOUS="ambiguous"
 @dataclass(frozen=True)
 class AssetInspection:
-    source_path: Path
-    width: int
-    height: int
-    frame_width: int
-    frame_height: int
-    frame_count: int
-    layout: FrameLayout
-
-
-def inspect_png(path: Path, fw: int, fh: int) -> AssetInspection:
-    """Inspect a PNG file and infer frame layout given expected frame dimensions.
-
-    This answers "what physically exists?" — not "what does this art mean?"
-    """
-    with Image.open(path) as img:
-        w, h = img.size
-
-    if w == fw and h == fh:
-        return AssetInspection(
-            source_path=path,
-            width=w,
-            height=h,
-            frame_width=fw,
-            frame_height=fh,
-            frame_count=1,
-            layout=FrameLayout.COPY,
-        )
-
-    if h == fh and w > fw and w % fw == 0:
-        frames = w // fw
-        return AssetInspection(
-            source_path=path,
-            width=w,
-            height=h,
-            frame_width=fw,
-            frame_height=fh,
-            frame_count=frames,
-            layout=FrameLayout.HORIZONTAL_STRIP,
-        )
-
-    return AssetInspection(
-        source_path=path,
-        width=w,
-        height=h,
-        frame_width=fw,
-        frame_height=fh,
-        frame_count=0,
-        layout=FrameLayout.AMBIGUOUS,
-    )
+    source_path:Path; width:int; height:int; frame_width:int; frame_height:int; frame_count:int; layout:FrameLayout; columns:int|None=None; rows:int|None=None
+def inspect_png(path:Path,fw:int,fh:int,layout:str="auto",columns:int|None=None,rows:int|None=None)->AssetInspection:
+    with Image.open(path) as image: w,h=image.size
+    if layout=="grid":
+        if not columns or not rows or (w,h)!=(fw*columns,fh*rows): return AssetInspection(path,w,h,fw,fh,0,FrameLayout.AMBIGUOUS)
+        return AssetInspection(path,w,h,fw,fh,columns*rows,FrameLayout.GRID,columns,rows)
+    candidates=[]
+    if (w,h)==(fw,fh): candidates.append((FrameLayout.COPY,1))
+    if h==fh and w>fw and w%fw==0: candidates.append((FrameLayout.HORIZONTAL_STRIP,w//fw))
+    if w==fw and h>fh and h%fh==0: candidates.append((FrameLayout.VERTICAL_STRIP,h//fh))
+    if layout!="auto": candidates=[item for item in candidates if item[0]==FrameLayout(layout)]
+    if len(candidates)!=1: return AssetInspection(path,w,h,fw,fh,0,FrameLayout.AMBIGUOUS)
+    kind,count=candidates[0]; return AssetInspection(path,w,h,fw,fh,count,kind)

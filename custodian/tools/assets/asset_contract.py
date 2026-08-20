@@ -1,140 +1,94 @@
-"""Asset family contract model — typed representation of .asset.json files."""
-
+"""Validated V1/V2 asset-family contracts."""
 from __future__ import annotations
-
-import json
+import json, re, string
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-SCHEMA_VERSION = "custodian.asset_family.v1"
-FAMILIES_DIR = Path(__file__).resolve().parents[2] / "content" / "metadata" / "assets" / "families"
+SCHEMA_VERSION = "custodian.asset_family.v2"
+READABLE_SCHEMAS = {"custodian.asset_family.v1", SCHEMA_VERSION}
+FAMILIES_DIR = Path(__file__).resolve().parents[2] / "content/metadata/assets/families"
+DIRECTIONS = ("n", "ne", "e", "se", "s", "sw", "w", "nw")
+POLICY_DIRECTIONS = {"omni": ("omni",), "4dir": ("n", "e", "s", "w"), "8dir": DIRECTIONS, **{d: (d,) for d in DIRECTIONS}}
+TOKEN = re.compile(r"^[a-z0-9][a-z0-9_-]*$")
+TEMPLATE_TOKENS = {"domain","owner","kind","layer","action_group","variant","direction","frames","frame_width","frame_height","frame_size","filename"}
 
+def _token(value: Any, label: str) -> str:
+    if not isinstance(value, str) or not TOKEN.fullmatch(value): raise ValueError(f"{label} must be a lowercase semantic token")
+    return value
 
 @dataclass(frozen=True)
 class AssetStateContract:
-    id: str
-    layer: str
-    action_group: str
-    variant: str
-    required: bool = False
-    recommended: bool = False
-    animation: bool = False
-    fps: float | None = None
-
+    id: str; layer: str; action_group: str; variant: str
+    required: bool=False; recommended: bool=False; animation: bool=False; fps: float|None=None
+    layout: str="auto"; columns: int|None=None; rows: int|None=None; min_direction_count: int=1
+    required_directions: tuple[str,...]=(); frame_width: int|None=None; frame_height: int|None=None
 
 @dataclass(frozen=True)
 class AssetFamilyContract:
-    id: str
-    kind: str
-    runtime_domain: str
-    runtime_owner: str
-    frame_width: int
-    frame_height: int
-    direction_policy: str
-    states: dict[str, AssetStateContract]
-    aliases: dict[str, str] = field(default_factory=dict)
-    consumers: tuple[dict[str, Any], ...] = ()
+    id: str; kind: str; runtime_domain: str; runtime_owner: str; frame_width: int; frame_height: int
+    direction_policy: str; states: dict[str,AssetStateContract]; auto_mirror: bool=False
+    runtime_template: str|None=None; filename_policy: str|None=None; filename_template: str|None=None
+    aliases: dict[str,str]=field(default_factory=dict); consumers: tuple[dict[str,Any],...]=(); schema: str=SCHEMA_VERSION
+    @property
+    def allowed_directions(self)->tuple[str,...]: return POLICY_DIRECTIONS[self.direction_policy]
+    def resolve_state(self,name:str)->tuple[str|None,str]:
+        if name in self.states: return name,f"exact state id '{name}'"
+        if name in self.aliases: return self.aliases[name],f"alias '{name}' -> '{self.aliases[name]}'"
+        return None,f"no state or alias for '{name}'"
+    def state_frame_size(self,state:AssetStateContract)->tuple[int,int]: return state.frame_width or self.frame_width,state.frame_height or self.frame_height
 
-    def resolve_state(self, name: str) -> tuple[str | None, str]:
-        """Resolve a filename stem to a state id.
-
-        Returns (state_id, reason). state_id is None if unresolvable.
-        """
-        if name in self.states:
-            return name, f"exact state id '{name}'"
-
-        if name in self.aliases:
-            resolved = self.aliases[name]
-            if resolved in self.states:
-                return resolved, f"alias '{name}' -> '{resolved}'"
-
-        return None, f"no state or alias for '{name}'"
-
-
-def load_family(path: Path) -> AssetFamilyContract:
-    """Load and validate a family contract JSON file."""
-    raw = json.loads(path.read_text(encoding="utf-8"))
-    return _parse_family(raw)
-
-
-def load_all_families(directory: Path | None = None) -> dict[str, AssetFamilyContract]:
-    """Load all family contracts from the families directory."""
-    d = directory or FAMILIES_DIR
-    if not d.exists():
-        return {}
-    result = {}
-    for p in sorted(d.glob("*.asset.json")):
-        fam = load_family(p)
-        result[fam.id] = fam
+def load_family(path:Path)->AssetFamilyContract: return parse_family(json.loads(path.read_text(encoding="utf-8")))
+def load_all_families(directory:Path|None=None)->dict[str,AssetFamilyContract]:
+    result={}
+    for path in sorted((directory or FAMILIES_DIR).glob("*.asset.json")):
+        family=load_family(path)
+        if family.id in result: raise ValueError(f"duplicate family id: {family.id}")
+        result[family.id]=family
     return result
 
-
-def _parse_family(raw: dict[str, Any]) -> AssetFamilyContract:
-    if not isinstance(raw, dict):
-        raise ValueError("family contract root must be an object")
-    schema = raw.get("schema")
-    if schema != SCHEMA_VERSION:
-        raise ValueError(f"Unknown schema '{schema}', expected '{SCHEMA_VERSION}'")
-
-    def required_text(container: dict, key: str, context: str) -> str:
-        value = container.get(key)
-        if not isinstance(value, str) or not value.strip():
-            raise ValueError(f"{context}.{key} must be a non-empty string")
-        return value
-
-    family_id = required_text(raw, "id", "family")
-    kind = required_text(raw, "kind", "family")
-    runtime = raw.get("runtime")
-    canvas = raw.get("canvas")
-    if not isinstance(runtime, dict) or not isinstance(canvas, dict):
-        raise ValueError("runtime and canvas must be objects")
-    runtime_domain = required_text(runtime, "domain", "runtime")
-    runtime_owner = required_text(runtime, "owner", "runtime")
-    width, height = canvas.get("width"), canvas.get("height")
-    if not isinstance(width, int) or isinstance(width, bool) or width <= 0:
-        raise ValueError("canvas.width must be a positive integer")
-    if not isinstance(height, int) or isinstance(height, bool) or height <= 0:
-        raise ValueError("canvas.height must be a positive integer")
-    direction = required_text(raw, "direction_policy", "family")
-    if direction not in {"omni", "n", "ne", "e", "se", "s", "sw", "w", "nw", "4dir", "8dir"}:
-        raise ValueError(f"unsupported direction_policy '{direction}'")
-    states_raw = raw.get("states")
-    if not isinstance(states_raw, dict) or not states_raw:
-        raise ValueError("states must be a non-empty object")
-    states: dict[str, AssetStateContract] = {}
-    for sid, sdata in states_raw.items():
-        if not isinstance(sid, str) or not sid or not isinstance(sdata, dict):
-            raise ValueError("state ids must be non-empty strings and state values must be objects")
-        states[sid] = AssetStateContract(
-            id=sid,
-            layer=required_text(sdata, "layer", f"states.{sid}"),
-            action_group=required_text(sdata, "action_group", f"states.{sid}"),
-            variant=required_text(sdata, "variant", f"states.{sid}"),
-            required=sdata.get("required", False),
-            recommended=sdata.get("recommended", False),
-            animation=sdata.get("animation", False),
-            fps=sdata.get("fps"),
-        )
-
-    aliases = raw.get("aliases", {})
-    if not isinstance(aliases, dict):
-        raise ValueError("aliases must be an object")
-    for alias, target in aliases.items():
-        if not isinstance(alias, str) or not alias or target not in states:
-            raise ValueError(f"alias '{alias}' targets unknown state '{target}'")
-    consumers = raw.get("consumers", [])
-    if not isinstance(consumers, list):
-        raise ValueError("consumers must be an array")
-    for index, consumer in enumerate(consumers):
-        if not isinstance(consumer, dict):
-            raise ValueError(f"consumer {index} must be an object")
-        required_text(consumer, "type", f"consumers[{index}]")
-        required_text(consumer, "path", f"consumers[{index}]")
-
-    return AssetFamilyContract(
-        id=family_id, kind=kind, runtime_domain=runtime_domain, runtime_owner=runtime_owner,
-        frame_width=width, frame_height=height, direction_policy=direction,
-        states=states,
-        aliases=aliases, consumers=tuple(consumers),
-    )
+def parse_family(raw:dict[str,Any])->AssetFamilyContract:
+    if not isinstance(raw,dict) or raw.get("schema") not in READABLE_SCHEMAS: raise ValueError(f"unknown family schema: {raw.get('schema') if isinstance(raw,dict) else None}")
+    family_id,kind=_token(raw.get("id"),"family.id"),_token(raw.get("kind"),"family.kind")
+    runtime,canvas=raw.get("runtime"),raw.get("canvas")
+    if not isinstance(runtime,dict) or not isinstance(canvas,dict): raise ValueError("runtime and canvas must be objects")
+    domain=str(runtime.get("domain","")); owner=_token(runtime.get("owner"),"runtime.owner")
+    if not domain or domain.startswith(("/","content/")) or ".." in Path(domain).parts: raise ValueError("runtime.domain must be below content/")
+    width,height=canvas.get("width"),canvas.get("height")
+    if not isinstance(width,int) or isinstance(width,bool) or width<=0 or not isinstance(height,int) or isinstance(height,bool) or height<=0: raise ValueError("canvas dimensions must be positive integers")
+    policy=str(raw.get("direction_policy",""))
+    if policy not in POLICY_DIRECTIONS: raise ValueError(f"unsupported direction_policy '{policy}'")
+    states_raw=raw.get("states")
+    if not isinstance(states_raw,dict) or not states_raw: raise ValueError("states must be a non-empty object")
+    states={}
+    for sid,data in states_raw.items():
+        _token(sid,"state id")
+        if not isinstance(data,dict): raise ValueError(f"states.{sid} must be an object")
+        layout=str(data.get("layout","auto"))
+        if layout not in {"auto","copy","horizontal_strip","vertical_strip","grid"}: raise ValueError(f"states.{sid}.layout invalid")
+        columns,rows=data.get("columns"),data.get("rows")
+        if layout=="grid" and (not isinstance(columns,int) or columns<=0 or not isinstance(rows,int) or rows<=0): raise ValueError(f"states.{sid}: grid requires columns/rows")
+        required_dirs=tuple(data.get("required_directions",()))
+        if any(d not in POLICY_DIRECTIONS[policy] for d in required_dirs): raise ValueError(f"states.{sid}: required direction outside policy")
+        minimum=data.get("min_direction_count",1)
+        if not isinstance(minimum,int) or minimum<1 or minimum>len(POLICY_DIRECTIONS[policy]): raise ValueError(f"states.{sid}: impossible min_direction_count")
+        animation=bool(data.get("animation",False))
+        if animation and layout=="copy": raise ValueError(f"states.{sid}: animation cannot use copy layout")
+        for dimension in (data.get("frame_width"), data.get("frame_height")):
+            if dimension is not None and (not isinstance(dimension,int) or isinstance(dimension,bool) or dimension<=0): raise ValueError(f"states.{sid}: frame override must be a positive integer")
+        states[sid]=AssetStateContract(sid,_token(data.get("layer"),f"states.{sid}.layer"),_token(data.get("action_group"),f"states.{sid}.action_group"),_token(data.get("variant"),f"states.{sid}.variant"),bool(data.get("required",False)),bool(data.get("recommended",False)),animation,data.get("fps"),layout,columns,rows,minimum,required_dirs,data.get("frame_width"),data.get("frame_height"))
+    aliases=raw.get("aliases",{})
+    if not isinstance(aliases,dict) or any(target not in states for target in aliases.values()): raise ValueError("unresolved aliases")
+    consumers=raw.get("consumers",[])
+    if not isinstance(consumers,list) or any(not isinstance(c,dict) for c in consumers): raise ValueError("consumers must be objects")
+    filename_policy=runtime.get("filename_policy")
+    if filename_policy is not None and filename_policy not in {"canonical","template"}: raise ValueError("invalid runtime filename_policy override")
+    runtime_template=runtime.get("template")
+    filename_template=runtime.get("filename_template")
+    for label,value in (("runtime.template",runtime_template),("runtime.filename_template",filename_template)):
+        if value is None: continue
+        if not isinstance(value,str) or not value or value.startswith(("/","content/")) or ".." in Path(value).parts: raise ValueError(f"{label} must stay below content/")
+        names={name for _,name,_,_ in string.Formatter().parse(value) if name}
+        if names-TEMPLATE_TOKENS: raise ValueError(f"{label} has unsupported tokens")
+    if filename_policy=="template" and not filename_template: raise ValueError("template filename policy override requires filename_template")
+    return AssetFamilyContract(family_id,kind,domain,owner,width,height,policy,states,bool(raw.get("auto_mirror",False)),runtime_template,filename_policy,filename_template,dict(aliases),tuple(consumers),str(raw["schema"]))

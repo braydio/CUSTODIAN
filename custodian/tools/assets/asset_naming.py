@@ -11,6 +11,8 @@ if str(ASSETS_DIR) not in sys.path:
 
 from asset_key import AssetKey
 
+VALID_DIRECTIONS = {"omni", "n", "ne", "e", "se", "s", "sw", "w", "nw"}
+
 
 def canonical_filename(key: AssetKey) -> str:
     """Generate canonical runtime filename from semantic identity.
@@ -33,3 +35,18 @@ def canonical_filename(key: AssetKey) -> str:
             size,
         )
     ) + ".png"
+
+
+def parse_canonical_filename(filename: str, kind: str) -> AssetKey:
+    parts = Path(filename).stem.split("__")
+    if len(parts) != 7:
+        raise ValueError("not a canonical asset filename")
+    owner, layer, group, variant, direction, frames_token, size_token = parts
+    if direction not in VALID_DIRECTIONS or not frames_token.endswith("f"):
+        raise ValueError("invalid canonical direction/frame token")
+    frames = int(frames_token[:-1])
+    if "x" in size_token:
+        width, height = map(int, size_token.split("x", 1))
+    else:
+        width = height = int(size_token)
+    return AssetKey(owner, kind, layer, group, variant, direction, frames, width, height)

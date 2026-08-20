@@ -4,6 +4,12 @@ Last updated: 2026-08-20
 
 Simulation boundary update (2026-08-08): use `WorldSimulationRuntime` and typed command ingress for live campaign-world access. Never launch Python from Godot. `GameState`, local power, `WaveManager`, and `FabPipeline` are compatibility/adapters. Validate with `run_world_simulation_migration_suite.sh`.
 
+Asset intake update (2026-08-20): use `tools/assets/asset.py` for general
+non-Operator families. V2.1 JSON schemas own semantic planning while the mature
+runtime-ready and sprite-ingest backends own physical processing. Operator
+assets retain their specialized key/builder, and the generated asset catalog is
+tooling metadata rather than gameplay authority.
+
 ## Purpose
 
 Operational handoff summary for active Godot implementation work.

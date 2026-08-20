@@ -73,7 +73,10 @@ Last updated: 2026-08-20
 - `custodian/tools/agent/change_control_bundle.py` — utility that bundles current git-changed files into `custodian/docs/change_control/<TASK_PACKET_NAME>.md` and copies the markdown bundle to the clipboard when a clipboard command is available
 - `custodian/asset_drop/runtime_ready/README.md` — persistent intake contract for already-runtime-ready assets before they become Godot content authority
 - `custodian/tools/pipelines/runtime_ready_assets.py` — conflict-safe router from the persistent runtime-ready inbox into organized `res://content/` targets, with archives and receipts
-- `custodian/tools/assets/asset.py` — preferred Asset Pipeline V2 CLI; semantic family planning delegates static and animated execution to mature backends
+- `custodian/tools/assets/asset.py` — preferred Asset Pipeline V2.1 CLI; schema-driven non-Operator family planning delegates static and animated execution to mature backends
+- `custodian/content/metadata/assets/schemas/*.json` — V2 kind registry for world props, enemies, tiles, effects, vehicles, weapons, UI, and backdrops
+- `custodian/content/metadata/assets/families/{enemy_grunt,void_cliff_face}.asset.json` — production directional enemy-sheet and exact-name 32px void-fascia intake contracts
+- `custodian/tools/validation/asset_pipeline_v21_production_smoke.py` — V2.1 kind registry, tile routing, direction/mirror planning, layout, and catalog migration acceptance
 - `custodian/tools/validation/asset_pipeline_v2_smoke.py` — isolated V2 safety, replacement, rollback, delegation, and status regression suite
 - `custodian/tools/pipelines/watch_runtime_ready_assets.sh` — optional inotify watcher that applies completed runtime-ready drops continuously
 - `custodian/tools/validation/runtime_ready_asset_pipeline_smoke.py` — focused validation for dry-run, routing, archiving, conflict protection, and explicit replacement

@@ -14,7 +14,7 @@ ASSETS_DIR = Path(__file__).resolve().parent
 if str(ASSETS_DIR) not in sys.path:
     sys.path.insert(0, str(ASSETS_DIR))
 
-from asset_plan import PlannedAsset
+from asset_plan import PlannedAsset, AssetOperation
 
 
 @dataclass
@@ -50,13 +50,16 @@ def begin_transaction(
     )
 
     for pa in planned_assets:
-        target = project_dir / pa.target_relative_path
-        if target.exists() and pa.operation.value == "replace":
-            backup = staging_dir / "backups" / pa.target_relative_path
-            backup.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(target, backup)
-            record.backups[target] = backup
-            record.replaced_targets.append(target)
+        for output in pa.outputs:
+            target = project_dir / output.target_relative_path
+            if target.exists() and output.operation == AssetOperation.REPLACE:
+                backup = staging_dir / "backups" / output.target_relative_path
+                backup.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(target, backup)
+                record.backups[target] = backup
+                record.replaced_targets.append(target)
+            elif not target.exists():
+                record.created_targets.append(target)
 
     catalog = project_dir / "content/metadata/assets/generated/asset_catalog.generated.json"
     if catalog.exists():

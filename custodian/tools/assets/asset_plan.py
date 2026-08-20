@@ -1,216 +1,86 @@
-"""Asset plan — the mutation boundary. Building a plan must never mutate content."""
-
+"""Pure, batch-aware, multi-output asset planning."""
 from __future__ import annotations
-
 import hashlib
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-
-import sys
-from pathlib import Path
-ASSETS_DIR = Path(__file__).resolve().parent
-if str(ASSETS_DIR) not in sys.path:
-    sys.path.insert(0, str(ASSETS_DIR))
-
-from asset_classifier import ResolutionConfidence
+from asset_classifier import AssetResolution,ResolutionConfidence,classify_input
 from asset_contract import AssetFamilyContract
-from asset_inspector import AssetInspection, FrameLayout
+from asset_inspector import AssetInspection,FrameLayout,inspect_png
 from asset_key import AssetKey
-from asset_router import resolve_runtime_target, load_kind_schemas, AssetKindSchema
-from asset_classifier import classify_input
-
-
-class AssetOperation(str, Enum):
-    CREATE = "create"
-    DUPLICATE = "duplicate"
-    REPLACE = "replace"
-    CONFLICT = "conflict"
-    SKIP = "skip"
-
-
+from asset_router import AssetKindSchema,load_kind_schemas,resolve_runtime_target
+from asset_naming import parse_canonical_filename
+MIRRORS={"e":"w","w":"e","ne":"nw","nw":"ne","se":"sw","sw":"se"}
+class AssetOperation(str,Enum): CREATE="create"; DUPLICATE="duplicate"; REPLACE="replace"; CONFLICT="conflict"; SKIP="skip"
+@dataclass(frozen=True)
+class PlannedOutput:
+    state_id:str; key:AssetKey; canonical_filename:str; target_relative_path:Path; operation:AssetOperation
+    existing_target:Path|None; provenance:str; source_asset:str|None=None
 @dataclass(frozen=True)
 class PlannedAsset:
-    source_path: Path
-    family_id: str
-    state_id: str | None
-    confidence: ResolutionConfidence
-    inspection: AssetInspection
-    key: AssetKey
-    canonical_filename: str
-    target_relative_path: Path
-    backend: str
-    operation: AssetOperation
-    existing_target: Path | None
-    warnings: tuple[str, ...]
-
-
+    source_path:Path; family_id:str; state_id:str|None; confidence:ResolutionConfidence; resolution:AssetResolution
+    inspection:AssetInspection; backend:str; outputs:tuple[PlannedOutput,...]; warnings:tuple[str,...]=(); post_process:tuple[str,...]=()
+    @property
+    def key(self): return self.outputs[0].key if self.outputs else AssetKey("unknown","unknown","unknown","unknown",self.source_path.stem,"omni",0,self.inspection.frame_width,self.inspection.frame_height)
+    @property
+    def canonical_filename(self): return self.outputs[0].canonical_filename if self.outputs else ""
+    @property
+    def target_relative_path(self): return self.outputs[0].target_relative_path if self.outputs else Path()
+    @property
+    def operation(self): return self.outputs[0].operation if self.outputs else AssetOperation.CONFLICT
+    @property
+    def existing_target(self): return self.outputs[0].existing_target if self.outputs else None
 @dataclass(frozen=True)
 class AssetPlan:
-    family_id: str
-    assets: tuple[PlannedAsset, ...]
-    errors: tuple[str, ...] = ()
-    warnings: tuple[str, ...] = ()
-
+    family_id:str; assets:tuple[PlannedAsset,...]; errors:tuple[str,...]=(); warnings:tuple[str,...]=(); post_process:tuple[str,...]=()
     @property
-    def can_apply(self) -> bool:
-        return not self.errors and all(
-            a.confidence != ResolutionConfidence.AMBIGUOUS for a in self.assets
-        )
+    def outputs(self): return tuple(output for asset in self.assets for output in asset.outputs)
+    @property
+    def can_apply(self): return not self.errors and all(asset.confidence!=ResolutionConfidence.AMBIGUOUS for asset in self.assets)
 
-
-def generate_plan(
-    family: AssetFamilyContract,
-    inbox_dir: Path,
-    project_dir: Path,
-) -> AssetPlan:
-    """Generate a read-only ingest plan for a family's inbox directory.
-
-    This function must NOT write to content/, archive/, staging/, or catalog.
-    """
-    errors: list[str] = []
-    warnings: list[str] = []
-    planned: list[PlannedAsset] = []
-
-    kind_schemas = load_kind_schemas()
-    kind_schema = kind_schemas.get(family.kind)
-
-    if kind_schema is None:
-        return AssetPlan(
-            family_id=family.id,
-            assets=(),
-            errors=(f"unsupported asset kind schema: {family.kind}",),
-        )
-    if not inbox_dir.exists():
-        return AssetPlan(family_id=family.id, assets=())
-
-    png_files = sorted(inbox_dir.glob("*.png"))
-    if not png_files:
-        return AssetPlan(
-            family_id=family.id,
-            assets=(),
-            warnings=(f"no PNG files found in {inbox_dir}",),
-        )
-
-    for png in png_files:
-        stem = png.stem
-
-        from asset_inspector import inspect_png
-        inspection = inspect_png(png, family.frame_width, family.frame_height)
-
-        resolution = classify_input(family, stem, inspection)
-
-        if resolution.confidence == ResolutionConfidence.AMBIGUOUS:
-            planned.append(_make_ambiguous(png, family, inspection, resolution))
-            continue
-
-        assert resolution.state_id is not None
-        state = family.states[resolution.state_id]
-        fw = family.frame_width
-        fh = family.frame_height
-        frames = inspection.frame_count if inspection.layout != FrameLayout.COPY else 1
-
-        key = AssetKey(
-            owner=family.runtime_owner,
-            kind=family.kind,
-            layer=state.layer,
-            action_group=state.action_group,
-            variant=state.variant,
-            direction=family.direction_policy,
-            frames=frames,
-            frame_width=fw,
-            frame_height=fh,
-        )
-
-        from asset_naming import canonical_filename
-        cf = canonical_filename(key)
-        target = resolve_runtime_target(
-            family=family, state=state, key=key, kind_schema=kind_schema,
-        )
-        target_full = project_dir / target
-
-        existing = target_full if target_full.exists() else None
-        operation = AssetOperation.CREATE
-        if existing:
-            old_hash = _file_hash(existing)
-            new_hash = _file_hash(png)
-            if old_hash == new_hash:
-                operation = AssetOperation.DUPLICATE
-                warnings.append(f"{stem}: duplicate (same hash as existing {target})")
-            else:
-                operation = AssetOperation.REPLACE
-
-        if state.animation and frames <= 1:
-            errors.append(f"{png.name}: state '{resolution.state_id}' requires animation but source resolves to one frame")
-        if not state.animation and frames > 1:
-            errors.append(f"{png.name}: state '{resolution.state_id}' is static but source resolves to {frames} frames")
-
-        backend = _select_backend(state, inspection)
-
-        p = PlannedAsset(
-            source_path=png,
-            family_id=family.id,
-            state_id=resolution.state_id,
-            confidence=resolution.confidence,
-            inspection=inspection,
-            key=key,
-            canonical_filename=cf,
-            target_relative_path=target,
-            backend=backend,
-            operation=operation,
-            existing_target=existing,
-            warnings=(),
-        )
-        planned.append(p)
-
-    return AssetPlan(
-        family_id=family.id,
-        assets=tuple(planned),
-        errors=tuple(errors),
-        warnings=tuple(warnings),
-    )
-
-
-def _make_ambiguous(
-    png: Path,
-    family: AssetFamilyContract,
-    inspection: AssetInspection,
-    resolution,
-) -> PlannedAsset:
-    key = AssetKey(
-        owner=family.runtime_owner,
-        kind=family.kind,
-        layer="unknown",
-        action_group="unknown",
-        variant=png.stem,
-        direction=family.direction_policy,
-        frames=0,
-        frame_width=inspection.frame_width,
-        frame_height=inspection.frame_height,
-    )
-    return PlannedAsset(
-        source_path=png,
-        family_id=family.id,
-        state_id=None,
-        confidence=ResolutionConfidence.AMBIGUOUS,
-        inspection=inspection,
-        key=key,
-        canonical_filename="",
-        target_relative_path=Path(),
-        backend="none",
-        operation=AssetOperation.CONFLICT,
-        existing_target=None,
-        warnings=(),
-    )
-
-
-def _select_backend(state, inspection) -> str:
-    if inspection.frame_count > 1 or inspection.layout == FrameLayout.GRID:
-        return "sprite_ingest"
-    return "runtime_ready"
-
-
-def _file_hash(path: Path) -> str:
-    h = hashlib.sha256()
-    h.update(path.read_bytes())
-    return h.hexdigest()
+def generate_plan(family:AssetFamilyContract,inbox_dir:Path,project_dir:Path,*,no_mirror:bool=False,kind_schemas:dict[str,AssetKindSchema]|None=None)->AssetPlan:
+    schemas=kind_schemas or load_kind_schemas(); schema=schemas.get(family.kind)
+    if schema is None: return AssetPlan(family.id,(),(f"unsupported asset kind schema: {family.kind}",))
+    if not inbox_dir.exists(): return AssetPlan(family.id,(),warnings=(f"inbox does not exist: {inbox_dir}",),post_process=schema.post_process)
+    files=sorted(inbox_dir.glob("*.png"))
+    if not files: return AssetPlan(family.id,(),warnings=(f"no PNG files found in {inbox_dir}",),post_process=schema.post_process)
+    inspected=[]; errors=[]
+    for png in files:
+        provisional_sid = None
+        try:
+            canonical = parse_canonical_filename(png.name, family.kind)
+            for sid, candidate in family.states.items():
+                if (candidate.layer, candidate.action_group, candidate.variant) == (canonical.layer, canonical.action_group, canonical.variant):
+                    provisional_sid = sid
+                    break
+        except (TypeError, ValueError):
+            provisional_sid,_=family.resolve_state(png.stem.rsplit("__",1)[0] if "__" in png.stem else png.stem)
+        state=family.states.get(provisional_sid) if provisional_sid else None
+        fw,fh=family.state_frame_size(state) if state else (family.frame_width,family.frame_height)
+        inspection=inspect_png(png,fw,fh,state.layout if state else "auto",state.columns if state else None,state.rows if state else None)
+        resolution=classify_input(family,png.stem,inspection); inspected.append((png,inspection,resolution))
+    authored={(resolution.state_id,resolution.direction) for _,_,resolution in inspected if resolution.state_id and resolution.direction}
+    assets=[]; seen_targets={}
+    for png,inspection,resolution in inspected:
+        if resolution.confidence==ResolutionConfidence.AMBIGUOUS or resolution.state_id is None or resolution.direction is None:
+            assets.append(PlannedAsset(png,family.id,None,resolution.confidence,resolution,inspection,"none",()))
+            errors.append(f"{png.name}: {resolution.reason}"); continue
+        state=family.states[resolution.state_id]
+        if state.animation and inspection.frame_count<=1: errors.append(f"{png.name}: state '{state.id}' requires animation")
+        if not state.animation and inspection.frame_count>1: errors.append(f"{png.name}: state '{state.id}' is static but has {inspection.frame_count} frames")
+        backend=schema.backend_policy if schema.backend_policy!="auto" else ("sprite_ingest" if inspection.frame_count>1 or inspection.layout in {FrameLayout.GRID,FrameLayout.VERTICAL_STRIP} else "runtime_ready")
+        directions=[(resolution.direction,"authored",None)]
+        mirror=MIRRORS.get(resolution.direction)
+        if family.auto_mirror and not no_mirror and mirror and (state.id,mirror) not in authored:
+            directions.append((mirror,"mirrored",f"{state.id}::{resolution.direction}"))
+        outputs=[]
+        for direction,provenance,source_asset in directions:
+            key=AssetKey(family.runtime_owner,family.kind,state.layer,state.action_group,state.variant,direction,inspection.frame_count,inspection.frame_width,inspection.frame_height)
+            target=resolve_runtime_target(family=family,state=state,key=key,kind_schema=schema); full=project_dir/target
+            operation=AssetOperation.CREATE if not full.exists() else (AssetOperation.DUPLICATE if provenance=="authored" and _hash(full)==_hash(png) else AssetOperation.REPLACE)
+            output=PlannedOutput(state.id,key,target.name,target,operation,full if full.exists() else None,provenance,source_asset)
+            if target in seen_targets: errors.append(f"duplicate semantic output target: {target}")
+            seen_targets[target]=output; outputs.append(output)
+        assets.append(PlannedAsset(png,family.id,state.id,resolution.confidence,resolution,inspection,backend,tuple(outputs),(),schema.post_process))
+    return AssetPlan(family.id,tuple(assets),tuple(errors),post_process=schema.post_process)
+def _hash(path:Path)->str: return hashlib.sha256(path.read_bytes()).hexdigest()

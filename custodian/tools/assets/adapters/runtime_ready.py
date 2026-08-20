@@ -12,6 +12,7 @@ for directory in (ASSETS_DIR, PIPELINES_DIR):
 from asset_plan import AssetOperation, PlannedAsset
 from adapters.backend_result import BackendResult
 from runtime_ready_assets import route_asset
+from PIL import Image
 
 
 def stage_asset(planned: PlannedAsset, project_dir: Path, *, dry_run: bool = False,
@@ -21,9 +22,21 @@ def stage_asset(planned: PlannedAsset, project_dir: Path, *, dry_run: bool = Fal
         return BackendResult(False, planned.operation, [], [f"unsafe target conflict: {target}"])
     if planned.operation == AssetOperation.REPLACE and not replace:
         return BackendResult(False, planned.operation, [], [f"replacement requires --replace: {target}"])
-    if planned.operation == AssetOperation.DUPLICATE:
-        return BackendResult(True, planned.operation, [target], [])
-    result = route_asset(planned.source_path, target, apply=not dry_run, replace=replace)
-    if result.status == "rejected":
-        return BackendResult(False, planned.operation, [], [result.detail])
-    return BackendResult(True, planned.operation, [target], [])
+    outputs=[]
+    for output in planned.outputs:
+        target=project_dir/output.target_relative_path
+        if output.operation==AssetOperation.REPLACE and not replace:
+            return BackendResult(False,output.operation,outputs,[f"replacement requires --replace: {target}"])
+        if output.operation==AssetOperation.DUPLICATE:
+            outputs.append(target); continue
+        if dry_run:
+            outputs.append(target); continue
+        if output.provenance=="authored":
+            result=route_asset(planned.source_path,target,apply=True,replace=replace)
+            if result.status=="rejected": return BackendResult(False,output.operation,outputs,[result.detail])
+        else:
+            target.parent.mkdir(parents=True,exist_ok=True)
+            with Image.open(planned.source_path) as image:
+                image.transpose(Image.Transpose.FLIP_LEFT_RIGHT).save(target)
+        outputs.append(target)
+    return BackendResult(True,planned.operation,outputs,[])

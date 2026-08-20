@@ -1,8 +1,1 @@
-{
-  "kind": "world_prop",
-  "runtime_template": "sprites/environment/props/{owner}/runtime/{layer}/{filename}",
-  "defaults": {
-    "direction": "omni",
-    "layer": "body"
-  }
-}
+{"schema":"custodian.asset_kind.v2","kind":"world_prop","runtime_template":"{domain}/{owner}/runtime/{layer}/{filename}","filename_policy":"canonical","backend_policy":"auto","defaults":{"domain":"sprites/environment/props","direction":"omni","auto_mirror":false,"layer":"body","action_group":"interaction"},"post_process":[]}

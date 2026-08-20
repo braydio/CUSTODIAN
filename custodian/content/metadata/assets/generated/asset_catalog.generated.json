@@ -1,9 +1,12 @@
 {
-  "schema": "custodian.asset_catalog.v1",
+  "schema": "custodian.asset_catalog.v2",
   "families": {
     "field_fabricator_mk1": {
-      "states": {
-        "active": {
+      "kind": "world_prop",
+      "assets": {
+        "active::omni": {
+          "state_id": "active",
+          "direction": "omni",
           "semantic_identity": [
             "field_fabricator_mk1",
             "world_prop",
@@ -18,9 +21,13 @@
             128,
             96
           ],
-          "sha256": "c674b2e735e869ec66335b9df35e32901bd3a3f5f06757c075aaaef8f0e1a838"
+          "sha256": "c674b2e735e869ec66335b9df35e32901bd3a3f5f06757c075aaaef8f0e1a838",
+          "provenance": "authored",
+          "source_asset": null
         },
-        "glow": {
+        "glow::omni": {
+          "state_id": "glow",
+          "direction": "omni",
           "semantic_identity": [
             "field_fabricator_mk1",
             "world_prop",
@@ -35,9 +42,13 @@
             128,
             96
           ],
-          "sha256": "3a876f0deef85073f444094364c2fec61a77200d3d8809a44f4e4957c84d54fc"
+          "sha256": "3a876f0deef85073f444094364c2fec61a77200d3d8809a44f4e4957c84d54fc",
+          "provenance": "authored",
+          "source_asset": null
         },
-        "idle": {
+        "idle::omni": {
+          "state_id": "idle",
+          "direction": "omni",
           "semantic_identity": [
             "field_fabricator_mk1",
             "world_prop",
@@ -52,7 +63,9 @@
             128,
             96
           ],
-          "sha256": "e882738ffc7a6b216610ab5ab7531f3ec64530835522059324c328241ebee97e"
+          "sha256": "e882738ffc7a6b216610ab5ab7531f3ec64530835522059324c328241ebee97e",
+          "provenance": "authored",
+          "source_asset": null
         }
       }
     }

@@ -1,0 +1,13 @@
+{
+  "schema":"custodian.asset_family.v2","id":"void_cliff_face","kind":"tile",
+  "runtime":{"domain":"tiles/mountain_cliffs/void_fascia","owner":"void_cliff_face"},
+  "canvas":{"width":32,"height":32},"direction_policy":"omni","auto_mirror":false,
+  "states":{
+    "top_01":{"required":true,"layer":"body","action_group":"fascia","variant":"top_01","layout":"copy"},
+    "body_01":{"required":true,"layer":"body","action_group":"fascia","variant":"body_01","layout":"copy"},
+    "body_02":{"required":true,"layer":"body","action_group":"fascia","variant":"body_02","layout":"copy"},
+    "body_cracked_01":{"required":true,"layer":"body","action_group":"fascia","variant":"body_cracked_01","layout":"copy"},
+    "bottom_01":{"required":true,"layer":"body","action_group":"fascia","variant":"bottom_01","layout":"copy"},
+    "bottom_broken_01":{"required":true,"layer":"body","action_group":"fascia","variant":"bottom_broken_01","layout":"copy"}
+  },"aliases":{},"consumers":[]
+}

@@ -1,0 +1,25 @@
+{
+  "schema":"custodian.asset_family.v2","id":"enemy_grunt","kind":"enemy",
+  "runtime":{"domain":"sprites/enemies","owner":"enemy_grunt"},
+  "canvas":{"width":96,"height":96},"direction_policy":"8dir","auto_mirror":true,
+  "states":{
+    "idle_01":{"required":true,"layer":"body","action_group":"locomotion","variant":"idle_01","animation":true,"fps":8,"min_direction_count":1},
+    "run_01":{"required":true,"layer":"body","action_group":"locomotion","variant":"run_01","animation":true,"fps":10,"min_direction_count":2},
+    "fast_01":{"required":true,"layer":"body","action_group":"melee","variant":"fast_01","animation":true,"fps":12,"min_direction_count":1},
+    "flinch_01":{"required":true,"layer":"body","action_group":"melee","variant":"flinch_01","animation":true,"fps":10,"min_direction_count":1},
+    "stagger_01":{"required":true,"layer":"body","action_group":"melee","variant":"stagger_01","animation":true,"fps":9,"min_direction_count":1},
+    "death_01":{"required":true,"layer":"body","action_group":"melee","variant":"death_01","animation":true,"fps":8,"min_direction_count":1},
+    "fast_02":{"recommended":true,"layer":"body","action_group":"melee","variant":"fast_02","animation":true},
+    "crit_01":{"recommended":true,"layer":"body","action_group":"melee","variant":"crit_01","animation":true},
+    "crit_recovery_01":{"recommended":true,"layer":"body","action_group":"melee","variant":"crit_recovery_01","animation":true},
+    "special_windup_01":{"layer":"body","action_group":"melee","variant":"special_windup_01","animation":true},
+    "special_inflight_01":{"layer":"body","action_group":"melee","variant":"special_inflight_01","animation":true},
+    "special_recovery_01":{"layer":"body","action_group":"melee","variant":"special_recovery_01","animation":true},
+    "parry_critical_open_enter_01":{"layer":"body","action_group":"melee","variant":"parry_critical_open_enter_01","animation":true},
+    "parry_critical_open_hold_01":{"layer":"body","action_group":"melee","variant":"parry_critical_open_hold_01","animation":true},
+    "parry_critical_recover_01":{"layer":"body","action_group":"melee","variant":"parry_critical_recover_01","animation":true},
+    "critical_execution_victim_01":{"layer":"body","action_group":"melee","variant":"critical_execution_victim_01","animation":true},
+    "falcon_reversal_victim_01":{"layer":"body","action_group":"melee","variant":"falcon_reversal_victim_01","animation":true,"frame_width":156,"frame_height":156}
+  },"aliases":{"move":"run_01","primary_attack":"fast_01"},
+  "consumers":[{"type":"script","path":"res://game/enemies/procgen/grunt_animation_library.gd"}]
+}

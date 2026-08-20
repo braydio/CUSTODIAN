@@ -1,0 +1,1 @@
+{"schema":"custodian.asset_kind.v2","kind":"ui","runtime_template":"{domain}/{owner}/{filename}","filename_policy":"template","filename_template":"{owner}_{variant}_{frame_size}.png","backend_policy":"runtime_ready","defaults":{"domain":"ui","direction":"omni","auto_mirror":false,"layer":"ui","action_group":"display"},"post_process":[]}
