@@ -45,6 +45,9 @@ const SUNDERED_KEEP_FRONTAGE_BUILDER_SCRIPT := preload(
 const ROUTE_PLAYABILITY_FIELD_SCRIPT := preload(
 	"res://game/world/procgen/playability/route_playability_field.gd"
 )
+const ENCOUNTER_CADENCE_PLANNER_SCRIPT := preload(
+	"res://game/world/procgen/encounters/encounter_cadence_planner.gd"
+)
 const REGION_FOOTPRINT_RESERVER_SCRIPT := preload("res://game/world/procgen/intent/region_footprint_reserver.gd")
 const STORY_ROOM_GEOMETRY_STAMPER_SCRIPT := preload("res://game/world/procgen/story/story_room_geometry_stamper.gd")
 const FACTION_SITE_GEOMETRY_STAMPER_SCRIPT := preload("res://game/world/procgen/factions/faction_site_geometry_stamper.gd")
@@ -684,6 +687,8 @@ var _ascent_field_vista_cells: Array[Vector2i] = []
 var _sundered_keep_frontage: Dictionary = {}
 var _route_playability_result: Dictionary = {}
 var _route_playability_audit: Dictionary = {}
+var _encounter_plan: Dictionary = {}
+var _encounter_reserved_cells: Dictionary = {}
 var _world_progress_marker_parent: Node2D = null
 var _debug_generation_id: int = 0
 var _runtime_wall_body_peak: int = 0
@@ -1057,6 +1062,7 @@ func promote_evaluated_candidate_to_final() -> Dictionary:
 	_enforce_route_playability_walkability(map_size)
 	_enforce_runtime_blocker_route_clearance()
 	_run_route_playability_audit()
+	_build_encounter_plan()
 	marks["playability_audit"] = Time.get_ticks_msec() - phase_started
 
 	phase_started = Time.get_ticks_msec()
@@ -1285,6 +1291,7 @@ func _fill_tilemaps() -> void:
 	_rebuild_runtime_walkable_boundary()
 	_audit_sundered_keep_frontage_required_floor()
 	_run_route_playability_audit()
+	_build_encounter_plan()
 	_marks["playability_audit"] = Time.get_ticks_msec() - _last
 	_last = Time.get_ticks_msec()
 
@@ -4869,6 +4876,8 @@ func _build_route_playability(
 ) -> void:
 	_route_playability_result.clear()
 	_route_playability_audit.clear()
+	_encounter_plan.clear()
+	_encounter_reserved_cells.clear()
 	if not route_playability_enabled:
 		return
 
@@ -5469,6 +5478,35 @@ func debug_get_route_playability() -> Dictionary:
 
 func debug_get_route_playability_audit() -> Dictionary:
 	return _route_playability_audit.duplicate(true)
+
+
+func debug_get_encounter_plan() -> Dictionary:
+	return _encounter_plan.duplicate(true)
+
+
+func is_encounter_reserved_cell(tile: Vector2i) -> bool:
+	return _encounter_reserved_cells.has(tile)
+
+
+func _build_encounter_plan() -> void:
+	_encounter_plan.clear()
+	_encounter_reserved_cells.clear()
+	if _route_playability_result.is_empty():
+		return
+	var planner := ENCOUNTER_CADENCE_PLANNER_SCRIPT.new()
+	_encounter_plan = planner.build({
+		"seed": _get_generation_seed(),
+		"playability": _route_playability_result,
+		"floor_cells": _generated_floor_cells,
+		"spawn_tile": get_player_spawn(),
+		"is_runtime_walkable": Callable(self, "is_runtime_walkable_after_props"),
+		"is_valid_spawn_cell": Callable(self, "is_valid_spawn_cell"),
+	})
+	for encounter in _encounter_plan.get("encounters", []) as Array:
+		var anchor := encounter.get("anchor_tile", Vector2i.ZERO) as Vector2i
+		_encounter_reserved_cells[anchor] = true
+		for direction in [Vector2i.UP, Vector2i.RIGHT, Vector2i.DOWN, Vector2i.LEFT]:
+			_encounter_reserved_cells[anchor + direction] = true
 
 
 func debug_run_route_playability_audit() -> Dictionary:
@@ -7052,6 +7090,7 @@ func _build_foliage_spawner_context(map_size: Vector2i = Vector2i.ZERO) -> Dicti
 			{}
 		),
 		"route_hard_clearance_cells": protected_route_cells,
+		"is_encounter_reserved_cell": Callable(self, "is_encounter_reserved_cell"),
 		"route_shoulder_cells": _route_playability_result.get(
 			"shoulder_cells",
 			{}
@@ -7370,6 +7409,10 @@ func _record_ruin_prop_candidate_rejection(reason: StringName, payload: Dictiona
 
 func _get_generation_seed() -> int:
 	return int(procgen_node.seed) if procgen_node != null and "seed" in procgen_node else 0
+
+
+func get_generation_seed() -> int:
+	return _get_generation_seed()
 
 
 func _observe_ruin_prop_collision(prop: ProceduralProp) -> void:
@@ -10110,6 +10153,7 @@ func get_level_data() -> Dictionary:
 		),
 		"route_playability": _route_playability_result.duplicate(true),
 		"route_playability_audit": _route_playability_audit.duplicate(true),
+		"encounter_plan": _encounter_plan.duplicate(true),
 		"vista_cells": _ascent_field_vista_cells.duplicate(),
 		"sundered_keep_frontage": _sundered_keep_frontage.duplicate(true),
 		"worldgen_reserved_regions": _worldgen_reserved_regions.duplicate(true),

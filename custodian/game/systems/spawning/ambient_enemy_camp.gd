@@ -12,6 +12,7 @@ class_name AmbientEnemyCamp
 @export var respawn_enabled: bool = false
 @export var faction_id: StringName = &"hostile"
 @export var behavior_profile_id: StringName = &"raider_grunt"
+var home_position_px: Vector2 = Vector2.INF
 
 var _spawned := false
 var _spawned_enemies: Array[Node] = []
@@ -91,7 +92,7 @@ func _configure_spawned_enemy(enemy: Node2D) -> void:
 		if behavior.has_method("setup_ambient_home"):
 			behavior.call(
 				"setup_ambient_home",
-				global_position,
+				global_position if home_position_px == Vector2.INF else home_position_px,
 				camp_id,
 				leash_radius_px
 			)

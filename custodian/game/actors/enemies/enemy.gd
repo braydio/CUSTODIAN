@@ -605,6 +605,10 @@ func _physics_process(delta):
 	if obs != null:
 		obs.perf_span_end(&"enemy_combat", combat_started)
 	if behavior_state_machine_enabled and behavior_state_machine != null and behavior_state_machine.has_method("physics_update"):
+		# BEHAVIOR AUTHORITY: EnemyBehaviorStateMachine owns strategic behavior,
+		# movement goals, investigation, pursuit, objectives, flee/search/home.
+		# enemy.gd retains combat execution, special attacks, and reactions.
+		# Everything after this return is legacy fallback for disabled BSM actors.
 		var behavior_started: int = obs.perf_span_begin() if obs != null else 0
 		if bool(behavior_state_machine.call("physics_update", self, delta)):
 			if obs != null:
@@ -1989,9 +1993,9 @@ func _get_pathfinding_direction(target_pos: Vector2, delta: float) -> Vector2:
 		path_refresh_timer = path_refresh_interval
 		_refresh_path(target_pos)
 	
-	# If no valid path, move directly toward target
+	# Direct grid LOS already failed. No authoritative path means stop and repath.
 	if current_path.is_empty():
-		return (target_pos - global_position).normalized()
+		return Vector2.ZERO
 	
 	# Follow path waypoints
 	return _get_direction_along_path(target_pos)
@@ -2515,6 +2519,20 @@ func get_behavior_snapshot() -> Dictionary:
 		"profile_id": String(behavior_profile_id),
 		"state": "legacy",
 		"carrying_loot": false,
+	}
+
+
+func get_behavior_authority_snapshot() -> Dictionary:
+	var authority := "legacy_assault"
+	if behavior_state_machine_enabled and behavior_state_machine != null:
+		authority = "behavior_state_machine"
+	elif passive:
+		authority = "passive"
+	return {
+		"authority": authority,
+		"state_machine_enabled": behavior_state_machine_enabled,
+		"behavior_profile_id": String(behavior_profile_id),
+		"legacy_assault_state": AssaultState.keys()[_assault_state],
 	}
 
 
@@ -3975,6 +3993,10 @@ func _update_reaction_timers(delta: float) -> bool:
 	return false
 
 
+# ============================================================
+# LEGACY BEHAVIOR FALLBACK
+# Used only when EnemyBehaviorStateMachine is disabled.
+# ============================================================
 func _update_assault_state(delta: float) -> bool:
 	_assault_state_timer = max(0.0, _assault_state_timer - delta)
 	match _assault_state:

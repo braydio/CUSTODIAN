@@ -9,6 +9,12 @@ var is_suspicious: bool = false
 
 var current_objective: Node = null
 var current_objective_type: StringName = &"none"
+var current_objective_score: float = 0.0
+var objective_evaluation_count: int = 0
+var objective_switch_count: int = 0
+var decision_ordinal: int = 0
+var damage_event_ordinal: int = 0
+var ambient_decision_ordinal: int = 0
 
 var target_storage: Node = null
 var carried_resources: Dictionary = {}
@@ -52,6 +58,12 @@ func get_debug_snapshot() -> Dictionary:
 		"alerted": is_alerted,
 		"suspicious": is_suspicious,
 		"objective_type": String(current_objective_type),
+		"current_objective_score": current_objective_score,
+		"objective_evaluation_count": objective_evaluation_count,
+		"objective_switch_count": objective_switch_count,
+		"decision_ordinal": decision_ordinal,
+		"damage_event_ordinal": damage_event_ordinal,
+		"ambient_decision_ordinal": ambient_decision_ordinal,
 		"carrying_loot": is_carrying_loot,
 		"carried_resources": carried_resources.duplicate(true),
 		"morale": morale,

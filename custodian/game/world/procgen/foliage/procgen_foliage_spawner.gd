@@ -128,6 +128,8 @@ func _should_place_foliage(context: Dictionary, pos: Vector2i) -> bool:
 		return false
 	if _is_route_hard_clearance(context, pos):
 		return false
+	if _call_bool(context, "is_encounter_reserved_cell", pos):
+		return false
 	if _call_bool(context, "is_road_surface_tile", pos) or _call_bool(context, "is_parking_zone_tile", pos):
 		return false
 	if _call_bool(context, "is_indoor_tile", pos):

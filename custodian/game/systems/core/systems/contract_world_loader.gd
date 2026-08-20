@@ -193,9 +193,41 @@ func _on_contract_generated(contract: Dictionary) -> void:
 
 
 func _place_ambient_enemy_camps(level_data: Dictionary, map_instance: Node) -> void:
+	_clear_generated_ambient_enemy_markers()
+	var encounter_plan := level_data.get("encounter_plan", {}) as Dictionary
+	var encounters := encounter_plan.get("encounters", []) as Array
+	if not encounters.is_empty():
+		_place_encounter_plan_markers(encounters, map_instance)
+	else:
+		_place_legacy_ambient_enemy_markers(level_data, map_instance)
+	_request_ambient_spawner_refresh()
+
+
+func _clear_generated_ambient_enemy_markers() -> void:
 	for existing in get_tree().get_nodes_in_group(GENERATED_AMBIENT_ENEMY_MARKER_GROUP):
 		if existing is Node and is_instance_valid(existing):
 			(existing as Node).queue_free()
+
+
+func _place_encounter_plan_markers(encounters: Array, map_instance: Node) -> void:
+	for encounter_variant in encounters:
+		var encounter := encounter_variant as Dictionary
+		var marker := Marker2D.new()
+		var encounter_id := String(encounter.get("encounter_id", "combat"))
+		marker.name = "AmbientEnemyCampMarker_%s" % encounter_id
+		marker.add_to_group(AMBIENT_ENEMY_MARKER_GROUP)
+		marker.add_to_group(GENERATED_AMBIENT_ENEMY_MARKER_GROUP)
+		for key in ["encounter_id", "tier", "pocket_index", "home_tile", "leash_radius_tiles", "spawn_radius_tiles", "activation_range_tiles", "enemy_count_min", "enemy_count_max", "behavior_profile_id"]:
+			var metadata_key: String = "encounter_tier" if key == "tier" else String(key)
+			marker.set_meta(metadata_key, encounter.get(key))
+		marker.set_meta("camp_id", encounter_id)
+		var anchor := encounter.get("anchor_tile", Vector2i.ZERO) as Vector2i
+		marker.set_meta("camp_tile", anchor)
+		map_instance.add_child(marker)
+		marker.global_position = _tile_to_world(map_instance, anchor)
+
+
+func _place_legacy_ambient_enemy_markers(level_data: Dictionary, map_instance: Node) -> void:
 	if ambient_enemy_camp_count <= 0:
 		return
 	var candidates := _build_ambient_enemy_candidate_tiles(level_data, map_instance)
@@ -222,6 +254,9 @@ func _place_ambient_enemy_camps(level_data: Dictionary, map_instance: Node) -> v
 		chosen.append(tile)
 		if chosen.size() >= ambient_enemy_camp_count:
 			break
+
+
+func _request_ambient_spawner_refresh() -> void:
 	var spawner := get_node_or_null(ambient_enemy_spawner_path)
 	if spawner != null and spawner.has_method("spawn_from_markers"):
 		spawner.call("spawn_from_markers")

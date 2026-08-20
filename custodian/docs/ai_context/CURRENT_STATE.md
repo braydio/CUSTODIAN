@@ -1,5 +1,27 @@
 # CURRENT STATE — CUSTODIAN
 
+## Map + AI Coherence V1 (2026-08-20)
+
+- Enemy behavior decisions use world/camp/spawn identity plus per-channel
+  ordinals; patrol, ambient activity, and damage-loot authority no longer use
+  wall-clock or state-duration seeds.
+- `EnemyObjectiveSensor` is a candidate scorer. The behavior state machine
+  owns immediate Operator/alert/loot interrupts, 0.65-second strategic
+  rescoring, 18-point objective hysteresis, and evaluation/switch telemetry.
+- `NavigationSystem` builds directional edges through
+  `ProcGenTilemap.can_actor_move_between_tiles()`. One-way drops remain
+  asymmetric, path smoothing validates elevation transitions, and disconnected
+  authoritative graphs return no path instead of direct movement.
+- `EncounterCadencePlanner` deterministically maps eligible combat pockets to
+  minor/major encounter data. Existing loader markers, `AmbientEnemySpawner`,
+  and `AmbientEnemyCamp` consume pocket home/leash/count/profile metadata;
+  legacy generic placement remains fallback when no plan exists.
+- The Marine now uses `raider_marine`. `enemy.gd` explicitly reports behavior
+  state-machine, passive, or legacy-assault authority.
+
+Authority chain: pocket intent → elevation traversal → navigation → encounter
+plan → camp territory → enemy behavior.
+
 ## Historical Archive Boundary Migration (2026-08-19)
 
 Completed: active doctrine now lives at

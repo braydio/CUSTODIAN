@@ -20,11 +20,12 @@ func choose_objective(enemy: Node2D, profile: Resource, blackboard: Node) -> Dic
 		if score > best_score:
 			best_score = score
 			best_type = StringName(str(key))
+	var target: Node = null
 	if best_type == &"storage":
-		blackboard.set("target_storage", storage_objective.get("target"))
+		target = storage_objective.get("target") as Node
 	elif best_type == &"sabotage_storage":
-		blackboard.set("target_storage", sabotage_objective.get("target"))
-	return {"type": best_type, "score": best_score}
+		target = sabotage_objective.get("target") as Node
+	return {"type": best_type, "score": best_score, "target": target, "scores": scores}
 
 
 func score_operator(enemy: Node2D, profile: Resource, blackboard: Node) -> float:
@@ -41,7 +42,6 @@ func score_operator(enemy: Node2D, profile: Resource, blackboard: Node) -> float
 	if not bool(blackboard.get("is_alerted")) and not bool(blackboard.get("has_seen_operator")):
 		if distance > awareness_radius:
 			return 0.0
-		_mark_operator_awareness(operator, blackboard)
 		var bubble_proximity := clampf(1.0 - distance / maxf(1.0, awareness_radius), 0.0, 1.0)
 		return float(profile.get("operator_awareness_score")) + bubble_proximity * 35.0
 	var proximity := clampf(1.0 - distance / maxf(1.0, float(profile.get("vision_range_px"))), 0.0, 1.0)
@@ -114,13 +114,3 @@ func _find_operator(enemy: Node) -> Node2D:
 	if enemy == null or not enemy.is_inside_tree():
 		return null
 	return enemy.get_tree().get_first_node_in_group("player") as Node2D
-
-
-func _mark_operator_awareness(operator: Node2D, blackboard: Node) -> void:
-	blackboard.operator_ref = operator
-	blackboard.last_known_operator_position = operator.global_position
-	blackboard.target_last_seen_position = operator.global_position
-	blackboard.investigation_position = operator.global_position
-	blackboard.has_seen_operator = true
-	blackboard.is_alerted = true
-	blackboard.is_suspicious = true

@@ -76,8 +76,8 @@ func _assert_operator_bubble_overrides_storage(root: Node2D, profile: Resource) 
 	enemy.add_child(sensor)
 	var objective: Dictionary = sensor.choose_objective(enemy, profile, blackboard)
 	_assert_eq(StringName(str(objective.get("type", "none"))), &"operator", "close Operator should override storage objective")
-	_assert_true(bool(blackboard.get("is_alerted")), "close Operator bubble should mark blackboard alerted")
-	_assert_true(blackboard.get("operator_ref") == operator, "close Operator bubble should set operator_ref")
+	_assert_true(not bool(blackboard.get("is_alerted")), "objective sensor must not mutate alert state")
+	_assert_true(blackboard.get("operator_ref") == operator, "objective sensor must preserve existing operator_ref")
 
 
 func _assert_true(value: bool, message: String) -> void:

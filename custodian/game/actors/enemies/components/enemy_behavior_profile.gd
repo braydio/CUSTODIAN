@@ -71,6 +71,32 @@ class_name EnemyBehaviorProfile
 static func create_profile(id: StringName) -> Resource:
 	var profile = load("res://game/actors/enemies/components/enemy_behavior_profile.gd").new()
 	match id:
+		&"raider_marine":
+			profile.profile_id = &"raider_marine"
+			profile.display_name = "Raider Marine"
+			profile.aggression_weight = 0.82
+			profile.theft_weight = 0.10
+			profile.sabotage_weight = 0.60
+			profile.self_preservation_weight = 0.28
+			profile.curiosity_weight = 0.18
+			profile.vision_range_px = 260.0
+			profile.hearing_range_px = 180.0
+			profile.detection_gain_per_sec = 1.90
+			profile.detection_notice_threshold = 0.28
+			profile.detection_alert_threshold = 0.90
+			profile.can_steal_resources = false
+			profile.can_sabotage_storage = true
+			profile.sabotage_seconds = 2.0
+			profile.sabotage_damage = 14
+			profile.patrol_speed = 58.0
+			profile.investigate_speed = 72.0
+			profile.engage_speed = 88.0
+			profile.flee_speed = 92.0
+			profile.objective_speed = 76.0
+			profile.ambient_activity_weight = 0.15
+			profile.noncombat_warning_seconds = 0.25
+			profile.investigation_memory_sec = 5.5
+			profile.lost_sight_memory_sec = 2.8
 		&"raider_savage":
 			profile.profile_id = &"raider_savage"
 			profile.display_name = "Raider Savage"

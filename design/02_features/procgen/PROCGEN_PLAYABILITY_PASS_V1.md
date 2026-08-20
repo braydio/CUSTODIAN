@@ -25,8 +25,10 @@ navigation authority.
 6. Floor presentation and road stamping
 7. Story/faction geometry
 8. Props and foliage
-9. Actors and encounter anchors
+9. Blocking props and foliage
 10. Final blocker-aware playability audit
+11. Deterministic encounter cadence plan
+12. Actors and encounter camp markers
 
 ## Runtime Ownership
 
@@ -121,12 +123,37 @@ Developer Observatory diagnostics and never become generation inputs.
 The paired portal's own authored collision is excluded from generic dressing
 blocker checks; its surrounding pad still rejects unrelated blockers.
 
+## Encounter Cadence V1
+
+After blocking props and the final audit, a pure `EncounterCadencePlanner`
+consumes classified pockets. Only eligible combat pockets produce ordinary
+encounters. Each plan owns a pocket edge anchor, an in-pocket home tile,
+pocket-derived leash, tier, count, activation, and behavior-profile metadata.
+Anchors must be spawn-valid, runtime-walkable, pocket-owned, and outside route
+hard clearance.
+
+Pockets use stable progression/beat metadata when present, otherwise squared
+distance from spawn with coordinate tie-breaks. The first encounter is minor;
+each third accepted combat pocket is major-eligible; majors never occur
+consecutively; later majors require an intervening safe pocket. The data-only
+plan is exported through existing level data and consumed by
+`ContractWorldLoader`, `AmbientEnemySpawner`, and `AmbientEnemyCamp`.
+
+Selected anchors and cardinal neighbors form a separate reservation mask for
+later streamed solid dressing. The mask does not become route clearance and
+does not mutate geometry.
+
+```text
+intent/pocket semantics -> elevation -> navigation -> encounter plan
+    -> camp territory -> enemy behavior
+```
+
 ## Deferred Presentation Work
 
 This V1 does not add camera bounds or a biome underlay. The exported masks and
 pocket roles are the authority those later presentation passes must consume.
-Encounter cadence and player-facing arena art remain later content work; this
-pass only establishes safe, reachable pocket geometry and edge anchors.
+Player-facing arena art remains later content work. Encounter cadence consumes
+the safe, reachable pocket geometry and edge anchors without new assets.
 
 ## Validation
 

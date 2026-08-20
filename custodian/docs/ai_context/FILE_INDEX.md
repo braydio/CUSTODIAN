@@ -1,6 +1,23 @@
 # FILE INDEX — CUSTODIAN
 
-Last updated: 2026-08-12
+Last updated: 2026-08-20
+
+## Map + AI Coherence
+
+- `game/world/procgen/encounters/encounter_cadence_planner.gd` — pure,
+  deterministic combat-pocket cadence and camp-territory plan authority.
+- `game/world/procgen/playability/` and `game/world/elevation/elevation_map.gd`
+  — pocket/anchor semantics and terrain traversal authority.
+- `game/systems/core/systems/navigation_system.gd` — directional elevation-edge
+  graph and elevation-safe smoothing.
+- `game/systems/core/systems/contract_world_loader.gd`,
+  `game/systems/spawning/ambient_enemy_{spawner,camp}.gd` — encounter-plan
+  marker adaptation and sole ambient camp runtime.
+- `game/actors/enemies/enemy_behavior_state_machine.gd` and `components/` —
+  deterministic behavior authority, pure scoring, perception, blackboard, and
+  profile tuning; `enemy.gd` retains combat/locomotion and legacy fallback.
+- `tools/validation/{enemy_behavior_determinism,enemy_objective_cadence,navigation_elevation,procgen_encounter_cadence,enemy_behavior_authority}_smoke.gd`
+  — focused coherence regression coverage.
 
 ## Terminal Sensors Intelligence
 

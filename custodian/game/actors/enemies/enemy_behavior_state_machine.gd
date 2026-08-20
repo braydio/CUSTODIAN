@@ -24,6 +24,7 @@ const DEAD := &"dead"
 @export var profile_id: StringName = &"raider_grunt"
 @export var notice_duration_sec: float = 0.35
 @export var idle_rescore_interval_sec: float = 0.65
+@export var objective_switch_margin: float = 18.0
 @export var storage_interact_range_px: float = 42.0
 @export var exit_reached_range_px: float = 36.0
 @export var debug_enabled: bool = false
@@ -126,10 +127,13 @@ func change_state(new_state: StringName) -> void:
 
 
 func on_damaged(enemy: Node, amount: float) -> void:
+	var event_ordinal: int = int(blackboard.damage_event_ordinal) if blackboard != null else 0
+	if blackboard != null:
+		blackboard.damage_event_ordinal += 1
 	if blackboard != null and profile != null:
 		blackboard.morale = maxf(0.0, blackboard.morale - amount * 0.25)
 	if loot_carrier != null and loot_carrier.is_carrying_loot() and profile != null:
-		var roll := _stable_damage_roll(enemy)
+		var roll := _deterministic_roll(enemy, &"damage_loot_drop", event_ordinal)
 		if roll < profile.drop_loot_on_hit_chance:
 			loot_carrier.drop_payload(enemy)
 			if blackboard != null:
@@ -190,25 +194,24 @@ func get_debug_snapshot() -> Dictionary:
 
 func _update_idle(enemy: Node2D, _delta: float) -> void:
 	enemy.call("behavior_stop")
-	if _evaluate_interrupts(enemy):
+	if _evaluate_immediate_interrupts(enemy):
 		return
 	if _rescore_timer <= 0.0:
 		_rescore_timer = idle_rescore_interval_sec
 		if _try_claim_nearby_ambient_anchor(enemy):
 			return
-		var objective: Dictionary = _choose_objective_measured(enemy)
-		_apply_objective_choice(objective)
+		_consider_objective_candidate(_choose_objective_measured(enemy))
 
 
 func _update_patrol(enemy: Node2D, _delta: float) -> void:
-	if _evaluate_interrupts(enemy):
+	if _evaluate_immediate_interrupts(enemy):
 		return
 	if _patrol_target == Vector2.ZERO or enemy.global_position.distance_to(_patrol_target) <= 18.0:
-		_patrol_target = blackboard.home_position + Vector2(96.0, 0.0).rotated(float((Time.get_ticks_msec() / 500) % 8) * TAU / 8.0)
+		_patrol_target = _choose_next_patrol_target(enemy)
 	enemy.call("behavior_move_toward", _patrol_target, profile.patrol_speed)
 	if _rescore_timer <= 0.0:
 		_rescore_timer = idle_rescore_interval_sec
-		_apply_objective_choice(_choose_objective_measured(enemy))
+		_consider_objective_candidate(_choose_objective_measured(enemy))
 
 
 func _update_ambient_activity(enemy: Node2D, delta: float) -> void:
@@ -232,8 +235,9 @@ func _update_ambient_activity(enemy: Node2D, delta: float) -> void:
 
 
 func _try_claim_nearby_ambient_anchor(enemy: Node2D) -> bool:
-	var roll_basis := "%s:%d:%d" % [enemy.name, int(state_time * 10.0), int(profile.ambient_activity_weight * 100.0)]
-	var roll := float((roll_basis.hash() & 0x7fffffff) % 1000) / 1000.0
+	var ordinal: int = int(blackboard.ambient_decision_ordinal)
+	blackboard.ambient_decision_ordinal += 1
+	var roll := _deterministic_roll(enemy, &"ambient_activity", ordinal)
 	if roll > profile.ambient_activity_weight:
 		return false
 	var best_anchor: Node2D = null
@@ -326,7 +330,7 @@ func _update_seek_objective(enemy: Node2D, _delta: float) -> void:
 		return
 	var storage := blackboard.get("target_storage") as Node2D
 	if storage == null or not is_instance_valid(storage):
-		_apply_objective_choice(_choose_objective_measured(enemy))
+		_consider_objective_candidate(_choose_objective_measured(enemy))
 		return
 	var sabotaging: bool = blackboard.current_objective_type == &"vault_storage_sabotage"
 	if sabotaging and storage.has_method("is_destroyed") and bool(storage.call("is_destroyed")):
@@ -431,26 +435,33 @@ func _update_flee(enemy: Node2D, _delta: float) -> void:
 	enemy.call("behavior_move_toward", exit_node.global_position, profile.flee_speed)
 
 
-func _evaluate_interrupts(enemy: Node2D) -> bool:
+func _evaluate_immediate_interrupts(enemy: Node2D) -> bool:
+	if blackboard.is_carrying_loot:
+		change_state(ESCAPE_WITH_LOOT)
+		return true
+	var operator := blackboard.operator_ref as Node2D
+	if operator == null or not is_instance_valid(operator):
+		operator = _find_operator()
+	if operator != null and enemy.global_position.distance_to(operator.global_position) <= float(profile.get("operator_awareness_bubble_px")):
+		_mark_operator_awareness(operator)
 	if blackboard.is_alerted and blackboard.operator_ref != null:
 		change_state(NOTICE)
 		return true
 	if blackboard.is_suspicious and blackboard.investigation_timer > 0.0:
 		change_state(INVESTIGATE)
 		return true
-	var objective: Dictionary = _choose_objective_measured(enemy)
-	if float(objective.get("score", 0.0)) > 0.0:
-		_apply_objective_choice(objective)
-		return current_state != IDLE and current_state != PATROL
 	return false
 
 
 func _choose_objective_measured(enemy: Node2D) -> Dictionary:
+	blackboard.objective_evaluation_count += 1
 	var observatory := enemy.get_node_or_null("/root/DevObservatory")
 	var started: int = observatory.perf_span_begin() if observatory != null else 0
 	var result: Dictionary = objective_sensor.call("choose_objective", enemy, profile, blackboard)
 	if observatory != null:
 		observatory.perf_span_end(&"enemy_objective_sensor", started)
+		if observatory.has_method("increment"):
+			observatory.call("increment", &"enemy_objective_evaluations", 1)
 	return result
 
 
@@ -475,25 +486,73 @@ func _evaluate_operator_interrupt_for_storage() -> bool:
 	return profile.aggression_weight >= profile.theft_weight or blackboard.morale <= profile.morale_panic_threshold
 
 
+func _consider_objective_candidate(candidate: Dictionary) -> bool:
+	var candidate_type := StringName(str(candidate.get("type", "none")))
+	var candidate_score := float(candidate.get("score", 0.0))
+	if candidate_score <= 0.0 or candidate_type == &"none":
+		if current_state == IDLE:
+			change_state(PATROL)
+		return false
+	if [&"operator", &"exit", &"investigate"].has(candidate_type):
+		_apply_objective_choice(candidate)
+		return true
+	var current_type: StringName = StringName(blackboard.current_objective_type)
+	var mapped_candidate_type := &"vault_storage_sabotage" if candidate_type == &"sabotage_storage" else &"vault_storage"
+	var current_valid := _is_current_strategic_objective_valid()
+	if current_type == mapped_candidate_type and current_valid:
+		blackboard.current_objective_score = candidate_score
+		return false
+	if current_valid and current_type != &"none":
+		var score_key := &"sabotage_storage" if current_type == &"vault_storage_sabotage" else &"storage"
+		var current_score := float((candidate.get("scores", {}) as Dictionary).get(score_key, blackboard.current_objective_score))
+		if candidate_score < current_score + objective_switch_margin:
+			blackboard.current_objective_score = current_score
+			return false
+	_apply_objective_choice(candidate)
+	return true
+
+
 func _apply_objective_choice(objective: Dictionary) -> void:
+	var previous_type: StringName = StringName(blackboard.current_objective_type)
+	var score := float(objective.get("score", 0.0))
 	match StringName(str(objective.get("type", "none"))):
 		&"exit":
 			change_state(ESCAPE_WITH_LOOT)
 		&"operator":
 			change_state(NOTICE)
 		&"storage":
+			blackboard.target_storage = objective.get("target") as Node
 			blackboard.current_objective_type = &"vault_storage"
 			blackboard.current_objective = blackboard.target_storage
+			blackboard.current_objective_score = score
 			change_state(SEEK_OBJECTIVE)
 		&"sabotage_storage":
+			blackboard.target_storage = objective.get("target") as Node
 			blackboard.current_objective_type = &"vault_storage_sabotage"
 			blackboard.current_objective = blackboard.target_storage
+			blackboard.current_objective_score = score
 			change_state(SEEK_OBJECTIVE)
 		&"investigate":
 			change_state(INVESTIGATE)
 		_:
 			if current_state == IDLE:
 				change_state(PATROL)
+	if blackboard.current_objective_type != previous_type and [&"vault_storage", &"vault_storage_sabotage"].has(blackboard.current_objective_type):
+		blackboard.objective_switch_count += 1
+		var observatory := get_node_or_null("/root/DevObservatory")
+		if observatory != null and observatory.has_method("increment"):
+			observatory.call("increment", &"enemy_objective_switches", 1)
+
+
+func _is_current_strategic_objective_valid() -> bool:
+	var target: Node = blackboard.current_objective as Node
+	if target == null or not is_instance_valid(target) or not target.is_inside_tree():
+		return false
+	if blackboard.current_objective_type == &"vault_storage":
+		return not target.has_method("has_resources") or bool(target.call("has_resources"))
+	if blackboard.current_objective_type == &"vault_storage_sabotage":
+		return not target.has_method("is_destroyed") or not bool(target.call("is_destroyed"))
+	return false
 
 
 func _update_search(enemy: Node2D, delta: float) -> void:
@@ -555,7 +614,46 @@ func _find_operator() -> Node2D:
 	return parent.get_tree().get_first_node_in_group("player") as Node2D
 
 
-func _stable_damage_roll(enemy: Node) -> float:
-	var basis := "%s:%d:%d" % [enemy.name if enemy != null else "enemy", int(state_time * 1000.0), int(Time.get_ticks_msec() / 250)]
-	var hash := basis.hash() & 0x7fffffff
-	return float(hash % 1000) / 1000.0
+func _choose_next_patrol_target(enemy: Node) -> Vector2:
+	var ordinal: int = int(blackboard.decision_ordinal)
+	blackboard.decision_ordinal += 1
+	var roll := _deterministic_roll(enemy, &"patrol_direction", ordinal)
+	var direction_index := mini(7, int(floor(roll * 8.0)))
+	var direction := Vector2.RIGHT.rotated(float(direction_index) * TAU / 8.0)
+	return blackboard.home_position + direction * 96.0
+
+
+func _mark_operator_awareness(operator: Node2D) -> void:
+	blackboard.operator_ref = operator
+	blackboard.last_known_operator_position = operator.global_position
+	blackboard.target_last_seen_position = operator.global_position
+	blackboard.investigation_position = operator.global_position
+	blackboard.has_seen_operator = true
+	blackboard.is_alerted = true
+	blackboard.is_suspicious = true
+
+
+func _get_stable_agent_key(enemy: Node) -> String:
+	var home: Vector2 = blackboard.home_position if blackboard != null else Vector2.ZERO
+	return "%d:%d:%s:%d:%d" % [
+		_resolve_world_seed(enemy),
+		int(enemy.get_meta("stable_spawn_ordinal", 0)) if enemy != null else 0,
+		String(blackboard.camp_id) if blackboard != null else "",
+		roundi(home.x),
+		roundi(home.y),
+	]
+
+
+func _resolve_world_seed(enemy: Node) -> int:
+	if enemy == null or not enemy.is_inside_tree():
+		return 0
+	for provider in enemy.get_tree().get_nodes_in_group("procgen_walkability_provider"):
+		if provider != null and provider.has_method("get_generation_seed"):
+			return int(provider.call("get_generation_seed"))
+	return 0
+
+
+func _deterministic_roll(enemy: Node, channel: StringName, ordinal: int) -> float:
+	var basis := "%s:%s:%d" % [_get_stable_agent_key(enemy), String(channel), ordinal]
+	var hashed := basis.hash() & 0x7fffffff
+	return float(hashed % 100000) / 99999.0

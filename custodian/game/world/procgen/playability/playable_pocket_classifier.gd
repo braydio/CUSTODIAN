@@ -45,9 +45,9 @@ func classify(
 			pocket["clear_rect"] = clear_rect
 			for cell in _rect_floor_cells(clear_rect, floor_cells):
 				encounter_clearance_cells[cell] = true
-			encounter_spawn_cells.append_array(
-				_encounter_edge_cells(rect, clear_rect, floor_cells)
-			)
+			var pocket_spawn_cells := _encounter_edge_cells(rect, clear_rect, floor_cells)
+			pocket["encounter_spawn_cells"] = pocket_spawn_cells
+			encounter_spawn_cells.append_array(pocket_spawn_cells)
 
 	return {
 		"pockets": pockets,

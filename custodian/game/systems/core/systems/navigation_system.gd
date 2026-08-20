@@ -194,20 +194,24 @@ func _is_walkable(cell: Vector2i) -> bool:
 
 
 func _connect_adjacent_cells(cell: Vector2i) -> void:
-	var neighbors = [
-		cell + Vector2i(0, -1),  # North
-		cell + Vector2i(1, 0),   # East
-		cell + Vector2i(0, 1),   # South
-		cell + Vector2i(-1, 0),  # West
-	]
-	
-	for neighbor in neighbors:
+	for neighbor in [cell + Vector2i.RIGHT, cell + Vector2i.DOWN]:
 		if _walkable_tiles.has(neighbor):
-			astar.connect_points(
-				_cell_to_id(cell),
-				_cell_to_id(neighbor),
-				true
-			)
+			var from_id := _cell_to_id(cell)
+			var to_id := _cell_to_id(neighbor)
+			if _can_traverse_edge(cell, neighbor):
+				astar.connect_points(from_id, to_id, false)
+			if _can_traverse_edge(neighbor, cell):
+				astar.connect_points(to_id, from_id, false)
+
+
+func _can_traverse_edge(from_cell: Vector2i, to_cell: Vector2i) -> bool:
+	if not _walkable_tiles.has(from_cell) or not _walkable_tiles.has(to_cell):
+		return false
+	if runtime_blocker_provider != null \
+			and is_instance_valid(runtime_blocker_provider) \
+			and runtime_blocker_provider.has_method("can_actor_move_between_tiles"):
+		return bool(runtime_blocker_provider.call("can_actor_move_between_tiles", from_cell, to_cell))
+	return true
 
 
 func get_path_to_target(start: Vector2, target: Vector2) -> PackedVector2Array:
@@ -226,18 +230,18 @@ func compute_path_immediate(start: Vector2, target: Vector2) -> PackedVector2Arr
 	target_cell = _get_nearest_walkable(target_cell)
 	
 	if not _walkable_tiles.has(start_cell) or not _walkable_tiles.has(target_cell):
-		return PackedVector2Array([start, target])
+		return PackedVector2Array()
 	
 	var start_id = _cell_to_id(start_cell)
 	var target_id = _cell_to_id(target_cell)
 	
 	if not astar.has_point(start_id) or not astar.has_point(target_id):
-		return PackedVector2Array([start, target])
+		return PackedVector2Array()
 	
 	var path_points = astar.get_point_path(start_id, target_id)
 	
 	if path_points.is_empty():
-		return PackedVector2Array([start, target])
+		return PackedVector2Array()
 	
 	return smooth_path(path_points)
 
@@ -271,26 +275,45 @@ func has_grid_line_of_sight(
 	var target_cell := floor_tilemap.local_to_map(
 		floor_tilemap.to_local(target)
 	)
-	var x := start_cell.x
-	var y := start_cell.y
+	var current := start_cell
 	var dx := absi(target_cell.x - start_cell.x)
 	var dy := absi(target_cell.y - start_cell.y)
 	var step_x := 1 if start_cell.x < target_cell.x else -1
 	var step_y := 1 if start_cell.y < target_cell.y else -1
 	var error := dx - dy
 	while true:
-		if not _cell_has_clearance(Vector2i(x, y), clearance_cells):
+		if not _cell_has_clearance(current, clearance_cells):
 			return false
-		if x == target_cell.x and y == target_cell.y:
+		if current == target_cell:
 			return true
+		var next := current
 		var doubled_error := error * 2
 		if doubled_error > -dy:
 			error -= dy
-			x += step_x
+			next.x += step_x
 		if doubled_error < dx:
 			error += dx
-			y += step_y
+			next.y += step_y
+		if not _can_traverse_raster_step(current, next, clearance_cells):
+			return false
+		current = next
 	return false
+
+
+func _can_traverse_raster_step(from_cell: Vector2i, to_cell: Vector2i, clearance_cells: int) -> bool:
+	if not _cell_has_clearance(to_cell, clearance_cells):
+		return false
+	if from_cell.x == to_cell.x or from_cell.y == to_cell.y:
+		return _can_traverse_edge(from_cell, to_cell)
+	var via_x := Vector2i(to_cell.x, from_cell.y)
+	var via_y := Vector2i(from_cell.x, to_cell.y)
+	var x_route := _cell_has_clearance(via_x, clearance_cells) \
+		and _can_traverse_edge(from_cell, via_x) \
+		and _can_traverse_edge(via_x, to_cell)
+	var y_route := _cell_has_clearance(via_y, clearance_cells) \
+		and _can_traverse_edge(from_cell, via_y) \
+		and _can_traverse_edge(via_y, to_cell)
+	return x_route or y_route
 
 
 func _cell_has_clearance(cell: Vector2i, clearance_cells: int) -> bool:

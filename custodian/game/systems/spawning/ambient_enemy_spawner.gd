@@ -143,12 +143,12 @@ func spawn_from_markers() -> int:
 	var created := 0
 
 	for marker_variant in get_tree().get_nodes_in_group(marker_group):
-		if created >= max_generated_camps:
-			break
-
 		var marker := marker_variant as Node2D
 		if marker == null or marker.is_queued_for_deletion():
 			continue
+		var is_planned := marker.has_meta("encounter_id")
+		if not is_planned and created >= max_generated_camps:
+			break
 
 		# ContractWorldLoader and the deferred startup call may both request
 		# marker processing. A marker may create exactly one generated camp.
@@ -160,11 +160,11 @@ func spawn_from_markers() -> int:
 			_obs_increment("ambient_enemy_duplicate_marker_suppressed")
 			continue
 
-		if (created + 1) * maxi(1, enemies_per_camp_min) > max_active_ambient_enemies:
+		if not is_planned and (created + 1) * maxi(1, enemies_per_camp_min) > max_active_ambient_enemies:
 			break
 
 		var marker_position := marker.global_position
-		if (
+		if not is_planned and (
 			player != null
 			and marker_position.distance_to(player.global_position)
 			< min_distance_from_player_start_px
@@ -179,17 +179,23 @@ func spawn_from_markers() -> int:
 			):
 				too_close = true
 				break
-		if too_close:
+		if too_close and not is_planned:
 			continue
 
 		var camp := CAMP_SCRIPT.new() as AmbientEnemyCamp
-		camp.camp_id = StringName("generated_camp_%d" % created)
+		camp.camp_id = StringName(marker.get_meta("camp_id", "generated_camp_%d" % created))
 		camp.enemy_scene = enemy_scene
-		camp.enemy_count_min = enemies_per_camp_min
-		camp.enemy_count_max = maxi(
-			enemies_per_camp_min,
-			enemies_per_camp_max
-		)
+		camp.enemy_count_min = int(marker.get_meta("enemy_count_min", enemies_per_camp_min))
+		camp.enemy_count_max = maxi(camp.enemy_count_min, int(marker.get_meta("enemy_count_max", enemies_per_camp_max)))
+		camp.behavior_profile_id = StringName(marker.get_meta("behavior_profile_id", &"raider_grunt"))
+		var tile_size := _resolve_runtime_tile_size(marker)
+		camp.leash_radius_px = float(marker.get_meta("leash_radius_tiles", camp.leash_radius_px / tile_size.x)) * tile_size.x
+		camp.spawn_radius_px = float(marker.get_meta("spawn_radius_tiles", camp.spawn_radius_px / tile_size.x)) * tile_size.x
+		camp.activation_range_px = float(marker.get_meta("activation_range_tiles", camp.activation_range_px / tile_size.x)) * tile_size.x
+		var home_tile_variant: Variant = marker.get_meta("home_tile") if marker.has_meta("home_tile") else null
+		var anchor_tile_variant: Variant = marker.get_meta("camp_tile") if marker.has_meta("camp_tile") else null
+		if home_tile_variant is Vector2i and anchor_tile_variant is Vector2i:
+			camp.home_position_px = marker_position + Vector2((home_tile_variant as Vector2i) - (anchor_tile_variant as Vector2i)) * tile_size
 		camp.position = Vector2.ZERO
 		camp.add_to_group(GENERATED_CAMP_GROUP)
 
@@ -199,6 +205,17 @@ func spawn_from_markers() -> int:
 		accepted.append(marker_position)
 		created += 1
 	return created
+
+
+func _resolve_runtime_tile_size(marker: Node) -> Vector2:
+	var current := marker
+	while current != null:
+		if current.has_method("get_runtime_tile_size"):
+			var size := current.call("get_runtime_tile_size") as Vector2
+			if size.x > 0.0 and size.y > 0.0:
+				return size
+		current = current.get_parent()
+	return Vector2(32.0, 32.0)
 
 
 func _marker_has_generated_camp(marker: Node) -> bool:
