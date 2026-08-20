@@ -9,6 +9,15 @@ const CombatConstants = preload("res://game/systems/combat/combat_constants.gd")
 const DAMAGE_POPUP_SCENE := preload("res://game/actors/ui/damage_popup.tscn")
 const WOLF_ANIMATION_LIBRARY := preload("res://game/enemies/procgen/wolf_animation_library.gd")
 const GRUNT_ANIMATION_LIBRARY := preload("res://game/enemies/procgen/grunt_animation_library.gd")
+const ENEMY_PRESENTATION_CONTROLLER_SCRIPT := preload(
+	"res://game/actors/enemies/presentation/enemy_presentation_controller.gd"
+)
+const ENEMY_GRUNT_ANIMATION_SET: EnemyAnimationSet = preload(
+	"res://game/actors/enemies/presentation/sets/enemy_grunt_animation_set.tres"
+)
+const GRUNT_FALCON_PUNCH_SCRIPT := preload(
+	"res://game/actors/enemies/abilities/grunt_falcon_punch.gd"
+)
 const SAVAGE_ANIMATION_LIBRARY := preload("res://game/enemies/procgen/savage_animation_library.gd")
 const ENEMY_PALETTE_SHADER := preload("res://game/enemies/procgen/enemy_palette_tint.gdshader")
 const ENEMY_BLACKBOARD_SCRIPT := preload("res://game/actors/enemies/components/enemy_blackboard.gd")
@@ -420,6 +429,10 @@ const OBJECTIVE_GROUPS := {
 var _visual_backend_fallbacks_reported: Dictionary = {}
 var _observatory_population_registered := false
 var _observatory_corpse_registered := false
+var _enemy_presentation: EnemyPresentationController = null
+var _grunt_attack_presentation_action: StringName = &"combat.fast_01"
+var _grunt_flinch_presentation_action: StringName = &"reaction.flinch_01"
+var _grunt_falcon_punch_ability: GruntFalconPunch = GRUNT_FALCON_PUNCH_SCRIPT.new()
 
 func _ready():
 	var obs := get_node_or_null("/root/DevObservatory")
@@ -952,42 +965,11 @@ func _attack_grunt_falcon_punch_target(_delta: float) -> bool:
 
 
 func _should_start_grunt_falcon_punch_now(target_node: Node2D) -> bool:
-	if not _should_use_grunt_falcon_punch_attack() or target_node == null or not target_node.is_in_group("player"):
-		return false
-	var distance := global_position.distance_to(target_node.global_position)
-	if distance < grunt_falcon_punch_launch_band_min or distance > grunt_falcon_punch_launch_band_max:
-		return false
-	if _grunt_falcon_punch_cooldown_timer > 0.0 or _grunt_falcon_punch_recent_parry_timer > 0.0:
-		return false
-	if _grunt_falcon_punch_normal_attacks_since_special < max(0, grunt_falcon_punch_after_normal_attacks_min):
-		return false
-	var chance := clampf(grunt_falcon_punch_chance, 0.0, 1.0)
-	if chance <= 0.0 or _grunt_falcon_punch_decision_credit < 1.0:
-		return false
-	if grunt_falcon_punch_requires_clear_lane and not _is_grunt_falcon_punch_lane_clear(target_node):
-		return false
-	return true
+	return _grunt_falcon_punch_ability.should_start(self, target_node)
 
 
 func _is_grunt_falcon_punch_lane_clear(target_node: Node2D) -> bool:
-	var to_target := target_node.global_position - global_position
-	var lane_length := maxf(0.0, to_target.length() - grunt_falcon_punch_stop_short_px)
-	if lane_length <= 0.0:
-		return false
-	var lane_direction := to_target.normalized()
-	for candidate in get_tree().get_nodes_in_group("enemy"):
-		if candidate == self or not (candidate is Node2D):
-			continue
-		var other := candidate as Node2D
-		if _is_target_destroyed(other):
-			continue
-		var offset := other.global_position - global_position
-		var forward := offset.dot(lane_direction)
-		if forward <= 0.0 or forward >= lane_length:
-			continue
-		if absf(offset.cross(lane_direction)) < grunt_falcon_punch_ally_lane_radius_px:
-			return false
-	return true
+	return _grunt_falcon_punch_ability.is_lane_clear(self, target_node)
 
 
 func _start_grunt_falcon_punch_windup(direction: Vector2) -> void:
@@ -2985,6 +2967,10 @@ func _start_attack_windup(queued_damage: float, is_strong: bool) -> void:
 		_grunt_falcon_punch_decision_credit = minf(2.0, _grunt_falcon_punch_decision_credit + clampf(grunt_falcon_punch_chance, 0.0, 1.0))
 	_pending_attack_damage = queued_damage
 	_attack_sequence += 1
+	if custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT):
+		_ensure_enemy_presentation_controller()
+		if _enemy_presentation != null:
+			_grunt_attack_presentation_action = _enemy_presentation.select_normal_attack()
 	_pending_attack_id = "%s:%s" % [get_instance_id(), _attack_sequence]
 	_attack_windup_timer = max(0.01, attack_windup_duration)
 	_windup_attack_is_strong = is_strong
@@ -3889,6 +3875,10 @@ func _enter_parry_critical_phase(phase: int) -> void:
 
 func _start_hit_recoil_reaction() -> void:
 	_recoil_timer = max(_recoil_timer, hit_recoil_duration)
+	if custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT):
+		_ensure_enemy_presentation_controller()
+		if _enemy_presentation != null:
+			_grunt_flinch_presentation_action = _enemy_presentation.select_flinch()
 	if _uses_directional_animation_set():
 		_update_directional_animation(_last_move_direction, false)
 
@@ -4355,7 +4345,7 @@ func _ensure_custom_enemy_animations() -> void:
 	if animated_sprite == null:
 		return
 	if custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT):
-		animated_sprite.sprite_frames = GRUNT_ANIMATION_LIBRARY.get_grunt_sprite_frames()
+		_ensure_enemy_presentation_controller()
 	elif custom_enemy_animation_set == String(CUSTOM_ENEMY_MARINE):
 		animated_sprite.sprite_frames = GRUNT_ANIMATION_LIBRARY.get_marine_sprite_frames()
 	elif custom_enemy_animation_set == String(CUSTOM_ENEMY_SAVAGE):
@@ -4366,7 +4356,7 @@ func _ensure_custom_enemy_fx_animations() -> void:
 	if custom_enemy_fx_sprite == null:
 		return
 	if custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT):
-		custom_enemy_fx_sprite.sprite_frames = GRUNT_ANIMATION_LIBRARY.get_grunt_fx_sprite_frames()
+		_ensure_enemy_presentation_controller()
 	elif custom_enemy_animation_set == String(CUSTOM_ENEMY_MARINE):
 		custom_enemy_fx_sprite.sprite_frames = GRUNT_ANIMATION_LIBRARY.get_marine_fx_sprite_frames()
 	else:
@@ -4555,13 +4545,7 @@ func _update_custom_enemy_animation(direction: Vector2, is_moving: bool, force_a
 			_play_animation(String(GRUNT_CRIT_RECOVERY_ANIMATION), false)
 			return
 	if _recoil_timer > 0.0:
-		var flinch_animation := GRUNT_ANIMATION_LIBRARY.get_flinch_animation(facing)
-		if not _has_animation(String(flinch_animation)):
-			flinch_animation = GRUNT_FLINCH_ANIMATION
-		if _has_animation(String(flinch_animation)):
-			animated_sprite.flip_h = false
-			_play_animation(String(flinch_animation), false)
-			_play_grunt_flinch_fx()
+		if _play_grunt_semantic(_grunt_flinch_presentation_action, facing):
 			return
 	if _stagger_timer > 0.0:
 		var stagger_animation := _get_grunt_stagger_animation()
@@ -4570,29 +4554,48 @@ func _update_custom_enemy_animation(direction: Vector2, is_moving: bool, force_a
 			_play_animation(String(stagger_animation), false)
 			return
 	if force_attack:
-		var attack_animation := GRUNT_ANIMATION_LIBRARY.get_attack_animation(facing)
-		if not _has_animation(String(attack_animation)):
-			attack_animation = GRUNT_ATTACK_ANIMATION
-		if _has_animation(String(attack_animation)):
-			animated_sprite.flip_h = false
-			_play_animation(String(attack_animation), false)
-			_play_custom_enemy_attack_fx(facing)
-		return
+		if _play_grunt_semantic(_grunt_attack_presentation_action, facing):
+			return
 	if is_moving:
-		var move_animation := GRUNT_ANIMATION_LIBRARY.get_move_animation(facing)
-		if not _has_animation(String(move_animation)):
-			move_animation = GRUNT_MOVE_ANIMATION
-		if _has_animation(String(move_animation)):
-			animated_sprite.flip_h = false
-			_play_animation(String(move_animation), false)
+		var movement_action := &"locomotion.run" if _grunt_movement_is_urgent() else &"locomotion.walk"
+		if _play_grunt_semantic(movement_action, facing):
 			return
 	animated_sprite.flip_h = false
-	if not _has_animation(String(GRUNT_IDLE_ANIMATION)):
+	var idle_action := &"locomotion.ready_idle" if _grunt_movement_is_urgent() else &"locomotion.relaxed_idle"
+	if _play_grunt_semantic(idle_action, facing):
 		return
-	if animated_sprite.animation != String(GRUNT_IDLE_ANIMATION):
+	if _has_animation(String(GRUNT_IDLE_ANIMATION)):
 		animated_sprite.play(String(GRUNT_IDLE_ANIMATION))
-	animated_sprite.stop()
-	animated_sprite.set_frame_and_progress(0, 0.0)
+		animated_sprite.stop()
+		animated_sprite.set_frame_and_progress(0, 0.0)
+
+
+func _ensure_enemy_presentation_controller() -> void:
+	if animated_sprite == null:
+		return
+	if _enemy_presentation == null:
+		_enemy_presentation = ENEMY_PRESENTATION_CONTROLLER_SCRIPT.new()
+		_enemy_presentation.setup(
+			ENEMY_GRUNT_ANIMATION_SET,
+			animated_sprite,
+			custom_enemy_fx_sprite
+		)
+
+
+func _play_grunt_semantic(action: StringName, facing: Vector2, restart := false) -> bool:
+	_ensure_enemy_presentation_controller()
+	if _enemy_presentation == null:
+		return false
+	animated_sprite.flip_h = false
+	return _enemy_presentation.play(action, facing, 0, restart)
+
+
+func _grunt_movement_is_urgent() -> bool:
+	if behavior_state_machine == null:
+		return target != null
+	return StringName(behavior_state_machine.get("current_state")) in [
+		&"notice", &"engage_operator", &"escape_with_loot", &"flee",
+	]
 
 
 func _update_savage_enemy_animation(direction: Vector2, is_moving: bool) -> void:

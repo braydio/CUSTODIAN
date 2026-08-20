@@ -142,6 +142,7 @@ class SharedFrameTransform:
     scaled_union_size: tuple[int, int]
     destination_offset: tuple[int, int]
     anchor: str
+    fit: str = "contain"
 
 
 # =============================================================================
@@ -290,6 +291,74 @@ def choose_resample(name: str) -> int:
     return Image.Resampling.LANCZOS
 
 
+def _fit_scale(
+    usable_size: tuple[int, int],
+    content_size: tuple[int, int],
+    fit: str,
+) -> float:
+    """
+    Resolve an aspect-preserving scale.
+
+    contain:
+        Entire source alpha bounds remain visible. This is the historical
+        sprite/prop behavior and may leave transparent gutters.
+
+    cover:
+        Source fills the entire usable frame. Overflow is cropped according
+        to the selected anchor. This is appropriate for seamless terrain
+        tiles and other edge-to-edge art.
+    """
+    usable_w, usable_h = usable_size
+    content_w, content_h = content_size
+
+    if content_w < 1 or content_h < 1:
+        return 1.0
+
+    x_scale = usable_w / content_w
+    y_scale = usable_h / content_h
+
+    if fit == "contain":
+        return min(x_scale, y_scale)
+    if fit == "cover":
+        return max(x_scale, y_scale)
+
+    raise ValueError(f"Unsupported fit mode: {fit}")
+
+
+def _alpha_composite_clipped(
+    canvas: Image.Image,
+    image: Image.Image,
+    offset: tuple[int, int],
+) -> None:
+    """
+    Alpha-composite an image even when its cover-fit placement extends beyond
+    the canvas.
+
+    Pillow's ordinary positive-offset path is not sufficient for deliberately
+    cropped cover-fit art. This computes the visible source rectangle first.
+    """
+    x, y = offset
+
+    source_left = max(0, -x)
+    source_top = max(0, -y)
+    source_right = min(image.width, canvas.width - x)
+    source_bottom = min(image.height, canvas.height - y)
+
+    if source_right <= source_left or source_bottom <= source_top:
+        return
+
+    visible = image.crop(
+        (source_left, source_top, source_right, source_bottom)
+    )
+
+    destination = (
+        max(0, x),
+        max(0, y),
+    )
+
+    canvas.alpha_composite(visible, destination)
+
+
 def _anchor_offset(
     canvas_size: tuple[int, int],
     scaled_size: tuple[int, int],
@@ -340,6 +409,50 @@ def _anchor_offset(
     raise ValueError(f"Unsupported anchor: {anchor}")
 
 
+def fit_on_canvas(
+    image: Image.Image,
+    canvas_size: tuple[int, int],
+    margin: int,
+    alpha_cutoff: int,
+    prepare_filter: str,
+    binary_alpha_during_prepare: bool,
+    fit: str = "contain",
+    anchor: str = "center",
+) -> Image.Image:
+    """
+    Single-image preparation path.
+
+    contain preserves the entire trimmed silhouette.
+    cover preserves aspect ratio but permits anchored cropping so terrain can
+    reach the runtime cell boundaries.
+    """
+    image = trim_transparent_border(image, cutoff=alpha_cutoff)
+    canvas_w, canvas_h = canvas_size
+    usable_w = max(1, canvas_w - margin * 2)
+    usable_h = max(1, canvas_h - margin * 2)
+
+    if image.width < 1 or image.height < 1:
+        return Image.new("RGBA", canvas_size, (0, 0, 0, 0))
+
+    scale = _fit_scale(
+        (usable_w, usable_h),
+        (image.width, image.height),
+        fit,
+    )
+    new_w = max(1, int(round(image.width * scale)))
+    new_h = max(1, int(round(image.height * scale)))
+
+    resized = image.resize((new_w, new_h), choose_resample(prepare_filter))
+    canvas = Image.new("RGBA", canvas_size, (0, 0, 0, 0))
+    offset = _anchor_offset(canvas_size, (new_w, new_h), margin, anchor)
+    _alpha_composite_clipped(canvas, resized, offset)
+
+    if binary_alpha_during_prepare:
+        canvas = clamp_alpha_binary(canvas, cutoff=alpha_cutoff)
+
+    return canvas
+
+
 def contain_fit_on_canvas(
     image: Image.Image,
     canvas_size: tuple[int, int],
@@ -349,28 +462,17 @@ def contain_fit_on_canvas(
     binary_alpha_during_prepare: bool,
     anchor: str = "center",
 ) -> Image.Image:
-    """Single-image preparation path."""
-    image = trim_transparent_border(image, cutoff=alpha_cutoff)
-    canvas_w, canvas_h = canvas_size
-    usable_w = max(1, canvas_w - margin * 2)
-    usable_h = max(1, canvas_h - margin * 2)
-
-    if image.width < 1 or image.height < 1:
-        return Image.new("RGBA", canvas_size, (0, 0, 0, 0))
-
-    scale = min(usable_w / image.width, usable_h / image.height)
-    new_w = max(1, int(round(image.width * scale)))
-    new_h = max(1, int(round(image.height * scale)))
-
-    resized = image.resize((new_w, new_h), choose_resample(prepare_filter))
-    canvas = Image.new("RGBA", canvas_size, (0, 0, 0, 0))
-    offset = _anchor_offset(canvas_size, (new_w, new_h), margin, anchor)
-    canvas.alpha_composite(resized, offset)
-
-    if binary_alpha_during_prepare:
-        canvas = clamp_alpha_binary(canvas, cutoff=alpha_cutoff)
-
-    return canvas
+    """Backward-compatible wrapper for the historical contain behavior."""
+    return fit_on_canvas(
+        image,
+        canvas_size=canvas_size,
+        margin=margin,
+        alpha_cutoff=alpha_cutoff,
+        prepare_filter=prepare_filter,
+        binary_alpha_during_prepare=binary_alpha_during_prepare,
+        fit="contain",
+        anchor=anchor,
+    )
 
 
 # =============================================================================
@@ -517,6 +619,7 @@ def calculate_shared_frame_transform(
     alpha_cutoff: int,
     anchor: str,
     union_padding: int,
+    fit: str = "contain",
 ) -> SharedFrameTransform:
     if not frames:
         raise SystemExit("No frames were provided")
@@ -538,7 +641,11 @@ def calculate_shared_frame_transform(
     usable_w = max(1, prepared_w - margin * 2)
     usable_h = max(1, prepared_h - margin * 2)
 
-    scale = min(usable_w / union_w, usable_h / union_h)
+    scale = _fit_scale(
+        (usable_w, usable_h),
+        (union_w, union_h),
+        fit,
+    )
     scaled_w = max(1, int(round(union_w * scale)))
     scaled_h = max(1, int(round(union_h * scale)))
 
@@ -557,6 +664,7 @@ def calculate_shared_frame_transform(
         scaled_union_size=(scaled_w, scaled_h),
         destination_offset=offset,
         anchor=anchor,
+        fit=fit,
     )
 
 
@@ -583,7 +691,11 @@ def prepare_sheet_frames(
             transform.prepared_cell_size,
             (0, 0, 0, 0),
         )
-        canvas.alpha_composite(resized, transform.destination_offset)
+        _alpha_composite_clipped(
+            canvas,
+            resized,
+            transform.destination_offset,
+        )
 
         if binary_alpha_during_prepare:
             canvas = clamp_alpha_binary(canvas, cutoff=alpha_cutoff)
@@ -1013,6 +1125,34 @@ def binary_alpha_is_valid(image: Image.Image) -> bool:
     return extrema.issubset({0, 255})
 
 
+def tile_edge_contacts(
+    image: Image.Image,
+    cutoff: int,
+) -> dict[str, bool]:
+    """
+    Report whether opaque art reaches each outer runtime-cell boundary.
+
+    This tests contact, not full-edge coverage. Irregular cliff silhouettes may
+    still contain deliberate alpha along portions of an edge.
+    """
+    bbox = alpha_bbox(image, cutoff)
+    if bbox is None:
+        return {
+            "left": False,
+            "right": False,
+            "top": False,
+            "bottom": False,
+        }
+
+    left, top, right, bottom = bbox
+    return {
+        "left": left == 0,
+        "right": right == image.width,
+        "top": top == 0,
+        "bottom": bottom == image.height,
+    }
+
+
 def frame_bbox_report(
     frames: list[Image.Image],
     cutoff: int,
@@ -1046,6 +1186,7 @@ def write_sheet_manifest(
         f"prepared_cell={transform.prepared_cell_size[0]}x{transform.prepared_cell_size[1]}",
         f"prepared_margin={transform.margin}",
         f"anchor={transform.anchor}",
+        f"fit={transform.fit}",
         f"destination_offset={transform.destination_offset}",
         f"alpha_cutoff={alpha_cutoff}",
         f"prepare_filter={prepare_filter}",
@@ -1188,6 +1329,27 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     parser.add_argument(
+        "--fit",
+        choices=["contain", "cover"],
+        default=None,
+        help=(
+            "Aspect-preserving fit policy. contain keeps the entire silhouette "
+            "and may leave transparent gutters. cover fills the usable frame "
+            "and crops overflow according to --anchor. Default: contain, or "
+            "cover when --tile is supplied."
+        ),
+    )
+    parser.add_argument(
+        "--tile",
+        action="store_true",
+        help=(
+            "Terrain-tile preset: defaults to --margin 0, --fit cover, and "
+            "--anchor center. Explicit --margin, --fit, or --anchor values "
+            "override the preset. The selected output also receives left/right "
+            "edge-contact diagnostics."
+        ),
+    )
+    parser.add_argument(
         "--colors",
         type=int,
         default=24,
@@ -1313,7 +1475,11 @@ def main() -> int:
             raise SystemExit("--margin must be 0 or greater")
         margin = args.margin
     else:
-        margin = automatic_margin(source_canvas)
+        # Sprites/props retain their historical breathing room.
+        # Terrain tiles must be allowed to reach the runtime cell boundary.
+        margin = 0 if args.tile else automatic_margin(source_canvas)
+
+    fit_mode = args.fit or ("cover" if args.tile else "contain")
 
     alpha_cutoff = (
         args.alpha_cutoff
@@ -1337,7 +1503,11 @@ def main() -> int:
         args.pixel_source or args.legacy_prep_alpha
     )
 
-    anchor = args.anchor or ("feet" if sheet_mode else "center")
+    anchor = args.anchor or (
+        "center"
+        if args.tile
+        else ("feet" if sheet_mode else "center")
+    )
 
     output_path = (
         args.output.expanduser().resolve()
@@ -1379,6 +1549,7 @@ def main() -> int:
             alpha_cutoff=alpha_cutoff,
             anchor=anchor,
             union_padding=args.union_padding,
+            fit=fit_mode,
         )
 
         prepared_frames = prepare_sheet_frames(
@@ -1416,13 +1587,14 @@ def main() -> int:
         )
 
     else:
-        prepared_source = contain_fit_on_canvas(
+        prepared_source = fit_on_canvas(
             source,
             canvas_size=source_canvas,
             margin=margin,
             alpha_cutoff=alpha_cutoff,
             prepare_filter=prepare_filter,
             binary_alpha_during_prepare=binary_alpha_during_prepare,
+            fit=fit_mode,
             anchor=anchor,
         )
         prepared_source.save(candidate_dir / "prepared_source.png")
@@ -1451,6 +1623,8 @@ def main() -> int:
     print(f"preparation frame:  {source_canvas[0]}x{source_canvas[1]}")
     print(f"preparation margin: {margin}px")
     print(f"preparation filter: {prepare_filter}")
+    print(f"fit:                {fit_mode}")
+    print(f"tile preset:        {'yes' if args.tile else 'no'}")
     print(f"anchor:             {anchor}")
     print(f"alpha cutoff:       {alpha_cutoff}")
     print(
@@ -1496,6 +1670,37 @@ def main() -> int:
         else:
             print(f"Prepared source: {candidate_dir / 'prepared_source.png'}")
         chosen = choose_interactively()
+
+    if args.tile:
+        contacts = tile_edge_contacts(candidates[chosen], alpha_cutoff)
+        missing_horizontal = [
+            edge for edge in ("left", "right")
+            if not contacts[edge]
+        ]
+
+        print()
+        print("Tile edge contact:")
+        print(
+            "  "
+            + ", ".join(
+                f"{edge}={'yes' if contacts[edge] else 'NO'}"
+                for edge in ("left", "right", "top", "bottom")
+            )
+        )
+
+        if missing_horizontal:
+            print(
+                "  TILE EDGE WARNING: selected art does not reach "
+                + " and ".join(missing_horizontal)
+                + " runtime edge"
+                + ("s" if len(missing_horizontal) > 1 else "")
+                + "."
+            )
+            print(
+                "  For a continuous body tile, inspect the source alpha bounds "
+                "or use --fit cover. Intentional broken-edge tiles may ignore "
+                "this warning."
+            )
 
     selected_name = METHODS[chosen][0]
     candidates[chosen].save(output_path, format="PNG")

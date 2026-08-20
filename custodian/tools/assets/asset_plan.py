@@ -16,6 +16,7 @@ class AssetOperation(str,Enum): CREATE="create"; DUPLICATE="duplicate"; REPLACE=
 class PlannedOutput:
     state_id:str; key:AssetKey; canonical_filename:str; target_relative_path:Path; operation:AssetOperation
     existing_target:Path|None; provenance:str; source_asset:str|None=None
+    superseded_targets:tuple[Path,...]=(); stale_consumers:tuple[str,...]=()
 @dataclass(frozen=True)
 class PlannedAsset:
     source_path:Path; family_id:str; state_id:str|None; confidence:ResolutionConfidence; resolution:AssetResolution
@@ -77,10 +78,50 @@ def generate_plan(family:AssetFamilyContract,inbox_dir:Path,project_dir:Path,*,n
         for direction,provenance,source_asset in directions:
             key=AssetKey(family.runtime_owner,family.kind,state.layer,state.action_group,state.variant,direction,inspection.frame_count,inspection.frame_width,inspection.frame_height)
             target=resolve_runtime_target(family=family,state=state,key=key,kind_schema=schema); full=project_dir/target
-            operation=AssetOperation.CREATE if not full.exists() else (AssetOperation.DUPLICATE if provenance=="authored" and _hash(full)==_hash(png) else AssetOperation.REPLACE)
-            output=PlannedOutput(state.id,key,target.name,target,operation,full if full.exists() else None,provenance,source_asset)
+            semantic_siblings=_semantic_runtime_siblings(project_dir,family,key,target)
+            superseded=tuple(path for path in semantic_siblings if path != target)
+            stale_consumers=_find_stale_consumers(project_dir,family,superseded)
+            if full.exists():
+                operation=AssetOperation.DUPLICATE if provenance=="authored" and _hash(full)==_hash(png) and not superseded else AssetOperation.REPLACE
+            elif semantic_siblings:
+                operation=AssetOperation.REPLACE
+            else:
+                operation=AssetOperation.CREATE
+            output=PlannedOutput(state.id,key,target.name,target,operation,full if full.exists() else (project_dir/semantic_siblings[0] if semantic_siblings else None),provenance,source_asset,superseded,stale_consumers)
+            if stale_consumers:
+                errors.append("blocked replacement for %s: stale consumer(s): %s" % ("/".join(key.semantic_identity), ", ".join(stale_consumers)))
             if target in seen_targets: errors.append(f"duplicate semantic output target: {target}")
             seen_targets[target]=output; outputs.append(output)
         assets.append(PlannedAsset(png,family.id,state.id,resolution.confidence,resolution,inspection,backend,tuple(outputs),(),schema.post_process))
     return AssetPlan(family.id,tuple(assets),tuple(errors),post_process=schema.post_process)
 def _hash(path:Path)->str: return hashlib.sha256(path.read_bytes()).hexdigest()
+
+def _semantic_runtime_siblings(project_dir:Path,family:AssetFamilyContract,key:AssetKey,target:Path)->tuple[Path,...]:
+    target_parts=target.parts
+    if "runtime" in target_parts:
+        runtime_index=target_parts.index("runtime")
+        owner_root=project_dir/Path(*target_parts[:runtime_index+1])
+    else:
+        owner_root=(project_dir/target).parent
+    if not owner_root.exists(): return ()
+    matches=[]
+    for path in sorted(owner_root.rglob("*.png")):
+        try: candidate=parse_canonical_filename(path.name,family.kind)
+        except (TypeError,ValueError): continue
+        if candidate.semantic_identity==key.semantic_identity:
+            matches.append(path.relative_to(project_dir))
+    return tuple(matches)
+
+def _find_stale_consumers(project_dir:Path,family:AssetFamilyContract,targets:tuple[Path,...])->tuple[str,...]:
+    if not targets: return ()
+    needles={"res://"+target.as_posix() for target in targets}
+    found=[]
+    for consumer in family.consumers:
+        rel=str(consumer.get("path",""))
+        if not rel.startswith("res://"): continue
+        path=project_dir/rel.removeprefix("res://")
+        if not path.is_file(): continue
+        try: text=path.read_text(encoding="utf-8")
+        except UnicodeDecodeError: continue
+        if any(needle in text for needle in needles): found.append(rel)
+    return tuple(sorted(set(found)))

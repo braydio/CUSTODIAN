@@ -7,8 +7,12 @@ const MARINE_FRAME_SIZE := Vector2i(96, 96)
 const MARINE_DASH_FRAME_SIZE := Vector2i(128, 128)
 const MARINE_DASH_FX_FRAME_SIZE := Vector2i(156, 156)
 const MARINE_IDLE_DIRECTIONS := [&"n", &"ne", &"e", &"se", &"s", &"sw", &"w", &"nw"]
+const GRUNT_ANIMATION_SET: EnemyAnimationSet = preload(
+	"res://game/actors/enemies/presentation/sets/enemy_grunt_animation_set.tres"
+)
 
-const ANIMATION_SPECS := {
+@warning_ignore("unused_private_class_variable")
+const LEGACY_ANIMATION_SPECS := {
 	"idle_s": {
 		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__locomotion__idle_01__s__10f__96.png",
 		"fps": 6.0,
@@ -171,7 +175,8 @@ const ANIMATION_SPECS := {
 	},
 }
 
-const FX_ANIMATION_SPECS := {
+@warning_ignore("unused_private_class_variable")
+const LEGACY_FX_ANIMATION_SPECS := {
 	"melee_fx_e": {
 		"path": "res://content/sprites/enemies/enemy_grunt/runtime/fx/enemy_grunt__fx__melee__fast_01__e__10f__96.png",
 		"fps": 12.0,
@@ -213,20 +218,14 @@ static var _cached_marine_fx_frames: SpriteFrames = null
 static func get_grunt_sprite_frames() -> SpriteFrames:
 	if _cached_frames != null:
 		return _cached_frames
-	var frames := SpriteFrames.new()
-	for animation_name in ANIMATION_SPECS.keys():
-		_add_strip_animation(frames, String(animation_name), ANIMATION_SPECS[animation_name])
-	_cached_frames = frames
+	_cached_frames = GRUNT_ANIMATION_SET.build_sprite_frames(&"body")
 	return _cached_frames
 
 
 static func get_grunt_fx_sprite_frames() -> SpriteFrames:
 	if _cached_fx_frames != null:
 		return _cached_fx_frames
-	var frames := SpriteFrames.new()
-	for animation_name in FX_ANIMATION_SPECS.keys():
-		_add_strip_animation(frames, String(animation_name), FX_ANIMATION_SPECS[animation_name])
-	_cached_fx_frames = frames
+	_cached_fx_frames = GRUNT_ANIMATION_SET.build_sprite_frames(&"fx")
 	return _cached_fx_frames
 
 

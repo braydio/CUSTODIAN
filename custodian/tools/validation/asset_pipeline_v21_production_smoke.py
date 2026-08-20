@@ -2,6 +2,7 @@
 """Focused V2.1 production-kind, layout, direction, and catalog acceptance."""
 from __future__ import annotations
 import json,sys,tempfile
+from dataclasses import replace
 from types import SimpleNamespace
 from pathlib import Path
 from PIL import Image
@@ -39,6 +40,21 @@ def main():
         eplan=generate_plan(enemy,einbox,root); assert eplan.can_apply and len(eplan.outputs)==2
         assert [(o.key.direction,o.provenance) for o in eplan.outputs]==[("e","authored"),("w","mirrored")]
         assert all("content/sprites/enemies/enemy_grunt/runtime/body/melee/" in o.target_relative_path.as_posix() for o in eplan.outputs)
+
+        # A semantic replacement with a changed canonical frame token is
+        # blocked until every declared consumer stops naming the old file.
+        old_semantic = root / "content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__fast_01__e__6f__96.png"
+        png(old_semantic, (96 * 6, 96))
+        consumer = root / "game/test_enemy_consumer.gd"
+        consumer.parent.mkdir(parents=True, exist_ok=True)
+        consumer.write_text('const OLD = "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__fast_01__e__6f__96.png"')
+        guarded_enemy = replace(enemy, consumers=({"type":"script", "path":"res://game/test_enemy_consumer.gd"},))
+        guarded = generate_plan(guarded_enemy, einbox, root)
+        assert not guarded.can_apply and any("stale consumer" in error for error in guarded.errors)
+        assert old_semantic.relative_to(root) in guarded.outputs[0].superseded_targets
+        consumer.write_text("# migrated to EnemyAnimationSet semantic lookup\n")
+        eplan = generate_plan(guarded_enemy, einbox, root)
+        assert eplan.can_apply
         # Every authored/mirrored target and the catalog participate in rollback.
         authored_target=root/eplan.outputs[0].target_relative_path; authored_target.parent.mkdir(parents=True,exist_ok=True); authored_target.write_bytes(b"old")
         rollback_plan=generate_plan(enemy,einbox,root)
@@ -48,6 +64,7 @@ def main():
         catalog_path=root/"content/metadata/assets/generated/asset_catalog.generated.json"; catalog_path.parent.mkdir(parents=True,exist_ok=True); catalog_path.write_text("changed")
         rollback_transaction(record,root)
         assert authored_target.read_bytes()==b"old"
+        assert old_semantic.exists(), "semantic predecessor was not restored"
 
         png(einbox/"fast_01__w.png",(96*5,96)); both=generate_plan(enemy,einbox,root)
         assert sorted((o.key.direction,o.provenance) for o in both.outputs)==[("e","authored"),("w","authored")]

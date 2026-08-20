@@ -24,6 +24,10 @@ def render_plan(plan):
         print(f"    {asset.inspection.width}x{asset.inspection.height}; {asset.inspection.layout.value}; {asset.inspection.frame_count} frame(s); backend {asset.backend}")
         for output in asset.outputs:
             print(f"    {output.provenance} -> {output.target_relative_path} [{output.operation.value}]")
+            for superseded in output.superseded_targets:
+                print(f"      supersedes: {superseded}")
+            for consumer in output.stale_consumers:
+                print(f"      BLOCKED stale consumer: {consumer}")
     for warning in plan.warnings: print(f"  WARNING: {warning}")
 
 def cmd_plan(args,families):
@@ -53,6 +57,10 @@ def cmd_ingest(args,families):
             result=module.stage_asset(asset,PROJECT_DIR,replace=args.replace,work_dir=staging)
             if not result.ok: raise RuntimeError("; ".join(result.errors))
             results.append(result)
+        for output in plan.outputs:
+            for superseded in output.superseded_targets:
+                old_target=PROJECT_DIR/superseded
+                if old_target.is_file(): old_target.unlink()
         catalog=load_catalog(); receipt_assets=[]
         for asset in plan.assets:
             input_hash=hashlib.sha256(asset.source_path.read_bytes()).hexdigest()
@@ -60,7 +68,7 @@ def cmd_ingest(args,families):
                 target=PROJECT_DIR/output.target_relative_path
                 if not target.is_file(): raise RuntimeError(f"missing declared output: {output.target_relative_path}")
                 update_catalog_entry(catalog,family.id,output.state_id,CatalogEntry(list(output.key.semantic_identity),output.target_relative_path.as_posix(),output.key.frames,[output.key.frame_width,output.key.frame_height],file_hash(target),output.state_id,output.key.direction,output.provenance,output.source_asset),family.kind)
-                receipt_assets.append({"state_id":output.state_id,"direction":output.key.direction,"semantic_identity":list(output.key.semantic_identity),"path":output.target_relative_path.as_posix(),"provenance":output.provenance,"source_asset":output.source_asset,"sha256":file_hash(target),"operation":output.operation.value,"backend":asset.backend})
+                receipt_assets.append({"state_id":output.state_id,"direction":output.key.direction,"semantic_identity":list(output.key.semantic_identity),"path":output.target_relative_path.as_posix(),"provenance":output.provenance,"source_asset":output.source_asset,"sha256":file_hash(target),"operation":output.operation.value,"superseded_paths":[path.as_posix() for path in output.superseded_targets],"backend":asset.backend})
         import_result=None
         if args.godot_import:
             from adapters.godot_import import run_godot_import

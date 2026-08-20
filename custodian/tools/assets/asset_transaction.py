@@ -60,6 +60,14 @@ def begin_transaction(
                 record.replaced_targets.append(target)
             elif not target.exists():
                 record.created_targets.append(target)
+            for relative in output.superseded_targets:
+                superseded = project_dir / relative
+                if superseded.exists() and superseded not in record.backups:
+                    backup = staging_dir / "backups" / relative
+                    backup.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copy2(superseded, backup)
+                    record.backups[superseded] = backup
+                    record.replaced_targets.append(superseded)
 
     catalog = project_dir / "content/metadata/assets/generated/asset_catalog.generated.json"
     if catalog.exists():

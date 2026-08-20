@@ -12082,13 +12082,24 @@ func _find_best_interactable(max_distance: float) -> Node:
 	for candidate in candidates:
 		if not (candidate is Node2D):
 			continue
-		var target_pos = (candidate as Node2D).global_position
+
+		if candidate.has_method("can_interact") \
+				and not bool(candidate.call("can_interact", self)):
+			continue
+
+		var target_pos := (candidate as Node2D).global_position
 		if candidate.has_method("get_interaction_position"):
-			target_pos = candidate.get_interaction_position()
-		var dist = global_position.distance_to(target_pos)
-		var allowed = max_distance
+			target_pos = candidate.call("get_interaction_position")
+
+		var dist := global_position.distance_to(target_pos)
+		var allowed := max_distance
+
 		if candidate.has_method("get_interaction_distance"):
-			allowed = min(max_distance, float(candidate.get_interaction_distance()))
+			allowed = minf(
+				max_distance,
+				float(candidate.call("get_interaction_distance"))
+			)
+
 		if dist <= allowed and dist <= best_dist:
 			best = candidate
 			best_dist = dist

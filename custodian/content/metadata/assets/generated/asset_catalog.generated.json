@@ -68,6 +68,137 @@
           "source_asset": null
         }
       }
+    },
+    "void_cliff_face": {
+      "kind": "tile",
+      "assets": {
+        "body_01::omni": {
+          "state_id": "body_01",
+          "direction": "omni",
+          "semantic_identity": [
+            "void_cliff_face",
+            "tile",
+            "body",
+            "fascia",
+            "body_01",
+            "omni"
+          ],
+          "path": "content/tiles/mountain_cliffs/void_fascia/void_cliff_face_body_01_32.png",
+          "frames": 1,
+          "frame_size": [
+            32,
+            32
+          ],
+          "sha256": "5153215101231b3dae39612dd44b3b4e9b089f3c92d859804b69d87487de948d",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "body_02::omni": {
+          "state_id": "body_02",
+          "direction": "omni",
+          "semantic_identity": [
+            "void_cliff_face",
+            "tile",
+            "body",
+            "fascia",
+            "body_02",
+            "omni"
+          ],
+          "path": "content/tiles/mountain_cliffs/void_fascia/void_cliff_face_body_02_32.png",
+          "frames": 1,
+          "frame_size": [
+            32,
+            32
+          ],
+          "sha256": "88581275a07d61e21f63807f3072acbbdddeaed5d2712638a9102937187bfa00",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "body_cracked_01::omni": {
+          "state_id": "body_cracked_01",
+          "direction": "omni",
+          "semantic_identity": [
+            "void_cliff_face",
+            "tile",
+            "body",
+            "fascia",
+            "body_cracked_01",
+            "omni"
+          ],
+          "path": "content/tiles/mountain_cliffs/void_fascia/void_cliff_face_body_cracked_01_32.png",
+          "frames": 1,
+          "frame_size": [
+            32,
+            32
+          ],
+          "sha256": "97ddb262af2906ab38736fc70ac0b167e3f781cb058ea436b3400d4e246a876f",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "bottom_01::omni": {
+          "state_id": "bottom_01",
+          "direction": "omni",
+          "semantic_identity": [
+            "void_cliff_face",
+            "tile",
+            "body",
+            "fascia",
+            "bottom_01",
+            "omni"
+          ],
+          "path": "content/tiles/mountain_cliffs/void_fascia/void_cliff_face_bottom_01_32.png",
+          "frames": 1,
+          "frame_size": [
+            32,
+            32
+          ],
+          "sha256": "88709bb7690f21a6c3a31fba724a8b2397acd7cc2ca3af7df89d9c71da26ab72",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "bottom_broken_01::omni": {
+          "state_id": "bottom_broken_01",
+          "direction": "omni",
+          "semantic_identity": [
+            "void_cliff_face",
+            "tile",
+            "body",
+            "fascia",
+            "bottom_broken_01",
+            "omni"
+          ],
+          "path": "content/tiles/mountain_cliffs/void_fascia/void_cliff_face_bottom_broken_01_32.png",
+          "frames": 1,
+          "frame_size": [
+            32,
+            32
+          ],
+          "sha256": "0ff278c1369ee6aab32fa1ce4ffa1a55d3549b30e78e78a43e31fecf281d94c4",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "top_01::omni": {
+          "state_id": "top_01",
+          "direction": "omni",
+          "semantic_identity": [
+            "void_cliff_face",
+            "tile",
+            "body",
+            "fascia",
+            "top_01",
+            "omni"
+          ],
+          "path": "content/tiles/mountain_cliffs/void_fascia/void_cliff_face_top_01_32.png",
+          "frames": 1,
+          "frame_size": [
+            32,
+            32
+          ],
+          "sha256": "f90c8fc734ea586a0e9244e8a669f567a5b2ef8b6f76521dd0ae75627aeb737c",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
     }
   }
 }
