@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://kb14kxj7o82e"
-path="res://.godot/imported/enemy_grunt__body__locomotion__idle_01__e__5f__96.png-b0edccabf51fad20f82fc4cbdfac1186.ctex"
+path="res://.godot/imported/enemy_grunt__body__locomotion__idle_01__e__5f__96.png-89deb720ad0d1fe44c9bfd0d9ec1d836.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/_pipeline/inbox/enemy_grunt__body__locomotion__idle_01__e__5f__96.png"
-dest_files=["res://.godot/imported/enemy_grunt__body__locomotion__idle_01__e__5f__96.png-b0edccabf51fad20f82fc4cbdfac1186.ctex"]
+source_file="res://content/sprites/_pipeline/batch/enemy_grunt__body__locomotion__idle_01__e__5f__96.png"
+dest_files=["res://.godot/imported/enemy_grunt__body__locomotion__idle_01__e__5f__96.png-89deb720ad0d1fe44c9bfd0d9ec1d836.ctex"]
 
 [params]
 

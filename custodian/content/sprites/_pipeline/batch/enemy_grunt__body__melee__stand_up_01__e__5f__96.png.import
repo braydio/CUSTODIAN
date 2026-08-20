@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c4x4n77ywsjft"
-path="res://.godot/imported/enemy_grunt__body__melee__stand_up_01__e__5f__96.png-caa02a46735e84ca5c57b3530f2a26b8.ctex"
+path="res://.godot/imported/enemy_grunt__body__melee__stand_up_01__e__5f__96.png-7fe30fd6b4ba8f4eb26db2310b59e044.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/_pipeline/inbox/enemy_grunt__body__melee__stand_up_01__e__5f__96.png"
-dest_files=["res://.godot/imported/enemy_grunt__body__melee__stand_up_01__e__5f__96.png-caa02a46735e84ca5c57b3530f2a26b8.ctex"]
+source_file="res://content/sprites/_pipeline/batch/enemy_grunt__body__melee__stand_up_01__e__5f__96.png"
+dest_files=["res://.godot/imported/enemy_grunt__body__melee__stand_up_01__e__5f__96.png-7fe30fd6b4ba8f4eb26db2310b59e044.ctex"]
 
 [params]
 

@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dqs0l0rjxqpe0"
-path="res://.godot/imported/enemy_grunt__body__melee__taunt_brandish_01__e__8f__96.png-142e92978b88fce977cc58a4d3346dd7.ctex"
+path="res://.godot/imported/enemy_grunt__body__melee__taunt_brandish_01__e__8f__96.png-4c53c91fc8cc8f7fea97dafe778a53e2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/_pipeline/inbox/enemy_grunt__body__melee__taunt_brandish_01__e__8f__96.png"
-dest_files=["res://.godot/imported/enemy_grunt__body__melee__taunt_brandish_01__e__8f__96.png-142e92978b88fce977cc58a4d3346dd7.ctex"]
+source_file="res://content/sprites/_pipeline/batch/enemy_grunt__body__melee__taunt_brandish_01__e__8f__96.png"
+dest_files=["res://.godot/imported/enemy_grunt__body__melee__taunt_brandish_01__e__8f__96.png-4c53c91fc8cc8f7fea97dafe778a53e2.ctex"]
 
 [params]
 

@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cvqch6l4n0wao"
-path="res://.godot/imported/enemy_grunt__body__melee__flinch_02__e__5f__96.png-d7001caa8804ee3ba0b2b420adbd6a22.ctex"
+path="res://.godot/imported/enemy_grunt__body__melee__flinch_02__e__5f__96.png-9913c26cadf989d31a70d3540ad1f09f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/_pipeline/inbox/enemy_grunt__body__melee__flinch_02__e__5f__96.png"
-dest_files=["res://.godot/imported/enemy_grunt__body__melee__flinch_02__e__5f__96.png-d7001caa8804ee3ba0b2b420adbd6a22.ctex"]
+source_file="res://content/sprites/_pipeline/batch/enemy_grunt__body__melee__flinch_02__e__5f__96.png"
+dest_files=["res://.godot/imported/enemy_grunt__body__melee__flinch_02__e__5f__96.png-9913c26cadf989d31a70d3540ad1f09f.ctex"]
 
 [params]
 
