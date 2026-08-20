@@ -10,7 +10,7 @@ Compact agent-facing map for current and target ownership. Use this with `custod
 - Procgen construction: `proc_gen_tilemap.gd` is the façade/state host; terrain, intent, playability, foliage, encounter cadence, and pre-terrain required-cell/diagnostic/repair algorithms live in focused helpers. `encounters/encounter_cadence_planner.gd` owns data-only combat-pocket cadence; it never spawns actors or mutates geometry.
 - Authored maps: currently `game/world/sundered_keep/`, `game/world/home/`, and gothic compound runtime files; target is `game/world/authored/<map>/` after explicit path migration.
 - Combat simulation: currently `game/systems/combat/*`, operator combat profiles, enemy combat hooks, `NoiseEventBus`; target remains domain-owned under `game/systems/combat/` plus actor-local ability modules.
-- Enemy behavior: `EnemyBehaviorStateMachine` owns strategic state and movement goals; perception owns detection; objective sensor scores candidates; blackboard stores working memory; profiles tune behavior. `enemy.gd` owns combat execution, special attacks, reactions, locomotion implementation, and disabled-BSM legacy fallback.
+- Enemy behavior: `EnemyBehaviorStateMachine` owns strategic state and movement goals; perception owns detection; objective sensor scores candidates; blackboard stores working memory; profiles tune behavior. `EnemyAnimationSet` plus `EnemyPresentationController` own semantic animation mapping/playback only. Actor-local ability modules own extracted special-decision/execution seams. `enemy.gd` remains the shared combat/locomotion host, reaction authority, compatibility surface, and disabled-BSM legacy fallback.
 - Navigation/elevation: `NavigationSystem` owns path selection; `ProcGenTilemap` plus `ElevationMap` own movement legality. Ambient spawning remains exclusively `AmbientEnemySpawner` plus `AmbientEnemyCamp`, with loader markers adapting encounter-plan data.
 - HUD/terminal presentation: currently `game/ui/hud/ui.gd`, `game/ui/terminal/*`, `game/ui/components/*`, `game/ui/minimap/*`; target keeps UI as read-only presentation plus explicit command requests.
 - Debug/observability: currently `custodian/debug/*`, `DevObservatory`, `WorldHistory`, `SectorHeatmap`, validation scripts; target routes observability services under `game/systems/observability/` without becoming player UI.
@@ -20,7 +20,9 @@ Compact agent-facing map for current and target ownership. Use this with `custod
 - `custodian/game/world/procgen/proc_gen_tilemap.gd`: procgen facade, construction policy, roads, terrain integration, foliage, portals, authored claims, export helpers.
 - `custodian/game/world/procgen/custodian_contract_map.gd`: contract seed/profile creation, candidate selection, acceptance metrics, final visual promotion.
 - `custodian/game/systems/core/systems/contract_world_loader.gd`: runtime handoff, anchor rebinding, vehicles, relays, resources, ingress, authored destinations.
-- `custodian/game/actors/enemies/enemy.gd`: base enemy actor, variants, marine dash, parry handshake, loot, animation fallback, behavior hooks.
+- `custodian/game/actors/enemies/enemy.gd`: base enemy actor, variants, remaining special phase hosts, parry handshake, loot, animation fallback, behavior hooks.
+- `custodian/game/actors/enemies/presentation/`: semantic animation-set and playback authority; presentation never owns hit timing or behavior state.
+- `custodian/game/actors/enemies/abilities/`: actor-local special ability modules; Falcon Punch launch eligibility/lane validation is the first live extraction.
 - `custodian/game/systems/core/state/game_state.gd`: run failure, modal pause, compatibility state, and future persistent/run/world state pressure.
 
 ## Extraction Status

@@ -4,15 +4,15 @@ const GRUNT_ANIMATION_LIBRARY := preload("res://game/enemies/procgen/grunt_anima
 
 const REQUIRED_BODY_ANIMATIONS := {
 	"idle_s": 10,
-	"run_e": 10,
-	"run_w": 10,
-	"melee_e": 10,
+	"run_e": 6,
+	"run_w": 6,
+	"melee_e": 9,
 	"melee_se": 10,
 	"melee_sw": 10,
-	"melee_w": 11,
+	"melee_w": 9,
 	"stagger_s": 8,
-	"stagger_e": 11,
-	"stagger_w": 11,
+	"stagger_e": 8,
+	"stagger_w": 8,
 	"special_windup_e": 6,
 	"special_windup_w": 6,
 	"special_inflight_e": 6,
@@ -21,17 +21,17 @@ const REQUIRED_BODY_ANIMATIONS := {
 	"special_recovery_w": 6,
 	"crit_s": 8,
 	"crit_recovery_s": 5,
-	"death_e": 8,
+	"death_e": 5,
 	"flinch_s": 6,
 	"flinch_e": 5,
 	"flinch_w": 5,
 }
 
 const REQUIRED_FX_ANIMATIONS := {
-	"melee_fx_e": 10,
+	"melee_fx_e": 9,
 	"melee_fx_se": 10,
 	"melee_fx_sw": 10,
-	"melee_fx_w": 10,
+	"melee_fx_w": 9,
 	"crit_fx_s": 8,
 	"flinch_fx_s": 5,
 }

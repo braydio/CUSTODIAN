@@ -420,7 +420,8 @@ watch daemon is not required.
 | 5 | Strong transactions (full backend rollback) |
 | 6 | Safe consumer binding (typed scene adapters) |
 | 7 | `asset watch` (auto-ingest on EXACT drops) |
-| 8 | Additional kind schemas (enemy, effect, vehicle, ui, backdrop) |
+| 8 | Complete: schema-driven enemy, tile, effect, vehicle, weapon, UI, and backdrop intake |
+| 9 | Bounded consumer-migration adapters for semantic replacements that rename concrete files |
 
 ---
 

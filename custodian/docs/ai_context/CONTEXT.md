@@ -80,6 +80,7 @@ See: `design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md`.
 - Actor layer: operator, enemies, structures, defenses, ambient entities
 - Authored-level layer: `AuthoredLevel2D` owns local content, named spawns, route-state hooks, and generic exit requests; `WorldIngressSite` owns origin capture/isolation/restoration; world-local `RouteTraversalManager` owns intra-campaign graph/session/profile/history/rollback/state/cache authority; `LevelLoader` owns one staged/active instance boundary; and `WorldIngressSpawner` deterministically combines route and level ingress definitions. See `design/04_architecture/{AUTHORED_LEVEL_AUTHORING_PIPELINE,ROUTE_TRAVERSAL_SYSTEM}.md`.
 - Enemy dash layer: `enemy_marine.tscn` enables the shared enemy phased dash values; `enemy.gd` owns the generic marine dash phases and impact feedback; `operator.gd` exposes `apply_enemy_dash_impact(...)`; Sundered Keep's local hallway ambush mirrors the same heavy dash tuning.
+- Enemy grunt presentation is semantic: `EnemyAnimationSet` maps actions/directions to body/FX strips, `EnemyPresentationController` plays synchronized presentation and deterministic variants, and gameplay timing remains in `enemy.gd`. Falcon Punch launch/lane policy is the first live module under `game/actors/enemies/abilities/`; remaining phases are still hosted by `enemy.gd`.
 - Stealth/perception layer: Operator movement exposes a read-only stealth snapshot, discrete loud actions publish through `NoiseEventBus`, enemy perception owns LOS/hearing, and the existing enemy behavior state machine owns investigate/pursue/search/return-home transitions. UI remains a read-only consumer of weapon status.
 
 ## Architecture Organization Status
@@ -137,7 +138,7 @@ An explicit architecture organization pass is now documented and tracked.
 
 10. **Ruin prop production assets.** Author additional `PropDefinition` resources, overlay/rubble artwork, and chip/dirt/vine/highlight overlays under `custodian/content/props/ruins/`. The procedural prop variant foundation and procgen placement are live; what's missing is enough authored art variety to make the system feel intentional rather than sparse.
 
-11. **Architecture organization pass execution.** The 9-layer ownership model and extraction candidates are documented but no runtime code has been moved yet. Prioritize the largest coordinator/facade files (`proc_gen_tilemap.gd`, `custodian_contract_map.gd`, `contract_world_loader.gd`, `enemy.gd`, `game_state.gd`) when a natural feature boundary creates a safe extraction window — do not move code for its own sake.
+11. **Architecture organization pass execution.** The 9-layer ownership model and extraction candidates are documented; focused helpers and the first enemy presentation/ability seams are live, while major coordinators remain intentionally incremental. Prioritize the largest coordinator/facade files (`proc_gen_tilemap.gd`, `custodian_contract_map.gd`, `contract_world_loader.gd`, `enemy.gd`, `game_state.gd`) when a natural feature boundary creates a safe extraction window — do not move code for its own sake.
 
 ### Cross-cutting
 

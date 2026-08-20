@@ -6,6 +6,11 @@ const ROOT := "res://content/sprites/enemies/enemy_grunt/runtime"
 func _init() -> void:
 	set_id = &"enemy_grunt"
 	default_frame_size = Vector2i(96, 96)
+	_add_legacy_body(
+		&"locomotion.ready_idle", &"idle_01", &"s", 10, 6.0, true,
+		"%s/body/enemy_grunt__body__locomotion__idle_01__s__10f__96.png",
+		&"idle_s"
+	)
 	_add_generated_pair(&"locomotion.relaxed_idle", &"unarmed_idle_01", &"locomotion", 5, 6.0, true)
 	_add_generated_pair(&"locomotion.ready_idle", &"idle_01", &"locomotion", 5, 6.0, true)
 	_add_generated_pair(&"locomotion.walk", &"walk_01", &"locomotion", 5, 8.0, true)
@@ -17,7 +22,19 @@ func _init() -> void:
 	_add_generated_pair(&"combat.fast_03", &"fast_03", &"melee", 8, 12.0, false, true)
 	_add_generated_pair(&"reaction.flinch_01", &"flinch_01", &"melee", 5, 12.0, false)
 	_add_generated_pair(&"reaction.flinch_02", &"flinch_02", &"melee", 5, 12.0, false)
+	_add_legacy_body(
+		&"reaction.flinch_01", &"flinch_01", &"s", 6, 12.0, false,
+		"%s/body/enemy_grunt__body__melee__flinch_01__s__6f__96.png",
+		&"flinch_s",
+		"%s/fx/enemy_grunt__fx__melee__flinch_01__s__5f__96.png",
+		&"flinch_fx_s"
+	)
 	_add_generated_pair(&"reaction.stagger", &"stagger_01", &"melee", 8, 10.0, false, true)
+	_add_legacy_body(
+		&"reaction.stagger", &"stagger_01", &"s", 8, 10.0, false,
+		"%s/body/enemy_grunt__body__melee__stagger_01__s__8f__96.png",
+		&"stagger_s"
+	)
 	_add_generated_pair(&"reaction.death", &"death_01", &"melee", 5, 10.0, false, true)
 	_add_generated_pair(&"reaction.knockdown_01", &"knockdown_01", &"melee", 6, 10.0, false, true)
 	_add_generated_pair(&"reaction.knockdown_02", &"knockdown_02", &"melee", 6, 10.0, false, true)
@@ -45,6 +62,11 @@ func _init() -> void:
 	_add_existing(&"reaction.execution_victim", &"critical_execution_victim_01", &"w", 12, 12.0)
 	_add_existing(&"reaction.falcon_reversal_victim", &"falcon_reversal_victim_01", &"e", 8, 12.0, false, Vector2i(156, 156), "body/melee")
 	_add_existing(&"reaction.falcon_reversal_victim", &"falcon_reversal_victim_01", &"w", 8, 12.0, false, Vector2i(156, 156), "body/melee")
+	_add_legacy_fx(
+		&"reaction.critical", &"crit_01", &"s", 8, 12.0,
+		"%s/fx/enemy_grunt__fx__melee__crit_01__s__8f__96.png",
+		&"crit_fx_s"
+	)
 
 
 func _add_generated_pair(action: StringName, variant: StringName, group: StringName, frames: int, fps: float, loop: bool, with_fx := false) -> void:
@@ -84,6 +106,28 @@ func _add_existing_pair(action: StringName, variant: StringName, direction: Stri
 	clips.append(clip)
 
 
+func _add_legacy_body(action: StringName, variant: StringName, direction: StringName, _frames: int, fps: float, loop: bool, path_template: String, animation_name: StringName, fx_path_template := "", fx_name: StringName = &"") -> void:
+	var clip := {
+		"action": action, "variant": variant, "direction": direction,
+		"body_path": path_template % ROOT,
+		"body_name": animation_name,
+		"fps": fps, "loop": loop,
+	}
+	if not fx_path_template.is_empty():
+		clip["fx_path"] = fx_path_template % ROOT
+		clip["fx_name"] = fx_name
+	clips.append(clip)
+
+
+func _add_legacy_fx(action: StringName, variant: StringName, direction: StringName, _frames: int, fps: float, path_template: String, animation_name: StringName) -> void:
+	clips.append({
+		"action": action, "variant": variant, "direction": direction,
+		"fx_path": path_template % ROOT,
+		"fx_name": animation_name,
+		"fps": fps, "loop": false,
+	})
+
+
 func _compatibility_name(action: StringName, direction: StringName, layer: StringName) -> StringName:
 	var action_text := String(action)
 	if layer == &"fx":
@@ -91,7 +135,7 @@ func _compatibility_name(action: StringName, direction: StringName, layer: Strin
 			return StringName("melee_fx_%s" % String(direction)) if action == &"combat.fast_01" else StringName("%s_fx_%s" % [action_text.get_slice(".", 1), direction])
 		return StringName("%s_fx_%s" % [action_text.replace(".", "_"), direction])
 	match action:
-		&"locomotion.ready_idle": return &"idle_s" if direction == &"e" else StringName("idle_%s" % direction)
+		&"locomotion.ready_idle": return StringName("idle_%s" % direction)
 		&"locomotion.relaxed_idle": return StringName("unarmed_idle_%s" % direction)
 		&"locomotion.walk": return StringName("walk_%s" % direction)
 		&"locomotion.run": return StringName("run_%s" % direction)

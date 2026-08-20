@@ -199,6 +199,1145 @@
           "source_asset": null
         }
       }
+    },
+    "enemy_grunt": {
+      "kind": "enemy",
+      "assets": {
+        "idle_01::e": {
+          "state_id": "idle_01",
+          "direction": "e",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "locomotion",
+            "idle_01",
+            "e"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/locomotion/enemy_grunt__body__locomotion__idle_01__e__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "3f565462a02f9cd386396488dfc219aee9705424f8530203aa0182c19d720408",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "idle_01::w": {
+          "state_id": "idle_01",
+          "direction": "w",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "locomotion",
+            "idle_01",
+            "w"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/locomotion/enemy_grunt__body__locomotion__idle_01__w__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "576be82adba3010743914379b9537d53769a25388e2d8fb5a04d933b00b2f9b7",
+          "provenance": "mirrored",
+          "source_asset": "idle_01::e"
+        },
+        "run_01::e": {
+          "state_id": "run_01",
+          "direction": "e",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "locomotion",
+            "run_01",
+            "e"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/locomotion/enemy_grunt__body__locomotion__run_01__e__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "fba90b64ad50c92ce6509e8fc41eea56d05ec82f78ecb64b0b21c8a8ee49d79c",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "run_01::w": {
+          "state_id": "run_01",
+          "direction": "w",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "locomotion",
+            "run_01",
+            "w"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/locomotion/enemy_grunt__body__locomotion__run_01__w__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "498a358f0864a42ec4fd4da8288f0f601580eb0ab8d1a9a5289629b342aabe20",
+          "provenance": "mirrored",
+          "source_asset": "run_01::e"
+        },
+        "unarmed_idle_01::e": {
+          "state_id": "unarmed_idle_01",
+          "direction": "e",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "locomotion",
+            "unarmed_idle_01",
+            "e"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/locomotion/enemy_grunt__body__locomotion__unarmed_idle_01__e__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "f7bd8e81d8b171d8a033f1f3d2207cf3a4e1573e56238a42326da80685d44d67",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "unarmed_idle_01::w": {
+          "state_id": "unarmed_idle_01",
+          "direction": "w",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "locomotion",
+            "unarmed_idle_01",
+            "w"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/locomotion/enemy_grunt__body__locomotion__unarmed_idle_01__w__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "08af67c26ab43e85d3eb931b14302a8d5258faf240a160288048a15f2a65c938",
+          "provenance": "mirrored",
+          "source_asset": "unarmed_idle_01::e"
+        },
+        "walk_01::e": {
+          "state_id": "walk_01",
+          "direction": "e",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "locomotion",
+            "walk_01",
+            "e"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/locomotion/enemy_grunt__body__locomotion__walk_01__e__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "8148fa340c1c7cdb7b15466afaaa1983259de0c4e9bf399506c80baadd562d3a",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "walk_01::w": {
+          "state_id": "walk_01",
+          "direction": "w",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "locomotion",
+            "walk_01",
+            "w"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/locomotion/enemy_grunt__body__locomotion__walk_01__w__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "b1743395d77e84f18cf24af9fa90f9a77ef31027afbc64735ab74c0c9f4aaac5",
+          "provenance": "mirrored",
+          "source_asset": "walk_01::e"
+        },
+        "alert_01::e": {
+          "state_id": "alert_01",
+          "direction": "e",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "melee",
+            "alert_01",
+            "e"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__alert_01__e__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "29422d6d083dd6630a06d2695b2a1b3fa41f23d42ad3d998dc36ba2ed5ce3d1c",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "alert_01::w": {
+          "state_id": "alert_01",
+          "direction": "w",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "melee",
+            "alert_01",
+            "w"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__alert_01__w__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "a22eaec18dcffa48d95153f4aee5362f0fdcb469928a382c0f51d2d0cf7d437f",
+          "provenance": "mirrored",
+          "source_asset": "alert_01::e"
+        },
+        "bark_01::e": {
+          "state_id": "bark_01",
+          "direction": "e",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "melee",
+            "bark_01",
+            "e"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__bark_01__e__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "d353da10cbf6c1a56bcd71f1bb3c9f4468b6aa3c6f20c1716f86acfd02be64af",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "bark_01::w": {
+          "state_id": "bark_01",
+          "direction": "w",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "melee",
+            "bark_01",
+            "w"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__bark_01__w__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "8c47964a002b313f16a5cffa5e16a1c1e06400e6fdbaa0ab928ad70aa7863e1f",
+          "provenance": "mirrored",
+          "source_asset": "bark_01::e"
+        },
+        "death_01::e": {
+          "state_id": "death_01",
+          "direction": "e",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "melee",
+            "death_01",
+            "e"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__death_01__e__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "f140c5bcba4d5f3e4e653ad39ccdfd2a243ca4f436db82d80aceeb21b29a44e2",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "death_01::w": {
+          "state_id": "death_01",
+          "direction": "w",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "melee",
+            "death_01",
+            "w"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__death_01__w__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "32b012e1b5f6e5166aacbdbed21258c3a35b6f5aae81d2c76557e289d8950ea7",
+          "provenance": "mirrored",
+          "source_asset": "death_01::e"
+        },
+        "draw_01::e": {
+          "state_id": "draw_01",
+          "direction": "e",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "melee",
+            "draw_01",
+            "e"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__draw_01__e__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "1425a0d137474e02cd43165791c839a8cb6a762e9ec88447015161219c09a791",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "draw_01::w": {
+          "state_id": "draw_01",
+          "direction": "w",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "melee",
+            "draw_01",
+            "w"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__draw_01__w__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "6978fe8590eb72852ee234f3a1fb1284b5ec2cdd4cae41aea0c0b845531eb55c",
+          "provenance": "mirrored",
+          "source_asset": "draw_01::e"
+        },
+        "fast_01::e": {
+          "state_id": "fast_01",
+          "direction": "e",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "melee",
+            "fast_01",
+            "e"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__fast_01__e__9f__96.png",
+          "frames": 9,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "78e652774133ca888d0fcf91cfc704b0551d533cdb1520ce9fca7ca904572f05",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "fast_01::w": {
+          "state_id": "fast_01",
+          "direction": "w",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "melee",
+            "fast_01",
+            "w"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__fast_01__w__9f__96.png",
+          "frames": 9,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "b7c51d65572855ac75621e548a9753d23e5cc2270c645556ac696af12674835a",
+          "provenance": "mirrored",
+          "source_asset": "fast_01::e"
+        },
+        "fast_02::e": {
+          "state_id": "fast_02",
+          "direction": "e",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "melee",
+            "fast_02",
+            "e"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__fast_02__e__7f__96.png",
+          "frames": 7,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "ce574347ed3f7e15db65a3b21917d6df657f4ebd7296871803ad5b1256126200",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "fast_02::w": {
+          "state_id": "fast_02",
+          "direction": "w",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "melee",
+            "fast_02",
+            "w"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__fast_02__w__7f__96.png",
+          "frames": 7,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "fd25b492af08c40c919a65cf09d0388e6890c9b19f797d1f38383799bc68eae4",
+          "provenance": "mirrored",
+          "source_asset": "fast_02::e"
+        },
+        "fast_03::e": {
+          "state_id": "fast_03",
+          "direction": "e",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "melee",
+            "fast_03",
+            "e"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__fast_03__e__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "e15aa7aca58e9c6e2499d96eed322994b15be46cd8efa9396ec6faa2b67e26e2",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "fast_03::w": {
+          "state_id": "fast_03",
+          "direction": "w",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "melee",
+            "fast_03",
+            "w"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__fast_03__w__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "5b9356f1d521bf7142f1ab1ad0b703814c41001cb63a96dab3848a74b0bbd1fd",
+          "provenance": "mirrored",
+          "source_asset": "fast_03::e"
+        },
+        "flinch_01::e": {
+          "state_id": "flinch_01",
+          "direction": "e",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "melee",
+            "flinch_01",
+            "e"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__flinch_01__e__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "629e2d85fe6c140093a34ffb9edd4d4c79b0674867874932a7f4a8dbc65d8704",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "flinch_01::w": {
+          "state_id": "flinch_01",
+          "direction": "w",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "melee",
+            "flinch_01",
+            "w"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__flinch_01__w__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "937af59ee212b29a8ffebcf9f74f1e2083a8fa43b03fad69f2ba96f7cad63ec1",
+          "provenance": "mirrored",
+          "source_asset": "flinch_01::e"
+        },
+        "flinch_02::e": {
+          "state_id": "flinch_02",
+          "direction": "e",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "melee",
+            "flinch_02",
+            "e"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__flinch_02__e__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "ff31bff6dccd681b3031a7917c6c416ac28cd0aa0e778f773cdabe1364067df8",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "flinch_02::w": {
+          "state_id": "flinch_02",
+          "direction": "w",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "melee",
+            "flinch_02",
+            "w"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__flinch_02__w__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "1a43c2198ea96b1228f4a97f4f02f52d7cc4e71c0692e7cf60e79102e8cef675",
+          "provenance": "mirrored",
+          "source_asset": "flinch_02::e"
+        },
+        "knockdown_01::e": {
+          "state_id": "knockdown_01",
+          "direction": "e",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "melee",
+            "knockdown_01",
+            "e"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__knockdown_01__e__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "7dc698eb2e6915c62af4f04677d628bca132857ac357b38f140c91f57a413f83",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "knockdown_01::w": {
+          "state_id": "knockdown_01",
+          "direction": "w",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "melee",
+            "knockdown_01",
+            "w"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__knockdown_01__w__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "695f334f50f38dd2dc65f9940ce3bebf255a6ccd435487815c9aed0483516b3a",
+          "provenance": "mirrored",
+          "source_asset": "knockdown_01::e"
+        },
+        "knockdown_02::e": {
+          "state_id": "knockdown_02",
+          "direction": "e",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "melee",
+            "knockdown_02",
+            "e"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__knockdown_02__e__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "3ded568692306c54ab17c868ab0ebed78814cafcc5ce52965b1073b5e699fb39",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "knockdown_02::w": {
+          "state_id": "knockdown_02",
+          "direction": "w",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "melee",
+            "knockdown_02",
+            "w"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__knockdown_02__w__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "3b92409403bded8f3bd307a1775a126d09b176ee46476a4547933b4cf305db65",
+          "provenance": "mirrored",
+          "source_asset": "knockdown_02::e"
+        },
+        "stagger_01::e": {
+          "state_id": "stagger_01",
+          "direction": "e",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "melee",
+            "stagger_01",
+            "e"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__stagger_01__e__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "1a914cbfec47b840ee611a9b084e67c9ac0423b03ef6758d886aa4afed3d36cb",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "stagger_01::w": {
+          "state_id": "stagger_01",
+          "direction": "w",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "melee",
+            "stagger_01",
+            "w"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__stagger_01__w__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "dca14917b6a2d8ad659c0743bf3f87229c5fce573df2bead8ef3d90b09206ae0",
+          "provenance": "mirrored",
+          "source_asset": "stagger_01::e"
+        },
+        "stand_up_01::e": {
+          "state_id": "stand_up_01",
+          "direction": "e",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "melee",
+            "stand_up_01",
+            "e"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__stand_up_01__e__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "a3a29a12eb45e05f50aa9d6bd7af69265df8d80d2ecf7948ac2c3204fb40a7e2",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "stand_up_01::w": {
+          "state_id": "stand_up_01",
+          "direction": "w",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "melee",
+            "stand_up_01",
+            "w"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__stand_up_01__w__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "ad31924ca59d86f8083bc764d81f1049c081ebe957ea2dbff63b3c73ef604662",
+          "provenance": "mirrored",
+          "source_asset": "stand_up_01::e"
+        },
+        "taunt_bark_01::e": {
+          "state_id": "taunt_bark_01",
+          "direction": "e",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "melee",
+            "taunt_bark_01",
+            "e"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__taunt_bark_01__e__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "bfb1983831377f3595cf2844446feffa451af572af89fab79ef93aaf8edc3acb",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "taunt_bark_01::w": {
+          "state_id": "taunt_bark_01",
+          "direction": "w",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "melee",
+            "taunt_bark_01",
+            "w"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__taunt_bark_01__w__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "608bbe7acf0cc04df95666bbed3284f882ce5eb6c6b242d260b2a4f14ea9683d",
+          "provenance": "mirrored",
+          "source_asset": "taunt_bark_01::e"
+        },
+        "taunt_brandish_01::e": {
+          "state_id": "taunt_brandish_01",
+          "direction": "e",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "melee",
+            "taunt_brandish_01",
+            "e"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__taunt_brandish_01__e__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "a662db829e9170dd56ff5ad2cb598d207a46bb455593bf0bdc9e39f5ffe09337",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "taunt_brandish_01::w": {
+          "state_id": "taunt_brandish_01",
+          "direction": "w",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "melee",
+            "taunt_brandish_01",
+            "w"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__taunt_brandish_01__w__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "f1099d5c89d9e251163e71531d6d628e79054cd0c463e006e69f486b096c62f3",
+          "provenance": "mirrored",
+          "source_asset": "taunt_brandish_01::e"
+        },
+        "taunt_point_01::e": {
+          "state_id": "taunt_point_01",
+          "direction": "e",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "melee",
+            "taunt_point_01",
+            "e"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__taunt_point_01__e__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "9a4d414105d10a4d66e90ee10c5fae93a03db07e8e08d90a3b2fff3b6a03c672",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "taunt_point_01::w": {
+          "state_id": "taunt_point_01",
+          "direction": "w",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "melee",
+            "taunt_point_01",
+            "w"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__taunt_point_01__w__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "c344fcd41be213e85d7d86bdbed637352d6acb103085122696b4525252b4f526",
+          "provenance": "mirrored",
+          "source_asset": "taunt_point_01::e"
+        },
+        "death_01_fx::e": {
+          "state_id": "death_01_fx",
+          "direction": "e",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "fx",
+            "melee",
+            "death_01",
+            "e"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/fx/melee/enemy_grunt__fx__melee__death_01__e__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "039915befb6bd127029b5f393e6f30bd85d472ae137100363739c99b45dac9b6",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "death_01_fx::w": {
+          "state_id": "death_01_fx",
+          "direction": "w",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "fx",
+            "melee",
+            "death_01",
+            "w"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/fx/melee/enemy_grunt__fx__melee__death_01__w__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "48bcf39c96d6efd94b5ddf13646c36b7679fe288b1c554e3595464c684d555e7",
+          "provenance": "mirrored",
+          "source_asset": "death_01_fx::e"
+        },
+        "fast_01_fx::e": {
+          "state_id": "fast_01_fx",
+          "direction": "e",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "fx",
+            "melee",
+            "fast_01",
+            "e"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/fx/melee/enemy_grunt__fx__melee__fast_01__e__9f__96.png",
+          "frames": 9,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "1838b15a0f9ea7972d805597c0eacbae049b0f9df29a260f1320e58c48e72d0f",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "fast_01_fx::w": {
+          "state_id": "fast_01_fx",
+          "direction": "w",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "fx",
+            "melee",
+            "fast_01",
+            "w"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/fx/melee/enemy_grunt__fx__melee__fast_01__w__9f__96.png",
+          "frames": 9,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "38db2c070e91f7293442b62f201a82db1d1a1ef700dfac19b8f3d62683f456c2",
+          "provenance": "mirrored",
+          "source_asset": "fast_01_fx::e"
+        },
+        "fast_02_fx::e": {
+          "state_id": "fast_02_fx",
+          "direction": "e",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "fx",
+            "melee",
+            "fast_02",
+            "e"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/fx/melee/enemy_grunt__fx__melee__fast_02__e__7f__96.png",
+          "frames": 7,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "9e777ffc9d18accce6386a0327226304ad1db7fe35be3f70675cff8782de4d16",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "fast_02_fx::w": {
+          "state_id": "fast_02_fx",
+          "direction": "w",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "fx",
+            "melee",
+            "fast_02",
+            "w"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/fx/melee/enemy_grunt__fx__melee__fast_02__w__7f__96.png",
+          "frames": 7,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "bf8d614cc2d0739cee94eca3462c8b7967fef0997bfab46ae9ece2f54cc51f12",
+          "provenance": "mirrored",
+          "source_asset": "fast_02_fx::e"
+        },
+        "fast_03_fx::e": {
+          "state_id": "fast_03_fx",
+          "direction": "e",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "fx",
+            "melee",
+            "fast_03",
+            "e"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/fx/melee/enemy_grunt__fx__melee__fast_03__e__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "cc277ec03719f4ca1a07a12938fb16170340f36d77775af4babba090d72b2e50",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "fast_03_fx::w": {
+          "state_id": "fast_03_fx",
+          "direction": "w",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "fx",
+            "melee",
+            "fast_03",
+            "w"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/fx/melee/enemy_grunt__fx__melee__fast_03__w__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "244768f4f2b673adbf3be3b0d9e8576c8b579106efe0dbc193ee1aba44b7b35f",
+          "provenance": "mirrored",
+          "source_asset": "fast_03_fx::e"
+        },
+        "knockdown_01_fx::e": {
+          "state_id": "knockdown_01_fx",
+          "direction": "e",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "fx",
+            "melee",
+            "knockdown_01",
+            "e"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/fx/melee/enemy_grunt__fx__melee__knockdown_01__e__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "b3bf60307f52ac098295d35641feb4bd34fc7fec211f5d3d8da420df28ab1a37",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "knockdown_01_fx::w": {
+          "state_id": "knockdown_01_fx",
+          "direction": "w",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "fx",
+            "melee",
+            "knockdown_01",
+            "w"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/fx/melee/enemy_grunt__fx__melee__knockdown_01__w__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "715fc985d3bdc0f8b73da4d002cbfcef125b123bde5faefebb0440191761c42d",
+          "provenance": "mirrored",
+          "source_asset": "knockdown_01_fx::e"
+        },
+        "knockdown_02_fx::e": {
+          "state_id": "knockdown_02_fx",
+          "direction": "e",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "fx",
+            "melee",
+            "knockdown_02",
+            "e"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/fx/melee/enemy_grunt__fx__melee__knockdown_02__e__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "3ca374ff97fffed12206333a339681231bc55405b9765ffd02ab6465ffe280c6",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "knockdown_02_fx::w": {
+          "state_id": "knockdown_02_fx",
+          "direction": "w",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "fx",
+            "melee",
+            "knockdown_02",
+            "w"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/fx/melee/enemy_grunt__fx__melee__knockdown_02__w__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "a381b88c3d28e1eb44b02103d07b4ad83117254b7f372d9d0f2ffc63dce5feb8",
+          "provenance": "mirrored",
+          "source_asset": "knockdown_02_fx::e"
+        },
+        "stagger_01_fx::e": {
+          "state_id": "stagger_01_fx",
+          "direction": "e",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "fx",
+            "melee",
+            "stagger_01",
+            "e"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/fx/melee/enemy_grunt__fx__melee__stagger_01__e__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "0fceb2085e6c73a19245e6163591e05cd9bb3a57024c06e975b6d26468dcee31",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "stagger_01_fx::w": {
+          "state_id": "stagger_01_fx",
+          "direction": "w",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "fx",
+            "melee",
+            "stagger_01",
+            "w"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/fx/melee/enemy_grunt__fx__melee__stagger_01__w__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "b8bf2ad6270c53c44cf3bf1113b4196d5d794e2254c891190ce717584df9cd9d",
+          "provenance": "mirrored",
+          "source_asset": "stagger_01_fx::e"
+        }
+      }
     }
   }
 }

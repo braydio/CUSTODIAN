@@ -19,17 +19,17 @@ const LEGACY_ANIMATION_SPECS := {
 		"loop": true,
 	},
 	"run_e": {
-		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__locomotion__run_01__e__10f__96.png",
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/locomotion/enemy_grunt__body__locomotion__run_01__e__6f__96.png",
 		"fps": 10.0,
 		"loop": true,
 	},
 	"run_w": {
-		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__locomotion__run_01__w__10f__96.png",
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/locomotion/enemy_grunt__body__locomotion__run_01__w__6f__96.png",
 		"fps": 10.0,
 		"loop": true,
 	},
 	"melee_e": {
-		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__fast_01__e__10f__96.png",
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__fast_01__e__9f__96.png",
 		"fps": 12.0,
 		"loop": false,
 	},
@@ -44,7 +44,7 @@ const LEGACY_ANIMATION_SPECS := {
 		"loop": false,
 	},
 	"melee_w": {
-		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__fast_01__w__11f__96.png",
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__fast_01__w__9f__96.png",
 		"fps": 12.0,
 		"loop": false,
 	},
@@ -54,12 +54,12 @@ const LEGACY_ANIMATION_SPECS := {
 		"loop": false,
 	},
 	"stagger_e": {
-		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__stagger_01__e__11f__96.png",
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__stagger_01__e__8f__96.png",
 		"fps": 10.0,
 		"loop": false,
 	},
 	"stagger_w": {
-		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__stagger_01__w__11f__96.png",
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__stagger_01__w__8f__96.png",
 		"fps": 10.0,
 		"loop": false,
 	},
@@ -154,22 +154,22 @@ const LEGACY_ANIMATION_SPECS := {
 		"loop": false,
 	},
 	"death_e": {
-		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__death_01__e__8f__96.png",
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__death_01__e__5f__96.png",
 		"fps": 10.0,
 		"loop": false,
 	},
 	"flinch_s": {
-		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__flinch_01__s__6__96.png",
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__flinch_01__s__6f__96.png",
 		"fps": 12.0,
 		"loop": false,
 	},
 	"flinch_e": {
-		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__flinch_01__e__5f__96.png",
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__flinch_01__e__5f__96.png",
 		"fps": 12.0,
 		"loop": false,
 	},
 	"flinch_w": {
-		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__flinch_01__w__5f__96.png",
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__flinch_01__w__5f__96.png",
 		"fps": 12.0,
 		"loop": false,
 	},
@@ -178,7 +178,7 @@ const LEGACY_ANIMATION_SPECS := {
 @warning_ignore("unused_private_class_variable")
 const LEGACY_FX_ANIMATION_SPECS := {
 	"melee_fx_e": {
-		"path": "res://content/sprites/enemies/enemy_grunt/runtime/fx/enemy_grunt__fx__melee__fast_01__e__10f__96.png",
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/fx/melee/enemy_grunt__fx__melee__fast_01__e__9f__96.png",
 		"fps": 12.0,
 		"loop": false,
 	},
@@ -193,7 +193,7 @@ const LEGACY_FX_ANIMATION_SPECS := {
 		"loop": false,
 	},
 	"melee_fx_w": {
-		"path": "res://content/sprites/enemies/enemy_grunt/runtime/fx/enemy_grunt__fx__melee__fast_01__w__10f__96.png",
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/fx/melee/enemy_grunt__fx__melee__fast_01__w__9f__96.png",
 		"fps": 12.0,
 		"loop": false,
 	},
