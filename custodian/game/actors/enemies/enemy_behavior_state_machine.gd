@@ -208,7 +208,10 @@ func _update_patrol(enemy: Node2D, _delta: float) -> void:
 		return
 	if _patrol_target == Vector2.ZERO or enemy.global_position.distance_to(_patrol_target) <= 18.0:
 		_patrol_target = _choose_next_patrol_target(enemy)
-	enemy.call("behavior_move_toward", _patrol_target, profile.patrol_speed)
+	var moved := bool(enemy.call("behavior_move_toward", _patrol_target, profile.patrol_speed))
+	if not moved:
+		_patrol_target = Vector2.ZERO
+		_record_unreachable_navigation_goal(&"patrol")
 	if _rescore_timer <= 0.0:
 		_rescore_timer = idle_rescore_interval_sec
 		_consider_objective_candidate(_choose_objective_measured(enemy))
@@ -572,7 +575,10 @@ func _update_search(enemy: Node2D, delta: float) -> void:
 		blackboard.search_point_index += 1
 		index = blackboard.search_point_index % offsets.size()
 		search_point = blackboard.target_last_seen_position + offsets[index]
-	enemy.call("behavior_move_toward", search_point, profile.investigate_speed)
+	var moved := bool(enemy.call("behavior_move_toward", search_point, profile.investigate_speed))
+	if not moved:
+		blackboard.search_point_index += 1
+		_record_unreachable_navigation_goal(&"search")
 
 
 func _update_return_home(enemy: Node2D, _delta: float) -> void:
@@ -620,7 +626,25 @@ func _choose_next_patrol_target(enemy: Node) -> Vector2:
 	var roll := _deterministic_roll(enemy, &"patrol_direction", ordinal)
 	var direction_index := mini(7, int(floor(roll * 8.0)))
 	var direction := Vector2.RIGHT.rotated(float(direction_index) * TAU / 8.0)
-	return blackboard.home_position + direction * 96.0
+	var raw_target: Vector2 = blackboard.home_position + direction * 96.0
+	if enemy != null and enemy.is_inside_tree():
+		for provider in enemy.get_tree().get_nodes_in_group("procgen_walkability_provider"):
+			if provider != null and provider.has_method("project_runtime_walkable_global"):
+				var projected: Variant = provider.call("project_runtime_walkable_global", raw_target, 6)
+				if projected is Vector2 and projected != Vector2.INF:
+					return projected
+	return raw_target
+
+
+func _record_unreachable_navigation_goal(channel: StringName) -> void:
+	var observatory := get_node_or_null("/root/DevObservatory") if is_inside_tree() else null
+	if observatory != null and observatory.has_method("increment"):
+		observatory.call("increment", &"enemy_navigation_goal_unreachable", 1)
+	if observatory != null and observatory.has_method("log_event"):
+		observatory.call("log_event", &"enemy_navigation_goal_unreachable", {
+			"channel": String(channel),
+			"state": String(current_state),
+		})
 
 
 func _mark_operator_awareness(operator: Node2D) -> void:

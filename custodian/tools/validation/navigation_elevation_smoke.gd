@@ -22,7 +22,7 @@ func _init() -> void:
 	nav._initialized = true; nav.astar = AStar2D.new(); nav.floor_tilemap = TileMapLayer.new(); nav.floor_tilemap.tile_set = TileSet.new()
 	assert(nav.compute_path_immediate(Vector2.ZERO, Vector2(64, 0)).is_empty())
 	var enemy_source := FileAccess.get_file_as_string("res://game/actors/enemies/enemy.gd")
-	assert(enemy_source.find("if current_path.is_empty():\n\t\treturn Vector2.ZERO") >= 0)
+	assert(enemy_source.count("if current_path.is_empty():\n\t\treturn Vector2.ZERO") >= 2)
 	print("navigation_elevation_smoke: PASS")
 	nav.floor_tilemap.free()
 	nav.free()

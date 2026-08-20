@@ -8,6 +8,15 @@ Feature owner: combat / allied automation
 
 Autonomous combat drones are fragile player-assist companions. V3 mounts a `DroneManager` in the active scene, spawns up to two allied droid companions near the Custodian, and supports an Operator or ordered guard-point anchor. The shared combat actor owns soft follow bands, local patrol/free-roam goals, guard-zone target acquisition and return rules, support bursts, HP, and destruction; the active main-scene presentation uses the animated allied infantry droid scene with squad-wide fire discipline, anchor, and follow-distance commands owned by `DroneManager`.
 
+Runtime terrain containment is authoritative. On procgen maps, `DroneManager`
+projects requested spawn and ground-guard positions through
+`ProcGenTilemap`'s final walkability state before registering a drone or
+committing an order. `CombatDrone` treats follow, guard, roam, intercept, and
+recall positions as navigation goals. An authoritative empty path stops the
+drone; it never restores raw steering through void, ledges, or blockers.
+Authored maps with no procgen walkability provider and no navigation authority
+retain the existing local direct-motion compatibility path.
+
 ## Doctrine Rules
 
 - Drones assist field combat; they do not replace the Custodian's positioning, target choice, repair decisions, or command authority.

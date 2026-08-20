@@ -5894,6 +5894,39 @@ func debug_print_stuck_report(world_pos: Vector2) -> Dictionary:
 
 
 func find_nearest_runtime_walkable_global(world_pos: Vector2, radius_tiles: int = 4) -> Vector2:
+	return find_safe_runtime_walkable_global(world_pos, radius_tiles)
+
+
+func project_runtime_walkable_global(world_pos: Vector2, radius_tiles: int = 10) -> Vector2:
+	var cell: Variant = find_nearest_runtime_walkable_cell(_global_to_tile(world_pos), radius_tiles)
+	return tile_to_global_position(cell) if cell is Vector2i else Vector2.INF
+
+
+func find_nearest_runtime_walkable_cell(origin: Vector2i, max_radius: int = 10) -> Variant:
+	if is_valid_spawn_cell(origin) and is_runtime_walkable_after_props(origin):
+		return origin
+	for radius in range(1, maxi(0, max_radius) + 1):
+		for tile in _ordered_runtime_walkable_ring(origin, radius):
+			if is_valid_spawn_cell(tile) and is_runtime_walkable_after_props(tile):
+				return tile
+	return null
+
+
+func _ordered_runtime_walkable_ring(origin: Vector2i, radius: int) -> Array[Vector2i]:
+	var ring: Array[Vector2i] = []
+	for y in range(-radius, radius + 1):
+		for x in range(-radius, radius + 1):
+			if maxi(absi(x), absi(y)) == radius:
+				ring.append(origin + Vector2i(x, y))
+	ring.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		var da := a.distance_squared_to(origin)
+		var db := b.distance_squared_to(origin)
+		return da < db or (da == db and (a.y < b.y or (a.y == b.y and a.x < b.x)))
+	)
+	return ring
+
+
+func find_safe_runtime_walkable_global(world_pos: Vector2, radius_tiles: int = 4) -> Vector2:
 	var origin := _global_to_tile(world_pos)
 	var candidates: Array[Vector2i] = []
 	var radius := maxi(0, radius_tiles)

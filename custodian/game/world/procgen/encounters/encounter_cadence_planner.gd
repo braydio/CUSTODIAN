@@ -102,7 +102,7 @@ func _pocket_center(pocket: Dictionary) -> Vector2i:
 
 
 func _progression_for(pocket: Dictionary, spawn_tile: Vector2i) -> float:
-	for key in [&"progression_index", &"beat_index", &"progression"]:
+	for key in [&"progression_index", &"beat_index", &"ascent_rank", &"progression"]:
 		if pocket.has(key): return float(pocket[key])
 	return float(_pocket_center(pocket).distance_squared_to(spawn_tile))
 

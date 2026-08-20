@@ -40,15 +40,24 @@ func spawn_camp() -> void:
 	var stable_offset := int((String(camp_id).hash() & 0x7fffffff) % (count_range + 1)) if count_range > 0 else 0
 	var count := maxi(0, enemy_count_min + stable_offset)
 	var parent := get_parent()
+	var spawner := get_tree().get_first_node_in_group(
+		"ambient_enemy_spawn_scheduler"
+	)
+	if spawner != null:
+		var cap := int(spawner.get("max_active_ambient_enemies"))
+		var active := int(spawner.call("get_active_enemy_count")) \
+			if spawner.has_method("get_active_enemy_count") else 0
+		var pending := int(spawner.call("get_pending_spawn_count")) \
+			if spawner.has_method("get_pending_spawn_count") else 0
+		count = mini(count, maxi(0, cap - active - pending))
+	if count <= 0:
+		return
 	for index in count:
 		var angle := TAU * float(index) / float(maxi(1, count))
 		var radius := spawn_radius_px * (0.55 + 0.45 * float((index % 3) + 1) / 3.0)
 		var spawn_position := (
 			global_position
 			+ Vector2.RIGHT.rotated(angle) * radius
-		)
-		var spawner := get_tree().get_first_node_in_group(
-			"ambient_enemy_spawn_scheduler"
 		)
 		if spawner != null and spawner.has_method("queue_enemy_spawn"):
 			spawner.call(

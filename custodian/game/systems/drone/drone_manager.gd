@@ -71,11 +71,19 @@ func spawn_drone(index: int = -1) -> Node2D:
 	if drone == null:
 		return null
 	var drone_id := "DRONE_%02d" % (slot + 1)
+	var requested_position := _operator.global_position + Vector2(
+		(-1.0 if slot % 2 == 0 else 1.0) * 48.0,
+		-28.0
+	)
+	var spawn_position := _project_drone_position(requested_position, 10)
+	if spawn_position == Vector2.INF:
+		drone.queue_free()
+		return null
 	if not squad_state.register_drone(drone_id):
 		drone.queue_free()
 		return null
 	_drone_parent.add_child(drone)
-	drone.global_position = _operator.global_position + Vector2((-1.0 if slot % 2 == 0 else 1.0) * 48.0, -28.0)
+	drone.global_position = spawn_position
 	if drone.has_method("configure"):
 		drone.call("configure", slot, _operator, self, command_profile)
 	_drones.append(drone)
@@ -141,12 +149,34 @@ func set_follow_distance(mode: int) -> void:
 	_propagate_follow_distance(mode)
 
 
-func issue_guard_order(position: Vector2) -> void:
-	squad_state.set_order_anchor(position)
+func issue_guard_order(position: Vector2) -> bool:
+	var resolved := _project_drone_position(position, 12)
+	if resolved == Vector2.INF:
+		_record_rejected_guard_order(position)
+		return false
+	squad_state.set_order_anchor(resolved)
 	_propagate_command_target_clear()
-	_propagate_order_anchor(position)
+	_propagate_order_anchor(resolved)
 	_update_guard_order_marker()
 	_announce_squad_state("Guard")
+	return true
+
+
+func _project_drone_position(position: Vector2, radius_tiles: int = 10) -> Vector2:
+	if not is_inside_tree():
+		return position
+	for provider in get_tree().get_nodes_in_group("procgen_walkability_provider"):
+		if provider != null and provider.has_method("project_runtime_walkable_global"):
+			return provider.call("project_runtime_walkable_global", position, radius_tiles) as Vector2
+	return position
+
+
+func _record_rejected_guard_order(position: Vector2) -> void:
+	var observatory := get_node_or_null("/root/DevObservatory")
+	if observatory != null and observatory.has_method("increment"):
+		observatory.call("increment", &"drone_guard_order_rejected", 1)
+	if observatory != null and observatory.has_method("log_event"):
+		observatory.call("log_event", &"drone_guard_order_rejected", {"position": position})
 
 
 func issue_target_order(hostile: Node2D) -> void:

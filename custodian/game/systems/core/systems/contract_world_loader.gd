@@ -196,7 +196,7 @@ func _place_ambient_enemy_camps(level_data: Dictionary, map_instance: Node) -> v
 	_clear_generated_ambient_enemy_markers()
 	var encounter_plan := level_data.get("encounter_plan", {}) as Dictionary
 	var encounters := encounter_plan.get("encounters", []) as Array
-	if not encounters.is_empty():
+	if String(encounter_plan.get("schema", "")) == "custodian.procgen_encounter_plan.v1":
 		_place_encounter_plan_markers(encounters, map_instance)
 	else:
 		_place_legacy_ambient_enemy_markers(level_data, map_instance)

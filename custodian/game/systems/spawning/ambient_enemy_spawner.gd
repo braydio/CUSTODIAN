@@ -160,9 +160,6 @@ func spawn_from_markers() -> int:
 			_obs_increment("ambient_enemy_duplicate_marker_suppressed")
 			continue
 
-		if not is_planned and (created + 1) * maxi(1, enemies_per_camp_min) > max_active_ambient_enemies:
-			break
-
 		var marker_position := marker.global_position
 		if not is_planned and (
 			player != null

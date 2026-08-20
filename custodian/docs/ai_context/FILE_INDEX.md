@@ -405,7 +405,7 @@ Last updated: 2026-08-20
 - `custodian/game/actors/relay/signal_indicator.gd` — primitive signal-strength visual for relay placeholder scenes
 - `custodian/game/actors/relay/relay_interaction.gd` — relay interaction area bridge for future scene-level interaction expansion
 - `custodian/game/actors/allies/combat_drone.tscn` — base allied combat drone scene with health bar, collision, muzzle marker, and fallback ColorRect visual
-- `custodian/game/actors/allies/combat_drone.gd` — fragile allied combat drone actor with Operator/order-point anchor resolution, close/far formation bands, deterministic local patrol, guard-centered targeting/return limits, freed-target pruning plus Observatory telemetry, FOLLOW/HOLD/INTERCEPT/RECALL modes, shared terrain-aware projectile fire, independent HP, and manager-controlled command state
+- `custodian/game/actors/allies/combat_drone.gd` — fragile allied combat drone actor with navigation-backed, procgen-floor-projected follow/guard/free-roam/intercept/recall goals; authoritative no-path stops rather than direct void steering
 - `custodian/game/actors/effects/drone_guard_order_marker.tscn` — lightweight pulsing world-space ring/cross marker for the active ordered guard point
 - `custodian/game/vfx/combat/parry_contact_spark_vfx.tscn` — non-looping world-space six-frame parry contact spark that auto-frees at animation completion
 - `custodian/game/vfx/combat/critical_breach_marker_vfx.tscn` — enemy-attached floating BREACH marker held visibly for the gameplay-owned critical window
@@ -415,12 +415,14 @@ Last updated: 2026-08-20
 - `custodian/content/spriteframes/effects/combat/` — compact SpriteFrames resources slicing the required contact, BREACH, and countdown runtime strips
 - `custodian/game/actors/allies/allied_infantry_droid.tscn` — active main-scene allied droid presentation with animated SpriteFrames, muzzle marker, health bar, status label, and inherited combat behavior
 - `custodian/game/actors/allies/allied_infantry_droid.gd` — animated `CombatDrone` subclass with facing-aware idle/run/destroyed playback, hold-fire dimming, and fire/follow status label; no raw squad command input
-- `custodian/game/systems/drone/drone_manager.gd` — scene-mounted drone squad manager that owns fire/formation/guard/return input, resolves hostile hover during the guard-order chord, exposes command-reticle state, converts hostile clicks to explicit target orders, owns the guard marker, and makes `K` restore Operator anchoring plus tactical `FOLLOW` without changing formation distance or fire discipline
+- `custodian/game/systems/drone/drone_manager.gd` — scene-mounted drone squad manager that projects procgen spawns and ground guard orders onto final runtime-walkable floor before squad registration/state mutation, while retaining fire/formation/target/return input authority
 - `custodian/game/systems/drone/drone_command_profile.gd` — drone tuning and mode constants for HP, speed, range, burst cadence, retreat threshold, tactical modes, follow-distance bands, separation, free-roam patrol timing, and leash behavior
 - `custodian/game/systems/drone/drone_targeting.gd` — deterministic local target selection helper for non-passive enemies near the Custodian or hold point, with optional range override for free roam
 - `custodian/game/systems/drone/drone_squad_state.gd` — lightweight resource tracking active/destroyed drone IDs, current tactical mode, fire discipline, current follow distance, reserve, and max active count
 - `custodian/tools/validation/main_scene_allied_droid_smoke.gd` — focused smoke proving `game.tscn` routes `DroneManager` to the animated allied droid scene and manager-owned T/G/J+click/K actions
 - `custodian/tools/validation/drone_follower_commands_smoke.gd` — focused V3 smoke for squad state, Operator/guard anchor transitions, close/far/roam guard goals, return limits, marker lifecycle, propagation, replacement inheritance, complete return-to-Operator-follow behavior, recall compatibility, and hold-fire burst cancellation
+- `custodian/tools/validation/allied_drone_navigation_walkability_smoke.gd` — focused spawn projection, deterministic nearest-floor selection, registration ordering, and authoritative no-path stop contract
+- `custodian/tools/validation/enemy_patrol_navigation_smoke.gd` — focused patrol no-path invalidation and fail-closed path-helper contract
 - `custodian/game/systems/core/state/game_state.gd` — fail-state and phase authority autoload; now pauses and mounts the game-over modal on `trigger_game_over(...)`, preserves the existing debug fields, and exposes `reset_run_state(...)` for restart flows.
 - `custodian/game/systems/core/state/game_stats.gd` — run-stat autoload for waves survived, enemies destroyed, power failures, and turrets lost snapshots used by the game-over modal.
 - `custodian/game/ui/game_over/game_over_modal.tscn` — centered pause-safe game-over modal showing fail reason, stats, Restart Facility, and Return to Menu.

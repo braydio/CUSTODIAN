@@ -23,6 +23,7 @@ class MockIngressDefinition extends RefCounted:
 	var prompt_text := "DESCEND"
 	var target_spawn_id: StringName = &"Spawn_DescentLanding"
 	var interaction_distance := 56.0
+	var site_scene_path := ""
 
 class MockRouteDefinition extends RefCounted:
 	var route_id: StringName = &"forlorn_ritualant_underground"
@@ -143,6 +144,9 @@ func _validate_scene(
 	_check(is_zero_approx(shaft_window.modulate.a), "parked shaft retained visible opacity", errors)
 	_check(shaft_window.clip_children == CanvasItem.CLIP_CHILDREN_ONLY, "shaft window lost its irregular child mask", errors)
 	_check(presentation.get_node_or_null("RearMassRoot/DarkMouth") != null, "idle cave mouth is missing", errors)
+	var mouth := presentation.get_node("RearMassRoot/DarkMouth") as Polygon2D
+	var mouth_bounds := _polygon_bounds(mouth.polygon)
+	_check(mouth_bounds.size.x <= 170.0, "idle shaft aperture exposes broad black side plates", errors)
 	for plate_name in ["TopRockOverhang", "LeftMouthRock", "RightMouthRock", "LowerCaveLip"]:
 		_check(
 			presentation.get_node_or_null(
@@ -154,6 +158,9 @@ func _validate_scene(
 	_check(not travel_geometry.visible, "solid temporary occlusion geometry is visible while idle", errors)
 	_check(entrance_mask.z_index == 1, "parked cave breakup must remain behind Operator z=2", errors)
 	_check(not presentation.foreground_occluder.visible, "broad cave mask must be hidden while parked", errors)
+	_check(presentation.foreground_occluder.region_enabled, "travel cave lip must use a localized texture region", errors)
+	var lip_size := presentation.foreground_occluder.region_rect.size * presentation.foreground_occluder.scale
+	_check(lip_size.x <= 180.0 and lip_size.y <= 84.0, "travel cave lip expanded into a whole-mountain foreground plate", errors)
 	_check((presentation.get_node("EntranceStructureRoot/EntranceShell") as Sprite2D).visible, "entrance shell is hidden while idle", errors)
 	_check(presentation.lift_root.visible, "lift is hidden while idle", errors)
 	_check((presentation.get_node("RearMassRoot/MountainCliff") as Sprite2D).visible, "mountain is hidden while idle", errors)
@@ -299,11 +306,12 @@ func _validate_lift_travel(
 	_check(presentation.has_presentation_puppet(), "descent did not create a puppet", errors)
 	_check(presentation.shaft_window.visible, "shaft did not become visible after accepted traversal", errors)
 	_check(presentation.entrance_mask.z_index == 20, "foreground cave mask did not enter travel z=20", errors)
-	_check(presentation.foreground_occluder.visible, "full cave mask did not activate for travel", errors)
+	_check(not presentation.foreground_occluder.visible, "cave lip activated before rider passed beneath it", errors)
 	_check(not presentation.travel_occlusion_geometry.visible, "solid temporary geometry activated during travel", errors)
 	_check(presentation.platform_back_vibrate.z_index == 5, "travel platform back did not enter z=5", errors)
 	_check((presentation.get_node("LiftRoot/PlatformFront") as Node2D).z_index == 7, "travel front lip did not enter z=7", errors)
 	await create_timer(0.3).timeout
+	_check(presentation.foreground_occluder.visible, "cave lip did not activate during deep descent", errors)
 	var puppet := presentation.get_presentation_puppet()
 	_check(puppet != null and puppet.z_index == 6, "rider did not retain lift world z=6", errors)
 	_check(puppet != null and not puppet.z_as_relative, "rider Z became relative to the lift hierarchy", errors)
@@ -436,6 +444,15 @@ func _validate_snapshot_hook_order(errors: Array[String]) -> void:
 func _read_text(path: String) -> String:
 	var file := FileAccess.open(path, FileAccess.READ)
 	return file.get_as_text() if file != null else ""
+
+
+func _polygon_bounds(points: PackedVector2Array) -> Rect2:
+	if points.is_empty():
+		return Rect2()
+	var bounds := Rect2(points[0], Vector2.ZERO)
+	for point in points:
+		bounds = bounds.expand(point)
+	return bounds
 
 
 func _check(ok: bool, message: String, errors: Array[String]) -> void:

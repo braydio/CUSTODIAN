@@ -101,6 +101,7 @@ func play_descent(actor: Node2D) -> void:
 	await _active_tween.finished
 	if not _playing or _presentation_rig == null:
 		return
+	_set_cave_lip_occlusion(true)
 	_active_tween = create_tween().set_parallel(true)
 	_active_tween.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	_active_tween.tween_property(
@@ -144,6 +145,7 @@ func play_ascent(actor: Node2D) -> void:
 	shaft_window.visible = true
 	shaft_window.modulate.a = 1.0
 	_set_travel_depth_mode()
+	_set_cave_lip_occlusion(true)
 	_presentation_rig.z_as_relative = false
 	_presentation_rig.z_index = RIDER_TRAVEL_Z
 	var hidden_duration := descent_duration * 0.58
@@ -171,6 +173,7 @@ func play_ascent(actor: Node2D) -> void:
 	await _active_tween.finished
 	if not _playing or _presentation_rig == null:
 		return
+	_set_cave_lip_occlusion(false)
 	_active_tween = create_tween().set_parallel(true)
 	_active_tween.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	_active_tween.tween_property(
@@ -302,7 +305,11 @@ func _set_travel_depth_mode() -> void:
 	lift_root.set_depths(LIFT_BACK_TRAVEL_Z, LIFT_FRONT_TRAVEL_Z)
 	entrance_mask.z_index = FOREGROUND_TRAVEL_Z
 	travel_occlusion_geometry.visible = false
-	foreground_occluder.visible = true
+	foreground_occluder.visible = false
+
+
+func _set_cave_lip_occlusion(enabled: bool) -> void:
+	foreground_occluder.visible = enabled
 
 
 func _on_dust_finished() -> void:

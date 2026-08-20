@@ -2113,7 +2113,7 @@ func _current_navigation_revision() -> int:
 
 func _get_direction_along_path(target_pos: Vector2) -> Vector2:
 	if current_path.is_empty():
-		return (target_pos - global_position).normalized()
+		return Vector2.ZERO
 	
 	# Find the next reachable waypoint
 	while path_follow_index < current_path.size() - 1:
@@ -2604,7 +2604,7 @@ func behavior_stop() -> void:
 		obs.perf_span_end(&"enemy_animation", started)
 
 
-func behavior_move_toward(target_position: Vector2, desired_speed: float) -> void:
+func behavior_move_toward(target_position: Vector2, desired_speed: float) -> bool:
 	var obs := get_node_or_null("/root/DevObservatory")
 	var prepare_started: int = obs.perf_span_begin() if obs != null else 0
 	var direction := Vector2.ZERO
@@ -2619,7 +2619,7 @@ func behavior_move_toward(target_position: Vector2, desired_speed: float) -> voi
 		if obs != null:
 			obs.perf_span_end(&"enemy_movement_prepare", prepare_started)
 		behavior_stop()
-		return
+		return false
 	var separation_started: int = obs.perf_span_begin() if obs != null else 0
 	direction = _apply_enemy_spacing_to_direction(direction)
 	if obs != null:
@@ -2638,6 +2638,7 @@ func behavior_move_toward(target_position: Vector2, desired_speed: float) -> voi
 		_update_directional_animation(_last_move_direction, true)
 		if obs != null:
 			obs.perf_span_end(&"enemy_animation", animation_started)
+	return true
 
 
 func _apply_enemy_spacing_to_direction(direction: Vector2) -> Vector2:

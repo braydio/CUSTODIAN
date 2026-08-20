@@ -48,6 +48,8 @@ var _target_scan_timer: float = 0.0
 var _footstep_timer: float = 0.0
 var _footstep_interval: float = 0.3
 var _step_index: int = 0
+var _navigation_system: Node = null
+var _walkability_provider: Node = null
 
 @onready var visual: ColorRect = get_node_or_null("Visual")
 @onready var health_bar: ProgressBar = get_node_or_null("HealthBar")
@@ -61,6 +63,7 @@ func _ready() -> void:
 	add_to_group("defense")
 	add_to_group("turret")
 	_hold_position = global_position
+	_resolve_movement_authorities()
 	_apply_profile()
 	_update_visuals()
 
@@ -219,11 +222,14 @@ func _prune_freed_target_references() -> void:
 
 func _update_movement(delta: float) -> void:
 	var desired_position := _get_desired_position()
-	var to_goal := desired_position - global_position
+	var resolved_goal := _project_goal(desired_position, 10)
+	var to_goal := resolved_goal - global_position
 	var desired_velocity := Vector2.ZERO
-	if to_goal.length() > 4.0:
-		desired_velocity = to_goal.normalized() * profile.drone_speed
-		_update_footstep_sfx(delta)
+	if resolved_goal != Vector2.INF and to_goal.length() > 4.0:
+		var direction := _navigation_direction(resolved_goal)
+		if direction.length_squared() > 0.0001:
+			desired_velocity = direction * profile.drone_speed
+			_update_footstep_sfx(delta)
 	velocity = velocity.move_toward(desired_velocity, profile.drone_acceleration * delta)
 	move_and_slide()
 
@@ -389,9 +395,44 @@ func _pick_next_roam_goal() -> void:
 	var angle := deg_to_rad(angle_seed)
 	_roam_goal = _get_anchor_position() + Vector2(cos(angle), sin(angle)) * radius
 	_roam_goal = _clamp_to_free_roam_leash(_roam_goal)
+	var projected := _project_goal(_roam_goal, 10)
+	_roam_goal = projected if projected != Vector2.INF else global_position
 	var repath_t := float((_roam_sequence * 41 + _slot_index * 17 + 7) % 100) / 99.0
 	_roam_repath_timer = lerpf(profile.free_roam_repath_min, profile.free_roam_repath_max, repath_t)
 	_roam_sequence += 1
+
+
+func _resolve_movement_authorities() -> void:
+	if not is_inside_tree():
+		return
+	_navigation_system = get_tree().get_first_node_in_group("navigation")
+	_walkability_provider = get_tree().get_first_node_in_group("procgen_walkability_provider")
+
+
+func _project_goal(goal: Vector2, radius_tiles: int) -> Vector2:
+	if _walkability_provider == null or not is_instance_valid(_walkability_provider):
+		_resolve_movement_authorities()
+	if _walkability_provider != null \
+			and _walkability_provider.has_method("project_runtime_walkable_global"):
+		return _walkability_provider.call(
+			"project_runtime_walkable_global", goal, radius_tiles
+		) as Vector2
+	return goal
+
+
+func _navigation_direction(goal: Vector2) -> Vector2:
+	if _navigation_system == null or not is_instance_valid(_navigation_system):
+		_resolve_movement_authorities()
+	if _navigation_system != null and _navigation_system.has_method("get_path_to_target"):
+		var path := _navigation_system.call("get_path_to_target", global_position, goal) as PackedVector2Array
+		if path.is_empty():
+			return Vector2.ZERO
+		var waypoint := path[1] if path.size() > 1 else path[0]
+		return (waypoint - global_position).normalized()
+	# Authored maps without procgen/navigation retain direct local locomotion.
+	if _walkability_provider == null:
+		return (goal - global_position).normalized()
+	return Vector2.ZERO
 
 
 func _clamp_to_free_roam_leash(position: Vector2) -> Vector2:

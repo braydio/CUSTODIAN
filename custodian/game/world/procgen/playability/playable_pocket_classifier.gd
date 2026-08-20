@@ -140,15 +140,12 @@ func _encounter_edge_cells(
 	floor_cells: Dictionary
 ) -> Array[Vector2i]:
 	var candidates: Array[Vector2i] = []
-	var offsets: Array[Vector2i] = [
-		Vector2i(rect.position.x + 2, rect.get_center().y),
-		Vector2i(rect.end.x - 3, rect.get_center().y),
-		Vector2i(rect.get_center().x, rect.position.y + 2),
-		Vector2i(rect.get_center().x, rect.end.y - 3),
-	]
-	for cell in offsets:
-		if rect.has_point(cell) \
-				and not clear_rect.has_point(cell) \
-				and floor_cells.has(cell):
-			candidates.append(cell)
+	for y in range(rect.position.y, rect.end.y):
+		for x in range(rect.position.x, rect.end.x):
+			var cell := Vector2i(x, y)
+			if floor_cells.has(cell) and not clear_rect.has_point(cell):
+				candidates.append(cell)
+	candidates.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		return a.y < b.y or (a.y == b.y and a.x < b.x)
+	)
 	return candidates
