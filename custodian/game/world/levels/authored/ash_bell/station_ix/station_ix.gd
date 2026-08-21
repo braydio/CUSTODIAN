@@ -22,6 +22,7 @@ var _one_shot_completion_count := 0
 @onready var assembly_a := $POIRoot/AssemblyA as CivicRelay2D
 @onready var assembly_b := $POIRoot/AssemblyB as CivicRelay2D
 @onready var assembly_c := $POIRoot/AssemblyC as CivicRelay2D
+@onready var authored_navigation := $NavigationRoot/AuthoredNavigationProvider as AuthoredNavigationProvider2D
 
 
 func _ready() -> void:
@@ -35,6 +36,7 @@ func _ready() -> void:
 			{"name": "sync_plant", "rect": Rect2i(22, 24, 20, 16), "color": Color("35454a")},
 		]
 	)
+	authored_navigation.configure(blockout_grid)
 	assembly_a.position = cell_center(Vector2i(24, 33))
 	assembly_b.position = cell_center(Vector2i(40, 33))
 	assembly_c.position = cell_center(Vector2i(32, 18))
@@ -42,6 +44,7 @@ func _ready() -> void:
 	assembly_b.repaired_changed.connect(_on_assembly_changed)
 	assembly_c.repaired_changed.connect(_on_assembly_changed)
 	_build_blockout_labels()
+	_build_evidence()
 	_position_pressure_markers()
 	super._ready()
 	_apply_state(false)
@@ -81,6 +84,9 @@ func restore_route_state(state: Dictionary) -> bool:
 	_station_isolated = bool(state.get("station_isolated", false))
 	_answer_archive_recovered = bool(state.get("answer_archive_recovered", false))
 	_apply_state(false)
+	var evidence := get_node_or_null("POIRoot/NinthAnswerAfterAction") as WorldEvidenceInteractable2D
+	if evidence != null:
+		evidence.set_recovered(_answer_archive_recovered)
 	return true
 
 
@@ -98,6 +104,10 @@ func debug_get_one_shot_completion_count() -> int:
 
 func is_station_isolated() -> bool:
 	return _station_isolated
+
+
+func debug_is_answer_archive_recovered() -> bool:
+	return _answer_archive_recovered
 
 
 func _on_assembly_changed(relay_id: StringName, repaired: bool) -> void:
@@ -123,6 +133,9 @@ func _apply_state(emit_relay_signals: bool) -> void:
 	var status_label := get_node_or_null("PropsRoot/StationStatus") as Label
 	if status_label != null:
 		status_label.text = FINAL_STATUS_CONTENT if _station_isolated else debug_get_pre_isolation_content()
+	var final_record := get_node_or_null("POIRoot/NinthAnswerAfterAction") as WorldEvidenceInteractable2D
+	if final_record != null:
+		final_record.set_actionable(_station_isolated)
 
 
 func _build_blockout_labels() -> void:
@@ -139,6 +152,26 @@ func _build_blockout_labels() -> void:
 	status.modulate = Color("c7d8d8")
 	status.add_theme_font_size_override("font_size", 16)
 	$PropsRoot.add_child(status)
+
+
+func _build_evidence() -> void:
+	_add_evidence(&"orra_duty_record", "STATION IX DUTY RECORD", "PRECENTOR ORRA\nDIRECT ASSIGNMENT: STATION IX", Vector2i(18, 37), false)
+	_add_evidence(&"shelter_tally", "EMERGENCY SHELTER TALLY", "Civilian admissions recorded under Precentor Orra's authority.", Vector2i(45, 36), false)
+	_add_evidence(&"missed_response_record", "RESPONSE WINDOW LOG", "STATION IX missed its required response window. STATUS: UNARRIVAL.", Vector2i(25, 27), false)
+	_add_evidence(&"ninth_answer_after_action", "NINTH ANSWER — AFTER ACTION", "LATE RESPONSE: ACCEPTED\nREGIONAL COUPLING: TERMINATED", Vector2i(32, 9), true)
+
+
+func _add_evidence(id: StringName, evidence_title: String, content: String, cell: Vector2i, final_record: bool) -> void:
+	var evidence := WorldEvidenceInteractable2D.new()
+	evidence.name = String(id).to_pascal_case()
+	evidence.evidence_id = id
+	evidence.title = evidence_title
+	evidence.body_text = content
+	evidence.position = cell_center(cell)
+	if final_record:
+		evidence.evidence_recovered.connect(func(_id: StringName) -> void: _answer_archive_recovered = true)
+		evidence.set_actionable(_station_isolated)
+	$POIRoot.add_child(evidence)
 
 
 func _position_pressure_markers() -> void:

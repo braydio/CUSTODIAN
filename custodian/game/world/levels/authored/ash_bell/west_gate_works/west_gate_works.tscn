@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://game/world/levels/authored/ash_bell/west_gate_works/west_gate_works.gd" id="1"]
 [ext_resource type="Script" path="res://game/world/levels/authored_blockout_grid_2d.gd" id="2"]
 [ext_resource type="Script" path="res://game/world/levels/authored/ash_bell/common/civic_relay_2d.gd" id="3"]
 [ext_resource type="Script" path="res://game/world/levels/interactable_level_exit_2d.gd" id="4"]
+[ext_resource type="Script" path="res://game/world/levels/authored_navigation_provider_2d.gd" id="5"]
 [sub_resource type="CircleShape2D" id="ExitShape"]
 radius = 40.0
 
@@ -46,3 +47,5 @@ arrival_guard_radius = 112.0
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Exits/Exit_Backtrack"]
 shape = SubResource("ExitShape")
 [node name="NavigationRoot" type="Node2D" parent="."]
+[node name="AuthoredNavigationProvider" type="Node" parent="NavigationRoot"]
+script = ExtResource("5")

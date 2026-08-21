@@ -17,6 +17,7 @@ var lifecycle: Dictionary = {
 var _level_loader: Node
 var _origin_ingress: Node
 var _source_state: Dictionary = {}
+var _previous_navigation_provider: Node
 
 
 func _ready() -> void:
@@ -93,11 +94,28 @@ func restore_route_state(_state: Dictionary) -> bool:
 
 
 func prepare_route_deactivation(_context: Dictionary) -> void:
-	pass
+	_restore_navigation_provider()
 
 
 func complete_route_activation(_context: Dictionary) -> bool:
+	_bind_navigation_provider()
 	return true
+
+
+func _bind_navigation_provider() -> void:
+	var provider := get_node_or_null("NavigationRoot/AuthoredNavigationProvider")
+	if provider == null:
+		return
+	var navigation := get_tree().get_first_node_in_group("navigation")
+	if navigation != null and navigation.has_method("set_runtime_navigation_provider"):
+		_previous_navigation_provider = navigation.call("set_runtime_navigation_provider", provider) as Node
+
+
+func _restore_navigation_provider() -> void:
+	var navigation := get_tree().get_first_node_in_group("navigation")
+	if navigation != null and navigation.has_method("set_runtime_navigation_provider"):
+		navigation.call("set_runtime_navigation_provider", _previous_navigation_provider)
+	_previous_navigation_provider = null
 
 
 func refresh_route_camera(actor: Node) -> bool:

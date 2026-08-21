@@ -22,6 +22,7 @@ var astar: AStar2D
 var floor_tilemap: TileMapLayer
 var walls_tilemap: TileMapLayer
 var runtime_blocker_provider: Node
+var runtime_navigation_provider: Node
 var _walkable_tiles: Dictionary = {}  # Vector2i -> bool
 var _initialized: bool = false
 var navigation_revision := 0
@@ -219,6 +220,8 @@ func get_path_to_target(start: Vector2, target: Vector2) -> PackedVector2Array:
 
 
 func compute_path_immediate(start: Vector2, target: Vector2) -> PackedVector2Array:
+	if runtime_navigation_provider != null and is_instance_valid(runtime_navigation_provider):
+		return runtime_navigation_provider.call("compute_path", start, target) as PackedVector2Array
 	if not _initialized or astar == null:
 		return PackedVector2Array([start, target])
 	
@@ -343,7 +346,17 @@ func request_enemy_path(
 
 
 func get_navigation_revision() -> int:
+	if runtime_navigation_provider != null and is_instance_valid(runtime_navigation_provider):
+		return int(runtime_navigation_provider.call("get_navigation_revision"))
 	return navigation_revision
+
+
+func set_runtime_navigation_provider(provider: Node) -> Node:
+	var previous := runtime_navigation_provider
+	runtime_navigation_provider = provider
+	navigation_revision += 1
+	navigation_dirty.emit()
+	return previous
 
 
 func _get_nearest_walkable(cell: Vector2i) -> Vector2i:
@@ -362,6 +375,8 @@ func _get_nearest_walkable(cell: Vector2i) -> Vector2i:
 
 
 func is_in_walkable_area(position: Vector2) -> bool:
+	if runtime_navigation_provider != null and is_instance_valid(runtime_navigation_provider):
+		return bool(runtime_navigation_provider.call("is_world_position_walkable", position))
 	if floor_tilemap == null:
 		return true
 	

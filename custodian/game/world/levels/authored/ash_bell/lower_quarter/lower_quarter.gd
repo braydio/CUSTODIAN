@@ -1,6 +1,8 @@
 class_name AshBellLowerQuarter
 extends AuthoredLevel2D
 
+const CIVIC_PRESENTER_SCRIPT := preload("res://game/world/levels/authored/ash_bell/common/meridian_civic_blockout_presenter.gd")
+
 const AUTHORING_CELL_SIZE_WORLD := 32.0
 const MAP_SIZE_CELLS := Vector2i(128, 96)
 const MAP_ORIGIN := Vector2(-2048.0, -1536.0)
@@ -31,6 +33,7 @@ var _station_ix_transit_interlock_repaired := false
 @onready var evac_relay := $POIRoot/EvacAnnunciator as CivicRelay2D
 @onready var pressure_relay := $POIRoot/GatePressureRelay as CivicRelay2D
 @onready var station_relay := $POIRoot/StationIXTransitInterlock as CivicRelay2D
+@onready var authored_navigation := $NavigationRoot/AuthoredNavigationProvider as AuthoredNavigationProvider2D
 
 
 func _ready() -> void:
@@ -47,7 +50,14 @@ func _ready() -> void:
 		]
 	)
 	_configure_authored_nodes()
+	authored_navigation.configure(blockout_grid)
+	authored_navigation.set_blocker(&"evacuation_shutter", Rect2i(38, 51, 2, 8), true)
+	authored_navigation.set_blocker(&"station_ix_interlock", Rect2i(94, 55, 10, 2), true)
+	authored_navigation.set_blocker(&"direct_personnel_collapse", DIRECT_BLOCKER_RECT, true)
 	_build_blockout_labels()
+	_build_evidence()
+	_build_beat_markers()
+	_build_environment_presentation()
 	_position_pressure_markers()
 	super._ready()
 	_apply_state(false)
@@ -71,6 +81,16 @@ func get_authoring_markers() -> Dictionary:
 		"west_gate": {"kind": "exit", "node_name": "Exit_WestGateWorks", "position": cell_center(Vector2i(6, 43))},
 		"station_ix": {"kind": "exit", "node_name": "Exit_StationIX", "position": cell_center(Vector2i(74, 65))},
 		"station_facade": {"kind": "landmark", "node_name": "StationIXFacade", "position": cell_center(Vector2i(63, 72))},
+		"beat_direct_line": {"kind": "beat", "node_name": "Beat_DirectLine", "position": cell_center(Vector2i(64, 78))},
+		"beat_evacuation_turn": {"kind": "beat", "node_name": "Beat_EvacuationTurn", "position": cell_center(Vector2i(53, 76))},
+		"beat_arcade_entry": {"kind": "beat", "node_name": "Beat_ArcadeEntry", "position": cell_center(Vector2i(40, 75))},
+		"beat_lower_market": {"kind": "beat", "node_name": "Beat_LowerMarket", "position": cell_center(Vector2i(35, 43))},
+		"beat_civic_basin": {"kind": "beat", "node_name": "Beat_CivicBasin", "position": cell_center(Vector2i(66, 43))},
+		"beat_wrong_street_entry": {"kind": "beat", "node_name": "Beat_WrongStreetEntry", "position": cell_center(Vector2i(76, 43))},
+		"beat_wrong_street_exit": {"kind": "beat", "node_name": "Beat_WrongStreetExit", "position": cell_center(Vector2i(104, 35))},
+		"beat_answers_court": {"kind": "beat", "node_name": "Beat_AnswersCourt", "position": cell_center(Vector2i(72, 20))},
+		"beat_station_ix_reacquire": {"kind": "beat", "node_name": "Beat_StationIXReacquire", "position": cell_center(Vector2i(92, 22))},
+		"beat_station_ix_threshold": {"kind": "beat", "node_name": "Beat_StationIXThreshold", "position": cell_center(Vector2i(78, 64))},
 	}
 
 
@@ -126,6 +146,55 @@ func _build_blockout_labels() -> void:
 		cell_center(Vector2i(56, 77)),
 		Color("d7ddd8")
 	)
+
+
+func _build_evidence() -> void:
+	_add_evidence(&"direct_line_order", "MERIDIAN PERSONNEL ROUTING", "Precentor Orra: report directly to Station IX. No discretionary delay authorized.", Vector2i(57, 77))
+	_add_evidence(&"evacuation_failure", "LOWER QUARTER CIVILIAN TRANSIT", "Civil evacuation corridor failed before district clearance. Personnel route diverted through the Lower Quarter.", Vector2i(40, 66))
+	_add_evidence(&"wrong_street_local", "LOCAL MATERIAL RECORD", "PROVENANCE: LOCAL\nSOURCE INTEGRITY: HIGH", Vector2i(79, 48))
+	_add_evidence(&"wrong_street_import", "CONTINUITY SURVEY", "CONTINUITY ORIGIN: ASH-BELL\nLOCAL MANUFACTURE RECORD: ABSENT", Vector2i(97, 48))
+	_add_evidence(&"answers_court_status", "ASH-BELL REGIONAL SYNCHRONIZATION", "I ANSWER\nII ANSWER\nIII ANSWER\nIV ANSWER\nV ANSWER\nVI ANSWER\nVII ANSWER\nVIII ANSWER\nIX UNARRIVAL", Vector2i(72, 13))
+
+
+func _add_evidence(id: StringName, evidence_title: String, content: String, cell: Vector2i) -> void:
+	var evidence := WorldEvidenceInteractable2D.new()
+	evidence.name = String(id).to_pascal_case()
+	evidence.evidence_id = id
+	evidence.title = evidence_title
+	evidence.body_text = content
+	evidence.position = cell_center(cell)
+	$POIRoot.add_child(evidence)
+
+
+func _build_beat_markers() -> void:
+	for item in get_authoring_marker_schema():
+		if str(item.get("kind")) != "beat":
+			continue
+		var marker := Marker2D.new()
+		marker.name = str(item.get("node_name"))
+		marker.position = item.get("position") as Vector2
+		$Markers.add_child(marker)
+
+
+func _build_environment_presentation() -> void:
+	var presenter: Node2D = CIVIC_PRESENTER_SCRIPT.new()
+	presenter.name = "MeridianCivicBlockoutPresenter"
+	presenter.configure(MAP_ORIGIN, AUTHORING_CELL_SIZE_WORLD)
+	$BackgroundRoot.add_child(presenter)
+	var court := Node2D.new()
+	court.name = "AnswersCourtPositions"
+	$PropsRoot.add_child(court)
+	for index in 9:
+		var position_node := Marker2D.new()
+		position_node.name = "Answer_%s" % (str(index + 1) if index < 8 else "IX_Missing")
+		position_node.position = cell_center(Vector2i(59 + index * 3, 16))
+		position_node.set_meta("original_meridian_equipment", true)
+		position_node.set_meta("missing", index == 8)
+		court.add_child(position_node)
+	var additions := Node2D.new()
+	additions.name = "LaterPenitentAdditions"
+	additions.set_meta("presentation", "white thread, black containment banners, ash rings")
+	$PropsRoot.add_child(additions)
 	_add_blockout_label(
 		"WrongStreetLocalEvidence",
 		"PROVENANCE: LOCAL\nSOURCE INTEGRITY: HIGH",
@@ -197,6 +266,12 @@ func _configure_blocker(body: StaticBody2D, center: Vector2, size: Vector2, colo
 func _set_blocker_open(body: StaticBody2D, open: bool) -> void:
 	body.visible = not open
 	(body.get_node("CollisionShape2D") as CollisionShape2D).disabled = open
+	if authored_navigation == null:
+		return
+	if body == evac_shutter:
+		authored_navigation.set_blocker(&"evacuation_shutter", Rect2i(38, 51, 2, 8), not open)
+	elif body == station_gate:
+		authored_navigation.set_blocker(&"station_ix_interlock", Rect2i(94, 55, 10, 2), not open)
 
 
 func _rect_center(rect: Rect2i) -> Vector2:

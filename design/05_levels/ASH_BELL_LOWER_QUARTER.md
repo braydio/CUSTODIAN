@@ -200,7 +200,7 @@ Station IX:
 Restore is idempotent, suppresses one-shot effects/rewards, and restores visual
 and collision state together.
 
-## First-Pass Limitations
+## Historical First-Pass Limitations
 
 - Procedural/blockout geometry and labels only; no production PNG assets.
 - Pressure markers are authored, but production Pale Bell Penitent population
@@ -218,10 +218,39 @@ idempotent restoration, and existing ingress behavior. The existing route
 pipeline, changed-file workflow, historical archive boundary check, and Moment
 Forge selection remain required.
 
+## Second Pass Implemented
+
+The second pass adds a generic authored-grid navigation provider and a shared
+`NavigationSystem` provider seam. Authored route activation binds the provider;
+deactivation restores the previous campaign source. Lower Quarter relay gates,
+the direct collapse, and the moving West Gate slab update collision and
+navigation together.
+
+West Gate closure now persists `closure_phase` (`OPEN`, `CLOSING`, `CLOSED`)
+and normalized `closure_progress`; a midpoint snapshot resumes only the
+remaining travel. Ten semantic route beats, placeholder Meridian civic masses,
+three physical Wrong Street bands, nine inspectable Court positions, and ten
+player-readable evidence records replace the most diagram-like first-pass
+presentation. `closure_archive_read` and `answer_archive_recovered` are now
+driven by their corresponding records and survive reconstruction.
+
+Production Penitent population is still withheld because no approved runtime
+actor exists. Real-camera Moment Forge capture remains a required visual review,
+not something inferred from headless geometry tests.
+
+West Gate Works session state is now:
+
+- `gate_motor_repaired`
+- `closure_phase`
+- `closure_progress`
+- `closure_complete` (read-compatibility projection)
+- `closure_archive_read`
+
 ## Next Agent Slice
 
-**Goal:** replace reviewed blockout presentation with production environment
-art and populate approved Penitent encounters without changing route topology.
+**Goal:** add the reviewed real-camera Moment Forge fixture, approve sightline
+captures, and populate deterministic authored pressure encounters only after a
+canonically honest production actor identity is available.
 
 **Constraints:** preserve authored geometry, local 32-unit scale, route state
 keys, camera-safe compositions, and authorial ambiguity. Do not promote faction
