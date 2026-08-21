@@ -37,6 +37,12 @@ const RangedBallisticAimResolver = preload(
 const OperatorIntegrityReclaim = preload(
 	"res://game/actors/operator/combat/operator_integrity_reclaim.gd"
 )
+const OperatorGuardController = preload(
+	"res://game/actors/operator/combat/operator_guard_controller.gd"
+)
+const OperatorGuardConfig = preload(
+	"res://game/actors/operator/combat/operator_guard_config.gd"
+)
 const EngagementTrackerScript = preload(
 	"res://game/systems/combat/engagement_tracker.gd"
 )
@@ -342,28 +348,11 @@ var last_fire_cooldown := 0.0
 @export_group("", "")
 @export var heavy_attack_stamina_cost: float = 14.0
 @export var heavy_attack_blocked_while_sprinting: bool = true
-@export var block_move_multiplier: float = 0.6
-@export var block_stamina_cost_per_hit: float = 12.0
 @export_group("Parry / Guard")
+@export var guard_config: OperatorGuardConfig = preload(
+	"res://game/actors/operator/combat/configs/operator_guard_default.tres"
+)
 @export var offhand_guard_item_equipped: bool = false
-@export var guard_weak_start_sec: float = 0.0
-@export var guard_full_active_sec: float = 0.10
-@export var parry_min_guard_time_sec: float = 0.04
-@export var parry_windup_sec: float = 0.02
-@export var parry_active_sec: float = 0.10
-@export var parry_recovery_sec: float = 0.16
-@export var parry_success_recovery_sec: float = 0.03
-@export var parry_stamina_cost: float = 8.0
-@export var parry_success_stamina_refund: float = 6.0
-@export var parry_enemy_stagger_sec: float = 0.55
-@export var parry_enemy_knockback: float = 44.0
-@export var parry_counter_window_sec: float = 0.45
-@export var parry_counter_damage_multiplier: float = 1.25
-@export var guard_damage_reduction: float = 0.65
-@export var guard_chip_damage_minimum: float = 1.0
-@export var guard_stamina_cost_per_hit: float = 12.0
-@export var guard_break_stamina_threshold: float = 6.0
-@export var guard_exit_speed_scale: float = 1.6
 @export_group("", "")
 @export_group("Field Patch")
 @export var field_patch_max_count: int = 2
@@ -532,18 +521,105 @@ var _paired_execution_operator_root: Vector2 = Vector2.ZERO
 var _paired_execution_direction: StringName = &"s"
 var _paired_execution_original_collision_mask: int = 0
 var _paired_execution_original_collision_layer: int = 0
-var _block_phase: StringName = &""
-var _block_active: bool = false
-var _parry_phase: StringName = &""
-var _parry_timer: float = 0.0
-var _parry_active: bool = false
-var _parry_success_lockout: float = 0.0
-var _guard_requested_from_secondary: bool = false
-var _guard_repress_required_after_parry_success: bool = false
-var _parry_neutral_lock_active: bool = false
-var _guard_held_timer: float = 0.0
+var _guard_controller := OperatorGuardController.new()
+# Transitional property surface for scenes/tests while the typed config and controller
+# remain the single active owners of tuning and state.
+var block_move_multiplier: float:
+	get: return guard_config.movement_multiplier
+	set(value): guard_config.movement_multiplier = value
+var block_stamina_cost_per_hit: float:
+	get: return guard_config.base_stamina_cost
+	set(value): guard_config.base_stamina_cost = value
+var guard_weak_start_sec: float:
+	get: return guard_config.weak_start_time
+	set(value): guard_config.weak_start_time = value
+var guard_full_active_sec: float:
+	get: return guard_config.full_activation_time
+	set(value): guard_config.full_activation_time = value
+var parry_min_guard_time_sec: float:
+	get: return guard_config.minimum_guard_time
+	set(value): guard_config.minimum_guard_time = value
+var parry_windup_sec: float:
+	get: return guard_config.parry_windup_time
+	set(value): guard_config.parry_windup_time = value
+var parry_active_sec: float:
+	get: return guard_config.parry_active_time
+	set(value): guard_config.parry_active_time = value
+var parry_recovery_sec: float:
+	get: return guard_config.parry_recovery_time
+	set(value): guard_config.parry_recovery_time = value
+var parry_success_recovery_sec: float:
+	get: return guard_config.parry_success_recovery_time
+	set(value): guard_config.parry_success_recovery_time = value
+var parry_stamina_cost: float:
+	get: return guard_config.parry_stamina_cost
+	set(value): guard_config.parry_stamina_cost = value
+var parry_success_stamina_refund: float:
+	get: return guard_config.parry_success_stamina_refund
+	set(value): guard_config.parry_success_stamina_refund = value
+var parry_enemy_stagger_sec: float:
+	get: return guard_config.parry_enemy_stagger_time
+	set(value): guard_config.parry_enemy_stagger_time = value
+var parry_enemy_knockback: float:
+	get: return guard_config.parry_enemy_knockback
+	set(value): guard_config.parry_enemy_knockback = value
+var parry_counter_window_sec: float:
+	get: return guard_config.counter_window_time
+	set(value): guard_config.counter_window_time = value
+var parry_counter_damage_multiplier: float:
+	get: return guard_config.counter_damage_multiplier
+	set(value): guard_config.counter_damage_multiplier = value
+var guard_damage_reduction: float:
+	get: return guard_config.damage_reduction
+	set(value): guard_config.damage_reduction = value
+var guard_chip_damage_minimum: float:
+	get: return guard_config.minimum_chip_damage
+	set(value): guard_config.minimum_chip_damage = value
+var guard_stamina_cost_per_hit: float:
+	get: return guard_config.base_stamina_cost
+	set(value): guard_config.base_stamina_cost = value
+var guard_break_stamina_threshold: float:
+	get: return guard_config.break_threshold
+	set(value): guard_config.break_threshold = value
+var guard_exit_speed_scale: float:
+	get: return guard_config.exit_speed_scale
+	set(value): guard_config.exit_speed_scale = value
+var _block_phase: StringName:
+	get: return _legacy_guard_phase()
+	set(value): _set_legacy_guard_phase(value)
+var _block_active: bool:
+	get: return _guard_controller.is_guard_fully_active()
+	set(value):
+		if value and _guard_controller.phase == OperatorGuardController.Phase.GUARD_ENTER:
+			_guard_controller.phase = OperatorGuardController.Phase.GUARD_HOLD
+var _parry_phase: StringName:
+	get: return _guard_controller.parry_phase_name()
+	set(value): _set_legacy_parry_phase(value)
+var _parry_timer: float:
+	get: return _guard_controller.parry_timer
+	set(value): _guard_controller.parry_timer = value
+var _parry_active: bool:
+	get: return _guard_controller.parry_active
+	set(value): _guard_controller.parry_active = value
+var _parry_success_lockout: float:
+	get: return _guard_controller.parry_success_lockout
+	set(value): _guard_controller.parry_success_lockout = value
+var _guard_requested_from_secondary: bool:
+	get: return _guard_controller.guard_requested
+	set(value): _guard_controller.guard_requested = value
+var _guard_repress_required_after_parry_success: bool:
+	get: return _guard_controller.repress_required
+	set(value): _guard_controller.repress_required = value
+var _parry_neutral_lock_active: bool:
+	get: return _guard_controller.neutral_lock_active
+	set(value): _guard_controller.neutral_lock_active = value
+var _guard_held_timer: float:
+	get: return _guard_controller.held_timer
+	set(value): _guard_controller.held_timer = value
+var _counter_window_timer: float:
+	get: return _guard_controller.counter_window_timer
+	set(value): _guard_controller.counter_window_timer = value
 var _offhand_secondary_was_pressed: bool = false
-var _counter_window_timer: float = 0.0
 var _melee_recovery_active: bool = false
 var _melee_recovery_timer: float = 0.0
 var _reload_active: bool = false
@@ -868,6 +944,8 @@ func _exit_tree() -> void:
 
 func _ready():
 	add_to_group("player")
+	guard_config = guard_config.duplicate(true) as OperatorGuardConfig
+	_guard_controller.setup(self, guard_config)
 	if not _animation_catalog.load_catalog():
 		push_error("[Operator] generated animation catalog could not be loaded")
 	_engagement_tracker = EngagementTrackerScript.new()
@@ -1174,11 +1252,6 @@ func _process(delta):
 	melee_cooldown_remaining = max(0.0, melee_cooldown_remaining - delta)
 	_dodge_cooldown_remaining = max(0.0, _dodge_cooldown_remaining - delta)
 	_dodge_iframe_timer = maxf(0.0, _dodge_iframe_timer - delta)
-	_parry_success_lockout = maxf(0.0, _parry_success_lockout - delta)
-	var prev_counter_window := _counter_window_timer
-	_counter_window_timer = maxf(0.0, _counter_window_timer - delta)
-	if prev_counter_window > 0.0 and _counter_window_timer <= 0.0:
-		_parry_neutral_lock_active = false
 	current_recoil = max(0.0, current_recoil - recoil_decay * delta)
 	_update_weapon_heat(delta)
 	_update_pending_ranged_shot(delta)
@@ -3928,6 +4001,8 @@ func _start_guard_from_secondary() -> void:
 
 
 func _can_start_guard_from_secondary() -> bool:
+	if _guard_controller.reraise_lockout_timer > 0.0 or _guard_controller.is_break_locked():
+		return false
 	if _is_dead or _enemy_impact_lock_timer > 0.0:
 		return false
 	if _is_terminal_open() or _is_ui_text_input_focused() or _portal_transition_locked or _portal_arrival_animation_active or _arrn_stabilization_locked:
@@ -3975,13 +4050,8 @@ func _try_start_parry() -> bool:
 	_reset_melee_overlay_visuals()
 	_parry_neutral_lock_active = false
 
-	_parry_phase = &"windup"
-	_parry_timer = maxf(0.0, parry_windup_sec)
-	_parry_active = false
-	_guard_requested_from_secondary = false
-	_block_phase = &"parry"
-	_block_active = false
-	_play_parry_animation(&"unarmed_parry")
+	if not _guard_controller.begin_parry():
+		return false
 	_request_block_state()
 	_obs_increment(&"player_parry_started")
 	_obs_log(&"player_parry_started", {
@@ -3993,6 +4063,8 @@ func _try_start_parry() -> bool:
 
 
 func _can_start_parry() -> bool:
+	if _guard_controller.reraise_lockout_timer > 0.0 or _guard_controller.is_break_locked():
+		return false
 	if stamina < parry_stamina_cost:
 		return false
 	if _is_dead or _enemy_impact_lock_timer > 0.0:
@@ -4009,54 +4081,7 @@ func _can_start_parry() -> bool:
 
 
 func _update_parry_guard_timers(delta: float) -> void:
-	if _parry_phase.is_empty():
-		return
-
-	_parry_timer = maxf(0.0, _parry_timer - delta)
-	match _parry_phase:
-		&"windup":
-			if _parry_timer <= 0.0:
-				_parry_phase = &"active"
-				_parry_timer = maxf(0.0, parry_active_sec)
-				_parry_active = true
-				_obs_increment(&"player_parry_active")
-				_obs_log(&"player_parry_active", {"position": global_position, "window_sec": parry_active_sec})
-		&"active":
-			if _parry_timer <= 0.0:
-				_parry_active = false
-				_obs_increment(&"player_parry_expired")
-				_obs_log(&"player_parry_expired", {"position": global_position})
-				_spawn_parry_miss_fx()
-				_parry_phase = &"recovery"
-				_parry_timer = maxf(maxf(0.0, parry_recovery_sec), _get_parry_attempt_remaining_duration())
-				_block_phase = &"recovery"
-				_block_active = false
-		&"success", &"recovery":
-			if _parry_timer <= 0.0:
-				var completed_phase := _parry_phase
-				_parry_phase = &""
-				_parry_active = false
-				if _block_phase == &"success" and not _buffered_attack_kind.is_empty() and _counter_window_timer > 0.0:
-					_block_phase = &""
-					_block_active = false
-					_request_attack_state(_consume_buffered_attack())
-				elif completed_phase == &"success":
-					_enter_post_parry_neutral_lock()
-				elif _is_attack_secondary_pressed() and _get_offhand_secondary_mode() == &"parry_guard":
-					_guard_requested_from_secondary = true
-					_block_phase = &"enter"
-					_block_active = false
-					_play_block_animation(&"melee_2h_block_enter")
-					_request_block_state()
-				elif _block_phase in [&"parry", &"success", &"recovery"]:
-					_block_phase = &""
-					_block_active = false
-		&"expired":
-			_parry_phase = &"recovery"
-			_parry_timer = maxf(maxf(0.0, parry_recovery_sec), _get_parry_attempt_remaining_duration())
-			_guard_requested_from_secondary = false
-			_block_phase = &"recovery"
-			_block_active = false
+	_guard_controller.tick(delta)
 
 
 func _get_parry_attempt_remaining_duration() -> float:
@@ -4089,15 +4114,6 @@ func _get_sprite_frames_animation_duration(sprite_frames: SpriteFrames, animatio
 	if speed <= 0.001:
 		return 0.0
 	return float(sprite_frames.get_frame_count(animation_name)) / speed
-
-
-func _enter_post_parry_neutral_lock() -> void:
-	_guard_requested_from_secondary = false
-	_guard_repress_required_after_parry_success = _is_attack_secondary_pressed()
-	_block_phase = &""
-	_block_active = false
-	_parry_neutral_lock_active = true
-	_play_parry_animation(&"unarmed_parry_success_01")
 
 
 func _enter_ranged_ready() -> void:
@@ -5171,12 +5187,11 @@ func start_attack(attack_key: String) -> void:
 
 func start_block() -> void:
 	if not _is_melee_loadout_active():
-		_block_phase = &""
-		_block_active = false
+		_guard_controller.reset()
 		return
-	if not _parry_phase.is_empty() and _block_phase in [&"parry", &"success", &"recovery"]:
+	if _guard_controller.parry_phase != OperatorGuardController.ParryPhase.NONE:
 		return
-	if _block_phase == &"hold":
+	if _guard_controller.phase == OperatorGuardController.Phase.GUARD_HOLD:
 		return
 	_reset_fast_chain()
 	_melee_active = false
@@ -5190,142 +5205,50 @@ func start_block() -> void:
 	_melee_hit_targets.clear()
 	_melee_miss_sfx_played = false
 	_reset_melee_overlay_visuals()
-	_parry_neutral_lock_active = false
-	_block_phase = &"enter"
-	_block_active = false
-	_play_block_animation(&"melee_2h_block_enter")
+	_guard_controller.neutral_lock_active = false
+	_guard_controller.start_guard()
 
 
 func update_block_state() -> String:
 	if animated_sprite == null:
-		_block_phase = &""
-		_block_active = false
+		_guard_controller.reset()
 		return _get_desired_animation_state()
-	match _block_phase:
-		&"parry", &"success", &"recovery":
-			if _parry_phase.is_empty():
-				_block_phase = &""
-				_block_active = false
-				return _get_desired_animation_state()
-			return "block"
-		&"expired":
-			if _wants_block():
-				start_block()
-				return "block"
-			return "block"
-		&"enter":
-			if _is_block_animation_finished():
-				_block_phase = &"hold"
-				_block_active = true
-				_play_block_animation(&"melee_2h_block_hold")
-			return "block"
-		&"hold":
-			if not _wants_block():
-				_block_phase = &"exit"
-				_block_active = false
-				_play_block_animation(&"melee_2h_block_exit")
-			return "block"
-		&"hitreact":
-			if _is_block_animation_finished():
-				_block_phase = &"hold"
-				_block_active = true
-				_play_block_animation(&"melee_2h_block_hold")
-			return "block"
-		&"exit":
-			if _is_block_animation_finished():
-				_block_phase = &""
-				_block_active = false
-				return _get_desired_animation_state()
-			return "block"
-		_:
-			if _wants_block():
-				start_block()
-				return "block"
-			return _get_desired_animation_state()
+	return _guard_controller.update_animation_state(_wants_block())
 
 
 func try_parry_incoming_attack(attacker: Node2D, hit_direction: Vector2, hit_data: Dictionary = {}) -> bool:
-	if not _parry_active:
+	if not _guard_controller.try_parry(attacker, hit_direction, hit_data):
+		if _guard_controller.parry_active:
+			_play_combat_sfx(MELEE_GRAZE_SOUND, global_position, -3.0)
 		return false
-
-	var guard_dir := _get_attack_aim_direction()
-	if guard_dir.length_squared() <= 0.001:
-		guard_dir = visual_idle_direction
-	if guard_dir.length_squared() <= 0.001:
-		guard_dir = Vector2.DOWN
-
-	var incoming_from := -hit_direction.normalized()
-	if incoming_from.length_squared() <= 0.001:
-		incoming_from = global_position.direction_to(attacker.global_position) if attacker != null and is_instance_valid(attacker) else -guard_dir
-	var facing_dot := guard_dir.normalized().dot(incoming_from.normalized())
-	if facing_dot < 0.35:
-		_play_combat_sfx(MELEE_GRAZE_SOUND, global_position, -3.0)
-		return false
-
-	_on_parry_success(attacker, hit_direction, hit_data)
 	return true
 
 
-func try_guard_incoming_attack(damage: float, hit_direction: Vector2, stamina_cost_override: float = -1.0) -> Dictionary:
-	if not _is_blocking():
-		return {"blocked": false, "damage": damage}
-
-	var guard_dir := _get_attack_aim_direction()
-	if guard_dir.length_squared() <= 0.001:
-		guard_dir = visual_idle_direction
-	if guard_dir.length_squared() <= 0.001:
-		guard_dir = Vector2.DOWN
-
-	var incoming_from := -hit_direction.normalized()
-	if incoming_from.length_squared() <= 0.001:
-		incoming_from = guard_dir
-	var facing_dot := guard_dir.normalized().dot(incoming_from.normalized())
-	if facing_dot < 0.15:
-		return {"blocked": false, "damage": damage}
-
-	var stamina_cost := stamina_cost_override if stamina_cost_override >= 0.0 else guard_stamina_cost_per_hit
-	if offhand_guard_item_equipped:
-		stamina_cost *= 0.75
-	_spend_stamina(stamina_cost, &"guard")
-
-	var reduction := guard_damage_reduction
-	if offhand_guard_item_equipped:
-		reduction = clampf(reduction + 0.12, 0.0, 0.9)
-	var reduced_damage := maxf(guard_chip_damage_minimum, damage * (1.0 - reduction))
-
-	if stamina <= guard_break_stamina_threshold:
-		_block_phase = &"hitreact"
-		_block_active = false
-		_play_block_animation(&"melee_2h_block_hitreact")
-		reduced_damage = maxf(guard_chip_damage_minimum, damage * 0.65)
-	elif _is_current_profile_unarmed():
-		_block_phase = &"hitreact"
-		_block_active = false
-		_play_block_animation(&"melee_2h_block_hitreact")
-
-	return {
-		"blocked": true,
-		"damage": reduced_damage,
-	}
+func try_guard_incoming_attack(
+	damage: float,
+	hit_direction: Vector2,
+	stamina_cost_override: float = -1.0,
+	hit_strength: int = CombatConstants.HitStrength.LIGHT
+) -> Dictionary:
+	return _guard_controller.resolve_guard_hit(
+		damage, hit_direction, hit_strength, stamina_cost_override
+	)
 
 
 func _is_failed_parry_hitreact_context() -> bool:
-	return not _parry_phase.is_empty() and _parry_phase != &"success"
+	return _guard_controller.parry_phase not in [
+		OperatorGuardController.ParryPhase.NONE,
+		OperatorGuardController.ParryPhase.SUCCESS,
+	]
 
 
 func _play_failed_parry_block_hitreact() -> void:
-	_parry_active = false
-	_parry_phase = &""
-	_parry_timer = 0.0
-	_block_phase = &"hitreact"
-	_block_active = false
-	_guard_requested_from_secondary = false
-	_play_block_animation(&"melee_2h_block_hitreact")
+	_guard_controller.fail_parry_to_recoil()
 	_obs_increment(&"player_failed_parry_hitreact")
 	_obs_log(&"player_failed_parry_hitreact", {"position": global_position, "health": current_health})
 
 
-func _on_parry_success(attacker: Node2D, hit_direction: Vector2, hit_data: Dictionary) -> void:
+func guard_apply_parry_success(attacker: Node2D, hit_direction: Vector2, hit_data: Dictionary) -> void:
 	var contact_position := global_position
 	if hit_data.get("impact_position") is Vector2:
 		contact_position = hit_data["impact_position"]
@@ -5336,16 +5259,6 @@ func _on_parry_success(attacker: Node2D, hit_direction: Vector2, hit_data: Dicti
 		if contact_direction.length_squared() <= 0.001:
 			contact_direction = _get_attack_aim_direction()
 		contact_position += contact_direction.normalized() * 22.0
-	_parry_active = false
-	_parry_phase = &"success"
-	var success_recovery := maxf(0.0, parry_success_recovery_sec)
-	_parry_timer = success_recovery
-	_parry_success_lockout = maxf(_parry_success_lockout, success_recovery)
-	_counter_window_timer = maxf(_counter_window_timer, parry_counter_window_sec)
-	_block_phase = &"success"
-	_block_active = false
-	_guard_repress_required_after_parry_success = _is_attack_secondary_pressed()
-
 	_regenerate_stamina(parry_success_stamina_refund, &"parry_refund")
 
 	if attacker != null and is_instance_valid(attacker):
@@ -9201,11 +9114,174 @@ func _is_using_ranged_2h_primary() -> bool:
 
 
 func _is_blocking() -> bool:
-	return _block_active
+	return _guard_controller.is_guard_active()
 
 
 func _is_block_state_active() -> bool:
-	return not _block_phase.is_empty()
+	return _guard_controller.is_state_active()
+
+
+func get_guard_controller() -> OperatorGuardController:
+	return _guard_controller
+
+
+func get_guard_snapshot() -> Dictionary:
+	return {
+		"phase": String(_guard_controller.phase_name()),
+		"parry_phase": String(_guard_controller.parry_phase_name()),
+		"guard_active": _guard_controller.is_guard_active(),
+		"guard_fully_active": _guard_controller.is_guard_fully_active(),
+		"guard_broken": _guard_controller.is_break_locked(),
+		"phase_timer": _guard_controller.phase_timer,
+		"reraise_lockout": _guard_controller.reraise_lockout_timer,
+		"parry_active": _guard_controller.parry_active,
+		"counter_window": _guard_controller.counter_window_timer,
+		"stamina": stamina,
+	}
+
+
+func _legacy_guard_phase() -> StringName:
+	match _guard_controller.phase:
+		OperatorGuardController.Phase.NEUTRAL: return &""
+		OperatorGuardController.Phase.GUARD_ENTER: return &"enter"
+		OperatorGuardController.Phase.GUARD_HOLD: return &"hold"
+		OperatorGuardController.Phase.LIGHT_RECOIL, OperatorGuardController.Phase.HEAVY_RECOIL: return &"hitreact"
+		OperatorGuardController.Phase.GUARD_BREAK, OperatorGuardController.Phase.BREAK_RECOVERY: return &"guard_break"
+		OperatorGuardController.Phase.GUARD_EXIT: return &"exit"
+		OperatorGuardController.Phase.PARRY: return &"parry"
+		OperatorGuardController.Phase.PARRY_SUCCESS: return &"success"
+		OperatorGuardController.Phase.PARRY_RECOVERY: return &"recovery"
+	return &""
+
+
+func _set_legacy_guard_phase(value: StringName) -> void:
+	match value:
+		&"": _guard_controller.phase = OperatorGuardController.Phase.NEUTRAL
+		&"enter": _guard_controller.phase = OperatorGuardController.Phase.GUARD_ENTER
+		&"hold": _guard_controller.phase = OperatorGuardController.Phase.GUARD_HOLD
+		&"hitreact": _guard_controller.phase = OperatorGuardController.Phase.LIGHT_RECOIL
+		&"guard_break": _guard_controller.phase = OperatorGuardController.Phase.GUARD_BREAK
+		&"exit": _guard_controller.phase = OperatorGuardController.Phase.GUARD_EXIT
+		&"parry": _guard_controller.phase = OperatorGuardController.Phase.PARRY
+		&"success": _guard_controller.phase = OperatorGuardController.Phase.PARRY_SUCCESS
+		&"recovery", &"expired": _guard_controller.phase = OperatorGuardController.Phase.PARRY_RECOVERY
+
+
+func _set_legacy_parry_phase(value: StringName) -> void:
+	match value:
+		&"": _guard_controller.parry_phase = OperatorGuardController.ParryPhase.NONE
+		&"windup": _guard_controller.parry_phase = OperatorGuardController.ParryPhase.WINDUP
+		&"active": _guard_controller.parry_phase = OperatorGuardController.ParryPhase.ACTIVE
+		&"success": _guard_controller.parry_phase = OperatorGuardController.ParryPhase.SUCCESS
+		&"recovery": _guard_controller.parry_phase = OperatorGuardController.ParryPhase.RECOVERY
+		&"expired": _guard_controller.parry_phase = OperatorGuardController.ParryPhase.EXPIRED
+
+
+func guard_play_block_animation(animation_name: StringName) -> void:
+	_play_block_animation(animation_name)
+
+
+func guard_play_parry_animation(animation_name: StringName) -> void:
+	_play_parry_animation(animation_name)
+
+
+func guard_is_block_animation_finished() -> bool:
+	return _is_block_animation_finished()
+
+
+func guard_desired_animation_state() -> String:
+	return _get_desired_animation_state()
+
+
+func guard_secondary_pressed() -> bool:
+	return _is_attack_secondary_pressed() and _get_offhand_secondary_mode() == &"parry_guard"
+
+
+func guard_faces_hit(hit_direction: Vector2, minimum_dot: float, attacker: Node2D = null) -> bool:
+	var guard_dir := _get_attack_aim_direction()
+	if guard_dir.length_squared() <= 0.001:
+		guard_dir = visual_idle_direction
+	if guard_dir.length_squared() <= 0.001:
+		guard_dir = Vector2.DOWN
+	var incoming_from := -hit_direction.normalized()
+	if incoming_from.length_squared() <= 0.001:
+		incoming_from = (
+			global_position.direction_to(attacker.global_position)
+			if attacker != null and is_instance_valid(attacker)
+			else guard_dir
+		)
+	return guard_dir.normalized().dot(incoming_from.normalized()) >= minimum_dot
+
+
+func guard_has_offhand_item() -> bool:
+	return offhand_guard_item_equipped
+
+
+func guard_current_stamina() -> float:
+	return stamina
+
+
+func guard_spend_stamina(amount: float, reason: StringName) -> void:
+	_spend_stamina(amount, reason)
+
+
+func guard_set_stamina_zero() -> void:
+	stamina = 0.0
+
+
+func guard_on_block(stamina_cost: float, hit_strength: int, chip_damage: float) -> void:
+	_obs_increment(&"operator_guard_blocks")
+	_obs_log(&"operator_guard_blocked", {
+		"position": global_position,
+		"stamina": stamina,
+		"stamina_cost": stamina_cost,
+		"hit_strength": hit_strength,
+		"chip_damage": chip_damage,
+		"phase": String(_guard_controller.phase_name()),
+	})
+
+
+func guard_on_break(stamina_cost: float, hit_strength: int, hit_direction: Vector2) -> void:
+	var recoil_direction := hit_direction.normalized()
+	velocity = recoil_direction * 90.0 if recoil_direction.length_squared() > 0.001 else Vector2.ZERO
+	_enemy_impact_lock_timer = maxf(_enemy_impact_lock_timer, guard_config.break_recovery_time)
+	_obs_increment(&"operator_guard_breaks")
+	_obs_log(&"operator_guard_broken", {
+		"position": global_position,
+		"stamina_cost": stamina_cost,
+		"hit_strength": hit_strength,
+		"break_recovery_sec": guard_config.break_recovery_time,
+		"reraise_lockout_sec": guard_config.reraise_lockout_time,
+	})
+	_notify_camera_attack_impact(Vector2.ZERO, true)
+
+
+func guard_on_parry_active() -> void:
+	_obs_increment(&"player_parry_active")
+	_obs_log(&"player_parry_active", {
+		"position": global_position,
+		"window_sec": guard_config.parry_active_time,
+	})
+
+
+func guard_on_parry_expired() -> void:
+	_obs_increment(&"player_parry_expired")
+	_obs_log(&"player_parry_expired", {"position": global_position})
+	_spawn_parry_miss_fx()
+
+
+func guard_parry_animation_remaining() -> float:
+	return _get_parry_attempt_remaining_duration()
+
+
+func guard_enter_post_parry_neutral() -> void:
+	if not _buffered_attack_kind.is_empty() and _guard_controller.counter_window_timer > 0.0:
+		_request_attack_state(_consume_buffered_attack())
+		return
+	_guard_controller.guard_requested = false
+	_guard_controller.repress_required = _is_attack_secondary_pressed()
+	_guard_controller.neutral_lock_active = true
+	_play_parry_animation(&"unarmed_parry_success_01")
 
 
 func _is_movement_locked() -> bool:
@@ -11292,7 +11368,12 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", attacker_
 			"target_health_after": current_health,
 		}
 
-	var guard_result := try_guard_incoming_attack(amount, resolved_hit_direction, guard_stamina_cost_override)
+	var guard_result := try_guard_incoming_attack(
+		amount,
+		resolved_hit_direction,
+		guard_stamina_cost_override,
+		int(hit_context.get("hit_strength", CombatConstants.HitStrength.LIGHT))
+	)
 	if bool(guard_result.get("blocked", false)):
 		var final_damage := float(guard_result.get("damage", amount))
 		if final_damage > 0.0:
@@ -11304,6 +11385,9 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", attacker_
 		var blocked_context := hit_context.duplicate(true)
 		blocked_context.merge({
 			"guard_damage": final_damage,
+			"guard_broken": bool(guard_result.get("guard_broken", false)),
+			"guard_stamina_cost": float(guard_result.get("stamina_cost", 0.0)),
+			"guard_recoil": String(guard_result.get("recoil", &"light")),
 		}, true)
 		_log_incoming_hit_result(&"blocked", hit_kind, amount, final_damage, attacker, blocked_context)
 		return {
@@ -11312,6 +11396,7 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", attacker_
 			"dodged": false,
 			"parried": false,
 			"blocked": true,
+			"guard_broken": bool(guard_result.get("guard_broken", false)),
 			"applied_damage": maxf(
 				0.0,
 				health_before - current_health

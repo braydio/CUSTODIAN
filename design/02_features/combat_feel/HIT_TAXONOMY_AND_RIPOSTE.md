@@ -1,10 +1,10 @@
 # HIT TAXONOMY AND RIPOSTE — MILESTONE C
 
-Status: in_progress (Phases 1-2 complete; Phase 3 heavy-hit presentation partial)
+Status: in_progress (Phases 1-3 simulation complete; dedicated guard-break art/VFX and riposte remain)
 Owner: gameplay/combat feel
 Runtime target: Godot 4.x (`custodian/`)
 Created: 2026-07-17
-Last updated: 2026-07-17
+Last updated: 2026-08-21
 
 ## Completed Phases
 
@@ -24,10 +24,13 @@ Last updated: 2026-07-17
 - `_play_armor_deflect_fx()` provides visual-only bright flash feedback
 - Observability counters track flinch/stagger/crit/interrupt/armor-deflect enemy reactions
 
-### Phase 3: Differentiated Operator Reactions — PARTIAL
+### Phase 3: Differentiated Operator Reactions — COMPLETE (simulation)
 - Unblocked HEAVY hits resolve the authored E/W 12-frame `bodyslam_knockdown_01` full-body strip from incoming hit direction.
 - The paired combat-FX strip plays on the existing melee FX layer and is cleaned up with the reaction state.
-- LIGHT hits retain the existing 0.22-second recoil; guard-break presentation/cooldown work remains open.
+- LIGHT hits retain the existing 0.22-second recoil.
+- `OperatorGuardController` owns explicit enter/hold/light-recoil/heavy-recoil/break/break-recovery/exit and parry phases.
+- Guard break collapses stamina to zero, creates a 0.40-second vulnerable recovery, and prevents guard/parry re-raise for 1.50 seconds. Existing block-hitreact art is the temporary fallback until dedicated full-body break art exists.
+- `HitStrength` scales posture cost and selects light versus heavy guard recoil; explicit per-attack stamina overrides remain authoritative.
 - `operator_knockdown_animation_smoke.gd` covers both directional body/FX resources and live selection.
 
 ## Purpose
@@ -40,8 +43,10 @@ action after successful parry.
 
 ## Design Rules
 
-- Simulation authority stays in `operator.gd` and `enemy.gd`. Presentation is
-  read-only from hit metadata.
+- Actor authority stays rooted in `Operator` and `Enemy`, but actor-local typed
+  controllers/abilities may own bounded simulation state. `OperatorGuardController`
+  owns guard/parry phases and `GruntFalconPunch` owns Falcon phases; actor shells
+  retain shared health, stamina, movement, damage, engagement, and presentation services.
 - Hit metadata travels WITH the damage event, never stored as persistent state.
 - Heavy enemies may ignore light flinch. This does not change their damage or
   stagger thresholds — it changes their ANIMATION response only.
@@ -189,19 +194,22 @@ receive_enemy_hit() → try_guard_incoming_attack() → take_damage() → _reque
 | **Guard break** | Stamina crosses threshold | `block_break` (new) | 0.40s | Break flash + camera shake + stamina drain VFX |
 | **Failed parry hit** | Hit during failed parry | `block_hitreact` (existing) | 0.15s | Red flash |
 
-### Guard Break Presentation
+### Guard Break Runtime Contract
 
-The current guard break is too subtle. New behavior:
+Implemented behavior:
 
 1. When `stamina <= guard_break_stamina_threshold`:
-   - Play `block_break` animation (new, or reuse `block_hitreact` with longer duration)
-   - Spawn guard-break VFX at Operator position (shield-shatter particle)
+   - Play `block_hitreact` as the current fallback (`block_break` remains a future asset)
    - Camera shake (moderate, 0.25s)
    - Brief stun window (0.40s) where Operator cannot guard/parry
    - Stamina drains to 0
-   - HUD stamina bar flashes red + "GUARD BROKEN" text
+   - Emit structured `operator_guard_broken` observability
 
-2. Guard break cooldown: 1.5s before guard can be re-raised
+2. Guard break lockout: 1.5s before guard can be re-raised, with a fresh press
+   required when the original guard input remained held.
+
+Dedicated shield-shatter VFX/audio and HUD text remain presentation follow-up,
+not missing simulation authority.
 
 ## 4. Riposte Action
 
