@@ -37,6 +37,22 @@ func play(action: StringName, direction: Vector2, variation_ordinal: int = 0, re
 	return true
 
 
+func resolve_animation_name(
+	action: StringName,
+	direction: Vector2,
+	variation_ordinal: int = 0
+) -> StringName:
+	if animation_set == null:
+		return &""
+	var clip := animation_set.resolve_clip(
+		action,
+		_direction_suffix(direction),
+		variation_ordinal
+	)
+	return animation_set.get_animation_name(clip, &"body") \
+		if not clip.is_empty() else &""
+
+
 func stop_on_first_frame() -> void:
 	if body_sprite == null:
 		return

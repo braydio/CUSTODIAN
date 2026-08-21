@@ -20,9 +20,9 @@ Compact agent-facing map for current and target ownership. Use this with `custod
 - `custodian/game/world/procgen/proc_gen_tilemap.gd`: procgen facade, construction policy, roads, terrain integration, foliage, portals, authored claims, export helpers.
 - `custodian/game/world/procgen/custodian_contract_map.gd`: contract seed/profile creation, candidate selection, acceptance metrics, final visual promotion.
 - `custodian/game/systems/core/systems/contract_world_loader.gd`: runtime handoff, anchor rebinding, vehicles, relays, resources, ingress, authored destinations.
-- `custodian/game/actors/enemies/enemy.gd`: base enemy actor, variants, remaining special phase hosts, parry handshake, loot, animation fallback, behavior hooks.
+- `custodian/game/actors/enemies/enemy.gd`: base enemy actor, remaining Marine/Savage special phase hosts, shared ability combat services, parry handshake, loot, animation fallback, behavior hooks.
 - `custodian/game/actors/enemies/presentation/`: semantic animation-set and playback authority; presentation never owns hit timing or behavior state.
-- `custodian/game/actors/enemies/abilities/`: actor-local special ability modules; Falcon Punch launch eligibility/lane validation is the first live extraction.
+- `custodian/game/actors/enemies/abilities/`: actor-local special ability modules; Falcon Punch is the first complete extraction, owning typed tuning, cadence, target capture, phases, movement/contact, reversal state, and telemetry.
 - `custodian/game/systems/core/state/game_state.gd`: run failure, modal pause, compatibility state, and future persistent/run/world state pressure.
 
 ## Extraction Status

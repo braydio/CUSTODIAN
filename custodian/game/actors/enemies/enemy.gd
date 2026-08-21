@@ -176,33 +176,9 @@ var melee_impact_audio_profile: String = "body"
 @export var grunt_critical_window_ring_offset: Vector2 = Vector2.ZERO
 @export var grunt_optional_critical_vfx_enabled: bool = true
 @export var grunt_falcon_punch_enabled: bool = false
-@export var grunt_falcon_punch_windup_time: float = 0.75
-@export var grunt_falcon_punch_tracking_lock_sec: float = 0.25
-@export var grunt_falcon_punch_leap_time: float = 0.28
-@export var grunt_falcon_punch_impact_lock_time: float = 0.08
-@export var grunt_falcon_punch_recovery_time: float = 0.70
-@export var grunt_falcon_punch_distance_px: float = 96.0
-@export var grunt_falcon_punch_damage_multiplier: float = 1.35
-@export var grunt_falcon_punch_cooldown: float = 2.1
-@export var grunt_falcon_punch_launch_band_min: float = 88.0
-@export var grunt_falcon_punch_launch_band_max: float = 184.0
-@export var grunt_falcon_punch_hit_active_start_ratio: float = 0.38
-@export var grunt_falcon_punch_hit_active_end_ratio: float = 0.76
-@export var grunt_falcon_punch_hit_forward_reach_px: float = 42.0
-@export var grunt_falcon_punch_hit_lateral_reach_px: float = 30.0
-@export var grunt_falcon_punch_windup_speed_multiplier: float = 0.15
-@export var grunt_falcon_punch_recovery_speed: float = 0.0
-@export var grunt_falcon_punch_stop_short_px: float = 28.0
-@export var grunt_falcon_punch_knockback_px: float = 58.0
-@export var grunt_falcon_punch_victim_hitstop: float = 0.06
-@export var grunt_falcon_punch_attacker_hitstop: float = 0.035
-@export var grunt_falcon_punch_camera_shake_strength: float = 0.22
-@export var grunt_falcon_punch_camera_shake_duration: float = 0.10
-@export_range(0.0, 1.0, 0.01) var grunt_falcon_punch_chance: float = 0.35
-@export var grunt_falcon_punch_recent_parry_lockout_sec: float = 3.0
-@export var grunt_falcon_punch_requires_clear_lane: bool = true
-@export var grunt_falcon_punch_ally_lane_radius_px: float = 34.0
-@export var grunt_falcon_punch_after_normal_attacks_min: int = 1
+@export var grunt_falcon_punch_config: GruntFalconPunchConfig = preload(
+	"res://game/actors/enemies/abilities/configs/grunt_falcon_punch_default.tres"
+)
 @export var enemy_body_separation_px: float = 28.0
 @export var enemy_spacing_radius_px: float = 34.0
 @export var enemy_spacing_strength: float = 0.65
@@ -359,28 +335,6 @@ var _marine_dash_attack_id := ""
 var _marine_dash_terminal_emitted := false
 var _marine_dash_closest_approach := INF
 var _marine_dash_last_spatial_context: Dictionary = {}
-var _grunt_falcon_punch_phase: StringName = &""
-var _grunt_falcon_punch_timer: float = 0.0
-var _grunt_falcon_punch_direction: Vector2 = Vector2.RIGHT
-var _grunt_falcon_punch_start_position: Vector2 = Vector2.ZERO
-var _grunt_falcon_punch_hit_targets: Array[int] = []
-var _grunt_falcon_punch_current_distance: float = 0.0
-var _grunt_falcon_punch_cooldown_timer: float = 0.0
-var _grunt_falcon_punch_recent_parry_timer: float = 0.0
-var _grunt_falcon_punch_attacker_hitstop_timer: float = 0.0
-var _grunt_falcon_punch_normal_attacks_since_special: int = 0
-var _grunt_falcon_punch_decision_credit: float = 0.0
-var _grunt_falcon_punch_attack_id: String = ""
-var _grunt_falcon_punch_result: StringName = &""
-var _grunt_falcon_punch_impact_confirmed: bool = false
-var _grunt_falcon_punch_launch_distance: float = -1.0
-var _grunt_falcon_punch_active_start_target_distance: float = -1.0
-var _grunt_falcon_punch_closest_approach: float = INF
-var _grunt_falcon_punch_lateral_error: float = 0.0
-var _grunt_falcon_punch_collision_obstructed: bool = false
-var _grunt_falcon_punch_tracking_locked: bool = false
-var _grunt_falcon_punch_locked_direction: Vector2 = Vector2.RIGHT
-var _grunt_falcon_punch_lock_target_position: Vector2 = Vector2.ZERO
 var _savage_chain_phase: StringName = &""
 var _savage_chain_timer: float = 0.0
 var _savage_chain_direction: Vector2 = Vector2.RIGHT
@@ -434,6 +388,67 @@ var _grunt_attack_presentation_action: StringName = &"combat.fast_01"
 var _grunt_flinch_presentation_action: StringName = &"reaction.flinch_01"
 var _grunt_falcon_punch_ability: GruntFalconPunch = GRUNT_FALCON_PUNCH_SCRIPT.new()
 
+
+# Transitional inspection surface for existing debug tools and external smokes.
+# Runtime ownership remains entirely inside the typed ability/config objects.
+func get_grunt_falcon_punch_ability() -> GruntFalconPunch:
+	return _grunt_falcon_punch_ability
+
+
+func _get(property: StringName) -> Variant:
+	match property:
+		&"grunt_falcon_punch_windup_time": return grunt_falcon_punch_config.total_windup_time()
+		&"grunt_falcon_punch_tracking_lock_sec": return grunt_falcon_punch_config.committed_time
+		&"grunt_falcon_punch_leap_time": return grunt_falcon_punch_config.leap_time
+		&"grunt_falcon_punch_impact_lock_time": return grunt_falcon_punch_config.impact_lock_time
+		&"grunt_falcon_punch_recovery_time": return grunt_falcon_punch_config.recovery_time
+		&"grunt_falcon_punch_distance_px": return grunt_falcon_punch_config.launch_distance_px
+		&"grunt_falcon_punch_damage_multiplier": return grunt_falcon_punch_config.damage_multiplier
+		&"grunt_falcon_punch_cooldown": return grunt_falcon_punch_config.cooldown
+		&"grunt_falcon_punch_launch_band_min": return grunt_falcon_punch_config.launch_band.x
+		&"grunt_falcon_punch_launch_band_max": return grunt_falcon_punch_config.launch_band.y
+		&"grunt_falcon_punch_hit_forward_reach_px": return grunt_falcon_punch_config.hit_forward_reach_px
+		&"grunt_falcon_punch_hit_lateral_reach_px": return grunt_falcon_punch_config.hit_lateral_reach_px
+		&"grunt_falcon_punch_recovery_speed": return grunt_falcon_punch_config.recovery_speed
+		&"grunt_falcon_punch_stop_short_px": return grunt_falcon_punch_config.stop_short_px
+		&"_grunt_falcon_punch_phase":
+			var phase_name := _grunt_falcon_punch_ability.get_phase_name()
+			return &"windup" if phase_name in [&"tracking", &"committed"] else (&"" if phase_name == &"idle" else phase_name)
+		&"_grunt_falcon_punch_timer": return _grunt_falcon_punch_ability.phase_timer
+		&"_grunt_falcon_punch_direction": return _grunt_falcon_punch_ability.direction
+		&"_grunt_falcon_punch_current_distance": return _grunt_falcon_punch_ability.current_distance
+		&"_grunt_falcon_punch_cooldown_timer": return _grunt_falcon_punch_ability.cooldown_timer
+		&"_grunt_falcon_punch_recent_parry_timer": return _grunt_falcon_punch_ability.recent_parry_timer
+		&"_grunt_falcon_punch_normal_attacks_since_special": return _grunt_falcon_punch_ability.normal_attacks_since_special
+		&"_grunt_falcon_punch_decision_credit": return _grunt_falcon_punch_ability.cadence_credit
+		&"_grunt_falcon_punch_attack_id": return _grunt_falcon_punch_ability.attack_id
+		&"_grunt_falcon_punch_tracking_locked": return _grunt_falcon_punch_ability.phase >= GruntFalconPunch.Phase.COMMITTED
+		&"_grunt_falcon_punch_locked_direction": return _grunt_falcon_punch_ability.committed_direction
+	return null
+
+
+func _set(property: StringName, value: Variant) -> bool:
+	match property:
+		&"grunt_falcon_punch_windup_time": grunt_falcon_punch_config.tracking_time = maxf(0.01, float(value) - grunt_falcon_punch_config.committed_time)
+		&"grunt_falcon_punch_tracking_lock_sec": grunt_falcon_punch_config.committed_time = float(value)
+		&"grunt_falcon_punch_leap_time": grunt_falcon_punch_config.leap_time = float(value)
+		&"grunt_falcon_punch_impact_lock_time": grunt_falcon_punch_config.impact_lock_time = float(value)
+		&"grunt_falcon_punch_recovery_time": grunt_falcon_punch_config.recovery_time = float(value)
+		&"grunt_falcon_punch_distance_px": grunt_falcon_punch_config.launch_distance_px = float(value)
+		&"grunt_falcon_punch_cooldown": grunt_falcon_punch_config.cooldown = float(value)
+		&"grunt_falcon_punch_chance": grunt_falcon_punch_config.cadence_credit_per_attack = float(value)
+		&"grunt_falcon_punch_after_normal_attacks_min": grunt_falcon_punch_config.normal_attacks_required = int(value)
+		&"grunt_falcon_punch_victim_hitstop": grunt_falcon_punch_config.victim_hitstop_sec = float(value)
+		&"grunt_falcon_punch_attacker_hitstop": grunt_falcon_punch_config.attacker_hitstop_sec = float(value)
+		&"_grunt_falcon_punch_timer": _grunt_falcon_punch_ability.phase_timer = float(value)
+		&"_grunt_falcon_punch_cooldown_timer": _grunt_falcon_punch_ability.cooldown_timer = float(value)
+		&"_grunt_falcon_punch_recent_parry_timer": _grunt_falcon_punch_ability.recent_parry_timer = float(value)
+		&"_grunt_falcon_punch_normal_attacks_since_special": _grunt_falcon_punch_ability.normal_attacks_since_special = int(value)
+		&"_grunt_falcon_punch_decision_credit": _grunt_falcon_punch_ability.cadence_credit = float(value)
+		_:
+			return false
+	return true
+
 func _ready():
 	var obs := get_node_or_null("/root/DevObservatory")
 	if obs != null and obs.has_method("adjust_gauge"):
@@ -476,8 +491,8 @@ func _ready():
 	_schedule_next_passive_wander()
 	_enter_assault_state(AssaultState.STAGING)
 	damage_timer = damage_interval
-	_grunt_falcon_punch_current_distance = grunt_falcon_punch_distance_px
-	_grunt_falcon_punch_decision_credit = maxf(0.0, 1.0 - clampf(grunt_falcon_punch_chance, 0.0, 1.0))
+	grunt_falcon_punch_config = grunt_falcon_punch_config.duplicate(true)
+	_grunt_falcon_punch_ability.setup(self, grunt_falcon_punch_config)
 	_refresh_target()
 	_initialize_navigation()
 	var stable_spawn_ordinal := int(get_meta("stable_spawn_ordinal", 0))
@@ -570,8 +585,6 @@ func _physics_process(delta):
 	if obs != null:
 		obs.perf_span_end(&"enemy_presentation", presentation_started)
 	_savage_pounce_cooldown_timer = maxf(0.0, _savage_pounce_cooldown_timer - delta)
-	_grunt_falcon_punch_cooldown_timer = maxf(0.0, _grunt_falcon_punch_cooldown_timer - delta)
-	_grunt_falcon_punch_recent_parry_timer = maxf(0.0, _grunt_falcon_punch_recent_parry_timer - delta)
 	var combat_started: int = obs.perf_span_begin() if obs != null else 0
 	if _update_savage_attack(delta):
 		if obs != null:
@@ -582,7 +595,7 @@ func _physics_process(delta):
 	if obs != null:
 		obs.perf_span_end(&"enemy_combat", combat_started)
 	combat_started = obs.perf_span_begin() if obs != null else 0
-	if _update_grunt_falcon_punch_attack(delta):
+	if _grunt_falcon_punch_ability.tick(delta):
 		if obs != null:
 			obs.perf_span_end(&"enemy_combat", combat_started)
 			obs.perf_span_end(tier_span_name, total_started)
@@ -952,310 +965,156 @@ func _log_savage_event(event_name: StringName, result: Dictionary = {}) -> void:
 
 
 func _attack_grunt_falcon_punch_target(_delta: float) -> bool:
-	if not _grunt_falcon_punch_phase.is_empty():
-		return true
-	if target == null or not is_instance_valid(target) or _is_target_destroyed(target):
-		return false
-	var target_node := target as Node2D
-	if target_node == null or not _should_start_grunt_falcon_punch_now(target_node):
-		return false
-	var direction := (target_node.global_position - global_position).normalized()
-	_start_grunt_falcon_punch_windup(direction)
-	return true
+	return _grunt_falcon_punch_ability.try_start(target as Node2D)
 
 
 func _should_start_grunt_falcon_punch_now(target_node: Node2D) -> bool:
-	return _grunt_falcon_punch_ability.should_start(self, target_node)
+	return _grunt_falcon_punch_ability.can_start(target_node)
 
 
 func _is_grunt_falcon_punch_lane_clear(target_node: Node2D) -> bool:
-	return _grunt_falcon_punch_ability.is_lane_clear(self, target_node)
+	return _grunt_falcon_punch_ability.is_lane_clear(target_node)
 
 
+# Compatibility entrypoints remain narrow while focused debug tools migrate to
+# the ability's public API. Enemy no longer owns Falcon runtime state.
 func _start_grunt_falcon_punch_windup(direction: Vector2) -> void:
-	_attack_sequence += 1
-	_grunt_falcon_punch_attack_id = "%s:falcon:%s" % [get_instance_id(), _attack_sequence]
-	_grunt_falcon_punch_result = &"pending"
-	_grunt_falcon_punch_impact_confirmed = false
-	_grunt_falcon_punch_launch_distance = global_position.distance_to((target as Node2D).global_position) if target is Node2D and is_instance_valid(target) else -1.0
-	_grunt_falcon_punch_active_start_target_distance = -1.0
-	_grunt_falcon_punch_closest_approach = _grunt_falcon_punch_launch_distance if _grunt_falcon_punch_launch_distance >= 0.0 else INF
-	_grunt_falcon_punch_lateral_error = 0.0
-	_grunt_falcon_punch_collision_obstructed = false
-	_grunt_falcon_punch_phase = &"windup"
-	_grunt_falcon_punch_timer = maxf(0.01, grunt_falcon_punch_windup_time)
-	_grunt_falcon_punch_cooldown_timer = maxf(0.0, grunt_falcon_punch_cooldown)
-	_grunt_falcon_punch_normal_attacks_since_special = 0
-	_grunt_falcon_punch_decision_credit = 0.0
-	_grunt_falcon_punch_direction = direction.normalized() if direction.length_squared() > 0.0001 else _last_move_direction.normalized()
-	if _grunt_falcon_punch_direction.length_squared() <= 0.0001:
-		_grunt_falcon_punch_direction = Vector2.RIGHT
-	_grunt_falcon_punch_tracking_locked = false
-	_grunt_falcon_punch_locked_direction = _grunt_falcon_punch_direction
-	_grunt_falcon_punch_lock_target_position = (target as Node2D).global_position if target is Node2D and is_instance_valid(target) else Vector2.ZERO
-	_grunt_falcon_punch_start_position = global_position
-	_grunt_falcon_punch_hit_targets.clear()
-	_last_move_direction = _grunt_falcon_punch_direction
-	clear_path()
-	if _uses_custom_enemy_animation_set():
-		_update_custom_enemy_animation(_grunt_falcon_punch_direction, true, false)
-	_obs_increment(&"falcon_punch_attempts")
-	_log_grunt_falcon_punch_event(&"grunt_falcon_punch_windup")
-	_audit_grunt_falcon_punch_presentation()
-
-
-func _lock_grunt_falcon_punch_tracking() -> void:
-	if _grunt_falcon_punch_tracking_locked:
-		return
-	_grunt_falcon_punch_tracking_locked = true
-	_grunt_falcon_punch_locked_direction = _grunt_falcon_punch_direction
-	if target is Node2D and is_instance_valid(target):
-		_grunt_falcon_punch_lock_target_position = (target as Node2D).global_position
-	_obs_increment(&"falcon_punch_tracking_locks")
-	_log_grunt_falcon_punch_event(&"grunt_falcon_punch_tracking_locked")
-	_audit_grunt_falcon_punch_presentation()
+	_grunt_falcon_punch_ability.start_debug(target as Node2D, direction)
 
 
 func _update_grunt_falcon_punch_attack(delta: float) -> bool:
-	if _grunt_falcon_punch_phase.is_empty():
-		return false
-	if _grunt_falcon_punch_attacker_hitstop_timer > 0.0:
-		_grunt_falcon_punch_attacker_hitstop_timer = maxf(0.0, _grunt_falcon_punch_attacker_hitstop_timer - delta)
-		velocity = Vector2.ZERO
-		return true
-	_grunt_falcon_punch_timer = maxf(0.0, _grunt_falcon_punch_timer - delta)
-	match _grunt_falcon_punch_phase:
-		&"windup":
-			if not _grunt_falcon_punch_tracking_locked:
-				_retarget_grunt_falcon_punch_windup()
-				if _grunt_falcon_punch_timer <= clampf(
-					grunt_falcon_punch_tracking_lock_sec,
-					0.0,
-					grunt_falcon_punch_windup_time
-				):
-					_lock_grunt_falcon_punch_tracking()
-			velocity = _grunt_falcon_punch_direction * speed * grunt_falcon_punch_windup_speed_multiplier
-			move_and_slide()
-			_last_move_direction = _grunt_falcon_punch_direction
-			if _uses_custom_enemy_animation_set():
-				_update_custom_enemy_animation(_grunt_falcon_punch_direction, true, false)
-			if _grunt_falcon_punch_timer <= 0.0:
-				if _try_claim_engagement_token(
-					grunt_falcon_punch_leap_time
-					+ grunt_falcon_punch_impact_lock_time
-					+ grunt_falcon_punch_recovery_time
-				):
-					_start_grunt_falcon_punch_leap()
-		&"leap":
-			_update_grunt_falcon_punch_leap(delta)
-		&"impact_lock":
-			velocity = Vector2.ZERO
-			if _grunt_falcon_punch_timer <= 0.0:
-				_start_grunt_falcon_punch_recovery()
-		&"recovery":
-			velocity = Vector2.ZERO
-			if _uses_custom_enemy_animation_set():
-				_update_custom_enemy_animation(_grunt_falcon_punch_direction, false, false)
-			if _grunt_falcon_punch_timer <= 0.0:
-				_finish_grunt_falcon_punch_attack()
-		_:
-			_finish_grunt_falcon_punch_attack()
-	return true
+	return _grunt_falcon_punch_ability.tick(delta)
 
 
 func _start_grunt_falcon_punch_leap() -> void:
-	if not _grunt_falcon_punch_tracking_locked:
-		_retarget_grunt_falcon_punch_windup()
-		_lock_grunt_falcon_punch_tracking()
-	_grunt_falcon_punch_direction = _grunt_falcon_punch_locked_direction
-	_grunt_falcon_punch_phase = &"leap"
-	_grunt_falcon_punch_timer = maxf(0.01, grunt_falcon_punch_leap_time)
-	_grunt_falcon_punch_start_position = global_position
-	_grunt_falcon_punch_current_distance = grunt_falcon_punch_distance_px
-	if _grunt_falcon_punch_tracking_locked:
-		var desired_contact_point := _grunt_falcon_punch_lock_target_position - _grunt_falcon_punch_direction * grunt_falcon_punch_stop_short_px
-		var projected_distance := maxf(0.0, (desired_contact_point - global_position).dot(_grunt_falcon_punch_direction))
-		_grunt_falcon_punch_current_distance = minf(grunt_falcon_punch_distance_px, projected_distance)
-	if _uses_custom_enemy_animation_set():
-		_update_custom_enemy_animation(_grunt_falcon_punch_direction, false, true)
-	_log_grunt_falcon_punch_event(&"grunt_falcon_punch_leap")
-	_audit_grunt_falcon_punch_presentation()
-
-
-func _retarget_grunt_falcon_punch_windup() -> void:
-	# Track only during the readable tell. Once leap begins, direction remains
-	# committed so a deliberate lateral dodge still defeats the attack.
-	if target == null or not is_instance_valid(target) or _is_target_destroyed(target) or not (target is Node2D):
-		return
-	var to_target := (target as Node2D).global_position - global_position
-	if to_target.length_squared() <= 0.0001:
-		return
-	_grunt_falcon_punch_direction = to_target.normalized()
-	_last_move_direction = _grunt_falcon_punch_direction
-
-
-func _update_grunt_falcon_punch_leap(delta: float) -> void:
-	var active_end := clampf(grunt_falcon_punch_hit_active_end_ratio, 0.01, 1.0)
-	var travel_time := maxf(0.01, grunt_falcon_punch_leap_time * active_end)
-	var leap_speed := _grunt_falcon_punch_current_distance / travel_time
-	velocity = _grunt_falcon_punch_direction * leap_speed
-	move_and_slide()
-	if target is Node2D and is_instance_valid(target):
-		var to_target := (target as Node2D).global_position - global_position
-		_grunt_falcon_punch_closest_approach = minf(_grunt_falcon_punch_closest_approach, to_target.length())
-		_grunt_falcon_punch_lateral_error = absf(to_target.cross(_grunt_falcon_punch_direction))
-		if _grunt_falcon_punch_active_start_target_distance < 0.0 and _is_grunt_falcon_punch_hit_window_active():
-			_grunt_falcon_punch_active_start_target_distance = to_target.length()
-	var traveled := global_position.distance_to(_grunt_falcon_punch_start_position)
-	var reached_contact := traveled >= _grunt_falcon_punch_current_distance or get_slide_collision_count() > 0
-	_grunt_falcon_punch_collision_obstructed = _grunt_falcon_punch_collision_obstructed or get_slide_collision_count() > 0
-	_try_apply_grunt_falcon_punch_hit(reached_contact)
-	if _grunt_falcon_punch_phase != &"leap":
-		return
-	if get_slide_collision_count() > 0 or traveled >= _grunt_falcon_punch_current_distance or _grunt_falcon_punch_timer <= 0.0:
-		var miss_reason := &"blocked_by_collision" if get_slide_collision_count() > 0 else _get_grunt_falcon_punch_miss_reason()
-		_resolve_grunt_falcon_punch_whiff(miss_reason)
-
-
-func _start_grunt_falcon_punch_impact_lock() -> void:
-	if not _grunt_falcon_punch_impact_confirmed:
-		return
-	_grunt_falcon_punch_phase = &"impact_lock"
-	_grunt_falcon_punch_timer = maxf(0.01, grunt_falcon_punch_impact_lock_time)
-	velocity = Vector2.ZERO
-	if _uses_custom_enemy_animation_set():
-		_update_custom_enemy_animation(_grunt_falcon_punch_direction, false, true)
-	_log_grunt_falcon_punch_event(&"grunt_falcon_punch_impact_lock")
-	_audit_grunt_falcon_punch_presentation()
-
-
-func _start_grunt_falcon_punch_recovery() -> void:
-	_grunt_falcon_punch_phase = &"recovery"
-	_grunt_falcon_punch_timer = maxf(0.01, grunt_falcon_punch_recovery_time)
-	velocity = Vector2.ZERO
-	_separate_from_target_after_contact(target as Node2D if target is Node2D else null)
-	if _uses_custom_enemy_animation_set():
-		_update_custom_enemy_animation(_grunt_falcon_punch_direction, false, false)
-	_log_grunt_falcon_punch_event(&"grunt_falcon_punch_recovery")
-	_audit_grunt_falcon_punch_presentation()
+	_grunt_falcon_punch_ability.start_leap()
 
 
 func _finish_grunt_falcon_punch_attack(result_override: StringName = &"") -> void:
-	if _grunt_falcon_punch_phase.is_empty():
-		return
-	if not result_override.is_empty():
-		_grunt_falcon_punch_result = result_override
-	if _grunt_falcon_punch_result == &"pending":
-		_grunt_falcon_punch_result = &"interrupted"
-		_obs_increment(&"falcon_punch_cancelled")
-	_log_grunt_falcon_punch_event(&"grunt_falcon_punch_finished")
-	_grunt_falcon_punch_phase = &""
-	_grunt_falcon_punch_timer = 0.0
-	_grunt_falcon_punch_attacker_hitstop_timer = 0.0
-	_grunt_falcon_punch_hit_targets.clear()
-	_grunt_falcon_punch_current_distance = grunt_falcon_punch_distance_px
-	_grunt_falcon_punch_attack_id = ""
-	_grunt_falcon_punch_impact_confirmed = false
-	_grunt_falcon_punch_tracking_locked = false
-	_grunt_falcon_punch_locked_direction = Vector2.RIGHT
-	_grunt_falcon_punch_lock_target_position = Vector2.ZERO
+	_grunt_falcon_punch_ability.finish(result_override)
+
+
+func _try_apply_grunt_falcon_punch_hit(force_contact_check: bool = false) -> void:
+	_grunt_falcon_punch_ability.try_apply_hit(force_contact_check)
+
+
+func _resolve_grunt_falcon_punch_whiff(reason: StringName) -> void:
+	_grunt_falcon_punch_ability.resolve_whiff(reason)
+
+
+func _get_grunt_falcon_punch_telemetry() -> Dictionary:
+	return _grunt_falcon_punch_ability.get_telemetry()
+
+
+func is_grunt_falcon_enabled() -> bool:
+	return _should_use_grunt_falcon_punch_attack()
+
+
+func is_combat_target_destroyed(node: Node) -> bool:
+	return _is_target_destroyed(node)
+
+
+func next_falcon_attack_id() -> String:
+	_attack_sequence += 1
+	return "%s:falcon:%s" % [get_instance_id(), _attack_sequence]
+
+
+func try_claim_ability_engagement_token(target_node: Node2D, hold_sec: float) -> bool:
+	if target_node == null or not is_instance_valid(target_node):
+		return false
+	var coordinator := get_node_or_null("/root/EnemyEngagementCoordinator")
+	if coordinator == null:
+		return true
+	return bool(coordinator.call("request_committed_attack", self, target_node, hold_sec))
+
+
+func release_ability_engagement_token() -> void:
 	_release_engagement_token()
-	velocity = Vector2.ZERO
+
+
+func resolve_ability_hit(
+	target_node: Node2D,
+	amount: float,
+	hit_kind: StringName,
+	ability_attack_id: String,
+	spatial: Dictionary
+) -> Dictionary:
+	return _apply_enemy_hit_to_target(
+		target_node, amount, hit_kind, -1.0, ability_attack_id, spatial
+	)
+
+
+func separate_ability_from_target(target_node: Node2D, fallback_direction: Vector2) -> void:
+	if target_node == null or not is_instance_valid(target_node):
+		return
+	var separation := maxf(0.0, enemy_body_separation_px)
+	var away := global_position - target_node.global_position
+	if away.length_squared() <= 0.001:
+		away = -fallback_direction
+	if away.length_squared() <= 0.001:
+		away = Vector2.LEFT
+	if global_position.distance_to(target_node.global_position) < separation:
+		global_position = target_node.global_position + away.normalized() * separation
+
+
+func play_enemy_action(action: StringName, facing: Vector2) -> bool:
+	return _play_grunt_semantic(action, facing)
+
+
+func get_enemy_presentation_action() -> StringName:
+	return _enemy_presentation.current_action if _enemy_presentation != null else &""
+
+
+func get_enemy_presentation_animation() -> String:
+	return String(animated_sprite.animation) if animated_sprite != null else ""
+
+
+func get_enemy_presentation_frame() -> int:
+	return animated_sprite.frame if animated_sprite != null else -1
+
+
+func is_enemy_presentation_playing() -> bool:
+	return animated_sprite.is_playing() if animated_sprite != null else false
+
+
+func resolve_enemy_action_animation(action: StringName, facing: Vector2) -> String:
+	if action.is_empty():
+		return ""
+	_ensure_enemy_presentation_controller()
+	if _enemy_presentation == null:
+		return ""
+	return String(_enemy_presentation.resolve_animation_name(action, facing))
+
+
+func set_ability_facing(facing: Vector2) -> void:
+	if facing.length_squared() > 0.0001:
+		_last_move_direction = facing.normalized()
+
+
+func refresh_enemy_directional_animation() -> void:
 	if _uses_directional_animation_set():
 		_update_directional_animation(_last_move_direction, false)
 
 
-func _try_apply_grunt_falcon_punch_hit(force_contact_check: bool = false) -> void:
-	if not force_contact_check and not _is_grunt_falcon_punch_hit_window_active():
-		return
-	if target == null or not is_instance_valid(target) or _is_target_destroyed(target):
-		return
-	var target_node := target as Node2D
-	if target_node == null:
-		return
-	var target_id := int(target_node.get_instance_id())
-	if _grunt_falcon_punch_hit_targets.has(target_id):
-		return
-	var spatial := EnemyHitSpatialContract.directional_lane(global_position, target_node.global_position, _grunt_falcon_punch_direction, 6.0, grunt_falcon_punch_hit_forward_reach_px, grunt_falcon_punch_hit_lateral_reach_px)
-	if not bool(spatial.spatial_valid):
-		return
-	_grunt_falcon_punch_hit_targets.append(target_id)
-	var hit_result := _apply_enemy_hit_to_target(
-		target_node,
-		damage * grunt_falcon_punch_damage_multiplier,
-		&"falcon_punch",
-		-1.0,
-		_grunt_falcon_punch_attack_id,
-		spatial
-	)
-	var result_name := StringName(str(hit_result.get("result", &"unknown")))
-	_grunt_falcon_punch_result = result_name
-	_obs_increment(&"grunt_falcon_punch_hits_resolved", 1)
-	_obs_increment(StringName("enemy_attack_result_%s" % String(result_name)), 1)
+func observatory_log(event_name: StringName, data: Dictionary = {}) -> void:
+	_obs_log(event_name, data)
+
+
+func observatory_increment(counter_name: StringName, amount := 1) -> void:
+	_obs_increment(counter_name, amount)
+
+
+func record_falcon_hit_result(result_name: StringName) -> void:
+	_obs_increment(&"grunt_falcon_punch_hits_resolved")
+	_obs_increment(StringName("enemy_attack_result_%s" % String(result_name)))
 	match result_name:
-		&"damaged":
-			_obs_increment(&"falcon_punch_result_damaged")
-		&"dodged":
-			_obs_increment(&"falcon_punch_result_iframe_dodged")
-		&"blocked":
-			_obs_increment(&"falcon_punch_result_blocked")
-		&"parried":
-			_obs_increment(&"falcon_punch_result_parried")
-	var resolved_event := _get_grunt_falcon_punch_telemetry()
-	resolved_event.merge({
-		"enemy": enemy_name,
-		"attack_id": _grunt_falcon_punch_attack_id,
-		"attacker_id": get_instance_id(),
-		"target_id": target_node.get_instance_id(),
-		"attack_type": "falcon_punch",
-		"phase": String(_grunt_falcon_punch_phase),
-		"position": global_position,
-		"target": target_node.name,
-		"target_position": target_node.global_position,
-		"result": String(hit_result.get("result", "")),
-		"applied_damage": float(hit_result.get("applied_damage", 0.0)),
-		"dodged": bool(hit_result.get("dodged", false)),
-		"blocked": bool(hit_result.get("blocked", false)),
-		"parried": bool(hit_result.get("parried", false)),
-	}, true)
-	resolved_event.merge(spatial, true)
-	_obs_log(&"grunt_falcon_punch_hit_resolved", resolved_event)
-	if bool(hit_result.get("parried", false)):
-		_obs_increment(&"falcon_punch_parried")
-		_obs_increment(&"enemy_attack_interrupted_by_parry")
-		var incoming_direction := _grunt_falcon_punch_direction
-		if target_node.has_method("try_start_falcon_reversal_from_parry") \
-				and bool(target_node.call(
-					"try_start_falcon_reversal_from_parry",
-					self,
-					incoming_direction
-				)):
-			_grunt_falcon_punch_result = &"parried_reversal"
-			return
-		_separate_from_target_after_contact(target_node)
-		if _grunt_falcon_punch_recent_parry_timer <= 0.0:
-			apply_parry_stagger(-_grunt_falcon_punch_direction, stagger_duration, 70.0)
-		return
-	if not bool(hit_result.get("dodged", false)) and not bool(hit_result.get("blocked", false)) and float(hit_result.get("applied_damage", 0.0)) > 0.0:
-		_grunt_falcon_punch_impact_confirmed = true
-		_grunt_falcon_punch_result = &"damaged"
-		_obs_increment(&"falcon_punch_hits")
-		if target_node.has_method("apply_enemy_falcon_punch_impact"):
-			target_node.call("apply_enemy_falcon_punch_impact", _grunt_falcon_punch_direction, grunt_falcon_punch_knockback_px, grunt_falcon_punch_victim_hitstop)
-		_trigger_grunt_falcon_punch_camera_feedback()
-		_apply_grunt_falcon_punch_hitstop(maxf(grunt_falcon_punch_victim_hitstop, grunt_falcon_punch_attacker_hitstop))
-		_grunt_falcon_punch_attacker_hitstop_timer = maxf(_grunt_falcon_punch_attacker_hitstop_timer, grunt_falcon_punch_attacker_hitstop)
-		_separate_from_target_after_contact(target_node)
-		_start_grunt_falcon_punch_impact_lock()
-		return
-	_separate_from_target_after_contact(target_node)
-	_start_grunt_falcon_punch_recovery()
+		&"damaged": _obs_increment(&"falcon_punch_result_damaged")
+		&"dodged": _obs_increment(&"falcon_punch_result_iframe_dodged")
+		&"blocked": _obs_increment(&"falcon_punch_result_blocked")
+		&"parried": _obs_increment(&"falcon_punch_result_parried")
 
 
-func _resolve_grunt_falcon_punch_whiff(reason: StringName) -> void:
-	if _grunt_falcon_punch_phase != &"leap":
-		return
-	_grunt_falcon_punch_result = reason
+func record_falcon_whiff(reason: StringName) -> void:
 	_obs_increment(&"falcon_punch_whiffed")
 	_obs_increment(&"falcon_punch_result_whiffed")
 	_obs_increment(&"enemy_attack_whiffs")
@@ -1266,55 +1125,26 @@ func _resolve_grunt_falcon_punch_whiff(reason: StringName) -> void:
 		_obs_increment(&"enemy_attack_whiffed_out_of_arc")
 	else:
 		_obs_increment(&"enemy_attack_whiffed_out_of_range")
-	var whiff_event := _get_grunt_falcon_punch_telemetry()
-	whiff_event.merge({
-		"attack_id": _grunt_falcon_punch_attack_id,
-		"attacker_id": get_instance_id(),
-		"target_id": target.get_instance_id() if target != null and is_instance_valid(target) else 0,
-		"attack_type": "falcon_punch",
-		"phase": "leap",
-		"result": "whiffed",
-		"reason": String(reason),
-		"position": global_position,
-	}, true)
-	_obs_log(&"grunt_falcon_punch_hit_resolved", whiff_event)
-	_start_grunt_falcon_punch_recovery()
 
 
-func _get_grunt_falcon_punch_miss_reason() -> StringName:
-	if not target is Node2D or not is_instance_valid(target) or _is_target_destroyed(target):
-		return &"target_out_of_range"
-	var to_target := (target as Node2D).global_position - global_position
-	var lateral_distance := absf(to_target.cross(_grunt_falcon_punch_direction))
-	if lateral_distance > grunt_falcon_punch_hit_lateral_reach_px:
-		return &"target_out_of_arc"
-	return &"target_out_of_range"
-
-
-func _separate_from_target_after_contact(target_node: Node2D) -> void:
-	if target_node == null or not is_instance_valid(target_node):
-		return
-	var separation := maxf(0.0, enemy_body_separation_px)
-	var away := global_position - target_node.global_position
-	if away.length_squared() <= 0.001:
-		away = -_grunt_falcon_punch_direction
-	if away.length_squared() <= 0.001:
-		away = Vector2.LEFT
-	if global_position.distance_to(target_node.global_position) < separation:
-		global_position = target_node.global_position + away.normalized() * separation
-
-
-func _trigger_grunt_falcon_punch_camera_feedback() -> void:
+func trigger_falcon_camera_feedback(
+	facing: Vector2,
+	ability_config: GruntFalconPunchConfig
+) -> void:
 	var camera := get_node_or_null("/root/GameRoot/World/Camera2D")
 	if camera == null:
 		return
 	if camera.has_method("on_attack_impact"):
-		camera.call("on_attack_impact", _grunt_falcon_punch_direction, true)
+		camera.call("on_attack_impact", facing, true)
 	if camera.has_method("shake"):
-		camera.call("shake", grunt_falcon_punch_camera_shake_strength * 10.0, grunt_falcon_punch_camera_shake_duration)
+		camera.call(
+			"shake",
+			ability_config.camera_shake_strength * 10.0,
+			ability_config.camera_shake_duration
+		)
 
 
-func _apply_grunt_falcon_punch_hitstop(duration: float) -> void:
+func apply_ability_hitstop(duration: float) -> void:
 	if duration <= 0.0 or Engine.time_scale < 1.0:
 		return
 	Engine.time_scale = 0.1
@@ -1325,78 +1155,6 @@ func _apply_grunt_falcon_punch_hitstop(duration: float) -> void:
 	await tree.create_timer(duration, true, false, true).timeout
 	if Engine.time_scale < 1.0:
 		Engine.time_scale = 1.0
-
-
-func _is_grunt_falcon_punch_hit_window_active() -> bool:
-	if _grunt_falcon_punch_phase != &"leap":
-		return false
-	var leap_time := maxf(0.01, grunt_falcon_punch_leap_time)
-	var progress := clampf(1.0 - (_grunt_falcon_punch_timer / leap_time), 0.0, 1.0)
-	var active_start := clampf(grunt_falcon_punch_hit_active_start_ratio, 0.0, 1.0)
-	var active_end := clampf(grunt_falcon_punch_hit_active_end_ratio, active_start, 1.0)
-	return progress >= active_start and progress <= active_end
-
-
-func _log_grunt_falcon_punch_event(event_name: StringName) -> void:
-	_obs_log(event_name, _get_grunt_falcon_punch_telemetry())
-
-
-func _audit_grunt_falcon_punch_presentation() -> void:
-	if _grunt_falcon_punch_phase.is_empty() or not _uses_custom_enemy_animation_set() or animated_sprite == null:
-		return
-	var expected := GRUNT_ANIMATION_LIBRARY.get_grunt_falcon_punch_phase_animation(
-		_grunt_falcon_punch_phase,
-		_grunt_falcon_punch_direction
-	)
-	if expected.is_empty() or String(animated_sprite.animation) == String(expected):
-		return
-	_obs_increment(&"falcon_punch_presentation_desync")
-	_obs_log(&"grunt_falcon_punch_presentation_desync", _get_grunt_falcon_punch_telemetry())
-
-
-func _get_grunt_falcon_punch_telemetry() -> Dictionary:
-	var dodge_phase := "unknown"
-	if target != null and is_instance_valid(target) and target.has_method("get_dodge_telemetry_phase"):
-		dodge_phase = String(target.call("get_dodge_telemetry_phase"))
-	var expected_animation := &""
-	if not _grunt_falcon_punch_phase.is_empty():
-		expected_animation = GRUNT_ANIMATION_LIBRARY.get_grunt_falcon_punch_phase_animation(
-			_grunt_falcon_punch_phase,
-			_grunt_falcon_punch_direction
-		)
-	var presentation_animation := String(animated_sprite.animation) if animated_sprite != null else ""
-	return {
-		"attack_id": _grunt_falcon_punch_attack_id,
-		"attacker_id": get_instance_id(),
-		"target_id": target.get_instance_id() if target != null and is_instance_valid(target) else 0,
-		"attack_type": "falcon_punch",
-		"enemy": enemy_name,
-		"phase": String(_grunt_falcon_punch_phase),
-		"result": String(_grunt_falcon_punch_result),
-		"position": global_position,
-		"direction": _grunt_falcon_punch_direction,
-		"target": target.name if target != null and is_instance_valid(target) else "",
-		"damage": damage * grunt_falcon_punch_damage_multiplier,
-		"launch_distance": _grunt_falcon_punch_launch_distance,
-		"target_distance_at_active_start": _grunt_falcon_punch_active_start_target_distance,
-		"closest_approach": _grunt_falcon_punch_closest_approach if is_finite(_grunt_falcon_punch_closest_approach) else -1.0,
-		"lateral_error": _grunt_falcon_punch_lateral_error,
-		"player_dodge_phase": dodge_phase,
-		"collision_obstructed": _grunt_falcon_punch_collision_obstructed,
-		"stop_short_distance": grunt_falcon_punch_stop_short_px,
-		"windup_duration": grunt_falcon_punch_windup_time,
-		"phase_timer_remaining": _grunt_falcon_punch_timer,
-		"windup_progress": clampf(1.0 - (_grunt_falcon_punch_timer / maxf(0.01, grunt_falcon_punch_windup_time)), 0.0, 1.0) if _grunt_falcon_punch_phase == &"windup" else 1.0,
-		"tracking_lock_sec": grunt_falcon_punch_tracking_lock_sec,
-		"tracking_locked": _grunt_falcon_punch_tracking_locked,
-		"locked_direction": _grunt_falcon_punch_locked_direction,
-		"lock_target_position": _grunt_falcon_punch_lock_target_position,
-		"presentation_animation": presentation_animation,
-		"presentation_frame": animated_sprite.frame if animated_sprite != null else -1,
-		"presentation_playing": animated_sprite.is_playing() if animated_sprite != null else false,
-		"expected_animation": String(expected_animation),
-		"presentation_matches_phase": expected_animation.is_empty() or (animated_sprite != null and presentation_animation == String(expected_animation)),
-	}
 
 
 func _attack_marine_dash_target(delta: float) -> void:
@@ -1814,7 +1572,7 @@ func _get_attack_range(node: Node2D) -> float:
 	if _variant_profile != null:
 		return float(_variant_profile.get("attack_range"))
 	if _should_use_grunt_falcon_punch_attack() and _should_start_grunt_falcon_punch_now(node):
-		return grunt_falcon_punch_launch_band_max
+		return grunt_falcon_punch_config.launch_band.y
 	if _should_use_marine_dash_attack() and node.is_in_group("player"):
 		return marine_dash_launch_band_max
 	if node.is_in_group("player"):
@@ -1859,7 +1617,7 @@ func get_behavior_attack_range() -> float:
 	if _should_use_savage_attacks():
 		return savage_pounce_launch_band_max if savage_pounce_enabled and _savage_pounce_cooldown_timer <= 0.0 else 40.0
 	if _should_use_grunt_falcon_punch_attack() and target is Node2D and _should_start_grunt_falcon_punch_now(target as Node2D):
-		return grunt_falcon_punch_launch_band_max
+		return grunt_falcon_punch_config.launch_band.y
 	if _should_use_marine_dash_attack():
 		return marine_dash_launch_band_max
 	return 40.0
@@ -2265,7 +2023,7 @@ func die():
 	_release_parry_critical_execution_owner()
 	_parry_critical_phase = ParryCriticalPhase.NONE
 	_parry_critical_standalone_root_valid = false
-	if not _grunt_falcon_punch_phase.is_empty():
+	if _grunt_falcon_punch_ability.is_active():
 		_obs_increment(&"enemy_attack_interrupted_by_death")
 		_obs_increment(&"falcon_punch_cancelled")
 	_finish_grunt_falcon_punch_attack(&"cancelled_by_death")
@@ -2528,10 +2286,10 @@ func get_debug_snapshot() -> Dictionary:
 		attack_id = _marine_dash_attack_id
 		attack_type = "marine_dash"
 		attack_phase = String(_marine_dash_phase)
-	elif not _grunt_falcon_punch_phase.is_empty():
-		attack_id = _grunt_falcon_punch_attack_id
+	elif _grunt_falcon_punch_ability.is_active():
+		attack_id = _grunt_falcon_punch_ability.attack_id
 		attack_type = "falcon_punch"
-		attack_phase = String(_grunt_falcon_punch_phase)
+		attack_phase = String(_grunt_falcon_punch_ability.get_phase_name())
 	return {
 		"position": global_position,
 		"health": {"current": health, "max": max_health},
@@ -2963,8 +2721,7 @@ func _hold_animated_sprite_final_frame(animation_name: StringName) -> void:
 
 func _start_attack_windup(queued_damage: float, is_strong: bool) -> void:
 	if _should_use_grunt_falcon_punch_attack() and target is Node2D and target.is_in_group("player"):
-		_grunt_falcon_punch_normal_attacks_since_special += 1
-		_grunt_falcon_punch_decision_credit = minf(2.0, _grunt_falcon_punch_decision_credit + clampf(grunt_falcon_punch_chance, 0.0, 1.0))
+		_grunt_falcon_punch_ability.on_normal_attack_started()
 	_pending_attack_damage = queued_damage
 	_attack_sequence += 1
 	if custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT):
@@ -3426,12 +3183,11 @@ func apply_melee_impact(attack_kind: String, knockback_direction: Vector2, knock
 func apply_parry_stagger(knockback_direction: Vector2, duration: float, knockback_force: float) -> void:
 	if dead:
 		return
-	var interrupted_falcon_punch := not _grunt_falcon_punch_phase.is_empty()
+	var interrupted_falcon_punch := _grunt_falcon_punch_ability.is_active()
 	_cancel_pending_attack_with_result(&"interrupted", &"parry")
 	_cancel_savage_attack()
-	_finish_grunt_falcon_punch_attack()
 	if interrupted_falcon_punch:
-		_grunt_falcon_punch_recent_parry_timer = maxf(_grunt_falcon_punch_recent_parry_timer, grunt_falcon_punch_recent_parry_lockout_sec)
+		_grunt_falcon_punch_ability.on_parried()
 	_finish_marine_dash_attack()
 	_stagger_timer = 0.0
 	_recoil_timer = 0.0
@@ -3528,9 +3284,7 @@ func can_receive_falcon_reversal_from(
 ) -> bool:
 	if dead or custom_enemy_animation_set != String(CUSTOM_ENEMY_GRUNT):
 		return false
-	if _grunt_falcon_punch_phase != &"leap":
-		return false
-	if attacker == null or not is_instance_valid(attacker) or target != attacker:
+	if not _grunt_falcon_punch_ability.can_receive_reversal_from(attacker):
 		return false
 	if _parry_critical_target != null \
 			or _parry_critical_phase == ParryCriticalPhase.EXECUTING:
@@ -3552,11 +3306,7 @@ func reserve_falcon_reversal(
 	if not can_receive_falcon_reversal_from(attacker, incoming_direction):
 		return {}
 	var direction := _resolve_falcon_reversal_direction(incoming_direction)
-	_grunt_falcon_punch_recent_parry_timer = maxf(
-		_grunt_falcon_punch_recent_parry_timer,
-		grunt_falcon_punch_recent_parry_lockout_sec
-	)
-	_finish_grunt_falcon_punch_attack(&"parried_reversal")
+	_grunt_falcon_punch_ability.finish_for_reversal()
 	return _reserve_paired_execution(attacker, &"falcon_reversal", direction)
 
 
@@ -4513,11 +4263,8 @@ func _update_custom_enemy_animation(direction: Vector2, is_moving: bool, force_a
 		facing = _last_move_direction
 	animated_sprite.scale = custom_enemy_animation_scale
 	_base_sprite_scale = animated_sprite.scale
-	if not _grunt_falcon_punch_phase.is_empty():
-		var special_animation := GRUNT_ANIMATION_LIBRARY.get_grunt_falcon_punch_phase_animation(_grunt_falcon_punch_phase, _grunt_falcon_punch_direction)
-		if _has_animation(String(special_animation)):
-			animated_sprite.flip_h = false
-			_play_animation(String(special_animation), false)
+	if _grunt_falcon_punch_ability.is_active():
+		_grunt_falcon_punch_ability.play_current_presentation()
 		return
 	if _parry_critical_phase != ParryCriticalPhase.NONE:
 		var critical_phase_name := &""

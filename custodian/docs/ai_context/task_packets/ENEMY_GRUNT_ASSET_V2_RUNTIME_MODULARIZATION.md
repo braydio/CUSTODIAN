@@ -1,13 +1,13 @@
 # Enemy Grunt Asset V2 Migration + Runtime Modularization
 
-- Status: `implemented_with_recorded_follow_up`
+- Status: `complete`
 - Authority: `design/04_architecture/ASSET_PIPELINE_V2.md`, `design/02_features/animation/ENEMY_GRUNT_RUNTIME_WIRING.md`
 - Goal: migrate the staged grunt batch through V2, replace concrete presentation wiring with semantic animation ownership, and extract the first special-ability module without changing strategic AI.
 - Files: asset planner/transactions, grunt migration tooling/content, enemy presentation/ability runtime, focused validation, ownership/current-state docs.
 - Constraints: preserve `EnemyBehaviorStateMachine`; preserve combat timing, Falcon reversal, critical execution, authored diagonals, and 156px material; never let FX own gameplay timing; preserve unrelated dirty work.
 - Acceptance: consumer-safe plans, deterministic semantic presentation, checked inbox migration, no missing paths/duplicate identities, focused combat and asset validations.
 - Completed: current-HEAD re-audit; V2.1 enemy schema/family confirmed and expanded; hash-backed inbox migration; transactional 27-input/54-output ingest; semantic animation set/controller; deterministic attack and reaction presentation; consumer-safe supersession; strict runtime cleanup; first Falcon Punch ability seam; documentation repair.
-- Deferred: remaining Falcon phase/timer extraction, Marine/Savage extraction, and profile `.tres` migration. The first Falcon module owns launch/lane eligibility, while the proven phase execution remains in `enemy.gd` until a dedicated equivalence slice.
+- Follow-up: Marine/Savage extraction and profile `.tres` migration remain separate slices. Falcon phase/timer ownership moved fully into `GruntFalconPunch` on 2026-08-21 with typed configuration, captured target identity, token-stall recovery, semantic presentation, and equivalence validation.
 
 ## Ownership And Timing
 
@@ -49,6 +49,6 @@
 
 ## Handoff
 
-- Next architecture slice: move the remaining Falcon phase/timer machinery behind the ability interface, then consider Marine/Savage extraction.
+- Completed architecture slice: Falcon owns its complete phase/timer/cadence/contact/telemetry machine; `Enemy` supplies narrow shared combat services and temporary debug compatibility accessors. Next compare this module with Marine Dash before introducing any generic ability base.
 - Pending content: classify or add a family state for the separately arrived `idle_02` input before ingesting it.
 - Moment follow-up: repair or retune `combat/light_hit_grunt` targeting setup; do not change enemy gameplay timing to satisfy the failed assertion.

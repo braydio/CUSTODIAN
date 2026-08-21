@@ -27,6 +27,16 @@ class DummyTarget:
 		falcon_impacts += 1
 
 
+class RejectingEngagementCoordinator:
+	extends Node
+
+	func reject(_target: Node2D, _hold_sec: float) -> bool:
+		return false
+
+	func release_committed_attack(_enemy: Node) -> void:
+		pass
+
+
 var _failed := false
 
 
@@ -52,6 +62,10 @@ func _run() -> void:
 	scene_root.add_child(target)
 	await process_frame
 	grunt.set_physics_process(false)
+	var ability := grunt.get_grunt_falcon_punch_ability() as GruntFalconPunch
+	var config := grunt.grunt_falcon_punch_config as GruntFalconPunchConfig
+	_assert_true(ability != null, "grunt should expose its owned Falcon ability")
+	_assert_true(config != null, "grunt should use typed Falcon configuration")
 	var body_sprite := grunt.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
 	_assert_near(float(grunt.get("grunt_falcon_punch_windup_time")), 0.75, 0.001, "live grunt should use the longer Falcon tell")
 	_assert_near(float(grunt.get("grunt_falcon_punch_tracking_lock_sec")), 0.25, 0.001, "live grunt should lock Falcon tracking for the final quarter-second")
@@ -101,6 +115,42 @@ func _run() -> void:
 		_assert_true(bool(leap_data.get("presentation_matches_phase", false)), "leap telemetry should confirm phase/presentation agreement")
 		_assert_true(bool(leap_data.get("tracking_locked", false)), "leap telemetry should retain commitment state")
 	grunt.call("_finish_grunt_falcon_punch_attack", &"debug_lock_test_complete")
+
+	# Captured identity remains authoritative even when Enemy.target is replaced.
+	var decoy := DummyTarget.new()
+	decoy.name = "DecoyPlayer"
+	decoy.add_to_group("player")
+	decoy.global_position = Vector2(-160.0, 0.0)
+	scene_root.add_child(decoy)
+	grunt.target = target
+	target.global_position = Vector2(112.0, 0.0)
+	ability.start_debug(target, Vector2.RIGHT)
+	ability.phase_timer = 0.0
+	ability.tick(0.0)
+	_assert_true(ability.get_phase_name() == &"committed", "successful token claim should enter explicit committed phase")
+	grunt.target = decoy
+	ability.tick(config.committed_time + 0.01)
+	_assert_true(ability.get_phase_name() == &"leap", "committed Falcon should launch")
+	_assert_true(ability.target_id == target.get_instance_id(), "Falcon target identity must not follow Enemy.target replacement")
+	_assert_true(ability.direction.x > 0.9, "captured Falcon must retain its original eastward commitment")
+	ability.finish(&"captured_target_test")
+	decoy.queue_free()
+
+	# A denied token cannot leave Falcon sitting forever at a zero timer.
+	var coordinator := RejectingEngagementCoordinator.new()
+	root.add_child(coordinator)
+	ability.engagement_token_request = Callable(coordinator, "reject")
+	grunt.target = target
+	ability.start_debug(target, Vector2.RIGHT)
+	ability.phase_timer = 0.0
+	ability.tick(0.0)
+	_assert_true(ability.get_phase_name() == &"recovery", "token denial should abort into recovery")
+	_assert_true(ability.result == &"token_unavailable", "token denial should expose a terminal reason")
+	ability.finish(&"token_denial_test")
+	ability.engagement_token_request = Callable(grunt, "try_claim_ability_engagement_token")
+	coordinator.queue_free()
+	await process_frame
+	grunt.target = target
 	grunt.global_position = Vector2.ZERO
 	target.global_position = Vector2(112.0, 0.0)
 	grunt.set("grunt_falcon_punch_windup_time", 0.02)
