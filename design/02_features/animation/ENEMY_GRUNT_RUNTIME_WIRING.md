@@ -19,7 +19,7 @@ The `enemy_grunt` sprite intake is a new active-enemy art set, not a replacement
 - Debug spawn: DevConsole command `spawn_grunt [x_offset y_offset]` spawns one near the operator through `EnemyDirector` / `WaveManager`. `spawn_grunt falcon` places one at a useful test distance and immediately starts the special windup against the Operator.
 - Startup test: `WaveManager.debug_spawn_grunt_on_start` can place one grunt near the initial operator spawn for live visual review, but it waits until the operator crosses `debug_start_grunt_trigger_distance` away from that spawn zone so AFK scene loads are safe.
 - Attack timing: `EnemyGrunt.attack_windup_duration` remains `0.42s`; gameplay timing is independent of strip frame count. The active ordinary `fast_01` E/W body and FX strips are nine frames.
-- Special attack: `EnemyGrunt.grunt_falcon_punch_enabled` selects the typed `GruntFalconPunchConfig`, while `GruntFalconPunch` owns cadence, cooldown, captured target identity, explicit `TRACKING -> COMMITTED -> LEAP -> IMPACT_LOCK -> RECOVERY` phases, movement, contact, reversal interruption, and telemetry. Falcon remains a deliberate commitment after normal melee pressure: deterministic cadence, recent-parry lockout, and a clear ally lane are required. The first `0.50s` tracks the captured Operator; the engagement token is claimed before the final `0.25s` committed tell, so a displayed commitment guarantees launch unless genuinely interrupted. That transition emits one local 100ms presentation pulse and freezes direction/target point. The `0.28s` leap derives travel from the committed target projection (`distance - 28px stop-short + 10px cushion`) and caps it from the `184px` launch band, so launch eligibility and physical reach cannot drift apart. It never homes after commitment and retains the `42px` forward by `30px` lateral contact envelope. Recovery has zero forward velocity and is result-specific: damaging hit `0.70s`, block `0.75s`, dodge/ordinary whiff `0.85s`, collision obstruction `0.95s`. Six-frame windup and inflight clips remain phase-matched at `8.0` and `21.428571` FPS; recovery playback is presentation-only and gameplay timers remain authoritative. Shared hit resolution remains in `Enemy.resolve_ability_hit(...)`, preserving dodge, parry, guard, damage analytics, body separation, camera feedback, and hitstop. A committed-leap parry still prefers automatic E/W Falcon Reversal.
+- Special attack: `EnemyGrunt.grunt_falcon_punch_enabled` selects the typed `GruntFalconPunchConfig`, while `GruntFalconPunch` owns cadence, cooldown, captured target identity, explicit `TRACKING -> COMMITTED -> LEAP` plus hit, soft-collision, hard-collision/stand-up, and recovery phases, movement, contact, reversal interruption, and telemetry. Falcon remains a deliberate commitment after normal melee pressure: deterministic cadence, recent-parry lockout, and a clear ally lane are required. The first `0.50s` tracks the captured Operator; the engagement token is claimed before the final `0.25s` committed tell, so a displayed commitment guarantees launch unless genuinely interrupted. That transition emits one local 100ms presentation pulse and freezes direction/target point. The `0.28s` leap derives travel from the committed target projection (`distance - 28px stop-short + 10px cushion`) and caps it from the `184px` launch band, so launch eligibility and physical reach cannot drift apart. It never homes after commitment and retains the `42px` forward by `30px` lateral contact envelope. Operator contact resolves first; enemy-body and glancing/static contacts take the soft collision path, while an opposing static-world normal after at least `22px` travel enters the authored collision knockdown and stand-up sequence. Recovery has zero forward velocity and is result-specific: damaging hit `0.70s`, block `0.75s`, dodge/ordinary whiff `0.85s`, collision obstruction `0.95s`. Six-frame windup and body/FX inflight clips remain phase-matched at `8.0` and `21.428571` FPS; recovery playback is presentation-only and gameplay timers remain authoritative. Shared hit resolution remains in `Enemy.resolve_ability_hit(...)`, preserving dodge, parry, guard, damage analytics, body separation, camera feedback, and hitstop. A committed-leap parry still prefers automatic E/W Falcon Reversal.
 - Falcon impact: a damaging, unblocked hit invokes the Operator's dedicated Falcon impact hook for hit recoil, `58px` knockback intent, brief hitstop, and smaller camera feedback than Marine dash. Block, parry, contact, and recovery all preserve body separation.
 
 The current art set is partial but expanded:
@@ -30,6 +30,7 @@ The current art set is partial but expanded:
 - stagger: current 8-frame east/west strips plus the existing south fallback, selected from tracked knockback/facing direction
 - flinch: east/west 5-frame strips plus the existing south fallback
 - special punch: dedicated east/west 6-frame `special_windup_01`, `special_inflight_01`, and `special_recovery_01` strips
+- Falcon collision: east-authored/west-mirrored synchronized four-frame soft collision and eight-frame hard-collision knockdown body/FX; hard collision exits through the existing five-frame `reaction.stand_up`
 - death: the current east-facing 5-frame fall is active and mirrors for west-facing deaths
 - paired execution victim: south retains the 8-frame fallback; east/west use matched 12-frame victim strips synchronized to the Operator body/FX triplets
 - Falcon Reversal victim: matched east/west eight-frame `156x156` strips share
@@ -38,6 +39,20 @@ The current art set is partial but expanded:
 - melee FX: east and west overlay strips, played through `CustomEnemyFxSprite` during grunt attack windup
 
 Until directional coverage is complete, runtime reuses available body strips instead of blocking the enemy from spawning.
+
+## Animation Usage Audit
+
+| Semantic actions | Runtime status | Trigger/ownership |
+| --- | --- | --- |
+| relaxed/ready idle, walk, run | Runtime-triggered | locomotion urgency; BSM still owns movement |
+| posture.draw / posture.alert | Runtime-triggered | first/later `NOTICE` transition; fixed 0.35s presentation window |
+| fast_01/02/03 | Runtime-triggered | deterministic spawn-ordinal bag; simulation attack timing unchanged |
+| flinch_01/02 | Runtime-triggered | damage/max-health severity below authoritative stagger/crit thresholds |
+| flavor bark/taunts | Runtime-triggered | deterministic stationary idle/ambient/search windows; threat or movement cancels immediately |
+| Falcon windup/inflight/recovery/collision/knockdown | Runtime-triggered | ability-owned phases; FX has no hit authority |
+| reaction.stand_up | Runtime-triggered | hard Falcon world collision only |
+| generic knockdown_01/02 | Registered, intentionally dormant | no general enemy knockdown gameplay authority exists |
+| critical, execution victim, Falcon Reversal victim | Runtime-triggered | existing critical/paired-execution authorities |
 
 ## Acceptance
 

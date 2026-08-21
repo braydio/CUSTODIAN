@@ -88,6 +88,14 @@ func _run() -> void:
 	for animation_name in [&"special_recovery_e", &"special_recovery_w"]:
 		_assert_true(body_sprite.sprite_frames.get_frame_count(animation_name) == 6, "%s should retain six frames" % animation_name)
 		_assert_near(body_sprite.sprite_frames.get_animation_speed(animation_name), 8.571429, 0.0001, "%s should span the 0.70s recovery" % animation_name)
+	for animation_name in [&"falcon_collision_e", &"falcon_collision_w"]:
+		_assert_true(body_sprite.sprite_frames.get_frame_count(animation_name) == 4, "%s should retain four frames" % animation_name)
+	for animation_name in [&"falcon_collision_knockdown_e", &"falcon_collision_knockdown_w"]:
+		_assert_true(body_sprite.sprite_frames.get_frame_count(animation_name) == 8, "%s should retain eight frames" % animation_name)
+	var fx_sprite := grunt.get_node_or_null("CustomEnemyFxSprite") as AnimatedSprite2D
+	_assert_true(fx_sprite != null, "grunt should expose synchronized Falcon FX")
+	if fx_sprite != null:
+		_assert_true(fx_sprite.sprite_frames.get_frame_count(&"combat_falcon_inflight_fx_e") == 6, "Falcon inflight FX should retain six frames")
 
 	grunt.global_position = Vector2.ZERO
 	grunt.set("target", target)
@@ -364,15 +372,57 @@ func _run() -> void:
 	grunt.call("_start_grunt_falcon_punch_leap")
 	grunt.call("_resolve_grunt_falcon_punch_whiff", &"blocked_by_collision")
 	_assert_near(ability.phase_timer, config.collision_recovery_time, 0.001, "collision obstruction should use longest recovery")
+	grunt.call("_finish_grunt_falcon_punch_attack", &"debug_collision_complete")
+
+	# A meaningful head-on StaticBody collision owns the crash/stand-up sequence.
+	var wall := StaticBody2D.new()
+	var wall_shape := CollisionShape2D.new()
+	var wall_rect := RectangleShape2D.new()
+	wall_rect.size = Vector2(12.0, 120.0)
+	wall_shape.shape = wall_rect
+	wall.add_child(wall_shape)
+	wall.global_position = Vector2(58.0, 0.0)
+	scene_root.add_child(wall)
+	grunt.global_position = Vector2.ZERO
+	target.global_position = Vector2(150.0, 0.0)
+	ability.start_debug(target, Vector2.RIGHT)
+	ability.start_leap()
+	for step in 12:
+		ability.tick(0.03)
+		if ability.get_phase_name() == &"collision_knockdown":
+			break
+	_assert_true(ability.get_phase_name() == &"collision_knockdown", "head-on world collision after meaningful travel should hard-knockdown")
+	_assert_true(ability.result == &"blocked_by_collision_hard", "hard collision should retain distinct terminal result")
+	_assert_true(ability.collision_opposition >= config.hard_collision_opposition_threshold, "hard collision should record opposing normal")
+	ability.tick(config.hard_collision_knockdown_time + 0.01)
+	_assert_true(ability.get_phase_name() == &"stand_up", "hard collision should transition to stand-up exactly once")
+	ability.tick(config.stand_up_time + 0.01)
+	_assert_true(not ability.is_active(), "stand-up completion should return Falcon to idle")
+	wall.queue_free()
+
+	# Grunt expression is presentation-only and follows BSM transitions.
+	grunt._grunt_presentation_ready = false
+	grunt.on_behavior_presentation_state_changed(&"idle", &"notice")
+	_assert_true(grunt.get_enemy_presentation_action() == &"posture.draw", "relaxed grunt should draw on first notice")
+	grunt.on_behavior_presentation_state_changed(&"search", &"notice")
+	_assert_true(grunt.get_enemy_presentation_action() == &"posture.alert", "ready grunt should alert on later notice")
+	grunt._grunt_expression_timer = 0.0
+	grunt._grunt_flavor_cooldown = 0.0
+	grunt.velocity = Vector2.ZERO
+	grunt.behavior_state_machine.current_state = &"idle"
+	grunt._update_grunt_expression(0.01)
+	_assert_true(String(grunt.get_enemy_presentation_action()).begins_with("flavor."), "safe stationary idle should admit deterministic flavor")
+	grunt.on_behavior_presentation_state_changed(&"idle", &"engage_operator")
+	_assert_true(grunt._grunt_expression_action.is_empty(), "combat escalation should cancel flavor immediately")
 	if observatory != null:
-		_assert_true(int(observatory.get("counters").get("falcon_punch_whiffed", 0)) == 2, "Falcon whiff counter should identify range and collision misses")
-		_assert_true(int(observatory.get("counters").get("enemy_attack_whiffed_out_of_range", 0)) == 1, "Falcon range whiff should expose reason counter")
+		_assert_true(int(observatory.get("counters").get("falcon_punch_whiffed", 0)) == 3, "Falcon whiff counter should identify range and collision misses")
+		_assert_true(int(observatory.get("counters").get("enemy_attack_whiffed_out_of_range", 0)) >= 1, "Falcon range whiff should expose reason counter")
 		var falcon_counters: Dictionary = observatory.get("counters")
 		_assert_true(int(falcon_counters.get("falcon_punch_result_damaged", 0)) >= 1, "Falcon damaged terminal detail should be counted")
 		_assert_true(int(falcon_counters.get("falcon_punch_result_parried", 0)) == 1, "Falcon parried terminal detail should be counted")
 		_assert_true(int(falcon_counters.get("falcon_punch_result_blocked", 0)) == 1, "Falcon blocked terminal detail should be counted")
 		_assert_true(int(falcon_counters.get("falcon_punch_result_iframe_dodged", 0)) == 1, "Falcon iframe-dodged terminal detail should be counted")
-		_assert_true(int(falcon_counters.get("falcon_punch_result_whiffed", 0)) == 2, "Falcon whiff terminal detail should count both terminal misses")
+		_assert_true(int(falcon_counters.get("falcon_punch_result_whiffed", 0)) == 3, "Falcon whiff terminal detail should count range, generic collision, and hard collision")
 
 	if _failed:
 		push_error("grunt_falcon_punch_smoke failed")

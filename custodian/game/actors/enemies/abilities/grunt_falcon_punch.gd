@@ -3,7 +3,7 @@ class_name GruntFalconPunch
 
 const HitSpatial = preload("res://game/systems/combat/enemy_hit_spatial_contract.gd")
 
-enum Phase { IDLE, TRACKING, COMMITTED, LEAP, IMPACT_LOCK, RECOVERY }
+enum Phase { IDLE, TRACKING, COMMITTED, LEAP, IMPACT_LOCK, COLLISION, COLLISION_KNOCKDOWN, STAND_UP, RECOVERY }
 
 var host: Enemy
 var config: GruntFalconPunchConfig
@@ -36,6 +36,9 @@ var actual_travel_distance := 0.0
 var selected_recovery_duration := 0.0
 var commitment_cue_count := 0
 var engagement_token_request: Callable
+var engagement_token_claimed := false
+var collision_contact_position := Vector2.ZERO
+var collision_opposition := 0.0
 
 
 func setup(new_host: Enemy, new_config: GruntFalconPunchConfig) -> void:
@@ -80,6 +83,21 @@ func tick(delta: float) -> bool:
 			host.velocity = Vector2.ZERO
 			if phase_timer <= 0.0:
 				_start_recovery()
+		Phase.COLLISION:
+			host.velocity = Vector2.ZERO
+			play_current_presentation()
+			if phase_timer <= 0.0:
+				_start_recovery()
+		Phase.COLLISION_KNOCKDOWN:
+			host.velocity = Vector2.ZERO
+			play_current_presentation()
+			if phase_timer <= 0.0:
+				_start_stand_up()
+		Phase.STAND_UP:
+			host.velocity = Vector2.ZERO
+			play_current_presentation()
+			if phase_timer <= 0.0:
+				finish()
 		Phase.RECOVERY:
 			host.velocity = Vector2.ZERO
 			play_current_presentation()
@@ -117,6 +135,9 @@ func start_debug(target: Node2D, initial_direction := Vector2.ZERO) -> bool:
 	actual_travel_distance = 0.0
 	selected_recovery_duration = 0.0
 	commitment_cue_count = 0
+	engagement_token_claimed = false
+	collision_contact_position = Vector2.ZERO
+	collision_opposition = 0.0
 	phase = Phase.TRACKING
 	phase_timer = maxf(0.01, config.tracking_time)
 	cooldown_timer = maxf(0.0, config.cooldown)
@@ -220,6 +241,9 @@ func get_phase_name() -> StringName:
 		Phase.COMMITTED: return &"committed"
 		Phase.LEAP: return &"leap"
 		Phase.IMPACT_LOCK: return &"impact_lock"
+		Phase.COLLISION: return &"collision"
+		Phase.COLLISION_KNOCKDOWN: return &"collision_knockdown"
+		Phase.STAND_UP: return &"stand_up"
 		Phase.RECOVERY: return &"recovery"
 	return &"idle"
 
@@ -243,6 +267,9 @@ func get_semantic_action() -> StringName:
 	match phase:
 		Phase.TRACKING, Phase.COMMITTED: return &"combat.falcon.windup"
 		Phase.LEAP, Phase.IMPACT_LOCK: return &"combat.falcon.inflight"
+		Phase.COLLISION: return &"combat.falcon.collision"
+		Phase.COLLISION_KNOCKDOWN: return &"combat.falcon.collision_knockdown"
+		Phase.STAND_UP: return &"reaction.stand_up"
 		Phase.RECOVERY: return &"combat.falcon.recovery"
 	return &""
 
@@ -362,7 +389,7 @@ func finish(result_override: StringName = &"") -> void:
 	target_id = 0
 	committed_direction = Vector2.RIGHT
 	committed_target_position = Vector2.ZERO
-	host.release_ability_engagement_token()
+	_release_engagement_token_once()
 	host.velocity = Vector2.ZERO
 	host.refresh_enemy_directional_animation()
 
@@ -392,6 +419,8 @@ func get_telemetry() -> Dictionary:
 		"lateral_error": lateral_error,
 		"player_dodge_phase": dodge_phase,
 		"collision_obstructed": collision_obstructed,
+		"collision_contact_position": collision_contact_position,
+		"collision_opposition": collision_opposition,
 		"stop_short_distance": config.stop_short_px,
 		"committed_target_distance": committed_target_distance,
 		"planned_travel_distance": planned_travel_distance,
@@ -438,6 +467,7 @@ func _attempt_commit() -> void:
 		host.observatory_increment(&"falcon_punch_token_rejected")
 		_start_recovery()
 		return
+	engagement_token_claimed = true
 	committed_direction = direction
 	var target := _target()
 	if target != null:
@@ -483,8 +513,79 @@ func _update_leap() -> void:
 	actual_travel_distance = maxf(actual_travel_distance, traveled)
 	collision_obstructed = collision_obstructed or collisions > 0
 	try_apply_hit(traveled >= current_distance or collisions > 0)
-	if phase == Phase.LEAP and (collisions > 0 or traveled >= current_distance or phase_timer <= 0.0):
-		resolve_whiff(&"blocked_by_collision" if collisions > 0 else _miss_reason())
+	if phase != Phase.LEAP:
+		return
+	if collisions > 0:
+		_resolve_slide_collisions(traveled)
+		return
+	if traveled >= current_distance or phase_timer <= 0.0:
+		resolve_whiff(_miss_reason())
+
+
+func _resolve_slide_collisions(traveled: float) -> void:
+	var saw_world := false
+	var hard_world := false
+	for index in host.get_slide_collision_count():
+		var collision := host.get_slide_collision(index)
+		var collider := collision.get_collider()
+		if collider == _target():
+			continue
+		if collider is Node and (collider as Node).is_in_group("enemy"):
+			host.observatory_increment(&"falcon_soft_world_collisions")
+			_start_collision(false, collision.get_position(), 0.0, &"ally_collision")
+			return
+		var is_world := collider is StaticBody2D or collider is TileMapLayer
+		if not is_world:
+			continue
+		saw_world = true
+		var opposition := -collision.get_normal().normalized().dot(direction)
+		if traveled >= config.hard_collision_min_travel_px \
+				and opposition >= config.hard_collision_opposition_threshold:
+			hard_world = true
+			collision_contact_position = collision.get_position()
+			collision_opposition = opposition
+			break
+	if hard_world:
+		host.observatory_increment(&"falcon_hard_world_collisions")
+		_start_collision(true, collision_contact_position, collision_opposition, &"blocked_by_collision_hard")
+	elif saw_world:
+		host.observatory_increment(&"falcon_soft_world_collisions")
+		_start_collision(false, host.global_position, collision_opposition, &"blocked_by_collision_soft")
+	else:
+		resolve_whiff(&"blocked_by_collision")
+
+
+func _start_collision(hard: bool, contact_position: Vector2, opposition: float, terminal_result: StringName) -> void:
+	result = terminal_result
+	collision_contact_position = contact_position
+	collision_opposition = opposition
+	host.velocity = Vector2.ZERO
+	host.record_falcon_whiff(result)
+	_release_engagement_token_once()
+	if hard:
+		phase = Phase.COLLISION_KNOCKDOWN
+		phase_timer = maxf(0.01, config.hard_collision_knockdown_time)
+	else:
+		phase = Phase.COLLISION
+		phase_timer = maxf(0.01, config.soft_collision_time)
+	play_current_presentation()
+	_log(&"grunt_falcon_punch_collision")
+	_audit_presentation()
+
+
+func _start_stand_up() -> void:
+	phase = Phase.STAND_UP
+	phase_timer = maxf(0.01, config.stand_up_time)
+	play_current_presentation()
+	_log(&"grunt_falcon_punch_stand_up")
+	_audit_presentation()
+
+
+func _release_engagement_token_once() -> void:
+	if not engagement_token_claimed:
+		return
+	engagement_token_claimed = false
+	host.release_ability_engagement_token()
 
 
 func _start_impact_lock() -> void:

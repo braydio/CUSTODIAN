@@ -119,9 +119,13 @@ func change_state(new_state: StringName) -> void:
 		return
 	if current_state == AMBIENT_ACTIVITY and new_state != AMBIENT_ACTIVITY and get_parent() != null:
 		_release_ambient_anchor(get_parent())
+	var previous_state := current_state
 	current_state = new_state
 	state_time = 0.0
 	_storage_timer = 0.0
+	var owner := get_parent()
+	if owner != null and owner.has_method("on_behavior_presentation_state_changed"):
+		owner.call("on_behavior_presentation_state_changed", previous_state, new_state)
 	if debug_enabled:
 		print("[EnemyBehavior] %s -> %s" % [get_parent().name if get_parent() != null else "enemy", String(new_state)])
 

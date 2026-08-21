@@ -387,6 +387,11 @@ var _enemy_presentation: EnemyPresentationController = null
 var _grunt_attack_presentation_action: StringName = &"combat.fast_01"
 var _grunt_flinch_presentation_action: StringName = &"reaction.flinch_01"
 var _grunt_falcon_punch_ability: GruntFalconPunch = GRUNT_FALCON_PUNCH_SCRIPT.new()
+var _grunt_presentation_ready := false
+var _grunt_expression_action: StringName = &""
+var _grunt_expression_timer := 0.0
+var _grunt_expression_is_flavor := false
+var _grunt_flavor_cooldown := 4.0
 
 
 # Transitional inspection surface for existing debug tools and external smokes.
@@ -574,6 +579,7 @@ func _physics_process(delta):
 		_simulation_tier_accum = 0.0
 	var presentation_started: int = obs.perf_span_begin() if obs != null else 0
 	_update_threat_highlight_visual(delta)
+	_update_grunt_expression(delta)
 	if obs != null:
 		obs.perf_span_end(&"enemy_presentation", presentation_started)
 	_savage_pounce_cooldown_timer = maxf(0.0, _savage_pounce_cooldown_timer - delta)
@@ -1051,6 +1057,56 @@ func separate_ability_from_target(target_node: Node2D, fallback_direction: Vecto
 
 func play_enemy_action(action: StringName, facing: Vector2) -> bool:
 	return _play_grunt_semantic(action, facing)
+
+
+func on_behavior_presentation_state_changed(_previous_state: StringName, new_state: StringName) -> void:
+	if custom_enemy_animation_set != String(CUSTOM_ENEMY_GRUNT):
+		return
+	if new_state == &"notice":
+		_grunt_expression_action = &"posture.alert" if _grunt_presentation_ready else &"posture.draw"
+		_grunt_expression_timer = 0.35
+		_grunt_expression_is_flavor = false
+		_grunt_presentation_ready = true
+		_play_grunt_semantic(_grunt_expression_action, _last_move_direction, true)
+	elif new_state in [&"engage_operator", &"flee", &"escape_with_loot"]:
+		_cancel_grunt_flavor()
+		_grunt_presentation_ready = true
+	elif new_state == &"idle" and _previous_state == &"return_home":
+		_grunt_presentation_ready = false
+
+
+func _update_grunt_expression(delta: float) -> void:
+	if custom_enemy_animation_set != String(CUSTOM_ENEMY_GRUNT):
+		return
+	_grunt_expression_timer = maxf(0.0, _grunt_expression_timer - delta)
+	_grunt_flavor_cooldown = maxf(0.0, _grunt_flavor_cooldown - delta)
+	if _grunt_expression_timer <= 0.0:
+		_grunt_expression_action = &""
+		_grunt_expression_is_flavor = false
+	if _grunt_flavor_cooldown > 0.0 or velocity.length_squared() > 1.0:
+		return
+	if behavior_state_machine == null:
+		return
+	var state := StringName(behavior_state_machine.get("current_state"))
+	if state not in [&"idle", &"ambient_activity", &"search"]:
+		return
+	_ensure_enemy_presentation_controller()
+	if _enemy_presentation == null:
+		return
+	_grunt_expression_action = _enemy_presentation.select_flavor()
+	_grunt_expression_timer = 0.75
+	_grunt_expression_is_flavor = true
+	var ordinal := int(get_meta("stable_spawn_ordinal", 0))
+	_grunt_flavor_cooldown = 6.0 + float((ordinal + _enemy_presentation.flavor_ordinal) % 5)
+	_play_grunt_semantic(_grunt_expression_action, _last_move_direction, true)
+
+
+func _cancel_grunt_flavor() -> void:
+	if not _grunt_expression_is_flavor:
+		return
+	_grunt_expression_action = &""
+	_grunt_expression_timer = 0.0
+	_grunt_expression_is_flavor = false
 
 
 func get_enemy_presentation_action() -> StringName:
@@ -3096,7 +3152,7 @@ func _apply_reaction(amount: float, hit_strength: int = CombatConstants.HitStren
 
 	# INTERRUPT hits always cause hit-recoil regardless of damage amount
 	if hit_strength == CombatConstants.HitStrength.INTERRUPT:
-		_start_hit_recoil_reaction()
+		_start_hit_recoil_reaction(amount)
 		_obs_increment(&"enemy_reactions_interrupt", 1)
 		return
 
@@ -3116,7 +3172,7 @@ func _apply_reaction(amount: float, hit_strength: int = CombatConstants.HitStren
 		_play_armor_deflect_fx()
 		_obs_increment(&"enemy_reactions_armor_deflect", 1)
 	else:
-		_start_hit_recoil_reaction()
+		_start_hit_recoil_reaction(amount)
 		_obs_increment(&"enemy_reactions_flinch", 1)
 
 
@@ -3615,12 +3671,13 @@ func _enter_parry_critical_phase(phase: int) -> void:
 	_play_animation(String(animation_name), false)
 
 
-func _start_hit_recoil_reaction() -> void:
+func _start_hit_recoil_reaction(applied_damage := 0.0) -> void:
 	_recoil_timer = max(_recoil_timer, hit_recoil_duration)
 	if custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT):
 		_ensure_enemy_presentation_controller()
 		if _enemy_presentation != null:
-			_grunt_flinch_presentation_action = _enemy_presentation.select_flinch()
+			var severity_ratio := applied_damage / maxf(1.0, max_health)
+			_grunt_flinch_presentation_action = _enemy_presentation.select_flinch_for_severity(severity_ratio)
 	if _uses_directional_animation_set():
 		_update_directional_animation(_last_move_direction, false)
 
@@ -4295,6 +4352,11 @@ func _update_custom_enemy_animation(direction: Vector2, is_moving: bool, force_a
 	if force_attack:
 		if _play_grunt_semantic(_grunt_attack_presentation_action, facing):
 			return
+	if _grunt_expression_is_flavor and is_moving:
+		_cancel_grunt_flavor()
+	if not _grunt_expression_action.is_empty() and _grunt_expression_timer > 0.0:
+		if _play_grunt_semantic(_grunt_expression_action, facing):
+			return
 	if is_moving:
 		var movement_action := &"locomotion.run" if _grunt_movement_is_urgent() else &"locomotion.walk"
 		if _play_grunt_semantic(movement_action, facing):
@@ -4317,7 +4379,8 @@ func _ensure_enemy_presentation_controller() -> void:
 		_enemy_presentation.setup(
 			ENEMY_GRUNT_ANIMATION_SET,
 			animated_sprite,
-			custom_enemy_fx_sprite
+			custom_enemy_fx_sprite,
+			int(get_meta("stable_spawn_ordinal", 0))
 		)
 
 

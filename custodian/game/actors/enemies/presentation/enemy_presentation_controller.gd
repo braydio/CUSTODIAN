@@ -8,12 +8,20 @@ var current_action: StringName = &""
 var attack_ordinal := 0
 var reaction_ordinal := 0
 var flavor_ordinal := 0
+var stable_spawn_ordinal := 0
+
+const ATTACK_BAGS: Array[Array] = [
+	[&"combat.fast_01", &"combat.fast_02", &"combat.fast_01", &"combat.fast_03", &"combat.fast_02", &"combat.fast_03", &"combat.fast_01"],
+	[&"combat.fast_02", &"combat.fast_01", &"combat.fast_03", &"combat.fast_01", &"combat.fast_02", &"combat.fast_01", &"combat.fast_03"],
+	[&"combat.fast_01", &"combat.fast_03", &"combat.fast_02", &"combat.fast_01", &"combat.fast_03", &"combat.fast_01", &"combat.fast_02"],
+]
 
 
-func setup(set_resource: EnemyAnimationSet, body: AnimatedSprite2D, fx: AnimatedSprite2D = null) -> void:
+func setup(set_resource: EnemyAnimationSet, body: AnimatedSprite2D, fx: AnimatedSprite2D = null, spawn_ordinal := 0) -> void:
 	animation_set = set_resource
 	body_sprite = body
 	fx_sprite = fx
+	stable_spawn_ordinal = maxi(0, spawn_ordinal)
 	if body_sprite != null:
 		body_sprite.sprite_frames = animation_set.build_sprite_frames(&"body")
 	if fx_sprite != null:
@@ -61,8 +69,8 @@ func stop_on_first_frame() -> void:
 
 
 func select_normal_attack() -> StringName:
-	var actions: Array[StringName] = [&"combat.fast_01", &"combat.fast_02", &"combat.fast_03"]
-	var selected := actions[attack_ordinal % actions.size()]
+	var bag: Array = ATTACK_BAGS[stable_spawn_ordinal % ATTACK_BAGS.size()]
+	var selected: StringName = bag[attack_ordinal % bag.size()]
 	attack_ordinal += 1
 	return selected
 
@@ -72,6 +80,10 @@ func select_flinch() -> StringName:
 	var selected := actions[reaction_ordinal % actions.size()]
 	reaction_ordinal += 1
 	return selected
+
+
+func select_flinch_for_severity(damage_ratio: float) -> StringName:
+	return &"reaction.flinch_02" if damage_ratio >= 0.16 else &"reaction.flinch_01"
 
 
 func select_flavor() -> StringName:

@@ -18,6 +18,7 @@ func _init() -> void:
 		&"reaction.knockdown_01", &"reaction.knockdown_02",
 		&"reaction.stand_up", &"combat.falcon.windup",
 		&"combat.falcon.inflight", &"combat.falcon.recovery",
+		&"combat.falcon.collision", &"combat.falcon.collision_knockdown",
 		&"reaction.falcon_reversal_victim",
 	]
 	for action in required_actions:
@@ -32,11 +33,16 @@ func _init() -> void:
 	var second := _selection_fingerprint()
 	assert(first == second)
 	assert(first.slice(0, 3) == [
-		&"combat.fast_01", &"combat.fast_02", &"combat.fast_03",
+		&"combat.fast_01", &"combat.fast_02", &"combat.fast_01",
 	])
 	assert(first.slice(3, 5) == [
 		&"reaction.flinch_01", &"reaction.flinch_02",
 	])
+	var alternate: EnemyPresentationController = CONTROLLER.new()
+	alternate.stable_spawn_ordinal = 1
+	assert(alternate.select_normal_attack() == &"combat.fast_02")
+	assert(alternate.select_flinch_for_severity(0.05) == &"reaction.flinch_01")
+	assert(alternate.select_flinch_for_severity(0.20) == &"reaction.flinch_02")
 
 	var fast := ANIMATION_SET.resolve_clip(&"combat.fast_01", &"e")
 	assert(not String(fast.get("body_path", "")).is_empty())

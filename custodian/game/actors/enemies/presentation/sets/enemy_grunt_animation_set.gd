@@ -48,10 +48,14 @@ func _init() -> void:
 	_add_existing_pair(&"combat.fast_01", &"fast_01", &"sw", 10, 12.0, false, true)
 	_add_existing(&"combat.falcon.windup", &"special_windup_01", &"e", 6, 8.0)
 	_add_existing(&"combat.falcon.windup", &"special_windup_01", &"w", 6, 8.0)
-	_add_existing(&"combat.falcon.inflight", &"special_inflight_01", &"e", 6, 21.428571)
-	_add_existing(&"combat.falcon.inflight", &"special_inflight_01", &"w", 6, 21.428571)
+	_add_mixed_runtime_pair(&"combat.falcon.inflight", &"special_inflight_01", &"e", 6, 21.428571, "body", "fx/melee")
+	_add_mixed_runtime_pair(&"combat.falcon.inflight", &"special_inflight_01", &"w", 6, 21.428571, "body", "fx/melee")
 	_add_existing(&"combat.falcon.recovery", &"special_recovery_01", &"e", 6, 8.571429)
 	_add_existing(&"combat.falcon.recovery", &"special_recovery_01", &"w", 6, 8.571429)
+	_add_mixed_runtime_pair(&"combat.falcon.collision", &"falcon_collision_01", &"e", 4, 12.0, "body/melee", "fx/melee")
+	_add_mixed_runtime_pair(&"combat.falcon.collision", &"falcon_collision_01", &"w", 4, 12.0, "body/melee", "fx/melee")
+	_add_mixed_runtime_pair(&"combat.falcon.collision_knockdown", &"falcon_collision_knockdown_01", &"e", 8, 10.0, "body/melee", "fx/melee")
+	_add_mixed_runtime_pair(&"combat.falcon.collision_knockdown", &"falcon_collision_knockdown_01", &"w", 8, 10.0, "body/melee", "fx/melee")
 	_add_existing(&"reaction.critical", &"crit_01", &"s", 8, 10.0)
 	_add_existing(&"reaction.critical_recovery", &"crit_recovery_01", &"s", 5, 8.0)
 	_add_existing(&"reaction.critical_open_enter", &"parry_critical_open_enter_01", &"s", 5, 12.0)
@@ -106,6 +110,17 @@ func _add_existing_pair(action: StringName, variant: StringName, direction: Stri
 	clips.append(clip)
 
 
+func _add_mixed_runtime_pair(action: StringName, variant: StringName, direction: StringName, frames: int, fps: float, body_subdir: String, fx_subdir: String) -> void:
+	clips.append({
+		"action": action, "variant": variant, "direction": direction,
+		"body_path": "%s/%s/enemy_grunt__body__melee__%s__%s__%df__96.png" % [ROOT, body_subdir, variant, direction, frames],
+		"body_name": _compatibility_name(action, direction, &"body"),
+		"fx_path": "%s/%s/enemy_grunt__fx__melee__%s__%s__%df__96.png" % [ROOT, fx_subdir, variant, direction, frames],
+		"fx_name": _compatibility_name(action, direction, &"fx"),
+		"fps": fps, "loop": false,
+	})
+
+
 func _add_legacy_body(action: StringName, variant: StringName, direction: StringName, _frames: int, fps: float, loop: bool, path_template: String, animation_name: StringName, fx_path_template := "", fx_name: StringName = &"") -> void:
 	var clip := {
 		"action": action, "variant": variant, "direction": direction,
@@ -153,4 +168,6 @@ func _compatibility_name(action: StringName, direction: StringName, layer: Strin
 		&"combat.falcon.windup": return StringName("special_windup_%s" % direction)
 		&"combat.falcon.inflight": return StringName("special_inflight_%s" % direction)
 		&"combat.falcon.recovery": return StringName("special_recovery_%s" % direction)
+		&"combat.falcon.collision": return StringName("falcon_collision_%s" % direction)
+		&"combat.falcon.collision_knockdown": return StringName("falcon_collision_knockdown_%s" % direction)
 	return StringName("%s_%s" % [action_text.replace(".", "_"), direction])

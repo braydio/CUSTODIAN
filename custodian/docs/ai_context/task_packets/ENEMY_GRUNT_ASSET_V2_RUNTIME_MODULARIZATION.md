@@ -14,7 +14,7 @@
 - Owner: Codex
 - Agent/session: current implementation session
 - Created: 2026-08-20
-- Last updated: 2026-08-20
+- Last updated: 2026-08-21
 
 ## Work Surface
 
@@ -42,6 +42,7 @@
 ## Final Evidence
 
 - Asset job: `job_20260820T232800Z_6fb5a49d`; 27 authored inputs, 54 runtime outputs, Godot import successful, `enemy_runtime_import` executed, receipt and immutable archive retained.
+- Falcon expression asset job: `job_20260821T221636Z_9874678c`; five exact E-authored inputs produced ten E/W runtime outputs. It added synchronized inflight FX plus four-frame collision and eight-frame collision-knockdown body/FX without superseding the existing inflight body.
 - Asset/runtime validation: V2 smoke, schema smoke, strict enemy animation report, PNG audit, semantic presentation smoke, grunt animation smoke, Falcon Punch/reversal/parry smokes, behavior determinism/authority, architecture ownership, archive boundary, doctor, and changed-file validation passed.
 - Runtime cleanup: zero invalid canonical names and zero duplicate semantic identities after hash/reference-backed cleanup. Authored diagonal attacks, critical/parry assets, and 156px Falcon material remain available.
 - Moment Forge: `combat/parry_success` passed. `combat/light_hit_grunt` ran but its health assertion failed because Operator targeting committed with an empty target (`reliable_contact=false`) after the soft target was lost; no enemy damage event occurred, so this is recorded as a scenario/Operator-targeting issue rather than an animation-owned timing change.
@@ -50,5 +51,6 @@
 ## Handoff
 
 - Completed architecture slice: Falcon owns its complete phase/timer/cadence/contact/telemetry machine; `Enemy` supplies narrow shared combat services. Validation/debug callers now inspect the typed ability directly and the temporary `_grunt_falcon_punch_*` property bridge has been removed. Falcon 2.0 derives travel from the committed point across the real `88–184px` band, emits one local commitment pulse, and uses `0.70/0.75/0.85/0.95s` hit/block/whiff/collision recovery. Next compare this module with Marine Dash before introducing any generic ability base.
+- Expression follow-up complete: Falcon classifies target, ally, glancing/static, and hard opposing static-world contacts; hard collision owns its authored knockdown and stand-up vulnerability. Grunt presentation uses deterministic spawn-ordinal melee bags, severity-aware flinch, notice-edge draw/alert, and cancellable safe-window flavor. Generic knockdown art remains intentionally dormant because no general knockdown simulation contract was added.
 - Pending content: classify or add a family state for the separately arrived `idle_02` input before ingesting it.
 - Moment follow-up: repair or retune `combat/light_hit_grunt` targeting setup; do not change enemy gameplay timing to satisfy the failed assertion.

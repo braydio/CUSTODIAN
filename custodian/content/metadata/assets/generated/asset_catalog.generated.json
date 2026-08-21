@@ -1336,6 +1336,216 @@
           "sha256": "b8bf2ad6270c53c44cf3bf1113b4196d5d794e2254c891190ce717584df9cd9d",
           "provenance": "mirrored",
           "source_asset": "stagger_01_fx::e"
+        },
+        "falcon_collision_01::e": {
+          "state_id": "falcon_collision_01",
+          "direction": "e",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "melee",
+            "falcon_collision_01",
+            "e"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__falcon_collision_01__e__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "bcb64551eb2cc3e9f5c060dc64523ef4338ae1c9d6c6c2d232fad6865921052d",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "falcon_collision_01::w": {
+          "state_id": "falcon_collision_01",
+          "direction": "w",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "melee",
+            "falcon_collision_01",
+            "w"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__falcon_collision_01__w__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "4246af20c7c4fcd7ff6b90401052c2fe22586303e0d7d693cc0629c5635c93d9",
+          "provenance": "mirrored",
+          "source_asset": "falcon_collision_01::e"
+        },
+        "falcon_collision_knockdown_01::e": {
+          "state_id": "falcon_collision_knockdown_01",
+          "direction": "e",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "melee",
+            "falcon_collision_knockdown_01",
+            "e"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__falcon_collision_knockdown_01__e__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "b67227a4faa544fb90cd10675b45ff265b7a885f50bd4b04505284d1c59bc794",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "falcon_collision_knockdown_01::w": {
+          "state_id": "falcon_collision_knockdown_01",
+          "direction": "w",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "melee",
+            "falcon_collision_knockdown_01",
+            "w"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__falcon_collision_knockdown_01__w__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "8ebb9c618b29836ebdbbe0674350c484895e9aa0d148c1887f2f47cfaefc79d5",
+          "provenance": "mirrored",
+          "source_asset": "falcon_collision_knockdown_01::e"
+        },
+        "falcon_collision_01_fx::e": {
+          "state_id": "falcon_collision_01_fx",
+          "direction": "e",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "fx",
+            "melee",
+            "falcon_collision_01",
+            "e"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/fx/melee/enemy_grunt__fx__melee__falcon_collision_01__e__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "a92a29ec20656d0ce80afe6a7407ed4c213bbc977f0af384debe5a679bb9e44d",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "falcon_collision_01_fx::w": {
+          "state_id": "falcon_collision_01_fx",
+          "direction": "w",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "fx",
+            "melee",
+            "falcon_collision_01",
+            "w"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/fx/melee/enemy_grunt__fx__melee__falcon_collision_01__w__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "6a8cbb006bdda4df33a7892c4ca21ad59df38d6310aad45eb851b21955336f2b",
+          "provenance": "mirrored",
+          "source_asset": "falcon_collision_01_fx::e"
+        },
+        "falcon_collision_knockdown_01_fx::e": {
+          "state_id": "falcon_collision_knockdown_01_fx",
+          "direction": "e",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "fx",
+            "melee",
+            "falcon_collision_knockdown_01",
+            "e"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/fx/melee/enemy_grunt__fx__melee__falcon_collision_knockdown_01__e__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "8113a10302eb503a6ca181a9aa9451b2be35dd001f86d9cc54285e7bb561a44a",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "falcon_collision_knockdown_01_fx::w": {
+          "state_id": "falcon_collision_knockdown_01_fx",
+          "direction": "w",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "fx",
+            "melee",
+            "falcon_collision_knockdown_01",
+            "w"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/fx/melee/enemy_grunt__fx__melee__falcon_collision_knockdown_01__w__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "0a5466459087093c925690bbb37f2e6546bb2b398e432f0de70a18acff902160",
+          "provenance": "mirrored",
+          "source_asset": "falcon_collision_knockdown_01_fx::e"
+        },
+        "special_inflight_01_fx::e": {
+          "state_id": "special_inflight_01_fx",
+          "direction": "e",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "fx",
+            "melee",
+            "special_inflight_01",
+            "e"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/fx/melee/enemy_grunt__fx__melee__special_inflight_01__e__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "dd123c6475968221cf1655404573a0f8cf45cb6b787fbd249e1d33c0b0ee9c99",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "special_inflight_01_fx::w": {
+          "state_id": "special_inflight_01_fx",
+          "direction": "w",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "fx",
+            "melee",
+            "special_inflight_01",
+            "w"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/fx/melee/enemy_grunt__fx__melee__special_inflight_01__w__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "cfa6892fb1d2c000591d4d931dc5f740ad8c17989c82190651d85c409272ca1c",
+          "provenance": "mirrored",
+          "source_asset": "special_inflight_01_fx::e"
         }
       }
     }

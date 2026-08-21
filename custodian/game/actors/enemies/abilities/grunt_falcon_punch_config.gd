@@ -9,6 +9,11 @@ class_name GruntFalconPunchConfig
 @export var blocked_recovery_time := 0.75
 @export var whiff_recovery_time := 0.85
 @export var collision_recovery_time := 0.95
+@export var soft_collision_time := 0.34
+@export var hard_collision_knockdown_time := 0.80
+@export var stand_up_time := 0.50
+@export var hard_collision_min_travel_px := 22.0
+@export_range(0.0, 1.0, 0.01) var hard_collision_opposition_threshold := 0.55
 @export var committed_reach_buffer_px := 10.0
 @export var commitment_cue_time := 0.10
 @export var damage_multiplier := 1.35
