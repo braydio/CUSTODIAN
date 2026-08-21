@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dx0fltyavoj30"
-path="res://.godot/imported/enemy_grunt__body__melee__fast_01__e__9f__96.png-490c1f8b1b015e27f8798ca05c47ef3f.ctex"
+uid="uid://bxyeb8gn16vfp"
+path="res://.godot/imported/forlorn_rit.png-bedb6c605eb1cde648ae0fd2cf1ccd86.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__fast_01__e__9f__96.png"
-dest_files=["res://.godot/imported/enemy_grunt__body__melee__fast_01__e__9f__96.png-490c1f8b1b015e27f8798ca05c47ef3f.ctex"]
+source_file="res://content/sprites/incoming/forlorn_rit.png"
+dest_files=["res://.godot/imported/forlorn_rit.png-bedb6c605eb1cde648ae0fd2cf1ccd86.ctex"]
 
 [params]
 
