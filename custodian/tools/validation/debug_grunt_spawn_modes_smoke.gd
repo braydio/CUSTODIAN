@@ -44,7 +44,8 @@ func _run() -> void:
 	var falcon_grunt: Node2D = await _spawn_mode(wave_manager, enemies, operator, &"falcon", Vector2(128.0, 0.0))
 	_assert_true(falcon_grunt != null, "falcon debug mode should be accepted")
 	if falcon_grunt != null:
-		_assert_true(StringName(falcon_grunt.get("_grunt_falcon_punch_phase")) == &"windup", "falcon debug mode should immediately enter windup")
+		var falcon := falcon_grunt.call("get_grunt_falcon_punch_ability") as GruntFalconPunch
+		_assert_true(falcon.debug_get_presentation_phase_name() == &"windup", "falcon debug mode should immediately enter windup")
 		_assert_true(falcon_grunt.get("target") == operator, "falcon debug mode should explicitly target the Operator")
 		falcon_grunt.queue_free()
 		await process_frame

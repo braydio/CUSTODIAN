@@ -72,10 +72,11 @@ func _test_standard_melee_range_isolation() -> void:
 	grunt.global_position = Vector2.ZERO
 	target.global_position = Vector2(159.939, 0.0)
 	grunt.set("target", target)
-	grunt.set("_grunt_falcon_punch_normal_attacks_since_special", 1)
-	grunt.set("_grunt_falcon_punch_decision_credit", 1.0)
-	grunt.set("_grunt_falcon_punch_cooldown_timer", 0.0)
-	grunt.set("_grunt_falcon_punch_recent_parry_timer", 0.0)
+	var falcon := grunt.get_grunt_falcon_punch_ability() as GruntFalconPunch
+	falcon.normal_attacks_since_special = 1
+	falcon.cadence_credit = 1.0
+	falcon.cooldown_timer = 0.0
+	falcon.recent_parry_timer = 0.0
 	_assert_true(is_equal_approx(float(grunt.call("_get_attack_range", target)), 184.0), "Falcon eligibility should still expose its 184px AI launch range")
 	grunt.call("_capture_pending_attack_context")
 	_assert_true(is_equal_approx(float(grunt.get("_pending_attack_range_px")), 40.0), "ordinary melee must capture the 40px player contact range")

@@ -70,14 +70,15 @@ func _run_reversal_case(
 	operator.set("_parry_active", true)
 	grunt.call("_start_grunt_falcon_punch_windup", falcon_direction)
 	grunt.call("_start_grunt_falcon_punch_leap")
-	_assert_true(String(grunt.get("_grunt_falcon_punch_phase")) == "leap", "%s Falcon should enter committed leap" % expected_direction)
+	var falcon := grunt.get_grunt_falcon_punch_ability() as GruntFalconPunch
+	_assert_true(falcon.get_phase_name() == &"leap", "%s Falcon should enter committed leap" % expected_direction)
 
 	grunt.call("_try_apply_grunt_falcon_punch_hit", true)
 	_assert_true(bool(operator.get("_paired_execution_active")), "%s Falcon parry should automatically start reversal" % expected_direction)
 	_assert_true(String(operator.get("_paired_execution_kind")) == "falcon_reversal", "paired execution should identify Falcon Reversal")
 	_assert_true(String(operator.get("_paired_execution_direction")) == String(expected_direction), "Falcon travel should select the authored %s triplet" % expected_direction)
 	_assert_true(int(grunt.get("_parry_critical_phase")) == PHASE_EXECUTING, "Falcon Reversal should enter EXECUTING directly")
-	_assert_true(String(grunt.get("_grunt_falcon_punch_phase")).is_empty(), "execution ownership should fully cancel Falcon movement")
+	_assert_true(not falcon.is_active(), "execution ownership should fully cancel Falcon movement")
 	_assert_true(grunt.get("_critical_breach_marker_vfx") == null and grunt.get("_critical_window_ring_vfx") == null, "automatic reversal should not create BREACH/countdown presentation")
 
 	var operator_body := operator.get_node("AnimatedSprite2D") as AnimatedSprite2D
@@ -113,7 +114,7 @@ func _run_reversal_case(
 	operator.call("_update_paired_execution", 2.0)
 	_assert_true(not bool(operator.get("_paired_execution_active")), "completion should restore Operator ownership")
 	_assert_true(int(grunt.get("_parry_critical_phase")) == PHASE_NONE, "completion should release enemy execution ownership")
-	_assert_true(float(grunt.get("_grunt_falcon_punch_recent_parry_timer")) > 0.0, "Falcon parry lockout should survive reversal")
+	_assert_true(falcon.recent_parry_timer > 0.0, "Falcon parry lockout should survive reversal")
 
 	operator.queue_free()
 	grunt.queue_free()

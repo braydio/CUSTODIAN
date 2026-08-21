@@ -30,6 +30,11 @@ var active_start_target_distance := -1.0
 var closest_approach := INF
 var lateral_error := 0.0
 var collision_obstructed := false
+var committed_target_distance := 0.0
+var planned_travel_distance := 0.0
+var actual_travel_distance := 0.0
+var selected_recovery_duration := 0.0
+var commitment_cue_count := 0
 var engagement_token_request: Callable
 
 
@@ -37,7 +42,7 @@ func setup(new_host: Enemy, new_config: GruntFalconPunchConfig) -> void:
 	host = new_host
 	config = new_config
 	engagement_token_request = Callable(host, "try_claim_ability_engagement_token")
-	current_distance = config.launch_distance_px
+	current_distance = 0.0
 	cadence_credit = maxf(0.0, 1.0 - config.cadence_credit_per_attack)
 
 
@@ -107,6 +112,11 @@ func start_debug(target: Node2D, initial_direction := Vector2.ZERO) -> bool:
 	closest_approach = launch_distance
 	lateral_error = 0.0
 	collision_obstructed = false
+	committed_target_distance = 0.0
+	planned_travel_distance = 0.0
+	actual_travel_distance = 0.0
+	selected_recovery_duration = 0.0
+	commitment_cue_count = 0
 	phase = Phase.TRACKING
 	phase_timer = maxf(0.01, config.tracking_time)
 	cooldown_timer = maxf(0.0, config.cooldown)
@@ -214,6 +224,11 @@ func get_phase_name() -> StringName:
 	return &"idle"
 
 
+func debug_get_presentation_phase_name() -> StringName:
+	var phase_name := get_phase_name()
+	return &"windup" if phase_name in [&"tracking", &"committed"] else (&"" if phase_name == &"idle" else phase_name)
+
+
 func get_attack_range_for(target: Node2D) -> float:
 	return config.launch_band.y if can_start(target) else 0.0
 
@@ -242,11 +257,15 @@ func start_leap() -> void:
 	phase = Phase.LEAP
 	phase_timer = maxf(0.01, config.leap_time)
 	launch_start = host.global_position
-	var desired_contact := committed_target_position - direction * config.stop_short_px
-	current_distance = minf(
-		config.launch_distance_px,
-		maxf(0.0, (desired_contact - host.global_position).dot(direction))
+	committed_target_distance = host.global_position.distance_to(committed_target_position)
+	var projected_distance := maxf(0.0, (committed_target_position - host.global_position).dot(direction))
+	var maximum_travel := maxf(0.0, config.launch_band.y - config.stop_short_px + config.committed_reach_buffer_px)
+	planned_travel_distance = clampf(
+		projected_distance - config.stop_short_px + config.committed_reach_buffer_px,
+		0.0,
+		maximum_travel
 	)
+	current_distance = planned_travel_distance
 	play_current_presentation()
 	_log(&"grunt_falcon_punch_leap")
 	_audit_presentation()
@@ -269,6 +288,7 @@ func try_apply_hit(force_contact_check := false) -> void:
 		target, host.damage * config.damage_multiplier, &"falcon_punch", attack_id, spatial
 	)
 	result = StringName(str(hit_result.get("result", &"unknown")))
+	selected_recovery_duration = _recovery_duration_for_result(result)
 	host.record_falcon_hit_result(result)
 	var event := get_telemetry()
 	event.merge({
@@ -314,6 +334,7 @@ func resolve_whiff(reason: StringName) -> void:
 	if phase != Phase.LEAP:
 		return
 	result = reason
+	selected_recovery_duration = _recovery_duration_for_result(result)
 	host.record_falcon_whiff(reason)
 	var event := get_telemetry()
 	event.merge({"result": "whiffed", "reason": String(reason)}, true)
@@ -334,7 +355,7 @@ func finish(result_override: StringName = &"") -> void:
 	phase_timer = 0.0
 	attacker_hitstop_timer = 0.0
 	hit_targets.clear()
-	current_distance = config.launch_distance_px
+	current_distance = 0.0
 	attack_id = ""
 	impact_confirmed = false
 	target_ref = null
@@ -372,6 +393,11 @@ func get_telemetry() -> Dictionary:
 		"player_dodge_phase": dodge_phase,
 		"collision_obstructed": collision_obstructed,
 		"stop_short_distance": config.stop_short_px,
+		"committed_target_distance": committed_target_distance,
+		"planned_travel_distance": planned_travel_distance,
+		"actual_travel_distance": actual_travel_distance,
+		"selected_recovery_duration": selected_recovery_duration,
+		"commitment_cue_count": commitment_cue_count,
 		"windup_duration": config.total_windup_time(),
 		"windup_progress": _windup_progress(),
 		"phase_timer_remaining": phase_timer,
@@ -418,6 +444,8 @@ func _attempt_commit() -> void:
 		committed_target_position = target.global_position
 	phase = Phase.COMMITTED
 	phase_timer = maxf(0.01, config.committed_time)
+	commitment_cue_count += 1
+	host.play_falcon_commitment_cue(config.commitment_cue_time)
 	host.observatory_increment(&"falcon_punch_tracking_locks")
 	_log(&"grunt_falcon_punch_tracking_locked")
 	_audit_presentation()
@@ -452,6 +480,7 @@ func _update_leap() -> void:
 			active_start_target_distance = to_target.length()
 	var collisions := host.get_slide_collision_count()
 	var traveled := host.global_position.distance_to(launch_start)
+	actual_travel_distance = maxf(actual_travel_distance, traveled)
 	collision_obstructed = collision_obstructed or collisions > 0
 	try_apply_hit(traveled >= current_distance or collisions > 0)
 	if phase == Phase.LEAP and (collisions > 0 or traveled >= current_distance or phase_timer <= 0.0):
@@ -469,12 +498,24 @@ func _start_impact_lock() -> void:
 
 func _start_recovery() -> void:
 	phase = Phase.RECOVERY
-	phase_timer = maxf(0.01, config.recovery_time)
+	selected_recovery_duration = _recovery_duration_for_result(result)
+	phase_timer = maxf(0.01, selected_recovery_duration)
 	host.velocity = Vector2.ZERO
 	host.separate_ability_from_target(_target(), direction)
 	play_current_presentation()
 	_log(&"grunt_falcon_punch_recovery")
 	_audit_presentation()
+
+
+func _recovery_duration_for_result(terminal_result: StringName) -> float:
+	match terminal_result:
+		&"blocked":
+			return config.blocked_recovery_time
+		&"blocked_by_collision":
+			return config.collision_recovery_time
+		&"dodged", &"iframe_dodged", &"target_out_of_range", &"target_out_of_arc", &"lateral_miss", &"whiffed":
+			return config.whiff_recovery_time
+	return config.recovery_time
 
 
 func _hit_window_active() -> bool:

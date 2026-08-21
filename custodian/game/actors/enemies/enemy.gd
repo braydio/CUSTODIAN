@@ -395,6 +395,18 @@ func get_grunt_falcon_punch_ability() -> GruntFalconPunch:
 	return _grunt_falcon_punch_ability
 
 
+func play_falcon_commitment_cue(duration: float) -> void:
+	# Presentation-only: no simulation pause, displacement, or phase mutation.
+	observatory_increment(&"falcon_punch_commitment_cues")
+	var sprite := animated_sprite as CanvasItem
+	if sprite == null:
+		return
+	var original := sprite.modulate
+	var tween := create_tween()
+	tween.tween_property(sprite, "modulate", Color(1.0, 0.82, 0.48, original.a), maxf(0.01, duration * 0.35))
+	tween.tween_property(sprite, "modulate", original, maxf(0.01, duration * 0.65))
+
+
 func _get(property: StringName) -> Variant:
 	match property:
 		&"grunt_falcon_punch_windup_time": return grunt_falcon_punch_config.total_windup_time()
@@ -402,7 +414,6 @@ func _get(property: StringName) -> Variant:
 		&"grunt_falcon_punch_leap_time": return grunt_falcon_punch_config.leap_time
 		&"grunt_falcon_punch_impact_lock_time": return grunt_falcon_punch_config.impact_lock_time
 		&"grunt_falcon_punch_recovery_time": return grunt_falcon_punch_config.recovery_time
-		&"grunt_falcon_punch_distance_px": return grunt_falcon_punch_config.launch_distance_px
 		&"grunt_falcon_punch_damage_multiplier": return grunt_falcon_punch_config.damage_multiplier
 		&"grunt_falcon_punch_cooldown": return grunt_falcon_punch_config.cooldown
 		&"grunt_falcon_punch_launch_band_min": return grunt_falcon_punch_config.launch_band.x
@@ -411,19 +422,6 @@ func _get(property: StringName) -> Variant:
 		&"grunt_falcon_punch_hit_lateral_reach_px": return grunt_falcon_punch_config.hit_lateral_reach_px
 		&"grunt_falcon_punch_recovery_speed": return grunt_falcon_punch_config.recovery_speed
 		&"grunt_falcon_punch_stop_short_px": return grunt_falcon_punch_config.stop_short_px
-		&"_grunt_falcon_punch_phase":
-			var phase_name := _grunt_falcon_punch_ability.get_phase_name()
-			return &"windup" if phase_name in [&"tracking", &"committed"] else (&"" if phase_name == &"idle" else phase_name)
-		&"_grunt_falcon_punch_timer": return _grunt_falcon_punch_ability.phase_timer
-		&"_grunt_falcon_punch_direction": return _grunt_falcon_punch_ability.direction
-		&"_grunt_falcon_punch_current_distance": return _grunt_falcon_punch_ability.current_distance
-		&"_grunt_falcon_punch_cooldown_timer": return _grunt_falcon_punch_ability.cooldown_timer
-		&"_grunt_falcon_punch_recent_parry_timer": return _grunt_falcon_punch_ability.recent_parry_timer
-		&"_grunt_falcon_punch_normal_attacks_since_special": return _grunt_falcon_punch_ability.normal_attacks_since_special
-		&"_grunt_falcon_punch_decision_credit": return _grunt_falcon_punch_ability.cadence_credit
-		&"_grunt_falcon_punch_attack_id": return _grunt_falcon_punch_ability.attack_id
-		&"_grunt_falcon_punch_tracking_locked": return _grunt_falcon_punch_ability.phase >= GruntFalconPunch.Phase.COMMITTED
-		&"_grunt_falcon_punch_locked_direction": return _grunt_falcon_punch_ability.committed_direction
 	return null
 
 
@@ -434,17 +432,11 @@ func _set(property: StringName, value: Variant) -> bool:
 		&"grunt_falcon_punch_leap_time": grunt_falcon_punch_config.leap_time = float(value)
 		&"grunt_falcon_punch_impact_lock_time": grunt_falcon_punch_config.impact_lock_time = float(value)
 		&"grunt_falcon_punch_recovery_time": grunt_falcon_punch_config.recovery_time = float(value)
-		&"grunt_falcon_punch_distance_px": grunt_falcon_punch_config.launch_distance_px = float(value)
 		&"grunt_falcon_punch_cooldown": grunt_falcon_punch_config.cooldown = float(value)
 		&"grunt_falcon_punch_chance": grunt_falcon_punch_config.cadence_credit_per_attack = float(value)
 		&"grunt_falcon_punch_after_normal_attacks_min": grunt_falcon_punch_config.normal_attacks_required = int(value)
 		&"grunt_falcon_punch_victim_hitstop": grunt_falcon_punch_config.victim_hitstop_sec = float(value)
 		&"grunt_falcon_punch_attacker_hitstop": grunt_falcon_punch_config.attacker_hitstop_sec = float(value)
-		&"_grunt_falcon_punch_timer": _grunt_falcon_punch_ability.phase_timer = float(value)
-		&"_grunt_falcon_punch_cooldown_timer": _grunt_falcon_punch_ability.cooldown_timer = float(value)
-		&"_grunt_falcon_punch_recent_parry_timer": _grunt_falcon_punch_ability.recent_parry_timer = float(value)
-		&"_grunt_falcon_punch_normal_attacks_since_special": _grunt_falcon_punch_ability.normal_attacks_since_special = int(value)
-		&"_grunt_falcon_punch_decision_credit": _grunt_falcon_punch_ability.cadence_credit = float(value)
 		_:
 			return false
 	return true

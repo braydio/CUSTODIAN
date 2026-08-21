@@ -6,7 +6,11 @@ class_name GruntFalconPunchConfig
 @export var leap_time := 0.28
 @export var impact_lock_time := 0.08
 @export var recovery_time := 0.70
-@export var launch_distance_px := 96.0
+@export var blocked_recovery_time := 0.75
+@export var whiff_recovery_time := 0.85
+@export var collision_recovery_time := 0.95
+@export var committed_reach_buffer_px := 10.0
+@export var commitment_cue_time := 0.10
 @export var damage_multiplier := 1.35
 @export var cooldown := 2.1
 @export var launch_band := Vector2(88.0, 184.0)

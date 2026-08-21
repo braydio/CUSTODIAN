@@ -49,6 +49,6 @@
 
 ## Handoff
 
-- Completed architecture slice: Falcon owns its complete phase/timer/cadence/contact/telemetry machine; `Enemy` supplies narrow shared combat services and temporary debug compatibility accessors. Next compare this module with Marine Dash before introducing any generic ability base.
+- Completed architecture slice: Falcon owns its complete phase/timer/cadence/contact/telemetry machine; `Enemy` supplies narrow shared combat services. Validation/debug callers now inspect the typed ability directly and the temporary `_grunt_falcon_punch_*` property bridge has been removed. Falcon 2.0 derives travel from the committed point across the real `88–184px` band, emits one local commitment pulse, and uses `0.70/0.75/0.85/0.95s` hit/block/whiff/collision recovery. Next compare this module with Marine Dash before introducing any generic ability base.
 - Pending content: classify or add a family state for the separately arrived `idle_02` input before ingesting it.
 - Moment follow-up: repair or retune `combat/light_hit_grunt` targeting setup; do not change enemy gameplay timing to satisfy the failed assertion.
