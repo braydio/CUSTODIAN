@@ -509,6 +509,7 @@ var _melee_hit_targets: Dictionary = {}
 var _active_melee_contact: Dictionary = {}
 var _active_melee_contact_id: StringName = &"default"
 var _melee_prev_animation_frame: int = -1
+var _pending_melee_contact_frames: Array[int] = []
 var _melee_miss_sfx_played: bool = false
 var _melee_impact_audio_variant_cursors: Dictionary = {}
 var _critical_attack_target: Node2D = null
@@ -4873,8 +4874,11 @@ func _update_melee_attack(delta: float) -> void:
 
 	_update_melee_hitbox_transform()
 	_sync_melee_hitbox_window_from_animation()
-	if _melee_hitbox_active:
-		_apply_melee_hitbox_tick()
+	if not _pending_melee_contact_frames.is_empty():
+		var contact_frames := _pending_melee_contact_frames.duplicate()
+		_pending_melee_contact_frames.clear()
+		for semantic_frame: int in contact_frames:
+			_apply_melee_hitbox_tick(semantic_frame)
 
 	if _melee_attack_kind == "fast" \
 	and _has_authored_fast_chain() \
@@ -4988,7 +4992,7 @@ func _start_buffered_fast_chain_dodge() -> bool:
 	)
 
 
-func _apply_melee_hitbox_tick() -> void:
+func _apply_melee_hitbox_tick(semantic_frame: int = -1) -> void:
 	# Paired executions use their duration-table contact event, never overlap polling.
 	if _melee_attack_kind == "critical":
 		return
@@ -5005,9 +5009,11 @@ func _apply_melee_hitbox_tick() -> void:
 		var weapon_window: Dictionary = weapon_definition.hit_windows.get(_melee_attack_key, {})
 		if not weapon_window.is_empty():
 			window = weapon_window
-	var active_directions := _get_melee_active_hit_directions(animated_sprite.frame if animated_sprite else 0, window)
+	var resolved_frame: int = semantic_frame \
+		if semantic_frame >= 0 else (animated_sprite.frame if animated_sprite else 0)
+	var active_directions := _get_melee_active_hit_directions(resolved_frame, window)
 	var active_contact := _get_melee_contact_for_frame(
-		animated_sprite.frame if animated_sprite else 0,
+		resolved_frame,
 		window
 	)
 	var contact_id := StringName(active_contact.get("id", "default"))
@@ -6509,6 +6515,7 @@ func _sync_melee_hitbox_window_from_animation() -> void:
 	if animated_sprite == null or not _melee_active:
 		disable_hitbox()
 		_melee_prev_animation_frame = -1
+		_pending_melee_contact_frames.clear()
 		if obs != null:
 			obs.perf_span_end(&"operator_animation_sync", animation_started)
 		return
@@ -6521,39 +6528,72 @@ func _sync_melee_hitbox_window_from_animation() -> void:
 		var weapon_window: Dictionary = weapon_definition.hit_windows.get(_melee_attack_key, {})
 		if not weapon_window.is_empty():
 			window = weapon_window
+	var frame_count: int = animated_sprite.sprite_frames.get_frame_count(
+		animated_sprite.animation
+	)
+	var crossed_frames := _collect_crossed_animation_frames(
+		_melee_prev_animation_frame,
+		frame,
+		frame_count
+	)
 	var best_contact: Dictionary = {}
-	var hit_found: bool = false
-	if _melee_prev_animation_frame < 0 or _melee_prev_animation_frame == frame:
-		best_contact = _get_melee_contact_for_frame(frame, window)
-		hit_found = not best_contact.is_empty()
-	else:
-		var frame_count: int = animated_sprite.sprite_frames.get_frame_count(
-			animated_sprite.animation
-		)
-		var scan_from: int = _melee_prev_animation_frame + 1
-		if frame < _melee_prev_animation_frame:
-			for f in range(scan_from, frame_count):
-				var c: Dictionary = _get_melee_contact_for_frame(f, window)
-				if not c.is_empty():
-					best_contact = c
-					hit_found = true
-			scan_from = 0
-		for f in range(scan_from, frame + 1):
-			var c: Dictionary = _get_melee_contact_for_frame(f, window)
-			if not c.is_empty():
-				best_contact = c
-				hit_found = true
+	for semantic_frame: int in crossed_frames:
+		if not _is_melee_hit_frame_active(semantic_frame, window):
+			continue
+		if not _pending_melee_contact_frames.has(semantic_frame):
+			_pending_melee_contact_frames.append(semantic_frame)
+		var contact := _get_melee_contact_for_frame(semantic_frame, window)
+		if not contact.is_empty():
+			best_contact = contact
 	_melee_prev_animation_frame = frame
 	_active_melee_contact = best_contact
 	_active_melee_contact_id = StringName(
 		_active_melee_contact.get("id", "default")
 	)
-	if hit_found:
+	if not _pending_melee_contact_frames.is_empty():
 		enable_hitbox()
 	else:
 		disable_hitbox()
 	if obs != null:
 		obs.perf_span_end(&"operator_animation_sync", animation_started)
+
+
+func _collect_crossed_animation_frames(
+	previous_frame: int,
+	current_frame: int,
+	frame_count: int
+) -> Array[int]:
+	var crossed: Array[int] = []
+	if frame_count <= 0 or current_frame < 0:
+		return crossed
+	if previous_frame < 0 or previous_frame == current_frame:
+		crossed.append(current_frame)
+		return crossed
+	var scan_from := previous_frame + 1
+	if current_frame < previous_frame:
+		for frame_index in range(scan_from, frame_count):
+			crossed.append(frame_index)
+		scan_from = 0
+	for frame_index in range(scan_from, current_frame + 1):
+		crossed.append(frame_index)
+	return crossed
+
+
+func debug_collect_crossed_contact_frames(
+	previous_frame: int,
+	current_frame: int,
+	frame_count: int,
+	window: Dictionary
+) -> Array[int]:
+	var contacts: Array[int] = []
+	for frame_index: int in _collect_crossed_animation_frames(
+		previous_frame,
+		current_frame,
+		frame_count
+	):
+		if _is_melee_hit_frame_active(frame_index, window):
+			contacts.append(frame_index)
+	return contacts
 
 
 func _is_melee_hit_frame_active(frame: int, window: Dictionary) -> bool:
@@ -8847,6 +8887,7 @@ func _commit_melee_attack_solution(
 ) -> void:
 	_committed_melee_target = solution.get("target") as Node2D
 	_committed_melee_attack_solution = solution.duplicate(true)
+	_emit_weapon_feedback(&"melee_attack_committed", _active_attack_profile)
 	_obs_log(&"player_melee_attack_targeting_committed", {
 		"attack_id": String(profile.attack_id) if profile != null else _resolve_current_attack_id(),
 		"target": _committed_melee_target.name if is_instance_valid(_committed_melee_target) else "",

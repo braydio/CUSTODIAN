@@ -79,7 +79,7 @@ The generic special-room system remains live for other encounters. Its documenta
 - Authored camera bounds: `1120x864 px` centered on the chamber.
 - Entry spawn: `(0, 332)`, on the lower lift walk-off position.
 - World-return interaction: `(0, 358)`, on the shared lower lift assembly.
-- Boundary rails enclose the chamber with a `192 px` south opening.
+- Thirteen authored perimeter rails trace the chapel silhouette while retaining the `192 px` south opening; validation probes separately identify known floor and void positions.
 - The Ritualant scene remains instanced at `(0, 0)`; the old internal exit
   trigger is retired because the authored wrapper owns travel.
 
@@ -106,6 +106,15 @@ resolution-appropriate epilogue, and hands the route off while black so the
 existing surface ascent reads as the continuation of one journey. Additional
 cavern dressing remains art polish, never a reason to restore special-room
 insertion.
+
+The lift captures the Operator into the shared presentation rig, suspends the
+live actor, and carries the rider through the authored `176 px` ascent. A
+rejected route request rolls the lift, black overlay, presentation, and actor
+processing back to their pre-departure state.
+
+The wrapper owns session snapshot delegation for the encounter. Event pressure,
+thread/fountain/resolution state, knowledge/dialogue flags, one-shots, resolved
+anchors, and local completion state survive snapshot-and-unload re-entry.
 
 ## Assets
 

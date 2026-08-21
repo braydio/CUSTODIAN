@@ -173,8 +173,8 @@ func cut_thread() -> void:
 	if event_state.ritualant_hostile:
 		return
 
-	event_state.set_thread_tension(100, &"thread_cut")
 	event_state.set_resolution(AshBellEventState.Resolution.CUT_THREAD)
+	event_state.set_thread_tension(100, &"thread_cut")
 	event_state.add_silence_pressure(25, &"thread_cut")
 	request_dialogue.emit(dialogue_id, &"cut_thread_response")
 	_handle_thread_snap_once()
@@ -300,6 +300,51 @@ func debug_get_resolved_thread_anchor_count() -> int:
 
 func is_thread_anchor_resolved(anchor_id: StringName) -> bool:
 	return _resolved_thread_anchors.has(anchor_id)
+
+
+func capture_encounter_state() -> Dictionary:
+	return {
+		"event_state": event_state.capture_state() if event_state != null else {},
+		"intro_triggered": _intro_triggered,
+		"encounter_completed": _completed,
+		"dialogue_followup_index": _followup_index,
+		"resolved_thread_anchor_ids": _resolved_thread_anchors.keys(),
+		"thread_snap_handled": _thread_snap_handled,
+	}
+
+
+func restore_encounter_state(state: Dictionary) -> bool:
+	if state.is_empty() or event_state == null:
+		return false
+	var event_snapshot := state.get("event_state", {}) as Dictionary
+	if not event_state.restore_state(event_snapshot, false):
+		return false
+	_intro_triggered = bool(state.get("intro_triggered", false))
+	_completed = bool(state.get("encounter_completed", false))
+	_followup_index = maxi(0, int(state.get("dialogue_followup_index", 0)))
+	_thread_snap_handled = bool(state.get("thread_snap_handled", false))
+	_resolved_thread_anchors.clear()
+	for anchor_id: Variant in state.get("resolved_thread_anchor_ids", []):
+		_resolved_thread_anchors[StringName(str(anchor_id))] = true
+	_apply_restored_encounter_state()
+	return true
+
+
+func _apply_restored_encounter_state() -> void:
+	_set_initial_visibility()
+	_on_fountain_state_changed(event_state.fountain_state)
+	_on_resolution_changed(event_state.resolution)
+	_update_event_atmosphere()
+	_update_debug()
+	if event_state.apparition_seen and unarrived_apparition != null:
+		unarrived_apparition.visible = false
+	if event_state.has_stilling_pin and stilling_pin_pickup != null:
+		stilling_pin_pickup.visible = false
+		stilling_pin_pickup.monitoring = false
+	if event_state.ritualant_hostile \
+			and forlorn_ritualant != null \
+			and forlorn_ritualant.has_method("become_hostile"):
+		forlorn_ritualant.call("become_hostile")
 
 
 func _handle_thread_snap_once() -> void:

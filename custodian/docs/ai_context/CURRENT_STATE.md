@@ -278,8 +278,17 @@ Documentation updates this session:
   seven-frame directed materialization, and only completed presentation latches
   the separate resolved milestone and commits terrain. Surface and Underground
   instance one lift-platform assembly. Both termini require boarding plus E;
-  the lower lift rises into black, plays default/stabilized/silent epilogue by
-  encounter state, then hands off to the existing surface ascent. The chamber
+  arrival-guarded exits are excluded from Operator interaction targeting. The
+  lower lift captures a presentation rider, suspends the live Operator, rises
+  `176 px` into black, plays default/stabilized/silent epilogue by encounter
+  state, then hands off to the existing surface ascent; rejected transitions
+  fully roll back presentation, lift, overlay, and actor processing. The chamber
+  persists event/site one-shots and progression through route-session snapshots,
+  clips its stationary `1120x864` void quad with an explicit presentation mask,
+  and uses thirteen authored rails plus validation probes instead of a coarse
+  rectangular perimeter. Committed ranged/melee actions now reach the authored
+  room reaction hooks, and the hostile Ritualant is bounded north of the lift.
+  The chamber
   reads dialogue JSON through an E-advanced cancellable presenter, treats the
   visible bell as an ordinary broken chapel bell and the basin as the wrong
   Fountain, and never grants a second Knot from thread touch. Pin contact now

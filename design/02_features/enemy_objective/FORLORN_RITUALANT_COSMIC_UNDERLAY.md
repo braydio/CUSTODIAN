@@ -15,14 +15,14 @@ Runtime files:
 
 Layering contract:
 
-1. `CosmicUnderlay` sits below the authored room geometry in world space.
+1. `VoidUnderlay/RoomSizedQuad` is a stationary `1120x864` presentation quad below the authored room geometry.
 2. The chamber floor, rubble, walls, props, NPC, interactables, collision, and VFX remain above it.
 3. The underlay has no collision, navigation, interactables, or simulation authority.
 4. Player movement remains confined to the room's existing collision.
-5. Room art should keep transparent/irregular outer edges so the underlay is visible around the broken perimeter and through any future gaps.
+5. `room_silhouette_mask.png` is the explicit underlay clipping input; floor and rubble alpha are not underlay authority.
 
-The current floor and perimeter rubble PNGs already carry alpha, so the underlay can render through transparent negative space. If later room art is replaced by a flattened opaque image, split that art back into a transparent-edged chamber layer plus the separate cosmic underlay rather than masking the issue in code.
+The room mask, edge-shadow mask, and edge-rim mask share the same stationary `1120x864` alignment. This mask is presentation-only and must never generate collision. If intentional internal void apertures are later authored, use a dedicated reviewed reveal mask rather than incidental holes in floor art.
 
-The reusable `CosmicUnderlay` script exposes subtle drift and pulse controls. Keep values slow and low-amplitude; the effect should feel like abyssal pressure under the room, not arcade parallax.
+Cosmic motion occurs only through shader UV drift inside that fixed mask. The Ritualant room no longer moves its underlay node in world space. The generic reusable `CosmicUnderlay` remains available to unrelated scenes.
 
 Shader polish for the same layer is tracked in `design/02_features/enemy_objective/FORLORN_RITUALANT_SHADER_FX.md`.

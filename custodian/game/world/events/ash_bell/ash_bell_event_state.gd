@@ -148,6 +148,51 @@ func set_resolution(new_resolution: int) -> void:
 	resolution_changed.emit(resolution)
 
 
+func capture_state() -> Dictionary:
+	return {
+		"silence_pressure": silence_pressure,
+		"thread_tension": thread_tension,
+		"fountain_state": fountain_state,
+		"resolution": resolution,
+		"seen_dialogue": seen_dialogue.duplicate(true),
+		"unlocked_knowledge": unlocked_knowledge.duplicate(true),
+		"has_stilling_pin": has_stilling_pin,
+		"has_thread_knot": has_thread_knot,
+		"apparition_seen": apparition_seen,
+		"ritualant_hostile": ritualant_hostile,
+		"thread_snap_emitted": _thread_snap_emitted,
+	}
+
+
+func restore_state(state: Dictionary, emit_changes := true) -> bool:
+	if state.is_empty():
+		return false
+	silence_pressure = clampi(int(state.get("silence_pressure", 0)), 0, 100)
+	thread_tension = clampi(int(state.get("thread_tension", 0)), 0, 100)
+	fountain_state = clampi(
+		int(state.get("fountain_state", FountainState.ABSENT)),
+		FountainState.ABSENT,
+		FountainState.CRACKED_ANCHORED
+	)
+	resolution = clampi(
+		int(state.get("resolution", Resolution.UNSEEN)),
+		Resolution.UNSEEN,
+		Resolution.SITE_DEFILED
+	)
+	seen_dialogue = (state.get("seen_dialogue", {}) as Dictionary).duplicate(true)
+	unlocked_knowledge = (state.get("unlocked_knowledge", {}) as Dictionary).duplicate(true)
+	has_stilling_pin = bool(state.get("has_stilling_pin", false))
+	has_thread_knot = bool(state.get("has_thread_knot", false))
+	apparition_seen = bool(state.get("apparition_seen", false))
+	ritualant_hostile = bool(state.get("ritualant_hostile", false))
+	_thread_snap_emitted = bool(state.get("thread_snap_emitted", false))
+	if emit_changes:
+		pressure_changed.emit(silence_pressure, thread_tension)
+		fountain_state_changed.emit(fountain_state)
+		resolution_changed.emit(resolution)
+	return true
+
+
 func _apply_pressure_thresholds(_reason: StringName) -> void:
 	if silence_pressure >= 60 and fountain_state < FountainState.BLACK_WATER:
 		set_fountain_state(FountainState.BLACK_WATER)

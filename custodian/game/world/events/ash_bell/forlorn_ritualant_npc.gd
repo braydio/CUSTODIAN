@@ -32,11 +32,13 @@ enum Phase {
 @export var target_path: NodePath
 @export var site_path: NodePath
 @export var animated_sprite_path: NodePath
+@export var combat_bounds_path: NodePath
 
 @onready var target: Node2D = get_node_or_null(target_path)
 @onready var site: ForlornRitualantSite = get_node_or_null(site_path)
 @onready var animated_sprite: AnimatedSprite2D = get_node_or_null(animated_sprite_path)
 @onready var visual: CanvasItem = get_node_or_null("Visual")
+@onready var combat_bounds: CollisionShape2D = get_node_or_null(combat_bounds_path)
 
 var phase: int = Phase.KNEELING
 var hp: int
@@ -79,13 +81,29 @@ func _physics_process(delta: float) -> void:
 		velocity = Vector2.ZERO
 		return
 	if distance > thread_pull_range:
-		velocity = to_target.normalized() * move_speed
+		var bounded_goal := _clamp_to_combat_bounds(target.global_position)
+		var to_bounded_goal := bounded_goal - global_position
+		velocity = to_bounded_goal.normalized() * move_speed \
+			if to_bounded_goal.length_squared() > 0.01 else Vector2.ZERO
 		move_and_slide()
+		global_position = _clamp_to_combat_bounds(global_position)
 		return
 
 	velocity = Vector2.ZERO
 	if _attack_timer <= 0.0:
 		_choose_attack(distance)
+
+
+func _clamp_to_combat_bounds(world_position: Vector2) -> Vector2:
+	if combat_bounds == null or not (combat_bounds.shape is RectangleShape2D):
+		return world_position
+	var rect_shape := combat_bounds.shape as RectangleShape2D
+	var half_size := rect_shape.size * 0.5
+	var center := combat_bounds.global_position
+	return Vector2(
+		clampf(world_position.x, center.x - half_size.x, center.x + half_size.x),
+		clampf(world_position.y, center.y - half_size.y, center.y + half_size.y)
+	)
 
 
 func become_hostile() -> void:

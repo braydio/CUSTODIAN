@@ -44,6 +44,9 @@ radius = 28.0
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ritualant"]
 size = Vector2(26, 28)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_combat_bounds"]
+size = Vector2(1000, 700)
+
 [sub_resource type="CircleShape2D" id="CircleShape2D_intro"]
 radius = 160.0
 
@@ -97,6 +100,13 @@ fountain_ring_path = NodePath("FX/FountainRing")
 bell_shadow_path = NodePath("FX/BellShadow")
 
 [node name="ForlornRitualantShaderFX" parent="." unique_id=2095794667 instance=ExtResource("37_shader_fx")]
+
+[node name="CombatBounds" type="Node2D" parent="."]
+position = Vector2(0, -56)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CombatBounds"]
+shape = SubResource("RectangleShape2D_combat_bounds")
+disabled = true
 
 [node name="Floor" type="Sprite2D" parent="." unique_id=1737574996]
 z_index = -30
@@ -277,6 +287,7 @@ position = Vector2(0, -154)
 script = ExtResource("2_npc")
 site_path = NodePath("../..")
 animated_sprite_path = NodePath("AnimatedSprite2D")
+combat_bounds_path = NodePath("../../CombatBounds/CollisionShape2D")
 
 [node name="Visual" type="Sprite2D" parent="NPCs/ForlornRitualant" unique_id=79598284]
 z_index = 1

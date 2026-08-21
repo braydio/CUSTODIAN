@@ -37,7 +37,7 @@ func capture_from_operator(operator: Node) -> bool:
 		if clone == null:
 			continue
 		parts_root.add_child(clone)
-		clone.transform = operator_inverse * source.global_transform
+		clone.transform = operator_inverse * source.get_global_transform()
 	return parts_root.get_child_count() > 0
 
 

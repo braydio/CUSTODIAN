@@ -44,6 +44,26 @@ func _run() -> void:
 		errors.append("lower lift exit is not interactable")
 	if level.get_node_or_null("PropsRoot/LowerLiftAssembly") == null:
 		errors.append("shared lower lift assembly is missing")
+	var underlay_quad := level.get_node_or_null(
+		"PlayableRoot/ForlornRitualantSite/ForlornRitualantShaderFX/VoidUnderlay/RoomSizedQuad"
+	) as TextureRect
+	if underlay_quad == null:
+		errors.append("explicit fixed room underlay quad is missing")
+	elif underlay_quad.size != Vector2(1120.0, 864.0):
+		errors.append("room underlay quad is not 1120x864")
+	elif underlay_quad.material == null:
+		errors.append("room underlay quad lacks explicit mask material")
+	else:
+		var shader_code := (underlay_quad.material as ShaderMaterial).shader.code
+		if shader_code.find("room_silhouette_mask") < 0:
+			errors.append("cosmic underlay shader does not sample room mask")
+		if shader_code.find("void_reveal") < 0:
+			errors.append("cosmic underlay shader lacks explicit reveal authority")
+	if level.call("get_boundary_segments").size() < 13:
+		errors.append("authored chamber still uses coarse five-rail boundary")
+	if level.call("get_walkable_probes").is_empty() \
+			or level.call("get_void_probes").is_empty():
+		errors.append("authored floor/void validation probes are missing")
 	if level.find_child("ExitTrigger", true, false) != null:
 		errors.append("legacy encounter exit trigger still competes with authored route")
 	var marker_state := level.call("get_authoring_marker_state") as Dictionary

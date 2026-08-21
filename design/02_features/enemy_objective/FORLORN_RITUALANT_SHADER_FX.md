@@ -20,10 +20,10 @@ Runtime files:
 Layering contract:
 
 1. `ForlornRitualantShaderFX` is instanced under `forlorn_ritualant_site.tscn` before floor, rubble, walls, NPCs, interactables, and VFX.
-2. `CosmicUnderlay` uses the void-ocean shader on the cosmic background texture for slow, subtle drift/dimming.
+2. `VoidUnderlay/RoomSizedQuad` uses the void-ocean shader and explicit room-mask sampler for slow UV drift/dimming inside a stationary `1120x864` aperture.
 3. `EdgeFX/RoomShadowMaskSprite2D` and `EdgeFX/RoomRimGlowMaskSprite2D` use the same room silhouette mask with different `ShaderMaterial` parameters to separate the room edge from the void.
 4. `TemporalFX/TemporalHazeRect` is a world-space `ColorRect` using additive haze; it stays below UI and avoids carrying gameplay state.
-5. The FX scene contains no collision, navigation, interactables, physics, or deterministic simulation logic.
+5. Floor/rubble PNG alpha is not the clipping contract. The FX scene contains no collision, navigation, interactables, physics, or deterministic simulation logic.
 
 Mask contract:
 
@@ -32,7 +32,7 @@ Mask contract:
 - Alpha is opaque where the current room silhouette exists and transparent outside.
 - The mask is presentation-only. Do not encode gameplay collision into it.
 
-The current mask was derived from the existing alpha-bearing perimeter rubble art. If production room art changes, regenerate or replace this mask from the new transparent-edged chamber silhouette so the edge shadow/rim remains aligned.
+The same stationary mask alignment drives underlay clipping, edge shadow, and edge rim. If production room art changes, regenerate or replace the reviewed mask while keeping it separate from authored gameplay rails.
 
 Intensity control:
 

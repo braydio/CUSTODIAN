@@ -59,7 +59,7 @@ Retired:
 - Route ID: `forlorn_ritualant_underground`
 - Route node: `ritual_cavern`
 - Named spawn: `Spawn_DescentLanding`
-- Spawn position: `(0, 224)`, deliberately north of the existing encounter scene's internal south-exit trigger
+- Spawn position: `(0, 332)`, on the authored lower-lift walk-off position
 - Route exit: `return_world`
 - Chamber/camera footprint: `1120x864 px` (`35x27` at `32 px`)
 - Procgen placement role: exterior `north_edge_overlook` ingress only

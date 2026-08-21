@@ -16,6 +16,8 @@ var home_position_px: Vector2 = Vector2.INF
 
 var _spawned := false
 var _spawned_enemies: Array[Node] = []
+var _planned_count := -1
+var _queued_or_spawned_count := 0
 
 
 func _ready() -> void:
@@ -27,6 +29,9 @@ func _process(_delta: float) -> void:
 	_prune_enemies()
 	if _spawned and (not respawn_enabled or not _spawned_enemies.is_empty()):
 		return
+	if _spawned and respawn_enabled and _spawned_enemies.is_empty():
+		_spawned = false
+		_queued_or_spawned_count = 0
 	var player := get_tree().get_first_node_in_group("player") as Node2D
 	if player == null or global_position.distance_to(player.global_position) > activation_range_px:
 		return
@@ -36,9 +41,11 @@ func _process(_delta: float) -> void:
 func spawn_camp() -> void:
 	if enemy_scene == null:
 		return
-	var count_range := maxi(0, enemy_count_max - enemy_count_min)
-	var stable_offset := int((String(camp_id).hash() & 0x7fffffff) % (count_range + 1)) if count_range > 0 else 0
-	var count := maxi(0, enemy_count_min + stable_offset)
+	if _planned_count < 0:
+		var count_range := maxi(0, enemy_count_max - enemy_count_min)
+		var stable_offset := int((String(camp_id).hash() & 0x7fffffff) % (count_range + 1)) if count_range > 0 else 0
+		_planned_count = maxi(0, enemy_count_min + stable_offset)
+	var count := maxi(0, _planned_count - _queued_or_spawned_count)
 	var parent := get_parent()
 	var spawner := get_tree().get_first_node_in_group(
 		"ambient_enemy_spawn_scheduler"
@@ -52,8 +59,9 @@ func spawn_camp() -> void:
 		count = mini(count, maxi(0, cap - active - pending))
 	if count <= 0:
 		return
-	for index in count:
-		var angle := TAU * float(index) / float(maxi(1, count))
+	for local_index in count:
+		var index := _queued_or_spawned_count + local_index
+		var angle := TAU * float(index) / float(maxi(1, _planned_count))
 		var radius := spawn_radius_px * (0.55 + 0.45 * float((index % 3) + 1) / 3.0)
 		var spawn_position := (
 			global_position
@@ -73,8 +81,10 @@ func spawn_camp() -> void:
 			)
 		else:
 			_spawn_enemy_immediately(parent, spawn_position)
-	_spawned = true
-	set_process(false)
+	_queued_or_spawned_count += count
+	_spawned = _queued_or_spawned_count >= _planned_count
+	if _spawned:
+		set_process(false)
 
 
 func _spawn_enemy_immediately(parent: Node, spawn_position: Vector2) -> void:

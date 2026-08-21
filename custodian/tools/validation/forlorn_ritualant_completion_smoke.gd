@@ -22,6 +22,19 @@ class FakeOperator:
 	func apply_external_speed_multiplier(_multiplier: float, _duration: float) -> void:
 		speed_multiplier_calls += 1
 
+	func add_test_visual() -> void:
+		var visual := ColorRect.new()
+		visual.name = "Visual"
+		visual.size = Vector2(12.0, 18.0)
+		add_child(visual)
+
+
+class RejectingExit:
+	extends InteractableLevelExit2D
+
+	func request_transition(_actor: Node) -> bool:
+		return false
+
 
 var errors: Array[String] = []
 
@@ -71,6 +84,7 @@ func _validate_encounter_runtime() -> void:
 	root.add_child(site)
 	var actor := FakeOperator.new()
 	actor.name = "Operator"
+	actor.add_test_visual()
 	actor.add_to_group("player")
 	root.add_child(actor)
 	await process_frame
@@ -140,6 +154,21 @@ func _validate_encounter_runtime() -> void:
 	site.event_state.set_thread_tension(100, &"smoke")
 	site.event_state.set_thread_tension(100, &"smoke_repeat")
 	_check(snap_count[0] == 1, "thread snap did not execute exactly once")
+	var cut_site := SITE_SCENE.instantiate() as ForlornRitualantSite
+	root.add_child(cut_site)
+	await process_frame
+	cut_site.cut_thread()
+	_check(cut_site.event_state.ritualant_hostile, "explicit thread cut did not provoke Ritualant")
+	_check(cut_site.event_state.resolution == AshBellEventState.Resolution.PROVOKED_RITUALANT, "thread snap did not supersede CUT_THREAD resolution")
+	var captured := cut_site.capture_encounter_state()
+	var restored_site := SITE_SCENE.instantiate() as ForlornRitualantSite
+	root.add_child(restored_site)
+	await process_frame
+	_check(restored_site.restore_encounter_state(captured), "encounter snapshot did not restore")
+	_check(restored_site.event_state.ritualant_hostile, "restored encounter lost hostile state")
+	_check(restored_site.event_state.resolution == AshBellEventState.Resolution.PROVOKED_RITUALANT, "restored encounter lost resolution")
+	cut_site.queue_free()
+	restored_site.queue_free()
 	site.resolve_thread_anchor(&"west")
 	site.resolve_thread_anchor(&"north")
 	site.resolve_thread_anchor(&"east")
@@ -169,6 +198,7 @@ func _validate_lower_lift() -> void:
 	_check(surface_lift.scene_file_path == LIFT_ASSEMBLY_PATH, "surface lift does not instance shared assembly")
 	var actor := FakeOperator.new()
 	actor.name = "Operator"
+	actor.add_test_visual()
 	actor.add_to_group("player")
 	root.add_child(actor)
 	actor.global_position = lift.get_boarding_position()
@@ -186,8 +216,42 @@ func _validate_lower_lift() -> void:
 	_check(exit.can_interact(actor), "boarded actor cannot interact with lower lift")
 	level.ritualant_site.event_state.set_resolution(AshBellEventState.Resolution.SITE_DEFILED)
 	exit.interact(actor)
+	await create_timer(0.4).timeout
+	_check(lift.position.y < 358.0, "lower lift did not move during ascent")
+	_check(lift.get_node("RiderAnchor").get_child_count() > 0, "lower lift did not carry a presentation rider")
 	await create_timer(2.0).timeout
 	_check(transitions[0] == 1, "E-style lower-lift interaction did not request route once")
+
+	var rollback_level := UNDERGROUND_SCENE.instantiate() as ForlornRitualantUnderground
+	root.add_child(rollback_level)
+	var rollback_actor := FakeOperator.new()
+	rollback_actor.name = "OperatorRollback"
+	rollback_actor.add_to_group("player")
+	rollback_actor.add_test_visual()
+	root.add_child(rollback_actor)
+	await process_frame
+	var rollback_lift := rollback_level.lower_lift
+	rollback_actor.global_position = rollback_lift.get_boarding_position()
+	rollback_level.ritualant_site.event_state.set_resolution(
+		AshBellEventState.Resolution.SITE_DEFILED
+	)
+	var rejecting_exit := RejectingExit.new()
+	rejecting_exit.exit_id = &"return_world"
+	var rejecting_shape := CollisionShape2D.new()
+	rejecting_shape.name = "CollisionShape2D"
+	rejecting_shape.shape = CircleShape2D.new()
+	rejecting_exit.add_child(rejecting_shape)
+	root.add_child(rejecting_exit)
+	var actor_physics_before := rollback_actor.is_physics_processing()
+	rollback_level.begin_lift_departure(rollback_actor, rejecting_exit)
+	await create_timer(1.8).timeout
+	_check(not rollback_level.debug_is_departure_running(), "failed transition wedged departure")
+	_check(rollback_lift.position.y == 358.0, "failed transition did not restore lift Y")
+	_check(is_equal_approx(rollback_level.departure_black.modulate.a, 0.0), "failed transition left black overlay visible")
+	_check(rollback_actor.is_physics_processing() == actor_physics_before, "failed transition did not restore actor physics state")
+	rollback_level.queue_free()
+	rollback_actor.queue_free()
+	rejecting_exit.queue_free()
 	level.queue_free()
 	surface.queue_free()
 	actor.queue_free()

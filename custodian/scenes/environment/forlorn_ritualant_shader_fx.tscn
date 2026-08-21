@@ -1,7 +1,6 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/environment/forlorn_ritualant_shader_fx.gd" id="1_fx_script"]
-[ext_resource type="Script" path="res://scripts/environment/cosmic_underlay.gd" id="2_underlay_script"]
 [ext_resource type="Texture2D" path="res://content/backgrounds/forlorn_ritualant/cosmic-underlay.png" id="3_underlay_texture"]
 [ext_resource type="Texture2D" path="res://content/masks/forlorn_ritualant/room_silhouette_mask.png" id="4_room_mask"]
 [ext_resource type="ShaderMaterial" path="res://game/world/events/ash_bell/materials/void_ocean_underlay_material.tres" id="5_void_material"]
@@ -19,21 +18,22 @@ temporal_haze_material = ExtResource("8_haze_material")
 encounter_intensity = 0.35
 max_intensity = 0.75
 
-[node name="CosmicUnderlay" type="Node2D" parent="."]
+[node name="VoidUnderlay" type="Node2D" parent="."]
 z_index = -100
-script = ExtResource("2_underlay_script")
-drift_amplitude = Vector2(6, 4)
-drift_speed = Vector2(0.025, 0.018)
-pulse_strength = 0.0
-pulse_speed = 0.12
-base_texture_scale = Vector2(1.08, 1.08)
 
-[node name="Sprite2D" type="Sprite2D" parent="CosmicUnderlay"]
+[node name="RoomSizedQuad" type="TextureRect" parent="VoidUnderlay"]
 texture_filter = 1
 modulate = Color(0.72, 0.82, 1, 0.86)
 material = ExtResource("5_void_material")
 z_index = -100
+offset_left = -560.0
+offset_top = -432.0
+offset_right = 560.0
+offset_bottom = 432.0
+mouse_filter = 2
 texture = ExtResource("3_underlay_texture")
+expand_mode = 1
+stretch_mode = 6
 
 [node name="EdgeFX" type="Node2D" parent="."]
 z_index = -28

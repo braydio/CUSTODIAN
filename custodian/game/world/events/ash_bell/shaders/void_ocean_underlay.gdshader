@@ -8,6 +8,9 @@ uniform float drift_speed : hint_range(0.0, 2.0) = 0.055;
 uniform float pulse_strength : hint_range(0.0, 0.25) = 0.035;
 uniform float vignette_strength : hint_range(0.0, 1.0) = 0.30;
 
+uniform sampler2D cosmic_texture : source_color, repeat_enable;
+uniform sampler2D room_silhouette_mask : source_color, filter_nearest;
+
 uniform vec4 cold_tint : source_color = vec4(0.62, 0.82, 1.0, 1.0);
 uniform vec4 violet_tint : source_color = vec4(0.42, 0.24, 0.78, 1.0);
 
@@ -35,7 +38,9 @@ void fragment() {
 	float n2 = noise(uv * 15.0 + vec2(-t * 0.8, t * 0.5));
 
 	vec2 drift = vec2(n1 - 0.5, n2 - 0.5) * drift_strength;
-	vec4 base = texture(TEXTURE, uv + drift);
+	vec4 base = texture(cosmic_texture, uv + drift);
+	float room_coverage = texture(room_silhouette_mask, UV).a;
+	float void_reveal = 1.0 - room_coverage;
 
 	float pulse = 1.0 + sin(TIME * 0.45) * pulse_strength;
 
@@ -52,5 +57,6 @@ void fragment() {
 
 	base.rgb *= 1.0 - darkness;
 
+	base.a *= void_reveal;
 	COLOR = base;
 }
