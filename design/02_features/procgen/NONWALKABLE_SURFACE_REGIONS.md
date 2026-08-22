@@ -89,7 +89,9 @@ Explicit complete chasm semantics feed the seam-safe, camera-following
 `ProcgenDepthBackdrop.configure_from_chasm_cells()` presentation and the
 presentation-only `VoidCliffFace`. The face paints only authoritative chasm
 cells in a deterministic three-to-eight-cell band from floor frontiers; ocean
-and floor stop propagation. `RuntimeWalkableBoundary` remains the sole physical
+and floor stop propagation. Its authored top, three weighted body variants,
+and two weighted bottom variants use stable seed-and-cell clustering and dissolve
+into the endless forest backdrop. `RuntimeWalkableBoundary` remains the sole physical
 authority, and neither visual layer participates in collision or navigation.
 
 ## Candidate And Streaming Contract
@@ -124,6 +126,5 @@ and connected finite chasm-region forest stacks are excluded.
 
 ## Next Agent Slice
 
-Pass 2 may refine fascia edges, corners, drops, bottom breakup, roots,
-variation, and contact shadows without changing collision or navigation
-ownership.
+Roots and contact shadows may refine the authored fascia without changing
+collision or navigation ownership.

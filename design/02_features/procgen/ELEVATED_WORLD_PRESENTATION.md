@@ -21,7 +21,7 @@ Visual order is cold abyss haze, recognizable distant canopy, dark near-wall gro
 
 Gameplay terrain files are individual 32x32 PNGs under `content/tiles/mountain_cliffs/` and `content/tiles/terrain/runtime/chasm_bridge/`. IDs 44-59 and 100-114 are stable semantic TileSet IDs. The three runtime forest textures are 1536x1024 non-repeating compositions under `content/backgrounds/procgen/endless_forest/`. Both generated-world and explicit-chasm configuration use one native-scale, camera-following haze/canopy/wall-growth stack. Explicit chasm bounds and counts remain diagnostic metadata rather than finite forest placement authority.
 
-## Void Cliff Face Pass 1
+## Authored Void Cliff Face
 
 - Endless forest remains presentation-only.
 - Explicit chasm semantics remain authoritative structural state, but no longer
@@ -34,10 +34,12 @@ Gameplay terrain files are individual 32x32 PNGs under `content/tiles/mountain_c
 - The face may paint only authoritative chasm cells: never floor or ocean.
 - It owns no collision, navigation, occupancy, traversal, placement, minimap,
   simulation, streaming, or wall authority.
-- V1 fascia depth varies deterministically from three to eight cells and uses
-  only TileSet source 45, `rock_plateau_raised_32.png`.
-- Edge/corner/drop art, bottom breakup, roots, variation, and contact-shadow
-  decals are explicitly deferred to Pass 2.
+- Fascia depth varies deterministically from three to eight cells. Distance one
+  uses authored top source 149; interior depth uses weighted, clustered body
+  sources 150–152; terminal depth uses weighted bottom sources 153–154.
+- Cosmetic choices are stable by map seed and cell. Source 45,
+  `rock_plateau_raised_32.png`, is no longer a fascia dependency.
+- Roots and contact-shadow decals remain deferred.
 
 ## Source Versus Runtime Art
 

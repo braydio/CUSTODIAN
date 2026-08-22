@@ -9,5 +9,8 @@
     "body_cracked_01":{"required":true,"layer":"body","action_group":"fascia","variant":"body_cracked_01","layout":"copy"},
     "bottom_01":{"required":true,"layer":"body","action_group":"fascia","variant":"bottom_01","layout":"copy"},
     "bottom_broken_01":{"required":true,"layer":"body","action_group":"fascia","variant":"bottom_broken_01","layout":"copy"}
-  },"aliases":{},"consumers":[]
+  },"aliases":{},"consumers":[
+    {"type":"resource","path":"res://content/tiles/tilesets/procgen_world_tileset.tres"},
+    {"type":"script","path":"res://game/world/procgen/presentation/procgen_void_cliff_face.gd"}
+  ]
 }

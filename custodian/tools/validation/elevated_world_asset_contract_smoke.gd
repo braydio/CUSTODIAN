@@ -29,6 +29,16 @@ const EXPECTED := {
 	110: "chasm_inner_corner_nw_32.png", 111: "chasm_inner_corner_se_32.png",
 	112: "chasm_inner_corner_sw_32.png", 113: "collapsed_gap_32.png",
 	114: "broken_gap_edge_32.png",
+	149: "void_cliff_face_top_01_32.png",
+	150: "void_cliff_face_body_01_32.png",
+	151: "void_cliff_face_body_02_32.png",
+	152: "void_cliff_face_body_cracked_01_32.png",
+	153: "void_cliff_face_bottom_01_32.png",
+	154: "void_cliff_face_bottom_broken_01_32.png",
+}
+const FASCIA_SOURCE_IDS := {
+	"top": 149, "body_01": 150, "body_02": 151,
+	"body_cracked": 152, "bottom": 153, "bottom_broken": 154,
 }
 
 
@@ -130,13 +140,12 @@ func _run() -> void:
 	assert(not face.z_as_relative and face.z_index == -120)
 	assert(face.tile_set == TILESET)
 	assert(not face.collision_enabled and not face.navigation_enabled)
-	assert(face.body_source_id == 45)
 	var floor_cells: Dictionary = {}
 	var chasm_cells: Dictionary = {}
-	var floor_rect := Rect2i(Vector2i(7, 7), Vector2i(6, 6))
+	var floor_rect := Rect2i(Vector2i(24, 24), Vector2i(48, 48))
 	var omitted_ocean_rect := Rect2i(Vector2i.ZERO, Vector2i(4, 4))
-	for y in 20:
-		for x in 20:
+	for y in 96:
+		for x in 96:
 			var cell := Vector2i(x, y)
 			if floor_rect.has_point(cell):
 				floor_cells[cell] = true
@@ -149,18 +158,48 @@ func _run() -> void:
 	var first_face_cells: Array[Vector2i] = face.get_used_cells()
 	first_face_cells.sort()
 	assert(not first_face_cells.is_empty())
+	var first_sources := _source_fingerprint(face, first_face_cells)
+	var paint_plan := face.get_debug_paint_plan()
 	for cell in first_face_cells:
 		assert(chasm_cells.has(cell))
 		assert(not floor_cells.has(cell))
 		assert(not omitted_ocean_rect.has_point(cell))
-		assert(face.get_cell_source_id(cell) == 45)
+		assert(face.get_cell_source_id(cell) != 45)
 		var distance := _manhattan_distance_to_rect(cell, floor_rect)
 		assert(distance >= 1 and distance <= 8)
+		var paint_data := paint_plan[cell] as Dictionary
+		var role := String(paint_data["role"])
+		assert(face.get_cell_source_id(cell) == int(FASCIA_SOURCE_IDS[role]))
+		if int(paint_data["distance"]) == 1:
+			assert(role == "top")
+		elif int(paint_data["distance"]) >= int(paint_data["depth_limit"]):
+			assert(role == "bottom" or role == "bottom_broken")
+		else:
+			assert(role == "body_01" or role == "body_02" or role == "body_cracked")
 	face.clear()
 	face.configure_from_surface_cells(floor_cells, chasm_cells, 17)
 	var repeated_face_cells: Array[Vector2i] = face.get_used_cells()
 	repeated_face_cells.sort()
 	assert(repeated_face_cells == first_face_cells)
+	assert(_source_fingerprint(face, repeated_face_cells) == first_sources)
+	var debug_state := face.get_debug_state()
+	assert(debug_state["source_ids"] == FASCIA_SOURCE_IDS)
+	for count_key: String in [
+		"top_count", "body_01_count", "body_02_count", "body_cracked_count",
+		"bottom_count", "bottom_broken_count",
+	]:
+		assert(int(debug_state[count_key]) > 0, "%s should appear in the large fixture" % count_key)
+	face.min_depth_tiles = 8
+	face.max_depth_tiles = 8
+	face.configure_from_surface_cells(floor_cells, chasm_cells, 17)
+	var fixed_depth_cells: Array[Vector2i] = face.get_used_cells()
+	fixed_depth_cells.sort()
+	var fixed_depth_sources := _source_fingerprint(face, fixed_depth_cells)
+	face.configure_from_surface_cells(floor_cells, chasm_cells, 71)
+	var varied_seed_cells: Array[Vector2i] = face.get_used_cells()
+	varied_seed_cells.sort()
+	assert(varied_seed_cells == fixed_depth_cells, "Cosmetic seed must not alter fixed topology")
+	assert(_source_fingerprint(face, varied_seed_cells) != fixed_depth_sources)
 	for audio_node: Node in map.find_children("*", "AudioStreamPlayer", true, false):
 		(audio_node as AudioStreamPlayer).stop()
 	camera.free()
@@ -215,3 +254,10 @@ func _manhattan_distance_to_rect(cell: Vector2i, rect: Rect2i) -> int:
 	var dx := maxi(maxi(rect.position.x - cell.x, cell.x - (rect.end.x - 1)), 0)
 	var dy := maxi(maxi(rect.position.y - cell.y, cell.y - (rect.end.y - 1)), 0)
 	return dx + dy
+
+
+func _source_fingerprint(face: ProcgenVoidCliffFace, cells: Array[Vector2i]) -> String:
+	var parts: PackedStringArray = []
+	for cell in cells:
+		parts.append("%d,%d:%d" % [cell.x, cell.y, face.get_cell_source_id(cell)])
+	return "|".join(parts)
