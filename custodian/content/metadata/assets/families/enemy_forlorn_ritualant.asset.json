@@ -1,0 +1,71 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "enemy_forlorn_ritualant",
+  "kind": "enemy",
+
+  "runtime": {
+    "domain": "sprites/enemies",
+    "owner": "enemy_forlorn_ritualant",
+    "template": "sprites/enemies/forlorn_ritualant/runtime/{layer}/{action_group}/{filename}"
+  },
+
+  "canvas": {
+    "width": 128,
+    "height": 128
+  },
+
+  "direction_policy": "s",
+  "auto_mirror": false,
+
+  "states": {
+    "ninth_answer": {
+      "required": true,
+      "layer": "body",
+      "action_group": "special",
+      "variant": "ninth_answer",
+      "animation": true,
+      "fps": 8,
+      "layout": "grid",
+      "columns": 4,
+      "rows": 2
+    },
+
+    "orra_late": {
+      "required": true,
+      "layer": "body",
+      "action_group": "special",
+      "variant": "orra_late",
+      "animation": true,
+      "fps": 8,
+      "layout": "grid",
+      "columns": 4,
+      "rows": 2
+    },
+
+    "dissolve": {
+      "required": true,
+      "layer": "body",
+      "action_group": "death",
+      "variant": "dissolve",
+      "animation": true,
+      "fps": 6,
+      "layout": "grid",
+      "columns": 4,
+      "rows": 2
+    },
+
+    "death_violent": {
+      "required": true,
+      "layer": "body",
+      "action_group": "death",
+      "variant": "death_violent",
+      "animation": true,
+      "fps": 8,
+      "layout": "grid",
+      "columns": 4,
+      "rows": 2
+    }
+  },
+
+  "aliases": {}
+}

@@ -138,7 +138,6 @@ z_index = -8
 z_as_relative = false
 
 [node name="MountainCliff" type="Sprite2D" parent="RearMassRoot" unique_id=16733388]
-texture_filter = 1
 position = Vector2(0, -150)
 texture = ExtResource("2_mountain")
 

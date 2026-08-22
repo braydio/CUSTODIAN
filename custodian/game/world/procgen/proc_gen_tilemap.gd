@@ -152,6 +152,12 @@ const TERRAIN_TILESET_SOURCES := {
 	"sundered_keep_cliff_rock_floor_cracked_01": {"source_id": 130, "layer": "floor"},
 	"sundered_keep_main_courtyard_flagstone_wet_01": {"source_id": 131, "layer": "floor"},
 	"sundered_keep_main_gate_threshold_stone_01": {"source_id": 132, "layer": "floor"},
+	"void_cliff_face_top_01_32": {"source_id": 149, "layer": "presentation"},
+	"void_cliff_face_body_01_32": {"source_id": 150, "layer": "presentation"},
+	"void_cliff_face_body_02_32": {"source_id": 151, "layer": "presentation"},
+	"void_cliff_face_body_cracked_01_32": {"source_id": 152, "layer": "presentation"},
+	"void_cliff_face_bottom_01_32": {"source_id": 153, "layer": "presentation"},
+	"void_cliff_face_bottom_broken_01_32": {"source_id": 154, "layer": "presentation"},
 }
 const NONWALKABLE_SURFACE_TILESET_SOURCES := {
 	"sundered_keep_ocean_dark_water_01": 124,
