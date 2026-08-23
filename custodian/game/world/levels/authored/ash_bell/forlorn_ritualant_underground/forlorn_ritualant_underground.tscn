@@ -11,8 +11,8 @@ size = Vector2(192, 64)
 [node name="ForlornRitualantUnderground" type="Node2D"]
 script = ExtResource("1_level")
 draw_placeholder_grid = false
-placeholder_canvas_size = Vector2(1120, 864)
-camera_bounds = Rect2(-560, -432, 1120, 864)
+placeholder_canvas_size = Vector2(3584, 4096)
+camera_bounds = Rect2(-1792, -2048, 3584, 4096)
 
 [node name="UnderlayRoot" type="Node2D" parent="."]
 
@@ -21,11 +21,12 @@ camera_bounds = Rect2(-560, -432, 1120, 864)
 [node name="PlayableRoot" type="Node2D" parent="."]
 
 [node name="ForlornRitualantSite" parent="PlayableRoot" instance=ExtResource("2_ritualant")]
+position = Vector2(0, -1120)
 
 [node name="PropsRoot" type="Node2D" parent="."]
 
 [node name="LowerLiftAssembly" parent="PropsRoot" instance=ExtResource("4_lift")]
-position = Vector2(0, 358)
+position = Vector2(0, 1696)
 
 [node name="OcclusionRoot" type="Node2D" parent="."]
 
@@ -38,7 +39,7 @@ collision_mask = 1
 [node name="Markers" type="Node2D" parent="."]
 
 [node name="Spawn_DescentLanding" type="Marker2D" parent="Markers"]
-position = Vector2(0, 332)
+position = Vector2(0, 1670)
 
 [node name="POIRoot" type="Node2D" parent="."]
 
@@ -49,7 +50,7 @@ position = Vector2(0, 332)
 [node name="Exits" type="Node2D" parent="."]
 
 [node name="Exit_ReturnWorld" type="Area2D" parent="Exits"]
-position = Vector2(0, 358)
+position = Vector2(0, 1696)
 script = ExtResource("3_exit")
 exit_id = &"return_world"
 prompt_text = "ASCEND TO SURFACE"

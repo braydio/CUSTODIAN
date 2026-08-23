@@ -1,6 +1,6 @@
 # Forlorn Ritualant — Underground Authored-Route Migration
 
-**Status:** route migration complete; encounter completion V2 implemented
+**Status:** route migration complete; authored cavern journey V3 implemented
 **Decision date:** 2026-07-30
 
 ## Decision
@@ -18,10 +18,10 @@ The new authored Underground wrapper owns level lifecycle, named spawn, camera b
 ## Authority Boundary
 
 - Procgen may place only the exterior cave ingress marker.
-- Procgen does not insert, reserve, clear, or own the `35x27` Ritualant chamber.
+- Procgen does not insert, reserve, clear, or own the `35x27` Ritualant chapel.
 - `SpecialRoomRuntimeInserter` must not discover an Ash-Bell Ritualant definition.
 - `RouteTraversalManager` and `LevelLoader` own entry, isolation, return, and re-entry.
-- The authored Underground scene owns the chamber footprint and collision rails.
+- The authored Underground scene owns the `112x128` / `3584x4096` cavern, the translated chapel footprint, and the closed playable boundary loop.
 - The existing Ash-Bell event scripts continue to own encounter state and presentation.
 
 ## Runtime Flow
@@ -75,12 +75,14 @@ The generic special-room system remains live for other encounters. Its documenta
 
 ## Authored Spatial Contract
 
-- Existing room footprint: `35x27` tiles at `32 px` per tile (`1120x864 px`).
-- Authored camera bounds: `1120x864 px` centered on the chamber.
-- Entry spawn: `(0, 332)`, on the lower lift walk-off position.
-- World-return interaction: `(0, 358)`, on the shared lower lift assembly.
-- Thirteen authored perimeter rails trace the chapel silhouette while retaining the `192 px` south opening; validation probes separately identify known floor and void positions.
-- The Ritualant scene remains instanced at `(0, 0)`; the old internal exit
+- Full Underground: `112x128` authored cells at `32 px` (`3584x4096`), with camera bounds `Rect2(-1792,-2048,3584,4096)`.
+- Player-controlled cavern depth is up-screen (`Vector2.UP`); the projected lift still descends down-screen and returns up-screen.
+- The existing `35x27` / `1120x864` chapel is instanced at `(0,-1120)`.
+- Entry spawn: `(0,1670)`, on the lower lift walk-off position.
+- World-return interaction: `(0,1696)`, on the shared lower lift assembly.
+- Arrival lift starts at `(0,1440)` and travels down-screen to the dock over `256 px` / `1.10 sec` under the black handoff.
+- A closed polygon loop defines the cavern, landing shelf, and chapel connector; debug centerline data is presentation-only.
+- The Ritualant scene is instanced at `(0,-1120)`; the old internal exit
   trigger is retired because the authored wrapper owns travel.
 
 ## Room Mapper
@@ -91,7 +93,7 @@ Enter/`U` also applies the new rails or markers to the running mapper preview
 immediately. Marker positions are written into
 `forlorn_ritualant_underground.tscn` as well as the script authority, so the
 authored scene and runtime constants do not present conflicting coordinates.
-Collision rails remain generated from `BOUNDARY_SEGMENTS`; the mapper writes
+Collision rails remain generated from the authoritative boundary loop; the mapper writes
 that production authority rather than baking duplicate collision children into
 the scene.
 

@@ -217,7 +217,7 @@ func _validate_lower_lift() -> void:
 	level.ritualant_site.event_state.set_resolution(AshBellEventState.Resolution.SITE_DEFILED)
 	exit.interact(actor)
 	await create_timer(0.4).timeout
-	_check(lift.position.y < 358.0, "lower lift did not move during ascent")
+	_check(lift.position.y < 1696.0, "lower lift did not move during ascent")
 	_check(lift.get_node("RiderAnchor").get_child_count() > 0, "lower lift did not carry a presentation rider")
 	await create_timer(2.0).timeout
 	_check(transitions[0] == 1, "E-style lower-lift interaction did not request route once")
@@ -246,7 +246,7 @@ func _validate_lower_lift() -> void:
 	rollback_level.begin_lift_departure(rollback_actor, rejecting_exit)
 	await create_timer(1.8).timeout
 	_check(not rollback_level.debug_is_departure_running(), "failed transition wedged departure")
-	_check(rollback_lift.position.y == 358.0, "failed transition did not restore lift Y")
+	_check(rollback_lift.position.y == 1696.0, "failed transition did not restore lift Y")
 	_check(is_equal_approx(rollback_level.departure_black.modulate.a, 0.0), "failed transition left black overlay visible")
 	_check(rollback_actor.is_physics_processing() == actor_physics_before, "failed transition did not restore actor physics state")
 	rollback_level.queue_free()

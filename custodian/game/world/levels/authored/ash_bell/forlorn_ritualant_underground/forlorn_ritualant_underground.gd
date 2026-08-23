@@ -5,35 +5,34 @@ const OPERATOR_PRESENTATION_RIG_SCENE := preload(
 	"res://game/actors/operator/presentation/operator_presentation_rig_2d.tscn"
 )
 const LIFT_ASCENT_DISTANCE := 176.0
-const RITUALANT_CHAMBER_BOUNDS := Rect2(-560.0, -432.0, 1120.0, 864.0)
+const LOWER_LIFT_TRAVEL_DISTANCE := 256.0
+const LOWER_LIFT_TRAVEL_SEC := 1.10
+const AUTHORED_CELL_SIZE := 32.0
+const MAP_SIZE_CELLS := Vector2i(112, 128)
+const LEVEL_BOUNDS := Rect2(-1792.0, -2048.0, 3584.0, 4096.0)
+const CHAPEL_ORIGIN := Vector2(0.0, -1120.0)
+const RITUALANT_CHAMBER_BOUNDS := Rect2(-560.0, -1552.0, 1120.0, 864.0)
+const LOWER_LIFT_DOCK := Vector2(0.0, 1696.0)
+const LOWER_LIFT_ARRIVAL_START := Vector2(0.0, 1440.0)
+const SPAWN_DESCENT_LANDING := Vector2(0.0, 1670.0)
+const LANDING_CONNECTOR := Rect2(-128.0, 1312.0, 256.0, 128.0)
+const CHAPEL_CONNECTOR := Rect2(-96.0, -768.0, 192.0, 128.0)
+const CAVERN_DEEPER_DIRECTION := Vector2.UP
+const LIFT_DESCENT_SCREEN_DIRECTION := Vector2.DOWN
+const LIFT_ASCENT_SCREEN_DIRECTION := Vector2.UP
 
-const BOUNDARY_SEGMENTS := [
-	[Vector2(-320.0, -376.0), Vector2(-112.0, -416.0)],
-	[Vector2(-112.0, -416.0), Vector2(112.0, -416.0)],
-	[Vector2(112.0, -416.0), Vector2(320.0, -376.0)],
-	[Vector2(-320.0, -376.0), Vector2(-456.0, -264.0)],
-	[Vector2(-456.0, -264.0), Vector2(-512.0, -32.0)],
-	[Vector2(-512.0, -32.0), Vector2(-480.0, 224.0)],
-	[Vector2(-480.0, 224.0), Vector2(-304.0, 360.0)],
-	[Vector2(-304.0, 360.0), Vector2(-96.0, 416.0)],
-	[Vector2(320.0, -376.0), Vector2(456.0, -264.0)],
-	[Vector2(456.0, -264.0), Vector2(512.0, -32.0)],
-	[Vector2(512.0, -32.0), Vector2(480.0, 224.0)],
-	[Vector2(480.0, 224.0), Vector2(304.0, 360.0)],
-	[Vector2(304.0, 360.0), Vector2(96.0, 416.0)],
-]
+var PLAYABLE_BOUNDARY_LOOP := PackedVector2Array([
+	Vector2(-128,1376), Vector2(-160,1280), Vector2(-288,1184), Vector2(-384,1024), Vector2(-416,832), Vector2(-352,640), Vector2(-224,480), Vector2(-64,320), Vector2(64,160), Vector2(96,-64), Vector2(32,-256), Vector2(-96,-416), Vector2(-224,-576), Vector2(-96,-704), Vector2(-304,-760), Vector2(-480,-896), Vector2(-512,-1152), Vector2(-456,-1384), Vector2(-320,-1496), Vector2(-112,-1536), Vector2(112,-1536), Vector2(320,-1496), Vector2(456,-1384), Vector2(512,-1152), Vector2(480,-896), Vector2(304,-760), Vector2(96,-704), Vector2(224,-576), Vector2(224,-352), Vector2(320,-192), Vector2(352,32), Vector2(320,224), Vector2(192,416), Vector2(32,576), Vector2(-96,736), Vector2(-128,928), Vector2(-64,1088), Vector2(64,1216), Vector2(128,1280), Vector2(128,1376), Vector2(224,1408), Vector2(320,1472), Vector2(352,1600), Vector2(352,1760), Vector2(288,1824), Vector2(-288,1824), Vector2(-352,1760), Vector2(-352,1600), Vector2(-320,1472), Vector2(-224,1408),
+])
+var CAVERN_CENTERLINE := PackedVector2Array([
+	Vector2(0,1376), Vector2(-64,1280), Vector2(-224,1120), Vector2(-256,832), Vector2(-192,608), Vector2(-64,416), Vector2(128,192), Vector2(192,-64), Vector2(128,-320), Vector2(0,-544), Vector2(0,-704),
+])
 
 const WALKABLE_PROBES := [
-	Vector2(0.0, 0.0),
-	Vector2(0.0, 300.0),
-	Vector2(-280.0, 120.0),
-	Vector2(280.0, 120.0),
+	Vector2(0.0, 1600.0), Vector2(-256.0, 960.0), Vector2(160.0, -64.0), Vector2(0.0, -704.0), Vector2(0.0, -1120.0),
 ]
 const VOID_PROBES := [
-	Vector2(-528.0, -300.0),
-	Vector2(528.0, -300.0),
-	Vector2(-520.0, 300.0),
-	Vector2(520.0, 300.0),
+	Vector2(-640.0, 1600.0), Vector2(640.0, 1600.0), Vector2(-640.0, 800.0), Vector2(640.0, 0.0),
 ]
 
 const AUTHORING_MARKERS := {
@@ -41,19 +40,19 @@ const AUTHORING_MARKERS := {
 		"node_name": "Spawn_DescentLanding",
 		"label": "LOWER DESCENT LANDING",
 		"kind": "spawn",
-		"position": Vector2(0.0, 332.0),
+		"position": SPAWN_DESCENT_LANDING,
 	},
 	"return_world": {
 		"node_name": "Exit_ReturnWorld",
 		"label": "ASCEND TO SURFACE",
 		"kind": "level_exit",
-		"position": Vector2(0.0, 358.0),
+		"position": LOWER_LIFT_DOCK,
 	},
 	"encounter_origin": {
 		"node_name": "ForlornRitualantSite",
 		"label": "RITUALANT ENCOUNTER ORIGIN",
 		"kind": "encounter",
-		"position": Vector2(0.0, 0.0),
+		"position": CHAPEL_ORIGIN,
 	},
 }
 
@@ -68,10 +67,90 @@ var _departure_rig: OperatorPresentationRig2D = null
 var _departure_lift_start := Vector2.ZERO
 var _actor_process_snapshot: Dictionary = {}
 var _bound_operator: Node = null
+var _arrival_running := false
+var _arrival_actor: Node = null
+var _arrival_rig: OperatorPresentationRig2D = null
 
 
 func _ready() -> void:
 	call_deferred("_bind_active_operator")
+
+
+func activate_route_node(actor: Node, spawn_id: StringName) -> bool:
+	if not super.activate_route_node(actor, spawn_id):
+		return false
+	if spawn_id == &"Spawn_DescentLanding":
+		call_deferred("_begin_arrival_sequence", actor)
+	return true
+
+
+func _begin_arrival_sequence(actor: Node) -> void:
+	if _arrival_running or actor == null or not (actor is Node2D):
+		return
+	_arrival_running = true
+	_arrival_actor = actor
+	if not _capture_arrival_rider(actor):
+		_arrival_running = false
+		_arrival_actor = null
+		return
+	_suspend_arrival_actor(actor)
+	departure_black.modulate.a = 1.0
+	lower_lift.position = LOWER_LIFT_ARRIVAL_START
+	lower_lift.set_vibrating(true)
+	var camera := get_viewport().get_camera_2d()
+	if camera != null and camera.has_method("set_presentation_framing"):
+		camera.call("set_presentation_framing", true, Vector2(0.0, -224.0), Vector2(0.62, 0.62))
+	await get_tree().create_timer(0.18).timeout
+	var fade := create_tween()
+	fade.tween_property(departure_black, "modulate:a", 0.0, 0.55)
+	var lift_tween := create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	lift_tween.tween_property(lower_lift, "position", LOWER_LIFT_DOCK, LOWER_LIFT_TRAVEL_SEC)
+	await lift_tween.finished
+	lower_lift.set_vibrating(false)
+	await get_tree().create_timer(0.12).timeout
+	_finish_arrival_sequence()
+
+
+func _capture_arrival_rider(actor: Node) -> bool:
+	_arrival_rig = OPERATOR_PRESENTATION_RIG_SCENE.instantiate() as OperatorPresentationRig2D
+	if _arrival_rig == null:
+		return false
+	lower_lift.rider_anchor.add_child(_arrival_rig)
+	_arrival_rig.position = Vector2.ZERO
+	if not _arrival_rig.capture_from_operator(actor):
+		_arrival_rig.queue_free()
+		_arrival_rig = null
+		return false
+	_arrival_rig.hide_source_visuals()
+	_arrival_rig.play_pose(&"lift_braced")
+	return true
+
+
+func _suspend_arrival_actor(actor: Node) -> void:
+	_actor_process_snapshot = {
+		"process": actor.is_processing(), "physics": actor.is_physics_processing(),
+		"input": actor.is_processing_input(), "unhandled_input": actor.is_processing_unhandled_input(),
+		"unhandled_key_input": actor.is_processing_unhandled_key_input(),
+	}
+	actor.set_process(false)
+	actor.set_physics_process(false)
+	actor.set_process_input(false)
+	actor.set_process_unhandled_input(false)
+	actor.set_process_unhandled_key_input(false)
+	if actor is CharacterBody2D:
+		(actor as CharacterBody2D).velocity = Vector2.ZERO
+
+
+func _finish_arrival_sequence() -> void:
+	if _arrival_actor != null and is_instance_valid(_arrival_actor):
+		_restore_departure_actor_processing(_arrival_actor)
+	if _arrival_rig != null and is_instance_valid(_arrival_rig):
+		_arrival_rig.restore_source_visuals()
+		_arrival_rig.queue_free()
+	_arrival_rig = null
+	_arrival_actor = null
+	_actor_process_snapshot.clear()
+	_arrival_running = false
 
 
 func _bind_active_operator() -> void:
@@ -114,15 +193,16 @@ func begin_lift_departure(actor: Node, exit: InteractableLevelExit2D) -> void:
 		return
 	_suspend_departure_actor(actor)
 	lower_lift.set_vibrating(true)
-	await get_tree().create_timer(0.25).timeout
 	var tween := create_tween().set_parallel(true).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	tween.tween_property(
 		lower_lift,
 		"position:y",
-		lower_lift.position.y - LIFT_ASCENT_DISTANCE,
-		0.75
+		lower_lift.position.y - LOWER_LIFT_TRAVEL_DISTANCE,
+		LOWER_LIFT_TRAVEL_SEC
 	)
-	tween.tween_property(departure_black, "modulate:a", 1.0, 0.65)
+	var black_tween := create_tween()
+	black_tween.tween_interval(0.35)
+	black_tween.tween_property(departure_black, "modulate:a", 1.0, 0.60)
 	await tween.finished
 	var lines: Array[String] = ritualant_site.get_departure_lines() if ritualant_site != null else []
 	for line in lines:
@@ -241,6 +321,8 @@ func _exit_tree() -> void:
 			_bound_operator.disconnect("weapon_feedback_event", callback)
 	if _departure_running:
 		_cleanup_departure_immediate()
+	if _arrival_running:
+		_finish_arrival_sequence()
 
 
 func debug_is_departure_running() -> bool:
@@ -248,7 +330,13 @@ func debug_is_departure_running() -> bool:
 
 
 func get_boundary_segments() -> Array:
-	return BOUNDARY_SEGMENTS
+	var segments: Array = []
+	for index in PLAYABLE_BOUNDARY_LOOP.size():
+		segments.append([
+			PLAYABLE_BOUNDARY_LOOP[index],
+			PLAYABLE_BOUNDARY_LOOP[(index + 1) % PLAYABLE_BOUNDARY_LOOP.size()],
+		])
+	return segments
 
 
 func get_walkable_probes() -> Array:

@@ -16,8 +16,8 @@ consolidate those assets; this pass does not move them.
 The Empty Bell entrance uses a surface-side lift descent and return ascent around the existing
 fade into the Forlorn Ritualant Underground. The presentation belongs to the
 generated `WorldIngressSite`; it is not part of
-`forlorn_ritualant_underground.tscn`, whose `Spawn_DescentLanding` remains at
-`(0, 224)`.
+`forlorn_ritualant_underground.tscn`. The canonical Underground
+`Spawn_DescentLanding` is `(0, 1670)` inside the migrated 3584x4096 cavern.
 
 ## Runtime ownership
 

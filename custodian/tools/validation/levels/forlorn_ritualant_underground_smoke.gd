@@ -28,10 +28,10 @@ func _run() -> void:
 		var authored_level := level as AuthoredLevel2D
 		if not authored_level.has_spawn(&"Spawn_DescentLanding"):
 			errors.append("Spawn_DescentLanding does not resolve")
-		elif authored_level.get_spawn_position(&"Spawn_DescentLanding") != Vector2(0.0, 332.0):
+		elif authored_level.get_spawn_position(&"Spawn_DescentLanding") != Vector2(0.0, 1670.0):
 			errors.append("Spawn_DescentLanding is not on the lower lift")
-		if authored_level.get_camera_bounds().size != Vector2(1120.0, 864.0):
-			errors.append("authored chamber camera bounds are not 1120x864")
+		if authored_level.get_camera_bounds() != Rect2(-1792.0, -2048.0, 3584.0, 4096.0):
+			errors.append("authored Underground camera bounds are not 3584x4096")
 
 	if level.get_node_or_null("PlayableRoot/ForlornRitualantSite") == null:
 		errors.append("existing ForlornRitualantSite is not instanced")
@@ -59,8 +59,8 @@ func _run() -> void:
 			errors.append("cosmic underlay shader does not sample room mask")
 		if shader_code.find("void_reveal") < 0:
 			errors.append("cosmic underlay shader lacks explicit reveal authority")
-	if level.call("get_boundary_segments").size() < 13:
-		errors.append("authored chamber still uses coarse five-rail boundary")
+	if level.call("get_boundary_segments").size() != 50:
+		errors.append("authored Underground boundary loop is incomplete")
 	if level.call("get_walkable_probes").is_empty() \
 			or level.call("get_void_probes").is_empty():
 		errors.append("authored floor/void validation probes are missing")
