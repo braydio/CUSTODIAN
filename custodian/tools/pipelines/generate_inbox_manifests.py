@@ -480,6 +480,8 @@ def _canonical_runtime_path(info: SheetInfo) -> str:
         return f"weapons/{info.owner}/animations/{info.basename}"
     if info.owner in {"command_terminal", "fabricator_terminal", "computer_terminal", "builder_terminal"}:
         return f"environment/props/terminal/runtime/body/{info.basename}"
+    if info.owner == "field_fabricator_mk1":
+        return f"environment/props/field_fabricator_mk1/runtime/{info.layer}/{info.action_group}/{info.basename}"
     if info.owner in {"portal_ring", "hit_spark", "muzzle_flash", "block_spark"} or info.owner.endswith("_spark") or info.owner.endswith("_ring"):
         return f"effects/runtime/{info.basename}"
     if _is_vehicle_owner(info.owner):

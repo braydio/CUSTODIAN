@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://game/infrastructure/infrastructure_structure.gd" id="1_structure"]
 [ext_resource type="Resource" path="res://content/infrastructure/definitions/fabrication/field_fabricator_mk1.tres" id="2_definition"]
 [ext_resource type="Script" path="res://game/infrastructure/components/power_consumer_component.gd" id="3_consumer"]
 [ext_resource type="Script" path="res://game/infrastructure/components/infrastructure_service_component.gd" id="4_service"]
+[ext_resource type="Script" path="res://game/infrastructure/structures/field_fabricator_visual_controller.gd" id="5_visual"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fabricator"]
 size = Vector2(92, 64)
@@ -14,13 +15,17 @@ definition = ExtResource("2_definition")
 infrastructure_instance_id = &"field_fabricator_primary"
 prebuilt_operational = true
 
-[node name="Body" type="Polygon2D" parent="."]
-polygon = PackedVector2Array(-46, -32, 46, -32, 46, 32, -46, 32)
-color = Color(0.16, 0.28, 0.29, 1)
+[node name="Body" type="AnimatedSprite2D" parent="."]
+centered = true
+texture_filter = 1
 
-[node name="Core" type="Polygon2D" parent="."]
-polygon = PackedVector2Array(-24, -18, 24, -18, 30, 0, 24, 18, -24, 18, -30, 0)
-color = Color(0.32, 0.78, 0.7, 0.9)
+[node name="FX" type="AnimatedSprite2D" parent="."]
+centered = true
+visible = false
+texture_filter = 1
+
+[node name="VisualController" type="Node" parent="."]
+script = ExtResource("5_visual")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_fabricator")

@@ -4,48 +4,6 @@
     "field_fabricator_mk1": {
       "kind": "world_prop",
       "assets": {
-        "active::omni": {
-          "state_id": "active",
-          "direction": "omni",
-          "semantic_identity": [
-            "field_fabricator_mk1",
-            "world_prop",
-            "body",
-            "interaction",
-            "fabricate",
-            "omni"
-          ],
-          "path": "content/sprites/environment/props/field_fabricator_mk1/runtime/body/field_fabricator_mk1__body__interaction__fabricate__omni__4f__128x96.png",
-          "frames": 4,
-          "frame_size": [
-            128,
-            96
-          ],
-          "sha256": "c674b2e735e869ec66335b9df35e32901bd3a3f5f06757c075aaaef8f0e1a838",
-          "provenance": "authored",
-          "source_asset": null
-        },
-        "glow::omni": {
-          "state_id": "glow",
-          "direction": "omni",
-          "semantic_identity": [
-            "field_fabricator_mk1",
-            "world_prop",
-            "fx",
-            "interaction",
-            "powered_glow",
-            "omni"
-          ],
-          "path": "content/sprites/environment/props/field_fabricator_mk1/runtime/fx/field_fabricator_mk1__fx__interaction__powered_glow__omni__1f__128x96.png",
-          "frames": 1,
-          "frame_size": [
-            128,
-            96
-          ],
-          "sha256": "3a876f0deef85073f444094364c2fec61a77200d3d8809a44f4e4957c84d54fc",
-          "provenance": "authored",
-          "source_asset": null
-        },
         "idle::omni": {
           "state_id": "idle",
           "direction": "omni",
@@ -57,13 +15,55 @@
             "idle",
             "omni"
           ],
-          "path": "content/sprites/environment/props/field_fabricator_mk1/runtime/body/field_fabricator_mk1__body__interaction__idle__omni__1f__128x96.png",
-          "frames": 1,
+          "path": "content/sprites/environment/props/field_fabricator_mk1/runtime/body/interaction/field_fabricator_mk1__body__interaction__idle__omni__8f__96.png",
+          "frames": 8,
           "frame_size": [
-            128,
+            96,
             96
           ],
-          "sha256": "e882738ffc7a6b216610ab5ab7531f3ec64530835522059324c328241ebee97e",
+          "sha256": "fc40da8241df9bdcfbd32483c01bcd1b0ca1fb169ab294ece4b23ab368bb2273",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "fabricate::omni": {
+          "state_id": "fabricate",
+          "direction": "omni",
+          "semantic_identity": [
+            "field_fabricator_mk1",
+            "world_prop",
+            "body",
+            "interaction",
+            "fabricate",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/field_fabricator_mk1/runtime/body/interaction/field_fabricator_mk1__body__interaction__fabricate__omni__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "b02434774102f739bbf5619dba1f2f23bc7134c6b0fb72f5197bdcb7b8dcc08b",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "fabricate_fx::omni": {
+          "state_id": "fabricate_fx",
+          "direction": "omni",
+          "semantic_identity": [
+            "field_fabricator_mk1",
+            "world_prop",
+            "fx",
+            "interaction",
+            "fabricate",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/field_fabricator_mk1/runtime/fx/interaction/field_fabricator_mk1__fx__interaction__fabricate__omni__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "beecab45d29c5c647de77ec59e4f6d376a693ed7e0205304319e82e2411cb0f9",
           "provenance": "authored",
           "source_asset": null
         }

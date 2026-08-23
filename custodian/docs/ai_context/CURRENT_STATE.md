@@ -794,7 +794,11 @@ Documentation updates this session:
 
 Canonical structure design language: `custodian/design/02_art_direction/CUSTODIAN_STRUCTURE_DESIGN_CONTRACT.md`
 Field Fabricator Mk1 integration proposal: `design/02_features/infrastructure/FIELD_FABRICATOR_VISUAL_INTEGRATION_CODE.md`
-Production sprite path (pending art): `custodian/assets/sprites/infrastructure/fabrication/field_fabricator_mk1/field_fabricator_mk1__idle__128x96.png`
+Field Fabricator Mk1 now uses a progressive 96x96-per-frame Asset V2 contract
+under `content/sprites/environment/props/field_fabricator_mk1/runtime/`.
+The currently ingested partial set is body idle, body fabricate, and fabricate
+FX; startup, fabricate-complete, offline, and damage/destruction states remain
+declared for future inbox drops and fall back safely at runtime.
 # Operator asset pipeline V2 (2026-08-16)
 
 - Operator source authority is `content/sprites/operator/source/animations`; generated runtime authority is `content/sprites/operator/runtime/animations`.

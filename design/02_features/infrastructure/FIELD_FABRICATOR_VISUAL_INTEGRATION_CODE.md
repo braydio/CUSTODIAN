@@ -1,6 +1,6 @@
 # Field Fabricator Mk1 — Visual Integration Code
 
-**Status:** proposed
+**Status:** partial production integration (idle/fabricate body, fabricate FX live)
 **Scope:** visual replacement of placeholder geometry with production sprite art
 **Authority:** `custodian/design/02_art_direction/CUSTODIAN_STRUCTURE_DESIGN_CONTRACT.md`
 **Runtime target:** `custodian/game/infrastructure/structures/field_fabricator_mk1.tscn`
@@ -9,7 +9,10 @@
 
 ## 1. What Changes
 
-Replace the placeholder `Polygon2D` geometry in the Field Fabricator Mk1 scene with a production `Sprite2D` using a 128×96 transparent RGBA sprite.
+Replace the placeholder `Polygon2D` geometry in the Field Fabricator Mk1 scene with
+the progressive production presentation. The current runtime contract is a
+96×96 frame canvas and 768×96 eight-frame strips; only inbox-present states are
+ingested, while the full family vocabulary remains declared for future drops.
 
 ## 2. What Does NOT Change
 
@@ -41,7 +44,8 @@ FieldFabricatorMk1 (StaticBody2D)
 
 ```text
 FieldFabricatorMk1 (StaticBody2D)
-├── Body (Sprite2D)               ← production 128×96 sprite
+├── Body (AnimatedSprite2D)       ← production 96×96 frame canvas
+├── FX (AnimatedSprite2D)         ← optional matching 96×96 overlay
 ├── CollisionShape2D              ← RectangleShape2D(92, 64) — unchanged
 ├── PowerConsumer (node)          ← unchanged
 └── FabricationService (node)     ← unchanged
@@ -100,13 +104,19 @@ Note: `load_steps` drops from 6 to 5 because the `Core` Polygon2D sub-resource i
 ## 6. Sprite Asset Path
 
 ```text
-custodian/assets/sprites/infrastructure/fabrication/field_fabricator_mk1/field_fabricator_mk1__idle__128x96.png
+custodian/content/sprites/environment/props/field_fabricator_mk1/runtime/body/interaction/
+field_fabricator_mk1__body__interaction__idle__omni__8f__96.png
 ```
 
-* 128 × 96 px
+* 96 × 96 px per frame, 768 × 96 px strip for eight frames
 * RGBA transparent
 * nearest-neighbor filtered
 * centered = true
+
+The canonical family also declares `startup`, `fabricate_complete`, `offline`,
+and future damage/destruction states. Missing states fall back deterministically
+to idle; missing FX remains hidden. Asset V2 ingests only files actually present
+in `asset_drop/inbox/field_fabricator_mk1/`.
 
 ---
 
