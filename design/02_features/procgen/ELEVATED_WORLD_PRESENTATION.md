@@ -90,3 +90,8 @@ registration; that state is an explicit no-op and is logged.
 ## Validation
 
 Run `elevated_world_asset_contract_smoke.gd` for asset, TileSet, scene, and backdrop contracts. Run `procgen_candidate_promotion_smoke.gd` to prove that accepted structural state is promoted without a second generation or streaming reveal expansion. Run `elevated_world_seed_review.gd` for fixed-seed geometry summaries, followed by the established terrain, road, and route-clearance smokes.
+- Underlay profiles are presentation-only FAR/MIDDLE/NEAR resources. Endless
+  Forest remains the default `ProcgenUnderlayProfile`; Drowned Basilica is an
+  explicit alternate profile with deterministic A/B selection by seed,
+  profile, and layer. Profiles never own chasm cells, cliffs, collision,
+  navigation, occupancy, minimap, or generation.

@@ -12,6 +12,8 @@ const CARDINAL_NEIGHBORS: Array[Vector2i] = [
 ]
 
 @export_group("Textures")
+@export var underlay_profile: ProcgenUnderlayProfile
+@export var variant_seed: int = 0
 @export var far_haze_texture: Texture2D
 @export var canopy_texture: Texture2D
 @export var wall_growth_texture: Texture2D
@@ -35,6 +37,7 @@ var _camera: Camera2D
 var _camera_search_elapsed := 0.0
 var _world_stack: Node2D
 var _debug_mode := "hidden"
+var _selected_variants := {"far": -1, "middle": -1, "near": -1}
 
 
 func _ready() -> void:
@@ -45,6 +48,38 @@ func _ready() -> void:
 	add_child(_regions_root)
 	set_process(true)
 	visible = false
+	if underlay_profile != null:
+		_apply_profile(underlay_profile, variant_seed)
+
+func set_underlay_profile(profile: ProcgenUnderlayProfile, seed_value: int = 0) -> void:
+	underlay_profile = profile
+	variant_seed = seed_value
+	_apply_profile(profile, seed_value)
+
+func get_underlay_profile_id() -> StringName:
+	return underlay_profile.profile_id if underlay_profile != null else &""
+
+func get_selected_variant_indices() -> Dictionary:
+	return _selected_variants.duplicate()
+
+func _apply_profile(profile: ProcgenUnderlayProfile, seed_value: int) -> void:
+	if profile == null or not profile.is_valid():
+		push_error("[ProcgenDepthBackdrop] Invalid underlay profile; chasm presentation cannot render.")
+		return
+	far_haze_alpha = profile.far_alpha
+	canopy_alpha = profile.middle_alpha
+	wall_growth_alpha = profile.near_alpha
+	_selected_variants["far"] = _variant_index(seed_value, profile.profile_id, &"far", profile.far_variants.size())
+	_selected_variants["middle"] = _variant_index(seed_value, profile.profile_id, &"middle", profile.middle_variants.size())
+	_selected_variants["near"] = _variant_index(seed_value, profile.profile_id, &"near", profile.near_variants.size())
+	far_haze_texture = profile.far_variants[_selected_variants["far"]]
+	canopy_texture = profile.middle_variants[_selected_variants["middle"]]
+	wall_growth_texture = profile.near_variants[_selected_variants["near"]]
+
+func _variant_index(seed_value: int, profile_id: StringName, layer: StringName, count: int) -> int:
+	if count <= 1: return 0
+	var text := "%d:%s:%s" % [seed_value, String(profile_id), String(layer)]
+	return absi(hash(text)) % count
 
 
 func _process(delta: float) -> void:

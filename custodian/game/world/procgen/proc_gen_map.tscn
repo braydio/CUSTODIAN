@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" path="res://content/backgrounds/procgen/endless_forest/endless_forest_depth_haze_1536x1024.png" id="forest_far_haze"]
 [ext_resource type="Texture2D" path="res://content/backgrounds/procgen/endless_forest/endless_forest_canopy_mass_1536x1024.png" id="forest_canopy"]
 [ext_resource type="Texture2D" path="res://content/backgrounds/procgen/endless_forest/endless_forest_wall_growth_1536x1024.png" id="forest_wall_growth"]
+[ext_resource type="Resource" path="res://game/world/procgen/presentation/underlays/endless_forest_underlay.tres" id="forest_underlay_profile"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_1"]
 
@@ -94,6 +95,8 @@ interior_wall_corner_source_id = 17
 [node name="DepthBackdrop" type="Node2D" parent="."]
 z_index = -300
 script = ExtResource("depth_backdrop_script")
+underlay_profile = ExtResource("forest_underlay_profile")
+variant_seed = 0
 far_haze_texture = ExtResource("forest_far_haze")
 canopy_texture = ExtResource("forest_canopy")
 wall_growth_texture = ExtResource("forest_wall_growth")

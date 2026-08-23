@@ -958,3 +958,6 @@ Last updated: 2026-08-20
 - `custodian/tools/pipelines/build_operator_animation_resources.gd` — catalog-driven compatibility `SpriteFrames` generator.
 - `custodian/content/sprites/operator/README.md` — current Operator authoring and weapon-profile workflow.
 - `custodian/tools/validation/operator_{asset_schema,asset_layout}_smoke.py` and `operator_runtime_path_audit.py` — schema, layout, canvas, synchronization, supersession, and historical-path gates.
+- `game/world/procgen/presentation/procgen_underlay_profile.gd` and
+  `game/world/procgen/presentation/underlays/` own scenic FAR/MIDDLE/NEAR
+  profile resources; they do not own world structure.

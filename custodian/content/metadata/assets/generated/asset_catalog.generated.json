@@ -1826,6 +1826,137 @@
           "source_asset": null
         }
       }
+    },
+    "drowned_basilica_underlay": {
+      "kind": "backdrop",
+      "assets": {
+        "far_depth_a::omni": {
+          "state_id": "far_depth_a",
+          "direction": "omni",
+          "semantic_identity": [
+            "drowned_basilica",
+            "backdrop",
+            "background",
+            "display",
+            "far_depth_a",
+            "omni"
+          ],
+          "path": "content/backgrounds/procgen/drowned_basilica/drowned_basilica_far_depth_a_1536x1024.png",
+          "frames": 1,
+          "frame_size": [
+            1536,
+            1024
+          ],
+          "sha256": "d2cd6f2ade9c6d801245157c5b1e9c547a8c4b0f21c896a4f4a878b19a9e63fe",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "far_depth_b::omni": {
+          "state_id": "far_depth_b",
+          "direction": "omni",
+          "semantic_identity": [
+            "drowned_basilica",
+            "backdrop",
+            "background",
+            "display",
+            "far_depth_b",
+            "omni"
+          ],
+          "path": "content/backgrounds/procgen/drowned_basilica/drowned_basilica_far_depth_b_1536x1024.png",
+          "frames": 1,
+          "frame_size": [
+            1536,
+            1024
+          ],
+          "sha256": "5e0c592c1172f539a86ab208f26549e4f14a4d288962357f1b9cc76e3fbdff89",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "near_wall_a::omni": {
+          "state_id": "near_wall_a",
+          "direction": "omni",
+          "semantic_identity": [
+            "drowned_basilica",
+            "backdrop",
+            "background",
+            "display",
+            "near_wall_a",
+            "omni"
+          ],
+          "path": "content/backgrounds/procgen/drowned_basilica/drowned_basilica_near_wall_a_1536x1024.png",
+          "frames": 1,
+          "frame_size": [
+            1536,
+            1024
+          ],
+          "sha256": "b5e196b22e8c388f0d8ee8ed7339371e36e9b2be76f39785c14a553a6b9fca52",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "near_wall_b::omni": {
+          "state_id": "near_wall_b",
+          "direction": "omni",
+          "semantic_identity": [
+            "drowned_basilica",
+            "backdrop",
+            "background",
+            "display",
+            "near_wall_b",
+            "omni"
+          ],
+          "path": "content/backgrounds/procgen/drowned_basilica/drowned_basilica_near_wall_b_1536x1024.png",
+          "frames": 1,
+          "frame_size": [
+            1536,
+            1024
+          ],
+          "sha256": "ba855632741fe08a8ab8d66d1cf36a73d67dbe972e999337fbf370ce01d97866",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "ruin_field_a::omni": {
+          "state_id": "ruin_field_a",
+          "direction": "omni",
+          "semantic_identity": [
+            "drowned_basilica",
+            "backdrop",
+            "background",
+            "display",
+            "ruin_field_a",
+            "omni"
+          ],
+          "path": "content/backgrounds/procgen/drowned_basilica/drowned_basilica_ruin_field_a_1536x1024.png",
+          "frames": 1,
+          "frame_size": [
+            1536,
+            1024
+          ],
+          "sha256": "0e9256d24fd182e6fb6da4b2a9ef6401ba1812016a51f90e9f54678fa190d687",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "ruin_field_b::omni": {
+          "state_id": "ruin_field_b",
+          "direction": "omni",
+          "semantic_identity": [
+            "drowned_basilica",
+            "backdrop",
+            "background",
+            "display",
+            "ruin_field_b",
+            "omni"
+          ],
+          "path": "content/backgrounds/procgen/drowned_basilica/drowned_basilica_ruin_field_b_1536x1024.png",
+          "frames": 1,
+          "frame_size": [
+            1536,
+            1024
+          ],
+          "sha256": "fa0f2e398178966bbcd221e04b62539c8e04a88a5f404bb6091e359465cebaf1",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
     }
   }
 }

@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ProcgenUnderlayProfile" load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://game/world/procgen/presentation/procgen_underlay_profile.gd" id="1"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/procgen/drowned_basilica/drowned_basilica_far_depth_a_1536x1024.png" id="2"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/procgen/drowned_basilica/drowned_basilica_far_depth_b_1536x1024.png" id="3"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/procgen/drowned_basilica/drowned_basilica_ruin_field_a_1536x1024.png" id="4"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/procgen/drowned_basilica/drowned_basilica_ruin_field_b_1536x1024.png" id="5"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/procgen/drowned_basilica/drowned_basilica_near_wall_a_1536x1024.png" id="6"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/procgen/drowned_basilica/drowned_basilica_near_wall_b_1536x1024.png" id="7"]
+
+[resource]
+script = ExtResource("1")
+profile_id = &"drowned_basilica"
+far_variants = Array[Texture2D]([ExtResource("2"), ExtResource("3")])
+middle_variants = Array[Texture2D]([ExtResource("4"), ExtResource("5")])
+near_variants = Array[Texture2D]([ExtResource("6"), ExtResource("7")])
+far_alpha = 0.55
+middle_alpha = 0.78
+near_alpha = 0.32

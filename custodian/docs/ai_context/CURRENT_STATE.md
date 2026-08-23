@@ -801,3 +801,8 @@ Production sprite path (pending art): `custodian/assets/sprites/infrastructure/f
 - `operator_asset_schema.py` is the sole Python identity parser; `build_operator_runtime.py` is the sole runtime builder and produces `operator_animation_catalog.generated.json`.
 - Gameplay weapon type and reusable animation profile are separate. Presentation modes are socketed static, authored overlay, and hybrid. Weapon-specific art is weapon-owned.
 - Historical Operator trees were hash/reference migrated into canonical assets or `source/legacy`; old runtime roots are rejected by `operator_runtime_path_audit.py`.
+- Procgen void underlays now use typed FAR/MIDDLE/NEAR profiles. Endless Forest
+  remains default; Drowned Basilica is an explicitly forceable alternate with
+  six Asset V2 runtime images and deterministic per-layer A/B selection. The
+  underlay remains scenic-only; VoidCliffFace and chasm structure retain
+  authority.

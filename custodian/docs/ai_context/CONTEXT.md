@@ -161,3 +161,7 @@ Optionally also update legacy changelog/devlog material for historical continuit
 # Current simulation migration contract
 
 Macro-game extraction is now scaffolded under `game/state/` and `game/systems/simulation/`. Use `design/04_architecture/PYTHON_SIM_TO_GODOT_MIGRATION.md` as authority. Keep Hub persistent, CampaignSession/WorldSimulationState transient, and route campaign completion through CampaignOutcome. Do not launch Python from Godot or expand GameState into a second world-state monolith.
+- Drowned Basilica underlay production assets live under
+  `content/backgrounds/procgen/drowned_basilica/`; immutable masters remain in
+  `asset_drop/source_work/underlays/drowned_basilica_underlay/`. Use
+  `drowned_basilica_underlay.tres` only as an explicit presentation profile.
