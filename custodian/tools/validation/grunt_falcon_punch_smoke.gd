@@ -414,6 +414,17 @@ func _run() -> void:
 	_assert_true(String(grunt.get_enemy_presentation_action()).begins_with("flavor."), "safe stationary idle should admit deterministic flavor")
 	grunt.on_behavior_presentation_state_changed(&"idle", &"engage_operator")
 	_assert_true(grunt._grunt_expression_action.is_empty(), "combat escalation should cancel flavor immediately")
+
+	# Locomotion presentation follows, but never owns, BSM movement speed.
+	grunt.behavior_state_machine.current_state = &"patrol"
+	grunt.velocity = Vector2(58.0, 0.0)
+	_assert_true(grunt._get_grunt_locomotion_action() == &"locomotion.walk", "calm patrol speed should use walk")
+	grunt.behavior_state_machine.current_state = &"investigate"
+	grunt.velocity = Vector2(72.0, 0.0)
+	_assert_true(grunt._get_grunt_locomotion_action() == &"locomotion.unarmed_run", "faster non-aggro investigation should use unarmed run")
+	grunt.behavior_state_machine.current_state = &"engage_operator"
+	grunt.velocity = Vector2(88.0, 0.0)
+	_assert_true(grunt._get_grunt_locomotion_action() == &"locomotion.run", "aggro movement should retain armed run")
 	if observatory != null:
 		_assert_true(int(observatory.get("counters").get("falcon_punch_whiffed", 0)) == 3, "Falcon whiff counter should identify range and collision misses")
 		_assert_true(int(observatory.get("counters").get("enemy_attack_whiffed_out_of_range", 0)) >= 1, "Falcon range whiff should expose reason counter")

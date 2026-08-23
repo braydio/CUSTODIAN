@@ -346,7 +346,7 @@
             96,
             96
           ],
-          "sha256": "8148fa340c1c7cdb7b15466afaaa1983259de0c4e9bf399506c80baadd562d3a",
+          "sha256": "e77a6f61ddb94d004f741bc6c11fbc9bb2901d10fc87cac619a515d9d19ee04f",
           "provenance": "authored",
           "source_asset": null
         },
@@ -367,7 +367,7 @@
             96,
             96
           ],
-          "sha256": "b1743395d77e84f18cf24af9fa90f9a77ef31027afbc64735ab74c0c9f4aaac5",
+          "sha256": "9fcdab4e0c0552fb96a607b7633c5cb0ed81c0f86ebf637527d1fe9857385229",
           "provenance": "mirrored",
           "source_asset": "walk_01::e"
         },
@@ -1546,6 +1546,48 @@
           "sha256": "cfa6892fb1d2c000591d4d931dc5f740ad8c17989c82190651d85c409272ca1c",
           "provenance": "mirrored",
           "source_asset": "special_inflight_01_fx::e"
+        },
+        "unarmed_run_01::e": {
+          "state_id": "unarmed_run_01",
+          "direction": "e",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "locomotion",
+            "unarmed_run_01",
+            "e"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/locomotion/enemy_grunt__body__locomotion__unarmed_run_01__e__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "c73870225972ff538f418bd4b56f63ce9c3c50261b248286f4d11730629f5bfe",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "unarmed_run_01::w": {
+          "state_id": "unarmed_run_01",
+          "direction": "w",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "locomotion",
+            "unarmed_run_01",
+            "w"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/locomotion/enemy_grunt__body__locomotion__unarmed_run_01__w__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "ff718b82ececeb7a06b6e8436bc3d063aa88a1b1d534ece59bcdfcacdb7a635e",
+          "provenance": "mirrored",
+          "source_asset": "unarmed_run_01::e"
         }
       }
     }

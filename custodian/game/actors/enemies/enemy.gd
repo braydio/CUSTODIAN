@@ -4358,7 +4358,7 @@ func _update_custom_enemy_animation(direction: Vector2, is_moving: bool, force_a
 		if _play_grunt_semantic(_grunt_expression_action, facing):
 			return
 	if is_moving:
-		var movement_action := &"locomotion.run" if _grunt_movement_is_urgent() else &"locomotion.walk"
+		var movement_action := _get_grunt_locomotion_action()
 		if _play_grunt_semantic(movement_action, facing):
 			return
 	animated_sprite.flip_h = false
@@ -4398,6 +4398,17 @@ func _grunt_movement_is_urgent() -> bool:
 	return StringName(behavior_state_machine.get("current_state")) in [
 		&"notice", &"engage_operator", &"escape_with_loot", &"flee",
 	]
+
+
+func _get_grunt_locomotion_action() -> StringName:
+	if _grunt_movement_is_urgent():
+		return &"locomotion.run"
+	# Presentation follows simulation intent: patrol/ambient movement stays a
+	# walk, while faster non-aggro investigation/objective travel uses the
+	# relaxed run. Animation playback never sets actor speed.
+	if velocity.length() >= 64.0:
+		return &"locomotion.unarmed_run"
+	return &"locomotion.walk"
 
 
 func _update_savage_enemy_animation(direction: Vector2, is_moving: bool) -> void:

@@ -44,7 +44,7 @@ Until directional coverage is complete, runtime reuses available body strips ins
 
 | Semantic actions | Runtime status | Trigger/ownership |
 | --- | --- | --- |
-| relaxed/ready idle, walk, run | Runtime-triggered | locomotion urgency; BSM still owns movement |
+| relaxed/ready idle, walk, unarmed run, armed run | Runtime-triggered | calm patrol uses walk; faster non-aggro travel uses unarmed run; aggro/escape uses armed run; BSM/profile still owns movement speed |
 | posture.draw / posture.alert | Runtime-triggered | first/later `NOTICE` transition; fixed 0.35s presentation window |
 | fast_01/02/03 | Runtime-triggered | deterministic spawn-ordinal bag; simulation attack timing unchanged |
 | flinch_01/02 | Runtime-triggered | damage/max-health severity below authoritative stagger/crit thresholds |

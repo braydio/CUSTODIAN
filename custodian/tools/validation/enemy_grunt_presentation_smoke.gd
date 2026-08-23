@@ -11,7 +11,7 @@ const CONTROLLER := preload(
 func _init() -> void:
 	var required_actions: Array[StringName] = [
 		&"locomotion.relaxed_idle", &"locomotion.ready_idle",
-		&"locomotion.walk", &"locomotion.run", &"posture.alert",
+		&"locomotion.walk", &"locomotion.unarmed_run", &"locomotion.run", &"posture.alert",
 		&"posture.draw", &"combat.fast_01", &"combat.fast_02",
 		&"combat.fast_03", &"reaction.flinch_01",
 		&"reaction.flinch_02", &"reaction.stagger", &"reaction.death",
