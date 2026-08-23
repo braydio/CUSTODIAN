@@ -402,9 +402,11 @@ def _append_performance_incident_section(lines: list[str], payload: Mapping[str,
     for name, raw in _mapping(incident.get("phase_summaries")).items():
         row = _mapping(raw)
         lines.append(f"    {name} | {_number(row.get('average_ms')):.2f} | {_number(row.get('p95_ms')):.2f} | {_number(row.get('p99_ms')):.2f} | {_number(row.get('process_ms')):.2f} | {_number(row.get('physics_ms')):.2f} | {_number(row.get('unaccounted_ms')):.2f}")
-    lines.extend(["", "  Top aggregated spans", "    name | total ms | max ms | calls"])
+    sample_count = max(1, int(_number(incident.get("samples_retained"), summary.get("sample_count", 1))))
+    lines.extend(["", "  Top aggregated spans", "    name | total ms | avg ms/gameplay sample | max ms | calls"])
     for row in _records(incident.get("top_spans")):
-        lines.append(f"    {row.get('name', '')} | {_number(row.get('total_ms')):.2f} | {_number(row.get('max_ms')):.2f} | {int(_number(row.get('count')))}")
+        average = _number(row.get("average_ms_per_sample"), _number(row.get("total_ms")) / sample_count)
+        lines.append(f"    {row.get('name', '')} | {_number(row.get('total_ms')):.2f} | {average:.2f} | {_number(row.get('max_ms')):.2f} | {int(_number(row.get('count')))}")
     lines.extend([
         "", "  Worst gameplay frames",
         "    NOTE: Godot process/physics monitors are sampled asynchronously and are",
@@ -427,8 +429,6 @@ def _append_performance_incident_section(lines: list[str], payload: Mapping[str,
 
     gauges = _mapping(payload.get("gauges"))
     spans = _mapping(incident.get("aggregate_spans"))
-    sample_count = max(1, int(_number(incident.get("samples_retained"), 1)))
-
     def span_ms_per_frame(name: str) -> float:
         return _number(_mapping(spans.get(name)).get("total_usec")) / 1000.0 / sample_count
 

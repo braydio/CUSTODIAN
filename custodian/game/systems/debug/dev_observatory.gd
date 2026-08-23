@@ -394,6 +394,12 @@ func _sample_frame_time_from_ticks(now_usec: int, scaled_delta: float) -> void:
 		return
 	var wall_frame_ms := float(now_usec - _last_wall_frame_usec) / 1000.0
 	_last_wall_frame_usec = now_usec
+	if not _application_focused:
+		# Background/application-unfocused frames are not gameplay samples. Clear
+		# any spans collected during the frame and keep them out of every
+		# performance accumulator, trigger window, dossier, and rearm clock.
+		_frame_performance_spans.clear()
+		return
 	var sample := {
 		"uptime_sec": get_uptime_sec(),
 		"phase": performance_incident_phase,
@@ -568,7 +574,7 @@ func get_performance_incident_report() -> Dictionary:
 		"severe_hitch_count": _count_threshold(gameplay_values, SEVERE_HITCH_THRESHOLD_MS),
 	}
 	var aggregate_spans := _aggregate_spans(_frame_samples)
-	var top_spans := _top_spans(aggregate_spans)
+	var top_spans := _top_spans(aggregate_spans, _frame_samples.size())
 	var likely := _classify_incident({
 		"lifetime_deltas": deltas,
 		"wall_ms": float(summary.get("frame_ms_average", 0.0)),
@@ -651,13 +657,18 @@ func _build_phase_summaries() -> Dictionary:
 	return output
 
 
-func _top_spans(spans_variant: Variant) -> Array[Dictionary]:
+func _top_spans(spans_variant: Variant, sample_count: int = 1) -> Array[Dictionary]:
 	var rows: Array[Dictionary] = []
 	if not (spans_variant is Dictionary):
 		return rows
 	for key in (spans_variant as Dictionary).keys():
 		var bucket: Dictionary = spans_variant[key]
-		rows.append({"name": String(key), "count": int(bucket.get("count", 0)), "total_ms": float(bucket.get("total_usec", 0)) / 1000.0, "max_ms": float(bucket.get("max_usec", 0)) / 1000.0})
+		var total_ms := float(bucket.get("total_usec", 0)) / 1000.0
+		rows.append({
+			"name": String(key), "count": int(bucket.get("count", 0)),
+			"total_ms": total_ms, "max_ms": float(bucket.get("max_usec", 0)) / 1000.0,
+			"average_ms_per_sample": total_ms / float(maxi(1, sample_count)),
+		})
 	rows.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return float(a.total_ms) > float(b.total_ms))
 	if rows.size() > 5:
 		rows.resize(5)
@@ -679,7 +690,7 @@ func _classify_incident(summary: Dictionary, top_spans: Array[Dictionary]) -> St
 	if physics_ms > process_ms and physics_ms >= wall_ms * 0.5:
 		return "physics monitor elevated — collision remains a hypothesis"
 	for span in top_spans:
-		if String(span.get("name", "")).begins_with("enemy_") and float(span.get("total_ms", 0.0)) > 8.0:
+		if String(span.get("name", "")).begins_with("enemy_") and float(span.get("average_ms_per_sample", 0.0)) > 8.0:
 			return "enemy actor script dominated"
 	if int(deltas.get("draw_calls_delta", 0)) > 50:
 		return "rendering / presentation dominated"

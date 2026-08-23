@@ -27,6 +27,33 @@ func _run() -> void:
 	_assert(after_stall.get("sample_count") == baseline.get("sample_count"), "external stall contaminated gameplay sample count")
 	_assert(after_stall.get("frame_ms_worst") == baseline.get("frame_ms_worst"), "external stall contaminated gameplay worst frame")
 	_assert((observatory.get("_performance_external_stalls") as Array).size() == 1, "51-second sample was not retained as an external stall")
+	observatory.call("clear")
+	observatory.set("_application_focused", false)
+	observatory.call("_invalidate_wall_clock", &"unfocused_regression")
+	observatory.call("_sample_frame_time_from_ticks", 1000000, 1.0)
+	for index in range(1000):
+		observatory.call("_sample_frame_time_from_ticks", 2000000 + index * 1000000, 1.0)
+	var unfocused_summary := observatory.call("get_performance_summary") as Dictionary
+	_assert(int(unfocused_summary.get("sample_count", -1)) == 0, "unfocused frames entered gameplay sample statistics")
+	_assert(int(unfocused_summary.get("hitch_count", -1)) == 0, "unfocused frames incremented hitch counters")
+	_assert(int(observatory.get("_performance_auto_trigger_count")) == 0, "unfocused frames auto-triggered an incident")
+	_assert(observatory.get("_performance_incident_state") != &"DEGRADED_LATCHED", "unfocused frames entered degraded latch")
+	_assert((observatory.get("_performance_preroll") as Array).is_empty(), "unfocused frames entered preroll")
+	_assert((observatory.get("_performance_worst_frames") as Array).is_empty(), "unfocused frames entered worst-frame dossiers")
+	observatory.set("_application_focused", true)
+	observatory.call("clear")
+	var enemy_total_usec_per_frame := 12900.0 / 89.0
+	for _index in range(89):
+		observatory.call("_record_frame_sample", {
+			"wall_frame_ms": 1000.0, "process_ms": 1.0, "physics_ms": 1.0,
+			"spans": {"enemy_total": {"count": 1, "total_usec": enemy_total_usec_per_frame}},
+		})
+	var normalized_report := observatory.call("get_performance_incident_report") as Dictionary
+	_assert(
+		not String((normalized_report.get("likely_owner", {}) as Dictionary).get("classification", "")).contains("enemy actor script dominated"),
+		"enemy aggregate span was classified from total duration instead of gameplay-sample average"
+	)
+	observatory.call("clear")
 	var hitches_before_giant := int((observatory.call("get_performance_summary") as Dictionary).get("hitch_count", 0))
 	observatory.call("_invalidate_wall_clock", &"test_external_stall")
 	observatory.call("_sample_frame_time_from_ticks", 100000, 0.016)

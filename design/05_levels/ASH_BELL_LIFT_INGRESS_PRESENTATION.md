@@ -205,10 +205,13 @@ structured fallback/failure diagnostics. The pocket remains isolated before
 the first White Thread Knot and the Knot is never consumed.
 
 A connector-invalid placement candidate does not omit Ash Bell. The spawner
-advances through a bounded deterministic north-edge candidate sequence until a
-candidate passes the canonical dry-run. Rejection and final placement events
-include route/site identity and ingress ID. Validation runs after the authored
-pocket is applied to the authoritative post-generation terrain used at runtime.
+advances through an explicit, deterministic candidate bound (the production
+route uses `candidate_attempt_limit = lateral_search_tiles * 2 + 1`). Each
+candidate is planned into virtual pocket semantics and evaluated against the
+canonical dry-run connector before any production terrain, region, road,
+foliage, collision-boundary, shadow, or navigation state is touched. Only the
+selected candidate is committed once. Rejection and final placement events
+include route/site identity and ingress ID.
 
 ## Validation
 

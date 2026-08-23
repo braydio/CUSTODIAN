@@ -43,6 +43,23 @@ func _validate_seed(seed: int) -> void:
 	map.claim_procgen_floor_rect_for_authored_scene_tiles(
 		mainland_center, Vector2i(25, 8), "generated_mainland", "test", 0
 	)
+	var candidate_pocket_plan := map.plan_world_overlook_pocket(
+		Vector2i(24, 6), Vector2i(9, 10),
+		{"initially_isolated": true, "gap_depth_tiles": 2}
+	)
+	var before_candidate_evaluation := map.debug_get_runtime_authoring_fingerprint()
+	var rejected_candidate := map.evaluate_runtime_walkable_connector_for_pocket(
+		candidate_pocket_plan, map.tile_to_global_position(Vector2i(24, 10)),
+		Vector2i.DOWN, 3, 1, "ash_bell_threadway", "white_thread", -1,
+		&"threadway_organic"
+	)
+	_check(not bool(rejected_candidate.get("ok", false)), seed, "failed pocket candidate unexpectedly resolved", rejected_candidate)
+	_check(
+		map.debug_get_runtime_authoring_fingerprint() == before_candidate_evaluation,
+		seed,
+		"rejected pocket candidate mutated persistent runtime state",
+		rejected_candidate
+	)
 	var pocket := map.claim_world_overlook_pocket(
 		Vector2i(24, 6), Vector2i(9, 10),
 		{

@@ -17,6 +17,7 @@
       "max_edge_distance_tiles": 8,
       "approach_depth_tiles": 10,
       "lateral_search_tiles": 32,
+      "candidate_attempt_limit": 65,
       "unlock_causeway": {
         "resource_id": "white_thread_knot",
         "event_id": "ash_bell_threadway_unlocked",

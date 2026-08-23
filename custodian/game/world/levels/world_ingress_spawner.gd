@@ -124,7 +124,14 @@ func _resolve_authored_ingress_candidate(
 	ingress_id: String
 ) -> Dictionary:
 	var rejected: Array[Vector2i] = []
-	for attempt in range(12):
+	var candidate_attempt_limit := maxi(
+		1,
+		int(placement.get(
+			"candidate_attempt_limit",
+			maxi(1, int(placement.get("lateral_search_tiles", 28)) * 2 + 1)
+		))
+	)
+	for attempt in range(candidate_attempt_limit):
 		var result := resolver.call(
 			"resolve", placement, level_data, map_instance, occupied_tiles, rejected
 		) as Dictionary
@@ -133,8 +140,14 @@ func _resolve_authored_ingress_candidate(
 		if not bool(result.get("requires_authored_pocket", false)):
 			return result
 		var tile := result.get("tile", Vector2i.ZERO) as Vector2i
-		var pocket_result := _author_overlook_pocket(map_instance, result)
-		if pocket_result.size != Vector2i.ZERO and _validate_unlock_causeway_contract(map_instance, result):
+		var pocket_plan := _plan_overlook_pocket(map_instance, result)
+		if bool(pocket_plan.get("ok", false)):
+			result["pocket_plan"] = pocket_plan
+		if bool(pocket_plan.get("ok", false)) and _validate_unlock_causeway_contract(map_instance, result):
+			var pocket_result := _commit_overlook_pocket(map_instance, result)
+			if pocket_result.size == Vector2i.ZERO:
+				rejected.append(tile)
+				continue
 			result["placement_attempt"] = attempt + 1
 			return result
 		rejected.append(tile)
@@ -148,7 +161,7 @@ func _resolve_authored_ingress_candidate(
 		})
 	return {
 		"ok": false,
-		"reason": "no canonically connector-resolvable authored pocket after 12 deterministic candidates",
+		"reason": "no canonically connector-resolvable authored pocket after %d deterministic candidates" % candidate_attempt_limit,
 		"rejected_tiles": rejected,
 	}
 
@@ -161,17 +174,17 @@ func _validate_unlock_causeway_contract(map_instance: Node, result: Dictionary) 
 		return false
 	var tile := result.get("tile", Vector2i.ZERO) as Vector2i
 	var outward := result.get("outward_direction", Vector2i.UP) as Vector2i
-	var plan := map_instance.call(
-		"evaluate_runtime_walkable_connector",
-		_tile_to_world(map_instance, tile),
-		-outward,
-		int(config.get("width_tiles", 3)),
-		int(config.get("max_length_tiles", 18)),
-		"ash_bell_threadway",
-		"white_thread",
-		-1,
-		StringName(config.get("routing_profile", "direct"))
-	) as Dictionary
+	var method_name := "evaluate_runtime_walkable_connector"
+	var arguments: Array = [
+		_tile_to_world(map_instance, tile), -outward,
+		int(config.get("width_tiles", 3)), int(config.get("max_length_tiles", 18)),
+		"ash_bell_threadway", "white_thread", -1,
+		StringName(config.get("routing_profile", "direct")),
+	]
+	if result.has("pocket_plan") and map_instance.has_method("evaluate_runtime_walkable_connector_for_pocket"):
+		method_name = "evaluate_runtime_walkable_connector_for_pocket"
+		arguments.push_front(result.get("pocket_plan", {}))
+	var plan := map_instance.callv(method_name, arguments) as Dictionary
 	result["connector_diagnostic"] = plan.duplicate(true)
 	if bool(plan.get("ok", false)):
 		_observe(&"ash_bell_threadway_placement_validated", {
@@ -205,16 +218,29 @@ func _apply_ingress_dressing_clearance(
 		)
 
 
-func _author_overlook_pocket(
+func _plan_overlook_pocket(
 	map_instance: Node,
 	result: Dictionary
-) -> Rect2i:
+) -> Dictionary:
 	if (
 		map_instance == null
-		or not map_instance.has_method(
-			"claim_world_overlook_pocket"
-		)
+		or not map_instance.has_method("plan_world_overlook_pocket")
 	):
+		return {"ok": true, "legacy_claim": true}
+	return map_instance.call(
+		"plan_world_overlook_pocket",
+		result.get("pocket_center_tile") as Vector2i,
+		result.get("pocket_size_tiles") as Vector2i,
+		result.get("unlock_causeway", {}) as Dictionary
+	) as Dictionary
+
+
+func _commit_overlook_pocket(map_instance: Node, result: Dictionary) -> Rect2i:
+	if map_instance == null:
+		return Rect2i()
+	if result.has("pocket_plan") and map_instance.has_method("commit_world_overlook_pocket_plan"):
+		return map_instance.call("commit_world_overlook_pocket_plan", result.get("pocket_plan", {})) as Rect2i
+	if not map_instance.has_method("claim_world_overlook_pocket"):
 		return Rect2i()
 	return map_instance.call(
 		"claim_world_overlook_pocket",

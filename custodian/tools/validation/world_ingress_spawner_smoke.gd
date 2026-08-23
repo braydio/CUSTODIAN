@@ -30,6 +30,49 @@ class PocketMap:
 class RetryPocketMap:
 	extends PocketMap
 
+	var plan_count := 0
+	var commit_count := 0
+
+	func plan_world_overlook_pocket(
+		center_tile: Vector2i,
+		size_tiles: Vector2i,
+		unlock_causeway: Dictionary = {}
+	) -> Dictionary:
+		plan_count += 1
+		return {
+			"ok": true,
+			"center_tile": center_tile,
+			"size_tiles": size_tiles,
+			"unlock_causeway": unlock_causeway,
+			"virtual_floor_cells": {Vector2i.ZERO: true},
+		}
+
+	func evaluate_runtime_walkable_connector_for_pocket(
+		_plan: Dictionary,
+		_start: Vector2,
+		_direction: Vector2i,
+		_width: int,
+		_length: int,
+		_connector_id: String,
+		_resource_id: String,
+		_lateral: int = -1,
+		_routing_profile: StringName = &"direct"
+	) -> Dictionary:
+		if plan_count == 1:
+			return {"ok": false, "reason": "no mainland endpoint within connector budget"}
+		return {
+			"ok": true, "cells": [Vector2i.ZERO],
+			"island_anchor_tile": Vector2i.ZERO, "endpoint_tile": Vector2i.DOWN,
+		}
+
+	func commit_world_overlook_pocket_plan(plan: Dictionary) -> Rect2i:
+		commit_count += 1
+		return claim_world_overlook_pocket(
+			plan.get("center_tile", Vector2i.ZERO),
+			plan.get("size_tiles", Vector2i.ZERO),
+			plan.get("unlock_causeway", {})
+		)
+
 	func evaluate_runtime_walkable_connector(
 		_start: Vector2, _direction: Vector2i, _width: int, _length: int,
 		_connector_id: String, _resource_id: String, _lateral: int = -1,
@@ -147,8 +190,8 @@ func _run() -> void:
 	)
 	if retried.size() != 1:
 		errors.append("connector-invalid Ash Bell candidate was not retried to placement")
-	if retry_map.claim_count != 2:
-		errors.append("connector-invalid candidate retry count was not deterministic")
+	if retry_map.claim_count != 1 or retry_map.plan_count != 2 or retry_map.commit_count != 1:
+		errors.append("rejected pocket candidate mutated or committed before evaluation")
 	_finish(errors)
 
 

@@ -150,6 +150,10 @@ func _resolve_north_edge_overlook(
 		4,
 		int(placement.get("lateral_search_tiles", 28))
 	)
+	var candidate_attempt_limit := maxi(
+		1,
+		int(placement.get("candidate_attempt_limit", lateral_search * 2 + 1))
+	)
 	var minimum_spacing := maxi(
 		1,
 		int(placement.get("minimum_spacing_tiles", 10))
@@ -199,6 +203,7 @@ func _resolve_north_edge_overlook(
 			"anchor": anchor,
 			"outward_direction": Vector2i.UP,
 			"edge_distance_tiles": candidate.y,
+			"candidate_attempt_limit": candidate_attempt_limit,
 			"unlock_causeway": (placement.get("unlock_causeway", {}) as Dictionary).duplicate(true),
 		}
 		if (
@@ -227,6 +232,7 @@ func _resolve_north_edge_overlook(
 			max_edge_distance,
 			approach_depth,
 			lateral_search,
+			candidate_attempt_limit,
 			level_data,
 			map_instance,
 			rejected_tiles
@@ -240,6 +246,7 @@ func _resolve_north_edge_overlook(
 			"anchor": anchor,
 			"outward_direction": Vector2i.UP,
 			"edge_distance_tiles": authored_candidate.y,
+			"candidate_attempt_limit": candidate_attempt_limit,
 			"requires_authored_pocket": true,
 			"pocket_center_tile": (
 				authored_candidate
@@ -288,6 +295,7 @@ func _best_north_edge_authoring_candidate(
 	max_edge_distance: int,
 	approach_depth: int,
 	lateral_search: int,
+	candidate_attempt_limit: int,
 	level_data: Dictionary,
 	map_instance: Node,
 	rejected_tiles: Array[Vector2i] = []
@@ -303,9 +311,13 @@ func _best_north_edge_authoring_candidate(
 	)
 	var best := Vector2i(-1, -1)
 	var best_score := -1
+	var considered := 0
 	for x in range(min_x, max_x + 1):
 		if rejected_tiles.has(Vector2i(x, max_edge_distance)):
 			continue
+		if considered >= candidate_attempt_limit:
+			break
+		considered += 1
 		var score := 0
 		for step in range(approach_depth):
 			if _is_walkable(

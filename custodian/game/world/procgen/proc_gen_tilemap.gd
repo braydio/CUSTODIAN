@@ -674,6 +674,8 @@ var _foliage_locally_inspected_tiles: Dictionary = {}
 var _foliage_textures: Array[Texture2D] = []
 var _pending_foliage_tiles: Array[Vector2i] = []
 var _world_ingress_dressing_clearance_rects: Array[Rect2i] = []
+var _connector_evaluation_floor_cells: Dictionary = {}
+var _connector_evaluation_wall_cells: Dictionary = {}
 var _foliage_spawn_generation: int = 0
 var _foliage_deferred_start_msec: int = 0
 var _interior_prop_textures: Array[Texture2D] = []
@@ -2773,6 +2775,78 @@ func claim_world_overlook_pocket(
 	return footprint
 
 
+func plan_world_overlook_pocket(
+	center_tile: Vector2i,
+	size_tiles: Vector2i,
+	unlock_causeway: Dictionary = {}
+) -> Dictionary:
+	if not bool(unlock_causeway.get("initially_isolated", false)):
+		return {
+			"ok": true,
+			"requires_commit": true,
+			"center_tile": center_tile,
+			"size_tiles": size_tiles,
+			"unlock_causeway": unlock_causeway.duplicate(true),
+		}
+	var gap_depth := maxi(1, int(unlock_causeway.get("gap_depth_tiles", 2)))
+	var full_size := Vector2i(maxi(5, size_tiles.x), maxi(gap_depth + 3, size_tiles.y))
+	var full_half := Vector2i(
+		int(floor(float(full_size.x) * 0.5)),
+		int(floor(float(full_size.y) * 0.5))
+	)
+	var full_rect := Rect2i(center_tile - full_half, full_size)
+	var island_size := Vector2i(full_size.x, full_size.y - gap_depth)
+	var island_rect := Rect2i(full_rect.position, island_size)
+	var moat_cells: Array[Vector2i] = []
+	for y in range(island_rect.position.y, island_rect.end.y + gap_depth):
+		moat_cells.append(Vector2i(island_rect.position.x - 1, y))
+		moat_cells.append(Vector2i(island_rect.end.x, y))
+	for y in range(island_rect.end.y, island_rect.end.y + gap_depth):
+		for x in range(island_rect.position.x - 1, island_rect.end.x + 1):
+			moat_cells.append(Vector2i(x, y))
+	var map_size := procgen_node.map_size if procgen_node != null else Vector2i(999999, 999999)
+	var required: Dictionary = {}
+	for required_cell in _collect_terrain_required_cells(map_size):
+		required[required_cell] = true
+	for cell in moat_cells:
+		if not _is_tile_inside_map(cell, map_size, 0):
+			continue
+		if required.has(cell) or is_sundered_keep_frontage_protected(cell):
+			return {"ok": false, "reason": "pocket moat intersects protected cell", "blocked_cell": cell}
+	var virtual_floor := _generated_floor_cells.duplicate(true)
+	var virtual_walls := _generated_wall_cells.duplicate(true)
+	for x in range(island_rect.position.x, island_rect.end.x):
+		for y in range(island_rect.position.y, island_rect.end.y):
+			var cell := Vector2i(x, y)
+			if _is_tile_inside_map(cell, map_size, 0):
+				virtual_floor[cell] = true
+				virtual_walls.erase(cell)
+	for cell in moat_cells:
+		virtual_floor.erase(cell)
+	return {
+		"ok": true,
+		"requires_commit": true,
+		"center_tile": center_tile,
+		"size_tiles": size_tiles,
+		"unlock_causeway": unlock_causeway.duplicate(true),
+		"footprint": island_rect,
+		"island_rect": island_rect,
+		"moat_cells": moat_cells,
+		"virtual_floor_cells": virtual_floor,
+		"virtual_wall_cells": virtual_walls,
+	}
+
+
+func commit_world_overlook_pocket_plan(plan: Dictionary) -> Rect2i:
+	if not bool(plan.get("ok", false)):
+		return Rect2i()
+	return claim_world_overlook_pocket(
+		plan.get("center_tile", Vector2i.ZERO) as Vector2i,
+		plan.get("size_tiles", Vector2i.ZERO) as Vector2i,
+		plan.get("unlock_causeway", {}) as Dictionary
+	)
+
+
 func _claim_isolated_world_overlook_pocket(
 	center_tile: Vector2i,
 	size_tiles: Vector2i,
@@ -2902,6 +2976,36 @@ func evaluate_runtime_walkable_connector(
 	)
 
 
+func evaluate_runtime_walkable_connector_for_pocket(
+	pocket_plan: Dictionary,
+	start_global_position: Vector2,
+	preferred_direction: Vector2i,
+	width_tiles: int = 3,
+	max_length_tiles: int = 18,
+	region_type: String = "runtime_connector",
+	region_zone: String = "connector",
+	lateral_allowance_tiles: int = -1,
+	routing_profile: StringName = &"direct"
+) -> Dictionary:
+	if not bool(pocket_plan.get("ok", false)):
+		return {"ok": false, "reason": "invalid pocket plan"}
+	var previous_floor := _connector_evaluation_floor_cells
+	var previous_walls := _connector_evaluation_wall_cells
+	_connector_evaluation_floor_cells = (
+		pocket_plan.get("virtual_floor_cells", {}) as Dictionary
+	).duplicate(true)
+	_connector_evaluation_wall_cells = (
+		pocket_plan.get("virtual_wall_cells", _generated_wall_cells) as Dictionary
+	).duplicate(true)
+	var result := evaluate_runtime_walkable_connector(
+		start_global_position, preferred_direction, width_tiles, max_length_tiles,
+		region_type, region_zone, lateral_allowance_tiles, routing_profile
+	)
+	_connector_evaluation_floor_cells = previous_floor
+	_connector_evaluation_wall_cells = previous_walls
+	return result
+
+
 func _evaluate_or_commit_runtime_walkable_connector(
 	start_global_position: Vector2,
 	preferred_direction: Vector2i,
@@ -2936,13 +3040,13 @@ func _evaluate_or_commit_runtime_walkable_connector(
 			"reason": "",
 		}
 	var island_anchor := start
-	if not _generated_floor_cells.has(island_anchor):
+	if not _connector_floor_has(island_anchor):
 		island_anchor = Vector2i(-1, -1)
 		for distance in range(1, max_length_tiles + 1):
 			var candidate := start - inward * distance
 			if not _is_tile_inside_map(candidate, map_size, 0):
 				break
-			if _generated_floor_cells.has(candidate) and not mainland.has(candidate):
+			if _connector_floor_has(candidate) and not mainland.has(candidate):
 				island_anchor = candidate
 				break
 	if island_anchor.x < 0:
@@ -3039,7 +3143,7 @@ func _evaluate_or_commit_runtime_walkable_connector(
 	var ordered_cells := expansion.get("ordered_cells", []) as Array[Vector2i]
 	var new_cells: Array[Vector2i] = []
 	for cell in ordered_cells:
-		if not _generated_floor_cells.has(cell):
+		if not _connector_floor_has(cell):
 			new_cells.append(cell)
 		var variant_hash := _tile_noise_hash(cell + Vector2i(1709, 2237)) % 11
 		variants[cell] = 5 if variant_hash == 10 else variant_hash % 5
@@ -3117,7 +3221,8 @@ func commit_runtime_walkable_connector_plan(
 
 func _runtime_floor_component(origin: Vector2i, map_size: Vector2i) -> Dictionary:
 	var result: Dictionary = {}
-	if not _generated_floor_cells.has(origin):
+	var floor_cells := _connector_floor_cells()
+	if not floor_cells.has(origin):
 		return result
 	var pending: Array[Vector2i] = [origin]
 	result[origin] = true
@@ -3127,11 +3232,27 @@ func _runtime_floor_component(origin: Vector2i, map_size: Vector2i) -> Dictionar
 			var neighbor: Vector2i = cell + direction
 			if result.has(neighbor) or not _is_tile_inside_map(neighbor, map_size, 0):
 				continue
-			if not _generated_floor_cells.has(neighbor) or _generated_wall_cells.has(neighbor):
+			if not floor_cells.has(neighbor) or _connector_wall_has(neighbor):
 				continue
 			result[neighbor] = true
 			pending.append(neighbor)
 	return result
+
+
+func _connector_floor_cells() -> Dictionary:
+	return _connector_evaluation_floor_cells if not _connector_evaluation_floor_cells.is_empty() else _generated_floor_cells
+
+
+func _connector_floor_has(cell: Vector2i) -> bool:
+	return _connector_floor_cells().has(cell)
+
+
+func _connector_wall_cells() -> Dictionary:
+	return _connector_evaluation_wall_cells if not _connector_evaluation_wall_cells.is_empty() else _generated_wall_cells
+
+
+func _connector_wall_has(cell: Vector2i) -> bool:
+	return _connector_wall_cells().has(cell)
 
 
 func _deterministic_tile_line(start: Vector2i, endpoint: Vector2i) -> Array[Vector2i]:
@@ -3272,9 +3393,9 @@ func _validate_connector_cells(
 	for cell in cells:
 		if not _is_tile_inside_map(cell, map_size, 0):
 			return {"ok": false, "reason": "connector left map bounds", "blocked_cell": cell}
-		if _generated_wall_cells.has(cell):
+		if _connector_wall_has(cell):
 			return {"ok": false, "reason": "connector intersects constructed wall", "blocked_cell": cell}
-		if not _generated_floor_cells.has(cell) and (
+		if not _connector_floor_has(cell) and (
 			required.has(cell) or is_sundered_keep_frontage_protected(cell)
 		):
 			return {"ok": false, "reason": "connector intersects protected route", "blocked_cell": cell}
@@ -5383,6 +5504,19 @@ func debug_get_generated_floor_cells() -> Dictionary:
 
 func debug_get_generated_wall_cells() -> Dictionary:
 	return _generated_wall_cells.duplicate(true)
+
+
+func debug_get_runtime_authoring_fingerprint() -> Dictionary:
+	return {
+		"floor": _generated_floor_cells.duplicate(true),
+		"walls": _generated_wall_cells.duplicate(true),
+		"regions": _region_tiles.duplicate(true),
+		"roads": _main_road_tiles.duplicate(true),
+		"road_centerline": _road_centerline_tiles.duplicate(true),
+		"foliage": _foliage_nodes.duplicate(true),
+		"surface": _surface_kind_by_cell.duplicate(true),
+		"health": get_runtime_health_snapshot(),
+	}
 
 
 func get_nonwalkable_surface_kind_at_tile(cell: Vector2i) -> StringName:
