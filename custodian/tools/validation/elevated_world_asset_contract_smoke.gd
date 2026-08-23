@@ -4,7 +4,6 @@ const MAP_SCENE := preload("res://game/world/procgen/proc_gen_map.tscn")
 const TILESET := preload("res://content/tiles/tilesets/procgen_world_tileset.tres")
 const RUNTIME_BACKGROUNDS := [
 	"res://content/backgrounds/procgen/endless_forest/endless_forest_depth_haze_1536x1024.png",
-	"res://content/backgrounds/procgen/endless_forest/endless_forest_canopy_mass_1536x1024.png",
 	"res://content/backgrounds/procgen/endless_forest/endless_forest_wall_growth_1536x1024.png",
 ]
 const CONTACT_SHADOW_SOURCE := (
