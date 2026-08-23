@@ -14,18 +14,18 @@ const CARDINAL_NEIGHBORS: Array[Vector2i] = [
 @export_group("Textures")
 @export var underlay_profile: ProcgenUnderlayProfile
 @export var variant_seed: int = 0
-@export var far_haze_texture: Texture2D
-@export var canopy_texture: Texture2D
-@export var wall_growth_texture: Texture2D
+@export var far_texture: Texture2D
+@export var middle_texture: Texture2D
+@export var near_texture: Texture2D
 
 @export_group("Regions")
 @export_range(1, 64, 1) var minimum_region_tiles := 4
 @export_range(1, 16, 1) var region_padding_tiles := 2
 
 @export_group("Layer Opacity")
-@export_range(0.0, 1.0, 0.01) var far_haze_alpha := 0.30
-@export_range(0.0, 1.0, 0.01) var canopy_alpha := 0.90
-@export_range(0.0, 1.0, 0.01) var wall_growth_alpha := 0.48
+@export_range(0.0, 1.0, 0.01) var far_alpha := 0.30
+@export_range(0.0, 1.0, 0.01) var middle_alpha := 0.90
+@export_range(0.0, 1.0, 0.01) var near_alpha := 0.48
 
 @export_group("Camera Backdrop")
 @export var follow_camera := true
@@ -56,6 +56,12 @@ func set_underlay_profile(profile: ProcgenUnderlayProfile, seed_value: int = 0) 
 	variant_seed = seed_value
 	_apply_profile(profile, seed_value)
 
+
+func set_variant_seed(seed_value: int) -> void:
+	variant_seed = seed_value
+	if underlay_profile != null:
+		_apply_profile(underlay_profile, seed_value)
+
 func get_underlay_profile_id() -> StringName:
 	return underlay_profile.profile_id if underlay_profile != null else &""
 
@@ -66,15 +72,16 @@ func _apply_profile(profile: ProcgenUnderlayProfile, seed_value: int) -> void:
 	if profile == null or not profile.is_valid():
 		push_error("[ProcgenDepthBackdrop] Invalid underlay profile; chasm presentation cannot render.")
 		return
-	far_haze_alpha = profile.far_alpha
-	canopy_alpha = profile.middle_alpha
-	wall_growth_alpha = profile.near_alpha
+	far_alpha = profile.far_alpha
+	middle_alpha = profile.middle_alpha
+	near_alpha = profile.near_alpha
 	_selected_variants["far"] = _variant_index(seed_value, profile.profile_id, &"far", profile.far_variants.size())
 	_selected_variants["middle"] = _variant_index(seed_value, profile.profile_id, &"middle", profile.middle_variants.size())
 	_selected_variants["near"] = _variant_index(seed_value, profile.profile_id, &"near", profile.near_variants.size())
-	far_haze_texture = profile.far_variants[_selected_variants["far"]]
-	canopy_texture = profile.middle_variants[_selected_variants["middle"]]
-	wall_growth_texture = profile.near_variants[_selected_variants["near"]]
+	far_texture = profile.far_variants[_selected_variants["far"]]
+	middle_texture = profile.middle_variants[_selected_variants["middle"]]
+	near_texture = profile.near_variants[_selected_variants["near"]]
+	_refresh_existing_layers()
 
 func _variant_index(seed_value: int, profile_id: StringName, layer: StringName, count: int) -> int:
 	if count <= 1: return 0
@@ -197,25 +204,25 @@ func _create_world_bounds_stack(
 
 	_create_layer(
 		_world_stack,
-		"FarHaze",
-		far_haze_texture,
-		far_haze_alpha,
+		"Far",
+		far_texture,
+		far_alpha,
 		-3
 	)
 
 	_create_layer(
 		_world_stack,
-		"CanopyMass",
-		canopy_texture,
-		canopy_alpha,
+		"Middle",
+		middle_texture,
+		middle_alpha,
 		-2
 	)
 
 	_create_layer(
 		_world_stack,
-		"WallGrowth",
-		wall_growth_texture,
-		wall_growth_alpha,
+		"Near",
+		near_texture,
+		near_alpha,
 		-1
 	)
 
@@ -242,15 +249,15 @@ func _create_region_stack(
 
 	var scale_value := _region_scale(world_rect.size)
 	region.scale = Vector2.ONE * scale_value
-	_create_layer(region, "FarHaze", far_haze_texture, far_haze_alpha, -3)
-	_create_layer(region, "CanopyMass", canopy_texture, canopy_alpha, -2)
-	_create_layer(region, "WallGrowth", wall_growth_texture, wall_growth_alpha, -1)
+	_create_layer(region, "Far", far_texture, far_alpha, -3)
+	_create_layer(region, "Middle", middle_texture, middle_alpha, -2)
+	_create_layer(region, "Near", near_texture, near_alpha, -1)
 
 
 func _region_scale(region_size: Vector2) -> float:
 	var texture_size := Vector2(1536.0, 1024.0)
-	if canopy_texture != null:
-		texture_size = Vector2(canopy_texture.get_size())
+	if middle_texture != null:
+		texture_size = Vector2(middle_texture.get_size())
 	if texture_size.x <= 0.0 or texture_size.y <= 0.0:
 		return MIN_REGION_SCALE
 	return clampf(
@@ -280,6 +287,22 @@ func _create_layer(
 	sprite.z_as_relative = true
 	sprite.z_index = local_z
 	parent.add_child(sprite)
+
+
+func _refresh_existing_layers() -> void:
+	if _world_stack == null or not is_instance_valid(_world_stack):
+		return
+	_update_layer(_world_stack.get_node_or_null("Far"), far_texture, far_alpha)
+	_update_layer(_world_stack.get_node_or_null("Middle"), middle_texture, middle_alpha)
+	_update_layer(_world_stack.get_node_or_null("Near"), near_texture, near_alpha)
+
+
+func _update_layer(node: Node, texture: Texture2D, alpha: float) -> void:
+	var sprite := node as Sprite2D
+	if sprite == null:
+		return
+	sprite.texture = texture
+	sprite.modulate.a = alpha
 
 
 func _connected_regions(cells: Array) -> Array[Array]:

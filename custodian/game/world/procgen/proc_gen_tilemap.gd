@@ -189,6 +189,12 @@ const NONWALKABLE_SURFACE_CARDINALS: Array[Vector2i] = [
 	Vector2i.LEFT,
 ]
 const SUNDERED_KEEP_OCEAN_CLAIM_ID := &"sundered_keep_frontage_ocean"
+const ENDLESS_FOREST_UNDERLAY := preload(
+	"res://game/world/procgen/presentation/underlays/endless_forest_underlay.tres"
+)
+const DROWNED_BASILICA_UNDERLAY := preload(
+	"res://game/world/procgen/presentation/underlays/drowned_basilica_underlay.tres"
+)
 enum WorldShapeMode {
 	LEGACY_CAVE,
 	ASCENT_FIELD,
@@ -199,6 +205,7 @@ enum WorldShapeMode {
 @export var walls_tilemap: TileMapLayer
 @export var nav_region: NavigationRegion2D
 @export var depth_backdrop: ProcgenDepthBackdrop
+@export_enum("DEFAULT", "ENDLESS_FOREST", "DROWNED_BASILICA") var underlay_profile_override := "DEFAULT"
 @export var void_cliff_face: ProcgenVoidCliffFace
 @export var nonwalkable_surface_base_tilemap: TileMapLayer
 @export var nonwalkable_surface_overlay_tilemap: TileMapLayer
@@ -8971,6 +8978,13 @@ func _apply_foliage_occlusion_material(material: ShaderMaterial, active_centers:
 func _refresh_depth_backdrop() -> void:
 	if depth_backdrop == null:
 		return
+	var profile := depth_backdrop.underlay_profile
+	match underlay_profile_override:
+		"ENDLESS_FOREST":
+			profile = ENDLESS_FOREST_UNDERLAY
+		"DROWNED_BASILICA":
+			profile = DROWNED_BASILICA_UNDERLAY
+	depth_backdrop.set_underlay_profile(profile, _get_generation_seed())
 	if not _chasm_cells.is_empty():
 		depth_backdrop.configure_from_chasm_cells(_chasm_cells.keys())
 		return

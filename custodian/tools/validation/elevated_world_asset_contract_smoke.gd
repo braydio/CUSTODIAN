@@ -111,9 +111,9 @@ func _run() -> void:
 		assert(region.get_meta("chasm_cell_count", 0) == 8)
 		assert(is_equal_approx(region.scale.x, region.scale.y))
 		var layers := [
-			region.get_node_or_null("FarHaze") as Sprite2D,
-			region.get_node_or_null("CanopyMass") as Sprite2D,
-			region.get_node_or_null("WallGrowth") as Sprite2D,
+				region.get_node_or_null("Far") as Sprite2D,
+				region.get_node_or_null("Middle") as Sprite2D,
+				region.get_node_or_null("Near") as Sprite2D,
 		]
 		for index in layers.size():
 			var layer := layers[index] as Sprite2D
@@ -127,9 +127,9 @@ func _run() -> void:
 	backdrop.call("_process", 0.6)
 	var chasm_stack := regions[0] as Node2D
 	assert(chasm_stack.global_position == camera.global_position)
-	assert(is_equal_approx(backdrop.far_haze_alpha, 0.30))
-	assert(is_equal_approx(backdrop.canopy_alpha, 0.90))
-	assert(is_equal_approx(backdrop.wall_growth_alpha, 0.48))
+	assert(is_equal_approx(backdrop.far_alpha, 0.30))
+	assert(is_equal_approx(backdrop.middle_alpha, 0.90))
+	assert(is_equal_approx(backdrop.near_alpha, 0.48))
 	assert(
 		_find_texture_path(map, CONTACT_SHADOW_SOURCE).is_empty(),
 		"Contact-shadow source must not be wired globally"

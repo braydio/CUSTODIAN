@@ -11,15 +11,15 @@ The deterministic `ASCENT_FIELD` campaign world is presented as a bright, walkab
 ## Authority
 
 - Procgen retains authority over geometry, floor cells, roads, paths, elevation, navigation, collision, and streaming reveal.
-- `ProcgenDepthBackdrop` owns only the global far-haze, canopy, and near-wall-growth presentation.
+- `ProcgenDepthBackdrop` owns only the global FAR, MIDDLE, and NEAR scenic underlay presentation.
 - The backdrop has no collision or navigation and never creates reachable forest terrain.
 - The general compatibility stack records generated-floor bounds for diagnostics, but its visual placement is native-scale and camera-following. It is not scaled to the full world rectangle.
 
 ## Visual Contract
 
-Visual order is cold abyss haze, recognizable distant canopy, dark near-wall growth, deep chasm/void, cliff fascia, plateau floor, then roads, paths, props, actors, and effects. Walkable cells remain on the upper plane. Every exposed boundary uses the existing deterministic terrain semantics; this pass does not change topology.
+Visual order is cold abyss depth, recognizable middle architecture, dark near ruin mass, deep chasm/void, cliff fascia, plateau floor, then roads, paths, props, actors, and effects. Walkable cells remain on the upper plane. Every exposed boundary uses the existing deterministic terrain semantics; this pass does not change topology.
 
-Gameplay terrain files are individual 32x32 PNGs under `content/tiles/mountain_cliffs/` and `content/tiles/terrain/runtime/chasm_bridge/`. IDs 44-59 and 100-114 are stable semantic TileSet IDs. The three runtime forest textures are 1536x1024 non-repeating compositions under `content/backgrounds/procgen/endless_forest/`. Both generated-world and explicit-chasm configuration use one native-scale, camera-following haze/canopy/wall-growth stack. Explicit chasm bounds and counts remain diagnostic metadata rather than finite forest placement authority.
+Gameplay terrain files are individual 32x32 PNGs under `content/tiles/mountain_cliffs/` and `content/tiles/terrain/runtime/chasm_bridge/`. IDs 44-59 and 100-114 are stable semantic TileSet IDs. Runtime underlay profiles use 1536x1024 non-repeating compositions. Both generated-world and explicit-chasm configuration use one native-scale, camera-following FAR/MIDDLE/NEAR stack. Explicit chasm bounds and counts remain diagnostic metadata rather than finite scenic placement authority.
 
 ## Authored Void Cliff Face
 
@@ -51,7 +51,7 @@ Procgen now exports complete deterministic `chasm_cells` semantics for every
 in-map non-floor cell not replaced by an explicit surface claim. These
 semantics are structural state and remain independent of wall dressing.
 
-Both configuration paths retain received cell bounds as metadata and create one native-scale far-haze, canopy, and near-wall-growth stack that follows the active camera with a small overscan. Authored edge pockets and map-wide chasms therefore cannot expose a finite left/right seam. This remains a distant underlay rather than geographically fixed treetop terrain. The backdrop does not participate in simulation or per-tile reveal and therefore does not alter deterministic fingerprints. Runtime images use linear filtering without mipmaps, disabled repeat, and lossless compression.
+Both configuration paths retain received cell bounds as metadata and create one native-scale FAR/MIDDLE/NEAR stack that follows the active camera with a small overscan. Authored edge pockets and map-wide chasms therefore cannot expose a finite left/right seam. The backdrop does not participate in simulation or per-tile reveal and therefore does not alter deterministic fingerprints. Runtime images use linear filtering without mipmaps, disabled repeat, and lossless compression. Endless Forest is the production default; Drowned Basilica is an explicit development override through `ProcGenTilemap.underlay_profile_override`, with A/B selection derived from the accepted `ProcGen.seed`. Tonal normalization of Drowned Basilica derivatives remains pending visual review.
 
 Finite connected-region forest stacks are not production authority: one
 1536×1024 stack centered on a large region cannot safely cover a map-wide
