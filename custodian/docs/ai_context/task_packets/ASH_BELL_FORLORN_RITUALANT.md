@@ -127,8 +127,15 @@ Forge. The route and interaction authority are no longer deferred.
 - Both termini require boarding plus E; lower body entry never travels.
 - Lower departure rises into black, plays state-aware epilogue, then hands off
   to the existing surface ascent.
-- Dialogue comes from `forlorn_ritualant_dialogue.json` and advances by E.
+- Dialogue comes from `forlorn_ritualant_dialogue.json`: ambient captions,
+  grouped two-beat manual interaction, and optional BELL / THREAD / ORRA
+  topic menus. The local encounter owns these interactions; optional lore is
+  not required to leave.
 - The broken chapel bell and wrong basin are intentional physical evidence.
 - Chamber thread changes ritual state and never grants another Knot.
 - Pin Strike, Thread Pull, Ninth Answer, Orra Comes Late, survival, and three
   anchors have reachable runtime contracts.
+- The canonical legacy spawn remains `(0,332)` in the authored chapel scene;
+  the migrated underground landing spawn is `(0,1670)`. Lower-lift departure
+  shows a visible ascent before blackout, and the encounter root uses neutral
+  z inheritance so its floor cannot occlude the Operator.

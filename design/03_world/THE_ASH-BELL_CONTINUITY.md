@@ -277,4 +277,9 @@ Example:
 
 ## Design Lock
 
+Clarification: West Gate closure was an emergency containment action that
+ended civilian passage and deepened the historical wound; it did not terminate
+reciprocal regional coupling. Orra's late Ninth Answer collapsed the coupling
+and ended the Open Interval.
+
 The Ash-Bell Continuity is a real adjacent continuity coupled reciprocally to the active world during the Ash-Bell Unarrival. Its nine stations, Answers, Precentor Orra, Open Interval, West Gate closure, Dry Fountain, black banners, and white thread have operational histories. Later faiths mythologize those facts. Imported Ash-Bell evidence may be incomplete or misread, but it is not authorial proof that non-arrival is sacred, that provenance itself is cosmic substance, or that the player's future is predetermined.

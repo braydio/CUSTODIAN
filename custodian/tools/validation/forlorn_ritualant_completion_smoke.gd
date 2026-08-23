@@ -103,6 +103,10 @@ func _validate_encounter_runtime() -> void:
 	_check(not site.dialogue_presenter.is_active(), "dialogue did not cancel outside interaction range")
 	actor.global_position = site.global_position
 	site.ask_about_bell()
+	while site.dialogue_presenter.is_manual_active():
+		site.dialogue_presenter.advance()
+	if site.dialogue_presenter.is_menu_active():
+		site.dialogue_presenter.close_menu()
 	_check(bool(memory.call("is_completed", &"knowledge_ash_bell_ninth_answer")), "knowledge unlock was not persisted")
 	var pin_interactable := site.get_node("Props/StillingPinPickup") as AshBellInteractable
 	_check(pin_interactable.can_interact(actor), "Stilling Pin did not unlock from the Bell conversation branch")
@@ -158,6 +162,7 @@ func _validate_encounter_runtime() -> void:
 	root.add_child(cut_site)
 	await process_frame
 	cut_site.cut_thread()
+	await create_timer(4.5).timeout
 	_check(cut_site.event_state.ritualant_hostile, "explicit thread cut did not provoke Ritualant")
 	_check(cut_site.event_state.resolution == AshBellEventState.Resolution.PROVOKED_RITUALANT, "thread snap did not supersede CUT_THREAD resolution")
 	var captured := cut_site.capture_encounter_state()

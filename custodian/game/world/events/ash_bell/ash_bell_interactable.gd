@@ -18,7 +18,6 @@ enum InteractionKind {
 @export var site_path: NodePath
 @export var interaction_distance: float = 84.0
 @export var prompt_text: String = ""
-@export var conversation_followup_legacy := false
 @export var anchor_id: StringName
 
 ## If true, child visuals under this Area2D are hidden while the interaction is locked.
@@ -34,12 +33,6 @@ var _last_available: bool = true
 
 
 func _ready() -> void:
-	if conversation_followup_legacy:
-		monitoring = false
-		monitorable = false
-		visible = false
-		set_process(false)
-		return
 	add_to_group("interactable")
 	_refresh_availability(true)
 
@@ -55,6 +48,8 @@ func _process(delta: float) -> void:
 
 func can_interact(_actor: Node = null) -> bool:
 	if site == null or site.event_state == null:
+		return false
+	if site.is_dialogue_input_captured():
 		return false
 
 	var state := site.event_state
@@ -102,13 +97,14 @@ func can_interact(_actor: Node = null) -> bool:
 func get_interaction_prompt() -> String:
 	if not can_interact():
 		return ""
+	var state := site.event_state
 
 	if not prompt_text.strip_edges().is_empty():
 		return prompt_text
 
 	match interaction_kind:
 		InteractionKind.RITUALANT:
-			return "LISTEN TO FORLORN-RITUALANT"
+			return "SPEAK TO FORLORN-RITUALANT" if state.has_seen_dialogue(&"first_interaction") else "LISTEN TO FORLORN-RITUALANT"
 		InteractionKind.ASK_BELL:
 			return "ASK: BELL?"
 		InteractionKind.ASK_THREAD:

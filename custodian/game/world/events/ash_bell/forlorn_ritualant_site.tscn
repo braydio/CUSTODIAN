@@ -56,6 +56,9 @@ size = Vector2(220, 150)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_exit"]
 size = Vector2(260, 72)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_thread_warning"]
+size = Vector2(300, 180)
+
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ash_up"]
 lifetime_randomness = 0.3
 direction = Vector3(0, -1, 0)
@@ -82,7 +85,7 @@ shadow_color = Color(0, 0, 0, 0.5)
 
 [node name="ForlornRitualantSite" type="Node2D" unique_id=1649470245]
 script = ExtResource("1_site")
-z_index = 40
+z_index = 0
 forlorn_ritualant_path = NodePath("NPCs/ForlornRitualant")
 dry_fountain_ghost_path = NodePath("Props/DryFountainGhost")
 dry_fountain_black_water_path = NodePath("Props/DryFountainBlackWater")
@@ -320,39 +323,6 @@ prompt_text = "TOUCH WHITE THREAD"
 [node name="CollisionShape2D" type="CollisionShape2D" parent="NPCs/TouchThreadInteract" unique_id=1639990276]
 shape = SubResource("CircleShape2D_interact")
 
-[node name="AskBellInteract" type="Area2D" parent="NPCs" unique_id=271793634]
-position = Vector2(-40, -140)
-script = ExtResource("3_interactable")
-conversation_followup_legacy = true
-interaction_kind = 1
-site_path = NodePath("../..")
-prompt_text = "ASK: BELL?"
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="NPCs/AskBellInteract" unique_id=351997683]
-shape = SubResource("CircleShape2D_interact")
-
-[node name="AskThreadInteract" type="Area2D" parent="NPCs" unique_id=1435024224]
-position = Vector2(0, -170)
-script = ExtResource("3_interactable")
-conversation_followup_legacy = true
-interaction_kind = 2
-site_path = NodePath("../..")
-prompt_text = "ASK: THREAD?"
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="NPCs/AskThreadInteract" unique_id=1050710001]
-shape = SubResource("CircleShape2D_interact")
-
-[node name="AskOrraInteract" type="Area2D" parent="NPCs" unique_id=323304799]
-position = Vector2(40, -140)
-script = ExtResource("3_interactable")
-conversation_followup_legacy = true
-interaction_kind = 3
-site_path = NodePath("../..")
-prompt_text = "ASK: ORRA?"
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="NPCs/AskOrraInteract" unique_id=1677265150]
-shape = SubResource("CircleShape2D_interact")
-
 [node name="CutThreadInteract" type="Area2D" parent="NPCs" unique_id=374370415]
 position = Vector2(74, -138)
 script = ExtResource("3_interactable")
@@ -364,6 +334,15 @@ prompt_text = "CUT WHITE THREAD"
 shape = SubResource("CircleShape2D_interact")
 
 [node name="Triggers" type="Node2D" parent="." unique_id=168594331]
+
+[node name="ThreadWarningZone" type="Area2D" parent="Triggers"]
+position = Vector2(0, -146)
+script = ExtResource("5_trigger")
+trigger_kind = 4
+site_path = NodePath("../..")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/ThreadWarningZone"]
+shape = SubResource("RectangleShape2D_thread_warning")
 
 [node name="ProximityIntroTrigger" type="Area2D" parent="Triggers" unique_id=1097650950]
 position = Vector2(0, -44)
@@ -457,23 +436,25 @@ process_material = SubResource("ParticleProcessMaterial_ash_down")
 
 [node name="DialoguePresentation" type="Node2D" parent="." unique_id=1722286022]
 visible = false
+z_as_relative = false
+z_index = 80
 script = ExtResource("38_dialogue_presenter")
 site_path = NodePath("..")
 position = Vector2(0, 210)
 
 [node name="Background" type="ColorRect" parent="DialoguePresentation" unique_id=636911536]
 z_index = 1
-offset_left = -304.0
-offset_top = -78.0
-offset_right = 296.0
-offset_bottom = -14.0
+offset_left = -340.0
+offset_top = -150.0
+offset_right = 340.0
+offset_bottom = 28.0
 color = Color(0, 0, 0, 0.75)
 
 [node name="AshBellDialogueLabel" type="Label" parent="DialoguePresentation" unique_id=1592804111]
-offset_left = -258.0
-offset_top = -68.0
-offset_right = 302.0
-offset_bottom = -24.0
+offset_left = -310.0
+offset_top = -138.0
+offset_right = 310.0
+offset_bottom = 18.0
 text = ""
 label_settings = SubResource("LabelSettings_dialogue")
 horizontal_alignment = 1

@@ -2852,6 +2852,14 @@ From the earlier design — preserved as a closing statement on why the encounte
 
 ## Appendix A Change Log
 
+## Current interaction authority (2026-08)
+
+The live encounter uses ambient arrival captions, a two-beat manual first
+conversation, and an optional BELL / THREAD / ORRA / LEAVE topic menu. Optional
+lore is never required for departure. The old procgen-room placement, literal
+bell-history dialogue, and three overlapping world-space ASK areas are
+historical references only. Generic knockdown dialogue assets remain dormant.
+
 | Date | Change |
 |------|--------|
 | 2026-05-27 | Merged from `FORLORN_RITUALANT_ENCOUNTER.md` into appendix. Silence Pressure + Thread Tension confirmed as canonical mechanical model. Toll Count system retained as alternate reference. |

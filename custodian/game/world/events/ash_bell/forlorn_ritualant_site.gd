@@ -57,13 +57,23 @@ signal request_knowledge_unlock(knowledge_id: StringName)
 var _intro_triggered: bool = false
 var _player_inside_fountain: bool = false
 var _fountain_stand_time: float = 0.0
+var _fountain_total_stand_time: float = 0.0
 var _completed: bool = false
 var _dialogue_sequence: int = 0
 
 var _fountain_stabilize_time: float = 0.0
-var _followup_index := 0
 var _thread_snap_handled := false
 var _resolved_thread_anchors: Dictionary = {}
+
+const TOPIC_KNOWLEDGE := {
+	&"ask_bell": &"ash_bell_ninth_answer",
+	&"ask_unarrival": &"ash_bell_open_interval",
+	&"ask_thread": &"ash_bell_white_thread",
+	&"ask_thread_breaks": &"ash_bell_white_thread",
+	&"ask_orra": &"ash_bell_unarrived_saint",
+	&"ask_orra_late": &"ash_bell_unarrived_saint",
+	&"ask_orra_judgement": &"ash_bell_unarrived_saint",
+}
 
 
 func _ready() -> void:
@@ -81,6 +91,9 @@ func _ready() -> void:
 	event_state.knowledge_unlocked.connect(_on_knowledge_unlocked)
 	event_state.thread_snapped.connect(_handle_thread_snap_once)
 	request_dialogue.connect(_on_request_dialogue)
+	if dialogue_presenter != null:
+		dialogue_presenter.topic_requested.connect(_on_dialogue_topic_requested)
+		dialogue_presenter.sequence_finished.connect(_on_dialogue_sequence_finished)
 	request_item_grant.connect(_on_request_item_grant)
 	request_knowledge_unlock.connect(_on_request_knowledge_unlock)
 
@@ -92,6 +105,11 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if _player_inside_fountain:
 		_fountain_stand_time += delta
+		_fountain_total_stand_time += delta
+		if _fountain_total_stand_time >= 1.0:
+			_request_dialogue_once(&"fountain_zone_warning")
+		if _fountain_total_stand_time >= 3.0:
+			_request_dialogue_once(&"fountain_zone_linger")
 
 		if _fountain_stand_time >= fountain_pressure_tick_seconds:
 			_fountain_stand_time = 0.0
@@ -106,6 +124,8 @@ func _process(delta: float) -> void:
 		else:
 			_fountain_stabilize_time = 0.0
 	else:
+		_fountain_stand_time = 0.0
+		_fountain_total_stand_time = 0.0
 		_fountain_stabilize_time = 0.0
 
 	_update_event_atmosphere()
@@ -122,19 +142,12 @@ func trigger_intro() -> void:
 
 
 func interact_with_ritualant() -> void:
-	if dialogue_presenter != null and dialogue_presenter.is_active():
-		dialogue_presenter.advance()
-		return
+	if event_state.ritualant_hostile: return
+	if dialogue_presenter != null and dialogue_presenter.blocks_world_interaction(): return
+	var actor := _get_dialogue_actor()
 	if event_state.has_seen_dialogue(&"first_interaction"):
-		var followups: Array[StringName] = [&"ask_bell", &"ask_thread", &"ask_orra"]
-		var next_id := followups[_followup_index % followups.size()]
-		_followup_index += 1
-		match next_id:
-			&"ask_bell": ask_about_bell()
-			&"ask_thread": ask_about_thread()
-			&"ask_orra": ask_about_orra()
+		if dialogue_presenter != null: dialogue_presenter.open_menu(&"ritualant_root", actor)
 		return
-	event_state.mark_dialogue_seen(&"first_interaction")
 	event_state.set_resolution(AshBellEventState.Resolution.SPOKE_TO_RITUALANT)
 	event_state.set_fountain_state(AshBellEventState.FountainState.GHOST)
 	event_state.unlock_knowledge(&"ash_bell_dry_fountain")
@@ -142,21 +155,47 @@ func interact_with_ritualant() -> void:
 
 
 func ask_about_bell() -> void:
+	event_state.set_resolution(AshBellEventState.Resolution.SPOKE_TO_RITUALANT)
+	event_state.set_fountain_state(AshBellEventState.FountainState.GHOST)
 	event_state.mark_dialogue_seen(&"ask_bell")
 	event_state.unlock_knowledge(&"ash_bell_ninth_answer")
-	request_dialogue.emit(dialogue_id, &"ask_bell")
+	_start_topic_dialogue(&"ask_bell", &"bell_menu")
 
 
 func ask_about_thread() -> void:
 	event_state.mark_dialogue_seen(&"ask_thread")
 	event_state.unlock_knowledge(&"ash_bell_white_thread")
-	request_dialogue.emit(dialogue_id, &"ask_thread")
+	_start_topic_dialogue(&"ask_thread", &"thread_menu")
 
 
 func ask_about_orra() -> void:
 	event_state.mark_dialogue_seen(&"ask_orra")
 	event_state.unlock_knowledge(&"ash_bell_unarrived_saint")
-	request_dialogue.emit(dialogue_id, &"ask_orra")
+	_start_topic_dialogue(&"ask_orra", &"orra_menu")
+
+func _on_dialogue_topic_requested(node_id: StringName, return_menu_id: StringName) -> void:
+	_start_topic_dialogue(node_id, return_menu_id)
+
+func _start_topic_dialogue(node_id: StringName, return_menu_id: StringName) -> void:
+	if not event_state.ritualant_hostile and dialogue_presenter != null:
+		dialogue_presenter.start(node_id, _get_dialogue_actor(), return_menu_id)
+
+func _on_dialogue_sequence_finished(node_id: StringName) -> void:
+	event_state.mark_dialogue_seen(node_id)
+	var knowledge_variant: Variant = TOPIC_KNOWLEDGE.get(node_id, &"")
+	if knowledge_variant is StringName and knowledge_variant != &"":
+		event_state.unlock_knowledge(knowledge_variant)
+
+func _get_dialogue_actor() -> Node2D:
+	var actor := get_tree().get_first_node_in_group("player") as Node2D
+	if actor == null: actor = get_tree().get_first_node_in_group("operator") as Node2D
+	return actor
+
+func is_dialogue_input_captured() -> bool:
+	return dialogue_presenter != null and dialogue_presenter.blocks_world_interaction()
+
+func _request_dialogue_once(node_id: StringName) -> void:
+	if not event_state.has_seen_dialogue(node_id): request_dialogue.emit(dialogue_id, node_id)
 
 
 func touch_thread() -> void:
@@ -164,6 +203,7 @@ func touch_thread() -> void:
 	event_state.add_silence_pressure(-4, &"thread_touched")
 	event_state.set_resolution(AshBellEventState.Resolution.TOUCHED_THREAD)
 	event_state.unlock_knowledge(&"ash_bell_white_thread")
+	_request_dialogue_once(&"thread_touch_response")
 
 	if event_state.fountain_state == AshBellEventState.FountainState.GHOST:
 		event_state.set_fountain_state(AshBellEventState.FountainState.CRACKED_ANCHORED)
@@ -174,10 +214,12 @@ func cut_thread() -> void:
 		return
 
 	event_state.set_resolution(AshBellEventState.Resolution.CUT_THREAD)
+	event_state.set_thread_tension(99, &"thread_cut_pending")
+	request_dialogue.emit(dialogue_id, &"cut_thread_response")
+	if dialogue_presenter != null and _get_dialogue_actor() != null:
+		await dialogue_presenter.wait_for_node_end(&"cut_thread_response")
 	event_state.set_thread_tension(100, &"thread_cut")
 	event_state.add_silence_pressure(25, &"thread_cut")
-	request_dialogue.emit(dialogue_id, &"cut_thread_response")
-	_handle_thread_snap_once()
 
 
 func take_stilling_pin() -> void:
@@ -188,6 +230,7 @@ func take_stilling_pin() -> void:
 	event_state.set_resolution(AshBellEventState.Resolution.TOOK_STILLING_PIN)
 	event_state.unlock_knowledge(&"ash_bell_ninth_answer")
 	request_item_grant.emit(&"stilling_pin")
+	_request_dialogue_once(&"take_stilling_pin_response")
 
 	if stilling_pin_pickup != null:
 		stilling_pin_pickup.queue_free()
@@ -208,9 +251,12 @@ func set_stilling_pin() -> void:
 
 	event_state.set_resolution(AshBellEventState.Resolution.SET_STILLING_PIN)
 	event_state.add_silence_pressure(35, &"stilling_pin_set")
-	request_dialogue.emit(dialogue_id, &"set_stilling_pin")
+	request_dialogue.emit(dialogue_id, &"set_stilling_pin_pre")
+	if dialogue_presenter != null: await dialogue_presenter.wait_for_node_end(&"set_stilling_pin_pre")
 	_show_unarrived_apparition()
 	_trigger_ghost_procession()
+	await get_tree().create_timer(1.15).timeout
+	request_dialogue.emit(dialogue_id, &"set_stilling_pin_resolve")
 
 
 func player_attacked_in_room() -> void:
@@ -237,12 +283,17 @@ func player_crossed_thread(move_kind: StringName) -> void:
 			event_state.add_thread_tension(12, &"dodge_thread")
 		_:
 			event_state.add_thread_tension(3, &"cross_thread")
+	_request_dialogue_once(&"thread_cross_warning")
+
+func warn_thread_approach() -> void:
+	_request_dialogue_once(&"thread_warning")
 
 
 func set_player_inside_fountain(is_inside: bool) -> void:
 	_player_inside_fountain = is_inside
 	if not is_inside:
 		_fountain_stand_time = 0.0
+		_fountain_total_stand_time = 0.0
 
 
 func exit_site() -> void:
@@ -307,7 +358,6 @@ func capture_encounter_state() -> Dictionary:
 		"event_state": event_state.capture_state() if event_state != null else {},
 		"intro_triggered": _intro_triggered,
 		"encounter_completed": _completed,
-		"dialogue_followup_index": _followup_index,
 		"resolved_thread_anchor_ids": _resolved_thread_anchors.keys(),
 		"thread_snap_handled": _thread_snap_handled,
 	}
@@ -321,7 +371,6 @@ func restore_encounter_state(state: Dictionary) -> bool:
 		return false
 	_intro_triggered = bool(state.get("intro_triggered", false))
 	_completed = bool(state.get("encounter_completed", false))
-	_followup_index = maxi(0, int(state.get("dialogue_followup_index", 0)))
 	_thread_snap_handled = bool(state.get("thread_snap_handled", false))
 	_resolved_thread_anchors.clear()
 	for anchor_id: Variant in state.get("resolved_thread_anchor_ids", []):
@@ -575,11 +624,7 @@ func _complete_if_ready() -> void:
 
 
 func _on_request_dialogue(_dialogue_id: StringName, node_id: StringName) -> void:
-	var actor := get_tree().get_first_node_in_group("player") as Node2D
-	if actor == null:
-		actor = get_tree().get_first_node_in_group("operator") as Node2D
-	if dialogue_presenter != null:
-		dialogue_presenter.start(node_id, actor)
+	if dialogue_presenter != null: dialogue_presenter.start(node_id, _get_dialogue_actor())
 
 
 func _on_request_item_grant(item_id: StringName) -> void:

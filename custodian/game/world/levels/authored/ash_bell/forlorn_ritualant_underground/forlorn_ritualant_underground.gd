@@ -193,17 +193,16 @@ func begin_lift_departure(actor: Node, exit: InteractableLevelExit2D) -> void:
 		return
 	_suspend_departure_actor(actor)
 	lower_lift.set_vibrating(true)
-	var tween := create_tween().set_parallel(true).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	tween.tween_property(
-		lower_lift,
-		"position:y",
-		lower_lift.position.y - LOWER_LIFT_TRAVEL_DISTANCE,
-		LOWER_LIFT_TRAVEL_SEC
-	)
-	var black_tween := create_tween()
-	black_tween.tween_interval(0.35)
-	black_tween.tween_property(departure_black, "modulate:a", 1.0, 0.60)
-	await tween.finished
+	await get_tree().create_timer(0.25).timeout
+	var ascent_target_y := _departure_lift_start.y - LOWER_LIFT_TRAVEL_DISTANCE
+	var visible_target_y := lerpf(_departure_lift_start.y, ascent_target_y, 0.46)
+	var visible_ascent := create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	visible_ascent.tween_property(lower_lift, "position:y", visible_target_y, 0.45)
+	await visible_ascent.finished
+	var fade_ascent := create_tween().set_parallel(true).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	fade_ascent.tween_property(lower_lift, "position:y", ascent_target_y, 0.65)
+	fade_ascent.tween_property(departure_black, "modulate:a", 1.0, 0.585)
+	await fade_ascent.finished
 	var lines: Array[String] = ritualant_site.get_departure_lines() if ritualant_site != null else []
 	for line in lines:
 		departure_epilogue.text = "Forlorn-Ritualant: %s" % line
@@ -227,6 +226,8 @@ func _capture_departure_rider(actor: Node) -> bool:
 	if _departure_rig == null:
 		return false
 	rider_anchor.add_child(_departure_rig)
+	_departure_rig.z_as_relative = false
+	_departure_rig.z_index = 2
 	_departure_rig.position = Vector2.ZERO
 	if not _departure_rig.capture_from_operator(actor):
 		_departure_rig.queue_free()

@@ -6,6 +6,7 @@ enum TriggerKind {
 	FOUNTAIN,
 	EXIT,
 	GHOST_PROCESSION,
+	THREAD_WARNING,
 }
 
 @export var trigger_kind: int = TriggerKind.INTRO
@@ -32,6 +33,8 @@ func _on_body_entered(body: Node) -> void:
 			site.exit_site()
 		TriggerKind.GHOST_PROCESSION:
 			site.event_state.add_silence_pressure(5, &"procession_lane_crossed")
+		TriggerKind.THREAD_WARNING:
+			site.warn_thread_approach()
 
 
 func _on_body_exited(body: Node) -> void:

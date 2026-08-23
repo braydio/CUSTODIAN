@@ -1,242 +1,43 @@
 {
-  "id": "ash_bell_forlorn_ritualant",
-  "internal_name": "The Forlorn-Ritualant and the Unarrived",
-  "public_name": "Forlorn-Ritualant",
-  "continuity_origin": "ash_bell",
-  "forbidden_terms": [
-    "timeline",
-    "alternate universe",
-    "this version",
-    "last time",
-    "multiverse",
-    "parallel world"
-  ],
-  "motifs": [
-    "ninth_answer",
-    "dry_fountain",
-    "black_banners",
-    "white_thread",
-    "unarrived_saint",
-    "ash_instead_of_snow"
-  ],
-  "nodes": {
-    "proximity_intro": [
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "Stop. Outside the white.",
-        "delay": 0.0
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "The count is not finished.",
-        "delay": 2.5
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "Keep your boots clear of the thread.",
-        "delay": 3.0
-      }
-    ],
-    "first_interaction": [
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "Custodian. Good. Count with me."
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "Bell above. Fountain below. West gate to our left. Black banners at the doors."
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "The bell is wrong."
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "The basin is wrong."
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "There is no west gate."
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "Do not tell me this is another chapel."
-      }
-    ],
-    "ask_bell": [
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "The one above us is a chapel bell."
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "Bronze. Rope. Tower. Ordinary things."
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "The Ninth was never cast."
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "Nine stations. Eight Answers."
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "Station Nine was Orra's."
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "We waited for the Ninth."
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "It came late."
-      }
-    ],
-    "ask_thread": [
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "Name first. Wrist second."
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "During the Silence we counted who crossed."
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "The living. The dead."
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "Then people came through who remembered the wrong streets."
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "So we tied everyone."
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "If yours pulls tight, stop walking."
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "If it snaps, do not answer anyone behind you."
-      }
-    ],
-    "ask_orra": [
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "She had a post."
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "Station Nine."
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "They told her to go straight there."
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "She went back for the lower quarter."
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "Eight stations answered."
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "Orra did not."
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "Then she came."
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "Late."
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "But she came."
-      }
-    ],
-    "attack_response": [
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "Ahh, Custodian."
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "So fear found you early."
-      }
-    ],
-    "cut_thread_response": [
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "No."
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "That wasn't a cord."
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "That was a name."
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "Do not turn around."
-      }
-    ],
-    "peaceful_exit": [
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "Go gently."
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "Some gates are closed by footsteps."
-      }
-    ],
-    "stabilized_exit": [
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "The count holds."
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "Go."
-      }
-    ],
-    "inspect_fountain": [
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "This is a basin. It is not the Fountain."
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "Wrong lip. Wrong depth. No east fracture."
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "Someone built this where the Fountain should be."
-      }
-    ],
-    "set_stilling_pin": [
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "The pin finds the basin."
-      },
-      {
-        "speaker": "Forlorn-Ritualant",
-        "text": "The count may still hold."
-      }
-    ],
-    "pin_strike_bark": [{"speaker":"Forlorn-Ritualant","text":"Still."}],
-    "thread_pull_bark": [{"speaker":"Forlorn-Ritualant","text":"Back to the count."}],
-    "ninth_answer_bark": [{"speaker":"Forlorn-Ritualant","text":"Answer nothing."}],
-    "orra_late_windup_bark": [{"speaker":"Forlorn-Ritualant","text":"Too early."}],
-    "orra_late_resolve_bark": [{"speaker":"Forlorn-Ritualant","text":"Now."}]
+  "id":"ash_bell_forlorn_ritualant",
+  "internal_name":"The Forlorn-Ritualant and the Unarrived",
+  "public_name":"Forlorn-Ritualant",
+  "continuity_origin":"ash_bell",
+  "forbidden_terms":["timeline","alternate universe","this version","last time","multiverse","parallel world","Bellfall","Unnarrival"],
+  "motifs":["ninth_answer","dry_fountain","black_banners","white_thread","unarrived_saint","ash_instead_of_snow"],
+  "menus":{
+    "ritualant_root":[{"label":"BELL","node":"ask_bell","next_menu":"bell_menu","skip_if_seen":true},{"label":"THREAD","node":"ask_thread","next_menu":"thread_menu","skip_if_seen":true},{"label":"ORRA","node":"ask_orra","next_menu":"orra_menu","skip_if_seen":true},{"label":"LEAVE","close":true}],
+    "bell_menu":[{"label":"UNARRIVAL","node":"ask_unarrival","next_menu":"bell_menu"},{"label":"BACK","menu":"ritualant_root"}],
+    "thread_menu":[{"label":"IF IT BREAKS?","node":"ask_thread_breaks","next_menu":"thread_menu"},{"label":"BACK","menu":"ritualant_root"}],
+    "orra_menu":[{"label":"WHY WAS SHE LATE?","node":"ask_orra_late","next_menu":"orra_menu"},{"label":"DID SHE FAIL?","node":"ask_orra_judgement","next_menu":"orra_menu","requires_seen":"ask_orra_late"},{"label":"BACK","menu":"ritualant_root"}]
+  },
+  "nodes":{
+    "proximity_intro":{"delivery":"ambient","lines":[{"line_id":"ritualant_intro_01","speaker":"Forlorn-Ritualant","text":"Do not speak during the toll.","hold":2.1},{"line_id":"ritualant_intro_02","speaker":"Forlorn-Ritualant","text":"The west gate was still taking people when the closure order came.","hold":2.8},{"line_id":"ritualant_intro_03","speaker":"Forlorn-Ritualant","text":"Mothers pressed their children beneath the black banners.","hold":2.7},{"line_id":"ritualant_intro_04","speaker":"Forlorn-Ritualant","text":"And still the ash came.","hold":2.8}]},
+    "first_interaction":{"delivery":"manual","lines":[{"line_id":"ritualant_first_01","speaker":"Forlorn-Ritualant","text":"Custodian. Good. Help me finish the count.\n\nBell above. Fountain below. West gate where the frightened came through. Black banners at the doors."},{"line_id":"ritualant_first_02","speaker":"Forlorn-Ritualant","text":"No.\n\nThe bell is wrong. The basin is wrong. There is no west gate.\n\nCustodian... where did you bring me?"}]},
+    "ask_bell":{"delivery":"manual","lines":[{"line_id":"ritualant_bell_01","speaker":"Forlorn-Ritualant","text":"That one is a chapel bell.\n\nThe Ninth was Station Nine's Answer. Nine stations. Nine Answers."},{"line_id":"ritualant_bell_02","speaker":"Forlorn-Ritualant","text":"Eight answered.\n\nNine did not.\n\nSTATION IX: UNARRIVAL."}]},
+    "ask_unarrival":{"delivery":"manual","lines":[{"line_id":"ritualant_unarrival_01","speaker":"Forlorn-Ritualant","text":"An Answer that did not arrive inside its interval.\n\nThe station marked it: UNARRIVAL."},{"line_id":"ritualant_unarrival_02","speaker":"Forlorn-Ritualant","text":"For Station Nine, the interval stayed open.\n\nPeople crossed. Freight crossed. Streets stopped agreeing."},{"line_id":"ritualant_unarrival_03","speaker":"Forlorn-Ritualant","text":"Then Orra came."}]},
+    "ask_thread":{"delivery":"manual","lines":[{"line_id":"ritualant_thread_01","speaker":"Forlorn-Ritualant","text":"Name first. Wrist second.\n\nWhen station records stopped agreeing with the people in front of them, we tied the name to the body."}]},
+    "ask_thread_breaks":{"delivery":"manual","lines":[{"line_id":"ritualant_thread_break_01","speaker":"Forlorn-Ritualant","text":"If it pulls tight, stop walking.\n\nIf it snaps, do not answer until they ask your station."},{"line_id":"ritualant_thread_break_02","speaker":"Forlorn-Ritualant","text":"If no one asks... do not answer at all."}]},
+    "ask_orra":{"delivery":"manual","lines":[{"line_id":"ritualant_orra_01","speaker":"Forlorn-Ritualant","text":"Precentor Orra. Meridian Office. Station Nine.\n\nSaint came later."}]},
+    "ask_orra_late":{"delivery":"manual","lines":[{"line_id":"ritualant_orra_late_01","speaker":"Forlorn-Ritualant","text":"She was ordered straight to Nine.\n\nThe Lower Quarter had not cleared."},{"line_id":"ritualant_orra_late_02","speaker":"Forlorn-Ritualant","text":"She turned back for them.\n\nEight stations answered while she was gone. Nine did not."}]},
+    "ask_orra_judgement":{"delivery":"manual","lines":[{"line_id":"ritualant_orra_judgement_01","speaker":"Forlorn-Ritualant","text":"She abandoned Nine.\n\nShe brought people out."},{"line_id":"ritualant_orra_judgement_02","speaker":"Forlorn-Ritualant","text":"The interval opened.\n\nShe closed it."},{"line_id":"ritualant_orra_judgement_03","speaker":"Forlorn-Ritualant","text":"You tell me, Custodian."}]},
+    "thread_warning":{"delivery":"ambient","lines":[{"line_id":"ritualant_thread_warning_01","speaker":"Forlorn-Ritualant","text":"Outside the white.","hold":1.7}]},
+    "thread_cross_warning":{"delivery":"ambient","lines":[{"line_id":"ritualant_thread_cross_01","speaker":"Forlorn-Ritualant","text":"Easy. Do not pull the count apart.","hold":2.0}]},
+    "thread_touch_response":{"delivery":"ambient","lines":[{"line_id":"ritualant_thread_touch_01","speaker":"Forlorn-Ritualant","text":"Good. It still knows the difference.","hold":2.0}]},
+    "cut_thread_response":{"delivery":"ambient","lock_actor":true,"interrupt_ambient":true,"lines":[{"line_id":"ritualant_thread_cut_01","speaker":"Forlorn-Ritualant","text":"No.","hold":1.0},{"line_id":"ritualant_thread_cut_02","speaker":"Forlorn-Ritualant","text":"That wasn't a cord.\n\nThat was a name.","hold":1.8},{"line_id":"ritualant_thread_cut_03","speaker":"Forlorn-Ritualant","text":"Do not turn around.","hold":1.4}]},
+    "inspect_fountain":{"delivery":"manual","lines":[{"line_id":"ritualant_fountain_01","speaker":"Forlorn-Ritualant","text":"This is a basin. It is not the Fountain."},{"line_id":"ritualant_fountain_02","speaker":"Forlorn-Ritualant","text":"Wrong lip. Wrong depth. No east fracture.\n\nThe Fountain is where we counted the unburied.\n\nThis should not be here."}]},
+    "fountain_zone_warning":{"delivery":"ambient","lines":[{"line_id":"ritualant_fountain_warning_01","speaker":"Forlorn-Ritualant","text":"Step aside. The unburied are counted there.","hold":2.1}]},
+    "fountain_zone_linger":{"delivery":"ambient","lines":[{"line_id":"ritualant_fountain_linger_01","speaker":"Forlorn-Ritualant","text":"You stand where the empty coffins stood.","hold":2.4}]},
+    "take_stilling_pin_response":{"delivery":"ambient","lines":[{"line_id":"ritualant_pin_take_01","speaker":"Forlorn-Ritualant","text":"Take it. No sound will come.","hold":1.9},{"line_id":"ritualant_pin_take_02","speaker":"Forlorn-Ritualant","text":"That is its mercy.","hold":1.8}]},
+    "set_stilling_pin_pre":{"delivery":"ambient","lock_actor":true,"interrupt_ambient":true,"lines":[{"line_id":"ritualant_pin_set_01","speaker":"Forlorn-Ritualant","text":"Set it deep.","hold":1.15},{"line_id":"ritualant_pin_set_02","speaker":"Forlorn-Ritualant","text":"Now let nothing answer.","hold":1.35}]},
+    "set_stilling_pin_resolve":{"delivery":"ambient","interrupt_ambient":true,"lines":[{"line_id":"ritualant_pin_set_03","speaker":"Forlorn-Ritualant","text":"The count may still hold.","hold":2.0}]},
+    "attack_response":{"delivery":"ambient","interrupt_ambient":true,"lines":[{"line_id":"ritualant_attack_01","speaker":"Forlorn-Ritualant","text":"Custodian.","hold":0.9},{"line_id":"ritualant_attack_02","speaker":"Forlorn-Ritualant","text":"Then fear found you before understanding.","hold":1.8}]},
+    "peaceful_exit":{"delivery":"ambient","lines":[{"line_id":"ritualant_exit_01","speaker":"Forlorn-Ritualant","text":"Go gently.","hold":1.4},{"line_id":"ritualant_exit_02","speaker":"Forlorn-Ritualant","text":"Some gates are closed by footsteps.","hold":2.1}]},
+    "stabilized_exit":{"delivery":"ambient","lines":[{"line_id":"ritualant_stable_exit_01","speaker":"Forlorn-Ritualant","text":"The count holds.","hold":1.4},{"line_id":"ritualant_stable_exit_02","speaker":"Forlorn-Ritualant","text":"Go.","hold":1.2}]},
+    "ninth_answer_bark":{"delivery":"ambient","lines":[{"line_id":"ritualant_bark_ninth","speaker":"Forlorn-Ritualant","text":"Answer nothing.","hold":0.9}]},
+    "pin_strike_bark":{"delivery":"ambient","lines":[{"line_id":"ritualant_bark_pin","speaker":"Forlorn-Ritualant","text":"Still.","hold":0.8}]},
+    "thread_pull_bark":{"delivery":"ambient","lines":[{"line_id":"ritualant_bark_thread","speaker":"Forlorn-Ritualant","text":"Back to the count.","hold":0.9}]},
+    "orra_late_windup_bark":{"delivery":"ambient","lines":[{"line_id":"ritualant_bark_orra_early","speaker":"Forlorn-Ritualant","text":"Too early.","hold":0.8}]},
+    "orra_late_resolve_bark":{"delivery":"ambient","lines":[{"line_id":"ritualant_bark_orra_now","speaker":"Forlorn-Ritualant","text":"Now.","hold":0.8}]}
   }
 }
