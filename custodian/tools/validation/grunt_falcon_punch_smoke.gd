@@ -416,12 +416,13 @@ func _run() -> void:
 	_assert_true(grunt._grunt_expression_action.is_empty(), "combat escalation should cancel flavor immediately")
 
 	# Locomotion presentation follows, but never owns, BSM movement speed.
+	grunt._grunt_presentation_ready = false
 	grunt.behavior_state_machine.current_state = &"patrol"
 	grunt.velocity = Vector2(58.0, 0.0)
-	_assert_true(grunt._get_grunt_locomotion_action() == &"locomotion.walk", "calm patrol speed should use walk")
+	_assert_true(grunt._get_grunt_locomotion_action() == &"locomotion.relaxed_walk", "calm patrol speed should use relaxed walk")
 	grunt.behavior_state_machine.current_state = &"investigate"
 	grunt.velocity = Vector2(72.0, 0.0)
-	_assert_true(grunt._get_grunt_locomotion_action() == &"locomotion.unarmed_run", "faster non-aggro investigation should use unarmed run")
+	_assert_true(grunt._get_grunt_locomotion_action() == &"locomotion.relaxed_run", "faster non-aggro investigation should use relaxed run")
 	grunt.behavior_state_machine.current_state = &"engage_operator"
 	grunt.velocity = Vector2(88.0, 0.0)
 	_assert_true(grunt._get_grunt_locomotion_action() == &"locomotion.run", "aggro movement should retain armed run")

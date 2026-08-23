@@ -1588,6 +1588,48 @@
           "sha256": "ff718b82ececeb7a06b6e8436bc3d063aa88a1b1d534ece59bcdfcacdb7a635e",
           "provenance": "mirrored",
           "source_asset": "unarmed_run_01::e"
+        },
+        "unarmed_walk_01::e": {
+          "state_id": "unarmed_walk_01",
+          "direction": "e",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "locomotion",
+            "unarmed_walk_01",
+            "e"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/locomotion/enemy_grunt__body__locomotion__unarmed_walk_01__e__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "e77a6f61ddb94d004f741bc6c11fbc9bb2901d10fc87cac619a515d9d19ee04f",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "unarmed_walk_01::w": {
+          "state_id": "unarmed_walk_01",
+          "direction": "w",
+          "semantic_identity": [
+            "enemy_grunt",
+            "enemy",
+            "body",
+            "locomotion",
+            "unarmed_walk_01",
+            "w"
+          ],
+          "path": "content/sprites/enemies/enemy_grunt/runtime/body/locomotion/enemy_grunt__body__locomotion__unarmed_walk_01__w__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "9fcdab4e0c0552fb96a607b7633c5cb0ed81c0f86ebf637527d1fe9857385229",
+          "provenance": "mirrored",
+          "source_asset": "unarmed_walk_01::e"
         }
       }
     }

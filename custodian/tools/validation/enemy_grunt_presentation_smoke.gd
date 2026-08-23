@@ -11,7 +11,7 @@ const CONTROLLER := preload(
 func _init() -> void:
 	var required_actions: Array[StringName] = [
 		&"locomotion.relaxed_idle", &"locomotion.ready_idle",
-		&"locomotion.walk", &"locomotion.unarmed_run", &"locomotion.run", &"posture.alert",
+		&"locomotion.relaxed_walk", &"locomotion.walk", &"locomotion.unarmed_run", &"locomotion.run", &"posture.alert",
 		&"posture.draw", &"combat.fast_01", &"combat.fast_02",
 		&"combat.fast_03", &"reaction.flinch_01",
 		&"reaction.flinch_02", &"reaction.stagger", &"reaction.death",
@@ -50,6 +50,9 @@ func _init() -> void:
 	assert(float(fast.get("fps", 0.0)) > 0.0)
 	assert(not fast.has("hit_frame"))
 	assert(not fast.has("damage"))
+	assert(ANIMATION_SET.resolve_clip(&"locomotion.relaxed_walk", &"e").get("body_path", "").contains("unarmed_walk_01"))
+	assert(is_equal_approx(ANIMATION_SET.get_clip_duration(&"posture.alert", &"e"), 0.5))
+	assert(is_equal_approx(ANIMATION_SET.get_clip_duration(&"flavor.bark", &"e"), 1.0))
 
 	print("enemy_grunt_presentation_smoke: PASS actions=%d fingerprint=%s" % [
 		required_actions.size(), str(first).sha256_text(),

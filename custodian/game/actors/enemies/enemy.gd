@@ -391,6 +391,7 @@ var _grunt_presentation_ready := false
 var _grunt_expression_action: StringName = &""
 var _grunt_expression_timer := 0.0
 var _grunt_expression_is_flavor := false
+var _grunt_lost_target_flavor_pending := false
 var _grunt_flavor_cooldown := 4.0
 
 
@@ -1064,13 +1065,16 @@ func on_behavior_presentation_state_changed(_previous_state: StringName, new_sta
 		return
 	if new_state == &"notice":
 		_grunt_expression_action = &"posture.alert" if _grunt_presentation_ready else &"posture.draw"
-		_grunt_expression_timer = 0.35
+		var expression_duration := _enemy_presentation.get_duration(_grunt_expression_action, _last_move_direction)
+		_grunt_expression_timer = expression_duration if expression_duration > 0.0 else 0.35
 		_grunt_expression_is_flavor = false
 		_grunt_presentation_ready = true
 		_play_grunt_semantic(_grunt_expression_action, _last_move_direction, true)
 	elif new_state in [&"engage_operator", &"flee", &"escape_with_loot"]:
 		_cancel_grunt_flavor()
 		_grunt_presentation_ready = true
+	elif _previous_state == &"engage_operator" and new_state == &"search":
+		_grunt_lost_target_flavor_pending = true
 	elif new_state == &"idle" and _previous_state == &"return_home":
 		_grunt_presentation_ready = false
 
@@ -1093,8 +1097,17 @@ func _update_grunt_expression(delta: float) -> void:
 	_ensure_enemy_presentation_controller()
 	if _enemy_presentation == null:
 		return
-	_grunt_expression_action = _enemy_presentation.select_flavor()
-	_grunt_expression_timer = 0.75
+	var context: StringName = &"idle"
+	if _grunt_lost_target_flavor_pending:
+		context = &"lost_target"
+		_grunt_lost_target_flavor_pending = false
+	elif state == &"ambient_activity":
+		context = &"ambient_activity"
+	elif state == &"search":
+		context = &"search"
+	_grunt_expression_action = _enemy_presentation.select_flavor(context)
+	var expression_duration := _enemy_presentation.get_duration(_grunt_expression_action, _last_move_direction)
+	_grunt_expression_timer = expression_duration if expression_duration > 0.0 else 0.75
 	_grunt_expression_is_flavor = true
 	var ordinal := int(get_meta("stable_spawn_ordinal", 0))
 	_grunt_flavor_cooldown = 6.0 + float((ordinal + _enemy_presentation.flavor_ordinal) % 5)
@@ -4401,14 +4414,14 @@ func _grunt_movement_is_urgent() -> bool:
 
 
 func _get_grunt_locomotion_action() -> StringName:
-	if _grunt_movement_is_urgent():
-		return &"locomotion.run"
-	# Presentation follows simulation intent: patrol/ambient movement stays a
-	# walk, while faster non-aggro investigation/objective travel uses the
-	# relaxed run. Animation playback never sets actor speed.
-	if velocity.length() >= 64.0:
-		return &"locomotion.unarmed_run"
-	return &"locomotion.walk"
+	var ready := _grunt_presentation_ready or _grunt_movement_is_urgent()
+	if velocity.length() <= 0.5:
+		return &"locomotion.ready_idle" if ready else &"locomotion.relaxed_idle"
+	var speed_ratio := velocity.length() / maxf(1.0, speed)
+	var running := _grunt_movement_is_urgent() or speed_ratio >= 0.80
+	if ready:
+		return &"locomotion.run" if running else &"locomotion.walk"
+	return &"locomotion.relaxed_run" if running else &"locomotion.relaxed_walk"
 
 
 func _update_savage_enemy_animation(direction: Vector2, is_moving: bool) -> void:

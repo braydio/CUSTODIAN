@@ -4,6 +4,13 @@ Status: implemented V1.4; White Thread threadway gating integrated
 Owner: world presentation / authored-level ingress
 Runtime target: Godot 4 (`custodian/`)
 
+The production interaction prompt is `DESCEND BELOW`. The current ingress
+composition intentionally remains mixed-source: newer mountain/lamp art lives
+under `custodian/content/sprites/world/ingress/ash_bell/`, while the entrance
+shell, shaft, chains, and platform still use working legacy assets under
+`custodian/assets/sprites/world/ingress/ash_bell/`. A future V2 migration may
+consolidate those assets; this pass does not move them.
+
 ## Purpose
 
 The Empty Bell entrance uses a surface-side lift descent and return ascent around the existing
@@ -45,7 +52,7 @@ generated `WorldIngressSite`; it is not part of
 ```text
 surface trigger
   -> capture origin snapshot
-  -> explicit Interact: TRAVERSE THE DERELICT LIFT
+  -> explicit Interact: DESCEND BELOW
   -> capture visible Operator presentation into detached rider puppet
   -> hide live Operator visual leaves without moving its CharacterBody2D
   -> attach puppet to RiderAnchor in a restrained lift-braced pose

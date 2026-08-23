@@ -15,6 +15,12 @@ const ATTACK_BAGS: Array[Array] = [
 	[&"combat.fast_02", &"combat.fast_01", &"combat.fast_03", &"combat.fast_01", &"combat.fast_02", &"combat.fast_01", &"combat.fast_03"],
 	[&"combat.fast_01", &"combat.fast_03", &"combat.fast_02", &"combat.fast_01", &"combat.fast_03", &"combat.fast_01", &"combat.fast_02"],
 ]
+const FLAVOR_BAGS := {
+	&"idle": [&"flavor.bark", &"flavor.bark", &"flavor.taunt_brandish"],
+	&"ambient_activity": [&"flavor.bark", &"flavor.taunt_brandish", &"flavor.taunt_point", &"flavor.bark"],
+	&"search": [&"flavor.taunt_point", &"flavor.bark", &"flavor.taunt_point"],
+	&"lost_target": [&"flavor.taunt_bark", &"flavor.bark", &"flavor.taunt_point"],
+}
 
 
 func setup(set_resource: EnemyAnimationSet, body: AnimatedSprite2D, fx: AnimatedSprite2D = null, spawn_ordinal := 0) -> void:
@@ -61,6 +67,12 @@ func resolve_animation_name(
 		if not clip.is_empty() else &""
 
 
+func get_duration(action: StringName, direction: Vector2, variation_ordinal: int = 0) -> float:
+	if animation_set == null:
+		return 0.0
+	return animation_set.get_clip_duration(action, _direction_suffix(direction), variation_ordinal)
+
+
 func stop_on_first_frame() -> void:
 	if body_sprite == null:
 		return
@@ -86,9 +98,9 @@ func select_flinch_for_severity(damage_ratio: float) -> StringName:
 	return &"reaction.flinch_02" if damage_ratio >= 0.16 else &"reaction.flinch_01"
 
 
-func select_flavor() -> StringName:
-	var actions: Array[StringName] = [&"flavor.bark", &"flavor.taunt_bark", &"flavor.taunt_brandish", &"flavor.taunt_point"]
-	var selected := actions[flavor_ordinal % actions.size()]
+func select_flavor(context: StringName = &"idle") -> StringName:
+	var actions: Array = FLAVOR_BAGS.get(context, FLAVOR_BAGS[&"idle"])
+	var selected: StringName = actions[posmod(stable_spawn_ordinal + flavor_ordinal, actions.size())]
 	flavor_ordinal += 1
 	return selected
 

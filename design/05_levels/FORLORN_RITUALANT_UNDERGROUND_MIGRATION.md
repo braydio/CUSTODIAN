@@ -31,7 +31,7 @@ Generated world
   -> isolated north-edge lift pocket
   -> White Thread Knot acquisition latches a pending surface causeway
   -> player approaches and witnesses the permanent Threadway resolve
-  -> cave ingress: TRAVERSE THE DERELICT LIFT
+  -> cave ingress: DESCEND BELOW
   -> route: forlorn_ritualant_underground
   -> node: ritual_cavern
   -> spawn: Spawn_DescentLanding on the lower terminus of the same lift

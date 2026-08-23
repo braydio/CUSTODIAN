@@ -28,6 +28,17 @@ func resolve_clip(action: StringName, direction: StringName, variation_ordinal: 
 	return candidates[0]
 
 
+func get_clip_duration(action: StringName, direction: StringName, variation_ordinal: int = 0) -> float:
+	var clip := resolve_clip(action, direction, variation_ordinal)
+	if clip.is_empty():
+		return 0.0
+	var frame_count := int(clip.get("frame_count", 0))
+	var fps := float(clip.get("fps", 0.0))
+	if frame_count <= 0 or fps <= 0.0:
+		return 0.0
+	return float(frame_count) / fps
+
+
 func build_sprite_frames(layer: StringName) -> SpriteFrames:
 	var frames := SpriteFrames.new()
 	for clip_variant in clips:

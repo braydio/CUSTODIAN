@@ -204,7 +204,7 @@ func _validate_prompt(errors: Array[String]) -> void:
 	var route := parsed as Dictionary if parsed is Dictionary else {}
 	var ingress := route.get("ingress", {}) as Dictionary
 	_check(
-		str(ingress.get("prompt_text", "")) == "TRAVERSE THE DERELICT LIFT",
+		str(ingress.get("prompt_text", "")) == "DESCEND BELOW",
 		"Ash Bell interaction prompt drifted",
 		errors
 	)

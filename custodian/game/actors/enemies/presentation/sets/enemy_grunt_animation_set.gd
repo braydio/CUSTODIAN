@@ -14,6 +14,7 @@ func _init() -> void:
 	_add_generated_pair(&"locomotion.relaxed_idle", &"unarmed_idle_01", &"locomotion", 5, 6.0, true)
 	_add_generated_pair(&"locomotion.ready_idle", &"idle_01", &"locomotion", 5, 6.0, true)
 	_add_generated_pair(&"locomotion.walk", &"walk_01", &"locomotion", 5, 8.0, true)
+	_add_generated_pair(&"locomotion.relaxed_walk", &"unarmed_walk_01", &"locomotion", 5, 8.0, true)
 	_add_generated_pair(&"locomotion.unarmed_run", &"unarmed_run_01", &"locomotion", 6, 10.0, true)
 	_add_generated_pair(&"locomotion.run", &"run_01", &"locomotion", 6, 10.0, true)
 	_add_generated_pair(&"posture.alert", &"alert_01", &"melee", 5, 10.0, false)
@@ -80,7 +81,7 @@ func _add_generated_pair(action: StringName, variant: StringName, group: StringN
 			"action": action, "variant": variant, "direction": direction,
 			"body_path": "%s/body/%s/enemy_grunt__body__%s__%s__%s__%df__96.png" % [ROOT, group, group, variant, direction, frames],
 			"body_name": _compatibility_name(action, direction, &"body"),
-			"fps": fps, "loop": loop,
+			"frame_count": frames, "fps": fps, "loop": loop,
 		}
 		if with_fx:
 			clip["fx_path"] = "%s/fx/%s/enemy_grunt__fx__%s__%s__%s__%df__96.png" % [ROOT, group, group, variant, direction, frames]
@@ -94,7 +95,7 @@ func _add_existing(action: StringName, variant: StringName, direction: StringNam
 		"action": action, "variant": variant, "direction": direction,
 		"body_path": "%s/%s/enemy_grunt__body__melee__%s__%s__%df__%s.png" % [ROOT, subdir, variant, direction, frames, size_token],
 		"body_name": _compatibility_name(action, direction, &"body"),
-		"fps": fps, "loop": loop, "frame_size": frame_size,
+		"frame_count": frames, "fps": fps, "loop": loop, "frame_size": frame_size,
 	})
 
 
@@ -103,7 +104,7 @@ func _add_existing_pair(action: StringName, variant: StringName, direction: Stri
 		"action": action, "variant": variant, "direction": direction,
 		"body_path": "%s/body/enemy_grunt__body__melee__%s__%s__%df__96.png" % [ROOT, variant, direction, frames],
 		"body_name": _compatibility_name(action, direction, &"body"),
-		"fps": fps, "loop": loop,
+		"frame_count": frames, "fps": fps, "loop": loop,
 	}
 	if with_fx:
 		clip["fx_path"] = "%s/fx/enemy_grunt__fx__melee__%s__%s__%df__96.png" % [ROOT, variant, direction, frames]
@@ -118,7 +119,7 @@ func _add_mixed_runtime_pair(action: StringName, variant: StringName, direction:
 		"body_name": _compatibility_name(action, direction, &"body"),
 		"fx_path": "%s/%s/enemy_grunt__fx__melee__%s__%s__%df__96.png" % [ROOT, fx_subdir, variant, direction, frames],
 		"fx_name": _compatibility_name(action, direction, &"fx"),
-		"fps": fps, "loop": false,
+		"frame_count": frames, "fps": fps, "loop": false,
 	})
 
 
@@ -127,7 +128,7 @@ func _add_legacy_body(action: StringName, variant: StringName, direction: String
 		"action": action, "variant": variant, "direction": direction,
 		"body_path": path_template % ROOT,
 		"body_name": animation_name,
-		"fps": fps, "loop": loop,
+		"frame_count": _frames, "fps": fps, "loop": loop,
 	}
 	if not fx_path_template.is_empty():
 		clip["fx_path"] = fx_path_template % ROOT
@@ -140,7 +141,7 @@ func _add_legacy_fx(action: StringName, variant: StringName, direction: StringNa
 		"action": action, "variant": variant, "direction": direction,
 		"fx_path": path_template % ROOT,
 		"fx_name": animation_name,
-		"fps": fps, "loop": false,
+		"frame_count": _frames, "fps": fps, "loop": false,
 	})
 
 
@@ -153,6 +154,7 @@ func _compatibility_name(action: StringName, direction: StringName, layer: Strin
 	match action:
 		&"locomotion.ready_idle": return StringName("idle_%s" % direction)
 		&"locomotion.relaxed_idle": return StringName("unarmed_idle_%s" % direction)
+		&"locomotion.relaxed_walk": return StringName("unarmed_walk_%s" % direction)
 		&"locomotion.walk": return StringName("walk_%s" % direction)
 		&"locomotion.unarmed_run": return StringName("unarmed_run_%s" % direction)
 		&"locomotion.run": return StringName("run_%s" % direction)

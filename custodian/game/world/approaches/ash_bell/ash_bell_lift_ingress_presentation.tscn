@@ -139,6 +139,7 @@ z_as_relative = false
 
 [node name="MountainCliff" type="Sprite2D" parent="RearMassRoot" unique_id=16733388]
 position = Vector2(0, -150)
+modulate = Color(0.72, 0.75, 0.82, 1)
 texture = ExtResource("2_mountain")
 
 [node name="DarkMouth" type="Polygon2D" parent="RearMassRoot" unique_id=2097256610]
@@ -181,10 +182,12 @@ scale = Vector2(0.8, 0.8)
 texture = ExtResource("5_chain")
 
 [node name="LeftSupportTimber" type="Polygon2D" parent="EntranceStructureRoot" unique_id=232109263]
+visible = false
 color = Color(0.16, 0.115, 0.075, 1)
 polygon = PackedVector2Array(-103, -224, -88, -227, -78, -18, -94, -15)
 
 [node name="RightSupportTimber" type="Polygon2D" parent="EntranceStructureRoot" unique_id=106952385]
+visible = false
 color = Color(0.16, 0.115, 0.075, 1)
 polygon = PackedVector2Array(88, -227, 103, -224, 94, -15, 78, -18)
 

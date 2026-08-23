@@ -6,6 +6,7 @@
     "idle_01":{"required":true,"layer":"body","action_group":"locomotion","variant":"idle_01","animation":true,"fps":8,"min_direction_count":1},
     "unarmed_idle_01":{"recommended":true,"layer":"body","action_group":"locomotion","variant":"unarmed_idle_01","animation":true,"fps":8},
     "walk_01":{"recommended":true,"layer":"body","action_group":"locomotion","variant":"walk_01","animation":true,"fps":8},
+    "unarmed_walk_01":{"recommended":true,"layer":"body","action_group":"locomotion","variant":"unarmed_walk_01","animation":true,"fps":8},
     "unarmed_run_01":{"recommended":true,"layer":"body","action_group":"locomotion","variant":"unarmed_run_01","animation":true,"fps":10},
     "run_01":{"required":true,"layer":"body","action_group":"locomotion","variant":"run_01","animation":true,"fps":10,"min_direction_count":2},
     "fast_01":{"required":true,"layer":"body","action_group":"melee","variant":"fast_01","animation":true,"fps":12,"min_direction_count":1},

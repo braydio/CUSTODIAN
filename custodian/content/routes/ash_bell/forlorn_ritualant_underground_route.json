@@ -7,7 +7,7 @@
   "tags": ["authored", "world_ingress", "ash_bell", "underground", "ritual_site"],
   "ingress": {
     "ingress_id": "forlorn_ritualant_underground",
-    "prompt_text": "TRAVERSE THE DERELICT LIFT",
+    "prompt_text": "DESCEND BELOW",
 		"interaction_distance": 56.0,
     "route_profile": "production",
     "placement": {
