@@ -33,7 +33,7 @@ def load_kind_schemas(directory:Path|None=None)->dict[str,AssetKindSchema]:
     return result
 def resolve_runtime_target(*,family:AssetFamilyContract,state:AssetStateContract,key:AssetKey,kind_schema:AssetKindSchema)->Path:
     policy=family.filename_policy or kind_schema.filename_policy; filename_template=family.filename_template or kind_schema.filename_template
-    values={"domain":family.runtime_domain,"owner":key.owner,"kind":key.kind,"layer":key.layer,"action_group":key.action_group,"variant":key.variant,"direction":key.direction,"frames":key.frames,"frame_width":key.frame_width,"frame_height":key.frame_height,"frame_size":str(key.frame_width) if key.frame_width==key.frame_height else f"{key.frame_width}x{key.frame_height}"}
+    values={"domain":family.runtime_domain,"owner":key.owner,"kind":key.kind,"layer":key.layer,"action_group":key.action_group,"variant":key.variant,"direction":key.direction,"frames":key.frames,"frame_width":key.frame_width,"frame_height":key.frame_height,"frame_size":f"{key.frame_width}x{key.frame_height}"}
     filename=canonical_filename(key) if policy=="canonical" else str(filename_template).format(**values)
     if not filename or PurePosixPath(filename).name != filename or ".." in PurePosixPath(filename).parts: raise ValueError("generated filename must be a non-empty basename")
     values["filename"]=filename; template=family.runtime_template or kind_schema.runtime_template

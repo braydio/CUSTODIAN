@@ -4,6 +4,15 @@
 [ext_resource type="PackedScene" path="res://game/world/events/ash_bell/forlorn_ritualant_site.tscn" id="2_ritualant"]
 [ext_resource type="Script" path="res://game/world/levels/interactable_level_exit_2d.gd" id="3_exit"]
 [ext_resource type="PackedScene" path="res://game/world/approaches/ash_bell/ash_bell_lift_platform_assembly.tscn" id="4_lift"]
+[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__underlay__far_void_01__2048x2048.png" id="5_far_void"]
+[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__underlay__mid_depth_south_01__2048x1536.png" id="6_mid_south"]
+[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__underlay__mid_depth_middle_01__2048x1792.png" id="7_mid_middle"]
+[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__underlay__mid_depth_north_01__2048x1792.png" id="8_mid_north"]
+[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__ground__cavern_repeat_01__512x512.png" id="9_ground"]
+[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__landing_shelf_apron_01__768x512.png" id="10_apron"]
+[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__cavern_rim_south_01__1024x1024.png" id="11_rim_south"]
+[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__cavern_rim_middle_01__1024x1024.png" id="12_rim_middle"]
+[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__cavern_rim_north_01__1024x1024.png" id="13_rim_north"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_return"]
 size = Vector2(192, 64)
@@ -16,7 +25,43 @@ camera_bounds = Rect2(-1792, -2048, 3584, 4096)
 
 [node name="UnderlayRoot" type="Node2D" parent="."]
 
+[node name="FarVoid" type="Sprite2D" parent="UnderlayRoot"]
+texture = ExtResource("5_far_void")
+z_index = -30
+
+[node name="MidDepthSouth" type="Sprite2D" parent="UnderlayRoot"]
+texture = ExtResource("6_mid_south")
+z_index = -29
+
+[node name="MidDepthMiddle" type="Sprite2D" parent="UnderlayRoot"]
+texture = ExtResource("7_mid_middle")
+z_index = -28
+
+[node name="MidDepthNorth" type="Sprite2D" parent="UnderlayRoot"]
+texture = ExtResource("8_mid_north")
+z_index = -27
+
 [node name="BackgroundRoot" type="Node2D" parent="."]
+
+[node name="CavernGround" type="Sprite2D" parent="BackgroundRoot"]
+texture = ExtResource("9_ground")
+z_index = -20
+
+[node name="LandingShelfApron" type="Sprite2D" parent="BackgroundRoot"]
+texture = ExtResource("10_apron")
+z_index = 10
+
+[node name="CavernRimSouth" type="Sprite2D" parent="BackgroundRoot"]
+texture = ExtResource("11_rim_south")
+z_index = 11
+
+[node name="CavernRimMiddle" type="Sprite2D" parent="BackgroundRoot"]
+texture = ExtResource("12_rim_middle")
+z_index = 12
+
+[node name="CavernRimNorth" type="Sprite2D" parent="BackgroundRoot"]
+texture = ExtResource("13_rim_north")
+z_index = 13
 
 [node name="PlayableRoot" type="Node2D" parent="."]
 

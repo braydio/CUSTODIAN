@@ -1,0 +1,124 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "ritualant_underground_environment",
+  "kind": "backdrop",
+
+  "runtime": {
+    "domain": "tiles/encounters/ritualant_set/underground",
+    "owner": "ritualant_underground",
+    "template": "{domain}/{filename}",
+    "filename_policy": "template",
+    "filename_template": "{owner}__{layer}__{variant}__{frame_size}.png"
+  },
+
+  "canvas": {
+    "width": 1024,
+    "height": 1024
+  },
+
+  "direction_policy": "omni",
+  "auto_mirror": false,
+
+  "states": {
+    "far_void_01": {
+      "required": true,
+      "layer": "underlay",
+      "action_group": "environment",
+      "variant": "far_void_01",
+      "layout": "copy",
+      "frame_width": 2048,
+      "frame_height": 2048
+    },
+    "mid_depth_south_01": {
+      "required": true,
+      "layer": "underlay",
+      "action_group": "environment",
+      "variant": "mid_depth_south_01",
+      "layout": "copy",
+      "frame_width": 2048,
+      "frame_height": 1536
+    },
+    "mid_depth_middle_01": {
+      "required": true,
+      "layer": "underlay",
+      "action_group": "environment",
+      "variant": "mid_depth_middle_01",
+      "layout": "copy",
+      "frame_width": 2048,
+      "frame_height": 1792
+    },
+    "mid_depth_north_01": {
+      "required": true,
+      "layer": "underlay",
+      "action_group": "environment",
+      "variant": "mid_depth_north_01",
+      "layout": "copy",
+      "frame_width": 2048,
+      "frame_height": 1792
+    },
+    "cavern_repeat_01": {
+      "required": true,
+      "layer": "ground",
+      "action_group": "environment",
+      "variant": "cavern_repeat_01",
+      "layout": "copy",
+      "frame_width": 512,
+      "frame_height": 512
+    },
+    "landing_shelf_apron_01": {
+      "required": true,
+      "layer": "overlay",
+      "action_group": "environment",
+      "variant": "landing_shelf_apron_01",
+      "layout": "copy",
+      "frame_width": 768,
+      "frame_height": 512
+    },
+    "cavern_rim_south_01": {
+      "required": true,
+      "layer": "overlay",
+      "action_group": "environment",
+      "variant": "cavern_rim_south_01",
+      "layout": "copy",
+      "frame_width": 1024,
+      "frame_height": 1024
+    },
+    "cavern_rim_middle_01": {
+      "required": true,
+      "layer": "overlay",
+      "action_group": "environment",
+      "variant": "cavern_rim_middle_01",
+      "layout": "copy",
+      "frame_width": 1024,
+      "frame_height": 1024
+    },
+    "cavern_rim_north_01": {
+      "required": true,
+      "layer": "overlay",
+      "action_group": "environment",
+      "variant": "cavern_rim_north_01",
+      "layout": "copy",
+      "frame_width": 1024,
+      "frame_height": 1024
+    }
+  },
+
+  "aliases": {
+    "far_void": "far_void_01",
+    "south_mid_depth": "mid_depth_south_01",
+    "middle_mid_depth": "mid_depth_middle_01",
+    "north_mid_depth": "mid_depth_north_01",
+    "cavern_ground": "cavern_repeat_01",
+    "landing_apron": "landing_shelf_apron_01",
+    "south_rim": "cavern_rim_south_01",
+    "middle_rim": "cavern_rim_middle_01",
+    "north_rim": "cavern_rim_north_01"
+  },
+
+  "consumers": [
+    {
+      "type": "scene",
+      "path": "res://game/world/levels/authored/ash_bell/forlorn_ritualant_underground/forlorn_ritualant_underground.tscn"
+    }
+  ]
+}
