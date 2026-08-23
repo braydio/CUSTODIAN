@@ -13,19 +13,19 @@ const CARDINAL_NEIGHBORS: Array[Vector2i] = [
 
 @export_group("Textures")
 @export var underlay_profile: ProcgenUnderlayProfile
-@export var variant_seed: int = 0
-@export var far_texture: Texture2D
-@export var middle_texture: Texture2D
-@export var near_texture: Texture2D
+var variant_seed: int = 0
+var far_texture: Texture2D
+var middle_texture: Texture2D
+var near_texture: Texture2D
 
 @export_group("Regions")
 @export_range(1, 64, 1) var minimum_region_tiles := 4
 @export_range(1, 16, 1) var region_padding_tiles := 2
 
 @export_group("Layer Opacity")
-@export_range(0.0, 1.0, 0.01) var far_alpha := 0.30
-@export_range(0.0, 1.0, 0.01) var middle_alpha := 0.90
-@export_range(0.0, 1.0, 0.01) var near_alpha := 0.48
+var far_alpha := 0.30
+var middle_alpha := 0.90
+var near_alpha := 0.48
 
 @export_group("Camera Backdrop")
 @export var follow_camera := true

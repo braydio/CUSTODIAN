@@ -53,6 +53,8 @@ semantics are structural state and remain independent of wall dressing.
 
 Both configuration paths retain received cell bounds as metadata and create one native-scale FAR/MIDDLE/NEAR stack that follows the active camera with a small overscan. Authored edge pockets and map-wide chasms therefore cannot expose a finite left/right seam. The backdrop does not participate in simulation or per-tile reveal and therefore does not alter deterministic fingerprints. Runtime images use linear filtering without mipmaps, disabled repeat, and lossless compression. Endless Forest is the production default; Drowned Basilica is an explicit development override through `ProcGenTilemap.underlay_profile_override`, with A/B selection derived from the accepted `ProcGen.seed`. Tonal normalization of Drowned Basilica derivatives remains pending visual review.
 
+The runtime override authority is `ProcGenTilemap.set_underlay_profile_override("DROWNED_BASILICA")` (or the exported `underlay_profile_override` inspector field). It resolves the selected profile and passes the accepted `ProcGen.seed` to `ProcgenDepthBackdrop`; the backdrop then updates an already-instantiated FAR/MIDDLE/NEAR stack in place. `DEFAULT` selects the scene's Endless Forest profile.
+
 Finite connected-region forest stacks are not production authority: one
 1536×1024 stack centered on a large region cannot safely cover a map-wide
 chasm. Chasm locality is instead expressed by the bounded stone fascia.

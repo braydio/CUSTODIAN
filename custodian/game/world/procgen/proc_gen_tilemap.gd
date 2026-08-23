@@ -1005,6 +1005,10 @@ func _on_procgen_finished() -> void:
 	])
 	var _t_start := Time.get_ticks_msec()
 	_fill_tilemaps()
+	# Re-apply the presentation profile after the accepted generation result is
+	# fully available. This makes the backdrop seed handoff explicit and keeps
+	# candidate promotion/final runtime presentation on the same seed authority.
+	_refresh_depth_backdrop()
 	_evaluated_candidate_ready = generation_evaluation_mode \
 		and not _generated_floor_cells.is_empty()
 	var _t_fill := Time.get_ticks_msec() - _t_start
@@ -8978,17 +8982,27 @@ func _apply_foliage_occlusion_material(material: ShaderMaterial, active_centers:
 func _refresh_depth_backdrop() -> void:
 	if depth_backdrop == null:
 		return
-	var profile := depth_backdrop.underlay_profile
+	var profile := ENDLESS_FOREST_UNDERLAY
 	match underlay_profile_override:
-		"ENDLESS_FOREST":
-			profile = ENDLESS_FOREST_UNDERLAY
 		"DROWNED_BASILICA":
 			profile = DROWNED_BASILICA_UNDERLAY
 	depth_backdrop.set_underlay_profile(profile, _get_generation_seed())
 	if not _chasm_cells.is_empty():
 		depth_backdrop.configure_from_chasm_cells(_chasm_cells.keys())
+	elif not _generated_floor_cells.is_empty():
+		depth_backdrop.configure_from_cells(_generated_floor_cells.keys())
+
+
+func set_underlay_profile_override(profile_name: String) -> void:
+	if profile_name not in ["DEFAULT", "ENDLESS_FOREST", "DROWNED_BASILICA"]:
+		push_error("[ProcGenTilemap] Unsupported underlay profile override: %s" % profile_name)
 		return
-	depth_backdrop.configure_from_cells(_generated_floor_cells.keys())
+	underlay_profile_override = profile_name
+	_refresh_depth_backdrop()
+
+
+func get_underlay_profile_override() -> String:
+	return underlay_profile_override
 
 
 func _refresh_void_cliff_face() -> void:
