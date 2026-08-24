@@ -64,9 +64,16 @@
 [ext_resource type="Script" path="res://game/infrastructure/construction_placement_controller.gd" id="218_construction_placement"]
 [ext_resource type="Script" path="res://game/infrastructure/construction_zone_2d.gd" id="219_construction_zone"]
 [ext_resource type="PackedScene" path="res://game/ui/construction/construction_placement_hud.tscn" id="220_construction_hud"]
+[ext_resource type="Script" path="res://game/tutorial/command_terminal_tutorial.gd" id="221_command_tutorial"]
+[ext_resource type="PackedScene" path="res://game/ui/cognitive/cognitive_feedback_overlay.tscn" id="222_cognitive_overlay"]
 
 [node name="GameRoot" type="Node2D" unique_id=593578645]
 metadata/_edit_vertical_guides_ = [-1047.0]
+
+[node name="CommandTerminalTutorial" type="Node" parent="."]
+script = ExtResource("221_command_tutorial")
+
+[node name="CognitiveFeedbackOverlay" parent="." instance=ExtResource("222_cognitive_overlay")]
 
 [node name="SensorIntelligenceReadModel" type="Node" parent="."]
 script = ExtResource("217_sensor_intelligence")
@@ -812,7 +819,7 @@ layout_mode = 2
 text = "OPERATIONAL SUMMARY"
 
 [node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewTopRow/OverviewOperationalPanel/Margin/Content" unique_id=-2137803052]
-custom_minimum_size = Vector2(0, 84)
+custom_minimum_size = Vector2(0, 96)
 layout_mode = 2
 bbcode_enabled = true
 fit_content = true
@@ -838,7 +845,7 @@ layout_mode = 2
 text = "POWER SUMMARY"
 
 [node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewTopRow/OverviewPowerPanel/Margin/Content" unique_id=-2137803047]
-custom_minimum_size = Vector2(0, 84)
+custom_minimum_size = Vector2(0, 96)
 layout_mode = 2
 bbcode_enabled = true
 fit_content = true
@@ -864,7 +871,7 @@ layout_mode = 2
 text = "ASSAULT SUMMARY"
 
 [node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewTopRow/OverviewAssaultPanel/Margin/Content" unique_id=-2137803042]
-custom_minimum_size = Vector2(0, 84)
+custom_minimum_size = Vector2(0, 96)
 layout_mode = 2
 bbcode_enabled = true
 fit_content = true

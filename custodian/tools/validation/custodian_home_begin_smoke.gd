@@ -11,6 +11,8 @@ var _failures: Array[String] = []
 
 
 func _initialize() -> void:
+	if ProjectSettings.get_setting("application/run/main_scene", "") != HOME_SCENE:
+		_failures.append("Project main scene must be the Home beginning")
 	_check_exists(HOME_SCENE)
 	_check_exists(HOME_SCRIPT)
 	_check_exists(TERMINAL_SCRIPT)
@@ -74,6 +76,8 @@ func _check_home_instance(instance: Node) -> void:
 	for method_name in ["get_boundary_segments", "get_authoring_marker_schema", "get_authoring_marker_state"]:
 		if not instance.has_method(method_name):
 			_failures.append("Home scene missing mapper contract: %s" % method_name)
+	if str(instance.get("next_scene_path")) != "res://scenes/game.tscn":
+		_failures.append("Home operational handoff target drifted")
 
 
 func _check_home_mapper(instance: Node) -> void:

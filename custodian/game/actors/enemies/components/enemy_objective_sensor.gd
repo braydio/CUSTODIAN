@@ -5,12 +5,14 @@ class_name EnemyObjectiveSensor
 func choose_objective(enemy: Node2D, profile: Resource, blackboard: Node) -> Dictionary:
 	var storage_objective := _score_storage_objective(enemy, profile, blackboard)
 	var sabotage_objective := _score_sabotage_storage_objective(enemy, profile, blackboard)
+	var cognitive_objective := _score_cognitive_residue_objective(enemy, profile, blackboard)
 	var scores := {
 		"operator": score_operator(enemy, profile, blackboard),
 		"storage": float(storage_objective.get("score", 0.0)),
 		"sabotage_storage": float(sabotage_objective.get("score", 0.0)),
 		"exit": score_exit_with_loot(enemy, profile, blackboard),
 		"investigate": score_investigation(enemy, profile, blackboard),
+		"cognitive_residue": float(cognitive_objective.get("score", 0.0)),
 	}
 	blackboard.objective_debug_scores = scores.duplicate(true)
 	var best_type := &"none"
@@ -25,6 +27,8 @@ func choose_objective(enemy: Node2D, profile: Resource, blackboard: Node) -> Dic
 		target = storage_objective.get("target") as Node
 	elif best_type == &"sabotage_storage":
 		target = sabotage_objective.get("target") as Node
+	elif best_type == &"cognitive_residue":
+		target = cognitive_objective.get("target") as Node
 	return {"type": best_type, "score": best_score, "target": target, "scores": scores}
 
 
@@ -39,6 +43,8 @@ func score_operator(enemy: Node2D, profile: Resource, blackboard: Node) -> float
 		return 0.0
 	var distance := enemy.global_position.distance_to(operator.global_position)
 	var awareness_radius := float(profile.get("operator_awareness_bubble_px"))
+	if StringName(blackboard.get("cognitive_residue_axis")) == &"bearing" and not bool(blackboard.get("is_alerted")):
+		awareness_radius *= 1.12
 	if not bool(blackboard.get("is_alerted")) and not bool(blackboard.get("has_seen_operator")):
 		if distance > awareness_radius:
 			return 0.0
@@ -99,6 +105,41 @@ func score_investigation(_enemy: Node2D, profile: Resource, blackboard: Node) ->
 	if not bool(blackboard.get("is_suspicious")) or float(blackboard.get("investigation_timer")) <= 0.0:
 		return 0.0
 	return float(profile.get("curiosity_weight")) * 100.0
+
+
+func _score_cognitive_residue_objective(enemy: Node2D, profile: Resource, blackboard: Node) -> Dictionary:
+	if (
+		not bool(profile.get("can_seek_cognitive_residue"))
+		or bool(blackboard.get("is_carrying_loot"))
+		or bool(blackboard.get("is_alerted"))
+	):
+		return {"score": 0.0, "target": null}
+	var radius := float(profile.get("cognitive_residue_awareness_radius_px"))
+	var candidates: Array[Node2D] = []
+	for candidate in enemy.get_tree().get_nodes_in_group("cognitive_residue_pickup"):
+		if candidate is Node2D and is_instance_valid(candidate):
+			var residue := candidate as Node2D
+			if enemy.global_position.distance_to(residue.global_position) <= radius:
+				candidates.append(residue)
+	candidates.sort_custom(func(a: Node2D, b: Node2D) -> bool:
+		return enemy.global_position.distance_squared_to(a.global_position) < enemy.global_position.distance_squared_to(b.global_position)
+	)
+	var navigation := enemy.get_node_or_null("/root/GameRoot/NavigationSystem")
+	var best_score := 0.0
+	var best_target: Node = null
+	for index in mini(16, candidates.size()):
+		var residue := candidates[index]
+		if navigation == null or not navigation.has_method("get_path_to_target"):
+			continue
+		var path: PackedVector2Array = navigation.call("get_path_to_target", enemy.global_position, residue.global_position)
+		if path.is_empty():
+			continue
+		var distance := enemy.global_position.distance_to(residue.global_position)
+		var score := maxf(0.0, float(profile.get("cognitive_residue_weight")) * 100.0 - distance / maxf(radius, 1.0) * 45.0)
+		if score > best_score:
+			best_score = score
+			best_target = residue
+	return {"score": best_score, "target": best_target}
 
 
 func _get_vault_manager(enemy: Node) -> Node:

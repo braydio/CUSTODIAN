@@ -49,7 +49,11 @@ func update_perception(enemy: Node2D, profile: Resource, blackboard: Node, delta
 	var snapshot := _get_operator_snapshot(operator)
 	var operator_position := snapshot.get("global_position", operator.global_position) as Vector2
 	var distance := enemy.global_position.distance_to(operator_position)
-	var visible: bool = distance <= float(profile.get("vision_range_px")) and _is_in_vision_arc(enemy, operator_position, profile) and _has_line_of_sight(enemy, operator)
+	var recollection_mult := _recollection_range_multiplier(blackboard)
+	var vision_range := float(profile.get("vision_range_px")) * recollection_mult
+	var hearing_range := float(profile.get("hearing_range_px")) * recollection_mult
+	var memory_mult := 1.2 if recollection_mult > 1.0 else 1.0
+	var visible: bool = distance <= vision_range and _is_in_vision_arc(enemy, operator_position, profile) and _has_line_of_sight(enemy, operator)
 	has_line_of_sight = visible
 	blackboard.target_visible = visible
 
@@ -58,19 +62,19 @@ func update_perception(enemy: Node2D, profile: Resource, blackboard: Node, delta
 		blackboard.last_known_operator_position = operator_position
 		blackboard.target_last_seen_position = operator_position
 		blackboard.operator_ref = operator
-		blackboard.pursuit_timer = float(profile.get("lost_sight_memory_sec"))
+		blackboard.pursuit_timer = float(profile.get("lost_sight_memory_sec")) * memory_mult
 		var visibility_mult := float(snapshot.get("visibility_mult", 1.0))
-		var distance_mult := _distance_detection_mult(distance, profile.vision_range_px)
+		var distance_mult := _distance_detection_mult(distance, vision_range)
 		detection_meter = clampf(detection_meter + float(profile.get("detection_gain_per_sec")) * visibility_mult * distance_mult * perception_delta, 0.0, 1.0)
 	else:
 		_decay(profile, perception_delta)
 
 	var noise_radius := float(snapshot.get("noise_radius_px", 0.0))
-	if not visible and noise_radius > 0.0 and distance <= min(float(profile.get("hearing_range_px")) + noise_radius, float(profile.get("hearing_range_px")) * 2.5):
+	if not visible and noise_radius > 0.0 and distance <= min(hearing_range + noise_radius, hearing_range * 2.5):
 		last_known_position = operator_position
 		blackboard.operator_ref = operator
 		blackboard.investigation_position = operator_position
-		blackboard.set("investigation_timer", float(profile.get("investigation_memory_sec")))
+		blackboard.set("investigation_timer", float(profile.get("investigation_memory_sec")) * memory_mult)
 		blackboard.is_suspicious = true
 		heard_noise.emit(operator_position, noise_radius)
 		became_suspicious.emit(operator_position)
@@ -114,10 +118,15 @@ func _on_noise_emitted(event: Variant) -> void:
 	var strength: float = maxf(0.05, float(event.get("threat_value")) * distance_strength)
 	_current_blackboard.target_last_heard_position = event_position
 	_current_blackboard.investigation_position = event_position
-	_current_blackboard.investigation_timer = maxf(_current_blackboard.investigation_timer, float(_current_profile.get("investigation_memory_sec")))
+	var memory_mult := 1.2 if _recollection_range_multiplier(_current_blackboard) > 1.0 else 1.0
+	_current_blackboard.investigation_timer = maxf(_current_blackboard.investigation_timer, float(_current_profile.get("investigation_memory_sec")) * memory_mult)
 	_current_blackboard.is_suspicious = true
 	detection_meter = clampf(detection_meter + strength * (0.45 if bool(event.get("suppressed")) else 0.7), 0.0, 1.0)
-	force_noise(event_position, float(_current_profile.get("investigation_memory_sec")), _current_blackboard)
+	force_noise(event_position, float(_current_profile.get("investigation_memory_sec")) * memory_mult, _current_blackboard)
+
+
+func _recollection_range_multiplier(blackboard: Node) -> float:
+	return 1.1 if StringName(blackboard.get("cognitive_residue_axis")) == &"recollection" and float(blackboard.get("cognitive_residue_buff_timer")) > 0.0 else 1.0
 
 
 func force_noise(noise_position: Vector2, strength: float, blackboard: Node) -> void:

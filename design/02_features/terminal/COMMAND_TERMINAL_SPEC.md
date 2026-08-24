@@ -4,7 +4,7 @@
 **Status:** design
 **Created:** 2026-04-06
 **Author:** PAI-OpenCode
-**Last Updated:** 2026-07-20
+**Last Updated:** 2026-08-24
 **Content Canon Authority:** `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 
 ---
@@ -148,6 +148,12 @@ At the `1366x768` safe-layout target, the default rail presents OVERVIEW, SECTOR
 - On OVERVIEW, the first entries are a synthesized attention feed: current system/link state, grid change, sensor/contact state, and recommended next page/command. After boot completes, boot/procedure chatter collapses into one `BOOT LOG // N PRIOR MESSAGES` entry before the bounded actionable transcript.
 
 ---
+
+## Runtime layout and first-use tutorial contract
+
+The tactical map title and `MapPreview` are one stable `MapPreviewBlock`. Page changes reparent that block as a unit between OVERVIEW and page content; they never recreate either child. Scroll position is preserved when refreshing the current page and resets only on an actual page change.
+
+The first operational-world terminal lesson is command-driven and run-scoped. It damages the existing defense authority, asks the player to issue `STATUS`, then `REPAIR DEFENSE`, and advances only from successfully handled commands plus an observed integrity increase. The tutorial projects instructions into the existing transcript and never creates a second repair path.
 
 ## Page Specifications
 

@@ -1,7 +1,7 @@
 # Home Beginning: Custodian Field Terminal
 
 **Status:** active V1 implementation
-**Last Updated:** 2026-06-02
+**Last Updated:** 2026-08-24
 **Runtime Target:** Godot 4.x (`custodian/`)
 **Runtime Slice:** `res://scenes/home_custodian_begin.tscn`
 **Validation:** `res://tools/validation/custodian_home_begin_smoke.gd`
@@ -38,7 +38,7 @@ The Custodian follows the command not because it understands the source, but bec
 
 ## V1 runtime implementation
 
-The first implementation lives as a dedicated authored Home scene rather than replacing the current contract/procgen main scene:
+The first implementation lives as the authored project boot scene and hands off to the existing contract/procgen world:
 
 ```text
 custodian/scenes/home_custodian_begin.tscn
@@ -48,7 +48,7 @@ custodian/game/world/home/field_terminal_interactable.gd
 
 V1 uses the existing Road of Witnesses map, the existing Operator, the shared world camera, the Black Reliquary HUD, and existing command-terminal compatibility art as a placeholder Field Terminal visual. It is a real playable slice: the Operator starts at the lower Road of Witnesses, follows a distance-based Custodian-band signal, receives progressively stranger HUD status fragments, approaches the Field Terminal, and establishes witness contact through the normal `interact` action.
 
-V1 intentionally does **not** promote this scene to `application/run/main_scene`; `res://scenes/game.tscn` remains the active project main scene until boot-flow ownership is changed deliberately. The Home beginning scene is the canonical implementation target for that later boot-flow handoff.
+`res://scenes/home_custodian_begin.tscn` is the production `application/run/main_scene`. The first terminal interaction preserves the witness-contact/archive reveal. A second interaction commits the run transition to `res://scenes/game.tscn`; duplicate interaction signals cannot schedule multiple handoffs.
 
 Runtime behavior:
 
@@ -57,6 +57,7 @@ Runtime behavior:
 - The Black Reliquary HUD presents location, phase, objective, signal/provenance status, and prompt plaque text.
 - Prompt text is rendered as real Godot labels through the HUD, not baked into textures.
 - Witness contact changes objective state to terminal stabilization and unlocks a partial archive/status readout placeholder.
+- A second terminal access request changes scene through `CustodianHomeBegin`; the interactable and HUD do not own boot-flow authority.
 - Missing production art/audio is tracked in `REQUIRED_ASSETS.md`; the current scene uses existing assets as fallbacks.
 
 ## Home mapper

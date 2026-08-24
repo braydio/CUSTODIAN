@@ -5,6 +5,7 @@ signal cognitive_values_changed(recollection: float, instinct: float, bearing: f
 signal dominant_state_changed(old_state: StringName, new_state: StringName)
 signal instinct_action_requested(action_id: StringName)
 signal cognitive_item_collected(item_id: StringName, amount: int)
+signal cognitive_threshold_changed(axis: StringName, old_tier: int, new_tier: int, value: float)
 
 const STATE_DRIFT := &"DRIFT"
 const STATE_FLOW := &"FLOW"
@@ -23,12 +24,16 @@ const ITEM_AXIS := {
 @export var instinct_meter: float = 0.0
 @export var decay_per_second: float = 0.02
 @export var mixed_state_margin: float = 0.08
+@export var feedback_threshold := 3.0
+@export var saturation_threshold := 6.0
 
 var _dominant_state: StringName = STATE_MIXED
+var _axis_tiers := {&"recollection": 0, &"instinct": 0, &"bearing": 0}
 
 
 func _ready() -> void:
 	_dominant_state = _calculate_dominant_state()
+	_sync_axis_tiers(false)
 
 
 func _process(delta: float) -> void:
@@ -97,6 +102,22 @@ func get_weights() -> Dictionary:
 
 func get_dominant_state() -> StringName:
 	return _dominant_state
+
+
+func get_axis_value(axis: StringName) -> float:
+	match axis:
+		&"recollection": return recollection
+		&"instinct": return instinct
+		&"bearing": return bearing
+	return 0.0
+
+
+func get_axis_tier(axis: StringName) -> int:
+	return int(_axis_tiers.get(axis, 0))
+
+
+func get_axis_intensity(axis: StringName) -> float:
+	return clampf(get_axis_value(axis) / maxf(saturation_threshold, 0.001), 0.0, 1.0)
 
 
 func get_rare_drop_multiplier() -> float:
@@ -168,11 +189,22 @@ func from_save_dict(data: Dictionary) -> void:
 
 
 func _emit_values_changed() -> void:
+	_sync_axis_tiers(true)
 	cognitive_values_changed.emit(recollection, instinct, bearing)
 	var old_state := _dominant_state
 	_dominant_state = _calculate_dominant_state()
 	if old_state != _dominant_state:
 		dominant_state_changed.emit(old_state, _dominant_state)
+
+
+func _sync_axis_tiers(emit_changes: bool) -> void:
+	for axis: StringName in [&"recollection", &"instinct", &"bearing"]:
+		var value := get_axis_value(axis)
+		var new_tier := 2 if value >= saturation_threshold else (1 if value >= feedback_threshold else 0)
+		var old_tier := int(_axis_tiers.get(axis, 0))
+		_axis_tiers[axis] = new_tier
+		if emit_changes and old_tier != new_tier:
+			cognitive_threshold_changed.emit(axis, old_tier, new_tier, value)
 
 
 func _calculate_dominant_state() -> StringName:

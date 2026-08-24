@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="CUSTODIAN"
-run/main_scene="res://scenes/game.tscn"
+run/main_scene="res://scenes/home_custodian_begin.tscn"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://icon.svg"
 

@@ -40,6 +40,9 @@ var ambient_anchor: Node = null
 var ambient_activity_id: StringName = &"none"
 var ambient_activity_timer: float = 0.0
 var ambient_noncombat_first: bool = true
+var target_cognitive_residue: Node = null
+var cognitive_residue_axis: StringName = &""
+var cognitive_residue_buff_timer := 0.0
 
 
 func reset_alerts() -> void:
@@ -75,5 +78,8 @@ func get_debug_snapshot() -> Dictionary:
 		"camp_id": String(camp_id),
 		"ambient_activity": String(ambient_activity_id),
 		"ambient_anchor": ambient_anchor.name if ambient_anchor != null and is_instance_valid(ambient_anchor) else "",
+		"target_cognitive_residue": target_cognitive_residue.name if target_cognitive_residue != null and is_instance_valid(target_cognitive_residue) else "",
+		"cognitive_residue_axis": String(cognitive_residue_axis),
+		"cognitive_residue_buff_timer": cognitive_residue_buff_timer,
 		"scores": objective_debug_scores.duplicate(true),
 	}

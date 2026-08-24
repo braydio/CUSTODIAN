@@ -27,6 +27,8 @@ const PAGE_HISTORY := "history"
 const PAGE_LEDGER := "ledger"
 const PAGE_EQUIPMENT := "equipment"
 
+enum InspectionMode { GLANCE, DETAIL }
+
 const PAGE_ORDER := [PAGE_STATUS, PAGE_EQUIPMENT, PAGE_LEDGER, PAGE_HISTORY]
 const PAGE_LABELS := {
 	"status": "STATUS",
@@ -91,6 +93,7 @@ var _selected_category := "all"
 var _selected_item_id := ""
 var _sort_name_first := false
 var _controller_prompts_active := false
+var _inspection_mode := InspectionMode.GLANCE
 var _entries: Array[Dictionary] = []
 var _category_buttons: Dictionary = {}
 var _item_buttons: Array[Button] = []
@@ -246,6 +249,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif _current_page == PAGE_LEDGER and key_event.physical_keycode == KEY_R:
 			_toggle_ledger_sort()
 			get_viewport().set_input_as_handled()
+		elif _current_page == PAGE_LEDGER and key_event.physical_keycode == KEY_TAB:
+			_toggle_inspection_mode()
+			get_viewport().set_input_as_handled()
 	elif event is InputEventJoypadButton:
 		var joy_event := event as InputEventJoypadButton
 		if joy_event.button_index == JOY_BUTTON_LEFT_SHOULDER:
@@ -259,6 +265,9 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 		elif _current_page == PAGE_LEDGER and joy_event.button_index == JOY_BUTTON_RIGHT_STICK:
 			_toggle_ledger_sort()
+			get_viewport().set_input_as_handled()
+		elif _current_page == PAGE_LEDGER and joy_event.button_index == JOY_BUTTON_Y:
+			_toggle_inspection_mode()
 			get_viewport().set_input_as_handled()
 
 
@@ -1748,11 +1757,71 @@ func _show_detail(entry: Dictionary) -> void:
 	]
 	_ledger_detail_count.text = "×%d" % int(entry.get("quantity", 0))
 	_ledger_detail_use.text = "PRIMARY USE: %s" % _usage_label(definition)
-	_ledger_detail_description.text = str(definition.get("description", "No recovered archive description is available."))
+	_ledger_detail_description.text = (
+		_build_glance_summary(entry) if _inspection_mode == InspectionMode.GLANCE
+		else _build_detail_summary(entry)
+	)
+	_ledger_detail_provenance.visible = _inspection_mode == InspectionMode.DETAIL
 	_ledger_detail_provenance.text = "PROVENANCE: %s" % str(definition.get("provenance", "LOCAL LEDGER / UNVERIFIED"))
 	
 	# Show equip button for equipment items if the slot is empty
 	_show_equip_button_if_applicable(entry)
+
+
+func _toggle_inspection_mode() -> void:
+	_inspection_mode = InspectionMode.DETAIL if _inspection_mode == InspectionMode.GLANCE else InspectionMode.GLANCE
+	for entry in _entries:
+		if str(entry.get("item_id", "")) == _selected_item_id:
+			_show_detail(entry)
+			break
+	_update_input_prompts()
+
+
+func _build_glance_summary(entry: Dictionary) -> String:
+	var definition: Dictionary = entry.get("definition", {})
+	var lines := ["USE · %s" % _usage_label(definition)]
+	if str(definition.get("category", "")) == "cognitive":
+		lines.append(_build_cognitive_item_summary(definition))
+	elif str(definition.get("category", "")) == "equipment":
+		var item_id := StringName(str(entry.get("item_id", "")))
+		var slot := _get_equipment_slot_for_item(item_id)
+		var equipped := _inventory_manager != null and str(_inventory_manager.call("get_equipped", slot)) == String(item_id)
+		lines.append("STATUS · %s" % ("EQUIPPED" if equipped else "CARRIED"))
+	elif str(definition.get("category", "")) == "resources":
+		lines.append("KNOWN USE · %s" % _usage_label(definition))
+	return "\n".join(lines)
+
+
+func _build_detail_summary(entry: Dictionary) -> String:
+	var definition: Dictionary = entry.get("definition", {})
+	var lines := [str(definition.get("description", "No recovered archive description is available."))]
+	if str(definition.get("category", "")) == "cognitive":
+		lines.append("")
+		lines.append(_build_cognitive_item_summary(definition))
+	if definition.has("mechanical_effects"):
+		lines.append("\nMECHANICAL DETAIL · %s" % str(definition.get("mechanical_effects")))
+	return "\n".join(lines)
+
+
+func _build_cognitive_item_summary(definition: Dictionary) -> String:
+	var axis := StringName(str(definition.get("cognitive_axis", "")))
+	var cognitive := get_node_or_null("/root/CognitiveState")
+	if cognitive == null:
+		return "AXIS · %s\nCOGNITIVE STATE · OFFLINE" % String(axis).to_upper()
+	var bonuses := "DROP +%.0f%% · ENEMY TRACKING +%.0f%%" % [
+		(float(cognitive.call("get_drop_rate_multiplier")) - 1.0) * 100.0,
+		float(cognitive.call("get_enemy_tracking_bonus")) * 100.0,
+	] if axis == &"recollection" else (
+		"MOVE +%.0f%% · RECOVERY %.0f%%" % [
+			(float(cognitive.call("get_move_speed_multiplier")) - 1.0) * 100.0,
+			(1.0 - float(cognitive.call("get_attack_recovery_multiplier"))) * 100.0,
+		] if axis == &"instinct" else
+		"ACCURACY +%.0f%% · CRIT +%.0f%%" % [float(cognitive.call("get_player_accuracy_bonus")) * 100.0, float(cognitive.call("get_player_crit_bonus")) * 100.0]
+	)
+	return "AXIS · %s\nRAW VALUE · %.2f\nDOMINANT · %s\nBONUSES · %s" % [
+		String(axis).to_upper(), float(cognitive.call("get_axis_value", axis)),
+		String(cognitive.call("get_dominant_state")), bonuses,
+	]
 
 
 func _item_icon_material(item_id: String) -> Material:
@@ -1931,11 +2000,11 @@ func _update_input_prompts() -> void:
 	if _footer_hint != null:
 		if _controller_prompts_active:
 			_footer_hint.text = "LB  PREVIOUS PAGE     RB  NEXT PAGE%s     B  CLOSE" % (
-				"     X  FILTER     R3  SORT     A  SELECT" if _current_page == PAGE_LEDGER else ""
+				"     X  FILTER     R3  SORT     Y  %s     A  SELECT" % ("GLANCE" if _inspection_mode == InspectionMode.DETAIL else "DETAIL") if _current_page == PAGE_LEDGER else ""
 			)
 		else:
 			_footer_hint.text = "Q  PREVIOUS PAGE     E  NEXT PAGE%s     ESC  CLOSE" % (
-				"     F  FILTER     R  SORT" if _current_page == PAGE_LEDGER else ""
+				"     F  FILTER     R  SORT     TAB  %s" % ("GLANCE" if _inspection_mode == InspectionMode.DETAIL else "DETAIL") if _current_page == PAGE_LEDGER else ""
 			)
 	if _ledger_filter_button != null:
 		_ledger_filter_button.text = "%s  FILTER · %s" % [

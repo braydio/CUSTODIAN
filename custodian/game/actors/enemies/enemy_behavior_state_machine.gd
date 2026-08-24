@@ -15,6 +15,8 @@ const SEEK_OBJECTIVE := &"seek_objective"
 const OPEN_STORAGE := &"open_storage"
 const STEAL_RESOURCES := &"steal_resources"
 const SABOTAGE_STORAGE := &"sabotage_storage"
+const SEEK_COGNITIVE_RESIDUE := &"seek_cognitive_residue"
+const CONSUME_COGNITIVE_RESIDUE := &"consume_cognitive_residue"
 const ESCAPE_WITH_LOOT := &"escape_with_loot"
 const FLEE := &"flee"
 const STUNNED := &"stunned"
@@ -68,6 +70,10 @@ func physics_update(enemy: Node2D, delta: float) -> bool:
 	_rescore_timer -= delta
 	if blackboard.investigation_timer > 0.0:
 		blackboard.investigation_timer = maxf(0.0, blackboard.investigation_timer - delta)
+	if blackboard.cognitive_residue_buff_timer > 0.0:
+		blackboard.cognitive_residue_buff_timer = maxf(0.0, blackboard.cognitive_residue_buff_timer - delta)
+		if blackboard.cognitive_residue_buff_timer <= 0.0:
+			blackboard.cognitive_residue_axis = &""
 	var observatory := enemy.get_node_or_null("/root/DevObservatory")
 	var perception_started: int = observatory.perf_span_begin() if observatory != null else 0
 	perception.update_perception(enemy, profile, blackboard, delta)
@@ -101,6 +107,10 @@ func physics_update(enemy: Node2D, delta: float) -> bool:
 			_update_steal_resources(enemy, delta)
 		SABOTAGE_STORAGE:
 			_update_sabotage_storage(enemy, delta)
+		SEEK_COGNITIVE_RESIDUE:
+			_update_seek_cognitive_residue(enemy)
+		CONSUME_COGNITIVE_RESIDUE:
+			_update_consume_cognitive_residue(enemy)
 		ESCAPE_WITH_LOOT:
 			_update_escape_with_loot(enemy, delta)
 		FLEE:
@@ -212,7 +222,7 @@ func _update_patrol(enemy: Node2D, _delta: float) -> void:
 		return
 	if _patrol_target == Vector2.ZERO or enemy.global_position.distance_to(_patrol_target) <= 18.0:
 		_patrol_target = _choose_next_patrol_target(enemy)
-	var moved := bool(enemy.call("behavior_move_toward", _patrol_target, profile.patrol_speed))
+	var moved := bool(enemy.call("behavior_move_toward", _patrol_target, _movement_speed(profile.patrol_speed)))
 	if not moved:
 		_patrol_target = Vector2.ZERO
 		_record_unreachable_navigation_goal(&"patrol")
@@ -233,7 +243,7 @@ func _update_ambient_activity(enemy: Node2D, delta: float) -> void:
 	if anchor.has_method("get_anchor_position"):
 		anchor_pos = anchor.call("get_anchor_position")
 	if enemy.global_position.distance_to(anchor_pos) > 18.0:
-		enemy.call("behavior_move_toward", anchor_pos, profile.patrol_speed)
+		enemy.call("behavior_move_toward", anchor_pos, _movement_speed(profile.patrol_speed))
 		return
 	enemy.call("behavior_stop")
 	blackboard.ambient_activity_timer += delta
@@ -284,7 +294,7 @@ func _update_investigate(enemy: Node2D, _delta: float) -> void:
 		change_state(PATROL)
 		return
 	if enemy.global_position.distance_to(target_pos) > 22.0:
-		enemy.call("behavior_move_toward", target_pos, profile.investigate_speed)
+		enemy.call("behavior_move_toward", target_pos, _movement_speed(profile.investigate_speed))
 		return
 	enemy.call("behavior_stop")
 	if state_time >= 1.0:
@@ -319,14 +329,14 @@ func _update_engage_operator(enemy: Node2D, _delta: float) -> void:
 			blackboard.search_point_index = 0
 			change_state(SEARCH)
 			return
-		enemy.call("behavior_move_toward", blackboard.target_last_seen_position, profile.engage_speed)
+		enemy.call("behavior_move_toward", blackboard.target_last_seen_position, _movement_speed(profile.engage_speed))
 		return
 	enemy.set("target", operator)
 	var attack_range := 40.0
 	if enemy.has_method("get_behavior_attack_range"):
 		attack_range = float(enemy.call("get_behavior_attack_range"))
 	if enemy.global_position.distance_to(operator.global_position) > attack_range:
-		enemy.call("behavior_move_toward", operator.global_position, profile.engage_speed)
+		enemy.call("behavior_move_toward", operator.global_position, _movement_speed(profile.engage_speed))
 	else:
 		enemy.call("behavior_attack_target")
 
@@ -347,7 +357,7 @@ func _update_seek_objective(enemy: Node2D, _delta: float) -> void:
 		change_state(IDLE)
 		return
 	if enemy.global_position.distance_to(storage.global_position) > storage_interact_range_px:
-		enemy.call("behavior_move_toward", storage.global_position, profile.objective_speed)
+		enemy.call("behavior_move_toward", storage.global_position, _movement_speed(profile.objective_speed))
 	elif sabotaging:
 		change_state(SABOTAGE_STORAGE)
 	else:
@@ -425,7 +435,7 @@ func _update_escape_with_loot(enemy: Node2D, _delta: float) -> void:
 		loot_carrier.clear_payload()
 		enemy.queue_free()
 		return
-	enemy.call("behavior_move_toward", exit_node.global_position, profile.objective_speed * profile.loot_escape_speed_mult)
+	enemy.call("behavior_move_toward", exit_node.global_position, _movement_speed(profile.objective_speed * profile.loot_escape_speed_mult))
 
 
 func _update_flee(enemy: Node2D, _delta: float) -> void:
@@ -434,12 +444,12 @@ func _update_flee(enemy: Node2D, _delta: float) -> void:
 	var manager := _get_vault_manager(enemy)
 	var exit_node: Node2D = manager.call("find_nearest_exit", enemy.global_position) if manager != null else null
 	if exit_node == null:
-		enemy.call("behavior_move_toward", blackboard.home_position, profile.flee_speed)
+		enemy.call("behavior_move_toward", blackboard.home_position, _movement_speed(profile.flee_speed))
 		return
 	if enemy.global_position.distance_to(exit_node.global_position) <= exit_reached_range_px:
 		enemy.queue_free()
 		return
-	enemy.call("behavior_move_toward", exit_node.global_position, profile.flee_speed)
+	enemy.call("behavior_move_toward", exit_node.global_position, _movement_speed(profile.flee_speed))
 
 
 func _evaluate_immediate_interrupts(enemy: Node2D) -> bool:
@@ -503,6 +513,9 @@ func _consider_objective_candidate(candidate: Dictionary) -> bool:
 	if [&"operator", &"exit", &"investigate"].has(candidate_type):
 		_apply_objective_choice(candidate)
 		return true
+	if candidate_type == &"cognitive_residue":
+		_apply_objective_choice(candidate)
+		return true
 	var current_type: StringName = StringName(blackboard.current_objective_type)
 	var mapped_candidate_type := &"vault_storage_sabotage" if candidate_type == &"sabotage_storage" else &"vault_storage"
 	var current_valid := _is_current_strategic_objective_valid()
@@ -539,6 +552,13 @@ func _apply_objective_choice(objective: Dictionary) -> void:
 			blackboard.current_objective = blackboard.target_storage
 			blackboard.current_objective_score = score
 			change_state(SEEK_OBJECTIVE)
+		&"cognitive_residue":
+			blackboard.target_cognitive_residue = objective.get("target") as Node
+			blackboard.current_objective_type = &"cognitive_residue"
+			blackboard.current_objective = blackboard.target_cognitive_residue
+			blackboard.current_objective_score = score
+			_obs_increment(&"enemy_cognitive_residue_targeted")
+			change_state(SEEK_COGNITIVE_RESIDUE)
 		&"investigate":
 			change_state(INVESTIGATE)
 		_:
@@ -559,7 +579,65 @@ func _is_current_strategic_objective_valid() -> bool:
 		return not target.has_method("has_resources") or bool(target.call("has_resources"))
 	if blackboard.current_objective_type == &"vault_storage_sabotage":
 		return not target.has_method("is_destroyed") or not bool(target.call("is_destroyed"))
+	if blackboard.current_objective_type == &"cognitive_residue":
+		return not target.is_queued_for_deletion()
 	return false
+
+
+func _update_seek_cognitive_residue(enemy: Node2D) -> void:
+	if _evaluate_immediate_interrupts(enemy):
+		return
+	var residue := blackboard.target_cognitive_residue as Node2D
+	if residue == null or not is_instance_valid(residue) or residue.is_queued_for_deletion():
+		_clear_cognitive_residue_target()
+		change_state(PATROL)
+		return
+	if enemy.global_position.distance_to(residue.global_position) <= float(profile.cognitive_residue_consume_range_px):
+		change_state(CONSUME_COGNITIVE_RESIDUE)
+		return
+	if not bool(enemy.call("behavior_move_toward", residue.global_position, _movement_speed(profile.objective_speed))):
+		_obs_increment(&"enemy_cognitive_residue_unreachable")
+		_record_unreachable_navigation_goal(&"cognitive_residue")
+		_clear_cognitive_residue_target()
+		change_state(PATROL)
+
+
+func _update_consume_cognitive_residue(enemy: Node2D) -> void:
+	if _evaluate_immediate_interrupts(enemy):
+		return
+	var residue := blackboard.target_cognitive_residue as Node
+	if residue == null or not is_instance_valid(residue) or not residue.has_method("consume_by_enemy"):
+		_clear_cognitive_residue_target()
+		change_state(PATROL)
+		return
+	var result: Dictionary = residue.call("consume_by_enemy", enemy)
+	if result.is_empty():
+		_clear_cognitive_residue_target()
+		change_state(PATROL)
+		return
+	blackboard.cognitive_residue_axis = StringName(str(result.get("axis", "")))
+	blackboard.cognitive_residue_buff_timer = float(profile.cognitive_residue_buff_duration_sec)
+	_obs_increment(&"enemy_cognitive_residue_consumed")
+	_clear_cognitive_residue_target()
+	change_state(PATROL)
+
+
+func _clear_cognitive_residue_target() -> void:
+	blackboard.target_cognitive_residue = null
+	if blackboard.current_objective_type == &"cognitive_residue":
+		blackboard.current_objective_type = &"none"
+		blackboard.current_objective = null
+		blackboard.current_objective_score = 0.0
+
+
+func _movement_speed(base_speed: float) -> float:
+	return base_speed * (1.12 if StringName(blackboard.cognitive_residue_axis) == &"instinct" and blackboard.cognitive_residue_buff_timer > 0.0 else 1.0)
+
+
+func _obs_increment(counter_name: StringName) -> void:
+	var observatory := get_node_or_null("/root/DevObservatory")
+	if observatory != null and observatory.has_method("increment"):
+		observatory.call("increment", counter_name, 1)
 
 
 func _update_search(enemy: Node2D, delta: float) -> void:
@@ -579,7 +657,7 @@ func _update_search(enemy: Node2D, delta: float) -> void:
 		blackboard.search_point_index += 1
 		index = blackboard.search_point_index % offsets.size()
 		search_point = blackboard.target_last_seen_position + offsets[index]
-	var moved := bool(enemy.call("behavior_move_toward", search_point, profile.investigate_speed))
+	var moved := bool(enemy.call("behavior_move_toward", search_point, _movement_speed(profile.investigate_speed)))
 	if not moved:
 		blackboard.search_point_index += 1
 		_record_unreachable_navigation_goal(&"search")
@@ -596,7 +674,7 @@ func _update_return_home(enemy: Node2D, _delta: float) -> void:
 		blackboard.reset_alerts()
 		change_state(PATROL)
 		return
-	enemy.call("behavior_move_toward", blackboard.home_position, profile.patrol_speed)
+	enemy.call("behavior_move_toward", blackboard.home_position, _movement_speed(profile.patrol_speed))
 
 
 func _resolve_components() -> void:

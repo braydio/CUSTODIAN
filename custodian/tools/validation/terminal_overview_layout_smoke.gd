@@ -71,7 +71,9 @@ func _run() -> void:
 
 	_require(planet != null and not planet.visible, "Overview should not display the large planet preview.")
 	_require(map_preview != null and map_preview.visible, "Overview should display the tactical map.")
-	_require(map_preview == null or map_preview.get_parent() == map_slot, "Overview tactical map should be mounted between summary and diagnosis rows.")
+	var map_block := ui.find_child("MapPreviewBlock", true, false) as Control
+	_require(map_block != null and map_block.get_parent() == map_slot, "Overview tactical map block should be mounted between summary and diagnosis rows.")
+	_require(map_preview == null or map_preview.get_parent() == map_block, "Overview tactical map should remain inside its stable semantic block.")
 	_require(map_preview == null or map_preview.size.y >= 200.0, "Overview tactical map should remain the primary visual anchor.")
 	_require(map_preview == null or bottom_row == null or map_preview.size.y > bottom_row.size.y, "Overview tactical map should remain taller than the diagnosis-card row.")
 	_require(top_row != null and top_row.visible, "Overview summary cards should be visible.")

@@ -1,6 +1,8 @@
 extends Node2D
 class_name CustodianHomeBegin
 
+@export_file("*.tscn") var next_scene_path := "res://scenes/game.tscn"
+
 const BOUNDARY_SEGMENTS := [
 	[Vector2(-627.0, -627.0), Vector2(627.0, -627.0)],
 	[Vector2(627.0, -627.0), Vector2(627.0, 627.0)],
@@ -33,6 +35,7 @@ const Palette := preload("res://game/ui/theme/black_reliquary_palette.gd")
 
 var _witness_established := false
 var _last_signal_band := -1
+var _transition_committed := false
 
 
 func _ready() -> void:
@@ -237,21 +240,34 @@ func _on_witness_established(_actor: Node) -> void:
 
 
 func _on_terminal_access_requested(_actor: Node) -> void:
+	if _transition_committed:
+		return
+	_transition_committed = true
 	if hud != null:
 		hud.set_debug_overlay_visible(false)
 		hud.show_interaction(
 			"ARCHIVE PARTIAL",
-			"Memory damaged. Restore terminal subsystems.",
+			"Operational Custodian node located.",
 			_get_interact_prompt_key(),
 			Catalog.ICON_OBJECTIVE
 		)
-		hud.call("set_status_line", "gate", Catalog.ICON_KEY_ITEM, "ARCHIVE: DAMAGED", Palette.GOLD_TEXT)
+	call_deferred("_enter_operational_world")
+
+
+func _enter_operational_world() -> void:
+	if next_scene_path.is_empty() or not ResourceLoader.exists(next_scene_path):
+		push_error("[CustodianHomeBegin] Missing next scene: %s" % next_scene_path)
+		_transition_committed = false
+		return
+	get_tree().change_scene_to_file(next_scene_path)
 
 
 func get_beginning_state() -> Dictionary:
 	return {
 		"witness_established": _witness_established,
 		"signal_band": _last_signal_band,
+		"transition_committed": _transition_committed,
+		"next_scene_path": next_scene_path,
 		"objective": "Stabilize the terminal" if _witness_established else "Trace the Custodian frequency",
 	}
 

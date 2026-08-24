@@ -1,6 +1,6 @@
 # CUSTODIAN — Forest Shrumb Runtime Implementation Delta
 
-Status: v1 foundation initialized 2026-04-30
+Status: active runtime foundation, residue ecology and feedback implemented 2026-08-24
 Purpose: compact Codex/agent-facing runtime implementation instructions
 Depends on: Forest Shrumb lore/gameplay design document (no dedicated cognitive drops doc exists yet)
 Runtime target: Godot 4.x under `custodian/`
@@ -13,6 +13,8 @@ Ambient spawning uses `ambient_shrumb.tscn`; the former scav droid scene path
 has been removed.
 
 ---
+
+Implementation note, 2026-08-24: cognitive pickups remain player-collectible, but zealot behavior profiles may also select a nearby reachable residue as a local objective. The existing behavior state machine owns seeking and consumption, uses authoritative NavigationSystem paths, respects alert/objective interrupts and the ambient leash, and applies a temporary axis-specific enemy modifier. Raw cognitive thresholds at 3 and 6 drive a world-only layer-10 feedback overlay; normalized cognitive gameplay weights and the layer-20 HUD remain unchanged.
 
 ## 1. Scope
 

@@ -9,6 +9,7 @@ extends Area2D
 @export var animation_frame_count: int = 4
 
 const FLOATING_TEXT_SCENE := preload("res://game/actors/effects/floating_text.tscn")
+const InventoryItemCatalog := preload("res://game/ui/inventory/inventory_item_catalog.gd")
 
 const ITEM_DISPLAY := {
 	&"faint_recollection": "Faint Recollection",
@@ -43,10 +44,28 @@ var _animation_time: float = 0.0
 
 
 func _ready() -> void:
+	add_to_group("cognitive_residue_pickup")
 	if visual != null:
 		_visual_base_y = visual.position.y
 	body_entered.connect(_on_body_entered)
 	_refresh_visual()
+
+
+func get_cognitive_axis() -> StringName:
+	var definition := InventoryItemCatalog.get_definition(item_id)
+	return StringName(str(definition.get("cognitive_axis", "")))
+
+
+func can_enemy_consume(enemy: Node) -> bool:
+	return enemy != null and is_instance_valid(enemy) and not is_queued_for_deletion()
+
+
+func consume_by_enemy(enemy: Node) -> Dictionary:
+	if not can_enemy_consume(enemy):
+		return {}
+	var result := {"item_id": item_id, "axis": get_cognitive_axis(), "quantity": quantity}
+	queue_free()
+	return result
 
 
 func _process(delta: float) -> void:

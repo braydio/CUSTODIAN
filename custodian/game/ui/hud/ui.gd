@@ -1,5 +1,7 @@
 extends CanvasLayer
 
+signal terminal_command_executed(normalized_command: String, handled: bool)
+
 const TerminalCommandRouterScript := preload("res://game/ui/terminal/terminal_command_router.gd")
 const TerminalSnapshotScript := preload("res://game/ui/terminal/terminal_snapshot.gd")
 const TerminalStatusFormatterScript := preload("res://game/ui/terminal/terminal_status_formatter.gd")
@@ -350,6 +352,7 @@ var _terminal_page_buttons: Dictionary = {}
 var _terminal_nav_buttons: Array = []
 var _terminal_action_buttons: Array = []
 var _terminal_main_scroll: ScrollContainer = null
+var _terminal_map_preview_block: VBoxContainer = null
 var _terminal_font_mono: Font = null
 var _terminal_font_mono_bold: Font = null
 var _terminal_font_display: Font = null
@@ -993,7 +996,19 @@ func _setup_terminal_main_scroll() -> void:
 			if previous_parent != null:
 				previous_parent.remove_child(node)
 			content_column.add_child(node)
+	_ensure_terminal_map_preview_block(content_column)
 	_apply_terminal_page_layout()
+
+
+func _ensure_terminal_map_preview_block(content_column: VBoxContainer) -> VBoxContainer:
+	if _terminal_map_preview_block != null and is_instance_valid(_terminal_map_preview_block):
+		return _terminal_map_preview_block
+	_terminal_map_preview_block = VBoxContainer.new()
+	_terminal_map_preview_block.name = "MapPreviewBlock"
+	content_column.add_child(_terminal_map_preview_block)
+	terminal_map_preview_title_label.reparent(_terminal_map_preview_block)
+	terminal_map_preview.reparent(_terminal_map_preview_block)
+	return _terminal_map_preview_block
 
 
 func _apply_terminal_page_layout() -> void:
@@ -1003,29 +1018,23 @@ func _apply_terminal_page_layout() -> void:
 	if content_column == null:
 		return
 	var is_overview := _terminal_current_page == "OVERVIEW"
+	var map_preview_block := _ensure_terminal_map_preview_block(content_column)
 	if terminal_map_preview.has_method("set_overview_mode"):
 		terminal_map_preview.call("set_overview_mode", is_overview)
 	if is_overview and terminal_overview_map_slot != null:
-		if terminal_map_preview_title_label.get_parent() != terminal_overview_map_slot:
-			terminal_map_preview_title_label.reparent(terminal_overview_map_slot)
-		if terminal_map_preview.get_parent() != terminal_overview_map_slot:
-			terminal_map_preview.reparent(terminal_overview_map_slot)
+		if map_preview_block.get_parent() != terminal_overview_map_slot:
+			map_preview_block.reparent(terminal_overview_map_slot)
 		terminal_map_preview_title_label.visible = true
 		terminal_map_preview.visible = true
 		terminal_map_preview.custom_minimum_size.y = 236.0
 	else:
-		if terminal_map_preview_title_label.get_parent() != content_column:
-			terminal_map_preview_title_label.reparent(content_column)
-		if terminal_map_preview.get_parent() != content_column:
-			terminal_map_preview.reparent(content_column)
-		var widget_index := terminal_widget_stack.get_index() if terminal_widget_stack != null and terminal_widget_stack.get_parent() == content_column else content_column.get_child_count()
-		content_column.move_child(terminal_map_preview_title_label, widget_index)
-		content_column.move_child(terminal_map_preview, mini(widget_index + 1, content_column.get_child_count() - 1))
+		if map_preview_block.get_parent() != content_column:
+			map_preview_block.reparent(content_column)
+		var widget_index := terminal_widget_stack.get_index() if terminal_widget_stack != null and terminal_widget_stack.get_parent() == content_column else -1
+		content_column.move_child(map_preview_block, mini(widget_index + 1, content_column.get_child_count() - 1))
 		terminal_map_preview.custom_minimum_size.y = 116.0 if _terminal_current_page == "SENSORS" else 250.0
 	if terminal_planet_preview != null:
 		terminal_planet_preview.custom_minimum_size.y = 144.0
-	if _terminal_main_scroll != null:
-		_terminal_main_scroll.scroll_vertical = 0
 
 
 func _update_debug_panel() -> void:
@@ -3421,6 +3430,7 @@ func _execute_terminal_command_buffered(parsed: Dictionary) -> void:
 	var cmd_upper := str(parsed.get("normalized", ""))
 	_render_terminal_status("EXECUTING %s" % cmd_upper)
 	var handled := _terminal_command_router.execute(self, parsed)
+	terminal_command_executed.emit(cmd_upper, handled)
 	if handled:
 		_append_terminal_line("COMMAND ACCEPTED", "success")
 		_render_terminal_status("QUEUE %d | LINK STABLE" % _terminal_command_queue.size())
@@ -3662,7 +3672,10 @@ func _set_terminal_page(page_name: String) -> void:
 	var normalized := page_name.to_upper()
 	if not _terminal_page_buttons.has(normalized):
 		return
+	var page_changed := normalized != _terminal_current_page
 	_terminal_current_page = normalized
+	if page_changed and _terminal_main_scroll != null:
+		_terminal_main_scroll.scroll_vertical = 0
 	_refresh_terminal_page_buttons()
 	_apply_terminal_page_theme()
 	_render_terminal_output()
@@ -3671,6 +3684,10 @@ func _set_terminal_page(page_name: String) -> void:
 	if _terminal_open or terminal_input != null:
 		call_deferred("_ensure_terminal_input_visible_and_focused")
 	_debug_terminal_input_layout("_set_terminal_page")
+
+
+func append_terminal_tutorial_line(text: String, kind: String = "info") -> void:
+	_append_terminal_line(text, kind)
 
 
 func _apply_terminal_page_theme() -> void:

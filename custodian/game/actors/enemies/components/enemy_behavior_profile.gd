@@ -67,6 +67,13 @@ class_name EnemyBehaviorProfile
 @export var ambient_anchor_search_radius_px: float = 220.0
 @export var noncombat_warning_seconds: float = 0.8
 
+@export_category("Cognitive Residue")
+@export var can_seek_cognitive_residue := false
+@export var cognitive_residue_weight := 0.0
+@export var cognitive_residue_awareness_radius_px := 360.0
+@export var cognitive_residue_consume_range_px := 26.0
+@export var cognitive_residue_buff_duration_sec := 8.0
+
 
 static func create_profile(id: StringName) -> Resource:
 	var profile = load("res://game/actors/enemies/components/enemy_behavior_profile.gd").new()
@@ -160,6 +167,11 @@ static func create_profile(id: StringName) -> Resource:
 			profile.sabotage_damage = 14
 			profile.ambient_activity_weight = 0.7
 			profile.noncombat_warning_seconds = 0.5
+			profile.can_seek_cognitive_residue = true
+			profile.cognitive_residue_weight = 0.80
+			profile.cognitive_residue_awareness_radius_px = 380.0
+			profile.cognitive_residue_consume_range_px = 26.0
+			profile.cognitive_residue_buff_duration_sec = 8.0
 		_:
 			profile.profile_id = &"raider_grunt"
 			profile.display_name = "Raider Grunt"

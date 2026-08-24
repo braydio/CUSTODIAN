@@ -1,7 +1,7 @@
 # Inventory Pause Menu Refinement
 
 Status: implemented
-Last updated: 2026-07-24
+Last updated: 2026-08-24
 
 ## Summary
 
@@ -97,6 +97,8 @@ creating a second overbright arch behind page content.
   equipment category or displays `NO UNEQUIPPED EQUIPMENT`.
 
 ## Controls
+
+Ledger inspection has two presentation modes. `GLANCE` is the default compact summary; `DETAIL` adds provenance and full authored description. `Tab` / controller `Y` toggles the mode without changing selection or gameplay authority. Cognitive records show raw axis value, current dominant state, and the live modifier reported by `CognitiveState`; equipment and resource summaries likewise project existing authorities rather than duplicating them.
 
 - Category filtering and class/name sorting are real focusable buttons.
 - Hovering an item card exposes its identity, class, quantity, and description
