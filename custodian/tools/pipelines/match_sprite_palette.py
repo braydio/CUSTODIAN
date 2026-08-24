@@ -15,6 +15,16 @@ def srgb_to_linear(c: float) -> float:
     return ((c + 0.055) / 1.055) ** 2.4
 
 
+def linear_to_srgb(c: float) -> int:
+    """Convert linear RGB [0,1] back to 8-bit sRGB."""
+    c = max(0.0, min(1.0, c))
+    if c <= 0.0031308:
+        value = 12.92 * c
+    else:
+        value = 1.055 * (c ** (1.0 / 2.4)) - 0.055
+    return int(round(value * 255.0))
+
+
 def rgb_to_xyz(rgb: tuple[int, int, int]) -> tuple[float, float, float]:
     r, g, b = [srgb_to_linear(v) for v in rgb]
 
@@ -56,26 +66,119 @@ def lab_distance(a: tuple[float, float, float], b: tuple[float, float, float]) -
     )
 
 
-def extract_palette(path: Path, alpha_threshold: int, max_colors: int) -> list[tuple[int, int, int]]:
+def extract_palette(
+    path: Path,
+    alpha_threshold: int,
+    max_colors: int,
+) -> list[tuple[int, int, int]]:
+    """
+    Extract a representative pixel-art palette.
+
+    Frequency-only truncation is intentionally avoided: rare highlight,
+    rim-light, and accent colors are visually important in pixel art even
+    when they occur in only a handful of pixels.
+    """
     image = Image.open(path).convert("RGBA")
     counts: dict[tuple[int, int, int], int] = {}
 
     for r, g, b, a in image.getdata():
         if a <= alpha_threshold:
             continue
+
         rgb = (r, g, b)
         counts[rgb] = counts.get(rgb, 0) + 1
 
     if not counts:
         raise RuntimeError(f"{path}: no non-transparent pixels found")
 
-    # Most common colors first. For pixel art, this is usually good enough.
-    palette = [rgb for rgb, _ in sorted(counts.items(), key=lambda item: item[1], reverse=True)]
+    ranked = sorted(
+        counts,
+        key=lambda rgb: (-counts[rgb], rgb),
+    )
 
-    if max_colors > 0:
-        palette = palette[:max_colors]
+    if max_colors <= 0 or len(ranked) <= max_colors:
+        return ranked
 
-    return palette
+    labs = {
+        rgb: rgb_to_lab(rgb)
+        for rgb in ranked
+    }
+
+    selected: list[tuple[int, int, int]] = []
+    selected_set: set[tuple[int, int, int]] = set()
+
+    def add(rgb: tuple[int, int, int]) -> None:
+        if len(selected) >= max_colors:
+            return
+        if rgb in selected_set:
+            return
+
+        selected.append(rgb)
+        selected_set.add(rgb)
+
+    # Preserve major tonal/extreme roles first.
+    add(ranked[0])  # most common
+    add(min(ranked, key=lambda rgb: labs[rgb][0]))  # darkest
+    add(max(ranked, key=lambda rgb: labs[rgb][0]))  # brightest
+
+    # Preserve the strongest chromatic accent, often gold/emissive trim.
+    add(
+        max(
+            ranked,
+            key=lambda rgb: math.hypot(
+                labs[rgb][1],
+                labs[rgb][2],
+            ),
+        )
+    )
+
+    # Retain a core of common material colors.
+    common_budget = min(
+        max_colors,
+        max(4, max_colors // 4),
+    )
+
+    for rgb in ranked[:common_budget]:
+        add(rgb)
+
+    # Fill remaining slots by LAB diversity instead of raw frequency.
+    # A small frequency bonus prevents isolated noise pixels from taking
+    # over while still retaining rare but meaningful highlights.
+    max_count = max(counts.values())
+
+    while len(selected) < max_colors:
+        best_rgb = None
+        best_score = -1.0
+
+        for rgb in ranked:
+            if rgb in selected_set:
+                continue
+
+            minimum_distance = min(
+                lab_distance(
+                    labs[rgb],
+                    labs[selected_rgb],
+                )
+                for selected_rgb in selected
+            )
+
+            frequency_bonus = (
+                1.0
+                + 0.15 * (counts[rgb] / max_count)
+            )
+
+            score = minimum_distance * frequency_bonus
+
+            if score > best_score:
+                best_score = score
+                best_rgb = rgb
+
+        if best_rgb is None:
+            break
+
+        add(best_rgb)
+
+    return selected
 
 
 def blend_rgb(
@@ -83,10 +186,32 @@ def blend_rgb(
     target: tuple[int, int, int],
     strength: float,
 ) -> tuple[int, int, int]:
+    """
+    Blend in linear RGB instead of gamma-encoded sRGB.
+
+    Straight interpolation of 8-bit sRGB values tends to produce muddy,
+    overly dark intermediate colors, especially in gold/orange ramps.
+    """
     strength = max(0.0, min(1.0, strength))
-    return tuple(
-        int(round(source[i] * (1.0 - strength) + target[i] * strength))
+
+    source_linear = tuple(
+        srgb_to_linear(value)
+        for value in source
+    )
+    target_linear = tuple(
+        srgb_to_linear(value)
+        for value in target
+    )
+
+    blended_linear = tuple(
+        source_linear[i] * (1.0 - strength)
+        + target_linear[i] * strength
         for i in range(3)
+    )
+
+    return tuple(
+        linear_to_srgb(value)
+        for value in blended_linear
     )
 
 

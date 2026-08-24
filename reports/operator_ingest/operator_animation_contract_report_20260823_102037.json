@@ -1,0 +1,260 @@
+{
+  "schema": "custodian.operator_animation_contract_report.v2",
+  "summary": {
+    "expected": 51,
+    "present": 42,
+    "missing_required": 0,
+    "missing_optional": 9
+  },
+  "present": [
+    {
+      "key": "unarmed/locomotion/idle_01/s",
+      "layer": "lower_body",
+      "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__s__5f__96.png"
+    },
+    {
+      "key": "unarmed/locomotion/idle_01/se",
+      "layer": "lower_body",
+      "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__se__5f__96.png"
+    },
+    {
+      "key": "unarmed/locomotion/idle_01/e",
+      "layer": "lower_body",
+      "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__e__5f__96.png"
+    },
+    {
+      "key": "unarmed/locomotion/idle_01/n",
+      "layer": "lower_body",
+      "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__n__5f__96.png"
+    },
+    {
+      "key": "unarmed/locomotion/idle_01/nw",
+      "layer": "lower_body",
+      "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__nw__5f__96.png"
+    },
+    {
+      "key": "unarmed/locomotion/idle_01/w",
+      "layer": "lower_body",
+      "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__w__5f__96.png"
+    },
+    {
+      "key": "unarmed/locomotion/idle_01/sw",
+      "layer": "lower_body",
+      "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__sw__5f__96.png"
+    },
+    {
+      "key": "unarmed/locomotion/idle_01/s",
+      "layer": "upper_body",
+      "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__upper_body__unarmed__locomotion__idle_01__s__5f__96.png"
+    },
+    {
+      "key": "unarmed/locomotion/idle_01/se",
+      "layer": "upper_body",
+      "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__upper_body__unarmed__locomotion__idle_01__se__5f__96.png"
+    },
+    {
+      "key": "unarmed/locomotion/idle_01/e",
+      "layer": "upper_body",
+      "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__upper_body__unarmed__locomotion__idle_01__e__5f__96.png"
+    },
+    {
+      "key": "unarmed/locomotion/idle_01/n",
+      "layer": "upper_body",
+      "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__upper_body__unarmed__locomotion__idle_01__n__5f__96.png"
+    },
+    {
+      "key": "unarmed/locomotion/idle_01/nw",
+      "layer": "upper_body",
+      "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__upper_body__unarmed__locomotion__idle_01__nw__5f__96.png"
+    },
+    {
+      "key": "unarmed/locomotion/idle_01/w",
+      "layer": "upper_body",
+      "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__upper_body__unarmed__locomotion__idle_01__w__5f__96.png"
+    },
+    {
+      "key": "unarmed/locomotion/idle_01/sw",
+      "layer": "upper_body",
+      "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__upper_body__unarmed__locomotion__idle_01__sw__5f__96.png"
+    },
+    {
+      "key": "unarmed/locomotion/run_01/s",
+      "layer": "lower_body",
+      "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__s__5f__96.png"
+    },
+    {
+      "key": "unarmed/locomotion/run_01/se",
+      "layer": "lower_body",
+      "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__se__5f__96.png"
+    },
+    {
+      "key": "unarmed/locomotion/run_01/e",
+      "layer": "lower_body",
+      "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__e__5f__96.png"
+    },
+    {
+      "key": "unarmed/locomotion/run_01/ne",
+      "layer": "lower_body",
+      "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__ne__6f__96.png"
+    },
+    {
+      "key": "unarmed/locomotion/run_01/n",
+      "layer": "lower_body",
+      "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__n__8f__96.png"
+    },
+    {
+      "key": "unarmed/locomotion/run_01/nw",
+      "layer": "lower_body",
+      "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__nw__6f__96.png"
+    },
+    {
+      "key": "unarmed/locomotion/run_01/w",
+      "layer": "lower_body",
+      "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__w__5f__96.png"
+    },
+    {
+      "key": "unarmed/locomotion/run_01/sw",
+      "layer": "lower_body",
+      "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__sw__5f__96.png"
+    },
+    {
+      "key": "unarmed/locomotion/run_01/s",
+      "layer": "upper_body",
+      "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__s__5f__96.png"
+    },
+    {
+      "key": "unarmed/locomotion/run_01/se",
+      "layer": "upper_body",
+      "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__se__5f__96.png"
+    },
+    {
+      "key": "unarmed/locomotion/run_01/e",
+      "layer": "upper_body",
+      "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__e__5f__96.png"
+    },
+    {
+      "key": "unarmed/locomotion/run_01/ne",
+      "layer": "upper_body",
+      "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__ne__6f__96.png"
+    },
+    {
+      "key": "unarmed/locomotion/run_01/n",
+      "layer": "upper_body",
+      "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__n__8f__96.png"
+    },
+    {
+      "key": "unarmed/locomotion/run_01/nw",
+      "layer": "upper_body",
+      "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__nw__6f__96.png"
+    },
+    {
+      "key": "unarmed/locomotion/run_01/w",
+      "layer": "upper_body",
+      "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__w__5f__96.png"
+    },
+    {
+      "key": "unarmed/locomotion/run_01/sw",
+      "layer": "upper_body",
+      "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__sw__5f__96.png"
+    },
+    {
+      "key": "unarmed/locomotion/idle_01/ne",
+      "layer": "lower_body",
+      "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__ne__6f__96.png"
+    },
+    {
+      "key": "melee_1h/posture/draw_01/e",
+      "layer": "upper_body",
+      "path": "res://content/sprites/operator/runtime/animations/melee_1h/posture/draw_01/operator__upper_body__melee_1h__posture__draw_01__e__4f__128x96.png"
+    },
+    {
+      "key": "melee_1h/posture/draw_01/w",
+      "layer": "upper_body",
+      "path": "res://content/sprites/operator/runtime/animations/melee_1h/posture/draw_01/operator__upper_body__melee_1h__posture__draw_01__w__4f__128x96.png"
+    },
+    {
+      "key": "melee_1h/attack/fast_01/e",
+      "layer": "full_body",
+      "path": "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01/operator__full_body__melee_1h__attack__fast_01__e__10f__156x96.png"
+    },
+    {
+      "key": "melee_1h/attack/fast_01/w",
+      "layer": "full_body",
+      "path": "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01/operator__full_body__melee_1h__attack__fast_01__w__10f__156x96.png"
+    },
+    {
+      "key": "sidearm/posture/draw_sidearm_01/ne",
+      "layer": "upper_body",
+      "path": "res://content/sprites/operator/runtime/animations/sidearm/posture/draw_sidearm_01/operator__upper_body__sidearm__posture__draw_sidearm_01__ne__5f__96.png"
+    },
+    {
+      "key": "sidearm/posture/draw_sidearm_01/nw",
+      "layer": "upper_body",
+      "path": "res://content/sprites/operator/runtime/animations/sidearm/posture/draw_sidearm_01/operator__upper_body__sidearm__posture__draw_sidearm_01__nw__5f__96.png"
+    },
+    {
+      "key": "sidearm/posture/draw_sidearm_01/se",
+      "layer": "upper_body",
+      "path": "res://content/sprites/operator/runtime/animations/sidearm/posture/draw_sidearm_01/operator__upper_body__sidearm__posture__draw_sidearm_01__se__5f__96.png"
+    },
+    {
+      "key": "sidearm/posture/draw_sidearm_01/sw",
+      "layer": "upper_body",
+      "path": "res://content/sprites/operator/runtime/animations/sidearm/posture/draw_sidearm_01/operator__upper_body__sidearm__posture__draw_sidearm_01__sw__5f__96.png"
+    },
+    {
+      "key": "ranged_2h/posture/stance_01/e",
+      "layer": "upper_body",
+      "path": "res://content/sprites/operator/runtime/animations/ranged_2h/posture/stance_01/operator__upper_body__ranged_2h__posture__stance_01__e__5f__96.png"
+    },
+    {
+      "key": "ranged_2h/posture/stance_01/n",
+      "layer": "upper_body",
+      "path": "res://content/sprites/operator/runtime/animations/ranged_2h/posture/stance_01/operator__upper_body__ranged_2h__posture__stance_01__n__5f__96.png"
+    },
+    {
+      "key": "ranged_2h/posture/stance_01/w",
+      "layer": "upper_body",
+      "path": "res://content/sprites/operator/runtime/animations/ranged_2h/posture/stance_01/operator__upper_body__ranged_2h__posture__stance_01__w__5f__96.png"
+    }
+  ],
+  "missing_required": [],
+  "missing_optional": [
+    {
+      "key": "unarmed/locomotion/idle_01/ne",
+      "layer": "upper_body"
+    },
+    {
+      "key": "melee_1h/posture/idle_ready_01/e",
+      "layer": "upper_body"
+    },
+    {
+      "key": "melee_1h/posture/idle_ready_01/w",
+      "layer": "upper_body"
+    },
+    {
+      "key": "melee_1h/posture/idle_relaxed_01/e",
+      "layer": "upper_body"
+    },
+    {
+      "key": "melee_1h/posture/idle_relaxed_01/w",
+      "layer": "upper_body"
+    },
+    {
+      "key": "melee_1h_dagger/attack/fast_01/e",
+      "layer": "full_body"
+    },
+    {
+      "key": "melee_1h_dagger/attack/fast_01/w",
+      "layer": "full_body"
+    },
+    {
+      "key": "melee_1h_heavy/attack/fast_01/e",
+      "layer": "full_body"
+    },
+    {
+      "key": "melee_1h_heavy/attack/fast_01/w",
+      "layer": "full_body"
+    }
+  ]
+}

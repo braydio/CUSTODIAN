@@ -3,7 +3,7 @@
   "mode": "strip",
   "outputs": [
     {
-      "path": "operator/new_operator/modular/chain_02/operator__modular_upper_fx__melee_1h__chain_02__e__8f__156x96.png",
+      "path": "operator/source/animations/melee_1h/attack/fast_02/operator__fx__melee_1h__attack__fast_02__e__8f__156x96.png",
       "layout": "horizontal_strip",
       "select": {
         "type": "range",
@@ -12,12 +12,12 @@
       }
     }
   ],
+  "post_process": [
+    "operator_runtime_build"
+  ],
   "frame_size": [
     156,
     96
   ],
-  "remove_superseded": true,
-  "post_process": [
-    "operator_modular_runtime"
-  ]
+  "remove_superseded": true
 }
