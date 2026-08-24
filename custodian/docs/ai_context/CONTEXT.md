@@ -165,7 +165,8 @@ Macro-game extraction is now scaffolded under `game/state/` and `game/systems/si
   `content/backgrounds/procgen/drowned_basilica/`; immutable masters remain in
   `asset_drop/source_work/underlays/drowned_basilica_underlay/`. Use
   `drowned_basilica_underlay.tres` only as an explicit presentation profile;
-  `ProcGenTilemap.underlay_profile_override` or
+  `ProcGenTilemap.underlay_profile_override` (`ENDLESS_FOREST` production
+  default or `DROWNED_BASILICA` development override) or
   `set_underlay_profile_override("DROWNED_BASILICA")` is the development force
   path and A/B selection uses the accepted `ProcGen.seed`. Tonal normalization remains
   pending visual review.

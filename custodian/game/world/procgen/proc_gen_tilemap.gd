@@ -205,7 +205,7 @@ enum WorldShapeMode {
 @export var walls_tilemap: TileMapLayer
 @export var nav_region: NavigationRegion2D
 @export var depth_backdrop: ProcgenDepthBackdrop
-@export_enum("DEFAULT", "ENDLESS_FOREST", "DROWNED_BASILICA") var underlay_profile_override := "DEFAULT"
+@export_enum("ENDLESS_FOREST", "DROWNED_BASILICA") var underlay_profile_override := "ENDLESS_FOREST"
 @export var void_cliff_face: ProcgenVoidCliffFace
 @export var nonwalkable_surface_base_tilemap: TileMapLayer
 @export var nonwalkable_surface_overlay_tilemap: TileMapLayer
@@ -9128,7 +9128,7 @@ func _refresh_depth_backdrop() -> void:
 
 
 func set_underlay_profile_override(profile_name: String) -> void:
-	if profile_name not in ["DEFAULT", "ENDLESS_FOREST", "DROWNED_BASILICA"]:
+	if profile_name not in ["ENDLESS_FOREST", "DROWNED_BASILICA"]:
 		push_error("[ProcGenTilemap] Unsupported underlay profile override: %s" % profile_name)
 		return
 	underlay_profile_override = profile_name
