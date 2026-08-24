@@ -442,7 +442,7 @@ Last updated: 2026-08-20
 - `custodian/autoload/fab_pipeline.gd` — recipe loading, resource payment, queued fabrication jobs, and output completion autoload; supports `build_token`, `unlock`, `resource`, and bounded `operator_consumable` outputs such as Lattice Field Patch by checking carry cap before payment and granting through `Operator.add_field_patches(...)`
 - `custodian/game/fabrication/fab_job.gd` — lightweight queued fabrication job state with elapsed/duration/progress helpers
 - `custodian/game/fabrication/fab_recipe_database.gd` — reusable JSON recipe database node for fabrication UI/world bridges
-- `custodian/game/fabrication/fabricator_terminal.gd` — Area2D bridge for starting allowed fabrication recipes through `FabPipeline`
+- `custodian/game/fabrication/fabricator_terminal.gd` — unmounted legacy FabPipeline V1 compatibility adapter; production physical interaction is owned by `field_fabricator_interaction.gd` and the shared FABRICATION terminal page
 - `custodian/game/systems/core/systems/turret_placement.gd` — tactical placement compatibility surface for material/redeploy turrets plus token-driven `turret_basic` and `barricade_light`; permanent infrastructure is intentionally excluded
 - `custodian/game/infrastructure/{construction_catalog,construction_placement_controller,construction_placement_validator,construction_placement_preview,construction_zone_2d}.gd` — Construction Placement V1 ownership for permanent Ready Build resolution, full-footprint validation, preview, zones, and atomic commit
 - `custodian/game/ui/construction/` — dedicated permanent construction placement HUD; the normal terminal shell is closed during this mode

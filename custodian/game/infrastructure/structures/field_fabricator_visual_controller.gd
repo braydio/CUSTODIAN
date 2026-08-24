@@ -54,6 +54,9 @@ func _ready() -> void:
 
 
 func play_state(state: StringName) -> void:
+	if state == _active_state and state in [&"idle", &"fabricate", &"offline"] \
+	and body != null and body.is_playing():
+		return
 	var resolved_body := _resolve_body_state(state)
 	if body != null and not resolved_body.is_empty():
 		body.sprite_frames = _body_frames[resolved_body]

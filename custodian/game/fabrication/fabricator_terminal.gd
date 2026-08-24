@@ -1,6 +1,10 @@
 extends Area2D
 class_name FabricatorTerminal
 
+## Legacy FabPipeline V1 compatibility adapter. Production interaction is owned
+## by FieldFabricatorInteraction and the shared FABRICATION terminal page.
+## Do not mount this node as a second physical Fabricator authority.
+
 @export var interaction_label: String = "FABRICATOR"
 @export var allowed_recipe_categories: Array[String] = []
 

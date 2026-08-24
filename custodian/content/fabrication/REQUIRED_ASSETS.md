@@ -159,7 +159,7 @@ From `resource_ledger.gd`:
 |------|------|------|
 | FabPipeline | `autoload/fab_pipeline.gd` | Recipe execution, job lifecycle |
 | FabRecipeDatabase | `game/fabrication/fab_recipe_database.gd` | Recipe query helpers |
-| FabricatorTerminal | `game/fabrication/fabricator_terminal.gd` | Interaction entry point |
+| FabricatorTerminal | `game/fabrication/fabricator_terminal.gd` | Legacy unmounted compatibility adapter; not the production interaction authority |
 | FabJob | `game/fabrication/fab_job.gd` | Per-job timing/progress |
 | ResourceLedger | `autoload/resource_ledger.gd` | Resource tracking |
 | TurretPlacement | `game/systems/core/systems/turret_placement.gd` | Turret building/dismantling |

@@ -18,10 +18,12 @@ func get_service_output() -> float:
 		return 0.0
 	var owner := get_parent()
 	var output := base_output
-	if owner != null and owner.has_method("get_integrity_modifier"):
-		output *= clampf(float(owner.call("get_integrity_modifier")), 0.0, 1.0)
 	if requires_power and owner != null and owner.has_method("get_power_efficiency"):
+		# PowerConsumerComponent already composes structure integrity into its
+		# effective output. Do not square integrity for powered services.
 		output *= maxf(0.0, float(owner.call("get_power_efficiency")))
+	elif owner != null and owner.has_method("get_integrity_modifier"):
+		output *= clampf(float(owner.call("get_integrity_modifier")), 0.0, 1.0)
 	return output
 
 

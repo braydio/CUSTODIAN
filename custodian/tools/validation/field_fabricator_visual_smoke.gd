@@ -37,6 +37,10 @@ func _run() -> void:
 		assert(fx.animation == state)
 		assert(fx.sprite_frames.get_frame_count(state) == 8)
 		assert(fx.sprite_frames.get_frame_texture(state, 0).get_size() == Vector2(156, 156))
+	controller.play_state(&"fabricate")
+	body.frame = 3
+	controller.play_state(&"fabricate")
+	assert(body.frame == 3, "Re-selecting an active loop must not restart its animation.")
 	controller.play_state(&"offline")
 	assert(body.animation == &"offline")
 	assert(not fx.visible)

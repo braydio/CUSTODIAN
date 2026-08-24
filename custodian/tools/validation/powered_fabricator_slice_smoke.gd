@@ -70,7 +70,7 @@ func _run() -> void:
 	consumer.overdrive_enabled = false
 	consumer.apply_power_allocation(25.0)
 	fabricator.call("take_damage", 160.0)
-	_require(is_equal_approx(fab_pipeline.get_fabrication_rate_multiplier(), 0.25), "Half-integrity Fabricator should preserve the existing integrity-scaled power and service throughput contract.")
+	_require(is_equal_approx(fab_pipeline.get_fabrication_rate_multiplier(), 0.5), "Half-integrity Fabricator should run at 0.5x with integrity composed exactly once.")
 	terminal_projection = FAB_VIEW_MODEL.new().build(game_root)
 	terminal_status = terminal_projection.get("status", {})
 	_require(str(terminal_status.get("fabricator_state", "")) == "DEGRADED", "Terminal should report integrity-degraded machine truth.")
