@@ -196,8 +196,7 @@ func _fixture_command(action: Dictionary, result: Dictionary) -> void:
 		],
 		"ritualant_underground_cavern_journey": [
 			"begin_landing_descent",
-			"hold_apron_center",
-			"begin_north_walk",
+			"begin_full_journey",
 		],
 		"field_fabricator": [
 			"power_on",

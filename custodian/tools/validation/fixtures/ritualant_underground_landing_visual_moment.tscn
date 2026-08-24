@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://tools/validation/fixtures/ritualant_underground_landing_visual_moment.gd" id="1_fixture"]
 [ext_resource type="PackedScene" path="res://game/world/levels/authored/ash_bell/forlorn_ritualant_underground/forlorn_ritualant_underground.tscn" id="2_level"]
 [ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__full_body__unarmed__locomotion__idle_01__s__8f__96.png" id="3_operator"]
+[ext_resource type="Script" path="res://tools/validation/fixtures/ritualant_underground_journey_camera.gd" id="4_camera"]
 
 [sub_resource type="AtlasTexture" id="Atlas_operator"]
 atlas = ExtResource("3_operator")
@@ -24,3 +25,4 @@ texture = SubResource("Atlas_operator")
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(0, 1540)
 enabled = true
+script = ExtResource("4_camera")
