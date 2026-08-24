@@ -1,6 +1,6 @@
 # Operator Melee Presentation Posture
 
-- **Status:** draft — planned feature (not yet implemented)
+- **Status:** active — READY/RELAXED/draw runtime presentation implemented
 - **Owner:** gameplay/combat + gameplay/animation
 - **Runtime target:** Godot 4 (`custodian/`)
 - **Active spec path:** `design/02_features/combat_feel/OPERATOR_MELEE_PRESENTATION_POSTURE.md`
@@ -338,8 +338,8 @@ For the first complete sword implementation:
 | `melee_draw` | ✅ | unarmed → sword (4-frame sheet exists, needs pipeline promotion) |
 | `melee_idle_ready` | ✅ | combat neutral (the crouched, sword-raised pose) |
 | `melee_idle_relaxed` | ✅ | exploration neutral (the upright, sword-down pose) |
-| `melee_ready_up` | 🟡 | relaxed → combat |
-| `melee_relax` | 🟡 | combat → relaxed |
+| `melee_ready_up` | 🟡 | relaxed → combat; optional authored transition pending |
+| `melee_relax` | 🟡 | combat → relaxed; optional authored transition pending |
 | `melee_sheathe` | 🟡 | sword → unarmed |
 | `melee_fast_01` | ✅ | combo |
 | `melee_fast_02` | ✅ | combo |
@@ -453,9 +453,9 @@ This matches the modular ownership rules already documented for the Operator
 | `EngagementTracker.engagement_active` | ✅ Ready | Live; 4 s quiet period |
 | `EquipWeaponState` | ✅ Ready | Non-interruptible transition to pattern `melee_draw` on |
 | Weapon-change queuing | ✅ Ready | `queue_weapon_selection()` gates to idle/walk/sprint |
-| 4-frame draw sheet | 🟡 Intake | Exists in `new_operator/modular/melee_1h/`; needs pipeline promotion |
-| `idle_ready_01` sheet | ❌ Missing | Crouched sword-raised pose |
-| `idle_relaxed_01` sheet | ❌ Missing | Upright sword-down pose |
+| 4-frame draw sheet | ✅ Ready | Generated catalog/runtime lower-body presentation |
+| `idle_ready_01` sheet | ✅ Ready | Generated E/W lower- and upper-body stack |
+| `idle_relaxed_01` sheet | ✅ Ready | Generated E/W lower- and upper-body stack |
 | `melee_ready_up` / `melee_relax` sheets | ❌ Missing | 2–3 frame transitions |
 | `melee_sheathe` | ❌ Deferred | Later slice; reverse/adapt draw frames |
 

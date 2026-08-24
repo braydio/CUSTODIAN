@@ -10,6 +10,7 @@ extends Area2D
 
 const FLOATING_TEXT_SCENE := preload("res://game/actors/effects/floating_text.tscn")
 const InventoryItemCatalog := preload("res://game/ui/inventory/inventory_item_catalog.gd")
+const InventoryAssets := preload("res://game/ui/inventory/inventory_asset_catalog.gd")
 
 const ITEM_DISPLAY := {
 	&"faint_recollection": "Faint Recollection",
@@ -27,12 +28,6 @@ const ITEM_ANIMATION_TEXTURES := {
 	&"faint_recollection": preload("res://content/sprites/items/faint_recollection.png"),
 	&"residual_instinct": preload("res://content/sprites/items/faded_instinct.png"),
 	&"ancient_bearing": preload("res://content/sprites/items/ancient_bearing.png"),
-}
-
-const ITEM_TOAST_ICONS := {
-	&"faint_recollection": preload("res://content/sprites/items/shrumb_drops/faint_recollection_icon_64.png"),
-	&"residual_instinct": preload("res://content/sprites/items/shrumb_drops/residual_instinct_icon_64.png"),
-	&"ancient_bearing": preload("res://content/sprites/items/shrumb_drops/ancient_bearing_icon_64.png"),
 }
 
 @onready var visual: Sprite2D = get_node_or_null("Visual")
@@ -96,7 +91,8 @@ func _on_body_entered(body: Node) -> void:
 	if cognitive != null:
 		cognitive.add_from_item(item_id, quantity)
 
-	_show_loot_toast(item_id, _get_display_name(), quantity, ITEM_COLORS.get(item_id, Color.WHITE), ITEM_TOAST_ICONS.get(item_id, null), "Cognitive imprint secured")
+	var toast_icon := InventoryAssets.item_icon(String(item_id))
+	_show_loot_toast(item_id, _get_display_name(), quantity, ITEM_COLORS.get(item_id, Color.WHITE), toast_icon, "Cognitive imprint secured")
 	_spawn_pickup_popup()
 	_play_pickup_tone()
 	print("[CognitivePickup] %s +%d" % [_get_display_name(), quantity])

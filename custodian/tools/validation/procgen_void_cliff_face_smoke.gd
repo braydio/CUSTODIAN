@@ -18,10 +18,12 @@ const ROLE_SOURCE_IDS := {
 	"bottom": 153,
 	"bottom_broken": 154,
 }
+const NORMAL_WALL_SOURCE_ID := 45
 
 
 func _init() -> void:
 	for source_id: int in SOURCE_PATHS:
+		assert(source_id != NORMAL_WALL_SOURCE_ID, "Void fascia must not reuse the regular wall source")
 		assert(TILESET.has_source(source_id), "Missing fascia source %d" % source_id)
 		var source := TILESET.get_source(source_id) as TileSetAtlasSource
 		assert(source != null and source.texture != null)
@@ -80,8 +82,16 @@ func _init() -> void:
 	varied_cells.sort()
 	assert(varied_cells == fixed_cells, "Cosmetic seed changed fixed-depth topology")
 	assert(_fingerprint(face, varied_cells) != fixed_fingerprint)
+	var representative_fingerprints: Dictionary = {}
+	for representative_seed in [3, 17, 41, 71, 113]:
+		face.configure_from_surface_cells(floor_cells, chasm_cells, representative_seed)
+		var representative_cells := face.get_used_cells()
+		representative_cells.sort()
+		_assert_plan(face, representative_cells, floor_cells, chasm_cells, ocean_cells)
+		representative_fingerprints[_fingerprint(face, representative_cells)] = true
+	assert(representative_fingerprints.size() > 1, "Five representative seeds did not exercise fascia variation")
 
-	print("procgen_void_cliff_face_smoke: PASS cells=%d sources=%d" % [first_cells.size(), SOURCE_PATHS.size()])
+	print("procgen_void_cliff_face_smoke: PASS cells=%d sources=%d representative_seeds=5" % [first_cells.size(), SOURCE_PATHS.size()])
 	quit(0)
 
 
@@ -103,7 +113,7 @@ func _assert_plan(
 		assert(distance >= 1 and distance <= depth_limit)
 		assert(depth_limit >= 3 and depth_limit <= 8)
 		assert(face.get_cell_source_id(cell) == int(ROLE_SOURCE_IDS[role]))
-		assert(face.get_cell_source_id(cell) != 45)
+		assert(face.get_cell_source_id(cell) != NORMAL_WALL_SOURCE_ID)
 		if distance == 1:
 			assert(role == "top")
 		elif distance == depth_limit:

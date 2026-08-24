@@ -17,6 +17,7 @@ extends Control
 @export var vehicle_color: Color = Color(0.96, 0.80, 0.32, 1.0)
 @export var turret_color: Color = Color(0.40, 0.92, 0.78, 1.0)
 @export var relay_color: Color = Color(0.74, 0.92, 1.0, 1.0)
+@export var debug_marker_color: Color = Color(0.95, 0.35, 0.95, 1.0)
 @export var grid_color: Color = Color(0.32, 0.38, 0.32, 0.16)
 
 @export var map_padding_px: float = 9.0
@@ -52,6 +53,7 @@ var terminal_nodes: Array = []
 var vehicle_nodes: Array = []
 var turret_nodes: Array = []
 var relay_nodes: Array = []
+var debug_marker_nodes: Array = []
 var _map_texture_dirty := false
 var _redraw_queued := false
 var _dynamic_redraw_accum := 0.0
@@ -180,6 +182,11 @@ func set_relays(nodes: Array) -> void:
 	_request_redraw()
 
 
+func set_debug_markers(nodes: Array) -> void:
+	debug_marker_nodes = _filter_valid_node2d_array(nodes)
+	_request_redraw()
+
+
 func update_tile(tile: Vector2i, terrain_kind: String) -> void:
 	if not _is_tile_inside(tile):
 		return
@@ -299,6 +306,7 @@ func _draw() -> void:
 	_draw_relay_pips(map_rect)
 	_draw_objective_pips(map_rect)
 	_draw_enemy_pips(map_rect)
+	_draw_debug_markers(map_rect)
 	_draw_player_pip(map_rect)
 
 
@@ -370,7 +378,22 @@ func _get_dynamic_signature() -> String:
 	_append_nodes_signature(parts, "v", vehicle_nodes)
 	_append_nodes_signature(parts, "t", turret_nodes)
 	_append_nodes_signature(parts, "r", relay_nodes)
+	_append_nodes_signature(parts, "d", debug_marker_nodes)
 	return "|".join(parts)
+
+
+func _draw_debug_markers(map_rect: Rect2) -> void:
+	if not OS.is_debug_build():
+		return
+	for marker in debug_marker_nodes:
+		if not _is_valid_node2d(marker):
+			continue
+		var tile := _global_to_tile(marker.global_position)
+		if not _is_tile_inside(tile):
+			continue
+		var panel_position := _tile_to_panel(tile, map_rect)
+		draw_arc(panel_position, utility_marker_radius_px + 3.0, 0.0, TAU, 16, debug_marker_color, 1.5)
+		_draw_cross_marker(panel_position, debug_marker_color)
 
 
 func _append_nodes_signature(parts: Array[String], prefix: String, nodes: Array) -> void:

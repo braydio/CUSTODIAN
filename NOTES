@@ -1,39 +1,33 @@
 GAMEPLAY NOTES
 
-1. Resource gathering needs to have pickup toast notifs. Also, shrumb pickups are using spritesheets instead of authored item icon portraits in the pickup toasts. 
+1. [DONE] Pickup toasts are live. Cognitive pickup toasts resolve portraits through the canonical inventory asset catalog; world animation sheets remain separate.
 
-2. Still need to authorthe procgen void endless forest underlay playable land cliffs + work on world display/presentation of procgen
+2. [PARTIAL/DESIGN] Endless Forest depth underlay and explicit void fascia are implemented and contract-tested. Subjective composition and tonal tuning remain visual-review work.
 
-3. Teleporter portals - we should figure an actual gameplay use. Right now they are neat structures from procgen, can break procgenby generating 1portal atspawn, 1portal at sundered keep transport terminal. 
+3. [DONE V1] Paired procgen portals are local tactical shortcuts inside the current generated map. Cross-map Home/Sundered Keep travel requires authored world-route authority and remains future design.
 
-4. We need to wire in the custodian home/lost terminal signal seeking game level as the pre-procgen level
+4. [DONE] Custodian Home/lost-terminal is the production boot flow; the second terminal interaction hands off to the operational world.
 
-6. Shrumbs need to respect tile nav
+6. [DONE] Shrumb ambient spawning projects through runtime-safe procgen walkability and revalidates final positions after runtime props.
 
-7. Maybe the cognitifve residue/drops of the shrumb can be coveted and sought affter by enemies, who will path to, pick up, and get bonuses from the cognitive residues (within reason , not omniscient sensing of cognitive residue)
+7. [DONE] Selected zealot profiles locally seek reachable cognitive residue and receive temporary axis-specific effects through existing objective/path authority.
 
-8. Mobs currently do not respeoct nav 100% -- instances of enemies spawning in void psace, shrumbs too. appearrs that edges of nav boundaries are 'walls' preventing traversal rather than not allowing anyone to walk there? 
+8. [DONE] Ambient enemies and Shrumbs spawn on runtime-safe walkability. Existing NavigationSystem authority is preserved and failed paths stop movement.
 
-9. Cognitive Effect UI/Exposure: Currently there is no way fore the player to see the cognitive effects stacked from the pickups. Do we mean this? How should we expose the effects? In the inventory? See inventory item: 
-  - 9a. What about like a shader effect -- on cognitive item pickup we do like a flash of it, and when the threshold amount is reached we doa  full overlay of the shader. Different effect for each cognitive axis.
+9. [DONE] Cognitive pickups pulse a world-only shader, raw thresholds produce sustained axis feedback, and inventory exposes raw state and live effects.
 
+10. [DONE] Ledger inspection defaults to GLANCE and toggles to DETAIL without duplicating gameplay authority.
 
-10. Invewntory Item; Layout for items needs revamp - thinkinig of dark souls At a Glance view (initial) vs. detail view (toggled) Equipment has stat breakdowns, consumables have... i forget... but our UI is okay so far, feels incomplete.
+11. [DONE] Point-blank forward melee coverage is repaired without increasing authored range or allowing rear contacts. A close-range sidearm remains optional design.
 
+12. [DONE] Terminal map/title ordering uses one stable semantic block; refreshes preserve scroll and actual page changes reset it.
 
-11. Sometimes the enemies stand too close for the melee weapon, they are like inside the hit box? And it is hardto reposition to get back to where they can be hit. Should this be intentinoal? Should we prompt a close-range sidearm use for this, with a knockback? Or is that tedious?
+13. [DONE] The run-scoped terminal tutorial requires successful STATUS then REPAIR DEFENSE commands and verifies real integrity recovery.
 
-12. The terminal on some pages - any page with a scrollbar middle section i think - the map  / second half seciton will on terminal uptate flip with the item on top and vv. its super annoying.
-  - DEFENSE
-  - POWER
-  - SENSORS
+14. [DONE RUNTIME] Light Buggy exit uses body-sized collision and adjacent traversability checks; impossible exits preserve pilot state. turn_response now affects handling. Further feel tuning remains DESIGN.
 
-13. Should have like a command terminal tutorial -- maybe step one, let power drain completely. Have the terminal walk player through the repair.
+15. [DONE RUNTIME] Camp grunts use an unscaled actor parent, direct projectile hits guarantee victim notice, gun noise remains nearby awareness, noncombat patrol is verified, and the startup debug grunt is disabled.
 
-14. The custodian light buggy is cumbersome. Also upon boarding, the exit button does not work. Custodian is stuck within.
+16. [DONE CONTRACT] Ordinary gameplay walls and void fascia have separate source roles. Fascia paints explicit chasm presentation only and owns neither collision nor navigation.
 
-15. The enemy grunt does not detect you when you shoot him. We planned noise from gun gets attention also. Also the enemy spawn camped spawned grunts are 2x size? Also they just sit still while not in combat?
-
-16. The perfectly acceptable ruin-walls were replaced by the void walls that were recently made as underlay-cliff transitioner
-
-17. Ineed an indicator on the map where the ritualant scene spawns for debugging.
+17. [DONE DEBUG] Debug builds show the Ritualant surface ingress as a distinctive minimap ring/cross marker; release builds do not.

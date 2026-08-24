@@ -46,6 +46,12 @@ const OperatorGuardConfig = preload(
 const EngagementTrackerScript = preload(
 	"res://game/systems/combat/engagement_tracker.gd"
 )
+const MeleePostureResolverScript = preload(
+	"res://game/actors/operator/presentation/melee_posture_resolver.gd"
+)
+const OPERATOR_ANIMATION_CATALOG_FRAMES := preload(
+	"res://game/actors/operator/operator_animation_catalog_frames.tres"
+)
 const INITIATIVE_CLAIMED_VFX_SCENE := preload(
 	"res://game/vfx/initiative_claimed_vfx.tscn"
 )
@@ -707,6 +713,8 @@ var _integrity_reclaim: RefCounted = OperatorIntegrityReclaim.new()
 var _integrity_reclaim_restore_serial := 0
 var _integrity_reclaim_last_restore := 0.0
 var _engagement_tracker: EngagementTracker = null
+var _melee_posture_resolver: MeleePostureResolver = null
+var _melee_draw_presentation_active := false
 var _last_damage_kind: StringName = &""
 var _last_enemy_attack_kind: StringName = &""
 var _last_incoming_attack_context: Dictionary = {}
@@ -958,6 +966,8 @@ func _ready():
 	_engagement_tracker.vanguard_seal_activated.connect(
 		_on_vanguard_seal_activated
 	)
+	_melee_posture_resolver = MeleePostureResolverScript.new()
+	_install_melee_posture_catalog_frames()
 	# Sync with ControllableActor base class
 	current_health = health
 	_integrity_reclaim.call("configure", max_health)
@@ -1263,6 +1273,7 @@ func _process(delta):
 	_update_reload(delta)
 	_update_field_patch(delta)
 	_update_field_patch_observability(delta)
+	_update_melee_presentation_posture(delta)
 	_tick_primary_ranged_action_presentation(delta)
 	_sync_ranged_aim_camera_state()
 	_sync_primary_ranged_weapon_frame_to_upper()
@@ -1698,6 +1709,8 @@ func _update_animation():
 			return
 		if is_block_anim and _is_modular_block_active():
 			return
+		if _is_equip_weapon_state_active() and _melee_draw_presentation_active:
+			return
 		_hide_modular_locomotion_layers()
 		return
 
@@ -1812,12 +1825,9 @@ func _update_animation():
 		if _is_current_profile_unarmed() and _sync_modular_locomotion_layers("unarmed_idle", visual_idle_direction, _get_modular_upper_locomotion_direction(animation_dir)):
 			_update_idle_loop_tracking(true, "unarmed_idle")
 			return
-		# Modular melee stance: check if modular layers have a melee_1h_stance_01 animation
 		if _is_melee_loadout_active():
-			var melee_modular_stance := AnimationResolver.resolve("melee_1h_stance_01", animation_dir, modular_lower_body_sprite)
-			if modular_lower_body_sprite and modular_lower_body_sprite.sprite_frames and modular_lower_body_sprite.sprite_frames.has_animation(melee_modular_stance):
-				_sync_modular_locomotion_layers("melee_1h_stance_01", animation_dir, _get_modular_upper_locomotion_direction(animation_dir))
-				_update_idle_loop_tracking(false, "")
+			if _sync_modular_melee_posture(animation_dir):
+				_update_idle_loop_tracking(true, "melee_posture")
 				return
 		var melee_body_stance_anim := _get_authored_melee_body_stance_animation()
 		if _is_melee_loadout_active() and not melee_body_stance_anim.is_empty():
@@ -1902,6 +1912,105 @@ func _sync_modular_locomotion_layers(base_animation: String, lower_direction: Ve
 		return false
 
 	animated_sprite.visible = false
+	return true
+
+
+func _update_melee_presentation_posture(delta: float) -> void:
+	if _melee_posture_resolver == null:
+		return
+	var engagement_active := _engagement_tracker != null and _engagement_tracker.engagement_active
+	var presentation_locked := (
+		_is_dead
+		or _melee_active
+		or _melee_heavy_anticipating
+		or _melee_fast_windup
+		or _melee_recovery_active
+		or _is_block_state_active()
+		or _dodge_active
+		or _dodge_recovery_active
+		or _is_equip_weapon_state_active()
+	)
+	_melee_posture_resolver.resolve(delta, _is_melee_loadout_active() and not using_unarmed, engagement_active, presentation_locked)
+
+
+func _sync_modular_melee_posture(direction: Vector2) -> bool:
+	if _melee_posture_resolver == null or modular_lower_body_sprite == null or modular_upper_body_sprite == null:
+		return false
+	if modular_lower_body_sprite.sprite_frames == null or modular_upper_body_sprite.sprite_frames == null:
+		return false
+	var action := String(_melee_posture_resolver.get_animation_action())
+	var suffix := "w" if direction.x < -0.05 else "e"
+	var lower_animation := StringName("melee_1h/posture/%s/%s/lower_body" % [action, suffix])
+	var upper_animation := StringName("melee_1h/posture/%s/%s/upper_body" % [action, suffix])
+	if not _has_playable_sprite_animation(modular_lower_body_sprite.sprite_frames, lower_animation):
+		return false
+	if not _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, upper_animation):
+		return false
+	modular_lower_body_sprite.visible = true
+	modular_upper_body_sprite.visible = true
+	modular_lower_body_sprite.flip_h = false
+	modular_upper_body_sprite.flip_h = false
+	if modular_lower_body_sprite.animation != lower_animation or not modular_lower_body_sprite.is_playing():
+		modular_lower_body_sprite.play(lower_animation)
+	if modular_upper_body_sprite.animation != upper_animation or not modular_upper_body_sprite.is_playing():
+		modular_upper_body_sprite.play(upper_animation)
+	_hide_modular_head_layer()
+	_hide_modular_cape_layer()
+	animated_sprite.visible = false
+	return true
+
+
+func _install_melee_posture_catalog_frames() -> void:
+	if modular_lower_body_sprite == null or modular_upper_body_sprite == null:
+		return
+	modular_lower_body_sprite.sprite_frames = modular_lower_body_sprite.sprite_frames.duplicate(true)
+	modular_upper_body_sprite.sprite_frames = modular_upper_body_sprite.sprite_frames.duplicate(true)
+	for action in ["draw_weapon_01", "idle_ready_01", "idle_relaxed_01"]:
+		for suffix in ["e", "w"]:
+			for layer in ["lower_body", "upper_body"]:
+				var animation := StringName("melee_1h/posture/%s/%s/%s" % [action, suffix, layer])
+				var target: SpriteFrames = modular_lower_body_sprite.sprite_frames if layer == "lower_body" else modular_upper_body_sprite.sprite_frames
+				_copy_catalog_animation(OPERATOR_ANIMATION_CATALOG_FRAMES, target, animation)
+
+
+func _copy_catalog_animation(source: SpriteFrames, target: SpriteFrames, animation: StringName) -> void:
+	if source == null or target == null or not source.has_animation(animation) or target.has_animation(animation):
+		return
+	target.add_animation(animation)
+	target.set_animation_loop(animation, source.get_animation_loop(animation))
+	target.set_animation_speed(animation, source.get_animation_speed(animation))
+	for frame_index in source.get_frame_count(animation):
+		target.add_frame(
+			animation,
+			source.get_frame_texture(animation, frame_index),
+			source.get_frame_duration(animation, frame_index)
+		)
+
+
+func start_equip_weapon_presentation() -> void:
+	_melee_draw_presentation_active = false
+	if not _is_melee_loadout_active() or using_unarmed or modular_lower_body_sprite == null:
+		return
+	var frames: SpriteFrames = modular_lower_body_sprite.sprite_frames
+	var draw_animation := &"melee_1h/posture/draw_weapon_01/e/lower_body"
+	if frames == null or not _has_playable_sprite_animation(frames, draw_animation):
+		return
+	_hide_modular_locomotion_layers()
+	animated_sprite.visible = false
+	modular_lower_body_sprite.visible = true
+	modular_lower_body_sprite.flip_h = visual_idle_direction.x < -0.05
+	modular_lower_body_sprite.play(draw_animation)
+	_melee_draw_presentation_active = true
+	if _melee_posture_resolver != null:
+		_melee_posture_resolver.begin_draw_grace()
+
+
+func is_equip_weapon_presentation_complete() -> bool:
+	if not _melee_draw_presentation_active:
+		return true
+	if modular_lower_body_sprite != null and modular_lower_body_sprite.is_playing():
+		return false
+	_melee_draw_presentation_active = false
 	return true
 
 
@@ -8402,6 +8511,8 @@ func _apply_armed_selection(index: int) -> void:
 	primary_weapon_equipped = profile != null
 	equipped_primary_weapon_id = String(profile.weapon_id) if profile != null else PRIMARY_WEAPON_NONE
 	combat_loadout_mode = _get_loadout_mode_for_profile(profile)
+	if combat_loadout_mode == LOADOUT_MELEE and profile != null and profile.weapon_kind == "melee" and _melee_posture_resolver != null:
+		_melee_posture_resolver.begin_draw_grace()
 	_cancel_reload()
 	_reset_melee_overlay_visuals()
 	_apply_melee_weapon_animation_resources(profile)

@@ -10,6 +10,7 @@ extends Control
 @export var vehicle_group_name: StringName = &"vehicle"
 @export var turret_group_name: StringName = &"turret"
 @export var relay_group_name: StringName = &"arrn_relay"
+@export var debug_marker_group_name: StringName = &"debug_minimap_ritualant_ingress"
 @export var refresh_entities_interval: float = 0.25
 @export var retry_procgen_interval: float = 0.35
 @export var enable_expand_toggle: bool = true
@@ -247,6 +248,11 @@ func _refresh_dynamic_nodes() -> void:
 	for node in get_tree().get_nodes_in_group(relay_group_name):
 		if node is Node2D and bool(node.get("visible")):
 			relays.append(node as Node2D)
+	var debug_markers: Array[Node2D] = []
+	if OS.is_debug_build():
+		for node in get_tree().get_nodes_in_group(debug_marker_group_name):
+			if node is Node2D:
+				debug_markers.append(node as Node2D)
 
 	minimap_view.set_enemies(enemies)
 	minimap_view.set_objectives(objectives)
@@ -258,6 +264,8 @@ func _refresh_dynamic_nodes() -> void:
 		minimap_view.call("set_turrets", turrets)
 	if minimap_view.has_method("set_relays"):
 		minimap_view.call("set_relays", relays)
+	if minimap_view.has_method("set_debug_markers"):
+		minimap_view.call("set_debug_markers", debug_markers)
 	if procgen_tilemap == null or not is_instance_valid(procgen_tilemap):
 		_update_dynamic_bounds(player, enemies, objectives, terminals, vehicles, turrets, relays)
 

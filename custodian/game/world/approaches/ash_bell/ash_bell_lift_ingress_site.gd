@@ -24,6 +24,8 @@ var _threadway_resolved := false
 
 func _ready() -> void:
 	super._ready()
+	if OS.is_debug_build():
+		add_to_group("debug_minimap_ritualant_ingress")
 	var ledger := get_node_or_null("/root/ResourceLedger")
 	if ledger != null and not ledger.resource_added.is_connected(
 		_on_resource_added
