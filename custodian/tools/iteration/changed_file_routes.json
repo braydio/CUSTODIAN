@@ -99,6 +99,19 @@
 		"reason": "Forlorn Ritualant dialogue, combat, lower-lift, or departure presentation changed."
 	},
 	{
+		"id": "ritualant_underground_landing_visual",
+		"include": [
+			"custodian/game/world/levels/authored/ash_bell/forlorn_ritualant_underground/**",
+			"custodian/asset_drop/source_work/ritualant_scene/ritualant_landing_shelf_apron_*.png",
+			"custodian/tools/validation/fixtures/ritualant_underground_landing_visual_moment.*",
+			"custodian/tools/iteration/scenarios/traversal/ritualant_underground_landing_visual.json"
+		],
+		"exclude": ["**/*.import", "reports/**"],
+		"scenario_ids": ["traversal/ritualant_underground_landing_visual"],
+		"priority": 125,
+		"reason": "Ritualant lower-lift landing, apron candidate, camera path, or visual-review fixture changed."
+	},
+	{
 		"id": "ash_bell_lift",
 		"include": [
 			"custodian/game/world/approaches/ash_bell/**",

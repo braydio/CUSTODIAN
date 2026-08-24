@@ -189,6 +189,11 @@ func _fixture_command(action: Dictionary, result: Dictionary) -> void:
 			"return_lift",
 			"begin_return",
 		],
+		"ritualant_underground_landing_visual": [
+			"begin_landing_descent",
+			"hold_apron_center",
+			"begin_north_walk",
+		],
 		"field_fabricator": [
 			"power_on",
 			"begin_fabrication",

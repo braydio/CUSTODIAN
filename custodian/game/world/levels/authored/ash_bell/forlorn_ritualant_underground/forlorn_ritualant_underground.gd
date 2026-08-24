@@ -20,6 +20,10 @@ const CHAPEL_CONNECTOR := Rect2(-96.0, -768.0, 192.0, 128.0)
 const CAVERN_DEEPER_DIRECTION := Vector2.UP
 const LIFT_DESCENT_SCREEN_DIRECTION := Vector2.DOWN
 const LIFT_ASCENT_SCREEN_DIRECTION := Vector2.UP
+const MOMENT_APRON_CANDIDATE_PATHS := {
+	&"CRISP": "res://asset_drop/source_work/ritualant_scene/ritualant_landing_shelf_apron_crisp.png",
+	&"BALANCED": "res://asset_drop/source_work/ritualant_scene/ritualant_landing_shelf_apron_balanced.png",
+}
 
 var PLAYABLE_BOUNDARY_LOOP := PackedVector2Array([
 	Vector2(-128,1376), Vector2(-160,1280), Vector2(-288,1184), Vector2(-384,1024), Vector2(-416,832), Vector2(-352,640), Vector2(-224,480), Vector2(-64,320), Vector2(64,160), Vector2(96,-64), Vector2(32,-256), Vector2(-96,-416), Vector2(-224,-576), Vector2(-96,-704), Vector2(-304,-760), Vector2(-480,-896), Vector2(-512,-1152), Vector2(-456,-1384), Vector2(-320,-1496), Vector2(-112,-1536), Vector2(112,-1536), Vector2(320,-1496), Vector2(456,-1384), Vector2(512,-1152), Vector2(480,-896), Vector2(304,-760), Vector2(96,-704), Vector2(224,-576), Vector2(224,-352), Vector2(320,-192), Vector2(352,32), Vector2(320,224), Vector2(192,416), Vector2(32,576), Vector2(-96,736), Vector2(-128,928), Vector2(-64,1088), Vector2(64,1216), Vector2(128,1280), Vector2(128,1376), Vector2(224,1408), Vector2(320,1472), Vector2(352,1600), Vector2(352,1760), Vector2(288,1824), Vector2(-288,1824), Vector2(-352,1760), Vector2(-352,1600), Vector2(-320,1472), Vector2(-224,1408),
@@ -60,6 +64,7 @@ const AUTHORING_MARKERS := {
 @onready var ritualant_site: ForlornRitualantSite = $PlayableRoot/ForlornRitualantSite
 @onready var departure_black: ColorRect = $DepartureOverlay/Black
 @onready var departure_epilogue: Label = $DepartureOverlay/Epilogue
+@onready var landing_shelf_apron: Sprite2D = $BackgroundRoot/LandingShelfApron
 
 var _departure_running := false
 var _departure_actor: Node = null
@@ -70,10 +75,34 @@ var _bound_operator: Node = null
 var _arrival_running := false
 var _arrival_actor: Node = null
 var _arrival_rig: OperatorPresentationRig2D = null
+var _production_landing_shelf_apron: Texture2D = null
 
 
 func _ready() -> void:
+	_production_landing_shelf_apron = landing_shelf_apron.texture
 	call_deferred("_bind_active_operator")
+
+
+func moment_forge_set_landing_apron_candidate(candidate_id: StringName) -> bool:
+	if not OS.is_debug_build() or not OS.get_cmdline_user_args().has("--moment-forge"):
+		return false
+	var normalized := StringName(str(candidate_id).strip_edges().to_upper())
+	if normalized in [&"", &"CANONICAL"]:
+		landing_shelf_apron.texture = _production_landing_shelf_apron
+		return true
+	if not MOMENT_APRON_CANDIDATE_PATHS.has(normalized):
+		push_warning("Unknown Ritualant apron review candidate: %s" % normalized)
+		return false
+	var path := str(MOMENT_APRON_CANDIDATE_PATHS[normalized])
+	if not ResourceLoader.exists(path):
+		push_error("Ritualant apron review candidate is missing: %s" % path)
+		return false
+	var candidate := load(path) as Texture2D
+	if candidate == null:
+		push_error("Ritualant apron review candidate could not load: %s" % path)
+		return false
+	landing_shelf_apron.texture = candidate
+	return true
 
 
 func activate_route_node(actor: Node, spawn_id: StringName) -> bool:

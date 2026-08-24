@@ -44,6 +44,14 @@ func _run() -> void:
 		errors.append("lower lift exit is not interactable")
 	if level.get_node_or_null("PropsRoot/LowerLiftAssembly") == null:
 		errors.append("shared lower lift assembly is missing")
+	var apron := level.get_node_or_null("BackgroundRoot/LandingShelfApron") as Sprite2D
+	var production_apron: Texture2D = apron.texture if apron != null else null
+	if apron == null:
+		errors.append("landing shelf apron presentation node is missing")
+	elif bool(level.call("moment_forge_set_landing_apron_candidate", &"CANONICAL")):
+		errors.append("landing apron candidate override escaped Moment Forge authorization")
+	elif apron.texture != production_apron:
+		errors.append("rejected landing apron override changed production texture authority")
 	var underlay_quad := level.get_node_or_null(
 		"PlayableRoot/ForlornRitualantSite/ForlornRitualantShaderFX/VoidUnderlay/RoomSizedQuad"
 	) as TextureRect
