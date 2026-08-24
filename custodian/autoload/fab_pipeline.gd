@@ -10,6 +10,7 @@ signal unlock_completed(unlock_id: String)
 const FabJobScript := preload("res://game/fabrication/fab_job.gd")
 
 @export var recipes_path: String = "res://content/fabrication/fab_recipes.json"
+@export var allow_test_without_fabricator := false
 
 var _recipes: Dictionary = {}
 var _jobs: Array = []
@@ -60,41 +61,37 @@ func get_completed_unlocks() -> Dictionary:
 
 
 func can_start_recipe(recipe_id: String) -> bool:
+	return get_recipe_start_block_reason(recipe_id).is_empty()
+
+
+func get_recipe_start_block_reason(recipe_id: String) -> String:
 	if not _recipes.has(recipe_id):
-		return false
+		return "Unknown recipe"
+	if not _has_operable_fabricator():
+		return "Field Fabricator unavailable"
 	var recipe: Dictionary = _recipes[recipe_id]
 	if _is_recipe_locked(recipe):
-		return false
+		return "ARRN blueprint locked"
 	if not _can_accept_recipe_output(recipe):
-		return false
+		return "Output carry cap reached"
 	var ledger := _get_resource_ledger()
 	if ledger == null:
-		return false
+		return "ResourceLedger unavailable"
 	var cost: Dictionary = recipe.get("cost", {})
-	return bool(ledger.call("can_pay", cost))
+	if not bool(ledger.call("can_pay", cost)):
+		return "Insufficient resources"
+	return ""
 
 
 func try_start_recipe(recipe_id: String) -> bool:
-	if not _recipes.has(recipe_id):
-		job_failed.emit(recipe_id, "Unknown recipe")
+	var blocked_reason := get_recipe_start_block_reason(recipe_id)
+	if not blocked_reason.is_empty():
+		job_failed.emit(recipe_id, blocked_reason)
 		return false
 
 	var ledger := _get_resource_ledger()
-	if ledger == null:
-		job_failed.emit(recipe_id, "ResourceLedger unavailable")
-		return false
-
 	var recipe: Dictionary = (_recipes[recipe_id] as Dictionary).duplicate(true)
-	if _is_recipe_locked(recipe):
-		job_failed.emit(recipe_id, "ARRN blueprint locked")
-		return false
-	if not _can_accept_recipe_output(recipe):
-		job_failed.emit(recipe_id, "Output carry cap reached")
-		return false
 	var cost: Dictionary = recipe.get("cost", {})
-	if not bool(ledger.call("can_pay", cost)):
-		job_failed.emit(recipe_id, "Insufficient resources")
-		return false
 	if not bool(ledger.call("pay", cost)):
 		job_failed.emit(recipe_id, "Payment failed")
 		return false
@@ -128,16 +125,13 @@ func _tick_jobs(delta: float) -> void:
 	if fabrication_rate <= 0.0:
 		return
 
-	var completed_jobs: Array = []
-	for job in _jobs:
-		if job == null:
-			continue
-		var is_complete: bool = bool(job.call("tick", delta * fabrication_rate))
-		job_progressed.emit(job.job_id, job.recipe_id, job.call("progress"))
-		if is_complete:
-			completed_jobs.append(job)
-
-	for job in completed_jobs:
+	var job = _jobs[0]
+	if job == null:
+		_jobs.pop_front()
+		return
+	var is_complete: bool = bool(job.call("tick", delta * fabrication_rate))
+	job_progressed.emit(job.job_id, job.recipe_id, job.call("progress"))
+	if is_complete:
 		_complete_job(job)
 
 
@@ -206,11 +200,23 @@ func get_fabrication_rate_multiplier() -> float:
 
 func _get_fabrication_rate_multiplier() -> float:
 	var registry := get_node_or_null("/root/InfrastructureRegistry")
-	if registry == null or not registry.has_method("has_service"):
-		return 1.0
-	if not bool(registry.call("has_service", &"FABRICATION")):
-		return 1.0
+	if registry == null or not registry.has_method("get_service_providers"):
+		return 1.0 if allow_test_without_fabricator else 0.0
+	if not _has_operable_fabricator():
+		return 1.0 if allow_test_without_fabricator else 0.0
 	return maxf(0.0, float(registry.call("get_service_output", &"FABRICATION")))
+
+
+func _has_operable_fabricator() -> bool:
+	if allow_test_without_fabricator:
+		return true
+	var registry := get_node_or_null("/root/InfrastructureRegistry")
+	if registry == null or not registry.has_method("get_service_providers"):
+		return false
+	for provider in registry.call("get_service_providers", &"FABRICATION"):
+		if provider != null and (not provider.has_method("is_dead") or not bool(provider.call("is_dead"))):
+			return true
+	return false
 
 
 func _is_recipe_locked(recipe: Dictionary) -> bool:

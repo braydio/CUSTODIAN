@@ -20,6 +20,7 @@ func _run() -> void:
 	resource_ledger.call("clear")
 	build_inventory.call("clear")
 	fab_pipeline.call("clear_jobs")
+	fab_pipeline.set("allow_test_without_fabricator", true)
 
 	var ui := CanvasLayer.new()
 	ui.name = "UI"

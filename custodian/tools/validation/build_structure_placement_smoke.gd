@@ -22,6 +22,7 @@ func _run() -> void:
 	ledger.call("clear")
 	build_inventory.call("clear")
 	fab_pipeline.call("clear_jobs")
+	fab_pipeline.set("allow_test_without_fabricator", true)
 	ledger.call("add", "blackwood", 10)
 	ledger.call("add", "ruin_scrap", 4)
 	assert(fab_pipeline.call("try_start_recipe", "barricade_light"))

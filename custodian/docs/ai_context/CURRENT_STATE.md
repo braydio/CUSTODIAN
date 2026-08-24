@@ -797,11 +797,16 @@ Documentation updates this session:
 
 Canonical structure design language: `custodian/design/02_art_direction/CUSTODIAN_STRUCTURE_DESIGN_CONTRACT.md`
 Field Fabricator Mk1 integration proposal: `design/02_features/infrastructure/FIELD_FABRICATOR_VISUAL_INTEGRATION_CODE.md`
-Field Fabricator Mk1 now uses a progressive 96x96-per-frame Asset V2 contract
-under `content/sprites/environment/props/field_fabricator_mk1/runtime/`.
-The currently ingested partial set is body idle, body fabricate, and fabricate
-FX; startup, fabricate-complete, offline, and damage/destruction states remain
-declared for future inbox drops and fall back safely at runtime.
+Field Fabricator Mk1 now uses the complete five-body/four-FX production Asset
+V2 lifecycle under `content/sprites/environment/props/field_fabricator_mk1/runtime/`:
+eight horizontal 156×156 frames for idle, startup, fabricate,
+fabricate-complete, and offline, with no offline FX. The physical machine is an
+`interactable` shortcut into the existing FABRICATION page. Its registered,
+integrity-scaled `FABRICATION` service is the local throughput dependency;
+FabPipeline advances one FIFO job at a time, pauses progress at zero service,
+and no longer treats an absent/destroyed provider as production 1.0×. The
+terminal projects actual machine power, throughput, integrity, active progress,
+and waiting count without taking simulation authority.
 # Operator asset pipeline V2 (2026-08-16)
 
 - Operator source authority is `content/sprites/operator/source/animations`; generated runtime authority is `content/sprites/operator/runtime/animations`.

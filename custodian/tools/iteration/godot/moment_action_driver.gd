@@ -189,6 +189,11 @@ func _fixture_command(action: Dictionary, result: Dictionary) -> void:
 			"return_lift",
 			"begin_return",
 		],
+		"field_fabricator": [
+			"power_on",
+			"begin_fabrication",
+			"complete_fabrication",
+		],
 	}
 	if command not in allowed.get(fixture_id, []):
 		result.ok = false

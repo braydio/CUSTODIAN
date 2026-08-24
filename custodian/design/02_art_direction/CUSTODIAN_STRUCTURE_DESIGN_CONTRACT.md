@@ -718,7 +718,8 @@ Prepare production sprite art separately.
 
 Use:
 
-`128 × 96 px`
+The production animation canvas is `156 × 156 px` per frame. Each current
+lifecycle sheet is an eight-frame horizontal `1248 × 156 px` strip.
 
 This corresponds naturally to the existing `4 × 3` 32px footprint.
 
@@ -731,9 +732,7 @@ Leave transparent breathing room around the asset.
 
 ## 12.2 Origin
 
-Sprite origin:
-
-`Vector2(64, 48)`
+Sprite origin is the center of the `156 × 156` frame (`Vector2(78, 78)`).
 
 World origin should continue representing the logical center of the existing structure.
 
@@ -743,13 +742,14 @@ Do not offset gameplay placement merely to compensate for the artwork.
 
 # 13. Required Art Files
 
-Create/use:
+Production runtime authority is:
 
-`custodian/assets/sprites/infrastructure/fabrication/field_fabricator_mk1/`
+`custodian/content/sprites/environment/props/field_fabricator_mk1/runtime/`
 
-Required initial file:
-
-`field_fabricator_mk1__idle__128x96.png`
+Required body states are `idle`, `startup`, `fabricate`,
+`fabricate_complete`, and `offline`. Recommended matching FX states are
+`idle`, `startup`, `fabricate`, and `fabricate_complete`. All canonical runtime
+filenames end in `__8f__156.png`. There is intentionally no offline FX.
 
 Transparent RGBA.
 
@@ -757,31 +757,17 @@ No baked checkerboard.
 No background.
 No terrain shadow that extends beyond the machine unless intentionally part of the sprite.
 
-Recommended later:
-
-`field_fabricator_mk1__active__4f__128x96.png`
-
-Optional:
-
-`field_fabricator_mk1__damaged__128x96.png`
-
-Do not invent missing production art.
-
-If these assets have not been supplied, prepare the runtime contract and explicitly report the exact missing asset path.
+Damage remains a gameplay tint and integrity-scaled throughput state until a
+separate authored damage family is approved. Do not invent missing production
+art.
 
 ---
 
 # 14. Active Animation Spec
 
-If/when supplied:
-
-`field_fabricator_mk1__active__4f__128x96.png`
-
-Four horizontal frames.
-
-Each frame:
-
-* 128×96
+The current production family uses five semantic body animations and four
+matching FX animations. `idle`, `fabricate`, and `offline` loop; `startup` and
+`fabricate_complete` are one-shots. Playback is `6/9/8/9/6 FPS` respectively.
 
 Animation should be subtle.
 

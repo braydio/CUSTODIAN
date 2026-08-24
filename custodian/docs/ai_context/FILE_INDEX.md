@@ -831,9 +831,12 @@ Last updated: 2026-08-20
 - `design/02_features/infrastructure/COMPOUND_INFRASTRUCTURE_SYSTEM.md` — active authority for the bounded construction economy; Powered Fabricator Milestone 1 is live with component grid registration, hybrid Capacitor Bank construction, typed fabrication service output, and a versioned persistence boundary
 - `design/02_features/infrastructure/INFRASTRUCTURE_IMPLEMENTATION_PLAN.md` — implemented Milestone 1 compatibility decisions, transaction order, runtime file list, and validation record
 - `custodian/autoload/infrastructure_registry.gd` — structure/service registry, terminal snapshot authority, and versioned capture/restore boundary
-- `custodian/game/infrastructure/` — reusable structure definition/base, power and service components, and Field Fabricator/Capacitor Bank scenes
+- `custodian/game/infrastructure/` — reusable structure definition/base, power and service components, Capacitor Bank, and the physical Field Fabricator scene with local interaction plus five-state body/four-state FX controller
+- `custodian/autoload/fab_pipeline.gd` — local Ready-Build delivery adapter with physical-FABRICATION-service gating, retained zero-service progress, single-lane FIFO execution, and an explicit isolated-test compatibility flag
+- `custodian/game/ui/terminal/fabrication_terminal_view_model.gd` — read-only physical Fabricator power/throughput/integrity/active-job/waiting-queue projection and work-order translation
 - `custodian/content/infrastructure/definitions/` — definition resources for the first Field Fabricator and Capacitor Bank structures
 - `custodian/tools/validation/{construction_placement_validator,construction_placement_controller,construction_placement_ui,construction_placement_contract,powered_fabricator_slice}_smoke.gd` — focused Construction Placement V1 footprint, transaction, UI, construction, and commissioned-power validation
+- `custodian/tools/iteration/scenarios/infrastructure/field_fabricator_cycle.json`, `custodian/scenes/debug/field_fabricator_moment.tscn`, and `custodian/tools/validation/fixtures/field_fabricator_moment.gd` — deterministic four-second visual review of offline, startup, fabricate, completion, and idle presentation
 - `design/02_features/infrastructure/CONSTRUCTION_PLACEMENT_V1.md` — active permanent construction placement ownership, transaction, zone, UI, and acceptance contract
 - `design/02_features/power/POWER_SYSTEMS_GODOT.md` — current sector-oriented power implementation summary and compatibility boundary for future infrastructure-grid work
 - `design/04_architecture/SIMPLIFIED_POWER_IN_ROOMS.md` — superseded room-marker proposal retained as historical reference; its conduit-to-generator mapping must not be implemented

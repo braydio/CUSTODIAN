@@ -61,6 +61,7 @@ func build(ui: Node, selected_work_order_id: String = "") -> Dictionary:
 	var ready_builds := _build_ready_builds(recipes, build_tokens, resource_defs)
 	var in_progress := _build_in_progress_jobs(recipes, jobs, resource_defs)
 	var ready_build_counts := _count_ready_build_states(ready_builds)
+	var machine := _build_machine_status(ui, jobs)
 
 	if selected_work_order.is_empty() and not work_orders.is_empty():
 		selected_work_order = work_orders[0]
@@ -70,8 +71,17 @@ func build(ui: Node, selected_work_order_id: String = "") -> Dictionary:
 
 	return {
 		"status": {
-			"fabricator_state": "ONLINE",
-			"queue_summary": "%d in progress" % jobs.size(),
+			"fabricator_state": machine.get("state", "OFFLINE"),
+			"power_tier": machine.get("power_tier", "offline"),
+			"power_allocated": machine.get("power_allocated", 0.0),
+			"power_standard": machine.get("power_standard", 0.0),
+			"fabrication_multiplier": machine.get("fabrication_multiplier", 0.0),
+			"integrity": machine.get("integrity", 0.0),
+			"max_integrity": machine.get("max_integrity", 0.0),
+			"active_recipe_id": machine.get("active_recipe_id", ""),
+			"active_progress": machine.get("active_progress", 0.0),
+			"waiting_queue_count": machine.get("waiting_queue_count", 0),
+			"queue_summary": machine.get("queue_summary", "unavailable"),
 			"ready_build_summary": "%d ready / %d deployable" % [ready_build_counts.get("total", 0), ready_build_counts.get("deployable", 0)],
 			"next_action": next_action,
 			"first_fabrication_hint": _build_first_fabrication_hint(jobs, build_tokens, completed_unlocks, recipes),
@@ -397,6 +407,8 @@ func _resolve_work_order_state(ui: Node, recipe: Dictionary, resources: Dictiona
 		return "LOCKED"
 	if _is_operator_field_patch_recipe(recipe) and _is_operator_field_patch_full(ui):
 		return "CARRIED MAX"
+	if not _machine_accepts_orders(ui):
+		return "UNAVAILABLE"
 	if _can_pay_recipe(recipe, resources):
 		return "READY"
 	return "MISSING MATERIALS"
@@ -456,6 +468,8 @@ func _format_action_text(recipe_id: String, recipe: Dictionary, state: String, r
 		return "Unlock required"
 	if state == "CARRIED MAX":
 		return "CARRY CAP REACHED"
+	if state == "UNAVAILABLE":
+		return "FIELD FABRICATOR UNAVAILABLE"
 	var output_type := str(recipe.get("output_type", "build_token"))
 	if output_type == "build_token" and ready_build_count > 0 and deployable:
 		return "BUILD PLACE %s" % str(recipe.get("output_id", recipe_id))
@@ -621,6 +635,85 @@ func _get_node(ui: Node, path: String) -> Node:
 	if ui == null:
 		return null
 	return ui.get_node_or_null(path)
+
+
+func _machine_accepts_orders(ui: Node) -> bool:
+	var pipeline := _get_node(ui, "/root/FabPipeline")
+	if pipeline == null:
+		return false
+	if bool(pipeline.get("allow_test_without_fabricator")):
+		return true
+	var registry := _get_node(ui, "/root/InfrastructureRegistry")
+	if registry == null or not registry.has_method("get_service_providers"):
+		return false
+	for provider in registry.call("get_service_providers", &"FABRICATION"):
+		if provider != null and (not provider.has_method("is_dead") or not bool(provider.call("is_dead"))):
+			return true
+	return false
+
+
+func _build_machine_status(ui: Node, jobs: Array) -> Dictionary:
+	var result := {
+		"state": "OFFLINE",
+		"power_tier": "offline",
+		"power_allocated": 0.0,
+		"power_standard": 0.0,
+		"fabrication_multiplier": 0.0,
+		"integrity": 0.0,
+		"max_integrity": 0.0,
+		"active_recipe_id": "",
+		"active_progress": 0.0,
+		"waiting_queue_count": maxi(0, jobs.size() - 1),
+		"queue_summary": "unavailable",
+	}
+	if not jobs.is_empty() and jobs[0] is Dictionary:
+		result.active_recipe_id = str((jobs[0] as Dictionary).get("recipe_id", ""))
+		result.active_progress = float((jobs[0] as Dictionary).get("progress", 0.0))
+	var registry := _get_node(ui, "/root/InfrastructureRegistry")
+	if registry == null or not registry.has_method("get_service_providers"):
+		var pipeline := _get_node(ui, "/root/FabPipeline")
+		if pipeline != null and bool(pipeline.get("allow_test_without_fabricator")):
+			result.state = "ONLINE"
+			result.power_tier = "test"
+			result.fabrication_multiplier = 1.0
+			result.queue_summary = "%d active / %d waiting" % [mini(1, jobs.size()), maxi(0, jobs.size() - 1)]
+		return result
+	var providers: Array = registry.call("get_service_providers", &"FABRICATION")
+	if providers.is_empty():
+		var pipeline := _get_node(ui, "/root/FabPipeline")
+		if pipeline != null and bool(pipeline.get("allow_test_without_fabricator")):
+			result.state = "ONLINE"
+			result.power_tier = "test"
+			result.fabrication_multiplier = 1.0
+			result.queue_summary = "%d active / %d waiting" % [mini(1, jobs.size()), maxi(0, jobs.size() - 1)]
+		return result
+	var machine := providers[0] as Node
+	if machine == null:
+		return result
+	result.integrity = float(machine.get("current_integrity"))
+	result.max_integrity = float(machine.call("get_max_integrity")) if machine.has_method("get_max_integrity") else 0.0
+	if machine.has_method("is_dead") and bool(machine.call("is_dead")):
+		result.state = "DESTROYED"
+		result.queue_summary = "%d paused" % jobs.size()
+		return result
+	var consumer := machine.get_node_or_null("PowerConsumer")
+	if consumer != null and consumer.has_method("get_power_snapshot"):
+		var power: Dictionary = consumer.call("get_power_snapshot")
+		result.power_tier = str(power.get("tier", "offline"))
+		result.power_allocated = float(power.get("allocated", 0.0))
+		result.power_standard = float(power.get("standard", 0.0))
+		result.fabrication_multiplier = float(registry.call("get_service_output", &"FABRICATION"))
+		match result.power_tier:
+			"overdrive": result.state = "OVERDRIVE"
+			"standard": result.state = "DEGRADED" if result.integrity + 0.001 < result.max_integrity else "ONLINE"
+			"degraded": result.state = "DEGRADED"
+			_: result.state = "OFFLINE"
+	result.queue_summary = "%d active / %d waiting%s" % [
+		mini(1, jobs.size()),
+		maxi(0, jobs.size() - 1),
+		" // PAUSED" if result.fabrication_multiplier <= 0.0 and not jobs.is_empty() else "",
+	]
+	return result
 
 
 func _call_dictionary(node: Node, method_name: String) -> Dictionary:

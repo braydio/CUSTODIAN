@@ -1,10 +1,11 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://game/infrastructure/infrastructure_structure.gd" id="1_structure"]
 [ext_resource type="Resource" path="res://content/infrastructure/definitions/fabrication/field_fabricator_mk1.tres" id="2_definition"]
 [ext_resource type="Script" path="res://game/infrastructure/components/power_consumer_component.gd" id="3_consumer"]
 [ext_resource type="Script" path="res://game/infrastructure/components/infrastructure_service_component.gd" id="4_service"]
 [ext_resource type="Script" path="res://game/infrastructure/structures/field_fabricator_visual_controller.gd" id="5_visual"]
+[ext_resource type="Script" path="res://game/infrastructure/structures/field_fabricator_interaction.gd" id="6_interaction"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fabricator"]
 size = Vector2(92, 64)
@@ -26,6 +27,10 @@ texture_filter = 1
 
 [node name="VisualController" type="Node" parent="."]
 script = ExtResource("5_visual")
+
+[node name="Interaction" type="Node2D" parent="."]
+position = Vector2(0, 48)
+script = ExtResource("6_interaction")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_fabricator")

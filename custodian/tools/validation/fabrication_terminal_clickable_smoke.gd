@@ -41,7 +41,8 @@ func _run() -> void:
 
 	var fabrication_widgets := ui.find_child("FabricationWidgets", true, false)
 	var settings_widgets := ui.find_child("SettingsWidgets", true, false)
-	var recipe_rows := ui.find_child("Rows", true, false)
+	var recipe_scroll := ui.find_child("RecipeScroll", true, false)
+	var recipe_rows := recipe_scroll.find_child("Rows", true, false) if recipe_scroll != null else null
 	var craft_one := ui.find_child("CraftOneButton", true, false)
 	_require(fabrication_widgets != null, "FabricationWidgets should exist under WidgetStack.")
 	_require(settings_widgets != null, "SettingsWidgets should remain separate from FabricationWidgets.")

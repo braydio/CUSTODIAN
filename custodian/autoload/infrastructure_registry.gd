@@ -79,6 +79,16 @@ func get_service_output(service_id: StringName) -> float:
 	return output
 
 
+func get_service_providers(service_id: StringName) -> Array[Node]:
+	_prune_invalid()
+	var providers: Array[Node] = []
+	for structure in _structures.values():
+		if structure.has_method("has_infrastructure_service") \
+		and bool(structure.call("has_infrastructure_service", service_id)):
+			providers.append(structure)
+	return providers
+
+
 func notify_structure_changed(service_ids: Array = []) -> void:
 	for service_id_variant in service_ids:
 		var service_id := StringName(str(service_id_variant))

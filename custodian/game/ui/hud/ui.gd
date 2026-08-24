@@ -858,7 +858,8 @@ func _devconsole_fab_start(args: Array) -> String:
 	if not bool(fab_pipeline.call("has_recipe", recipe_id)):
 		return "Unknown recipe: %s" % recipe_id
 	if not bool(fab_pipeline.call("can_start_recipe", recipe_id)):
-		return "Cannot start %s. Insufficient resources or pipeline unavailable." % recipe_id
+		var reason := str(fab_pipeline.call("get_recipe_start_block_reason", recipe_id)) if fab_pipeline.has_method("get_recipe_start_block_reason") else "Pipeline unavailable"
+		return "Cannot start %s. %s." % [recipe_id, reason]
 	if bool(fab_pipeline.call("try_start_recipe", recipe_id)):
 		return "Started fabrication recipe: %s" % recipe_id
 	return "Failed to start fabrication recipe: %s" % recipe_id
@@ -4544,6 +4545,9 @@ func _render_terminal_fabrication_widgets() -> void:
 		"FABRICATION // WORK ORDERS",
 		"-------------------------",
 		"Fabricator: %s" % str(status.get("fabricator_state", "UNKNOWN")),
+		"Power: %.1f / %.1f P (%s)" % [float(status.get("power_allocated", 0.0)), float(status.get("power_standard", 0.0)), str(status.get("power_tier", "offline")).to_upper()],
+		"Throughput: %d%%" % int(round(float(status.get("fabrication_multiplier", 0.0)) * 100.0)),
+		"Integrity: %d / %d" % [int(round(float(status.get("integrity", 0.0)))), int(round(float(status.get("max_integrity", 0.0))))],
 		"In Progress: %s" % str(status.get("queue_summary", "unknown")),
 		"Ready Builds: %s" % str(status.get("ready_build_summary", "unknown")),
 		"Next Action: %s" % str(status.get("next_action", "Review the list.")),
@@ -4651,10 +4655,15 @@ func _render_terminal_fabrication_clickable_widgets(view: Dictionary) -> void:
 	var ready_builds: Array = view.get("ready_builds", [])
 
 	_configure_fabrication_dashboard_layout()
-	_set_terminal_rich_text(_get_fabrication_panel_body("FabStatusPanel"), "FAB STATUS: %s | QUEUE %d | READY %d | %s" % [
+	_set_terminal_rich_text(_get_fabrication_panel_body("FabStatusPanel"), "FAB %s | PWR %.0f/%.0f | RATE %d%% | HP %.0f/%.0f | QUEUE %d+%d | %s" % [
 		str(status.get("fabricator_state", "UNKNOWN")).to_upper(),
-		in_progress.size(),
-		ready_builds.size(),
+		float(status.get("power_allocated", 0.0)),
+		float(status.get("power_standard", 0.0)),
+		int(round(float(status.get("fabrication_multiplier", 0.0)) * 100.0)),
+		float(status.get("integrity", 0.0)),
+		float(status.get("max_integrity", 0.0)),
+		mini(1, in_progress.size()),
+		int(status.get("waiting_queue_count", 0)),
 		_get_operator_patch_carry_summary(),
 	])
 
@@ -5963,7 +5972,8 @@ func _execute_local_terminal_command_legacy(parsed: Dictionary) -> bool:
 						_append_terminal_line("UNKNOWN RECIPE %s" % recipe_id.to_upper(), "warning")
 						return true
 					if not bool(start_pipeline.call("can_start_recipe", recipe_id)):
-						_append_terminal_line("CANNOT START %s // INSUFFICIENT RESOURCES" % recipe_id.to_upper(), "warning")
+						var reason := str(start_pipeline.call("get_recipe_start_block_reason", recipe_id)) if start_pipeline.has_method("get_recipe_start_block_reason") else "PIPELINE UNAVAILABLE"
+						_append_terminal_line("CANNOT START %s // %s" % [recipe_id.to_upper(), reason.to_upper()], "warning")
 						return true
 					if bool(start_pipeline.call("try_start_recipe", recipe_id)):
 						_terminal_fabrication_selected_work_order_id = recipe_id

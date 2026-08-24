@@ -135,6 +135,7 @@ func _validate_terminal_fabrication_restock(root: Node) -> void:
 
 	ledger.call("clear")
 	fab_pipeline.call("clear_jobs")
+	fab_pipeline.set("allow_test_without_fabricator", true)
 
 	var operator := OPERATOR_SCENE.instantiate()
 	root.add_child(operator)

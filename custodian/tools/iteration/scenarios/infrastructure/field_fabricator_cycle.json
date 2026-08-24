@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "id": "infrastructure/field_fabricator_cycle",
+  "description": "Field Fabricator transitions through its powered single-lane production presentation cycle.",
+  "scene": "res://scenes/debug/field_fabricator_moment.tscn",
+  "seed": 156825,
+  "duration_ticks": 240,
+  "simulation": {"physics_hz": 60, "warmup_ticks": 2, "max_wall_seconds": 24, "pause_during_setup": true},
+  "capture": {"width": 1280, "height": 720, "fps": 60, "audio": false, "start_tick": 0, "end_tick": 239, "contact_sheet_ticks": [0, 16, 90, 141, 195, 230], "required_keyframes": true, "background": "opaque"},
+  "setup": {
+    "remove_nodes": [],
+    "roles": {"fabricator": {"node_path": "."}},
+    "spawns": [],
+    "properties": [],
+    "processing": [],
+    "fixture": {"id": "field_fabricator", "config": {}}
+  },
+  "timeline": [
+    {"tick": 15, "action": "fixture_command", "name": "power_on"},
+    {"tick": 80, "action": "fixture_command", "name": "begin_fabrication"},
+    {"tick": 140, "action": "fixture_command", "name": "complete_fabrication"},
+    {"tick": 230, "action": "finish"}
+  ],
+  "probes": [{"id": "fabricator_state", "role": "fabricator", "fields": ["state"], "ticks": [0, 16, 90, 141, 210], "required": true}],
+  "assertions": [
+    {"type": "role_exists", "role": "fabricator", "severity": "error"},
+    {"type": "no_unreleased_inputs", "severity": "error"},
+    {"type": "output_exists", "path": "telemetry.json", "severity": "error"}
+  ],
+  "stable_fingerprint": {"event_payload_fields": {}, "counters": [], "probes": ["fabricator_state"], "position_quantum_px": 0.25, "float_quantum": 0.0001},
+  "tags": ["infrastructure", "fabrication", "power", "presentation"]
+}

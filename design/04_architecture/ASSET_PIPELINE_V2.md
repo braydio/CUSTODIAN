@@ -55,7 +55,7 @@ runtime-ready backend    sprite-ingest backend
 ### 1. Create a Family Contract (one-time)
 
 ```bash
-asset new field_fabricator_mk1 --kind world_prop --size 128x96
+asset new field_fabricator_mk1 --kind world_prop --size 156x156
 ```
 
 Creates:
@@ -66,9 +66,9 @@ Creates:
 
 ```text
 custodian/asset_drop/inbox/field_fabricator_mk1/
-    idle.png       # 128x96 static
-    active.png     # 512x96 (4-frame horizontal strip)
-    glow.png       # 128x96 static
+    idle.png       # 1248x156 (8-frame horizontal strip)
+    fabricate.png  # 1248x156 (8-frame horizontal strip)
+    fabricate_fx.png
 ```
 
 No canonical naming required. Just human-readable state names.
@@ -81,7 +81,7 @@ asset plan field_fabricator_mk1
 
 Shows:
 - Source file → resolved state
-- Frame inference (4x 128x96 strip detected)
+- Frame inference (8x 156x156 strip detected)
 - Canonical filename generated
 - Target runtime path
 - Backend selection
@@ -106,15 +106,21 @@ FIELD_FABRICATOR_MK1
 
   required
       ✓ idle
-      ✓ active
+      ✓ startup
+      ✓ fabricate
+      ✓ fabricate_complete
+      ✓ offline
   recommended
-      ✓ glow
+      ✓ idle_fx
+      ✓ startup_fx
+      ✓ fabricate_fx
+      ✓ fabricate_complete_fx
   optional
       ○ damaged
       ○ destroyed
   consumer
     res://game/infrastructure/structures/field_fabricator_mk1.tscn
-  production completeness: 2/2 required
+  production completeness: 5/5 required
 ```
 
 ---
@@ -147,8 +153,8 @@ FIELD_FABRICATOR_MK1
   },
 
   "canvas": {
-    "width": 128,
-    "height": 96
+    "width": 156,
+    "height": 156
   },
 
   "direction_policy": "omni",
@@ -160,26 +166,28 @@ FIELD_FABRICATOR_MK1
       "action_group": "interaction",
       "variant": "idle"
     },
-    "active": {
+    "fabricate": {
       "required": true,
       "layer": "body",
       "action_group": "interaction",
       "variant": "fabricate",
       "animation": true,
-      "fps": 6
+      "fps": 8
     },
-    "glow": {
+    "fabricate_fx": {
       "required": false,
       "recommended": true,
       "layer": "fx",
       "action_group": "interaction",
-      "variant": "powered_glow"
+      "variant": "fabricate",
+      "animation": true,
+      "fps": 8
     }
   },
 
   "aliases": {
-    "working": "active",
-    "powered": "glow"
+    "working": "fabricate",
+    "powered": "fabricate_fx"
   },
 
   "consumers": [
@@ -203,9 +211,9 @@ FIELD_FABRICATOR_MK1
 ### Aliases
 
 Map human-friendly names to canonical state IDs:
-- `working` → `active`
-- `fabricating` → `active`
-- `powered` → `glow`
+- `working` → `fabricate`
+- `fabricating` → `fabricate`
+- `powered` → `fabricate_fx`
 
 ---
 
@@ -218,9 +226,9 @@ Generated automatically from semantic identity:
 ```
 
 Examples:
-- `field_fabricator_mk1__body__interaction__idle__omni__1f__128x96.png`
-- `field_fabricator_mk1__body__interaction__fabricate__omni__4f__128x96.png`
-- `field_fabricator_mk1__fx__interaction__powered_glow__omni__1f__128x96.png`
+- `field_fabricator_mk1__body__interaction__idle__omni__8f__156.png`
+- `field_fabricator_mk1__body__interaction__fabricate__omni__8f__156.png`
+- `field_fabricator_mk1__fx__interaction__fabricate__omni__8f__156.png`
 
 **Humans never type these.** They are derived output.
 
@@ -353,30 +361,34 @@ path; runtime verification requires explicit validation evidence.
 
 ## Field Fabricator Mk1 — Acceptance Fixture
 
+This fixture is now a production Asset V2 family rather than the original
+128×96 scaffold example.
+
 ### Input
 ```
 asset_drop/inbox/field_fabricator_mk1/
-    idle.png   (128×96)
-    active.png (512×96 → 4×128×96 strip)
-    glow.png   (128×96)
+    idle.png                  (1248×156 → 8×156×156 strip)
+    startup.png               (1248×156 → 8×156×156 strip)
+    fabricate.png             (1248×156 → 8×156×156 strip)
+    fabricate_complete.png    (1248×156 → 8×156×156 strip)
+    offline.png               (1248×156 → 8×156×156 strip)
+    idle_fx.png               (1248×156 → 8×156×156 strip)
+    startup_fx.png            (1248×156 → 8×156×156 strip)
+    fabricate_fx.png          (1248×156 → 8×156×156 strip)
+    fabricate_complete_fx.png (1248×156 → 8×156×156 strip)
 ```
 
 ### Generated Output
 ```
 content/sprites/environment/props/field_fabricator_mk1/runtime/
-    body/
-        field_fabricator_mk1__body__interaction__idle__omni__1f__128x96.png
-        field_fabricator_mk1__body__interaction__fabricate__omni__4f__128x96.png
-    fx/
-        field_fabricator_mk1__fx__interaction__powered_glow__omni__1f__128x96.png
+    body/interaction/*__8f__156.png
+    fx/interaction/*__8f__156.png
 ```
 
 ### Backend Selection
 | File | Layout | Backend |
 |------|--------|---------|
-| idle.png | copy | runtime_ready |
-| active.png | horizontal_strip (4f) | sprite_ingest |
-| glow.png | copy | runtime_ready |
+| all nine lifecycle sheets | horizontal_strip (8f) | sprite_ingest |
 
 ---
 

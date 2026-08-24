@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://jjpkt78ndmlw"
-path="res://.godot/imported/field_fabricator_mk1__fx__interaction__fabricate__omni__8f__96.png-8f5b96a3a4b46a14458080869f0a0ea5.ctex"
+uid="uid://cle7xlt0l0ooj"
+path="res://.godot/imported/field_fabricator_mk1__body__interaction__fabricate__omni__8f__156.png-e79b29d4ed340381d98e095da872e9be.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/environment/props/field_fabricator_mk1/runtime/fx/interaction/field_fabricator_mk1__fx__interaction__fabricate__omni__8f__96.png"
-dest_files=["res://.godot/imported/field_fabricator_mk1__fx__interaction__fabricate__omni__8f__96.png-8f5b96a3a4b46a14458080869f0a0ea5.ctex"]
+source_file="res://content/sprites/environment/props/field_fabricator_mk1/runtime/body/interaction/field_fabricator_mk1__body__interaction__fabricate__omni__8f__156.png"
+dest_files=["res://.godot/imported/field_fabricator_mk1__body__interaction__fabricate__omni__8f__156.png-e79b29d4ed340381d98e095da872e9be.ctex"]
 
 [params]
 

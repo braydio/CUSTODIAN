@@ -30,6 +30,7 @@ func _run() -> void:
 	build_inventory.call("add", "barricade_light", 1)
 	build_inventory.call("add", "power_bank_patch", 1)
 	fab_pipeline.call("clear_jobs")
+	fab_pipeline.set("allow_test_without_fabricator", true)
 
 	var view_model := FabricationTerminalViewModelScript.new() as FabricationTerminalViewModel
 	assert(view_model != null)
