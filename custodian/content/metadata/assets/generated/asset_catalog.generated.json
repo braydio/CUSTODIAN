@@ -1950,6 +1950,489 @@
           "sha256": "31fefaa8c57171c6d0abb606b6ff9e8a18c9bc44ee1df2e095af2db34f2cc07d",
           "provenance": "authored",
           "source_asset": null
+        },
+        "arrival_back_01::omni": {
+          "state_id": "arrival_back_01",
+          "direction": "omni",
+          "semantic_identity": [
+            "ritualant_underground",
+            "backdrop",
+            "lift",
+            "environment",
+            "arrival_back_01",
+            "omni"
+          ],
+          "path": "content/tiles/encounters/ritualant_set/underground/ritualant_underground__lift__arrival_back_01__768x1536.png",
+          "frames": 1,
+          "frame_size": [
+            768,
+            1536
+          ],
+          "sha256": "3621b53448a305da52a180ff6f9ce289613afec888c10ee41f10106c422d994c",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "arrival_fore_01::omni": {
+          "state_id": "arrival_fore_01",
+          "direction": "omni",
+          "semantic_identity": [
+            "ritualant_underground",
+            "backdrop",
+            "lift",
+            "environment",
+            "arrival_fore_01",
+            "omni"
+          ],
+          "path": "content/tiles/encounters/ritualant_set/underground/ritualant_underground__lift__arrival_fore_01__768x1536.png",
+          "frames": 1,
+          "frame_size": [
+            768,
+            1536
+          ],
+          "sha256": "4b6bd2db070293ef5b83dc04f6ef6cb586a482e6a92f536499408e6abc126735",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "chain_anchor_01::omni": {
+          "state_id": "chain_anchor_01",
+          "direction": "omni",
+          "semantic_identity": [
+            "ritualant_underground",
+            "backdrop",
+            "prop",
+            "environment",
+            "chain_anchor_01",
+            "omni"
+          ],
+          "path": "content/tiles/encounters/ritualant_set/underground/ritualant_underground__prop__chain_anchor_01__160x192.png",
+          "frames": 1,
+          "frame_size": [
+            160,
+            192
+          ],
+          "sha256": "83b21b1e1f346aefe8403be4e45f2b8db105e857743afe240827121f866b762d",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "chapel_connector_apron_01::omni": {
+          "state_id": "chapel_connector_apron_01",
+          "direction": "omni",
+          "semantic_identity": [
+            "ritualant_underground",
+            "backdrop",
+            "overlay",
+            "environment",
+            "chapel_connector_apron_01",
+            "omni"
+          ],
+          "path": "content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__chapel_connector_apron_01__512x384.png",
+          "frames": 1,
+          "frame_size": [
+            512,
+            384
+          ],
+          "sha256": "e5b3540ab2749bdc0f247dd9ed60e3380e4a1c17be4520c1284f4d4665fee32d",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "chapel_haze_01::omni": {
+          "state_id": "chapel_haze_01",
+          "direction": "omni",
+          "semantic_identity": [
+            "ritualant_underground",
+            "backdrop",
+            "underlay",
+            "environment",
+            "chapel_haze_01",
+            "omni"
+          ],
+          "path": "content/tiles/encounters/ritualant_set/underground/ritualant_underground__underlay__chapel_haze_01__1024x768.png",
+          "frames": 1,
+          "frame_size": [
+            1024,
+            768
+          ],
+          "sha256": "6141362d05d4b56f4af4b26957b90c4c2f5dde14e8982994436ded3b9f154675",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "chapel_outer_blend_01::omni": {
+          "state_id": "chapel_outer_blend_01",
+          "direction": "omni",
+          "semantic_identity": [
+            "ritualant_underground",
+            "backdrop",
+            "overlay",
+            "environment",
+            "chapel_outer_blend_01",
+            "omni"
+          ],
+          "path": "content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__chapel_outer_blend_01__1280x1024.png",
+          "frames": 1,
+          "frame_size": [
+            1280,
+            1024
+          ],
+          "sha256": "0c13592dc228297e15efc575a80ec3e9f766cc37209952ace0fab6ef8f130113",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "chapel_threshold_01::omni": {
+          "state_id": "chapel_threshold_01",
+          "direction": "omni",
+          "semantic_identity": [
+            "ritualant_underground",
+            "backdrop",
+            "occluder",
+            "environment",
+            "chapel_threshold_01",
+            "omni"
+          ],
+          "path": "content/tiles/encounters/ritualant_set/underground/ritualant_underground__occluder__chapel_threshold_01__1024x512.png",
+          "frames": 1,
+          "frame_size": [
+            1024,
+            512
+          ],
+          "sha256": "45222589daebde1cab430d6220fc0f281ee8263f9d5e165c70035f4db1137208",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "deep_left_01::omni": {
+          "state_id": "deep_left_01",
+          "direction": "omni",
+          "semantic_identity": [
+            "ritualant_underground",
+            "backdrop",
+            "occluder",
+            "environment",
+            "deep_left_01",
+            "omni"
+          ],
+          "path": "content/tiles/encounters/ritualant_set/underground/ritualant_underground__occluder__deep_left_01__768x512.png",
+          "frames": 1,
+          "frame_size": [
+            768,
+            512
+          ],
+          "sha256": "a0c3b38fb32c189fd00e2ae5b8a089da2e04cbad64594d788cbda36e4dfa70ee",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "distant_chapel_01::omni": {
+          "state_id": "distant_chapel_01",
+          "direction": "omni",
+          "semantic_identity": [
+            "ritualant_underground",
+            "backdrop",
+            "vista",
+            "environment",
+            "distant_chapel_01",
+            "omni"
+          ],
+          "path": "content/tiles/encounters/ritualant_set/underground/ritualant_underground__vista__distant_chapel_01__320x160.png",
+          "frames": 1,
+          "frame_size": [
+            320,
+            160
+          ],
+          "sha256": "5e8381df6cb4bd70b07f69fc82413cace04077c1337ddff72b04307b585a811a",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "fracture_detail_01::omni": {
+          "state_id": "fracture_detail_01",
+          "direction": "omni",
+          "semantic_identity": [
+            "ritualant_underground",
+            "backdrop",
+            "overlay",
+            "environment",
+            "fracture_detail_01",
+            "omni"
+          ],
+          "path": "content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__fracture_detail_01__256x256.png",
+          "frames": 1,
+          "frame_size": [
+            256,
+            256
+          ],
+          "sha256": "43680d936c1b7be19e731d775d6460b6c6e92b267423418fee151e47f7d25e6b",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "landing_mouth_01::omni": {
+          "state_id": "landing_mouth_01",
+          "direction": "omni",
+          "semantic_identity": [
+            "ritualant_underground",
+            "backdrop",
+            "lift",
+            "environment",
+            "landing_mouth_01",
+            "omni"
+          ],
+          "path": "content/tiles/encounters/ritualant_set/underground/ritualant_underground__lift__landing_mouth_01__768x512.png",
+          "frames": 1,
+          "frame_size": [
+            768,
+            512
+          ],
+          "sha256": "0be41f1a0c84677fe0ccb9db7c8e6ef23e907c823c0b73bc007b857e3b547ce0",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "middle_left_01::omni": {
+          "state_id": "middle_left_01",
+          "direction": "omni",
+          "semantic_identity": [
+            "ritualant_underground",
+            "backdrop",
+            "occluder",
+            "environment",
+            "middle_left_01",
+            "omni"
+          ],
+          "path": "content/tiles/encounters/ritualant_set/underground/ritualant_underground__occluder__middle_left_01__768x512.png",
+          "frames": 1,
+          "frame_size": [
+            768,
+            512
+          ],
+          "sha256": "f7f2f5a7e4d89d0ad371f2a548d95ce2df8c980ae15a2a340b450c5ef4695c9b",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "middle_right_pillar_01::omni": {
+          "state_id": "middle_right_pillar_01",
+          "direction": "omni",
+          "semantic_identity": [
+            "ritualant_underground",
+            "backdrop",
+            "occluder",
+            "environment",
+            "middle_right_pillar_01",
+            "omni"
+          ],
+          "path": "content/tiles/encounters/ritualant_set/underground/ritualant_underground__occluder__middle_right_pillar_01__512x768.png",
+          "frames": 1,
+          "frame_size": [
+            512,
+            768
+          ],
+          "sha256": "e53fce7546f6f5bcbfc027e37bbb867e575e79dcc93fc7df25daf4406e1e14cf",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "mineral_haze_01::omni": {
+          "state_id": "mineral_haze_01",
+          "direction": "omni",
+          "semantic_identity": [
+            "ritualant_underground",
+            "backdrop",
+            "underlay",
+            "environment",
+            "mineral_haze_01",
+            "omni"
+          ],
+          "path": "content/tiles/encounters/ritualant_set/underground/ritualant_underground__underlay__mineral_haze_01__1536x1536.png",
+          "frames": 1,
+          "frame_size": [
+            1536,
+            1536
+          ],
+          "sha256": "cb66fc7e4a42747ba963018bc3da4b4e13cc535667e26a947af368ddaa5001b4",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "mineral_seep_01::omni": {
+          "state_id": "mineral_seep_01",
+          "direction": "omni",
+          "semantic_identity": [
+            "ritualant_underground",
+            "backdrop",
+            "prop",
+            "environment",
+            "mineral_seep_01",
+            "omni"
+          ],
+          "path": "content/tiles/encounters/ritualant_set/underground/ritualant_underground__prop__mineral_seep_01__256x192.png",
+          "frames": 1,
+          "frame_size": [
+            256,
+            192
+          ],
+          "sha256": "c26578043ad85a4e43ce814c333ad0b5a3777ed80cb7a8674cb61f95612cbd6d",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "rock_medium_01::omni": {
+          "state_id": "rock_medium_01",
+          "direction": "omni",
+          "semantic_identity": [
+            "ritualant_underground",
+            "backdrop",
+            "prop",
+            "environment",
+            "rock_medium_01",
+            "omni"
+          ],
+          "path": "content/tiles/encounters/ritualant_set/underground/ritualant_underground__prop__rock_medium_01__192x128.png",
+          "frames": 1,
+          "frame_size": [
+            192,
+            128
+          ],
+          "sha256": "8b4220af1c3ebf967afe67f04f3764803284b297440db9a28966b6e91da33344",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "rock_small_01::omni": {
+          "state_id": "rock_small_01",
+          "direction": "omni",
+          "semantic_identity": [
+            "ritualant_underground",
+            "backdrop",
+            "prop",
+            "environment",
+            "rock_small_01",
+            "omni"
+          ],
+          "path": "content/tiles/encounters/ritualant_set/underground/ritualant_underground__prop__rock_small_01__128x96.png",
+          "frames": 1,
+          "frame_size": [
+            128,
+            96
+          ],
+          "sha256": "4352aff1bb2ac47d6459b79097d10058fdeeb15ca9d4a10797e6682f280cd59f",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "service_rail_broken_01::omni": {
+          "state_id": "service_rail_broken_01",
+          "direction": "omni",
+          "semantic_identity": [
+            "ritualant_underground",
+            "backdrop",
+            "prop",
+            "environment",
+            "service_rail_broken_01",
+            "omni"
+          ],
+          "path": "content/tiles/encounters/ritualant_set/underground/ritualant_underground__prop__service_rail_broken_01__256x128.png",
+          "frames": 1,
+          "frame_size": [
+            256,
+            128
+          ],
+          "sha256": "89315f57bcb07f62954823495d4bcbf0d25759f307b477e2984dfa5cb40badb7",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "shaft_scroll_01::omni": {
+          "state_id": "shaft_scroll_01",
+          "direction": "omni",
+          "semantic_identity": [
+            "ritualant_underground",
+            "backdrop",
+            "lift",
+            "environment",
+            "shaft_scroll_01",
+            "omni"
+          ],
+          "path": "content/tiles/encounters/ritualant_set/underground/ritualant_underground__lift__shaft_scroll_01__256x1536.png",
+          "frames": 1,
+          "frame_size": [
+            256,
+            1536
+          ],
+          "sha256": "26fada473cf280d45aa943f894df512d9dc68a1e8fedf69c2984b2ab0e473523",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "south_right_01::omni": {
+          "state_id": "south_right_01",
+          "direction": "omni",
+          "semantic_identity": [
+            "ritualant_underground",
+            "backdrop",
+            "occluder",
+            "environment",
+            "south_right_01",
+            "omni"
+          ],
+          "path": "content/tiles/encounters/ritualant_set/underground/ritualant_underground__occluder__south_right_01__768x512.png",
+          "frames": 1,
+          "frame_size": [
+            768,
+            512
+          ],
+          "sha256": "44da2e36683b34fb2791800f1936fb56d3b1050aa5f3bf9036db2b781b4e9efd",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "stalagmite_tall_01::omni": {
+          "state_id": "stalagmite_tall_01",
+          "direction": "omni",
+          "semantic_identity": [
+            "ritualant_underground",
+            "backdrop",
+            "prop",
+            "environment",
+            "stalagmite_tall_01",
+            "omni"
+          ],
+          "path": "content/tiles/encounters/ritualant_set/underground/ritualant_underground__prop__stalagmite_tall_01__160x256.png",
+          "frames": 1,
+          "frame_size": [
+            160,
+            256
+          ],
+          "sha256": "001d15dfe3d4eec09e490de5e3e5eaf03bbf486538bc8561adafe5d6a358f39d",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "stalagmite_wide_01::omni": {
+          "state_id": "stalagmite_wide_01",
+          "direction": "omni",
+          "semantic_identity": [
+            "ritualant_underground",
+            "backdrop",
+            "prop",
+            "environment",
+            "stalagmite_wide_01",
+            "omni"
+          ],
+          "path": "content/tiles/encounters/ritualant_set/underground/ritualant_underground__prop__stalagmite_wide_01__256x160.png",
+          "frames": 1,
+          "frame_size": [
+            256,
+            160
+          ],
+          "sha256": "74e1bf568b2d0efef2538fda4498cb512d00a90f91e9c84ea2f2159e92914b09",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "wet_ground_detail_01::omni": {
+          "state_id": "wet_ground_detail_01",
+          "direction": "omni",
+          "semantic_identity": [
+            "ritualant_underground",
+            "backdrop",
+            "overlay",
+            "environment",
+            "wet_ground_detail_01",
+            "omni"
+          ],
+          "path": "content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__wet_ground_detail_01__384x256.png",
+          "frames": 1,
+          "frame_size": [
+            384,
+            256
+          ],
+          "sha256": "4e061bc25c01c86aa3bffd643a7ee7e9f653649efa6344454667e3cbae2aa6c3",
+          "provenance": "authored",
+          "source_asset": null
         }
       }
     },

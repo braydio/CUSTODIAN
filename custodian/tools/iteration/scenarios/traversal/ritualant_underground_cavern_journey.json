@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "id": "traversal/ritualant_underground_cavern_journey",
+  "description": "Full deterministic visual review of the production Ritualant arrival and northbound cavern journey.",
+  "scene": "res://tools/validation/fixtures/ritualant_underground_landing_visual_moment.tscn",
+  "seed": 104729,
+  "duration_ticks": 430,
+  "simulation": {"physics_hz": 60, "warmup_ticks": 4, "max_wall_seconds": 40, "pause_during_setup": true},
+  "capture": {"width": 1280, "height": 720, "fps": 60, "audio": false, "start_tick": 0, "end_tick": 429, "contact_sheet_ticks": [10, 63, 90, 180, 300, 410], "required_keyframes": true, "background": "opaque"},
+  "setup": {"remove_nodes": [], "roles": {"fixture": {"node_path": "."}, "level": {"node_path": "ForlornRitualantUnderground"}, "operator": {"node_path": "Operator"}}, "spawns": [], "properties": [], "processing": [], "fixture": {"id": "ritualant_underground_cavern_journey", "config": {}}},
+  "timeline": [{"tick": 10, "action": "fixture_command", "name": "begin_landing_descent"}, {"tick": 110, "action": "fixture_command", "name": "hold_apron_center"}, {"tick": 150, "action": "fixture_command", "name": "begin_north_walk"}, {"tick": 425, "action": "finish"}],
+  "probes": [{"id": "fixture_state", "role": "fixture", "fields": ["canonical_apron_loaded", "checkpoint"], "ticks": [0, 63, 90, 125, 180, 300, 410], "required": true}, {"id": "operator_path", "role": "operator", "fields": ["global_position"], "ticks": [90, 125, 180, 300, 410], "required": true}],
+  "assertions": [{"type": "role_exists", "role": "level", "severity": "error"}, {"type": "role_exists", "role": "operator", "severity": "error"}, {"type": "probe_compare", "probe": "fixture_state", "tick": 0, "field": "canonical_apron_loaded", "op": "eq", "value": true, "severity": "error"}, {"type": "no_unreleased_inputs", "severity": "error"}, {"type": "output_exists", "path": "telemetry.json", "severity": "error"}],
+  "stable_fingerprint": {"event_payload_fields": {}, "counters": [], "probes": ["operator_path"], "position_quantum_px": 0.25, "float_quantum": 0.0001},
+  "tags": ["traversal", "ash_bell", "forlorn_ritualant", "visual_review", "production_art", "cavern_journey"]
+}

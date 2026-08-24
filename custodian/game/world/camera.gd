@@ -240,6 +240,29 @@ func set_presentation_framing(active: bool, framing_offset := Vector2.ZERO, fram
 		_current_aim_camera_lead = Vector2.ZERO
 
 
+func set_presentation_framing_transition(
+	framing_offset: Vector2,
+	framing_zoom: Vector2,
+	duration_sec: float
+) -> void:
+	var start_offset := _presentation_offset if _presentation_framing_active else Vector2.ZERO
+	var start_zoom := zoom
+	set_presentation_framing(true, start_offset, start_zoom)
+	var duration := maxf(0.0, duration_sec)
+	if duration <= 0.0:
+		set_presentation_framing(true, framing_offset, framing_zoom)
+		return
+	var tween := create_tween().set_parallel(true)
+	tween.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+	tween.tween_property(self, "_presentation_offset", framing_offset, duration)
+	tween.tween_property(
+		self,
+		"_presentation_zoom",
+		framing_zoom.clamp(min_zoom, max_zoom),
+		duration
+	)
+
+
 func has_presentation_framing() -> bool:
 	return _presentation_framing_active
 

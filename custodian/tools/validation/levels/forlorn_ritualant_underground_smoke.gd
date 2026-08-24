@@ -45,13 +45,21 @@ func _run() -> void:
 	if level.get_node_or_null("PropsRoot/LowerLiftAssembly") == null:
 		errors.append("shared lower lift assembly is missing")
 	var apron := level.get_node_or_null("BackgroundRoot/LandingShelfApron") as Sprite2D
-	var production_apron: Texture2D = apron.texture if apron != null else null
 	if apron == null:
 		errors.append("landing shelf apron presentation node is missing")
-	elif bool(level.call("moment_forge_set_landing_apron_candidate", &"CANONICAL")):
-		errors.append("landing apron candidate override escaped Moment Forge authorization")
-	elif apron.texture != production_apron:
-		errors.append("rejected landing apron override changed production texture authority")
+	elif apron.position != Vector2(0.0, 1600.0):
+		errors.append("landing shelf apron is not at canonical production position")
+	if level.has_method("moment_forge_set_landing_apron_candidate"):
+		errors.append("retired landing apron candidate override still exists")
+	var ground := level.get_node_or_null("BackgroundRoot/PlayableGround") as Polygon2D
+	if ground == null:
+		errors.append("playable polygon ground is missing")
+	elif ground.polygon != level.PLAYABLE_BOUNDARY_LOOP or ground.uv.size() != ground.polygon.size():
+		errors.append("playable ground does not use route polygon and matching UVs")
+	for path: String in ["UnderlayRoot", "BackgroundRoot", "PropsRoot/CavernPropsRoot", "OcclusionRoot", "ArrivalDescentRoot"]:
+		var visual_root := level.get_node_or_null(path)
+		if visual_root != null and visual_root.find_child("CollisionShape2D", true, false) != null:
+			errors.append("presentation root %s contains collision" % path)
 	var underlay_quad := level.get_node_or_null(
 		"PlayableRoot/ForlornRitualantSite/ForlornRitualantShaderFX/VoidUnderlay/RoomSizedQuad"
 	) as TextureRect

@@ -100,7 +100,30 @@
       "layout": "copy",
       "frame_width": 1024,
       "frame_height": 1024
-    }
+    },
+    "mineral_haze_01": {"required":true,"layer":"underlay","action_group":"environment","variant":"mineral_haze_01","layout":"copy","frame_width":1536,"frame_height":1536},
+    "chapel_haze_01": {"required":true,"layer":"underlay","action_group":"environment","variant":"chapel_haze_01","layout":"copy","frame_width":1024,"frame_height":768},
+    "chapel_connector_apron_01": {"required":true,"layer":"overlay","action_group":"environment","variant":"chapel_connector_apron_01","layout":"copy","frame_width":512,"frame_height":384},
+    "chapel_outer_blend_01": {"required":true,"layer":"overlay","action_group":"environment","variant":"chapel_outer_blend_01","layout":"copy","frame_width":1280,"frame_height":1024},
+    "wet_ground_detail_01": {"required":true,"layer":"overlay","action_group":"environment","variant":"wet_ground_detail_01","layout":"copy","frame_width":384,"frame_height":256},
+    "fracture_detail_01": {"required":true,"layer":"overlay","action_group":"environment","variant":"fracture_detail_01","layout":"copy","frame_width":256,"frame_height":256},
+    "shaft_scroll_01": {"required":true,"layer":"lift","action_group":"environment","variant":"shaft_scroll_01","layout":"copy","frame_width":256,"frame_height":1536},
+    "arrival_back_01": {"required":true,"layer":"lift","action_group":"environment","variant":"arrival_back_01","layout":"copy","frame_width":768,"frame_height":1536},
+    "arrival_fore_01": {"required":true,"layer":"lift","action_group":"environment","variant":"arrival_fore_01","layout":"copy","frame_width":768,"frame_height":1536},
+    "landing_mouth_01": {"required":true,"layer":"lift","action_group":"environment","variant":"landing_mouth_01","layout":"copy","frame_width":768,"frame_height":512},
+    "distant_chapel_01": {"required":true,"layer":"vista","action_group":"environment","variant":"distant_chapel_01","layout":"copy","frame_width":320,"frame_height":160},
+    "south_right_01": {"required":true,"layer":"occluder","action_group":"environment","variant":"south_right_01","layout":"copy","frame_width":768,"frame_height":512},
+    "middle_left_01": {"required":true,"layer":"occluder","action_group":"environment","variant":"middle_left_01","layout":"copy","frame_width":768,"frame_height":512},
+    "middle_right_pillar_01": {"required":true,"layer":"occluder","action_group":"environment","variant":"middle_right_pillar_01","layout":"copy","frame_width":512,"frame_height":768},
+    "deep_left_01": {"required":true,"layer":"occluder","action_group":"environment","variant":"deep_left_01","layout":"copy","frame_width":768,"frame_height":512},
+    "chapel_threshold_01": {"required":true,"layer":"occluder","action_group":"environment","variant":"chapel_threshold_01","layout":"copy","frame_width":1024,"frame_height":512},
+    "rock_small_01": {"required":true,"layer":"prop","action_group":"environment","variant":"rock_small_01","layout":"copy","frame_width":128,"frame_height":96},
+    "rock_medium_01": {"required":true,"layer":"prop","action_group":"environment","variant":"rock_medium_01","layout":"copy","frame_width":192,"frame_height":128},
+    "stalagmite_tall_01": {"required":true,"layer":"prop","action_group":"environment","variant":"stalagmite_tall_01","layout":"copy","frame_width":160,"frame_height":256},
+    "stalagmite_wide_01": {"required":true,"layer":"prop","action_group":"environment","variant":"stalagmite_wide_01","layout":"copy","frame_width":256,"frame_height":160},
+    "service_rail_broken_01": {"required":true,"layer":"prop","action_group":"environment","variant":"service_rail_broken_01","layout":"copy","frame_width":256,"frame_height":128},
+    "chain_anchor_01": {"required":true,"layer":"prop","action_group":"environment","variant":"chain_anchor_01","layout":"copy","frame_width":160,"frame_height":192},
+    "mineral_seep_01": {"required":true,"layer":"prop","action_group":"environment","variant":"mineral_seep_01","layout":"copy","frame_width":256,"frame_height":192}
   },
 
   "aliases": {
@@ -112,7 +135,14 @@
     "landing_apron": "landing_shelf_apron_01",
     "south_rim": "cavern_rim_south_01",
     "middle_rim": "cavern_rim_middle_01",
-    "north_rim": "cavern_rim_north_01"
+    "north_rim": "cavern_rim_north_01",
+    "mineral_haze": "mineral_haze_01",
+    "chapel_haze": "chapel_haze_01",
+    "chapel_apron": "chapel_connector_apron_01",
+    "chapel_blend": "chapel_outer_blend_01",
+    "shaft_scroll": "shaft_scroll_01",
+    "landing_mouth": "landing_mouth_01",
+    "distant_chapel": "distant_chapel_01"
   },
 
   "consumers": [

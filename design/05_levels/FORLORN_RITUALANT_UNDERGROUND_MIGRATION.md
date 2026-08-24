@@ -118,11 +118,11 @@ The wrapper owns session snapshot delegation for the encounter. Event pressure,
 thread/fountain/resolution state, knowledge/dialogue flags, one-shots, resolved
 anchors, and local completion state survive snapshot-and-unload re-entry.
 
-## Assets
+## Production presentation assets
 
-No new production art is required for the authority migration. Future staged-descent assets remain separate production work and must use exact paths under:
+Asset V2 family `ritualant_underground_environment` owns 32 canonical states under `custodian/content/tiles/encounters/ritualant_set/underground/`. The runtime stack comprises the repeating far void; three feathered parallax depth panels; mineral and chapel haze; an exact polygon-clipped repeating ground; three cavern rims and the balanced landing apron; chapel connector/outer-blend overlays; fixed wet/fracture details; a non-repeating surface shaft and paired underground arrival shaft; a one-shot distant-chapel proxy; five collisionless foreground occluders; and seven collisionless prop types.
 
-`custodian/content/tiles/encounters/ritualant_set/underground/`
+Authored camera zones progress through landing, upper descent, deep cavern, chapel approach, and gameplay release. These presentation systems do not alter `PLAYABLE_BOUNDARY_LOOP`, lift/route authority, navigation, collision, or Ritualant encounter state.
 
 ## Validation
 

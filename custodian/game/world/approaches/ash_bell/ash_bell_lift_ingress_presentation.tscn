@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://c6w255ro2sm4f" path="res://game/world/approaches/ash_bell/ash_bell_lift_ingress_presentation.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://hl4ph67i17x8" path="res://content/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__mountain_cliff_mass__768x512.png" id="2_mountain"]
 [ext_resource type="Texture2D" uid="uid://b4qfc57eqtbod" path="res://assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__entrance_shell__idle__s__1f__256x256.png" id="3_shell"]
-[ext_resource type="Texture2D" uid="uid://6qbao5efpk4" path="res://assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__shaft_scroll_tile__idle__s__1f__256x512.png" id="4_shaft"]
+[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__lift__shaft_scroll_01__256x1536.png" id="4_shaft"]
 [ext_resource type="Texture2D" uid="uid://csjxsa2ppv7po" path="res://assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_chain__idle__s__1f__64x256.png" id="5_chain"]
 [ext_resource type="Texture2D" uid="uid://om83n78xjlhq" path="res://assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress_fx__descent_dust__burst__omni__6f__192x192.png" id="8_dust"]
 [ext_resource type="Texture2D" uid="uid://c0dejt7411drm" path="res://assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__foreground_occluder__idle__s__1f__256x256.png" id="9_occluder"]
@@ -154,7 +154,7 @@ polygon = PackedVector2Array(-118, -246, -82, -266, -28, -258, 28, -268, 82, -25
 
 [node name="ShaftScroll" type="Sprite2D" parent="RearMassRoot/ShaftWindow" unique_id=657390576]
 texture_filter = 1
-texture_repeat = 2
+texture_repeat = 1
 position = Vector2(0, -106)
 texture = ExtResource("4_shaft")
 region_enabled = true

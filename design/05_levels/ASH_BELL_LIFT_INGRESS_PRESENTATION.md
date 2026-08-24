@@ -181,8 +181,10 @@ Runtime art lives under
 `custodian/assets/sprites/world/ingress/ash_bell/`; source generations are
 preserved under `source/generated/`. Runtime PNGs use exact filename
 dimensions, alpha outside isolated sprites, lossless compression, no mipmaps,
-and nearest CanvasItem filtering. The shaft uses enabled texture repeat and a
-mirrored vertical construction to reduce the scrolling seam. The static
+and nearest CanvasItem filtering. The shaft uses the canonical `256x1536`
+`ritualant_underground__lift__shaft_scroll_01` strip with texture repeat disabled.
+Descent still travels down-screen while sampling progressively positive texture Y;
+ascent reverses both operations. Cavern route progression remains up-screen. The static
 entrance shell contains no lift platform or active lamp.
 
 ## Connector generation contract

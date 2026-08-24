@@ -79,7 +79,7 @@ func play_descent(actor: Node2D) -> void:
 	dust_burst.play(&"burst")
 	var lift_target_y := lift_root.position.y + descent_distance
 	var shaft_start_y := shaft_scroll.region_rect.position.y
-	var shaft_target_y := shaft_start_y - shaft_scroll_distance
+	var shaft_target_y := shaft_start_y + shaft_scroll_distance
 	var reveal_duration := descent_duration * 0.25
 	var hide_duration := descent_duration - reveal_duration
 	var reveal_distance := descent_distance * 0.25
@@ -138,7 +138,7 @@ func play_ascent(actor: Node2D) -> void:
 	_playing = true
 	lift_root.position = _lift_start_position + Vector2(0.0, descent_distance)
 	shaft_scroll.region_rect = Rect2(
-		_shaft_start_rect.position - Vector2(0.0, shaft_scroll_distance),
+		_shaft_start_rect.position + Vector2(0.0, shaft_scroll_distance),
 		_shaft_start_rect.size
 	)
 	_set_platform_vibrating(true)

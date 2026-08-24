@@ -20,10 +20,7 @@ const CHAPEL_CONNECTOR := Rect2(-96.0, -768.0, 192.0, 128.0)
 const CAVERN_DEEPER_DIRECTION := Vector2.UP
 const LIFT_DESCENT_SCREEN_DIRECTION := Vector2.DOWN
 const LIFT_ASCENT_SCREEN_DIRECTION := Vector2.UP
-const MOMENT_APRON_CANDIDATE_PATHS := {
-	&"CRISP": "res://asset_drop/source_work/ritualant_scene/ritualant_landing_shelf_apron_crisp.png",
-	&"BALANCED": "res://asset_drop/source_work/ritualant_scene/ritualant_landing_shelf_apron_balanced.png",
-}
+const DISTANT_PROXY_FADE_REGION := Rect2(-192.0, 1280.0, 384.0, 160.0)
 
 var PLAYABLE_BOUNDARY_LOOP := PackedVector2Array([
 	Vector2(-128,1376), Vector2(-160,1280), Vector2(-288,1184), Vector2(-384,1024), Vector2(-416,832), Vector2(-352,640), Vector2(-224,480), Vector2(-64,320), Vector2(64,160), Vector2(96,-64), Vector2(32,-256), Vector2(-96,-416), Vector2(-224,-576), Vector2(-96,-704), Vector2(-304,-760), Vector2(-480,-896), Vector2(-512,-1152), Vector2(-456,-1384), Vector2(-320,-1496), Vector2(-112,-1536), Vector2(112,-1536), Vector2(320,-1496), Vector2(456,-1384), Vector2(512,-1152), Vector2(480,-896), Vector2(304,-760), Vector2(96,-704), Vector2(224,-576), Vector2(224,-352), Vector2(320,-192), Vector2(352,32), Vector2(320,224), Vector2(192,416), Vector2(32,576), Vector2(-96,736), Vector2(-128,928), Vector2(-64,1088), Vector2(64,1216), Vector2(128,1280), Vector2(128,1376), Vector2(224,1408), Vector2(320,1472), Vector2(352,1600), Vector2(352,1760), Vector2(288,1824), Vector2(-288,1824), Vector2(-352,1760), Vector2(-352,1600), Vector2(-320,1472), Vector2(-224,1408),
@@ -65,6 +62,12 @@ const AUTHORING_MARKERS := {
 @onready var departure_black: ColorRect = $DepartureOverlay/Black
 @onready var departure_epilogue: Label = $DepartureOverlay/Epilogue
 @onready var landing_shelf_apron: Sprite2D = $BackgroundRoot/LandingShelfApron
+@onready var playable_ground: Polygon2D = $BackgroundRoot/PlayableGround
+@onready var distant_chapel_proxy: Sprite2D = $UnderlayRoot/DistantChapelProxy
+@onready var shaft_arrival_back: Sprite2D = $ArrivalDescentRoot/ShaftArrivalBack
+@onready var shaft_arrival_fore: Sprite2D = $ArrivalDescentRoot/ShaftArrivalFore
+@onready var landing_mouth: Sprite2D = $ArrivalDescentRoot/LandingMouth
+@onready var landing_dust: Sprite2D = $ArrivalDescentRoot/LandingDust
 
 var _departure_running := false
 var _departure_actor: Node = null
@@ -75,34 +78,38 @@ var _bound_operator: Node = null
 var _arrival_running := false
 var _arrival_actor: Node = null
 var _arrival_rig: OperatorPresentationRig2D = null
-var _production_landing_shelf_apron: Texture2D = null
+var _distant_chapel_retired := false
+var _proxy_was_south_of_fade_region := true
 
 
 func _ready() -> void:
-	_production_landing_shelf_apron = landing_shelf_apron.texture
+	_build_playable_ground()
+	distant_chapel_proxy.modulate.a = 0.70
+	_distant_chapel_retired = false
+	set_process(true)
 	call_deferred("_bind_active_operator")
 
 
-func moment_forge_set_landing_apron_candidate(candidate_id: StringName) -> bool:
-	if not OS.is_debug_build() or not OS.get_cmdline_user_args().has("--moment-forge"):
-		return false
-	var normalized := StringName(str(candidate_id).strip_edges().to_upper())
-	if normalized in [&"", &"CANONICAL"]:
-		landing_shelf_apron.texture = _production_landing_shelf_apron
-		return true
-	if not MOMENT_APRON_CANDIDATE_PATHS.has(normalized):
-		push_warning("Unknown Ritualant apron review candidate: %s" % normalized)
-		return false
-	var path := str(MOMENT_APRON_CANDIDATE_PATHS[normalized])
-	if not ResourceLoader.exists(path):
-		push_error("Ritualant apron review candidate is missing: %s" % path)
-		return false
-	var candidate := load(path) as Texture2D
-	if candidate == null:
-		push_error("Ritualant apron review candidate could not load: %s" % path)
-		return false
-	landing_shelf_apron.texture = candidate
-	return true
+func _build_playable_ground() -> void:
+	playable_ground.polygon = PLAYABLE_BOUNDARY_LOOP
+	var ground_uv := PackedVector2Array()
+	for point in PLAYABLE_BOUNDARY_LOOP:
+		ground_uv.append(point - LEVEL_BOUNDS.position)
+	playable_ground.uv = ground_uv
+
+
+func _process(_delta: float) -> void:
+	if _distant_chapel_retired:
+		return
+	var actor := get_tree().get_first_node_in_group("player") as Node2D
+	if actor == null:
+		return
+	var local_actor := to_local(actor.global_position)
+	if DISTANT_PROXY_FADE_REGION.has_point(local_actor) and _proxy_was_south_of_fade_region:
+		_distant_chapel_retired = true
+		var tween := create_tween()
+		tween.tween_property(distant_chapel_proxy, "modulate:a", 0.0, 0.70)
+	_proxy_was_south_of_fade_region = local_actor.y >= DISTANT_PROXY_FADE_REGION.end.y
 
 
 func activate_route_node(actor: Node, spawn_id: StringName) -> bool:
@@ -124,6 +131,12 @@ func _begin_arrival_sequence(actor: Node) -> void:
 		return
 	_suspend_arrival_actor(actor)
 	departure_black.modulate.a = 1.0
+	shaft_arrival_back.visible = true
+	shaft_arrival_fore.visible = true
+	shaft_arrival_back.modulate.a = 1.0
+	shaft_arrival_fore.modulate.a = 1.0
+	shaft_arrival_back.region_rect.position.y = 0.0
+	shaft_arrival_fore.region_rect.position.y = 0.0
 	lower_lift.position = LOWER_LIFT_ARRIVAL_START
 	lower_lift.set_vibrating(true)
 	var camera := get_viewport().get_camera_2d()
@@ -132,10 +145,21 @@ func _begin_arrival_sequence(actor: Node) -> void:
 	await get_tree().create_timer(0.18).timeout
 	var fade := create_tween()
 	fade.tween_property(departure_black, "modulate:a", 0.0, 0.55)
-	var lift_tween := create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	var lift_tween := create_tween().set_parallel(true).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	lift_tween.tween_property(lower_lift, "position", LOWER_LIFT_DOCK, LOWER_LIFT_TRAVEL_SEC)
+	lift_tween.tween_property(shaft_arrival_back, "region_rect:position:y", 448.0, LOWER_LIFT_TRAVEL_SEC)
+	lift_tween.tween_property(shaft_arrival_fore, "region_rect:position:y", 576.0, LOWER_LIFT_TRAVEL_SEC)
 	await lift_tween.finished
 	lower_lift.set_vibrating(false)
+	landing_dust.visible = true
+	var shaft_fade := create_tween().set_parallel(true)
+	shaft_fade.tween_property(shaft_arrival_back, "modulate:a", 0.0, 0.18)
+	shaft_fade.tween_property(shaft_arrival_fore, "modulate:a", 0.0, 0.18)
+	shaft_fade.finished.connect(func() -> void:
+		shaft_arrival_back.visible = false
+		shaft_arrival_fore.visible = false
+		landing_dust.visible = false
+	)
 	await get_tree().create_timer(0.12).timeout
 	_finish_arrival_sequence()
 
@@ -221,6 +245,12 @@ func begin_lift_departure(actor: Node, exit: InteractableLevelExit2D) -> void:
 		_departure_actor = null
 		return
 	_suspend_departure_actor(actor)
+	shaft_arrival_back.visible = true
+	shaft_arrival_fore.visible = true
+	shaft_arrival_back.modulate.a = 1.0
+	shaft_arrival_fore.modulate.a = 1.0
+	shaft_arrival_back.region_rect.position.y = 448.0
+	shaft_arrival_fore.region_rect.position.y = 576.0
 	lower_lift.set_vibrating(true)
 	await get_tree().create_timer(0.25).timeout
 	var ascent_target_y := _departure_lift_start.y - LOWER_LIFT_TRAVEL_DISTANCE
@@ -231,7 +261,11 @@ func begin_lift_departure(actor: Node, exit: InteractableLevelExit2D) -> void:
 	var fade_ascent := create_tween().set_parallel(true).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	fade_ascent.tween_property(lower_lift, "position:y", ascent_target_y, 0.65)
 	fade_ascent.tween_property(departure_black, "modulate:a", 1.0, 0.585)
+	fade_ascent.tween_property(shaft_arrival_back, "region_rect:position:y", 0.0, 0.65)
+	fade_ascent.tween_property(shaft_arrival_fore, "region_rect:position:y", 0.0, 0.65)
 	await fade_ascent.finished
+	shaft_arrival_back.visible = false
+	shaft_arrival_fore.visible = false
 	var lines: Array[String] = ritualant_site.get_departure_lines() if ritualant_site != null else []
 	for line in lines:
 		departure_epilogue.text = "Forlorn-Ritualant: %s" % line

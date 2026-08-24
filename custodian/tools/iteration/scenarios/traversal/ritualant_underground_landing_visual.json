@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "id": "traversal/ritualant_underground_landing_visual",
-  "description": "Deterministic full-capture review of the Ritualant lower-lift landing and temporary CRISP/BALANCED apron candidates.",
+  "description": "Deterministic full-capture review of the canonical Ritualant lower-lift landing production art.",
   "scene": "res://tools/validation/fixtures/ritualant_underground_landing_visual_moment.tscn",
   "seed": 104729,
   "duration_ticks": 430,
@@ -17,7 +17,7 @@
     "spawns": [],
     "properties": [],
     "processing": [],
-    "fixture": {"id": "ritualant_underground_landing_visual", "config": {"candidate_env": "CUSTODIAN_RITUALANT_APRON_CANDIDATE"}}
+    "fixture": {"id": "ritualant_underground_landing_visual", "config": {}}
   },
   "timeline": [
     {"tick": 10, "action": "fixture_command", "name": "begin_landing_descent"},
@@ -26,16 +26,16 @@
     {"tick": 425, "action": "finish"}
   ],
   "probes": [
-    {"id": "fixture_state", "role": "fixture", "fields": ["candidate_applied", "checkpoint"], "ticks": [0, 63, 90, 125, 180, 300, 410], "required": true},
+    {"id": "fixture_state", "role": "fixture", "fields": ["canonical_apron_loaded", "checkpoint"], "ticks": [0, 63, 90, 125, 180, 300, 410], "required": true},
     {"id": "operator_path", "role": "operator", "fields": ["global_position"], "ticks": [90, 125, 180, 300, 410], "required": true}
   ],
   "assertions": [
     {"type": "role_exists", "role": "level", "severity": "error"},
     {"type": "role_exists", "role": "operator", "severity": "error"},
-    {"type": "probe_compare", "probe": "fixture_state", "tick": 0, "field": "candidate_applied", "op": "eq", "value": true, "severity": "error"},
+    {"type": "probe_compare", "probe": "fixture_state", "tick": 0, "field": "canonical_apron_loaded", "op": "eq", "value": true, "severity": "error"},
     {"type": "no_unreleased_inputs", "severity": "error"},
     {"type": "output_exists", "path": "telemetry.json", "severity": "error"}
   ],
   "stable_fingerprint": {"event_payload_fields": {}, "counters": [], "probes": ["operator_path"], "position_quantum_px": 0.25, "float_quantum": 0.0001},
-  "tags": ["traversal", "ash_bell", "forlorn_ritualant", "lift", "visual_review", "apron_candidate"]
+  "tags": ["traversal", "ash_bell", "forlorn_ritualant", "lift", "visual_review", "production_art"]
 }
