@@ -2073,7 +2073,7 @@
             1280,
             1024
           ],
-          "sha256": "0c13592dc228297e15efc575a80ec3e9f766cc37209952ace0fab6ef8f130113",
+          "sha256": "cfe2baa4174fbf8f671d1d39e7ff78c51bbfbdddd3d7d741432c96046351de35",
           "provenance": "authored",
           "source_asset": null
         },
@@ -2094,7 +2094,7 @@
             1024,
             512
           ],
-          "sha256": "45222589daebde1cab430d6220fc0f281ee8263f9d5e165c70035f4db1137208",
+          "sha256": "be8b9d063224db2688dbb84523c312990e037545e78d35206e437f851d71a728",
           "provenance": "authored",
           "source_asset": null
         },
@@ -2115,7 +2115,7 @@
             768,
             512
           ],
-          "sha256": "a0c3b38fb32c189fd00e2ae5b8a089da2e04cbad64594d788cbda36e4dfa70ee",
+          "sha256": "f2236a5afb5790661d1ba12601edf2dd1f185988cb6d65aaab5a1ab83fb7efb4",
           "provenance": "authored",
           "source_asset": null
         },
@@ -2136,7 +2136,7 @@
             320,
             160
           ],
-          "sha256": "5e8381df6cb4bd70b07f69fc82413cace04077c1337ddff72b04307b585a811a",
+          "sha256": "35ca8ff145bc1973851c6a661f2049f00f60318c572262f05c97ee8e795eb64f",
           "provenance": "authored",
           "source_asset": null
         },
@@ -2199,7 +2199,7 @@
             768,
             512
           ],
-          "sha256": "f7f2f5a7e4d89d0ad371f2a548d95ce2df8c980ae15a2a340b450c5ef4695c9b",
+          "sha256": "4f23b2bd5f551d8d854efe11a659addfc1cd7429f46683cbc86e094cefa0e1fb",
           "provenance": "authored",
           "source_asset": null
         },
@@ -2220,7 +2220,7 @@
             512,
             768
           ],
-          "sha256": "e53fce7546f6f5bcbfc027e37bbb867e575e79dcc93fc7df25daf4406e1e14cf",
+          "sha256": "cdf7530947b3853cbd1653d1bcd95c3d39d8de9743f5eee608705724eaefb596",
           "provenance": "authored",
           "source_asset": null
         },
@@ -2283,7 +2283,7 @@
             192,
             128
           ],
-          "sha256": "8b4220af1c3ebf967afe67f04f3764803284b297440db9a28966b6e91da33344",
+          "sha256": "aba7c07083c08d7f4770bd05a7858f52b9a705d5635bca8d90d6f697df362ba9",
           "provenance": "authored",
           "source_asset": null
         },
@@ -2304,7 +2304,7 @@
             128,
             96
           ],
-          "sha256": "4352aff1bb2ac47d6459b79097d10058fdeeb15ca9d4a10797e6682f280cd59f",
+          "sha256": "16cf359b90648051f28bead6f9fd12588010b33663fd7840273e395f494fffa0",
           "provenance": "authored",
           "source_asset": null
         },
@@ -2367,7 +2367,7 @@
             768,
             512
           ],
-          "sha256": "44da2e36683b34fb2791800f1936fb56d3b1050aa5f3bf9036db2b781b4e9efd",
+          "sha256": "9f013c2c876e3d936e30da3406881b2cbc4a4b26b62be277cd8e7e89d06952b8",
           "provenance": "authored",
           "source_asset": null
         },
@@ -2388,7 +2388,7 @@
             160,
             256
           ],
-          "sha256": "001d15dfe3d4eec09e490de5e3e5eaf03bbf486538bc8561adafe5d6a358f39d",
+          "sha256": "490f8c69da32c93897478cee9465459358fda71268604bf5b23571fa9790315a",
           "provenance": "authored",
           "source_asset": null
         },
@@ -2409,7 +2409,7 @@
             256,
             160
           ],
-          "sha256": "74e1bf568b2d0efef2538fda4498cb512d00a90f91e9c84ea2f2159e92914b09",
+          "sha256": "d16dbae6e35c5642cb8ab2ae4754a3092f8d208ff94e7605697ebaa01093c388",
           "provenance": "authored",
           "source_asset": null
         },
