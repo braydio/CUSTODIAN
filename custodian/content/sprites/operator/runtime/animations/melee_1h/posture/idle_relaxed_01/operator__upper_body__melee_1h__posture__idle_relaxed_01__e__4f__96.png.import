@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://81rkrsmu3je2"
-path="res://.godot/imported/operator__modular_weapon_vigil_dagger__melee_1h__relaxed_idle_01__e__4f__96.png-a339138a575893200000831040aa39f0.ctex"
+uid="uid://dqny5btddix3b"
+path="res://.godot/imported/operator__upper_body__melee_1h__posture__idle_relaxed_01__e__4f__96.png-68e1a8f7a737277aa264d048c1473cd3.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/_pipeline/inbox/operator__modular_weapon_vigil_dagger__melee_1h__relaxed_idle_01__e__4f__96.png"
-dest_files=["res://.godot/imported/operator__modular_weapon_vigil_dagger__melee_1h__relaxed_idle_01__e__4f__96.png-a339138a575893200000831040aa39f0.ctex"]
+source_file="res://content/sprites/operator/runtime/animations/melee_1h/posture/idle_relaxed_01/operator__upper_body__melee_1h__posture__idle_relaxed_01__e__4f__96.png"
+dest_files=["res://.godot/imported/operator__upper_body__melee_1h__posture__idle_relaxed_01__e__4f__96.png-68e1a8f7a737277aa264d048c1473cd3.ctex"]
 
 [params]
 

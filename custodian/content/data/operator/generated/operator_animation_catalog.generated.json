@@ -753,6 +753,54 @@
         }
       }
     },
+    "melee_1h/cosmetic/relaxed_idle_01/e": {
+      "profile": "melee_1h",
+      "group": "cosmetic",
+      "action": "relaxed_idle_01",
+      "direction": "e",
+      "layers": {
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/cosmetic/relaxed_idle_01/operator__lower_body__melee_1h__cosmetic__relaxed_idle_01__e__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/cosmetic/relaxed_idle_01/operator__upper_body__melee_1h__cosmetic__relaxed_idle_01__e__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
+    "melee_1h/cosmetic/relaxed_idle_01/w": {
+      "profile": "melee_1h",
+      "group": "cosmetic",
+      "action": "relaxed_idle_01",
+      "direction": "w",
+      "layers": {
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/cosmetic/relaxed_idle_01/operator__lower_body__melee_1h__cosmetic__relaxed_idle_01__w__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/cosmetic/relaxed_idle_01/operator__upper_body__melee_1h__cosmetic__relaxed_idle_01__w__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
     "melee_1h/posture/draw_01/e": {
       "profile": "melee_1h",
       "group": "posture",
@@ -865,6 +913,54 @@
         }
       }
     },
+    "melee_1h/posture/idle_relaxed_01/e": {
+      "profile": "melee_1h",
+      "group": "posture",
+      "action": "idle_relaxed_01",
+      "direction": "e",
+      "layers": {
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/posture/idle_relaxed_01/operator__lower_body__melee_1h__posture__idle_relaxed_01__e__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/posture/idle_relaxed_01/operator__upper_body__melee_1h__posture__idle_relaxed_01__e__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
+    "melee_1h/posture/idle_relaxed_01/w": {
+      "profile": "melee_1h",
+      "group": "posture",
+      "action": "idle_relaxed_01",
+      "direction": "w",
+      "layers": {
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/posture/idle_relaxed_01/operator__lower_body__melee_1h__posture__idle_relaxed_01__w__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/posture/idle_relaxed_01/operator__upper_body__melee_1h__posture__idle_relaxed_01__w__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
     "melee_1h/posture/stance_01/e": {
       "profile": "melee_1h",
       "group": "posture",
@@ -945,6 +1041,38 @@
         }
       }
     },
+    "melee_1h_dagger/cosmetic/relaxed_idle_01/e": {
+      "profile": "melee_1h_dagger",
+      "group": "cosmetic",
+      "action": "relaxed_idle_01",
+      "direction": "e",
+      "layers": {
+        "weapon": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_dagger/cosmetic/relaxed_idle_01/operator__weapon__melee_1h_dagger__cosmetic__relaxed_idle_01__e__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
+    "melee_1h_dagger/cosmetic/relaxed_idle_01/w": {
+      "profile": "melee_1h_dagger",
+      "group": "cosmetic",
+      "action": "relaxed_idle_01",
+      "direction": "w",
+      "layers": {
+        "weapon": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_dagger/cosmetic/relaxed_idle_01/operator__weapon__melee_1h_dagger__cosmetic__relaxed_idle_01__w__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
     "melee_1h_dagger/posture/draw_01/e": {
       "profile": "melee_1h_dagger",
       "group": "posture",
@@ -972,6 +1100,38 @@
           "frames": 4,
           "frame_size": [
             128,
+            96
+          ]
+        }
+      }
+    },
+    "melee_1h_dagger/posture/idle_relaxed_01/e": {
+      "profile": "melee_1h_dagger",
+      "group": "posture",
+      "action": "idle_relaxed_01",
+      "direction": "e",
+      "layers": {
+        "weapon": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_dagger/posture/idle_relaxed_01/operator__weapon__melee_1h_dagger__posture__idle_relaxed_01__e__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
+    "melee_1h_dagger/posture/idle_relaxed_01/w": {
+      "profile": "melee_1h_dagger",
+      "group": "posture",
+      "action": "idle_relaxed_01",
+      "direction": "w",
+      "layers": {
+        "weapon": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_dagger/posture/idle_relaxed_01/operator__weapon__melee_1h_dagger__posture__idle_relaxed_01__w__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
             96
           ]
         }

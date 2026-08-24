@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b8fer32nci0a2"
-path="res://.godot/imported/operator__modular_lower_body__melee_1h__relaxed_idle_01__e__4f__96.png-400367103f059193d075b603184f5f61.ctex"
+uid="uid://ce531y3svfs6s"
+path="res://.godot/imported/operator__lower_body__melee_1h__cosmetic__relaxed_idle_01__e__4f__96.png-ba2fe892541ecbdc2f71cd806198c78e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/_pipeline/inbox/operator__modular_lower_body__melee_1h__relaxed_idle_01__e__4f__96.png"
-dest_files=["res://.godot/imported/operator__modular_lower_body__melee_1h__relaxed_idle_01__e__4f__96.png-400367103f059193d075b603184f5f61.ctex"]
+source_file="res://content/sprites/operator/source/animations/melee_1h/cosmetic/relaxed_idle_01/operator__lower_body__melee_1h__cosmetic__relaxed_idle_01__e__4f__96.png"
+dest_files=["res://.godot/imported/operator__lower_body__melee_1h__cosmetic__relaxed_idle_01__e__4f__96.png-ba2fe892541ecbdc2f71cd806198c78e.ctex"]
 
 [params]
 
