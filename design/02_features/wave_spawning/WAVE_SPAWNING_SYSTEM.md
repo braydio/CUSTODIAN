@@ -11,6 +11,13 @@
 
 ## 1. System Overview
 
+Ambient procgen camps treat marker positions as desired positions only. The
+existing `procgen_walkability_provider` resolves each camp member through
+`find_safe_runtime_walkable_global()` when queued and again before
+instantiation. Mobile hostiles are parented under the unscaled world enemy
+container, never transformed procgen markers. Rejected slots are resolved
+attempts and do not retry every frame.
+
 The current runtime uses assault waves as a temporary delivery mechanism for hostile pressure, but the target feel is not arcade horde defense. Assaults should arrive as tactical incursions with short bursts of contact and meaningful lulls between them.
 
 Current runtime slice:

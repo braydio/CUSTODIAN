@@ -183,6 +183,7 @@ func _handle_body_hit(body: Node, impact_position: Vector2, surface_normal: Vect
 		else:
 			result_variant = body.call("receive_projectile_hit", direct_damage, team)
 		var was_blocked: bool = _extract_blocked_result(result_variant)
+		_notify_direct_hit_awareness(body)
 		_confirm_operator_direct_hit(result_variant, hit_modifiers)
 		_report_operator_confirmed_damage(result_variant, body)
 		_apply_game_feel(body, 0.0)
@@ -211,6 +212,7 @@ func _handle_body_hit(body: Node, impact_position: Vector2, surface_normal: Vect
 			bullet_hit_strength,
 			reaction_damage
 		)
+		_notify_direct_hit_awareness(body)
 		_confirm_operator_direct_hit(damage_result, hit_modifiers)
 		_report_operator_confirmed_damage(damage_result, body)
 		_apply_game_feel(body, 60.0)
@@ -223,6 +225,18 @@ func _handle_body_hit(body: Node, impact_position: Vector2, surface_normal: Vect
 		queue_free()
 		return true
 	return false
+
+
+func _notify_direct_hit_awareness(target: Node) -> void:
+	if team != "player":
+		return
+	if shooter == null or not is_instance_valid(shooter):
+		return
+	if target == null or not target.is_in_group("enemy"):
+		return
+	var behavior := target.get_node_or_null("EnemyBehaviorStateMachine")
+	if behavior != null and behavior.has_method("force_notice"):
+		behavior.call("force_notice", shooter)
 
 
 func _prepare_operator_direct_hit(target: Node) -> Dictionary:

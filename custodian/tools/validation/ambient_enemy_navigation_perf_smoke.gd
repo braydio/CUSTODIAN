@@ -13,6 +13,10 @@ const GENERATED_CAMP_GROUP := &"generated_procgen_ambient_camp"
 
 var _path_callback_count := 0
 
+class WalkabilityProvider extends Node:
+	func _ready() -> void: add_to_group("procgen_walkability_provider")
+	func find_safe_runtime_walkable_global(position: Vector2, _radius: int) -> Vector2: return position
+
 
 func _init() -> void:
 	call_deferred("_run")
@@ -22,6 +26,7 @@ func _run() -> void:
 	var test_root := Node2D.new()
 	test_root.name = "AmbientEnemyNavigationPerfSmoke"
 	root.add_child(test_root)
+	test_root.add_child(WalkabilityProvider.new())
 
 	var enemy_template := Node2D.new()
 	var enemy_scene := PackedScene.new()
@@ -64,7 +69,7 @@ func _run() -> void:
 		)
 	var spawned_nodes := test_root.get_children().filter(
 		func(child: Node) -> bool:
-			return child != spawner
+			return child != spawner and child is Node2D
 	)
 	assert(spawned_nodes.size() == 4)
 	for index in spawned_nodes.size():

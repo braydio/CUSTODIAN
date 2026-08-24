@@ -6416,10 +6416,10 @@ func _update_melee_hitbox_transform() -> void:
 	if hitbox_root == null or weapon_hitbox == null or weapon_hitbox_shape == null:
 		return
 	hitbox_root.rotation = _melee_forward.angle()
-	weapon_hitbox.position = Vector2(_melee_range_current * 0.62, 0.0)
+	weapon_hitbox.position = Vector2(_melee_range_current * 0.50, 0.0)
 	if weapon_hitbox_shape.shape is CircleShape2D:
 		var circle := weapon_hitbox_shape.shape as CircleShape2D
-		circle.radius = max(8.0, _melee_range_current * 0.44)
+		circle.radius = max(8.0, _melee_range_current * 0.55)
 
 
 func _sync_melee_hitbox_window_from_animation() -> void:

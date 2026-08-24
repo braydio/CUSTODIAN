@@ -121,12 +121,19 @@ func _on_contract_generated(contract: Dictionary) -> void:
 	for tile in candidate_tiles:
 		if tile.distance_to(spawn_tile) < float(min_distance_from_spawn_tiles):
 			continue
+		var desired_position := _tile_to_world(map_instance, tile)
+		var spawn_position := _resolve_runtime_walkable_spawn(desired_position, 8)
+		if spawn_position == Vector2.INF:
+			_obs_increment("ambient_critter_spawn_rejected_unwalkable")
+			continue
+		if spawn_position.distance_squared_to(desired_position) > 1.0:
+			_obs_increment("ambient_critter_spawn_projected")
 		var critter := critter_scene.instantiate()
 		if critter == null:
 			continue
 		container.add_child(critter)
 		if critter is Node2D:
-			(critter as Node2D).global_position = _tile_to_world(map_instance, tile)
+			(critter as Node2D).global_position = spawn_position
 			_apply_critter_variation(critter as Node2D, spawned)
 			_set_critter_home(critter as Node2D)
 		_spawned_critters.append(critter)
@@ -152,11 +159,13 @@ func _try_ambient_spawn() -> void:
 	
 	# Pick random position around player
 	var spawn_offset := Vector2.RIGHT.rotated(_critter_rng.randf() * TAU) * _critter_rng.randf_range(ambient_spawn_radius_min, ambient_spawn_radius_max)
-	var spawn_pos: Vector2 = player.global_position + spawn_offset
-	
-	# Check if valid spawn location (not too close to walls, etc.)
-	if not _is_valid_spawn_position(spawn_pos):
+	var desired_spawn_pos: Vector2 = player.global_position + spawn_offset
+	var spawn_pos := _resolve_runtime_walkable_spawn(desired_spawn_pos, 8)
+	if spawn_pos == Vector2.INF:
+		_obs_increment("ambient_critter_spawn_rejected_unwalkable")
 		return
+	if spawn_pos.distance_squared_to(desired_spawn_pos) > 1.0:
+		_obs_increment("ambient_critter_spawn_projected")
 	
 	var critter := critter_scene.instantiate()
 	if critter == null:
@@ -180,15 +189,46 @@ func _get_player() -> Node:
 	return get_node_or_null("/root/GameRoot/World/Player")
 
 
-func _is_valid_spawn_position(pos: Vector2) -> bool:
-	# Check distance from player - don't spawn too close
-	var player := _get_player()
-	if player:
-		if pos.distance_to(player.global_position) < 100.0:
-			return false
-	
-	# Could add wall/collision checks here
-	return true
+func _resolve_runtime_walkable_spawn(
+	desired_position: Vector2,
+	radius_tiles: int = 8
+) -> Vector2:
+	var best := Vector2.INF
+	var best_distance_sq := INF
+	var providers := get_tree().get_nodes_in_group("procgen_walkability_provider")
+	for provider in providers:
+		if provider == null or not provider.has_method("find_safe_runtime_walkable_global"):
+			continue
+		var candidate: Variant = provider.call(
+			"find_safe_runtime_walkable_global", desired_position, radius_tiles
+		)
+		if not candidate is Vector2:
+			continue
+		var position := candidate as Vector2
+		if position == Vector2.INF:
+			continue
+		var distance_sq := desired_position.distance_squared_to(position)
+		if distance_sq < best_distance_sq:
+			best = position
+			best_distance_sq = distance_sq
+	if best != Vector2.INF:
+		return best
+	if not providers.is_empty():
+		return Vector2.INF
+	var navigation := get_node_or_null("/root/GameRoot/NavigationSystem")
+	if (
+		navigation != null
+		and navigation.has_method("is_in_walkable_area")
+		and bool(navigation.call("is_in_walkable_area", desired_position))
+	):
+		return desired_position
+	return Vector2.INF
+
+
+func _obs_increment(counter_name: StringName) -> void:
+	var observatory := get_node_or_null("/root/DevObservatory")
+	if observatory != null and observatory.has_method("increment"):
+		observatory.call("increment", counter_name, 1)
 
 
 func _collect_candidate_tiles(level_data: Dictionary) -> Array[Vector2i]:

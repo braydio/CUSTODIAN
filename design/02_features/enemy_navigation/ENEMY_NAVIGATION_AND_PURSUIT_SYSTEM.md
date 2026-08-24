@@ -9,6 +9,11 @@ Enemy navigation must preserve responsive pursuit without allowing ambient or wa
 
 ## Runtime ownership
 
+Spawn safety is upstream of navigation: ambient hostiles and Shrumbs use the
+existing procgen runtime-walkability provider before instantiation. This does
+not change `NavigationSystem`, patrol scoring, or the authoritative empty-path
+rule; an empty path stops an enemy rather than permitting direct travel.
+
 - `AmbientEnemySpawner` owns the global ambient actor-spawn queue. It instantiates at most one queued ambient combat actor per physics frame, assigns the local transform before `add_child()`, assigns a stable spawn ordinal, and prewarms grunt body/FX animation libraries during world startup. Marker processing is idempotent: deferred startup and `ContractWorldLoader` may both request processing, but marker metadata and generated-child detection permit exactly one camp and count suppressed duplicates.
 - `NavigationSystem` owns the authoritative `AStar2D` graph, navigation revision, deterministic grid line-of-sight, and path smoothing.
 - `EnemyNavigationBroker`, owned beneath `NavigationSystem`, admits at most two synchronous A* searches per physics frame and coalesces repeated pending requests from one actor.

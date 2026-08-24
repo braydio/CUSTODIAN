@@ -65,3 +65,8 @@ back into targeting.
 Hard lock, camera orbit, target-relative strafing, target cycling, homing,
 teleportation, enlarged hitboxes, and guaranteed damage are non-goals. Hard
 lock remains an optional follow-up after soft-target feel review.
+
+The overlap broad phase is centered at `0.50 × authored range` with a
+`0.55 × authored range` radius so point-blank forward contacts are reliable.
+Distance, facing, authored range, and per-contact-window checks remain damage
+authority, so this geometry grants no additional attack reach.

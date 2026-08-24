@@ -19,6 +19,8 @@ Scalable **Vehicle Registry System** supporting `Faction -> Domain -> Chassis ->
 - Operator can enter/exit with Interact
 - While piloted, movement input controls vehicle; while unpiloted, controls Operator
 - Vehicle uses `actor_kind = "vehicle"` for terrain movement multiplier
+- Vehicle exit requires a body-sized collision-free, traversable adjacent candidate; an impossible exit preserves piloted state
+- Movement profiles apply frame-rate-independent `turn_response` while preserving the explicit reverse multiplier rule
 - Missing optional InputMap actions don't crash
 - Unsupported domains valid in data but refuse spawn unless `allow_placeholder_spawn == true`
 - Display name generated from classification fields

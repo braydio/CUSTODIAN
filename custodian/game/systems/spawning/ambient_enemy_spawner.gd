@@ -9,6 +9,7 @@ const GENERATED_CAMP_GROUP := &"generated_procgen_ambient_camp"
 const CAMP_CREATED_META := &"ambient_enemy_camp_created"
 
 @export var enemy_scene: PackedScene
+@export var enemy_container_path: NodePath = NodePath("/root/GameRoot/World/Enemies")
 @export var marker_group: StringName = &"ambient_enemy_camp_marker"
 @export var min_distance_from_player_start_px: float = 420.0
 @export var min_camp_spacing_px: float = 700.0
@@ -70,10 +71,16 @@ func _spawn_queued_enemy(request: Dictionary) -> void:
 	var parent := request.get("parent") as Node
 	if scene == null or parent == null or not is_instance_valid(parent):
 		return
+	var requested_position := request.get("spawn_position", Vector2.ZERO) as Vector2
+	var spawn_position := resolve_runtime_walkable_spawn(requested_position, 4)
+	if spawn_position == Vector2.INF:
+		_obs_increment("ambient_enemy_spawn_rejected_unwalkable")
+		return
+	if spawn_position.distance_squared_to(requested_position) > 1.0:
+		_obs_increment("ambient_enemy_spawn_projected")
 	var enemy := scene.instantiate() as Node2D
 	if enemy == null or not parent is Node2D:
 		return
-	var spawn_position := request.get("spawn_position", Vector2.ZERO) as Vector2
 	enemy.position = (parent as Node2D).to_local(spawn_position)
 	enemy.set_meta("stable_spawn_ordinal", int(request.get("spawn_ordinal", 0)))
 	parent.add_child(enemy)
@@ -91,6 +98,57 @@ func _spawn_queued_enemy(request: Dictionary) -> void:
 		_max_spawn_usec
 	)
 	_obs_set_gauge("ambient_enemy_spawn_queue_depth", _spawn_queue.size())
+
+
+func get_enemy_spawn_parent() -> Node2D:
+	var container := get_node_or_null(enemy_container_path) as Node2D
+	if container != null:
+		return container
+	return get_node_or_null("/root/GameRoot/World") as Node2D
+
+
+func record_spawn_projection() -> void:
+	_obs_increment("ambient_enemy_spawn_projected")
+
+
+func record_spawn_rejection() -> void:
+	_obs_increment("ambient_enemy_spawn_rejected_unwalkable")
+
+
+func resolve_runtime_walkable_spawn(
+	desired_position: Vector2,
+	radius_tiles: int = 6
+) -> Vector2:
+	var best := Vector2.INF
+	var best_distance_sq := INF
+	var providers := get_tree().get_nodes_in_group("procgen_walkability_provider")
+	for provider in providers:
+		if provider == null or not provider.has_method("find_safe_runtime_walkable_global"):
+			continue
+		var candidate: Variant = provider.call(
+			"find_safe_runtime_walkable_global", desired_position, radius_tiles
+		)
+		if not candidate is Vector2:
+			continue
+		var position := candidate as Vector2
+		if position == Vector2.INF:
+			continue
+		var distance_sq := desired_position.distance_squared_to(position)
+		if distance_sq < best_distance_sq:
+			best = position
+			best_distance_sq = distance_sq
+	if best != Vector2.INF:
+		return best
+	if not providers.is_empty():
+		return Vector2.INF
+	var navigation := get_node_or_null("/root/GameRoot/NavigationSystem")
+	if (
+		navigation != null
+		and navigation.has_method("is_in_walkable_area")
+		and bool(navigation.call("is_in_walkable_area", desired_position))
+	):
+		return desired_position
+	return Vector2.INF
 
 
 func _prewarm_grunt_animation_library() -> void:

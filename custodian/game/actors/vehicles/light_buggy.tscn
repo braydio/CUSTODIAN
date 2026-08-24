@@ -35,7 +35,7 @@ shape = SubResource("CircleShape2D_entry")
 script = ExtResource("3_seat")
 
 [node name="ExitMarker" type="Marker2D" parent="." unique_id=804282256]
-position = Vector2(48, 4)
+position = Vector2(56, 4)
 
 [node name="Hardpoints" type="Node2D" parent="." unique_id=800960612]
 

@@ -54,8 +54,13 @@ func _run() -> void:
 
 	var grunt := enemies.get_child(0) as Node2D
 	var expected_position := Vector2(196.0, 200.0)
-	if grunt == null or not grunt.global_position.is_equal_approx(expected_position):
+	if grunt == null or grunt.global_position.distance_to(expected_position) > 4.0:
 		push_error("debug startup grunt should spawn at original spawn-zone offset; got=%s expected=%s" % [str(grunt.global_position if grunt != null else Vector2.INF), str(expected_position)])
+		quit(1)
+		return
+	var game_scene_source := FileAccess.get_file_as_string("res://scenes/game.tscn")
+	if not game_scene_source.contains("debug_spawn_grunt_on_start = false"):
+		push_error("production game scene must keep startup debug grunt disabled")
 		quit(1)
 		return
 

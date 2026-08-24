@@ -195,15 +195,24 @@ func _apply_movement(input_vector: Vector2, brake: bool, delta: float) -> void:
 	var max_speed_value := float(movement_profile.get("max_speed", 175.0))
 	var acceleration := float(movement_profile.get("acceleration", 420.0))
 	var deceleration := float(movement_profile.get("deceleration", 520.0))
+	var turn_response := float(movement_profile.get("turn_response", 10.0))
 	if brake:
 		input_vector = Vector2.ZERO
 		deceleration *= 1.65
 	var target_velocity := Vector2.ZERO
 	if input_vector != Vector2.ZERO:
 		var reverse_multiplier := 1.0
-		if facing_direction != Vector2.ZERO and input_vector.dot(facing_direction) < -0.25:
+		var target_direction := input_vector.normalized()
+		var reversing := facing_direction != Vector2.ZERO and target_direction.dot(facing_direction) < -0.25
+		if reversing:
 			reverse_multiplier = float(movement_profile.get("reverse_multiplier", 0.45))
-		target_velocity = input_vector * max_speed_value * reverse_multiplier * _query_movement_surface_multiplier()
+		else:
+			var current_direction := velocity.normalized() if velocity.length_squared() > 0.01 else facing_direction
+			if current_direction == Vector2.ZERO:
+				current_direction = target_direction
+			var turn_alpha := 1.0 - exp(-maxf(0.01, turn_response) * delta)
+			target_direction = current_direction.slerp(target_direction, turn_alpha).normalized()
+		target_velocity = target_direction * max_speed_value * reverse_multiplier * _query_movement_surface_multiplier()
 		velocity = velocity.move_toward(target_velocity, acceleration * delta)
 	else:
 		velocity = velocity.move_toward(Vector2.ZERO, deceleration * delta)
@@ -224,14 +233,19 @@ func _query_movement_surface_multiplier() -> float:
 
 
 func _find_exit_position() -> Vector2:
-	var base_position := global_position + Vector2(42.0, 0.0)
+	var candidate_radius := 56.0
+	var base_position := global_position + Vector2(candidate_radius, 0.0)
 	if exit_marker != null:
 		base_position = exit_marker.global_position
 	if _is_exit_position_clear(base_position):
 		return base_position
 	var offsets: Array[Vector2] = [
-		Vector2(42, 0), Vector2(-42, 0), Vector2(0, 42), Vector2(0, -42),
-		Vector2(42, 42), Vector2(-42, 42), Vector2(42, -42), Vector2(-42, -42)
+		Vector2(candidate_radius, 0), Vector2(-candidate_radius, 0),
+		Vector2(0, candidate_radius), Vector2(0, -candidate_radius),
+		Vector2(candidate_radius, candidate_radius), Vector2(-candidate_radius, candidate_radius),
+		Vector2(candidate_radius, -candidate_radius), Vector2(-candidate_radius, -candidate_radius),
+		Vector2(candidate_radius * 1.5, 0), Vector2(-candidate_radius * 1.5, 0),
+		Vector2(0, candidate_radius * 1.5), Vector2(0, -candidate_radius * 1.5)
 	]
 	for offset in offsets:
 		var candidate: Vector2 = global_position + offset
@@ -241,18 +255,45 @@ func _find_exit_position() -> Vector2:
 
 
 func _is_exit_position_clear(position: Vector2) -> bool:
+	if not _is_exit_position_traversable(position):
+		return false
 	var world := get_world_2d()
 	if world == null:
 		return true
-	var query := PhysicsPointQueryParameters2D.new()
-	query.position = position
-	query.collision_mask = 1
+	var pilot_shape_node := _get_pilot_collision_shape_node()
+	var shape: Shape2D = null
+	var local_offset := Vector2.ZERO
+	if pilot_shape_node != null and pilot_shape_node.shape != null:
+		shape = pilot_shape_node.shape.duplicate()
+		local_offset = pilot_shape_node.position
+	else:
+		var fallback := CapsuleShape2D.new()
+		fallback.radius = 12.0
+		fallback.height = 24.0
+		shape = fallback
+	var query := PhysicsShapeQueryParameters2D.new()
+	query.shape = shape
+	query.transform = Transform2D(0.0, position + local_offset)
+	query.collision_mask = _pilot_collision_mask if _pilot_collision_mask != 0 else 1
 	query.collide_with_areas = false
 	query.collide_with_bodies = true
-	var hits := world.direct_space_state.intersect_point(query, 4)
-	for hit in hits:
-		if Dictionary(hit).get("collider") != self:
-			return false
+	var exclusions: Array[RID] = [get_rid()]
+	if pilot is CollisionObject2D:
+		exclusions.append((pilot as CollisionObject2D).get_rid())
+	query.exclude = exclusions
+	return world.direct_space_state.intersect_shape(query, 8).is_empty()
+
+
+func _get_pilot_collision_shape_node() -> CollisionShape2D:
+	if pilot == null:
+		return null
+	return pilot.get_node_or_null("CollisionShape2D") as CollisionShape2D
+
+
+func _is_exit_position_traversable(position: Vector2) -> bool:
+	var navigation := get_node_or_null("/root/GameRoot/NavigationSystem")
+	if navigation != null and navigation.has_method("is_in_walkable_area"):
+		return bool(navigation.call("is_in_walkable_area", position))
 	return true
 
 

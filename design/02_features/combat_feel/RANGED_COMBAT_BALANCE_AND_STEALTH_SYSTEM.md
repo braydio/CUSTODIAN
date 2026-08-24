@@ -33,6 +33,7 @@ redirects a shot away from the accepted player aim point and never gates fire.
 - `NoiseEventBus` is a generic autoload. Gunshots emit one event per trigger pull, including muzzle-obstructed shots. Suppression scales radius but never makes a shot silent.
 - Operator stealth snapshots include sneak, sprint, firing, dodge, velocity, visibility, and movement-noise state. Gunshots use events rather than the ambient snapshot.
 - Existing enemy perception retains raycast LOS and now consumes noise events. Enemies investigate the event position rather than receiving permanent knowledge of the Operator.
+- A hostile that accepts a direct player projectile contact immediately enters its existing `force_notice(operator)` path, including blocked or zero-damage impacts. Nearby unstruck enemies remain governed by `NoiseEventBus` hearing.
 - Existing enemy behavior now tracks last seen/heard positions, pursuit memory, deterministic search offsets, home position, camp ID, and a leash. Hard leash applies after LOS is broken.
 - `AmbientEnemyCamp` supports authored activation-limited camps; `AmbientEnemySpawner` supports procgen/authored marker groups. Successful contract generation deterministically places two separated walkable camp markers, each configured for two hostile grunts outside wave spawning. The Sundered Keep approach layout separately authors one grunt in each vista subregion.
 - `get_weapon_status()` exposes canonical ammo, heat, overheat, noise, suppression, range values, and whether a ranged magazine is currently active while retaining legacy keys.

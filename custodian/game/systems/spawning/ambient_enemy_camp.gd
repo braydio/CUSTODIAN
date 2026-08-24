@@ -46,10 +46,19 @@ func spawn_camp() -> void:
 		var stable_offset := int((String(camp_id).hash() & 0x7fffffff) % (count_range + 1)) if count_range > 0 else 0
 		_planned_count = maxi(0, enemy_count_min + stable_offset)
 	var count := maxi(0, _planned_count - _queued_or_spawned_count)
-	var parent := get_parent()
 	var spawner := get_tree().get_first_node_in_group(
 		"ambient_enemy_spawn_scheduler"
 	)
+	var parent: Node2D = null
+	if spawner != null and spawner.has_method("get_enemy_spawn_parent"):
+		parent = spawner.call("get_enemy_spawn_parent") as Node2D
+	if parent == null:
+		parent = get_node_or_null("/root/GameRoot/World/Enemies") as Node2D
+	if parent == null:
+		parent = get_node_or_null("/root/GameRoot/World") as Node2D
+	if parent == null:
+		push_warning("AmbientEnemyCamp: no neutral world actor parent; camp spawn aborted")
+		return
 	if spawner != null:
 		var cap := int(spawner.get("max_active_ambient_enemies"))
 		var active := int(spawner.call("get_active_enemy_count")) \
@@ -59,14 +68,40 @@ func spawn_camp() -> void:
 		count = mini(count, maxi(0, cap - active - pending))
 	if count <= 0:
 		return
+	var resolved_positions: Array[Vector2] = []
 	for local_index in count:
 		var index := _queued_or_spawned_count + local_index
 		var angle := TAU * float(index) / float(maxi(1, _planned_count))
 		var radius := spawn_radius_px * (0.55 + 0.45 * float((index % 3) + 1) / 3.0)
-		var spawn_position := (
+		var desired_spawn_position := (
 			global_position
 			+ Vector2.RIGHT.rotated(angle) * radius
 		)
+		var spawn_position := Vector2.INF
+		if spawner != null and spawner.has_method("resolve_runtime_walkable_spawn"):
+			spawn_position = spawner.call(
+				"resolve_runtime_walkable_spawn", desired_spawn_position, 6
+			)
+		if spawn_position == Vector2.INF:
+			if spawner != null and spawner.has_method("record_spawn_rejection"):
+				spawner.call("record_spawn_rejection")
+			continue
+		if (
+			spawn_position.distance_squared_to(desired_spawn_position) > 1.0
+			and spawner != null
+			and spawner.has_method("record_spawn_projection")
+		):
+			spawner.call("record_spawn_projection")
+		var separated := spawn_position != Vector2.INF
+		for existing_position in resolved_positions:
+			if spawn_position.distance_squared_to(existing_position) < 28.0 * 28.0:
+				separated = false
+				break
+		if not separated:
+			if spawner != null and spawner.has_method("record_spawn_rejection"):
+				spawner.call("record_spawn_rejection")
+			continue
+		resolved_positions.append(spawn_position)
 		if spawner != null and spawner.has_method("queue_enemy_spawn"):
 			spawner.call(
 				"queue_enemy_spawn",
@@ -80,7 +115,7 @@ func spawn_camp() -> void:
 				Callable(self, "_on_enemy_spawned")
 			)
 		else:
-			_spawn_enemy_immediately(parent, spawn_position)
+			push_warning("AmbientEnemyCamp: spawn scheduler unavailable; camp slot rejected")
 	_queued_or_spawned_count += count
 	_spawned = _queued_or_spawned_count >= _planned_count
 	if _spawned:
