@@ -1,0 +1,25 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "ash_bell_overlap",
+  "kind": "tile",
+  "runtime": {
+    "domain": "tiles/ash_bell/lower_quarter",
+    "owner": "ash_bell_overlap"
+  },
+  "canvas": {
+    "width": 512,
+    "height": 512
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "idle": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "idle"
+    }
+  },
+  "aliases": {},
+  "consumers": []
+}

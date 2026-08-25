@@ -1,0 +1,25 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "station_ix_district",
+  "kind": "backdrop",
+  "runtime": {
+    "domain": "backgrounds/ash_bell/lower_quarter",
+    "owner": "station_ix_district"
+  },
+  "canvas": {
+    "width": 768,
+    "height": 768
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "idle": {
+      "required": true,
+      "layer": "background",
+      "action_group": "display",
+      "variant": "idle"
+    }
+  },
+  "aliases": {},
+  "consumers": []
+}

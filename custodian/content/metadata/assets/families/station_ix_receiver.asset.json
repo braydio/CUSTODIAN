@@ -1,0 +1,25 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "station_ix_receiver",
+  "kind": "world_prop",
+  "runtime": {
+    "domain": "sprites/environment/props/ash_bell/station_ix",
+    "owner": "station_ix_receiver"
+  },
+  "canvas": {
+    "width": 96,
+    "height": 96
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "idle": {
+      "required": true,
+      "layer": "body",
+      "action_group": "interaction",
+      "variant": "idle"
+    }
+  },
+  "aliases": {},
+  "consumers": []
+}
