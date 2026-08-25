@@ -1,0 +1,15 @@
+for f in \
+  meridian_civic_floor \
+  meridian_civic_wall \
+  meridian_civic_props \
+  ash_bell_overlap \
+  station_ix_district \
+  meridian_answer_pedestal \
+  station_ix_receiver \
+  station_ix_sync_core \
+  meridian_transit_descent \
+  meridian_civic_relay
+do
+    echo "========== $f =========="
+    python3 /home/braydenchaffee/Projects/CUSTODIAN/custodian/tools/assets/asset.py plan "$f" || exit 1
+done

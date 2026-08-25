@@ -13,11 +13,12 @@
   "direction_policy": "omni",
   "auto_mirror": false,
   "states": {
-    "idle": {
+    "landmark": {
       "required": true,
       "layer": "background",
       "action_group": "display",
-      "variant": "idle"
+      "variant": "landmark",
+      "layout": "copy"
     }
   },
   "aliases": {},

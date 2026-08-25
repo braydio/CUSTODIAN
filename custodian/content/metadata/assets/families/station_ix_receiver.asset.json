@@ -13,13 +13,18 @@
   "direction_policy": "omni",
   "auto_mirror": false,
   "states": {
-    "idle": {
+    "active": {
       "required": true,
       "layer": "body",
       "action_group": "interaction",
-      "variant": "idle"
+      "variant": "active",
+      "animation": true,
+      "fps": 9,
+      "layout": "horizontal_strip"
     }
   },
-  "aliases": {},
+  "aliases": {
+    "powered": "active"
+  },
   "consumers": []
 }

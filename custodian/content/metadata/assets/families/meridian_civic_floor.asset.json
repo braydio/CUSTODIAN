@@ -13,11 +13,12 @@
   "direction_policy": "omni",
   "auto_mirror": false,
   "states": {
-    "idle": {
+    "atlas": {
       "required": true,
       "layer": "body",
       "action_group": "tile",
-      "variant": "idle"
+      "variant": "atlas",
+      "layout": "copy"
     }
   },
   "aliases": {},
