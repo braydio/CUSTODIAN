@@ -45,6 +45,11 @@ Results on 2026-08-21:
 32px atlases across all three districts. Station landmark, pedestals, relays,
 West Gate slab, Station IX core/receiver, and transit ingress are integrated
 without changing geometry, navigation, topology, or state.
+The floor correction restricts generic civic paving to the approved clean/worn
+cell lists, zones market and road materials explicitly, keeps markings and
+ornaments as sparse authored overlays, deduplicates overlapping walkable-region
+draws, and uses an alpha-cleaned V2 runtime atlas prepared reproducibly from
+`asset_drop/source_work/meridian_civic_floor/`.
 `traversal/ash_bell_lower_quarter_opening` completed a full six-keyframe
 real-camera capture and manual review. Penitent combat population remains
 deliberately deferred because no approved canonical actor was identified.

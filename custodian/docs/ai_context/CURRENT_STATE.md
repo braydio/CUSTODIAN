@@ -773,6 +773,13 @@ Documentation updates this session:
   for geometry/navigation/state. The real-camera
   `traversal/ash_bell_lower_quarter_opening` fixture covers six route beats;
   Penitent encounter population remains deferred pending an approved actor.
+- Lower Quarter floor-atlas correction is live. Generic civic paving draws only
+  from the approved clean pool with deterministic ~12% worn variation; market
+  and road materials are zone-bound, while markings, row-seven ornaments,
+  drains, and technical cells are sparse authored overlays. The V2 runtime
+  atlas is prepared from `asset_drop/source_work/meridian_civic_floor/` by
+  removing only border-connected near-black negative space and one halo layer
+  from non-ground cells; 51 approved ground cells remain fully opaque.
 
 - Asset Pipeline V2.1 is the preferred semantic-family intake for non-Operator art. Data schemas register `world_prop`, enemy, tile, effect, vehicle, weapon, UI, and backdrop kinds; family V2 supports literal directional assets, deterministic authored-over-mirror precedence, copy/horizontal/vertical/explicit-grid layouts, multi-output plans, and a direction-safe V2 catalog. `enemy_grunt` and `void_cliff_face` are production contracts. Void cliff presentation now forms a one-cell frontier lip with deterministic outward-normal extrusion, typical two-to-four-cell bodies, sparse five-to-six-cell bodies, and suppression of tiny enclosed chasm pockets; its chasm semantics and `RuntimeWalkableBoundary` collision remain untouched, while Observatory exposes frontier, painted-cell, and ratio gauges. Execution still delegates to the mature runtime-ready and sprite-manifest backends, while Operator retains its specialized pipeline. Consumer binding remains explicit, `.godot/` cache and unbounded delegated post-process side effects are not transactionally rolled back, and watch mode remains deferred.
 - Content directory stabilization now has a first migration pass: `res://content/README.md` documents stable content domains, `docs/ASSET_LAYOUT_CONVENTION.md` defines duplicate/migration safety rules, and `custodian/tools/validation/content_asset_audit.py` reports loose content-root files, loose sprite/tile-domain files, unregistered quarantine files, and exact duplicate groups. The loose Road of Witnesses map now lives under `res://content/levels/hub/`; loose terminal/operator/enemy-scout/tile source files now live under owner-specific `source/` folders; and prior `res://content/unregistered/` vault art now lives under `res://content/props/gothic/vault_dressing/source/unregistered/` for later manifest promotion.

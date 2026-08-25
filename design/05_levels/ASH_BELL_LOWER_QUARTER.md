@@ -247,6 +247,14 @@ deterministic selection; atlas art never owns collision, walkability,
 navigation, exits, or route state. `AuthoredBlockoutGrid2D` remains geometry and
 navigation authority with production drawing suppressed.
 
+The Meridian civic floor atlas uses quiet opaque ground pools rather than the
+full 256-cell sheet: clean civic slabs dominate normal paving, worn slabs remain
+low-frequency, and market/road materials are restricted to authored districts.
+Transit markings, row-seven civic ornaments, drains, machine details, and amber
+technical cells are authored overlays only. The reproducible source-work prep
+removes border-connected near-black negative space and one adjacent halo layer
+from non-ground cells while preserving all approved ground cells opaque.
+
 The Lower Quarter integrates the 768×768 Station IX landmark, eight 96×96
 Answer pedestals with a physically missing/damaged IX, and 96×96 civic relays.
 Wrong Street uses fixed local, seam, and imported bands with mismatched curb and
@@ -271,13 +279,12 @@ West Gate Works session state is now:
 
 ## Next Agent Slice
 
-**Goal:** add the reviewed real-camera Moment Forge fixture, approve sightline
-captures, and populate deterministic authored pressure encounters only after a
+**Goal:** populate deterministic authored pressure encounters only after a
 canonically honest production actor identity is available.
 
 **Constraints:** preserve authored geometry, local 32-unit scale, route state
 keys, camera-safe compositions, and authorial ambiguity. Do not promote faction
 theology into cosmological fact.
 
-**Acceptance:** in-engine spatial review approves the graybox first; subsequent
-art and combat work retains all focused route/layout/state validation.
+**Acceptance:** subsequent combat work retains the approved production-art
+sightlines and all focused route/layout/state validation.
