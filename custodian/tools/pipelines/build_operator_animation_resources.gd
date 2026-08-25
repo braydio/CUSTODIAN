@@ -36,7 +36,7 @@ func _build() -> bool:
 			var animation := StringName("%s/%s" % [semantic_key, layer])
 			frames.add_animation(animation)
 			frames.set_animation_speed(animation, 12.0)
-			frames.set_animation_loop(animation, true)
+			frames.set_animation_loop(animation, _should_loop_animation(semantic_key))
 			for frame_index in range(frame_count):
 				var atlas := AtlasTexture.new()
 				atlas.atlas = texture
@@ -48,3 +48,29 @@ func _build() -> bool:
 		return false
 	print("built Operator catalog SpriteFrames: %s" % OUTPUT_PATH)
 	return true
+
+
+func _should_loop_animation(semantic_key: String) -> bool:
+	var parts := semantic_key.split("/")
+	if parts.size() < 3:
+		return false
+	var group := parts[1]
+	var action := parts[2]
+	match group:
+		"locomotion":
+			return not action.contains("hitreact")
+		"posture":
+			return not (
+				action.begins_with("draw_")
+				or action.begins_with("ready_up_")
+				or action.begins_with("relax_")
+				or action.begins_with("sheathe_")
+			)
+		"defense":
+			return action.contains("block_hold")
+		"attack", "reaction", "transition", "interaction":
+			return false
+		_:
+			# Preserve the legacy cosmetic catalog until those entries receive
+			# authored semantic groups of their own.
+			return true

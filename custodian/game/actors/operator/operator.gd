@@ -2006,7 +2006,7 @@ func _install_melee_posture_catalog_frames() -> void:
 		return
 	modular_lower_body_sprite.sprite_frames = modular_lower_body_sprite.sprite_frames.duplicate(true)
 	modular_upper_body_sprite.sprite_frames = modular_upper_body_sprite.sprite_frames.duplicate(true)
-	for action in ["draw_weapon_01", "idle_ready_01", "idle_relaxed_01"]:
+	for action in ["draw_01", "idle_ready_01", "idle_relaxed_01"]:
 		for suffix in ["e", "w"]:
 			for layer in ["lower_body", "upper_body"]:
 				var animation := StringName("melee_1h/posture/%s/%s/%s" % [action, suffix, layer])
@@ -2028,7 +2028,7 @@ func _install_melee_posture_weapon_frames(
 	else:
 		frames = frames.duplicate(true)
 	melee_weapon_overlay_sprite.sprite_frames = frames
-	for action in ["draw_weapon_01", "idle_ready_01", "idle_relaxed_01"]:
+	for action in ["draw_01", "idle_ready_01", "idle_relaxed_01"]:
 		for suffix in ["e", "w"]:
 			var animation := StringName(
 				"%s/posture/%s/%s/weapon" % [weapon_profile, action, suffix]
@@ -2056,17 +2056,57 @@ func _copy_catalog_animation(source: SpriteFrames, target: SpriteFrames, animati
 
 func start_equip_weapon_presentation() -> void:
 	_melee_draw_presentation_active = false
-	if not _is_melee_loadout_active() or using_unarmed or modular_lower_body_sprite == null:
+	if not _is_melee_loadout_active() \
+	or using_unarmed \
+	or modular_lower_body_sprite == null \
+	or modular_upper_body_sprite == null:
 		return
-	var frames: SpriteFrames = modular_lower_body_sprite.sprite_frames
-	var draw_animation := &"melee_1h/posture/draw_weapon_01/e/lower_body"
-	if frames == null or not _has_playable_sprite_animation(frames, draw_animation):
+	var suffix := "w" if visual_idle_direction.x < -0.05 else "e"
+	var lower_animation := StringName(
+		"melee_1h/posture/draw_01/%s/lower_body" % suffix
+	)
+	var upper_animation := StringName(
+		"melee_1h/posture/draw_01/%s/upper_body" % suffix
+	)
+	if not _has_playable_sprite_animation(
+		modular_lower_body_sprite.sprite_frames,
+		lower_animation
+	) \
+	or not _has_playable_sprite_animation(
+		modular_upper_body_sprite.sprite_frames,
+		upper_animation
+	):
 		return
+	var weapon_definition := _get_equipped_primary_weapon_definition() as OperatorWeaponDefinition
+	var weapon_animation := &""
+	var uses_authored_weapon_overlay := false
+	if weapon_definition != null \
+	and weapon_definition.weapon_presentation_mode != "socketed_static":
+		weapon_animation = StringName(
+			"%s/posture/draw_01/%s/weapon"
+			% [String(weapon_definition.get_animation_profile()), suffix]
+		)
+		uses_authored_weapon_overlay = _has_playable_sprite_animation(
+			melee_weapon_overlay_sprite.sprite_frames if melee_weapon_overlay_sprite != null else null,
+			weapon_animation
+		)
+		if weapon_definition.weapon_presentation_mode == "authored_overlay" \
+		and not uses_authored_weapon_overlay:
+			return
 	_hide_modular_locomotion_layers()
 	animated_sprite.visible = false
 	modular_lower_body_sprite.visible = true
-	modular_lower_body_sprite.flip_h = visual_idle_direction.x < -0.05
-	modular_lower_body_sprite.play(draw_animation)
+	modular_upper_body_sprite.visible = true
+	modular_lower_body_sprite.flip_h = false
+	modular_upper_body_sprite.flip_h = false
+	modular_lower_body_sprite.play(lower_animation)
+	modular_upper_body_sprite.play(upper_animation)
+	if uses_authored_weapon_overlay:
+		melee_weapon_overlay_sprite.visible = true
+		melee_weapon_overlay_sprite.flip_h = false
+		melee_weapon_overlay_sprite.play(weapon_animation)
+		if primary_weapon_sprite != null:
+			primary_weapon_sprite.visible = false
 	_melee_draw_presentation_active = true
 	if _melee_posture_resolver != null:
 		_melee_posture_resolver.begin_draw_grace()
@@ -2076,6 +2116,12 @@ func is_equip_weapon_presentation_complete() -> bool:
 	if not _melee_draw_presentation_active:
 		return true
 	if modular_lower_body_sprite != null and modular_lower_body_sprite.is_playing():
+		return false
+	if modular_upper_body_sprite != null and modular_upper_body_sprite.is_playing():
+		return false
+	if melee_weapon_overlay_sprite != null \
+	and String(melee_weapon_overlay_sprite.animation).contains("/posture/draw_01/") \
+	and melee_weapon_overlay_sprite.is_playing():
 		return false
 	_melee_draw_presentation_active = false
 	return true

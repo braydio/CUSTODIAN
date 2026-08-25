@@ -849,22 +849,6 @@
         }
       }
     },
-    "melee_1h/posture/draw_weapon_01/e": {
-      "profile": "melee_1h",
-      "group": "posture",
-      "action": "draw_weapon_01",
-      "direction": "e",
-      "layers": {
-        "lower_body": {
-          "path": "res://content/sprites/operator/runtime/animations/melee_1h/posture/draw_weapon_01/operator__lower_body__melee_1h__posture__draw_weapon_01__e__4f__96.png",
-          "frames": 4,
-          "frame_size": [
-            96,
-            96
-          ]
-        }
-      }
-    },
     "melee_1h/posture/idle_ready_01/e": {
       "profile": "melee_1h",
       "group": "posture",

@@ -159,15 +159,21 @@ idle
  [presentation resolves melee_ready]
 ```
 
-The four-frame sword draw sheet already produced lives at:
+The canonical four-frame draw package lives under the generated `draw_01`
+families:
 
 ```text
-custodian/content/sprites/operator/new_operator/modular/melee_1h/
-  operator__modular_lower_body__melee_1h__draw_weapon_01__e__4f__96x128.png
+melee_1h/posture/draw_01/{e,w}
+  lower_body  4f 128×96
+  upper_body  4f 128×96
+
+<weapon animation_profile>/posture/draw_01/{e,w}
+  weapon      4f 128×96
 ```
 
-It should be promoted through the operator ingest pipeline into the runtime
-body/upper-body stack as the `melee_draw` animation key.
+The three layers play as one non-looping composition at 12 FPS. The obsolete
+lower-only `draw_weapon_01` family is retired and must not return to runtime
+or validation authority.
 
 ### ready — `melee_idle_ready`
 
@@ -459,25 +465,26 @@ This matches the modular ownership rules already documented for the Operator
 | `EngagementTracker.engagement_active` | ✅ Ready | Live; 4 s quiet period |
 | `EquipWeaponState` | ✅ Ready | Non-interruptible transition to pattern `melee_draw` on |
 | Weapon-change queuing | ✅ Ready | `queue_weapon_selection()` gates to idle/walk/sprint |
-| 4-frame draw sheet | ✅ Ready | Generated catalog/runtime lower-body presentation |
+| 4-frame `draw_01` package | ✅ Ready | Generated E/W lower, upper, and Vigil weapon layers; synchronized and non-looping |
 | `idle_ready_01` sheet | ✅ Ready | Generated E/W lower- and upper-body stack |
 | `idle_relaxed_01` sheet | ✅ Ready | Generated E/W lower- and upper-body stack |
 | Vigil `idle_relaxed_01` weapon sheet | ✅ Ready | Generated E/W four-frame weapon layer under `melee_1h_dagger` and composed at runtime |
 | `melee_ready_up` / `melee_relax` sheets | ❌ Missing | 2–3 frame transitions |
 | `melee_sheathe` | ❌ Deferred | Later slice; reverse/adapt draw frames |
 
-## Next Agent Slice
+## Historical Implementation Slice
 
-Goal: implement the posture axis as presentation-only and wire the first
-draw/ready/relaxed assets.
+The original implementation slice established the posture resolver and first
+body-only draw/ready/relaxed wiring. Its earlier `draw_weapon_01` reference is
+superseded by the canonical `draw_01` composition above.
 
 Files:
 
 - new `game/actors/operator/melee_posture_resolver.gd` (or equivalent
   presentation helper) plus a focused smoke;
 - `operator.gd` — draw-grace timer, posture requests at safe windows;
-- sprite pipeline promotion of `draw_weapon_01__e__4f__96x128.png` to the
-  runtime `melee_1h` namespace as `melee_draw`;
+- sprite pipeline promotion of the canonical `draw_01` package to the runtime
+  body and weapon-profile namespaces;
 - weapon definitions gain `melee_draw` / `melee_idle_ready` /
   `melee_idle_relaxed` keys in `animation_map`.
 
