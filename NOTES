@@ -1,33 +1,8 @@
-GAMEPLAY NOTES
+1. The cliffs that should be hanging down currently are also pasted over top of the genera ruined-wall walls tiles
 
-1. [DONE] Pickup toasts are live. Cognitive pickup toasts resolve portraits through the canonical inventory asset catalog; world animation sheets remain separate.
+2. I have not seen a single enemy in a while.
+  - Correction: I have seen the enemy_marine
 
-2. [PARTIAL/DESIGN] Endless Forest depth underlay and explicit void fascia are implemented and contract-tested. Subjective composition and tonal tuning remain visual-review work.
+3. Either the ritualant scene isnot loading, or not showing on the map, or both
 
-3. [DONE V1] Paired procgen portals are local tactical shortcuts inside the current generated map. Cross-map Home/Sundered Keep travel requires authored world-route authority and remains future design.
-
-4. [DONE] Custodian Home/lost-terminal is the production boot flow; the second terminal interaction hands off to the operational world.
-
-6. [DONE] Shrumb ambient spawning projects through runtime-safe procgen walkability and revalidates final positions after runtime props.
-
-7. [DONE] Selected zealot profiles locally seek reachable cognitive residue and receive temporary axis-specific effects through existing objective/path authority.
-
-8. [DONE] Ambient enemies and Shrumbs spawn on runtime-safe walkability. Existing NavigationSystem authority is preserved and failed paths stop movement.
-
-9. [DONE] Cognitive pickups pulse a world-only shader, raw thresholds produce sustained axis feedback, and inventory exposes raw state and live effects.
-
-10. [DONE] Ledger inspection defaults to GLANCE and toggles to DETAIL without duplicating gameplay authority.
-
-11. [DONE] Point-blank forward melee coverage is repaired without increasing authored range or allowing rear contacts. A close-range sidearm remains optional design.
-
-12. [DONE] Terminal map/title ordering uses one stable semantic block; refreshes preserve scroll and actual page changes reset it.
-
-13. [DONE] The run-scoped terminal tutorial requires successful STATUS then REPAIR DEFENSE commands and verifies real integrity recovery.
-
-14. [DONE RUNTIME] Light Buggy exit uses body-sized collision and adjacent traversability checks; impossible exits preserve pilot state. turn_response now affects handling. Further feel tuning remains DESIGN.
-
-15. [DONE RUNTIME] Camp grunts use an unscaled actor parent, direct projectile hits guarantee victim notice, gun noise remains nearby awareness, noncombat patrol is verified, and the startup debug grunt is disabled.
-
-16. [DONE CONTRACT] Ordinary gameplay walls and void fascia have separate source roles. Fascia paints explicit chasm presentation only and owns neither collision nor navigation.
-
-17. [DONE DEBUG] Debug builds show the Ritualant surface ingress as a distinctive minimap ring/cross marker; release builds do not.
+4. The sundered keep UI is distracting, too large. And the general minimap is too large and probably not needed.
