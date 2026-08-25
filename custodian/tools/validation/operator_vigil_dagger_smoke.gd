@@ -242,9 +242,16 @@ func _validate_frame_resources(operator: Node) -> void:
 			"equipped dagger did not install body animation %s"
 			% animation
 		)
+	_validate_animation_set(
+		runtime_overlay.sprite_frames,
+		OVERLAY_ANIMATIONS,
+		"runtime weapon overlay"
+	)
 	_assert(
-		runtime_overlay.sprite_frames == overlay,
-		"equipped dagger did not install its overlay resource"
+		runtime_overlay.sprite_frames.has_animation(
+			&"melee_1h_dagger/posture/idle_relaxed_01/e/weapon"
+		),
+		"equipped dagger did not compose its posture weapon animation"
 	)
 	_assert(
 		runtime_fx.sprite_frames == fx,

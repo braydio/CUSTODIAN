@@ -1,6 +1,6 @@
 # Operator Melee Presentation Posture
 
-- **Status:** active — READY/RELAXED/draw runtime presentation implemented
+- **Status:** active — READY/RELAXED/draw runtime composition implemented for body and weapon layers
 - **Owner:** gameplay/combat + gameplay/animation
 - **Runtime target:** Godot 4 (`custodian/`)
 - **Active spec path:** `design/02_features/combat_feel/OPERATOR_MELEE_PRESENTATION_POSTURE.md`
@@ -411,12 +411,17 @@ This matches the modular ownership rules already documented for the Operator
 - `operator.gd` — orchestration only; owns the draw-grace presentation timer
   and the posture transition requests at safe boundaries (idle/locomotion
   windows, after attack recovery, after dodge, after guard/parry).
-- `OperatorWeaponDefinition` — owns posture animation keys per weapon via the
-  existing `animation_map` shape (the `melee_stance` key already exists in
-  every definition: `vigil_dagger_stance`, `sword_cleaver_stance`,
-  `melee_stance` for the Katana, `unarmed_idle` for fists).
-- Sprite pipeline — promotes the 4-frame draw sheet and the new idle/transition
-  sheets into runtime strips under the `melee_1h` namespace.
+- `OperatorWeaponDefinition` — owns the weapon-layer posture namespace through
+  `animation_profile`. Generic Operator lower/upper posture remains under
+  `melee_1h`; an authored overlay composes its weapon animation from
+  `<animation_profile>/posture/<action>/<direction>/weapon` (for example,
+  Vigil uses `melee_1h_dagger`). Definitions without compatible authored
+  posture art retain the existing static presentation fallback.
+- Sprite pipeline — promotes body posture strips under `melee_1h` and
+  weapon-owned posture strips under their definition profile. Runtime copies
+  the matching catalog weapon animations into the active weapon overlay after
+  its definition-specific attack resource is installed, then synchronizes the
+  overlay frame/progress with the body loop.
 
 ## Edge Cases
 
@@ -439,8 +444,9 @@ This matches the modular ownership rules already documented for the Operator
   in the style of `operator_melee_soft_targeting_smoke.gd` /
   `operator_melee_fast_chain_smoke.gd`.
 - Runtime wiring smoke: verify draw → ready → relaxed → ready transition
-  sequence on the Operator, and that no gameplay state is added to the
-  state machine.
+  sequence on the Operator, that no gameplay state is added to the state
+  machine, and that the Vigil definition installs and plays its four-frame
+  `melee_1h_dagger` weapon layer with the generic body posture.
 - Moment Forge: a `combat_playground`-style scenario capturing the
   relaxed → ready lift and the quiet-period relax; `--capture-mode full` once
   the assets land, since acceptance depends on pose timing and readability.
@@ -456,6 +462,7 @@ This matches the modular ownership rules already documented for the Operator
 | 4-frame draw sheet | ✅ Ready | Generated catalog/runtime lower-body presentation |
 | `idle_ready_01` sheet | ✅ Ready | Generated E/W lower- and upper-body stack |
 | `idle_relaxed_01` sheet | ✅ Ready | Generated E/W lower- and upper-body stack |
+| Vigil `idle_relaxed_01` weapon sheet | ✅ Ready | Generated E/W four-frame weapon layer under `melee_1h_dagger` and composed at runtime |
 | `melee_ready_up` / `melee_relax` sheets | ❌ Missing | 2–3 frame transitions |
 | `melee_sheathe` | ❌ Deferred | Later slice; reverse/adapt draw frames |
 
