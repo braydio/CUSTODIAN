@@ -26,12 +26,19 @@ const BOTTOM_VARIATION_SALT := 0x5b7d19
 @export var presentation_enabled := true
 
 @export_group("Depth")
-@export_range(1, 12, 1) var min_depth_tiles := 3
+@export_range(1, 12, 1) var min_depth_tiles := 4
 @export_range(1, 12, 1) var max_depth_tiles := 8
+@export_range(1, 12, 1) var typical_max_depth_tiles := 6
+@export_range(0, 100, 1) var deep_section_percent := 12
 @export_range(1, 16, 1) var variation_patch_tiles := 4
 
+@export_group("Pocket Suppression")
+@export_range(0, 256, 1) var min_enclosed_chasm_cells_for_fascia := 24
+
 var _last_seed := 0
+var _last_frontier_cell_count := 0
 var _last_painted_cell_count := 0
+var _last_suppressed_pocket_count := 0
 var _last_role_counts := _empty_role_counts()
 var _last_paint_plan: Dictionary = {}
 
@@ -43,7 +50,9 @@ func configure_from_surface_cells(
 ) -> void:
 	clear()
 	_last_seed = seed
+	_last_frontier_cell_count = 0
 	_last_painted_cell_count = 0
+	_last_suppressed_pocket_count = 0
 	_last_role_counts = _empty_role_counts()
 	_last_paint_plan.clear()
 
@@ -64,67 +73,72 @@ func configure_from_surface_cells(
 		visible = false
 		return
 
-	var queue_cells: Array[Vector2i] = []
-	var queue_distances: Array[int] = []
-	var queue_limits: Array[int] = []
-	var best_remaining_by_cell: Dictionary = {}
-	var frontier_cells: Dictionary = {}
+	var eligible_chasm_cells := _classify_fascia_chasm_cells(chasm_cells)
+	var frontier_directions: Dictionary = {}
 
 	for floor_variant: Variant in floor_cells.keys():
 		if not floor_variant is Vector2i:
 			continue
 		var floor_cell := floor_variant as Vector2i
-		var depth_limit := _depth_limit_for_frontier(floor_cell, seed)
 		for direction in CARDINALS:
 			var first_chasm_cell := floor_cell + direction
-			if not chasm_cells.has(first_chasm_cell):
+			if not eligible_chasm_cells.has(first_chasm_cell):
 				continue
-			frontier_cells[first_chasm_cell] = true
-			var remaining := depth_limit - 1
-			var previous := int(best_remaining_by_cell.get(first_chasm_cell, -1))
-			if remaining <= previous:
-				continue
-			best_remaining_by_cell[first_chasm_cell] = remaining
-			queue_cells.append(first_chasm_cell)
-			queue_distances.append(1)
-			queue_limits.append(depth_limit)
+			var directions: Array = frontier_directions.get(first_chasm_cell, [])
+			directions.append(direction)
+			frontier_directions[first_chasm_cell] = directions
 
-	var cursor := 0
-	while cursor < queue_cells.size():
-		var cell := queue_cells[cursor]
-		var distance := queue_distances[cursor]
-		var depth_limit := queue_limits[cursor]
-		cursor += 1
-		var remaining := depth_limit - distance
-		if remaining < int(best_remaining_by_cell.get(cell, -1)):
-			continue
-		if not chasm_cells.has(cell):
-			continue
-		_last_paint_plan[cell] = {
-			"distance": distance,
+	var frontier_cells: Array[Vector2i] = []
+	for frontier_variant: Variant in frontier_directions.keys():
+		frontier_cells.append(frontier_variant as Vector2i)
+	frontier_cells.sort()
+	_last_frontier_cell_count = frontier_cells.size()
+
+	# The lip is exactly the floor-to-chasm frontier. Subsequent cells are a
+	# straight extrusion along that frontier's stable local outward normal.
+	for frontier_cell: Vector2i in frontier_cells:
+		var outward_direction := _resolve_outward_direction(
+			frontier_cell,
+			frontier_directions[frontier_cell] as Array,
+			seed
+		)
+		var depth_limit := _depth_limit_for_frontier(frontier_cell, seed)
+		_last_paint_plan[frontier_cell] = {
+			"distance": 1,
 			"depth_limit": depth_limit,
+			"frontier_cell": frontier_cell,
+			"outward_direction": outward_direction,
 		}
-		if distance >= depth_limit:
-			continue
-		var next_distance := distance + 1
-		var next_remaining := depth_limit - next_distance
-		for direction in CARDINALS:
-			var neighbor := cell + direction
-			if not chasm_cells.has(neighbor):
-				continue
-			var previous := int(best_remaining_by_cell.get(neighbor, -1))
-			if next_remaining <= previous:
-				continue
-			best_remaining_by_cell[neighbor] = next_remaining
-			queue_cells.append(neighbor)
-			queue_distances.append(next_distance)
-			queue_limits.append(depth_limit)
+
+	for frontier_cell: Vector2i in frontier_cells:
+		var frontier_plan := _last_paint_plan[frontier_cell] as Dictionary
+		var outward_direction := frontier_plan["outward_direction"] as Vector2i
+		var depth_limit := int(frontier_plan["depth_limit"])
+		var terminal_cell := frontier_cell
+		for distance in range(2, depth_limit + 1):
+			var cell := frontier_cell + outward_direction * (distance - 1)
+			if not eligible_chasm_cells.has(cell):
+				break
+			if frontier_directions.has(cell):
+				break
+			var previous_data := _last_paint_plan.get(cell, {}) as Dictionary
+			if not previous_data.is_empty() and int(previous_data["distance"]) <= distance:
+				break
+			_last_paint_plan[cell] = {
+				"distance": distance,
+				"depth_limit": depth_limit,
+				"frontier_cell": frontier_cell,
+				"outward_direction": outward_direction,
+			}
+			terminal_cell = cell
+		if terminal_cell != frontier_cell:
+			var terminal_plan := _last_paint_plan[terminal_cell] as Dictionary
+			if terminal_plan["frontier_cell"] == frontier_cell:
+				terminal_plan["depth_limit"] = int(terminal_plan["distance"])
 
 	for cell_variant: Variant in _last_paint_plan:
 		var cell := cell_variant as Vector2i
 		var paint_data := _last_paint_plan[cell] as Dictionary
-		if frontier_cells.has(cell):
-			paint_data["distance"] = 1
 		var role := _role_for_cell(
 			cell,
 			int(paint_data["distance"]),
@@ -143,7 +157,13 @@ func configure_from_surface_cells(
 func get_debug_state() -> Dictionary:
 	return {
 		"visible": visible,
+		"frontier_cells": _last_frontier_cell_count,
 		"painted_cells": _last_painted_cell_count,
+		"cells_per_frontier": (
+			float(_last_painted_cell_count) / float(_last_frontier_cell_count)
+			if _last_frontier_cell_count > 0 else 0.0
+		),
+		"suppressed_pocket_count": _last_suppressed_pocket_count,
 		"source_ids": FASCIA_SOURCE_IDS.duplicate(true),
 		"top_count": int(_last_role_counts["top"]),
 		"body_01_count": int(_last_role_counts["body_01"]),
@@ -153,6 +173,9 @@ func get_debug_state() -> Dictionary:
 		"bottom_broken_count": int(_last_role_counts["bottom_broken"]),
 		"min_depth_tiles": mini(min_depth_tiles, max_depth_tiles),
 		"max_depth_tiles": maxi(min_depth_tiles, max_depth_tiles),
+		"typical_max_depth_tiles": typical_max_depth_tiles,
+		"deep_section_percent": deep_section_percent,
+		"min_enclosed_chasm_cells_for_fascia": min_enclosed_chasm_cells_for_fascia,
 		"variation_patch_tiles": variation_patch_tiles,
 		"seed": _last_seed,
 	}
@@ -206,13 +229,98 @@ func _depth_limit_for_frontier(frontier_cell: Vector2i, seed: int) -> int:
 	var high := maxi(min_depth_tiles, max_depth_tiles)
 	if low == high:
 		return low
+	var typical_high := clampi(typical_max_depth_tiles, low, high)
 	var patch_size := maxi(1, variation_patch_tiles)
 	var patch := Vector2i(
 		floori(float(frontier_cell.x) / float(patch_size)),
 		floori(float(frontier_cell.y) / float(patch_size))
 	)
-	var span := high - low + 1
-	return low + (_stable_hash(patch, seed) % span)
+	var roll := _stable_hash(patch, seed) % 100
+	if high > typical_high and roll < deep_section_percent:
+		var deep_span := high - typical_high
+		return typical_high + 1 + (_stable_hash(patch, seed ^ 0x4d31f7) % deep_span)
+	var typical_span := typical_high - low + 1
+	return low + (_stable_hash(patch, seed) % typical_span)
+
+
+func _resolve_outward_direction(frontier_cell: Vector2i, directions: Array, seed: int) -> Vector2i:
+	var summed := Vector2i.ZERO
+	for direction_variant: Variant in directions:
+		if direction_variant is Vector2i:
+			summed += direction_variant as Vector2i
+	if absi(summed.x) > absi(summed.y):
+		return Vector2i(signi(summed.x), 0)
+	if absi(summed.y) > absi(summed.x):
+		return Vector2i(0, signi(summed.y))
+	var candidates: Array[Vector2i] = []
+	for direction_variant: Variant in directions:
+		if direction_variant is Vector2i and direction_variant not in candidates:
+			candidates.append(direction_variant as Vector2i)
+	if candidates.is_empty():
+		return Vector2i.DOWN
+	candidates.sort()
+	return candidates[_stable_hash(frontier_cell, seed ^ 0x713ab9) % candidates.size()]
+
+
+func _classify_fascia_chasm_cells(chasm_cells: Dictionary) -> Dictionary:
+	var eligible: Dictionary = {}
+	var visited: Dictionary = {}
+	var bounds := _cell_bounds(chasm_cells)
+	for cell_variant: Variant in chasm_cells.keys():
+		if not cell_variant is Vector2i:
+			continue
+		var start := cell_variant as Vector2i
+		if visited.has(start):
+			continue
+		var component: Array[Vector2i] = []
+		var queue: Array[Vector2i] = [start]
+		visited[start] = true
+		var touches_exterior := false
+		var cursor := 0
+		while cursor < queue.size():
+			var cell := queue[cursor]
+			cursor += 1
+			component.append(cell)
+			touches_exterior = touches_exterior or _touches_bounds(cell, bounds)
+			for direction: Vector2i in CARDINALS:
+				var neighbor := cell + direction
+				if chasm_cells.has(neighbor) and not visited.has(neighbor):
+					visited[neighbor] = true
+					queue.append(neighbor)
+		var qualifies := (
+			touches_exterior
+			or component.size() >= min_enclosed_chasm_cells_for_fascia
+			or min_enclosed_chasm_cells_for_fascia <= 0
+		)
+		if qualifies:
+			for cell: Vector2i in component:
+				eligible[cell] = true
+		else:
+			_last_suppressed_pocket_count += 1
+	return eligible
+
+
+func _cell_bounds(cells: Dictionary) -> Rect2i:
+	var first := true
+	var minimum := Vector2i.ZERO
+	var maximum := Vector2i.ZERO
+	for cell_variant: Variant in cells.keys():
+		if not cell_variant is Vector2i:
+			continue
+		var cell := cell_variant as Vector2i
+		if first:
+			minimum = cell
+			maximum = cell
+			first = false
+		else:
+			minimum = Vector2i(mini(minimum.x, cell.x), mini(minimum.y, cell.y))
+			maximum = Vector2i(maxi(maximum.x, cell.x), maxi(maximum.y, cell.y))
+	return Rect2i(minimum, maximum - minimum + Vector2i.ONE)
+
+
+func _touches_bounds(cell: Vector2i, bounds: Rect2i) -> bool:
+	var end := bounds.end - Vector2i.ONE
+	return cell.x == bounds.position.x or cell.y == bounds.position.y or cell.x == end.x or cell.y == end.y
 
 
 func _stable_hash(cell: Vector2i, seed: int) -> int:

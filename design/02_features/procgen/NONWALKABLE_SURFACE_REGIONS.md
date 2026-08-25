@@ -3,7 +3,7 @@
 - **Status:** review
 - **Owner:** procgen semantic classification and non-walkable surface presentation
 - **Runtime:** `custodian/` Godot 4.x
-- **Last updated:** 2026-08-09
+- **Last updated:** 2026-08-25
 
 ## Purpose
 
@@ -88,11 +88,15 @@ strictly disjoint from playable floor.
 Explicit complete chasm semantics feed the seam-safe, camera-following
 `ProcgenDepthBackdrop.configure_from_chasm_cells()` presentation and the
 presentation-only `VoidCliffFace`. The face paints only authoritative chasm
-cells in a deterministic three-to-eight-cell band from floor frontiers; ocean
-and floor stop propagation. Its authored top, three weighted body variants,
-and two weighted bottom variants use stable seed-and-cell clustering and dissolve
-into the endless forest backdrop. `RuntimeWalkableBoundary` remains the sole physical
-authority, and neither visual layer participates in collision or navigation.
+cells: one top at each eligible floor frontier followed by a deterministic
+straight extrusion along a stable local outward normal. Typical faces use two
+to four body cells and sparse deep faces use five or six; ocean and floor stop
+each ray. Tiny enclosed chasm pockets retain their semantic classification but
+do not receive full fascia. The authored top, three weighted body variants, and
+two weighted bottom variants use stable seed-and-cell clustering and dissolve
+into the endless forest backdrop. `RuntimeWalkableBoundary` remains the sole
+physical authority, and neither visual layer participates in collision or
+navigation.
 
 ## Candidate And Streaming Contract
 

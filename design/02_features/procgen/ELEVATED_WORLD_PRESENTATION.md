@@ -2,7 +2,7 @@
 
 Status: complete
 
-Last updated: 2026-08-09
+Last updated: 2026-08-25
 
 ## Purpose
 
@@ -34,9 +34,15 @@ Gameplay terrain files are individual 32x32 PNGs under `content/tiles/mountain_c
 - The face may paint only authoritative chasm cells: never floor or ocean.
 - It owns no collision, navigation, occupancy, traversal, placement, minimap,
   simulation, streaming, or wall authority.
-- Fascia depth varies deterministically from three to eight cells. Distance one
-  uses authored top source 149; interior depth uses weighted, clustered body
-  sources 150–152; terminal depth uses weighted bottom sources 153–154.
+- Fascia uses a one-cell frontier lip and deterministic directed extrusion along
+  each frontier's stable local outward normal. Typical sections contain two to
+  four body cells before the terminal bottom; sparse sections deepen to five or
+  six body cells. It does not cardinally flood sideways from the frontier.
+  Authored top source 149 marks the lip, weighted clustered body sources
+  150–152 form the face, and weighted bottom sources 153–154 terminate it.
+- Enclosed chasm components smaller than 24 cells are presentation-suppressed;
+  the authoritative `CHASM` classification and exhaustive
+  `RuntimeWalkableBoundary` collision remain unchanged.
 - Cosmetic choices are stable by map seed and cell. Source 45,
   `rock_plateau_raised_32.png`, is no longer a fascia dependency.
 - Roots and contact-shadow decals remain deferred.
@@ -92,6 +98,10 @@ registration; that state is an explicit no-op and is logged.
 ## Validation
 
 Run `elevated_world_asset_contract_smoke.gd` for asset, TileSet, scene, and backdrop contracts. Run `procgen_candidate_promotion_smoke.gd` to prove that accepted structural state is promoted without a second generation or streaming reveal expansion. Run `elevated_world_seed_review.gd` for fixed-seed geometry summaries, followed by the established terrain, road, and route-clearance smokes.
+- Developer Observatory reports `procgen_void_cliff_frontier_cells`,
+  `procgen_void_cliff_painted_cells`, and
+  `procgen_void_cliff_cells_per_frontier` through the existing procgen runtime
+  health snapshot.
 - Underlay profiles are presentation-only FAR/MIDDLE/NEAR resources. Endless
   Forest remains the default `ProcgenUnderlayProfile`; Drowned Basilica is an
   explicit alternate profile with deterministic A/B selection by seed,

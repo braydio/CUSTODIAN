@@ -19,6 +19,7 @@ const ROLE_SOURCE_IDS := {
 	"bottom_broken": 154,
 }
 const NORMAL_WALL_SOURCE_ID := 45
+const CARDINALS: Array[Vector2i] = [Vector2i.UP, Vector2i.RIGHT, Vector2i.DOWN, Vector2i.LEFT]
 
 
 func _init() -> void:
@@ -36,7 +37,9 @@ func _init() -> void:
 	face.navigation_enabled = false
 	root.add_child(face)
 	assert(not face.collision_enabled and not face.navigation_enabled)
-	assert(face.min_depth_tiles == 3 and face.max_depth_tiles == 8)
+	assert(face.min_depth_tiles == 4 and face.max_depth_tiles == 8)
+	assert(face.typical_max_depth_tiles == 6 and face.deep_section_percent == 12)
+	assert(face.min_enclosed_chasm_cells_for_fascia == 24)
 
 	var floor_cells: Dictionary = {}
 	var chasm_cells: Dictionary = {}
@@ -51,6 +54,9 @@ func _init() -> void:
 				ocean_cells[cell] = true
 			else:
 				chasm_cells[cell] = true
+	var tiny_pocket := Vector2i(48, 48)
+	floor_cells.erase(tiny_pocket)
+	chasm_cells[tiny_pocket] = true
 
 	face.configure_from_surface_cells(floor_cells, chasm_cells, 17)
 	var first_cells := face.get_used_cells()
@@ -59,6 +65,18 @@ func _init() -> void:
 	_assert_plan(face, first_cells, floor_cells, chasm_cells, ocean_cells)
 	var state := face.get_debug_state()
 	assert(state["source_ids"] == ROLE_SOURCE_IDS)
+	assert(int(state["frontier_cells"]) > 0)
+	assert(int(state["painted_cells"]) == first_cells.size())
+	assert(float(state["cells_per_frontier"]) >= 1.0)
+	assert(int(state["suppressed_pocket_count"]) == 1)
+	assert(not tiny_pocket in first_cells, "Tiny enclosed chasm pocket received full fascia")
+	var deep_frontiers := 0
+	for data_variant: Variant in face.get_debug_paint_plan().values():
+		var data := data_variant as Dictionary
+		if int(data["distance"]) == 1 and int(data["depth_limit"]) > face.typical_max_depth_tiles:
+			deep_frontiers += 1
+	assert(deep_frontiers > 0, "Representative fascia has no sparse deep sections")
+	assert(deep_frontiers * 2 < int(state["frontier_cells"]), "Deep fascia sections are not sparse")
 	for count_key: String in [
 		"top_count", "body_01_count", "body_02_count", "body_cracked_count",
 		"bottom_count", "bottom_broken_count",
@@ -110,8 +128,13 @@ func _assert_plan(
 		var distance := int(data["distance"])
 		var depth_limit := int(data["depth_limit"])
 		var role := String(data["role"])
+		var frontier_cell := data["frontier_cell"] as Vector2i
+		var outward_direction := data["outward_direction"] as Vector2i
 		assert(distance >= 1 and distance <= depth_limit)
-		assert(depth_limit >= 3 and depth_limit <= 8)
+		assert(depth_limit >= face.min_depth_tiles and depth_limit <= face.max_depth_tiles)
+		assert(outward_direction in CARDINALS)
+		assert(cell == frontier_cell + outward_direction * (distance - 1), "Fascia spread laterally from its frontier normal")
+		assert(floor_cells.has(frontier_cell - outward_direction), "Frontier normal lacks a corresponding floor edge")
 		assert(face.get_cell_source_id(cell) == int(ROLE_SOURCE_IDS[role]))
 		assert(face.get_cell_source_id(cell) != NORMAL_WALL_SOURCE_ID)
 		if distance == 1:

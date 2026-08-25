@@ -10019,7 +10019,7 @@ func get_runtime_health_snapshot() -> Dictionary:
 	var wall_root := walls_tilemap.get_node_or_null("RuntimeWallCollision") if walls_tilemap != null else null
 	var boundary := walls_tilemap.get_node_or_null("RuntimeWalkableBoundary") if walls_tilemap != null else null
 	var wall_bodies := wall_root.get_child_count() if wall_root != null else 0
-	return {
+	var snapshot := {
 		"generation_id": _debug_generation_id,
 		"map_size": procgen_node.map_size if procgen_node != null else Vector2i.ZERO,
 		"floor_cells": _generated_floor_cells.size(),
@@ -10045,6 +10045,11 @@ func get_runtime_health_snapshot() -> Dictionary:
 		"last_mutation_uptime_sec": _last_runtime_mutation_uptime_sec,
 		"last_mutation_duration_usec": _last_runtime_mutation_duration_usec,
 	}
+	var cliff_state := void_cliff_face.get_debug_state() if void_cliff_face != null else {}
+	snapshot["void_cliff_frontier_cells"] = int(cliff_state.get("frontier_cells", 0))
+	snapshot["void_cliff_painted_cells"] = int(cliff_state.get("painted_cells", 0))
+	snapshot["void_cliff_cells_per_frontier"] = float(cliff_state.get("cells_per_frontier", 0.0))
+	return snapshot
 
 
 func _publish_runtime_health_gauges() -> void:

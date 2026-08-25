@@ -183,6 +183,23 @@ func _run() -> void:
 	assert(_source_fingerprint(face, repeated_face_cells) == first_sources)
 	var debug_state := face.get_debug_state()
 	assert(debug_state["source_ids"] == FASCIA_SOURCE_IDS)
+	var runtime_health: Dictionary = map.get_runtime_health_snapshot()
+	assert(int(runtime_health["void_cliff_frontier_cells"]) == int(debug_state["frontier_cells"]))
+	assert(int(runtime_health["void_cliff_painted_cells"]) == int(debug_state["painted_cells"]))
+	assert(is_equal_approx(
+		float(runtime_health["void_cliff_cells_per_frontier"]),
+		float(debug_state["cells_per_frontier"])
+	))
+	var observatory := root.get_node_or_null("DevObservatory")
+	assert(observatory != null)
+	map.call("_publish_runtime_health_gauges")
+	var gauges := observatory.get("gauges") as Dictionary
+	for gauge_name: String in [
+		"procgen_void_cliff_frontier_cells",
+		"procgen_void_cliff_painted_cells",
+		"procgen_void_cliff_cells_per_frontier",
+	]:
+		assert(gauges.has(gauge_name), "Missing Observatory gauge %s" % gauge_name)
 	for count_key: String in [
 		"top_count", "body_01_count", "body_02_count", "body_cracked_count",
 		"bottom_count", "bottom_broken_count",
