@@ -198,6 +198,13 @@ func _fixture_command(action: Dictionary, result: Dictionary) -> void:
 			"begin_landing_descent",
 			"begin_full_journey",
 		],
+		"ash_bell_lower_quarter_opening": [
+			"direct_line",
+			"evacuation_turn",
+			"civic_basin",
+			"answers_court",
+			"station_threshold",
+		],
 		"field_fabricator": [
 			"power_on",
 			"begin_fabrication",

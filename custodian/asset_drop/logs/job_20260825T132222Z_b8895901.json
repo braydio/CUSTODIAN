@@ -1,0 +1,44 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260825T132222Z_b8895901",
+  "timestamp": "2026-08-25T13:22:22.385214+00:00",
+  "family": "meridian_transit_descent",
+  "kind": "world_prop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/meridian_transit_descent/idle.png",
+      "sha256": "58aa96a46aab896f6b5fad9d01d2c2d26994da2e1761ec51942d39c514a77fd7"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "idle",
+      "direction": "omni",
+      "semantic_identity": [
+        "meridian_transit_descent",
+        "world_prop",
+        "body",
+        "interaction",
+        "idle",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/ash_bell/lower_quarter/meridian_transit_descent/runtime/body/meridian_transit_descent__body__interaction__idle__omni__1f__288x224.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "58aa96a46aab896f6b5fad9d01d2c2d26994da2e1761ec51942d39c514a77fd7",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": false,
+    "ok": null
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

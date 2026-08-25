@@ -1,0 +1,44 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260825T132220Z_4f923578",
+  "timestamp": "2026-08-25T13:22:20.476780+00:00",
+  "family": "meridian_answer_pedestal",
+  "kind": "world_prop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/meridian_answer_pedestal/idle.png",
+      "sha256": "70d0685e55489c568013de10032cb89d4a25e802e9146d4f538c7d7b26c8ff2e"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "idle",
+      "direction": "omni",
+      "semantic_identity": [
+        "meridian_answer_pedestal",
+        "world_prop",
+        "body",
+        "interaction",
+        "idle",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/ash_bell/lower_quarter/meridian_answer_pedestal/runtime/body/meridian_answer_pedestal__body__interaction__idle__omni__1f__96.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "70d0685e55489c568013de10032cb89d4a25e802e9146d4f538c7d7b26c8ff2e",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": false,
+    "ok": null
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

@@ -766,6 +766,14 @@ Documentation updates this session:
 
 ## Asset Source Cleanup
 
+- Ash-Bell Lower Quarter, West Gate Works, Station IX, and the Lower Quarter
+  ingress now use ten Asset Pipeline V2 families: four explicit 32px civic/
+  overlap atlases, Station IX landmark, Answer pedestal, active receiver, sync
+  core, transit descent, and civic relay. Presentation remains non-authoritative
+  for geometry/navigation/state. The real-camera
+  `traversal/ash_bell_lower_quarter_opening` fixture covers six route beats;
+  Penitent encounter population remains deferred pending an approved actor.
+
 - Asset Pipeline V2.1 is the preferred semantic-family intake for non-Operator art. Data schemas register `world_prop`, enemy, tile, effect, vehicle, weapon, UI, and backdrop kinds; family V2 supports literal directional assets, deterministic authored-over-mirror precedence, copy/horizontal/vertical/explicit-grid layouts, multi-output plans, and a direction-safe V2 catalog. `enemy_grunt` and `void_cliff_face` are production contracts. Execution still delegates to the mature runtime-ready and sprite-manifest backends, while Operator retains its specialized pipeline. Consumer binding remains explicit, `.godot/` cache and unbounded delegated post-process side effects are not transactionally rolled back, and watch mode remains deferred.
 - Content directory stabilization now has a first migration pass: `res://content/README.md` documents stable content domains, `docs/ASSET_LAYOUT_CONVENTION.md` defines duplicate/migration safety rules, and `custodian/tools/validation/content_asset_audit.py` reports loose content-root files, loose sprite/tile-domain files, unregistered quarantine files, and exact duplicate groups. The loose Road of Witnesses map now lives under `res://content/levels/hub/`; loose terminal/operator/enemy-scout/tile source files now live under owner-specific `source/` folders; and prior `res://content/unregistered/` vault art now lives under `res://content/props/gothic/vault_dressing/source/unregistered/` for later manifest promotion.
 - A canonical `content/_aseprite/` directory now exists as the single home for all `.aseprite` and `.ase` source files, mirroring the content tree.

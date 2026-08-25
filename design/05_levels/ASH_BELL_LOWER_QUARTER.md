@@ -202,7 +202,7 @@ and collision state together.
 
 ## Historical First-Pass Limitations
 
-- Procedural/blockout geometry and labels only; no production PNG assets.
+- The first pass used procedural/blockout geometry and labels only; that presentation was superseded by the production-art integration below.
 - Pressure markers are authored, but production Pale Bell Penitent population
   is deferred unless existing production-ready actors prove suitable.
 - Dialogue, evidence-reader UX, cinematics, weather polish, and final encounter
@@ -237,6 +237,29 @@ driven by their corresponding records and survive reconstruction.
 Production Penitent population is still withheld because no approved runtime
 actor exists. Real-camera Moment Forge capture remains a required visual review,
 not something inferred from headless geometry tests.
+
+## Production Art Integration
+
+Lower Quarter, West Gate Works, and Station IX use four exact 512×512,
+16×16 atlases with unscaled 32×32 source cells: Meridian civic floor, wall,
+props, and the fixed Ash-Bell overlap. Explicit semantic coordinate lists drive
+deterministic selection; atlas art never owns collision, walkability,
+navigation, exits, or route state. `AuthoredBlockoutGrid2D` remains geometry and
+navigation authority with production drawing suppressed.
+
+The Lower Quarter integrates the 768×768 Station IX landmark, eight 96×96
+Answer pedestals with a physically missing/damaged IX, and 96×96 civic relays.
+Wrong Street uses fixed local, seam, and imported bands with mismatched curb and
+service-channel alignment. West Gate reuses the civic set with industrial
+dressing and atlas-presented moving-slab art while its `AnimatableBody2D`
+retains collision and closure authority.
+
+Station IX uses the civic set as a workplace, the 384×320 synchronization core,
+and the canonical 768×96 receiver as eight 96×96 frames at 9 FPS. Isolation
+stops the receiver on a cold inert frame without replay on restore. The world
+ingress uses the 288×224 Meridian transit descent. The reviewed
+`traversal/ash_bell_lower_quarter_opening` fixture uses the real Operator and
+gameplay `CameraController`; baselines remain a manual developer decision.
 
 West Gate Works session state is now:
 

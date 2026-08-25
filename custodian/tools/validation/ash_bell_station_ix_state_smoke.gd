@@ -14,6 +14,9 @@ func _run() -> void:
 	var a := station.get_node("POIRoot/AssemblyA") as CivicRelay2D
 	var b := station.get_node("POIRoot/AssemblyB") as CivicRelay2D
 	var c := station.get_node("POIRoot/AssemblyC") as CivicRelay2D
+	var receiver := station.get_node("PropsRoot/ActiveReceiver") as AnimatedSprite2D
+	assert(receiver != null and receiver.sprite_frames.get_frame_count(&"active") == 8)
+	assert(receiver.sprite_frames.get_animation_speed(&"active") == 9.0 and receiver.is_playing())
 	assert(a.is_actionable())
 	assert(not b.is_actionable() and not c.is_actionable())
 	a.set_repaired(true)
@@ -22,6 +25,7 @@ func _run() -> void:
 	assert(c.is_actionable())
 	c.set_repaired(true)
 	assert(station.is_station_isolated())
+	assert(not receiver.is_playing() and receiver.frame == 0)
 	assert(station.debug_get_one_shot_completion_count() == 1)
 	var captured := station.capture_route_state()
 	var restored := STATION_IX.instantiate() as AshBellStationIX
@@ -30,6 +34,8 @@ func _run() -> void:
 	assert(restored.restore_route_state(captured))
 	assert(restored.capture_route_state() == captured)
 	assert(restored.debug_get_one_shot_completion_count() == 0)
+	var restored_receiver := restored.get_node("PropsRoot/ActiveReceiver") as AnimatedSprite2D
+	assert(not restored_receiver.is_playing() and restored_receiver.frame == 0)
 	var final_status := restored.debug_get_final_status_content()
 	assert("STATUS: UNARRIVAL" in final_status)
 	assert("LATE RESPONSE:\nACCEPTED" in final_status)

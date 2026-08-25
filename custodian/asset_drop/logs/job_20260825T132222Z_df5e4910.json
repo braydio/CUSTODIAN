@@ -1,0 +1,44 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260825T132222Z_df5e4910",
+  "timestamp": "2026-08-25T13:22:22.537263+00:00",
+  "family": "meridian_civic_relay",
+  "kind": "world_prop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/meridian_civic_relay/idle.png",
+      "sha256": "a3b3ebe785c5e12819e860ed18f5e16c817407cca270ef3725599cb3614b7f72"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "idle",
+      "direction": "omni",
+      "semantic_identity": [
+        "meridian_civic_relay",
+        "world_prop",
+        "body",
+        "interaction",
+        "idle",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/ash_bell/common/meridian_civic_relay/runtime/body/meridian_civic_relay__body__interaction__idle__omni__1f__96.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "a3b3ebe785c5e12819e860ed18f5e16c817407cca270ef3725599cb3614b7f72",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": false,
+    "ok": null
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

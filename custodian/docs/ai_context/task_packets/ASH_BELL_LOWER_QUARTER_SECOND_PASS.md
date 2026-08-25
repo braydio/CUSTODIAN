@@ -1,6 +1,6 @@
 # Ash-Bell Lower Quarter Second Pass
 
-- Status: `implemented — navigation/evidence/presentation foundation; encounter and captured-camera review deferred`
+- Status: `implemented — navigation/evidence foundation and production-art integration; encounter population deferred`
 - Authority: `design/05_levels/ASH_BELL_LOWER_QUARTER.md`
 - Scope: interruption-safe West Gate state, generic authored navigation, relay-driven dynamic blockers, semantic traversal beats, civic massing, physical Wrong Street/Court presentation, and ten player-readable records.
 
@@ -34,6 +34,17 @@ Results on 2026-08-21:
 
 - No production Penitent actor exists, so no generic actor is mislabeled as one.
 - Authored encounter-wave population and persistence await an approved canonical actor identity.
-- Production art remains absent; exact contracts remain in the active design.
-- Real-camera Moment Forge fixtures and reviewed captures remain required before claiming final sightline/art acceptance.
+- Historical note: production art and camera review were absent when the second
+  pass closed. The later production integration ingested all ten V2 families,
+  replaced blockout presentation, and added the reviewed real-camera fixture.
 - The evidence overlay is intentionally narrow and transient; it is not a codex or automatic gameplay binding system.
+
+## Production-Art Follow-up (2026-08-25)
+
+`MeridianCivicArtPresenter` now uses explicit semantic coordinates from the four
+32px atlases across all three districts. Station landmark, pedestals, relays,
+West Gate slab, Station IX core/receiver, and transit ingress are integrated
+without changing geometry, navigation, topology, or state.
+`traversal/ash_bell_lower_quarter_opening` completed a full six-keyframe
+real-camera capture and manual review. Penitent combat population remains
+deliberately deferred because no approved canonical actor was identified.

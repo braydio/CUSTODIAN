@@ -1,7 +1,10 @@
 class_name AshBellLowerQuarter
 extends AuthoredLevel2D
 
-const CIVIC_PRESENTER_SCRIPT := preload("res://game/world/levels/authored/ash_bell/common/meridian_civic_blockout_presenter.gd")
+const CIVIC_PRESENTER_SCRIPT := preload("res://game/world/levels/authored/ash_bell/common/meridian_civic_art_presenter.gd")
+const STATION_LANDMARK := preload("res://content/backgrounds/ash_bell/lower_quarter/station_ix_district/station_ix_district_landmark_768x768.png")
+const ANSWER_PEDESTAL := preload("res://content/sprites/environment/props/ash_bell/lower_quarter/meridian_answer_pedestal/runtime/body/meridian_answer_pedestal__body__interaction__idle__omni__1f__96.png")
+const CIVIC_RELAY := preload("res://content/sprites/environment/props/ash_bell/common/meridian_civic_relay/runtime/body/meridian_civic_relay__body__interaction__idle__omni__1f__96.png")
 
 const AUTHORING_CELL_SIZE_WORLD := 32.0
 const MAP_SIZE_CELLS := Vector2i(128, 96)
@@ -49,6 +52,7 @@ func _ready() -> void:
 			{"name": "eight_answers_court", "rect": ANSWERS_COURT_RECT, "color": Color("454c51")},
 		]
 	)
+	blockout_grid.visible = false
 	_configure_authored_nodes()
 	authored_navigation.configure(blockout_grid)
 	authored_navigation.set_blocker(&"evacuation_shutter", Rect2i(38, 51, 2, 8), true)
@@ -128,6 +132,7 @@ func debug_get_content_strings() -> PackedStringArray:
 
 
 func _configure_authored_nodes() -> void:
+	for relay in [evac_relay, pressure_relay, station_relay]: relay.presentation_texture = CIVIC_RELAY
 	evac_relay.position = cell_center(Vector2i(39, 58))
 	pressure_relay.position = cell_center(Vector2i(22, 42))
 	station_relay.position = cell_center(Vector2i(89, 21))
@@ -178,41 +183,37 @@ func _build_beat_markers() -> void:
 
 func _build_environment_presentation() -> void:
 	var presenter: Node2D = CIVIC_PRESENTER_SCRIPT.new()
-	presenter.name = "MeridianCivicBlockoutPresenter"
-	presenter.configure(MAP_ORIGIN, AUTHORING_CELL_SIZE_WORLD)
+	presenter.name = "MeridianCivicArtPresenter"
+	presenter.configure(MAP_ORIGIN, WALKABLE_REGIONS, &"lower_quarter")
+	presenter.z_index = -2
 	$BackgroundRoot.add_child(presenter)
+	var landmark := Sprite2D.new()
+	landmark.name = "StationIXLandmark"
+	landmark.texture = STATION_LANDMARK
+	landmark.position = cell_center(Vector2i(63, 75))
+	landmark.scale = Vector2.ONE * 0.75
+	landmark.z_index = -1
+	$BackgroundRoot.add_child(landmark)
 	var court := Node2D.new()
 	court.name = "AnswersCourtPositions"
 	$PropsRoot.add_child(court)
 	for index in 9:
-		var position_node := Marker2D.new()
+		var position_node := Sprite2D.new()
 		position_node.name = "Answer_%s" % (str(index + 1) if index < 8 else "IX_Missing")
 		position_node.position = cell_center(Vector2i(59 + index * 3, 16))
 		position_node.set_meta("original_meridian_equipment", true)
 		position_node.set_meta("missing", index == 8)
+		if index < 8:
+			position_node.texture = ANSWER_PEDESTAL
+		else:
+			position_node.texture = CIVIC_PRESENTER_SCRIPT.PROPS
+			position_node.region_enabled = true
+			position_node.region_rect = Rect2(8 * 32, 10 * 32, 32, 32)
 		court.add_child(position_node)
 	var additions := Node2D.new()
 	additions.name = "LaterPenitentAdditions"
 	additions.set_meta("presentation", "white thread, black containment banners, ash rings")
 	$PropsRoot.add_child(additions)
-	_add_blockout_label(
-		"WrongStreetLocalEvidence",
-		"PROVENANCE: LOCAL\nSOURCE INTEGRITY: HIGH",
-		cell_center(Vector2i(76, 48)),
-		Color("c8ceca")
-	)
-	_add_blockout_label(
-		"WrongStreetImportedEvidence",
-		"CONTINUITY ORIGIN: ASH-BELL\nLOCAL MANUFACTURE RECORD: ABSENT",
-		cell_center(Vector2i(92, 48)),
-		Color("aaa5d5")
-	)
-	_add_blockout_label(
-		"AnswersCourtPanel",
-		"ASH-BELL REGIONAL SYNCHRONIZATION\nI ANSWER  II ANSWER  III ANSWER  IV ANSWER\nV ANSWER  VI ANSWER  VII ANSWER  VIII ANSWER\nIX UNARRIVAL",
-		cell_center(Vector2i(58, 11)),
-		Color("d3dddc")
-	)
 
 
 func _add_blockout_label(node_name: String, text: String, at: Vector2, color: Color) -> void:
@@ -253,11 +254,17 @@ func _apply_state(emit_relay_signals: bool) -> void:
 func _configure_blocker(body: StaticBody2D, center: Vector2, size: Vector2, color: Color) -> void:
 	body.position = center
 	var polygon := body.get_node("Visual") as Polygon2D
-	polygon.color = color
-	polygon.polygon = PackedVector2Array([
-		-size * 0.5, Vector2(size.x * 0.5, -size.y * 0.5),
-		size * 0.5, Vector2(-size.x * 0.5, size.y * 0.5),
-	])
+	polygon.visible = false
+	var tile_count := Vector2i(roundi(size.x / 32.0), roundi(size.y / 32.0))
+	for y in tile_count.y:
+		for x in tile_count.x:
+			var tile := Sprite2D.new()
+			tile.name = "ProductionTile_%02d_%02d" % [x, y]
+			tile.texture = CIVIC_PRESENTER_SCRIPT.WALL
+			tile.region_enabled = true
+			tile.region_rect = Rect2(Vector2(0 if body != $DynamicGates/DirectPersonnelCollapse else 1, 10) * 32.0, Vector2.ONE * 32.0)
+			tile.position = -size * 0.5 + Vector2(x + 0.5, y + 0.5) * 32.0
+			body.add_child(tile)
 	var shape := RectangleShape2D.new()
 	shape.size = size
 	(body.get_node("CollisionShape2D") as CollisionShape2D).shape = shape
@@ -279,16 +286,4 @@ func _rect_center(rect: Rect2i) -> Vector2:
 
 
 func _draw() -> void:
-	# Station IX mass is deliberately close to the arrival view but not walkable.
-	var station_rect := Rect2(MAP_ORIGIN + Vector2(STATION_EXTERIOR_RECT.position) * 32.0, Vector2(STATION_EXTERIOR_RECT.size) * 32.0)
-	draw_rect(station_rect, Color("24292e"), true)
-	draw_rect(station_rect, Color("bdc9ca"), false, 8.0)
-	# Wrong Street incompatible utility alignment.
-	draw_line(cell_center(Vector2i(91, 52)), cell_center(Vector2i(106, 31)), Color("7771aa"), 12.0)
-	# Nine technical positions: I–VIII active, IX absent/damaged.
-	for index in 9:
-		var p := cell_center(Vector2i(59 + index * 3, 16))
-		if index < 8:
-			draw_circle(p, 18.0, Color(0.75, 0.84, 0.86, 0.72))
-		else:
-			draw_arc(p, 18.0, 0.0, TAU, 20, Color("5b3436"), 5.0)
+	pass

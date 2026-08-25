@@ -61,7 +61,8 @@ For the full content-root domain map, see `res://content/README.md`.
 For registered production families, use the Godot-ignored
 `custodian/asset_drop/inbox/<family>/` surface and the `asset plan`, `asset ingest`, and
 `asset status` commands. Asset Pipeline V2 owns semantic naming/routing and delegates
-execution to the mature backends. Its current production kind support is `world_prop`.
+execution to the mature backends. V2.1 production schemas support `world_prop`,
+`enemy`, `tile`, `effect`, `vehicle`, `weapon`, `ui`, and `backdrop`.
 
 ## Direct Runtime-Ready Backend
 

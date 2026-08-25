@@ -2566,6 +2566,266 @@
           "source_asset": null
         }
       }
+    },
+    "meridian_civic_floor": {
+      "kind": "tile",
+      "assets": {
+        "atlas::omni": {
+          "state_id": "atlas",
+          "direction": "omni",
+          "semantic_identity": [
+            "meridian_civic_floor",
+            "tile",
+            "body",
+            "tile",
+            "atlas",
+            "omni"
+          ],
+          "path": "content/tiles/ash_bell/lower_quarter/meridian_civic_floor_atlas_512.png",
+          "frames": 1,
+          "frame_size": [
+            512,
+            512
+          ],
+          "sha256": "65dc9abc0d9689940f8d3ff475437ecf22ef33c1183af2b3d4ad8d8250af43db",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "meridian_civic_wall": {
+      "kind": "tile",
+      "assets": {
+        "atlas::omni": {
+          "state_id": "atlas",
+          "direction": "omni",
+          "semantic_identity": [
+            "meridian_civic_wall",
+            "tile",
+            "body",
+            "tile",
+            "atlas",
+            "omni"
+          ],
+          "path": "content/tiles/ash_bell/lower_quarter/meridian_civic_wall_atlas_512.png",
+          "frames": 1,
+          "frame_size": [
+            512,
+            512
+          ],
+          "sha256": "18121f7018688f1ad18834d91263eebbcf7c89406cc0d5af0cb6ea0bda476223",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "meridian_civic_props": {
+      "kind": "tile",
+      "assets": {
+        "atlas::omni": {
+          "state_id": "atlas",
+          "direction": "omni",
+          "semantic_identity": [
+            "meridian_civic_props",
+            "tile",
+            "body",
+            "tile",
+            "atlas",
+            "omni"
+          ],
+          "path": "content/tiles/ash_bell/lower_quarter/meridian_civic_props_atlas_512.png",
+          "frames": 1,
+          "frame_size": [
+            512,
+            512
+          ],
+          "sha256": "40f01a098db0b7783b58b914095f459ac24523e03e39ad3c35f00f9fefaccfc1",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "ash_bell_overlap": {
+      "kind": "tile",
+      "assets": {
+        "atlas::omni": {
+          "state_id": "atlas",
+          "direction": "omni",
+          "semantic_identity": [
+            "ash_bell_overlap",
+            "tile",
+            "body",
+            "tile",
+            "atlas",
+            "omni"
+          ],
+          "path": "content/tiles/ash_bell/lower_quarter/ash_bell_overlap_atlas_512.png",
+          "frames": 1,
+          "frame_size": [
+            512,
+            512
+          ],
+          "sha256": "84b5c0a24c08cc502029a5ec131a9f674cafefef818ac3965ffe98b31efa801d",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "station_ix_district": {
+      "kind": "backdrop",
+      "assets": {
+        "landmark::omni": {
+          "state_id": "landmark",
+          "direction": "omni",
+          "semantic_identity": [
+            "station_ix_district",
+            "backdrop",
+            "background",
+            "display",
+            "landmark",
+            "omni"
+          ],
+          "path": "content/backgrounds/ash_bell/lower_quarter/station_ix_district/station_ix_district_landmark_768x768.png",
+          "frames": 1,
+          "frame_size": [
+            768,
+            768
+          ],
+          "sha256": "7499196f0b8b339a08929430f9db0321b5b9327fe83611334a1991a1dc218fbe",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "meridian_answer_pedestal": {
+      "kind": "world_prop",
+      "assets": {
+        "idle::omni": {
+          "state_id": "idle",
+          "direction": "omni",
+          "semantic_identity": [
+            "meridian_answer_pedestal",
+            "world_prop",
+            "body",
+            "interaction",
+            "idle",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/ash_bell/lower_quarter/meridian_answer_pedestal/runtime/body/meridian_answer_pedestal__body__interaction__idle__omni__1f__96.png",
+          "frames": 1,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "70d0685e55489c568013de10032cb89d4a25e802e9146d4f538c7d7b26c8ff2e",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "station_ix_receiver": {
+      "kind": "world_prop",
+      "assets": {
+        "active::omni": {
+          "state_id": "active",
+          "direction": "omni",
+          "semantic_identity": [
+            "station_ix_receiver",
+            "world_prop",
+            "body",
+            "interaction",
+            "active",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/ash_bell/station_ix/station_ix_receiver/runtime/body/station_ix_receiver__body__interaction__active__omni__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "2f891359dbde6ac670cd7b9cc55ec8fbe14da98dea7f724da083ea5ae927cabc",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "station_ix_sync_core": {
+      "kind": "world_prop",
+      "assets": {
+        "idle::omni": {
+          "state_id": "idle",
+          "direction": "omni",
+          "semantic_identity": [
+            "station_ix_sync_core",
+            "world_prop",
+            "body",
+            "interaction",
+            "idle",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/ash_bell/station_ix/station_ix_sync_core/runtime/body/station_ix_sync_core__body__interaction__idle__omni__1f__384x320.png",
+          "frames": 1,
+          "frame_size": [
+            384,
+            320
+          ],
+          "sha256": "7adfedfe87abe1d9e0a885dc62c0433e9bbf7217f4acd275fe56fd5e51ae0d1b",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "meridian_transit_descent": {
+      "kind": "world_prop",
+      "assets": {
+        "idle::omni": {
+          "state_id": "idle",
+          "direction": "omni",
+          "semantic_identity": [
+            "meridian_transit_descent",
+            "world_prop",
+            "body",
+            "interaction",
+            "idle",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/ash_bell/lower_quarter/meridian_transit_descent/runtime/body/meridian_transit_descent__body__interaction__idle__omni__1f__288x224.png",
+          "frames": 1,
+          "frame_size": [
+            288,
+            224
+          ],
+          "sha256": "58aa96a46aab896f6b5fad9d01d2c2d26994da2e1761ec51942d39c514a77fd7",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "meridian_civic_relay": {
+      "kind": "world_prop",
+      "assets": {
+        "idle::omni": {
+          "state_id": "idle",
+          "direction": "omni",
+          "semantic_identity": [
+            "meridian_civic_relay",
+            "world_prop",
+            "body",
+            "interaction",
+            "idle",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/ash_bell/common/meridian_civic_relay/runtime/body/meridian_civic_relay__body__interaction__idle__omni__1f__96.png",
+          "frames": 1,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "a3b3ebe785c5e12819e860ed18f5e16c817407cca270ef3725599cb3614b7f72",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
     }
   }
 }

@@ -1,6 +1,11 @@
 class_name AshBellStationIX
 extends AuthoredLevel2D
 
+const CIVIC_PRESENTER_SCRIPT := preload("res://game/world/levels/authored/ash_bell/common/meridian_civic_art_presenter.gd")
+const CIVIC_RELAY := preload("res://content/sprites/environment/props/ash_bell/common/meridian_civic_relay/runtime/body/meridian_civic_relay__body__interaction__idle__omni__1f__96.png")
+const SYNC_CORE := preload("res://content/sprites/environment/props/ash_bell/station_ix/station_ix_sync_core/runtime/body/station_ix_sync_core__body__interaction__idle__omni__1f__384x320.png")
+const RECEIVER_SHEET := preload("res://content/sprites/environment/props/ash_bell/station_ix/station_ix_receiver/runtime/body/station_ix_receiver__body__interaction__active__omni__8f__96.png")
+
 const AUTHORING_CELL_SIZE_WORLD := 32.0
 const MAP_SIZE_CELLS := Vector2i(64, 56)
 const MAP_ORIGIN := Vector2(-1024.0, -896.0)
@@ -23,6 +28,8 @@ var _one_shot_completion_count := 0
 @onready var assembly_b := $POIRoot/AssemblyB as CivicRelay2D
 @onready var assembly_c := $POIRoot/AssemblyC as CivicRelay2D
 @onready var authored_navigation := $NavigationRoot/AuthoredNavigationProvider as AuthoredNavigationProvider2D
+var _receiver: AnimatedSprite2D
+var _sync_core: Sprite2D
 
 
 func _ready() -> void:
@@ -36,6 +43,8 @@ func _ready() -> void:
 			{"name": "sync_plant", "rect": Rect2i(22, 24, 20, 16), "color": Color("35454a")},
 		]
 	)
+	blockout_grid.visible = false
+	for relay in [assembly_a, assembly_b, assembly_c]: relay.presentation_texture = CIVIC_RELAY
 	authored_navigation.configure(blockout_grid)
 	assembly_a.position = cell_center(Vector2i(24, 33))
 	assembly_b.position = cell_center(Vector2i(40, 33))
@@ -44,6 +53,7 @@ func _ready() -> void:
 	assembly_b.repaired_changed.connect(_on_assembly_changed)
 	assembly_c.repaired_changed.connect(_on_assembly_changed)
 	_build_blockout_labels()
+	_build_production_presentation()
 	_build_evidence()
 	_position_pressure_markers()
 	super._ready()
@@ -129,6 +139,15 @@ func _apply_state(emit_relay_signals: bool) -> void:
 	assembly_a.set_actionable(not _assembly_a_repaired)
 	assembly_b.set_actionable(_assembly_a_repaired and not _assembly_b_repaired)
 	assembly_c.set_actionable(_assembly_b_repaired and not _assembly_c_repaired)
+	if _receiver != null:
+		if _station_isolated:
+			_receiver.stop()
+			_receiver.frame = 0
+		elif not _receiver.is_playing():
+			_receiver.play(&"active")
+		_receiver.modulate = Color(0.58, 0.66, 0.68, 0.72) if _station_isolated else Color(0.85, 0.94, 1.0, 1.0)
+	if _sync_core != null:
+		_sync_core.modulate = Color(0.7, 0.78, 0.8, 0.9) if _station_isolated else Color(1.0, 0.88, 0.66, 1.0)
 	queue_redraw()
 	var status_label := get_node_or_null("PropsRoot/StationStatus") as Label
 	if status_label != null:
@@ -182,14 +201,34 @@ func _position_pressure_markers() -> void:
 	$EventMarkers/PressureSpawn_AssemblyC_01.position = cell_center(Vector2i(28, 20))
 	$EventMarkers/PressureSpawn_AssemblyC_02.position = cell_center(Vector2i(36, 20))
 
+func _build_production_presentation() -> void:
+	var presenter: Node2D = CIVIC_PRESENTER_SCRIPT.new()
+	presenter.name = "MeridianCivicArtPresenter"
+	presenter.configure(MAP_ORIGIN, WALKABLE_REGIONS, &"station_ix")
+	$BackgroundRoot.add_child(presenter)
+	_sync_core = Sprite2D.new()
+	_sync_core.name = "StationIXSyncCore"
+	_sync_core.texture = SYNC_CORE
+	_sync_core.position = cell_center(Vector2i(32, 16))
+	$PropsRoot.add_child(_sync_core)
+	var frames := SpriteFrames.new()
+	frames.remove_animation(&"default")
+	frames.add_animation(&"active")
+	frames.set_animation_speed(&"active", 9.0)
+	frames.set_animation_loop(&"active", true)
+	for index in 8:
+		var atlas := AtlasTexture.new()
+		atlas.atlas = RECEIVER_SHEET
+		atlas.region = Rect2(index * 96, 0, 96, 96)
+		frames.add_frame(&"active", atlas)
+	_receiver = AnimatedSprite2D.new()
+	_receiver.name = "ActiveReceiver"
+	_receiver.sprite_frames = frames
+	_receiver.animation = &"active"
+	_receiver.position = cell_center(Vector2i(32, 11))
+	_receiver.play()
+	$PropsRoot.add_child(_receiver)
+
 
 func _draw() -> void:
-	# Workplace-first blockout fixtures at Ground Intake.
-	for index in 6:
-		var locker := Rect2(cell_center(Vector2i(25 + index * 2, 47)) - Vector2(12, 22), Vector2(24, 44))
-		draw_rect(locker, Color("566168"), true)
-	# Restrained answer chamber status; final isolation adds a cold-white ring.
-	var chamber_center := cell_center(Vector2i(32, 16))
-	draw_arc(chamber_center, 220.0, 0.0, TAU, 48, Color("95a8aa"), 5.0)
-	if _station_isolated:
-		draw_arc(chamber_center, 170.0, 0.0, TAU, 48, Color(0.76, 0.88, 0.9, 0.8), 8.0)
+	pass

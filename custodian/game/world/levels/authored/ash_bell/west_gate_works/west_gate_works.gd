@@ -1,6 +1,9 @@
 class_name AshBellWestGateWorks
 extends AuthoredLevel2D
 
+const CIVIC_PRESENTER_SCRIPT := preload("res://game/world/levels/authored/ash_bell/common/meridian_civic_art_presenter.gd")
+const CIVIC_RELAY := preload("res://content/sprites/environment/props/ash_bell/common/meridian_civic_relay/runtime/body/meridian_civic_relay__body__interaction__idle__omni__1f__96.png")
+
 const AUTHORING_CELL_SIZE_WORLD := 32.0
 const MAP_SIZE_CELLS := Vector2i(64, 48)
 const MAP_ORIGIN := Vector2(-1024.0, -768.0)
@@ -31,9 +34,12 @@ var _last_navigation_slab_y := -999
 func _ready() -> void:
 	blockout_grid.position = MAP_ORIGIN
 	blockout_grid.configure(AUTHORING_CELL_SIZE_WORLD, MAP_SIZE_CELLS, WALKABLE_REGIONS)
+	blockout_grid.visible = false
+	gate_motor.presentation_texture = CIVIC_RELAY
 	gate_motor.position = cell_center(Vector2i(12, 24))
 	gate_motor.repaired_changed.connect(_on_gate_motor_repaired)
 	_configure_slab()
+	_build_production_presentation()
 	authored_navigation.configure(blockout_grid)
 	_build_evidence()
 	$EventMarkers/PressureSpawn_GateMotor_01.position = cell_center(Vector2i(18, 20))
@@ -129,8 +135,21 @@ func _configure_slab() -> void:
 	shape.size = size
 	($DynamicGates/ClosureSlab/CollisionShape2D as CollisionShape2D).shape = shape
 	var visual := $DynamicGates/ClosureSlab/Visual as Polygon2D
-	visual.color = Color("60676b")
-	visual.polygon = PackedVector2Array([-size * 0.5, Vector2(size.x * 0.5, -size.y * 0.5), size * 0.5, Vector2(-size.x * 0.5, size.y * 0.5)])
+	visual.visible = false
+	for index in 8:
+		var tile := Sprite2D.new()
+		tile.name = "GateTile_%02d" % index
+		tile.texture = CIVIC_PRESENTER_SCRIPT.WALL
+		tile.region_enabled = true
+		tile.region_rect = Rect2(Vector2(7, 7) * 32.0, Vector2.ONE * 32.0)
+		tile.position = Vector2((float(index) - 3.5) * 32.0, 0.0)
+		closure_slab.add_child(tile)
+
+func _build_production_presentation() -> void:
+	var presenter: Node2D = CIVIC_PRESENTER_SCRIPT.new()
+	presenter.name = "MeridianCivicArtPresenter"
+	presenter.configure(MAP_ORIGIN, WALKABLE_REGIONS, &"west_gate_works")
+	$BackgroundRoot.add_child(presenter)
 
 
 func _on_gate_motor_repaired(_relay_id: StringName, repaired: bool) -> void:

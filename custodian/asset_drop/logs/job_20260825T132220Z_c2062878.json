@@ -1,0 +1,44 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260825T132220Z_c2062878",
+  "timestamp": "2026-08-25T13:22:20.323292+00:00",
+  "family": "station_ix_district",
+  "kind": "backdrop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/station_ix_district/landmark.png",
+      "sha256": "7499196f0b8b339a08929430f9db0321b5b9327fe83611334a1991a1dc218fbe"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "landmark",
+      "direction": "omni",
+      "semantic_identity": [
+        "station_ix_district",
+        "backdrop",
+        "background",
+        "display",
+        "landmark",
+        "omni"
+      ],
+      "path": "content/backgrounds/ash_bell/lower_quarter/station_ix_district/station_ix_district_landmark_768x768.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "7499196f0b8b339a08929430f9db0321b5b9327fe83611334a1991a1dc218fbe",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": false,
+    "ok": null
+  },
+  "validation_evidence": [],
+  "result": "success"
+}
