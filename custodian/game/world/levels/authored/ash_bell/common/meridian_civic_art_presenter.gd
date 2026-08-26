@@ -167,9 +167,61 @@ func _draw_floor_overlay(cell: Vector2i, variants: Array, salt: int) -> void:
 
 
 func _draw_wall_band(rect: Rect2i, category: String) -> void:
-	for y in range(rect.position.y, rect.end.y):
-		for x in range(rect.position.x, rect.end.x):
-			_draw_cell(WALL, Palette.WALL[category], Vector2i(x, y))
+	if rect.size.x <= 0 or rect.size.y <= 0:
+		return
+
+	# The wall atlas contains facade/perimeter modules with transparent negative
+	# space. Architecture is a large continuous civic mass underneath them,
+	# not one opaque 32x32 decorative tile repeated through every cell.
+	var world_rect := Rect2(
+		map_origin + Vector2(rect.position * TILE_SIZE),
+		Vector2(rect.size * TILE_SIZE)
+	)
+
+	var mass_color := Color("1d2327")
+	if category == "arcade":
+		mass_color = Color("20272b")
+	elif category == "service_wall":
+		mass_color = Color("1b2024")
+	elif category == "damaged_wall":
+		mass_color = Color("1b1d1f")
+
+	draw_rect(world_rect, mass_color, true)
+
+	var top_y := rect.position.y
+	var bottom_y := rect.end.y - 1
+
+	# Quiet continuous roof/parapet line.
+	for x in range(rect.position.x, rect.end.x):
+		_draw_cell(WALL, Palette.WALL_TOP_STRAIGHT, Vector2i(x, top_y))
+
+	# Bottom-facing facade is what should carry most visual information.
+	var facade_variants: Array = Palette.WALL_RETAINING_FACES
+	match category:
+		"arcade":
+			facade_variants = Palette.WALL_ARCH_FACADES
+		"service_wall":
+			facade_variants = Palette.WALL_SERVICE_FACADES
+		"damaged_wall":
+			facade_variants = Palette.WALL_DAMAGED
+		"rail_edge", "parapet":
+			facade_variants = Palette.WALL_RAIL_EDGES
+		_:
+			facade_variants = Palette.WALL_RETAINING_FACES
+
+	for x in range(rect.position.x, rect.end.x):
+		_draw_cell(WALL, facade_variants, Vector2i(x, bottom_y))
+
+	# Sparse facade rhythm for tall masses. Never refill the whole rectangle.
+	if rect.size.y >= 6 and category not in ["rail_edge", "parapet"]:
+		for y in range(rect.position.y + 3, rect.end.y - 2, 4):
+			for x in range(rect.position.x + 1, rect.end.x - 1, 4):
+				var detail_pool: Array = (
+					Palette.WALL_SERVICE_FACADES
+					if category != "damaged_wall"
+					else Palette.WALL_DAMAGED
+				)
+				_draw_cell(WALL, detail_pool, Vector2i(x, y))
 
 
 func _draw_prop(cell: Vector2i, category: String) -> void:
