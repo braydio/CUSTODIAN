@@ -1,0 +1,131 @@
+{
+  "artifacts": {
+    "assertions": "assertions.json",
+    "audio": "audio_mix.wav",
+    "contact_sheet": "current_contact_sheet.png",
+    "metrics": "metrics.json",
+    "probes": "probes.json",
+    "report": "index.html",
+    "telemetry": "telemetry.json",
+    "timeline": "timeline.json",
+    "video": "current.mp4",
+    "visual_diff": null
+  },
+  "baseline": {
+    "status": "not_requested"
+  },
+  "baseline_compatibility": {
+    "contact_sheet_ticks": [
+      8,
+      22,
+      36,
+      50,
+      64,
+      78
+    ],
+    "end_tick": 89,
+    "fps": 60,
+    "height": 720,
+    "metrics_schema_major": 1,
+    "scenario_id": "traversal/ash_bell_lower_quarter_opening",
+    "scenario_schema_version": 1,
+    "scenario_sha256": "51fc436ddb681ce36d03a699e6bf557e2a1ccb31e2ab628ef2a1bfe44850f001",
+    "start_tick": 0,
+    "width": 1280
+  },
+  "capture": {
+    "audio_requested": false,
+    "fps": 60,
+    "height": 720,
+    "mode": "full",
+    "synchronization": "verified",
+    "width": 1280
+  },
+  "generated_at": "2026-08-25T15:36:13.558479-04:00",
+  "media": {
+    "audio_metrics": {
+      "available": true,
+      "channels": 2,
+      "duration_sec": 1.5666666666666667,
+      "frames": 75200,
+      "noise_floor_dbfs": -27.04351479587883,
+      "onset_ms": null,
+      "onset_threshold_dbfs": -15.043514795878831,
+      "peak_dbfs": -16.270469398587103,
+      "peak_time_ms": 1061.1666666666667,
+      "rms_dbfs": -27.46384112681802,
+      "sample_rate": 48000,
+      "sample_width": 2
+    },
+    "audio_state": {
+      "available": true,
+      "canonical_available": true,
+      "conversion": "ffmpeg",
+      "requested": false
+    },
+    "ffmpeg_available": true,
+    "visual_diff": null
+  },
+  "repository": {
+    "branch": "main",
+    "changed_files": [
+      "D custodian/asset_drop/archive/job_20260825T132219Z_980a525b/meridian_civic_floor/atlas.png",
+      " D custodian/asset_drop/inbox/tmep",
+      " M custodian/content/metadata/assets/generated/asset_catalog.generated.json",
+      " M custodian/content/tiles/ash_bell/lower_quarter/meridian_civic_floor_atlas_512.png",
+      " M custodian/docs/ai_context/CURRENT_STATE.md",
+      " M custodian/docs/ai_context/FILE_INDEX.md",
+      " M custodian/docs/ai_context/task_packets/ASH_BELL_LOWER_QUARTER_SECOND_PASS.md",
+      " M custodian/game/world/levels/authored/ash_bell/common/meridian_civic_art_palette.gd",
+      " M custodian/game/world/levels/authored/ash_bell/common/meridian_civic_art_presenter.gd",
+      " M custodian/tools/validation/validation_manifest.json",
+      " M design/05_levels/ASH_BELL_LOWER_QUARTER.md",
+      "?? custodian/asset_drop/archive/job_20260825T132219Z_980a525b/meridian_civic_floor/meridian_civic_floor_atlas.png",
+      "?? custodian/asset_drop/archive/job_20260825T132219Z_980a525b/meridian_civic_floor/meridian_civic_floor_atlas__coords.png",
+      "?? custodian/asset_drop/archive/job_20260825T193026Z_7e84f24f/",
+      "?? custodian/asset_drop/logs/job_20260825T193026Z_7e84f24f.json",
+      "?? custodian/asset_drop/source_work/meridian_civic_floor/",
+      "?? custodian/tools/art/clean_meridian_civic_floor_atlas.py",
+      "?? custodian/tools/validation/ash_bell_lower_quarter_floor_atlas_smoke.gd",
+      "?? reports/moment_forge/traversal/ash_bell_lower_quarter_opening/"
+    ],
+    "commit": "7fb74d8d673159f053161cbcdbf7b68cdb714cf7",
+    "dirty": true,
+    "root": "/home/braydenchaffee/Projects/CUSTODIAN"
+  },
+  "run_id": "lower-quarter-floor-correction",
+  "runtime": {
+    "godot": {
+      "build": "arch_linux",
+      "hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+      "hex": 263938,
+      "major": 4,
+      "minor": 7,
+      "patch": 2,
+      "status": "stable",
+      "string": "4.7.2-stable (arch_linux)",
+      "timestamp": 1786929518
+    },
+    "physics_hz": 60,
+    "renderer": "vulkan"
+  },
+  "scenario": {
+    "id": "traversal/ash_bell_lower_quarter_opening",
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/traversal/ash_bell_lower_quarter_opening/lower-quarter-floor-correction/scenario.snapshot.json",
+    "schema_version": 1,
+    "sha256": "51fc436ddb681ce36d03a699e6bf557e2a1ccb31e2ab628ef2a1bfe44850f001"
+  },
+  "schema": "custodian.moment_forge.run_manifest.v1",
+  "stable_assertions_passed": true,
+  "stable_fingerprint": {
+    "algorithm": "sha256",
+    "schema": "custodian.moment_forge.stable_fingerprint.v1",
+    "value": "57155a4f12dbc347226bfa277d37fc5ff0f63d928ca24120696454df1316993d"
+  },
+  "status": "passed",
+  "tools": {
+    "ffmpeg": "/usr/bin/ffmpeg",
+    "pillow": "12.3.0",
+    "python": "3.14.7"
+  }
+}

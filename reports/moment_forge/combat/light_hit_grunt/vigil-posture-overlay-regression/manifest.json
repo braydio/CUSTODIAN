@@ -1,0 +1,138 @@
+{
+  "artifacts": {
+    "assertions": "assertions.json",
+    "audio": "audio_mix.wav",
+    "contact_sheet": "current_contact_sheet.png",
+    "metrics": "metrics.json",
+    "probes": "probes.json",
+    "report": "index.html",
+    "telemetry": "telemetry.json",
+    "timeline": "timeline.json",
+    "video": "current.mp4",
+    "visual_diff": null
+  },
+  "baseline": {
+    "status": "not_requested"
+  },
+  "baseline_compatibility": {
+    "contact_sheet_ticks": [
+      0,
+      60,
+      76,
+      81,
+      82,
+      100
+    ],
+    "end_tick": 149,
+    "fps": 60,
+    "height": 720,
+    "metrics_schema_major": 1,
+    "scenario_id": "combat/light_hit_grunt",
+    "scenario_schema_version": 1,
+    "scenario_sha256": "e7e779625b7b9e4d706c419b249d1441bf8b6e1b4ee30cfb6709092f9a0bed0f",
+    "start_tick": 0,
+    "width": 1280
+  },
+  "capture": {
+    "audio_requested": true,
+    "fps": 60,
+    "height": 720,
+    "mode": "full",
+    "synchronization": "verified",
+    "width": 1280
+  },
+  "generated_at": "2026-08-25T16:15:38.387977-04:00",
+  "media": {
+    "audio_metrics": {
+      "available": true,
+      "channels": 2,
+      "duration_sec": 2.533333333333333,
+      "frames": 121600,
+      "noise_floor_dbfs": -27.04351479587883,
+      "onset_ms": 1477.1875,
+      "onset_threshold_dbfs": -15.043514795878831,
+      "peak_dbfs": -13.469037531031702,
+      "peak_time_ms": 1486.2083333333333,
+      "rms_dbfs": -26.841757654151696,
+      "sample_rate": 48000,
+      "sample_width": 2
+    },
+    "audio_state": {
+      "available": true,
+      "canonical_available": true,
+      "conversion": "ffmpeg",
+      "requested": true
+    },
+    "ffmpeg_available": true,
+    "visual_diff": null
+  },
+  "repository": {
+    "branch": "main",
+    "changed_files": [
+      "D custodian/asset_drop/archive/job_20260825T132219Z_980a525b/meridian_civic_floor/atlas.png",
+      " D custodian/asset_drop/inbox/tmep",
+      " M custodian/content/sprites/_pipeline/archive/operator__modular_upper_body__melee_1h__idle_ready_01__e__4f__128x96.json",
+      " M custodian/content/sprites/_pipeline/archive/operator__modular_upper_body__melee_1h__idle_ready_01__e__4f__128x96.png",
+      " M custodian/content/sprites/_pipeline/logs/operator__modular_upper_body__melee_1h__idle_ready_01__e__4f__128x96.log.json",
+      " M custodian/content/sprites/_pipeline/normalized/operator__modular_upper_body__melee_1h__idle_ready_01__e__4f__128x96.png",
+      " M custodian/content/sprites/operator/runtime/animations/melee_1h/posture/idle_ready_01/operator__upper_body__melee_1h__posture__idle_ready_01__e__4f__128x96.png",
+      " M custodian/content/sprites/operator/runtime/animations/melee_1h/posture/idle_ready_01/operator__upper_body__melee_1h__posture__idle_ready_01__w__4f__128x96.png",
+      " M custodian/content/sprites/operator/source/animations/melee_1h/posture/idle_ready_01/operator__upper_body__melee_1h__posture__idle_ready_01__e__4f__128x96.png",
+      " M custodian/content/sprites/operator/source/animations/melee_1h/posture/idle_ready_01/operator__upper_body__melee_1h__posture__idle_ready_01__w__4f__128x96.png",
+      " M custodian/docs/ai_context/CURRENT_STATE.md",
+      " M custodian/game/actors/operator/operator.gd",
+      " M custodian/tools/validation/operator_melee_posture_smoke.gd",
+      " M custodian/tools/validation/operator_vigil_dagger_smoke.gd",
+      " M design/02_features/combat_feel/OPERATOR_MELEE_PRESENTATION_POSTURE.md",
+      "?? custodian/asset_drop/archive/job_20260825T132219Z_980a525b/meridian_civic_floor/meridian_civic_floor_atlas.png",
+      "?? custodian/asset_drop/archive/job_20260825T132219Z_980a525b/meridian_civic_floor/meridian_civic_floor_atlas__coords.png",
+      "?? custodian/asset_drop/source_work/meridian_civic_floor/meridian_civic_floor_atlas__clean.png",
+      "?? custodian/asset_drop/source_work/meridian_civic_floor/meridian_civic_floor_atlas__clean_deoutlined.png",
+      "?? custodian/asset_drop/source_work/meridian_civic_floor/meridian_civic_floor_atlas__coords.png",
+      "?? custodian/asset_drop/source_work/meridian_civic_floor/meridian_civic_floor_atlas_packed.png",
+      "?? custodian/asset_drop/source_work/meridian_civic_floor/meridian_civic_floor_atlas_source.png",
+      "?? custodian/tools/validation/ash_bell_lower_quarter_floor_atlas_smoke.gd.uid",
+      "?? reports/moment_forge/combat/light_hit_grunt/vigil-posture-overlay-regression/",
+      "?? reports/moment_forge/traversal/ash_bell_lower_quarter_opening/",
+      "?? reports/operator_ingest/operator_animation_contract_report_20260825_160531.json"
+    ],
+    "commit": "30b333bf40c95814b3f1fca1b9cbcfcf09f1ce66",
+    "dirty": true,
+    "root": "/home/braydenchaffee/Projects/CUSTODIAN"
+  },
+  "run_id": "vigil-posture-overlay-regression",
+  "runtime": {
+    "godot": {
+      "build": "arch_linux",
+      "hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+      "hex": 263938,
+      "major": 4,
+      "minor": 7,
+      "patch": 2,
+      "status": "stable",
+      "string": "4.7.2-stable (arch_linux)",
+      "timestamp": 1786929518
+    },
+    "physics_hz": 60,
+    "renderer": "vulkan"
+  },
+  "scenario": {
+    "id": "combat/light_hit_grunt",
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/combat/light_hit_grunt/vigil-posture-overlay-regression/scenario.snapshot.json",
+    "schema_version": 1,
+    "sha256": "e7e779625b7b9e4d706c419b249d1441bf8b6e1b4ee30cfb6709092f9a0bed0f"
+  },
+  "schema": "custodian.moment_forge.run_manifest.v1",
+  "stable_assertions_passed": true,
+  "stable_fingerprint": {
+    "algorithm": "sha256",
+    "schema": "custodian.moment_forge.stable_fingerprint.v1",
+    "value": "e4f6c8f5a62f904f4aa66847ac9b9721ab70524b286c8fab558633a22bcafa4e"
+  },
+  "status": "passed",
+  "tools": {
+    "ffmpeg": "/usr/bin/ffmpeg",
+    "pillow": "12.3.0",
+    "python": "3.14.7"
+  }
+}

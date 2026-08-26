@@ -1,0 +1,51 @@
+{
+  "argv": [
+    "/usr/bin/godot",
+    "--path",
+    "/home/braydenchaffee/Projects/CUSTODIAN/custodian",
+    "--fixed-fps",
+    "60",
+    "--write-movie",
+    "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/traversal/ash_bell_lower_quarter_opening/lower-quarter-floor-correction/raw/capture.png",
+    "--script",
+    "res://tools/iteration/godot/moment_runner.gd",
+    "--",
+    "--custodian-dev",
+    "--observe",
+    "--moment-forge",
+    "--moment-scenario",
+    "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/traversal/ash_bell_lower_quarter_opening/lower-quarter-floor-correction/scenario.snapshot.json",
+    "--moment-output",
+    "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/traversal/ash_bell_lower_quarter_opening/lower-quarter-floor-correction",
+    "--moment-capture-mode",
+    "full"
+  ],
+  "capture_mode": "full",
+  "repository": {
+    "branch": "main",
+    "changed_files": [
+      "D custodian/asset_drop/archive/job_20260825T132219Z_980a525b/meridian_civic_floor/atlas.png",
+      " D custodian/asset_drop/inbox/tmep",
+      " M custodian/content/metadata/assets/generated/asset_catalog.generated.json",
+      " M custodian/content/tiles/ash_bell/lower_quarter/meridian_civic_floor_atlas_512.png",
+      " M custodian/docs/ai_context/CURRENT_STATE.md",
+      " M custodian/docs/ai_context/FILE_INDEX.md",
+      " M custodian/docs/ai_context/task_packets/ASH_BELL_LOWER_QUARTER_SECOND_PASS.md",
+      " M custodian/game/world/levels/authored/ash_bell/common/meridian_civic_art_palette.gd",
+      " M custodian/game/world/levels/authored/ash_bell/common/meridian_civic_art_presenter.gd",
+      " M custodian/tools/validation/validation_manifest.json",
+      " M design/05_levels/ASH_BELL_LOWER_QUARTER.md",
+      "?? custodian/asset_drop/archive/job_20260825T132219Z_980a525b/meridian_civic_floor/meridian_civic_floor_atlas.png",
+      "?? custodian/asset_drop/archive/job_20260825T132219Z_980a525b/meridian_civic_floor/meridian_civic_floor_atlas__coords.png",
+      "?? custodian/asset_drop/archive/job_20260825T193026Z_7e84f24f/",
+      "?? custodian/asset_drop/logs/job_20260825T193026Z_7e84f24f.json",
+      "?? custodian/asset_drop/source_work/meridian_civic_floor/",
+      "?? custodian/tools/art/clean_meridian_civic_floor_atlas.py",
+      "?? custodian/tools/validation/ash_bell_lower_quarter_floor_atlas_smoke.gd",
+      "?? reports/moment_forge/traversal/ash_bell_lower_quarter_opening/"
+    ],
+    "commit": "7fb74d8d673159f053161cbcdbf7b68cdb714cf7",
+    "dirty": true
+  },
+  "scenario_sha256": "51fc436ddb681ce36d03a699e6bf557e2a1ccb31e2ab628ef2a1bfe44850f001"
+}

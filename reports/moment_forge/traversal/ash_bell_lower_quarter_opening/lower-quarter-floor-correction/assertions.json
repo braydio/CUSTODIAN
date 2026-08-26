@@ -1,0 +1,81 @@
+[
+	{
+		"actual": true,
+		"expected": {
+			"role": "level",
+			"severity": "error",
+			"type": "role_exists"
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "role_exists"
+	},
+	{
+		"actual": true,
+		"expected": {
+			"role": "operator",
+			"severity": "error",
+			"type": "role_exists"
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "role_exists"
+	},
+	{
+		"actual": true,
+		"expected": {
+			"field": "real_camera",
+			"op": "eq",
+			"probe": "fixture_state",
+			"severity": "error",
+			"tick": 8.0,
+			"type": "probe_compare",
+			"value": true
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "probe_compare"
+	},
+	{
+		"actual": true,
+		"expected": {
+			"field": "real_operator",
+			"op": "eq",
+			"probe": "fixture_state",
+			"severity": "error",
+			"tick": 8.0,
+			"type": "probe_compare",
+			"value": true
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "probe_compare"
+	},
+	{
+		"actual": false,
+		"expected": {
+			"severity": "error",
+			"type": "no_unreleased_inputs"
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "no_unreleased_inputs"
+	},
+	{
+		"actual": true,
+		"expected": {
+			"path": "telemetry.json",
+			"severity": "error",
+			"type": "output_exists"
+		},
+		"message": "",
+		"passed": true,
+		"severity": "error",
+		"type": "output_exists"
+	}
+]

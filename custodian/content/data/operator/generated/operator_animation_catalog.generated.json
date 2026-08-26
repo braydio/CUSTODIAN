@@ -801,6 +801,54 @@
         }
       }
     },
+    "melee_1h/locomotion/run_01/e": {
+      "profile": "melee_1h",
+      "group": "locomotion",
+      "action": "run_01",
+      "direction": "e",
+      "layers": {
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/locomotion/run_01/operator__lower_body__melee_1h__locomotion__run_01__e__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/locomotion/run_01/operator__upper_body__melee_1h__locomotion__run_01__e__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
+    "melee_1h/locomotion/run_01/w": {
+      "profile": "melee_1h",
+      "group": "locomotion",
+      "action": "run_01",
+      "direction": "w",
+      "layers": {
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/locomotion/run_01/operator__lower_body__melee_1h__locomotion__run_01__w__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/locomotion/run_01/operator__upper_body__melee_1h__locomotion__run_01__w__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
     "melee_1h/posture/draw_01/e": {
       "profile": "melee_1h",
       "group": "posture",
@@ -1050,6 +1098,38 @@
         "weapon": {
           "path": "res://content/sprites/operator/runtime/animations/melee_1h_dagger/cosmetic/relaxed_idle_01/operator__weapon__melee_1h_dagger__cosmetic__relaxed_idle_01__w__4f__96.png",
           "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
+    "melee_1h_dagger/locomotion/run_01/e": {
+      "profile": "melee_1h_dagger",
+      "group": "locomotion",
+      "action": "run_01",
+      "direction": "e",
+      "layers": {
+        "weapon": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_dagger/locomotion/run_01/operator__weapon__melee_1h_dagger__locomotion__run_01__e__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
+    "melee_1h_dagger/locomotion/run_01/w": {
+      "profile": "melee_1h_dagger",
+      "group": "locomotion",
+      "action": "run_01",
+      "direction": "w",
+      "layers": {
+        "weapon": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_dagger/locomotion/run_01/operator__weapon__melee_1h_dagger__locomotion__run_01__w__6f__96.png",
+          "frames": 6,
           "frame_size": [
             96,
             96

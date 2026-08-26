@@ -1,0 +1,186 @@
+{
+	"actions": [
+		{
+			"action": "fixture_command",
+			"ok": true,
+			"response": true,
+			"tick": 15
+		},
+		{
+			"action": "fixture_command",
+			"ok": true,
+			"response": true,
+			"tick": 29
+		},
+		{
+			"action": "fixture_command",
+			"ok": true,
+			"response": true,
+			"tick": 43
+		},
+		{
+			"action": "fixture_command",
+			"ok": true,
+			"response": true,
+			"tick": 57
+		},
+		{
+			"action": "fixture_command",
+			"ok": true,
+			"response": true,
+			"tick": 71
+		},
+		{
+			"action": "finish",
+			"finish": true,
+			"ok": true,
+			"tick": 86
+		}
+	],
+	"assertions": [
+		{
+			"actual": true,
+			"expected": {
+				"role": "level",
+				"severity": "error",
+				"type": "role_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "role_exists"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"role": "operator",
+				"severity": "error",
+				"type": "role_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "role_exists"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"field": "real_camera",
+				"op": "eq",
+				"probe": "fixture_state",
+				"severity": "error",
+				"tick": 8.0,
+				"type": "probe_compare",
+				"value": true
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"field": "real_operator",
+				"op": "eq",
+				"probe": "fixture_state",
+				"severity": "error",
+				"tick": 8.0,
+				"type": "probe_compare",
+				"value": true
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "probe_compare"
+		},
+		{
+			"actual": false,
+			"expected": {
+				"severity": "error",
+				"type": "no_unreleased_inputs"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "no_unreleased_inputs"
+		},
+		{
+			"actual": true,
+			"expected": {
+				"path": "telemetry.json",
+				"severity": "error",
+				"type": "output_exists"
+			},
+			"message": "",
+			"passed": true,
+			"severity": "error",
+			"type": "output_exists"
+		}
+	],
+	"capture_failures": [],
+	"capture_mode": "full",
+	"completed": true,
+	"completed_tick": 86,
+	"failures": [],
+	"keyframes": [
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/traversal/ash_bell_lower_quarter_opening/lower-quarter-floor-correction/keyframes/tick_000008.png",
+			"render_frame": 16,
+			"sha256": "eed9a0cf71145ab5bc46b061b3b4d1426a800281c6d7d01ebb4790764821b9b5",
+			"tick": 8
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/traversal/ash_bell_lower_quarter_opening/lower-quarter-floor-correction/keyframes/tick_000022.png",
+			"render_frame": 30,
+			"sha256": "d3dc962269cee9f90f41dcec2f108000f5f824499207a0abf9ad20c1dd86275f",
+			"tick": 22
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/traversal/ash_bell_lower_quarter_opening/lower-quarter-floor-correction/keyframes/tick_000036.png",
+			"render_frame": 44,
+			"sha256": "5917d2e7a781a6f13a30e2c36fabc76169e856c5ce814326daa238392d7f9ee3",
+			"tick": 36
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/traversal/ash_bell_lower_quarter_opening/lower-quarter-floor-correction/keyframes/tick_000050.png",
+			"render_frame": 58,
+			"sha256": "90f71a35a04d7d30c377800ebd7a5c5e64c9c3fdbe4185e1e839c1907c732273",
+			"tick": 50
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/traversal/ash_bell_lower_quarter_opening/lower-quarter-floor-correction/keyframes/tick_000064.png",
+			"render_frame": 72,
+			"sha256": "571a52cd13b6300a08c7ad4c2d6a4dc9727647f55aeed5ba51ed69d7ba5bd47d",
+			"tick": 64
+		},
+		{
+			"path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/traversal/ash_bell_lower_quarter_opening/lower-quarter-floor-correction/keyframes/tick_000078.png",
+			"render_frame": 86,
+			"sha256": "73092305bbae2c4807ea663e575f3a391602832797f2d87590eff8a6756a9980",
+			"tick": 78
+		}
+	],
+	"markers": [],
+	"passed": true,
+	"probe_failures": [],
+	"runtime": {
+		"godot": {
+			"build": "arch_linux",
+			"hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+			"hex": 263938,
+			"major": 4,
+			"minor": 7,
+			"patch": 2,
+			"status": "stable",
+			"string": "4.7.2-stable (arch_linux)",
+			"timestamp": 1786929518
+		},
+		"physics_hz": 60,
+		"renderer": "vulkan"
+	},
+	"scenario_id": "traversal/ash_bell_lower_quarter_opening",
+	"scenario_path": "/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/traversal/ash_bell_lower_quarter_opening/lower-quarter-floor-correction/scenario.snapshot.json",
+	"schema": "custodian.moment_forge.run_result.v1",
+	"seed": 104729
+}

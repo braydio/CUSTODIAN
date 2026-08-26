@@ -1,0 +1,176 @@
+{
+  "assertions": [
+    {
+      "role": "level",
+      "severity": "error",
+      "type": "role_exists"
+    },
+    {
+      "role": "operator",
+      "severity": "error",
+      "type": "role_exists"
+    },
+    {
+      "field": "real_camera",
+      "op": "eq",
+      "probe": "fixture_state",
+      "severity": "error",
+      "tick": 8,
+      "type": "probe_compare",
+      "value": true
+    },
+    {
+      "field": "real_operator",
+      "op": "eq",
+      "probe": "fixture_state",
+      "severity": "error",
+      "tick": 8,
+      "type": "probe_compare",
+      "value": true
+    },
+    {
+      "severity": "error",
+      "type": "no_unreleased_inputs"
+    },
+    {
+      "path": "telemetry.json",
+      "severity": "error",
+      "type": "output_exists"
+    }
+  ],
+  "capture": {
+    "audio": false,
+    "background": "opaque",
+    "contact_sheet_ticks": [
+      8,
+      22,
+      36,
+      50,
+      64,
+      78
+    ],
+    "end_tick": 89,
+    "fps": 60,
+    "height": 720,
+    "required_keyframes": true,
+    "start_tick": 0,
+    "width": 1280
+  },
+  "description": "Real Operator and gameplay Camera2D review of the Lower Quarter opening and landmark reacquisition beats.",
+  "duration_ticks": 90,
+  "id": "traversal/ash_bell_lower_quarter_opening",
+  "probes": [
+    {
+      "fields": [
+        "checkpoint",
+        "real_camera",
+        "real_operator"
+      ],
+      "id": "fixture_state",
+      "required": true,
+      "role": "fixture",
+      "ticks": [
+        8,
+        22,
+        36,
+        50,
+        64,
+        78
+      ]
+    },
+    {
+      "fields": [
+        "global_position"
+      ],
+      "id": "operator_path",
+      "required": true,
+      "role": "operator",
+      "ticks": [
+        8,
+        22,
+        36,
+        50,
+        64,
+        78
+      ]
+    }
+  ],
+  "scene": "res://tools/validation/fixtures/ash_bell_lower_quarter_opening_moment.tscn",
+  "schema_version": 1,
+  "seed": 104729,
+  "setup": {
+    "fixture": {
+      "config": {},
+      "id": "ash_bell_lower_quarter_opening"
+    },
+    "processing": [],
+    "properties": [],
+    "remove_nodes": [],
+    "roles": {
+      "fixture": {
+        "node_path": "."
+      },
+      "level": {
+        "node_path": "World/AshBellLowerQuarter"
+      },
+      "operator": {
+        "node_path": "World/Operator"
+      }
+    },
+    "spawns": []
+  },
+  "simulation": {
+    "max_wall_seconds": 45,
+    "pause_during_setup": true,
+    "physics_hz": 60,
+    "warmup_ticks": 6
+  },
+  "stable_fingerprint": {
+    "counters": [],
+    "event_payload_fields": {},
+    "float_quantum": 0.0001,
+    "position_quantum_px": 0.25,
+    "probes": [
+      "operator_path"
+    ]
+  },
+  "tags": [
+    "traversal",
+    "ash_bell",
+    "lower_quarter",
+    "visual_review",
+    "production_art",
+    "camera"
+  ],
+  "timeline": [
+    {
+      "action": "fixture_command",
+      "name": "direct_line",
+      "tick": 15
+    },
+    {
+      "action": "fixture_command",
+      "name": "evacuation_turn",
+      "tick": 29
+    },
+    {
+      "action": "fixture_command",
+      "name": "civic_basin",
+      "tick": 43
+    },
+    {
+      "action": "fixture_command",
+      "name": "answers_court",
+      "tick": 57
+    },
+    {
+      "action": "fixture_command",
+      "name": "station_threshold",
+      "tick": 71
+    },
+    {
+      "action": "finish",
+      "tick": 86
+    }
+  ]
+}

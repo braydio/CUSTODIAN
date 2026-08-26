@@ -3,7 +3,7 @@
   "mode": "strip",
   "outputs": [
     {
-      "path": "operator/source/animations/melee_1h/locomotion/idle_ready_01/operator__upper_body__melee_1h__locomotion__idle_ready_01__e__4f__128x96.png",
+      "path": "operator/source/animations/melee_1h/posture/idle_ready_01/operator__upper_body__melee_1h__posture__idle_ready_01__e__4f__128x96.png",
       "layout": "horizontal_strip",
       "select": {
         "type": "range",

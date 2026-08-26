@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Moment Forge — traversal/ash_bell_lower_quarter_opening</title>
+<style>
+:root{color-scheme:dark;--bg:#090d13;--panel:#111925;--line:#2d425a;--text:#dce8f2;--muted:#8ca0b4;--cyan:#66d9ef;--red:#ff6b72;--green:#72d69b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,sans-serif}main{max-width:1600px;margin:auto;padding:24px}code{color:var(--cyan)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.panel{background:var(--panel);border:1px solid var(--line);padding:16px;border-radius:8px;overflow:auto;margin-bottom:16px}video,img{width:100%;height:auto;background:#000}table{width:100%;border-collapse:collapse}th,td{padding:7px 9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.pass{color:var(--green)}.fail{color:var(--red)}.muted{color:var(--muted)}button,input{margin:4px}@media(max-width:900px){.grid{grid-template-columns:1fr}}
+</style></head><body><main>
+<h1>CUSTODIAN Moment Forge</h1>
+<p><code>traversal/ash_bell_lower_quarter_opening</code> — Real Operator and gameplay Camera2D review of the Lower Quarter opening and landmark reacquisition beats.</p>
+<p>Status: <b>passed</b> · fingerprint <code>57155a4f12dbc347</code></p>
+<section class="panel"><button id="playBoth">Play both</button><button id="pauseBoth">Pause</button><label>Scrub <input id="scrub" type="range" min="0" max="1000" value="0"></label>
+<div class="grid"><div><h2>Baseline</h2><p class='muted'>Unavailable.</p></div><div><h2>Current</h2><video controls loop src='current.mp4'></video></div></div></section>
+<div class="grid"><section class="panel"><h2>Baseline contact sheet</h2><p class='muted'>Unavailable.</p></section><section class="panel"><h2>Current contact sheet</h2><img src='current_contact_sheet.png' alt='current_contact_sheet.png'></section></div>
+<section class="panel"><h2>Visual difference (advisory)</h2><p class='muted'>Unavailable.</p></section>
+<section class="panel"><h2>Assertions</h2><ul><li class='pass'><b>role_exists</b> [error]: </li>
+<li class='pass'><b>role_exists</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>probe_compare</b> [error]: </li>
+<li class='pass'><b>no_unreleased_inputs</b> [error]: </li>
+<li class='pass'><b>output_exists</b> [error]: </li></ul></section>
+<section class="panel"><h2>Metric deltas</h2><table><thead><tr><th>Metric</th><th>Baseline</th><th>Current</th><th>Delta</th></tr></thead><tbody><tr><td>completed_tick</td><td>None</td><td>86</td><td>None</td></tr>
+<tr><td>visible_visual_anchor_delta_px</td><td>None</td><td>None</td><td>None</td></tr>
+<tr><td>visible_visual_anchor_sample_count</td><td>None</td><td>0</td><td>None</td></tr></tbody></table></section>
+<section class="panel"><h2>Tick-enriched timeline</h2><table><thead><tr><th>Tick</th><th>Kind</th><th>Evidence</th></tr></thead><tbody><tr><td>0</td><td>performance_external_stall</td><td><code>{&quot;data&quot;: {&quot;application_focused&quot;: true, &quot;duration_ms&quot;: 2004.855, &quot;overlay_visible&quot;: false, &quot;phase&quot;: &quot;baseline&quot;, &quot;reason&quot;: &quot;external_or_unclassified_stall&quot;, &quot;time_scale&quot;: 1.0, &quot;tree_paused&quot;: false, &quot;uptime_sec&quot;: 5.251}, &quot;kind&quot;: &quot;performance_external_stall&quot;, &quot;tick&quot;: 0}</code></td></tr>
+<tr><td>15</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;fixture_command&quot;, &quot;name&quot;: &quot;direct_line&quot;, &quot;tick&quot;: 15.0}, &quot;moment_tick&quot;: 15, &quot;result&quot;: {&quot;action&quot;: &quot;fixture_command&quot;, &quot;ok&quot;: true, &quot;response&quot;: true, &quot;tick&quot;: 15}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 15}</code></td></tr>
+<tr><td>25</td><td>performance_incident_state_changed</td><td><code>{&quot;data&quot;: {&quot;from&quot;: &quot;ARMED&quot;, &quot;to&quot;: &quot;CAPTURING&quot;}, &quot;kind&quot;: &quot;performance_incident_state_changed&quot;, &quot;tick&quot;: 25}</code></td></tr>
+<tr><td>25</td><td>performance_incident_started</td><td><code>{&quot;data&quot;: {&quot;phase&quot;: &quot;baseline&quot;, &quot;preroll_samples&quot;: 30, &quot;trigger&quot;: &quot;automatic&quot;}, &quot;kind&quot;: &quot;performance_incident_started&quot;, &quot;tick&quot;: 25}</code></td></tr>
+<tr><td>29</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;fixture_command&quot;, &quot;name&quot;: &quot;evacuation_turn&quot;, &quot;tick&quot;: 29.0}, &quot;moment_tick&quot;: 29, &quot;result&quot;: {&quot;action&quot;: &quot;fixture_command&quot;, &quot;ok&quot;: true, &quot;response&quot;: true, &quot;tick&quot;: 29}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 29}</code></td></tr>
+<tr><td>43</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;fixture_command&quot;, &quot;name&quot;: &quot;civic_basin&quot;, &quot;tick&quot;: 43.0}, &quot;moment_tick&quot;: 43, &quot;result&quot;: {&quot;action&quot;: &quot;fixture_command&quot;, &quot;ok&quot;: true, &quot;response&quot;: true, &quot;tick&quot;: 43}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 43}</code></td></tr>
+<tr><td>57</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;fixture_command&quot;, &quot;name&quot;: &quot;answers_court&quot;, &quot;tick&quot;: 57.0}, &quot;moment_tick&quot;: 57, &quot;result&quot;: {&quot;action&quot;: &quot;fixture_command&quot;, &quot;ok&quot;: true, &quot;response&quot;: true, &quot;tick&quot;: 57}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 57}</code></td></tr>
+<tr><td>71</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;fixture_command&quot;, &quot;name&quot;: &quot;station_threshold&quot;, &quot;tick&quot;: 71.0}, &quot;moment_tick&quot;: 71, &quot;result&quot;: {&quot;action&quot;: &quot;fixture_command&quot;, &quot;ok&quot;: true, &quot;response&quot;: true, &quot;tick&quot;: 71}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 71}</code></td></tr>
+<tr><td>86</td><td>moment_forge_action</td><td><code>{&quot;data&quot;: {&quot;authored_action&quot;: {&quot;action&quot;: &quot;finish&quot;, &quot;tick&quot;: 86.0}, &quot;moment_tick&quot;: 86, &quot;result&quot;: {&quot;action&quot;: &quot;finish&quot;, &quot;finish&quot;: true, &quot;ok&quot;: true, &quot;tick&quot;: 86}}, &quot;kind&quot;: &quot;moment_forge_action&quot;, &quot;tick&quot;: 86}</code></td></tr></tbody></table></section>
+<section class="panel"><h2>Provenance</h2><pre>{
+  &quot;capture&quot;: {
+    &quot;audio_requested&quot;: false,
+    &quot;fps&quot;: 60,
+    &quot;height&quot;: 720,
+    &quot;mode&quot;: &quot;full&quot;,
+    &quot;synchronization&quot;: &quot;verified&quot;,
+    &quot;width&quot;: 1280
+  },
+  &quot;repository&quot;: {
+    &quot;branch&quot;: &quot;main&quot;,
+    &quot;changed_files&quot;: [
+      &quot;D custodian/asset_drop/archive/job_20260825T132219Z_980a525b/meridian_civic_floor/atlas.png&quot;,
+      &quot; D custodian/asset_drop/inbox/tmep&quot;,
+      &quot; M custodian/content/metadata/assets/generated/asset_catalog.generated.json&quot;,
+      &quot; M custodian/content/tiles/ash_bell/lower_quarter/meridian_civic_floor_atlas_512.png&quot;,
+      &quot; M custodian/docs/ai_context/CURRENT_STATE.md&quot;,
+      &quot; M custodian/docs/ai_context/FILE_INDEX.md&quot;,
+      &quot; M custodian/docs/ai_context/task_packets/ASH_BELL_LOWER_QUARTER_SECOND_PASS.md&quot;,
+      &quot; M custodian/game/world/levels/authored/ash_bell/common/meridian_civic_art_palette.gd&quot;,
+      &quot; M custodian/game/world/levels/authored/ash_bell/common/meridian_civic_art_presenter.gd&quot;,
+      &quot; M custodian/tools/validation/validation_manifest.json&quot;,
+      &quot; M design/05_levels/ASH_BELL_LOWER_QUARTER.md&quot;,
+      &quot;?? custodian/asset_drop/archive/job_20260825T132219Z_980a525b/meridian_civic_floor/meridian_civic_floor_atlas.png&quot;,
+      &quot;?? custodian/asset_drop/archive/job_20260825T132219Z_980a525b/meridian_civic_floor/meridian_civic_floor_atlas__coords.png&quot;,
+      &quot;?? custodian/asset_drop/archive/job_20260825T193026Z_7e84f24f/&quot;,
+      &quot;?? custodian/asset_drop/logs/job_20260825T193026Z_7e84f24f.json&quot;,
+      &quot;?? custodian/asset_drop/source_work/meridian_civic_floor/&quot;,
+      &quot;?? custodian/tools/art/clean_meridian_civic_floor_atlas.py&quot;,
+      &quot;?? custodian/tools/validation/ash_bell_lower_quarter_floor_atlas_smoke.gd&quot;,
+      &quot;?? reports/moment_forge/traversal/ash_bell_lower_quarter_opening/&quot;
+    ],
+    &quot;commit&quot;: &quot;7fb74d8d673159f053161cbcdbf7b68cdb714cf7&quot;,
+    &quot;dirty&quot;: true,
+    &quot;root&quot;: &quot;/home/braydenchaffee/Projects/CUSTODIAN&quot;
+  },
+  &quot;runtime&quot;: {
+    &quot;godot&quot;: {
+      &quot;build&quot;: &quot;arch_linux&quot;,
+      &quot;hash&quot;: &quot;ed1daf0bf001b61586d9930840f2f1394092c079&quot;,
+      &quot;hex&quot;: 263938,
+      &quot;major&quot;: 4,
+      &quot;minor&quot;: 7,
+      &quot;patch&quot;: 2,
+      &quot;status&quot;: &quot;stable&quot;,
+      &quot;string&quot;: &quot;4.7.2-stable (arch_linux)&quot;,
+      &quot;timestamp&quot;: 1786929518
+    },
+    &quot;physics_hz&quot;: 60,
+    &quot;renderer&quot;: &quot;vulkan&quot;
+  },
+  &quot;scenario&quot;: {
+    &quot;id&quot;: &quot;traversal/ash_bell_lower_quarter_opening&quot;,
+    &quot;path&quot;: &quot;/home/braydenchaffee/Projects/CUSTODIAN/reports/moment_forge/traversal/ash_bell_lower_quarter_opening/lower-quarter-floor-correction-v2/scenario.snapshot.json&quot;,
+    &quot;schema_version&quot;: 1,
+    &quot;sha256&quot;: &quot;51fc436ddb681ce36d03a699e6bf557e2a1ccb31e2ab628ef2a1bfe44850f001&quot;
+  }
+}</pre></section>
+</main><script>
+const videos=[...document.querySelectorAll('video')],scrub=document.getElementById('scrub');
+document.getElementById('playBoth').onclick=()=>videos.forEach(v=>v.play());
+document.getElementById('pauseBoth').onclick=()=>videos.forEach(v=>v.pause());
+scrub.oninput=()=>videos.forEach(v=>{if(Number.isFinite(v.duration))v.currentTime=v.duration*Number(scrub.value)/1000});
+</script></body></html>

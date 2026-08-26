@@ -1,0 +1,25 @@
+{ "frames": {
+   "operator__modular_weapon_vigil_dagger__melee_1h__idle_ready_01__e__4f__96.png": {
+    "frame": { "x": 0, "y": 0, "w": 96, "h": 384 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 96, "h": 384 },
+    "sourceSize": { "w": 96, "h": 384 },
+    "duration": 100
+   }
+ },
+ "meta": {
+  "app": "http://www.aseprite.org/",
+  "version": "1.3.18.2-dev",
+  "format": "RGBA8888",
+  "size": { "w": 96, "h": 384 },
+  "scale": "1",
+  "frameTags": [
+  ],
+  "layers": [
+   { "name": "Layer", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+  ]
+ }
+}
