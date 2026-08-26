@@ -255,6 +255,14 @@ technical cells are authored overlays only. The reproducible source-work prep
 removes border-connected near-black negative space and one adjacent halo layer
 from non-ground cells while preserving all approved ground cells opaque.
 
+The Meridian wall atlas uses the reviewed alpha-clean source; the original
+Meridian props atlas remains canonical because equivalent cleanup erodes its
+already-correct thin alpha silhouettes. Wall cells are facade and perimeter
+modules rather than solid-building voxels. `MeridianCivicArtPresenter` draws a
+dark continuous civic structural mass first, then a quiet top edge, a semantic
+bottom facade, and sparse interior machinery. It must not refill authored wall
+rectangles with repeated 32×32 wall sprites.
+
 The Lower Quarter integrates the 768×768 Station IX landmark, eight 96×96
 Answer pedestals with a physically missing/damaged IX, and 96×96 civic relays.
 Wrong Street uses fixed local, seam, and imported bands with mismatched curb and
