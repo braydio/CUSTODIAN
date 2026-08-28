@@ -13,6 +13,7 @@ enum Phase {
 	KNEELING,
 	RISING,
 	HOSTILE,
+	RESOLVING,
 	DISSOLVING,
 	GONE,
 }
@@ -160,6 +161,25 @@ func dissolve() -> void:
 	queue_free()
 
 
+func begin_stabilized_resolution() -> void:
+	if phase == Phase.GONE or phase == Phase.DISSOLVING:
+		return
+	phase = Phase.RESOLVING
+	_attack_in_progress = false
+	velocity = Vector2.ZERO
+	_play_anim(&"kneel_idle")
+	_set_visual_color(Color(0.62, 0.58, 0.48, 1.0))
+
+
+func interrupt_for_stabilization() -> void:
+	if phase == Phase.GONE or phase == Phase.DISSOLVING:
+		return
+	phase = Phase.RESOLVING
+	_attack_in_progress = false
+	velocity = Vector2.ZERO
+	_play_anim(&"hostile_idle")
+
+
 func die_violently() -> void:
 	phase = Phase.GONE
 	velocity = Vector2.ZERO
@@ -212,6 +232,7 @@ func _pin_strike() -> void:
 func _thread_pull() -> void:
 	_attack_in_progress = true
 	_last_attack = &"thread_pull"
+	attack_started.emit()
 	thread_pull_started.emit()
 	_play_anim(&"thread_pull")
 	_bark(&"thread_pull_bark")
@@ -236,6 +257,7 @@ func _thread_pull() -> void:
 func _ninth_answer() -> void:
 	_attack_in_progress = true
 	_last_attack = &"ninth_answer"
+	attack_started.emit()
 	ninth_answer_started.emit()
 	_play_anim(&"ninth_answer")
 	_bark(&"ninth_answer_bark")
@@ -258,6 +280,7 @@ func _ninth_answer() -> void:
 func _orra_comes_late() -> void:
 	_attack_in_progress = true
 	_last_attack = &"orra_late"
+	attack_started.emit()
 	orra_late_started.emit()
 	_play_anim(&"orra_late")
 	_bark(&"orra_late_windup_bark")

@@ -4,9 +4,9 @@
   "description": "Lower-lift arrival, Ritualant reveal/dialogue/ritual, hostile grammar, and deliberate return-ascent review.",
   "scene": "res://tools/validation/fixtures/forlorn_ritualant_completion_moment.tscn",
   "seed": 104729,
-  "duration_ticks": 600,
+  "duration_ticks": 1020,
   "simulation": {"physics_hz": 60, "warmup_ticks": 4, "max_wall_seconds": 40, "pause_during_setup": true},
-  "capture": {"width": 1280, "height": 720, "fps": 60, "audio": false, "start_tick": 0, "end_tick": 599, "contact_sheet_ticks": [0, 125, 260, 330, 400, 555], "required_keyframes": true, "background": "opaque"},
+  "capture": {"width": 1280, "height": 720, "fps": 60, "audio": false, "start_tick": 0, "end_tick": 1019, "contact_sheet_ticks": [0, 260, 480, 660, 760, 995], "required_keyframes": true, "background": "opaque"},
   "setup": {
     "remove_nodes": [],
     "roles": {
@@ -25,12 +25,15 @@
     {"tick": 235, "action": "fixture_command", "name": "thread_pull"},
     {"tick": 305, "action": "fixture_command", "name": "ninth_answer"},
     {"tick": 375, "action": "fixture_command", "name": "orra_late"},
-    {"tick": 445, "action": "fixture_command", "name": "return_lift"},
-    {"tick": 510, "action": "fixture_command", "name": "begin_return"},
-    {"tick": 598, "action": "finish"}
+    {"tick": 445, "action": "fixture_command", "name": "anchor_west"},
+    {"tick": 535, "action": "fixture_command", "name": "anchor_north"},
+    {"tick": 625, "action": "fixture_command", "name": "anchor_east"},
+    {"tick": 880, "action": "fixture_command", "name": "return_lift"},
+    {"tick": 940, "action": "fixture_command", "name": "begin_return"},
+    {"tick": 1018, "action": "finish"}
   ],
   "probes": [
-    {"id": "encounter_state", "role": "fixture", "fields": ["checkpoint", "active_attack"], "ticks": [0, 60, 125, 190, 260, 330, 400, 480, 555], "required": true}
+    {"id": "encounter_state", "role": "fixture", "fields": ["checkpoint", "active_attack"], "ticks": [0, 60, 125, 190, 260, 330, 400, 480, 570, 660, 760, 900, 980], "required": true}
   ],
   "assertions": [
     {"type": "role_exists", "role": "level", "severity": "error"},
@@ -39,6 +42,9 @@
     {"type": "probe_compare", "probe": "encounter_state", "tick": 260, "field": "active_attack", "op": "eq", "value": "thread_pull", "severity": "error"},
     {"type": "probe_compare", "probe": "encounter_state", "tick": 330, "field": "active_attack", "op": "eq", "value": "ninth_answer", "severity": "error"},
     {"type": "probe_compare", "probe": "encounter_state", "tick": 400, "field": "active_attack", "op": "eq", "value": "orra_late", "severity": "error"},
+    {"type": "probe_compare", "probe": "encounter_state", "tick": 480, "field": "checkpoint", "op": "eq", "value": "anchor_west", "severity": "error"},
+    {"type": "probe_compare", "probe": "encounter_state", "tick": 570, "field": "checkpoint", "op": "eq", "value": "anchor_north", "severity": "error"},
+    {"type": "probe_compare", "probe": "encounter_state", "tick": 660, "field": "checkpoint", "op": "eq", "value": "anchor_east", "severity": "error"},
     {"type": "no_unreleased_inputs", "severity": "error"},
     {"type": "output_exists", "path": "telemetry.json", "severity": "error"}
   ],

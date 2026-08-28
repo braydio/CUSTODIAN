@@ -23,7 +23,7 @@ func moment_forge_fixture_command(command: String, _args: Dictionary) -> Variant
 			checkpoint = command
 			camera.position = Vector2.ZERO
 			operator.global_position = site.global_position + Vector2(0.0, 126.0)
-			site.on_player_entered_proximity()
+			site.trigger_intro()
 		"first_dialogue":
 			checkpoint = command
 			operator.global_position = site.global_position + Vector2(40.0, 52.0)
@@ -42,6 +42,12 @@ func moment_forge_fixture_command(command: String, _args: Dictionary) -> Variant
 		"orra_late":
 			_prepare_hostile(command, Vector2(80.0, 36.0))
 			ritualant.debug_force_attack(&"orra_late")
+		"anchor_west":
+			_play_anchor_exchange(command, &"west", Vector2(-92.0, 18.0))
+		"anchor_north":
+			_play_anchor_exchange(command, &"north", Vector2(0.0, -84.0))
+		"anchor_east":
+			_play_anchor_exchange(command, &"east", Vector2(92.0, 18.0))
 		"return_lift":
 			checkpoint = command
 			active_attack = "none"
@@ -68,3 +74,11 @@ func _prepare_hostile(label: String, offset: Vector2) -> void:
 	site.event_state.ritualant_hostile = true
 	ritualant.phase = ForlornRitualantNPC.Phase.HOSTILE
 	operator.global_position = ritualant.global_position + offset
+
+
+func _play_anchor_exchange(label: String, anchor_id: StringName, offset: Vector2) -> void:
+	_prepare_hostile(label, offset)
+	ritualant.debug_force_attack(&"pin_strike")
+	await get_tree().create_timer(0.65).timeout
+	if site != null and site.event_state.ritualant_hostile:
+		site.resolve_thread_anchor(anchor_id)

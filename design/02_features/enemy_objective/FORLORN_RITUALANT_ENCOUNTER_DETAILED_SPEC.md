@@ -107,16 +107,14 @@ motifs:
 
 ## Intended placement
 
-Use as a **curated room inserted into procgen**, preferably:
+Use as a **fixed authored Underground destination** reached through the
+Ash-Bell surface ingress and authored route pipeline:
 
 ```text
-Hub-adjacent ruin: rare
-Free-roam exterior: uncommon
-Interior chapel/basilica: ideal
-Underground threshold region: excellent
-Early game: possible, but partial only
-Mid game: ideal
-Late game: expanded variant
+Generated world: exterior ingress only
+Authored route: forlorn_ritualant_underground
+Authored chapel: fixed at CHAPEL_ORIGIN
+Encounter placement: never procgen-owned
 ```
 
 ## Encounter completion states
@@ -293,7 +291,10 @@ Walking through thread:
 
 ### Dry Fountain ghost zone
 
-The `F` region is physically empty at first. After certain dialogue, a transparent dry fountain appears. It never becomes fully solid unless the player chooses to “Anchor the Thread.”
+The `F` region always contains a physically real but wrong basin. Dialogue and
+encounter pressure reveal supernatural overlays: a translucent remembered
+fountain, black water, and finally the anchored gold/thread ring. The physical
+basin and its `220x150` gameplay zone remain authoritative throughout.
 
 ---
 
@@ -389,7 +390,10 @@ custodian/content/props/ash_bell/dry_fountain_cracked_96x96.png
 
 Description:
 
-Initially invisible. After dialogue line “The Fountain should be beneath us,” a translucent ruined fountain fades in at the `F` region. Later, black water may appear in its basin if thread tension gets high.
+The wrong physical basin is always present. After the Fountain is recognized,
+a translucent remembered fountain overlaps it. Black water may appear as
+thread tension rises; the anchored ring appears only for
+`CRACKED_ANCHORED`.
 
 Important:
 
@@ -2007,74 +2011,15 @@ func interact(_actor: Node) -> void:
 
 ---
 
-# 17. Procgen integration
+# 17. Authored-route integration
 
-This room should be treated as a rare special room, not a normal prop cluster.
-
-## Room definition
-
-Path:
-
-```text
-custodian/content/procgen/special_rooms/ash_bell_forlorn_ritualant_room.json
-```
-
-```json
-{
-  "id": "ash_bell_forlorn_ritualant_room",
-  "display_name": "Ruined Bell Chapel",
-  "scene_path": "res://game/world/events/ash_bell/forlorn_ritualant_site.tscn",
-  "size_tiles": [35, 27],
-  "entry_edges": ["south"],
-  "exit_edges": ["north", "east"],
-  "rarity": "rare",
-  "min_depth": 2,
-  "max_instances_per_run": 1,
-  "tags": [
-    "special_room",
-    "ash_bell",
-    "lore",
-    "temporal_drifter",
-    "low_combat",
-    "ritual_site"
-  ],
-  "spawn_conditions": {
-    "requires_flags_absent": ["ash_bell_forlorn_ritualant_completed"],
-    "preferred_biomes": [
-      "ruined_capital",
-      "underground_chapel",
-      "ash_waste",
-      "collapsed_transit"
-    ],
-    "avoid_biomes": ["tutorial_compound", "high_tech_cleanroom"]
-  },
-  "reward_profile": {
-    "primary": "knowledge",
-    "secondary": "lore_relic",
-    "combat_reward": "none"
-  }
-}
-```
-
-## Spawn weighting
-
-Base:
-
-```text
-rare room chance: 3%
-if player has seen any Ash-Bell drifter: +2%
-if player has White Thread Knot: +3%
-if player has Bell-Clapper Without a Bell: do not spawn again
-```
-
-Late-game:
-
-```text
-if custodian_instability >= high:
-    ash_bell_special_room_weight += 0.10
-```
-
-This follows your Ash-Bell source recommendation that Ash-Bell appearances should be weighted enough for pattern recognition, but not so common that the game explains itself.
+The encounter is a fixed authored destination. Procgen owns only the exterior
+Ash-Bell ingress and its surface Threadway state; it never inserts, reserves,
+clears, weights, or restores the chapel. `RouteTraversalManager` and
+`LevelLoader` own the isolated trip to
+`forlorn_ritualant_underground`; the authored wrapper owns the cavern, chapel,
+spawn, return lift, and encounter lifetime. The retired special-room definition
+must remain absent.
 
 ---
 
@@ -2097,7 +2042,7 @@ It has four overlapping mechanics:
    Movement through ritual space has consequences without hard-blocking exploration.
 
 3. **Architecture contradiction**
-   The Dry Fountain appears because the NPC remembers it, not because the map originally had it.
+   A physically real but wrong basin is overlapped by the Fountain the NPC remembers.
 
 4. **Nonlethal ritual resolution**
    The player can solve the room by respecting, touching, and anchoring the thread instead of killing the NPC.
@@ -2128,7 +2073,7 @@ Then add:
 10. Thread tension
 11. Unarrived apparition
 12. Hostile Forlorn-Ritualant
-13. Procgen rare-room injection
+13. Authored-route presentation and persistence
 ```
 
 That gets you the atmosphere quickly without blocking on boss AI. The full version is worth building, but the static ritual-room version alone is already strong enough to appear in-game.
@@ -2793,47 +2738,7 @@ func _flash_phantoms() -> void:
 
 ---
 
-## A.6 Encounter JSON (Alternate Format)
-
-Simpler JSON structure from the earlier design. Note the different spawn rules format and the `forbidden_player_facing_terms` array:
-
-```json
-{
-  "id": "ash_bell_forlorn_ritualant",
-  "internal_continuity_tag": "ash_bell",
-  "display_name": "The Forlorn-Ritualant",
-  "spawn_rules": {
-    "biomes": ["ruined_capital", "subterranean_basilica", "dead_transit"],
-    "min_player_progress": 0.35,
-    "requires_temporal_drifters_unlocked": true,
-    "base_weight": 0.08,
-    "instability_weight_bonus": {
-      "threshold": 75,
-      "bonus": 0.12
-    }
-  },
-  "motifs": [
-    "ninth_bell",
-    "white_thread",
-    "black_banners",
-    "dry_fountain",
-    "unarrived_saint",
-    "sealed_west_gate"
-  ],
-  "forbidden_player_facing_terms": [
-    "alternate universe",
-    "timeline",
-    "continuity",
-    "this version",
-    "this time"
-  ],
-  "resolutions": ["mercy", "defeated", "ignored"]
-}
-```
-
----
-
-## A.7 Thematic Analysis
+## A.6 Thematic Analysis
 
 From the earlier design — preserved as a closing statement on why the encounter works:
 
@@ -2841,7 +2746,7 @@ From the earlier design — preserved as a closing statement on why the encounte
 >
 > - a bell-frame with no bell,
 > - a stilling pin with no source,
-> - a fountain that is absent but remembered,
+> - a physically wrong basin overlapped by the fountain remembered,
 > - a saint who arrives too late,
 > - a gate that never existed here,
 > - and a Custodian order remembered as containment.

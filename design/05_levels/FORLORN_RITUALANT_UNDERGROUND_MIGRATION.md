@@ -126,11 +126,18 @@ processing back to their pre-departure state.
 The Underground uses camera-profile change notification for the distant chapel
 proxy and generic `AuthoredThresholdBlend2D` instances for the reversible
 cosmic-underlay and temporal-haze transition beneath the existing chapel
-overhang. Dialogue is screen-space. Encounter resolution invalidates stale
-dialogue and delayed Ritualant attacks, pauses fountain pressure while actor
-input is captured, and keeps the lift unavailable until resolution stagecraft
-finishes. `InteractableLevelExit2D` delegates prompt truth to the same
-controller predicate used by departure acceptance.
+overhang. The proxy is composited above the south cavern rim and initialized
+from the active camera profile. Dialogue is screen-space with separate manual
+and menu heights. Terminal resolution invalidates environmental as well as
+direct Ritualant speech, pauses fountain pressure while actor input is
+captured, and hard-gates delayed attacks. The hostile route is an ordered
+WEST/NORTH/EAST ritual duel: each anchor requires a fresh Ritualant attack
+exchange, and only the currently valid anchor is emphasized. Stabilization
+interrupts combat, tightens the thread presentation, drops the Ritualant out
+of hostility, reverses the ash pressure, and lets dialogue data own the final
+three-beat cadence before dissolution. The shared lift accepts the visible
+deck (`72 px` half-width), and `InteractableLevelExit2D` delegates prompt truth
+to the same controller predicate used by departure acceptance.
 
 `AshBellLiftIngressPresentation` and the Underground wrapper still duplicate
 transit orchestration. A future

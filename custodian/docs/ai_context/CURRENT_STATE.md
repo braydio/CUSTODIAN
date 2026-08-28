@@ -155,6 +155,15 @@ Documentation updates this session:
   Knots are no-ops. Underground route and explicit lift boarding remain intact.
   Moment Forge scenario `traversal/ash_bell_threadway_resolve` captures the
   locked pocket, staggered materialization, and settled persistent causeway.
+- The authored Forlorn-Ritualant Underground now presents its distant chapel
+  above the landing rim under camera-profile authority, uses mode-aware
+  screen-space dialogue, and suppresses all terminal environmental speech.
+  Hostile resolution is an ordered WEST/NORTH/EAST ritual duel with one fresh
+  Ritualant attack exchange per anchor; stabilization immediately interrupts
+  combat, visibly collapses hostility, and lets the three-line dialogue cadence
+  own dissolution timing. The shared Ash-Bell lift boarding contract covers
+  its visible deck, and the lower exit prompt uses the same acceptance gate as
+  departure.
 - Enemy body hits now carry authoritative spatial contact snapshots through a
   stable attack ID into Operator dodge/result/lethal telemetry. Marine Dash has
   one correlated windup-to-terminal ID and exact directional-lane diagnostics;

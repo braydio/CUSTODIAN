@@ -42,6 +42,8 @@ func _run() -> void:
 		errors.append("lower lift still triggers travel on body entry")
 	elif not exit.is_in_group("interactable"):
 		errors.append("lower lift exit is not interactable")
+	elif not is_equal_approx((exit as InteractableLevelExit2D).interaction_distance, 96.0):
+		errors.append("lower lift interaction reach does not cover its visible deck")
 	if level.get_node_or_null("PropsRoot/LowerLiftAssembly") == null:
 		errors.append("shared lower lift assembly is missing")
 	var apron := level.get_node_or_null("BackgroundRoot/LandingShelfApron") as Sprite2D
@@ -51,10 +53,24 @@ func _run() -> void:
 		errors.append("landing shelf apron is not at canonical production position")
 	var proxy := level.get_node_or_null("UnderlayRoot/DistantChapelProxy") as Sprite2D
 	if proxy == null \
-			or proxy.position != Vector2(384.0, 672.0) \
+			or proxy.position != Vector2(384.0, 896.0) \
 			or proxy.scale != Vector2(1.25, 1.25) \
+			or proxy.z_index != -39 \
 			or not is_equal_approx(proxy.modulate.a, 0.0):
 		errors.append("distant chapel proxy composition drifted")
+	if proxy != null:
+		level.call("_on_camera_profile_changed", &"", &"LANDING_VISTA")
+		await create_timer(0.50).timeout
+		if proxy.modulate.a <= 0.80:
+			errors.append("distant chapel proxy did not reveal in LANDING_VISTA")
+		level.call("_on_camera_profile_changed", &"LANDING_VISTA", &"UPPER_DESCENT")
+		await create_timer(0.50).timeout
+		if proxy.modulate.a <= 0.80:
+			errors.append("distant chapel proxy did not remain visible in UPPER_DESCENT")
+		level.call("_on_camera_profile_changed", &"UPPER_DESCENT", &"DEEP_CAVERN")
+		await create_timer(0.70).timeout
+		if proxy.modulate.a >= 0.08:
+			errors.append("distant chapel proxy did not retire in DEEP_CAVERN")
 	var chapel_blend := level.get_node_or_null("BackgroundRoot/ChapelOuterBlend") as Sprite2D
 	if chapel_blend == null or chapel_blend.z_index != -28:
 		errors.append("chapel outer blend z authority drifted")

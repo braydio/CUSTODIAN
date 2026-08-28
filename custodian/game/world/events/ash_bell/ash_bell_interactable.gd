@@ -88,7 +88,7 @@ func can_interact(_actor: Node = null) -> bool:
 				and state.resolution != AshBellEventState.Resolution.SET_STILLING_PIN
 
 		InteractionKind.THREAD_ANCHOR:
-			return state.ritualant_hostile and not site.is_thread_anchor_resolved(anchor_id)
+			return site.can_resolve_thread_anchor(anchor_id)
 
 		_:
 			return true
@@ -180,12 +180,21 @@ func interact(actor: Node) -> void:
 			site.resolve_thread_anchor(anchor_id)
 
 
+func _draw() -> void:
+	if interaction_kind != InteractionKind.THREAD_ANCHOR or not _last_available:
+		return
+	draw_circle(Vector2.ZERO, 22.0, Color(0.95, 0.82, 0.42, 0.12))
+	draw_arc(Vector2.ZERO, 22.0, 0.0, TAU, 32, Color(0.95, 0.82, 0.42, 0.90), 2.0)
+	draw_arc(Vector2.ZERO, 29.0, 0.0, TAU, 32, Color(0.76, 0.90, 1.0, 0.45), 1.0)
+
+
 func _refresh_availability(force: bool) -> void:
 	var available := can_interact()
 	if not force and available == _last_available:
 		return
 
 	_last_available = available
+	queue_redraw()
 
 	if disable_monitorable_when_locked:
 		monitorable = available

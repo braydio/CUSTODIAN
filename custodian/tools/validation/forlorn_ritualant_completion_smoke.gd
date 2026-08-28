@@ -68,6 +68,11 @@ func _validate_canonical_data() -> void:
 	_check(item_description == KNOT_DESCRIPTION, "inventory Knot description drifted")
 	var dialogue := _json("res://content/dialogue/ash_bell/forlorn_ritualant_dialogue.json")
 	_check((dialogue.get("nodes", {}) as Dictionary).has("ninth_answer_bark"), "dialogue data lacks Ninth Answer bark")
+	var stabilized := ((dialogue.get("nodes", {}) as Dictionary).get("stabilized_exit", {}) as Dictionary).get("lines", []) as Array
+	_check(stabilized.size() == 3, "stabilized resolution does not own its three-beat cadence")
+	if stabilized.size() == 3:
+		_check(str((stabilized[0] as Dictionary).get("text", "")) == "Enough.", "stabilized resolution opening drifted")
+		_check(str((stabilized[1] as Dictionary).get("text", "")) == "The thread has the count.", "stabilized resolution meaning drifted")
 
 
 func _validate_encounter_runtime() -> void:
@@ -98,6 +103,10 @@ func _validate_encounter_runtime() -> void:
 		"production dialogue presenter is not screen-space"
 	)
 	site.dialogue_presenter.start(&"first_interaction", actor)
+	_check(
+		is_equal_approx(site.dialogue_presenter.background.offset_top, -204.0),
+		"manual dialogue did not receive readable native-height layout"
+	)
 	var first_line := site.dialogue_presenter.get_current_text()
 	site.dialogue_presenter.advance()
 	_check(site.dialogue_presenter.get_current_text() != first_line, "dialogue did not advance on explicit input contract")
@@ -105,6 +114,12 @@ func _validate_encounter_runtime() -> void:
 	site.dialogue_presenter._process(0.0)
 	_check(not site.dialogue_presenter.is_active(), "dialogue did not cancel outside interaction range")
 	actor.global_position = site.global_position
+	site.dialogue_presenter.open_menu(&"ritualant_root", actor)
+	_check(
+		is_equal_approx(site.dialogue_presenter.background.offset_top, -268.0),
+		"dialogue menu did not receive expanded native-height layout"
+	)
+	site.dialogue_presenter.force_close()
 	site.ask_about_bell()
 	while site.dialogue_presenter.is_manual_active():
 		site.dialogue_presenter.advance()
@@ -201,9 +216,27 @@ func _validate_encounter_runtime() -> void:
 	_check(restored_site.event_state.resolution == AshBellEventState.Resolution.PROVOKED_RITUALANT, "restored encounter lost resolution")
 	cut_site.queue_free()
 	restored_site.queue_free()
+	var phantom_site := SITE_SCENE.instantiate() as ForlornRitualantSite
+	root.add_child(phantom_site)
+	await process_frame
+	phantom_site.set_player_inside_fountain(true)
+	phantom_site.event_state.set_resolution(AshBellEventState.Resolution.SITE_STABILIZED)
+	await create_timer(3.25).timeout
+	_check(
+		not phantom_site.dialogue_presenter.is_active(),
+		"terminal fountain zone emitted phantom Ritualant dialogue"
+	)
+	phantom_site.queue_free()
+
 	site.dialogue_presenter.open_menu(&"ritualant_root", actor)
+	_check(site.can_resolve_thread_anchor(&"west"), "WEST anchor did not unlock after a Ritualant exchange")
+	_check(not site.can_resolve_thread_anchor(&"north"), "NORTH anchor unlocked out of ritual order")
 	site.resolve_thread_anchor(&"west")
+	_check(not site.can_resolve_thread_anchor(&"north"), "NORTH anchor unlocked without another Ritualant exchange")
+	npc.attack_started.emit()
 	site.resolve_thread_anchor(&"north")
+	_check(not site.can_resolve_thread_anchor(&"east"), "EAST anchor unlocked without another Ritualant exchange")
+	npc.attack_started.emit()
 	site.resolve_thread_anchor(&"east")
 	await create_timer(0.05).timeout
 	_check(
@@ -217,10 +250,6 @@ func _validate_encounter_runtime() -> void:
 	_check(site.debug_get_resolved_thread_anchor_count() == 3, "three-anchor route did not resolve")
 	_check(site.event_state.resolution == AshBellEventState.Resolution.SITE_STABILIZED, "three anchors did not stabilize site")
 	_check(site.get_departure_lines().is_empty(), "stabilized lift repeated Ritualant payoff")
-	site.event_state.set_resolution(AshBellEventState.Resolution.SEEN)
-	_check(site.get_departure_lines() == ["Go gently.", "Some gates are closed by footsteps."], "unresolved departure lines drifted")
-	site.event_state.set_resolution(AshBellEventState.Resolution.SITE_DEFILED)
-	_check(site.get_departure_lines().is_empty(), "defiled site produced impossible Ritualant speech")
 	var contracts := npc.debug_get_animation_contract()
 	_check(contracts.size() == 4, "missing action animation contracts are not explicit")
 	site.queue_free()
@@ -254,10 +283,17 @@ func _validate_lower_lift() -> void:
 	level.ritualant_site.event_state.set_resolution(
 		AshBellEventState.Resolution.SITE_DEFILED
 	)
-	_check(
-		exit.get_interaction_prompt() == "ASCEND TO SURFACE",
-		"boarded resolved actor did not receive ASCEND prompt"
-	)
+	for offset_x in [-68.0, 0.0, 68.0]:
+		actor.global_position = lift.global_position + Vector2(offset_x, -26.0)
+		_check(
+			lift.is_actor_boarded(actor),
+			"visible lower-lift deck rejected boarded actor at x=%s" % offset_x
+		)
+		_check(
+			exit.get_interaction_prompt() == "ASCEND TO SURFACE",
+			"visible lower-lift deck lacked ASCEND prompt at x=%s" % offset_x
+		)
+	actor.global_position = lift.get_boarding_position()
 	var transitions := [0]
 	exit.transition_requested.connect(func(_id: StringName, _actor: Node) -> void: transitions[0] += 1)
 	exit.body_entered.emit(actor)

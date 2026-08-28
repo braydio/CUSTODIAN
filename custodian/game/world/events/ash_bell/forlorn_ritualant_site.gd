@@ -65,6 +65,10 @@ var _resolution_sequence_running := false
 var _fountain_stabilize_time: float = 0.0
 var _thread_snap_handled := false
 var _resolved_thread_anchors: Dictionary = {}
+const THREAD_ANCHOR_ORDER: Array[StringName] = [&"west", &"north", &"east"]
+var _thread_anchor_stage := 0
+var _hostile_attack_epoch := 0
+var _anchor_unlock_epoch := 1
 
 const TOPIC_KNOWLEDGE := {
 	&"ask_bell": &"ash_bell_ninth_answer",
@@ -92,6 +96,8 @@ func _ready() -> void:
 	event_state.knowledge_unlocked.connect(_on_knowledge_unlocked)
 	event_state.thread_snapped.connect(_handle_thread_snap_once)
 	request_dialogue.connect(_on_request_dialogue)
+	if forlorn_ritualant != null and forlorn_ritualant.has_signal("attack_started"):
+		forlorn_ritualant.attack_started.connect(_on_ritualant_attack_started)
 	if dialogue_presenter != null:
 		dialogue_presenter.topic_requested.connect(_on_dialogue_topic_requested)
 		dialogue_presenter.sequence_finished.connect(_on_dialogue_sequence_finished)
@@ -232,7 +238,10 @@ func can_speak_to_ritualant() -> bool:
 	)
 
 func _request_dialogue_once(node_id: StringName) -> void:
-	if not event_state.has_seen_dialogue(node_id): request_dialogue.emit(dialogue_id, node_id)
+	if is_terminal_resolution() or _resolution_sequence_running:
+		return
+	if not event_state.has_seen_dialogue(node_id):
+		request_dialogue.emit(dialogue_id, node_id)
 
 
 func touch_thread() -> void:
@@ -377,13 +386,30 @@ func get_departure_lines() -> Array[String]:
 
 
 func resolve_thread_anchor(anchor_id: StringName) -> void:
-	if anchor_id == &"" or _resolved_thread_anchors.has(anchor_id):
+	if not can_resolve_thread_anchor(anchor_id):
 		return
 	_resolved_thread_anchors[anchor_id] = true
+	_thread_anchor_stage += 1
 	event_state.calm_thread(18)
 	event_state.add_silence_pressure(-8, &"thread_anchor")
-	if _resolved_thread_anchors.size() >= 3:
+	_anchor_unlock_epoch = _hostile_attack_epoch + 1
+	if _thread_anchor_stage >= THREAD_ANCHOR_ORDER.size():
 		stabilize_site()
+
+
+func can_resolve_thread_anchor(anchor_id: StringName) -> bool:
+	if event_state == null or not event_state.ritualant_hostile:
+		return false
+	if _thread_anchor_stage >= THREAD_ANCHOR_ORDER.size():
+		return false
+	if anchor_id != THREAD_ANCHOR_ORDER[_thread_anchor_stage]:
+		return false
+	return _hostile_attack_epoch >= _anchor_unlock_epoch
+
+
+func _on_ritualant_attack_started() -> void:
+	if event_state != null and event_state.ritualant_hostile and not _resolution_sequence_running:
+		_hostile_attack_epoch += 1
 
 
 func debug_get_resolved_thread_anchor_count() -> int:
@@ -400,6 +426,9 @@ func capture_encounter_state() -> Dictionary:
 		"intro_triggered": _intro_triggered,
 		"encounter_completed": _completed,
 		"resolved_thread_anchor_ids": _resolved_thread_anchors.keys(),
+		"thread_anchor_stage": _thread_anchor_stage,
+		"hostile_attack_epoch": _hostile_attack_epoch,
+		"anchor_unlock_epoch": _anchor_unlock_epoch,
 		"thread_snap_handled": _thread_snap_handled,
 	}
 
@@ -416,6 +445,9 @@ func restore_encounter_state(state: Dictionary) -> bool:
 	_resolved_thread_anchors.clear()
 	for anchor_id: Variant in state.get("resolved_thread_anchor_ids", []):
 		_resolved_thread_anchors[StringName(str(anchor_id))] = true
+	_thread_anchor_stage = int(state.get("thread_anchor_stage", _resolved_thread_anchors.size()))
+	_hostile_attack_epoch = int(state.get("hostile_attack_epoch", _thread_anchor_stage))
+	_anchor_unlock_epoch = int(state.get("anchor_unlock_epoch", _thread_anchor_stage + 1))
 	_apply_restored_encounter_state()
 	return true
 
@@ -454,9 +486,31 @@ func stabilize_site() -> void:
 	event_state.unlock_knowledge(&"ash_bell_open_interval")
 	if dialogue_presenter != null:
 		dialogue_presenter.force_close()
-	await get_tree().create_timer(0.18).timeout
+	if forlorn_ritualant != null \
+			and is_instance_valid(forlorn_ritualant) \
+			and forlorn_ritualant.has_method("interrupt_for_stabilization"):
+		forlorn_ritualant.call("interrupt_for_stabilization")
+	if thread_visual != null:
+		thread_visual.visible = true
+		thread_visual.modulate.a = 0.0
+		var thread_tween := create_tween()
+		thread_tween.set_trans(Tween.TRANS_SINE)
+		thread_tween.set_ease(Tween.EASE_OUT)
+		thread_tween.tween_property(thread_visual, "modulate:a", 1.0, 0.35)
+	await get_tree().create_timer(0.35).timeout
+	await get_tree().create_timer(0.55).timeout
+	if forlorn_ritualant != null \
+			and is_instance_valid(forlorn_ritualant) \
+			and forlorn_ritualant.has_method("begin_stabilized_resolution"):
+		forlorn_ritualant.call("begin_stabilized_resolution")
+	event_state.set_silence_pressure(0, &"site_stabilized")
+	event_state.calm_thread(100)
+	_set_downward_ash_enabled(false)
+	await get_tree().create_timer(0.70).timeout
 	request_dialogue.emit(dialogue_id, &"stabilized_exit")
-	await get_tree().create_timer(1.45).timeout
+	if dialogue_presenter != null \
+			and dialogue_presenter.get_active_node() == &"stabilized_exit":
+		await dialogue_presenter.wait_for_line_end(&"stabilized_exit", 1)
 	if forlorn_ritualant != null \
 			and is_instance_valid(forlorn_ritualant) \
 			and forlorn_ritualant.has_method("dissolve"):
@@ -480,6 +534,10 @@ func _start_hostile_phase() -> void:
 		return
 	if dialogue_presenter != null:
 		dialogue_presenter.force_close()
+	_thread_anchor_stage = 0
+	_hostile_attack_epoch = 0
+	_anchor_unlock_epoch = 1
+	_resolved_thread_anchors.clear()
 	event_state.ritualant_hostile = true
 	event_state.set_resolution(AshBellEventState.Resolution.PROVOKED_RITUALANT)
 
@@ -680,7 +738,17 @@ func _complete_if_ready() -> void:
 
 
 func _on_request_dialogue(_dialogue_id: StringName, node_id: StringName) -> void:
-	if dialogue_presenter != null: dialogue_presenter.start(node_id, _get_dialogue_actor())
+	if dialogue_presenter == null:
+		return
+	if node_id == &"stabilized_exit":
+		if forlorn_ritualant != null and is_instance_valid(forlorn_ritualant):
+			dialogue_presenter.start(node_id, _get_dialogue_actor())
+		return
+	if is_terminal_resolution():
+		return
+	if forlorn_ritualant == null or not is_instance_valid(forlorn_ritualant):
+		return
+	dialogue_presenter.start(node_id, _get_dialogue_actor())
 
 
 func _on_request_item_grant(item_id: StringName) -> void:

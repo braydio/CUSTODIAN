@@ -112,12 +112,12 @@ z_as_relative=false
 z_index=-94
 modulate=Color(1,1,1,0.12)
 [node name="DistantChapelProxy" type="Sprite2D" parent="UnderlayRoot"]
-position=Vector2(384,672)
+position=Vector2(384,896)
 scale=Vector2(1.25,1.25)
 modulate=Color(1,1,1,0)
 texture=ExtResource("23")
 z_as_relative=false
-z_index=-65
+z_index=-39
 [node name="BackgroundRoot" type="Node2D" parent="."]
 [node name="PlayableGround" type="Polygon2D" parent="BackgroundRoot"]
 texture_repeat=2
@@ -435,6 +435,7 @@ position=Vector2(0,1696)
 script=ExtResource("3")
 exit_id=&"return_world"
 prompt_text="ASCEND TO SURFACE"
+interaction_distance=96.0
 arrival_guard_radius=96.0
 boarding_authority_path=NodePath("../../PropsRoot/LowerLiftAssembly")
 departure_controller_path=NodePath("../..")

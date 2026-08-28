@@ -99,7 +99,13 @@ func _ready() -> void:
 		camera_zone_director.active_profile_changed.connect(
 			_on_camera_profile_changed
 		)
+		call_deferred("_refresh_initial_camera_profile")
 	call_deferred("_bind_active_operator")
+
+
+func _refresh_initial_camera_profile() -> void:
+	if camera_zone_director != null:
+		camera_zone_director.refresh_now()
 
 
 func _build_playable_ground() -> void:

@@ -9,6 +9,10 @@ class_name AshBellLiftPlatformAssembly
 @onready var front_lip_vibrate: AnimatedSprite2D = $PlatformFront/FrontLipVibrate
 @onready var rider_anchor: Marker2D = $RiderAnchor
 
+@export var boarding_half_width := 72.0
+@export var boarding_min_y := -60.0
+@export var boarding_max_y := 24.0
+
 
 func set_vibrating(active: bool) -> void:
 	platform_back_idle.visible = not active
@@ -36,7 +40,11 @@ func is_actor_boarded(actor: Node2D) -> bool:
 	if actor == null:
 		return false
 	var local_actor := to_local(actor.global_position)
-	return absf(local_actor.x) <= 42.0 and local_actor.y >= -54.0 and local_actor.y <= 18.0
+	return (
+		absf(local_actor.x) <= boarding_half_width
+		and local_actor.y >= boarding_min_y
+		and local_actor.y <= boarding_max_y
+	)
 
 
 func get_boarding_position() -> Vector2:

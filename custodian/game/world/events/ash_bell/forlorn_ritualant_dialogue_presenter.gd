@@ -6,8 +6,15 @@ signal sequence_cancelled(node_id: StringName)
 signal sequence_ended(node_id: StringName, completed: bool)
 signal topic_requested(node_id: StringName, return_menu_id: StringName)
 signal menu_closed(menu_id: StringName)
+signal line_ended(node_id: StringName, line_index: int)
 
 enum Mode { NONE, MANUAL, AMBIENT, MENU }
+const MANUAL_PANEL_TOP := -204.0
+const MANUAL_LABEL_TOP := -180.0
+const MENU_PANEL_TOP := -268.0
+const MENU_LABEL_TOP := -244.0
+const PANEL_BOTTOM := 0.0
+const LABEL_BOTTOM := -18.0
 @export_file("*.json") var dialogue_path := "res://content/dialogue/ash_bell/forlorn_ritualant_dialogue.json"
 @export var actor_cancel_distance := 280.0
 @export var site_path: NodePath
@@ -43,7 +50,7 @@ func start(node_id: StringName, actor: Node2D = null, return_menu_id: StringName
 func start_manual(node_id: StringName, actor: Node2D = null, return_menu_id: StringName = &"") -> bool:
 	var source := _get_lines(node_id)
 	if source.is_empty() or _mode == Mode.MANUAL: return false
-	_clear(false); _mode = Mode.MANUAL; _active_node = node_id; _return_menu = return_menu_id; _lines = source; _line_index = 0; _actor = actor if actor != null else _actor; _lock(_actor); _arm(); _set_visible(true); _show_line(); return true
+	_clear(false); _mode = Mode.MANUAL; _active_node = node_id; _return_menu = return_menu_id; _lines = source; _line_index = 0; _actor = actor if actor != null else _actor; _lock(_actor); _arm(); _apply_layout_for_mode(); _set_visible(true); _show_line(); return true
 func start_ambient(node_id: StringName, actor: Node2D = null, interrupt_ambient := false, lock_actor := false) -> bool:
 	var source := _get_lines(node_id)
 	if source.is_empty(): return false
@@ -59,6 +66,7 @@ func start_ambient(node_id: StringName, actor: Node2D = null, interrupt_ambient 
 	_generation += 1
 	var g := _generation
 	if lock_actor: _lock(actor)
+	_apply_layout_for_mode()
 	_set_visible(true)
 	_run_ambient(g)
 	return true
@@ -66,6 +74,7 @@ func _run_ambient(g: int) -> void:
 	while _mode == Mode.AMBIENT and g == _generation and _line_index < _lines.size():
 		_show_line(); await get_tree().create_timer(_hold()).timeout
 		if _mode != Mode.AMBIENT or g != _generation: return
+		line_ended.emit(_active_node, _line_index)
 		_line_index += 1
 	if _mode == Mode.AMBIENT and g == _generation: finish()
 func open_menu(menu_id: StringName, actor: Node2D = null) -> bool:
@@ -75,7 +84,7 @@ func open_menu(menu_id: StringName, actor: Node2D = null) -> bool:
 	for value in source:
 		if value is Dictionary and _available(value): _menu_options.append((value as Dictionary).duplicate(true))
 	if _menu_options.is_empty(): _clear(true); return false
-	_menu_index = 0; _lock(_actor); _arm(); _set_visible(true); _show_menu(); return true
+	_menu_index = 0; _lock(_actor); _arm(); _apply_layout_for_mode(); _set_visible(true); _show_menu(); return true
 func advance() -> void:
 	if _mode != Mode.MANUAL: return
 	_line_index += 1
@@ -122,6 +131,11 @@ func debug_select_menu_option(index: int) -> void:
 	if _mode == Mode.MENU and not _menu_options.is_empty(): _menu_index = clampi(index, 0, _menu_options.size()-1); _select_menu()
 func wait_for_node_end(node_id: StringName) -> void:
 	while _active_node == node_id: await sequence_ended
+func wait_for_line_end(node_id: StringName, target_line_index: int) -> void:
+	while _active_node == node_id and _line_index <= target_line_index:
+		var ended: Array = await line_ended
+		if ended.size() >= 2 and ended[0] == node_id and int(ended[1]) >= target_line_index:
+			return
 
 func _select_menu() -> void:
 	if _menu_options.is_empty(): return
@@ -174,3 +188,20 @@ func _unlock() -> void:
 func _clear(unlock: bool) -> void:
 	_generation += 1; _mode = Mode.NONE; _active_node = &""; _active_menu = &""; _return_menu = &""; _lines.clear(); _line_index = -1; _menu_options.clear(); _actor = null; _ambient_lock = false; if unlock: _unlock(); if label != null: label.text = ""; _set_visible(false)
 func _set_visible(value: bool) -> void: visible = value; if background != null: background.visible = value
+
+
+func _apply_layout_for_mode() -> void:
+	if background == null or label == null:
+		return
+	var panel := background as Control
+	var text := label as Control
+	if panel == null or text == null:
+		return
+	if _mode == Mode.MENU:
+		panel.offset_top = MENU_PANEL_TOP
+		text.offset_top = MENU_LABEL_TOP
+	else:
+		panel.offset_top = MANUAL_PANEL_TOP
+		text.offset_top = MANUAL_LABEL_TOP
+	panel.offset_bottom = PANEL_BOTTOM
+	text.offset_bottom = LABEL_BOTTOM
