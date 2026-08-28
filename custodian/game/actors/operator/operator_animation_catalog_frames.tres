@@ -89,8 +89,8 @@
 [ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/melee_1h_dagger/locomotion/run_01/operator__weapon__melee_1h_dagger__locomotion__run_01__w__6f__96.png" id="87_hf54k"]
 [ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/melee_1h_dagger/posture/draw_01/operator__weapon__melee_1h_dagger__posture__draw_01__e__4f__128x96.png" id="88_7ubm2"]
 [ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/melee_1h_dagger/posture/draw_01/operator__weapon__melee_1h_dagger__posture__draw_01__w__4f__128x96.png" id="89_1wj43"]
-[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/melee_1h_dagger/posture/idle_ready_01/operator__weapon__melee_1h_dagger__posture__idle_ready_01__e__4f__96.png" id="90_hkwyy"]
-[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/melee_1h_dagger/posture/idle_ready_01/operator__weapon__melee_1h_dagger__posture__idle_ready_01__w__4f__96.png" id="91_jmtt1"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/melee_1h_dagger/posture/idle_ready_01/operator__weapon__melee_1h_dagger__posture__idle_ready_01__e__4f__128x96.png" id="90_hkwyy"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/melee_1h_dagger/posture/idle_ready_01/operator__weapon__melee_1h_dagger__posture__idle_ready_01__w__4f__128x96.png" id="91_jmtt1"]
 [ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/melee_1h_dagger/posture/idle_relaxed_01/operator__weapon__melee_1h_dagger__posture__idle_relaxed_01__e__4f__96.png" id="92_tkghi"]
 [ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/melee_1h_dagger/posture/idle_relaxed_01/operator__weapon__melee_1h_dagger__posture__idle_relaxed_01__w__4f__96.png" id="93_tuwxs"]
 [ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/legacy_fast_attack_1_right_body/operator__full_body__melee_1h_heavy__attack__legacy_fast_attack_1_right_body__omni__1f__576x288.png" id="94_g8e0y"]
@@ -2623,35 +2623,35 @@ region = Rect2(384, 0, 128, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_yv5bk"]
 atlas = ExtResource("90_hkwyy")
-region = Rect2(0, 0, 96, 96)
+region = Rect2(0, 0, 128, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_xcge5"]
 atlas = ExtResource("90_hkwyy")
-region = Rect2(96, 0, 96, 96)
+region = Rect2(128, 0, 128, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_israa"]
 atlas = ExtResource("90_hkwyy")
-region = Rect2(192, 0, 96, 96)
+region = Rect2(256, 0, 128, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_to8f3"]
 atlas = ExtResource("90_hkwyy")
-region = Rect2(288, 0, 96, 96)
+region = Rect2(384, 0, 128, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6dtmd"]
 atlas = ExtResource("91_jmtt1")
-region = Rect2(0, 0, 96, 96)
+region = Rect2(0, 0, 128, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_xw3l6"]
 atlas = ExtResource("91_jmtt1")
-region = Rect2(96, 0, 96, 96)
+region = Rect2(128, 0, 128, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3x82e"]
 atlas = ExtResource("91_jmtt1")
-region = Rect2(192, 0, 96, 96)
+region = Rect2(256, 0, 128, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0qchn"]
 atlas = ExtResource("91_jmtt1")
-region = Rect2(288, 0, 96, 96)
+region = Rect2(384, 0, 128, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ni3v2"]
 atlas = ExtResource("92_tkghi")

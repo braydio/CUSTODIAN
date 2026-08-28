@@ -1,0 +1,12 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/operator__weapon__melee_1h_dagger__posture__idle_ready_01__e__4f__128x96.json",
+	"outputs": [
+		"res://content/sprites/operator/source/animations/melee_1h_dagger/posture/idle_ready_01/operator__weapon__melee_1h_dagger__posture__idle_ready_01__e__4f__128x96.png",
+		"res://content/sprites/operator/source/animations/melee_1h_dagger/posture/idle_ready_01/operator__weapon__melee_1h_dagger__posture__idle_ready_01__w__4f__128x96.png"
+	],
+	"post_process": [
+		"operator_runtime_build"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/operator__weapon__melee_1h_dagger__posture__idle_ready_01__e__4f__128x96.png",
+	"timestamp_utc": "2026-08-28 03:16:50"
+}
