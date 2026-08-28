@@ -1873,6 +1873,19 @@ func _sync_modular_locomotion_layers(base_animation: String, lower_direction: Ve
 	var resolved_upper_direction := upper_direction
 	if resolved_upper_direction.length_squared() <= 0.0001:
 		resolved_upper_direction = lower_direction
+	if _is_melee_loadout_active() and not _is_current_profile_unarmed():
+		var melee_locomotion_synced := _sync_modular_melee_locomotion(
+			base_animation,
+			resolved_upper_direction,
+			speed_scale
+		)
+		if not melee_locomotion_synced:
+			_hide_modular_locomotion_layers()
+			if melee_weapon_overlay_sprite != null \
+			and String(melee_weapon_overlay_sprite.animation).contains("/locomotion/"):
+				melee_weapon_overlay_sprite.visible = false
+				melee_weapon_overlay_sprite.stop()
+		return melee_locomotion_synced
 
 	if not _sync_modular_lower_body_locomotion(base_animation, lower_direction, speed_scale):
 		_hide_modular_locomotion_layers()
@@ -1897,20 +1910,91 @@ func _sync_modular_locomotion_layers(base_animation: String, lower_direction: Ve
 		if not _sync_modular_ranged_relaxed_upper_layers(resolved_upper_direction):
 			_hide_modular_locomotion_layers()
 			return false
-	elif _is_melee_loadout_active():
-		if not _sync_modular_lower_body_locomotion(base_animation, lower_direction, speed_scale):
-			_hide_modular_locomotion_layers()
-			return false
-		if not _sync_modular_unarmed_upper_body_locomotion(base_animation, resolved_upper_direction, speed_scale):
-			_hide_modular_locomotion_layers()
-			return false
-		_sync_modular_head_locomotion(base_animation, resolved_upper_direction, speed_scale)
-		_hide_modular_cape_layer()
 	else:
 		_hide_modular_head_layer()
 		_hide_modular_locomotion_layers()
 		return false
 
+	animated_sprite.visible = false
+	return true
+
+
+func _sync_modular_melee_locomotion(
+	base_animation: String,
+	direction: Vector2,
+	speed_scale: float
+) -> bool:
+	if base_animation != "unarmed_run" \
+	or modular_lower_body_sprite == null \
+	or modular_upper_body_sprite == null \
+	or melee_weapon_overlay_sprite == null:
+		return false
+	var weapon_definition := _get_equipped_primary_weapon_definition() as OperatorWeaponDefinition
+	if weapon_definition == null \
+	or weapon_definition.weapon_presentation_mode == "socketed_static":
+		return false
+	var suffix := "w" if direction.x < -0.05 else "e"
+	var lower_animation := StringName(
+		"melee_1h/locomotion/run_01/%s/lower_body" % suffix
+	)
+	var upper_animation := StringName(
+		"melee_1h/locomotion/run_01/%s/upper_body" % suffix
+	)
+	var weapon_animation := StringName(
+		"%s/locomotion/run_01/%s/weapon" % [
+			String(weapon_definition.get_animation_profile()),
+			suffix,
+		]
+	)
+	if not _has_playable_sprite_animation(
+		modular_lower_body_sprite.sprite_frames,
+		lower_animation
+	) \
+	or not _has_playable_sprite_animation(
+		modular_upper_body_sprite.sprite_frames,
+		upper_animation
+	) \
+	or not _has_playable_sprite_animation(
+		melee_weapon_overlay_sprite.sprite_frames,
+		weapon_animation
+	):
+		return false
+	for sprite in [
+		modular_lower_body_sprite,
+		modular_upper_body_sprite,
+		melee_weapon_overlay_sprite,
+	]:
+		sprite.visible = true
+		sprite.flip_h = false
+		sprite.speed_scale = speed_scale
+	var animations: Array[StringName] = [
+		lower_animation,
+		upper_animation,
+		weapon_animation,
+	]
+	var sprites: Array[AnimatedSprite2D] = [
+		modular_lower_body_sprite,
+		modular_upper_body_sprite,
+		melee_weapon_overlay_sprite,
+	]
+	for index in sprites.size():
+		if sprites[index].animation != animations[index] \
+		or not sprites[index].is_playing():
+			sprites[index].play(animations[index])
+	var lower_frame_count: int = modular_lower_body_sprite.sprite_frames.get_frame_count(
+		lower_animation
+	)
+	for sprite in [modular_upper_body_sprite, melee_weapon_overlay_sprite]:
+		var frame_count: int = sprite.sprite_frames.get_frame_count(sprite.animation)
+		if lower_frame_count > 0 and frame_count > 0:
+			sprite.set_frame_and_progress(
+				mini(modular_lower_body_sprite.frame, frame_count - 1),
+				modular_lower_body_sprite.frame_progress
+			)
+	if primary_weapon_sprite != null:
+		primary_weapon_sprite.visible = false
+	_hide_modular_head_layer()
+	_hide_modular_cape_layer()
 	animated_sprite.visible = false
 	return true
 
@@ -2012,6 +2096,17 @@ func _install_melee_posture_catalog_frames() -> void:
 				var animation := StringName("melee_1h/posture/%s/%s/%s" % [action, suffix, layer])
 				var target: SpriteFrames = modular_lower_body_sprite.sprite_frames if layer == "lower_body" else modular_upper_body_sprite.sprite_frames
 				_copy_catalog_animation(OPERATOR_ANIMATION_CATALOG_FRAMES, target, animation)
+	for suffix in ["e", "w"]:
+		for layer in ["lower_body", "upper_body"]:
+			var animation := StringName(
+				"melee_1h/locomotion/run_01/%s/%s" % [suffix, layer]
+			)
+			var target: SpriteFrames = (
+				modular_lower_body_sprite.sprite_frames
+				if layer == "lower_body"
+				else modular_upper_body_sprite.sprite_frames
+			)
+			_copy_catalog_animation(OPERATOR_ANIMATION_CATALOG_FRAMES, target, animation)
 
 
 func _install_melee_posture_weapon_frames(
@@ -2022,22 +2117,34 @@ func _install_melee_posture_weapon_frames(
 	var weapon_profile := String(weapon_definition.get_animation_profile())
 	if weapon_profile.is_empty():
 		return
+	var catalog_animations: Array[StringName] = []
+	for action in ["draw_01", "idle_ready_01", "idle_relaxed_01"]:
+		for suffix in ["e", "w"]:
+			var animation := StringName(
+				"%s/posture/%s/%s/weapon" % [weapon_profile, action, suffix]
+			)
+			if OPERATOR_ANIMATION_CATALOG_FRAMES.has_animation(animation):
+				catalog_animations.append(animation)
+	for suffix in ["e", "w"]:
+		var animation := StringName(
+			"%s/locomotion/run_01/%s/weapon" % [weapon_profile, suffix]
+		)
+		if OPERATOR_ANIMATION_CATALOG_FRAMES.has_animation(animation):
+			catalog_animations.append(animation)
+	if catalog_animations.is_empty():
+		return
 	var frames: SpriteFrames = melee_weapon_overlay_sprite.sprite_frames
 	if frames == null:
 		frames = SpriteFrames.new()
 	else:
 		frames = frames.duplicate(true)
 	melee_weapon_overlay_sprite.sprite_frames = frames
-	for action in ["draw_01", "idle_ready_01", "idle_relaxed_01"]:
-		for suffix in ["e", "w"]:
-			var animation := StringName(
-				"%s/posture/%s/%s/weapon" % [weapon_profile, action, suffix]
-			)
-			_copy_catalog_animation(
-				OPERATOR_ANIMATION_CATALOG_FRAMES,
-				frames,
-				animation
-			)
+	for animation in catalog_animations:
+		_copy_catalog_animation(
+			OPERATOR_ANIMATION_CATALOG_FRAMES,
+			frames,
+			animation
+		)
 
 
 func _copy_catalog_animation(source: SpriteFrames, target: SpriteFrames, animation: StringName) -> void:
@@ -2343,6 +2450,10 @@ func _can_reuse_modular_lower_body_for_current_loadout() -> bool:
 		return _has_modular_ranged_ready_upper_stack()
 	if _is_using_ranged_2h_primary():
 		return _has_modular_ranged_relaxed_upper_stack()
+	if _is_melee_loadout_active():
+		return modular_upper_body_sprite != null \
+			and modular_upper_body_sprite.sprite_frames != null \
+			and melee_weapon_overlay_sprite != null
 	return false
 
 

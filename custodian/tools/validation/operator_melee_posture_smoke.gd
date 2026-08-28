@@ -32,6 +32,13 @@ func _init() -> void:
 	assert(not CATALOG_FRAMES.get_animation_loop(&"unarmed/reaction/light_hitreact_01/s/full_body"))
 	assert(CATALOG_FRAMES.has_animation("melee_1h_dagger/posture/idle_relaxed_01/e/weapon"))
 	assert(CATALOG_FRAMES.has_animation("melee_1h_dagger/posture/idle_relaxed_01/w/weapon"))
+	for suffix in ["e", "w"]:
+		assert(CATALOG_FRAMES.has_animation("melee_1h/posture/idle_ready_01/%s/lower_body" % suffix))
+		assert(CATALOG_FRAMES.has_animation("melee_1h/posture/idle_ready_01/%s/upper_body" % suffix))
+		assert(CATALOG_FRAMES.has_animation("melee_1h_dagger/posture/idle_ready_01/%s/weapon" % suffix))
+		assert(CATALOG_FRAMES.has_animation("melee_1h/locomotion/run_01/%s/lower_body" % suffix))
+		assert(CATALOG_FRAMES.has_animation("melee_1h/locomotion/run_01/%s/upper_body" % suffix))
+		assert(CATALOG_FRAMES.has_animation("melee_1h_dagger/locomotion/run_01/%s/weapon" % suffix))
 	root.add_child(operator)
 	await process_frame
 	operator.call("_install_melee_posture_catalog_frames")
@@ -55,9 +62,13 @@ func _init() -> void:
 	assert(vigil_definition.get_animation_profile() == &"melee_1h_dagger")
 	operator.call("_apply_melee_weapon_animation_resources", vigil_definition)
 	for suffix in ["e", "w"]:
-		var weapon_animation := "melee_1h_dagger/posture/idle_relaxed_01/%s/weapon" % suffix
-		assert(weapon.sprite_frames.has_animation(weapon_animation), "missing Vigil posture weapon %s" % suffix)
-		assert(weapon.sprite_frames.get_frame_count(weapon_animation) == 4, "Vigil posture weapon must remain four frames")
+		for action in ["idle_ready_01", "idle_relaxed_01"]:
+			var weapon_animation := "melee_1h_dagger/posture/%s/%s/weapon" % [action, suffix]
+			assert(weapon.sprite_frames.has_animation(weapon_animation), "missing Vigil posture weapon %s %s" % [action, suffix])
+			assert(weapon.sprite_frames.get_frame_count(weapon_animation) == 4, "Vigil posture weapon must remain four frames")
+		var run_weapon_animation := "melee_1h_dagger/locomotion/run_01/%s/weapon" % suffix
+		assert(weapon.sprite_frames.has_animation(run_weapon_animation), "missing Vigil run weapon %s" % suffix)
+		assert(weapon.sprite_frames.get_frame_count(run_weapon_animation) == 6, "Vigil run weapon must remain six frames")
 	var armed_weapons: Array = operator.get("armed_weapons")
 	var vigil_index := armed_weapons.find(vigil_definition)
 	assert(vigil_index >= 0)
@@ -68,6 +79,17 @@ func _init() -> void:
 	assert(weapon.visible, "Vigil posture weapon overlay should be visible")
 	assert(weapon.animation == &"melee_1h_dagger/posture/idle_relaxed_01/e/weapon")
 	assert(weapon.is_playing(), "Vigil posture weapon overlay should animate")
+	assert(runtime_resolver.resolve(0.0, true, true, false) == MeleePostureResolver.Posture.READY)
+	assert(operator.call("_sync_modular_melee_posture", Vector2.LEFT))
+	assert(weapon.animation == &"melee_1h_dagger/posture/idle_ready_01/w/weapon")
+	assert(weapon.visible and weapon.is_playing(), "Vigil ready weapon overlay should animate")
+	assert(operator.call("_sync_modular_locomotion_layers", "unarmed_run", Vector2.RIGHT, Vector2.RIGHT, 1.0))
+	assert(lower.animation == &"melee_1h/locomotion/run_01/e/lower_body")
+	assert(upper.animation == &"melee_1h/locomotion/run_01/e/upper_body")
+	assert(weapon.animation == &"melee_1h_dagger/locomotion/run_01/e/weapon")
+	assert(weapon.visible and weapon.is_playing(), "Vigil run weapon overlay should animate")
+	assert(not operator.call("_sync_modular_locomotion_layers", "unarmed_walk", Vector2.RIGHT, Vector2.RIGHT, 1.0), "missing Vigil walk art must retain fallback")
+	assert(not lower.visible and not upper.visible and not weapon.visible, "melee locomotion fallback must hide the incomplete modular stack")
 	operator.set_process(false)
 	operator.set_physics_process(false)
 	operator.set("visual_idle_direction", Vector2.RIGHT)
