@@ -75,14 +75,16 @@ func _init() -> void:
 	operator.call("_apply_armed_selection", vigil_index)
 	var runtime_resolver = operator.get("_melee_posture_resolver") as MeleePostureResolver
 	assert(runtime_resolver.resolve(4.0, true, false, false) == MeleePostureResolver.Posture.RELAXED)
-	assert(operator.call("_sync_modular_melee_posture", Vector2.RIGHT))
+	assert(operator.call("_sync_modular_melee_posture", Vector2.LEFT))
 	assert(weapon.visible, "Vigil posture weapon overlay should be visible")
-	assert(weapon.animation == &"melee_1h_dagger/posture/idle_relaxed_01/e/weapon")
+	assert(weapon.animation == &"melee_1h_dagger/posture/idle_relaxed_01/w/weapon")
 	assert(weapon.is_playing(), "Vigil posture weapon overlay should animate")
+	_assert_hidden_legacy_body_does_not_hijack(operator, lower, weapon)
 	assert(runtime_resolver.resolve(0.0, true, true, false) == MeleePostureResolver.Posture.READY)
 	assert(operator.call("_sync_modular_melee_posture", Vector2.LEFT))
 	assert(weapon.animation == &"melee_1h_dagger/posture/idle_ready_01/w/weapon")
 	assert(weapon.visible and weapon.is_playing(), "Vigil ready weapon overlay should animate")
+	_assert_hidden_legacy_body_does_not_hijack(operator, lower, weapon)
 	assert(operator.call("_sync_modular_locomotion_layers", "unarmed_run", Vector2.RIGHT, Vector2.RIGHT, 1.0))
 	assert(lower.animation == &"melee_1h/locomotion/run_01/e/lower_body")
 	assert(upper.animation == &"melee_1h/locomotion/run_01/e/upper_body")
@@ -117,3 +119,32 @@ func _init() -> void:
 	operator.free()
 	print("operator_melee_posture_smoke: PASS")
 	quit(0)
+
+
+func _assert_hidden_legacy_body_does_not_hijack(
+	operator: Node,
+	lower: AnimatedSprite2D,
+	weapon: AnimatedSprite2D
+) -> void:
+	var legacy_body := operator.get_node("AnimatedSprite2D") as AnimatedSprite2D
+	assert(not legacy_body.visible, "modular posture must own visible body presentation")
+	lower.set_frame_and_progress(2, 0.375)
+	operator.call("_sync_modular_melee_posture", Vector2.LEFT)
+	var expected_animation := weapon.animation
+	var expected_frame := weapon.frame
+	var expected_progress := weapon.frame_progress
+	legacy_body.flip_h = true
+	var legacy_frame_count := legacy_body.sprite_frames.get_frame_count(
+		legacy_body.animation
+	)
+	for step in range(3):
+		if legacy_frame_count > 0:
+			legacy_body.frame = (legacy_body.frame + 1) % legacy_frame_count
+		legacy_body.frame_changed.emit()
+		assert(weapon.animation == expected_animation)
+		assert(not weapon.flip_h, "hidden legacy body flipped explicit W weapon art")
+		assert(weapon.frame == expected_frame, "hidden legacy body replaced modular weapon frame")
+		assert(
+			is_equal_approx(weapon.frame_progress, expected_progress),
+			"hidden legacy body replaced modular weapon frame progress"
+		)

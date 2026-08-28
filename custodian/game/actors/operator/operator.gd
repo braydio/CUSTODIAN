@@ -7026,8 +7026,21 @@ func disable_hitbox() -> void:
 
 
 func _on_attack_frame_changed() -> void:
-	_sync_melee_hitbox_window_from_animation()
-	_sync_melee_overlay_frames()
+	if _melee_active:
+		_sync_melee_hitbox_window_from_animation()
+	if _legacy_melee_body_slaved_presentation_active():
+		_sync_melee_overlay_frames()
+
+
+func _legacy_melee_body_slaved_presentation_active() -> bool:
+	if animated_sprite == null or not animated_sprite.visible:
+		return false
+	return (
+		_melee_active
+		or _melee_heavy_anticipating
+		or _melee_fast_windup
+		or _melee_recovery_active
+	)
 
 
 func _play_melee_overlay_from_key(attack_key: String) -> void:

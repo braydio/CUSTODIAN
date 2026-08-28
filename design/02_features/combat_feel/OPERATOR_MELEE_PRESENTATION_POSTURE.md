@@ -428,6 +428,10 @@ This matches the modular ownership rules already documented for the Operator
   the matching catalog weapon animations into the active weapon overlay after
   its definition-specific attack resource is installed, then synchronizes the
   overlay frame/progress with the body loop.
+- Legacy `animated_sprite.frame_changed` synchronization is valid only while
+  visible body-slaved melee attack/windup/recovery presentation owns the body.
+  Hidden legacy animation must never overwrite modular posture, locomotion, or
+  draw weapon direction, frame, or frame progress.
 
 ## Edge Cases
 
@@ -452,7 +456,10 @@ This matches the modular ownership rules already documented for the Operator
 - Runtime wiring smoke: verify draw → ready → relaxed → ready transition
   sequence on the Operator, that no gameplay state is added to the state
   machine, and that the Vigil definition installs and plays its four-frame
-  `melee_1h_dagger` weapon layer with the generic body posture.
+  `melee_1h_dagger` weapon layer with the generic body posture. For west READY
+  and RELAXED, advance the hidden legacy body through repeated `frame_changed`
+  events and prove the explicit W weapon remains unflipped and synchronized to
+  the modular lower-body frame/progress clock.
 - Moment Forge: a `combat_playground`-style scenario capturing the
   relaxed → ready lift and the quiet-period relax; `--capture-mode full` once
   the assets land, since acceptance depends on pose timing and readability.
