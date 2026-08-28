@@ -205,10 +205,6 @@ func _build_environment_presentation() -> void:
 		position_node.set_meta("missing", index == 8)
 		if index < 8:
 			position_node.texture = ANSWER_PEDESTAL
-		else:
-			position_node.texture = CIVIC_PRESENTER_SCRIPT.PROPS
-			position_node.region_enabled = true
-			position_node.region_rect = Rect2(8 * 32, 10 * 32, 32, 32)
 		court.add_child(position_node)
 	var additions := Node2D.new()
 	additions.name = "LaterPenitentAdditions"

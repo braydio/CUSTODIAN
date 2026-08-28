@@ -125,6 +125,21 @@
 		"scenario_ids": ["traversal/ash_bell_lift_exterior_descent"],
 		"priority": 110,
 		"reason": "Ash Bell lift traversal behavior or landmark art changed."
+	},
+	{
+		"id": "meridian_civic_native_props",
+		"include": [
+			"custodian/content/metadata/assets/meridian_civic_props_native.semantic.json",
+			"custodian/content/sprites/environment/props/meridian_civic/native/**",
+			"custodian/game/world/levels/presentation/semantic_native_prop_2d.gd",
+			"custodian/game/world/levels/authored/ash_bell/common/meridian_civic_art_presenter.gd",
+			"custodian/tools/validation/fixtures/meridian_civic_native_scale_moment.*",
+			"custodian/tools/iteration/scenarios/traversal/meridian_civic_native_scale.json"
+		],
+		"exclude": ["**/*.import", "reports/**"],
+		"scenario_ids": ["traversal/meridian_civic_native_scale"],
+		"priority": 120,
+		"reason": "Meridian civic native-prop semantics, runtime presentation, or physical scale changed."
 	}
   ]
 }

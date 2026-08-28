@@ -28,7 +28,14 @@ func _run() -> void:
 	root.add_child(lower)
 	await process_frame
 	assert(not lower.blockout_grid.visible)
-	assert(lower.get_node_or_null("BackgroundRoot/MeridianCivicArtPresenter") != null)
+	var civic_presenter := lower.get_node("BackgroundRoot/MeridianCivicArtPresenter") as MeridianCivicArtPresenter
+	assert(civic_presenter != null)
+	var native_props := civic_presenter.get_node("NativeProps") as Node2D
+	assert(native_props != null and native_props.y_sort_enabled)
+	assert(native_props.get_child_count() == 32)
+	for child: Node in native_props.get_children():
+		assert(child is SemanticNativeProp2D)
+		assert((child as SemanticNativeProp2D).get_sprite().scale == Vector2.ONE)
 	assert(lower.get_node_or_null("BackgroundRoot/StationIXLandmark") != null)
 	assert(lower.get_node("DynamicGates/DirectPersonnelCollapse/CollisionShape2D").shape != null)
 	assert(not lower.authored_navigation.is_world_position_walkable(lower.cell_center(Vector2i(60, 72))))

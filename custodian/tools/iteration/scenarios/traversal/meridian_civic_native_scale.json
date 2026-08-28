@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "id": "traversal/meridian_civic_native_scale",
+  "description": "Native Meridian civic props beside the real Operator for physical-scale and silhouette review.",
+  "scene": "res://tools/validation/fixtures/meridian_civic_native_scale_moment.tscn",
+  "seed": 224,
+  "duration_ticks": 48,
+  "simulation": {"physics_hz": 60, "warmup_ticks": 6, "max_wall_seconds": 45, "pause_during_setup": true},
+  "capture": {"width": 1280, "height": 720, "fps": 60, "audio": false, "start_tick": 0, "end_tick": 47, "contact_sheet_ticks": [6, 14, 22, 30, 38, 46], "required_keyframes": true, "background": "opaque"},
+  "setup": {"remove_nodes": [], "roles": {"fixture": {"node_path": "."}, "operator": {"node_path": "Operator"}}, "spawns": [], "properties": [], "processing": [], "fixture": {"id": "meridian_civic_native_scale", "config": {}}},
+  "timeline": [
+    {"tick": 46, "action": "finish"}
+  ],
+  "probes": [{"id": "fixture_state", "role": "fixture", "fields": ["ready_count", "native_scale_preserved", "real_operator"], "ticks": [6, 22, 38, 46], "required": true}],
+  "assertions": [
+    {"type": "role_exists", "role": "operator", "severity": "error"},
+    {"type": "probe_compare", "probe": "fixture_state", "tick": 6, "field": "ready_count", "op": "eq", "value": 8, "severity": "error"},
+    {"type": "probe_compare", "probe": "fixture_state", "tick": 6, "field": "native_scale_preserved", "op": "eq", "value": true, "severity": "error"},
+    {"type": "probe_compare", "probe": "fixture_state", "tick": 6, "field": "real_operator", "op": "eq", "value": true, "severity": "error"},
+    {"type": "no_unreleased_inputs", "severity": "error"},
+    {"type": "output_exists", "path": "telemetry.json", "severity": "error"}
+  ],
+  "stable_fingerprint": {"event_payload_fields": {}, "counters": [], "probes": ["fixture_state"], "position_quantum_px": 0.25, "float_quantum": 0.0001},
+  "tags": ["traversal", "ash_bell", "lower_quarter", "native_props", "visual_review", "production_art"]
+}

@@ -272,6 +272,17 @@ Full captures are not a default CI requirement. Advisory pixel and audio
 differences must not fail CI — only stable assertions and deterministic metrics
 are validation authority.
 
+For Meridian civic semantic native props and the physical-scale review fixture:
+
+```bash
+python3 custodian/tools/validation/meridian_civic_props_semantic_manifest_smoke.py
+cd custodian
+env HOME=/tmp/custodian-godot-home godot --headless --path . --import --quit
+env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/meridian_civic_native_prop_smoke.gd
+cd ..
+python3 custodian/tools/iteration/run_moment.py traversal/meridian_civic_native_scale --capture-mode full
+```
+
 For Operator combat-resource feedback, compact HUD pressure state, and weapon-local presentation isolation:
 
 ```bash

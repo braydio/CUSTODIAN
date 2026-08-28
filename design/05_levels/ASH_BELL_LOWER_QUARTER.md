@@ -240,12 +240,15 @@ not something inferred from headless geometry tests.
 
 ## Production Art Integration
 
-Lower Quarter, West Gate Works, and Station IX use four exact 512×512,
-16×16 atlases with unscaled 32×32 source cells: Meridian civic floor, wall,
-props, and the fixed Ash-Bell overlap. Explicit semantic coordinate lists drive
-deterministic selection; atlas art never owns collision, walkability,
-navigation, exits, or route state. `AuthoredBlockoutGrid2D` remains geometry and
-navigation authority with production drawing suppressed.
+Lower Quarter, West Gate Works, and Station IX use exact 512×512, 16×16
+atlases with unscaled 32×32 source cells for Meridian civic floor/wall and the
+fixed Ash-Bell overlap. The former civic props atlas is retained only for true
+tile-scale or legacy detail; physical props resolve through the 224-entry
+`meridian_civic_props_native` semantic manifest and render at their preserved
+native dimensions. Explicit semantic selection drives both paths; presentation
+art never owns collision, walkability, navigation, exits, or route state.
+`AuthoredBlockoutGrid2D` remains geometry and navigation authority with
+production drawing suppressed.
 
 The Meridian civic floor atlas uses quiet opaque ground pools rather than the
 full 256-cell sheet: clean civic slabs dominate normal paving, worn slabs remain
@@ -255,13 +258,15 @@ technical cells are authored overlays only. The reproducible source-work prep
 removes border-connected near-black negative space and one adjacent halo layer
 from non-ground cells while preserving all approved ground cells opaque.
 
-The Meridian wall atlas uses the reviewed alpha-clean source; the original
-Meridian props atlas remains canonical because equivalent cleanup erodes its
-already-correct thin alpha silhouettes. Wall cells are facade and perimeter
+The Meridian wall atlas uses the reviewed alpha-clean source. Native civic prop
+extracts preserve those already-correct thin silhouettes without normalizing
+them into 32×32 destinations. Wall cells are facade and perimeter
 modules rather than solid-building voxels. `MeridianCivicArtPresenter` draws a
 dark continuous civic structural mass first, then a quiet top edge, a semantic
-bottom facade, and sparse interior machinery. It must not refill authored wall
-rectangles with repeated 32×32 wall sprites.
+bottom facade, and sparse interior machinery, then mounts manifest-backed
+native prop children using authored anchor metadata. It must not refill
+authored wall rectangles with repeated 32×32 wall sprites or derive collision
+from prop alpha.
 
 The Lower Quarter integrates the 768×768 Station IX landmark, eight 96×96
 Answer pedestals with a physically missing/damaged IX, and 96×96 civic relays.
