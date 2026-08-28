@@ -282,6 +282,7 @@ env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tool
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/combat_impact_audio_smoke.gd
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_primary_ranged_modular_fire_smoke.gd
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_weapon_socket_smoke.gd
+env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_melee_locomotion_socket_smoke.gd
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_ranged_ballistic_aim_smoke.gd
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/ranged_ballistic_reticle_smoke.gd
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_ranged_ready_input_smoke.gd

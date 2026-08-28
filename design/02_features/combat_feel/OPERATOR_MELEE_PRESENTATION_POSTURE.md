@@ -470,7 +470,7 @@ This matches the modular ownership rules already documented for the Operator
 | `idle_relaxed_01` sheet | ✅ Ready | Generated E/W lower- and upper-body stack |
 | Vigil `idle_relaxed_01` weapon sheet | ✅ Ready | Generated E/W four-frame weapon layer under `melee_1h_dagger` and composed at runtime |
 | Vigil `idle_ready_01` weapon sheet | ✅ Ready | Generated E/W four-frame weapon layer selected through the equipped definition's `melee_1h_dagger` profile |
-| Melee `run_01` composition | ✅ Ready | Generated E/W `melee_1h` lower/upper body plus profile-selected Vigil weapon layer; other equipped weapons retain their own resource/fallback behavior |
+| Melee `run_01` composition | ✅ Ready | Generated six-frame E/W `melee_1h` body clock plus profile-selected Vigil weapon layer; Vigil now uses interpolated Hybrid Weapon Socket grip records during run only, while missing metadata and other weapons retain authored-strip fallback |
 | `melee_ready_up` / `melee_relax` sheets | ❌ Missing | 2–3 frame transitions |
 | `melee_sheathe` | ❌ Deferred | Later slice; reverse/adapt draw frames |
 

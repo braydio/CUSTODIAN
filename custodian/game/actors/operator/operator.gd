@@ -758,6 +758,9 @@ var _primary_ranged_action_suffix: StringName = &"right"
 var _weapon_socket_library := WeaponSocketLibrary.new()
 var _active_weapon_socket: Dictionary = {}
 var _weapon_socket_error_key: String = ""
+var _melee_locomotion_socket_active: bool = false
+var _melee_locomotion_socket_offset := Vector2.ZERO
+var _melee_locomotion_socket_track: StringName = &""
 var _current_weapon_correction: float = 0.0
 var _weapon_correction_initialized: bool = false
 var _weapon_correction_process_frame: int = -1
@@ -1928,10 +1931,12 @@ func _sync_modular_melee_locomotion(
 	or modular_lower_body_sprite == null \
 	or modular_upper_body_sprite == null \
 	or melee_weapon_overlay_sprite == null:
+		_reset_melee_locomotion_socket_presentation()
 		return false
 	var weapon_definition := _get_equipped_primary_weapon_definition() as OperatorWeaponDefinition
 	if weapon_definition == null \
 	or weapon_definition.weapon_presentation_mode == "socketed_static":
+		_reset_melee_locomotion_socket_presentation()
 		return false
 	var suffix := "w" if direction.x < -0.05 else "e"
 	var lower_animation := StringName(
@@ -1958,11 +1963,16 @@ func _sync_modular_melee_locomotion(
 		melee_weapon_overlay_sprite.sprite_frames,
 		weapon_animation
 	):
+		_reset_melee_locomotion_socket_presentation()
 		return false
+	var socket_track := upper_animation
+	var socket_mode := (
+		String(weapon_definition.get_animation_profile()) == "melee_1h_dagger"
+		and _weapon_socket_library.has_socket(socket_track, 0)
+	)
 	for sprite in [
 		modular_lower_body_sprite,
 		modular_upper_body_sprite,
-		melee_weapon_overlay_sprite,
 	]:
 		sprite.visible = true
 		sprite.flip_h = false
@@ -1970,12 +1980,10 @@ func _sync_modular_melee_locomotion(
 	var animations: Array[StringName] = [
 		lower_animation,
 		upper_animation,
-		weapon_animation,
 	]
 	var sprites: Array[AnimatedSprite2D] = [
 		modular_lower_body_sprite,
 		modular_upper_body_sprite,
-		melee_weapon_overlay_sprite,
 	]
 	for index in sprites.size():
 		if sprites[index].animation != animations[index] \
@@ -1984,11 +1992,41 @@ func _sync_modular_melee_locomotion(
 	var lower_frame_count: int = modular_lower_body_sprite.sprite_frames.get_frame_count(
 		lower_animation
 	)
-	for sprite in [modular_upper_body_sprite, melee_weapon_overlay_sprite]:
+	for sprite in [modular_upper_body_sprite]:
 		var frame_count: int = sprite.sprite_frames.get_frame_count(sprite.animation)
 		if lower_frame_count > 0 and frame_count > 0:
-			sprite.set_frame_and_progress(
+				sprite.set_frame_and_progress(
 				mini(modular_lower_body_sprite.frame, frame_count - 1),
+					modular_lower_body_sprite.frame_progress
+				)
+	melee_weapon_overlay_sprite.visible = true
+	melee_weapon_overlay_sprite.flip_h = false
+	melee_weapon_overlay_sprite.speed_scale = speed_scale
+	if socket_mode:
+		melee_weapon_overlay_sprite.stop()
+		melee_weapon_overlay_sprite.animation = weapon_animation
+		var socket_weapon_frame_count: int = melee_weapon_overlay_sprite.sprite_frames.get_frame_count(
+			weapon_animation
+		)
+		if socket_weapon_frame_count != lower_frame_count \
+		or not _apply_melee_locomotion_socket(
+			socket_track,
+			modular_lower_body_sprite.frame,
+			modular_lower_body_sprite.frame_progress
+		):
+			_reset_melee_locomotion_socket_presentation()
+			socket_mode = false
+	if not socket_mode:
+		_reset_melee_locomotion_socket_presentation()
+		if melee_weapon_overlay_sprite.animation != weapon_animation \
+		or not melee_weapon_overlay_sprite.is_playing():
+			melee_weapon_overlay_sprite.play(weapon_animation)
+		var fallback_weapon_frame_count: int = melee_weapon_overlay_sprite.sprite_frames.get_frame_count(
+			weapon_animation
+		)
+		if lower_frame_count > 0 and fallback_weapon_frame_count > 0:
+			melee_weapon_overlay_sprite.set_frame_and_progress(
+				mini(modular_lower_body_sprite.frame, fallback_weapon_frame_count - 1),
 				modular_lower_body_sprite.frame_progress
 			)
 	if primary_weapon_sprite != null:
@@ -1997,6 +2035,68 @@ func _sync_modular_melee_locomotion(
 	_hide_modular_cape_layer()
 	animated_sprite.visible = false
 	return true
+
+
+func _apply_melee_locomotion_socket(
+	track: StringName,
+	frame: int,
+	frame_progress: float
+) -> bool:
+	var socket := _weapon_socket_library.get_interpolated_socket(
+		track,
+		frame,
+		frame_progress,
+		false
+	)
+	if socket.is_empty() or melee_weapon_overlay_sprite == null:
+		return false
+	_melee_locomotion_socket_active = true
+	_melee_locomotion_socket_track = track
+	_melee_locomotion_socket_offset = socket.grip as Vector2
+	melee_weapon_overlay_sprite.position = (
+		_melee_weapon_overlay_base_position
+		+ _melee_locomotion_socket_offset
+		+ _body_recoil_offset
+		+ _fake_elevation_visual_offset
+		+ Vector2(0.0, _dodge_charge_visual_compression)
+	)
+	melee_weapon_overlay_sprite.rotation = deg_to_rad(
+		float(socket.weapon_angle_deg)
+	)
+	melee_weapon_overlay_sprite.z_index = int(socket.weapon_z)
+	melee_weapon_overlay_sprite.set_frame_and_progress(frame, frame_progress)
+	return true
+
+
+func _reset_melee_locomotion_socket_presentation() -> void:
+	if not _melee_locomotion_socket_active \
+	and _melee_locomotion_socket_offset == Vector2.ZERO:
+		return
+	_melee_locomotion_socket_active = false
+	_melee_locomotion_socket_track = &""
+	_melee_locomotion_socket_offset = Vector2.ZERO
+	if melee_weapon_overlay_sprite != null:
+		melee_weapon_overlay_sprite.rotation = 0.0
+		melee_weapon_overlay_sprite.z_index = 0
+		melee_weapon_overlay_sprite.position = (
+			_melee_weapon_overlay_base_position
+			+ _body_recoil_offset
+			+ _fake_elevation_visual_offset
+			+ Vector2(0.0, _dodge_charge_visual_compression)
+		)
+
+
+func get_melee_locomotion_socket_snapshot() -> Dictionary:
+	return {
+		"active": _melee_locomotion_socket_active,
+		"track": String(_melee_locomotion_socket_track),
+		"offset": _melee_locomotion_socket_offset,
+		"weapon_playing": (
+			melee_weapon_overlay_sprite.is_playing()
+			if melee_weapon_overlay_sprite != null
+			else false
+		),
+	}
 
 
 func _update_melee_presentation_posture(delta: float) -> void:
@@ -2018,6 +2118,7 @@ func _update_melee_presentation_posture(delta: float) -> void:
 
 
 func _sync_modular_melee_posture(direction: Vector2) -> bool:
+	_reset_melee_locomotion_socket_presentation()
 	if _melee_posture_resolver == null or modular_lower_body_sprite == null or modular_upper_body_sprite == null:
 		return false
 	if modular_lower_body_sprite.sprite_frames == null or modular_upper_body_sprite.sprite_frames == null:
@@ -3412,6 +3513,7 @@ func _hide_modular_head_layer() -> void:
 
 
 func _hide_modular_locomotion_layers() -> void:
+	_reset_melee_locomotion_socket_presentation()
 	_modular_lower_action_animation = &""
 	_modular_upper_action_animation = &""
 	_modular_upper_fx_action_animation = &""
@@ -10220,7 +10322,12 @@ func _apply_body_recoil_offset() -> void:
 	if modular_upper_fx_sprite:
 		modular_upper_fx_sprite.position = _modular_upper_fx_base_position + _body_recoil_offset + _fake_elevation_visual_offset + dodge_charge_offset
 	if melee_weapon_overlay_sprite:
-		melee_weapon_overlay_sprite.position = _melee_weapon_overlay_base_position + _body_recoil_offset + _fake_elevation_visual_offset + dodge_charge_offset
+		var melee_socket_offset := (
+			_melee_locomotion_socket_offset
+			if _melee_locomotion_socket_active
+			else Vector2.ZERO
+		)
+		melee_weapon_overlay_sprite.position = _melee_weapon_overlay_base_position + melee_socket_offset + _body_recoil_offset + _fake_elevation_visual_offset + dodge_charge_offset
 	if melee_fx_overlay_sprite:
 		melee_fx_overlay_sprite.position = _melee_fx_overlay_base_position + _body_recoil_offset + _fake_elevation_visual_offset + dodge_charge_offset
 
@@ -10573,6 +10680,8 @@ func _update_primary_weapon_visual(is_firing: bool) -> void:
 	var is_melee_mode = _is_using_melee_weapon_sprite() and not _is_ranged_ready_active()
 	var show_attack_weapon_overlay := is_melee_mode and (_melee_active or _melee_heavy_anticipating or _melee_fast_windup or _melee_recovery_active)
 	var show_block_weapon_overlay := is_melee_mode and _is_block_state_active()
+	if show_attack_weapon_overlay or show_block_weapon_overlay or not is_melee_mode:
+		_reset_melee_locomotion_socket_presentation()
 	if melee_weapon_overlay_sprite:
 		melee_weapon_overlay_sprite.visible = show_attack_weapon_overlay or show_block_weapon_overlay
 		if not melee_weapon_overlay_sprite.visible:

@@ -509,6 +509,39 @@ The current modular weapon strips remain visible compatibility art, with the
 upper body as their clock. This avoids a broad scene/resource migration before
 the extracted static art is reviewed.
 
+### Phase: melee locomotion vertical slice
+
+Vigil `melee_1h_dagger/locomotion/run_01` E/W is the first melee consumer of
+the existing frame-socket catalog. The six-frame `melee_1h` lower-body loop is
+the presentation clock; its frame and `frame_progress` select the matching
+upper-body socket record and the wrapped next record. Grip position uses
+smoothstep interpolation, and authored angle uses shortest-angle interpolation.
+The weapon overlay is stopped while socket mode is active, so it cannot own an
+independent timer or double-render alongside the socketed presentation.
+
+The normalized weapon frame pivot is `(48,48)` on each 96×96 cell. Socket
+`grip` values are Operator-local hand positions; `weapon_z` explicitly owns
+front/behind-torso ordering. Runtime rotation is presentation-only and retains
+nearest-neighbor import sampling. Current Vigil records use the authored sprite
+angles directly, so the positional correction lands without introducing large
+continuous rotations or pixel shimmer.
+
+This is intentionally locomotion-only. Draw, `idle_ready`, `idle_relaxed`, fast
+and heavy attacks, block/parry, executions, and other authored melee actions
+retain authored-strip presentation. Leaving run, changing weapon, or losing a
+matching socket record clears the socket transform. Missing metadata falls
+back to the existing authored run overlay with its frame slaved to the body.
+Ranged socket placement, muzzle/ejection authority, fine correction, and camera
+work remain unchanged.
+
+The live body, upper-body, and previous source submissions are physically
+672×96, but their manifests intentionally select six cells and runtime
+SpriteFrames contain six frames. The incoming normalized seven-cell Vigil
+review strip therefore does not change body timing: runtime maps body frames
+0–5 to source cells 0–5, while cell 6 remains noncanonical pending an explicit
+seven-frame body contract. It must not be silently ingested or used to stretch
+the six-frame locomotion clock.
+
 ### Phase 2 — Static runtime weapon node and full directions
 
 1. Export reviewed one-frame weapon textures for all eight sectors without

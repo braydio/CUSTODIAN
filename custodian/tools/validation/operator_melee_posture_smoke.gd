@@ -87,7 +87,9 @@ func _init() -> void:
 	assert(lower.animation == &"melee_1h/locomotion/run_01/e/lower_body")
 	assert(upper.animation == &"melee_1h/locomotion/run_01/e/upper_body")
 	assert(weapon.animation == &"melee_1h_dagger/locomotion/run_01/e/weapon")
-	assert(weapon.visible and weapon.is_playing(), "Vigil run weapon overlay should animate")
+	var socket_snapshot := operator.call("get_melee_locomotion_socket_snapshot") as Dictionary
+	assert(bool(socket_snapshot.active), "Vigil run weapon should use locomotion socket mode")
+	assert(weapon.visible and not weapon.is_playing(), "socketed Vigil run weapon must use the body clock")
 	assert(not operator.call("_sync_modular_locomotion_layers", "unarmed_walk", Vector2.RIGHT, Vector2.RIGHT, 1.0), "missing Vigil walk art must retain fallback")
 	assert(not lower.visible and not upper.visible and not weapon.visible, "melee locomotion fallback must hide the incomplete modular stack")
 	operator.set_process(false)

@@ -47,17 +47,65 @@ func get_socket(animation: StringName, frame: int, required: bool = true) -> Dic
 	return {}
 
 
-func validate_track(animation: StringName, frame_count: int) -> PackedStringArray:
+func validate_track(
+	animation: StringName,
+	frame_count: int,
+	required_fields: Array[StringName] = [
+		&"grip", &"support_grip", &"muzzle", &"ejection",
+	]
+) -> PackedStringArray:
 	var errors := PackedStringArray()
 	for frame in range(frame_count):
 		if not has_socket(animation, frame):
 			errors.append("%s frame %d" % [animation, frame])
 			continue
-		var socket := get_socket(animation, frame, false)
-		for key in [&"grip", &"support_grip", &"muzzle", &"ejection"]:
+		var socket := _tracks[String(animation)][frame] as Dictionary
+		for key in required_fields:
 			if not socket.has(key):
 				errors.append("%s frame %d missing %s" % [animation, frame, key])
 	return errors
+
+
+func get_interpolated_socket(
+	animation: StringName,
+	frame: int,
+	frame_progress: float,
+	required: bool = true
+) -> Dictionary:
+	var frames: Variant = _tracks.get(String(animation), [])
+	if not (frames is Array) or frames.is_empty():
+		if required:
+			push_error("Missing production weapon socket track: %s (%s)" % [animation, _loaded_path])
+		return {}
+	if frame < 0 or frame >= frames.size():
+		if required:
+			push_error("Invalid production weapon socket frame: %s frame %d (%s)" % [animation, frame, _loaded_path])
+		return {}
+	var next_frame: int = (frame + 1) % int(frames.size())
+	if not has_socket(animation, frame) or not has_socket(animation, next_frame):
+		if required:
+			push_error("Incomplete production weapon socket interpolation: %s frames %d/%d (%s)" % [animation, frame, next_frame, _loaded_path])
+		return {}
+	var current := get_socket(animation, frame, false)
+	var next := get_socket(animation, next_frame, false)
+	var linear_progress := clampf(frame_progress, 0.0, 1.0)
+	var smooth_progress := linear_progress * linear_progress * (3.0 - 2.0 * linear_progress)
+	return {
+		"grip": (current.grip as Vector2).lerp(next.grip as Vector2, smooth_progress),
+		"support_grip": (current.support_grip as Vector2).lerp(next.support_grip as Vector2, smooth_progress),
+		"muzzle": (current.muzzle as Vector2).lerp(next.muzzle as Vector2, smooth_progress),
+		"ejection": (current.ejection as Vector2).lerp(next.ejection as Vector2, smooth_progress),
+		"weapon_angle_deg": lerp_angle(
+			deg_to_rad(float(current.weapon_angle_deg)),
+			deg_to_rad(float(next.weapon_angle_deg)),
+			smooth_progress
+		) * 180.0 / PI,
+		"weapon_z": int(current.weapon_z),
+		"current_frame": frame,
+		"next_frame": next_frame,
+		"linear_progress": linear_progress,
+		"smooth_progress": smooth_progress,
+	}
 
 
 static func resolve_aim_sector(direction: Vector2) -> StringName:

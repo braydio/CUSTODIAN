@@ -23,6 +23,26 @@ Use source names such as
 `enemy_raider__rig_atlas__base__s__5x4__96.png`. Author south, north, and east;
 west is optional when the Godot skin enables east-to-west mirroring.
 
+## Vigil run grip-pivot normalization
+
+`normalize_vigil_run_pivot.lua` is calibrated only for the supplied 672×96,
+seven-frame Vigil dagger run reference. It translates each 96×96 frame so the
+measured grip anchors `(50,48)`, `(41,55)`, `(30,48)`, `(38,44)`, `(60,48)`,
+`(42,51)`, and `(32,47)` land at the common frame-local pivot `(48,48)`.
+Alpha is preserved and the script performs no scaling, rotation, filtering, or
+resampling.
+
+```bash
+aseprite -b raw_vigil_run.png \
+  --script-param output=normalized_7f_melee_vigil_dagger.png \
+  --script tools/aseprite/normalize_vigil_run_pivot.lua
+```
+
+The current body presentation clock remains six frames. The seventh source
+cell is retained in the normalized review strip and must not be silently
+promoted into the runtime contract; canonical selection requires an explicit
+body/frame-map decision.
+
 ## Operator modular alignment reference
 
 `operator_pair_reference.lua` helps the alignment-repair conveyor

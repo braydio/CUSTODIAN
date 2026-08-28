@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "owner": "operator",
-  "weapon_id": "carbine_mk1",
+  "weapon_id": "operator_hybrid_weapons",
   "cell_size": [96, 96],
   "required_sectors": ["e", "w", "se", "sw"],
   "coordinate_space": "operator_local",
@@ -57,6 +57,22 @@
     ],
     "ranged_2h_fire_modular_down_left": [
       {"grip":[0,-18],"support_grip":[-10,-11],"muzzle":[-31,-17],"ejection":[-12,-20],"weapon_angle_deg":0,"weapon_z":4},{"grip":[1,-19],"support_grip":[-9,-12],"muzzle":[-30,-18],"ejection":[-11,-21],"weapon_angle_deg":0,"weapon_z":4},{"grip":[2,-20],"support_grip":[-8,-13],"muzzle":[-29,-19],"ejection":[-10,-22],"weapon_angle_deg":0,"weapon_z":4},{"grip":[1,-19],"support_grip":[-9,-12],"muzzle":[-30,-18],"ejection":[-11,-21],"weapon_angle_deg":0,"weapon_z":4},{"grip":[0,-18],"support_grip":[-10,-11],"muzzle":[-31,-17],"ejection":[-12,-20],"weapon_angle_deg":0,"weapon_z":4}
+    ],
+    "melee_1h/locomotion/run_01/e/upper_body": [
+      {"grip":[2,0],"weapon_angle_deg":0,"weapon_z":3},
+      {"grip":[-7,7],"weapon_angle_deg":0,"weapon_z":3},
+      {"grip":[-18,0],"weapon_angle_deg":0,"weapon_z":1},
+      {"grip":[-10,-4],"weapon_angle_deg":0,"weapon_z":1},
+      {"grip":[12,0],"weapon_angle_deg":0,"weapon_z":3},
+      {"grip":[-6,3],"weapon_angle_deg":0,"weapon_z":3}
+    ],
+    "melee_1h/locomotion/run_01/w/upper_body": [
+      {"grip":[-2,0],"weapon_angle_deg":0,"weapon_z":3},
+      {"grip":[7,7],"weapon_angle_deg":0,"weapon_z":3},
+      {"grip":[18,0],"weapon_angle_deg":0,"weapon_z":1},
+      {"grip":[10,-4],"weapon_angle_deg":0,"weapon_z":1},
+      {"grip":[-12,0],"weapon_angle_deg":0,"weapon_z":3},
+      {"grip":[6,3],"weapon_angle_deg":0,"weapon_z":3}
     ]
   }
 }
