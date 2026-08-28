@@ -4,6 +4,8 @@
 `operator anim`. It exports only manifest-whitelisted layers to ignored
 workspace staging; it never writes canonical PNGs. Workbench `.aseprite` files
 are disposable editing surfaces, not production assets.
+V2 assembly consumes manifest-selected baseline or migration strips, explicit
+timeline slots, independent document clocks, and hidden reference layers.
 
 ## Humanoid rigid-cutout source
 

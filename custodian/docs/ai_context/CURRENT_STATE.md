@@ -1,12 +1,16 @@
 # CURRENT STATE — CUSTODIAN
 
-## Operator Animation Workbench V1 (2026-08-28)
+## Operator Animation Workbench V2 (2026-08-28)
 
 `operator anim list|status|edit|refresh|publish` now provides semantic,
 provenance-checked Aseprite round-trip editing over canonical Operator V2 PNGs.
 Ignored `.ai/operator_animation_workbench/` documents are disposable pixel
 editing surfaces; gameplay timing/state and generated runtime/catalog outputs
 retain their existing authority.
+V2 adds explicit add/remove frame-contract migrations, request-context
+fingerprints, exact linked-weapon isolation, independent document/layer clocks,
+dependency gates for gameplay/socket frame authority, transaction journals,
+and downstream rollback. Existing V1 manifests upgrade non-destructively.
 
 ## Map + AI Coherence V1 (2026-08-20)
 

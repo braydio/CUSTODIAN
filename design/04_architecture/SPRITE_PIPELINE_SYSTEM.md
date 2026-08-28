@@ -6,7 +6,7 @@ mirroring, and enemy/vehicle runtime refresh to this mature backend rather than
 reimplementing them. Operator keeps its specialized key and runtime builder.
 Direct backend commands remain supported expert/debug entrypoints.
 
-Operator semantic round-trip editing is specified by
+Operator semantic round-trip editing and explicit frame-contract migration are specified by
 `design/02_features/animation/OPERATOR_ANIMATION_WORKBENCH.md`. It is an
 editor-facing facade over the existing V2 source/runtime/catalog pipeline;
 canonical PNGs remain authority and `.aseprite` workbenches remain ignored,

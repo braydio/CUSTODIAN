@@ -13,7 +13,7 @@ PIPELINES = CUSTODIAN_ROOT / "tools/pipelines"
 SOURCE_ROOT = CUSTODIAN_ROOT / "content/sprites/operator/source/animations"
 WEAPON_ROOT = CUSTODIAN_ROOT / "content/sprites/weapons"
 CATALOG = CUSTODIAN_ROOT / "content/data/operator/generated/operator_animation_catalog.generated.json"
-SCHEMA_NAME = "custodian.operator_animation_workbench.v1"
+SCHEMA_NAME = "custodian.operator_animation_workbench.v2"
 PRESENTATION_ORDER = ("cape", "lower_body", "upper_body", "head", "weapon", "fx")
 
 def _load(name: str, path: Path):
@@ -53,6 +53,30 @@ def pixel_sha256(path: Path) -> str:
 def rel(path: Path, repo_root: Path=REPO_ROOT) -> str:
     try: return path.resolve().relative_to(repo_root.resolve()).as_posix()
     except ValueError: return str(path.resolve())
+
+def context_fingerprint(identity:dict, weapon:WeaponContext|None) -> str:
+    context={"identity":identity,"weapon_id":weapon.weapon_id if weapon else "","linked_profile":weapon.animation_profile if weapon else "","presentation_mode":weapon.presentation_mode if weapon else ""}
+    return hashlib.sha256(json.dumps(context,sort_keys=True,separators=(",",":")).encode()).hexdigest()
+
+def assert_context(manifest:dict, requested:dict):
+    actual=manifest.get("context",{}).get("fingerprint","")
+    if actual!=requested.get("context",{}).get("fingerprint",""):
+        raise WorkbenchError("WORKBENCH CONTEXT MISMATCH\nexisting and requested weapon/profile context differ; refresh with --discard-edits to recontextualize")
+
+def upgrade_v1_manifest_to_v2(data:dict) -> dict:
+    if data.get("schema")==SCHEMA_NAME: return data
+    if data.get("schema")!="custodian.operator_animation_workbench.v1": raise WorkbenchError(f"unsupported workbench schema: {data.get('schema')}")
+    weapon=data.get("weapon_context") or {}; identity=data["identity"]
+    data["schema"]=SCHEMA_NAME
+    data["context"]={"weapon_id":weapon.get("weapon_id",""),"linked_profile":weapon.get("animation_profile",""),"presentation_mode":weapon.get("presentation_mode",""),"fingerprint":context_fingerprint(identity,WeaponContext(weapon.get("weapon_id",""),weapon.get("animation_profile",""),weapon.get("presentation_mode","")) if weapon else None)}
+    clock=int(data["timeline"]["frames"]); data["timeline"].update({"source_clock_frames":clock,"workspace_clock_frames":clock,"document_frames":max([clock]+[int(b["frames"]) for b in data["layers"]])})
+    for b in data["layers"]:
+        semantic={"owner":b["owner"],"layer":b["layer"],"profile":b["profile"],"group":b["group"],"action":b["action"],"direction":b["direction"]}
+        source={"path":b["source_path"],"frames":b["frames"],"frame_size":b["frame_size"],"file_sha256":b["source_file_sha256"],"pixel_sha256":b["source_pixel_sha256"]}
+        workspace={"frames":b["frames"],"frame_size":b["frame_size"],"placement":b["placement"],"timeline_slots":list(range(1,b["frames"]+1))}
+        b.update({"semantic_identity":semantic,"source_contract":source,"workspace_contract":workspace,"publish_contract":{"path":b["source_path"],"frames":b["frames"],"frame_size":b["frame_size"]}})
+    data["pending_migration"]=None
+    return data
 
 def source_index(source_root: Path=SOURCE_ROOT, weapon_root: Path=WEAPON_ROOT):
     groups={}
@@ -100,12 +124,20 @@ def build_plan(profile, action, direction, group="", weapon_id="", linked_profil
         sid=("operator",layer,profile,group,action,direction)
         if sid in index: selected.append(index[sid])
     available={k.layer for _,k in selected}
+    full_body_reference=None
     if {"lower_body","upper_body"} <= available:
+        full_body_reference=next((x for x in selected if x[1].layer=="full_body"),None)
         selected=[x for x in selected if x[1].layer!="full_body"]
     weapon=resolve_weapon(weapon_id,linked_profile,catalog_path)
     if weapon and weapon.presentation_mode in {"authored_overlay","hybrid"}:
         for layer in ("weapon","fx"):
-            candidates=[v for sid,v in index.items() if sid[1]==layer and sid[2]==weapon.animation_profile and sid[3:]==(group,action,direction)]
+            exact=[v for sid,v in index.items() if sid[0]==weapon.weapon_id and sid[1]==layer and sid[2]==weapon.animation_profile and sid[3:]==(group,action,direction)]
+            fallback=[v for sid,v in index.items() if sid[0]=="operator" and sid[1]==layer and sid[2]==weapon.animation_profile and sid[3:]==(group,action,direction)]
+            if not exact and fallback and catalog_path.exists():
+                users=[wid for wid,item in json.loads(catalog_path.read_text()).get("weapons",{}).items() if item.get("animation_profile")==weapon.animation_profile]
+                if len(users)>1: raise WorkbenchError(f"operator-owned linked {layer} profile {weapon.animation_profile} is shared by weapons {users}; exact owner required")
+            candidates=exact or fallback
+            if len(candidates)>1: raise WorkbenchError(f"ambiguous linked {layer} owner for {weapon.weapon_id}: {[str(x[0]) for x in candidates]}")
             selected += candidates
     if not selected: raise WorkbenchError("no canonical layers resolved")
     width=max(k.frame_width for _,k in selected); height=max(k.frame_height for _,k in selected)
@@ -116,14 +148,21 @@ def build_plan(profile, action, direction, group="", weapon_id="", linked_profil
     bindings=[]
     for path,k in ordered:
         linked=k.animation_profile!=profile; bid=(f"{k.layer}__{weapon.weapon_id}" if linked and weapon else k.layer)
-        bindings.append(LayerBinding(bid,bid,"linked_fx" if linked and k.layer=="fx" else "linked_weapon" if linked else "editable",True,k.owner,k.animation_profile,k.action_group,k.action,k.direction,k.layer,rel(path,repo_root),rel((CUSTODIAN_ROOT/SCHEMA.canonical_runtime_path(k)),repo_root),file_sha256(path),pixel_sha256(path),k.frames,[k.frame_width,k.frame_height],[(width-k.frame_width)//2,(height-k.frame_height)//2],"exact" if k.frames==clock[1].frames else "editor_sequential_only"))
-    return {"schema":SCHEMA_NAME,"identity":asdict(identity),"weapon_context":asdict(weapon) if weapon else None,"timeline":{"frames":clock[1].frames,"preview_fps":12,"timing_authority":False,"clock_owner":clock[1].layer},"canvas":{"width":width,"height":height},"aseprite":{"path":"","last_synced_sha256":None},"layers":[asdict(x) for x in bindings],"references":[],"last_publish":{"timestamp":None,"validation_status":None}}
+        flat=asdict(LayerBinding(bid,bid,"linked_fx" if linked and k.layer=="fx" else "linked_weapon" if linked else "editable",True,k.owner,k.animation_profile,k.action_group,k.action,k.direction,k.layer,rel(path,repo_root),rel((CUSTODIAN_ROOT/SCHEMA.canonical_runtime_path(k)),repo_root),file_sha256(path),pixel_sha256(path),k.frames,[k.frame_width,k.frame_height],[(width-k.frame_width)//2,(height-k.frame_height)//2],"exact" if k.frames==clock[1].frames else "editor_sequential_only"))
+        flat.update({"semantic_identity":{"owner":k.owner,"layer":k.layer,"profile":k.animation_profile,"group":k.action_group,"action":k.action,"direction":k.direction},"source_contract":{"path":flat["source_path"],"frames":k.frames,"frame_size":flat["frame_size"],"file_sha256":flat["source_file_sha256"],"pixel_sha256":flat["source_pixel_sha256"]},"workspace_contract":{"frames":k.frames,"frame_size":flat["frame_size"],"placement":flat["placement"],"timeline_slots":list(range(1,k.frames+1))},"publish_contract":{"path":flat["source_path"],"frames":k.frames,"frame_size":flat["frame_size"]},"input_path":""})
+        bindings.append(flat)
+    references=[]
+    if full_body_reference:
+        path,k=full_body_reference; references.append({"binding_id":"full_body_reference","aseprite_layer_name":"__REFERENCE_FULL_BODY","role":"reference","editable":False,"source_path":rel(path,repo_root),"frames":k.frames,"frame_size":[k.frame_width,k.frame_height],"placement":[(width-k.frame_width)//2,(height-k.frame_height)//2],"timeline_slots":list(range(1,k.frames+1))})
+    ident=asdict(identity); context={"weapon_id":weapon.weapon_id if weapon else "","linked_profile":weapon.animation_profile if weapon else "","presentation_mode":weapon.presentation_mode if weapon else ""}; context["fingerprint"]=context_fingerprint(ident,weapon)
+    document=max([clock[1].frames]+[b["frames"] for b in bindings]+[r["frames"] for r in references])
+    return {"schema":SCHEMA_NAME,"identity":ident,"context":context,"weapon_context":asdict(weapon) if weapon else None,"timeline":{"frames":document,"source_clock_frames":clock[1].frames,"workspace_clock_frames":clock[1].frames,"document_frames":document,"preview_fps":12,"timing_authority":False,"clock_owner":clock[1].layer},"canvas":{"width":width,"height":height},"aseprite":{"path":"","last_synced_sha256":None},"layers":bindings,"references":references,"pending_migration":None,"last_publish":{"timestamp":None,"validation_status":None}}
 
 def extract_binding(raw: Path, binding: dict, canvas: dict, output: Path):
     with Image.open(raw) as im:
-        im=im.convert("RGBA"); cw,ch=canvas["width"],canvas["height"]; frames=binding["frames"]
+        im=im.convert("RGBA"); cw,ch=canvas["width"],canvas["height"]; frames=binding.get("workspace_contract",{}).get("frames",binding["frames"])
         if im.size != (cw*frames,ch): raise WorkbenchError(f"raw export contract changed: {im.size}")
-        fw,fh=binding["frame_size"]; x,y=binding["placement"]; out=Image.new("RGBA",(fw*frames,fh))
+        contract=binding.get("workspace_contract",binding); fw,fh=contract["frame_size"]; x,y=contract["placement"]; out=Image.new("RGBA",(fw*frames,fh))
         for i in range(frames):
             frame=im.crop((i*cw,0,(i+1)*cw,ch)); alpha=frame.getchannel("A"); legal=Image.new("L",(cw,ch)); legal.paste(255,(x,y,x+fw,y+fh))
             outside=Image.eval(legal,lambda v:255-v)
