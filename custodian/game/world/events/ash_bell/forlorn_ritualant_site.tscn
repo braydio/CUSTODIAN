@@ -78,10 +78,11 @@ gravity = Vector3(0, 8, 0)
 scale_min = 0.3
 
 [sub_resource type="LabelSettings" id="LabelSettings_dialogue"]
-font_size = 20
-outline_size = 6
+font_size = 22
+font_color = Color(0.94, 0.94, 0.92, 1)
+outline_size = 4
 outline_color = Color(0, 0, 0, 1)
-shadow_color = Color(0, 0, 0, 0.5)
+shadow_color = Color(0, 0, 0, 0.65)
 
 [node name="ForlornRitualantSite" type="Node2D" unique_id=1649470245]
 script = ExtResource("1_site")
@@ -95,7 +96,7 @@ unarrived_apparition_path = NodePath("VFX/UnarrivedApparition")
 stilling_pin_pickup_path = NodePath("Props/StillingPinPickup")
 ghost_procession_path = NodePath("VFX/GhostProcession")
 debug_label_path = NodePath("Debug/AshBellDebugLabel")
-dialogue_label_path = NodePath("DialoguePresentation/AshBellDialogueLabel")
+dialogue_label_path = NodePath("DialogueOverlay/DialoguePresentation/AshBellDialogueLabel")
 silence_veil_path = NodePath("FX/SilenceVeil")
 pressure_halo_path = NodePath("FX/PressureHalo")
 thread_visual_path = NodePath("FX/ThreadVisual")
@@ -434,27 +435,27 @@ process_material = SubResource("ParticleProcessMaterial_ash_down")
 
 [node name="Debug" type="Node2D" parent="." unique_id=409010644]
 
-[node name="DialoguePresentation" type="Node2D" parent="." unique_id=1722286022]
+[node name="DialogueOverlay" type="CanvasLayer" parent="."]
+layer = 85
+
+[node name="DialoguePresentation" type="Node2D" parent="DialogueOverlay" unique_id=1722286022]
 visible = false
-z_as_relative = false
-z_index = 80
 script = ExtResource("38_dialogue_presenter")
-site_path = NodePath("..")
-position = Vector2(0, 210)
+site_path = NodePath("../..")
+position = Vector2(640, 684)
 
-[node name="Background" type="ColorRect" parent="DialoguePresentation" unique_id=636911536]
-z_index = 1
-offset_left = -340.0
-offset_top = -150.0
-offset_right = 340.0
-offset_bottom = 28.0
-color = Color(0, 0, 0, 0.75)
+[node name="Background" type="ColorRect" parent="DialogueOverlay/DialoguePresentation" unique_id=636911536]
+offset_left = -480.0
+offset_top = -168.0
+offset_right = 480.0
+offset_bottom = 0.0
+color = Color(0, 0, 0, 0.88)
 
-[node name="AshBellDialogueLabel" type="Label" parent="DialoguePresentation" unique_id=1592804111]
-offset_left = -310.0
-offset_top = -138.0
-offset_right = 310.0
-offset_bottom = 18.0
+[node name="AshBellDialogueLabel" type="Label" parent="DialogueOverlay/DialoguePresentation" unique_id=1592804111]
+offset_left = -444.0
+offset_top = -144.0
+offset_right = 444.0
+offset_bottom = -18.0
 text = ""
 label_settings = SubResource("LabelSettings_dialogue")
 horizontal_alignment = 1

@@ -47,8 +47,20 @@ func _run() -> void:
 	var apron := level.get_node_or_null("BackgroundRoot/LandingShelfApron") as Sprite2D
 	if apron == null:
 		errors.append("landing shelf apron presentation node is missing")
-	elif apron.position != Vector2(0.0, 1600.0):
+	elif apron.position != Vector2(0.0, 1568.0):
 		errors.append("landing shelf apron is not at canonical production position")
+	var proxy := level.get_node_or_null("UnderlayRoot/DistantChapelProxy") as Sprite2D
+	if proxy == null \
+			or proxy.position != Vector2(384.0, 672.0) \
+			or proxy.scale != Vector2(1.25, 1.25) \
+			or not is_equal_approx(proxy.modulate.a, 0.0):
+		errors.append("distant chapel proxy composition drifted")
+	var chapel_blend := level.get_node_or_null("BackgroundRoot/ChapelOuterBlend") as Sprite2D
+	if chapel_blend == null or chapel_blend.z_index != -28:
+		errors.append("chapel outer blend z authority drifted")
+	var connector_blend := level.get_node_or_null("BackgroundRoot/ChapelConnectorApron") as Sprite2D
+	if connector_blend == null or connector_blend.z_index != -27:
+		errors.append("chapel connector blend z authority drifted")
 	if level.has_method("moment_forge_set_landing_apron_candidate"):
 		errors.append("retired landing apron candidate override still exists")
 	var ground := level.get_node_or_null("BackgroundRoot/PlayableGround") as Polygon2D

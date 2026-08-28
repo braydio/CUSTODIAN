@@ -19,13 +19,16 @@ encounter_intensity = 0.35
 max_intensity = 0.75
 
 [node name="VoidUnderlay" type="Node2D" parent="."]
-z_index = -100
+z_as_relative = false
+z_index = -72
+modulate = Color(1, 1, 1, 0)
 
 [node name="RoomSizedQuad" type="TextureRect" parent="VoidUnderlay"]
 texture_filter = 1
 modulate = Color(0.72, 0.82, 1, 0.86)
 material = ExtResource("5_void_material")
-z_index = -100
+z_as_relative = false
+z_index = -72
 offset_left = -560.0
 offset_top = -432.0
 offset_right = 560.0

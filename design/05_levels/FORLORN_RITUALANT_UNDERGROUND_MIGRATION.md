@@ -80,7 +80,14 @@ The generic special-room system remains live for other encounters. Its documenta
 - The existing `35x27` / `1120x864` chapel is instanced at `(0,-1120)`.
 - Entry spawn: `(0,1670)`, on the lower lift walk-off position.
 - World-return interaction: `(0,1696)`, on the shared lower lift assembly.
-- Arrival lift starts at `(0,1440)` and travels down-screen to the dock over `256 px` / `1.10 sec` under the black handoff.
+- Surface visible descent is `176 px`, owned by `AshBellLiftIngressPresentation`.
+- Underground arrival/departure travels `256 px` between `y=1440` and `y=1696`.
+- Underground arrival holds full black for `0.20 sec`, reveals the shaft over
+  `0.50 sec`, holds the established composition for `0.15 sec`, travels the
+  visible `256 px` over `1.35 sec`, then settles/fades the shaft over `0.30 sec`.
+- Underground departure holds for `0.20 sec`, travels the first `128 px` over
+  `0.70 sec` fully visible, travels the final `128 px` over `0.75 sec` while
+  black takes authority, then holds full black for `0.25 sec` before handoff.
 - A closed polygon loop defines the cavern, landing shelf, and chapel connector; debug centerline data is presentation-only.
 - The Ritualant scene is instanced at `(0,-1120)`; the old internal exit
   trigger is retired because the authored wrapper owns travel.
@@ -109,10 +116,28 @@ existing surface ascent reads as the continuation of one journey. Additional
 cavern dressing remains art polish, never a reason to restore special-room
 insertion.
 
-The lift captures the Operator into the shared presentation rig, suspends the
-live actor, and carries the rider through the authored `176 px` ascent. A
+The surface lift captures the Operator into the shared presentation rig and
+carries the rider through its authored `176 px` visible surface ascent. The
+Underground wrapper independently owns the `256 px` lower arrival/departure
+travel described above. Both suspend the live actor. A
 rejected route request rolls the lift, black overlay, presentation, and actor
 processing back to their pre-departure state.
+
+The Underground uses camera-profile change notification for the distant chapel
+proxy and generic `AuthoredThresholdBlend2D` instances for the reversible
+cosmic-underlay and temporal-haze transition beneath the existing chapel
+overhang. Dialogue is screen-space. Encounter resolution invalidates stale
+dialogue and delayed Ritualant attacks, pauses fountain pressure while actor
+input is captured, and keeps the lift unavailable until resolution stagecraft
+finishes. `InteractableLevelExit2D` delegates prompt truth to the same
+controller predicate used by departure acceptance.
+
+`AshBellLiftIngressPresentation` and the Underground wrapper still duplicate
+transit orchestration. A future
+`game/world/levels/presentation/lift_transit_presenter_2d.gd` should own actor
+capture/suspension, rider presentation, travel reversal, cancellation, and
+rollback while leaving art composition and travel profiles caller-owned. That
+extraction is deliberately deferred until both transit sequences are stable.
 
 The wrapper owns session snapshot delegation for the encounter. Event pressure,
 thread/fountain/resolution state, knowledge/dialogue flags, one-shots, resolved

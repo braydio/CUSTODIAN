@@ -122,7 +122,12 @@ func get_interaction_prompt() -> String:
 		InteractionKind.SET_STILLING_PIN:
 			return "SET PIN IN BASIN"
 		InteractionKind.THREAD_ANCHOR:
-			return "ANCHOR WHITE THREAD"
+			var next_anchor := (
+				site.debug_get_resolved_thread_anchor_count() + 1
+				if site != null
+				else 1
+			)
+			return "ANCHOR WHITE THREAD %d/3" % clampi(next_anchor, 1, 3)
 		_:
 			return "INTERACT"
 

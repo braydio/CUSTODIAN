@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=3]
+[gd_scene load_steps=41 format=3]
 
 [ext_resource type="Script" path="res://game/world/levels/authored/ash_bell/forlorn_ritualant_underground/forlorn_ritualant_underground.gd" id="1"]
 [ext_resource type="PackedScene" path="res://game/world/events/ash_bell/forlorn_ritualant_site.tscn" id="2"]
@@ -38,6 +38,7 @@
 [ext_resource type="Script" path="res://game/world/levels/presentation/authored_camera_zone_director_2d.gd" id="36"]
 [ext_resource type="Script" path="res://game/world/levels/presentation/authored_camera_zone_2d.gd" id="37"]
 [ext_resource type="Texture2D" path="res://assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress_fx__descent_dust__burst__omni__6f__192x192.png" id="38"]
+[ext_resource type="Script" path="res://game/world/levels/presentation/authored_threshold_blend_2d.gd" id="39"]
 [sub_resource type="RectangleShape2D" id="return"]
 size=Vector2(192,64)
 [sub_resource type="Shader" id="vertical_feather"]
@@ -111,8 +112,9 @@ z_as_relative=false
 z_index=-94
 modulate=Color(1,1,1,0.12)
 [node name="DistantChapelProxy" type="Sprite2D" parent="UnderlayRoot"]
-position=Vector2(448,704)
-modulate=Color(1,1,1,0.7)
+position=Vector2(384,672)
+scale=Vector2(1.25,1.25)
+modulate=Color(1,1,1,0)
 texture=ExtResource("23")
 z_as_relative=false
 z_index=-65
@@ -126,7 +128,7 @@ z_index=-50
 position=Vector2(0,-1120)
 texture=ExtResource("17")
 z_as_relative=false
-z_index=-45
+z_index=-28
 [node name="CavernRimSouth" type="Sprite2D" parent="BackgroundRoot"]
 position=Vector2(0,1024)
 texture=ExtResource("11")
@@ -143,7 +145,7 @@ texture=ExtResource("13")
 z_as_relative=false
 z_index=-40
 [node name="LandingShelfApron" type="Sprite2D" parent="BackgroundRoot"]
-position=Vector2(0,1600)
+position=Vector2(0,1568)
 texture=ExtResource("10")
 z_as_relative=false
 z_index=-39
@@ -151,7 +153,7 @@ z_index=-39
 position=Vector2(0,-640)
 texture=ExtResource("16")
 z_as_relative=false
-z_index=-38
+z_index=-27
 [node name="GroundDetails" type="Node2D" parent="BackgroundRoot"]
 [node name="WetDetail01" type="Sprite2D" parent="BackgroundRoot/GroundDetails"]
 position=Vector2(-128,1216)
@@ -351,6 +353,24 @@ texture=ExtResource("28")
 z_as_relative=false
 z_index=60
 [node name="CameraPresentation" type="Node2D" parent="."]
+[node name="ChapelCosmicBlend" type="Node" parent="CameraPresentation"]
+script=ExtResource("39")
+reference_path=NodePath("../..")
+target_path=NodePath("../../PlayableRoot/ForlornRitualantSite/ForlornRitualantShaderFX/VoidUnderlay")
+south_y=-608.0
+north_y=-736.0
+south_alpha=0.0
+north_alpha=1.0
+smoothstep=true
+[node name="ChapelTemporalHazeBlend" type="Node" parent="CameraPresentation"]
+script=ExtResource("39")
+reference_path=NodePath("../..")
+target_path=NodePath("../../PlayableRoot/ForlornRitualantSite/ForlornRitualantShaderFX/TemporalFX")
+south_y=-640.0
+north_y=-800.0
+south_alpha=0.0
+north_alpha=0.65
+smoothstep=true
 [node name="AuthoredCameraZoneDirector2D" type="Node" parent="CameraPresentation"]
 script=ExtResource("36")
 [node name="LandingVista" type="Node2D" parent="CameraPresentation/AuthoredCameraZoneDirector2D"]

@@ -1,6 +1,11 @@
 extends Node
 class_name AuthoredCameraZoneDirector2D
 
+signal active_profile_changed(
+	previous_profile_id: StringName,
+	current_profile_id: StringName
+)
+
 const SUBJECT_SAFE_INSET := Vector4(0.06, 0.10, 0.06, 0.16)
 
 @export var subject_path: NodePath
@@ -22,8 +27,10 @@ func _process(_delta: float) -> void:
 	var selected := _select_zone(_subject.global_position)
 	if selected == _active_zone:
 		return
+	var previous_profile := get_active_profile_id()
 	_active_zone = selected
 	_apply_active_zone()
+	active_profile_changed.emit(previous_profile, get_active_profile_id())
 
 
 func refresh_now() -> void:

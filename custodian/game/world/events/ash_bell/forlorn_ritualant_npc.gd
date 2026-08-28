@@ -63,6 +63,9 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	if phase != Phase.HOSTILE:
 		return
+	if not _combat_execution_allowed():
+		velocity = Vector2.ZERO
+		return
 
 	_hostile_elapsed += delta
 	if _hostile_elapsed >= survive_to_dissolve_seconds:
@@ -190,7 +193,7 @@ func _pin_strike() -> void:
 	_play_anim(&"pin_strike")
 	_bark(&"pin_strike_bark")
 	await get_tree().create_timer(pin_windup_seconds).timeout
-	if phase != Phase.HOSTILE:
+	if not _combat_execution_allowed():
 		_attack_in_progress = false
 		return
 	stilling_pin_impact.emit()
@@ -214,7 +217,11 @@ func _thread_pull() -> void:
 	_bark(&"thread_pull_bark")
 	var target_start := target.global_position if target != null else Vector2.ZERO
 	await get_tree().create_timer(thread_pull_windup_seconds).timeout
-	if phase != Phase.HOSTILE or target == null or not is_instance_valid(target):
+	if (
+		not _combat_execution_allowed()
+		or target == null
+		or not is_instance_valid(target)
+	):
 		_attack_in_progress = false
 		return
 	var radial := (target_start - global_position).normalized()
@@ -236,7 +243,11 @@ func _ninth_answer() -> void:
 	if site != null:
 		site.begin_ninth_answer_lane(lane_x)
 	await get_tree().create_timer(ninth_answer_windup_seconds).timeout
-	if phase == Phase.HOSTILE and target != null and is_instance_valid(target):
+	if (
+		_combat_execution_allowed()
+		and target != null
+		and is_instance_valid(target)
+	):
 		if absf(target.global_position.x - lane_x) <= 30.0 and target.has_method("take_damage"):
 			target.call("take_damage", ninth_answer_damage)
 	if site != null:
@@ -255,7 +266,11 @@ func _orra_comes_late() -> void:
 	if site != null:
 		site.begin_orra_late(behind)
 	await get_tree().create_timer(orra_late_delay_seconds).timeout
-	if phase == Phase.HOSTILE and target != null and is_instance_valid(target):
+	if (
+		_combat_execution_allowed()
+		and target != null
+		and is_instance_valid(target)
+	):
 		var caught := target.global_position.distance_to(target_start) <= 44.0
 		if site != null:
 			site.resolve_orra_late(caught)
@@ -267,6 +282,20 @@ func _finish_attack() -> void:
 	_attack_in_progress = false
 	if phase == Phase.HOSTILE:
 		_play_anim(&"hostile_idle")
+
+
+func _combat_execution_allowed() -> bool:
+	if phase != Phase.HOSTILE:
+		return false
+	if site == null or site.event_state == null:
+		return false
+	if not site.event_state.ritualant_hostile:
+		return false
+	if site.is_dialogue_input_captured():
+		return false
+	if site.is_encounter_resolving():
+		return false
+	return true
 
 
 func _bark(node_id: StringName) -> void:

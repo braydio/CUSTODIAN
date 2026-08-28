@@ -92,6 +92,19 @@ func cancel() -> void:
 func close_menu() -> void:
 	if _mode != Mode.MENU: return
 	var menu := _active_menu; _clear(true); menu_closed.emit(menu); _play_pending()
+func force_close() -> void:
+	var ended_node := _active_node
+	var ended_menu := _active_menu
+	_pending = &""
+	_pending_actor = null
+	_pending_interrupt = false
+	_pending_lock = false
+	_clear(true)
+	if ended_node != &"":
+		sequence_cancelled.emit(ended_node)
+		sequence_ended.emit(ended_node, false)
+	if ended_menu != &"":
+		menu_closed.emit(ended_menu)
 func is_active() -> bool: return _mode != Mode.NONE
 func is_manual_active() -> bool: return _mode == Mode.MANUAL
 func is_menu_active() -> bool: return _mode == Mode.MENU

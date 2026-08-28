@@ -6,7 +6,16 @@ const OPERATOR_PRESENTATION_RIG_SCENE := preload(
 )
 const LIFT_ASCENT_DISTANCE := 176.0
 const LOWER_LIFT_TRAVEL_DISTANCE := 256.0
-const LOWER_LIFT_TRAVEL_SEC := 1.10
+const ARRIVAL_BLACK_HOLD_SEC := 0.20
+const ARRIVAL_BLACK_FADE_SEC := 0.50
+const ARRIVAL_SHAFT_ESTABLISH_SEC := 0.15
+const ARRIVAL_TRAVEL_SEC := 1.35
+const ARRIVAL_SHAFT_FADE_SEC := 0.30
+const DEPARTURE_PREMOVE_HOLD_SEC := 0.20
+const DEPARTURE_VISIBLE_TRAVEL_SEC := 0.70
+const DEPARTURE_FADE_TRAVEL_SEC := 0.75
+const DEPARTURE_BLACK_FADE_SEC := 0.60
+const DEPARTURE_BLACK_HOLD_SEC := 0.25
 const AUTHORED_CELL_SIZE := 32.0
 const MAP_SIZE_CELLS := Vector2i(112, 128)
 const LEVEL_BOUNDS := Rect2(-1792.0, -2048.0, 3584.0, 4096.0)
@@ -20,7 +29,6 @@ const CHAPEL_CONNECTOR := Rect2(-96.0, -768.0, 192.0, 128.0)
 const CAVERN_DEEPER_DIRECTION := Vector2.UP
 const LIFT_DESCENT_SCREEN_DIRECTION := Vector2.DOWN
 const LIFT_ASCENT_SCREEN_DIRECTION := Vector2.UP
-const DISTANT_PROXY_FADE_REGION := Rect2(-192.0, 1280.0, 384.0, 160.0)
 
 var PLAYABLE_BOUNDARY_LOOP := PackedVector2Array([
 	Vector2(-128,1376), Vector2(-160,1280), Vector2(-288,1184), Vector2(-384,1024), Vector2(-416,832), Vector2(-352,640), Vector2(-224,480), Vector2(-64,320), Vector2(64,160), Vector2(96,-64), Vector2(32,-256), Vector2(-96,-416), Vector2(-224,-576), Vector2(-96,-704), Vector2(-304,-760), Vector2(-480,-896), Vector2(-512,-1152), Vector2(-456,-1384), Vector2(-320,-1496), Vector2(-112,-1536), Vector2(112,-1536), Vector2(320,-1496), Vector2(456,-1384), Vector2(512,-1152), Vector2(480,-896), Vector2(304,-760), Vector2(96,-704), Vector2(224,-576), Vector2(224,-352), Vector2(320,-192), Vector2(352,32), Vector2(320,224), Vector2(192,416), Vector2(32,576), Vector2(-96,736), Vector2(-128,928), Vector2(-64,1088), Vector2(64,1216), Vector2(128,1280), Vector2(128,1376), Vector2(224,1408), Vector2(320,1472), Vector2(352,1600), Vector2(352,1760), Vector2(288,1824), Vector2(-288,1824), Vector2(-352,1760), Vector2(-352,1600), Vector2(-320,1472), Vector2(-224,1408),
@@ -68,6 +76,9 @@ const AUTHORING_MARKERS := {
 @onready var shaft_arrival_fore: Sprite2D = $ArrivalDescentRoot/ShaftArrivalFore
 @onready var landing_mouth: Sprite2D = $ArrivalDescentRoot/LandingMouth
 @onready var landing_dust: Sprite2D = $ArrivalDescentRoot/LandingDust
+@onready var camera_zone_director: AuthoredCameraZoneDirector2D = (
+	$CameraPresentation/AuthoredCameraZoneDirector2D
+)
 
 var _departure_running := false
 var _departure_actor: Node = null
@@ -78,15 +89,16 @@ var _bound_operator: Node = null
 var _arrival_running := false
 var _arrival_actor: Node = null
 var _arrival_rig: OperatorPresentationRig2D = null
-var _distant_chapel_retired := false
-var _proxy_was_south_of_fade_region := true
+var _distant_proxy_tween: Tween
 
 
 func _ready() -> void:
 	_build_playable_ground()
-	distant_chapel_proxy.modulate.a = 0.70
-	_distant_chapel_retired = false
-	set_process(true)
+	distant_chapel_proxy.modulate.a = 0.0
+	if camera_zone_director != null:
+		camera_zone_director.active_profile_changed.connect(
+			_on_camera_profile_changed
+		)
 	call_deferred("_bind_active_operator")
 
 
@@ -98,18 +110,31 @@ func _build_playable_ground() -> void:
 	playable_ground.uv = ground_uv
 
 
-func _process(_delta: float) -> void:
-	if _distant_chapel_retired:
+func _on_camera_profile_changed(
+	_previous_profile: StringName,
+	current_profile: StringName
+) -> void:
+	match current_profile:
+		&"LANDING_VISTA", &"UPPER_DESCENT":
+			_fade_distant_chapel(0.88, 0.45)
+		&"DEEP_CAVERN", &"CHAPEL_APPROACH", &"CHAPEL_GAMEPLAY_RELEASE":
+			_fade_distant_chapel(0.0, 0.65)
+
+
+func _fade_distant_chapel(target_alpha: float, seconds: float) -> void:
+	if distant_chapel_proxy == null:
 		return
-	var actor := get_tree().get_first_node_in_group("player") as Node2D
-	if actor == null:
-		return
-	var local_actor := to_local(actor.global_position)
-	if DISTANT_PROXY_FADE_REGION.has_point(local_actor) and _proxy_was_south_of_fade_region:
-		_distant_chapel_retired = true
-		var tween := create_tween()
-		tween.tween_property(distant_chapel_proxy, "modulate:a", 0.0, 0.70)
-	_proxy_was_south_of_fade_region = local_actor.y >= DISTANT_PROXY_FADE_REGION.end.y
+	if _distant_proxy_tween != null and _distant_proxy_tween.is_valid():
+		_distant_proxy_tween.kill()
+	_distant_proxy_tween = create_tween()
+	_distant_proxy_tween.set_trans(Tween.TRANS_SINE)
+	_distant_proxy_tween.set_ease(Tween.EASE_IN_OUT)
+	_distant_proxy_tween.tween_property(
+		distant_chapel_proxy,
+		"modulate:a",
+		target_alpha,
+		seconds
+	)
 
 
 func activate_route_node(actor: Node, spawn_id: StringName) -> bool:
@@ -142,25 +167,29 @@ func _begin_arrival_sequence(actor: Node) -> void:
 	var camera := get_viewport().get_camera_2d()
 	if camera != null and camera.has_method("set_presentation_framing"):
 		camera.call("set_presentation_framing", true, Vector2(0.0, -224.0), Vector2(0.62, 0.62))
-	await get_tree().create_timer(0.18).timeout
-	var fade := create_tween()
-	fade.tween_property(departure_black, "modulate:a", 0.0, 0.55)
+	await get_tree().create_timer(ARRIVAL_BLACK_HOLD_SEC).timeout
+	var black_fade := create_tween()
+	black_fade.set_trans(Tween.TRANS_SINE)
+	black_fade.set_ease(Tween.EASE_OUT)
+	black_fade.tween_property(
+		departure_black, "modulate:a", 0.0, ARRIVAL_BLACK_FADE_SEC
+	)
+	await black_fade.finished
+	await get_tree().create_timer(ARRIVAL_SHAFT_ESTABLISH_SEC).timeout
 	var lift_tween := create_tween().set_parallel(true).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	lift_tween.tween_property(lower_lift, "position", LOWER_LIFT_DOCK, LOWER_LIFT_TRAVEL_SEC)
-	lift_tween.tween_property(shaft_arrival_back, "region_rect:position:y", 448.0, LOWER_LIFT_TRAVEL_SEC)
-	lift_tween.tween_property(shaft_arrival_fore, "region_rect:position:y", 576.0, LOWER_LIFT_TRAVEL_SEC)
+	lift_tween.tween_property(lower_lift, "position", LOWER_LIFT_DOCK, ARRIVAL_TRAVEL_SEC)
+	lift_tween.tween_property(shaft_arrival_back, "region_rect:position:y", 448.0, ARRIVAL_TRAVEL_SEC)
+	lift_tween.tween_property(shaft_arrival_fore, "region_rect:position:y", 576.0, ARRIVAL_TRAVEL_SEC)
 	await lift_tween.finished
 	lower_lift.set_vibrating(false)
 	landing_dust.visible = true
 	var shaft_fade := create_tween().set_parallel(true)
-	shaft_fade.tween_property(shaft_arrival_back, "modulate:a", 0.0, 0.18)
-	shaft_fade.tween_property(shaft_arrival_fore, "modulate:a", 0.0, 0.18)
-	shaft_fade.finished.connect(func() -> void:
-		shaft_arrival_back.visible = false
-		shaft_arrival_fore.visible = false
-		landing_dust.visible = false
-	)
-	await get_tree().create_timer(0.12).timeout
+	shaft_fade.tween_property(shaft_arrival_back, "modulate:a", 0.0, ARRIVAL_SHAFT_FADE_SEC)
+	shaft_fade.tween_property(shaft_arrival_fore, "modulate:a", 0.0, ARRIVAL_SHAFT_FADE_SEC)
+	await shaft_fade.finished
+	shaft_arrival_back.visible = false
+	shaft_arrival_fore.visible = false
+	landing_dust.visible = false
 	_finish_arrival_sequence()
 
 
@@ -231,11 +260,7 @@ func _on_operator_weapon_feedback(event_id: StringName, _snapshot: Dictionary) -
 
 
 func begin_lift_departure(actor: Node, exit: InteractableLevelExit2D) -> void:
-	if _departure_running or actor == null or exit == null:
-		return
-	if ritualant_site != null and not ritualant_site.can_depart_site():
-		return
-	if not (actor is Node2D) or not lower_lift.is_actor_boarded(actor as Node2D):
+	if exit == null or not can_begin_lift_departure(actor, exit):
 		return
 	_departure_running = true
 	_departure_actor = actor
@@ -252,20 +277,24 @@ func begin_lift_departure(actor: Node, exit: InteractableLevelExit2D) -> void:
 	shaft_arrival_back.region_rect.position.y = 448.0
 	shaft_arrival_fore.region_rect.position.y = 576.0
 	lower_lift.set_vibrating(true)
-	await get_tree().create_timer(0.25).timeout
-	var ascent_target_y := _departure_lift_start.y - LOWER_LIFT_TRAVEL_DISTANCE
-	var visible_target_y := lerpf(_departure_lift_start.y, ascent_target_y, 0.46)
-	var visible_ascent := create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	visible_ascent.tween_property(lower_lift, "position:y", visible_target_y, 0.45)
+	await get_tree().create_timer(DEPARTURE_PREMOVE_HOLD_SEC).timeout
+	var halfway_y := _departure_lift_start.y - 128.0
+	var visible_ascent := create_tween().set_parallel(true).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	visible_ascent.tween_property(lower_lift, "position:y", halfway_y, DEPARTURE_VISIBLE_TRAVEL_SEC)
+	visible_ascent.tween_property(shaft_arrival_back, "region_rect:position:y", 224.0, DEPARTURE_VISIBLE_TRAVEL_SEC)
+	visible_ascent.tween_property(shaft_arrival_fore, "region_rect:position:y", 288.0, DEPARTURE_VISIBLE_TRAVEL_SEC)
 	await visible_ascent.finished
-	var fade_ascent := create_tween().set_parallel(true).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	fade_ascent.tween_property(lower_lift, "position:y", ascent_target_y, 0.65)
-	fade_ascent.tween_property(departure_black, "modulate:a", 1.0, 0.585)
-	fade_ascent.tween_property(shaft_arrival_back, "region_rect:position:y", 0.0, 0.65)
-	fade_ascent.tween_property(shaft_arrival_fore, "region_rect:position:y", 0.0, 0.65)
-	await fade_ascent.finished
-	shaft_arrival_back.visible = false
-	shaft_arrival_fore.visible = false
+	var ascent_target_y := _departure_lift_start.y - LOWER_LIFT_TRAVEL_DISTANCE
+	var final_ascent := create_tween().set_parallel(true).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	final_ascent.tween_property(lower_lift, "position:y", ascent_target_y, DEPARTURE_FADE_TRAVEL_SEC)
+	final_ascent.tween_property(shaft_arrival_back, "region_rect:position:y", 0.0, DEPARTURE_FADE_TRAVEL_SEC)
+	final_ascent.tween_property(shaft_arrival_fore, "region_rect:position:y", 0.0, DEPARTURE_FADE_TRAVEL_SEC)
+	var black_fade := create_tween()
+	black_fade.tween_interval(DEPARTURE_FADE_TRAVEL_SEC - DEPARTURE_BLACK_FADE_SEC)
+	black_fade.tween_property(departure_black, "modulate:a", 1.0, DEPARTURE_BLACK_FADE_SEC)
+	await final_ascent.finished
+	await black_fade.finished
+	await get_tree().create_timer(DEPARTURE_BLACK_HOLD_SEC).timeout
 	var lines: Array[String] = ritualant_site.get_departure_lines() if ritualant_site != null else []
 	for line in lines:
 		departure_epilogue.text = "Forlorn-Ritualant: %s" % line
@@ -274,10 +303,22 @@ func begin_lift_departure(actor: Node, exit: InteractableLevelExit2D) -> void:
 	departure_epilogue.visible = false
 	if not lines.is_empty():
 		await get_tree().create_timer(0.35).timeout
-	_restore_departure_actor_processing(actor)
 	var transition_started := exit.request_transition(actor)
 	if not transition_started:
 		await _rollback_failed_departure()
+
+
+func can_begin_lift_departure(
+	actor: Node,
+	_exit: InteractableLevelExit2D = null
+) -> bool:
+	if _departure_running or not (actor is Node2D):
+		return false
+	if lower_lift == null or not lower_lift.is_actor_boarded(actor as Node2D):
+		return false
+	if ritualant_site != null and not ritualant_site.can_depart_site():
+		return false
+	return true
 
 
 func _capture_departure_rider(actor: Node) -> bool:

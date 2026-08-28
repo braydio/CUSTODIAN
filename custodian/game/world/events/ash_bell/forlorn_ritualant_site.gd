@@ -45,7 +45,7 @@ signal request_knowledge_unlock(knowledge_id: StringName)
 @onready var debug_label: Label = get_node_or_null(debug_label_path)
 @onready var dialogue_label: Label = get_node_or_null(dialogue_label_path)
 @onready var dialogue_presenter: ForlornRitualantDialoguePresenter = (
-	get_node_or_null("DialoguePresentation")
+	get_node_or_null("DialogueOverlay/DialoguePresentation")
 )
 
 @onready var silence_veil: CanvasItem = get_node_or_null(silence_veil_path)
@@ -60,6 +60,7 @@ var _fountain_stand_time: float = 0.0
 var _fountain_total_stand_time: float = 0.0
 var _completed: bool = false
 var _dialogue_sequence: int = 0
+var _resolution_sequence_running := false
 
 var _fountain_stabilize_time: float = 0.0
 var _thread_snap_handled := false
@@ -103,6 +104,12 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	if is_dialogue_input_captured() or _resolution_sequence_running:
+		_fountain_stand_time = 0.0
+		_fountain_stabilize_time = 0.0
+		_update_event_atmosphere()
+		_update_debug()
+		return
 	if _player_inside_fountain:
 		_fountain_stand_time += delta
 		_fountain_total_stand_time += delta
@@ -142,8 +149,10 @@ func trigger_intro() -> void:
 
 
 func interact_with_ritualant() -> void:
-	if event_state.ritualant_hostile: return
-	if dialogue_presenter != null and dialogue_presenter.blocks_world_interaction(): return
+	if not can_speak_to_ritualant():
+		return
+	if dialogue_presenter != null and dialogue_presenter.blocks_world_interaction():
+		return
 	var actor := _get_dialogue_actor()
 	if event_state.has_seen_dialogue(&"first_interaction"):
 		if dialogue_presenter != null: dialogue_presenter.open_menu(&"ritualant_root", actor)
@@ -174,11 +183,14 @@ func ask_about_orra() -> void:
 	_start_topic_dialogue(&"ask_orra", &"orra_menu")
 
 func _on_dialogue_topic_requested(node_id: StringName, return_menu_id: StringName) -> void:
-	_start_topic_dialogue(node_id, return_menu_id)
+	if not _start_topic_dialogue(node_id, return_menu_id):
+		if dialogue_presenter != null:
+			dialogue_presenter.force_close()
 
-func _start_topic_dialogue(node_id: StringName, return_menu_id: StringName) -> void:
-	if not event_state.ritualant_hostile and dialogue_presenter != null:
-		dialogue_presenter.start(node_id, _get_dialogue_actor(), return_menu_id)
+func _start_topic_dialogue(node_id: StringName, return_menu_id: StringName) -> bool:
+	if not can_speak_to_ritualant() or dialogue_presenter == null:
+		return false
+	return dialogue_presenter.start(node_id, _get_dialogue_actor(), return_menu_id)
 
 func _on_dialogue_sequence_finished(node_id: StringName) -> void:
 	event_state.mark_dialogue_seen(node_id)
@@ -193,6 +205,31 @@ func _get_dialogue_actor() -> Node2D:
 
 func is_dialogue_input_captured() -> bool:
 	return dialogue_presenter != null and dialogue_presenter.blocks_world_interaction()
+
+
+func is_terminal_resolution() -> bool:
+	if event_state == null:
+		return false
+	return event_state.resolution in [
+		AshBellEventState.Resolution.RITUALANT_DISSOLVED,
+		AshBellEventState.Resolution.SITE_STABILIZED,
+		AshBellEventState.Resolution.SITE_DEFILED,
+	]
+
+
+func is_encounter_resolving() -> bool:
+	return _resolution_sequence_running
+
+
+func can_speak_to_ritualant() -> bool:
+	return (
+		not _resolution_sequence_running
+		and not is_terminal_resolution()
+		and event_state != null
+		and not event_state.ritualant_hostile
+		and forlorn_ritualant != null
+		and is_instance_valid(forlorn_ritualant)
+	)
 
 func _request_dialogue_once(node_id: StringName) -> void:
 	if not event_state.has_seen_dialogue(node_id): request_dialogue.emit(dialogue_id, node_id)
@@ -308,7 +345,11 @@ func exit_site() -> void:
 
 
 func can_depart_site() -> bool:
-	return not event_state.ritualant_hostile
+	if _resolution_sequence_running:
+		return false
+	if is_terminal_resolution():
+		return true
+	return event_state != null and not event_state.ritualant_hostile
 
 
 func play_departure_epilogue() -> void:
@@ -331,7 +372,7 @@ func get_departure_lines() -> Array[String]:
 			or event_state.resolution == AshBellEventState.Resolution.RITUALANT_DISSOLVED:
 		return []
 	if event_state.resolution == AshBellEventState.Resolution.SITE_STABILIZED:
-		return ["The count holds.", "Go."]
+		return []
 	return ["Go gently.", "Some gates are closed by footsteps."]
 
 
@@ -405,11 +446,25 @@ func _handle_thread_snap_once() -> void:
 
 
 func stabilize_site() -> void:
+	if _resolution_sequence_running or is_terminal_resolution():
+		return
+	_resolution_sequence_running = true
 	event_state.ritualant_hostile = false
 	event_state.set_resolution(AshBellEventState.Resolution.SITE_STABILIZED)
 	event_state.unlock_knowledge(&"ash_bell_open_interval")
-	if forlorn_ritualant != null and forlorn_ritualant.has_method("dissolve"):
+	if dialogue_presenter != null:
+		dialogue_presenter.force_close()
+	await get_tree().create_timer(0.18).timeout
+	request_dialogue.emit(dialogue_id, &"stabilized_exit")
+	await get_tree().create_timer(1.45).timeout
+	if forlorn_ritualant != null \
+			and is_instance_valid(forlorn_ritualant) \
+			and forlorn_ritualant.has_method("dissolve"):
 		forlorn_ritualant.call("dissolve")
+	if dialogue_presenter != null \
+			and dialogue_presenter.get_active_node() == &"stabilized_exit":
+		await dialogue_presenter.wait_for_node_end(&"stabilized_exit")
+	_resolution_sequence_running = false
 	_complete_if_ready()
 
 
@@ -421,6 +476,10 @@ func defile_site() -> void:
 
 
 func _start_hostile_phase() -> void:
+	if is_terminal_resolution() or _resolution_sequence_running:
+		return
+	if dialogue_presenter != null:
+		dialogue_presenter.force_close()
 	event_state.ritualant_hostile = true
 	event_state.set_resolution(AshBellEventState.Resolution.PROVOKED_RITUALANT)
 
@@ -525,16 +584,12 @@ func _update_event_atmosphere() -> void:
 		thread_visual.modulate.a = lerpf(0.25, 1.0, tension)
 
 	if fountain_ring != null:
-		fountain_ring.visible = event_state.fountain_state != AshBellEventState.FountainState.ABSENT
-		match event_state.fountain_state:
-			AshBellEventState.FountainState.GHOST:
-				fountain_ring.modulate = Color(0.55, 0.72, 1.0, lerpf(0.35, 0.75, pressure))
-			AshBellEventState.FountainState.BLACK_WATER:
-				fountain_ring.modulate = Color(0.05, 0.08, 0.12, lerpf(0.65, 1.0, pressure))
-			AshBellEventState.FountainState.CRACKED_ANCHORED:
-				fountain_ring.modulate = Color(0.95, 0.82, 0.42, 0.8)
-			_:
-				fountain_ring.modulate.a = 0.0
+		fountain_ring.visible = (
+			event_state.fountain_state
+			== AshBellEventState.FountainState.CRACKED_ANCHORED
+		)
+		if fountain_ring.visible:
+			fountain_ring.modulate = Color(0.95, 0.82, 0.42, 0.80)
 
 	if bell_shadow != null:
 		bell_shadow.visible = true
@@ -608,7 +663,8 @@ func _on_resolution_changed(new_resolution: int) -> void:
 		AshBellEventState.Resolution.RITUALANT_DISSOLVED, \
 		AshBellEventState.Resolution.SITE_STABILIZED, \
 		AshBellEventState.Resolution.SITE_DEFILED:
-			_complete_if_ready()
+			if not _resolution_sequence_running:
+				_complete_if_ready()
 
 
 func _on_knowledge_unlocked(knowledge_id: StringName) -> void:

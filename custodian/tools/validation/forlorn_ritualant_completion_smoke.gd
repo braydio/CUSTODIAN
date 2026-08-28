@@ -93,7 +93,10 @@ func _validate_encounter_runtime() -> void:
 	site.touch_thread()
 	_check(int(ledger.call("get_amount", "white_thread_knot")) == before, "touch_thread granted duplicate Knot")
 	_check(site.dialogue_presenter != null and site.dialogue_presenter.get_current_text().find("Forlorn-Ritualant waits beneath no bell") < 0, "obsolete no-bell production text remains")
-	_check(site.dialogue_presenter.get_parent() == site, "production dialogue presenter remained debug-owned")
+	_check(
+		site.dialogue_presenter.get_parent() is CanvasLayer,
+		"production dialogue presenter is not screen-space"
+	)
 	site.dialogue_presenter.start(&"first_interaction", actor)
 	var first_line := site.dialogue_presenter.get_current_text()
 	site.dialogue_presenter.advance()
@@ -121,12 +124,36 @@ func _validate_encounter_runtime() -> void:
 	var npc := site.get_node("NPCs/ForlornRitualant") as ForlornRitualantNPC
 	npc.target = actor
 	npc.site = site
+	site.event_state.ritualant_hostile = true
 	npc.phase = ForlornRitualantNPC.Phase.HOSTILE
 	npc.pin_windup_seconds = 0.03
 	actor.global_position = npc.global_position + Vector2(150.0, 0.0)
 	npc.debug_force_attack(&"pin_strike")
 	await create_timer(0.08).timeout
 	_check(actor.damage_taken == 0.0, "Pin Strike damaged an out-of-range target")
+
+	site.dialogue_presenter.start(&"first_interaction", actor)
+	actor.global_position = npc.global_position + Vector2(20.0, 0.0)
+	var dialogue_damage_before := actor.damage_taken
+	npc.debug_force_attack(&"pin_strike")
+	await create_timer(0.08).timeout
+	_check(
+		actor.damage_taken == dialogue_damage_before,
+		"Ritualant damaged actor while locking dialogue owned input"
+	)
+	site.dialogue_presenter.force_close()
+
+	site.set_player_inside_fountain(true)
+	site.event_state.set_silence_pressure(10, &"test")
+	site.dialogue_presenter.start(&"first_interaction", actor)
+	var pressure_before_dialogue := site.event_state.silence_pressure
+	await create_timer(site.fountain_pressure_tick_seconds + 0.25).timeout
+	_check(
+		site.event_state.silence_pressure == pressure_before_dialogue,
+		"fountain pressure advanced while dialogue locked actor"
+	)
+	site.dialogue_presenter.force_close()
+	site.set_player_inside_fountain(false)
 	npc.thread_pull_windup_seconds = 0.03
 	actor.global_position = npc.global_position + Vector2(120.0, 0.0)
 	var pull_start := actor.global_position
@@ -174,12 +201,22 @@ func _validate_encounter_runtime() -> void:
 	_check(restored_site.event_state.resolution == AshBellEventState.Resolution.PROVOKED_RITUALANT, "restored encounter lost resolution")
 	cut_site.queue_free()
 	restored_site.queue_free()
+	site.dialogue_presenter.open_menu(&"ritualant_root", actor)
 	site.resolve_thread_anchor(&"west")
 	site.resolve_thread_anchor(&"north")
 	site.resolve_thread_anchor(&"east")
+	await create_timer(0.05).timeout
+	_check(
+		not site.dialogue_presenter.is_menu_active(),
+		"Ritualant menu survived terminal stabilization"
+	)
+	_check(
+		not site.can_speak_to_ritualant(),
+		"terminal Ritualant remained conversational"
+	)
 	_check(site.debug_get_resolved_thread_anchor_count() == 3, "three-anchor route did not resolve")
 	_check(site.event_state.resolution == AshBellEventState.Resolution.SITE_STABILIZED, "three anchors did not stabilize site")
-	_check(site.get_departure_lines() == ["The count holds.", "Go."], "stabilized departure lines drifted")
+	_check(site.get_departure_lines().is_empty(), "stabilized lift repeated Ritualant payoff")
 	site.event_state.set_resolution(AshBellEventState.Resolution.SEEN)
 	_check(site.get_departure_lines() == ["Go gently.", "Some gates are closed by footsteps."], "unresolved departure lines drifted")
 	site.event_state.set_resolution(AshBellEventState.Resolution.SITE_DEFILED)
@@ -208,6 +245,19 @@ func _validate_lower_lift() -> void:
 	root.add_child(actor)
 	actor.global_position = lift.get_boarding_position()
 	await process_frame
+	actor.global_position = exit.global_position + Vector2(140.0, 0.0)
+	_check(
+		exit.get_interaction_prompt().is_empty(),
+		"lower lift showed ASCEND prompt while actor was not boarded"
+	)
+	actor.global_position = lift.get_boarding_position()
+	level.ritualant_site.event_state.set_resolution(
+		AshBellEventState.Resolution.SITE_DEFILED
+	)
+	_check(
+		exit.get_interaction_prompt() == "ASCEND TO SURFACE",
+		"boarded resolved actor did not receive ASCEND prompt"
+	)
 	var transitions := [0]
 	exit.transition_requested.connect(func(_id: StringName, _actor: Node) -> void: transitions[0] += 1)
 	exit.body_entered.emit(actor)
@@ -219,7 +269,6 @@ func _validate_lower_lift() -> void:
 	exit._physics_process(0.0)
 	actor.global_position = lift.get_boarding_position()
 	_check(exit.can_interact(actor), "boarded actor cannot interact with lower lift")
-	level.ritualant_site.event_state.set_resolution(AshBellEventState.Resolution.SITE_DEFILED)
 	exit.interact(actor)
 	await create_timer(0.4).timeout
 	_check(lift.position.y < 1696.0, "lower lift did not move during ascent")
@@ -249,7 +298,7 @@ func _validate_lower_lift() -> void:
 	root.add_child(rejecting_exit)
 	var actor_physics_before := rollback_actor.is_physics_processing()
 	rollback_level.begin_lift_departure(rollback_actor, rejecting_exit)
-	await create_timer(1.8).timeout
+	await create_timer(3.4).timeout
 	_check(not rollback_level.debug_is_departure_running(), "failed transition wedged departure")
 	_check(rollback_lift.position.y == 1696.0, "failed transition did not restore lift Y")
 	_check(is_equal_approx(rollback_level.departure_black.modulate.a, 0.0), "failed transition left black overlay visible")

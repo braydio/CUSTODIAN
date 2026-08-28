@@ -13,7 +13,10 @@ func _ready() -> void:
 
 
 func get_interaction_prompt() -> String:
-	return prompt_text if _route_enabled and not _transition_locked else ""
+	var actor := get_tree().get_first_node_in_group("player")
+	if actor == null:
+		actor = get_tree().get_first_node_in_group("operator")
+	return prompt_text if can_interact(actor) else ""
 
 
 func get_interaction_position() -> Vector2:
@@ -28,14 +31,18 @@ func can_interact(actor: Node = null) -> bool:
 	if not _route_enabled or _transition_locked or is_actor_arrival_guarded(actor):
 		return false
 	var boarding_authority := get_node_or_null(boarding_authority_path)
-	return (
-		boarding_authority == null
-		or (
-			actor is Node2D
-			and boarding_authority.has_method("is_actor_boarded")
-			and bool(boarding_authority.call("is_actor_boarded", actor))
-		)
-	)
+	if boarding_authority != null and (
+		not (actor is Node2D)
+		or not boarding_authority.has_method("is_actor_boarded")
+		or not bool(boarding_authority.call("is_actor_boarded", actor))
+	):
+		return false
+	var controller := get_node_or_null(departure_controller_path)
+	if controller != null \
+			and controller.has_method("can_begin_lift_departure") \
+			and not bool(controller.call("can_begin_lift_departure", actor, self)):
+		return false
+	return true
 
 
 func interact(actor: Node) -> void:
