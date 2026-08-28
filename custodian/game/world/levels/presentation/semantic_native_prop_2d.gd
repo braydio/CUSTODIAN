@@ -137,6 +137,9 @@ static func _get_manifest_index(path: String) -> Dictionary:
 			continue
 		if not index.has(family):
 			index[family] = {}
+		if (index[family] as Dictionary).has(variant):
+			push_error("Duplicate semantic native prop address %s/%s in %s" % [family, variant, path])
+			continue
 		(index[family] as Dictionary)[variant] = entry
 	_manifest_cache[path] = index
 	return index
