@@ -4,9 +4,9 @@
 [ext_resource type="TileSet" uid="uid://dmi7ehjmoiqcf" path="res://content/tiles/tilesets/procgen_world_tileset.tres" id="2"]
 [ext_resource type="Script" uid="uid://dhph4w3w8vsll" path="res://game/world/procgen/procgen.gd" id="3_7iafn"]
 [ext_resource type="Script" uid="uid://gy2k3e1i24lq" path="res://game/systems/core/systems/shadow_system.gd" id="4_shadow_system"]
-[ext_resource type="Script" path="res://game/world/procgen/presentation/procgen_depth_backdrop.gd" id="depth_backdrop_script"]
-[ext_resource type="Script" path="res://game/world/procgen/presentation/procgen_void_cliff_face.gd" id="void_cliff_face_script"]
+[ext_resource type="Script" uid="uid://dqe7eo11p80xo" path="res://game/world/procgen/presentation/procgen_depth_backdrop.gd" id="depth_backdrop_script"]
 [ext_resource type="Resource" path="res://game/world/procgen/presentation/underlays/endless_forest_underlay.tres" id="forest_underlay_profile"]
+[ext_resource type="Script" uid="uid://d07cq17l8tuey" path="res://game/world/procgen/presentation/procgen_void_cliff_face.gd" id="void_cliff_face_script"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_1"]
 
@@ -21,7 +21,6 @@ depth_backdrop = NodePath("DepthBackdrop")
 void_cliff_face = NodePath("VoidCliffFace")
 nonwalkable_surface_base_tilemap = NodePath("NavigationRegion2D/NonWalkableSurfaceBase")
 nonwalkable_surface_overlay_tilemap = NodePath("NavigationRegion2D/NonWalkableSurfaceOverlay")
-intent_main_roads_enabled = false
 floor_source_id = 10
 walls_source_id = 12
 reference_vertical_wall_coords = Array[Vector2i]([Vector2i(15, 0)])
@@ -57,11 +56,13 @@ procgen_node = NodePath("../ProcGen2")
 floor_tilemap = NodePath("../NavigationRegion2D/Floor")
 walls_tilemap = NodePath("../NavigationRegion2D/Walls")
 nav_region = NodePath("../NavigationRegion2D")
+underlay_profile_override = "DROWNED_BASILICA"
 nonwalkable_surface_base_tilemap = NodePath("../NavigationRegion2D/NonWalkableSurfaceBase")
 nonwalkable_surface_overlay_tilemap = NodePath("../NavigationRegion2D/NonWalkableSurfaceOverlay")
 generation_output_enabled = false
 floor_source_id = 10
 walls_source_id = 12
+high_walls_source_id = 3
 reference_vertical_wall_coords = Array[Vector2i]([Vector2i(15, 0)])
 reference_vertical_hole_right_coords = Array[Vector2i]([Vector2i(15, 0)])
 reference_vertical_hole_left_coords = Array[Vector2i]([Vector2i(15, 0)])
@@ -89,15 +90,14 @@ interior_wall_source_ids = Array[int]([16, 30, 31])
 interior_wall_source_id = 16
 interior_wall_corner_source_id = 17
 
-[node name="DepthBackdrop" type="Node2D" parent="."]
+[node name="DepthBackdrop" type="Node2D" parent="." unique_id=193772199]
 z_index = -300
 script = ExtResource("depth_backdrop_script")
 underlay_profile = ExtResource("forest_underlay_profile")
 
-[node name="VoidCliffFace" type="TileMapLayer" parent="."]
-z_as_relative = false
+[node name="VoidCliffFace" type="TileMapLayer" parent="." unique_id=927911932]
 z_index = -120
-y_sort_enabled = false
+z_as_relative = false
 tile_set = ExtResource("2")
 collision_enabled = false
 navigation_enabled = false
@@ -106,16 +106,14 @@ script = ExtResource("void_cliff_face_script")
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="." unique_id=2086078231]
 navigation_polygon = SubResource("NavigationPolygon_1")
 
-[node name="NonWalkableSurfaceBase" type="TileMapLayer" parent="NavigationRegion2D"]
-z_as_relative = false
+[node name="NonWalkableSurfaceBase" type="TileMapLayer" parent="NavigationRegion2D" unique_id=1661177212]
 z_index = -90
-y_sort_enabled = false
+z_as_relative = false
 tile_set = ExtResource("2")
 
-[node name="NonWalkableSurfaceOverlay" type="TileMapLayer" parent="NavigationRegion2D"]
-z_as_relative = false
+[node name="NonWalkableSurfaceOverlay" type="TileMapLayer" parent="NavigationRegion2D" unique_id=1490315881]
 z_index = -70
-y_sort_enabled = false
+z_as_relative = false
 tile_set = ExtResource("2")
 
 [node name="Floor" type="TileMapLayer" parent="NavigationRegion2D" unique_id=1495522250]
