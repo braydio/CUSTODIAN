@@ -50,6 +50,11 @@ opingest() {
   "${CUSTODIAN_GODOT}/tools/operator/operator_ingest.sh" "$@"
 }
 
+operator() {
+  _update_usage "operator"
+  python3 "${CUSTODIAN_GODOT}/tools/operator/operator_cli.py" "$@"
+}
+
 # -- Analyze the latest or an explicitly provided Developer Observatory session
 obsreport() {
   _update_usage "obsreport"
@@ -168,6 +173,7 @@ clisting() {
   echo "    dryjson        generate JSON sidecar manifests (dry run)"
   echo "    runjson        generate JSON sidecar manifests (live)"
   echo "    runsprite      run sprite ingest pipeline"
+  echo "    operator       semantic Operator animation workbench"
   echo "    opingest       focused operator ingest (dry run; --apply to write)"
   echo "    pixelart       spritesheet -> frame-by-frame pixel art -> chosen PNG"
   echo "    matchpal       match sprite palette to a reference (CIE LAB)"
@@ -202,7 +208,7 @@ alias_usage() {
     return
   fi
   echo "Custodian alias usage counts:"
-  for cmd in dryjson runjson runsprite opingest obsreport listbox pixelart matchpal batchstrike opcolor promptmenu opcombo opcontract opaudit opnext oprepair oprepair-report oprepair-smoke opvalidate clisting; do
+  for cmd in dryjson runjson runsprite operator opingest obsreport listbox pixelart matchpal batchstrike opcolor promptmenu opcombo opcontract opaudit opnext oprepair oprepair-report oprepair-smoke opvalidate clisting; do
     local count
     count=$(grep -c "$cmd" "$usage_file" 2>/dev/null || echo 0)
     printf "  %-12s %d\n" "${cmd}:" "${count}"
@@ -211,5 +217,5 @@ alias_usage() {
   echo "Total: $(wc -l <"${usage_file}") invocations"
 }
 
-echo "  Custodian commands ready: croot, cgodot, cpack, opcolor, dryjson, runjson, runsprite, opingest, obsreport, listbox, pixelart, matchpal, batchstrike, promptmenu, opcombo, opcontract, opaudit, opnext, oprepair, oprepair-report, oprepair-smoke, opvalidate, clisting"
+echo "  Custodian commands ready: croot, cgodot, cpack, opcolor, dryjson, runjson, runsprite, operator, opingest, obsreport, listbox, pixelart, matchpal, batchstrike, promptmenu, opcombo, opcontract, opaudit, opnext, oprepair, oprepair-report, oprepair-smoke, opvalidate, clisting"
 echo "  Type 'clisting' for all commands with descriptions, 'alias_usage' for usage counts."

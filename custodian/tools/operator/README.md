@@ -1,5 +1,20 @@
 # Operator Authoring Tools
 
+## Semantic animation workbench
+
+Canonical PNG source is authority. The ignored `.aseprite` workbench is a
+disposable editing surface outside `res://`.
+
+```sh
+operator anim list melee_1h --group posture
+operator anim status melee_1h idle_relaxed_01 e --weapon vigil_pattern_dagger
+operator anim edit melee_1h idle_relaxed_01 e --weapon vigil_pattern_dagger
+operator anim refresh melee_1h idle_relaxed_01 e --weapon vigil_pattern_dagger
+operator anim publish melee_1h idle_relaxed_01 e --weapon vigil_pattern_dagger
+```
+
+Workspaces default to `.ai/operator_animation_workbench/<profile>/<group>/<action>/<direction>/`.
+
 Use `modular_combo_check.py` for ordinary modular lower/upper visual review.
 Use the provenance-first repair conveyor when the review identifies artwork
 that needs manual waist-seam correction:

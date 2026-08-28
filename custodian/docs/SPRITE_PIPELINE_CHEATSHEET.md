@@ -34,6 +34,11 @@ silhouette, face/hand/equipment landmark, isolated-pixel, and cross-frame contin
 
 ## 1. Check What Assets Are Needed
 
+For semantic Operator pixel editing, source aliases and use `operator anim
+list|status|edit|refresh|publish`. Canonical PNG source remains authority; the
+workspace under `.ai/operator_animation_workbench/` is disposable and outside
+`res://`.
+
 For Operator modular animation coverage:
 
 ```bash

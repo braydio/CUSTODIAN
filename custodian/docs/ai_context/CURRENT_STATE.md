@@ -1,5 +1,13 @@
 # CURRENT STATE — CUSTODIAN
 
+## Operator Animation Workbench V1 (2026-08-28)
+
+`operator anim list|status|edit|refresh|publish` now provides semantic,
+provenance-checked Aseprite round-trip editing over canonical Operator V2 PNGs.
+Ignored `.ai/operator_animation_workbench/` documents are disposable pixel
+editing surfaces; gameplay timing/state and generated runtime/catalog outputs
+retain their existing authority.
+
 ## Map + AI Coherence V1 (2026-08-20)
 
 - The deprecated `procgen_route_clearance_smoke.gd` road-building assertion is

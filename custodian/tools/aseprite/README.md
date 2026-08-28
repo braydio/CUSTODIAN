@@ -1,5 +1,10 @@
 # CUSTODIAN Aseprite Tools
 
+`operator_animation_workbench.lua` is the headless assemble/export bridge for
+`operator anim`. It exports only manifest-whitelisted layers to ignored
+workspace staging; it never writes canonical PNGs. Workbench `.aseprite` files
+are disposable editing surfaces, not production assets.
+
 ## Humanoid rigid-cutout source
 
 Run `File > Scripts > new_humanoid_rig_source.lua` to create a 96×96,
