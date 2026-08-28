@@ -50,6 +50,19 @@ V1 uses the existing Road of Witnesses map, the existing Operator, the shared wo
 
 `res://scenes/home_custodian_begin.tscn` is the production `application/run/main_scene`. The first terminal interaction preserves the witness-contact/archive reveal. A second interaction commits the run transition to `res://scenes/game.tscn`; duplicate interaction signals cannot schedule multiple handoffs.
 
+The Home beginning is also the operational-world prewarm window. After Home has
+presented and processed its first frame, the persistent
+`WorldContractBootstrap` autoload begins one cooperative contract-generation
+run while the Operator, camera, HUD, and audio remain active. The generator and
+its accepted map survive the Home scene unload beneath the autoload.
+
+At terminal access, a ready contract transitions immediately. An in-progress
+contract leaves Home playable and presents `FIELD LINK SYNCHRONIZING` until the
+contract becomes ready. A rejected run presents `FIELD LINK FAILED`, does not
+enter the operational world, and requires an explicit terminal retry with a
+fresh seed. SceneTree-based generation remains on the main thread and yields at
+the generator's existing cooperative boundaries; it is not threaded.
+
 Runtime behavior:
 
 - `CustodianHomeBegin` owns local objective state and signal-band presentation.
@@ -57,7 +70,7 @@ Runtime behavior:
 - The Black Reliquary HUD presents location, phase, objective, signal/provenance status, and prompt plaque text.
 - Prompt text is rendered as real Godot labels through the HUD, not baked into textures.
 - Witness contact changes objective state to terminal stabilization and unlocks a partial archive/status readout placeholder.
-- A second terminal access request changes scene through `CustodianHomeBegin`; the interactable and HUD do not own boot-flow authority.
+- A second terminal access request changes scene through `CustodianHomeBegin` only after the persistent world-contract bootstrap is ready; the interactable and HUD do not own boot-flow authority.
 - Missing production art/audio is tracked in `REQUIRED_ASSETS.md`; the current scene uses existing assets as fallbacks.
 
 ## Home mapper

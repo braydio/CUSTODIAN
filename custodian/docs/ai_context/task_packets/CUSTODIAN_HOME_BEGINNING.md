@@ -64,13 +64,13 @@ The Home beginning has an active design home, a Godot scene/runtime script, Blac
 
 ## Completion Notes
 
-- Implemented: moved the design source to `design/03_architecture/HOME_CUSTODIAN_FIELD_TERMINAL.md`; added `home_custodian_begin.tscn`, `CustodianHomeBegin`, and `FieldTerminalInteractable`; extended `CustodianHUD` with generic location/status APIs; added Home smoke validation; updated required asset trackers and AI context docs.
+- Implemented: moved the design source to `design/04_architecture/HOME_CUSTODIAN_FIELD_TERMINAL.md`; added `home_custodian_begin.tscn`, `CustodianHomeBegin`, and `FieldTerminalInteractable`; extended `CustodianHUD` with generic location/status APIs; promoted Home to the boot flow; added persistent contract prewarm with guarded ready/wait/failure/retry terminal handling; added Home and prewarm smoke validation; updated required asset trackers and AI context docs.
 - Validated: `cd custodian && godot --headless --script res://tools/validation/custodian_home_begin_smoke.gd`; `cd custodian && godot --headless --check-only --script res://game/world/home/custodian_home_begin.gd`; `cd custodian && godot --headless --check-only --script res://game/world/home/field_terminal_interactable.gd`; `cd custodian && godot --headless --check-only --script res://game/ui/hud/custodian_hud.gd`; `cd custodian && godot --headless --script res://tools/validation/black_reliquary_ui_smoke.gd`; required asset copies compared with `cmp`.
-- Deferred: production Field Terminal art, signal audio/FX, terminal-chamber environmental dressing, and boot-flow promotion.
+- Deferred: production Field Terminal art, signal audio/FX, terminal-chamber environmental dressing, and real-workload Moment Forge frame-time tuning.
 
 ## Next Steps
 
-- Next action: decide when to promote `home_custodian_begin.tscn` into boot/default flow.
+- Next action: capture and tune the full wake/prewarm sequence in Moment Forge, including frame-time evidence from the real procgen workload.
 - Best starting files: `custodian/scenes/home_custodian_begin.tscn`, `custodian/game/world/home/custodian_home_begin.gd`
 - Required context: Home beginning doc and Black Reliquary HUD API.
 - Validation to run: rerun `cd custodian && godot --headless --script res://tools/validation/custodian_home_begin_smoke.gd` after any Home scene, Field Terminal, or HUD API edit.

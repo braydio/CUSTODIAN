@@ -36,6 +36,7 @@ const Palette := preload("res://game/ui/theme/black_reliquary_palette.gd")
 var _witness_established := false
 var _last_signal_band := -1
 var _transition_committed := false
+var _field_link_failed := false
 
 
 func _ready() -> void:
@@ -47,6 +48,15 @@ func _ready() -> void:
 			terminal.connect("terminal_access_requested", _on_terminal_access_requested)
 	_configure_hud()
 	_update_signal_state(true)
+	call_deferred("_begin_world_prewarm")
+
+
+func _begin_world_prewarm() -> void:
+	# Present and process the playable wake scene before cooperative procgen work.
+	await get_tree().process_frame
+	var bootstrap := _get_world_contract_bootstrap()
+	if bootstrap != null:
+		bootstrap.call("ensure_started")
 
 
 func get_boundary_segments() -> Array:
@@ -191,12 +201,22 @@ func _get_signal_band(distance: float) -> int:
 func _update_prompt() -> void:
 	if hud == null or terminal == null or operator_ref == null:
 		return
+	if _transition_committed:
+		return
 	var target: Node = null
 	if "interaction_target" in operator_ref:
 		target = operator_ref.get("interaction_target")
 	if target != terminal:
 		return
 	var input_hint := _get_interact_prompt_key()
+	if _field_link_failed:
+		hud.show_interaction(
+			"FIELD LINK FAILED",
+			"Local terrain solution rejected. Retry terminal.",
+			input_hint,
+			Catalog.ICON_HAZARD
+		)
+		return
 	if _witness_established:
 		hud.show_interaction(
 			"CUSTODIAN TERMINAL",
@@ -242,16 +262,90 @@ func _on_witness_established(_actor: Node) -> void:
 func _on_terminal_access_requested(_actor: Node) -> void:
 	if _transition_committed:
 		return
+	var bootstrap := _get_world_contract_bootstrap()
+	if bootstrap == null:
+		push_error("[CustodianHomeBegin] WorldContractBootstrap autoload missing")
+		_show_field_link_failure()
+		return
 	_transition_committed = true
+	if bool(bootstrap.call("is_ready")):
+		_field_link_failed = false
+		bootstrap.call("mark_terminal_requested")
+		_show_archive_partial()
+		call_deferred("_enter_operational_world")
+		return
+	if int(bootstrap.call("get_state")) == 3:
+		# A failed run retries only after this explicit terminal request.
+		bootstrap.call("ensure_started")
+	_field_link_failed = false
+	bootstrap.call("mark_terminal_requested")
+	_connect_prewarm_wait_signals(bootstrap)
 	if hud != null:
 		hud.set_debug_overlay_visible(false)
 		hud.show_interaction(
-			"ARCHIVE PARTIAL",
-			"Operational Custodian node located.",
-			_get_interact_prompt_key(),
+			"FIELD LINK SYNCHRONIZING",
+			"Local terrain reconstruction in progress.",
+			"",
 			Catalog.ICON_OBJECTIVE
 		)
+
+
+func _connect_prewarm_wait_signals(bootstrap: Node) -> void:
+	var ready_callback := Callable(self, "_on_prewarmed_contract_ready")
+	var failure_callback := Callable(self, "_on_prewarmed_contract_failed")
+	if not bootstrap.is_connected("contract_ready", ready_callback):
+		bootstrap.connect("contract_ready", ready_callback, CONNECT_ONE_SHOT)
+	if not bootstrap.is_connected("generation_failed", failure_callback):
+		bootstrap.connect(
+			"generation_failed",
+			failure_callback,
+			CONNECT_ONE_SHOT
+		)
+
+
+func _on_prewarmed_contract_ready(_contract: Dictionary) -> void:
+	_disconnect_prewarm_wait_signal("generation_failed", "_on_prewarmed_contract_failed")
+	_field_link_failed = false
+	_show_archive_partial()
 	call_deferred("_enter_operational_world")
+
+
+func _on_prewarmed_contract_failed(_result: Dictionary) -> void:
+	_disconnect_prewarm_wait_signal("contract_ready", "_on_prewarmed_contract_ready")
+	_transition_committed = false
+	_field_link_failed = true
+	_show_field_link_failure()
+
+
+func _disconnect_prewarm_wait_signal(signal_name: String, method_name: String) -> void:
+	var bootstrap := _get_world_contract_bootstrap()
+	var callback := Callable(self, method_name)
+	if bootstrap != null and bootstrap.is_connected(signal_name, callback):
+		bootstrap.disconnect(signal_name, callback)
+
+
+func _show_archive_partial() -> void:
+	if hud == null:
+		return
+	hud.set_debug_overlay_visible(false)
+	hud.show_interaction(
+		"ARCHIVE PARTIAL",
+		"Operational Custodian node located.",
+		"",
+		Catalog.ICON_OBJECTIVE
+	)
+
+
+func _show_field_link_failure() -> void:
+	if hud == null:
+		return
+	hud.set_debug_overlay_visible(false)
+	hud.show_interaction(
+		"FIELD LINK FAILED",
+		"Local terrain solution rejected. Retry terminal.",
+		_get_interact_prompt_key(),
+		Catalog.ICON_HAZARD
+	)
 
 
 func _enter_operational_world() -> void:
@@ -263,13 +357,23 @@ func _enter_operational_world() -> void:
 
 
 func get_beginning_state() -> Dictionary:
+	var bootstrap := _get_world_contract_bootstrap()
 	return {
 		"witness_established": _witness_established,
 		"signal_band": _last_signal_band,
 		"transition_committed": _transition_committed,
 		"next_scene_path": next_scene_path,
 		"objective": "Stabilize the terminal" if _witness_established else "Trace the Custodian frequency",
+		"world_prewarm_state": (
+			int(bootstrap.call("get_state"))
+			if bootstrap != null
+			else -1
+		),
 	}
+
+
+func _get_world_contract_bootstrap() -> Node:
+	return get_node_or_null("/root/WorldContractBootstrap")
 
 
 func _get_interact_prompt_key() -> String:

@@ -24,7 +24,7 @@
 [ext_resource type="PackedScene" path="res://game/actors/sector/turret_sniper.tscn" id="22_turret_sniper"]
 [ext_resource type="Script" uid="uid://bv666t3wt6ofa" path="res://game/actors/sector/power_node.gd" id="24_power_node"]
 [ext_resource type="Script" uid="uid://c1cs5ipx8lxnp" path="res://game/systems/core/systems/supply_drop_manager.gd" id="25_supply_drop"]
-[ext_resource type="PackedScene" uid="uid://lp5kk4al1nnv" path="res://game/world/procgen/custodian_contract_map.tscn" id="26_contract_map"]
+[ext_resource type="Script" path="res://game/world/procgen/world_contract_proxy.gd" id="26_contract_proxy"]
 [ext_resource type="PackedScene" uid="uid://dqle6bbgblr2o" path="res://game/actors/terminal/command_terminal.tscn" id="27_command_terminal"]
 [ext_resource type="Script" uid="uid://bvqagq17ro1u6" path="res://game/systems/core/systems/contract_world_loader.gd" id="28_contract_loader"]
 [ext_resource type="Script" uid="uid://xjdny30dgrp6" path="res://content/tiles/debug/debug_controller.gd" id="29_debug_controller"]
@@ -237,7 +237,8 @@ heavy_ammo = 2
 [node name="AmmoCacheD" parent="World/Items" unique_id=655756500 instance=ExtResource("10_cache")]
 position = Vector2(40, -520)
 
-[node name="ContractMap" parent="World" unique_id=1103719919 groups=["world_origin_branch"] instance=ExtResource("26_contract_map")]
+[node name="ContractMap" type="Node2D" parent="World" unique_id=1103719919 groups=["world_origin_branch"]]
+script = ExtResource("26_contract_proxy")
 visible = false
 
 [node name="Operator" parent="World" unique_id=2047803984 instance=ExtResource("2_operator")]

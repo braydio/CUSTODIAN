@@ -1050,6 +1050,23 @@ floor outside walls, ocean, and chasm. The save/restore smoke proves the
 versioned `InfrastructureRegistry` boundary. It does not imply project-wide
 save-manager integration.
 
+## Custodian Wake Contract Prewarm
+
+Use after changing the Home-to-operational-world handoff, contract bootstrap,
+compatibility proxy, or contract loader installation seam.
+
+```bash
+cd custodian
+godot --headless --path . --script res://tools/validation/world_contract_prewarm_smoke.gd
+godot --headless --path . --script res://tools/validation/custodian_home_begin_smoke.gd
+```
+
+The focused prewarm smoke injects a cheap deterministic generator and proves
+that generation begins without loading `game.tscn`, the retained map survives
+under the autoload, `World/ContractMap` is a proxy, the loader reparents the
+same instance into `World/ProcGenRuntime`, one run is claimed without a second
+generation, failure blocks readiness, and reset permits a fresh retry.
+
 ## Ambient Enemy Navigation Performance
 
 Use after changing ambient camp activation, enemy navigation queries, pursuit

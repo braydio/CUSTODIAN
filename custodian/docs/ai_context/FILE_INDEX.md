@@ -13,6 +13,13 @@ Last updated: 2026-08-20
 - `game/systems/core/systems/contract_world_loader.gd`,
   `game/systems/spawning/ambient_enemy_{spawner,camp}.gd` — encounter-plan
   marker adaptation and sole ambient camp runtime.
+- `game/world/procgen/world_contract_bootstrap.gd` and
+  `world_contract_proxy.gd` — persistent Home-scene contract prewarm authority
+  and legacy `GameRoot/World/ContractMap` compatibility provider.
+- `tools/validation/world_contract_prewarm_smoke.gd` and
+  `fixtures/fake_{world_contract_map,navigation_system}.gd` — single-generation,
+  retained-instance, proxy handoff, failure, retry, and reset coverage without
+  full procgen cost.
 - `game/actors/enemies/enemy_behavior_state_machine.gd` and `components/` —
   deterministic behavior authority, pure scoring, perception, blackboard, and
   profile tuning; `enemy.gd` retains combat/locomotion and legacy fallback.

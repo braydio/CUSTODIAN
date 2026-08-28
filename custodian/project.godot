@@ -50,6 +50,7 @@ InstantReplayRecorder="*res://game/systems/replay/instant_replay_recorder.gd"
 SimulationInterestManager="*res://game/systems/simulation/simulation_interest_manager.gd"
 SectorHeatmap="*res://game/systems/world/sector_heatmap.gd"
 MaterialIntelligence="*res://game/systems/world/material_intelligence.gd"
+WorldContractBootstrap="*res://game/world/procgen/world_contract_bootstrap.gd"
 
 [custodian]
 

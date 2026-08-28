@@ -629,6 +629,23 @@ These are likely touch points for implementation.
 
 ## 16. Implementation Notes for Later Systems
 
+### Boot-time contract lifetime
+
+Operational contract generation begins during the playable Custodian wake
+scene, after its first processed frame. `WorldContractBootstrap` is the
+persistent generation-lifetime authority and retains the real
+`CustodianContractMap` plus its accepted `ProcGenTilemap` across the scene
+change. `World/ContractMap` in `game.tscn` is a compatibility proxy at the
+legacy node path; it republishes the bootstrap contract and never starts a
+second generator. `ContractWorldLoader` remains the installation authority and
+reparents the exact retained `contract["map"]["instance"]` into
+`World/ProcGenRuntime`, then marks the bootstrap claimed.
+
+The canonical procgen algorithm is unchanged and remains cooperative
+SceneTree work. Any remaining wake-scene hitching must be profiled by procgen
+phase before adding bounded yields; Node and TileMap work must not be moved
+wholesale to a worker thread.
+
 Once this feature is complete, later docs may assume:
 
 * procgen map is authoritative runtime world
@@ -669,4 +686,3 @@ If any one of those fails, this feature is not done.
 * [5] Compound Tile System
 * [6] Campaign Flow & Game Loop
 * [7] Integration Contract (Glue Layer)
-

@@ -133,7 +133,9 @@ This ensures stable planet+map pairing per contract seed.
 
 ## Active World Wiring
 
-- `res://game/systems/contract_world_loader.gd` now listens to `contract_generated`.
+- `WorldContractBootstrap` starts and retains the real contract generator during the playable Home wake scene, after Home's first processed frame.
+- `game.tscn` keeps the legacy `World/ContractMap` path through `WorldContractProxy`, which republishes the retained contract without generating a second map.
+- `res://game/systems/contract_world_loader.gd` listens to the proxy's `contract_generated` signal and remains runtime installation authority.
 - On generation, it re-parents the contract `ProcGenMap` instance into active world runtime container:
   - `World/ProcGenRuntime`
 - Static sector visuals are hidden (systems remain available), and runtime entities are aligned to contract map data:

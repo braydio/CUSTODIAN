@@ -341,6 +341,9 @@ func get_last_failure_result() -> Dictionary:
 
 
 func _mark_contract_ready() -> void:
+	var bootstrap := get_node_or_null("/root/WorldContractBootstrap")
+	if bootstrap != null and bootstrap.has_method("mark_claimed"):
+		bootstrap.call("mark_claimed")
 	var game_state := get_node_or_null("/root/GameState")
 	if game_state != null and game_state.has_method("mark_contract_ready"):
 		game_state.call("mark_contract_ready")
