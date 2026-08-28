@@ -3,6 +3,7 @@ extends Node2D
 
 const DEFAULT_MANIFEST_PATH := "res://content/metadata/assets/meridian_civic_props_native.semantic.json"
 const DEFAULT_TEXTURE_ROOT := "res://content/sprites/environment/props/meridian_civic/native"
+const RuntimeCatalog := preload("res://game/world/levels/presentation/meridian_civic_native_prop_catalog.generated.gd")
 
 static var _manifest_cache: Dictionary = {}
 
@@ -48,16 +49,15 @@ func configure(
 	z_index = 0 if uses_y_sort else -1
 	metadata = entry.duplicate(true)
 
-	var source_file := String(entry.get("source_file", ""))
-	var texture_path := "%s/%s/%s" % [texture_root, runtime_family, source_file]
+	var texture_path := String(entry.get("texture_path", ""))
 	var texture := load(texture_path) as Texture2D
 	if texture == null:
 		push_error("Native prop texture is unavailable: %s" % texture_path)
 		clear()
 		return false
 
-	var crop_size := _vector2i_from_array(entry.get("crop_size", []))
-	if Vector2i(texture.get_size()) != crop_size:
+	var canvas_size := _vector2i_from_array(entry.get("canvas_size", []))
+	if Vector2i(texture.get_size()) != canvas_size:
 		push_error("Native prop crop contract mismatch: %s" % texture_path)
 		clear()
 		return false
@@ -68,7 +68,7 @@ func configure(
 	_sprite.texture = texture
 	_sprite.centered = true
 	_sprite.scale = Vector2.ONE * float(entry.get("native_scale", 1.0))
-	_sprite.position = Vector2(crop_size) * 0.5 - _vector2_from_array(entry.get("extract_anchor_px", []))
+	_sprite.position = _vector2_from_array(entry.get("sprite_position", []))
 	_sprite.set_meta(&"runtime_family", runtime_family)
 	_sprite.set_meta(&"variant_key", variant_key)
 	_sprite.set_meta(&"anchor_mode", anchor_mode)
@@ -103,8 +103,8 @@ static func resolve_variant(
 		family_id: StringName,
 		variant_id: StringName
 ) -> Dictionary:
-	var index := _get_manifest_index(path)
-	return (index.get(String(family_id), {}) as Dictionary).get(String(variant_id), {}) as Dictionary
+	var _unused_path := path
+	return RuntimeCatalog.ENTRIES.get("%s/%s" % [family_id, variant_id], {}) as Dictionary
 
 
 static func can_spawn_production(

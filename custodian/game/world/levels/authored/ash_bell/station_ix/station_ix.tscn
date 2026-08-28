@@ -1,10 +1,11 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://game/world/levels/authored/ash_bell/station_ix/station_ix.gd" id="1"]
 [ext_resource type="Script" path="res://game/world/levels/authored_blockout_grid_2d.gd" id="2"]
 [ext_resource type="Script" path="res://game/world/levels/authored/ash_bell/common/civic_relay_2d.gd" id="3"]
 [ext_resource type="Script" path="res://game/world/levels/interactable_level_exit_2d.gd" id="4"]
 [ext_resource type="Script" path="res://game/world/levels/authored_navigation_provider_2d.gd" id="5"]
+[ext_resource type="Script" path="res://game/world/levels/authored/ash_bell/common/lower_quarter_native_prop_layer_2d.gd" id="6"]
 [sub_resource type="CircleShape2D" id="ExitShape"]
 radius = 40.0
 
@@ -18,6 +19,10 @@ draw_placeholder_grid = false
 [node name="BlockoutGrid" type="Node2D" parent="PlayableRoot"]
 script = ExtResource("2")
 [node name="PropsRoot" type="Node2D" parent="."]
+[node name="NativePropRoot" type="Node2D" parent="PropsRoot"]
+script = ExtResource("6")
+level_id = "station_ix"
+map_origin = Vector2(-1024, -896)
 [node name="PrecentorOrraRecord" type="Marker2D" parent="PropsRoot"]
 [node name="DynamicGates" type="Node2D" parent="."]
 [node name="OcclusionRoot" type="Node2D" parent="."]

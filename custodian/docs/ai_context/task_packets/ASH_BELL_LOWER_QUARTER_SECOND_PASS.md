@@ -45,6 +45,10 @@ Results on 2026-08-21:
 32px atlases across all three districts. Station landmark, pedestals, relays,
 West Gate slab, Station IX core/receiver, and transit ingress are integrated
 without changing geometry, navigation, topology, or state.
+The subsequent Lower Quarter native-prop placement pass replaced the small
+presenter-owned scatter with 258 exact manifest records across all three levels.
+Native-scale visual nodes remain collisionless until individual footprints are
+route-proven; floor/wall atlases retain only tiling presentation authority.
 The floor correction restricts generic civic paving to the approved clean/worn
 cell lists, zones market and road materials explicitly, keeps markings and
 ornaments as sparse authored overlays, deduplicates overlapping walkable-region

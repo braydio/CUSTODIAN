@@ -245,7 +245,11 @@ atlases with unscaled 32×32 source cells for Meridian civic floor/wall and the
 fixed Ash-Bell overlap. The former civic props atlas is retained only for true
 tile-scale or legacy detail; physical props resolve through the 224-entry
 `meridian_civic_props_native` semantic manifest and render at their preserved
-native dimensions. Explicit semantic selection drives both paths; presentation
+native dimensions. `lower_quarter_native_prop_placements.json` is exact visual
+placement authority for 112 Lower Quarter, 64 West Gate Works, and 82 Station
+IX instances. Its 258 records use 180 reviewed source variants across 77
+semantic families; review-required source IDs 177, 201, and 212 remain absent.
+Explicit semantic selection drives both paths; presentation
 art never owns collision, walkability, navigation, exits, or route state.
 `AuthoredBlockoutGrid2D` remains geometry and navigation authority with
 production drawing suppressed.
@@ -263,8 +267,11 @@ extracts preserve those already-correct thin silhouettes without normalizing
 them into 32×32 destinations. Wall cells are facade and perimeter
 modules rather than solid-building voxels. `MeridianCivicArtPresenter` draws a
 dark continuous civic structural mass first, then a quiet top edge, a semantic
-bottom facade, and sparse interior machinery, then mounts manifest-backed
-native prop children using authored anchor metadata. It must not refill
+bottom facade, and sparse interior machinery. `LowerQuarterNativePropLayer2D`
+separately mounts manifest-backed native prop children at exact authored world
+anchors using semantic anchor metadata. All collision footprints are disabled
+for this visual pass; collision is never inferred from pixels and authored
+navigation remains unchanged. The presenter must not refill
 authored wall rectangles with repeated 32×32 wall sprites or derive collision
 from prop alpha.
 

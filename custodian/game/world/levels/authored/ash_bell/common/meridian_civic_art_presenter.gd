@@ -2,7 +2,6 @@ class_name MeridianCivicArtPresenter
 extends Node2D
 
 const Palette := preload("res://game/world/levels/authored/ash_bell/common/meridian_civic_art_palette.gd")
-const NativeProp := preload("res://game/world/levels/presentation/semantic_native_prop_2d.gd")
 const FLOOR := preload("res://content/tiles/ash_bell/lower_quarter/meridian_civic_floor_atlas_512.png")
 const WALL := preload("res://content/tiles/ash_bell/lower_quarter/meridian_civic_wall_atlas_512.png")
 const OVERLAP := preload("res://content/tiles/ash_bell/lower_quarter/ash_bell_overlap_atlas_512.png")
@@ -22,14 +21,12 @@ const STATION_THRESHOLD_RECT := Rect2i(72, 58, 30, 10)
 var map_origin := Vector2.ZERO
 var walkable_regions: Array[Rect2i] = []
 var district := &"lower_quarter"
-var _native_props_root: Node2D
 
 
 func configure(origin: Vector2, regions: Array[Rect2i], district_id: StringName = &"lower_quarter") -> void:
 	map_origin = origin
 	walkable_regions = regions.duplicate()
 	district = district_id
-	_rebuild_native_props()
 	queue_redraw()
 
 
@@ -208,51 +205,6 @@ func _draw_wall_band(rect: Rect2i, category: String) -> void:
 					else Palette.WALL_DAMAGED
 				)
 				_draw_cell(WALL, detail_pool, Vector2i(x, y))
-
-
-func _rebuild_native_props() -> void:
-	if _native_props_root != null and is_instance_valid(_native_props_root):
-		_native_props_root.free()
-	_native_props_root = Node2D.new()
-	_native_props_root.name = "NativeProps"
-	_native_props_root.y_sort_enabled = true
-	add_child(_native_props_root)
-	match district:
-		&"lower_quarter":
-			for y in range(51, 79, 5):
-				_add_native_prop(Vector2i(31, y), &"meridian_civic_lighting", &"lantern_standard_amber")
-			for cell in [Vector2i(54, 88), Vector2i(75, 88), Vector2i(22, 38), Vector2i(48, 48), Vector2i(60, 43)]:
-				_add_native_prop(cell, &"meridian_civic_lighting", &"lantern_standard_a")
-			for cell in [Vector2i(22, 45), Vector2i(30, 38), Vector2i(42, 49), Vector2i(51, 40)]:
-				_add_native_prop(cell, &"meridian_civic_bench", _choose_variant(cell, [&"bench_wood_short", &"bench_wood_medium", &"bench_metal_low"]))
-			for x in range(56, 73):
-				var cell := Vector2i(x, 72 + (x % 3))
-				_add_native_prop(cell, &"meridian_civic_debris", _choose_variant(cell, [&"micro_stone_a", &"micro_stone_b", &"micro_stone_c", &"masonry_block_small_a", &"masonry_block_small_b"]))
-		&"west_gate_works":
-			for cell in [Vector2i(10, 20), Vector2i(16, 20), Vector2i(24, 16), Vector2i(38, 20), Vector2i(45, 27)]:
-				_add_native_prop(cell, &"meridian_civic_lighting", &"lantern_standard_amber")
-			for cell in [Vector2i(16, 28), Vector2i(26, 28), Vector2i(39, 28)]:
-				_add_native_prop(cell, &"meridian_civic_utility", _choose_variant(cell, [&"box_compact", &"box_multiport", &"junction_box_square_a"]))
-		&"station_ix":
-			for x in range(25, 37, 2):
-				var cell := Vector2i(x, 47)
-				_add_native_prop(cell, &"meridian_civic_utility", _choose_variant(cell, [&"cabinet_tall_closed", &"cabinet_tall_lit", &"cabinet_terminal_tall"]))
-			for cell in [Vector2i(27, 45), Vector2i(36, 45), Vector2i(18, 35), Vector2i(48, 35)]:
-				_add_native_prop(cell, &"meridian_civic_lighting", &"lantern_standard_amber")
-
-
-func _add_native_prop(cell: Vector2i, family: StringName, variant: StringName) -> void:
-	var prop := NativeProp.new() as SemanticNativeProp2D
-	prop.name = "%s_%d_%d" % [variant, cell.x, cell.y]
-	prop.position = map_origin + Vector2(cell * TILE_SIZE) + Vector2(TILE_SIZE * 0.5, TILE_SIZE)
-	if prop.configure(family, variant):
-		_native_props_root.add_child(prop)
-	else:
-		prop.free()
-
-
-func _choose_variant(cell: Vector2i, variants: Array[StringName]) -> StringName:
-	return variants[Palette._stable_hash(cell, 0x6e31) % variants.size()]
 
 
 func _draw_cell(texture: Texture2D, variants: Array, cell: Vector2i) -> void:

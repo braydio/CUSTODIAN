@@ -1,4 +1,4 @@
-# CUSTODIAN — Meridian Native Prop Full Authored Placement Pass
+# CUSTODIAN — Lower Quarter Native Prop Full Authored Placement Pass
 
 Repository: `/home/braydenchaffee/Projects/CUSTODIAN`
 Godot project: `custodian/`
@@ -8,7 +8,7 @@ Godot project: `custodian/`
 Copy these into the repo before implementation:
 
 - semantic inventory -> `custodian/content/metadata/assets/meridian_civic_props_native.semantic.json`
-- exact authored placements -> `custodian/game/world/levels/authored/ash_bell/common/ash_bell_native_prop_placements.json`
+- exact authored placements -> `custodian/game/world/levels/authored/ash_bell/common/lower_quarter_native_prop_placements.json`
 
 The placement JSON is AUTHORITATIVE. Do not move, substitute, omit, randomize, or add placements without reporting a blocked asset/coordinate and stopping that placement. It contains 258 exact instances using 180 unique extracted source IDs and covers all 77 non-review semantic families. The only semantic families deliberately excluded are `compound_rubble_prop` (177), `compound_salvage` (201), and `compound_masonry` (212), because the semantic manifest marks them `review_required=true`.
 
@@ -84,7 +84,7 @@ After ingest, resolve canonical runtime paths from `asset_catalog.generated.json
 
 Create a reusable authored-only native prop layer, suggested path:
 
-`custodian/game/world/levels/authored/ash_bell/common/authored_native_prop_layer_2d.gd`
+`custodian/game/world/levels/authored/ash_bell/common/lower_quarter_native_prop_layer_2d.gd`
 
 Responsibilities:
 1. accept `map_origin`, `cell_size=32`, level id, exact placement records
@@ -101,7 +101,7 @@ Responsibilities:
 
 Do not place native physical props through `MeridianCivicArtPresenter._draw_prop()`.
 
-Remove/suppress legacy `_draw_prop()` calls for any category now represented in `ash_bell_native_prop_placements.json`. Floor and wall atlas rendering stays in the presenter.
+Remove/suppress legacy `_draw_prop()` calls for any category now represented in `lower_quarter_native_prop_placements.json`. Floor and wall atlas rendering stays in the presenter.
 
 ## Exact coordinate convention
 
@@ -183,7 +183,7 @@ Each level configures the native prop layer with its own exact level id and map 
 
 ## Validation
 
-Add `ash_bell_native_prop_placement_smoke.gd` and validate:
+Add `lower_quarter_native_prop_placement_smoke.gd` and validate:
 
 1. placement JSON has exactly 258 records
 2. counts are exactly 112 / 64 / 82 by level
@@ -212,7 +212,7 @@ Reject the pass if it still reads as large empty tiled fields with a few isolate
 Update active Lower Quarter/Station IX docs to state:
 - physical Meridian props are native extracted sprites, not 32px atlas cells
 - floor/wall atlases remain 32px tiling presentation
-- exact authored native placements live in `ash_bell_native_prop_placements.json`
+- exact authored native placements live in `lower_quarter_native_prop_placements.json`
 - source semantic inventory lives in `meridian_civic_props_native.semantic.json`
 - collision is separately authored and never inferred from prop pixels
 
