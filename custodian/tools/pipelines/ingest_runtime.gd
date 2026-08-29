@@ -609,6 +609,22 @@ func _run_post_process(step: String, cleanup_superseded: bool) -> Dictionary:
 			)
 			if build_exit_code != 0:
 				return {"ok": false, "error": "operator modular runtime build failed:\n%s" % "\n".join(build_output)}
+			var compatibility_output: Array = []
+			var compatibility_exit_code := OS.execute(
+				"python3",
+				[
+					ProjectSettings.globalize_path(
+						"res://tools/pipelines/update_operator_compatibility_resources.py"
+					)
+				],
+				compatibility_output,
+				true
+			)
+			if compatibility_exit_code != 0:
+				return {
+					"ok": false,
+					"error": "operator compatibility SpriteFrames update failed:\n%s" % "\n".join(compatibility_output)
+				}
 			var curated_output: Array = []
 			var curated_exit_code := OS.execute(
 				"godot",

@@ -10,6 +10,22 @@ import animation_frame_contract as fc
 
 DEFAULT_ROOT=m.REPO_ROOT/".ai/operator_animation_workbench"
 LUA=m.CUSTODIAN_ROOT/"tools/aseprite/operator_animation_workbench.lua"
+COMPATIBILITY_SCRIPT=m.PIPELINES/"update_operator_compatibility_resources.py"
+GENERATED_OPERATOR_RESOURCES=[
+    m.CUSTODIAN_ROOT/"game/actors/operator"/name for name in (
+        "operator_runtime_frames.tres",
+        "operator_weapon_frames.tres",
+        "operator_melee_overlay_frames.tres",
+        "operator_ranged_fx_frames.tres",
+        "operator_modular_lower_body_frames.tres",
+        "operator_modular_upper_body_frames.tres",
+        "operator_modular_sidearm_frames.tres",
+        "operator_modular_upper_fx_frames.tres",
+        "operator_modular_cape_frames.tres",
+        "operator_modular_head_frames.tres",
+        "operator_animation_catalog_frames.tres",
+    )
+]
 
 def resolve_aseprite(explicit=None, required=False):
     value=explicit or os.environ.get("ASEPRITE_BIN") or shutil.which("aseprite")
@@ -60,7 +76,8 @@ def refresh(profile,action,direction,group="",weapon="",linked_profile="",root=D
     fresh=m.build_plan(profile,action,direction,group,weapon,linked_profile); ws=workspace(root,fresh["identity"]); mf=ws/"workbench.json"; wb=ws/"workbench.aseprite"
     if mf.exists() and wb.exists():
         old=load(mf)
-        m.assert_context(old,fresh)
+        if not discard:
+            m.assert_context(old,fresh)
         if old.get("pending_migration") and not discard: raise m.WorkbenchError("WORKBENCH HAS PENDING CONTRACT MIGRATION\n--discard-edits also discards the pending migration")
         if state(old,wb).startswith("EDITED") and not discard: raise m.WorkbenchError("workbench has unsynchronized edits; pass --discard-edits")
         stamp=datetime.now().strftime("%Y%m%dT%H%M%S"); (ws/"backups"/stamp).mkdir(parents=True,exist_ok=True); shutil.copy2(wb,ws/"backups"/stamp/"workbench.aseprite"); shutil.copy2(mf,ws/"backups"/stamp/"workbench.json")
@@ -73,7 +90,10 @@ def frame_migrate(profile,action,direction,operation,position,fill="duplicate-pr
     data=load(mf); m.assert_context(data,requested)
     if "STALE" in state(data,wb): raise m.WorkbenchError("WORKBENCH STALE")
     if data.get("pending_migration"): raise m.WorkbenchError("WORKBENCH HAS PENDING CONTRACT MIGRATION")
-    report=fc.migration_report(data,operation,position,fill,layers,m.REPO_ROOT)
+    try:
+        report=fc.migration_report(data,operation,position,fill,layers,m.REPO_ROOT)
+    except ValueError as error:
+        raise m.WorkbenchError(str(error)) from error
     if report["dependency_audit"]["level"]!="GREEN": raise m.WorkbenchError("FRAME MIGRATION BLOCKED BY GAMEPLAY FRAME AUTHORITY\n"+json.dumps(report["dependency_audit"],indent=2))
     if dry_run: return report
     stamp=datetime.now().strftime("%Y%m%dT%H%M%S"); backup=ws/"backups"/f"frame_{stamp}"; backup.mkdir(parents=True,exist_ok=True); shutil.copy2(wb,backup/"workbench.aseprite"); shutil.copy2(mf,backup/"workbench.json")
@@ -96,11 +116,32 @@ def frame_migrate(profile,action,direction,operation,position,fill="duplicate-pr
     return report
 
 def _validation_commands(data,full_validate=False):
-    cmds=[["python3",str(m.CUSTODIAN_ROOT/"tools/validation/operator_animation_contract_report.py")],["python3",str(m.CUSTODIAN_ROOT/"tools/validation/operator_animation_workbench_smoke.py")],["godot","--headless","--path",str(m.CUSTODIAN_ROOT),"--script","res://tools/validation/operator_modular_layers_smoke.gd"]]
+    cmds=[["python3",str(COMPATIBILITY_SCRIPT),"--check"],["python3",str(m.CUSTODIAN_ROOT/"tools/validation/operator_animation_contract_report.py")],["python3",str(m.CUSTODIAN_ROOT/"tools/validation/operator_animation_workbench_smoke.py")],["godot","--headless","--path",str(m.CUSTODIAN_ROOT),"--script","res://tools/validation/operator_modular_layers_smoke.gd"]]
     if data["identity"]["profile"]=="melee_1h" and data["identity"]["group"]=="posture": cmds.append(["godot","--headless","--path",str(m.CUSTODIAN_ROOT),"--script","res://tools/validation/operator_melee_posture_smoke.gd"])
     if data.get("context",{}).get("weapon_id")=="vigil_pattern_dagger": cmds.append(["godot","--headless","--path",str(m.CUSTODIAN_ROOT),"--script","res://tools/validation/operator_vigil_dagger_smoke.gd"])
     if full_validate: cmds.append(["python3",str(m.CUSTODIAN_ROOT/"tools/validation/run_validation.py"),"--changed","--json"])
     return cmds
+
+def _journal_stage(path,journal,state,stage):
+    journal["state"]=state
+    if stage and stage not in journal["validation_stages_completed"]: journal["validation_stages_completed"].append(stage)
+    save(path,journal)
+
+def _compatibility_update():
+    subprocess.run(["python3",str(COMPATIBILITY_SCRIPT)],check=True,cwd=m.REPO_ROOT)
+
+def _compatibility_check():
+    subprocess.run(["python3",str(COMPATIBILITY_SCRIPT),"--check"],check=True,cwd=m.REPO_ROOT)
+
+def _godot_import():
+    subprocess.run(["godot","--headless","--path",str(m.CUSTODIAN_ROOT),"--import","--quit"],check=True)
+
+def _catalog_build():
+    subprocess.run(["godot","--headless","--path",str(m.CUSTODIAN_ROOT),"--script","res://tools/pipelines/build_operator_animation_resources.gd"],check=True)
+
+def _operator_scene_consistency():
+    _compatibility_check()
+    subprocess.run(["godot","--headless","--path",str(m.CUSTODIAN_ROOT),"--script","res://tools/validation/operator_modular_layers_smoke.gd"],check=True)
 
 def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_validate=False,requested=None):
     ws=manifest.parent; data=load(manifest); st=state(data,ws/"workbench.aseprite")
@@ -116,32 +157,54 @@ def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_valid
         if current_audit["level"]!="GREEN": raise m.WorkbenchError("FRAME MIGRATION BLOCKED BY GAMEPLAY FRAME AUTHORITY\n"+json.dumps(current_audit,indent=2))
     for b,c,dst,old in candidates:
         if dst!=old and dst.exists(): raise m.WorkbenchError(f"target frame contract already exists: {dst}")
-    tx=ws/"transactions"/stamp; backup=tx/"backups"; backup.mkdir(parents=True,exist_ok=True); journal={"transaction_id":stamp,"state":"PREPARED","old_source_paths":[str(x[3]) for x in candidates],"target_source_paths":[str(x[2]) for x in candidates],"pending_migration":migration,"validation_stages_completed":[]}; save(tx/"transaction.json",journal)
+    tx=ws/"transactions"/stamp; backup=tx/"backups"; source_backup=backup/"sources"; resource_backup=backup/"resources"; source_backup.mkdir(parents=True,exist_ok=True); resource_backup.mkdir(parents=True,exist_ok=True)
+    journal_path=tx/"transaction.json"
+    journal={"transaction_id":stamp,"state":"PREPARED","sources":[],"resources":[],"pending_migration":migration,"validation_stages_completed":[]}
     for b,c,dst,old in candidates:
-        shutil.copy2(old,backup/old.name)
+        saved=source_backup/f"{b['binding_id']}.png"; shutil.copy2(old,saved)
         sidecar=old.with_suffix(old.suffix+".import")
-        if sidecar.exists(): shutil.copy2(sidecar,backup/(old.name+".import"))
+        saved_sidecar=source_backup/f"{b['binding_id']}.png.import"
+        if sidecar.exists(): shutil.copy2(sidecar,saved_sidecar)
+        journal["sources"].append({"binding_id":b["binding_id"],"old_path":m.rel(old),"old_sha256":m.file_sha256(old),"target_path":m.rel(dst),"target_sha256":m.file_sha256(c),"backup_path":m.rel(saved),"import_backup_path":m.rel(saved_sidecar) if saved_sidecar.exists() else ""})
+    for resource in GENERATED_OPERATOR_RESOURCES:
+        saved=resource_backup/resource.name; shutil.copy2(resource,saved)
+        journal["resources"].append({"path":m.rel(resource),"old_sha256":m.file_sha256(resource),"target_sha256":None,"backup_path":m.rel(saved)})
+    save(journal_path,journal)
     try:
         for b,c,dst,old in candidates:
             if dst!=old:
                 old.unlink()
                 old.with_suffix(old.suffix+".import").unlink(missing_ok=True)
             tmp=dst.with_suffix(".png.workbench.tmp"); shutil.copy2(c,tmp); dst.parent.mkdir(parents=True,exist_ok=True); os.replace(tmp,dst)
-        journal["state"]="SOURCE_SWAPPED"; save(tx/"transaction.json",journal)
+        _journal_stage(journal_path,journal,"SOURCE_SWAPPED","source_swap")
         subprocess.run(["python3",str(m.PIPELINES/"build_operator_runtime.py"),"--strict","--remove-superseded"],check=True,cwd=m.REPO_ROOT)
-        journal["state"]="RUNTIME_BUILT"; save(tx/"transaction.json",journal); subprocess.run(["godot","--headless","--path",str(m.CUSTODIAN_ROOT),"--import","--quit"],check=True); journal["state"]="GODOT_IMPORTED"; save(tx/"transaction.json",journal); subprocess.run(["godot","--headless","--path",str(m.CUSTODIAN_ROOT),"--script","res://tools/pipelines/build_operator_animation_resources.gd"],check=True); journal["state"]="RESOURCES_BUILT"; save(tx/"transaction.json",journal)
-        for cmd in _validation_commands(data,full_validate): subprocess.run(cmd,check=True,cwd=m.REPO_ROOT)
-        journal["state"]="VALIDATED"
+        _journal_stage(journal_path,journal,"RUNTIME_BUILT","runtime_build")
+        _compatibility_update()
+        for item in journal["resources"]: item["target_sha256"]=m.file_sha256(m.REPO_ROOT/item["path"])
+        _compatibility_check()
+        _journal_stage(journal_path,journal,"COMPATIBILITY_BUILT","compatibility_resource_generation")
+        _godot_import(); _journal_stage(journal_path,journal,"GODOT_IMPORTED","godot_import")
+        _catalog_build()
+        for item in journal["resources"]: item["target_sha256"]=m.file_sha256(m.REPO_ROOT/item["path"])
+        _journal_stage(journal_path,journal,"RESOURCES_BUILT","catalog_resource_generation")
+        for cmd in _validation_commands(data,full_validate):
+            subprocess.run(cmd,check=True,cwd=m.REPO_ROOT)
+            _journal_stage(journal_path,journal,journal["state"],"validation:"+Path(cmd[-1]).name)
+        _journal_stage(journal_path,journal,"VALIDATED","mandatory_validation")
     except Exception:
         try:
             for b,c,dst,old in candidates:
                 if dst.exists(): dst.unlink()
-                shutil.copy2(backup/old.name,old)
-                side=backup/(old.name+".import")
+                dst.with_suffix(dst.suffix+".import").unlink(missing_ok=True)
+                shutil.copy2(source_backup/f"{b['binding_id']}.png",old)
+                side=source_backup/f"{b['binding_id']}.png.import"
                 if side.exists(): shutil.copy2(side,old.with_suffix(old.suffix+".import"))
-            subprocess.run(["python3",str(m.PIPELINES/"build_operator_runtime.py"),"--strict","--remove-superseded"],check=True,cwd=m.REPO_ROOT); subprocess.run(["godot","--headless","--path",str(m.CUSTODIAN_ROOT),"--import","--quit"],check=True); subprocess.run(["godot","--headless","--path",str(m.CUSTODIAN_ROOT),"--script","res://tools/pipelines/build_operator_animation_resources.gd"],check=True); journal["state"]="ROLLED_BACK"
+            for resource in GENERATED_OPERATOR_RESOURCES: shutil.copy2(resource_backup/resource.name,resource)
+            subprocess.run(["python3",str(m.PIPELINES/"build_operator_runtime.py"),"--strict","--remove-superseded"],check=True,cwd=m.REPO_ROOT)
+            _compatibility_update(); _compatibility_check(); _godot_import(); _catalog_build(); _operator_scene_consistency()
+            _journal_stage(journal_path,journal,"ROLLED_BACK","rollback_consistency")
         except Exception: journal["state"]="RECOVERY_REQUIRED"
-        save(tx/"transaction.json",journal); raise
+        save(journal_path,journal); raise
     for b,_,dst,old in candidates:
         b["source_path"]=m.rel(dst); b["source_file_sha256"]=m.file_sha256(dst); b["source_pixel_sha256"]=m.pixel_sha256(dst); b["source_contract"]={"path":m.rel(dst),"frames":b["workspace_contract"]["frames"],"frame_size":b["frame_size"],"file_sha256":b["source_file_sha256"],"pixel_sha256":b["source_pixel_sha256"]}; b["publish_contract"]={"path":m.rel(dst),"frames":b["frames"],"frame_size":b["frame_size"]}
-    data["timeline"]["source_clock_frames"]=data["timeline"]["workspace_clock_frames"]; data["pending_migration"]=None; _baseline(data,ws); data["aseprite"]["last_synced_sha256"]=m.file_sha256(ws/"workbench.aseprite"); data["last_publish"]={"timestamp":datetime.now(timezone.utc).isoformat(),"validation_status":"passed"}; journal["state"]="COMMITTED"; save(tx/"transaction.json",journal); save(manifest,data); return [str(x[2]) for x in candidates]
+    data["timeline"]["source_clock_frames"]=data["timeline"]["workspace_clock_frames"]; data["pending_migration"]=None; _baseline(data,ws); data["aseprite"]["last_synced_sha256"]=m.file_sha256(ws/"workbench.aseprite"); data["last_publish"]={"timestamp":datetime.now(timezone.utc).isoformat(),"validation_status":"passed"}; _journal_stage(journal_path,journal,"COMMITTED","manifest_sync"); save(manifest,data); return [str(x[2]) for x in candidates]

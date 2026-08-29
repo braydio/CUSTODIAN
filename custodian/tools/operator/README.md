@@ -20,6 +20,12 @@ Use `--dry-run` on frame or publish commands to inspect without mutation. Frame
 commands stage a dependency-audited migration in `.ai`; only publish changes
 canonical PNG contracts.
 
+Publish refreshes the V2 runtime first, then runs
+`tools/pipelines/update_operator_compatibility_resources.py` before Godot
+import. This keeps legacy aliases consumed directly by `operator.tscn` pointed
+at the current semantic frame contract. Its `--check` mode reports retired
+runtime paths before actor smokes.
+
 Use `modular_combo_check.py` for ordinary modular lower/upper visual review.
 Use the provenance-first repair conveyor when the review identifies artwork
 that needs manual waist-seam correction:

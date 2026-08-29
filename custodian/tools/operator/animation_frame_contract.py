@@ -37,8 +37,15 @@ def automatic_set(manifest:dict,layers:str="auto"):
     if layers not in ("auto","all"):
         wanted=set(layers.split(',')); missing=wanted-{b['binding_id'] for b in editable}
         if missing: raise ValueError(f"unknown binding ids: {sorted(missing)}")
-        return [b for b in editable if b['binding_id'] in wanted],[]
-    if layers=="all": return editable,[]
+        affected=[b for b in editable if b['binding_id'] in wanted]
+        clock_owner=manifest["timeline"].get("clock_owner","")
+        if not affected: raise ValueError("explicit migration selection is empty")
+        if not any(b["layer"]==clock_owner or b["binding_id"]==clock_owner for b in affected):
+            raise ValueError(f"explicit migration selection excludes clock owner: {clock_owner}")
+        return affected,[]
+    if layers=="all":
+        if not editable: raise ValueError("automatic migration set is empty")
+        return editable,[]
     body_layers={b["layer"] for b in editable}
     affected=[]; excluded=[]
     for b in editable:
@@ -50,7 +57,20 @@ def automatic_set(manifest:dict,layers:str="auto"):
         elif b["layer"]=="fx": reason="FX is independent by default"
         if include: affected.append(b)
         else: excluded.append({"binding_id":b["binding_id"],"reason":reason})
+    if not affected: raise ValueError("automatic migration set is empty")
     return affected,excluded
+
+def _socket_track_identity(key:str):
+    parts=key.split('/')
+    if len(parts)==5:
+        return tuple(parts)
+    match=re.fullmatch(r"ranged_2h_(stance|aim|fire)_modular_(right|left|down_right|down_left)",key)
+    if not match: return None
+    action_token,direction_token=match.groups()
+    action={"stance":"stance_01","aim":"aim_01","fire":"fire_01"}[action_token]
+    group="posture" if action_token=="stance" else "cosmetic"
+    direction={"right":"e","left":"w","down_right":"se","down_left":"sw"}[direction_token]
+    return ("ranged_2h",group,action,direction,"upper_body")
 
 def audit_dependencies(repo:Path,manifest:dict,affected:list[dict]):
     ident=manifest["identity"]; action=ident["action"]; deps=[]
@@ -68,9 +88,17 @@ def audit_dependencies(repo:Path,manifest:dict,affected:list[dict]):
     sockets=repo/"custodian/content/data/operator/generated/operator_weapon_sockets.generated.json"
     if sockets.exists():
         tracks=json.loads(sockets.read_text()).get("tracks",{})
-        needles=(ident["profile"],ident["group"],action,ident["direction"])
         for key,track in tracks.items():
-            if all(n in key for n in needles) and isinstance(track,list): deps.append(Dependency("YELLOW",str(sockets.relative_to(repo)),key,f"per-frame socket track ({len(track)} records)"))
+            track_identity=_socket_track_identity(key)
+            if track_identity is None or not isinstance(track,list): continue
+            profile,group,track_action,direction,layer=track_identity
+            if (profile,group,track_action,direction)!=(ident["profile"],ident["group"],action,ident["direction"]): continue
+            tied=any(
+                b.get("layer")==layer
+                and int(b.get("workspace_contract",{}).get("frames",b.get("frames",0)))==len(track)
+                for b in affected
+            )
+            if tied: deps.append(Dependency("YELLOW",str(sockets.relative_to(repo)),key,f"per-frame socket track ({len(track)} records)"))
     level="RED" if any(d.level=="RED" for d in deps) else "YELLOW" if deps else "GREEN"
     return {"level":level,"dependencies":[asdict(d) for d in deps]}
 

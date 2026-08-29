@@ -251,10 +251,10 @@ Primary scripts:
 - `custodian/tools/pipelines/ingest.py`
 - `custodian/tools/pipelines/ingest_runtime.gd`
 - `custodian/tools/pipelines/build_operator_runtime.py`
+- `custodian/tools/pipelines/update_operator_compatibility_resources.py`
 - `custodian/tools/pipelines/operator_action_preview.py`
 - `custodian/tools/pipelines/scaffold_character_contract.py`
 - `custodian/tools/pipelines/reload_assets.py`
-- `custodian/tools/pipelines/update_operator_curated_resources.gd`
 - `custodian/tools/pipelines/update_vehicle_runtime_resources.gd`
 - `custodian/tools/validation/operator_animation_contract_report.py`
 
@@ -265,8 +265,12 @@ Current post-process support:
 - `enemy_runtime_import`
 - `vehicle_runtime_import`
 
-`operator_curated_resources` rebuilds operator runtime `SpriteFrames` after curated body/overlay outputs are
-updated. `operator_modular_runtime` normalizes supported modular Operator source sheets from
+`operator_curated_resources` now routes through the catalog-driven compatibility
+resource generator and catalog resource builder; the retired
+`update_operator_curated_resources.gd` path no longer exists. The Python phase
+updates generated compatibility `.tres` paths and full-strip frame aliases
+before Godot import, while `build_operator_animation_resources.gd` rebuilds the
+canonical catalog `SpriteFrames` after import. `operator_modular_runtime` normalizes supported modular Operator source sheets from
 `res://content/sprites/operator/source/animations/` into generated runtime sheets below
 `res://content/sprites/operator/runtime/animations/` through `build_operator_runtime.py`.
 `enemy_runtime_import` and `vehicle_runtime_import` run import/resource refresh steps for the active enemy and
@@ -323,9 +327,12 @@ For already-authored Operator modular source sheets in `content/sprites/operator
 
 1. Run `python custodian/tools/pipelines/build_operator_runtime.py --dry-run --remove-superseded`
 2. Run `python custodian/tools/pipelines/build_operator_runtime.py --strict --remove-superseded`
-3. Run `python custodian/tools/validation/operator_animation_contract_report.py`
-4. Generate QA previews with `operator_action_preview.py` when visual inspection is needed
-5. Register any new gameplay playback deliberately in runtime/state-machine code and curated resources
+3. Run `python custodian/tools/pipelines/update_operator_compatibility_resources.py`
+4. Run Godot import, then `build_operator_animation_resources.gd`
+5. Run `python custodian/tools/pipelines/update_operator_compatibility_resources.py --check`
+6. Run `python custodian/tools/validation/operator_animation_contract_report.py`
+7. Generate QA previews with `operator_action_preview.py` when visual inspection is needed
+8. Register any new gameplay playback deliberately in runtime/state-machine code and compatibility resources
 
 For direct expert use of the runtime-ready backend:
 

@@ -6,6 +6,7 @@ from PIL import Image
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"operator"))
 import animation_workbench_model as m
 import animation_frame_contract as fc
+import animation_workbench as w
 
 def strip(path,n,w=8,h=8):
  im=Image.new("RGBA",(n*w,h))
@@ -46,20 +47,41 @@ def main():
   for x in mixed["layers"][:2]:x["workspace_contract"]["frames"]=10
   fx=json.loads(json.dumps(mixed["layers"][0]));fx.update({"binding_id":"fx","layer":"fx","role":"linked_fx"});fx["workspace_contract"]["frames"]=8;mixed["layers"].append(fx)
   report=fc.migration_report(mixed,"add",2,"duplicate-prev","auto",m.REPO_ROOT);assert set(report["affected_bindings"])=={"lower_body","upper_body"} and report["excluded_bindings"][0]["binding_id"]=="fx"
+  try:fc.migration_report(mixed,"add",2,"duplicate-prev","upper_body",m.REPO_ROOT);raise AssertionError("clock-owner exclusion accepted")
+  except ValueError as error:assert "clock owner" in str(error)
+  empty=json.loads(json.dumps(mixed));empty["layers"]=[fx]
+  try:fc.migration_report(empty,"add",2,"duplicate-prev","auto",m.REPO_ROOT);raise AssertionError("empty automatic migration accepted")
+  except ValueError as error:assert "empty" in str(error)
   dep=root/"dependencies";defs=dep/"custodian/game/actors/operator";defs.mkdir(parents=True);(defs/"test_definition.tres").write_text('weapon_id = &"weapon_a"\nhit_windows = {}\n')
   attack=json.loads(json.dumps(a));attack["identity"].update({"group":"attack","action":"fast_01"});attack["context"]["weapon_id"]="weapon_a"
   assert fc.audit_dependencies(dep,attack,attack["layers"])["level"]=="RED"
-  (defs/"test_definition.tres").unlink();sockets=dep/"custodian/content/data/operator/generated/operator_weapon_sockets.generated.json";sockets.parent.mkdir(parents=True);sockets.write_text(json.dumps({"tracks":{"melee_1h/attack/fast_01/e/upper_body":[{},{}]}}))
+  (defs/"test_definition.tres").unlink();sockets=dep/"custodian/content/data/operator/generated/operator_weapon_sockets.generated.json";sockets.parent.mkdir(parents=True);sockets.write_text(json.dumps({"tracks":{"melee_1h/attack/fast_01/e/upper_body":[{} for _ in range(4)]}}))
   assert fc.audit_dependencies(dep,attack,attack["layers"])["level"]=="YELLOW"
+  legacy=json.loads(json.dumps(a));legacy["identity"]={"profile":"ranged_2h","group":"cosmetic","action":"fire_01","direction":"e"};legacy_upper=json.loads(json.dumps(legacy["layers"][1]));legacy_upper["layer"]="upper_body";legacy_upper["workspace_contract"]["frames"]=6
+  sockets.write_text(json.dumps({"tracks":{"ranged_2h_fire_modular_right":[{} for _ in range(6)]}}));assert fc.audit_dependencies(dep,legacy,[legacy_upper])["level"]=="YELLOW"
+  recontext=root/"recontext";ident={"profile":"melee_1h","group":"posture","action":"idle_relaxed_01","direction":"e"};ws=w.workspace(recontext,ident);ws.mkdir(parents=True);wb=ws/"workbench.aseprite";wb.write_bytes(b"edited weapon A")
+  old_manifest={"schema":m.SCHEMA_NAME,"identity":ident,"context":{"fingerprint":"weapon-a"},"timeline":{"document_frames":1},"canvas":{"width":8,"height":8},"layers":[],"references":[],"pending_migration":None,"aseprite":{"path":str(wb),"last_synced_sha256":m.file_sha256(wb)}};w.save(ws/"workbench.json",old_manifest)
+  fresh=json.loads(json.dumps(old_manifest));fresh["context"]={"fingerprint":"weapon-b"};fresh["aseprite"]["last_synced_sha256"]=None
+  old_build,old_run,old_resolve=m.build_plan,w.aseprite_run,w.resolve_aseprite
+  try:
+   m.build_plan=lambda *_args,**_kwargs:json.loads(json.dumps(fresh))
+   w.resolve_aseprite=lambda *_args,**_kwargs:Path("/bin/true")
+   def fake_run(_binary,manifest_path,_mode):
+    generated=json.loads(manifest_path.read_text());Path(generated["aseprite"]["path"]).write_bytes(b"weapon B")
+   w.aseprite_run=fake_run
+   refreshed,_=w.refresh("melee_1h","idle_relaxed_01","e",weapon="weapon_b",root=recontext,discard=True)
+   assert refreshed["context"]["fingerprint"]=="weapon-b" and list((ws/"backups").glob("*/workbench.aseprite"))
+  finally:m.build_plan,w.aseprite_run,w.resolve_aseprite=old_build,old_run,old_resolve
  real=m.build_plan("melee_1h","idle_relaxed_01","e",weapon_id="vigil_pattern_dagger");r=fc.migration_report(real,"add",2,"duplicate-prev","auto",m.REPO_ROOT)
- assert [x["binding_id"] for x in real["layers"]]==["lower_body","upper_body","weapon__vigil_pattern_dagger"] and r["new_clock_frames"]==5 and r["dependency_audit"]["level"]=="GREEN"
+ old_clock=real["timeline"]["workspace_clock_frames"]
+ assert [x["binding_id"] for x in real["layers"]]==["lower_body","upper_body","weapon__vigil_pattern_dagger"] and r["new_clock_frames"]==old_clock+1 and r["dependency_audit"]["level"]=="GREEN"
  if shutil.which("aseprite"):
   with tempfile.TemporaryDirectory() as td:
    cli=Path(__file__).resolve().parents[1]/"operator/operator_cli.py"; common=["melee_1h","idle_relaxed_01","e","--weapon","vigil_pattern_dagger","--workspace-root",td]
    subprocess.run([sys.executable,str(cli),"anim","edit",*common,"--no-open"],check=True,stdout=subprocess.DEVNULL)
    subprocess.run([sys.executable,str(cli),"anim","frame","add",*common,"--after","2"],check=True,stdout=subprocess.DEVNULL)
-   manifest=json.loads((Path(td)/"melee_1h/posture/idle_relaxed_01/e/workbench.json").read_text());assert manifest["timeline"]["workspace_clock_frames"]==5 and manifest["pending_migration"]["affected_bindings"]==["lower_body","upper_body","weapon__vigil_pattern_dagger"]
-   published=subprocess.run([sys.executable,str(cli),"anim","publish",*common,"--dry-run","--json"],check=True,capture_output=True,text=True);targets=json.loads(published.stdout)["changed_sources"];assert len(targets)==3 and all("__5f__96.png" in p for p in targets)
+   manifest=json.loads((Path(td)/"melee_1h/posture/idle_relaxed_01/e/workbench.json").read_text());assert manifest["timeline"]["workspace_clock_frames"]==old_clock+1 and manifest["pending_migration"]["affected_bindings"]==["lower_body","upper_body","weapon__vigil_pattern_dagger"]
+   published=subprocess.run([sys.executable,str(cli),"anim","publish",*common,"--dry-run","--json"],check=True,capture_output=True,text=True);targets=json.loads(published.stdout)["changed_sources"];assert len(targets)==3 and all(f"__{old_clock+1}f__96.png" in p for p in targets)
  else: print("SKIP ASEPRITE INTEGRATION: aseprite executable unavailable")
  print("PASS operator_animation_workbench_smoke: V2 add/remove, bounds, duplicates, owner/context, upgrade, mixed clocks, real Vigil GREEN")
 if __name__=="__main__":main()

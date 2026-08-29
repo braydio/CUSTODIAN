@@ -31,7 +31,10 @@ The Operator post-process runs:
 
 ```bash
 python3 tools/pipelines/build_operator_runtime.py --strict --remove-superseded
+python3 tools/pipelines/update_operator_compatibility_resources.py
+godot --headless --path . --import --quit
 godot --headless --path . --script res://tools/pipelines/build_operator_animation_resources.gd
+python3 tools/pipelines/update_operator_compatibility_resources.py --check
 ```
 
 The builder preserves declared canvases, validates synchronized lower/upper clocks, removes superseded semantic siblings when requested, and emits `content/data/operator/generated/operator_animation_catalog.generated.json`. It does not create gameplay states or dummy layers.

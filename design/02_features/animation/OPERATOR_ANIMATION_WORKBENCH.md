@@ -43,6 +43,30 @@ stage exact strip transforms, reassemble Aseprite, and record a pending
 migration. Publish journals the source swap and rolls source/runtime/import/
 resource state back if any mandatory downstream stage fails.
 
+## Compatibility SpriteFrames boundary
+
+`operator.tscn` still consumes ten generated compatibility `SpriteFrames`
+resources directly. They preserve legacy animation aliases such as
+`unarmed_run_right`, but their texture paths are generated projections rather
+than source authority. After the strict runtime build, publish runs:
+
+```bash
+python3 custodian/tools/pipelines/update_operator_compatibility_resources.py
+```
+
+This path-first generator resolves current strips from the semantic V2 catalog,
+updates safe full-strip aliases and their exact `AtlasTexture` frame count, and
+does not rewrite manually sliced or weapon-owned mappings. It also refreshes
+the catalog `.tres` paths before Godot import, avoiding a stale-resource load
+cycle. `--check` fails with `STALE OPERATOR SPRITEFRAMES RESOURCE` before actor
+smokes when any Operator runtime PNG reference is missing.
+
+Publish transactions back up all ten compatibility resources plus the catalog
+resource and journal old/new SHA-256 values. Rollback removes target PNG import
+sidecars, restores the old source and resource contracts, rebuilds the old
+runtime/catalog, runs the stale-path check, and proves `operator.tscn` loads via
+the modular-layer smoke. Failure of that recovery becomes `RECOVERY_REQUIRED`.
+
 ## Acceptance
 
 The smoke covers exact extraction after rectangular-canvas placement, illegal outside-rectangle pixels, and current lower/upper/Vigil semantic resolution. Aseprite headless assembly is exercised by the non-destructive edit demo when the executable is available.

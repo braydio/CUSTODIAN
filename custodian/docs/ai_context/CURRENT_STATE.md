@@ -11,6 +11,11 @@ V2 adds explicit add/remove frame-contract migrations, request-context
 fingerprints, exact linked-weapon isolation, independent document/layer clocks,
 dependency gates for gameplay/socket frame authority, transaction journals,
 and downstream rollback. Existing V1 manifests upgrade non-destructively.
+Frame-contract publish now refreshes the ten legacy-alias `SpriteFrames`
+resources consumed by `operator.tscn` plus the catalog resource before Godot
+import. The catalog-driven path phase resizes only full sequential strip
+aliases, journals resource hashes, restores them during rollback, and reports
+retired runtime PNG paths before actor smokes.
 
 ## Map + AI Coherence V1 (2026-08-20)
 
@@ -662,7 +667,7 @@ Documentation updates this session:
 - Operator animation state management is now deterministic enough for the combat baseline: the state machine tracks transition sequence and per-state elapsed time, attack states can explicitly re-enter, and attack completion is read from operator combat state instead of sprite playback.
 - Operator light damage reaction now enters `hit_recoil` for a short `0.22s` stun window; while Fists are active, it resolves through the `unarmed_light_hitreact` profile animation.
 - Operator Field Patch healing/restock V1 is live in `res://game/actors/operator/operator.gd`: `use_field_patch` is bound to keyboard `P`, starts with 1 carried patch out of a baseline max of 2, uses a 1.25s vulnerable commit window, slows movement to 35%, restores 35% max health only at commit, and preserves the patch if interrupted before commit. Damage, attack, dodge, reload, death, terminal/inventory/UI/runtime locks, and field-work input cancel the use before commit. Compact HUD health text reads `PATCH n/max` or `PATCHING x.xs` through `Operator.get_field_patch_status()`. Restock v1 is terminal/fabrication based: recipe `lattice_field_patch` costs `resin_clot` x2, `signal_filament` x1, and `capacitor_dust` x1, completes as an `operator_consumable` output after a short fabrication job, consumes resources only when the Operator is below carry cap, and grants through `add_field_patches(...)`; `res://game/actors/items/consumables/lattice_field_patch_pickup.tscn` provides rare emergency-cache pickup support that grants +1 patch below cap or fallback materials when full. Normal enemy health-potion drops and passive combat refill are not part of the live contract.
-- Field Patch use presentation now has an explicit modular Operator runtime path. The modular builder can emit `field_patch_use_01` lower-body, upper-body, and upper-FX modules under `operator/runtime/animations/unarmed/interaction/field_patch_use_01/`; `update_operator_curated_resources.gd` registers them as `field_patch_use_{lower,upper,fx}` E/W animations, and `operator.gd` plays those layers only during the existing patch-use window. Healing timing, interruption, and count semantics remain unchanged, and missing generated SpriteFrames fall back to the previous locomotion presentation with a warning.
+- Field Patch use presentation has an explicit modular Operator runtime path. The modular builder emits `field_patch_use_01` lower-body, upper-body, and upper-FX modules under `operator/runtime/animations/unarmed/interaction/field_patch_use_01/`; generated compatibility resources preserve the `field_patch_use_{lower,upper,fx}` E/W aliases and `update_operator_compatibility_resources.py` keeps their semantic runtime paths current. `operator.gd` plays those layers only during the existing patch-use window. Healing timing, interruption, and count semantics remain unchanged, and missing generated SpriteFrames fall back to the previous locomotion presentation with a warning.
 - Operator ordinary light hit recoil now atomically plays synchronized modular lower/upper five-frame N/S
   `idle_hitreact_01` layers, with the existing modular head joining when available. Facing at reaction start selects art;
   diagonals use nearest vertical art and E/W ties preserve the previous resolved vertical sector. Missing either required

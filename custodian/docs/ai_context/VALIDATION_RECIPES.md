@@ -829,6 +829,7 @@ For modular Operator naming/routing and generic action module generation:
 python -m py_compile custodian/tools/pipelines/generate_inbox_manifests.py custodian/tools/pipelines/build_actor_spriteframes.py
 python custodian/tools/validation/non_operator_actor_pipeline_smoke.py
 python custodian/tools/validation/operator_modular_pipeline_smoke.py
+python custodian/tools/validation/operator_compatibility_resources_smoke.py
 godot --headless --path custodian \
   --script res://tools/validation/sprite_directional_mirror_pipeline_smoke.gd
 ```

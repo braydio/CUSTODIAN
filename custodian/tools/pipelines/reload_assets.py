@@ -11,6 +11,18 @@ PROJECT_DIR = SCRIPT_DIR.parent.parent
 
 
 def main() -> int:
+    compatibility = subprocess.run(
+        [sys.executable, str(SCRIPT_DIR / "update_operator_compatibility_resources.py")],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if compatibility.stdout:
+        print(compatibility.stdout, end="")
+    if compatibility.stderr:
+        print(compatibility.stderr, file=sys.stderr, end="")
+    if compatibility.returncode != 0:
+        return compatibility.returncode
     command = [
         "godot",
         "--headless",

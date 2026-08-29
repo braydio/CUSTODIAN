@@ -95,6 +95,10 @@ if [[ "$APPLY" -eq 0 ]]; then
   exit 0
 fi
 
+echo "== Operator compatibility resource path update =="
+python3 custodian/tools/pipelines/update_operator_compatibility_resources.py
+echo ""
+
 if [[ "$NO_IMPORT" -eq 0 ]]; then
   echo "== Godot import =="
   godot --headless --path custodian --import --quit
@@ -104,7 +108,7 @@ else
   echo ""
 fi
 
-echo "== Operator curated resource update =="
+echo "== Operator catalog resource update =="
 godot --headless --path custodian --script res://tools/pipelines/build_operator_animation_resources.gd
 echo ""
 
