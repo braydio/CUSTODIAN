@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://blp2dsfpeq8kr"
-path="res://.godot/imported/grunt_taunt_04.png-742ef93aa0a967495fe7f4f9192cfced.ctex"
+path="res://.godot/imported/grunt_taunt_04.png-6feeb43d94427e20e60419e0caa7a94c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/incoming/grunt_taunt_04.png"
-dest_files=["res://.godot/imported/grunt_taunt_04.png-742ef93aa0a967495fe7f4f9192cfced.ctex"]
+source_file="res://content/sprites/enemies/enemy_grunt/source_sheets/grunt_taunt_04.png"
+dest_files=["res://.godot/imported/grunt_taunt_04.png-6feeb43d94427e20e60419e0caa7a94c.ctex"]
 
 [params]
 
