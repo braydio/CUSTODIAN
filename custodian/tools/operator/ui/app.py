@@ -1,0 +1,262 @@
+"""Textual application shell for the Operator Workbench."""
+from __future__ import annotations
+
+import asyncio
+import shutil
+import subprocess
+from pathlib import Path
+
+from textual.app import App
+from textual.binding import Binding
+from textual.widgets import Input
+
+from .dialogs import (
+    ErrorDialog, FrameAddDialog, FrameRemoveDialog, PublishDialog, RefreshDialog,
+    ValidationDialog, WeaponContextDialog,
+)
+from .features import AnimationFeature
+from .screens import MainScreen
+from .service import WorkbenchService
+from .state import AnimationSelection, WorkbenchUIState
+from .widgets import ActivityLog, AnimationDetail, AnimationTree, LayerTable, WorkbenchStatusBar
+
+
+class OperatorWorkbenchApp(App):
+    TITLE = "Operator Workbench"
+    CSS = """
+    Screen { background: #11151c; color: #d8dee9; }
+    #workbench-status { height: 3; padding: 1 2; background: #202734; color: #eceff4; }
+    #search { height: 3; margin: 0 1; }
+    .hidden { display: none; }
+    #workspace-row { height: 1fr; }
+    #navigation-pane { width: 28%; min-width: 28; border: solid #4c566a; }
+    #detail-pane { width: 42%; border: solid #4c566a; padding: 1 2; }
+    #layers-pane { width: 30%; border: solid #4c566a; }
+    #animation-tree { height: 1fr; }
+    #layer-table { height: 1fr; }
+    #activity-pane { height: 10; border: solid #4c566a; }
+    #activity-log { height: 1fr; padding: 0 1; }
+    .pane-title { height: 1; padding: 0 1; text-style: bold; background: #202734; }
+    .dialog { width: 72; max-height: 90%; margin: 4 8; padding: 1 2; border: thick #81a1c1; background: #202734; }
+    .publish-dialog { width: 96; }
+    .error-dialog { border: thick #bf616a; }
+    .dialog-title { height: 2; text-align: center; text-style: bold; }
+    .dialog-body { height: auto; max-height: 1fr; overflow-y: auto; }
+    .dialog-buttons { height: 3; align-horizontal: right; margin-top: 1; }
+    .dialog-buttons Button { margin-left: 1; }
+    """
+    BINDINGS = [
+        ("q", "quit", "Quit"), Binding("slash", "search", "Search", priority=True), ("f5", "full_refresh", "Reload"),
+        ("question_mark", "help", "Help"), ("e", "edit", "Edit"), ("a", "add_frame", "Add Frame"),
+        ("x", "remove_frame", "Remove Frame"), ("p", "publish", "Publish"),
+        ("r", "refresh_workbench", "Refresh"), ("w", "weapon_context", "Weapon"),
+        ("v", "validate", "Validate"), ("j", "cursor_down", "Down"), ("k", "cursor_up", "Up"),
+    ]
+
+    def __init__(self, service: WorkbenchService | None = None, startup: AnimationSelection | None = None) -> None:
+        super().__init__(); self.service = service or WorkbenchService(); self.state = WorkbenchUIState(selection=startup)
+        self.features = {"animations": AnimationFeature(self.service)}; self.session_view = None
+
+    def on_mount(self) -> None:
+        self.push_screen(MainScreen())
+        self.call_after_refresh(self.action_full_refresh)
+        self.set_interval(1.0, self._watch_selected)
+
+    def _widget(self, selector, kind): return self.screen.query_one(selector, kind)
+
+    def _activity(self, message: str, severity: str = "INFO") -> None:
+        event = self.state.add_activity(message, severity)
+        self._widget("#activity-log", ActivityLog).add_event(event)
+
+    async def _thread(self, function, *args): return await asyncio.to_thread(function, *args)
+
+    def _error(self, error: Exception) -> None:
+        projected = self.service.project_error(error); self._activity(projected.message.splitlines()[0], "ERROR")
+        self.push_screen(ErrorDialog(projected.title, projected.message))
+
+    def _repo_status(self) -> tuple[str, bool]:
+        try:
+            branch = subprocess.run(["git", "branch", "--show-current"], cwd=self.service.repo_root, text=True, capture_output=True, check=True).stdout.strip() or "detached"
+            dirty = bool(subprocess.run(["git", "status", "--porcelain"], cwd=self.service.repo_root, text=True, capture_output=True, check=True).stdout)
+            return branch, dirty
+        except (OSError, subprocess.CalledProcessError): return "unknown", False
+
+    async def _reload_browser(self) -> None:
+        try:
+            records = await self._thread(self.features["animations"].refresh)
+            query = self.state.search_filter
+            filtered = self.service.filter_records(records, query)
+            tree = self._widget("#animation-tree", AnimationTree); tree.set_records(filtered)
+            if self.state.selection and not self.state.selection.group:
+                requested = self.state.selection
+                matches = [row.selection for row in filtered if (
+                    row.selection.profile, row.selection.action, row.selection.direction
+                ) == (requested.profile, requested.action, requested.direction)]
+                if len(matches) == 1:
+                    resolved = matches[0]
+                    self.state.selection = AnimationSelection(
+                        resolved.profile, resolved.group, resolved.action, resolved.direction,
+                        requested.weapon_id, requested.linked_profile,
+                    )
+            if self.state.selection and tree.select_identity(self.state.selection): await self._load_session(self.state.selection)
+            elif filtered:
+                self.state.selection = filtered[0].selection; tree.select_identity(self.state.selection); await self._load_session(self.state.selection)
+            branch, dirty = await self._thread(self._repo_status)
+            aseprite = str(self.service.workbench.resolve_aseprite(self.service.aseprite) or "unavailable")
+            self._widget("#workbench-status", WorkbenchStatusBar).set_status(branch, dirty, aseprite)
+            self._activity(f"browser refreshed ({len(filtered)} animations)", "OK")
+        except Exception as error: self._error(error)
+
+    async def _load_session(self, selection: AnimationSelection) -> None:
+        try:
+            session = await self._thread(self.service.session, selection); self.session_view = session
+            self.state.selection = selection; self.state.watch_signature = self.service.watch_signature(selection)
+            self._widget("#animation-detail", AnimationDetail).show_session(session)
+            self._widget("#layer-table", LayerTable).show_session(session)
+        except Exception as error: self._error(error)
+
+    async def on_animation_tree_selected(self, event: AnimationTree.Selected) -> None:
+        await self._load_session(event.selection); self._activity(f"selected {event.selection.identity}")
+
+    async def on_input_changed(self, event: Input.Changed) -> None:
+        if event.input.id != "search": return
+        self.state.search_filter = event.value
+        records = self.features["animations"].build_navigation(event.value)
+        self._widget("#animation-tree", AnimationTree).set_records(records)
+
+    def action_search(self) -> None:
+        search = self._widget("#search", Input); search.remove_class("hidden"); search.focus()
+
+    def action_cursor_down(self) -> None: self._widget("#animation-tree", AnimationTree).action_cursor_down()
+    def action_cursor_up(self) -> None: self._widget("#animation-tree", AnimationTree).action_cursor_up()
+    def action_full_refresh(self) -> None: self.run_worker(self._reload_browser(), group="browser", exclusive=True)
+
+    async def _watch_selected(self) -> None:
+        selection = self.state.selection
+        if not selection: return
+        signature = self.service.watch_signature(selection)
+        if signature != self.state.watch_signature:
+            self.state.watch_signature = signature; self._activity("workbench changed", "OK"); await self._load_session(selection)
+        process = self.state.aseprite_process
+        if process is not None and process.poll() is not None:
+            self.state.aseprite_process = None; self._activity("Aseprite closed")
+        if self.state.active_operation:
+            tx = self.service.transaction_state(selection)
+            if tx and getattr(self, "_last_tx_state", "") != tx[0]:
+                self._last_tx_state = tx[0]; severity = "ERROR" if tx[0] in ("ROLLED_BACK", "RECOVERY_REQUIRED") else "OK"
+                self._activity(tx[0].replace("_", " "), severity)
+                if tx[0] == "RECOVERY_REQUIRED": self.push_screen(ErrorDialog("RECOVERY_REQUIRED", f"RECOVERY_REQUIRED\n{tx[1]}"))
+
+    def _require_selection(self) -> AnimationSelection | None:
+        if not self.state.selection: self._error(RuntimeError("Select an animation first")); return None
+        return self.state.selection
+
+    def _guard(self, operation: str) -> bool:
+        if self.state.active_operation:
+            selection = self.state.selection.identity if self.state.selection else ""
+            self._error(RuntimeError(f"Operator Workbench operation already running:\n{self.state.active_operation} {selection}")); return False
+        self.state.active_operation = operation; return True
+
+    async def _mutate(self, operation: str, function, *args) -> None:
+        if not self._guard(operation): return
+        selection = self.state.selection
+        self._activity(f"{operation.lower()} started")
+        try:
+            result = await self._thread(function, *args)
+            if operation == "EDIT": self.state.aseprite_process = result; self._activity("ASEPRITE OPEN", "OK")
+            else: self._activity(f"{operation.lower()} complete", "OK")
+            if operation == "PUBLISH" and selection:
+                transaction = self.service.transaction_state(selection)
+                if transaction:
+                    severity = "ERROR" if transaction[0] in ("ROLLED_BACK", "RECOVERY_REQUIRED") else "OK"
+                    self._activity(transaction[0].replace("_", " "), severity)
+            if selection: await self._load_session(selection)
+            if operation == "PUBLISH": await self._reload_browser()
+        except Exception as error: self._error(error)
+        finally: self.state.active_operation = ""
+
+    def action_edit(self) -> None:
+        selection=self._require_selection()
+        if selection:self.run_worker(self._mutate("EDIT",self.service.edit,selection),group="mutation")
+
+    async def _prepare_add(self) -> None:
+        selection=self._require_selection()
+        if not selection:return
+        try:
+            current=self.session_view.workspace_frames if self.session_view else 1; position=max(1,current//2)
+            preview=await self._thread(self.service.frame_preview,selection,"add",position,"duplicate-prev")
+            self.push_screen(FrameAddDialog(preview),self._accept_frame)
+        except Exception as error:self._error(error)
+    def action_add_frame(self)->None:
+        if self._guard_preview(): self.run_worker(self._prepare_add(),group="preview",exclusive=True)
+
+    async def _prepare_remove(self)->None:
+        selection=self._require_selection()
+        if not selection:return
+        try:
+            current=self.session_view.workspace_frames if self.session_view else 1;position=max(1,current)
+            preview=await self._thread(self.service.frame_preview,selection,"remove",position,"duplicate-prev")
+            self.push_screen(FrameRemoveDialog(preview),self._accept_frame)
+        except Exception as error:self._error(error)
+    def action_remove_frame(self)->None:
+        if self._guard_preview(): self.run_worker(self._prepare_remove(),group="preview",exclusive=True)
+
+    def _accept_frame(self,result:dict|None)->None:
+        selection=self.state.selection
+        if result and selection:self.run_worker(self._mutate("FRAME MIGRATION",self.service.frame_apply,selection,result["operation"],result["position"],result["fill"]),group="mutation")
+
+    async def _prepare_publish(self)->None:
+        selection=self._require_selection()
+        if not selection:return
+        try:
+            preview=await self._thread(self.service.publish_preview,selection,False)
+            process=self.state.aseprite_process;opened=process is not None and process.poll() is None
+            self.push_screen(PublishDialog(preview,opened),self._accept_publish)
+        except Exception as error:self._error(error)
+    def action_publish(self)->None:
+        if self._guard_preview(): self.run_worker(self._prepare_publish(),group="preview",exclusive=True)
+    def _accept_publish(self,full:bool|None)->None:
+        if full is not None and self.state.selection:self.run_worker(self._mutate("PUBLISH",self.service.publish,self.state.selection,full),group="mutation")
+
+    def action_refresh_workbench(self)->None:
+        if not self._guard_preview(): return
+        selection=self._require_selection()
+        if not selection:return
+        if self.session_view and (self.session_view.workbench_state!="CLEAN" or self.session_view.migration):
+            self.push_screen(RefreshDialog(),lambda discard:self._accept_refresh(discard))
+        else:self.run_worker(self._mutate("REFRESH",self.service.refresh,selection,False),group="mutation")
+    def _accept_refresh(self,discard:bool|None)->None:
+        if discard and self.state.selection:self.run_worker(self._mutate("REFRESH",self.service.refresh,self.state.selection,True),group="mutation")
+
+    def action_weapon_context(self)->None:
+        selection=self._require_selection()
+        if selection:self.push_screen(WeaponContextDialog(self.service.known_weapons(),selection.weapon_id),self._accept_weapon)
+    def _accept_weapon(self,weapon_id:str|None)->None:
+        old=self.state.selection
+        if weapon_id is None or not old:return
+        linked=next((x["animation_profile"] for x in self.service.known_weapons() if x["weapon_id"]==weapon_id),"")
+        self.state.selection=AnimationSelection(old.profile,old.group,old.action,old.direction,weapon_id,linked)
+        self.run_worker(self._load_session(self.state.selection),group="session",exclusive=True)
+
+    def action_validate(self)->None:
+        if self._guard_preview() and self._require_selection():self.push_screen(ValidationDialog(),self._accept_validation)
+
+    def _guard_preview(self)->bool:
+        if not self.state.active_operation:return True
+        selection=self.state.selection.identity if self.state.selection else ""
+        self._error(RuntimeError(f"Operator Workbench operation already running:\n{self.state.active_operation} {selection}"));return False
+    def _accept_validation(self,full:bool|None)->None:
+        if full is not None and self.state.selection:self.run_worker(self._run_validation(full),group="mutation")
+    async def _run_validation(self,full:bool)->None:
+        if not self._guard("VALIDATION"):return
+        try:
+            for line in await self._thread(self.service.validate,self.state.selection,full):self._activity(line)
+            self._activity("validation complete","OK")
+        except Exception as error:self._error(error)
+        finally:self.state.active_operation=""
+
+
+def run_operator_workbench(*, profile: str = "", group: str = "", action: str = "", direction: str = "", weapon: str = "", linked_profile: str = "") -> int:
+    startup = AnimationSelection(profile, group, action, direction, weapon, linked_profile) if all((profile, action, direction)) else None
+    OperatorWorkbenchApp(startup=startup).run()
+    return 0

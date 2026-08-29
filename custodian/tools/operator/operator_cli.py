@@ -10,6 +10,9 @@ def common(p,identity=True,dry_run=False):
     if dry_run: p.add_argument("--dry-run",action="store_true")
 def main():
     ap=argparse.ArgumentParser(prog="operator"); a=ap.add_subparsers(dest="area",required=True); anim=a.add_parser("anim").add_subparsers(dest="cmd",required=True)
+    ui=a.add_parser("ui",help="open the optional interactive Operator Workbench")
+    for name in ("profile","group","action","direction","weapon","linked_profile"):
+        ui.add_argument(f"--{name.replace('_','-')}",default="")
     lp=anim.add_parser("list"); lp.add_argument("profile"); lp.add_argument("--group",default=""); lp.add_argument("--json",action="store_true")
     for name in ("status","edit","refresh"): common(anim.add_parser(name))
     common(anim.add_parser("publish"),dry_run=True)
@@ -18,6 +21,15 @@ def main():
     remove=frame.add_parser("remove"); common(remove,dry_run=True); remove.add_argument("--frame",type=int,required=True); remove.add_argument("--layers",default="auto")
     anim.choices["edit"].add_argument("--no-open",action="store_true"); anim.choices["refresh"].add_argument("--discard-edits",action="store_true"); anim.choices["publish"].add_argument("--force-stale-source",action="store_true"); anim.choices["publish"].add_argument("--full-validate",action="store_true")
     x=ap.parse_args()
+    if x.area=="ui":
+        try:
+            from ui.app import run_operator_workbench
+        except ModuleNotFoundError as error:
+            if error.name and error.name.split(".")[0]=="textual":
+                from ui import OPTIONAL_DEPENDENCY_MESSAGE
+                print(f"operator: {OPTIONAL_DEPENDENCY_MESSAGE}",file=sys.stderr);return 2
+            raise
+        return run_operator_workbench(profile=x.profile,group=x.group,action=x.action,direction=x.direction,weapon=x.weapon,linked_profile=x.linked_profile)
     try:
         if x.cmd=="list":
             idx=m.source_index(); rows={}

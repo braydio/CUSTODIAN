@@ -1,5 +1,20 @@
 # CURRENT STATE — CUSTODIAN
 
+## Operator Workbench Interactive UI V1 (2026-08-29)
+
+`operator ui` is the preferred interactive Operator animation authoring front
+door. Its optional Textual dependency is isolated under
+`tools/operator/ui/requirements.txt`; all `operator anim` automation remains
+usable without it. The provider-based shell registers the animation feature,
+while one structured service projects Workbench V2 source/session/layer,
+migration, publish, weapon, validation, and transaction-journal state.
+
+The TUI provides semantic tree/search navigation, nonblocking Aseprite launch,
+selected-workbench mtime refresh, dependency-gated add/remove review, mandatory
+publish review, journal-backed progress, readable Workbench errors, and a
+single-operation UI guard. Authority remains: TUI → Workbench V2 backend →
+canonical PNG source → existing runtime and compatibility pipeline.
+
 ## Ritualant Mapper-Backed Arena Re-authoring (2026-08-29)
 
 The fixed Ash-Bell Underground chapel is now `40x30` / `1280x960` at the

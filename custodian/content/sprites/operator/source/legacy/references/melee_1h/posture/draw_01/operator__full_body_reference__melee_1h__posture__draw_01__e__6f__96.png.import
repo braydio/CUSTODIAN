@@ -10,7 +10,7 @@ metadata={
 
 [deps]
 
-source_file="res://content/sprites/operator/source/animations/melee_1h/posture/draw_01/operator__full_body_reference__melee_1h__posture__draw_01__e__6f__96.png"
+source_file="res://content/sprites/operator/source/legacy/references/melee_1h/posture/draw_01/operator__full_body_reference__melee_1h__posture__draw_01__e__6f__96.png"
 dest_files=["res://.godot/imported/operator__full_body_reference__melee_1h__posture__draw_01__e__6f__96.png-97c045618bc04f804c1a2260fe0ff0a1.ctex"]
 
 [params]

@@ -38,6 +38,10 @@ For semantic Operator pixel editing, source aliases and use `operator anim
 list|status|edit|refresh|publish`. Canonical PNG source remains authority; the
 workspace under `.ai/operator_animation_workbench/` is disposable and outside
 `res://`.
+For interactive work, install the optional dependency from
+`custodian/tools/operator/ui/requirements.txt` in a virtual environment and
+run `operator ui`. The TUI is a control cockpit over Workbench V2; Aseprite is
+still the editor and the CLI remains available for scripts.
 Use `operator anim frame add ... --after N --dry-run` or `frame remove ...
 --frame N --dry-run` to inspect an explicit frame-contract migration. Run
 without `--dry-run` to stage it, edit the new timeline, then publish.

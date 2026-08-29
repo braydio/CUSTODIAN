@@ -5,6 +5,20 @@
 Canonical PNG source is authority. The ignored `.aseprite` workbench is a
 disposable editing surface outside `res://`.
 
+The preferred interactive authoring front door is the optional Textual UI:
+
+```sh
+python3 -m venv --system-site-packages .ai/operator-ui-venv
+.ai/operator-ui-venv/bin/pip install -r custodian/tools/operator/ui/requirements.txt
+.ai/operator-ui-venv/bin/python custodian/tools/operator/operator_cli.py ui
+```
+
+If the `operator` alias uses that environment, the final command is simply
+`operator ui`. Optional startup context accepts `--profile`, `--group`,
+`--action`, `--direction`, `--weapon`, and `--linked-profile`. The TUI calls
+the same structured Workbench V2 Python APIs as the CLI; it never executes or
+parses `operator anim` output. Aseprite remains the visual editor.
+
 ```sh
 operator anim list melee_1h --group posture
 operator anim status melee_1h idle_relaxed_01 e --weapon vigil_pattern_dagger
@@ -19,6 +33,11 @@ Workspaces default to `.ai/operator_animation_workbench/<profile>/<group>/<actio
 Use `--dry-run` on frame or publish commands to inspect without mutation. Frame
 commands stage a dependency-audited migration in `.ai`; only publish changes
 canonical PNG contracts.
+
+The UI supplies searchable semantic navigation, layer/reference inspection,
+nonblocking Aseprite launch, saved-workbench change detection, dependency-
+audited frame review, mandatory publish review, transaction-journal progress,
+and standard/full validation. The CLI remains the automation front door.
 
 Publish refreshes the V2 runtime first, then runs
 `tools/pipelines/update_operator_compatibility_resources.py` before Godot

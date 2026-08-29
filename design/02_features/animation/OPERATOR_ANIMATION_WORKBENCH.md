@@ -12,7 +12,27 @@ V2 edits pixels and stages explicit frame-count contract migrations. It cannot c
 
 ## Workflow
 
+The preferred interactive front door is `operator ui`. It is an optional
+Textual control surface beside the scriptable CLI, not a wrapper around it:
+
+```text
+                    operator anim CLI
+                   /
+Workbench V2 APIs
+                   \
+                    operator ui TUI → Aseprite
+```
+
+The UI holds only selection, presentation, activity, process handles, and an
+operation lock. It resolves source/session state, migrations, publish dry-runs,
+weapon metadata, validation, and transaction progress through one structured
+service over this backend. Publish always requires a UI review modal. Aseprite
+launch is nonblocking and publishing explicitly uses the last saved document.
+Textual is isolated to `tools/operator/ui/requirements.txt`; its absence must
+not affect any command below.
+
 ```bash
+operator ui
 operator anim list melee_1h --group posture
 operator anim status melee_1h idle_relaxed_01 e --weapon vigil_pattern_dagger
 operator anim edit melee_1h idle_relaxed_01 e --weapon vigil_pattern_dagger
@@ -70,3 +90,11 @@ the modular-layer smoke. Failure of that recovery becomes `RECOVERY_REQUIRED`.
 ## Acceptance
 
 The smoke covers exact extraction after rectangular-canvas placement, illegal outside-rectangle pixels, and current lower/upper/Vigil semantic resolution. Aseprite headless assembly is exercised by the non-destructive edit demo when the executable is available.
+
+`operator_workbench_ui_smoke.py` exercises browser/session/context/error
+projections without a terminal, then uses Textual's headless pilot when the
+optional dependency is installed. It proves search, six-frame run detail,
+add-frame dry-run review/cancel, and publish review/cancel without canonical
+source mutation. Image rendering and an embedded sprite editor are deliberate
+V1 deferrals; a future preview adapter may target Kitty, chafa, contact sheets,
+or Aseprite without changing the service/provider boundary.
