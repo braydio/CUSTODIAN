@@ -432,7 +432,7 @@ Last updated: 2026-08-20
 - `custodian/game/vfx/combat/parry_contact_spark_vfx.tscn` — non-looping world-space six-frame parry contact spark that auto-frees at animation completion
 - `custodian/game/vfx/combat/critical_breach_marker_vfx.tscn` — enemy-attached floating BREACH marker held visibly for the gameplay-owned critical window
 - `custodian/game/vfx/combat/critical_window_ring_vfx.tscn` — enemy-attached twelve-frame countdown reticle scaled to the supplied critical-window duration
-- `custodian/game/vfx/combat/parry_success_burst_vfx.gd` / `.tscn` — independently owned world-space parry-success one-shot that reuses the validated six-frame contact strip and survives Operator modular-layer transitions
+- `custodian/game/vfx/combat/parry_success_burst_vfx.gd` / `.tscn` — independently owned world-space parry-success one-shot that plays the canonical authored five-frame Operator success sheet and survives modular-layer transitions
 - `custodian/content/audio/sfx/combat/parry_success_01.wav` — 0.61-second positional confirmation cue spawned exactly once at the resolved contact point by Operator parry-success authority
 - `custodian/content/spriteframes/effects/combat/` — compact SpriteFrames resources slicing the required contact, BREACH, and countdown runtime strips
 - `custodian/game/actors/allies/allied_infantry_droid.tscn` — active main-scene allied droid presentation with animated SpriteFrames, muzzle marker, health bar, status label, and inherited combat behavior

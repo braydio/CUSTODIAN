@@ -284,10 +284,10 @@ reaction clips play through the existing block state path, and exit reuses entry
 movement remains slowed by `block_move_multiplier`; the lower layer reuses modular `unarmed_walk` locomotion while the
 upper layer holds the authored block loop. Parry gameplay now uses the same state path for timing, plays the generated
 modular `parry_01` lower/upper/FX stack when available, and falls back to block animations when `unarmed_parry*` clips are missing. The curated `parry_01` playback is intentionally
-registered at 12 FPS for a slightly heavier read. Successful parries spawn an independent world-space success burst
-at the captured contact point. It currently reuses the validated six-frame contact strip through a dedicated one-shot
-scene, so post-parry body/neutral transitions cannot hide it. `PLACEHOLDER_unarmed_parry_success_fx*` remains an
-optional modular motion overlay; missing directional coverage warns and falls back without owning success readability.
+registered at 12 FPS for a slightly heavier read. Successful parries spawn the authored five-frame
+`operator__fx__unarmed__defense__parry_success_01` sheet as an independent world-space success burst at the captured
+contact point. The dedicated one-shot scene survives post-parry body/neutral transitions, mirrors the authored east
+strip for west-facing contact, and replaces the former contact-strip reuse plus optional placeholder modular overlay.
 
 Asset rule: unarmed body motion and unarmed FX should be separate runtime layers. If an existing clean body strip
 matches the needed motion, reuse it for body frames and put fist impact/trail pixels in an unarmed FX overlay.

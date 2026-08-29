@@ -362,6 +362,15 @@ func _validate_offhand_parry_guard(operator: Node, root: Node) -> void:
 	_assert_true(is_equal_approx(attacker.parry_duration, float(operator.get("parry_enemy_stagger_sec"))), "parry should use exported stagger duration")
 	_assert_true(is_equal_approx(attacker.parry_knockback, float(operator.get("parry_enemy_knockback"))), "parry should use exported knockback")
 	_assert_true(operator.get("_parry_phase") == &"success", "successful parry should enter success recovery")
+	var parry_success_vfx := operator.get_tree().get_nodes_in_group("parry_success_world_vfx")
+	_assert_true(parry_success_vfx.size() == 1, "successful parry should create exactly one authored success burst")
+	if parry_success_vfx.size() == 1:
+		var success_sprite := parry_success_vfx[0].get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
+		_assert_true(success_sprite != null, "authored parry-success burst should expose its animation sprite")
+		if success_sprite != null:
+			_assert_true(success_sprite.animation == &"success", "authored parry-success burst should play the success animation")
+			_assert_true(success_sprite.sprite_frames.get_frame_count(&"success") == 5, "authored parry-success burst should use all five inbox frames")
+			_assert_true(is_equal_approx(success_sprite.sprite_frames.get_animation_speed(&"success"), 20.0), "authored parry-success burst should play at 20 FPS")
 	var parry_success_audio := operator.get_tree().get_nodes_in_group("parry_success_audio")
 	_assert_true(parry_success_audio.size() == 1, "successful parry should create exactly one positional success sound")
 	if parry_success_audio.size() == 1:

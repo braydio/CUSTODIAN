@@ -5829,15 +5829,9 @@ func _spawn_parry_success_fx(contact_position: Vector2) -> Node2D:
 		direction = visual_idle_direction
 	if direction.length_squared() <= 0.001:
 		direction = Vector2.DOWN
-	if _play_modular_parry_fx(direction, "PLACEHOLDER_unarmed_parry_success_fx"):
-		return burst
-	var placeholder_animation := AnimationResolver.resolve(
-		"PLACEHOLDER_unarmed_parry_success_fx",
-		direction,
-		modular_upper_fx_sprite
-	)
-	_warn_missing_animation_once(String(placeholder_animation), "independent world-space parry success burst")
-	_play_modular_parry_fx(direction, "unarmed_parry_fx")
+	var burst_sprite := burst.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
+	if burst_sprite != null:
+		burst_sprite.flip_h = direction.x < -0.001
 	return burst
 
 
