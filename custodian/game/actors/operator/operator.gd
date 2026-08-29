@@ -5724,26 +5724,6 @@ func guard_apply_parry_success(attacker: Node2D, hit_direction: Vector2, hit_dat
 	})
 
 
-func _spawn_parry_miss_fx() -> void:
-	var miss_fx := PARRY_CONTACT_SPARK_VFX_SCENE.instantiate() as Node2D
-	if miss_fx == null:
-		return
-	var parent := get_tree().current_scene
-	if parent == null:
-		parent = get_parent()
-	parent.add_child(miss_fx)
-	var direction := _get_attack_aim_direction()
-	if direction.length_squared() <= 0.001:
-		direction = visual_idle_direction
-	if direction.length_squared() <= 0.001:
-		direction = Vector2.DOWN
-	miss_fx.global_position = global_position + direction.normalized() * 20.0
-	miss_fx.modulate = Color(1.0, 0.34, 0.24, 0.72)
-	miss_fx.add_to_group("parry_miss_world_vfx")
-	_obs_increment(&"player_parry_miss_vfx_spawned")
-	_obs_log(&"player_parry_miss_vfx_spawned", {"position": miss_fx.global_position})
-
-
 func _spawn_parry_contact_spark(contact_position: Vector2) -> void:
 	var spark := PARRY_CONTACT_SPARK_VFX_SCENE.instantiate() as Node2D
 	if spark == null:
@@ -9717,7 +9697,6 @@ func guard_on_parry_active() -> void:
 func guard_on_parry_expired() -> void:
 	_obs_increment(&"player_parry_expired")
 	_obs_log(&"player_parry_expired", {"position": global_position})
-	_spawn_parry_miss_fx()
 
 
 func guard_parry_animation_remaining() -> float:

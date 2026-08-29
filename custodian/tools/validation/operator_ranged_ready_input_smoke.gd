@@ -339,13 +339,13 @@ func _validate_offhand_parry_guard(operator: Node, root: Node) -> void:
 	_assert_true(operator.get("_block_phase") == &"recovery", "missed active parry should keep block recovery presentation")
 	_assert_true(operator.get_tree().get_nodes_in_group("parry_success_world_vfx").is_empty(), "missed active parry should not spawn success burst")
 	_assert_true(operator.get_tree().get_nodes_in_group("parry_success_audio").is_empty(), "missed active parry should not play the success sound")
-	_assert_true(not operator.get_tree().get_nodes_in_group("parry_miss_world_vfx").is_empty(), "missed active parry should spawn miss feedback")
+	_assert_true(operator.get_tree().get_nodes_in_group("parry_miss_world_vfx").is_empty(), "missed active parry should not spawn a contact spark")
 	if observatory != null:
 		var miss_counters: Dictionary = observatory.get("counters")
 		_assert_true(int(miss_counters.get("player_parry_started", 0)) == 1, "parry start telemetry should count the attempt")
 		_assert_true(int(miss_counters.get("player_parry_active", 0)) == 1, "parry active telemetry should count the timing window")
 		_assert_true(int(miss_counters.get("player_parry_expired", 0)) == 1, "parry expiry telemetry should count the miss")
-		_assert_true(int(miss_counters.get("player_parry_miss_vfx_spawned", 0)) == 1, "parry miss telemetry should count spawned feedback")
+		_assert_true(int(miss_counters.get("player_parry_miss_vfx_spawned", 0)) == 0, "parry expiry should not report removed miss VFX")
 
 	operator.call("_update_parry_guard_timers", float(operator.get("parry_recovery_sec")) + 0.01)
 	operator.set("_guard_held_timer", float(operator.get("parry_min_guard_time_sec")))
