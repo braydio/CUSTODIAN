@@ -26,6 +26,18 @@ var _show_draft := true
 var _show_help := true
 var _marker_mode := false
 var _selected_marker_index := 0
+var _semantic_groups := {
+	"boundary": true,
+	"encounter": true,
+	"hazard": true,
+	"interaction": true,
+	"camera": true,
+	"transition": true,
+	"art": true,
+	"traversal": true,
+}
+var _show_semantic_labels := true
+var _show_grid := true
 
 
 func _ready() -> void:
@@ -36,6 +48,8 @@ func _ready() -> void:
 	_refresh_marker_schema()
 	_update_help()
 	_overlay.queue_redraw()
+	if OS.get_cmdline_user_args().has("--mapper-snapshot"):
+		_capture_mapper_snapshot_and_quit.call_deferred()
 
 
 func _process(_delta: float) -> void:
@@ -152,12 +166,22 @@ func _handle_key(event: InputEventKey) -> void:
 			_cycle_selected_marker(1)
 		KEY_V:
 			_show_draft = not _show_draft
+		KEY_L:
+			_show_semantic_labels = not _show_semantic_labels
+		KEY_G:
+			_show_grid = not _show_grid
+		KEY_0:
+			_toggle_all_semantic_groups()
+		KEY_P:
+			_save_mapper_snapshot()
 		KEY_EQUAL, KEY_PLUS:
 			_zoom(zoom_step)
 		KEY_MINUS:
 			_zoom(1.0 / zoom_step)
 		_:
-			if event.keycode >= KEY_1 and event.keycode <= KEY_9:
+			if not _marker_mode and event.keycode >= KEY_1 and event.keycode <= KEY_8:
+				_toggle_semantic_group(event.keycode - KEY_1)
+			elif event.keycode >= KEY_1 and event.keycode <= KEY_9:
 				_selected_marker_index = clampi(event.keycode - KEY_1, 0, _marker_schema.size() - 1)
 				_marker_mode = true
 	_update_help()
@@ -490,15 +514,22 @@ func _marker_runtime_point(marker_id: String) -> Vector2:
 func _update_help() -> void:
 	if _hud == null:
 		return
-	_hud.text = "\n".join([
+	var lines := PackedStringArray([
 		mapper_title,
-		"Mode: %s   M: toggle collision/marker   1-9: marker type   PgUp/PgDn: previous/next   Selected: %s" % ["MARKER" if _marker_mode else "COLLISION", _selected_marker_id()],
+		"Mode: %s   M: collision/marker   Marker mode 1-9: type   PgUp/PgDn: cycle   Selected: %s" % ["MARKER" if _marker_mode else "COLLISION", _selected_marker_id()],
 		"Marker keys: %s" % _marker_shortcuts_text(),
 		"Collision mode: Left click add rail point   Right click undo   C copy rails   Enter/U apply rails",
 		"Marker mode: Left click place selected marker   Right click clear selected marker   C copy markers   Enter/U apply markers",
-		"WASD/arrows: pan   Wheel/+/-: zoom   E: existing rails   V: draft   R: reset current mode   H: help",
+		"Semantic: 1 boundary  2 encounter  3 hazards  4 interactions  5 cameras  6 transitions  7 art  8 traversal  0 all",
+		"L: labels   G: 32px grid   P: snapshot+JSON   WASD/arrows: pan   Wheel/+/-: zoom   E: rails   V: draft   H: help",
 		"Mouse runtime: %s   Source: %s" % [_fmt_vec(_mouse_world), _fmt_vec(_to_source_point(_mouse_world))],
 	])
+	var under_cursor := get_debug_geometry_under_point(_mouse_world)
+	if not under_cursor.is_empty():
+		lines.append("UNDER CURSOR")
+		for record: Dictionary in under_cursor:
+			lines.append("  %s — %s" % [str(record.get("label", record.get("id", ""))), str(record.get("details", ""))])
+	_hud.text = "\n".join(lines)
 
 
 func _marker_shortcuts_text() -> String:
@@ -527,4 +558,143 @@ func get_collision_mapper_state() -> Dictionary:
 		"mouse_world": _mouse_world,
 		"show_existing": _show_existing,
 		"show_draft": _show_draft,
+		"semantic_geometry": _get_semantic_geometry(),
+		"semantic_groups": _semantic_groups,
+		"show_semantic_labels": _show_semantic_labels,
+		"show_grid": _show_grid,
 	}
+
+
+func _get_semantic_geometry() -> Array[Dictionary]:
+	if _target_level == null or not _target_level.has_method("get_authoring_debug_geometry"):
+		return []
+	var raw: Variant = _target_level.call("get_authoring_debug_geometry")
+	var records: Array[Dictionary] = []
+	if raw is Array:
+		for value: Variant in raw:
+			if value is Dictionary and not (value as Dictionary).is_empty():
+				records.append(value as Dictionary)
+	return records
+
+
+func get_debug_geometry_under_point(point: Vector2) -> Array[Dictionary]:
+	var matches: Array[Dictionary] = []
+	for record: Dictionary in _get_semantic_geometry():
+		if not bool(_semantic_groups.get(str(record.get("group", "")), true)):
+			continue
+		if _debug_record_contains_point(record, point):
+			matches.append(record)
+	return matches
+
+
+func _debug_record_contains_point(record: Dictionary, point: Vector2) -> bool:
+	match str(record.get("shape", "")):
+		"rect", "sprite_rect", "band":
+			return (record.get("rect", Rect2()) as Rect2).has_point(point)
+		"circle":
+			return point.distance_to(record.get("center", Vector2.ZERO) as Vector2) <= float(record.get("radius", 0.0))
+		"point":
+			return point.distance_to(record.get("point", Vector2.ZERO) as Vector2) <= 18.0 / maxf(_camera.zoom.x, 0.05)
+		"polygon":
+			return Geometry2D.is_point_in_polygon(point, record.get("polygon", PackedVector2Array()) as PackedVector2Array)
+	return false
+
+
+func _toggle_semantic_group(index: int) -> void:
+	var groups := ["boundary", "encounter", "hazard", "interaction", "camera", "transition", "art", "traversal"]
+	if index < 0 or index >= groups.size():
+		return
+	var group: String = groups[index]
+	_semantic_groups[group] = not bool(_semantic_groups[group])
+
+
+func _toggle_all_semantic_groups() -> void:
+	var enable := false
+	for group: String in _semantic_groups:
+		if not bool(_semantic_groups[group]):
+			enable = true
+			break
+	for group: String in _semantic_groups:
+		_semantic_groups[group] = enable
+
+
+func _save_mapper_snapshot() -> void:
+	var level_id := target_scene_path.get_file().get_basename()
+	var relative_dir := "reports/level_maps/%s" % level_id
+	var absolute_dir := ProjectSettings.globalize_path("res://../%s" % relative_dir)
+	DirAccess.make_dir_recursive_absolute(absolute_dir)
+	var png_path := "%s/full_map.png" % absolute_dir
+	var json_path := "%s/full_map.json" % absolute_dir
+	var export := {
+		"level": level_id,
+		"gameplay_bounds": _records_for_groups(["boundary", "encounter"]),
+		"camera_zones": _records_for_groups(["camera"]),
+		"hazards": _records_for_groups(["hazard"]),
+		"interactions": _records_for_groups(["interaction"]),
+		"art_bounds": _records_for_groups(["art"]),
+		"transitions": _records_for_groups(["transition", "traversal"]),
+	}
+	var file := FileAccess.open(json_path, FileAccess.WRITE)
+	if file == null:
+		push_error("[LevelCollisionPoiMapper] Could not save mapper JSON snapshot")
+		return
+	file.store_string(JSON.stringify(_json_safe(export), "  "))
+	file.close()
+	if DisplayServer.get_name() == "headless":
+		push_warning(
+			"[LevelCollisionPoiMapper] Saved full_map.json; the dummy headless renderer "
+			+ "cannot capture full_map.png. Use P from the rendered mapper."
+		)
+		return
+	var viewport_texture := get_viewport().get_texture()
+	if viewport_texture == null:
+		push_warning(
+			"[LevelCollisionPoiMapper] Saved full_map.json; the dummy headless renderer "
+			+ "cannot capture full_map.png. Use P from the rendered mapper."
+		)
+		return
+	var image := viewport_texture.get_image()
+	if image == null or image.is_empty() or image.save_png(png_path) != OK:
+		push_error("[LevelCollisionPoiMapper] Saved full_map.json but could not save full_map.png")
+		return
+	print("[LevelCollisionPoiMapper] Saved %s/full_map.png and full_map.json" % relative_dir)
+
+
+func _capture_mapper_snapshot_and_quit() -> void:
+	await get_tree().process_frame
+	await get_tree().process_frame
+	_save_mapper_snapshot()
+	get_tree().quit()
+
+
+func _records_for_groups(groups: Array[String]) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for record: Dictionary in _get_semantic_geometry():
+		if groups.has(str(record.get("group", ""))):
+			result.append(record)
+	return result
+
+
+func _json_safe(value: Variant) -> Variant:
+	if value is Dictionary:
+		var result := {}
+		for key: Variant in (value as Dictionary).keys():
+			result[str(key)] = _json_safe((value as Dictionary)[key])
+		return result
+	if value is Array:
+		var result: Array = []
+		for item: Variant in value:
+			result.append(_json_safe(item))
+		return result
+	if value is Vector2:
+		return [value.x, value.y]
+	if value is Rect2:
+		return [value.position.x, value.position.y, value.size.x, value.size.y]
+	if value is PackedVector2Array:
+		var result: Array = []
+		for point: Vector2 in value:
+			result.append([point.x, point.y])
+		return result
+	if value is StringName or value is NodePath:
+		return str(value)
+	return value

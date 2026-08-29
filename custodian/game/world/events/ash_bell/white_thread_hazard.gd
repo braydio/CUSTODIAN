@@ -27,6 +27,13 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if site != null and site.suppresses_encounter_hazards():
+		# Discard stored cadence so dialogue cannot close into an immediate tick.
+		_tick_timer = tension_tick_interval
+		_visual_pulse = maxf(0.0, _visual_pulse - delta)
+		_update_visual(false)
+		return
+
 	_tick_timer = maxf(0.0, _tick_timer - delta)
 	_visual_pulse = maxf(0.0, _visual_pulse - delta)
 
@@ -58,7 +65,10 @@ func _physics_process(delta: float) -> void:
 func _on_body_entered(body: Node) -> void:
 	_bodies_inside[body] = true
 
-	if body != null and body.is_in_group("player") and site != null:
+	if body != null \
+	and body.is_in_group("player") \
+	and site != null \
+	and not site.suppresses_encounter_hazards():
 		site.event_state.add_thread_tension(entry_tension_amount, &"thread_entry")
 		_visual_pulse = 0.22
 

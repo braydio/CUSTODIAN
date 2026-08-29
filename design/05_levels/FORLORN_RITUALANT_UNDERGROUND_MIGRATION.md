@@ -94,7 +94,12 @@ The generic special-room system remains live for other encounters. Its documenta
 
 ## Room Mapper
 
-Open `res://scenes/debug/forlorn_ritualant_underground_mapper.tscn` to edit the chamber rails and its three authoritative spatial records: `descent_landing`, `return_world`, and `encounter_origin`. Press `M` to switch between collision and marker modes, use `1`–`3` or Page Up/Page Down to select a record, left-click to place it, and press Enter or `U` to write the matching constants in the authored-level script.
+Open `res://scenes/debug/forlorn_ritualant_underground_mapper.tscn` for the
+canonical visual diagnostic of gameplay, collision, camera, transition, and
+art alignment. The existing rail/marker authoring workflow remains available:
+press `M` to switch modes, use `1`–`3` or Page Up/Page Down to select
+`descent_landing`, `return_world`, or `encounter_origin`, left-click to place
+it, and press Enter or `U` to write the matching authority.
 
 Enter/`U` also applies the new rails or markers to the running mapper preview
 immediately. Marker positions are written into
@@ -105,6 +110,36 @@ that production authority rather than baking duplicate collision children into
 the scene.
 
 The return record directly positions `Exit_ReturnWorld`; there is intentionally no second `Return_CaveMouth` marker. The landing directly positions `Spawn_DescentLanding`, and the encounter origin directly positions the instanced `ForlornRitualantSite`.
+
+The mapper also renders runtime-derived semantic geometry. Keys `1`–`8` in
+collision mode filter boundary, encounter, hazard, interaction, camera,
+transition, art, and traversal groups; `0` toggles all, `L` toggles labels,
+and `G` toggles the 32 px grid. The HUD lists every semantic volume under the
+cursor with its runtime details. Art bounds come from live textures and global
+transforms; collision bounds come from live shapes; parallax records are
+explicitly labelled presentation-only. No debug overlay is a second geometry
+authority.
+
+Press `P` to export `reports/level_maps/forlorn_ritualant_underground/full_map.png`
+and `full_map.json`. Both use the same semantic records being rendered. The
+chapel remains `1120x864` with its current `1000x700` combat bounds until a
+mapper-backed review re-authors art and gameplay together; this mapper pass
+does not resize the arena.
+
+## Dialogue and Hostility Safety
+
+Dialogue ownership, encounter-resolution choreography, and terminal resolution
+all suppress White Thread and fountain hazard mutation. White Thread resets its
+tick interval while suppressed, so stored time cannot fire immediately when
+dialogue closes. Same-frame firearm or melee feedback is also ignored while
+dialogue owns Operator input.
+
+`AshBellEventState` requests hostility but does not directly declare it.
+`ForlornRitualantSite` is the sole hostility-transition authority: it records
+the reason, defers a request received during dialogue, then performs dialogue
+shutdown and NPC/presentation choreography after control is released. The
+mapper exposes the last cause, including `thread_snap`, `player_melee`,
+`player_firearm`, or a pressure-threshold reason.
 
 ## Presentation Scope
 

@@ -178,6 +178,10 @@ func get_authoring_markers() -> Dictionary:
 	return {}
 
 
+func get_authoring_debug_geometry() -> Array[Dictionary]:
+	return []
+
+
 func get_authoring_marker_schema() -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
 	for marker_id: Variant in get_authoring_markers().keys():

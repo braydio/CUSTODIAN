@@ -12,6 +12,18 @@
 > retired bell-component, or in-room Knot-pickup passages below are historical
 > and superseded by this correction plus the authored-route documents.
 
+> **Active mapper/safety correction (2026-08-29):** the production
+> `forlorn_ritualant_underground_mapper.tscn` is the canonical visual
+> diagnostic for art/gameplay alignment. Its semantic overlays are extracted
+> from live runtime nodes and textures, never separately authored geometry.
+> Dialogue, resolution, and terminal states suppress encounter-hazard mutation;
+> aggression feedback is ignored while dialogue owns Operator input; and every
+> hostility transition is requested through `ForlornRitualantSite`, which
+> records the cause and defers it until dialogue releases control. The current
+> `35x27` / `1120x864` chapel remains authoritative pending mapper-backed
+> re-authoring. Older size/layout implementation passages below are historical
+> reference, not permission to resize invisible bounds independently of art.
+
 This is the implementation spec for the fixed authored Ash-Bell Underground
 encounter. The player-facing motifs remain Ninth Bell, ash, Dry Fountain,
 black banners, white thread, and Saint Orra / the Unarrived Saint.

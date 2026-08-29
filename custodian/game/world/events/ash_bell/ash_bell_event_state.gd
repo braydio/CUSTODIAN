@@ -6,6 +6,7 @@ signal fountain_state_changed(new_state: int)
 signal resolution_changed(new_resolution: int)
 signal knowledge_unlocked(knowledge_id: StringName)
 signal thread_snapped
+signal hostility_requested(reason: StringName)
 
 enum FountainState {
 	ABSENT,
@@ -193,12 +194,11 @@ func restore_state(state: Dictionary, emit_changes := true) -> bool:
 	return true
 
 
-func _apply_pressure_thresholds(_reason: StringName) -> void:
+func _apply_pressure_thresholds(reason: StringName) -> void:
 	if silence_pressure >= 60 and fountain_state < FountainState.BLACK_WATER:
 		set_fountain_state(FountainState.BLACK_WATER)
 	elif silence_pressure >= 45 and fountain_state < FountainState.GHOST:
 		set_fountain_state(FountainState.GHOST)
 
 	if silence_pressure >= 90 and not ritualant_hostile:
-		ritualant_hostile = true
-		set_resolution(Resolution.PROVOKED_RITUALANT)
+		hostility_requested.emit(reason)

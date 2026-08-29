@@ -61,6 +61,8 @@ var _fountain_total_stand_time: float = 0.0
 var _completed: bool = false
 var _dialogue_sequence: int = 0
 var _resolution_sequence_running := false
+var _deferred_hostility_reason: StringName = &""
+var _debug_last_hostility_reason: StringName = &""
 
 var _fountain_stabilize_time: float = 0.0
 var _thread_snap_handled := false
@@ -95,6 +97,7 @@ func _ready() -> void:
 	event_state.resolution_changed.connect(_on_resolution_changed)
 	event_state.knowledge_unlocked.connect(_on_knowledge_unlocked)
 	event_state.thread_snapped.connect(_handle_thread_snap_once)
+	event_state.hostility_requested.connect(_request_hostile_phase)
 	request_dialogue.connect(_on_request_dialogue)
 	if forlorn_ritualant != null and forlorn_ritualant.has_signal("attack_started"):
 		forlorn_ritualant.attack_started.connect(_on_ritualant_attack_started)
@@ -110,7 +113,12 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	if is_dialogue_input_captured() or _resolution_sequence_running:
+	if not _deferred_hostility_reason.is_empty() \
+	and not is_dialogue_input_captured():
+		var deferred_reason := _deferred_hostility_reason
+		_deferred_hostility_reason = &""
+		_start_hostile_phase(deferred_reason)
+	if suppresses_encounter_hazards():
 		_fountain_stand_time = 0.0
 		_fountain_stabilize_time = 0.0
 		_update_event_atmosphere()
@@ -227,6 +235,14 @@ func is_encounter_resolving() -> bool:
 	return _resolution_sequence_running
 
 
+func suppresses_encounter_hazards() -> bool:
+	return (
+		is_dialogue_input_captured()
+		or is_encounter_resolving()
+		or is_terminal_resolution()
+	)
+
+
 func can_speak_to_ritualant() -> bool:
 	return (
 		not _resolution_sequence_running
@@ -309,14 +325,14 @@ func player_attacked_in_room() -> void:
 	event_state.add_silence_pressure(15, &"player_attack")
 	if not event_state.ritualant_hostile:
 		request_dialogue.emit(dialogue_id, &"attack_response")
-		_start_hostile_phase()
+		_request_hostile_phase(&"player_melee")
 
 
 func player_fired_weapon_in_room() -> void:
 	event_state.add_silence_pressure(22, &"player_firearm")
 	if not event_state.ritualant_hostile:
 		request_dialogue.emit(dialogue_id, &"attack_response")
-		_start_hostile_phase()
+		_request_hostile_phase(&"player_firearm")
 
 
 func player_crossed_thread(move_kind: StringName) -> void:
@@ -420,6 +436,10 @@ func is_thread_anchor_resolved(anchor_id: StringName) -> bool:
 	return _resolved_thread_anchors.has(anchor_id)
 
 
+func debug_get_last_hostility_reason() -> StringName:
+	return _debug_last_hostility_reason
+
+
 func capture_encounter_state() -> Dictionary:
 	return {
 		"event_state": event_state.capture_state() if event_state != null else {},
@@ -430,6 +450,7 @@ func capture_encounter_state() -> Dictionary:
 		"hostile_attack_epoch": _hostile_attack_epoch,
 		"anchor_unlock_epoch": _anchor_unlock_epoch,
 		"thread_snap_handled": _thread_snap_handled,
+		"last_hostility_reason": String(_debug_last_hostility_reason),
 	}
 
 
@@ -442,6 +463,7 @@ func restore_encounter_state(state: Dictionary) -> bool:
 	_intro_triggered = bool(state.get("intro_triggered", false))
 	_completed = bool(state.get("encounter_completed", false))
 	_thread_snap_handled = bool(state.get("thread_snap_handled", false))
+	_debug_last_hostility_reason = StringName(str(state.get("last_hostility_reason", "")))
 	_resolved_thread_anchors.clear()
 	for anchor_id: Variant in state.get("resolved_thread_anchor_ids", []):
 		_resolved_thread_anchors[StringName(str(anchor_id))] = true
@@ -473,8 +495,7 @@ func _handle_thread_snap_once() -> void:
 	if _thread_snap_handled:
 		return
 	_thread_snap_handled = true
-	_show_unarrived_apparition()
-	_start_hostile_phase()
+	_request_hostile_phase(&"thread_snap")
 
 
 func stabilize_site() -> void:
@@ -529,11 +550,23 @@ func defile_site() -> void:
 	_complete_if_ready()
 
 
-func _start_hostile_phase() -> void:
+func _request_hostile_phase(reason: StringName) -> void:
+	if is_terminal_resolution() or is_encounter_resolving():
+		return
+	if is_dialogue_input_captured():
+		_deferred_hostility_reason = reason
+		return
+	_start_hostile_phase(reason)
+
+
+func _start_hostile_phase(reason: StringName) -> void:
 	if is_terminal_resolution() or _resolution_sequence_running:
 		return
+	_debug_last_hostility_reason = reason
 	if dialogue_presenter != null:
 		dialogue_presenter.force_close()
+	if reason == &"thread_snap":
+		_show_unarrived_apparition()
 	_thread_anchor_stage = 0
 	_hostile_attack_epoch = 0
 	_anchor_unlock_epoch = 1
@@ -681,10 +714,6 @@ func _on_pressure_changed(_silence_pressure: int, _thread_tension: int) -> void:
 	if event_state.silence_pressure >= 75:
 		_trigger_ghost_procession()
 
-	if event_state.silence_pressure >= 90 and not event_state.ritualant_hostile:
-		_start_hostile_phase()
-
-
 func _on_fountain_state_changed(new_state: int) -> void:
 	match new_state:
 		AshBellEventState.FountainState.ABSENT:
@@ -778,9 +807,10 @@ func _update_debug() -> void:
 	if debug_label == null:
 		return
 
-	debug_label.text = "ASH-BELL\npressure=%s\nthread=%s\nfountain=%s\nres=%s" % [
+	debug_label.text = "ASH-BELL\npressure=%s\nthread=%s\nfountain=%s\nres=%s\nhostility=%s" % [
 		event_state.silence_pressure,
 		event_state.thread_tension,
 		event_state.fountain_state,
 		event_state.resolution,
+		String(_debug_last_hostility_reason),
 	]

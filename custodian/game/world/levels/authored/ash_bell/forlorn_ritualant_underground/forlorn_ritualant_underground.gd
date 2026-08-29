@@ -258,6 +258,8 @@ func _on_operator_weapon_feedback(event_id: StringName, _snapshot: Dictionary) -
 		to_local((_bound_operator as Node2D).global_position)
 	):
 		return
+	if ritualant_site.suppresses_encounter_hazards():
+		return
 	match event_id:
 		&"fire":
 			ritualant_site.player_fired_weapon_in_room()
@@ -456,6 +458,141 @@ func get_walkable_probes() -> Array:
 
 func get_void_probes() -> Array:
 	return VOID_PROBES
+
+
+func get_authoring_debug_geometry() -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	_append_level_debug_geometry(out)
+	_append_encounter_debug_geometry(out)
+	_append_camera_debug_geometry(out)
+	_append_transition_debug_geometry(out)
+	_append_art_debug_geometry(out)
+	return out
+
+
+func _append_level_debug_geometry(out: Array[Dictionary]) -> void:
+	out.append(AuthoringDebugGeometry.polygon_record(
+		"playable.boundary", "boundary", "PLAYABLE AREA",
+		PLAYABLE_BOUNDARY_LOOP, "Runtime walkability boundary", self
+	))
+	for record in [
+		AuthoringDebugGeometry.rect_record("traversal.landing_connector", "traversal", "LANDING CONNECTOR", LANDING_CONNECTOR, "Authored route connector", self),
+		AuthoringDebugGeometry.rect_record("traversal.chapel_connector", "traversal", "CHAPEL CONNECTOR", CHAPEL_CONNECTOR, "Authored route connector", self),
+		AuthoringDebugGeometry.rect_record("encounter.ritualant_chamber", "encounter", "RITUALANT CHAMBER", RITUALANT_CHAMBER_BOUNDS, "1120x864 current chapel; resize deferred", self),
+		AuthoringDebugGeometry.point_record("traversal.lower_lift_dock", "traversal", "LOWER LIFT DOCK", LOWER_LIFT_DOCK, "Lift boarding and departure origin", lower_lift),
+		AuthoringDebugGeometry.point_record("traversal.spawn_descent", "traversal", "DESCENT LANDING SPAWN", SPAWN_DESCENT_LANDING, "Route entry spawn", get_node_or_null("Markers/Spawn_DescentLanding")),
+		AuthoringDebugGeometry.point_record("transition.return_world", "transition", "RETURN WORLD EXIT", LOWER_LIFT_DOCK, "Interaction distance 96 px", get_node_or_null("Exits/Exit_ReturnWorld")),
+	]:
+		out.append(record)
+
+
+func _append_encounter_debug_geometry(out: Array[Dictionary]) -> void:
+	if ritualant_site == null:
+		return
+	var collision_specs := [
+		["encounter.combat_bounds", "encounter", "COMBAT BOUNDS", "CombatBounds/CollisionShape2D", "Ritualant movement / combat containment"],
+		["encounter.thread_hazard", "hazard", "WHITE THREAD HAZARD", "Props/WhiteThreadHazard/CollisionShape2D", "+1 entry; ticks every 0.75 sec; walk +3, run +7, dodge +12"],
+		["encounter.thread_warning", "hazard", "THREAD WARNING", "Triggers/ThreadWarningZone/CollisionShape2D", "Ambient warning only"],
+		["encounter.intro", "encounter", "INTRO RADIUS", "Triggers/ProximityIntroTrigger/CollisionShape2D", "Proximity introduction trigger"],
+		["encounter.fountain_zone", "hazard", "DRY FOUNTAIN ZONE", "Triggers/DryFountainZone/CollisionShape2D", "Pressure tick every %.1f sec" % ritualant_site.fountain_pressure_tick_seconds],
+		["interaction.ritualant", "interaction", "RITUALANT INTERACTION", "NPCs/RitualantInteract/CollisionShape2D", "Interaction distance 84 px"],
+		["interaction.touch_thread", "interaction", "TOUCH THREAD", "NPCs/TouchThreadInteract/CollisionShape2D", "Thread interaction"],
+		["interaction.cut_thread", "interaction", "CUT THREAD", "NPCs/CutThreadInteract/CollisionShape2D", "Thread interaction"],
+		["interaction.stilling_pin", "interaction", "STILLING PIN", "Props/StillingPinPickup/CollisionShape2D", "Pickup interaction"],
+		["interaction.fountain", "interaction", "DRY FOUNTAIN INTERACTION", "Props/DryFountainInteract/CollisionShape2D", "Inspect dry fountain"],
+		["interaction.set_pin", "interaction", "SET STILLING PIN", "Props/SetStillingPinInteract/CollisionShape2D", "Set pin in basin"],
+		["interaction.anchor_west", "interaction", "THREAD ANCHOR WEST", "Props/ThreadAnchorWest/CollisionShape2D", "Hostile resolution anchor WEST"],
+		["interaction.anchor_north", "interaction", "THREAD ANCHOR NORTH", "Props/ThreadAnchorNorth/CollisionShape2D", "Hostile resolution anchor NORTH"],
+		["interaction.anchor_east", "interaction", "THREAD ANCHOR EAST", "Props/ThreadAnchorEast/CollisionShape2D", "Hostile resolution anchor EAST"],
+	]
+	for spec: Array in collision_specs:
+		var collision := ritualant_site.get_node_or_null(spec[3]) as CollisionShape2D
+		var record := AuthoringDebugGeometry.collision_shape_record(
+			self, collision, spec[0], spec[1], spec[2], spec[4]
+		)
+		if not record.is_empty():
+			out.append(record)
+	var ritualant := ritualant_site.get_node_or_null("NPCs/ForlornRitualant") as Node2D
+	if ritualant != null:
+		out.append(AuthoringDebugGeometry.point_record(
+			"encounter.ritualant", "encounter", "RITUALANT",
+			to_local(ritualant.global_position),
+			"Last hostility: %s" % String(ritualant_site.debug_get_last_hostility_reason()), ritualant
+		))
+
+
+func _append_camera_debug_geometry(out: Array[Dictionary]) -> void:
+	if camera_zone_director == null:
+		return
+	for child: Node in camera_zone_director.get_children():
+		if not child is AuthoredCameraZone2D:
+			continue
+		var zone := child as AuthoredCameraZone2D
+		out.append(AuthoringDebugGeometry.rect_record(
+			"camera.%s" % String(zone.profile_id).to_lower(), "camera",
+			String(zone.profile_id), zone.region,
+			"priority %d; zoom %s; offset %s; transition %.2fs" % [zone.priority, zone.framing_zoom, zone.framing_offset, zone.transition_sec], zone
+		))
+
+
+func _append_transition_debug_geometry(out: Array[Dictionary]) -> void:
+	for spec in [
+		["transition.cosmic_underlay", "COSMIC UNDERLAY 0→1", "CameraPresentation/ChapelCosmicBlend"],
+		["transition.temporal_haze", "TEMPORAL HAZE 0→0.65", "CameraPresentation/ChapelTemporalHazeBlend"],
+	]:
+		var blend := get_node_or_null(spec[2])
+		if blend == null:
+			continue
+		out.append(AuthoringDebugGeometry.band_record(
+			spec[0], "transition", spec[1], float(blend.get("south_y")),
+			float(blend.get("north_y")), LEVEL_BOUNDS.size.x,
+			"Runtime threshold blend", blend
+		))
+
+
+func _append_art_debug_geometry(out: Array[Dictionary]) -> void:
+	var art_paths := [
+		"UnderlayRoot/DistantChapelProxy", "BackgroundRoot/LandingShelfApron",
+		"BackgroundRoot/CavernRimSouth", "BackgroundRoot/CavernRimMiddle",
+		"BackgroundRoot/CavernRimNorth", "BackgroundRoot/ChapelConnectorApron",
+		"BackgroundRoot/ChapelOuterBlend", "OcclusionRoot/ChapelThreshold",
+		"PlayableRoot/ForlornRitualantSite/Floor",
+		"PlayableRoot/ForlornRitualantSite/PerimeterRubble",
+		"PlayableRoot/ForlornRitualantSite/Props/DryFountainBasin",
+		"PlayableRoot/ForlornRitualantSite/Props/WhiteThreadVisual",
+		"PlayableRoot/ForlornRitualantSite/Props/EmptyBellFrame/BrokenBell",
+	]
+	for path: String in art_paths:
+		var sprite := get_node_or_null(path) as Sprite2D
+		if sprite == null:
+			continue
+		var record := AuthoringDebugGeometry.sprite_record(
+			self, sprite, "art.%s" % sprite.name.to_snake_case(), "art",
+			sprite.name, "Gameplay-aligned art; z %d" % sprite.z_index
+		)
+		if not record.is_empty():
+			out.append(record)
+	var parallax_paths := [
+		"UnderlayRoot/FarVoidParallax/FarVoid",
+		"UnderlayRoot/MidDepthSouthParallax/MidDepthSouth",
+		"UnderlayRoot/MidDepthMiddleParallax/MidDepthMiddle",
+		"UnderlayRoot/MidDepthNorthParallax/MidDepthNorth",
+		"UnderlayRoot/MineralHazeParallax/MineralHaze",
+		"UnderlayRoot/ChapelHazeParallax/ChapelHaze",
+	]
+	for path: String in parallax_paths:
+		var sprite := get_node_or_null(path) as Sprite2D
+		if sprite == null:
+			continue
+		var parallax := sprite.get_parent() as Parallax2D
+		var record := AuthoringDebugGeometry.sprite_record(
+			self, sprite, "art.parallax.%s" % sprite.name.to_snake_case(), "art",
+			"%s — PARALLAX" % sprite.name,
+			"PARALLAX PRESENTATION; NOT GAMEPLAY ALIGNMENT AUTHORITY; scroll_scale %s" % parallax.scroll_scale
+		)
+		if not record.is_empty():
+			record["parallax"] = true
+			out.append(record)
 
 
 func get_authoring_markers() -> Dictionary:
