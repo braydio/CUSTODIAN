@@ -261,6 +261,8 @@ func _request_dialogue_once(node_id: StringName) -> void:
 
 
 func touch_thread() -> void:
+	if _resolution_sequence_running or is_terminal_resolution():
+		return
 	event_state.calm_thread(12)
 	event_state.add_silence_pressure(-4, &"thread_touched")
 	event_state.set_resolution(AshBellEventState.Resolution.TOUCHED_THREAD)
@@ -272,7 +274,8 @@ func touch_thread() -> void:
 
 
 func cut_thread() -> void:
-	if event_state.ritualant_hostile:
+	if _resolution_sequence_running or is_terminal_resolution() \
+			or event_state.ritualant_hostile:
 		return
 
 	event_state.set_resolution(AshBellEventState.Resolution.CUT_THREAD)
@@ -336,6 +339,8 @@ func player_fired_weapon_in_room() -> void:
 
 
 func player_crossed_thread(move_kind: StringName) -> void:
+	if _resolution_sequence_running or is_terminal_resolution():
+		return
 	match move_kind:
 		&"walk":
 			event_state.add_thread_tension(3, &"walk_thread")
@@ -348,6 +353,8 @@ func player_crossed_thread(move_kind: StringName) -> void:
 	_request_dialogue_once(&"thread_cross_warning")
 
 func warn_thread_approach() -> void:
+	if _resolution_sequence_running or is_terminal_resolution():
+		return
 	_request_dialogue_once(&"thread_warning")
 
 
@@ -750,8 +757,23 @@ func _on_resolution_changed(new_resolution: int) -> void:
 		AshBellEventState.Resolution.RITUALANT_DISSOLVED, \
 		AshBellEventState.Resolution.SITE_STABILIZED, \
 		AshBellEventState.Resolution.SITE_DEFILED:
+			_retire_terminal_interactions()
 			if not _resolution_sequence_running:
 				_complete_if_ready()
+
+
+func _retire_terminal_interactions() -> void:
+	for path in [
+		NodePath("NPCs/RitualantInteract"),
+		NodePath("NPCs/TouchThreadInteract"),
+		NodePath("NPCs/CutThreadInteract"),
+		NodePath("Props/ThreadAnchorWest"),
+		NodePath("Props/ThreadAnchorNorth"),
+		NodePath("Props/ThreadAnchorEast"),
+	]:
+		var interactable := get_node_or_null(path) as AshBellInteractable
+		if interactable != null:
+			interactable.retire()
 
 
 func _on_knowledge_unlocked(knowledge_id: StringName) -> void:

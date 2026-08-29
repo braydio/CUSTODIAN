@@ -30,6 +30,7 @@ enum InteractionKind {
 
 var _refresh_timer: float = 0.0
 var _last_available: bool = true
+var _retired: bool = false
 
 
 func _ready() -> void:
@@ -47,6 +48,8 @@ func _process(delta: float) -> void:
 
 
 func can_interact(_actor: Node = null) -> bool:
+	if _retired:
+		return false
 	if site == null or site.event_state == null:
 		return false
 	if site.is_dialogue_input_captured():
@@ -56,8 +59,7 @@ func can_interact(_actor: Node = null) -> bool:
 
 	match interaction_kind:
 		InteractionKind.RITUALANT:
-			return not state.ritualant_hostile \
-				and state.resolution < AshBellEventState.Resolution.PROVOKED_RITUALANT
+			return site.can_speak_to_ritualant()
 
 		InteractionKind.ASK_BELL, InteractionKind.ASK_THREAD, InteractionKind.ASK_ORRA:
 			return state.resolution >= AshBellEventState.Resolution.SPOKE_TO_RITUALANT \
@@ -178,6 +180,25 @@ func interact(actor: Node) -> void:
 
 		InteractionKind.THREAD_ANCHOR:
 			site.resolve_thread_anchor(anchor_id)
+
+
+func retire() -> void:
+	if _retired:
+		return
+
+	_retired = true
+	remove_from_group("interactable")
+	monitoring = false
+	monitorable = false
+	collision_layer = 0
+	collision_mask = 0
+	set_process(false)
+	_last_available = false
+	queue_redraw()
+
+	for child in get_children():
+		if child is CanvasItem:
+			(child as CanvasItem).visible = false
 
 
 func _draw() -> void:

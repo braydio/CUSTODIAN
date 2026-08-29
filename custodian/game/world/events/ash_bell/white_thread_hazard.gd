@@ -27,6 +27,14 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if site != null and (
+		site.is_encounter_resolving()
+		or site.is_terminal_resolution()
+	):
+		_bodies_inside.clear()
+		_visual_pulse = 0.0
+		_update_visual(false)
+		return
 	if site != null and site.suppresses_encounter_hazards():
 		# Discard stored cadence so dialogue cannot close into an immediate tick.
 		_tick_timer = tension_tick_interval
@@ -63,6 +71,11 @@ func _physics_process(delta: float) -> void:
 
 
 func _on_body_entered(body: Node) -> void:
+	if site != null and (
+		site.is_encounter_resolving()
+		or site.is_terminal_resolution()
+	):
+		return
 	_bodies_inside[body] = true
 
 	if body != null \
@@ -92,6 +105,8 @@ func _infer_move_kind(body: Node) -> StringName:
 
 func _apply_slow(body: Node) -> void:
 	if site == null or site.event_state == null:
+		return
+	if site.is_encounter_resolving() or site.is_terminal_resolution():
 		return
 	if site.event_state.thread_tension < slow_tension_threshold:
 		return

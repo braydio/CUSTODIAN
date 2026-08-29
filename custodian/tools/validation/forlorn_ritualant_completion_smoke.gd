@@ -67,8 +67,23 @@ func _validate_canonical_data() -> void:
 			item_description = str(item.get("description", ""))
 	_check(item_description == KNOT_DESCRIPTION, "inventory Knot description drifted")
 	var dialogue := _json("res://content/dialogue/ash_bell/forlorn_ritualant_dialogue.json")
-	_check((dialogue.get("nodes", {}) as Dictionary).has("ninth_answer_bark"), "dialogue data lacks Ninth Answer bark")
-	var stabilized := ((dialogue.get("nodes", {}) as Dictionary).get("stabilized_exit", {}) as Dictionary).get("lines", []) as Array
+	var dialogue_nodes := dialogue.get("nodes", {}) as Dictionary
+	_check(dialogue_nodes.has("ninth_answer_bark"), "dialogue data lacks Ninth Answer bark")
+	var intro := (dialogue_nodes.get("proximity_intro", {}) as Dictionary).get("lines", []) as Array
+	var intro_text: Array[String] = []
+	for line_variant: Variant in intro:
+		intro_text.append(str((line_variant as Dictionary).get("text", "")))
+	_check(
+		intro_text == [
+			"Do not speak during the toll.",
+			"The west gate was still taking people when the closure order came.",
+			"Mothers pressed their children beneath the banners.",
+			"The Custodians walked the walls with covered lanterns.",
+			"And still the ash came.",
+		],
+		"Ritualant proximity intro cadence drifted"
+	)
+	var stabilized := (dialogue_nodes.get("stabilized_exit", {}) as Dictionary).get("lines", []) as Array
 	_check(stabilized.size() == 3, "stabilized resolution does not own its three-beat cadence")
 	if stabilized.size() == 3:
 		_check(str((stabilized[0] as Dictionary).get("text", "")) == "Enough.", "stabilized resolution opening drifted")
@@ -249,6 +264,23 @@ func _validate_encounter_runtime() -> void:
 	)
 	_check(site.debug_get_resolved_thread_anchor_count() == 3, "three-anchor route did not resolve")
 	_check(site.event_state.resolution == AshBellEventState.Resolution.SITE_STABILIZED, "three anchors did not stabilize site")
+	var ritualant_interact := site.get_node("NPCs/RitualantInteract") as AshBellInteractable
+	var touch_interact := site.get_node("NPCs/TouchThreadInteract") as AshBellInteractable
+	var cut_interact := site.get_node("NPCs/CutThreadInteract") as AshBellInteractable
+	_check(not ritualant_interact.can_interact(actor), "terminal Ritualant interaction survived")
+	_check(ritualant_interact.get_interaction_prompt().is_empty(), "terminal Ritualant prompt survived")
+	_check(not touch_interact.can_interact(actor), "terminal thread touch survived")
+	_check(not cut_interact.can_interact(actor), "terminal thread cut survived")
+	_check(not ritualant_interact.is_in_group("interactable"), "terminal Ritualant proxy remained selectable")
+	var tension_before := site.event_state.thread_tension
+	site.touch_thread()
+	site.cut_thread()
+	site.player_crossed_thread(&"walk")
+	_check(site.event_state.thread_tension == tension_before, "terminal thread state still mutated")
+	_check(
+		site.event_state.resolution == AshBellEventState.Resolution.SITE_STABILIZED,
+		"terminal interaction regressed encounter resolution"
+	)
 	_check(site.get_departure_lines().is_empty(), "stabilized lift repeated Ritualant payoff")
 	var contracts := npc.debug_get_animation_contract()
 	_check(contracts.size() == 4, "missing action animation contracts are not explicit")

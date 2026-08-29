@@ -428,6 +428,23 @@ Two archway stubs on the west/southwest side of the room. They should imply a ga
 
 # 6. Character asset specs
 
+> **Active production correction (2026-08-29):** the live Ritualant animation
+> contract uses `128x128` frames under
+> `custodian/content/sprites/enemies/forlorn_ritualant/runtime/`. The older
+> `48x64` paths and frame counts in sections 6.1–6.4 below are historical art
+> prompts, not runtime authority. Existing production coverage is kneel/idle,
+> six-frame hostile idle, four-frame rise, ten-frame pin strike, nine-frame
+> thread pull, and a one-frame dissolve placeholder. The explicit remaining
+> authored gaps are:
+>
+> - `enemy_forlorn_ritualant__body__dissolve__s__10f__128.png`
+> - `enemy_forlorn_ritualant__body__ninth_answer__s__10f__128.png`
+> - `enemy_forlorn_ritualant__body__orra_late__s__8f__128.png`
+> - `enemy_forlorn_ritualant__body__death_violent__s__8f__128.png`
+>
+> Author in that priority order. Do not replace an explicit fallback with
+> invented production pixels. Hostile locomotion remains a later polish gap.
+
 Per your repo guidance, do **not** silently rely on invented production art. Wire placeholders first, then generate/replace these exact assets. The AGENTS file explicitly says new gameplay animation assets should be requested with exact save paths and intent.
 
 ## 6.1 Forlorn-Ritualant idle sprite
