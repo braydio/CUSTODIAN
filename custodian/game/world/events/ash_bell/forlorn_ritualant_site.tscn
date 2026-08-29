@@ -25,15 +25,15 @@
 [ext_resource type="Texture2D" uid="uid://cj5jrprp3kx2v" path="res://content/tiles/encounters/ritualant_set/ash_debris_patch5.png" id="29_debris_5"]
 [ext_resource type="SpriteFrames" uid="uid://bntuttfw58gdy" path="res://content/tiles/encounters/ritualant_set/runtime/dry_fountain_ghost_frames.tres" id="30_ghost_anim"]
 [ext_resource type="SpriteFrames" uid="uid://od2538tpylf4" path="res://content/tiles/encounters/ritualant_set/runtime/black_water_fountain_frames.tres" id="31_water_anim"]
-[ext_resource type="Texture2D" uid="uid://bvq6boqnolokb" path="res://content/tiles/encounters/ritualant_set/ruined_bell_chapel_floor_underlay_32x27.png" id="32_floor"]
-[ext_resource type="Texture2D" uid="uid://dx4tuf4rd0xf7" path="res://content/tiles/encounters/ritualant_set/ruined_bell_chapel_perimeter_rubble_35x27.png" id="33_rubble"]
-[ext_resource type="Texture2D" uid="uid://b0utvxnyell2y" path="res://content/tiles/encounters/ritualant_set/white_thread_hazard_runtime_01.png" id="34_thread_hazard"]
+[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/ruined_bell_chapel_floor_underlay_40x30.png" id="32_floor"]
+[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/ruined_bell_chapel_perimeter_rubble_40x30.png" id="33_rubble"]
+[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/white_thread_hazard_runtime_02__768x64.png" id="34_thread_hazard"]
 [ext_resource type="SpriteFrames" uid="uid://htpgv207bj6s" path="res://content/tiles/encounters/ritualant_set/runtime/forlorn_ritualant_animations.tres" id="35_npc_animations"]
 [ext_resource type="Texture2D" uid="uid://baylmb3pm0scg" path="res://content/tiles/encounters/ritualant_set/stilling_pin_pickup_01.png" id="36_pin"]
 [ext_resource type="PackedScene" path="res://scenes/environment/forlorn_ritualant_shader_fx.tscn" id="37_shader_fx"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_thread"]
-size = Vector2(220, 128)
+size = Vector2(288, 64)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_clapper"]
 radius = 18.0
@@ -45,7 +45,7 @@ radius = 28.0
 size = Vector2(26, 28)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_combat_bounds"]
-size = Vector2(1000, 700)
+size = Vector2(1152, 800)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_intro"]
 radius = 160.0
@@ -106,7 +106,7 @@ bell_shadow_path = NodePath("FX/BellShadow")
 [node name="ForlornRitualantShaderFX" parent="." unique_id=2095794667 instance=ExtResource("37_shader_fx")]
 
 [node name="CombatBounds" type="Node2D" parent="."]
-position = Vector2(0, -56)
+position = Vector2(0, -48)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CombatBounds"]
 shape = SubResource("RectangleShape2D_combat_bounds")
@@ -192,7 +192,12 @@ script = ExtResource("4_thread")
 site_path = NodePath("../..")
 thread_visual_path = NodePath("../WhiteThreadVisual")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Props/WhiteThreadHazard" unique_id=533190785]
+[node name="LeftCollisionShape2D" type="CollisionShape2D" parent="Props/WhiteThreadHazard" unique_id=533190785]
+position = Vector2(-240, 0)
+shape = SubResource("RectangleShape2D_thread")
+
+[node name="RightCollisionShape2D" type="CollisionShape2D" parent="Props/WhiteThreadHazard"]
+position = Vector2(240, 0)
 shape = SubResource("RectangleShape2D_thread")
 
 [node name="StillingPinPickup" type="Area2D" parent="Props" unique_id=451224377]
@@ -230,7 +235,7 @@ prompt_text = "SET PIN IN BASIN"
 shape = SubResource("CircleShape2D_interact")
 
 [node name="ThreadAnchorWest" type="Area2D" parent="Props"]
-position = Vector2(-150, -78)
+position = Vector2(-416, 96)
 script = ExtResource("3_interactable")
 interaction_kind = 9
 site_path = NodePath("../..")
@@ -240,7 +245,7 @@ anchor_id = &"west"
 shape = SubResource("CircleShape2D_interact")
 
 [node name="ThreadAnchorNorth" type="Area2D" parent="Props"]
-position = Vector2(0, -210)
+position = Vector2(0, -352)
 script = ExtResource("3_interactable")
 interaction_kind = 9
 site_path = NodePath("../..")
@@ -250,7 +255,7 @@ anchor_id = &"north"
 shape = SubResource("CircleShape2D_interact")
 
 [node name="ThreadAnchorEast" type="Area2D" parent="Props"]
-position = Vector2(150, -78)
+position = Vector2(416, 96)
 script = ExtResource("3_interactable")
 interaction_kind = 9
 site_path = NodePath("../..")
@@ -315,7 +320,7 @@ site_path = NodePath("../..")
 shape = SubResource("CircleShape2D_interact")
 
 [node name="TouchThreadInteract" type="Area2D" parent="NPCs" unique_id=1255823245]
-position = Vector2(-74, -138)
+position = Vector2(-256, -146)
 script = ExtResource("3_interactable")
 interaction_kind = 4
 site_path = NodePath("../..")
@@ -325,7 +330,7 @@ prompt_text = "TOUCH WHITE THREAD"
 shape = SubResource("CircleShape2D_interact")
 
 [node name="CutThreadInteract" type="Area2D" parent="NPCs" unique_id=374370415]
-position = Vector2(74, -138)
+position = Vector2(256, -146)
 script = ExtResource("3_interactable")
 interaction_kind = 5
 site_path = NodePath("../..")

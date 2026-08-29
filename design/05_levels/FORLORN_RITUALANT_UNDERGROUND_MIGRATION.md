@@ -18,7 +18,7 @@ The new authored Underground wrapper owns level lifecycle, named spawn, camera b
 ## Authority Boundary
 
 - Procgen may place only the exterior cave ingress marker.
-- Procgen does not insert, reserve, clear, or own the `35x27` Ritualant chapel.
+- Procgen does not insert, reserve, clear, or own the `40x30` Ritualant chapel.
 - `SpecialRoomRuntimeInserter` must not discover an Ash-Bell Ritualant definition.
 - `RouteTraversalManager` and `LevelLoader` own entry, isolation, return, and re-entry.
 - The authored Underground scene owns the `112x128` / `3584x4096` cavern, the translated chapel footprint, and the closed playable boundary loop.
@@ -77,7 +77,8 @@ The generic special-room system remains live for other encounters. Its documenta
 
 - Full Underground: `112x128` authored cells at `32 px` (`3584x4096`), with camera bounds `Rect2(-1792,-2048,3584,4096)`.
 - Player-controlled cavern depth is up-screen (`Vector2.UP`); the projected lift still descends down-screen and returns up-screen.
-- The existing `35x27` / `1120x864` chapel is instanced at `(0,-1120)`.
+- The `40x30` / `1280x960` chapel is instanced at `(0,-1120)`, yielding
+  `Rect2(-640,-1600,1280,960)` and meeting the connector at `y=-640`.
 - Entry spawn: `(0,1670)`, on the lower lift walk-off position.
 - World-return interaction: `(0,1696)`, on the shared lower lift assembly.
 - Surface visible descent is `176 px`, owned by `AshBellLiftIngressPresentation`.
@@ -120,11 +121,17 @@ transforms; collision bounds come from live shapes; parallax records are
 explicitly labelled presentation-only. No debug overlay is a second geometry
 authority.
 
+`F1` selects gameplay (boundary, encounter, hazard, interaction), `F2`
+selects art alignment (boundary, art, traversal), `F3` selects presentation
+(camera, transition, art), and `F4` hides semantic overlays. With three or
+more groups visible, bulk labels are suppressed while `UNDER CURSOR` remains.
+
 Press `P` to export `reports/level_maps/forlorn_ritualant_underground/full_map.png`
 and `full_map.json`. Both use the same semantic records being rendered. The
-chapel remains `1120x864` with its current `1000x700` combat bounds until a
-mapper-backed review re-authors art and gameplay together; this mapper pass
-does not resize the arena.
+mapper-backed arena is `1280x960` with `1152x800` combat bounds, native-scale
+extended floor/perimeter art, and a correspondingly widened connected
+playable loop. A dedicated `320x192` bridge at `(0,1376)` covers the landing
+connector without moving `LandingShelfApron`.
 
 ## Dialogue and Hostility Safety
 

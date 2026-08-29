@@ -174,6 +174,14 @@ func _handle_key(event: InputEventKey) -> void:
 			_toggle_all_semantic_groups()
 		KEY_P:
 			_save_mapper_snapshot()
+		KEY_F1:
+			_apply_semantic_preset(["boundary", "encounter", "hazard", "interaction"])
+		KEY_F2:
+			_apply_semantic_preset(["boundary", "art", "traversal"])
+		KEY_F3:
+			_apply_semantic_preset(["camera", "transition", "art"])
+		KEY_F4:
+			_apply_semantic_preset([])
 		KEY_EQUAL, KEY_PLUS:
 			_zoom(zoom_step)
 		KEY_MINUS:
@@ -521,6 +529,7 @@ func _update_help() -> void:
 		"Collision mode: Left click add rail point   Right click undo   C copy rails   Enter/U apply rails",
 		"Marker mode: Left click place selected marker   Right click clear selected marker   C copy markers   Enter/U apply markers",
 		"Semantic: 1 boundary  2 encounter  3 hazards  4 interactions  5 cameras  6 transitions  7 art  8 traversal  0 all",
+		"Presets: F1 gameplay   F2 art alignment   F3 presentation   F4 clean",
 		"L: labels   G: 32px grid   P: snapshot+JSON   WASD/arrows: pan   Wheel/+/-: zoom   E: rails   V: draft   H: help",
 		"Mouse runtime: %s   Source: %s" % [_fmt_vec(_mouse_world), _fmt_vec(_to_source_point(_mouse_world))],
 	])
@@ -616,6 +625,11 @@ func _toggle_all_semantic_groups() -> void:
 			break
 	for group: String in _semantic_groups:
 		_semantic_groups[group] = enable
+
+
+func _apply_semantic_preset(enabled_groups: Array) -> void:
+	for group: String in _semantic_groups:
+		_semantic_groups[group] = enabled_groups.has(group)
 
 
 func _save_mapper_snapshot() -> void:

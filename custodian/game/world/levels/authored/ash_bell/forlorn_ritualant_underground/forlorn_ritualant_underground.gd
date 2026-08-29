@@ -20,7 +20,7 @@ const AUTHORED_CELL_SIZE := 32.0
 const MAP_SIZE_CELLS := Vector2i(112, 128)
 const LEVEL_BOUNDS := Rect2(-1792.0, -2048.0, 3584.0, 4096.0)
 const CHAPEL_ORIGIN := Vector2(0.0, -1120.0)
-const RITUALANT_CHAMBER_BOUNDS := Rect2(-560.0, -1552.0, 1120.0, 864.0)
+const RITUALANT_CHAMBER_BOUNDS := Rect2(-640.0, -1600.0, 1280.0, 960.0)
 const LOWER_LIFT_DOCK := Vector2(0.0, 1696.0)
 const LOWER_LIFT_ARRIVAL_START := Vector2(0.0, 1440.0)
 const SPAWN_DESCENT_LANDING := Vector2(0.0, 1670.0)
@@ -31,7 +31,7 @@ const LIFT_DESCENT_SCREEN_DIRECTION := Vector2.DOWN
 const LIFT_ASCENT_SCREEN_DIRECTION := Vector2.UP
 
 var PLAYABLE_BOUNDARY_LOOP := PackedVector2Array([
-	Vector2(-128,1376), Vector2(-160,1280), Vector2(-288,1184), Vector2(-384,1024), Vector2(-416,832), Vector2(-352,640), Vector2(-224,480), Vector2(-64,320), Vector2(64,160), Vector2(96,-64), Vector2(32,-256), Vector2(-96,-416), Vector2(-224,-576), Vector2(-96,-704), Vector2(-304,-760), Vector2(-480,-896), Vector2(-512,-1152), Vector2(-456,-1384), Vector2(-320,-1496), Vector2(-112,-1536), Vector2(112,-1536), Vector2(320,-1496), Vector2(456,-1384), Vector2(512,-1152), Vector2(480,-896), Vector2(304,-760), Vector2(96,-704), Vector2(224,-576), Vector2(224,-352), Vector2(320,-192), Vector2(352,32), Vector2(320,224), Vector2(192,416), Vector2(32,576), Vector2(-96,736), Vector2(-128,928), Vector2(-64,1088), Vector2(64,1216), Vector2(128,1280), Vector2(128,1376), Vector2(224,1408), Vector2(320,1472), Vector2(352,1600), Vector2(352,1760), Vector2(288,1824), Vector2(-288,1824), Vector2(-352,1760), Vector2(-352,1600), Vector2(-320,1472), Vector2(-224,1408),
+	Vector2(-128,1376), Vector2(-160,1280), Vector2(-288,1184), Vector2(-384,1024), Vector2(-416,832), Vector2(-352,640), Vector2(-224,480), Vector2(-64,320), Vector2(64,160), Vector2(96,-64), Vector2(32,-256), Vector2(-96,-416), Vector2(-224,-576), Vector2(-96,-704), Vector2(-352,-768), Vector2(-560,-896), Vector2(-608,-1152), Vector2(-560,-1408), Vector2(-416,-1536), Vector2(-160,-1584), Vector2(160,-1584), Vector2(416,-1536), Vector2(560,-1408), Vector2(608,-1152), Vector2(560,-896), Vector2(352,-768), Vector2(96,-704), Vector2(224,-576), Vector2(224,-352), Vector2(320,-192), Vector2(352,32), Vector2(320,224), Vector2(192,416), Vector2(32,576), Vector2(-96,736), Vector2(-128,928), Vector2(-64,1088), Vector2(64,1216), Vector2(128,1280), Vector2(128,1376), Vector2(224,1408), Vector2(320,1472), Vector2(352,1600), Vector2(352,1760), Vector2(288,1824), Vector2(-288,1824), Vector2(-352,1760), Vector2(-352,1600), Vector2(-320,1472), Vector2(-224,1408),
 ])
 var CAVERN_CENTERLINE := PackedVector2Array([
 	Vector2(0,1376), Vector2(-64,1280), Vector2(-224,1120), Vector2(-256,832), Vector2(-192,608), Vector2(-64,416), Vector2(128,192), Vector2(192,-64), Vector2(128,-320), Vector2(0,-544), Vector2(0,-704),
@@ -122,7 +122,7 @@ func _on_camera_profile_changed(
 ) -> void:
 	match current_profile:
 		&"LANDING_VISTA", &"UPPER_DESCENT":
-			_fade_distant_chapel(0.88, 0.45)
+			_fade_distant_chapel(0.92, 0.40)
 		&"DEEP_CAVERN", &"CHAPEL_APPROACH", &"CHAPEL_GAMEPLAY_RELEASE":
 			_fade_distant_chapel(0.0, 0.65)
 
@@ -478,7 +478,7 @@ func _append_level_debug_geometry(out: Array[Dictionary]) -> void:
 	for record in [
 		AuthoringDebugGeometry.rect_record("traversal.landing_connector", "traversal", "LANDING CONNECTOR", LANDING_CONNECTOR, "Authored route connector", self),
 		AuthoringDebugGeometry.rect_record("traversal.chapel_connector", "traversal", "CHAPEL CONNECTOR", CHAPEL_CONNECTOR, "Authored route connector", self),
-		AuthoringDebugGeometry.rect_record("encounter.ritualant_chamber", "encounter", "RITUALANT CHAMBER", RITUALANT_CHAMBER_BOUNDS, "1120x864 current chapel; resize deferred", self),
+		AuthoringDebugGeometry.rect_record("encounter.ritualant_chamber", "encounter", "RITUALANT CHAMBER", RITUALANT_CHAMBER_BOUNDS, "1280x960 mapper-backed chapel", self),
 		AuthoringDebugGeometry.point_record("traversal.lower_lift_dock", "traversal", "LOWER LIFT DOCK", LOWER_LIFT_DOCK, "Lift boarding and departure origin", lower_lift),
 		AuthoringDebugGeometry.point_record("traversal.spawn_descent", "traversal", "DESCENT LANDING SPAWN", SPAWN_DESCENT_LANDING, "Route entry spawn", get_node_or_null("Markers/Spawn_DescentLanding")),
 		AuthoringDebugGeometry.point_record("transition.return_world", "transition", "RETURN WORLD EXIT", LOWER_LIFT_DOCK, "Interaction distance 96 px", get_node_or_null("Exits/Exit_ReturnWorld")),
@@ -491,7 +491,8 @@ func _append_encounter_debug_geometry(out: Array[Dictionary]) -> void:
 		return
 	var collision_specs := [
 		["encounter.combat_bounds", "encounter", "COMBAT BOUNDS", "CombatBounds/CollisionShape2D", "Ritualant movement / combat containment"],
-		["encounter.thread_hazard", "hazard", "WHITE THREAD HAZARD", "Props/WhiteThreadHazard/CollisionShape2D", "+1 entry; ticks every 0.75 sec; walk +3, run +7, dodge +12"],
+		["encounter.thread_hazard_left", "hazard", "WHITE THREAD HAZARD LEFT", "Props/WhiteThreadHazard/LeftCollisionShape2D", "+1 entry; ticks every 0.75 sec; walk +3, run +7, dodge +12"],
+		["encounter.thread_hazard_right", "hazard", "WHITE THREAD HAZARD RIGHT", "Props/WhiteThreadHazard/RightCollisionShape2D", "+1 entry; ticks every 0.75 sec; walk +3, run +7, dodge +12"],
 		["encounter.thread_warning", "hazard", "THREAD WARNING", "Triggers/ThreadWarningZone/CollisionShape2D", "Ambient warning only"],
 		["encounter.intro", "encounter", "INTRO RADIUS", "Triggers/ProximityIntroTrigger/CollisionShape2D", "Proximity introduction trigger"],
 		["encounter.fountain_zone", "hazard", "DRY FOUNTAIN ZONE", "Triggers/DryFountainZone/CollisionShape2D", "Pressure tick every %.1f sec" % ritualant_site.fountain_pressure_tick_seconds],
@@ -553,6 +554,7 @@ func _append_transition_debug_geometry(out: Array[Dictionary]) -> void:
 func _append_art_debug_geometry(out: Array[Dictionary]) -> void:
 	var art_paths := [
 		"UnderlayRoot/DistantChapelProxy", "BackgroundRoot/LandingShelfApron",
+		"BackgroundRoot/LandingConnectorBridge",
 		"BackgroundRoot/CavernRimSouth", "BackgroundRoot/CavernRimMiddle",
 		"BackgroundRoot/CavernRimNorth", "BackgroundRoot/ChapelConnectorApron",
 		"BackgroundRoot/ChapelOuterBlend", "OcclusionRoot/ChapelThreshold",

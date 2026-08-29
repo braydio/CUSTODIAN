@@ -1,4 +1,4 @@
-[gd_scene load_steps=41 format=3]
+[gd_scene load_steps=42 format=3]
 
 [ext_resource type="Script" path="res://game/world/levels/authored/ash_bell/forlorn_ritualant_underground/forlorn_ritualant_underground.gd" id="1"]
 [ext_resource type="PackedScene" path="res://game/world/events/ash_bell/forlorn_ritualant_site.tscn" id="2"]
@@ -39,6 +39,7 @@
 [ext_resource type="Script" path="res://game/world/levels/presentation/authored_camera_zone_2d.gd" id="37"]
 [ext_resource type="Texture2D" path="res://assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress_fx__descent_dust__burst__omni__6f__192x192.png" id="38"]
 [ext_resource type="Script" path="res://game/world/levels/presentation/authored_threshold_blend_2d.gd" id="39"]
+[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__landing_connector_bridge_01__320x192.png" id="40"]
 [sub_resource type="RectangleShape2D" id="return"]
 size=Vector2(192,64)
 [sub_resource type="Shader" id="vertical_feather"]
@@ -112,7 +113,7 @@ z_as_relative=false
 z_index=-94
 modulate=Color(1,1,1,0.12)
 [node name="DistantChapelProxy" type="Sprite2D" parent="UnderlayRoot"]
-position=Vector2(384,896)
+position=Vector2(320,1088)
 scale=Vector2(1.25,1.25)
 modulate=Color(1,1,1,0)
 texture=ExtResource("23")
@@ -149,6 +150,11 @@ position=Vector2(0,1568)
 texture=ExtResource("10")
 z_as_relative=false
 z_index=-39
+[node name="LandingConnectorBridge" type="Sprite2D" parent="BackgroundRoot"]
+position=Vector2(0,1376)
+texture=ExtResource("40")
+z_as_relative=false
+z_index=-38
 [node name="ChapelConnectorApron" type="Sprite2D" parent="BackgroundRoot"]
 position=Vector2(0,-640)
 texture=ExtResource("16")
@@ -412,7 +418,7 @@ release_to_gameplay=false
 [node name="ChapelGameplayRelease" type="Node2D" parent="CameraPresentation/AuthoredCameraZoneDirector2D"]
 script=ExtResource("37")
 profile_id=&"CHAPEL_GAMEPLAY_RELEASE"
-region=Rect2(-480,-1536,960,768)
+region=Rect2(-576,-1584,1152,864)
 framing_zoom=Vector2(1,1)
 framing_offset=Vector2(0,0)
 transition_sec=0.35

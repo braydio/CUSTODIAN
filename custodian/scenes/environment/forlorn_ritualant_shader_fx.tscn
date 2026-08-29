@@ -29,10 +29,10 @@ modulate = Color(0.72, 0.82, 1, 0.86)
 material = ExtResource("5_void_material")
 z_as_relative = false
 z_index = -72
-offset_left = -560.0
-offset_top = -432.0
-offset_right = 560.0
-offset_bottom = 432.0
+offset_left = -640.0
+offset_top = -480.0
+offset_right = 640.0
+offset_bottom = 480.0
 mouse_filter = 2
 texture = ExtResource("3_underlay_texture")
 expand_mode = 1
@@ -44,11 +44,13 @@ z_index = -28
 [node name="RoomShadowMaskSprite2D" type="Sprite2D" parent="EdgeFX"]
 material = ExtResource("6_shadow_material")
 z_index = -28
+scale = Vector2(1.142857, 1.111111)
 texture = ExtResource("4_room_mask")
 
 [node name="RoomRimGlowMaskSprite2D" type="Sprite2D" parent="EdgeFX"]
 material = ExtResource("7_rim_material")
 z_index = -27
+scale = Vector2(1.142857, 1.111111)
 texture = ExtResource("4_room_mask")
 
 [node name="TemporalFX" type="Node2D" parent="."]

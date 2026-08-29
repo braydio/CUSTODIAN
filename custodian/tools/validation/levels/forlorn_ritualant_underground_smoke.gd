@@ -51,9 +51,16 @@ func _run() -> void:
 		errors.append("landing shelf apron presentation node is missing")
 	elif apron.position != Vector2(0.0, 1568.0):
 		errors.append("landing shelf apron is not at canonical production position")
+	var landing_bridge := level.get_node_or_null("BackgroundRoot/LandingConnectorBridge") as Sprite2D
+	if landing_bridge == null \
+			or landing_bridge.position != Vector2(0.0, 1376.0) \
+			or landing_bridge.z_index != -38 \
+			or landing_bridge.texture == null \
+			or landing_bridge.texture.get_size() != Vector2(320.0, 192.0):
+		errors.append("landing connector bridge art contract drifted")
 	var proxy := level.get_node_or_null("UnderlayRoot/DistantChapelProxy") as Sprite2D
 	if proxy == null \
-			or proxy.position != Vector2(384.0, 896.0) \
+			or proxy.position != Vector2(320.0, 1088.0) \
 			or proxy.scale != Vector2(1.25, 1.25) \
 			or proxy.z_index != -39 \
 			or not is_equal_approx(proxy.modulate.a, 0.0):
@@ -93,8 +100,8 @@ func _run() -> void:
 	) as TextureRect
 	if underlay_quad == null:
 		errors.append("explicit fixed room underlay quad is missing")
-	elif underlay_quad.size != Vector2(1120.0, 864.0):
-		errors.append("room underlay quad is not 1120x864")
+	elif underlay_quad.size != Vector2(1280.0, 960.0):
+		errors.append("room underlay quad is not 1280x960")
 	elif underlay_quad.material == null:
 		errors.append("room underlay quad lacks explicit mask material")
 	else:

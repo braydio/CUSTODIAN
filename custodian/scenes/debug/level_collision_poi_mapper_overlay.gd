@@ -65,6 +65,11 @@ func _draw_grid(state: Dictionary) -> void:
 func _draw_semantic_geometry(state: Dictionary) -> void:
 	var groups := state.get("semantic_groups", {}) as Dictionary
 	var show_labels := bool(state.get("show_semantic_labels", true))
+	var enabled_group_count := 0
+	for enabled: Variant in groups.values():
+		if bool(enabled):
+			enabled_group_count += 1
+	show_labels = show_labels and enabled_group_count < 3
 	for record: Dictionary in state.get("semantic_geometry", []):
 		var group := str(record.get("group", ""))
 		if not bool(groups.get(group, true)):

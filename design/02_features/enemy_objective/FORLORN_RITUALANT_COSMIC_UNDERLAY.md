@@ -15,13 +15,13 @@ Runtime files:
 
 Layering contract:
 
-1. `VoidUnderlay/RoomSizedQuad` is a stationary `1120x864` presentation quad below the authored room geometry.
+1. `VoidUnderlay/RoomSizedQuad` is a stationary `1280x960` presentation quad below the authored room geometry.
 2. The chamber floor, rubble, walls, props, NPC, interactables, collision, and VFX remain above it.
 3. The underlay has no collision, navigation, interactables, or simulation authority.
 4. Player movement remains confined to the room's existing collision.
 5. `room_silhouette_mask.png` is the explicit underlay clipping input; floor and rubble alpha are not underlay authority.
 
-The room mask, edge-shadow mask, and edge-rim mask share the same stationary `1120x864` alignment. This mask is presentation-only and must never generate collision. If intentional internal void apertures are later authored, use a dedicated reviewed reveal mask rather than incidental holes in floor art.
+The room mask, edge-shadow mask, and edge-rim mask share the same stationary `1280x960` alignment. This mask is presentation-only and must never generate collision. If intentional internal void apertures are later authored, use a dedicated reviewed reveal mask rather than incidental holes in floor art.
 
 Cosmic motion occurs only through shader UV drift inside that fixed mask. The Ritualant room no longer moves its underlay node in world space. The generic reusable `CosmicUnderlay` remains available to unrelated scenes.
 

@@ -19,10 +19,12 @@
 > Dialogue, resolution, and terminal states suppress encounter-hazard mutation;
 > aggression feedback is ignored while dialogue owns Operator input; and every
 > hostility transition is requested through `ForlornRitualantSite`, which
-> records the cause and defers it until dialogue releases control. The current
-> `35x27` / `1120x864` chapel remains authoritative pending mapper-backed
-> re-authoring. Older size/layout implementation passages below are historical
-> reference, not permission to resize invisible bounds independently of art.
+> records the cause and defers it until dialogue releases control. The
+> mapper-backed re-authoring expands chapel art, playable boundary, combat,
+> and presentation authority together to `40x30` / `1280x960`, with a
+> `1152x800` combat rectangle. White Thread is two visible/mechanical
+> `288x64` segments separated by a hazard-free `192 px` dialogue gap. Older
+> size/layout implementation passages below are historical reference.
 
 This is the implementation spec for the fixed authored Ash-Bell Underground
 encounter. The player-facing motifs remain Ninth Bell, ash, Dry Fountain,
@@ -183,13 +185,26 @@ custodian/content/items/lore/ash_bell_items.json
 
 ## Room size
 
-Use a **35×27 tile room**, assuming 32×32 tiles.
+Use a **40×30 tile room**, assuming 32×32 tiles.
 
 ```text
-Width:  35 tiles = 1120 px
-Height: 27 tiles = 864 px
+Width:  40 tiles = 1280 px
+Height: 30 tiles = 960 px
 Tile:   32 px
 ```
+
+The unchanged `CHAPEL_ORIGIN = Vector2(0,-1120)` yields world authority
+`Rect2(-640,-1600,1280,960)` whose south edge meets the chapel connector at
+`y=-640`. Combat is `Rect2(-576,-1568,1152,800)`. Floor and perimeter art are
+extended at native scale, never stretched from the retired textures.
+
+White Thread remains at local `(0,-146)`. Its visible and mechanical segments
+are `288x64`, centered at local `(-240,0)` and `(240,0)` beneath that parent;
+local `x=-96..96` is the intentional hazard-free Ritualant approach. Touch and
+Cut interactions sit on the visible segments at `(-256,-146)` and
+`(256,-146)`. Hostile anchors form a room-scale triangle at WEST `(-416,96)`,
+NORTH `(0,-352)`, and EAST `(416,96)` while preserving the required fresh
+attack exchange between anchors.
 
 ## Camera framing
 
