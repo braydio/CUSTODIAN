@@ -1,0 +1,1046 @@
+{
+  "art_bounds": [
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/UnderlayRoot/DistantChapelProxy",
+      "center": [
+        384.0,
+        896.0
+      ],
+      "details": "Gameplay-aligned art; z -39",
+      "group": "art",
+      "id": "art.distant_chapel_proxy",
+      "label": "DistantChapelProxy",
+      "rect": [
+        184.0,
+        796.0,
+        400.0,
+        200.0
+      ],
+      "shape": "sprite_rect",
+      "texture_size": [
+        320.0,
+        160.0
+      ],
+      "z_index": -39
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/BackgroundRoot/LandingShelfApron",
+      "center": [
+        0.0,
+        1568.0
+      ],
+      "details": "Gameplay-aligned art; z -39",
+      "group": "art",
+      "id": "art.landing_shelf_apron",
+      "label": "LandingShelfApron",
+      "rect": [
+        -384.0,
+        1312.0,
+        768.0,
+        512.0
+      ],
+      "shape": "sprite_rect",
+      "texture_size": [
+        768.0,
+        512.0
+      ],
+      "z_index": -39
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/BackgroundRoot/CavernRimSouth",
+      "center": [
+        0.0,
+        1024.0
+      ],
+      "details": "Gameplay-aligned art; z -40",
+      "group": "art",
+      "id": "art.cavern_rim_south",
+      "label": "CavernRimSouth",
+      "rect": [
+        -512.0,
+        512.0,
+        1024.0,
+        1024.0
+      ],
+      "shape": "sprite_rect",
+      "texture_size": [
+        1024.0,
+        1024.0
+      ],
+      "z_index": -40
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/BackgroundRoot/CavernRimMiddle",
+      "center": [
+        0.0,
+        256.0
+      ],
+      "details": "Gameplay-aligned art; z -40",
+      "group": "art",
+      "id": "art.cavern_rim_middle",
+      "label": "CavernRimMiddle",
+      "rect": [
+        -512.0,
+        -256.0,
+        1024.0,
+        1024.0
+      ],
+      "shape": "sprite_rect",
+      "texture_size": [
+        1024.0,
+        1024.0
+      ],
+      "z_index": -40
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/BackgroundRoot/CavernRimNorth",
+      "center": [
+        0.0,
+        -448.0
+      ],
+      "details": "Gameplay-aligned art; z -40",
+      "group": "art",
+      "id": "art.cavern_rim_north",
+      "label": "CavernRimNorth",
+      "rect": [
+        -512.0,
+        -960.0,
+        1024.0,
+        1024.0
+      ],
+      "shape": "sprite_rect",
+      "texture_size": [
+        1024.0,
+        1024.0
+      ],
+      "z_index": -40
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/BackgroundRoot/ChapelConnectorApron",
+      "center": [
+        0.0,
+        -640.0
+      ],
+      "details": "Gameplay-aligned art; z -27",
+      "group": "art",
+      "id": "art.chapel_connector_apron",
+      "label": "ChapelConnectorApron",
+      "rect": [
+        -256.0,
+        -832.0,
+        512.0,
+        384.0
+      ],
+      "shape": "sprite_rect",
+      "texture_size": [
+        512.0,
+        384.0
+      ],
+      "z_index": -27
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/BackgroundRoot/ChapelOuterBlend",
+      "center": [
+        0.0,
+        -1120.0
+      ],
+      "details": "Gameplay-aligned art; z -28",
+      "group": "art",
+      "id": "art.chapel_outer_blend",
+      "label": "ChapelOuterBlend",
+      "rect": [
+        -640.0,
+        -1632.0,
+        1280.0,
+        1024.0
+      ],
+      "shape": "sprite_rect",
+      "texture_size": [
+        1280.0,
+        1024.0
+      ],
+      "z_index": -28
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/OcclusionRoot/ChapelThreshold",
+      "center": [
+        0.0,
+        -704.0
+      ],
+      "details": "Gameplay-aligned art; z 60",
+      "group": "art",
+      "id": "art.chapel_threshold",
+      "label": "ChapelThreshold",
+      "rect": [
+        -512.0,
+        -960.0,
+        1024.0,
+        512.0
+      ],
+      "shape": "sprite_rect",
+      "texture_size": [
+        1024.0,
+        512.0
+      ],
+      "z_index": 60
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/PlayableRoot/ForlornRitualantSite/Floor",
+      "center": [
+        0.0,
+        -1120.0
+      ],
+      "details": "Gameplay-aligned art; z -30",
+      "group": "art",
+      "id": "art.floor",
+      "label": "Floor",
+      "rect": [
+        -541.5,
+        -1552.0,
+        1083.0,
+        864.0
+      ],
+      "shape": "sprite_rect",
+      "texture_size": [
+        1083.0,
+        864.0
+      ],
+      "z_index": -30
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/PlayableRoot/ForlornRitualantSite/PerimeterRubble",
+      "center": [
+        0.0,
+        -1120.0
+      ],
+      "details": "Gameplay-aligned art; z -29",
+      "group": "art",
+      "id": "art.perimeter_rubble",
+      "label": "PerimeterRubble",
+      "rect": [
+        -560.0,
+        -1552.0,
+        1120.0,
+        864.0
+      ],
+      "shape": "sprite_rect",
+      "texture_size": [
+        1120.0,
+        864.0
+      ],
+      "z_index": -29
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/PlayableRoot/ForlornRitualantSite/Props/DryFountainBasin",
+      "center": [
+        0.0,
+        -1164.0
+      ],
+      "details": "Gameplay-aligned art; z 0",
+      "group": "art",
+      "id": "art.dry_fountain_basin",
+      "label": "DryFountainBasin",
+      "rect": [
+        -80.0,
+        -1228.0,
+        160.0,
+        128.0
+      ],
+      "shape": "sprite_rect",
+      "texture_size": [
+        160.0,
+        128.0
+      ],
+      "z_index": 0
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/PlayableRoot/ForlornRitualantSite/Props/WhiteThreadVisual",
+      "center": [
+        0.0,
+        -1266.0
+      ],
+      "details": "Gameplay-aligned art; z 3",
+      "group": "art",
+      "id": "art.white_thread_visual",
+      "label": "WhiteThreadVisual",
+      "rect": [
+        -256.0,
+        -1298.0,
+        512.0,
+        64.0
+      ],
+      "shape": "sprite_rect",
+      "texture_size": [
+        512.0,
+        64.0
+      ],
+      "z_index": 3
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/PlayableRoot/ForlornRitualantSite/Props/EmptyBellFrame/BrokenBell",
+      "center": [
+        0.0,
+        -1390.0
+      ],
+      "details": "Gameplay-aligned art; z 1",
+      "group": "art",
+      "id": "art.broken_bell",
+      "label": "BrokenBell",
+      "rect": [
+        -64.0,
+        -1473.5,
+        128.0,
+        167.0
+      ],
+      "shape": "sprite_rect",
+      "texture_size": [
+        128.0,
+        167.0
+      ],
+      "z_index": 1
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/UnderlayRoot/FarVoidParallax/FarVoid",
+      "center": [
+        -2624.0,
+        -2372.0
+      ],
+      "details": "PARALLAX PRESENTATION; NOT GAMEPLAY ALIGNMENT AUTHORITY; scroll_scale (0.1, 0.1)",
+      "group": "art",
+      "id": "art.parallax.far_void",
+      "label": "FarVoid — PARALLAX",
+      "parallax": true,
+      "rect": [
+        -3648.0,
+        -3396.0,
+        2048.0,
+        2048.0
+      ],
+      "shape": "sprite_rect",
+      "texture_size": [
+        2048.0,
+        2048.0
+      ],
+      "z_index": -120
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/UnderlayRoot/MidDepthSouthParallax/MidDepthSouth",
+      "center": [
+        -460.799987792969,
+        -259.200012207031
+      ],
+      "details": "PARALLAX PRESENTATION; NOT GAMEPLAY ALIGNMENT AUTHORITY; scroll_scale (0.28, 0.28)",
+      "group": "art",
+      "id": "art.parallax.mid_depth_south",
+      "label": "MidDepthSouth — PARALLAX",
+      "parallax": true,
+      "rect": [
+        -1484.80004882812,
+        -1027.19995117188,
+        2048.0,
+        1536.0
+      ],
+      "shape": "sprite_rect",
+      "texture_size": [
+        2048.0,
+        1536.0
+      ],
+      "z_index": -110
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/UnderlayRoot/MidDepthMiddleParallax/MidDepthMiddle",
+      "center": [
+        -460.799987792969,
+        -259.200012207031
+      ],
+      "details": "PARALLAX PRESENTATION; NOT GAMEPLAY ALIGNMENT AUTHORITY; scroll_scale (0.28, 0.28)",
+      "group": "art",
+      "id": "art.parallax.mid_depth_middle",
+      "label": "MidDepthMiddle — PARALLAX",
+      "parallax": true,
+      "rect": [
+        -1484.80004882812,
+        -1155.19995117188,
+        2048.0,
+        1792.0
+      ],
+      "shape": "sprite_rect",
+      "texture_size": [
+        2048.0,
+        1792.0
+      ],
+      "z_index": -109
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/UnderlayRoot/MidDepthNorthParallax/MidDepthNorth",
+      "center": [
+        -460.799987792969,
+        -259.200012207031
+      ],
+      "details": "PARALLAX PRESENTATION; NOT GAMEPLAY ALIGNMENT AUTHORITY; scroll_scale (0.28, 0.28)",
+      "group": "art",
+      "id": "art.parallax.mid_depth_north",
+      "label": "MidDepthNorth — PARALLAX",
+      "parallax": true,
+      "rect": [
+        -1484.80004882812,
+        -1155.19995117188,
+        2048.0,
+        1792.0
+      ],
+      "shape": "sprite_rect",
+      "texture_size": [
+        2048.0,
+        1792.0
+      ],
+      "z_index": -108
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/UnderlayRoot/MineralHazeParallax/MineralHaze",
+      "center": [
+        -352.0,
+        -198.0
+      ],
+      "details": "PARALLAX PRESENTATION; NOT GAMEPLAY ALIGNMENT AUTHORITY; scroll_scale (0.45, 0.45)",
+      "group": "art",
+      "id": "art.parallax.mineral_haze",
+      "label": "MineralHaze — PARALLAX",
+      "parallax": true,
+      "rect": [
+        -1120.0,
+        -966.0,
+        1536.0,
+        1536.0
+      ],
+      "shape": "sprite_rect",
+      "texture_size": [
+        1536.0,
+        1536.0
+      ],
+      "z_index": -95
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/UnderlayRoot/ChapelHazeParallax/ChapelHaze",
+      "center": [
+        -352.0,
+        -198.0
+      ],
+      "details": "PARALLAX PRESENTATION; NOT GAMEPLAY ALIGNMENT AUTHORITY; scroll_scale (0.45, 0.45)",
+      "group": "art",
+      "id": "art.parallax.chapel_haze",
+      "label": "ChapelHaze — PARALLAX",
+      "parallax": true,
+      "rect": [
+        -864.0,
+        -582.0,
+        1024.0,
+        768.0
+      ],
+      "shape": "sprite_rect",
+      "texture_size": [
+        1024.0,
+        768.0
+      ],
+      "z_index": -94
+    }
+  ],
+  "camera_zones": [
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/CameraPresentation/AuthoredCameraZoneDirector2D/LandingVista",
+      "details": "priority 10; zoom (0.62, 0.62); offset (0.0, -224.0); transition 0.65s",
+      "group": "camera",
+      "id": "camera.landing_vista",
+      "label": "LANDING_VISTA",
+      "rect": [
+        -512.0,
+        1216.0,
+        1024.0,
+        768.0
+      ],
+      "shape": "rect"
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/CameraPresentation/AuthoredCameraZoneDirector2D/UpperDescent",
+      "details": "priority 20; zoom (0.68, 0.68); offset (0.0, -192.0); transition 0.55s",
+      "group": "camera",
+      "id": "camera.upper_descent",
+      "label": "UPPER_DESCENT",
+      "rect": [
+        -576.0,
+        480.0,
+        1152.0,
+        896.0
+      ],
+      "shape": "rect"
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/CameraPresentation/AuthoredCameraZoneDirector2D/DeepCavern",
+      "details": "priority 30; zoom (0.76, 0.76); offset (0.0, -144.0); transition 0.50s",
+      "group": "camera",
+      "id": "camera.deep_cavern",
+      "label": "DEEP_CAVERN",
+      "rect": [
+        -576.0,
+        -320.0,
+        1152.0,
+        832.0
+      ],
+      "shape": "rect"
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/CameraPresentation/AuthoredCameraZoneDirector2D/ChapelApproach",
+      "details": "priority 40; zoom (0.82, 0.82); offset (0.0, -96.0); transition 0.40s",
+      "group": "camera",
+      "id": "camera.chapel_approach",
+      "label": "CHAPEL_APPROACH",
+      "rect": [
+        -416.0,
+        -800.0,
+        832.0,
+        480.0
+      ],
+      "shape": "rect"
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/CameraPresentation/AuthoredCameraZoneDirector2D/ChapelGameplayRelease",
+      "details": "priority 100; zoom (1.0, 1.0); offset (0.0, 0.0); transition 0.35s",
+      "group": "camera",
+      "id": "camera.chapel_gameplay_release",
+      "label": "CHAPEL_GAMEPLAY_RELEASE",
+      "rect": [
+        -480.0,
+        -1536.0,
+        960.0,
+        768.0
+      ],
+      "shape": "rect"
+    }
+  ],
+  "gameplay_bounds": [
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview",
+      "details": "Runtime walkability boundary",
+      "group": "boundary",
+      "id": "playable.boundary",
+      "label": "PLAYABLE AREA",
+      "polygon": [
+        [
+          -128.0,
+          1376.0
+        ],
+        [
+          -160.0,
+          1280.0
+        ],
+        [
+          -288.0,
+          1184.0
+        ],
+        [
+          -384.0,
+          1024.0
+        ],
+        [
+          -416.0,
+          832.0
+        ],
+        [
+          -352.0,
+          640.0
+        ],
+        [
+          -224.0,
+          480.0
+        ],
+        [
+          -64.0,
+          320.0
+        ],
+        [
+          64.0,
+          160.0
+        ],
+        [
+          96.0,
+          -64.0
+        ],
+        [
+          32.0,
+          -256.0
+        ],
+        [
+          -96.0,
+          -416.0
+        ],
+        [
+          -224.0,
+          -576.0
+        ],
+        [
+          -96.0,
+          -704.0
+        ],
+        [
+          -304.0,
+          -760.0
+        ],
+        [
+          -480.0,
+          -896.0
+        ],
+        [
+          -512.0,
+          -1152.0
+        ],
+        [
+          -456.0,
+          -1384.0
+        ],
+        [
+          -320.0,
+          -1496.0
+        ],
+        [
+          -112.0,
+          -1536.0
+        ],
+        [
+          112.0,
+          -1536.0
+        ],
+        [
+          320.0,
+          -1496.0
+        ],
+        [
+          456.0,
+          -1384.0
+        ],
+        [
+          512.0,
+          -1152.0
+        ],
+        [
+          480.0,
+          -896.0
+        ],
+        [
+          304.0,
+          -760.0
+        ],
+        [
+          96.0,
+          -704.0
+        ],
+        [
+          224.0,
+          -576.0
+        ],
+        [
+          224.0,
+          -352.0
+        ],
+        [
+          320.0,
+          -192.0
+        ],
+        [
+          352.0,
+          32.0
+        ],
+        [
+          320.0,
+          224.0
+        ],
+        [
+          192.0,
+          416.0
+        ],
+        [
+          32.0,
+          576.0
+        ],
+        [
+          -96.0,
+          736.0
+        ],
+        [
+          -128.0,
+          928.0
+        ],
+        [
+          -64.0,
+          1088.0
+        ],
+        [
+          64.0,
+          1216.0
+        ],
+        [
+          128.0,
+          1280.0
+        ],
+        [
+          128.0,
+          1376.0
+        ],
+        [
+          224.0,
+          1408.0
+        ],
+        [
+          320.0,
+          1472.0
+        ],
+        [
+          352.0,
+          1600.0
+        ],
+        [
+          352.0,
+          1760.0
+        ],
+        [
+          288.0,
+          1824.0
+        ],
+        [
+          -288.0,
+          1824.0
+        ],
+        [
+          -352.0,
+          1760.0
+        ],
+        [
+          -352.0,
+          1600.0
+        ],
+        [
+          -320.0,
+          1472.0
+        ],
+        [
+          -224.0,
+          1408.0
+        ]
+      ],
+      "shape": "polygon"
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview",
+      "details": "1120x864 current chapel; resize deferred",
+      "group": "encounter",
+      "id": "encounter.ritualant_chamber",
+      "label": "RITUALANT CHAMBER",
+      "rect": [
+        -560.0,
+        -1552.0,
+        1120.0,
+        864.0
+      ],
+      "shape": "rect"
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/PlayableRoot/ForlornRitualantSite/CombatBounds/CollisionShape2D",
+      "details": "Ritualant movement / combat containment",
+      "group": "encounter",
+      "id": "encounter.combat_bounds",
+      "label": "COMBAT BOUNDS",
+      "rect": [
+        -500.0,
+        -1526.0,
+        1000.0,
+        700.0
+      ],
+      "shape": "rect"
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/PlayableRoot/ForlornRitualantSite/Triggers/ProximityIntroTrigger/CollisionShape2D",
+      "center": [
+        0.0,
+        -1164.0
+      ],
+      "details": "Proximity introduction trigger",
+      "group": "encounter",
+      "id": "encounter.intro",
+      "label": "INTRO RADIUS",
+      "radius": 160.0,
+      "shape": "circle"
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/PlayableRoot/ForlornRitualantSite/NPCs/ForlornRitualant",
+      "details": "Last hostility: ",
+      "group": "encounter",
+      "id": "encounter.ritualant",
+      "label": "RITUALANT",
+      "point": [
+        0.0,
+        -1274.0
+      ],
+      "shape": "point"
+    }
+  ],
+  "hazards": [
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/PlayableRoot/ForlornRitualantSite/Props/WhiteThreadHazard/CollisionShape2D",
+      "details": "+1 entry; ticks every 0.75 sec; walk +3, run +7, dodge +12",
+      "group": "hazard",
+      "id": "encounter.thread_hazard",
+      "label": "WHITE THREAD HAZARD",
+      "rect": [
+        -110.0,
+        -1330.0,
+        220.0,
+        128.0
+      ],
+      "shape": "rect"
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/PlayableRoot/ForlornRitualantSite/Triggers/ThreadWarningZone/CollisionShape2D",
+      "details": "Ambient warning only",
+      "group": "hazard",
+      "id": "encounter.thread_warning",
+      "label": "THREAD WARNING",
+      "rect": [
+        -150.0,
+        -1356.0,
+        300.0,
+        180.0
+      ],
+      "shape": "rect"
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/PlayableRoot/ForlornRitualantSite/Triggers/DryFountainZone/CollisionShape2D",
+      "details": "Pressure tick every 2.0 sec",
+      "group": "hazard",
+      "id": "encounter.fountain_zone",
+      "label": "DRY FOUNTAIN ZONE",
+      "rect": [
+        -110.0,
+        -1245.0,
+        220.0,
+        150.0
+      ],
+      "shape": "rect"
+    }
+  ],
+  "interactions": [
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/PlayableRoot/ForlornRitualantSite/NPCs/RitualantInteract/CollisionShape2D",
+      "center": [
+        0.0,
+        -1274.0
+      ],
+      "details": "Interaction distance 84 px",
+      "group": "interaction",
+      "id": "interaction.ritualant",
+      "label": "RITUALANT INTERACTION",
+      "radius": 28.0,
+      "shape": "circle"
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/PlayableRoot/ForlornRitualantSite/NPCs/TouchThreadInteract/CollisionShape2D",
+      "center": [
+        -74.0,
+        -1258.0
+      ],
+      "details": "Thread interaction",
+      "group": "interaction",
+      "id": "interaction.touch_thread",
+      "label": "TOUCH THREAD",
+      "radius": 28.0,
+      "shape": "circle"
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/PlayableRoot/ForlornRitualantSite/NPCs/CutThreadInteract/CollisionShape2D",
+      "center": [
+        74.0,
+        -1258.0
+      ],
+      "details": "Thread interaction",
+      "group": "interaction",
+      "id": "interaction.cut_thread",
+      "label": "CUT THREAD",
+      "radius": 28.0,
+      "shape": "circle"
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/PlayableRoot/ForlornRitualantSite/Props/StillingPinPickup/CollisionShape2D",
+      "center": [
+        0.0,
+        -1264.0
+      ],
+      "details": "Pickup interaction",
+      "group": "interaction",
+      "id": "interaction.stilling_pin",
+      "label": "STILLING PIN",
+      "radius": 18.0,
+      "shape": "circle"
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/PlayableRoot/ForlornRitualantSite/Props/DryFountainInteract/CollisionShape2D",
+      "center": [
+        0.0,
+        -1164.0
+      ],
+      "details": "Inspect dry fountain",
+      "group": "interaction",
+      "id": "interaction.fountain",
+      "label": "DRY FOUNTAIN INTERACTION",
+      "radius": 28.0,
+      "shape": "circle"
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/PlayableRoot/ForlornRitualantSite/Props/SetStillingPinInteract/CollisionShape2D",
+      "center": [
+        0.0,
+        -1164.0
+      ],
+      "details": "Set pin in basin",
+      "group": "interaction",
+      "id": "interaction.set_pin",
+      "label": "SET STILLING PIN",
+      "radius": 28.0,
+      "shape": "circle"
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/PlayableRoot/ForlornRitualantSite/Props/ThreadAnchorWest/CollisionShape2D",
+      "center": [
+        -150.0,
+        -1198.0
+      ],
+      "details": "Hostile resolution anchor WEST",
+      "group": "interaction",
+      "id": "interaction.anchor_west",
+      "label": "THREAD ANCHOR WEST",
+      "radius": 28.0,
+      "shape": "circle"
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/PlayableRoot/ForlornRitualantSite/Props/ThreadAnchorNorth/CollisionShape2D",
+      "center": [
+        0.0,
+        -1330.0
+      ],
+      "details": "Hostile resolution anchor NORTH",
+      "group": "interaction",
+      "id": "interaction.anchor_north",
+      "label": "THREAD ANCHOR NORTH",
+      "radius": 28.0,
+      "shape": "circle"
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/PlayableRoot/ForlornRitualantSite/Props/ThreadAnchorEast/CollisionShape2D",
+      "center": [
+        150.0,
+        -1198.0
+      ],
+      "details": "Hostile resolution anchor EAST",
+      "group": "interaction",
+      "id": "interaction.anchor_east",
+      "label": "THREAD ANCHOR EAST",
+      "radius": 28.0,
+      "shape": "circle"
+    }
+  ],
+  "level": "forlorn_ritualant_underground",
+  "transitions": [
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview",
+      "details": "Authored route connector",
+      "group": "traversal",
+      "id": "traversal.landing_connector",
+      "label": "LANDING CONNECTOR",
+      "rect": [
+        -128.0,
+        1312.0,
+        256.0,
+        128.0
+      ],
+      "shape": "rect"
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview",
+      "details": "Authored route connector",
+      "group": "traversal",
+      "id": "traversal.chapel_connector",
+      "label": "CHAPEL CONNECTOR",
+      "rect": [
+        -96.0,
+        -768.0,
+        192.0,
+        128.0
+      ],
+      "shape": "rect"
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/PropsRoot/LowerLiftAssembly",
+      "details": "Lift boarding and departure origin",
+      "group": "traversal",
+      "id": "traversal.lower_lift_dock",
+      "label": "LOWER LIFT DOCK",
+      "point": [
+        0.0,
+        1696.0
+      ],
+      "shape": "point"
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/Markers/Spawn_DescentLanding",
+      "details": "Route entry spawn",
+      "group": "traversal",
+      "id": "traversal.spawn_descent",
+      "label": "DESCENT LANDING SPAWN",
+      "point": [
+        0.0,
+        1670.0
+      ],
+      "shape": "point"
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/Exits/Exit_ReturnWorld",
+      "details": "Interaction distance 96 px",
+      "group": "transition",
+      "id": "transition.return_world",
+      "label": "RETURN WORLD EXIT",
+      "point": [
+        0.0,
+        1696.0
+      ],
+      "shape": "point"
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/CameraPresentation/ChapelCosmicBlend",
+      "details": "Runtime threshold blend",
+      "group": "transition",
+      "id": "transition.cosmic_underlay",
+      "label": "COSMIC UNDERLAY 0→1",
+      "north_y": -736.0,
+      "rect": [
+        -1792.0,
+        -736.0,
+        3584.0,
+        128.0
+      ],
+      "shape": "band",
+      "south_y": -608.0
+    },
+    {
+      "authority_path": "/root/ForlornRitualantUndergroundMapper/World/ForlornRitualantRoomPreview/CameraPresentation/ChapelTemporalHazeBlend",
+      "details": "Runtime threshold blend",
+      "group": "transition",
+      "id": "transition.temporal_haze",
+      "label": "TEMPORAL HAZE 0→0.65",
+      "north_y": -800.0,
+      "rect": [
+        -1792.0,
+        -800.0,
+        3584.0,
+        160.0
+      ],
+      "shape": "band",
+      "south_y": -640.0
+    }
+  ]
+}

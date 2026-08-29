@@ -56,7 +56,6 @@ procgen_node = NodePath("../ProcGen2")
 floor_tilemap = NodePath("../NavigationRegion2D/Floor")
 walls_tilemap = NodePath("../NavigationRegion2D/Walls")
 nav_region = NodePath("../NavigationRegion2D")
-underlay_profile_override = "DROWNED_BASILICA"
 nonwalkable_surface_base_tilemap = NodePath("../NavigationRegion2D/NonWalkableSurfaceBase")
 nonwalkable_surface_overlay_tilemap = NodePath("../NavigationRegion2D/NonWalkableSurfaceOverlay")
 generation_output_enabled = false
