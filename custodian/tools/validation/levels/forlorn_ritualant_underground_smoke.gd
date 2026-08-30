@@ -42,8 +42,10 @@ func _run() -> void:
 		errors.append("lower lift still triggers travel on body entry")
 	elif not exit.is_in_group("interactable"):
 		errors.append("lower lift exit is not interactable")
-	elif not is_equal_approx((exit as InteractableLevelExit2D).interaction_distance, 96.0):
-		errors.append("lower lift interaction reach does not cover its visible deck")
+	elif not is_equal_approx((exit as InteractableLevelExit2D).interaction_distance, 64.0):
+		errors.append("lower lift interaction reach is not the reviewed 64 px")
+	elif not is_equal_approx((exit as InteractableLevelExit2D).arrival_guard_radius, 56.0):
+		errors.append("lower lift arrival guard is not the reviewed 56 px")
 	if level.get_node_or_null("PropsRoot/LowerLiftAssembly") == null:
 		errors.append("shared lower lift assembly is missing")
 	var apron := level.get_node_or_null("BackgroundRoot/LandingShelfApron") as Sprite2D

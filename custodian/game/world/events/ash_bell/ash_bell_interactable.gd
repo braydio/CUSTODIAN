@@ -76,18 +76,17 @@ func can_interact(_actor: Node = null) -> bool:
 				and state.resolution != AshBellEventState.Resolution.CUT_THREAD
 
 		InteractionKind.TAKE_STILLING_PIN:
-			return state.has_seen_dialogue(&"ask_bell") \
+			return site.has_completed_core_dialogue() \
 				and not state.ritualant_hostile \
 				and not state.has_stilling_pin
 
 		InteractionKind.DRY_FOUNTAIN:
 			return state.resolution >= AshBellEventState.Resolution.SEEN \
+				and not state.has_stilling_pin \
 				and state.fountain_state != AshBellEventState.FountainState.BLACK_WATER
 
 		InteractionKind.SET_STILLING_PIN:
-			return state.has_stilling_pin \
-				and state.resolution >= AshBellEventState.Resolution.TOOK_STILLING_PIN \
-				and state.resolution != AshBellEventState.Resolution.SET_STILLING_PIN
+			return site.can_set_stilling_pin()
 
 		InteractionKind.THREAD_ANCHOR:
 			return site.can_resolve_thread_anchor(anchor_id)
@@ -122,7 +121,7 @@ func get_interaction_prompt() -> String:
 		InteractionKind.DRY_FOUNTAIN:
 			return "INSPECT DRY FOUNTAIN"
 		InteractionKind.SET_STILLING_PIN:
-			return "SET PIN IN BASIN"
+			return "SET STILLING PIN"
 		InteractionKind.THREAD_ANCHOR:
 			var next_anchor := (
 				site.debug_get_resolved_thread_anchor_count() + 1

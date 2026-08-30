@@ -1,4 +1,4 @@
-[gd_scene load_steps=42 format=3]
+[gd_scene load_steps=45 format=3]
 
 [ext_resource type="Script" path="res://game/world/levels/authored/ash_bell/forlorn_ritualant_underground/forlorn_ritualant_underground.gd" id="1"]
 [ext_resource type="PackedScene" path="res://game/world/events/ash_bell/forlorn_ritualant_site.tscn" id="2"]
@@ -40,8 +40,13 @@
 [ext_resource type="Texture2D" path="res://assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress_fx__descent_dust__burst__omni__6f__192x192.png" id="38"]
 [ext_resource type="Script" path="res://game/world/levels/presentation/authored_threshold_blend_2d.gd" id="39"]
 [ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__landing_connector_bridge_01__320x192.png" id="40"]
+[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__lift__shaft_scroll_01__256x1536.png" id="41"]
 [sub_resource type="RectangleShape2D" id="return"]
 size=Vector2(192,64)
+[sub_resource type="RectangleShape2D" id="lower_lift_boarding_back"]
+size=Vector2(223,16)
+[sub_resource type="RectangleShape2D" id="lower_lift_boarding_front_wing"]
+size=Vector2(48,18)
 [sub_resource type="Shader" id="vertical_feather"]
 code="shader_type canvas_item; uniform float top_feather=0.1; uniform float bottom_feather=0.1; void fragment(){vec4 c=texture(TEXTURE,UV); float a=1.0; if(top_feather>0.0)a*=smoothstep(0.0,top_feather,UV.y); if(bottom_feather>0.0)a*=smoothstep(0.0,bottom_feather,1.0-UV.y); COLOR=vec4(c.rgb,c.a*a);}"
 [sub_resource type="ShaderMaterial" id="south_feather"]
@@ -215,6 +220,17 @@ position=Vector2(0,-1120)
 [node name="PropsRoot" type="Node2D" parent="."]
 [node name="LowerLiftAssembly" parent="PropsRoot" instance=ExtResource("4")]
 position=Vector2(0,1696)
+[node name="LowerLiftBoardingBounds" type="StaticBody2D" parent="PropsRoot"]
+position=Vector2(0,1696)
+[node name="BackStop" type="CollisionShape2D" parent="PropsRoot/LowerLiftBoardingBounds"]
+position=Vector2(0.5,-36)
+shape=SubResource("lower_lift_boarding_back")
+[node name="LeftFrontWing" type="CollisionShape2D" parent="PropsRoot/LowerLiftBoardingBounds"]
+position=Vector2(-56,38)
+shape=SubResource("lower_lift_boarding_front_wing")
+[node name="RightFrontWing" type="CollisionShape2D" parent="PropsRoot/LowerLiftBoardingBounds"]
+position=Vector2(56,38)
+shape=SubResource("lower_lift_boarding_front_wing")
 [node name="CavernPropsRoot" type="Node2D" parent="PropsRoot"]
 y_sort_enabled=true
 [node name="RockSmall01" type="Sprite2D" parent="PropsRoot/CavernPropsRoot"]
@@ -302,6 +318,16 @@ position=Vector2(-224,-608)
 texture=ExtResource("35")
 flip_h=false
 [node name="ArrivalDescentRoot" type="Node2D" parent="."]
+[node name="ShaftScroll" type="Sprite2D" parent="ArrivalDescentRoot"]
+visible=false
+position=Vector2(0,1440)
+texture=ExtResource("41")
+texture_filter=1
+texture_repeat=1
+z_as_relative=false
+z_index=-10
+region_enabled=true
+region_rect=Rect2(0,448,256,768)
 [node name="ShaftArrivalBack" type="Sprite2D" parent="ArrivalDescentRoot"]
 visible=false
 position=Vector2(0,1440)
@@ -441,8 +467,8 @@ position=Vector2(0,1696)
 script=ExtResource("3")
 exit_id=&"return_world"
 prompt_text="ASCEND TO SURFACE"
-interaction_distance=96.0
-arrival_guard_radius=96.0
+interaction_distance=64.0
+arrival_guard_radius=56.0
 boarding_authority_path=NodePath("../../PropsRoot/LowerLiftAssembly")
 departure_controller_path=NodePath("../..")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Exits/Exit_ReturnWorld"]

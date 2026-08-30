@@ -37,6 +37,24 @@ so activity/error reporting remains safe beneath every dialog; failed session
 loads no longer emit false successful-selection events or mask their original
 Workbench error with a Textual `NoMatches` exception.
 
+## Ritualant Lift + Peaceful Flow Repair (2026-08-29)
+
+The surface lift no longer draws `ThresholdSurface`; its hidden travel polygons
+remain disabled. The Underground return uses `64 px` interaction / `56 px`
+arrival release, local surface-matched boarding rails, and the existing narrow
+shaft-scroll art for ascent while the large arrival panels remain arrival-only.
+Route traversal exposes a read-only transition-input lock; pause closes/refuses
+during handoff and requires a post-transition button release.
+
+Ritualant first-time dialogue is completion-authoritative: cancellation does
+not mark production seen, completed Bell/Thread/Orra beats close to gameplay,
+and repeat topics use short recaps. Completed first contact plus all three core
+topics unlocks the Stilling Pin; taking it disables basin INSPECT and leaves
+`SET STILLING PIN` as the sole basin action. That action requires the upstream
+White Thread Knot and directly runs apparition/procession, final three-beat
+stabilization, and dissolution without the prior hidden stand timer. Unseen
+departure produces no Ritualant speech.
+
 ## Ritualant Mapper-Backed Arena Re-authoring (2026-08-29)
 
 The fixed Ash-Bell Underground chapel is now `40x30` / `1280x960` at the

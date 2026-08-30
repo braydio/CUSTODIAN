@@ -26,6 +26,22 @@
 > `288x64` segments separated by a hazard-free `192 px` dialogue gap. Older
 > size/layout implementation passages below are historical reference.
 
+> **Active peaceful-flow/dialogue correction (2026-08-29):** first-time
+> production dialogue is completion-authoritative: cancelling does not mark a
+> node seen, and completed production never replays. First contact opens one
+> shallow Bell / Thread / Orra surface; each core topic folds its former
+> submenu follow-ups into one complete beat, closes naturally to gameplay, and
+> resolves to a short recap on repeat. After first contact and all three core
+> topics complete, repeat interaction becomes a state-aware synopsis. Only
+> that completed core conversation unlocks the Stilling Pin. Taking it disables
+> Dry Fountain inspection and makes `SET STILLING PIN` the basin's sole action.
+> Setting it requires the upstream White Thread Knot, owns the apparition and
+> procession beat, then immediately commits `SITE_STABILIZED` through the
+> existing final cadence and dissolution; no timed basin stand remains in the
+> peaceful route. Departure speech requires completed first contact. Earlier
+> nested-menu, `ask_bell`-only unlock, replayable production, and post-Pin
+> hidden-stand passages below are superseded.
+
 This is the implementation spec for the fixed authored Ash-Bell Underground
 encounter. The player-facing motifs remain Ninth Bell, ash, Dry Fountain,
 black banners, white thread, and Saint Orra / the Unarrived Saint.
@@ -356,13 +372,11 @@ A heavy black iron stilling pin lying across the Forlorn-Ritualant’s lap or ju
 
 Gameplay:
 
-The player can take it only after either:
-
-```text
-- completing the full dialogue
-- cutting the thread
-- defeating/provoking the Forlorn-Ritualant
-```
+The player can take it only after completing first contact plus the full Bell,
+Thread, and Orra production beats. Taking it immediately retires `INSPECT DRY
+FOUNTAIN`; the colocated basin authority becomes `SET STILLING PIN`. Setting
+the Pin requires the upstream White Thread Knot and commits the complete
+peaceful resolution without another hidden stand timer.
 
 ## 5.3 White thread web
 
@@ -766,9 +780,9 @@ Effect:
 
 The Unarrived apparition appears behind the player, not in front of them. It vanishes when the camera tries to center it.
 
-## If player leaves without touching anything
+## If player leaves after completing first contact
 
-On exit trigger:
+On exit trigger, only if `first_interaction` completed:
 
 ```text
 Forlorn-Ritualant:
@@ -885,7 +899,8 @@ BLACK_WATER:
   or player carries Bell-Clapper Without a Bell
 
 CRACKED_ANCHORED:
-  if player touches thread at low pressure and then interacts with Fountain
+  when the player sets the Stilling Pin in the basin; this is the visible
+  anchored commitment state immediately before peaceful stabilization
 ```
 
 ## 8.4 Unarrived apparition
@@ -1060,6 +1075,27 @@ ash_bell_bellfall_containment:
 ---
 
 # 10. Data file: `forlorn_ritualant_dialogue.json`
+
+The live JSON, rather than the historical illustrative excerpt below, owns
+production text. Its current topology is:
+
+```text
+ritualant_root
+  BELL   -> ask_bell        / ask_bell_recap
+  THREAD -> ask_thread      / ask_thread_recap
+  ORRA   -> ask_orra        / ask_orra_recap
+  LEAVE
+```
+
+There are no nested Bell/Thread/Orra submenus. The three production nodes fold
+in the former Unarrival, thread-break, Orra-late, and Orra-judgement follow-ups.
+Completion closes to gameplay; cancellation does not set `seen_dialogue`;
+repeats select recap nodes. Once first interaction and all three core topics
+complete, ordinary interaction selects `core_synopsis_pin_waiting` or
+`core_synopsis_pin_taken` rather than reopening the menu.
+
+The following JSON is retained only as historical tone reference and is not a
+schema, topology, or exact-copy authority:
 
 ```json
 {

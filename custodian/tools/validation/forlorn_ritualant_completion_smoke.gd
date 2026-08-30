@@ -8,6 +8,8 @@ const SURFACE_LIFT_SCENE := preload(
 	"res://game/world/approaches/ash_bell/ash_bell_lift_ingress_presentation.tscn"
 )
 const LIFT_ASSEMBLY_PATH := "res://game/world/approaches/ash_bell/ash_bell_lift_platform_assembly.tscn"
+const ROUTE_MANAGER_SCRIPT := preload("res://game/world/routes/route_traversal_manager.gd")
+const PAUSE_UI_SCRIPT := preload("res://game/ui/hud/pause_ui.gd")
 const KNOT_DESCRIPTION := "A funerary knot of unnaturally clean white thread. Names were tied into these before the dead were counted. The fibers pull taut near places that do not agree with their own history."
 
 
@@ -47,6 +49,7 @@ func _run() -> void:
 	_validate_canonical_data()
 	await _validate_encounter_runtime()
 	await _validate_lower_lift()
+	await _validate_pause_transition_lock()
 	if errors.is_empty():
 		print("[ForlornRitualantCompletionSmoke] PASS")
 		quit(0)
@@ -68,7 +71,11 @@ func _validate_canonical_data() -> void:
 	_check(item_description == KNOT_DESCRIPTION, "inventory Knot description drifted")
 	var dialogue := _json("res://content/dialogue/ash_bell/forlorn_ritualant_dialogue.json")
 	var dialogue_nodes := dialogue.get("nodes", {}) as Dictionary
+	var dialogue_menus := dialogue.get("menus", {}) as Dictionary
 	_check(dialogue_nodes.has("ninth_answer_bark"), "dialogue data lacks Ninth Answer bark")
+	_check(dialogue_menus.size() == 1 and dialogue_menus.has("ritualant_root"), "Ritualant dialogue retained nested submenu churn")
+	for recap_id in ["ask_bell_recap", "ask_thread_recap", "ask_orra_recap"]:
+		_check(dialogue_nodes.has(recap_id), "dialogue data lacks recap %s" % recap_id)
 	var intro := (dialogue_nodes.get("proximity_intro", {}) as Dictionary).get("lines", []) as Array
 	var intro_text: Array[String] = []
 	for line_variant: Variant in intro:
@@ -128,6 +135,10 @@ func _validate_encounter_runtime() -> void:
 	actor.global_position = site.global_position + Vector2(400.0, 0.0)
 	site.dialogue_presenter._process(0.0)
 	_check(not site.dialogue_presenter.is_active(), "dialogue did not cancel outside interaction range")
+	_check(
+		not site.event_state.has_seen_dialogue(&"first_interaction"),
+		"cancelled first interaction was marked complete"
+	)
 	actor.global_position = site.global_position
 	site.dialogue_presenter.open_menu(&"ritualant_root", actor)
 	_check(
@@ -135,14 +146,70 @@ func _validate_encounter_runtime() -> void:
 		"dialogue menu did not receive expanded native-height layout"
 	)
 	site.dialogue_presenter.force_close()
-	site.ask_about_bell()
-	while site.dialogue_presenter.is_manual_active():
-		site.dialogue_presenter.advance()
-	if site.dialogue_presenter.is_menu_active():
-		site.dialogue_presenter.close_menu()
+	var peaceful_site := SITE_SCENE.instantiate() as ForlornRitualantSite
+	root.add_child(peaceful_site)
+	await process_frame
+	peaceful_site.interact_with_ritualant()
+	_finish_manual(peaceful_site.dialogue_presenter)
+	_check(
+		peaceful_site.event_state.has_seen_dialogue(&"first_interaction"),
+		"completed first interaction was not marked seen"
+	)
+	var pin_interactable := peaceful_site.get_node("Props/StillingPinPickup") as AshBellInteractable
+	_check(not pin_interactable.can_interact(actor), "Stilling Pin unlocked before all core topics")
+	peaceful_site.ask_about_bell()
+	var bell_production := peaceful_site.dialogue_presenter.get_current_text()
+	peaceful_site.dialogue_presenter.cancel()
+	_check(
+		not peaceful_site.event_state.has_seen_dialogue(&"ask_bell"),
+		"cancelled Bell topic was marked complete"
+	)
+	peaceful_site.ask_about_bell()
+	_check(
+		peaceful_site.dialogue_presenter.get_current_text() == bell_production,
+		"cancelled Bell topic did not replay first-time production"
+	)
+	_finish_manual(peaceful_site.dialogue_presenter)
+	_check(not peaceful_site.dialogue_presenter.is_active(), "topic completion did not return to gameplay")
+	_check(not pin_interactable.can_interact(actor), "Bell topic alone unlocked Stilling Pin")
+	peaceful_site.ask_about_bell()
+	_check(
+		peaceful_site.dialogue_presenter.get_active_node() == &"ask_bell_recap",
+		"completed Bell topic replayed full production instead of recap"
+	)
+	_check(
+		peaceful_site.dialogue_presenter.get_current_text() != bell_production,
+		"Bell recap duplicated first-time production"
+	)
+	_finish_manual(peaceful_site.dialogue_presenter)
+	peaceful_site.ask_about_thread()
+	_finish_manual(peaceful_site.dialogue_presenter)
+	peaceful_site.ask_about_orra()
+	_finish_manual(peaceful_site.dialogue_presenter)
+	_check(peaceful_site.has_completed_core_dialogue(), "three completed core topics did not exhaust core dialogue")
+	_check(pin_interactable.can_interact(actor), "full core dialogue did not unlock Stilling Pin")
 	_check(bool(memory.call("is_completed", &"knowledge_ash_bell_ninth_answer")), "knowledge unlock was not persisted")
-	var pin_interactable := site.get_node("Props/StillingPinPickup") as AshBellInteractable
-	_check(pin_interactable.can_interact(actor), "Stilling Pin did not unlock from the Bell conversation branch")
+	var dry_interactable := peaceful_site.get_node("Props/DryFountainInteract") as AshBellInteractable
+	var set_pin_interactable := peaceful_site.get_node("Props/SetStillingPinInteract") as AshBellInteractable
+	peaceful_site.take_stilling_pin()
+	_check(not dry_interactable.can_interact(actor), "INSPECT remained available after taking Stilling Pin")
+	_check(set_pin_interactable.can_interact(actor), "SET STILLING PIN did not become the sole basin interaction")
+	peaceful_site.set_stilling_pin()
+	for _step in range(120):
+		if peaceful_site.event_state.resolution == AshBellEventState.Resolution.SITE_STABILIZED:
+			break
+		await create_timer(0.1).timeout
+	_check(
+		peaceful_site.event_state.resolution == AshBellEventState.Resolution.SITE_STABILIZED,
+		"setting Stilling Pin did not complete peaceful resolution"
+	)
+	_check(not set_pin_interactable.can_interact(actor), "SET STILLING PIN survived peaceful completion")
+	peaceful_site.queue_free()
+	var unseen_site := SITE_SCENE.instantiate() as ForlornRitualantSite
+	root.add_child(unseen_site)
+	await process_frame
+	_check(unseen_site.get_departure_lines().is_empty(), "unseen immediate departure produced Ritualant speech")
+	unseen_site.queue_free()
 	var hazard := site.get_node("Props/WhiteThreadHazard") as WhiteThreadHazard
 	site.event_state.set_thread_tension(20, &"smoke_low")
 	hazard._apply_slow(actor)
@@ -299,6 +366,18 @@ func _validate_lower_lift() -> void:
 	var surface_lift := surface.get_node("LiftRoot") as AshBellLiftPlatformAssembly
 	_check(lift.scene_file_path == LIFT_ASSEMBLY_PATH, "lower lift does not instance shared assembly")
 	_check(surface_lift.scene_file_path == LIFT_ASSEMBLY_PATH, "surface lift does not instance shared assembly")
+	_check(not surface.has_node("ThresholdSurface"), "surface lift retained flat ThresholdSurface polygon")
+	_check(is_equal_approx(exit.interaction_distance, 64.0), "lower lift interaction distance was not reduced")
+	_check(is_equal_approx(exit.arrival_guard_radius, 56.0), "lower lift arrival guard was not reduced")
+	var boarding_bounds := level.get_node_or_null("PropsRoot/LowerLiftBoardingBounds") as StaticBody2D
+	_check(boarding_bounds != null, "lower lift lacks local boarding containment")
+	if boarding_bounds != null:
+		var back := boarding_bounds.get_node("BackStop") as CollisionShape2D
+		var left := boarding_bounds.get_node("LeftFrontWing") as CollisionShape2D
+		var right := boarding_bounds.get_node("RightFrontWing") as CollisionShape2D
+		_check((back.shape as RectangleShape2D).size == Vector2(223.0, 16.0), "lower lift backstop contract drifted")
+		_check((left.shape as RectangleShape2D).size == Vector2(48.0, 18.0), "lower lift left wing contract drifted")
+		_check((right.shape as RectangleShape2D).size == Vector2(48.0, 18.0), "lower lift right wing contract drifted")
 	var actor := FakeOperator.new()
 	actor.name = "Operator"
 	actor.add_test_visual()
@@ -333,7 +412,7 @@ func _validate_lower_lift() -> void:
 	_check(transitions[0] == 0, "walking onto lower lift triggered route travel")
 	exit.arm_arrival_guard(actor)
 	_check(not exit.can_interact(actor), "arrival guard allowed immediate lower-lift bounce")
-	actor.global_position = exit.global_position + Vector2(140.0, 0.0)
+	actor.global_position = exit.global_position + Vector2(57.0, 0.0)
 	exit._physics_process(0.0)
 	actor.global_position = lift.get_boarding_position()
 	_check(exit.can_interact(actor), "boarded actor cannot interact with lower lift")
@@ -341,6 +420,9 @@ func _validate_lower_lift() -> void:
 	await create_timer(0.4).timeout
 	_check(lift.position.y < 1696.0, "lower lift did not move during ascent")
 	_check(lift.get_node("RiderAnchor").get_child_count() > 0, "lower lift did not carry a presentation rider")
+	_check(level.shaft_scroll.visible, "lower ascent did not use central shaft scroll")
+	_check(not level.shaft_arrival_back.visible, "lower ascent retained rectangular rear arrival panel")
+	_check(not level.shaft_arrival_fore.visible, "lower ascent retained rectangular foreground arrival panel")
 	await create_timer(2.0).timeout
 	_check(transitions[0] == 1, "E-style lower-lift interaction did not request route once")
 
@@ -378,6 +460,33 @@ func _validate_lower_lift() -> void:
 	surface.queue_free()
 	actor.queue_free()
 	await process_frame
+
+
+func _validate_pause_transition_lock() -> void:
+	var manager := ROUTE_MANAGER_SCRIPT.new() as RouteTraversalManager
+	root.add_child(manager)
+	var pause_ui := PAUSE_UI_SCRIPT.new() as CanvasLayer
+	root.add_child(pause_ui)
+	await process_frame
+	manager._phase = RouteTraversalManager.TransitionPhase.REQUESTED
+	_check(manager.is_transition_input_locked(), "route phase did not lock transition input")
+	pause_ui._process(0.0)
+	_check(not pause_ui.can_accept_pause_input(), "pause accepted input during route transition")
+	_check(not pause_ui.is_paused and not paused, "route transition left SceneTree paused")
+	manager._phase = RouteTraversalManager.TransitionPhase.IDLE
+	pause_ui._process(0.0)
+	_check(pause_ui.can_accept_pause_input(), "pause did not re-arm after required release")
+	manager._visual_transition_active = true
+	_check(manager.is_transition_input_locked(), "visual transition did not lock pause input")
+	manager._visual_transition_active = false
+	pause_ui.queue_free()
+	manager.queue_free()
+	await process_frame
+
+
+func _finish_manual(presenter: ForlornRitualantDialoguePresenter) -> void:
+	while presenter != null and presenter.is_manual_active():
+		presenter.advance()
 
 
 func _json(path: String) -> Dictionary:

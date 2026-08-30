@@ -229,7 +229,7 @@ position = Vector2(0, -44)
 script = ExtResource("3_interactable")
 interaction_kind = 8
 site_path = NodePath("../..")
-prompt_text = "SET PIN IN BASIN"
+prompt_text = "SET STILLING PIN"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Props/SetStillingPinInteract" unique_id=435349878]
 shape = SubResource("CircleShape2D_interact")

@@ -72,6 +72,7 @@ const AUTHORING_MARKERS := {
 @onready var landing_shelf_apron: Sprite2D = $BackgroundRoot/LandingShelfApron
 @onready var playable_ground: Polygon2D = $BackgroundRoot/PlayableGround
 @onready var distant_chapel_proxy: Sprite2D = $UnderlayRoot/DistantChapelProxy
+@onready var shaft_scroll: Sprite2D = $ArrivalDescentRoot/ShaftScroll
 @onready var shaft_arrival_back: Sprite2D = $ArrivalDescentRoot/ShaftArrivalBack
 @onready var shaft_arrival_fore: Sprite2D = $ArrivalDescentRoot/ShaftArrivalFore
 @onready var landing_mouth: Sprite2D = $ArrivalDescentRoot/LandingMouth
@@ -278,25 +279,22 @@ func begin_lift_departure(actor: Node, exit: InteractableLevelExit2D) -> void:
 		_departure_actor = null
 		return
 	_suspend_departure_actor(actor)
-	shaft_arrival_back.visible = true
-	shaft_arrival_fore.visible = true
-	shaft_arrival_back.modulate.a = 1.0
-	shaft_arrival_fore.modulate.a = 1.0
-	shaft_arrival_back.region_rect.position.y = 448.0
-	shaft_arrival_fore.region_rect.position.y = 576.0
+	shaft_arrival_back.visible = false
+	shaft_arrival_fore.visible = false
+	shaft_scroll.visible = true
+	shaft_scroll.modulate.a = 1.0
+	shaft_scroll.region_rect.position.y = 448.0
 	lower_lift.set_vibrating(true)
 	await get_tree().create_timer(DEPARTURE_PREMOVE_HOLD_SEC).timeout
 	var halfway_y := _departure_lift_start.y - 128.0
 	var visible_ascent := create_tween().set_parallel(true).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	visible_ascent.tween_property(lower_lift, "position:y", halfway_y, DEPARTURE_VISIBLE_TRAVEL_SEC)
-	visible_ascent.tween_property(shaft_arrival_back, "region_rect:position:y", 224.0, DEPARTURE_VISIBLE_TRAVEL_SEC)
-	visible_ascent.tween_property(shaft_arrival_fore, "region_rect:position:y", 288.0, DEPARTURE_VISIBLE_TRAVEL_SEC)
+	visible_ascent.tween_property(shaft_scroll, "region_rect:position:y", 224.0, DEPARTURE_VISIBLE_TRAVEL_SEC)
 	await visible_ascent.finished
 	var ascent_target_y := _departure_lift_start.y - LOWER_LIFT_TRAVEL_DISTANCE
 	var final_ascent := create_tween().set_parallel(true).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	final_ascent.tween_property(lower_lift, "position:y", ascent_target_y, DEPARTURE_FADE_TRAVEL_SEC)
-	final_ascent.tween_property(shaft_arrival_back, "region_rect:position:y", 0.0, DEPARTURE_FADE_TRAVEL_SEC)
-	final_ascent.tween_property(shaft_arrival_fore, "region_rect:position:y", 0.0, DEPARTURE_FADE_TRAVEL_SEC)
+	final_ascent.tween_property(shaft_scroll, "region_rect:position:y", 0.0, DEPARTURE_FADE_TRAVEL_SEC)
 	var black_fade := create_tween()
 	black_fade.tween_interval(DEPARTURE_FADE_TRAVEL_SEC - DEPARTURE_BLACK_FADE_SEC)
 	black_fade.tween_property(departure_black, "modulate:a", 1.0, DEPARTURE_BLACK_FADE_SEC)
@@ -389,6 +387,7 @@ func _rollback_failed_departure() -> void:
 	tween.tween_property(departure_black, "modulate:a", 0.0, 0.25)
 	await tween.finished
 	lower_lift.set_vibrating(false)
+	shaft_scroll.visible = false
 	_departure_actor = null
 	_actor_process_snapshot.clear()
 	_departure_running = false
@@ -403,6 +402,8 @@ func _cleanup_departure_immediate() -> void:
 	if lower_lift != null:
 		lower_lift.position = _departure_lift_start
 		lower_lift.set_vibrating(false)
+	if shaft_scroll != null:
+		shaft_scroll.visible = false
 	if departure_black != null:
 		departure_black.modulate.a = 0.0
 	if departure_epilogue != null:

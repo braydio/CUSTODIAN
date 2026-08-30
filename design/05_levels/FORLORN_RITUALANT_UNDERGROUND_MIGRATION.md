@@ -89,6 +89,10 @@ The generic special-room system remains live for other encounters. Its documenta
 - Underground departure holds for `0.20 sec`, travels the first `128 px` over
   `0.70 sec` fully visible, travels the final `128 px` over `0.75 sec` while
   black takes authority, then holds full black for `0.25 sec` before handoff.
+- `Exit_ReturnWorld` uses a `64 px` interaction distance and `56 px`
+  arrival-release guard. Local lower-lift boarding containment mirrors the
+  surface `223x16` backstop and paired `48x18` front wings without moving
+  collision authority into the shared assembly.
 - A closed polygon loop defines the cavern, landing shelf, and chapel connector; debug centerline data is presentation-only.
 - The Ritualant scene is instanced at `(0,-1120)`; the old internal exit
   trigger is retired because the authored wrapper owns travel.
@@ -141,6 +145,16 @@ tick interval while suppressed, so stored time cannot fire immediately when
 dialogue closes. Same-frame firearm or melee feedback is also ignored while
 dialogue owns Operator input.
 
+First-time production dialogue is marked seen only after `sequence_finished`;
+cancellation leaves it replayable. First contact exposes one shallow Bell /
+Thread / Orra menu. Each topic owns its former follow-up material, closes to
+gameplay when complete, and uses a short recap thereafter. Completed first
+contact plus all three core topics unlocks the Stilling Pin. Taking it retires
+basin inspection; `SET STILLING PIN` requires the upstream White Thread Knot,
+runs apparition/procession stagecraft, and commits stabilization without a
+timed fountain stand. Exhausted core dialogue resolves to a state-aware
+synopsis, and departure epilogue speech requires completed first contact.
+
 `AshBellEventState` requests hostility but does not directly declare it.
 `ForlornRitualantSite` is the sole hostility-transition authority: it records
 the reason, defers a request received during dialogue, then performs dialogue
@@ -165,6 +179,13 @@ travel described above. Both suspend the live actor. A
 rejected route request rolls the lift, black overlay, presentation, and actor
 processing back to their pre-departure state.
 
+The surface presentation no longer draws the flat `ThresholdSurface` polygon;
+`DarkMouth` remains only as the deep aperture and disabled travel-occlusion
+polygons remain disabled. Underground arrival retains its authored timing and
+arrival panels, while ascent uses the existing narrow `256x1536` shaft-scroll
+texture as its moving central shaft. The `768 px` arrival back/foreground
+panels are not shown during ascent.
+
 The Underground uses camera-profile change notification for the distant chapel
 proxy and generic `AuthoredThresholdBlend2D` instances for the reversible
 cosmic-underlay and temporal-haze transition beneath the existing chapel
@@ -180,6 +201,11 @@ of hostility, reverses the ash pressure, and lets dialogue data own the final
 three-beat cadence before dissolution. The shared lift accepts the visible
 deck (`72 px` half-width), and `InteractableLevelExit2D` delegates prompt truth
 to the same controller predicate used by departure acceptance.
+
+`RouteTraversalManager.is_transition_input_locked()` exposes the read-only
+phase/visual-transition gate consumed by pause UI. Pause cannot open during a
+handoff, an already-open pause is cleared, and pause must be released once
+after transition before another press can be accepted.
 
 `AshBellLiftIngressPresentation` and the Underground wrapper still duplicate
 transit orchestration. A future
@@ -203,8 +229,13 @@ Authored camera zones progress through landing, upper descent, deep cavern, chap
 ```bash
 cd custodian
 godot --headless --path . --script res://tools/validation/levels/forlorn_ritualant_underground_smoke.gd
+godot --headless --path . --script res://tools/validation/forlorn_ritualant_completion_smoke.gd
 godot --headless --path . --script res://tools/validation/route_registry_contract_smoke.gd
 godot --headless --path . --script res://tools/validation/special_room_insertion_smoke.gd
 ```
 
-The Ritualant smoke must prove that the authored level and route load, the named spawn resolves, the encounter scene is instanced, a `return_world` exit exists, and the retired special-room JSON is absent.
+The level smoke proves authored route/load/spawn/exit authority and retirement
+of the procgen definition. The completion smoke additionally proves one-time
+dialogue/recaps, the Pin-to-basin peaceful journey, unseen departure silence,
+lower-lift containment and ascent art, reduced guard distance, and route-aware
+pause suppression.

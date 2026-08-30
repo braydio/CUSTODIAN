@@ -81,6 +81,9 @@ const TOPIC_KNOWLEDGE := {
 	&"ask_orra_late": &"ash_bell_unarrived_saint",
 	&"ask_orra_judgement": &"ash_bell_unarrived_saint",
 }
+const CORE_DIALOGUE_TOPICS: Array[StringName] = [
+	&"ask_bell", &"ask_thread", &"ask_orra",
+]
 
 
 func _ready() -> void:
@@ -169,7 +172,17 @@ func interact_with_ritualant() -> void:
 		return
 	var actor := _get_dialogue_actor()
 	if event_state.has_seen_dialogue(&"first_interaction"):
-		if dialogue_presenter != null: dialogue_presenter.open_menu(&"ritualant_root", actor)
+		if dialogue_presenter == null:
+			return
+		if has_completed_core_dialogue():
+			var synopsis := (
+				&"core_synopsis_pin_taken"
+				if event_state.has_stilling_pin
+				else &"core_synopsis_pin_waiting"
+			)
+			dialogue_presenter.start(synopsis, actor)
+		else:
+			dialogue_presenter.open_menu(&"ritualant_root", actor)
 		return
 	event_state.set_resolution(AshBellEventState.Resolution.SPOKE_TO_RITUALANT)
 	event_state.set_fountain_state(AshBellEventState.FountainState.GHOST)
@@ -180,21 +193,23 @@ func interact_with_ritualant() -> void:
 func ask_about_bell() -> void:
 	event_state.set_resolution(AshBellEventState.Resolution.SPOKE_TO_RITUALANT)
 	event_state.set_fountain_state(AshBellEventState.FountainState.GHOST)
-	event_state.mark_dialogue_seen(&"ask_bell")
-	event_state.unlock_knowledge(&"ash_bell_ninth_answer")
-	_start_topic_dialogue(&"ask_bell", &"bell_menu")
+	_start_topic_or_recap(&"ask_bell", &"ask_bell_recap")
 
 
 func ask_about_thread() -> void:
-	event_state.mark_dialogue_seen(&"ask_thread")
-	event_state.unlock_knowledge(&"ash_bell_white_thread")
-	_start_topic_dialogue(&"ask_thread", &"thread_menu")
+	_start_topic_or_recap(&"ask_thread", &"ask_thread_recap")
 
 
 func ask_about_orra() -> void:
-	event_state.mark_dialogue_seen(&"ask_orra")
-	event_state.unlock_knowledge(&"ash_bell_unarrived_saint")
-	_start_topic_dialogue(&"ask_orra", &"orra_menu")
+	_start_topic_or_recap(&"ask_orra", &"ask_orra_recap")
+
+
+func _start_topic_or_recap(
+	topic_id: StringName,
+	recap_id: StringName
+) -> bool:
+	var node_id := recap_id if event_state.has_seen_dialogue(topic_id) else topic_id
+	return _start_topic_dialogue(node_id, &"")
 
 func _on_dialogue_topic_requested(node_id: StringName, return_menu_id: StringName) -> void:
 	if not _start_topic_dialogue(node_id, return_menu_id):
@@ -211,6 +226,15 @@ func _on_dialogue_sequence_finished(node_id: StringName) -> void:
 	var knowledge_variant: Variant = TOPIC_KNOWLEDGE.get(node_id, &"")
 	if knowledge_variant is StringName and knowledge_variant != &"":
 		event_state.unlock_knowledge(knowledge_variant)
+
+
+func has_completed_core_dialogue() -> bool:
+	if event_state == null or not event_state.has_seen_dialogue(&"first_interaction"):
+		return false
+	for topic_id in CORE_DIALOGUE_TOPICS:
+		if not event_state.has_seen_dialogue(topic_id):
+			return false
+	return true
 
 func _get_dialogue_actor() -> Node2D:
 	var actor := get_tree().get_first_node_in_group("player") as Node2D
@@ -288,7 +312,9 @@ func cut_thread() -> void:
 
 
 func take_stilling_pin() -> void:
-	if event_state.has_stilling_pin:
+	if event_state.has_stilling_pin \
+			or not has_completed_core_dialogue() \
+			or event_state.ritualant_hostile:
 		return
 
 	event_state.has_stilling_pin = true
@@ -302,6 +328,8 @@ func take_stilling_pin() -> void:
 
 
 func inspect_dry_fountain() -> void:
+	if event_state.has_stilling_pin:
+		return
 	if event_state.fountain_state == AshBellEventState.FountainState.ABSENT:
 		event_state.set_fountain_state(AshBellEventState.FountainState.GHOST)
 
@@ -311,17 +339,34 @@ func inspect_dry_fountain() -> void:
 
 
 func set_stilling_pin() -> void:
-	if not event_state.has_stilling_pin:
+	if not can_set_stilling_pin():
 		return
 
 	event_state.set_resolution(AshBellEventState.Resolution.SET_STILLING_PIN)
-	event_state.add_silence_pressure(35, &"stilling_pin_set")
+	event_state.set_fountain_state(AshBellEventState.FountainState.CRACKED_ANCHORED)
 	request_dialogue.emit(dialogue_id, &"set_stilling_pin_pre")
 	if dialogue_presenter != null: await dialogue_presenter.wait_for_node_end(&"set_stilling_pin_pre")
 	_show_unarrived_apparition()
 	_trigger_ghost_procession()
 	await get_tree().create_timer(1.15).timeout
 	request_dialogue.emit(dialogue_id, &"set_stilling_pin_resolve")
+	if dialogue_presenter != null:
+		await dialogue_presenter.wait_for_node_end(&"set_stilling_pin_resolve")
+	stabilize_site()
+
+
+func can_set_stilling_pin() -> bool:
+	return (
+		event_state != null
+		and event_state.has_stilling_pin
+		and event_state.has_thread_knot
+		and has_completed_core_dialogue()
+		and not event_state.ritualant_hostile
+		and not _resolution_sequence_running
+		and not is_terminal_resolution()
+		and event_state.resolution >= AshBellEventState.Resolution.TOOK_STILLING_PIN
+		and event_state.resolution != AshBellEventState.Resolution.SET_STILLING_PIN
+	)
 
 
 func player_attacked_in_room() -> void:
@@ -400,6 +445,9 @@ func play_departure_epilogue() -> void:
 
 
 func get_departure_lines() -> Array[String]:
+	if event_state == null \
+			or not event_state.has_seen_dialogue(&"first_interaction"):
+		return []
 	if event_state.resolution == AshBellEventState.Resolution.SITE_DEFILED \
 			or event_state.resolution == AshBellEventState.Resolution.RITUALANT_DISSOLVED:
 		return []
@@ -767,6 +815,9 @@ func _retire_terminal_interactions() -> void:
 		NodePath("NPCs/RitualantInteract"),
 		NodePath("NPCs/TouchThreadInteract"),
 		NodePath("NPCs/CutThreadInteract"),
+		NodePath("Props/StillingPinPickup"),
+		NodePath("Props/DryFountainInteract"),
+		NodePath("Props/SetStillingPinInteract"),
 		NodePath("Props/ThreadAnchorWest"),
 		NodePath("Props/ThreadAnchorNorth"),
 		NodePath("Props/ThreadAnchorEast"),

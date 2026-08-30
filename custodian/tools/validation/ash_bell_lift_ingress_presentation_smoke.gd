@@ -144,6 +144,11 @@ func _validate_scene(
 	_check(is_zero_approx(shaft_window.modulate.a), "parked shaft retained visible opacity", errors)
 	_check(shaft_window.clip_children == CanvasItem.CLIP_CHILDREN_ONLY, "shaft window lost its irregular child mask", errors)
 	_check(presentation.get_node_or_null("RearMassRoot/DarkMouth") != null, "idle cave mouth is missing", errors)
+	_check(
+		presentation.get_node_or_null("ThresholdSurface") == null,
+		"flat ThresholdSurface polygon returned",
+		errors
+	)
 	var mouth := presentation.get_node("RearMassRoot/DarkMouth") as Polygon2D
 	var mouth_bounds := _polygon_bounds(mouth.polygon)
 	_check(mouth_bounds.size.x <= 170.0, "idle shaft aperture exposes broad black side plates", errors)
@@ -192,9 +197,9 @@ func _validate_scene(
 	presentation.add_child(boarded_actor)
 	boarded_actor.global_position = presentation.get_boarding_position()
 	_check(presentation.is_actor_boarded(boarded_actor), "boarding marker is outside boarding gate", errors)
-	boarded_actor.position = Vector2(50, -26)
+	boarded_actor.position = Vector2(73, -26)
 	_check(not presentation.is_actor_boarded(boarded_actor), "side position passed boarding gate", errors)
-	boarded_actor.position = Vector2(0, -60)
+	boarded_actor.position = Vector2(0, -61)
 	_check(not presentation.is_actor_boarded(boarded_actor), "rear shaft position passed boarding gate", errors)
 	boarded_actor.queue_free()
 
@@ -361,7 +366,7 @@ func _validate_specialized_spawner(errors: Array[String]) -> void:
 		player.name = "Operator"
 		player.add_to_group("player")
 		root.add_child(player)
-		player.global_position = ingress.global_position + Vector2(70, -26)
+		player.global_position = ingress.global_position + Vector2(80, -26)
 		ingress.interact(player)
 		_check(not bool(ingress.get("_approach_enter_deferred")), "off-platform interaction triggered lift traversal", errors)
 		ingress.call("_on_body_entered", player)
@@ -411,7 +416,6 @@ func _validate_world_depth_contract(
 ) -> void:
 	var expected := {
 		"RearMassRoot": -8,
-		"ThresholdSurface": 0,
 		"EntranceStructureRoot": 1,
 		"LiftRoot": 0,
 		"ForegroundOccluderRoot": 1,

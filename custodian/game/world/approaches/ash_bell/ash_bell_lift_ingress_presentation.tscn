@@ -201,11 +201,6 @@ position = Vector2(0, -26)
 [node name="InteractionApproachMarker" type="Marker2D" parent="." unique_id=1268059212]
 position = Vector2(0, 72)
 
-[node name="ThresholdSurface" type="Polygon2D" parent="." unique_id=1057101993]
-z_as_relative = false
-color = Color(0.145, 0.14, 0.13, 1)
-polygon = PackedVector2Array(-122, -8, -88, -18, -44, -13, 0, -18, 46, -12, 90, -17, 124, -6, 112, 34, 70, 42, 22, 37, -30, 43, -78, 38, -116, 25)
-
 [node name="DustBurst" type="AnimatedSprite2D" parent="." unique_id=104774872]
 visible = false
 modulate = Color(1, 1, 1, 0.34)

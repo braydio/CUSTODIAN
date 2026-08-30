@@ -145,6 +145,11 @@ func _select_menu() -> void:
 	if menu != &"": open_menu(menu, _actor); return
 	var node := StringName(str(option.get("node", "")))
 	if node == &"": return
+	if _seen(node):
+		var recap := StringName(str(option.get("recap_node", "")))
+		if recap != &"":
+			topic_requested.emit(recap, &"")
+			return
 	if bool(option.get("skip_if_seen", false)) and _seen(node): open_menu(StringName(str(option.get("next_menu", ""))), _actor); return
 	topic_requested.emit(node, StringName(str(option.get("next_menu", ""))))
 func _show_menu() -> void:

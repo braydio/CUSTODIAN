@@ -188,6 +188,10 @@ func get_phase() -> int:
 	return _phase
 
 
+func is_transition_input_locked() -> bool:
+	return _phase != TransitionPhase.IDLE or _visual_transition_active
+
+
 func get_route_state_store() -> RefCounted:
 	return _state_store
 

@@ -3,6 +3,7 @@ extends CanvasLayer
 var is_paused := false
 var selected_index := 0
 var menu_items: Array[Dictionary] = []
+var _pause_release_required := false
 
 @onready var panel: Control = get_node_or_null("PausePanel")
 @onready var title_label: Label = get_node_or_null("PausePanel/Title")
@@ -23,6 +24,15 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if _is_terminal_open():
 		return
+	if _is_route_transition_locked():
+		_pause_release_required = true
+		if is_paused:
+			toggle_pause()
+		return
+	if _pause_release_required:
+		if not Input.is_action_pressed("pause"):
+			_pause_release_required = false
+		return
 
 	if Input.is_action_just_pressed("pause"):
 		toggle_pause()
@@ -41,6 +51,8 @@ func _process(_delta: float) -> void:
 
 
 func toggle_pause() -> void:
+	if not is_paused and not can_accept_pause_input():
+		return
 	is_paused = not is_paused
 
 	if panel == null:
@@ -208,3 +220,20 @@ func _is_terminal_open() -> bool:
 	if ui and ui.has_method("is_terminal_open"):
 		return bool(ui.is_terminal_open())
 	return false
+
+
+func can_accept_pause_input() -> bool:
+	return not _pause_release_required and not _is_route_transition_locked()
+
+
+func _is_route_transition_locked() -> bool:
+	var manager := get_tree().get_first_node_in_group("route_traversal_manager")
+	if manager == null:
+		var world := get_node_or_null("/root/GameRoot/World")
+		if world != null:
+			manager = world.get_node_or_null("RouteTraversalManager")
+	return (
+		manager != null
+		and manager.has_method("is_transition_input_locked")
+		and bool(manager.call("is_transition_input_locked"))
+	)
