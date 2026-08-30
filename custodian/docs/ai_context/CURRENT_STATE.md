@@ -102,6 +102,14 @@ import. The catalog-driven path phase resizes only full sequential strip
 aliases, journals resource hashes, restores them during rollback, and reports
 retired runtime PNG paths before actor smokes.
 
+The planned `Operator Art Agent` roadmap now lives at
+`design/02_features/animation/OPERATOR_ART_AGENT_SYSTEM.md`. It is not a live
+pixel-authoring capability: Workbench V2 remains the only transactional
+publication gate, Alignment Repair remains manual, and the first approved
+future slice is `.ai`-only deterministic Aseprite editing, thin CLI/MCP service,
+operation journaling, rendering, and defect observation with no canonical
+publication.
+
 ## Map + AI Coherence V1 (2026-08-20)
 
 - The deprecated `procgen_route_clearance_smoke.gd` road-building assertion is
