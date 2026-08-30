@@ -1,0 +1,23 @@
+{
+  "source": "operator__modular_weapon_vigil_dagger__melee_1h__relaxed_idle_01__e__5f__96.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "operator/source/animations/melee_1h_dagger/cosmetic/relaxed_idle_01/operator__weapon__melee_1h_dagger__cosmetic__relaxed_idle_01__e__5f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 5
+      }
+    }
+  ],
+  "post_process": [
+    "operator_runtime_build"
+  ],
+  "frame_size": [
+    96,
+    96
+  ],
+  "remove_superseded": true
+}
