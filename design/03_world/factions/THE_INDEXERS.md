@@ -34,7 +34,7 @@ The Indexers are not trying to understand the wound. They are trying to label th
 
 ## What They Are Right About
 
-The Severing did create catastrophic ambiguity. Provenance failure did matter. If no one can classify what survived, restoration becomes dangerous. The Indexers understand that unstructured fragments become lethal.
+The Severing did create catastrophic ambiguity. Origin conflict did matter. If no one can classify what survived, restoration becomes dangerous. The Indexers understand that unstructured fragments become lethal.
 
 ---
 
@@ -60,9 +60,9 @@ They may encounter the term earlier than the player, but they redact, encode, or
 
 ---
 
-## Relationship to the Hidden Entity
+## Relationship to the Return-Path Problem
 
-Indexers are dangerous because they might try to classify the unclassifiable. If they attempt to name or index the hidden entity, they may create a route to it. They do not understand that some recipient fields were removed for safety.
+Indexers are dangerous because they might try to classify the unclassifiable. They pursue complete origin indexing across all continuity boundaries, including Null Warrant sealed routes. Their classification instinct does not account for records intentionally removed from indexing for safety. Some routes and authorities were deliberately excluded from all known indexing systems — not because the data was lost, but because completing the index could reopen something that was sealed.
 
 ---
 

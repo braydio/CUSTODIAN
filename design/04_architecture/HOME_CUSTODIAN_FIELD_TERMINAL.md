@@ -30,9 +30,9 @@ At first, this seems like a simple objective:
 
 But the deeper truth is:
 
-> The command is not merely electronic. It is a provenance echo — a repeating fragment of Custodian authority, archive memory, and impossible historical residue. The signal leaks because the Pale causes continuity states to converge: a local half-buried terminal has become contaminated by another continuity-state in which the same terminal has already been restored and used by the Custodian across many worlds.
+> The command is not merely electronic. It is residual Lattice coupling — a repeating fragment of Custodian authority, archive memory, and imported telemetry from a physically adjacent continuity-state. The signal carries old authority credentials and route history that leak through because the terminal retains imported state from a counterpart interaction across a nearby continuity boundary.
 
-The bleed expresses itself through frequencies, codes, procedural language, and authority patterns familiar to the Custodian. The terminal has already “knows” the Custodian because the Custodian has already restored this terminal in a different continuity.
+The bleed expresses itself through frequencies, codes, procedural language, and authority patterns familiar to the Custodian. The terminal responds to the Custodian because it carries a continuity-signature match from a physically adjacent record — not because it remembers this specific Custodian from another life.
 
 The Custodian follows the command not because it understands the source, but because **answering dead authority is what it was made to do**. The first act of play is therefore not exploration for its own sake, but **return**: the Custodian comes back to a forgotten institutional post, anchors it, and refuses to relinquish its residual authority.
 
@@ -67,7 +67,7 @@ Runtime behavior:
 
 - `CustodianHomeBegin` owns local objective state and signal-band presentation.
 - `FieldTerminalInteractable` is a normal `interactable` group member discovered by the existing Operator interaction scan.
-- The Black Reliquary HUD presents location, phase, objective, signal/provenance status, and prompt plaque text.
+- The Black Reliquary HUD presents location, phase, objective, signal/continuity-origin status, and prompt plaque text.
 - Prompt text is rendered as real Godot labels through the HUD, not baked into textures.
 - Witness contact changes objective state to terminal stabilization and unlocks a partial archive/status readout placeholder.
 - A second terminal access request changes scene through `CustodianHomeBegin` only after the persistent world-contract bootstrap is ready; the interactable and HUD do not own boot-flow authority.
@@ -113,9 +113,9 @@ It is part:
 - command terminal
 - archive node
 - mission desk
-- lawful reality anchor
+- residual authority anchor
 - repair/fabrication interface
-- provenance recorder
+- continuity-origin recorder
 - dormant base core
 
 It should feel like the first piece of “home” the player finds.
@@ -145,7 +145,7 @@ My recommendation:
 
 The terminal is broadcasting in a frequency band that was never meant for normal radio.
 
-It is a **provenance carrier**.
+It is an **authority credential carrier**.
 
 That means the signal contains not just coordinates or data, but identity relationships:
 
@@ -163,9 +163,9 @@ It is saying: **RETURN TO POST.**
 
 But the mechanism behind that recognition is stranger than simple identity matching.
 
-The terminal does not recognize the Custodian as a sentient agent checking in against a database. The local half-buried terminal’s state has been contaminated by another continuity-state — a version of reality in which the same terminal was already restored and used by the Custodian across many worlds. The Pale causes these continuity states to converge. The bleed expresses itself through frequencies, codes, procedural language, and authority patterns familiar to the Custodian.
+The terminal does not recognize the Custodian as a sentient agent checking in against a database. The local half-buried terminal retains imported state from a physically adjacent continuity — a counterpart record in which this terminal was restored and used. The imported state carries old authority credentials, route history, and a continuity-signature match. The bleed expresses itself through frequencies, codes, procedural language, and authority patterns familiar to the Custodian.
 
-The signal leaks recognition because the terminal has already been restored by this Custodian somewhere else. That is the pale signal — not a broadcast, but a convergence leak.
+The signal responds to the Custodian because the imported record contains a matching authority signature — not a broadcast, but imported telemetry that activates on encountering the right credential type.
 
 It is saying:
 
@@ -173,16 +173,16 @@ It is saying:
 SOURCE: CUSTODIAN FIELD TERMINAL
 STATUS: UNVERIFIED
 AUTHORITY: PARTIAL
-TARGET: [CUSTODIAN IDENTITY — CONVERGENCE FROM ANOTHER CONTINUITY]
+TARGET: [CUSTODIAN AUTHORITY SIGNATURE — CONTINUITY-SIGNATURE MATCH]
 LAST CONTACT: [UNFILED]
-PROVENANCE: DAMAGED
-REQUEST: WITNESS
+SOURCE INTEGRITY: IMPORTED
+REQUEST: AUTHENTICATION
 COMMAND: RETURN TO POST
 ```
 
 That last word is important.
 
-The terminal does not need repair yet. It needs to be **witnessed** by a Custodian so lawful reality can decide what it is.
+The terminal does not need repair yet. It needs to be **authenticated** by a Custodian so its imported authority credentials can activate local equipment.
 
 ## Opening mission flow
 
@@ -292,7 +292,7 @@ COMMAND SOURCE: PRIOR
 COMMAND ORIGIN: ANOTHER CONTINUITY
 ```
 
-The source is physically ahead, but provenance-wise it is “below” and “prior” — and originating from a continuity that should not converge with this one. That reinforces that the Custodian perceives reality through origin, continuity, and authority, and that the Pale is causing these states to bleed.
+The source is physically ahead, but in continuity-origin terms it is “below” and “prior” — and originating from a continuity that should not converge with this one. That reinforces that the Custodian perceives reality through origin, continuity, and authority, and that the Pale is causing these states to bleed.
 
 ### Beat 5 — Terminal reveal
 
@@ -308,16 +308,16 @@ AUTHORITY HANDSHAKE FAILED.
 AUTHORITY HANDSHAKE FAILED.
 AUTHORITY HANDSHAKE PARTIAL.
 
-CONTINUITY CONVERGENCE CONFIRMED.
-THIS TERMINAL HAS BEEN RESTORED BY THIS UNIT ELSEWHERE.
-WITNESS ACCEPTED.
-PROVENANCE ANCHOR ESTABLISHED.
+CONTINUITY-SIGNATURE MATCH CONFIRMED.
+IMPORTED AUTHORITY CREDENTIALS DETECTED.
+AUTHENTICATION ACCEPTED.
+ROUTE HISTORY LOADED.
 
 RETURN TO POST.
 POST ACCEPTED.
 ```
 
-The terminal does not verify the Custodian’s identity by checking it against a database. The terminal’s state has been contaminated by another continuity — a version of events in which this Custodian already restored this terminal across many worlds. The Pale causes the states to converge. The command to RETURN TO POST was always the terminal calling the Custodian back to a post it already occupied in a different continuity.
+The terminal does not verify the Custodian’s identity by checking it against a database. The terminal retains imported state from a physically adjacent continuity — a counterpart record in which this terminal was restored and used. The imported authority credentials and route history activate when they encounter a matching continuity-signature. The command to RETURN TO POST was always the terminal broadcasting old institutional authority that happens to match this Custodian’s credential type.
 
 Then the terminal wakes enough to become the player’s first hub interface.
 
@@ -335,18 +335,18 @@ End state:
 - Local map/scanner unlocked.
 - First real base objective appears.
 - The terminal identifies nearby resources.
-- The terminal also records the first “provenance anomaly.”
+- The terminal also records the first continuity-origin anomaly.
 
 Objective completion text:
 
 ```text
 POST ACCEPTED.
 CUSTODIAN FIELD TERMINAL LOCATED.
-WITNESS STATE: ESTABLISHED
+AUTHENTICATION STATE: ESTABLISHED
 ARCHIVE LINK: PARTIAL
 LOCAL COMMAND: DEGRADED
 REPAIR CAPACITY: MINIMAL
-CONTINUITY CONVERGENCE: CONFIRMED
+CONTINUITY-SIGNATURE MATCH: CONFIRMED
 
 NEW DIRECTIVE:
 STABILIZE THE TERMINAL.
@@ -393,18 +393,18 @@ Use this as an in-game archive entry after discovery:
 ```text
 ARCHIVE ENTRY: CUSTODIAN FIELD TERMINAL
 
-Custodian Field Terminals were deployed as local continuity anchors in contested, damaged, or low-trust sectors. Each terminal maintained command access, repair logs, witness records, local infrastructure maps, and provenance chains for recovered assets.
+Custodian Field Terminals were deployed as local continuity anchors in contested, damaged, or low-trust sectors. Each terminal maintained command access, repair logs, route-history records, local infrastructure maps, and continuity-origin records for recovered assets.
 
 This unit was found repeating an institutional command without confirmed grid authority: RETURN TO POST.
 
-Recovered signal structure suggests the terminal was not transmitting a location or a request. It was transmitting a command from an institutional post that should not still exist. The command’s authority signature shows continuity convergence — this terminal’s state has been contaminated by another continuity in which it was already restored and active.
+Recovered signal structure suggests the terminal was not transmitting a location or a request. It was transmitting a command from an institutional post that should not still exist. The command’s authority signature contains imported credentials from a physically adjacent continuity — old authority data that persists in the terminal’s local state.
 
 Status:
 - Archive memory damaged
 - Local authority partial
 - Fabrication rights restricted
-- Provenance index unstable
-- Continuity convergence: confirmed
+- Source integrity: imported
+- Continuity-signature match: confirmed
 
 Recommendation:
 Accept post. Restore terminal subsystems before accepting external records as true.
@@ -451,7 +451,7 @@ Inner ring:
 
 - terminal chamber
 - stronger interference
-- first provenance anomaly
+- first continuity-origin anomaly
 - small fight or ambush
 - terminal discovery
 
@@ -492,7 +492,7 @@ Approach and establish witness contact. The terminal is already expecting this u
 After interacting:
 
 ```text
-Witness contact established. Continuity convergence confirmed.
+Authentication established. Continuity-signature match confirmed.
 
 POST ACCEPTED.
 
@@ -515,7 +515,7 @@ And maybe one lore flag:
 ```text
 global_flags:
   - terminal_witness_established
-  - first_provenance_anomaly_detected
+  - first_continuity_origin_anomaly_detected
 ```
 
 ## Best name for the frequency
@@ -525,7 +525,7 @@ Do not call it “radio frequency” in system text. Give it a better term.
 Options:
 
 - **Custodian-band frequency**
-- **Provenance carrier**
+- **Authority credential carrier**
 - **Witness-band signal**
 - **Archive-band pulse**
 - **Continuity-band signal**
@@ -535,7 +535,7 @@ Options:
 Best combination:
 
 > The terminal emits a **Custodian-band frequency**.
-> Later, the Custodian identifies it as a **provenance carrier**.
+> Later, the Custodian identifies it as an **authority credential carrier**.
 
 Early game term: understandable.
 Deep lore term: weirder.
@@ -568,7 +568,7 @@ UNFILED ORIGIN STATE
 or:
 
 ```text
-PROVENANCE FAILURE: SOURCE ABSENT
+SOURCE CONFLICT: ORIGIN ABSENT
 ```
 
 Then later the player learns this is part of the same cosmic wound.
@@ -577,7 +577,7 @@ Then later the player learns this is part of the same cosmic wound.
 
 I would lock this as the first objective thesis:
 
-> **The Custodian awakens in a grand ruin beneath a repeating institutional command: RETURN TO POST. The command leaks from a terminal whose state is contaminated by another continuity — a version of events where this Custodian already restored this post. The Custodian follows not because it understands, but because answering dead authority is what it was made to do. The first act is not exploration. It is return. Finding the terminal establishes the first anchor of lawful reality, archive, repair, and player purpose.**
+> **The Custodian awakens in a grand ruin beneath a repeating institutional command: RETURN TO POST. The command carries imported authority credentials from a physically adjacent continuity — a counterpart record in which this terminal was restored. The Custodian follows not because it understands, but because answering dead authority is what it was made to do. The first act is not exploration. It is return. Finding the terminal establishes the first anchor of archive, repair, scanning, and player purpose.**
 
 That is the whole game in miniature.
 
@@ -600,5 +600,5 @@ custodian/docs/ai_context/CURRENT_STATE.md
 Canonical one-liner for the docs:
 
 ```text
-The first objective is not “explore.” It is **RETURN TO POST**. The Custodian awakens in a grand institution ruin beneath a repeating command from a terminal whose state has been contaminated by another continuity. The Custodian answers the command because responding to dead authority is what it was built to do. Witness contact establishes the first local anchor of lawful reality, archive, repair, scanning, and future base progression — and confirms that the Custodian is not inheriting power, but refusing to relinquish residual authority.
+The first objective is not “explore.” It is **RETURN TO POST**. The Custodian awakens in a grand institution ruin beneath a repeating command from a terminal carrying imported authority credentials from a physically adjacent continuity. The Custodian answers the command because responding to dead authority is what it was built to do. Authentication establishes the first local anchor of archive, repair, scanning, and future base progression — and confirms that the Custodian is not inheriting power, but refusing to relinquish residual authority.
 ```

@@ -55,10 +55,11 @@ They treat Ash-Bell's Open Interval as a revelation for all existence. Historica
 - Restoration can reopen dangerous connections.
 - The Ash-Bell Unarrival was real.
 - Nine stations exchanged operational Answers.
-- The Ninth Answer was received from both sides of the overlap.
+- The Ninth Answer was given by Precentor Orra at Station IX and terminated regional coupling.
 - Routes, personnel, records, and structures crossed between adjacent continuities.
 - Precentor Orra was a real operator later mythologized as a saint.
-- The West Gate closure ended stable transit and abandoned people.
+- Orra was ordered to Station IX and deliberately diverted to recover stranded civilians before reaching her post.
+- West Gate closure was a separate containment and evacuation event that did not end the Open Interval.
 - Similar continuity anomalies can make ordinary records and sensors unreliable.
 
 They often locate continuity-anomaly sites before other factions because their inherited practices preserve useful signal-listening and route-recognition methods.
@@ -109,8 +110,9 @@ Their rites transform operational history:
 | The Open Interval allowed reciprocal cross-continuity exchange | The Pale opened a merciful road without destination |
 | White thread assisted identity and custody checks | Thread binds a person against false arrival |
 | Black banners marked a containment order | Black banners announce compassionate refusal |
-| Precentor Orra coordinated the emergency | Saint Orra arrived late by sacred choice |
-| The West Gate was sealed to end stable coupling | The Closed Gate spared the Unarrived |
+| Precentor Orra was ordered to Station IX and diverted for civilians | Saint Orra arrived late by sacred choice |
+| West Gate closure was a separate containment event | The Closed Gate spared the Unarrived |
+| Orra's Ninth Answer terminated regional coupling | The final Answer sealed the mystery |
 
 Use both columns in content. Penitent speech may be beautiful, persuasive, and wrong without invalidating the historical event beneath it.
 

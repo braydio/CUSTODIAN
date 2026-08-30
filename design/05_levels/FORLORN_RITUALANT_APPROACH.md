@@ -17,7 +17,7 @@ Creates a clean five-stage player progression:
 2. **Threshold** — enter cave; compression, darkness, sound change
 3. **Mechanical descent** — old lift takes you down; signals "this place goes deeper than expected"; good pacing break before the reveal
 4. **Deep cavern** — larger chamber; space to stage lighting, atmosphere, and encounter layout
-5. **Cosmic intrusion** — Ash Bell Continuum starts bleeding through; the Forlorn Ritualant scene becomes sacred/uncanny/tragic instead of just "enemy in cave"
+5. **Cosmic intrusion** — Ash-Bell Continuity starts bleeding through; the Forlorn Ritualant scene becomes sacred/uncanny/tragic instead of just "enemy in cave"
 
 ---
 
@@ -66,7 +66,7 @@ Small landing zone before the main encounter area.
 
 ### 5. Main Forlorn Ritualant chamber
 
-The emotional core. Not just "cave room" — it should feel like a cavern used as a ritual site, worn by grief and repetition, close enough to the Ash Bell Continuum that reality is thinning.
+The emotional core. Not just "cave room" — it should feel like a cavern used as a ritual site, worn by grief and repetition, close enough to the Ash-Bell Continuity that physical cross-continuity intrusion bleeds into the chamber.
 
 **Spatial composition**:
 
@@ -84,13 +84,13 @@ Three lighting layers:
 |-------|--------|---------|
 | **1. Practical local cave light** | Low warm/neutral: lift lamp, dying sconces, small candles/shrine fire, weak industrial strips | Grounding, silhouette definition, local readability |
 | **2. Ritual light** | Focused around encounter zone: soft amber ash glow, pale bone-white ring, dim red ember traces | Draws attention to ritual floor; separates arena from raw cave |
-| **3. Continuum intrusion light** | Cool blue-violet, pallid silver, soft teal, star-white pulses | Makes the space feel cosmically contaminated; implies nearness to the Ash Bell Continuum |
+| **3. Continuum intrusion light** | Cool blue-violet, pallid silver, soft teal, star-white pulses | Makes the space feel cosmically intimate; implies nearness to the Ash-Bell Continuity |
 
 **Best principle**: Let continuum light feel *directional but impossible* — not like a torch. Leaking through cracks, blooming from mist, reflecting on wet stone, appearing in places it shouldn't.
 
 ---
 
-## Ash Bell Continuum closeness
+## Ash-Bell Continuity closeness
 
 Visible in environmental symptoms, not just a background decal.
 
@@ -171,7 +171,7 @@ Visible in environmental symptoms, not just a background decal.
 
 | First half | Second half |
 |------------|-------------|
-| Subterranean / archaeological / physical | Metaphysical / tragic / cosmic-lit |
+| Subterranean / archaeological / physical | Physical cross-continuity intrusion / tragic / cosmic-lit |
 
 That contrast is what makes the reveal land.
 
@@ -210,12 +210,12 @@ Design and implement the Forlorn Ritualant encounter approach as a staged descen
 4. Lift descent transition
 5. Lower cavern landing
 6. Main Forlorn Ritualant chamber
-7. Ash Bell Continuum cosmic atmosphere in the final chamber
+7. Ash-Bell Continuity cosmic atmosphere in the final chamber
 
 **Design goals**:
 - The encounter should feel discovered, not immediately exposed.
 - The lift descent should function as a pacing and mood transition.
-- The final chamber should feel physically subterranean but cosmically close to the Ash Bell Continuum.
+- The final chamber should feel physically subterranean but cosmically close to the Ash-Bell Continuity.
 - The space should feel mournful, sacred, and uncanny rather than merely "boss arena in a cave."
 
 **Implementation priorities**:
@@ -225,7 +225,7 @@ Design and implement the Forlorn Ritualant encounter approach as a staged descen
 4. Build a focal ritual chamber for the Forlorn Ritualant.
 5. Add lighting layers: grounded cave/practical light, ritual floor light, continuum intrusion light.
 6. Add atmosphere: ash particles, mist, cosmic seep/starfield/distant impossible glow.
-7. Ensure the final chamber has a strong backdrop phenomenon suggesting nearness to the Ash Bell Continuum.
+7. Ensure the final chamber has a strong backdrop phenomenon suggesting nearness to the Ash-Bell Continuity.
 
 **Environmental details**:
 - Cave entrance should be modest and grounded.

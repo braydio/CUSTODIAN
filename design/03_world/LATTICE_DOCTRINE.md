@@ -139,7 +139,7 @@ Archive completion does not "win" the world. It:
 But every success also increases:
 
 - strain on the Lattice
-- Pale attention from what lies outside
+- Pale pressure from beyond the boundary
 - instability pressure
 
 Every success accelerates the eventual catastrophe.

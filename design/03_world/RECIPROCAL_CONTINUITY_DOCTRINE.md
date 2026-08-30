@@ -130,6 +130,11 @@ During the Open Interval, the Ash-Bell continuity remained physically coupled to
 
 The Ninth Silence is the folk and devotional name for the Open Interval.
 
+### Open Interval locks
+
+- **West Gate closure does not terminate the Open Interval.** West Gate closure may remain a separate containment and evacuation event, but it is not what ends the Open Interval. Orra's Ninth Answer does.
+- **"Ninth Bell" is later survivor and devotional language** derived from Station IX and its missing Answer. There was no original ninth cast bronze bell and no operational bell-signal of that name.
+
 ---
 
 ## 9. Unarrival

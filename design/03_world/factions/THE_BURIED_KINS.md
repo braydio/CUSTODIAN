@@ -56,9 +56,9 @@ They may not use the word early. To them, the continuity catastrophe is not abst
 
 ---
 
-## Relationship to the Hidden Entity
+## Relationship to the Return-Path Problem
 
-They likely do not know the entity. But they may be its living evidence. Their communities may have been intentionally kept near Ash-Bell sites as witness populations, continuity ballast, containment anchors, living buffers — unwilling participants in Null Warrant strategy. This is morally awful and should emerge slowly.
+They may not know the sealed-route history. But they may be its living evidence. Their communities may have been intentionally kept near continuity-boundary sites as witness populations, continuity ballast, containment anchors, living buffers — unwilling participants in Null Warrant strategy. This is morally awful and should emerge slowly.
 
 ---
 

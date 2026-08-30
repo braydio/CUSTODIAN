@@ -166,15 +166,6 @@ Generation implications:
 - fewer strong claims in terminal/readouts
 - more degraded, corrupted, or unresolved outputs
 
-### `provenance_failure`
-A site where an object, room, body, record, or event has effects in history while its origin, witness chain, or sequence cannot be placed.
-
-Generation implications:
-- machine language should classify contradictions coldly
-- local factions should offer mutually incompatible but locally coherent explanations
-- physical evidence should imply wrong-order age, impossible ownership, or orphaned cause
-- avoid exposition naming the Unnarrival unless the content is deliberately late-game or sealed
-
 ---
 
 ## Provenance Tag Sets
@@ -479,6 +470,10 @@ If a shared lore payload resource or dictionary is created, start with this exac
 
 ```gdscript
 {
+    "continuity_anomaly": String,
+    "continuity_origin": String,
+    "source_integrity": String,
+    "provenance_status": String,
     "world_legibility_class": String,
     "original_function": String,
     "collapse_mode": String,
@@ -511,12 +506,12 @@ Keep it flat at first. Do not over-engineer the schema before runtime consumers 
 
 ### Do Now
 - reserve payload fields in generation docs and data contracts
-- preserve authored provenance metadata in room templates
+- preserve authored continuity-origin metadata in room templates
 - enforce inspect and machine-language style rules
 - keep enemy systems extensible for ideology-weighted behavior
 
 ### Do Soon
-- generate inspect pools from provenance/reuse combos
+- generate inspect pools from continuity-origin/reuse combos
 - generate machine-message pools from original function + collapse mode
 - let region generation pick tableau families from the payload
 

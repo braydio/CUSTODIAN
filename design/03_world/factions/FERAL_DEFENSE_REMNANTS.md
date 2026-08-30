@@ -59,9 +59,9 @@ These are not beliefs. They are leftovers.
 
 ---
 
-## Relationship to the Hidden Entity
+## Relationship to the Return-Path Problem
 
-They may guard against it without knowing it. Some protocols may be ancient containment reflexes established by the hidden authority. A turret may be defending an empty room because the room is not truly empty in the way old systems measure arrival.
+They may guard sealed-route infrastructure without knowing it. Some protocols may be ancient containment reflexes established by Null Warrant authority. A turret may be defending an empty room because the room is not truly empty in the way old systems measure arrival.
 
 ---
 

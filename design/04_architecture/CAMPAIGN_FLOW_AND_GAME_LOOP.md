@@ -96,7 +96,7 @@ Deployment should feel like leaving home for a temporary but consequential opera
 
 The player is not leaving for “another match.” The player is leaving to perform a bounded historical intervention whose consequences will be absorbed into the Hub’s record.
 
-Some campaigns should eventually be framed as provenance interventions: the Custodian is not simply recovering lore, but stabilizing a contradiction long enough to determine how an object, witness, event, or place can exist in the record.
+Some campaigns should eventually be framed as continuity-origin investigations: the Custodian is not simply recovering lore, but investigating route topology, anomaly class, cross-continuity evidence, containment history, and historical reconstruction.
 
 ### 3.4 Support Partial Success and Failure
 
@@ -106,7 +106,7 @@ Campaigns should not collapse into binary success/failure. Existing design direc
 
 The game should support repeated cycles of selection, deployment, outcome, and return, but not in the form of endless stat inflation. Persistent gain should be primarily interpretive and doctrinal, not raw combat power.
 
-This interpretive gain must align with the revised Severing canon: information collapse is the symptom, while the deeper wound is broken provenance. Campaign rewards can therefore expose recovered facts, but the strongest rewards should clarify origin, witness, sequence, use, or meaning.
+This interpretive gain must align with the revised Severing canon: information collapse is the symptom, while the deeper wound is continuity damage — severed routes, unstable boundaries, cross-continuity debris, and unresolved anomaly history. Campaign rewards can therefore expose recovered facts, but the strongest rewards should clarify continuity origin, route safety, anomaly classification, and historical reconstruction.
 
 ### 3.6 Keep Runtime Ownership Clear
 

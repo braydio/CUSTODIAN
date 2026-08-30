@@ -257,14 +257,13 @@ The Hub’s fiction-facing ontology should stay aligned with the system design d
 - **Correlated** — multiple records or campaigns support the interpretation.
 - **Canonical** — fit for operational doctrine.
 - **Sealed** — too dangerous, too uncertain, or too destabilizing to restore openly.
-- **Unarrived** — a source, event, artifact, name, or witness has effects in history while its origin cannot be placed.
 
 ### Loss States
 
 - **Material Loss** — the thing is gone.
 - **Context Loss** — the thing remains, but its meaning is gone.
 - **Comparative Loss** — too much of the relational context is gone to ever fully reconstruct the truth.
-- **Provenance Failure** — the relationship between object, origin, witness, time, use, and meaning contradicts itself.
+- **Provenance Conflict** — forensic evidence shows contradictory origin, witness, sequence, or ownership relations.
 
 ### Confidence Protocol
 
@@ -425,7 +424,7 @@ Each generated world should derive a coherent evidence stack from a small number
 
 - **Original Function** — what the site originally was
 - **Collapse Mode** — how it ceased to function normally
-- **Provenance Failure** — which origin, witness, sequence, or ownership relation is impossible
+- **Provenance Conflict** — forensic evidence of contradictory origin, witness, sequence, or ownership
 - **Post-Collapse Reuse** — how later inhabitants repurposed it
 - **Present Ideology** — who dominates it now and what they believe
 - **Surviving Truth** — what is actually true here
@@ -511,7 +510,7 @@ Prefer machine-denotative fragments such as:
 - `ARCHIVAL SEAL BREACH SUSPECTED`
 - `NO ACCEPTABLE OPERATOR SIGNATURE`
 - `DECONTAMINATION LANE OUT OF TOLERANCE`
-- `PROVENANCE FAILURE: SOURCE UNARRIVED`
+- `PROVENANCE CONFLICT: ORIGIN UNRESOLVED`
 - `WITNESS PRECEDES EVENT`
 - `OBJECT PRECEDES MANUFACTURE`
 

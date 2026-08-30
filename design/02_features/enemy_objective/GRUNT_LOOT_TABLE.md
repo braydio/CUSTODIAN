@@ -29,8 +29,8 @@ Common drops help the player survive through fabrication and repair. Rare drops 
 | `frayed_signal_filament` | Frayed Signal Filament | 1 | 20% | Sensor, terminal, and Command Center material pulled from helmet comms, respirator antennae, or squad uplinks. |
 | `cracked_field_tag` | Cracked Field Tag | 1 | 15% | Lore/provenance clue for faction identity, patrol routes, assault hints, or enemy database confidence. |
 | `power_components` | Power Components | 1 | 10% | Scarce repair/power routing material from better-equipped grunts or intact relay fragments. |
-| `memory_glass_fragment` | Memory Glass Fragment | 1 | 4% | Rare knowledge/research item containing an impossible historical contradiction. |
-| `white_thread_knot` | White Thread Knot | 1 | 1% | Rare supernatural Severing clue tied to Ash-Bell, the Unnarrival, or Choir-adjacent content. |
+| `memory_glass_fragment` | Memory Glass Fragment | 1 | 4% | Rare knowledge/research item whose continuity origin cannot be matched to any local source; forensic evidence of unresolved source conflict. |
+| `white_thread_knot` | White Thread Knot | 1 | 1% | Rare cross-continuity marker tied to Ash-Bell signal-channel work or Choir-adjacent containment traces, with a physical origin-link to a neighboring continuity. |
 
 ## Flavor Anchors
 

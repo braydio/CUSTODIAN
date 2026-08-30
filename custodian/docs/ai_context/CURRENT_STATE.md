@@ -146,17 +146,12 @@ Canonical Reciprocal Continuity migration completed. Provenance-as-cosmic-substr
 
 - New highest-authority doctrine: `design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md`
 - Runtime knowledge IDs renamed: `ash_bell_ninth_bell` → `ash_bell_ninth_answer`, `ash_bell_bellfall_containment` → `ash_bell_open_interval`
-- Terminology lock: Unarrival (single-n), not Unnarrival (double-n)
 - No save compatibility required; direct renames applied
-
-Last updated: 2026-08-18
-
-Last updated: 2026-08-14
 
 Documentation updates this session:
 - Created `design/02_features/combat_feel/OPERATOR_MELEE_PRESENTATION_POSTURE.md` — draft spec for the melee presentation posture axis (sheathed/drawing/ready/relaxed/sheathing), driven by `EngagementTracker.engagement_active` with its 4 s quiet period, defining `melee_draw` as the melee flavor of `equip_weapon`, READY as the combat neutral replacing the single-frame melee stance placeholder, RELAXED as the exploration neutral, and `ready_up`/`relax` as presentation-only transitions that never gate attack input. No new gameplay states; movement stays lower-body-owned while posture is upper-body/loadout-owned.
 - Created `design/02_features/factions/FACTION_EXPRESSION_SYSTEM.md` — full implementation spec from Faction Continuity Audit findings, covering taxonomy lock, canonical IDs, gameplay boundaries, roster reduction, data model, migration order, and Sundered Keep vertical slice.
-- Remediated terminology drift in 6 documents: fixed "Great Severance" → "the Severing", "The Unarrival" → "the Unnarrival", "Penitents of Static" → "Pale Bell Penitents", `penitent_of_static` → `pale_bell_penitent`, and obsolete directory paths (`03_content/` → `03_world/`, `00_canon/` → `03_world/lore/`).
+- Remediated terminology drift in 6 documents: fixed "Great Severance" → "the Severing", "Penitents of Static" → "Pale Bell Penitents", `penitent_of_static` → `pale_bell_penitent`, and obsolete directory paths (`03_content/` → `03_world/`, `00_canon/` → `03_world/lore/`).
 - Reduced faction bible in GAME_PROTOCOLS_AND_WORLD_LORE.md to summary+links (canon now in `design/03_world/factions/`, implementation spec in `design/02_features/factions/FACTION_EXPRESSION_SYSTEM.md`, lore authority in `design/03_world/lore/CORE_LORE.md`).
 
 ## Runtime Status
@@ -611,7 +606,7 @@ Documentation updates this session:
   Vista envelopes explicitly release camera authority. The six
   authored-ingress smokes plus route,
   state, and authored-exit suites validate the current production chain.
-- Current Severing canon: The world did not collapse because shared context merely faded. The Severing is rooted in a supernatural/cosmic provenance wound caused by the Unnarrival; information collapse and fragmented history are the observable symptoms, and knowledge recovery is provenance stabilization across object, origin, witness, time, use, and meaning. See `design/03_world/lore/CORE_LORE.md` for the canon terminology ladder.
+- Current Severing canon: The world did not collapse because shared context merely faded. The Severing severed and damaged continuity routes; the Pale spreads at unstable continuity interfaces; isolated continuities, spreading Pale, failed Lattice pockets, and cross-continuity debris are the observable symptoms. Historical and forensic reconstruction recovers origin, source integrity, and route history. See `design/03_world/lore/CORE_LORE.md` and `design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md` for the canon terminology ladder.
 
 ## Current Implemented Slice
 

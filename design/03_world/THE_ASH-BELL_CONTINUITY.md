@@ -32,25 +32,23 @@ Do not expose these fields directly in ordinary dialogue.
 
 Before later theology, Ash-Bell maintained a practical continuity-port system organized around **nine stations**. Each station issued a distinct verification response called an **Answer**. A route was accepted only when its expected Answers arrived in order and agreed with the carried authority, cargo, and witness record.
 
-The Ninth Bell was not originally supernatural. It was the audible synchronization signal for the ninth station and the final Answer in a completed route. Depending on local use, the same signal served civic, military, funerary, and transit functions.
-
 ### Precentor Orra
 
-**Precentor Orra** was the senior operator responsible for coordinating the nine-station Answer sequence during the emergency. Later survivors made her Saint Orra, the Unarrived Saint, and the Witness Who Came Late. Those titles are theology built from a real operator and a real disaster.
+**Precentor Orra** was Station IX's officer, not a coordinator of all nine stations. Later survivors made her Saint Orra, the Unarrived Saint, and the Witness Who Came Late. Those titles are theology built from a real operator and a real disaster.
 
-Orra did not create the coupling and is not a cosmic error. Surviving records disagree about whether she ordered, delayed, or merely witnessed the final Answer because records from both continuities entered the same evidence chains.
+Orra did not create the coupling and is not a cosmic error. She was ordered directly to Station IX during the Ash-Bell emergency. The civilian evacuation corridor failed. Orra deliberately diverted to recover stranded civilians instead of proceeding to her post. By the time she reached IX, the station had already missed its required window and been classified `UNARRIVAL`. Orra's late Ninth Answer terminated regional coupling, but local catastrophe had already occurred and wider propagation was arrested.
 
 ### The Open Interval
 
-The **Open Interval** was the operational window in which the nine stations remained mutually addressable while routing authority was contested. During that interval:
+The **Open Interval** was the operational window produced by incomplete regional closure after IX missed its Answer. During that interval:
 
-- Answers arrived from the neighboring continuity as well as their intended stations
+- physical cross-continuity exchange occurred between paired sites
 - personnel and freight crossed into destinations that had not originated their routes
 - paired sites temporarily shared geometry
 - clocks and witness records remained locally coherent but disagreed across the coupling
 - the active continuity answered at least one Ash-Bell call, making the relationship reciprocal
 
-The Open Interval ended when Ash-Bell command sealed its West Gate and broke the nine-station sequence. The closure stopped stable transit but did not undo exchanged matter or the lasting coupling.
+The Open Interval ended when Orra reached Station IX and gave the Ninth Answer, which terminated regional coupling. West Gate closure was a separate containment and evacuation event; it did not end the Open Interval.
 
 This is the event later Penitent doctrine turns into sacred non-arrival. That doctrine is an interpretation, not the cosmology of the setting.
 
@@ -60,17 +58,17 @@ This is the event later Penitent doctrine turns into sacred non-arrival. That do
 
 ### 1. The Ninth Bell / Ninth Answer
 
-A synchronization signal remembered as a bell that should not exist, was never cast, or rang after the city fell.
+Later survivor and devotional language derived from Station IX and its missing Ninth Answer. There was no original ninth cast bronze bell. The name refers to the station, its unanswered slot in the sequence, and the catastrophe that followed.
 
-> “I was married under the Ninth Bell.”
+> "I was married under the Ninth Bell."
 >
-> “There were only eight tower bells. The ninth came from the station frame.”
+> "There were only eight tower bells. The ninth came from the station frame."
 >
-> “You rang it yourself. No—sorry. You answered it yourself.”
+> "You rang it yourself. No—sorry. You answered it yourself."
 >
-> “The Ninth Bell does not ring for the dead. It rings for those the stations misplaced.”
+> "The Ninth Bell does not ring for the dead. It rings for those the stations misplaced."
 
-The contradictions come from people confusing a station signal, later ritual bells, and imported records—not from an intrinsically impossible bell.
+The contradictions come from people confusing devotional language, later ritual bells, and imported records—not from an intrinsically impossible bell.
 
 ### 2. Ash Instead of Snow
 
@@ -172,7 +170,7 @@ Appears near a wall, writing names into a book with no pages.
 >
 > “Your gate is too small.”
 >
-> “When the Ninth Answer came from both sides, command changed from rescue to containment.”
+> “We had given up on IX. Then the Ninth Answer came late and the coupling came apart.”
 >
 > “You gave the order cleanly. I hated you for that.”
 
@@ -281,5 +279,9 @@ Clarification: West Gate closure was an emergency containment action that
 ended civilian passage and deepened the historical wound; it did not terminate
 reciprocal regional coupling. Orra's late Ninth Answer collapsed the coupling
 and ended the Open Interval.
+
+"Ninth Bell" is later survivor and devotional language derived from Station IX's missing Answer. There was no original ninth cast bronze bell.
+
+West Gate closure does not terminate the Open Interval. Orra's Ninth Answer does.
 
 The Ash-Bell Continuity is a real adjacent continuity coupled reciprocally to the active world during the Ash-Bell Unarrival. Its nine stations, Answers, Precentor Orra, Open Interval, West Gate closure, Dry Fountain, black banners, and white thread have operational histories. Later faiths mythologize those facts. Imported Ash-Bell evidence may be incomplete or misread, but it is not authorial proof that non-arrival is sacred, that provenance itself is cosmic substance, or that the player's future is predetermined.

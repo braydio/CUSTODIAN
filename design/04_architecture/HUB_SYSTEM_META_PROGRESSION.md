@@ -131,7 +131,7 @@ The Hub tracks:
 * what is suspected
 * what is irretrievably lost
 * what patterns appear to repeat
-* which records, artifacts, bodies, or events have impossible provenance
+* which records, artifacts, bodies, or events have anomalous continuity-origin evidence
 
 It does not primarily track money, gear tier, or XP. Persistent bonuses are not conventional stat buffs; they are interpretive leverage that alters capability and choice. 
 
@@ -184,7 +184,7 @@ This layer should preserve the distinction between:
 - correlated truths
 - canonical doctrine
 - sealed conclusions
-- unarrived sources or events whose effects exist before their origin can be placed
+- anomalous continuity-origin evidence that precedes or exceeds its discoverable source
 
 ### 7.7 Campaign History
 
@@ -285,7 +285,7 @@ var knowledge_nodes: Array[KnowledgeNode] = []
 var knowledge_archive: Array[ArchiveEntry] = []
 var invalidated_hypotheses: Array[HypothesisRecord] = []
 var irretrievable_losses: Array[LossRecord] = []
-var provenance_failures: Array[ProvenanceFailureRecord] = []
+var continuity_anomalies: Array[ContinuityAnomalyRecord] = []
 
 var campaign_history: Array[CampaignRecord] = []
 var campaign_slots: int = 3
@@ -301,7 +301,7 @@ var abandonment_penalty_modifier: float = 1.0
 * `archive_loss_count` and `archive_loss_tolerance` track existential failure pressure. Existing plan text already uses `archive_loss_tolerance` as a capability flag, and earlier design notes emphasize archive loss as existential.  
 * `active_offer_bundle` is persistent so reloads do not silently reroll mission choices.
 * `knowledge_nodes` are the real currency and should be the richest persistent payload in the system. Existing design notes define them in terms of category, origin, confidence, and implications. 
-* `provenance_failures` are optional until the first dedicated anomaly system lands, but the data model must leave room for origin/witness/sequence contradictions rather than reducing them to generic lore entries.
+* `continuity_anomalies` are optional until the first dedicated anomaly system lands, but the data model must leave room for continuity-origin, source-integrity, and provenance-status contradictions rather than reducing them to generic lore entries.
 
 ---
 
@@ -317,7 +317,9 @@ var id: String
 var category: String            # biotech, propulsion, governance, cognition, warfare, etc.
 var origin: String              # civilization / era / unknown
 var confidence: String          # inferred / partial / confirmed
-var provenance_state: String     # stable / contested / failed / unarrived
+var continuity_origin: String       # local / ash_bell / adjacent_known / adjacent_unknown / mixed / unresolved
+var source_integrity: String        # verified / incomplete / contradictory / altered / degraded / unknown
+var provenance_status: String       # verified / partial / disputed / cross_continuity / absent / unknown
 var witness_chain: Array[String] = []
 var concrete_recovery: String   # device/process/material fact, if any
 var contextual_revelation: String

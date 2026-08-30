@@ -148,7 +148,7 @@ func _update_signal_state(force: bool) -> void:
 	if _witness_established:
 		if force or _last_signal_band != 4:
 			_last_signal_band = 4
-			hud.set_phase("WITNESS ESTABLISHED")
+			hud.set_phase("AUTHENTICATION ESTABLISHED")
 			hud.set_objective("Stabilize the terminal")
 			hud.call("set_status_line", "key", Catalog.ICON_OBJECTIVE, "WITNESS: ESTABLISHED", Palette.GREEN_SIGNAL)
 			hud.call("set_status_line", "gate", Catalog.ICON_KEY_ITEM, "ARCHIVE: PARTIAL", Palette.GOLD_TEXT)
@@ -175,7 +175,7 @@ func _update_signal_state(force: bool) -> void:
 			hud.call("set_status_line", "gate", Catalog.ICON_HAZARD, "SOURCE: STATIONARY", Palette.GOLD_TEXT)
 			hud.call("set_status_line", "return", Catalog.COMPASS_ROSE_SMALL, "AUTH: REQUESTED", Palette.BLUE_TECH)
 		2:
-			hud.set_phase("PROVENANCE ECHO")
+			hud.set_phase("IMPORTED TELEMETRY")
 			hud.set_objective("Follow the damaged authority carrier")
 			hud.call("set_status_line", "key", Catalog.ICON_OBJECTIVE, "SIGNAL MATCH: 71%", Palette.GOLD_TEXT)
 			hud.call("set_status_line", "gate", Catalog.ICON_HAZARD, "LOCATION: AHEAD / BELOW / PRIOR", Palette.DANGER)

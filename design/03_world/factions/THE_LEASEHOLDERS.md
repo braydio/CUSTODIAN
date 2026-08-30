@@ -60,9 +60,9 @@ They do not use the term unless exposed to Ash-Bell material. Even then, they re
 
 ---
 
-## Relationship to the Hidden Entity
+## Relationship to the Return-Path Problem
 
-They almost certainly do not understand it. But their records may contain the shape of the cover-up: null warrants, sealed route orders, emergency jurisdiction transfers, denial authority, black-office signatures. They may guard the paperwork that reveals the hidden authority existed.
+They almost certainly do not understand it. But their records may contain the shape of the cover-up: null warrants, sealed route orders, emergency jurisdiction transfers, denial authority, black-office signatures. They may guard the paperwork that reveals the Null Warrant authority existed and sealed certain routes from all indexing.
 
 ---
 

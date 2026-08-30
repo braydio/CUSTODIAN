@@ -31,11 +31,9 @@ No wreckage. No emergency beacon. No faint scrambled burst from a dying comms ar
 
 The public was told the expeditions were delayed. Then that contact was intermittent. Then that they were presumed lost to an unidentified spatial anomaly. The coordinated disappearance of every ship sent to investigate the disturbance was classified, compartmentalized, and eventually buried under the cascading collapses of the institutions that had launched them.
 
-The truth — what little of it can be reconstructed — is that the fleets were the first large-scale human structures to encounter the full, unshielded force of the Severing's propagation hazard. The Severing was not yet a settled wound; it was still rippling outward, still destabilizing the fundamental relationships between position, identity, and continuity. The ships and their crews did not burn, did not shatter, did not drift into the void.
+What little can be reconstructed is unresolved and explicitly speculative. The leading working hypothesis is that the fleets were the first large-scale human structures to encounter the unshielded propagation hazard of the Severing — a hazard that destabilized the fundamental relationships between position, identity, and continuity. The ships and their crews did not burn, did not shatter, did not drift into the void. But the exact mechanism of their loss remains unknown: whether their matter, signal, and crews were dispersed through a causal anomaly, whether they were transported, whether they still broadcast from inside the event, or whether they were simply unmade. No faction that survived holds a confirmed reconstruction.
 
-They were dispersed. Scattered across the quantum architecture of the event itself — their matter, their signal, their crews, their collective purpose unstitched from a single trajectory and redistributed into the folds of a wound that did not respect spatial or causal location.
-
-No single broadcast wave survived because there was no coherent "there" for the wave to depart from.
+No single broadcast wave survived because there was no coherent "there" for the wave to depart from — though this itself is inference from absence, not a verified fact.
 
 ---
 
@@ -55,7 +53,7 @@ These are design hooks, not committed plot. They exist to be chosen among or con
 
 The fleets were dispersed, but not randomly. The propagation hazard scattered them along a single causal axis — a "bearing" in continuity-space that deposits dispersed matter at a consistent destination. If that destination could be located, it may hold the combined remnants of every expedition: a graveyard, a prison, a seed, or something none of the living factions have words for.
 
-This would make the Dispersed Fleets a gnomic fixed point in the setting — unreachable through normal transit, but potentially accessible through the same kind of provenance-stabilization logic the Custodian uses to extend Lattice bubbles. Finding the destination would not mean finding survivors. But it would mean finding an answer.
+This would make the Dispersed Fleets a gnomic fixed point in the setting — unreachable through normal transit, but potentially accessible through the same kind of residual-coupling investigation and route reconstruction the Custodian uses to extend Lattice bubbles across continuity boundaries. Finding the destination would not mean finding survivors. But it would mean finding an answer.
 
 #### Revelation Path B: A Descendant Faction
 
@@ -89,7 +87,7 @@ A faction born from the Dispersed Fleets would need its own visual language, beh
 - **Potentially the only faction that remembers the Severing from *inside* the event.**
 
 ### Gameplay Revelation
-If the Custodian can piece together the truth of the Dispersed Fleets — through deep archive recovery, ARRN knowledge stabilization, faction encounters, or a dedicated narrative threshold — it would represent one of the setting's major revealed truths. This is campaign-spine material, not casual terminal flavor text.
+If the Custodian can piece together the truth of the Dispersed Fleets — through deep archive recovery, continuity-history reconstruction, faction encounters, or a dedicated narrative threshold — it would represent one of the setting's major revealed truths. This is campaign-spine material, not casual terminal flavor text.
 
 ---
 

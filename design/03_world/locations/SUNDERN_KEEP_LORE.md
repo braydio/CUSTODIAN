@@ -254,7 +254,7 @@ RECORD CONFLICT: SOURCE EXISTS / SOURCE NEVER EXISTED
 CONFIDENCE: CONTESTED
 ```
 
-**Runtime status:** Not yet implemented. Would tie into the existing Black Archive canon and provenance stabilization mechanics.
+**Runtime status:** Not yet implemented. Would tie into the existing Black Archive canon and continuity-origin reconstruction mechanics.
 
 ---
 
@@ -271,7 +271,7 @@ Where Ash-Bell motifs appear without taking over the whole keep: Ninth Bell refe
 
 ### 9. The West Gate That Was Never Built
 **Function:** Major objective gate
-**Temporal state:** Exists only because it was sealed
+**Temporal state:** Imported from a neighboring continuity
 **Mood:** Impossible authority
 
 The keep's central mystery. Facts the player can discover:
@@ -288,7 +288,7 @@ OBJECT: WEST GATE
 INSTALLATION: ABSENT
 SEAL: CONFIRMED
 BREACH: PREVENTED
-CLASSIFICATION: UNNARRIVED SOURCE
+CLASSIFICATION: CONTINUITY COUPLING MULTIPLE
 ```
 
 **Runtime status:** Not yet implemented. The level has a main gate (south) and great hall doors, but no West Gate area.
@@ -303,7 +303,7 @@ Best starter presence. They are not ideological — they are the keep's dead sys
 **Runtime alignment:** Current wave enemies (drones, grunts, fast, heavy) are not yet tagged with faction identity. The marine ambush could be framed as a Feral Defense Remnant.
 
 ### Choir of Provenance
-Best mid-zone antagonist. They believe every object must be returned to its correct source before the world can stop bleeding. They would seal contradictory rooms, destroy impossible records, assign forced origins to artifacts, mark doors as `FALSE SOURCE`. Their philosophy should feel dangerously reasonable.
+Best mid-zone antagonist. They believe every object must be returned to its verified continuity origin before the keep can be safely reconstructed. They would seal contradictory rooms, destroy impossible records, assign forced origins to artifacts, mark doors as `FALSE SOURCE`. Their philosophy should feel dangerously reasonable.
 
 **Runtime alignment:** Choir of Provenance is established in canon docs but not yet present in Sundern Keep runtime.
 
@@ -338,11 +338,11 @@ Excellent optional faction. Claim legal continuity over the keep using procedura
 - Memory Glass Fragment
 - West Gate Seal Fragment
 - Dead Operator Token
-- Ash-Bell Clapper Shard
+- Ash-Bell Station Shard
 
 ### Major Relics
 - **The Seal That Preceded the Gate:** A heavy authority seal stamped for a gate whose installation record is absent.
-- **The Ninth Bell Clapper:** A clapper from a bell tower that no map agrees existed.
+- **The Ninth Bell Clapper:** A clapper from a bell tower that no map agrees existed. Devotional relic; survivors forged it well after the catastrophe, misremembering the "Ninth Bell" as a real bell.
 - **The Custody Writ:** A legal/operational order granting authority to the Custodian, dated after the keep's collapse and before the Custodian's arrival.
 - **The Black Archive Index:** Unlocks the first strong clue that Sundern Keep is not merely decayed, but temporally misfiled.
 
@@ -393,7 +393,7 @@ At the West Gate:
 ```
 LATTICE STATUS: FRAYING
 PALE INDEX: ACTIVE
-ANOMALOUS ACTIVITY: UNNARRIVED SOURCE
+ANOMALOUS ACTIVITY: FOREIGN TOPOLOGY PRESENT
 AUTHORITY: SEALED
 GATE: NOT BUILT / CLOSED
 ```
@@ -442,4 +442,4 @@ This keeps the mystery ladder intact: the player sees the world's interpretive c
 
 ## Design Lock
 
-> Sundern Keep is a temporally adrift Continuity Port bastion: a fortress-shaped Lattice wound where several incompatible states of the same institutional site have collapsed into one playable ruin. Its castle form is a post-collapse misinterpretation of old authority infrastructure. Its central contradiction is the West Gate: a sealed structure whose construction record is absent, whose seal predates its installation, and whose purpose was to prevent an arrival that had not yet occurred. The Custodian does not conquer the keep; they stabilize enough of its provenance to hold the post, recover its surviving truth, and decide which contradictions are safe to preserve.
+> Sundern Keep is a temporally adrift Continuity Port bastion: a fortress-shaped Lattice wound where several incompatible states of the same institutional site have collapsed into one playable ruin. Its castle form is a post-collapse misinterpretation of old authority infrastructure. Its central contradiction is the West Gate: a sealed structure whose construction record is absent, whose seal predates its installation, and which may originate from a neighboring continuity. The Custodian does not conquer the keep; they reconstruct enough of its continuity history to hold the post, recover its surviving truth, and decide which contradictions are safe to preserve.

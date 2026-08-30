@@ -145,7 +145,7 @@ Indexer combat vocabulary should lean toward correction, filing, tagging, extrac
 Both can seal doors, but for different reasons:
 
 - **Leaseholder seal:** "You have no recognized claim."
-- **Choir seal:** "Opening this may propagate contaminated truth."
+- **Choir seal:** "Opening this may propagate unverified foreign-origin records."
 
 The Choir should not become another route-lock faction. Its best gameplay is optional, high-value quarantine where the player knowingly accepts interpretive or systemic risk.
 
@@ -646,7 +646,7 @@ Do not commission new faction production art until this data and behavior contra
 
 1. Establish `design/03_world/lore/CORE_LORE.md` + `design/03_world/factions/` as explicit lore authority
 2. Reduce faction content in `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md` to a current summary with links
-3. Fix terminology drift across all docs: "Great Severance" → "The Severing", "Penitents of Static" → "Pale Bell Penitents", "The Unarrival" → "Unnarrival"
+3. Keep canonical terms aligned with doctrine: "Great Severance" → "The Severing", "Penitents of Static" → "Pale Bell Penitents".
 4. Fix stale paths: `design/00_canon/` → `design/03_world/lore/`, `design/03_content/` → `design/03_world/`
 
 ### Phase 2 — Canonical ID migration (runtime)

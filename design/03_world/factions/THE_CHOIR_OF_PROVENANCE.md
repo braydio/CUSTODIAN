@@ -73,9 +73,9 @@ They classify the Ash-Bell coupling as a reciprocal quarantine breach:
 - active-continuity material entered Ash-Bell
 - station Answers created misleading cross-continuity corroboration
 - paired sites retained imported geometry after closure
-- the West Gate seal ended stable exchange but left unresolved imports
+- Orra's late Ninth Answer terminated regional coupling but left unresolved imports
 
-The Choir may know whether Precentor Orra's last Answer came from Ash-Bell, the active continuity, or both. They withhold it because releasing origin keys could identify surviving imports or reactivate dormant station logic—not because completing a chain of meaning summons a hidden recipient.
+The Choir may hold records of Orra's diversion and the sequence of station Answers, but they withhold operational details because releasing origin keys could identify surviving imports or reactivate dormant station logic.
 
 ---
 
