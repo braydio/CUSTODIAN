@@ -904,16 +904,16 @@
       "direction": "e",
       "layers": {
         "lower_body": {
-          "path": "res://content/sprites/operator/runtime/animations/melee_1h/posture/idle_ready_01/operator__lower_body__melee_1h__posture__idle_ready_01__e__4f__128x96.png",
-          "frames": 4,
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/posture/idle_ready_01/operator__lower_body__melee_1h__posture__idle_ready_01__e__5f__128x96.png",
+          "frames": 5,
           "frame_size": [
             128,
             96
           ]
         },
         "upper_body": {
-          "path": "res://content/sprites/operator/runtime/animations/melee_1h/posture/idle_ready_01/operator__upper_body__melee_1h__posture__idle_ready_01__e__4f__128x96.png",
-          "frames": 4,
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/posture/idle_ready_01/operator__upper_body__melee_1h__posture__idle_ready_01__e__5f__128x96.png",
+          "frames": 5,
           "frame_size": [
             128,
             96
@@ -1176,8 +1176,8 @@
       "direction": "e",
       "layers": {
         "weapon": {
-          "path": "res://content/sprites/operator/runtime/animations/melee_1h_dagger/posture/idle_ready_01/operator__weapon__melee_1h_dagger__posture__idle_ready_01__e__4f__128x96.png",
-          "frames": 4,
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_dagger/posture/idle_ready_01/operator__weapon__melee_1h_dagger__posture__idle_ready_01__e__5f__128x96.png",
+          "frames": 5,
           "frame_size": [
             128,
             96

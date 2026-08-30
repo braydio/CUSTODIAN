@@ -16,54 +16,25 @@ SOURCE = (
 OUTPUT = (
     ROOT
     / "asset_drop/source_work/meridian_civic_floor"
-    / "meridian_civic_floor_atlas__seam_neutralized.png"
+    / "meridian_civic_floor_atlas__all_cells_seam_neutralized.png"
 )
 
 REVIEW = (
     ROOT
     / "asset_drop/source_work/meridian_civic_floor"
-    / "meridian_civic_floor_atlas__seam_neutralized_review.png"
+    / "meridian_civic_floor_atlas__all_cells_seam_neutralized_review.png"
 )
 
 CELL = 32
 EDGE_WIDTH = 2
 
-# The outermost pixel of every approved ground cell is always bled from its
-# interior. Only the second pixel layer uses these conservative outline tests.
+# A pixel must be dark enough AND significantly darker than the material just
+# inside the tile before we consider it a baked outline.
 EDGE_DARK_THRESHOLD = 72
 MIN_BRIGHTNESS_DELTA = 16
 
-
-# These are the opaque ground cells actually used as broad floor material.
-GROUND_CELLS = {
-    # Clean civic.
-    (0, 0),
-    (1, 0),
-    (2, 0),
-    (3, 0),
-    (10, 0),
-    (8, 1),
-    (11, 1),
-    (12, 1),
-    (0, 2),
-    (10, 2),
-    # Worn civic.
-    (4, 0),
-    (5, 0),
-    (6, 0),
-    (7, 0),
-    # Road base.
-    (0, 5),
-    (1, 5),
-    (2, 5),
-    (3, 5),
-    (11, 5),
-    (12, 5),
-    # Market / rough ground.
-    *{(x, 8) for x in range(16)},
-    *{(x, 9) for x in range(14)},
-    (15, 9),
-}
+# Target all atlas cells.
+TARGET_CELLS = {(x, y) for y in range(16) for x in range(16)}
 
 
 def brightness(pixel):
@@ -93,11 +64,12 @@ def sample_vertical_inward(
     """
     Sample three pixels moving inward horizontally.
 
-    Example:
+    Examples:
       left edge x=0 samples local x=2,3,4
+      left inner edge x=1 samples local x=3,4,5
       right edge x=31 samples local x=29,28,27
+      right inner edge x=30 samples local x=28,27,26
     """
-
     samples = []
 
     start_distance = EDGE_WIDTH
@@ -125,6 +97,15 @@ def sample_horizontal_inward(
     local_y,
     direction_y,
 ):
+    """
+    Sample three pixels moving inward vertically.
+
+    Examples:
+      top edge y=0 samples local y=2,3,4
+      top inner edge y=1 samples local y=3,4,5
+      bottom edge y=31 samples local y=29,28,27
+      bottom inner edge y=30 samples local y=28,27,26
+    """
     samples = []
 
     start_distance = EDGE_WIDTH
@@ -146,10 +127,9 @@ def sample_horizontal_inward(
 
 def sample_corner(original, gx, gy, corner_x, corner_y):
     """
-    Corners use a real inward 3x3 material sample instead of inheriting one
-    particular horizontal/vertical edge.
+    Corners use a true inward 3x3 material sample instead of inheriting one
+    particular horizontal/vertical edge result.
     """
-
     if corner_x == 0:
         xs = range(2, 5)
     else:
@@ -200,7 +180,6 @@ def process_edge_pixel(
     global_y = gy + ly
 
     old = original.getpixel((global_x, global_y))
-
     replacement_rgb = median_rgb(samples)
 
     if replacement_rgb is None:
@@ -209,50 +188,13 @@ def process_edge_pixel(
     if not should_replace(old, replacement_rgb):
         return False
 
-    # Preserve alpha exactly.
     result.putpixel(
         (global_x, global_y),
         (
             replacement_rgb[0],
             replacement_rgb[1],
             replacement_rgb[2],
-            old[3],
-        ),
-    )
-
-    return True
-
-
-def force_replace_edge_pixel(
-    original,
-    result,
-    gx,
-    gy,
-    lx,
-    ly,
-    samples,
-):
-    replacement_rgb = median_rgb(samples)
-
-    if replacement_rgb is None:
-        return False
-
-    global_x = gx + lx
-    global_y = gy + ly
-    old = original.getpixel((global_x, global_y))
-
-    if old[3] == 0:
-        return False
-
-    # Preserve alpha exactly while deterministically bleeding approved ground
-    # material through the outermost baked cell outline.
-    result.putpixel(
-        (global_x, global_y),
-        (
-            replacement_rgb[0],
-            replacement_rgb[1],
-            replacement_rgb[2],
-            old[3],
+            old[3],  # preserve alpha exactly
         ),
     )
 
@@ -290,31 +232,44 @@ def neutralize_cell(original, result, cell_x, cell_y):
     replacements = 0
 
     # --------------------------------------------------------------
-    # LEFT / RIGHT
+    # LEFT / RIGHT EDGES
     # --------------------------------------------------------------
-
     for ly in range(EDGE_WIDTH, CELL - EDGE_WIDTH):
 
-        for lx, direction_x, force in (
-            (0, +1, True),
-            (1, +1, False),
-            (CELL - 2, -1, False),
-            (CELL - 1, -1, True),
-        ):
+        # Left edge band: x=0,1
+        for lx in range(EDGE_WIDTH):
             samples = sample_vertical_inward(
                 original,
                 gx,
                 gy,
                 lx,
                 ly,
-                direction_x,
+                +1,
             )
 
-            replace = (
-                force_replace_edge_pixel if force else process_edge_pixel
+            if process_edge_pixel(
+                original,
+                result,
+                gx,
+                gy,
+                lx,
+                ly,
+                samples,
+            ):
+                replacements += 1
+
+        # Right edge band: x=30,31
+        for lx in range(CELL - EDGE_WIDTH, CELL):
+            samples = sample_vertical_inward(
+                original,
+                gx,
+                gy,
+                lx,
+                ly,
+                -1,
             )
 
-            if replace(
+            if process_edge_pixel(
                 original,
                 result,
                 gx,
@@ -326,31 +281,44 @@ def neutralize_cell(original, result, cell_x, cell_y):
                 replacements += 1
 
     # --------------------------------------------------------------
-    # TOP / BOTTOM
+    # TOP / BOTTOM EDGES
     # --------------------------------------------------------------
-
     for lx in range(EDGE_WIDTH, CELL - EDGE_WIDTH):
 
-        for ly, direction_y, force in (
-            (0, +1, True),
-            (1, +1, False),
-            (CELL - 2, -1, False),
-            (CELL - 1, -1, True),
-        ):
+        # Top edge band: y=0,1
+        for ly in range(EDGE_WIDTH):
             samples = sample_horizontal_inward(
                 original,
                 gx,
                 gy,
                 lx,
                 ly,
-                direction_y,
+                +1,
             )
 
-            replace = (
-                force_replace_edge_pixel if force else process_edge_pixel
+            if process_edge_pixel(
+                original,
+                result,
+                gx,
+                gy,
+                lx,
+                ly,
+                samples,
+            ):
+                replacements += 1
+
+        # Bottom edge band: y=30,31
+        for ly in range(CELL - EDGE_WIDTH, CELL):
+            samples = sample_horizontal_inward(
+                original,
+                gx,
+                gy,
+                lx,
+                ly,
+                -1,
             )
 
-            if replace(
+            if process_edge_pixel(
                 original,
                 result,
                 gx,
@@ -364,7 +332,6 @@ def neutralize_cell(original, result, cell_x, cell_y):
     # --------------------------------------------------------------
     # CORNERS
     # --------------------------------------------------------------
-
     corners = [
         (0, 0),
         (CELL - 1, 0),
@@ -381,7 +348,7 @@ def neutralize_cell(original, result, cell_x, cell_y):
             ly,
         )
 
-        if force_replace_edge_pixel(
+        if process_edge_pixel(
             original,
             result,
             gx,
@@ -392,7 +359,7 @@ def neutralize_cell(original, result, cell_x, cell_y):
         ):
             replacements += 1
 
-    # Second corner pixel layer.
+    # Second corner-pixel layer: (1,0), (0,1), (1,1), etc.
     corner_regions = [
         range(0, EDGE_WIDTH),
         range(CELL - EDGE_WIDTH, CELL),
@@ -413,13 +380,7 @@ def neutralize_cell(original, result, cell_x, cell_y):
                         0 if ly < CELL // 2 else CELL - 1,
                     )
 
-                    replace = (
-                        force_replace_edge_pixel
-                        if lx in (0, CELL - 1) or ly in (0, CELL - 1)
-                        else process_edge_pixel
-                    )
-
-                    if replace(
+                    if process_edge_pixel(
                         original,
                         result,
                         gx,
@@ -433,37 +394,13 @@ def neutralize_cell(original, result, cell_x, cell_y):
     return replacements
 
 
-def verify_non_ground_cells_unchanged(original, result):
-    for cy in range(16):
-        for cx in range(16):
-
-            if (cx, cy) in GROUND_CELLS:
-                continue
-
-            left = cx * CELL
-            top = cy * CELL
-
-            for ly in range(CELL):
-                for lx in range(CELL):
-
-                    position = (left + lx, top + ly)
-
-                    if original.getpixel(position) != result.getpixel(position):
-                        raise RuntimeError(
-                            f"Non-ground atlas cell {(cx, cy)} changed "
-                            f"at local pixel {(lx, ly)}"
-                        )
-
-
-def verify_ground_alpha_unchanged(original, result):
-    for cx, cy in GROUND_CELLS:
-
+def verify_alpha_unchanged(original, result):
+    for cx, cy in TARGET_CELLS:
         left = cx * CELL
         top = cy * CELL
 
         for ly in range(CELL):
             for lx in range(CELL):
-
                 position = (left + lx, top + ly)
 
                 before_alpha = original.getpixel(position)[3]
@@ -471,14 +408,13 @@ def verify_ground_alpha_unchanged(original, result):
 
                 if before_alpha != after_alpha:
                     raise RuntimeError(
-                        f"Ground alpha changed in cell {(cx, cy)} "
+                        f"Alpha changed in cell {(cx, cy)} "
                         f"at local pixel {(lx, ly)}: "
                         f"{before_alpha} -> {after_alpha}"
                     )
 
 
 def build_review(original, result):
-    # 4x nearest-neighbor previews make tile seams easy to inspect.
     scale = 2
 
     before = original.resize(
@@ -515,7 +451,7 @@ def build_review(original, result):
 
     draw.text(
         (after_x, 12),
-        "AFTER - OPAQUE GROUND SEAMS NEUTRALIZED",
+        "AFTER - ALL CELLS SEAM NEUTRALIZED",
         fill=(255, 255, 255, 255),
     )
 
@@ -552,7 +488,7 @@ def main():
 
     per_cell_report = []
 
-    for cx, cy in sorted(GROUND_CELLS, key=lambda p: (p[1], p[0])):
+    for cx, cy in sorted(TARGET_CELLS, key=lambda p: (p[1], p[0])):
 
         before = count_dark_perimeter(
             original,
@@ -587,12 +523,7 @@ def main():
             )
         )
 
-    verify_non_ground_cells_unchanged(
-        original,
-        result,
-    )
-
-    verify_ground_alpha_unchanged(
+    verify_alpha_unchanged(
         original,
         result,
     )
@@ -610,7 +541,6 @@ def main():
         original,
         result,
     )
-
     review.save(REVIEW)
 
     print()
@@ -620,7 +550,7 @@ def main():
     print(f"output:       {OUTPUT}")
     print(f"review:       {REVIEW}")
     print()
-    print(f"ground cells: {len(GROUND_CELLS)}")
+    print(f"target cells: {len(TARGET_CELLS)}")
     print(f"replacements: {replacements}")
     print()
     print(f"dark perimeter pixels before: {dark_before}")
