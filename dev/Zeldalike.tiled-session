@@ -23,10 +23,10 @@
         },
         "/home/braydenchaffee/Projects/CUSTODIAN/Tiled/01_mountain_terrain_map/untitled.tmx": {
             "scale": 3,
-            "selectedLayer": 0,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": -13.666666666666671,
-                "y": 142.16666666666666
+                "x": 141.5,
+                "y": 201.33333333333331
             }
         },
         "Zeldaesqe/Scene Overview.tsx": {
