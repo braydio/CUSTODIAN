@@ -66,9 +66,13 @@
 [ext_resource type="PackedScene" path="res://game/ui/construction/construction_placement_hud.tscn" id="220_construction_hud"]
 [ext_resource type="Script" path="res://game/tutorial/command_terminal_tutorial.gd" id="221_command_tutorial"]
 [ext_resource type="PackedScene" path="res://game/ui/cognitive/cognitive_feedback_overlay.tscn" id="222_cognitive_overlay"]
+[ext_resource type="Script" path="res://game/scenarios/command_pressure_v1/command_pressure_scenario_bootstrap.gd" id="223_command_pressure_bootstrap"]
 
 [node name="GameRoot" type="Node2D" unique_id=593578645]
 metadata/_edit_vertical_guides_ = [-1047.0]
+
+[node name="CommandPressureScenarioBootstrap" type="Node" parent="."]
+script = ExtResource("223_command_pressure_bootstrap")
 
 [node name="CommandTerminalTutorial" type="Node" parent="."]
 script = ExtResource("221_command_tutorial")

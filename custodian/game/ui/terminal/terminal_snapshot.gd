@@ -28,6 +28,7 @@ func build(ui: Node) -> Dictionary:
 	var sensor_truth := _collect_sensor_truth(ui, simulation_tick)
 	var projected_sensors := IntelProjectorScript.project_contacts(sensor_truth, IntelProjectorScript.fidelity_from_name(fidelity), terminal_mode, simulation_tick)
 	var projected_forecast := IntelProjectorScript.project_forecast(director, IntelProjectorScript.fidelity_from_name(fidelity))
+	var scenario := collect_command_pressure_scenario(ui)
 	return {
 		"simulation_tick": simulation_tick,
 		"simulation_seconds": float(simulation_tick) / float(simulation_ticks_per_second),
@@ -63,7 +64,18 @@ func build(ui: Node) -> Dictionary:
 		"arrn": arrn,
 		"tactical_entities": collect_tactical_entities(ui),
 		"vault": collect_vault(ui),
+		"command_pressure": scenario,
 	}
+
+
+func collect_command_pressure_scenario(ui: Node) -> Dictionary:
+	var scenario := ui.get_tree().get_first_node_in_group("command_pressure_scenario")
+	if scenario == null:
+		return {}
+	var snapshot: Dictionary = scenario.call("get_setup_snapshot") if scenario.has_method("get_setup_snapshot") else {}
+	if scenario.has_method("get_after_action_snapshot"):
+		snapshot["after_action"] = scenario.call("get_after_action_snapshot")
+	return snapshot
 
 
 func _collect_sensor_truth(ui: Node, simulation_tick: int) -> Dictionary:

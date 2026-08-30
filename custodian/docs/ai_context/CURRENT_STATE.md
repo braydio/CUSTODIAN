@@ -1,5 +1,25 @@
 # CURRENT STATE — CUSTODIAN
 
+## Command Pressure Physical Scenario V1 (2026-08-30)
+
+`--scenario command_pressure_v1` now boots an authored, procgen-free Command
+pressure slice inside the ordinary `game.tscn` shell. An inert bootstrap
+isolates the scenario from the legacy terminal tutorial, generated-world
+claiming, ambient actors, supply drops, automatic waves, and procedural enemy
+variants without changing normal launches. The director repositions existing
+physical infrastructure, damages the real POWER/DEFENSE sectors, initializes
+the real ResourceLedger, instances five exact ResourceNodes and two reusable
+physical repair ports, and submits one exact six-enemy north assault through
+`WaveManager.start_external_wave()` after the authored preparation window.
+
+Terminal snapshots now carry the scenario phase/after-action observation and
+Overview incidents remain derived from live power and hostile truth. New
+terminal world mutations share `TerminalWorldActionService`; Power, enemies,
+turrets, fabrication, placement, loot, and Sensors remain their own gameplay
+authorities. Automated setup and physical-loop smokes cover isolation,
+harvesting, repair, generation loss, exact spawning/objectives, and direct
+movement. Interactive balance and visual review remain developer-owned.
+
 ## Controller Input Hardening (2026-08-30)
 
 The existing twin-stick contract now has semantic `sprint` and `heavy_attack`

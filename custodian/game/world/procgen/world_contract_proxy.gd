@@ -6,6 +6,9 @@ signal contract_generation_failed(result: Dictionary)
 
 
 func _ready() -> void:
+	var game_root := get_node_or_null("/root/GameRoot")
+	if game_root != null and bool(game_root.get_meta("command_pressure_scenario_active", false)):
+		return
 	var bootstrap := _get_bootstrap()
 	if bootstrap == null:
 		push_error("[WorldContractProxy] WorldContractBootstrap autoload missing")

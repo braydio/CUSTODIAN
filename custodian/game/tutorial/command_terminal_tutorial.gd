@@ -11,6 +11,10 @@ var _hp_before_repair := 0.0
 
 
 func _ready() -> void:
+	var game_root := get_node_or_null("/root/GameRoot")
+	if game_root != null and bool(game_root.get_meta("command_pressure_scenario_active", false)):
+		set_process(false)
+		return
 	set_process(true)
 
 

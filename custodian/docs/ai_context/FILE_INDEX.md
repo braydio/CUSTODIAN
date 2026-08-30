@@ -989,3 +989,12 @@ Last updated: 2026-08-20
 - `game/world/procgen/presentation/procgen_underlay_profile.gd` and
   `game/world/procgen/presentation/underlays/` own scenic FAR/MIDDLE/NEAR
   profile resources; they do not own world structure.
+# Command Pressure scenario
+
+- `design/02_features/terminal/COMMAND_PRESSURE_SCENARIO_V1.md` — active authority for the authored physical Command vertical slice.
+- `custodian/game/scenarios/command_pressure_v1/command_pressure_scenario_bootstrap.gd` — inert CLI selector and production-cadence isolation.
+- `custodian/game/scenarios/command_pressure_v1/command_pressure_scenario_root.tscn` — scenario-owned ground, exact resource nodes, repair ports, markers, and director.
+- `custodian/game/scenarios/command_pressure_v1/command_pressure_scenario_director.gd` — authored setup/timing/objectives and read-only aftermath observation.
+- `custodian/game/ui/terminal/terminal_world_action_service.gd` — focused bridge from terminal intent to existing live public APIs.
+- `custodian/game/infrastructure/repair/field_repair_interaction.gd` — reusable proximity/hold/ledger-backed physical repair interaction.
+- `custodian/tools/validation/command_pressure_scenario_setup_smoke.gd` and `command_pressure_physical_loop_smoke.gd` — scenario contract and live-system regression coverage.

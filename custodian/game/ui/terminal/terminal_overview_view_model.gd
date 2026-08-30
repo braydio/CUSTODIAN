@@ -25,6 +25,8 @@ func build(snapshot: Dictionary) -> Dictionary:
 	ranked.sort_custom(_rank_before)
 	incidents.sort_custom(_incident_before)
 	var recommendations := _build_recommendations(ranked, snapshot)
+	_append_command_pressure_incidents(incidents, snapshot)
+	incidents.sort_custom(_incident_before)
 	return {
 		"priority_sectors": ranked,
 		"active_incidents": incidents,
@@ -106,6 +108,21 @@ func _build_recommendations(ranked: Array[Dictionary], snapshot: Dictionary) -> 
 		return String(a.get("id", "")) < String(b.get("id", ""))
 	)
 	return recommendations
+
+
+func _append_command_pressure_incidents(incidents: Array[Dictionary], snapshot: Dictionary) -> void:
+	var scenario: Dictionary = snapshot.get("command_pressure", {}) if snapshot.get("command_pressure", {}) is Dictionary else {}
+	if scenario.is_empty():
+		return
+	var phase := String(scenario.get("phase", "PREPARATION"))
+	var power_status: Dictionary = snapshot.get("power_status", {}) if snapshot.get("power_status", {}) is Dictionary else {}
+	if float(power_status.get("net_per_second", 0.0)) < 0.0:
+		incidents.append({"id": &"command_pressure_reserve_falling", "severity": &"warning", "label": "GRID RESERVE FALLING", "score": 220})
+	var contacts := int((snapshot.get("enemies", {}) as Dictionary).get("total", 0)) if snapshot.get("enemies", {}) is Dictionary else 0
+	if contacts > 0:
+		incidents.append({"id": &"command_pressure_north_contacts", "severity": &"alert", "label": "HOSTILE CONTACT // NORTH", "score": 280})
+	if phase == "AFTERMATH" or phase == "COMPLETE":
+		incidents.append({"id": &"command_pressure_assess_post", "severity": &"info", "label": "RETURN TO COMMAND // ASSESS POST", "score": 320})
 
 
 func _incident_for_sector(sector: Dictionary) -> Dictionary:

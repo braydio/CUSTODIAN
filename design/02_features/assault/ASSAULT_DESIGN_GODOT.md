@@ -1,247 +1,107 @@
-# Assault Design (Godot)
+# Assault Design — Godot Runtime Authority
 
-> Godot-era assault implementation contract.
-> Phase: In Progress
+Status: active implementation authority
+Last corrected: 2026-08-30
 
----
+## Principle
 
-## Core Loop
+Loaded assaults are physical Godot gameplay. `WaveManager` creates real Enemy
+actors at real `SpawnNode`s; Enemy behavior selects and attacks real scene
+objectives; turrets fire real projectiles; and physical health, power, loot,
+and movement determine the result.
 
-```
-Allocate/Fabricate
-    ↓
-Intercept / Assault
-    ↓
-Damage / Salvage
-    ↓
-Repair / Rebuild
-    ↓
-Repeat
-```
+Determinism means authored or seeded inputs. It does not mean replacing loaded
+combat with an abstract resolution model.
 
-The objective: couple resource management to combat pressure without adding new combat subsystems.
+## Runtime ownership
 
----
-
-## Implemented Systems (Godot)
-
-- Structure lifecycle: OPERATIONAL → DAMAGED → OFFLINE → DESTROYED
-- Materials economy: `GameState.materials`
-- Assault approaches: INGRESS_N / INGRESS_S
-- Multi-wave tactical assaults
-- Ammo consumption per assault tick
-- Sector fortification levels
-- Defense doctrine and allocation
-
----
-
-## Phase A: Transit Interception
-
-### Overview
-
-Deterministic pre-engagement interception when assaults traverse transit nodes (T_NORTH, T_SOUTH).
-
-### Mechanics
-
-**Trigger:** Assault approaches transit node
-
-**Resource Gate:**
-- Requires turret ammo stock ≥ 1
-- Spend 1 ammo per intercept
-- No ammo = no mitigation
-
-**Mitigation:**
-- Store on `AssaultApproach.threat_mult`
-- Default = 1.0
-- On intercept: multiply by ~0.9
-
-**Engagement:**
-When assault starts:
-```
-threat_budget *= approach.threat_mult
+```text
+authored composition / point-budget cadence
+                    ↓
+              WaveManager
+                    ↓
+                SpawnNode
+                    ↓
+              physical Enemy
+                    ↓
+ behavior + navigation + target groups + combat
+                    ↓
+ Operator / turret / power_node / command_post
 ```
 
-**Clamp:**
-- Floor: 0.7
-- Ceiling: 1.0
+- `WaveManager` owns queueing, cadence, scene instantiation, lane selection,
+  objective assignment, and observable wave status.
+- `SpawnNode` is an authored physical lane marker with lane, weight, and active
+  state.
+- Enemy owns movement, targeting, attacks, damage reactions, death, and corpse
+  loot after spawn.
+- DefenseTurret owns acquisition and projectile fire subject to its actual
+  power allocation.
+- `SensorIntelligenceReadModel` observes living hostile actors; terminal pages
+  consume projected read models rather than scenario-owned contact flags.
 
-### Godot Implementation
+## Two ingress modes
 
-- `AssaultManager` handles spawning and movement
-- `TransitNode` areas trigger interception check
-- Turret system tracks ammo stock
-- UI displays interception events
+Normal contract cadence uses GameState phase activation and deterministic
+point-budget construction. `WaveManager` may choose eligible enemy types from
+that budget and schedules subsequent waves.
 
----
+Authored scenarios use:
 
-## Phase B: Transit Fortification
-
-### Objective
-
-Extend FORTIFY command to support transit nodes and influence interception strength.
-
-### Architectural Decision
-
-Transit nodes are NOT sectors.
-
-Store separately:
-```
-transit_fort_levels = {
-    "T_NORTH": 0,
-    "T_SOUTH": 0,
-}
+```gdscript
+start_external_wave(composition, lane, objective, behavior_profile)
 ```
 
-### Implementation
+This submits an exact composition through the same physical spawn path without
+requiring automatic cadence. It is not a debug-spawn loop and does not resolve
+outcomes. Scenario directors stop deciding combat after submission.
 
-**FORTIFY Command:**
-- Accepts: `FORTIFY <SECTOR> <0-4>` or `FORTIFY T_NORTH <0-4>`
-- Writes to `transit_fort_levels`
+## Objective contract
 
-**Interception Math:**
-```
-node = approach.current_node
-fort_level = state.transit_fort_levels.get(node, 0)
-if fort_level > 0:
-    approach.threat_mult -= fort_level * TRANSIT_FORTIFICATION_FACTOR
-```
+Enemies resolve live targets through objective group priorities. Current
+production objectives include `harass_player`, `destroy_power`,
+`destroy_turrets`, and `breach_command`. Targets must be actual scene nodes in
+the corresponding groups and must accept the normal combat damage contract.
 
-**Constants:**
-- `TRANSIT_FORTIFICATION_FACTOR = 0.025`
-- `THREAT_MULT_FLOOR = 0.7`
+## Navigation
 
-### Godot Implementation
+Generated worlds use the current navigation system and walkability providers.
+Authored shells may provide authored navigation data or use the existing direct
+movement fallback when no graph exists. Actors still move through physics and
+collision; teleporting or abstract travel is not an assault implementation.
 
-- Add `transit_fort_levels` to GameState
-- TransitNode entities have fortification level
-- Visual indicator of fortification (barricades, turrets)
-- FORTIFY UI in pause menu
+## Economy and aftermath
 
----
+Assaults do not spend or award strategic `GameState.materials` as their loaded
+combat authority. Typed corpse salvage is rolled by the real enemy/corpse
+runtime and reaches `ResourceLedger` only after physical collection. Turret
+ammunition, sector damage, power loss, and repair remain owned by their live
+systems.
 
-## Phase C: Salvage Coupling
+## Explicit non-authorities
 
-### Objective
+Do not use an abstract interception score, threat-point damage, simulated kill
+count, simulated turret ammunition, mirrored infrastructure HP, or a
+WorldSimulationRuntime outcome to decide a loaded assault. Strategic adapters
+may observe a completed physical outcome for persistence; they do not choose
+that outcome.
 
-Link salvage reward to interception effectiveness and ammo expenditure.
+## Current proving scenario
 
-### Formula (Locked)
+`design/02_features/terminal/COMMAND_PRESSURE_SCENARIO_V1.md` defines the first
+authored deterministic vertical slice. It fixes composition, lane, objective,
+timing, and setup while preserving live physical outcomes.
 
-```
-final_salvage = clamp(
-    base_salvage + efficiency_bonus - burn_penalty,
-    outcome_min,
-    outcome_max
-)
-```
+## Validation
 
-**Efficiency Bonus:**
-- Derived from `intercepted_units / total_assault_units`
+- WaveManager external plans instantiate the exact requested enemy scenes.
+- Lane and objective reach every spawned actor.
+- Actors move materially toward real targets.
+- Turret projectiles reduce real Enemy HP.
+- Enemy attacks reduce real infrastructure HP.
+- PowerNode damage reduces actual generation.
+- Sensors observe real hostiles.
+- Wave completion observes pending spawns and living actors.
 
-**Burn Penalty:**
-- Derived from intercept ammo
-- Tactical ammo expenditure
-- Transit fortification wear
-
-**Edge Case:**
-- Zero units intercepted → use `partial` tier envelope
-
-### Constraints
-- Deterministic
-- Bounded modifier
-- No RNG spikes
-- Preserve salvage baseline
-
----
-
-## Wave Escalation
-
-### Current Implementation
-
-See `wave_manager.gd` for existing wave system.
-
-### Current Direction
-
-The runtime should not feel like nonstop horde defense. Assaults should:
-- approach through readable lanes
-- arrive in short bursts
-- leave time for repositioning, repair, and recovery
-- pressure objectives with fewer, more legible enemies
-
-### Enemy Contact Rhythm
-
-First-pass runtime behavior now uses a lightweight per-enemy assault state machine:
-- `STAGING`: brief pause after spawn so arrivals do not instantly sprint the objective
-- `PROBING`: slower advance / local repositioning while feeling out the lane
-- `COMMIT`: full objective pressure once contact is established
-- `REGROUP`: temporary fallback after heavy attrition before re-entering the fight
-
-This is not the final assault orchestration layer, but it moves the live feel away from horde-stream behavior and toward tactical pushes.
-
-### Escalation Formula
-
-```
-wave_difficulty = base_difficulty * (1.0 + wave_number * escalation_factor)
-```
-
-### Material Rewards
-
-| Wave Tier | Salvage Range |
-|-----------|---------------|
-| Early (1-3) | 10-20 materials |
-| Mid (4-7) | 20-40 materials |
-| Late (8+) | 40-80 materials |
-
----
-
-## Defense Doctrine
-
-### Concept
-
-Player allocates defensive resources per sector:
-- Turret placement
-- Fortification level (0-4)
-- Defense priority
-
-### Doctrine Tiers
-
-| Tier | Effect |
-|------|--------|
-| 0 | No bonus |
-| 1 | +10% interception |
-| 2 | +20% interception |
-| 3 | +35% interception |
-| 4 | +50% interception |
-
----
-
-## Godot Implementation Checklist
-
-### Required Touchpoints
-
-1. **AssaultManager** - Spawning, movement, interception
-2. **GameState** - Materials, transit_fort_levels, ammo stocks
-3. **TurretSystem** - Ammo consumption, interception logic
-4. **TransitNode** - Fortification, interception trigger
-5. **UI** - FORTIFY command, STATUS display, wave info
-6. **SalvageSystem** - Phase C formula implementation
-
-### Non-Goals
-
-- Turret placement UI (future)
-- Projectile simulation (use hitscan)
-- Build grid (future)
-- New combat subsystem
-- Rework tactical engine
-
----
-
-## Legacy Python Reference
-
-Python implementation in:
-- `core/assaults.py` - Assault logic
-- `core/state.py` - State management
-- `terminal/commands/policy.py` - FORTIFY
-- `terminal/commands/status.py` - STATUS display
-
-Godot port: Translate terminal commands to UI interactions, translate tick-based to real-time.
+Historical pre-Godot implementations are archive material only and are not an
+active design or runtime dependency.

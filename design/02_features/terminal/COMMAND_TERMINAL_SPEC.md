@@ -686,3 +686,15 @@ Acceptance: no command executes through `_execute_local_terminal_command_legacy(
 ---
 
 *This document aligns with MASTER_ROADMAP.md for milestone tracking.*
+## Physical scenario authority
+
+`command_pressure_v1` is the first authored Command vertical slice. Its active
+authority is `COMMAND_PRESSURE_SCENARIO_V1.md`. The terminal projects live
+Power, Sector, Sensors, ResourceLedger, FabPipeline, placement, and wave state.
+New world mutations route through `TerminalWorldActionService` to public
+runtime APIs; terminal widgets do not own gameplay state.
+
+Tutorial and UI layers may explain a physical condition but do not manufacture
+operational truth after the world has begun. The legacy repair tutorial remains
+available in ordinary launches, but is disabled before setup in Command
+Pressure scenario mode.

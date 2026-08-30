@@ -1174,3 +1174,17 @@ If a feasible validation step cannot run, record it in the task packet completio
 - reason
 - risk left behind
 - exact next validation command
+## Command Pressure Scenario V1
+
+```bash
+env HOME=/tmp/custodian-godot-home godot --headless --path custodian \
+  --script res://tools/validation/command_pressure_scenario_setup_smoke.gd
+env HOME=/tmp/custodian-godot-home godot --headless --path custodian \
+  --script res://tools/validation/command_pressure_physical_loop_smoke.gd
+```
+
+The setup smoke protects the inert argument parser, root ownership, exact
+resource/service contracts, timing, and composition. The physical-loop smoke
+uses the actual ResourceNode, ResourceLedger, PowerNode, Sector repair, Enemy,
+SpawnNode, and WaveManager paths. Human balance/playability evaluation is a
+separate developer-owned pass.

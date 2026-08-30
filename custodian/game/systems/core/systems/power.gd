@@ -1,5 +1,7 @@
 extends Node
 
+signal emergency_repair_applied(sector_name: String, repair_amount: float, power_cost: float)
+
 @export var total_power: float = 500.0
 @export var max_power: float = 500.0
 @export var base_charge_rate: float = 250.0
@@ -305,6 +307,11 @@ func apply_emergency_repair(sector_name: String) -> Dictionary:
 	total_power = max(0.0, total_power - float(profile.get("power_cost", emergency_repair_power_cost)))
 	var repair_amount := float(profile.get("repair_amount", emergency_repair_base_amount))
 	sector.heal(repair_amount)
+	emergency_repair_applied.emit(
+		String(sector.get("sector_name") if "sector_name" in sector else sector.name),
+		repair_amount,
+		float(profile.get("power_cost", emergency_repair_power_cost))
+	)
 	profile["available"] = true
 	profile["reason"] = "APPLIED"
 	profile["sector"] = String(sector.get("sector_name") if "sector_name" in sector else sector.name)

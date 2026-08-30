@@ -84,6 +84,9 @@ var _last_failure_result: Dictionary = {}
 
 func _ready() -> void:
 	add_to_group("contract_world_loader")
+	var game_root := get_node_or_null("/root/GameRoot")
+	if game_root != null and bool(game_root.get_meta("command_pressure_scenario_active", false)):
+		return
 	call_deferred("_bind_contract_map")
 
 

@@ -6,6 +6,7 @@ const TerminalCommandRouterScript := preload("res://game/ui/terminal/terminal_co
 const TerminalSnapshotScript := preload("res://game/ui/terminal/terminal_snapshot.gd")
 const TerminalStatusFormatterScript := preload("res://game/ui/terminal/terminal_status_formatter.gd")
 const TerminalOverviewViewModelScript := preload("res://game/ui/terminal/terminal_overview_view_model.gd")
+const TerminalWorldActionServiceScript := preload("res://game/ui/terminal/terminal_world_action_service.gd")
 const TerminalFabricationViewModelScript := preload("res://game/ui/terminal/fabrication_terminal_view_model.gd")
 const SensorsTerminalViewModelScript := preload("res://game/ui/terminal/sensors_terminal_view_model.gd")
 const TerminalMapPreviewScript := preload("res://game/ui/terminal/terminal_map_preview.gd")
@@ -364,6 +365,7 @@ var _terminal_command_router: TerminalCommandRouter = TerminalCommandRouterScrip
 var _terminal_snapshot_builder: TerminalSnapshot = TerminalSnapshotScript.new()
 var _terminal_status_formatter: TerminalStatusFormatter = TerminalStatusFormatterScript.new()
 var _terminal_overview_view_model: TerminalOverviewViewModel = TerminalOverviewViewModelScript.new()
+var _terminal_world_actions: TerminalWorldActionService = TerminalWorldActionServiceScript.new()
 var _terminal_fabrication_view_model: FabricationTerminalViewModel = TerminalFabricationViewModelScript.new()
 var _terminal_map_preview_renderer: TerminalMapPreview = TerminalMapPreviewScript.new()
 var _terminal_planet_preview_renderer: TerminalPlanetPreview = TerminalPlanetPreviewScript.new()
@@ -6849,10 +6851,7 @@ func _apply_terminal_emergency_repair(raw_name: String) -> Dictionary:
 	var resolved_name := _resolve_terminal_sector_name(raw_name)
 	if resolved_name.is_empty():
 		return {"ok": false, "reason": "UNKNOWN_SECTOR"}
-	var power_system := get_node_or_null("/root/GameRoot/Power")
-	if power_system == null or not power_system.has_method("apply_emergency_repair"):
-		return {"ok": false, "reason": "POWER_UNAVAILABLE", "sector": resolved_name}
-	var result = power_system.call("apply_emergency_repair", resolved_name)
+	var result = _terminal_world_actions.apply_emergency_repair(get_tree(), resolved_name)
 	if result is Dictionary:
 		var response: Dictionary = result
 		response["ok"] = str(response.get("reason", "")) == "APPLIED"
@@ -6865,11 +6864,8 @@ func _apply_terminal_sector_priority(raw_name: String, priority_name: String) ->
 	var resolved_name := _resolve_terminal_sector_name(raw_name)
 	if resolved_name.is_empty():
 		return {"ok": false, "reason": "UNKNOWN_SECTOR"}
-	var power_system := get_node_or_null("/root/GameRoot/Power")
-	if power_system == null or not power_system.has_method("set_sector_priority"):
-		return {"ok": false, "reason": "POWER_UNAVAILABLE", "sector": resolved_name}
 	var priority_value := _resolve_power_priority(priority_name)
-	var changed := bool(power_system.call("set_sector_priority", resolved_name, priority_value))
+	var changed := _terminal_world_actions.set_sector_priority(get_tree(), resolved_name, priority_value)
 	return {
 		"ok": changed,
 		"sector": resolved_name,

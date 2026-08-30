@@ -7,6 +7,7 @@ const WAVE_ALERT_SOUND: AudioStream = preload("res://content/audio/sfx/environme
 signal wave_started(wave_number: int)
 signal wave_completed(wave_number: int)
 signal all_waves_completed()
+signal authored_enemy_spawned(enemy: Node, enemy_type: String)
 
 @export var wave_interval: float = 45.0
 @export var intra_wave_spawn_interval: float = 0.5
@@ -30,6 +31,7 @@ signal all_waves_completed()
 @export var debug_spawn_grunt_on_start: bool = false
 @export var debug_start_grunt_offset: Vector2 = Vector2(96.0, 0.0)
 @export var debug_start_grunt_trigger_distance: float = 360.0
+@export var automatic_cadence_enabled: bool = true
 
 @export var enemy_container_path: NodePath = NodePath("/root/GameRoot/World/Enemies")
 @export var game_state_path: NodePath = NodePath("/root/GameState")
@@ -102,6 +104,10 @@ func _on_phase_changed(_old_phase: int, new_phase: int) -> void:
 	_sync_phase_state(new_phase)
 
 func _sync_phase_state(phase: int) -> void:
+	if not automatic_cadence_enabled:
+		active = false
+		_timer.stop()
+		return
 	var assault_active := phase == GameState.Phase.ASSAULT_ACTIVE
 	active = assault_active
 	if assault_active:
@@ -283,6 +289,9 @@ func _spawn_enemy(enemy_type: String, difficulty: float) -> bool:
 		enemy.set("attack_objective", _forced_objective)
 	_apply_behavior_profile(enemy, enemy_type, _forced_behavior_profile)
 	parent.add_child(enemy)
+	if not _forced_objective.is_empty():
+		enemy.set_meta("authored_wave_enemy", true)
+		authored_enemy_spawned.emit(enemy, enemy_type)
 	if variant_profile != null and enemy.has_method("apply_variant"):
 		enemy.call("apply_variant", variant_profile)
 	elif enemy.has_method("apply_difficulty_modifiers"):
@@ -345,6 +354,37 @@ func set_external_wave_plan(composition: Array[String], lane: String = "", objec
 	_forced_objective = objective.strip_edges().to_lower()
 	_forced_behavior_profile = behavior_profile
 
+
+func start_external_wave(
+	composition: Array[String],
+	lane: String = "",
+	objective: String = "",
+	behavior_profile: StringName = &""
+) -> bool:
+	if composition.is_empty() or _wave_in_progress:
+		return false
+	set_external_wave_plan(composition, lane, objective, behavior_profile)
+	_refresh_spawn_nodes()
+	if _spawn_nodes.is_empty():
+		_external_wave_queue.clear()
+		_forced_lane = ""
+		_forced_objective = ""
+		_forced_behavior_profile = &""
+		return false
+	wave_number += 1
+	_wave_in_progress = true
+	_waiting_for_recovery_clearance = false
+	_play_wave_alert_sfx()
+	wave_started.emit(wave_number)
+	_prepare_wave_queue(0)
+	_burst_spawns_remaining = min(spawn_burst_size, _pending_spawns.size())
+	_spawn_next_from_queue(_calculate_difficulty())
+	if _pending_spawns.is_empty():
+		_complete_wave()
+	else:
+		_schedule_next_spawn()
+	return true
+
 func get_wave_status() -> Dictionary:
 	var next_wave_in := -1.0
 	if _timer and not _timer.is_stopped():
@@ -357,6 +397,7 @@ func get_wave_status() -> Dictionary:
 		"alive_enemies": _count_alive_enemies(),
 		"max_alive_enemies": max_alive_enemies,
 		"pending_spawns": _pending_spawns.size(),
+		"external_queued": _external_wave_queue.size(),
 		"next_wave_in": next_wave_in,
 		"forced_lane": _forced_lane,
 		"forced_objective": _forced_objective,
@@ -411,8 +452,10 @@ func _apply_behavior_profile(enemy: Node, enemy_type: String, profile_id: String
 	var chosen_profile := profile_id
 	if chosen_profile == &"" and enemy_type == "savage":
 		chosen_profile = &"raider_savage"
-	elif chosen_profile == &"" and enemy_type in ["grunt", "marine"]:
+	elif chosen_profile == &"" and enemy_type == "grunt":
 		chosen_profile = &"raider_grunt"
+	elif chosen_profile == &"" and enemy_type == "marine":
+		chosen_profile = &"raider_marine"
 	if chosen_profile == &"":
 		return
 	if enemy.has_method("set_behavior_profile"):
