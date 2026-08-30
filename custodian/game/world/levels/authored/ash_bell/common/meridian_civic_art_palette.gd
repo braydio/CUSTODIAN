@@ -1,6 +1,26 @@
 class_name MeridianCivicArtPalette
 extends RefCounted
 
+const SRC_CIVIC_LIGHT := Vector2i(2, 0)
+const SRC_CIVIC_LIGHT_WORN_A := Vector2i(5, 0)
+const SRC_CIVIC_LIGHT_WORN_B := Vector2i(6, 0)
+const SRC_CIVIC_DARK := Vector2i(8, 0)
+const SRC_CIVIC_DARK_WORN := Vector2i(10, 0)
+const SRC_MARKET_BASE := Vector2i(1, 8)
+const SRC_MARKET_WORN_A := Vector2i(2, 8)
+const SRC_MARKET_WORN_B := Vector2i(5, 8)
+const SRC_MARKET_DAMAGE_A := Vector2i(3, 9)
+const SRC_MARKET_DAMAGE_B := Vector2i(10, 9)
+const SRC_ROAD_GREY := Vector2i(2, 5)
+const SRC_ROAD_DARK := Vector2i(11, 5)
+const SRC_ROAD_LINE_H := Vector2i(1, 4)
+const SRC_ROAD_LINE_H_DOUBLE := Vector2i(2, 4)
+const SRC_ROAD_LINE_V_DASH := Vector2i(5, 4)
+const SRC_ROAD_LINE_V_DOUBLE := Vector2i(6, 4)
+const SRC_ROAD_CROSSWALK_H := Vector2i(0, 4)
+const SRC_ROAD_ARROW_N := Vector2i(10, 4)
+const SRC_ROAD_DASH_H := Vector2i(12, 4)
+
 const BASE_CIVIC := [
 	Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(3, 0),
 	Vector2i(10, 0), Vector2i(8, 1), Vector2i(11, 1), Vector2i(12, 1),

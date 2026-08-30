@@ -54,6 +54,15 @@ cell lists, zones market and road materials explicitly, keeps markings and
 ornaments as sparse authored overlays, deduplicates overlapping walkable-region
 draws, and uses an alpha-cleaned V2 runtime atlas prepared reproducibly from
 `asset_drop/source_work/meridian_civic_floor/`.
+
+## Authored-ground composition follow-up (2026-08-30)
+
+The later composition pass removed the remaining coordinate hashing and pool
+selection from authored paving. Lower Quarter uses exact region bases plus the
+approved coordinate-only wear and marking set; West Gate Works and Station IX
+use exact room materials and exact route/pad markings. Straight wall bands are
+pinned to `(0,0)` top and `(1,4)` face until a separate topology-aware wall
+orientation audit. Gameplay-scale captures cover all three authored levels.
 `traversal/ash_bell_lower_quarter_opening` completed a full six-keyframe
 real-camera capture and manual review. Penitent combat population remains
 deliberately deferred because no approved canonical actor was identified.

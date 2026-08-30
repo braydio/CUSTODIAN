@@ -7,16 +7,53 @@ const WALL := preload("res://content/tiles/ash_bell/lower_quarter/meridian_civic
 const OVERLAP := preload("res://content/tiles/ash_bell/lower_quarter/ash_bell_overlap_atlas_512.png")
 const TILE_SIZE := 32
 
+const ARRIVAL_PLATFORM_RECT := Rect2i(52, 82, 24, 12)
+const ARRIVAL_AXIS_RECT := Rect2i(62, 82, 5, 12)
+const DIRECT_PERSONNEL_RECT := Rect2i(58, 70, 12, 14)
+const WEST_DETOUR_RECT := Rect2i(38, 74, 22, 8)
+const EVACUATION_ARCADE_RECT := Rect2i(32, 48, 14, 32)
 const LOWER_MARKET_RECT := Rect2i(16, 34, 46, 20)
 const CIVIC_BASIN_RECT := Rect2i(56, 36, 24, 14)
-const ARRIVAL_PLATFORM_RECT := Rect2i(52, 82, 24, 12)
-const EVACUATION_ARCADE_RECT := Rect2i(32, 48, 14, 32)
-const DIRECT_PERSONNEL_RECT := Rect2i(58, 70, 12, 14)
+const WRONG_STREET_LOCAL_RECT := Rect2i(74, 30, 10, 24)
 const WRONG_STREET_BOUNDARY_RECT := Rect2i(84, 30, 8, 24)
 const WRONG_STREET_IMPORT_RECT := Rect2i(92, 30, 16, 24)
+const NORTH_RAMP_RECT := Rect2i(84, 18, 12, 14)
 const ANSWERS_COURT_RECT := Rect2i(55, 8, 34, 22)
-const EAST_SWITCHBACK_RECT := Rect2i(84, 16, 24, 52)
+const UPPER_EAST_TRAVERSE_RECT := Rect2i(84, 16, 24, 10)
+const EAST_SWITCHBACK_RECT := Rect2i(98, 22, 10, 44)
 const STATION_THRESHOLD_RECT := Rect2i(72, 58, 30, 10)
+const WEST_GATE_BRANCH_RECT := Rect2i(4, 39, 14, 8)
+
+const LOWER_QUARTER_FLOOR_OVERRIDES := {
+	Vector2i(53, 84): Vector2i(5, 0), Vector2i(57, 91): Vector2i(6, 0),
+	Vector2i(71, 84): Vector2i(5, 0), Vector2i(74, 90): Vector2i(6, 0),
+	Vector2i(58, 38): Vector2i(5, 0), Vector2i(62, 47): Vector2i(6, 0),
+	Vector2i(76, 38): Vector2i(5, 0), Vector2i(78, 46): Vector2i(6, 0),
+	Vector2i(57, 10): Vector2i(5, 0), Vector2i(86, 11): Vector2i(6, 0),
+	Vector2i(60, 27): Vector2i(5, 0), Vector2i(84, 27): Vector2i(6, 0),
+	Vector2i(76, 32): Vector2i(10, 0), Vector2i(82, 45): Vector2i(10, 0),
+	Vector2i(79, 51): Vector2i(10, 0), Vector2i(74, 60): Vector2i(10, 0),
+	Vector2i(96, 61): Vector2i(10, 0), Vector2i(81, 66): Vector2i(10, 0),
+	Vector2i(99, 65): Vector2i(10, 0), Vector2i(20, 37): Vector2i(2, 8),
+	Vector2i(25, 45): Vector2i(5, 8), Vector2i(33, 52): Vector2i(3, 9),
+	Vector2i(40, 35): Vector2i(10, 9), Vector2i(49, 50): Vector2i(2, 8),
+	Vector2i(58, 52): Vector2i(5, 8), Vector2i(53, 35): Vector2i(3, 9),
+	Vector2i(30, 49): Vector2i(10, 9),
+}
+
+const WEST_GATE_ENTRY_RECT := Rect2i(48, 18, 12, 12)
+const WEST_GATE_CONTROL_RECT := Rect2i(34, 16, 16, 16)
+const WEST_GATE_PRESSURE_RECT := Rect2i(20, 12, 16, 24)
+const WEST_GATE_MOTOR_RECT := Rect2i(8, 16, 14, 16)
+const WEST_GATE_ARCHIVE_RECT := Rect2i(14, 4, 16, 8)
+const WEST_GATE_CLOSURE_RECT := Rect2i(20, 32, 28, 10)
+
+const STATION_GROUND_INTAKE_RECT := Rect2i(24, 44, 16, 10)
+const STATION_WEST_RECORDS_RECT := Rect2i(8, 32, 20, 12)
+const STATION_SYNC_PLANT_RECT := Rect2i(22, 24, 20, 16)
+const STATION_EAST_RECORDS_RECT := Rect2i(40, 30, 16, 12)
+const STATION_ANSWER_CHAMBER_RECT := Rect2i(15, 2, 34, 28)
+const STATION_CONNECTOR_RECT := Rect2i(30, 39, 4, 6)
 
 var map_origin := Vector2.ZERO
 var walkable_regions: Array[Rect2i] = []
@@ -34,6 +71,7 @@ func _draw() -> void:
 	draw_rect(Rect2(map_origin, Vector2(128, 96) * TILE_SIZE), Color("11161a"), true)
 	for cell: Vector2i in _collect_walkable_cells():
 		_draw_cell_source(FLOOR, get_floor_source_cell(cell), cell)
+	_draw_authored_floor_overlays()
 	match district:
 		&"lower_quarter": _draw_lower_quarter()
 		&"west_gate_works": _draw_west_gate()
@@ -43,35 +81,67 @@ func _draw() -> void:
 func get_floor_material(cell: Vector2i) -> StringName:
 	match district:
 		&"west_gate_works":
-			return &"road_base"
+			return &"road_base" if _get_west_gate_base(cell) == Palette.SRC_ROAD_DARK else &"normal_civic"
 		&"station_ix":
-			return &"road_base" if Rect2i(22, 24, 20, 16).has_point(cell) else &"normal_civic"
+			return &"road_base" if _get_station_ix_base(cell) == Palette.SRC_ROAD_DARK else &"normal_civic"
 	if WRONG_STREET_IMPORT_RECT.has_point(cell):
 		return &"overlap_import"
-	if ARRIVAL_PLATFORM_RECT.has_point(cell) or CIVIC_BASIN_RECT.has_point(cell) or ANSWERS_COURT_RECT.has_point(cell) or STATION_THRESHOLD_RECT.has_point(cell):
-		return &"normal_civic"
 	if LOWER_MARKET_RECT.has_point(cell):
 		return &"market_ground"
-	if EVACUATION_ARCADE_RECT.has_point(cell) or DIRECT_PERSONNEL_RECT.has_point(cell) or EAST_SWITCHBACK_RECT.has_point(cell):
+	var source := _get_lower_quarter_base(cell)
+	if source == Palette.SRC_ROAD_GREY or source == Palette.SRC_ROAD_DARK:
 		return &"road_base"
 	return &"normal_civic"
 
 
 func get_floor_source_cell(cell: Vector2i) -> Vector2i:
-	match get_floor_material(cell):
-		&"market_ground":
-			if Palette._stable_hash(cell, 0x5319) % 100 < 85:
-				return Palette.choose(Palette.MARKET_GROUND, cell, 0x3481)
-			return Palette.choose(Palette.WORN_CIVIC, cell, 0x8791)
-		&"road_base":
-			if Palette._stable_hash(cell, 0x19d3) % 100 < 90:
-				return Palette.choose(Palette.ROAD_BASE, cell, 0x7123)
-			return Palette.choose(Palette.WORN_CIVIC, cell, 0x2657)
-		&"overlap_import":
-			# The Ash-Bell atlas replaces this base in _draw_wrong_street().
-			return Palette.choose(Palette.BASE_CIVIC, cell, 0x4117)
+	match district:
+		&"west_gate_works": return _get_west_gate_base(cell)
+		&"station_ix": return _get_station_ix_base(cell)
 		_:
-			return Palette.choose_normal_civic(cell)
+			if LOWER_QUARTER_FLOOR_OVERRIDES.has(cell):
+				return LOWER_QUARTER_FLOOR_OVERRIDES[cell] as Vector2i
+			return _get_lower_quarter_base(cell)
+
+
+func _get_lower_quarter_base(cell: Vector2i) -> Vector2i:
+	if ANSWERS_COURT_RECT.has_point(cell): return Palette.SRC_CIVIC_LIGHT
+	if STATION_THRESHOLD_RECT.has_point(cell): return Palette.SRC_CIVIC_DARK
+	if CIVIC_BASIN_RECT.has_point(cell): return Palette.SRC_CIVIC_LIGHT
+	if WRONG_STREET_IMPORT_RECT.has_point(cell): return Palette.SRC_CIVIC_DARK
+	if ARRIVAL_AXIS_RECT.has_point(cell): return Palette.SRC_ROAD_GREY
+	if DIRECT_PERSONNEL_RECT.has_point(cell): return Palette.SRC_ROAD_GREY
+	if WEST_DETOUR_RECT.has_point(cell): return Palette.SRC_ROAD_GREY
+	if EVACUATION_ARCADE_RECT.has_point(cell): return Palette.SRC_ROAD_DARK
+	if NORTH_RAMP_RECT.has_point(cell): return Palette.SRC_ROAD_DARK
+	if UPPER_EAST_TRAVERSE_RECT.has_point(cell): return Palette.SRC_ROAD_DARK
+	if EAST_SWITCHBACK_RECT.has_point(cell): return Palette.SRC_ROAD_DARK
+	if WEST_GATE_BRANCH_RECT.has_point(cell): return Palette.SRC_ROAD_DARK
+	if LOWER_MARKET_RECT.has_point(cell): return Palette.SRC_MARKET_BASE
+	if WRONG_STREET_LOCAL_RECT.has_point(cell): return Palette.SRC_CIVIC_DARK
+	if WRONG_STREET_BOUNDARY_RECT.has_point(cell): return Palette.SRC_CIVIC_DARK
+	if ARRIVAL_PLATFORM_RECT.has_point(cell): return Palette.SRC_CIVIC_LIGHT
+	return Palette.SRC_CIVIC_DARK
+
+
+func _get_west_gate_base(cell: Vector2i) -> Vector2i:
+	if WEST_GATE_ENTRY_RECT.has_point(cell): return Palette.SRC_CIVIC_DARK
+	if WEST_GATE_CONTROL_RECT.has_point(cell): return Palette.SRC_CIVIC_DARK
+	if WEST_GATE_PRESSURE_RECT.has_point(cell): return Palette.SRC_ROAD_DARK
+	if WEST_GATE_MOTOR_RECT.has_point(cell): return Palette.SRC_ROAD_DARK
+	if WEST_GATE_ARCHIVE_RECT.has_point(cell): return Palette.SRC_CIVIC_DARK
+	if WEST_GATE_CLOSURE_RECT.has_point(cell): return Palette.SRC_ROAD_DARK
+	return Palette.SRC_CIVIC_DARK
+
+
+func _get_station_ix_base(cell: Vector2i) -> Vector2i:
+	if STATION_SYNC_PLANT_RECT.has_point(cell): return Palette.SRC_ROAD_DARK
+	if STATION_GROUND_INTAKE_RECT.has_point(cell): return Palette.SRC_CIVIC_DARK
+	if STATION_WEST_RECORDS_RECT.has_point(cell): return Vector2i(12, 0)
+	if STATION_EAST_RECORDS_RECT.has_point(cell): return Vector2i(12, 0)
+	if STATION_ANSWER_CHAMBER_RECT.has_point(cell): return Palette.SRC_CIVIC_DARK
+	if STATION_CONNECTOR_RECT.has_point(cell): return Vector2i(12, 0)
+	return Palette.SRC_CIVIC_DARK
 
 
 func _collect_walkable_cells() -> Array[Vector2i]:
@@ -88,7 +158,6 @@ func _collect_walkable_cells() -> Array[Vector2i]:
 
 
 func _draw_lower_quarter() -> void:
-	_draw_authored_floor_overlays()
 	_draw_wall_band(Rect2i(48, 66, 10, 18), "retaining")
 	_draw_wall_band(Rect2i(70, 68, 10, 16), "wall_straight")
 	_draw_wall_band(Rect2i(26, 55, 6, 25), "arcade")
@@ -96,18 +165,37 @@ func _draw_lower_quarter() -> void:
 
 
 func _draw_authored_floor_overlays() -> void:
-	for cell: Vector2i in [
-		Vector2i(61, 89), Vector2i(64, 89), Vector2i(67, 89),
-		Vector2i(62, 79), Vector2i(65, 76), Vector2i(60, 73),
-		Vector2i(39, 74), Vector2i(35, 65), Vector2i(33, 56),
-		Vector2i(66, 47), Vector2i(76, 43), Vector2i(87, 27),
-		Vector2i(100, 27), Vector2i(99, 42), Vector2i(94, 62), Vector2i(82, 64),
-	]:
-		_draw_floor_overlay(cell, Palette.TRANSIT_MARKINGS, 0x2d11)
-	for cell: Vector2i in [Vector2i(61, 40), Vector2i(69, 40), Vector2i(61, 47), Vector2i(69, 47), Vector2i(34, 55), Vector2i(39, 55)]:
-		_draw_floor_overlay(cell, Palette.SERVICE_DETAILS, 0x6381)
-	for cell: Vector2i in [Vector2i(64, 43), Vector2i(68, 43), Vector2i(69, 20), Vector2i(75, 20), Vector2i(89, 21), Vector2i(78, 64)]:
-		_draw_floor_overlay(cell, Palette.CIVIC_ACCENTS, 0x1a57)
+	for cell: Vector2i in _collect_walkable_cells():
+		var source := get_floor_overlay_source_cell(cell)
+		if source != Vector2i(-1, -1):
+			_draw_cell_source(FLOOR, source, cell)
+
+
+func get_floor_overlay_source_cell(cell: Vector2i) -> Vector2i:
+	if district == &"west_gate_works":
+		if (cell.y == 24 and cell.x in range(10, 58)) or (cell.y == 36 and cell.x in range(22, 47)):
+			return Palette.SRC_ROAD_LINE_H
+		return Vector2i(-1, -1)
+	if district == &"station_ix":
+		if cell == Vector2i(32, 51): return Palette.SRC_ROAD_ARROW_N
+		if cell.x == 32 and (cell.y in range(46, 51) or cell.y in range(27, 38)):
+			return Palette.SRC_ROAD_LINE_V_DASH
+		if cell == Vector2i(24, 33): return Vector2i(9, 12)
+		if cell == Vector2i(40, 33): return Vector2i(11, 12)
+		if cell == Vector2i(32, 18): return Vector2i(13, 13)
+		return Vector2i(-1, -1)
+	if cell == Vector2i(64, 85) or cell == Vector2i(64, 78) or cell == Vector2i(89, 22) or cell == Vector2i(103, 28) or cell == Vector2i(103, 52):
+		return Palette.SRC_ROAD_ARROW_N
+	if cell.y == 82 and cell.x in range(62, 67): return Palette.SRC_ROAD_CROSSWALK_H
+	if cell.x == 64 and (cell.y in range(83, 92) or cell.y in range(75, 82)):
+		return Palette.SRC_ROAD_LINE_V_DASH
+	if cell.y == 77 and cell.x in range(40, 58): return Palette.SRC_ROAD_LINE_H
+	if cell.x == 39 and cell.y in range(50, 74): return Palette.SRC_ROAD_LINE_V_DASH
+	if cell.y == 42 and cell.x in range(6, 17): return Palette.SRC_ROAD_LINE_H
+	if cell.x == 89 and cell.y in range(20, 31): return Palette.SRC_ROAD_LINE_V_DASH
+	if cell.y == 22 and cell.x in range(90, 103): return Palette.SRC_ROAD_LINE_H
+	if cell.x == 103 and cell.y in range(26, 63): return Palette.SRC_ROAD_LINE_V_DASH
+	return Vector2i(-1, -1)
 
 
 func _draw_wrong_street() -> void:
@@ -115,38 +203,26 @@ func _draw_wrong_street() -> void:
 	# boundary, and only the import band replaces it with Ash-Bell material.
 	for y in range(WRONG_STREET_BOUNDARY_RECT.position.y, WRONG_STREET_BOUNDARY_RECT.end.y, 3):
 		for x in range(WRONG_STREET_BOUNDARY_RECT.position.x, WRONG_STREET_BOUNDARY_RECT.end.x, 2):
-			_draw_cell(OVERLAP, Palette.OVERLAP["seam"], Vector2i(x, y))
+			_draw_cell_source(OVERLAP, Vector2i(7, 5), Vector2i(x, y))
 	for y in range(WRONG_STREET_IMPORT_RECT.position.y, WRONG_STREET_IMPORT_RECT.end.y):
 		for x in range(WRONG_STREET_IMPORT_RECT.position.x, WRONG_STREET_IMPORT_RECT.end.x):
-			_draw_cell(OVERLAP, Palette.OVERLAP["imported_floor"], Vector2i(x, y))
+			_draw_cell_source(OVERLAP, Vector2i(0, 0), Vector2i(x, y))
 	for x in range(92, 108):
-		_draw_cell(OVERLAP, Palette.OVERLAP["imported_curb"], Vector2i(x, 36 + ((x - 92) / 4)))
+		_draw_cell_source(OVERLAP, Vector2i(0, 4), Vector2i(x, 36 + ((x - 92) / 4)))
 	for cell in [Vector2i(94, 33), Vector2i(98, 37), Vector2i(102, 41), Vector2i(106, 45)]:
-		_draw_cell(OVERLAP, Palette.OVERLAP["imported_service_channel"], cell)
+		_draw_cell_source(OVERLAP, Vector2i(0, 2), cell)
 	for cell in [Vector2i(95, 50), Vector2i(101, 48), Vector2i(105, 34)]:
-		_draw_cell(OVERLAP, Palette.OVERLAP["damaged_import"], cell)
+		_draw_cell_source(OVERLAP, Vector2i(0, 10), cell)
 
 
 func _draw_west_gate() -> void:
-	for cell: Vector2i in [Vector2i(54, 24), Vector2i(42, 24), Vector2i(30, 24), Vector2i(18, 24), Vector2i(18, 8), Vector2i(28, 36)]:
-		_draw_floor_overlay(cell, Palette.TRANSIT_MARKINGS, 0x5189)
-	for cell: Vector2i in [Vector2i(12, 24), Vector2i(22, 30), Vector2i(38, 24), Vector2i(30, 8)]:
-		_draw_floor_overlay(cell, Palette.TECHNICAL_DETAILS, 0x9a13)
 	for rect in [Rect2i(6, 14, 4, 20), Rect2i(32, 12, 3, 22), Rect2i(47, 14, 3, 20), Rect2i(13, 3, 18, 2)]:
 		_draw_wall_band(rect, "service_wall")
 
 
 func _draw_station_ix() -> void:
-	for cell: Vector2i in [Vector2i(32, 51), Vector2i(32, 46), Vector2i(24, 37), Vector2i(32, 37), Vector2i(40, 37), Vector2i(32, 26), Vector2i(32, 21)]:
-		_draw_floor_overlay(cell, Palette.TRANSIT_MARKINGS, 0x8421)
-	for cell: Vector2i in [Vector2i(24, 33), Vector2i(40, 33), Vector2i(32, 18), Vector2i(30, 11), Vector2i(34, 11)]:
-		_draw_floor_overlay(cell, Palette.TECHNICAL_DETAILS, 0x1471)
 	for rect in [Rect2i(7, 31, 2, 14), Rect2i(27, 30, 2, 14), Rect2i(39, 29, 2, 14), Rect2i(55, 29, 2, 14)]:
 		_draw_wall_band(rect, "service_wall")
-
-
-func _draw_floor_overlay(cell: Vector2i, variants: Array, salt: int) -> void:
-	_draw_cell_source(FLOOR, Palette.choose(variants, cell, salt), cell)
 
 
 func _draw_wall_band(rect: Rect2i, category: String) -> void:
@@ -176,39 +252,17 @@ func _draw_wall_band(rect: Rect2i, category: String) -> void:
 
 	# Quiet continuous roof/parapet line.
 	for x in range(rect.position.x, rect.end.x):
-		_draw_cell(WALL, Palette.WALL_TOP_STRAIGHT, Vector2i(x, top_y))
+		_draw_cell_source(WALL, Vector2i(0, 0), Vector2i(x, top_y))
 
 	# Bottom-facing facade is what should carry most visual information.
-	var facade_variants: Array = Palette.WALL_RETAINING_FACES
-	match category:
-		"arcade":
-			facade_variants = Palette.WALL_ARCH_FACADES
-		"service_wall":
-			facade_variants = Palette.WALL_SERVICE_FACADES
-		"damaged_wall":
-			facade_variants = Palette.WALL_DAMAGED
-		"rail_edge", "parapet":
-			facade_variants = Palette.WALL_RAIL_EDGES
-		_:
-			facade_variants = Palette.WALL_RETAINING_FACES
-
 	for x in range(rect.position.x, rect.end.x):
-		_draw_cell(WALL, facade_variants, Vector2i(x, bottom_y))
+		_draw_cell_source(WALL, Vector2i(1, 4), Vector2i(x, bottom_y))
 
 	# Sparse facade rhythm for tall masses. Never refill the whole rectangle.
 	if rect.size.y >= 6 and category not in ["rail_edge", "parapet"]:
 		for y in range(rect.position.y + 3, rect.end.y - 2, 4):
 			for x in range(rect.position.x + 1, rect.end.x - 1, 4):
-				var detail_pool: Array = (
-					Palette.WALL_SERVICE_FACADES
-					if category != "damaged_wall"
-					else Palette.WALL_DAMAGED
-				)
-				_draw_cell(WALL, detail_pool, Vector2i(x, y))
-
-
-func _draw_cell(texture: Texture2D, variants: Array, cell: Vector2i) -> void:
-	_draw_cell_source(texture, Palette.choose(variants, cell), cell)
+				_draw_cell_source(WALL, Vector2i(1, 4), Vector2i(x, y))
 
 
 func _draw_cell_source(texture: Texture2D, source: Vector2i, cell: Vector2i) -> void:

@@ -888,10 +888,7 @@ Documentation updates this session:
   `traversal/ash_bell_lower_quarter_opening` fixture covers six route beats;
   `traversal/meridian_civic_native_scale` compares representative props against
   the real Operator; Penitent encounter population remains deferred pending an approved actor.
-- Lower Quarter floor-atlas correction is live. Generic civic paving draws only
-  from the approved clean pool with deterministic ~12% worn variation; market
-  and road materials are zone-bound, while markings, row-seven ornaments,
-  drains, and technical cells are sparse authored overlays. The V2 runtime
+- Lower Quarter authored-ground composition is live across Lower Quarter, West Gate Works, and Station IX. Every runtime paving source now comes from an exact region base, exact wear/damage coordinate, or exact line/marking range; no floor hashing or palette choice remains. Arrival, municipal roads, service roads, Market, Basin, Court, Wrong Street, West Gate rooms, and Station IX rooms therefore retain intentional material identities. Straight wall bands are temporarily pinned to top `(0,0)` and face `(1,4)` pending the dedicated topology/orientation wall audit. The V2 runtime
   atlas is prepared from `asset_drop/source_work/meridian_civic_floor/` by
   removing only border-connected near-black negative space and one halo layer
   from non-ground cells; 51 approved ground cells remain fully opaque. The

@@ -257,20 +257,21 @@ art never owns collision, walkability, navigation, exits, or route state.
 `AuthoredBlockoutGrid2D` remains geometry and navigation authority with
 production drawing suppressed.
 
-The Meridian civic floor atlas uses quiet opaque ground pools rather than the
-full 256-cell sheet: clean civic slabs dominate normal paving, worn slabs remain
-low-frequency, and market/road materials are restricted to authored districts.
-Transit markings, row-seven civic ornaments, drains, machine details, and amber
-technical cells are authored overlays only. The reproducible source-work prep
-removes border-connected near-black negative space and one adjacent halo layer
-from non-ground cells while preserving all approved ground cells opaque.
+The Meridian civic floor atlas is authored composition, not a variation pool.
+Every walkable cell resolves through an exact district/region base, an explicit
+coordinate override, or an explicit marking range. Lower Quarter, West Gate
+Works, and Station IX never hash floor coordinates or randomly select paving,
+wear, transit markings, service details, or civic accents. Physical drains,
+hatches, machinery, lamps, benches, and barriers remain native-prop concerns.
 
 The Meridian wall atlas uses the reviewed alpha-clean source. Native civic prop
 extracts preserve those already-correct thin silhouettes without normalizing
 them into 32×32 destinations. Wall cells are facade and perimeter
 modules rather than solid-building voxels. `MeridianCivicArtPresenter` draws a
-dark continuous civic structural mass first, then a quiet top edge, a semantic
-bottom facade, and sparse interior machinery. `LowerQuarterNativePropLayer2D`
+dark continuous civic structural mass first. Until the topology-aware wall
+audit lands, straight runs are stabilized to wall source `(0,0)` for their top
+and `(1,4)` for their face, with no per-cell random wall selection.
+`LowerQuarterNativePropLayer2D`
 separately mounts manifest-backed native prop children at exact authored world
 anchors using semantic anchor metadata. All collision footprints are disabled
 for this visual pass; collision is never inferred from pixels and authored
