@@ -186,6 +186,12 @@ func _ready() -> void:
 	_refresh_entries()
 	_select_page(PAGE_STATUS, false)
 	_update_input_prompts()
+	var prompt_service := get_node_or_null("/root/InputPromptService")
+	if prompt_service != null:
+		_controller_prompts_active = bool(prompt_service.call("is_gamepad_active"))
+		if prompt_service.has_signal("device_family_changed"):
+			prompt_service.device_family_changed.connect(_on_device_family_changed)
+		_update_input_prompts()
 	call_deferred("_update_ledger_grid_columns")
 	call_deferred("_update_responsive_layout")
 	visible = false
@@ -214,14 +220,6 @@ func close() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event is InputEventJoypadButton or event is InputEventJoypadMotion:
-		if not _controller_prompts_active:
-			_controller_prompts_active = true
-			_update_input_prompts()
-	elif event is InputEventKey or event is InputEventMouseButton or event is InputEventMouseMotion:
-		if _controller_prompts_active:
-			_controller_prompts_active = false
-			_update_input_prompts()
 	if event.is_action_pressed("toggle_inventory"):
 		if visible:
 			close()
@@ -269,6 +267,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif _current_page == PAGE_LEDGER and joy_event.button_index == JOY_BUTTON_Y:
 			_toggle_inspection_mode()
 			get_viewport().set_input_as_handled()
+
+
+func _on_device_family_changed(device_family: StringName) -> void:
+	_controller_prompts_active = device_family == &"gamepad"
+	_update_input_prompts()
 
 
 func _notification(what: int) -> void:

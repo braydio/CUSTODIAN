@@ -1433,7 +1433,7 @@ func _physics_process(delta):
 			visual_idle_direction = input_direction
 
 	var moving = input_direction != Vector2.ZERO
-	var wants_sprint = Input.is_key_pressed(KEY_CTRL)
+	var wants_sprint := Input.is_action_pressed("sprint")
 	var was_sprinting := is_sprinting
 	if _sprint_exhausted and stamina >= stamina_max:
 		_sprint_exhausted = false
@@ -4341,11 +4341,11 @@ func _is_attack_primary_pressed() -> bool:
 func _is_attack_secondary_just_pressed() -> bool:
 	return Input.is_action_just_pressed("aim_hold") \
 		or Input.is_action_just_pressed("attack_secondary") \
-		or (Input.is_key_pressed(KEY_SHIFT) and _is_attack_primary_just_pressed())
+		or Input.is_action_just_pressed("heavy_attack")
 
 
 func _is_attack_secondary_chord_just_pressed() -> bool:
-	return Input.is_key_pressed(KEY_SHIFT) and _is_attack_primary_just_pressed()
+	return Input.is_action_just_pressed("heavy_attack")
 
 
 func _is_attack_secondary_pressed() -> bool:
@@ -4616,14 +4616,14 @@ func _is_ranged_ready_active() -> bool:
 func _get_requested_attack_kind(intent: String = "") -> String:
 	if not intent.is_empty():
 		return _attack_kind_from_intent(intent)
-	var wants_heavy: bool = Input.is_key_pressed(KEY_SHIFT)
+	var wants_heavy := Input.is_action_pressed("heavy_attack")
 	if not wants_heavy:
 		return "fast"
 	if heavy_attack_blocked_while_sprinting and is_sprinting:
 		return "fast"
 	if stamina < heavy_attack_stamina_cost:
 		return "fast"
-	if Input.is_key_pressed(KEY_SHIFT):
+	if wants_heavy:
 		return "heavy"
 	return "fast"
 
@@ -10425,7 +10425,7 @@ func _has_active_idle_input() -> bool:
 		or Input.is_action_pressed("block") \
 		or Input.is_action_pressed("interact") \
 		or Input.is_action_pressed("repair") \
-		or Input.is_key_pressed(KEY_CTRL) \
+		or Input.is_action_pressed("sprint") \
 		or _melee_active \
 		or _reload_active \
 		or _melee_recovery_active
@@ -11590,7 +11590,7 @@ func _get_controller_aim_direction() -> Vector2:
 		Input.get_action_strength("aim_right") - Input.get_action_strength("aim_left"),
 		Input.get_action_strength("aim_down") - Input.get_action_strength("aim_up")
 	)
-	if aim_input.length_squared() <= 0.04:
+	if aim_input.length_squared() <= 0.0001:
 		return Vector2.ZERO
 	return aim_input.normalized()
 

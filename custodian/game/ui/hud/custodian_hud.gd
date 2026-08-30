@@ -378,6 +378,12 @@ func show_interaction(title: String, body: String, input_hint: String = "G", ico
 		prompt.call("show_prompt", title, body, input_hint, icon_path)
 
 
+func show_action_interaction(title: String, body: String, action_name: StringName = &"interact", icon_path: String = "") -> void:
+	_last_prompt_frame = Engine.get_process_frames()
+	if prompt != null:
+		prompt.call("show_action_prompt", title, body, action_name, icon_path)
+
+
 func hide_interaction() -> void:
 	_last_prompt_frame = -1
 	if prompt != null:

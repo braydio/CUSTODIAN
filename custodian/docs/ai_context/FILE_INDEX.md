@@ -146,6 +146,10 @@ Last updated: 2026-08-20
 ## Active Runtime Entry
 
 - `custodian/project.godot` — Godot project config and input map
+- `design/02_features/input/CONTROLLER_INPUT_SYSTEM.md` — active production keyboard/mouse and Xbox-layout action, analog, UI, prompt, and deferred-command authority.
+- `custodian/game/systems/input/input_prompt_service.gd` — presentation-only last-meaningful-device tracker and InputMap-to-keyboard/Xbox label resolver.
+- `custodian/tools/validation/controller_input_contract_smoke.gd` — focused production action/binding/deadzone/collision/raw-key/prompt/UI contract smoke.
+- `custodian/docs/ai_context/task_packets/CONTROLLER_INPUT_HARDENING.md` — implementation record for the post-twin-stick controller parity migration.
 - `custodian/scenes/game.tscn` — active game scene and terminal layout, including the authored `PageButtonsScroll` with pinned `MoreButton`/terminal actions; no longer auto-spawns the Forlorn-Ritualant dev encounter, and still includes scene-mounted `DroneManager` for allied combat drone V1 spawning plus a temporary grunt startup debug spawn gated by Operator distance from the initial spawn zone
 - `custodian/scenes/home_custodian_begin.tscn` — dedicated Home beginning scene for Objective 01, tracing a Custodian-band signal across the Road of Witnesses to the damaged Field Terminal; not yet the application main scene.
 - `custodian/scenes/debug/home_custodian_begin_mapper.tscn` — live Home beginning collision/POI mapper for authored perimeter rails, Custodian wake spawn, and Field Terminal placement; Enter/`U` persists script authority, updates the preview, and mirrors marker positions into the target scene.

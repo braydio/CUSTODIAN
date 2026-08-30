@@ -1,5 +1,19 @@
 # CURRENT STATE — CUSTODIAN
 
+## Controller Input Hardening (2026-08-30)
+
+The existing twin-stick contract now has semantic `sprint` and `heavy_attack`
+actions instead of Operator-owned Ctrl/Shift checks. Xbox bindings cover L3/R3,
+RB/LB, Field Patch on D-pad Up, and build/deploy/pickup on D-pad Down while
+weapon cycling exclusively owns D-pad Left/Right. Movement/aim/trigger deadzones
+are 0.20/0.22/0.15 and analog movement magnitude remains intact.
+`InputPromptService` is a presentation-only autoload for meaningful-device
+hot-swap and InputMap-derived keyboard/Xbox labels. Inventory consumes that
+shared state, Black Reliquary prompts support action-driven labels, and pause
+supports B/`ui_cancel` resume plus device-appropriate Select/Back hints.
+Controller glyph artwork, direct drone command mode, and live item cycling remain
+deliberately deferred.
+
 ## Station IX Landmark Contact Alignment (2026-08-29)
 
 The Lower Quarter Station IX landmark now uses an alpha-clean 768×768 cutout

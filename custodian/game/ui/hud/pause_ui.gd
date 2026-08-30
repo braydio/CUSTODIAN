@@ -19,6 +19,9 @@ func _ready() -> void:
 
 	if title_label:
 		title_label.text = "PAUSED"
+	var prompt_service := get_node_or_null("/root/InputPromptService")
+	if prompt_service != null and prompt_service.has_signal("device_family_changed"):
+		prompt_service.device_family_changed.connect(_on_device_family_changed)
 
 
 func _process(_delta: float) -> void:
@@ -82,6 +85,9 @@ func toggle_pause() -> void:
 func handle_input() -> void:
 	if menu_items.is_empty():
 		return
+	if Input.is_action_just_pressed("ui_cancel"):
+		toggle_pause()
+		return
 
 	if Input.is_action_just_pressed("ui_up"):
 		selected_index = max(0, selected_index - 1)
@@ -120,6 +126,10 @@ func build_menu() -> void:
 	menu_items.append({
 		"label": "RESUME",
 		"type": "resume",
+	})
+	menu_items.append({
+		"label": _pause_control_hint(),
+		"type": "hint",
 	})
 
 	for item in menu_items:
@@ -237,3 +247,16 @@ func _is_route_transition_locked() -> bool:
 		and manager.has_method("is_transition_input_locked")
 		and bool(manager.call("is_transition_input_locked"))
 	)
+
+
+func _pause_control_hint() -> String:
+	var prompt_service := get_node_or_null("/root/InputPromptService")
+	if prompt_service != null and bool(prompt_service.call("is_gamepad_active")):
+		return "A SELECT  ·  B BACK"
+	return "ENTER SELECT  ·  ESC BACK"
+
+
+func _on_device_family_changed(_device_family: StringName) -> void:
+	if is_paused:
+		build_menu()
+		update_menu_display()

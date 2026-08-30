@@ -14,16 +14,31 @@ const Palette := preload("res://game/ui/theme/black_reliquary_palette.gd")
 @onready var key_label: Label = get_node_or_null("Stack/BodyPlaque/BodyRow/KeyBadge/Key")
 
 var _locked := false
+var _action_name: StringName = &""
+var _literal_hint := ""
 
 
 func _ready() -> void:
 	_apply_assets()
+	var prompt_service := get_node_or_null("/root/InputPromptService")
+	if prompt_service != null and prompt_service.has_signal("device_family_changed"):
+		prompt_service.device_family_changed.connect(_on_device_family_changed)
 	hide_prompt()
 
 
 func show_prompt(title: String, body: String, input_hint: String = "G", icon_path: String = "") -> void:
 	_locked = false
+	_action_name = &""
+	_literal_hint = input_hint
 	_set_content(title, body, input_hint, icon_path)
+	visible = true
+
+
+func show_action_prompt(title: String, body: String, action_name: StringName = &"interact", icon_path: String = "") -> void:
+	_locked = false
+	_action_name = action_name
+	_literal_hint = ""
+	_set_content(title, body, _resolve_action_hint(), icon_path)
 	visible = true
 
 
@@ -74,3 +89,16 @@ func _set_content(title: String, body: String, input_hint: String, icon_path: St
 		icon_rect.texture = texture
 		icon_rect.visible = texture != null
 		icon_rect.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+
+
+func _resolve_action_hint() -> String:
+	var prompt_service := get_node_or_null("/root/InputPromptService")
+	if prompt_service != null and prompt_service.has_method("resolve_action_label"):
+		return str(prompt_service.resolve_action_label(_action_name))
+	return String(_action_name).to_upper().replace("_", " ")
+
+
+func _on_device_family_changed(_device_family: StringName) -> void:
+	if _action_name.is_empty() or key_label == null:
+		return
+	key_label.text = _resolve_action_hint()
