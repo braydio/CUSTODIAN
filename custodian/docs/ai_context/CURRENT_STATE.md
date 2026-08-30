@@ -31,7 +31,11 @@ COMPLETE/PARTIAL/REFERENCE presentation status; the live 8-frame
 `melee_1h/attack/critical_execution_01/e` weapon-only source is correctly marked
 PARTIAL rather than silently gaining invented body layers. The three-column
 layer contract table remains horizontally scroll-free in the 80×35 pilot, and
-workspace paths display repo-relative when possible.
+workspace paths display repo-relative when possible. Persistent shell widget
+access is anchored to the retained MainScreen rather than the topmost modal,
+so activity/error reporting remains safe beneath every dialog; failed session
+loads no longer emit false successful-selection events or mask their original
+Workbench error with a Textual `NoMatches` exception.
 
 ## Ritualant Mapper-Backed Arena Re-authoring (2026-08-29)
 

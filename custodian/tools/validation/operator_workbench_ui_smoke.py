@@ -144,10 +144,18 @@ class PilotService:
     def known_weapons(self): return []
 
 
+class FailingPilotService(PilotService):
+    def session(self, _selection):
+        raise FakeModel.WorkbenchError(
+            "WORKBENCH CONTEXT MISMATCH\nfixture"
+        )
+
+
 async def textual_smoke() -> None:
     from ui.app import OperatorWorkbenchApp
-    from ui.dialogs import FrameAddDialog, PublishDialog
-    from ui.widgets import AnimationDetail, AnimationTree
+    from ui.dialogs import ErrorDialog, FrameAddDialog, PublishDialog
+    from ui.widgets import ActivityLog, AnimationDetail, AnimationTree
+    from textual.widgets import Static
     service = PilotService(); app = OperatorWorkbenchApp(service=service, startup=service.selection)
     async with app.run_test(size=(80, 35)) as pilot:
         await pilot.pause(0.5)
@@ -177,7 +185,71 @@ async def textual_smoke() -> None:
         await pilot.click("#cancel"); await pilot.pause(); assert service.mutations == 0
         await pilot.press("p"); await pilot.pause(0.3)
         assert isinstance(app.screen, PublishDialog) and "new__7f" in str(app.screen.query_one("#publish-preview").render())
+        activity_log = app.main_screen.query_one("#activity-log", ActivityLog)
+        activity_lines = len(activity_log.lines)
+        app._activity("fixture while publish modal")
+        await pilot.pause()
+        assert app.state.activity[-1].message == "fixture while publish modal"
+        assert len(activity_log.lines) > activity_lines
         await pilot.click("#cancel"); assert service.mutations == 0
+
+    failing_service = FailingPilotService()
+    failing_app = OperatorWorkbenchApp(
+        service=failing_service,
+        startup=failing_service.selection,
+    )
+    async with failing_app.run_test(size=(80, 35)) as pilot:
+        await pilot.pause(0.5)
+        assert isinstance(failing_app.screen, ErrorDialog)
+        assert "WORKBENCH CONTEXT MISMATCH" in failing_app.screen.error_message
+        assert "fixture" in failing_app.screen.error_message
+        assert "WORKBENCH CONTEXT MISMATCH" in str(
+            failing_app.screen.query_one(".dialog-body", Static).render()
+        )
+        assert any(
+            event.message == "WORKBENCH CONTEXT MISMATCH"
+            for event in failing_app.state.activity
+        )
+        assert not any(
+            event.message == f"selected {failing_service.selection.identity}"
+            for event in failing_app.state.activity
+        )
+
+        original_dialog = failing_app.screen
+        failing_app._error(
+            FakeModel.WorkbenchError("WORKBENCH CONTEXT MISMATCH\nsecond fixture")
+        )
+        await pilot.pause()
+        assert failing_app.screen is original_dialog
+        assert failing_app.screen.error_message == (
+            "WORKBENCH CONTEXT MISMATCH\nfixture"
+        )
+
+        await pilot.click("#close")
+        await pilot.pause()
+        assert failing_app.screen is failing_app.main_screen
+        assert failing_app.main_screen.query_one("#activity-log", ActivityLog)
+
+        selected_events = len([
+            event for event in failing_app.state.activity
+            if event.message == f"selected {failing_service.selection.identity}"
+        ])
+        await failing_app.on_animation_tree_selected(
+            SimpleNamespace(selection=failing_service.selection)
+        )
+        await pilot.pause()
+        assert isinstance(failing_app.screen, ErrorDialog)
+        assert len([
+            event for event in failing_app.state.activity
+            if event.message == f"selected {failing_service.selection.identity}"
+        ]) == selected_events
+        await pilot.click("#close")
+        await pilot.pause()
+
+        tree = failing_app.main_screen.query_one("#animation-tree", AnimationTree)
+        tree.focus()
+        await pilot.press("down")
+        assert failing_app.screen is failing_app.main_screen
 
 
 def real_repo_read_only() -> None:

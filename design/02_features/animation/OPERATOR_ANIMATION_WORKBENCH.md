@@ -40,6 +40,12 @@ available for audit. The primary layer view is deliberately compact—layer,
 source/workspace/publish contract, and canvas—with role/owner/profile/reference
 status in the selected-layer detail.
 
+Persistent shell widgets belong to the retained main screen, not whichever
+modal is currently topmost. Activity events always append to UI state and the
+underlying main-screen log while dialogs are open. A failed session projection
+must preserve its exact Workbench error, open at most one error dialog, and
+must not report the semantic selection as successfully loaded.
+
 ```bash
 operator ui
 operator anim list melee_1h --group posture
@@ -103,7 +109,9 @@ The smoke covers exact extraction after rectangular-canvas placement, illegal ou
 `operator_workbench_ui_smoke.py` exercises browser/session/context/error
 projections without a terminal, then uses Textual's headless pilot when the
 optional dependency is installed. It proves search, six-frame run detail,
-add-frame dry-run review/cancel, and publish review/cancel without canonical
-source mutation. Image rendering and an embedded sprite editor are deliberate
-V1 deferrals; a future preview adapter may target Kitty, chafa, contact sheets,
-or Aseprite without changing the service/provider boundary.
+add-frame dry-run review/cancel, publish review/cancel, modal-safe activity
+logging, and exact Workbench-error survival after failed session loading,
+without canonical source mutation. Image rendering and an embedded sprite
+editor are deliberate V1 deferrals; a future preview adapter may target Kitty,
+chafa, contact sheets, or Aseprite without changing the service/provider
+boundary.

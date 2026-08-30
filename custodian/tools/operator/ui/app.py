@@ -57,22 +57,29 @@ class OperatorWorkbenchApp(App):
     def __init__(self, service: WorkbenchService | None = None, startup: AnimationSelection | None = None) -> None:
         super().__init__(); self.service = service or WorkbenchService(); self.state = WorkbenchUIState(selection=startup)
         self.features = {"animations": AnimationFeature(self.service)}; self.session_view = None
+        self.main_screen: MainScreen | None = None
 
     def on_mount(self) -> None:
-        self.push_screen(MainScreen())
+        self.main_screen = MainScreen()
+        self.push_screen(self.main_screen)
         self.call_after_refresh(self.action_full_refresh)
         self.set_interval(1.0, self._watch_selected)
 
-    def _widget(self, selector, kind): return self.screen.query_one(selector, kind)
+    def _main_widget(self, selector, kind):
+        if self.main_screen is None:
+            raise RuntimeError("Operator Workbench MainScreen is not mounted")
+        return self.main_screen.query_one(selector, kind)
 
     def _activity(self, message: str, severity: str = "INFO") -> None:
         event = self.state.add_activity(message, severity)
-        self._widget("#activity-log", ActivityLog).add_event(event)
+        self._main_widget("#activity-log", ActivityLog).add_event(event)
 
     async def _thread(self, function, *args): return await asyncio.to_thread(function, *args)
 
     def _error(self, error: Exception) -> None:
         projected = self.service.project_error(error); self._activity(projected.message.splitlines()[0], "ERROR")
+        if isinstance(self.screen, ErrorDialog):
+            return
         self.push_screen(ErrorDialog(projected.title, projected.message))
 
     def _repo_status(self) -> tuple[str, bool]:
@@ -87,7 +94,7 @@ class OperatorWorkbenchApp(App):
             records = await self._thread(self.features["animations"].refresh)
             query = self.state.search_filter
             filtered = self.service.filter_records(records, query)
-            tree = self._widget("#animation-tree", AnimationTree); tree.set_records(filtered)
+            tree = self._main_widget("#animation-tree", AnimationTree); tree.set_records(filtered)
             if self.state.selection and not self.state.selection.group:
                 requested = self.state.selection
                 matches = [row.selection for row in filtered if (
@@ -104,40 +111,44 @@ class OperatorWorkbenchApp(App):
                 self.state.selection = filtered[0].selection; tree.select_identity(self.state.selection); await self._load_session(self.state.selection)
             branch, dirty = await self._thread(self._repo_status)
             aseprite = str(self.service.workbench.resolve_aseprite(self.service.aseprite) or "unavailable")
-            self._widget("#workbench-status", WorkbenchStatusBar).set_status(branch, dirty, aseprite)
+            self._main_widget("#workbench-status", WorkbenchStatusBar).set_status(branch, dirty, aseprite)
             action_count = len({(row.selection.profile, row.selection.group, row.selection.action) for row in filtered})
             self._activity(f"browser refreshed: {len(filtered)} directional variants, {action_count} actions", "OK")
         except Exception as error: self._error(error)
 
-    async def _load_session(self, selection: AnimationSelection) -> None:
+    async def _load_session(self, selection: AnimationSelection) -> bool:
         try:
             session = await self._thread(self.service.session, selection); self.session_view = session
             self.state.selection = selection; self.state.watch_signature = self.service.watch_signature(selection)
-            self._widget("#animation-detail", AnimationDetail).show_session(session)
-            self._widget("#layer-table", LayerTable).show_session(session)
-            layer_table = self._widget("#layer-table", LayerTable)
-            self._widget("#layer-detail", Static).update(layer_table.selected_detail(0))
-        except Exception as error: self._error(error)
+            self._main_widget("#animation-detail", AnimationDetail).show_session(session)
+            self._main_widget("#layer-table", LayerTable).show_session(session)
+            layer_table = self._main_widget("#layer-table", LayerTable)
+            self._main_widget("#layer-detail", Static).update(layer_table.selected_detail(0))
+            return True
+        except Exception as error:
+            self._error(error)
+            return False
 
     def on_data_table_row_highlighted(self, event: DataTable.RowHighlighted) -> None:
         if event.data_table.id != "layer-table": return
         table = event.data_table
-        self._widget("#layer-detail", Static).update(table.selected_detail(event.cursor_row))
+        self._main_widget("#layer-detail", Static).update(table.selected_detail(event.cursor_row))
 
     async def on_animation_tree_selected(self, event: AnimationTree.Selected) -> None:
-        await self._load_session(event.selection); self._activity(f"selected {event.selection.identity}")
+        if await self._load_session(event.selection):
+            self._activity(f"selected {event.selection.identity}")
 
     async def on_input_changed(self, event: Input.Changed) -> None:
         if event.input.id != "search": return
         self.state.search_filter = event.value
         records = self.features["animations"].build_navigation(event.value)
-        self._widget("#animation-tree", AnimationTree).set_records(records)
+        self._main_widget("#animation-tree", AnimationTree).set_records(records)
 
     def action_search(self) -> None:
-        search = self._widget("#search", Input); search.remove_class("hidden"); search.focus()
+        search = self._main_widget("#search", Input); search.remove_class("hidden"); search.focus()
 
-    def action_cursor_down(self) -> None: self._widget("#animation-tree", AnimationTree).action_cursor_down()
-    def action_cursor_up(self) -> None: self._widget("#animation-tree", AnimationTree).action_cursor_up()
+    def action_cursor_down(self) -> None: self._main_widget("#animation-tree", AnimationTree).action_cursor_down()
+    def action_cursor_up(self) -> None: self._main_widget("#animation-tree", AnimationTree).action_cursor_up()
     def action_full_refresh(self) -> None: self.run_worker(self._reload_browser(), group="browser", exclusive=True)
 
     async def _watch_selected(self) -> None:
