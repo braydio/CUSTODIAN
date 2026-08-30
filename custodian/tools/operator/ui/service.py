@@ -11,8 +11,8 @@ import animation_workbench as workbench
 import animation_workbench_model as model
 
 from .state import (
-    AnimationRecord, AnimationSelection, ErrorView, LayerView, MigrationView,
-    PublishView, SessionView,
+    AnimationRecord, AnimationSelection, ErrorView, ExistingContextView,
+    LayerView, MigrationView, PublishView, SessionView,
 )
 
 
@@ -93,6 +93,26 @@ class WorkbenchService:
             "profile": selection.profile, "group": selection.group,
             "action": selection.action, "direction": selection.direction,
         })
+
+    @staticmethod
+    def _context_view(context: dict[str, Any]) -> ExistingContextView:
+        return ExistingContextView(
+            str(context.get("weapon_id", "")),
+            str(context.get("linked_profile", "")),
+            str(context.get("presentation_mode", "")),
+            str(context.get("fingerprint", "")),
+        )
+
+    def existing_context(self, selection: AnimationSelection) -> ExistingContextView | None:
+        """Inspect manifest context without accepting or asserting it."""
+        manifest_path = self.workspace(selection) / "workbench.json"
+        if not manifest_path.exists():
+            return None
+        data = self.workbench.load(manifest_path)
+        return self._context_view(data.get("context", {}))
+
+    def requested_context(self, selection: AnimationSelection) -> ExistingContextView:
+        return self._context_view(self._plan(selection).get("context", {}))
 
     @staticmethod
     def migration_view(report: dict[str, Any] | None) -> MigrationView | None:

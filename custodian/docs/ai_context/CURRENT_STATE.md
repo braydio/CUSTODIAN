@@ -50,6 +50,11 @@ access is anchored to the retained MainScreen rather than the topmost modal,
 so activity/error reporting remains safe beneath every dialog; failed session
 loads no longer emit false successful-selection events or mask their original
 Workbench error with a Textual `NoMatches` exception.
+Animation-tree leaves now own identity only while weapon/linked-profile context
+persists separately across navigation. An existing identity-only workspace with
+a different strict fingerprint opens a recovery dialog that can cancel, adopt
+the manifest context without mutation, or recontextualize through the existing
+backup-producing discard-refresh path; `assert_context()` remains unchanged.
 
 ## Ritualant Lift + Peaceful Flow Repair (2026-08-29)
 

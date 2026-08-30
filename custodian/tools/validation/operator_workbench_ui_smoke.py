@@ -13,7 +13,7 @@ OPERATOR_ROOT = Path(__file__).resolve().parents[1] / "operator"
 sys.path.insert(0, str(OPERATOR_ROOT))
 
 from ui.service import WorkbenchService
-from ui.state import AnimationRecord, AnimationSelection, LayerView, MigrationView, PublishView, SessionView
+from ui.state import AnimationRecord, AnimationSelection, ExistingContextView, LayerView, MigrationView, PublishView, SessionView
 
 
 class FakeModel:
@@ -51,7 +51,10 @@ class FakeModel:
             "layers": layers, "references": [binding("full_body_reference", "reference", False)],
             "pending_migration": None,
         }
-    def assert_context(self, _data, _plan): return None
+    def assert_context(self, data, plan):
+        keys = ("weapon_id", "linked_profile", "presentation_mode")
+        if any(data.get("context", {}).get(key, "") != plan.get("context", {}).get(key, "") for key in keys):
+            raise self.WorkbenchError("WORKBENCH CONTEXT MISMATCH\nfixture")
 
 
 class FakeWorkbench:
@@ -119,11 +122,21 @@ def pure_service_smoke() -> None:
         error = service.project_error(FakeModel.WorkbenchError("WORKBENCH STALE\nsource changed"))
         assert error.title == "WORKBENCH STALE" and "source changed" in error.message
 
+        existing_plan = service._plan(vigil)
+        (ws / "workbench.json").write_text(json.dumps(existing_plan))
+        inspected = service.existing_context(run.selection)
+        assert inspected == ExistingContextView("vigil_pattern_dagger", "melee_1h_dagger", "authored_overlay", "")
+        assert service.requested_context(run.selection).weapon_id == ""
+        try: service.session(run.selection)
+        except FakeModel.WorkbenchError as error: assert "CONTEXT MISMATCH" in str(error)
+        else: raise AssertionError("strict context assertion was weakened")
+
 
 class PilotService:
     def __init__(self):
         self.repo_root = Path.cwd(); self.aseprite = None; self.workbench = SimpleNamespace(resolve_aseprite=lambda *_: Path("/bin/true")); self.mutations = 0
         self.selection = AnimationSelection("unarmed", "locomotion", "run_01", "e")
+        self.last_selection = None
         self.migration = MigrationView("add", 3, "duplicate-prev", 6, 7, ("lower_body", "upper_body"), (("fx", "independent clock"),), "GREEN")
     def browser_records(self):
         return [
@@ -133,7 +146,9 @@ class PilotService:
             AnimationRecord(AnimationSelection("unarmed", "defense", "guard_01", "e"), 4, ("full_body",)),
         ]
     def filter_records(self, records, query): return WorkbenchService.filter_records(records, query)
-    def session(self, selection): return SessionView(selection, 6, 6, 6, "CLEAN", "NONE", "GREEN", Path("/tmp/workbench"), "/bin/true", (LayerView("lower_body", "operator_layer", "operator", "unarmed", 6, 6, 6, "96×96"),))
+    def session(self, selection):
+        self.last_selection = selection
+        return SessionView(selection, 6, 6, 6, "CLEAN", "NONE", "GREEN", Path("/tmp/workbench"), "/bin/true", (LayerView("lower_body", "operator_layer", "operator", "unarmed", 6, 6, 6, "96×96"),))
     def watch_signature(self, _selection): return (None, None)
     def frame_preview(self, _selection, operation, position, fill):
         if operation == "remove": return MigrationView("remove", position, fill, 6, 5, ("lower_body",), (), "GREEN")
@@ -144,16 +159,33 @@ class PilotService:
     def known_weapons(self): return []
 
 
-class FailingPilotService(PilotService):
-    def session(self, _selection):
-        raise FakeModel.WorkbenchError(
-            "WORKBENCH CONTEXT MISMATCH\nfixture"
-        )
+class ContextPilotService(PilotService):
+    def __init__(self):
+        super().__init__()
+        self.existing = ExistingContextView("vigil_pattern_dagger", "melee_1h_dagger", "authored_overlay", "fixture")
+        self.active_weapon = self.existing.weapon_id
+        self.active_linked = self.existing.linked_profile
+        self.refresh_calls = []
+    def session(self, selection):
+        self.last_selection = selection
+        if (selection.weapon_id, selection.linked_profile) != (self.active_weapon, self.active_linked):
+            raise FakeModel.WorkbenchError("WORKBENCH CONTEXT MISMATCH\nfixture")
+        return super().session(selection)
+    def existing_context(self, _selection): return self.existing
+    def requested_context(self, selection):
+        return ExistingContextView(selection.weapon_id, selection.linked_profile, "authored_overlay" if selection.weapon_id else "", "requested")
+    def refresh(self, selection, discard=False):
+        self.refresh_calls.append((selection, discard))
+        self.mutations += 1
+        self.active_weapon = selection.weapon_id
+        self.active_linked = selection.linked_profile
+        self.existing = self.requested_context(selection)
+        return {}, Path(".")
 
 
 async def textual_smoke() -> None:
     from ui.app import OperatorWorkbenchApp
-    from ui.dialogs import ErrorDialog, FrameAddDialog, PublishDialog
+    from ui.dialogs import ContextMismatchDialog, FrameAddDialog, PublishDialog
     from ui.widgets import ActivityLog, AnimationDetail, AnimationTree
     from textual.widgets import Static
     service = PilotService(); app = OperatorWorkbenchApp(service=service, startup=service.selection)
@@ -180,6 +212,11 @@ async def textual_smoke() -> None:
         assert app.screen.query_one("#search").value == "run_01"
         assert "6f" in str(app.screen.query_one("#animation-detail", AnimationDetail).render())
         await pilot.press("escape"); app.screen.query_one("#animation-tree").focus()
+        app.state.adopt_context("vigil_pattern_dagger", "melee_1h_dagger")
+        await app.on_animation_tree_selected(SimpleNamespace(selection=AnimationSelection("unarmed", "locomotion", "walk_01", "e")))
+        assert service.last_selection.weapon_id == "vigil_pattern_dagger"
+        assert service.last_selection.linked_profile == "melee_1h_dagger"
+        app.state.adopt_context("", "")
         await pilot.press("a"); await pilot.pause(0.3)
         assert isinstance(app.screen, FrameAddDialog) and "6" in str(app.screen.query_one("#frame-add-preview").render())
         await pilot.click("#cancel"); await pilot.pause(); assert service.mutations == 0
@@ -193,63 +230,36 @@ async def textual_smoke() -> None:
         assert len(activity_log.lines) > activity_lines
         await pilot.click("#cancel"); assert service.mutations == 0
 
-    failing_service = FailingPilotService()
-    failing_app = OperatorWorkbenchApp(
-        service=failing_service,
-        startup=failing_service.selection,
-    )
+    cancel_service = ContextPilotService()
+    failing_app = OperatorWorkbenchApp(service=cancel_service, startup=cancel_service.selection)
     async with failing_app.run_test(size=(80, 35)) as pilot:
         await pilot.pause(0.5)
-        assert isinstance(failing_app.screen, ErrorDialog)
-        assert "WORKBENCH CONTEXT MISMATCH" in failing_app.screen.error_message
-        assert "fixture" in failing_app.screen.error_message
-        assert "WORKBENCH CONTEXT MISMATCH" in str(
-            failing_app.screen.query_one(".dialog-body", Static).render()
-        )
+        assert isinstance(failing_app.screen, ContextMismatchDialog)
+        body = str(failing_app.screen.query_one("#context-mismatch-body", Static).render())
+        assert "vigil_pattern_dagger" in body and "Requested:" in body and "Weapon: none" in body
         assert any(
             event.message == "WORKBENCH CONTEXT MISMATCH"
             for event in failing_app.state.activity
         )
-        assert not any(
-            event.message == f"selected {failing_service.selection.identity}"
-            for event in failing_app.state.activity
-        )
+        await pilot.click("#cancel"); await pilot.pause()
+        assert cancel_service.mutations == 0 and cancel_service.active_weapon == "vigil_pattern_dagger"
 
-        original_dialog = failing_app.screen
-        failing_app._error(
-            FakeModel.WorkbenchError("WORKBENCH CONTEXT MISMATCH\nsecond fixture")
-        )
-        await pilot.pause()
-        assert failing_app.screen is original_dialog
-        assert failing_app.screen.error_message == (
-            "WORKBENCH CONTEXT MISMATCH\nfixture"
-        )
+    open_service = ContextPilotService(); open_app = OperatorWorkbenchApp(service=open_service, startup=open_service.selection)
+    async with open_app.run_test(size=(80, 35)) as pilot:
+        await pilot.pause(0.5); assert isinstance(open_app.screen, ContextMismatchDialog)
+        await pilot.click("#open-existing"); await pilot.pause(0.5)
+        assert open_app.state.weapon_id == "vigil_pattern_dagger"
+        assert open_app.state.linked_profile == "melee_1h_dagger"
+        assert open_service.mutations == 0 and open_app.screen is open_app.main_screen
 
-        await pilot.click("#close")
-        await pilot.pause()
-        assert failing_app.screen is failing_app.main_screen
-        assert failing_app.main_screen.query_one("#activity-log", ActivityLog)
-
-        selected_events = len([
-            event for event in failing_app.state.activity
-            if event.message == f"selected {failing_service.selection.identity}"
-        ])
-        await failing_app.on_animation_tree_selected(
-            SimpleNamespace(selection=failing_service.selection)
-        )
-        await pilot.pause()
-        assert isinstance(failing_app.screen, ErrorDialog)
-        assert len([
-            event for event in failing_app.state.activity
-            if event.message == f"selected {failing_service.selection.identity}"
-        ]) == selected_events
-        await pilot.click("#close")
-        await pilot.pause()
-
-        tree = failing_app.main_screen.query_one("#animation-tree", AnimationTree)
-        tree.focus()
-        await pilot.press("down")
-        assert failing_app.screen is failing_app.main_screen
+    refresh_service = ContextPilotService(); refresh_app = OperatorWorkbenchApp(service=refresh_service, startup=refresh_service.selection)
+    async with refresh_app.run_test(size=(80, 35)) as pilot:
+        await pilot.pause(0.5); assert isinstance(refresh_app.screen, ContextMismatchDialog)
+        await pilot.click("#recontextualize"); await pilot.pause(0.5)
+        assert len(refresh_service.refresh_calls) == 1
+        selection, discard = refresh_service.refresh_calls[0]
+        assert selection.weapon_id == "" and selection.linked_profile == "" and discard is True
+        assert refresh_app.screen is refresh_app.main_screen
 
 
 def real_repo_read_only() -> None:

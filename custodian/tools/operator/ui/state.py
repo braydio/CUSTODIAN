@@ -94,6 +94,22 @@ class SessionView:
 
 
 @dataclass(frozen=True)
+class ExistingContextView:
+    weapon_id: str
+    linked_profile: str
+    presentation_mode: str
+    fingerprint: str
+
+    @property
+    def weapon_label(self) -> str:
+        return self.weapon_id or "none"
+
+    @property
+    def profile_label(self) -> str:
+        return self.linked_profile or "none"
+
+
+@dataclass(frozen=True)
 class ActivityEvent:
     message: str
     severity: str = "INFO"
@@ -103,12 +119,31 @@ class ActivityEvent:
 @dataclass
 class WorkbenchUIState:
     selection: AnimationSelection | None = None
+    weapon_id: str = ""
+    linked_profile: str = ""
     search_filter: str = ""
     selected_feature: str = "animations"
     activity: list[ActivityEvent] = field(default_factory=list)
     active_operation: str = ""
     aseprite_process: Any = None
     watch_signature: tuple[int | None, int | None] = (None, None)
+
+    def __post_init__(self) -> None:
+        if self.selection is not None:
+            self.weapon_id = self.selection.weapon_id
+            self.linked_profile = self.selection.linked_profile
+
+    def contextualize(self, identity: AnimationSelection) -> AnimationSelection:
+        return AnimationSelection(
+            identity.profile, identity.group, identity.action, identity.direction,
+            self.weapon_id, self.linked_profile,
+        )
+
+    def adopt_context(self, weapon_id: str, linked_profile: str) -> None:
+        self.weapon_id = weapon_id
+        self.linked_profile = linked_profile
+        if self.selection is not None:
+            self.selection = self.contextualize(self.selection)
 
     def add_activity(self, message: str, severity: str = "INFO", limit: int = 200) -> ActivityEvent:
         event = ActivityEvent(message, severity)

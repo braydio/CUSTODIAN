@@ -11,13 +11,13 @@ from textual.binding import Binding
 from textual.widgets import DataTable, Input, Static
 
 from .dialogs import (
-    ErrorDialog, FrameAddDialog, FrameRemoveDialog, PublishDialog, RefreshDialog,
-    ValidationDialog, WeaponContextDialog,
+    ContextMismatchDialog, ErrorDialog, FrameAddDialog, FrameRemoveDialog,
+    PublishDialog, RefreshDialog, ValidationDialog, WeaponContextDialog,
 )
 from .features import AnimationFeature
 from .screens import MainScreen
 from .service import WorkbenchService
-from .state import AnimationSelection, WorkbenchUIState
+from .state import AnimationSelection, ExistingContextView, WorkbenchUIState
 from .widgets import ActivityLog, AnimationDetail, AnimationTree, LayerTable, WorkbenchStatusBar
 
 
@@ -108,7 +108,9 @@ class OperatorWorkbenchApp(App):
                     )
             if self.state.selection and tree.select_identity(self.state.selection): await self._load_session(self.state.selection)
             elif filtered:
-                self.state.selection = filtered[0].selection; tree.select_identity(self.state.selection); await self._load_session(self.state.selection)
+                self.state.selection = self.state.contextualize(filtered[0].selection)
+                tree.select_identity(self.state.selection)
+                await self._load_session(self.state.selection)
             branch, dirty = await self._thread(self._repo_status)
             aseprite = str(self.service.workbench.resolve_aseprite(self.service.aseprite) or "unavailable")
             self._main_widget("#workbench-status", WorkbenchStatusBar).set_status(branch, dirty, aseprite)
@@ -126,8 +128,36 @@ class OperatorWorkbenchApp(App):
             self._main_widget("#layer-detail", Static).update(layer_table.selected_detail(0))
             return True
         except Exception as error:
+            projected = self.service.project_error(error)
+            if projected.title == "WORKBENCH CONTEXT MISMATCH":
+                existing = self.service.existing_context(selection)
+                if existing is not None:
+                    requested = self.service.requested_context(selection)
+                    self._activity(projected.title, "ERROR")
+                    if not isinstance(self.screen, ContextMismatchDialog):
+                        self.push_screen(
+                            ContextMismatchDialog(existing, requested),
+                            lambda result: self._accept_context_mismatch(result, selection, existing),
+                        )
+                    return False
             self._error(error)
             return False
+
+    def _accept_context_mismatch(
+        self, result: str | None, requested: AnimationSelection,
+        existing: ExistingContextView,
+    ) -> None:
+        if result == "open-existing":
+            self.state.adopt_context(existing.weapon_id, existing.linked_profile)
+            adopted = self.state.contextualize(requested)
+            self.run_worker(self._load_session(adopted), group="session", exclusive=True)
+        elif result == "recontextualize":
+            self.state.adopt_context(requested.weapon_id, requested.linked_profile)
+            self.state.selection = requested
+            self.run_worker(
+                self._mutate("RECONTEXTUALIZE", self.service.refresh, requested, True),
+                group="mutation", exclusive=True,
+            )
 
     def on_data_table_row_highlighted(self, event: DataTable.RowHighlighted) -> None:
         if event.data_table.id != "layer-table": return
@@ -135,8 +165,9 @@ class OperatorWorkbenchApp(App):
         self._main_widget("#layer-detail", Static).update(table.selected_detail(event.cursor_row))
 
     async def on_animation_tree_selected(self, event: AnimationTree.Selected) -> None:
-        if await self._load_session(event.selection):
-            self._activity(f"selected {event.selection.identity}")
+        selection = self.state.contextualize(event.selection)
+        if await self._load_session(selection):
+            self._activity(f"selected {selection.identity}")
 
     async def on_input_changed(self, event: Input.Changed) -> None:
         if event.input.id != "search": return
@@ -255,7 +286,8 @@ class OperatorWorkbenchApp(App):
         old=self.state.selection
         if weapon_id is None or not old:return
         linked=next((x["animation_profile"] for x in self.service.known_weapons() if x["weapon_id"]==weapon_id),"")
-        self.state.selection=AnimationSelection(old.profile,old.group,old.action,old.direction,weapon_id,linked)
+        self.state.adopt_context(weapon_id, linked)
+        self.state.selection=self.state.contextualize(old)
         self.run_worker(self._load_session(self.state.selection),group="session",exclusive=True)
 
     def action_validate(self)->None:

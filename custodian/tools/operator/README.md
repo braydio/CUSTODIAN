@@ -44,6 +44,12 @@ production-complete. The compact layer table shows source → workspace → publ
 contracts, with ownership detail below it. The CLI remains the automation front
 door.
 
+Weapon and linked-profile context are global UI state, separate from the
+identity-only animation tree. If an identity-only workspace already belongs to
+a different context, the UI keeps Workbench V2's strict fingerprint check and
+offers Cancel, read-only Open Existing Context, or backup-producing
+Recontextualize recovery. It never rewrites `workbench.json` directly.
+
 Publish refreshes the V2 runtime first, then runs
 `tools/pipelines/update_operator_compatibility_resources.py` before Godot
 import. This keeps legacy aliases consumed directly by `operator.tscn` pointed
