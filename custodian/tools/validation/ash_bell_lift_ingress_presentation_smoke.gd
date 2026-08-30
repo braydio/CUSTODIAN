@@ -44,6 +44,7 @@ func _run() -> void:
 		root.add_child(presentation)
 		await process_frame
 		_validate_scene(presentation, errors)
+		_validate_cardinal_facing(presentation, errors)
 		await _validate_lift_travel(presentation, errors)
 		presentation.queue_free()
 	_validate_specialized_spawner(errors)
@@ -121,13 +122,13 @@ func _validate_scene(
 	var front_vibrate := presentation.get_node("LiftRoot/PlatformFront/FrontLipVibrate") as AnimatedSprite2D
 	var dust := presentation.get_node("DustBurst") as AnimatedSprite2D
 	var lamp := presentation.get_node("LampFxRoot/Lamp") as AnimatedSprite2D
-	var shaft_window := presentation.get_node("RearMassRoot/ShaftWindow") as Polygon2D
-	var entrance_mask := presentation.get_node("ForegroundOccluderRoot") as Node2D
+	var shaft_window := presentation.get_node("ApproachFacingRoot/RearMassRoot/ShaftWindow") as Polygon2D
+	var entrance_mask := presentation.get_node("ApproachFacingRoot/ForegroundOccluderRoot") as Node2D
 	var travel_geometry := presentation.get_node(
-		"ForegroundOccluderRoot/TravelOcclusionGeometry"
+		"ApproachFacingRoot/ForegroundOccluderRoot/TravelOcclusionGeometry"
 	) as Node2D
 	var threshold := presentation.get_node("EntranceThresholdMarker") as Marker2D
-	var approach := presentation.get_node("InteractionApproachMarker") as Marker2D
+	var approach := presentation.get_node("ApproachFacingRoot/InteractionApproachMarker") as Marker2D
 	var rider_anchor := presentation.get_node("LiftRoot/RiderAnchor") as Marker2D
 	var boarding_marker := presentation.get_node("BoardingMarker") as Marker2D
 	_check(vibrate.sprite_frames.get_frame_count(&"vibrate") == 4, "vibrate frame count drifted", errors)
@@ -138,24 +139,24 @@ func _validate_scene(
 	_check(is_equal_approx(dust.sprite_frames.get_animation_speed(&"burst"), 12.0), "dust FPS drifted", errors)
 	_check(not dust.sprite_frames.get_animation_loop(&"burst"), "dust must not loop", errors)
 	_check(lamp.sprite_frames.get_frame_count(&"flicker") == 8, "lamp frame count drifted", errors)
-	_check((presentation.get_node("EntranceStructureRoot/ChainLeft") as Node2D).position == Vector2(-42, -126), "left chain placement drifted", errors)
-	_check((presentation.get_node("EntranceStructureRoot/ChainRight") as Node2D).position == Vector2(42, -126), "right chain placement drifted", errors)
+	_check((presentation.get_node("ApproachFacingRoot/EntranceStructureRoot/ChainLeft") as Node2D).position == Vector2(-42, -126), "left chain placement drifted", errors)
+	_check((presentation.get_node("ApproachFacingRoot/EntranceStructureRoot/ChainRight") as Node2D).position == Vector2(42, -126), "right chain placement drifted", errors)
 	_check(not shaft_window.visible, "shaft interior must be hidden while parked", errors)
 	_check(is_zero_approx(shaft_window.modulate.a), "parked shaft retained visible opacity", errors)
 	_check(shaft_window.clip_children == CanvasItem.CLIP_CHILDREN_ONLY, "shaft window lost its irregular child mask", errors)
-	_check(presentation.get_node_or_null("RearMassRoot/DarkMouth") != null, "idle cave mouth is missing", errors)
+	_check(presentation.get_node_or_null("ApproachFacingRoot/RearMassRoot/DarkMouth") != null, "idle cave mouth is missing", errors)
 	_check(
 		presentation.get_node_or_null("ThresholdSurface") == null,
 		"flat ThresholdSurface polygon returned",
 		errors
 	)
-	var mouth := presentation.get_node("RearMassRoot/DarkMouth") as Polygon2D
+	var mouth := presentation.get_node("ApproachFacingRoot/RearMassRoot/DarkMouth") as Polygon2D
 	var mouth_bounds := _polygon_bounds(mouth.polygon)
 	_check(mouth_bounds.size.x <= 170.0, "idle shaft aperture exposes broad black side plates", errors)
 	for plate_name in ["TopRockOverhang", "LeftMouthRock", "RightMouthRock", "LowerCaveLip"]:
 		_check(
 			presentation.get_node_or_null(
-				"ForegroundOccluderRoot/TravelOcclusionGeometry/" + plate_name
+				"ApproachFacingRoot/ForegroundOccluderRoot/TravelOcclusionGeometry/" + plate_name
 			) is Polygon2D,
 			"temporary occlusion plate is missing: %s" % plate_name,
 			errors
@@ -166,9 +167,9 @@ func _validate_scene(
 	_check(presentation.foreground_occluder.region_enabled, "travel cave lip must use a localized texture region", errors)
 	var lip_size := presentation.foreground_occluder.region_rect.size * presentation.foreground_occluder.scale
 	_check(lip_size.x <= 180.0 and lip_size.y <= 84.0, "travel cave lip expanded into a whole-mountain foreground plate", errors)
-	_check((presentation.get_node("EntranceStructureRoot/EntranceShell") as Sprite2D).visible, "entrance shell is hidden while idle", errors)
+	_check((presentation.get_node("ApproachFacingRoot/EntranceStructureRoot/EntranceShell") as Sprite2D).visible, "entrance shell is hidden while idle", errors)
 	_check(presentation.lift_root.visible, "lift is hidden while idle", errors)
-	_check((presentation.get_node("RearMassRoot/MountainCliff") as Sprite2D).visible, "mountain is hidden while idle", errors)
+	_check((presentation.get_node("ApproachFacingRoot/RearMassRoot/MountainCliff") as Sprite2D).visible, "mountain is hidden while idle", errors)
 	_check(presentation.lift_root.position == threshold.position, "parked platform is not aligned to its threshold", errors)
 	_check(rider_anchor.position == Vector2(0, -26), "rider anchor height drifted", errors)
 	_check(boarding_marker.position == Vector2(0, -26), "boarding marker drifted", errors)
@@ -208,12 +209,15 @@ func _validate_prompt(errors: Array[String]) -> void:
 	var parsed: Variant = JSON.parse_string(_read_text(ROUTE_PATH))
 	var route := parsed as Dictionary if parsed is Dictionary else {}
 	var ingress := route.get("ingress", {}) as Dictionary
+	var placement := ingress.get("placement", {}) as Dictionary
 	_check(
 		str(ingress.get("prompt_text", "")) == "DESCEND BELOW",
 		"Ash Bell interaction prompt drifted",
 		errors
 	)
 	_check(is_equal_approx(float(ingress.get("interaction_distance", 0.0)), 56.0), "Ash Bell interaction distance drifted", errors)
+	_check(str(placement.get("strategy", "")) == "edge_overlook", "Ash Bell cardinal placement strategy drifted", errors)
+	_check(placement.get("allowed_edges", []) == ["north", "east", "south", "west"], "Ash Bell allowed edge contract drifted", errors)
 
 
 func _validate_puppet_scene(errors: Array[String]) -> void:
@@ -415,10 +419,10 @@ func _validate_world_depth_contract(
 	errors: Array[String]
 ) -> void:
 	var expected := {
-		"RearMassRoot": -8,
-		"EntranceStructureRoot": 1,
+		"ApproachFacingRoot/RearMassRoot": -8,
+		"ApproachFacingRoot/EntranceStructureRoot": 1,
 		"LiftRoot": 0,
-		"ForegroundOccluderRoot": 1,
+		"ApproachFacingRoot/ForegroundOccluderRoot": 1,
 		"DustBurst": 10,
 		"LampFxRoot": 10,
 	}
@@ -427,10 +431,27 @@ func _validate_world_depth_contract(
 		_check(item != null, "%s is missing from lift depth contract" % node_path, errors)
 		if item != null:
 			_check(item.z_index == expected[node_path], "%s world Z drifted" % node_path, errors)
-	for root_name: String in ["RearMassRoot", "EntranceStructureRoot", "ForegroundOccluderRoot"]:
+	for root_name: String in ["ApproachFacingRoot/RearMassRoot", "ApproachFacingRoot/EntranceStructureRoot", "ApproachFacingRoot/ForegroundOccluderRoot"]:
 		var band := presentation.get_node(root_name) as Node2D
 		_check(not band.z_as_relative, "%s must use absolute z" % root_name, errors)
 		_check(not band.y_sort_enabled, "%s must disable y-sort" % root_name, errors)
+
+
+func _validate_cardinal_facing(presentation: AshBellLiftIngressPresentation, errors: Array[String]) -> void:
+	var lift_start := presentation.lift_root.global_position
+	var rider_offset := presentation.rider_anchor.global_position - presentation.lift_root.global_position
+	for outward in [Vector2i.UP, Vector2i.RIGHT, Vector2i.DOWN, Vector2i.LEFT]:
+		presentation.configure_outward_direction(outward)
+		var approach_delta := presentation.get_interaction_approach_position() - presentation.global_position
+		_check(approach_delta.dot(Vector2(-outward)) > 0.0, "interaction approach is not inward for %s" % outward, errors)
+		_check(is_zero_approx(presentation.lift_root.global_rotation), "lift rotated for %s" % outward, errors)
+		_check(is_equal_approx(presentation.shaft_scroll.global_rotation, 0.0), "shaft scroll rotated for %s" % outward, errors)
+		_check(presentation.lift_root.global_position == lift_start, "lift moved while facing %s" % outward, errors)
+		_check(presentation.rider_anchor.global_position - presentation.lift_root.global_position == rider_offset, "rider detached while facing %s" % outward, errors)
+		var clearance := presentation.get_procgen_dressing_clearance_world_rect()
+		for local_corner in [Vector2(-416, -432), Vector2(416, -432), Vector2(416, 176), Vector2(-416, 176)]:
+			_check(clearance.grow(0.1).has_point(presentation.approach_facing_root.to_global(local_corner)), "clearance missed approach art for %s" % outward, errors)
+	presentation.configure_outward_direction(Vector2i.UP)
 
 
 func _validate_snapshot_hook_order(errors: Array[String]) -> void:

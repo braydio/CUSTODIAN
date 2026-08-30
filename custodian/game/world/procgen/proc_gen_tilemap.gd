@@ -2750,13 +2750,15 @@ func claim_procgen_floor_rect_for_authored_scene_tiles(
 func claim_world_overlook_pocket(
 	center_tile: Vector2i,
 	size_tiles: Vector2i,
-	unlock_causeway: Dictionary = {}
+	unlock_causeway: Dictionary = {},
+	outward_direction: Vector2i = Vector2i.UP
 ) -> Rect2i:
 	if bool(unlock_causeway.get("initially_isolated", false)):
 		return _claim_isolated_world_overlook_pocket(
 			center_tile,
 			size_tiles,
-			unlock_causeway
+			unlock_causeway,
+			outward_direction
 		)
 	var footprint := claim_procgen_floor_rect_for_authored_scene_tiles(
 		center_tile,
@@ -2778,7 +2780,8 @@ func claim_world_overlook_pocket(
 func plan_world_overlook_pocket(
 	center_tile: Vector2i,
 	size_tiles: Vector2i,
-	unlock_causeway: Dictionary = {}
+	unlock_causeway: Dictionary = {},
+	outward_direction: Vector2i = Vector2i.UP
 ) -> Dictionary:
 	if not bool(unlock_causeway.get("initially_isolated", false)):
 		return {
@@ -2787,23 +2790,29 @@ func plan_world_overlook_pocket(
 			"center_tile": center_tile,
 			"size_tiles": size_tiles,
 			"unlock_causeway": unlock_causeway.duplicate(true),
+			"outward_direction": outward_direction,
 		}
 	var gap_depth := maxi(1, int(unlock_causeway.get("gap_depth_tiles", 2)))
-	var full_size := Vector2i(maxi(5, size_tiles.x), maxi(gap_depth + 3, size_tiles.y))
+	var full_size := Vector2i(maxi(gap_depth + 3, size_tiles.x), maxi(gap_depth + 3, size_tiles.y))
 	var full_half := Vector2i(
 		int(floor(float(full_size.x) * 0.5)),
 		int(floor(float(full_size.y) * 0.5))
 	)
 	var full_rect := Rect2i(center_tile - full_half, full_size)
-	var island_size := Vector2i(full_size.x, full_size.y - gap_depth)
-	var island_rect := Rect2i(full_rect.position, island_size)
+	var inward := -outward_direction
+	var island_rect := full_rect
+	if inward == Vector2i.DOWN:
+		island_rect.size.y -= gap_depth
+	elif inward == Vector2i.UP:
+		island_rect.position.y += gap_depth
+		island_rect.size.y -= gap_depth
+	elif inward == Vector2i.RIGHT:
+		island_rect.size.x -= gap_depth
+	else:
+		island_rect.position.x += gap_depth
+		island_rect.size.x -= gap_depth
 	var moat_cells: Array[Vector2i] = []
-	for y in range(island_rect.position.y, island_rect.end.y + gap_depth):
-		moat_cells.append(Vector2i(island_rect.position.x - 1, y))
-		moat_cells.append(Vector2i(island_rect.end.x, y))
-	for y in range(island_rect.end.y, island_rect.end.y + gap_depth):
-		for x in range(island_rect.position.x - 1, island_rect.end.x + 1):
-			moat_cells.append(Vector2i(x, y))
+	_append_cardinal_pocket_moat(moat_cells, island_rect, full_rect, inward)
 	var map_size := procgen_node.map_size if procgen_node != null else Vector2i(999999, 999999)
 	var required: Dictionary = {}
 	for required_cell in _collect_terrain_required_cells(map_size):
@@ -2829,6 +2838,7 @@ func plan_world_overlook_pocket(
 		"center_tile": center_tile,
 		"size_tiles": size_tiles,
 		"unlock_causeway": unlock_causeway.duplicate(true),
+		"outward_direction": outward_direction,
 		"footprint": island_rect,
 		"island_rect": island_rect,
 		"moat_cells": moat_cells,
@@ -2843,31 +2853,48 @@ func commit_world_overlook_pocket_plan(plan: Dictionary) -> Rect2i:
 	return claim_world_overlook_pocket(
 		plan.get("center_tile", Vector2i.ZERO) as Vector2i,
 		plan.get("size_tiles", Vector2i.ZERO) as Vector2i,
-		plan.get("unlock_causeway", {}) as Dictionary
+		plan.get("unlock_causeway", {}) as Dictionary,
+		plan.get("outward_direction", Vector2i.UP) as Vector2i
 	)
+
+
+func _append_cardinal_pocket_moat(
+	moat_cells: Array[Vector2i],
+	island_rect: Rect2i,
+	full_rect: Rect2i,
+	inward: Vector2i
+) -> void:
+	for y in range(island_rect.position.y, island_rect.end.y):
+		moat_cells.append(Vector2i(island_rect.position.x - 1, y))
+		moat_cells.append(Vector2i(island_rect.end.x, y))
+	for x in range(island_rect.position.x, island_rect.end.x):
+		moat_cells.append(Vector2i(x, island_rect.position.y - 1))
+		moat_cells.append(Vector2i(x, island_rect.end.y))
+	if inward.x == 0:
+		var start_y := island_rect.end.y if inward.y > 0 else full_rect.position.y
+		for y in range(start_y, start_y + full_rect.size.y - island_rect.size.y):
+			for x in range(island_rect.position.x - 1, island_rect.end.x + 1):
+				moat_cells.append(Vector2i(x, y))
+	else:
+		var start_x := island_rect.end.x if inward.x > 0 else full_rect.position.x
+		for x in range(start_x, start_x + full_rect.size.x - island_rect.size.x):
+			for y in range(island_rect.position.y - 1, island_rect.end.y + 1):
+				moat_cells.append(Vector2i(x, y))
 
 
 func _claim_isolated_world_overlook_pocket(
 	center_tile: Vector2i,
 	size_tiles: Vector2i,
-	unlock_causeway: Dictionary
+	unlock_causeway: Dictionary,
+	outward_direction: Vector2i = Vector2i.UP
 ) -> Rect2i:
-	var gap_depth := maxi(1, int(unlock_causeway.get("gap_depth_tiles", 2)))
-	var full_size := Vector2i(maxi(5, size_tiles.x), maxi(gap_depth + 3, size_tiles.y))
-	var full_half := Vector2i(
-		int(floor(float(full_size.x) * 0.5)),
-		int(floor(float(full_size.y) * 0.5))
-	)
-	var full_rect := Rect2i(center_tile - full_half, full_size)
-	var island_size := Vector2i(full_size.x, full_size.y - gap_depth)
-	var island_rect := Rect2i(full_rect.position, island_size)
+	var plan := plan_world_overlook_pocket(center_tile, size_tiles, unlock_causeway, outward_direction)
+	if not bool(plan.get("ok", false)):
+		return Rect2i()
+	var island_rect := plan.get("island_rect", Rect2i()) as Rect2i
 	var moat_cells: Dictionary = {}
-	for y in range(island_rect.position.y, island_rect.end.y + gap_depth):
-		moat_cells[Vector2i(island_rect.position.x - 1, y)] = true
-		moat_cells[Vector2i(island_rect.end.x, y)] = true
-	for y in range(island_rect.end.y, island_rect.end.y + gap_depth):
-		for x in range(island_rect.position.x - 1, island_rect.end.x + 1):
-			moat_cells[Vector2i(x, y)] = true
+	for cell in plan.get("moat_cells", []):
+		moat_cells[cell] = true
 	var map_size := procgen_node.map_size if procgen_node != null else Vector2i(999999, 999999)
 	var required: Dictionary = {}
 	for required_cell in _collect_terrain_required_cells(map_size):

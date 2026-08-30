@@ -2,6 +2,7 @@ extends SceneTree
 
 const LEVEL_DEFINITION_SCRIPT := preload("res://game/world/levels/level_definition.gd")
 const SPAWNER_SCRIPT := preload("res://game/world/levels/world_ingress_spawner.gd")
+const RESOLVER_SCRIPT := preload("res://game/world/levels/world_ingress_placement_resolver.gd")
 
 
 class PocketMap:
@@ -15,7 +16,8 @@ class PocketMap:
 	func claim_world_overlook_pocket(
 		center_tile: Vector2i,
 		size_tiles: Vector2i,
-		_unlock_causeway: Dictionary = {}
+		_unlock_causeway: Dictionary = {},
+		_outward_direction: Vector2i = Vector2i.UP
 	) -> Rect2i:
 		claim_count += 1
 		return Rect2i(
@@ -36,7 +38,8 @@ class RetryPocketMap:
 	func plan_world_overlook_pocket(
 		center_tile: Vector2i,
 		size_tiles: Vector2i,
-		unlock_causeway: Dictionary = {}
+		unlock_causeway: Dictionary = {},
+		outward_direction: Vector2i = Vector2i.UP
 	) -> Dictionary:
 		plan_count += 1
 		return {
@@ -44,6 +47,7 @@ class RetryPocketMap:
 			"center_tile": center_tile,
 			"size_tiles": size_tiles,
 			"unlock_causeway": unlock_causeway,
+			"outward_direction": outward_direction,
 			"virtual_floor_cells": {Vector2i.ZERO: true},
 		}
 
@@ -70,7 +74,8 @@ class RetryPocketMap:
 		return claim_world_overlook_pocket(
 			plan.get("center_tile", Vector2i.ZERO),
 			plan.get("size_tiles", Vector2i.ZERO),
-			plan.get("unlock_causeway", {})
+			plan.get("unlock_causeway", {}),
+			plan.get("outward_direction", Vector2i.UP)
 		)
 
 	func evaluate_runtime_walkable_connector(
@@ -109,6 +114,7 @@ func _run() -> void:
 	}
 	var placed: Array = spawner.call("place_all", level_data, map, world, null, definitions)
 	var errors: Array[String] = []
+	_validate_cardinal_resolver(errors)
 	if placed.size() != 2: errors.append("expected two generated ingresses, got %d" % placed.size())
 	var placements := spawner.call("get_last_placements") as Dictionary
 	if not placements.has("alpha_level") or not placements.has("beta_level"):
@@ -148,11 +154,11 @@ func _run() -> void:
 		errors.append("north-edge overlook ingress was not placed")
 	else:
 		var vista_ingress := vista_placed[0] as Node
-		if vista_ingress.get_meta(
+		if not [Vector2i.UP, Vector2i.RIGHT, Vector2i.DOWN, Vector2i.LEFT].has(vista_ingress.get_meta(
 			"world_ingress_outward_direction",
 			Vector2i.ZERO
-		) != Vector2i.UP:
-			errors.append("north-edge orientation metadata was not propagated")
+		)):
+			errors.append("cardinal edge orientation metadata was not propagated")
 		var edge_distance := int(
 			vista_ingress.get_meta(
 				"world_ingress_edge_distance_tiles",
@@ -234,7 +240,8 @@ func _overlook_definition(with_unlock_contract: bool = false) -> RefCounted:
 			"target_spawn_id": "EntrySpawn",
 			"interaction_distance": 92.0,
 			"placement": {
-				"strategy": "north_edge_overlook",
+				"strategy": "edge_overlook",
+				"allowed_edges": ["north", "east", "south", "west"],
 				"priority": 200,
 				"minimum_spacing_tiles": 10,
 				"max_edge_distance_tiles": 8,
@@ -250,6 +257,32 @@ func _overlook_definition(with_unlock_contract: bool = false) -> RefCounted:
 	return definition
 
 
+func _validate_cardinal_resolver(errors: Array[String]) -> void:
+	var resolver := RESOLVER_SCRIPT.new()
+	var map := PocketMap.new()
+	var level_data := {"map_size": Vector2i(96, 80), "compound_ingress": [Vector2i(48, 40)], "seed": 17}
+	var edges := {
+		"north": Vector2i.UP, "east": Vector2i.RIGHT,
+		"south": Vector2i.DOWN, "west": Vector2i.LEFT,
+	}
+	for edge_name: String in edges:
+		var result := resolver.resolve({
+			"strategy": "edge_overlook", "allowed_edges": [edge_name],
+			"max_edge_distance_tiles": 8, "approach_depth_tiles": 10,
+			"lateral_search_tiles": 32, "candidate_attempt_limit": 65,
+			"unlock_causeway": {"initially_isolated": true},
+		}, level_data, map, [])
+		var outward: Vector2i = edges[edge_name]
+		_check(bool(result.get("ok", false)), "%s resolver fixture failed" % edge_name, errors)
+		_check(result.get("outward_direction", Vector2i.ZERO) == outward, "%s outward vector drifted" % edge_name, errors)
+		var expected_size := Vector2i(9, 10) if outward.x == 0 else Vector2i(10, 9)
+		_check(result.get("pocket_size_tiles", Vector2i.ZERO) == expected_size, "%s pocket dimensions drifted" % edge_name, errors)
+		var tile := result.get("tile", Vector2i.ZERO) as Vector2i
+		var center := result.get("pocket_center_tile", Vector2i.ZERO) as Vector2i
+		_check(center == tile - outward * 5, "%s pocket center is not inward" % edge_name, errors)
+	map.free()
+
+
 func _finish(errors: Array[String]) -> void:
 	if errors.is_empty():
 		print("[WorldIngressSpawnerSmoke] PASS")
@@ -257,3 +290,8 @@ func _finish(errors: Array[String]) -> void:
 		return
 	for error in errors: push_error("[WorldIngressSpawnerSmoke] %s" % error)
 	quit(1)
+
+
+func _check(ok: bool, message: String, errors: Array[String]) -> void:
+	if not ok:
+		errors.append(message)

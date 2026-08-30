@@ -20,23 +20,24 @@ const FOREGROUND_TRAVEL_Z := 20
 @export var descent_duration := 1.05
 @export var shaft_scroll_distance := 384.0
 
+@onready var approach_facing_root: Node2D = $ApproachFacingRoot
 @onready var lift_root: AshBellLiftPlatformAssembly = $LiftRoot
 @onready var rider_anchor: Marker2D = $LiftRoot/RiderAnchor
 @onready var boarding_marker: Marker2D = $BoardingMarker
 @onready var entrance_threshold_marker: Marker2D = $EntranceThresholdMarker
-@onready var interaction_approach_marker: Marker2D = $InteractionApproachMarker
-@onready var shaft_window: Polygon2D = $RearMassRoot/ShaftWindow
-@onready var shaft_scroll: Sprite2D = $RearMassRoot/ShaftWindow/ShaftScroll
+@onready var interaction_approach_marker: Marker2D = $ApproachFacingRoot/InteractionApproachMarker
+@onready var shaft_window: Polygon2D = $ApproachFacingRoot/RearMassRoot/ShaftWindow
+@onready var shaft_scroll: Sprite2D = $ApproachFacingRoot/RearMassRoot/ShaftWindow/ShaftScroll
 @onready var platform_back_idle: Sprite2D = $LiftRoot/PlatformBackIdle
 @onready var platform_back_vibrate: AnimatedSprite2D = $LiftRoot/PlatformBackVibrate
 @onready var front_lip_idle: Sprite2D = $LiftRoot/PlatformFront/FrontLipIdle
 @onready var front_lip_vibrate: AnimatedSprite2D = $LiftRoot/PlatformFront/FrontLipVibrate
 @onready var dust_burst: AnimatedSprite2D = $DustBurst
-@onready var entrance_mask: Node2D = $ForegroundOccluderRoot
+@onready var entrance_mask: Node2D = $ApproachFacingRoot/ForegroundOccluderRoot
 @onready var travel_occlusion_geometry: Node2D = (
-	$ForegroundOccluderRoot/TravelOcclusionGeometry
+	$ApproachFacingRoot/ForegroundOccluderRoot/TravelOcclusionGeometry
 )
-@onready var foreground_occluder: Sprite2D = $ForegroundOccluderRoot/ForegroundOccluder
+@onready var foreground_occluder: Sprite2D = $ApproachFacingRoot/ForegroundOccluderRoot/ForegroundOccluder
 @onready var lamp: AnimatedSprite2D = $LampFxRoot/Lamp
 
 var _playing := false
@@ -60,6 +61,25 @@ func _ready() -> void:
 	if not dust_burst.animation_finished.is_connected(_on_dust_finished):
 		dust_burst.animation_finished.connect(_on_dust_finished)
 	lamp.play(&"flicker")
+	_update_shaft_scroll_rotation()
+
+
+func configure_outward_direction(direction: Vector2i) -> void:
+	if not [Vector2i.UP, Vector2i.RIGHT, Vector2i.DOWN, Vector2i.LEFT].has(direction):
+		direction = Vector2i.UP
+	rotation = 0.0
+	approach_facing_root.rotation = {
+		Vector2i.UP: 0.0,
+		Vector2i.RIGHT: PI * 0.5,
+		Vector2i.DOWN: PI,
+		Vector2i.LEFT: -PI * 0.5,
+	}[direction]
+	_update_shaft_scroll_rotation()
+
+
+func _update_shaft_scroll_rotation() -> void:
+	if shaft_scroll != null:
+		shaft_scroll.global_rotation = 0.0
 
 
 func play_descent(actor: Node2D) -> void:
@@ -241,10 +261,17 @@ func get_boarding_position() -> Vector2:
 
 
 func get_procgen_dressing_clearance_world_rect() -> Rect2:
-	return Rect2(
-		global_position + PROCGEN_DRESSING_CLEARANCE_LOCAL.position,
-		PROCGEN_DRESSING_CLEARANCE_LOCAL.size
-	)
+	var corners := [
+		PROCGEN_DRESSING_CLEARANCE_LOCAL.position,
+		PROCGEN_DRESSING_CLEARANCE_LOCAL.end,
+		Vector2(PROCGEN_DRESSING_CLEARANCE_LOCAL.end.x, PROCGEN_DRESSING_CLEARANCE_LOCAL.position.y),
+		Vector2(PROCGEN_DRESSING_CLEARANCE_LOCAL.position.x, PROCGEN_DRESSING_CLEARANCE_LOCAL.end.y),
+	]
+	var first := approach_facing_root.to_global(corners[0])
+	var bounds := Rect2(first, Vector2.ZERO)
+	for corner in corners.slice(1):
+		bounds = bounds.expand(approach_facing_root.to_global(corner))
+	return bounds
 
 
 func is_actor_boarded(actor: Node2D) -> bool:

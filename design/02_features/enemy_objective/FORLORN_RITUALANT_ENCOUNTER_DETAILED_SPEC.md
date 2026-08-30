@@ -2101,6 +2101,11 @@ clears, weights, or restores the chapel. `RouteTraversalManager` and
 spawn, return lift, and encounter lifetime. The retired special-room definition
 must remain absent.
 
+The surface ingress may occupy any cardinal world-edge pocket. Its authored
+approach faces the selected outward direction while lift travel remains
+screen-vertical; the Threadway always resolves from the inward/mainland side.
+This orientation changes no authored underground coordinates or timing.
+
 ---
 
 # 18. Suggested implementation proposal files

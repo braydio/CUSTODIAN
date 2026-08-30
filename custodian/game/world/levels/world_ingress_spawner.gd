@@ -231,7 +231,8 @@ func _plan_overlook_pocket(
 		"plan_world_overlook_pocket",
 		result.get("pocket_center_tile") as Vector2i,
 		result.get("pocket_size_tiles") as Vector2i,
-		result.get("unlock_causeway", {}) as Dictionary
+		result.get("unlock_causeway", {}) as Dictionary,
+		result.get("outward_direction", Vector2i.UP) as Vector2i
 	) as Dictionary
 
 
@@ -246,7 +247,8 @@ func _commit_overlook_pocket(map_instance: Node, result: Dictionary) -> Rect2i:
 		"claim_world_overlook_pocket",
 		result.get("pocket_center_tile") as Vector2i,
 		result.get("pocket_size_tiles") as Vector2i,
-		result.get("unlock_causeway", {}) as Dictionary
+		result.get("unlock_causeway", {}) as Dictionary,
+		result.get("outward_direction", Vector2i.UP) as Vector2i
 	) as Rect2i
 
 

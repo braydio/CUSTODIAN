@@ -11,7 +11,8 @@
 		"interaction_distance": 56.0,
     "route_profile": "production",
     "placement": {
-      "strategy": "north_edge_overlook",
+      "strategy": "edge_overlook",
+      "allowed_edges": ["north", "east", "south", "west"],
       "priority": 140,
       "minimum_spacing_tiles": 14,
       "max_edge_distance_tiles": 8,

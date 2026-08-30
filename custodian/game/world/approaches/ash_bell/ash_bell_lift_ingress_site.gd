@@ -49,6 +49,9 @@ func _ensure_visual() -> void:
 		return
 	_presentation.name = "AshBellLiftIngressPresentation"
 	add_child(_presentation)
+	_presentation.configure_outward_direction(
+		get_meta("world_ingress_outward_direction", Vector2i.UP) as Vector2i
+	)
 
 
 func get_interaction_position() -> Vector2:
