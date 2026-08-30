@@ -25,6 +25,13 @@ selected-workbench mtime refresh, dependency-gated add/remove review, mandatory
 publish review, journal-backed progress, readable Workbench errors, and a
 single-operation UI guard. Authority remains: TUI → Workbench V2 backend →
 canonical PNG source → existing runtime and compatibility pipeline.
+Tree construction uses side-effect-free lookup/create logic, preserves manual
+expansion, and expands only selected ancestry. Directional variants expose
+COMPLETE/PARTIAL/REFERENCE presentation status; the live 8-frame
+`melee_1h/attack/critical_execution_01/e` weapon-only source is correctly marked
+PARTIAL rather than silently gaining invented body layers. The three-column
+layer contract table remains horizontally scroll-free in the 80×35 pilot, and
+workspace paths display repo-relative when possible.
 
 ## Ritualant Mapper-Backed Arena Re-authoring (2026-08-29)
 

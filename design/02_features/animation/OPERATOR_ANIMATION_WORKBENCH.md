@@ -31,6 +31,15 @@ launch is nonblocking and publishing explicitly uses the last saved document.
 Textual is isolated to `tools/operator/ui/requirements.txt`; its absence must
 not affect any command below.
 
+The browser has exactly one node per semantic profile/group/action and one leaf
+per direction. Only selected ancestry expands automatically; manual expansion
+survives ordinary refresh. Directional rows project canonical presentation
+completeness: synchronized lower+upper and valid full-body sources are COMPLETE,
+while weapon-only, FX-only, and isolated fragments are PARTIAL and remain
+available for audit. The primary layer view is deliberately compact—layer,
+source/workspace/publish contract, and canvas—with role/owner/profile/reference
+status in the selected-layer detail.
+
 ```bash
 operator ui
 operator anim list melee_1h --group posture

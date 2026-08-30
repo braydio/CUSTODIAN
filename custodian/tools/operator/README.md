@@ -37,7 +37,12 @@ canonical PNG contracts.
 The UI supplies searchable semantic navigation, layer/reference inspection,
 nonblocking Aseprite launch, saved-workbench change detection, dependency-
 audited frame review, mandatory publish review, transaction-journal progress,
-and standard/full validation. The CLI remains the automation front door.
+and standard/full validation. Browser rows are directional variants and expose
+COMPLETE/PARTIAL/REFERENCE status from their canonical layer set; incomplete
+weapon-only or fragment sources remain inspectable without being presented as
+production-complete. The compact layer table shows source → workspace → publish
+contracts, with ownership detail below it. The CLI remains the automation front
+door.
 
 Publish refreshes the V2 runtime first, then runs
 `tools/pipelines/update_operator_compatibility_resources.py` before Godot

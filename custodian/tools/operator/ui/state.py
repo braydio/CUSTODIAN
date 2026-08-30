@@ -26,11 +26,15 @@ class AnimationRecord:
     selection: AnimationSelection
     frames: int
     layers: tuple[str, ...]
+    completeness: str = "COMPLETE"
+    completeness_detail: str = ""
 
     @property
     def summary(self) -> str:
         names = "+".join(layer.replace("_body", "") for layer in self.layers)
-        return f"{self.selection.direction}   {self.frames}f   {names}"
+        marker = {"COMPLETE": "●", "PARTIAL": "◐", "REFERENCE/LEGACY": "◇"}.get(self.completeness, "⚠")
+        detail = self.completeness_detail or names
+        return f"{self.selection.direction}   {self.frames}f   {marker} {detail}"
 
 
 @dataclass(frozen=True)
@@ -84,6 +88,9 @@ class SessionView:
     layers: tuple[LayerView, ...]
     migration: MigrationView | None = None
     context: dict[str, Any] = field(default_factory=dict, compare=False)
+    completeness: str = "COMPLETE"
+    completeness_detail: str = ""
+    workspace_display: str = ""
 
 
 @dataclass(frozen=True)

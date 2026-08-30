@@ -25,6 +25,11 @@ class FakeModel:
         return {
             ("operator", "lower_body", "unarmed", "locomotion", "run_01", "e"): (self.root / "lower.png", key("lower_body", 6)),
             ("operator", "upper_body", "unarmed", "locomotion", "run_01", "e"): (self.root / "upper.png", key("upper_body", 6)),
+            ("operator", "lower_body", "unarmed", "locomotion", "run_01", "w"): (self.root / "lower_w.png", key("lower_body", 6)),
+            ("operator", "upper_body", "unarmed", "locomotion", "run_01", "w"): (self.root / "upper_w.png", key("upper_body", 6)),
+            ("operator", "full_body", "unarmed", "locomotion", "walk_01", "e"): (self.root / "walk.png", key("full_body", 5)),
+            ("operator", "full_body", "unarmed", "defense", "guard_01", "e"): (self.root / "guard.png", key("full_body", 4)),
+            ("operator", "weapon", "melee_1h", "attack", "critical_execution_01", "e"): (self.root / "critical.png", key("weapon", 8)),
             ("operator", "lower_body", "melee_1h", "posture", "idle_relaxed_01", "e"): (self.root / "idle.png", key("lower_body", 4)),
         }
     def build_plan(self, profile, action, direction, group, weapon, linked, **_kwargs):
@@ -88,10 +93,13 @@ def pure_service_smoke() -> None:
         records = service.browser_records()
         run = next(row for row in records if row.selection.action == "run_01")
         assert run.frames == 6 and run.layers == ("lower_body", "upper_body")
-        assert service.filter_records(records, "locomotion") == [run]
-        assert service.filter_records(records, "RUN_01") == [run]
+        assert len(service.filter_records(records, "locomotion")) == 3
+        assert len(service.filter_records(records, "RUN_01")) == 2
+        critical = next(row for row in records if row.selection.action == "critical_execution_01")
+        assert critical.completeness == "PARTIAL" and critical.completeness_detail == "weapon only; no body presentation layer"
         session = service.session(run.selection)
         assert session.workbench_state == "ABSENT" and session.source_frames == 6
+        assert session.workspace_display.startswith("workspace/")
         assert any(not layer.publishing and layer.layer == "full_body_reference" for layer in session.layers)
         vigil = AnimationSelection("melee_1h", "posture", "idle_relaxed_01", "e", "vigil_pattern_dagger", "melee_1h_dagger")
         vigil_session = service.session(vigil)
@@ -117,7 +125,13 @@ class PilotService:
         self.repo_root = Path.cwd(); self.aseprite = None; self.workbench = SimpleNamespace(resolve_aseprite=lambda *_: Path("/bin/true")); self.mutations = 0
         self.selection = AnimationSelection("unarmed", "locomotion", "run_01", "e")
         self.migration = MigrationView("add", 3, "duplicate-prev", 6, 7, ("lower_body", "upper_body"), (("fx", "independent clock"),), "GREEN")
-    def browser_records(self): return [AnimationRecord(self.selection, 6, ("lower_body", "upper_body"))]
+    def browser_records(self):
+        return [
+            AnimationRecord(self.selection, 6, ("lower_body", "upper_body")),
+            AnimationRecord(AnimationSelection("unarmed", "locomotion", "run_01", "w"), 6, ("lower_body", "upper_body")),
+            AnimationRecord(AnimationSelection("unarmed", "locomotion", "walk_01", "e"), 5, ("full_body",)),
+            AnimationRecord(AnimationSelection("unarmed", "defense", "guard_01", "e"), 4, ("full_body",)),
+        ]
     def filter_records(self, records, query): return WorkbenchService.filter_records(records, query)
     def session(self, selection): return SessionView(selection, 6, 6, 6, "CLEAN", "NONE", "GREEN", Path("/tmp/workbench"), "/bin/true", (LayerView("lower_body", "operator_layer", "operator", "unarmed", 6, 6, 6, "96×96"),))
     def watch_signature(self, _selection): return (None, None)
@@ -135,9 +149,25 @@ async def textual_smoke() -> None:
     from ui.dialogs import FrameAddDialog, PublishDialog
     from ui.widgets import AnimationDetail, AnimationTree
     service = PilotService(); app = OperatorWorkbenchApp(service=service, startup=service.selection)
-    async with app.run_test(size=(140, 42)) as pilot:
+    async with app.run_test(size=(80, 35)) as pilot:
         await pilot.pause(0.5)
-        assert app.screen.query_one("#animation-tree", AnimationTree).root.children
+        tree = app.screen.query_one("#animation-tree", AnimationTree)
+        branches = [node.data for node in tree._walk_nodes() if isinstance(node.data, tuple)]
+        assert branches.count(("unarmed",)) == 1
+        assert branches.count(("unarmed", "locomotion")) == 1
+        assert branches.count(("unarmed", "defense")) == 1
+        assert branches.count(("unarmed", "locomotion", "run_01")) == 1
+        assert branches.count(("unarmed", "locomotion", "walk_01")) == 1
+        run_node = next(node for node in tree._walk_nodes() if node.data == ("unarmed", "locomotion", "run_01"))
+        assert len(run_node.children) == 2
+        selected_ancestry = [("unarmed",), ("unarmed", "locomotion"), ("unarmed", "locomotion", "run_01")]
+        for key in selected_ancestry:
+            assert next(node for node in tree._walk_nodes() if node.data == key).is_expanded
+        assert not next(node for node in tree._walk_nodes() if node.data == ("unarmed", "defense")).is_expanded
+        layer_table = app.screen.query_one("#layer-table")
+        assert list(layer_table.columns.values())[0].label.plain == "LAYER"
+        assert len(layer_table.columns) == 3
+        assert layer_table.max_scroll_x == 0
         await pilot.press("slash"); await pilot.press("r", "u", "n", "underscore", "0", "1"); await pilot.pause()
         assert app.screen.query_one("#search").value == "run_01"
         assert "6f" in str(app.screen.query_one("#animation-detail", AnimationDetail).render())
@@ -155,6 +185,8 @@ def real_repo_read_only() -> None:
     records = service.browser_records()
     run = next(row for row in records if row.selection == AnimationSelection("unarmed", "locomotion", "run_01", "e"))
     assert run.frames == 6 and set(run.layers) >= {"lower_body", "upper_body"}
+    critical = next(row for row in records if row.selection == AnimationSelection("melee_1h", "attack", "critical_execution_01", "e"))
+    assert critical.frames == 8 and critical.layers == ("weapon",) and critical.completeness == "PARTIAL"
     vigil = AnimationSelection("melee_1h", "posture", "idle_relaxed_01", "e", "vigil_pattern_dagger", "melee_1h_dagger")
     session = service.session(vigil)
     assert any(layer.layer == "weapon__vigil_pattern_dagger" for layer in session.layers)

@@ -8,7 +8,7 @@ from pathlib import Path
 
 from textual.app import App
 from textual.binding import Binding
-from textual.widgets import Input
+from textual.widgets import DataTable, Input, Static
 
 from .dialogs import (
     ErrorDialog, FrameAddDialog, FrameRemoveDialog, PublishDialog, RefreshDialog,
@@ -29,15 +29,16 @@ class OperatorWorkbenchApp(App):
     #search { height: 3; margin: 0 1; }
     .hidden { display: none; }
     #workspace-row { height: 1fr; }
-    #navigation-pane { width: 28%; min-width: 28; border: solid #4c566a; }
-    #detail-pane { width: 42%; border: solid #4c566a; padding: 1 2; }
-    #layers-pane { width: 30%; border: solid #4c566a; }
+    #navigation-pane { width: 25%; min-width: 20; border: solid #4c566a; }
+    #detail-pane { width: 35%; border: solid #4c566a; padding: 1 2; }
+    #layers-pane { width: 40%; min-width: 28; border: solid #4c566a; }
     #animation-tree { height: 1fr; }
     #layer-table { height: 1fr; }
+    #layer-detail { height: 4; padding: 0 1; background: #181e28; }
     #activity-pane { height: 10; border: solid #4c566a; }
     #activity-log { height: 1fr; padding: 0 1; }
     .pane-title { height: 1; padding: 0 1; text-style: bold; background: #202734; }
-    .dialog { width: 72; max-height: 90%; margin: 4 8; padding: 1 2; border: thick #81a1c1; background: #202734; }
+    .dialog { width: 72; max-height: 94%; margin: 1 4; padding: 1 2; border: thick #81a1c1; background: #202734; }
     .publish-dialog { width: 96; }
     .error-dialog { border: thick #bf616a; }
     .dialog-title { height: 2; text-align: center; text-style: bold; }
@@ -104,7 +105,8 @@ class OperatorWorkbenchApp(App):
             branch, dirty = await self._thread(self._repo_status)
             aseprite = str(self.service.workbench.resolve_aseprite(self.service.aseprite) or "unavailable")
             self._widget("#workbench-status", WorkbenchStatusBar).set_status(branch, dirty, aseprite)
-            self._activity(f"browser refreshed ({len(filtered)} animations)", "OK")
+            action_count = len({(row.selection.profile, row.selection.group, row.selection.action) for row in filtered})
+            self._activity(f"browser refreshed: {len(filtered)} directional variants, {action_count} actions", "OK")
         except Exception as error: self._error(error)
 
     async def _load_session(self, selection: AnimationSelection) -> None:
@@ -113,7 +115,14 @@ class OperatorWorkbenchApp(App):
             self.state.selection = selection; self.state.watch_signature = self.service.watch_signature(selection)
             self._widget("#animation-detail", AnimationDetail).show_session(session)
             self._widget("#layer-table", LayerTable).show_session(session)
+            layer_table = self._widget("#layer-table", LayerTable)
+            self._widget("#layer-detail", Static).update(layer_table.selected_detail(0))
         except Exception as error: self._error(error)
+
+    def on_data_table_row_highlighted(self, event: DataTable.RowHighlighted) -> None:
+        if event.data_table.id != "layer-table": return
+        table = event.data_table
+        self._widget("#layer-detail", Static).update(table.selected_detail(event.cursor_row))
 
     async def on_animation_tree_selected(self, event: AnimationTree.Selected) -> None:
         await self._load_session(event.selection); self._activity(f"selected {event.selection.identity}")

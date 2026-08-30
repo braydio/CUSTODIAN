@@ -13,8 +13,12 @@ class AnimationDetail(Static):
                 f"Affected: {', '.join(item.affected)}\nAudit: {item.audit}"
             )
         weapon = session.context.get("weapon_id") or "none"
+        completeness = session.completeness
+        if session.completeness_detail:
+            completeness += f" — {session.completeness_detail}"
         self.update(
             f"[b]SELECTED ANIMATION[/b]\n\n{session.selection.identity}\n\n"
+            f"Presentation: {completeness}\n"
             f"Workbench:   {session.workbench_state}\n"
             f"Source:      {session.source_frames}f\n"
             f"Workspace:   {session.workspace_frames}f\n"
@@ -22,6 +26,6 @@ class AnimationDetail(Static):
             f"Migration:   {session.contract_state}\n"
             f"Dependencies:{session.dependency_status:>7}\n\n"
             f"Weapon context: {weapon}\n\n"
-            f"Workspace: {session.workspace_path}\n"
+            f"Workspace: {session.workspace_display or session.workspace_path}\n"
             f"Aseprite:  {session.aseprite_path}{migration}"
         )

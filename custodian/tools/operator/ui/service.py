@@ -54,8 +54,21 @@ class WorkbenchService:
             layers = tuple(key.layer for key in visible_keys)
             clocks = [key.frames for key in visible_keys if key.layer in ("lower_body", "full_body")]
             frames = clocks[0] if clocks else max(key.frames for key in visible_keys)
-            records.append(AnimationRecord(AnimationSelection(profile, group, action, direction), frames, layers))
+            completeness, detail = self.classify_layers(layers)
+            records.append(AnimationRecord(AnimationSelection(profile, group, action, direction), frames, layers, completeness, detail))
         return records
+
+    @staticmethod
+    def classify_layers(layers: tuple[str, ...] | list[str]) -> tuple[str, str]:
+        names = set(layers)
+        if "full_body_reference" in names or any(name.startswith("__REFERENCE") for name in names):
+            return "REFERENCE/LEGACY", "reference source"
+        if {"lower_body", "upper_body"} <= names:
+            return "COMPLETE", "lower+upper"
+        if "full_body" in names:
+            return "COMPLETE", "full body"
+        visible = "+".join(name.replace("_body", "") for name in layers) or "no layers"
+        return "PARTIAL", f"{visible} only; no body presentation layer"
 
     @staticmethod
     def filter_records(records: list[AnimationRecord], query: str) -> list[AnimationRecord]:
@@ -122,12 +135,17 @@ class WorkbenchService:
                 f"{frame_size[0]}×{frame_size[1]}", bool(binding.get("editable", False)),
             ))
         dependency = migration.audit if migration else "GREEN"
+        publishing_layers = tuple(layer.layer for layer in layers if layer.publishing)
+        completeness, completeness_detail = self.classify_layers(publishing_layers)
+        try: workspace_display = str(ws.relative_to(self.repo_root))
+        except ValueError: workspace_display = str(ws)
         return SessionView(
             selection, int(timeline["source_clock_frames"]),
             int(timeline["workspace_clock_frames"]), int(timeline["document_frames"]),
             state, "MIGRATION_PENDING" if migration else "NONE", dependency, ws,
             str(self.workbench.resolve_aseprite(self.aseprite) or "unavailable"), tuple(layers),
-            migration, data.get("context", {}),
+            migration, data.get("context", {}), completeness, completeness_detail,
+            workspace_display,
         )
 
     def watch_signature(self, selection: AnimationSelection) -> tuple[int | None, int | None]:
