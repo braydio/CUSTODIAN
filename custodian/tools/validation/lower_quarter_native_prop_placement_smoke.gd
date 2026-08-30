@@ -7,7 +7,7 @@ const SCENES := {
 	"west_gate_works": "res://game/world/levels/authored/ash_bell/west_gate_works/west_gate_works.tscn",
 	"station_ix": "res://game/world/levels/authored/ash_bell/station_ix/station_ix.tscn",
 }
-const EXPECTED_COUNTS := {"lower_quarter": 112, "west_gate_works": 64, "station_ix": 82}
+const EXPECTED_COUNTS := {"lower_quarter": 104, "west_gate_works": 64, "station_ix": 82}
 const BLOCKED_SOURCE_IDS := {177: true, 201: true, 212: true}
 
 
@@ -31,8 +31,8 @@ func _run() -> void:
 	for level_id: String in EXPECTED_COUNTS:
 		var level := (placement_doc.get("levels", {}) as Dictionary).get(level_id, {}) as Dictionary
 		var records := level.get("placements", []) as Array
-		_assert(records.size() == EXPECTED_COUNTS[level_id], "%s count" % level_id)
 		var origin := _vec(level.get("map_origin", []))
+		var enabled_count := 0
 		for value: Variant in records:
 			var record := value as Dictionary
 			var placement_id := String(record.get("placement_id", ""))
@@ -51,8 +51,11 @@ func _run() -> void:
 			_assert(calculated == _vec(record.get("world_anchor", [])), "world anchor %s" % placement_id)
 			source_ids[source_id] = true
 			families[String(record.get("semantic_family"))] = true
-			total += 1
-	_assert(total == 258, "total placement count")
+			if bool(record.get("enabled", true)):
+				enabled_count += 1
+				total += 1
+		_assert(enabled_count == EXPECTED_COUNTS[level_id], "%s active count" % level_id)
+	_assert(total == 250, "total active placement count")
 	_assert(source_ids.size() == 180, "unique source count")
 	_assert(families.size() == 77, "semantic family coverage")
 	for level_id: String in SCENES:
@@ -71,7 +74,7 @@ func _run() -> void:
 		instance.queue_free()
 		await process_frame
 	_assert(not FileAccess.get_file_as_string("res://game/world/levels/authored/ash_bell/common/meridian_civic_art_presenter.gd").contains("_draw_prop"), "legacy prop drawing absent")
-	print("lower_quarter_native_prop_placement_smoke: PASS placements=258 sources=180 families=77")
+	print("lower_quarter_native_prop_placement_smoke: PASS active_placements=250 sources=180 families=77")
 	quit(0)
 
 

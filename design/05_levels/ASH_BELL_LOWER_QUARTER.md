@@ -83,8 +83,10 @@ Station IX exterior mass is `Rect2i(54,58,18,14)` and is not walkable Lower
 Quarter floor. Its facade sits roughly fifteen authored cells north of the
 arrival spawn and shares the opening composition with the direct-route signage.
 The collapsed direct line at `Rect2i(55,71,18,4)` is visibly and physically
-impassable. The required signs are `MERIDIAN PERSONNEL / STATION IX → DIRECT`
-and `CIVIL EVACUATION / LOWER QUARTER ↓`.
+impassable. The required routing information remains `MERIDIAN PERSONNEL /
+STATION IX → DIRECT` and `CIVIL EVACUATION / LOWER QUARTER ↓`, presented by
+native sign-frame, directory, and evidence interactions rather than floating
+blockout labels.
 
 Markers:
 
@@ -246,8 +248,9 @@ fixed Ash-Bell overlap. The former civic props atlas is retained only for true
 tile-scale or legacy detail; physical props resolve through the 224-entry
 `meridian_civic_props_native` semantic manifest and render at their preserved
 native dimensions. `lower_quarter_native_prop_placements.json` is exact visual
-placement authority for 112 Lower Quarter, 64 West Gate Works, and 82 Station
-IX instances. Its 258 records use 180 reviewed source variants across 77
+placement authority for 104 active Lower Quarter, 64 West Gate Works, and 82
+Station IX instances. Eight Lower Quarter roadwork records remain explicitly
+presentation-disabled. Its 258 records use 180 reviewed source variants across 77
 semantic families; review-required source IDs 177, 201, and 212 remain absent.
 Explicit semantic selection drives both paths; presentation
 art never owns collision, walkability, navigation, exits, or route state.
@@ -275,8 +278,12 @@ navigation remains unchanged. The presenter must not refill
 authored wall rectangles with repeated 32×32 wall sprites or derive collision
 from prop alpha.
 
-The Lower Quarter integrates the 768×768 Station IX landmark, eight 96×96
-Answer pedestals with a physically missing/damaged IX, and 96×96 civic relays.
+The Lower Quarter integrates the alpha-clean 768×768 Station IX landmark through
+an explicit facade-contact root at authored cell `(63,71)`. Reviewed source
+pixel `y=627` maps to that root at `0.75` scale, so the approximately 16×14-cell
+opaque silhouette grows north inside the 18×14 exterior rather than centering
+across the failed approach. It also uses eight 96×96 Answer pedestals with a
+physically missing/damaged IX, and 96×96 civic relays.
 Wrong Street uses fixed local, seam, and imported bands with mismatched curb and
 service-channel alignment. West Gate reuses the civic set with industrial
 dressing and atlas-presented moving-slab art while its `AnimatableBody2D`

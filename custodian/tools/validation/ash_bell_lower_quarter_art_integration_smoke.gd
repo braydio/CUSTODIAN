@@ -5,7 +5,7 @@ const ASSETS := {
 	"wall": ["res://content/tiles/ash_bell/lower_quarter/meridian_civic_wall_atlas_512.png", Vector2i(512, 512)],
 	"props": ["res://content/tiles/ash_bell/lower_quarter/meridian_civic_props_atlas_512.png", Vector2i(512, 512)],
 	"overlap": ["res://content/tiles/ash_bell/lower_quarter/ash_bell_overlap_atlas_512.png", Vector2i(512, 512)],
-	"landmark": ["res://content/backgrounds/ash_bell/lower_quarter/station_ix_district/station_ix_district_landmark_768x768.png", Vector2i(768, 768)],
+	"landmark": ["res://content/backgrounds/ash_bell/lower_quarter/station_ix_district/station_ix_district_landmark_contact_cutout_768x768.png", Vector2i(768, 768)],
 	"pedestal": ["res://content/sprites/environment/props/ash_bell/lower_quarter/meridian_answer_pedestal/runtime/body/meridian_answer_pedestal__body__interaction__idle__omni__1f__96.png", Vector2i(96, 96)],
 	"receiver": ["res://content/sprites/environment/props/ash_bell/station_ix/station_ix_receiver/runtime/body/station_ix_receiver__body__interaction__active__omni__8f__96.png", Vector2i(768, 96)],
 	"core": ["res://content/sprites/environment/props/ash_bell/station_ix/station_ix_sync_core/runtime/body/station_ix_sync_core__body__interaction__idle__omni__1f__384x320.png", Vector2i(384, 320)],
@@ -30,13 +30,27 @@ func _run() -> void:
 	assert(not lower.blockout_grid.visible)
 	var civic_presenter := lower.get_node("BackgroundRoot/MeridianCivicArtPresenter") as MeridianCivicArtPresenter
 	assert(civic_presenter != null)
-	var native_props := civic_presenter.get_node("NativeProps") as Node2D
-	assert(native_props != null and native_props.y_sort_enabled)
-	assert(native_props.get_child_count() == 32)
+	var native_props := lower.get_node("PropsRoot/NativePropRoot") as LowerQuarterNativePropLayer2D
+	assert(native_props != null)
+	assert(native_props.get_child_count() == 104)
 	for child: Node in native_props.get_children():
 		assert(child is SemanticNativeProp2D)
 		assert((child as SemanticNativeProp2D).get_sprite().scale == Vector2.ONE)
-	assert(lower.get_node_or_null("BackgroundRoot/StationIXLandmark") != null)
+	var landmark_root := lower.get_node("BackgroundRoot/StationIXLandmarkRoot") as Node2D
+	var landmark := landmark_root.get_node("StationIXLandmark") as Sprite2D
+	assert(landmark_root.position == lower.cell_center(lower.STATION_LANDMARK_CONTACT_CELL))
+	assert(landmark.position.y == (384.0 - lower.STATION_LANDMARK_GROUND_Y_PX) * lower.STATION_LANDMARK_SCALE)
+	var cutout_image := Image.load_from_file(ProjectSettings.globalize_path(ASSETS["landmark"][0]))
+	var source_image := Image.load_from_file(ProjectSettings.globalize_path("res://content/backgrounds/ash_bell/lower_quarter/station_ix_district/station_ix_district_landmark_768x768.png"))
+	assert(cutout_image.get_used_rect().end.y <= int(lower.STATION_LANDMARK_GROUND_Y_PX) + 1)
+	assert(cutout_image.get_used_rect().size != cutout_image.get_size())
+	for y in range(cutout_image.get_height()):
+		for x in range(cutout_image.get_width()):
+			var cutout_pixel := cutout_image.get_pixel(x, y)
+			if cutout_pixel.a > 0.0:
+				var source_pixel := source_image.get_pixel(x, y)
+				assert(cutout_pixel.r == source_pixel.r and cutout_pixel.g == source_pixel.g and cutout_pixel.b == source_pixel.b)
+	assert(lower.get_node_or_null("PropsRoot/DirectRouteSign") == null)
 	assert(lower.get_node("DynamicGates/DirectPersonnelCollapse/CollisionShape2D").shape != null)
 	assert(not lower.authored_navigation.is_world_position_walkable(lower.cell_center(Vector2i(60, 72))))
 	for path in ["POIRoot/EvacAnnunciator", "POIRoot/GatePressureRelay", "POIRoot/StationIXTransitInterlock"]:

@@ -446,6 +446,8 @@
         },
         {
           "placement_id": "direct_closure_cluster",
+          "enabled": false,
+          "disabled_reason": "direct collapse vocabulary reduction",
           "source_id": 74,
           "semantic_name": "temporary_closure_cluster",
           "semantic_family": "temporary_barricade_cluster",
@@ -504,6 +506,8 @@
         },
         {
           "placement_id": "direct_crowd_barrier",
+          "enabled": false,
+          "disabled_reason": "direct collapse vocabulary reduction",
           "source_id": 83,
           "semantic_name": "crowd_barrier_amber",
           "semantic_family": "crowd_control_barrier",
@@ -533,6 +537,8 @@
         },
         {
           "placement_id": "direct_cone_a",
+          "enabled": false,
+          "disabled_reason": "direct collapse vocabulary reduction",
           "source_id": 79,
           "semantic_name": "cone_barrel_a",
           "semantic_family": "traffic_cone",
@@ -620,6 +626,8 @@
         },
         {
           "placement_id": "direct_cone_cluster",
+          "enabled": false,
+          "disabled_reason": "direct collapse vocabulary reduction",
           "source_id": 84,
           "semantic_name": "cone_cluster_three",
           "semantic_family": "cone_cluster",
@@ -649,6 +657,8 @@
         },
         {
           "placement_id": "direct_sawhorse_a",
+          "enabled": false,
+          "disabled_reason": "direct collapse vocabulary reduction",
           "source_id": 85,
           "semantic_name": "sawhorse_small",
           "semantic_family": "sawhorse_barricade",
@@ -678,6 +688,8 @@
         },
         {
           "placement_id": "direct_sawhorse_b",
+          "enabled": false,
+          "disabled_reason": "direct collapse vocabulary reduction",
           "source_id": 86,
           "semantic_name": "sawhorse_large",
           "semantic_family": "sawhorse_barricade",
@@ -707,6 +719,8 @@
         },
         {
           "placement_id": "direct_warning_sign",
+          "enabled": false,
+          "disabled_reason": "direct collapse vocabulary reduction",
           "source_id": 100,
           "semantic_name": "tripod_warning_sign",
           "semantic_family": "tripod_sign",
@@ -794,6 +808,8 @@
         },
         {
           "placement_id": "direct_rubble_b",
+          "enabled": false,
+          "disabled_reason": "direct collapse vocabulary reduction",
           "source_id": 178,
           "semantic_name": "rubble_split_blocks",
           "semantic_family": "rubble",

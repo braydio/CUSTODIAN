@@ -2,7 +2,7 @@ class_name AshBellLowerQuarter
 extends AuthoredLevel2D
 
 const CIVIC_PRESENTER_SCRIPT := preload("res://game/world/levels/authored/ash_bell/common/meridian_civic_art_presenter.gd")
-const STATION_LANDMARK := preload("res://content/backgrounds/ash_bell/lower_quarter/station_ix_district/station_ix_district_landmark_768x768.png")
+const STATION_LANDMARK := preload("res://content/backgrounds/ash_bell/lower_quarter/station_ix_district/station_ix_district_landmark_contact_cutout_768x768.png")
 const ANSWER_PEDESTAL := preload("res://content/sprites/environment/props/ash_bell/lower_quarter/meridian_answer_pedestal/runtime/body/meridian_answer_pedestal__body__interaction__idle__omni__1f__96.png")
 const CIVIC_RELAY := preload("res://content/sprites/environment/props/ash_bell/common/meridian_civic_relay/runtime/body/meridian_civic_relay__body__interaction__idle__omni__1f__96.png")
 
@@ -11,6 +11,9 @@ const MAP_SIZE_CELLS := Vector2i(128, 96)
 const MAP_ORIGIN := Vector2(-2048.0, -1536.0)
 const STATION_EXTERIOR_RECT := Rect2i(54, 58, 18, 14)
 const DIRECT_BLOCKER_RECT := Rect2i(55, 71, 18, 4)
+const STATION_LANDMARK_GROUND_Y_PX := 627.0
+const STATION_LANDMARK_SCALE := 0.75
+const STATION_LANDMARK_CONTACT_CELL := Vector2i(63, 71)
 const WRONG_STREET_RECT := Rect2i(74, 30, 34, 24)
 const ANSWERS_COURT_RECT := Rect2i(55, 8, 34, 22)
 
@@ -58,7 +61,6 @@ func _ready() -> void:
 	authored_navigation.set_blocker(&"evacuation_shutter", Rect2i(38, 51, 2, 8), true)
 	authored_navigation.set_blocker(&"station_ix_interlock", Rect2i(94, 55, 10, 2), true)
 	authored_navigation.set_blocker(&"direct_personnel_collapse", DIRECT_BLOCKER_RECT, true)
-	_build_blockout_labels()
 	_build_evidence()
 	_build_beat_markers()
 	_build_environment_presentation()
@@ -144,15 +146,6 @@ func _configure_authored_nodes() -> void:
 	_configure_blocker($DynamicGates/DirectPersonnelCollapse, _rect_center(DIRECT_BLOCKER_RECT), Vector2(DIRECT_BLOCKER_RECT.size) * AUTHORING_CELL_SIZE_WORLD, Color("574a43"))
 
 
-func _build_blockout_labels() -> void:
-	_add_blockout_label(
-		"DirectRouteSign",
-		"MERIDIAN PERSONNEL\nSTATION IX → DIRECT\n\nCIVIL EVACUATION\nLOWER QUARTER ↓",
-		cell_center(Vector2i(56, 77)),
-		Color("d7ddd8")
-	)
-
-
 func _build_evidence() -> void:
 	_add_evidence(&"direct_line_order", "MERIDIAN PERSONNEL ROUTING", "Precentor Orra: report directly to Station IX. No discretionary delay authorized.", Vector2i(57, 77))
 	_add_evidence(&"evacuation_failure", "LOWER QUARTER CIVILIAN TRANSIT", "Civil evacuation corridor failed before district clearance. Personnel route diverted through the Lower Quarter.", Vector2i(40, 66))
@@ -187,13 +180,22 @@ func _build_environment_presentation() -> void:
 	presenter.configure(MAP_ORIGIN, WALKABLE_REGIONS, &"lower_quarter")
 	presenter.z_index = -2
 	$BackgroundRoot.add_child(presenter)
+	var landmark_root := Node2D.new()
+	landmark_root.name = "StationIXLandmarkRoot"
+	landmark_root.position = cell_center(STATION_LANDMARK_CONTACT_CELL)
+	landmark_root.z_index = -1
+	$BackgroundRoot.add_child(landmark_root)
 	var landmark := Sprite2D.new()
 	landmark.name = "StationIXLandmark"
 	landmark.texture = STATION_LANDMARK
-	landmark.position = cell_center(Vector2i(63, 75))
-	landmark.scale = Vector2.ONE * 0.75
-	landmark.z_index = -1
-	$BackgroundRoot.add_child(landmark)
+	landmark.scale = Vector2.ONE * STATION_LANDMARK_SCALE
+	# Sprite2D is center-anchored. Move the reviewed source-pixel facade contact
+	# to the root so the landmark grows north from authored row 71.
+	landmark.position = Vector2(
+		0.0,
+		(384.0 - STATION_LANDMARK_GROUND_Y_PX) * STATION_LANDMARK_SCALE
+	)
+	landmark_root.add_child(landmark)
 	var court := Node2D.new()
 	court.name = "AnswersCourtPositions"
 	$PropsRoot.add_child(court)
@@ -210,16 +212,6 @@ func _build_environment_presentation() -> void:
 	additions.name = "LaterPenitentAdditions"
 	additions.set_meta("presentation", "white thread, black containment banners, ash rings")
 	$PropsRoot.add_child(additions)
-
-
-func _add_blockout_label(node_name: String, text: String, at: Vector2, color: Color) -> void:
-	var label := Label.new()
-	label.name = node_name
-	label.text = text
-	label.position = at
-	label.modulate = color
-	label.add_theme_font_size_override("font_size", 16)
-	$PropsRoot.add_child(label)
 
 
 func _position_pressure_markers() -> void:

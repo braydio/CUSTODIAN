@@ -35,6 +35,8 @@ func rebuild() -> bool:
 		_fail("Map origin mismatch for %s: scene=%s manifest=%s" % [level_id, map_origin, authored_origin])
 		return false
 	for record_variant: Variant in level.get("placements", []):
+		if not bool((record_variant as Dictionary).get("enabled", true)):
+			continue
 		if not _instantiate_record(record_variant as Dictionary):
 			return false
 	return true
