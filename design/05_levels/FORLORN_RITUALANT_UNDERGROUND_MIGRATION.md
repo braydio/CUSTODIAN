@@ -28,7 +28,7 @@ The new authored Underground wrapper owns level lifecycle, named spawn, camera b
 
 ```text
 Generated world
-  -> isolated north-edge lift pocket
+  -> isolated cardinal-edge lift pocket
   -> White Thread Knot acquisition latches a pending surface causeway
   -> player approaches and witnesses the permanent Threadway resolve
   -> cave ingress: DESCEND BELOW
@@ -47,6 +47,13 @@ Ritualant chamber. Any canonical `white_thread_knot` acquisition latches the
 run-level causeway milestone without consuming the item. The Underground's own
 thread interaction remains encounter content and is not the sole prerequisite
 for reaching itself.
+
+The exterior placement resolver may select north, east, south, or west. Its
+cardinal `outward_direction` is the placement authority for the authored pocket,
+the rotated map-facing approach composition, the inward/mainland gap, and the
+Threadway connector direction (`-outward_direction`). Lift travel remains
+screen-vertical, and this surface orientation never changes the authored
+Underground scene, named landing spawn, traversal timing, or encounter geometry.
 
 ## Runtime Files
 
