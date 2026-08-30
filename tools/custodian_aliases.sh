@@ -52,7 +52,33 @@ opingest() {
 
 operator() {
   _update_usage "operator"
-  python3 "${CUSTODIAN_GODOT}/tools/operator/operator_cli.py" "$@"
+  local operator_python="${CUSTODIAN_REPO}/.ai/operator-ui-venv/bin/python"
+  if [[ ! -x "${operator_python}" ]]; then
+    operator_python="python3"
+  fi
+  "${operator_python}" "${CUSTODIAN_GODOT}/tools/operator/operator_cli.py" "$@"
+}
+
+# -- Install/update the optional Textual Operator UI environment
+opui-install() {
+  _update_usage "opui-install"
+  local ui_venv="${CUSTODIAN_REPO}/.ai/operator-ui-venv"
+  if [[ ! -x "${ui_venv}/bin/python" ]]; then
+    python3 -m venv --system-site-packages "${ui_venv}" || return
+  fi
+  "${ui_venv}/bin/python" -m pip install \
+    -r "${CUSTODIAN_GODOT}/tools/operator/ui/requirements.txt"
+}
+
+# -- Open the optional Textual Operator Workbench
+opui() {
+  _update_usage "opui"
+  local ui_python="${CUSTODIAN_REPO}/.ai/operator-ui-venv/bin/python"
+  if [[ ! -x "${ui_python}" ]]; then
+    echo "Operator UI environment missing. Run 'opui-install' first." >&2
+    return 2
+  fi
+  "${ui_python}" "${CUSTODIAN_GODOT}/tools/operator/operator_cli.py" ui "$@"
 }
 
 # -- Analyze the latest or an explicitly provided Developer Observatory session
@@ -181,6 +207,8 @@ clisting() {
   echo "    listbox        list current assets in pipeline inbox"
   echo ""
   echo "  Operator Animation"
+  echo "    opui           open the Textual Operator Workbench"
+  echo "    opui-install   install/update its isolated Textual environment"
   echo "    opcombo        check upper/lower modular combo fit & alignment"
   echo "    opcontract     report animation completeness vs production contract"
   echo "    opaudit        audit modular sprite sources for missing/extra assets"
@@ -208,7 +236,7 @@ alias_usage() {
     return
   fi
   echo "Custodian alias usage counts:"
-  for cmd in dryjson runjson runsprite operator opingest obsreport listbox pixelart matchpal batchstrike opcolor promptmenu opcombo opcontract opaudit opnext oprepair oprepair-report oprepair-smoke opvalidate clisting; do
+  for cmd in dryjson runjson runsprite operator opui opui-install opingest obsreport listbox pixelart matchpal batchstrike opcolor promptmenu opcombo opcontract opaudit opnext oprepair oprepair-report oprepair-smoke opvalidate clisting; do
     local count
     count=$(grep -c "$cmd" "$usage_file" 2>/dev/null || echo 0)
     printf "  %-12s %d\n" "${cmd}:" "${count}"
@@ -217,5 +245,5 @@ alias_usage() {
   echo "Total: $(wc -l <"${usage_file}") invocations"
 }
 
-echo "  Custodian commands ready: croot, cgodot, cpack, opcolor, dryjson, runjson, runsprite, operator, opingest, obsreport, listbox, pixelart, matchpal, batchstrike, promptmenu, opcombo, opcontract, opaudit, opnext, oprepair, oprepair-report, oprepair-smoke, opvalidate, clisting"
+echo "  Custodian commands ready: croot, cgodot, cpack, opcolor, dryjson, runjson, runsprite, operator, opui, opui-install, opingest, obsreport, listbox, pixelart, matchpal, batchstrike, promptmenu, opcombo, opcontract, opaudit, opnext, oprepair, oprepair-report, oprepair-smoke, opvalidate, clisting"
 echo "  Type 'clisting' for all commands with descriptions, 'alias_usage' for usage counts."
