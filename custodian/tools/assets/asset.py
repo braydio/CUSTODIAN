@@ -122,7 +122,7 @@ def cmd_request(args,families):
     lines=[family.id.upper(),""]
     for sid,state in family.states.items():
         tag="REQUIRED" if state.required else "RECOMMENDED" if state.recommended else "OPTIONAL"; suffix="" if family.direction_policy=="omni" else "__<direction>"
-        fw,fh=family.state_frame_size(state); detail="static" if not state.animation else f"{state.layout}/declared animation"
+        fw,fh=family.state_frame_size(state); detail="static" if not state.animation else f"{state.layout}/declared animation" + (f"; exactly {state.expected_frames} frames" if state.expected_frames else "")
         lines += [f"{tag} {sid}{suffix}.png",f"  {fw}x{fh} {detail}; minimum directions: {state.min_direction_count}; required: {', '.join(state.required_directions) or 'none'}; auto mirror: {family.auto_mirror}"]
     text="\n".join(lines)+"\n"; print(text)
     if args.write:

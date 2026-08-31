@@ -172,6 +172,7 @@ FIELD_FABRICATOR_MK1
       "action_group": "interaction",
       "variant": "fabricate",
       "animation": true,
+      "frames": 8,
       "fps": 8
     },
     "fabricate_fx": {
@@ -196,6 +197,8 @@ FIELD_FABRICATOR_MK1
 }
 ```
 
+`frames` is an optional exact source-frame contract. Missing optional or recommended states remain non-blocking, but once a matching source is supplied the planner rejects a strip whose inferred frame count differs from this value.
+
 ### State Fields
 
 | Field | Purpose |
@@ -206,6 +209,7 @@ FIELD_FABRICATOR_MK1
 | `required` | Must be present for completeness |
 | `recommended` | Should be present, warned if missing |
 | `animation` | True if multi-frame strip expected |
+| `frames` | Optional exact frame count, enforced when a source is supplied |
 | `fps` | Playback hint for animated states |
 
 ### Aliases

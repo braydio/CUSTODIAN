@@ -1,0 +1,40 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "pursuit_frame",
+  "kind": "enemy",
+  "runtime": {
+    "domain": "sprites/enemies",
+    "owner": "pursuit_frame"
+  },
+  "canvas": {
+    "width": 96,
+    "height": 96
+  },
+  "direction_policy": "4dir",
+  "auto_mirror": true,
+  "states": {
+    "idle_ready_01": {"required": false, "recommended": true, "layer": "body", "action_group": "posture", "variant": "idle_ready_01", "animation": true, "layout": "horizontal_strip", "frames": 4, "required_directions": ["s"]},
+    "patrol_walk_01": {"required": false, "recommended": true, "layer": "body", "action_group": "locomotion", "variant": "patrol_walk_01", "animation": true, "layout": "horizontal_strip", "frames": 8, "required_directions": ["s"]},
+    "patrol_scan_01": {"required": false, "recommended": true, "layer": "body", "action_group": "activity", "variant": "patrol_scan_01", "animation": true, "layout": "horizontal_strip", "frames": 6, "required_directions": ["s"]},
+    "checkpoint_halt_01": {"required": false, "recommended": true, "layer": "body", "action_group": "activity", "variant": "checkpoint_halt_01", "animation": true, "layout": "horizontal_strip", "frames": 4, "required_directions": ["s"]},
+    "notice_01": {"required": false, "recommended": true, "layer": "body", "action_group": "combat", "variant": "notice_01", "animation": true, "layout": "horizontal_strip", "frames": 4, "required_directions": ["s"]},
+    "pursuit_run_01": {"required": false, "recommended": true, "layer": "body", "action_group": "locomotion", "variant": "pursuit_run_01", "animation": true, "layout": "horizontal_strip", "frames": 8, "required_directions": ["s"]},
+    "intercept_windup_01": {"required": false, "recommended": true, "layer": "body", "action_group": "combat", "variant": "intercept_windup_01", "animation": true, "layout": "horizontal_strip", "frames": 4, "required_directions": ["e"]},
+    "intercept_burst_01": {"required": false, "recommended": true, "layer": "body", "action_group": "combat", "variant": "intercept_burst_01", "animation": true, "layout": "horizontal_strip", "frames": 4, "required_directions": ["e"]},
+    "intercept_recover_01": {"required": false, "recommended": true, "layer": "body", "action_group": "combat", "variant": "intercept_recover_01", "animation": true, "layout": "horizontal_strip", "frames": 5, "required_directions": ["e"]},
+    "melee_brace_01": {"required": false, "recommended": true, "layer": "body", "action_group": "combat", "variant": "melee_brace_01", "animation": true, "layout": "horizontal_strip", "frames": 6, "required_directions": ["e"]}
+  },
+  "aliases": {
+    "idle_ready": "idle_ready_01",
+    "patrol_walk": "patrol_walk_01",
+    "patrol_scan": "patrol_scan_01",
+    "checkpoint_halt": "checkpoint_halt_01",
+    "notice": "notice_01",
+    "pursuit_run": "pursuit_run_01",
+    "intercept_windup": "intercept_windup_01",
+    "intercept_burst": "intercept_burst_01",
+    "intercept_recover": "intercept_recover_01",
+    "melee_brace": "melee_brace_01"
+  },
+  "consumers": []
+}

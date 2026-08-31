@@ -23,6 +23,7 @@ class AssetStateContract:
     required: bool=False; recommended: bool=False; animation: bool=False; fps: float|None=None
     layout: str="auto"; columns: int|None=None; rows: int|None=None; min_direction_count: int=1
     required_directions: tuple[str,...]=(); frame_width: int|None=None; frame_height: int|None=None
+    expected_frames: int|None=None
 
 @dataclass(frozen=True)
 class AssetFamilyContract:
@@ -76,7 +77,10 @@ def parse_family(raw:dict[str,Any])->AssetFamilyContract:
         if animation and layout=="copy": raise ValueError(f"states.{sid}: animation cannot use copy layout")
         for dimension in (data.get("frame_width"), data.get("frame_height")):
             if dimension is not None and (not isinstance(dimension,int) or isinstance(dimension,bool) or dimension<=0): raise ValueError(f"states.{sid}: frame override must be a positive integer")
-        states[sid]=AssetStateContract(sid,_token(data.get("layer"),f"states.{sid}.layer"),_token(data.get("action_group"),f"states.{sid}.action_group"),_token(data.get("variant"),f"states.{sid}.variant"),bool(data.get("required",False)),bool(data.get("recommended",False)),animation,data.get("fps"),layout,columns,rows,minimum,required_dirs,data.get("frame_width"),data.get("frame_height"))
+        expected_frames=data.get("frames")
+        if expected_frames is not None and (not isinstance(expected_frames,int) or isinstance(expected_frames,bool) or expected_frames<=0): raise ValueError(f"states.{sid}.frames must be a positive integer")
+        if expected_frames==1 and animation: raise ValueError(f"states.{sid}: animated state must expect more than one frame")
+        states[sid]=AssetStateContract(sid,_token(data.get("layer"),f"states.{sid}.layer"),_token(data.get("action_group"),f"states.{sid}.action_group"),_token(data.get("variant"),f"states.{sid}.variant"),bool(data.get("required",False)),bool(data.get("recommended",False)),animation,data.get("fps"),layout,columns,rows,minimum,required_dirs,data.get("frame_width"),data.get("frame_height"),expected_frames)
     aliases=raw.get("aliases",{})
     if not isinstance(aliases,dict) or any(target not in states for target in aliases.values()): raise ValueError("unresolved aliases")
     consumers=raw.get("consumers",[])

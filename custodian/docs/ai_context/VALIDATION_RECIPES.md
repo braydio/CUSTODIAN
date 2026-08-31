@@ -93,7 +93,7 @@ Prefer RTK subcommands for compact output when they support the command shape. R
 - Scene or asset import change: run Godot import before headless boot when feasible.
 - Sprite pipeline change: run dry-run ingest first, then targeted ingest only when outputs are intended.
 - Generic runtime-ready asset intake: run the persistent drop router in dry-run mode before apply.
-- Asset Pipeline V2.1: run `python3 custodian/tools/validation/asset_pipeline_v2_smoke.py` and `python3 custodian/tools/validation/asset_pipeline_v21_production_smoke.py`; focused schema, plan, ingest, replacement, transaction, status, and backend-delegation entrypoints sit beside them.
+- Asset Pipeline V2.1: run `python3 custodian/tools/validation/asset_pipeline_v2_smoke.py` and `python3 custodian/tools/validation/asset_pipeline_v21_production_smoke.py`; focused schema, plan, ingest, replacement, transaction, status, and backend-delegation entrypoints sit beside them. For Pursuit Frame intake changes, also run `python3 custodian/tools/validation/pursuit_frame_asset_family_smoke.py`.
 - Tile pipeline change: run Python syntax checks plus the relevant tile generator command.
 - Commit/staging task: inspect status with RTK, but do not stage or commit without explicit user approval.
 

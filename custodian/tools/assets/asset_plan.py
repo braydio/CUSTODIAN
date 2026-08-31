@@ -69,6 +69,7 @@ def generate_plan(family:AssetFamilyContract,inbox_dir:Path,project_dir:Path,*,n
         state=family.states[resolution.state_id]
         if state.animation and inspection.frame_count<=1: errors.append(f"{png.name}: state '{state.id}' requires animation")
         if not state.animation and inspection.frame_count>1: errors.append(f"{png.name}: state '{state.id}' is static but has {inspection.frame_count} frames")
+        if state.expected_frames is not None and inspection.frame_count!=state.expected_frames: errors.append(f"{png.name}: state '{state.id}' requires exactly {state.expected_frames} frames, found {inspection.frame_count}")
         backend=schema.backend_policy if schema.backend_policy!="auto" else ("sprite_ingest" if inspection.frame_count>1 or inspection.layout in {FrameLayout.GRID,FrameLayout.VERTICAL_STRIP} else "runtime_ready")
         directions=[(resolution.direction,"authored",None)]
         mirror=MIRRORS.get(resolution.direction)
