@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import csv
 import json
 import sys
 from pathlib import Path
@@ -124,6 +125,32 @@ def main() -> None:
             f"got {review_count}"
         )
 
+    review_path = path.with_suffix(".csv")
+    if not review_path.is_file():
+        fail(f"missing human-review CSV: {review_path}")
+    with review_path.open(newline="", encoding="utf-8-sig") as review_file:
+        review_rows = list(csv.DictReader(review_file))
+    if len(review_rows) != EXPECTED_ENTRIES:
+        fail(
+            f"expected {EXPECTED_ENTRIES} CSV review rows, "
+            f"got {len(review_rows)}"
+        )
+    entries_by_id = {entry["id"]: entry for entry in entries}
+    for row in review_rows:
+        entry_id = row.get("id", "")
+        entry = entries_by_id.get(entry_id)
+        if entry is None:
+            fail(f"CSV references unknown entry id: {entry_id}")
+        csv_coord = (int(row["x"]), int(row["y"]))
+        if csv_coord != tuple(entry["source_coord"]):
+            fail(f"{entry_id}: CSV coordinate drifted to {csv_coord}")
+        for key in ("semantic_name", "family", "geometry_class", "condition"):
+            if row.get(key) != str(entry.get(key, "")):
+                fail(f"{entry_id}: CSV {key} drifted")
+        csv_review_required = row.get("review_required", "").lower() == "true"
+        if csv_review_required != bool(entry.get("review_required")):
+            fail(f"{entry_id}: CSV review_required drifted")
+
     print("[PASS] Meridian civic wall semantic manifest")
     print(f"  entries: {len(entries)}")
     print(f"  families: {len(families)}")
@@ -133,6 +160,7 @@ def main() -> None:
     print("  reserved runtime rows/cols 14-15: unused")
     print("  scale: 1.0")
     print("  rotation/mirroring: disabled")
+    print("  human-review CSV: synchronized")
 
 if __name__ == "__main__":
     main()
