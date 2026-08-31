@@ -55,6 +55,21 @@ const STATION_EAST_RECORDS_RECT := Rect2i(40, 30, 16, 12)
 const STATION_ANSWER_CHAMBER_RECT := Rect2i(15, 2, 34, 28)
 const STATION_CONNECTOR_RECT := Rect2i(30, 39, 4, 6)
 
+const DIRECT_ROUTE_WEST_MASS := Rect2i(48, 66, 10, 18)
+const DIRECT_ROUTE_EAST_MASS := Rect2i(70, 68, 10, 16)
+const EVACUATION_ARCADE_MASS := Rect2i(26, 55, 6, 25)
+const WALL_ROOF_SOURCE := Vector2i(8, 0)
+const WALL_CAP_SOURCE := Vector2i(0, 0)
+const WALL_FACE_SOURCE := Vector2i(1, 4)
+const EVACUATION_ARCADE_FACE := {
+	Vector2i(26, 79): Vector2i(0, 1),
+	Vector2i(27, 79): Vector2i(2, 1),
+	Vector2i(28, 79): Vector2i(4, 1),
+	Vector2i(29, 79): Vector2i(5, 1),
+	Vector2i(30, 79): Vector2i(2, 1),
+	Vector2i(31, 79): Vector2i(0, 1),
+}
+
 var map_origin := Vector2.ZERO
 var walkable_regions: Array[Rect2i] = []
 var district := &"lower_quarter"
@@ -158,10 +173,30 @@ func _collect_walkable_cells() -> Array[Vector2i]:
 
 
 func _draw_lower_quarter() -> void:
-	_draw_wall_band(Rect2i(48, 66, 10, 18), "retaining")
-	_draw_wall_band(Rect2i(70, 68, 10, 16), "wall_straight")
-	_draw_wall_band(Rect2i(26, 55, 6, 25), "arcade")
+	_draw_authored_wall_mass(DIRECT_ROUTE_WEST_MASS)
+	_draw_authored_wall_mass(DIRECT_ROUTE_EAST_MASS)
+	_draw_authored_wall_mass(EVACUATION_ARCADE_MASS, EVACUATION_ARCADE_FACE)
 	_draw_wrong_street()
+
+
+func _draw_authored_wall_mass(
+	rect: Rect2i,
+	explicit_south_face: Dictionary = {},
+) -> void:
+	# Structural volume is a coherent roof field. Wall-atlas modules only
+	# describe exposed edges and authored openings; they never tile the mass.
+	for y in range(rect.position.y, rect.end.y):
+		for x in range(rect.position.x, rect.end.x):
+			_draw_cell_source(FLOOR, WALL_ROOF_SOURCE, Vector2i(x, y))
+
+	for x in range(rect.position.x, rect.end.x):
+		_draw_cell_source(WALL, WALL_CAP_SOURCE, Vector2i(x, rect.position.y))
+
+	var south_y := rect.end.y - 1
+	for x in range(rect.position.x, rect.end.x):
+		var cell := Vector2i(x, south_y)
+		var source := explicit_south_face.get(cell, WALL_FACE_SOURCE) as Vector2i
+		_draw_cell_source(WALL, source, cell)
 
 
 func _draw_authored_floor_overlays() -> void:
@@ -257,13 +292,6 @@ func _draw_wall_band(rect: Rect2i, category: String) -> void:
 	# Bottom-facing facade is what should carry most visual information.
 	for x in range(rect.position.x, rect.end.x):
 		_draw_cell_source(WALL, Vector2i(1, 4), Vector2i(x, bottom_y))
-
-	# Sparse facade rhythm for tall masses. Never refill the whole rectangle.
-	if rect.size.y >= 6 and category not in ["rail_edge", "parapet"]:
-		for y in range(rect.position.y + 3, rect.end.y - 2, 4):
-			for x in range(rect.position.x + 1, rect.end.x - 1, 4):
-				_draw_cell_source(WALL, Vector2i(1, 4), Vector2i(x, y))
-
 
 func _draw_cell_source(texture: Texture2D, source: Vector2i, cell: Vector2i) -> void:
 	var destination := Rect2(map_origin + Vector2(cell * TILE_SIZE), Vector2.ONE * TILE_SIZE)

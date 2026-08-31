@@ -71,10 +71,6 @@ window/size/viewport_width=1280
 window/size/viewport_height=720
 window/stretch/mode="canvas_items"
 
-[editor]
-
-run/main_run_args="-- --scenario command_pressure_v1"
-
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/dev-console/plugin.cfg", "res://addons/fightengine/plugin.cfg", "res://addons/godot_ai/plugin.cfg", "res://addons/godotdev_nvim_node_copy/plugin.cfg", "res://addons/indie_game_components/plugin.cfg", "res://addons/shader_library/plugin.cfg")

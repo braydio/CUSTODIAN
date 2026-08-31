@@ -13,7 +13,7 @@ This manifest describes the real **14×14 / 196-module** wall source sheet and i
 - **unit_rule:** Every promoted wall module is a native 32x32 runtime cell. Do not stretch modules to create height.
 - **composition_rule:** Broad horizontal structural mass/roof surface is owned by the floor/roof surface layer. This wall atlas owns exposed caps, faces, openings, rails, transitions, damage, and channel boundaries.
 - **topology_first:** Choose geometry/topology class first, then choose a style variant within a compatible family. Never randomly select across corners, straights, terminals, openings, slopes, and damage.
-- **orientation_rule:** Do not runtime-rotate or mirror these sprites. Lighting and asymmetric details are authored. Exact directional ports for review_required topology pieces must be reviewed before automatic neighbor-mask selection.
+- **orientation_rule:** Do not runtime-rotate or mirror these sprites. Lighting and asymmetric details are authored. V2 resolves the directional review into 80 auto-safe modules with exact cardinal ports and 116 explicit/manual-only modules.
 - **facade_rule:** front_facade/front_edge modules belong on authored exposed player-facing edges, not as tiled interior wall-body fill.
 - **damage_rule:** Damaged/rubble modules are explicit authored beats only and must never be scattered into continuity-critical runs.
 - **collision_rule:** Manifest collision hints are non-authoritative. Authored topology/collision/navigation remain gameplay authority.
@@ -46,7 +46,7 @@ This manifest describes the real **14×14 / 196-module** wall source sheet and i
 
 ## Important authoring rule
 
-Do **not** treat this as a bag of interchangeable wall tiles. The composer should resolve: **topology/edge role → family → exact variant**. `review_required=true` means the semantic family is reliable but exact directional ports should be confirmed before fully automatic neighbor-mask placement.
+Do **not** treat this as a bag of interchangeable wall tiles. The composer resolves: **exact topology/ports → compatible family → exact variant**. Only `composer.auto_compose=true` entries may enter automatic lookup. Doors, windows, gates, stairs, rubble, breaches, damage, terminals, and ambiguous transitions remain `explicit_authored_only` even though their semantic review is complete.
 
 ## Suggested validation
 
@@ -55,4 +55,5 @@ Do **not** treat this as a bag of interchangeable wall tiles. The composer shoul
 - No entry references runtime row/column 14 or 15.
 - No `rotation_allowed` or `mirror_allowed` entry is true.
 - Structural collision/navigation is never generated from image alpha.
-- Automatic composer may use straight/front-facing modules immediately, but must fail closed on unreviewed corner/junction/slope/channel orientations until their directional ports are explicitly approved.
+- The checked-in runtime catalog must reproduce byte-for-byte from `custodian/tools/art/build_meridian_civic_wall_runtime_catalog.py`.
+- Automatic lookup must expose exactly the 80 auto-safe coordinates and no manual-only coordinate.

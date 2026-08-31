@@ -1,7 +1,7 @@
 {
-  "schema": "custodian.semantic_wall_manifest.v1",
+  "schema": "custodian.semantic_wall_manifest.v2",
   "family_id": "meridian_civic_wall",
-  "status": "reviewed_semantic_first_pass",
+  "status": "directional_topology_reviewed",
   "source_master": {
     "recommended_repo_path": "custodian/asset_drop/source_work/lower_quarter_region/meridian_civic_wall_atlas__master.png",
     "size_px": [
@@ -1291,7 +1291,17 @@
         "retaining_top"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_01_00",
@@ -1339,7 +1349,17 @@
         "retaining_top"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_02_00",
@@ -1386,8 +1406,19 @@
         "roof_corner",
         "retaining_corner"
       ],
-      "review_required": true,
-      "confidence": 0.82
+      "review_required": false,
+      "confidence": 0.82,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "E",
+          "S"
+        ],
+        "topology": "corner_es",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe",
+        "review_note": "Square cap corner; horizontal run continues east, vertical run continues south."
+      }
     },
     {
       "id": "wall_03_00",
@@ -1434,8 +1465,19 @@
         "roof_corner",
         "retaining_corner"
       ],
-      "review_required": true,
-      "confidence": 0.82
+      "review_required": false,
+      "confidence": 0.82,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "E",
+          "S"
+        ],
+        "topology": "corner_es",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe",
+        "review_note": "Square cap corner variant; same visual topology as 2,0."
+      }
     },
     {
       "id": "wall_04_00",
@@ -1482,8 +1524,19 @@
         "roof_corner",
         "retaining_corner"
       ],
-      "review_required": true,
-      "confidence": 0.82
+      "review_required": false,
+      "confidence": 0.82,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "E",
+          "S"
+        ],
+        "topology": "corner_es",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe",
+        "review_note": "Square cap corner variant; same visual topology as 2,0."
+      }
     },
     {
       "id": "wall_05_00",
@@ -1530,8 +1583,19 @@
         "roof_corner",
         "retaining_corner"
       ],
-      "review_required": true,
-      "confidence": 0.82
+      "review_required": false,
+      "confidence": 0.82,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "E",
+          "S"
+        ],
+        "topology": "corner_es_damaged",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe",
+        "review_note": "Damaged/irregular square cap corner; east-to-south continuation."
+      }
     },
     {
       "id": "wall_06_00",
@@ -1578,8 +1642,20 @@
         "roof_junction",
         "retaining_junction"
       ],
-      "review_required": true,
-      "confidence": 0.82
+      "review_required": false,
+      "confidence": 0.82,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E",
+          "S"
+        ],
+        "topology": "tee_wes",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe",
+        "review_note": "Three-way cap junction: west/east horizontal plus south branch."
+      }
     },
     {
       "id": "wall_07_00",
@@ -1626,8 +1702,19 @@
         "rounded_corner",
         "basin_edge"
       ],
-      "review_required": true,
-      "confidence": 0.82
+      "review_required": false,
+      "confidence": 0.82,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "N",
+          "E"
+        ],
+        "topology": "corner_ne_rounded",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe",
+        "review_note": "Rounded cap bend from north to east."
+      }
     },
     {
       "id": "wall_08_00",
@@ -1674,8 +1761,21 @@
         "roof_junction",
         "retaining_junction"
       ],
-      "review_required": true,
-      "confidence": 0.82
+      "review_required": false,
+      "confidence": 0.82,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "N",
+          "E",
+          "S",
+          "W"
+        ],
+        "topology": "cross_nesw",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe",
+        "review_note": "Four-way cap junction."
+      }
     },
     {
       "id": "wall_09_00",
@@ -1722,8 +1822,21 @@
         "roof_junction",
         "retaining_junction"
       ],
-      "review_required": true,
-      "confidence": 0.82
+      "review_required": false,
+      "confidence": 0.82,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "N",
+          "E",
+          "S",
+          "W"
+        ],
+        "topology": "cross_nesw",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe",
+        "review_note": "Four-way cap junction variant."
+      }
     },
     {
       "id": "wall_10_00",
@@ -1770,8 +1883,21 @@
         "roof_junction",
         "retaining_junction"
       ],
-      "review_required": true,
-      "confidence": 0.82
+      "review_required": false,
+      "confidence": 0.82,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "N",
+          "E",
+          "S",
+          "W"
+        ],
+        "topology": "cross_nesw",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe",
+        "review_note": "Four-way cap junction variant."
+      }
     },
     {
       "id": "wall_11_00",
@@ -1820,7 +1946,14 @@
         "support"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_12_00",
@@ -1868,7 +2001,17 @@
         "short_run"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_13_00",
@@ -1916,7 +2059,17 @@
         "short_run"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_00_01",
@@ -1964,7 +2117,14 @@
         "facade"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_01_01",
@@ -2011,7 +2171,14 @@
         "facade"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_02_01",
@@ -2058,7 +2225,14 @@
         "portal"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_03_01",
@@ -2105,7 +2279,14 @@
         "facade"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_04_01",
@@ -2152,7 +2333,14 @@
         "portal"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_05_01",
@@ -2199,7 +2387,14 @@
         "portal"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_06_01",
@@ -2246,7 +2441,14 @@
         "station_facade"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_07_01",
@@ -2293,7 +2495,14 @@
         "secure_facade"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_08_01",
@@ -2340,7 +2549,14 @@
         "station_facade"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_09_01",
@@ -2387,7 +2603,14 @@
         "secure_facade"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_10_01",
@@ -2434,7 +2657,14 @@
         "secure_facade"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_11_01",
@@ -2481,7 +2711,14 @@
         "portal"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_12_01",
@@ -2528,7 +2765,14 @@
         "station_facade"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_13_01",
@@ -2575,7 +2819,14 @@
         "station_facade"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_00_02",
@@ -2623,7 +2874,14 @@
         "utility"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_punctuation",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_01_02",
@@ -2671,7 +2929,14 @@
         "pier"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_punctuation",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_02_02",
@@ -2718,7 +2983,17 @@
         "service_edge"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_03_02",
@@ -2766,7 +3041,14 @@
         "pier"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_punctuation",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_04_02",
@@ -2814,7 +3096,14 @@
         "utility"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_punctuation",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_05_02",
@@ -2862,7 +3151,14 @@
         "damage"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_damage",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_06_02",
@@ -2909,8 +3205,19 @@
         "service_corner",
         "rounded_edge"
       ],
-      "review_required": true,
-      "confidence": 0.82
+      "review_required": false,
+      "confidence": 0.82,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "E",
+          "S"
+        ],
+        "topology": "corner_es_rounded",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe",
+        "review_note": "Rounded utility edge turning east-to-south."
+      }
     },
     {
       "id": "wall_07_02",
@@ -2958,7 +3265,17 @@
         "low_wall"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_08_02",
@@ -3007,7 +3324,17 @@
         "wear"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_09_02",
@@ -3055,7 +3382,17 @@
         "rail"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_10_02",
@@ -3103,7 +3440,17 @@
         "rail"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_11_02",
@@ -3152,7 +3499,17 @@
         "amber"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_12_02",
@@ -3200,7 +3557,14 @@
         "utility"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_punctuation",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_13_02",
@@ -3248,7 +3612,14 @@
         "utility"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_punctuation",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_00_03",
@@ -3295,8 +3666,19 @@
         "retaining",
         "rounded_edge"
       ],
-      "review_required": true,
-      "confidence": 0.82
+      "review_required": false,
+      "confidence": 0.82,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "E",
+          "S"
+        ],
+        "topology": "corner_es_rounded",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe",
+        "review_note": "Large rounded retaining corner turning east-to-south."
+      }
     },
     {
       "id": "wall_01_03",
@@ -3344,7 +3726,17 @@
         "pipe"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_02_03",
@@ -3392,7 +3784,17 @@
         "pipe"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_03_03",
@@ -3440,7 +3842,17 @@
         "pipe"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_04_03",
@@ -3488,7 +3900,17 @@
         "pipe"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_05_03",
@@ -3536,8 +3958,19 @@
         "pipe",
         "corner"
       ],
-      "review_required": true,
-      "confidence": 0.82
+      "review_required": false,
+      "confidence": 0.82,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "S"
+        ],
+        "topology": "corner_ws_rounded",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe",
+        "review_note": "Pipe retaining bend from west to south."
+      }
     },
     {
       "id": "wall_06_03",
@@ -3585,8 +4018,19 @@
         "pipe",
         "corner"
       ],
-      "review_required": true,
-      "confidence": 0.82
+      "review_required": false,
+      "confidence": 0.82,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "S"
+        ],
+        "topology": "corner_ws_rounded",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe",
+        "review_note": "Smaller pipe retaining bend from west to south."
+      }
     },
     {
       "id": "wall_07_03",
@@ -3635,7 +4079,17 @@
         "low_wall"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_08_03",
@@ -3682,7 +4136,17 @@
         "plaza_edge"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_09_03",
@@ -3729,7 +4193,17 @@
         "plaza_edge"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_10_03",
@@ -3776,7 +4250,17 @@
         "plaza_edge"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_11_03",
@@ -3825,7 +4309,14 @@
         "service"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_12_03",
@@ -3874,7 +4365,14 @@
         "service"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_13_03",
@@ -3921,7 +4419,17 @@
         "secure_edge"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_00_04",
@@ -3970,7 +4478,14 @@
         "corner"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_damage",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_01_04",
@@ -4018,7 +4533,17 @@
         "masonry"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_02_04",
@@ -4067,7 +4592,17 @@
         "wear"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_03_04",
@@ -4115,8 +4650,16 @@
         "corner",
         "retaining"
       ],
-      "review_required": true,
-      "confidence": 0.82
+      "review_required": false,
+      "confidence": 0.82,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "manual_composite_corner",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "reviewed_manual_only",
+        "review_note": "Composite pipe/railing corner; author explicitly rather than neighbor-mask selecting."
+      }
     },
     {
       "id": "wall_04_04",
@@ -4164,8 +4707,16 @@
         "corner",
         "retaining"
       ],
-      "review_required": true,
-      "confidence": 0.82
+      "review_required": false,
+      "confidence": 0.82,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "manual_composite_corner",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "reviewed_manual_only",
+        "review_note": "Composite pipe/railing corner variant; author explicitly."
+      }
     },
     {
       "id": "wall_05_04",
@@ -4213,7 +4764,17 @@
         "retaining"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_06_04",
@@ -4261,7 +4822,17 @@
         "retaining"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_07_04",
@@ -4310,7 +4881,14 @@
         "terminal"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_punctuation",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_08_04",
@@ -4358,7 +4936,17 @@
         "retaining"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_09_04",
@@ -4406,7 +4994,17 @@
         "retaining"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_10_04",
@@ -4454,7 +5052,17 @@
         "retaining"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_11_04",
@@ -4502,7 +5110,17 @@
         "retaining"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_12_04",
@@ -4551,7 +5169,14 @@
         "damage"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_damage",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_13_04",
@@ -4600,7 +5225,14 @@
         "post"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_punctuation",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_00_05",
@@ -4649,7 +5281,14 @@
         "terminal"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_punctuation",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_01_05",
@@ -4697,8 +5336,19 @@
         "retaining",
         "elevation"
       ],
-      "review_required": true,
-      "confidence": 0.82
+      "review_required": false,
+      "confidence": 0.82,
+      "composer": {
+        "auto_compose": false,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "slope_rise_east",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "reviewed_manual_only",
+        "review_note": "Retaining ramp rises toward east; explicit elevation transition only."
+      }
     },
     {
       "id": "wall_02_05",
@@ -4746,7 +5396,17 @@
         "retaining"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_03_05",
@@ -4794,7 +5454,17 @@
         "retaining"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_04_05",
@@ -4842,7 +5512,17 @@
         "retaining"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_05_05",
@@ -4890,7 +5570,17 @@
         "retaining"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_06_05",
@@ -4938,7 +5628,14 @@
         "post"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_punctuation",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_07_05",
@@ -4986,7 +5683,14 @@
         "damage"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_damage",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_08_05",
@@ -5034,7 +5738,17 @@
         "heavy"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_09_05",
@@ -5081,7 +5795,17 @@
         "ornamental"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_10_05",
@@ -5128,7 +5852,17 @@
         "ornamental"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_11_05",
@@ -5175,7 +5909,17 @@
         "ornamental"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_12_05",
@@ -5223,7 +5967,17 @@
         "teal"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_13_05",
@@ -5271,7 +6025,17 @@
         "teal"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_00_06",
@@ -5318,7 +6082,17 @@
         "ornamental"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_01_06",
@@ -5366,8 +6140,19 @@
         "slope",
         "damage"
       ],
-      "review_required": true,
-      "confidence": 0.82
+      "review_required": false,
+      "confidence": 0.82,
+      "composer": {
+        "auto_compose": false,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "slope_fall_east",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "reviewed_manual_only",
+        "review_note": "Damaged railing slopes downward toward east; explicit damage/elevation beat."
+      }
     },
     {
       "id": "wall_02_06",
@@ -5415,8 +6200,19 @@
         "slope",
         "damage"
       ],
-      "review_required": true,
-      "confidence": 0.82
+      "review_required": false,
+      "confidence": 0.82,
+      "composer": {
+        "auto_compose": false,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "slope_rise_east",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "reviewed_manual_only",
+        "review_note": "Damaged railing slopes upward toward east; explicit damage/elevation beat."
+      }
     },
     {
       "id": "wall_03_06",
@@ -5463,7 +6259,14 @@
         "post"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_punctuation",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_04_06",
@@ -5511,7 +6314,14 @@
         "terminal"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_punctuation",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_05_06",
@@ -5559,7 +6369,14 @@
         "panel"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_06_06",
@@ -5606,8 +6423,19 @@
         "rubble",
         "slope"
       ],
-      "review_required": true,
-      "confidence": 0.82
+      "review_required": false,
+      "confidence": 0.82,
+      "composer": {
+        "auto_compose": false,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "rubble_slope_rise_east",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "reviewed_manual_only",
+        "review_note": "Rubble slope rises toward east; authored damage transition."
+      }
     },
     {
       "id": "wall_07_06",
@@ -5654,8 +6482,19 @@
         "rubble",
         "slope"
       ],
-      "review_required": true,
-      "confidence": 0.82
+      "review_required": false,
+      "confidence": 0.82,
+      "composer": {
+        "auto_compose": false,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "rubble_slope_rise_east",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "reviewed_manual_only",
+        "review_note": "Rubble slope rises toward east; authored damage transition."
+      }
     },
     {
       "id": "wall_08_06",
@@ -5702,8 +6541,19 @@
         "rubble",
         "slope"
       ],
-      "review_required": true,
-      "confidence": 0.82
+      "review_required": false,
+      "confidence": 0.82,
+      "composer": {
+        "auto_compose": false,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "rubble_slope_rise_east",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "reviewed_manual_only",
+        "review_note": "Rubble slope rises toward east; authored damage transition."
+      }
     },
     {
       "id": "wall_09_06",
@@ -5750,8 +6600,19 @@
         "rubble",
         "slope"
       ],
-      "review_required": true,
-      "confidence": 0.82
+      "review_required": false,
+      "confidence": 0.82,
+      "composer": {
+        "auto_compose": false,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "rubble_slope_rise_east",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "reviewed_manual_only",
+        "review_note": "Rubble slope rises toward east; authored damage transition."
+      }
     },
     {
       "id": "wall_10_06",
@@ -5799,7 +6660,14 @@
         "secure"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_11_06",
@@ -5847,7 +6715,14 @@
         "secure"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_12_06",
@@ -5895,7 +6770,14 @@
         "secure"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_13_06",
@@ -5943,7 +6825,14 @@
         "secure"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_00_07",
@@ -5991,7 +6880,14 @@
         "secure"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_01_07",
@@ -6039,7 +6935,14 @@
         "secure"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_02_07",
@@ -6087,7 +6990,14 @@
         "secure"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_03_07",
@@ -6135,7 +7045,14 @@
         "panel"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_04_07",
@@ -6183,7 +7100,14 @@
         "service"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_05_07",
@@ -6231,7 +7155,14 @@
         "panel"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_06_07",
@@ -6279,7 +7210,14 @@
         "window"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_07_07",
@@ -6327,7 +7265,14 @@
         "door"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_08_07",
@@ -6374,7 +7319,14 @@
         "gate"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_09_07",
@@ -6421,7 +7373,14 @@
         "gate"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_10_07",
@@ -6468,7 +7427,14 @@
         "machine"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_11_07",
@@ -6515,7 +7481,14 @@
         "door"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_12_07",
@@ -6562,7 +7535,14 @@
         "door"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_13_07",
@@ -6609,7 +7589,14 @@
         "door"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_00_08",
@@ -6656,7 +7643,14 @@
         "gate"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_01_08",
@@ -6703,7 +7697,14 @@
         "gate"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_02_08",
@@ -6750,7 +7751,14 @@
         "gate"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_03_08",
@@ -6797,7 +7805,14 @@
         "gate"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_04_08",
@@ -6844,7 +7859,14 @@
         "gate"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_05_08",
@@ -6891,7 +7913,14 @@
         "gate"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_06_08",
@@ -6938,7 +7967,14 @@
         "door"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_07_08",
@@ -6985,7 +8021,14 @@
         "facade"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_08_08",
@@ -7033,7 +8076,14 @@
         "teal"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_09_08",
@@ -7081,7 +8131,14 @@
         "teal"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_10_08",
@@ -7128,7 +8185,14 @@
         "door"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_11_08",
@@ -7176,7 +8240,14 @@
         "teal"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_12_08",
@@ -7224,7 +8295,14 @@
         "teal"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_13_08",
@@ -7271,7 +8349,14 @@
         "gate"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_00_09",
@@ -7319,7 +8404,14 @@
         "door"
       ],
       "review_required": false,
-      "confidence": 0.86
+      "confidence": 0.86,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_01_09",
@@ -7367,7 +8459,14 @@
         "gate"
       ],
       "review_required": false,
-      "confidence": 0.86
+      "confidence": 0.86,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_02_09",
@@ -7414,8 +8513,18 @@
         "rubble",
         "breach"
       ],
-      "review_required": true,
-      "confidence": 0.82
+      "review_required": false,
+      "confidence": 0.82,
+      "composer": {
+        "auto_compose": false,
+        "ports": [
+          "E"
+        ],
+        "topology": "breach_left_terminal",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "reviewed_manual_only",
+        "review_note": "Left-side breach terminal feeding rubble/opening to east."
+      }
     },
     {
       "id": "wall_03_09",
@@ -7463,7 +8572,14 @@
         "rubble"
       ],
       "review_required": false,
-      "confidence": 0.86
+      "confidence": 0.86,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_04_09",
@@ -7510,8 +8626,19 @@
         "rubble",
         "breach"
       ],
-      "review_required": true,
-      "confidence": 0.82
+      "review_required": false,
+      "confidence": 0.82,
+      "composer": {
+        "auto_compose": false,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "breach_center",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "reviewed_manual_only",
+        "review_note": "Centered rubble breach with surviving wall context on both sides."
+      }
     },
     {
       "id": "wall_05_09",
@@ -7558,8 +8685,18 @@
         "rubble",
         "breach"
       ],
-      "review_required": true,
-      "confidence": 0.82
+      "review_required": false,
+      "confidence": 0.82,
+      "composer": {
+        "auto_compose": false,
+        "ports": [
+          "W"
+        ],
+        "topology": "breach_right_terminal",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "reviewed_manual_only",
+        "review_note": "Right-side breach terminal fed from west."
+      }
     },
     {
       "id": "wall_06_09",
@@ -7606,8 +8743,19 @@
         "rubble",
         "breach"
       ],
-      "review_required": true,
-      "confidence": 0.82
+      "review_required": false,
+      "confidence": 0.82,
+      "composer": {
+        "auto_compose": false,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "breach_center",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "reviewed_manual_only",
+        "review_note": "Centered rubble breach variant; explicit authored damage."
+      }
     },
     {
       "id": "wall_07_09",
@@ -7654,8 +8802,16 @@
         "rubble",
         "open"
       ],
-      "review_required": true,
-      "confidence": 0.82
+      "review_required": false,
+      "confidence": 0.82,
+      "composer": {
+        "auto_compose": false,
+        "ports": [],
+        "topology": "rubble_open",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "reviewed_manual_only",
+        "review_note": "Open rubble pile with no reliable structural continuation ports."
+      }
     },
     {
       "id": "wall_08_09",
@@ -7703,7 +8859,14 @@
         "window"
       ],
       "review_required": false,
-      "confidence": 0.86
+      "confidence": 0.86,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_09_09",
@@ -7751,7 +8914,14 @@
         "worn"
       ],
       "review_required": false,
-      "confidence": 0.86
+      "confidence": 0.86,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_10_09",
@@ -7799,7 +8969,14 @@
         "breach"
       ],
       "review_required": false,
-      "confidence": 0.86
+      "confidence": 0.86,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_11_09",
@@ -7847,7 +9024,14 @@
         "void"
       ],
       "review_required": false,
-      "confidence": 0.86
+      "confidence": 0.86,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_12_09",
@@ -7895,7 +9079,14 @@
         "worn"
       ],
       "review_required": false,
-      "confidence": 0.86
+      "confidence": 0.86,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_13_09",
@@ -7943,7 +9134,14 @@
         "masonry"
       ],
       "review_required": false,
-      "confidence": 0.86
+      "confidence": 0.86,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_00_10",
@@ -7990,8 +9188,19 @@
         "rubble",
         "breach"
       ],
-      "review_required": true,
-      "confidence": 0.82
+      "review_required": false,
+      "confidence": 0.82,
+      "composer": {
+        "auto_compose": false,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "breach_center",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "reviewed_manual_only",
+        "review_note": "Large breached wall framed by surviving sides; explicit authored damage."
+      }
     },
     {
       "id": "wall_01_10",
@@ -8039,7 +9248,14 @@
         "gate"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_02_10",
@@ -8085,8 +9301,16 @@
       "usage_tags": [
         "rubble"
       ],
-      "review_required": true,
-      "confidence": 0.82
+      "review_required": false,
+      "confidence": 0.82,
+      "composer": {
+        "auto_compose": false,
+        "ports": [],
+        "topology": "rubble_open",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "reviewed_manual_only",
+        "review_note": "Large freestanding rubble pile; no automatic wall continuation."
+      }
     },
     {
       "id": "wall_03_10",
@@ -8132,8 +9356,19 @@
       "usage_tags": [
         "rubble"
       ],
-      "review_required": true,
-      "confidence": 0.82
+      "review_required": false,
+      "confidence": 0.82,
+      "composer": {
+        "auto_compose": false,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "rubble_span",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "reviewed_manual_only",
+        "review_note": "Long rubble span with surviving side structures; explicit authored damage."
+      }
     },
     {
       "id": "wall_04_10",
@@ -8181,7 +9416,14 @@
         "damage"
       ],
       "review_required": false,
-      "confidence": 0.86
+      "confidence": 0.86,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_05_10",
@@ -8229,7 +9471,14 @@
         "damage"
       ],
       "review_required": false,
-      "confidence": 0.86
+      "confidence": 0.86,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_06_10",
@@ -8276,7 +9525,14 @@
         "damage"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_damage",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_07_10",
@@ -8324,7 +9580,14 @@
         "damage"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_damage",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_08_10",
@@ -8371,7 +9634,14 @@
         "gate"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_punctuation",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_09_10",
@@ -8418,7 +9688,14 @@
         "gate"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_punctuation",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_10_10",
@@ -8465,7 +9742,17 @@
         "retaining"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_11_10",
@@ -8512,7 +9799,17 @@
         "retaining"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_12_10",
@@ -8559,7 +9856,14 @@
         "service"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_punctuation",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_13_10",
@@ -8606,7 +9910,17 @@
         "retaining"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_00_11",
@@ -8653,7 +9967,14 @@
         "railing"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_punctuation",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_01_11",
@@ -8700,7 +10021,17 @@
         "retaining"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_02_11",
@@ -8746,8 +10077,16 @@
       "usage_tags": [
         "rubble"
       ],
-      "review_required": true,
-      "confidence": 0.82
+      "review_required": false,
+      "confidence": 0.82,
+      "composer": {
+        "auto_compose": false,
+        "ports": [],
+        "topology": "rubble_open",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "reviewed_manual_only",
+        "review_note": "Low rubble cluster; no automatic wall continuation."
+      }
     },
     {
       "id": "wall_03_11",
@@ -8794,7 +10133,14 @@
         "gate"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_punctuation",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_04_11",
@@ -8841,7 +10187,14 @@
         "service"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_punctuation",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_05_11",
@@ -8888,7 +10241,17 @@
         "retaining"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_06_11",
@@ -8935,7 +10298,14 @@
         "plate"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_punctuation",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_07_11",
@@ -8981,8 +10351,19 @@
         "hazard",
         "slope"
       ],
-      "review_required": true,
-      "confidence": 0.82
+      "review_required": false,
+      "confidence": 0.82,
+      "composer": {
+        "auto_compose": false,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "hazard_slope_fall_east",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "reviewed_manual_only",
+        "review_note": "Hazard-marked diagonal slope; explicit authored transition."
+      }
     },
     {
       "id": "wall_08_11",
@@ -9028,8 +10409,19 @@
         "hazard",
         "corner"
       ],
-      "review_required": true,
-      "confidence": 0.82
+      "review_required": false,
+      "confidence": 0.82,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "E",
+          "S"
+        ],
+        "topology": "corner_es_diagonal",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe",
+        "review_note": "Hazard inner corner turning east-to-south."
+      }
     },
     {
       "id": "wall_09_11",
@@ -9077,7 +10469,17 @@
         "water_edge"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_10_11",
@@ -9125,7 +10527,17 @@
         "water_edge"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_11_11",
@@ -9173,8 +10585,19 @@
         "water_edge",
         "corner"
       ],
-      "review_required": true,
-      "confidence": 0.8
+      "review_required": false,
+      "confidence": 0.8,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "S"
+        ],
+        "topology": "canal_corner_ws",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe",
+        "review_note": "Canal edge turns west-to-south; water/open region lies lower-left."
+      }
     },
     {
       "id": "wall_12_11",
@@ -9222,8 +10645,19 @@
         "water_edge",
         "corner"
       ],
-      "review_required": true,
-      "confidence": 0.8
+      "review_required": false,
+      "confidence": 0.8,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "E",
+          "S"
+        ],
+        "topology": "canal_corner_es",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe",
+        "review_note": "Canal edge turns east-to-south; mirrored source-authored counterpart."
+      }
     },
     {
       "id": "wall_13_11",
@@ -9271,7 +10705,17 @@
         "water_edge"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_00_12",
@@ -9318,7 +10762,17 @@
         "chain"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_01_12",
@@ -9365,7 +10819,17 @@
         "chain"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_02_12",
@@ -9412,7 +10876,17 @@
         "chain"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_03_12",
@@ -9459,7 +10933,17 @@
         "chain"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_04_12",
@@ -9507,7 +10991,14 @@
         "damage"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_damage",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_05_12",
@@ -9554,8 +11045,19 @@
         "stairs",
         "railing"
       ],
-      "review_required": true,
-      "confidence": 0.82
+      "review_required": false,
+      "confidence": 0.82,
+      "composer": {
+        "auto_compose": false,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "stair_transition",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "reviewed_manual_only",
+        "review_note": "Stair/railing module; explicit authored stair only."
+      }
     },
     {
       "id": "wall_06_12",
@@ -9601,8 +11103,19 @@
         "hazard",
         "stairs"
       ],
-      "review_required": true,
-      "confidence": 0.82
+      "review_required": false,
+      "confidence": 0.82,
+      "composer": {
+        "auto_compose": false,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "hazard_stair_rise_east",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "reviewed_manual_only",
+        "review_note": "Hazard stair/slope rises toward east; explicit traversal transition."
+      }
     },
     {
       "id": "wall_07_12",
@@ -9649,7 +11162,17 @@
         "retaining"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_08_12",
@@ -9695,8 +11218,16 @@
         "hazard",
         "corner"
       ],
-      "review_required": true,
-      "confidence": 0.82
+      "review_required": false,
+      "confidence": 0.82,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "manual_diagonal_corner",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "reviewed_manual_only",
+        "review_note": "Diagonal hazard corner has mixed wall/ground footprint; keep explicit/manual."
+      }
     },
     {
       "id": "wall_09_12",
@@ -9744,7 +11275,17 @@
         "water_edge"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_10_12",
@@ -9792,7 +11333,17 @@
         "water_edge"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_11_12",
@@ -9840,8 +11391,16 @@
         "water_edge",
         "corner"
       ],
-      "review_required": true,
-      "confidence": 0.8
+      "review_required": false,
+      "confidence": 0.8,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "manual_canal_diagonal_corner",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "reviewed_manual_only",
+        "review_note": "Diagonal canal corner; preserve as authored special rather than grid-autotile."
+      }
     },
     {
       "id": "wall_12_12",
@@ -9889,7 +11448,17 @@
         "water_edge"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_13_12",
@@ -9937,8 +11506,16 @@
         "water_edge",
         "end"
       ],
-      "review_required": true,
-      "confidence": 0.8
+      "review_required": false,
+      "confidence": 0.8,
+      "composer": {
+        "auto_compose": false,
+        "ports": [],
+        "topology": "isolated_pool_end",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "reviewed_manual_only",
+        "review_note": "Closed/near-closed small pool/end module; not a generic neighbor-mask tile."
+      }
     },
     {
       "id": "wall_00_13",
@@ -9985,7 +11562,17 @@
         "railing"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_01_13",
@@ -10032,7 +11619,17 @@
         "railing"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_02_13",
@@ -10080,7 +11677,17 @@
         "hazard"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_03_13",
@@ -10128,7 +11735,14 @@
         "panel"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_04_13",
@@ -10175,7 +11789,17 @@
         "railing"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_05_13",
@@ -10223,7 +11847,14 @@
         "hazard"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "authored_special",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "not_needed_manual"
+      }
     },
     {
       "id": "wall_06_13",
@@ -10271,7 +11902,17 @@
         "pipe"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_07_13",
@@ -10318,7 +11959,17 @@
         "railing"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_08_13",
@@ -10365,7 +12016,17 @@
         "railing"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_09_13",
@@ -10413,8 +12074,19 @@
         "water_edge",
         "corner"
       ],
-      "review_required": true,
-      "confidence": 0.8
+      "review_required": false,
+      "confidence": 0.8,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "E",
+          "S"
+        ],
+        "topology": "canal_pool_corner_es",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe",
+        "review_note": "Pool frame corner turning east-to-south."
+      }
     },
     {
       "id": "wall_10_13",
@@ -10462,7 +12134,17 @@
         "water_edge"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_11_13",
@@ -10510,7 +12192,17 @@
         "water_edge"
       ],
       "review_required": false,
-      "confidence": 0.98
+      "confidence": 0.98,
+      "composer": {
+        "auto_compose": true,
+        "ports": [
+          "W",
+          "E"
+        ],
+        "topology": "straight_we",
+        "selection_scope": "topology_then_family_variant",
+        "review_state": "reviewed_safe"
+      }
     },
     {
       "id": "wall_12_13",
@@ -10558,8 +12250,16 @@
         "water_edge",
         "end"
       ],
-      "review_required": true,
-      "confidence": 0.8
+      "review_required": false,
+      "confidence": 0.8,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "manual_pool_frame_end",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "reviewed_manual_only",
+        "review_note": "U/frame-like pool end; explicit authored water geometry required."
+      }
     },
     {
       "id": "wall_13_13",
@@ -10607,8 +12307,24 @@
         "water_edge",
         "corner"
       ],
-      "review_required": true,
-      "confidence": 0.8
+      "review_required": false,
+      "confidence": 0.8,
+      "composer": {
+        "auto_compose": false,
+        "ports": null,
+        "topology": "manual_pool_curved_corner",
+        "selection_scope": "explicit_authored_only",
+        "review_state": "reviewed_manual_only",
+        "review_note": "Large curved pool corner; explicit authored water geometry required."
+      }
     }
-  ]
+  ],
+  "topology_contract": {
+    "direction_convention": "N=screen/world up, E=right, S=down, W=left.",
+    "ports_meaning": "Ports describe intended structural continuation through the module, not raw nontransparent pixels touching the cell edge.",
+    "auto_compose_gate": "Only entries with composer.auto_compose=true may be selected by neighbor-mask logic.",
+    "manual_rule": "Explicit authored doors, windows, gates, slopes, stairs, damage, rubble, terminals, service punctuation and ambiguous diagonal water pieces must never be injected by automatic topology selection.",
+    "variant_rule": "Automatic selection first resolves an exact port/topology signature, then may choose only among style-compatible entries with that same signature.",
+    "rotation_rule": "No runtime rotation or mirroring. Use source-authored orientation only."
+  }
 }
