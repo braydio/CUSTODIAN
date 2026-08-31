@@ -1190,3 +1190,20 @@ resource/service contracts, timing, and composition. The physical-loop smoke
 uses the actual ResourceNode, ResourceLedger, PowerNode, Sector repair, Enemy,
 SpawnNode, and WaveManager paths. Human balance/playability evaluation is a
 separate developer-owned pass.
+
+## Operator Art Agent V1
+
+From the repository root:
+
+```bash
+python3 custodian/tools/validation/operator_art_agent_smoke.py
+python3 custodian/tools/validation/operator_animation_workbench_smoke.py
+python3 custodian/tools/validation/run_validation.py --changed --json
+```
+
+The Art Agent smoke uses temporary Workbench/session roots and the real
+headless Aseprite bridge when available. It covers all V1 edit primitives,
+render/diff output, layer/frame/bounds and external-SHA refusal, pending
+migration refusal, automatic rollback, byte-exact undo, the live six-frame
+Vigil semantic contract, and production source/runtime/resource immutability.
+Moment Forge is not required because V1 cannot modify production art or runtime.

@@ -122,13 +122,17 @@ import. The catalog-driven path phase resizes only full sequential strip
 aliases, journals resource hashes, restores them during rollback, and reports
 retired runtime PNG paths before actor smokes.
 
-The planned `Operator Art Agent` roadmap now lives at
-`design/02_features/animation/OPERATOR_ART_AGENT_SYSTEM.md`. It is not a live
-pixel-authoring capability: Workbench V2 remains the only transactional
-publication gate, Alignment Repair remains manual, and the first approved
-future slice is `.ai`-only deterministic Aseprite editing, thin CLI/MCP service,
-operation journaling, rendering, and defect observation with no canonical
-publication.
+`Operator Art Agent V1` is live above Workbench V2. `operator art` starts a
+semantic `.ai` session, inspects editable bindings, renders the actual Aseprite
+composite, and performs deterministic paint, erase, integer stroke, same-layer
+copy, and region-move operations. Full-workbench backups, a process lock,
+optimistic SHA checks, independent Lua-side authorization, append-only
+journals, automatic failure rollback, and byte-exact latest undo protect the
+disposable document. Transparent frames/contact sheets and baseline diffs
+provide visual observation. Workbench V2 remains the only canonical
+publication gate; Art Agent V1 cannot publish, rebuild runtime, change
+frames/timing, resize, rotate, or alter sockets. MCP, pose synthesis, critique,
+and autonomous production remain later phases.
 
 ## Map + AI Coherence V1 (2026-08-20)
 

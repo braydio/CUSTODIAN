@@ -8,6 +8,11 @@ Implemented editor tooling. Canonical Operator V2 PNGs are authority; Aseprite w
 
 Canonical source PNGs under `custodian/content/sprites/operator/source/animations/` remain source authority. Runtime PNGs and the generated Operator animation catalog remain generated outputs. Workbenches live outside `res://` in `.ai/operator_animation_workbench/` and never become production assets.
 
+Deterministic agent pixel editing and visual rendering are implemented by the
+separate Operator Art Agent V1 above this backend. It may mutate only the
+disposable workbench and does not change Workbench publication authority. See
+`OPERATOR_ART_AGENT_SYSTEM.md`.
+
 V2 edits pixels and stages explicit frame-count contract migrations. It cannot change semantic identity, source-frame canvas, timing, speed, transitions, direction ownership, hit windows, weapon presentation ownership, or combat simulation. Frame commands mutate only the ignored workspace; publish alone replaces canonical frame-count filenames transactionally. Ambiguous semantic source identity is a hard error. Resolution uses Operator V2 grammar and exact identity; modification time, directory order, filename recency, arbitrary glob selection, and archives never choose authority.
 
 ## Workflow

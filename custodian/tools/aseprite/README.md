@@ -7,6 +7,16 @@ are disposable editing surfaces, not production assets.
 V2 assembly consumes manifest-selected baseline or migration strips, explicit
 timeline slots, independent document clocks, and hidden reference layers.
 
+`operator_art_agent.lua` is the separate headless JSON bridge used by
+`operator art`. It independently reads the Workbench V2 manifest, permits only
+editable bindings and legal timeline/binding rectangles, and refuses reference
+layers or manually translated cels. Pixel changes clone the cel image and
+replace it inside one Aseprite transaction. V1 supports exact paint/erase,
+integer Bresenham square strokes, same-layer copy, and region moves; Python
+owns byte backups, SHA concurrency checks, rollback, and journaling. The bridge
+renders through Aseprite's actual compositor and never publishes canonical
+source.
+
 ## Humanoid rigid-cutout source
 
 Run `File > Scripts > new_humanoid_rig_source.lua` to create a 96×96,

@@ -3,6 +3,7 @@ import argparse,json,subprocess,sys
 from pathlib import Path
 import animation_workbench_model as m
 import animation_workbench as w
+from art_agent.cli import configure_art_parser, dispatch_art_command
 
 def common(p,identity=True,dry_run=False):
     if identity: p.add_argument("profile"); p.add_argument("action"); p.add_argument("direction")
@@ -10,6 +11,7 @@ def common(p,identity=True,dry_run=False):
     if dry_run: p.add_argument("--dry-run",action="store_true")
 def main():
     ap=argparse.ArgumentParser(prog="operator"); a=ap.add_subparsers(dest="area",required=True); anim=a.add_parser("anim").add_subparsers(dest="cmd",required=True)
+    art=a.add_parser("art",help="Codex-safe Operator pixel authoring"); configure_art_parser(art)
     ui=a.add_parser("ui",help="open the optional interactive Operator Workbench")
     for name in ("profile","group","action","direction","weapon","linked_profile"):
         ui.add_argument(f"--{name.replace('_','-')}",default="")
@@ -21,6 +23,7 @@ def main():
     remove=frame.add_parser("remove"); common(remove,dry_run=True); remove.add_argument("--frame",type=int,required=True); remove.add_argument("--layers",default="auto")
     anim.choices["edit"].add_argument("--no-open",action="store_true"); anim.choices["refresh"].add_argument("--discard-edits",action="store_true"); anim.choices["publish"].add_argument("--force-stale-source",action="store_true"); anim.choices["publish"].add_argument("--full-validate",action="store_true")
     x=ap.parse_args()
+    if x.area=="art": return dispatch_art_command(x)
     if x.area=="ui":
         try:
             from ui.app import run_operator_workbench

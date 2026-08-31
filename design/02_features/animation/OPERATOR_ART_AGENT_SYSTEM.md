@@ -2,12 +2,32 @@
 
 ## Status
 
-**Roadmap authority — planned, not implemented.**
+**V1 editing foundation implemented; long-horizon roadmap remains planned.**
 
 This document defines the long-horizon architecture and phased delivery plan
-for an agent-operated Operator art workstation. The first approved
-implementation slice is Phases 0–3 only. Later phases require an architecture
-review and explicit graduation before implementation.
+for an agent-operated Operator art workstation. V1 now provides guarded,
+deterministic editing and visual inspection of existing Workbench V2 documents.
+MCP, temporary agent-layer creation, automated critique, pose semantics,
+publication, and later phases still require explicit graduation.
+
+### Implemented V1 capability
+
+`operator art` starts a semantic session under `.ai/operator_art_agent/` and
+reuses `animation_workbench.ensure()` rather than resolving source itself. It
+supports inspect, Aseprite-composite render, exact paint/erase, deterministic
+integer square-brush strokes, same-layer cross-frame copy, overlap-safe region
+move, close, and byte-exact latest undo.
+
+Every mutation requires a non-stale/no-migration Workbench, a process lock, an
+expected document SHA, an editable manifest binding, a valid timeline slot, an
+unchanged cel placement, and document coordinates inside the binding rectangle.
+Lua rechecks those boundaries independently. Python takes a complete workbench
+backup, journals the request/response and hashes, and restores the backup on
+bridge failure. Render output includes transparent frames, a strip, a contact
+sheet, baseline diff, and before/after sheet.
+
+V1 has no canonical publish, runtime rebuild, frame/timing mutation, resize,
+rotation, socket, MCP, image-model, critic, or automatic commit capability.
 
 ## Objective
 
@@ -703,21 +723,23 @@ outliers, publish a review site, update docs, and commit task-owned files.
 
 This phase does not grant authority to change combat timing or gameplay feel.
 
-## First implementation slice
+## First implementation slice — V1 delivered
 
-Only Phases 0–3 are approved as the first build slice:
+The delivered V1 slice is intentionally narrower than the complete Phases 0–3
+roadmap:
 
 1. preserve Workbench V2 unchanged as publication authority;
-2. add the design/style/schema foundation;
-3. build deterministic Aseprite editing over `.ai` only;
-4. add the shared Python service and thin local MCP wrapper;
-5. journal every operation and support temporary agent layers;
-6. render observation/contact-sheet products;
+2. add versioned session/request/response models;
+3. build deterministic Aseprite editing over existing `.ai` workbenches only;
+4. add the shared Python service and thin `operator art` CLI;
+5. journal every mutation with full-document backups and SHA guards;
+6. render transparent observation/contact-sheet/diff products;
 7. prove inspect/edit/render/erase/restore against the live six-frame east
    melee run without canonical publication.
 
-Publication, pose synthesis, autonomous art creation, socket calibration, and
-autopilot are explicitly out of scope for this slice.
+MCP, temporary agent-layer creation, injected-defect criticism, publication,
+pose synthesis, autonomous art creation, socket calibration, and autopilot are
+explicitly deferred.
 
 ## Validation strategy
 
@@ -767,11 +789,9 @@ Update implementation state—not roadmap aspiration—in:
 Do not edit current Workbench or Alignment Repair claims as though Art Agent
 capabilities exist before their phase is implemented and validated.
 
-## Open decisions before Phase 1
+## Open decisions before the next slice
 
 - exact MCP SDK/runtime and process supervision model;
-- bridge request transport (request file, stdin, or controlled subprocess);
-- Aseprite executable/version discovery and minimum supported API behavior;
 - task schema versioning and migration policy;
 - maximum operation/pixel/frame budgets and timeout defaults;
 - reserved temporary/review layer naming;

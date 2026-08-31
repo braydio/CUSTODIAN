@@ -34,6 +34,36 @@ Use `--dry-run` on frame or publish commands to inspect without mutation. Frame
 commands stage a dependency-audited migration in `.ai`; only publish changes
 canonical PNG contracts.
 
+## Operator Art Agent V1
+
+`operator art` is the agent-safe pixel-authoring layer above Workbench V2. It
+reuses the same semantic workbench and may modify only its ignored `.aseprite`
+document. Canonical PNG publication remains exclusively `operator anim
+publish`; Art Agent V1 has no publish, runtime rebuild, frame timing, resize,
+rotation, or socket API.
+
+```sh
+operator art start melee_1h run_01 e --group locomotion --weapon vigil_pattern_dagger
+operator art inspect SESSION
+operator art render SESSION
+operator art paint SESSION --frame 3 --layer lower_body --pixels pixels.json
+operator art erase SESSION --frame 3 --layer lower_body --pixels erase.json
+operator art stroke SESSION --frame 3 --layer lower_body --color '#d89915ff' --points '44,62;45,62;46,61'
+operator art copy SESSION --layer lower_body --source-frame 2 --destination-frame 3 --rect 35,49,16,28 --to 37,48
+operator art move SESSION --frame 3 --layer lower_body --rect 35,49,16,28 --dx 2 --dy -1
+operator art undo SESSION
+operator art close SESSION
+```
+
+Sessions live under
+`.ai/operator_art_agent/<profile>/<group>/<action>/<direction>/<session-id>/`.
+Every mutation takes a complete pre-operation `.aseprite` backup, uses a
+nonblocking process lock plus optimistic SHA guard, records an append-only
+JSONL journal, and rolls back automatically if the bridge fails. Coordinates
+are document-space. `render` writes transparent per-frame PNGs, a strip,
+contact sheet, baseline diff, and before/after image. Saving the workbench in a
+GUI during an active session intentionally trips the external-change guard.
+
 The UI supplies searchable semantic navigation, layer/reference inspection,
 nonblocking Aseprite launch, saved-workbench change detection, dependency-
 audited frame review, mandatory publish review, transaction-journal progress,

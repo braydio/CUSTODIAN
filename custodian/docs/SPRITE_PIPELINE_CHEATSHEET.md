@@ -46,6 +46,12 @@ Use `operator anim frame add ... --after N --dry-run` or `frame remove ...
 --frame N --dry-run` to inspect an explicit frame-contract migration. Run
 without `--dry-run` to stage it, edit the new timeline, then publish.
 
+For guarded agent-driven edits to an existing Workbench, use `operator art
+start|inspect|render|paint|erase|stroke|copy|move|undo`. These commands operate
+only on `.ai` workbench/session state and produce visual review artifacts; they
+cannot publish canonical source or rebuild runtime assets. Publication remains
+an explicit later `operator anim publish` action.
+
 For Operator modular animation coverage:
 
 ```bash

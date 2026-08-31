@@ -38,6 +38,12 @@ How it relates to other validation:
 
 Use this section when the ask is about new Operator modular animation drops, missing modular parts, upper/lower visual fit, or source/runtime review for `custodian/content/sprites/operator/source/animations/` (V2 editable source tree).
 
+For deterministic pixel edits to an existing semantic animation, start with
+`operator art start`, inspect/render the session, then use the bounded
+paint/erase/stroke/copy/move commands. Every mutation is backed up and
+journaled; `operator art undo` restores the latest exact backup. This tool is
+draft-only. Use `operator anim publish` separately only after explicit review.
+
 ### Production Coverage Contract
 
 Use first for "what Operator modular animation coverage is missing, suspicious, or ready?":
