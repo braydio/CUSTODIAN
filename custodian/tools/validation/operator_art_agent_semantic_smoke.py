@@ -10,6 +10,7 @@ from art_agent.landmarks import Landmark, reconcile_hashes
 from art_agent.masks import bounds, combine, image_to_spans, morphology, polygon, rectangle, spans_to_image
 from art_agent.metrics import animation_metrics, frame_metrics
 from art_agent.qa import run_qa
+from art_agent.profile_measure import measure as measure_profile
 
 
 def main():
@@ -105,7 +106,13 @@ def main():
         ]
         weapon=run_qa(base_metrics,landmarks=weapon_landmarks)
         assert any(item["class"]=="weapon" and item["frame"]==3 for item in weapon["findings"])
-    print("PASS operator_art_agent_semantic_smoke: landmarks, frame-local staleness, RLE masks, metrics v2, QA v2 (structural/anatomy/pixel_art/animation/weapon/semantic)")
+
+    profile=measure_profile()
+    assert profile["sampled_identities"]  # canonical melee_1h walk/run/idle sources resolve deterministically
+    assert profile["measurements"]
+    assert all(item["accepted"] is False for item in profile["measurements"].values())
+    assert all(set(item["provenance"]["identities"][0]) == {"profile","group","action","direction"} for item in profile["measurements"].values())
+    print("PASS operator_art_agent_semantic_smoke: landmarks, frame-local staleness, RLE masks, metrics v2, QA v2 (structural/anatomy/pixel_art/animation/weapon/semantic), profile bootstrap")
 
 
 if __name__=="__main__": main()
