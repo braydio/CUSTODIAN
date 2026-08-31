@@ -162,6 +162,7 @@ class ArtAgentService:
                 "workbench_manifest": session.workbench_manifest,
                 "workbench": session.workbench_path,
                 "preview_root": str((root / "previews").resolve()),
+                "capability_path": str((root / "capability.json").resolve()),
             },
         )
         shutil.copy2(workbench_path, root / "backups/000000_baseline.aseprite")

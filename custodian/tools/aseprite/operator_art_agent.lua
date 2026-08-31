@@ -22,6 +22,7 @@ local function execute()
   if req.schema~=protocol.REQUEST_SCHEMA then error("unsupported Art Agent request schema") end
   local capability=read_json(assert(req.capability,"capability required"))
   if capability.schema~=protocol.CAPABILITY_SCHEMA then error("unsupported Art Agent capability schema") end
+  if req.capability~=capability.capability_path then error("Art Agent capability self-reference mismatch") end
   if req.session_id~=capability.session_id or req.nonce~=capability.nonce then error("Art Agent capability mismatch") end
   if req.manifest~=capability.workbench_manifest or req.workbench~=capability.workbench then error("Art Agent capability path mismatch") end
   local manifest=read_json(req.manifest)
@@ -46,7 +47,13 @@ local function execute()
 
   local function authorized_output(path)
     local root=capability.preview_root
-    if type(path)~="string" or string.sub(path,1,#root+1)~=root.."/" then close_and_error("render output outside authorized preview root") end
+    if type(path)~="string" then close_and_error("render output outside authorized preview root") end
+    if string.find(path,"\0",1,true) then close_and_error("render output path contains a NUL byte") end
+    if string.find(path,"\\",1,true) then close_and_error("render output path contains a backslash") end
+    if string.find(path,"..",1,true) then close_and_error("render output path contains a traversal segment") end
+    if string.find(path,"/./",1,true) then close_and_error("render output path contains a redundant segment") end
+    if string.sub(path,1,1)~="/" then close_and_error("render output path must be absolute") end
+    if string.sub(path,1,#root+1)~=root.."/" then close_and_error("render output outside authorized preview root") end
   end
 
   if sprite.width~=manifest.canvas.width or sprite.height~=manifest.canvas.height or #sprite.frames~=manifest.timeline.document_frames then

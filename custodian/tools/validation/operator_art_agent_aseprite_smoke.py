@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import hashlib, subprocess, sys, tempfile
+import hashlib, json, subprocess, sys, tempfile
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[3]; sys.path.insert(0,str(ROOT/"custodian/tools/operator"))
 import animation_workbench as workbench
@@ -29,6 +29,12 @@ def main():
             else: raise AssertionError(f"expected {fragment}")
         bad=service._build_request(loaded,"security_nonce",{"type":"inspect"},"security_nonce_key"); bad["nonce"]="wrong"; expect("capability mismatch",bad)
         outside=service._build_request(loaded,"security_output",{"type":"render_clean","output":str((temp/"outside.png").resolve())},"security_output_key"); expect("outside authorized preview root",outside)
+        capability_data=json.loads(Path(loaded.capability_path).read_text())
+        forged_capability=root/"forged_capability.json"; write_json(forged_capability,capability_data)
+        forged=service._build_request(loaded,"security_self_ref",{"type":"inspect"},"security_self_ref_key"); forged["capability"]=str(forged_capability.resolve())
+        expect("capability self-reference mismatch",forged)
+        traversal=service._build_request(loaded,"security_traversal",{"type":"render_clean","output":capability_data["preview_root"]+"/../evil.png"},"security_traversal_key")
+        expect("traversal segment",traversal)
         initial=Path(service.load_session(session).workbench_path).read_bytes(); service.render(session)
         service.set_landmarks(session,[{"frame":1,"name":"head_center","x":48,"y":30,"semantic_side":"center","confidence":0.5,"provenance":"heuristic"},{"frame":1,"name":"hip_center","x":48,"y":55,"semantic_side":"center","confidence":0.5,"provenance":"heuristic"},{"frame":1,"name":"knee_near","x":53,"y":67,"semantic_side":"near","confidence":0.5,"provenance":"heuristic"},{"frame":1,"name":"knee_far","x":43,"y":65,"semantic_side":"far","confidence":0.5,"provenance":"heuristic"}])
         applied=0
