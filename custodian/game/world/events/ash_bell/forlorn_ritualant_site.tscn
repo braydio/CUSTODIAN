@@ -31,6 +31,10 @@
 [ext_resource type="SpriteFrames" uid="uid://htpgv207bj6s" path="res://content/tiles/encounters/ritualant_set/runtime/forlorn_ritualant_animations.tres" id="35_npc_animations"]
 [ext_resource type="Texture2D" uid="uid://baylmb3pm0scg" path="res://content/tiles/encounters/ritualant_set/stilling_pin_pickup_01.png" id="36_pin"]
 [ext_resource type="PackedScene" path="res://scenes/environment/forlorn_ritualant_shader_fx.tscn" id="37_shader_fx"]
+[ext_resource type="Script" path="res://game/world/levels/presentation/encounter_hazard_telegraph_2d.gd" id="39_telegraph"]
+[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__hazard__thread_zone_decal_01__384x96.png" id="40_decal"]
+[ext_resource type="SpriteFrames" path="res://content/sprites/effects/runtime/ritualant_underground_hazard/thread_warning_sweep_frames.tres" id="41_warning"]
+[ext_resource type="SpriteFrames" path="res://content/sprites/effects/runtime/ritualant_underground_hazard/thread_activation_burst_frames.tres" id="42_activation"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_thread"]
 size = Vector2(288, 64)
@@ -191,6 +195,8 @@ position = Vector2(0, -146)
 script = ExtResource("4_thread")
 site_path = NodePath("../..")
 thread_visual_path = NodePath("../WhiteThreadVisual")
+telegraph_left_path = NodePath("TelegraphLeft")
+telegraph_right_path = NodePath("TelegraphRight")
 
 [node name="LeftCollisionShape2D" type="CollisionShape2D" parent="Props/WhiteThreadHazard" unique_id=533190785]
 position = Vector2(-240, 0)
@@ -199,6 +205,52 @@ shape = SubResource("RectangleShape2D_thread")
 [node name="RightCollisionShape2D" type="CollisionShape2D" parent="Props/WhiteThreadHazard"]
 position = Vector2(240, 0)
 shape = SubResource("RectangleShape2D_thread")
+
+[node name="TelegraphLeft" type="Node2D" parent="Props/WhiteThreadHazard"]
+position = Vector2(-240, 0)
+script = ExtResource("39_telegraph")
+decal_path = NodePath("Decal")
+warning_sprite_path = NodePath("WarningSweep")
+activation_sprite_path = NodePath("ActivationBurst")
+
+[node name="Decal" type="Sprite2D" parent="Props/WhiteThreadHazard/TelegraphLeft"]
+z_index = 2
+texture = ExtResource("40_decal")
+
+[node name="WarningSweep" type="AnimatedSprite2D" parent="Props/WhiteThreadHazard/TelegraphLeft"]
+visible = false
+z_index = 3
+sprite_frames = ExtResource("41_warning")
+animation = &"warning"
+
+[node name="ActivationBurst" type="AnimatedSprite2D" parent="Props/WhiteThreadHazard/TelegraphLeft"]
+visible = false
+z_index = 4
+sprite_frames = ExtResource("42_activation")
+animation = &"activate"
+
+[node name="TelegraphRight" type="Node2D" parent="Props/WhiteThreadHazard"]
+position = Vector2(240, 0)
+script = ExtResource("39_telegraph")
+decal_path = NodePath("Decal")
+warning_sprite_path = NodePath("WarningSweep")
+activation_sprite_path = NodePath("ActivationBurst")
+
+[node name="Decal" type="Sprite2D" parent="Props/WhiteThreadHazard/TelegraphRight"]
+z_index = 2
+texture = ExtResource("40_decal")
+
+[node name="WarningSweep" type="AnimatedSprite2D" parent="Props/WhiteThreadHazard/TelegraphRight"]
+visible = false
+z_index = 3
+sprite_frames = ExtResource("41_warning")
+animation = &"warning"
+
+[node name="ActivationBurst" type="AnimatedSprite2D" parent="Props/WhiteThreadHazard/TelegraphRight"]
+visible = false
+z_index = 4
+sprite_frames = ExtResource("42_activation")
+animation = &"activate"
 
 [node name="StillingPinPickup" type="Area2D" parent="Props" unique_id=451224377]
 position = Vector2(0, -144)

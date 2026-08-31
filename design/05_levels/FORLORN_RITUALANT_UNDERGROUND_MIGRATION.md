@@ -150,10 +150,13 @@ more groups visible, bulk labels are suppressed while `UNDER CURSOR` remains.
 
 Press `P` to export `reports/level_maps/forlorn_ritualant_underground/full_map.png`
 and `full_map.json`. Both use the same semantic records being rendered. The
-mapper-backed arena is `1280x960` with `1152x800` combat bounds, native-scale
-extended floor/perimeter art, and a correspondingly widened connected
-playable loop. A dedicated `320x192` bridge at `(0,1376)` covers the landing
-connector without moving `LandingShelfApron`.
+mapper-backed gameplay chapel remains `1280x960` with `1152x800` combat bounds
+and a correspondingly widened connected playable loop. Its expanded
+presentation master is independently authored at `2594x1737`, registered at
+`(0,-1120)` at native `Vector2.ONE` scale. The source was losslessly cropped
+from a padded `3000x2000` master; it was never resized or resampled. A dedicated
+`320x192` bridge at `(0,1376)` covers the landing connector without moving
+`LandingShelfApron`.
 
 ## Dialogue and Hostility Safety
 
@@ -238,7 +241,22 @@ anchors, and local completion state survive snapshot-and-unload re-entry.
 
 ## Production presentation assets
 
-Asset V2 family `ritualant_underground_environment` owns 32 canonical states under `custodian/content/tiles/encounters/ritualant_set/underground/`. The runtime stack comprises the repeating far void; three feathered parallax depth panels; mineral and chapel haze; an exact polygon-clipped repeating ground; three cavern rims and the balanced landing apron; chapel connector/outer-blend overlays; fixed wet/fracture details; a non-repeating surface shaft and paired underground arrival shaft; a one-shot distant-chapel proxy; five collisionless foreground occluders; and seven collisionless prop types.
+Asset V2 family `ritualant_underground_environment` owns 37 canonical states under `custodian/content/tiles/encounters/ritualant_set/underground/`. The runtime stack comprises the repeating far void; three feathered parallax depth panels; mineral and chapel haze; an exact polygon-clipped repeating ground; the native-scale `2594x1737` expanded arena presentation master; three cavern rims and the balanced landing apron; chapel connector/outer-blend overlays; fixed wet/fracture details; a non-repeating surface shaft and paired underground arrival shaft; a one-shot distant-chapel proxy; six collisionless foreground occluders; and seven collisionless prop types.
+
+`chapel_connector_apron_02` and `chapel_threshold_forelip_01` are the active
+chapel transition art. The forelip is presentation-only and may occlude the
+Operator through its alpha silhouette; it owns no collision, navigation, or
+route connectivity. `lower_quarter_seal_01` overlays the separately authored
+northern gameplay blocker and fades over `1.35` seconds after encounter
+completion. The two old site-floor layers remain temporarily visible until the
+native-scale master registration is approved in the production mapper; they
+must not be deleted or hidden solely from numeric assumptions.
+
+Asset V2 family `ritualant_underground_hazard_fx` owns the shared eight-frame
+warning sweep and ten-frame activation burst. The matching `384x96` thread-zone
+decal and both animated effects are presentation of `WhiteThreadHazard` state:
+the live `288x64` collision segments, encounter suppression, and thread-tension
+cadence remain gameplay authority.
 
 Authored camera zones progress through landing, upper descent, deep cavern, chapel approach, and gameplay release. These presentation systems do not alter `PLAYABLE_BOUNDARY_LOOP`, lift/route authority, navigation, collision, or Ritualant encounter state.
 

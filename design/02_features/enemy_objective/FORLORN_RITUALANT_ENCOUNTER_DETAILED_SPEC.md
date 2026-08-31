@@ -42,6 +42,17 @@
 > nested-menu, `ask_bell`-only unlock, replayable production, and post-Pin
 > hidden-stand passages below are superseded.
 
+> **Active expanded-arena presentation correction (2026-08-31):** the
+> gameplay chapel remains the mapper-backed `1280x960` chamber with `1152x800`
+> combat authority, while the environment presentation master is a separate
+> native-scale `2594x1737` RGBA plate registered at `(0,-1120)`. The new chapel
+> apron and alpha-shaped forelip are presentation-only. White Thread decals,
+> warning sweeps, and activation bursts observe the existing hazard state and
+> never own collision, damage, tension, or encounter resolution. The lower
+> quarter seal similarly overlays a real authored blocker and fades only as a
+> completion presentation. Do not derive gameplay geometry from any of these
+> raster assets.
+
 This is the implementation spec for the fixed authored Ash-Bell Underground
 encounter. The player-facing motifs remain Ninth Bell, ash, Dry Fountain,
 black banners, white thread, and Saint Orra / the Unarrived Saint.

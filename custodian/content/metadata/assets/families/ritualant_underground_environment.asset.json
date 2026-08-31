@@ -103,7 +103,7 @@
     },
     "mineral_haze_01": {"required":true,"layer":"underlay","action_group":"environment","variant":"mineral_haze_01","layout":"copy","frame_width":1536,"frame_height":1536},
     "chapel_haze_01": {"required":true,"layer":"underlay","action_group":"environment","variant":"chapel_haze_01","layout":"copy","frame_width":1024,"frame_height":768},
-    "chapel_connector_apron_01": {"required":true,"layer":"overlay","action_group":"environment","variant":"chapel_connector_apron_01","layout":"copy","frame_width":512,"frame_height":384},
+    "chapel_connector_apron_01": {"required":false,"layer":"overlay","action_group":"environment","variant":"chapel_connector_apron_01","layout":"copy","frame_width":512,"frame_height":384},
     "chapel_outer_blend_01": {"required":true,"layer":"overlay","action_group":"environment","variant":"chapel_outer_blend_01","layout":"copy","frame_width":1280,"frame_height":1024},
     "wet_ground_detail_01": {"required":true,"layer":"overlay","action_group":"environment","variant":"wet_ground_detail_01","layout":"copy","frame_width":384,"frame_height":256},
     "fracture_detail_01": {"required":true,"layer":"overlay","action_group":"environment","variant":"fracture_detail_01","layout":"copy","frame_width":256,"frame_height":256},
@@ -116,7 +116,12 @@
     "middle_left_01": {"required":true,"layer":"occluder","action_group":"environment","variant":"middle_left_01","layout":"copy","frame_width":768,"frame_height":512},
     "middle_right_pillar_01": {"required":true,"layer":"occluder","action_group":"environment","variant":"middle_right_pillar_01","layout":"copy","frame_width":512,"frame_height":768},
     "deep_left_01": {"required":true,"layer":"occluder","action_group":"environment","variant":"deep_left_01","layout":"copy","frame_width":768,"frame_height":512},
-    "chapel_threshold_01": {"required":true,"layer":"occluder","action_group":"environment","variant":"chapel_threshold_01","layout":"copy","frame_width":1024,"frame_height":512},
+    "chapel_threshold_01": {"required":false,"layer":"occluder","action_group":"environment","variant":"chapel_threshold_01","layout":"copy","frame_width":1024,"frame_height":512},
+    "arena_expanded_floor_base_01": {"required":true,"layer":"arena","action_group":"environment","variant":"expanded_floor_base_01","layout":"copy","frame_width":2594,"frame_height":1737},
+    "lower_quarter_seal_01": {"required":true,"layer":"occluder","action_group":"environment","variant":"lower_quarter_seal_01","layout":"copy","frame_width":1024,"frame_height":512},
+    "chapel_connector_apron_02": {"required":true,"layer":"overlay","action_group":"environment","variant":"chapel_connector_apron_02","layout":"copy","frame_width":768,"frame_height":384},
+    "chapel_threshold_forelip_01": {"required":true,"layer":"occluder","action_group":"environment","variant":"chapel_threshold_forelip_01","layout":"copy","frame_width":1024,"frame_height":512},
+    "thread_zone_decal_01": {"required":true,"layer":"hazard","action_group":"environment","variant":"thread_zone_decal_01","layout":"copy","frame_width":384,"frame_height":96},
     "rock_small_01": {"required":true,"layer":"prop","action_group":"environment","variant":"rock_small_01","layout":"copy","frame_width":128,"frame_height":96},
     "rock_medium_01": {"required":true,"layer":"prop","action_group":"environment","variant":"rock_medium_01","layout":"copy","frame_width":192,"frame_height":128},
     "stalagmite_tall_01": {"required":true,"layer":"prop","action_group":"environment","variant":"stalagmite_tall_01","layout":"copy","frame_width":160,"frame_height":256},
@@ -138,7 +143,11 @@
     "north_rim": "cavern_rim_north_01",
     "mineral_haze": "mineral_haze_01",
     "chapel_haze": "chapel_haze_01",
-    "chapel_apron": "chapel_connector_apron_01",
+    "arena_floor": "arena_expanded_floor_base_01",
+    "chapel_apron": "chapel_connector_apron_02",
+    "chapel_threshold": "chapel_threshold_forelip_01",
+    "lower_quarter_seal": "lower_quarter_seal_01",
+    "thread_zone_decal": "thread_zone_decal_01",
     "chapel_blend": "chapel_outer_blend_01",
     "shaft_scroll": "shaft_scroll_01",
     "landing_mouth": "landing_mouth_01",
@@ -149,6 +158,10 @@
     {
       "type": "scene",
       "path": "res://game/world/levels/authored/ash_bell/forlorn_ritualant_underground/forlorn_ritualant_underground.tscn"
+    },
+    {
+      "type": "scene",
+      "path": "res://game/world/events/ash_bell/forlorn_ritualant_site.tscn"
     }
   ]
 }

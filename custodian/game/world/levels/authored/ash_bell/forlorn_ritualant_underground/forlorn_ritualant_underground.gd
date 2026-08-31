@@ -71,6 +71,8 @@ const AUTHORING_MARKERS := {
 @onready var departure_epilogue: Label = $DepartureOverlay/Epilogue
 @onready var landing_shelf_apron: Sprite2D = $BackgroundRoot/LandingShelfApron
 @onready var playable_ground: Polygon2D = $BackgroundRoot/PlayableGround
+@onready var ritualant_arena_expanded_base: Sprite2D = $BackgroundRoot/RitualantArenaExpandedBase
+@onready var lower_quarter_seal: Sprite2D = $OcclusionRoot/LowerQuarterSeal
 @onready var distant_chapel_proxy: Sprite2D = $UnderlayRoot/DistantChapelProxy
 @onready var shaft_scroll: Sprite2D = $ArrivalDescentRoot/ShaftScroll
 @onready var shaft_arrival_back: Sprite2D = $ArrivalDescentRoot/ShaftArrivalBack
@@ -95,6 +97,10 @@ var _distant_proxy_tween: Tween
 
 func _ready() -> void:
 	_build_playable_ground()
+	if ritualant_site != null and not ritualant_site.encounter_completed.is_connected(
+		_on_ritualant_encounter_completed
+	):
+		ritualant_site.encounter_completed.connect(_on_ritualant_encounter_completed)
 	distant_chapel_proxy.modulate.a = 0.0
 	if camera_zone_director != null:
 		camera_zone_director.active_profile_changed.connect(
@@ -102,6 +108,15 @@ func _ready() -> void:
 		)
 		call_deferred("_refresh_initial_camera_profile")
 	call_deferred("_bind_active_operator")
+
+
+func _on_ritualant_encounter_completed(_resolution: int) -> void:
+	if lower_quarter_seal == null or lower_quarter_seal.modulate.a <= 0.0:
+		return
+	var tween := create_tween()
+	tween.set_trans(Tween.TRANS_SINE)
+	tween.set_ease(Tween.EASE_IN_OUT)
+	tween.tween_property(lower_quarter_seal, "modulate:a", 0.0, 1.35)
 
 
 func _refresh_initial_camera_profile() -> void:
@@ -554,15 +569,19 @@ func _append_transition_debug_geometry(out: Array[Dictionary]) -> void:
 
 func _append_art_debug_geometry(out: Array[Dictionary]) -> void:
 	var art_paths := [
+		"BackgroundRoot/RitualantArenaExpandedBase",
 		"UnderlayRoot/DistantChapelProxy", "BackgroundRoot/LandingShelfApron",
 		"BackgroundRoot/LandingConnectorBridge",
 		"BackgroundRoot/CavernRimSouth", "BackgroundRoot/CavernRimMiddle",
 		"BackgroundRoot/CavernRimNorth", "BackgroundRoot/ChapelConnectorApron",
 		"BackgroundRoot/ChapelOuterBlend", "OcclusionRoot/ChapelThreshold",
+		"OcclusionRoot/LowerQuarterSeal",
 		"PlayableRoot/ForlornRitualantSite/Floor",
 		"PlayableRoot/ForlornRitualantSite/PerimeterRubble",
 		"PlayableRoot/ForlornRitualantSite/Props/DryFountainBasin",
 		"PlayableRoot/ForlornRitualantSite/Props/WhiteThreadVisual",
+		"PlayableRoot/ForlornRitualantSite/Props/WhiteThreadHazard/TelegraphLeft/Decal",
+		"PlayableRoot/ForlornRitualantSite/Props/WhiteThreadHazard/TelegraphRight/Decal",
 		"PlayableRoot/ForlornRitualantSite/Props/EmptyBellFrame/BrokenBell",
 	]
 	for path: String in art_paths:
@@ -575,6 +594,25 @@ func _append_art_debug_geometry(out: Array[Dictionary]) -> void:
 		)
 		if not record.is_empty():
 			out.append(record)
+	for side in ["Left", "Right"]:
+		var telegraph := get_node_or_null(
+			"PlayableRoot/ForlornRitualantSite/Props/WhiteThreadHazard/Telegraph%s" % side
+		) as Node2D
+		if telegraph == null:
+			continue
+		var center := to_local(telegraph.global_position)
+		out.append(AuthoringDebugGeometry.rect_record(
+			"art.thread_warning_%s" % side.to_lower(), "art",
+			"THREAD WARNING %s" % side.to_upper(),
+			Rect2(center - Vector2(192, 48), Vector2(384, 96)),
+			"Presentation only; mechanical hazard remains 288x64", telegraph
+		))
+		out.append(AuthoringDebugGeometry.rect_record(
+			"art.thread_activation_%s" % side.to_lower(), "art",
+			"THREAD ACTIVATION %s" % side.to_upper(),
+			Rect2(center - Vector2(192, 64), Vector2(384, 128)),
+			"Presentation only activation burst", telegraph
+		))
 	var parallax_paths := [
 		"UnderlayRoot/FarVoidParallax/FarVoid",
 		"UnderlayRoot/MidDepthSouthParallax/MidDepthSouth",

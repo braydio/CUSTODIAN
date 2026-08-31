@@ -2433,6 +2433,111 @@
           "sha256": "4e061bc25c01c86aa3bffd643a7ee7e9f653649efa6344454667e3cbae2aa6c3",
           "provenance": "authored",
           "source_asset": null
+        },
+        "arena_expanded_floor_base_01::omni": {
+          "state_id": "arena_expanded_floor_base_01",
+          "direction": "omni",
+          "semantic_identity": [
+            "ritualant_underground",
+            "backdrop",
+            "arena",
+            "environment",
+            "expanded_floor_base_01",
+            "omni"
+          ],
+          "path": "content/tiles/encounters/ritualant_set/underground/ritualant_underground__arena__expanded_floor_base_01__2594x1737.png",
+          "frames": 1,
+          "frame_size": [
+            2594,
+            1737
+          ],
+          "sha256": "364926e30b514d23fd8e7c7a729b25e889b6c2006bbcf309e3bf54a7c72ab3ec",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "chapel_connector_apron_02::omni": {
+          "state_id": "chapel_connector_apron_02",
+          "direction": "omni",
+          "semantic_identity": [
+            "ritualant_underground",
+            "backdrop",
+            "overlay",
+            "environment",
+            "chapel_connector_apron_02",
+            "omni"
+          ],
+          "path": "content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__chapel_connector_apron_02__768x384.png",
+          "frames": 1,
+          "frame_size": [
+            768,
+            384
+          ],
+          "sha256": "a741d04863c62a00446edeada78abf765fe192fc3289c974e2e451bc627effee",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "chapel_threshold_forelip_01::omni": {
+          "state_id": "chapel_threshold_forelip_01",
+          "direction": "omni",
+          "semantic_identity": [
+            "ritualant_underground",
+            "backdrop",
+            "occluder",
+            "environment",
+            "chapel_threshold_forelip_01",
+            "omni"
+          ],
+          "path": "content/tiles/encounters/ritualant_set/underground/ritualant_underground__occluder__chapel_threshold_forelip_01__1024x512.png",
+          "frames": 1,
+          "frame_size": [
+            1024,
+            512
+          ],
+          "sha256": "ee97eb0b1e945bae77b8ebda4b71346c365fcfa0bf69529dcaf77ccf047db856",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "lower_quarter_seal_01::omni": {
+          "state_id": "lower_quarter_seal_01",
+          "direction": "omni",
+          "semantic_identity": [
+            "ritualant_underground",
+            "backdrop",
+            "occluder",
+            "environment",
+            "lower_quarter_seal_01",
+            "omni"
+          ],
+          "path": "content/tiles/encounters/ritualant_set/underground/ritualant_underground__occluder__lower_quarter_seal_01__1024x512.png",
+          "frames": 1,
+          "frame_size": [
+            1024,
+            512
+          ],
+          "sha256": "2fddd18a07415c719930a8cdff75ae70df5501a4ff7b6c800e4b41c9193507bd",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "thread_zone_decal_01::omni": {
+          "state_id": "thread_zone_decal_01",
+          "direction": "omni",
+          "semantic_identity": [
+            "ritualant_underground",
+            "backdrop",
+            "hazard",
+            "environment",
+            "thread_zone_decal_01",
+            "omni"
+          ],
+          "path": "content/tiles/encounters/ritualant_set/underground/ritualant_underground__hazard__thread_zone_decal_01__384x96.png",
+          "frames": 1,
+          "frame_size": [
+            384,
+            96
+          ],
+          "sha256": "3d32325c67015121f6a33011a61249f0789aead6e7af72cb59c6f329a56667ef",
+          "provenance": "authored",
+          "source_asset": null
         }
       }
     },
@@ -2822,6 +2927,53 @@
             96
           ],
           "sha256": "a3b3ebe785c5e12819e860ed18f5e16c817407cca270ef3725599cb3614b7f72",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "ritualant_underground_hazard_fx": {
+      "kind": "effect",
+      "assets": {
+        "thread_activation_burst_01::omni": {
+          "state_id": "thread_activation_burst_01",
+          "direction": "omni",
+          "semantic_identity": [
+            "ritualant_underground_hazard",
+            "effect",
+            "fx",
+            "hazard",
+            "thread_activation_burst_01",
+            "omni"
+          ],
+          "path": "content/sprites/effects/runtime/ritualant_underground_hazard/ritualant_underground_hazard__fx__hazard__thread_activation_burst_01__omni__10f__384x128.png",
+          "frames": 10,
+          "frame_size": [
+            384,
+            128
+          ],
+          "sha256": "4c89233728ea478cb5dacae79ff6956594ab3bca5bbe94ef7ac19a5056a89710",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "thread_warning_sweep_01::omni": {
+          "state_id": "thread_warning_sweep_01",
+          "direction": "omni",
+          "semantic_identity": [
+            "ritualant_underground_hazard",
+            "effect",
+            "fx",
+            "hazard",
+            "thread_warning_sweep_01",
+            "omni"
+          ],
+          "path": "content/sprites/effects/runtime/ritualant_underground_hazard/ritualant_underground_hazard__fx__hazard__thread_warning_sweep_01__omni__8f__384x96.png",
+          "frames": 8,
+          "frame_size": [
+            384,
+            96
+          ],
+          "sha256": "477b4f965f8df41cb49379bceee79751884b205e98a67907e2ecbae836109fb7",
           "provenance": "authored",
           "source_asset": null
         }

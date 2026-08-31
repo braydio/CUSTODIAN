@@ -8,12 +8,16 @@ extends Area2D
 
 ## Optional child/node visual for the actual white thread line.
 @export var thread_visual_path: NodePath
+@export var telegraph_left_path: NodePath
+@export var telegraph_right_path: NodePath
 
 ## Small immediate penalty when first entering the thread.
 @export var entry_tension_amount: int = 1
 
 @onready var site: ForlornRitualantSite = get_node_or_null(site_path)
 @onready var thread_visual: CanvasItem = get_node_or_null(thread_visual_path)
+@onready var telegraph_left: EncounterHazardTelegraph2D = get_node_or_null(telegraph_left_path)
+@onready var telegraph_right: EncounterHazardTelegraph2D = get_node_or_null(telegraph_right_path)
 
 var _bodies_inside: Dictionary = {}
 var _tick_timer: float = 0.0
@@ -115,9 +119,9 @@ func _apply_slow(body: Node) -> void:
 
 
 func _update_visual(player_inside: bool = false) -> void:
+	_update_telegraphs(player_inside)
 	if thread_visual == null:
 		return
-
 	thread_visual.visible = true
 
 	var base_alpha := 0.45
@@ -132,3 +136,16 @@ func _update_visual(player_inside: bool = false) -> void:
 		base_alpha = 1.0
 
 	thread_visual.modulate = Color(0.78, 0.88, 1.0, base_alpha)
+
+
+func _update_telegraphs(player_inside: bool) -> void:
+	var state := EncounterHazardTelegraph2D.State.DORMANT
+	if site == null or site.event_state == null or site.suppresses_encounter_hazards():
+		state = EncounterHazardTelegraph2D.State.SUPPRESSED
+	elif site.event_state.thread_tension >= 60:
+		state = EncounterHazardTelegraph2D.State.ACTIVE
+	elif site.event_state.thread_tension >= 30 or player_inside:
+		state = EncounterHazardTelegraph2D.State.WARNING
+	for telegraph in [telegraph_left, telegraph_right]:
+		if telegraph != null:
+			telegraph.set_presentation_state(state)

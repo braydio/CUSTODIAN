@@ -69,6 +69,15 @@ func _validate_runtime_geometry() -> void:
 	_check(camera_count == 5, "mapper did not expose all five runtime camera zones")
 	var chapel_art := by_id.get("art.chapel_outer_blend", {}) as Dictionary
 	_check(chapel_art.get("texture_size", Vector2.ZERO) == Vector2(1280.0, 1024.0), "chapel art bounds did not derive from texture size")
+	var arena_art := by_id.get("art.ritualant_arena_expanded_base", {}) as Dictionary
+	_check(arena_art.get("texture_size", Vector2.ZERO) == Vector2(2594.0, 1737.0), "expanded arena master is not mapper-visible at 2594x1737")
+	var seal_art := by_id.get("art.lower_quarter_seal", {}) as Dictionary
+	_check(seal_art.get("texture_size", Vector2.ZERO) == Vector2(1024.0, 512.0), "lower-quarter seal is not mapper-visible at native size")
+	for side: String in ["left", "right"]:
+		var warning := by_id.get("art.thread_warning_%s" % side, {}) as Dictionary
+		var activation := by_id.get("art.thread_activation_%s" % side, {}) as Dictionary
+		_check((warning.get("rect", Rect2()) as Rect2).size == Vector2(384.0, 96.0), "%s thread warning bounds drifted" % side)
+		_check((activation.get("rect", Rect2()) as Rect2).size == Vector2(384.0, 128.0), "%s thread activation bounds drifted" % side)
 	var parallax := by_id.get("art.parallax.far_void", {}) as Dictionary
 	_check(bool(parallax.get("parallax", false)), "parallax art was not distinguished from gameplay-aligned art")
 

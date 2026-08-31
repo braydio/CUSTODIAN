@@ -15,6 +15,9 @@ func _draw() -> void:
 	var thread_left := (by_id.get("encounter.thread_hazard_left", {}) as Dictionary).get("rect", Rect2()) as Rect2
 	var thread_right := (by_id.get("encounter.thread_hazard_right", {}) as Dictionary).get("rect", Rect2()) as Rect2
 	var warning := (by_id.get("encounter.thread_warning", {}) as Dictionary).get("rect", Rect2()) as Rect2
+	var arena_art := (by_id.get("art.ritualant_arena_expanded_base", {}) as Dictionary).get("rect", Rect2()) as Rect2
+	var decal_left := (by_id.get("art.decal", {}) as Dictionary).get("rect", Rect2()) as Rect2
+	var warning_left := (by_id.get("art.thread_warning_left", {}) as Dictionary).get("rect", Rect2()) as Rect2
 	var ritualant := (by_id.get("encounter.ritualant", {}) as Dictionary).get("point", Vector2.ZERO) as Vector2
 	var fountain_art := (by_id.get("art.dry_fountain_basin", {}) as Dictionary).get("center", Vector2.ZERO) as Vector2
 	var fountain_zone := (by_id.get("encounter.fountain_zone", {}) as Dictionary).get("rect", Rect2()) as Rect2
@@ -29,6 +32,8 @@ func _draw() -> void:
 		"CHAPEL combat/visible %.1f%%" % (100.0 * combat.get_area() / maxf(chamber.get_area(), 1.0)),
 		"RITUALANT %s" % ritualant,
 		"THREAD hazards L%s R%s gap=%dpx  warning %s" % [thread_left.size, thread_right.size, int(thread_right.position.x - thread_left.end.x), warning.size],
+		"ARENA ART %s (presentation only, native scale)" % arena_art.size,
+		"THREAD art decal=%s warning=%s; gameplay=%s" % [decal_left.size, warning_left.size, thread_left.size],
 		"FOUNTAIN art/game delta %s" % (fountain_zone.get_center() - fountain_art),
 		"HOSTILITY last=%s" % (String(hostility) if not hostility.is_empty() else "none"),
 		"LIFT dock=(0, 1696) interaction=96px",
