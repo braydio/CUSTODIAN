@@ -7735,7 +7735,7 @@ func _get_ruin_prop_protected_zone_type(cell: Vector2i) -> StringName:
 		if story_cell is Vector2i and cell.distance_to(story_cell) <= float(combat_readability_prop_clearance_tiles):
 			return &"story_room"
 	for portal in _portal_teleporters:
-		if portal is Node2D and is_instance_valid(portal) \
+		if is_instance_valid(portal) and portal is Node2D \
 				and cell.distance_to(_global_to_tile((portal as Node2D).global_position)) <= float(combat_readability_prop_clearance_tiles):
 			return &"portal"
 	if _is_inside_combat_readability_spawn_clearance(cell, combat_readability_prop_clearance_tiles):
@@ -7954,7 +7954,9 @@ func _is_inside_combat_readability_spawn_clearance(pos: Vector2i, radius: int = 
 		if cell is Vector2i:
 			anchors.append(cell)
 	for portal in _portal_teleporters:
-		if portal is Node2D and is_instance_valid(portal):
+		# A queued portal can be freed while streaming reveal is still draining.
+		# Validity must be checked before a type test; `is` faults on a freed object.
+		if is_instance_valid(portal) and portal is Node2D:
 			anchors.append(_global_to_tile((portal as Node2D).global_position))
 	for anchor in anchors:
 		if pos.distance_to(anchor) <= float(clearance_radius):

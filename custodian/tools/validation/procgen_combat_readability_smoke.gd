@@ -34,12 +34,17 @@ func _run() -> void:
 	tilemap.alternate_floor_source_ids = [9]
 	tilemap.full_grid_floor_source_ids = [9, 10]
 	tilemap.floor_value_cluster_variant_source_ids = [9, 10]
+	var procgen := ProcGen.new()
+	procgen.map_size = Vector2i(12, 12)
+	tilemap.add_child(procgen)
+	tilemap.procgen_node = procgen
 	root.add_child(tilemap)
 	await process_frame
 
 	_seed_floor(tilemap, floor)
 	_validate_floor_debug_report(tilemap)
 	_validate_readability_cluster_skip(tilemap, floor)
+	_validate_freed_portal_clearance(tilemap)
 	await _validate_combat_foliage_profile(tilemap)
 
 	tilemap.queue_free()
@@ -85,6 +90,22 @@ func _validate_readability_cluster_skip(tilemap: ProcGenTilemap, floor: TileMapL
 	for cell in [Vector2i(2, 2), Vector2i(3, 2), Vector2i(4, 2), Vector2i(5, 2), Vector2i(6, 2)]:
 		_require(floor.get_cell_source_id(cell) == 10, "Combat/readability floor tile %s should skip cluster source swaps." % str(cell))
 	_require(not tilemap.get_last_floor_value_cluster_summary().is_empty(), "Floor cluster summary should remain available.")
+
+
+func _validate_freed_portal_clearance(tilemap: ProcGenTilemap) -> void:
+	var portal := Area2D.new()
+	root.add_child(portal)
+	tilemap._portal_teleporters.append(portal)
+	portal.free()
+	_require(
+		not tilemap._is_inside_combat_readability_spawn_clearance(Vector2i(11, 11), 1),
+		"Freed portals should be ignored by combat-readability clearance."
+	)
+	_require(
+		tilemap._get_ruin_prop_protected_zone_type(Vector2i(11, 11)).is_empty(),
+		"Freed portals should be ignored by ruin-prop protection."
+	)
+	tilemap._portal_teleporters.clear()
 
 
 func _validate_combat_foliage_profile(tilemap: ProcGenTilemap) -> void:
