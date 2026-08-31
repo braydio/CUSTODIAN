@@ -252,14 +252,28 @@ class ArtAgentService:
         x0,y0,x1,y1=bbox; values=[{"frame":frame,"name":"head_center","x":round((x0+x1-1)/2),"y":y0+max(0,(y1-y0)//5),"semantic_side":"center","confidence":0.25,"provenance":"heuristic"},{"frame":frame,"name":"hip_center","x":round((x0+x1-1)/2),"y":y0+round((y1-y0)*0.58),"semantic_side":"center","confidence":0.2,"provenance":"heuristic"}]
         return self.set_landmarks(session_path,values)
 
+    def frame_fingerprint(self, session_path: Path, frame: int, *, mode: str = "clean", layer: str = "") -> str:
+        return self._frame_fingerprints(session_path, mode=mode, layer=layer)[frame]
+
+    def _frame_fingerprints(self, session_path: Path, *, mode: str = "clean", layer: str = "") -> dict[int, str]:
+        artifacts = self.render(session_path, mode=mode, layer=layer, include_drafts=False)
+        metrics = animation_metrics([Path(path) for path in artifacts["frames"]])
+        return {index + 1: item["pixel_sha"] for index, item in enumerate(metrics["frames"])}
+
     def validate_landmarks(self, session_path: Path) -> list[dict[str, Any]]:
-        session,_manifest,root=self._checked_session(session_path); items=landmark_store.reconcile_hashes(landmark_store.load(root/"landmarks.json"),{frame:session.expected_workbench_sha256 for frame in range(1,1000)}); landmark_store.save(root/"landmarks.json",items); return [landmark_store.asdict(x) for x in items]
+        _session, _manifest, root = self._checked_session(session_path)
+        fingerprints = self._frame_fingerprints(session_path)
+        items = landmark_store.reconcile_hashes(landmark_store.load(root / "landmarks.json"), fingerprints)
+        landmark_store.save(root / "landmarks.json", items)
+        return [landmark_store.asdict(x) for x in items]
 
     def set_landmarks(self, session_path: Path, values: list[dict[str, Any]]) -> list[dict[str, Any]]:
         session, manifest, root = self._checked_session(session_path)
-        canvas=manifest["canvas"]; current=landmark_store.load(root / "landmarks.json"); indexed={(x.frame,x.name):x for x in current}
+        canvas = manifest["canvas"]
+        fingerprints = self._frame_fingerprints(session_path)
+        current=landmark_store.load(root / "landmarks.json"); indexed={(x.frame,x.name):x for x in current}
         for value in values:
-            value=dict(value); value.setdefault("source_hash",session.expected_workbench_sha256); value.setdefault("approved",False); value.setdefault("status","CURRENT")
+            value=dict(value); value.setdefault("source_hash",fingerprints.get(value.get("frame"),"")); value.setdefault("approved",False); value.setdefault("status","CURRENT")
             item=landmark_store.Landmark(**value); landmark_store.validate(item,frame_count=int(manifest["timeline"]["document_frames"]),width=int(canvas["width"]),height=int(canvas["height"])); indexed[(item.frame,item.name)]=item
         result=sorted(indexed.values(),key=lambda x:(x.frame,x.name)); landmark_store.save(root / "landmarks.json",result)
         return [landmark_store.asdict(x) for x in result]
