@@ -7,7 +7,7 @@ from PIL import Image
 
 ROOT=Path(__file__).resolve().parents[3]; sys.path.insert(0,str(ROOT/"custodian/tools/operator"))
 from art_agent.landmarks import Landmark, reconcile_hashes
-from art_agent.masks import bounds, combine, image_to_spans, morphology, polygon, spans_to_image
+from art_agent.masks import bounds, combine, image_to_spans, morphology, polygon, rectangle, spans_to_image
 from art_agent.metrics import animation_metrics, frame_metrics
 from art_agent.qa import run_qa
 
@@ -16,6 +16,17 @@ def main():
     size=(16,16); spans=polygon(size,[[2,2],[8,2],[8,8],[2,8]]); assert spans==image_to_spans(spans_to_image(spans,size)); assert bounds(spans)==[2,2,7,7]
     other=polygon(size,[[6,6],[12,6],[12,12],[6,12]])
     assert len(combine(spans,other,size,"union"))>len(combine(spans,other,size,"intersect")); assert morphology(spans,size,"dilate")!=spans
+
+    def expect_value_error(fragment,callback):
+        try: callback()
+        except ValueError as error: assert fragment in str(error),(fragment,error)
+        else: raise AssertionError(f"expected ValueError containing {fragment!r}")
+    expect_value_error("at least 3 points",lambda:polygon(size,[[1,1],[2,2]]))
+    expect_value_error("outside canvas",lambda:polygon(size,[[1,1],[2,2],[100,100]]))
+    expect_value_error("must be integers",lambda:polygon(size,[[1,1],[2,2],[3.5,3]]))
+    expect_value_error("width and height must be positive",lambda:rectangle(size,[1,1,0,4]))
+    expect_value_error("outside canvas",lambda:rectangle(size,[10,10,20,20]))
+    expect_value_error("must be integers",lambda:rectangle(size,[1,1,2.5,4]))
     human=Landmark(1,"head_center",4,4,"center",1.0,"human",True,"old"); agent=Landmark(1,"hip_center",4,8,"center",.8,"agent",False,"old"); reconciled=reconcile_hashes([human,agent],{1:"new"}); assert len(reconciled)==1 and reconciled[0].status=="STALE"
 
     human_f1=Landmark(1,"head_center",4,4,"center",1.0,"human",True,"h1"); human_f2=Landmark(2,"head_center",4,4,"center",1.0,"human",True,"h2")

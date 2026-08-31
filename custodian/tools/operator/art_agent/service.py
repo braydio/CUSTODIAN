@@ -10,6 +10,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterator
 
+from PIL import Image
+
 import animation_workbench as workbench
 import animation_workbench_model as model
 
@@ -28,6 +30,7 @@ from .review import append_critique, critiques, packet as review_packet
 from .semantic_ops import draft_operation
 
 ART_ROOT = model.REPO_ROOT / ".ai/operator_art_agent"
+PART_SCHEMA_PATH = model.CUSTODIAN_ROOT / "content/data/operator/authoring/operator_part_schema.json"
 MUTATION_TYPES = {
     "paint_pixels",
     "erase_pixels",
@@ -281,32 +284,127 @@ class ArtAgentService:
     def remove_landmark(self, session_path: Path, *, frame: int, name: str) -> list[dict[str, Any]]:
         _session,_manifest,root=self._checked_session(session_path); result=[x for x in landmark_store.load(root/"landmarks.json") if (x.frame,x.name)!=(frame,name)]; landmark_store.save(root/"landmarks.json",result); return [landmark_store.asdict(x) for x in result]
 
+    def _part_schema(self) -> dict[str, Any]:
+        return json.loads(PART_SCHEMA_PATH.read_text())
+
     def define_mask(self, session_path: Path, *, frame: int, layer: str, part: str, polygon: list[list[int]] | None = None, rect: list[int] | None = None, provenance: str = "agent", confidence: float = 1.0) -> dict[str, Any]:
         session,manifest,root=self._checked_session(session_path); canvas=manifest["canvas"]
         if (polygon is None)==(rect is None): raise model.WorkbenchError("mask requires exactly one polygon or rectangle")
         if not 1<=frame<=int(manifest["timeline"]["document_frames"]): raise model.WorkbenchError("mask frame outside animation contract")
+        part_spec=self._part_schema().get("parts",{}).get(part)
+        if part_spec is None: raise model.WorkbenchError(f"unknown Operator part: {part}")
+        preferred=part_spec.get("preferred_layers",[])
+        if preferred and layer not in preferred: raise model.WorkbenchError(f"layer {layer!r} is not a permitted binding for part {part!r} (expected one of {preferred})")
         editable={item["aseprite_layer_name"] for item in manifest.get("layers",[]) if item.get("editable") is True}
         if layer not in editable: raise model.WorkbenchError("mask layer is not an editable Workbench binding")
         if not 0.0<=confidence<=1.0: raise model.WorkbenchError("mask confidence must be in 0..1")
         size=(int(canvas["width"]),int(canvas["height"])); spans=mask_store.polygon(size,polygon) if polygon is not None else mask_store.rectangle(size,rect or [])
         cel_fingerprint=self._layer_frame_hash(session_path,layer,frame)
-        mask_id=f"{part}_f{frame}_{mask_store.fingerprint(spans)[:10]}"; item=mask_store.PartMask(mask_id,frame,layer,part,spans,mask_store.bounds(spans),session.expected_workbench_sha256,cel_fingerprint,provenance,confidence)
-        path=root/"masks.json"; payload=json.loads(path.read_text()) if path.exists() else {"schema":"custodian.operator_part_masks.v1","masks":[]}; payload["masks"]=[x for x in payload["masks"] if x["mask_id"]!=mask_id]+[item.to_json()]; write_json(path,payload); return item.to_json()
+        mask_id=f"{part}_f{frame}_{mask_store.fingerprint(spans)[:10]}"
+        item=mask_store.PartMask(mask_id,frame,layer,part,spans,mask_store.bounds(spans),session.expected_workbench_sha256,cel_fingerprint,provenance,confidence)
+        return self._persist_mask(root,item)
+
+    def _persist_mask(self, root: Path, item: mask_store.PartMask) -> dict[str, Any]:
+        path=root/"masks.json"; payload=json.loads(path.read_text()) if path.exists() else {"schema":"custodian.operator_part_masks.v1","masks":[]}
+        payload["masks"]=[x for x in payload["masks"] if x["mask_id"]!=item.mask_id]+[item.to_json()]
+        write_json(path,payload); return item.to_json()
 
     def get_masks(self, session_path: Path) -> list[dict[str, Any]]:
         _session,_manifest,root=self._checked_session(session_path); path=root/"masks.json"; return json.loads(path.read_text()).get("masks",[]) if path.exists() else []
 
+    def validate_masks(self, session_path: Path) -> list[dict[str, Any]]:
+        _session,_manifest,root=self._checked_session(session_path)
+        path=root/"masks.json"; payload=json.loads(path.read_text()) if path.exists() else {"schema":"custodian.operator_part_masks.v1","masks":[]}
+        result=[]
+        for value in payload.get("masks",[]):
+            item=mask_store.PartMask.from_json(value)
+            if item.status=="CURRENT":
+                try:
+                    current=self._layer_frame_hash(session_path,item.layer,item.frame)
+                except model.WorkbenchError:
+                    current=None
+                if current!=item.source_cel_fingerprint:
+                    item.status="STALE"
+            result.append(item.to_json())
+        write_json(path,{"schema":payload.get("schema","custodian.operator_part_masks.v1"),"masks":result})
+        return result
+
+    def _mark_mask_stale(self, root: Path, mask_id: str) -> None:
+        path=root/"masks.json"; payload=json.loads(path.read_text()) if path.exists() else {"schema":"custodian.operator_part_masks.v1","masks":[]}
+        for value in payload.get("masks",[]):
+            if value["mask_id"]==mask_id: value["status"]="STALE"
+        write_json(path,payload)
+
     def _mask(self, session_path: Path, mask_id: str) -> mask_store.PartMask:
+        _session,_manifest,root=self._checked_session(session_path)
         for value in self.get_masks(session_path):
             if value["mask_id"]==mask_id:
                 item=mask_store.PartMask.from_json(value)
-                if self._layer_frame_hash(session_path,item.layer,item.frame)!=item.source_cel_fingerprint: raise model.WorkbenchError(f"stale semantic mask: {mask_id}")
+                if self._layer_frame_hash(session_path,item.layer,item.frame)!=item.source_cel_fingerprint:
+                    self._mark_mask_stale(root,mask_id)
+                    raise model.WorkbenchError(f"stale semantic mask: {mask_id}")
                 return item
         raise model.WorkbenchError(f"unknown semantic mask: {mask_id}")
 
     def _layer_frame_hash(self, session_path: Path, layer: str, frame: int) -> str:
         artifacts=self.render(session_path,mode="layer",layer=layer)
         return animation_metrics([Path(artifacts["frames"][frame-1])])["frames"][0]["pixel_sha"]
+
+    def _derive_mask(self, root: Path, base: mask_store.PartMask, spans: list, *, part: str, parents: list[str]) -> dict[str, Any]:
+        if not spans: raise model.WorkbenchError("derived mask rasterized to zero area")
+        mask_id=f"{part}_f{base.frame}_{mask_store.fingerprint(spans)[:10]}"
+        item=mask_store.PartMask(
+            mask_id=mask_id, frame=base.frame, layer=base.layer, part=part,
+            spans=spans, bounds=mask_store.bounds(spans),
+            source_workbench_sha256=base.source_workbench_sha256,
+            source_cel_fingerprint=base.source_cel_fingerprint,
+            provenance="derived", confidence=base.confidence,
+            status="CURRENT", parents=parents,
+        )
+        return self._persist_mask(root,item)
+
+    def _binary_mask_op(self, session_path: Path, mask_id_a: str, mask_id_b: str, operation: str, *, part: str) -> dict[str, Any]:
+        a=self._mask(session_path,mask_id_a); b=self._mask(session_path,mask_id_b)
+        if a.layer!=b.layer or a.frame!=b.frame: raise model.WorkbenchError("mask boolean operations require the same layer and frame")
+        _session,manifest,root=self._checked_session(session_path)
+        size=(int(manifest["canvas"]["width"]),int(manifest["canvas"]["height"]))
+        spans=mask_store.combine(a.spans,b.spans,size,operation)
+        return self._derive_mask(root,a,spans,part=part,parents=[a.mask_id,b.mask_id])
+
+    def mask_union(self, session_path: Path, mask_id_a: str, mask_id_b: str, *, part: str) -> dict[str, Any]:
+        return self._binary_mask_op(session_path,mask_id_a,mask_id_b,"union",part=part)
+
+    def mask_subtract(self, session_path: Path, mask_id_a: str, mask_id_b: str, *, part: str) -> dict[str, Any]:
+        return self._binary_mask_op(session_path,mask_id_a,mask_id_b,"subtract",part=part)
+
+    def mask_intersect(self, session_path: Path, mask_id_a: str, mask_id_b: str, *, part: str) -> dict[str, Any]:
+        return self._binary_mask_op(session_path,mask_id_a,mask_id_b,"intersect",part=part)
+
+    def mask_dilate_1px(self, session_path: Path, mask_id: str, *, part: str | None = None) -> dict[str, Any]:
+        a=self._mask(session_path,mask_id); _session,manifest,root=self._checked_session(session_path)
+        size=(int(manifest["canvas"]["width"]),int(manifest["canvas"]["height"]))
+        spans=mask_store.morphology(a.spans,size,"dilate")
+        return self._derive_mask(root,a,spans,part=part or a.part,parents=[a.mask_id])
+
+    def mask_erode_1px(self, session_path: Path, mask_id: str, *, part: str | None = None) -> dict[str, Any]:
+        a=self._mask(session_path,mask_id); _session,manifest,root=self._checked_session(session_path)
+        size=(int(manifest["canvas"]["width"]),int(manifest["canvas"]["height"]))
+        spans=mask_store.morphology(a.spans,size,"erode")
+        return self._derive_mask(root,a,spans,part=part or a.part,parents=[a.mask_id])
+
+    def mask_from_alpha_region(self, session_path: Path, *, frame: int, layer: str, part: str, seed: list[int] | None = None, provenance: str = "derived") -> dict[str, Any]:
+        session,manifest,root=self._checked_session(session_path)
+        if not 1<=frame<=int(manifest["timeline"]["document_frames"]): raise model.WorkbenchError("mask frame outside animation contract")
+        editable={item["aseprite_layer_name"] for item in manifest.get("layers",[]) if item.get("editable") is True}
+        if layer not in editable: raise model.WorkbenchError("mask layer is not an editable Workbench binding")
+        artifacts=self.render(session_path,mode="layer",layer=layer)
+        with Image.open(artifacts["frames"][frame-1]) as source:
+            spans=mask_store.alpha_region(source.convert("RGBA"),seed=tuple(seed) if seed else None)
+        if not spans: raise model.WorkbenchError("alpha region mask is empty")
+        cel_fingerprint=self._layer_frame_hash(session_path,layer,frame)
+        mask_id=f"{part}_f{frame}_{mask_store.fingerprint(spans)[:10]}"
+        item=mask_store.PartMask(mask_id,frame,layer,part,spans,mask_store.bounds(spans),session.expected_workbench_sha256,cel_fingerprint,provenance,1.0)
+        return self._persist_mask(root,item)
 
     def preview_mask(self, session_path: Path, mask_id: str) -> dict[str, Any]:
         _session,_manifest,root=self._checked_session(session_path); mask=self._mask(session_path,mask_id); artifacts=self.render(session_path); output=root/"previews/masks"/f"frame_{mask.frame:03d}_{mask.part}.png"; output.parent.mkdir(parents=True,exist_ok=True); make_mask_overlay(Path(artifacts["frames"][mask.frame-1]),mask.to_json()["spans"],output); return {"mask_id":mask_id,"preview":str(output.resolve())}

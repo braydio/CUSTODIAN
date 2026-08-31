@@ -50,6 +50,7 @@ def configure_art_parser(parser: argparse.ArgumentParser) -> None:
     mask = _session_command(commands, "mask")
     mask.add_argument("--frame", type=int, required=True); mask.add_argument("--layer", required=True); mask.add_argument("--part", required=True)
     mask.add_argument("--polygon"); mask.add_argument("--rect")
+    _session_command(commands, "validate-masks")
     plan = _session_command(commands, "plan"); plan.add_argument("--recipe", required=True, choices=("walk","run","idle","fast_attack","heavy_attack"))
     _session_command(commands, "metrics"); _session_command(commands, "qa")
     draft = _session_command(commands, "draft")
@@ -185,6 +186,7 @@ def dispatch_art_command(args: argparse.Namespace) -> int:
         elif command == "mask":
             polygon = [_integer_list(point,2,"polygon point") for point in args.polygon.split(";")] if args.polygon else None
             result = service.define_mask(args.session,frame=args.frame,layer=args.layer,part=args.part,polygon=polygon,rect=_integer_list(args.rect,4,"rect") if args.rect else None)
+        elif command == "validate-masks": result = service.validate_masks(args.session)
         elif command == "plan": result = service.plan(args.session,args.recipe)
         elif command == "metrics": result = service.get_metrics(args.session)
         elif command == "qa": result = service.run_qa(args.session)

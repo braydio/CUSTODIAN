@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import hashlib
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from PIL import Image, ImageDraw, ImageFilter
 
 
@@ -24,6 +24,8 @@ class PartMask:
     source_cel_fingerprint: str
     provenance: str
     confidence: float
+    status: str = "CURRENT"
+    parents: list[str] = field(default_factory=list)
 
     def to_json(self) -> dict:
         value = asdict(self)
@@ -33,7 +35,8 @@ class PartMask:
     @classmethod
     def from_json(cls, value: dict) -> "PartMask":
         value = dict(value); value["spans"] = [MaskSpan(**x) for x in value["spans"]]
-        return cls(**value)
+        known = {name for name in cls.__dataclass_fields__}
+        return cls(**{key: item for key, item in value.items() if key in known})
 
 
 def image_to_spans(image: Image.Image) -> list[MaskSpan]:
@@ -64,13 +67,40 @@ def bounds(spans: list[MaskSpan]) -> list[int]:
 
 
 def polygon(size: tuple[int, int], points: list[list[int]]) -> list[MaskSpan]:
+    if not isinstance(points, list) or len(points) < 3:
+        raise ValueError("polygon mask requires at least 3 points")
+    width, height = size
+    for point in points:
+        if not isinstance(point, (list, tuple)) or len(point) != 2:
+            raise ValueError(f"polygon point must be [x, y]: {point!r}")
+        x, y = point
+        if not isinstance(x, int) or not isinstance(y, int):
+            raise ValueError(f"polygon coordinates must be integers: {point!r}")
+        if not (0 <= x < width and 0 <= y < height):
+            raise ValueError(f"polygon point outside canvas: {point!r}")
     image=Image.new("1",size); ImageDraw.Draw(image).polygon([tuple(x) for x in points],fill=1)
-    return image_to_spans(image)
+    spans = image_to_spans(image)
+    if not spans:
+        raise ValueError("polygon mask rasterized to zero area")
+    return spans
 
 
 def rectangle(size: tuple[int, int], rect: list[int]) -> list[MaskSpan]:
-    x,y,w,h=rect; image=Image.new("1",size); ImageDraw.Draw(image).rectangle((x,y,x+w-1,y+h-1),fill=1)
-    return image_to_spans(image)
+    if not isinstance(rect, list) or len(rect) != 4:
+        raise ValueError("rectangle mask requires [x, y, w, h]")
+    x,y,w,h=rect
+    if not all(isinstance(value, int) for value in (x, y, w, h)):
+        raise ValueError(f"rectangle coordinates must be integers: {rect!r}")
+    if w <= 0 or h <= 0:
+        raise ValueError(f"rectangle width and height must be positive: {rect!r}")
+    width, height = size
+    if not (0 <= x and 0 <= y and x + w <= width and y + h <= height):
+        raise ValueError(f"rectangle outside canvas: {rect!r}")
+    image=Image.new("1",size); ImageDraw.Draw(image).rectangle((x,y,x+w-1,y+h-1),fill=1)
+    spans = image_to_spans(image)
+    if not spans:
+        raise ValueError("rectangle mask rasterized to zero area")
+    return spans
 
 
 def alpha_region(image: Image.Image, *, seed: tuple[int, int] | None = None) -> list[MaskSpan]:

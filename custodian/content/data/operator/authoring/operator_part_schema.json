@@ -16,6 +16,8 @@
     "thigh_far": {"preferred_layers": ["lower_body"]},
     "shin_far": {"preferred_layers": ["lower_body"]},
     "foot_far": {"preferred_layers": ["lower_body"]},
+    "near_leg": {"preferred_layers": ["lower_body"]},
+    "far_leg": {"preferred_layers": ["lower_body"]},
     "cloak_near": {"preferred_layers": ["cape", "upper_body"]},
     "cloak_far": {"preferred_layers": ["cape", "upper_body"]},
     "weapon": {"preferred_layers": ["weapon"]}
