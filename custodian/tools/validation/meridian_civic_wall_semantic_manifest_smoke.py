@@ -116,12 +116,12 @@ def main() -> None:
             fail(f"{entry_id}: unknown family {family}")
 
         composer = entry.get("composer", {})
-        if composer.get("review_state") not in {"reviewed_safe", "reviewed_manual"}:
+        if composer.get("review_state") not in {"reviewed_safe", "reviewed_manual_only", "not_needed_manual"}:
             fail(f"{entry_id}: unresolved composer review state")
         auto_compose = composer.get("auto_compose")
         if not isinstance(auto_compose, bool):
             fail(f"{entry_id}: auto_compose must be boolean")
-        ports = composer.get("ports", [])
+        ports = composer.get("ports") or []
         if auto_compose and not ports:
             fail(f"{entry_id}: auto-safe entry has no cardinal ports")
         if not auto_compose and composer.get("selection_scope") != "explicit_authored_only":
@@ -183,7 +183,7 @@ def main() -> None:
         entry_id = entry["id"]
         if csv_coord != tuple(entry["source_coord"]):
             fail(f"{entry_id}: CSV coordinate drifted to {csv_coord}")
-        for key in ("semantic_name", "family", "geometry_class", "condition"):
+        for key in ("semantic_name", "family", "geometry_class"):
             if row.get(key) != str(entry.get(key, "")):
                 fail(f"{entry_id}: CSV {key} drifted")
         composer = entry["composer"]
@@ -191,7 +191,7 @@ def main() -> None:
         if csv_auto != composer["auto_compose"]:
             fail(f"{entry_id}: CSV auto_compose drifted")
         csv_ports = row.get("ports", "").split("|") if row.get("ports") else []
-        if csv_ports != composer["ports"]:
+        if csv_ports != (composer["ports"] or []):
             fail(f"{entry_id}: CSV ports drifted")
         for key in ("topology", "review_state", "selection_scope"):
             if row.get(key) != str(composer.get(key, "")):

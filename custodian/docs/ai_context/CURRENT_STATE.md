@@ -106,6 +106,15 @@ landing connector has a dedicated `320x192` bridge overlay, the distant chapel
 proxy is at `(320,1088)`, and mapper F1–F4 presets cover gameplay, art
 alignment, presentation, and clean capture with bulk-label suppression.
 
+## Meridian Civic Wall Topology Handoff (2026-08-31)
+
+The Meridian wall manifest is now V2: all 196 modules have reviewed composer
+decisions, with 80 exact-cardinal-port auto-safe entries and 116 explicit/manual
+entries. `meridian_civic_wall_runtime_catalog.gd` is generated from the semantic
+JSON and is the runtime lookup boundary. Lower Quarter's first three authored
+wall masses now use deterministic roof/cap/facade composition; collision and
+navigation remain separate authorities.
+
 ## Operator Animation Workbench V2 (2026-08-28)
 
 `operator anim list|status|edit|refresh|publish` now provides semantic,
