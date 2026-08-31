@@ -572,7 +572,9 @@ class ArtAgentService:
         _session,_manifest,root=self._checked_session(session_path); artifacts=self.render(session_path); values=animation_metrics([Path(x) for x in artifacts["frames"]],self.get_landmarks(session_path),masks=self.get_masks(session_path)); write_json(root/"metrics.json",values); return values
 
     def plan(self, session_path: Path, recipe: str) -> dict[str, Any]:
-        session,manifest,root=self._checked_session(session_path); recipes=model.CUSTODIAN_ROOT/"tools/operator/art_recipes"; projection=json.loads((model.CUSTODIAN_ROOT/"content/data/operator/authoring/operator_direction_projection.json").read_text()); refs=assemble_references(manifest,source_root=model.SOURCE_ROOT); value=build_animation_plan(session.identity,manifest,recipes/f"{recipe}.json",projection,refs).to_json(); write_json(root/"plan.json",value); return value
+        session,manifest,root=self._checked_session(session_path); recipes=model.CUSTODIAN_ROOT/"tools/operator/art_recipes"; projection=json.loads((model.CUSTODIAN_ROOT/"content/data/operator/authoring/operator_direction_projection.json").read_text()); refs=assemble_references(manifest,source_root=model.SOURCE_ROOT)
+        value=build_animation_plan(session.identity,manifest,recipes/f"{recipe}.json",projection,refs,landmarks=self.get_landmarks(session_path),masks=self.get_masks(session_path)).to_json()
+        write_json(root/"plan.json",value); return value
 
     def run_qa(self, session_path: Path, *, required_landmarks: list[str] | dict[str, list[str]] | None = None) -> dict[str, Any]:
         session,manifest,root=self._checked_session(session_path)
@@ -596,7 +598,19 @@ class ArtAgentService:
 
     def build_review_packet(self, session_path: Path, *, task: str = "") -> dict[str, Any]:
         session,manifest,root=self._checked_session(session_path); artifacts=self.render(session_path); metrics=self.get_metrics(session_path); qa=self.run_qa(session_path); refs=assemble_references(manifest,source_root=model.SOURCE_ROOT); plan_path=root/"plan.json"; constraints=json.loads(plan_path.read_text()).get("constraints",[]) if plan_path.exists() else []
-        return review_packet(root/"review_packet.json",task=task or f"Review {session.identity.action} {session.identity.direction}",constraints=constraints,artifacts=artifacts,metrics=str((root/"metrics.json").resolve()),qa=str((root/"qa.json").resolve()),references=refs,findings=qa["findings"])
+        operations_path=root/"operations.jsonl"
+        operations=[json.loads(line) for line in operations_path.read_text().splitlines() if line] if operations_path.exists() else []
+        return review_packet(
+            root/"review_packet.json",
+            task=task or f"Review {session.identity.action} {session.identity.direction}",
+            constraints=constraints,artifacts=artifacts,
+            metrics=str((root/"metrics.json").resolve()),qa=str((root/"qa.json").resolve()),
+            references=refs,findings=qa["findings"],
+            masks=self.get_masks(session_path),drafts=self.get_drafts(session_path),
+            landmarks=self.get_landmarks(session_path),
+            workbench_sha256=session.expected_workbench_sha256,
+            operations=operations,
+        )
 
     def ingest_notes(self, session_path: Path) -> list[dict[str, Any]]:
         _session,manifest,root=self._checked_session(session_path); artifacts=self.render(session_path,mode="layer",layer="__REVIEW_NOTES"); observations=[]
