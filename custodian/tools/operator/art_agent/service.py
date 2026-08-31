@@ -17,6 +17,7 @@ from .aseprite_bridge import ArtAgentBridge
 from .models import ArtIdentity, ArtSession, CAPABILITY_SCHEMA, REQUEST_SCHEMA
 from .render import extract_note_components, make_animation_gif, make_before_after, make_contact_sheet, make_diff, make_mask_overlay, make_onion_skin, make_silhouette_sheet, split_strip
 from .security import require_under
+from . import drafts as draft_store
 from . import landmarks as landmark_store
 from . import masks as mask_store
 from .metrics import animation_metrics
@@ -296,14 +297,164 @@ class ArtAgentService:
     def preview_mask(self, session_path: Path, mask_id: str) -> dict[str, Any]:
         _session,_manifest,root=self._checked_session(session_path); mask=self._mask(session_path,mask_id); artifacts=self.render(session_path); output=root/"previews/masks"/f"frame_{mask.frame:03d}_{mask.part}.png"; output.parent.mkdir(parents=True,exist_ok=True); make_mask_overlay(Path(artifacts["frames"][mask.frame-1]),mask.to_json()["spans"],output); return {"mask_id":mask_id,"preview":str(output.resolve())}
 
-    def create_draft(self, session_path: Path, *, kind: str, mask_id: str, destination_frame: int | None = None, dx: int = 0, dy: int = 0, axis_x: int | None = None, operation_key: str | None = None) -> dict[str, Any]:
-        mask=self._mask(session_path,mask_id); operation=draft_operation(kind,mask,destination_frame=destination_frame,dx=dx,dy=dy,axis_x=axis_x); return self.apply_operation(session_path,operation,operation_key=operation_key)
+    def create_draft(
+        self,
+        session_path: Path,
+        *,
+        kind: str,
+        mask_id: str,
+        destination_mask_id: str | None = None,
+        destination_frame: int | None = None,
+        dx: int = 0,
+        dy: int = 0,
+        axis_x: int | None = None,
+        operation_key: str | None = None,
+    ) -> dict[str, Any]:
+        mask = self._mask(session_path, mask_id)
+        destination_mask = self._mask(session_path, destination_mask_id) if destination_mask_id else None
+        operation = draft_operation(
+            kind, mask,
+            destination_frame=destination_frame,
+            destination_mask=destination_mask,
+            dx=dx, dy=dy, axis_x=axis_x,
+        )
+        result = self.apply_operation(session_path, operation, operation_key=operation_key)
+        response = result["response"]
+        draft_id = response["draft_id"]
+        same_cel = operation["layer"] == mask.layer and operation["destination_frame"] == mask.frame
+        destination_cel_fingerprint = (
+            mask.source_cel_fingerprint if same_cel
+            else self._layer_frame_hash(session_path, operation["layer"], operation["destination_frame"])
+        )
+        draft_cel_fingerprint = self._layer_frame_hash(session_path, draft_id, operation["destination_frame"])
+        record = draft_store.DraftRecord(
+            draft_id=draft_id,
+            kind=kind,
+            part=mask.part,
+            source_mask_id=mask.mask_id,
+            destination_mask_id=destination_mask.mask_id if destination_mask else None,
+            source_layer=mask.layer,
+            source_frame=mask.frame,
+            destination_layer=operation["layer"],
+            destination_frame=operation["destination_frame"],
+            source_spans=operation["spans"],
+            destination_spans=operation.get("destination_mask_spans"),
+            source_mask_fingerprint=mask_store.fingerprint(mask.spans),
+            source_cel_fingerprint=mask.source_cel_fingerprint,
+            destination_cel_fingerprint=destination_cel_fingerprint,
+            draft_cel_fingerprint=draft_cel_fingerprint,
+            dx=dx, dy=dy, axis_x=axis_x,
+            created_operation_key=result["operation_key"],
+            created_workbench_sha256=result["workbench_sha256_after"],
+            status="ACTIVE",
+            created_utc=utc_now(),
+        )
+        _session, _manifest, root = self._checked_session(session_path)
+        drafts_path = root / "drafts.json"
+        items = [item for item in draft_store.load(drafts_path) if item.draft_id != draft_id] + [record]
+        draft_store.save(drafts_path, items)
+        return {**result, "draft": record.to_json()}
+
+    def get_drafts(self, session_path: Path) -> list[dict[str, Any]]:
+        _session, _manifest, root = self._checked_session(session_path)
+        return [item.to_json() for item in draft_store.load(root / "drafts.json")]
+
+    def _draft_staleness(self, session_path: Path, record: "draft_store.DraftRecord") -> tuple[str | None, str | None]:
+        current_source = self._layer_frame_hash(session_path, record.source_layer, record.source_frame)
+        if current_source != record.source_cel_fingerprint:
+            return "source cel changed since draft creation", None
+        current_draft = self._layer_frame_hash(session_path, record.draft_id, record.destination_frame)
+        if current_draft != record.draft_cel_fingerprint:
+            return "draft layer changed since creation", None
+        same_cel = record.destination_layer == record.source_layer and record.destination_frame == record.source_frame
+        current_destination = current_source if same_cel else self._layer_frame_hash(session_path, record.destination_layer, record.destination_frame)
+        if current_destination != record.destination_cel_fingerprint:
+            if record.kind == "copy":
+                return None, "destination frame changed since draft creation"
+            return f"destination cel changed since draft creation ({record.kind} requires an unchanged destination)", None
+        if record.kind == "replace" and record.destination_mask_id:
+            try:
+                self._mask(session_path, record.destination_mask_id)
+            except model.WorkbenchError as error:
+                return f"destination mask no longer current: {error}", None
+        return None, None
+
+    def validate_drafts(self, session_path: Path) -> list[dict[str, Any]]:
+        _session, _manifest, root = self._checked_session(session_path)
+        items = draft_store.load(root / "drafts.json")
+        result = []
+        for record in items:
+            if record.status == "ACTIVE":
+                blocking, advisory = self._draft_staleness(session_path, record)
+                if blocking:
+                    record.status = "STALE"
+                elif advisory:
+                    record.advisory_note = advisory
+            result.append(record)
+        draft_store.save(root / "drafts.json", result)
+        return [item.to_json() for item in result]
 
     def discard_draft(self, session_path: Path, draft_id: str, *, operation_key: str | None = None) -> dict[str, Any]:
-        return self.apply_operation(session_path,{"type":"discard_draft","draft_id":draft_id},operation_key=operation_key)
+        _session, _manifest, root = self._checked_session(session_path)
+        items = draft_store.load(root / "drafts.json")
+        record = draft_store.find(items, draft_id)
+        if record is None:
+            raise model.WorkbenchError(f"unknown Art Agent draft: {draft_id}")
+        if record.status not in ("ACTIVE", "STALE"):
+            raise model.WorkbenchError(f"cannot discard draft in status {record.status}: {draft_id}")
+        result = self.apply_operation(session_path, {"type": "discard_draft", "draft_id": draft_id}, operation_key=operation_key)
+        record.status = "DISCARDED"
+        draft_store.save(root / "drafts.json", draft_store.replace(items, record))
+        return {**result, "draft": record.to_json()}
 
-    def bake_draft(self, session_path: Path, *, draft_id: str, mask_id: str, target_frame: int, target_layer: str, clear_source_mask: bool = True, operation_key: str | None = None) -> dict[str, Any]:
-        mask=self._mask(session_path,mask_id); return self.apply_operation(session_path,{"type":"bake_draft","draft_id":draft_id,"frame":target_frame,"layer":target_layer,"clear_source_mask":clear_source_mask,"spans":[{"y":x.y,"x0":x.x0,"x1":x.x1} for x in mask.spans]},operation_key=operation_key)
+    def bake_draft(self, session_path: Path, *, draft_id: str, operation_key: str | None = None) -> dict[str, Any]:
+        _session, _manifest, root = self._checked_session(session_path)
+        items = draft_store.load(root / "drafts.json")
+        record = draft_store.find(items, draft_id)
+        if record is None:
+            raise model.WorkbenchError(f"unknown Art Agent draft: {draft_id}")
+        if record.status != "ACTIVE":
+            raise model.WorkbenchError(f"draft is not ACTIVE (status={record.status}): {draft_id}")
+        blocking, advisory = self._draft_staleness(session_path, record)
+        if blocking:
+            record.status = "STALE"
+            draft_store.save(root / "drafts.json", draft_store.replace(items, record))
+            raise model.WorkbenchError(f"refusing to bake stale draft {draft_id}: {blocking}")
+        if record.kind in ("shift", "mirror"):
+            clear_spans = record.source_spans
+        elif record.kind == "replace":
+            clear_spans = record.destination_spans
+        else:
+            clear_spans = None
+        operation = {
+            "type": "bake_draft",
+            "draft_id": draft_id,
+            "layer": record.destination_layer,
+            "frame": record.destination_frame,
+        }
+        if clear_spans is not None:
+            operation["clear_spans"] = clear_spans
+        result = self.apply_operation(session_path, operation, operation_key=operation_key)
+        response = result["response"]
+        record.status = "BAKED"
+        record.needs_gap_repair = bool(response.get("needs_gap_repair"))
+        if advisory:
+            record.advisory_note = advisory
+        draft_store.save(root / "drafts.json", draft_store.replace(items, record))
+        return {**result, "draft": record.to_json()}
+
+    def resolve_gap_repair(self, session_path: Path, draft_id: str, note: str = "") -> dict[str, Any]:
+        _session, _manifest, root = self._checked_session(session_path)
+        items = draft_store.load(root / "drafts.json")
+        record = draft_store.find(items, draft_id)
+        if record is None:
+            raise model.WorkbenchError(f"unknown Art Agent draft: {draft_id}")
+        if not record.needs_gap_repair:
+            raise model.WorkbenchError(f"draft has no unresolved gap repair: {draft_id}")
+        record.needs_gap_repair = False
+        record.gap_repair_note = note
+        draft_store.save(root / "drafts.json", draft_store.replace(items, record))
+        return record.to_json()
 
     def get_metrics(self, session_path: Path) -> dict[str, Any]:
         _session,_manifest,root=self._checked_session(session_path); artifacts=self.render(session_path); values=animation_metrics([Path(x) for x in artifacts["frames"]],self.get_landmarks(session_path)); write_json(root/"metrics.json",values); return values

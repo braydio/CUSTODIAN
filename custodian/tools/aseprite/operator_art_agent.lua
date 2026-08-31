@@ -275,18 +275,25 @@ local function execute()
     app.transaction("Operator Art Agent: discard draft",function() sprite:deleteLayer(layer) end)
     response.changed=true; response.changed_pixels=0; response.draft_id=operation.draft_id
   elseif operation.type=="bake_draft" then
-    local draft=find_draft(operation.draft_id); local binding=binding_for_layer(operation.layer); local _,target=resolve_cel(binding,operation.frame); local draft_cel=draft:cel(operation.frame)
+    local draft=find_draft(operation.draft_id); local binding=binding_for_layer(operation.layer); local _,target=resolve_cel(binding,operation.frame)
+    if #draft.cels~=1 then close_and_error("Art Agent draft must own exactly one cel") end
+    if draft.cels[1].frameNumber~=operation.frame then close_and_error("Art Agent draft cel frame does not match bake target") end
+    local draft_cel=draft:cel(operation.frame)
     if not draft_cel then close_and_error("draft has no cel for target frame") end
     local rect=legal_rect(binding); local image=target.image:clone(); local changed={}; local clear=transparent()
-    if operation.clear_source_mask==true then
-      for _,point in ipairs(spans_pixels(operation.spans)) do local lx,ly=point[1]-rect.x,point[2]-rect.y; if image:getPixel(lx,ly)~=clear then image:drawPixel(lx,ly,clear); table.insert(changed,{point[1],point[2]}) end end
+    if operation.clear_spans~=nil then
+      for _,point in ipairs(spans_pixels(operation.clear_spans)) do
+        if not contains(rect,point[1],point[2]) then close_and_error("bake clear span outside legal binding rectangle") end
+        local lx,ly=point[1]-rect.x,point[2]-rect.y
+        if image:getPixel(lx,ly)~=clear then image:drawPixel(lx,ly,clear); table.insert(changed,{point[1],point[2]}) end
+      end
     end
     for y=rect.y,rect.y+rect.h-1 do for x=rect.x,rect.x+rect.w-1 do
       local value=draft_cel.image:getPixel(x-draft_cel.position.x,y-draft_cel.position.y)
       if app.pixelColor.rgbaA(value)>0 and image:getPixel(x-rect.x,y-rect.y)~=value then image:drawPixel(x-rect.x,y-rect.y,value); table.insert(changed,{x,y}) end
     end end
     app.transaction("Operator Art Agent: bake draft",function() target.image=image; sprite:deleteLayer(draft) end)
-    response.changed=true; response.changed_pixels=#changed; response.changed_bbox=changed_bounds(changed); response.needs_gap_repair=operation.clear_source_mask==true
+    response.changed=true; response.changed_pixels=#changed; response.changed_bbox=changed_bounds(changed); response.needs_gap_repair=operation.clear_spans~=nil
   elseif operation.type=="clear_masked_region" then
     local binding=binding_for_layer(operation.layer); local _,cel=resolve_cel(binding,operation.frame); local rect=legal_rect(binding); local image=cel.image:clone(); local changed={}; local clear=transparent()
     for _,point in ipairs(spans_pixels(operation.spans)) do if not contains(rect,point[1],point[2]) then close_and_error("mask outside legal binding rectangle") end; local lx,ly=point[1]-rect.x,point[2]-rect.y; if image:getPixel(lx,ly)~=clear then image:drawPixel(lx,ly,clear); table.insert(changed,{point[1],point[2]}) end end

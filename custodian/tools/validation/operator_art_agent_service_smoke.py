@@ -8,6 +8,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[3]; sys.path.insert(0,str(ROOT/"custodian/tools/operator"))
 import animation_workbench as workbench
 import animation_workbench_model as model
+from art_agent.drafts import DraftRecord, save as save_drafts
 from art_agent.models import ArtIdentity, ArtSession, CAPABILITY_SCHEMA, RESPONSE_SCHEMA
 from art_agent.service import ArtAgentService, write_json
 from art_agent.aseprite_bridge import ArtAgentBridge
@@ -48,6 +49,22 @@ def main():
         key="retry-key"; first=service.apply_operation(session,{"type":"paint_pixels"},operation_key=key); second=service.apply_operation(session,{"type":"paint_pixels"},operation_key=key); assert first==second
         before=wb.read_bytes(); noop=service.apply_operation(session,{"type":"move_region","dx":0,"dy":0},operation_key="noop"); assert noop["status"]=="NOOP" and wb.read_bytes()==before
         before=wb.read_bytes(); expect("forced failure",lambda:service.apply_operation(session,{"type":"paint_pixels","force_fail":True},operation_key="fail")); assert wb.read_bytes()==before; expect("previously failed",lambda:service.apply_operation(session,{"type":"paint_pixels"},operation_key="fail"))
+
+        expect("unknown Art Agent draft",lambda:service.bake_draft(session,draft_id="__ART_DRAFT__ghost__f001__deadbeef"))
+        expect("unknown Art Agent draft",lambda:service.discard_draft(session,"__ART_DRAFT__ghost__f001__deadbeef"))
+        expect("unknown Art Agent draft",lambda:service.resolve_gap_repair(session,"__ART_DRAFT__ghost__f001__deadbeef"))
+
+        fixture_draft=DraftRecord(draft_id="__ART_DRAFT__far_leg__f001__aaaaaaaa",kind="shift",part="far_leg",source_mask_id="m1",destination_mask_id=None,source_layer="lower_body",source_frame=1,destination_layer="lower_body",destination_frame=1,source_spans=[{"y":0,"x0":0,"x1":1}],destination_spans=None,source_mask_fingerprint="fp",source_cel_fingerprint="fp",destination_cel_fingerprint="fp",draft_cel_fingerprint="fp",dx=1,dy=0,axis_x=None,created_operation_key="draft-op-1",created_workbench_sha256="sha",status="DISCARDED",created_utc="now")
+        drafts_path=session.parent/"drafts.json"; save_drafts(drafts_path,[fixture_draft])
+        expect("draft is not ACTIVE",lambda:service.bake_draft(session,draft_id=fixture_draft.draft_id))
+        expect("cannot discard draft in status",lambda:service.discard_draft(session,fixture_draft.draft_id))
+
+        active_draft=DraftRecord(**{**fixture_draft.to_json(),"status":"ACTIVE"})
+        save_drafts(drafts_path,[active_draft])
+        expect("draft has no unresolved gap repair",lambda:service.resolve_gap_repair(session,active_draft.draft_id))
+        got=service.get_drafts(session); assert len(got)==1 and got[0]["draft_id"]==active_draft.draft_id and got[0]["status"]=="ACTIVE"
+        drafts_path.unlink()
+
         outside=root/"outside/session.json"; outside.parent.mkdir(); outside.write_text("{}"); expect("escapes authorized root",lambda:service.load_session(outside))
         link=root/"art/link"; link.symlink_to(root/"outside",target_is_directory=True); expect("escapes authorized root",lambda:service.load_session(link/"session.json"))
         payload=json.loads(session.read_text()); external=root/"outside/workbench.aseprite"; external.write_bytes(b"x"); payload["workbench_path"]=str(external); session.write_text(json.dumps(payload)); expect("escapes authorized root",lambda:service.load_session(session))
@@ -61,7 +78,7 @@ def main():
         bridge_payload({"schema":"bad","request_id":"request","operation_key":"key","ok":True},"response schema mismatch")
         bridge_payload({"schema":RESPONSE_SCHEMA,"request_id":"wrong","operation_key":"key","ok":True},"request ID mismatch")
         bridge_payload({"schema":RESPONSE_SCHEMA,"request_id":"request","operation_key":"wrong","ok":True},"operation key mismatch")
-    print("PASS operator_art_agent_service_smoke: confinement, rollback, NOOP, idempotency")
+    print("PASS operator_art_agent_service_smoke: confinement, rollback, NOOP, idempotency, draft registry")
 
 
 if __name__=="__main__": main()

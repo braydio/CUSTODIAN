@@ -351,7 +351,7 @@ def run_v2_pilot(*, keep_artifacts: bool = False, allow_skip_aseprite: bool = Fa
         draft_qa = service.run_qa(session, required_landmarks=list(REQUIRED_LANDMARKS))
         _write(report / "draft_metrics.json", draft_metrics); _write(report / "draft_qa.json", draft_qa)
 
-        bake_record = service.bake_draft(session, draft_id=draft_id, mask_id=far["mask_id"], target_frame=selected_frame, target_layer="lower_body", clear_source_mask=True, operation_key=f"pilot-{timestamp}-bake")
+        bake_record = service.bake_draft(session, draft_id=draft_id, operation_key=f"pilot-{timestamp}-bake")
         applied_operations += 1
         bake_response = bake_record["response"]
         _require(bool(bake_response.get("changed_bbox")), "temporary_bake", "bake did not report a changed bbox")
