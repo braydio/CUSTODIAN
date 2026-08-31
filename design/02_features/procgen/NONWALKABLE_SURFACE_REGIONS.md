@@ -98,6 +98,15 @@ into the endless forest backdrop. `RuntimeWalkableBoundary` remains the sole
 physical authority, and neither visual layer participates in collision or
 navigation.
 
+Generated walls remain permitted on semantic `CHASM` cells; walls are blocker
+authority, not a fourth surface kind. Presentation reconciles that valid
+overlap without changing classification: a wall-occupied frontier visually
+substitutes for the fascia top, `VoidCliffFace` paints no generated-wall cell,
+and its first visible body begins at the first outward clear chasm cell. Any
+wall encountered after painting begins is a hard ray terminator. The wall,
+floor, chasm, ocean, navigation, and runtime-boundary authorities are otherwise
+unchanged.
+
 ## Candidate And Streaming Contract
 
 Surface sets are structural candidate state. They are classified from the

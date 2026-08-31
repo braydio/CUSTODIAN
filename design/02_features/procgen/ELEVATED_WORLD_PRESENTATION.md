@@ -1,8 +1,8 @@
 # Elevated World Presentation
 
-Status: complete
+Status: review
 
-Last updated: 2026-08-25
+Last updated: 2026-08-31
 
 ## Purpose
 
@@ -40,12 +40,20 @@ Gameplay terrain files are individual 32x32 PNGs under `content/tiles/mountain_c
   six body cells. It does not cardinally flood sideways from the frontier.
   Authored top source 149 marks the lip, weighted clustered body sources
   150–152 form the face, and weighted bottom sources 153–154 terminate it.
+- Generated wall occupancy may coexist semantically with `CHASM`. At those
+  frontiers the generated wall substitutes for the fascia top: `VoidCliffFace`
+  never paints a wall-occupied cell, skips the contiguous initial wall run, and
+  begins with a body role at the first outward clear chasm cell. A later wall
+  terminates the ray rather than allowing fascia to resume beyond it.
 - Enclosed chasm components smaller than 24 cells are presentation-suppressed;
   the authoritative `CHASM` classification and exhaustive
   `RuntimeWalkableBoundary` collision remain unchanged.
 - Cosmetic choices are stable by map seed and cell. Source 45,
   `rock_plateau_raised_32.png`, is no longer a fascia dependency.
 - Roots and contact-shadow decals remain deferred.
+- Wall-aware fascia geometry is implemented and covered by focused plus
+  eight-seed integration smokes. This document remains `review` until the fixed
+  seed wall-hang captures receive human visual approval.
 
 ## Source Versus Runtime Art
 

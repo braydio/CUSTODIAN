@@ -9178,7 +9178,8 @@ func _refresh_void_cliff_face() -> void:
 	void_cliff_face.configure_from_surface_cells(
 		_generated_floor_cells,
 		_chasm_cells,
-		_get_generation_seed()
+		_get_generation_seed(),
+		_generated_wall_cells
 	)
 
 

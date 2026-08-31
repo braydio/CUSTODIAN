@@ -3,6 +3,8 @@
 2. I have not seen a single enemy in a while.
   - Correction: I have seen the enemy_marine
 
-3. Either the ritualant scene isnot loading, or not showing on the map, or both
+3. Ritualant world ingress can be omitted on generated maps.
+  - Root cause identified: cardinal edge authored-pocket fallback incorrectly requires the candidate tile to already be walkable.
+  - Required-ingress/fallback repair is next after void-cliff presentation.
 
 4. The sundered keep UI is distracting, too large. And the general minimap is too large and probably not needed.

@@ -967,11 +967,12 @@ Last updated: 2026-08-20
 
 - `design/02_features/procgen/ELEVATED_WORLD_PRESENTATION.md` — upper-plane, cliff, void, forest-depth, streaming, and determinism authority.
 - `custodian/game/world/procgen/presentation/procgen_depth_backdrop.gd` — global non-repeating, camera-following forest depth stack used by both generated-world and explicit-chasm configuration paths.
-- `custodian/game/world/procgen/presentation/procgen_void_cliff_face.gd` — presentation-only directional FLOOR-to-CHASM fascia using authored top/body/bottom sources 149–154, stable outward normals, sparse deep sections, and tiny enclosed-pocket suppression; never contributes collision, navigation, or surface semantics.
+- `custodian/game/world/procgen/presentation/procgen_void_cliff_face.gd` — presentation-only directional FLOOR-to-CHASM fascia using authored top/body/bottom sources 149–154, stable outward normals, sparse deep sections, tiny enclosed-pocket suppression, and wall-aware lip substitution; it never paints accepted generated-wall cells or contributes collision, navigation, or surface semantics.
 - `custodian/content/tiles/procgen/elevated_world/source/` — reference-only concept montages; never runtime atlases.
 - `custodian/content/tiles/procgen/elevated_world/archive/pre_elevated_world_v1/` — pre-pass runtime art archive; never runtime-loaded.
 - `custodian/tools/validation/elevated_world_asset_contract_smoke.gd` — image, alpha, TileSet semantic-ID, scene, and no-collision contract.
 - `custodian/tools/validation/procgen_void_cliff_face_smoke.gd` — authored fascia source, role semantics, seed stability, topology isolation, and presentation-only contract.
+- `custodian/tools/validation/procgen_void_cliff_wall_integration_smoke.gd` — eight-seed production-map proof that generated walls, chasm semantics, and fascia all exist while fascia/wall cell intersection remains empty.
 - `custodian/tools/validation/elevated_world_seed_review.gd` — fixed-seed presentation geometry and route summary.
 
 - `../design/00_meta/MASTER_DESIGN_DOCTRINE.md` — active project-wide doctrine

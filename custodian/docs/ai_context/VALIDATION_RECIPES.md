@@ -1163,12 +1163,18 @@ From `custodian/`:
 
 ```bash
 godot --headless --path . --script res://tools/validation/elevated_world_asset_contract_smoke.gd
+godot --headless --path . --script res://tools/validation/procgen_void_cliff_face_smoke.gd
+godot --headless --path . --script res://tools/validation/procgen_void_cliff_wall_integration_smoke.gd
 godot --headless --path . --script res://tools/validation/elevated_world_seed_review.gd
 godot --headless --path . --script res://tools/validation/procgen_terrain_required_cells_smoke.gd
 godot --headless --path . --script res://tools/validation/procgen_road_surface_roles_smoke.gd
 ```
 
-The asset smoke proves the source/archive exclusion and stable TileSet semantics. The seed review prints five deterministic geometry summaries; it does not replace renderer-backed visual review.
+The asset smoke proves the source/archive exclusion and stable TileSet semantics.
+The focused fascia smoke covers exposed and wall-backed cardinal rays, while
+the integration smoke proves zero generated-wall/fascia overlap across eight
+production seeds. The seed review prints five deterministic geometry summaries;
+it does not replace renderer-backed visual review.
 
 If a feasible validation step cannot run, record it in the task packet completion notes when a packet exists, or in the final handoff otherwise:
 

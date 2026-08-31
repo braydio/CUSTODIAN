@@ -39,6 +39,8 @@ var _last_seed := 0
 var _last_frontier_cell_count := 0
 var _last_painted_cell_count := 0
 var _last_suppressed_pocket_count := 0
+var _last_wall_lip_frontier_count := 0
+var _last_wall_excluded_cell_count := 0
 var _last_role_counts := _empty_role_counts()
 var _last_paint_plan: Dictionary = {}
 
@@ -46,13 +48,16 @@ var _last_paint_plan: Dictionary = {}
 func configure_from_surface_cells(
 	floor_cells: Dictionary,
 	chasm_cells: Dictionary,
-	seed: int
+	seed: int,
+	wall_cells: Dictionary = {}
 ) -> void:
 	clear()
 	_last_seed = seed
 	_last_frontier_cell_count = 0
 	_last_painted_cell_count = 0
 	_last_suppressed_pocket_count = 0
+	_last_wall_lip_frontier_count = 0
+	_last_wall_excluded_cell_count = 0
 	_last_role_counts = _empty_role_counts()
 	_last_paint_plan.clear()
 
@@ -94,30 +99,57 @@ func configure_from_surface_cells(
 	frontier_cells.sort()
 	_last_frontier_cell_count = frontier_cells.size()
 
-	# The lip is exactly the floor-to-chasm frontier. Subsequent cells are a
-	# straight extrusion along that frontier's stable local outward normal.
+	# A generated wall may validly occupy the first semantic chasm cell. In that
+	# case the wall owns the visible lip and the fascia begins at the first clear
+	# chasm cell beyond the contiguous wall run.
 	for frontier_cell: Vector2i in frontier_cells:
 		var outward_direction := _resolve_outward_direction(
 			frontier_cell,
 			frontier_directions[frontier_cell] as Array,
 			seed
 		)
+		var visible_start := frontier_cell
+		var wall_lip_depth := 0
+		while eligible_chasm_cells.has(visible_start) and wall_cells.has(visible_start):
+			wall_lip_depth += 1
+			_last_wall_excluded_cell_count += 1
+			visible_start += outward_direction
+		if wall_lip_depth > 0:
+			_last_wall_lip_frontier_count += 1
+		if not eligible_chasm_cells.has(visible_start):
+			continue
+		# Do not carry one ray through a second, independently exposed frontier.
+		if wall_lip_depth > 0 and frontier_directions.has(visible_start):
+			continue
 		var depth_limit := _depth_limit_for_frontier(frontier_cell, seed)
-		_last_paint_plan[frontier_cell] = {
+		var candidate := {
 			"distance": 1,
 			"depth_limit": depth_limit,
 			"frontier_cell": frontier_cell,
+			"visible_start_cell": visible_start,
 			"outward_direction": outward_direction,
+			"wall_lip_depth": wall_lip_depth,
+			"wall_backed": wall_lip_depth > 0,
 		}
+		var existing := _last_paint_plan.get(visible_start, {}) as Dictionary
+		if existing.is_empty() or (bool(existing.get("wall_backed", false)) and wall_lip_depth == 0):
+			_last_paint_plan[visible_start] = candidate
 
-	for frontier_cell: Vector2i in frontier_cells:
-		var frontier_plan := _last_paint_plan[frontier_cell] as Dictionary
+	var visible_frontiers: Array[Vector2i] = []
+	for cell_variant: Variant in _last_paint_plan.keys():
+		visible_frontiers.append(cell_variant as Vector2i)
+	visible_frontiers.sort()
+	for visible_start: Vector2i in visible_frontiers:
+		var frontier_plan := _last_paint_plan[visible_start] as Dictionary
+		var frontier_cell := frontier_plan["frontier_cell"] as Vector2i
 		var outward_direction := frontier_plan["outward_direction"] as Vector2i
 		var depth_limit := int(frontier_plan["depth_limit"])
-		var terminal_cell := frontier_cell
+		var terminal_cell := visible_start
 		for distance in range(2, depth_limit + 1):
-			var cell := frontier_cell + outward_direction * (distance - 1)
+			var cell := visible_start + outward_direction * (distance - 1)
 			if not eligible_chasm_cells.has(cell):
+				break
+			if wall_cells.has(cell):
 				break
 			if frontier_directions.has(cell):
 				break
@@ -128,10 +160,13 @@ func configure_from_surface_cells(
 				"distance": distance,
 				"depth_limit": depth_limit,
 				"frontier_cell": frontier_cell,
+				"visible_start_cell": visible_start,
 				"outward_direction": outward_direction,
+				"wall_lip_depth": int(frontier_plan["wall_lip_depth"]),
+				"wall_backed": bool(frontier_plan["wall_backed"]),
 			}
 			terminal_cell = cell
-		if terminal_cell != frontier_cell:
+		if terminal_cell != visible_start:
 			var terminal_plan := _last_paint_plan[terminal_cell] as Dictionary
 			if terminal_plan["frontier_cell"] == frontier_cell:
 				terminal_plan["depth_limit"] = int(terminal_plan["distance"])
@@ -143,7 +178,8 @@ func configure_from_surface_cells(
 			cell,
 			int(paint_data["distance"]),
 			int(paint_data["depth_limit"]),
-			seed
+			seed,
+			bool(paint_data["wall_backed"])
 		)
 		paint_data["role"] = role
 		var source_id := int(FASCIA_SOURCE_IDS[role])
@@ -164,6 +200,8 @@ func get_debug_state() -> Dictionary:
 			if _last_frontier_cell_count > 0 else 0.0
 		),
 		"suppressed_pocket_count": _last_suppressed_pocket_count,
+		"wall_lip_frontier_count": _last_wall_lip_frontier_count,
+		"wall_excluded_cell_count": _last_wall_excluded_cell_count,
 		"source_ids": FASCIA_SOURCE_IDS.duplicate(true),
 		"top_count": int(_last_role_counts["top"]),
 		"body_01_count": int(_last_role_counts["body_01"]),
@@ -185,8 +223,14 @@ func get_debug_paint_plan() -> Dictionary:
 	return _last_paint_plan.duplicate(true)
 
 
-func _role_for_cell(cell: Vector2i, distance: int, depth_limit: int, seed: int) -> String:
-	if distance == 1:
+func _role_for_cell(
+		cell: Vector2i,
+		distance: int,
+		depth_limit: int,
+		seed: int,
+		wall_backed: bool
+) -> String:
+	if distance == 1 and not wall_backed:
 		return "top"
 	if distance >= depth_limit:
 		return (
