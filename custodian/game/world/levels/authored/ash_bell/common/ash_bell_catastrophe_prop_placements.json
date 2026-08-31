@@ -1,0 +1,2280 @@
+{
+  "schema": "custodian.authored_catastrophe_prop_placements.v1",
+  "family_id": "meridian_civic_ruins_native",
+  "level_id": "lower_quarter",
+  "cell_world_px": 32,
+  "map_origin": [
+    -2048,
+    -1536
+  ],
+  "placement_count": 102,
+  "zone_counts": {
+    "arrival": 12,
+    "direct_collapse": 22,
+    "evacuation_arcade": 18,
+    "lower_market": 22,
+    "civic_basin": 8,
+    "wrong_street": 4,
+    "answers_court": 6,
+    "station_approach": 10
+  },
+  "placement_rule": "Exact authored placement. Do not randomize, substitute, move, omit, or add without reporting the change.",
+  "collision_rule": "All entries visual-only for first pass. Existing authored topology/collision/navigation remain authority.",
+  "narrative_density": {
+    "arrival": "restrained; surviving civic baseline remains legible",
+    "direct_collapse": "maximum catastrophe concentration; physical route failure",
+    "evacuation_arcade": "failed evacuation plus infrastructure repair scars",
+    "lower_market": "abandonment and concentrated wreckage, not uniform rubble",
+    "civic_basin": "mostly intact public infrastructure with selective failure",
+    "wrong_street": "minimal generic damage so continuity mismatch remains primary",
+    "answers_court": "controlled technical ruin; preserve formal geometry and later Penitent layer",
+    "station_approach": "increasing emergency/structural failure approaching Station IX"
+  },
+  "do_not_reenable_old_roadwork_cluster": true,
+  "placements": [
+    {
+      "placement_id": "ruin_arrival_01",
+      "level_id": "lower_quarter",
+      "zone": "arrival",
+      "source_id": 3,
+      "semantic_name": "bent_dead_streetlamp",
+      "semantic_family": "ruined_lighting",
+      "cell": [
+        53,
+        88
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_arrival_02",
+      "level_id": "lower_quarter",
+      "zone": "arrival",
+      "source_id": 35,
+      "semantic_name": "collapsed_bench",
+      "semantic_family": "ruined_seating",
+      "cell": [
+        56,
+        86
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_arrival_03",
+      "level_id": "lower_quarter",
+      "zone": "arrival",
+      "source_id": 43,
+      "semantic_name": "overgrown_small_planter",
+      "semantic_family": "ruined_planters",
+      "cell": [
+        59,
+        84
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_arrival_04",
+      "level_id": "lower_quarter",
+      "zone": "arrival",
+      "source_id": 47,
+      "semantic_name": "collapsed_crowd_barrier",
+      "semantic_family": "broken_edge_control",
+      "cell": [
+        72,
+        84
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_arrival_05",
+      "level_id": "lower_quarter",
+      "zone": "arrival",
+      "source_id": 71,
+      "semantic_name": "shattered_utility_cabinet",
+      "semantic_family": "damaged_utility",
+      "cell": [
+        74,
+        87
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_arrival_06",
+      "level_id": "lower_quarter",
+      "zone": "arrival",
+      "source_id": 91,
+      "semantic_name": "floor_grille",
+      "semantic_family": "floor_service_hardware",
+      "cell": [
+        55,
+        91
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_arrival_07",
+      "level_id": "lower_quarter",
+      "zone": "arrival",
+      "source_id": 146,
+      "semantic_name": "micro_stone_debris",
+      "semantic_family": "structural_debris",
+      "cell": [
+        68,
+        91
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_arrival_08",
+      "level_id": "lower_quarter",
+      "zone": "arrival",
+      "source_id": 128,
+      "semantic_name": "blue_ruined_dumpster",
+      "semantic_family": "abandoned_waste",
+      "cell": [
+        73,
+        90
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_arrival_09",
+      "level_id": "lower_quarter",
+      "zone": "arrival",
+      "source_id": 14,
+      "semantic_name": "snapped_service_post",
+      "semantic_family": "ruined_lighting",
+      "cell": [
+        61,
+        90
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_arrival_10",
+      "level_id": "lower_quarter",
+      "zone": "arrival",
+      "source_id": 105,
+      "semantic_name": "open_floor_hatch",
+      "semantic_family": "floor_service_hardware",
+      "cell": [
+        70,
+        88
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_arrival_11",
+      "level_id": "lower_quarter",
+      "zone": "arrival",
+      "source_id": 33,
+      "semantic_name": "worn_wood_bench",
+      "semantic_family": "ruined_seating",
+      "cell": [
+        53,
+        84
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_arrival_12",
+      "level_id": "lower_quarter",
+      "zone": "arrival",
+      "source_id": 32,
+      "semantic_name": "masonry_rubble_small",
+      "semantic_family": "structural_debris",
+      "cell": [
+        75,
+        92
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_direct_collapse_01",
+      "level_id": "lower_quarter",
+      "zone": "direct_collapse",
+      "source_id": 137,
+      "semantic_name": "beam_rubble_pile",
+      "semantic_family": "structural_debris",
+      "cell": [
+        58,
+        72
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_direct_collapse_02",
+      "level_id": "lower_quarter",
+      "zone": "direct_collapse",
+      "source_id": 145,
+      "semantic_name": "masonry_chunk_large",
+      "semantic_family": "structural_debris",
+      "cell": [
+        60,
+        72
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_direct_collapse_03",
+      "level_id": "lower_quarter",
+      "zone": "direct_collapse",
+      "source_id": 147,
+      "semantic_name": "broken_marked_road_slab",
+      "semantic_family": "structural_debris",
+      "cell": [
+        62,
+        72
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_direct_collapse_04",
+      "level_id": "lower_quarter",
+      "zone": "direct_collapse",
+      "source_id": 150,
+      "semantic_name": "large_masonry_rubble",
+      "semantic_family": "structural_debris",
+      "cell": [
+        65,
+        72
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_direct_collapse_05",
+      "level_id": "lower_quarter",
+      "zone": "direct_collapse",
+      "source_id": 151,
+      "semantic_name": "collapsed_route_slab",
+      "semantic_family": "structural_debris",
+      "cell": [
+        68,
+        72
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_direct_collapse_06",
+      "level_id": "lower_quarter",
+      "zone": "direct_collapse",
+      "source_id": 152,
+      "semantic_name": "pipe_rubble_cluster",
+      "semantic_family": "structural_debris",
+      "cell": [
+        59,
+        74
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_direct_collapse_07",
+      "level_id": "lower_quarter",
+      "zone": "direct_collapse",
+      "source_id": 153,
+      "semantic_name": "heavy_conduit_wreckage",
+      "semantic_family": "structural_debris",
+      "cell": [
+        61,
+        74
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_direct_collapse_08",
+      "level_id": "lower_quarter",
+      "zone": "direct_collapse",
+      "source_id": 143,
+      "semantic_name": "broken_wall_section",
+      "semantic_family": "structural_debris",
+      "cell": [
+        63,
+        74
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_direct_collapse_09",
+      "level_id": "lower_quarter",
+      "zone": "direct_collapse",
+      "source_id": 144,
+      "semantic_name": "breached_wall_corner",
+      "semantic_family": "structural_debris",
+      "cell": [
+        66,
+        74
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_direct_collapse_10",
+      "level_id": "lower_quarter",
+      "zone": "direct_collapse",
+      "source_id": 58,
+      "semantic_name": "barrier_wreckage",
+      "semantic_family": "failed_emergency_control",
+      "cell": [
+        69,
+        74
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_direct_collapse_11",
+      "level_id": "lower_quarter",
+      "zone": "direct_collapse",
+      "source_id": 57,
+      "semantic_name": "heavy_hazard_barrier",
+      "semantic_family": "failed_emergency_control",
+      "cell": [
+        58,
+        76
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_direct_collapse_12",
+      "level_id": "lower_quarter",
+      "zone": "direct_collapse",
+      "source_id": 59,
+      "semantic_name": "field_barricade",
+      "semantic_family": "failed_emergency_control",
+      "cell": [
+        60,
+        76
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_direct_collapse_13",
+      "level_id": "lower_quarter",
+      "zone": "direct_collapse",
+      "source_id": 60,
+      "semantic_name": "amber_ground_beacon",
+      "semantic_family": "warning_and_bollards",
+      "cell": [
+        63,
+        76
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_direct_collapse_14",
+      "level_id": "lower_quarter",
+      "zone": "direct_collapse",
+      "source_id": 64,
+      "semantic_name": "traffic_cone",
+      "semantic_family": "failed_emergency_control",
+      "cell": [
+        67,
+        76
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_direct_collapse_15",
+      "level_id": "lower_quarter",
+      "zone": "direct_collapse",
+      "source_id": 76,
+      "semantic_name": "ruptured_wiring_cabinet",
+      "semantic_family": "damaged_utility",
+      "cell": [
+        69,
+        76
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_direct_collapse_16",
+      "level_id": "lower_quarter",
+      "zone": "direct_collapse",
+      "source_id": 99,
+      "semantic_name": "horizontal_pipe_bundle",
+      "semantic_family": "salvage_and_service_debris",
+      "cell": [
+        59,
+        78
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_direct_collapse_17",
+      "level_id": "lower_quarter",
+      "zone": "direct_collapse",
+      "source_id": 100,
+      "semantic_name": "horizontal_pipe_stack",
+      "semantic_family": "salvage_and_service_debris",
+      "cell": [
+        62,
+        78
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_direct_collapse_18",
+      "level_id": "lower_quarter",
+      "zone": "direct_collapse",
+      "source_id": 154,
+      "semantic_name": "small_beam_bundle",
+      "semantic_family": "salvage_and_service_debris",
+      "cell": [
+        65,
+        78
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_direct_collapse_19",
+      "level_id": "lower_quarter",
+      "zone": "direct_collapse",
+      "source_id": 155,
+      "semantic_name": "micro_metal_debris",
+      "semantic_family": "structural_debris",
+      "cell": [
+        68,
+        78
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_direct_collapse_20",
+      "level_id": "lower_quarter",
+      "zone": "direct_collapse",
+      "source_id": 156,
+      "semantic_name": "small_pipe_wreckage",
+      "semantic_family": "structural_debris",
+      "cell": [
+        58,
+        80
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_direct_collapse_21",
+      "level_id": "lower_quarter",
+      "zone": "direct_collapse",
+      "source_id": 157,
+      "semantic_name": "small_rubble_cluster",
+      "semantic_family": "structural_debris",
+      "cell": [
+        69,
+        80
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_direct_collapse_22",
+      "level_id": "lower_quarter",
+      "zone": "direct_collapse",
+      "source_id": 161,
+      "semantic_name": "twisted_metal_debris",
+      "semantic_family": "structural_debris",
+      "cell": [
+        64,
+        81
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_evacuation_arcade_01",
+      "level_id": "lower_quarter",
+      "zone": "evacuation_arcade",
+      "source_id": 5,
+      "semantic_name": "curved_broken_lamp",
+      "semantic_family": "ruined_lighting",
+      "cell": [
+        34,
+        76
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_evacuation_arcade_02",
+      "level_id": "lower_quarter",
+      "zone": "evacuation_arcade",
+      "source_id": 14,
+      "semantic_name": "snapped_service_post",
+      "semantic_family": "ruined_lighting",
+      "cell": [
+        43,
+        76
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_evacuation_arcade_03",
+      "level_id": "lower_quarter",
+      "zone": "evacuation_arcade",
+      "source_id": 45,
+      "semantic_name": "collapsed_bench_b",
+      "semantic_family": "ruined_seating",
+      "cell": [
+        33,
+        72
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_evacuation_arcade_04",
+      "level_id": "lower_quarter",
+      "zone": "evacuation_arcade",
+      "source_id": 49,
+      "semantic_name": "snapped_emergency_chain_barrier",
+      "semantic_family": "broken_edge_control",
+      "cell": [
+        44,
+        70
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_evacuation_arcade_05",
+      "level_id": "lower_quarter",
+      "zone": "evacuation_arcade",
+      "source_id": 66,
+      "semantic_name": "tripod_floodlight",
+      "semantic_family": "structural_debris",
+      "cell": [
+        34,
+        68
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_evacuation_arcade_06",
+      "level_id": "lower_quarter",
+      "zone": "evacuation_arcade",
+      "source_id": 68,
+      "semantic_name": "dual_worklight_tripod",
+      "semantic_family": "warning_and_bollards",
+      "cell": [
+        42,
+        66
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_evacuation_arcade_07",
+      "level_id": "lower_quarter",
+      "zone": "evacuation_arcade",
+      "source_id": 73,
+      "semantic_name": "open_damaged_cabinet",
+      "semantic_family": "damaged_utility",
+      "cell": [
+        33,
+        63
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_evacuation_arcade_08",
+      "level_id": "lower_quarter",
+      "zone": "evacuation_arcade",
+      "source_id": 74,
+      "semantic_name": "exposed_wiring_cabinet",
+      "semantic_family": "damaged_utility",
+      "cell": [
+        44,
+        62
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_evacuation_arcade_09",
+      "level_id": "lower_quarter",
+      "zone": "evacuation_arcade",
+      "source_id": 76,
+      "semantic_name": "ruptured_wiring_cabinet",
+      "semantic_family": "damaged_utility",
+      "cell": [
+        34,
+        59
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_evacuation_arcade_10",
+      "level_id": "lower_quarter",
+      "zone": "evacuation_arcade",
+      "source_id": 77,
+      "semantic_name": "open_service_cabinet",
+      "semantic_family": "damaged_utility",
+      "cell": [
+        43,
+        57
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_evacuation_arcade_11",
+      "level_id": "lower_quarter",
+      "zone": "evacuation_arcade",
+      "source_id": 80,
+      "semantic_name": "narrow_service_terminal",
+      "semantic_family": "damaged_utility",
+      "cell": [
+        33,
+        54
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_evacuation_arcade_12",
+      "level_id": "lower_quarter",
+      "zone": "evacuation_arcade",
+      "source_id": 82,
+      "semantic_name": "low_open_service_kiosk",
+      "semantic_family": "damaged_utility",
+      "cell": [
+        44,
+        52
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_evacuation_arcade_13",
+      "level_id": "lower_quarter",
+      "zone": "evacuation_arcade",
+      "source_id": 84,
+      "semantic_name": "strapped_salvage_case",
+      "semantic_family": "salvage_and_service_debris",
+      "cell": [
+        35,
+        50
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_evacuation_arcade_14",
+      "level_id": "lower_quarter",
+      "zone": "evacuation_arcade",
+      "source_id": 87,
+      "semantic_name": "stacked_pipe_bundle",
+      "semantic_family": "salvage_and_service_debris",
+      "cell": [
+        42,
+        50
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_evacuation_arcade_15",
+      "level_id": "lower_quarter",
+      "zone": "evacuation_arcade",
+      "source_id": 94,
+      "semantic_name": "open_access_hatch",
+      "semantic_family": "floor_service_hardware",
+      "cell": [
+        36,
+        74
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_evacuation_arcade_16",
+      "level_id": "lower_quarter",
+      "zone": "evacuation_arcade",
+      "source_id": 99,
+      "semantic_name": "horizontal_pipe_bundle",
+      "semantic_family": "salvage_and_service_debris",
+      "cell": [
+        41,
+        69
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_evacuation_arcade_17",
+      "level_id": "lower_quarter",
+      "zone": "evacuation_arcade",
+      "source_id": 145,
+      "semantic_name": "masonry_chunk_large",
+      "semantic_family": "structural_debris",
+      "cell": [
+        36,
+        61
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_evacuation_arcade_18",
+      "level_id": "lower_quarter",
+      "zone": "evacuation_arcade",
+      "source_id": 148,
+      "semantic_name": "small_masonry_rubble",
+      "semantic_family": "structural_debris",
+      "cell": [
+        41,
+        55
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_lower_market_01",
+      "level_id": "lower_quarter",
+      "zone": "lower_market",
+      "source_id": 33,
+      "semantic_name": "worn_wood_bench",
+      "semantic_family": "ruined_seating",
+      "cell": [
+        18,
+        36
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_lower_market_02",
+      "level_id": "lower_quarter",
+      "zone": "lower_market",
+      "source_id": 34,
+      "semantic_name": "worn_metal_bench",
+      "semantic_family": "ruined_seating",
+      "cell": [
+        22,
+        36
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_lower_market_03",
+      "level_id": "lower_quarter",
+      "zone": "lower_market",
+      "source_id": 35,
+      "semantic_name": "collapsed_bench",
+      "semantic_family": "ruined_seating",
+      "cell": [
+        27,
+        36
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_lower_market_04",
+      "level_id": "lower_quarter",
+      "zone": "lower_market",
+      "source_id": 43,
+      "semantic_name": "overgrown_small_planter",
+      "semantic_family": "ruined_planters",
+      "cell": [
+        33,
+        36
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_lower_market_05",
+      "level_id": "lower_quarter",
+      "zone": "lower_market",
+      "source_id": 110,
+      "semantic_name": "overgrown_square_planter",
+      "semantic_family": "ruined_planters",
+      "cell": [
+        40,
+        36
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_lower_market_06",
+      "level_id": "lower_quarter",
+      "zone": "lower_market",
+      "source_id": 111,
+      "semantic_name": "dead_shrub_planter",
+      "semantic_family": "ruined_planters",
+      "cell": [
+        48,
+        36
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_lower_market_07",
+      "level_id": "lower_quarter",
+      "zone": "lower_market",
+      "source_id": 112,
+      "semantic_name": "overgrown_long_planter_b",
+      "semantic_family": "ruined_planters",
+      "cell": [
+        57,
+        36
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_lower_market_08",
+      "level_id": "lower_quarter",
+      "zone": "lower_market",
+      "source_id": 113,
+      "semantic_name": "broken_overgrown_planter",
+      "semantic_family": "ruined_planters",
+      "cell": [
+        19,
+        42
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_lower_market_09",
+      "level_id": "lower_quarter",
+      "zone": "lower_market",
+      "source_id": 127,
+      "semantic_name": "green_ruined_dumpster",
+      "semantic_family": "abandoned_waste",
+      "cell": [
+        24,
+        42
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_lower_market_10",
+      "level_id": "lower_quarter",
+      "zone": "lower_market",
+      "source_id": 128,
+      "semantic_name": "blue_ruined_dumpster",
+      "semantic_family": "abandoned_waste",
+      "cell": [
+        30,
+        42
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_lower_market_11",
+      "level_id": "lower_quarter",
+      "zone": "lower_market",
+      "source_id": 129,
+      "semantic_name": "amber_salvage_crate",
+      "semantic_family": "salvage_and_service_debris",
+      "cell": [
+        37,
+        42
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_lower_market_12",
+      "level_id": "lower_quarter",
+      "zone": "lower_market",
+      "source_id": 130,
+      "semantic_name": "blue_salvage_crate",
+      "semantic_family": "salvage_and_service_debris",
+      "cell": [
+        45,
+        42
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_lower_market_13",
+      "level_id": "lower_quarter",
+      "zone": "lower_market",
+      "source_id": 131,
+      "semantic_name": "yellow_salvage_crate",
+      "semantic_family": "salvage_and_service_debris",
+      "cell": [
+        53,
+        42
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_lower_market_14",
+      "level_id": "lower_quarter",
+      "zone": "lower_market",
+      "source_id": 133,
+      "semantic_name": "metal_salvage_case",
+      "semantic_family": "salvage_and_service_debris",
+      "cell": [
+        59,
+        42
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_lower_market_15",
+      "level_id": "lower_quarter",
+      "zone": "lower_market",
+      "source_id": 134,
+      "semantic_name": "yellow_civic_barrel",
+      "semantic_family": "salvage_and_service_debris",
+      "cell": [
+        18,
+        49
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_lower_market_16",
+      "level_id": "lower_quarter",
+      "zone": "lower_market",
+      "source_id": 140,
+      "semantic_name": "stacked_salvage_pipes",
+      "semantic_family": "salvage_and_service_debris",
+      "cell": [
+        24,
+        49
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_lower_market_17",
+      "level_id": "lower_quarter",
+      "zone": "lower_market",
+      "source_id": 105,
+      "semantic_name": "open_floor_hatch",
+      "semantic_family": "floor_service_hardware",
+      "cell": [
+        31,
+        49
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_lower_market_18",
+      "level_id": "lower_quarter",
+      "zone": "lower_market",
+      "source_id": 72,
+      "semantic_name": "scarred_utility_cabinet",
+      "semantic_family": "damaged_utility",
+      "cell": [
+        39,
+        49
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_lower_market_19",
+      "level_id": "lower_quarter",
+      "zone": "lower_market",
+      "source_id": 14,
+      "semantic_name": "snapped_service_post",
+      "semantic_family": "ruined_lighting",
+      "cell": [
+        47,
+        49
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_lower_market_20",
+      "level_id": "lower_quarter",
+      "zone": "lower_market",
+      "source_id": 47,
+      "semantic_name": "collapsed_crowd_barrier",
+      "semantic_family": "broken_edge_control",
+      "cell": [
+        55,
+        49
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_lower_market_21",
+      "level_id": "lower_quarter",
+      "zone": "lower_market",
+      "source_id": 150,
+      "semantic_name": "large_masonry_rubble",
+      "semantic_family": "structural_debris",
+      "cell": [
+        58,
+        52
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_lower_market_22",
+      "level_id": "lower_quarter",
+      "zone": "lower_market",
+      "source_id": 154,
+      "semantic_name": "small_beam_bundle",
+      "semantic_family": "salvage_and_service_debris",
+      "cell": [
+        28,
+        52
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_civic_basin_01",
+      "level_id": "lower_quarter",
+      "zone": "civic_basin",
+      "source_id": 116,
+      "semantic_name": "overgrown_long_planter_c",
+      "semantic_family": "ruined_planters",
+      "cell": [
+        58,
+        38
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_civic_basin_02",
+      "level_id": "lower_quarter",
+      "zone": "civic_basin",
+      "source_id": 119,
+      "semantic_name": "low_overgrown_planter",
+      "semantic_family": "ruined_planters",
+      "cell": [
+        63,
+        38
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_civic_basin_03",
+      "level_id": "lower_quarter",
+      "zone": "civic_basin",
+      "source_id": 114,
+      "semantic_name": "broken_civic_fountain",
+      "semantic_family": "broken_civic_monuments",
+      "cell": [
+        71,
+        38
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_civic_basin_04",
+      "level_id": "lower_quarter",
+      "zone": "civic_basin",
+      "source_id": 120,
+      "semantic_name": "broken_monument_basin",
+      "semantic_family": "broken_civic_monuments",
+      "cell": [
+        77,
+        38
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_civic_basin_05",
+      "level_id": "lower_quarter",
+      "zone": "civic_basin",
+      "source_id": 14,
+      "semantic_name": "snapped_service_post",
+      "semantic_family": "ruined_lighting",
+      "cell": [
+        59,
+        46
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_civic_basin_06",
+      "level_id": "lower_quarter",
+      "zone": "civic_basin",
+      "source_id": 75,
+      "semantic_name": "amber_patch_cabinet",
+      "semantic_family": "damaged_utility",
+      "cell": [
+        65,
+        47
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_civic_basin_07",
+      "level_id": "lower_quarter",
+      "zone": "civic_basin",
+      "source_id": 94,
+      "semantic_name": "open_access_hatch",
+      "semantic_family": "floor_service_hardware",
+      "cell": [
+        73,
+        47
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_civic_basin_08",
+      "level_id": "lower_quarter",
+      "zone": "civic_basin",
+      "source_id": 146,
+      "semantic_name": "micro_stone_debris",
+      "semantic_family": "structural_debris",
+      "cell": [
+        78,
+        46
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_wrong_street_01",
+      "level_id": "lower_quarter",
+      "zone": "wrong_street",
+      "source_id": 3,
+      "semantic_name": "bent_dead_streetlamp",
+      "semantic_family": "ruined_lighting",
+      "cell": [
+        76,
+        34
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_wrong_street_02",
+      "level_id": "lower_quarter",
+      "zone": "wrong_street",
+      "source_id": 78,
+      "semantic_name": "patched_field_cabinet",
+      "semantic_family": "damaged_utility",
+      "cell": [
+        82,
+        46
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_wrong_street_03",
+      "level_id": "lower_quarter",
+      "zone": "wrong_street",
+      "source_id": 105,
+      "semantic_name": "open_floor_hatch",
+      "semantic_family": "floor_service_hardware",
+      "cell": [
+        88,
+        50
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_wrong_street_04",
+      "level_id": "lower_quarter",
+      "zone": "wrong_street",
+      "source_id": 156,
+      "semantic_name": "small_pipe_wreckage",
+      "semantic_family": "structural_debris",
+      "cell": [
+        104,
+        34
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_answers_court_01",
+      "level_id": "lower_quarter",
+      "zone": "answers_court",
+      "source_id": 5,
+      "semantic_name": "curved_broken_lamp",
+      "semantic_family": "ruined_lighting",
+      "cell": [
+        58,
+        12
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_answers_court_02",
+      "level_id": "lower_quarter",
+      "zone": "answers_court",
+      "source_id": 72,
+      "semantic_name": "scarred_utility_cabinet",
+      "semantic_family": "damaged_utility",
+      "cell": [
+        66,
+        10
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_answers_court_03",
+      "level_id": "lower_quarter",
+      "zone": "answers_court",
+      "source_id": 49,
+      "semantic_name": "snapped_emergency_chain_barrier",
+      "semantic_family": "broken_edge_control",
+      "cell": [
+        78,
+        10
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_answers_court_04",
+      "level_id": "lower_quarter",
+      "zone": "answers_court",
+      "source_id": 120,
+      "semantic_name": "broken_monument_basin",
+      "semantic_family": "broken_civic_monuments",
+      "cell": [
+        85,
+        13
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_answers_court_05",
+      "level_id": "lower_quarter",
+      "zone": "answers_court",
+      "source_id": 148,
+      "semantic_name": "small_masonry_rubble",
+      "semantic_family": "structural_debris",
+      "cell": [
+        61,
+        27
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_answers_court_06",
+      "level_id": "lower_quarter",
+      "zone": "answers_court",
+      "source_id": 67,
+      "semantic_name": "small_warning_bollard",
+      "semantic_family": "warning_and_bollards",
+      "cell": [
+        83,
+        27
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_station_approach_01",
+      "level_id": "lower_quarter",
+      "zone": "station_approach",
+      "source_id": 3,
+      "semantic_name": "bent_dead_streetlamp",
+      "semantic_family": "ruined_lighting",
+      "cell": [
+        75,
+        60
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_station_approach_02",
+      "level_id": "lower_quarter",
+      "zone": "station_approach",
+      "source_id": 14,
+      "semantic_name": "snapped_service_post",
+      "semantic_family": "ruined_lighting",
+      "cell": [
+        81,
+        60
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_station_approach_03",
+      "level_id": "lower_quarter",
+      "zone": "station_approach",
+      "source_id": 70,
+      "semantic_name": "closed_utility_cabinet",
+      "semantic_family": "damaged_utility",
+      "cell": [
+        88,
+        60
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_station_approach_04",
+      "level_id": "lower_quarter",
+      "zone": "station_approach",
+      "source_id": 74,
+      "semantic_name": "exposed_wiring_cabinet",
+      "semantic_family": "damaged_utility",
+      "cell": [
+        96,
+        60
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_station_approach_05",
+      "level_id": "lower_quarter",
+      "zone": "station_approach",
+      "source_id": 69,
+      "semantic_name": "tripod_service_marker",
+      "semantic_family": "warning_and_bollards",
+      "cell": [
+        76,
+        66
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_station_approach_06",
+      "level_id": "lower_quarter",
+      "zone": "station_approach",
+      "source_id": 59,
+      "semantic_name": "field_barricade",
+      "semantic_family": "failed_emergency_control",
+      "cell": [
+        84,
+        66
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_station_approach_07",
+      "level_id": "lower_quarter",
+      "zone": "station_approach",
+      "source_id": 145,
+      "semantic_name": "masonry_chunk_large",
+      "semantic_family": "structural_debris",
+      "cell": [
+        92,
+        66
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_station_approach_08",
+      "level_id": "lower_quarter",
+      "zone": "station_approach",
+      "source_id": 147,
+      "semantic_name": "broken_marked_road_slab",
+      "semantic_family": "structural_debris",
+      "cell": [
+        100,
+        64
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_station_approach_09",
+      "level_id": "lower_quarter",
+      "zone": "station_approach",
+      "source_id": 152,
+      "semantic_name": "pipe_rubble_cluster",
+      "semantic_family": "structural_debris",
+      "cell": [
+        101,
+        50
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    },
+    {
+      "placement_id": "ruin_station_approach_10",
+      "level_id": "lower_quarter",
+      "zone": "station_approach",
+      "source_id": 133,
+      "semantic_name": "metal_salvage_case",
+      "semantic_family": "salvage_and_service_debris",
+      "cell": [
+        102,
+        40
+      ],
+      "offset_px": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "collision_enabled": false,
+      "role": "catastrophe_dressing"
+    }
+  ]
+}

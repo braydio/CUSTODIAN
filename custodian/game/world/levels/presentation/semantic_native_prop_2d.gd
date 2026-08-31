@@ -18,6 +18,7 @@ var collision_profile: StringName = &"none"
 var native_size := Vector2i.ZERO
 var uses_y_sort := false
 var metadata: Dictionary = {}
+var warn_on_rejection := true
 
 var _sprite: Sprite2D
 
@@ -30,10 +31,12 @@ func configure(
 	clear()
 	var entry := resolve_variant(manifest_path, family_id, variant_id)
 	if entry.is_empty():
-		push_warning("Unknown native prop variant %s/%s" % [family_id, variant_id])
+		if warn_on_rejection:
+			push_warning("Unknown native prop variant %s/%s" % [family_id, variant_id])
 		return false
 	if production_spawn and bool(entry.get("review_required", false)):
-		push_warning("Native prop %s/%s requires review before production use" % [family_id, variant_id])
+		if warn_on_rejection:
+			push_warning("Native prop %s/%s requires review before production use" % [family_id, variant_id])
 		return false
 
 	runtime_family = family_id
@@ -103,8 +106,11 @@ static func resolve_variant(
 		family_id: StringName,
 		variant_id: StringName
 ) -> Dictionary:
-	var _unused_path := path
-	return RuntimeCatalog.ENTRIES.get("%s/%s" % [family_id, variant_id], {}) as Dictionary
+	if path == DEFAULT_MANIFEST_PATH:
+		return RuntimeCatalog.ENTRIES.get("%s/%s" % [family_id, variant_id], {}) as Dictionary
+	var manifest_index := _get_manifest_index(path)
+	var family_index := manifest_index.get(String(family_id), {}) as Dictionary
+	return family_index.get(String(variant_id), {}) as Dictionary
 
 
 static func can_spawn_production(

@@ -115,6 +115,19 @@ JSON and is the runtime lookup boundary. Lower Quarter's first three authored
 wall masses now use deterministic roof/cap/facade composition; collision and
 navigation remain separate authorities.
 
+## Lower Quarter Catastrophe Dressing (2026-08-31)
+
+Lower Quarter now preserves three explicit environmental-history layers rather
+than one generic prop bucket: 104 surviving Meridian civic props under
+`NativeCivicPropRoot`, 102 authored catastrophe ruins under
+`NativeCatastrophePropRoot`, and later intervention under
+`LaterPenitentAdditions`. The catastrophe runtime is built from 161 native RGBA
+extracts without resizing; its semantic manifest retains exact extractor crop,
+dimension, filename, and contact-anchor evidence. Placement is checked-in JSON,
+native scale, collisionless, and non-random. Review-required compound clusters
+fail closed outside explicit authored placement, while blockout geometry and
+navigation remain sole gameplay authority.
+
 ## Operator Animation Workbench V2 (2026-08-28)
 
 `operator anim list|status|edit|refresh|publish` now provides semantic,

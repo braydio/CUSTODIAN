@@ -297,6 +297,19 @@ navigation remains unchanged. The presenter must not refill
 authored wall rectangles with repeated 32×32 wall sprites or derive collision
 from prop alpha.
 
+Lower Quarter also owns a distinct catastrophe-history presentation layer.
+`NativeCivicPropRoot` remains the surviving pre-catastrophe Meridian substrate;
+`NativeCatastrophePropRoot` mounts exactly 102 authored, native-scale ruins from
+the 161-entry `meridian_civic_ruins_native.semantic.json` manifest; and
+`LaterPenitentAdditions` remains a separate later-intervention layer. The ruins
+manifest retains the extractor's filename, native dimensions, crop bounds, and
+contact anchor, then adds authored history, district, collision-hint, and
+compound-review semantics. It is never a generic random prop pool. Compound
+clusters fail closed for generic selection and may appear only through explicit
+checked-in placement records. Catastrophe props are collisionless presentation:
+their alpha, dimensions, and suggested collision hints never change authored
+walkability, navigation, exits, relays, or route state.
+
 ### Next Agent Slice — Additional Authored Wall Masses
 
 Use the V2 catalog only after deriving exact boundary ports from authored

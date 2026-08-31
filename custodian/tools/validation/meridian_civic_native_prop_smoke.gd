@@ -30,7 +30,7 @@ func _run() -> void:
 		assert(prop.variant_key == contract[1])
 		assert(prop.get_sprite() != null)
 		assert(prop.get_sprite().scale == Vector2.ONE)
-		assert(Vector2i(prop.get_sprite().texture.get_size()) == Vector2i(prop.metadata.crop_size[0], prop.metadata.crop_size[1]))
+		assert(Vector2i(prop.get_sprite().texture.get_size()) == Vector2i(prop.metadata.canvas_size[0], prop.metadata.canvas_size[1]))
 		assert(prop.native_size == Vector2i(prop.metadata.native_size[0], prop.metadata.native_size[1]))
 		assert(prop.get_sprite().get_meta(&"collision_is_authoritative") == false)
 		assert(prop.get_node_or_null("CollisionShape2D") == null)
@@ -48,6 +48,7 @@ func _run() -> void:
 	for variant in [&"utility_rubble_compound", &"compound_salvage_cluster", &"compound_masonry_cluster"]:
 		assert(not NativeProp.can_spawn_production(MANIFEST, &"meridian_civic_debris", variant))
 		var blocked := NativeProp.new() as SemanticNativeProp2D
+		blocked.warn_on_rejection = false
 		root.add_child(blocked)
 		assert(not blocked.configure(&"meridian_civic_debris", variant))
 		assert(blocked.get_sprite() == null)

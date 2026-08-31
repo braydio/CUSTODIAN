@@ -30,7 +30,7 @@ func _run() -> void:
 	assert(not lower.blockout_grid.visible)
 	var civic_presenter := lower.get_node("BackgroundRoot/MeridianCivicArtPresenter") as MeridianCivicArtPresenter
 	assert(civic_presenter != null)
-	var native_props := lower.get_node("PropsRoot/NativePropRoot") as LowerQuarterNativePropLayer2D
+	var native_props := lower.get_node("PropsRoot/NativeCivicPropRoot") as LowerQuarterNativePropLayer2D
 	assert(native_props != null)
 	assert(native_props.get_child_count() == 104)
 	for child: Node in native_props.get_children():

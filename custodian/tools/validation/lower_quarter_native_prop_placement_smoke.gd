@@ -63,7 +63,8 @@ func _run() -> void:
 		var instance := scene.instantiate()
 		root.add_child(instance)
 		await process_frame
-		var layer := instance.get_node("PropsRoot/NativePropRoot") as LowerQuarterNativePropLayer2D
+		var layer_path := "PropsRoot/NativeCivicPropRoot" if level_id == "lower_quarter" else "PropsRoot/NativePropRoot"
+		var layer := instance.get_node(layer_path) as LowerQuarterNativePropLayer2D
 		var snapshot := layer.get_debug_snapshot()
 		_assert(layer.get_errors().is_empty(), "%s layer errors" % level_id)
 		_assert(snapshot.size() == EXPECTED_COUNTS[level_id], "%s instantiated count" % level_id)
