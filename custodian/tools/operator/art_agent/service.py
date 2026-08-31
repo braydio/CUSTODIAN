@@ -471,7 +471,7 @@ class ArtAgentService:
         return record.to_json()
 
     def get_metrics(self, session_path: Path) -> dict[str, Any]:
-        _session,_manifest,root=self._checked_session(session_path); artifacts=self.render(session_path); values=animation_metrics([Path(x) for x in artifacts["frames"]],self.get_landmarks(session_path)); write_json(root/"metrics.json",values); return values
+        _session,_manifest,root=self._checked_session(session_path); artifacts=self.render(session_path); values=animation_metrics([Path(x) for x in artifacts["frames"]],self.get_landmarks(session_path),masks=self.get_masks(session_path)); write_json(root/"metrics.json",values); return values
 
     def plan(self, session_path: Path, recipe: str) -> dict[str, Any]:
         session,manifest,root=self._checked_session(session_path); recipes=model.CUSTODIAN_ROOT/"tools/operator/art_recipes"; projection=json.loads((model.CUSTODIAN_ROOT/"content/data/operator/authoring/operator_direction_projection.json").read_text()); refs=assemble_references(manifest,source_root=model.SOURCE_ROOT); value=build_animation_plan(session.identity,manifest,recipes/f"{recipe}.json",projection,refs).to_json(); write_json(root/"plan.json",value); return value
