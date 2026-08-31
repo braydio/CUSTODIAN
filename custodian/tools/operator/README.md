@@ -69,6 +69,15 @@ operator art qa SESSION
 operator art review SESSION --task 'review east walk'
 ```
 
+Run the real V2 acceptance pilot with `operator art pilot` or machine-readable
+`operator art pilot --json`. The shared runner targets the eight-frame east
+Vigil walk, writes review evidence under
+`reports/operator_art_agent/v2_pilot/<timestamp>/`, temporarily edits only the
+disposable `.ai` Workbench, and requires byte-exact restoration plus unchanged
+production hashes. Add `--keep-artifacts` to retain the temporary session;
+Aseprite is required unless a caller explicitly supplies
+`--allow-skip-aseprite`.
+
 Normal CLI use cannot override Art Agent or Workbench roots. Tests inject
 temporary roots through `ArtAgentService` directly.
 

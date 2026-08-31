@@ -12,6 +12,7 @@ import animation_workbench as workbench
 import animation_workbench_model as model
 
 from .service import ART_ROOT, ArtAgentService
+from .pilot import print_result as print_pilot_result, run_v2_pilot
 
 
 def _session_command(subparsers: argparse._SubParsersAction, name: str) -> argparse.ArgumentParser:
@@ -24,6 +25,10 @@ def _session_command(subparsers: argparse._SubParsersAction, name: str) -> argpa
 
 def configure_art_parser(parser: argparse.ArgumentParser) -> None:
     commands = parser.add_subparsers(dest="art_cmd", required=True)
+    pilot = commands.add_parser("pilot", help="run the real V2 semantic-art acceptance pilot")
+    pilot.add_argument("--json", action="store_true")
+    pilot.add_argument("--keep-artifacts", action="store_true")
+    pilot.add_argument("--allow-skip-aseprite", action="store_true")
     start = commands.add_parser("start")
     start.add_argument("profile")
     start.add_argument("action")
@@ -139,8 +144,15 @@ def _service(args: argparse.Namespace) -> ArtAgentService:
 
 def dispatch_art_command(args: argparse.Namespace) -> int:
     try:
-        service = _service(args)
         command = args.art_cmd
+        if command == "pilot":
+            result = run_v2_pilot(
+                keep_artifacts=args.keep_artifacts,
+                allow_skip_aseprite=args.allow_skip_aseprite,
+            )
+            print_pilot_result(result, json_output=args.json)
+            return 0 if result.get("engineering") in {"PASS", "SKIP"} else 1
+        service = _service(args)
         if command == "start":
             session = service.start_session(
                 profile=args.profile,

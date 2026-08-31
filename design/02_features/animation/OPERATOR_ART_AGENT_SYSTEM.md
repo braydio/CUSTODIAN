@@ -11,6 +11,15 @@ V2 adds confined capabilities, semantic landmarks and masks, non-destructive
 draft layers, metrics/QA, review packets, richer renders, and a thin local MCP
 adapter. Publication and pose synthesis remain explicit later graduations.
 
+The canonical V2 acceptance runner is `operator art pilot` (also
+`python3 custodian/tools/validation/operator_art_agent_v2_pilot.py`). It opens
+the real eight-frame east Vigil walk, persists fixture-provenance landmarks and
+near/far leg masks through public services, shifts the far leg in a draft,
+temporarily bakes and performs bounded pixel cleanup, emits a review packet,
+then restores the Workbench byte-exactly. Protected Operator source, runtime,
+generated data, actor resources, and sockets are hashed before and after. The
+runner never publishes; engineering PASS and art-capability status are separate.
+
 ### Implemented V2 capability
 
 V2 hardens the `.ai` boundary with resolved path containment, per-session

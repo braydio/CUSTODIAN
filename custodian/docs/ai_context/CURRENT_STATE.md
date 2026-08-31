@@ -148,6 +148,12 @@ draft-first semantic part edits, metrics, provisional QA, deterministic plans,
 critiques, review packets, and a local stdio MCP adapter are implemented.
 Workbench remains the sole publication gate; pose synthesis and autonomous
 production remain later phases.
+The canonical real-asset acceptance is now `operator art pilot`. It exercises
+the eight-frame `melee_1h/locomotion/walk_01/e` Vigil animation with persisted
+landmarks, distinguishable near/far leg masks, a non-destructive far-leg draft,
+temporary bake, bounded pixel cleanup, metrics/QA, and review artifacts. It
+unwinds every mutation to byte-identical Workbench state and verifies protected
+Operator production hashes; it never publishes.
 
 ## Map + AI Coherence V1 (2026-08-20)
 

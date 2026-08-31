@@ -49,6 +49,11 @@ no publish, git, shell, or arbitrary filesystem tool; Workbench remains the
 canonical publication gate. This tool is draft-only. Use `operator anim
 publish` separately only after explicit review.
 
+Use `operator art pilot` for the canonical V2 real-asset engineering verdict.
+It creates the far-leg semantic edit only in disposable Workbench state,
+generates contact-sheet/GIF/QA evidence, restores exact bytes, and verifies that
+Operator production content did not change.
+
 ### Production Coverage Contract
 
 Use first for "what Operator modular animation coverage is missing, suspicious, or ready?":

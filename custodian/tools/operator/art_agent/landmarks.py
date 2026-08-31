@@ -21,7 +21,7 @@ class Landmark:
     y: int
     semantic_side: Literal["near", "far", "center", "none"]
     confidence: float
-    provenance: Literal["agent", "human", "heuristic", "imported"]
+    provenance: Literal["agent", "human", "heuristic", "imported", "pilot_fixture"]
     approved: bool = False
     source_hash: str = ""
     status: Literal["CURRENT", "STALE"] = "CURRENT"

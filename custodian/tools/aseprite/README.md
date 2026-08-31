@@ -22,6 +22,8 @@ handshake. `operator_art_agent_lib.lua` owns shared protocol constants. Clean
 renders hide reference/guide/landmark/review layers. Semantic operations create
 reserved `__ART_DRAFT__*` layers and never grant them Workbench publish
 bindings; bake is explicit and remains confined to an editable binding.
+The V2 pilot drives this same bridge through `ArtAgentService`; it does not use
+a pilot-only Aseprite path or gain publication authority.
 
 ## Humanoid rigid-cutout source
 

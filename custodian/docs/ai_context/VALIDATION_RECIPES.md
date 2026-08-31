@@ -1210,6 +1210,7 @@ python3 custodian/tools/validation/operator_art_agent_service_smoke.py
 python3 custodian/tools/validation/operator_art_agent_semantic_smoke.py
 python3 custodian/tools/validation/operator_art_agent_aseprite_smoke.py
 python3 custodian/tools/validation/operator_art_agent_mcp_smoke.py
+python3 custodian/tools/validation/operator_art_agent_v2_pilot.py
 ```
 
 Coverage includes all V1 edit primitives plus V2 confinement, capability,
@@ -1218,3 +1219,11 @@ render/diff output, layer/frame/bounds and external-SHA refusal, pending
 migration refusal, automatic rollback, byte-exact undo, the live six-frame
 Vigil semantic contract, and production source/runtime/resource immutability.
 Moment Forge is not required because V2 cannot modify production art or runtime.
+
+The V2 pilot requires real Aseprite by default and targets
+`melee_1h/locomotion/walk_01/e` with the Vigil dagger. Equivalent entrypoints
+are `operator art pilot` and `operator art pilot --json`. Reports are written to
+`reports/operator_art_agent/v2_pilot/<timestamp>/`; the runner modifies only
+disposable `.ai` state, restores the Workbench byte-for-byte, hashes protected
+production trees before/after, and never publishes. `--allow-skip-aseprite` is
+an explicit environment accommodation, not the normal acceptance path.

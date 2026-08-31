@@ -2,5 +2,5 @@
   "schema": "custodian.operator_landmark_schema.v1",
   "names": ["head_center", "hood_top", "shoulder_near", "shoulder_far", "elbow_near", "elbow_far", "hand_near", "hand_far", "hip_center", "hip_near", "hip_far", "knee_near", "knee_far", "ankle_near", "ankle_far", "toe_near", "toe_far", "cloak_tip_near", "cloak_tip_far", "weapon_grip", "weapon_tip"],
   "semantic_sides": ["near", "far", "center", "none"],
-  "provenance": ["agent", "human", "heuristic", "imported"]
+  "provenance": ["agent", "human", "heuristic", "imported", "pilot_fixture"]
 }
