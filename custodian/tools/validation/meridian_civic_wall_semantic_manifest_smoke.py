@@ -12,6 +12,10 @@ DEFAULT_MANIFEST = (
     Path(__file__).resolve().parents[3]
     / "custodian/content/metadata/assets/meridian_civic_wall.semantic.json"
 )
+DEFAULT_REVIEW_CSV = (
+    Path(__file__).resolve().parents[3]
+    / "custodian/docs/asset_review/meridian_civic_wall.semantic.csv"
+)
 
 def fail(message: str) -> None:
     raise SystemExit(f"[FAIL] {message}")
@@ -125,7 +129,7 @@ def main() -> None:
             f"got {review_count}"
         )
 
-    review_path = path.with_suffix(".csv")
+    review_path = DEFAULT_REVIEW_CSV
     if not review_path.is_file():
         fail(f"missing human-review CSV: {review_path}")
     with review_path.open(newline="", encoding="utf-8-sig") as review_file:

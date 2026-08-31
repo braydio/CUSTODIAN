@@ -2,7 +2,7 @@
 
 **Canonical manifest:** `custodian/content/metadata/assets/meridian_civic_wall.semantic.json`
 
-**Human-review table:** `custodian/content/metadata/assets/meridian_civic_wall.semantic.csv`
+**Human-review table:** `custodian/docs/asset_review/meridian_civic_wall.semantic.csv`
 
 This manifest describes the real **14×14 / 196-module** wall source sheet and its corrected per-module mapping into the first 14×14 cells of a 16×16, 512×512 runtime atlas.
 

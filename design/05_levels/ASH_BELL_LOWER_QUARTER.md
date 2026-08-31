@@ -274,9 +274,10 @@ then compatible semantic family, then exact variant. Forty-three corners,
 junctions, slopes, rubble transitions, canal edges/endcaps, and similar modules
 remain `review_required` and must fail closed for automatic neighbor-mask
 composition until their exact directional ports are reviewed.
-The adjacent `meridian_civic_wall.semantic.csv` is the sortable human-review
-surface and `meridian_civic_wall.semantic.README.md` is the compact manifest
-contract; neither replaces the JSON as machine authority.
+The Godot-ignored `custodian/docs/asset_review/meridian_civic_wall.semantic.csv`
+is the sortable human-review surface and the adjacent
+`meridian_civic_wall.semantic.README.md` is the compact manifest contract;
+neither replaces the JSON as machine authority.
 
 Native civic prop extracts preserve already-correct thin silhouettes without
 normalizing them into 32×32 destinations. Wall cells are facade and perimeter
