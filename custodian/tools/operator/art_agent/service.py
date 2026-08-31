@@ -476,8 +476,22 @@ class ArtAgentService:
     def plan(self, session_path: Path, recipe: str) -> dict[str, Any]:
         session,manifest,root=self._checked_session(session_path); recipes=model.CUSTODIAN_ROOT/"tools/operator/art_recipes"; projection=json.loads((model.CUSTODIAN_ROOT/"content/data/operator/authoring/operator_direction_projection.json").read_text()); refs=assemble_references(manifest,source_root=model.SOURCE_ROOT); value=build_animation_plan(session.identity,manifest,recipes/f"{recipe}.json",projection,refs).to_json(); write_json(root/"plan.json",value); return value
 
-    def run_qa(self, session_path: Path, *, required_landmarks: list[str] | None = None) -> dict[str, Any]:
-        _session,_manifest,root=self._checked_session(session_path); metrics=self.get_metrics(session_path); value=evaluate_qa(metrics,required_landmarks=required_landmarks,landmarks=self.get_landmarks(session_path),critiques=critiques(root/"critiques.jsonl")); write_json(root/"qa.json",value); return value
+    def run_qa(self, session_path: Path, *, required_landmarks: list[str] | dict[str, list[str]] | None = None) -> dict[str, Any]:
+        session,manifest,root=self._checked_session(session_path)
+        metrics=self.get_metrics(session_path)
+        profile_path=model.CUSTODIAN_ROOT/"content/data/operator/authoring/operator_art_profile.json"
+        profile=json.loads(profile_path.read_text()) if profile_path.exists() else None
+        value=evaluate_qa(
+            metrics,
+            required_landmarks=required_landmarks,
+            landmarks=self.get_landmarks(session_path),
+            critiques=critiques(root/"critiques.jsonl"),
+            masks=self.get_masks(session_path),
+            drafts=self.get_drafts(session_path),
+            profile=profile,
+            expected_frame_count=int(manifest["timeline"]["document_frames"]),
+        )
+        write_json(root/"qa.json",value); return value
 
     def record_critique(self, session_path: Path, critique: dict[str, Any]) -> dict[str, Any]:
         _session,_manifest,root=self._checked_session(session_path); return append_critique(root/"critiques.jsonl",critique)

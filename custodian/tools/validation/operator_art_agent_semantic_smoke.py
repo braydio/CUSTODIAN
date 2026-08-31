@@ -69,7 +69,32 @@ def main():
         near=polygon(size,[[2,2],[6,2],[6,6],[2,6]])
         mask_summary=animation_metrics([multi],masks=[{"mask_id":"m1","part":"thigh_near","frame":1,"layer":"lower_body","spans":[{"y":s.y,"x0":s.x0,"x1":s.x1} for s in near],"bounds":bounds(near)}])["masks"]
         assert mask_summary and mask_summary[0]["mask_id"]=="m1" and mask_summary[0]["span_pixel_count"]==sum(s.x1-s.x0+1 for s in near)
-    print("PASS operator_art_agent_semantic_smoke: landmarks, frame-local staleness, RLE masks, metrics v2, per-frame QA")
+
+        # QA v2: structural (malformed mask), semantic (stale mask/draft, gap repair), weapon (grip/tip drift)
+        base_metrics=animation_metrics([p,p,p])
+        structural=run_qa(base_metrics,masks=[{"mask_id":"bad","spans":[]}])
+        assert structural["status"]=="RED" and any(item["class"]=="structural" for item in structural["findings"])
+
+        semantic=run_qa(
+            base_metrics,
+            masks=[{"mask_id":"m1","status":"STALE","spans":[{"y":0,"x0":0,"x1":1}]}],
+            drafts=[{"draft_id":"d1","status":"ACTIVE","needs_gap_repair":True},{"draft_id":"d2","status":"STALE"}],
+        )
+        semantic_issues={(item["class"],item["issue"]) for item in semantic["findings"]}
+        assert semantic["status"]=="NEEDS_HUMAN_REVIEW"
+        assert ("semantic","stale mask") in semantic_issues and ("semantic","unresolved gap repair") in semantic_issues and ("semantic","stale draft") in semantic_issues
+
+        weapon_landmarks=[
+            {"frame":1,"name":"weapon_grip","x":0,"y":0,"status":"CURRENT"},
+            {"frame":1,"name":"weapon_tip","x":10,"y":0,"status":"CURRENT"},
+            {"frame":2,"name":"weapon_grip","x":0,"y":0,"status":"CURRENT"},
+            {"frame":2,"name":"weapon_tip","x":10,"y":0,"status":"CURRENT"},
+            {"frame":3,"name":"weapon_grip","x":0,"y":0,"status":"CURRENT"},
+            {"frame":3,"name":"weapon_tip","x":50,"y":0,"status":"CURRENT"},
+        ]
+        weapon=run_qa(base_metrics,landmarks=weapon_landmarks)
+        assert any(item["class"]=="weapon" and item["frame"]==3 for item in weapon["findings"])
+    print("PASS operator_art_agent_semantic_smoke: landmarks, frame-local staleness, RLE masks, metrics v2, QA v2 (structural/anatomy/pixel_art/animation/weapon/semantic)")
 
 
 if __name__=="__main__": main()
