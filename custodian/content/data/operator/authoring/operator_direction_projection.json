@@ -1,0 +1,10 @@
+{
+  "schema": "custodian.operator_direction_projection.v1",
+  "camera": {"mode": "elevated_three_quarter", "elevation_class": "moderate", "calibrated_angle": null},
+  "directions": {
+    "e": {"near_side_screen_bias": "down", "far_side_screen_bias": "up", "show_hood_top_plane": true, "near_limb_occludes_far": true, "cloak_trail": ["west", "screen_down"]},
+    "w": {"near_side_screen_bias": "down", "far_side_screen_bias": "up", "show_hood_top_plane": true, "near_limb_occludes_far": true, "cloak_trail": ["east", "screen_down"]},
+    "n": {"near_side_screen_bias": "down", "far_side_screen_bias": "up", "show_hood_top_plane": true, "near_limb_occludes_far": true},
+    "s": {"near_side_screen_bias": "down", "far_side_screen_bias": "up", "show_hood_top_plane": true, "near_limb_occludes_far": true}
+  }
+}

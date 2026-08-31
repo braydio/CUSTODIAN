@@ -1191,7 +1191,7 @@ uses the actual ResourceNode, ResourceLedger, PowerNode, Sector repair, Enemy,
 SpawnNode, and WaveManager paths. Human balance/playability evaluation is a
 separate developer-owned pass.
 
-## Operator Art Agent V1
+## Operator Art Agent V2
 
 From the repository root:
 
@@ -1201,9 +1201,20 @@ python3 custodian/tools/validation/operator_animation_workbench_smoke.py
 python3 custodian/tools/validation/run_validation.py --changed --json
 ```
 
-The Art Agent smoke uses temporary Workbench/session roots and the real
-headless Aseprite bridge when available. It covers all V1 edit primitives,
+The aggregate Art Agent smoke runs service, semantic, and MCP coverage even
+without Aseprite, then runs the real headless bridge when available. Run the
+split owners directly while diagnosing:
+
+```bash
+python3 custodian/tools/validation/operator_art_agent_service_smoke.py
+python3 custodian/tools/validation/operator_art_agent_semantic_smoke.py
+python3 custodian/tools/validation/operator_art_agent_aseprite_smoke.py
+python3 custodian/tools/validation/operator_art_agent_mcp_smoke.py
+```
+
+Coverage includes all V1 edit primitives plus V2 confinement, capability,
+idempotency, landmarks, RLE masks, metrics, QA, and MCP surface checks,
 render/diff output, layer/frame/bounds and external-SHA refusal, pending
 migration refusal, automatic rollback, byte-exact undo, the live six-frame
 Vigil semantic contract, and production source/runtime/resource immutability.
-Moment Forge is not required because V1 cannot modify production art or runtime.
+Moment Forge is not required because V2 cannot modify production art or runtime.

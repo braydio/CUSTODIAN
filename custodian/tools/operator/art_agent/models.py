@@ -3,9 +3,10 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass
 from typing import Any, Literal
 
-SESSION_SCHEMA = "custodian.operator_art_agent.session.v1"
-REQUEST_SCHEMA = "custodian.operator_art_agent.request.v1"
-RESPONSE_SCHEMA = "custodian.operator_art_agent.response.v1"
+SESSION_SCHEMA = "custodian.operator_art_agent.session.v2"
+REQUEST_SCHEMA = "custodian.operator_art_agent.request.v2"
+RESPONSE_SCHEMA = "custodian.operator_art_agent.response.v2"
+CAPABILITY_SCHEMA = "custodian.operator_art_agent.capability.v1"
 
 OperationKind = Literal[
     "paint_pixels",
@@ -37,6 +38,7 @@ class ArtSession:
     context_fingerprint: str
     initial_workbench_sha256: str
     expected_workbench_sha256: str
+    capability_path: str = ""
     operation_count: int = 0
     state: Literal["ACTIVE", "CLOSED", "ERROR"] = "ACTIVE"
 
@@ -51,6 +53,7 @@ class ArtSession:
         workbench_path: str,
         context_fingerprint: str,
         workbench_sha256: str,
+        capability_path: str = "",
     ) -> "ArtSession":
         return cls(
             schema=SESSION_SCHEMA,
@@ -62,6 +65,7 @@ class ArtSession:
             context_fingerprint=context_fingerprint,
             initial_workbench_sha256=workbench_sha256,
             expected_workbench_sha256=workbench_sha256,
+            capability_path=capability_path,
         )
 
     @classmethod

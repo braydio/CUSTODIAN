@@ -1,0 +1,41 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+import hashlib, subprocess, sys, tempfile
+from pathlib import Path
+ROOT=Path(__file__).resolve().parents[3]; sys.path.insert(0,str(ROOT/"custodian/tools/operator"))
+import animation_workbench as workbench
+import animation_workbench_model as model
+from art_agent.aseprite_bridge import ArtAgentBridge
+from art_agent.service import ArtAgentService, write_json
+
+def tree_hashes(root):
+    return {str(path.relative_to(ROOT)):hashlib.sha256(path.read_bytes()).hexdigest() for path in sorted(root.rglob("*")) if path.is_file()} if root.exists() else {}
+
+def main():
+    if workbench.resolve_aseprite() is None:
+        print("SKIP operator_art_agent_aseprite_smoke: Aseprite executable unavailable"); return
+    subprocess.run([sys.executable,str(ROOT/"custodian/tools/validation/operator_art_agent_smoke.py"),"--aseprite-child"],check=True)
+    protected=[ROOT/"custodian/content/sprites/operator/source/animations",ROOT/"custodian/content/sprites/operator/runtime/animations",ROOT/"custodian/game/actors/operator"]
+    before={str(path):tree_hashes(path) for path in protected}
+    with tempfile.TemporaryDirectory() as td:
+        temp=Path(td); service=ArtAgentService(art_root=temp/"art",workspace_root=temp/"workbench",aseprite=workbench.resolve_aseprite())
+        session=service.start_session(profile="melee_1h",group="locomotion",action="walk_01",direction="e",weapon="vigil_pattern_dagger")
+        inspection=service.inspect(session); assert inspection["frames"]==8 and inspection["canvas"]=={"width":96,"height":96}
+        loaded=service.load_session(session); root=session.parent; bridge=ArtAgentBridge(aseprite=workbench.resolve_aseprite())
+        def expect(fragment, request):
+            path=root/"requests/security.json"; response=root/"responses/security.json"; write_json(path,request)
+            try: bridge.execute(request_path=path,response_path=response,expected_request_id=request["request_id"],expected_operation_key=request["operation_key"])
+            except Exception as error: assert fragment in str(error),(fragment,error)
+            else: raise AssertionError(f"expected {fragment}")
+        bad=service._build_request(loaded,"security_nonce",{"type":"inspect"},"security_nonce_key"); bad["nonce"]="wrong"; expect("capability mismatch",bad)
+        outside=service._build_request(loaded,"security_output",{"type":"render_clean","output":str((temp/"outside.png").resolve())},"security_output_key"); expect("outside authorized preview root",outside)
+        initial=Path(service.load_session(session).workbench_path).read_bytes(); service.render(session)
+        service.set_landmarks(session,[{"frame":1,"name":"head_center","x":48,"y":30,"semantic_side":"center","confidence":0.5,"provenance":"heuristic"},{"frame":1,"name":"hip_center","x":48,"y":55,"semantic_side":"center","confidence":0.5,"provenance":"heuristic"},{"frame":1,"name":"knee_near","x":53,"y":67,"semantic_side":"near","confidence":0.5,"provenance":"heuristic"},{"frame":1,"name":"knee_far","x":43,"y":65,"semantic_side":"far","confidence":0.5,"provenance":"heuristic"}])
+        near=service.define_mask(session,frame=1,layer="lower_body",part="thigh_near",polygon=[[48,54],[56,55],[55,70],[49,68]])
+        service.define_mask(session,frame=1,layer="lower_body",part="thigh_far",polygon=[[40,53],[48,54],[47,68],[40,66]])
+        draft=service.create_draft(session,kind="shift",mask_id=near["mask_id"],dx=1,dy=0); assert draft["response"]["draft_id"].startswith("__ART_DRAFT__")
+        service.render(session); qa=service.run_qa(session,required_landmarks=["head_center","hip_center","knee_near","knee_far"]); assert qa["publish_authorized"] is False
+        service.undo_last(session); assert Path(service.load_session(session).workbench_path).read_bytes()==initial
+    assert before=={str(path):tree_hashes(path) for path in protected}
+    print("PASS operator_art_agent_aseprite_smoke: V1 bridge and reversible eight-frame semantic pilot")
+if __name__=="__main__": main()

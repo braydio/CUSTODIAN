@@ -1,0 +1,7 @@
+{
+  "schema": "custodian.operator_art_profile.v1",
+  "status": "provisional",
+  "enforcement": {"structural": true, "artistic": false},
+  "measurements": {},
+  "note": "Numeric artistic tolerances remain advisory until sampled provenance is reviewed and explicitly accepted."
+}

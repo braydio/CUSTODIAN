@@ -2,13 +2,30 @@
 
 ## Status
 
-**V1 editing foundation implemented; long-horizon roadmap remains planned.**
+**V2 semantic repair workstation implemented; canonical publication remains external.**
 
 This document defines the long-horizon architecture and phased delivery plan
 for an agent-operated Operator art workstation. V1 now provides guarded,
 deterministic editing and visual inspection of existing Workbench V2 documents.
-MCP, temporary agent-layer creation, automated critique, pose semantics,
-publication, and later phases still require explicit graduation.
+V2 adds confined capabilities, semantic landmarks and masks, non-destructive
+draft layers, metrics/QA, review packets, richer renders, and a thin local MCP
+adapter. Publication and pose synthesis remain explicit later graduations.
+
+### Implemented V2 capability
+
+V2 hardens the `.ai` boundary with resolved path containment, per-session
+capability sidecars, a strict request/response handshake, idempotent operation
+keys, numeric/cel validation, and true no-op handling. Pure-Python safety and
+semantic validation run even when Aseprite is unavailable.
+
+Operator anatomy is expressed as near/far landmarks and scanline-RLE part
+masks. Semantic shifts, copies, replacements, and mirrors first create
+`__ART_DRAFT__*` layers; source bindings do not change until an explicit bake.
+Draft discard and Workbench backup undo remain exact. Metrics, provisional
+style QA, deterministic reference assembly, immutable animation plans,
+critiques, and review packets provide evidence without claiming aesthetic
+authority. The local stdio MCP adapter exposes the same service and contains no
+publish, git, shell, or arbitrary filesystem tool.
 
 ### Implemented V1 capability
 
@@ -26,8 +43,9 @@ backup, journals the request/response and hashes, and restores the backup on
 bridge failure. Render output includes transparent frames, a strip, a contact
 sheet, baseline diff, and before/after sheet.
 
-V1 has no canonical publish, runtime rebuild, frame/timing mutation, resize,
-rotation, socket, MCP, image-model, critic, or automatic commit capability.
+Neither V1 nor V2 has canonical publish, runtime rebuild, frame/timing
+mutation, resize, rotation, socket mutation, embedded image-model, or automatic
+commit capability.
 
 ## Objective
 

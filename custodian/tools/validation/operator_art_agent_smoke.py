@@ -48,7 +48,7 @@ def write_json(path: Path, payload: dict) -> None:
     path.write_text(json.dumps(payload, indent=2) + "\n")
 
 
-def main() -> None:
+def aseprite_main() -> None:
     protected_roots = (
         ROOT / "custodian/content/sprites/operator/source/animations",
         ROOT / "custodian/content/sprites/operator/runtime/animations",
@@ -80,14 +80,8 @@ def main() -> None:
         baseline_backup = session_path.parent / "backups/000000_baseline.aseprite"
         assert session_path.exists() and baseline_backup.exists()
         assert session.expected_workbench_sha256 == model.file_sha256(workbench_path)
-        cli = OPERATOR_TOOLS / "operator_cli.py"
-        routed = subprocess.run(
-            [sys.executable, str(cli), "art", "status", str(session_path), "--json"],
-            check=True,
-            capture_output=True,
-            text=True,
-        )
-        assert json.loads(routed.stdout)["session_id"] == session.session_id
+        # Production CLI deliberately cannot accept injected roots; tests use the
+        # service constructor so an agent cannot turn those test seams into path escapes.
 
         inspection = service.inspect(session_path)
         assert inspection["frames"] == 6
@@ -178,7 +172,7 @@ def main() -> None:
         manifest["layers"][0]["workspace_contract"]["frame_size"] = [64, 64]
         write_json(manifest_path, manifest)
         expect_error(
-            "outside legal binding rectangle",
+            "cel image dimensions differ from binding contract",
             lambda: service.apply_operation(
                 session_path,
                 {"type": "paint_pixels", "frame": 1, "layer": "lower_body",
@@ -238,4 +232,14 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    if "--aseprite-child" in sys.argv:
+        aseprite_main()
+    else:
+        subprocess.run([sys.executable, str(Path(__file__).with_name("operator_art_agent_service_smoke.py"))], check=True)
+        subprocess.run([sys.executable, str(Path(__file__).with_name("operator_art_agent_semantic_smoke.py"))], check=True)
+        subprocess.run([sys.executable, str(Path(__file__).with_name("operator_art_agent_mcp_smoke.py"))], check=True)
+        if workbench.resolve_aseprite() is None:
+            print("SKIP real Aseprite integration: executable unavailable")
+        else:
+            aseprite_main()
+        print("PASS operator_art_agent_smoke: V2 aggregate")

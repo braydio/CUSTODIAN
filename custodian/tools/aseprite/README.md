@@ -17,6 +17,12 @@ owns byte backups, SHA concurrency checks, rollback, and journaling. The bridge
 renders through Aseprite's actual compositor and never publishes canonical
 source.
 
+V2 requests also require a nonce-bearing capability sidecar and strict protocol
+handshake. `operator_art_agent_lib.lua` owns shared protocol constants. Clean
+renders hide reference/guide/landmark/review layers. Semantic operations create
+reserved `__ART_DRAFT__*` layers and never grant them Workbench publish
+bindings; bake is explicit and remains confined to an editable binding.
+
 ## Humanoid rigid-cutout source
 
 Run `File > Scripts > new_humanoid_rig_source.lua` to create a 96×96,

@@ -34,12 +34,15 @@ Use `--dry-run` on frame or publish commands to inspect without mutation. Frame
 commands stage a dependency-audited migration in `.ai`; only publish changes
 canonical PNG contracts.
 
-## Operator Art Agent V1
+## Operator Art Agent V2
 
-`operator art` is the agent-safe pixel-authoring layer above Workbench V2. It
-reuses the same semantic workbench and may modify only its ignored `.aseprite`
+`operator art` is the agent-safe semantic repair layer above Workbench V2. V1
+primitive editing remains available; V2 adds capability-confined sessions,
+landmarks, RLE part masks, draft-first part edits, metrics, QA, plans, critiques,
+and review packets. The local `art_agent.mcp_server` is a thin stdio adapter.
+It reuses the same semantic workbench and may modify only its ignored `.aseprite`
 document. Canonical PNG publication remains exclusively `operator anim
-publish`; Art Agent V1 has no publish, runtime rebuild, frame timing, resize,
+publish`; Art Agent V2 has no publish, runtime rebuild, frame timing, resize,
 rotation, or socket API.
 
 ```sh
@@ -54,6 +57,20 @@ operator art move SESSION --frame 3 --layer lower_body --rect 35,49,16,28 --dx 2
 operator art undo SESSION
 operator art close SESSION
 ```
+
+Semantic examples:
+
+```bash
+operator art landmarks SESSION --set landmarks.json
+operator art mask SESSION --frame 3 --layer lower_body --part thigh_far --polygon '43,53;49,54;48,66;42,65'
+operator art draft SESSION --kind shift --mask thigh_far_f3_HASH --dx 2 --dy -1
+operator art metrics SESSION
+operator art qa SESSION
+operator art review SESSION --task 'review east walk'
+```
+
+Normal CLI use cannot override Art Agent or Workbench roots. Tests inject
+temporary roots through `ArtAgentService` directly.
 
 Sessions live under
 `.ai/operator_art_agent/<profile>/<group>/<action>/<direction>/<session-id>/`.

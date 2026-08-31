@@ -41,8 +41,13 @@ Use this section when the ask is about new Operator modular animation drops, mis
 For deterministic pixel edits to an existing semantic animation, start with
 `operator art start`, inspect/render the session, then use the bounded
 paint/erase/stroke/copy/move commands. Every mutation is backed up and
-journaled; `operator art undo` restores the latest exact backup. This tool is
-draft-only. Use `operator anim publish` separately only after explicit review.
+journaled; `operator art undo` restores the latest exact backup. For semantic
+animation repair, add landmarks and part masks, create a draft
+with `operator art draft`, review renders/metrics/QA, and bake only an approved
+draft. `art_agent.mcp_server` exposes the same confined service locally. It has
+no publish, git, shell, or arbitrary filesystem tool; Workbench remains the
+canonical publication gate. This tool is draft-only. Use `operator anim
+publish` separately only after explicit review.
 
 ### Production Coverage Contract
 
