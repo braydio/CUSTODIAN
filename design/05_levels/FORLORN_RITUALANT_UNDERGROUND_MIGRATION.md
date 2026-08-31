@@ -50,10 +50,21 @@ for reaching itself.
 
 The exterior placement resolver may select north, east, south, or west. Its
 cardinal `outward_direction` is the placement authority for the authored pocket,
-the rotated map-facing approach composition, the inward/mainland gap, and the
-Threadway connector direction (`-outward_direction`). Lift travel remains
-screen-vertical, and this surface orientation never changes the authored
-Underground scene, named landing spawn, traversal timing, or encounter geometry.
+the semantic interaction approach, the inward/mainland gap, and the Threadway
+connector direction (`-outward_direction`). Lift travel and all existing cave,
+cliff, masonry, lamp, shaft, and lift artwork remain screen-upright; visible art
+must never inherit cardinal routing rotation. This surface orientation never
+changes the authored Underground scene, named landing spawn, traversal timing,
+or encounter geometry.
+
+The current exterior facade composition is authored only as a south-facing
+facade, appropriate to a north-edge pocket whose mainland approach is down-screen.
+South-edge placement requires future north-facing facade art, east-edge placement
+requires future west-facing facade art, and west-edge placement requires future
+east-facing facade art. Until those presentation profiles exist, all placements
+reuse the upright south-facing facade as an explicit temporary visual fallback.
+Directional facade variants are presentation ownership; they never control pocket
+placement, interaction coordinates, collision routing, or Threadway resolution.
 
 ## Runtime Files
 

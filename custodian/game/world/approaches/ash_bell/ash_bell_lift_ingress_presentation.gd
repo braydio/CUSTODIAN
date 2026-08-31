@@ -8,6 +8,12 @@ const PROCGEN_DRESSING_CLEARANCE_LOCAL := Rect2(
 	Vector2(-416.0, -432.0),
 	Vector2(832.0, 608.0)
 )
+const LEFT_CLIFF_COLLISION_LOCAL := [
+	Vector2(-384, -300), Vector2(-112, -300), Vector2(-112, 60), Vector2(-384, 60),
+]
+const RIGHT_CLIFF_COLLISION_LOCAL := [
+	Vector2(112, -300), Vector2(384, -300), Vector2(384, 60), Vector2(112, 60),
+]
 const LIFT_BACK_IDLE_Z := 1
 const LIFT_FRONT_IDLE_Z := 3
 const LIFT_BACK_TRAVEL_Z := 5
@@ -20,24 +26,34 @@ const FOREGROUND_TRAVEL_Z := 20
 @export var descent_duration := 1.05
 @export var shaft_scroll_distance := 384.0
 
-@onready var approach_facing_root: Node2D = $ApproachFacingRoot
+enum FacadeFacing {
+	SOUTH_FACING,
+	NORTH_FACING,
+	EAST_FACING,
+	WEST_FACING,
+}
+
+@onready var visual_root: Node2D = $VisualRoot
+@onready var spatial_facing_root: Node2D = $SpatialFacingRoot
 @onready var lift_root: AshBellLiftPlatformAssembly = $LiftRoot
 @onready var rider_anchor: Marker2D = $LiftRoot/RiderAnchor
 @onready var boarding_marker: Marker2D = $BoardingMarker
 @onready var entrance_threshold_marker: Marker2D = $EntranceThresholdMarker
-@onready var interaction_approach_marker: Marker2D = $ApproachFacingRoot/InteractionApproachMarker
-@onready var shaft_window: Polygon2D = $ApproachFacingRoot/RearMassRoot/ShaftWindow
-@onready var shaft_scroll: Sprite2D = $ApproachFacingRoot/RearMassRoot/ShaftWindow/ShaftScroll
+@onready var interaction_approach_marker: Marker2D = $SpatialFacingRoot/InteractionApproachMarker
+@onready var left_cliff_collision: CollisionPolygon2D = $SpatialFacingRoot/Collision/LeftCliffCollision
+@onready var right_cliff_collision: CollisionPolygon2D = $SpatialFacingRoot/Collision/RightCliffCollision
+@onready var shaft_window: Polygon2D = $VisualRoot/RearMassRoot/ShaftWindow
+@onready var shaft_scroll: Sprite2D = $VisualRoot/RearMassRoot/ShaftWindow/ShaftScroll
 @onready var platform_back_idle: Sprite2D = $LiftRoot/PlatformBackIdle
 @onready var platform_back_vibrate: AnimatedSprite2D = $LiftRoot/PlatformBackVibrate
 @onready var front_lip_idle: Sprite2D = $LiftRoot/PlatformFront/FrontLipIdle
 @onready var front_lip_vibrate: AnimatedSprite2D = $LiftRoot/PlatformFront/FrontLipVibrate
 @onready var dust_burst: AnimatedSprite2D = $DustBurst
-@onready var entrance_mask: Node2D = $ApproachFacingRoot/ForegroundOccluderRoot
+@onready var entrance_mask: Node2D = $VisualRoot/ForegroundOccluderRoot
 @onready var travel_occlusion_geometry: Node2D = (
-	$ApproachFacingRoot/ForegroundOccluderRoot/TravelOcclusionGeometry
+	$VisualRoot/ForegroundOccluderRoot/TravelOcclusionGeometry
 )
-@onready var foreground_occluder: Sprite2D = $ApproachFacingRoot/ForegroundOccluderRoot/ForegroundOccluder
+@onready var foreground_occluder: Sprite2D = $VisualRoot/ForegroundOccluderRoot/ForegroundOccluder
 @onready var lamp: AnimatedSprite2D = $LampFxRoot/Lamp
 
 var _playing := false
@@ -45,6 +61,7 @@ var _lift_start_position := Vector2.ZERO
 var _shaft_start_rect := Rect2()
 var _presentation_rig: OperatorPresentationRig2D
 var _active_tween: Tween
+var _outward_direction := Vector2i.UP
 
 
 func _ready() -> void:
@@ -67,19 +84,30 @@ func _ready() -> void:
 func configure_outward_direction(direction: Vector2i) -> void:
 	if not [Vector2i.UP, Vector2i.RIGHT, Vector2i.DOWN, Vector2i.LEFT].has(direction):
 		direction = Vector2i.UP
+	_outward_direction = direction
 	rotation = 0.0
-	approach_facing_root.rotation = {
-		Vector2i.UP: 0.0,
-		Vector2i.RIGHT: PI * 0.5,
-		Vector2i.DOWN: PI,
-		Vector2i.LEFT: -PI * 0.5,
-	}[direction]
-	_update_shaft_scroll_rotation()
+	visual_root.rotation = 0.0
+	visual_root.scale = Vector2.ONE
+	spatial_facing_root.rotation = 0.0
+	spatial_facing_root.scale = Vector2.ONE
+	var inward := -direction
+	interaction_approach_marker.position = Vector2(inward) * 72.0
+	left_cliff_collision.polygon = _orient_semantic_polygon(LEFT_CLIFF_COLLISION_LOCAL, inward)
+	right_cliff_collision.polygon = _orient_semantic_polygon(RIGHT_CLIFF_COLLISION_LOCAL, inward)
 
 
 func _update_shaft_scroll_rotation() -> void:
 	if shaft_scroll != null:
 		shaft_scroll.global_rotation = 0.0
+
+
+func _orient_semantic_polygon(points: Array, inward: Vector2i) -> PackedVector2Array:
+	var oriented := PackedVector2Array()
+	var inward_axis := Vector2(inward)
+	var lateral_axis := Vector2(inward.y, -inward.x)
+	for point in points:
+		oriented.append(lateral_axis * point.x + inward_axis * point.y)
+	return oriented
 
 
 func play_descent(actor: Node2D) -> void:
@@ -267,11 +295,26 @@ func get_procgen_dressing_clearance_world_rect() -> Rect2:
 		Vector2(PROCGEN_DRESSING_CLEARANCE_LOCAL.end.x, PROCGEN_DRESSING_CLEARANCE_LOCAL.position.y),
 		Vector2(PROCGEN_DRESSING_CLEARANCE_LOCAL.position.x, PROCGEN_DRESSING_CLEARANCE_LOCAL.end.y),
 	]
-	var first := approach_facing_root.to_global(corners[0])
+	var first := visual_root.to_global(corners[0])
 	var bounds := Rect2(first, Vector2.ZERO)
 	for corner in corners.slice(1):
-		bounds = bounds.expand(approach_facing_root.to_global(corner))
+		bounds = bounds.expand(visual_root.to_global(corner))
 	return bounds
+
+
+func get_required_facade_facing() -> int:
+	return int({
+		Vector2i.UP: FacadeFacing.SOUTH_FACING,
+		Vector2i.RIGHT: FacadeFacing.WEST_FACING,
+		Vector2i.DOWN: FacadeFacing.NORTH_FACING,
+		Vector2i.LEFT: FacadeFacing.EAST_FACING,
+	}.get(_outward_direction, FacadeFacing.SOUTH_FACING))
+
+
+func get_active_facade_facing() -> int:
+	# Only the south-facing exterior composition is authored today. Cardinal
+	# routing remains valid while the other presentation profiles await art.
+	return FacadeFacing.SOUTH_FACING
 
 
 func is_actor_boarded(actor: Node2D) -> bool:

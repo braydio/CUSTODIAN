@@ -122,13 +122,13 @@ func _validate_scene(
 	var front_vibrate := presentation.get_node("LiftRoot/PlatformFront/FrontLipVibrate") as AnimatedSprite2D
 	var dust := presentation.get_node("DustBurst") as AnimatedSprite2D
 	var lamp := presentation.get_node("LampFxRoot/Lamp") as AnimatedSprite2D
-	var shaft_window := presentation.get_node("ApproachFacingRoot/RearMassRoot/ShaftWindow") as Polygon2D
-	var entrance_mask := presentation.get_node("ApproachFacingRoot/ForegroundOccluderRoot") as Node2D
+	var shaft_window := presentation.get_node("VisualRoot/RearMassRoot/ShaftWindow") as Polygon2D
+	var entrance_mask := presentation.get_node("VisualRoot/ForegroundOccluderRoot") as Node2D
 	var travel_geometry := presentation.get_node(
-		"ApproachFacingRoot/ForegroundOccluderRoot/TravelOcclusionGeometry"
+		"VisualRoot/ForegroundOccluderRoot/TravelOcclusionGeometry"
 	) as Node2D
 	var threshold := presentation.get_node("EntranceThresholdMarker") as Marker2D
-	var approach := presentation.get_node("ApproachFacingRoot/InteractionApproachMarker") as Marker2D
+	var approach := presentation.get_node("SpatialFacingRoot/InteractionApproachMarker") as Marker2D
 	var rider_anchor := presentation.get_node("LiftRoot/RiderAnchor") as Marker2D
 	var boarding_marker := presentation.get_node("BoardingMarker") as Marker2D
 	_check(vibrate.sprite_frames.get_frame_count(&"vibrate") == 4, "vibrate frame count drifted", errors)
@@ -139,24 +139,24 @@ func _validate_scene(
 	_check(is_equal_approx(dust.sprite_frames.get_animation_speed(&"burst"), 12.0), "dust FPS drifted", errors)
 	_check(not dust.sprite_frames.get_animation_loop(&"burst"), "dust must not loop", errors)
 	_check(lamp.sprite_frames.get_frame_count(&"flicker") == 8, "lamp frame count drifted", errors)
-	_check((presentation.get_node("ApproachFacingRoot/EntranceStructureRoot/ChainLeft") as Node2D).position == Vector2(-42, -126), "left chain placement drifted", errors)
-	_check((presentation.get_node("ApproachFacingRoot/EntranceStructureRoot/ChainRight") as Node2D).position == Vector2(42, -126), "right chain placement drifted", errors)
+	_check((presentation.get_node("VisualRoot/EntranceStructureRoot/ChainLeft") as Node2D).position == Vector2(-42, -126), "left chain placement drifted", errors)
+	_check((presentation.get_node("VisualRoot/EntranceStructureRoot/ChainRight") as Node2D).position == Vector2(42, -126), "right chain placement drifted", errors)
 	_check(not shaft_window.visible, "shaft interior must be hidden while parked", errors)
 	_check(is_zero_approx(shaft_window.modulate.a), "parked shaft retained visible opacity", errors)
 	_check(shaft_window.clip_children == CanvasItem.CLIP_CHILDREN_ONLY, "shaft window lost its irregular child mask", errors)
-	_check(presentation.get_node_or_null("ApproachFacingRoot/RearMassRoot/DarkMouth") != null, "idle cave mouth is missing", errors)
+	_check(presentation.get_node_or_null("VisualRoot/RearMassRoot/DarkMouth") != null, "idle cave mouth is missing", errors)
 	_check(
 		presentation.get_node_or_null("ThresholdSurface") == null,
 		"flat ThresholdSurface polygon returned",
 		errors
 	)
-	var mouth := presentation.get_node("ApproachFacingRoot/RearMassRoot/DarkMouth") as Polygon2D
+	var mouth := presentation.get_node("VisualRoot/RearMassRoot/DarkMouth") as Polygon2D
 	var mouth_bounds := _polygon_bounds(mouth.polygon)
 	_check(mouth_bounds.size.x <= 170.0, "idle shaft aperture exposes broad black side plates", errors)
 	for plate_name in ["TopRockOverhang", "LeftMouthRock", "RightMouthRock", "LowerCaveLip"]:
 		_check(
 			presentation.get_node_or_null(
-				"ApproachFacingRoot/ForegroundOccluderRoot/TravelOcclusionGeometry/" + plate_name
+				"VisualRoot/ForegroundOccluderRoot/TravelOcclusionGeometry/" + plate_name
 			) is Polygon2D,
 			"temporary occlusion plate is missing: %s" % plate_name,
 			errors
@@ -167,9 +167,9 @@ func _validate_scene(
 	_check(presentation.foreground_occluder.region_enabled, "travel cave lip must use a localized texture region", errors)
 	var lip_size := presentation.foreground_occluder.region_rect.size * presentation.foreground_occluder.scale
 	_check(lip_size.x <= 180.0 and lip_size.y <= 84.0, "travel cave lip expanded into a whole-mountain foreground plate", errors)
-	_check((presentation.get_node("ApproachFacingRoot/EntranceStructureRoot/EntranceShell") as Sprite2D).visible, "entrance shell is hidden while idle", errors)
+	_check((presentation.get_node("VisualRoot/EntranceStructureRoot/EntranceShell") as Sprite2D).visible, "entrance shell is hidden while idle", errors)
 	_check(presentation.lift_root.visible, "lift is hidden while idle", errors)
-	_check((presentation.get_node("ApproachFacingRoot/RearMassRoot/MountainCliff") as Sprite2D).visible, "mountain is hidden while idle", errors)
+	_check((presentation.get_node("VisualRoot/RearMassRoot/MountainCliff") as Sprite2D).visible, "mountain is hidden while idle", errors)
 	_check(presentation.lift_root.position == threshold.position, "parked platform is not aligned to its threshold", errors)
 	_check(rider_anchor.position == Vector2(0, -26), "rider anchor height drifted", errors)
 	_check(boarding_marker.position == Vector2(0, -26), "boarding marker drifted", errors)
@@ -419,10 +419,10 @@ func _validate_world_depth_contract(
 	errors: Array[String]
 ) -> void:
 	var expected := {
-		"ApproachFacingRoot/RearMassRoot": -8,
-		"ApproachFacingRoot/EntranceStructureRoot": 1,
+		"VisualRoot/RearMassRoot": -8,
+		"VisualRoot/EntranceStructureRoot": 1,
 		"LiftRoot": 0,
-		"ApproachFacingRoot/ForegroundOccluderRoot": 1,
+		"VisualRoot/ForegroundOccluderRoot": 1,
 		"DustBurst": 10,
 		"LampFxRoot": 10,
 	}
@@ -431,7 +431,7 @@ func _validate_world_depth_contract(
 		_check(item != null, "%s is missing from lift depth contract" % node_path, errors)
 		if item != null:
 			_check(item.z_index == expected[node_path], "%s world Z drifted" % node_path, errors)
-	for root_name: String in ["ApproachFacingRoot/RearMassRoot", "ApproachFacingRoot/EntranceStructureRoot", "ApproachFacingRoot/ForegroundOccluderRoot"]:
+	for root_name: String in ["VisualRoot/RearMassRoot", "VisualRoot/EntranceStructureRoot", "VisualRoot/ForegroundOccluderRoot"]:
 		var band := presentation.get_node(root_name) as Node2D
 		_check(not band.z_as_relative, "%s must use absolute z" % root_name, errors)
 		_check(not band.y_sort_enabled, "%s must disable y-sort" % root_name, errors)
@@ -440,17 +440,45 @@ func _validate_world_depth_contract(
 func _validate_cardinal_facing(presentation: AshBellLiftIngressPresentation, errors: Array[String]) -> void:
 	var lift_start := presentation.lift_root.global_position
 	var rider_offset := presentation.rider_anchor.global_position - presentation.lift_root.global_position
-	for outward in [Vector2i.UP, Vector2i.RIGHT, Vector2i.DOWN, Vector2i.LEFT]:
+	var expected_approaches := {
+		Vector2i.UP: Vector2(0, 72),
+		Vector2i.RIGHT: Vector2(-72, 0),
+		Vector2i.DOWN: Vector2(0, -72),
+		Vector2i.LEFT: Vector2(72, 0),
+	}
+	var expected_facades := {
+		Vector2i.UP: AshBellLiftIngressPresentation.FacadeFacing.SOUTH_FACING,
+		Vector2i.RIGHT: AshBellLiftIngressPresentation.FacadeFacing.WEST_FACING,
+		Vector2i.DOWN: AshBellLiftIngressPresentation.FacadeFacing.NORTH_FACING,
+		Vector2i.LEFT: AshBellLiftIngressPresentation.FacadeFacing.EAST_FACING,
+	}
+	var expected_left_blocker_first_points := {
+		Vector2i.UP: Vector2(-384, -300),
+		Vector2i.RIGHT: Vector2(300, -384),
+		Vector2i.DOWN: Vector2(384, 300),
+		Vector2i.LEFT: Vector2(-300, 384),
+	}
+	var entrance_shell := presentation.get_node("VisualRoot/EntranceStructureRoot/EntranceShell") as Sprite2D
+	var mountain_cliff := presentation.get_node("VisualRoot/RearMassRoot/MountainCliff") as Sprite2D
+	for outward: Vector2i in expected_approaches:
 		presentation.configure_outward_direction(outward)
 		var approach_delta := presentation.get_interaction_approach_position() - presentation.global_position
-		_check(approach_delta.dot(Vector2(-outward)) > 0.0, "interaction approach is not inward for %s" % outward, errors)
+		_check(approach_delta.is_equal_approx(expected_approaches[outward]), "interaction approach is not canonical for %s" % outward, errors)
+		_check(presentation.get_required_facade_facing() == expected_facades[outward], "facade profile mapping drifted for %s" % outward, errors)
+		_check(presentation.get_active_facade_facing() == AshBellLiftIngressPresentation.FacadeFacing.SOUTH_FACING, "unavailable facade art activated for %s" % outward, errors)
+		_check(is_zero_approx(presentation.visual_root.global_rotation), "visible root rotated for %s" % outward, errors)
+		_check(presentation.visual_root.scale == Vector2.ONE, "visible root scaled for %s" % outward, errors)
+		_check(is_zero_approx(presentation.spatial_facing_root.global_rotation), "semantic root was rotated for %s" % outward, errors)
+		_check(presentation.left_cliff_collision.polygon[0] == expected_left_blocker_first_points[outward], "cliff blockers were not rebuilt cardinally for %s" % outward, errors)
+		_check(is_zero_approx(entrance_shell.global_rotation), "entrance shell rotated for %s" % outward, errors)
+		_check(is_zero_approx(mountain_cliff.global_rotation), "mountain rotated for %s" % outward, errors)
 		_check(is_zero_approx(presentation.lift_root.global_rotation), "lift rotated for %s" % outward, errors)
 		_check(is_equal_approx(presentation.shaft_scroll.global_rotation, 0.0), "shaft scroll rotated for %s" % outward, errors)
 		_check(presentation.lift_root.global_position == lift_start, "lift moved while facing %s" % outward, errors)
 		_check(presentation.rider_anchor.global_position - presentation.lift_root.global_position == rider_offset, "rider detached while facing %s" % outward, errors)
 		var clearance := presentation.get_procgen_dressing_clearance_world_rect()
 		for local_corner in [Vector2(-416, -432), Vector2(416, -432), Vector2(416, 176), Vector2(-416, 176)]:
-			_check(clearance.grow(0.1).has_point(presentation.approach_facing_root.to_global(local_corner)), "clearance missed approach art for %s" % outward, errors)
+			_check(clearance.grow(0.1).has_point(presentation.visual_root.to_global(local_corner)), "clearance missed approach art for %s" % outward, errors)
 	presentation.configure_outward_direction(Vector2i.UP)
 
 
