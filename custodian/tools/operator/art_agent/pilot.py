@@ -365,6 +365,8 @@ def run_v2_pilot(*, keep_artifacts: bool = False, allow_skip_aseprite: bool = Fa
             applied_operations += 1
             _require(cleanup_record.get("status") == "APPLIED", "gap_repair", "bounded primitive cleanup was a no-op")
             cleanup_operations.append({"type": "paint_pixels", "frame": selected_frame, "layer": "lower_body", "pixels": [cleanup_pixel]})
+            resolved = service.resolve_gap_repair(session, draft_id, "pilot bounded far-leg cleanup applied and reviewed")
+            _require(resolved.get("needs_gap_repair") is False, "gap_repair", "resolve_gap_repair did not clear the outstanding flag")
         lower_after = _layer_hashes(service, session, "lower_body")
         _require(lower_after[selected_frame - 1] != lower_before[selected_frame - 1], "temporary_bake", "selected lower_body frame did not change")
         _require(all(after == before for index, (after, before) in enumerate(zip(lower_after, lower_before), 1) if index != selected_frame), "temporary_bake", "unrelated lower_body frame changed")
