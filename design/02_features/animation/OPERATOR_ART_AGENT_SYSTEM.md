@@ -30,10 +30,34 @@ semantic validation run even when Aseprite is unavailable.
 Operator anatomy is expressed as near/far landmarks and scanline-RLE part
 masks. Semantic shifts, copies, replacements, and mirrors first create
 `__ART_DRAFT__*` layers; source bindings do not change until an explicit bake.
-Draft discard and Workbench backup undo remain exact. Metrics, provisional
-style QA, deterministic reference assembly, immutable animation plans,
-critiques, and review packets provide evidence without claiming aesthetic
-authority. The local stdio MCP adapter exposes the same service and contains no
+Every draft is registered as an immutable `DraftRecord` (source/destination
+mask, layer, frame, and fingerprints) the moment it is created. Baking a draft
+takes only its `draft_id` — the caller cannot redirect a draft at a different
+mask, layer, or frame — and each kind clears different pixels at bake time:
+`shift`/`mirror` clear the original source region, `copy` clears nothing, and
+`replace` requires a second destination mask and clears only that mask's
+region. A draft whose source, destination, or draft-layer pixels changed since
+creation fails closed instead of baking. Draft discard and Workbench backup
+undo remain exact.
+
+Landmark and mask staleness are frame-local: each frame's own render
+fingerprint is compared independently, so editing one frame cannot mark
+landmarks or masks stale on unrelated frames. Masks validate against
+`operator_part_schema.json` and reject malformed/out-of-canvas/empty
+polygons and rectangles before ever reaching Aseprite; masks carry a
+persisted `CURRENT`/`STALE` status and support union/subtract/intersect/
+dilate/erode/alpha-region derivation with parent tracking. QA covers seven
+finding classes — structural, registration, anatomy, pixel_art, animation,
+weapon, and semantic (stale masks/landmarks/drafts, unresolved gap repair) —
+and metrics report real per-trajectory loop-seam displacement instead of a
+first-frame-vs-last-frame SHA comparison. Uncalibrated artistic measurements
+stay advisory; `publish_authorized` is `false` unconditionally. Reference
+assembly also resolves same-direction idle-ready posture and locomotion
+walk/run siblings deterministically (never by mtime or filename recency), and
+`profile_measure.py` bootstraps provisional style-profile numbers from an
+explicit canonical sample set that nothing auto-accepts. The local stdio MCP
+adapter exposes the same service through explicit per-tool JSON schemas
+(`additionalProperties: false`, enforced at dispatch time) and contains no
 publish, git, shell, or arbitrary filesystem tool.
 
 ### Implemented V1 capability

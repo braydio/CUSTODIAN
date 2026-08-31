@@ -62,12 +62,23 @@ Semantic examples:
 
 ```bash
 operator art landmarks SESSION --set landmarks.json
+operator art validate-landmarks SESSION
 operator art mask SESSION --frame 3 --layer lower_body --part thigh_far --polygon '43,53;49,54;48,66;42,65'
+operator art validate-masks SESSION
 operator art draft SESSION --kind shift --mask thigh_far_f3_HASH --dx 2 --dy -1
+operator art drafts SESSION
+operator art validate-drafts SESSION
+operator art bake-draft SESSION --draft __ART_DRAFT__thigh_far__f003__HASH
+operator art resolve-gap-repair SESSION --draft __ART_DRAFT__thigh_far__f003__HASH --note "cleaned up bake gap"
 operator art metrics SESSION
 operator art qa SESSION
 operator art review SESSION --task 'review east walk'
 ```
+
+`bake-draft` takes only `--draft`; the target layer/frame/mask and bake-time
+clearing behavior come from the `DraftRecord` created with the draft, not from
+caller-supplied arguments. A draft whose source, destination, or draft-layer
+pixels changed since creation is refused (`STALE`) rather than baked.
 
 Run the real V2 acceptance pilot with `operator art pilot` or machine-readable
 `operator art pilot --json`. The shared runner targets the eight-frame east

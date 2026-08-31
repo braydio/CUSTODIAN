@@ -14,6 +14,13 @@ OperationKind = Literal[
     "stroke",
     "copy_region",
     "move_region",
+    "draft_shift_part",
+    "draft_copy_part",
+    "draft_replace_part",
+    "draft_mirror_part",
+    "discard_draft",
+    "bake_draft",
+    "clear_masked_region",
 ]
 
 

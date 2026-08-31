@@ -627,7 +627,7 @@ class ArtAgentService:
         operation_key: str | None = None,
     ) -> dict[str, Any]:
         if operation.get("type") not in MUTATION_TYPES:
-            raise model.WorkbenchError(f"unsupported Art Agent V1 mutation: {operation.get('type')}")
+            raise model.WorkbenchError(f"unsupported Operator Art Agent mutation: {operation.get('type')}")
         operation_key = operation_key or uuid.uuid4().hex
         session_path = self._authorized_session_path(session_path)
         session, manifest, root = self._checked_session(session_path)

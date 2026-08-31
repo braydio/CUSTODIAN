@@ -168,6 +168,35 @@ temporary bake, bounded pixel cleanup, metrics/QA, and review artifacts. It
 unwinds every mutation to byte-identical Workbench state and verifies protected
 Operator production hashes; it never publishes.
 
+## Operator Art Agent V2.1 correction pass (2026-08-31)
+
+`bake_draft()` no longer accepts caller-supplied mask/frame/layer/clear
+arguments; every semantic draft (shift/copy/replace/mirror, each with distinct
+bake-time clearing semantics) is registered as an immutable `DraftRecord` in a
+persisted `drafts.json`, and baking takes only a `draft_id` — the target
+layer/frame/mask are resolved from that record, not the caller, and a stale
+draft (source, destination, or draft-layer pixels changed since creation)
+fails closed instead of baking. `replace` now requires a second destination
+mask and only clears that mask's region, leaving the source untouched.
+
+Landmark and mask staleness are now frame-local (a real per-frame render
+fingerprint replaces the old whole-document SHA used for every frame), and
+per-frame required-landmark QA no longer accepts one landmark anywhere in the
+session as satisfying every frame. `masks` validate against
+`operator_part_schema.json` (including `near_leg`/`far_leg`) and reject
+malformed polygons/rectangles before ever reaching Aseprite; masks persist a
+`CURRENT`/`STALE` status and support union/subtract/intersect/dilate/erode/
+alpha-region derivation with parent tracking. QA now covers seven finding
+classes (structural/registration/anatomy/pixel_art/animation/weapon/semantic);
+metrics report real trajectory-sorted loop-seam displacement instead of the
+old `first-frame-SHA != last-frame-SHA` check. `publish_authorized` stays
+`false` unconditionally in every case. The MCP adapter enforces explicit
+per-tool JSON schemas (`additionalProperties: false`) at dispatch time and
+preserves the request id on error. `profile_measure.py` bootstraps
+provisional style-profile numbers from an explicit canonical sample set;
+nothing is auto-accepted. `operator art pilot` remains the V2 completion gate
+and was updated to call the new `bake_draft` signature.
+
 ## Map + AI Coherence V1 (2026-08-20)
 
 - The deprecated `procgen_route_clearance_smoke.gd` road-building assertion is

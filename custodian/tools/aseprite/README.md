@@ -18,10 +18,16 @@ renders through Aseprite's actual compositor and never publishes canonical
 source.
 
 V2 requests also require a nonce-bearing capability sidecar and strict protocol
-handshake. `operator_art_agent_lib.lua` owns shared protocol constants. Clean
-renders hide reference/guide/landmark/review layers. Semantic operations create
+handshake, including a self-reference check (the capability file must name its
+own path) and hardened output-path validation (no NUL, backslash, `..`, or
+`/./` segments; absolute path required) before any render target is trusted.
+`operator_art_agent_lib.lua` owns shared protocol constants. Clean renders
+hide reference/guide/landmark/review layers. Semantic operations create
 reserved `__ART_DRAFT__*` layers and never grant them Workbench publish
-bindings; bake is explicit and remains confined to an editable binding.
+bindings; bake is explicit, confined to an editable binding, and clears
+exactly the pixel spans Python computes for the draft's kind (shift/mirror
+clear the source, replace clears the destination mask, copy clears nothing) --
+the Lua bridge never infers clearing behavior on its own.
 The V2 pilot drives this same bridge through `ArtAgentService`; it does not use
 a pilot-only Aseprite path or gain publication authority.
 
