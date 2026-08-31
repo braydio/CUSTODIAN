@@ -264,13 +264,23 @@ Works, and Station IX never hash floor coordinates or randomly select paving,
 wear, transit markings, service details, or civic accents. Physical drains,
 hatches, machinery, lamps, benches, and barriers remain native-prop concerns.
 
-The Meridian wall atlas uses the reviewed alpha-clean source. Native civic prop
-extracts preserve those already-correct thin silhouettes without normalizing
-them into 32×32 destinations. Wall cells are facade and perimeter
+The Meridian wall atlas uses the reviewed alpha-clean source. Its reusable
+`meridian_civic_wall.semantic.json` manifest exhaustively maps all 196 modules
+from the corrected 14×14 logical source grid to the same coordinates inside the
+first 14×14 cells of the 16×16 runtime atlas; rows and columns 14–15 remain
+reserved transparent. The manifest classifies 21 semantic families and locks
+native scale plus no-rotation/no-mirroring policy. Composition is topology first,
+then compatible semantic family, then exact variant. Forty-three corners,
+junctions, slopes, rubble transitions, canal edges/endcaps, and similar modules
+remain `review_required` and must fail closed for automatic neighbor-mask
+composition until their exact directional ports are reviewed.
+
+Native civic prop extracts preserve already-correct thin silhouettes without
+normalizing them into 32×32 destinations. Wall cells are facade and perimeter
 modules rather than solid-building voxels. `MeridianCivicArtPresenter` draws a
 dark continuous civic structural mass first. Until the topology-aware wall
-audit lands, straight runs are stabilized to wall source `(0,0)` for their top
-and `(1,4)` for their face, with no per-cell random wall selection.
+composer lands, straight runs are stabilized to wall source `(0,0)` for their
+top and `(1,4)` for their face, with no per-cell random wall selection.
 `LowerQuarterNativePropLayer2D`
 separately mounts manifest-backed native prop children at exact authored world
 anchors using semantic anchor metadata. All collision footprints are disabled
@@ -278,6 +288,14 @@ for this visual pass; collision is never inferred from pixels and authored
 navigation remains unchanged. The presenter must not refill
 authored wall rectangles with repeated 32×32 wall sprites or derive collision
 from prop alpha.
+
+### Next Agent Slice — Directional Wall Ports
+
+Review the 43 `review_required` manifest entries and assign exact cardinal
+connectivity ports (`N`, `E`, `S`, `W`) without inferring uncertain topology from
+family labels alone. Automatic wall composition must continue to reject those
+entries until reviewed ports are explicit. This review must not promote wall
+pixels into collision or navigation authority.
 
 The Lower Quarter integrates the alpha-clean 768×768 Station IX landmark through
 an explicit facade-contact root at authored cell `(63,71)`. Reviewed source

@@ -276,6 +276,8 @@ For Meridian civic semantic native props and the physical-scale review fixture:
 
 ```bash
 python3 custodian/tools/validation/meridian_civic_props_semantic_manifest_smoke.py
+python3 custodian/tools/validation/meridian_civic_wall_semantic_manifest_smoke.py \
+  custodian/content/metadata/assets/meridian_civic_wall.semantic.json
 cd custodian
 env HOME=/tmp/custodian-godot-home godot --headless --path . --import --quit
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/meridian_civic_native_prop_smoke.gd
