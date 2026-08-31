@@ -852,6 +852,7 @@ def make_single_candidates(
     target_size: tuple[int, int],
     colors: int,
     alpha_cutoff: int,
+    crisp_colors: int | None = None,
 ) -> dict[str, Image.Image]:
     rgba = prepared_source.convert("RGBA")
 
@@ -859,6 +860,13 @@ def make_single_candidates(
         rgba.resize(target_size, Image.Resampling.NEAREST),
         cutoff=alpha_cutoff,
     )
+    if crisp_colors is not None:
+        crisp = quantize_rgba_with_palette(
+            crisp,
+            build_shared_palette([crisp], crisp_colors, alpha_cutoff),
+            crisp_colors,
+            alpha_cutoff,
+        )
 
     balanced_reduced = rgba.resize(target_size, Image.Resampling.BOX)
     balanced_palette = build_shared_palette(
@@ -874,7 +882,7 @@ def make_single_candidates(
     clustered_reduced = rgba.resize(target_size, Image.Resampling.BOX)
     clustered_reduced = ImageEnhance.Contrast(clustered_reduced).enhance(1.12)
     clustered_reduced = ImageEnhance.Color(clustered_reduced).enhance(1.08)
-    clustered_colors = max(8, colors * 2 // 3)
+    clustered_colors = max(2, colors * 2 // 3)
     clustered_palette = build_shared_palette(
         [clustered_reduced], clustered_colors, alpha_cutoff
     )
@@ -896,6 +904,7 @@ def make_sheet_candidates(
     target_size: tuple[int, int],
     colors: int,
     alpha_cutoff: int,
+    crisp_colors: int | None = None,
 ) -> tuple[dict[str, Image.Image], dict[str, list[Image.Image]]]:
     """
     Process each frame independently so resampling never crosses frame borders,
@@ -909,6 +918,21 @@ def make_sheet_candidates(
         )
         for frame in prepared_frames
     ]
+    if crisp_colors is not None:
+        crisp_palette = build_shared_palette(
+            crisp_frames,
+            crisp_colors,
+            alpha_cutoff,
+        )
+        crisp_frames = [
+            quantize_rgba_with_palette(
+                frame,
+                crisp_palette,
+                crisp_colors,
+                alpha_cutoff,
+            )
+            for frame in crisp_frames
+        ]
 
     # Balanced ------------------------------------------------------------
     balanced_reduced = [
@@ -938,7 +962,7 @@ def make_sheet_candidates(
         reduced = ImageEnhance.Color(reduced).enhance(1.08)
         clustered_reduced.append(reduced)
 
-    clustered_colors = max(8, colors * 2 // 3)
+    clustered_colors = max(2, colors * 2 // 3)
     clustered_palette = build_shared_palette(
         clustered_reduced,
         clustered_colors,
@@ -1352,10 +1376,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--colors",
         type=int,
-        default=24,
+        default=None,
         help=(
-            "Balanced palette size. Sheet mode derives ONE shared palette from "
-            "all frames to prevent color flicker. Default: 24."
+            "Palette ceiling for every candidate, including crisp. Sheet mode "
+            "derives one shared palette from all frames to prevent color flicker. "
+            "When omitted, balanced/clustered use 24 while crisp preserves the "
+            "legacy source palette."
         ),
     )
     parser.add_argument(
@@ -1436,8 +1462,9 @@ def main() -> int:
     if not source_path.is_file():
         raise SystemExit(f"Source image not found: {source_path}")
 
-    if not 2 <= args.colors <= 256:
+    if args.colors is not None and not 2 <= args.colors <= 256:
         raise SystemExit("--colors must be between 2 and 256")
+    colors = args.colors if args.colors is not None else 24
     if args.canvas_baseline < 1:
         raise SystemExit("--canvas-baseline must be positive")
     if args.frames is not None and args.frames < 1:
@@ -1572,8 +1599,9 @@ def main() -> int:
             prepared_frames,
             geometry,
             target_size,
-            args.colors,
+            colors,
             alpha_cutoff,
+            crisp_colors=args.colors,
         )
 
         write_sheet_manifest(
@@ -1601,8 +1629,9 @@ def main() -> int:
         candidates = make_single_candidates(
             prepared_source,
             target_size=target_size,
-            colors=args.colors,
+            colors=colors,
             alpha_cutoff=alpha_cutoff,
+            crisp_colors=args.colors,
         )
 
     # Write all candidates before selection.
@@ -1631,7 +1660,10 @@ def main() -> int:
         "prep alpha:         "
         + ("binary" if binary_alpha_during_prepare else "soft until final reduction")
     )
-    print(f"palette colors:     {args.colors}")
+    print(
+        "palette colors:     "
+        + (str(args.colors) if args.colors is not None else "24 (crisp preserved)")
+    )
 
     if sheet_mode and geometry is not None:
         print(f"frames:             {geometry.frame_count}")

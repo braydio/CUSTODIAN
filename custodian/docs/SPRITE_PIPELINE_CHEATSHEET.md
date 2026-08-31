@@ -29,6 +29,8 @@ The previews are crisp nearest-neighbor, balanced area/palette, and bold cluster
 pixelart source_384.png output_96.png --choose balanced
 ```
 
+`--colors N` caps the palette for `crisp`, `balanced`, and `clustered`. If the flag is omitted, crisp preserves its legacy source palette while balanced/clustered default to 24 colors.
+
 Prefer exact integer ratios such as `384→96` or `768→96`. Treat the result as a cleanup master that still needs
 silhouette, face/hand/equipment landmark, isolated-pixel, and cross-frame continuity review before inbox ingest.
 
