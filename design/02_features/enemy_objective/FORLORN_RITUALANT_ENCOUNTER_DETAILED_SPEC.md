@@ -477,8 +477,8 @@ Two archway stubs on the west/southwest side of the room. They should imply a ga
 > thread pull, and a one-frame dissolve placeholder. The explicit remaining
 > authored gaps are:
 >
-> - `enemy_forlorn_ritualant__body__dissolve__s__10f__128.png`
-> - `enemy_forlorn_ritualant__body__ninth_answer__s__10f__128.png`
+> - `enemy_forlorn_ritualant__body__dissolve__s__8f__128.png`
+> - `enemy_forlorn_ritualant__body__ninth_answer__s__8f__128.png`
 > - `enemy_forlorn_ritualant__body__orra_late__s__8f__128.png`
 > - `enemy_forlorn_ritualant__body__death_violent__s__8f__128.png`
 >
