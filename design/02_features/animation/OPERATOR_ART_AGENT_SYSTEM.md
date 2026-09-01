@@ -80,6 +80,31 @@ Neither V1 nor V2 has canonical publish, runtime rebuild, frame/timing
 mutation, resize, rotation, socket mutation, embedded image-model, or automatic
 commit capability.
 
+## Source Session subsystem
+
+Incoming high-resolution PNGs use a separate pre-canonical Source Session under
+`.ai/operator_art_agent/source_sessions/`; they are never opened as permissive
+Workbench documents. Source paths are confined to `asset_drop/inbox` and
+`asset_drop/source_work`. A session stages an immutable copy, records its hash
+and fixed sheet geometry, analyzes every frame, then asks the existing pixel-art
+converter for one shared crop, scale, and placement across the complete sheet.
+
+Normalization owns exactly one `global_scale`. Per-frame registrations contain
+integer `dx`/`dy` only, are bounded to ±12 pixels, and fail when the translation
+would clip visible pixels. The converter's CLI and programmatic API share the
+same preparation and candidate-generation core. Crisp, balanced, and clustered
+candidates remain review artifacts; selecting one copies it to the session's
+`registered/candidate.png`. Review produces frame metrics, a contact sheet,
+silhouette sheet, and GIF. Handoff may copy only a passing reviewed candidate to
+the Operator asset-drop inbox; it does not write canonical source, generated
+runtime output, or invoke Workbench publication.
+
+Normalization geometry protects the shared animation envelope. When reviewed
+body landmarks are available, registration should prefer support-foot contact,
+hip center, then head center. Antennae, shields, muzzles, cloak tips, and other
+peripheral equipment protect against clipping but must never independently
+determine per-frame character scale.
+
 ## Objective
 
 The target is not an MCP pixel-painting server. The target is an autonomous,

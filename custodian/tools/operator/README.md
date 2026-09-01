@@ -92,6 +92,27 @@ Aseprite is required unless a caller explicitly supplies
 Normal CLI use cannot override Art Agent or Workbench roots. Tests inject
 temporary roots through `ArtAgentService` directly.
 
+### Pre-canonical Source Sessions
+
+High-resolution/generated PNGs are normalized beside, not inside, Workbench:
+
+```sh
+operator art source-start custodian/asset_drop/inbox/operator/walk_highres.png --frames 8 --target-size 96
+operator art source-analyze SESSION
+operator art source-plan SESSION --anchor feet --method balanced
+operator art source-register SESSION --frame 4 --dx -1 --dy 2
+operator art source-convert SESSION
+operator art source-select SESSION balanced
+operator art source-review SESSION
+operator art source-handoff SESSION operator__melee_1h__walk_01__e__8f__96.png
+```
+
+Source reads are confined to the inbox and source-work asset-drop roots. One
+crop and scale is shared by the complete sheet; registrations are bounded
+integer translations and conversion refuses clipping. Handoff only stages a
+reviewed candidate in the inbox for the existing ingest workflow. It does not
+publish canonical source or runtime assets.
+
 Sessions live under
 `.ai/operator_art_agent/<profile>/<group>/<action>/<direction>/<session-id>/`.
 Every mutation takes a complete pre-operation `.aseprite` backup, uses a

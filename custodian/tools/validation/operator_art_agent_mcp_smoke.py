@@ -9,19 +9,24 @@ class StubService:
     def inspect(self,session): return {"session":str(session),"ok":True}
     def apply_operation(self,session,operation,operation_key=None): return {"session":str(session),"operation":operation,"operation_key":operation_key}
 
+class StubSourceService:
+    def start(self,**kwargs): return Path("/safe/source/session.json")
+    def analyze(self,session): return {"session":str(session),"shared_union_bbox":[0,0,1,1]}
+
 def main():
     server=OperatorArtMCP(); definitions=server.tool_definitions(); names={x["name"] for x in definitions}
     assert "operator_art_inspect" in names and "operator_art_bake_draft" in names
+    assert {"operator_art_source_start","operator_art_source_analyze","operator_art_source_plan_normalization","operator_art_source_convert","operator_art_source_review","operator_art_source_handoff"} <= names
     assert not any(any(word in name for word in ("publish","git","shell","read_file","write_file")) for name in names)
     for item in definitions:
         schema=item["inputSchema"]
         assert schema["type"]=="object" and schema["additionalProperties"] is False, item["name"]
-        if item["name"]!="operator_art_start": assert "session" in schema["properties"], item["name"]
+        if item["name"] not in {"operator_art_start","operator_art_source_start"}: assert "session" in schema["properties"], item["name"]
     bake_schema=next(x["inputSchema"] for x in definitions if x["name"]=="operator_art_bake_draft")
     assert set(bake_schema["properties"])=={"session","draft_id","operation_key"}
     assert "mask_id" not in bake_schema["properties"] and "target_layer" not in bake_schema["properties"]
     result=server.dispatch({"jsonrpc":"2.0","id":1,"method":"tools/list"}); assert result["result"]["tools"]
-    stub=OperatorArtMCP(StubService())
+    stub=OperatorArtMCP(StubService(),StubSourceService())
     read=stub.dispatch({"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"operator_art_inspect","arguments":{"session":"/safe/session.json"}}}); assert read["result"]["structuredContent"]["ok"]
     mutation=stub.dispatch({"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"operator_art_paint_pixels","arguments":{"session":"/safe/session.json","frame":1,"layer":"lower_body","pixels":[],"operation_key":"k"}}}); assert mutation["result"]["structuredContent"]["operation_key"]=="k"
 
@@ -31,6 +36,10 @@ def main():
     assert missing["error"]["code"]==-32602 and "missing required field" in missing["error"]["message"]
     wrong_type=stub.dispatch({"jsonrpc":"2.0","id":6,"method":"tools/call","params":{"name":"operator_art_paint_pixels","arguments":{"session":"/safe/session.json","frame":"one","layer":"lower_body","pixels":[]}}})
     assert wrong_type["error"]["code"]==-32602
+    source=stub.dispatch({"jsonrpc":"2.0","id":7,"method":"tools/call","params":{"name":"operator_art_source_start","arguments":{"source_path":"/allowed/source.png","frames":8,"target_size":96}}})
+    assert source["result"]["structuredContent"]["session"].endswith("session.json")
+    invalid_source=stub.dispatch({"jsonrpc":"2.0","id":8,"method":"tools/call","params":{"name":"operator_art_source_start","arguments":{"source_path":"/allowed/source.png","frames":65}}})
+    assert invalid_source["error"]["code"]==-32602 and "maximum" in invalid_source["error"]["message"]
 
     # main()'s error path must preserve the request id even when dispatch() itself raises
     stdin_lines="\n".join([

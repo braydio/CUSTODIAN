@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any, Callable
 
 from .service import ArtAgentService
+from .source_service import SourceArtService
 
 _STRING = {"type": "string"}
 _OPTIONAL_STRING = {"type": ["string", "null"]}
@@ -94,6 +95,33 @@ _TOOL_SPECS: dict[str, dict[str, tuple[dict[str, Any], bool]]] = {
     "operator_art_record_critique": {"session": (_STRING, True), "critique": (_OBJECT, True)},
     "operator_art_review_packet": {"session": (_STRING, True), "task": (_STRING, False)},
     "operator_art_undo": {"session": (_STRING, True)},
+    "operator_art_source_start": {
+        "source_path": (_STRING, True),
+        "frames": ({"type": "integer", "minimum": 1, "maximum": 64}, True),
+        "columns": ({"type": ["integer", "null"], "minimum": 1}, False),
+        "rows": ({"type": "integer", "minimum": 1, "default": 1}, False),
+        "target_size": ({"type": "integer", "minimum": 16, "maximum": 256, "default": 96}, False),
+    },
+    "operator_art_source_status": {"session": (_STRING, True)},
+    "operator_art_source_analyze": {"session": (_STRING, True)},
+    "operator_art_source_plan_normalization": {
+        "session": (_STRING, True),
+        "anchor": ({"type": "string", "enum": ["feet", "center", "top-center", "bottom-center"], "default": "feet"}, False),
+        "method": ({"type": "string", "enum": ["crisp", "balanced", "clustered"], "default": "balanced"}, False),
+    },
+    "operator_art_source_set_registration": {
+        "session": (_STRING, True),
+        "frame": ({"type": "integer", "minimum": 1}, True),
+        "dx": ({"type": "integer", "minimum": -12, "maximum": 12}, True),
+        "dy": ({"type": "integer", "minimum": -12, "maximum": 12}, True),
+    },
+    "operator_art_source_convert": {"session": (_STRING, True)},
+    "operator_art_source_review": {"session": (_STRING, True)},
+    "operator_art_source_select_candidate": {
+        "session": (_STRING, True),
+        "method": ({"type": "string", "enum": ["crisp", "balanced", "clustered"]}, True),
+    },
+    "operator_art_source_handoff": {"session": (_STRING, True), "destination_name": (_STRING, True)},
 }
 
 _DESCRIPTIONS: dict[str, str] = {
@@ -104,6 +132,11 @@ _DESCRIPTIONS: dict[str, str] = {
     "operator_art_erase_pixels": "Clear exact integer-grid pixels to transparent on an editable Workbench binding. Mutates the disposable session only.",
     "operator_art_stroke": "Draw a deterministic square-brush line/point stroke. Mutates the disposable session only.",
     "operator_art_undo": "Restore the Workbench to the state before the last applied mutation, byte-exact. Mutates the disposable session only.",
+    "operator_art_source_start": "Stage a PNG from an authorized CUSTODIAN asset-drop root into a disposable pre-canonical Source Session.",
+    "operator_art_source_plan_normalization": "Plan an incoming animation sheet using ONE shared scale and crop across every frame. This tool never independently scales individual frames.",
+    "operator_art_source_set_registration": "Adjust one normalized frame using bounded integer translation only; scale and dimensions cannot vary per frame.",
+    "operator_art_source_convert": "Generate crisp, balanced, and clustered candidates with the plan's single shared transform and translation-only registrations.",
+    "operator_art_source_handoff": "Stage a reviewed source candidate in the Operator asset-drop inbox. This does not publish canonical or runtime art.",
 }
 
 
@@ -147,6 +180,13 @@ def _validate_value(schema: dict[str, Any], value: Any, label: str) -> None:
     types = schema_type if isinstance(schema_type, list) else [schema_type] if schema_type else []
     if types and not any(_type_matches(value, item) for item in types):
         raise ValueError(f"{label} has wrong type: expected {types}")
+    if "enum" in schema and value not in schema["enum"]:
+        raise ValueError(f"{label} is not one of {schema['enum']}")
+    if isinstance(value, (int, float)) and not isinstance(value, bool):
+        if "minimum" in schema and value < schema["minimum"]:
+            raise ValueError(f"{label} is below minimum {schema['minimum']}")
+        if "maximum" in schema and value > schema["maximum"]:
+            raise ValueError(f"{label} exceeds maximum {schema['maximum']}")
     if isinstance(value, list) and ("array" in types):
         min_items, max_items = schema.get("minItems"), schema.get("maxItems")
         if min_items is not None and len(value) < min_items:
@@ -176,10 +216,12 @@ def validate_arguments(name: str, arguments: dict[str, Any]) -> None:
 
 
 class OperatorArtMCP:
-    def __init__(self, service: ArtAgentService | None = None): self.service=service or ArtAgentService()
+    def __init__(self, service: ArtAgentService | None = None, source_service: SourceArtService | None = None):
+        self.service=service or ArtAgentService()
+        self.source_service=source_service or SourceArtService()
 
     def tools(self) -> dict[str, Callable[..., Any]]:
-        s=self.service
+        s=self.service; source=self.source_service
         return {
             "operator_art_start": lambda **x: {"session":str(s.start_session(**x))},
             "operator_art_status": lambda session,**_:s.status(Path(session)),
@@ -216,6 +258,15 @@ class OperatorArtMCP:
             "operator_art_record_critique": lambda session,critique,**_:s.record_critique(Path(session),critique),
             "operator_art_review_packet": lambda session,**x:s.build_review_packet(Path(session),**x),
             "operator_art_undo": lambda session,**_:s.undo_last(Path(session)),
+            "operator_art_source_start": lambda **x:{"session":str(source.start(**x))},
+            "operator_art_source_status": lambda session,**_:source.status(Path(session)),
+            "operator_art_source_analyze": lambda session,**_:source.analyze(Path(session)),
+            "operator_art_source_plan_normalization": lambda session,**x:source.plan_normalization(Path(session),**x),
+            "operator_art_source_set_registration": lambda session,**x:source.set_frame_registration(Path(session),**x),
+            "operator_art_source_convert": lambda session,**_:source.convert(Path(session)),
+            "operator_art_source_review": lambda session,**_:source.review(Path(session)),
+            "operator_art_source_select_candidate": lambda session,method,**_:source.select_candidate(Path(session),method),
+            "operator_art_source_handoff": lambda session,destination_name,**_:source.handoff(Path(session),destination_name=destination_name),
         }
 
     def tool_definitions(self) -> list[dict]:

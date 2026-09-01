@@ -145,6 +145,23 @@ class SharedFrameTransform:
     fit: str = "contain"
 
 
+@dataclass(frozen=True)
+class SheetConversionRequest:
+    """Stable programmatic sheet-conversion request used by trusted tools."""
+
+    source: Path
+    columns: int
+    rows: int
+    frame_count: int
+    source_cell: tuple[int, int]
+    target_size: tuple[int, int]
+    method: str
+    transform: SharedFrameTransform
+    registrations: tuple[tuple[int, int], ...]
+    alpha_cutoff: int = 16
+    colors: int = 24
+
+
 # =============================================================================
 # Parsing helpers
 # =============================================================================
@@ -668,6 +685,50 @@ def calculate_shared_frame_transform(
     )
 
 
+def compute_shared_frame_transform(
+    *,
+    frame_size: tuple[int, int],
+    frame_bboxes: list[tuple[int, int, int, int] | None],
+    target_size: tuple[int, int],
+    anchor: str = "feet",
+    fit: str = "contain",
+    padding: int = 0,
+) -> SharedFrameTransform:
+    """Compute one crop/scale/placement shared by an entire animation sheet."""
+    union = expand_bbox(
+        union_bboxes(frame_bboxes, fallback_size=frame_size),
+        padding,
+        frame_size,
+    )
+    prepared_cell_size = automatic_source_canvas(target_size)
+    margin = automatic_margin(prepared_cell_size)
+    content_size = (max(1, union[2] - union[0]), max(1, union[3] - union[1]))
+    usable_size = (
+        max(1, prepared_cell_size[0] - margin * 2),
+        max(1, prepared_cell_size[1] - margin * 2),
+    )
+    scale = _fit_scale(usable_size, content_size, fit)
+    scaled_size = (
+        max(1, round(content_size[0] * scale)),
+        max(1, round(content_size[1] * scale)),
+    )
+    return SharedFrameTransform(
+        union_bbox=union,
+        prepared_cell_size=prepared_cell_size,
+        margin=margin,
+        scale=scale,
+        scaled_union_size=scaled_size,
+        destination_offset=_anchor_offset(
+            prepared_cell_size,
+            scaled_size,
+            margin,
+            anchor,
+        ),
+        anchor=anchor,
+        fit=fit,
+    )
+
+
 def prepare_sheet_frames(
     frames: list[Image.Image],
     transform: SharedFrameTransform,
@@ -703,6 +764,35 @@ def prepare_sheet_frames(
         prepared.append(canvas)
 
     return prepared
+
+
+def translation_would_clip(frame: Image.Image, *, dx: int, dy: int) -> bool:
+    bbox = frame.convert("RGBA").getchannel("A").getbbox()
+    if bbox is None:
+        return False
+    left, top, right, bottom = bbox
+    return (
+        left + dx < 0
+        or top + dy < 0
+        or right + dx > frame.width
+        or bottom + dy > frame.height
+    )
+
+
+def translate_frame_integer(frame: Image.Image, *, dx: int, dy: int) -> Image.Image:
+    """Translate a normalized frame without resampling."""
+    if not isinstance(dx, int) or not isinstance(dy, int):
+        raise ValueError("frame registration must use integer translations")
+    source = frame.convert("RGBA")
+    result = Image.new("RGBA", source.size, (0, 0, 0, 0))
+    source_left, source_top = max(0, -dx), max(0, -dy)
+    source_right = min(source.width, source.width - dx)
+    source_bottom = min(source.height, source.height - dy)
+    if source_right <= source_left or source_bottom <= source_top:
+        return result
+    visible = source.crop((source_left, source_top, source_right, source_bottom))
+    result.alpha_composite(visible, (max(0, dx), max(0, dy)))
+    return result
 
 
 # =============================================================================
@@ -992,6 +1082,47 @@ def make_sheet_candidates(
     }
 
     return sheet_candidates, frame_candidates
+
+
+def convert_sheet_request(request: SheetConversionRequest) -> Image.Image:
+    """Convert a sheet with one shared transform and translation-only registration."""
+    method_key = METHOD_ALIASES.get(request.method)
+    if method_key is None:
+        raise ValueError(f"unsupported conversion method: {request.method}")
+    if len(request.registrations) != request.frame_count:
+        raise ValueError("registration count must equal frame count")
+    geometry = SheetGeometry(
+        columns=request.columns,
+        rows=request.rows,
+        frame_count=request.frame_count,
+        source_cell=request.source_cell,
+    )
+    with Image.open(request.source) as source:
+        frames = split_sheet_frames(source.convert("RGBA"), geometry)
+    prepared = prepare_sheet_frames(
+        frames,
+        request.transform,
+        prepare_filter="lanczos",
+        alpha_cutoff=request.alpha_cutoff,
+        binary_alpha_during_prepare=False,
+    )
+    _sheets, candidates = make_sheet_candidates(
+        prepared,
+        geometry,
+        request.target_size,
+        request.colors,
+        request.alpha_cutoff,
+        crisp_colors=request.colors,
+    )
+    registered: list[Image.Image] = []
+    for index, frame in enumerate(candidates[method_key]):
+        dx, dy = request.registrations[index]
+        if translation_would_clip(frame, dx=dx, dy=dy):
+            raise ValueError(
+                f"registration for frame {index + 1} would clip visible pixels"
+            )
+        registered.append(translate_frame_integer(frame, dx=dx, dy=dy))
+    return reassemble_sheet(registered, geometry, request.target_size)
 
 
 # =============================================================================

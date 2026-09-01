@@ -12,6 +12,7 @@ import animation_workbench as workbench
 import animation_workbench_model as model
 
 from .service import ART_ROOT, ArtAgentService
+from .source_service import SourceArtService
 from .pilot import print_result as print_pilot_result, run_v2_pilot
 
 
@@ -95,6 +96,37 @@ def configure_art_parser(parser: argparse.ArgumentParser) -> None:
     move.add_argument("--dx", type=int, required=True)
     move.add_argument("--dy", type=int, required=True)
 
+    source_start = commands.add_parser("source-start")
+    source_start.add_argument("source", type=Path)
+    source_start.add_argument("--frames", type=int, required=True)
+    source_start.add_argument("--columns", type=int)
+    source_start.add_argument("--rows", type=int, default=1)
+    source_start.add_argument("--target-size", type=int, default=96)
+    source_start.add_argument("--json", action="store_true")
+    for name in ("source-status", "source-analyze", "source-convert", "source-review"):
+        command = commands.add_parser(name)
+        command.add_argument("session", type=Path)
+        command.add_argument("--json", action="store_true")
+    source_plan = commands.add_parser("source-plan")
+    source_plan.add_argument("session", type=Path)
+    source_plan.add_argument("--anchor", choices=("feet", "center", "top-center", "bottom-center"), default="feet")
+    source_plan.add_argument("--method", choices=("crisp", "balanced", "clustered"), default="balanced")
+    source_plan.add_argument("--json", action="store_true")
+    source_register = commands.add_parser("source-register")
+    source_register.add_argument("session", type=Path)
+    source_register.add_argument("--frame", type=int, required=True)
+    source_register.add_argument("--dx", type=int, required=True)
+    source_register.add_argument("--dy", type=int, required=True)
+    source_register.add_argument("--json", action="store_true")
+    source_select = commands.add_parser("source-select")
+    source_select.add_argument("session", type=Path)
+    source_select.add_argument("method", choices=("crisp", "balanced", "clustered"))
+    source_select.add_argument("--json", action="store_true")
+    source_handoff = commands.add_parser("source-handoff")
+    source_handoff.add_argument("session", type=Path)
+    source_handoff.add_argument("destination_name")
+    source_handoff.add_argument("--json", action="store_true")
+
 
 def _integer_list(value: str, count: int, label: str) -> list[int]:
     try:
@@ -157,6 +189,20 @@ def dispatch_art_command(args: argparse.Namespace) -> int:
             )
             print_pilot_result(result, json_output=args.json)
             return 0 if result.get("engineering") in {"PASS", "SKIP"} else 1
+        if command.startswith("source-"):
+            source = SourceArtService()
+            if command == "source-start":
+                result = {"session": str(source.start(source_path=args.source, frames=args.frames, columns=args.columns, rows=args.rows, target_size=args.target_size))}
+            elif command == "source-status": result = source.status(args.session)
+            elif command == "source-analyze": result = source.analyze(args.session)
+            elif command == "source-plan": result = source.plan_normalization(args.session, anchor=args.anchor, method=args.method)
+            elif command == "source-register": result = source.set_frame_registration(args.session, frame=args.frame, dx=args.dx, dy=args.dy)
+            elif command == "source-convert": result = source.convert(args.session)
+            elif command == "source-review": result = source.review(args.session)
+            elif command == "source-select": result = source.select_candidate(args.session, args.method)
+            else: result = source.handoff(args.session, destination_name=args.destination_name)
+            print(json.dumps(result, indent=2))
+            return 0
         service = _service(args)
         if command == "start":
             session = service.start_session(

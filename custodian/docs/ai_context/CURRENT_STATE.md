@@ -206,6 +206,12 @@ draft-first semantic part edits, metrics, provisional QA, deterministic plans,
 critiques, review packets, and a local stdio MCP adapter are implemented.
 Workbench remains the sole publication gate; pose synthesis and autonomous
 production remain later phases.
+The Operator Art MCP/CLI also has a separate pre-canonical Source Session path
+for high-resolution asset-drop PNGs. It confines source reads, stages and hashes
+the original, analyzes fixed cells, computes one shared whole-sheet scale/crop,
+allows only bounded integer frame registration, generates three converter
+candidates, emits review metrics/contact/silhouette/GIF artifacts, and stages a
+passing selection back to the inbox without writing canonical or runtime art.
 The canonical real-asset acceptance is now `operator art pilot`. It exercises
 the eight-frame `melee_1h/locomotion/walk_01/e` Vigil animation with persisted
 landmarks, distinguishable near/far leg masks, a non-destructive far-leg draft,

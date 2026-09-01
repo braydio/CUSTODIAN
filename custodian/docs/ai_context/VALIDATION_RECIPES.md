@@ -1233,3 +1233,18 @@ are `operator art pilot` and `operator art pilot --json`. Reports are written to
 disposable `.ai` state, restores the Workbench byte-for-byte, hashes protected
 production trees before/after, and never publishes. `--allow-skip-aseprite` is
 an explicit environment accommodation, not the normal acceptance path.
+
+### Operator Art Source Sessions
+
+```bash
+python3 custodian/tools/validation/operator_art_source_smoke.py
+python3 custodian/tools/validation/operator_art_source_real_pilot.py
+python3 custodian/tools/validation/operator_art_agent_mcp_smoke.py
+```
+
+The source smoke proves allowlisted staging, immutable source hashing, fixed
+sheet geometry, one shared global scale, translation-only registration, three
+96 px candidates, true alpha, clipping refusal, review artifacts, and staged
+handoff without canonical publication. The pilot runs an eight-frame source by
+default or accepts `--source PATH --frames N --target-size N`, and hashes the
+production Operator tree before and after.
