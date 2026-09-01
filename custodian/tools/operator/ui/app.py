@@ -69,6 +69,7 @@ class OperatorWorkbenchApp(App):
         ("end", "preview_last", "Last frame"), ("left_square_bracket", "preview_slower", "Slower review"),
         ("right_square_bracket", "preview_faster", "Faster review"), ("l", "preview_loop", "Loop"),
         ("s", "preview_source", "Source"), ("ctrl+a", "timeline_add", "Add clip"),
+        ("z", "preview_zoom", "Zoom"),
         ("delete", "timeline_remove", "Remove clip"), ("ctrl+up", "timeline_up", "Move clip left"),
         ("ctrl+down", "timeline_down", "Move clip right"), ("ctrl+s", "timeline_save", "Save sequence"),
         ("ctrl+o", "timeline_load", "Load sequence"),
@@ -249,14 +250,14 @@ class OperatorWorkbenchApp(App):
         if self.state.mode == "timeline":
             if not self.timeline_frames: return
             index = self.state.preview_frame; clip, source_frame, frame = self.timeline_frames[index]
-            self._main_widget("#timeline-canvas", PreviewCanvas).show_frame(frame, f"CLIP {clip + 1} · SOURCE FRAME {source_frame + 1}")
+            self._main_widget("#timeline-canvas", PreviewCanvas).show_frame(frame, f"CLIP {clip + 1} · SOURCE FRAME {source_frame + 1}", self.state.preview_zoom)
             fps = self.sequence.clips[clip].review_fps
-            self._main_widget("#timeline-controls", PreviewControls).show(frame=index, frames=len(self.timeline_frames), fps=fps, playing=self.state.preview_playing, loop=self.state.preview_loop, source=self.state.preview_source)
+            self._main_widget("#timeline-controls", PreviewControls).show(frame=index, frames=len(self.timeline_frames), fps=fps, playing=self.state.preview_playing, loop=self.state.preview_loop, source=self.state.preview_source, zoom=self.state.preview_zoom)
             return
         if not self.preview_view: return
         index = self.state.preview_frame
-        self._main_widget("#preview-canvas", PreviewCanvas).show_frame(self.preview_view.frames[index], self.preview_view.identity.key)
-        self._main_widget("#preview-controls", PreviewControls).show(frame=index, frames=len(self.preview_view.frames), fps=self.state.review_fps, playing=self.state.preview_playing, loop=self.state.preview_loop, source=self.state.preview_source)
+        self._main_widget("#preview-canvas", PreviewCanvas).show_frame(self.preview_view.frames[index], self.preview_view.identity.key, self.state.preview_zoom)
+        self._main_widget("#preview-controls", PreviewControls).show(frame=index, frames=len(self.preview_view.frames), fps=self.state.review_fps, playing=self.state.preview_playing, loop=self.state.preview_loop, source=self.state.preview_source, zoom=self.state.preview_zoom)
 
     def action_preview_toggle(self):
         if self.state.mode not in ("preview", "timeline"): return
@@ -281,6 +282,12 @@ class OperatorWorkbenchApp(App):
         self.state.preview_source = sources[(sources.index(self.state.preview_source) + 1) % len(sources)]
         task = self._load_timeline() if self.state.mode == "timeline" else self._load_preview()
         self.run_worker(task, group="preview-image", exclusive=True)
+
+    def action_preview_zoom(self):
+        if self.state.mode not in ("preview", "timeline"): return
+        modes = ("auto", "1x", "2x", "3x", "fit")
+        self.state.preview_zoom = modes[(modes.index(self.state.preview_zoom) + 1) % len(modes)]
+        self._render_preview()
 
     def action_timeline_add(self):
         selection = self._require_selection()

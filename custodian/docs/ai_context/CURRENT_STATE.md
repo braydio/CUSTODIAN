@@ -98,6 +98,12 @@ coverage is computed evidence. The shared semantic provider composites real
 rectangular layer contracts for saved Workbench, canonical source, and generated
 runtime. REVIEW FPS never changes gameplay timing, and duplicate/trimmed/looped
 review clips save only under the ignored Workbench sequence root.
+Preview display is raster-first through optional `textual-image`: TGP/Sixel
+receive PIL RGBA frames directly, with AUTO/1×/2×/3× integer zoom and an
+explicitly labeled FIT representation. Half-cell/Unicode output is visibly
+degraded fallback only. Workbench, canonical, and runtime comparisons share one
+layer policy, preventing simultaneous full-body and modular-body composition
+while retaining authored head, cape, weapon, and FX overlays.
 
 ## Operator Workbench Interactive UI V1 (2026-08-29)
 

@@ -184,10 +184,42 @@ class ContextPilotService(PilotService):
 
 
 async def textual_smoke() -> None:
+    from PIL import Image
+    from textual.app import App, ComposeResult
     from ui.app import OperatorWorkbenchApp
     from ui.dialogs import ContextMismatchDialog, FrameAddDialog, PublishDialog
-    from ui.widgets import ActivityLog, AnimationDetail, AnimationTree
+    from ui.widgets import ActivityLog, AnimationDetail, AnimationTree, PreviewCanvas
     from textual.widgets import Static
+    from textual_image.widget import AutoImage
+
+    class RasterPilot(App):
+        def compose(self) -> ComposeResult:
+            yield PreviewCanvas("fixture", id="raster-canvas")
+
+    raster_app = RasterPilot()
+    async with raster_app.run_test(size=(80, 35)) as pilot:
+        canvas = raster_app.query_one("#raster-canvas", PreviewCanvas)
+        frame = Image.new("RGBA", (156, 96), (12, 34, 56, 0)); frame.putpixel((9, 8), (90, 80, 70, 123))
+        canvas.show_frame(frame, "156 fixture", "1x"); await pilot.pause()
+        assert canvas.source_frame is not frame and canvas.source_frame.size == (156, 96)
+        assert canvas.rendered_image.size == (156, 96) and canvas.rendered_image.tobytes() == frame.tobytes()
+        canvas.show_frame(frame, "156 fixture", "2x"); await pilot.pause()
+        assert canvas.rendered_image.size == (312, 192)
+        assert canvas.rendered_image.getpixel((18, 16)) == (90, 80, 70, 123)
+        fallback = canvas.query_one(".preview-fallback", Static)
+        assert canvas.low_fidelity_fallback and fallback.display
+        assert "LOW-FIDELITY FALLBACK" in str(fallback.render())
+        canvas.low_fidelity_fallback = False; canvas.renderer = "TGP"
+        canvas.show_frame(frame, "primary fixture", "1x"); await pilot.pause()
+        primary_input = canvas.query_one(".preview-raster", AutoImage).image
+        assert isinstance(primary_input, Image.Image) and primary_input.mode == "RGBA"
+        assert primary_input.size == (156, 96) and primary_input.tobytes() == frame.tobytes()
+        square = Image.new("RGBA", (96, 96), (1, 2, 3, 77))
+        canvas.show_frame(square, "96 fixture", "1x"); await pilot.pause()
+        square_input = canvas.query_one(".preview-raster", AutoImage).image
+        assert isinstance(square_input, Image.Image) and square_input.size == (96, 96)
+        assert square_input.mode == "RGBA" and square_input.tobytes() == square.tobytes()
+
     service = PilotService(); app = OperatorWorkbenchApp(service=service, startup=service.selection)
     async with app.run_test(size=(80, 35)) as pilot:
         await pilot.pause(0.5)
@@ -281,7 +313,9 @@ def real_repo_read_only() -> None:
 
 def main() -> None:
     pure_service_smoke()
-    try: import textual  # noqa: F401
+    try:
+        import textual  # noqa: F401
+        import textual_image  # noqa: F401
     except ModuleNotFoundError: print("SKIP TEXTUAL PILOT: install custodian/tools/operator/ui/requirements.txt")
     else: asyncio.run(textual_smoke())
     real_repo_read_only()

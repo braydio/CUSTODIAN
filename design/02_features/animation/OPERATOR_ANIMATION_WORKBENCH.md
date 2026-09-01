@@ -129,15 +129,24 @@ may explain a next action but never mutate or reorder authored rank.
 Preview is now a first-class review surface. One provider composes semantic
 layers for saved Workbench, canonical source, and generated runtime views. It
 uses each layer's recorded frame count and rectangular frame dimensions,
-centers smaller layers on the largest canvas, preserves alpha, and permits only
-nearest-neighbor display scaling. Space, arrows, Home/End, brackets, and `L`
-control playback, frame review, REVIEW FPS, and looping. REVIEW FPS is disposable
-presentation state and never writes gameplay timing or transition authority.
+centers smaller layers on the largest canvas, and applies one presentation-layer
+policy to all three views: modular lower+upper replaces full-body, otherwise
+full-body is used, followed by authored head/cape/weapon/FX overlays. Reference
+and compatibility duplicates are excluded.
+
+The primary Textual renderer receives the composed PIL RGBA raster directly and
+uses TGP or Sixel through `textual-image`. Native 1×, 2×, and 3× modes use only
+integer nearest-neighbor replication. AUTO chooses 2× when it fits and otherwise
+1×; FIT is visibly labeled as a fitted review representation. Unicode/half-cell
+output is a visibly marked LOW-FIDELITY FALLBACK, never the production review
+path. Space, arrows, Home/End, brackets, `Z`, and `L` control playback, frame
+review, REVIEW FPS, zoom, and looping. REVIEW FPS is disposable presentation
+state and never writes gameplay timing or transition authority.
 
 Timeline clips contain only semantic identity, direction, REVIEW FPS, loop
 count, and optional inclusive frame trims. Duplicates are legal. Saved sequences
 live under `.ai/operator_animation_workbench/sequences/`; clip boundaries are
 exact, and sequence JSON is never published to canonical source or runtime.
-WorkbenchService remains the exclusive UI/backend boundary, preview caches are
-fingerprinted under the ignored workspace, and a changed saved workbench
-invalidates its cached review frames.
+WorkbenchService remains the exclusive UI/backend boundary. Saved-workbench
+preview exports are keyed by the `.aseprite` SHA under the ignored workspace,
+so a changed saved workbench cannot reuse an earlier export.

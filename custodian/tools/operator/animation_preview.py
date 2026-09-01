@@ -10,6 +10,7 @@ from typing import Literal
 from PIL import Image
 
 PreviewSource = Literal["workbench", "canonical", "runtime"]
+ZoomMode = Literal["auto", "1x", "2x", "3x", "fit"]
 PLAN_SCHEMA = "custodian.operator_animation_implementation_plan.v1"
 SEQUENCE_SCHEMA = "custodian.operator_animation_review_sequence.v1"
 
@@ -31,6 +32,14 @@ class Preview:
     frame_size: tuple[int, int]
     fingerprint: str
     paths: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class PresentationLayer:
+    name: str
+    path: Path
+    frames: int
+    frame_size: tuple[int, int]
 
 
 @dataclass
@@ -90,13 +99,41 @@ def split_image(image: Image.Image, frame_size: tuple[int, int]) -> list[Image.I
     return [image.convert("RGBA").crop((index * width, 0, (index + 1) * width, height)) for index in range(count)]
 
 
-def composite_layers(layers: list[tuple[Path, int, tuple[int, int]]]) -> tuple[tuple[Image.Image, ...], tuple[int, int]]:
+def scale_preview_frame(frame: Image.Image, zoom: ZoomMode | int) -> Image.Image:
+    """Scale review pixels only by exact integer nearest-neighbor replication."""
+    rgba = frame.convert("RGBA")
+    if zoom in ("auto", "fit", "1x", 1):
+        return rgba.copy()
+    scale = int(str(zoom).removesuffix("x"))
+    if scale not in (2, 3):
+        raise ValueError(f"unsupported integer preview zoom: {zoom}")
+    return rgba.resize((rgba.width * scale, rgba.height * scale), Image.Resampling.NEAREST)
+
+
+def select_presentation_layers(layers: list[PresentationLayer]) -> list[PresentationLayer]:
+    """Select one equivalent authored presentation stack for every source mode."""
+    by_name = {layer.name: layer for layer in layers}
+    selected: list[PresentationLayer] = []
+    if {"lower_body", "upper_body"} <= by_name.keys():
+        selected.extend((by_name["lower_body"], by_name["upper_body"]))
+    elif "full_body" in by_name:
+        selected.append(by_name["full_body"])
+    for name in ("head", "cape", "weapon", "fx"):
+        if name in by_name:
+            selected.append(by_name[name])
+    if not selected:
+        raise ValueError("animation has no authored presentation body or overlay layers")
+    return selected
+
+
+def composite_layers(layers: list[PresentationLayer]) -> tuple[tuple[Image.Image, ...], tuple[int, int]]:
     if not layers:
         raise ValueError("animation has no previewable layers")
-    frame_count = max(item[1] for item in layers)
-    canvas = (max(item[2][0] for item in layers), max(item[2][1] for item in layers))
+    frame_count = max(item.frames for item in layers)
+    canvas = (max(item.frame_size[0] for item in layers), max(item.frame_size[1] for item in layers))
     output = [Image.new("RGBA", canvas, (0, 0, 0, 0)) for _ in range(frame_count)]
-    for path, count, size in layers:
+    for layer in layers:
+        path, count, size = layer.path, layer.frames, layer.frame_size
         source = split_strip(path, count, size)
         x, y = (canvas[0] - size[0]) // 2, (canvas[1] - size[1]) // 2
         for index, frame in enumerate(source):
@@ -108,30 +145,29 @@ class AnimationPreviewProvider:
     def __init__(self, *, repo_root: Path, catalog_path: Path, source_index, workspace_root: Path):
         self.repo_root = Path(repo_root); self.catalog_path = Path(catalog_path)
         self.source_index = source_index; self.workspace_root = Path(workspace_root)
-        self.cache_root = self.workspace_root / "preview_cache"
 
-    def _catalog_layers(self, identity: SemanticIdentity) -> list[tuple[Path, int, tuple[int, int]]]:
+    def _catalog_layers(self, identity: SemanticIdentity) -> list[PresentationLayer]:
         payload = json.loads(self.catalog_path.read_text())
         entry = payload.get("animations", {}).get(identity.key)
         if not entry:
             raise ValueError(f"animation absent from generated catalog: {identity.key}")
         rows = []
-        for layer in entry.get("layers", {}).values():
+        for name, layer in entry.get("layers", {}).items():
             raw = str(layer["path"])
             path = self.repo_root / "custodian" / raw.removeprefix("res://") if raw.startswith("res://") else self.repo_root / raw
-            rows.append((path, int(layer["frames"]), tuple(layer["frame_size"])))
-        return rows
+            rows.append(PresentationLayer(name, path, int(layer["frames"]), tuple(layer["frame_size"])))
+        return select_presentation_layers(rows)
 
-    def _canonical_layers(self, identity: SemanticIdentity) -> list[tuple[Path, int, tuple[int, int]]]:
+    def _canonical_layers(self, identity: SemanticIdentity) -> list[PresentationLayer]:
         rows = []
         for sid, (path, key) in self.source_index().items():
             if sid[0] == "operator" and tuple(sid[2:6]) == (identity.profile, identity.group, identity.action, identity.direction):
-                rows.append((Path(path), int(key.frames), (int(key.frame_width), int(key.frame_height))))
+                rows.append(PresentationLayer(str(sid[1]), Path(path), int(key.frames), (int(key.frame_width), int(key.frame_height))))
         if not rows:
             raise ValueError(f"animation absent from canonical source: {identity.key}")
-        return rows
+        return select_presentation_layers(rows)
 
-    def _workbench_layers(self, identity: SemanticIdentity) -> list[tuple[Path, int, tuple[int, int]]]:
+    def _workbench_layers(self, identity: SemanticIdentity) -> list[PresentationLayer]:
         workspace = self.workspace_root / identity.profile / identity.group / identity.action / identity.direction
         manifest_path = workspace / "workbench.json"
         if not manifest_path.exists():
@@ -145,14 +181,15 @@ class AnimationPreviewProvider:
             path = candidate if candidate is not None and candidate.exists() else Path(binding.get("input_path", ""))
             contract = binding.get("workspace_contract", {})
             size = tuple(binding.get("frame_size", (0, 0)))
-            if path.exists() and size != (0, 0): rows.append((path, int(contract.get("frames", binding.get("frames", 0))), size))
+            if path.exists() and size != (0, 0):
+                rows.append(PresentationLayer(str(binding.get("binding_id", "")), path, int(contract.get("frames", binding.get("frames", 0))), size))
         if not rows:
             raise ValueError(f"workbench has no saved preview export: {identity.key}")
-        return rows
+        return select_presentation_layers(rows)
 
     def load(self, identity: SemanticIdentity, source: PreviewSource = "runtime") -> Preview:
         layers = self._workbench_layers(identity) if source == "workbench" else self._canonical_layers(identity) if source == "canonical" else self._catalog_layers(identity)
-        paths = [item[0] for item in layers]
+        paths = [item.path for item in layers]
         fingerprint = _digest(paths)
         frames, size = composite_layers(layers)
         return Preview(identity, source, frames, size, fingerprint, tuple(str(path) for path in paths))

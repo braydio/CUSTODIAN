@@ -133,6 +133,7 @@ class WorkbenchUIState:
     preview_playing: bool = False
     preview_loop: bool = True
     review_fps: float = 8.0
+    preview_zoom: str = "auto"
     sequence_name: str = "review"
 
     def __post_init__(self) -> None:
