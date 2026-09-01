@@ -208,6 +208,11 @@ async def textual_smoke() -> None:
         assert list(layer_table.columns.values())[0].label.plain == "LAYER"
         assert len(layer_table.columns) == 3
         assert layer_table.max_scroll_x == 0
+        app.action_mode_plan(); await pilot.pause()
+        assert app.state.mode == "plan" and not app.main_screen.query_one("#plan-mode").has_class("hidden")
+        assert app.main_screen.query_one("#workspace-row").has_class("hidden")
+        app.action_mode_workbench(); await pilot.pause()
+        assert app.state.mode == "workbench" and not app.main_screen.query_one("#workspace-row").has_class("hidden")
         await pilot.press("slash"); await pilot.press("r", "u", "n", "underscore", "0", "1"); await pilot.pause()
         assert app.screen.query_one("#search").value == "run_01"
         assert "6f" in str(app.screen.query_one("#animation-detail", AnimationDetail).render())

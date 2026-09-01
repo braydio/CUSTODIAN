@@ -90,6 +90,15 @@ are presentation-disabled, leaving 104 active Lower Quarter props and 250
 active civic props overall. Native sign/directory/evidence interactions retain
 the route information; the floating blockout label is gone.
 
+## Operator Workbench Interactive UI V3 (2026-09-01)
+
+`operator ui` now has shared-selection PLAN, WORKBENCH, PREVIEW, and TIMELINE
+modes. The implementation-plan JSON owns human rank/priority/state; live catalog
+coverage is computed evidence. The shared semantic provider composites real
+rectangular layer contracts for saved Workbench, canonical source, and generated
+runtime. REVIEW FPS never changes gameplay timing, and duplicate/trimmed/looped
+review clips save only under the ignored Workbench sequence root.
+
 ## Operator Workbench Interactive UI V1 (2026-08-29)
 
 `operator ui` is the preferred interactive Operator animation authoring front

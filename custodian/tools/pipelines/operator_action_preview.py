@@ -4,10 +4,14 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import sys
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 from PIL import Image
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "operator"))
+from animation_preview import split_image
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -264,14 +268,7 @@ def load_strip(path: Path, default_frame_size: int) -> Strip:
 
 
 def split_frames(strip: Image.Image, frame_size: int) -> list[Image.Image]:
-    frames = max(1, strip.width // frame_size)
-    out: list[Image.Image] = []
-    for index in range(frames):
-        frame = Image.new("RGBA", (frame_size, frame_size), (0, 0, 0, 0))
-        crop = strip.crop((index * frame_size, 0, min((index + 1) * frame_size, strip.width), min(frame_size, strip.height)))
-        frame.alpha_composite(crop, (0, 0))
-        out.append(frame)
-    return out
+    return split_image(strip, (frame_size, frame_size))
 
 
 def composite_frame_lists(base_frames: list[Image.Image], overlay_frames: list[Image.Image], frame_size: int) -> list[Image.Image]:

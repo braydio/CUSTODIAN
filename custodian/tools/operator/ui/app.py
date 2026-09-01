@@ -8,6 +8,7 @@ from pathlib import Path
 
 from textual.app import App
 from textual.binding import Binding
+from textual.widget import Widget
 from textual.widgets import DataTable, Input, Static
 
 from .dialogs import (
@@ -18,7 +19,10 @@ from .features import AnimationFeature
 from .screens import MainScreen
 from .service import WorkbenchService
 from .state import AnimationSelection, ExistingContextView, WorkbenchUIState
-from .widgets import ActivityLog, AnimationDetail, AnimationTree, LayerTable, WorkbenchStatusBar
+from .widgets import (ActivityLog, AnimationDetail, AnimationTree, LayerTable,
+                      PlanTable, PreviewCanvas, PreviewControls, TimelineTable,
+                      WorkbenchStatusBar)
+import animation_preview
 
 
 class OperatorWorkbenchApp(App):
@@ -37,6 +41,12 @@ class OperatorWorkbenchApp(App):
     #layer-detail { height: 4; padding: 0 1; background: #181e28; }
     #activity-pane { height: 10; border: solid #4c566a; }
     #activity-log { height: 1fr; padding: 0 1; }
+    .mode-pane { height: 1fr; }
+    #plan-table { height: 1fr; }
+    #timeline-table { height: 12; }
+    #timeline-canvas { height: 1fr; content-align: center middle; }
+    #preview-canvas { height: 1fr; content-align: center middle; }
+    #preview-controls { height: 3; content-align: center middle; background: #202734; }
     .pane-title { height: 1; padding: 0 1; text-style: bold; background: #202734; }
     .dialog { width: 72; max-height: 94%; margin: 1 4; padding: 1 2; border: thick #81a1c1; background: #202734; }
     .publish-dialog { width: 96; }
@@ -52,18 +62,32 @@ class OperatorWorkbenchApp(App):
         ("x", "remove_frame", "Remove Frame"), ("p", "publish", "Publish"),
         ("r", "refresh_workbench", "Refresh"), ("w", "weapon_context", "Weapon"),
         ("v", "validate", "Validate"), ("j", "cursor_down", "Down"), ("k", "cursor_up", "Up"),
+        Binding("1", "mode_plan", "Plan", priority=True), Binding("2", "mode_workbench", "Workbench", priority=True),
+        Binding("3", "mode_preview", "Preview", priority=True), Binding("4", "mode_timeline", "Timeline", priority=True),
+        ("space", "preview_toggle", "Play/Pause"), ("left", "preview_previous", "Previous frame"),
+        ("right", "preview_next", "Next frame"), ("home", "preview_first", "First frame"),
+        ("end", "preview_last", "Last frame"), ("left_square_bracket", "preview_slower", "Slower review"),
+        ("right_square_bracket", "preview_faster", "Faster review"), ("l", "preview_loop", "Loop"),
+        ("s", "preview_source", "Source"), ("ctrl+a", "timeline_add", "Add clip"),
+        ("delete", "timeline_remove", "Remove clip"), ("ctrl+up", "timeline_up", "Move clip left"),
+        ("ctrl+down", "timeline_down", "Move clip right"), ("ctrl+s", "timeline_save", "Save sequence"),
+        ("ctrl+o", "timeline_load", "Load sequence"),
     ]
 
     def __init__(self, service: WorkbenchService | None = None, startup: AnimationSelection | None = None) -> None:
         super().__init__(); self.service = service or WorkbenchService(); self.state = WorkbenchUIState(selection=startup)
         self.features = {"animations": AnimationFeature(self.service)}; self.session_view = None
         self.main_screen: MainScreen | None = None
+        self.preview_view = None
+        self.timeline_frames = []
+        self.sequence = animation_preview.ReviewSequence("review")
 
     def on_mount(self) -> None:
         self.main_screen = MainScreen()
         self.push_screen(self.main_screen)
         self.call_after_refresh(self.action_full_refresh)
         self.set_interval(1.0, self._watch_selected)
+        self.set_interval(1.0 / 30.0, self._preview_tick)
 
     def _main_widget(self, selector, kind):
         if self.main_screen is None:
@@ -114,6 +138,8 @@ class OperatorWorkbenchApp(App):
             branch, dirty = await self._thread(self._repo_status)
             aseprite = str(self.service.workbench.resolve_aseprite(self.service.aseprite) or "unavailable")
             self._main_widget("#workbench-status", WorkbenchStatusBar).set_status(branch, dirty, aseprite)
+            if hasattr(self.service, "animation_plan"):
+                self._main_widget("#plan-table", PlanTable).set_items(await self._thread(self.service.animation_plan))
             action_count = len({(row.selection.profile, row.selection.group, row.selection.action) for row in filtered})
             self._activity(f"browser refreshed: {len(filtered)} directional variants, {action_count} actions", "OK")
         except Exception as error: self._error(error)
@@ -164,6 +190,20 @@ class OperatorWorkbenchApp(App):
         table = event.data_table
         self._main_widget("#layer-detail", Static).update(table.selected_detail(event.cursor_row))
 
+    def on_data_table_row_selected(self, event: DataTable.RowSelected) -> None:
+        if event.data_table.id != "plan-table": return
+        item_id = str(event.row_key.value)
+        item = next((row for row in self.service.animation_plan() if row["id"] == item_id), None)
+        if item:
+            direction = (item.get("covered_directions") or item["directions"])[0]
+            self.state.selection = self.state.contextualize(AnimationSelection(item["profile"], item["group"], item["action"], direction))
+            self._set_mode("workbench")
+            self.run_worker(self._load_session(self.state.selection), group="session", exclusive=True)
+
+    def on_preview_controls_scrubbed(self, event: PreviewControls.Scrubbed) -> None:
+        frames = len(self.timeline_frames) if self.state.mode == "timeline" else len(self.preview_view.frames) if self.preview_view else 0
+        if frames: self.state.preview_frame = round(event.ratio * (frames - 1)); self._render_preview()
+
     async def on_animation_tree_selected(self, event: AnimationTree.Selected) -> None:
         selection = self.state.contextualize(event.selection)
         if await self._load_session(selection):
@@ -181,6 +221,117 @@ class OperatorWorkbenchApp(App):
     def action_cursor_down(self) -> None: self._main_widget("#animation-tree", AnimationTree).action_cursor_down()
     def action_cursor_up(self) -> None: self._main_widget("#animation-tree", AnimationTree).action_cursor_up()
     def action_full_refresh(self) -> None: self.run_worker(self._reload_browser(), group="browser", exclusive=True)
+
+    def _set_mode(self, mode: str) -> None:
+        self.state.mode = mode
+        ids = {"plan": "#plan-mode", "workbench": "#workspace-row", "preview": "#preview-mode", "timeline": "#timeline-mode"}
+        for name, selector in ids.items(): self._main_widget(selector, Widget).set_class(name != mode, "hidden")
+        if mode == "preview": self.run_worker(self._load_preview(), group="preview-image", exclusive=True)
+        if mode == "timeline":
+            self._main_widget("#timeline-table", TimelineTable).set_sequence(self.sequence)
+            self.run_worker(self._load_timeline(), group="timeline-image", exclusive=True)
+
+    def action_mode_plan(self): self._set_mode("plan")
+    def action_mode_workbench(self): self._set_mode("workbench")
+    def action_mode_preview(self): self._set_mode("preview")
+    def action_mode_timeline(self): self._set_mode("timeline")
+
+    async def _load_preview(self) -> None:
+        selection = self._require_selection()
+        if not selection: return
+        try:
+            self.preview_view = await self._thread(self.service.preview, selection, self.state.preview_source)
+            self.state.preview_frame = min(self.state.preview_frame, len(self.preview_view.frames) - 1)
+            self._render_preview()
+        except Exception as error: self._error(error)
+
+    def _render_preview(self) -> None:
+        if self.state.mode == "timeline":
+            if not self.timeline_frames: return
+            index = self.state.preview_frame; clip, source_frame, frame = self.timeline_frames[index]
+            self._main_widget("#timeline-canvas", PreviewCanvas).show_frame(frame, f"CLIP {clip + 1} · SOURCE FRAME {source_frame + 1}")
+            fps = self.sequence.clips[clip].review_fps
+            self._main_widget("#timeline-controls", PreviewControls).show(frame=index, frames=len(self.timeline_frames), fps=fps, playing=self.state.preview_playing, loop=self.state.preview_loop, source=self.state.preview_source)
+            return
+        if not self.preview_view: return
+        index = self.state.preview_frame
+        self._main_widget("#preview-canvas", PreviewCanvas).show_frame(self.preview_view.frames[index], self.preview_view.identity.key)
+        self._main_widget("#preview-controls", PreviewControls).show(frame=index, frames=len(self.preview_view.frames), fps=self.state.review_fps, playing=self.state.preview_playing, loop=self.state.preview_loop, source=self.state.preview_source)
+
+    def action_preview_toggle(self):
+        if self.state.mode not in ("preview", "timeline"): return
+        self.state.preview_playing = not self.state.preview_playing; self._render_preview()
+    def action_preview_previous(self):
+        if self.preview_view or self.timeline_frames: self.state.preview_frame = max(0, self.state.preview_frame - 1); self._render_preview()
+    def action_preview_next(self):
+        frames = len(self.timeline_frames) if self.state.mode == "timeline" else len(self.preview_view.frames) if self.preview_view else 0
+        if frames:
+            last = frames - 1
+            self.state.preview_frame = 0 if self.state.preview_loop and self.state.preview_frame == last else min(last, self.state.preview_frame + 1); self._render_preview()
+    def action_preview_first(self): self.state.preview_frame = 0; self._render_preview()
+    def action_preview_last(self):
+        frames = len(self.timeline_frames) if self.state.mode == "timeline" else len(self.preview_view.frames) if self.preview_view else 0
+        if frames: self.state.preview_frame = frames - 1; self._render_preview()
+    def action_preview_slower(self): self.state.review_fps = max(1.0, self.state.review_fps - 1.0); self._render_preview()
+    def action_preview_faster(self): self.state.review_fps = min(30.0, self.state.review_fps + 1.0); self._render_preview()
+    def action_preview_loop(self): self.state.preview_loop = not self.state.preview_loop; self._render_preview()
+    def action_preview_source(self):
+        if self.state.mode not in ("preview", "timeline"): return
+        sources = ("workbench", "canonical", "runtime")
+        self.state.preview_source = sources[(sources.index(self.state.preview_source) + 1) % len(sources)]
+        task = self._load_timeline() if self.state.mode == "timeline" else self._load_preview()
+        self.run_worker(task, group="preview-image", exclusive=True)
+
+    def action_timeline_add(self):
+        selection = self._require_selection()
+        if not selection: return
+        self.sequence.clips.append(animation_preview.TimelineClip(selection.profile, selection.group, selection.action, selection.direction, self.state.review_fps))
+        self._main_widget("#timeline-table", TimelineTable).set_sequence(self.sequence)
+        self.run_worker(self._load_timeline(), group="timeline-image", exclusive=True)
+
+    def _timeline_index(self) -> int:
+        return self._main_widget("#timeline-table", TimelineTable).cursor_row
+
+    def action_timeline_remove(self):
+        index = self._timeline_index()
+        if 0 <= index < len(self.sequence.clips): self.sequence.clips.pop(index); self._main_widget("#timeline-table", TimelineTable).set_sequence(self.sequence); self.run_worker(self._load_timeline(), group="timeline-image", exclusive=True)
+
+    def _move_clip(self, delta: int):
+        index = self._timeline_index(); target = index + delta
+        if 0 <= index < len(self.sequence.clips) and 0 <= target < len(self.sequence.clips):
+            self.sequence.clips[index], self.sequence.clips[target] = self.sequence.clips[target], self.sequence.clips[index]
+            table = self._main_widget("#timeline-table", TimelineTable); table.set_sequence(self.sequence); table.move_cursor(row=target)
+            self.run_worker(self._load_timeline(), group="timeline-image", exclusive=True)
+
+    def action_timeline_up(self): self._move_clip(-1)
+    def action_timeline_down(self): self._move_clip(1)
+    def action_timeline_save(self):
+        try: self._activity(f"sequence saved: {self.service.save_sequence(self.sequence)}", "OK")
+        except Exception as error: self._error(error)
+
+    def action_timeline_load(self):
+        try:
+            self.sequence = self.service.load_sequence(self.state.sequence_name)
+            self._main_widget("#timeline-table", TimelineTable).set_sequence(self.sequence)
+            self.run_worker(self._load_timeline(), group="timeline-image", exclusive=True)
+            self._activity(f"sequence loaded: {self.sequence.name}", "OK")
+        except Exception as error: self._error(error)
+
+    def _preview_tick(self) -> None:
+        if self.state.mode not in ("preview", "timeline") or not self.state.preview_playing: return
+        counter = getattr(self, "_preview_tick_counter", 0) + 1
+        self._preview_tick_counter = counter
+        fps = self.state.review_fps
+        if self.state.mode == "timeline" and self.timeline_frames:
+            fps = self.sequence.clips[self.timeline_frames[self.state.preview_frame][0]].review_fps
+        if counter % max(1, round(30.0 / fps)) == 0: self.action_preview_next()
+
+    async def _load_timeline(self) -> None:
+        try:
+            self.timeline_frames = await self._thread(self.service.flatten_sequence, self.sequence, self.state.preview_source)
+            self.state.preview_frame = min(self.state.preview_frame, max(0, len(self.timeline_frames) - 1))
+            self._render_preview()
+        except Exception as error: self._error(error)
 
     async def _watch_selected(self) -> None:
         selection = self.state.selection

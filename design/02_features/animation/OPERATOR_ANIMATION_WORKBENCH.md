@@ -116,7 +116,28 @@ projections without a terminal, then uses Textual's headless pilot when the
 optional dependency is installed. It proves search, six-frame run detail,
 add-frame dry-run review/cancel, publish review/cancel, modal-safe activity
 logging, and exact Workbench-error survival after failed session loading,
-without canonical source mutation. Image rendering and an embedded sprite
-editor are deliberate V1 deferrals; a future preview adapter may target Kitty,
-chafa, contact sheets, or Aseprite without changing the service/provider
-boundary.
+without canonical source mutation.
+
+## V3 production cockpit
+
+`operator ui` has four shared-selection modes: `1` PLAN, `2` WORKBENCH, `3`
+PREVIEW, and `4` TIMELINE. The implementation plan JSON beside this document is
+the only implementation-order authority. Rank, priority, and plan state are
+human-authored. Coverage and health are computed annotations; recommendations
+may explain a next action but never mutate or reorder authored rank.
+
+Preview is now a first-class review surface. One provider composes semantic
+layers for saved Workbench, canonical source, and generated runtime views. It
+uses each layer's recorded frame count and rectangular frame dimensions,
+centers smaller layers on the largest canvas, preserves alpha, and permits only
+nearest-neighbor display scaling. Space, arrows, Home/End, brackets, and `L`
+control playback, frame review, REVIEW FPS, and looping. REVIEW FPS is disposable
+presentation state and never writes gameplay timing or transition authority.
+
+Timeline clips contain only semantic identity, direction, REVIEW FPS, loop
+count, and optional inclusive frame trims. Duplicates are legal. Saved sequences
+live under `.ai/operator_animation_workbench/sequences/`; clip boundaries are
+exact, and sequence JSON is never published to canonical source or runtime.
+WorkbenchService remains the exclusive UI/backend boundary, preview caches are
+fingerprinted under the ignored workspace, and a changed saved workbench
+invalidates its cached review frames.

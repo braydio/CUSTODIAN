@@ -9,6 +9,7 @@ from typing import Any, Callable
 import animation_frame_contract as frame_contract
 import animation_workbench as workbench
 import animation_workbench_model as model
+import animation_preview
 
 from .state import (
     AnimationRecord, AnimationSelection, ErrorView, ExistingContextView,
@@ -35,6 +36,12 @@ class WorkbenchService:
         self.model = model_api
         self.workbench = workbench_api
         self._popen = popen
+        self.plan_path = self.repo_root / "design/02_features/animation/OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json"
+        self.preview_provider = animation_preview.AnimationPreviewProvider(
+            repo_root=self.repo_root, catalog_path=self.catalog_path,
+            source_index=self._index, workspace_root=self.workspace_root,
+        )
+        self.sequence_root = self.workspace_root / "sequences"
 
     def _index(self):
         return self.model.source_index(self.source_root, self.weapon_root)
@@ -57,6 +64,28 @@ class WorkbenchService:
             completeness, detail = self.classify_layers(layers)
             records.append(AnimationRecord(AnimationSelection(profile, group, action, direction), frames, layers, completeness, detail))
         return records
+
+    def animation_plan(self) -> list[dict[str, Any]]:
+        payload = json.loads(self.plan_path.read_text())
+        catalog = json.loads(self.catalog_path.read_text())
+        return animation_preview.validate_plan(payload, catalog)
+
+    def preview(self, selection: AnimationSelection, source: str = "runtime"):
+        if source == "workbench":
+            self.workbench.export_preview(self.workspace(selection) / "workbench.json", self.aseprite)
+        identity = animation_preview.SemanticIdentity(
+            selection.profile, selection.group, selection.action, selection.direction,
+        )
+        return self.preview_provider.load(identity, source)
+
+    def save_sequence(self, sequence: animation_preview.ReviewSequence) -> Path:
+        return animation_preview.save_sequence(sequence, self.sequence_root)
+
+    def load_sequence(self, name: str) -> animation_preview.ReviewSequence:
+        return animation_preview.load_sequence(self.sequence_root / f"{name}.json")
+
+    def flatten_sequence(self, sequence: animation_preview.ReviewSequence, source: str = "runtime"):
+        return animation_preview.flatten_sequence(sequence, self.preview_provider, source)
 
     @staticmethod
     def classify_layers(layers: tuple[str, ...] | list[str]) -> tuple[str, str]:

@@ -63,6 +63,20 @@ def _baseline(plan, ws):
 def aseprite_run(binary, manifest, mode):
     subprocess.run([str(binary),"-b","--script-param",f"mode={mode}","--script-param",f"manifest={manifest.resolve()}","--script",str(LUA)],check=True)
 
+def export_preview(manifest, aseprite=None):
+    """Export saved workbench pixels into ignored review cache only."""
+    manifest=Path(manifest); data=load(manifest); ws=manifest.parent
+    stamp="preview_"+m.file_sha256(ws/"workbench.aseprite")[:16]
+    normalized=ws/"exports"/stamp/"normalized"
+    if normalized.exists(): return normalized
+    data["export_stamp"]=stamp; save(manifest,data)
+    aseprite_run(resolve_aseprite(aseprite,True),manifest,"export")
+    normalized.mkdir(parents=True,exist_ok=True)
+    for binding in data.get("layers",[]):
+        raw=ws/"exports"/stamp/"raw"/f"{binding['binding_id']}.png"
+        m.extract_binding(raw,binding,data["canvas"],normalized/f"{binding['binding_id']}.png")
+    return normalized
+
 def ensure(profile,action,direction,group="",weapon="",linked_profile="",root=DEFAULT_ROOT,aseprite=None):
     plan=m.build_plan(profile,action,direction,group,weapon,linked_profile); ws=workspace(root,plan["identity"]); mf=ws/"workbench.json"; wb=ws/"workbench.aseprite"
     if mf.exists() and wb.exists():

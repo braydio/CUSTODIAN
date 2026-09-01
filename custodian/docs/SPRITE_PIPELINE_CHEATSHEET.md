@@ -44,6 +44,9 @@ For interactive work, install the optional dependency from
 `custodian/tools/operator/ui/requirements.txt` in a virtual environment and
 run `operator ui`. The TUI is a control cockpit over Workbench V2; Aseprite is
 still the editor and the CLI remains available for scripts.
+Use `1`–`4` for PLAN / WORKBENCH / PREVIEW / TIMELINE. Preview compares saved
+Workbench, canonical source, and generated runtime at non-authoritative REVIEW
+FPS. Review sequences are disposable `.ai` JSON and allow duplicates and trims.
 Use `operator anim frame add ... --after N --dry-run` or `frame remove ...
 --frame N --dry-run` to inspect an explicit frame-contract migration. Run
 without `--dry-run` to stage it, edit the new timeline, then publish.

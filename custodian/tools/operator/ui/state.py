@@ -127,6 +127,13 @@ class WorkbenchUIState:
     active_operation: str = ""
     aseprite_process: Any = None
     watch_signature: tuple[int | None, int | None] = (None, None)
+    mode: str = "workbench"
+    preview_source: str = "runtime"
+    preview_frame: int = 0
+    preview_playing: bool = False
+    preview_loop: bool = True
+    review_fps: float = 8.0
+    sequence_name: str = "review"
 
     def __post_init__(self) -> None:
         if self.selection is not None:

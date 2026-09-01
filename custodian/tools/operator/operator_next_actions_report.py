@@ -17,6 +17,7 @@ from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 from types import ModuleType
+from types import SimpleNamespace
 from typing import Any, Iterable
 
 
@@ -492,11 +493,33 @@ def main() -> int:
         else repo_root / "custodian/tools/validation/contracts/operator_animation_core.json"
     )
     contract = json.loads(contract_path.read_text(encoding="utf-8"))
-    expected = reporter.expand_contract(contract)
+    expanded = reporter.expand(contract)
     source_root = repo_root / "custodian/content/sprites/operator/source/animations"
     runtime_root = repo_root / "custodian/content/sprites/operator/runtime"
-    assets = reporter.scan_assets(source_root, runtime_root, owner="operator")
-    contract_report = reporter.build_report(contract, expected, assets)
+    catalog_path = repo_root / "custodian/content/data/operator/generated/operator_animation_catalog.generated.json"
+    catalog = json.loads(catalog_path.read_text(encoding="utf-8"))
+    current_report = reporter.build_report(contract, catalog)
+    # The recommendation renderer still needs its richer grouping projection,
+    # but coverage authority is the current catalog-based reporter API.
+    expected = []
+    for item in expanded:
+        legacy_group = "core_locomotion" if item["action_group"] == "locomotion" else "fast_attack" if item["action"] == "fast_01" else item["group_id"]
+        actions = ("fast_windup_01", "fast_strike_01", "fast_recovery_01") if item["action"] == "fast_01" else (item["action"],)
+        for action in actions:
+            expected.append(SimpleNamespace(
+                group=legacy_group, direction=item["direction"], layer=item["layer"],
+                loadout=item["animation_profile"], action=action, frames=1,
+                frame_size=96, key=(item["layer"], item["animation_profile"], action, item["direction"]),
+            ))
+    assets = []
+    by_key = {(f"{item['animation_profile']}/{item['action_group']}/{item['action']}/{item['direction']}", item["layer"]): item for item in expanded}
+    contract_report = {"summary": current_report["summary"], "missing_required_assets": [], "missing_optional_assets": []}
+    for field, target in (("missing_required", "missing_required_assets"), ("missing_optional", "missing_optional_assets")):
+        for missing in current_report.get(field, []):
+            item = by_key.get((missing["key"], missing["layer"]))
+            if item:
+                group = "core_locomotion" if item["action_group"] == "locomotion" else "fast_attack" if item["action"] == "fast_01" else item["group_id"]
+                contract_report[target].append({"group": group, "direction": item["direction"]})
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
 
     actions = build_actions(

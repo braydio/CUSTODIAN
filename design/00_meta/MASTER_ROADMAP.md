@@ -209,6 +209,15 @@ Milestones are major release checkpoints. Each has:
 **Target:** 2026-03-30  
 **Status:** in_progress
 
+Operator animation production order is now authored in
+`design/02_features/animation/OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json`.
+Its rank and plan state are human authority; catalog coverage, validation
+health, and generated next-action reports are evidence only and may never
+silently reorder the plan. Workbench V3 adds PLAN, WORKBENCH, PREVIEW, and
+TIMELINE cockpit modes. Preview and saved review sequences remain disposable
+`.ai/` tooling artifacts and do not own gameplay timing or runtime animation
+state.
+
 | Feature | Status | Priority | Source |
 |---------|--------|----------|--------|
 | Reload state animation | in_progress | P2 | Design doc |

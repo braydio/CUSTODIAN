@@ -19,6 +19,12 @@ If the `operator` alias uses that environment, the final command is simply
 the same structured Workbench V2 Python APIs as the CLI; it never executes or
 parses `operator anim` output. Aseprite remains the visual editor.
 
+The V3 cockpit uses `1` PLAN, `2` WORKBENCH, `3` PREVIEW, and `4` TIMELINE.
+Plan rank is human-authored and catalog coverage is annotation only. Preview
+switches saved Workbench, canonical, and generated runtime with `S`; playback
+changes REVIEW FPS only. Timeline clips may repeat, trim, and reorder semantic
+animations and save only beneath `.ai/operator_animation_workbench/sequences/`.
+
 ```sh
 operator anim list melee_1h --group posture
 operator anim status melee_1h idle_relaxed_01 e --weapon vigil_pattern_dagger
