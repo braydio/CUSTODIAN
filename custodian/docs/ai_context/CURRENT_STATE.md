@@ -1,5 +1,14 @@
 # CURRENT STATE — CUSTODIAN
 
+## Pause-Only Tactical Minimap + Compact Sundered Keep HUD (2026-09-01)
+
+The live tactical minimap is no longer mounted on either the global gameplay
+HUD or the Sundered Keep map-local HUD. The same data-driven map is mounted in
+the pause panel at a dedicated 500×500 surface; the terminal's separate
+read-only preview remains unchanged. Sundered Keep's remaining vitals, loadout,
+and interaction panels render at half linear scale, reducing each panel's
+screen area by 75 percent without changing gameplay or interaction authority.
+
 ## Command Pressure Physical Scenario V1 (2026-08-30)
 
 `--scenario command_pressure_v1` now boots an authored, procgen-free Command

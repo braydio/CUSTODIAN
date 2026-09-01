@@ -170,7 +170,7 @@ const SECTOR_DISPLAY_NAMES := {
 @onready var crosshair_label = get_node_or_null("Crosshair")
 @onready var ranged_reticle = get_node_or_null("RangedReticle")
 @onready var interaction_label = get_node_or_null("InteractionLabel")
-@onready var minimap = get_node_or_null("Minimap")
+@onready var minimap = get_node_or_null("../PauseUI/PausePanel/Minimap")
 @onready var construction_placement_hud = get_node_or_null("ConstructionPlacementHUD")
 
 @onready var terminal_panel = get_node_or_null("TerminalPanel")
@@ -383,8 +383,8 @@ const TERMINAL_ACTIVITY_SCROLL_FOLLOW_MARGIN := 24.0
 func _ready():
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_ensure_terminal_modal_input_order()
-	if minimap:
-		_minimap_visible = minimap.visible
+	# The tactical map is pause-only; its parent panel owns visibility.
+	_minimap_visible = false
 	_set_main_hud_hidden(false)
 	_create_debug_panel()
 	_register_devconsole_commands()
@@ -1670,8 +1670,6 @@ func _set_main_hud_hidden(hidden: bool) -> void:
 	for node in _get_essential_hud_nodes():
 		if node:
 			node.visible = not effective_hidden
-	if minimap:
-		minimap.visible = not effective_hidden and _minimap_visible
 	for node in _get_debug_hud_nodes():
 		if node:
 			node.visible = false
@@ -1683,21 +1681,13 @@ func _set_main_hud_hidden(hidden: bool) -> void:
 
 
 func _handle_minimap_toggle_input(event: InputEvent) -> bool:
-	if not ENABLE_MINIMAP or minimap == null:
-		return false
-	if not InputMap.has_action(MINIMAP_TOGGLE_ACTION):
-		return false
-	if not event.is_action_pressed(MINIMAP_TOGGLE_ACTION):
-		return false
-	_set_minimap_visible(not _minimap_visible)
-	get_viewport().set_input_as_handled()
-	return true
+	# Retain the input action for save/input-map compatibility, but the map is
+	# now intentionally available only from the pause menu.
+	return false
 
 
 func _set_minimap_visible(visible: bool) -> void:
-	_minimap_visible = visible
-	if minimap:
-		minimap.visible = visible and not _main_hud_hidden and not _terminal_open
+	_minimap_visible = false
 
 
 func set_world_presentation_mode(mode: StringName) -> void:

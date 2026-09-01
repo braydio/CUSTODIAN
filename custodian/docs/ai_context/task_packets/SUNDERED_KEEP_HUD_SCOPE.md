@@ -6,7 +6,7 @@
 - Owner: Codex
 - Agent/session: Codex 2026-06-06
 - Created: 2026-06-06
-- Last updated: 2026-06-06
+- Last updated: 2026-09-01
 
 ## Task
 
@@ -15,6 +15,10 @@ Prevent Sundered Keep-specific quest, status, prompt, and minimap HUD surfaces f
 ## Outcome
 
 The local Sundered Keep `CustodianHUD` is hidden by default, becomes active only when `enter_from_main(...)` runs, and hides again on `return_to_main(...)`. Terminal overlay suppression preserves this map-context state instead of blindly restoring inactive gameplay overlays.
+
+The HUD no longer mounts a minimap; tactical map presentation is owned by the
+pause menu. Its remaining vitals, loadout, and prompt panels use half linear
+scale, reducing their screen area by 75 percent.
 
 ## Authority
 

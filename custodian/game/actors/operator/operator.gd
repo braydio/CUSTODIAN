@@ -5146,7 +5146,7 @@ func _start_fast_attack() -> void:
 func _play_dodge_fast_attack_presentation() -> bool:
 	if animated_sprite == null or animated_sprite.sprite_frames == null:
 		return false
-	var suffix := "left" if _melee_forward.x < -0.05 else "right"
+	var suffix := _get_dodge_fast_attack_visual_suffix(_melee_forward)
 	var body_animation := StringName("unarmed_dodge_fast_attack_%s" % suffix)
 	if not _has_playable_sprite_animation(animated_sprite.sprite_frames, body_animation):
 		return false
@@ -5169,6 +5169,14 @@ func _play_dodge_fast_attack_presentation() -> bool:
 	else:
 		_hide_modular_cape_layer()
 	return true
+
+
+func _get_dodge_fast_attack_visual_suffix(direction: Vector2) -> String:
+	# The authored roll-exit E/W strips face opposite their registered runtime
+	# suffixes. Keep the correction local to this presentation family so attack
+	# targeting, hitboxes, drive, and every other directional animation retain
+	# the canonical world-space direction.
+	return "right" if direction.x < -0.05 else "left"
 
 
 func _try_start_fast_attack_windup() -> bool:

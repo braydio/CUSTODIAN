@@ -98,6 +98,11 @@ art exists, the east strip is mirrored for west and gameplay direction is
 clamped inside a 75-degree horizontal presentation sector, preventing a
 horizontal-looking attack from damaging a target directly north or south.
 
+The dedicated unarmed roll-exit fast-attack art has inverted authored E/W
+registration. Runtime presentation compensates only when selecting that body,
+FX, and cape family; world-space attack direction, targeting, drive, and
+hitboxes remain canonical.
+
 ## Reset rules
 
 The chain resets to Fast 01 when:

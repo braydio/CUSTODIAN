@@ -23,7 +23,6 @@ const InventoryAssets := preload("res://game/ui/inventory/inventory_asset_catalo
 @onready var loadout_secondary_icon: TextureRect = get_node_or_null("Root/TopLeftLoadout/Margin/Content/SecondaryRow/IconFrame/Icon")
 @onready var loadout_secondary_name: Label = get_node_or_null("Root/TopLeftLoadout/Margin/Content/SecondaryRow/Text/Name")
 @onready var loadout_secondary_status: Label = get_node_or_null("Root/TopLeftLoadout/Margin/Content/SecondaryRow/Text/Status")
-@onready var minimap_frame: Node = get_node_or_null("Root/TopRightPanel/Margin/BlackReliquaryMinimapFrame")
 @onready var prompt: Node = get_node_or_null("Root/BottomLeftPrompt/BlackReliquaryPrompt")
 @onready var debug_overlay: Panel = get_node_or_null("Root/DebugOverlay")
 @onready var debug_label: Label = get_node_or_null("Root/DebugOverlay/Margin/DebugLabel")
@@ -407,8 +406,9 @@ func set_status_line(slot: String, icon_path: String, text: String, color: Color
 
 
 func set_minimap_visible(p_visible: bool) -> void:
-	if minimap_frame != null:
-		(minimap_frame as CanvasItem).visible = p_visible
+	# Compatibility entrypoint for map scripts written before minimaps became
+	# pause-only. Gameplay HUDs intentionally have no minimap surface.
+	pass
 
 
 func set_context_active(active: bool) -> void:

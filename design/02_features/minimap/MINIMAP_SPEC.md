@@ -7,6 +7,13 @@ Core decision: **build a custom data-driven minimap**, not an addon and not a ti
 
 # CUSTODIAN Tactical Minimap Implementation Spec
 
+## Presentation ownership
+
+The live tactical minimap is pause-menu-only during ordinary play. The gameplay
+HUD and authored-map-local HUDs must not mount a minimap. The terminal may retain
+its separate read-only map preview because that surface is part of the command
+interface rather than the in-game HUD.
+
 ## Goal
 
 Implement a tactical minimap UI for the Godot runtime that shows:

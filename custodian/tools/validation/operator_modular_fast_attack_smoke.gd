@@ -126,6 +126,22 @@ func _validate_roll_exit_ingest_registration() -> void:
 
 
 func _validate_fast_attack_entry_points(operator: Node) -> void:
+	_assert_true(
+		str(operator.call("_get_dodge_fast_attack_visual_suffix", Vector2.RIGHT)) == "left",
+		"right-facing roll-exit attack should select the visually right authored strip"
+	)
+	_assert_true(
+		str(operator.call("_get_dodge_fast_attack_visual_suffix", Vector2.LEFT)) == "right",
+		"left-facing roll-exit attack should select the visually left authored strip"
+	)
+	var directional_body := operator.get("animated_sprite") as AnimatedSprite2D
+	operator.set("_melee_forward", Vector2.RIGHT)
+	_assert_true(bool(operator.call("_play_dodge_fast_attack_presentation")), "right-facing roll-exit presentation should play")
+	_assert_true(directional_body.animation == &"unarmed_dodge_fast_attack_left", "right-facing roll-exit played the left-facing art")
+	operator.set("_melee_forward", Vector2.LEFT)
+	_assert_true(bool(operator.call("_play_dodge_fast_attack_presentation")), "left-facing roll-exit presentation should play")
+	_assert_true(directional_body.animation == &"unarmed_dodge_fast_attack_right", "left-facing roll-exit played the right-facing art")
+	operator.call("_reset_melee_overlay_visuals")
 	operator.set("using_unarmed", true)
 	operator.set("combat_loadout_mode", "melee")
 	operator.set("primary_weapon_equipped", false)

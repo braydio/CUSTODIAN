@@ -1,9 +1,8 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://game/ui/hud/custodian_hud.gd" id="1_hud"]
 [ext_resource type="PackedScene" path="res://game/ui/components/black_reliquary_panel.tscn" id="2_panel"]
 [ext_resource type="PackedScene" path="res://game/ui/components/black_reliquary_prompt.tscn" id="3_prompt"]
-[ext_resource type="PackedScene" path="res://game/ui/components/black_reliquary_minimap_frame.tscn" id="4_minimap"]
 
 [node name="CustodianHUD" type="CanvasLayer"]
 layer = 20
@@ -26,6 +25,7 @@ offset_left = 14.0
 offset_top = 12.0
 offset_right = 238.0
 offset_bottom = 182.0
+scale = Vector2(0.5, 0.5)
 
 [node name="Margin" type="MarginContainer" parent="Root/TopLeftVitals"]
 layout_mode = 2
@@ -138,6 +138,7 @@ offset_left = 14.0
 offset_top = 192.0
 offset_right = 238.0
 offset_bottom = 320.0
+scale = Vector2(0.5, 0.5)
 
 [node name="Margin" type="MarginContainer" parent="Root/TopLeftLoadout"]
 layout_mode = 2
@@ -215,28 +216,6 @@ layout_mode = 2
 text = "RECOVERED"
 text_overrun_behavior = 3
 
-[node name="TopRightPanel" parent="Root" instance=ExtResource("2_panel")]
-custom_minimum_size = Vector2(142, 160)
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -156.0
-offset_top = 12.0
-offset_right = -14.0
-offset_bottom = 172.0
-grow_horizontal = 0
-
-[node name="Margin" type="MarginContainer" parent="Root/TopRightPanel"]
-layout_mode = 2
-theme_override_constants/margin_left = 6
-theme_override_constants/margin_top = 6
-theme_override_constants/margin_right = 6
-theme_override_constants/margin_bottom = 6
-
-[node name="BlackReliquaryMinimapFrame" parent="Root/TopRightPanel/Margin" instance=ExtResource("4_minimap")]
-layout_mode = 2
-
 [node name="BottomLeftPrompt" type="Control" parent="Root"]
 layout_mode = 1
 anchors_preset = 2
@@ -248,6 +227,7 @@ offset_right = 380.0
 offset_bottom = -22.0
 grow_vertical = 0
 mouse_filter = 2
+scale = Vector2(0.5, 0.5)
 
 [node name="BlackReliquaryPrompt" parent="Root/BottomLeftPrompt" instance=ExtResource("3_prompt")]
 layout_mode = 1
