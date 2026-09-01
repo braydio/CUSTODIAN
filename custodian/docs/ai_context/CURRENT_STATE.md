@@ -1,5 +1,17 @@
 # CURRENT STATE — CUSTODIAN
 
+## Ash-Bell Pre-Protocol Figures Canon (2026-09-01)
+
+Canonical Ash-Bell history now begins with recurring still humanoid figures in
+physically inaccessible Lower Quarter locations and Null Warrant's visibly
+fearful containment response. Sightings triggered flight; quarantine diversion,
+continuity instability, and overload caused the mundane transit-capacity
+failure; West Gate was sealed because the diverted population could no longer
+be screened for continuity origin and custody. White thread begins as `NAME
+FIRST / WRIST SECOND` identity procedure. The figures remain explicitly
+unresolved: they are not confirmed as `NON-RECIPIENT`, the Severing's cause,
+replacements, one being, or a species.
+
 ## Procgen Grunt + Pursuit Frame Population (2026-09-01)
 
 Ambient procgen camps no longer consume rejected walkability projections as

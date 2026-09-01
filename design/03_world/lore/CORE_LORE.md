@@ -83,6 +83,13 @@ Questions this layer raises:
 
 The Null Warrant Office does not need to be fully explained. It functions as evidence that the old civilization understood the hazard better than the public record suggests, and chose containment over disclosure.
 
+Ash-Bell makes that institutional terror visible. Before the Protocol, still
+humanoid figures recurred around the Lower Quarter in physically inaccessible
+places. Null Warrant recognized enough to withdraw, quarantine transit, and
+eventually seal West Gate when it could no longer verify the continuity origin
+of the evacuation flow. The sightings are historical canon; their identity,
+intent, and relationship to `NON-RECIPIENT` or the Severing are not.
+
 ---
 
 ## Layer 5 — Reserved Cosmic Mystery
@@ -108,6 +115,13 @@ Ash-Bell is not Layer 2 of the universal apocalypse.
 Ash-Bell is a historically important case study inside the wider continuity catastrophe. It is the player's most intimate demonstration of the same physics that caused the Severing. Huge cosmic premise, human-sized tragedy.
 
 The Ash-Bell Unarrival, Precentor Orra, the Open Interval, and the Ninth Answer are the human face of the return-path problem. The player encounters them not as abstract cosmology but as a ruined chapel, a broken bell, a wrong basin, a ghost procession, and a phrase that means more than it says.
+
+The tragedy begins before the missed Answer: figures at impossible distances,
+Null Warrant officers afraid in public, a transit corridor failing after
+quarantine diversion, and a gate closed against a crowd it could physically
+have passed but could no longer safely identify. Orra turns back at that moral
+fracture. White thread's first meaning is emergency identity and custody—**Name
+first. Wrist second.** Its later sacred meaning grows from that practical wound.
 
 ---
 

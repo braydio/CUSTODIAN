@@ -66,3 +66,36 @@ New lock:
 - Reciprocal Continuity Doctrine is highest authority for this domain
 
 See: `design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md`
+
+---
+
+## 2026-09-01 — Ash-Bell pre-Protocol figures and West Gate
+
+Added the pre-Protocol Lower Quarter humanoid sightings as settled Ash-Bell
+history while preserving their identity and cosmological role as reserved
+mystery.
+
+Canon lock:
+
+- still humanoid figures appeared in inaccessible Lower Quarter locations
+  before Station IX missed its Answer
+- Null Warrant recognized the danger and was visibly afraid, without proving it
+  understood the phenomenon
+- sightings and containment triggered evacuation; quarantine diversion,
+  continuity instability, overload, and control failure made the primary
+  civilian corridor unusable
+- West Gate remained physically passable but was sealed when Null Warrant could
+  no longer establish the continuity origin and custody of the diverted flow
+- black banners mark the evacuation-to-containment threshold; white thread began
+  as emergency identity/custody practice: **Name first. Wrist second.**
+- Null Warrant possessed fragmentary evidence of a resembling persistent
+  presence under which human populations moved coherently for no resolved
+  human purpose
+- the figures are not confirmed as `NON-RECIPIENT`, the cause of the Severing,
+  replacements, one entity, or a species
+
+Defining image: a crowd approaches West Gate while a still figure watches from
+an inaccessible elevation. A Null Warrant officer sees it, radios, and the gate
+begins closing. The crowd reads, *They are locking us in with it.* The Office
+may read, *We cannot let it out with them.* Neither reading is granted the whole
+truth.

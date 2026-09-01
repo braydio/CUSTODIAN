@@ -155,7 +155,7 @@ Shared context is therefore **symptom-level language**, not root-cause language.
 
 ### The Open Interval and Ash-Bell
 
-The Ash-Bell Unarrival is the player's most intimate demonstration of the Severing's physics. During a continuity hazard event, the Meridian Office initiated the Ash-Bell Protocol — a nine-station synchronization procedure. Station IX, commanded by Precentor Orra, failed to answer within its required window. The system classified this as **Unarrival**.
+The Ash-Bell Unarrival is the player's most intimate demonstration of the Severing's physics. Before the Protocol, still humanoid figures began recurring around the Lower Quarter in places with no physical approach. Null Warrant recognized the sightings as a continuity hazard and was visibly afraid of them. Evacuation began; quarantine diversion and continuity instability collapsed the primary transit corridor's capacity; and the remaining crowd was sent toward West Gate. When Null Warrant could no longer verify the continuity origin and custody of that flow, black banners rose and the gate was sealed before the district was clear. During that emergency, the Meridian Office initiated the Ash-Bell Protocol — a nine-station synchronization procedure. Station IX, commanded by Precentor Orra, failed to answer within its required window. The system classified this as **Unarrival**.
 
 Orra had deliberately diverted to rescue stranded civilians. Eight stations answered. Station IX did not. The resulting Open Interval physically coupled the Ash-Bell Continuity to the active world. People, matter, memories, and structures crossed. Orra eventually reached Station IX and gave the Ninth Answer, ending the wider coupling — but local catastrophe had already occurred.
 
@@ -167,6 +167,15 @@ Do not overexplain Ash-Bell directly in player-facing content. Present it throug
 - a ghost procession of continuity drifters
 - a phrase: "Orra Comes Late"
 - ritual timing that echoes station synchronization
+- a still figure where no route reaches it, and an armed Warrant officer who
+  retreats instead of approaching
+- the field order `NAME FIRST / WRIST SECOND`
+
+Do not identify the figures as `NON-RECIPIENT`, the cause of the Severing, or a
+known species. Null Warrant possessed fragments suggesting that a resembling
+presentation had once incorporated human populations into coherent but
+incomprehensible mass movement. Similarity explains institutional fear; it does
+not settle identity or cause.
 
 Do not write the world as random rubble. Write it as layered, functioning misinterpretation.
 

@@ -101,24 +101,50 @@ The Ash-Bell Unarrival is the historical Station IX catastrophe.
 
 Sequence:
 
-1. Continuity hazard detected.
-2. Ash-Bell Protocol initiated.
-3. Nine Meridian stations ordered to synchronize regional closure.
-4. A civilian evacuation corridor failed.
-5. Orra received orders to proceed directly to Station IX.
-6. Orra deliberately diverted to recover stranded civilians.
-7. Stations I-VIII answered.
-8. Station IX failed to answer within its required window.
-9. System classified Station IX: UNARRIVAL.
-10. Regional continuity closure completed incompletely.
-11. The Open Interval began.
-12. Ash-Bell continuity remained coupled to the local state.
-13. People, matter, memories, structures, and/or state information crossed.
-14. Orra eventually reached Station IX.
-15. Orra gave the Ninth Answer.
-16. The coupling collapsed.
-17. Local catastrophe had already occurred.
-18. Wider propagation was arrested.
+1. Unexplained humanoid figures appeared near and within the Lower Quarter.
+2. Null Warrant identified the sightings as a continuity hazard and began a quiet containment response.
+3. Further sightings moved closer to inhabited areas; civilians witnessed both the figures and Null Warrant withdrawing from them.
+4. Evacuation began and the Ash-Bell Protocol was initiated.
+5. Nine Meridian stations were ordered to synchronize regional closure.
+6. Quarantine diversion and continuity instability reduced the primary civilian transit corridor to one overloaded branch; control failed and the corridor became unusable.
+7. The remaining civilian flow was diverted toward West Gate.
+8. Null Warrant could no longer screen that flow well enough to guarantee that everyone crossing the cordon had begun inside it, or crossed alone.
+9. Black banners were raised and West Gate was ordered shut before the Lower Quarter was cleared.
+10. Orra received orders to proceed directly to Station IX.
+11. Orra deliberately diverted to recover stranded civilians.
+12. Stations I-VIII answered.
+13. Station IX failed to answer within its required window.
+14. System classified Station IX: UNARRIVAL.
+15. Regional continuity closure completed incompletely.
+16. The Open Interval began.
+17. Ash-Bell continuity remained coupled to the local state.
+18. People, matter, memories, structures, and/or state information crossed.
+19. Orra eventually reached Station IX.
+20. Orra gave the Ninth Answer.
+21. The coupling collapsed.
+22. Local catastrophe had already occurred.
+23. Wider propagation was arrested.
+
+### Pre-Protocol humanoid sightings
+
+The sightings are canonical. Their explanation is not.
+
+Witnesses described still, humanoid figures in places with no credible approach:
+behind locked service fences, on closed platforms, across rail cuts, beneath the
+transit arcade, and at the ends of streets already inside a cordon. They were not
+recorded charging crowds or attacking West Gate. The terror came from their
+proximity, recurrence, and the visible fear of Null Warrant personnel who had
+apparently encountered comparable evidence before.
+
+The primary evacuation corridor failed as infrastructure under impossible
+pressure, not because canon declares that a figure attacked it. The official
+record is **LOWER QUARTER CIVILIAN TRANSIT: CAPACITY FAILURE FOLLOWING
+QUARANTINE DIVERSION**. Survivor accounts may contradict its details.
+
+West Gate was physically capable of passing more civilians. It was sealed
+because containment could no longer establish the continuity origin or custody
+of everyone in the flow. This makes the order brutally defensible without making
+it morally clean.
 
 ---
 
@@ -217,6 +243,12 @@ Null Warrant handled:
 NON-RECIPIENT is an optional classified Null Warrant designation.
 
 It is not a confirmed entity. The player can spend half the game wondering whether NON-RECIPIENT is a thing. Canon does not say yet.
+
+It must not be established as the name of the Ash-Bell figures. It may denote
+one figure, the recurring presentation, a contact category, a failed reciprocal
+address, or a Null Warrant hypothesis. The figures may be related to the
+Severing hazard, a symptom of it, or one distinct kind of return-path
+catastrophe. None of those relationships is settled.
 
 Possible machine text:
 

@@ -29,12 +29,22 @@ physically through the Lower Quarter.
 
 ## Canon Lock
 
+Before the Protocol, unexplained still humanoid figures recurred near and within
+the Lower Quarter, including physically inaccessible platforms, fenced service
+areas, and elevated routes. Null Warrant recognized the sightings as a
+continuity hazard and was visibly afraid. The sightings triggered containment
+and flight; they did not directly destroy the evacuation route. Quarantine
+diversion, continuity instability, and overload made the primary civilian
+transit corridor unusable, diverting its remaining flow to West Gate. Null
+Warrant sealed the still-functional gate when it could no longer verify the
+continuity origin and custody of everyone in that flow.
+
 The Meridian Office operated Stations I through IX under the Ash-Bell Protocol.
-Precentor Orra was ordered directly to Station IX, diverted into the Lower
-Quarter after a civilian evacuation route failed, and arrived after Stations
-I–VIII had answered and IX had been classified `UNARRIVAL`. Her late Ninth
-Answer terminated regional coupling after the Open Interval and local
-catastrophe, arresting wider propagation.
+Precentor Orra was ordered directly to Station IX, turned back for civilians
+stranded by the West Gate closure, and arrived after Stations I–VIII had
+answered and IX had been classified `UNARRIVAL`. Her late Ninth Answer
+terminated regional coupling after the Open Interval and local catastrophe,
+arresting wider propagation.
 
 The implementation preserves all competing moral readings: Orra abandoned her
 post, saved civilians, enabled and ended the Open Interval, prevented a larger
@@ -42,6 +52,11 @@ catastrophe, and was placed in an impossible choice by her superiors. Penitent
 interpretations remain faction theology, not authorial cosmology. Provenance is
 forensic origin/evidence lineage. Retired terms including “Unnarrival” and
 “Bellfall” are forbidden.
+
+The figures' identity, intention, and origin remain unresolved. The route must
+not confirm that they are `NON-RECIPIENT`, that they caused the Severing, or
+that they replaced or accompanied anyone through West Gate. Null Warrant's
+inability to rule those possibilities out is the containment rationale.
 
 ## Authored-Cell And Camera Contract
 

@@ -32,6 +32,52 @@ Do not expose these fields directly in ordinary dialogue.
 
 Before later theology, Ash-Bell maintained a practical continuity-port system organized around **nine stations**. Each station issued a distinct verification response called an **Answer**. A route was accepted only when its expected Answers arrived in order and agreed with the carried authority, cargo, and witness record.
 
+### Before the black banners
+
+Before Station IX missed its Answer, the Lower Quarter had already begun seeing
+men where no men could be.
+
+They stood beyond locked service fences, on closed station platforms, across
+canals and rail cuts with no route to them. One might wait at the far end of an
+evacuated street or beneath the transit arcade and do nothing at all. Witnesses
+called them men because the alternative required words they did not have.
+
+Null Warrant came quietly. The Office did not explain what it recognized. What
+emptied the Lower Quarter was not only the figures, but the sight of trained
+continuity officers backing away from one, abandoning a cordon around another,
+and ordering whole blocks cleared. Some civilians saw the figures. More saw
+Null Warrant run.
+
+The planned civilian transit route then failed for an ordinary reason made
+catastrophic by extraordinary conditions. Null Warrant quarantined one segment;
+continuity instability made another unreliable; the remaining branch took the
+whole evacuation load until vehicles, platforms, shutters, and control could no
+longer clear one another. Its official epitaph was bloodless:
+
+```text
+LOWER QUARTER CIVILIAN TRANSIT:
+CAPACITY FAILURE FOLLOWING QUARANTINE DIVERSION
+```
+
+Survivors remembered it differently: the trains stopped; the tunnels were shut;
+there was something on the platform; the platform was empty and the warrant
+officers were looking at the ceiling. Canon does not reconcile every account.
+
+The displaced crowd moved toward West Gate. The gate could still open. Null
+Warrant could no longer prove that everyone in the line had begun on the
+affected side of the cordon, or that everyone crossed it alone. Black banners
+rose. The gate began closing.
+
+The defining image is a crowd moving toward West Gate while, above them on an
+inaccessible part of the Lower Quarter, one still figure watches. Most never see
+it. A Null Warrant officer does, radios the sighting, and the machinery starts.
+
+The civilians understand: *They are locking us in with it.*
+
+Null Warrant may understand: *We cannot let it out with them.*
+
+Neither side is granted the whole truth.
+
 ### Precentor Orra
 
 **Precentor Orra** was Station IX's officer, not a coordinator of all nine stations. Later survivors made her Saint Orra, the Unarrived Saint, and the Witness Who Came Late. Those titles are theology built from a real operator and a real disaster.
@@ -94,6 +140,11 @@ The Dry Fountain was a real Ash-Bell civic landmark and later memorial where the
 
 Black banners marked the operational shift from evacuation to containment. White thread began as a low-technology identity and custody aid used when station records could no longer distinguish imported people from local counterparts. Survivors later made both devotional symbols.
 
+Its field order was plain: **Name first. Wrist second.** Write the name while a
+witness can still answer for it, then tie the record to the body being passed
+through custody. It was a desperate procedure, not proof that replacements were
+real; the inability to exclude that possibility was enough.
+
 > “You still tie white thread around the dead here?”
 >
 > “The banners are missing. That means command has not chosen containment.”
@@ -114,6 +165,54 @@ The historical Precentor became Saint Orra in oral tradition.
 
 Keep operational and theological versions in tension. The theology must never overwrite the history as authorial truth.
 
+### 6. What Null Warrant had seen
+
+Null Warrant retained fragments from at least one continuity in which a
+resembling humanoid presentation was not contained and acquired persistent
+presence. The fragments do not show a conquered world in any simple sense.
+Lights remain on. Industry continues. Human populations move in coherent
+processions, work columns, migrations, and relocations whose purpose cannot be
+resolved. Settlements empty when the figures arrive and repopulate according to
+patterns that correspond to no identified economy, war, climate, or faith.
+
+The surviving language is worse than the word *enslaved*:
+
+```text
+POPULATION MOVEMENT: COHERENT
+ECONOMIC PURPOSE: NONE IDENTIFIED
+MILITARY PURPOSE: NONE IDENTIFIED
+DESTINATION: RECURRENT / UNRESOLVED
+
+SUBJECTS DO NOT PRESENT AS PRISONERS.
+SUBJECTS DO NOT PRESENT AS VOLUNTARY.
+```
+
+This evidence explains Null Warrant's fear; it does not prove that the Ash-Bell
+figures were identical to those in the fragments. It does not prove that either
+phenomenon caused the Severing.
+
+### 7. The name withheld
+
+Ash-Bell records may classify the immediate contact without naming it:
+
+```text
+RETURN-PATH CONTACT: UNRESOLVED
+HUMANOID PRESENTATION: RECURRING
+RECIPROCAL ADDRESS: NONE
+DO NOT APPROACH
+```
+
+A later, more deeply sealed record may instead contain:
+
+```text
+RETURN-PATH CONTACT: NON-RECIPIENT
+RECIPROCAL ADDRESS: UNRESOLVED
+DO NOT COMPLETE HANDSHAKE
+```
+
+`NON-RECIPIENT` is not authorial confirmation. It may be a name, a category, an
+individual, a failed address, or merely what Null Warrant feared it had found.
+
 ---
 
 ## How to Present It
@@ -127,6 +226,13 @@ Bad:
 Good:
 
 > “Your station gave the wrong Answer, but the gate opened anyway.”
+
+The Forlorn-Ritualant may remember the evacuation without explaining the
+figures:
+
+> “They came up from the Lower Quarter before the evacuation order.”
+>
+> “Some had seen the figures. Some had only seen the warrant officers running.”
 
 Bad:
 
