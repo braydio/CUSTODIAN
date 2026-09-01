@@ -25,9 +25,9 @@
       "variant": "ninth_answer",
       "animation": true,
       "fps": 8,
-      "layout": "grid",
-      "columns": 4,
-      "rows": 2
+      "layout": "horizontal_strip",
+      "frame_width": 128,
+      "frame_height": 128
     },
 
     "orra_late": {
@@ -37,9 +37,9 @@
       "variant": "orra_late",
       "animation": true,
       "fps": 8,
-      "layout": "grid",
-      "columns": 4,
-      "rows": 2
+      "layout": "horizontal_strip",
+      "frame_width": 128,
+      "frame_height": 128
     },
 
     "dissolve": {
@@ -49,9 +49,9 @@
       "variant": "dissolve",
       "animation": true,
       "fps": 6,
-      "layout": "grid",
-      "columns": 4,
-      "rows": 2
+      "layout": "horizontal_strip",
+      "frame_width": 128,
+      "frame_height": 128
     },
 
     "death_violent": {
@@ -61,9 +61,9 @@
       "variant": "death_violent",
       "animation": true,
       "fps": 8,
-      "layout": "grid",
-      "columns": 4,
-      "rows": 2
+      "layout": "horizontal_strip",
+      "frame_width": 128,
+      "frame_height": 128
     }
   },
 
