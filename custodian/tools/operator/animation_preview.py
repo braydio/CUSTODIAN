@@ -140,7 +140,7 @@ class AnimationPreviewProvider:
         document = Path(manifest.get("aseprite", {}).get("path", workspace / "workbench.aseprite"))
         exported = workspace / "exports" / f"preview_{_file_sha(document)[:16]}" / "normalized" if document.exists() else None
         rows = []
-        for binding in manifest.get("layers", ()): 
+        for binding in manifest.get("layers", ()):
             candidate = exported / f"{binding['binding_id']}.png" if exported else None
             path = candidate if candidate is not None and candidate.exists() else Path(binding.get("input_path", ""))
             contract = binding.get("workspace_contract", {})
