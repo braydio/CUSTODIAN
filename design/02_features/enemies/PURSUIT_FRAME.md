@@ -6,7 +6,7 @@ Status: animation intake contract staged; runtime actor and gameplay implementat
 
 `pursuit_frame` is a registered Asset Pipeline V2 enemy family. This slice prepares deterministic animation intake only. It does not create placeholder art, a runtime enemy scene, combat behavior, an intercept ability, or a presentation resource.
 
-Missing animations are intentionally non-blocking. All ten initial body states are recommended rather than required, so the family remains healthy at `0/0 required` until artwork is supplied. Once a file is present, its dimensions, direction, layout, and exact frame count are enforced.
+Missing animations are intentionally non-blocking. All sixteen body states are recommended rather than required, so the family remains healthy at `0/0 required` until artwork is supplied. Once a file is present, its dimensions, direction, layout, and exact frame count are enforced.
 
 ## Intake
 
@@ -30,8 +30,14 @@ Use `<state>__<direction>.png` names:
 | `intercept_burst_01` | combat | E | 4 | 384×96 |
 | `intercept_recover_01` | combat | E | 5 | 480×96 |
 | `melee_brace_01` | combat | E | 6 | 576×96 |
+| `flinch_01` | reaction | S | 4 | 384×96 |
+| `stagger_01` | reaction | S | 6 | 576×96 |
+| `death_shutdown_01` | death | S | 8 | 768×96 |
+| `search_sweep_01` | activity | S | 6 | 576×96 |
+| `investigate_scan_01` | activity | S | 6 | 576×96 |
+| `return_to_route_01` | activity | S | 6 | 576×96 |
 
-Each frame is 96×96 with true alpha, stable world-contact registration, no inter-frame padding, and no background pixels. Asset Pipeline V2 deterministically mirrors the four east-authored combat states to west unless an authored west strip is later present.
+Each frame is 96×96 with true alpha, stable world-contact registration, no inter-frame padding, and no background pixels. Asset Pipeline V2 deterministically mirrors the four east-authored combat states to west unless an authored west strip is later present. Additional authored directions are valid for any state; in particular, authored north/east `idle_ready_01` and `patrol_walk_01` strips augment their required south coverage, with east also supplying west through deterministic mirroring.
 
 Canonical runtime output follows the current enemy-kind layout:
 

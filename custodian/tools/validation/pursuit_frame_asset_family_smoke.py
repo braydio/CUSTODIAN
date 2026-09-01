@@ -29,6 +29,12 @@ EXPECTED = {
     "intercept_burst_01": ("combat", "e", 4),
     "intercept_recover_01": ("combat", "e", 5),
     "melee_brace_01": ("combat", "e", 6),
+    "flinch_01": ("reaction", "s", 4),
+    "stagger_01": ("reaction", "s", 6),
+    "death_shutdown_01": ("death", "s", 8),
+    "search_sweep_01": ("activity", "s", 6),
+    "investigate_scan_01": ("activity", "s", 6),
+    "return_to_route_01": ("activity", "s", 6),
 }
 
 
@@ -64,15 +70,18 @@ def main() -> int:
         assert missing.can_apply and not missing.assets and not missing.errors
         status = get_family_status(family, project)
         assert status.completeness == "0/0 required"
-        assert len(status.recommended_states) == 10
+        assert len(status.recommended_states) == 16
 
         for state_id, (_, direction, frames) in EXPECTED.items():
             _strip(inbox / f"{state_id}__{direction}.png", frames)
+        for state_id, frames in (("idle_ready_01", 4), ("patrol_walk_01", 8)):
+            _strip(inbox / f"{state_id}__n.png", frames)
+            _strip(inbox / f"{state_id}__e.png", frames)
 
         plan = generate_plan(family, inbox, project)
         assert plan.can_apply, plan.errors
-        assert len(plan.assets) == 10
-        assert len(plan.outputs) == 14  # Six south sheets plus four authored E/mirrored W pairs.
+        assert len(plan.assets) == 20
+        assert len(plan.outputs) == 26  # Sixteen base outputs, four N/E extensions, and six mirrored W outputs.
         for output in plan.outputs:
             path = output.target_relative_path.as_posix()
             assert path.startswith("content/sprites/enemies/pursuit_frame/runtime/body/")
@@ -86,8 +95,8 @@ def main() -> int:
 
     print("[PASS] Pursuit Frame Asset Pipeline V2 family")
     print("  missing animations: non-blocking")
-    print("  authored inputs: 10")
-    print("  planned outputs with E/W mirroring: 14")
+    print("  authored inputs: 20 (16 base plus idle/walk N/E extensions)")
+    print("  planned outputs with E/W mirroring: 26")
     print("  exact frame contracts: enforced when supplied")
     return 0
 

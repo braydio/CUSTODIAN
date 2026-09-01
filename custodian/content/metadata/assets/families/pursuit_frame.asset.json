@@ -22,7 +22,13 @@
     "intercept_windup_01": {"required": false, "recommended": true, "layer": "body", "action_group": "combat", "variant": "intercept_windup_01", "animation": true, "layout": "horizontal_strip", "frames": 4, "required_directions": ["e"]},
     "intercept_burst_01": {"required": false, "recommended": true, "layer": "body", "action_group": "combat", "variant": "intercept_burst_01", "animation": true, "layout": "horizontal_strip", "frames": 4, "required_directions": ["e"]},
     "intercept_recover_01": {"required": false, "recommended": true, "layer": "body", "action_group": "combat", "variant": "intercept_recover_01", "animation": true, "layout": "horizontal_strip", "frames": 5, "required_directions": ["e"]},
-    "melee_brace_01": {"required": false, "recommended": true, "layer": "body", "action_group": "combat", "variant": "melee_brace_01", "animation": true, "layout": "horizontal_strip", "frames": 6, "required_directions": ["e"]}
+    "melee_brace_01": {"required": false, "recommended": true, "layer": "body", "action_group": "combat", "variant": "melee_brace_01", "animation": true, "layout": "horizontal_strip", "frames": 6, "required_directions": ["e"]},
+    "flinch_01": {"required": false, "recommended": true, "layer": "body", "action_group": "reaction", "variant": "flinch_01", "animation": true, "layout": "horizontal_strip", "frames": 4, "required_directions": ["s"]},
+    "stagger_01": {"required": false, "recommended": true, "layer": "body", "action_group": "reaction", "variant": "stagger_01", "animation": true, "layout": "horizontal_strip", "frames": 6, "required_directions": ["s"]},
+    "death_shutdown_01": {"required": false, "recommended": true, "layer": "body", "action_group": "death", "variant": "death_shutdown_01", "animation": true, "layout": "horizontal_strip", "frames": 8, "required_directions": ["s"]},
+    "search_sweep_01": {"required": false, "recommended": true, "layer": "body", "action_group": "activity", "variant": "search_sweep_01", "animation": true, "layout": "horizontal_strip", "frames": 6, "required_directions": ["s"]},
+    "investigate_scan_01": {"required": false, "recommended": true, "layer": "body", "action_group": "activity", "variant": "investigate_scan_01", "animation": true, "layout": "horizontal_strip", "frames": 6, "required_directions": ["s"]},
+    "return_to_route_01": {"required": false, "recommended": true, "layer": "body", "action_group": "activity", "variant": "return_to_route_01", "animation": true, "layout": "horizontal_strip", "frames": 6, "required_directions": ["s"]}
   },
   "aliases": {
     "idle_ready": "idle_ready_01",
@@ -34,7 +40,13 @@
     "intercept_windup": "intercept_windup_01",
     "intercept_burst": "intercept_burst_01",
     "intercept_recover": "intercept_recover_01",
-    "melee_brace": "melee_brace_01"
+    "melee_brace": "melee_brace_01",
+    "flinch": "flinch_01",
+    "stagger": "stagger_01",
+    "death_shutdown": "death_shutdown_01",
+    "search_sweep": "search_sweep_01",
+    "investigate_scan": "investigate_scan_01",
+    "return_to_route": "return_to_route_01"
   },
   "consumers": []
 }
