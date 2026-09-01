@@ -1,0 +1,1069 @@
+{
+  "schema": "custodian.ash_bell_lower_quarter_entrance_reauthor.v1",
+  "level_id": "lower_quarter",
+  "cell_world_px": 32,
+  "map_origin": [
+    -2048,
+    -1536
+  ],
+  "intent": {
+    "primary": "Re-author the Lower Quarter arrival into a narrow threshold -> broad civic forecourt -> personnel-route apron while preserving the canonical failed direct route and mandatory west evacuation detour.",
+    "do_not_change": [
+      "Spawn_FromWorld cell [64,87]",
+      "Exit_ReturnWorld cell [64,91]",
+      "DirectPersonnelCollapse Rect2i(55,71,18,4)",
+      "Station IX landmark contact cell [63,71]",
+      "West Detour Rect2i(38,74,22,8)",
+      "Evacuation Arcade Rect2i(32,48,14,32)",
+      "route state, relays, exits, and authored 32-world-unit cell scale"
+    ],
+    "key_read": "The player enters on a five-cell official personnel axis, opens into an eight-cell-per-side forecourt, sees Station IX immediately, reaches a wider personnel-route apron, then discovers the direct line is catastrophically blocked and the evacuation corridor turns west."
+  },
+  "geometry": {
+    "replace_walkable_region": {
+      "remove": [
+        52,
+        82,
+        24,
+        12
+      ],
+      "remove_name": "Arrival Platform"
+    },
+    "add_walkable_regions": [
+      {
+        "id": "entrance_south_threshold",
+        "rect": [
+          60,
+          90,
+          9,
+          4
+        ],
+        "cells": "x=60..68, y=90..93",
+        "purpose": "Narrow world-entry mouth. Contains Exit_ReturnWorld [64,91]."
+      },
+      {
+        "id": "entrance_forecourt",
+        "rect": [
+          54,
+          84,
+          21,
+          6
+        ],
+        "cells": "x=54..74, y=84..89",
+        "purpose": "Main civic arrival court. Contains Spawn_FromWorld [64,87]."
+      },
+      {
+        "id": "entrance_north_apron",
+        "rect": [
+          57,
+          82,
+          14,
+          2
+        ],
+        "cells": "x=57..70, y=82..83",
+        "purpose": "Narrowing apron into the existing Direct Personnel Line."
+      }
+    ],
+    "unchanged_adjacent_regions": [
+      [
+        "direct_personnel_line",
+        [
+          58,
+          70,
+          12,
+          14
+        ]
+      ],
+      [
+        "west_detour",
+        [
+          38,
+          74,
+          22,
+          8
+        ]
+      ],
+      [
+        "evacuation_arcade",
+        [
+          32,
+          48,
+          14,
+          32
+        ]
+      ]
+    ],
+    "nonwalkable_entry_frame_zones": [
+      {
+        "id": "west_entry_ruin_frame",
+        "rect": [
+          48,
+          84,
+          6,
+          10
+        ],
+        "purpose": "Nonwalkable ruined architectural shoulder framing the forecourt."
+      },
+      {
+        "id": "east_entry_ruin_frame",
+        "rect": [
+          75,
+          84,
+          6,
+          10
+        ],
+        "purpose": "Nonwalkable ruined architectural shoulder framing the forecourt."
+      }
+    ],
+    "reserved_clear_lane": {
+      "rect": [
+        62,
+        82,
+        5,
+        12
+      ],
+      "cells": "x=62..66, y=82..93",
+      "purpose": "Official personnel axis. No prop anchor may occupy these cells."
+    }
+  },
+  "floor_sources": {
+    "civic_light": [
+      2,
+      0
+    ],
+    "civic_light_worn_a": [
+      5,
+      0
+    ],
+    "civic_light_worn_b": [
+      6,
+      0
+    ],
+    "civic_dark": [
+      8,
+      0
+    ],
+    "civic_dark_worn": [
+      10,
+      0
+    ],
+    "road_grey": [
+      2,
+      5
+    ],
+    "road_dark": [
+      11,
+      5
+    ],
+    "road_line_h": [
+      1,
+      4
+    ],
+    "road_line_h_double": [
+      2,
+      4
+    ],
+    "road_line_v_dash": [
+      5,
+      4
+    ],
+    "road_line_v_double": [
+      6,
+      4
+    ],
+    "road_crosswalk_h": [
+      0,
+      4
+    ],
+    "road_arrow_n": [
+      10,
+      4
+    ],
+    "road_dash_h": [
+      12,
+      4
+    ]
+  },
+  "floor_base_priority": [
+    {
+      "priority": 1,
+      "id": "direct_collapse_burn_band",
+      "rect": [
+        58,
+        71,
+        12,
+        4
+      ],
+      "source": [
+        11,
+        5
+      ],
+      "note": "Dark service/asphalt base under the physically blocked DirectPersonnelCollapse. No random damage tiles."
+    },
+    {
+      "priority": 2,
+      "id": "west_detour",
+      "rect": [
+        38,
+        74,
+        22,
+        8
+      ],
+      "source": [
+        11,
+        5
+      ],
+      "note": "Change West Detour from grey personnel-road material to dark evacuation/service-road material so the required diversion is visually distinct."
+    },
+    {
+      "priority": 3,
+      "id": "direct_personnel_line",
+      "rect": [
+        58,
+        70,
+        12,
+        14
+      ],
+      "source": [
+        2,
+        5
+      ],
+      "note": "Official Meridian personnel roadway remains coherent grey road."
+    },
+    {
+      "priority": 4,
+      "id": "arrival_axis",
+      "rect": [
+        62,
+        82,
+        5,
+        12
+      ],
+      "source": [
+        2,
+        5
+      ],
+      "note": "Five-cell direct-route spine from world threshold through the forecourt."
+    },
+    {
+      "priority": 5,
+      "id": "south_threshold",
+      "rect": [
+        60,
+        90,
+        9,
+        4
+      ],
+      "source": [
+        8,
+        0
+      ],
+      "note": "Dark civic threshold shoulders. Arrival axis overrides the center five cells."
+    },
+    {
+      "priority": 6,
+      "id": "forecourt",
+      "rect": [
+        54,
+        84,
+        21,
+        6
+      ],
+      "source": [
+        2,
+        0
+      ],
+      "note": "Quiet light civic paving. Arrival axis overrides x=62..66."
+    },
+    {
+      "priority": 7,
+      "id": "north_apron",
+      "rect": [
+        57,
+        82,
+        14,
+        2
+      ],
+      "source": [
+        2,
+        0
+      ],
+      "note": "Light shoulders at x=57 and x=70; existing Direct Personnel Line owns x=58..69."
+    }
+  ],
+  "floor_exact_overrides": [
+    {
+      "cell": [
+        55,
+        85
+      ],
+      "source": [
+        5,
+        0
+      ],
+      "role": "west_forecourt_wear"
+    },
+    {
+      "cell": [
+        58,
+        88
+      ],
+      "source": [
+        6,
+        0
+      ],
+      "role": "west_forecourt_wear"
+    },
+    {
+      "cell": [
+        55,
+        89
+      ],
+      "source": [
+        5,
+        0
+      ],
+      "role": "west_forecourt_wear"
+    },
+    {
+      "cell": [
+        73,
+        85
+      ],
+      "source": [
+        5,
+        0
+      ],
+      "role": "east_forecourt_wear"
+    },
+    {
+      "cell": [
+        70,
+        88
+      ],
+      "source": [
+        6,
+        0
+      ],
+      "role": "east_forecourt_wear"
+    },
+    {
+      "cell": [
+        73,
+        89
+      ],
+      "source": [
+        5,
+        0
+      ],
+      "role": "east_forecourt_wear"
+    },
+    {
+      "cell": [
+        57,
+        83
+      ],
+      "source": [
+        6,
+        0
+      ],
+      "role": "west_apron_wear"
+    },
+    {
+      "cell": [
+        70,
+        83
+      ],
+      "source": [
+        5,
+        0
+      ],
+      "role": "east_apron_wear"
+    },
+    {
+      "cell": [
+        60,
+        92
+      ],
+      "source": [
+        10,
+        0
+      ],
+      "role": "threshold_wear_west"
+    },
+    {
+      "cell": [
+        68,
+        92
+      ],
+      "source": [
+        10,
+        0
+      ],
+      "role": "threshold_wear_east"
+    }
+  ],
+  "floor_overlays": [
+    {
+      "id": "precinct_threshold_double_line",
+      "cells": [
+        [
+          60,
+          90
+        ],
+        [
+          61,
+          90
+        ],
+        [
+          62,
+          90
+        ],
+        [
+          63,
+          90
+        ],
+        [
+          64,
+          90
+        ],
+        [
+          65,
+          90
+        ],
+        [
+          66,
+          90
+        ],
+        [
+          67,
+          90
+        ],
+        [
+          68,
+          90
+        ]
+      ],
+      "source": [
+        2,
+        4
+      ]
+    },
+    {
+      "id": "forecourt_crosswalk",
+      "cells": [
+        [
+          62,
+          89
+        ],
+        [
+          63,
+          89
+        ],
+        [
+          64,
+          89
+        ],
+        [
+          65,
+          89
+        ],
+        [
+          66,
+          89
+        ]
+      ],
+      "source": [
+        0,
+        4
+      ]
+    },
+    {
+      "id": "south_centerline",
+      "cells": [
+        [
+          64,
+          91
+        ],
+        [
+          64,
+          92
+        ]
+      ],
+      "source": [
+        5,
+        4
+      ]
+    },
+    {
+      "id": "forecourt_centerline",
+      "cells": [
+        [
+          64,
+          84
+        ],
+        [
+          64,
+          85
+        ],
+        [
+          64,
+          86
+        ],
+        [
+          64,
+          87
+        ],
+        [
+          64,
+          88
+        ]
+      ],
+      "source": [
+        5,
+        4
+      ],
+      "replace": {
+        "cell": [
+          64,
+          86
+        ],
+        "source": [
+          10,
+          4
+        ]
+      }
+    },
+    {
+      "id": "direct_personnel_centerline",
+      "cells": [
+        [
+          64,
+          75
+        ],
+        [
+          64,
+          76
+        ],
+        [
+          64,
+          77
+        ],
+        [
+          64,
+          78
+        ],
+        [
+          64,
+          79
+        ],
+        [
+          64,
+          80
+        ],
+        [
+          64,
+          81
+        ],
+        [
+          64,
+          82
+        ],
+        [
+          64,
+          83
+        ]
+      ],
+      "source": [
+        5,
+        4
+      ],
+      "replace": {
+        "cell": [
+          64,
+          78
+        ],
+        "source": [
+          10,
+          4
+        ]
+      }
+    },
+    {
+      "id": "evacuation_turn_line",
+      "cells": [
+        [
+          40,
+          79
+        ],
+        [
+          41,
+          79
+        ],
+        [
+          42,
+          79
+        ],
+        [
+          43,
+          79
+        ],
+        [
+          44,
+          79
+        ],
+        [
+          45,
+          79
+        ],
+        [
+          46,
+          79
+        ],
+        [
+          47,
+          79
+        ],
+        [
+          48,
+          79
+        ],
+        [
+          49,
+          79
+        ],
+        [
+          50,
+          79
+        ],
+        [
+          51,
+          79
+        ],
+        [
+          52,
+          79
+        ],
+        [
+          53,
+          79
+        ],
+        [
+          54,
+          79
+        ],
+        [
+          55,
+          79
+        ],
+        [
+          56,
+          79
+        ],
+        [
+          57,
+          79
+        ],
+        [
+          58,
+          79
+        ],
+        [
+          59,
+          79
+        ],
+        [
+          60,
+          79
+        ],
+        [
+          61,
+          79
+        ],
+        [
+          62,
+          79
+        ],
+        [
+          63,
+          79
+        ]
+      ],
+      "source": [
+        1,
+        4
+      ],
+      "note": "Horizontal evacuation cue branches west one row south of the direct-route arrow. Stop at x=63 so the central north-south line remains readable."
+    }
+  ],
+  "civic_prop_remap": [
+    {
+      "placement_id": "arrival_w_lamp",
+      "action": "keep",
+      "cell": [
+        54,
+        88
+      ]
+    },
+    {
+      "placement_id": "arrival_e_lamp",
+      "action": "move",
+      "from": [
+        75,
+        88
+      ],
+      "to": [
+        74,
+        88
+      ]
+    },
+    {
+      "placement_id": "arrival_w_bench",
+      "action": "keep",
+      "cell": [
+        57,
+        85
+      ]
+    },
+    {
+      "placement_id": "arrival_e_bench",
+      "action": "keep",
+      "cell": [
+        71,
+        85
+      ]
+    },
+    {
+      "placement_id": "personnel_sign",
+      "action": "keep",
+      "cell": [
+        60,
+        82
+      ]
+    },
+    {
+      "placement_id": "arrival_directory",
+      "action": "keep",
+      "cell": [
+        69,
+        82
+      ]
+    },
+    {
+      "placement_id": "arrival_bin",
+      "action": "move",
+      "from": [
+        53,
+        85
+      ],
+      "to": [
+        54,
+        86
+      ]
+    },
+    {
+      "placement_id": "arrival_bollard_w",
+      "action": "keep",
+      "cell": [
+        58,
+        82
+      ]
+    },
+    {
+      "placement_id": "arrival_bollard_e",
+      "action": "move",
+      "from": [
+        71,
+        82
+      ],
+      "to": [
+        70,
+        82
+      ]
+    },
+    {
+      "placement_id": "arrival_drain",
+      "action": "move",
+      "from": [
+        58,
+        90
+      ],
+      "to": [
+        60,
+        89
+      ]
+    },
+    {
+      "placement_id": "arrival_hatch",
+      "action": "move",
+      "from": [
+        72,
+        90
+      ],
+      "to": [
+        72,
+        89
+      ]
+    },
+    {
+      "placement_id": "arrival_pier",
+      "action": "move",
+      "from": [
+        52,
+        83
+      ],
+      "to": [
+        57,
+        83
+      ]
+    },
+    {
+      "placement_id": "arrival_railing",
+      "action": "move",
+      "from": [
+        54,
+        83
+      ],
+      "to": [
+        55,
+        84
+      ]
+    },
+    {
+      "placement_id": "arrival_chain_railing",
+      "action": "move",
+      "from": [
+        73,
+        83
+      ],
+      "to": [
+        72,
+        84
+      ]
+    },
+    {
+      "placement_id": "arrival_beacon",
+      "action": "move",
+      "from": [
+        73,
+        82
+      ],
+      "to": [
+        74,
+        84
+      ]
+    }
+  ],
+  "catastrophe_prop_remap": [
+    {
+      "placement_id": "ruin_arrival_01",
+      "action": "disable",
+      "reason": "Avoid duplicate dead/intact lamp cluster at entrance."
+    },
+    {
+      "placement_id": "ruin_arrival_02",
+      "action": "move",
+      "from": [
+        56,
+        86
+      ],
+      "to": [
+        55,
+        87
+      ]
+    },
+    {
+      "placement_id": "ruin_arrival_03",
+      "action": "keep",
+      "cell": [
+        59,
+        84
+      ]
+    },
+    {
+      "placement_id": "ruin_arrival_04",
+      "action": "disable",
+      "reason": "Keep official axis and forecourt read clear; failed barricades belong at the direct-collapse choke."
+    },
+    {
+      "placement_id": "ruin_arrival_05",
+      "action": "move",
+      "from": [
+        74,
+        87
+      ],
+      "to": [
+        73,
+        87
+      ]
+    },
+    {
+      "placement_id": "ruin_arrival_06",
+      "action": "move",
+      "from": [
+        55,
+        91
+      ],
+      "to": [
+        60,
+        92
+      ]
+    },
+    {
+      "placement_id": "ruin_arrival_07",
+      "action": "keep",
+      "cell": [
+        68,
+        91
+      ]
+    },
+    {
+      "placement_id": "ruin_arrival_08",
+      "action": "disable",
+      "reason": "Move dumpster language to Lower Market; entrance should read civic ruin, not trash staging."
+    },
+    {
+      "placement_id": "ruin_arrival_09",
+      "action": "keep",
+      "cell": [
+        61,
+        90
+      ]
+    },
+    {
+      "placement_id": "ruin_arrival_10",
+      "action": "disable",
+      "reason": "Avoid duplicate hatch language and preserve clean lane."
+    },
+    {
+      "placement_id": "ruin_arrival_11",
+      "action": "disable",
+      "reason": "Two surviving civic benches already establish the pre-catastrophe substrate."
+    },
+    {
+      "placement_id": "ruin_arrival_12",
+      "action": "move",
+      "from": [
+        75,
+        92
+      ],
+      "to": [
+        68,
+        93
+      ]
+    }
+  ],
+  "entry_ruined_facade_frame": [
+    {
+      "placement_id": "entry_frame_west_facade",
+      "source_id": 62,
+      "semantic_name": "damaged_facade_module_02",
+      "top_left_cell": [
+        50,
+        86
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "role": "west_nonwalkable_forecourt_frame"
+    },
+    {
+      "placement_id": "entry_frame_east_facade",
+      "source_id": 64,
+      "semantic_name": "damaged_facade_module_03",
+      "top_left_cell": [
+        75,
+        86
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "role": "east_nonwalkable_forecourt_frame"
+    },
+    {
+      "placement_id": "entry_frame_west_rubble",
+      "source_id": 129,
+      "semantic_name": "rubble_cluster_08",
+      "top_left_cell": [
+        48,
+        91
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "role": "west_threshold_outer_rubble"
+    },
+    {
+      "placement_id": "entry_frame_east_rubble",
+      "source_id": 140,
+      "semantic_name": "rubble_cluster_14",
+      "top_left_cell": [
+        75,
+        91
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "role": "east_threshold_outer_rubble"
+    }
+  ],
+  "validation": {
+    "required_cells_walkable": [
+      [
+        64,
+        87
+      ],
+      [
+        64,
+        91
+      ],
+      [
+        64,
+        78
+      ],
+      [
+        58,
+        80
+      ],
+      [
+        40,
+        75
+      ]
+    ],
+    "required_cells_nonwalkable": [
+      [
+        52,
+        88
+      ],
+      [
+        53,
+        88
+      ],
+      [
+        75,
+        88
+      ],
+      [
+        54,
+        92
+      ],
+      [
+        74,
+        92
+      ]
+    ],
+    "expected_removed_walkable_cells_vs_old_arrival": 98,
+    "expected_added_walkable_cells_vs_old_arrival": 0,
+    "route_expectations": [
+      "Spawn_FromWorld [64,87] reaches DirectLine beat [64,78].",
+      "Spawn_FromWorld [64,87] reaches West Detour connection [58,80].",
+      "West Detour remains connected to Evacuation Arcade.",
+      "DirectPersonnelCollapse remains physically impassable.",
+      "No active civic or catastrophe prop anchor lies inside reserved clear lane Rect2i(62,82,5,12)."
+    ]
+  }
+}
