@@ -28,9 +28,13 @@ var _nodes := {}; var _menus := {}; var _mode := Mode.NONE; var _active_node: St
 func _ready() -> void:
 	_load_dialogue(); _set_visible(false); set_process_unhandled_input(true)
 func _process(_delta: float) -> void:
-	if _active_node == &"" or _actor == null or (_mode == Mode.AMBIENT and _ambient_lock): return
+	if _mode == Mode.NONE or _actor == null or (_mode == Mode.AMBIENT and _ambient_lock): return
 	var site := get_node_or_null(site_path) as Node2D
-	if site != null and _actor.global_position.distance_to(site.global_position) > actor_cancel_distance: cancel()
+	if site != null and _actor.global_position.distance_to(site.global_position) > actor_cancel_distance:
+		if _mode == Mode.MENU:
+			close_menu()
+		else:
+			cancel()
 func _unhandled_input(event: InputEvent) -> void:
 	if Time.get_ticks_msec() < _not_before: return
 	if _mode == Mode.MANUAL:
@@ -50,7 +54,8 @@ func start(node_id: StringName, actor: Node2D = null, return_menu_id: StringName
 func start_manual(node_id: StringName, actor: Node2D = null, return_menu_id: StringName = &"") -> bool:
 	var source := _get_lines(node_id)
 	if source.is_empty() or _mode == Mode.MANUAL: return false
-	_clear(false); _mode = Mode.MANUAL; _active_node = node_id; _return_menu = return_menu_id; _lines = source; _line_index = 0; _actor = actor if actor != null else _actor; _lock(_actor); _arm(); _apply_layout_for_mode(); _set_visible(true); _show_line(); return true
+	var conversation_actor := actor if actor != null else _actor
+	_clear(true); _mode = Mode.MANUAL; _active_node = node_id; _return_menu = return_menu_id; _lines = source; _line_index = 0; _actor = conversation_actor; _arm(); _apply_layout_for_mode(); _set_visible(true); _show_line(); return true
 func start_ambient(node_id: StringName, actor: Node2D = null, interrupt_ambient := false, lock_actor := false) -> bool:
 	var source := _get_lines(node_id)
 	if source.is_empty(): return false
@@ -80,11 +85,12 @@ func _run_ambient(g: int) -> void:
 func open_menu(menu_id: StringName, actor: Node2D = null) -> bool:
 	var source: Variant = _menus.get(String(menu_id), [])
 	if not source is Array: return false
-	_clear(false); _mode = Mode.MENU; _active_menu = menu_id; _actor = actor if actor != null else _actor; _menu_options.clear()
+	var conversation_actor := actor if actor != null else _actor
+	_clear(true); _mode = Mode.MENU; _active_menu = menu_id; _actor = conversation_actor; _menu_options.clear()
 	for value in source:
 		if value is Dictionary and _available(value): _menu_options.append((value as Dictionary).duplicate(true))
 	if _menu_options.is_empty(): _clear(true); return false
-	_menu_index = 0; _lock(_actor); _arm(); _apply_layout_for_mode(); _set_visible(true); _show_menu(); return true
+	_menu_index = 0; _arm(); _apply_layout_for_mode(); _set_visible(true); _show_menu(); return true
 func advance() -> void:
 	if _mode != Mode.MANUAL: return
 	_line_index += 1

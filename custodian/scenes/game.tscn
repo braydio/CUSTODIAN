@@ -540,7 +540,7 @@ texture = ExtResource("101_crosshair")
 [node name="RangedReticle" parent="UI" instance=ExtResource("102_ranged_reticle")]
 
 [node name="InteractionLabel" type="Label" parent="UI" unique_id=466777138]
-modulate = Color(0.86, 0.93, 0.9, 0.82)
+modulate = Color(0.72, 0.78, 0.76, 0.56)
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -550,6 +550,7 @@ offset_left = -280.0
 offset_top = 112.0
 offset_right = 280.0
 offset_bottom = 140.0
+theme_override_font_sizes/font_size = 13
 horizontal_alignment = 1
 
 [node name="TerminalPanel" type="Panel" parent="UI" unique_id=760134112]

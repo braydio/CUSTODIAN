@@ -2860,6 +2860,10 @@ conversation, and an optional BELL / THREAD / ORRA / LEAVE topic menu. Optional
 lore is never required for departure. The old procgen-room placement, literal
 bell-history dialogue, and three overlapping world-space ASK areas are
 historical references only. Generic knockdown dialogue assets remain dormant.
+Manual dialogue and its topic menu do not suspend Operator locomotion. The
+player may continue moving while reading or selecting, and crossing the
+presenter's authored `actor_cancel_distance` closes the active line or menu
+without marking an unfinished topic complete.
 
 | Date | Change |
 |------|--------|

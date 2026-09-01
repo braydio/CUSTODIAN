@@ -131,7 +131,11 @@ func _validate_encounter_runtime() -> void:
 		site.dialogue_presenter.get_parent() is CanvasLayer,
 		"production dialogue presenter is not screen-space"
 	)
+	actor.set_process(true)
+	actor.set_physics_process(true)
 	site.dialogue_presenter.start(&"first_interaction", actor)
+	_check(actor.is_processing(), "manual dialogue disabled Operator frame processing")
+	_check(actor.is_physics_processing(), "manual dialogue disabled Operator movement")
 	_check(
 		is_equal_approx(site.dialogue_presenter.background.offset_top, -204.0),
 		"manual dialogue did not receive readable native-height layout"
@@ -148,11 +152,16 @@ func _validate_encounter_runtime() -> void:
 	)
 	actor.global_position = site.global_position
 	site.dialogue_presenter.open_menu(&"ritualant_root", actor)
+	_check(actor.is_processing(), "dialogue menu disabled Operator frame processing")
+	_check(actor.is_physics_processing(), "dialogue menu disabled Operator movement")
 	_check(
 		is_equal_approx(site.dialogue_presenter.background.offset_top, -268.0),
 		"dialogue menu did not receive expanded native-height layout"
 	)
-	site.dialogue_presenter.force_close()
+	actor.global_position = site.global_position + Vector2(400.0, 0.0)
+	site.dialogue_presenter._process(0.0)
+	_check(not site.dialogue_presenter.is_active(), "dialogue menu did not close outside interaction range")
+	actor.global_position = site.global_position
 	var peaceful_site := SITE_SCENE.instantiate() as ForlornRitualantSite
 	root.add_child(peaceful_site)
 	await process_frame
