@@ -91,6 +91,77 @@ class RetryPocketMap:
 		}
 
 
+class NonWalkablePocketMap:
+	extends PocketMap
+
+	func is_walkable_floor_tile(_tile: Vector2i) -> bool:
+		return false
+
+
+class FallbackPocketMap:
+	extends PocketMap
+
+	var connector_requests: Array[Dictionary] = []
+	var commit_count := 0
+
+	func plan_world_overlook_pocket(
+		center_tile: Vector2i,
+		size_tiles: Vector2i,
+		unlock_causeway: Dictionary = {},
+		outward_direction: Vector2i = Vector2i.UP
+	) -> Dictionary:
+		return {
+			"ok": true,
+			"center_tile": center_tile,
+			"size_tiles": size_tiles,
+			"unlock_causeway": unlock_causeway,
+			"outward_direction": outward_direction,
+			"virtual_floor_cells": {Vector2i.ZERO: true},
+		}
+
+	func evaluate_runtime_walkable_connector_for_pocket(
+		_plan: Dictionary,
+		_start: Vector2,
+		_direction: Vector2i,
+		_width: int,
+		length: int,
+		_connector_id: String,
+		_resource_id: String,
+		lateral: int = -1,
+		_routing_profile: StringName = &"direct"
+	) -> Dictionary:
+		connector_requests.append({"length": length, "lateral": lateral})
+		if length < 30 or lateral < 10:
+			return {"ok": false, "reason": "no mainland endpoint within connector budget"}
+		return {
+			"ok": true,
+			"cells": [Vector2i.ZERO],
+			"island_anchor_tile": Vector2i.ZERO,
+			"endpoint_tile": Vector2i.DOWN,
+		}
+
+	func evaluate_runtime_walkable_connector(
+		_start: Vector2,
+		_direction: Vector2i,
+		_width: int,
+		_length: int,
+		_connector_id: String,
+		_resource_id: String,
+		_lateral: int = -1,
+		_routing_profile: StringName = &"direct"
+	) -> Dictionary:
+		return {"ok": false, "reason": "pocket-aware evaluation required"}
+
+	func commit_world_overlook_pocket_plan(plan: Dictionary) -> Rect2i:
+		commit_count += 1
+		return claim_world_overlook_pocket(
+			plan.get("center_tile", Vector2i.ZERO),
+			plan.get("size_tiles", Vector2i.ZERO),
+			plan.get("unlock_causeway", {}),
+			plan.get("outward_direction", Vector2i.UP)
+		)
+
+
 func _init() -> void:
 	call_deferred("_run")
 
@@ -198,6 +269,33 @@ func _run() -> void:
 		errors.append("connector-invalid Ash Bell candidate was not retried to placement")
 	if retry_map.claim_count != 1 or retry_map.plan_count != 2 or retry_map.commit_count != 1:
 		errors.append("rejected pocket candidate mutated or committed before evaluation")
+	var nonwalkable_map := NonWalkablePocketMap.new()
+	nonwalkable_map.name = "NonWalkablePocketMap"
+	world.add_child(nonwalkable_map)
+	var nonwalkable_authored := spawner.call(
+		"place_all", vista_level_data, nonwalkable_map, world, null,
+		[_overlook_definition()]
+	) as Array
+	if nonwalkable_authored.size() != 1 or nonwalkable_map.claim_count != 1:
+		errors.append("authored pocket fallback still requires preexisting edge floor")
+	var fallback_map := FallbackPocketMap.new()
+	fallback_map.name = "FallbackPocketMap"
+	world.add_child(fallback_map)
+	var required_definition := _overlook_definition(true, true)
+	var required_dry_run := spawner.call(
+		"validate_required_ingresses",
+		vista_level_data,
+		fallback_map,
+		[required_definition]
+	) as Dictionary
+	if not bool(required_dry_run.get("ok", false)):
+		errors.append("required ingress dry-run rejected runtime-valid fallback")
+	if fallback_map.commit_count != 0 or fallback_map.claim_count != 0:
+		errors.append("required ingress dry-run committed authored terrain")
+	if not fallback_map.connector_requests.has({"length": 18, "lateral": -1}):
+		errors.append("required ingress preflight skipped canonical connector budget")
+	if not fallback_map.connector_requests.has({"length": 30, "lateral": 10}):
+		errors.append("required ingress preflight skipped runtime fallback budget")
 	_finish(errors)
 
 
@@ -224,7 +322,10 @@ func _definition(level_id: String, ingress_id: String, offsets: Array, priority:
 	return definition
 
 
-func _overlook_definition(with_unlock_contract: bool = false) -> RefCounted:
+func _overlook_definition(
+	with_unlock_contract: bool = false,
+	required_for_contract: bool = false
+) -> RefCounted:
 	var definition: RefCounted = LEVEL_DEFINITION_SCRIPT.new()
 	definition.call("configure_from_dictionary", {
 		"level_id": "vista_level",
@@ -241,6 +342,7 @@ func _overlook_definition(with_unlock_contract: bool = false) -> RefCounted:
 			"interaction_distance": 92.0,
 			"placement": {
 				"strategy": "edge_overlook",
+				"required_for_contract": required_for_contract,
 				"allowed_edges": ["north", "east", "south", "west"],
 				"priority": 200,
 				"minimum_spacing_tiles": 10,
@@ -250,6 +352,8 @@ func _overlook_definition(with_unlock_contract: bool = false) -> RefCounted:
 				"unlock_causeway": {
 					"initially_isolated": true, "width_tiles": 3,
 					"max_length_tiles": 18, "gap_depth_tiles": 2,
+					"fallback_max_length_tiles": 30,
+					"fallback_lateral_allowance_tiles": 10,
 				} if with_unlock_contract else {},
 			},
 		},

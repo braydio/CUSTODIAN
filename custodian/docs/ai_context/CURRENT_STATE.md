@@ -1,5 +1,18 @@
 # CURRENT STATE — CUSTODIAN
 
+## Required Ritualant World Ingress (2026-09-01)
+
+The Forlorn-Ritualant surface route is now a required accepted-contract
+ingress. Authored edge fallback may create its pocket on non-walkable edge
+cells, searches the full permitted edge band, and prefers candidates with
+existing inward mainland. Placement preflight and runtime Threadway resolution
+share the route-authored 18-tile canonical budget and 30-tile / 10-lateral
+fallback. Procgen dry-runs registered ingresses in production priority order
+during each normal map attempt and rejects candidates that cannot host the
+Ritualant; real placement is asserted again before readiness. The Orra topic
+now closes with `Both are true. That's the trouble.` instead of an unanswered
+player-facing question.
+
 ## Pause-Only Tactical Minimap + Compact Sundered Keep HUD (2026-09-01)
 
 The live tactical minimap is no longer mounted on either the global gameplay

@@ -90,6 +90,13 @@ func _validate_canonical_data() -> void:
 		],
 		"Ritualant proximity intro cadence drifted"
 	)
+	var orra_lines := (dialogue_nodes.get("ask_orra", {}) as Dictionary).get("lines", []) as Array
+	_check(
+		not orra_lines.is_empty()
+		and str((orra_lines.back() as Dictionary).get("text", ""))
+		== "Both are true. That's the trouble.",
+		"Orra dialogue still ends as an unanswered player prompt"
+	)
 	var stabilized := (dialogue_nodes.get("stabilized_exit", {}) as Dictionary).get("lines", []) as Array
 	_check(stabilized.size() == 3, "stabilized resolution does not own its three-beat cadence")
 	if stabilized.size() == 3:

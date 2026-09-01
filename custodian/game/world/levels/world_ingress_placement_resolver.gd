@@ -294,8 +294,8 @@ func _best_edge_authoring_candidate(
 	map_size: Vector2i,
 	max_edge_distance: int,
 	approach_depth: int,
-	lateral_search: int,
-	candidate_attempt_limit: int,
+	_lateral_search: int,
+	_candidate_attempt_limit: int,
 	level_data: Dictionary,
 	map_instance: Node,
 	edge_order: Array[Vector2i],
@@ -304,31 +304,35 @@ func _best_edge_authoring_candidate(
 	rejected_tiles: Array[Vector2i] = []
 ) -> Dictionary:
 	var best: Dictionary = {}
-	var best_score := -1
-	var considered := 0
+	var best_score := -INF
 	var entries := _interleaved_edge_candidates(map_size, max_edge_distance, {}, anchor, edge_order)
 	for entry: Dictionary in entries:
 		var candidate := entry.tile as Vector2i
 		var outward := entry.outward as Vector2i
-		if rejected_tiles.has(candidate) or _lateral_distance(candidate, anchor, outward) > lateral_search:
+		var inward := -outward
+		if rejected_tiles.has(candidate):
 			continue
-		if (
-			not _is_walkable(candidate, level_data, map_instance)
-			or _is_reserved(candidate, level_data)
-			or not _has_spacing(candidate, occupied_tiles, minimum_spacing)
-		):
+		# The authored fallback creates floor, so the candidate itself need not
+		# already be walkable. Use the innermost allowed edge band to keep the
+		# new pocket as close to mainland as the placement contract permits.
+		if _edge_distance(candidate, map_size, outward) != max_edge_distance:
 			continue
-		if considered >= candidate_attempt_limit:
-			break
-		considered += 1
-		var score := 0
+		if _is_reserved(candidate, level_data):
+			continue
+		if not _has_spacing(candidate, occupied_tiles, minimum_spacing):
+			continue
+		var existing_inward_floor := 0
 		for step in range(approach_depth):
 			if _is_walkable(
-				candidate - outward * step,
+				candidate + inward * step,
 				level_data,
 				map_instance
 			):
-				score += 1
+				existing_inward_floor += 1
+		var lateral_penalty := float(
+			_lateral_distance(candidate, anchor, outward)
+		) * 0.01
+		var score := float(existing_inward_floor) - lateral_penalty
 		if score > best_score:
 			best_score = score
 			best = entry

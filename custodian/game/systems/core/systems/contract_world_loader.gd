@@ -186,7 +186,8 @@ func _on_contract_generated(contract: Dictionary) -> void:
 	if place_gothic_compound_connection:
 		_place_gothic_compound_connection(level_data, map_instance)
 	if place_registered_level_connections:
-		_place_registered_world_ingresses(level_data, map_instance)
+		if not _place_registered_world_ingresses(level_data, map_instance):
+			return
 	elif place_sundered_keep_connection:
 		_place_sundered_keep_connection(level_data, map_instance)
 	if reposition_camera_from_contract:
@@ -1342,10 +1343,10 @@ func _place_sundered_keep_connection(level_data: Dictionary, map_instance: Node)
 			operator.global_position = ingress.global_position + debug_sundered_keep_start_offset
 
 
-func _place_registered_world_ingresses(level_data: Dictionary, map_instance: Node) -> void:
+func _place_registered_world_ingresses(level_data: Dictionary, map_instance: Node) -> bool:
 	var world := get_node_or_null(world_path) as Node2D
 	if world == null:
-		return
+		return false
 	var spawner := world.get_node_or_null("WorldIngressSpawner")
 	if spawner == null:
 		spawner = WORLD_INGRESS_SPAWNER_SCRIPT.new()
@@ -1362,12 +1363,27 @@ func _place_registered_world_ingresses(level_data: Dictionary, map_instance: Nod
 			loader
 		) as Array
 	)
+	var placements := spawner.call("get_last_placements") as Dictionary
+	if not placements.has("forlorn_ritualant_underground"):
+		var placement_errors := Array(spawner.call("get_last_errors"))
+		push_error(
+			"[ContractWorldLoader] Required Ritualant ingress missing "
+			+ "after accepted-world placement"
+		)
+		_on_contract_generation_failed({
+			"generation_failed": true,
+			"failure_reason": "required_world_ingress_missing",
+			"ingress_id": "forlorn_ritualant_underground",
+			"placement_errors": placement_errors,
+		})
+		return false
 	_place_sundered_keep_world_vista(
 		world,
 		placed_ingresses,
 		map_instance,
 		level_data
 	)
+	return true
 
 
 func _place_sundered_keep_world_vista(

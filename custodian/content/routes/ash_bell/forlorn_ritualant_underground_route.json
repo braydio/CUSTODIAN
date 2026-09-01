@@ -13,6 +13,7 @@
     "placement": {
       "strategy": "edge_overlook",
       "allowed_edges": ["north", "east", "south", "west"],
+      "required_for_contract": true,
       "priority": 140,
       "minimum_spacing_tiles": 14,
       "max_edge_distance_tiles": 8,
@@ -26,6 +27,8 @@
         "gap_depth_tiles": 2,
         "width_tiles": 3,
         "max_length_tiles": 18,
+        "fallback_max_length_tiles": 30,
+        "fallback_lateral_allowance_tiles": 10,
         "routing_profile": "threadway_organic",
         "render_base_floor_visual": false
       }

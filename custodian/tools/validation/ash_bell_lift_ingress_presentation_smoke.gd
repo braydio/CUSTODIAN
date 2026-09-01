@@ -218,6 +218,11 @@ func _validate_prompt(errors: Array[String]) -> void:
 	_check(is_equal_approx(float(ingress.get("interaction_distance", 0.0)), 56.0), "Ash Bell interaction distance drifted", errors)
 	_check(str(placement.get("strategy", "")) == "edge_overlook", "Ash Bell cardinal placement strategy drifted", errors)
 	_check(placement.get("allowed_edges", []) == ["north", "east", "south", "west"], "Ash Bell allowed edge contract drifted", errors)
+	_check(bool(placement.get("required_for_contract", false)), "Ash Bell ingress is not required for accepted contracts", errors)
+	var causeway := placement.get("unlock_causeway", {}) as Dictionary
+	_check(int(causeway.get("max_length_tiles", 0)) == 18, "canonical Threadway budget drifted", errors)
+	_check(int(causeway.get("fallback_max_length_tiles", 0)) == 30, "fallback Threadway length drifted", errors)
+	_check(int(causeway.get("fallback_lateral_allowance_tiles", -1)) == 10, "fallback Threadway lateral allowance drifted", errors)
 
 
 func _validate_puppet_scene(errors: Array[String]) -> void:

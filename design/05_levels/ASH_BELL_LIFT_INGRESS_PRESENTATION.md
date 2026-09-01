@@ -198,22 +198,29 @@ three tiles. Width expansion follows each segment's local tangent and unions
 incoming/outgoing perpendicular bands at bends before the complete widened
 candidate is safety-checked. Generic connectors retain direct routing. A
 generated isolated pocket is accepted only
-when the normal three-wide, 18-tile production budget can reach player-reachable
-mainland without crossing bounds, constructed walls, required cells, or
-Sundered Keep protection. Runtime commit uses that exact plan contract. A
-single defensive fallback may extend to 30 tiles with a bounded 10-tile lateral
-allowance for old or degraded layouts; it preserves all safety checks and emits
-structured fallback/failure diagnostics. The pocket remains isolated before
-the first White Thread Knot and the Knot is never consumed.
+when either the normal three-wide, 18-tile production budget or the shared
+30-tile / 10-tile-lateral fallback can reach player-reachable mainland without
+crossing bounds, constructed walls, required cells, or Sundered Keep
+protection. Placement preflight and runtime resolution read both budgets from
+the route contract and evaluate them in that order. The pocket remains isolated
+before the first White Thread Knot and the Knot is never consumed.
 
 A connector-invalid placement candidate does not omit Ash Bell. The spawner
 advances through an explicit, deterministic candidate bound (the production
 route uses `candidate_attempt_limit = lateral_search_tiles * 2 + 1`). Each
 candidate is planned into virtual pocket semantics and evaluated against the
-canonical dry-run connector before any production terrain, region, road,
+shared canonical/fallback dry-run connector before any production terrain, region, road,
 foliage, collision-boundary, shadow, or navigation state is touched. Only the
 selected candidate is committed once. Rejection and final placement events
 include route/site identity and ingress ID.
+
+The route is `required_for_contract`. Every procgen candidate dry-runs all
+registered ingresses in production priority order, including their spacing,
+and an otherwise valid map is rejected when the Ritualant ingress cannot be
+placed. The normal 12-attempt contract loop therefore retries another map
+instead of publishing a playable world without this encounter. Real placement
+is checked again before contract readiness; a missing required ingress fails
+the load and `_mark_contract_ready()` is not reached.
 
 ## Validation
 
@@ -231,6 +238,10 @@ godot --headless --path custodian \
   --script res://tools/validation/world_ingress_physics_reentry_smoke.gd
 godot --headless --path custodian \
   --script res://tools/validation/authored_level_ingress_return_smoke.gd
+godot --headless --path custodian \
+  --script res://tools/validation/world_ingress_spawner_smoke.gd
+godot --headless --path custodian \
+  --script res://tools/validation/required_ritualant_ingress_contract_sweep.gd
 ```
 
 The focused smokes verify asset dimensions/import settings, animation

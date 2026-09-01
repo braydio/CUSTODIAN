@@ -8,6 +8,10 @@ class_name CustodianContractMap
 signal contract_generated(contract: Dictionary)
 signal contract_generation_failed(result: Dictionary)
 
+const WORLD_INGRESS_SPAWNER_SCRIPT := preload(
+	"res://game/world/levels/world_ingress_spawner.gd"
+)
+
 @export var auto_generate_on_ready: bool = true
 @export var contract_seed: int = 0
 @export var randomize_seed_on_ready: bool = true
@@ -319,9 +323,34 @@ func generate_contract(seed_value: int) -> void:
 		var candidate_level_data := await _generate_map_level_data(candidate_map)
 		var _t_generate := Time.get_ticks_msec() - _attempt_start - _t_instantiate
 		var candidate_metrics := _get_map_layout_metrics(candidate_map, candidate_level_data)
+		var ingress_validator := WORLD_INGRESS_SPAWNER_SCRIPT.new()
+		var required_ingress_result := ingress_validator.call(
+			"validate_required_ingresses",
+			candidate_level_data,
+			candidate_map
+		) as Dictionary
+		ingress_validator.free()
+		var required_ingresses_valid := bool(
+			required_ingress_result.get("ok", false)
+		)
+		candidate_metrics["required_ingresses_valid"] = required_ingresses_valid
+		candidate_metrics["required_ingress_failures"] = (
+			required_ingress_result.get("failures", []) as Array
+		).duplicate(true)
+		if not required_ingresses_valid:
+			var rejection_reasons := candidate_metrics.get(
+				"rejection_reasons", []
+			) as Array
+			if not rejection_reasons.has("required_world_ingress"):
+				rejection_reasons.append("required_world_ingress")
+			candidate_metrics["rejection_reasons"] = rejection_reasons
+			candidate_metrics["candidate_valid"] = false
 		var _t_metrics := Time.get_ticks_msec() - _attempt_start - _t_instantiate - _t_generate
 		var candidate_score := _score_map_layout(candidate_metrics)
-		var accepted := _is_map_layout_acceptable(candidate_metrics)
+		var accepted := (
+			_is_map_layout_acceptable(candidate_metrics)
+			and required_ingresses_valid
+		)
 		var _t_total_attempt := Time.get_ticks_msec() - _attempt_start
 		var candidate_terrain_failed := _is_terrain_failed_candidate(candidate_metrics)
 		print("[CustodianContractMap] Attempt %d: instantiate=%.1fs generate=%.1fs metrics=%.1fs total=%.1fs layout_valid=%s candidate_valid=%s connected=%.2f ingress=%.2f pre_terrain_connected=%.2f pre_terrain_missing=%d baseline_rescue=%d terrain_fallback=%s terrain_connectivity=%s terrain_rescue=%d terrain_rescue_limit=%d terrain_rescue_ok=%s rejection_reasons=%s accepted=%s score=%.2f" % [
@@ -348,6 +377,11 @@ func generate_contract(seed_value: int) -> void:
 		])
 		if not accepted:
 			print("[CustodianContractMap]   layout_debug: %s" % _format_layout_metric_debug(candidate_metrics))
+			if not required_ingresses_valid:
+				print(
+					"[CustodianContractMap]   required_ingress_failures: %s"
+					% [candidate_metrics.get("required_ingress_failures", [])]
+				)
 		if accepted:
 			if best_map_instance != null and best_map_instance != candidate_map:
 				await _dispose_node(best_map_instance)
@@ -895,6 +929,8 @@ func _can_use_degraded_fallback(metrics: Dictionary) -> bool:
 		return false
 	if not bool(metrics.get("terrain_connectivity", true)):
 		return false
+	if not bool(metrics.get("required_ingresses_valid", false)):
+		return false
 	if float(metrics.get("connected_ratio", 0.0)) < min_connected_room_ratio:
 		return false
 	if require_compound_ingress_connectivity and float(metrics.get("ingress_ratio", 0.0)) < 1.0:
@@ -921,6 +957,9 @@ func _build_generation_failure_result(
 		"best_rejected_pre_terrain_required_connectivity": float(best_rejected_metrics.get("pre_terrain_connected_required_ratio", 1.0)),
 		"best_rejected_pre_terrain_missing": int(best_rejected_metrics.get("pre_terrain_missing_required_count", 0)),
 		"best_rejected_reasons": best_rejected_metrics.get("rejection_reasons", []).duplicate(true),
+		"best_rejected_required_ingress_failures": (
+			best_rejected_metrics.get("required_ingress_failures", []) as Array
+		).duplicate(true),
 	}
 
 

@@ -11,8 +11,6 @@ const THREADWAY_SCRIPT := preload(
 const THREADWAY_EVENT_ID := &"ash_bell_threadway_unlocked"
 const THREADWAY_RESOLVED_EVENT_ID := &"ash_bell_threadway_resolved"
 const THREADWAY_RESOURCE_ID := "white_thread_knot"
-const THREADWAY_FALLBACK_MAX_LENGTH := 30
-const THREADWAY_FALLBACK_LATERAL_ALLOWANCE := 10
 const THREADWAY_REVEAL_AUDIENCE_RADIUS := 760.0
 
 var _presentation: AshBellLiftIngressPresentation
@@ -131,6 +129,14 @@ func _resolve_threadway(play_reveal: bool) -> void:
 	var width := int(config.get("width_tiles", 3))
 	var routing_profile := StringName(config.get("routing_profile", "direct"))
 	var canonical_length := int(config.get("max_length_tiles", 18))
+	var fallback_length := maxi(
+		canonical_length,
+		int(config.get("fallback_max_length_tiles", 30))
+	)
+	var fallback_lateral := maxi(
+		0,
+		int(config.get("fallback_lateral_allowance_tiles", 10))
+	)
 	var selected_length := canonical_length
 	var selected_lateral := -1
 	var canonical_plan: Dictionary = {}
@@ -143,8 +149,8 @@ func _resolve_threadway(play_reveal: bool) -> void:
 			routing_profile
 		) as Dictionary
 		if not bool(canonical_plan.get("ok", false)) and str(canonical_plan.get("reason", "")) == "no mainland endpoint within connector budget":
-			selected_length = maxi(canonical_length, THREADWAY_FALLBACK_MAX_LENGTH)
-			selected_lateral = THREADWAY_FALLBACK_LATERAL_ALLOWANCE
+			selected_length = fallback_length
+			selected_lateral = fallback_lateral
 			var fallback_plan := _main_map.call(
 				"evaluate_runtime_walkable_connector",
 				_presentation.get_interaction_approach_position(), -outward,

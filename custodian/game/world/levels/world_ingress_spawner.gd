@@ -35,20 +35,10 @@ func place_all(
 		map_instance.call("clear_world_ingress_dressing_clearances")
 	var definitions: Array = []
 	if definitions_override.is_empty():
-		var registry: RefCounted = LEVEL_REGISTRY_SCRIPT.new()
-		if not registry.call("load_index", registry_index_path):
-			_last_errors = registry.call("get_errors")
+		definitions = _load_registered_ingress_records()
+		if not _last_errors.is_empty():
 			_observe(&"level_ingress_placement_failed", {"reason": "; ".join(_last_errors)})
 			return []
-		for definition: RefCounted in registry.call("get_levels_with_tag", &"world_ingress"):
-			definitions.append(_level_record(definition))
-		var route_registry: RefCounted = ROUTE_REGISTRY_SCRIPT.new()
-		if not route_registry.call("load_index", ROUTE_REGISTRY_SCRIPT.DEFAULT_INDEX_PATH, registry):
-			for error: String in route_registry.call("get_errors"):
-				_last_errors.append("route registry: %s" % error)
-			return []
-		for route: RefCounted in route_registry.call("get_routes_with_tag", &"world_ingress"):
-			definitions.append(_route_record(route))
 	else:
 		for definition: Variant in definitions_override:
 			if definition is RefCounted:
@@ -114,6 +104,96 @@ func place_all(
 	return placed
 
 
+func _load_registered_ingress_records() -> Array:
+	var definitions: Array = []
+	var registry: RefCounted = LEVEL_REGISTRY_SCRIPT.new()
+	if not registry.call("load_index", registry_index_path):
+		_last_errors = registry.call("get_errors")
+		return definitions
+	for definition: RefCounted in registry.call(
+		"get_levels_with_tag", &"world_ingress"
+	):
+		definitions.append(_level_record(definition))
+	var route_registry: RefCounted = ROUTE_REGISTRY_SCRIPT.new()
+	if not route_registry.call(
+		"load_index",
+		ROUTE_REGISTRY_SCRIPT.DEFAULT_INDEX_PATH,
+		registry
+	):
+		for error: String in route_registry.call("get_errors"):
+			_last_errors.append("route registry: %s" % error)
+		return []
+	for route: RefCounted in route_registry.call(
+		"get_routes_with_tag", &"world_ingress"
+	):
+		definitions.append(_route_record(route))
+	definitions.sort_custom(_definition_precedes)
+	return definitions
+
+
+func validate_required_ingresses(
+	level_data: Dictionary,
+	map_instance: Node,
+	definitions_override: Array = []
+) -> Dictionary:
+	_last_errors.clear()
+	var definitions: Array = []
+	if definitions_override.is_empty():
+		definitions = _load_registered_ingress_records()
+	else:
+		for definition: Variant in definitions_override:
+			if definition is RefCounted:
+				definitions.append(_level_record(definition as RefCounted))
+		definitions.sort_custom(_definition_precedes)
+	var failures: Array[Dictionary] = []
+	if not _last_errors.is_empty():
+		return {
+			"ok": false,
+			"failures": [{
+				"identity": "registry",
+				"ingress_id": "",
+				"reason": "; ".join(_last_errors),
+				"diagnostic": {},
+			}],
+		}
+	var resolver: RefCounted = PLACEMENT_RESOLVER_SCRIPT.new()
+	var occupied_tiles: Array[Vector2i] = []
+	for record: Dictionary in definitions:
+		var ingress_definition := record.get("ingress") as RefCounted
+		if ingress_definition == null:
+			continue
+		var placement := ingress_definition.placement as Dictionary
+		var is_required := bool(placement.get("required_for_contract", false))
+		var result := _resolve_authored_ingress_candidate(
+			resolver,
+			placement,
+			level_data,
+			map_instance,
+			occupied_tiles,
+			str(record.get("identity")),
+			String(ingress_definition.ingress_id),
+			false
+		)
+		if not bool(result.get("ok", false)):
+			if is_required:
+				failures.append({
+					"identity": str(record.get("identity")),
+					"ingress_id": String(ingress_definition.ingress_id),
+					"reason": str(result.get("reason", "placement failed")),
+					"diagnostic": (
+						result.get("connector_diagnostic", {}) as Dictionary
+					).duplicate(true),
+				})
+			continue
+		occupied_tiles.append(
+			result.get("tile", Vector2i.ZERO) as Vector2i
+		)
+	return {
+		"ok": failures.is_empty(),
+		"failures": failures,
+	}
+
+
 func _resolve_authored_ingress_candidate(
 	resolver: RefCounted,
 	placement: Dictionary,
@@ -121,7 +201,8 @@ func _resolve_authored_ingress_candidate(
 	map_instance: Node,
 	occupied_tiles: Array[Vector2i],
 	identity: String,
-	ingress_id: String
+	ingress_id: String,
+	commit_pocket: bool = true
 ) -> Dictionary:
 	var rejected: Array[Vector2i] = []
 	var candidate_attempt_limit := maxi(
@@ -144,6 +225,9 @@ func _resolve_authored_ingress_candidate(
 		if bool(pocket_plan.get("ok", false)):
 			result["pocket_plan"] = pocket_plan
 		if bool(pocket_plan.get("ok", false)) and _validate_unlock_causeway_contract(map_instance, result):
+			if not commit_pocket:
+				result["placement_attempt"] = attempt + 1
+				return result
 			var pocket_result := _commit_overlook_pocket(map_instance, result)
 			if pocket_result.size == Vector2i.ZERO:
 				rejected.append(tile)
@@ -166,35 +250,77 @@ func _resolve_authored_ingress_candidate(
 	}
 
 
+func _evaluate_unlock_connector_plan(
+	map_instance: Node,
+	result: Dictionary,
+	max_length: int,
+	lateral_allowance: int
+) -> Dictionary:
+	var config := result.get("unlock_causeway", {}) as Dictionary
+	var tile := result.get("tile", Vector2i.ZERO) as Vector2i
+	var outward := result.get("outward_direction", Vector2i.UP) as Vector2i
+	var method_name := "evaluate_runtime_walkable_connector"
+	var arguments: Array = [
+		_tile_to_world(map_instance, tile), -outward,
+		int(config.get("width_tiles", 3)), max_length,
+		"ash_bell_threadway", "white_thread", lateral_allowance,
+		StringName(config.get("routing_profile", "direct")),
+	]
+	if result.has("pocket_plan") and map_instance.has_method("evaluate_runtime_walkable_connector_for_pocket"):
+		method_name = "evaluate_runtime_walkable_connector_for_pocket"
+		arguments.push_front(result.get("pocket_plan", {}))
+	return map_instance.callv(method_name, arguments) as Dictionary
+
+
 func _validate_unlock_causeway_contract(map_instance: Node, result: Dictionary) -> bool:
 	var config := result.get("unlock_causeway", {}) as Dictionary
 	if config.is_empty() or not bool(config.get("initially_isolated", false)):
 		return true
 	if map_instance == null or not map_instance.has_method("evaluate_runtime_walkable_connector"):
 		return false
-	var tile := result.get("tile", Vector2i.ZERO) as Vector2i
-	var outward := result.get("outward_direction", Vector2i.UP) as Vector2i
-	var method_name := "evaluate_runtime_walkable_connector"
-	var arguments: Array = [
-		_tile_to_world(map_instance, tile), -outward,
-		int(config.get("width_tiles", 3)), int(config.get("max_length_tiles", 18)),
-		"ash_bell_threadway", "white_thread", -1,
-		StringName(config.get("routing_profile", "direct")),
-	]
-	if result.has("pocket_plan") and map_instance.has_method("evaluate_runtime_walkable_connector_for_pocket"):
-		method_name = "evaluate_runtime_walkable_connector_for_pocket"
-		arguments.push_front(result.get("pocket_plan", {}))
-	var plan := map_instance.callv(method_name, arguments) as Dictionary
-	result["connector_diagnostic"] = plan.duplicate(true)
-	if bool(plan.get("ok", false)):
+	var canonical_length := int(config.get("max_length_tiles", 18))
+	var fallback_length := maxi(
+		canonical_length,
+		int(config.get("fallback_max_length_tiles", 30))
+	)
+	var fallback_lateral := maxi(
+		0,
+		int(config.get("fallback_lateral_allowance_tiles", 10))
+	)
+	var canonical_plan := _evaluate_unlock_connector_plan(
+		map_instance, result, canonical_length, -1
+	)
+	if bool(canonical_plan.get("ok", false)):
+		result["connector_diagnostic"] = canonical_plan.duplicate(true)
+		result["connector_preflight_mode"] = "canonical"
 		_observe(&"ash_bell_threadway_placement_validated", {
-			"tile": tile,
-			"island_anchor": plan.get("island_anchor_tile"),
-			"endpoint": plan.get("endpoint_tile"),
-			"cell_count": (plan.get("cells", []) as Array).size(),
+			"tile": result.get("tile", Vector2i.ZERO),
+			"mode": "canonical",
+			"island_anchor": canonical_plan.get("island_anchor_tile"),
+			"endpoint": canonical_plan.get("endpoint_tile"),
+			"cell_count": (canonical_plan.get("cells", []) as Array).size(),
 		})
 		return true
-	return false
+	var fallback_plan := _evaluate_unlock_connector_plan(
+		map_instance, result, fallback_length, fallback_lateral
+	)
+	result["connector_diagnostic"] = {
+		"canonical": canonical_plan.duplicate(true),
+		"fallback": fallback_plan.duplicate(true),
+	}
+	if not bool(fallback_plan.get("ok", false)):
+		return false
+	result["connector_preflight_mode"] = "fallback"
+	result["connector_preflight_max_length"] = fallback_length
+	result["connector_preflight_lateral_allowance"] = fallback_lateral
+	_observe(&"ash_bell_threadway_placement_validated", {
+		"tile": result.get("tile", Vector2i.ZERO),
+		"mode": "fallback",
+		"island_anchor": fallback_plan.get("island_anchor_tile"),
+		"endpoint": fallback_plan.get("endpoint_tile"),
+		"cell_count": (fallback_plan.get("cells", []) as Array).size(),
+	})
+	return true
 
 
 func _apply_ingress_dressing_clearance(
@@ -359,6 +485,8 @@ func _tile_to_world(map_instance: Node, tile: Vector2i) -> Vector2:
 
 
 func _observe(event_name: StringName, payload: Dictionary) -> void:
+	if not is_inside_tree():
+		return
 	var observatory := get_node_or_null("/root/DevObservatory")
 	if observatory != null and observatory.has_method("log_event"):
 		observatory.call("log_event", event_name, payload)
