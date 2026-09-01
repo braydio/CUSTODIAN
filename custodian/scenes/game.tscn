@@ -16,6 +16,7 @@
 [ext_resource type="PackedScene" path="res://game/actors/enemies/fast_drone.tscn" id="16_fast_enemy"]
 [ext_resource type="PackedScene" path="res://game/actors/enemies/heavy_drone.tscn" id="17_heavy_enemy"]
 [ext_resource type="PackedScene" path="res://game/actors/enemies/enemy_grunt.tscn" id="18_grunt_enemy"]
+[ext_resource type="PackedScene" path="res://game/actors/enemies/pursuit_frame.tscn" id="18_pursuit_frame_enemy"]
 [ext_resource type="PackedScene" path="res://game/actors/enemies/enemy_marine.tscn" id="18_marine_enemy"]
 [ext_resource type="PackedScene" path="res://game/actors/enemies/enemy_savage.tscn" id="18_savage_enemy"]
 [ext_resource type="PackedScene" uid="uid://chxttfh575v5i" path="res://game/actors/sector/turret_gunner.tscn" id="19_turret_gunner"]
@@ -372,6 +373,7 @@ script = ExtResource("28_contract_loader")
 [node name="AmbientEnemySpawner" type="Node" parent="."]
 script = ExtResource("207_ambient_spawner")
 enemy_scene = ExtResource("18_grunt_enemy")
+enemy_scenes = Array[PackedScene]([ExtResource("18_grunt_enemy"), ExtResource("18_pursuit_frame_enemy")])
 max_generated_camps = 1
 max_active_ambient_enemies = 2
 enemies_per_camp_min = 2

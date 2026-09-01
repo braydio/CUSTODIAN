@@ -1,0 +1,6 @@
+[gd_resource type="Resource" script_class="EnemyAnimationSet" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/actors/enemies/presentation/sets/pursuit_frame_animation_set.gd" id="1"]
+
+[resource]
+script = ExtResource("1")

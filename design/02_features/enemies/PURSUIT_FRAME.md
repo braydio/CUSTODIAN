@@ -1,10 +1,14 @@
 # Pursuit Frame
 
-Status: animation intake contract staged; runtime actor and gameplay implementation deferred.
+Status: initial runtime actor and procgen ambient spawning implemented; bespoke intercept gameplay deferred.
 
 ## Authority Boundary
 
-`pursuit_frame` is a registered Asset Pipeline V2 enemy family. This slice prepares deterministic animation intake only. It does not create placeholder art, a runtime enemy scene, combat behavior, an intercept ability, or a presentation resource.
+`pursuit_frame` is a registered Asset Pipeline V2 enemy family with a live
+ambient-enemy actor. Its initial runtime reuses the shared human-enemy behavior
+state machine and melee authority while consuming a dedicated
+`EnemyAnimationSet` built from canonical Pursuit Frame outputs. It does not yet
+implement a bespoke intercept ability.
 
 Missing animations are intentionally non-blocking. All sixteen body states are recommended rather than required, so the family remains healthy at `0/0 required` until artwork is supplied. Once a file is present, its dimensions, direction, layout, and exact frame count are enforced.
 
@@ -57,12 +61,21 @@ python3 custodian/tools/assets/asset.py ingest pursuit_frame --dry-run
 
 Apply only after reviewing the plan. Runtime actor wiring is a separate feature slice after enough presentation coverage exists.
 
+## Runtime wiring
+
+- Scene: `res://game/actors/enemies/pursuit_frame.tscn`.
+- Presentation: `pursuit_frame_animation_set.tres` maps shared locomotion,
+  melee, flinch, stagger, and death semantics to the authored V2 strips.
+- Procgen ambient camps deterministically alternate Grunt and Pursuit Frame per
+  enemy slot, so the standard two-actor active cap exposes both families.
+- Missing specialized actions fall back through the existing semantic
+  presentation controller without changing combat timing.
+
 ## Deferred Families and Runtime Work
 
 - rigid-humanoid source/atlas authoring;
 - registered optic overlay effects;
-- `pursuit_frame.tscn` and its animation set;
-- behavior profile and intercept ability;
+- dedicated behavior profile and intercept ability;
 - gameplay and Moment Forge validation.
 
-These are not represented by fake or fallback assets in this intake contract.
+These are not represented by fake gameplay authority in this initial runtime.

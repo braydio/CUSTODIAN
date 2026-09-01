@@ -9,6 +9,7 @@ const GENERATED_CAMP_GROUP := &"generated_procgen_ambient_camp"
 const CAMP_CREATED_META := &"ambient_enemy_camp_created"
 
 @export var enemy_scene: PackedScene
+@export var enemy_scenes: Array[PackedScene] = []
 @export var enemy_container_path: NodePath = NodePath("/root/GameRoot/World/Enemies")
 @export var marker_group: StringName = &"ambient_enemy_camp_marker"
 @export var min_distance_from_player_start_px: float = 420.0
@@ -193,7 +194,7 @@ func _obs_set_gauge(gauge_name: String, value: Variant) -> void:
 
 
 func spawn_from_markers() -> int:
-	if enemy_scene == null:
+	if enemy_scene == null and enemy_scenes.is_empty():
 		return 0
 
 	var player := get_tree().get_first_node_in_group("player") as Node2D
@@ -240,6 +241,7 @@ func spawn_from_markers() -> int:
 		var camp := CAMP_SCRIPT.new() as AmbientEnemyCamp
 		camp.camp_id = StringName(marker.get_meta("camp_id", "generated_camp_%d" % created))
 		camp.enemy_scene = enemy_scene
+		camp.enemy_scenes = _available_enemy_scenes()
 		camp.enemy_count_min = int(marker.get_meta("enemy_count_min", enemies_per_camp_min))
 		camp.enemy_count_max = maxi(camp.enemy_count_min, int(marker.get_meta("enemy_count_max", enemies_per_camp_max)))
 		camp.behavior_profile_id = StringName(marker.get_meta("behavior_profile_id", &"raider_grunt"))
@@ -260,6 +262,14 @@ func spawn_from_markers() -> int:
 		accepted.append(marker_position)
 		created += 1
 	return created
+
+
+func _available_enemy_scenes() -> Array[PackedScene]:
+	var available: Array[PackedScene] = []
+	for scene in enemy_scenes:
+		if scene != null:
+			available.append(scene)
+	return available
 
 
 func _resolve_runtime_tile_size(marker: Node) -> Vector2:

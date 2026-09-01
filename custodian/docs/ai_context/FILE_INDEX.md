@@ -83,7 +83,8 @@ Last updated: 2026-08-20
 - `custodian/tools/assets/asset.py` — preferred Asset Pipeline V2.1 CLI; schema-driven non-Operator family planning delegates static and animated execution to mature backends
 - `custodian/content/metadata/assets/schemas/*.json` — V2 kind registry for world props, enemies, tiles, effects, vehicles, weapons, UI, and backdrops
 - `custodian/content/metadata/assets/families/{enemy_grunt,pursuit_frame,void_cliff_face}.asset.json` — production directional enemy-sheet, non-blocking exact-frame Pursuit Frame intake, and exact-name 32px void-fascia contracts
-- `design/02_features/enemies/PURSUIT_FRAME.md` — initial Pursuit Frame animation intake authority; ten recommended body strips are accepted without making missing art block pipeline health
+- `design/02_features/enemies/PURSUIT_FRAME.md` — Pursuit Frame animation intake and initial procgen ambient runtime authority
+- `custodian/game/actors/enemies/pursuit_frame.tscn` and `presentation/sets/pursuit_frame_animation_set.{gd,tres}` — live shared-behavior Pursuit actor and semantic V2-strip binding
 - `custodian/tools/validation/asset_pipeline_v21_production_smoke.py` — V2.1 kind registry, tile routing, direction/mirror planning, layout, and catalog migration acceptance
 - `custodian/tools/validation/asset_pipeline_v2_smoke.py` — isolated V2 safety, replacement, rollback, delegation, and status regression suite
 - `custodian/tools/pipelines/watch_runtime_ready_assets.sh` — optional inotify watcher that applies completed runtime-ready drops continuously

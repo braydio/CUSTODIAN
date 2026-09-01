@@ -3,6 +3,7 @@ class_name AmbientEnemyCamp
 
 @export var camp_id: StringName = &"camp"
 @export var enemy_scene: PackedScene
+@export var enemy_scenes: Array[PackedScene] = []
 @export var enemy_count_min: int = 2
 @export var enemy_count_max: int = 4
 @export var spawn_radius_px: float = 96.0
@@ -39,7 +40,7 @@ func _process(_delta: float) -> void:
 
 
 func spawn_camp() -> void:
-	if enemy_scene == null:
+	if enemy_scene == null and enemy_scenes.is_empty():
 		return
 	if _planned_count < 0:
 		var count_range := maxi(0, enemy_count_max - enemy_count_min)
@@ -69,6 +70,7 @@ func spawn_camp() -> void:
 	if count <= 0:
 		return
 	var resolved_positions: Array[Vector2] = []
+	var queued_count := 0
 	for local_index in count:
 		var index := _queued_or_spawned_count + local_index
 		var angle := TAU * float(index) / float(maxi(1, _planned_count))
@@ -103,9 +105,12 @@ func spawn_camp() -> void:
 			continue
 		resolved_positions.append(spawn_position)
 		if spawner != null and spawner.has_method("queue_enemy_spawn"):
+			var selected_scene := _enemy_scene_for_slot(index)
+			if selected_scene == null:
+				continue
 			spawner.call(
 				"queue_enemy_spawn",
-				enemy_scene,
+				selected_scene,
 				parent,
 				spawn_position,
 				global_position,
@@ -114,12 +119,23 @@ func spawn_camp() -> void:
 				behavior_profile_id,
 				Callable(self, "_on_enemy_spawned")
 			)
+			queued_count += 1
 		else:
 			push_warning("AmbientEnemyCamp: spawn scheduler unavailable; camp slot rejected")
-	_queued_or_spawned_count += count
+	_queued_or_spawned_count += queued_count
 	_spawned = _queued_or_spawned_count >= _planned_count
 	if _spawned:
 		set_process(false)
+
+
+func _enemy_scene_for_slot(slot_index: int) -> PackedScene:
+	var available: Array[PackedScene] = []
+	for scene in enemy_scenes:
+		if scene != null:
+			available.append(scene)
+	if not available.is_empty():
+		return available[posmod(slot_index, available.size())]
+	return enemy_scene
 
 
 func _spawn_enemy_immediately(parent: Node, spawn_position: Vector2) -> void:

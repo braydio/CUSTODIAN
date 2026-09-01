@@ -14,7 +14,7 @@ existing procgen runtime-walkability provider before instantiation. This does
 not change `NavigationSystem`, patrol scoring, or the authoritative empty-path
 rule; an empty path stops an enemy rather than permitting direct travel.
 
-- `AmbientEnemySpawner` owns the global ambient actor-spawn queue. It instantiates at most one queued ambient combat actor per physics frame, assigns the local transform before `add_child()`, assigns a stable spawn ordinal, and prewarms grunt body/FX animation libraries during world startup. Marker processing is idempotent: deferred startup and `ContractWorldLoader` may both request processing, but marker metadata and generated-child detection permit exactly one camp and count suppressed duplicates.
+- `AmbientEnemySpawner` owns the global ambient actor-spawn queue. It instantiates at most one queued ambient combat actor per physics frame, assigns the local transform before `add_child()`, assigns a stable spawn ordinal, and prewarms grunt body/FX animation libraries during world startup. Procgen camp slots deterministically alternate the configured Grunt/Pursuit Frame scenes. Rejected walkability projections do not consume a camp slot, so a camp retries instead of permanently completing empty. Marker processing is idempotent: deferred startup and `ContractWorldLoader` may both request processing, but marker metadata and generated-child detection permit exactly one camp and count suppressed duplicates.
 - `NavigationSystem` owns the authoritative `AStar2D` graph, navigation revision, deterministic grid line-of-sight, and path smoothing.
 - `EnemyNavigationBroker`, owned beneath `NavigationSystem`, admits at most two synchronous A* searches per physics frame and coalesces repeated pending requests from one actor.
 - `EnemySpatialIndex`, also owned beneath `NavigationSystem`, rebuilds 64 px buckets at 10 Hz. Separation examines only neighboring buckets in stable spawn/path order.
@@ -46,6 +46,8 @@ Run:
 ```bash
 godot --headless --path custodian \
   --script res://tools/validation/ambient_enemy_navigation_perf_smoke.gd
+godot --headless --path custodian \
+  --script res://tools/validation/procgen_enemy_family_spawn_smoke.gd
 ```
 
 For threshold-free real-actor scaling evidence, run

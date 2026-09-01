@@ -1,5 +1,16 @@
 # CURRENT STATE — CUSTODIAN
 
+## Procgen Grunt + Pursuit Frame Population (2026-09-01)
+
+Ambient procgen camps no longer consume rejected walkability projections as
+successful spawns; an early unavailable provider now leaves the slot pending
+and the camp retries. The mounted scheduler accepts a deterministic enemy-scene
+family list, and each two-actor camp alternates the live Enemy Grunt and the new
+Pursuit Frame actor. Pursuit Frame uses the shared human-enemy behavior/combat
+authority plus a dedicated semantic animation set backed by its canonical
+Asset Pipeline V2 posture, locomotion, melee, flinch, stagger, and death strips.
+Bespoke intercept gameplay remains deferred.
+
 ## Required Ritualant World Ingress (2026-09-01)
 
 The Forlorn-Ritualant surface route is now a required accepted-contract
@@ -1009,7 +1020,7 @@ Documentation updates this session:
   detection only to the second pixel layer; non-ground cells and alpha remain
   byte-for-byte unchanged.
 
-- Asset Pipeline V2.1 is the preferred semantic-family intake for non-Operator art. Data schemas register `world_prop`, enemy, tile, effect, vehicle, weapon, UI, and backdrop kinds; family V2 supports literal directional assets, deterministic authored-over-mirror precedence, copy/horizontal/vertical/explicit-grid layouts, optional exact frame-count contracts, multi-output plans, and a direction-safe V2 catalog. `enemy_grunt`, `pursuit_frame`, and `void_cliff_face` are active contracts. Pursuit Frame currently stages sixteen recommended 96px body strips without blocking on missing art, including reaction, death, search, investigation, and route-return coverage; supplied strips must satisfy their exact direction and frame contracts, while additional authored directions are accepted and runtime actor/ability wiring remains deferred. Void cliff presentation now forms a one-cell frontier lip with deterministic outward-normal extrusion, typical two-to-four-cell bodies, sparse five-to-six-cell bodies, and suppression of tiny enclosed chasm pockets; its chasm semantics and `RuntimeWalkableBoundary` collision remain untouched, while Observatory exposes frontier, painted-cell, and ratio gauges. Execution still delegates to the mature runtime-ready and sprite-manifest backends, while Operator retains its specialized pipeline. Consumer binding remains explicit, `.godot/` cache and unbounded delegated post-process side effects are not transactionally rolled back, and watch mode remains deferred.
+- Asset Pipeline V2.1 is the preferred semantic-family intake for non-Operator art. Data schemas register `world_prop`, enemy, tile, effect, vehicle, weapon, UI, and backdrop kinds; family V2 supports literal directional assets, deterministic authored-over-mirror precedence, copy/horizontal/vertical/explicit-grid layouts, optional exact frame-count contracts, multi-output plans, and a direction-safe V2 catalog. `enemy_grunt`, `pursuit_frame`, and `void_cliff_face` are active contracts. Pursuit Frame supplies sixteen recommended 96px body strips without blocking on missing art, including reaction, death, search, investigation, and route-return coverage; its initial live actor consumes the available locomotion/combat/reaction subset through a dedicated animation set, while bespoke intercept gameplay remains deferred. Void cliff presentation now forms a one-cell frontier lip with deterministic outward-normal extrusion, typical two-to-four-cell bodies, sparse five-to-six-cell bodies, and suppression of tiny enclosed chasm pockets; its chasm semantics and `RuntimeWalkableBoundary` collision remain untouched, while Observatory exposes frontier, painted-cell, and ratio gauges. Execution still delegates to the mature runtime-ready and sprite-manifest backends, while Operator retains its specialized pipeline. Consumer binding remains explicit, `.godot/` cache and unbounded delegated post-process side effects are not transactionally rolled back, and watch mode remains deferred.
 - Content directory stabilization now has a first migration pass: `res://content/README.md` documents stable content domains, `docs/ASSET_LAYOUT_CONVENTION.md` defines duplicate/migration safety rules, and `custodian/tools/validation/content_asset_audit.py` reports loose content-root files, loose sprite/tile-domain files, unregistered quarantine files, and exact duplicate groups. The loose Road of Witnesses map now lives under `res://content/levels/hub/`; loose terminal/operator/enemy-scout/tile source files now live under owner-specific `source/` folders; and prior `res://content/unregistered/` vault art now lives under `res://content/props/gothic/vault_dressing/source/unregistered/` for later manifest promotion.
 - A canonical `content/_aseprite/` directory now exists as the single home for all `.aseprite` and `.ase` source files, mirroring the content tree.
 - `tools/aseprite/sweep_aseprite.sh` — one-time sweep to move all 213 existing `.aseprite` files into `_aseprite/` (run with `--apply --git`).

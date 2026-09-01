@@ -1,0 +1,79 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://game/actors/enemies/enemy.gd" id="1_enemy"]
+[ext_resource type="Script" path="res://game/actors/enemies/components/enemy_blackboard.gd" id="2_blackboard"]
+[ext_resource type="Script" path="res://game/actors/enemies/components/enemy_perception_component.gd" id="3_perception"]
+[ext_resource type="Script" path="res://game/actors/enemies/components/enemy_objective_sensor.gd" id="4_sensor"]
+[ext_resource type="Script" path="res://game/actors/enemies/components/enemy_loot_carrier.gd" id="5_carrier"]
+[ext_resource type="Script" path="res://game/actors/enemies/enemy_behavior_state_machine.gd" id="6_behavior"]
+[ext_resource type="Script" path="res://game/actors/effects/blob_shadow.gd" id="7_shadow"]
+[ext_resource type="Texture2D" path="res://content/sprites/world/shadows/contact_shadow_character_64x32.png" id="8_shadow_texture"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_pursuit"]
+size = Vector2(28, 28)
+
+[node name="PursuitFrame" type="CharacterBody2D"]
+z_index = 2
+script = ExtResource("1_enemy")
+enemy_name = "PURSUIT FRAME"
+speed = 96.0
+health = 92.0
+max_health = 92.0
+damage = 15.0
+base_tint = Color(0.22, 0.42, 0.48, 1)
+attack_windup_duration = 0.46
+attack_recovery_duration = 0.48
+material_drop_min = 1
+material_drop_max = 3
+custom_enemy_animation_set = "pursuit_frame"
+behavior_state_machine_enabled = true
+behavior_profile_id = &"raider_grunt"
+
+[node name="Visual" type="ColorRect" parent="."]
+offset_left = -14.0
+offset_top = -14.0
+offset_right = 14.0
+offset_bottom = 14.0
+color = Color(0.22, 0.42, 0.48, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_pursuit")
+
+[node name="HealthBar" type="ProgressBar" parent="."]
+offset_left = -16.0
+offset_top = -32.0
+offset_right = 16.0
+offset_bottom = -26.0
+value = 100.0
+show_percentage = false
+
+[node name="BlobShadow" type="Node2D" parent="."]
+position = Vector2(0, 13)
+script = ExtResource("7_shadow")
+shadow_texture = ExtResource("8_shadow_texture")
+base_radius = Vector2(14, 7)
+shadow_alpha = 0.28
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -18)
+
+[node name="CustomEnemyFxSprite" type="AnimatedSprite2D" parent="."]
+visible = false
+position = Vector2(0, -18)
+
+[node name="CriticalExecutionAnchor" type="Marker2D" parent="."]
+
+[node name="EnemyBlackboard" type="Node" parent="."]
+script = ExtResource("2_blackboard")
+
+[node name="EnemyPerceptionComponent" type="Node" parent="."]
+script = ExtResource("3_perception")
+
+[node name="EnemyObjectiveSensor" type="Node" parent="."]
+script = ExtResource("4_sensor")
+
+[node name="EnemyLootCarrier" type="Node" parent="."]
+script = ExtResource("5_carrier")
+
+[node name="EnemyBehaviorStateMachine" type="Node" parent="."]
+script = ExtResource("6_behavior")

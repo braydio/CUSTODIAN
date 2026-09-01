@@ -15,6 +15,9 @@ const ENEMY_PRESENTATION_CONTROLLER_SCRIPT := preload(
 const ENEMY_GRUNT_ANIMATION_SET: EnemyAnimationSet = preload(
 	"res://game/actors/enemies/presentation/sets/enemy_grunt_animation_set.tres"
 )
+const PURSUIT_FRAME_ANIMATION_SET: EnemyAnimationSet = preload(
+	"res://game/actors/enemies/presentation/sets/pursuit_frame_animation_set.tres"
+)
 const GRUNT_FALCON_PUNCH_SCRIPT := preload(
 	"res://game/actors/enemies/abilities/grunt_falcon_punch.gd"
 )
@@ -42,6 +45,7 @@ const WOLF_SPECIAL_ANIMATION := &"howl_east"
 const CUSTOM_ENEMY_GRUNT := &"enemy_grunt"
 const CUSTOM_ENEMY_MARINE := &"enemy_marine"
 const CUSTOM_ENEMY_SAVAGE := &"enemy_savage"
+const CUSTOM_PURSUIT_FRAME := &"pursuit_frame"
 const GRUNT_IDLE_ANIMATION := &"idle_s"
 const GRUNT_MOVE_ANIMATION := &"run_w"
 const GRUNT_ATTACK_ANIMATION := &"melee_e"
@@ -4011,7 +4015,12 @@ func _uses_procedural_variant_animation_set() -> bool:
 
 
 func _uses_custom_enemy_animation_set() -> bool:
-	return [String(CUSTOM_ENEMY_GRUNT), String(CUSTOM_ENEMY_MARINE), String(CUSTOM_ENEMY_SAVAGE)].has(custom_enemy_animation_set) and animated_sprite != null
+	return [
+		String(CUSTOM_ENEMY_GRUNT),
+		String(CUSTOM_ENEMY_MARINE),
+		String(CUSTOM_ENEMY_SAVAGE),
+		String(CUSTOM_PURSUIT_FRAME),
+	].has(custom_enemy_animation_set) and animated_sprite != null
 
 
 func _uses_custom_ambient_animation_set() -> bool:
@@ -4156,7 +4165,7 @@ func _has_directional_animation_assets() -> bool:
 func _ensure_custom_enemy_animations() -> void:
 	if animated_sprite == null:
 		return
-	if custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT):
+	if custom_enemy_animation_set in [String(CUSTOM_ENEMY_GRUNT), String(CUSTOM_PURSUIT_FRAME)]:
 		_ensure_enemy_presentation_controller()
 	elif custom_enemy_animation_set == String(CUSTOM_ENEMY_MARINE):
 		animated_sprite.sprite_frames = GRUNT_ANIMATION_LIBRARY.get_marine_sprite_frames()
@@ -4167,7 +4176,7 @@ func _ensure_custom_enemy_animations() -> void:
 func _ensure_custom_enemy_fx_animations() -> void:
 	if custom_enemy_fx_sprite == null:
 		return
-	if custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT):
+	if custom_enemy_animation_set in [String(CUSTOM_ENEMY_GRUNT), String(CUSTOM_PURSUIT_FRAME)]:
 		_ensure_enemy_presentation_controller()
 	elif custom_enemy_animation_set == String(CUSTOM_ENEMY_MARINE):
 		custom_enemy_fx_sprite.sprite_frames = GRUNT_ANIMATION_LIBRARY.get_marine_fx_sprite_frames()
@@ -4389,8 +4398,11 @@ func _ensure_enemy_presentation_controller() -> void:
 		return
 	if _enemy_presentation == null:
 		_enemy_presentation = ENEMY_PRESENTATION_CONTROLLER_SCRIPT.new()
+		var selected_set := PURSUIT_FRAME_ANIMATION_SET \
+			if custom_enemy_animation_set == String(CUSTOM_PURSUIT_FRAME) \
+			else ENEMY_GRUNT_ANIMATION_SET
 		_enemy_presentation.setup(
-			ENEMY_GRUNT_ANIMATION_SET,
+			selected_set,
 			animated_sprite,
 			custom_enemy_fx_sprite,
 			int(get_meta("stable_spawn_ordinal", 0))
