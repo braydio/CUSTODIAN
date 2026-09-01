@@ -1,0 +1,77 @@
+{
+  "schema": "custodian.operator_art_agent.v2_pilot_result.v1",
+  "timestamp": "20260831_223523",
+  "identity": {
+    "profile": "melee_1h",
+    "group": "locomotion",
+    "action": "walk_01",
+    "direction": "e"
+  },
+  "weapon": "vigil_pattern_dagger",
+  "engineering": "PASS",
+  "art_capability": "YELLOW",
+  "report_path": "reports/operator_art_agent/v2_pilot/20260831_223523",
+  "artifact_paths": {
+    "baseline_animation.gif": "reports/operator_art_agent/v2_pilot/20260831_223523/baseline_animation.gif",
+    "baseline_contact_sheet.png": "reports/operator_art_agent/v2_pilot/20260831_223523/baseline_contact_sheet.png",
+    "baseline_metrics.json": "reports/operator_art_agent/v2_pilot/20260831_223523/baseline_metrics.json",
+    "baseline_onion_skin.png": "reports/operator_art_agent/v2_pilot/20260831_223523/baseline_onion_skin.png",
+    "baseline_qa.json": "reports/operator_art_agent/v2_pilot/20260831_223523/baseline_qa.json",
+    "baseline_silhouette.png": "reports/operator_art_agent/v2_pilot/20260831_223523/baseline_silhouette.png",
+    "baseline_strip.png": "reports/operator_art_agent/v2_pilot/20260831_223523/baseline_strip.png",
+    "before_after.png": "reports/operator_art_agent/v2_pilot/20260831_223523/before_after.png",
+    "diff.png": "reports/operator_art_agent/v2_pilot/20260831_223523/diff.png",
+    "draft_animation.gif": "reports/operator_art_agent/v2_pilot/20260831_223523/draft_animation.gif",
+    "draft_contact_sheet.png": "reports/operator_art_agent/v2_pilot/20260831_223523/draft_contact_sheet.png",
+    "draft_metrics.json": "reports/operator_art_agent/v2_pilot/20260831_223523/draft_metrics.json",
+    "draft_onion_skin.png": "reports/operator_art_agent/v2_pilot/20260831_223523/draft_onion_skin.png",
+    "draft_qa.json": "reports/operator_art_agent/v2_pilot/20260831_223523/draft_qa.json",
+    "draft_silhouette.png": "reports/operator_art_agent/v2_pilot/20260831_223523/draft_silhouette.png",
+    "draft_strip.png": "reports/operator_art_agent/v2_pilot/20260831_223523/draft_strip.png",
+    "edited_animation.gif": "reports/operator_art_agent/v2_pilot/20260831_223523/edited_animation.gif",
+    "edited_contact_sheet.png": "reports/operator_art_agent/v2_pilot/20260831_223523/edited_contact_sheet.png",
+    "edited_metrics.json": "reports/operator_art_agent/v2_pilot/20260831_223523/edited_metrics.json",
+    "edited_onion_skin.png": "reports/operator_art_agent/v2_pilot/20260831_223523/edited_onion_skin.png",
+    "edited_qa.json": "reports/operator_art_agent/v2_pilot/20260831_223523/edited_qa.json",
+    "edited_silhouette.png": "reports/operator_art_agent/v2_pilot/20260831_223523/edited_silhouette.png",
+    "edited_strip.png": "reports/operator_art_agent/v2_pilot/20260831_223523/edited_strip.png",
+    "landmarks.json": "reports/operator_art_agent/v2_pilot/20260831_223523/landmarks.json",
+    "mask_overlay.png": "reports/operator_art_agent/v2_pilot/20260831_223523/mask_overlay.png",
+    "operations.json": "reports/operator_art_agent/v2_pilot/20260831_223523/operations.json",
+    "pilot_identity.json": "reports/operator_art_agent/v2_pilot/20260831_223523/pilot_identity.json",
+    "production_after.json": "reports/operator_art_agent/v2_pilot/20260831_223523/production_after.json",
+    "production_before.json": "reports/operator_art_agent/v2_pilot/20260831_223523/production_before.json",
+    "review_packet.json": "reports/operator_art_agent/v2_pilot/20260831_223523/review_packet.json",
+    "selected_frame_mask_overlay.png": "reports/operator_art_agent/v2_pilot/20260831_223523/selected_frame_mask_overlay.png",
+    "semantic_edit_plan.json": "reports/operator_art_agent/v2_pilot/20260831_223523/semantic_edit_plan.json"
+  },
+  "frame_count": 8,
+  "frame_size": [
+    96,
+    96
+  ],
+  "selected_frame": 4,
+  "selected_part": "far_leg",
+  "mask_ids": [
+    "near_leg_f4_0c27f425d6",
+    "far_leg_f4_0eab5d2d5f"
+  ],
+  "baseline_workbench_sha256": "d23082c8b827c81df1ce97221183dc747e787132dfdae562fe1a17ea626707bb",
+  "final_workbench_sha256": "d23082c8b827c81df1ce97221183dc747e787132dfdae562fe1a17ea626707bb",
+  "exact_restore": true,
+  "landmark_status": "PASS",
+  "mask_status": "PASS",
+  "draft_status": "PASS",
+  "bake_status": "PASS",
+  "metrics_status": "PASS",
+  "qa_status": "PASS",
+  "pre_existing_findings": [
+    {
+      "severity": "advisory",
+      "class": "pixel_art",
+      "issue": "semi-transparent pixels present"
+    }
+  ],
+  "new_findings": [],
+  "production_immutability": true
+}

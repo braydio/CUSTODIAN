@@ -25,8 +25,6 @@
 [ext_resource type="Texture2D" uid="uid://cj5jrprp3kx2v" path="res://content/tiles/encounters/ritualant_set/ash_debris_patch5.png" id="29_debris_5"]
 [ext_resource type="SpriteFrames" uid="uid://bntuttfw58gdy" path="res://content/tiles/encounters/ritualant_set/runtime/dry_fountain_ghost_frames.tres" id="30_ghost_anim"]
 [ext_resource type="SpriteFrames" uid="uid://od2538tpylf4" path="res://content/tiles/encounters/ritualant_set/runtime/black_water_fountain_frames.tres" id="31_water_anim"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/ruined_bell_chapel_floor_underlay_40x30.png" id="32_floor"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/ruined_bell_chapel_perimeter_rubble_40x30.png" id="33_rubble"]
 [ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/white_thread_hazard_runtime_02__768x64.png" id="34_thread_hazard"]
 [ext_resource type="SpriteFrames" uid="uid://htpgv207bj6s" path="res://content/tiles/encounters/ritualant_set/runtime/forlorn_ritualant_animations.tres" id="35_npc_animations"]
 [ext_resource type="Texture2D" uid="uid://baylmb3pm0scg" path="res://content/tiles/encounters/ritualant_set/stilling_pin_pickup_01.png" id="36_pin"]
@@ -115,14 +113,6 @@ position = Vector2(0, -48)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CombatBounds"]
 shape = SubResource("RectangleShape2D_combat_bounds")
 disabled = true
-
-[node name="Floor" type="Sprite2D" parent="." unique_id=1737574996]
-z_index = -30
-texture = ExtResource("32_floor")
-
-[node name="PerimeterRubble" type="Sprite2D" parent="." unique_id=1562758724]
-z_index = -29
-texture = ExtResource("33_rubble")
 
 [node name="FloorDebris1" type="Sprite2D" parent="." unique_id=986184121]
 modulate = Color(1, 1, 1, 0.5)

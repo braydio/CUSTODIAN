@@ -586,7 +586,8 @@ func stabilize_site() -> void:
 	request_dialogue.emit(dialogue_id, &"stabilized_exit")
 	if dialogue_presenter != null \
 			and dialogue_presenter.get_active_node() == &"stabilized_exit":
-		await dialogue_presenter.wait_for_line_end(&"stabilized_exit", 1)
+		await dialogue_presenter.wait_for_node_end(&"stabilized_exit")
+	await get_tree().create_timer(0.25).timeout
 	if forlorn_ritualant != null \
 			and is_instance_valid(forlorn_ritualant) \
 			and forlorn_ritualant.has_method("dissolve"):

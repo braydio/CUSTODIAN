@@ -16,7 +16,6 @@
 [ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__underlay__mineral_haze_01__1536x1536.png" id="14"]
 [ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__underlay__chapel_haze_01__1024x768.png" id="15"]
 [ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__chapel_connector_apron_02__768x384.png" id="16"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__chapel_outer_blend_01__1280x1024.png" id="17"]
 [ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__wet_ground_detail_01__384x256.png" id="18"]
 [ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__fracture_detail_01__256x256.png" id="19"]
 [ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__lift__arrival_back_01__768x1536.png" id="20"]
@@ -138,11 +137,6 @@ texture_repeat=2
 texture=ExtResource("9")
 z_as_relative=false
 z_index=-50
-[node name="ChapelOuterBlend" type="Sprite2D" parent="BackgroundRoot"]
-position=Vector2(0,-1120)
-texture=ExtResource("17")
-z_as_relative=false
-z_index=-28
 [node name="CavernRimSouth" type="Sprite2D" parent="BackgroundRoot"]
 position=Vector2(0,1024)
 texture=ExtResource("11")
