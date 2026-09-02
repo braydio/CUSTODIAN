@@ -20,9 +20,17 @@ func _run() -> void:
 	var north_cells := (spawn.y - facade.global_position.y) / 32.0
 	assert(north_cells >= 14.0 and north_cells <= 17.0)
 	var grid := level.blockout_grid as AuthoredBlockoutGrid2D
+	for cell in [Vector2i(64, 87), Vector2i(64, 91), Vector2i(64, 78), Vector2i(58, 80), Vector2i(40, 75)]:
+		assert(grid.is_walkable_cell(cell), "expected walkable entrance/route cell %s" % cell)
+	for cell in [Vector2i(52, 88), Vector2i(53, 88), Vector2i(75, 88), Vector2i(54, 92), Vector2i(74, 92)]:
+		assert(not grid.is_walkable_cell(cell), "expected retired arrival cell %s to be nonwalkable" % cell)
+	for target in [Vector2i(64, 78), Vector2i(58, 80), Vector2i(40, 75)]:
+		assert(_can_reach(grid, Vector2i(64, 87), target), "spawn reaches authored route target %s" % target)
 	var collapse := level.get_node("DynamicGates/DirectPersonnelCollapse") as StaticBody2D
 	assert(collapse.visible)
 	assert(not (collapse.get_node("CollisionShape2D") as CollisionShape2D).disabled)
+	assert(not level.authored_navigation.is_world_position_walkable(level.cell_center(Vector2i(64, 72))))
+	assert(level.authored_navigation.compute_path(level.cell_center(Vector2i(64, 76)), level.cell_center(Vector2i(64, 70))).is_empty())
 	assert(_can_reach(grid, Vector2i(64, 87), Vector2i(64, 91)))
 	var evac := level.get_node("POIRoot/EvacAnnunciator") as CivicRelay2D
 	var pressure := level.get_node("POIRoot/GatePressureRelay") as CivicRelay2D

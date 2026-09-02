@@ -1,5 +1,8 @@
 {
   "schema": "custodian.ash_bell_lower_quarter_entrance_reauthor.v1",
+  "lifecycle": "implemented_reference_only",
+  "runtime_consumed": false,
+  "remaining_blocker": "Ruined facade placements await authored semantic sources; current source IDs 62, 64, 129, and 140 identify different emergency and salvage assets.",
   "level_id": "lower_quarter",
   "cell_world_px": 32,
   "map_origin": [

@@ -46,7 +46,7 @@
           "runtime_family": "meridian_civic_lighting",
           "variant_key": "lantern_standard_amber",
           "cell": [
-            75,
+            74,
             88
           ],
           "offset_px": [
@@ -54,7 +54,7 @@
             0
           ],
           "world_anchor": [
-            368,
+            336,
             1296
           ],
           "anchor_mode": "floor_contact",
@@ -191,16 +191,16 @@
           "runtime_family": "meridian_civic_waste",
           "variant_key": "waste_bin_round",
           "cell": [
-            53,
-            85
+            54,
+            86
           ],
           "offset_px": [
             0,
             0
           ],
           "world_anchor": [
-            -336,
-            1200
+            -304,
+            1232
           ],
           "anchor_mode": "floor_contact",
           "native_size": [
@@ -249,7 +249,7 @@
           "runtime_family": "meridian_civic_traffic_control",
           "variant_key": "bollard_stone_b",
           "cell": [
-            71,
+            70,
             82
           ],
           "offset_px": [
@@ -257,7 +257,7 @@
             0
           ],
           "world_anchor": [
-            240,
+            208,
             1104
           ],
           "anchor_mode": "floor_contact",
@@ -278,16 +278,16 @@
           "runtime_family": "meridian_civic_floor_hardware",
           "variant_key": "round_storm_drain",
           "cell": [
-            58,
-            90
+            60,
+            89
           ],
           "offset_px": [
             0,
             0
           ],
           "world_anchor": [
-            -176,
-            1360
+            -112,
+            1328
           ],
           "anchor_mode": "floor_center",
           "native_size": [
@@ -308,7 +308,7 @@
           "variant_key": "service_plate_plain_a",
           "cell": [
             72,
-            90
+            89
           ],
           "offset_px": [
             0,
@@ -316,7 +316,7 @@
           ],
           "world_anchor": [
             272,
-            1360
+            1328
           ],
           "anchor_mode": "floor_center",
           "native_size": [
@@ -336,7 +336,7 @@
           "runtime_family": "meridian_civic_structure",
           "variant_key": "square_civic_pier_base",
           "cell": [
-            52,
+            57,
             83
           ],
           "offset_px": [
@@ -344,7 +344,7 @@
             0
           ],
           "world_anchor": [
-            -368,
+            -208,
             1136
           ],
           "anchor_mode": "floor_contact",
@@ -365,16 +365,16 @@
           "runtime_family": "meridian_civic_structure",
           "variant_key": "ornate_three_post_railing",
           "cell": [
-            54,
-            83
+            55,
+            84
           ],
           "offset_px": [
             0,
             0
           ],
           "world_anchor": [
-            -304,
-            1136
+            -272,
+            1168
           ],
           "anchor_mode": "floor_contact",
           "native_size": [
@@ -394,16 +394,16 @@
           "runtime_family": "meridian_civic_structure",
           "variant_key": "chain_railing_span",
           "cell": [
-            73,
-            83
+            72,
+            84
           ],
           "offset_px": [
             0,
             0
           ],
           "world_anchor": [
-            304,
-            1136
+            272,
+            1168
           ],
           "anchor_mode": "floor_contact",
           "native_size": [
@@ -423,16 +423,16 @@
           "runtime_family": "meridian_civic_worksite",
           "variant_key": "amber_beacon_pedestal",
           "cell": [
-            73,
-            82
+            74,
+            84
           ],
           "offset_px": [
             0,
             0
           ],
           "world_anchor": [
-            304,
-            1104
+            336,
+            1168
           ],
           "anchor_mode": "floor_contact",
           "native_size": [

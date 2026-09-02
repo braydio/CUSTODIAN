@@ -52,6 +52,9 @@ func _run() -> void:
 			source_ids[source_id] = true
 			families[String(record.get("semantic_family"))] = true
 			if bool(record.get("enabled", true)):
+				if level_id == "lower_quarter":
+					var cell := Vector2i(int((record.get("cell", []) as Array)[0]), int((record.get("cell", []) as Array)[1]))
+					_assert(not Rect2i(62, 82, 5, 12).has_point(cell), "%s stays outside reserved arrival axis" % placement_id)
 				enabled_count += 1
 				total += 1
 		_assert(enabled_count == EXPECTED_COUNTS[level_id], "%s active count" % level_id)

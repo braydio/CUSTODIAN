@@ -47,6 +47,8 @@ func rebuild() -> bool:
 
 
 func _instantiate_record(record: Dictionary) -> bool:
+	if not bool(record.get("enabled", true)):
+		return true
 	var placement_id := String(record.get("placement_id", ""))
 	var scale_contract := _vector2(record.get("scale", []))
 	if scale_contract != Vector2.ONE:

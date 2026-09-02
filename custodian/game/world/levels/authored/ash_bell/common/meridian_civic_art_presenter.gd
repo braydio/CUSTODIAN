@@ -7,8 +7,11 @@ const WALL := preload("res://content/tiles/ash_bell/lower_quarter/meridian_civic
 const OVERLAP := preload("res://content/tiles/ash_bell/lower_quarter/ash_bell_overlap_atlas_512.png")
 const TILE_SIZE := 32
 
-const ARRIVAL_PLATFORM_RECT := Rect2i(52, 82, 24, 12)
+const ENTRANCE_SOUTH_THRESHOLD_RECT := Rect2i(60, 90, 9, 4)
+const ENTRANCE_FORECOURT_RECT := Rect2i(54, 84, 21, 6)
+const ENTRANCE_NORTH_APRON_RECT := Rect2i(57, 82, 14, 2)
 const ARRIVAL_AXIS_RECT := Rect2i(62, 82, 5, 12)
+const DIRECT_COLLAPSE_FLOOR_RECT := Rect2i(58, 71, 12, 4)
 const DIRECT_PERSONNEL_RECT := Rect2i(58, 70, 12, 14)
 const WEST_DETOUR_RECT := Rect2i(38, 74, 22, 8)
 const EVACUATION_ARCADE_RECT := Rect2i(32, 48, 14, 32)
@@ -25,8 +28,11 @@ const STATION_THRESHOLD_RECT := Rect2i(72, 58, 30, 10)
 const WEST_GATE_BRANCH_RECT := Rect2i(4, 39, 14, 8)
 
 const LOWER_QUARTER_FLOOR_OVERRIDES := {
-	Vector2i(53, 84): Vector2i(5, 0), Vector2i(57, 91): Vector2i(6, 0),
-	Vector2i(71, 84): Vector2i(5, 0), Vector2i(74, 90): Vector2i(6, 0),
+	Vector2i(55, 85): Vector2i(5, 0), Vector2i(58, 88): Vector2i(6, 0),
+	Vector2i(55, 89): Vector2i(5, 0), Vector2i(73, 85): Vector2i(5, 0),
+	Vector2i(70, 88): Vector2i(6, 0), Vector2i(73, 89): Vector2i(5, 0),
+	Vector2i(57, 83): Vector2i(6, 0), Vector2i(70, 83): Vector2i(5, 0),
+	Vector2i(60, 92): Vector2i(10, 0), Vector2i(68, 92): Vector2i(10, 0),
 	Vector2i(58, 38): Vector2i(5, 0), Vector2i(62, 47): Vector2i(6, 0),
 	Vector2i(76, 38): Vector2i(5, 0), Vector2i(78, 46): Vector2i(6, 0),
 	Vector2i(57, 10): Vector2i(5, 0), Vector2i(86, 11): Vector2i(6, 0),
@@ -124,9 +130,13 @@ func _get_lower_quarter_base(cell: Vector2i) -> Vector2i:
 	if STATION_THRESHOLD_RECT.has_point(cell): return Palette.SRC_CIVIC_DARK
 	if CIVIC_BASIN_RECT.has_point(cell): return Palette.SRC_CIVIC_LIGHT
 	if WRONG_STREET_IMPORT_RECT.has_point(cell): return Palette.SRC_CIVIC_DARK
-	if ARRIVAL_AXIS_RECT.has_point(cell): return Palette.SRC_ROAD_GREY
+	if DIRECT_COLLAPSE_FLOOR_RECT.has_point(cell): return Palette.SRC_ROAD_DARK
+	if WEST_DETOUR_RECT.has_point(cell): return Palette.SRC_ROAD_DARK
 	if DIRECT_PERSONNEL_RECT.has_point(cell): return Palette.SRC_ROAD_GREY
-	if WEST_DETOUR_RECT.has_point(cell): return Palette.SRC_ROAD_GREY
+	if ARRIVAL_AXIS_RECT.has_point(cell): return Palette.SRC_ROAD_GREY
+	if ENTRANCE_SOUTH_THRESHOLD_RECT.has_point(cell): return Palette.SRC_CIVIC_DARK
+	if ENTRANCE_FORECOURT_RECT.has_point(cell): return Palette.SRC_CIVIC_LIGHT
+	if ENTRANCE_NORTH_APRON_RECT.has_point(cell): return Palette.SRC_CIVIC_LIGHT
 	if EVACUATION_ARCADE_RECT.has_point(cell): return Palette.SRC_ROAD_DARK
 	if NORTH_RAMP_RECT.has_point(cell): return Palette.SRC_ROAD_DARK
 	if UPPER_EAST_TRAVERSE_RECT.has_point(cell): return Palette.SRC_ROAD_DARK
@@ -135,7 +145,6 @@ func _get_lower_quarter_base(cell: Vector2i) -> Vector2i:
 	if LOWER_MARKET_RECT.has_point(cell): return Palette.SRC_MARKET_BASE
 	if WRONG_STREET_LOCAL_RECT.has_point(cell): return Palette.SRC_CIVIC_DARK
 	if WRONG_STREET_BOUNDARY_RECT.has_point(cell): return Palette.SRC_CIVIC_DARK
-	if ARRIVAL_PLATFORM_RECT.has_point(cell): return Palette.SRC_CIVIC_LIGHT
 	return Palette.SRC_CIVIC_DARK
 
 
@@ -219,12 +228,13 @@ func get_floor_overlay_source_cell(cell: Vector2i) -> Vector2i:
 		if cell == Vector2i(40, 33): return Vector2i(11, 12)
 		if cell == Vector2i(32, 18): return Vector2i(13, 13)
 		return Vector2i(-1, -1)
-	if cell == Vector2i(64, 85) or cell == Vector2i(64, 78) or cell == Vector2i(89, 22) or cell == Vector2i(103, 28) or cell == Vector2i(103, 52):
+	if cell == Vector2i(64, 86) or cell == Vector2i(64, 78) or cell == Vector2i(89, 22) or cell == Vector2i(103, 28) or cell == Vector2i(103, 52):
 		return Palette.SRC_ROAD_ARROW_N
-	if cell.y == 82 and cell.x in range(62, 67): return Palette.SRC_ROAD_CROSSWALK_H
-	if cell.x == 64 and (cell.y in range(83, 92) or cell.y in range(75, 82)):
+	if cell.y == 90 and cell.x in range(60, 69): return Palette.SRC_ROAD_LINE_H_DOUBLE
+	if cell.y == 89 and cell.x in range(62, 67): return Palette.SRC_ROAD_CROSSWALK_H
+	if cell.x == 64 and (cell.y in range(91, 93) or cell.y in range(84, 89) or cell.y in range(75, 84)):
 		return Palette.SRC_ROAD_LINE_V_DASH
-	if cell.y == 77 and cell.x in range(40, 58): return Palette.SRC_ROAD_LINE_H
+	if cell.y == 79 and cell.x in range(40, 64): return Palette.SRC_ROAD_LINE_H
 	if cell.x == 39 and cell.y in range(50, 74): return Palette.SRC_ROAD_LINE_V_DASH
 	if cell.y == 42 and cell.x in range(6, 17): return Palette.SRC_ROAD_LINE_H
 	if cell.x == 89 and cell.y in range(20, 31): return Palette.SRC_ROAD_LINE_V_DASH

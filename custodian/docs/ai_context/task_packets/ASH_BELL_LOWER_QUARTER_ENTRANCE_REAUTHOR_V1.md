@@ -2,9 +2,14 @@
 
 ## Status
 
-**Proposed authored redesign grounded in the current Godot runtime.**
+**Implemented 2026-09-02, with the ruined-facade frame placement blocked on
+semantic source identity.**
 
-The current live runtime uses a 32-world-unit authored cell, Lower Quarter origin `(-2048,-1536)`, the arrival region `Rect2i(52,82,24,12)`, `Spawn_FromWorld` at `(64,87)`, `Exit_ReturnWorld` at `(64,91)`, Direct Personnel Line `Rect2i(58,70,12,14)`, and the physically impassable collapse `Rect2i(55,71,18,4)`.
+The live runtime uses a 32-world-unit authored cell, Lower Quarter origin
+`(-2048,-1536)`, the three-region entrance defined below, `Spawn_FromWorld` at
+`(64,87)`, `Exit_ReturnWorld` at `(64,91)`, Direct Personnel Line
+`Rect2i(58,70,12,14)`, and the physically impassable collapse
+`Rect2i(55,71,18,4)`.
 
 This pass keeps the canonical route logic: the player is initially aimed straight at Station IX, discovers the direct personnel route is physically failed, and must divert west into the evacuation route. The generated "ideal state" infographic must **not** be interpreted as a literal straight-through route to Station IX.
 
@@ -176,7 +181,9 @@ Rect2i(62,82,5,12)
 
 This is the five-cell official movement lane.
 
-The exact civic and catastrophe prop moves/disables are machine-readable in `ash_bell_lower_quarter_entrance_reauthor_v1.json`.
+The exact civic and catastrophe prop moves/disables are retained beside this
+packet in `ash_bell_lower_quarter_entrance_reauthor_v1.json` as an implemented,
+reference-only record; runtime does not load that JSON.
 
 The entrance should retain:
 - two surviving civic lamps
@@ -188,6 +195,13 @@ The entrance should retain:
 Heavier rubble/barricade vocabulary belongs at the Direct Personnel collapse, not at world ingress.
 
 ## Ruined facade frame
+
+Status: blocked. The checked-in ruins family does not provide the semantic
+source mapping specified below: current IDs 62, 64, 129, and 140 resolve to
+`dead_service_canister`, `traffic_cone`, `amber_salvage_crate`, and
+`stacked_salvage_pipes`. Do not place those substitutes. The intended frame
+remains deferred until the authored facade extracts and semantic identities are
+available.
 
 Use the new native ruined-facade family outside the new walkable shape:
 
@@ -213,9 +227,12 @@ The opening must read in this order:
 
 This preserves the canonical visual irony: the official order is obvious, but obeying it is impossible.
 
-## Documentation drift to fix
+## Documentation drift remediation
 
-The active level design currently documents the arrival as `Rect2i(52,82,24,12)`. Update it to the three-region entrance composition above. Update runtime-context docs and floor-validation expectations in the same commit. Do not leave the old rectangular Arrival Platform described as current authority.
+Completed 2026-09-02. The active level design, runtime-context docs, file index,
+and floor-validation expectations now describe the three-region entrance. The
+old `Rect2i(52,82,24,12)` Arrival Platform remains here only as the explicit
+historical geometry removed by this contract.
 
 ## Acceptance
 

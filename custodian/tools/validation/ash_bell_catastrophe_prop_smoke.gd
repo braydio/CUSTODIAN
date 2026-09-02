@@ -4,7 +4,7 @@ const LOWER_QUARTER := "res://game/world/levels/authored/ash_bell/lower_quarter/
 const MANIFEST := "res://content/metadata/assets/meridian_civic_ruins_native.semantic.json"
 const NativeProp := preload("res://game/world/levels/presentation/semantic_native_prop_2d.gd")
 const EXPECTED_ZONES := {
-	"arrival": 12,
+	"arrival": 7,
 	"direct_collapse": 22,
 	"evacuation_arcade": 18,
 	"lower_market": 22,
@@ -35,9 +35,10 @@ func _run() -> void:
 	_assert(catastrophe.get_errors().is_empty(), "catastrophe layer has no errors")
 	_assert(civic.get_debug_snapshot().size() == 104, "surviving civic placement count")
 	var snapshot := catastrophe.get_debug_snapshot()
-	_assert(snapshot.size() == 102, "catastrophe placement count")
+	_assert(snapshot.size() == 97, "active catastrophe placement count")
 	var zones: Dictionary = {}
 	var seen_ids: Dictionary = {}
+	var reserved_axis := Rect2i(62, 82, 5, 12)
 	for item: Dictionary in snapshot:
 		var placement_id := String(item.get("placement_id", ""))
 		_assert(not seen_ids.has(placement_id), "unique placement %s" % placement_id)
@@ -47,10 +48,15 @@ func _run() -> void:
 		_assert(item.get("scale") == Vector2.ONE, "%s native scale" % placement_id)
 		_assert(not bool(item.get("collision_enabled", true)), "%s collision disabled" % placement_id)
 		_assert(not String(item.get("resolved_texture", "")).is_empty(), "%s texture resolves" % placement_id)
+		var root_world_position := item.get("root_world_position") as Vector2
+		var cell := Vector2i(floor((root_world_position.x + 2048.0) / 32.0), floor((root_world_position.y + 1536.0) / 32.0))
+		_assert(not reserved_axis.has_point(cell), "%s stays outside reserved arrival axis" % placement_id)
 	_assert(zones == EXPECTED_ZONES, "runtime zone counts")
+	for disabled_id in ["ruin_arrival_01", "ruin_arrival_04", "ruin_arrival_08", "ruin_arrival_10", "ruin_arrival_11"]:
+		_assert(not seen_ids.has(disabled_id), "%s remains disabled" % disabled_id)
 	_assert(not NativeProp.can_spawn_production(MANIFEST, &"meridian_ruins_debris", &"broken_wall_section"), "compound wall cannot spawn generically")
 	_assert(not NativeProp.can_spawn_production(MANIFEST, &"meridian_ruins_debris", &"breached_wall_corner"), "compound corner cannot spawn generically")
-	print("ash_bell_catastrophe_prop_smoke: PASS civic=104 catastrophe=102 history_layers=3")
+	print("ash_bell_catastrophe_prop_smoke: PASS civic=104 catastrophe=97 arrival=7 history_layers=3")
 	level.queue_free()
 	await process_frame
 	quit(0)

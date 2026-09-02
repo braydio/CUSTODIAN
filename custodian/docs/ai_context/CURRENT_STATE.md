@@ -179,7 +179,8 @@ navigation remain separate authorities.
 
 Lower Quarter now preserves three explicit environmental-history layers rather
 than one generic prop bucket: 104 surviving Meridian civic props under
-`NativeCivicPropRoot`, 102 authored catastrophe ruins under
+`NativeCivicPropRoot`, 97 active authored catastrophe ruins (102 retained
+records, with seven active Arrival records) under
 `NativeCatastrophePropRoot`, and later intervention under
 `LaterPenitentAdditions`. The catastrophe runtime is built from 161 native RGBA
 extracts without resizing; its semantic manifest retains exact extractor crop,
@@ -187,6 +188,15 @@ dimension, filename, and contact-anchor evidence. Placement is checked-in JSON,
 native scale, collisionless, and non-random. Review-required compound clusters
 fail closed outside explicit authored placement, while blockout geometry and
 navigation remain sole gameplay authority.
+
+The world entrance is now the authored V1 narrow-threshold composition: South
+Threshold `Rect2i(60,90,9,4)`, Entry Forecourt `Rect2i(54,84,21,6)`, and North
+Apron `Rect2i(57,82,14,2)`. Its clear five-cell grey personnel axis points at
+the still-impassable Direct Personnel collapse, while the West Detour uses dark
+evacuation-road material and an explicit west-turn line. Civic and catastrophe
+props were remapped off the reserved axis. The requested facade-frame source
+IDs remain blocked because current semantic IDs 62, 64, 129, and 140 resolve to
+different emergency/salvage assets, not the facade semantics named by V1.
 
 ## Operator Animation Workbench V2 (2026-08-28)
 

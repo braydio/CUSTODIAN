@@ -1,5 +1,8 @@
 # CODEX BRIEF — Ash-Bell Lower Quarter Entrance Reauthor V1
 
+Archived 2026-09-02 after implementation. Retained for historical handoff
+context only; the active design and runtime files are authoritative.
+
 Repo:
 `/home/braydenchaffee/Projects/CUSTODIAN`
 

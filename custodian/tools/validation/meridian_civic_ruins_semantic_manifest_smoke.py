@@ -26,13 +26,15 @@ EXPECTED_ZONES = {
     "answers_court": 6,
     "station_approach": 10,
 }
+EXPECTED_ACTIVE_ZONES = {**EXPECTED_ZONES, "arrival": 7}
 BLOCKED_CELLS = {
     (64, 87), (14, 43), (80, 65),
     (64, 91), (6, 43), (74, 65),
     (39, 58), (22, 42), (89, 21),
 }
 WALKABLE = (
-    (52, 82, 24, 12), (58, 70, 12, 14), (38, 74, 22, 8),
+    (60, 90, 9, 4), (54, 84, 21, 6), (57, 82, 14, 2),
+    (58, 70, 12, 14), (38, 74, 22, 8),
     (32, 48, 14, 32), (16, 34, 46, 20), (56, 36, 24, 14),
     (74, 30, 34, 24), (84, 18, 12, 14), (55, 8, 34, 22),
     (84, 16, 24, 10), (98, 22, 10, 44), (72, 58, 30, 10),
@@ -94,6 +96,10 @@ def main() -> None:
     assert len(placements) == placement_document["placement_count"] == 102
     assert placement_document["zone_counts"] == EXPECTED_ZONES
     assert Counter(entry["zone"] for entry in placements) == Counter(EXPECTED_ZONES)
+    active_placements = [entry for entry in placements if entry.get("enabled", True)]
+    assert len(active_placements) == placement_document["active_placement_count"] == 97
+    assert placement_document["active_zone_counts"] == EXPECTED_ACTIVE_ZONES
+    assert Counter(entry["zone"] for entry in active_placements) == Counter(EXPECTED_ACTIVE_ZONES)
     assert len({entry["placement_id"] for entry in placements}) == 102
     assert len({tuple(entry["cell"]) for entry in placements}) == 102
     used_review_required = set()
@@ -105,7 +111,8 @@ def main() -> None:
         assert placement["collision_enabled"] is False
         cell = tuple(placement["cell"])
         assert cell not in BLOCKED_CELLS, placement["placement_id"]
-        assert _walkable(cell), placement["placement_id"]
+        if placement.get("enabled", True):
+            assert _walkable(cell), placement["placement_id"]
         if manifest_by_id[source_id]["review_required"]:
             assert manifest_by_id[source_id]["usage_policy"] == "explicit_authored_only"
             used_review_required.add(source_id)
@@ -116,7 +123,7 @@ def main() -> None:
         assert forbidden not in layer_source
     print(
         "meridian_civic_ruins_semantic_manifest_smoke: PASS "
-        "entries=161 placements=102 explicit_compounds=2"
+        "entries=161 placements=102 active=97 explicit_compounds=2"
     )
 
 

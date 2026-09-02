@@ -18,6 +18,17 @@
     "answers_court": 6,
     "station_approach": 10
   },
+  "active_placement_count": 97,
+  "active_zone_counts": {
+    "arrival": 7,
+    "direct_collapse": 22,
+    "evacuation_arcade": 18,
+    "lower_market": 22,
+    "civic_basin": 8,
+    "wrong_street": 4,
+    "answers_court": 6,
+    "station_approach": 10
+  },
   "placement_rule": "Exact authored placement. Do not randomize, substitute, move, omit, or add without reporting the change.",
   "collision_rule": "All entries visual-only for first pass. Existing authored topology/collision/navigation remain authority.",
   "narrative_density": {
@@ -34,6 +45,8 @@
   "placements": [
     {
       "placement_id": "ruin_arrival_01",
+      "enabled": false,
+      "disabled_reason": "Avoid duplicate dead/intact lamp cluster at entrance.",
       "level_id": "lower_quarter",
       "zone": "arrival",
       "source_id": 3,
@@ -62,8 +75,8 @@
       "semantic_name": "collapsed_bench",
       "semantic_family": "ruined_seating",
       "cell": [
-        56,
-        86
+        55,
+        87
       ],
       "offset_px": [
         0,
@@ -100,6 +113,8 @@
     },
     {
       "placement_id": "ruin_arrival_04",
+      "enabled": false,
+      "disabled_reason": "Keep the official axis and forecourt read clear; failed barricades remain at the direct-collapse choke.",
       "level_id": "lower_quarter",
       "zone": "arrival",
       "source_id": 47,
@@ -128,7 +143,7 @@
       "semantic_name": "shattered_utility_cabinet",
       "semantic_family": "damaged_utility",
       "cell": [
-        74,
+        73,
         87
       ],
       "offset_px": [
@@ -150,8 +165,8 @@
       "semantic_name": "floor_grille",
       "semantic_family": "floor_service_hardware",
       "cell": [
-        55,
-        91
+        60,
+        92
       ],
       "offset_px": [
         0,
@@ -188,6 +203,8 @@
     },
     {
       "placement_id": "ruin_arrival_08",
+      "enabled": false,
+      "disabled_reason": "Move dumpster language to Lower Market; entrance should read civic ruin, not trash staging.",
       "level_id": "lower_quarter",
       "zone": "arrival",
       "source_id": 128,
@@ -232,6 +249,8 @@
     },
     {
       "placement_id": "ruin_arrival_10",
+      "enabled": false,
+      "disabled_reason": "Avoid duplicate hatch language and preserve the clear lane.",
       "level_id": "lower_quarter",
       "zone": "arrival",
       "source_id": 105,
@@ -254,6 +273,8 @@
     },
     {
       "placement_id": "ruin_arrival_11",
+      "enabled": false,
+      "disabled_reason": "Two surviving civic benches already establish the pre-catastrophe substrate.",
       "level_id": "lower_quarter",
       "zone": "arrival",
       "source_id": 33,
@@ -282,8 +303,8 @@
       "semantic_name": "masonry_rubble_small",
       "semantic_family": "structural_debris",
       "cell": [
-        75,
-        92
+        68,
+        93
       ],
       "offset_px": [
         0,

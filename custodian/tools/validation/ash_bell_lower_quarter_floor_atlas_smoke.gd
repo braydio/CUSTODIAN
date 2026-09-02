@@ -37,6 +37,7 @@ func _init() -> void:
 	assert(Palette.SRC_ROAD_GREY == Vector2i(2, 5))
 	assert(Palette.SRC_ROAD_DARK == Vector2i(11, 5))
 	assert(Palette.SRC_ROAD_LINE_H == Vector2i(1, 4))
+	assert(Palette.SRC_ROAD_LINE_H_DOUBLE == Vector2i(2, 4))
 	assert(Palette.SRC_ROAD_LINE_V_DASH == Vector2i(5, 4))
 	assert(Palette.SRC_ROAD_ARROW_N == Vector2i(10, 4))
 
@@ -52,15 +53,39 @@ func _init() -> void:
 	assert(presenter.get_floor_material(Vector2i(72, 20)) == &"normal_civic")
 	assert(presenter.get_floor_material(Vector2i(92, 22)) == &"road_base")
 	assert(presenter.get_floor_material(Vector2i(78, 64)) == &"normal_civic")
-	assert(presenter.get_floor_source_cell(Vector2i(55, 88)) == Palette.SRC_CIVIC_LIGHT)
 	assert(presenter.get_floor_source_cell(Vector2i(64, 88)) == Palette.SRC_ROAD_GREY)
+	assert(presenter.get_floor_source_cell(Vector2i(58, 72)) == Palette.SRC_ROAD_DARK)
+	assert(presenter.get_floor_source_cell(Vector2i(58, 76)) == Palette.SRC_ROAD_DARK)
+	assert(presenter.get_floor_source_cell(Vector2i(40, 75)) == Palette.SRC_ROAD_DARK)
+	assert(presenter.get_floor_source_cell(Vector2i(60, 91)) == Palette.SRC_CIVIC_DARK)
+	assert(presenter.get_floor_source_cell(Vector2i(55, 88)) == Palette.SRC_CIVIC_LIGHT)
+	var expected_entrance_wear := {
+		Vector2i(55, 85): Palette.SRC_CIVIC_LIGHT_WORN_A,
+		Vector2i(58, 88): Palette.SRC_CIVIC_LIGHT_WORN_B,
+		Vector2i(55, 89): Palette.SRC_CIVIC_LIGHT_WORN_A,
+		Vector2i(73, 85): Palette.SRC_CIVIC_LIGHT_WORN_A,
+		Vector2i(70, 88): Palette.SRC_CIVIC_LIGHT_WORN_B,
+		Vector2i(73, 89): Palette.SRC_CIVIC_LIGHT_WORN_A,
+		Vector2i(57, 83): Palette.SRC_CIVIC_LIGHT_WORN_B,
+		Vector2i(70, 83): Palette.SRC_CIVIC_LIGHT_WORN_A,
+		Vector2i(60, 92): Palette.SRC_CIVIC_DARK_WORN,
+		Vector2i(68, 92): Palette.SRC_CIVIC_DARK_WORN,
+	}
+	for cell: Vector2i in expected_entrance_wear:
+		assert(presenter.get_floor_source_cell(cell) == expected_entrance_wear[cell], "entrance wear %s" % cell)
 	assert(presenter.get_floor_source_cell(Vector2i(39, 65)) == Palette.SRC_ROAD_DARK)
 	assert(presenter.get_floor_source_cell(Vector2i(35, 43)) == Palette.SRC_MARKET_BASE)
 	assert(presenter.get_floor_source_cell(Vector2i(20, 37)) == Palette.SRC_MARKET_WORN_A)
 	assert(presenter.get_floor_source_cell(Vector2i(58, 38)) == Palette.SRC_CIVIC_LIGHT_WORN_A)
-	assert(presenter.get_floor_overlay_source_cell(Vector2i(64, 85)) == Palette.SRC_ROAD_ARROW_N)
-	assert(presenter.get_floor_overlay_source_cell(Vector2i(64, 86)) == Palette.SRC_ROAD_LINE_V_DASH)
-	assert(presenter.get_floor_overlay_source_cell(Vector2i(62, 82)) == Palette.SRC_ROAD_CROSSWALK_H)
+	assert(presenter.get_floor_overlay_source_cell(Vector2i(64, 86)) == Palette.SRC_ROAD_ARROW_N)
+	assert(presenter.get_floor_overlay_source_cell(Vector2i(64, 78)) == Palette.SRC_ROAD_ARROW_N)
+	assert(presenter.get_floor_overlay_source_cell(Vector2i(62, 90)) == Palette.SRC_ROAD_LINE_H_DOUBLE)
+	assert(presenter.get_floor_overlay_source_cell(Vector2i(62, 89)) == Palette.SRC_ROAD_CROSSWALK_H)
+	assert(presenter.get_floor_overlay_source_cell(Vector2i(64, 91)) == Palette.SRC_ROAD_LINE_V_DASH)
+	assert(presenter.get_floor_overlay_source_cell(Vector2i(64, 85)) == Palette.SRC_ROAD_LINE_V_DASH)
+	assert(presenter.get_floor_overlay_source_cell(Vector2i(64, 82)) == Palette.SRC_ROAD_LINE_V_DASH)
+	assert(presenter.get_floor_overlay_source_cell(Vector2i(40, 79)) == Palette.SRC_ROAD_LINE_H)
+	assert(presenter.get_floor_overlay_source_cell(Vector2i(40, 77)) == Vector2i(-1, -1))
 	presenter.configure(Vector2.ZERO, [], &"west_gate_works")
 	assert(presenter.get_floor_source_cell(Vector2i(52, 22)) == Palette.SRC_CIVIC_DARK)
 	assert(presenter.get_floor_source_cell(Vector2i(24, 20)) == Palette.SRC_ROAD_DARK)

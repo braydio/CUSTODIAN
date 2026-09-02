@@ -18,7 +18,8 @@ const WRONG_STREET_RECT := Rect2i(74, 30, 34, 24)
 const ANSWERS_COURT_RECT := Rect2i(55, 8, 34, 22)
 
 const WALKABLE_REGIONS: Array[Rect2i] = [
-	Rect2i(52, 82, 24, 12), Rect2i(58, 70, 12, 14),
+	Rect2i(60, 90, 9, 4), Rect2i(54, 84, 21, 6),
+	Rect2i(57, 82, 14, 2), Rect2i(58, 70, 12, 14),
 	Rect2i(38, 74, 22, 8), Rect2i(32, 48, 14, 32),
 	Rect2i(16, 34, 46, 20), Rect2i(56, 36, 24, 14),
 	Rect2i(74, 30, 34, 24), Rect2i(84, 18, 12, 14),

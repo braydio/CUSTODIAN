@@ -80,7 +80,9 @@ Origin: `(-2048, -1536)`. Camera bounds: `Rect2(-2048, -1536, 4096, 3072)`.
 
 Walkable regions:
 
-- Arrival Platform `Rect2i(52,82,24,12)`
+- South Threshold `Rect2i(60,90,9,4)`
+- Entry Forecourt `Rect2i(54,84,21,6)`
+- North Apron `Rect2i(57,82,14,2)`
 - Direct Personnel Line `Rect2i(58,70,12,14)`
 - West Detour `Rect2i(38,74,22,8)`
 - Evacuation Arcade `Rect2i(32,48,14,32)`
@@ -102,6 +104,16 @@ impassable. The required routing information remains `MERIDIAN PERSONNEL /
 STATION IX → DIRECT` and `CIVIL EVACUATION / LOWER QUARTER ↓`, presented by
 native sign-frame, directory, and evidence interactions rather than floating
 blockout labels.
+
+The entrance narrows through the South Threshold, opens into the civic
+forecourt, and contracts again at the North Apron around a clear five-cell
+official axis. The Direct Personnel Line remains the obvious but failed route;
+the dark West Detour and its west-turn marking communicate the required
+evacuation diversion. Ten exact wear cells and all entrance markings are
+deterministic authored coordinates rather than randomized variants.
+The nonwalkable shoulder facade frames remain an explicit art blocker: current
+ruins-manifest source IDs 62, 64, 129, and 140 do not match the facade semantics
+named by the V1 entrance packet and must not be substituted silently.
 
 Markers:
 
