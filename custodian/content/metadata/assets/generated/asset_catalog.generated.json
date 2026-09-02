@@ -3466,6 +3466,95 @@
           "source_asset": null
         }
       }
+    },
+    "enemy_forlorn_ritualant": {
+      "kind": "enemy",
+      "assets": {
+        "death_violent::s": {
+          "state_id": "death_violent",
+          "direction": "s",
+          "semantic_identity": [
+            "enemy_forlorn_ritualant",
+            "enemy",
+            "body",
+            "death",
+            "death_violent",
+            "s"
+          ],
+          "path": "content/sprites/enemies/forlorn_ritualant/runtime/body/death/enemy_forlorn_ritualant__body__death__death_violent__s__8f__128.png",
+          "frames": 8,
+          "frame_size": [
+            128,
+            128
+          ],
+          "sha256": "b44d8450ae1751bf14dfcbae843f6d4f3bd2ead114ee2c724a21cbc9e3b73908",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "dissolve::s": {
+          "state_id": "dissolve",
+          "direction": "s",
+          "semantic_identity": [
+            "enemy_forlorn_ritualant",
+            "enemy",
+            "body",
+            "death",
+            "dissolve",
+            "s"
+          ],
+          "path": "content/sprites/enemies/forlorn_ritualant/runtime/body/death/enemy_forlorn_ritualant__body__death__dissolve__s__8f__128.png",
+          "frames": 8,
+          "frame_size": [
+            128,
+            128
+          ],
+          "sha256": "611c2e5351ae0aabd789b07b174a1323ac5aea514687d42821a4b58a9b746063",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "ninth_answer::s": {
+          "state_id": "ninth_answer",
+          "direction": "s",
+          "semantic_identity": [
+            "enemy_forlorn_ritualant",
+            "enemy",
+            "body",
+            "special",
+            "ninth_answer",
+            "s"
+          ],
+          "path": "content/sprites/enemies/forlorn_ritualant/runtime/body/special/enemy_forlorn_ritualant__body__special__ninth_answer__s__8f__128.png",
+          "frames": 8,
+          "frame_size": [
+            128,
+            128
+          ],
+          "sha256": "b9e9f47082e1434b76e446a0941edda2c285bb4a4e0cfb13707fc9572e45dfae",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "orra_late::s": {
+          "state_id": "orra_late",
+          "direction": "s",
+          "semantic_identity": [
+            "enemy_forlorn_ritualant",
+            "enemy",
+            "body",
+            "special",
+            "orra_late",
+            "s"
+          ],
+          "path": "content/sprites/enemies/forlorn_ritualant/runtime/body/special/enemy_forlorn_ritualant__body__special__orra_late__s__8f__128.png",
+          "frames": 8,
+          "frame_size": [
+            128,
+            128
+          ],
+          "sha256": "c4ccbdb5828bf433506544b0361e6aba3d4697b7786a298f0b8666f9040c43bc",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
     }
   }
 }

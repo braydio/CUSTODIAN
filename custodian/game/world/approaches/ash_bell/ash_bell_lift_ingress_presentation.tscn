@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://c6w255ro2sm4f" path="res://game/world/approaches/ash_bell/ash_bell_lift_ingress_presentation.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://hl4ph67i17x8" path="res://content/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__mountain_cliff_mass__768x512.png" id="2_mountain"]
 [ext_resource type="Texture2D" uid="uid://b4qfc57eqtbod" path="res://assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__entrance_shell__idle__s__1f__256x256.png" id="3_shell"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__lift__shaft_scroll_01__256x1536.png" id="4_shaft"]
+[ext_resource type="Texture2D" uid="uid://b4mig5cxmgpg1" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__lift__shaft_scroll_01__256x1536.png" id="4_shaft"]
 [ext_resource type="Texture2D" uid="uid://csjxsa2ppv7po" path="res://assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__lift_chain__idle__s__1f__64x256.png" id="5_chain"]
 [ext_resource type="Texture2D" uid="uid://om83n78xjlhq" path="res://assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress_fx__descent_dust__burst__omni__6f__192x192.png" id="8_dust"]
 [ext_resource type="Texture2D" uid="uid://c0dejt7411drm" path="res://assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress__foreground_occluder__idle__s__1f__256x256.png" id="9_occluder"]
@@ -125,7 +125,7 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="Rectangle_boarding_back"]
-size = Vector2(223, 16)
+size = Vector2(234, 287)
 
 [sub_resource type="RectangleShape2D" id="Rectangle_boarding_front_wing"]
 size = Vector2(48, 18)
@@ -133,15 +133,15 @@ size = Vector2(48, 18)
 [node name="AshBellLiftIngressPresentation" type="Node2D" unique_id=1500034601]
 script = ExtResource("1_script")
 
-[node name="VisualRoot" type="Node2D" parent="."]
+[node name="VisualRoot" type="Node2D" parent="." unique_id=300168306]
 
 [node name="RearMassRoot" type="Node2D" parent="VisualRoot" unique_id=1018997416]
 z_index = -8
 z_as_relative = false
 
 [node name="MountainCliff" type="Sprite2D" parent="VisualRoot/RearMassRoot" unique_id=16733388]
-position = Vector2(0, -150)
 modulate = Color(0.72, 0.75, 0.82, 1)
+position = Vector2(0, -150)
 texture = ExtResource("2_mountain")
 
 [node name="DarkMouth" type="Polygon2D" parent="VisualRoot/RearMassRoot" unique_id=2097256610]
@@ -193,29 +193,6 @@ visible = false
 color = Color(0.16, 0.115, 0.075, 1)
 polygon = PackedVector2Array(88, -227, 103, -224, 94, -15, 78, -18)
 
-[node name="LiftRoot" parent="." unique_id=472364186 instance=ExtResource("13_lift_assembly")]
-
-[node name="BoardingMarker" type="Marker2D" parent="." unique_id=1414137815]
-position = Vector2(0, -26)
-
-[node name="EntranceThresholdMarker" type="Marker2D" parent="." unique_id=821545183]
-
-[node name="SpatialFacingRoot" type="Node2D" parent="."]
-
-[node name="InteractionApproachMarker" type="Marker2D" parent="SpatialFacingRoot" unique_id=1268059212]
-position = Vector2(0, 72)
-
-[node name="DustBurst" type="AnimatedSprite2D" parent="." unique_id=104774872]
-visible = false
-modulate = Color(1, 1, 1, 0.34)
-z_index = 10
-z_as_relative = false
-texture_filter = 1
-position = Vector2(0, 10)
-scale = Vector2(0.5, 0.3)
-sprite_frames = SubResource("SpriteFrames_dust")
-animation = &"burst"
-
 [node name="ForegroundOccluderRoot" type="Node2D" parent="VisualRoot" unique_id=1849960762]
 z_index = 1
 z_as_relative = false
@@ -250,6 +227,37 @@ texture = ExtResource("9_occluder")
 region_enabled = true
 region_rect = Rect2(80, 140, 352, 160)
 
+[node name="LiftRoot" parent="." unique_id=472364186 instance=ExtResource("13_lift_assembly")]
+
+[node name="BoardingMarker" type="Marker2D" parent="." unique_id=1414137815]
+position = Vector2(0, -26)
+
+[node name="EntranceThresholdMarker" type="Marker2D" parent="." unique_id=821545183]
+
+[node name="SpatialFacingRoot" type="Node2D" parent="." unique_id=829270526]
+
+[node name="InteractionApproachMarker" type="Marker2D" parent="SpatialFacingRoot" unique_id=1268059212]
+position = Vector2(0, 72)
+
+[node name="Collision" type="StaticBody2D" parent="SpatialFacingRoot" unique_id=510268338]
+
+[node name="LeftCliffCollision" type="CollisionPolygon2D" parent="SpatialFacingRoot/Collision" unique_id=886423864]
+polygon = PackedVector2Array(-330, -214, -121, -359, -119, -28, -369, 60)
+
+[node name="RightCliffCollision" type="CollisionPolygon2D" parent="SpatialFacingRoot/Collision" unique_id=1361042681]
+polygon = PackedVector2Array(112, -300, 319, -242, 385, 17, 108, -28)
+
+[node name="DustBurst" type="AnimatedSprite2D" parent="." unique_id=104774872]
+visible = false
+modulate = Color(1, 1, 1, 0.34)
+z_index = 10
+z_as_relative = false
+texture_filter = 1
+position = Vector2(0, 10)
+scale = Vector2(0.5, 0.3)
+sprite_frames = SubResource("SpriteFrames_dust")
+animation = &"burst"
+
 [node name="LampFxRoot" type="Node2D" parent="." unique_id=318169812]
 z_index = 10
 z_as_relative = false
@@ -260,18 +268,10 @@ position = Vector2(76, -108)
 sprite_frames = SubResource("SpriteFrames_lamp")
 animation = &"flicker"
 
-[node name="Collision" type="StaticBody2D" parent="SpatialFacingRoot" unique_id=510268338]
-
-[node name="LeftCliffCollision" type="CollisionPolygon2D" parent="SpatialFacingRoot/Collision" unique_id=886423864]
-polygon = PackedVector2Array(-384, -300, -112, -300, -112, 60, -384, 60)
-
-[node name="RightCliffCollision" type="CollisionPolygon2D" parent="SpatialFacingRoot/Collision" unique_id=1361042681]
-polygon = PackedVector2Array(112, -300, 384, -300, 384, 60, 112, 60)
-
 [node name="BoardingBounds" type="StaticBody2D" parent="." unique_id=1562508588]
 
 [node name="BackStop" type="CollisionShape2D" parent="BoardingBounds" unique_id=1221824079]
-position = Vector2(0.5, -36)
+position = Vector2(-8, -171.5)
 shape = SubResource("Rectangle_boarding_back")
 
 [node name="LeftFrontWing" type="CollisionShape2D" parent="BoardingBounds" unique_id=1853738078]

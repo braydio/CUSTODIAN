@@ -254,6 +254,7 @@ def run_qa(
     drafts: list[dict[str, Any]] | None = None,
     profile: dict[str, Any] | None = None,
     expected_frame_count: int | None = None,
+    palette_findings: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     each_frame, when_visible = _normalize_required(required_landmarks)
     by_frame = _current_by_frame(landmarks)
@@ -266,6 +267,10 @@ def run_qa(
     findings += _animation_findings(metrics)
     findings += _weapon_findings(by_frame)
     findings += _semantic_findings(landmarks, masks, drafts, critiques)
+    findings += [
+        _finding(item.get("severity", ADVISORY), "palette", item["issue"], **{k:v for k,v in item.items() if k not in {"severity","issue","class"}})
+        for item in (palette_findings or [])
+    ]
 
     status = (
         "RED" if any(item["severity"] == CRITICAL for item in findings)

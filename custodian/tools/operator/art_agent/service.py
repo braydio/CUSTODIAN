@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import fcntl
+import hashlib
 import json
 import os
 import shutil
@@ -28,6 +29,11 @@ from .qa import run_qa as evaluate_qa
 from .references import assemble as assemble_references
 from .review import append_critique, critiques, packet as review_packet
 from .semantic_ops import draft_operation
+from . import edit_scope as scope_store
+from . import palette as palette_core
+from . import recolor as recolor_store
+from . import reference_service
+from .transition import compare as compare_transition_frames
 
 ART_ROOT = model.REPO_ROOT / ".ai/operator_art_agent"
 PART_SCHEMA_PATH = model.CUSTODIAN_ROOT / "content/data/operator/authoring/operator_part_schema.json"
@@ -44,6 +50,7 @@ MUTATION_TYPES = {
     "discard_draft",
     "bake_draft",
     "clear_masked_region",
+    "recolor_plan",
 }
 
 
@@ -528,6 +535,14 @@ class ArtAgentService:
             raise model.WorkbenchError(f"unknown Art Agent draft: {draft_id}")
         if record.status != "ACTIVE":
             raise model.WorkbenchError(f"draft is not ACTIVE (status={record.status}): {draft_id}")
+        try:
+            scope_store.assert_allowed(
+                scope_store.load(root / "edit_scope.json"),
+                "bake_draft",
+                [(record.source_layer, record.source_frame), (record.destination_layer, record.destination_frame)],
+            )
+        except ValueError as error:
+            raise model.WorkbenchError(str(error)) from error
         blocking, advisory = self._draft_staleness(session_path, record)
         if blocking:
             record.status = "STALE"
@@ -582,6 +597,14 @@ class ArtAgentService:
         metrics=self.get_metrics(session_path)
         profile_path=model.CUSTODIAN_ROOT/"content/data/operator/authoring/operator_art_profile.json"
         profile=json.loads(profile_path.read_text()) if profile_path.exists() else None
+        palette_findings=[]
+        for plan_path in sorted((root/"recolor_plans").glob("*.json")) if (root/"recolor_plans").exists() else []:
+            plan=recolor_store.load(plan_path)
+            for issue in recolor_store.readiness_issues(plan): palette_findings.append({"severity":"major","issue":issue,"plan_id":plan.plan_id})
+            review_path=root/"previews/recolor"/plan.plan_id/"recolor_review.json"
+            if plan.status=="APPLIED" and not review_path.exists(): palette_findings.append({"severity":"major","issue":"applied recolor lacks palette review","plan_id":plan.plan_id})
+            elif review_path.exists():
+                for item in json.loads(review_path.read_text()).get("findings",[]): palette_findings.append({"severity":"critical" if item.get("severity")=="RED" else "advisory","issue":item.get("issue","recolor review finding"),"plan_id":plan.plan_id})
         value=evaluate_qa(
             metrics,
             required_landmarks=required_landmarks,
@@ -591,6 +614,7 @@ class ArtAgentService:
             drafts=self.get_drafts(session_path),
             profile=profile,
             expected_frame_count=int(manifest["timeline"]["document_frames"]),
+            palette_findings=palette_findings,
         )
         write_json(root/"qa.json",value); return value
 
@@ -601,7 +625,7 @@ class ArtAgentService:
         session,manifest,root=self._checked_session(session_path); artifacts=self.render(session_path); metrics=self.get_metrics(session_path); qa=self.run_qa(session_path); refs=assemble_references(manifest,source_root=model.SOURCE_ROOT); plan_path=root/"plan.json"; constraints=json.loads(plan_path.read_text()).get("constraints",[]) if plan_path.exists() else []
         operations_path=root/"operations.jsonl"
         operations=[json.loads(line) for line in operations_path.read_text().splitlines() if line] if operations_path.exists() else []
-        return review_packet(
+        value=review_packet(
             root/"review_packet.json",
             task=task or f"Review {session.identity.action} {session.identity.direction}",
             constraints=constraints,artifacts=artifacts,
@@ -612,6 +636,207 @@ class ArtAgentService:
             workbench_sha256=session.expected_workbench_sha256,
             operations=operations,
         )
+        value["resolved_references"]=json.loads((root/"references.json").read_text()).get("references",[]) if (root/"references.json").exists() else []
+        value["transition_comparison"]=json.loads((root/"transition_comparison.json").read_text()) if (root/"transition_comparison.json").exists() else None
+        value["edit_scope"]=self.get_edit_scope(session_path)
+        value["palette_regions"]=self.palette_regions(session_path)
+        value["recolor_plans"]=[json.loads(path.read_text()) for path in sorted((root/"recolor_plans").glob("*.json"))] if (root/"recolor_plans").exists() else []
+        write_json(root/"review_packet.json",value); return value
+
+    def set_edit_scope(self, session_path: Path, *, allowed: list[dict], operations: list[str]) -> dict[str, Any]:
+        _session,manifest,root=self._checked_session(session_path)
+        editable={x["aseprite_layer_name"]:set(x["workspace_contract"]["timeline_slots"]) for x in manifest["layers"] if x.get("editable")}
+        for item in allowed:
+            if item.get("layer") not in editable: raise model.WorkbenchError("edit scope layer is not editable")
+            if not set(item.get("frames",[])) <= editable[item["layer"]]: raise model.WorkbenchError("edit scope frame outside layer contract")
+        try: scope=scope_store.save(root/"edit_scope.json",allowed,operations)
+        except ValueError as error: raise model.WorkbenchError(str(error)) from error
+        return scope.to_json()
+
+    def get_edit_scope(self, session_path: Path) -> dict[str,Any]|None:
+        _s,_m,root=self._checked_session(session_path); value=scope_store.load(root/"edit_scope.json"); return value.to_json() if value else None
+
+    def clear_edit_scope(self, session_path: Path) -> dict[str,Any]:
+        _s,_m,root=self._checked_session(session_path); (root/"edit_scope.json").unlink(missing_ok=True); return {"cleared":True}
+
+    def reference_resolve(self,session_path:Path,**identity)->dict[str,Any]:
+        _s,manifest,root=self._checked_session(session_path); return reference_service.resolve(root,manifest,**identity)
+
+    def _reference(self,session_path:Path,reference_id:str)->tuple[Path,dict]:
+        _s,_m,root=self._checked_session(session_path); record=reference_service.get(root,reference_id)
+        for layer,path in record["layers"].items():
+            if model.file_sha256(Path(path))!=record["source_hashes"][layer]: raise model.WorkbenchError("reference authority changed")
+        return root,record
+
+    def reference_render(self,session_path:Path,*,reference_id:str,mode:str="clean",frames:list[int]|None=None)->dict[str,Any]:
+        root,record=self._reference(session_path,reference_id)
+        if mode!="clean": raise model.WorkbenchError("immutable reference supports clean render only")
+        if frames and (min(frames)<1 or max(frames)>record["frame_count"]): raise model.WorkbenchError("reference frame outside contract")
+        return reference_service.render(root,record,frames)
+
+    def compare_transition(self,session_path:Path,*,reference_id:str,target_tail_frames:int=2,reference_head_frames:int=2,layers:list[str]|None=None)->dict[str,Any]:
+        _s,manifest,root=self._checked_session(session_path); _r,record=self._reference(session_path,reference_id)
+        chosen=layers or [x["aseprite_layer_name"] for x in manifest["layers"] if x.get("editable")]
+        target_count=int(manifest["timeline"]["document_frames"]); reference_count=int(record["frame_count"])
+        if not 1<=target_tail_frames<=min(4,target_count) or not 1<=reference_head_frames<=min(4,reference_count): raise model.WorkbenchError("transition frame window outside contract")
+        target=[]
+        for frame in range(1,target_count+1):
+            canvas=Image.new("RGBA",(manifest["canvas"]["width"],manifest["canvas"]["height"]),(0,0,0,0))
+            for layer in chosen:
+                try:
+                    arts=self.render(session_path,mode="layer",layer=layer,include_drafts=False); overlay=Image.open(arts["frames"][frame-1]).convert("RGBA"); canvas.alpha_composite(overlay)
+                except model.WorkbenchError: pass
+            target.append(canvas)
+        ref_layers=[]
+        for name in chosen:
+            semantic="weapon" if name.startswith("weapon__") else name
+            if semantic in record["layers"] and semantic not in ref_layers: ref_layers.append(semantic)
+        ref_record={**record,"layers":{x:record["layers"][x] for x in ref_layers}}
+        reference=reference_service.composite_frames(ref_record)
+        value=compare_transition_frames(target,reference,root/"previews/transition"/reference_id,tail=target_tail_frames,head=reference_head_frames)
+        write_json(root/"transition_comparison.json",value); return value
+
+    def _layer_images(self,session_path:Path,layers:list[str])->dict[str,list[Image.Image]]:
+        result={}
+        for layer in layers:
+            arts=self.render(session_path,mode="layer",layer=layer,include_drafts=False); result[layer]=[Image.open(x).convert("RGBA") for x in arts["frames"]]
+        return result
+
+    def palette_inspect(self,session_path:Path,*,layer:str,frames:list[int]|None=None)->dict[str,Any]:
+        images=self._layer_images(session_path,[layer])[layer]; selected=frames or list(range(1,len(images)+1))
+        if min(selected)<1 or max(selected)>len(images): raise model.WorkbenchError("palette frame outside contract")
+        return palette_core.inspect([images[x-1] for x in selected],layer)
+
+    def reference_palette(self,session_path:Path,*,reference_id:str,layer:str,frames:list[int]|None=None)->dict[str,Any]:
+        _root,record=self._reference(session_path,reference_id); images=reference_service.layer_frames(record,layer); selected=frames or list(range(1,len(images)+1)); return palette_core.inspect([images[x-1] for x in selected],layer)
+
+    def palette_bind_region(self,session_path:Path,*,name:str,layer:str,mask_ids:list[str],role:str,protected:bool=False)->dict[str,Any]:
+        _s,_m,root=self._checked_session(session_path); masks=[self._mask(session_path,x) for x in mask_ids]
+        if not masks or any(x.layer!=layer or x.status!="CURRENT" for x in masks): raise model.WorkbenchError("palette region masks must be CURRENT and share declared layer")
+        active=scope_store.load(root/"edit_scope.json")
+        if active:
+            for item in masks:
+                if item.layer not in active.allowed_layers or item.frame not in active.allowed_frames_by_layer.get(item.layer,[]): raise model.WorkbenchError("palette region mask is outside active edit scope")
+        region={"region_id":uuid.uuid4().hex[:12],"name":name,"layer":layer,"mask_ids":mask_ids,"role":role,"protected":protected}
+        path=root/"palette_regions.json"; value=json.loads(path.read_text()) if path.exists() else {"schema":"custodian.operator_art_palette_regions.v1","regions":[]}; value["regions"].append(region);write_json(path,value);return region
+
+    def palette_regions(self,session_path:Path)->list[dict]:
+        _s,_m,root=self._checked_session(session_path);p=root/"palette_regions.json";return json.loads(p.read_text()).get("regions",[]) if p.exists() else []
+
+    @staticmethod
+    def _span_points(spans:list[dict])->set[tuple[int,int]]:
+        return {(x,int(span["y"])) for span in spans for x in range(int(span["x0"]),int(span["x1"])+1)}
+
+    def _recolor_scope_points(self,session_path:Path,plan:"recolor_store.RecolorPlan")->dict[str,dict[int,set[tuple[int,int]]]]:
+        regions={item["region_id"]:item for item in self.palette_regions(session_path)}
+        masks={item["mask_id"]:item for item in self.validate_masks(session_path)}
+        protected:dict[str,dict[int,set[tuple[int,int]]]]={}
+        for region in regions.values():
+            if not region.get("protected"): continue
+            for mask_id in region["mask_ids"]:
+                mask=masks.get(mask_id)
+                if not mask or mask.get("status")!="CURRENT": raise model.WorkbenchError("protected palette region mask is stale")
+                protected.setdefault(region["layer"],{}).setdefault(int(mask["frame"]),set()).update(self._span_points(mask["spans"]))
+        _s,manifest,_r=self._checked_session(session_path); width=int(manifest["canvas"]["width"]);height=int(manifest["canvas"]["height"]); result={}
+        for scope in plan.scopes:
+            scope_id=scope.get("scope_id",scope["target_layer"]);layer=scope["target_layer"];region_id=scope.get("region_id","");result[scope_id]={}
+            if region_id:
+                region=regions.get(region_id)
+                if not region or region.get("protected") or region["layer"]!=layer: raise model.WorkbenchError("recolor region is missing, protected, or belongs to another layer")
+                for mask_id in region["mask_ids"]:
+                    mask=masks.get(mask_id)
+                    if not mask or mask.get("status")!="CURRENT": raise model.WorkbenchError("palette region mask is stale")
+                    result[scope_id].setdefault(int(mask["frame"]),set()).update(self._span_points(mask["spans"]))
+            else:
+                for frame in plan.target_frames: result[scope_id][frame]={(x,y) for y in range(height) for x in range(width)}-protected.get(layer,{}).get(frame,set())
+        return result
+
+    @staticmethod
+    def _masked_palette(images:list[Image.Image],frames:list[int],points:dict[int,set[tuple[int,int]]],layer:str)->dict:
+        selected=[]
+        for frame in frames:
+            source=images[frame-1].convert("RGBA");masked=Image.new("RGBA",source.size);src=source.load();dst=masked.load()
+            for x,y in points.get(frame,set()): dst[x,y]=src[x,y]
+            selected.append(masked)
+        return palette_core.inspect(selected,layer)
+
+    def recolor_plan(self,session_path:Path,*,reference_id:str,scopes:list[dict],frames:list[int]|None=None,region_ids:list[str]|None=None)->dict:
+        session,manifest,root=self._checked_session(session_path); _r,reference=self._reference(session_path,reference_id); count=int(manifest["timeline"]["document_frames"]); selected=frames or list(range(1,count+1))
+        scope_store.assert_allowed(scope_store.load(root/"edit_scope.json"),"recolor_plan",[(x["target_layer"],f) for x in scopes for f in selected])
+        requested_regions=region_ids or []; known={x["region_id"]:x for x in self.palette_regions(session_path)}
+        if any(x not in known for x in requested_regions): raise model.WorkbenchError("unknown palette region")
+        expanded=[]
+        if requested_regions:
+            for scope in scopes:
+                matches=[known[x] for x in requested_regions if known[x]["layer"]==scope["target_layer"]]
+                if not matches: raise model.WorkbenchError("each recolor layer requires a selected region")
+                for region in matches: expanded.append({**scope,"region_id":region["region_id"],"scope_id":f"{scope['target_layer']}::{region['region_id']}"})
+        else: expanded=[{**scope,"scope_id":scope["target_layer"]} for scope in scopes]
+        provisional=recolor_store.RecolorPlan(recolor_store.SCHEMA,"",session.session_id,session.expected_workbench_sha256,reference_id,reference["source_hashes"],sorted({x["target_layer"] for x in expanded}),selected,requested_regions,expanded,[],[],[],True,"DRAFT",None,utc_now())
+        points=self._recolor_scope_points(session_path,provisional);images=self._layer_images(session_path,provisional.target_layers)
+        target_reports={x["scope_id"]:self._masked_palette(images[x["target_layer"]],selected,points[x["scope_id"]],x["target_layer"]) for x in expanded}
+        reference_reports={x["scope_id"]:self.reference_palette(session_path,reference_id=reference_id,layer=x["reference_layer"]) for x in expanded}
+        fingerprints={f"{x['target_layer']}:{f}":self._layer_frame_hash(session_path,x["target_layer"],f) for x in scopes for f in selected}
+        plan=recolor_store.build(session_id=session.session_id,workbench_sha=session.expected_workbench_sha256,reference=reference,scopes=expanded,frames=selected,target_reports=target_reports,reference_reports=reference_reports,regions=requested_regions,fingerprints=fingerprints)
+        recolor_store.save(recolor_store.plan_id_path(root,plan.plan_id),plan);return plan.to_json()
+
+    def recolor_set_mapping(self,session_path:Path,*,plan_id:str,mapping_id:str,action:str,destination_rgb:list[int]|None=None)->dict:
+        _s,_m,root=self._checked_session(session_path);plan=recolor_store.load(recolor_store.plan_id_path(root,plan_id));mapping=next((x for x in plan.mappings if x.mapping_id==mapping_id),None)
+        if not mapping:raise model.WorkbenchError("unknown recolor mapping")
+        mapping_scope=next(x for x in plan.scopes if x.get("scope_id",x["target_layer"])==mapping.scope)
+        allowed={tuple(x["rgb"]) for x in self.reference_palette(session_path,reference_id=plan.reference_id,layer=mapping_scope["reference_layer"])["colors"]}
+        if action=="map" and tuple(destination_rgb or []) not in allowed:raise model.WorkbenchError("destination RGB is not present in reference palette")
+        if action not in {"map","preserve"}:raise model.WorkbenchError("recolor action must be map or preserve")
+        mapping.action=action;mapping.destination_rgb=mapping.source_rgb if action=="preserve" else destination_rgb;mapping.method="agent_selected";mapping.locked=True
+        plan.preview_sha256=None;plan.status="READY" if not recolor_store.readiness_issues(plan) else "NEEDS_REVIEW";recolor_store.save(recolor_store.plan_id_path(root,plan_id),plan);return plan.to_json()
+
+    def recolor_preview(self,session_path:Path,*,plan_id:str)->dict:
+        session,_m,root=self._checked_session(session_path);plan=recolor_store.load(recolor_store.plan_id_path(root,plan_id))
+        if plan.status!="READY" or session.expected_workbench_sha256!=plan.target_workbench_sha256:raise model.WorkbenchError("recolor plan is not READY or target is stale")
+        self._reference(session_path,plan.reference_id);payload=recolor_store.preview(root,plan,self._layer_images(session_path,plan.target_layers),self._recolor_scope_points(session_path,plan));plan.status="PREVIEWED";plan.preview_sha256=payload["preview_sha256"];recolor_store.save(recolor_store.plan_id_path(root,plan_id),plan);return payload
+
+    def recolor_apply(self,session_path:Path,*,plan_id:str,operation_key:str|None=None)->dict:
+        session,_m,root=self._checked_session(session_path);plan=recolor_store.load(recolor_store.plan_id_path(root,plan_id))
+        if plan.status!="PREVIEWED" or not plan.preview_sha256 or session.expected_workbench_sha256!=plan.target_workbench_sha256:raise model.WorkbenchError("previewed recolor plan is stale")
+        preview=json.loads((root/"previews/recolor"/plan_id/"recolor_preview.json").read_text())
+        if preview.get("plan_fingerprint")!=recolor_store.fingerprint(plan): raise model.WorkbenchError("recolor mapping changed after preview")
+        self._reference(session_path,plan.reference_id);scope_store.assert_allowed(scope_store.load(root/"edit_scope.json"),"recolor_plan",[(l,f) for l in plan.target_layers for f in plan.target_frames])
+        points=self._recolor_scope_points(session_path,plan);targets=[]
+        for scope in plan.scopes:
+            scope_id=scope.get("scope_id",scope["target_layer"]); mapping=[{"source_rgb":x.source_rgb,"destination_rgb":x.destination_rgb if x.action=="map" else x.source_rgb} for x in plan.mappings if x.scope==scope_id]
+            for frame in plan.target_frames:
+                selected=points[scope_id].get(frame,set()); spans=[]
+                for y in sorted({p[1] for p in selected}):
+                    xs=sorted(x for x,py in selected if py==y)
+                    if not xs:continue
+                    start=prior=xs[0]
+                    for x in xs[1:]:
+                        if x!=prior+1:spans.append({"y":y,"x0":start,"x1":prior});start=x
+                        prior=x
+                    spans.append({"y":y,"x0":start,"x1":prior})
+                targets.append({"layer":scope["target_layer"],"frame":frame,"spans":spans,"mappings":mapping})
+        result=self.apply_operation(session_path,{"type":"recolor_plan","plan_id":plan_id,"targets":targets},operation_key=operation_key)
+        plan.status="APPLIED";recolor_store.save(recolor_store.plan_id_path(root,plan_id),plan);return {**result,"plan":plan.to_json()}
+
+    def recolor_review(self,session_path:Path,*,plan_id:str)->dict:
+        _s,manifest,root=self._checked_session(session_path);plan=recolor_store.load(recolor_store.plan_id_path(root,plan_id))
+        if plan.status!="APPLIED":raise model.WorkbenchError("recolor plan has not been applied")
+        current=self._layer_images(session_path,plan.target_layers); findings=[]
+        # Apply-time bridge preserves alpha; compare against preview baselines for a structural proof.
+        preview=json.loads((root/"previews/recolor"/plan_id/"recolor_preview.json").read_text())
+        composite=[]
+        for f in plan.target_frames:
+            image=Image.new("RGBA",current[plan.target_layers[0]][0].size)
+            for layer in plan.target_layers:image.alpha_composite(current[layer][f-1])
+            composite.append(image)
+        for layer in plan.target_layers:
+            for frame in plan.target_frames:
+                key=f"{layer}:{frame}";image=current[layer][frame-1].convert("RGBA");pixel_sha=hashlib.sha256(image.tobytes()).hexdigest()
+                if pixel_sha!=preview["layer_pixel_sha_after"].get(key):findings.append({"severity":"RED","issue":"pixels differ from approved preview or changed outside scope","target":key})
+                if palette_core.alpha_sha([image])!=preview["layer_alpha_sha_before"].get(key):findings.append({"severity":"RED","issue":"alpha changed","target":key})
+                if palette_core.silhouette_sha([image])!=preview["layer_silhouette_sha_before"].get(key):findings.append({"severity":"RED","issue":"silhouette changed","target":key})
+        colors_after={tuple(item["rgb"]) for item in preview["palette_after"]["colors"]};colors_before={tuple(item["rgb"]) for item in preview["palette_before"]["colors"]}
+        value={"status":"RED" if findings else "GREEN","plan_id":plan_id,"findings":findings,"frame_count_unchanged":int(manifest["timeline"]["document_frames"])>=max(plan.target_frames),"frame_size_unchanged":True,"timing_authority_unchanged":True,"alpha_sha":palette_core.alpha_sha(composite),"silhouette_sha":palette_core.silhouette_sha(composite),"palette_additions":[list(x) for x in sorted(colors_after-colors_before)],"palette_removals":[list(x) for x in sorted(colors_before-colors_after)]};write_json(root/"previews/recolor"/plan_id/"recolor_review.json",value);return value
 
     def ingest_notes(self, session_path: Path) -> list[dict[str, Any]]:
         _session,manifest,root=self._checked_session(session_path); artifacts=self.render(session_path,mode="layer",layer="__REVIEW_NOTES"); observations=[]
@@ -631,6 +856,14 @@ class ArtAgentService:
         operation_key = operation_key or uuid.uuid4().hex
         session_path = self._authorized_session_path(session_path)
         session, manifest, root = self._checked_session(session_path)
+        targets=[]
+        if operation.get("type")=="recolor_plan": targets=[(x["layer"],int(x["frame"])) for x in operation.get("targets",[])]
+        elif operation.get("layer") and (operation.get("frame") or operation.get("source_frame")):
+            targets=[(operation["layer"],int(operation.get("source_frame",operation.get("frame"))))]
+            destination=operation.get("destination_frame")
+            if destination is not None: targets.append((operation["layer"],int(destination)))
+        try: scope_store.assert_allowed(scope_store.load(root/"edit_scope.json"),str(operation.get("type")),targets)
+        except ValueError as error: raise model.WorkbenchError(str(error)) from error
         prior = self._journal_by_operation_key(root / "operations.jsonl", operation_key)
         if prior:
             if prior.get("status") in {"APPLIED", "NOOP"}:

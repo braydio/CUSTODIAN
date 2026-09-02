@@ -65,6 +65,20 @@ def configure_art_parser(parser: argparse.ArgumentParser) -> None:
     review = _session_command(commands, "review"); review.add_argument("--task", default="")
     _session_command(commands, "ingest-notes")
 
+    reference = _session_command(commands, "reference-resolve")
+    reference.add_argument("profile"); reference.add_argument("action"); reference.add_argument("direction")
+    reference.add_argument("--group", required=True); reference.add_argument("--weapon", default=""); reference.add_argument("--linked-profile", default="")
+    reference_render = _session_command(commands, "reference-render"); reference_render.add_argument("reference_id"); reference_render.add_argument("--frames")
+    transition = _session_command(commands, "transition"); transition.add_argument("--reference", required=True); transition.add_argument("--target-tail-frames", type=int, default=2); transition.add_argument("--reference-head-frames", type=int, default=2)
+    scope_set = _session_command(commands, "edit-scope-set"); scope_set.add_argument("--allowed", type=Path, required=True); scope_set.add_argument("--operations", required=True)
+    _session_command(commands, "edit-scope-get"); _session_command(commands, "edit-scope-clear")
+    palette = _session_command(commands, "palette"); palette.add_argument("--layer", required=True); palette.add_argument("--frames")
+    reference_palette = _session_command(commands, "reference-palette"); reference_palette.add_argument("reference_id"); reference_palette.add_argument("--layer", required=True); reference_palette.add_argument("--frames")
+    recolor_plan = _session_command(commands, "recolor-plan"); recolor_plan.add_argument("--reference", required=True); recolor_plan.add_argument("--scope", action="append", required=True); recolor_plan.add_argument("--frames"); recolor_plan.add_argument("--region", action="append", default=[])
+    recolor_set = _session_command(commands, "recolor-set"); recolor_set.add_argument("plan_id"); recolor_set.add_argument("mapping_id"); recolor_set.add_argument("--action", choices=("map","preserve"), required=True); recolor_set.add_argument("--destination")
+    for name in ("recolor-preview","recolor-apply","recolor-review"):
+        command=_session_command(commands,name);command.add_argument("plan_id")
+
     paint = _session_command(commands, "paint")
     paint.add_argument("--frame", type=int, required=True)
     paint.add_argument("--layer", required=True)
@@ -103,7 +117,7 @@ def configure_art_parser(parser: argparse.ArgumentParser) -> None:
     source_start.add_argument("--rows", type=int, default=1)
     source_start.add_argument("--target-size", type=int, default=96)
     source_start.add_argument("--json", action="store_true")
-    for name in ("source-status", "source-analyze", "source-convert", "source-review"):
+    for name in ("source-status", "source-analyze", "source-convert", "source-review", "source-palette"):
         command = commands.add_parser(name)
         command.add_argument("session", type=Path)
         command.add_argument("--json", action="store_true")
@@ -126,6 +140,10 @@ def configure_art_parser(parser: argparse.ArgumentParser) -> None:
     source_handoff.add_argument("session", type=Path)
     source_handoff.add_argument("destination_name")
     source_handoff.add_argument("--json", action="store_true")
+    source_recolor_plan=commands.add_parser("source-recolor-plan");source_recolor_plan.add_argument("session",type=Path);source_recolor_plan.add_argument("profile");source_recolor_plan.add_argument("action");source_recolor_plan.add_argument("direction");source_recolor_plan.add_argument("--group",required=True);source_recolor_plan.add_argument("--layer",required=True);source_recolor_plan.add_argument("--json",action="store_true")
+    source_recolor_set=commands.add_parser("source-recolor-set");source_recolor_set.add_argument("session",type=Path);source_recolor_set.add_argument("plan_id");source_recolor_set.add_argument("mapping_id");source_recolor_set.add_argument("--action",choices=("map","preserve"),required=True);source_recolor_set.add_argument("--destination");source_recolor_set.add_argument("--json",action="store_true")
+    for name in ("source-recolor-preview","source-recolor-apply","source-recolor-review"):
+        command=commands.add_parser(name);command.add_argument("session",type=Path);command.add_argument("plan_id");command.add_argument("--json",action="store_true")
 
 
 def _integer_list(value: str, count: int, label: str) -> list[int]:
@@ -153,6 +171,14 @@ def _points(value: str) -> list[list[int]]:
     if not points:
         raise model.WorkbenchError("stroke requires at least one point")
     return points
+
+def _frames(value: str | None) -> list[int] | None:
+    return None if not value else sorted(set(_integer_list(value, len(value.split(",")), "frames")))
+
+def _rgb(value: str | None) -> list[int] | None:
+    if value is None: return None
+    result=_color(value)
+    return result[:3]
 
 
 def _load_pixels(path: Path, *, require_rgba: bool) -> list[dict[str, Any]]:
@@ -199,8 +225,14 @@ def dispatch_art_command(args: argparse.Namespace) -> int:
             elif command == "source-register": result = source.set_frame_registration(args.session, frame=args.frame, dx=args.dx, dy=args.dy)
             elif command == "source-convert": result = source.convert(args.session)
             elif command == "source-review": result = source.review(args.session)
+            elif command == "source-palette": result = source.palette_inspect(args.session)
             elif command == "source-select": result = source.select_candidate(args.session, args.method)
-            else: result = source.handoff(args.session, destination_name=args.destination_name)
+            elif command == "source-handoff": result = source.handoff(args.session, destination_name=args.destination_name)
+            elif command == "source-recolor-plan": result = source.recolor_plan(args.session,profile=args.profile,group=args.group,action=args.action,direction=args.direction,layer=args.layer)
+            elif command == "source-recolor-set": result = source.recolor_set_mapping(args.session,plan_id=args.plan_id,mapping_id=args.mapping_id,action=args.action,destination_rgb=_rgb(args.destination))
+            elif command == "source-recolor-preview": result = source.recolor_preview(args.session,plan_id=args.plan_id)
+            elif command == "source-recolor-apply": result = source.recolor_apply(args.session,plan_id=args.plan_id)
+            else: result = source.recolor_review(args.session,plan_id=args.plan_id)
             print(json.dumps(result, indent=2))
             return 0
         service = _service(args)
@@ -245,6 +277,25 @@ def dispatch_art_command(args: argparse.Namespace) -> int:
         elif command == "critique": result = service.record_critique(args.session,json.loads(args.input.read_text()))
         elif command == "review": result = service.build_review_packet(args.session,task=args.task)
         elif command == "ingest-notes": result = service.ingest_notes(args.session)
+        elif command == "reference-resolve": result = service.reference_resolve(args.session,profile=args.profile,group=args.group,action=args.action,direction=args.direction,weapon=args.weapon,linked_profile=args.linked_profile)
+        elif command == "reference-render": result = service.reference_render(args.session,reference_id=args.reference_id,frames=_frames(args.frames))
+        elif command == "transition": result = service.compare_transition(args.session,reference_id=args.reference,target_tail_frames=args.target_tail_frames,reference_head_frames=args.reference_head_frames)
+        elif command == "edit-scope-set": result = service.set_edit_scope(args.session,allowed=json.loads(args.allowed.read_text()).get("allowed",json.loads(args.allowed.read_text())),operations=[x for x in args.operations.split(",") if x])
+        elif command == "edit-scope-get": result = service.get_edit_scope(args.session)
+        elif command == "edit-scope-clear": result = service.clear_edit_scope(args.session)
+        elif command == "palette": result = service.palette_inspect(args.session,layer=args.layer,frames=_frames(args.frames))
+        elif command == "reference-palette": result = service.reference_palette(args.session,reference_id=args.reference_id,layer=args.layer,frames=_frames(args.frames))
+        elif command == "recolor-plan":
+            scopes=[]
+            for value in args.scope:
+                target,separator,reference=value.partition(":")
+                if not separator or not target or not reference: raise model.WorkbenchError("scope must be target_layer:reference_layer")
+                scopes.append({"target_layer":target,"reference_layer":reference})
+            result=service.recolor_plan(args.session,reference_id=args.reference,scopes=scopes,frames=_frames(args.frames),region_ids=args.region)
+        elif command == "recolor-set": result=service.recolor_set_mapping(args.session,plan_id=args.plan_id,mapping_id=args.mapping_id,action=args.action,destination_rgb=_rgb(args.destination))
+        elif command == "recolor-preview": result=service.recolor_preview(args.session,plan_id=args.plan_id)
+        elif command == "recolor-apply": result=service.recolor_apply(args.session,plan_id=args.plan_id)
+        elif command == "recolor-review": result=service.recolor_review(args.session,plan_id=args.plan_id)
         else:
             operation: dict[str, Any]
             if command in ("paint", "erase"):

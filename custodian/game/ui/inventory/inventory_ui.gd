@@ -202,7 +202,6 @@ func open(inv: Inventory = null) -> void:
 		inventory = inv
 	visible = true
 	mouse_filter = Control.MOUSE_FILTER_STOP
-	_play_ui_sound(UI_INVENTORY_SOUND, -6.0)
 	_refresh_entries()
 	_select_page(_current_page, false)
 	call_deferred("_update_ledger_grid_columns")
@@ -215,7 +214,6 @@ func close() -> void:
 		return
 	visible = false
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_play_ui_sound(UI_SELECT_SOUND, -8.0)
 	closed.emit()
 
 

@@ -24,6 +24,10 @@ _PIXELS = {"type": "array", "items": _OBJECT}
 _LANDMARKS = {"type": "array", "items": _OBJECT}
 _REQUIRED_LANDMARKS = {"anyOf": [{"type": "array", "items": {"type": "string"}}, _OBJECT]}
 _POINTS = {"type": "array", "items": _POINT}
+_FRAMES = {"type":"array","items":{"type":"integer","minimum":1},"uniqueItems":True}
+_RGB = {"type":["array","null"],"items":{"type":"integer","minimum":0,"maximum":255},"minItems":3,"maxItems":3}
+_SCOPE_ITEMS={"type":"array","minItems":1,"items":{"type":"object","properties":{"target_layer":_STRING,"reference_layer":_STRING},"required":["target_layer","reference_layer"],"additionalProperties":False}}
+_EDIT_ALLOWED={"type":"array","minItems":1,"items":{"type":"object","properties":{"layer":_STRING,"frames":_FRAMES},"required":["layer","frames"],"additionalProperties":False}}
 
 # name -> {property: (schema, required)}. Every tool mutates only the disposable
 # `.ai` Workbench session named by `session`; none can write canonical source,
@@ -95,6 +99,21 @@ _TOOL_SPECS: dict[str, dict[str, tuple[dict[str, Any], bool]]] = {
     "operator_art_record_critique": {"session": (_STRING, True), "critique": (_OBJECT, True)},
     "operator_art_review_packet": {"session": (_STRING, True), "task": (_STRING, False)},
     "operator_art_undo": {"session": (_STRING, True)},
+    "operator_art_reference_resolve":{"session":(_STRING,True),"profile":(_STRING,True),"group":(_STRING,True),"action":(_STRING,True),"direction":(_STRING,True),"weapon":(_STRING,False),"linked_profile":(_STRING,False)},
+    "operator_art_reference_render":{"session":(_STRING,True),"reference_id":(_STRING,True),"mode":({"type":"string","enum":["clean"]},False),"frames":(_FRAMES,False)},
+    "operator_art_compare_transition":{"session":(_STRING,True),"reference_id":(_STRING,True),"target_tail_frames":({"type":"integer","minimum":1,"maximum":4},False),"reference_head_frames":({"type":"integer","minimum":1,"maximum":4},False),"layers":({"type":"array","items":_STRING,"uniqueItems":True},False)},
+    "operator_art_set_edit_scope":{"session":(_STRING,True),"allowed":(_EDIT_ALLOWED,True),"operations":({"type":"array","items":_STRING,"uniqueItems":True,"minItems":1},True)},
+    "operator_art_get_edit_scope":{"session":(_STRING,True)},
+    "operator_art_clear_edit_scope":{"session":(_STRING,True)},
+    "operator_art_palette_inspect":{"session":(_STRING,True),"layer":(_STRING,True),"frames":(_FRAMES,False)},
+    "operator_art_reference_palette":{"session":(_STRING,True),"reference_id":(_STRING,True),"layer":(_STRING,True),"frames":(_FRAMES,False)},
+    "operator_art_palette_bind_region":{"session":(_STRING,True),"name":(_STRING,True),"layer":(_STRING,True),"mask_ids":({"type":"array","items":_STRING,"minItems":1,"uniqueItems":True},True),"role":({"type":"string","enum":["outline","cloth","armor","metal","skin","trim","accent","weapon","effect","other"]},True),"protected":(_BOOLEAN,False)},
+    "operator_art_palette_regions":{"session":(_STRING,True)},
+    "operator_art_recolor_plan":{"session":(_STRING,True),"reference_id":(_STRING,True),"scopes":(_SCOPE_ITEMS,True),"frames":(_FRAMES,False),"region_ids":({"type":"array","items":_STRING,"uniqueItems":True},False)},
+    "operator_art_recolor_set_mapping":{"session":(_STRING,True),"plan_id":(_STRING,True),"mapping_id":(_STRING,True),"action":({"type":"string","enum":["map","preserve"]},True),"destination_rgb":(_RGB,False)},
+    "operator_art_recolor_preview":{"session":(_STRING,True),"plan_id":(_STRING,True)},
+    "operator_art_recolor_apply":{"session":(_STRING,True),"plan_id":(_STRING,True),"operation_key":(_OPTIONAL_STRING,False)},
+    "operator_art_recolor_review":{"session":(_STRING,True),"plan_id":(_STRING,True)},
     "operator_art_source_start": {
         "source_path": (_STRING, True),
         "frames": ({"type": "integer", "minimum": 1, "maximum": 64}, True),
@@ -122,6 +141,12 @@ _TOOL_SPECS: dict[str, dict[str, tuple[dict[str, Any], bool]]] = {
         "method": ({"type": "string", "enum": ["crisp", "balanced", "clustered"]}, True),
     },
     "operator_art_source_handoff": {"session": (_STRING, True), "destination_name": (_STRING, True)},
+    "operator_art_source_palette_inspect":{"session":(_STRING,True)},
+    "operator_art_source_recolor_plan":{"session":(_STRING,True),"profile":(_STRING,True),"group":(_STRING,True),"action":(_STRING,True),"direction":(_STRING,True),"layer":(_STRING,True)},
+    "operator_art_source_recolor_set_mapping":{"session":(_STRING,True),"plan_id":(_STRING,True),"mapping_id":(_STRING,True),"action":({"type":"string","enum":["map","preserve"]},True),"destination_rgb":(_RGB,False)},
+    "operator_art_source_recolor_preview":{"session":(_STRING,True),"plan_id":(_STRING,True)},
+    "operator_art_source_recolor_apply":{"session":(_STRING,True),"plan_id":(_STRING,True)},
+    "operator_art_source_recolor_review":{"session":(_STRING,True),"plan_id":(_STRING,True)},
 }
 
 _DESCRIPTIONS: dict[str, str] = {
@@ -137,6 +162,11 @@ _DESCRIPTIONS: dict[str, str] = {
     "operator_art_source_set_registration": "Adjust one normalized frame using bounded integer translation only; scale and dimensions cannot vary per frame.",
     "operator_art_source_convert": "Generate crisp, balanced, and clustered candidates with the plan's single shared transform and translation-only registrations.",
     "operator_art_source_handoff": "Stage a reviewed source candidate in the Operator asset-drop inbox. This does not publish canonical or runtime art.",
+    "operator_art_reference_resolve":"Resolve immutable canonical reference art by semantic identity. Arbitrary filesystem paths are never accepted.",
+    "operator_art_compare_transition":"Compare final editable target frames against opening immutable reference frames and generate continuity metrics and review artifacts. Read-only.",
+    "operator_art_recolor_plan":"Create a non-mutating palette alignment plan. Mapping is animation-wide within each scope; per-frame mappings are forbidden.",
+    "operator_art_recolor_preview":"Render a recolor plan without modifying Workbench pixels. Alpha and silhouette must remain byte-equivalent.",
+    "operator_art_recolor_apply":"Transactionally apply a previously previewed recolor plan to disposable Workbench state. Apply accepts plan authority only.",
 }
 
 
@@ -258,6 +288,21 @@ class OperatorArtMCP:
             "operator_art_record_critique": lambda session,critique,**_:s.record_critique(Path(session),critique),
             "operator_art_review_packet": lambda session,**x:s.build_review_packet(Path(session),**x),
             "operator_art_undo": lambda session,**_:s.undo_last(Path(session)),
+            "operator_art_reference_resolve":lambda session,**x:s.reference_resolve(Path(session),**x),
+            "operator_art_reference_render":lambda session,**x:s.reference_render(Path(session),**x),
+            "operator_art_compare_transition":lambda session,**x:s.compare_transition(Path(session),**x),
+            "operator_art_set_edit_scope":lambda session,**x:s.set_edit_scope(Path(session),**x),
+            "operator_art_get_edit_scope":lambda session,**_:s.get_edit_scope(Path(session)),
+            "operator_art_clear_edit_scope":lambda session,**_:s.clear_edit_scope(Path(session)),
+            "operator_art_palette_inspect":lambda session,**x:s.palette_inspect(Path(session),**x),
+            "operator_art_reference_palette":lambda session,**x:s.reference_palette(Path(session),**x),
+            "operator_art_palette_bind_region":lambda session,**x:s.palette_bind_region(Path(session),**x),
+            "operator_art_palette_regions":lambda session,**_:s.palette_regions(Path(session)),
+            "operator_art_recolor_plan":lambda session,**x:s.recolor_plan(Path(session),**x),
+            "operator_art_recolor_set_mapping":lambda session,**x:s.recolor_set_mapping(Path(session),**x),
+            "operator_art_recolor_preview":lambda session,**x:s.recolor_preview(Path(session),**x),
+            "operator_art_recolor_apply":lambda session,**x:s.recolor_apply(Path(session),**x),
+            "operator_art_recolor_review":lambda session,**x:s.recolor_review(Path(session),**x),
             "operator_art_source_start": lambda **x:{"session":str(source.start(**x))},
             "operator_art_source_status": lambda session,**_:source.status(Path(session)),
             "operator_art_source_analyze": lambda session,**_:source.analyze(Path(session)),
@@ -267,6 +312,12 @@ class OperatorArtMCP:
             "operator_art_source_review": lambda session,**_:source.review(Path(session)),
             "operator_art_source_select_candidate": lambda session,method,**_:source.select_candidate(Path(session),method),
             "operator_art_source_handoff": lambda session,destination_name,**_:source.handoff(Path(session),destination_name=destination_name),
+            "operator_art_source_palette_inspect":lambda session,**_:source.palette_inspect(Path(session)),
+            "operator_art_source_recolor_plan":lambda session,**x:source.recolor_plan(Path(session),**x),
+            "operator_art_source_recolor_set_mapping":lambda session,**x:source.recolor_set_mapping(Path(session),**x),
+            "operator_art_source_recolor_preview":lambda session,**x:source.recolor_preview(Path(session),**x),
+            "operator_art_source_recolor_apply":lambda session,**x:source.recolor_apply(Path(session),**x),
+            "operator_art_source_recolor_review":lambda session,**x:source.recolor_review(Path(session),**x),
         }
 
     def tool_definitions(self) -> list[dict]:

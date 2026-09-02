@@ -1,42 +1,81 @@
-[gd_resource type="SpriteFrames" format=3]
+[gd_resource type="SpriteFrames" format=3 uid="uid://da87ap52mttvk"]
 
-[ext_resource type="Texture2D" path="res://content/sprites/effects/runtime/ritualant_underground_hazard/ritualant_underground_hazard__fx__hazard__thread_activation_burst_01__omni__10f__384x128.png" id="1_sheet"]
+[ext_resource type="Texture2D" uid="uid://c54lg6xpkoqbl" path="res://content/sprites/effects/runtime/ritualant_underground_hazard/ritualant_underground_hazard__fx__hazard__thread_activation_burst_01__omni__10f__384x128.png" id="1_sheet"]
 
 [sub_resource type="AtlasTexture" id="A0"]
 atlas = ExtResource("1_sheet")
 region = Rect2(0, 0, 384, 128)
+
 [sub_resource type="AtlasTexture" id="A1"]
 atlas = ExtResource("1_sheet")
 region = Rect2(384, 0, 384, 128)
+
 [sub_resource type="AtlasTexture" id="A2"]
 atlas = ExtResource("1_sheet")
 region = Rect2(768, 0, 384, 128)
+
 [sub_resource type="AtlasTexture" id="A3"]
 atlas = ExtResource("1_sheet")
 region = Rect2(1152, 0, 384, 128)
+
 [sub_resource type="AtlasTexture" id="A4"]
 atlas = ExtResource("1_sheet")
 region = Rect2(1536, 0, 384, 128)
+
 [sub_resource type="AtlasTexture" id="A5"]
 atlas = ExtResource("1_sheet")
 region = Rect2(1920, 0, 384, 128)
+
 [sub_resource type="AtlasTexture" id="A6"]
 atlas = ExtResource("1_sheet")
 region = Rect2(2304, 0, 384, 128)
+
 [sub_resource type="AtlasTexture" id="A7"]
 atlas = ExtResource("1_sheet")
 region = Rect2(2688, 0, 384, 128)
+
 [sub_resource type="AtlasTexture" id="A8"]
 atlas = ExtResource("1_sheet")
 region = Rect2(3072, 0, 384, 128)
+
 [sub_resource type="AtlasTexture" id="A9"]
 atlas = ExtResource("1_sheet")
 region = Rect2(3456, 0, 384, 128)
 
 [resource]
 animations = [{
-"frames": [{"duration": 1.0, "texture": SubResource("A0")}, {"duration": 1.0, "texture": SubResource("A1")}, {"duration": 1.0, "texture": SubResource("A2")}, {"duration": 1.0, "texture": SubResource("A3")}, {"duration": 1.0, "texture": SubResource("A4")}, {"duration": 1.0, "texture": SubResource("A5")}, {"duration": 1.0, "texture": SubResource("A6")}, {"duration": 1.0, "texture": SubResource("A7")}, {"duration": 1.0, "texture": SubResource("A8")}, {"duration": 1.0, "texture": SubResource("A9")}],
-"loop": false,
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("A0")
+}, {
+"duration": 1.0,
+"texture": SubResource("A1")
+}, {
+"duration": 1.0,
+"texture": SubResource("A2")
+}, {
+"duration": 1.0,
+"texture": SubResource("A3")
+}, {
+"duration": 1.0,
+"texture": SubResource("A4")
+}, {
+"duration": 1.0,
+"texture": SubResource("A5")
+}, {
+"duration": 1.0,
+"texture": SubResource("A6")
+}, {
+"duration": 1.0,
+"texture": SubResource("A7")
+}, {
+"duration": 1.0,
+"texture": SubResource("A8")
+}, {
+"duration": 1.0,
+"texture": SubResource("A9")
+}],
+"loop": 0,
 "name": &"activate",
 "speed": 16.0
 }]

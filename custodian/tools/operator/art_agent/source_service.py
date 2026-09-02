@@ -26,6 +26,8 @@ from .source_models import (
 )
 from .source_normalization import build_plan, shared_transform_from_plan
 from .source_review import review_normalization
+from . import palette as palette_core
+from . import recolor as recolor_store
 
 ART_TOOLS = model.CUSTODIAN_ROOT / "tools/art"
 if str(ART_TOOLS) not in sys.path:
@@ -319,3 +321,59 @@ class SourceArtService:
             "frame_size": [session.target_width, session.target_height],
             "source_session": str(path.resolve()),
         }
+
+    def palette_inspect(self,session_path:Path|str)->dict[str,Any]:
+        session,root,_path=self.load(session_path)
+        if not session.selected_candidate: raise model.WorkbenchError("select a candidate before palette inspection")
+        with Image.open(session.selected_candidate) as sheet: frames=extract_frames(sheet,columns=session.geometry.columns,rows=session.geometry.rows,frame_count=session.geometry.frame_count)
+        return palette_core.inspect(frames,"candidate")
+
+    def recolor_plan(self,session_path:Path|str,*,profile:str,group:str,action:str,direction:str,layer:str)->dict[str,Any]:
+        session,root,_path=self.load(session_path)
+        if not session.selected_candidate: raise model.WorkbenchError("select a candidate before recolor planning")
+        index=model.source_index(model.SOURCE_ROOT,model.WEAPON_ROOT); hit=index.get(("operator",layer,profile,group,action,direction))
+        if not hit: raise model.WorkbenchError("semantic canonical recolor reference did not resolve")
+        reference_path=Path(hit[0]); key=hit[1]
+        with Image.open(reference_path) as strip:
+            strip=strip.convert("RGBA"); reference_frames=[strip.crop((i*key.frame_width,0,(i+1)*key.frame_width,key.frame_height)) for i in range(key.frames)]
+        with Image.open(session.selected_candidate) as sheet: target_frames=extract_frames(sheet,columns=session.geometry.columns,rows=session.geometry.rows,frame_count=session.geometry.frame_count)
+        reference={"reference_id":uuid.uuid4().hex[:12],"source_hashes":{"candidate":sha256(reference_path)}}
+        plan=recolor_store.build(session_id=session.session_id,workbench_sha=sha256(Path(session.selected_candidate)),reference=reference,scopes=[{"target_layer":"candidate","reference_layer":layer}],frames=list(range(1,len(target_frames)+1)),target_reports={"candidate":palette_core.inspect(target_frames,"candidate")},reference_reports={"candidate":palette_core.inspect(reference_frames,layer)},regions=[],fingerprints={})
+        payload=plan.to_json();payload["source_reference"]={"path":str(reference_path.resolve()),"layer":layer,"sha256":sha256(reference_path)};recolor_store.save(recolor_store.plan_id_path(root,plan.plan_id),plan);write_json(root/"recolor_plans"/f"{plan.plan_id}.reference.json",payload["source_reference"]);return payload
+
+    def recolor_set_mapping(self,session_path:Path|str,*,plan_id:str,mapping_id:str,action:str,destination_rgb:list[int]|None=None)->dict:
+        _session,root,_path=self.load(session_path);plan=recolor_store.load(recolor_store.plan_id_path(root,plan_id));mapping=next((x for x in plan.mappings if x.mapping_id==mapping_id),None)
+        if not mapping:raise model.WorkbenchError("unknown recolor mapping")
+        ref=json.loads((root/"recolor_plans"/f"{plan_id}.reference.json").read_text()); key=next(hit[1] for hit in model.source_index(model.SOURCE_ROOT,model.WEAPON_ROOT).values() if str(Path(hit[0]).resolve())==ref["path"])
+        with Image.open(ref["path"]) as image: image=image.convert("RGBA"); frames=[image.crop((i*key.frame_width,0,(i+1)*key.frame_width,key.frame_height)) for i in range(key.frames)]
+        allowed={tuple(x["rgb"]) for x in palette_core.inspect(frames,ref["layer"])["colors"]}
+        if action=="map" and tuple(destination_rgb or []) not in allowed:raise model.WorkbenchError("destination RGB is not present in reference palette")
+        mapping.action=action;mapping.destination_rgb=mapping.source_rgb if action=="preserve" else destination_rgb;mapping.locked=True;mapping.method="agent_selected";plan.status="READY" if not recolor_store.readiness_issues(plan) else "NEEDS_REVIEW";plan.preview_sha256=None;recolor_store.save(recolor_store.plan_id_path(root,plan_id),plan);return plan.to_json()
+
+    def recolor_preview(self,session_path:Path|str,*,plan_id:str)->dict:
+        session,root,_path=self.load(session_path);plan=recolor_store.load(recolor_store.plan_id_path(root,plan_id))
+        if plan.status!="READY" or sha256(Path(session.selected_candidate))!=plan.target_workbench_sha256:raise model.WorkbenchError("source recolor plan is not READY or candidate is stale")
+        with Image.open(session.selected_candidate) as sheet:frames=extract_frames(sheet,columns=session.geometry.columns,rows=session.geometry.rows,frame_count=session.geometry.frame_count)
+        payload=recolor_store.preview(root,plan,{"candidate":frames});plan.status="PREVIEWED";plan.preview_sha256=payload["preview_sha256"];recolor_store.save(recolor_store.plan_id_path(root,plan_id),plan);return payload
+
+    def recolor_apply(self,session_path:Path|str,*,plan_id:str)->dict:
+        session,root,path=self.load(session_path);plan=recolor_store.load(recolor_store.plan_id_path(root,plan_id))
+        if plan.status!="PREVIEWED" or sha256(Path(session.selected_candidate))!=plan.target_workbench_sha256:raise model.WorkbenchError("previewed source recolor plan is stale")
+        preview=json.loads((root/"previews/recolor"/plan_id/"recolor_preview.json").read_text())
+        if preview.get("plan_fingerprint")!=recolor_store.fingerprint(plan):raise model.WorkbenchError("source recolor mapping changed after preview")
+        ref=json.loads((root/"recolor_plans"/f"{plan_id}.reference.json").read_text())
+        if sha256(Path(ref["path"]))!=ref["sha256"]:raise model.WorkbenchError("reference authority changed")
+        with Image.open(session.selected_candidate) as sheet:frames=extract_frames(sheet,columns=session.geometry.columns,rows=session.geometry.rows,frame_count=session.geometry.frame_count)
+        after,_stats=recolor_store.apply_mapping({"candidate":frames},plan);out=Image.new("RGBA",(session.geometry.columns*session.target_width,session.geometry.rows*session.target_height))
+        for i,frame in enumerate(after["candidate"]):out.alpha_composite(frame,((i%session.geometry.columns)*session.target_width,(i//session.geometry.columns)*session.target_height))
+        destination=root/"registered/recolored_candidate.png";out.save(destination);plan.status="APPLIED";recolor_store.save(recolor_store.plan_id_path(root,plan_id),plan);return {"candidate":str(destination.resolve()),"plan_id":plan_id}
+
+    def recolor_review(self,session_path:Path|str,*,plan_id:str)->dict:
+        session,root,_path=self.load(session_path);plan=recolor_store.load(recolor_store.plan_id_path(root,plan_id));candidate=root/"registered/recolored_candidate.png"
+        if plan.status!="APPLIED" or not candidate.exists():raise model.WorkbenchError("source recolor plan has not been applied")
+        with Image.open(session.selected_candidate) as a,Image.open(candidate) as b:
+            before=extract_frames(a,columns=session.geometry.columns,rows=session.geometry.rows,frame_count=session.geometry.frame_count);after=extract_frames(b,columns=session.geometry.columns,rows=session.geometry.rows,frame_count=session.geometry.frame_count)
+        findings=[]
+        if palette_core.alpha_sha(before)!=palette_core.alpha_sha(after):findings.append({"severity":"RED","issue":"alpha changed"})
+        if palette_core.silhouette_sha(before)!=palette_core.silhouette_sha(after):findings.append({"severity":"RED","issue":"silhouette changed"})
+        value={"status":"RED" if findings else "GREEN","findings":findings,"candidate":str(candidate.resolve())};write_json(root/"review/source_recolor_review.json",value);return value

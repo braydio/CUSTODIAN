@@ -121,6 +121,10 @@ local function execute()
     return app.pixelColor.rgba(channel(value[1],"red"),channel(value[2],"green"),channel(value[3],"blue"),channel(value[4] or 255,"alpha"))
   end
 
+  local function rgb_key(red,green,blue)
+    return string.format("%d:%d:%d",red,green,blue)
+  end
+
   local function changed_bounds(points)
     if #points==0 then return nil end
     local min_x,max_x,min_y,max_y=points[1][1],points[1][1],points[1][2],points[1][2]
@@ -306,6 +310,30 @@ local function execute()
     for _,point in ipairs(spans_pixels(operation.spans)) do if not contains(rect,point[1],point[2]) then close_and_error("mask outside legal binding rectangle") end; local lx,ly=point[1]-rect.x,point[2]-rect.y; if image:getPixel(lx,ly)~=clear then image:drawPixel(lx,ly,clear); table.insert(changed,{point[1],point[2]}) end end
     if #changed>0 then app.transaction("Operator Art Agent: clear mask",function() cel.image=image end) end
     response.changed=#changed>0; response.changed_pixels=#changed; response.changed_bbox=changed_bounds(changed)
+  elseif operation.type=="recolor_plan" then
+    local assignments={}; local assignment_order={}; local changed={}; local total=0
+    for _,target in ipairs(operation.targets or {}) do
+      local binding=binding_for_layer(target.layer); local _,cel=resolve_cel(binding,target.frame); local rect=legal_rect(binding); local cel_key=target.layer..":"..tostring(target.frame)
+      local assignment=assignments[cel_key]
+      if not assignment then assignment={cel=cel,image=cel.image:clone()}; assignments[cel_key]=assignment; table.insert(assignment_order,assignment) end
+      local image=assignment.image; local mapping={}; local allowed=nil
+      for _,item in ipairs(target.mappings or {}) do
+        if #item.source_rgb~=3 or #item.destination_rgb~=3 then close_and_error("recolor mappings contain RGB only") end
+        local source=rgb_key(channel(item.source_rgb[1],"source red"),channel(item.source_rgb[2],"source green"),channel(item.source_rgb[3],"source blue"))
+        mapping[source]={channel(item.destination_rgb[1],"destination red"),channel(item.destination_rgb[2],"destination green"),channel(item.destination_rgb[3],"destination blue")}
+      end
+      if target.spans~=nil then allowed={}; for _,point in ipairs(spans_pixels(target.spans)) do if not contains(rect,point[1],point[2]) then close_and_error("recolor span outside legal binding rectangle") end; allowed[tostring(point[1])..":"..tostring(point[2])]=true end end
+      for y=rect.y,rect.y+rect.h-1 do for x=rect.x,rect.x+rect.w-1 do
+        if allowed==nil or allowed[tostring(x)..":"..tostring(y)] then
+          local lx,ly=x-rect.x,y-rect.y; local value=image:getPixel(lx,ly); local alpha=app.pixelColor.rgbaA(value)
+          if alpha>0 then local key=rgb_key(app.pixelColor.rgbaR(value),app.pixelColor.rgbaG(value),app.pixelColor.rgbaB(value)); local replacement=mapping[key]
+            if replacement then local next_value=app.pixelColor.rgba(replacement[1],replacement[2],replacement[3],alpha); if next_value~=value then image:drawPixel(lx,ly,next_value); table.insert(changed,{x,y}); total=total+1 end end
+          end
+        end
+      end end
+    end
+    if total>0 then app.transaction("Operator Art Agent: recolor plan",function() for _,item in ipairs(assignment_order) do item.cel.image=item.image end end) end
+    response.changed=total>0; response.changed_pixels=total; response.changed_bbox=changed_bounds(changed); response.plan_id=operation.plan_id
   else close_and_error("unsupported Art Agent V1 operation: "..tostring(operation.type)) end
 
   if response.changed then sprite:saveAs(req.workbench) end

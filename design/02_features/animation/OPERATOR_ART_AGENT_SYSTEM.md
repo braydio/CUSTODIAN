@@ -2,7 +2,7 @@
 
 ## Status
 
-**V2 semantic repair workstation implemented; canonical publication remains external.**
+**V2 semantic repair workstation plus reference/palette hardening implemented; canonical publication remains external.**
 
 This document defines the long-horizon architecture and phased delivery plan
 for an agent-operated Operator art workstation. V1 now provides guarded,
@@ -19,6 +19,18 @@ temporarily bakes and performs bounded pixel cleanup, emits a review packet,
 then restores the Workbench byte-exactly. Protected Operator source, runtime,
 generated data, actor resources, and sockets are hashed before and after. The
 runner never publishes; engineering PASS and art-capability status are separate.
+
+### Reference, transition, and palette hardening
+
+Sessions resolve immutable canonical references only by semantic identity,
+render target-tail/reference-head transition comparisons, and can persist an
+edit scope enforced at the shared mutation boundary. Palette reports sort
+deterministically by sRGB luminance and RGB. Recoloring follows hash-locked
+plan, explicit ambiguity resolution, non-mutating preview, plan-id-only atomic
+apply, and review. Destination colors come from the reference palette or are
+explicitly preserved; mappings are animation-wide and alpha/silhouette hashes
+must remain exact. Source Session recolor writes a separate registered
+candidate and never overwrites its original or converter candidates.
 
 ### Implemented V2 capability
 

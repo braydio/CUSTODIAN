@@ -1,36 +1,67 @@
-[gd_resource type="SpriteFrames" format=3]
+[gd_resource type="SpriteFrames" format=3 uid="uid://dic6h5vx5mv1q"]
 
-[ext_resource type="Texture2D" path="res://content/sprites/effects/runtime/ritualant_underground_hazard/ritualant_underground_hazard__fx__hazard__thread_warning_sweep_01__omni__8f__384x96.png" id="1_sheet"]
+[ext_resource type="Texture2D" uid="uid://d1g85udrvsna3" path="res://content/sprites/effects/runtime/ritualant_underground_hazard/ritualant_underground_hazard__fx__hazard__thread_warning_sweep_01__omni__8f__384x96.png" id="1_sheet"]
 
 [sub_resource type="AtlasTexture" id="W0"]
 atlas = ExtResource("1_sheet")
 region = Rect2(0, 0, 384, 96)
+
 [sub_resource type="AtlasTexture" id="W1"]
 atlas = ExtResource("1_sheet")
 region = Rect2(384, 0, 384, 96)
+
 [sub_resource type="AtlasTexture" id="W2"]
 atlas = ExtResource("1_sheet")
 region = Rect2(768, 0, 384, 96)
+
 [sub_resource type="AtlasTexture" id="W3"]
 atlas = ExtResource("1_sheet")
 region = Rect2(1152, 0, 384, 96)
+
 [sub_resource type="AtlasTexture" id="W4"]
 atlas = ExtResource("1_sheet")
 region = Rect2(1536, 0, 384, 96)
+
 [sub_resource type="AtlasTexture" id="W5"]
 atlas = ExtResource("1_sheet")
 region = Rect2(1920, 0, 384, 96)
+
 [sub_resource type="AtlasTexture" id="W6"]
 atlas = ExtResource("1_sheet")
 region = Rect2(2304, 0, 384, 96)
+
 [sub_resource type="AtlasTexture" id="W7"]
 atlas = ExtResource("1_sheet")
 region = Rect2(2688, 0, 384, 96)
 
 [resource]
 animations = [{
-"frames": [{"duration": 1.0, "texture": SubResource("W0")}, {"duration": 1.0, "texture": SubResource("W1")}, {"duration": 1.0, "texture": SubResource("W2")}, {"duration": 1.0, "texture": SubResource("W3")}, {"duration": 1.0, "texture": SubResource("W4")}, {"duration": 1.0, "texture": SubResource("W5")}, {"duration": 1.0, "texture": SubResource("W6")}, {"duration": 1.0, "texture": SubResource("W7")}],
-"loop": true,
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("W0")
+}, {
+"duration": 1.0,
+"texture": SubResource("W1")
+}, {
+"duration": 1.0,
+"texture": SubResource("W2")
+}, {
+"duration": 1.0,
+"texture": SubResource("W3")
+}, {
+"duration": 1.0,
+"texture": SubResource("W4")
+}, {
+"duration": 1.0,
+"texture": SubResource("W5")
+}, {
+"duration": 1.0,
+"texture": SubResource("W6")
+}, {
+"duration": 1.0,
+"texture": SubResource("W7")
+}],
+"loop": 1,
 "name": &"warning",
 "speed": 12.0
 }]
