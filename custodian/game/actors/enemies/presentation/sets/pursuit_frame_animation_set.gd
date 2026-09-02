@@ -12,13 +12,23 @@ func _init() -> void:
 	_add(&"locomotion.relaxed_run", &"pursuit_run_01", &"locomotion", [&"s"], 8, 10.0, true, &"relaxed_run")
 	_add(&"locomotion.walk", &"patrol_walk_01", &"locomotion", [&"s"], 8, 8.0, true, &"walk")
 	_add(&"locomotion.run", &"pursuit_run_01", &"locomotion", [&"s"], 8, 10.0, true, &"run")
+	_add(&"posture.draw", &"notice_01", &"combat", [&"s"], 4, 10.0, false, &"draw")
+	_add(&"posture.alert", &"notice_01", &"combat", [&"s"], 4, 10.0, false, &"alert")
 	_add(&"combat.fast_01", &"melee_brace_01", &"combat", [&"e", &"w"], 6, 12.0, false, &"melee")
 	_add(&"combat.fast_02", &"intercept_burst_01", &"combat", [&"e", &"w"], 4, 12.0, false, &"intercept")
 	_add(&"combat.fast_03", &"melee_brace_01", &"combat", [&"e", &"w"], 6, 12.0, false, &"melee_heavy")
+	_add(&"combat.intercept_windup", &"intercept_windup_01", &"combat", [&"e", &"w"], 4, 10.0, false, &"intercept_windup")
+	_add(&"combat.intercept_burst", &"intercept_burst_01", &"combat", [&"e", &"w"], 4, 12.0, false, &"intercept_burst")
+	_add(&"combat.intercept_recover", &"intercept_recover_01", &"combat", [&"e", &"w"], 5, 10.0, false, &"intercept_recover")
 	_add(&"reaction.flinch_01", &"flinch_01", &"reaction", [&"s"], 4, 12.0, false, &"flinch")
 	_add(&"reaction.flinch_02", &"flinch_01", &"reaction", [&"s"], 4, 12.0, false, &"flinch_heavy")
 	_add(&"reaction.stagger", &"stagger_01", &"reaction", [&"s"], 6, 10.0, false, &"stagger")
 	_add(&"reaction.death", &"death_shutdown_01", &"death", [&"s"], 8, 10.0, false, &"death")
+	_add(&"activity.checkpoint_halt", &"checkpoint_halt_01", &"activity", [&"s"], 4, 8.0, false, &"checkpoint_halt")
+	_add(&"activity.patrol_scan", &"patrol_scan_01", &"activity", [&"s"], 6, 8.0, false, &"patrol_scan")
+	_add(&"activity.search_sweep", &"search_sweep_01", &"activity", [&"s"], 6, 8.0, false, &"search_sweep")
+	_add(&"activity.investigate_scan", &"investigate_scan_01", &"activity", [&"s"], 6, 8.0, false, &"investigate_scan")
+	_add(&"activity.return_to_route", &"return_to_route_01", &"activity", [&"s"], 6, 8.0, false, &"return_to_route")
 
 
 func _add(
