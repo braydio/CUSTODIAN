@@ -1,0 +1,50 @@
+{
+  "schema": "custodian.operator_animation_review_spec.v1",
+  "status": "REVIEW_ONLY",
+  "publication": "NOT_PUBLISHED",
+  "identity": {
+    "owner": "operator",
+    "animation_profile": "melee_1h",
+    "action_group": "posture",
+    "action": "sheathe_01",
+    "intent": "Sheathe the equipped melee weapon when transitioning to ranged or unarmed."
+  },
+  "derivation": {
+    "source_action": "draw_01",
+    "source_paths": [
+      "content/sprites/operator/source/animations/melee_1h/posture/draw_01",
+      "content/sprites/operator/source/animations/melee_1h_dagger/posture/draw_01"
+    ],
+    "operation": "reverse_frame_order_only",
+    "resampling": false,
+    "resize": false,
+    "frame_order": "output[i] = source[frame_count - 1 - i]",
+    "gameplay_timing_changed": false,
+    "canonical_source_changed": false,
+    "runtime_changed": false
+  },
+  "contract": {
+    "directions": ["e", "w"],
+    "frame_count": 4,
+    "frame_size": [128, 96],
+    "layers": ["lower_body", "upper_body", "weapon"],
+    "weapon_profile": "melee_1h_dagger",
+    "timing_authority": "inherited from draw_01; review artifact only"
+  },
+  "outputs": [
+    "operator__lower_body__melee_1h__posture__sheathe_01__e__4f__128x96.png",
+    "operator__lower_body__melee_1h__posture__sheathe_01__w__4f__128x96.png",
+    "operator__upper_body__melee_1h__posture__sheathe_01__e__4f__128x96.png",
+    "operator__upper_body__melee_1h__posture__sheathe_01__w__4f__128x96.png",
+    "operator__weapon__melee_1h_dagger__posture__sheathe_01__e__4f__128x96.png",
+    "operator__weapon__melee_1h_dagger__posture__sheathe_01__w__4f__128x96.png"
+  ],
+  "review_checks": [
+    "all six outputs are RGBA horizontal strips",
+    "each output is exactly 512x96 (4 frames x 128x96)",
+    "each output frame is byte-equivalent to a source draw_01 frame in reverse order",
+    "source draw_01 sheets remain unchanged",
+    "no canonical or runtime publication has occurred",
+    "reviewer should verify dagger handoff into ranged or unarmed presentation"
+  ]
+}
