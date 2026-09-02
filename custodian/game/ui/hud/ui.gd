@@ -535,6 +535,7 @@ func _register_devconsole_commands() -> void:
 		_register_devconsole_command(console, "show_cognitive", _devconsole_show_cognitive)
 		_register_devconsole_command(console, "test_spawn", _devconsole_test_spawn)
 		_register_devconsole_command(console, "spawn_grunt", _devconsole_spawn_grunt)
+		_register_devconsole_command(console, "spawn_pursuit_frame", _devconsole_spawn_pursuit_frame)
 		_register_devconsole_command(console, "spawn_savage", _devconsole_spawn_savage)
 		_register_devconsole_command(console, "knight_skin", _devconsole_knight_skin)
 		_register_devconsole_command(console, "ui_status", _devconsole_ui_status)
@@ -650,6 +651,21 @@ func _normalize_debug_grunt_spawn_mode(value: String) -> StringName:
 		"lethal", "execution_lethal":
 			return &"execution_lethal"
 	return &""
+
+
+func _devconsole_spawn_pursuit_frame(args: Array) -> String:
+	var operator := _get_operator_node()
+	if operator == null:
+		return "Operator not found"
+	var offset := Vector2(96.0, 0.0)
+	if args.size() >= 2 and str(args[0]).is_valid_float() and str(args[1]).is_valid_float():
+		offset = Vector2(float(args[0]), float(args[1]))
+	var enemy_mgr := get_node_or_null("/root/GameRoot/EnemyDirector")
+	if enemy_mgr != null and enemy_mgr.has_method("spawn_debug_enemy_type"):
+		var pos := operator.global_position + offset
+		var spawned := bool(enemy_mgr.call("spawn_debug_enemy_type", "pursuit_frame", pos))
+		return "Spawned pursuit_frame at %s" % str(pos) if spawned else "Failed to spawn pursuit_frame"
+	return "EnemyDirector not found or spawn_debug_enemy_type not available"
 
 
 func _devconsole_spawn_savage(args: Array) -> String:

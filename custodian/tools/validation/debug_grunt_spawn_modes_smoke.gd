@@ -1,6 +1,7 @@
 extends SceneTree
 
 const GRUNT_SCENE := preload("res://game/actors/enemies/enemy_grunt.tscn")
+const PURSUIT_FRAME_SCENE := preload("res://game/actors/enemies/pursuit_frame.tscn")
 const OPERATOR_SCENE := preload("res://game/actors/operator/operator.tscn")
 const WAVE_MANAGER_SCRIPT := preload("res://game/systems/core/systems/wave_manager.gd")
 
@@ -16,6 +17,9 @@ func _init() -> void:
 
 
 func _run() -> void:
+	var hud_source := FileAccess.get_file_as_string("res://game/ui/hud/ui.gd")
+	_assert_true(hud_source.contains("spawn_pursuit_frame"), "DevConsole should register spawn_pursuit_frame")
+	_assert_true(hud_source.contains("_devconsole_spawn_pursuit_frame"), "DevConsole pursuit handler should exist")
 	var game_root := Node.new()
 	game_root.name = "GameRoot"
 	root.add_child(game_root)
@@ -33,6 +37,7 @@ func _run() -> void:
 	var wave_manager := WAVE_MANAGER_SCRIPT.new()
 	wave_manager.name = "WaveManager"
 	wave_manager.grunt_scene = GRUNT_SCENE
+	wave_manager.pursuit_frame_scene = PURSUIT_FRAME_SCENE
 	game_root.add_child(wave_manager)
 	await process_frame
 
@@ -48,6 +53,13 @@ func _run() -> void:
 		_assert_true(falcon.debug_get_presentation_phase_name() == &"windup", "falcon debug mode should immediately enter windup")
 		_assert_true(falcon_grunt.get("target") == operator, "falcon debug mode should explicitly target the Operator")
 		falcon_grunt.queue_free()
+		await process_frame
+
+	var pursuit := await _spawn_type(wave_manager, enemies, operator, "pursuit_frame")
+	_assert_true(pursuit != null, "pursuit_frame debug spawn should be accepted")
+	if pursuit != null:
+		_assert_true(String(pursuit.get("custom_enemy_animation_set")) == "pursuit_frame", "pursuit_frame should use its dedicated animation set")
+		pursuit.queue_free()
 		await process_frame
 
 	var lethal_grunt: Node2D = await _spawn_mode(wave_manager, enemies, operator, &"execution_lethal")
@@ -102,6 +114,19 @@ func _spawn_mode(wave_manager: Node, enemies: Node2D, operator: Node2D, mode: St
 		1.0,
 		&"",
 		mode
+	))
+	await process_frame
+	if not spawned or enemies.get_child_count() != child_count_before + 1:
+		return null
+	return enemies.get_child(enemies.get_child_count() - 1) as Node2D
+
+
+func _spawn_type(wave_manager: Node, enemies: Node2D, operator: Node2D, enemy_type: String) -> Node2D:
+	var child_count_before := enemies.get_child_count()
+	var spawned := bool(wave_manager.call(
+		"debug_spawn_enemy_type",
+		enemy_type,
+		operator.global_position + Vector2(96.0, 0.0)
 	))
 	await process_frame
 	if not spawned or enemies.get_child_count() != child_count_before + 1:

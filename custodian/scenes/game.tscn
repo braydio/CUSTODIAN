@@ -349,6 +349,7 @@ drone_scene = ExtResource("6_enemy")
 fast_drone_scene = ExtResource("16_fast_enemy")
 heavy_drone_scene = ExtResource("17_heavy_enemy")
 grunt_scene = ExtResource("18_grunt_enemy")
+pursuit_frame_scene = ExtResource("18_pursuit_frame_enemy")
 marine_scene = ExtResource("18_marine_enemy")
 savage_scene = ExtResource("18_savage_enemy")
 debug_spawn_grunt_on_start = false
