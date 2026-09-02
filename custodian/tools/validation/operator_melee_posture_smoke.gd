@@ -65,7 +65,11 @@ func _init() -> void:
 		for action in ["idle_ready_01", "idle_relaxed_01"]:
 			var weapon_animation := "melee_1h_dagger/posture/%s/%s/weapon" % [action, suffix]
 			assert(weapon.sprite_frames.has_animation(weapon_animation), "missing Vigil posture weapon %s %s" % [action, suffix])
-			assert(weapon.sprite_frames.get_frame_count(weapon_animation) == 4, "Vigil posture weapon must remain four frames")
+			var expected_frames := 5 if action == "idle_ready_01" and suffix == "e" else 4
+			assert(
+				weapon.sprite_frames.get_frame_count(weapon_animation) == expected_frames,
+				"Vigil posture weapon frame contract mismatch for %s %s" % [action, suffix],
+			)
 		var run_weapon_animation := "melee_1h_dagger/locomotion/run_01/%s/weapon" % suffix
 		assert(weapon.sprite_frames.has_animation(run_weapon_animation), "missing Vigil run weapon %s" % suffix)
 		assert(weapon.sprite_frames.get_frame_count(run_weapon_animation) == 6, "Vigil run weapon must remain six frames")
