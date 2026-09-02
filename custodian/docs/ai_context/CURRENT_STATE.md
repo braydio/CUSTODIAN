@@ -1,5 +1,14 @@
 # CURRENT STATE — CUSTODIAN
 
+## Lower Quarter Gothic-Futurist Native Art Overlay (2026-09-02)
+
+The reviewed 1448×1086 Gothic-sci-fi wall and prop masters are installed and
+preprocessed through one deterministic 0.5 source scale. Lower Quarter mounts a
+collisionless `GothicSciFiWallModuleRoot` over the existing 32px Meridian wall
+topology, and high-signal civic/collapse prop anchors resolve reviewed Gothic
+variants through deterministic overrides. Runtime publication, collision,
+navigation, route geometry, and event logic remain unchanged.
+
 ## Ash-Bell Pre-Protocol Figures Canon (2026-09-01)
 
 Canonical Ash-Bell history now begins with recurring still humanoid figures in
@@ -1121,3 +1130,11 @@ and waiting count without taking simulation authority.
   six Asset V2 runtime images and deterministic per-layer A/B selection. The
   underlay remains scenic-only; VoidCliffFace and chasm structure retain
   authority.
+Reference/palette hardening now adds immutable semantic canonical references,
+target-tail/reference-head transition artifacts, enforced per-layer/frame edit
+scopes, deterministic palette reports, and hash-locked recolor plans. Preview
+is non-mutating; Workbench apply accepts only a previewed plan and recolors all
+cloned target cels in one Aseprite transaction while preserving alpha. Source
+Session recolor writes `registered/recolored_candidate.png` separately and
+never changes the staged original, converter candidates, canonical source, or
+runtime output.

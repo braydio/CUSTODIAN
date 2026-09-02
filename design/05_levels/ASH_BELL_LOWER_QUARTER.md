@@ -382,3 +382,11 @@ theology into cosmological fact.
 
 **Acceptance:** subsequent combat work retains the approved production-art
 sightlines and all focused route/layout/state validation.
+
+## Gothic-Futurist Native Art Overlay (2026-09-02)
+
+The reviewed Gothic-sci-fi wall and prop masters now provide a collisionless
+native presentation overlay for Lower Quarter. The existing 32px Meridian wall
+topology, collision, navigation, route geometry, and event logic remain
+authoritative. This pass distinguishes Gothic-futurist Meridian architecture
+from later explicit Penitent religious additions.

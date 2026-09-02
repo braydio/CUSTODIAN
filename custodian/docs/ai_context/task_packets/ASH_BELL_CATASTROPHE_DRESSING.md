@@ -168,3 +168,10 @@ Validation completed:
 
 Gameplay-scale zone captures remain a human art-direction review surface; they
 do not weaken the deterministic runtime or navigation acceptance gates above.
+
+## Supersession note — 2026-09-02
+
+The reviewed Gothic-future wall/prop packet supersedes the prior Lower Quarter
+visual vocabulary for surviving civic and catastrophe presentation. Existing
+catastrophe placement authority remains intact; new explicit damage modules are
+limited to named collapse beats and remain collisionless overlays.

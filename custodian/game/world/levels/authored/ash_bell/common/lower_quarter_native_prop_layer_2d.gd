@@ -3,6 +3,7 @@ extends Node2D
 
 const PLACEMENT_PATH := "res://game/world/levels/authored/ash_bell/common/lower_quarter_native_prop_placements.json"
 const MANIFEST_PATH := "res://content/metadata/assets/meridian_civic_props_native.semantic.json"
+const OVERRIDE_PATH := "res://game/world/levels/authored/ash_bell/common/lower_quarter_gothic_scifi_prop_overrides.json"
 const NativeProp := preload("res://game/world/levels/presentation/semantic_native_prop_2d.gd")
 const CELL_SIZE := 32
 
@@ -11,6 +12,8 @@ const CELL_SIZE := 32
 
 var _debug_snapshot: Array[Dictionary] = []
 var _errors := PackedStringArray()
+var _overrides: Dictionary = {}
+var _override_manifest_path := ""
 
 
 func _ready() -> void:
@@ -22,6 +25,12 @@ func rebuild() -> bool:
 		child.free()
 	_debug_snapshot.clear()
 	_errors.clear()
+	_overrides.clear()
+	_override_manifest_path = ""
+	var override_document := _load_json(OVERRIDE_PATH)
+	if not override_document.is_empty():
+		_overrides = override_document.get("overrides", {}) as Dictionary
+		_override_manifest_path = String(override_document.get("manifest", ""))
 	var document := _load_json(PLACEMENT_PATH)
 	if document.is_empty():
 		return false
@@ -59,7 +68,16 @@ func _instantiate_record(record: Dictionary) -> bool:
 	prop.position = calculated
 	prop.scale = Vector2.ONE
 	prop.rotation = 0.0
-	if not prop.configure(StringName(record.get("runtime_family", "")), StringName(record.get("variant_key", ""))):
+	var resolved_record := record.duplicate(true)
+	var override := _overrides.get(placement_id, {}) as Dictionary
+	if not override.is_empty():
+		resolved_record.merge(override, true)
+		prop.manifest_path = _override_manifest_path
+	if not prop.configure(
+		StringName(resolved_record.get("runtime_family", "")),
+		StringName(resolved_record.get("variant_key", "")),
+		not bool(resolved_record.get("allow_review", false))
+	):
 		prop.free()
 		_fail("Unable to resolve source_id %s for %s" % [record.get("source_id"), placement_id])
 		return false
@@ -67,6 +85,7 @@ func _instantiate_record(record: Dictionary) -> bool:
 	# authored topology remains authority until each footprint is route-proven.
 	prop.set_meta(&"placement_id", placement_id)
 	prop.set_meta(&"source_id", int(record.get("source_id", -1)))
+	prop.set_meta(&"visual_override", not override.is_empty())
 	prop.set_meta(&"collision_enabled", false)
 	add_child(prop)
 	var sprite := prop.get_sprite()

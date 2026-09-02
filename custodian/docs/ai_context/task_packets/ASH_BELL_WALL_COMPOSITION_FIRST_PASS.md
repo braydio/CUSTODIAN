@@ -109,3 +109,10 @@ explicit arcade modules. The former sparse interior facade loop is removed.
 Collision, navigation, blockers, native props, and walkable geometry were not
 changed. Automated validation is recorded in the task completion response;
 gameplay-scale aesthetic approval remains developer-owned.
+
+## Supersession note — 2026-09-02
+
+The reviewed Gothic-future native module packet extends Lower Quarter visual
+presentation without replacing the 32px topology substrate or its authority.
+Multi-cell facades, piers, and collapse modules must not be flattened into the
+existing wall atlas.

@@ -1,0 +1,26 @@
+{
+  "schema": "custodian.lower_quarter_gothic_scifi_prop_overrides.v1",
+  "manifest": "res://content/metadata/assets/lower_quarter_gothic_scifi_props_native.semantic.json",
+  "overrides": {
+    "arrival_w_lamp": {"runtime_family":"lower_quarter_civic_lighting","variant_key":"gothic_civic_light_01"},
+    "arrival_e_lamp": {"runtime_family":"lower_quarter_civic_lighting","variant_key":"gothic_civic_light_02"},
+    "arrival_w_bench": {"runtime_family":"lower_quarter_bench","variant_key":"gothic_civic_bench_01"},
+    "arrival_e_bench": {"runtime_family":"lower_quarter_bench","variant_key":"gothic_civic_bench_01"},
+    "personnel_sign": {"runtime_family":"lower_quarter_warning_sign","variant_key":"warning_sign_01"},
+    "arrival_directory": {"runtime_family":"lower_quarter_terminal","variant_key":"civic_terminal_01"},
+    "arrival_bin": {"runtime_family":"lower_quarter_waste_bin","variant_key":"waste_bin_01"},
+    "arrival_bollard_w": {"runtime_family":"lower_quarter_bollard","variant_key":"civic_bollard_01"},
+    "arrival_bollard_e": {"runtime_family":"lower_quarter_bollard","variant_key":"civic_bollard_02"},
+    "arrival_railing": {"runtime_family":"lower_quarter_gothic_fence","variant_key":"gothic_fence_01"},
+    "arrival_chain_railing": {"runtime_family":"lower_quarter_gothic_fence","variant_key":"gothic_fence_02"},
+    "arrival_beacon": {"runtime_family":"lower_quarter_emergency_floodlight","variant_key":"emergency_floodlight_01"},
+    "direct_concrete_barrier": {"runtime_family":"lower_quarter_containment_barrier","variant_key":"containment_barrier_01"},
+    "direct_crowd_barrier": {"runtime_family":"lower_quarter_containment_barrier","variant_key":"containment_barrier_02"},
+    "direct_warning_sign": {"runtime_family":"lower_quarter_warning_sign","variant_key":"warning_sign_01"},
+    "direct_rubble_a": {"runtime_family":"lower_quarter_structural_debris","variant_key":"structural_debris_01","allow_review":true},
+    "direct_rubble_b": {"runtime_family":"lower_quarter_structural_debris","variant_key":"structural_debris_02","allow_review":true},
+    "direct_rubble_c": {"runtime_family":"lower_quarter_structural_debris","variant_key":"structural_debris_03","allow_review":true},
+    "direct_amber_w": {"runtime_family":"lower_quarter_emergency_floodlight","variant_key":"emergency_floodlight_02","allow_review":true},
+    "direct_amber_e": {"runtime_family":"lower_quarter_emergency_floodlight","variant_key":"emergency_floodlight_01"}
+  }
+}

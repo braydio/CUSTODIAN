@@ -8,6 +8,7 @@
 [ext_resource type="Script" path="res://game/world/levels/authored_navigation_provider_2d.gd" id="6"]
 [ext_resource type="Script" path="res://game/world/levels/authored/ash_bell/common/lower_quarter_native_prop_layer_2d.gd" id="7"]
 [ext_resource type="Script" path="res://game/world/levels/authored/ash_bell/common/ash_bell_catastrophe_prop_layer_2d.gd" id="8"]
+[ext_resource type="Script" path="res://game/world/levels/authored/ash_bell/common/lower_quarter_native_wall_module_layer_2d.gd" id="9"]
 
 [sub_resource type="CircleShape2D" id="ExitShape"]
 radius = 40.0
@@ -19,6 +20,9 @@ draw_placeholder_grid = false
 
 [node name="UnderlayRoot" type="Node2D" parent="."]
 [node name="BackgroundRoot" type="Node2D" parent="."]
+[node name="GothicSciFiWallModuleRoot" type="Node2D" parent="BackgroundRoot"]
+script = ExtResource("9")
+map_origin = Vector2(-2048, -1536)
 [node name="PlayableRoot" type="Node2D" parent="."]
 [node name="BlockoutGrid" type="Node2D" parent="PlayableRoot"]
 script = ExtResource("2")

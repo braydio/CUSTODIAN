@@ -1,0 +1,3997 @@
+{
+  "schema": "custodian.semantic_native_visual_manifest.v1",
+  "family_id": "lower_quarter_gothic_scifi_walls",
+  "source_master": {
+    "path": "res://asset_drop/source_work/lower_quarter_region/lower_quarter_gothic_scifi_walls__master__1448x1086.png",
+    "size": [
+      1448,
+      1086
+    ]
+  },
+  "runtime_contract": {
+    "global_source_scale": 0.5,
+    "individual_autofit": false,
+    "alpha": "binary 0/255 after cutoff 16",
+    "shared_palette_colors": 48,
+    "collision": "visual-only; existing authored topology remains authority"
+  },
+  "entries": [
+    {
+      "index": 1,
+      "id": "wall_asset_001",
+      "category": "unclassified",
+      "rect_px": [
+        14,
+        4,
+        255,
+        187
+      ],
+      "opaque_component_area": 30688,
+      "semantic_family": "facade_run",
+      "semantic_name": "gothic_scifi_facade_01",
+      "runtime_family": "lower_quarter_facade_run",
+      "variant_key": "gothic_scifi_facade_01",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_001",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_facade_run/gothic_scifi_facade_01.png",
+      "native_size": [
+        128,
+        94
+      ],
+      "canvas_size": [
+        128,
+        94
+      ],
+      "sprite_position": [
+        0.0,
+        -47.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 2,
+      "id": "wall_asset_002",
+      "category": "unclassified",
+      "rect_px": [
+        274,
+        4,
+        235,
+        183
+      ],
+      "opaque_component_area": 27880,
+      "semantic_family": "facade_run",
+      "semantic_name": "gothic_scifi_facade_02",
+      "runtime_family": "lower_quarter_facade_run",
+      "variant_key": "gothic_scifi_facade_02",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_002",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_facade_run/gothic_scifi_facade_02.png",
+      "native_size": [
+        118,
+        92
+      ],
+      "canvas_size": [
+        118,
+        92
+      ],
+      "sprite_position": [
+        0.0,
+        -46.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 3,
+      "id": "wall_asset_003",
+      "category": "unclassified",
+      "rect_px": [
+        515,
+        5,
+        47,
+        167
+      ],
+      "opaque_component_area": 5153,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_01",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_01",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_003",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_01.png",
+      "native_size": [
+        24,
+        84
+      ],
+      "canvas_size": [
+        24,
+        84
+      ],
+      "sprite_position": [
+        0.0,
+        -42.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 4,
+      "id": "wall_asset_004",
+      "category": "unclassified",
+      "rect_px": [
+        567,
+        4,
+        230,
+        189
+      ],
+      "opaque_component_area": 30370,
+      "semantic_family": "facade_run",
+      "semantic_name": "gothic_scifi_facade_03",
+      "runtime_family": "lower_quarter_facade_run",
+      "variant_key": "gothic_scifi_facade_03",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_004",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_facade_run/gothic_scifi_facade_03.png",
+      "native_size": [
+        115,
+        94
+      ],
+      "canvas_size": [
+        115,
+        94
+      ],
+      "sprite_position": [
+        0.0,
+        -47.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 5,
+      "id": "wall_asset_005",
+      "category": "unclassified",
+      "rect_px": [
+        817,
+        5,
+        58,
+        170
+      ],
+      "opaque_component_area": 7823,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_02",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_02",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_005",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_02.png",
+      "native_size": [
+        29,
+        85
+      ],
+      "canvas_size": [
+        29,
+        85
+      ],
+      "sprite_position": [
+        0.0,
+        -42.5
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 6,
+      "id": "wall_asset_006",
+      "category": "unclassified",
+      "rect_px": [
+        894,
+        6,
+        60,
+        163
+      ],
+      "opaque_component_area": 7809,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_03",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_03",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_006",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_03.png",
+      "native_size": [
+        30,
+        82
+      ],
+      "canvas_size": [
+        30,
+        82
+      ],
+      "sprite_position": [
+        0.0,
+        -41.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 7,
+      "id": "wall_asset_007",
+      "category": "unclassified",
+      "rect_px": [
+        970,
+        6,
+        55,
+        166
+      ],
+      "opaque_component_area": 7314,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_04",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_04",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_007",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_04.png",
+      "native_size": [
+        28,
+        83
+      ],
+      "canvas_size": [
+        28,
+        83
+      ],
+      "sprite_position": [
+        0.0,
+        -41.5
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 8,
+      "id": "wall_asset_008",
+      "category": "unclassified",
+      "rect_px": [
+        1051,
+        6,
+        49,
+        164
+      ],
+      "opaque_component_area": 6577,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_05",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_05",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_008",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_05.png",
+      "native_size": [
+        24,
+        82
+      ],
+      "canvas_size": [
+        24,
+        82
+      ],
+      "sprite_position": [
+        0.0,
+        -41.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 9,
+      "id": "wall_asset_009",
+      "category": "unclassified",
+      "rect_px": [
+        1118,
+        6,
+        54,
+        171
+      ],
+      "opaque_component_area": 7535,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_06",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_06",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_009",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_06.png",
+      "native_size": [
+        27,
+        86
+      ],
+      "canvas_size": [
+        27,
+        86
+      ],
+      "sprite_position": [
+        0.0,
+        -43.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 10,
+      "id": "wall_asset_010",
+      "category": "unclassified",
+      "rect_px": [
+        1191,
+        7,
+        52,
+        180
+      ],
+      "opaque_component_area": 7466,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_07",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_07",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_010",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_07.png",
+      "native_size": [
+        26,
+        90
+      ],
+      "canvas_size": [
+        26,
+        90
+      ],
+      "sprite_position": [
+        0.0,
+        -45.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 11,
+      "id": "wall_asset_011",
+      "category": "unclassified",
+      "rect_px": [
+        1264,
+        6,
+        45,
+        171
+      ],
+      "opaque_component_area": 5322,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_08",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_08",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_011",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_08.png",
+      "native_size": [
+        22,
+        86
+      ],
+      "canvas_size": [
+        22,
+        86
+      ],
+      "sprite_position": [
+        0.0,
+        -43.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 12,
+      "id": "wall_asset_012",
+      "category": "unclassified",
+      "rect_px": [
+        1314,
+        6,
+        53,
+        194
+      ],
+      "opaque_component_area": 7362,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_09",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_09",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_012",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_09.png",
+      "native_size": [
+        26,
+        97
+      ],
+      "canvas_size": [
+        26,
+        97
+      ],
+      "sprite_position": [
+        0.0,
+        -48.5
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 13,
+      "id": "wall_asset_013",
+      "category": "unclassified",
+      "rect_px": [
+        1382,
+        6,
+        54,
+        192
+      ],
+      "opaque_component_area": 7190,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_10",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_10",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_013",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_10.png",
+      "native_size": [
+        27,
+        96
+      ],
+      "canvas_size": [
+        27,
+        96
+      ],
+      "sprite_position": [
+        0.0,
+        -48.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 14,
+      "id": "wall_asset_014",
+      "category": "unclassified",
+      "rect_px": [
+        12,
+        172,
+        200,
+        167
+      ],
+      "opaque_component_area": 23174,
+      "semantic_family": "facade_run",
+      "semantic_name": "gothic_scifi_facade_04",
+      "runtime_family": "lower_quarter_facade_run",
+      "variant_key": "gothic_scifi_facade_04",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_014",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_facade_run/gothic_scifi_facade_04.png",
+      "native_size": [
+        100,
+        84
+      ],
+      "canvas_size": [
+        100,
+        84
+      ],
+      "sprite_position": [
+        0.0,
+        -42.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 15,
+      "id": "wall_asset_015",
+      "category": "unclassified",
+      "rect_px": [
+        222,
+        180,
+        161,
+        153
+      ],
+      "opaque_component_area": 18734,
+      "semantic_family": "facade_run",
+      "semantic_name": "gothic_scifi_banner_facade_01",
+      "runtime_family": "lower_quarter_facade_run",
+      "variant_key": "gothic_scifi_banner_facade_01",
+      "production_status": "explicit_only",
+      "history_layer": "containment_response",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_015",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": true,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_facade_run/gothic_scifi_banner_facade_01.png",
+      "native_size": [
+        80,
+        76
+      ],
+      "canvas_size": [
+        80,
+        76
+      ],
+      "sprite_position": [
+        0.0,
+        -38.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 16,
+      "id": "wall_asset_016",
+      "category": "unclassified",
+      "rect_px": [
+        397,
+        178,
+        167,
+        154
+      ],
+      "opaque_component_area": 19907,
+      "semantic_family": "facade_run",
+      "semantic_name": "gothic_scifi_facade_05",
+      "runtime_family": "lower_quarter_facade_run",
+      "variant_key": "gothic_scifi_facade_05",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_016",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_facade_run/gothic_scifi_facade_05.png",
+      "native_size": [
+        84,
+        77
+      ],
+      "canvas_size": [
+        84,
+        77
+      ],
+      "sprite_position": [
+        0.0,
+        -38.5
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 17,
+      "id": "wall_asset_017",
+      "category": "unclassified",
+      "rect_px": [
+        574,
+        184,
+        203,
+        162
+      ],
+      "opaque_component_area": 25174,
+      "semantic_family": "facade_run",
+      "semantic_name": "gothic_scifi_facade_06",
+      "runtime_family": "lower_quarter_facade_run",
+      "variant_key": "gothic_scifi_facade_06",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_017",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_facade_run/gothic_scifi_facade_06.png",
+      "native_size": [
+        102,
+        81
+      ],
+      "canvas_size": [
+        102,
+        81
+      ],
+      "sprite_position": [
+        0.0,
+        -40.5
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 18,
+      "id": "wall_asset_018",
+      "category": "unclassified",
+      "rect_px": [
+        788,
+        183,
+        66,
+        153
+      ],
+      "opaque_component_area": 8316,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_11",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_11",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_018",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_11.png",
+      "native_size": [
+        33,
+        76
+      ],
+      "canvas_size": [
+        33,
+        76
+      ],
+      "sprite_position": [
+        0.0,
+        -38.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 19,
+      "id": "wall_asset_019",
+      "category": "unclassified",
+      "rect_px": [
+        867,
+        184,
+        55,
+        145
+      ],
+      "opaque_component_area": 6819,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_12",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_12",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_019",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_12.png",
+      "native_size": [
+        28,
+        72
+      ],
+      "canvas_size": [
+        28,
+        72
+      ],
+      "sprite_position": [
+        0.0,
+        -36.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 20,
+      "id": "wall_asset_020",
+      "category": "unclassified",
+      "rect_px": [
+        936,
+        180,
+        60,
+        158
+      ],
+      "opaque_component_area": 7686,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_13",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_13",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_020",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_13.png",
+      "native_size": [
+        30,
+        79
+      ],
+      "canvas_size": [
+        30,
+        79
+      ],
+      "sprite_position": [
+        0.0,
+        -39.5
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 21,
+      "id": "wall_asset_021",
+      "category": "unclassified",
+      "rect_px": [
+        1011,
+        185,
+        35,
+        152
+      ],
+      "opaque_component_area": 4851,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_14",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_14",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_021",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_14.png",
+      "native_size": [
+        18,
+        76
+      ],
+      "canvas_size": [
+        18,
+        76
+      ],
+      "sprite_position": [
+        0.0,
+        -38.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 22,
+      "id": "wall_asset_022",
+      "category": "unclassified",
+      "rect_px": [
+        1059,
+        185,
+        42,
+        152
+      ],
+      "opaque_component_area": 5382,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_15",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_15",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_022",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_15.png",
+      "native_size": [
+        21,
+        76
+      ],
+      "canvas_size": [
+        21,
+        76
+      ],
+      "sprite_position": [
+        0.0,
+        -38.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 23,
+      "id": "wall_asset_023",
+      "category": "unclassified",
+      "rect_px": [
+        1117,
+        190,
+        44,
+        151
+      ],
+      "opaque_component_area": 5626,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_16",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_16",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_023",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_16.png",
+      "native_size": [
+        22,
+        76
+      ],
+      "canvas_size": [
+        22,
+        76
+      ],
+      "sprite_position": [
+        0.0,
+        -38.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 24,
+      "id": "wall_asset_024",
+      "category": "unclassified",
+      "rect_px": [
+        1178,
+        194,
+        58,
+        157
+      ],
+      "opaque_component_area": 7747,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_17",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_17",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_024",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_17.png",
+      "native_size": [
+        29,
+        78
+      ],
+      "canvas_size": [
+        29,
+        78
+      ],
+      "sprite_position": [
+        0.0,
+        -39.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 25,
+      "id": "wall_asset_025",
+      "category": "unclassified",
+      "rect_px": [
+        1257,
+        185,
+        53,
+        180
+      ],
+      "opaque_component_area": 6668,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_18",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_18",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_025",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_18.png",
+      "native_size": [
+        26,
+        90
+      ],
+      "canvas_size": [
+        26,
+        90
+      ],
+      "sprite_position": [
+        0.0,
+        -45.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 26,
+      "id": "wall_asset_026",
+      "category": "unclassified",
+      "rect_px": [
+        1324,
+        210,
+        56,
+        156
+      ],
+      "opaque_component_area": 7424,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_19",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_19",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_026",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_19.png",
+      "native_size": [
+        28,
+        78
+      ],
+      "canvas_size": [
+        28,
+        78
+      ],
+      "sprite_position": [
+        0.0,
+        -39.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 27,
+      "id": "wall_asset_027",
+      "category": "unclassified",
+      "rect_px": [
+        1392,
+        204,
+        42,
+        165
+      ],
+      "opaque_component_area": 5373,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_20",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_20",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_027",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_20.png",
+      "native_size": [
+        21,
+        82
+      ],
+      "canvas_size": [
+        21,
+        82
+      ],
+      "sprite_position": [
+        0.0,
+        -41.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 28,
+      "id": "wall_asset_028",
+      "category": "unclassified",
+      "rect_px": [
+        113,
+        338,
+        54,
+        132
+      ],
+      "opaque_component_area": 6609,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_21",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_21",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_028",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_21.png",
+      "native_size": [
+        27,
+        66
+      ],
+      "canvas_size": [
+        27,
+        66
+      ],
+      "sprite_position": [
+        0.0,
+        -33.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 29,
+      "id": "wall_asset_029",
+      "category": "unclassified",
+      "rect_px": [
+        183,
+        337,
+        57,
+        134
+      ],
+      "opaque_component_area": 6913,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_22",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_22",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_029",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_22.png",
+      "native_size": [
+        28,
+        67
+      ],
+      "canvas_size": [
+        28,
+        67
+      ],
+      "sprite_position": [
+        0.0,
+        -33.5
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 30,
+      "id": "wall_asset_030",
+      "category": "unclassified",
+      "rect_px": [
+        389,
+        322,
+        145,
+        161
+      ],
+      "opaque_component_area": 17558,
+      "semantic_family": "facade_run",
+      "semantic_name": "gothic_scifi_facade_07",
+      "runtime_family": "lower_quarter_facade_run",
+      "variant_key": "gothic_scifi_facade_07",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_030",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_facade_run/gothic_scifi_facade_07.png",
+      "native_size": [
+        72,
+        80
+      ],
+      "canvas_size": [
+        72,
+        80
+      ],
+      "sprite_position": [
+        0.0,
+        -40.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 31,
+      "id": "wall_asset_031",
+      "category": "unclassified",
+      "rect_px": [
+        13,
+        336,
+        79,
+        150
+      ],
+      "opaque_component_area": 8788,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_23",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_23",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_031",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_23.png",
+      "native_size": [
+        40,
+        75
+      ],
+      "canvas_size": [
+        40,
+        75
+      ],
+      "sprite_position": [
+        0.0,
+        -37.5
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 32,
+      "id": "wall_asset_032",
+      "category": "unclassified",
+      "rect_px": [
+        253,
+        332,
+        62,
+        147
+      ],
+      "opaque_component_area": 8133,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_24",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_24",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_032",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_24.png",
+      "native_size": [
+        31,
+        74
+      ],
+      "canvas_size": [
+        31,
+        74
+      ],
+      "sprite_position": [
+        0.0,
+        -37.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 33,
+      "id": "wall_asset_033",
+      "category": "unclassified",
+      "rect_px": [
+        331,
+        339,
+        50,
+        138
+      ],
+      "opaque_component_area": 6196,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_25",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_25",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_033",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_25.png",
+      "native_size": [
+        25,
+        69
+      ],
+      "canvas_size": [
+        25,
+        69
+      ],
+      "sprite_position": [
+        0.0,
+        -34.5
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 34,
+      "id": "wall_asset_034",
+      "category": "unclassified",
+      "rect_px": [
+        544,
+        330,
+        189,
+        171
+      ],
+      "opaque_component_area": 22809,
+      "semantic_family": "facade_run",
+      "semantic_name": "gothic_scifi_banner_facade_02",
+      "runtime_family": "lower_quarter_facade_run",
+      "variant_key": "gothic_scifi_banner_facade_02",
+      "production_status": "explicit_only",
+      "history_layer": "containment_response",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_034",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": true,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_facade_run/gothic_scifi_banner_facade_02.png",
+      "native_size": [
+        94,
+        86
+      ],
+      "canvas_size": [
+        94,
+        86
+      ],
+      "sprite_position": [
+        0.0,
+        -43.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 35,
+      "id": "wall_asset_035",
+      "category": "unclassified",
+      "rect_px": [
+        750,
+        339,
+        113,
+        159
+      ],
+      "opaque_component_area": 15370,
+      "semantic_family": "damage_facade",
+      "semantic_name": "gothic_scifi_breached_facade_01",
+      "runtime_family": "lower_quarter_damage_facade",
+      "variant_key": "gothic_scifi_breached_facade_01",
+      "production_status": "explicit_only",
+      "history_layer": "catastrophe_aftermath",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_035",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": true,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_damage_facade/gothic_scifi_breached_facade_01.png",
+      "native_size": [
+        56,
+        80
+      ],
+      "canvas_size": [
+        56,
+        80
+      ],
+      "sprite_position": [
+        0.0,
+        -40.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 36,
+      "id": "wall_asset_036",
+      "category": "unclassified",
+      "rect_px": [
+        879,
+        358,
+        68,
+        150
+      ],
+      "opaque_component_area": 7956,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_26",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_26",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_036",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_26.png",
+      "native_size": [
+        34,
+        75
+      ],
+      "canvas_size": [
+        34,
+        75
+      ],
+      "sprite_position": [
+        0.0,
+        -37.5
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 37,
+      "id": "wall_asset_037",
+      "category": "unclassified",
+      "rect_px": [
+        964,
+        345,
+        67,
+        168
+      ],
+      "opaque_component_area": 9483,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_27",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_27",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_037",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_27.png",
+      "native_size": [
+        34,
+        84
+      ],
+      "canvas_size": [
+        34,
+        84
+      ],
+      "sprite_position": [
+        0.0,
+        -42.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 38,
+      "id": "wall_asset_038",
+      "category": "unclassified",
+      "rect_px": [
+        1045,
+        346,
+        62,
+        160
+      ],
+      "opaque_component_area": 8318,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_28",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_28",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_038",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_28.png",
+      "native_size": [
+        31,
+        80
+      ],
+      "canvas_size": [
+        31,
+        80
+      ],
+      "sprite_position": [
+        0.0,
+        -40.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 39,
+      "id": "wall_asset_039",
+      "category": "unclassified",
+      "rect_px": [
+        1124,
+        348,
+        58,
+        166
+      ],
+      "opaque_component_area": 6883,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_29",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_29",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_039",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_29.png",
+      "native_size": [
+        29,
+        83
+      ],
+      "canvas_size": [
+        29,
+        83
+      ],
+      "sprite_position": [
+        0.0,
+        -41.5
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 40,
+      "id": "wall_asset_040",
+      "category": "unclassified",
+      "rect_px": [
+        1192,
+        351,
+        55,
+        181
+      ],
+      "opaque_component_area": 7233,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_30",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_30",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_040",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_30.png",
+      "native_size": [
+        28,
+        90
+      ],
+      "canvas_size": [
+        28,
+        90
+      ],
+      "sprite_position": [
+        0.0,
+        -45.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 41,
+      "id": "wall_asset_041",
+      "category": "unclassified",
+      "rect_px": [
+        1259,
+        381,
+        48,
+        146
+      ],
+      "opaque_component_area": 4837,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_31",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_31",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_041",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_31.png",
+      "native_size": [
+        24,
+        73
+      ],
+      "canvas_size": [
+        24,
+        73
+      ],
+      "sprite_position": [
+        0.0,
+        -36.5
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 42,
+      "id": "wall_asset_042",
+      "category": "unclassified",
+      "rect_px": [
+        1316,
+        381,
+        45,
+        141
+      ],
+      "opaque_component_area": 5129,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_32",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_32",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_042",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_32.png",
+      "native_size": [
+        22,
+        70
+      ],
+      "canvas_size": [
+        22,
+        70
+      ],
+      "sprite_position": [
+        0.0,
+        -35.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 43,
+      "id": "wall_asset_043",
+      "category": "unclassified",
+      "rect_px": [
+        1373,
+        380,
+        59,
+        135
+      ],
+      "opaque_component_area": 5945,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_33",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_33",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_043",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_33.png",
+      "native_size": [
+        30,
+        68
+      ],
+      "canvas_size": [
+        30,
+        68
+      ],
+      "sprite_position": [
+        0.0,
+        -34.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 44,
+      "id": "wall_asset_044",
+      "category": "unclassified",
+      "rect_px": [
+        18,
+        479,
+        98,
+        190
+      ],
+      "opaque_component_area": 15804,
+      "semantic_family": "opening",
+      "semantic_name": "gothic_scifi_opening_01",
+      "runtime_family": "lower_quarter_opening",
+      "variant_key": "gothic_scifi_opening_01",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_044",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_opening/gothic_scifi_opening_01.png",
+      "native_size": [
+        49,
+        95
+      ],
+      "canvas_size": [
+        49,
+        95
+      ],
+      "sprite_position": [
+        0.0,
+        -47.5
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 45,
+      "id": "wall_asset_045",
+      "category": "unclassified",
+      "rect_px": [
+        135,
+        479,
+        106,
+        187
+      ],
+      "opaque_component_area": 17603,
+      "semantic_family": "opening",
+      "semantic_name": "gothic_scifi_opening_02",
+      "runtime_family": "lower_quarter_opening",
+      "variant_key": "gothic_scifi_opening_02",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_045",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_opening/gothic_scifi_opening_02.png",
+      "native_size": [
+        53,
+        94
+      ],
+      "canvas_size": [
+        53,
+        94
+      ],
+      "sprite_position": [
+        0.0,
+        -47.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 46,
+      "id": "wall_asset_046",
+      "category": "unclassified",
+      "rect_px": [
+        254,
+        482,
+        130,
+        192
+      ],
+      "opaque_component_area": 20653,
+      "semantic_family": "opening",
+      "semantic_name": "gothic_scifi_opening_03",
+      "runtime_family": "lower_quarter_opening",
+      "variant_key": "gothic_scifi_opening_03",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_046",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_opening/gothic_scifi_opening_03.png",
+      "native_size": [
+        65,
+        96
+      ],
+      "canvas_size": [
+        65,
+        96
+      ],
+      "sprite_position": [
+        0.0,
+        -48.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 47,
+      "id": "wall_asset_047",
+      "category": "unclassified",
+      "rect_px": [
+        394,
+        486,
+        121,
+        190
+      ],
+      "opaque_component_area": 17534,
+      "semantic_family": "opening",
+      "semantic_name": "gothic_scifi_opening_04",
+      "runtime_family": "lower_quarter_opening",
+      "variant_key": "gothic_scifi_opening_04",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_047",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_opening/gothic_scifi_opening_04.png",
+      "native_size": [
+        60,
+        95
+      ],
+      "canvas_size": [
+        60,
+        95
+      ],
+      "sprite_position": [
+        0.0,
+        -47.5
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 48,
+      "id": "wall_asset_048",
+      "category": "unclassified",
+      "rect_px": [
+        530,
+        501,
+        160,
+        173
+      ],
+      "opaque_component_area": 19129,
+      "semantic_family": "opening",
+      "semantic_name": "gothic_scifi_opening_05",
+      "runtime_family": "lower_quarter_opening",
+      "variant_key": "gothic_scifi_opening_05",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_048",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_opening/gothic_scifi_opening_05.png",
+      "native_size": [
+        80,
+        86
+      ],
+      "canvas_size": [
+        80,
+        86
+      ],
+      "sprite_position": [
+        0.0,
+        -43.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 49,
+      "id": "wall_asset_049",
+      "category": "unclassified",
+      "rect_px": [
+        706,
+        499,
+        125,
+        181
+      ],
+      "opaque_component_area": 15297,
+      "semantic_family": "opening",
+      "semantic_name": "gothic_scifi_opening_06",
+      "runtime_family": "lower_quarter_opening",
+      "variant_key": "gothic_scifi_opening_06",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_049",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_opening/gothic_scifi_opening_06.png",
+      "native_size": [
+        62,
+        90
+      ],
+      "canvas_size": [
+        62,
+        90
+      ],
+      "sprite_position": [
+        0.0,
+        -45.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 50,
+      "id": "wall_asset_050",
+      "category": "unclassified",
+      "rect_px": [
+        843,
+        515,
+        120,
+        185
+      ],
+      "opaque_component_area": 12623,
+      "semantic_family": "opening_damage",
+      "semantic_name": "gothic_scifi_broken_opening_01",
+      "runtime_family": "lower_quarter_opening_damage",
+      "variant_key": "gothic_scifi_broken_opening_01",
+      "production_status": "explicit_only",
+      "history_layer": "catastrophe_aftermath",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_050",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": true,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_opening_damage/gothic_scifi_broken_opening_01.png",
+      "native_size": [
+        60,
+        92
+      ],
+      "canvas_size": [
+        60,
+        92
+      ],
+      "sprite_position": [
+        0.0,
+        -46.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 51,
+      "id": "wall_asset_051",
+      "category": "unclassified",
+      "rect_px": [
+        977,
+        512,
+        91,
+        186
+      ],
+      "opaque_component_area": 9700,
+      "semantic_family": "opening_damage",
+      "semantic_name": "gothic_scifi_broken_opening_02",
+      "runtime_family": "lower_quarter_opening_damage",
+      "variant_key": "gothic_scifi_broken_opening_02",
+      "production_status": "explicit_only",
+      "history_layer": "catastrophe_aftermath",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_051",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": true,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_opening_damage/gothic_scifi_broken_opening_02.png",
+      "native_size": [
+        46,
+        93
+      ],
+      "canvas_size": [
+        46,
+        93
+      ],
+      "sprite_position": [
+        0.0,
+        -46.5
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 52,
+      "id": "wall_asset_052",
+      "category": "unclassified",
+      "rect_px": [
+        1080,
+        513,
+        51,
+        174
+      ],
+      "opaque_component_area": 7212,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_34",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_34",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_052",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_34.png",
+      "native_size": [
+        26,
+        87
+      ],
+      "canvas_size": [
+        26,
+        87
+      ],
+      "sprite_position": [
+        0.0,
+        -43.5
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 53,
+      "id": "wall_asset_053",
+      "category": "unclassified",
+      "rect_px": [
+        1147,
+        520,
+        47,
+        171
+      ],
+      "opaque_component_area": 6314,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_35",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_35",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_053",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_35.png",
+      "native_size": [
+        24,
+        86
+      ],
+      "canvas_size": [
+        24,
+        86
+      ],
+      "sprite_position": [
+        0.0,
+        -43.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 54,
+      "id": "wall_asset_054",
+      "category": "unclassified",
+      "rect_px": [
+        1210,
+        544,
+        37,
+        116
+      ],
+      "opaque_component_area": 3885,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_36",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_36",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_054",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_36.png",
+      "native_size": [
+        18,
+        58
+      ],
+      "canvas_size": [
+        18,
+        58
+      ],
+      "sprite_position": [
+        0.0,
+        -29.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 55,
+      "id": "wall_asset_055",
+      "category": "unclassified",
+      "rect_px": [
+        1260,
+        531,
+        36,
+        135
+      ],
+      "opaque_component_area": 3707,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_37",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_37",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_055",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_37.png",
+      "native_size": [
+        18,
+        68
+      ],
+      "canvas_size": [
+        18,
+        68
+      ],
+      "sprite_position": [
+        0.0,
+        -34.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 56,
+      "id": "wall_asset_056",
+      "category": "unclassified",
+      "rect_px": [
+        1314,
+        529,
+        42,
+        131
+      ],
+      "opaque_component_area": 4112,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_38",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_38",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_056",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_38.png",
+      "native_size": [
+        21,
+        66
+      ],
+      "canvas_size": [
+        21,
+        66
+      ],
+      "sprite_position": [
+        0.0,
+        -33.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 57,
+      "id": "wall_asset_057",
+      "category": "unclassified",
+      "rect_px": [
+        1370,
+        521,
+        59,
+        155
+      ],
+      "opaque_component_area": 7525,
+      "semantic_family": "pier_panel",
+      "semantic_name": "gothic_scifi_pier_39",
+      "runtime_family": "lower_quarter_pier_panel",
+      "variant_key": "gothic_scifi_pier_39",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_057",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_pier_panel/gothic_scifi_pier_39.png",
+      "native_size": [
+        30,
+        78
+      ],
+      "canvas_size": [
+        30,
+        78
+      ],
+      "sprite_position": [
+        0.0,
+        -39.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 58,
+      "id": "wall_asset_058",
+      "category": "unclassified",
+      "rect_px": [
+        11,
+        659,
+        132,
+        192
+      ],
+      "opaque_component_area": 18613,
+      "semantic_family": "corner",
+      "semantic_name": "gothic_scifi_corner_01",
+      "runtime_family": "lower_quarter_corner",
+      "variant_key": "gothic_scifi_corner_01",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_058",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_corner/gothic_scifi_corner_01.png",
+      "native_size": [
+        66,
+        96
+      ],
+      "canvas_size": [
+        66,
+        96
+      ],
+      "sprite_position": [
+        0.0,
+        -48.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 59,
+      "id": "wall_asset_059",
+      "category": "unclassified",
+      "rect_px": [
+        153,
+        668,
+        94,
+        169
+      ],
+      "opaque_component_area": 11915,
+      "semantic_family": "corner",
+      "semantic_name": "gothic_scifi_corner_02",
+      "runtime_family": "lower_quarter_corner",
+      "variant_key": "gothic_scifi_corner_02",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_059",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_corner/gothic_scifi_corner_02.png",
+      "native_size": [
+        47,
+        84
+      ],
+      "canvas_size": [
+        47,
+        84
+      ],
+      "sprite_position": [
+        0.0,
+        -42.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 60,
+      "id": "wall_asset_060",
+      "category": "unclassified",
+      "rect_px": [
+        255,
+        681,
+        126,
+        158
+      ],
+      "opaque_component_area": 15495,
+      "semantic_family": "corner",
+      "semantic_name": "gothic_scifi_corner_03",
+      "runtime_family": "lower_quarter_corner",
+      "variant_key": "gothic_scifi_corner_03",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_060",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_corner/gothic_scifi_corner_03.png",
+      "native_size": [
+        63,
+        79
+      ],
+      "canvas_size": [
+        63,
+        79
+      ],
+      "sprite_position": [
+        0.0,
+        -39.5
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 61,
+      "id": "wall_asset_061",
+      "category": "unclassified",
+      "rect_px": [
+        397,
+        670,
+        120,
+        166
+      ],
+      "opaque_component_area": 14664,
+      "semantic_family": "corner",
+      "semantic_name": "gothic_scifi_corner_04",
+      "runtime_family": "lower_quarter_corner",
+      "variant_key": "gothic_scifi_corner_04",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_061",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_corner/gothic_scifi_corner_04.png",
+      "native_size": [
+        60,
+        83
+      ],
+      "canvas_size": [
+        60,
+        83
+      ],
+      "sprite_position": [
+        0.0,
+        -41.5
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 62,
+      "id": "wall_asset_062",
+      "category": "unclassified",
+      "rect_px": [
+        531,
+        667,
+        149,
+        182
+      ],
+      "opaque_component_area": 18768,
+      "semantic_family": "corner",
+      "semantic_name": "gothic_scifi_corner_05",
+      "runtime_family": "lower_quarter_corner",
+      "variant_key": "gothic_scifi_corner_05",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_062",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_corner/gothic_scifi_corner_05.png",
+      "native_size": [
+        74,
+        91
+      ],
+      "canvas_size": [
+        74,
+        91
+      ],
+      "sprite_position": [
+        0.0,
+        -45.5
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 63,
+      "id": "wall_asset_063",
+      "category": "unclassified",
+      "rect_px": [
+        1075,
+        696,
+        65,
+        137
+      ],
+      "opaque_component_area": 6615,
+      "semantic_family": "damage_transition",
+      "semantic_name": "gothic_scifi_edge_damage_01",
+      "runtime_family": "lower_quarter_damage_transition",
+      "variant_key": "gothic_scifi_edge_damage_01",
+      "production_status": "explicit_only",
+      "history_layer": "catastrophe_aftermath",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_063",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": true,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_damage_transition/gothic_scifi_edge_damage_01.png",
+      "native_size": [
+        32,
+        68
+      ],
+      "canvas_size": [
+        32,
+        68
+      ],
+      "sprite_position": [
+        0.0,
+        -34.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 64,
+      "id": "wall_asset_064",
+      "category": "unclassified",
+      "rect_px": [
+        1154,
+        676,
+        125,
+        152
+      ],
+      "opaque_component_area": 13593,
+      "semantic_family": "damage_transition",
+      "semantic_name": "gothic_scifi_edge_damage_02",
+      "runtime_family": "lower_quarter_damage_transition",
+      "variant_key": "gothic_scifi_edge_damage_02",
+      "production_status": "explicit_only",
+      "history_layer": "catastrophe_aftermath",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_064",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": true,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_damage_transition/gothic_scifi_edge_damage_02.png",
+      "native_size": [
+        62,
+        76
+      ],
+      "canvas_size": [
+        62,
+        76
+      ],
+      "sprite_position": [
+        0.0,
+        -38.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 65,
+      "id": "wall_asset_065",
+      "category": "unclassified",
+      "rect_px": [
+        1286,
+        669,
+        116,
+        165
+      ],
+      "opaque_component_area": 10978,
+      "semantic_family": "damage_transition",
+      "semantic_name": "gothic_scifi_edge_damage_03",
+      "runtime_family": "lower_quarter_damage_transition",
+      "variant_key": "gothic_scifi_edge_damage_03",
+      "production_status": "explicit_only",
+      "history_layer": "catastrophe_aftermath",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_065",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": true,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_damage_transition/gothic_scifi_edge_damage_03.png",
+      "native_size": [
+        58,
+        82
+      ],
+      "canvas_size": [
+        58,
+        82
+      ],
+      "sprite_position": [
+        0.0,
+        -41.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 66,
+      "id": "wall_asset_066",
+      "category": "unclassified",
+      "rect_px": [
+        1387,
+        682,
+        48,
+        122
+      ],
+      "opaque_component_area": 4275,
+      "semantic_family": "damage_transition",
+      "semantic_name": "gothic_scifi_edge_damage_04",
+      "runtime_family": "lower_quarter_damage_transition",
+      "variant_key": "gothic_scifi_edge_damage_04",
+      "production_status": "explicit_only",
+      "history_layer": "catastrophe_aftermath",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_066",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": true,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_damage_transition/gothic_scifi_edge_damage_04.png",
+      "native_size": [
+        24,
+        61
+      ],
+      "canvas_size": [
+        24,
+        61
+      ],
+      "sprite_position": [
+        0.0,
+        -30.5
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 67,
+      "id": "wall_asset_067",
+      "category": "unclassified",
+      "rect_px": [
+        692,
+        692,
+        117,
+        147
+      ],
+      "opaque_component_area": 13970,
+      "semantic_family": "corner",
+      "semantic_name": "gothic_scifi_corner_06",
+      "runtime_family": "lower_quarter_corner",
+      "variant_key": "gothic_scifi_corner_06",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_067",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_corner/gothic_scifi_corner_06.png",
+      "native_size": [
+        58,
+        74
+      ],
+      "canvas_size": [
+        58,
+        74
+      ],
+      "sprite_position": [
+        0.0,
+        -37.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 68,
+      "id": "wall_asset_068",
+      "category": "unclassified",
+      "rect_px": [
+        818,
+        688,
+        135,
+        172
+      ],
+      "opaque_component_area": 14554,
+      "semantic_family": "corner",
+      "semantic_name": "gothic_scifi_corner_07",
+      "runtime_family": "lower_quarter_corner",
+      "variant_key": "gothic_scifi_corner_07",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_068",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_corner/gothic_scifi_corner_07.png",
+      "native_size": [
+        68,
+        86
+      ],
+      "canvas_size": [
+        68,
+        86
+      ],
+      "sprite_position": [
+        0.0,
+        -43.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 69,
+      "id": "wall_asset_069",
+      "category": "unclassified",
+      "rect_px": [
+        964,
+        697,
+        113,
+        164
+      ],
+      "opaque_component_area": 13582,
+      "semantic_family": "damage_transition",
+      "semantic_name": "gothic_scifi_edge_damage_05",
+      "runtime_family": "lower_quarter_damage_transition",
+      "variant_key": "gothic_scifi_edge_damage_05",
+      "production_status": "explicit_only",
+      "history_layer": "catastrophe_aftermath",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_069",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": true,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_damage_transition/gothic_scifi_edge_damage_05.png",
+      "native_size": [
+        56,
+        82
+      ],
+      "canvas_size": [
+        56,
+        82
+      ],
+      "sprite_position": [
+        0.0,
+        -41.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 70,
+      "id": "wall_asset_070",
+      "category": "unclassified",
+      "rect_px": [
+        13,
+        843,
+        128,
+        73
+      ],
+      "opaque_component_area": 4565,
+      "semantic_family": "wall_cap",
+      "semantic_name": "gothic_scifi_cap_01",
+      "runtime_family": "lower_quarter_wall_cap",
+      "variant_key": "gothic_scifi_cap_01",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_top_center",
+      "source_asset_id": "wall_asset_070",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_wall_cap/gothic_scifi_cap_01.png",
+      "native_size": [
+        64,
+        36
+      ],
+      "canvas_size": [
+        64,
+        36
+      ],
+      "sprite_position": [
+        0.0,
+        18.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 71,
+      "id": "wall_asset_071",
+      "category": "unclassified",
+      "rect_px": [
+        12,
+        892,
+        147,
+        92
+      ],
+      "opaque_component_area": 5549,
+      "semantic_family": "spiked_parapet",
+      "semantic_name": "gothic_scifi_spiked_parapet_01",
+      "runtime_family": "lower_quarter_spiked_parapet",
+      "variant_key": "gothic_scifi_spiked_parapet_01",
+      "production_status": "explicit_only",
+      "history_layer": "containment_response",
+      "role": "architectural_module",
+      "anchor_mode": "wall_top_center",
+      "source_asset_id": "wall_asset_071",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": true,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_spiked_parapet/gothic_scifi_spiked_parapet_01.png",
+      "native_size": [
+        74,
+        46
+      ],
+      "canvas_size": [
+        74,
+        46
+      ],
+      "sprite_position": [
+        0.0,
+        23.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 72,
+      "id": "wall_asset_072",
+      "category": "unclassified",
+      "rect_px": [
+        160,
+        838,
+        104,
+        65
+      ],
+      "opaque_component_area": 3585,
+      "semantic_family": "wall_cap",
+      "semantic_name": "gothic_scifi_cap_02",
+      "runtime_family": "lower_quarter_wall_cap",
+      "variant_key": "gothic_scifi_cap_02",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_top_center",
+      "source_asset_id": "wall_asset_072",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_wall_cap/gothic_scifi_cap_02.png",
+      "native_size": [
+        52,
+        32
+      ],
+      "canvas_size": [
+        52,
+        32
+      ],
+      "sprite_position": [
+        0.0,
+        16.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 73,
+      "id": "wall_asset_073",
+      "category": "unclassified",
+      "rect_px": [
+        266,
+        844,
+        100,
+        67
+      ],
+      "opaque_component_area": 3566,
+      "semantic_family": "wall_cap",
+      "semantic_name": "gothic_scifi_cap_03",
+      "runtime_family": "lower_quarter_wall_cap",
+      "variant_key": "gothic_scifi_cap_03",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_top_center",
+      "source_asset_id": "wall_asset_073",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_wall_cap/gothic_scifi_cap_03.png",
+      "native_size": [
+        50,
+        34
+      ],
+      "canvas_size": [
+        50,
+        34
+      ],
+      "sprite_position": [
+        0.0,
+        17.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 74,
+      "id": "wall_asset_074",
+      "category": "unclassified",
+      "rect_px": [
+        378,
+        845,
+        65,
+        58
+      ],
+      "opaque_component_area": 2551,
+      "semantic_family": "wall_cap",
+      "semantic_name": "gothic_scifi_cap_04",
+      "runtime_family": "lower_quarter_wall_cap",
+      "variant_key": "gothic_scifi_cap_04",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_top_center",
+      "source_asset_id": "wall_asset_074",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_wall_cap/gothic_scifi_cap_04.png",
+      "native_size": [
+        32,
+        29
+      ],
+      "canvas_size": [
+        32,
+        29
+      ],
+      "sprite_position": [
+        0.0,
+        14.5
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 75,
+      "id": "wall_asset_075",
+      "category": "unclassified",
+      "rect_px": [
+        456,
+        844,
+        71,
+        59
+      ],
+      "opaque_component_area": 2796,
+      "semantic_family": "wall_cap",
+      "semantic_name": "gothic_scifi_cap_05",
+      "runtime_family": "lower_quarter_wall_cap",
+      "variant_key": "gothic_scifi_cap_05",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_top_center",
+      "source_asset_id": "wall_asset_075",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_wall_cap/gothic_scifi_cap_05.png",
+      "native_size": [
+        36,
+        30
+      ],
+      "canvas_size": [
+        36,
+        30
+      ],
+      "sprite_position": [
+        0.0,
+        15.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 76,
+      "id": "wall_asset_076",
+      "category": "unclassified",
+      "rect_px": [
+        542,
+        842,
+        54,
+        82
+      ],
+      "opaque_component_area": 3580,
+      "semantic_family": "wall_base",
+      "semantic_name": "gothic_scifi_base_01",
+      "runtime_family": "lower_quarter_wall_base",
+      "variant_key": "gothic_scifi_base_01",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_076",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_wall_base/gothic_scifi_base_01.png",
+      "native_size": [
+        27,
+        41
+      ],
+      "canvas_size": [
+        27,
+        41
+      ],
+      "sprite_position": [
+        0.0,
+        -20.5
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 77,
+      "id": "wall_asset_077",
+      "category": "unclassified",
+      "rect_px": [
+        609,
+        848,
+        44,
+        74
+      ],
+      "opaque_component_area": 2576,
+      "semantic_family": "wall_base",
+      "semantic_name": "gothic_scifi_base_02",
+      "runtime_family": "lower_quarter_wall_base",
+      "variant_key": "gothic_scifi_base_02",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_077",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_wall_base/gothic_scifi_base_02.png",
+      "native_size": [
+        22,
+        37
+      ],
+      "canvas_size": [
+        22,
+        37
+      ],
+      "sprite_position": [
+        0.0,
+        -18.5
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 78,
+      "id": "wall_asset_078",
+      "category": "unclassified",
+      "rect_px": [
+        663,
+        854,
+        46,
+        70
+      ],
+      "opaque_component_area": 2589,
+      "semantic_family": "wall_base",
+      "semantic_name": "gothic_scifi_base_03",
+      "runtime_family": "lower_quarter_wall_base",
+      "variant_key": "gothic_scifi_base_03",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_078",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_wall_base/gothic_scifi_base_03.png",
+      "native_size": [
+        23,
+        35
+      ],
+      "canvas_size": [
+        23,
+        35
+      ],
+      "sprite_position": [
+        0.0,
+        -17.5
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 79,
+      "id": "wall_asset_079",
+      "category": "unclassified",
+      "rect_px": [
+        728,
+        837,
+        62,
+        74
+      ],
+      "opaque_component_area": 3341,
+      "semantic_family": "wall_base",
+      "semantic_name": "gothic_scifi_base_04",
+      "runtime_family": "lower_quarter_wall_base",
+      "variant_key": "gothic_scifi_base_04",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_079",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_wall_base/gothic_scifi_base_04.png",
+      "native_size": [
+        31,
+        37
+      ],
+      "canvas_size": [
+        31,
+        37
+      ],
+      "sprite_position": [
+        0.0,
+        -18.5
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 80,
+      "id": "wall_asset_080",
+      "category": "unclassified",
+      "rect_px": [
+        1083,
+        840,
+        70,
+        171
+      ],
+      "opaque_component_area": 9600,
+      "semantic_family": "damage_transition",
+      "semantic_name": "gothic_scifi_collapse_01",
+      "runtime_family": "lower_quarter_damage_transition",
+      "variant_key": "gothic_scifi_collapse_01",
+      "production_status": "explicit_only",
+      "history_layer": "catastrophe_aftermath",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_080",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": true,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_damage_transition/gothic_scifi_collapse_01.png",
+      "native_size": [
+        35,
+        86
+      ],
+      "canvas_size": [
+        35,
+        86
+      ],
+      "sprite_position": [
+        0.0,
+        -43.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 81,
+      "id": "wall_asset_081",
+      "category": "unclassified",
+      "rect_px": [
+        1360,
+        825,
+        75,
+        88
+      ],
+      "opaque_component_area": 4584,
+      "semantic_family": "damage_transition",
+      "semantic_name": "gothic_scifi_collapse_02",
+      "runtime_family": "lower_quarter_damage_transition",
+      "variant_key": "gothic_scifi_collapse_02",
+      "production_status": "explicit_only",
+      "history_layer": "catastrophe_aftermath",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_081",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": true,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_damage_transition/gothic_scifi_collapse_02.png",
+      "native_size": [
+        38,
+        44
+      ],
+      "canvas_size": [
+        38,
+        44
+      ],
+      "sprite_position": [
+        0.0,
+        -22.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 82,
+      "id": "wall_asset_082",
+      "category": "unclassified",
+      "rect_px": [
+        16,
+        912,
+        210,
+        156
+      ],
+      "opaque_component_area": 15428,
+      "semantic_family": "spiked_parapet",
+      "semantic_name": "gothic_scifi_spiked_parapet_02",
+      "runtime_family": "lower_quarter_spiked_parapet",
+      "variant_key": "gothic_scifi_spiked_parapet_02",
+      "production_status": "explicit_only",
+      "history_layer": "containment_response",
+      "role": "architectural_module",
+      "anchor_mode": "wall_top_center",
+      "source_asset_id": "wall_asset_082",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": true,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_spiked_parapet/gothic_scifi_spiked_parapet_02.png",
+      "native_size": [
+        105,
+        78
+      ],
+      "canvas_size": [
+        105,
+        78
+      ],
+      "sprite_position": [
+        0.0,
+        39.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 83,
+      "id": "wall_asset_083",
+      "category": "unclassified",
+      "rect_px": [
+        214,
+        900,
+        159,
+        92
+      ],
+      "opaque_component_area": 5476,
+      "semantic_family": "spiked_parapet",
+      "semantic_name": "gothic_scifi_spiked_parapet_03",
+      "runtime_family": "lower_quarter_spiked_parapet",
+      "variant_key": "gothic_scifi_spiked_parapet_03",
+      "production_status": "explicit_only",
+      "history_layer": "containment_response",
+      "role": "architectural_module",
+      "anchor_mode": "wall_top_center",
+      "source_asset_id": "wall_asset_083",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": true,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_spiked_parapet/gothic_scifi_spiked_parapet_03.png",
+      "native_size": [
+        80,
+        46
+      ],
+      "canvas_size": [
+        80,
+        46
+      ],
+      "sprite_position": [
+        0.0,
+        23.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 84,
+      "id": "wall_asset_084",
+      "category": "unclassified",
+      "rect_px": [
+        248,
+        962,
+        112,
+        98
+      ],
+      "opaque_component_area": 5881,
+      "semantic_family": "wall_cap",
+      "semantic_name": "gothic_scifi_cap_06",
+      "runtime_family": "lower_quarter_wall_cap",
+      "variant_key": "gothic_scifi_cap_06",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_top_center",
+      "source_asset_id": "wall_asset_084",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_wall_cap/gothic_scifi_cap_06.png",
+      "native_size": [
+        56,
+        49
+      ],
+      "canvas_size": [
+        56,
+        49
+      ],
+      "sprite_position": [
+        0.0,
+        24.5
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 85,
+      "id": "wall_asset_085",
+      "category": "unclassified",
+      "rect_px": [
+        343,
+        994,
+        88,
+        70
+      ],
+      "opaque_component_area": 3392,
+      "semantic_family": "wall_cap",
+      "semantic_name": "gothic_scifi_cap_07",
+      "runtime_family": "lower_quarter_wall_cap",
+      "variant_key": "gothic_scifi_cap_07",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_top_center",
+      "source_asset_id": "wall_asset_085",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_wall_cap/gothic_scifi_cap_07.png",
+      "native_size": [
+        44,
+        35
+      ],
+      "canvas_size": [
+        44,
+        35
+      ],
+      "sprite_position": [
+        0.0,
+        17.5
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 86,
+      "id": "wall_asset_086",
+      "category": "unclassified",
+      "rect_px": [
+        371,
+        907,
+        80,
+        87
+      ],
+      "opaque_component_area": 4268,
+      "semantic_family": "damage_transition",
+      "semantic_name": "gothic_scifi_collapse_03",
+      "runtime_family": "lower_quarter_damage_transition",
+      "variant_key": "gothic_scifi_collapse_03",
+      "production_status": "explicit_only",
+      "history_layer": "catastrophe_aftermath",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_086",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": true,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_damage_transition/gothic_scifi_collapse_03.png",
+      "native_size": [
+        40,
+        44
+      ],
+      "canvas_size": [
+        40,
+        44
+      ],
+      "sprite_position": [
+        0.0,
+        -22.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 87,
+      "id": "wall_asset_087",
+      "category": "unclassified",
+      "rect_px": [
+        441,
+        983,
+        67,
+        80
+      ],
+      "opaque_component_area": 3668,
+      "semantic_family": "wall_base",
+      "semantic_name": "gothic_scifi_base_05",
+      "runtime_family": "lower_quarter_wall_base",
+      "variant_key": "gothic_scifi_base_05",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_087",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_wall_base/gothic_scifi_base_05.png",
+      "native_size": [
+        34,
+        40
+      ],
+      "canvas_size": [
+        34,
+        40
+      ],
+      "sprite_position": [
+        0.0,
+        -20.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 88,
+      "id": "wall_asset_088",
+      "category": "unclassified",
+      "rect_px": [
+        464,
+        914,
+        56,
+        65
+      ],
+      "opaque_component_area": 2887,
+      "semantic_family": "wall_base",
+      "semantic_name": "gothic_scifi_base_06",
+      "runtime_family": "lower_quarter_wall_base",
+      "variant_key": "gothic_scifi_base_06",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_088",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_wall_base/gothic_scifi_base_06.png",
+      "native_size": [
+        28,
+        32
+      ],
+      "canvas_size": [
+        28,
+        32
+      ],
+      "sprite_position": [
+        0.0,
+        -16.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 89,
+      "id": "wall_asset_089",
+      "category": "unclassified",
+      "rect_px": [
+        518,
+        1003,
+        67,
+        50
+      ],
+      "opaque_component_area": 1981,
+      "semantic_family": "wall_cap",
+      "semantic_name": "gothic_scifi_cap_08",
+      "runtime_family": "lower_quarter_wall_cap",
+      "variant_key": "gothic_scifi_cap_08",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_top_center",
+      "source_asset_id": "wall_asset_089",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_wall_cap/gothic_scifi_cap_08.png",
+      "native_size": [
+        34,
+        25
+      ],
+      "canvas_size": [
+        34,
+        25
+      ],
+      "sprite_position": [
+        0.0,
+        12.5
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 90,
+      "id": "wall_asset_090",
+      "category": "unclassified",
+      "rect_px": [
+        528,
+        925,
+        69,
+        73
+      ],
+      "opaque_component_area": 3494,
+      "semantic_family": "wall_base",
+      "semantic_name": "gothic_scifi_base_07",
+      "runtime_family": "lower_quarter_wall_base",
+      "variant_key": "gothic_scifi_base_07",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_090",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_wall_base/gothic_scifi_base_07.png",
+      "native_size": [
+        34,
+        36
+      ],
+      "canvas_size": [
+        34,
+        36
+      ],
+      "sprite_position": [
+        0.0,
+        -18.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 91,
+      "id": "wall_asset_091",
+      "category": "unclassified",
+      "rect_px": [
+        609,
+        934,
+        51,
+        100
+      ],
+      "opaque_component_area": 3765,
+      "semantic_family": "wall_base",
+      "semantic_name": "gothic_scifi_base_08",
+      "runtime_family": "lower_quarter_wall_base",
+      "variant_key": "gothic_scifi_base_08",
+      "production_status": "generic",
+      "history_layer": "surviving_civic",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_091",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": false,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_wall_base/gothic_scifi_base_08.png",
+      "native_size": [
+        26,
+        50
+      ],
+      "canvas_size": [
+        26,
+        50
+      ],
+      "sprite_position": [
+        0.0,
+        -25.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 92,
+      "id": "wall_asset_092",
+      "category": "unclassified",
+      "rect_px": [
+        637,
+        921,
+        108,
+        142
+      ],
+      "opaque_component_area": 6966,
+      "semantic_family": "damage_transition",
+      "semantic_name": "gothic_scifi_collapse_04",
+      "runtime_family": "lower_quarter_damage_transition",
+      "variant_key": "gothic_scifi_collapse_04",
+      "production_status": "explicit_only",
+      "history_layer": "catastrophe_aftermath",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_092",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": true,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_damage_transition/gothic_scifi_collapse_04.png",
+      "native_size": [
+        54,
+        71
+      ],
+      "canvas_size": [
+        54,
+        71
+      ],
+      "sprite_position": [
+        0.0,
+        -35.5
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 93,
+      "id": "wall_asset_093",
+      "category": "unclassified",
+      "rect_px": [
+        718,
+        870,
+        109,
+        204
+      ],
+      "opaque_component_area": 10672,
+      "semantic_family": "damage_transition",
+      "semantic_name": "gothic_scifi_collapse_05",
+      "runtime_family": "lower_quarter_damage_transition",
+      "variant_key": "gothic_scifi_collapse_05",
+      "production_status": "explicit_only",
+      "history_layer": "catastrophe_aftermath",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_093",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": true,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_damage_transition/gothic_scifi_collapse_05.png",
+      "native_size": [
+        54,
+        102
+      ],
+      "canvas_size": [
+        54,
+        102
+      ],
+      "sprite_position": [
+        0.0,
+        -51.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 94,
+      "id": "wall_asset_094",
+      "category": "unclassified",
+      "rect_px": [
+        830,
+        849,
+        138,
+        220
+      ],
+      "opaque_component_area": 14946,
+      "semantic_family": "damage_transition",
+      "semantic_name": "gothic_scifi_collapse_06",
+      "runtime_family": "lower_quarter_damage_transition",
+      "variant_key": "gothic_scifi_collapse_06",
+      "production_status": "explicit_only",
+      "history_layer": "catastrophe_aftermath",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_094",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": true,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_damage_transition/gothic_scifi_collapse_06.png",
+      "native_size": [
+        69,
+        110
+      ],
+      "canvas_size": [
+        69,
+        110
+      ],
+      "sprite_position": [
+        0.0,
+        -55.0
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 95,
+      "id": "wall_asset_095",
+      "category": "unclassified",
+      "rect_px": [
+        959,
+        869,
+        145,
+        198
+      ],
+      "opaque_component_area": 15706,
+      "semantic_family": "damage_transition",
+      "semantic_name": "gothic_scifi_collapse_07",
+      "runtime_family": "lower_quarter_damage_transition",
+      "variant_key": "gothic_scifi_collapse_07",
+      "production_status": "explicit_only",
+      "history_layer": "catastrophe_aftermath",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_095",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": true,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_damage_transition/gothic_scifi_collapse_07.png",
+      "native_size": [
+        72,
+        99
+      ],
+      "canvas_size": [
+        72,
+        99
+      ],
+      "sprite_position": [
+        0.0,
+        -49.5
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 96,
+      "id": "wall_asset_096",
+      "category": "unclassified",
+      "rect_px": [
+        1137,
+        837,
+        182,
+        234
+      ],
+      "opaque_component_area": 22258,
+      "semantic_family": "damage_transition",
+      "semantic_name": "gothic_scifi_collapse_08",
+      "runtime_family": "lower_quarter_damage_transition",
+      "variant_key": "gothic_scifi_collapse_08",
+      "production_status": "explicit_only",
+      "history_layer": "catastrophe_aftermath",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_096",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": true,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_damage_transition/gothic_scifi_collapse_08.png",
+      "native_size": [
+        91,
+        117
+      ],
+      "canvas_size": [
+        91,
+        117
+      ],
+      "sprite_position": [
+        0.0,
+        -58.5
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    },
+    {
+      "index": 97,
+      "id": "wall_asset_097",
+      "category": "unclassified",
+      "rect_px": [
+        1267,
+        833,
+        165,
+        238
+      ],
+      "opaque_component_area": 18425,
+      "semantic_family": "damage_transition",
+      "semantic_name": "gothic_scifi_collapse_09",
+      "runtime_family": "lower_quarter_damage_transition",
+      "variant_key": "gothic_scifi_collapse_09",
+      "production_status": "explicit_only",
+      "history_layer": "catastrophe_aftermath",
+      "role": "architectural_module",
+      "anchor_mode": "wall_bottom_center",
+      "source_asset_id": "wall_asset_097",
+      "runtime_scale": 0.5,
+      "collision_is_authoritative": false,
+      "review_required": true,
+      "texture_path": "res://content/sprites/environment/structure/ash_bell/lower_quarter/gothic_scifi_native/lower_quarter_damage_transition/gothic_scifi_collapse_09.png",
+      "native_size": [
+        82,
+        119
+      ],
+      "canvas_size": [
+        82,
+        119
+      ],
+      "sprite_position": [
+        0.0,
+        -59.5
+      ],
+      "native_scale": 1.0,
+      "source_runtime_scale": 0.5,
+      "collision_profile": "none",
+      "y_sort": true
+    }
+  ]
+}

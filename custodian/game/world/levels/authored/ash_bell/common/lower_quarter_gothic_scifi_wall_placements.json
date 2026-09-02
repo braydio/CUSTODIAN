@@ -1,0 +1,22 @@
+{
+  "schema": "custodian.lower_quarter_gothic_scifi_wall_placements.v1",
+  "level_id": "lower_quarter",
+  "map_origin": [-2048, -1536],
+  "collision_authority": "existing authored topology and MeridianCivicArtPresenter",
+  "scale": [1, 1],
+  "rotation_quarters": 0,
+  "mirror": false,
+  "placements": [
+    {"placement_id":"entry_forecourt_facade","runtime_family":"lower_quarter_facade_run","variant_key":"gothic_scifi_facade_01","cell":[54,84],"offset_px":[0,0],"world_anchor":[-304,1168],"rotation_quarters":0,"mirror":false},
+    {"placement_id":"entry_forecourt_pier_w","runtime_family":"lower_quarter_pier_panel","variant_key":"gothic_scifi_pier_01","cell":[53,85],"offset_px":[0,0],"world_anchor":[-336,1200],"rotation_quarters":0,"mirror":false},
+    {"placement_id":"entry_forecourt_pier_e","runtime_family":"lower_quarter_pier_panel","variant_key":"gothic_scifi_pier_02","cell":[75,85],"offset_px":[0,0],"world_anchor":[368,1200],"rotation_quarters":0,"mirror":false},
+    {"placement_id":"direct_personnel_collapse_w","runtime_family":"lower_quarter_damage_transition","variant_key":"gothic_scifi_collapse_01","cell":[55,73],"offset_px":[0,0],"world_anchor":[-272,816],"rotation_quarters":0,"mirror":false,"allow_review":true},
+    {"placement_id":"direct_personnel_collapse_e","runtime_family":"lower_quarter_damage_transition","variant_key":"gothic_scifi_collapse_02","cell":[72,73],"offset_px":[0,0],"world_anchor":[272,816],"rotation_quarters":0,"mirror":false,"allow_review":true},
+    {"placement_id":"evacuation_arcade_facade","runtime_family":"lower_quarter_facade_run","variant_key":"gothic_scifi_facade_02","cell":[32,60],"offset_px":[0,0],"world_anchor":[-1008,400],"rotation_quarters":0,"mirror":false},
+    {"placement_id":"lower_market_civic_edge","runtime_family":"lower_quarter_facade_run","variant_key":"gothic_scifi_facade_03","cell":[17,42],"offset_px":[0,0],"world_anchor":[-1488,-176],"rotation_quarters":0,"mirror":false},
+    {"placement_id":"civic_basin_formal_edge","runtime_family":"lower_quarter_corner","variant_key":"gothic_scifi_corner_01","cell":[57,43],"offset_px":[0,0],"world_anchor":[-208,-144],"rotation_quarters":0,"mirror":false},
+    {"placement_id":"eight_answers_court_facade","runtime_family":"lower_quarter_facade_run","variant_key":"gothic_scifi_facade_04","cell":[56,16],"offset_px":[0,0],"world_anchor":[-240,-1008],"rotation_quarters":0,"mirror":false},
+    {"placement_id":"station_ix_approach_pier_w","runtime_family":"lower_quarter_pier_panel","variant_key":"gothic_scifi_pier_03","cell":[73,60],"offset_px":[0,0],"world_anchor":[304,400],"rotation_quarters":0,"mirror":false},
+    {"placement_id":"station_ix_approach_pier_e","runtime_family":"lower_quarter_pier_panel","variant_key":"gothic_scifi_pier_04","cell":[90,60],"offset_px":[0,0],"world_anchor":[848,400],"rotation_quarters":0,"mirror":false}
+  ]
+}
