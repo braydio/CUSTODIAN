@@ -662,7 +662,7 @@ func _devconsole_spawn_pursuit_frame(args: Array) -> String:
 		offset = Vector2(float(args[0]), float(args[1]))
 	var enemy_mgr := get_node_or_null("/root/GameRoot/EnemyDirector")
 	if enemy_mgr != null and enemy_mgr.has_method("spawn_debug_enemy_type"):
-		var pos := operator.global_position + offset
+		var pos: Vector2 = (operator as Node2D).global_position + offset
 		var spawned := bool(enemy_mgr.call("spawn_debug_enemy_type", "pursuit_frame", pos))
 		return "Spawned pursuit_frame at %s" % str(pos) if spawned else "Failed to spawn pursuit_frame"
 	return "EnemyDirector not found or spawn_debug_enemy_type not available"
