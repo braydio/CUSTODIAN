@@ -8,3 +8,24 @@
   - Required-ingress/fallback repair is next after void-cliff presentation.
 
 4. The sundered keep UI is distracting, too large. And the general minimap is too large and probably not needed.
+
+I AM NOT SURE WHAT OF ABOVE HAS BEEN FIXED BUT HERE IS LATEST: 
+
+Aug3
+---
+
+1. The pursuit_frame melee animation is facing the wrong way - must be flipped.
+2. The pursuit frame is slow, not inimidating, maybe does not pursue? 
+3. Pursuit frame needs VFX
+4. Pursuit frame not using all animations - like Death not using. Also is walk being used for its idle?
+5. Enemy grunt not using all animations -- have not seen taunts
+6. Enemiees are too stationary
+7. Should maybe expose COGNITIVE EFFECTS with exact actual numeric values. And i havent yet triggered a full cognitive state
+Should remove the auto-spawn turrets. They msut be fabbed
+Add support to fabricate lalied drones -- should be expensive
+Unplayable void clif-buffers whatever those purple thigns are called are alwyas there, alwyas purple , always a lot of them and they do not look like the thing they are supposed to be as
+I want an actual stealth system that is fun
+Guns still fire at/point at cursor even wtih twinsticks. Must respect joustock aming if usign controller. also need toggle unarmed button
+You should pick up the fabricated item physically interacting with the field fabricator
+Guns do not work in other maps besides the campaign map - there arre no bullets?
+
