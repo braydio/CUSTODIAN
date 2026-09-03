@@ -16,4 +16,3 @@ func _initialize() -> void:
 		quit(1)
 	print("authored_level_mapper_framework_smoke: PASS")
 	quit(0)
-

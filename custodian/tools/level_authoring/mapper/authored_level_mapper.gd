@@ -1,7 +1,6 @@
 class_name AuthoredLevelMapper
 extends LevelCollisionPoiMapper
 
-const CollisionModel := preload("res://tools/level_authoring/mapper/mapper_collision_model.gd")
 const Validation := preload("res://tools/level_authoring/mapper/mapper_validation.gd")
 const History := preload("res://tools/level_authoring/mapper/mapper_history.gd")
 

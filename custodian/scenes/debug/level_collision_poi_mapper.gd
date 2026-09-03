@@ -25,6 +25,8 @@ var _active_polyline: Array[Vector2] = []
 # authoring uses `_active_polyline` and `_draft_polylines` exclusively.
 var _draft_points: Array[Vector2] = []
 var _draft_markers: Dictionary = {}
+var _selected_polyline_index := -1
+var _selected_vertex_index := -1
 var _marker_schema: Array[Dictionary] = []
 var _mouse_world := Vector2.ZERO
 var _show_existing := true
@@ -78,7 +80,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		var mouse := event as InputEventMouseButton
 		match mouse.button_index:
 			MOUSE_BUTTON_LEFT:
-				_set_marker_point(_camera.get_global_mouse_position()) if _marker_mode else _add_point(_camera.get_global_mouse_position(), mouse.double_click)
+				if not _marker_mode and mouse.alt_pressed:
+					_select_collision_at_point(_camera.get_global_mouse_position())
+				else:
+					_set_marker_point(_camera.get_global_mouse_position()) if _marker_mode else _add_point(_camera.get_global_mouse_position(), mouse.double_click)
 			MOUSE_BUTTON_RIGHT:
 				_remove_selected_marker_point() if _marker_mode else _remove_last_point()
 			MOUSE_BUTTON_WHEEL_UP:
@@ -184,6 +189,11 @@ func _handle_key(event: InputEventKey) -> void:
 			_hud.visible = _show_help
 		KEY_R:
 			_draft_markers.clear() if _marker_mode else _active_polyline.clear()
+		KEY_DELETE:
+			if not _marker_mode and _selected_polyline_index >= 0:
+				_draft_polylines.remove_at(_selected_polyline_index)
+				_selected_polyline_index = -1
+				_selected_vertex_index = -1
 		KEY_M:
 			_marker_mode = not _marker_mode
 		KEY_PAGEUP:
@@ -253,6 +263,22 @@ func _finish_active_polyline() -> void:
 func _remove_last_point() -> void:
 	if not _active_polyline.is_empty():
 		_active_polyline.pop_back()
+
+func _select_collision_at_point(point: Vector2) -> void:
+	var best_distance := INF
+	_selected_polyline_index = -1
+	_selected_vertex_index = -1
+	for polyline_index in range(_draft_polylines.size()):
+		var polyline := _draft_polylines[polyline_index] as Array
+		for vertex_index in range(polyline.size()):
+			var distance := point.distance_to(polyline[vertex_index] as Vector2)
+			if distance < best_distance:
+				best_distance = distance
+				_selected_polyline_index = polyline_index
+				_selected_vertex_index = vertex_index
+	if best_distance > 24.0 / maxf(_camera.zoom.x, 0.05):
+		_selected_polyline_index = -1
+		_selected_vertex_index = -1
 
 
 func _set_marker_point(point: Vector2) -> void:
@@ -585,7 +611,7 @@ func _update_help() -> void:
 		mapper_title,
 		"Mode: %s   M: collision/marker   Marker mode 1-9: type   PgUp/PgDn: cycle   Selected: %s" % ["MARKER" if _marker_mode else "COLLISION", _selected_marker_id()],
 		"Marker keys: %s" % _marker_shortcuts_text(),
-		"Collision: Left click add   double-click/Space finish   N new chain   Right click undo   Enter/U save",
+		"Collision: Left click add   double-click/Space finish   N new chain   Right click undo   Alt-click select   Delete remove   Enter/U save",
 		"Collision: R cancel active   C copy rails   E existing   V draft",
 		"Marker mode: Left click place selected marker   Right click clear selected marker   C copy markers   Enter/U apply markers",
 		"Semantic: 1 boundary  2 encounter  3 hazards  4 interactions  5 cameras  6 transitions  7 art  8 traversal  0 all",
@@ -621,6 +647,8 @@ func get_collision_mapper_state() -> Dictionary:
 		"draft_points": _active_polyline,
 		"draft_polylines": _draft_polylines,
 		"active_polyline": _active_polyline,
+		"selected_polyline": _selected_polyline_index,
+		"selected_vertex": _selected_vertex_index,
 		"draft_markers": _draft_markers,
 		"marker_schema": _marker_schema,
 		"marker_kinds": _marker_schema.map(func(item: Dictionary) -> String: return str(item.get("id", ""))),

@@ -146,14 +146,20 @@ func _draw_draft(points: Array) -> void:
 
 
 func _draw_polylines(polylines: Array, color: Color) -> void:
+	var state := _mapper.call("get_collision_mapper_state") as Dictionary if _mapper != null else {}
+	var selected := int(state.get("selected_polyline", -1))
 	for polyline_variant: Variant in polylines:
 		if polyline_variant is Array:
 			var points := polyline_variant as Array
+			var polyline_index := polylines.find(polyline_variant)
+			var line_color := Color(0.15, 0.95, 1.0, 0.95) if polyline_index == selected else color
 			for index in range(points.size()):
 				var point := points[index] as Vector2
-				draw_circle(point, 5.0, color)
+				draw_circle(point, 5.0, line_color)
 				if index + 1 < points.size():
-					draw_line(point, points[index + 1] as Vector2, color, 3.0)
+					draw_line(point, points[index + 1] as Vector2, line_color, 3.0)
+				if polyline_index == selected and index == int(state.get("selected_vertex", -1)):
+					draw_circle(point, 8.0, Color.WHITE)
 
 
 func _draw_markers(state: Dictionary) -> void:
