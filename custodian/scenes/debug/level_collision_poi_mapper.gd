@@ -1,6 +1,8 @@
 class_name LevelCollisionPoiMapper
 extends Node2D
 
+const CollisionModel := preload("res://tools/level_authoring/mapper/mapper_collision_model.gd")
+
 @export_file("*.tscn") var target_scene_path: String
 @export_file("*.gd") var target_script_path: String
 @export_file("*.json") var target_preview_config_path: String
@@ -39,6 +41,11 @@ var _semantic_groups := {
 	"transition": true,
 	"art": true,
 	"traversal": true,
+	"occlusion": true,
+	"elevation": true,
+	"spawn": true,
+	"dynamic_blocker": true,
+	"region": true,
 }
 var _show_semantic_labels := true
 var _show_grid := true
@@ -478,64 +485,11 @@ func _compiled_draft_segments(include_active: bool) -> Array:
 
 
 static func compile_polylines(polylines: Array) -> Array:
-	var result: Array = []
-	for polyline_variant: Variant in polylines:
-		if not polyline_variant is Array:
-			continue
-		var polyline := polyline_variant as Array
-		for index in range(polyline.size() - 1):
-			var a := polyline[index] as Vector2
-			var b := polyline[index + 1] as Vector2
-			if a == null or b == null or a.is_equal_approx(b):
-				continue
-			result.append([a, b])
-	return result
+	return CollisionModel.compile_polylines(polylines)
 
 
 static func reconstruct_polylines(segments: Array) -> Array:
-	var unused: Array = []
-	for segment_variant: Variant in segments:
-		if not segment_variant is Array or (segment_variant as Array).size() < 2:
-			continue
-		var segment := segment_variant as Array
-		var a := segment[0] as Vector2
-		var b := segment[1] as Vector2
-		if a == null or b == null or a.is_equal_approx(b):
-			continue
-		unused.append([a, b])
-	var result: Array = []
-	while not unused.is_empty():
-		var seed: Array = unused.pop_front()
-		var chain: Array = [seed[0], seed[1]]
-		var extended := true
-		while extended:
-			extended = false
-			for index in range(unused.size()):
-				var candidate := unused[index] as Array
-				if (candidate[0] as Vector2).is_equal_approx(chain[-1] as Vector2):
-					chain.append(candidate[1])
-					unused.remove_at(index)
-					extended = true
-					break
-				if (candidate[1] as Vector2).is_equal_approx(chain[-1] as Vector2):
-					chain.append(candidate[0])
-					unused.remove_at(index)
-					extended = true
-					break
-			for index in range(unused.size()):
-				var candidate := unused[index] as Array
-				if (candidate[1] as Vector2).is_equal_approx(chain[0] as Vector2):
-					chain.push_front(candidate[0])
-					unused.remove_at(index)
-					extended = true
-					break
-				if (candidate[0] as Vector2).is_equal_approx(chain[0] as Vector2):
-					chain.push_front(candidate[1])
-					unused.remove_at(index)
-					extended = true
-					break
-		result.append(chain)
-	return result
+	return CollisionModel.reconstruct_polylines(segments)
 
 
 func _load_existing_collision_polylines() -> void:
@@ -718,7 +672,7 @@ func _debug_record_contains_point(record: Dictionary, point: Vector2) -> bool:
 
 
 func _toggle_semantic_group(index: int) -> void:
-	var groups := ["boundary", "encounter", "hazard", "interaction", "camera", "transition", "art", "traversal"]
+	var groups := ["boundary", "encounter", "hazard", "interaction", "camera", "transition", "art", "traversal", "occlusion", "elevation", "spawn", "dynamic_blocker", "region"]
 	if index < 0 or index >= groups.size():
 		return
 	var group: String = groups[index]

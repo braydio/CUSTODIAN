@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cat7vgtadw4fu"]
 
-[ext_resource type="Script" uid="uid://dioq6k227ollc" path="res://scenes/debug/level_collision_poi_mapper.gd" id="1_mapper"]
+[ext_resource type="Script" path="res://tools/level_authoring/mapper/authored_level_mapper.gd" id="1_mapper"]
 [ext_resource type="Script" path="res://scenes/debug/forlorn_ritualant_underground_mapper_overlay.gd" id="2_overlay"]
 
 [node name="ForlornRitualantUndergroundMapper" type="Node2D" unique_id=1142025961]
@@ -9,6 +9,7 @@ target_scene_path = "res://game/world/levels/authored/ash_bell/forlorn_ritualant
 target_script_path = "res://game/world/levels/authored/ash_bell/forlorn_ritualant_underground/forlorn_ritualant_underground.gd"
 target_instance_name = "ForlornRitualantRoomPreview"
 mapper_title = "Forlorn Ritualant Underground Room Mapper"
+adapter_script_path = "res://tools/level_authoring/mapper/adapters/ritualant_mapper_adapter.gd"
 initial_camera_zoom = Vector2(0.72, 0.72)
 
 [node name="World" type="Node2D" parent="." unique_id=2093688581]

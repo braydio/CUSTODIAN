@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3]
 
-[ext_resource type="Script" path="res://scenes/debug/level_collision_poi_mapper.gd" id="1_mapper"]
+[ext_resource type="Script" path="res://tools/level_authoring/mapper/authored_level_mapper.gd" id="1_mapper"]
 [ext_resource type="Script" path="res://scenes/debug/level_collision_poi_mapper_overlay.gd" id="2_overlay"]
 
 [node name="HomeCustodianBeginMapper" type="Node2D"]
@@ -9,6 +9,7 @@ target_scene_path = "res://scenes/home_custodian_begin.tscn"
 target_script_path = "res://game/world/home/custodian_home_begin.gd"
 target_instance_name = "HomeCustodianBeginPreview"
 mapper_title = "Home / Custodian Beginning Mapper"
+adapter_script_path = "res://tools/level_authoring/mapper/adapters/home_begin_mapper_adapter.gd"
 initial_camera_position = Vector2(0, 0)
 initial_camera_zoom = Vector2(0.72, 0.72)
 
