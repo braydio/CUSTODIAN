@@ -1,0 +1,11 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/operator__modular_upper_body__melee_1h__run_01__n__6f__96.json",
+	"outputs": [
+		"res://content/sprites/operator/source/animations/melee_1h/locomotion/run_01/operator__upper_body__melee_1h__locomotion__run_01__n__6f__96.png"
+	],
+	"post_process": [
+		"operator_runtime_build"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/operator__modular_upper_body__melee_1h__run_01__n__6f__96.png",
+	"timestamp_utc": "2026-09-03 05:58:34"
+}

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d4gck8s35pkks"
-path="res://.godot/imported/operator__weapon__melee_1h_dagger__posture__sheathe_01__e__4f__128x96.png-506e404ae19209bbec512b8a774220ba.ctex"
+uid="uid://cev43y2heqwbn"
+path="res://.godot/imported/operator__upper_body__melee_1h__posture__sheathe_01__e__4f__128x96.png-2d0fdaf6151df3c1f83897699503c8d8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/_pipeline/inbox/operator__weapon__melee_1h_dagger__posture__sheathe_01__e__4f__128x96.png"
-dest_files=["res://.godot/imported/operator__weapon__melee_1h_dagger__posture__sheathe_01__e__4f__128x96.png-506e404ae19209bbec512b8a774220ba.ctex"]
+source_file="res://content/sprites/operator/runtime/animations/melee_1h/posture/sheathe_01/operator__upper_body__melee_1h__posture__sheathe_01__e__4f__128x96.png"
+dest_files=["res://.godot/imported/operator__upper_body__melee_1h__posture__sheathe_01__e__4f__128x96.png-2d0fdaf6151df3c1f83897699503c8d8.ctex"]
 
 [params]
 

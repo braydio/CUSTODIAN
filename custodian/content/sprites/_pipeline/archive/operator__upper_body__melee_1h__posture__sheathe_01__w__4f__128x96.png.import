@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cu5jk4t54cob6"
-path="res://.godot/imported/operator__modular_upper_body__melee_1h__run_01__n__6f__96.png-f3a7bd39022b0349728c5abac58e1c5f.ctex"
+uid="uid://0a2u7n1a0271"
+path="res://.godot/imported/operator__upper_body__melee_1h__posture__sheathe_01__w__4f__128x96.png-2ecb2c7b7210676e08e48efde61ec049.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/_pipeline/inbox/operator__modular_upper_body__melee_1h__run_01__n__6f__96.png"
-dest_files=["res://.godot/imported/operator__modular_upper_body__melee_1h__run_01__n__6f__96.png-f3a7bd39022b0349728c5abac58e1c5f.ctex"]
+source_file="res://content/sprites/_pipeline/archive/operator__upper_body__melee_1h__posture__sheathe_01__w__4f__128x96.png"
+dest_files=["res://.godot/imported/operator__upper_body__melee_1h__posture__sheathe_01__w__4f__128x96.png-2ecb2c7b7210676e08e48efde61ec049.ctex"]
 
 [params]
 

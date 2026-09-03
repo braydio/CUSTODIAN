@@ -825,6 +825,30 @@
         }
       }
     },
+    "melee_1h/locomotion/run_01/n": {
+      "profile": "melee_1h",
+      "group": "locomotion",
+      "action": "run_01",
+      "direction": "n",
+      "layers": {
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/locomotion/run_01/operator__lower_body__melee_1h__locomotion__run_01__n__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/locomotion/run_01/operator__upper_body__melee_1h__locomotion__run_01__n__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
     "melee_1h/locomotion/run_01/w": {
       "profile": "melee_1h",
       "group": "locomotion",
@@ -1036,6 +1060,54 @@
           "frames": 4,
           "frame_size": [
             96,
+            96
+          ]
+        }
+      }
+    },
+    "melee_1h/posture/sheathe_01/e": {
+      "profile": "melee_1h",
+      "group": "posture",
+      "action": "sheathe_01",
+      "direction": "e",
+      "layers": {
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/posture/sheathe_01/operator__lower_body__melee_1h__posture__sheathe_01__e__4f__128x96.png",
+          "frames": 4,
+          "frame_size": [
+            128,
+            96
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/posture/sheathe_01/operator__upper_body__melee_1h__posture__sheathe_01__e__4f__128x96.png",
+          "frames": 4,
+          "frame_size": [
+            128,
+            96
+          ]
+        }
+      }
+    },
+    "melee_1h/posture/sheathe_01/w": {
+      "profile": "melee_1h",
+      "group": "posture",
+      "action": "sheathe_01",
+      "direction": "w",
+      "layers": {
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/posture/sheathe_01/operator__lower_body__melee_1h__posture__sheathe_01__w__4f__128x96.png",
+          "frames": 4,
+          "frame_size": [
+            128,
+            96
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/posture/sheathe_01/operator__upper_body__melee_1h__posture__sheathe_01__w__4f__128x96.png",
+          "frames": 4,
+          "frame_size": [
+            128,
             96
           ]
         }
@@ -1308,6 +1380,38 @@
           "frames": 4,
           "frame_size": [
             96,
+            96
+          ]
+        }
+      }
+    },
+    "melee_1h_dagger/posture/sheathe_01/e": {
+      "profile": "melee_1h_dagger",
+      "group": "posture",
+      "action": "sheathe_01",
+      "direction": "e",
+      "layers": {
+        "weapon": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_dagger/posture/sheathe_01/operator__weapon__melee_1h_dagger__posture__sheathe_01__e__4f__128x96.png",
+          "frames": 4,
+          "frame_size": [
+            128,
+            96
+          ]
+        }
+      }
+    },
+    "melee_1h_dagger/posture/sheathe_01/w": {
+      "profile": "melee_1h_dagger",
+      "group": "posture",
+      "action": "sheathe_01",
+      "direction": "w",
+      "layers": {
+        "weapon": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_dagger/posture/sheathe_01/operator__weapon__melee_1h_dagger__posture__sheathe_01__w__4f__128x96.png",
+          "frames": 4,
+          "frame_size": [
+            128,
             96
           ]
         }

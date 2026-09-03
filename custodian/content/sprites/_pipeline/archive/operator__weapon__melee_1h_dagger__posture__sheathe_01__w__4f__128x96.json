@@ -1,0 +1,23 @@
+{
+  "source": "operator__weapon__melee_1h_dagger__posture__sheathe_01__w__4f__128x96.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "operator/source/animations/melee_1h_dagger/posture/sheathe_01/operator__weapon__melee_1h_dagger__posture__sheathe_01__w__4f__128x96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 4
+      }
+    }
+  ],
+  "post_process": [
+    "operator_runtime_build"
+  ],
+  "frame_size": [
+    128,
+    96
+  ],
+  "remove_superseded": true
+}
