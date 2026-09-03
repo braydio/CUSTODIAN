@@ -14,8 +14,13 @@ func _init() -> void:
 	_add(&"locomotion.run", &"pursuit_run_01", &"locomotion", [&"s"], 8, 10.0, true, &"run")
 	_add(&"posture.draw", &"notice_01", &"combat", [&"s"], 4, 10.0, false, &"draw")
 	_add(&"posture.alert", &"notice_01", &"combat", [&"s"], 4, 10.0, false, &"alert")
+	# Normal Pursuit melee never aliases the intercept strips: only
+	# combat.intercept_windup / combat.intercept_burst / combat.intercept_recover
+	# may address them, so the generic normal-attack selector (which freely
+	# picks fast_01/02/03) can never visually jump straight into a burst
+	# without its windup/recovery.
 	_add(&"combat.fast_01", &"melee_brace_01", &"combat", [&"e", &"w"], 6, 12.0, false, &"melee")
-	_add(&"combat.fast_02", &"intercept_burst_01", &"combat", [&"e", &"w"], 4, 12.0, false, &"intercept")
+	_add(&"combat.fast_02", &"melee_brace_01", &"combat", [&"e", &"w"], 6, 12.0, false, &"melee")
 	_add(&"combat.fast_03", &"melee_brace_01", &"combat", [&"e", &"w"], 6, 12.0, false, &"melee_heavy")
 	_add(&"combat.intercept_windup", &"intercept_windup_01", &"combat", [&"e", &"w"], 4, 10.0, false, &"intercept_windup")
 	_add(&"combat.intercept_burst", &"intercept_burst_01", &"combat", [&"e", &"w"], 4, 12.0, false, &"intercept_burst")

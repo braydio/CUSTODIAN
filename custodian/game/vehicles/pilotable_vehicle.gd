@@ -15,6 +15,19 @@ enum ControlState { UNOCCUPIED, ENTERING, PILOTED, EXITING, DISABLED }
 @export var move_animation: StringName = &"move"
 @export var max_health: float = 100.0
 @export var current_health: float = 100.0
+@export var exit_search_radii_px := PackedFloat32Array([
+	56.0,
+	72.0,
+	88.0,
+	104.0,
+	128.0,
+	160.0,
+	192.0,
+	224.0,
+	256.0,
+])
+@export_range(8, 32, 1)
+var exit_search_direction_count := 16
 
 var vehicle_definition = null
 var control_state := ControlState.UNOCCUPIED
@@ -29,6 +42,9 @@ var disabled_reason: String = ""
 
 var _pilot_collision_layer := 0
 var _pilot_collision_mask := 0
+var _pilot_entry_global_position := Vector2.INF
+var _last_exit_candidate_count := 0
+var _last_exit_used_emergency_fallback := false
 
 
 func _ready() -> void:
@@ -75,6 +91,9 @@ func enter_vehicle(actor: Node) -> bool:
 		return false
 	control_state = ControlState.ENTERING
 	pilot = actor
+	if actor is Node2D:
+		_pilot_entry_global_position = (actor as Node2D).global_position
+	_obs_increment(&"vehicle_entered")
 	if pilot is CollisionObject2D:
 		var collision_actor := pilot as CollisionObject2D
 		_pilot_collision_layer = collision_actor.collision_layer
@@ -103,10 +122,24 @@ func exit_vehicle() -> bool:
 	if control_state != ControlState.PILOTED or pilot == null:
 		return false
 	control_state = ControlState.EXITING
+	_obs_increment(&"vehicle_exit_requested")
+	_obs_log(&"vehicle_exit_requested", {
+		"vehicle_id": name,
+		"vehicle_position": global_position,
+	})
 	var exit_position := _find_exit_position()
 	if exit_position == Vector2.INF:
 		control_state = ControlState.PILOTED
 		push_warning("PilotableVehicle: no valid exit position for %s" % name)
+		_obs_increment(&"vehicle_exit_failed_no_safe_position")
+		_obs_set_gauge(&"vehicle_exit_last_failure_reason", "no_safe_position")
+		_obs_log(&"vehicle_exit_failed", {
+			"vehicle_id": name,
+			"vehicle_position": global_position,
+			"candidate_count": _last_exit_candidate_count,
+			"used_emergency_fallback": false,
+			"failure_reason": "no_safe_position",
+		})
 		return false
 	if pilot is Node2D:
 		(pilot as Node2D).global_position = exit_position
@@ -126,6 +159,15 @@ func exit_vehicle() -> bool:
 	control_state = ControlState.UNOCCUPIED
 	velocity = Vector2.ZERO
 	current_speed = 0.0
+	_pilot_entry_global_position = Vector2.INF
+	_obs_increment(&"vehicle_exit_succeeded")
+	_obs_log(&"vehicle_exit_succeeded", {
+		"vehicle_id": name,
+		"vehicle_position": global_position,
+		"selected_position": exit_position,
+		"candidate_count": _last_exit_candidate_count,
+		"used_emergency_fallback": _last_exit_used_emergency_fallback,
+	})
 	_update_movement_animation()
 	return true
 
@@ -222,6 +264,10 @@ func _apply_movement(input_vector: Vector2, brake: bool, delta: float) -> void:
 		facing_direction = velocity.normalized()
 	_handle_ambient_critter_impacts()
 	_update_movement_animation()
+	_obs_set_gauge(&"vehicle_mode", ControlState.keys()[control_state])
+	_obs_set_gauge(&"vehicle_id", name)
+	_obs_set_gauge(&"vehicle_position", global_position)
+	_obs_set_gauge(&"vehicle_speed", current_speed)
 
 
 func _query_movement_surface_multiplier() -> float:
@@ -233,25 +279,82 @@ func _query_movement_surface_multiplier() -> float:
 
 
 func _find_exit_position() -> Vector2:
-	var candidate_radius := 56.0
-	var base_position := global_position + Vector2(candidate_radius, 0.0)
-	if exit_marker != null:
-		base_position = exit_marker.global_position
-	if _is_exit_position_clear(base_position):
-		return base_position
-	var offsets: Array[Vector2] = [
-		Vector2(candidate_radius, 0), Vector2(-candidate_radius, 0),
-		Vector2(0, candidate_radius), Vector2(0, -candidate_radius),
-		Vector2(candidate_radius, candidate_radius), Vector2(-candidate_radius, candidate_radius),
-		Vector2(candidate_radius, -candidate_radius), Vector2(-candidate_radius, -candidate_radius),
-		Vector2(candidate_radius * 1.5, 0), Vector2(-candidate_radius * 1.5, 0),
-		Vector2(0, candidate_radius * 1.5), Vector2(0, -candidate_radius * 1.5)
-	]
-	for offset in offsets:
-		var candidate: Vector2 = global_position + offset
-		if _is_exit_position_clear(candidate):
-			return candidate
+	var candidates := _build_exit_candidates()
+	_last_exit_candidate_count = candidates.size()
+	_last_exit_used_emergency_fallback = false
+	_obs_set_gauge(&"vehicle_exit_last_candidate_count", candidates.size())
+	for candidate in candidates:
+		if not _is_exit_position_clear(candidate):
+			_obs_increment(&"vehicle_exit_candidate_rejected_collision")
+			continue
+		if not _is_exit_candidate_reachable(candidate):
+			_obs_increment(&"vehicle_exit_candidate_rejected_navigation")
+			continue
+		return candidate
+
+	# Emergency softlock escape only after local search is exhausted. This is
+	# a last-resort anti-softlock measure, not a substitute for a real local
+	# exit: reaching it means the geometry immediately around the vehicle is
+	# malformed and should be investigated via the emergency-fallback counter.
+	if (
+		_pilot_entry_global_position != Vector2.INF
+		and _is_exit_position_clear(_pilot_entry_global_position)
+	):
+		_last_exit_used_emergency_fallback = true
+		_obs_increment(&"vehicle_exit_emergency_fallback")
+		_obs_log(&"vehicle_exit_emergency_fallback", {
+			"vehicle_id": name,
+			"vehicle_position": global_position,
+			"entry_position": _pilot_entry_global_position,
+			"candidate_count": candidates.size(),
+		})
+		return _pilot_entry_global_position
+
 	return Vector2.INF
+
+
+func _build_exit_candidates() -> Array[Vector2]:
+	var result: Array[Vector2] = []
+
+	if exit_marker != null:
+		result.append(exit_marker.global_position)
+
+	var forward := facing_direction.normalized()
+	if forward.length_squared() < 0.01:
+		forward = Vector2.DOWN
+
+	var right := Vector2(-forward.y, forward.x)
+
+	for radius in exit_search_radii_px:
+		result.append(global_position + right * radius)
+		result.append(global_position - right * radius)
+		result.append(global_position - forward * radius)
+		result.append(global_position + forward * radius)
+
+		for index in exit_search_direction_count:
+			var direction := Vector2.RIGHT.rotated(
+				TAU * float(index) / float(exit_search_direction_count)
+			)
+			var candidate := global_position + direction * radius
+			if not result.has(candidate):
+				result.append(candidate)
+
+	return result
+
+
+func _is_exit_candidate_reachable(candidate: Vector2) -> bool:
+	var navigation := get_node_or_null("/root/GameRoot/NavigationSystem")
+	if (
+		navigation != null
+		and navigation.has_method("compute_path_immediate")
+	):
+		var path := navigation.call(
+			"compute_path_immediate",
+			global_position,
+			candidate
+		) as PackedVector2Array
+		return not path.is_empty()
+	return _is_exit_position_traversable(candidate)
 
 
 func _is_exit_position_clear(position: Vector2) -> bool:
@@ -363,6 +466,28 @@ func _handle_ambient_critter_impacts() -> void:
 		var collider := collision.get_collider()
 		if collider is Node and (collider as Node).is_in_group("ambient_critter") and collider.has_method("apply_melee_impact"):
 			collider.call("apply_melee_impact", "heavy", velocity.normalized(), min(current_speed, 260.0))
+
+
+func _observatory() -> Node:
+	return get_node_or_null("/root/DevObservatory")
+
+
+func _obs_increment(counter_name: StringName, amount: int = 1) -> void:
+	var observatory := _observatory()
+	if observatory != null and observatory.has_method("increment"):
+		observatory.call("increment", counter_name, amount)
+
+
+func _obs_set_gauge(gauge_name: StringName, value: Variant) -> void:
+	var observatory := _observatory()
+	if observatory != null and observatory.has_method("set_gauge"):
+		observatory.call("set_gauge", gauge_name, value)
+
+
+func _obs_log(event_name: StringName, data: Dictionary = {}) -> void:
+	var observatory := _observatory()
+	if observatory != null and observatory.has_method("log_event"):
+		observatory.call("log_event", event_name, data)
 
 
 func _get_action_prompt_key(action_name: StringName, fallback: String) -> String:

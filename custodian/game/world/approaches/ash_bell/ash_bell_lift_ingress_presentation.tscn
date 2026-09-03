@@ -125,7 +125,7 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="Rectangle_boarding_back"]
-size = Vector2(234, 287)
+size = Vector2(223, 16)
 
 [sub_resource type="RectangleShape2D" id="Rectangle_boarding_front_wing"]
 size = Vector2(48, 18)
@@ -242,10 +242,10 @@ position = Vector2(0, 72)
 [node name="Collision" type="StaticBody2D" parent="SpatialFacingRoot" unique_id=510268338]
 
 [node name="LeftCliffCollision" type="CollisionPolygon2D" parent="SpatialFacingRoot/Collision" unique_id=886423864]
-polygon = PackedVector2Array(-330, -214, -121, -359, -119, -28, -369, 60)
+polygon = PackedVector2Array(-351, -193, -113, -369, -32, -315, -93, -203, -109, -26, -361, -22)
 
 [node name="RightCliffCollision" type="CollisionPolygon2D" parent="SpatialFacingRoot/Collision" unique_id=1361042681]
-polygon = PackedVector2Array(112, -300, 319, -242, 385, 17, 108, -28)
+polygon = PackedVector2Array(112, -300, 349, -223, 365, -29, 108, -28, 90, -202, -97, -194, -30, -312)
 
 [node name="DustBurst" type="AnimatedSprite2D" parent="." unique_id=104774872]
 visible = false
@@ -271,7 +271,7 @@ animation = &"flicker"
 [node name="BoardingBounds" type="StaticBody2D" parent="." unique_id=1562508588]
 
 [node name="BackStop" type="CollisionShape2D" parent="BoardingBounds" unique_id=1221824079]
-position = Vector2(-8, -171.5)
+position = Vector2(0.5, -36)
 shape = SubResource("Rectangle_boarding_back")
 
 [node name="LeftFrontWing" type="CollisionShape2D" parent="BoardingBounds" unique_id=1853738078]

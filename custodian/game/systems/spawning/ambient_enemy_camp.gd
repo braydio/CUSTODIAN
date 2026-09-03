@@ -13,6 +13,7 @@ class_name AmbientEnemyCamp
 @export var respawn_enabled: bool = false
 @export var faction_id: StringName = &"hostile"
 @export var behavior_profile_id: StringName = &"raider_grunt"
+@export var behavior_profile_override_id: StringName = &""
 var home_position_px: Vector2 = Vector2.INF
 
 var _spawned := false
@@ -157,8 +158,21 @@ func _configure_spawned_enemy(enemy: Node2D) -> void:
 		return
 	var behavior := enemy.get_node_or_null("EnemyBehaviorStateMachine")
 	if behavior != null:
-		if behavior.has_method("setup_profile"):
-			behavior.call("setup_profile", behavior_profile_id)
+		# Scene/family behavior is intrinsic authority (e.g. a Pursuit Frame's
+		# own behavior_profile_id). The camp/encounter profile only overrides
+		# it when explicitly requested via behavior_profile_override_id;
+		# otherwise a mixed camp must not silently stomp a family's identity
+		# back to the camp's generic profile.
+		var intrinsic_profile := StringName(enemy.get("behavior_profile_id"))
+		var selected_profile := intrinsic_profile
+		if behavior_profile_override_id != &"":
+			selected_profile = behavior_profile_override_id
+		elif selected_profile == &"":
+			selected_profile = behavior_profile_id
+		if selected_profile != &"":
+			enemy.set("behavior_profile_id", selected_profile)
+			if behavior.has_method("setup_profile"):
+				behavior.call("setup_profile", selected_profile)
 		if behavior.has_method("setup_ambient_home"):
 			behavior.call(
 				"setup_ambient_home",

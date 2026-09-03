@@ -6117,7 +6117,7 @@ func find_safe_runtime_walkable_global(world_pos: Vector2, radius_tiles: int = 4
 					or _count_local_runtime_reachable_tiles(tile, 3) < 8 \
 					or _has_runtime_blocker_within(tile, 1):
 				continue
-				candidates.append(tile)
+			candidates.append(tile)
 	candidates.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
 		var da := a.distance_squared_to(origin)
 		var db := b.distance_squared_to(origin)
