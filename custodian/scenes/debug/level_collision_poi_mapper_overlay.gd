@@ -20,7 +20,8 @@ func _draw() -> void:
 		_draw_existing(state.get("target_level") as Node)
 	_draw_semantic_geometry(state)
 	if bool(state.get("show_draft", true)):
-		_draw_draft(state.get("draft_points", []) as Array)
+		_draw_polylines(state.get("draft_polylines", []) as Array, Color(0.15, 0.85, 1.0, 0.75))
+		_draw_draft(state.get("active_polyline", state.get("draft_points", [])) as Array)
 		_draw_markers(state)
 	_draw_crosshair(state.get("mouse_world", Vector2.ZERO) as Vector2)
 
@@ -142,6 +143,17 @@ func _draw_draft(points: Array) -> void:
 		draw_circle(point, 6.0, Color(0.2, 0.95, 1.0, 0.95))
 		if index + 1 < points.size():
 			draw_line(point, points[index + 1] as Vector2, Color(0.2, 0.95, 1.0, 0.95), 3.0)
+
+
+func _draw_polylines(polylines: Array, color: Color) -> void:
+	for polyline_variant: Variant in polylines:
+		if polyline_variant is Array:
+			var points := polyline_variant as Array
+			for index in range(points.size()):
+				var point := points[index] as Vector2
+				draw_circle(point, 5.0, color)
+				if index + 1 < points.size():
+					draw_line(point, points[index + 1] as Vector2, color, 3.0)
 
 
 func _draw_markers(state: Dictionary) -> void:

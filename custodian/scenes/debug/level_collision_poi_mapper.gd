@@ -17,6 +17,10 @@ extends Node2D
 @onready var _hud: Label = $CanvasLayer/Help
 
 var _target_level: Node2D
+var _draft_polylines: Array = []
+var _active_polyline: Array[Vector2] = []
+# Compatibility alias for the older approach mapper subclass. New collision
+# authoring uses `_active_polyline` and `_draft_polylines` exclusively.
 var _draft_points: Array[Vector2] = []
 var _draft_markers: Dictionary = {}
 var _marker_schema: Array[Dictionary] = []
@@ -41,6 +45,7 @@ var _show_grid := true
 
 
 func _ready() -> void:
+	_draft_points = _active_polyline
 	_camera.make_current()
 	_camera.position = initial_camera_position
 	_camera.zoom = initial_camera_zoom
@@ -66,7 +71,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		var mouse := event as InputEventMouseButton
 		match mouse.button_index:
 			MOUSE_BUTTON_LEFT:
-				_set_marker_point(_camera.get_global_mouse_position()) if _marker_mode else _add_point(_camera.get_global_mouse_position())
+				_set_marker_point(_camera.get_global_mouse_position()) if _marker_mode else _add_point(_camera.get_global_mouse_position(), mouse.double_click)
 			MOUSE_BUTTON_RIGHT:
 				_remove_selected_marker_point() if _marker_mode else _remove_last_point()
 			MOUSE_BUTTON_WHEEL_UP:
@@ -101,6 +106,7 @@ func _load_target_level() -> void:
 				_target_level.set_meta("mapper_preview_config", parsed)
 	_world.add_child(_target_level)
 	_hide_target_canvas_layers(_target_level)
+	_load_existing_collision_polylines()
 
 
 func _hide_target_canvas_layers(node: Node) -> void:
@@ -150,14 +156,27 @@ func _handle_key(event: InputEventKey) -> void:
 		KEY_C:
 			_copy_markers_to_clipboard() if _marker_mode else _copy_segments_to_clipboard()
 		KEY_ENTER, KEY_KP_ENTER, KEY_U:
-			_apply_draft_markers_to_runtime_marker_map() if _marker_mode else _apply_draft_segments_to_runtime_collision_map()
+			if _marker_mode:
+				_apply_draft_markers_to_runtime_marker_map()
+			else:
+				_finish_active_polyline()
+				_apply_draft_segments_to_runtime_collision_map()
+		KEY_SPACE:
+			if not _marker_mode:
+				_finish_active_polyline()
+		KEY_N:
+			if not _marker_mode:
+				_finish_active_polyline()
+		KEY_ESCAPE:
+			if not _marker_mode:
+				_active_polyline.clear()
 		KEY_E:
 			_show_existing = not _show_existing
 		KEY_H:
 			_show_help = not _show_help
 			_hud.visible = _show_help
 		KEY_R:
-			_draft_markers.clear() if _marker_mode else _draft_points.clear()
+			_draft_markers.clear() if _marker_mode else _active_polyline.clear()
 		KEY_M:
 			_marker_mode = not _marker_mode
 		KEY_PAGEUP:
@@ -206,15 +225,27 @@ func _cycle_selected_marker(direction: int) -> void:
 	_marker_mode = true
 
 
-func _add_point(point: Vector2) -> void:
-	_draft_points.append(point)
-	if _draft_points.size() >= 2:
-		print(_format_segment(_draft_points[-2], _draft_points[-1]))
+func _add_point(point: Vector2, finish_on_double_click := false) -> void:
+	_active_polyline.append(point)
+	if _active_polyline.size() >= 2:
+		print(_format_segment(_active_polyline[-2], _active_polyline[-1]))
+	if finish_on_double_click:
+		_finish_active_polyline()
+
+
+func _finish_active_polyline() -> void:
+	var cleaned: Array[Vector2] = []
+	for point in _active_polyline:
+		if cleaned.is_empty() or not point.is_equal_approx(cleaned[-1]):
+			cleaned.append(point)
+	if cleaned.size() >= 2:
+		_draft_polylines.append(cleaned)
+	_active_polyline.clear()
 
 
 func _remove_last_point() -> void:
-	if not _draft_points.is_empty():
-		_draft_points.pop_back()
+	if not _active_polyline.is_empty():
+		_active_polyline.pop_back()
 
 
 func _set_marker_point(point: Vector2) -> void:
@@ -272,16 +303,9 @@ func _apply_draft_segments_to_preview() -> void:
 	for child in boundary.get_children():
 		child.queue_free()
 	var index := 1
-	var point_index := 1
-	while point_index < _draft_points.size():
-		_add_preview_boundary_segment(
-			boundary,
-			"BoundarySegment_%03d" % index,
-			_draft_points[point_index - 1],
-			_draft_points[point_index]
-		)
+	for segment: Array in _compiled_draft_segments(true):
+		_add_preview_boundary_segment(boundary, "BoundarySegment_%03d" % index, segment[0], segment[1])
 		index += 1
-		point_index += 1
 
 
 func _add_preview_boundary_segment(parent: StaticBody2D, node_name: String, a: Vector2, b: Vector2) -> void:
@@ -441,11 +465,92 @@ func _atomic_write_verified(path: String, text: String) -> bool:
 
 func _format_draft_segment_lines() -> Array[String]:
 	var lines: Array[String] = []
-	var index := 1
-	while index < _draft_points.size():
-		lines.append(_format_segment(_draft_points[index - 1], _draft_points[index]))
-		index += 1
+	for segment: Array in _compiled_draft_segments(false):
+		lines.append(_format_segment(segment[0], segment[1]))
 	return lines
+
+
+func _compiled_draft_segments(include_active: bool) -> Array:
+	var polylines := _draft_polylines.duplicate(true)
+	if include_active and _active_polyline.size() >= 2:
+		polylines.append(_active_polyline.duplicate())
+	return compile_polylines(polylines)
+
+
+static func compile_polylines(polylines: Array) -> Array:
+	var result: Array = []
+	for polyline_variant: Variant in polylines:
+		if not polyline_variant is Array:
+			continue
+		var polyline := polyline_variant as Array
+		for index in range(polyline.size() - 1):
+			var a := polyline[index] as Vector2
+			var b := polyline[index + 1] as Vector2
+			if a == null or b == null or a.is_equal_approx(b):
+				continue
+			result.append([a, b])
+	return result
+
+
+static func reconstruct_polylines(segments: Array) -> Array:
+	var unused: Array = []
+	for segment_variant: Variant in segments:
+		if not segment_variant is Array or (segment_variant as Array).size() < 2:
+			continue
+		var segment := segment_variant as Array
+		var a := segment[0] as Vector2
+		var b := segment[1] as Vector2
+		if a == null or b == null or a.is_equal_approx(b):
+			continue
+		unused.append([a, b])
+	var result: Array = []
+	while not unused.is_empty():
+		var seed: Array = unused.pop_front()
+		var chain: Array = [seed[0], seed[1]]
+		var extended := true
+		while extended:
+			extended = false
+			for index in range(unused.size()):
+				var candidate := unused[index] as Array
+				if (candidate[0] as Vector2).is_equal_approx(chain[-1] as Vector2):
+					chain.append(candidate[1])
+					unused.remove_at(index)
+					extended = true
+					break
+				if (candidate[1] as Vector2).is_equal_approx(chain[-1] as Vector2):
+					chain.append(candidate[0])
+					unused.remove_at(index)
+					extended = true
+					break
+			for index in range(unused.size()):
+				var candidate := unused[index] as Array
+				if (candidate[1] as Vector2).is_equal_approx(chain[0] as Vector2):
+					chain.push_front(candidate[0])
+					unused.remove_at(index)
+					extended = true
+					break
+				if (candidate[0] as Vector2).is_equal_approx(chain[0] as Vector2):
+					chain.push_front(candidate[1])
+					unused.remove_at(index)
+					extended = true
+					break
+		result.append(chain)
+	return result
+
+
+func _load_existing_collision_polylines() -> void:
+	var segments: Array = []
+	if _target_level != null and _target_level.has_method("get_boundary_segments"):
+		var raw: Variant = _target_level.call("get_boundary_segments")
+		if raw is Array:
+			segments = raw
+	if segments.is_empty() and _target_level != null:
+		var boundary := _target_level.find_child("PathBoundaryCollision", true, false) as StaticBody2D
+		if boundary != null:
+			for child in boundary.get_children():
+				if child.has_meta("boundary_a") and child.has_meta("boundary_b"):
+					segments.append([child.get_meta("boundary_a"), child.get_meta("boundary_b")])
+	_draft_polylines = reconstruct_polylines(segments)
 
 
 func _format_boundary_segments_const(lines: Array[String]) -> String:
@@ -526,7 +631,8 @@ func _update_help() -> void:
 		mapper_title,
 		"Mode: %s   M: collision/marker   Marker mode 1-9: type   PgUp/PgDn: cycle   Selected: %s" % ["MARKER" if _marker_mode else "COLLISION", _selected_marker_id()],
 		"Marker keys: %s" % _marker_shortcuts_text(),
-		"Collision mode: Left click add rail point   Right click undo   C copy rails   Enter/U apply rails",
+		"Collision: Left click add   double-click/Space finish   N new chain   Right click undo   Enter/U save",
+		"Collision: R cancel active   C copy rails   E existing   V draft",
 		"Marker mode: Left click place selected marker   Right click clear selected marker   C copy markers   Enter/U apply markers",
 		"Semantic: 1 boundary  2 encounter  3 hazards  4 interactions  5 cameras  6 transitions  7 art  8 traversal  0 all",
 		"Presets: F1 gameplay   F2 art alignment   F3 presentation   F4 clean",
@@ -558,7 +664,9 @@ func get_collision_mapper_state() -> Dictionary:
 	return {
 		"target_level": _target_level,
 		"approach": _target_level,
-		"draft_points": _draft_points,
+		"draft_points": _active_polyline,
+		"draft_polylines": _draft_polylines,
+		"active_polyline": _active_polyline,
 		"draft_markers": _draft_markers,
 		"marker_schema": _marker_schema,
 		"marker_kinds": _marker_schema.map(func(item: Dictionary) -> String: return str(item.get("id", ""))),
