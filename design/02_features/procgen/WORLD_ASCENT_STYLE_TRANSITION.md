@@ -37,3 +37,6 @@ Full story-room geometry, production art, stacked traversal, and actor elevation
 - **Files:** procgen story modules, `proc_gen_tilemap.gd`, authored room templates.
 - **Constraints:** preserve deterministic generation and required-route connectivity.
 - **Acceptance:** story footprints reserve space, carve safely, place props/anchors, and export minimap metadata.
+## Local biome orthogonality
+
+Local ecological biome is orthogonal to distance/style progression. Distance band does not directly choose biome; accepted terrain, seeded moisture/exposure, and climate bias do.

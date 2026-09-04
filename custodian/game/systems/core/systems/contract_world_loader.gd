@@ -157,6 +157,7 @@ func _on_contract_generated(contract: Dictionary) -> void:
 
 	var map_instance: Node = map_instance_variant as Node
 	_attach_procgen_map(map_instance)
+	_apply_contract_environment(contract, map_instance)
 	var sectors_positioned := _position_static_sectors_from_contract(level_data, map_instance)
 
 	if hide_static_sectors and not sectors_positioned:
@@ -321,6 +322,12 @@ func _apply_contract_lighting_profile(world_profile: Dictionary) -> void:
 	var director := get_tree().get_first_node_in_group("world_lighting_director")
 	if director != null and director.has_method("apply_world_profile_overrides"):
 		director.call("apply_world_profile_overrides", world_profile, false)
+
+
+func _apply_contract_environment(contract: Dictionary, map_instance: Node) -> void:
+	var director := get_tree().get_first_node_in_group("world_environment_director")
+	if director != null and director.has_method("configure_from_contract"):
+		director.call("configure_from_contract", contract, map_instance)
 
 
 func _on_contract_generation_failed(result: Dictionary) -> void:

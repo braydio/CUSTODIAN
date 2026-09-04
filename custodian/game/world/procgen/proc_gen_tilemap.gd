@@ -17,6 +17,13 @@ const RUNTIME_WALKABLE_BOUNDARY_CHUNK_SCRIPT := preload(
 )
 const ELEVATION_MAP_SCRIPT := preload("res://game/world/elevation/elevation_map.gd")
 const TERRAIN_BUILDER_SCRIPT := preload("res://game/world/procgen/terrain/terrain_builder.gd")
+const BIOME_FIELD_SCRIPT := preload("res://game/world/procgen/biomes/biome_field.gd")
+const BIOME_PROFILES := {
+	"scrubland": preload("res://content/procgen/biomes/scrubland.tres"),
+	"woodland": preload("res://content/procgen/biomes/woodland.tres"),
+	"wetland": preload("res://content/procgen/biomes/wetland.tres"),
+	"rocky_upland": preload("res://content/procgen/biomes/rocky_upland.tres"),
+}
 const TERRAIN_TILE_IDS_SCRIPT := preload("res://game/world/procgen/terrain/terrain_tile_ids.gd")
 const SUNDERED_KEEP_SHORELINE_COMPOSITOR := preload(
 	"res://game/world/procgen/terrain/sundered_keep_shoreline_compositor.gd"
@@ -672,6 +679,8 @@ var _portal_teleporters: Array[Area2D] = []
 var _foliage_nodes: Dictionary = {}
 var _foliage_locally_inspected_tiles: Dictionary = {}
 var _foliage_textures: Array[Texture2D] = []
+var _foliage_tree_textures: Array[Texture2D] = []
+var _foliage_shrub_textures: Array[Texture2D] = []
 var _pending_foliage_tiles: Array[Vector2i] = []
 var _world_ingress_dressing_clearance_rects: Array[Rect2i] = []
 var _connector_evaluation_floor_cells: Dictionary = {}
@@ -683,6 +692,11 @@ var _fruit_texture: Texture2D = null
 var _fruit_sprites: Array[Node2D] = []
 var _presentation_gauge_accum := 0.0
 var _foliage_spawner: ProcgenFoliageSpawner = null
+var _biome_field: BiomeField = null
+var _biome_id_by_cell: Dictionary = {}
+var _biome_summary: Dictionary = {}
+var _environment_wind_speed_multiplier: float = 1.0
+var _environment_wind_gust_multiplier: float = 1.0
 var _planet_world_profile: Dictionary = {}
 var _world_progress_profile = null
 var _world_progress_samples: Dictionary = {}
@@ -1132,6 +1146,7 @@ func _fill_tilemaps() -> void:
 		_clear_runtime_wall_collision()
 		_clear_runtime_walkable_boundary()
 		_clear_world_progression_runtime()
+		_clear_biome_field()
 		_rebuild_runtime_wall_collision_debug()
 	_marks["setup_clear"] = Time.get_ticks_msec() - _last
 	_last = Time.get_ticks_msec()
@@ -1217,6 +1232,7 @@ func _fill_tilemaps() -> void:
 		_marks["terrain_state_capture"] = Time.get_ticks_msec() - terrain_phase_started
 	_marks["terrain_elevation"] = Time.get_ticks_msec() - _last
 	_last = Time.get_ticks_msec()
+	_build_biome_field()
 
 	if world_progression_enabled:
 		_build_world_progress_samples(map_size)
@@ -7267,6 +7283,77 @@ func _log_terrain_builder_summary(terrain_result: Dictionary) -> void:
 		push_warning(str(warning))
 
 
+func _ensure_biome_field() -> void:
+	if _biome_field == null:
+		_biome_field = BIOME_FIELD_SCRIPT.new()
+
+
+func _clear_biome_field() -> void:
+	_biome_id_by_cell.clear()
+	_biome_summary.clear()
+
+
+func _build_biome_field() -> void:
+	_clear_biome_field()
+	if _generated_floor_cells.is_empty():
+		return
+	_ensure_biome_field()
+	var result: Dictionary = _biome_field.build(
+		_generated_floor_cells, _last_terrain_result, _get_generation_seed(), _planet_world_profile
+	)
+	_biome_id_by_cell = (result.get("biome_id_by_cell", {}) as Dictionary).duplicate(true)
+	_biome_summary = result.duplicate(true)
+	_biome_summary.erase("biome_id_by_cell")
+	var counts: Dictionary = _biome_summary.get("counts", {})
+	var observatory := get_node_or_null("/root/DevObservatory")
+	if observatory != null and observatory.has_method("set_gauge"):
+		for biome_id in BIOME_PROFILES:
+			observatory.call("set_gauge", "procgen_biome_%s_cells" % biome_id, int(counts.get(StringName(biome_id), 0)))
+
+
+func get_biome_id_at_tile(tile: Vector2i) -> StringName:
+	return StringName(_biome_id_by_cell.get(tile, &"scrubland"))
+
+
+func get_biome_id_at_global(global_position: Vector2) -> StringName:
+	return get_biome_id_at_tile(_global_to_tile(global_position))
+
+
+func get_biome_profile_at_tile(tile: Vector2i) -> BiomeProfile:
+	return BIOME_PROFILES.get(String(get_biome_id_at_tile(tile)), BIOME_PROFILES["scrubland"]) as BiomeProfile
+
+
+func get_biome_foliage_density(tile: Vector2i) -> float:
+	var profile := get_biome_profile_at_tile(tile)
+	return profile.foliage_density_ceiling if profile != null else foliage_density
+
+
+func get_biome_tree_probability(tile: Vector2i) -> float:
+	var profile := get_biome_profile_at_tile(tile)
+	return profile.tree_probability if profile != null else 0.1
+
+
+func get_biome_foliage_tint(tile: Vector2i) -> Color:
+	var profile := get_biome_profile_at_tile(tile)
+	return profile.foliage_tint if profile != null else Color.WHITE
+
+
+func debug_get_biome_field() -> Dictionary:
+	return {"biome_id_by_cell": _biome_id_by_cell.duplicate(true), "summary": _biome_summary.duplicate(true)}
+
+
+func set_environment_wind_multipliers(speed_multiplier: float, gust_multiplier: float) -> void:
+	_environment_wind_speed_multiplier = clampf(speed_multiplier, 0.0, 3.0)
+	_environment_wind_gust_multiplier = clampf(gust_multiplier, 0.0, 3.0)
+	if _foliage_spawner == null:
+		return
+	for value in _foliage_spawner.get_shared_materials().values():
+		var material := value as ShaderMaterial
+		if material == null: continue
+		material.set_shader_parameter("wind_speed", foliage_wind_speed * _environment_wind_speed_multiplier)
+		material.set_shader_parameter("gust_amount", foliage_wind_gust_amount * _environment_wind_gust_multiplier)
+
+
 func _ensure_foliage_spawner() -> void:
 	if _foliage_spawner == null:
 		_foliage_spawner = PROCGEN_FOLIAGE_SPAWNER_SCRIPT.new()
@@ -7287,6 +7374,8 @@ func _build_foliage_spawner_context(map_size: Vector2i = Vector2i.ZERO) -> Dicti
 		"foliage_nodes": _foliage_nodes,
 		"fruit_sprites": _fruit_sprites,
 		"foliage_textures": _foliage_textures,
+		"foliage_tree_textures": _foliage_tree_textures,
+		"foliage_shrub_textures": _foliage_shrub_textures,
 		"fruit_texture": _fruit_texture,
 		"generated_floor_cells": _generated_floor_cells,
 		"generated_wall_cells": _generated_wall_cells,
@@ -7333,10 +7422,10 @@ func _build_foliage_spawner_context(map_size: Vector2i = Vector2i.ZERO) -> Dicti
 		"foliage_player_occlusion_softness": foliage_player_occlusion_softness,
 		"foliage_player_occlusion_alpha": foliage_player_occlusion_alpha,
 		"foliage_wind_enabled": foliage_wind_enabled,
-		"foliage_wind_speed": foliage_wind_speed,
+		"foliage_wind_speed": foliage_wind_speed * _environment_wind_speed_multiplier,
 		"foliage_shrub_wind_strength_px": foliage_shrub_wind_strength_px,
 		"foliage_tree_wind_strength_px": foliage_tree_wind_strength_px,
-		"foliage_wind_gust_amount": foliage_wind_gust_amount,
+		"foliage_wind_gust_amount": foliage_wind_gust_amount * _environment_wind_gust_multiplier,
 		"foliage_occlusion_shader": FOLIAGE_OCCLUSION_SHADER,
 		"foliage_occlusion_max_shader_bubbles": FOLIAGE_OCCLUSION_MAX_SHADER_BUBBLES,
 		"foliage_tree_trunk_collision_size": foliage_tree_trunk_collision_size,
@@ -7355,6 +7444,9 @@ func _build_foliage_spawner_context(map_size: Vector2i = Vector2i.ZERO) -> Dicti
 		"tile_noise_hash": Callable(self, "_tile_noise_hash"),
 		"tile_to_world_position": Callable(self, "_tile_to_world_position"),
 		"get_planet_profile_color": Callable(self, "_get_planet_profile_color"),
+		"get_biome_foliage_density": Callable(self, "get_biome_foliage_density"),
+		"get_biome_tree_probability": Callable(self, "get_biome_tree_probability"),
+		"get_biome_foliage_tint": Callable(self, "get_biome_foliage_tint"),
 		"get_player_spawn": Callable(self, "get_player_spawn"),
 		"is_road_surface_tile": Callable(self, "is_road_surface_tile"),
 		"is_parking_zone_tile": Callable(self, "is_parking_zone_tile"),
@@ -8863,19 +8955,29 @@ func _foliage_jitter(pos: Vector2i) -> Vector2:
 
 func _load_foliage_textures() -> void:
 	_foliage_textures.clear()
+	_foliage_tree_textures.clear()
+	_foliage_shrub_textures.clear()
 	for path in FOLIAGE_ASSET_PATHS:
 		var tex := load(path) as Texture2D
 		if tex != null:
-			_foliage_textures.append(tex)
+			_register_foliage_texture(tex)
 	for texture in extra_foliage_textures:
 		if texture != null:
-			_foliage_textures.append(texture)
+			_register_foliage_texture(texture)
 
 	if enable_fruit_spawning:
 		if ResourceLoader.exists(FRUIT_TEXTURE_PATH):
 			_fruit_texture = load(FRUIT_TEXTURE_PATH) as Texture2D
 		else:
 			_fruit_texture = null
+
+
+func _register_foliage_texture(texture: Texture2D) -> void:
+	_foliage_textures.append(texture)
+	if texture.get_size().y >= 96.0:
+		_foliage_tree_textures.append(texture)
+	else:
+		_foliage_shrub_textures.append(texture)
 
 
 func _load_interior_prop_textures() -> void:
@@ -10388,6 +10490,8 @@ func get_level_data() -> Dictionary:
 		"elevation_cells": elevation_map.get_serialized_cells() if elevation_map != null else [],
 		"pre_terrain_connectivity": _last_pre_terrain_connectivity.duplicate(true),
 		"terrain_builder": _get_terrain_builder_level_data(),
+		"biome_id_by_cell": _biome_id_by_cell.duplicate(true),
+		"biome_summary": _biome_summary.duplicate(true),
 		"floor_cells": _dict_keys_as_vector2i_array(_generated_floor_cells),
 		"wall_cells": _dict_keys_as_vector2i_array(_generated_wall_cells),
 		"ocean_cells": _dict_keys_as_vector2i_array(_ocean_cells),

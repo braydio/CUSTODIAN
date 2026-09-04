@@ -17,7 +17,7 @@
 
 ## 1. Purpose
 
-Define the Hub as the persistent strategic and epistemic layer that exists across campaigns. The Hub is not a menu, not a generic metagame wrapper, and not a power-escalation system. It is the persistent historical layer that survives campaign disposal, surfaces scenario proposals, mutates from campaign outcomes, and accumulates knowledge, interpretation, and irreversible loss. The canonical split is already established: Hub is persistent, Campaign World is transient, and accepting a scenario instantiates a disposable campaign state that returns a mutation back into the Hub on win, loss, or abandonment.  
+Define the Hub as the persistent strategic and epistemic layer that exists across campaigns. The Hub is not a menu, not a generic metagame wrapper, and not a power-escalation system. It is the persistent historical layer that survives campaign disposal, surfaces scenario proposals, mutates from campaign outcomes, and accumulates knowledge, interpretation, and irreversible loss. The canonical split is already established: Hub is persistent, CampaignRegion runtime representation is transient while its Domain persists according to world state, and accepting a scenario instantiates a disposable campaign state that returns a mutation back into the Hub on win, loss, or abandonment.  
 
 This file locks the Hub as a **knowledge-state machine** rather than a resource economy. The Hub tracks what is known, suspected, lost, and pattern-repeated. Persistent rewards are not raw buffs; they are interpretive leverage that changes what can be understood, surfaced, or chosen later. 
 
@@ -43,7 +43,7 @@ The Hub implementation must remain aligned with the following content-facing rul
 
 The active runtime already contains a playable Godot combat slice with procgen contract world loading, a local command terminal, wave combat, turrets, sprint, melee, repair, and contract/map previews. What it does **not** yet have is campaign persistence, mission offer semantics, outcome-to-meta mutation, or a persistent archive layer that turns repeated runs into a coherent larger game. Project status explicitly calls out save/snapshot persistence and campaign progression as not yet implemented or medium-priority gaps. 
 
-The Hub exists to solve that gap without breaking the current architecture. The earlier design guidance is explicit that this is a layering change, not a rewrite: current world simulation becomes `CampaignState`, a distinct `HubState` persists outside it, a `CampaignOutcome` is produced on resolution, applied to `HubState`, and the campaign state is discarded. Deterministic ticks, assault logic, expedition logic, and transient sector/base logic remain intact. 
+The Hub exists to solve that gap without breaking the current architecture. The earlier design guidance is explicit that this is a layering change, not a rewrite: current world simulation becomes `CampaignState`, a distinct `HubState` persists outside it, a `CampaignOutcome` is produced on resolution, applied to `HubState`, and the the active CampaignRegion runtime state is unloaded after outcome capture. Deterministic ticks, assault logic, expedition logic, and transient sector/base logic remain intact. 
 
 ---
 
@@ -62,7 +62,7 @@ When shown in player-facing UI or supporting docs, a Contract should be framed a
 
 ### 3.2 Two Worlds, Two Timescales
 
-The Hub is the only persistent world. Campaign worlds are transient, created on acceptance, destroyed on resolution, and not revisitable. There is no free travel, no shared map continuity, and no rollback to preserve failed worlds. That distinction is not flavor text; it is the core architectural rule. 
+The Hub is the persistent strategic authority. CampaignRegion runtime instances are transient representations of persistent Lattice Domains, selected on acceptance and unloaded on resolution. V1 need not implement free travel or broad inactive-domain simulation, but canon permits later Contracts into a Domain when routes and field state allow it.
 
 ### 3.3 Canonical State Transition
 

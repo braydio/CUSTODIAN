@@ -206,3 +206,6 @@ Expected output includes:
 - `planet_seed=<int>`
 - `map_seed=<int>`
 - `level_data_keys=[...]`
+## Environment climate fields
+
+Contract world profiles now carry `biome_moisture_bias`, `biome_exposure_bias`, `day_start_hour_min`, `day_start_hour_max`, and deterministic `weather_weights`. These are climate-envelope inputs; local biome remains ProcGenTilemap-owned.

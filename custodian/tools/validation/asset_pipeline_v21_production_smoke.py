@@ -20,7 +20,7 @@ def png(path,size):
     path.parent.mkdir(parents=True,exist_ok=True); Image.new("RGBA",size,(31,63,127,255)).save(path)
 
 def main():
-    schemas=load_kind_schemas(); assert set(schemas)=={"world_prop","enemy","tile","effect","vehicle","weapon","ui","backdrop"}
+    schemas=load_kind_schemas(); assert set(schemas)=={"world_prop","enemy","ambient_creature","tile","effect","vehicle","weapon","ui","backdrop"}
     families=load_all_families(); tile=families["void_cliff_face"]; enemy=families["enemy_grunt"]
     with tempfile.TemporaryDirectory() as tmp:
         root=Path(tmp); inbox=root/"asset_drop/inbox/void_cliff_face"

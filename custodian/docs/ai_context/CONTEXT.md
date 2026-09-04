@@ -1,5 +1,12 @@
 # PROJECT CONTEXT PRIMER — CUSTODIAN
 
+## Canon Migration (2026-09-03)
+
+CampaignRegion is a transient runtime representation of a persistent Lattice
+Domain. Archive Engines stabilize damaged reality; they do not create worlds.
+The Pale is an unstable continuity condition, provenance is forensic, and route
+restoration remains reciprocal and dangerous.
+
 Last updated: 2026-08-20
 
 Simulation boundary update (2026-08-08): use `WorldSimulationRuntime` and typed command ingress for live campaign-world access. Never launch Python from Godot. `GameState`, local power, `WaveManager`, and `FabPipeline` are compatibility/adapters. Validate with `run_world_simulation_migration_suite.sh`.
@@ -173,3 +180,6 @@ Macro-game extraction is now scaffolded under `game/state/` and `game/systems/si
   `set_underlay_profile_override("DROWNED_BASILICA")` is the development force
   path and A/B selection uses the accepted `ProcGen.seed`. Tonal normalization remains
   pending visual review.
+## World Environment authority
+
+Static ecological biome semantics belong to accepted `ProcGenTilemap`; changing clock/weather state belongs to the world-local `WorldEnvironmentDirector`; final lighting and fullscreen atmosphere remain owned by their existing directors. Environment V1 is presentation-only.

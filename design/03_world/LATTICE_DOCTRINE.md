@@ -8,6 +8,12 @@
 **Related Docs:** `design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md`, `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`, `design/04_architecture/HUB_SYSTEM_META_PROGRESSION.md`, `design/04_architecture/CAMPAIGN_FLOW_AND_GAME_LOOP.md`, `design/03_world/PROCEDURAL_LORE_GENERATION.md`, `design/03_world/LATTICE_ARCHIVE_ENGINE_MEMORY_GLASS.md`  
 **Source:** `design/LORE_GAMEPLAY_DUMP.md` (archived after migration)
 
+> **CANONICAL MIGRATION OVERRIDE:** This document is governed by
+> `design/03_world/LATTICE_DOMAIN_COSMOLOGY_MIGRATION.md`. Any older wording
+> below that describes Campaign Worlds as ontologically temporary, Archive-created,
+> inherently non-revisitable, or destroyed on mission resolution is historical
+> framing and is superseded by the Lattice Domain model.
+
 ---
 
 ## Purpose
@@ -15,7 +21,7 @@
 Lock the **Lattice doctrine** as the new canonical framing for CUSTODIAN's core premise. This document defines:
 
 - what the Lattice actually does (it cannot protect any reality permanently)
-- what campaign worlds are (Lattice reality pockets, not planets)
+- what Lattice Domains are (persistent damaged regions, not generated bubbles)
 - what the Custodian is actually trying to accomplish
 - why campaigns inevitably end
 - how this reframes meta-progression, the world boundary, and replayability
@@ -76,9 +82,7 @@ The Lattice collapses. The world collapses.
 
 ### Scale: Planets + Time + Universe
 
-A campaign world is a specific **planet** within a specific **temporal field** at a specific **point in universal time** — or possibly a different universe entirely.
-
-The planet is the spatial anchor. The Lattice is the temporal/existential container that makes that slice of reality survivable.
+A Lattice Domain is an existing damaged region of post-Severing reality held at usable coherence by Archive/Lattice infrastructure. It may be geographically large; a route may reach an adjacent continuity or historical state, but continuity displacement is a consequential anomaly rather than the default identity of every Domain.
 
 Campaigns from different cycles may be on different planets, in different eras, or in universes that don't share the same timeline. Most may not exist at the same time as each other.
 
@@ -267,7 +271,7 @@ The old framing — Custodians as "provenance-preservation systems" and "authori
 
 ### Campaign World Transience — Clarified
 
-Existing canon already says "Campaign worlds are transient." This doctrine clarifies the **mechanism** (Lattice-protected realities). Campaign worlds are on planets — but also in different temporal fields, different times, and possibly different universes. The planet is the spatial anchor; the Lattice is the temporal/existential container. Compatible with PixelPlanets system.
+Earlier campaign-world transience language is superseded. CampaignRegion runtime instances are transient representations of persistent Domains. Domains may contain ordinary planetary territory and may be revisited when routes and field state permit; continuity-displaced destinations remain exceptional. This remains compatible with PixelPlanets runtime generation.
 
 ### Hub System Progression — Compatible
 

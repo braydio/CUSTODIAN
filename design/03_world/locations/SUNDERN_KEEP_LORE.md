@@ -7,6 +7,11 @@
 > **Cross-reference:** See `design/03_world/lore/CORE_LORE.md` for master lore canon, `design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md` for cosmology, `design/03_world/factions/` for faction profiles, `design/02_features/factions/FACTION_EXPRESSION_SYSTEM.md` for faction implementation and taxonomy
 > **Terminology note:** "Penitents of Static" → "Pale Bell Penitents" (early); "The Severance" → "the Severing" (public term); "Unnarrival" → "Unarrival" (canonical spelling, single n). See `design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md` for the full terminology lock.
 
+> **LATTICE DOMAIN LOCK:** Sundern Keep occupies part of a persistent
+> post-Severing Lattice Domain maintained by surviving continuity-port and
+> Archive infrastructure. Unloading its CampaignRegion runtime does not
+> fictionally destroy the Keep or its Domain.
+
 ---
 
 ## One-Line Identity

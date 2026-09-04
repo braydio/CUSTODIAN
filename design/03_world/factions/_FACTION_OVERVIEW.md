@@ -1,5 +1,12 @@
 # CUSTODIAN — Faction Overview
 
+> **MIGRATION HOLD — FACTION REAUTHOR PENDING**
+>
+> The Lattice Domain cosmology supersedes assumptions under which this roster
+> was authored. These profiles remain historical design reference until the
+> replacement faction architecture is locked. Do not add new runtime
+> dependencies on this roster during the hold.
+
 > **Status:** Canonical design reference — cross-faction comparison and implementation guide
 > **Doctrine authority:** `design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md`
 > **Supersedes:** MAJOR_FACTION_PROFILES.md (pre-design). Conflicts resolved per FACTION_PROFILES_CORRECTIONS.md and ASH_BELL_AND_DESIGN_GUIDANCE.md.

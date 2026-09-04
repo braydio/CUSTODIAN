@@ -196,7 +196,7 @@ CAMPAIGN REGION
 RESOLUTION
     -> generate CampaignOutcome
     -> apply outcome to Hub
-    -> destroy campaign world
+    -> unload active CampaignRegion runtime instance
     -> return to compound
 
 COMPOUND

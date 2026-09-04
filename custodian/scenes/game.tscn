@@ -35,6 +35,7 @@
 [ext_resource type="Script" uid="uid://xj0cr1hc5c46" path="res://content/tiles/debug/debug_collector.gd" id="33_debug_collector"]
 [ext_resource type="Script" uid="uid://bi11w51uaudmj" path="res://game/systems/core/systems/ambient_critter_manager.gd" id="34_ambient_critters"]
 [ext_resource type="PackedScene" uid="uid://dn7go36qvrw6x" path="res://game/actors/enemies/ambient_shrumb.tscn" id="35_ambient_shrumb"]
+[ext_resource type="PackedScene" path="res://game/actors/ambient/baby_opossum/baby_opossum.tscn" id="35_baby_opossum"]
 [ext_resource type="Script" uid="uid://by380p21nbchx" path="res://game/actors/ui/terminal_background.gd" id="36_terminal_background"]
 [ext_resource type="Script" uid="uid://bg78eihw40m6g" path="res://game/systems/core/systems/navigation_system.gd" id="40_navigation"]
 [ext_resource type="Script" uid="uid://din0buhray3ph" path="res://content/tiles/debug/navigation_debug.gd" id="41_nav_debug"]
@@ -55,6 +56,7 @@
 [ext_resource type="PackedScene" path="res://scenes/debug/dev_observatory_overlay.tscn" id="208_observatory_overlay"]
 [ext_resource type="PackedScene" path="res://game/actors/allies/allied_infantry_droid.tscn" id="209_allied_droid"]
 [ext_resource type="Script" path="res://game/world/lighting/world_lighting_director.gd" id="210_lighting_director"]
+[ext_resource type="Script" path="res://game/world/environment/world_environment_director.gd" id="210_environment_director"]
 [ext_resource type="Resource" path="res://content/lighting/profiles/sundered_keep_exterior.tres" id="211_lighting_profile"]
 [ext_resource type="PackedScene" path="res://game/world/lighting/world_atmosphere_2d.tscn" id="212_world_atmosphere"]
 [ext_resource type="PackedScene" path="res://game/world/lighting/light_rig_2d.tscn" id="213_light_rig"]
@@ -114,6 +116,12 @@ script = ExtResource("210_lighting_director")
 canvas_modulate_path = NodePath("../CanvasModulate")
 directional_light_path = NodePath("../DirectionalLight2D")
 default_profile = ExtResource("211_lighting_profile")
+
+[node name="WorldEnvironmentDirector" type="Node" parent="World"]
+script = ExtResource("210_environment_director")
+day_length_seconds = 1440.0
+clock_enabled = true
+indoor_transition_seconds = 1.25
 
 [node name="DebugDraw" type="Node2D" parent="World" unique_id=1320630577 groups=["world_origin_branch"]]
 script = ExtResource("31_debug_draw")
@@ -383,6 +391,8 @@ enemies_per_camp_max = 2
 [node name="AmbientCritterManager" type="Node" parent="." unique_id=292901155]
 script = ExtResource("34_ambient_critters")
 critter_scene = ExtResource("35_ambient_shrumb")
+supplemental_critter_scene = ExtResource("35_baby_opossum")
+supplemental_critter_spawn_weight = 0.15
 min_distance_from_spawn_tiles = 10
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=2053415447]

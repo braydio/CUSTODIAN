@@ -228,7 +228,12 @@ func _place_foliage(context: Dictionary, pos: Vector2i) -> bool:
 		return false
 	var sprite := Sprite2D.new()
 	sprite.texture = texture
-	sprite.modulate = _call_color(context, "get_planet_profile_color", "foliage_tint", Color.WHITE)
+	var climate_tint := _call_color(context, "get_planet_profile_color", "foliage_tint", Color.WHITE)
+	var biome_tint := _call_tile_color(context, "get_biome_foliage_tint", pos, Color.WHITE)
+	sprite.modulate = Color(
+		climate_tint.r * biome_tint.r, climate_tint.g * biome_tint.g,
+		climate_tint.b * biome_tint.b, climate_tint.a * biome_tint.a
+	)
 	var world_pos := _call_vector2(context, "tile_to_world_position", pos) + _foliage_jitter(context, pos)
 	sprite.position = foliage_parent.to_local(world_pos)
 	sprite.z_index = int(context.get("foliage_behind_z_index", 1))
@@ -293,8 +298,14 @@ func _pick_foliage_texture(context: Dictionary, pos: Vector2i) -> Texture2D:
 	var foliage_textures: Array = context.get("foliage_textures", [])
 	if foliage_textures.is_empty():
 		return null
-	var idx := _tile_noise_hash(context, pos + Vector2i(19, 73)) % foliage_textures.size()
-	return foliage_textures[idx] as Texture2D
+	var tree_textures: Array = context.get("foliage_tree_textures", [])
+	var shrub_textures: Array = context.get("foliage_shrub_textures", [])
+	var tree_probability := clampf(_call_float(context, "get_biome_tree_probability", pos, 0.1), 0.0, 1.0)
+	var tree_roll := float(_tile_noise_hash(context, pos + Vector2i(211, 433)) % 1000) / 1000.0
+	var candidates: Array = tree_textures if tree_roll < tree_probability else shrub_textures
+	if candidates.is_empty(): candidates = foliage_textures
+	var idx := _tile_noise_hash(context, pos + Vector2i(19, 73)) % candidates.size()
+	return candidates[idx] as Texture2D
 
 
 func _classify_foliage(foliage_size: Vector2) -> String:
@@ -356,6 +367,7 @@ func _would_place_foliage_at(context: Dictionary, pos: Vector2i) -> bool:
 	if _is_no_random_foliage_region_tile(context, pos):
 		return false
 	var density := float(context.get("foliage_density", 0.0))
+	density = minf(density, _call_float(context, "get_biome_foliage_density", pos, density))
 	density = minf(density, _route_foliage_density(context, pos))
 	if _is_inside_compound_zone(context, pos):
 		density *= float(context.get("foliage_compound_density_multiplier", 0.28))
@@ -549,6 +561,19 @@ func _call_color(context: Dictionary, key: String, color_id: String, fallback: C
 	var callable: Callable = context.get(key, Callable())
 	if callable.is_valid():
 		return callable.call(color_id, fallback) as Color
+	return fallback
+
+
+func _call_float(context: Dictionary, key: String, pos: Vector2i, fallback: float) -> float:
+	var callable: Callable = context.get(key, Callable())
+	return float(callable.call(pos)) if callable.is_valid() else fallback
+
+
+func _call_tile_color(context: Dictionary, key: String, pos: Vector2i, fallback: Color) -> Color:
+	var callable: Callable = context.get(key, Callable())
+	if callable.is_valid():
+		var value: Variant = callable.call(pos)
+		if value is Color: return value as Color
 	return fallback
 
 

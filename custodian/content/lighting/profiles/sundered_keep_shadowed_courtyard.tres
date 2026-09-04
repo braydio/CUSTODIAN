@@ -11,3 +11,5 @@ directional_rotation_degrees = -38.0
 cosmic_underlay_alpha = 0.03
 fog_alpha = 0.14
 transition_seconds = 0.75
+environment_influence = 0.75
+weather_influence = 0.8

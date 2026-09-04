@@ -7,13 +7,15 @@ model = ChatterboxTurboTTS.from_pretrained(device="cpu", nano=True)
 
 print("Generating...", flush=True)
 
+text = "The West Gate closure. Thousands still inside."
+
 wav = model.generate(
-    "When the station records stopped agreeing with the people in front of us, we wrote the name down and tied it at the wrist.",
+    text,
     audio_prompt_path="reference.wav",
 )
 
 print("GENERATION RETURNED", wav.shape, flush=True)
-
+print("Generated for text:", text, flush=True)
 audio = wav.squeeze().detach().cpu().numpy()
 
 sf.write("forlorn_nano_test.wav", audio, model.sr, subtype="PCM_16")

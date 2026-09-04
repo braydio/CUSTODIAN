@@ -40,7 +40,7 @@ The current `LevelLoader` is the live bridge for the third responsibility. Phase
 
 ## 1. Purpose
 
-Define the runtime system that moves the player and simulation authority between major world contexts without corrupting state, breaking camera/input binding, or blurring the distinction between the persistent Hub and transient campaign worlds.
+Define the runtime system that moves the player and simulation authority between major world contexts without corrupting state, breaking camera/input binding, or blurring the distinction between the persistent Hub and transient CampaignRegion runtime representations.
 
 This system is not just scene loading. It is the authoritative contract for entering, leaving, unloading, and re-binding runtime contexts such as:
 
@@ -91,7 +91,11 @@ The World Transition System must satisfy five design goals simultaneously.
 
 ### 3.1 Preserve the Hub/Campaign Split
 
-The Hub is persistent. Campaign worlds are disposable. Transition logic must never quietly merge those lifetimes. Accepting a proposal creates a campaign world. Resolving or abandoning it returns a distilled outcome to the Hub and destroys the campaign world. 
+The Hub is persistent. CampaignRegion runtime instances are disposable runtime
+representations of persistent Lattice Domains. Transition logic must never merge
+those lifetimes. Accepting a proposal grants operational access to a Domain;
+resolving or abandoning it returns a distilled outcome to the Hub and unloads the
+active runtime instance.
 
 ### 3.2 Make Context Changes Explicit
 
@@ -164,11 +168,11 @@ Game boots into compound world or into a saved hub-side world context.
 
 ### 6.2 Compound to Campaign Region
 
-Player accepts a Hub proposal and deploys into a transient campaign world.
+Player accepts a Hub proposal and deploys into a transient CampaignRegion runtime representation.
 
 ### 6.3 Campaign Region to Compound
 
-Campaign resolves via victory, partial success, failure, or abandonment; outcome is applied to Hub; campaign world is destroyed; player returns to compound.
+Campaign resolves via victory, partial success, failure, or abandonment; outcome is applied to Hub; the active CampaignRegion runtime instance is unloaded; player returns to compound.
 
 ### 6.4 Compound to Compound Rebuild
 
@@ -511,7 +515,7 @@ Campaign flow produces `CampaignOutcome`. Transition system then:
 5. rebinds player/camera/UI
 6. resumes player control in compound
 
-This preserves the architecture already established in the Hub doc: campaign world is destroyed after its distilled outcome mutates the hub. 
+This preserves the architecture already established in the Hub doc: the active CampaignRegion runtime instance is unloaded after its distilled outcome mutates the hub. 
 
 ---
 
@@ -909,7 +913,7 @@ This is the second mandatory flow.
 
 ### Important Rule
 
-Outcome application must occur before campaign destruction is considered complete, because the entire architecture depends on campaign state distilling into Hub mutation before the transient world is discarded. 
+Outcome application must occur before runtime CampaignRegion unloading is considered complete, because the architecture depends on campaign state distilling into Hub mutation before the transient instance is freed. 
 
 ---
 
@@ -1197,7 +1201,7 @@ custodian/scenes/game.tscn
 
 * consume `CampaignOutcome`
 * apply hub mutation
-* destroy campaign world
+* unload active CampaignRegion runtime instance
 * restore compound
 
 ### Phase 5 — Save/Resume Integration
@@ -1272,7 +1276,7 @@ This file is complete when all of the following are true.
 
 * [ ] Selected scenario can be deployed into a campaign world
 * [ ] `CampaignOutcome` can be applied before return finalization
-* [ ] Campaign world is destroyed after outcome application
+* [ ] the active CampaignRegion runtime instance is unloaded after outcome application
 
 ### Determinism / Persistence
 

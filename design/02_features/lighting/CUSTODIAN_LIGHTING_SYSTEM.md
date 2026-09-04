@@ -93,3 +93,6 @@ terminal and power-node lights.
 - Placement/tuning of the new profile resources in additional production level zones beyond the gatehouse reference room.
 - Selective normal/specular map production for hero assets and major machinery.
 - Custom shaders for cosmic underlay refraction, temporal distortion, fog bands, and fake height-map shadows.
+## Environment composition
+
+`WorldLightingDirector` composes authored/zone base lighting with continuous day/night and weather modifiers rather than replacing authored profiles. `environment_influence` and `weather_influence` let authored interiors/events retain authority.

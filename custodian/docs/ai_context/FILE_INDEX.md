@@ -1,5 +1,11 @@
 # FILE INDEX — CUSTODIAN
 
+## Canon migration
+
+`design/03_world/LATTICE_DOMAIN_COSMOLOGY_MIGRATION.md` is the active migration
+lock for persistent Lattice Domains, Archive Fields, Pale geography, route
+reciprocity, and runtime-vs-fiction lifecycle terminology.
+
 Last updated: 2026-08-20
 
 ## Map + AI Coherence
@@ -1015,3 +1021,19 @@ Last updated: 2026-08-20
 - `custodian/game/ui/terminal/terminal_world_action_service.gd` — focused bridge from terminal intent to existing live public APIs.
 - `custodian/game/infrastructure/repair/field_repair_interaction.gd` — reusable proximity/hold/ledger-backed physical repair interaction.
 - `custodian/tools/validation/command_pressure_scenario_setup_smoke.gd` and `command_pressure_physical_loop_smoke.gd` — scenario contract and live-system regression coverage.
+# Baby Opossum Ambient Creature
+
+- `custodian/game/actors/ambient/ambient_creature_animation_set.gd` — shared
+  fail-soft semantic clip resolver and SpriteFrames builder for ambient actors.
+- `custodian/game/actors/ambient/ambient_creature_presentation_controller.gd` —
+  cycle-safe semantic fallback and alias presentation API.
+- `custodian/game/actors/ambient/baby_opossum/` — production actor, scene,
+  animation set, and optional V2 runtime strip discovery.
+- `custodian/content/metadata/assets/families/ambient_baby_opossum.asset.json`
+  — all-optional Baby Opossum family contract.
+## World Environment V1
+
+- `design/02_features/environment/WORLD_ENVIRONMENT_BIOME_DAYNIGHT_WEATHER.md` — implementation authority.
+- `game/world/procgen/biomes/` and `content/procgen/biomes/` — deterministic field logic and local foliage profiles.
+- `game/world/environment/world_environment_director.gd` — fixed-physics clock, seeded weather, indoor exposure, and presentation publication.
+- `tools/validation/{biome_field,world_environment}_smoke.gd` — focused deterministic contracts.

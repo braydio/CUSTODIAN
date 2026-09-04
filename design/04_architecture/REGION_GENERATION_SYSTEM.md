@@ -52,13 +52,13 @@ Define the system that generates transient campaign regions from Hub-selected sc
 
 This system is not generic procgen for procgen’s sake. It exists to answer one specific need in the larger architecture:
 
-> a selected `CampaignScenario` must become a concrete region world that can be entered, traversed, fought through, partially completed, abandoned, resolved, and then discarded.
+> a selected `CampaignScenario` must become a concrete runtime representation of a Lattice Domain that can be entered, traversed, fought through, partially completed, abandoned, resolved, and then unloaded.
 
 The Hub already defines persistent proposal logic and the World Transition System defines how authoritative world contexts switch. This file defines what actually gets built on the other side of that transition.
 
 It must preserve four already-established truths:
 
-1. campaign worlds are transient and disposable, unlike the persistent Hub 
+1. CampaignRegion runtime representations are transient; represented Lattice Domains persist according to world state, unlike the persistent Hub 
 2. the active runtime is Godot-authoritative and fixed-step deterministic 
 3. contract/procgen world promotion is already part of the runtime baseline 
 4. designer-authored room-template hybrid generation is already an active implementation path via Edgar/Tiled room templates, not just raw noise fields 
@@ -110,9 +110,11 @@ They should also affect what the world appears to have been, how it failed, how 
 
 Use authored room templates where they improve structure and identity; use procedural assembly where they improve replayability. The existing Edgar room-template direction is the correct backbone for this. 
 
-### 3.5 Disposable
+### 3.5 Runtime-Transient
 
-Regions are not persistent homesteads or revisitable open worlds. They exist to support one campaign instance and then be destroyed.
+CampaignRegion instances are not persistent homesteads or open-world runtime
+objects. They support one active operation and may then be unloaded; the
+represented Lattice Domain remains a persistent lore/strategic entity.
 
 ### 3.6 Systemic
 

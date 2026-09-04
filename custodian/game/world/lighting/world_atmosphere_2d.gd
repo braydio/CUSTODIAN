@@ -3,12 +3,14 @@ class_name WorldAtmosphere2D
 
 @export var camera_path: NodePath = NodePath("../World/Camera2D")
 @export var lighting_director_path: NodePath = NodePath("../World/WorldLightingDirector")
+@export var environment_director_path: NodePath = NodePath("../World/WorldEnvironmentDirector")
 
 @onready var post_process: ColorRect = $PostProcess
 
 var _material: ShaderMaterial = null
 var _camera: Camera2D = null
 var _director: WorldLightingDirector = null
+var _environment_director: Node = null
 var _missing_nodes_reported: bool = false
 
 
@@ -41,6 +43,7 @@ func is_render_enabled() -> bool:
 func _resolve_runtime_nodes() -> void:
 	_camera = get_node_or_null(camera_path) as Camera2D
 	_director = get_node_or_null(lighting_director_path) as WorldLightingDirector
+	_environment_director = get_node_or_null(environment_director_path)
 	if not _missing_nodes_reported and (_camera == null or _director == null):
 		_missing_nodes_reported = true
 		_report_warning("World atmosphere could not resolve its live camera or lighting director.", {
@@ -60,18 +63,23 @@ func _update_shader_parameters() -> void:
 		return
 	_material.set_shader_parameter("fog_alpha", _director.fog_alpha)
 	_material.set_shader_parameter("cosmic_alpha", _director.cosmic_underlay_alpha)
-	var profile := _director.active_profile
-	if profile == null:
-		return
-	var fog_color := profile.ambient_color.lerp(profile.directional_color, 0.18)
+	var fog_color := _director.resolved_ambient_color.lerp(_director.resolved_directional_color, 0.18)
 	var grade_tint := Color(
-		lerpf(1.0, profile.directional_color.r, 0.22),
-		lerpf(1.0, profile.directional_color.g, 0.22),
-		lerpf(1.0, profile.directional_color.b, 0.22),
+		lerpf(1.0, _director.resolved_directional_color.r, 0.22),
+		lerpf(1.0, _director.resolved_directional_color.g, 0.22),
+		lerpf(1.0, _director.resolved_directional_color.b, 0.22),
 		1.0
 	)
 	_material.set_shader_parameter("fog_color", fog_color)
 	_material.set_shader_parameter("grade_tint", grade_tint)
+	var state := {}
+	if _environment_director != null and _environment_director.has_method("get_presentation_state"):
+		state = _environment_director.call("get_presentation_state") as Dictionary
+	_material.set_shader_parameter("precipitation_mode", int(state.get("precipitation_mode", 0)))
+	_material.set_shader_parameter("precipitation_alpha", float(state.get("precipitation_alpha", 0.0)))
+	_material.set_shader_parameter("weather_tint", state.get("weather_tint", Color.WHITE))
+	_material.set_shader_parameter("weather_grade_mix", float(state.get("weather_grade_mix", 0.0)))
+	_material.set_shader_parameter("weather_wind", Vector2(float(state.get("wind_speed_multiplier", 1.0)), float(state.get("gust_multiplier", 1.0))))
 
 
 func _report_warning(message: String, data: Dictionary) -> void:

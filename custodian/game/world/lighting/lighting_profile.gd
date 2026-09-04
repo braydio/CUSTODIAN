@@ -8,3 +8,5 @@ class_name LightingProfile
 @export_range(0.0, 1.0, 0.01) var cosmic_underlay_alpha: float = 0.0
 @export_range(0.0, 1.0, 0.01) var fog_alpha: float = 0.0
 @export_range(0.0, 10.0, 0.05) var transition_seconds: float = 1.2
+@export_range(0.0, 1.0, 0.01) var environment_influence: float = 1.0
+@export_range(0.0, 1.0, 0.01) var weather_influence: float = 1.0

@@ -3,6 +3,8 @@ extends Node
 @export var contract_map_path: NodePath = NodePath("/root/GameRoot/World/ContractMap")
 @export var critter_container_path: NodePath = NodePath("/root/GameRoot/World/Enemies")
 @export var critter_scene: PackedScene
+@export var supplemental_critter_scene: PackedScene
+@export_range(0.0, 1.0, 0.01) var supplemental_critter_spawn_weight: float = 0.15
 @export var critter_count: int = 3
 @export var min_distance_from_spawn_tiles: int = 8
 @export var preferred_habitat_groups: PackedStringArray = PackedStringArray(["vegetation", "ambient_cover"])
@@ -154,7 +156,7 @@ func _try_ambient_spawn() -> void:
 	if container == null:
 		return
 	
-	if critter_scene == null:
+	if critter_scene == null and supplemental_critter_scene == null:
 		return
 	
 	# Pick random position around player
@@ -167,7 +169,12 @@ func _try_ambient_spawn() -> void:
 	if spawn_pos.distance_squared_to(desired_spawn_pos) > 1.0:
 		_obs_increment("ambient_critter_spawn_projected")
 	
-	var critter := critter_scene.instantiate()
+	var selected_scene := critter_scene
+	if supplemental_critter_scene != null and _critter_rng.randf() < supplemental_critter_spawn_weight:
+		selected_scene = supplemental_critter_scene
+	if selected_scene == null:
+		return
+	var critter := selected_scene.instantiate()
 	if critter == null:
 		return
 	

@@ -646,7 +646,7 @@ This section ties the entire architecture together.
 3. Campaign Flow builds `CampaignOutcome`
 4. Outcome is handed to Hub-side mutation path
 5. World Transition receives return request
-6. Campaign world is destroyed only after outcome distillation and handoff are safe
+6. The active CampaignRegion runtime instance is unloaded only after outcome distillation and handoff are safe
 
 ### 14.6 Return to Compound
 

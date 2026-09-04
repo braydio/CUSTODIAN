@@ -1,5 +1,15 @@
 # CURRENT STATE — CUSTODIAN
 
+## Canon Migration (2026-09-03)
+
+Current world canon uses persistent **Lattice Domains**: regions of damaged
+post-Severing reality held coherent by Archive/Lattice infrastructure and
+separated by the Pale. CampaignRegion runtime instances are transient
+representations of operational access into those Domains; mission resolution or
+runtime unloading does not imply fictional destruction. Canon permits later
+revisitation when routes and field state allow it. See
+`design/03_world/LATTICE_DOMAIN_COSMOLOGY_MIGRATION.md`.
+
 ## Lower Quarter Gothic-Futurist Native Art Overlay (2026-09-02)
 
 The reviewed 1448×1086 Gothic-sci-fi wall and prop masters are installed and
@@ -1138,3 +1148,14 @@ cloned target cels in one Aseprite transaction while preserving alpha. Source
 Session recolor writes `registered/recolored_candidate.png` separately and
 never changes the staged original, converter candidates, canonical source, or
 runtime output.
+# Baby Opossum Ambient Creature Runtime (2026-09-03)
+
+Baby Opossum now has a first-class `ambient_creature` V2 family and runtime
+actor under `game/actors/ambient/baby_opossum/`. Its semantic presentation
+resolver is optional-asset, cycle-safe, direction-aware, and independent of
+the enemy domain. The actor is invulnerable, supports trust/treat, reject-hit,
+play-dead, hide, and scavenging hooks, and is registered as a conservative
+supplemental fauna spawn. Shrumb remains on its existing compatibility path.
+## World Environment V1 (2026-09-03)
+
+Accepted procgen maps now own deterministic scrubland, woodland, wetland, and rocky-upland fields that constrain foliage density, composition, and tint beneath route policy. One world-local `WorldEnvironmentDirector` owns a 24-minute fixed-physics day, contract-seeded weather, and indoor exposure; existing lighting, atmosphere, and shared foliage materials remain presentation authorities.

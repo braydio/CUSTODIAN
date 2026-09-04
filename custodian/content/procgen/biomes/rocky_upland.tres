@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="BiomeProfile" load_steps=2 format=3]
+[ext_resource type="Script" path="res://game/world/procgen/biomes/biome_profile.gd" id="1"]
+[resource]
+script = ExtResource("1")
+biome_id = &"rocky_upland"
+foliage_density_ceiling = 0.03
+tree_probability = 0.0
+foliage_tint = Color(0.92, 0.89, 0.82, 1)

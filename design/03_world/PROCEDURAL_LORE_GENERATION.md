@@ -10,6 +10,11 @@
 **Faction Spec Authority:** `design/02_features/factions/FACTION_EXPRESSION_SYSTEM.md`  
 **Primary Downstream Consumers:** `design/04_architecture/REGION_GENERATION_SYSTEM.md`, `design/02_features/pixel_planet/PIXEL_PLANET_CONTRACT_SYSTEM.md`, `design/02_features/procgen/AUTHORED_TILED_ROOM_PIPELINE.md`, `design/02_features/enemy_director/implementation.md`, `design/02_features/terminal/COMMAND_TERMINAL_SPEC.md`
 
+> **CANONICAL MIGRATION:** Procedural generation constructs the runtime
+> representation of terrain becoming operationally accessible inside an
+> existing Lattice Domain. It does not imply that an Archive Engine creates
+> terrain ex nihilo. See `LATTICE_DOMAIN_COSMOLOGY_MIGRATION.md`.
+
 ---
 
 ## Purpose
@@ -74,6 +79,10 @@ Every generated region should be able to carry a lore payload like this, whether
 
 ```gdscript
 {
+    "domain_id": "...",
+    "archive_field_state": "stable_field",
+    "field_zone": "domain_core",
+    "route_context": "...",
     "world_legibility_class": "continuity_overlap",
     "original_function": "relay_maintenance_site",
     "collapse_mode": "controlled_sealing",
@@ -84,7 +93,7 @@ Every generated region should be able to carry a lore payload like this, whether
     "provenance_status": "incomplete",
 
     "post_collapse_reuse": "salvage_nest",
-    "present_ideology": "indexer",
+    "present_ideology": "DEPRECATED PENDING FACTION REDESIGN",
 
     "surviving_truth": "site_once_routed_authenticated_traffic",
     "false_local_interpretation": "relay_chooses_the_worthy",

@@ -1,0 +1,10 @@
+{
+  "prop_count": 20,
+  "wall_count": 14,
+  "runtime_png_count": 34,
+  "runtime_alpha_binary": true,
+  "source_image_size": [
+    1536,
+    1024
+  ]
+}

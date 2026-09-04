@@ -178,25 +178,18 @@ reality stabilized through agreed history
 
 ---
 
-## Faction Summary
+## Faction Architecture
 
-### Pale Bell Penitents
-Devotional order built around a partial, terrifying understanding of the Ash-Bell Unarrival. They turn an operational continuity emergency into theology. Not all things meant to arrive should arrive. They are wrong about the universality but right about the danger.
+> **MIGRATION HOLD — FACTION REAUTHOR PENDING**
 
-### The Choir of Provenance
-Continuity-origin quarantine extremists. They verify where things came from and contain what cannot be verified. Their obsession is based on a real hazard. Their flaw is valuing verified origin more than human life.
+The Lattice Domain cosmology supersedes assumptions under which the current
+faction roster was authored. Existing faction profiles remain historical design
+reference until replacement faction architecture is locked. Do not implement new
+runtime faction dependencies from the faction directory during this hold.
 
-### The Indexers
-Classification catastrophe — the universe became unfiled. They seek to reclassify everything. Their failure mode is false certainty.
-
-### The Leaseholders
-Ownership catastrophe — value detached from use. They lease access to infrastructure, knowledge, and routes. Their failure mode is extractive control.
-
-### The Buried Kins
-Identity catastrophe — selves became unreliable. They preserve identity through genealogy, lineage, and remembrance. Their failure mode is insular exclusion.
-
-### Feral Defense Remnants
-Authority catastrophe — commands lost their chains. Autonomous defense systems still executing orders whose context has been destroyed. Their failure mode is unexamined obedience.
+Continuity physics must not be inferred from retired faction doctrine, and new
+world, scenario, or implementation documents must not treat the former roster as
+newly finalized canon.
 
 ---
 

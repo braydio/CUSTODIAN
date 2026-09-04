@@ -16,6 +16,11 @@ uniform vec4 cosmic_tint : source_color = vec4(0.18, 0.48, 0.82, 1.0);
 uniform float cosmic_alpha : hint_range(0.0, 0.5, 0.005) = 0.0;
 uniform float vignette_strength : hint_range(0.0, 0.5, 0.005) = 0.10;
 uniform float grain_strength : hint_range(0.0, 0.08, 0.001) = 0.008;
+uniform int precipitation_mode = 0;
+uniform float precipitation_alpha : hint_range(0.0, 1.0) = 0.0;
+uniform vec4 weather_tint : source_color = vec4(1.0);
+uniform float weather_grade_mix : hint_range(0.0, 0.25) = 0.0;
+uniform vec2 weather_wind = vec2(1.0);
 
 
 float hash21(vec2 p) {
@@ -60,6 +65,28 @@ float fbm2(vec2 p) {
 	return value;
 }
 
+float precipitation(vec2 pixel, vec2 world_position) {
+	if (precipitation_mode == 1) {
+		vec2 p = pixel + vec2(TIME * 54.0 * weather_wind.x, TIME * 190.0);
+		vec2 cell = floor(p / vec2(17.0, 29.0));
+		vec2 local = mod(p, vec2(17.0, 29.0));
+		return step(0.86, hash21(cell)) * step(local.x, 1.15) * step(local.y, 10.0) * 0.30;
+	}
+	if (precipitation_mode == 2 || precipitation_mode == 3) {
+		float speed = precipitation_mode == 2 ? 18.0 : 10.0;
+		vec2 p = pixel + vec2(sin(TIME + world_position.y * 0.01) * 8.0 * weather_wind.y, TIME * speed);
+		vec2 cell = floor(p / 19.0);
+		vec2 local = mod(p, 19.0) - vec2(9.5);
+		float point = step(length(local), precipitation_mode == 2 ? 1.25 : 0.85) * step(0.72, hash21(cell));
+		return point * (precipitation_mode == 2 ? 0.28 : 0.22);
+	}
+	if (precipitation_mode == 4) {
+		float band = value_noise(vec2(world_position.x * 0.012 - TIME * 0.7 * weather_wind.x, world_position.y * 0.004));
+		return smoothstep(0.69, 0.88, band) * 0.18;
+	}
+	return 0.0;
+}
+
 
 void fragment() {
 	vec4 scene = texture(screen_texture, SCREEN_UV);
@@ -94,6 +121,12 @@ void fragment() {
 	vec2 pixel = floor(SCREEN_UV * viewport_size);
 	float grain = hash21(pixel + floor(TIME * 12.0)) - 0.5;
 	output_color += grain * grain_strength;
+	output_color = mix(output_color, output_color * weather_tint.rgb, weather_grade_mix);
+	if (precipitation_alpha > 0.001) {
+		float weather_particle = precipitation(pixel, world_position) * precipitation_alpha;
+		vec3 particle_color = precipitation_mode == 3 ? weather_tint.rgb * 0.48 : weather_tint.rgb;
+		output_color = mix(output_color, particle_color, weather_particle);
+	}
 
 	COLOR = vec4(clamp(output_color, vec3(0.0), vec3(1.0)), scene.a);
 }

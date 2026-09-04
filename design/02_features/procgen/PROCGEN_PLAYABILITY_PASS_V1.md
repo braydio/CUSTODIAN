@@ -182,3 +182,6 @@ Acceptance:
 - safe pockets separate major encounters;
 - the camera never exposes flat gray void inside its valid generated bounds;
 - no underlay node participates in collision or navigation.
+## Environment V1 foliage precedence
+
+Random foliage now resolves `world/climate upper bound → local biome upper bound → route/playability upper bound → contextual multipliers`. Route hard-clearance and sparse-dressing policy remain final authority; biome classification never changes walkability.

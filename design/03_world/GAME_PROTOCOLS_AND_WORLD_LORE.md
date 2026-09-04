@@ -8,6 +8,12 @@
 **Supersedes:** `design/GAME_NOTES.md`, `design/GAME_NOTES_DRAFT.md` as canonical authority  
 **Related Docs:** `design/03_world/lore/CORE_LORE.md`, `design/03_world/lore/CRECHE_AND_LOCKER_LORE.md`, `design/03_world/factions/`, `design/03_world/LATTICE_DOCTRINE.md`, `design/03_world/LATTICE_ARCHIVE_ENGINE_MEMORY_GLASS.md`, `design/03_world/PROCEDURAL_LORE_GENERATION.md`, `design/02_features/factions/FACTION_EXPRESSION_SYSTEM.md`, `design/04_architecture/HUB_SYSTEM_META_PROGRESSION.md`, `design/04_architecture/CAMPAIGN_FLOW_AND_GAME_LOOP.md`, `custodian/docs/ai_context/CURRENT_STATE.md`
 
+> **CANONICAL MIGRATION OVERRIDE:** Contracts access persistent Lattice Domains.
+> CampaignRegion runtime instances are transient representations only. Mission
+> resolution does not destroy a Domain, and canon permits later revisitation when
+> route and field conditions allow it. See
+> `design/03_world/LATTICE_DOMAIN_COSMOLOGY_MIGRATION.md`.
+
 ---
 
 ## Purpose
@@ -50,9 +56,9 @@ Use this tiering whenever later docs discuss setting or protocol.
 ### Tier 1 — Locked Canon
 These are stable unless a future doctrine revision explicitly changes them.
 
-1. **CUSTODIAN is mechanically a tactical systems game about field-stabilizing Lattice reality pockets, but thematically it is about keeping meaning alive inside a doomed continuity field — not saving the world permanently.**
+1. **CUSTODIAN is mechanically a tactical systems game about operating inside and reinforcing Lattice Domains, but thematically it is about keeping meaning alive in damaged continuity — not saving the world permanently.**
 2. **The world's central catastrophe is the Severing: the failure, fragmentation, or deliberate destruction of a civilization-scale Lattice network after continuity access became a propagation hazard. The initiating cause remains unresolved.**
-3. **The Hub is persistent. Campaign worlds are transient Lattices — Archive-inflated reality pockets on specific planets, in specific temporal fields, that inevitably collapse. Contracts formalize bounded historical interventions that extend the bubble's lifespan.**
+3. **The Hub is persistent. Contracts access Lattice Domains: existing damaged regions held coherent by Archive infrastructure. CampaignRegion runtime instances are transient; Domains may persist, change, be revisited, or eventually collapse.**
 4. **Knowledge progression outranks raw stat inflation as the game's long-horizon reward spine, because knowledge extends the stabilization field — it extends the Lattice.**
 5. **Lore must be delivered primarily through evidence, procedure, environment, enemy behavior, and degraded interfaces — not long exposition dumps.**
 6. **ARRN remains the knowledge backbone.** Its existing mechanical name, **Automated Relay Routing Network**, stays valid; in fiction it is the surviving field-facing relay layer of the old continuity lattice.
@@ -241,15 +247,14 @@ It may exist to:
 - observe without overcommitting
 - remove a threat that blocks future interpretation
 
-The player does not “claim” a world by visiting it. The player accepts a Contract, resolves or fails it, returns a mutation to the Hub, and the campaign state is discarded.
+The player does not “claim” a Domain by visiting it. The player accepts a Contract, resolves or fails it, returns a mutation to the Hub, and the active CampaignRegion runtime instance is unloaded.
 
 ### Campaign Rule
 
-Campaign worlds are transient both mechanically and in fiction.
-They are Archive-reinforced Lattice fields: temporary reality pockets on specific planets, in specific temporal fields, that will inevitably collapse.
-They are not colony seeds or permanent settlements. They are bounded operational worlds whose outcomes feed the historical record.
-
-No Lattice lasts forever. The campaign ends not because the player lost, but because the Pale always wins.
+CampaignRegion runtime instances are transient mechanically. They represent
+bounded operational access to persistent Lattice Domains whose outcomes feed the
+historical record. A Domain is not a colony seed or an Archive-created bubble;
+its field may expand, contract, persist, or eventually fail in-world.
 
 This reinforces the existing Hub-system architecture and the Lattice Doctrine, and must stay consistent with `HUB_SYSTEM_META_PROGRESSION.md` and `CAMPAIGN_FLOW_AND_GAME_LOOP.md`.
 

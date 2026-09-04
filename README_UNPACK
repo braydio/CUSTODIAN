@@ -1,0 +1,32 @@
+# Lower Quarter Gothic-SciFi V2 — Reviewed Extract
+
+This pack contains the reviewed subset of the latest generated Lower Quarter sheet.
+
+Contents:
+- 20 selected prop assets
+- 14 selected wall/architecture assets
+- native source-scale RGBA extracts under `asset_drop/source_work/.../v2_extract/`
+- 0.5x runtime derivatives under `content/sprites/.../gothic_scifi_native_v2/`
+- semantic extraction manifest with source rectangles and output sizes
+- reviewed combined source image for provenance
+
+Runtime conversion intentionally follows the live Lower Quarter Gothic-SciFi builder's core contract:
+- one global 0.5x scale
+- no per-asset autofit
+- 48-color shared palette per source family
+- binary runtime alpha after cutoff 16
+- visual-only; no collision/navigation authority is supplied
+
+The source image contained residual very-low-alpha matte pixels from generation.
+The extraction pass hard-zeroed alpha <= 16 before cropping. Runtime PNG alpha is binary 0/255.
+
+Recommended use:
+1. Extract this ZIP at the CUSTODIAN repository root.
+2. Review `gothic_scifi_native_v2` in the mapper before replacing V1 references.
+3. Keep gameplay bounds/collision authored separately.
+4. If approved, have Codex register/consume the V2 semantic manifest and migrate selected placements.
+
+Not included:
+- duplicated lamp/crate/rubble variants
+- giant hero-cathedral facades
+- ornamental pieces that would over-dress the Ritualant cavern

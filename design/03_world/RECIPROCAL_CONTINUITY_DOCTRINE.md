@@ -14,6 +14,20 @@ this doctrine wins.
 
 **Related Docs:** `design/03_world/LATTICE_DOCTRINE.md`, `design/03_world/lore/CORE_LORE.md`, `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 
+## Post-Severing Domain Topology — Canonical Migration Lock
+
+Before the Severing, ordinary reality was stable independently of Archive
+Engines. The Lattice was infrastructure imposed on that reality, not a reality
+generator. After the Severing, damaged regions relevant to CUSTODIAN require
+sufficient Lattice/Archive coherence to sustain stable complex existence.
+
+A **Lattice Domain** is an existing post-Severing region maintained at usable
+coherence by Archive infrastructure. The Pale separates and intrudes upon
+Domains. Surviving routes may connect them, and restoring a route preserves the
+Reciprocal Continuity Law and its return-path risk. CampaignRegion runtime
+instances may be generated and unloaded; the represented Domain is not thereby
+created or destroyed.
+
 ---
 
 ## 1. The Reciprocal Continuity Law
@@ -48,15 +62,15 @@ The Pale remains unresolved. Its exact nature, relationship to the original cont
 
 The Lattice is real continuity-field technology.
 
-A Lattice creates a temporary reality pocket: a bounded field coherent enough to inhabit, resistant to Pale intrusion for a finite time, and dependent on Archive infrastructure for reinforcement.
+A Lattice/Archive system maintains a damaged region at usable coherence: a bounded field resistant to Pale intrusion for as long as infrastructure and conditions permit.
 
 Key properties:
 
-- Temporary reality pocket
+- Persistent Lattice Domain under field support
 - Field coherence
 - Pale resistance
-- Finite lifetime
-- Different time and universe possibilities
+- Eventual failure pressure
+- Continuity displacement as a consequential anomaly, not a default
 
 Lattices may couple compatible continuity states. A Lattice aperture is therefore both transport infrastructure and a possible reciprocal continuity path.
 

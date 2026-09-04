@@ -114,3 +114,6 @@ Manual acceptance:
 
 - Add restrained `LightRig2D` instances only to authored emitters with clear state meaning.
 - Profile atmosphere colors per authored level/planet after screenshot review; do not raise fog or grain simply to make the effect obvious.
+## Environment V1
+
+Existing `WorldAtmosphere2D` remains the only fullscreen environmental pass and consumes resolved lighting plus precipitation/weather state. Rain, snow, ash, and dust render below UI without a particle node or second shader pass.
