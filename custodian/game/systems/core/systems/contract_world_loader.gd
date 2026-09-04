@@ -151,7 +151,11 @@ func _on_contract_generated(contract: Dictionary) -> void:
 		_on_contract_generation_failed(level_data)
 		return
 	var map_instance_variant: Variant = map_block.get("instance")
-	if not (map_instance_variant is Node):
+	if (
+		map_instance_variant == null
+		or not is_instance_valid(map_instance_variant)
+		or not (map_instance_variant is Node)
+	):
 		push_warning("[ContractWorldLoader] Contract map instance missing or invalid")
 		return
 

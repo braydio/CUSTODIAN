@@ -23,6 +23,7 @@ func _init() -> void:
 
 func _run() -> void:
 	_validate_static_wiring()
+	_validate_freed_cached_map_guard()
 	var bootstrap := root.get_node_or_null("WorldContractBootstrap")
 	assert(bootstrap != null, "WorldContractBootstrap autoload missing")
 	bootstrap.call("reset")
@@ -102,6 +103,21 @@ func _run() -> void:
 	bootstrap.call("restore_generator_scene")
 	print("world_contract_prewarm_smoke: PASS")
 	quit(0)
+
+
+func _validate_freed_cached_map_guard() -> void:
+	var loader := LOADER_SCRIPT.new()
+	var stale_map := Node2D.new()
+	var stale_contract := {
+		"world_profile": {},
+		"map": {
+			"instance": stale_map,
+			"level_data": {},
+		},
+	}
+	stale_map.free()
+	loader.call("_on_contract_generated", stale_contract)
+	loader.free()
 
 
 func _validate_static_wiring() -> void:
