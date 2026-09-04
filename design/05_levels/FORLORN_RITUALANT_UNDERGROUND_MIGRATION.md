@@ -185,6 +185,14 @@ mapper exposes the last cause, including `thread_snap`, `player_melee`,
 
 ## Presentation Scope
 
+The authored Underground consumes
+`forlorn_ritualant_dressing_placements.json` through the visual-only
+`ForlornRitualantDressingLayer2D`. Its 37 explicit placements reuse reviewed
+Lower Quarter V2 native props and wall fragments at authored positions, mirror
+flags, and absolute draw depths. The placement layer never creates collision,
+navigation, interaction, or encounter authority; the existing authored boundary
+and scene systems remain authoritative.
+
 The surface and underground levels now share one lift-platform assembly. The
 lower terminus provides a short south-to-north landing approach; departure
 requires boarding plus E, raises the platform into full black, plays the

@@ -1,4 +1,4 @@
-[gd_scene load_steps=45 format=3]
+[gd_scene load_steps=46 format=3]
 
 [ext_resource type="Script" path="res://game/world/levels/authored/ash_bell/forlorn_ritualant_underground/forlorn_ritualant_underground.gd" id="1"]
 [ext_resource type="PackedScene" path="res://game/world/events/ash_bell/forlorn_ritualant_site.tscn" id="2"]
@@ -42,6 +42,7 @@
 [ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__lift__shaft_scroll_01__256x1536.png" id="41"]
 [ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__arena__expanded_floor_base_01__2594x1737.png" id="42_arena"]
 [ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__occluder__lower_quarter_seal_01__1024x512.png" id="43_seal"]
+[ext_resource type="Script" path="res://game/world/levels/authored/ash_bell/forlorn_ritualant_underground/forlorn_ritualant_dressing_layer_2d.gd" id="44_dressing"]
 [sub_resource type="RectangleShape2D" id="return"]
 size=Vector2(192,64)
 [sub_resource type="RectangleShape2D" id="lower_lift_boarding_back"]
@@ -220,6 +221,8 @@ z_index=-24
 [node name="ForlornRitualantSite" parent="PlayableRoot" instance=ExtResource("2")]
 position=Vector2(0,-1120)
 [node name="PropsRoot" type="Node2D" parent="."]
+[node name="AuthoredDressing" type="Node2D" parent="PropsRoot"]
+script=ExtResource("44_dressing")
 [node name="LowerLiftAssembly" parent="PropsRoot" instance=ExtResource("4")]
 position=Vector2(0,1696)
 [node name="LowerLiftBoardingBounds" type="StaticBody2D" parent="PropsRoot"]
