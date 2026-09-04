@@ -137,6 +137,27 @@ FIELD_FABRICATOR_MK1
 | `asset request <family> [--write]` | Print art request checklist |
 | `asset doctor` | Health checks (contracts, inbox, consumers) |
 
+### Terminal information architecture
+
+The CLI is answer-first. Default output must present, in order: the subject, the
+answer or status, blockers, attention items, changes, and the next command.
+Pipeline evidence such as classifier confidence, resolution reason, backend,
+layout, provenance paths, binding, and validation evidence belongs under
+`--verbose`. Expected successful inference stays quiet; ambiguity and unsafe
+replacement remain prominent.
+
+`plan`, `status`, `request`, `families`, and `doctor` support `--json` for stable
+machine-readable output. Human output is not an API and must not be scraped.
+Symbols have consistent non-color semantics: `✓` ready/success, `→` pending,
+`·` not performed or unavailable, `⚠` inspect/non-blocking, `✗` blocking, and
+`◐` partial. In particular, absent runtime validation evidence is reported as
+`not verified`, never as a failed verification.
+
+Errors include the rejected subject and a concrete recovery command, example,
+or registration path. `new` prints every resolved default so kind, direction,
+mirroring, domain, owner, and canvas mistakes are visible immediately. `ingest`
+ends with a receipt summary before archive and job identifiers.
+
 ---
 
 ## Family Contract Schema
