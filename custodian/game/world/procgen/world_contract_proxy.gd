@@ -20,7 +20,7 @@ func _ready() -> void:
 	if not bootstrap.is_connected("generation_failed", failure_callback):
 		bootstrap.connect("generation_failed", failure_callback)
 	call_deferred("_publish_latest_state")
-	if int(bootstrap.call("get_state")) == 0:
+	if bool(bootstrap.call("needs_generation")):
 		# Compatibility for direct game.tscn/debug launches. Generation still
 		# belongs to the persistent bootstrap and occurs only once.
 		bootstrap.call_deferred("ensure_started")

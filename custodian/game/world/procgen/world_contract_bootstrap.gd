@@ -36,7 +36,8 @@ var _generator_scene: PackedScene = CONTRACT_MAP_SCENE
 
 func ensure_started(seed: int = 0) -> void:
 	if state in [State.GENERATING, State.READY, State.CLAIMED]:
-		return
+		if state == State.GENERATING or _has_live_contract_map():
+			return
 	reset()
 	run_seed = seed if seed != 0 else randi()
 	if run_seed == 0:
@@ -67,7 +68,7 @@ func ensure_started(seed: int = 0) -> void:
 
 
 func get_latest_contract() -> Dictionary:
-	return contract
+	return contract if _has_live_contract_map() else {}
 
 
 func get_latest_generation_failure() -> Dictionary:
@@ -79,7 +80,25 @@ func get_state() -> State:
 
 
 func is_ready() -> bool:
-	return state in [State.READY, State.CLAIMED]
+	return state in [State.READY, State.CLAIMED] and _has_live_contract_map()
+
+
+func needs_generation() -> bool:
+	return state == State.IDLE or (
+		state in [State.READY, State.CLAIMED] and not _has_live_contract_map()
+	)
+
+
+func _has_live_contract_map() -> bool:
+	var map_block_variant: Variant = contract.get("map", {})
+	if not (map_block_variant is Dictionary):
+		return false
+	var map_instance_variant: Variant = (map_block_variant as Dictionary).get("instance")
+	return (
+		map_instance_variant != null
+		and is_instance_valid(map_instance_variant)
+		and map_instance_variant is Node
+	)
 
 
 func mark_terminal_requested() -> void:

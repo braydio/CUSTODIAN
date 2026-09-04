@@ -11,6 +11,10 @@ func _run() -> void:
 	var provider := Provider.new(); host.add_child(provider)
 	var spawner := SPAWNER.new(); host.add_child(spawner)
 	var critters := CRITTERS.new(); host.add_child(critters)
+	var stale_map := Node2D.new()
+	var stale_contract := {"world_profile": {}, "map": {"instance": stale_map, "level_data": {}}}
+	stale_map.free()
+	critters.call("_on_contract_generated", stale_contract)
 	assert(spawner.resolve_runtime_walkable_spawn(Vector2.ZERO, 6) == provider.safe)
 	assert(critters.call("_resolve_runtime_walkable_spawn", Vector2.ZERO, 8) == provider.safe)
 	provider.safe = Vector2.INF

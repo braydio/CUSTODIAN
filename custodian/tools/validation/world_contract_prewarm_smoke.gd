@@ -75,6 +75,12 @@ func _run() -> void:
 
 	game_root.queue_free()
 	await process_frame
+	assert(not bool(bootstrap.call("is_ready")), "freed claimed map must be stale")
+	assert((bootstrap.call("get_latest_contract") as Dictionary).is_empty())
+	bootstrap.call("ensure_started", 434343)
+	assert(int(bootstrap.call("get_state")) == 1, "stale claim must regenerate")
+	await process_frame
+	assert(bool(bootstrap.call("is_ready")), "stale claim retry did not reach READY")
 	bootstrap.call("reset")
 	await process_frame
 	assert((bootstrap.call("get_latest_contract") as Dictionary).is_empty())

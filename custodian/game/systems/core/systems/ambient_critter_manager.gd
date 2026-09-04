@@ -94,7 +94,11 @@ func _on_contract_generated(contract: Dictionary) -> void:
 	var map_block: Dictionary = contract.get("map", {}) as Dictionary
 	var level_data: Dictionary = map_block.get("level_data", {}) as Dictionary
 	var map_instance_variant: Variant = map_block.get("instance")
-	if not (map_instance_variant is Node):
+	if (
+		map_instance_variant == null
+		or not is_instance_valid(map_instance_variant)
+		or not (map_instance_variant is Node)
+	):
 		return
 	var map_instance := map_instance_variant as Node
 	var container := get_node_or_null(critter_container_path)
