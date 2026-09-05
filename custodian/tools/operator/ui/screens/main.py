@@ -4,8 +4,8 @@ from textual.screen import Screen
 from textual.widgets import Footer, Input, Label, Static
 
 from ..widgets import (ActivityLog, AnimationDetail, AnimationTree, LayerTable,
-                       PlanTable, PreviewCanvas, PreviewControls, TimelineTable,
-                       WorkbenchStatusBar)
+                       MotionCanvas, MotionControls, MotionMetrics, PlanTable,
+                       PreviewCanvas, PreviewControls, TimelineTable, WorkbenchStatusBar)
 
 
 class MainScreen(Screen):
@@ -32,6 +32,14 @@ class MainScreen(Screen):
             yield TimelineTable(id="timeline-table")
             yield PreviewCanvas("Add clips to review the sequence", id="timeline-canvas")
             yield PreviewControls("SEQUENCE REVIEW FPS", id="timeline-controls")
+        with Container(id="motion-mode", classes="mode-pane hidden"):
+            with Horizontal(id="motion-workspace"):
+                yield MotionCanvas("Select an animation", id="motion-canvas")
+                with Vertical(id="motion-inspector"):
+                    yield Label("MOTION LAB", classes="pane-title")
+                    yield MotionControls(id="motion-controls")
+                    yield MotionMetrics(id="motion-metrics")
+            yield PreviewControls("MOTION REVIEW", id="motion-preview-controls")
         with Vertical(id="activity-pane"):
             yield Label("ACTIVITY", classes="pane-title")
             yield ActivityLog(id="activity-log", max_lines=200, markup=True)

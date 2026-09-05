@@ -179,9 +179,9 @@ are presentation-disabled, leaving 104 active Lower Quarter props and 250
 active civic props overall. Native sign/directory/evidence interactions retain
 the route information; the floating blockout label is gone.
 
-## Operator Workbench Interactive UI V3 (2026-09-01)
+## Operator Workbench Interactive UI V4 (2026-09-05)
 
-`operator ui` now has shared-selection PLAN, WORKBENCH, PREVIEW, and TIMELINE
+`operator ui` now has shared-selection PLAN, WORKBENCH, PREVIEW, TIMELINE, and MOTION
 modes. The implementation-plan JSON owns human rank/priority/state; live catalog
 coverage is computed evidence. The shared semantic provider composites real
 rectangular layer contracts for saved Workbench, canonical source, and generated
@@ -193,6 +193,13 @@ explicitly labeled FIT representation. Half-cell/Unicode output is visibly
 degraded fallback only. Workbench, canonical, and runtime comparisons share one
 layer policy, preventing simultaneous full-body and modular-body composition
 while retaining authored head, cape, weapon, and FX overlays.
+MOTION is a non-mutating physical calibration view over that same composed
+source. It compares continuous candidate travel in treadmill and fixed-world
+modes over a 32 px ruler and real Ritualant cavern ground, while retaining
+source switching, integer raster review, scrubbing, and review FPS. Review FPS,
+travel, and curve remain disposable review inputs rather than gameplay timing or
+combat authority. The TUI is the rapid calibration surface; Enter writes an
+ignored request and launches the Godot harness for runtime verification.
 
 ## Operator Workbench Interactive UI V1 (2026-08-29)
 

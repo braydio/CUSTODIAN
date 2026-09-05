@@ -136,7 +136,7 @@ class PilotService:
     def __init__(self):
         self.repo_root = Path.cwd(); self.aseprite = None; self.workbench = SimpleNamespace(resolve_aseprite=lambda *_: Path("/bin/true")); self.mutations = 0
         self.selection = AnimationSelection("unarmed", "locomotion", "run_01", "e")
-        self.last_selection = None
+        self.last_selection = None; self.preview_calls = 0; self.runtime_calls = 0
         self.migration = MigrationView("add", 3, "duplicate-prev", 6, 7, ("lower_body", "upper_body"), (("fx", "independent clock"),), "GREEN")
     def browser_records(self):
         return [
@@ -157,6 +157,15 @@ class PilotService:
     def project_error(self, error): return WorkbenchService.project_error(error)
     def transaction_state(self, _selection): return None
     def known_weapons(self): return []
+    def preview(self, selection, source="runtime"):
+        from PIL import Image
+        import animation_preview
+        self.preview_calls += 1
+        frames = tuple(Image.new("RGBA", (96, 96), (20 + index, 30, 40, 180)) for index in range(6))
+        identity = animation_preview.SemanticIdentity(selection.profile, selection.group, selection.action, selection.direction)
+        return animation_preview.Preview(identity, source, frames, (96, 96), "fixture", ())
+    def motion_event_markers(self, _selection): return ()
+    def launch_motion_runtime(self, *_args, **_kwargs): self.runtime_calls += 1; return SimpleNamespace()
 
 
 class ContextPilotService(PilotService):
@@ -188,7 +197,7 @@ async def textual_smoke() -> None:
     from textual.app import App, ComposeResult
     from ui.app import OperatorWorkbenchApp
     from ui.dialogs import ContextMismatchDialog, FrameAddDialog, PublishDialog
-    from ui.widgets import ActivityLog, AnimationDetail, AnimationTree, PreviewCanvas
+    from ui.widgets import ActivityLog, AnimationDetail, AnimationTree, MotionCanvas, PreviewCanvas
     from textual.widgets import Static
     from textual_image.widget import AutoImage
 
@@ -245,6 +254,32 @@ async def textual_smoke() -> None:
         assert app.main_screen.query_one("#workspace-row").has_class("hidden")
         app.action_mode_workbench(); await pilot.pause()
         assert app.state.mode == "workbench" and not app.main_screen.query_one("#workspace-row").has_class("hidden")
+        selected_identity = app.state.selection.identity
+        app.set_focus(None)
+        await pilot.press("5"); await pilot.pause(0.4)
+        assert app.state.mode == "motion" and not app.main_screen.query_one("#motion-mode").has_class("hidden"), (app.state.mode, app.main_screen.query_one("#motion-mode").classes)
+        assert all(app.main_screen.query_one(selector).has_class("hidden") for selector in ("#plan-mode", "#workspace-row", "#preview-mode", "#timeline-mode"))
+        assert app.state.selection.identity == selected_identity
+        motion_canvas = app.main_screen.query_one("#motion-canvas", MotionCanvas)
+        assert motion_canvas.source_frame is not None and motion_canvas.source_frame.mode == "RGBA"
+        motion_canvas.low_fidelity_fallback = False; motion_canvas.renderer = "TGP"; app._render_motion(); await pilot.pause()
+        assert motion_canvas.query_one(".preview-raster", AutoImage).image.mode == "RGBA"
+        preview_calls = service.preview_calls
+        await pilot.press("s"); await pilot.pause(0.3)
+        assert service.preview_calls > preview_calls
+        mode = app.state.motion.mode; await pilot.press("m"); assert app.state.motion.mode != mode
+        ground = app.state.motion.ground; await pilot.press("g"); await pilot.pause(0.2); assert app.state.motion.ground != ground
+        curve = app.state.motion.curve; await pilot.press("c"); assert app.state.motion.curve != curve
+        distance = app.state.motion.travel_px; await pilot.press("d"); assert app.state.motion.travel_px != distance
+        travel = app.state.motion.travel_px; await pilot.press("shift+right"); assert app.state.motion.travel_px == travel + 16
+        controls = app.main_screen.query_one("#motion-preview-controls")
+        controls.post_message(controls.Scrubbed(0.75)); await pilot.pause()
+        assert app.state.motion.elapsed_sec > 0 and app.state.preview_frame > 0
+        before_mutations = service.mutations
+        await pilot.press("enter"); assert service.runtime_calls == 1 and service.mutations == before_mutations
+        await pilot.press("3"); await pilot.pause(0.3); await pilot.press("5"); await pilot.pause(0.3); await pilot.press("3"); await pilot.pause(0.3)
+        assert app.state.selection.identity == selected_identity
+        await pilot.press("2"); await pilot.pause()
         await pilot.press("slash"); await pilot.press("r", "u", "n", "underscore", "0", "1"); await pilot.pause()
         assert app.screen.query_one("#search").value == "run_01"
         assert "6f" in str(app.screen.query_one("#animation-detail", AnimationDetail).render())
@@ -300,15 +335,18 @@ async def textual_smoke() -> None:
 
 
 def real_repo_read_only() -> None:
-    service = WorkbenchService()
-    records = service.browser_records()
-    run = next(row for row in records if row.selection == AnimationSelection("unarmed", "locomotion", "run_01", "e"))
-    assert run.frames == 6 and set(run.layers) >= {"lower_body", "upper_body"}
-    critical = next(row for row in records if row.selection == AnimationSelection("melee_1h", "attack", "critical_execution_01", "e"))
-    assert critical.frames == 8 and critical.layers == ("weapon",) and critical.completeness == "PARTIAL"
-    vigil = AnimationSelection("melee_1h", "posture", "idle_relaxed_01", "e", "vigil_pattern_dagger", "melee_1h_dagger")
-    session = service.session(vigil)
-    assert any(layer.layer == "weapon__vigil_pattern_dagger" for layer in session.layers)
+    with tempfile.TemporaryDirectory(prefix="operator_ui_readonly_") as raw:
+        service = WorkbenchService(workspace_root=Path(raw) / "workspace")
+        records = service.browser_records()
+        run = next(row for row in records if row.selection == AnimationSelection("unarmed", "locomotion", "run_01", "e"))
+        assert run.frames == 6 and set(run.layers) >= {"lower_body", "upper_body"}
+        critical = next(row for row in records if row.selection == AnimationSelection("melee_1h", "attack", "critical_execution_01", "e"))
+        assert critical.frames == 8 and critical.layers == ("weapon",) and critical.completeness == "PARTIAL"
+        vigil = AnimationSelection("melee_1h", "posture", "idle_relaxed_01", "e", "vigil_pattern_dagger", "melee_1h_dagger")
+        session = service.session(vigil)
+        assert any(layer.layer == "weapon__vigil_pattern_dagger" for layer in session.layers)
+        contacts = service.motion_event_markers(AnimationSelection("melee_1h", "attack", "fast_01", "e", "vigil_pattern_dagger", "melee_1h_dagger"))
+        assert len(contacts) == 1 and contacts[0].kind == "CONTACT" and contacts[0].frame == 5
 
 
 def main() -> None:

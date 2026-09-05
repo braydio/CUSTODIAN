@@ -4,6 +4,7 @@ from __future__ import annotations
 import asyncio
 import shutil
 import subprocess
+import time
 from pathlib import Path
 
 from textual.app import App
@@ -20,9 +21,10 @@ from .screens import MainScreen
 from .service import WorkbenchService
 from .state import AnimationSelection, ExistingContextView, WorkbenchUIState
 from .widgets import (ActivityLog, AnimationDetail, AnimationTree, LayerTable,
-                      PlanTable, PreviewCanvas, PreviewControls, TimelineTable,
-                      WorkbenchStatusBar)
+                      MotionCanvas, MotionControls, MotionMetrics, PlanTable,
+                      PreviewCanvas, PreviewControls, TimelineTable, WorkbenchStatusBar)
 import animation_preview
+import animation_motion_preview
 
 
 class OperatorWorkbenchApp(App):
@@ -47,6 +49,12 @@ class OperatorWorkbenchApp(App):
     #timeline-canvas { height: 1fr; content-align: center middle; }
     #preview-canvas { height: 1fr; content-align: center middle; }
     #preview-controls { height: 3; content-align: center middle; background: #202734; }
+    #motion-workspace { height: 1fr; }
+    #motion-canvas { width: 1fr; height: 1fr; content-align: center middle; }
+    #motion-inspector { width: 28; min-width: 22; border: solid #4c566a; }
+    #motion-controls { height: 10; padding: 0 1; }
+    #motion-metrics { height: 1fr; padding: 0 1; }
+    #motion-preview-controls { height: 3; content-align: center middle; background: #202734; }
     .pane-title { height: 1; padding: 0 1; text-style: bold; background: #202734; }
     .dialog { width: 72; max-height: 94%; margin: 1 4; padding: 1 2; border: thick #81a1c1; background: #202734; }
     .publish-dialog { width: 96; }
@@ -64,6 +72,7 @@ class OperatorWorkbenchApp(App):
         ("v", "validate", "Validate"), ("j", "cursor_down", "Down"), ("k", "cursor_up", "Up"),
         Binding("1", "mode_plan", "Plan", priority=True), Binding("2", "mode_workbench", "Workbench", priority=True),
         Binding("3", "mode_preview", "Preview", priority=True), Binding("4", "mode_timeline", "Timeline", priority=True),
+        Binding("5", "mode_motion", "Motion", priority=True),
         ("space", "preview_toggle", "Play/Pause"), ("left", "preview_previous", "Previous frame"),
         ("right", "preview_next", "Next frame"), ("home", "preview_first", "First frame"),
         ("end", "preview_last", "Last frame"), ("left_square_bracket", "preview_slower", "Slower review"),
@@ -73,6 +82,11 @@ class OperatorWorkbenchApp(App):
         ("delete", "timeline_remove", "Remove clip"), ("ctrl+up", "timeline_up", "Move clip left"),
         ("ctrl+down", "timeline_down", "Move clip right"), ("ctrl+s", "timeline_save", "Save sequence"),
         ("ctrl+o", "timeline_load", "Load sequence"),
+        ("m", "motion_mode", "Motion mode"), ("g", "motion_ground", "Motion ground"),
+        ("c", "motion_curve", "Motion curve"), ("d", "motion_distance", "Motion distance"),
+        ("shift+left", "motion_travel_less", "Travel -16"), ("shift+right", "motion_travel_more", "Travel +16"),
+        ("ctrl+left", "motion_travel_less_large", "Travel -32"), ("ctrl+right", "motion_travel_more_large", "Travel +32"),
+        ("ctrl+r", "motion_reset", "Reset motion"), ("enter", "motion_runtime", "Runtime check"),
     ]
 
     def __init__(self, service: WorkbenchService | None = None, startup: AnimationSelection | None = None) -> None:
@@ -82,6 +96,9 @@ class OperatorWorkbenchApp(App):
         self.preview_view = None
         self.timeline_frames = []
         self.sequence = animation_preview.ReviewSequence("review")
+        self.motion_renderer = None
+        self.motion_markers = ()
+        self._motion_last_tick = time.monotonic()
 
     def on_mount(self) -> None:
         self.main_screen = MainScreen()
@@ -147,12 +164,18 @@ class OperatorWorkbenchApp(App):
 
     async def _load_session(self, selection: AnimationSelection) -> bool:
         try:
+            changed = self.state.selection is None or self.state.selection.identity != selection.identity
             session = await self._thread(self.service.session, selection); self.session_view = session
             self.state.selection = selection; self.state.watch_signature = self.service.watch_signature(selection)
+            if changed:
+                self.state.motion.elapsed_sec = 0.0
+                self.state.motion.playing = False
             self._main_widget("#animation-detail", AnimationDetail).show_session(session)
             self._main_widget("#layer-table", LayerTable).show_session(session)
             layer_table = self._main_widget("#layer-table", LayerTable)
             self._main_widget("#layer-detail", Static).update(layer_table.selected_detail(0))
+            if changed and self.state.mode == "motion":
+                await self._load_motion_preview()
             return True
         except Exception as error:
             projected = self.service.project_error(error)
@@ -202,6 +225,12 @@ class OperatorWorkbenchApp(App):
             self.run_worker(self._load_session(self.state.selection), group="session", exclusive=True)
 
     def on_preview_controls_scrubbed(self, event: PreviewControls.Scrubbed) -> None:
+        if self.state.mode == "motion" and self.preview_view:
+            duration = len(self.preview_view.frames) / self.state.review_fps
+            self.state.motion.elapsed_sec = event.ratio * duration
+            self.state.motion.playing = False
+            self._render_motion()
+            return
         frames = len(self.timeline_frames) if self.state.mode == "timeline" else len(self.preview_view.frames) if self.preview_view else 0
         if frames: self.state.preview_frame = round(event.ratio * (frames - 1)); self._render_preview()
 
@@ -225,17 +254,21 @@ class OperatorWorkbenchApp(App):
 
     def _set_mode(self, mode: str) -> None:
         self.state.mode = mode
-        ids = {"plan": "#plan-mode", "workbench": "#workspace-row", "preview": "#preview-mode", "timeline": "#timeline-mode"}
+        ids = {"plan": "#plan-mode", "workbench": "#workspace-row", "preview": "#preview-mode", "timeline": "#timeline-mode", "motion": "#motion-mode"}
         for name, selector in ids.items(): self._main_widget(selector, Widget).set_class(name != mode, "hidden")
         if mode == "preview": self.run_worker(self._load_preview(), group="preview-image", exclusive=True)
         if mode == "timeline":
             self._main_widget("#timeline-table", TimelineTable).set_sequence(self.sequence)
             self.run_worker(self._load_timeline(), group="timeline-image", exclusive=True)
+        if mode == "motion":
+            self._motion_last_tick = time.monotonic()
+            self.run_worker(self._load_motion_preview(), group="motion-image", exclusive=True)
 
     def action_mode_plan(self): self._set_mode("plan")
     def action_mode_workbench(self): self._set_mode("workbench")
     def action_mode_preview(self): self._set_mode("preview")
     def action_mode_timeline(self): self._set_mode("timeline")
+    def action_mode_motion(self): self._set_mode("motion")
 
     async def _load_preview(self) -> None:
         selection = self._require_selection()
@@ -245,6 +278,53 @@ class OperatorWorkbenchApp(App):
             self.state.preview_frame = min(self.state.preview_frame, len(self.preview_view.frames) - 1)
             self._render_preview()
         except Exception as error: self._error(error)
+
+    async def _load_motion_preview(self) -> None:
+        selection = self._require_selection()
+        if not selection: return
+        try:
+            self.preview_view = await self._thread(self.service.preview, selection, self.state.preview_source)
+            self.motion_markers = await self._thread(self.service.motion_event_markers, selection)
+            self.motion_renderer = await self._thread(
+                animation_motion_preview.MotionPreviewRenderer, self.service.repo_root,
+                self.preview_view.frames, self.state.motion.ground, self.motion_markers,
+            )
+            self._render_motion()
+        except Exception as error: self._error(error)
+
+    def _motion_config(self):
+        if not self.preview_view: return None
+        motion = self.state.motion
+        return animation_motion_preview.MotionConfig(
+            self.preview_view.identity, self.state.review_fps, motion.travel_px,
+            motion.curve, self.preview_view.identity.direction,
+            animation_motion_preview.CANVAS_SIZE, motion.ground, motion.mode,
+            len(self.preview_view.frames),
+        )
+
+    def _render_motion(self) -> None:
+        config = self._motion_config()
+        if config is None or self.motion_renderer is None: return
+        motion = self.state.motion
+        rendered = self.motion_renderer.render(
+            config, motion.elapsed_sec, loop=motion.loop, show_grid=motion.show_grid,
+            show_start_ghost=motion.show_start_ghost,
+            show_contact_markers=motion.show_contact_markers,
+        )
+        self.state.preview_frame = rendered.sample.frame_index
+        self._main_widget("#motion-canvas", MotionCanvas).show_frame(rendered.image, self.preview_view.identity.key, self.state.preview_zoom)
+        self._main_widget("#motion-controls", MotionControls).show(
+            mode=motion.mode, ground=motion.ground, curve=motion.curve,
+            travel_px=motion.travel_px, fps=self.state.review_fps,
+        )
+        self._main_widget("#motion-metrics", MotionMetrics).show(
+            rendered.sample, len(self.preview_view.frames), rendered.warnings, bool(self.motion_markers),
+        )
+        self._main_widget("#motion-preview-controls", PreviewControls).show(
+            frame=rendered.sample.frame_index, frames=len(self.preview_view.frames),
+            fps=self.state.review_fps, playing=motion.playing, loop=motion.loop,
+            source=self.state.preview_source, zoom=self.state.preview_zoom,
+        )
 
     def _render_preview(self) -> None:
         if self.state.mode == "timeline":
@@ -260,34 +340,95 @@ class OperatorWorkbenchApp(App):
         self._main_widget("#preview-controls", PreviewControls).show(frame=index, frames=len(self.preview_view.frames), fps=self.state.review_fps, playing=self.state.preview_playing, loop=self.state.preview_loop, source=self.state.preview_source, zoom=self.state.preview_zoom)
 
     def action_preview_toggle(self):
+        if self.state.mode == "motion":
+            self.state.motion.playing = not self.state.motion.playing
+            self._motion_last_tick = time.monotonic(); self._render_motion(); return
         if self.state.mode not in ("preview", "timeline"): return
         self.state.preview_playing = not self.state.preview_playing; self._render_preview()
     def action_preview_previous(self):
+        if self.state.mode == "motion" and self.preview_view:
+            self.state.motion.playing = False
+            frame = max(0, self.state.preview_frame - 1)
+            self.state.motion.elapsed_sec = frame / self.state.review_fps
+            self._render_motion(); return
         if self.preview_view or self.timeline_frames: self.state.preview_frame = max(0, self.state.preview_frame - 1); self._render_preview()
     def action_preview_next(self):
+        if self.state.mode == "motion" and self.preview_view:
+            self.state.motion.playing = False
+            frame = min(len(self.preview_view.frames) - 1, self.state.preview_frame + 1)
+            self.state.motion.elapsed_sec = frame / self.state.review_fps
+            self._render_motion(); return
         frames = len(self.timeline_frames) if self.state.mode == "timeline" else len(self.preview_view.frames) if self.preview_view else 0
         if frames:
             last = frames - 1
             self.state.preview_frame = 0 if self.state.preview_loop and self.state.preview_frame == last else min(last, self.state.preview_frame + 1); self._render_preview()
-    def action_preview_first(self): self.state.preview_frame = 0; self._render_preview()
+    def action_preview_first(self):
+        if self.state.mode == "motion": self.state.motion.elapsed_sec = 0.0; self.state.motion.playing = False; self._render_motion(); return
+        self.state.preview_frame = 0; self._render_preview()
     def action_preview_last(self):
+        if self.state.mode == "motion" and self.preview_view:
+            self.state.motion.elapsed_sec = len(self.preview_view.frames) / self.state.review_fps
+            self.state.motion.playing = False; self._render_motion(); return
         frames = len(self.timeline_frames) if self.state.mode == "timeline" else len(self.preview_view.frames) if self.preview_view else 0
         if frames: self.state.preview_frame = frames - 1; self._render_preview()
-    def action_preview_slower(self): self.state.review_fps = max(1.0, self.state.review_fps - 1.0); self._render_preview()
-    def action_preview_faster(self): self.state.review_fps = min(30.0, self.state.review_fps + 1.0); self._render_preview()
-    def action_preview_loop(self): self.state.preview_loop = not self.state.preview_loop; self._render_preview()
+    def action_preview_slower(self): self.state.review_fps = max(1.0, self.state.review_fps - 1.0); self._render_motion() if self.state.mode == "motion" else self._render_preview()
+    def action_preview_faster(self): self.state.review_fps = min(30.0, self.state.review_fps + 1.0); self._render_motion() if self.state.mode == "motion" else self._render_preview()
+    def action_preview_loop(self):
+        if self.state.mode == "motion": self.state.motion.loop = not self.state.motion.loop; self._render_motion(); return
+        self.state.preview_loop = not self.state.preview_loop; self._render_preview()
     def action_preview_source(self):
-        if self.state.mode not in ("preview", "timeline"): return
+        if self.state.mode not in ("preview", "timeline", "motion"): return
         sources = ("workbench", "canonical", "runtime")
         self.state.preview_source = sources[(sources.index(self.state.preview_source) + 1) % len(sources)]
-        task = self._load_timeline() if self.state.mode == "timeline" else self._load_preview()
+        task = self._load_timeline() if self.state.mode == "timeline" else self._load_motion_preview() if self.state.mode == "motion" else self._load_preview()
         self.run_worker(task, group="preview-image", exclusive=True)
 
     def action_preview_zoom(self):
-        if self.state.mode not in ("preview", "timeline"): return
+        if self.state.mode not in ("preview", "timeline", "motion"): return
         modes = ("auto", "1x", "2x", "3x", "fit")
         self.state.preview_zoom = modes[(modes.index(self.state.preview_zoom) + 1) % len(modes)]
-        self._render_preview()
+        self._render_motion() if self.state.mode == "motion" else self._render_preview()
+
+    def action_motion_mode(self):
+        if self.state.mode != "motion": return
+        self.state.motion.mode = "world" if self.state.motion.mode == "treadmill" else "treadmill"; self._render_motion()
+    def action_motion_ground(self):
+        if self.state.mode != "motion": return
+        grounds = ("grid32", "ritualant_cavern"); current = self.state.motion.ground
+        self.state.motion.ground = grounds[(grounds.index(current) + 1) % len(grounds)]
+        self.run_worker(self._load_motion_preview(), group="motion-image", exclusive=True)
+    def action_motion_curve(self):
+        if self.state.mode != "motion": return
+        curves = animation_motion_preview.CURVES; current = self.state.motion.curve
+        self.state.motion.curve = curves[(curves.index(current) + 1) % len(curves)]; self._render_motion()
+    def action_motion_distance(self):
+        if self.state.mode != "motion": return
+        values = animation_motion_preview.DISTANCE_PRESETS
+        current = min(range(len(values)), key=lambda index: abs(values[index] - self.state.motion.travel_px))
+        self.state.motion.travel_px = values[(current + 1) % len(values)]; self._render_motion()
+    def _adjust_motion_travel(self, delta: float):
+        if self.state.mode != "motion": return
+        self.state.motion.travel_px = min(512.0, max(0.0, self.state.motion.travel_px + delta)); self._render_motion()
+    def action_motion_travel_less(self): self._adjust_motion_travel(-16.0)
+    def action_motion_travel_more(self): self._adjust_motion_travel(16.0)
+    def action_motion_travel_less_large(self): self._adjust_motion_travel(-32.0)
+    def action_motion_travel_more_large(self): self._adjust_motion_travel(32.0)
+    def action_motion_reset(self):
+        if self.state.mode != "motion": return
+        from .state import MotionLabState
+        self.state.motion = MotionLabState(); self._motion_last_tick = time.monotonic()
+        self.run_worker(self._load_motion_preview(), group="motion-image", exclusive=True)
+    def action_motion_runtime(self):
+        if self.state.mode != "motion": return
+        selection = self._require_selection()
+        if not selection: return
+        motion = self.state.motion
+        try:
+            self.service.launch_motion_runtime(selection, fps=self.state.review_fps, travel_px=motion.travel_px, curve=motion.curve, ground=motion.ground, mode=motion.mode)
+            motion.runtime_request_serial += 1
+            self._activity("RUNTIME MOTION CHECK launched", "OK")
+            self._activity(f"{selection.identity} · {motion.travel_px:.0f}px · {self.state.review_fps:g}fps · {motion.curve.upper()}")
+        except Exception as error: self._error(error)
 
     def action_timeline_add(self):
         selection = self._require_selection()
@@ -325,6 +466,15 @@ class OperatorWorkbenchApp(App):
         except Exception as error: self._error(error)
 
     def _preview_tick(self) -> None:
+        if self.state.mode == "motion":
+            now = time.monotonic(); delta = now - self._motion_last_tick; self._motion_last_tick = now
+            if not self.state.motion.playing or not self.preview_view: return
+            duration = len(self.preview_view.frames) / self.state.review_fps
+            self.state.motion.elapsed_sec += delta * self.state.motion.playback_rate
+            if self.state.motion.elapsed_sec >= duration:
+                if self.state.motion.loop: self.state.motion.elapsed_sec %= duration
+                else: self.state.motion.elapsed_sec = duration; self.state.motion.playing = False
+            self._render_motion(); return
         if self.state.mode not in ("preview", "timeline") or not self.state.preview_playing: return
         counter = getattr(self, "_preview_tick_counter", 0) + 1
         self._preview_tick_counter = counter

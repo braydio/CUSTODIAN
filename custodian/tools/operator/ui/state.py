@@ -117,6 +117,22 @@ class ActivityEvent:
 
 
 @dataclass
+class MotionLabState:
+    mode: str = "treadmill"
+    ground: str = "ritualant_cavern"
+    travel_px: float = 128.0
+    curve: str = "attack_lunge"
+    elapsed_sec: float = 0.0
+    playback_rate: float = 1.0
+    playing: bool = False
+    loop: bool = True
+    show_grid: bool = True
+    show_start_ghost: bool = True
+    show_contact_markers: bool = True
+    runtime_request_serial: int = 0
+
+
+@dataclass
 class WorkbenchUIState:
     selection: AnimationSelection | None = None
     weapon_id: str = ""
@@ -132,9 +148,10 @@ class WorkbenchUIState:
     preview_frame: int = 0
     preview_playing: bool = False
     preview_loop: bool = True
-    review_fps: float = 8.0
+    review_fps: float = 12.0
     preview_zoom: str = "auto"
     sequence_name: str = "review"
+    motion: MotionLabState = field(default_factory=MotionLabState)
 
     def __post_init__(self) -> None:
         if self.selection is not None:

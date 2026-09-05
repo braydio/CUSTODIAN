@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 from pathlib import Path
 from typing import Any, Callable
@@ -10,6 +11,7 @@ import animation_frame_contract as frame_contract
 import animation_workbench as workbench
 import animation_workbench_model as model
 import animation_preview
+import animation_motion_preview
 
 from .state import (
     AnimationRecord, AnimationSelection, ErrorView, ExistingContextView,
@@ -42,6 +44,7 @@ class WorkbenchService:
             source_index=self._index, workspace_root=self.workspace_root,
         )
         self.sequence_root = self.workspace_root / "sequences"
+        self.motion_request_path = self.repo_root / ".ai/operator_animation_workbench/motion_lab_request.json"
 
     def _index(self):
         return self.model.source_index(self.source_root, self.weapon_root)
@@ -77,6 +80,72 @@ class WorkbenchService:
             selection.profile, selection.group, selection.action, selection.direction,
         )
         return self.preview_provider.load(identity, source)
+
+    def motion_event_markers(self, selection: AnimationSelection) -> tuple[animation_motion_preview.MotionEventMarker, ...]:
+        """Read optional structured catalog events without scraping runtime source."""
+        try:
+            entry = json.loads(self.catalog_path.read_text()).get("animations", {}).get(selection.identity, {})
+        except (OSError, json.JSONDecodeError):
+            return ()
+        rows = entry.get("motion_events", entry.get("events", ()))
+        if not isinstance(rows, list):
+            rows = []
+        markers = []
+        for index, row in enumerate(rows):
+            if not isinstance(row, dict) or "frame" not in row:
+                continue
+            kind = str(row.get("kind", "CONTACT")).upper()
+            if kind not in ("WINDUP_END", "ACTIVE", "CONTACT", "RECOVERY_START"):
+                continue
+            markers.append(animation_motion_preview.MotionEventMarker(
+                str(row.get("id", f"event_{index}")), str(row.get("label", kind)), int(row["frame"]), kind,
+            ))
+        if markers or not selection.weapon_id:
+            return tuple(markers)
+        definition_path = self.repo_root / "custodian/game/actors/operator" / f"{selection.weapon_id}_definition.tres"
+        try: definition = definition_path.read_text()
+        except OSError: return ()
+        attack_key = ""
+        fast_match = re.fullmatch(r"fast_(\d+)", selection.action)
+        if fast_match:
+            chain = re.search(r"fast_chain_keys\s*=\s*PackedStringArray\(([^)]*)\)", definition)
+            keys = re.findall(r'"([^"]+)"', chain.group(1)) if chain else []
+            index = int(fast_match.group(1)) - 1
+            attack_key = keys[index] if 0 <= index < len(keys) else ""
+        if not attack_key:
+            mapped = re.search(rf'"{re.escape(selection.action)}"\s*:\s*"([^"]+)"', definition)
+            attack_key = mapped.group(1) if mapped else ""
+        start = definition.find(f'"{attack_key}": {{') if attack_key else -1
+        if start < 0: return ()
+        brace_start = definition.find("{", start); depth = 0; end = brace_start
+        for end in range(brace_start, len(definition)):
+            if definition[end] == "{": depth += 1
+            elif definition[end] == "}":
+                depth -= 1
+                if depth == 0: break
+        block = definition[brace_start:end + 1]
+        frames = []
+        for raw in re.findall(r'(?<![A-Za-z_])"frames"\s*:\s*\[([^]]*)\]', block):
+            frames.extend(int(value) for value in re.findall(r"\d+", raw))
+        return tuple(animation_motion_preview.MotionEventMarker(
+            f"contact_{index + 1}", f"CONTACT {index + 1}", max(0, frame - 1), "CONTACT",
+        ) for index, frame in enumerate(dict.fromkeys(frames)))
+
+    def launch_motion_runtime(self, selection: AnimationSelection, *, fps: float, travel_px: float,
+                              curve: str, ground: str, mode: str):
+        payload = {
+            "schema": "custodian.operator_motion_request.v1",
+            "identity": {"profile": selection.profile, "group": selection.group, "action": selection.action, "direction": selection.direction},
+            "source": "runtime", "fps": float(fps), "travel_px": float(travel_px),
+            "curve": curve, "ground": ground, "mode": mode,
+        }
+        self.motion_request_path.parent.mkdir(parents=True, exist_ok=True)
+        self.motion_request_path.write_text(json.dumps(payload, indent=2) + "\n")
+        return self._popen([
+            "godot", "--path", str(self.repo_root / "custodian"),
+            "res://scenes/debug/operator_motion_calibration.tscn",
+            "--motion-request", str(self.motion_request_path.resolve()),
+        ])
 
     def save_sequence(self, sequence: animation_preview.ReviewSequence) -> Path:
         return animation_preview.save_sequence(sequence, self.sequence_root)
