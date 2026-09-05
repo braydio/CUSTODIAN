@@ -1,43 +1,48 @@
-#!/bin/sh
-command -v git-lfs >/dev/null 2>&1 || {
-  printf >&2 "\n%s\n\n" "Warning: Git LFS is configured but 'git-lfs' was not found on your path; skipping LFS post-commit hook."
-  exit 0
-}
-git lfs post-commit "$@" || printf >&2 "\n%s\n\n" "Warning: git lfs post-commit failed; commit was created."
-
-# Optional Google Drive sync. Keep commits local and fast by default.
-REPO_DIR="$(git rev-parse --show-toplevel)"
-if [ "${CUSTODIAN_SYNC_AFTER_COMMIT:-0}" = "1" ] && [ -x "$REPO_DIR/rclone-git-sync.sh" ]; then
-  log_dir="$REPO_DIR/.git/hooks-logs"
-  mkdir -p "$log_dir"
-  nohup "$REPO_DIR/rclone-git-sync.sh" >"$log_dir/rclone-git-sync.log" 2>&1 &
-  echo "Started background Google Drive sync; log: $log_dir/rclone-git-sync.log"
-else
-  echo "Skipping Google Drive sync. Set CUSTODIAN_SYNC_AFTER_COMMIT=1 to run it in the background."
-fi
-
-# Gentle reminder after commits.
-
-cat <<'MSG'
-Post-commit reminder:
-Did this commit change behavior or decisions? If yes, update docs/_ai_context/DEVLOG.md.
-MSG
+#!/usr/bin/env bash
 
 set -u
 
 REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0
 cd "$REPO_ROOT" || exit 0
 
-echo "[code-review-graph] Updating graph after commit..."
-
-if command -v uvx >/dev/null 2>&1; then
-  if uvx code-review-graph update --repo "$REPO_ROOT"; then
-    echo "[code-review-graph] Graph updated."
-  else
-    echo "[code-review-graph] WARNING: graph update failed." >&2
-  fi
+# ─────────────────────────────────────────────
+# 1. Git LFS post-commit
+# ─────────────────────────────────────────────
+if command -v git-lfs >/dev/null 2>&1; then
+    git lfs post-commit "$@" || \
+        echo "[post-commit] WARNING: git lfs post-commit failed." >&2
 else
-  echo "[code-review-graph] WARNING: uvx not found; graph was not updated." >&2
+    echo "[post-commit] WARNING: git-lfs not found." >&2
+fi
+
+
+# ─────────────────────────────────────────────
+# 2. Refresh code-review-graph
+# ─────────────────────────────────────────────
+if [ -x "$REPO_ROOT/tools/crg-refresh.sh" ]; then
+    "$REPO_ROOT/tools/crg-refresh.sh" || \
+        echo "[post-commit] WARNING: graph refresh failed." >&2
+else
+    echo "[post-commit] WARNING: tools/crg-refresh.sh not found/executable." >&2
+fi
+
+
+# ─────────────────────────────────────────────
+# 3. Optional Google Drive backup
+# ─────────────────────────────────────────────
+if [ "${CUSTODIAN_SYNC_AFTER_COMMIT:-0}" = "1" ]; then
+    if [ -x "$REPO_ROOT/rclone-git-sync.sh" ]; then
+        LOG_DIR="$REPO_ROOT/.git/hooks-logs"
+        mkdir -p "$LOG_DIR"
+
+        nohup "$REPO_ROOT/rclone-git-sync.sh" \
+            > "$LOG_DIR/rclone-git-sync.log" 2>&1 &
+
+        echo "[post-commit] Started background Google Drive backup."
+        echo "[post-commit] Log: $LOG_DIR/rclone-git-sync.log"
+    else
+        echo "[post-commit] WARNING: rclone-git-sync.sh unavailable." >&2
+    fi
 fi
 
 exit 0

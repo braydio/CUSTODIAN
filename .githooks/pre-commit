@@ -1,59 +1,89 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-set -e
+set -euo pipefail
 
-# ──────────────────────────────────────────────
-# 1. Block commits that include forbidden files
-# ──────────────────────────────────────────────
-forbidden_pattern='^(auth\.json|internal_storage\.json|history\.jsonl|olddauth\.json|shell_snapshots/|log/)$'
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
 
-staged_paths=$(git diff --cached --name-only)
+# ─────────────────────────────────────────────
+# 1. Block forbidden staged files
+# ─────────────────────────────────────────────
+#
+# ACMR deliberately excludes deletions, so removing an accidentally tracked
+# forbidden file is allowed.
+#
+staged_paths="$(git diff --cached --name-only --diff-filter=ACMR)"
+
+forbidden_pattern='(^|/)(auth\.json|internal_storage\.json|history\.jsonl|olddauth\.json)$|^(log|shell_snapshots)/'
+
 if [ -n "$staged_paths" ]; then
-  forbidden_match=$(printf '%s\n' "$staged_paths" | grep -E "$forbidden_pattern" || true)
-  if [ -n "$forbidden_match" ]; then
-    echo "Commit blocked: forbidden files or directories staged." >&2
-    echo "Remove these paths from the commit:" >&2
-    echo "$forbidden_match" >&2
-    exit 1
-  fi
+    forbidden_match="$(
+        printf '%s\n' "$staged_paths" |
+        grep -E "$forbidden_pattern" || true
+    )"
+
+    if [ -n "$forbidden_match" ]; then
+        echo "Commit blocked: forbidden files or directories are staged." >&2
+        echo >&2
+        echo "Remove these paths from the commit:" >&2
+        printf '%s\n' "$forbidden_match" >&2
+        exit 1
+    fi
 fi
 
-# ──────────────────────────────────────────────
-# 2. Warn about .aseprite / .ase source files
-#    outside content/_aseprite/
-# ──────────────────────────────────────────────
-# This hook used to move files during commit. Hooks should not rewrite the
-# working tree unexpectedly, so this is now advisory only.
+
+# ─────────────────────────────────────────────
+# 2. Warn about misplaced Aseprite source files
+# ─────────────────────────────────────────────
 if [ -d "custodian/content" ]; then
-  content_aseprite_files=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '^custodian/content/.*\.(aseprite|ase)$' | grep -v '/_aseprite/' || true)
+    content_aseprite_files="$(
+        printf '%s\n' "$staged_paths" |
+        grep -E '^custodian/content/.*\.(aseprite|ase)$' |
+        grep -v '/_aseprite/' || true
+    )"
 
-  if [ -n "$content_aseprite_files" ]; then
-    content_aseprite_count=$(printf '%s\n' "$content_aseprite_files" | wc -l | tr -d ' ')
-    echo "Warning: staged .aseprite/.ase source files are outside content/_aseprite/." >&2
-    echo "Consider moving them after this commit if they are intended source assets. Showing first 25 of $content_aseprite_count:" >&2
-    printf '%s\n' "$content_aseprite_files" | sed -n '1,25p' >&2
-  fi
+    if [ -n "$content_aseprite_files" ]; then
+        content_aseprite_count="$(
+            printf '%s\n' "$content_aseprite_files" |
+            wc -l |
+            tr -d ' '
+        )"
+
+        echo "Warning: staged .aseprite/.ase source files are outside content/_aseprite/." >&2
+        echo "Showing first 25 of $content_aseprite_count:" >&2
+        printf '%s\n' "$content_aseprite_files" | sed -n '1,25p' >&2
+    fi
 fi
 
-# ──────────────────────────────────────────────
-# 3. Optional warning: untracked, unignored files
-# ──────────────────────────────────────────────
-warn_dirs="log sessions shell_snapshots"
-if [ -n "$warn_dirs" ]; then
-  untracked=$(git ls-files -o --exclude-standard $warn_dirs 2>/dev/null || true)
-  if [ -n "$untracked" ]; then
-    echo "Warning: untracked files exist under log/, sessions/, or shell_snapshots/." >&2
-    echo "Consider adding them to .gitignore or removing them:" >&2
-    echo "$untracked" >&2
-  fi
+
+# ─────────────────────────────────────────────
+# 3. Warn about untracked local-state files
+# ─────────────────────────────────────────────
+untracked="$(
+    git ls-files \
+        --others \
+        --exclude-standard \
+        -- \
+        log/ \
+        sessions/ \
+        shell_snapshots/ \
+        2>/dev/null || true
+)"
+
+if [ -n "$untracked" ]; then
+    echo "Warning: untracked local-state files exist:" >&2
+    printf '%s\n' "$untracked" | sed -n '1,25p' >&2
 fi
 
-# ──────────────────────────────────────────────
-# 4. Validate Design Codex structure
-# ──────────────────────────────────────────────
-if printf '%s\n' "$staged_paths" | grep -Eq '^(design/90_codex/|tools/validate_design_codex.py|\.githooks/pre-commit|tools/install_git_hooks.sh)'; then
-  echo "[pre-commit] validating design codex..."
-  python tools/validate_design_codex.py
+
+# ─────────────────────────────────────────────
+# 4. Validate Design Codex when relevant
+# ─────────────────────────────────────────────
+if printf '%s\n' "$staged_paths" |
+    grep -Eq '^(design/90_codex/|tools/validate_design_codex.py|\.githooks/pre-commit|tools/install_git_hooks.sh)'
+then
+    echo "[pre-commit] validating design codex..."
+    python3 tools/validate_design_codex.py
 fi
 
 exit 0

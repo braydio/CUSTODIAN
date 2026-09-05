@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cat >/dev/null || true; REPO_ROOT=\"$(git rev-parse --show-toplevel 2>/dev/null)\" || exit 0; uvx code-review-graph update --repo \"$REPO_ROOT\" && uvx code-review-graph status --repo \"$REPO_ROOT\"",
+            "command": "bash tools/crg-refresh.sh --status",
             "timeout": 60
           }
         ]

@@ -1,15 +1,35 @@
 #!/usr/bin/env bash
-# code-review-graph: session start status (Gemini CLI hook)
-# Must output ONLY JSON on stdout. Logs go to stderr. Never blocks the session.
-set -euo pipefail
 
-cat > /dev/null || true
+set -u
 
-msg="$(code-review-graph status --repo "/home/braydenchaffee/Projects/CUSTODIAN" 2>&1 | head -n 1 || true)"
+cat >/dev/null || true
 
-CRG_MSG="$msg" python3 -c '
-import json,os
-m=os.environ.get("CRG_MSG","")
-print(json.dumps({"systemMessage":m,"suppressOutput":True}))
-' 2>/dev/null || echo '{"suppressOutput": true}'
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+MESSAGE=""
+
+if [ -z "$REPO_ROOT" ]; then
+    MESSAGE="code-review-graph: not inside a Git repository"
+elif ! command -v uvx >/dev/null 2>&1; then
+    MESSAGE="code-review-graph: uvx not found"
+else
+    if uvx code-review-graph update --repo "$REPO_ROOT" >&2; then
+        MESSAGE="$(
+            uvx code-review-graph status --repo "$REPO_ROOT" 2>&1 |
+            head -n 1
+        )"
+    else
+        MESSAGE="code-review-graph: startup update failed"
+    fi
+fi
+
+CRG_MSG="$MESSAGE" python3 - <<'PY'
+import json
+import os
+
+print(json.dumps({
+    "systemMessage": os.environ.get("CRG_MSG", ""),
+    "suppressOutput": True
+}))
+PY
+
 exit 0

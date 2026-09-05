@@ -1,77 +1,88 @@
 #!/usr/bin/env bash
+
 set -euo pipefail
 
 REPO_DIR="$(git rev-parse --show-toplevel)"
 G_DRIVE_REMOTE="git-gdrive-sync:git-backups/home/braydenchaffee/Projects/CUSTODIAN"
-ACTION="${1:-sync}"  # "sync" (default, local→remote) or "restore" (remote→local)
+ACTION="${1:-sync}"
 
-# --- Pre-flight checks ---
+LOG_DIR="$REPO_DIR/.git/hooks-logs"
+LOCK_FILE="$LOG_DIR/rclone-git-sync.lock"
 
-if ! command -v rclone &> /dev/null; then
-  echo "ERROR: rclone is not installed."
-  exit 1
+mkdir -p "$LOG_DIR"
+
+# Prevent overlapping backups from rapid successive commits.
+exec 9>"$LOCK_FILE"
+
+if command -v flock >/dev/null 2>&1; then
+    if ! flock -n 9; then
+        echo "Another CUSTODIAN backup is already running; skipping."
+        exit 0
+    fi
+else
+    echo "Warning: flock not available; continuing without backup locking." >&2
 fi
 
-if ! rclone listremotes 2>/dev/null | grep -q "git-gdrive-sync:"; then
-  echo "ERROR: rclone remote 'git-gdrive-sync' is not configured."
-  echo "  Run: rclone config create git-gdrive-sync drive ..."
-  exit 1
-fi
 
-# --- Mode ---
-
-case "$ACTION" in
-  sync)
-    echo "Syncing $REPO_DIR → G-Drive (local is source)..."
-    DIRECTION=("$REPO_DIR" "$G_DRIVE_REMOTE")
-    ;;
-  restore)
-    echo "Restoring G-Drive → $REPO_DIR (remote is source)..."
-    echo "  WARNING: This overwrites local files not in the backup."
-    DIRECTION=("$G_DRIVE_REMOTE" "$REPO_DIR")
-    ;;
-  *)
-    echo "Usage: $0 [sync|restore]"
-    echo "  sync    (default)  Copy local changes to G-Drive"
-    echo "  restore            Pull G-Drive backup down to local"
+# ─────────────────────────────────────────────
+# Preconditions
+# ─────────────────────────────────────────────
+if ! command -v rclone >/dev/null 2>&1; then
+    echo "ERROR: rclone is not installed." >&2
     exit 1
-    ;;
+fi
+
+if ! rclone listremotes 2>/dev/null | grep -qx 'git-gdrive-sync:'; then
+    echo "ERROR: rclone remote 'git-gdrive-sync:' is not configured." >&2
+    exit 1
+fi
+
+
+# ─────────────────────────────────────────────
+# Direction
+# ─────────────────────────────────────────────
+case "$ACTION" in
+    sync|backup)
+        echo "Backing up $REPO_DIR -> $G_DRIVE_REMOTE"
+        SOURCE="$REPO_DIR"
+        DESTINATION="$G_DRIVE_REMOTE"
+        ;;
+
+    restore)
+        echo "Restoring $G_DRIVE_REMOTE -> $REPO_DIR"
+        echo "WARNING: restore may overwrite local files."
+        SOURCE="$G_DRIVE_REMOTE"
+        DESTINATION="$REPO_DIR"
+        ;;
+
+    *)
+        echo "Usage: $0 [backup|sync|restore]" >&2
+        exit 1
+        ;;
 esac
 
-# --- Exclude args ---
 
-EXCLUDE_ARGS=(
-  # Baseline safety — always exclude these regardless of .gitignore
-  --exclude ".git/**"
-  --exclude ".godot/**"
-  --exclude ".venv/**"
-  --exclude "__pycache__/**"
-  --exclude "node_modules/**"
-  --exclude ".import/**"
-
-  # Note: full .gitignore compatibility requires rclone's --gitignore flag which
-  # is only available in rclone sync, not copy. The explicit excludes above cover
-  # the high-noise patterns. For additional gitignore-like rules, add them to
-  # a .rcloneignore file — it will be picked up if present.
-
-  # Keep rclone metadata for faster re-syncs
-  --metadata
-
-  # Track renames so moved files don't get re-uploaded
-  --track-renames
-
-  # Check file hashes for integrity
-  --checksum
+ARGS=(
+    --exclude ".git/**"
+    --exclude ".godot/**"
+    --exclude ".venv/**"
+    --exclude "__pycache__/**"
+    --exclude "node_modules/**"
+    --exclude ".import/**"
+    --metadata
+    --checksum
 )
 
-# Optional: respect .rcloneignore if it exists (rclone-specific overrides)
 if [ -f "$REPO_DIR/.rcloneignore" ]; then
-  EXCLUDE_ARGS+=(--exclude-from "$REPO_DIR/.rcloneignore")
-  echo "  Using .rcloneignore for additional exclude patterns."
+    ARGS+=(--exclude-from "$REPO_DIR/.rcloneignore")
 fi
 
-# --- Execute ---
+# Intentionally use COPY, not SYNC.
+# Backups should not delete remote-only files.
+rclone copy \
+    "$SOURCE" \
+    "$DESTINATION" \
+    "${ARGS[@]}" \
+    --stats 30s
 
-rclone copy "${DIRECTION[@]}" "${EXCLUDE_ARGS[@]}" --progress
-
-echo "G-Drive ${ACTION} complete."
+echo "Google Drive $ACTION complete."

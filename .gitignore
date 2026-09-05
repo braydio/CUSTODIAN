@@ -137,3 +137,9 @@ rclone-git-sync.sh
 repomix-output.*
 # Added by code-review-graph
 .code-review-graph/
+auth.json
+internal_storage.json
+history.jsonl
+olddauth.json
+log/
+shell_snapshots/
