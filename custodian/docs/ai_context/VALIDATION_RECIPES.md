@@ -645,10 +645,15 @@ godot --headless --path . \
   --script res://tools/validation/operator_melee_fast_chain_smoke.gd
 godot --headless --path . \
   --script res://tools/validation/enemy_engagement_coordinator_smoke.gd
+godot --headless --path . \
+  --script res://tools/validation/combat_exchange_commitment_smoke.gd
 godot --headless --path . --quit \
   --scene res://scenes/game.tscn
 ```
 
+The combat-exchange smoke validates committed-light survival, deterministic
+neutral-light flinch gating, posture accumulation/recovery/break, heavy poise
+override, and collision-resolved displacement without attack cancellation.
 The soft-targeting smokes validate aim-over-nearest selection, retention and
 switch hysteresis, shared reach/correction/assist-drive bounds, and passive
 far/approach/reliable ring states. The dagger smoke validates the default definition, authored Chain 02/03 runtime

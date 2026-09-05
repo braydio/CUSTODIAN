@@ -477,6 +477,12 @@ Implemented behavior:
 - sprint/combat coupling:
   - heavy attacks can be gated while sprinting (`heavy_attack_blocked_while_sprinting`)
   - heavy attacks consume stamina (`heavy_attack_stamina_cost`)
+  - `EngagementTracker.engagement_active` is the combat-pressure authority and
+    retains a four-second quiet grace after hostile intent ends
+  - intentional offensive actions establish pressure before stamina spend
+  - sprint and traversal dodge spend no stamina outside combat pressure
+  - out-of-pressure stamina regenerates at five times the combat rate
+  - attack, dodge, guard, and parry spends delay regeneration for 0.70 seconds
 
 ## 6. Targeting Readability
 

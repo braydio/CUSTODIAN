@@ -23,6 +23,8 @@ func _run() -> void:
 	_assert(operator.call("_get_dodge_profile_for_hold", 0.30) == &"committed", "committed threshold must select committed")
 	_assert(operator.call("_get_dodge_profile_for_hold", 2.0) == &"committed", "hold time must clamp to committed")
 
+	_validate_traversal_dodge_is_free(operator)
+	(operator.get("_engagement_tracker") as Node).set("engagement_active", true)
 	_validate_profile(operator, &"tap", 1.0, 1.0, 16.0)
 	_validate_profile(operator, &"long", 1.30, 1.25, 20.0)
 	_validate_profile(operator, &"committed", 1.55, 1.60, 26.0)
@@ -39,6 +41,14 @@ func _run() -> void:
 	for error in _errors:
 		push_error("[OperatorChargedLongRollSmoke] %s" % error)
 	quit(1)
+
+
+func _validate_traversal_dodge_is_free(operator: Node) -> void:
+	_reset_dodge(operator)
+	operator.set("stamina", 1.0)
+	var started := bool(operator.call("_try_start_dodge_with_profile", Vector2.RIGHT, &"tap"))
+	_assert(started, "outside-combat traversal dodge should not require reserve")
+	_assert(is_equal_approx(float(operator.get("stamina")), 1.0), "outside-combat traversal dodge should be free")
 
 
 func _validate_profile(operator: Node, profile: StringName, speed_multiplier: float, recovery_multiplier: float, stamina_cost: float) -> void:

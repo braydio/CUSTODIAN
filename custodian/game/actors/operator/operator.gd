@@ -501,12 +501,16 @@ var _dodge_fast_attack_buffered: bool = false
 var _dodge_fast_attack_presentation_active: bool = false
 var _buffered_attack_kind: String = ""
 var _buffered_attack_timer: float = 0.0
+var _terminal_fast_restart_buffered: bool = false
 var _buffered_dodge_direction: Vector2 = Vector2.ZERO
 var _melee_swing_sfx_played := false
 var _melee_swing_sfx_frames_played: Dictionary = {}
 var _melee_animation_finished := false
 var _hit_stop_active: bool = false
 var _melee_damage_current: float = 0.0
+var _melee_posture_damage_current: float = 0.0
+var _stamina_regen_delay_timer: float = 0.0
+var _traversal_sprint_suppression_active: bool = false
 var _melee_range_current: float = 0.0
 var _melee_arc_current: float = 0.0
 var _melee_hitbox_active: bool = false
@@ -983,6 +987,8 @@ func _ready():
 	_engagement_tracker.vanguard_seal_activated.connect(
 		_on_vanguard_seal_activated
 	)
+	_engagement_tracker.engagement_started.connect(_on_combat_pressure_entered)
+	_engagement_tracker.engagement_ended.connect(_on_combat_pressure_exited)
 	_melee_posture_resolver = MeleePostureResolverScript.new()
 	_install_melee_posture_catalog_frames()
 	# Sync with ControllableActor base class
@@ -1286,6 +1292,7 @@ func _process(delta):
 	_update_body_recoil(delta)
 	_update_attack_buffer(delta)
 	_update_melee_attack(delta)
+	_try_start_terminal_fast_restart()
 	_update_melee_recovery(delta)
 	_update_reload(delta)
 	_update_field_patch(delta)
@@ -1511,13 +1518,24 @@ func _physics_process(delta):
 	_update_stealth_noise_snapshot(moving)
 
 	if is_sprinting:
-		_spend_stamina(stamina_drain_per_second * delta, &"sprint")
+		if _is_combat_pressure_active():
+			_traversal_sprint_suppression_active = false
+			_spend_stamina(stamina_drain_per_second * delta, &"sprint")
+		elif not _traversal_sprint_suppression_active:
+			_traversal_sprint_suppression_active = true
+			_obs_increment(&"stamina_traversal_sprint_suppressed")
 		if stamina <= 0.0:
 			is_sprinting = false
 			if stamina_sprint_exhaustion_requires_full_recovery:
 				_sprint_exhausted = true
 	else:
-		_regenerate_stamina(stamina_regen_per_second * delta)
+		_traversal_sprint_suppression_active = false
+		if _stamina_regen_delay_timer > 0.0:
+			_stamina_regen_delay_timer = maxf(0.0, _stamina_regen_delay_timer - delta)
+		elif _is_combat_pressure_active():
+			_regenerate_stamina(stamina_regen_per_second * delta)
+		else:
+			_regenerate_stamina(stamina_regen_per_second * 5.0 * delta, &"traversal")
 
 	# DEBUG: Press J to damage nearest sector
 	if Input.is_key_pressed(KEY_J):
@@ -3889,17 +3907,34 @@ func _spend_stamina(amount: float, cause: StringName) -> float:
 		stamina = stamina_max
 		_sprint_exhausted = false
 		return 0.0
+	if cause in [&"dodge", &"dodge_chain"] and not _is_combat_pressure_active():
+		return 0.0
 	var before := stamina
 	stamina = maxf(0.0, stamina - maxf(0.0, amount))
 	var spent := before - stamina
 	if spent > 0.0:
 		_obs_accumulate(StringName("stamina_spent_%s" % String(cause)), spent)
 		_obs_accumulate(&"stamina_spent_total", spent)
+		if _is_combat_pressure_active():
+			var combat_cause := cause
+			if cause == &"fast_attack":
+				combat_cause = &"fast"
+			elif cause == &"heavy_attack":
+				combat_cause = &"heavy"
+			elif cause == &"dodge_chain":
+				combat_cause = &"dodge"
+			_obs_accumulate(StringName("stamina_spent_combat_%s" % String(combat_cause)), spent)
+		if cause in [&"fast_attack", &"heavy_attack", &"dodge", &"dodge_chain", &"guard", &"parry"]:
+			_stamina_regen_delay_timer = maxf(_stamina_regen_delay_timer, 0.70)
 	if before > 0.0 and stamina <= 0.0:
 		_obs_increment(&"stamina_exhaustions")
 		_obs_increment(StringName("stamina_exhaustion_%s" % String(cause)))
 		_obs_log(&"stamina_exhausted", {"cause": String(cause), "position": global_position})
 	return spent
+
+
+func _is_combat_pressure_active() -> bool:
+	return _engagement_tracker != null and _engagement_tracker.engagement_active
 
 
 func _regenerate_stamina(amount: float, cause: StringName = &"passive") -> float:
@@ -4980,6 +5015,7 @@ func _advance_fast_chain_step() -> bool:
 func _reset_fast_chain(clear_buffer: bool = true) -> void:
 	_melee_fast_combo_step = 0
 	_melee_fast_chain_direction_active = false
+	_terminal_fast_restart_buffered = false
 	_clear_committed_melee_targeting()
 	if clear_buffer:
 		_clear_attack_buffer()
@@ -5097,6 +5133,8 @@ func _start_fast_attack() -> void:
 	_critical_attack_target = null
 	_critical_attack_damage = 0.0
 	_active_attack_profile = get_current_combat_profile()
+	if _engagement_tracker != null:
+		_engagement_tracker.notify_operator_offensive_action(_melee_soft_target)
 	_melee_active = true
 	_melee_prev_animation_frame = -1
 	_parry_neutral_lock_active = false
@@ -5189,6 +5227,11 @@ func _start_fast_attack() -> void:
 			"stamina_cost": stamina_cost,
 			"direction": _melee_forward,
 		})
+		if _active_attack_profile.weapon_id == &"vigil_pattern_dagger":
+			match _melee_fast_combo_step:
+				0: _obs_increment(&"vigil_fast_chain_started")
+				1: _obs_increment(&"vigil_fast_chain_link_2")
+				2: _obs_increment(&"vigil_fast_chain_link_3")
 		return
 
 	var next_fast_key := "melee_fast_1"
@@ -5340,6 +5383,9 @@ func _start_heavy_attack() -> void:
 	_critical_attack_target = null
 	_critical_attack_damage = 0.0
 	_active_attack_profile = get_current_combat_profile()
+	if _engagement_tracker != null:
+		_engagement_tracker.notify_operator_offensive_action(_melee_soft_target)
+	_obs_increment(&"player_heavy_started")
 	_parry_neutral_lock_active = false
 	_modular_upper_action_animation = &""
 	_melee_heavy_anticipating = false
@@ -5412,6 +5458,7 @@ func _get_cancel_start_time() -> float:
 
 
 func _update_melee_attack(delta: float) -> void:
+	var terminal_restart_requested := false
 	if not _melee_active:
 		disable_hitbox()
 		return
@@ -5507,6 +5554,7 @@ func _update_melee_attack(delta: float) -> void:
 			if _advance_fast_chain_step():
 				_request_attack_state("fast")
 				return
+			terminal_restart_requested = true
 			_reset_fast_chain()
 		elif buffered_finisher_input == "dodge":
 			_start_buffered_fast_chain_dodge()
@@ -5523,6 +5571,16 @@ func _update_melee_attack(delta: float) -> void:
 			_start_fast_attack_recovery()
 		_reset_fast_chain(false)
 
+	if _melee_attack_kind == "fast" \
+	and _active_attack_profile != null \
+	and _active_attack_profile.weapon_id == &"vigil_pattern_dagger" \
+	and _melee_attack_key == "vigil_dagger_fast_03":
+		_obs_increment(&"vigil_fast_chain_completed")
+		_obs_increment(&"vigil_fast_3_recovery_completed")
+	elif _melee_attack_kind == "heavy":
+		_obs_increment(&"player_heavy_resolved")
+	if terminal_restart_requested:
+		_terminal_fast_restart_buffered = true
 	_melee_active = false
 	_melee_attack_kind = ""
 	_melee_attack_key = ""
@@ -5539,6 +5597,13 @@ func _update_melee_attack(delta: float) -> void:
 		_active_attack_profile = null
 		_active_melee_attack_profile = null
 		_reset_melee_overlay_visuals()
+
+
+func _try_start_terminal_fast_restart() -> void:
+	if not _terminal_fast_restart_buffered or not _can_start_attack_now():
+		return
+	_terminal_fast_restart_buffered = false
+	_request_attack_state("fast")
 
 
 func _start_buffered_fast_chain_dodge() -> bool:
@@ -5628,8 +5693,8 @@ func _apply_melee_hitbox_tick(semantic_frame: int = -1) -> void:
 			* float(hit_modifiers.get("direct_damage_multiplier", 1.0))
 		)
 		var stagger_damage := (
-			_melee_damage_current
-			* float(active_contact.get("stagger_multiplier", 1.0))
+			_melee_posture_damage_current
+			* float(active_contact.get("posture_multiplier", active_contact.get("stagger_multiplier", 1.0)))
 			* float(hit_modifiers.get("stagger_damage_multiplier", 1.0))
 		)
 		var damage_started: int = obs.perf_span_begin() if obs != null else 0
@@ -6930,6 +6995,10 @@ func _configure_melee_hitbox(damage: float, attack_range: float, attack_arc_degr
 	var damage_multiplier := 1.0 if _active_melee_attack_profile != null else (profile.damage_multiplier if profile != null else 1.0)
 	var range_multiplier := 1.0 if _active_melee_attack_profile != null else (profile.range_multiplier if profile != null else 1.0)
 	_melee_damage_current = damage * damage_multiplier
+	_melee_posture_damage_current = (
+		_active_melee_attack_profile.posture_damage
+		if _active_melee_attack_profile != null else _melee_damage_current
+	)
 	if _counter_window_timer > 0.0 and _melee_attack_kind == "fast":
 		_melee_damage_current *= parry_counter_damage_multiplier
 		_counter_window_timer = 0.0
@@ -7782,6 +7851,16 @@ func _on_vanguard_seal_activated(_duration_sec: float) -> void:
 		add_child(effect)
 
 
+func _on_combat_pressure_entered() -> void:
+	_obs_increment(&"combat_pressure_entered")
+	_obs_log(&"combat_pressure_entered", {"position": global_position})
+
+
+func _on_combat_pressure_exited() -> void:
+	_obs_increment(&"combat_pressure_exited")
+	_obs_log(&"combat_pressure_exited", {"position": global_position})
+
+
 func report_confirmed_damage_dealt(
 	applied_damage: float,
 	damage_context: Dictionary
@@ -8579,6 +8658,8 @@ func _get_dodge_start_rejection_reason(required_stamina: float = -1.0) -> String
 	if _melee_active or _melee_heavy_anticipating or _melee_fast_windup or _melee_recovery_active or _is_block_state_active():
 		return &"action_locked"
 	var cost := dodge_stamina_cost if required_stamina < 0.0 else required_stamina
+	if not _is_combat_pressure_active():
+		cost = 0.0
 	if stamina < maxf(0.0, cost):
 		return &"insufficient_stamina"
 	return &""
@@ -12508,6 +12589,12 @@ func finish_damage_reaction_presentation() -> void:
 
 func _interrupt_active_combat_for_damage_reaction() -> void:
 	_cancel_attack_drive(true)
+	if _melee_active \
+	and _melee_attack_kind == "fast" \
+	and _active_attack_profile != null \
+	and _active_attack_profile.weapon_id == &"vigil_pattern_dagger" \
+	and _melee_attack_key != "vigil_dagger_fast_03":
+		_obs_increment(&"vigil_fast_chain_abandoned")
 	_reset_fast_chain()
 	_melee_active = false
 	_melee_attack_kind = ""

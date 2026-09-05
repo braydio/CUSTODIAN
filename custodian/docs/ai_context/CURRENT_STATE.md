@@ -1,5 +1,24 @@
 # CURRENT STATE — CUSTODIAN
 
+## Combat Exchange + Commitment Pass (2026-09-05)
+
+Vigil Fast 01/02 no longer cancel a grunt's committed pending attack. Enemy hit
+feedback is separated from gameplay interruption through deterministic poise:
+neutral light flinch has a 0.70-second gate, committed lights preserve attack
+lifecycle, and heavy/interrupt/posture-break/critical/death authority remains.
+Enemies now accumulate independently authored posture (baseline grunt 100,
+1.25-second recovery delay, 26/s recovery); the Vigil chain contributes
+14/16/30. Fast 03 terminates rather than looping, owns a 0.42-second authored
+recovery floor, and retains its two-contact finisher payoff. Collision-resolved
+Vigil displacement is approximately 2.5/3/1.7+14 px by contact. Existing melee
+target acquisition remains generous but freezes direction and drive at action
+commit. EngagementTracker now also expresses combat pressure for stamina:
+intentional attacks enter pressure before spend, pressure retains its existing
+four-second quiet grace, sprint and traversal dodge are free outside pressure,
+and traversal stamina regenerates at 5x while combat spends impose a 0.70-second
+regen delay. Vigil heavy/chain/charge remain deferred because no semantically
+appropriate authored dagger heavy presentation exists.
+
 ## Procgen Native-32px Spatial Normalization (2026-09-05)
 
 `ProcGenMap` now runs native 32px at `scale == Vector2.ONE`. One semantic

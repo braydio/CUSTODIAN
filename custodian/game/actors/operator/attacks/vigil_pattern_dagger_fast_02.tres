@@ -6,9 +6,10 @@
 script = ExtResource("1_profile")
 attack_id = &"vigil_dagger_fast_02"
 damage = 12.0
+posture_damage = 16.0
 range_px = 60.0
 arc_degrees = 60.0
-knockback_force = 32.0
+knockback_force = 180.0
 windup_sec = 0.278
 active_sec = 0.056
 recovery_sec = 0.111

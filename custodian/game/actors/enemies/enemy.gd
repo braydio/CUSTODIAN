@@ -130,6 +130,11 @@ enum GruntWeaponPosture {
 @export var stagger_damage_threshold: float = 24.0
 @export var crit_damage_threshold: float = 48.0
 @export var resists_light_flinch: bool = false
+@export_category("Poise and Posture")
+@export var posture_max: float = 100.0
+@export var posture_recovery_delay: float = 1.25
+@export var posture_recovery_rate: float = 26.0
+@export var light_flinch_cooldown: float = 0.70
 @export_enum("body", "robot_metal", "scorched", "shrumb", "hallway_reverb")
 var melee_impact_audio_profile: String = "body"
 @export var crit_hit_duration: float = 0.8
@@ -278,6 +283,9 @@ var _attack_windup_timer: float = 0.0
 var _pending_attack_damage: float = 0.0
 var _stagger_timer: float = 0.0
 var _recoil_timer: float = 0.0
+var posture_current: float = 0.0
+var _posture_recovery_delay_timer: float = 0.0
+var _light_flinch_cooldown_timer: float = 0.0
 var _crit_timer: float = 0.0
 var _crit_recovery_timer: float = 0.0
 var _parry_critical_window_timer: float = 0.0
@@ -2277,6 +2285,12 @@ func _obs_increment(counter_name: StringName, amount: int = 1) -> void:
 		observatory.call("increment", String(counter_name), amount)
 
 
+func _obs_accumulate(counter_name: StringName, amount: float) -> void:
+	var observatory := _get_dev_observatory()
+	if observatory != null and observatory.has_method("accumulate"):
+		observatory.call("accumulate", String(counter_name), amount)
+
+
 func _assault_state_name(state: int) -> String:
 	match state:
 		AssaultState.STAGING:
@@ -3225,29 +3239,47 @@ func _apply_reaction(amount: float, hit_strength: int = CombatConstants.HitStren
 	if _parry_critical_phase != ParryCriticalPhase.NONE:
 		return
 
-	# INTERRUPT hits always cause hit-recoil regardless of damage amount
+	var posture_damage := maxf(0.0, amount)
+	if posture_damage > 0.0:
+		posture_current = minf(maxf(1.0, posture_max), posture_current + posture_damage)
+		_posture_recovery_delay_timer = maxf(0.0, posture_recovery_delay)
+		_obs_accumulate(&"enemy_posture_damage_received", posture_damage)
+	if posture_current + 0.0001 >= maxf(1.0, posture_max):
+		posture_current = 0.0
+		_posture_recovery_delay_timer = maxf(0.0, posture_recovery_delay)
+		_start_stagger_reaction()
+		_obs_increment(&"enemy_posture_break")
+		_obs_increment(&"enemy_reactions_stagger", 1)
+		_obs_log(&"enemy_posture_break", {
+			"enemy_id": get_instance_id(),
+			"posture_max": posture_max,
+		})
+		return
+
+	# Explicit interrupt-class hits override ordinary poise.
 	if hit_strength == CombatConstants.HitStrength.INTERRUPT:
-		_start_hit_recoil_reaction(amount)
+		_start_stagger_reaction()
 		_obs_increment(&"enemy_reactions_interrupt", 1)
 		return
 
-	# Crit/stagger thresholds still apply for heavy hits and high-damage light hits
-	if amount >= crit_damage_threshold:
-		_start_crit_reaction()
-		_obs_increment(&"enemy_reactions_crit", 1)
-	elif hit_strength == CombatConstants.HitStrength.HEAVY:
+	# Explicit hit classes retain poise authority independently of HP damage.
+	if hit_strength == CombatConstants.HitStrength.HEAVY:
 		# Attack commitment, not raw damage, guarantees the heavy stagger.
-		_start_stagger_reaction()
-		_obs_increment(&"enemy_reactions_stagger", 1)
-	elif amount >= stagger_damage_threshold:
 		_start_stagger_reaction()
 		_obs_increment(&"enemy_reactions_stagger", 1)
 	elif resists_light_flinch:
 		# Armor-deflect presentation: visual cue but no movement interruption
 		_play_armor_deflect_fx()
 		_obs_increment(&"enemy_reactions_armor_deflect", 1)
+	elif not _pending_attack_id.is_empty():
+		_obs_increment(&"enemy_light_flinch_suppressed_commit")
+		_obs_increment(&"enemy_attack_survived_light_contact")
+	elif _light_flinch_cooldown_timer > 0.0:
+		_obs_increment(&"enemy_light_flinch_suppressed_cooldown")
 	else:
 		_start_hit_recoil_reaction(amount)
+		_light_flinch_cooldown_timer = maxf(0.0, light_flinch_cooldown)
+		_obs_increment(&"enemy_light_flinch_applied")
 		_obs_increment(&"enemy_reactions_flinch", 1)
 
 
@@ -3271,12 +3303,10 @@ func apply_melee_impact(attack_kind: String, knockback_direction: Vector2, knock
 	var contact_id := attack_parts[1] if attack_parts.size() > 1 else ""
 	var is_dagger_finisher := base_attack_kind == "vigil_dagger_fast_03"
 	var is_dagger_finisher_catch := is_dagger_finisher and contact_id == "cut_01"
-	var is_dagger_link_two := base_attack_kind == "vigil_dagger_fast_02"
-	var is_dagger_link_one := base_attack_kind == "vigil_dagger_fast_01"
 	if is_dagger_finisher_catch \
 	and custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT):
-		_recoil_timer = maxf(_recoil_timer, 0.12)
-		_cancel_pending_attack_with_result(&"interrupted", &"dagger_finisher_catch")
+		# First contact creates space but does not steal the enemy's turn.
+		pass
 	elif is_dagger_finisher and custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT):
 		_stagger_timer = maxf(_stagger_timer, 0.33)
 		_recoil_timer = 0.0
@@ -3288,17 +3318,17 @@ func apply_melee_impact(attack_kind: String, knockback_direction: Vector2, knock
 		if _savage_chain_phase.is_empty() and _savage_pounce_phase.is_empty():
 			_recoil_timer = maxf(_recoil_timer, 0.20)
 			_cancel_pending_attack_with_result(&"interrupted", &"dagger_finisher")
-	elif (is_dagger_link_one or is_dagger_link_two) \
-	and custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT):
-		_recoil_timer = maxf(_recoil_timer, 0.18 if is_dagger_link_two else 0.16)
-		_cancel_pending_attack_with_result(&"interrupted", &"dagger_chain")
 	elif attack_kind == "heavy":
-		_stagger_timer = max(_stagger_timer, stagger_duration * 1.2)
-		_recoil_timer = 0.0
-	else:
-		_recoil_timer = max(_recoil_timer, hit_recoil_duration * 1.2)
-	velocity = knockback_direction.normalized() * knockback_force
-	move_and_slide()
+		# Heavy gameplay interruption was already resolved at take_damage().
+		pass
+	var position_before := global_position
+	var displacement := knockback_direction.normalized() * maxf(0.0, knockback_force) / 60.0
+	var collision := move_and_collide(displacement)
+	var applied_distance := position_before.distance_to(global_position)
+	if collision != null:
+		_obs_increment(&"enemy_knockback_blocked")
+	if applied_distance > 0.001:
+		_obs_increment(&"enemy_knockback_applied")
 	if _uses_directional_animation_set():
 		_update_directional_animation(_last_move_direction, false)
 
@@ -3308,6 +3338,8 @@ func apply_parry_stagger(knockback_direction: Vector2, duration: float, knockbac
 		return
 	var interrupted_falcon_punch := _grunt_falcon_punch_ability.is_active()
 	_cancel_pending_attack_with_result(&"interrupted", &"parry")
+	posture_current = 0.0
+	_posture_recovery_delay_timer = maxf(0.0, posture_recovery_delay)
 	_cancel_savage_attack()
 	if interrupted_falcon_punch:
 		_grunt_falcon_punch_ability.on_parried()
@@ -3771,6 +3803,8 @@ func _start_stagger_reaction() -> void:
 
 
 func _start_crit_reaction() -> void:
+	posture_current = 0.0
+	_posture_recovery_delay_timer = maxf(0.0, posture_recovery_delay)
 	_crit_timer = max(_crit_timer, crit_hit_duration)
 	_crit_recovery_timer = 0.0
 	_parry_critical_window_timer = 0.0
@@ -3795,6 +3829,11 @@ func _spawn_damage_popup(amount: float) -> void:
 
 
 func _update_reaction_timers(delta: float) -> bool:
+	_light_flinch_cooldown_timer = maxf(0.0, _light_flinch_cooldown_timer - delta)
+	if _posture_recovery_delay_timer > 0.0:
+		_posture_recovery_delay_timer = maxf(0.0, _posture_recovery_delay_timer - delta)
+	elif posture_current > 0.0:
+		posture_current = maxf(0.0, posture_current - maxf(0.0, posture_recovery_rate) * delta)
 	if _parry_critical_phase == ParryCriticalPhase.EXECUTING:
 		velocity = Vector2.ZERO
 		global_position = _parry_critical_execution_root
@@ -3856,6 +3895,17 @@ func _update_reaction_timers(delta: float) -> bool:
 			_update_directional_animation(_last_move_direction, false)
 		return true
 	return false
+
+
+func get_posture_status() -> Dictionary:
+	return {
+		"current": posture_current,
+		"maximum": posture_max,
+		"recovery_delay_remaining": _posture_recovery_delay_timer,
+		"recovery_rate": posture_recovery_rate,
+		"light_flinch_cooldown_remaining": _light_flinch_cooldown_timer,
+		"attack_committed": not _pending_attack_id.is_empty(),
+	}
 
 
 # ============================================================

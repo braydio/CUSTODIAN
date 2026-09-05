@@ -114,6 +114,14 @@ func notify_direct_hostile_damage(applied_damage: float) -> void:
 		_end_vanguard(&"direct_damage")
 
 
+func notify_operator_offensive_action(target: Node = null) -> void:
+	if not _is_living_hostile(target):
+		return
+	if not engagement_active:
+		_start_engagement()
+	_quiet_timer = 0.0
+
+
 func get_status() -> Dictionary:
 	return {
 		"engagement_active": engagement_active,

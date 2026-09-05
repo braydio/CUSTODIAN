@@ -6,6 +6,8 @@ class_name MeleeAttackProfile
 
 @export_category("Hitbox")
 @export var damage: float = 10.0
+## Stance pressure is authored independently from health damage.
+@export var posture_damage: float = 10.0
 @export var range_px: float = 72.0
 @export var arc_degrees: float = 80.0
 @export var knockback_force: float = 56.0
