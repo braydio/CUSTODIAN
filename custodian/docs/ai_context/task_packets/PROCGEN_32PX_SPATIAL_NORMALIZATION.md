@@ -256,5 +256,4 @@ and the design doc are new.
 
 ## Commit SHA
 
-See the commit immediately following this task packet's addition in the
-repository history.
+`47d2b5f1d` — "procgen native 32px spatial normalization"
