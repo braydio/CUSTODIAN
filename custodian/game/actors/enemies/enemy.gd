@@ -101,6 +101,12 @@ enum LifeState {
 	EMPTY_CORPSE,
 }
 
+enum GruntWeaponPosture {
+	RELAXED,
+	DRAWING,
+	READY,
+}
+
 @export var enemy_name: String = "SCOUT"
 @export var speed: float = 80.0
 @export var health: float = 50.0
@@ -391,7 +397,7 @@ var _enemy_presentation: EnemyPresentationController = null
 var _grunt_attack_presentation_action: StringName = &"combat.fast_01"
 var _grunt_flinch_presentation_action: StringName = &"reaction.flinch_01"
 var _grunt_falcon_punch_ability: GruntFalconPunch = GRUNT_FALCON_PUNCH_SCRIPT.new()
-var _grunt_presentation_ready := false
+var _grunt_weapon_posture := GruntWeaponPosture.RELAXED
 var _grunt_expression_action: StringName = &""
 var _grunt_expression_timer := 0.0
 var _grunt_expression_is_flavor := false
@@ -1068,27 +1074,47 @@ func on_behavior_presentation_state_changed(_previous_state: StringName, new_sta
 	if custom_enemy_animation_set != String(CUSTOM_ENEMY_GRUNT):
 		return
 	if new_state == &"notice":
-		_grunt_expression_action = &"posture.alert" if _grunt_presentation_ready else &"posture.draw"
+		_cancel_grunt_flavor()
+		if _grunt_is_weapon_relaxed():
+			_grunt_weapon_posture = GruntWeaponPosture.DRAWING
+			_grunt_expression_action = &"posture.draw"
+			_obs_increment(&"grunt_draw_started", 1)
+		else:
+			_grunt_weapon_posture = GruntWeaponPosture.READY
+			_grunt_expression_action = &"posture.alert"
+			_obs_increment(&"grunt_alert_started", 1)
 		var expression_duration := _enemy_presentation.get_duration(_grunt_expression_action, _last_move_direction)
-		_grunt_expression_timer = expression_duration if expression_duration > 0.0 else 0.35
+		_grunt_expression_timer = expression_duration if expression_duration > 0.0 else 0.50
 		_grunt_expression_is_flavor = false
-		_grunt_presentation_ready = true
 		_play_grunt_semantic(_grunt_expression_action, _last_move_direction, true)
 	elif new_state in [&"engage_operator", &"flee", &"escape_with_loot"]:
 		_cancel_grunt_flavor()
-		_grunt_presentation_ready = true
+		if _grunt_weapon_posture != GruntWeaponPosture.DRAWING:
+			_grunt_weapon_posture = GruntWeaponPosture.READY
 	elif _previous_state == &"engage_operator" and new_state == &"search":
 		_grunt_lost_target_flavor_pending = true
-	elif new_state == &"idle" and _previous_state == &"return_home":
-		_grunt_presentation_ready = false
+	elif new_state == &"patrol" and _previous_state == &"return_home":
+		_grunt_weapon_posture = GruntWeaponPosture.RELAXED
+		_grunt_expression_action = &""
+		_grunt_expression_timer = 0.0
+		_grunt_expression_is_flavor = false
+		_obs_increment(&"grunt_combat_deescalated", 1)
 
 
 func _update_grunt_expression(delta: float) -> void:
 	if custom_enemy_animation_set != String(CUSTOM_ENEMY_GRUNT):
 		return
-	_grunt_expression_timer = maxf(0.0, _grunt_expression_timer - delta)
 	_grunt_flavor_cooldown = maxf(0.0, _grunt_flavor_cooldown - delta)
+	if not _grunt_expression_action.is_empty() \
+	and not _grunt_expression_is_flavor \
+	and _grunt_transition_expression_blocked():
+		return
+	_grunt_expression_timer = maxf(0.0, _grunt_expression_timer - delta)
 	if _grunt_expression_timer <= 0.0:
+		var completed_action := _grunt_expression_action
+		if completed_action == &"posture.draw" and _grunt_weapon_posture == GruntWeaponPosture.DRAWING:
+			_grunt_weapon_posture = GruntWeaponPosture.READY
+			_obs_increment(&"grunt_draw_completed", 1)
 		_grunt_expression_action = &""
 		_grunt_expression_is_flavor = false
 	if _grunt_flavor_cooldown > 0.0 or velocity.length_squared() > 1.0:
@@ -1116,6 +1142,26 @@ func _update_grunt_expression(delta: float) -> void:
 	var ordinal := int(get_meta("stable_spawn_ordinal", 0))
 	_grunt_flavor_cooldown = 6.0 + float((ordinal + _enemy_presentation.flavor_ordinal) % 5)
 	_play_grunt_semantic(_grunt_expression_action, _last_move_direction, true)
+
+
+func _grunt_transition_expression_blocked() -> bool:
+	return dead \
+		or _parry_critical_phase != ParryCriticalPhase.NONE \
+		or _crit_timer > 0.0 \
+		or _crit_recovery_timer > 0.0 \
+		or _stagger_timer > 0.0 \
+		or _recoil_timer > 0.0 \
+		or _grunt_falcon_punch_ability.is_active() \
+		or _attack_windup_timer > 0.0 \
+		or not _pending_attack_id.is_empty()
+
+
+func _grunt_is_weapon_ready() -> bool:
+	return _grunt_weapon_posture == GruntWeaponPosture.READY
+
+
+func _grunt_is_weapon_relaxed() -> bool:
+	return _grunt_weapon_posture == GruntWeaponPosture.RELAXED
 
 
 func _cancel_grunt_flavor() -> void:
@@ -2355,10 +2401,22 @@ func get_debug_snapshot() -> Dictionary:
 		attack_id = _grunt_falcon_punch_ability.attack_id
 		attack_type = "falcon_punch"
 		attack_phase = String(_grunt_falcon_punch_ability.get_phase_name())
+	var behavior_snapshot := get_behavior_snapshot()
+	var blackboard_snapshot: Dictionary = behavior_snapshot.get("blackboard", {})
 	return {
 		"position": global_position,
 		"health": {"current": health, "max": max_health},
-		"behavior": get_behavior_snapshot(),
+		"behavior": behavior_snapshot,
+		"grunt_weapon_posture": GruntWeaponPosture.keys()[_grunt_weapon_posture],
+		"grunt_expression_action": String(_grunt_expression_action),
+		"grunt_expression_timer": _grunt_expression_timer,
+		"behavior_state": behavior_snapshot.get("state", "legacy"),
+		"target_visible": blackboard_snapshot.get("target_visible", false),
+		"is_alerted": blackboard_snapshot.get("alerted", false),
+		"is_suspicious": blackboard_snapshot.get("suspicious", false),
+		"pursuit_timer": blackboard_snapshot.get("pursuit_timer", 0.0),
+		"search_timer": blackboard_snapshot.get("search_timer", 0.0),
+		"operator_ref_valid": blackboard_snapshot.get("operator_ref_valid", false),
 		"attack": {
 			"id": attack_id,
 			"type": attack_type,
@@ -4426,7 +4484,7 @@ func _grunt_movement_is_urgent() -> bool:
 
 
 func _get_grunt_locomotion_action() -> StringName:
-	var ready := _grunt_presentation_ready or _grunt_movement_is_urgent()
+	var ready := _grunt_is_weapon_ready() or _grunt_movement_is_urgent()
 	if velocity.length() <= 0.5:
 		return &"locomotion.ready_idle" if ready else &"locomotion.relaxed_idle"
 	var speed_ratio := velocity.length() / maxf(1.0, speed)

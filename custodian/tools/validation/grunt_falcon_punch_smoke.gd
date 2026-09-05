@@ -401,11 +401,14 @@ func _run() -> void:
 	wall.queue_free()
 
 	# Grunt expression is presentation-only and follows BSM transitions.
-	grunt._grunt_presentation_ready = false
+	grunt._grunt_weapon_posture = Enemy.GruntWeaponPosture.RELAXED
 	grunt.on_behavior_presentation_state_changed(&"idle", &"notice")
 	_assert_true(grunt.get_enemy_presentation_action() == &"posture.draw", "relaxed grunt should draw on first notice")
 	grunt.on_behavior_presentation_state_changed(&"search", &"notice")
 	_assert_true(grunt.get_enemy_presentation_action() == &"posture.alert", "ready grunt should alert on later notice")
+	grunt._pending_attack_id = ""
+	grunt._attack_windup_timer = 0.0
+	grunt._grunt_expression_action = &""
 	grunt._grunt_expression_timer = 0.0
 	grunt._grunt_flavor_cooldown = 0.0
 	grunt.velocity = Vector2.ZERO
@@ -416,7 +419,7 @@ func _run() -> void:
 	_assert_true(grunt._grunt_expression_action.is_empty(), "combat escalation should cancel flavor immediately")
 
 	# Locomotion presentation follows, but never owns, BSM movement speed.
-	grunt._grunt_presentation_ready = false
+	grunt._grunt_weapon_posture = Enemy.GruntWeaponPosture.RELAXED
 	grunt.behavior_state_machine.current_state = &"patrol"
 	grunt.velocity = Vector2(58.0, 0.0)
 	_assert_true(grunt._get_grunt_locomotion_action() == &"locomotion.relaxed_walk", "calm patrol speed should use relaxed walk")

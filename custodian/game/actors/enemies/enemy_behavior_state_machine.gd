@@ -136,6 +136,10 @@ func change_state(new_state: StringName) -> void:
 	var owner := get_parent()
 	if owner != null and owner.has_method("on_behavior_presentation_state_changed"):
 		owner.call("on_behavior_presentation_state_changed", previous_state, new_state)
+	if _owner_is_grunt() and previous_state == NOTICE and new_state == ENGAGE_OPERATOR:
+		_obs_increment(&"grunt_notice_to_engage")
+	elif _owner_is_grunt() and previous_state == ENGAGE_OPERATOR and new_state == SEARCH:
+		_obs_increment(&"grunt_engage_to_search")
 	if debug_enabled:
 		print("[EnemyBehavior] %s -> %s" % [get_parent().name if get_parent() != null else "enemy", String(new_state)])
 
@@ -167,11 +171,26 @@ func force_steal() -> void:
 
 
 func force_notice(operator: Node = null) -> void:
-	if blackboard != null and operator is Node2D:
+	_resolve_components()
+	if blackboard != null and profile != null and operator is Node2D and is_instance_valid(operator):
+		var threat_position := (operator as Node2D).global_position
 		blackboard.operator_ref = operator
-		blackboard.last_known_operator_position = (operator as Node2D).global_position
+		blackboard.last_known_operator_position = threat_position
+		blackboard.target_last_seen_position = threat_position
+		blackboard.investigation_position = threat_position
 		blackboard.has_seen_operator = true
 		blackboard.is_alerted = true
+		blackboard.is_suspicious = true
+		blackboard.pursuit_timer = maxf(blackboard.pursuit_timer, profile.lost_sight_memory_sec)
+		blackboard.search_timer = maxf(blackboard.search_timer, profile.investigation_memory_sec)
+		if _owner_is_grunt():
+			_obs_increment(&"grunt_direct_hit_notice")
+			var owner := get_parent() as Node2D
+			_obs_log(&"grunt_direct_hit_notice", {
+				"target_visible": blackboard.target_visible,
+				"pursuit_timer": blackboard.pursuit_timer,
+				"distance_to_attacker": owner.global_position.distance_to(threat_position) if owner != null else -1.0,
+			})
 	change_state(NOTICE)
 
 
@@ -320,7 +339,7 @@ func _update_engage_operator(enemy: Node2D, _delta: float) -> void:
 		if blackboard.investigation_position != Vector2.ZERO:
 			change_state(INVESTIGATE)
 		else:
-			change_state(PATROL)
+			change_state(RETURN_HOME)
 		return
 	if not blackboard.target_visible:
 		blackboard.pursuit_timer = maxf(0.0, blackboard.pursuit_timer - _delta)
@@ -638,6 +657,17 @@ func _obs_increment(counter_name: StringName) -> void:
 	var observatory := get_node_or_null("/root/DevObservatory")
 	if observatory != null and observatory.has_method("increment"):
 		observatory.call("increment", counter_name, 1)
+
+
+func _obs_log(event_name: StringName, data: Dictionary) -> void:
+	var observatory := get_node_or_null("/root/DevObservatory") if is_inside_tree() else null
+	if observatory != null and observatory.has_method("log_event"):
+		observatory.call("log_event", event_name, data)
+
+
+func _owner_is_grunt() -> bool:
+	var owner := get_parent()
+	return owner != null and String(owner.get("custom_enemy_animation_set")) == "enemy_grunt"
 
 
 func _update_search(enemy: Node2D, delta: float) -> void:

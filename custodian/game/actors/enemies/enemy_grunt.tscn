@@ -89,3 +89,4 @@ script = ExtResource("5_carrier")
 
 [node name="EnemyBehaviorStateMachine" type="Node" parent="."]
 script = ExtResource("6_behavior")
+notice_duration_sec = 0.5

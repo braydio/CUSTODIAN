@@ -50,6 +50,14 @@ func reset_alerts() -> void:
 	is_suspicious = false
 	has_seen_operator = false
 	operator_ref = null
+	target_visible = false
+	pursuit_timer = 0.0
+	search_timer = 0.0
+	search_point_index = 0
+	investigation_position = Vector2.ZERO
+	investigation_timer = 0.0
+	target_last_seen_position = Vector2.ZERO
+	target_last_heard_position = Vector2.ZERO
 	current_objective_type = &"none"
 	current_objective = null
 	ambient_activity_id = &"none"
@@ -73,6 +81,7 @@ func get_debug_snapshot() -> Dictionary:
 		"last_known_operator_position": last_known_operator_position,
 		"investigation_position": investigation_position,
 		"target_visible": target_visible,
+		"operator_ref_valid": operator_ref != null and is_instance_valid(operator_ref),
 		"pursuit_timer": pursuit_timer,
 		"search_timer": search_timer,
 		"camp_id": String(camp_id),
