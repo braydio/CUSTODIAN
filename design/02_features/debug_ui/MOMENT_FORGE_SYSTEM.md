@@ -641,7 +641,11 @@ Owns exact visual evidence:
 
 - validates capture resolution;
 - validates contact-sheet tick list;
-- requests post-draw keyframes;
+- explicitly renders and reads each selected authored physics tick in sparse
+  evidence mode, without an unbounded render-signal wait;
+- disables interactive-display VSync for evidence runs so fixed-tick simulation
+  and sparse GPU readback are not paced by the desktop compositor;
+- retains post-draw synchronization for full Movie Writer keyframes;
 - saves one PNG per selected tick;
 - records image width, height, and hash;
 - records the relationship between scenario tick and process/render frame;

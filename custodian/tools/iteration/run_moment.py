@@ -537,6 +537,10 @@ def _build_command(
     ]
     if capture_mode == "none":
         command.append("--headless")
+    elif capture_mode == "evidence":
+        # Sparse capture needs the real renderer, but it must not be paced by
+        # interactive-display VSync while advancing fixed simulation ticks.
+        command.append("--disable-vsync")
     elif capture_mode == "full":
         raw_dir = output_dir / "raw"
         raw_dir.mkdir(parents=True, exist_ok=True)

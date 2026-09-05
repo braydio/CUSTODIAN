@@ -556,7 +556,11 @@ Documentation updates this session:
   suggestions, authored runs, compatible baseline comparison/acceptance,
   repeatability fingerprints, and none/evidence/full capture; it invokes a fixed-tick
   Godot runner only through `--moment-forge` and adds no autoload or production
-  simulation authority. Review artifacts stay under `reports/moment_forge/`
+  simulation authority. Sparse evidence capture no longer awaits an unbounded
+  `frame_post_draw` signal: evidence runs disable VSync and explicitly render
+  selected authored physics ticks, while full Movie Writer runs
+  retain post-draw synchronization. A 20-tick, six-keyframe regression scenario
+  protects this path. Review artifacts stay under `reports/moment_forge/`
   and include telemetry, stable metrics/assertions, contact sheets, optional
   Movie Maker audio/video, advisory visual diffs, and a dependency-free HTML report.
   The original light-hit full capture passed the then-current root-position

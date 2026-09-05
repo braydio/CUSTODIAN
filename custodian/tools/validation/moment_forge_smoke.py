@@ -12,6 +12,7 @@ CHECKS = (
     "moment_forge_schema_smoke.py",
     "moment_forge_changed_router_smoke.py",
     "moment_forge_report_smoke.py",
+    "moment_forge_evidence_capture_smoke.py",
 )
 
 

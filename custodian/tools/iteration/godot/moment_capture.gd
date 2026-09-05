@@ -29,7 +29,17 @@ func configure(target: Viewport, path: String, capture: Dictionary, capture_mode
 func capture_tick(tick: int) -> bool:
 	if mode == "none" or not selected_ticks.has(tick):
 		return true
-	await RenderingServer.frame_post_draw
+	if mode == "evidence":
+		# Sparse evidence capture does not use Movie Writer. Explicitly draw the
+		# selected authored tick instead of waiting indefinitely for a future
+		# interactive render-loop signal. Evidence runs disable VSync at launch,
+		# so this draw is not paced by the desktop compositor.
+		RenderingServer.force_draw(false)
+	else:
+		# Full capture runs under --write-movie, which continuously drives the
+		# render stream. Preserve its post-draw synchronization so authored-tick
+		# keyframes remain aligned with the movie frames.
+		await RenderingServer.frame_post_draw
 	var texture := viewport.get_texture()
 	var image := texture.get_image() if texture != null else null
 	if image == null or image.is_empty():

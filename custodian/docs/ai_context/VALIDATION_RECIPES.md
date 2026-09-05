@@ -266,6 +266,9 @@ python3 custodian/tools/iteration/run_moment.py <scenario-id> \
 
 # Complete focused suite
 bash custodian/tools/validation/run_moment_forge_suite.sh
+
+# Sparse evidence-capture deadlock regression
+python3 custodian/tools/validation/moment_forge_evidence_capture_smoke.py
 ```
 
 Full captures are not a default CI requirement. Advisory pixel and audio
