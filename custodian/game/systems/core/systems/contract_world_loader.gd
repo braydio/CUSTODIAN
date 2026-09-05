@@ -1296,7 +1296,7 @@ func _place_gothic_compound_connection(level_data: Dictionary, map_instance: Nod
 		return
 	main_gate.name = "GothicCompoundTravelGate"
 	main_gate.add_to_group("generated_gothic_compound_connection")
-	main_gate.call("configure", gothic_map, 0, "ENTER GOTHIC COMPOUND")
+	main_gate.call("configure", gothic_map, 0, "ENTER CARROW YARD")
 	main_gate.global_position = main_gate_position
 	world.add_child(main_gate)
 

@@ -1,0 +1,613 @@
+CUSTODIAN DEV OBSERVATORY PLAYTEST REPORT
+============================================
+Source:   /home/braydenchaffee/.local/share/godot/app_userdata/CUSTODIAN/dev_observatory/latest_session.json
+Schema:   custodian.dev_observatory.session.v1
+Exported: 2026-09-04 16:09:19
+Scene:    GameRoot (res://scenes/game.tscn)
+Uptime:   7m 21s
+Captured: 300 events | 0 warnings | 61 counters | 216 gauges
+NOTE: event buffer wrapped; showing the final 300/300 events (1607 logged, 1307 dropped). Counters remain cumulative.
+
+PLAYTEST SIGNALS
+  player deaths                0
+  damage events                0
+  cumulative damage amount     75
+  retained-event damage        0
+  cumulative chip damage       0
+  cumulative healing amount    0
+  ranged shots fired           20
+  blocked muzzle shots         0
+  ranged fire failures         0
+  ranged empty failures        total=0
+  ranged state failures        total=0
+  ranged internal failures     total=0
+  ranged cancellations         none
+  dodges started               1
+  iframe avoids                0
+  field patches committed      0
+  field patches cancelled      0
+  enemy attacks resolved       3
+  terminal events retained     0
+  terminal unique IDs retained 0
+  incoming hit results total   3
+  whiff terminals total        1
+  enemy attack whiffs          1
+  incoming hit results         damaged=3, blocked=0, parried=0, dodged=0
+  falcon punch attempts        0
+  falcon punch hits            0
+  falcon punch parried         0
+  falcon punch whiffed         0
+  falcon punch cancelled       0
+  falcon punch results         none
+  enemies destroyed            2
+  NOTE: incoming hit results exclude whiffs; terminal outcomes include them.
+  NOTE: retained event/unique-ID totals are tail-window values; cumulative counters may be larger.
+
+RANGED REQUEST RECONCILIATION
+  requests                     20
+  fired                        20
+  muzzle blocked               0
+  failed                       0
+  cancelled                    0
+  pending                      0
+  unaccounted                  0
+
+RANGED OVERHEAT DIAGNOSTICS
+  cumulative failures          0
+  retained detailed failures   0
+  average heat at failure      unavailable (not retained)
+  maximum heat at failure      unavailable (not retained)
+  first retained overheat      unavailable (not retained)
+  longest retained streak      0
+
+ENEMY ATTACK TERMINAL OUTCOMES (UNIQUE ATTACK IDs IN RETAINED EVENTS)
+  damaged=0, blocked=0, parried=0, whiffed=0, cancelled_by_death=0
+
+ENEMY ATTACK INTERRUPTION CAUSES (UNIQUE ATTACK IDs IN RETAINED EVENTS)
+  interrupted_by_parry=0, interrupted_by_hit=0, interrupted_by_target_loss=0
+
+ENEMY ATTACK LIFECYCLE (UNIQUE ATTACK IDs IN RETAINED EVENTS)
+  started=0, active=0, terminal=0
+
+FALCON PUNCH DIAGNOSTICS
+------------------------------------------------
+  none retained
+
+LETHAL HIT DIAGNOSTIC
+------------------------------------------------
+  none retained
+
+SUSPICIOUS HITS
+------------------------------------------------
+  none
+
+PERFORMANCE INCIDENT
+------------------------------------------------
+  state                          DEGRADED_LATCHED
+  trigger                        automatic
+  duration                       43.464s
+  gameplay sample count          196
+  external stalls excluded       1
+  overlay visible at start       False
+  application focused at start   True
+  tree paused at start           False
+  NOTE: external stalls are excluded from gameplay average/percentile/worst calculations.
+
+  Phase summaries
+    phase | avg | p95 | p99 | process | physics | unaccounted
+    baseline | 30.40 | 169.92 | 175.57 | 40.66 | 10.44 | 0.00
+
+  Top aggregated spans
+    name | total ms | avg ms/gameplay sample | max ms | calls
+    enemy_total | 28.04 | 0.14 | 0.08 | 1496
+    enemy_active_total | 22.43 | 0.11 | 0.07 | 1032
+    enemy_behavior | 11.05 | 0.06 | 0.04 | 811
+    enemy_combat | 3.51 | 0.02 | 0.01 | 4055
+    enemy_nearby_total | 3.13 | 0.02 | 0.07 | 328
+
+  Worst gameplay frames
+    NOTE: Godot process/physics monitors are sampled asynchronously and are
+    directional evidence, not an exact decomposition of each wall-time frame.
+    wall ms | phase | process | physics | unaccounted | living enemies | top span
+    178.10 | baseline | 12.74 | 32.01 | 133.34 | 9 | enemy_total
+    175.56 | baseline | 9.64 | 22.39 | 143.54 | 9 | enemy_total
+    175.06 | baseline | 9.64 | 22.39 | 143.04 | 9 | enemy_total
+    171.89 | baseline | 12.74 | 32.01 | 127.14 | 9 | enemy_total
+    171.44 | baseline | 9.64 | 22.39 | 139.42 | 9 | enemy_total
+    170.71 | baseline | 9.64 | 22.39 | 138.68 | 9 | enemy_total
+    170.32 | baseline | 8.70 | 23.19 | 138.44 | 9 | enemy_total
+    170.26 | baseline | 9.64 | 22.39 | 138.24 | 9 | enemy_total
+    170.23 | baseline | 12.74 | 32.01 | 125.48 | 9 | enemy_total
+    169.92 | baseline | 12.74 | 32.01 | 125.16 | 9 | enemy_total
+    169.82 | baseline | 9.64 | 22.39 | 137.80 | 9 | enemy_total
+    168.49 | baseline | 8.70 | 23.19 | 136.60 | 9 | enemy_total
+    168.13 | baseline | 12.74 | 32.01 | 123.38 | 9 | enemy_total
+    167.48 | baseline | 8.70 | 23.19 | 135.59 | 9 | enemy_total
+    148.88 | baseline | 12.74 | 32.01 | 104.12 | 9 | enemy_total
+    110.78 | baseline | 12.74 | 32.01 | 66.03 | 9 | enemy_total
+    54.35 | baseline | 11.44 | 7.96 | 34.96 | 9 | 
+    54.04 | baseline | 11.44 | 7.96 | 34.65 | 9 | 
+    53.51 | baseline | 11.44 | 7.96 | 34.12 | 9 | 
+    41.85 | baseline | 11.44 | 7.96 | 22.45 | 9 | 
+
+  External stalls
+    duration | reason | focused | paused | overlay visible
+    150571.68 | focus_out | False | False | False
+
+  Lifetime deltas
+    active_audio_delta           0
+    active_audio_players_delta   0
+    active_vfx_delta             0
+    corpse_enemies_delta         1
+    draw_calls_delta             103
+    living_enemies_delta         -1
+    node_count_delta             8
+    rendered_objects_delta       912
+
+  Likely owner
+    classification: rendering / presentation dominated
+    confidence/evidence: [{"average_ms_per_sample":0.143076530612245,"count":1496,"max_ms":0.077,"name":"enemy_total","total_ms":28.043},{"ave...
+
+PROCGEN RUNTIME HEALTH — INCIDENT SNAPSHOT
+------------------------------------------------
+  snapshot active              True
+  snapshot source              /root/GameRoot/World/ProcGenRuntime/ProcGenMap
+  captured at uptime           309.808
+  generation                   1
+  map                          {"x":208,"y":208}
+  floor cells                  10358
+  wall cells                   937
+  wall chunks                  19
+  wall bodies                  19
+  wall shapes                  357
+  boundary chunks              1
+  boundary bodies              1
+  boundary shapes              472
+  navigation revision          5
+  navigation pending           False
+  navigation requested         5
+  navigation completed         5
+  terrain commits              0
+  connector commits            0
+  topology repairs             0
+  last mutation                procgen_navigation_rebuild_finished
+  last mutation uptime         262.003
+  last mutation usec           257894
+
+PROCGEN RUNTIME HEALTH — CURRENT/LAST KNOWN
+------------------------------------------------
+  snapshot active              True
+  snapshot source              /root/GameRoot/World/ProcGenRuntime/ProcGenMap
+  captured at uptime           441.437
+  generation                   1
+  map                          {"x":208,"y":208}
+  floor cells                  10358
+  wall cells                   937
+  wall chunks                  19
+  wall bodies                  19
+  wall shapes                  357
+  boundary chunks              1
+  boundary bodies              1
+  boundary shapes              472
+  navigation revision          5
+  navigation pending           False
+  navigation requested         5
+  navigation completed         5
+  terrain commits              0
+  connector commits            0
+  topology repairs             0
+  last mutation                procgen_navigation_rebuild_finished
+  last mutation uptime         262.003
+  last mutation usec           257894
+
+RECENT PROCGEN MUTATIONS — INCIDENT RETAINED
+------------------------------------------------
+  time | type | reason | duration usec | changed | before -> after
+  262.003 | procgen_navigation_rebuild_finished | wall_change | 257894 | 0 | 4 -> 5
+  261.745 | procgen_navigation_rebuild_started | wall_change | 0 | 0 | 0 -> 0
+  261.736 | procgen_shadow_rebuild_requested | terrain_or_wall_refresh | 5 | 0 | 39 -> 40
+  261.736 | procgen_runtime_wall_rebuilt | visible_wall_sync | 1430 | 0 | 357 -> 357
+  261.624 | procgen_shadow_rebuild_requested | terrain_or_wall_refresh | 5 | 0 | 38 -> 39
+  261.624 | procgen_runtime_wall_rebuilt | visible_wall_sync | 1426 | 0 | 355 -> 355
+  261.239 | procgen_shadow_rebuild_requested | terrain_or_wall_refresh | 6 | 0 | 37 -> 38
+  261.239 | procgen_runtime_wall_rebuilt | visible_wall_sync | 1455 | 0 | 342 -> 342
+  260.852 | procgen_shadow_rebuild_requested | terrain_or_wall_refresh | 6 | 0 | 36 -> 37
+  260.852 | procgen_runtime_wall_rebuilt | visible_wall_sync | 1438 | 0 | 337 -> 337
+  260.463 | procgen_shadow_rebuild_requested | terrain_or_wall_refresh | 5 | 0 | 35 -> 36
+  260.463 | procgen_runtime_wall_rebuilt | visible_wall_sync | 1401 | 0 | 337 -> 337
+  260.073 | procgen_shadow_rebuild_requested | terrain_or_wall_refresh | 6 | 0 | 34 -> 35
+  260.073 | procgen_runtime_wall_rebuilt | visible_wall_sync | 1387 | 0 | 337 -> 337
+
+WORLD INGRESS PLACEMENT OUTCOMES
+------------------------------------------------
+  none retained
+
+ENEMY RUNTIME ATTRIBUTION
+------------------------------------------------
+
+  Population
+    living             10
+    active             5
+    nearby             5
+    background         0
+    dormant            0
+    director           1
+    legacy             9
+
+  This incident
+    enemy total              0.143 ms/frame
+    enemy active             0.114 ms/frame
+    enemy nearby             0.016 ms/frame
+    enemy background         0.003 ms/frame
+    enemy dormant            0.000 ms/frame
+
+  Subsystem distribution
+    behavior                 0.056 ms/frame
+    perception               0.000 ms/frame
+    objective                0.000 ms/frame
+    navigation               0.000 ms/frame
+    separation               0.000 ms/frame
+    movement prepare         0.000 ms/frame
+    move_and_slide           0.000 ms/frame
+    combat                   0.018 ms/frame
+    animation                0.000 ms/frame
+    presentation             0.005 ms/frame
+
+  Wall-time attribution
+    wall                     30.397 ms/frame
+    Godot process            40.661 ms/frame
+    Godot physics            10.437 ms/frame
+    enemy total (nested)     0.143 ms/frame
+    unaccounted              0.000 ms/frame
+
+MATERIAL INTELLIGENCE
+------------------------------------------------
+  override cells               0
+  total contacts               20
+  material cells               none
+  current player material      unknown
+  retained contact events      2
+  retained contacts/material   unknown=2
+  retained contacts/kind       bullet_impact=1, enemy_death=1
+
+HEATMAP
+------------------------------------------------
+  cells                        38
+  samples                      507
+  event types                  presence=454, damage_taken=75, enemy_attack_hit=75, incoming_hit_damaged=75, shot_fired=20, enemy_killed=6, material_bullet_impact=4, enemy_attack_whiff=0.5, material_enemy_death=0.5, material_melee_impact=0.5, dodge_started=0.25
+
+  Top heat cells
+    42,35        world=(2688,2240) bounds=(2688,2240)-(2752,2304) total=171.00   by_type=presence=171
+    44,33        world=(2816,2112) bounds=(2816,2112)-(2880,2176) total=155.50   by_type=damage_taken=45, enemy_attack_hit=45, incoming_hit_damaged=45, presence=20, material_melee_impact=0.5
+    41,38        world=(2624,2432) bounds=(2624,2432)-(2688,2496) total=63.00    by_type=presence=63
+    43,33        world=(2752,2112) bounds=(2752,2112)-(2816,2176) total=58.50    by_type=damage_taken=15, enemy_attack_hit=15, incoming_hit_damaged=15, presence=13, enemy_attack_whiff=0.5
+    46,32        world=(2944,2048) bounds=(2944,2048)-(3008,2112) total=50.50    by_type=presence=38, shot_fired=9, enemy_killed=3, material_bullet_impact=0.25, material_enemy_death=0.25
+    45,34        world=(2880,2176) bounds=(2880,2176)-(2944,2240) total=49.00    by_type=presence=49
+    42,32        world=(2688,2048) bounds=(2688,2048)-(2752,2112) total=47.00    by_type=damage_taken=15, enemy_attack_hit=15, incoming_hit_damaged=15, presence=2
+    46,33        world=(2944,2112) bounds=(2944,2112)-(3008,2176) total=22.00    by_type=presence=17, shot_fired=5
+    46,34        world=(2944,2176) bounds=(2944,2176)-(3008,2240) total=19.00    by_type=presence=19
+    45,33        world=(2880,2112) bounds=(2880,2112)-(2944,2176) total=14.25    by_type=presence=11, shot_fired=3, dodge_started=0.25
+    42,33        world=(2688,2112) bounds=(2688,2112)-(2752,2176) total=13.00    by_type=presence=11, shot_fired=2
+    44,35        world=(2816,2240) bounds=(2816,2240)-(2880,2304) total=5.00     by_type=presence=5
+
+  Danger cells
+    44,33        world=(2816,2112) bounds=(2816,2112)-(2880,2176) danger=45.00    by_type=damage_taken=45, enemy_attack_hit=45, incoming_hit_damaged=45, presence=20, material_melee_impact=0.5
+    42,32        world=(2688,2048) bounds=(2688,2048)-(2752,2112) danger=15.00    by_type=damage_taken=15, enemy_attack_hit=15, incoming_hit_damaged=15, presence=2
+    43,33        world=(2752,2112) bounds=(2752,2112)-(2816,2176) danger=15.00    by_type=damage_taken=15, enemy_attack_hit=15, incoming_hit_damaged=15, presence=13, enemy_attack_whiff=0.5
+
+  Combat cells
+    44,33        world=(2816,2112) bounds=(2816,2112)-(2880,2176) combat=45.00    by_type=damage_taken=45, enemy_attack_hit=45, incoming_hit_damaged=45, presence=20, material_melee_impact=0.5
+    42,32        world=(2688,2048) bounds=(2688,2048)-(2752,2112) combat=15.00    by_type=damage_taken=15, enemy_attack_hit=15, incoming_hit_damaged=15, presence=2
+    43,33        world=(2752,2112) bounds=(2752,2112)-(2816,2176) combat=15.00    by_type=damage_taken=15, enemy_attack_hit=15, incoming_hit_damaged=15, presence=13, enemy_attack_whiff=0.5
+    46,32        world=(2944,2048) bounds=(2944,2048)-(3008,2112) combat=12.00    by_type=presence=38, shot_fired=9, enemy_killed=3, material_bullet_impact=0.25, material_enemy_death=0.25
+    46,33        world=(2944,2112) bounds=(2944,2112)-(3008,2176) combat=5.00     by_type=presence=17, shot_fired=5
+    45,33        world=(2880,2112) bounds=(2880,2112)-(2944,2176) combat=3.00     by_type=presence=11, shot_fired=3, dodge_started=0.25
+    47,33        world=(3008,2112) bounds=(3008,2112)-(3072,2176) combat=3.00     by_type=enemy_killed=3, material_bullet_impact=0.25, material_enemy_death=0.25
+    42,33        world=(2688,2112) bounds=(2688,2112)-(2752,2176) combat=2.00     by_type=presence=11, shot_fired=2
+    43,36        world=(2752,2304) bounds=(2752,2304)-(2816,2368) combat=1.00     by_type=presence=2, shot_fired=1
+
+SIGNAL QUALITY FLAGS
+------------------------------------------------
+  - Event buffer wrapped: 1307 events dropped after 1607 logged.
+  - Retained events are dominated by enemy_navigation_goal_unreachable: 240/300 (80.0%).
+  - Dodges were recorded, but no iframe avoids were observed.
+
+TOP EVENT TYPES (18)
+  enemy_navigation_goal_unreachable    240
+  performance_incident_state_changed   17
+  enemy_simulation_tier_changed        13
+  procgen_runtime_wall_rebuilt         6
+  procgen_shadow_rebuild_requested     6
+  observatory_overlay_toggled          3
+  player_weapon_feedback               2
+  player_ranged_shot                   2
+  material_contact                     2
+  procgen_stuck_pocket_validation      1
+  procgen_navigation_rebuild_started   1
+  procgen_navigation_rebuild_finished  1
+  enemy_killed                         1
+  world_history_recorded               1
+  player_reclaim_rejected              1
+  performance_incident_started         1
+  performance_incident_stopped         1
+  performance_external_stall           1
+
+WARNINGS (0 total, 0 displayed)
+  none
+
+NONZERO COUNTERS
+  ambient_critter_spawn_projected      9
+  ambient_enemy_duplicate_marker_suppressed 9
+  ambient_enemy_spawn_count            3
+  ambient_enemy_spawn_projected        6
+  enemies_destroyed                    2
+  enemy_assault_state_commit           2
+  enemy_assault_state_regroup          2
+  enemy_attack_result_damaged          3
+  enemy_attack_result_whiffed          1
+  enemy_attack_whiffed_out_of_range    1
+  enemy_attack_whiffs                  1
+  enemy_attack_windups                 4
+  enemy_attacks_resolved               3
+  enemy_hits_with_spatial_context      3
+  enemy_los_query_count                153
+  enemy_los_query_total_usec           2583
+  enemy_nav_query_count                370
+  enemy_nav_query_total_usec           54193
+  enemy_navigation_goal_unreachable    1127
+  enemy_objective_evaluations          57
+  enemy_objective_switches             2
+  enemy_reactions_flinch               18
+  enemy_separation_candidate_checks    7686
+  enemy_sim_tier_active                10
+  enemy_sim_tier_background            3
+  enemy_sim_tier_nearby                16
+  enemy_spatial_contact_valid          3
+  field_patch_prompt_shown             1
+  incoming_hit_damaged                 3
+  incoming_hits_total                  3
+  player_damage_amount_total           75
+  player_dodge_charge_started          1
+  player_dodges_started                1
+  player_dodges_started_tap            1
+  player_hits_taken                    3
+  player_hits_taken_heavy              1
+  player_hits_taken_light              2
+  player_parry_active                  2
+  player_parry_expired                 2
+  player_parry_started                 2
+  player_ranged_fire_requests          20
+  player_ranged_request_fired          20
+  player_ranged_shots_fired            20
+  player_ranged_trigger_samples        21
+  procgen_prop_candidates_rejected_protected_zone 5
+  procgen_runtime_blockers_registered  8
+  procgen_runtime_blockers_unregistered 1
+  stamina_regenerated_passive          209.133
+  stamina_regenerated_total            209.133
+  stamina_spent_dodge                  16
+  stamina_spent_fast_attack            19
+  stamina_spent_parry                  16
+  stamina_spent_sprint                 196.267
+  stamina_spent_total                  247.267
+  world_history_enemy_killed           2
+  world_history_player_damage          3
+  world_history_sector_damage          1
+
+GAUGES
+  active_combat_audio                  0
+  active_enemies                       10
+  active_projectiles                   1
+  active_vfx                           0
+  ambient_critters                     9
+  ambient_enemy_animation_prewarm_usec 35865
+  ambient_enemy_spawn_last_usec        15902
+  ambient_enemy_spawn_max_usec         21303
+  ambient_enemy_spawn_queue_depth      0
+  collision_shape_count                1213
+  collision_shape_count_enemies        10
+  collision_shape_count_foliage        2
+  collision_shape_count_peak           1213
+  collision_shape_count_projectiles    0
+  collision_shape_count_ruin_props     11
+  collision_shape_count_runtime_walls  829
+  corpse_enemies                       0
+  director_behavior_agents             1
+  enemy_behavior_sample                {"blackboard":{"alerted":false,"ambient_activity":"none","ambient_anchor":"","ambient...
+  enemy_los_query_last_usec            10
+  enemy_nav_query_last_usec            144
+  enemy_nav_queue_depth                0
+  enemy_tier_active                    5
+  enemy_tier_active_physics_enabled    5
+  enemy_tier_background                0
+  enemy_tier_background_physics_enabled 0
+  enemy_tier_dormant                   0
+  enemy_tier_dormant_physics_enabled   0
+  enemy_tier_nearby                    5
+  enemy_tier_nearby_physics_enabled    5
+  field_patch_active                   False
+  field_patch_seconds_available_below_half_health 186.36
+  field_patches_max                    2
+  field_patches_remaining              1
+  foliage_shared_material_count        1
+  foliage_z_order_inspections          0
+  fps                                  6
+  grid_allocated_rate                  86
+  grid_degraded_consumer_count         0
+  grid_generation_rate                 120
+  grid_net_rate                        34
+  grid_offline_consumer_count          0
+  grid_requested_rate                  86
+  grid_storage_capacity                500
+  grid_stored_energy                   488.791
+  heat_player_presence_cells           54
+  heatmap_cells                        38
+  heatmap_samples                      507
+  infrastructure_structure_count       1
+  infrastructure_under_construction_count 0
+  interest_active                      5
+  interest_background                  0
+  interest_dormant                     0
+  interest_nearby                      5
+  legacy_combat_agents                 9
+  legacy_enemy_sample                  {"carrying_loot":false,"enabled":false,"profile_id":"raider_grunt","state":"legacy"}
+  living_enemies                       10
+  loaded_procgen_root_count            1
+  loaded_world_branch_count            2
+  node_class_histogram                 {"AnimatedSprite2D":72,"AnimationPlayer":1,"Area2D":45,"AudioStreamPlayer":2,"AudioSt...
+  node_count                           10794
+  node_count_collision                 1607
+  node_count_peak                      10794
+  node_count_procgen                   1276
+  node_count_props                     123
+  node_count_ui                        667
+  node_count_vfx                       1
+  node_count_world                     10141
+  observatory_full_tree_scan_count     1
+  observatory_overlay_build_usec       2624
+  observatory_overlay_line_count       43
+  observatory_overlay_refresh_count    10
+  observatory_overlay_text_chars       1055
+  observatory_scan_usec                98560
+  performance_draw_calls               699
+  performance_frame_ms_average         53.429
+  performance_frame_ms_current         176.714
+  performance_frame_ms_p95             178.174
+  performance_frame_ms_p99             193.551
+  performance_frame_ms_worst           405.195
+  performance_frame_sample_count       600
+  performance_hitch_count              399
+  performance_incident_auto_trigger_count 5
+  performance_incident_external_stall_count 1
+  performance_incident_manual_trigger_count 0
+  performance_incident_rearm_progress_sec 0
+  performance_incident_state           DEGRADED_LATCHED
+  performance_physics_ms               23.373
+  performance_process_ms               14.325
+  performance_rendered_objects         2801
+  performance_severe_hitch_count       305
+  physics_body_count                   349
+  physics_body_count_foliage           2
+  physics_body_count_peak              349
+  physics_body_count_ruin_props        7
+  physics_body_count_runtime_walls     20
+  physics_process_enabled_node_count   27
+  player_active_weapon_id              carbine_mk1
+  player_active_weapon_state_key       carbine_mk1
+  player_alive                         True
+  player_ammo_per_shot                 1
+  player_dead                          False
+  player_dodge_chain_index             0
+  player_dodge_flow                    0
+  player_health                        25
+  player_last_live_loaded_ammo         4
+  player_last_live_reserve_ammo        64
+  player_last_live_stamina             100
+  player_last_live_weapon_id           carbine_mk1
+  player_loaded_ammo                   4
+  player_magazine_capacity             24
+  player_material                      unknown
+  player_material_footstep_noise_mult  1
+  player_max_health                    100
+  player_melee_target_angle_error      0
+  player_melee_target_distance         0
+  player_melee_target_proximity        0
+  player_melee_target_reliable         0
+  player_melee_target_score            0
+  player_position                      {"x":2987,"y":2145}
+  player_ranged_requests_pending       0
+  player_reclaim_active                0
+  player_reclaim_packet_count          0
+  player_reclaim_window_remaining      0
+  player_recoil                        0.45
+  player_reserve_ammo                  64
+  player_sprinting                     False
+  player_stamina                       100
+  player_stamina_max                   100
+  player_weapon_heat                   0
+  player_weapon_overheated             False
+  process_enabled_node_count           66
+  procgen_biome_rocky_upland_cells     4833
+  procgen_biome_scrubland_cells        759
+  procgen_biome_wetland_cells          1209
+  procgen_biome_woodland_cells         3338
+  procgen_floor_cells                  10358
+  procgen_foliage_sprite_count         1
+  procgen_fruit_sprite_count           0
+  procgen_generated_wall_cells         937
+  procgen_generation_count             1
+  procgen_generation_id                1
+  procgen_interior_prop_count          3
+  procgen_last_mutation_duration_usec  257894
+  procgen_last_mutation_kind           procgen_navigation_rebuild_finished
+  procgen_last_mutation_uptime_sec     262.003
+  procgen_map_height                   208
+  procgen_map_width                    208
+  procgen_navigation_last_rebuild_reason wall_change
+  procgen_navigation_last_rebuild_usec 257894
+  procgen_navigation_rebuild_completed_count 5
+  procgen_navigation_rebuild_pending   False
+  procgen_navigation_rebuild_requested_count 5
+  procgen_navigation_revision          5
+  procgen_prop_candidates_rejected_existing_blocker 0
+  procgen_prop_candidates_rejected_protected_zone 5
+  procgen_prop_candidates_rejected_stuck_risk 0
+  procgen_prop_collision_alignment_warning_count_last_generation 0
+  procgen_reveal_queue                 0
+  procgen_road_decal_count             24
+  procgen_runtime_blocker_sources      7
+  procgen_runtime_connector_commit_count 0
+  procgen_runtime_prop_blocker_cells   93
+  procgen_runtime_terrain_commit_count 0
+  procgen_runtime_terrain_last_changed_cell_count 0
+  procgen_runtime_terrain_last_commit_reason 
+  procgen_runtime_terrain_last_commit_usec 0
+  procgen_runtime_topology_repair_count 0
+  procgen_runtime_wall_body_count      19
+  procgen_runtime_wall_body_peak       42
+  procgen_runtime_wall_chunk_count     19
+  procgen_runtime_wall_chunks_created_total 61
+  procgen_runtime_wall_chunks_freed_total 42
+  procgen_runtime_wall_collision_isolation_enabled True
+  procgen_runtime_wall_last_rebuild_reason visible_wall_sync
+  procgen_runtime_wall_last_rebuild_usec 1430
+  procgen_runtime_wall_rebuild_count   36
+  procgen_runtime_wall_shape_count     357
+  procgen_runtime_wall_shapes_created_total 1298
+  procgen_runtime_wall_shapes_freed_total 941
+  procgen_scattered_prop_count         11
+  procgen_shadow_last_rebuild_usec     5
+  procgen_shadow_rebuild_requested_count 40
+  procgen_snapshot_active              True
+  procgen_snapshot_captured_uptime_sec 441.327
+  procgen_snapshot_source              /root/GameRoot/World/ProcGenRuntime/ProcGenMap
+  procgen_stuck_pockets_detected_last_generation 0
+  procgen_stuck_pockets_last_scan      0
+  procgen_stuck_pockets_remediated_last_generation 0
+  procgen_void_cliff_cells_per_frontier 3.047
+  procgen_void_cliff_frontier_cells    1044
+  procgen_void_cliff_painted_cells     3181
+  procgen_walkable_boundary_body_count 1
+  procgen_walkable_boundary_chunk_count 1
+  procgen_walkable_boundary_chunks_created_total 2
+  procgen_walkable_boundary_chunks_freed_total 1
+  procgen_walkable_boundary_last_rebuild_reason generation
+  procgen_walkable_boundary_last_rebuild_usec 13241
+  procgen_walkable_boundary_rebuild_count 2
+  procgen_walkable_boundary_shape_count 472
+  procgen_wall_cells                   937
+  procgen_wall_shadow_isolation_enabled True
+  render_atmosphere_enabled            True
+  render_directional_light_enabled     True
+  render_isolation_mode                production
+  render_point_light_count             4
+  render_procgen_depth_backdrop_enabled True
+  render_procgen_floor_enabled         True
+  render_procgen_major_visuals_enabled True
+  render_procgen_walls_enabled         True
+  top_level_subtree_counts             {"ARRNManager":1,"BuildInventory":1,"CognitiveState":1,"CommandRegistry":1,"DebugBus"...
+  uptime_sec                           441.33
+  world_environment_hour               12.192
+  world_environment_local_exposure     1
+  world_environment_precipitation_alpha 0
+  world_environment_weather_id         clear

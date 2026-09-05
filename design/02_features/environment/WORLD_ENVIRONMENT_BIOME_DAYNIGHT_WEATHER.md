@@ -8,10 +8,15 @@
 Exactly three systems own this feature:
 
 - `ProcGenTilemap` owns immutable per-cell ecological biome semantics and exports them in level data.
-- `WorldEnvironmentDirector` owns the fixed-physics clock, seeded weather schedule, indoor exposure, and environment modifier publication.
+- `WorldEnvironmentDirector` owns the fixed-physics clock, seeded weather schedule, provider-resolved indoor exposure, and environment modifier publication.
 - `WorldLightingDirector` remains the lighting compositor; authored and zone profiles are base authority and environment modifiers never replace them.
 
 `WorldAtmosphere2D` remains the only fullscreen environmental pass. It renders weather and precipitation below UI. Existing shared shrub/tree foliage materials remain the only foliage wind materials.
+
+Ecological biome semantics are also consumed by the separate presentation-only
+authority in `design/02_features/procgen/PROCGEN_MACRO_PRESENTATION_SYSTEM.md`.
+That system may select compatible authored terrain stamps, but does not move
+classification into `WorldEnvironmentDirector` or add weather authority here.
 
 ## Locked V1 Contract
 
@@ -38,7 +43,18 @@ Route policy always wins. Biome is orthogonal to world-ascent distance/style pro
 
 Lighting composition is authored/zone base × day influence × weather influence, with retained climate fog/cosmic baselines and temporary flash added afterward. Profile influence values can suppress environment and weather for interiors, events, and anomalies.
 
-Procedural rain, snow, ash, and dust are rendered by the existing atmosphere shader in world space. UI is never graded. Indoor exposure transitions between 1.0 and 0.12 over 1.25 seconds while weather continues advancing.
+Procedural rain, snow, ash, and dust are rendered by the existing atmosphere shader in world space. UI is never graded. Indoor exposure transitions over 1.25 seconds while weather continues advancing.
+
+## Environment-region provider contract
+
+Environment exposure is map-agnostic. Any generated, authored, or connected map may join the `environment_region_provider` group and implement:
+
+```gdscript
+func get_environment_region_at_global(world_position: Vector2) -> Dictionary:
+	return {}
+```
+
+An empty dictionary means the provider does not own that position. An owning provider returns `contains`, `indoor`, `environment_exposure`, and `weather_exposure`. The director uses full exterior exposure when no provider claims the Operator. Procgen interiors publish `0.12` environment exposure and zero weather exposure; authored interiors may choose a stricter profile. Provider order must not affect positions with one spatial owner.
 
 ## Scope Exclusions
 

@@ -1,6 +1,6 @@
 # Procgen Macro Presentation V1
 
-- Status: `draft`
+- Status: `in_progress`
 - Authority: `design/02_features/procgen/PROCGEN_MACRO_PRESENTATION_SYSTEM.md`
 - Goal: Introduce a deterministic region-first macro presentation layer for
   rocky-upland procgen while preserving the existing semantic grid as complete
@@ -14,10 +14,11 @@
 - Acceptance: deterministic placement, contained non-overlapping footprints,
   unchanged semantic fingerprints, valid depth roots, safe fallback, existing
   procgen validation green, and an approved fixed-seed V1 visual review.
-- Completed: planning baseline and migration ledger created.
-- Deferred: all runtime implementation, asset creation/intake, and final API
-  choices until the hardened implementation specification is supplied and
-  reconciled.
+- Completed: hardened authority reconciliation, final-state biome sequencing,
+  pure region/planner/catalog foundations, presentation roots and realization,
+  streaming visibility gating, separate dressing clearance, level summary,
+  observability, empty production catalog, and focused smoke foundation.
+- Deferred: production art/profile population and fixed-seed visual acceptance.
 
 ## Ownership And Timing
 
@@ -42,8 +43,8 @@
 
 | Phase | Deliverable | Gate | Status |
 | --- | --- | --- | --- |
-| 0 | Hardened contract reconciliation and live API audit | Paths, schemas, ownership, deterministic rules, and validation commands locked | waiting_spec |
-| 1 | Rocky-upland region extraction and macro stamp foundation | Determinism, containment, no semantic mutation, fallback smoke | pending |
+| 0 | Hardened contract reconciliation and live API audit | Paths, schemas, ownership, deterministic rules, and validation commands locked | validated |
+| 1 | Rocky-upland region extraction and macro stamp foundation | Determinism, containment, no semantic mutation, fallback smoke | in_progress |
 | 2 | Cluster and hardstand composition | Clearance/readability rules preserved; quiet-ground ratios reviewable | pending |
 | 3 | Minor/major/hero landmark placement | Deterministic cadence and authored-claim compatibility proven | pending |
 | 4 | Woodland, wetland, and scrubland vocabularies | Per-biome fallback and regression coverage proven | pending |
@@ -63,7 +64,7 @@ Allowed ledger states are `waiting_spec`, `pending`, `in_progress`, `blocked`,
 | Claims | Stamps or later clusters invade authored/route/combat clearances | Reuse a named existing claim/clearance API after live audit |
 | Performance | Large textures and many Sprite2D nodes exceed budgets | Set texture, node, culling, and per-screen budgets in hardened spec |
 | Art | Visual footprint and semantic footprint disagree | Require explicit masks/anchors and debug footprint overlays |
-| Inventory | Brief states approximately 17 assets but enumerates 19 | Reconcile the production list in the hardened specification |
+| Inventory | Production family contains 19 specified runtime assets | Keep catalog empty until approved art and masks exist |
 | Fallback | Missing assets make terrain invisible or invalid | Keep current TileMap sources authoritative and visible |
 | Scope | Biome/profile work expands into classification rewrite | Add presentation fields only; retain classifier ownership |
 
@@ -106,8 +107,8 @@ Allowed ledger states are `waiting_spec`, `pending`, `in_progress`, `blocked`,
 
 ## Handoff
 
-- Next action: receive and reconcile the hardened implementation spec; do not
-  begin runtime work from this provisional packet alone.
+- Next action: complete the required regression suite, then await approved
+  rocky-upland art/profile masks for visual acceptance.
 - Best starting files: the authority document, this packet,
   `ELEVATED_WORLD_PRESENTATION.md`, the environment/biome spec, and the live
   procgen/terrain integration points discovered during the audit.
@@ -115,5 +116,6 @@ Allowed ledger states are `waiting_spec`, `pending`, `in_progress`, `blocked`,
 - Validation after implementation: focused macro-presentation smoke plus the
   existing terrain, elevation, route, foliage, streaming, and full procgen
   recipes named by the hardened spec.
-- Blockers or open questions: the hardened spec and exact production asset
-  contracts are not yet supplied.
+- Blockers or open questions: no approved rocky-upland production PNGs or stamp
+  masks are currently registered, so the required visual acceptance cannot yet
+  be completed without fabricating forbidden placeholder art.

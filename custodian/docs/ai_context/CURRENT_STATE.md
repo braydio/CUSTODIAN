@@ -1,5 +1,39 @@
 # CURRENT STATE — CUSTODIAN
 
+## Operator Melee Sheathe + Animation Reachability Contract (2026-09-04)
+
+The Operator's melee sheathe presentation (`melee_1h/posture/sheathe_01` body
+plus `melee_1h_dagger/posture/sheathe_01` weapon overlay) was already
+generated and cataloged but never played. Weapon switching is now
+transactional: `try_apply_pending_weapon_selection()` defers the loadout
+mutation and enters a new `sheathe_weapon` animation-state-machine state
+(mirroring `equip_weapon`) whenever the current loadout is an armed melee
+weapon being switched away from; the old weapon stays presentation authority
+through the sheathe's final frame, and `commit_pending_weapon_selection_after_sheathe()`
+then applies the new selection and, if it's also melee, enters `equip_weapon`
+to draw it. A single `_melee_overlay_clock_owner` field now gates
+`_sync_melee_overlay_frames()`, closing a sword-facing corruption bug where
+the hidden legacy full-body sprite's `frame_changed` signal could overwrite
+the modular weapon overlay's direction/frame. The Vigil dagger's Fast 03 FX
+and Fast 02 weapon art were repointed from legacy chain-numbered sources to
+their canonical `melee_1h/attack/fast_03` / `melee_1h_dagger/attack/fast_02`
+sheets. A new reachability contract
+(`custodian/content/data/operator/operator_animation_reachability.json` +
+`operator_animation_reachability_audit.gd`) now requires every non-legacy
+canonical Operator animation action to be classified `LIVE`, `DORMANT`,
+`SUPERSEDED`, or `ALTERNATE_LAYER`, so a future Asset Pipeline run can't
+silently produce another orphaned canonical sheet. See
+`design/02_features/combat_feel/OPERATOR_MELEE_PRESENTATION_POSTURE.md`
+("Sheathe + Reachability Implementation Slice").
+
+## Carrow Yard + East Machine House Interior (2026-09-04)
+
+The former player-facing Gothic Compound is canonically **Carrow Yard** (`carrow_yard`), formally the Carrow District Utility Yard. Its original identity is civic-industrial and its present-day faction ownership remains unresolved. Runtime technical paths retain the `gothic_compound` namespace until a separate mechanical migration.
+
+The deterministic generator now publishes named structure sites for the Operations House, East Machine House, West Draft House, Alarm Gantry, and Yard Control Terminal. The East Machine House replaces the former authored-vault overlay with a 12×8 off-map interior, paired interaction doors, hardened-floor/machinery layout, collision boundaries, three renamed service-storage caches, an interior lighting zone, and one warm maintenance light.
+
+Environment exposure is now resolved through the generic `environment_region_provider` group. Procgen and Carrow Yard both publish spatial ownership plus independent daylight and weather exposure. Entering the Machine House reduces environment exposure to `0.10`, suppresses weather to `0.0`, and leaves the deterministic clock/weather schedule advancing outside.
+
 ## Canon Migration (2026-09-03)
 
 Current world canon uses persistent **Lattice Domains**: regions of damaged
@@ -830,7 +864,7 @@ Documentation updates this session:
 - Fabrication/resource balance now has an offline deterministic report pipeline at `custodian/tools/balance/fabrication_balance_pipeline.py`. It reads live recipe/resource JSON plus `custodian/content/balance/scenarios/default_fabrication_run.json`, simulates 30-minute runs across build priorities and drop-rate profiles, checks lore-aware drop-table rules, and writes proposal-only outputs under `reports/fabrication_balance/` instead of mutating runtime data.
 - `enemy_marine` has a first runtime scene at `res://game/actors/enemies/enemy_marine.tscn` and consumes the full 8-direction idle suite from `res://content/sprites/enemies/enemy_marine/runtime/body/` through `GruntAnimationLibrary`. Its dash attack is now a tuned tactical heavy commitment move in `res://game/actors/enemies/enemy.gd`: the marine seeks a launch band, chooses quick or charged commits deterministically from range/target motion/previous result, spends a bounded charge budget between extra distance and extra damage, performs one predictive target lock during the final windup third, then commits without steering. The latest tuning pass raised the base impact to 32 damage / 105 knockback, widened the active hit window and contact reach, and nudged prediction/reset timing so the dash connects more often without becoming homing. Hit contact remains limited to the middle travel frames and a body-contact lane; impact/recovery are followed by an alternating lateral reset, preventing immediate dash trampling. The Great Hall ambush now wakes and hands control to this shared tactical runtime instead of maintaining a separate dash-spam controller. The move applies chunky damage plus poise/knockback feel through victim hitstop, forced slide/stagger hooks on the Operator, attacker hitstop, and camera feedback instead of relying only on HP loss. An east-facing 8-frame dash attack body strip and matching FX strip now live under `res://content/sprites/enemies/enemy_marine/runtime/{body,fx}/` and are used by the Sundered Keep Great Hall ambush plus generic marine combat playback. Directional body/FX variants and the servo/armor/impact/recovery audio stack remain required production assets tracked in `REQUIRED_ASSETS.md`. `WaveManager`, `EnemyDirector`, `EnemyFactory`, and `scenes/game.tscn` expose `marine_scene` / `"marine"` as a late-unlock enemy type. Until full directional movement/combat/death sheets are supplied, marine movement still uses directional idle as a visual fallback outside scripted dash moments.
 - The first game-over UX slice is implemented from `design/02_features/game_over/GAME_OVER_FLOW.md`. `GameState` remains the fail-state authority, pauses the tree, emits `game_over_triggered`, and mounts `res://game/ui/game_over/game_over_modal.tscn` when `trigger_game_over(...)` is called. `GameStats` tracks waves survived, enemies destroyed, power failures, and turrets lost; `WaveManager` records completed waves, and enemy death records destroyed enemies. The modal is now a full-screen loss overlay with stats, a clear Restart button that resets run state and reloads the current scene, and a Return-to-Menu fallback that uses the configured main scene until a production menu exists. Custodian death is immediate game over (`total_lives = 1`) with Custodian-facing defeat copy, and Sundered Keep siege objective collapse routes through the same global game-over modal. Direct smoke coverage lives at `res://tools/validation/game_over_flow_smoke.gd`, with Sundered Keep collapse coverage in `res://tools/validation/sundered_keep_large_layout_smoke.gd`.
-- A first connected-map slice is live for the gothic compound: contract world handoff places an interactable main-map gate near the generated compound ingress, instantiates an authored gothic compound map east of the main tactical map, and provides a return gate back to the main map. The authored submap uses the gothic compound blueprint generator under `res://game/world/procgen/gothic_compound/`, which reserves a compound rect, fills continuous terrain, builds a wall/post/gatehouse-dominant perimeter, cuts a readable south gate, carves approach/internal roads, places command keep/terminal/utility structures, protects a keep-plaza negative-space zone, adds secondary gate defenses/resources/hidden markers, clusters exterior ruin scatter, and validates required walkable routes before accepting the layout. The map now adds an explicit `AuthoredVaultRoom` node inside the accepted compound rect with three `VaultStorage` caches (`gothic_vault_ruin_scrap`, `gothic_vault_alloy_cache`, and `gothic_vault_power_cache`) plus a `VaultEnemyExit` marker, so the actual vault exists in the connected compound instead of only as a manager debug fallback. The latest layout-grammar passes add `gothic_compound_asset_defs.gd` metadata, flat-layer top-left anchoring for terrain/roads/decals, base-rooted dynamic wall/prop/gatehouse occluders under `DepthSortLayer`, footprint-aware placement/collision, chunked long-road placement, calmer macro terrain patches, zone-specific grates/decals, placement flags/errors, perimeter topology validation, larger connected-map/compound bounds, service-path complexity, and Custodian-relative depth sorting so occluding walls/props render behind the Custodian when the Custodian feet are below their base line and in front when the Custodian feet are above it. Runtime art comes from `res://content/procgen/special_rooms/gothic_compound/`.
+- Carrow Yard's connected-map runtime uses the retained gothic-compound blueprint generator under `res://game/world/procgen/gothic_compound/`: it reserves the yard, builds its perimeter and South Gate, carves service roads, places the Operations House/Yard Control Terminal/utility structures, and validates required walkable routes. Named structure-site output now anchors the accessible East Machine House. The former `AuthoredVaultRoom` and `VaultEnemyExit` prototype are retired; its resources survive as three service-storage caches in the off-map Machine House interior. Existing render/depth metadata, topology validation, service-path complexity, and Operator-relative occlusion remain unchanged.
 - The Sundered Keep phase-1 slice is live as a directed authored route. The
   front-gate layout is mapper-owned through
   `sundered_keep_front_gate_large.json`; intentional `mapper_placements`,
@@ -1048,7 +1082,7 @@ Documentation updates this session:
 - Broader infrastructure depth, project-wide save/load wiring, a dedicated construction placement controller/zones, production structure art, and full long-horizon base systems remain incomplete relative to full doctrine scope.
 - The remaining procgen handoff gap is live runtime verification: camera bounds, cursor aim, reachable anchors, and enemy navigation still need an end-to-end boot test in Godot.
 - Terrain Builder V1 now has explicit elevation and mountain-cliff TileSet sources and smoke coverage for those source IDs. Remaining elevation gaps are dedicated layer separation, movement/pathing enforcement beyond current spawn/prop filtering and contract scoring, and final in-game visual readability tuning.
-- The gothic compound connected map is a first authored destination slice using the reusable blueprint generator. Main tactical-map TileMapLayer adapter integration, full procedural gothic room assembly, save/load persistence of visited submaps, encounter composition, and minimap specialization remain future work.
+- Carrow Yard is the first canonical connected-map destination using the reusable gothic-compound blueprint generator and the first exterior-to-interior environment proof. Main tactical-map TileMapLayer adapter integration, broader authored interiors, save/load persistence of visited submaps, encounter composition, and minimap specialization remain future work.
 - The Sundered Keep connected map is an authored destination slice whose Front Gate now uses `sundered_keep_main_overlay.png` as its production visual base. `sundered_keep_front_gate_large.json` retains gameplay/state authority while its static generated floor, edge, wall, prop, placeholder, and prefab ops are archive-only. The initial production overlay is intentionally sparse: the stateful Return Mooring module, animated Main Gate and Great Hall door, underpass/roof presentation, command cache, siege objects, and marine encounter remain; future decorative floor/wall/prop additions come only from explicit `mapper_placements`. Collision rails, elevation, markers, interactions, and siege behavior remain unchanged. The local siege still tracks the three enemies in its required opening wave; clearing that wave secures the encounter, stops its pressure timer, and prevents further objective damage even if timed reinforcements were spawned.
 - Vehicle content is still art-incomplete: the hover buggy idle and horizontal movement loops are runtime-ready, while firing, damage, and destruction animations still need final source assets.
 - Additional ruin prop definitions and production chip/dirt/vine/highlight overlays still need to be authored under `custodian/content/props/ruins/data/prop_definitions/`, `extracted/`, and `overlays/`; the first moss/crack-driven test definitions and procgen placement are available.
@@ -1163,3 +1197,11 @@ supplemental fauna spawn. Shrumb remains on its existing compatibility path.
 ## World Environment V1 (2026-09-03)
 
 Accepted procgen maps now own deterministic scrubland, woodland, wetland, and rocky-upland fields that constrain foliage density, composition, and tint beneath route policy. One world-local `WorldEnvironmentDirector` owns a 24-minute fixed-physics day, contract-seeded weather, and indoor exposure; existing lighting, atmosphere, and shared foliage materials remain presentation authorities.
+
+Procgen Macro Presentation V1 is in implementation with an empty-safe
+rocky-upland catalog. Biomes now classify the final captured floor authority
+after faction/story, parking, and second-pass road corrections. Pure region and
+stamp planning is deterministic and separate from Sprite2D realization;
+presentation roots compensate for the scaled map parent, and streaming gates
+each macro stamp against all live Floor/Walls reveal probes. Macro masks and
+dressing clearances never create collision, navigation, or terrain authority.

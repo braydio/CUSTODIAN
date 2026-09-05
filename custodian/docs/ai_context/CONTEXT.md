@@ -182,4 +182,4 @@ Macro-game extraction is now scaffolded under `game/state/` and `game/systems/si
   pending visual review.
 ## World Environment authority
 
-Static ecological biome semantics belong to accepted `ProcGenTilemap`; changing clock/weather state belongs to the world-local `WorldEnvironmentDirector`; final lighting and fullscreen atmosphere remain owned by their existing directors. Environment V1 is presentation-only.
+Static ecological biome semantics belong to accepted `ProcGenTilemap`; changing clock/weather state belongs to the world-local `WorldEnvironmentDirector`; final lighting and fullscreen atmosphere remain owned by their existing directors. Spatial exposure is map-agnostic through `environment_region_provider`, currently implemented by procgen and Carrow Yard. Environment V1 is presentation-only.

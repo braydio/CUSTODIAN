@@ -1,0 +1,19 @@
+{
+	"action_count": 1,
+	"completed": false,
+	"duration_ticks": 18,
+	"event_count": 1,
+	"fixture": {
+		"position": [
+			0.0,
+			0.0
+		]
+	},
+	"probe_sample_count": 0,
+	"stable": {
+		"completed_tick": 18,
+		"visible_visual_anchor_delta_px": null,
+		"visible_visual_anchor_sample_count": 0
+	},
+	"warning_count": 0
+}

@@ -269,6 +269,11 @@ func _validate_animation_set(
 		return
 	for animation: StringName in animations:
 		var expected_frames := 9 if "fast_03" in String(animation) else (8 if "fast_02" in String(animation) else 10)
+		if label == "FX overlay" and "fast_03" in String(animation):
+			# Fast 03 FX was canonicalized onto the 8-frame melee_1h/attack/fast_03
+			# source; only the body/weapon Fast 03 clips still hold their prior
+			# 9-frame legacy layout.
+			expected_frames = 8
 		var expected_fps := 18.0
 		_assert(
 			frames.has_animation(animation),
@@ -310,7 +315,7 @@ func _validate_animation_set(
 			)
 		if "fast_03" in String(animation):
 			_assert_close(
-				frames.get_frame_duration(animation, 8),
+				frames.get_frame_duration(animation, expected_frames - 1),
 				1.5,
 				"%s animation %s final-frame hold drifted" % [label, animation]
 			)

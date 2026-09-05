@@ -4,7 +4,7 @@ class_name GothicCompoundTravelGate
 enum TravelMode { ENTER_COMPOUND, RETURN_TO_MAIN }
 
 @export var travel_mode: TravelMode = TravelMode.ENTER_COMPOUND
-@export var prompt_text: String = "ENTER GOTHIC COMPOUND"
+@export var prompt_text: String = "ENTER CARROW YARD"
 @export_range(32.0, 192.0, 1.0) var interaction_distance: float = 92.0
 @export var gate_texture: Texture2D = null
 @export var connected_map_path: NodePath

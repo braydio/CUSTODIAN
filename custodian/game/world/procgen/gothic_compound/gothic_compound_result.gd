@@ -23,6 +23,7 @@ var flags := {
 var placement_errors: Array[String] = []
 var placed_walls: Array[Vector2i] = []
 var placed_structures: Array[Vector2i] = []
+var structure_sites: Dictionary = {}
 var placed_props: Array[Vector2i] = []
 var placed_resources: Array[Vector2i] = []
 var placed_markers: Array[Vector2i] = []

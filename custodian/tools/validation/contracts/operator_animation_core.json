@@ -25,12 +25,24 @@
       "id": "melee_profiles",
       "required": false,
       "entries": [
+        {"animation_profile": "melee_1h", "action_group": "posture", "action": "draw_01", "layer": "lower_body", "directions": ["e", "w"]},
         {"animation_profile": "melee_1h", "action_group": "posture", "action": "draw_01", "layer": "upper_body", "directions": ["e", "w"]},
+        {"animation_profile": "melee_1h", "action_group": "posture", "action": "idle_ready_01", "layer": "lower_body", "directions": ["e", "w"]},
         {"animation_profile": "melee_1h", "action_group": "posture", "action": "idle_ready_01", "layer": "upper_body", "directions": ["e", "w"]},
+        {"animation_profile": "melee_1h", "action_group": "posture", "action": "idle_relaxed_01", "layer": "lower_body", "directions": ["e", "w"]},
         {"animation_profile": "melee_1h", "action_group": "posture", "action": "idle_relaxed_01", "layer": "upper_body", "directions": ["e", "w"]},
         {"animation_profile": "melee_1h", "action_group": "attack", "action": "fast_01", "layer": "full_body", "directions": ["e", "w"]},
         {"animation_profile": "melee_1h_dagger", "action_group": "attack", "action": "fast_01", "layer": "full_body", "directions": ["e", "w"]},
         {"animation_profile": "melee_1h_heavy", "action_group": "attack", "action": "fast_01", "layer": "full_body", "directions": ["e", "w"]}
+      ]
+    },
+    {
+      "id": "melee_sheathe",
+      "required": false,
+      "entries": [
+        {"animation_profile": "melee_1h", "action_group": "posture", "action": "sheathe_01", "layer": "lower_body", "directions": ["e", "w"]},
+        {"animation_profile": "melee_1h", "action_group": "posture", "action": "sheathe_01", "layer": "upper_body", "directions": ["e", "w"]},
+        {"animation_profile": "melee_1h_dagger", "action_group": "posture", "action": "sheathe_01", "layer": "weapon", "directions": ["e", "w"]}
       ]
     },
     {

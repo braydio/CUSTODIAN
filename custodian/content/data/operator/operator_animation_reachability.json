@@ -1,0 +1,571 @@
+{
+  "schema": "custodian.operator_animation_reachability.v1",
+  "entries": [
+    {
+      "profile": "melee_1h",
+      "group": "attack",
+      "action": "critical_execution_01",
+      "status": "DORMANT",
+      "reason": "No confirmed melee_1h critical-execution consumer; unarmed/cosmetic/critical_execution_01 is the live critical-execution path."
+    },
+    {
+      "profile": "melee_1h",
+      "group": "attack",
+      "action": "fast_01",
+      "status": "LIVE",
+      "consumer": "operator._legacy_melee_body_slaved_presentation (full_body, fx)"
+    },
+    {
+      "profile": "melee_1h",
+      "group": "attack",
+      "action": "fast_01",
+      "layer": "lower_body",
+      "status": "ALTERNATE_LAYER",
+      "authority": "full_body"
+    },
+    {
+      "profile": "melee_1h",
+      "group": "attack",
+      "action": "fast_01",
+      "layer": "upper_body",
+      "status": "ALTERNATE_LAYER",
+      "authority": "full_body"
+    },
+    {
+      "profile": "melee_1h",
+      "group": "attack",
+      "action": "fast_02",
+      "status": "LIVE",
+      "consumer": "operator._legacy_melee_body_slaved_presentation (full_body, fx)"
+    },
+    {
+      "profile": "melee_1h",
+      "group": "attack",
+      "action": "fast_02",
+      "layer": "lower_body",
+      "status": "ALTERNATE_LAYER",
+      "authority": "full_body"
+    },
+    {
+      "profile": "melee_1h",
+      "group": "attack",
+      "action": "fast_02",
+      "layer": "upper_body",
+      "status": "ALTERNATE_LAYER",
+      "authority": "full_body"
+    },
+    {
+      "profile": "melee_1h",
+      "group": "attack",
+      "action": "fast_03",
+      "status": "LIVE",
+      "consumer": "operator._legacy_melee_body_slaved_presentation (full_body, fx)"
+    },
+    {
+      "profile": "melee_1h",
+      "group": "attack",
+      "action": "fast_03",
+      "layer": "lower_body",
+      "status": "ALTERNATE_LAYER",
+      "authority": "full_body"
+    },
+    {
+      "profile": "melee_1h",
+      "group": "attack",
+      "action": "fast_03",
+      "layer": "upper_body",
+      "status": "ALTERNATE_LAYER",
+      "authority": "full_body"
+    },
+    {
+      "profile": "melee_1h",
+      "group": "attack",
+      "action": "fast_attack_chain_01",
+      "status": "DORMANT",
+      "reason": "No consumer references this action; the live fast-chain is driven by fast_01/02/03 individually."
+    },
+    {
+      "profile": "melee_1h",
+      "group": "cosmetic",
+      "action": "relaxed_idle_01",
+      "status": "SUPERSEDED",
+      "replacement": "melee_1h/posture/idle_relaxed_01"
+    },
+    {
+      "profile": "melee_1h",
+      "group": "locomotion",
+      "action": "run_01",
+      "status": "LIVE",
+      "consumer": "operator._sync_modular_melee_locomotion"
+    },
+    {
+      "profile": "melee_1h",
+      "group": "locomotion",
+      "action": "walk_01",
+      "status": "DORMANT",
+      "reason": "_install_melee_posture_catalog_frames only copies locomotion run_01 into the modular sprites; melee walk still plays the legacy full-body walk animation."
+    },
+    {
+      "profile": "melee_1h",
+      "group": "posture",
+      "action": "draw_01",
+      "status": "LIVE",
+      "consumer": "operator.start_equip_weapon_presentation"
+    },
+    {
+      "profile": "melee_1h",
+      "group": "posture",
+      "action": "idle_ready_01",
+      "status": "LIVE",
+      "consumer": "operator._sync_modular_melee_posture"
+    },
+    {
+      "profile": "melee_1h",
+      "group": "posture",
+      "action": "idle_relaxed_01",
+      "status": "LIVE",
+      "consumer": "operator._sync_modular_melee_posture"
+    },
+    {
+      "profile": "melee_1h",
+      "group": "posture",
+      "action": "sheathe_01",
+      "status": "LIVE",
+      "consumer": "operator.weapon_selection.sheathe"
+    },
+    {
+      "profile": "melee_1h",
+      "group": "posture",
+      "action": "stance_01",
+      "status": "SUPERSEDED",
+      "replacement": "melee_1h/posture/idle_ready_01"
+    },
+    {
+      "profile": "melee_1h_dagger",
+      "group": "attack",
+      "action": "fast_02",
+      "layer": "weapon",
+      "status": "LIVE",
+      "consumer": "vigil_pattern_dagger_definition.fx_map (vigil_dagger_fast_02_weapon)"
+    },
+    {
+      "profile": "melee_1h_dagger",
+      "group": "cosmetic",
+      "action": "relaxed_idle_01",
+      "status": "SUPERSEDED",
+      "replacement": "melee_1h_dagger/posture/idle_relaxed_01"
+    },
+    {
+      "profile": "melee_1h_dagger",
+      "group": "locomotion",
+      "action": "run_01",
+      "layer": "weapon",
+      "status": "LIVE",
+      "consumer": "operator._sync_modular_melee_locomotion (weapon overlay)"
+    },
+    {
+      "profile": "melee_1h_dagger",
+      "group": "locomotion",
+      "action": "walk_01",
+      "layer": "weapon",
+      "status": "DORMANT",
+      "reason": "_install_melee_posture_weapon_frames only copies locomotion run_01; the dagger weapon overlay has no walk animation to drive."
+    },
+    {
+      "profile": "melee_1h_dagger",
+      "group": "posture",
+      "action": "draw_01",
+      "layer": "weapon",
+      "status": "LIVE",
+      "consumer": "operator.start_equip_weapon_presentation (weapon overlay)"
+    },
+    {
+      "profile": "melee_1h_dagger",
+      "group": "posture",
+      "action": "idle_ready_01",
+      "layer": "weapon",
+      "status": "LIVE",
+      "consumer": "operator._sync_melee_posture_weapon_overlay"
+    },
+    {
+      "profile": "melee_1h_dagger",
+      "group": "posture",
+      "action": "idle_relaxed_01",
+      "layer": "weapon",
+      "status": "LIVE",
+      "consumer": "operator._sync_melee_posture_weapon_overlay"
+    },
+    {
+      "profile": "melee_1h_dagger",
+      "group": "posture",
+      "action": "sheathe_01",
+      "layer": "weapon",
+      "status": "LIVE",
+      "consumer": "operator.weapon_selection.sheathe"
+    },
+    {
+      "profile": "ranged_2h",
+      "group": "attack",
+      "action": "fast_01",
+      "status": "DORMANT",
+      "reason": "Ranged weapons fire via per-weapon body-fire animation names; no consumer references this generic attack chain action."
+    },
+    {
+      "profile": "ranged_2h",
+      "group": "attack",
+      "action": "fast_02",
+      "status": "DORMANT",
+      "reason": "Ranged weapons fire via per-weapon body-fire animation names; no consumer references this generic attack chain action."
+    },
+    {
+      "profile": "ranged_2h",
+      "group": "attack",
+      "action": "fast_03",
+      "status": "DORMANT",
+      "reason": "Ranged weapons fire via per-weapon body-fire animation names; no consumer references this generic attack chain action."
+    },
+    {
+      "profile": "ranged_2h",
+      "group": "cosmetic",
+      "action": "aim_01",
+      "status": "DORMANT",
+      "reason": "Ranged aim is currently driven by legacy_operator_body_ranged_2h_aim_raise / ranged_2h_aim_modular, not this canonical sheet."
+    },
+    {
+      "profile": "ranged_2h",
+      "group": "cosmetic",
+      "action": "fire_01",
+      "status": "DORMANT",
+      "reason": "Ranged fire is currently driven by per-weapon legacy body-fire animation names, not this canonical sheet."
+    },
+    {
+      "profile": "ranged_2h",
+      "group": "locomotion",
+      "action": "run_01",
+      "status": "LIVE",
+      "consumer": "operator ranged_2h_run_left/right"
+    },
+    {
+      "profile": "ranged_2h",
+      "group": "posture",
+      "action": "relaxed_01",
+      "status": "LIVE",
+      "consumer": "operator._sync_modular_ranged_relaxed_presentation (ranged_2h_relaxed_modular)"
+    },
+    {
+      "profile": "ranged_2h",
+      "group": "posture",
+      "action": "relaxed_carbine_mk1_01",
+      "status": "SUPERSEDED",
+      "replacement": "ranged_2h/posture/relaxed_01"
+    },
+    {
+      "profile": "ranged_2h",
+      "group": "posture",
+      "action": "stance_01",
+      "status": "LIVE",
+      "consumer": "operator._sync_modular_ranged_2h_stance_presentation (ranged_2h_stance)"
+    },
+    {
+      "profile": "shared",
+      "group": "attack",
+      "action": "dodge_charge_windup_01",
+      "status": "DORMANT",
+      "reason": "Dodge-charge windup presentation resolves from legacy production body frames (operator_dodge_charge_windup); no consumer references this canonical sheet."
+    },
+    {
+      "profile": "shared",
+      "group": "locomotion",
+      "action": "idle_01",
+      "status": "LIVE",
+      "consumer": "operator legacy idle_<direction> fallback"
+    },
+    {
+      "profile": "shared",
+      "group": "locomotion",
+      "action": "idle_hitreact_01",
+      "status": "LIVE",
+      "consumer": "operator operator_idle_hitreact_modular"
+    },
+    {
+      "profile": "shared",
+      "group": "locomotion",
+      "action": "run_01",
+      "status": "LIVE",
+      "consumer": "operator legacy run_<direction> fallback"
+    },
+    {
+      "profile": "shared",
+      "group": "locomotion",
+      "action": "walk_01",
+      "status": "LIVE",
+      "consumer": "operator legacy walk_<direction> fallback"
+    },
+    {
+      "profile": "shared",
+      "group": "posture",
+      "action": "stance_01",
+      "status": "SUPERSEDED",
+      "replacement": "shared/locomotion/idle_01"
+    },
+    {
+      "profile": "shared",
+      "group": "transition",
+      "action": "dodge_01",
+      "status": "LIVE",
+      "consumer": "operator.DODGE_FULL_NORTH_SHEET_PATH / DODGE_FULL_SOUTH_SHEET_PATH"
+    },
+    {
+      "profile": "shared",
+      "group": "transition",
+      "action": "dodge_chain_link_01",
+      "status": "DORMANT",
+      "reason": "Dodge chain-link presentation resolves from legacy production body frames (operator_dodge_chain_link); no consumer references this canonical sheet."
+    },
+    {
+      "profile": "sidearm",
+      "group": "cosmetic",
+      "action": "fire_sidearm_01",
+      "status": "DORMANT",
+      "reason": "Sidearm fire presentation is driven by _resolve_sidearm_directional_animation's sidearm_fire_<up/down>_<left/right> names, not this canonical sheet."
+    },
+    {
+      "profile": "sidearm",
+      "group": "cosmetic",
+      "action": "fx_01",
+      "status": "DORMANT",
+      "reason": "Paired with sidearm/cosmetic/fire_sidearm_01, which is not consumed; no separate consumer references this fx sheet."
+    },
+    {
+      "profile": "sidearm",
+      "group": "posture",
+      "action": "draw_sidearm_01",
+      "status": "LIVE",
+      "consumer": "operator._is_sidearm_action_finished / sidearm draw presentation"
+    },
+    {
+      "profile": "unarmed",
+      "group": "attack",
+      "action": "dodge_fast_attack_01",
+      "status": "LIVE",
+      "consumer": "operator unarmed_dodge_fast_attack_<direction>"
+    },
+    {
+      "profile": "unarmed",
+      "group": "attack",
+      "action": "fast_01",
+      "status": "LIVE",
+      "consumer": "operator unarmed fast-attack chain (modular + legacy full_body)"
+    },
+    {
+      "profile": "unarmed",
+      "group": "attack",
+      "action": "fast_02",
+      "status": "LIVE",
+      "consumer": "operator unarmed fast-attack chain (modular + legacy full_body)"
+    },
+    {
+      "profile": "unarmed",
+      "group": "attack",
+      "action": "fast_03",
+      "status": "LIVE",
+      "consumer": "operator unarmed fast-attack chain (modular + legacy full_body)"
+    },
+    {
+      "profile": "unarmed",
+      "group": "attack",
+      "action": "fast_recovery_01",
+      "status": "LIVE",
+      "consumer": "operator unarmed_fast_recovery_lower/upper"
+    },
+    {
+      "profile": "unarmed",
+      "group": "attack",
+      "action": "fast_strike_01",
+      "status": "LIVE",
+      "consumer": "operator unarmed_fast_strike_lower/upper/fx_modular"
+    },
+    {
+      "profile": "unarmed",
+      "group": "attack",
+      "action": "fast_strike_02",
+      "status": "DORMANT",
+      "reason": "Only unarmed_fast_strike_01 is referenced by the attack presentation; the _02 variant has no consumer."
+    },
+    {
+      "profile": "unarmed",
+      "group": "attack",
+      "action": "fast_windup_01",
+      "status": "LIVE",
+      "consumer": "operator unarmed_fast_windup_lower/upper"
+    },
+    {
+      "profile": "unarmed",
+      "group": "attack",
+      "action": "heavy_01",
+      "status": "LIVE",
+      "consumer": "operator unarmed_heavy attack intent"
+    },
+    {
+      "profile": "unarmed",
+      "group": "attack",
+      "action": "parry_recovery_01",
+      "status": "LIVE",
+      "consumer": "operator unarmed_parry_recovery"
+    },
+    {
+      "profile": "unarmed",
+      "group": "cosmetic",
+      "action": "critical_execution_01",
+      "status": "LIVE",
+      "consumer": "operator critical-execution presentation (hardcoded runtime paths)"
+    },
+    {
+      "profile": "unarmed",
+      "group": "cosmetic",
+      "action": "criticial_execution_01",
+      "status": "SUPERSEDED",
+      "replacement": "unarmed/cosmetic/critical_execution_01"
+    },
+    {
+      "profile": "unarmed",
+      "group": "cosmetic",
+      "action": "falcon_reversal_01",
+      "status": "LIVE",
+      "consumer": "operator falcon-reversal presentation (hardcoded runtime paths)"
+    },
+    {
+      "profile": "unarmed",
+      "group": "defense",
+      "action": "block_enter_01",
+      "status": "LIVE",
+      "consumer": "operator._play_modular_unarmed_block (unarmed_block_enter)"
+    },
+    {
+      "profile": "unarmed",
+      "group": "defense",
+      "action": "block_hit_01",
+      "status": "LIVE",
+      "consumer": "operator block hitreact presentation (unarmed_block_hitreact)"
+    },
+    {
+      "profile": "unarmed",
+      "group": "defense",
+      "action": "block_hold_01",
+      "status": "LIVE",
+      "consumer": "operator._play_modular_unarmed_block (unarmed_block_hold)"
+    },
+    {
+      "profile": "unarmed",
+      "group": "defense",
+      "action": "parry_01",
+      "status": "DORMANT",
+      "reason": "No consumer references a bare parry_01 window animation; only parry_success_01 and parry_miss_01 are played."
+    },
+    {
+      "profile": "unarmed",
+      "group": "defense",
+      "action": "parry_miss_01",
+      "status": "LIVE",
+      "consumer": "operator._play_parry_animation (unarmed_parry_miss_01)"
+    },
+    {
+      "profile": "unarmed",
+      "group": "defense",
+      "action": "parry_success_01",
+      "status": "LIVE",
+      "consumer": "operator._play_parry_animation (unarmed_parry_success_01)"
+    },
+    {
+      "profile": "unarmed",
+      "group": "interaction",
+      "action": "field_patch_use_01",
+      "status": "DORMANT",
+      "reason": "start_field_patch() drives gameplay state and timers but never plays this presentation animation."
+    },
+    {
+      "profile": "unarmed",
+      "group": "interaction",
+      "action": "success_01",
+      "status": "DORMANT_PENDING_INTERACTION_SUCCESS_CONTRACT",
+      "reason": "No generic interaction-success gameplay contract exists yet; interaction signals (repair_completed, interaction_pressed, etc.) are all per-interactable, not a unified Operator success beat."
+    },
+    {
+      "profile": "unarmed",
+      "group": "locomotion",
+      "action": "idle_01",
+      "status": "LIVE",
+      "consumer": "operator._sync_modular_locomotion_layers (unarmed_idle)"
+    },
+    {
+      "profile": "unarmed",
+      "group": "locomotion",
+      "action": "idle_hitreact_01",
+      "status": "LIVE",
+      "consumer": "operator operator_idle_hitreact_modular"
+    },
+    {
+      "profile": "unarmed",
+      "group": "locomotion",
+      "action": "run_01",
+      "status": "LIVE",
+      "consumer": "operator._sync_modular_locomotion_layers (unarmed_run)"
+    },
+    {
+      "profile": "unarmed",
+      "group": "locomotion",
+      "action": "walk_01",
+      "status": "LIVE",
+      "consumer": "operator._sync_modular_locomotion_layers (unarmed_walk)"
+    },
+    {
+      "profile": "unarmed",
+      "group": "posture",
+      "action": "dodge_charge_ready_01",
+      "status": "DORMANT",
+      "reason": "Dodge-charge gameplay signals exist (dodge_charge_changed, etc.) but no code plays this presentation animation yet."
+    },
+    {
+      "profile": "unarmed",
+      "group": "posture",
+      "action": "stance_01",
+      "status": "SUPERSEDED",
+      "replacement": "unarmed/locomotion/idle_01"
+    },
+    {
+      "profile": "unarmed",
+      "group": "reaction",
+      "action": "bodyslam_knockdown_01",
+      "status": "LIVE",
+      "consumer": "operator unarmed_bodyslam_knockdown_left/right"
+    },
+    {
+      "profile": "unarmed",
+      "group": "reaction",
+      "action": "death_01",
+      "status": "LIVE",
+      "consumer": "operator unarmed_death"
+    },
+    {
+      "profile": "unarmed",
+      "group": "reaction",
+      "action": "light_hitreact_01",
+      "status": "LIVE",
+      "consumer": "operator unarmed_light_hitreact"
+    },
+    {
+      "profile": "unarmed",
+      "group": "transition",
+      "action": "dodge_charge_meter_01",
+      "status": "DORMANT",
+      "reason": "Dodge-charge gameplay signals exist but no code plays this presentation animation yet."
+    },
+    {
+      "profile": "unarmed",
+      "group": "transition",
+      "action": "dodge_charge_release_01",
+      "status": "DORMANT",
+      "reason": "Dodge-charge gameplay signals exist but no code plays this presentation animation yet."
+    }
+  ]
+}

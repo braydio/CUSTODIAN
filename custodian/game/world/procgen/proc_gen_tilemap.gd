@@ -18,6 +18,9 @@ const RUNTIME_WALKABLE_BOUNDARY_CHUNK_SCRIPT := preload(
 const ELEVATION_MAP_SCRIPT := preload("res://game/world/elevation/elevation_map.gd")
 const TERRAIN_BUILDER_SCRIPT := preload("res://game/world/procgen/terrain/terrain_builder.gd")
 const BIOME_FIELD_SCRIPT := preload("res://game/world/procgen/biomes/biome_field.gd")
+const MACRO_PRESENTATION_COMPOSER_SCRIPT := preload(
+	"res://game/world/procgen/presentation/procgen_macro_presentation_composer.gd"
+)
 const BIOME_PROFILES := {
 	"scrubland": preload("res://content/procgen/biomes/scrubland.tres"),
 	"woodland": preload("res://content/procgen/biomes/woodland.tres"),
@@ -216,6 +219,9 @@ enum WorldShapeMode {
 @export var void_cliff_face: ProcgenVoidCliffFace
 @export var nonwalkable_surface_base_tilemap: TileMapLayer
 @export var nonwalkable_surface_overlay_tilemap: TileMapLayer
+@export var macro_presentation_back: Node2D
+@export var macro_presentation_ground: Node2D
+@export var macro_presentation_front: Node2D
 @export var world_shape_mode: WorldShapeMode = WorldShapeMode.ASCENT_FIELD
 @export var generation_evaluation_mode: bool = false
 @export var generation_output_enabled: bool = true
@@ -223,6 +229,13 @@ enum WorldShapeMode {
 @export var enable_final_foliage: bool = true
 @export var foliage_deferred_spawn_enabled: bool = true
 @export_range(64, 4096, 64) var foliage_spawn_batch_size: int = 512
+
+@export_group("Macro Presentation", "macro_presentation_")
+@export var macro_presentation_enabled := true
+@export var macro_presentation_catalog: Resource
+@export_range(0, 64, 1) var macro_presentation_max_stamps := 12
+@export var macro_presentation_debug_logging := false
+@export_group("", "")
 
 ## TileSet source IDs (from your TileSet)
 @export var floor_source_id: int = 0
@@ -695,6 +708,10 @@ var _foliage_spawner: ProcgenFoliageSpawner = null
 var _biome_field: BiomeField = null
 var _biome_id_by_cell: Dictionary = {}
 var _biome_summary: Dictionary = {}
+var _macro_presentation_composer: RefCounted = null
+var _macro_presentation_plan: Dictionary = {}
+var _macro_presentation_summary: Dictionary = {}
+var _macro_presentation_dressing_clearance_cells: Dictionary = {}
 var _environment_wind_speed_multiplier: float = 1.0
 var _environment_wind_gust_multiplier: float = 1.0
 var _planet_world_profile: Dictionary = {}
@@ -781,6 +798,7 @@ func _ready() -> void:
 	add_to_group("procgen_tilemap")
 	add_to_group("procgen_walkability_provider")
 	add_to_group("terrain_ballistics_provider")
+	add_to_group("environment_region_provider")
 	_start_wind_ambient_loop()
 	# Auto-find ProcGen if not assigned
 	if not procgen_node:
@@ -935,6 +953,7 @@ func _publish_presentation_node_gauges() -> void:
 		_interior_prop_nodes.size()
 	)
 	_obs_gauge(&"procgen_fruit_sprite_count", _fruit_sprites.size())
+	_obs_gauge(&"procgen_macro_stamp_count", int(_macro_presentation_summary.get("stamp_count", 0)))
 
 
 func _process_foliage_spawn_queue() -> void:
@@ -1083,6 +1102,10 @@ func promote_evaluated_candidate_to_final() -> Dictionary:
 	marks["floor_value_clusters"] = Time.get_ticks_msec() - phase_started
 
 	phase_started = Time.get_ticks_msec()
+	_rebuild_macro_presentation(map_size)
+	marks["macro_presentation"] = Time.get_ticks_msec() - phase_started
+
+	phase_started = Time.get_ticks_msec()
 	if not enable_streaming_reveal and enable_final_foliage:
 		_generate_foliage(map_size)
 	marks["foliage_finalize"] = Time.get_ticks_msec() - phase_started
@@ -1147,6 +1170,7 @@ func _fill_tilemaps() -> void:
 		_clear_runtime_walkable_boundary()
 		_clear_world_progression_runtime()
 		_clear_biome_field()
+		_clear_macro_presentation()
 		_rebuild_runtime_wall_collision_debug()
 	_marks["setup_clear"] = Time.get_ticks_msec() - _last
 	_last = Time.get_ticks_msec()
@@ -1232,8 +1256,6 @@ func _fill_tilemaps() -> void:
 		_marks["terrain_state_capture"] = Time.get_ticks_msec() - terrain_phase_started
 	_marks["terrain_elevation"] = Time.get_ticks_msec() - _last
 	_last = Time.get_ticks_msec()
-	_build_biome_field()
-
 	if world_progression_enabled:
 		_build_world_progress_samples(map_size)
 	if faction_ambient_sites_enabled:
@@ -1283,6 +1305,11 @@ func _fill_tilemaps() -> void:
 		_marks["roads2_state_capture"] = Time.get_ticks_msec() - roads2_phase_started
 	_marks["roads_pass2"] = Time.get_ticks_msec() - _last
 	_last = Time.get_ticks_msec()
+	# Classify the accepted final floor state, including late faction/story,
+	# parking, and second-pass road corrections.
+	_build_biome_field()
+	_marks["biome_final_semantics"] = Time.get_ticks_msec() - _last
+	_last = Time.get_ticks_msec()
 
 	if not generation_evaluation_mode:
 		_apply_floor_value_clusters(
@@ -1292,6 +1319,13 @@ func _fill_tilemaps() -> void:
 		_marks["floor_value_clusters"] = Time.get_ticks_msec() - _last
 	else:
 		_marks["floor_value_clusters"] = 0
+	_last = Time.get_ticks_msec()
+
+	if generation_evaluation_mode:
+		_build_macro_presentation_plan(map_size)
+	else:
+		_rebuild_macro_presentation(map_size)
+	_marks["macro_presentation"] = Time.get_ticks_msec() - _last
 	_last = Time.get_ticks_msec()
 
 	if enable_streaming_reveal:
@@ -6401,6 +6435,19 @@ func is_indoor_tile(tile: Vector2i) -> bool:
 	return region_type == "interior_floor" or region_type == "interior_wall" or region_type == "interior_threshold"
 
 
+func get_environment_region_at_global(world_position: Vector2) -> Dictionary:
+	var tile := _global_to_tile(world_position)
+	if not _generated_floor_cells.has(tile) and not _generated_wall_cells.has(tile):
+		return {}
+	var indoor := is_indoor_tile(tile)
+	return {
+		"contains": true,
+		"indoor": indoor,
+		"environment_exposure": 0.12 if indoor else 1.0,
+		"weather_exposure": 0.0 if indoor else 1.0,
+	}
+
+
 func get_intensity_at_tile(tile: Vector2i) -> float:
 	if procgen_node == null:
 		return 0.0
@@ -7342,6 +7389,175 @@ func debug_get_biome_field() -> Dictionary:
 	return {"biome_id_by_cell": _biome_id_by_cell.duplicate(true), "summary": _biome_summary.duplicate(true)}
 
 
+func _ensure_macro_presentation_composer() -> void:
+	if _macro_presentation_composer == null:
+		_macro_presentation_composer = MACRO_PRESENTATION_COMPOSER_SCRIPT.new()
+
+
+func _macro_presentation_roots() -> Dictionary:
+	return {
+		"back": macro_presentation_back,
+		"ground": macro_presentation_ground,
+		"front": macro_presentation_front,
+	}
+
+
+func _clear_macro_presentation() -> void:
+	if _macro_presentation_composer != null:
+		_macro_presentation_composer.clear(_macro_presentation_roots())
+	_macro_presentation_plan.clear()
+	_macro_presentation_summary.clear()
+	_macro_presentation_dressing_clearance_cells.clear()
+	_publish_macro_presentation_gauges()
+
+
+func _build_macro_presentation_plan(map_size: Vector2i) -> void:
+	_macro_presentation_plan.clear()
+	_macro_presentation_summary.clear()
+	_macro_presentation_dressing_clearance_cells.clear()
+	if not macro_presentation_enabled:
+		_publish_macro_presentation_gauges()
+		return
+	_ensure_macro_presentation_composer()
+	var protected_cells := _macro_presentation_protected_cells()
+	var ingress_cells: Dictionary = {}
+	for rect: Rect2i in _world_ingress_dressing_clearance_rects:
+		for x in range(rect.position.x, rect.end.x):
+			for y in range(rect.position.y, rect.end.y):
+				ingress_cells[Vector2i(x, y)] = true
+	var region_kind_by_cell: Dictionary = {}
+	for cell_variant: Variant in _generated_floor_cells.keys():
+		if cell_variant is Vector2i:
+			region_kind_by_cell[cell_variant] = get_region_type_at_tile(cell_variant)
+	var rocky_profile := BIOME_PROFILES.get("rocky_upland") as BiomeProfile
+	var context := {
+		"seed": _get_generation_seed(),
+		"max_stamps": macro_presentation_max_stamps,
+		"map_bounds": Rect2i(Vector2i.ZERO, map_size),
+		"floor_cells": _generated_floor_cells,
+		"wall_cells": _generated_wall_cells,
+		"terrain_result": _last_terrain_result,
+		"biome_id_by_cell": _biome_id_by_cell,
+		"protected_cells": protected_cells,
+		"required_cells": protected_cells,
+		"reserved_cells": _macro_reserved_cells(),
+		"ingress_clearance_cells": ingress_cells,
+		"region_kind_by_cell": region_kind_by_cell,
+		"families": rocky_profile.macro_stamp_families if rocky_profile != null else PackedStringArray(),
+		"min_region_cells": rocky_profile.macro_stamp_min_region_cells if rocky_profile != null else 0,
+	}
+	_macro_presentation_plan = _macro_presentation_composer.build_plan(
+		context,
+		macro_presentation_catalog
+	)
+	_macro_presentation_plan["streaming_enabled"] = enable_streaming_reveal
+	for placement: Dictionary in _macro_presentation_plan.get("placements", []):
+		if not bool(placement.get("claims_dressing_clearance", false)):
+			continue
+		for cell: Vector2i in placement.get("solid_cells", []):
+			_macro_presentation_dressing_clearance_cells[cell] = true
+		for cell: Vector2i in placement.get("overlay_cells", []):
+			_macro_presentation_dressing_clearance_cells[cell] = true
+	var family_counts: Dictionary = {}
+	for placement: Dictionary in _macro_presentation_plan.get("placements", []):
+		var family := String(placement.get("family_id", ""))
+		family_counts[family] = int(family_counts.get(family, 0)) + 1
+	_macro_presentation_summary = {
+		"schema": "custodian.procgen_macro_presentation.v1",
+		"seed": _get_generation_seed(),
+		"stamp_count": (_macro_presentation_plan.get("placements", []) as Array).size(),
+		"region_count": (_macro_presentation_plan.get("regions", []) as Array).size(),
+		"fallback_region_count": (_macro_presentation_plan.get("fallback_region_ids", []) as Array).size(),
+		"family_counts": family_counts,
+		"fingerprint": String(_macro_presentation_plan.get("fingerprint", "")),
+	}
+	if macro_presentation_debug_logging:
+		for reason: Variant in (_macro_presentation_plan.get("rejection_counts", {}) as Dictionary):
+			_obs_log(&"procgen_macro_candidate_rejected", {
+				"reason": String(reason),
+				"count": int(_macro_presentation_plan["rejection_counts"][reason]),
+			})
+	_publish_macro_presentation_gauges()
+
+
+func _rebuild_macro_presentation(map_size: Vector2i) -> void:
+	_build_macro_presentation_plan(map_size)
+	if _macro_presentation_plan.is_empty():
+		return
+	var world_scale := Vector2.ONE
+	if macro_presentation_back != null:
+		world_scale = macro_presentation_back.global_transform.get_scale()
+	_macro_presentation_composer.apply_plan(
+		_macro_presentation_plan,
+		macro_presentation_catalog,
+		_macro_presentation_roots(),
+		floor_tilemap,
+		walls_tilemap,
+		world_scale
+	)
+	_refresh_macro_streaming_visibility()
+
+
+func _refresh_macro_streaming_visibility() -> void:
+	if _macro_presentation_composer == null or _macro_presentation_plan.is_empty():
+		return
+	_macro_presentation_composer.refresh_streaming_visibility(
+		_macro_presentation_plan,
+		_macro_presentation_roots(),
+		floor_tilemap,
+		walls_tilemap
+	)
+
+
+func is_inside_macro_presentation_dressing_clearance(tile: Vector2i) -> bool:
+	return _macro_presentation_dressing_clearance_cells.has(tile)
+
+
+func debug_get_macro_presentation_plan() -> Dictionary:
+	return _macro_presentation_plan.duplicate(true)
+
+
+func _macro_presentation_protected_cells() -> Dictionary:
+	var result: Dictionary = {}
+	for source: Dictionary in [
+		_main_road_tiles,
+		_parking_zone_tiles,
+		_route_playability_result.get("hard_clearance_cells", {}) as Dictionary,
+	]:
+		for cell: Variant in source.keys():
+			if cell is Vector2i:
+				result[cell] = true
+	for cell: Vector2i in _last_compound_corridor_cells:
+		result[cell] = true
+	for cell: Vector2i in _last_interior_thresholds:
+		result[cell] = true
+	for rect: Rect2i in _world_ingress_dressing_clearance_rects:
+		for x in range(rect.position.x, rect.end.x):
+			for y in range(rect.position.y, rect.end.y):
+				result[Vector2i(x, y)] = true
+	return result
+
+
+func _macro_reserved_cells() -> Dictionary:
+	var result: Dictionary = {}
+	for region: Dictionary in _worldgen_reserved_regions:
+		for cell: Variant in region.get("cells", []):
+			if cell is Vector2i:
+				result[cell] = true
+		var rect: Rect2i = region.get("rect", Rect2i())
+		for x in range(rect.position.x, rect.end.x):
+			for y in range(rect.position.y, rect.end.y):
+				result[Vector2i(x, y)] = true
+	return result
+
+
+func _publish_macro_presentation_gauges() -> void:
+	_obs_gauge(&"procgen_macro_region_count", int(_macro_presentation_summary.get("region_count", 0)))
+	_obs_gauge(&"procgen_macro_stamp_count", int(_macro_presentation_summary.get("stamp_count", 0)))
+	_obs_gauge(&"procgen_macro_fallback_region_count", int(_macro_presentation_summary.get("fallback_region_count", 0)))
+	_obs_gauge(&"procgen_macro_clearance_cells", _macro_presentation_dressing_clearance_cells.size())
+
+
 func set_environment_wind_multipliers(speed_multiplier: float, gust_multiplier: float) -> void:
 	_environment_wind_speed_multiplier = clampf(speed_multiplier, 0.0, 3.0)
 	_environment_wind_gust_multiplier = clampf(gust_multiplier, 0.0, 3.0)
@@ -7455,6 +7671,10 @@ func _build_foliage_spawner_context(map_size: Vector2i = Vector2i.ZERO) -> Dicti
 		"is_inside_world_ingress_dressing_clearance": Callable(
 			self,
 			"is_inside_world_ingress_dressing_clearance"
+		),
+		"is_inside_macro_presentation_dressing_clearance": Callable(
+			self,
+			"is_inside_macro_presentation_dressing_clearance"
 		),
 		"get_region_type_at_tile": Callable(self, "get_region_type_at_tile"),
 		"get_region_data_at_tile": Callable(self, "get_region_data_at_tile"),
@@ -7800,6 +8020,8 @@ func _is_protected_ruin_prop_blocker_cell(cell: Vector2i) -> bool:
 
 
 func _get_ruin_prop_protected_zone_type(cell: Vector2i) -> StringName:
+	if is_inside_macro_presentation_dressing_clearance(cell):
+		return &"macro_presentation"
 	if is_sundered_keep_frontage_protected(cell):
 		return &"sundered_keep_frontage"
 	if _is_inside_required_route_clearance(cell, 0):
@@ -9332,6 +9554,7 @@ func _prepare_streaming_reveal() -> void:
 	_refresh_shadows()
 	var spawn_tile := get_player_spawn()
 	_prime_streaming_chunks(spawn_tile)
+	_refresh_macro_streaming_visibility()
 
 
 func _prime_streaming_chunks(center_tile: Vector2i) -> void:
@@ -9349,6 +9572,7 @@ func _prime_streaming_chunks(center_tile: Vector2i) -> void:
 	_rebuild_horizontal_wall_overlays()
 	_refresh_shadows()
 	_refresh_navigation_after_wall_change()
+	_refresh_macro_streaming_visibility()
 	_streaming_visual_rebuild_pending = false
 	_streaming_visual_rebuild_accum = 0.0
 
@@ -9477,6 +9701,7 @@ func _unload_chunk(chunk_pos: Vector2i) -> void:
 			_remove_runtime_wall_body(tile, false, false)
 	_revealed_chunks.erase(chunk_pos)
 	_streaming_visual_rebuild_pending = true
+	_refresh_macro_streaming_visibility()
 
 
 func _reveal_tile(tile: Vector2i) -> void:
@@ -10492,6 +10717,7 @@ func get_level_data() -> Dictionary:
 		"terrain_builder": _get_terrain_builder_level_data(),
 		"biome_id_by_cell": _biome_id_by_cell.duplicate(true),
 		"biome_summary": _biome_summary.duplicate(true),
+		"macro_presentation": _macro_presentation_summary.duplicate(true),
 		"floor_cells": _dict_keys_as_vector2i_array(_generated_floor_cells),
 		"wall_cells": _dict_keys_as_vector2i_array(_generated_wall_cells),
 		"ocean_cells": _dict_keys_as_vector2i_array(_ocean_cells),

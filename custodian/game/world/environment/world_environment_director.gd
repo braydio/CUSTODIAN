@@ -45,7 +45,8 @@ var _weather_hold_remaining := 0.0
 var _weather_transition_elapsed := 0.0
 var _weather_transition_duration := 0.0
 var _weather_transitioning := false
-var _local_exposure := 1.0
+var _environment_exposure := 1.0
+var _weather_exposure := 1.0
 var _observatory_accum := 0.0
 var _last_wind_speed_multiplier := -1.0
 var _last_gust_multiplier := -1.0
@@ -60,7 +61,10 @@ func _physics_process(delta: float) -> void:
 func advance_environment(delta: float) -> void:
 	if clock_enabled: current_hour = fposmod(current_hour + delta * 24.0 / maxf(day_length_seconds,1.0),24.0); time_changed.emit(current_hour)
 	_update_weather(delta)
-	_local_exposure = move_toward(_local_exposure,_resolve_target_exposure(),delta/maxf(indoor_transition_seconds,0.01))
+	var region := _resolve_environment_region()
+	var blend_step := delta / maxf(indoor_transition_seconds, 0.01)
+	_environment_exposure = move_toward(_environment_exposure, float(region.get("environment_exposure", 1.0)), blend_step)
+	_weather_exposure = move_toward(_weather_exposure, float(region.get("weather_exposure", 1.0)), blend_step)
 	_apply_environment()
 
 func configure_from_contract(contract: Dictionary, map_instance: Node) -> void:
@@ -71,7 +75,9 @@ func configure_from_contract(contract: Dictionary, map_instance: Node) -> void:
 	var start_rng := RandomNumberGenerator.new(); start_rng.seed = _environment_seed ^ 0x571D4E91
 	current_hour = start_rng.randf_range(float(_world_profile.get("day_start_hour_min",7.5)),float(_world_profile.get("day_start_hour_max",10.0)))
 	_weather_rng.seed = _environment_seed ^ 0x24681357; _weather_current = _pick_weighted_weather(); _weather_target = _weather_current
-	_weather_transitioning = false; _weather_hold_remaining = _weather_rng.randf_range(90.0,240.0); _local_exposure = _resolve_target_exposure(); _apply_environment(); weather_changed.emit(_weather_current)
+	_weather_transitioning = false; _weather_hold_remaining = _weather_rng.randf_range(90.0,240.0)
+	var region := _resolve_environment_region()
+	_environment_exposure = float(region.get("environment_exposure", 1.0)); _weather_exposure = float(region.get("weather_exposure", 1.0)); _apply_environment(); weather_changed.emit(_weather_current)
 
 func _update_weather(delta: float) -> void:
 	if _world_profile.is_empty(): return
@@ -110,9 +116,25 @@ func _pick(candidates: Array[String], weights: Dictionary, fallback: String) -> 
 		if roll <= running: return key
 	return candidates.back()
 
-func _resolve_target_exposure() -> float:
-	if _active_map == null or operator == null or not is_instance_valid(operator): return 1.0
-	return _exposure_for_indoor(_active_map.is_indoor_tile(_active_map.global_to_minimap_tile(operator.global_position)))
+func _resolve_environment_region() -> Dictionary:
+	if not is_inside_tree() or operator == null or not is_instance_valid(operator):
+		return _exterior_region()
+	for provider in get_tree().get_nodes_in_group("environment_region_provider"):
+		if provider == null or not provider.has_method("get_environment_region_at_global"):
+			continue
+		var region := provider.call("get_environment_region_at_global", operator.global_position) as Dictionary
+		if bool(region.get("contains", false)):
+			return region
+	return _exterior_region()
+
+
+func _exterior_region() -> Dictionary:
+	return {
+		"contains": true,
+		"indoor": false,
+		"environment_exposure": 1.0,
+		"weather_exposure": 1.0,
+	}
 
 func _exposure_for_indoor(is_indoor: bool) -> float:
 	return 0.12 if is_indoor else 1.0
@@ -139,8 +161,8 @@ func _weather_modifier(definition: Dictionary) -> Dictionary:
 
 func _apply_environment() -> void:
 	if lighting_director == null: return
-	var day := _sample_day(current_hour); day.local_exposure = _local_exposure
-	var weather := _sample_weather(); weather.local_exposure = _local_exposure
+	var day := _sample_day(current_hour); day.local_exposure = _environment_exposure
+	var weather := _sample_weather(); weather.local_exposure = _weather_exposure
 	lighting_director.set_environment_modifiers(day,weather)
 	var wind_speed := float(weather.wind_speed_multiplier); var gust := float(weather.gust_multiplier)
 	if _active_map != null and (not is_equal_approx(wind_speed,_last_wind_speed_multiplier) or not is_equal_approx(gust,_last_gust_multiplier)):
@@ -150,7 +172,7 @@ func _apply_environment() -> void:
 
 func get_presentation_state() -> Dictionary:
 	var weather := _sample_weather(); var influence := lighting_director.get_active_weather_influence() if lighting_director != null else 1.0
-	return {"hour":current_hour,"weather_id":StringName(_weather_target if _weather_transitioning else _weather_current),"precipitation_mode":int(weather.get("precipitation_mode",0)),"precipitation_alpha":clampf(float(weather.get("precipitation_intensity",0.0))*_local_exposure*influence,0.0,1.0),"weather_tint":weather.get("weather_tint",Color.WHITE),"weather_grade_mix":float(weather.get("weather_grade_mix",0.0))*_local_exposure*influence,"wind_speed_multiplier":weather.get("wind_speed_multiplier",1.0),"gust_multiplier":weather.get("gust_multiplier",1.0),"local_exposure":_local_exposure}
+	return {"hour":current_hour,"weather_id":StringName(_weather_target if _weather_transitioning else _weather_current),"precipitation_mode":int(weather.get("precipitation_mode",0)),"precipitation_alpha":clampf(float(weather.get("precipitation_intensity",0.0))*_weather_exposure*influence,0.0,1.0),"weather_tint":weather.get("weather_tint",Color.WHITE),"weather_grade_mix":float(weather.get("weather_grade_mix",0.0))*_weather_exposure*influence,"wind_speed_multiplier":weather.get("wind_speed_multiplier",1.0),"gust_multiplier":weather.get("gust_multiplier",1.0),"local_exposure":_environment_exposure,"environment_exposure":_environment_exposure,"weather_exposure":_weather_exposure}
 
 func debug_set_hour(hour: float) -> void: current_hour = fposmod(hour,24.0); _apply_environment()
 func debug_set_time_paused(paused: bool) -> void: clock_enabled = not paused
@@ -163,4 +185,4 @@ func debug_get_state() -> Dictionary:
 func _publish_gauges() -> void:
 	var observatory := get_node_or_null("/root/DevObservatory")
 	if observatory == null or not observatory.has_method("set_gauge"): return
-	var state := get_presentation_state(); observatory.call("set_gauge",&"world_environment_hour",current_hour); observatory.call("set_gauge",&"world_environment_weather_id",String(state.weather_id)); observatory.call("set_gauge",&"world_environment_precipitation_alpha",state.precipitation_alpha); observatory.call("set_gauge",&"world_environment_local_exposure",_local_exposure)
+	var state := get_presentation_state(); observatory.call("set_gauge",&"world_environment_hour",current_hour); observatory.call("set_gauge",&"world_environment_weather_id",String(state.weather_id)); observatory.call("set_gauge",&"world_environment_precipitation_alpha",state.precipitation_alpha); observatory.call("set_gauge",&"world_environment_local_exposure",_environment_exposure)

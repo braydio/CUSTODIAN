@@ -427,6 +427,10 @@ func _place_command_keep(ctx: Object, result, rect: Rect2i) -> bool:
 		return false
 	ctx.call("spawn_prop_def", pos, def)
 	result.command_keep_cell = pos + Vector2i(int(size.x / 2), size.y)
+	result.structure_sites["operations_house"] = {
+		"cell": pos,
+		"footprint": size,
+	}
 	result.flags["has_command_keep"] = true
 	for y in range(pos.y, pos.y + size.y):
 		for x in range(pos.x, pos.x + size.x):
@@ -447,6 +451,10 @@ func _place_terminal(ctx: Object, result) -> bool:
 		return false
 	result.terminal_cell = terminal_pos
 	ctx.call("spawn_prop_def", terminal_pos, def)
+	result.structure_sites["terminal"] = {
+		"cell": terminal_pos,
+		"footprint": size,
+	}
 	result.flags["has_terminal"] = true
 	for y in range(terminal_pos.y, terminal_pos.y + size.y):
 		for x in range(terminal_pos.x, terminal_pos.x + size.x):
@@ -461,19 +469,24 @@ func _place_utility_structures(ctx: Object, result, rect: Rect2i) -> void:
 	var candidates := []
 
 	if west_pad.size != Vector2i.ZERO:
-		candidates.append({"cell": west_pad.position, "asset": _asset("utility_fan")})
+		candidates.append({"cell": west_pad.position, "asset": _asset("utility_fan"), "site_id": "west_draft_house"})
 
 	if east_pad.size != Vector2i.ZERO:
-		candidates.append({"cell": east_pad.position, "asset": _asset("machine_house")})
+		candidates.append({"cell": east_pad.position, "asset": _asset("machine_house"), "site_id": "machine_house"})
 
-	# Bell frame: anchored to inner yard north edge, centered on x-axis
+	# Alarm Gantry (legacy bell_frame asset): anchored to Service Court north edge.
 	if yard.size != Vector2i.ZERO:
 		var bell_x := int((yard.position.x + yard.end.x) / 2) - 2
-		candidates.append({"cell": Vector2i(bell_x, yard.position.y), "asset": _asset("bell_frame")})
+		candidates.append({"cell": Vector2i(bell_x, yard.position.y), "asset": _asset("bell_frame"), "site_id": "alarm_gantry"})
 
 	for entry in candidates:
 		var def: Dictionary = entry["asset"]
-		_place_prop_checked(ctx, result, entry["cell"], def.get("footprint", Vector2i.ONE), def, bool(def.get("blocks", true)))
+		var footprint: Vector2i = def.get("footprint", Vector2i.ONE)
+		if _place_prop_checked(ctx, result, entry["cell"], footprint, def, bool(def.get("blocks", true))):
+			result.structure_sites[String(entry["site_id"])] = {
+				"cell": entry["cell"],
+				"footprint": footprint,
+			}
 
 
 func _place_defenses(ctx: Object, result, rect: Rect2i) -> void:

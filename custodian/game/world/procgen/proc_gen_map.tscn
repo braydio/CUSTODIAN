@@ -7,10 +7,11 @@
 [ext_resource type="Script" uid="uid://dqe7eo11p80xo" path="res://game/world/procgen/presentation/procgen_depth_backdrop.gd" id="depth_backdrop_script"]
 [ext_resource type="Resource" path="res://game/world/procgen/presentation/underlays/endless_forest_underlay.tres" id="forest_underlay_profile"]
 [ext_resource type="Script" uid="uid://d07cq17l8tuey" path="res://game/world/procgen/presentation/procgen_void_cliff_face.gd" id="void_cliff_face_script"]
+[ext_resource type="Resource" path="res://content/procgen/presentation/terrain_stamp_catalog_v1.tres" id="macro_stamp_catalog"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_1"]
 
-[node name="ProcGenMap" type="Node2D" unique_id=531661722 node_paths=PackedStringArray("procgen_node", "floor_tilemap", "walls_tilemap", "nav_region", "depth_backdrop", "void_cliff_face", "nonwalkable_surface_base_tilemap", "nonwalkable_surface_overlay_tilemap")]
+[node name="ProcGenMap" type="Node2D" unique_id=531661722 node_paths=PackedStringArray("procgen_node", "floor_tilemap", "walls_tilemap", "nav_region", "depth_backdrop", "void_cliff_face", "nonwalkable_surface_base_tilemap", "nonwalkable_surface_overlay_tilemap", "macro_presentation_back", "macro_presentation_ground", "macro_presentation_front")]
 scale = Vector2(2, 2)
 script = ExtResource("1")
 procgen_node = NodePath("ProcGen2")
@@ -21,6 +22,10 @@ depth_backdrop = NodePath("DepthBackdrop")
 void_cliff_face = NodePath("VoidCliffFace")
 nonwalkable_surface_base_tilemap = NodePath("NavigationRegion2D/NonWalkableSurfaceBase")
 nonwalkable_surface_overlay_tilemap = NodePath("NavigationRegion2D/NonWalkableSurfaceOverlay")
+macro_presentation_back = NodePath("NavigationRegion2D/MacroPresentationBack")
+macro_presentation_ground = NodePath("NavigationRegion2D/MacroPresentationGround")
+macro_presentation_front = NodePath("NavigationRegion2D/MacroPresentationFront")
+macro_presentation_catalog = ExtResource("macro_stamp_catalog")
 floor_source_id = 10
 walls_source_id = 12
 reference_vertical_wall_coords = Array[Vector2i]([Vector2i(15, 0)])
@@ -105,6 +110,10 @@ script = ExtResource("void_cliff_face_script")
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="." unique_id=2086078231]
 navigation_polygon = SubResource("NavigationPolygon_1")
 
+[node name="MacroPresentationBack" type="Node2D" parent="NavigationRegion2D"]
+z_index = -5
+z_as_relative = false
+
 [node name="NonWalkableSurfaceBase" type="TileMapLayer" parent="NavigationRegion2D" unique_id=1661177212]
 z_index = -90
 z_as_relative = false
@@ -118,6 +127,10 @@ tile_set = ExtResource("2")
 [node name="Floor" type="TileMapLayer" parent="NavigationRegion2D" unique_id=1495522250]
 tile_set = ExtResource("2")
 
+[node name="MacroPresentationGround" type="Node2D" parent="NavigationRegion2D"]
+z_index = 0
+z_as_relative = false
+
 [node name="FoliageLayer" type="Node2D" parent="NavigationRegion2D" unique_id=42841710]
 z_index = 1
 
@@ -130,6 +143,10 @@ script = ExtResource("4_shadow_system")
 [node name="Walls" type="TileMapLayer" parent="NavigationRegion2D" unique_id=495031987]
 z_index = 2
 tile_set = ExtResource("2")
+
+[node name="MacroPresentationFront" type="Node2D" parent="NavigationRegion2D"]
+z_index = 4
+z_as_relative = false
 
 [node name="ProcGen2" type="Node" parent="." unique_id=1827944280]
 script = ExtResource("3_7iafn")

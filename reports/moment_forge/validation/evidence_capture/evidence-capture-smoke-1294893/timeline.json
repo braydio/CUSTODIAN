@@ -1,0 +1,19 @@
+[
+	{
+		"data": {
+			"authored_action": {
+				"action": "finish",
+				"tick": 18.0
+			},
+			"moment_tick": 18,
+			"result": {
+				"action": "finish",
+				"finish": true,
+				"ok": true,
+				"tick": 18
+			}
+		},
+		"kind": "moment_forge_action",
+		"tick": 18
+	}
+]

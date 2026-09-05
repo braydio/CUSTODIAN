@@ -1,6 +1,12 @@
 # Gothic Compound Procgen
 
-Status: implemented-first-slice
+Status: implemented-first-slice; canonical Carrow Yard interior slice in progress
+
+## Canonical identity
+
+The connected-map implementation is canonically **Carrow Yard** (`carrow_yard`), formally the Carrow District Utility Yard. Its technical `gothic_compound` namespace remains temporarily unchanged pending a separate mechanical migration. Player-facing language uses Carrow Yard, Operations House, East Machine House, West Draft House, Alarm Gantry, Yard Control Terminal, and Service Court.
+
+The East Machine House is the first accessible interior. It replaces the orphaned authored-vault prototype with a 12×8 off-map room, retains the three existing resource caches under diegetic names, and acts as the first connected-map proof of the generic environment-region provider contract.
 
 ## Goal
 

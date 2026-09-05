@@ -23,6 +23,7 @@ const AttackFastState = preload("res://game/actors/operator/animations/states/at
 const AttackHeavyState = preload("res://game/actors/operator/animations/states/attack_heavy_state.gd")
 const BlockState = preload("res://game/actors/operator/animations/states/block_state.gd")
 const EquipWeaponState = preload("res://game/actors/operator/animations/states/equip_weapon_state.gd")
+const SheatheWeaponState = preload("res://game/actors/operator/animations/states/sheathe_weapon_state.gd")
 const HitRecoilState = preload("res://game/actors/operator/animations/states/hit_recoil_state.gd")
 const IdleState = preload("res://game/actors/operator/animations/states/idle_state.gd")
 const WalkState = preload("res://game/actors/operator/animations/states/walk_state.gd")
@@ -52,6 +53,15 @@ const MeleePostureResolverScript = preload(
 const OPERATOR_ANIMATION_CATALOG_FRAMES := preload(
 	"res://game/actors/operator/operator_animation_catalog_frames.tres"
 )
+
+const MELEE_POSTURE_CATALOG_ACTIONS: Array[StringName] = [
+	&"draw_01",
+	&"sheathe_01",
+	&"idle_ready_01",
+	&"idle_relaxed_01",
+]
+
+enum MeleeOverlayClockOwner { NONE, LEGACY_BODY, MODULAR_LOWER_BODY }
 const INITIATIVE_CLAIMED_VFX_SCENE := preload(
 	"res://game/vfx/initiative_claimed_vfx.tscn"
 )
@@ -715,6 +725,10 @@ var _integrity_reclaim_last_restore := 0.0
 var _engagement_tracker: EngagementTracker = null
 var _melee_posture_resolver: MeleePostureResolver = null
 var _melee_draw_presentation_active := false
+var _melee_sheathe_presentation_active := false
+var _melee_overlay_clock_owner := MeleeOverlayClockOwner.NONE
+var _weapon_selection_commit_pending := false
+var _sheathe_source_weapon: OperatorWeaponDefinition = null
 var _last_damage_kind: StringName = &""
 var _last_enemy_attack_kind: StringName = &""
 var _last_incoming_attack_context: Dictionary = {}
@@ -1703,7 +1717,7 @@ func _update_animation():
 		return
 
 	# Don't override attack animation while playing
-	if is_attacking or is_block_anim or _melee_recovery_active or _is_equip_weapon_state_active():
+	if is_attacking or is_block_anim or _melee_recovery_active or _is_equip_weapon_state_active() or _is_sheathe_weapon_state_active():
 		var active_animation_name := String(animated_sprite.animation)
 		animated_sprite.flip_h = facing_left and not active_animation_name.ends_with("_left")
 		if is_attacking and _sync_modular_action_domains():
@@ -1713,6 +1727,8 @@ func _update_animation():
 		if is_block_anim and _is_modular_block_active():
 			return
 		if _is_equip_weapon_state_active() and _melee_draw_presentation_active:
+			return
+		if _is_sheathe_weapon_state_active() and _melee_sheathe_presentation_active:
 			return
 		_hide_modular_locomotion_layers()
 		return
@@ -2034,6 +2050,7 @@ func _sync_modular_melee_locomotion(
 	_hide_modular_head_layer()
 	_hide_modular_cape_layer()
 	animated_sprite.visible = false
+	_melee_overlay_clock_owner = MeleeOverlayClockOwner.MODULAR_LOWER_BODY
 	return true
 
 
@@ -2113,6 +2130,7 @@ func _update_melee_presentation_posture(delta: float) -> void:
 		or _dodge_active
 		or _dodge_recovery_active
 		or _is_equip_weapon_state_active()
+		or _is_sheathe_weapon_state_active()
 	)
 	_melee_posture_resolver.resolve(delta, _is_melee_loadout_active() and not using_unarmed, engagement_active, presentation_locked)
 
@@ -2143,6 +2161,7 @@ func _sync_modular_melee_posture(direction: Vector2) -> bool:
 	_hide_modular_head_layer()
 	_hide_modular_cape_layer()
 	animated_sprite.visible = false
+	_melee_overlay_clock_owner = MeleeOverlayClockOwner.MODULAR_LOWER_BODY
 	return true
 
 
@@ -2191,7 +2210,7 @@ func _install_melee_posture_catalog_frames() -> void:
 		return
 	modular_lower_body_sprite.sprite_frames = modular_lower_body_sprite.sprite_frames.duplicate(true)
 	modular_upper_body_sprite.sprite_frames = modular_upper_body_sprite.sprite_frames.duplicate(true)
-	for action in ["draw_01", "idle_ready_01", "idle_relaxed_01"]:
+	for action in MELEE_POSTURE_CATALOG_ACTIONS:
 		for suffix in ["e", "w"]:
 			for layer in ["lower_body", "upper_body"]:
 				var animation := StringName("melee_1h/posture/%s/%s/%s" % [action, suffix, layer])
@@ -2219,7 +2238,7 @@ func _install_melee_posture_weapon_frames(
 	if weapon_profile.is_empty():
 		return
 	var catalog_animations: Array[StringName] = []
-	for action in ["draw_01", "idle_ready_01", "idle_relaxed_01"]:
+	for action in MELEE_POSTURE_CATALOG_ACTIONS:
 		for suffix in ["e", "w"]:
 			var animation := StringName(
 				"%s/posture/%s/%s/weapon" % [weapon_profile, action, suffix]
@@ -2316,6 +2335,7 @@ func start_equip_weapon_presentation() -> void:
 		if primary_weapon_sprite != null:
 			primary_weapon_sprite.visible = false
 	_melee_draw_presentation_active = true
+	_melee_overlay_clock_owner = MeleeOverlayClockOwner.MODULAR_LOWER_BODY
 	if _melee_posture_resolver != null:
 		_melee_posture_resolver.begin_draw_grace()
 
@@ -2333,6 +2353,98 @@ func is_equip_weapon_presentation_complete() -> bool:
 		return false
 	_melee_draw_presentation_active = false
 	return true
+
+
+func start_sheathe_weapon_presentation() -> bool:
+	_melee_sheathe_presentation_active = false
+	if not _is_melee_loadout_active() \
+	or using_unarmed \
+	or modular_lower_body_sprite == null \
+	or modular_upper_body_sprite == null:
+		return false
+	var weapon_definition := _sheathe_source_weapon
+	if weapon_definition == null:
+		weapon_definition = _get_equipped_primary_weapon_definition() as OperatorWeaponDefinition
+	if weapon_definition == null:
+		return false
+	var direction := visual_idle_direction
+	if direction.length_squared() <= 0.0001:
+		direction = aim_direction
+	if direction.length_squared() <= 0.0001:
+		direction = Vector2.RIGHT
+	var suffix := "w" if direction.x < -0.05 else "e"
+	var lower_animation := StringName(
+		"melee_1h/posture/sheathe_01/%s/lower_body" % suffix
+	)
+	var upper_animation := StringName(
+		"melee_1h/posture/sheathe_01/%s/upper_body" % suffix
+	)
+	if not _has_playable_sprite_animation(
+		modular_lower_body_sprite.sprite_frames,
+		lower_animation
+	) \
+	or not _has_playable_sprite_animation(
+		modular_upper_body_sprite.sprite_frames,
+		upper_animation
+	):
+		return false
+	var weapon_animation := &""
+	var uses_authored_weapon_overlay := false
+	if weapon_definition.weapon_presentation_mode != "socketed_static":
+		weapon_animation = StringName(
+			"%s/posture/sheathe_01/%s/weapon"
+			% [String(weapon_definition.get_animation_profile()), suffix]
+		)
+		uses_authored_weapon_overlay = _has_playable_sprite_animation(
+			melee_weapon_overlay_sprite.sprite_frames if melee_weapon_overlay_sprite != null else null,
+			weapon_animation
+		)
+		if weapon_definition.weapon_presentation_mode == "authored_overlay" \
+		and not uses_authored_weapon_overlay:
+			return false
+	_hide_modular_locomotion_layers()
+	animated_sprite.visible = false
+	modular_lower_body_sprite.visible = true
+	modular_upper_body_sprite.visible = true
+	modular_lower_body_sprite.flip_h = false
+	modular_upper_body_sprite.flip_h = false
+	modular_lower_body_sprite.play(lower_animation)
+	modular_upper_body_sprite.play(upper_animation)
+	if uses_authored_weapon_overlay:
+		melee_weapon_overlay_sprite.visible = true
+		melee_weapon_overlay_sprite.flip_h = false
+		melee_weapon_overlay_sprite.play(weapon_animation)
+		if primary_weapon_sprite != null:
+			primary_weapon_sprite.visible = false
+	_melee_sheathe_presentation_active = true
+	_melee_overlay_clock_owner = MeleeOverlayClockOwner.MODULAR_LOWER_BODY
+	return true
+
+
+func is_sheathe_weapon_presentation_complete() -> bool:
+	if not _melee_sheathe_presentation_active:
+		return true
+	if modular_lower_body_sprite != null and modular_lower_body_sprite.is_playing():
+		return false
+	if modular_upper_body_sprite != null and modular_upper_body_sprite.is_playing():
+		return false
+	if melee_weapon_overlay_sprite != null \
+	and String(melee_weapon_overlay_sprite.animation).contains("/posture/sheathe_01/") \
+	and melee_weapon_overlay_sprite.is_playing():
+		return false
+	_melee_sheathe_presentation_active = false
+	_melee_overlay_clock_owner = MeleeOverlayClockOwner.NONE
+	return true
+
+
+func cancel_sheathe_weapon_presentation() -> void:
+	if not _melee_sheathe_presentation_active:
+		return
+	_melee_sheathe_presentation_active = false
+	if melee_weapon_overlay_sprite != null:
+		melee_weapon_overlay_sprite.visible = false
+		melee_weapon_overlay_sprite.stop()
+	_melee_overlay_clock_owner = MeleeOverlayClockOwner.NONE
 
 
 func _sync_modular_action_domains() -> bool:
@@ -7011,11 +7123,14 @@ func _on_attack_frame_changed() -> void:
 	if _melee_active:
 		_sync_melee_hitbox_window_from_animation()
 	if _legacy_melee_body_slaved_presentation_active():
+		_melee_overlay_clock_owner = MeleeOverlayClockOwner.LEGACY_BODY
 		_sync_melee_overlay_frames()
 
 
 func _legacy_melee_body_slaved_presentation_active() -> bool:
 	if animated_sprite == null or not animated_sprite.visible:
+		return false
+	if _melee_sheathe_presentation_active or _melee_draw_presentation_active:
 		return false
 	return (
 		_melee_active
@@ -7047,6 +7162,7 @@ func _play_melee_overlay_from_key(attack_key: String) -> void:
 		melee_fx_overlay_sprite.visible = false
 		melee_fx_overlay_sprite.stop()
 		melee_fx_overlay_sprite.frame = 0
+	_melee_overlay_clock_owner = MeleeOverlayClockOwner.LEGACY_BODY
 	if not weapon_anim.is_empty() and melee_weapon_overlay_sprite:
 		weapon_anim = AnimationResolver.resolve(String(weapon_anim), _melee_forward, melee_weapon_overlay_sprite)
 	if not fx_anim.is_empty() and melee_fx_overlay_sprite:
@@ -7072,6 +7188,8 @@ func _play_melee_overlay_from_key(attack_key: String) -> void:
 
 
 func _sync_melee_overlay_frames() -> void:
+	if _melee_overlay_clock_owner != MeleeOverlayClockOwner.LEGACY_BODY:
+		return
 	if animated_sprite == null:
 		return
 	if melee_weapon_overlay_sprite and melee_weapon_overlay_sprite.visible:
@@ -7126,6 +7244,7 @@ func _reset_melee_overlay_visuals() -> void:
 		melee_fx_overlay_sprite.speed_scale = 1.0
 	if not _melee_active and not _melee_fast_windup and not _melee_recovery_active:
 		_clear_modular_fast_attack_layers()
+		_melee_overlay_clock_owner = MeleeOverlayClockOwner.NONE
 
 
 func _play_named_melee_weapon_overlay(animation_name: StringName) -> bool:
@@ -8778,6 +8897,11 @@ func try_apply_pending_weapon_selection() -> void:
 	if not can_apply_weapon_selection_now():
 		return
 	_rebuild_armed_weapon_list()
+	if _should_sheathe_before_selection(pending_weapon_selection):
+		_sheathe_source_weapon = _get_equipped_primary_weapon_definition() as OperatorWeaponDefinition
+		_weapon_selection_commit_pending = true
+		_enter_sheathe_weapon_state_if_available()
+		return
 	var selection_type := str(pending_weapon_selection.get("type", ""))
 	match selection_type:
 		"unarmed":
@@ -8797,14 +8921,88 @@ func can_apply_weapon_selection_now() -> bool:
 	return _animation_state_machine.current_state in ["idle", "walk", "sprint"]
 
 
+func _resolve_weapon_definition_for_selection(selection: Dictionary) -> OperatorWeaponDefinition:
+	var selection_type := str(selection.get("type", ""))
+	if selection_type == "unarmed":
+		return unarmed_definition
+	if selection_type == "armed":
+		if armed_weapons.is_empty():
+			return unarmed_definition
+		var index := clampi(int(selection.get("index", armed_weapon_index)), 0, armed_weapons.size() - 1)
+		return armed_weapons[index]
+	return null
+
+
+func _should_sheathe_before_selection(selection: Dictionary) -> bool:
+	if not _is_melee_loadout_active() or using_unarmed:
+		return false
+	var current_weapon := _get_equipped_primary_weapon_definition() as OperatorWeaponDefinition
+	if current_weapon == null:
+		return false
+	if _melee_posture_resolver != null \
+	and _melee_posture_resolver.posture == MeleePostureResolver.Posture.SHEATHED:
+		return false
+	if _resolve_weapon_definition_for_selection(selection) == current_weapon:
+		return false
+	if modular_lower_body_sprite == null or modular_upper_body_sprite == null:
+		return false
+	for suffix in ["e", "w"]:
+		var lower_animation := StringName("melee_1h/posture/sheathe_01/%s/lower_body" % suffix)
+		var upper_animation := StringName("melee_1h/posture/sheathe_01/%s/upper_body" % suffix)
+		if not _has_playable_sprite_animation(modular_lower_body_sprite.sprite_frames, lower_animation) \
+		or not _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, upper_animation):
+			return false
+	if current_weapon.weapon_presentation_mode == "authored_overlay":
+		var weapon_profile := String(current_weapon.get_animation_profile())
+		for suffix in ["e", "w"]:
+			var weapon_animation := StringName(
+				"%s/posture/sheathe_01/%s/weapon" % [weapon_profile, suffix]
+			)
+			if not _has_playable_sprite_animation(
+				melee_weapon_overlay_sprite.sprite_frames if melee_weapon_overlay_sprite != null else null,
+				weapon_animation
+			):
+				return false
+	return true
+
+
+func commit_pending_weapon_selection_after_sheathe() -> bool:
+	_weapon_selection_commit_pending = false
+	_sheathe_source_weapon = null
+	if not pending_weapon_selection.is_empty():
+		_rebuild_armed_weapon_list()
+		var selection_type := str(pending_weapon_selection.get("type", ""))
+		match selection_type:
+			"unarmed":
+				_apply_unarmed_selection()
+			"armed":
+				_apply_armed_selection(int(pending_weapon_selection.get("index", armed_weapon_index)))
+		pending_weapon_selection.clear()
+		_refresh_primary_weapon_state()
+	var target_is_melee := _is_melee_loadout_active() and not using_unarmed
+	if _melee_posture_resolver != null and not target_is_melee:
+		_melee_posture_resolver.mark_sheathed()
+	return target_is_melee
+
+
 func _enter_equip_weapon_state_if_available() -> void:
 	if _animation_state_machine == null:
 		return
 	_animation_state_machine.request("equip_weapon", 5)
 
 
+func _enter_sheathe_weapon_state_if_available() -> void:
+	if _animation_state_machine == null:
+		return
+	_animation_state_machine.request("sheathe_weapon", 5)
+
+
 func _is_equip_weapon_state_active() -> bool:
 	return _animation_state_machine != null and _animation_state_machine.current_state == "equip_weapon"
+
+
+func _is_sheathe_weapon_state_active() -> bool:
+	return _animation_state_machine != null and _animation_state_machine.current_state == "sheathe_weapon"
 
 
 func _apply_unarmed_selection() -> void:
@@ -10888,6 +11086,7 @@ func _setup_animation_state_machine() -> void:
 	_animation_state_machine.register_state(SprintState.new())
 	_animation_state_machine.register_state(BlockState.new())
 	_animation_state_machine.register_state(EquipWeaponState.new())
+	_animation_state_machine.register_state(SheatheWeaponState.new())
 	var hit_recoil_state := HitRecoilState.new()
 	hit_recoil_state.recoil_duration = operator_light_reaction_stun_duration
 	_animation_state_machine.register_state(hit_recoil_state)

@@ -20,7 +20,7 @@ func _run() -> void:
 
 	_validate_grunt_loot(root)
 	_validate_marine_idle(root)
-	_validate_authored_vault_room(root)
+	_validate_carrow_machine_house(root)
 
 	if _failed:
 		push_error("authored_vault_grunt_loot_marine_smoke failed")
@@ -176,11 +176,11 @@ func _validate_marine_dash_hit_gate(root: Node, marine: Node) -> void:
 	target.queue_free()
 
 
-func _validate_authored_vault_room(root: Node) -> void:
+func _validate_carrow_machine_house(root: Node) -> void:
 	var map := GOTHIC_COMPOUND_MAP_SCRIPT.new()
 	root.add_child(map)
-	var room := map.get_node_or_null("AuthoredVaultRoom")
-	_assert_true(room != null, "gothic compound should place AuthoredVaultRoom")
+	var room := map.get_node_or_null("EastMachineHouseInterior")
+	_assert_true(room != null, "Carrow Yard should place EastMachineHouseInterior")
 	if room == null:
 		map.queue_free()
 		return
@@ -188,8 +188,8 @@ func _validate_authored_vault_room(root: Node) -> void:
 	for node in get_nodes_in_group("vault_storage"):
 		if room.is_ancestor_of(node):
 			storage_count += 1
-	_assert_true(storage_count >= 3, "authored vault room should contain at least three storage nodes")
-	_assert_true(room.get_node_or_null("VaultEnemyExit") != null, "authored vault room should expose VaultEnemyExit marker")
+	_assert_true(storage_count >= 3, "East Machine House should contain at least three storage nodes")
+	_assert_true(room.get_node_or_null("LeaveEastMachineHouse") != null, "East Machine House should expose its exit doorway")
 	map.queue_free()
 
 

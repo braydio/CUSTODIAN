@@ -1,6 +1,6 @@
 # Procgen Macro Presentation System
 
-Status: draft planning baseline
+Status: implementation
 
 Last updated: 2026-09-04
 
@@ -11,10 +11,8 @@ deterministic, region-composed top-down 2.5D world. Large authored terrain
 stamps, environmental clusters, hardstand shapes, and landmarks will present
 the existing semantic world without becoming gameplay authority.
 
-This document records the approved direction and migration boundaries. A
-hardened implementation specification is pending. Reconcile that specification
-into this file and the linked task packet before runtime implementation begins;
-do not create a second competing active procgen presentation specification.
+This document is active implementation authority. Its hardened V1 contract was
+reconciled against the live procgen scene and pipeline on 2026-09-04.
 
 ## Authority Boundary
 
@@ -57,6 +55,10 @@ do not independently choose conspicuous detail.
   monolith.
 - The system does not generate one giant map texture.
 - Quiet ground and negative space are deliberate composition outcomes.
+- Streaming reveal gates each stamp using all of its actual live TileMap probe
+  cells and hides it again when those cells unload.
+- Missing or unfittable presentation art never rejects a structurally valid map.
+- V1 changes neither day/night nor weather behavior.
 
 ## Planned Runtime Ownership
 
@@ -64,7 +66,7 @@ The proposed implementation surface is:
 
 ```text
 custodian/game/world/procgen/presentation/
-  procgen_presentation_composer.gd
+  procgen_macro_presentation_composer.gd
   terrain_region_extractor.gd
   terrain_stamp_profile.gd
   terrain_stamp_catalog.gd
@@ -79,9 +81,10 @@ TerrainPresentationGround
 TerrainPresentationFront
 ```
 
-The hardened specification must resolve how those roots integrate with current
-TileMap, depth-sort, streaming-reveal, and authored-claim ownership before code
-is written.
+The roots are live children of `NavigationRegion2D` on the scaled `ProcGenMap`
+root. BACK/GROUND/FRONT use absolute z indices `-5/0/4`. V1 places BACK and
+GROUND only. Spawned sprites compensate for the map's `Vector2(2, 2)` parent
+scale, retain authored pivots, and use nearest filtering.
 
 ## Planned Data Contracts
 
@@ -96,10 +99,14 @@ is written.
 - foliage and prop clearance behavior;
 - presentation depth band.
 
-`BiomeProfile` is expected to grow from foliage tuning into an art-direction
-input with surface, archetype, cliff, rock-cluster, ground-detail, and foliage
-families plus their densities. It must not absorb biome classification or
-gameplay authority.
+`BiomeProfile` adds only `macro_stamp_families` and
+`macro_stamp_min_region_cells`. It does not absorb biome classification,
+surface gameplay authority, or weather.
+
+The biome field is built after faction/story geometry, parking, final road
+repair, and the final generated-state capture. It continues to run in candidate
+evaluation, while macro Sprite2D realization runs only for direct final output
+or accepted-candidate promotion.
 
 ## Generation Pipeline Target
 
@@ -132,15 +139,19 @@ The initial planned art vocabulary currently enumerates 19 reusable assets:
 - six boulder, pine-rock, and scrub-rock clusters;
 - four rock-ground and scree overlays.
 
-Exact asset identities, dimensions, masks, and intake contracts remain pending
-the hardened specification and asset review. The source brief calls this set
-"approximately 17," but its category counts total 19; the hardened spec must
-resolve whether two entries should be removed or the target should be 19. This
-list is a production target, not permission to generate or ingest assets yet.
+The hardened contract resolves this as 19 runtime assets. Runtime art belongs
+under `content/tiles/procgen_macro/runtime/rocky_upland/`; oversized masters
+belong under the sibling `source/rocky_upland/` domain. The catalog remains
+empty-safe until approved art and explicit authored semantic masks exist.
+
+Masks are authored resource data and are never inferred from PNG alpha.
+`solid_mask_cells` must already map to wall/blocked/ledge/drop authority;
+`walkable_overlay_cells` must already map to walkable floor. Empty reveal probes
+resolve to the union of both masks.
 
 ## Migration Phases
 
-### Phase 0 — Contract hardening
+### Phase 0 — Contract hardening (complete)
 
 - Reconcile the forthcoming hardened implementation spec.
 - Audit current terrain, biome, clearance, streaming, depth, and authored-claim
@@ -193,24 +204,18 @@ foliage, streaming, and procgen validation must remain green.
 Visual acceptance requires a fixed-seed gameplay capture demonstrating the V1
 composition target. Baselines may not be approved automatically.
 
-## Decisions Pending Hardened Specification
+## Deferred Beyond V1 Architecture
 
-- exact region and cliff-boundary input schemas;
-- footprint mask representation and rotation policy;
-- catalog resource format and content ownership;
-- placement scoring, overlap policy, and deterministic tie-breaking;
-- streaming reveal lifecycle and node reuse/removal behavior;
-- depth-band and occlusion rules around actors and structures;
-- clearance claim type and interaction with later scatter passes;
-- debug snapshot/events and rejection taxonomy;
-- asset performance budgets, batching, and visibility bounds;
-- initial rocky-upland inventory count: stated 17 versus enumerated 19;
-- save/load expectations, if any presentation choices persist independently.
+- production rocky-upland art and its explicit masks/pivots;
+- FRONT-band actor occlusion behavior;
+- non-rocky biome catalogs;
+- performance tuning informed by production texture/node counts;
+- persistence beyond deterministic rebuild from accepted semantics.
 
 ## Next Agent Slice
 
-Goal: reconcile the forthcoming hardened implementation specification into
-this planning baseline and make the task packet implementation-ready.
+Goal: finish validation of the hardened runtime foundation, then populate the
+empty-safe catalog only when approved rocky-upland production art exists.
 
 Read first:
 
@@ -223,8 +228,7 @@ Read first:
 
 Acceptance for that slice:
 
-- every pending decision is resolved or explicitly deferred;
-- proposed paths and API names match the live tree;
-- migration phases have falsifiable completion gates;
-- validation recipes and fixed seeds are named;
-- the task packet moves from `draft` to `ready` only after drift review.
+- focused and existing procgen validation remains green;
+- candidate promotion and direct final generation agree on plan fingerprint;
+- the first approved asset profiles have explicit semantic masks and pivots;
+- a fixed-seed visual capture is reviewed without automatic baseline approval.

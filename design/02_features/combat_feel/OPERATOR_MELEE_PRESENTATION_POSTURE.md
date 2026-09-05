@@ -1,6 +1,6 @@
 # Operator Melee Presentation Posture
 
-- **Status:** active — READY/RELAXED/draw runtime composition implemented for body and weapon layers
+- **Status:** active — READY/RELAXED/draw/sheathe runtime composition implemented for body and weapon layers; weapon switching is transactional
 - **Owner:** gameplay/combat + gameplay/animation
 - **Runtime target:** Godot 4 (`custodian/`)
 - **Active spec path:** `design/02_features/combat_feel/OPERATOR_MELEE_PRESENTATION_POSTURE.md`
@@ -259,19 +259,41 @@ Danger arrives quickly; calm returns gradually.
 
 ### sheathing — `melee_sheathe`
 
-Not required for the first slice, but eventually the reverse of the draw:
+**Status: LIVE.** A dedicated `sheathe_weapon` animation-state-machine state
+(mirroring `equip_weapon`) plays the authored `melee_1h/posture/sheathe_01`
+body layers and the current weapon's `<profile>/posture/sheathe_01/weapon`
+overlay when a canonical melee weapon is switched away from:
 
 ```text
-melee → unarmed
-SHEATHE
+READY / RELAXED
+  -> queued weapon change (queue_weapon_selection)
+  -> SHEATHE (sheathe_weapon state plays melee_1h/posture/sheathe_01)
+  -> commit_pending_weapon_selection_after_sheathe() applies the new loadout
+  -> optional DRAW of the new weapon (equip_weapon state) if it is also melee
+  -> stable presentation (READY/RELAXED, or unarmed/ranged/sidearm idle)
 ```
 
-The repo already treats `equip_weapon` as an unsafe selection transition
-alongside attacks/block/stagger/death and queues weapon changes until safe
-movement states (`idle`, `walk`, `sprint`) via
-`queue_weapon_selection()` / `can_apply_weapon_selection_now()`. That machinery
-is the natural home for sheathing; the draw frames can initially be reversed or
-adapted. Posture returns to `sheathed` on completion.
+Weapon switching is transactional: `try_apply_pending_weapon_selection()` only
+applies the new selection immediately when no sheathe is required (target ==
+current weapon, current loadout isn't armed melee, or the canonical sheathe
+art is missing). Otherwise it captures the outgoing weapon
+(`_sheathe_source_weapon`), enters `sheathe_weapon`, and defers the loadout
+mutation (`using_unarmed`, `armed_weapon_index`, the active weapon
+definition) until `commit_pending_weapon_selection_after_sheathe()` runs on
+the sheathe's final frame — the old weapon remains presentation authority for
+the entire sheathe, never snapping away one frame early. A melee-to-melee
+switch runs old-sheathe → commit → new-draw; switching to unarmed, sidearm,
+or ranged skips the draw step and returns straight to that loadout's own
+presentation. `MeleePostureResolver.mark_sheathed()` is called once the
+commit leaves the loadout non-melee, so posture (a presentation concern)
+stays in sync with the transaction without becoming a new gameplay state.
+
+A single `_melee_overlay_clock_owner` (`NONE` / `LEGACY_BODY` /
+`MODULAR_LOWER_BODY`) now gates `_sync_melee_overlay_frames()`, so the hidden
+legacy full-body `AnimatedSprite2D`'s `frame_changed` signal can never
+overwrite the modular weapon overlay's direction/frame while draw, sheathe,
+ready/relaxed idle, or melee locomotion own it — this closes the
+previously-identified sword-facing corruption bug.
 
 ## Engagement Trigger
 
@@ -333,7 +355,7 @@ frame budget.
 | `melee_draw` | sheathed → ready | authored 4 frames | promotes existing 4-frame draw sheet |
 | `melee_ready_up` | relaxed → ready | 0.12–0.18 s | 2–3 frames; polish only |
 | `melee_relax` | ready → relaxed | 0.25–0.40 s | ~3 frames; slower than ready-up |
-| `melee_sheathe` | ready/relaxed → sheathed | later | reverse/adapt draw frames |
+| `melee_sheathe` | ready/relaxed → sheathed | authored 4 frames | `sheathe_weapon` state, `melee_1h/posture/sheathe_01` |
 
 ## Animation Asset Package
 
@@ -346,7 +368,7 @@ For the first complete sword implementation:
 | `melee_idle_relaxed` | ✅ | exploration neutral (the upright, sword-down pose) |
 | `melee_ready_up` | 🟡 | relaxed → combat; optional authored transition pending |
 | `melee_relax` | 🟡 | combat → relaxed; optional authored transition pending |
-| `melee_sheathe` | 🟡 | sword → unarmed |
+| `melee_sheathe` | ✅ | sword → unarmed |
 | `melee_fast_01` | ✅ | combo |
 | `melee_fast_02` | ✅ | combo |
 | `melee_fast_03` | ✅ | combo |
@@ -471,7 +493,8 @@ This matches the modular ownership rules already documented for the Operator
 |------------|--------|-------|
 | `EngagementTracker.engagement_active` | ✅ Ready | Live; 4 s quiet period |
 | `EquipWeaponState` | ✅ Ready | Non-interruptible transition to pattern `melee_draw` on |
-| Weapon-change queuing | ✅ Ready | `queue_weapon_selection()` gates to idle/walk/sprint |
+| `SheatheWeaponState` | ✅ Ready | Non-interruptible transition; commits the pending weapon selection on its final frame |
+| Weapon-change queuing | ✅ Ready | `queue_weapon_selection()` gates to idle/walk/sprint; transactional sheathe-before-commit when leaving an armed melee weapon |
 | 4-frame `draw_01` package | ✅ Ready | Generated E/W lower, upper, and Vigil weapon layers; synchronized and non-looping |
 | `idle_ready_01` sheet | ✅ Ready | Generated E/W lower- and upper-body stack |
 | `idle_relaxed_01` sheet | ✅ Ready | Generated E/W lower- and upper-body stack |
@@ -479,7 +502,7 @@ This matches the modular ownership rules already documented for the Operator
 | Vigil `idle_ready_01` weapon sheet | ✅ Ready | Generated E/W four-frame weapon layer selected through the equipped definition's `melee_1h_dagger` profile |
 | Melee `run_01` composition | ✅ Ready | Generated six-frame E/W `melee_1h` body clock plus profile-selected Vigil weapon layer; Vigil now uses interpolated Hybrid Weapon Socket grip records during run only, while missing metadata and other weapons retain authored-strip fallback |
 | `melee_ready_up` / `melee_relax` sheets | ❌ Missing | 2–3 frame transitions |
-| `melee_sheathe` | ❌ Deferred | Later slice; reverse/adapt draw frames |
+| `melee_sheathe` | ✅ Ready | `melee_1h/posture/sheathe_01` body + `melee_1h_dagger/posture/sheathe_01` weapon, generated E/W |
 
 ## Historical Implementation Slice
 
@@ -513,3 +536,47 @@ Acceptance:
 - existing melee smokes remain green;
 - runtime shows draw → ready → relaxed after quiet → ready on engagement
   with no gameplay behavior change.
+
+## Sheathe + Reachability Implementation Slice (2026-09-04)
+
+Wired the previously-generated-but-unplayed `melee_1h/posture/sheathe_01` and
+`melee_1h_dagger/posture/sheathe_01` sheets, made weapon switching
+transactional, closed the sword-facing overlay-ownership bug, canonicalized
+the Vigil Fast 03 FX and Fast 02 weapon art, and added a durable reachability
+contract so a future Asset Pipeline run cannot silently orphan another
+canonical sheet.
+
+Files:
+
+- new `game/actors/operator/animations/states/sheathe_weapon_state.gd`
+  (mirrors `equip_weapon_state.gd`), registered in
+  `operator.gd:_setup_animation_state_machine()`;
+- `operator.gd` — `MELEE_POSTURE_CATALOG_ACTIONS` unifies the posture
+  installer whitelist (adds `sheathe_01`); `start_sheathe_weapon_presentation`
+  / `is_sheathe_weapon_presentation_complete` / `cancel_sheathe_weapon_presentation`
+  mirror the draw presentation; `_should_sheathe_before_selection` /
+  `commit_pending_weapon_selection_after_sheathe` make
+  `try_apply_pending_weapon_selection` transactional; a single
+  `_melee_overlay_clock_owner` (`NONE`/`LEGACY_BODY`/`MODULAR_LOWER_BODY`)
+  gates `_sync_melee_overlay_frames()`;
+- `presentation/melee_posture_resolver.gd` — `mark_sheathed()`;
+- `vigil_pattern_dagger_fx_frames.tres` — Fast 03 FX repointed from
+  `melee_1h/cosmetic/legacy_operator_modular_fx_melee_1h_chain_03_*` to
+  canonical `melee_1h/attack/fast_03`;
+- `vigil_pattern_dagger_melee_overlay_frames.tres` — Fast 02 weapon repointed
+  from its legacy chain_02 override to canonical `melee_1h_dagger/attack/fast_02`;
+- new `custodian/content/data/operator/operator_animation_reachability.json`
+  and `custodian/tools/validation/operator_animation_reachability_audit.gd` —
+  every non-legacy canonical catalog action is classified `LIVE`, `DORMANT`,
+  `SUPERSEDED`, or `ALTERNATE_LAYER`; the audit fails if a future pipeline run
+  adds one without a classification;
+- new `operator_melee_sheathe_smoke.gd` and
+  `operator_melee_switch_chain_smoke.gd`.
+
+Explicitly not wired (classified, not consumed): `melee_1h`/`unarmed`
+`posture/stance_01` (superseded by `idle_ready_01` / the current locomotion
+idle), `melee_1h_dagger/cosmetic/relaxed_idle_01` (superseded by
+`posture/idle_relaxed_01`), `melee_1h/attack/fast_01..03` `lower_body`/
+`upper_body` layers (alternate to the `full_body` authority), and
+`unarmed/interaction/success_01` (`DORMANT_PENDING_INTERACTION_SUCCESS_CONTRACT`
+— no generic interaction-success gameplay event exists yet to hang it on).

@@ -14,6 +14,11 @@ func begin_draw_grace(duration_sec: float = DEFAULT_DRAW_GRACE_SEC) -> void:
 	posture = Posture.READY
 
 
+func mark_sheathed() -> void:
+	posture = Posture.SHEATHED
+	draw_grace_remaining = 0.0
+
+
 func resolve(delta: float, melee_equipped: bool, engagement_active: bool, presentation_locked: bool) -> Posture:
 	draw_grace_remaining = maxf(0.0, draw_grace_remaining - maxf(0.0, delta))
 	if not melee_equipped:
