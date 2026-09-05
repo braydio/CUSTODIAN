@@ -12,7 +12,7 @@
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_1"]
 
 [node name="ProcGenMap" type="Node2D" unique_id=531661722 node_paths=PackedStringArray("procgen_node", "floor_tilemap", "walls_tilemap", "nav_region", "depth_backdrop", "void_cliff_face", "nonwalkable_surface_base_tilemap", "nonwalkable_surface_overlay_tilemap", "macro_presentation_back", "macro_presentation_ground", "macro_presentation_front")]
-scale = Vector2(2, 2)
+scale = Vector2(1, 1)
 script = ExtResource("1")
 procgen_node = NodePath("ProcGen2")
 floor_tilemap = NodePath("NavigationRegion2D/Floor")

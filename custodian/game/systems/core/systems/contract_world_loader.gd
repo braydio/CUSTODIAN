@@ -44,7 +44,7 @@ class_name ContractWorldLoader
 @export_range(8, 160, 1) var expedition_resource_min_distance_tiles: int = 46
 @export_range(2, 48, 1) var expedition_resource_min_spacing_tiles: int = 10
 @export_range(0.0, 1.0, 0.01) var expedition_resource_min_intensity: float = 0.30
-@export var fallback_tile_size: float = 16.0
+@export var fallback_tile_size: float = 32.0
 
 const ARRN_RELAY_SCENE := preload("res://game/actors/relay/relay.tscn")
 const RESOURCE_NODE_SCENE := preload("res://game/resources/resource_node.tscn")

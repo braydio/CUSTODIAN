@@ -1,10 +1,10 @@
 extends Node2D
 class_name ShadowSystem
 
-@export var shadow_offset_px: Vector2 = Vector2(6.0, 6.0)
+@export var shadow_offset_px: Vector2 = Vector2(12.0, 12.0)
 @export_range(0.0, 1.0, 0.01) var edge_alpha: float = 0.18
 @export_range(0.0, 1.0, 0.01) var corner_alpha: float = 0.30
-@export_range(0.0, 16.0, 0.5) var edge_inset_px: float = 3.0
+@export_range(0.0, 16.0, 0.5) var edge_inset_px: float = 6.0
 @export_range(0.0, 1.0, 0.01) var corner_scale: float = 0.7
 
 var floor_tilemap: TileMapLayer = null
@@ -12,7 +12,7 @@ var walls_tilemap: TileMapLayer = null
 
 var _edge_cells: Dictionary = {}
 var _corner_cells: Dictionary = {}
-var _tile_size: Vector2 = Vector2(16.0, 16.0)
+var _tile_size: Vector2 = Vector2(32.0, 32.0)
 var _regeneration_queued: bool = false
 
 

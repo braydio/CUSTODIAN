@@ -13,7 +13,7 @@ const ASH_BELL_LIFT_INGRESS_SITE_SCRIPT := preload(
 )
 
 @export_file("*.json") var registry_index_path := "res://content/levels/levels.json"
-@export var fallback_tile_size := 16.0
+@export var fallback_tile_size := 32.0
 
 var _last_placements: Dictionary = {}
 var _last_errors := PackedStringArray()

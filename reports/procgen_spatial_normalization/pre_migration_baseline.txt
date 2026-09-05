@@ -1,0 +1,31 @@
+[procgen_spatial_normalization_smoke] ROOT scale = (2.0, 2.0)
+[procgen_spatial_normalization_smoke] TILESET floor.tile_size = (16, 16), walls.tile_size = (16, 16)
+[procgen_spatial_normalization_smoke] RUNTIME get_runtime_tile_size() = (32.0, 32.0)
+[procgen_spatial_normalization_smoke] HORIZONTAL STEP (0,0)->(1,0) = 32.0000
+[procgen_spatial_normalization_smoke] VERTICAL STEP (0,0)->(0,1) = 32.0000
+[procgen_spatial_normalization_smoke] ROUND TRIP (0, 0) -> (16.0, 16.0) -> (0, 0)
+[procgen_spatial_normalization_smoke] ROUND TRIP (1, 0) -> (48.0, 16.0) -> (1, 0)
+[procgen_spatial_normalization_smoke] ROUND TRIP (0, 1) -> (16.0, 48.0) -> (0, 1)
+[procgen_spatial_normalization_smoke] ROUND TRIP (10, 10) -> (336.0, 336.0) -> (10, 10)
+[procgen_spatial_normalization_smoke] ROUND TRIP (31, 17) -> (1008.0, 560.0) -> (31, 17)
+[procgen_spatial_normalization_smoke] CENTERING map_to_local(0,0) local = (8.0, 8.0) (expected half-cell (16.0, 16.0))
+[procgen_spatial_normalization_smoke] MAP EXTENTS map_size=(96, 80) measured_width=3040.00 expected_width=3040.00 measured_height=2528.00 expected_height=2528.00
+[procgen_spatial_normalization_smoke] PLAYER SPAWN tile=(48, 68) global=(1552.0, 2192.0)
+[procgen_spatial_normalization_smoke] WALL COLLISION sample_tile=(0, 33) shape_size=(16.0, 16.0)
+[procgen_spatial_normalization_smoke] NAVIGATION spawn=(48, 68) neighbor=(49, 68) path_points=0
+[procgen_spatial_normalization_smoke] SHADOW _tile_size = (16.0, 16.0)
+[procgen_spatial_normalization_smoke] THREADWAY source_tile_size=(32.0, 32.0) runtime_tile_size=(32.0, 32.0)
+[procgen_spatial_normalization_smoke] THREADWAY floor sprite scale = (1.0, 1.0)
+[procgen_spatial_normalization_smoke] CONTRACT_WORLD_LOADER tile=(5, 5) loader_world=(176.0, 176.0) canonical=(176.0, 176.0)
+[procgen_spatial_normalization_smoke] STREAMING chunk_tiles=16 world_span=512.00
+[procgen_spatial_normalization_smoke] NO SCALE COMPENSATION offenders=[]
+ERROR: ProcGenMap.scale must be Vector2.ONE, was (2.0, 2.0)
+ERROR: Floor.tile_set.tile_size must be 32x32, was (16, 16)
+ERROR: Walls.tile_set.tile_size must be 32x32, was (16, 16)
+ERROR: cell (0,0) must center at the half-cell offset (16.0, 16.0), was (8.0, 8.0)
+ERROR: cell (1,0) must center at (48.0, 16.0), was (24.0, 8.0)
+ERROR: wall collision shape width should align to the 32px cell grid, was (16.0, 16.0)
+ERROR: navigation path between spawn (48, 68) and neighbor (49, 68) did not resolve
+ERROR: ShadowSystem must resolve a 32px local tile size, was (16.0, 16.0)
+procgen_spatial_normalization_smoke: FAIL (8 failures)
+ERROR: 3 resources still in use at exit (run with --verbose for details).

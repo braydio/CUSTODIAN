@@ -1508,7 +1508,7 @@ z_as_relative = false
 
 [node name="PreviewRoot" type="Node2D" parent="." unique_id=453866334]
 position = Vector2(624, 344)
-scale = Vector2(2, 2)
+scale = Vector2(1, 1)
 
 [node name="OceanBase" type="TileMapLayer" parent="PreviewRoot" unique_id=1076585126]
 z_index = -90

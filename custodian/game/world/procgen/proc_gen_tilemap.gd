@@ -561,7 +561,7 @@ const PATH_PIECE_EXPORT_ROOT := "res://content/tiles/roads_paths/runtime/placeho
 @export_range(0.0, 1.0, 0.05) var horizontal_wall_south_connector_spawn_chance: float = 0.35
 @export var show_runtime_wall_collision_debug: bool = false
 @export_range(0.0, 0.75, 0.05) var horizontal_wall_endcap_overlap_ratio: float = 0.25
-@export_range(0, 48, 1) var horizontal_wall_endcap_vertical_jitter_px: int = 12
+@export_range(0, 48, 1) var horizontal_wall_endcap_vertical_jitter_px: int = 24
 @export var foliage_player_feet_offset: Vector2 = Vector2(0, 8)
 @export var foliage_player_upper_body_offset: Vector2 = Vector2(0, -22)
 @export var foliage_player_occlusion_x_padding: float = 10.0
@@ -5065,7 +5065,7 @@ func _rebuild_sundered_keep_coastline_presentation() -> void:
 		)
 	_sundered_keep_coastline_parent.z_as_relative = false
 	_sundered_keep_coastline_parent.z_index = -60
-	var local_cell_size := Vector2(16.0, 16.0)
+	var local_cell_size := Vector2(32.0, 32.0)
 	if nonwalkable_surface_overlay_tilemap.tile_set != null:
 		local_cell_size = Vector2(
 			nonwalkable_surface_overlay_tilemap.tile_set.tile_size
@@ -6497,7 +6497,7 @@ func _rebuild_runtime_wall_collision(map_size: Vector2i, reason: String = "gener
 
 	_clear_runtime_wall_collision()
 
-	var tile_size: Vector2 = Vector2(16, 16)
+	var tile_size: Vector2 = Vector2(32, 32)
 	if walls_tilemap.tile_set != null:
 		tile_size = Vector2(walls_tilemap.tile_set.tile_size)
 
@@ -6529,7 +6529,7 @@ func _rebuild_runtime_walkable_boundary(reason: String = "generation") -> void:
 	boundary.call("setup")
 	walls_tilemap.add_child(boundary)
 	_walkable_boundary_chunks_created_total += 1
-	var tile_size := Vector2(16.0, 16.0)
+	var tile_size := Vector2(32.0, 32.0)
 	if walls_tilemap.tile_set != null:
 		tile_size = Vector2(walls_tilemap.tile_set.tile_size)
 	var thickness := maxf(2.0, minf(tile_size.x, tile_size.y) * 0.20)
@@ -9130,7 +9130,7 @@ func _tile_to_world_position(pos: Vector2i) -> Vector2:
 func _get_tile_size() -> Vector2:
 	if floor_tilemap != null and floor_tilemap.tile_set != null:
 		return Vector2(floor_tilemap.tile_set.tile_size)
-	return Vector2(16, 16)
+	return Vector2(32, 32)
 
 
 func get_terrain_ballistics_context() -> Dictionary:
@@ -9727,7 +9727,7 @@ func _spawn_runtime_wall_body(tile: Vector2i, refresh_debug: bool = true, publis
 		collision_root = Node2D.new()
 		collision_root.name = "RuntimeWallCollision"
 		walls_tilemap.add_child(collision_root)
-	var tile_size: Vector2 = Vector2(16, 16)
+	var tile_size: Vector2 = Vector2(32, 32)
 	if walls_tilemap.tile_set != null:
 		tile_size = Vector2(walls_tilemap.tile_set.tile_size)
 	var collision_profile := _get_runtime_wall_collision_profile(tile, tile_size)
@@ -10251,9 +10251,9 @@ func _add_horizontal_wall_south_connector_sprites(parent: Node2D, row_y: int, st
 		var roll: float = float(_tile_noise_hash(absolute_tile + Vector2i(1409, 223)) % 1000) / 1000.0
 		if roll > horizontal_wall_south_connector_spawn_chance:
 			continue
-		var size := Vector2(28.0, 48.5)
+		var size := Vector2(56.0, 97.0)
 		var x_center := (float(local_index) + 0.5) * _get_tile_size().x
-		var position := Vector2(x_center - size.x * 0.5, overlay_height - 4.0)
+		var position := Vector2(x_center - size.x * 0.5, overlay_height - 8.0)
 		if position.x < 0.0 or position.x + size.x > run_width:
 			continue
 		_add_horizontal_wall_south_connector_sprite(parent, position, size, tint)
@@ -10369,7 +10369,7 @@ func get_runtime_tile_size() -> Vector2:
 		var base_size := Vector2(floor_tilemap.tile_set.tile_size)
 		var world_scale := floor_tilemap.global_scale
 		return Vector2(base_size.x * absf(world_scale.x), base_size.y * absf(world_scale.y))
-	return Vector2(16, 16)
+	return Vector2(32, 32)
 
 
 func get_runtime_health_snapshot() -> Dictionary:

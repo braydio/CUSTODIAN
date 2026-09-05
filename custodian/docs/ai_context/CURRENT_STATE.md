@@ -1,5 +1,22 @@
 # CURRENT STATE — CUSTODIAN
 
+## Procgen Native-32px Spatial Normalization (2026-09-05)
+
+`ProcGenMap` now runs native 32px at `scale == Vector2.ONE`. One semantic
+procgen cell equals 32×32 world px, reached directly through the TileSet's
+own `tile_size = Vector2i(32, 32)` rather than a 16px logical grid doubled by
+a legacy `scale = Vector2(2, 2)` root transform. World coordinates are
+unchanged — spawn positions, map extents, wall-collision anchors, and the
+Ash Bell Threadway's 32px floor-sprite scale (`Vector2.ONE`) were all
+verified identical before and after via a new permanent smoke,
+`procgen_spatial_normalization_smoke.gd`. The 2× root scale was traced to a
+single 2026-03-27 bulk-import commit with no documented design rationale —
+it existed only because the originally-imported placeholder tileset was
+16px. Legacy 2× root scaling is retired; no ancestor transform is required to
+make the procgen 32px contract true. See
+`design/02_features/procgen/PROCGEN_32PX_SPATIAL_NORMALIZATION.md` and
+`custodian/docs/ai_context/task_packets/PROCGEN_32PX_SPATIAL_NORMALIZATION.md`.
+
 ## Operator Melee Sheathe + Animation Reachability Contract (2026-09-04)
 
 The Operator's melee sheathe presentation (`melee_1h/posture/sheathe_01` body

@@ -509,7 +509,7 @@ func _cell_world_bounds(cells: Dictionary, tile_size: Vector2) -> Rect2:
 func _runtime_tile_size() -> Vector2:
 	if _map_instance != null and _map_instance.has_method("get_runtime_tile_size"):
 		return _map_instance.call("get_runtime_tile_size") as Vector2
-	return Vector2(16.0, 16.0)
+	return Vector2(32.0, 32.0)
 
 
 func _runtime_world_cell_size() -> float:
@@ -623,7 +623,7 @@ func _tile_to_world(tile: Vector2i) -> Vector2:
 			return procgen_map.floor_tilemap.to_global(
 				procgen_map.floor_tilemap.map_to_local(tile)
 			)
-	var tile_size := Vector2(16.0, 16.0)
+	var tile_size := Vector2(32.0, 32.0)
 	if _map_instance != null \
 			and _map_instance.has_method("get_runtime_tile_size"):
 		tile_size = _map_instance.call("get_runtime_tile_size") as Vector2
