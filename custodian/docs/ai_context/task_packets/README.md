@@ -36,6 +36,7 @@ Completed packets are moved to `archived/`. They are preserved for historical re
 
 ### In Progress
 
+- `PROCGEN_MACRO_PRESENTATION_V1.md` — Draft migration ledger for the region-first rocky-upland macro presentation layer; awaiting the hardened implementation specification before runtime work begins.
 - `GAME_OVER_FLOW.md` — Implement the game-over UX slice from `design/02_features/game_over/GAME_OVER_FLOW.md`: fail-state modal, stats snapshot, restart/menu actions, and validation.
 - `PLAYABLE_SIEGE_LOOP_GATEHOUSE_SLICE.md` — Extend the Sundered Keep gatehouse into a playable siege loop with gate progression, enemy pressure, objective damage, repair, defense participation, debug feedback, and validation/docs updates.
 - `COGNITIVE_STATE_PHASE_B.md` — Wire cognitive state modifiers into game systems and fix debug panel bugs. Implementation done; awaiting Godot runtime validation of move speed, attack recovery, accuracy bonus, and crit bonus modifiers. Manual test: F12 toggles debug panel, cognitive items change player stats visually.
