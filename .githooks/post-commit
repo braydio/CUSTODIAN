@@ -10,7 +10,7 @@ REPO_DIR="$(git rev-parse --show-toplevel)"
 if [ "${CUSTODIAN_SYNC_AFTER_COMMIT:-0}" = "1" ] && [ -x "$REPO_DIR/rclone-git-sync.sh" ]; then
   log_dir="$REPO_DIR/.git/hooks-logs"
   mkdir -p "$log_dir"
-  nohup "$REPO_DIR/rclone-git-sync.sh" > "$log_dir/rclone-git-sync.log" 2>&1 &
+  nohup "$REPO_DIR/rclone-git-sync.sh" >"$log_dir/rclone-git-sync.log" 2>&1 &
   echo "Started background Google Drive sync; log: $log_dir/rclone-git-sync.log"
 else
   echo "Skipping Google Drive sync. Set CUSTODIAN_SYNC_AFTER_COMMIT=1 to run it in the background."
@@ -22,5 +22,22 @@ cat <<'MSG'
 Post-commit reminder:
 Did this commit change behavior or decisions? If yes, update docs/_ai_context/DEVLOG.md.
 MSG
+
+set -u
+
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0
+cd "$REPO_ROOT" || exit 0
+
+echo "[code-review-graph] Updating graph after commit..."
+
+if command -v uvx >/dev/null 2>&1; then
+  if uvx code-review-graph update --repo "$REPO_ROOT"; then
+    echo "[code-review-graph] Graph updated."
+  else
+    echo "[code-review-graph] WARNING: graph update failed." >&2
+  fi
+else
+  echo "[code-review-graph] WARNING: uvx not found; graph was not updated." >&2
+fi
 
 exit 0
