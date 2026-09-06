@@ -257,3 +257,140 @@ and the design doc are new.
 ## Commit SHA
 
 `47d2b5f1d` — "procgen native 32px spatial normalization"
+
+## Completion pass (2026-09-06)
+
+Follow-up session closing out the items this task packet deferred or left
+unresolved. `47d2b5f1d` was not reimplemented or altered.
+
+### Permanent world-coordinate baseline regression added
+
+`procgen_spatial_normalization_smoke.gd` gained a dedicated
+`_check_world_coordinate_baseline_regression()` check (18th assertion group)
+with hardcoded literal constants captured against `TEST_SEED = 913042` /
+`map_size (96, 80)`, matching this packet's own "Before/after cell-center
+measurements" table:
+
+- cell (10,10) global == (336.0, 336.0)
+- spawn tile (48, 68) global == (1552.0, 2192.0)
+- horizontal/vertical step == 32.0
+- map extents for (96, 80) == 3040.0 x 2528.0
+- wall anchor tile (0, 33) global == (16.0, 1072.0) (also pins generation
+  determinism, not just the transform, unlike the other constants above)
+
+These are deliberately hardcoded, not re-derived from
+`ProcgenSpatialContract` or the transform under test, so a future regression
+that shifts world coordinates while staying internally self-consistent (the
+failure mode the rest of this file's round-trip/ratio checks cannot catch)
+will fail here. Full smoke run: 22/22 assertions PASS.
+
+### Sundered Keep shoreline `plan_fingerprint` mismatch — root-caused and fixed
+
+Root cause (confirmed, not speculative): **unrelated to this migration.**
+`tools/visual_labs/sundered_keep_shoreline_lab.tscn`'s root node has shipped
+a hand-tuned "corner marker" editor-preview preset
+(`cliff_spacing_px = 60.0`, `corner_overlap_px = 8.0`,
+`shore_band_width_cells = 0`, `show_corner_markers = true`) since it was
+authored in `c7853ee8f` ("sundered keep cliff vocabulary, production context
+lab") — before `47d2b5f1d` ever touched this file (which only changed
+`PreviewRoot.scale`). `sundered_keep_shoreline_compositor_smoke.gd`'s parity
+checks (`lab_plan` vs. a `direct_plan` built via `_plan_options()`) have
+always hardcoded the *compositor's own* defaults (32.0 / 16.0 / 2) to match
+production (`proc_gen_tilemap.gd::_build_sundered_keep_shoreline_plan()`
+never overrides these three options, so production always uses the
+compositor defaults). The lab's checked-in preview-preset overrides diverged
+from those defaults, so every preset/fixture parity comparison failed
+regardless of migration state — this is a pre-existing lab-authoring/test
+assumption mismatch, not a spatial-coordinate bug, and not something
+scale-doubling could have "masked."
+
+Fix: `sundered_keep_shoreline_compositor_smoke.gd` now calls
+`lab.call("reset_defaults")` immediately after instantiating the lab and
+before any parity comparison, forcing the lab into the compositor's own
+default state for the duration of the test. This is a test-hygiene fix only
+— it does not touch `sundered_keep_shoreline_compositor.gd` (production
+terrain semantics), and it does not touch the lab scene's checked-in
+editor-open preview state (so opening the tool in-editor still shows the
+intended corner-marker demo). `sundered_keep_shoreline_compositor_smoke`:
+was failing (preset 0-7 divergence + all 3 production-fixture divergences +
+the cliff-density telemetry assertion); now PASS
+(`presets=8 vocabulary=15 production_cell=32.00 lab_cell=32.00
+samples_per_cell=1.00`, all fixture center errors 0.0).
+
+### Validation run
+
+- `procgen_spatial_normalization_smoke.gd`: PASS, 22/22.
+- `sundered_keep_shoreline_compositor_smoke.gd`: PASS (was FAIL).
+- `python3 tools/validation/run_validation.py --tag procgen --json` (23
+  tests): 22/23 passed. Sole remaining failure —
+  `sundered_keep_procgen_frontage` ("explicit chasm semantics did not
+  replace world-fallback backdrop", "camera-following rectangular depth
+  backdrop remains active") — re-confirmed unrelated: `procgen_depth_backdrop.gd`
+  does not appear in this migration's diff or in the shoreline-compositor
+  fix's diff. Unchanged from this packet's original finding.
+- `sundered_keep_world_vista_smoke.gd` run directly: still fails on the same
+  pre-existing camera-blend-weight assertions documented above (unrelated to
+  tile size); unchanged.
+- `procgen_ambient_enemy_real_world_spawn`: still PASS with the same
+  pre-existing unrelated `SpriteFrames already has animation` stderr noise;
+  unchanged.
+- `python3 tools/validation/run_validation.py --changed --json`: 6/6 passed
+  for the two files this pass touched
+  (`procgen_spatial_normalization_smoke.gd`,
+  `sundered_keep_shoreline_compositor_smoke.gd`) and their owning tests.
+
+### Visual validation
+
+Godot's headless mode cannot produce real screenshots (dummy rendering
+server has no texture backend); this session had a live `DISPLAY` available,
+so real-renderer capture was used instead of `--headless`:
+
+- `tools/validation/sundered_keep_procgen_frontage_seed_review.gd` (the
+  script this packet's own scenario file already documents as the source of
+  "production procgen frontage evidence") run for seed 3 at 2560x1440.
+  Inspected `world_overview.png`, `coastline_closeup.png`,
+  `ordinary_outside_cinematic.png`, and several contact-sheet frames.
+  Floor/wall/cliff/foliage/road/shadow tiles are all uniformly sized against
+  the 32px grid with no doubling/halving artifacts; the distant Sundered
+  Keep silhouette, road decals, and camera framing all read correctly.
+- `python3 tools/iteration/run_moment.py traversal/ash_bell_threadway_resolve
+  --capture-mode full` run to completion (real renderer). Inspected
+  keyframes at ticks 0, 76, and 145 (spanning the `walk_operator_across`
+  timeline action): operator sprite scale is consistent across frames and
+  proportionate to the treasure-chest prop and the White Thread causeway
+  floor tiles; the Ash Bell lift/mine-cart ingress structure and camera
+  framing are stable and correctly scaled throughout.
+
+No operator-scale, floor-scale, wall/cliff, foliage, prop, road, shadow, Ash
+Bell, or camera-framing regressions found in either capture. Screenshots
+were written to a local scratch directory outside the repo, not committed.
+
+### Prohibited-change verification
+
+Re-verified none of the prohibited compensations from the design doc were
+reintroduced: `ProcGenMap.scale` is still `Vector2.ONE`,
+`procgen_world_tileset.tres` `tile_size` is still `Vector2i(32, 32)`, no
+`scale = Vector2(2, 2)` exists anywhere under `game/world/procgen` or
+`tools/visual_labs`, and `game/world/camera.gd`'s zoom constants are
+untouched.
+
+### Updated deferred-item status
+
+- ~~`sundered_keep_shoreline_lab.gd`'s `plan_fingerprint()`-equality
+  divergence~~ — **resolved**, see above.
+- `sundered_keep_world_vista_smoke` failure — still pre-existing/unrelated,
+  unresolved, unchanged.
+- `procgen_ambient_enemy_real_world_spawn` and `sundered_keep_procgen_frontage`
+  failures — still confirmed unrelated by code-path disjointness, unresolved,
+  unchanged.
+- All other previously-deferred items (legacy 16px asset promotion, unused
+  TileSet sources, Macro Presentation V1 itself) remain out of scope,
+  unchanged.
+
+### Changed files (this pass)
+
+- `custodian/tools/validation/procgen_spatial_normalization_smoke.gd` —
+  added baseline-regression constants and the 18th check function.
+- `custodian/tools/validation/sundered_keep_shoreline_compositor_smoke.gd` —
+  added a `reset_defaults()` call before parity comparisons.
+- This task packet.

@@ -32,6 +32,15 @@ func _run() -> void:
 	root.add_child(lab)
 	await process_frame
 	await process_frame
+	# The checked-in scene ships a hand-tuned corner-marker preview preset
+	# (cliff_spacing_px=60, corner_overlap_px=8, shore_band_width_cells=0)
+	# on its root node for editor use, which diverges from the compositor's
+	# own defaults this smoke test compares against below. Force the lab
+	# back to those defaults so this test measures production/lab parity,
+	# not incidental scene-file authoring state.
+	lab.call("reset_defaults")
+	await process_frame
+	await process_frame
 	var production_floor := production.get_node("NavigationRegion2D/Floor") as TileMapLayer
 	var lab_floor := lab.get_node("PreviewRoot/Floor") as TileMapLayer
 	var production_world_cell_size := _resolve_world_cell_size(production_floor)

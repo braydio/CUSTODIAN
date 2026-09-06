@@ -7,6 +7,29 @@ const WORLD_LOADER_SCRIPT := preload("res://game/systems/core/systems/contract_w
 const TEST_SEED := 913042
 const TOLERANCE := 0.01
 
+# --- MIGRATION-REGRESSION BASELINE CONSTANTS --------------------------------
+# Frozen world-coordinate values captured once against TEST_SEED 913042 /
+# map_size (96, 80) at the native-32px migration (commit 47d2b5f1d), matching
+# the "Before/after cell-center measurements" table in this migration's task
+# packet. These are deliberately hardcoded literals, not values re-derived
+# from ProcgenSpatialContract or the transform under test -- a future change
+# that silently shifts world coordinates (e.g. reintroducing a root/tile
+# scale factor) must fail here even if it stays internally self-consistent
+# with the other round-trip/ratio checks in this file. Do not "fix" these
+# constants to match new behavior; a mismatch here means world space moved.
+const BASELINE_CELL_10_10_GLOBAL := Vector2(336.0, 336.0)
+const BASELINE_SPAWN_TILE := Vector2i(48, 68)
+const BASELINE_SPAWN_GLOBAL := Vector2(1552.0, 2192.0)
+const BASELINE_STEP_PX := 32.0
+const BASELINE_MAP_SIZE := Vector2i(96, 80)
+const BASELINE_MAP_WIDTH_PX := 3040.0
+const BASELINE_MAP_HEIGHT_PX := 2528.0
+# A generated wall cell for TEST_SEED 913042 (deterministic across runs) and
+# its expected global position -- pins generation determinism as well as the
+# spatial transform, unlike the other baseline checks above.
+const BASELINE_WALL_ANCHOR_TILE := Vector2i(0, 33)
+const BASELINE_WALL_ANCHOR_GLOBAL := Vector2(16.0, 1072.0)
+
 var _failures: Array[String] = []
 
 
@@ -33,6 +56,7 @@ func _run() -> void:
 	_check_contract_world_loader(map)
 	_check_streaming(map)
 	_check_no_scale_compensation(map)
+	_check_world_coordinate_baseline_regression(map)
 
 	map.queue_free()
 	_finish()
@@ -306,6 +330,60 @@ func _walk_for_scale_compensation(node: Node, offenders: Array[String]) -> void:
 			offenders.append("%s (%s)" % [candidate.get_path(), candidate.get_class()])
 	for child in node.get_children():
 		_walk_for_scale_compensation(child, offenders)
+
+
+# 17. WORLD COORDINATE BASELINE REGRESSION (migration-regression constants)
+func _check_world_coordinate_baseline_regression(map: ProcGenTilemap) -> void:
+	var cell_10_10_global := map.tile_to_global_position(Vector2i(10, 10))
+	_log("BASELINE cell(10,10) global = %s (expected %s)" % [str(cell_10_10_global), str(BASELINE_CELL_10_10_GLOBAL)])
+	_expect(
+		cell_10_10_global.is_equal_approx(BASELINE_CELL_10_10_GLOBAL),
+		"BASELINE REGRESSION: cell (10,10) global drifted from %s to %s" % [str(BASELINE_CELL_10_10_GLOBAL), str(cell_10_10_global)]
+	)
+
+	var spawn_tile: Vector2i = map.get_player_spawn()
+	_log("BASELINE spawn tile = %s (expected %s)" % [str(spawn_tile), str(BASELINE_SPAWN_TILE)])
+	_expect(
+		spawn_tile == BASELINE_SPAWN_TILE,
+		"BASELINE REGRESSION: spawn tile drifted from %s to %s (generation determinism changed)" % [str(BASELINE_SPAWN_TILE), str(spawn_tile)]
+	)
+	var spawn_global := map.tile_to_global_position(spawn_tile)
+	_expect(
+		spawn_global.is_equal_approx(BASELINE_SPAWN_GLOBAL),
+		"BASELINE REGRESSION: spawn tile %s global drifted from %s to %s" % [str(spawn_tile), str(BASELINE_SPAWN_GLOBAL), str(spawn_global)]
+	)
+
+	var origin := map.tile_to_global_position(Vector2i(0, 0))
+	var h_step := map.tile_to_global_position(Vector2i(1, 0)).distance_to(origin)
+	var v_step := map.tile_to_global_position(Vector2i(0, 1)).distance_to(origin)
+	_log("BASELINE h_step=%.4f v_step=%.4f (expected %.4f)" % [h_step, v_step, BASELINE_STEP_PX])
+	_expect(is_equal_approx(h_step, BASELINE_STEP_PX), "BASELINE REGRESSION: horizontal step drifted from %.4f to %.4f" % [BASELINE_STEP_PX, h_step])
+	_expect(is_equal_approx(v_step, BASELINE_STEP_PX), "BASELINE REGRESSION: vertical step drifted from %.4f to %.4f" % [BASELINE_STEP_PX, v_step])
+
+	var level_data := map.get_level_data()
+	var map_size: Vector2i = level_data.get("map_size", Vector2i.ZERO)
+	_expect(
+		map_size == BASELINE_MAP_SIZE,
+		"BASELINE REGRESSION: map_size drifted from %s to %s (baseline width/height below are only valid at %s)" % [str(BASELINE_MAP_SIZE), str(map_size), str(BASELINE_MAP_SIZE)]
+	)
+	var measured_width := map.tile_to_global_position(Vector2i(map_size.x - 1, 0)).distance_to(origin)
+	var measured_height := map.tile_to_global_position(Vector2i(0, map_size.y - 1)).distance_to(origin)
+	_log("BASELINE map_size=%s width=%.2f height=%.2f (expected %.2f x %.2f)" % [str(map_size), measured_width, measured_height, BASELINE_MAP_WIDTH_PX, BASELINE_MAP_HEIGHT_PX])
+	_expect(is_equal_approx(measured_width, BASELINE_MAP_WIDTH_PX), "BASELINE REGRESSION: map world width drifted from %.2f to %.2f" % [BASELINE_MAP_WIDTH_PX, measured_width])
+	_expect(is_equal_approx(measured_height, BASELINE_MAP_HEIGHT_PX), "BASELINE REGRESSION: map world height drifted from %.2f to %.2f" % [BASELINE_MAP_HEIGHT_PX, measured_height])
+
+	var wall_cells := map.debug_get_generated_wall_cells()
+	if not wall_cells.has(BASELINE_WALL_ANCHOR_TILE):
+		_failures.append(
+			"BASELINE REGRESSION: expected wall anchor tile %s is no longer a generated wall cell for seed %d (generation determinism changed)" % [str(BASELINE_WALL_ANCHOR_TILE), TEST_SEED]
+		)
+	else:
+		var anchor_global := map.tile_to_global_position(BASELINE_WALL_ANCHOR_TILE)
+		_log("BASELINE wall anchor %s global = %s (expected %s)" % [str(BASELINE_WALL_ANCHOR_TILE), str(anchor_global), str(BASELINE_WALL_ANCHOR_GLOBAL)])
+		_expect(
+			anchor_global.is_equal_approx(BASELINE_WALL_ANCHOR_GLOBAL),
+			"BASELINE REGRESSION: wall anchor tile %s global drifted from %s to %s" % [str(BASELINE_WALL_ANCHOR_TILE), str(BASELINE_WALL_ANCHOR_GLOBAL), str(anchor_global)]
+		)
 
 
 func _log(message: String) -> void:
