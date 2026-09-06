@@ -1258,3 +1258,25 @@ sheet geometry, one shared global scale, translation-only registration, three
 handoff without canonical publication. The pilot runs an eight-frame source by
 default or accepts `--source PATH --frames N --target-size N`, and hashes the
 production Operator tree before and after.
+# Operator Runtime Authority Migration Checks (in progress)
+
+These checks validate the preservation/selector foundations only; they do not
+certify the still-pending actor, pipeline or Workbench cutover. See
+`design/02_features/animation/OPERATOR_RUNTIME_ANIMATION_AUTHORITY.md` for the
+full acceptance gates.
+
+From the repository root:
+
+```bash
+# Read-only re-extraction checks actual compatibility frames against saved PNGs
+# and timing sidecars. Default is dry-run; --apply writes new strips only.
+godot --headless --path custodian --script res://tools/pipelines/migrations/materialize_operator_legacy_animations.gd
+godot --headless --path custodian --script res://tools/validation/operator_animation_selector_smoke.gd
+python3 custodian/tools/validation/operator_modular_pipeline_smoke.py
+```
+
+The selector smoke deliberately emits six missing-animation errors and one
+SOUTH warning while asserting empty results/identity isolation; success is its
+PASS marker and exit 0. The materializer must emit no errors and verifies 32
+mapped strips. Its source timing sidecars are not yet consumed by the old
+builder. Do not publish them through that builder as a completed migration.

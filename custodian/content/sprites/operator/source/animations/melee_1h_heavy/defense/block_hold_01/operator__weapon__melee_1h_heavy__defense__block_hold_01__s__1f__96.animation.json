@@ -1,0 +1,17 @@
+{
+	"durations": [
+		1.0
+	],
+	"fps": 1.0,
+	"frame_rgba_sha256": [
+		"e78025c1d1229a2e21b668431c6d7c7c0637ce47b8c08937204f1ab5bf341250"
+	],
+	"frames": 1,
+	"loop": true,
+	"migration_source": {
+		"animation": "melee_2h_block_hold_weapon",
+		"consumer": "res://game/actors/operator/operator.gd",
+		"resource": "res://game/actors/operator/operator_melee_overlay_frames.tres"
+	},
+	"schema": "custodian.operator_animation_timing.v1"
+}

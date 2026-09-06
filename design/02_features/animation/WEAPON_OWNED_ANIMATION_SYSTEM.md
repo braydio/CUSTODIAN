@@ -71,9 +71,9 @@ The current runtime is functional, but animation ownership is still inverted.
   `relaxed_01`. Primary fire must not bypass the raise or fire outside ranged-ready.
 - primary ranged-ready uses a composition contract: lower body is movement-owned and can reuse the existing modular
   `unarmed_{idle,walk,run}` locomotion clips, upper body and weapon are loadout-owned and aim-owned, FX is action-owned,
-  and legacy full-body ranged sprites are fallback only. Do not show modular lower-body legs while a legacy full-body
-  ranged sprite is visible; if the modular ranged upper/weapon stack is missing, hide modular lower-body layers and use
-  the full-body fallback instead.
+  and every selected layer must satisfy the runtime identity contract. Missing
+  ranged layers report missing runtime identities; they may not substitute a
+  compatibility full-body clip. Materialize still-live art before consumer cutover.
 - primary ranged directional transitions are retargetable: aim raise/lower may change directional clips while preserving
   normalized progress; fire commits one shot direction across every visible layer; recovery returns to current aim.
 
@@ -160,8 +160,8 @@ inside `operator.gd`.
 - `operator.gd` owns input collection, movement, cooldown bookkeeping, and high-level orchestration
 - animation states own transitions and attack requests
 - `OperatorWeaponDefinition` owns animation mappings, hit windows, and overlay/fx keys
-- `AnimationResolver` owns directional suffix lookup and fallback selection
-- SpriteFrames resources remain the render source until the later asset-loading migration is complete
+- `OperatorAnimationSelector` owns runtime selection under [Operator Runtime Animation Authority](OPERATOR_RUNTIME_ANIMATION_AUTHORITY.md).
+- One generated runtime SpriteFrames is the execution store; existing resource splits are migration debt.
 
 ### Non-goals for this migration
 
@@ -207,11 +207,10 @@ melee_2h_fast + up    -> melee_2h_fast_up
 melee_2h_fast + down  -> melee_2h_fast_down
 ```
 
-Fallback order:
-
-1. exact directional clip
-2. `_right`
-3. unsuffixed base
+Selection authority is now [Operator Runtime Animation Authority](OPERATOR_RUNTIME_ANIMATION_AUTHORITY.md):
+exact semantic identity, temporary same-identity SOUTH, then a missing-animation
+error. OMNI is exact-only. The historical aliases above are migration inputs,
+not a permitted runtime API.
 
 ### Direction resolution rule
 
@@ -534,9 +533,8 @@ Manual validation after each phase:
 
 Mitigation:
 
-- resolver fallback to `_right`
-- final fallback to unsuffixed base
-- leave legacy clips in place until all resources are renamed
+- Materialize live compatibility-only frames before deleting their resources.
+- Use the strict semantic selector and surface missing runtime identities.
 
 ### 2. Incomplete weapon definitions
 

@@ -1,0 +1,342 @@
+{
+  "migrations": [
+    {
+      "resource": "res://game/actors/operator/operator_runtime_frames.tres",
+      "old_animation": "melee_2h_block_enter",
+      "profile": "melee_1h_heavy",
+      "group": "defense",
+      "action": "block_enter_01",
+      "direction": "s",
+      "layer": "full_body",
+      "consumer": "res://game/actors/operator/operator.gd"
+    },
+    {
+      "resource": "res://game/actors/operator/operator_runtime_frames.tres",
+      "old_animation": "melee_2h_block_hold",
+      "profile": "melee_1h_heavy",
+      "group": "defense",
+      "action": "block_hold_01",
+      "direction": "s",
+      "layer": "full_body",
+      "consumer": "res://game/actors/operator/operator.gd"
+    },
+    {
+      "resource": "res://game/actors/operator/operator_runtime_frames.tres",
+      "old_animation": "melee_2h_block_exit",
+      "profile": "melee_1h_heavy",
+      "group": "defense",
+      "action": "block_exit_01",
+      "direction": "s",
+      "layer": "full_body",
+      "consumer": "res://game/actors/operator/operator.gd"
+    },
+    {
+      "resource": "res://game/actors/operator/operator_runtime_frames.tres",
+      "old_animation": "melee_2h_heavy_right",
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "heavy_01",
+      "direction": "s",
+      "layer": "full_body",
+      "consumer": "res://game/actors/operator/operator.gd"
+    },
+    {
+      "resource": "res://game/actors/operator/operator_runtime_frames.tres",
+      "old_animation": "melee_2h_heavy_anticipation",
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "heavy_windup_01",
+      "direction": "s",
+      "layer": "full_body",
+      "consumer": "res://game/actors/operator/operator.gd"
+    },
+    {
+      "resource": "res://game/actors/operator/operator_runtime_frames.tres",
+      "old_animation": "melee_2h_fast_recovery",
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "fast_recovery_01",
+      "direction": "s",
+      "layer": "full_body",
+      "consumer": "res://game/actors/operator/operator.gd"
+    },
+    {
+      "resource": "res://game/actors/operator/operator_melee_overlay_frames.tres",
+      "old_animation": "melee_2h_block_enter_weapon",
+      "profile": "melee_1h_heavy",
+      "group": "defense",
+      "action": "block_enter_01",
+      "direction": "s",
+      "layer": "weapon",
+      "consumer": "res://game/actors/operator/operator.gd"
+    },
+    {
+      "resource": "res://game/actors/operator/operator_melee_overlay_frames.tres",
+      "old_animation": "melee_2h_block_hold_weapon",
+      "profile": "melee_1h_heavy",
+      "group": "defense",
+      "action": "block_hold_01",
+      "direction": "s",
+      "layer": "weapon",
+      "consumer": "res://game/actors/operator/operator.gd"
+    },
+    {
+      "resource": "res://game/actors/operator/operator_melee_overlay_frames.tres",
+      "old_animation": "melee_2h_block_exit_weapon",
+      "profile": "melee_1h_heavy",
+      "group": "defense",
+      "action": "block_exit_01",
+      "direction": "s",
+      "layer": "weapon",
+      "consumer": "res://game/actors/operator/operator.gd"
+    },
+    {
+      "resource": "res://game/actors/operator/operator_melee_overlay_frames.tres",
+      "old_animation": "melee_2h_heavy_weapon",
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "heavy_01",
+      "direction": "s",
+      "layer": "weapon",
+      "consumer": "res://game/actors/operator/operator.gd"
+    },
+    {
+      "resource": "res://game/actors/operator/operator_melee_overlay_frames.tres",
+      "old_animation": "melee_2h_heavy_fx",
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "heavy_01",
+      "direction": "s",
+      "layer": "fx",
+      "consumer": "res://game/actors/operator/operator.gd"
+    },
+    {
+      "resource": "res://game/actors/operator/operator_melee_overlay_frames.tres",
+      "old_animation": "melee_2h_heavy_anticipation_weapon",
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "heavy_windup_01",
+      "direction": "s",
+      "layer": "weapon",
+      "consumer": "res://game/actors/operator/operator.gd"
+    },
+    {
+      "resource": "res://game/actors/operator/operator_melee_overlay_frames.tres",
+      "old_animation": "melee_2h_fast_recovery_weapon",
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "fast_recovery_01",
+      "direction": "s",
+      "layer": "weapon",
+      "consumer": "res://game/actors/operator/operator.gd"
+    },
+    {
+      "resource": "res://game/actors/operator/operator_melee_overlay_frames.tres",
+      "old_animation": "melee_2h_fast_recovery_fx",
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "fast_recovery_01",
+      "direction": "s",
+      "layer": "fx",
+      "consumer": "res://game/actors/operator/operator.gd"
+    },
+    {
+      "resource": "res://game/actors/operator/sword_cleaver_body_frames.tres",
+      "old_animation": "sword_cleaver_fast_01_right",
+      "owner": "operator",
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "fast_01",
+      "direction": "e",
+      "layer": "full_body",
+      "consumer": "res://game/actors/operator/sword_cleaver_definition.tres"
+    },
+    {
+      "resource": "res://game/actors/operator/sword_cleaver_fx_frames.tres",
+      "old_animation": "sword_cleaver_fast_01_fx_right",
+      "owner": "operator",
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "fast_01",
+      "direction": "e",
+      "layer": "fx",
+      "consumer": "res://game/actors/operator/sword_cleaver_definition.tres"
+    },
+    {
+      "resource": "res://game/actors/operator/sword_cleaver_weapon_overlay_frames.tres",
+      "old_animation": "sword_cleaver_fast_01_weapon_right",
+      "owner": "sword_cleaver",
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "fast_01",
+      "direction": "e",
+      "layer": "weapon",
+      "consumer": "res://game/actors/operator/sword_cleaver_definition.tres"
+    },
+    {
+      "resource": "res://game/actors/operator/sword_cleaver_body_frames.tres",
+      "old_animation": "sword_cleaver_fast_01_left",
+      "owner": "operator",
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "fast_01",
+      "direction": "w",
+      "layer": "full_body",
+      "consumer": "res://game/actors/operator/sword_cleaver_definition.tres"
+    },
+    {
+      "resource": "res://game/actors/operator/sword_cleaver_fx_frames.tres",
+      "old_animation": "sword_cleaver_fast_01_fx_left",
+      "owner": "operator",
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "fast_01",
+      "direction": "w",
+      "layer": "fx",
+      "consumer": "res://game/actors/operator/sword_cleaver_definition.tres"
+    },
+    {
+      "resource": "res://game/actors/operator/sword_cleaver_weapon_overlay_frames.tres",
+      "old_animation": "sword_cleaver_fast_01_weapon_left",
+      "owner": "sword_cleaver",
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "fast_01",
+      "direction": "w",
+      "layer": "weapon",
+      "consumer": "res://game/actors/operator/sword_cleaver_definition.tres"
+    },
+    {
+      "resource": "res://game/actors/operator/sword_cleaver_body_frames.tres",
+      "old_animation": "sword_cleaver_fast_02_right",
+      "owner": "operator",
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "fast_02",
+      "direction": "e",
+      "layer": "full_body",
+      "consumer": "res://game/actors/operator/sword_cleaver_definition.tres"
+    },
+    {
+      "resource": "res://game/actors/operator/sword_cleaver_fx_frames.tres",
+      "old_animation": "sword_cleaver_fast_02_fx_right",
+      "owner": "operator",
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "fast_02",
+      "direction": "e",
+      "layer": "fx",
+      "consumer": "res://game/actors/operator/sword_cleaver_definition.tres"
+    },
+    {
+      "resource": "res://game/actors/operator/sword_cleaver_weapon_overlay_frames.tres",
+      "old_animation": "sword_cleaver_fast_02_weapon_right",
+      "owner": "sword_cleaver",
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "fast_02",
+      "direction": "e",
+      "layer": "weapon",
+      "consumer": "res://game/actors/operator/sword_cleaver_definition.tres"
+    },
+    {
+      "resource": "res://game/actors/operator/sword_cleaver_body_frames.tres",
+      "old_animation": "sword_cleaver_fast_02_left",
+      "owner": "operator",
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "fast_02",
+      "direction": "w",
+      "layer": "full_body",
+      "consumer": "res://game/actors/operator/sword_cleaver_definition.tres"
+    },
+    {
+      "resource": "res://game/actors/operator/sword_cleaver_fx_frames.tres",
+      "old_animation": "sword_cleaver_fast_02_fx_left",
+      "owner": "operator",
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "fast_02",
+      "direction": "w",
+      "layer": "fx",
+      "consumer": "res://game/actors/operator/sword_cleaver_definition.tres"
+    },
+    {
+      "resource": "res://game/actors/operator/sword_cleaver_weapon_overlay_frames.tres",
+      "old_animation": "sword_cleaver_fast_02_weapon_left",
+      "owner": "sword_cleaver",
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "fast_02",
+      "direction": "w",
+      "layer": "weapon",
+      "consumer": "res://game/actors/operator/sword_cleaver_definition.tres"
+    },
+    {
+      "resource": "res://game/actors/operator/sword_cleaver_body_frames.tres",
+      "old_animation": "sword_cleaver_fast_03_right",
+      "owner": "operator",
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "fast_03",
+      "direction": "e",
+      "layer": "full_body",
+      "consumer": "res://game/actors/operator/sword_cleaver_definition.tres"
+    },
+    {
+      "resource": "res://game/actors/operator/sword_cleaver_fx_frames.tres",
+      "old_animation": "sword_cleaver_fast_03_fx_right",
+      "owner": "operator",
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "fast_03",
+      "direction": "e",
+      "layer": "fx",
+      "consumer": "res://game/actors/operator/sword_cleaver_definition.tres"
+    },
+    {
+      "resource": "res://game/actors/operator/sword_cleaver_weapon_overlay_frames.tres",
+      "old_animation": "sword_cleaver_fast_03_weapon_right",
+      "owner": "sword_cleaver",
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "fast_03",
+      "direction": "e",
+      "layer": "weapon",
+      "consumer": "res://game/actors/operator/sword_cleaver_definition.tres"
+    },
+    {
+      "resource": "res://game/actors/operator/sword_cleaver_body_frames.tres",
+      "old_animation": "sword_cleaver_fast_03_left",
+      "owner": "operator",
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "fast_03",
+      "direction": "w",
+      "layer": "full_body",
+      "consumer": "res://game/actors/operator/sword_cleaver_definition.tres"
+    },
+    {
+      "resource": "res://game/actors/operator/sword_cleaver_fx_frames.tres",
+      "old_animation": "sword_cleaver_fast_03_fx_left",
+      "owner": "operator",
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "fast_03",
+      "direction": "w",
+      "layer": "fx",
+      "consumer": "res://game/actors/operator/sword_cleaver_definition.tres"
+    },
+    {
+      "resource": "res://game/actors/operator/sword_cleaver_weapon_overlay_frames.tres",
+      "old_animation": "sword_cleaver_fast_03_weapon_left",
+      "owner": "sword_cleaver",
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "fast_03",
+      "direction": "w",
+      "layer": "weapon",
+      "consumer": "res://game/actors/operator/sword_cleaver_definition.tres"
+    }
+  ]
+}

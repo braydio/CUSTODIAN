@@ -1,0 +1,19 @@
+{
+	"durations": [
+		1.0,
+		1.0
+	],
+	"fps": 10.0,
+	"frame_rgba_sha256": [
+		"33d4c77d6dd770a7b62c1b2f612fecd53ef58a54e3119f5de147af6a1e619a33",
+		"1c0273095382988333e2f2b5ae487cea460737ed9be65cbad9c5de537f95bf75"
+	],
+	"frames": 2,
+	"loop": false,
+	"migration_source": {
+		"animation": "melee_2h_fast_recovery_weapon",
+		"consumer": "res://game/actors/operator/operator.gd",
+		"resource": "res://game/actors/operator/operator_melee_overlay_frames.tres"
+	},
+	"schema": "custodian.operator_animation_timing.v1"
+}

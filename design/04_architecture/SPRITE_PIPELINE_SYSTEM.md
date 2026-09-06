@@ -189,7 +189,7 @@ Composited Operator reaction pairs are a supported authored alias: `full_body_co
 
 Compatibility rule:
 
-- Legacy runtime paths may remain while current scenes and rebuild scripts still consume them.
+- Operator compatibility paths are migration inputs only: materialize live frames and remove all consumers and bridges before declaring the runtime authority migration complete.
 - New source and pipeline intake work should use the canonical name.
 - A manifest may write a canonical output and a compatibility copy in the same run.
 - Do not create new naming families such as `fast_attack_north_base_*` unless they are temporary compatibility outputs for existing code.
@@ -243,6 +243,14 @@ Direction rule:
 - Use `omni` only for non-directional effects.
 
 ## Current Implementation
+
+Operator target authority is now
+[Operator Runtime Animation Authority](../02_features/animation/OPERATOR_RUNTIME_ANIMATION_AUTHORITY.md).
+The compatibility pipeline described below records the pre-cutover implementation,
+not an allowance to retain Operator bridges after this migration. Preserve live
+frames first, then replace all Operator compatibility resources with one generated
+runtime SpriteFrames and its runtime-scanned manifest. Other actor migrations
+retain their own scope and acceptance contracts.
 
 Primary scripts:
 

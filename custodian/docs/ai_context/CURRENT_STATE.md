@@ -1,5 +1,33 @@
 # CURRENT STATE — CUSTODIAN
 
+## Operator Runtime Animation Authority Migration (2026-09-06, in progress)
+
+Target authority is
+`design/02_features/animation/OPERATOR_RUNTIME_ANIMATION_AUTHORITY.md`:
+source owns authoring, runtime owns execution, one generated SpriteFrames and
+one exact/temporary-SOUTH selector replace the existing compatibility chain.
+This cutover is **not complete**; gameplay still uses the existing stores and
+resolvers. Do not remove them until consumers are migrated.
+
+The explicit migration map and Godot materializer under
+`tools/pipelines/migrations/` have extracted 32 still-consumed strips: heavy
+attack/windup/recovery/guard body and overlays, plus Sword-Cleaver Fast 01/02/03
+E/W body, FX and weapon layers. Extraction uses actual frame textures, records
+RGBA SHA256 per frame, and preserves frame count, dimensions, FPS, durations
+and loops in `.animation.json` metadata. Cleaver weapon exports stay under
+`content/sprites/weapons/sword_cleaver/source/operator/`; body/FX exports use
+the Operator `melee_1h_heavy` source profile. They are source assets pending the
+runtime migration, not proof of a completed consumer cutover. The existing
+builder does not yet consume the new timing sidecars.
+
+`OperatorAnimationSelector` is implemented and independently smoke-tested but
+not yet wired into gameplay. Its tests cover exact E/N, SOUTH substitution,
+empty clips, missing identities, exact-only OMNI, owner/profile/group/layer
+isolation, and fallback counters/events. Remaining work includes the full
+dynamic-art inventory, strict schema split, runtime sync/manifest/resource,
+all actor/combat/state/weapon consumers, Workbench publication, and bridge
+deletion. The authority document tracks the remaining acceptance gates.
+
 ## Combat Tempo + Impact Feedback Pass (2026-09-06)
 
 Enemy LIGHT hits that gameplay suppresses (attack-commit survival or flinch

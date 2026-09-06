@@ -1,0 +1,19 @@
+{
+	"durations": [
+		1.0,
+		1.0
+	],
+	"fps": 10.0,
+	"frame_rgba_sha256": [
+		"1ec093086100a5e9518c53ec0d384b942cbd53d38dc164ed33c18253f40a4f29",
+		"575f07a79a8f5d37b5ae636abe5b76512b59b0d976dd960698a3ec647982d3e8"
+	],
+	"frames": 2,
+	"loop": false,
+	"migration_source": {
+		"animation": "melee_2h_block_exit",
+		"consumer": "res://game/actors/operator/operator.gd",
+		"resource": "res://game/actors/operator/operator_runtime_frames.tres"
+	},
+	"schema": "custodian.operator_animation_timing.v1"
+}

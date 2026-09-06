@@ -1,5 +1,13 @@
 # FILE INDEX — CUSTODIAN
 
+## Operator Runtime Authority Migration (in progress)
+
+- `design/02_features/animation/OPERATOR_RUNTIME_ANIMATION_AUTHORITY.md` — target ownership, exact/SOUTH selection, preservation gates and remaining acceptance work.
+- `tools/pipelines/migrations/materialize_operator_legacy_animations.gd` — explicit, dry-run-default, pixel/timing-preserving extraction from compatibility SpriteFrames.
+- `tools/pipelines/migrations/operator_legacy_animation_map.json` — reviewed resource/animation/consumer mappings for the initial 32 heavy-melee/Cleaver strips.
+- `game/actors/operator/animations/operator_animation_selector.gd` — tested runtime selector module, not yet connected to gameplay.
+- `tools/validation/operator_animation_selector_smoke.gd` — exact/SOUTH/OMNI and namespace-isolation regression checks.
+
 ## Canon migration
 
 `design/03_world/LATTICE_DOMAIN_COSMOLOGY_MIGRATION.md` is the active migration
