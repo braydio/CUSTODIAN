@@ -1,0 +1,2601 @@
+{
+  "schema": "custodian.carrow_machine_house_extract.v1",
+  "alpha_cutoff": 16,
+  "sources": {
+    "floor": "custodian/asset_drop/source_work/district_transfer_frame/carrow_machine_house_floor_v1_32.png",
+    "walls": "custodian/asset_drop/source_work/district_transfer_frame/carrow_machine_house_wall_v1_32.png",
+    "props": "custodian/asset_drop/source_work/district_transfer_frame/carrow_machine_house_service_props_v1_256x192.png"
+  },
+  "outputs": [
+    {
+      "family": "floor",
+      "logical_id": "r01_c01",
+      "source_bbox": [
+        21,
+        23,
+        156,
+        159
+      ],
+      "native_size": [
+        135,
+        136
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r01_c01__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r01_c01_32.png",
+      "sha256": "4e147094b82ac3dae2af1a93999dd0fa5067fd8cc8ebd04d4a76f526cc42215b"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r01_c02",
+      "source_bbox": [
+        175,
+        22,
+        310,
+        158
+      ],
+      "native_size": [
+        135,
+        136
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r01_c02__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r01_c02_32.png",
+      "sha256": "c300e97d7c34506feadda2b56852adcda954c56518fad8e89655bccca97a07ba"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r01_c03",
+      "source_bbox": [
+        329,
+        22,
+        464,
+        158
+      ],
+      "native_size": [
+        135,
+        136
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r01_c03__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r01_c03_32.png",
+      "sha256": "9c250d09e6be06fe252634318b05d816a3fe9accf31cc3d601b3f5f66ae90a8c"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r01_c04",
+      "source_bbox": [
+        482,
+        22,
+        618,
+        158
+      ],
+      "native_size": [
+        136,
+        136
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r01_c04__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r01_c04_32.png",
+      "sha256": "f51f9310a0d1238a4f5f3eb57eed2b188351da719bf4e3ad3a21b42fbff755cd"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r01_c05",
+      "source_bbox": [
+        637,
+        22,
+        772,
+        158
+      ],
+      "native_size": [
+        135,
+        136
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r01_c05__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r01_c05_32.png",
+      "sha256": "946218cff1b24594de4002e6ca54700efba3faee75000a825e37c6bf5fdb8e22"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r01_c06",
+      "source_bbox": [
+        791,
+        22,
+        927,
+        158
+      ],
+      "native_size": [
+        136,
+        136
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r01_c06__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r01_c06_32.png",
+      "sha256": "bdd982b63cb0ce64d5fac088eab605ed61bd2a65ca21f8d89abdeb5dab82f1c3"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r01_c07",
+      "source_bbox": [
+        945,
+        22,
+        1081,
+        158
+      ],
+      "native_size": [
+        136,
+        136
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r01_c07__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r01_c07_32.png",
+      "sha256": "38a0d5c76c9d9ba5411fa1b9230818e283c2964b9475db3cd662271d753d9684"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r01_c08",
+      "source_bbox": [
+        1099,
+        22,
+        1234,
+        158
+      ],
+      "native_size": [
+        135,
+        136
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r01_c08__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r01_c08_32.png",
+      "sha256": "bd606361ca5e07a352cee754dde7510ca55c35b9fc6cdd86c7c7ee98ac5e2f3e"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r02_c01",
+      "source_bbox": [
+        21,
+        176,
+        156,
+        310
+      ],
+      "native_size": [
+        135,
+        134
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r02_c01__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r02_c01_32.png",
+      "sha256": "370ea852c2a046815c942c6bfe7f86531d64cba1a697d6671fd8f56249d8dd3c"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r02_c02",
+      "source_bbox": [
+        175,
+        176,
+        310,
+        310
+      ],
+      "native_size": [
+        135,
+        134
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r02_c02__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r02_c02_32.png",
+      "sha256": "5d777ba3558e2c27f8592491bf548aa260900c71ef700ae70b1352bd47624f45"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r02_c03",
+      "source_bbox": [
+        329,
+        176,
+        464,
+        310
+      ],
+      "native_size": [
+        135,
+        134
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r02_c03__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r02_c03_32.png",
+      "sha256": "4abb28d87c46ee2dcb7de476efb06570de0112c1f2cfb7c356df19ad66a76f9d"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r02_c04",
+      "source_bbox": [
+        482,
+        176,
+        618,
+        310
+      ],
+      "native_size": [
+        136,
+        134
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r02_c04__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r02_c04_32.png",
+      "sha256": "b227904af68dee883d344562c16bbce3db8850d437e7e82fe0a5c2a014c34b98"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r02_c05",
+      "source_bbox": [
+        637,
+        175,
+        772,
+        309
+      ],
+      "native_size": [
+        135,
+        134
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r02_c05__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r02_c05_32.png",
+      "sha256": "33ad8ec7e589d3ac34b8a5c059ff2deaec9c1e7c43423e418d0f0d73583ecd2d"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r02_c06",
+      "source_bbox": [
+        791,
+        175,
+        927,
+        310
+      ],
+      "native_size": [
+        136,
+        135
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r02_c06__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r02_c06_32.png",
+      "sha256": "c1591ba8013d904cf96eb77d060afc1d861d5cb76a70a03a47da2b4cfbc56069"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r02_c07",
+      "source_bbox": [
+        945,
+        175,
+        1081,
+        310
+      ],
+      "native_size": [
+        136,
+        135
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r02_c07__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r02_c07_32.png",
+      "sha256": "d20408dfa519ecc6f550a6e5030c54a28bf0eaeb2024f0a8d20484401e33c1e5"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r02_c08",
+      "source_bbox": [
+        1099,
+        175,
+        1235,
+        310
+      ],
+      "native_size": [
+        136,
+        135
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r02_c08__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r02_c08_32.png",
+      "sha256": "fdaf811151aaa4ad44245282075605468ffc8197f8b21f575074fced827224ef"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r03_c01",
+      "source_bbox": [
+        21,
+        328,
+        156,
+        464
+      ],
+      "native_size": [
+        135,
+        136
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r03_c01__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r03_c01_32.png",
+      "sha256": "42ee75a8c5f61875ce39c9295923a04a14cca0d469d7490cb2973b2c482385ef"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r03_c02",
+      "source_bbox": [
+        175,
+        328,
+        310,
+        463
+      ],
+      "native_size": [
+        135,
+        135
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r03_c02__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r03_c02_32.png",
+      "sha256": "42e4be20fe122cb13cc1896417189d16154d706df04b1c8d612bfa0a8b985620"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r03_c03",
+      "source_bbox": [
+        329,
+        328,
+        464,
+        464
+      ],
+      "native_size": [
+        135,
+        136
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r03_c03__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r03_c03_32.png",
+      "sha256": "a79e1bd8ad31774f4ab329a82c2022aa96bf9729d42ea6561a3cfa944de58cdb"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r03_c04",
+      "source_bbox": [
+        482,
+        327,
+        618,
+        464
+      ],
+      "native_size": [
+        136,
+        137
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r03_c04__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r03_c04_32.png",
+      "sha256": "14abfcb2dec28459e2dc296bede3eaad763ed8cb585846dca46167caab8dbe42"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r03_c05",
+      "source_bbox": [
+        637,
+        327,
+        772,
+        463
+      ],
+      "native_size": [
+        135,
+        136
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r03_c05__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r03_c05_32.png",
+      "sha256": "06a479c337506d247d28954fefbe26df275631a1394e22de7d520f32ec3dd740"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r03_c06",
+      "source_bbox": [
+        791,
+        327,
+        927,
+        464
+      ],
+      "native_size": [
+        136,
+        137
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r03_c06__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r03_c06_32.png",
+      "sha256": "3ceb629daea5d704354f9ac432b620ffdc1ab947e8bcb4dde5f3a86e66b74520"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r03_c07",
+      "source_bbox": [
+        945,
+        327,
+        1081,
+        464
+      ],
+      "native_size": [
+        136,
+        137
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r03_c07__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r03_c07_32.png",
+      "sha256": "bdb2ea96732fb075323439fd4f7650d75077439bbed0e87014585f795884e551"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r03_c08",
+      "source_bbox": [
+        1099,
+        328,
+        1235,
+        463
+      ],
+      "native_size": [
+        136,
+        135
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r03_c08__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r03_c08_32.png",
+      "sha256": "940483e20eca1caf796f85d221a149b9e2432b436216c486c113a2ff88be9881"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r04_c01",
+      "source_bbox": [
+        21,
+        481,
+        155,
+        616
+      ],
+      "native_size": [
+        134,
+        135
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r04_c01__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r04_c01_32.png",
+      "sha256": "8c0a21add678b7c69781b3dda0b45012bec67640ba43e58486579d799c0b7a90"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r04_c02",
+      "source_bbox": [
+        174,
+        481,
+        310,
+        616
+      ],
+      "native_size": [
+        136,
+        135
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r04_c02__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r04_c02_32.png",
+      "sha256": "95605387834f05bc5a8ba4764b38dca5085ef3115e1e20868061bc8f2a163074"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r04_c03",
+      "source_bbox": [
+        328,
+        481,
+        463,
+        616
+      ],
+      "native_size": [
+        135,
+        135
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r04_c03__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r04_c03_32.png",
+      "sha256": "09848ce8ec68c6d438e7a3cf7b3a857131f63bf79475c85722b18e9bd34cb998"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r04_c04",
+      "source_bbox": [
+        482,
+        481,
+        617,
+        616
+      ],
+      "native_size": [
+        135,
+        135
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r04_c04__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r04_c04_32.png",
+      "sha256": "3d6d3e95d5b38f8f35bd756e89d40b2e22da188503eb1c38a082e500487027b7"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r04_c05",
+      "source_bbox": [
+        636,
+        481,
+        772,
+        616
+      ],
+      "native_size": [
+        136,
+        135
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r04_c05__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r04_c05_32.png",
+      "sha256": "f51a2244ee3b6f851025074811246895817a39ac3c5c49479f65fbd1e9b7b68e"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r04_c06",
+      "source_bbox": [
+        790,
+        481,
+        926,
+        616
+      ],
+      "native_size": [
+        136,
+        135
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r04_c06__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r04_c06_32.png",
+      "sha256": "73121993117a05ace5e82b25168c52925b49a5edeefe81bb94fcb0694ce79844"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r04_c07",
+      "source_bbox": [
+        945,
+        481,
+        1081,
+        616
+      ],
+      "native_size": [
+        136,
+        135
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r04_c07__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r04_c07_32.png",
+      "sha256": "5d492c11ca0b4569bf69844908758c77161ff4b5aced44a8f5acacb3175a2567"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r04_c08",
+      "source_bbox": [
+        1100,
+        481,
+        1235,
+        616
+      ],
+      "native_size": [
+        135,
+        135
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r04_c08__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r04_c08_32.png",
+      "sha256": "4070ec95007c543975749617f9e311475edf77bba2c8c152f6426a6b90ca5798"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r05_c01",
+      "source_bbox": [
+        23,
+        634,
+        156,
+        769
+      ],
+      "native_size": [
+        133,
+        135
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r05_c01__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r05_c01_32.png",
+      "sha256": "7865ad1034a76b4cdadc7679fc3163152d74e156234a6c0c5748fbfaa76e0574"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r05_c02",
+      "source_bbox": [
+        175,
+        634,
+        310,
+        768
+      ],
+      "native_size": [
+        135,
+        134
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r05_c02__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r05_c02_32.png",
+      "sha256": "8e6f8ffcc921368fdf5d6d54b3df33712d73d6251ea84f1afa4ed9c9b6030fc1"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r05_c03",
+      "source_bbox": [
+        329,
+        634,
+        463,
+        768
+      ],
+      "native_size": [
+        134,
+        134
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r05_c03__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r05_c03_32.png",
+      "sha256": "7510047ab93903ec0f635fe951b8a46206982cd37813820017f2293926e57caf"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r05_c04",
+      "source_bbox": [
+        482,
+        634,
+        617,
+        769
+      ],
+      "native_size": [
+        135,
+        135
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r05_c04__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r05_c04_32.png",
+      "sha256": "ebc432a5b92cc33f0b052c51601e71e58d25a90ec8e1ea81cb2ee639aa6b9cb0"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r05_c05",
+      "source_bbox": [
+        636,
+        634,
+        772,
+        769
+      ],
+      "native_size": [
+        136,
+        135
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r05_c05__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r05_c05_32.png",
+      "sha256": "4e14b7d03f567102baddc5a4bb262a0be38fe6f1b094f8c05c298214bb784e61"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r05_c06",
+      "source_bbox": [
+        790,
+        634,
+        926,
+        769
+      ],
+      "native_size": [
+        136,
+        135
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r05_c06__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r05_c06_32.png",
+      "sha256": "d936395bebff0537def8b0495c0c4dbff854e57ccaf0cf0214c1d8f560b078b0"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r05_c07",
+      "source_bbox": [
+        945,
+        634,
+        1081,
+        769
+      ],
+      "native_size": [
+        136,
+        135
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r05_c07__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r05_c07_32.png",
+      "sha256": "1869bbbcfc93df7e775307bace8caec509cbe189a3af3e7ebf6e15af1dde0466"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r05_c08",
+      "source_bbox": [
+        1099,
+        633,
+        1234,
+        769
+      ],
+      "native_size": [
+        135,
+        136
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r05_c08__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r05_c08_32.png",
+      "sha256": "666fb2bfa6d61a91927374424bda1c9210e405d233dbfdb28306c03414a648e0"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r06_c01",
+      "source_bbox": [
+        23,
+        787,
+        157,
+        921
+      ],
+      "native_size": [
+        134,
+        134
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r06_c01__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r06_c01_32.png",
+      "sha256": "ced5f16b14b53c9fb77f5c455c20b54840a2a22ae5d66fd47fa471af7ef51e90"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r06_c02",
+      "source_bbox": [
+        175,
+        787,
+        310,
+        921
+      ],
+      "native_size": [
+        135,
+        134
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r06_c02__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r06_c02_32.png",
+      "sha256": "92d93e2b03a721ba52f87ebe1767c5d1f00b77164f139aabcc98b0173c431dd6"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r06_c03",
+      "source_bbox": [
+        329,
+        787,
+        463,
+        922
+      ],
+      "native_size": [
+        134,
+        135
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r06_c03__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r06_c03_32.png",
+      "sha256": "8ed6d34f5c96ead6dee3056b28fbe0d57bc2f3754b0bf951d911206556503407"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r06_c04",
+      "source_bbox": [
+        482,
+        787,
+        617,
+        922
+      ],
+      "native_size": [
+        135,
+        135
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r06_c04__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r06_c04_32.png",
+      "sha256": "2c9ee01a364ec5a0bf21e4c880538e4358dad9c49602ebca66d46a3293a95028"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r06_c05",
+      "source_bbox": [
+        636,
+        787,
+        772,
+        922
+      ],
+      "native_size": [
+        136,
+        135
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r06_c05__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r06_c05_32.png",
+      "sha256": "c1efe96e47f6c282760dec3ae6a0ca5e0e82f5be8668c93c607965bfe4e3930a"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r06_c06",
+      "source_bbox": [
+        790,
+        787,
+        925,
+        922
+      ],
+      "native_size": [
+        135,
+        135
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r06_c06__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r06_c06_32.png",
+      "sha256": "aeb43f42a2a9376f9bd205cf041aaf2e351992db1ab4ab188406725fa0fb8190"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r06_c07",
+      "source_bbox": [
+        943,
+        787,
+        1079,
+        922
+      ],
+      "native_size": [
+        136,
+        135
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r06_c07__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r06_c07_32.png",
+      "sha256": "50874ee9d6b89ec09f6102a034c2bf15ee1cf233b26890f866aaf99b5a96c7b4"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r06_c08",
+      "source_bbox": [
+        1099,
+        787,
+        1235,
+        922
+      ],
+      "native_size": [
+        136,
+        135
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r06_c08__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r06_c08_32.png",
+      "sha256": "daa6a338e0d28c28e6ad7bd7a0df914591e783635cf42f656b5f7a733cd189ca"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r07_c01",
+      "source_bbox": [
+        23,
+        939,
+        156,
+        1074
+      ],
+      "native_size": [
+        133,
+        135
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r07_c01__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r07_c01_32.png",
+      "sha256": "c7308e3132f803031bc9a72f8386777784f0d3f454d0976fff16b73de83a53d2"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r07_c02",
+      "source_bbox": [
+        176,
+        939,
+        310,
+        1074
+      ],
+      "native_size": [
+        134,
+        135
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r07_c02__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r07_c02_32.png",
+      "sha256": "c88b0a1bccd3ddc137d447a7c83c97e5e033602eafc41198087295c4e6a811c3"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r07_c03",
+      "source_bbox": [
+        329,
+        939,
+        463,
+        1074
+      ],
+      "native_size": [
+        134,
+        135
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r07_c03__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r07_c03_32.png",
+      "sha256": "dc3126bbfdcc318ff4a072b645b8cf87cb29265e82cdc1928953e0f9284e842b"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r07_c04",
+      "source_bbox": [
+        482,
+        940,
+        616,
+        1075
+      ],
+      "native_size": [
+        134,
+        135
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r07_c04__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r07_c04_32.png",
+      "sha256": "a9953056dabffe33bc3fb3489dd192814db68cd6365c311c5bbaf8d8246c13a5"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r07_c05",
+      "source_bbox": [
+        636,
+        940,
+        771,
+        1075
+      ],
+      "native_size": [
+        135,
+        135
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r07_c05__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r07_c05_32.png",
+      "sha256": "19107ac5c1def6ee429362b39b4e6f29c70e6f761265ce312b400f92ea07dbbd"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r07_c06",
+      "source_bbox": [
+        789,
+        940,
+        924,
+        1074
+      ],
+      "native_size": [
+        135,
+        134
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r07_c06__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r07_c06_32.png",
+      "sha256": "f41f453fe675be6e8f523af46595c5f119277224364d25e7e6361ba5975ab4c3"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r07_c07",
+      "source_bbox": [
+        944,
+        940,
+        1078,
+        1074
+      ],
+      "native_size": [
+        134,
+        134
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r07_c07__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r07_c07_32.png",
+      "sha256": "8a1aafab78c28af63f67e5660802e65c149674ba8865a81eca9f8b6c4f1d0db3"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r07_c08",
+      "source_bbox": [
+        1097,
+        940,
+        1231,
+        1074
+      ],
+      "native_size": [
+        134,
+        134
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r07_c08__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r07_c08_32.png",
+      "sha256": "dec0dde16da7883ce2fb635222236998ffca20e2390614c2bf3e1f0713215eda"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r08_c01",
+      "source_bbox": [
+        22,
+        1093,
+        156,
+        1227
+      ],
+      "native_size": [
+        134,
+        134
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r08_c01__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r08_c01_32.png",
+      "sha256": "f92ebe0df034370c32d3ba2404564985a0d49f2361a7c6ccfd1cde4fd7a0c247"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r08_c02",
+      "source_bbox": [
+        176,
+        1093,
+        310,
+        1227
+      ],
+      "native_size": [
+        134,
+        134
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r08_c02__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r08_c02_32.png",
+      "sha256": "166ee27960b3cc42d91212ace718e8c25841397eadd7ca68491562beb518e083"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r08_c03",
+      "source_bbox": [
+        329,
+        1093,
+        463,
+        1227
+      ],
+      "native_size": [
+        134,
+        134
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r08_c03__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r08_c03_32.png",
+      "sha256": "d97e524c9cbd7422005f37187b94a6f87d420eaf3edd7e919061dcbbe0a9b9f4"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r08_c04",
+      "source_bbox": [
+        482,
+        1093,
+        616,
+        1227
+      ],
+      "native_size": [
+        134,
+        134
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r08_c04__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r08_c04_32.png",
+      "sha256": "d299eb7bba7e71ecaff37faf3b8e6fa795d58b0eb0b75125fbf7d9f10b414e50"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r08_c05",
+      "source_bbox": [
+        635,
+        1093,
+        770,
+        1227
+      ],
+      "native_size": [
+        135,
+        134
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r08_c05__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r08_c05_32.png",
+      "sha256": "a4f61948d39710ae447f1af09aab42948fa25329b6db81563da9b8906b9ef3bb"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r08_c06",
+      "source_bbox": [
+        789,
+        1093,
+        924,
+        1227
+      ],
+      "native_size": [
+        135,
+        134
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r08_c06__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r08_c06_32.png",
+      "sha256": "d5f1d678802ba88c5f45b7bab9e4b6c15682241fd6cbf20f14bf39189c247057"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r08_c07",
+      "source_bbox": [
+        943,
+        1093,
+        1078,
+        1227
+      ],
+      "native_size": [
+        135,
+        134
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r08_c07__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r08_c07_32.png",
+      "sha256": "01d8210b7fdaa9fc5e5b52125c426b554a5bab352ea79732253c3068ed50ea94"
+    },
+    {
+      "family": "floor",
+      "logical_id": "r08_c08",
+      "source_bbox": [
+        1096,
+        1093,
+        1231,
+        1227
+      ],
+      "native_size": [
+        135,
+        134
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/native_extract/floor_carrow_r08_c08__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/floor/runtime_32/floor_carrow_r08_c08_32.png",
+      "sha256": "5258437fc217ce0c7034c3eb0674818d0a1c39d2930bbf9236567c018697eac8"
+    },
+    {
+      "family": "walls",
+      "index": 1,
+      "logical_id": "wall_carrow_r01_c01",
+      "source_bbox": [
+        11,
+        13,
+        497,
+        186
+      ],
+      "native_size": [
+        488,
+        175
+      ],
+      "preview_size": [
+        244,
+        88
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r01_c01__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r01_c01__50pct.png",
+      "sha256": "b2f71a8818870df27ffbafb73812734dd0054cb2bad8f326f79bf0f6ea57a6d5"
+    },
+    {
+      "family": "walls",
+      "index": 2,
+      "logical_id": "wall_carrow_r01_c02",
+      "source_bbox": [
+        511,
+        12,
+        1013,
+        185
+      ],
+      "native_size": [
+        504,
+        175
+      ],
+      "preview_size": [
+        252,
+        88
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r01_c02__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r01_c02__50pct.png",
+      "sha256": "5fd8549d9b75fb012ad2e58b3ece26f7eb6b7670aefb1ab3163cb440fd055ed6"
+    },
+    {
+      "family": "walls",
+      "index": 3,
+      "logical_id": "wall_carrow_r01_c03",
+      "source_bbox": [
+        1026,
+        13,
+        1267,
+        185
+      ],
+      "native_size": [
+        243,
+        174
+      ],
+      "preview_size": [
+        122,
+        87
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r01_c03__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r01_c03__50pct.png",
+      "sha256": "c2e727ec9522bf0566148db38452b48a72f72ca0fe2f16926a45c094e764c2f3"
+    },
+    {
+      "family": "walls",
+      "index": 4,
+      "logical_id": "wall_carrow_r01_c04",
+      "source_bbox": [
+        1279,
+        12,
+        1526,
+        191
+      ],
+      "native_size": [
+        249,
+        181
+      ],
+      "preview_size": [
+        124,
+        90
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r01_c04__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r01_c04__50pct.png",
+      "sha256": "1e936fdc6c6d309781258bcf3c3fe1b7007c237255cd2e5a5e0b868e259d7664"
+    },
+    {
+      "family": "walls",
+      "index": 5,
+      "logical_id": "wall_carrow_r02_c01",
+      "source_bbox": [
+        18,
+        192,
+        180,
+        394
+      ],
+      "native_size": [
+        164,
+        204
+      ],
+      "preview_size": [
+        82,
+        102
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r02_c01__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r02_c01__50pct.png",
+      "sha256": "39f0a17e5b5807d4de55270e5fb5abb2bc1868102a3ca303816e62be03b17eda"
+    },
+    {
+      "family": "walls",
+      "index": 6,
+      "logical_id": "wall_carrow_r02_c02",
+      "source_bbox": [
+        193,
+        192,
+        283,
+        390
+      ],
+      "native_size": [
+        92,
+        200
+      ],
+      "preview_size": [
+        46,
+        100
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r02_c02__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r02_c02__50pct.png",
+      "sha256": "b61c1dd063c0f670263b9ae6b2d530cea057c3868c4ebf6e2f877802e2cb7a8b"
+    },
+    {
+      "family": "walls",
+      "index": 7,
+      "logical_id": "wall_carrow_r02_c03",
+      "source_bbox": [
+        316,
+        194,
+        398,
+        391
+      ],
+      "native_size": [
+        84,
+        199
+      ],
+      "preview_size": [
+        42,
+        100
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r02_c03__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r02_c03__50pct.png",
+      "sha256": "28a13270ae295b2bf65bbe8ddeefcd18d958f0a1d889f9188f03b3d501826e4c"
+    },
+    {
+      "family": "walls",
+      "index": 8,
+      "logical_id": "wall_carrow_r02_c04",
+      "source_bbox": [
+        421,
+        199,
+        472,
+        390
+      ],
+      "native_size": [
+        53,
+        193
+      ],
+      "preview_size": [
+        26,
+        96
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r02_c04__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r02_c04__50pct.png",
+      "sha256": "5ac03f4a8509bbc59038851bdcbdd86b5caecc0a37893e10b6498c2de81e97e4"
+    },
+    {
+      "family": "walls",
+      "index": 9,
+      "logical_id": "wall_carrow_r02_c05",
+      "source_bbox": [
+        512,
+        192,
+        609,
+        390
+      ],
+      "native_size": [
+        99,
+        200
+      ],
+      "preview_size": [
+        50,
+        100
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r02_c05__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r02_c05__50pct.png",
+      "sha256": "64b65134b2b1353c4f1db8249a91f929bb706b658c1a733c5e33d4d2fa9233bd"
+    },
+    {
+      "family": "walls",
+      "index": 10,
+      "logical_id": "wall_carrow_r02_c06",
+      "source_bbox": [
+        630,
+        194,
+        693,
+        394
+      ],
+      "native_size": [
+        65,
+        202
+      ],
+      "preview_size": [
+        32,
+        101
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r02_c06__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r02_c06__50pct.png",
+      "sha256": "dca97ef00a414c290b7d8b6f247ae52250349242ddaafa7bd3b4e4b747e8a775"
+    },
+    {
+      "family": "walls",
+      "index": 11,
+      "logical_id": "wall_carrow_r02_c07",
+      "source_bbox": [
+        715,
+        199,
+        777,
+        394
+      ],
+      "native_size": [
+        64,
+        197
+      ],
+      "preview_size": [
+        32,
+        98
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r02_c07__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r02_c07__50pct.png",
+      "sha256": "6ef34fedf4051a1d3c285f3b8e37f580606cdcac35e4e13f9c3c64e5e86c3aca"
+    },
+    {
+      "family": "walls",
+      "index": 12,
+      "logical_id": "wall_carrow_r02_c08",
+      "source_bbox": [
+        800,
+        193,
+        893,
+        390
+      ],
+      "native_size": [
+        95,
+        199
+      ],
+      "preview_size": [
+        48,
+        100
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r02_c08__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r02_c08__50pct.png",
+      "sha256": "d9d685265cbca942b9df731dc2a30e1019bbf35952aea17dcf44594d0c5eeccb"
+    },
+    {
+      "family": "walls",
+      "index": 13,
+      "logical_id": "wall_carrow_r02_c09",
+      "source_bbox": [
+        919,
+        192,
+        1177,
+        390
+      ],
+      "native_size": [
+        260,
+        200
+      ],
+      "preview_size": [
+        130,
+        100
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r02_c09__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r02_c09__50pct.png",
+      "sha256": "c1261ca9b006276b0cb99df945a8ab1d4d95b5d021c4edab0ae70b0fb5f7c251"
+    },
+    {
+      "family": "walls",
+      "index": 14,
+      "logical_id": "wall_carrow_r02_c10",
+      "source_bbox": [
+        1200,
+        202,
+        1428,
+        390
+      ],
+      "native_size": [
+        230,
+        190
+      ],
+      "preview_size": [
+        115,
+        95
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r02_c10__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r02_c10__50pct.png",
+      "sha256": "786f4ddd691afb8caf5a3d883ed54ca293a9eb9fc3ec4a990515a40c93bcbe52"
+    },
+    {
+      "family": "walls",
+      "index": 15,
+      "logical_id": "wall_carrow_r02_c11",
+      "source_bbox": [
+        1445,
+        192,
+        1522,
+        390
+      ],
+      "native_size": [
+        79,
+        200
+      ],
+      "preview_size": [
+        40,
+        100
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r02_c11__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r02_c11__50pct.png",
+      "sha256": "ec433e27f5c5ffe29708df3c222f38064aa8d45bf30fb9019aae8aacd525d9f6"
+    },
+    {
+      "family": "walls",
+      "index": 16,
+      "logical_id": "wall_carrow_r03_c01",
+      "source_bbox": [
+        22,
+        404,
+        304,
+        572
+      ],
+      "native_size": [
+        284,
+        170
+      ],
+      "preview_size": [
+        142,
+        85
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r03_c01__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r03_c01__50pct.png",
+      "sha256": "6e01dedb20123d324da65e99187c85a6d046cdd2bea8ddf7eb07be2a8660fefd"
+    },
+    {
+      "family": "walls",
+      "index": 17,
+      "logical_id": "wall_carrow_r03_c02",
+      "source_bbox": [
+        324,
+        404,
+        525,
+        571
+      ],
+      "native_size": [
+        203,
+        169
+      ],
+      "preview_size": [
+        102,
+        84
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r03_c02__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r03_c02__50pct.png",
+      "sha256": "a307e4d7edb5065f5739154b93eda339a10b6c3b49e1cfc404411fd2a77ac375"
+    },
+    {
+      "family": "walls",
+      "index": 18,
+      "logical_id": "wall_carrow_r03_c03",
+      "source_bbox": [
+        539,
+        404,
+        729,
+        572
+      ],
+      "native_size": [
+        192,
+        170
+      ],
+      "preview_size": [
+        96,
+        85
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r03_c03__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r03_c03__50pct.png",
+      "sha256": "ffe53779857e70a08295da13193cc0682b7918abdb453880357dd0e1da073dfa"
+    },
+    {
+      "family": "walls",
+      "index": 19,
+      "logical_id": "wall_carrow_r03_c04",
+      "source_bbox": [
+        769,
+        404,
+        825,
+        570
+      ],
+      "native_size": [
+        58,
+        168
+      ],
+      "preview_size": [
+        29,
+        84
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r03_c04__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r03_c04__50pct.png",
+      "sha256": "7dd17250398c49f195d124c28823c73643567ea918e4bce7c790f7e8d105681b"
+    },
+    {
+      "family": "walls",
+      "index": 20,
+      "logical_id": "wall_carrow_r03_c05",
+      "source_bbox": [
+        841,
+        404,
+        964,
+        572
+      ],
+      "native_size": [
+        125,
+        170
+      ],
+      "preview_size": [
+        62,
+        85
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r03_c05__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r03_c05__50pct.png",
+      "sha256": "2d53452735803869afa5830a5706453e32d93dca58ff9a4d7675573e94d23f5b"
+    },
+    {
+      "family": "walls",
+      "index": 21,
+      "logical_id": "wall_carrow_r03_c06",
+      "source_bbox": [
+        988,
+        405,
+        1216,
+        573
+      ],
+      "native_size": [
+        230,
+        170
+      ],
+      "preview_size": [
+        115,
+        85
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r03_c06__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r03_c06__50pct.png",
+      "sha256": "3f4e95e06bd41ad72b752c8d73ec2b8306924fc9d3f1835cf19e85a89d97dbe1"
+    },
+    {
+      "family": "walls",
+      "index": 22,
+      "logical_id": "wall_carrow_r03_c07",
+      "source_bbox": [
+        1233,
+        405,
+        1518,
+        572
+      ],
+      "native_size": [
+        287,
+        169
+      ],
+      "preview_size": [
+        144,
+        84
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r03_c07__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r03_c07__50pct.png",
+      "sha256": "9da0770be64f265c709f840cee47b77e24bf87d361081485ba3902d79ea8e769"
+    },
+    {
+      "family": "walls",
+      "index": 23,
+      "logical_id": "wall_carrow_r04_c01",
+      "source_bbox": [
+        22,
+        585,
+        275,
+        758
+      ],
+      "native_size": [
+        255,
+        175
+      ],
+      "preview_size": [
+        128,
+        88
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r04_c01__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r04_c01__50pct.png",
+      "sha256": "71a3fb37f55c4fa9e6a253cb5d6c2dd5faae5fe1da606234406630dc187a4acc"
+    },
+    {
+      "family": "walls",
+      "index": 24,
+      "logical_id": "wall_carrow_r04_c02",
+      "source_bbox": [
+        293,
+        585,
+        641,
+        752
+      ],
+      "native_size": [
+        350,
+        169
+      ],
+      "preview_size": [
+        175,
+        84
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r04_c02__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r04_c02__50pct.png",
+      "sha256": "d73e0913b8c7ce05db80f1633c8a1be29ec2dc52b7099569ed37677a06c9daa7"
+    },
+    {
+      "family": "walls",
+      "index": 25,
+      "logical_id": "wall_carrow_r04_c03",
+      "source_bbox": [
+        657,
+        585,
+        922,
+        753
+      ],
+      "native_size": [
+        267,
+        170
+      ],
+      "preview_size": [
+        134,
+        85
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r04_c03__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r04_c03__50pct.png",
+      "sha256": "856eb6dcaa2c8d7174f39f294897586080a47279c9bde271f276df147b7e6fcd"
+    },
+    {
+      "family": "walls",
+      "index": 26,
+      "logical_id": "wall_carrow_r04_c04",
+      "source_bbox": [
+        938,
+        585,
+        1197,
+        753
+      ],
+      "native_size": [
+        261,
+        170
+      ],
+      "preview_size": [
+        130,
+        85
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r04_c04__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r04_c04__50pct.png",
+      "sha256": "9fbcac815108b54e7653fb9b40cbbf42c129c72b24569079e52f1dd009c12010"
+    },
+    {
+      "family": "walls",
+      "index": 27,
+      "logical_id": "wall_carrow_r04_c05",
+      "source_bbox": [
+        1211,
+        585,
+        1511,
+        752
+      ],
+      "native_size": [
+        302,
+        169
+      ],
+      "preview_size": [
+        151,
+        84
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r04_c05__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r04_c05__50pct.png",
+      "sha256": "5f3a6d7ecf8ca1b3d9436244278beafec35bb0bf0ee2c58b6828ce5771bfdc42"
+    },
+    {
+      "family": "walls",
+      "index": 28,
+      "logical_id": "wall_carrow_r05_c01",
+      "source_bbox": [
+        18,
+        768,
+        205,
+        908
+      ],
+      "native_size": [
+        189,
+        142
+      ],
+      "preview_size": [
+        94,
+        71
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r05_c01__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r05_c01__50pct.png",
+      "sha256": "7b72a52ea8b431d276777cdbd0ccda0f4c3c4bb7416c957982aba8eab3194a26"
+    },
+    {
+      "family": "walls",
+      "index": 29,
+      "logical_id": "wall_carrow_r05_c02",
+      "source_bbox": [
+        224,
+        768,
+        411,
+        908
+      ],
+      "native_size": [
+        189,
+        142
+      ],
+      "preview_size": [
+        94,
+        71
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r05_c02__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r05_c02__50pct.png",
+      "sha256": "6d62228967c5bba1e6dbf39e740d6875426362899b90f81efe6ecd322262441f"
+    },
+    {
+      "family": "walls",
+      "index": 30,
+      "logical_id": "wall_carrow_r05_c03",
+      "source_bbox": [
+        425,
+        768,
+        565,
+        908
+      ],
+      "native_size": [
+        142,
+        142
+      ],
+      "preview_size": [
+        71,
+        71
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r05_c03__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r05_c03__50pct.png",
+      "sha256": "4fc24c16b9e95fe21dd5c060b0b5249d3fe2fb0dcfb85eaf9e8d4c7c2258df44"
+    },
+    {
+      "family": "walls",
+      "index": 31,
+      "logical_id": "wall_carrow_r05_c04",
+      "source_bbox": [
+        579,
+        768,
+        794,
+        909
+      ],
+      "native_size": [
+        217,
+        143
+      ],
+      "preview_size": [
+        108,
+        72
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r05_c04__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r05_c04__50pct.png",
+      "sha256": "b0315852fb8e9643f1002dd9fb01b3434015c41b9cf313aed6f1016e9a1df43b"
+    },
+    {
+      "family": "walls",
+      "index": 32,
+      "logical_id": "wall_carrow_r05_c05",
+      "source_bbox": [
+        809,
+        769,
+        1013,
+        912
+      ],
+      "native_size": [
+        206,
+        145
+      ],
+      "preview_size": [
+        103,
+        72
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r05_c05__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r05_c05__50pct.png",
+      "sha256": "c4f1912b16ac60ab92e8312caa1f1e00212a8a428ef89ccfc6740c48183099fa"
+    },
+    {
+      "family": "walls",
+      "index": 33,
+      "logical_id": "wall_carrow_r05_c06",
+      "source_bbox": [
+        1026,
+        770,
+        1119,
+        909
+      ],
+      "native_size": [
+        95,
+        141
+      ],
+      "preview_size": [
+        48,
+        70
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r05_c06__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r05_c06__50pct.png",
+      "sha256": "10c2efae5e729640dc98870f9a1ec248d3dc02337d074bdd793db5aa19c3a985"
+    },
+    {
+      "family": "walls",
+      "index": 34,
+      "logical_id": "wall_carrow_r05_c07",
+      "source_bbox": [
+        1132,
+        768,
+        1197,
+        910
+      ],
+      "native_size": [
+        67,
+        144
+      ],
+      "preview_size": [
+        34,
+        72
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r05_c07__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r05_c07__50pct.png",
+      "sha256": "af8a57464e1dfb8e90209b903377f962d1353c87e7142cc087e10f77243876dd"
+    },
+    {
+      "family": "walls",
+      "index": 35,
+      "logical_id": "wall_carrow_r05_c08",
+      "source_bbox": [
+        1202,
+        810,
+        1262,
+        885
+      ],
+      "native_size": [
+        62,
+        77
+      ],
+      "preview_size": [
+        31,
+        38
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r05_c08__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r05_c08__50pct.png",
+      "sha256": "5065485ddc0d1a83cc70db0be04c0d09806e74676b9bdf37de36d882ce3dd6db"
+    },
+    {
+      "family": "walls",
+      "index": 36,
+      "logical_id": "wall_carrow_r05_c09",
+      "source_bbox": [
+        1274,
+        784,
+        1400,
+        895
+      ],
+      "native_size": [
+        128,
+        113
+      ],
+      "preview_size": [
+        64,
+        56
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r05_c09__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r05_c09__50pct.png",
+      "sha256": "d186305b20178a993c9fbd099273258ce91af050468e076d853b45effc5f8318"
+    },
+    {
+      "family": "walls",
+      "index": 37,
+      "logical_id": "wall_carrow_r05_c10",
+      "source_bbox": [
+        1421,
+        772,
+        1455,
+        910
+      ],
+      "native_size": [
+        36,
+        140
+      ],
+      "preview_size": [
+        18,
+        70
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r05_c10__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r05_c10__50pct.png",
+      "sha256": "7eb1ac396da49fc5f9f1d10cbdcf0c2f95ff832c984892fb72c64da611b37e98"
+    },
+    {
+      "family": "walls",
+      "index": 38,
+      "logical_id": "wall_carrow_r05_c11",
+      "source_bbox": [
+        1479,
+        770,
+        1514,
+        909
+      ],
+      "native_size": [
+        37,
+        141
+      ],
+      "preview_size": [
+        18,
+        70
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r05_c11__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r05_c11__50pct.png",
+      "sha256": "2898b96da280406a80033d05fb275921514b65c84a05eb51656f669889f9c1d8"
+    },
+    {
+      "family": "walls",
+      "index": 39,
+      "logical_id": "wall_carrow_r06_c01",
+      "source_bbox": [
+        16,
+        920,
+        317,
+        1008
+      ],
+      "native_size": [
+        303,
+        90
+      ],
+      "preview_size": [
+        152,
+        45
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r06_c01__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r06_c01__50pct.png",
+      "sha256": "23c91a9380f8edf0e43edbc65fb6398ce7a6d000058bd416c3cf1e0e1253ad12"
+    },
+    {
+      "family": "walls",
+      "index": 40,
+      "logical_id": "wall_carrow_r06_c02",
+      "source_bbox": [
+        335,
+        920,
+        465,
+        1007
+      ],
+      "native_size": [
+        132,
+        89
+      ],
+      "preview_size": [
+        66,
+        44
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r06_c02__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r06_c02__50pct.png",
+      "sha256": "a0171145cfce77bae144315d75407fd874ab26fc229bc095bf4bf60f745427b5"
+    },
+    {
+      "family": "walls",
+      "index": 41,
+      "logical_id": "wall_carrow_r06_c03",
+      "source_bbox": [
+        481,
+        922,
+        683,
+        1007
+      ],
+      "native_size": [
+        204,
+        87
+      ],
+      "preview_size": [
+        102,
+        44
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r06_c03__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r06_c03__50pct.png",
+      "sha256": "1fd4f6fa698ec6e611c92cd4ea282a169a8010a1ae9068ebfb6f64789389e94e"
+    },
+    {
+      "family": "walls",
+      "index": 42,
+      "logical_id": "wall_carrow_r06_c04",
+      "source_bbox": [
+        708,
+        922,
+        811,
+        1007
+      ],
+      "native_size": [
+        105,
+        87
+      ],
+      "preview_size": [
+        52,
+        44
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r06_c04__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r06_c04__50pct.png",
+      "sha256": "ecaf6857528c70b75c1de5234a8f3829259499aa3b5717832844722701338c5d"
+    },
+    {
+      "family": "walls",
+      "index": 43,
+      "logical_id": "wall_carrow_r06_c05",
+      "source_bbox": [
+        842,
+        921,
+        934,
+        1007
+      ],
+      "native_size": [
+        94,
+        88
+      ],
+      "preview_size": [
+        47,
+        44
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r06_c05__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r06_c05__50pct.png",
+      "sha256": "18d143556dbc99cc13a148ff894713d1c7a3a1624a28ae9e70541aaa3c1834d3"
+    },
+    {
+      "family": "walls",
+      "index": 44,
+      "logical_id": "wall_carrow_r06_c06",
+      "source_bbox": [
+        970,
+        922,
+        1078,
+        1007
+      ],
+      "native_size": [
+        110,
+        87
+      ],
+      "preview_size": [
+        55,
+        44
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r06_c06__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r06_c06__50pct.png",
+      "sha256": "d62280232a418c054a58c2fc70357bfa7eca97d53d6125b1658b53155ac50b7f"
+    },
+    {
+      "family": "walls",
+      "index": 45,
+      "logical_id": "wall_carrow_r06_c07",
+      "source_bbox": [
+        1109,
+        922,
+        1215,
+        1007
+      ],
+      "native_size": [
+        108,
+        87
+      ],
+      "preview_size": [
+        54,
+        44
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r06_c07__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r06_c07__50pct.png",
+      "sha256": "d2e8f8f1c364dd147617366d0f1f01dcb6a402247c8ce6b80bb50309a5dae8f5"
+    },
+    {
+      "family": "walls",
+      "index": 46,
+      "logical_id": "wall_carrow_r06_c08",
+      "source_bbox": [
+        1235,
+        923,
+        1283,
+        1007
+      ],
+      "native_size": [
+        50,
+        86
+      ],
+      "preview_size": [
+        25,
+        43
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r06_c08__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r06_c08__50pct.png",
+      "sha256": "ea06b72fdbc083e37b0eb705f4a2e7bb92214d5bebd0ea1c1ec75c4e0bedbe4d"
+    },
+    {
+      "family": "walls",
+      "index": 47,
+      "logical_id": "wall_carrow_r06_c09",
+      "source_bbox": [
+        1310,
+        928,
+        1366,
+        1005
+      ],
+      "native_size": [
+        58,
+        79
+      ],
+      "preview_size": [
+        29,
+        40
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r06_c09__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r06_c09__50pct.png",
+      "sha256": "ed5e0e9d4cd3cf12fcef53601e3c396c6edc8849e8758c2003e3f5d9cbadbc8e"
+    },
+    {
+      "family": "walls",
+      "index": 48,
+      "logical_id": "wall_carrow_r06_c10",
+      "source_bbox": [
+        1386,
+        932,
+        1448,
+        999
+      ],
+      "native_size": [
+        64,
+        69
+      ],
+      "preview_size": [
+        32,
+        34
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r06_c10__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r06_c10__50pct.png",
+      "sha256": "ba2d595d2a1d31d2c7a83e4dbf3f8b8df19cfd581ace24beba53498408f36fe7"
+    },
+    {
+      "family": "walls",
+      "index": 49,
+      "logical_id": "wall_carrow_r06_c11",
+      "source_bbox": [
+        1467,
+        927,
+        1518,
+        1007
+      ],
+      "native_size": [
+        53,
+        82
+      ],
+      "preview_size": [
+        26,
+        41
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/native_extract/wall_carrow_r06_c11__native.png",
+      "preview_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/walls/runtime_preview_50pct/wall_carrow_r06_c11__50pct.png",
+      "sha256": "9f9ef9a27a84a7b74b1f1a67ed51d19963f4d28cdb5f7641f5887b3eb029c8f0"
+    },
+    {
+      "family": "props",
+      "logical_id": "parts_locker",
+      "source_bbox": [
+        58,
+        42,
+        274,
+        540
+      ],
+      "native_size": [
+        220,
+        502
+      ],
+      "runtime_size": [
+        64,
+        96
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/props/native_extract/props_carrow_parts_locker__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/props/runtime/props_carrow_parts_locker.png",
+      "sha256": "8f4555f3905925e5beeef3daf7aebcf87976475a4b840b28c1212c5f46e8fc2f"
+    },
+    {
+      "family": "props",
+      "logical_id": "service_cabinet",
+      "source_bbox": [
+        314,
+        250,
+        647,
+        536
+      ],
+      "native_size": [
+        337,
+        290
+      ],
+      "runtime_size": [
+        96,
+        64
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/props/native_extract/props_carrow_service_cabinet__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/props/runtime/props_carrow_service_cabinet.png",
+      "sha256": "76cfdafac2bb56a9ce0e229a18ffa7c21779a845da7d50b5a314dc389aab01ac"
+    },
+    {
+      "family": "props",
+      "logical_id": "workbench",
+      "source_bbox": [
+        688,
+        108,
+        1077,
+        536
+      ],
+      "native_size": [
+        393,
+        432
+      ],
+      "runtime_size": [
+        128,
+        96
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/props/native_extract/props_carrow_workbench__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/props/runtime/props_carrow_workbench.png",
+      "sha256": "f8380acb7f2f94e265a39683a518dd32e6f6628f33c645101fcbcbb2bf236cb5"
+    },
+    {
+      "family": "props",
+      "logical_id": "tool_board",
+      "source_bbox": [
+        1120,
+        156,
+        1419,
+        500
+      ],
+      "native_size": [
+        303,
+        348
+      ],
+      "runtime_size": [
+        96,
+        64
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/props/native_extract/props_carrow_tool_board__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/props/runtime/props_carrow_tool_board.png",
+      "sha256": "266bd5ea2008cfae89bc06a617118ca5404a1961c85d7a9702041951e7a2f75d"
+    },
+    {
+      "family": "props",
+      "logical_id": "maintenance_cart",
+      "source_bbox": [
+        48,
+        684,
+        385,
+        1015
+      ],
+      "native_size": [
+        341,
+        335
+      ],
+      "runtime_size": [
+        96,
+        96
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/props/native_extract/props_carrow_maintenance_cart__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/props/runtime/props_carrow_maintenance_cart.png",
+      "sha256": "b41c6c64f6001b82e9874a1827a8960ef014adba4f38b85c9a4139277218d2e7"
+    },
+    {
+      "family": "props",
+      "logical_id": "power_cabinet",
+      "source_bbox": [
+        435,
+        588,
+        688,
+        1021
+      ],
+      "native_size": [
+        257,
+        437
+      ],
+      "runtime_size": [
+        64,
+        96
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/props/native_extract/props_carrow_power_cabinet__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/props/runtime/props_carrow_power_cabinet.png",
+      "sha256": "4e2fc04d25747ecd8589258883afb03eecb030ebe5c7f926b612561f6689c7ea"
+    },
+    {
+      "family": "props",
+      "logical_id": "conduit_junction",
+      "source_bbox": [
+        709,
+        619,
+        1093,
+        1017
+      ],
+      "native_size": [
+        388,
+        402
+      ],
+      "runtime_size": [
+        64,
+        64
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/props/native_extract/props_carrow_conduit_junction__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/props/runtime/props_carrow_conduit_junction.png",
+      "sha256": "796c48f1284d42466029c6690023bd17055bc845e2582b27e791c4a4fa34107e"
+    },
+    {
+      "family": "props",
+      "logical_id": "replacement_modules",
+      "source_bbox": [
+        1129,
+        631,
+        1408,
+        991
+      ],
+      "native_size": [
+        283,
+        364
+      ],
+      "runtime_size": [
+        64,
+        96
+      ],
+      "native_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/props/native_extract/props_carrow_replacement_modules__native.png",
+      "runtime_path": "custodian/asset_drop/production_prep/carrow_machine_house_extract/props/runtime/props_carrow_replacement_modules.png",
+      "sha256": "1bf0dd82d4ab292a93d7515aca6a5004553295010dc7bd51bff0d0edd319c43f"
+    }
+  ]
+}
