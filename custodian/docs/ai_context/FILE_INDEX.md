@@ -1047,13 +1047,22 @@ Last updated: 2026-08-20
 # Baby Opossum Ambient Creature
 
 - `custodian/game/actors/ambient/ambient_creature_animation_set.gd` — shared
-  fail-soft semantic clip resolver and SpriteFrames builder for ambient actors.
+  fail-soft semantic clip resolver, layer-aware clip identity, and cached
+  per-layer SpriteFrames builder for ambient actors.
 - `custodian/game/actors/ambient/ambient_creature_presentation_controller.gd` —
-  cycle-safe semantic fallback and alias presentation API.
-- `custodian/game/actors/ambient/baby_opossum/` — production actor, scene,
-  animation set, and optional V2 runtime strip discovery.
+  cycle-safe semantic fallback, alias presentation API, and synchronized
+  body/prop layer playback.
+- `custodian/game/actors/ambient/baby_opossum/` — production actor (action
+  state machine), scene, animation set, and optional V2 runtime strip
+  discovery.
+- `custodian/game/systems/combat/attack_rejection.gd` — generic passive-target
+  attack rejection shared by melee and projectile weapons.
 - `custodian/content/metadata/assets/families/ambient_baby_opossum.asset.json`
-  — all-optional Baby Opossum family contract.
+  — all-optional Baby Opossum family contract, including the `barrel_prop`
+  hide layer states.
+- `custodian/tools/validation/baby_opossum_runtime_smoke.gd` — production gate
+  for home anchoring, determinism, sequence timing, movement locks, flee
+  termination, live projectile rejection, and layered presentation.
 ## World Environment V1
 
 - `design/02_features/environment/WORLD_ENVIRONMENT_BIOME_DAYNIGHT_WEATHER.md` — implementation authority.

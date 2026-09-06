@@ -1,6 +1,7 @@
 extends Area2D
 
 const CombatConstants = preload("res://game/systems/combat/combat_constants.gd")
+const AttackRejection := preload("res://game/systems/combat/attack_rejection.gd")
 
 @export var speed: float = 760.0
 @export var damage: float = 18.0
@@ -166,6 +167,22 @@ func _handle_body_hit(body: Node, impact_position: Vector2, surface_normal: Vect
 		return true
 	if body == shooter:
 		return false
+	# Passive rejectors (harmless creatures) consume the shot with their own
+	# reaction instead of falling through to the un-hittable pass-through path.
+	if AttackRejection.is_rejector(body):
+		AttackRejection.reject(body, {
+			"kind": &"projectile",
+			"team": team,
+			"attacker": shooter,
+			"projectile": null,
+			"origin": _last_step_from,
+			"direction": direction,
+			"impact_position": impact_position,
+			"damage": get_scaled_damage(),
+		})
+		_spawn_block_impact_at(impact_position)
+		queue_free()
+		return true
 	var base_damage := get_scaled_damage()
 	var hit_modifiers := _prepare_operator_direct_hit(body)
 	var direct_damage := (

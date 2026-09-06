@@ -1,6 +1,7 @@
 extends Area2D
 
 const CombatConstants = preload("res://game/systems/combat/combat_constants.gd")
+const AttackRejection := preload("res://game/systems/combat/attack_rejection.gd")
 
 @export var speed: float = 1200.0
 @export var damage: float = 12.0
@@ -59,6 +60,18 @@ func _physics_process(delta):
 
 func _on_body_entered(body: Node):
 	if body == shooter:
+		return
+	if AttackRejection.is_rejector(body):
+		var rejected_at := _resolve_impact_position(body)
+		AttackRejection.reject(body, {
+			"kind": &"projectile",
+			"team": team,
+			"attacker": shooter,
+			"impact_position": rejected_at,
+			"damage": damage,
+		})
+		_spawn_impact_at(rejected_at)
+		queue_free()
 		return
 	if body.has_method("receive_projectile_hit") and (_is_world_blocker(body) or _can_hit(body)):
 		var impact_position := _resolve_impact_position(body)

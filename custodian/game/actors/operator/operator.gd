@@ -32,6 +32,7 @@ const DeathState = preload("res://game/actors/operator/animations/states/death_s
 const MeleeAttackProfile = preload("res://game/systems/combat/melee_attack_profile.gd")
 const MeleeTargetResolver = preload("res://game/systems/combat/melee_target_resolver.gd")
 const CombatConstants = preload("res://game/systems/combat/combat_constants.gd")
+const AttackRejection := preload("res://game/systems/combat/attack_rejection.gd")
 const RangedBallisticAimResolver = preload(
 	"res://game/systems/combat/ranged_ballistic_aim_resolver.gd"
 )
@@ -5736,7 +5737,12 @@ func _apply_melee_hitbox_tick(semantic_frame: int = -1) -> void:
 		if not (body is Node2D):
 			continue
 		var enemy = body as Node2D
-		if enemy == null or not enemy.is_in_group("enemy"):
+		if enemy == null:
+			continue
+		if not enemy.is_in_group("enemy"):
+			# Passive rejectors answer the sweep themselves; the swing lands as
+			# a harmless bounce instead of passing through.
+			_try_reject_melee_contact(enemy, contact_id)
 			continue
 		if not enemy.has_method("take_damage"):
 			continue
@@ -5860,6 +5866,36 @@ func _apply_melee_hitbox_tick(semantic_frame: int = -1) -> void:
 		_melee_miss_sfx_played = true
 		# MISS SFX REMOVED — awaiting replacement (was MELEE_MISS_SOUND, too loud)
 		# _play_combat_sfx(MELEE_MISS_SOUND, global_position, -4.0)
+
+
+## Gives a non-hostile body in the melee arc a chance to reject the swing.
+## Returns true when the contact was consumed by the rejector.
+func _try_reject_melee_contact(body: Node2D, contact_id: StringName) -> bool:
+	if not AttackRejection.is_rejector(body):
+		return false
+	var contact_key := "%s:%s" % [str(body.get_instance_id()), String(contact_id)]
+	if _melee_hit_targets.has(contact_key):
+		return false
+	var to_body := body.global_position - global_position
+	var distance := to_body.length()
+	if distance <= 0.001 or distance > _melee_range_current:
+		return false
+	if absf(rad_to_deg(_melee_forward.angle_to(to_body.normalized()))) > (_melee_arc_current * 0.5):
+		return false
+	_melee_hit_targets[contact_key] = true
+	var impact_position := _resolve_melee_impact_position(body)
+	AttackRejection.reject(body, {
+		"kind": &"melee",
+		"team": "player",
+		"attacker": self,
+		"attack_key": String(_melee_attack_key),
+		"attack_kind": _melee_attack_kind,
+		"impact_position": impact_position,
+		"origin": global_position,
+		"damage": 0.0,
+	})
+	_spawn_melee_impact(impact_position)
+	return true
 
 
 func _get_melee_forward_direction() -> Vector2:

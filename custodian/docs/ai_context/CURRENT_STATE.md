@@ -1334,7 +1334,7 @@ cloned target cels in one Aseprite transaction while preserving alpha. Source
 Session recolor writes `registered/recolored_candidate.png` separately and
 never changes the staged original, converter candidates, canonical source, or
 runtime output.
-# Baby Opossum Ambient Creature Runtime (2026-09-03)
+# Baby Opossum Ambient Creature Runtime (2026-09-06)
 
 Baby Opossum now has a first-class `ambient_creature` V2 family and runtime
 actor under `game/actors/ambient/baby_opossum/`. Its semantic presentation
@@ -1342,6 +1342,33 @@ resolver is optional-asset, cycle-safe, direction-aware, and independent of
 the enemy domain. The actor is invulnerable, supports trust/treat, reject-hit,
 play-dead, hide, and scavenging hooks, and is registered as a conservative
 supplemental fauna spawn. Shrumb remains on its existing compatibility path.
+
+Behavior is owned by an explicit action state machine rather than loose
+booleans and timers. Every state names one semantic clip, a movement mode, and
+its successor, so hide, play-dead, flee, treat, rejection, and scavenging
+sequences play one animation at a time at their authored pace; play-dead and
+hide structurally suspend movement and flee terminates on safe distance or
+timeout. Wander is deterministic: the actor never reads wall-clock time or
+instance identity, and `AmbientCritterManager` hands each spawn a stable seed
+(`set_ambient_seed`) plus its post-spawn anchor (`set_passive_home_position`)
+so wander centers on where the creature actually spawned.
+
+Attack rejection is a generic weapon-side contract, not creature-specific
+weapon code: `game/systems/combat/attack_rejection.gd` routes any body in the
+`attack_rejector` group through `reject_attack(context)`, and the operator
+melee sweep, bullet, energy shot, and missile all consume the hit as a
+harmless deflect. Any future harmless actor opts in by joining that group.
+
+Presentation is layer-aware. Clip identity is `(layer, action, direction)`
+parsed from the canonical Asset V2 filename, each layer builds its own
+SpriteFrames with duplicate-name protection, and the actor carries a `HideProp`
+layer that plays the `barrel_prop` hide clips on the body's action clock (and
+hides when a prop clip is not authored). The animation set is one shared
+resource with cached per-layer SpriteFrames, so spawning N opossums no longer
+rescans the runtime directory N times, and clip FPS now comes from the family
+contract table instead of a coarse fast/slow split. No runtime strips are
+ingested yet; `OPOSSUM_REQUIRE_ART=1` turns the smoke's coverage report into a
+hard gate once art lands.
 ## World Environment V1 (2026-09-03)
 
 Accepted procgen maps now own deterministic scrubland, woodland, wetland, and rocky-upland fields that constrain foliage density, composition, and tint beneath route policy. One world-local `WorldEnvironmentDirector` owns a 24-minute fixed-physics day, contract-seeded weather, and indoor exposure; existing lighting, atmosphere, and shared foliage materials remain presentation authorities.

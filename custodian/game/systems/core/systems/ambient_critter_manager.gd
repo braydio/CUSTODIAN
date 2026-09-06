@@ -142,6 +142,7 @@ func _on_contract_generated(contract: Dictionary) -> void:
 			(critter as Node2D).global_position = spawn_position
 			_apply_critter_variation(critter as Node2D, spawned)
 			_set_critter_home(critter as Node2D)
+			_set_critter_ambient_seed(critter as Node2D)
 		_spawned_critters.append(critter)
 		spawned += 1
 		if spawned >= critter_count:
@@ -189,7 +190,8 @@ func _try_ambient_spawn() -> void:
 	# remains tied to the generated world identity.
 	_apply_critter_variation(critter, _spawned_critters.size())
 	_set_critter_home(critter)
-	
+	_set_critter_ambient_seed(critter)
+
 	_spawned_critters.append(critter)
 
 
@@ -297,6 +299,14 @@ func _apply_critter_variation(critter: Node2D, index: int) -> void:
 func _set_critter_home(critter: Node2D) -> void:
 	if critter != null and critter.has_method("set_passive_home_position"):
 		critter.call("set_passive_home_position", critter.global_position)
+
+
+## Ambient creatures must not derive their own randomness from wall-clock time
+## or instance identity. The manager owns the deterministic stream and hands
+## each spawn a stable seed drawn from it.
+func _set_critter_ambient_seed(critter: Node2D) -> void:
+	if critter != null and critter.has_method("set_ambient_seed"):
+		critter.call("set_ambient_seed", _critter_rng.randi())
 
 
 func _collect_habitat_positions() -> Array[Vector2]:
