@@ -28,6 +28,7 @@ const ACTION_FPS := {
 	"notice_treat":10.0,"approach_wary":8.0,"sniff_treat":10.0,"take_treat":10.0,"eat":8.0,
 	"friend_happy":10.0,"greet":10.0,"approach_player":8.0,"follow":8.0,"wait":8.0,
 	"search":8.0,"dig":10.0,"find_target":8.0,"look_back":8.0,"excited_idle":8.0,
+	"groom":8.0,"scratch":8.0,
 	"danger_sense":10.0,"retrieve":8.0,"gift_drop":10.0
 }
 

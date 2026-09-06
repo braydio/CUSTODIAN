@@ -11,7 +11,7 @@ class_name AmbientCreaturePresentationController
 const BODY_LAYER := &"body"
 
 const FALLBACKS := {
-	"idle_alt":["idle"],"look":["idle"],"sniff":["look","idle"],"waddle":["idle"],"scurry":["waddle","idle"],"sit_enter":["sit_idle","idle"],"sit_idle":["idle"],"sit_exit":["idle"],
+	"idle_alt":["idle"],"look":["idle"],"sniff":["look","idle"],"groom":["idle_alt","idle"],"scratch":["groom","idle_alt","idle"],"waddle":["idle"],"scurry":["waddle","idle"],"sit_enter":["sit_idle","idle"],"sit_idle":["idle"],"sit_exit":["idle"],
 	"alert":["startle","look","idle"],"startle":["alert","idle"],"freeze":["idle"],"hiss":["alert","startle","idle"],"panic":["startle","scurry","waddle","idle"],"flee_start":["startle","scurry","waddle","idle"],
 	"play_dead_enter":["freeze","idle"],"play_dead_hold":["freeze","idle"],"play_dead_peek":["look","idle"],"play_dead_exit":["idle"],"hide_enter":["scurry","idle"],"hide_hold":["idle"],"hide_peek":["look","idle"],"hide_exit":["idle"],
 	"reject_hit":["startle","idle"],"disapprove":["look","idle"],"disapprove_hold":["disapprove","look","idle"],"notice_treat":["alert","look","idle"],"approach_wary":["waddle","idle"],"sniff_treat":["sniff","look","idle"],"take_treat":["eat","idle"],"eat":["idle"],"friend_happy":["greet","look","idle"],"greet":["friend_happy","look","idle"],"approach_player":["waddle","idle"],"follow":["waddle","idle"],"wait":["idle"],

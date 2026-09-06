@@ -129,24 +129,27 @@ func _validate_freed_cached_map_guard() -> void:
 func _validate_static_wiring() -> void:
 	assert(
 		ProjectSettings.get_setting("application/run/main_scene")
-		== "res://scenes/home_custodian_begin.tscn"
+		== "res://scenes/awakening_first_return.tscn"
 	)
 	var game_scene_source := FileAccess.get_file_as_string("res://scenes/game.tscn")
 	assert(game_scene_source.contains("world_contract_proxy.gd"))
 	assert(not game_scene_source.contains("custodian_contract_map.tscn"))
-	var home_source := FileAccess.get_file_as_string(
-		"res://game/world/home/custodian_home_begin.gd"
+	# The Awakening prologue must not start first-campaign generation: no Contract
+	# has been surfaced yet. Prewarm resumes from the Hub in a later section.
+	var awakening_source := FileAccess.get_file_as_string(
+		"res://game/world/awakening/awakening_first_return.gd"
 	)
-	assert(home_source.contains("await get_tree().process_frame"))
-	assert(home_source.contains("FIELD LINK SYNCHRONIZING"))
-	assert(not home_source.contains("get_tree().paused = true"))
-	var home_scene := load("res://scenes/home_custodian_begin.tscn") as PackedScene
-	var home := home_scene.instantiate()
-	var operator := home.get_node_or_null("World/Operator")
-	var camera := home.get_node_or_null("World/Camera2D")
+	assert(not awakening_source.contains("WorldContractBootstrap"))
+	assert(not awakening_source.contains("ensure_started"))
+	assert(not awakening_source.contains("change_scene_to_file"))
+	assert(not awakening_source.contains("get_tree().paused = true"))
+	var awakening_scene := load("res://scenes/awakening_first_return.tscn") as PackedScene
+	var awakening := awakening_scene.instantiate()
+	var operator := awakening.get_node_or_null("World/Operator")
+	var camera := awakening.get_node_or_null("World/Camera2D")
 	assert(operator != null and operator.process_mode != Node.PROCESS_MODE_DISABLED)
 	assert(camera != null and camera.process_mode != Node.PROCESS_MODE_DISABLED)
-	home.free()
+	awakening.free()
 
 
 func _build_fake_generator_scene(should_fail: bool) -> PackedScene:

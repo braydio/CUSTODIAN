@@ -25,6 +25,8 @@ enum TrustStage { WILD, WARY, FED, FAMILIAR, FRIEND }
 enum Movement { LOCKED, WANDER, FLEE, APPROACH }
 enum State {
 	IDLE, WANDER, ALERT,
+	LOOK, SNIFF, GROOM, SCRATCH,
+	DANGER_SENSE, HISS, STARTLE,
 	FLEE_START, FLEE,
 	REJECT_HIT, DISAPPROVE,
 	PLAY_DEAD_ENTER, PLAY_DEAD_HOLD, PLAY_DEAD_PEEK, PLAY_DEAD_EXIT,
@@ -43,6 +45,13 @@ const STATE_TABLE := {
 	State.IDLE: {"action": &"idle", "movement": Movement.WANDER, "hold": true},
 	State.WANDER: {"action": &"waddle", "movement": Movement.WANDER, "hold": true},
 	State.ALERT: {"action": &"alert", "movement": Movement.LOCKED, "next": State.IDLE},
+	State.LOOK: {"action": &"look", "movement": Movement.LOCKED, "next": State.IDLE},
+	State.SNIFF: {"action": &"sniff", "movement": Movement.LOCKED, "next": State.IDLE},
+	State.GROOM: {"action": &"groom", "movement": Movement.LOCKED, "next": State.IDLE},
+	State.SCRATCH: {"action": &"scratch", "movement": Movement.LOCKED, "next": State.IDLE},
+	State.DANGER_SENSE: {"action": &"danger_sense", "movement": Movement.LOCKED, "next": State.HISS},
+	State.HISS: {"action": &"hiss", "movement": Movement.LOCKED, "next": State.FLEE_START},
+	State.STARTLE: {"action": &"startle", "movement": Movement.LOCKED, "next": State.FLEE_START},
 	State.FLEE_START: {"action": &"flee_start", "movement": Movement.LOCKED, "next": State.FLEE},
 	State.FLEE: {"action": &"scurry", "movement": Movement.FLEE, "duration": 2.4, "next": State.ALERT},
 	State.REJECT_HIT: {"action": &"reject_hit", "movement": Movement.LOCKED, "next": State.DISAPPROVE},
@@ -71,6 +80,11 @@ const STATE_TABLE := {
 }
 
 const AMBIENT_STATES := {State.IDLE: true, State.WANDER: true}
+# One-shot idle flavour beats, chosen deterministically from the seeded RNG.
+const AMBIENT_FLAVOUR_STATES: Array[int] = [State.LOOK, State.SNIFF, State.GROOM, State.SCRATCH]
+# Animation-derived state durations are capped so a long authored clip cannot
+# stall a reaction preamble; explicit table durations are used verbatim.
+const MAX_DERIVED_DURATION := 1.5
 const PLAY_DEAD_STATES := {State.PLAY_DEAD_ENTER: true, State.PLAY_DEAD_HOLD: true, State.PLAY_DEAD_PEEK: true}
 const HIDE_STATES := {State.HIDE_ENTER: true, State.HIDE_HOLD: true, State.HIDE_PEEK: true}
 const FLEE_STATES := {State.FLEE_START: true, State.FLEE: true}
@@ -86,6 +100,8 @@ signal gift_dropped(target: Node)
 @export var wander_radius := 96.0
 @export var flee_safe_distance := 220.0
 @export var search_radius := 240.0
+@export var idle_flavour_interval_min := 5.0
+@export var idle_flavour_interval_max := 13.0
 @export var trust_stage: TrustStage = TrustStage.WILD
 @export var trust_points := 0
 @export var behavior_enabled := true
@@ -109,6 +125,7 @@ var _state_timer := 0.0
 var _chained_next := -1
 var _wander_target := Vector2.ZERO
 var _wander_timer := 0.0
+var _flavour_timer := 0.0
 var _approach_target := Vector2.ZERO
 var _flee_origin := Vector2.ZERO
 var _home_initialized := false
@@ -154,6 +171,7 @@ func set_ambient_seed(seed_value: int) -> void:
 	_rng.seed = seed_value
 	_seeded = true
 	_wander_timer = 0.0
+	_reset_flavour_timer()
 
 # --- Presentation passthrough ----------------------------------------------
 
@@ -195,9 +213,21 @@ func reject_melee(attacker: Node = null) -> bool:
 	reject_attack({"kind": &"melee", "attacker": attacker})
 	return true
 
+## A blow that landed near the opossum without touching it: no time to size the
+## threat up, just bolt.
 func on_nearby_attack(origin: Vector2) -> void:
+	if not _is_interruptible(): return
+	_flee_origin = origin
 	_face_toward(origin)
-	if _is_interruptible(): _enter_state(State.ALERT)
+	_enter_state(State.STARTLE)
+
+## An ordinary approaching threat. The opossum notices it, warns it off, and
+## only then runs: danger_sense -> hiss -> flee_start -> flee -> alert -> idle.
+func sense_threat(origin: Vector2) -> void:
+	if not _is_interruptible(): return
+	_flee_origin = origin
+	_face_toward(origin)
+	_enter_state(State.DANGER_SENSE)
 
 # --- Behavior API -----------------------------------------------------------
 
@@ -289,6 +319,9 @@ func _enter_state(state: int, chain_to := -1) -> void:
 	var action := StringName(entry.get("action", &"idle"))
 	_state_timer = 0.0 if bool(entry.get("hold", false)) else _resolve_duration(entry, action)
 	_chained_next = chain_to
+	# The threat preamble faces the danger; the moment it resolves into a run,
+	# the opossum turns away from it.
+	if state == State.FLEE_START: _face_away_from(_flee_origin)
 	fleeing = FLEE_STATES.has(state)
 	play_dead = PLAY_DEAD_STATES.has(state)
 	is_hidden = HIDE_STATES.has(state)
@@ -317,18 +350,34 @@ func _resolve_next_state(finished: int, proposed: int) -> int:
 func _resolve_duration(entry: Dictionary, action: StringName) -> float:
 	if entry.has("duration"): return maxf(0.0, float(entry["duration"]))
 	var authored := get_action_duration(action)
-	return authored if authored > 0.0 else DEFAULT_ACTION_SECONDS
+	return minf(authored, MAX_DERIVED_DURATION) if authored > 0.0 else DEFAULT_ACTION_SECONDS
 
 func _tick_ambient(delta: float) -> void:
 	_wander_timer -= delta
+	_flavour_timer -= delta
 	if _wander_timer <= 0.0: _choose_wander_target()
 	var offset := _wander_target - global_position
 	if offset.length_squared() > ARRIVAL_DISTANCE_SQUARED:
 		facing_direction = offset.normalized()
 		if _state != State.WANDER: _enter_state(State.WANDER)
 		else: play_action(&"waddle")
-	elif _state != State.IDLE:
+		return
+	if _flavour_timer <= 0.0:
+		_play_idle_flavour()
+		return
+	if _state != State.IDLE:
 		_enter_state(State.IDLE)
+
+## Deterministic idle beat: the opossum pauses between wander legs to look,
+## sniff, groom, or scratch. Selection and cadence both come from the seeded
+## RNG, never from wall-clock time.
+func _play_idle_flavour() -> void:
+	_reset_flavour_timer()
+	_wander_timer = maxf(_wander_timer, 1.0)
+	_enter_state(AMBIENT_FLAVOUR_STATES[_rng.randi_range(0, AMBIENT_FLAVOUR_STATES.size() - 1)])
+
+func _reset_flavour_timer() -> void:
+	_flavour_timer = _rng.randf_range(idle_flavour_interval_min, maxf(idle_flavour_interval_min, idle_flavour_interval_max))
 
 func _apply_movement(_delta: float) -> void:
 	match int((STATE_TABLE[_state] as Dictionary).get("movement", Movement.LOCKED)):
@@ -382,8 +431,8 @@ func _bind_detector(detector: Node, handler: StringName) -> void:
 
 func _on_threat_detected(node: Node) -> void:
 	var source := _detector_source(node, &"opossum_threat")
-	if source == null or not _is_interruptible(): return
-	flee_from(source.global_position)
+	if source == null: return
+	sense_threat(source.global_position)
 
 func _on_treat_detected(node: Node) -> void:
 	var source := _detector_source(node, &"opossum_treat")

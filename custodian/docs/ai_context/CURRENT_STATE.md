@@ -709,7 +709,7 @@ Documentation updates this session:
 - Wide main-map road generation is disabled by default and explicitly disabled on the production `ProcGenMap`. This skips the expensive second road repair/parking/visual-refresh/state-capture stack and produces no generated `main_road` network. Narrow interest footpaths plus route, ingress, and connectivity authority remain active. The archived road implementation is retained behind `intent_main_roads_enabled = true` for controlled debug comparison only.
 - Better Terrain and Dear ImGui have been removed from `addons/`, their editor-plugin/autoload registrations are gone, and the retired ImGui Director Console integration/smoke were deleted. Godot-native terrain generation remains authoritative; F12 `debug_hud`, `DebugBus`, `DebugSnapshotCollector`, and `DevObservatory` remain the supported diagnostics stack.
 - World ingress return guards now survive both the brief empty-overlap window and synthetic `body_exited` signals caused by re-enabling Area2D monitoring after a disabled origin branch is restored. The guard follows the restored Operator's actual distance from the ingress, so returning from the Empty Bell remains on the procgen surface until the Operator physically leaves instead of immediately replaying descent.
-- The shared authored collision/POI mapper now applies saved rails and markers to its live preview and mirrors marker positions into the target `.tscn` while retaining script constants as runtime authority. The Forlorn Ritualant mapper therefore visibly and persistently updates its authored Underground level. `home_custodian_begin_mapper.tscn` provides the same workflow for the Home beginning perimeter, Custodian wake spawn, and Field Terminal.
+- The shared authored collision/POI mapper now applies saved rails and markers to its live preview and mirrors marker positions into the target `.tscn` while retaining script constants as runtime authority. The Forlorn Ritualant mapper therefore visibly and persistently updates its authored Underground level. `awakening_first_return_mapper.tscn` provides the same workflow for the Awakening opening dungeon, framed on the whole spine with section, route, and landmark overlays.
 - The production Sundered Keep mapper now owns runtime `_input` directly and freezes its instantiated gameplay preview after visual construction, preventing the preview HUD/controllers from swallowing authoring clicks. Palette tiles and sampled underlay stamps render immediately on absolute mapper preview layers before JSON save/rebuild.
 
 - Lootable Corpse Beacon is in implementation review. Enemy death now determines a structured reward payload exactly once without touching `ResourceLedger`, `VaultManager`, or `GameState`; the final death pose persists and `EnemyCorpseLoot` becomes the single proximity-collection boundary for typed loot, carried stolen resources, and legacy materials. Lootable corpses are exempt from cleanup, while collected/empty corpses use minimum/offscreen/hard lifetime cleanup. Reveal, persistent beacon/ring, collection collapse, corpse hue, and a focused smoke are wired. The persistent marker now splits the existing beacon strip into corpse-depth `GroundRing`/`BeamLower` presentation plus a small absolute-depth `BeamTip`, allowing the Operator to occlude the lower shaft without losing the readability indicator. The runtime sheets now resolve cleanly as reveal 8/768x96, beacon 9/432x160, collapse 8/768x160, and ring 6/576x96; collapse references the accurately named `8f` asset and the obsolete duplicate falsely named `6f` is retired. Scene-unload persistence is not supported. The requested 1536x1024 source sheets remain absent, so exact 8/6 production normalization remains an explicit art-intake blocker.
@@ -870,7 +870,7 @@ Documentation updates this session:
 - The production Approach now applies a conservative presentation trim: only the approved seventeen fortress-component textures/nodes are instantiated, hidden parallax layers skip processing, the invisible parapet and four route-wide translucent fog/mist overlays are not built, procedural approach lights use `256x256` radial textures, route-master mipmaps are disabled, and authored vista grunts default off behind an explicit production-performance export. The ocean underlay and remaining visible Grand Vista stack are retained; lazy Grand Vista construction remains deferred.
 - The authored-underlay plate pipeline is installed from `custodian_authored_underlay_pipeline/`: `slice_authored_underlay.py` slices an external large master into verified core-plus-bleed plates, writes a deterministic manifest plus streamed runtime/static preview scenes, and is consumed by `AuthoredUnderlayPlateLoader`. Its isolated `.venv` supplies the pinned Pillow dependency without altering system Python. Installation/unit/parse checks pass; no production plate set has been generated yet because the external source master is a separate input.
 - Active runtime: Godot 4.x project in `custodian/`.
-- Active main scene: `res://scenes/home_custodian_begin.tscn`; after its first processed frame, the persistent `WorldContractBootstrap` begins one hidden cooperative contract-generation run while Home remains playable. Its second Field Terminal interaction hands off once to `res://scenes/game.tscn` when the contract is ready, waits visibly in Home while generation is active, and exposes explicit retry after failure.
+- Active main scene: `res://scenes/awakening_first_return.tscn`. The Awakening prologue deliberately does **not** start contract prewarming and does not hand off to `res://scenes/game.tscn`: no Contract has been surfaced yet. `WorldContractBootstrap` and the reusable `FieldTerminalInteractable` remain in the repository for the later Hub/Forum sections, and the ready/wait/failure/retry terminal handling described below applies to that later handoff, not to the opening.
 - Authority model: Godot-authoritative runtime with no external gameplay authority.
 - Timing model: fixed-step deterministic simulation.
 - State root: `GameState` and `GameStats` autoloads plus world/system nodes under `GameRoot`.
@@ -890,7 +890,7 @@ Documentation updates this session:
 - Terminal `REBOOT` now repopulates the typed `Array[String]` transcript in place, avoiding the Godot runtime error caused by assigning an untyped duplicated boot-line array.
 - Active UI shell: in-game command terminal embedded in the Godot HUD. Its SECTORS page now uses a tactical-management hierarchy: larger shared minimap with focused-sector labeling/highlight, one-line aligned sector table, authoritative `NAME // STATE` selected-sector detail card, aligned command-link actions, smaller secondary event log with compressed focus-shift spam, explicit grid-deficit top status formatting, and clean dark text panels while preserving the industrial terminal frame.
 - Current gothic/brass gameplay HUD style: compact Black Reliquary UI, with runtime assets under `res://content/ui/black_reliquary/` and reusable Godot UI components under `res://game/ui/`; the Black Reliquary minimap frame embeds the shared live tactical minimap renderer instead of static marker art, Sundered Keep-specific quest/status/prompt/minimap surfaces only show while the player is inside Sundered Keep, normal-play diagnostics route to the dedicated F12/`debug_hud` debug screen instead of scattered HUD labels, and terminal focus masks gameplay overlays/debug surfaces without re-showing inactive map-local HUDs.
-- Current beginning/home slice: `res://scenes/home_custodian_begin.tscn`, an authored Road of Witnesses scene where the Custodian awakens beneath a repeating institutional command (RETURN TO POST), tracks its source through grand ruins to a damaged Field Terminal, and establishes witness contact at a post the terminal already recognizes from a converging continuity.
+- Current beginning slice: `res://scenes/awakening_first_return.tscn`, a ten-section authored dungeon walked as one continuous space — Crèche of Answerless Names, Recovery Ambulatory, Attestation Gallery, Locker Reliquary, Dust Lung Cistern, Undergate Mechanism Hall, Gate of Dust, Custodian Approach, the optional Chapel of Late Service, and the Road of Witnesses South Reach. The Custodian wakes beneath the repeating institutional command (RETURN TO POST); the Field Terminal that answers it belongs to a later section.
 - Mandatory local agent/developer entrypoint: `custodian/AGENTS.md`.
 - Godot 4.7 startup maintenance now uses explicit GDScript types in strict-warning paths, complete SpriteFrames
   `loop` metadata, current resource UIDs, and canonical/noncanonical import regeneration guidance documented in
@@ -995,7 +995,7 @@ Documentation updates this session:
 
 - Procgen Intent Graph / Ascent V1 is live as the first route-first worldgen correction layer. `ProcGenTilemap.world_shape_mode` defaults to `ASCENT_FIELD`, which skips the legacy BSP/corridor/cellular cave mask as base substrate and instead builds exterior floor/wall authority from `WorldgenIntentGraph` plus `AscentFieldBuilder`: broad ascent route, switchback terraces, side pockets, sparse cliff/ruin/border blockers, vistas, and story/faction reservations. `LEGACY_CAVE` keeps the old generator path available. `get_level_data()` exports `world_shape_mode`, `worldgen_intent_graph`, `ascent_field_summary`, `main_route_cells`, `vista_cells`, and reserved regions. TerrainBuilder receives intent required cells and reserved regions, applies guarded runtime height/traversal metadata, then preserves connectivity before layering the existing ascent route, mountain, and platform passes. Faction and story reservations now claim actual floor footprints through the shared authored-scene reservation API before their placeholder markers/anchors are used. Elevation traversal query APIs are live on `ProcGenTilemap`; full Operator/enemy/vehicle pathing enforcement remains deferred.
 - CUSTODIAN Lighting System V1 is live in `res://scenes/game.tscn` as a Godot-native presentation layer under `res://game/world/lighting/`, documented in `design/02_features/lighting/CUSTODIAN_LIGHTING_SYSTEM.md` and `design/02_features/visuals/WORLD_ATMOSPHERE_SHADER_SYSTEM.md`. The main scene now owns `CanvasModulate`, `DirectionalLight2D`, `WorldLightingDirector`, the `sundered_keep_exterior` default profile, and a fullscreen world-atmosphere pass below the UI. Contract planet profiles flow through `ContractWorldLoader` into duplicated runtime lighting profiles. Generated foliage shares shrub/tree wind/visibility-bubble materials, derives spatial phase from world position, updates uniforms per shared material, and limits z-order inspection to a tile window around the player; current motion tuning is 0.70 local px for shrubs, 1.35 local px for trees, and 0.42 gust contribution. The atmosphere pass uses three fog FBM octaves, two optional cosmic octaves, and skips cosmic noise entirely at zero strength. `LightRig2D` now supports authored light/glow cookies, shadows, light height, and asymmetric scaling while retaining its generated radial fallback. Six cookies, five painted contact/cast shadows, five additional localized-contrast profiles, and an eight-frame dust shaft are live under `res://content/`; the gatehouse reference scene exercises a cold window slash, two warm braziers, three pillar casters, a gate caster, contact shadows, a darker zone, and a bright objective. Operator and grunt blob-shadow presentation consumes the painted character contact texture. The standalone `lighting_system_smoke.gd` validates both the original playground and gatehouse reference room; `world_atmosphere_smoke.gd` verifies live scene wiring, shader/profile propagation, shared foliage uniforms, UI ordering, and representative light rigs. Production placement of the new profiles/occluders beyond the reference room and manual visual/performance tuning remain deferred.
-- The first Home beginning slice is implemented from `design/04_architecture/HOME_CUSTODIAN_FIELD_TERMINAL.md` and is now the project `run/main_scene`. It lives at `res://scenes/home_custodian_begin.tscn`, with objective/signal and handoff control in `res://game/world/home/custodian_home_begin.gd` and the reusable `FieldTerminalInteractable` in `res://game/world/home/field_terminal_interactable.gd`. First witness contact preserves the partial archive reveal. After Home's first processed frame, `WorldContractBootstrap` starts one hidden `CustodianContractMap` run and retains the accepted map across scene replacement. A second interaction transitions immediately when ready, waits without pausing Home while generation is active, or presents a retryable failure. `game.tscn` now exposes `World/ContractMap` through `WorldContractProxy`; `ContractWorldLoader` installs the same retained map instance into `World/ProcGenRuntime` and marks it claimed, so no second generation occurs. Production Field Terminal art, signal FX/audio, and terminal-chamber dressing remain tracked in `REQUIRED_ASSETS.md`.
+- The first Home beginning slice has been superseded by Awakening / The First Return; see the dedicated section below. `game.tscn` still exposes `World/ContractMap` through `WorldContractProxy`, and `ContractWorldLoader` still installs the retained map instance into `World/ProcGenRuntime`, for the later Hub handoff.
 - Contract generation is live and produces a contracted planet plus a linked tactical runtime world. Contract-owned procgen attempts now disable child `ProcGen` ready-time auto-generation before adding candidate maps to the tree, run candidate attempts in metric/evaluation mode, log explicit layout validity/connected-room/compound-ingress and terrain fallback/connectivity/rescue metrics, reject TerrainBuilder fallback/disconnected/excessive-rescue candidates for acceptance through `terrain_rescue_reject_threshold`, and regenerate only an accepted map once in full visual mode before contract emission. Attempt-loop logging now reports `attempts_run`, `max_attempts`, and `accepted_attempt` instead of implying the max attempt count always ran. Candidate evaluation now distinguishes layout validity, pre-TerrainBuilder required-cell connectivity, TerrainBuilder rescue health, candidate validity, and final acceptance; logs use `layout_valid`/`candidate_valid` instead of a broad `valid=true` that could imply accepted health. Contract layout diagnostics now include spawn tile, reachable tile count, room/ingress totals, represented room anchors, exact walkability, pre-terrain required connectivity/missing required samples with source and reason, TerrainBuilder baseline rescue, terrain rescue value/limit/ok status, rejection reasons, and up to 10 unreachable room samples; `ASCENT_FIELD` room-distance metrics use semantic ascent/objective anchors instead of legacy cave room centers, and `ASCENT_FIELD` player spawn resolves to the intent graph origin so layout scoring and TerrainBuilder start from the same authority. Huge baseline rescue now means upstream generated floor/required-cell connectivity is bad before TerrainBuilder, not that the candidate is healthy. Successful contracts now place two deterministic ambient-camp markers on separated walkable vista/route cells and the mounted `AmbientEnemySpawner` creates two-grunt camps from them; failed contracts continue to disable ambient camps. If every candidate is rejected, `CustodianContractMap` emits an explicit `contract_generation_failed` result and `ContractWorldLoader` aborts runtime world activation instead of allowing a no-map combat session; the loader disables wave spawning, enemy spawn nodes, ambient enemy camps, supply drops, ambient critter spawning, current/future enemy actors, navigation initialization, and map-bound camera setup for the failed session. The optional `allow_degraded_best_candidate_fallback` flag is disabled by default and only permits a loud development fallback when layout/ingress and terrain connectivity are otherwise sane. Streaming reveal no longer collapses hidden generated floor/wall authority back to only currently painted TileMap cells, so contract connected-room scoring aligns with TerrainBuilder connectivity instead of rejecting connected candidates. The Sundered Keep visual approach also consumes two authored grunt records from its mapper layout, one centered in each vista subregion. The Katana fast-chain body and FX clips now play at 17 FPS, and the runtime `melee_stance` placeholder is the single first frame of Fast 01. The tuning attempt count remains 12 while ascent/terrain profiles stabilize.
 - Main-scene observability now has a first bounded telemetry path: Operator damage/death, sector damage/repair, enemy kills, player-presence heat sampling, and power-node world-state sync all feed the new observability systems. The existing F12 debug screen remains the broader structured diagnostics surface; the F9 observatory is a faster recent-events/counters/gauges view rather than a replacement inspector.
 - Developer F2 now performs procgen render attribution instead of toggling the global atmosphere pass. It hides only the generated map's cached `DepthBackdrop`, `Floor`, `Walls`, `NonWalkableSurfaceBase`, and `NonWalkableSurfaceOverlay` CanvasItems; navigation, generated collision bodies/shapes, AI, enemies, props, foliage, and generation state remain enabled. Observatory publishes aggregate major-visual, floor, wall, and depth-backdrop gauges. Production defaults remain fully visible.
@@ -1334,6 +1334,60 @@ cloned target cels in one Aseprite transaction while preserving alpha. Source
 Session recolor writes `registered/recolored_candidate.png` separately and
 never changes the staged original, converter candidates, canonical source, or
 runtime output.
+# Awakening / The First Return, Sections 01-10 (2026-09-06)
+
+The one-image Home beginning is retired. The project now boots into
+`res://scenes/awakening_first_return.tscn`, a ten-section authored dungeon walked
+as one continuous space with no loading: Crèche of Answerless Names, Recovery
+Ambulatory, Attestation Gallery, Locker Reliquary, Dust Lung Cistern, Undergate
+Mechanism Hall, Gate of Dust, Custodian Approach, the optional Chapel of Late
+Service, and the Road of Witnesses South Reach. `design/04_architecture/AWAKENING_FIRST_RETURN.md`
+is the implementation authority.
+
+`game/world/awakening/awakening_layout.gd` is the single spatial authority: world
+bounds `Rect2(-1088, -7328, 2176, 7680)`, section envelopes, walkable polygons,
+void polygons, connectors, thresholds, set pieces, markers, camera reveals, and
+the Road offset. The runtime scene, mapper, debug tour, and geometry validator all
+query it; coordinates are not duplicated anywhere except where a smoke
+deliberately asserts a locked value. Every section node carries the same skeleton
+(`ArtUnderlay`, `BlockoutPresentation`, `Collision`, `Occlusion`, `SetPieces`,
+`Interactables`, `Triggers`, `Markers`, `Audio`) so an art pass can replace the
+blockout without touching authored collision, triggers, or gameplay coordinates.
+
+Existing systems were reused rather than rebuilt: the Operator, PlayerController,
+world camera, and Black Reliquary HUD; the existing `SidearmLocker` as the P-9
+recovery at `(832, -1952)`; the camera's presentation-framing seam for the three
+authored reveals (Dust Lung, Gate of Dust, Road), which never take input away; and
+the existing `RoadOfWitnessesPrototype` as section 10, instanced at world offset
+`(6, -6626)`. The Road became translation-safe through two changes —
+`apply_camera_bounds` is off inside the Awakening, and occlusion thresholds now
+compare local rather than global Y — plus a `south_gate_gap_width` that opens its
+southern boundary so the Approach joins it as continuous walkable space. The
+camera gained `set_authored_map_bounds`, because its deferred procgen rebuild
+would otherwise clear an authored level's clamp half a second after the level set
+it.
+
+Implemented interactions: the Crèche console (locks the opening state and sets the
+persistent RETURN TO POST objective), the existing locker (grants `p9_sidearm`),
+the Dust Lung bidirectional transit lift `(384, -3008)` ⇄ `(384, -3424)`, and the
+Undergate damaged port readout. No combat: the Attestation Sentinels, Approach
+Sentinel, scavenger nest, and route-leech are disabled `encounter` markers and
+`World/Enemies` is empty. No Field Terminal, Forum, Continuity Port, Contract, or
+campaign transition, and no first-campaign prewarming from the prologue — those
+belong to later sections, and `world_contract_prewarm_smoke.gd` now asserts their
+absence. The Road is sealed north of the South Reach by a visible collapsed
+barricade at `y = -6530`, not an invisible wall.
+
+Authoring is productionized: `awakening_first_return_mapper.tscn` frames the whole
+spine at zoom 0.18 with section, route, reveal, encounter, interaction, and
+future-art overlays; `awakening_first_return_debug.tscn` adds a dev-only zone
+selector, teleport-to-entry, overlay toggles, and progression reset without
+registering global hotkeys. `awakening_first_return_geometry_smoke.gd` builds a
+16px occupancy grid from the layout authority, erodes it by the Operator's
+collision radius, and proves a continuous route from `(0, 160)` to `(0, -6464)`
+across every mandatory section — it caught a real 16px pinch in the Locker
+Reliquary during implementation.
+
 # Baby Opossum Ambient Creature Runtime (2026-09-06)
 
 Baby Opossum now has a first-class `ambient_creature` V2 family and runtime
@@ -1366,9 +1420,33 @@ layer that plays the `barrel_prop` hide clips on the body's action clock (and
 hides when a prop clip is not authored). The animation set is one shared
 resource with cached per-layer SpriteFrames, so spawning N opossums no longer
 rescans the runtime directory N times, and clip FPS now comes from the family
-contract table instead of a coarse fast/slow split. No runtime strips are
-ingested yet; `OPOSSUM_REQUIRE_ART=1` turns the smoke's coverage report into a
-hard gate once art lands.
+contract table instead of a coarse fast/slow split.
+
+Runtime art is now published rather than pending. 22 body strips ship through
+Asset Pipeline V2 into `content/sprites/ambient_creatures/baby_opossum/runtime/`
+at 96x96 RGBA cells: `idle_south` s/n/e/w, `waddle` and `scurry` n/e/w, `sniff`,
+`groom`, `scratch`, `alert`, `danger_sense`, `hide_enter`, `hide_hold`,
+`hide_peek`, `play_dead_enter`, `play_dead_hold`, `notice_treat`, and
+`approach_wary`. `groom` and `scratch` are new family states and, with `look`
+and `sniff`, are reachable as deterministic one-shot idle beats; `danger_sense`
+and `hiss` now open the sensed-threat preamble and `startle` opens the near-miss
+preamble, both feeding the existing flee chain. The contract was reconciled
+against the art rather than the reverse: south idle is 4 frames (the family said
+6 under an `expected_frames` key the pipeline never read), and `hide_hold` and
+`play_dead_hold` are single held frames, not animations.
+
+Nine approved source renders remain unpublished because their poses sit on a
+non-uniform grid that cannot be sliced onto 96px cells without cutting poses in
+half (`waddle`/`scurry` south, `look`, `hiss`, `startle`, `disapprove`, `eat`,
+`friend_happy`, `hide_exit`), as does the whole `barrel_prop` hide layer, whose
+four source canvases disagree on barrel framing. Those strips are quarantined in
+`asset_drop/unresolved/ambient_baby_opossum/`, tracked in `REQUIRED_ASSETS.md`,
+and fail soft through presentation fallback; nothing was resampled or
+synthesized to fill them. `OPOSSUM_REQUIRE_ART=1` now validates the published
+baseline clip by clip instead of accepting any single PNG, and both
+`baby_opossum_runtime` and `baby_opossum_asset_contract` are registered in the
+validation manifest. `design/02_features/ambient/BABY_OPOSSUM_RUNTIME.md` is the
+implementation authority.
 ## World Environment V1 (2026-09-03)
 
 Accepted procgen maps now own deterministic scrubland, woodland, wetland, and rocky-upland fields that constrain foliage density, composition, and tint beneath route policy. One world-local `WorldEnvironmentDirector` owns a 24-minute fixed-physics day, contract-seeded weather, and indoor exposure; existing lighting, atmosphere, and shared foliage materials remain presentation authorities.

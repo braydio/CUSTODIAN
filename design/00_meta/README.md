@@ -90,7 +90,7 @@ design/
 ├── 04_architecture/               # High-level architecture
 │   ├── CAMPAIGN_FLOW_AND_GAME_LOOP.md
 │   ├── COMPOUND_TILE_SYSTEM.md
-│   ├── HOME_CUSTODIAN_FIELD_TERMINAL.md
+│   ├── AWAKENING_FIRST_RETURN.md
 │   ├── HUB_CHROMA_PROGRESSION.md
 │   ├── HUB_DOCTRINE.md
 │   ├── HUB_RETURN_GRAMMAR.md

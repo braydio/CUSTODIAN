@@ -1,10 +1,18 @@
-# Home Beginning: Custodian Field Terminal
+# Awakening: The First Return
 
-**Status:** active V1 implementation
-**Last Updated:** 2026-08-24
+**Status:** active blockout implementation, sections 01-10
+**Last Updated:** 2026-09-06
 **Runtime Target:** Godot 4.x (`custodian/`)
-**Runtime Slice:** `res://scenes/home_custodian_begin.tscn`
-**Validation:** `res://tools/validation/custodian_home_begin_smoke.gd`
+**Runtime Slice:** `res://scenes/awakening_first_return.tscn` (project `main_scene`)
+**Spatial authority:** `res://game/world/awakening/awakening_layout.gd`
+**Validation:** `awakening_first_return_smoke.gd`, `awakening_first_return_geometry_smoke.gd`, `awakening_first_return_progression_smoke.gd`
+
+> **Supersedes** the earlier "Home Beginning: Custodian Field Terminal" design, in
+> which the player woke directly on the Road of Witnesses and walked a short
+> distance to a Field Terminal that immediately handed off to procgen. The lore
+> below still stands; the opening is now a ten-section authored dungeon, and the
+> Field Terminal, the Ashen Forum, the Continuity Port, and the first Contract
+> belong to later sections that are not implemented yet.
 
 > **Lore cross-reference:** The terminal-recognition phase described in this doc is where the crèche recognizes or issues the player's Custodian designation. The fiction of crèches and designation-keyed crèche lockers (including what the locker does — and does not — prove about the person carrying the designation) is canon in `design/03_world/lore/CRECHE_AND_LOCKER_LORE.md`.
 
@@ -36,57 +44,143 @@ The bleed expresses itself through frequencies, codes, procedural language, and 
 
 The Custodian follows the command not because it understands the source, but because **answering dead authority is what it was made to do**. The first act of play is therefore not exploration for its own sake, but **return**: the Custodian comes back to a forgotten institutional post, anchors it, and refuses to relinquish its residual authority.
 
-## V1 runtime implementation
+## Sections 01-10: the implemented opening
 
-The first implementation lives as the authored project boot scene and hands off to the existing contract/procgen world:
+The player boots directly into the Crèche and walks one continuous space, with no
+loading, through:
 
 ```text
-custodian/scenes/home_custodian_begin.tscn
-custodian/game/world/home/custodian_home_begin.gd
-custodian/game/world/home/field_terminal_interactable.gd
+01  Crèche of Answerless Names          RECOVERY
+02  Recovery Ambulatory                 PROCESSING
+03  Attestation Gallery                 AUTHORITY CHECK
+04  Locker Reliquary                    ASSIGNMENT
+05  Dust Lung Cistern                   ASCENT
+06  Undergate Mechanism Hall            PORT INFRASTRUCTURE
+07  Gate of Dust                        HISTORICAL CITY
+08  Custodian Approach                  RECALL
+09  Chapel of Late Service              UNREGISTERED CHAPEL   (optional side loop)
+10  Road of Witnesses: South Reach      CIVIC AXIS
 ```
 
-V1 uses the existing Road of Witnesses map, the existing Operator, the shared world camera, the Black Reliquary HUD, and existing command-terminal compatibility art as a placeholder Field Terminal visual. It is a real playable slice: the Operator starts at the lower Road of Witnesses, follows a distance-based Custodian-band signal, receives progressively stranger HUD status fragments, approaches the Field Terminal, and establishes witness contact through the normal `interact` action.
+The shape is deliberately not one vertical hallway: the Ambulatory rings a central
+void, the Locker Reliquary kicks east, the Cistern widens enormously, the Register
+of Departures and the Chapel kick west, and everything resolves back onto the
+central civic axis. Even in greybox that reads as place.
 
-`res://scenes/home_custodian_begin.tscn` is the production `application/run/main_scene`. The first terminal interaction preserves the witness-contact/archive reveal. A second interaction commits the run transition to `res://scenes/game.tscn`; duplicate interaction signals cannot schedule multiple handoffs.
+### Spatial authority
 
-The Home beginning is also the operational-world prewarm window. After Home has
-presented and processed its first frame, the persistent
-`WorldContractBootstrap` autoload begins one cooperative contract-generation
-run while the Operator, camera, HUD, and audio remain active. The generator and
-its accepted map survive the Home scene unload beneath the autoload.
+`game/world/awakening/awakening_layout.gd` owns every coordinate: world bounds,
+section envelopes, walkable polygons, void polygons, connectors, thresholds, set
+pieces, markers, camera reveals, the Road offset, and the temporary South Reach
+seal. The runtime scene, the mapper, the debug tour, and the geometry validator
+all query it. Coordinates are not duplicated into the `.tscn`, the controller, or
+the tests — except where `awakening_first_return_smoke.gd` deliberately asserts a
+locked value so drift is caught.
 
-At terminal access, a ready contract transitions immediately. An in-progress
-contract leaves Home playable and presents `FIELD LINK SYNCHRONIZING` until the
-contract becomes ready. A rejected run presents `FIELD LINK FAILED`, does not
-enter the operational world, and requires an explicit terminal retry with a
-fresh seed. SceneTree-based generation remains on the main thread and yields at
-the generator's existing cooperative boundaries; it is not threaded.
+Convention: `+X` east, `-X` west, `+Y` south, `-Y` north; origin at the centre of
+the Crèche; macro geometry on the 32px grid; world bounds
+`Rect2(-1088, -7328, 2176, 7680)`; wake at `(0, 160)`.
 
-Runtime behavior:
+### Runtime slice
 
-- `CustodianHomeBegin` owns local objective state and signal-band presentation.
-- `FieldTerminalInteractable` is a normal `interactable` group member discovered by the existing Operator interaction scan.
-- The Black Reliquary HUD presents location, phase, objective, signal/continuity-origin status, and prompt plaque text.
-- Prompt text is rendered as real Godot labels through the HUD, not baked into textures.
-- Witness contact changes objective state to terminal stabilization and unlocks a partial archive/status readout placeholder.
-- A second terminal access request changes scene through `CustodianHomeBegin` only after the persistent world-contract bootstrap is ready; the interactable and HUD do not own boot-flow authority.
-- Missing production art/audio is tracked in `REQUIRED_ASSETS.md`; the current scene uses existing assets as fallbacks.
+```text
+custodian/scenes/awakening_first_return.tscn        project main scene
+custodian/game/world/awakening/awakening_layout.gd  spatial authority
+custodian/game/world/awakening/awakening_first_return.gd   orchestration only
+custodian/game/world/awakening/awakening_transit_lift.gd   Dust Lung service lift
+custodian/game/world/awakening/awakening_plaque_interactable.gd
+```
 
-## Home mapper
+Each section is a node with a fixed skeleton — `ArtUnderlay`,
+`BlockoutPresentation`, `Collision`, `Occlusion`, `SetPieces`, `Interactables`,
+`Triggers`, `Markers`, `Audio` — so a production art pass can replace
+`BlockoutPresentation` and fill `ArtUnderlay`, `Occlusion`, and `SetPieces`
+**without touching authored collision, triggers, or gameplay coordinates**.
 
-Open `res://scenes/debug/home_custodian_begin_mapper.tscn` to author the Home
-beginning perimeter and its initial spatial records. The mapper currently owns:
+`AwakeningFirstReturn` is orchestration only: current zone, visited zones, console
+acknowledgement, P-9 recovery, one-shot camera reveals, HUD location/phase/
+objective, and first-pass completion. It owns no geometry.
 
-- `operator_spawn` — the Custodian wake position;
-- `field_terminal` — the first objective terminal position;
-- `BOUNDARY_SEGMENTS` — the outer authored traversal rails.
+### Reused runtime, not rebuilt
 
-Press `M` to switch between collision and marker modes, `1`/`2` or Page
-Up/Page Down to select a marker, left-click to place, and Enter/`U` to apply.
-Applying writes `custodian_home_begin.gd`, updates the live preview, and records
-marker positions in `home_custodian_begin.tscn`. Target gameplay CanvasLayers
-are hidden only inside the mapper preview so the authoring help remains usable.
+- The **Operator**, **PlayerController**, **Camera2D**, and **Black Reliquary HUD**
+  are the existing ones.
+- Section 10 is the existing `RoadOfWitnessesPrototype` instanced at world offset
+  `(6, -6626)`, derived from `ROAD_WORLD_SOUTH_ENTRY - ROAD_LOCAL_SOUTH_ENTRY`. Two
+  changes make it translation-safe: `apply_camera_bounds` is off inside the
+  Awakening (the Awakening owns the combined world envelope), and its occlusion
+  thresholds now compare `to_local(player_position).y` instead of global Y. A
+  `south_gate_gap_width` opens its southern boundary wall so the Approach joins it
+  as continuous walkable space.
+- The **existing `SidearmLocker`** is the P-9 recovery at `(832, -1952)`. No second
+  locker implementation was written.
+- Camera reveals use the camera's existing `set_presentation_framing_transition` /
+  `clear_presentation_framing` seam. Player input is never taken away — the vista
+  is discovered while still walking.
+- The camera gained one seam, `set_authored_map_bounds`, because its deferred
+  procgen/connected-map rebuild would otherwise clear an authored level's clamp
+  half a second after the level set it.
+
+### Interactions implemented
+
+| Section | Interaction | Effect |
+| --- | --- | --- |
+| 01 | Crèche console `(112, 144)` | Locks the opening state to FIELD RECALL DETECTED / AUTHORITY VALID / CONTINUITY UNRESOLVED; objective becomes **RETURN TO POST** |
+| 04 | Existing SidearmLocker `(832, -1952)` | Opens, then grants `p9_sidearm` through `InventoryManager` |
+| 05 | Transit lift, lower `(384, -3008)` ⇄ upper `(384, -3424)` | Locks input, dims, relocates, restores. Not a Z-axis system; art can replace the dim with a cage without changing the contract |
+| 06 | Damaged port console `(128, -4016)` | PORT AUTHORITY: SUSPENDED / ROUTE INDEX: UNAVAILABLE / POST STATUS: UNMANNED. Interaction plus HUD plaque, no menu, no system |
+
+### Camera reveals
+
+| Section | Trigger | Offset | Zoom | Transition | Hold |
+| --- | --- | --- | --- | --- | --- |
+| 05 Dust Lung | `(0, -2688)` | `(0, -48)` | 0.72 | 0.90s | 1.20s |
+| 07 Gate of Dust | `(0, -4912)` | `(0, 100)` | 0.68 | 1.10s | 1.80s |
+| 10 Road reveal | `(0, -6080)` | `(0, -120)` | 0.66 | 1.20s | 2.00s |
+
+Each fires once, then releases to normal follow.
+
+### Deliberately not in this pass
+
+No combat. The Attestation Sentinels, the Approach Sentinel, the scavenger nest,
+and the route-leech exist as disabled `encounter` markers only; `World/Enemies`
+is empty and the progression smoke fails if it is not.
+
+No Field Terminal, no Ashen Forum, no Continuity Port activation, no Contract, no
+campaign transition. `field_terminal_interactable.gd` stays in the repository for
+the later Forum section but is not in the Awakening scene.
+
+No first-campaign generation. The old Home scene began cooperative procgen after
+its first frame, which was a sensible hiding place when Home was a short walk to a
+Terminal. Under this design there is a substantial prologue and no Contract has
+been surfaced, so `WorldContractBootstrap` is not started from the Awakening.
+`world_contract_prewarm_smoke.gd` asserts that absence. Prewarming resumes at an
+appropriate point once the Hub has identified a provisional Contract.
+
+The Road is temporarily sealed north of the South Reach by a **visible** collapsed
+barricade at `y = -6530`, spanning `x = -541 .. 553` — not an invisible wall. The
+completion trigger sits at `(0, -6464)`.
+
+## Authoring and validation
+
+`res://scenes/debug/awakening_first_return_mapper.tscn` frames the whole dungeon
+spine at `(0, -3200)` / zoom `0.18` and overlays section envelopes, entries and
+exits, the critical path, the optional branch, camera reveal points, encounter
+placeholders, interaction markers, and future-art anchors — all read from
+`awakening_layout.gd`.
+
+`res://scenes/debug/awakening_first_return_debug.tscn` instances the real scene and
+adds a dev-only panel: zone selector, teleport to entry, show collision, show zone
+bounds, show landmarks, reset progression. It registers no global hotkeys.
+
+`awakening_first_return_geometry_smoke.gd` is the important one. It builds a 16px
+occupancy grid from the same layout authority the runtime builds collision from,
+erodes it by the Operator's collision radius, and proves a continuous route from
+`(0, 160)` to `(0, -6464)` that visits every mandatory section and does not depend
+on the optional Chapel. It catches sealed doorways, forgotten blockers, corridors
+narrowed below the 128px critical-route minimum, Cistern routing breaks, and Road
+handoff drift. It found a real 16px pinch in the Locker Reliquary during
+implementation.
 
 ## Objective name
 
@@ -185,6 +279,15 @@ That last word is important.
 The terminal does not need repair yet. It needs to be **authenticated** by a Custodian so its imported authority credentials can activate local equipment.
 
 ## Opening mission flow
+
+> **Lore intent, not current implementation.** The beats below were written for
+> the superseded one-image Home opening in which the Custodian woke on the Road
+> and walked to a Field Terminal. They are retained because the emotional shape —
+> answering dead authority, partial success, the command becoming wrong — is still
+> the target. Map them onto sections 01-10 and the later Forum/Terminal sections
+> rather than reading them as the shipped flow. Beat 3 (first enemy contact) and
+> Beat 5 (terminal reveal) in particular are not implemented in the current pass.
+
 
 ### Beat 1 — Wake / insertion
 

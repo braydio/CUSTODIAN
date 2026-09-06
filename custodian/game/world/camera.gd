@@ -128,6 +128,9 @@ var operator_ref: Node2D = null
 var follow_target: Node2D = null
 var _runtime_map: Node = null
 var map_bounds := Rect2()
+## Authored levels that own their own world envelope publish it here. Procgen and
+## connected-map rebuilds leave it empty and keep their existing behaviour.
+var authored_map_bounds := Rect2()
 
 # Movement
 var _velocity: Vector2 = Vector2.ZERO
@@ -995,7 +998,18 @@ func get_ranged_aim_camera_snapshot() -> Dictionary:
 	}
 
 
+## An authored world envelope wins over the procgen/connected-map rebuild, which
+## would otherwise clear the clamp half a second after the level set it.
+func set_authored_map_bounds(bounds: Rect2) -> void:
+	authored_map_bounds = bounds
+	if bounds.size.x > 0.0 and bounds.size.y > 0.0:
+		map_bounds = bounds
+
+
 func _rebuild_bounds():
+	if authored_map_bounds.size.x > 0.0 and authored_map_bounds.size.y > 0.0:
+		map_bounds = authored_map_bounds
+		return
 	var world_loader = get_tree().get_first_node_in_group("contract_world_loader")
 	if world_loader != null:
 		if world_loader.has_method("is_contract_activation_aborted") and bool(world_loader.call("is_contract_activation_aborted")):

@@ -12,6 +12,15 @@ Defines the physical geometry of the hub: major districts, landmarks, traversal 
 
 **Core spatial idea:** A ruined legendary capital built on a long elevated spine, with one dominant ceremonial axis and several broken ring-districts. A dead, overgrown record of civilization's attempt to make itself legible to eternity.
 
+> **Implemented today (2026-09-06):** the southern approach to this spine exists as
+> a playable blockout. `design/04_architecture/AWAKENING_FIRST_RETURN.md` owns
+> sections 01-10 — the undercity Crèche through the Gate of Dust, the Custodian
+> Approach, and the **Road of Witnesses South Reach**, which is the first stretch of
+> the ceremonial axis described below. The Road is temporarily sealed north of the
+> South Reach by a visible collapsed barricade at world `y = -6530`; the districts
+> in this document lie beyond it and are not yet built. Awakening world coordinates
+> are authoritative in `custodian/game/world/awakening/awakening_layout.gd`.
+
 ---
 
 ## CANONICAL CITY MAP — "THE HISTORICAL CITY"

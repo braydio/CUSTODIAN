@@ -3555,6 +3555,473 @@
           "source_asset": null
         }
       }
+    },
+    "ambient_baby_opossum": {
+      "kind": "ambient_creature",
+      "assets": {
+        "alert::s": {
+          "state_id": "alert",
+          "direction": "s",
+          "semantic_identity": [
+            "baby_opossum",
+            "ambient_creature",
+            "body",
+            "fear",
+            "alert",
+            "s"
+          ],
+          "path": "content/sprites/ambient_creatures/baby_opossum/runtime/body/fear/baby_opossum__body__fear__alert__s__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "c64cbc302c927abca5085bd851999aaeadc9ad9d04c431502984c7078be09d34",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "approach_wary::s": {
+          "state_id": "approach_wary",
+          "direction": "s",
+          "semantic_identity": [
+            "baby_opossum",
+            "ambient_creature",
+            "body",
+            "friendship",
+            "approach_wary",
+            "s"
+          ],
+          "path": "content/sprites/ambient_creatures/baby_opossum/runtime/body/friendship/baby_opossum__body__friendship__approach_wary__s__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "fd9071fd19681709b2d58de39c1dbfdd78a4c098f6ccc1a97bba89080c2f335e",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "danger_sense::s": {
+          "state_id": "danger_sense",
+          "direction": "s",
+          "semantic_identity": [
+            "baby_opossum",
+            "ambient_creature",
+            "body",
+            "utility",
+            "danger_sense",
+            "s"
+          ],
+          "path": "content/sprites/ambient_creatures/baby_opossum/runtime/body/utility/baby_opossum__body__utility__danger_sense__s__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "0613435e8cf5ea630b974164a4e6667fcb0f35a1411b72297ecb70ae6a946462",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "groom::s": {
+          "state_id": "groom",
+          "direction": "s",
+          "semantic_identity": [
+            "baby_opossum",
+            "ambient_creature",
+            "body",
+            "ambient",
+            "groom",
+            "s"
+          ],
+          "path": "content/sprites/ambient_creatures/baby_opossum/runtime/body/ambient/baby_opossum__body__ambient__groom__s__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "7dac58ed735aa78135a9b9cdba1ef0c0cb969e7ed2ddd11f21656c4e254a03aa",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "hide_enter::s": {
+          "state_id": "hide_enter",
+          "direction": "s",
+          "semantic_identity": [
+            "baby_opossum",
+            "ambient_creature",
+            "body",
+            "fear",
+            "hide_enter",
+            "s"
+          ],
+          "path": "content/sprites/ambient_creatures/baby_opossum/runtime/body/fear/baby_opossum__body__fear__hide_enter__s__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "dea2038cdbc220838a47b8d9639e34b7fc1d2ba5191f6391fef11f87975b3f6a",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "hide_hold::s": {
+          "state_id": "hide_hold",
+          "direction": "s",
+          "semantic_identity": [
+            "baby_opossum",
+            "ambient_creature",
+            "body",
+            "fear",
+            "hide_hold",
+            "s"
+          ],
+          "path": "content/sprites/ambient_creatures/baby_opossum/runtime/body/fear/baby_opossum__body__fear__hide_hold__s__1f__96.png",
+          "frames": 1,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "4f3c9265da63248fc81ee44d08aabd563e0e5477cf76ca001f4c9a9ee3a6d13b",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "hide_peek::s": {
+          "state_id": "hide_peek",
+          "direction": "s",
+          "semantic_identity": [
+            "baby_opossum",
+            "ambient_creature",
+            "body",
+            "fear",
+            "hide_peek",
+            "s"
+          ],
+          "path": "content/sprites/ambient_creatures/baby_opossum/runtime/body/fear/baby_opossum__body__fear__hide_peek__s__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "93c3f109a37de7a666b7b15ec673b49458898fef2ef6bb598240d84150b90486",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "idle_south::e": {
+          "state_id": "idle_south",
+          "direction": "e",
+          "semantic_identity": [
+            "baby_opossum",
+            "ambient_creature",
+            "body",
+            "locomotion",
+            "idle_south",
+            "e"
+          ],
+          "path": "content/sprites/ambient_creatures/baby_opossum/runtime/body/locomotion/baby_opossum__body__locomotion__idle_south__e__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "1ba4b8e83799a0dd9bbd27bbc17e4b6e8affdbb7a881ad3e585bee3e2f89464a",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "idle_south::w": {
+          "state_id": "idle_south",
+          "direction": "w",
+          "semantic_identity": [
+            "baby_opossum",
+            "ambient_creature",
+            "body",
+            "locomotion",
+            "idle_south",
+            "w"
+          ],
+          "path": "content/sprites/ambient_creatures/baby_opossum/runtime/body/locomotion/baby_opossum__body__locomotion__idle_south__w__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "230b8299ec73ee3feb49fd710e5ef0c6db97af5192d9b545fdc913133a7c3fc6",
+          "provenance": "mirrored",
+          "source_asset": "idle_south::e"
+        },
+        "idle_south::n": {
+          "state_id": "idle_south",
+          "direction": "n",
+          "semantic_identity": [
+            "baby_opossum",
+            "ambient_creature",
+            "body",
+            "locomotion",
+            "idle_south",
+            "n"
+          ],
+          "path": "content/sprites/ambient_creatures/baby_opossum/runtime/body/locomotion/baby_opossum__body__locomotion__idle_south__n__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "8667fe0be3579a3697e7e385859e360b4bbd135fa6d69d52f217ad9bbcdcc5ac",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "idle_south::s": {
+          "state_id": "idle_south",
+          "direction": "s",
+          "semantic_identity": [
+            "baby_opossum",
+            "ambient_creature",
+            "body",
+            "locomotion",
+            "idle_south",
+            "s"
+          ],
+          "path": "content/sprites/ambient_creatures/baby_opossum/runtime/body/locomotion/baby_opossum__body__locomotion__idle_south__s__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "091b1bcc8709077c65f2ab93559d9004de936510cb8b0362b49f278aeec6a8b6",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "notice_treat::s": {
+          "state_id": "notice_treat",
+          "direction": "s",
+          "semantic_identity": [
+            "baby_opossum",
+            "ambient_creature",
+            "body",
+            "friendship",
+            "notice_treat",
+            "s"
+          ],
+          "path": "content/sprites/ambient_creatures/baby_opossum/runtime/body/friendship/baby_opossum__body__friendship__notice_treat__s__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "d8b6ff87d382bd6aaf18eed660551615589d968f2ce77dee1309f30b4dafcfc5",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "play_dead_enter::s": {
+          "state_id": "play_dead_enter",
+          "direction": "s",
+          "semantic_identity": [
+            "baby_opossum",
+            "ambient_creature",
+            "body",
+            "fear",
+            "play_dead_enter",
+            "s"
+          ],
+          "path": "content/sprites/ambient_creatures/baby_opossum/runtime/body/fear/baby_opossum__body__fear__play_dead_enter__s__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "3b072e252397def2bd55d2d48a84a01c08e409da354a34c382376acef67a10cd",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "play_dead_hold::s": {
+          "state_id": "play_dead_hold",
+          "direction": "s",
+          "semantic_identity": [
+            "baby_opossum",
+            "ambient_creature",
+            "body",
+            "fear",
+            "play_dead_hold",
+            "s"
+          ],
+          "path": "content/sprites/ambient_creatures/baby_opossum/runtime/body/fear/baby_opossum__body__fear__play_dead_hold__s__1f__96.png",
+          "frames": 1,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "2fd49d55cee30f319451dcf7f5a8ed82c7c681c728965f908ba27a28d9cf54bd",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "scratch::s": {
+          "state_id": "scratch",
+          "direction": "s",
+          "semantic_identity": [
+            "baby_opossum",
+            "ambient_creature",
+            "body",
+            "ambient",
+            "scratch",
+            "s"
+          ],
+          "path": "content/sprites/ambient_creatures/baby_opossum/runtime/body/ambient/baby_opossum__body__ambient__scratch__s__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "c177822e3461be88e03959c3ccec42ccae9d2552a308122e251372e9d84fb966",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "scurry::e": {
+          "state_id": "scurry",
+          "direction": "e",
+          "semantic_identity": [
+            "baby_opossum",
+            "ambient_creature",
+            "body",
+            "locomotion",
+            "scurry",
+            "e"
+          ],
+          "path": "content/sprites/ambient_creatures/baby_opossum/runtime/body/locomotion/baby_opossum__body__locomotion__scurry__e__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "db85ff5f8c06ace98c2aab52c2fb30d264da48002d6ecbf5c0682805fa5bf8d3",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "scurry::w": {
+          "state_id": "scurry",
+          "direction": "w",
+          "semantic_identity": [
+            "baby_opossum",
+            "ambient_creature",
+            "body",
+            "locomotion",
+            "scurry",
+            "w"
+          ],
+          "path": "content/sprites/ambient_creatures/baby_opossum/runtime/body/locomotion/baby_opossum__body__locomotion__scurry__w__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "8ab2dcb16125de2db20e97f7b64e6073346d6278d184e2f6faa121c911667615",
+          "provenance": "mirrored",
+          "source_asset": "scurry::e"
+        },
+        "scurry::n": {
+          "state_id": "scurry",
+          "direction": "n",
+          "semantic_identity": [
+            "baby_opossum",
+            "ambient_creature",
+            "body",
+            "locomotion",
+            "scurry",
+            "n"
+          ],
+          "path": "content/sprites/ambient_creatures/baby_opossum/runtime/body/locomotion/baby_opossum__body__locomotion__scurry__n__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "07e556e988aeb0e994b9540cdb6d64101c7423b46a0ada3889137135733ae02a",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "sniff::s": {
+          "state_id": "sniff",
+          "direction": "s",
+          "semantic_identity": [
+            "baby_opossum",
+            "ambient_creature",
+            "body",
+            "ambient",
+            "sniff",
+            "s"
+          ],
+          "path": "content/sprites/ambient_creatures/baby_opossum/runtime/body/ambient/baby_opossum__body__ambient__sniff__s__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "a60560e01d9ce845d4ba7067933aa2eeefcfe7b8bff0f8239e1710e945eeb552",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "waddle::e": {
+          "state_id": "waddle",
+          "direction": "e",
+          "semantic_identity": [
+            "baby_opossum",
+            "ambient_creature",
+            "body",
+            "locomotion",
+            "waddle",
+            "e"
+          ],
+          "path": "content/sprites/ambient_creatures/baby_opossum/runtime/body/locomotion/baby_opossum__body__locomotion__waddle__e__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "71c5de5ec2988bf32a9de3bb5af8f6aeecc277412acf7ae0891a77d88ed68103",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "waddle::w": {
+          "state_id": "waddle",
+          "direction": "w",
+          "semantic_identity": [
+            "baby_opossum",
+            "ambient_creature",
+            "body",
+            "locomotion",
+            "waddle",
+            "w"
+          ],
+          "path": "content/sprites/ambient_creatures/baby_opossum/runtime/body/locomotion/baby_opossum__body__locomotion__waddle__w__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "d0e86c84371a0be9610bfcc73680bc34bc018068d0575f2888ebecd80c158cb2",
+          "provenance": "mirrored",
+          "source_asset": "waddle::e"
+        },
+        "waddle::n": {
+          "state_id": "waddle",
+          "direction": "n",
+          "semantic_identity": [
+            "baby_opossum",
+            "ambient_creature",
+            "body",
+            "locomotion",
+            "waddle",
+            "n"
+          ],
+          "path": "content/sprites/ambient_creatures/baby_opossum/runtime/body/locomotion/baby_opossum__body__locomotion__waddle__n__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "6034b83e013a014d760f4a2385896f2c1e2ee722b45a3ddf8e83f51962574354",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
     }
   }
 }

@@ -28,7 +28,7 @@ The architecture is organized into nine layers. Each layer has a defined purpose
 
 **Current files:**
 - `custodian/scenes/game.tscn` — active main scene
-- `custodian/scenes/home_custodian_begin.tscn` — dedicated Home beginning scene (not yet the application main scene)
+- `custodian/scenes/awakening_first_return.tscn` — Awakening / The First Return, sections 01-10; the application main scene
 - `custodian/project.godot` — Godot project config, input mappings, autoloads
 
 **Target owner files:**

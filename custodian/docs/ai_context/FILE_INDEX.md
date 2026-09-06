@@ -168,8 +168,9 @@ Last updated: 2026-08-20
 - `custodian/tools/validation/controller_input_contract_smoke.gd` — focused production action/binding/deadzone/collision/raw-key/prompt/UI contract smoke.
 - `custodian/docs/ai_context/task_packets/CONTROLLER_INPUT_HARDENING.md` — implementation record for the post-twin-stick controller parity migration.
 - `custodian/scenes/game.tscn` — active game scene and terminal layout, including the authored `PageButtonsScroll` with pinned `MoreButton`/terminal actions; no longer auto-spawns the Forlorn-Ritualant dev encounter, and still includes scene-mounted `DroneManager` for allied combat drone V1 spawning plus a temporary grunt startup debug spawn gated by Operator distance from the initial spawn zone
-- `custodian/scenes/home_custodian_begin.tscn` — dedicated Home beginning scene for Objective 01, tracing a Custodian-band signal across the Road of Witnesses to the damaged Field Terminal; not yet the application main scene.
-- `custodian/scenes/debug/home_custodian_begin_mapper.tscn` — live Home beginning collision/POI mapper for authored perimeter rails, Custodian wake spawn, and Field Terminal placement; Enter/`U` persists script authority, updates the preview, and mirrors marker positions into the target scene.
+- `custodian/scenes/awakening_first_return.tscn` — Awakening / The First Return, the project main scene: sections 01-10 from the Crèche of Answerless Names to the Road of Witnesses South Reach as one continuous space.
+- `custodian/scenes/debug/awakening_first_return_mapper.tscn` — Awakening collision/POI mapper framed on the whole dungeon spine, with section envelopes, critical path, optional branch, camera reveals, encounter slots, interaction markers, and future-art anchors overlaid from `awakening_layout.gd`.
+- `custodian/scenes/debug/awakening_first_return_debug.tscn` — dev-only tour: zone selector, teleport to entry, collision/zone/landmark overlays, reset progression. Adds no global hotkeys.
 - `custodian/scenes/twin_solaria_backdrop_test.tscn` — development-only playable preview of the largest current Twin Solaria composite as a gameplay backdrop; uses perimeter collision only and does not replace the main scene.
 
 ## Active Runtime Systems
@@ -406,7 +407,10 @@ Last updated: 2026-08-20
 - `custodian/game/world/sundered_keep/sundered_keep_siege_objective.gd` — local Sundered Keep `Damageable` objective marker with side-effect-free route-state capture/validation/restoration for integrity state
 - `custodian/game/world/sundered_keep/sundered_keep_tilemap_loader.gd` — small JSON loader for `custodian.sundered_keep.level_tilemap.v1` level data used by the Sundered Keep Sprite2D tilemap build path
 - `custodian/game/world/sundered_keep/sundered_keep_interactable.gd` — small InputMap-aware interactable bridge used by the Sundered Keep Return Mooring, gate key pickup, Main Gate, and Great Hall door interaction nodes
-- `custodian/game/world/home/custodian_home_begin.gd` — local controller for the first Home beginning slice, including signal-band objective state, Black Reliquary HUD updates, prompt routing, and witness-contact completion state.
+- `custodian/game/world/awakening/awakening_layout.gd` — single spatial authority for the opening dungeon: world bounds, section envelopes, floors, voids, connectors, thresholds, set pieces, markers, camera reveals, and the Road offset.
+- `custodian/game/world/awakening/awakening_first_return.gd` — Awakening orchestration only: zone state, HUD location/phase/objective, console and P-9 progression, one-shot camera reveals, first-pass completion.
+- `custodian/game/world/awakening/awakening_transit_lift.gd` — Dust Lung bidirectional service lift.
+- `custodian/game/world/awakening/awakening_plaque_interactable.gd` — read-only Crèche console and Undergate port readout.
 - `custodian/scenes/debug/level_collision_poi_mapper.gd` — shared collision/POI authoring runtime used by Sundered Keep, Forlorn Ritualant Underground, and Home beginning mappers; saved edits update the live preview, script constants, and target-scene marker positions.
 - `custodian/game/world/home/field_terminal_interactable.gd` — reusable Field Terminal interactable that participates in the existing `interactable` group, plays existing terminal fallback activation art, and emits witness/access signals.
 - `custodian/game/world/compound/rooms/room_graph.gd` — deterministic compound room graph loader/validator with room count clamps, sorted type lookup, seeded template selection, and directional connection-rule checks
@@ -829,7 +833,9 @@ Last updated: 2026-08-20
 - `custodian/tools/validation/terminal_overlay_visibility_smoke.gd` — validates that opening the terminal hides gameplay overlay HUD scenes and masks the debug screen, then restores them on close.
 - `custodian/tools/validation/sundered_keep_layout_smoke.gd` — validates the Sundered Keep Return Mooring, key, portcullis, Great Hall door, blockers, and texture basics
 - `custodian/tools/validation/sundered_keep_large_layout_smoke.gd` — validates the large JSON functional layout, production underlay, absence of retired static visual placements, retained Return Mooring/module presentation, elevation transitions, underpass/roof regions, stateful gate and Great Hall presentation/blockers, marine ambush, minimap conversion, siege activation/objectives/repair/turret, and missing asset count
-- `custodian/tools/validation/custodian_home_begin_smoke.gd` — validates the Home beginning scene, Field Terminal interactable API, Road of Witnesses map, and Black Reliquary HUD scene load.
+- `custodian/tools/validation/awakening_first_return_smoke.gd` — locked section coordinates, connectors, scene skeleton, Road offset and translation-safety, mapper/debug-tour wiring, and the deliberate absence of Terminal/prewarm/handoff logic.
+- `custodian/tools/validation/awakening_first_return_geometry_smoke.gd` — 16px occupancy grid proving a continuous Operator-width route from `(0, 160)` to `(0, -6464)` across every mandatory section.
+- `custodian/tools/validation/awakening_first_return_progression_smoke.gd` — console progression, P-9 recovery through the existing locker, bidirectional lift, zone volumes, one-shot camera reveals, completion trigger, and disabled encounter slots.
 - `custodian/tools/validation/operator_authored_melee_fx_smoke.gd` — validates
   authored Operator melee FX suppress the legacy procedural gold swing while
   attacks without authored FX retain it as a fallback.
@@ -1060,9 +1066,19 @@ Last updated: 2026-08-20
 - `custodian/content/metadata/assets/families/ambient_baby_opossum.asset.json`
   — all-optional Baby Opossum family contract, including the `barrel_prop`
   hide layer states.
+- `custodian/content/sprites/ambient_creatures/baby_opossum/runtime/` —
+  published 96x96 Asset V2 body strips.
+- `custodian/tools/assets/stage_baby_opossum_source_work.py` — one-off
+  source-work bridge; audits inbox staging and quarantines mis-sliced strips.
 - `custodian/tools/validation/baby_opossum_runtime_smoke.gd` — production gate
   for home anchoring, determinism, sequence timing, movement locks, flee
-  termination, live projectile rejection, and layered presentation.
+  termination, live projectile rejection, layered presentation, and published
+  art coverage under `OPOSSUM_REQUIRE_ART=1`.
+- `custodian/tools/validation/baby_opossum_asset_contract_smoke.py` — pixel
+  contract for published strips: 96px cells, real alpha, frame-count token,
+  sliced-pose detection, body/prop pairing.
+- `design/02_features/ambient/BABY_OPOSSUM_RUNTIME.md` — implementation
+  authority for behavior, determinism, layers, and the art baseline.
 ## World Environment V1
 
 - `design/02_features/environment/WORLD_ENVIRONMENT_BIOME_DAYNIGHT_WEATHER.md` — implementation authority.

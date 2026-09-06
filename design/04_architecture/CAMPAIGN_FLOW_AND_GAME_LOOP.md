@@ -4,6 +4,14 @@
 
 > Runtime update (2026-08-08): the live game scene owns one runtime/session/world. Session resolution and Hub outcome application are exactly-once. Full strategic assault progression remains unported; `WaveManager` is physical spawn execution only.
 
+> Runtime update (2026-09-06): the campaign no longer begins at a Field Terminal
+> handoff. The project boots into `res://scenes/awakening_first_return.tscn`, the
+> ten-section Awakening prologue (`design/04_architecture/AWAKENING_FIRST_RETURN.md`).
+> That prologue surfaces no Contract, starts no world-contract prewarming, and does
+> not transition to `game.tscn`. The loop described below therefore begins at the
+> Hub/Forum sections that follow the Awakening, which are not yet implemented;
+> prewarming and the handoff into the procgen sandbox re-attach there.
+
 **Project:** CUSTODIAN
 **Status:** Required After Runtime Stabilization, Hub Foundation, World Transition, Region Generation, and Compound Structural Baseline
 **Priority:** Critical

@@ -6,7 +6,7 @@
 > **Source:** Two-section lore drop. SECTION 1 = **First Draft**; SECTION 2 = **Refinement**.
 > **Precedence:** SECTION 2 (the refinement) **takes precedence** wherever it conflicts with SECTION 1. Where SECTION 2 is silent, SECTION 1 stands.
 > **Lore Canon Authority:** `design/03_world/lore/CORE_LORE.md` — this document is a content-facing lore reference and must stay consistent with that canon.
-> **Related Docs:** `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`, `design/04_architecture/HOME_CUSTODIAN_FIELD_TERMINAL.md`, `design/02_features/operator/SIDEARM_UNLOCK.md`, `custodian/docs/ai_context/CURRENT_STATE.md`
+> **Related Docs:** `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`, `design/04_architecture/AWAKENING_FIRST_RETURN.md`, `design/02_features/operator/SIDEARM_UNLOCK.md`, `custodian/docs/ai_context/CURRENT_STATE.md`
 
 ---
 
@@ -100,6 +100,6 @@ Preference: **DESIGNATION MATCH CONFIRMED** — it quietly reinforces the centra
 
 This document is **lore authority only**; it does not change runtime behavior.
 
-- The `custodian_home` terminal-recognition phase referenced above is defined in `design/04_architecture/HOME_CUSTODIAN_FIELD_TERMINAL.md` (Objective 01: RETURN TO POST, witness contact with the Custodian Field Terminal).
+- The crèche the Custodian wakes in is implemented as section 01 of `design/04_architecture/AWAKENING_FIRST_RETURN.md` (Crèche of Answerless Names), and the designation-keyed crèche locker as section 04 (Locker Reliquary), where the existing SidearmLocker grants the P-9. The terminal-recognition phase referenced above belongs to a later section: the Field Terminal is not part of the implemented opening ten.
 - The P-9 Field Sidearm's current runtime expression is the Sundered Keep **field-retention locker** at `[73, 27]`, implemented per `design/02_features/operator/SIDEARM_UNLOCK.md` (recovery into carried inventory, then Equipment-page equip).
 - Whether the crèche locker is later realized directly inside the home scene is a downstream implementation decision, not settled here. Any such realization must preserve the Section 2 constraint: the acquisition presentation may report designation recognition, never prior personal ownership, resurrection, or replacement.

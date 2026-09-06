@@ -1,0 +1,73 @@
+[gd_scene format=3 uid="uid://fxo77x8sii2s"]
+
+[ext_resource type="Script" uid="uid://i5sl1dpc4fyt" path="res://game/world/awakening/awakening_first_return.gd" id="1_awakening"]
+[ext_resource type="Texture2D" uid="uid://cnxg8pupb5w7j" path="res://content/levels/hub/Road_of_Witnesses_Tilemap.png" id="2_map"]
+[ext_resource type="PackedScene" uid="uid://d3xbaxlif3364" path="res://game/actors/operator/operator.tscn" id="3_operator"]
+[ext_resource type="Script" uid="uid://cyoadqv7g5hc6" path="res://game/world/camera.gd" id="4_camera"]
+[ext_resource type="Script" uid="uid://bqt6lkdd6nniw" path="res://game/systems/core/player_controller.gd" id="5_player_controller"]
+[ext_resource type="Script" uid="uid://c3sk1ii78dnsj" path="res://game/world/hub/road_of_witnesses_prototype.gd" id="6_road"]
+[ext_resource type="PackedScene" path="res://game/ui/hud/custodian_hud.tscn" id="8_hud"]
+[ext_resource type="PackedScene" path="res://game/actors/props/sidearm_locker.tscn" id="9_locker"]
+
+[node name="GameRoot" type="Node2D"]
+script = ExtResource("1_awakening")
+
+[node name="World" type="Node2D" parent="."]
+
+[node name="AwakeningZones" type="Node2D" parent="World"]
+
+[node name="Zone01_Creche" type="Node2D" parent="World/AwakeningZones"]
+
+[node name="Zone02_Ambulatory" type="Node2D" parent="World/AwakeningZones"]
+
+[node name="Zone03_Attestation" type="Node2D" parent="World/AwakeningZones"]
+
+[node name="Zone04_LockerReliquary" type="Node2D" parent="World/AwakeningZones"]
+
+[node name="SidearmLocker" parent="World/AwakeningZones/Zone04_LockerReliquary" instance=ExtResource("9_locker")]
+position = Vector2(832, -1952)
+
+[node name="Zone05_DustLung" type="Node2D" parent="World/AwakeningZones"]
+
+[node name="Zone06_Undergate" type="Node2D" parent="World/AwakeningZones"]
+
+[node name="Zone07_GateOfDust" type="Node2D" parent="World/AwakeningZones"]
+
+[node name="Zone08_CustodianApproach" type="Node2D" parent="World/AwakeningZones"]
+
+[node name="Zone09_ChapelLateService" type="Node2D" parent="World/AwakeningZones"]
+
+[node name="Zone10_RoadSouthReach" type="Node2D" parent="World/AwakeningZones"]
+
+[node name="RoadOfWitnessesPrototype" type="Node2D" parent="World/AwakeningZones/Zone10_RoadSouthReach"]
+position = Vector2(6, -6626)
+script = ExtResource("6_road")
+apply_camera_bounds = false
+south_gate_gap_width = 192.0
+south_gate_gap_center_x = -6.0
+
+[node name="Background" type="Sprite2D" parent="World/AwakeningZones/Zone10_RoadSouthReach/RoadOfWitnessesPrototype"]
+texture = ExtResource("2_map")
+
+[node name="CollisionRoot" type="StaticBody2D" parent="World/AwakeningZones/Zone10_RoadSouthReach/RoadOfWitnessesPrototype"]
+
+[node name="ForegroundOcclusion" type="Node2D" parent="World/AwakeningZones/Zone10_RoadSouthReach/RoadOfWitnessesPrototype"]
+
+[node name="Projectiles" type="Node2D" parent="World"]
+
+[node name="Enemies" type="Node2D" parent="World"]
+
+[node name="Items" type="Node2D" parent="World"]
+
+[node name="Operator" parent="World" instance=ExtResource("3_operator")]
+position = Vector2(0, 160)
+
+[node name="PlayerController" type="Node" parent="World"]
+script = ExtResource("5_player_controller")
+operator_path = NodePath("../Operator")
+
+[node name="Camera2D" type="Camera2D" parent="World"]
+position = Vector2(0, 160)
+script = ExtResource("4_camera")
+
+[node name="CustodianHUD" parent="." instance=ExtResource("8_hud")]

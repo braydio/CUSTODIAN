@@ -224,13 +224,121 @@ func _check_layered_presentation(opossum: Node) -> void:
 			_fail("body clip for %s lost its layer identity" % String(action))
 	print("baby_opossum_runtime_smoke: layers body=%d barrel_prop=%d" % [body_clips, prop_clips])
 
+## Production art gate.
+##
+## Without OPOSSUM_REQUIRE_ART every published clip is still validated against the
+## family contract; the flag additionally requires the published baseline to be
+## present, so the gate cannot be satisfied by one arbitrary PNG.
+##
+## PUBLISHED_BASELINE lists the clips that are actually published today. Actions
+## whose approved source render sits on a non-uniform pose grid are quarantined in
+## asset_drop/unresolved/ambient_baby_opossum/ and named in KNOWN_ART_GAPS instead
+## of being demanded here — they stay fail-soft through presentation fallback.
+const PUBLISHED_BASELINE := {
+	"idle_south": ["s", "n", "e", "w"],
+	"waddle": ["n", "e", "w"],
+	"scurry": ["n", "e", "w"],
+	"sniff": ["s"], "groom": ["s"], "scratch": ["s"],
+	"alert": ["s"], "danger_sense": ["s"],
+	"hide_enter": ["s"], "hide_hold": ["s"], "hide_peek": ["s"],
+	"play_dead_enter": ["s"], "play_dead_hold": ["s"],
+	"notice_treat": ["s"], "approach_wary": ["s"],
+}
+
+const KNOWN_ART_GAPS := {
+	"waddle_s": "south waddle strip quarantined (source pose grid is non-uniform)",
+	"scurry_s": "south scurry strip quarantined (source pose grid is non-uniform)",
+	"look": "quarantined (source pose grid is non-uniform)",
+	"hiss": "quarantined (source pose grid is non-uniform)",
+	"startle": "quarantined (source pose grid is non-uniform)",
+	"disapprove": "quarantined (source pose grid is non-uniform)",
+	"eat": "quarantined (source pose grid is non-uniform)",
+	"friend_happy": "quarantined (source pose grid is non-uniform)",
+	"hide_exit": "quarantined (source pose grid is non-uniform)",
+	"barrel_prop": "hide prop layer unpublished (source canvases disagree on barrel framing)",
+}
+
 func _check_art_coverage() -> void:
 	var installed: int = ANIMATION_SET.clips.size()
-	print("baby_opossum_runtime_smoke: installed_runtime_clips=%d" % installed)
-	if installed > 0: return
-	var message := "no Baby Opossum runtime strips are installed; the family is fail-soft but not visually complete"
-	if OS.get_environment("OPOSSUM_REQUIRE_ART") == "1": _fail(message)
-	else: push_warning("baby_opossum_runtime_smoke: " + message)
+	var require_art := OS.get_environment("OPOSSUM_REQUIRE_ART") == "1"
+	print("baby_opossum_runtime_smoke: installed_runtime_clips=%d require_art=%s" % [installed, str(require_art)])
+	_check_clip_contract()
+	if not require_art:
+		if installed == 0:
+			push_warning("baby_opossum_runtime_smoke: no Baby Opossum runtime strips are installed; the family is fail-soft but not visually complete")
+		return
+	for action in PUBLISHED_BASELINE:
+		for direction in PUBLISHED_BASELINE[action]:
+			var clip: Dictionary = ANIMATION_SET.resolve_clip(StringName(action), StringName(direction), 0, &"body")
+			if clip.is_empty() or StringName(clip.get("direction", &"")) != StringName(direction):
+				_fail("production baseline missing body clip %s/%s" % [action, direction])
+	for gap in KNOWN_ART_GAPS:
+		print("baby_opossum_runtime_smoke: art gap · %s — %s" % [gap, KNOWN_ART_GAPS[gap]])
+
+## Every published clip must satisfy the 96px cell contract and agree with the
+## family contract on FPS.
+func _check_clip_contract() -> void:
+	var family := _load_family()
+	var fps_by_variant := {}
+	var layer_by_state := {}
+	for state_id in family.get("states", {}):
+		var state: Dictionary = family["states"][state_id]
+		var key := "%s/%s" % [str(state.get("layer", "body")), str(state.get("variant", state_id))]
+		fps_by_variant[key] = float(state.get("fps", 8.0))
+		layer_by_state[key] = true
+	var seen := {}
+	for value in ANIMATION_SET.clips:
+		var clip: Dictionary = value
+		var layer := String(clip.get("layer", "body"))
+		var action := String(clip.get("action", ""))
+		var direction := String(clip.get("direction", ""))
+		var path := String(clip.get("path", ""))
+		var identity := "%s/%s/%s" % [layer, action, direction]
+		if seen.has(identity):
+			_fail("duplicate runtime clip identity %s (%s)" % [identity, path])
+		seen[identity] = true
+		if not ["omni", "n", "ne", "e", "se", "s", "sw", "w", "nw"].has(direction):
+			_fail("clip %s has invalid direction '%s'" % [path, direction])
+		var texture := load(path) as Texture2D
+		if texture == null:
+			_fail("clip %s did not load" % path)
+			continue
+		if texture.get_height() != 96:
+			_fail("clip %s frame height %d != 96" % [path, texture.get_height()])
+		if texture.get_width() % 96 != 0:
+			_fail("clip %s width %d is not a multiple of 96" % [path, texture.get_width()])
+		elif texture.get_width() / 96 != int(clip.get("frame_count", -1)):
+			_fail("clip %s declares %df but holds %d frames" % [path, int(clip.get("frame_count", -1)), texture.get_width() / 96])
+		var contract_key := "%s/%s" % [layer, action]
+		if not fps_by_variant.has(contract_key):
+			_fail("clip %s has no matching family state (%s)" % [path, contract_key])
+		elif absf(float(clip.get("fps", 0.0)) - float(fps_by_variant[contract_key])) > 0.01:
+			_fail("clip %s runtime fps %.1f disagrees with family contract %.1f" % [path, float(clip.get("fps", 0.0)), float(fps_by_variant[contract_key])])
+	_check_prop_pairing()
+
+## The prop layer may only publish actions the body layer also publishes, and a
+## published pair must share a frame budget so the two layers stay in step.
+func _check_prop_pairing() -> void:
+	for value in ANIMATION_SET.clips:
+		var clip: Dictionary = value
+		if String(clip.get("layer", "body")) == "body": continue
+		var action := StringName(clip.get("action", &""))
+		var direction := StringName(clip.get("direction", &"s"))
+		var body_clip: Dictionary = ANIMATION_SET.resolve_clip(action, direction, 0, &"body")
+		if body_clip.is_empty():
+			_fail("prop clip %s has no body counterpart" % String(clip.get("path", "")))
+			continue
+		var prop_duration := float(clip.get("frame_count", 0)) / maxf(1.0, float(clip.get("fps", 1.0)))
+		var body_duration := float(body_clip.get("frame_count", 0)) / maxf(1.0, float(body_clip.get("fps", 1.0)))
+		if absf(prop_duration - body_duration) > 0.01:
+			_fail("prop/body pair %s runs %.3fs vs %.3fs" % [String(action), prop_duration, body_duration])
+
+func _load_family() -> Dictionary:
+	var text := FileAccess.get_file_as_string("res://content/metadata/assets/families/ambient_baby_opossum.asset.json")
+	var parsed: Variant = JSON.parse_string(text)
+	if parsed is Dictionary: return parsed as Dictionary
+	_fail("family contract could not be parsed")
+	return {}
 
 func _reset(opossum: Node) -> void:
 	opossum.set("trust_stage", 0)
@@ -241,7 +349,15 @@ func _fail(message: String) -> void:
 	push_error("baby_opossum_runtime_smoke: " + message)
 
 func _finish() -> void:
-	if _failures.is_empty():
+	var passed := _failures.is_empty()
+	print("CUSTODIAN_TEST_RESULT_JSON:" + JSON.stringify({
+		"schema": "custodian.headless_test.result.v1",
+		"test": "baby_opossum_runtime_smoke",
+		"passed": passed,
+		"failure_count": _failures.size(),
+		"failures": Array(_failures),
+	}))
+	if passed:
 		print("baby_opossum_runtime_smoke: PASS")
 		quit(0)
 		return

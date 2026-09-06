@@ -47,7 +47,7 @@ Canonical tracker for production art, audio, animation, and content assets that 
 
 | Status | Asset | Target Path | Purpose | Notes |
 |---|---|---|---|---|
-| needed | Custodian Field Terminal production prop suite | `custodian/content/sprites/environment/props/field_terminal/runtime/body/field_terminal__body__interaction__{idle,activate,damaged_active}__omni__?f__96.png` | Replace the Home beginning placeholder command-terminal compatibility art with the half-buried armored Field Terminal / Archive Anchor described by the first objective. | `home_custodian_begin.tscn` currently uses existing command terminal fallback art through `FieldTerminalInteractable`. |
+| needed | Custodian Field Terminal production prop suite | `custodian/content/sprites/environment/props/field_terminal/runtime/body/field_terminal__body__interaction__{idle,activate,damaged_active}__omni__?f__96.png` | Replace the placeholder command-terminal compatibility art with the half-buried armored Field Terminal / Archive Anchor described by the first objective. | Deferred: the Field Terminal is no longer part of the implemented opening. `FieldTerminalInteractable` is retained for the later Forum section and is not instanced in `awakening_first_return.tscn`. |
 | needed | Custodian-band signal visual FX | `custodian/content/sprites/effects/runtime/custodian_frequency/custodian_band_pulse_01__omni__?f__?.png`, `custodian/content/sprites/effects/runtime/custodian_frequency/provenance_static_01__omni__?f__?.png` | Make the opening signal gradient, pulse, and provenance distortion readable without relying only on HUD text. | V1 uses a small procedural `Line2D` signal needle and HUD status fragments. |
 | needed | Custodian-band signal audio cues | `custodian/content/audio/sfx/custodian_frequency/signal_pulse_*.wav`, `custodian/content/audio/sfx/custodian_frequency/provenance_static_*.wav`, `custodian/content/audio/ambience/home_beginning_signal_bed_*.wav` | Provide directional/static/near-terminal audio feedback for tracing the degraded provenance carrier. | No audio hooks are wired yet; assets are needed before the signal-tracking pass can be made diegetic. |
 | needed | Field Terminal chamber dressing props | `custodian/content/props/home/field_terminal/{burned_generator_*.png,dead_maintenance_drone_*.png,field_tag_offerings_*.png,white_thread_tie_*.png,floor_map_mismatch_*.png}` | Communicate that the terminal was found before, misunderstood, and treated as an Oath Box / Iron Witness. | V1 uses the Road of Witnesses map without bespoke terminal-chamber environmental storytelling props. |
@@ -105,6 +105,46 @@ Canonical tracker for production art, audio, animation, and content assets that 
 | needed | Enemy grunt sabotage animation suite | `custodian/content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__objective__sabotage_01__{n,ne,e,se,s,sw,w,nw}__6f__96.png` | Make storage vandalism/opening readable during the timed sabotage action. | Runtime sabotage behavior is implemented but currently reuses existing stop/idle presentation. |
 | needed | Enemy grunt loot/carry/escape animation suite | `custodian/content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__objective__{loot_start_01,carry_run_01,escape_01}__{n,ne,e,se,s,sw,w,nw}__?f__96.png` | Show thieves taking a bundle and fleeing with weight/urgency. | Current loot carrier state is functional and minimap-visible but not visually distinct on the enemy body. |
 | needed | Vault raid audio cues | `custodian/content/audio/sfx/vault/{storage_open_*.wav,storage_sabotage_*.wav,storage_destroyed_*.wav,loot_stolen_*.wav}` | Feedback for enemy storage opening, sabotage damage, destruction, and successful theft. | Runtime emits manager signals that can drive these cues once supplied. |
+
+## Awakening / The First Return (sections 01-10)
+
+The opening dungeon ships as a greybox blockout and is fully playable without any of these. Each section node reserves
+`ArtUnderlay`, `BlockoutPresentation`, `Occlusion`, and `SetPieces`, so a production pass can replace a single zone
+without disturbing authored collision, triggers, or gameplay coordinates. Envelopes are authoritative in
+`custodian/game/world/awakening/awakening_layout.gd`; the canvases below include ~64px of visual bleed beyond the
+gameplay envelope. All are 1 frame; foreground/occlusion companions use the same canvas with real alpha.
+
+| Status | Asset | Target Path | Purpose | Notes |
+|---|---|---|---|---|
+| needed | Crèche of Answerless Names underlay | `custodian/content/levels/awakening/01_creche/creche_underlay_v1.png` | Section 01 floor/architecture plate. | 960×704. Alcove bays, authority floor seal, headwall inscription. |
+| needed | Recovery Ambulatory underlay | `custodian/content/levels/awakening/02_ambulatory/ambulatory_underlay_v1.png` | Section 02 octagonal ring around the inaccessible Crèche headwall. | 1152×960. |
+| needed | Attestation Gallery underlay | `custodian/content/levels/awakening/03_attestation/attestation_underlay_v1.png` | Section 03 stele gallery and attestation dais. | 832×928. Twelve stelae, six per wall. |
+| needed | Locker Reliquary underlay | `custodian/content/levels/awakening/04_locker_reliquary/locker_reliquary_underlay_v1.png` | Section 04 octagonal reliquary; lockers read as wall relief around a central dry basin. | 704×704. |
+| needed | Dust Lung Cistern underlay | `custodian/content/levels/awakening/05_dust_lung/dust_lung_underlay_v1.png` | Section 05 scale shock: cistern ring, dry shaft, broken west bridge, daylight split. | 1216×1216. |
+| needed | Undergate Mechanism Hall underlay | `custodian/content/levels/awakening/06_undergate/undergate_underlay_v1.png` | Section 06 machinery hall and Register of Departures side room. | 896×1216. |
+| needed | Gate of Dust underlay | `custodian/content/levels/awakening/07_gate_of_dust/gate_of_dust_underlay_v1.png` | Section 07 plaza and the sealed gate the player emerges beneath. | 1536×768. Aperture 352px at `(0, -4768)`, pylons at `x = ±256`. |
+| needed | Custodian Approach underlay | `custodian/content/levels/awakening/08_approach/custodian_approach_underlay_v1.png` | Section 08 processional paving, chapel shells, burial terraces. | 1024×864. |
+| needed | Chapel of Late Service underlay | `custodian/content/levels/awakening/09_late_service/late_service_underlay_v1.png` | Section 09 optional side chapel: mosaic, relay-lamp altar, thread anchors. | 704×768. |
+| needed | Dust Lung transit lift cage | `custodian/content/sprites/environment/props/awakening/transit_lift/` | Replace the fade/dim placeholder with an animated cage travelling the shaft. | Interaction contract is fixed: `AwakeningTransitLift` locks input, relocates, restores. Art may replace the dim without changing it. |
+| needed | Crèche designation locker reskin | `custodian/content/sprites/environment/props/awakening/creche_locker/` | Visually reskin the existing Field Retention Locker into a crèche designation locker. | Mechanically already correct — do not add a second locker implementation. |
+
+## Baby Opossum Ambient Creature
+
+Runtime body strips are published; the entries below are approved source renders whose poses sit on a non-uniform
+grid (or, for the barrel, disagree on canvas framing between hide states), so they cannot be sliced onto 96x96 cells
+without cutting poses in half. The failed staging is preserved in `custodian/asset_drop/unresolved/ambient_baby_opossum/`
+and the raw renders in `custodian/asset_drop/source_work/baby_opossum/`. Each needs an artist re-export onto a uniform
+pose grid, not a pipeline change. Family contract: `custodian/content/metadata/assets/families/ambient_baby_opossum.asset.json`.
+Publish with `python tools/assets/asset.py ingest ambient_baby_opossum`; verify with
+`python tools/validation/baby_opossum_asset_contract_smoke.py`.
+
+| Status | Asset | Target Path | Purpose | Notes |
+|---|---|---|---|---|
+| needed | Baby Opossum south locomotion re-export | staged as `custodian/asset_drop/inbox/ambient_baby_opossum/{waddle,scurry}__s.png` | South-facing walk and run. Currently the most visible gap: moving toward the camera falls back to the north (rear-view) strip. | Source `opossum_{waddle,scurry}_s_v1.png` is 768px wide with 6 irregularly spaced poses. Re-export as a uniform 6-cell strip. |
+| needed | Baby Opossum ambient/threat re-export | staged as `custodian/asset_drop/inbox/ambient_baby_opossum/{look,hiss,startle}__s.png` | `look` idle beat; `hiss` and `startle` threat preamble. States are wired and currently fall back to `alert`/`idle`. | Sources are 768px (look, startle) and 2172px (hiss) with non-uniform pose spacing. `look` is 4 poses, `startle` 4, `hiss` 4. |
+| needed | Baby Opossum reaction/friendship re-export | staged as `custodian/asset_drop/inbox/ambient_baby_opossum/{disapprove,eat,friend_happy}__s.png` | Rejection disapproval beat and the treat payoff. States are wired and fall back to `look`/`idle`. | Sources are 768px wide, 6 poses each, irregularly spaced with tails crossing pose boundaries. |
+| needed | Baby Opossum `hide_exit` re-export (body + barrel) | staged as `custodian/asset_drop/inbox/ambient_baby_opossum/hide_exit__{s,barrel_prop__s}.png` | Climbing back out of the barrel. | Source is 2172x724 with 5 poses at a non-integer 434.4px pitch; the previously staged 4-frame strip cut a pose in half. |
+| needed | Baby Opossum `barrel_prop` hide layer, consistent framing | staged as `custodian/asset_drop/inbox/ambient_baby_opossum/hide_{enter,hold,peek,exit}__barrel_prop__s.png` | The barrel the opossum hides in. The `HideProp` layer exists and stays hidden without it, so hide states currently show no barrel. | The four source canvases are 880x136, 768x162, and 2172x724, which renders the barrel at 74x61, 90x34, and 88x66 — it would visibly resize between hide states. Re-export all four hide actions from one camera/canvas, body and barrel registered to each other. |
 
 ## Enemy Marine
 

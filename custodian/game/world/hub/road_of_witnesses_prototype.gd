@@ -12,11 +12,13 @@ const OCCLUSION_RADIUS := 72.0
 const OCCLUSION_SOFTNESS := 10.0
 const OCCLUSION_ALPHA := 0.45
 
+const SOUTH_BOUNDARY_RECT := Rect2(-627.0, 535.0, 1254.0, 92.0)
+
 const BLOCKER_RECTS := [
 	Rect2(-627.0, -627.0, 80.0, 1254.0),
 	Rect2(547.0, -627.0, 80.0, 1254.0),
 	Rect2(-627.0, -627.0, 1254.0, 92.0),
-	Rect2(-627.0, 535.0, 1254.0, 92.0),
+	SOUTH_BOUNDARY_RECT,
 	Rect2(-486.0, -408.0, 222.0, 236.0),
 	Rect2(270.0, -420.0, 232.0, 248.0),
 	Rect2(-512.0, -126.0, 152.0, 224.0),
@@ -54,6 +56,15 @@ const OCCLUSION_REGIONS := [
 	},
 ]
 
+## The Road owns camera bounds only when it is the whole world. Instanced as a
+## translated zone inside a larger scene, the host owns them instead.
+@export var apply_camera_bounds := true
+## Width of the gap cut in the southern boundary wall, in local space. Zero keeps
+## the map sealed; a positive value opens the causeway so the Road can be joined
+## to walkable space to its south.
+@export var south_gate_gap_width := 0.0
+@export var south_gate_gap_center_x := -6.0
+
 @onready var background: Sprite2D = $Background
 @onready var collision_root: StaticBody2D = $CollisionRoot
 @onready var occlusion_root: Node2D = $ForegroundOcclusion
@@ -87,10 +98,28 @@ func _process(_delta: float) -> void:
 	_update_occlusion()
 
 
+## Blocker geometry in Road-local space, with the optional southern causeway gap
+## applied. Static so a host scene can reason about the same collision without
+## copying these rects.
+static func build_blocker_rects(gap_center_x := 0.0, gap_width := 0.0) -> Array[Rect2]:
+	var result: Array[Rect2] = []
+	for rect in BLOCKER_RECTS:
+		if gap_width <= 0.0 or rect != SOUTH_BOUNDARY_RECT:
+			result.append(rect)
+			continue
+		var gap_min := gap_center_x - gap_width * 0.5
+		var gap_max := gap_center_x + gap_width * 0.5
+		if gap_min > rect.position.x:
+			result.append(Rect2(rect.position, Vector2(gap_min - rect.position.x, rect.size.y)))
+		if gap_max < rect.end.x:
+			result.append(Rect2(Vector2(gap_max, rect.position.y), Vector2(rect.end.x - gap_max, rect.size.y)))
+	return result
+
+
 func _build_collision() -> void:
 	for child in collision_root.get_children():
 		child.queue_free()
-	for rect in BLOCKER_RECTS:
+	for rect in build_blocker_rects(south_gate_gap_center_x, south_gate_gap_width):
 		var shape := CollisionShape2D.new()
 		var rectangle := RectangleShape2D.new()
 		rectangle.size = rect.size
@@ -132,11 +161,14 @@ func _build_occlusion() -> void:
 
 func _update_occlusion() -> void:
 	var player_pos := _player.global_position
+	# Thresholds are authored in Road-local space, so compare in local space; the
+	# shader's bubble_center stays global because it samples world position.
+	var local_player_position := to_local(player_pos)
 	for entry in _occlusion_sprites:
 		var sprite := entry.get("sprite") as Sprite2D
 		if sprite == null:
 			continue
-		var is_behind := player_pos.y <= float(entry.get("threshold_y", 0.0))
+		var is_behind := local_player_position.y <= float(entry.get("threshold_y", 0.0))
 		sprite.visible = is_behind
 		var material := sprite.material as ShaderMaterial
 		if material != null:
@@ -145,6 +177,8 @@ func _update_occlusion() -> void:
 
 
 func _apply_camera_bounds() -> void:
+	if not apply_camera_bounds:
+		return
 	var camera := get_node_or_null(CAMERA_PATH)
 	if camera == null:
 		return
