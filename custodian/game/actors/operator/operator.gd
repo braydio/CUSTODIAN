@@ -5414,6 +5414,9 @@ func _try_start_fast_attack_windup() -> bool:
 
 func _begin_fast_attack_strike_phase() -> void:
 	# Transition from windup to strike phase.
+	# IMPORTANT: Play the animation BEFORE computing _melee_duration,
+	# so _get_current_melee_animation_duration() uses the strike
+	# animation's actual frame count and speed, not the windup's.
 	_melee_fast_windup = false
 	_melee_active = true
 	_melee_prev_animation_frame = -1
@@ -5421,12 +5424,12 @@ func _begin_fast_attack_strike_phase() -> void:
 	var attack_profile: MeleeAttackProfile = _active_melee_attack_profile
 	if attack_profile != null:
 		_configure_melee_hitbox(attack_profile.damage, attack_profile.range_px, attack_profile.arc_degrees)
-		_melee_duration = attack_profile.recovery_sec
 		_play_melee_anim_from_key(_melee_attack_key, attack_profile.fallback_animation)
+		_melee_duration = _get_current_melee_animation_duration(attack_profile.active_sec + attack_profile.recovery_sec, 0.24, 0.42)
 	else:
 		_configure_melee_hitbox(melee_fast_hit_damage, melee_range, melee_arc_degrees)
-		_melee_duration = _get_current_melee_animation_duration(0.42, 0.24, 0.42)
 		_play_melee_anim_from_key(_melee_attack_key, &"unarmed_attack_fast")
+		_melee_duration = _get_current_melee_animation_duration(0.42, 0.24, 0.42)
 	if melee_cooldown_remaining <= 0.0:
 		_lock_melee_cooldown(_melee_duration + 0.04)
 

@@ -8,6 +8,8 @@
 [ext_resource type="Script" uid="uid://c3sk1ii78dnsj" path="res://game/world/hub/road_of_witnesses_prototype.gd" id="6_road"]
 [ext_resource type="Script" uid="uid://dgh1x7abx0kc5" path="res://game/world/home/field_terminal_interactable.gd" id="7_terminal"]
 [ext_resource type="PackedScene" path="res://game/ui/hud/custodian_hud.tscn" id="8_hud"]
+[ext_resource type="PackedScene" path="res://game/actors/props/sidearm_locker.tscn" id="9_locker"]
+[ext_resource type="PackedScene" uid="uid://c0q8bojosde6e" path="res://game/world/sundered_keep/return_causeway/ReturnCausewayApproach.tscn" id="10_0unrr"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_terminal"]
 size = Vector2(40, 28)
@@ -38,6 +40,9 @@ texture = ExtResource("2_map")
 [node name="Enemies" type="Node2D" parent="World" unique_id=833399380]
 
 [node name="Items" type="Node2D" parent="World" unique_id=1562080290]
+
+[node name="SidearmLocker" parent="World" unique_id=900219452 instance=ExtResource("9_locker")]
+position = Vector2(-80, -430)
 
 [node name="SignalNeedle" type="Line2D" parent="World" unique_id=1264563304]
 z_index = 12
@@ -78,3 +83,6 @@ position = Vector2(0, 160)
 script = ExtResource("4_camera")
 
 [node name="CustodianHUD" parent="." unique_id=1246867260 instance=ExtResource("8_hud")]
+
+[node name="ReturnCausewayApproach" parent="." unique_id=641726273 instance=ExtResource("10_0unrr")]
+position = Vector2(429, 71)

@@ -38,7 +38,7 @@
 [ext_resource type="Texture2D" uid="uid://dpqbd7lysn0tp" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__upper_body__unarmed__locomotion__idle_01__n__5f__96.png" id="8_newqn"]
 [ext_resource type="Texture2D" uid="uid://crbunnw0jsitl" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__upper_body__unarmed__attack__fast_strike_01__ne__3f__96.png" id="8_vulrk"]
 [ext_resource type="Texture2D" uid="uid://crjrqg203osqt" path="res://content/sprites/operator/runtime/animations/ranged_2h/posture/stance_01/operator__upper_body__ranged_2h__posture__stance_01__sw__5f__96.png" id="9_8cdyq"]
-[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__s__7f__96.png" id="9_fi43n"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__s__10f__96.png" id="9_fi43n"]
 [ext_resource type="Texture2D" uid="uid://choe0xidrwwqf" path="res://content/sprites/operator/runtime/animations/ranged_2h/posture/relaxed_01/operator__upper_body__ranged_2h__posture__relaxed_01__e__5f__96.png" id="9_pin0i"]
 [ext_resource type="Texture2D" uid="uid://im0mvk58qw1f" path="res://content/sprites/operator/runtime/animations/ranged_2h/posture/relaxed_01/operator__upper_body__ranged_2h__posture__relaxed_01__w__5f__96.png" id="10_hmwkn"]
 [ext_resource type="Texture2D" uid="uid://bq6tnfi34h71n" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__sw__5f__96.png" id="10_ov8n1"]
@@ -1738,6 +1738,18 @@ region = Rect2(576, 0, 96, 96)
 [sub_resource type="AtlasTexture" id="AtlasTexture_compat_d25638eb0f9e"]
 atlas = ExtResource("55_gxgan")
 region = Rect2(672, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_1cc29346c64b"]
+atlas = ExtResource("9_fi43n")
+region = Rect2(672, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_722a7e134e5e"]
+atlas = ExtResource("9_fi43n")
+region = Rect2(768, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_cb80274df81d"]
+atlas = ExtResource("9_fi43n")
+region = Rect2(864, 0, 96, 96)
 
 [resource]
 animations = [{
@@ -3549,6 +3561,15 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_compat_d362c883157c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_compat_1cc29346c64b")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_compat_722a7e134e5e")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_compat_cb80274df81d")
 }],
 "loop": 1,
 "name": &"unarmed_run_down",

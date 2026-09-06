@@ -76,7 +76,7 @@
 [ext_resource type="Texture2D" uid="uid://d4cyauseefwfc" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__nw__5f__96.png" id="49_o5bff"]
 [ext_resource type="Texture2D" uid="uid://dd0qotawvfrwb" path="res://content/sprites/operator/runtime/animations/unarmed/attack/dodge_fast_attack_01/operator__full_body__unarmed__attack__dodge_fast_attack_01__w__11f__96.png" id="51_ujnwi"]
 [ext_resource type="Texture2D" uid="uid://cs5e2v1jlksa1" path="res://content/sprites/operator/runtime/animations/unarmed/attack/dodge_fast_attack_01/operator__full_body__unarmed__attack__dodge_fast_attack_01__e__11f__96.png" id="52_lvmiq"]
-[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__s__7f__96.png" id="52_qbbas"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__s__10f__96.png" id="52_qbbas"]
 [ext_resource type="Texture2D" uid="uid://dihbbkxbx51rc" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__sw__5f__96.png" id="53_ppf15"]
 [ext_resource type="Texture2D" uid="uid://dbhng644ilypu" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__se__5f__96.png" id="54_fvmts"]
 [ext_resource type="Texture2D" uid="uid://bci2qb2rofv0j" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__w__5f__96.png" id="55_iekjw"]
@@ -3151,6 +3151,18 @@ region = Rect2(576, 0, 96, 96)
 atlas = ExtResource("76_mbo84")
 region = Rect2(672, 0, 96, 96)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_20ef6927aaa3"]
+atlas = ExtResource("52_qbbas")
+region = Rect2(672, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_e54d1c83d2a9"]
+atlas = ExtResource("52_qbbas")
+region = Rect2(768, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_778f45911122"]
+atlas = ExtResource("52_qbbas")
+region = Rect2(864, 0, 96, 96)
+
 [resource]
 animations = [{
 "frames": [{
@@ -5586,6 +5598,15 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_compat_10ae63e9910f")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_compat_20ef6927aaa3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_compat_e54d1c83d2a9")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_compat_778f45911122")
 }],
 "loop": 1,
 "name": &"unarmed_run_down",
