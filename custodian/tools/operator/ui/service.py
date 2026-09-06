@@ -68,6 +68,19 @@ class WorkbenchService:
             records.append(AnimationRecord(AnimationSelection(profile, group, action, direction), frames, layers, completeness, detail))
         return records
 
+    def available_directions(self, selection: AnimationSelection) -> tuple[str, ...]:
+        available = {
+            record.selection.direction
+            for record in self.browser_records()
+            if (
+                record.selection.profile == selection.profile
+                and record.selection.group == selection.group
+                and record.selection.action == selection.action
+            )
+        }
+        preferred = ("n", "e", "s", "w", "ne", "se", "sw", "nw", "omni")
+        return tuple(direction for direction in preferred if direction in available)
+
     def animation_plan(self) -> list[dict[str, Any]]:
         payload = json.loads(self.plan_path.read_text())
         catalog = json.loads(self.catalog_path.read_text())
@@ -131,13 +144,16 @@ class WorkbenchService:
             f"contact_{index + 1}", f"CONTACT {index + 1}", max(0, frame - 1), "CONTACT",
         ) for index, frame in enumerate(dict.fromkeys(frames)))
 
-    def launch_motion_runtime(self, selection: AnimationSelection, *, fps: float, travel_px: float,
-                              curve: str, ground: str, mode: str):
+    def launch_motion_runtime(
+        self, selection: AnimationSelection, *, fps: float, travel_px: float,
+        curve: str, ground: str, mode: str, loop: bool, loop_cycles: int,
+    ):
         payload = {
-            "schema": "custodian.operator_motion_request.v1",
+            "schema": "custodian.operator_motion_request.v2",
             "identity": {"profile": selection.profile, "group": selection.group, "action": selection.action, "direction": selection.direction},
             "source": "runtime", "fps": float(fps), "travel_px": float(travel_px),
             "curve": curve, "ground": ground, "mode": mode,
+            "loop": bool(loop), "loop_cycles": max(1, int(loop_cycles)),
         }
         self.motion_request_path.parent.mkdir(parents=True, exist_ok=True)
         self.motion_request_path.write_text(json.dumps(payload, indent=2) + "\n")

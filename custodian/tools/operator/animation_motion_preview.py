@@ -1,8 +1,10 @@
 """Pure motion-calibration model and raster compositor for Operator previews."""
 from __future__ import annotations
 
+import json
 import math
 from dataclasses import dataclass, field
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
@@ -10,13 +12,26 @@ from PIL import Image, ImageDraw
 
 CANVAS_SIZE = (768, 384)
 OPERATOR_ANCHOR = (384, 224)
-CURVES = ("constant", "linear", "ease_in", "ease_out", "ease_in_out", "attack_lunge")
+
+CURVES = (
+    "constant",
+    "linear",
+    "ease_in",
+    "ease_out",
+    "ease_in_out",
+    "attack_lunge",
+)
+
 MODES = ("treadmill", "world")
+CARDINAL_DIRECTIONS = ("n", "e", "s", "w")
+LOOP_CYCLE_PRESETS = (2, 3, 4, 6, 8)
 DISTANCE_PRESETS = (32.0, 64.0, 96.0, 128.0, 160.0, 192.0, 224.0, 256.0)
-GROUND_PRESETS = {
-    "grid32": None,
-    "ritualant_cavern": "custodian/content/tiles/encounters/ritualant_set/underground/ritualant_underground__ground__cavern_repeat_01__512x512.png",
-}
+
+WORLD_FOLLOW_DISTANCE_PX = 96.0
+RULER_STEP_PX = 32
+
+GROUND_PRESETS_PATH = Path(__file__).with_name("motion_ground_presets.json")
+GROUND_PRESET_SCHEMA = "custodian.operator_motion_ground_presets.v1"
 
 
 @dataclass(frozen=True)
@@ -47,6 +62,7 @@ class MotionConfig:
     ground: str = "ritualant_cavern"
     mode: str = "treadmill"
     frame_count: int = 1
+    loop_cycles: int = 3
 
 
 @dataclass(frozen=True)
@@ -55,12 +71,13 @@ class MotionSample:
 
     A looping animation has two independent clocks: the ANIMATION PHASE
     (which frame is showing, always in [0, duration_sec)) and CONTINUOUS
-    WORLD TRAVEL (how far the subject has actually gone since playback
-    started, which never resets while looping). The `phase_*` fields/aliases
+    WORLD TRAVEL (how far the subject has gone inside the configured multi-cycle
+    span). The `phase_*` fields/aliases
     describe a single cycle in isolation — this is what one-shot WORLD mode
     reviews. The `continuous_*` fields describe cumulative travel across
     however many cycles have completed — this is what TREADMILL mode's
-    scrolling ground uses, so the floor never snaps back to its start.
+    scrolling ground uses, so the floor does not snap at individual animation
+    boundaries and resets only after `loop_cycles` cycles.
     """
 
     elapsed_sec: float
@@ -143,31 +160,52 @@ def _curve_slope(curve: str, normalized: float) -> float:
     return (curve_progress(curve, right) - curve_progress(curve, left)) / (right - left)
 
 
-def sample_motion(config: MotionConfig, elapsed_sec: float, *, loop: bool = False) -> MotionSample:
+def sample_motion(
+    config: MotionConfig,
+    elapsed_sec: float,
+    *,
+    loop: bool = False,
+) -> MotionSample:
     count = max(1, int(config.frame_count))
     fps = max(0.001, float(config.review_fps))
     duration = count / fps
+
     elapsed = max(0.0, float(elapsed_sec))
+    cycle_limit = max(1, int(config.loop_cycles))
+
     if loop:
-        cycle_index = int(math.floor(elapsed / duration))
-        phase_sec = elapsed - cycle_index * duration
+        span = duration * cycle_limit
+        span_elapsed = elapsed % span
+
+        cycle_index = min(
+            cycle_limit - 1,
+            int(math.floor(span_elapsed / duration)),
+        )
+        phase_sec = span_elapsed - cycle_index * duration
     else:
         cycle_index = 0
         phase_sec = min(elapsed, duration)
+
     normalized = phase_sec / duration
     progress = curve_progress(config.curve, normalized)
+
     dx, dy = direction_vector(config.direction)
     travel = max(0.0, float(config.travel_px))
-    distance = travel * progress
-    root = (dx * distance, dy * distance)
+
+    phase_distance = travel * progress
+
+    root = (dx * phase_distance, dy * phase_distance)
     ground = (-root[0], -root[1])
-    continuous_distance = cycle_index * travel + distance
+
+    continuous_distance = cycle_index * travel + phase_distance
     continuous_root = (dx * continuous_distance, dy * continuous_distance)
+
     frame = min(count - 1, int(math.floor(normalized * count)))
     average = travel / duration
     speed = travel * _curve_slope(config.curve, normalized) / duration
+
     return MotionSample(
-        elapsed, duration, normalized, frame, progress, root, ground, distance, average, speed,
+        elapsed, duration, normalized, frame, progress, root, ground, phase_distance, average, speed,
         cycle_index, phase_sec, continuous_distance, continuous_root,
     )
 
@@ -181,14 +219,106 @@ def ground_phase(displacement: tuple[float, float], tile_size: tuple[int, int]) 
     return int(math.floor(displacement[0])) % max(1, tile_size[0]), int(math.floor(displacement[1])) % max(1, tile_size[1])
 
 
-def ground_preset(repo_root: Path, preset_id: str) -> tuple[GroundPreset, str | None]:
-    raw = GROUND_PRESETS.get(preset_id)
-    if preset_id == "grid32" or raw is None:
-        return GroundPreset("grid32", "GRID 32", None), None if preset_id == "grid32" else f"GROUND UNAVAILABLE: {preset_id}"
-    path = Path(repo_root) / raw
-    if path.exists():
-        return GroundPreset(preset_id, "RITUALANT CAVERN", path, (512, 512)), None
-    return GroundPreset("grid32", "GRID 32", None), f"GROUND UNAVAILABLE: {path}"
+@lru_cache(maxsize=1)
+def _ground_preset_rows() -> tuple[dict[str, Any], ...]:
+    payload = json.loads(GROUND_PRESETS_PATH.read_text())
+
+    if payload.get("schema") != GROUND_PRESET_SCHEMA:
+        raise RuntimeError(
+            f"unsupported motion ground preset schema: "
+            f"{payload.get('schema', '<missing>')}"
+        )
+
+    rows = payload.get("presets", ())
+    if not isinstance(rows, list):
+        raise RuntimeError("motion ground preset manifest has no presets list")
+
+    return tuple(row for row in rows if isinstance(row, dict))
+
+
+def ground_ids() -> tuple[str, ...]:
+    return tuple(
+        str(row["id"])
+        for row in _ground_preset_rows()
+        if row.get("id")
+    )
+
+
+def ground_preset(
+    repo_root: Path,
+    preset_id: str,
+) -> tuple[GroundPreset, str | None]:
+    rows = {
+        str(row.get("id", "")): row
+        for row in _ground_preset_rows()
+        if row.get("id")
+    }
+
+    row = rows.get(preset_id)
+    if row is None:
+        return GroundPreset("grid32", "GRID 32", None), f"GROUND UNAVAILABLE: {preset_id}"
+
+    raw_size = row.get("tile_size", (32, 32))
+    tile_size = (int(raw_size[0]), int(raw_size[1]))
+    label = str(row.get("label", preset_id.replace("_", " ").upper()))
+    raw_path = row.get("path")
+
+    if raw_path in (None, ""):
+        return GroundPreset(preset_id, label, None, tile_size), None
+
+    path = Path(repo_root) / str(raw_path)
+    if not path.exists():
+        return GroundPreset("grid32", "GRID 32", None), f"GROUND UNAVAILABLE: {path}"
+
+    return GroundPreset(preset_id, label, path, tile_size), None
+
+
+def presentation_offsets(
+    config: MotionConfig,
+    sample: MotionSample,
+    *,
+    loop: bool,
+) -> tuple[tuple[float, float], tuple[float, float]]:
+    """Return (world_offset, actor_offset) for treadmill or followed world presentation."""
+    travel_root = sample.continuous_root_displacement if loop else sample.root_displacement
+    distance = sample.continuous_position_px if loop else sample.position_px
+
+    if config.mode == "treadmill":
+        return (-travel_root[0], -travel_root[1]), (0.0, 0.0)
+
+    dx, dy = direction_vector(config.direction)
+    camera_follow = max(0.0, distance - WORLD_FOLLOW_DISTANCE_PX)
+    world_offset = (-dx * camera_follow, -dy * camera_follow)
+    return world_offset, travel_root
+
+
+def visible_ruler_distances(
+    canvas_size: tuple[int, int],
+    direction: str,
+    anchor: tuple[float, float],
+    world_offset: tuple[float, float],
+    step: int = RULER_STEP_PX,
+) -> tuple[int, ...]:
+    name = direction.casefold()
+    if name not in ("e", "w", "n", "s", "omni"):
+        return ()
+
+    dx, dy = direction_vector(name)
+    horizontal = name in ("e", "w", "omni")
+    axis_direction = dx if horizontal else dy
+    axis_anchor = anchor[0] if horizontal else anchor[1]
+    axis_offset = world_offset[0] if horizontal else world_offset[1]
+    axis_extent = canvas_size[0] if horizontal else canvas_size[1]
+    if abs(axis_direction) < 0.001:
+        return ()
+
+    distance_at_start = (0.0 - axis_anchor - axis_offset) / axis_direction
+    distance_at_end = (float(axis_extent) - axis_anchor - axis_offset) / axis_direction
+    lower = min(distance_at_start, distance_at_end)
+    upper = max(distance_at_start, distance_at_end)
+    first = int(math.floor(lower / step)) * step
+    last = int(math.ceil(upper / step)) * step
+    return tuple(range(first, last + step, step))
 
 
 class MotionPreviewRenderer:
@@ -225,53 +355,44 @@ class MotionPreviewRenderer:
 
     @staticmethod
     def _draw_ruler(canvas: Image.Image, direction: str, anchor: tuple[float, float], world_offset: tuple[float, float]) -> None:
-        if direction.casefold() not in ("e", "w", "n", "s", "omni"):
+        name = direction.casefold()
+        if name not in ("e", "w", "n", "s", "omni"):
             return
         draw = ImageDraw.Draw(canvas, "RGBA")
-        horizontal_travel = direction.casefold() in ("e", "w", "omni")
-        sign = -1 if direction.casefold() in ("w", "n") else 1
-        for distance in range(-256, 257, 32):
-            signed = distance * sign
-            if horizontal_travel:
-                x = anchor[0] + signed + world_offset[0]
-                if 0 <= x < canvas.width:
-                    draw.line((x, anchor[1] + 45, x, anchor[1] + 57), fill=(225, 230, 238, 210), width=1)
-                    draw.text((x + 2, anchor[1] + 59), str(distance), fill=(225, 230, 238, 220))
+        dx, dy = direction_vector(name)
+        horizontal = name in ("e", "w", "omni")
+        distances = visible_ruler_distances(canvas.size, name, anchor, world_offset)
+        for distance in distances:
+            if horizontal:
+                x = anchor[0] + dx * distance + world_offset[0]
+                draw.line((x, anchor[1] + 45, x, anchor[1] + 57), fill=(225, 230, 238, 210), width=1)
+                draw.text((x + 2, anchor[1] + 59), str(distance), fill=(225, 230, 238, 220))
             else:
-                y = anchor[1] + signed + world_offset[1]
-                if 0 <= y < canvas.height:
-                    draw.line((anchor[0] + 45, y, anchor[0] + 57, y), fill=(225, 230, 238, 210), width=1)
-                    draw.text((anchor[0] + 59, y - 6), str(distance), fill=(225, 230, 238, 220))
+                y = anchor[1] + dy * distance + world_offset[1]
+                draw.line((anchor[0] + 45, y, anchor[0] + 57, y), fill=(225, 230, 238, 210), width=1)
+                draw.text((anchor[0] + 59, y - 6), str(distance), fill=(225, 230, 238, 220))
 
     def render(self, config: MotionConfig, elapsed_sec: float, *, loop: bool, show_grid: bool = True,
                show_start_ghost: bool = True, show_contact_markers: bool = True) -> MotionFrame:
         sample = sample_motion(config, elapsed_sec, loop=loop)
-        is_treadmill = config.mode == "treadmill"
-        # TREADMILL: the actor stays planted and the ground scrolls under it by
-        # the CONTINUOUS distance, so the floor never jumps back to origin when
-        # the sprite loops. WORLD: the ground stays fixed and the actor walks
-        # across it using the PHASE (single-cycle) displacement, resetting to
-        # the start each loop so it never leaves the review canvas.
-        world_offset = (-sample.continuous_root_displacement[0], -sample.continuous_root_displacement[1]) if is_treadmill else (0.0, 0.0)
+        world_offset, actor_offset = presentation_offsets(config, sample, loop=loop)
         canvas = self._background(config.canvas_size, world_offset, show_grid)
         anchor = (config.canvas_size[0] / 2, OPERATOR_ANCHOR[1])
         if show_grid:
             self._draw_ruler(canvas, config.direction, anchor, world_offset)
         if show_start_ghost and self.frames:
-            ghost_offset = world_offset if is_treadmill else (0.0, 0.0)
-            self._paste_center(canvas, self.frames[0], (anchor[0] + ghost_offset[0], anchor[1] + ghost_offset[1]), 0.22)
-        actor_offset = (0.0, 0.0) if is_treadmill else sample.root_displacement
-        self._paste_center(canvas, self.frames[sample.frame_index], (anchor[0] + actor_offset[0], anchor[1] + actor_offset[1]))
+            self._paste_center(canvas, self.frames[0], (anchor[0] + world_offset[0], anchor[1] + world_offset[1]), 0.22)
+        self._paste_center(canvas, self.frames[sample.frame_index], (
+            anchor[0] + actor_offset[0] + world_offset[0],
+            anchor[1] + actor_offset[1] + world_offset[1],
+        ))
         if show_contact_markers:
             draw = ImageDraw.Draw(canvas, "RGBA")
             dx, dy = direction_vector(config.direction)
             for marker in self.markers:
                 marker_elapsed = min(marker.frame, config.frame_count) / config.review_fps
                 marker_sample = sample_motion(config, marker_elapsed)
-                if is_treadmill:
-                    # Pin the marker to the CURRENT cycle so it scrolls with the
-                    # ground and re-enters each lap instead of drifting off
-                    # toward -infinity as cycles accumulate.
+                if loop:
                     contact_distance = sample.cycle_index * config.travel_px + marker_sample.phase_position_px
                     marker_root = (dx * contact_distance, dy * contact_distance)
                 else:

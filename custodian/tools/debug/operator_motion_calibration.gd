@@ -1,9 +1,11 @@
 extends Node2D
 class_name OperatorMotionCalibration
 
-const REQUEST_SCHEMA := "custodian.operator_motion_request.v1"
+const REQUEST_SCHEMA := "custodian.operator_motion_request.v2"
+const GROUND_PRESETS_PATH := "res://tools/operator/motion_ground_presets.json"
+const WORLD_FOLLOW_DISTANCE_PX := 96.0
+const LOOP_CYCLE_PRESETS := [2, 3, 4, 6, 8]
 const CATALOG_FRAMES := preload("res://game/actors/operator/operator_animation_catalog_frames.tres")
-const CAVERN_GROUND := preload("res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__ground__cavern_repeat_01__512x512.png")
 const CANVAS_SIZE := Vector2(768.0, 384.0)
 const ANCHOR := Vector2(384.0, 224.0)
 const CURVES := [&"constant", &"linear", &"ease_in", &"ease_out", &"ease_in_out", &"attack_lunge"]
@@ -15,6 +17,9 @@ var elapsed_sec := 0.0
 var playing := true
 var animation_layers: Array[AnimatedSprite2D] = []
 var status_label: Label
+var ground_presets: Dictionary = {}
+var ground_texture: Texture2D
+var ground_tile_size := Vector2i(32, 32)
 
 
 func _ready() -> void:
@@ -42,11 +47,41 @@ func load_request(path: String) -> String:
 	if not parsed is Dictionary or parsed.get("schema", "") != REQUEST_SCHEMA:
 		return "Unsupported motion request"
 	request = parsed
+	var ground_error := _load_ground_presets()
+	if not ground_error.is_empty():
+		return ground_error
 	var identity := request.get("identity", {}) as Dictionary
 	identity_key = "%s/%s/%s/%s" % [identity.get("profile", ""), identity.get("group", ""), identity.get("action", ""), identity.get("direction", "")]
 	if identity_key.count("/") != 3 or not resolve_runtime_animation():
 		return "Runtime animation unavailable: %s" % identity_key
 	return ""
+
+
+func _load_ground_presets() -> String:
+	var parsed = JSON.parse_string(FileAccess.get_file_as_string(GROUND_PRESETS_PATH))
+	if not parsed is Dictionary or parsed.get("schema", "") != "custodian.operator_motion_ground_presets.v1":
+		return "Unsupported motion ground preset registry"
+	ground_presets.clear()
+	for row_variant in parsed.get("presets", []):
+		if row_variant is Dictionary and not String(row_variant.get("id", "")).is_empty():
+			ground_presets[String(row_variant.id)] = row_variant
+	_resolve_ground_texture()
+	return ""
+
+
+func _resolve_ground_texture() -> void:
+	ground_texture = null
+	ground_tile_size = Vector2i(32, 32)
+	var preset_id := String(request.get("ground", "grid32"))
+	var row := ground_presets.get(preset_id, {}) as Dictionary
+	var raw_size := row.get("tile_size", [32, 32]) as Array
+	if raw_size.size() >= 2:
+		ground_tile_size = Vector2i(int(raw_size[0]), int(raw_size[1]))
+	var raw_path = row.get("path")
+	if raw_path == null or String(raw_path).is_empty():
+		return
+	var relative := String(raw_path).trim_prefix("custodian/")
+	ground_texture = load("res://%s" % relative) as Texture2D
 
 
 func resolve_runtime_animation() -> bool:
@@ -83,9 +118,48 @@ func curve_progress(normalized: float) -> float:
 	return 1.0
 
 
-func sample_offsets(normalized: float) -> Dictionary:
-	var root := direction_vector() * float(request.get("travel_px", 0.0)) * curve_progress(normalized)
-	return {"progress": curve_progress(normalized), "world_actor": root, "treadmill_ground": -root}
+func cycle_duration() -> float:
+	return float(frame_count) / maxf(0.001, float(request.get("fps", 12.0)))
+
+
+func loop_cycles() -> int:
+	return maxi(1, int(request.get("loop_cycles", 3)))
+
+
+func sample_motion(elapsed: float) -> Dictionary:
+	var duration := cycle_duration()
+	var looping := bool(request.get("loop", true))
+	var cycle_index := 0
+	var phase_sec := 0.0
+	if looping:
+		var span := duration * float(loop_cycles())
+		var span_elapsed := fposmod(elapsed, span)
+		cycle_index = mini(loop_cycles() - 1, int(floor(span_elapsed / duration)))
+		phase_sec = span_elapsed - float(cycle_index) * duration
+	else:
+		phase_sec = minf(elapsed, duration)
+	var normalized := phase_sec / maxf(0.001, duration)
+	var progress := curve_progress(normalized)
+	var travel := float(request.get("travel_px", 0.0))
+	var phase_distance := travel * progress
+	var continuous_distance := float(cycle_index) * travel + phase_distance
+	var direction := direction_vector()
+	return {
+		"normalized": normalized, "progress": progress, "phase_sec": phase_sec,
+		"cycle_index": cycle_index, "phase_position": phase_distance,
+		"continuous_position": continuous_distance, "phase_root": direction * phase_distance,
+		"continuous_root": direction * continuous_distance,
+	}
+
+
+func presentation_offsets(sample: Dictionary) -> Dictionary:
+	var looping := bool(request.get("loop", true))
+	var root: Vector2 = sample.continuous_root if looping else sample.phase_root
+	var distance: float = sample.continuous_position if looping else sample.phase_position
+	if String(request.get("mode", "treadmill")) == "treadmill":
+		return {"world": -root, "actor": Vector2.ZERO}
+	var follow := maxf(0.0, distance - WORLD_FOLLOW_DISTANCE_PX)
+	return {"world": -direction_vector() * follow, "actor": root}
 
 
 func _build_runtime_view() -> void:
@@ -98,22 +172,21 @@ func _build_runtime_view() -> void:
 	for name in layers:
 		var sprite := AnimatedSprite2D.new()
 		sprite.sprite_frames = CATALOG_FRAMES; sprite.animation = StringName("%s/%s" % [identity_key, name])
-		sprite.centered = true; sprite.position = ANCHOR; sprite.play()
+		sprite.centered = true; sprite.position = ANCHOR; sprite.stop(); sprite.frame = 0
 		animation_layers.append(sprite); add_child(sprite)
 	status_label = Label.new(); status_label.position = Vector2(12, 10); add_child(status_label)
-	_update_presentation(0.0)
+	_update_presentation()
 
 
 func _draw() -> void:
 	draw_rect(Rect2(Vector2.ZERO, CANVAS_SIZE), Color("12161d"))
-	var normalized := elapsed_sec / maxf(0.001, float(frame_count) / maxf(0.001, float(request.get("fps", 12.0))))
-	var offsets := sample_offsets(normalized)
-	var world_offset: Vector2 = offsets.treadmill_ground if request.get("mode", "treadmill") == "treadmill" else Vector2.ZERO
-	if request.get("ground", "grid32") == "ritualant_cavern":
-		var phase := Vector2(fposmod(world_offset.x, 512.0), fposmod(world_offset.y, 512.0))
-		for y in range(int(phase.y) - 512, int(CANVAS_SIZE.y), 512):
-			for x in range(int(phase.x) - 512, int(CANVAS_SIZE.x), 512):
-				draw_texture(CAVERN_GROUND, Vector2(x, y))
+	var offsets := presentation_offsets(sample_motion(elapsed_sec))
+	var world_offset: Vector2 = offsets.world
+	if ground_texture:
+		var phase := Vector2(fposmod(world_offset.x, ground_tile_size.x), fposmod(world_offset.y, ground_tile_size.y))
+		for y in range(int(phase.y) - ground_tile_size.y, int(CANVAS_SIZE.y), ground_tile_size.y):
+			for x in range(int(phase.x) - ground_tile_size.x, int(CANVAS_SIZE.x), ground_tile_size.x):
+				draw_texture(ground_texture, Vector2(x, y))
 	var grid_phase := Vector2(fposmod(world_offset.x, 32.0), fposmod(world_offset.y, 32.0))
 	for x in range(int(grid_phase.x), int(CANVAS_SIZE.x), 32):
 		var alpha := 0.48 if int(x - grid_phase.x) % 96 == 0 else 0.26
@@ -126,18 +199,29 @@ func _draw() -> void:
 func _process(delta: float) -> void:
 	if playing:
 		elapsed_sec += delta
-	var duration := float(frame_count) / maxf(0.001, float(request.get("fps", 12.0)))
-	if elapsed_sec >= duration: elapsed_sec = fmod(elapsed_sec, duration)
-	_update_presentation(elapsed_sec / duration)
+	var duration := cycle_duration()
+	if bool(request.get("loop", true)):
+		var span := duration * float(loop_cycles())
+		if elapsed_sec >= span:
+			elapsed_sec = fposmod(elapsed_sec, span)
+	elif elapsed_sec >= duration:
+		elapsed_sec = duration
+		playing = false
+	_update_presentation()
 
 
-func _update_presentation(normalized: float) -> void:
-	var offsets := sample_offsets(normalized)
-	var mode := String(request.get("mode", "treadmill"))
+func _update_presentation() -> void:
+	var sample := sample_motion(elapsed_sec)
+	var offsets := presentation_offsets(sample)
 	for sprite in animation_layers:
-		sprite.position = ANCHOR + (offsets.world_actor if mode == "world" else Vector2.ZERO)
+		sprite.position = ANCHOR + offsets.actor + offsets.world
+		sprite.frame = mini(frame_count - 1, int(floor(sample.normalized * float(frame_count))))
 	if status_label:
-		status_label.text = "%s\n%s · %.0f px · %.3f s\n%s · %.1f%%" % [identity_key, String(request.get("curve", "")).to_upper(), float(request.get("travel_px", 0)), float(frame_count) / float(request.get("fps", 12.0)), mode.to_upper(), normalized * 100.0]
+		status_label.text = ("%s\n%s · %.0f px/cycle\n%s · cycle %d/%d\n%.0f px total") % [
+			identity_key, String(request.get("curve", "")).to_upper(),
+			float(request.get("travel_px", 0)), String(request.get("mode", "treadmill")).to_upper(),
+			int(sample.cycle_index) + 1, loop_cycles(), float(sample.continuous_position),
+		]
 	queue_redraw()
 
 
@@ -149,7 +233,14 @@ func _unhandled_key_input(event: InputEvent) -> void:
 		KEY_C:
 			var current := CURVES.find(StringName(request.get("curve", "attack_lunge")))
 			request["curve"] = String(CURVES[(current + 1) % CURVES.size()])
-		KEY_G: request["ground"] = "grid32" if request.get("ground", "ritualant_cavern") == "ritualant_cavern" else "ritualant_cavern"
+		KEY_G:
+			var ids := ground_presets.keys()
+			var current := ids.find(String(request.get("ground", "grid32")))
+			request["ground"] = ids[(current + 1) % ids.size()]
+			_resolve_ground_texture()
+		KEY_L when event.shift_pressed:
+			var current_cycles := LOOP_CYCLE_PRESETS.find(loop_cycles())
+			request["loop_cycles"] = LOOP_CYCLE_PRESETS[(current_cycles + 1) % LOOP_CYCLE_PRESETS.size()]
 
 
 func _show_error(message: String) -> void:

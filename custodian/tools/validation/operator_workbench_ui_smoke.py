@@ -14,6 +14,7 @@ sys.path.insert(0, str(OPERATOR_ROOT))
 
 from ui.service import WorkbenchService
 from ui.state import AnimationRecord, AnimationSelection, ExistingContextView, LayerView, MigrationView, PublishView, SessionView
+import animation_motion_preview
 
 
 class FakeModel:
@@ -98,6 +99,15 @@ def pure_service_smoke() -> None:
         assert run.frames == 6 and run.layers == ("lower_body", "upper_body")
         assert len(service.filter_records(records, "locomotion")) == 3
         assert len(service.filter_records(records, "RUN_01")) == 2
+        assert service.available_directions(run.selection) == ("e", "w")
+        service._popen = lambda command: command
+        service.launch_motion_runtime(
+            run.selection, fps=10.0, travel_px=128.0, curve="linear",
+            ground="grid32", mode="world", loop=True, loop_cycles=3,
+        )
+        motion_request = json.loads(service.motion_request_path.read_text())
+        assert motion_request["schema"] == "custodian.operator_motion_request.v2"
+        assert motion_request["loop"] is True and motion_request["loop_cycles"] == 3
         critical = next(row for row in records if row.selection.action == "critical_execution_01")
         assert critical.completeness == "PARTIAL" and critical.completeness_detail == "weapon only; no body presentation layer"
         session = service.session(run.selection)
@@ -137,6 +147,7 @@ class PilotService:
         self.repo_root = Path.cwd(); self.aseprite = None; self.workbench = SimpleNamespace(resolve_aseprite=lambda *_: Path("/bin/true")); self.mutations = 0
         self.selection = AnimationSelection("unarmed", "locomotion", "run_01", "e")
         self.last_selection = None; self.preview_calls = 0; self.runtime_calls = 0
+        self.runtime_selection = None
         self.migration = MigrationView("add", 3, "duplicate-prev", 6, 7, ("lower_body", "upper_body"), (("fx", "independent clock"),), "GREEN")
     def browser_records(self):
         return [
@@ -146,6 +157,7 @@ class PilotService:
             AnimationRecord(AnimationSelection("unarmed", "defense", "guard_01", "e"), 4, ("full_body",)),
         ]
     def filter_records(self, records, query): return WorkbenchService.filter_records(records, query)
+    def available_directions(self, selection): return WorkbenchService.available_directions(self, selection)
     def session(self, selection):
         self.last_selection = selection
         return SessionView(selection, 6, 6, 6, "CLEAN", "NONE", "GREEN", Path("/tmp/workbench"), "/bin/true", (LayerView("lower_body", "operator_layer", "operator", "unarmed", 6, 6, 6, "96×96"),))
@@ -165,7 +177,8 @@ class PilotService:
         identity = animation_preview.SemanticIdentity(selection.profile, selection.group, selection.action, selection.direction)
         return animation_preview.Preview(identity, source, frames, (96, 96), "fixture", ())
     def motion_event_markers(self, _selection): return ()
-    def launch_motion_runtime(self, *_args, **_kwargs): self.runtime_calls += 1; return SimpleNamespace()
+    def launch_motion_runtime(self, selection, **_kwargs):
+        self.runtime_calls += 1; self.runtime_selection = selection; return SimpleNamespace()
 
 
 class ContextPilotService(PilotService):
@@ -267,8 +280,7 @@ async def textual_smoke() -> None:
         assert "M Tread/World" in str(key_bar.render())
         motion_controls_text = str(app.main_screen.query_one("#motion-controls", MotionControls).render())
         assert "Enter runtime" not in motion_controls_text and "Shift" not in motion_controls_text
-        # Continuous treadmill: elapsed_sec must never wrap backward while
-        # looping, even across multiple animation-cycle boundaries.
+        # Continuous treadmill accumulates within the configured cycle span.
         app.state.motion.mode = "treadmill"; app.state.motion.loop = True; app.state.motion.playing = True
         duration = len(app.preview_view.frames) / app.state.review_fps
         app._motion_last_tick -= duration * 2.5
@@ -284,15 +296,28 @@ async def textual_smoke() -> None:
         await pilot.press("s"); await pilot.pause(0.3)
         assert service.preview_calls > preview_calls
         mode = app.state.motion.mode; await pilot.press("m"); assert app.state.motion.mode != mode
+        heading = app.state.motion.heading; await pilot.press("h"); await pilot.pause(0.2)
+        assert app.state.motion.heading != heading and app.preview_view.identity.direction == app.state.motion.heading
         ground = app.state.motion.ground; await pilot.press("g"); await pilot.pause(0.2); assert app.state.motion.ground != ground
         curve = app.state.motion.curve; await pilot.press("c"); assert app.state.motion.curve != curve
         distance = app.state.motion.travel_px; await pilot.press("d"); assert app.state.motion.travel_px != distance
+        cycles = app.state.motion.loop_cycles; await pilot.press("shift+l"); assert app.state.motion.loop_cycles != cycles
         travel = app.state.motion.travel_px; await pilot.press("shift+right"); assert app.state.motion.travel_px == travel + 16
         controls = app.main_screen.query_one("#motion-preview-controls")
         controls.post_message(controls.Scrubbed(0.75)); await pilot.pause()
-        assert app.state.motion.elapsed_sec > 0 and app.state.preview_frame > 0
+        assert app.state.motion.elapsed_sec > duration
+        assert app._motion_config() is not None
+        assert animation_motion_preview.sample_motion(
+            app._motion_config(), app.state.motion.elapsed_sec, loop=True,
+        ).cycle_index == 3
+        # Loop time wraps only after the configured multi-cycle span.
+        span = duration * app.state.motion.loop_cycles
+        app.state.motion.elapsed_sec = span - 0.01; app.state.motion.playing = True
+        app._motion_last_tick -= 0.02; app._preview_tick(); app.state.motion.playing = False
+        assert app.state.motion.elapsed_sec < duration
         before_mutations = service.mutations
         await pilot.press("enter"); assert service.runtime_calls == 1 and service.mutations == before_mutations
+        assert service.runtime_selection.direction == app.state.motion.heading
         await pilot.press("3"); await pilot.pause(0.3); await pilot.press("5"); await pilot.pause(0.3); await pilot.press("3"); await pilot.pause(0.3)
         assert app.state.selection.identity == selected_identity
         await pilot.press("2"); await pilot.pause()

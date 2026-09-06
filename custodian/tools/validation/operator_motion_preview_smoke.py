@@ -11,8 +11,10 @@ from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "custodian/tools/operator"))
-from animation_motion_preview import (MotionConfig, MotionPreviewRenderer, curve_progress,
-                                      ground_phase, sample_motion, scrub_motion)
+from animation_motion_preview import (
+    MotionConfig, MotionPreviewRenderer, curve_progress, ground_ids, ground_phase, ground_preset,
+    presentation_offsets, sample_motion, scrub_motion, visible_ruler_distances,
+)
 from animation_preview import SemanticIdentity
 
 
@@ -70,6 +72,48 @@ assert boundary_after.cycle_index == boundary_before.cycle_index + 1
 assert sample_motion(tread, 0.99, loop=True).frame_index == 9
 assert sample_motion(tread, 1.0, loop=True).frame_index == 0
 assert sample_motion(tread, 1.01, loop=True).frame_index == 0
+
+# Configurable multi-cycle reset.
+three_cycle = MotionConfig(identity, 10.0, 128.0, "linear", "e", mode="treadmill", frame_count=10, loop_cycles=3)
+assert abs(sample_motion(three_cycle, 1.5, loop=True).continuous_position_px - 192.0) < 1e-6
+assert abs(sample_motion(three_cycle, 2.5, loop=True).continuous_position_px - 320.0) < 1e-6
+before_reset = sample_motion(three_cycle, 2.999, loop=True)
+after_reset = sample_motion(three_cycle, 3.0, loop=True)
+assert before_reset.cycle_index == 2 and before_reset.continuous_position_px > 380.0
+assert after_reset.cycle_index == 0 and after_reset.continuous_position_px == 0.0
+assert after_reset.frame_index == 0
+
+# Cardinal variants use real directional vectors.
+for direction, expected in {
+    "e": (50.0, 0.0), "w": (-50.0, 0.0),
+    "n": (0.0, -50.0), "s": (0.0, 50.0),
+}.items():
+    directional = MotionConfig(identity, 10.0, 100.0, "linear", direction, frame_count=10)
+    assert sample_motion(directional, 0.5).root_displacement == expected
+
+# WORLD keeps a 96px actor lead and follows cumulative displacement after it.
+world = MotionConfig(identity, 10.0, 128.0, "linear", "e", mode="world", frame_count=10, loop_cycles=3)
+world_sample = sample_motion(world, 1.5, loop=True)
+world_offset, actor_offset = presentation_offsets(world, world_sample, loop=True)
+assert world_offset == (-96.0, -0.0)
+assert actor_offset == (192.0, 0.0)
+assert actor_offset[0] + world_offset[0] == 96.0
+
+# Ruler labels are absolute and derived from the visible viewport.
+ticks = visible_ruler_distances((768, 384), "e", (384, 224), (-320.0, 0.0))
+assert 0 in ticks and 256 in ticks and 512 in ticks and max(ticks) > 512
+
+required_grounds = {
+    "grid32", "ritualant_cavern", "industrial_hardstand", "mountain_rock",
+    "interior_concrete", "interior_panel", "connector_gravel",
+}
+assert required_grounds <= set(ground_ids())
+for ground_id in required_grounds:
+    preset, warning = ground_preset(ROOT, ground_id)
+    assert warning is None and preset.id == ground_id
+    if preset.path:
+        with Image.open(preset.path) as ground_image:
+            assert ground_image.size == preset.tile_size
 
 with tempfile.TemporaryDirectory(prefix="operator_motion_treadmill_") as raw:
     root = Path(raw); sentinel = root / "runtime.png"

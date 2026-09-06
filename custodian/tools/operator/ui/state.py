@@ -119,13 +119,21 @@ class ActivityEvent:
 @dataclass
 class MotionLabState:
     mode: str = "treadmill"
+
+    # Empty means "follow current Workbench selection".
+    heading: str = ""
+
     ground: str = "ritualant_cavern"
     travel_px: float = 128.0
     curve: str = "attack_lunge"
+
     elapsed_sec: float = 0.0
     playback_rate: float = 1.0
     playing: bool = False
+
     loop: bool = True
+    loop_cycles: int = 3
+
     show_grid: bool = True
     show_start_ghost: bool = True
     show_contact_markers: bool = True

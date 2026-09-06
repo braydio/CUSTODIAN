@@ -179,7 +179,7 @@ are presentation-disabled, leaving 104 active Lower Quarter props and 250
 active civic props overall. Native sign/directory/evidence interactions retain
 the route information; the floating blockout label is gone.
 
-## Operator Workbench Interactive UI V4 (2026-09-05)
+## Operator Workbench Interactive UI V5 (2026-09-06)
 
 `operator ui` now has shared-selection PLAN, WORKBENCH, PREVIEW, TIMELINE, and MOTION
 modes. The implementation-plan JSON owns human rank/priority/state; live catalog
@@ -194,12 +194,15 @@ degraded fallback only. Workbench, canonical, and runtime comparisons share one
 layer policy, preventing simultaneous full-body and modular-body composition
 while retaining authored head, cape, weapon, and FX overlays.
 MOTION is a non-mutating physical calibration view over that same composed
-source. It compares continuous candidate travel in treadmill and fixed-world
-modes over a 32 px ruler and real Ritualant cavern ground, while retaining
-source switching, integer raster review, scrubbing, and review FPS. Review FPS,
-travel, and curve remain disposable review inputs rather than gameplay timing or
-combat authority. The TUI is the rapid calibration surface; Enter writes an
-ignored request and launches the Godot harness for runtime verification.
+source. It selects real cardinal sibling variants, shares a seven-surface ground
+registry with Godot, and compares cycle-bounded cumulative travel in treadmill
+or WORLD camera-follow mode over viewport-derived absolute 32 px ruler ticks.
+Looping defaults to three animation cycles before root/world reset, with
+2/3/4/6/8-cycle spans and full-span scrubbing. Review FPS, travel, cycle span,
+and curve remain disposable review inputs rather than gameplay timing or combat
+authority. Enter writes a V2 request carrying loop semantics and exact heading;
+the Godot harness uses the same cumulative motion/camera model and drives frames
+from requested review FPS instead of the SpriteFrames clock.
 
 ## Operator Workbench Interactive UI V1 (2026-08-29)
 

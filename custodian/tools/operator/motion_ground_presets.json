@@ -1,0 +1,47 @@
+{
+  "schema": "custodian.operator_motion_ground_presets.v1",
+  "presets": [
+    {
+      "id": "grid32",
+      "label": "GRID 32",
+      "path": null,
+      "tile_size": [32, 32]
+    },
+    {
+      "id": "ritualant_cavern",
+      "label": "RITUALANT CAVERN",
+      "path": "custodian/content/tiles/encounters/ritualant_set/underground/ritualant_underground__ground__cavern_repeat_01__512x512.png",
+      "tile_size": [512, 512]
+    },
+    {
+      "id": "industrial_hardstand",
+      "label": "INDUSTRIAL HARDSTAND",
+      "path": "custodian/content/tiles/elevation/industrial/ground_flat_32.png",
+      "tile_size": [32, 32]
+    },
+    {
+      "id": "mountain_rock",
+      "label": "MOUNTAIN ROCK",
+      "path": "custodian/content/tiles/mountain_cliffs/rock_ground_flat_32.png",
+      "tile_size": [32, 32]
+    },
+    {
+      "id": "interior_concrete",
+      "label": "INTERIOR CONCRETE",
+      "path": "custodian/content/tiles/interiors/temp/floor_concrete_01_32.png",
+      "tile_size": [32, 32]
+    },
+    {
+      "id": "interior_panel",
+      "label": "INTERIOR PANEL",
+      "path": "custodian/content/tiles/interiors/runtime/floor_panel_32.png",
+      "tile_size": [32, 32]
+    },
+    {
+      "id": "connector_gravel",
+      "label": "CONNECTOR GRAVEL",
+      "path": "custodian/content/tiles/terrain/runtime/connector/terrain_connector_gravel_32.png",
+      "tile_size": [32, 32]
+    }
+  ]
+}

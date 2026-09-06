@@ -6,7 +6,11 @@ HINTS = {
     "workbench": "E Edit   A/X Frame   P Publish   V Validate   W Weapon   ? Help",
     "preview": "SPACE Play   ←/→ Frame   [/] FPS   L Loop   S Source   Z Zoom   ? Help",
     "timeline": "SPACE Play   Ctrl+A Add   Del Remove   Ctrl+↑/↓ Move   Ctrl+S/O Save/Load   ? Help",
-    "motion": "SPACE Play   M Tread/World   D Distance   C Curve   G Ground   ⇧←/→ ±16   ENTER Runtime   ? Help",
+    "motion": (
+        "SPACE Play   H Heading   M Tread/World   "
+        "G Ground   D Distance   L Loop   ⇧L Span   "
+        "ENTER Runtime   ? Help"
+    ),
 }
 
 

@@ -53,7 +53,7 @@ class OperatorWorkbenchApp(App):
     #motion-workspace { height: 1fr; }
     #motion-canvas { width: 1fr; height: 1fr; content-align: center middle; }
     #motion-inspector { width: 28; min-width: 22; border: solid #4c566a; }
-    #motion-controls { height: 5; padding: 0 1; }
+    #motion-controls { height: 7; padding: 0 1; }
     #motion-metrics { height: 1fr; padding: 0 1; }
     #motion-preview-controls { height: 3; content-align: center middle; background: #202734; }
     .pane-title { height: 1; padding: 0 1; text-style: bold; background: #202734; }
@@ -89,8 +89,9 @@ class OperatorWorkbenchApp(App):
         Binding("delete", "timeline_remove", "Remove clip", show=False), Binding("ctrl+up", "timeline_up", "Move clip left", show=False),
         Binding("ctrl+down", "timeline_down", "Move clip right", show=False), Binding("ctrl+s", "timeline_save", "Save sequence", show=False),
         Binding("ctrl+o", "timeline_load", "Load sequence", show=False),
-        Binding("m", "motion_mode", "Motion mode", show=False), Binding("g", "motion_ground", "Motion ground", show=False),
-        Binding("c", "motion_curve", "Motion curve", show=False), Binding("d", "motion_distance", "Motion distance", show=False),
+        Binding("m", "motion_mode", "Motion mode", show=False), Binding("h", "motion_heading", "Motion heading", show=False),
+        Binding("g", "motion_ground", "Motion ground", show=False), Binding("c", "motion_curve", "Motion curve", show=False),
+        Binding("d", "motion_distance", "Motion distance", show=False), Binding("shift+l", "motion_loop_cycles", "Motion loop span", show=False),
         Binding("shift+left", "motion_travel_less", "Travel -16", show=False), Binding("shift+right", "motion_travel_more", "Travel +16", show=False),
         Binding("ctrl+left", "motion_travel_less_large", "Travel -32", show=False), Binding("ctrl+right", "motion_travel_more_large", "Travel +32", show=False),
         Binding("ctrl+r", "motion_reset", "Reset motion", show=False), Binding("enter", "motion_runtime", "Runtime check", show=False),
@@ -177,6 +178,7 @@ class OperatorWorkbenchApp(App):
             if changed:
                 self.state.motion.elapsed_sec = 0.0
                 self.state.motion.playing = False
+                self.state.motion.heading = selection.direction
             self._main_widget("#animation-detail", AnimationDetail).show_session(session)
             self._main_widget("#layer-table", LayerTable).show_session(session)
             layer_table = self._main_widget("#layer-table", LayerTable)
@@ -234,7 +236,11 @@ class OperatorWorkbenchApp(App):
     def on_preview_controls_scrubbed(self, event: PreviewControls.Scrubbed) -> None:
         if self.state.mode == "motion" and self.preview_view:
             duration = len(self.preview_view.frames) / self.state.review_fps
-            self.state.motion.elapsed_sec = event.ratio * duration
+            span = duration * self.state.motion.loop_cycles if self.state.motion.loop else duration
+            target = event.ratio * span
+            if self.state.motion.loop and event.ratio >= 1.0:
+                target = max(0.0, span - 0.000001)
+            self.state.motion.elapsed_sec = target
             self.state.motion.playing = False
             self._render_motion()
             return
@@ -287,8 +293,18 @@ class OperatorWorkbenchApp(App):
             self._render_preview()
         except Exception as error: self._error(error)
 
+    def _motion_selection(self) -> AnimationSelection | None:
+        base = self.state.selection
+        if base is None:
+            return None
+        direction = self.state.motion.heading or base.direction
+        return AnimationSelection(
+            base.profile, base.group, base.action, direction,
+            base.weapon_id, base.linked_profile,
+        )
+
     async def _load_motion_preview(self) -> None:
-        selection = self._require_selection()
+        selection = self._motion_selection()
         if not selection: return
         try:
             self.preview_view = await self._thread(self.service.preview, selection, self.state.preview_source)
@@ -307,7 +323,7 @@ class OperatorWorkbenchApp(App):
             self.preview_view.identity, self.state.review_fps, motion.travel_px,
             motion.curve, self.preview_view.identity.direction,
             animation_motion_preview.CANVAS_SIZE, motion.ground, motion.mode,
-            len(self.preview_view.frames),
+            len(self.preview_view.frames), motion.loop_cycles,
         )
 
     def _render_motion(self) -> None:
@@ -322,11 +338,13 @@ class OperatorWorkbenchApp(App):
         self.state.preview_frame = rendered.sample.frame_index
         self._main_widget("#motion-canvas", MotionCanvas).show_frame(rendered.image, self.preview_view.identity.key, self.state.preview_zoom)
         self._main_widget("#motion-controls", MotionControls).show(
-            mode=motion.mode, ground=motion.ground, curve=motion.curve,
-            travel_px=motion.travel_px, fps=self.state.review_fps,
+            mode=motion.mode, heading=self.preview_view.identity.direction,
+            ground=motion.ground, curve=motion.curve, travel_px=motion.travel_px,
+            fps=self.state.review_fps, loop=motion.loop, loop_cycles=motion.loop_cycles,
         )
         self._main_widget("#motion-metrics", MotionMetrics).show(
-            rendered.sample, len(self.preview_view.frames), rendered.warnings, bool(self.motion_markers), mode=motion.mode,
+            rendered.sample, len(self.preview_view.frames), rendered.warnings,
+            bool(self.motion_markers), loop=motion.loop, loop_cycles=motion.loop_cycles,
         )
         self._main_widget("#motion-preview-controls", PreviewControls).show(
             frame=rendered.sample.frame_index, frames=len(self.preview_view.frames),
@@ -400,10 +418,29 @@ class OperatorWorkbenchApp(App):
     def action_motion_mode(self):
         if self.state.mode != "motion": return
         self.state.motion.mode = "world" if self.state.motion.mode == "treadmill" else "treadmill"; self._render_motion()
+    def action_motion_heading(self):
+        if self.state.mode != "motion": return
+        base = self.state.selection
+        if base is None: return
+        available = set(self.service.available_directions(base))
+        cardinal = [direction for direction in animation_motion_preview.CARDINAL_DIRECTIONS if direction in available]
+        if not cardinal:
+            self._activity(f"No cardinal variants available for {base.profile}/{base.group}/{base.action}", "WARN")
+            return
+        motion = self.state.motion
+        current = motion.heading or base.direction
+        motion.heading = cardinal[(cardinal.index(current) + 1) % len(cardinal)] if current in cardinal else cardinal[0]
+        motion.elapsed_sec = 0.0
+        motion.playing = False
+        self._activity(f"MOTION HEADING {motion.heading.upper()}", "OK")
+        self.run_worker(self._load_motion_preview(), group="motion-image", exclusive=True)
     def action_motion_ground(self):
         if self.state.mode != "motion": return
-        grounds = ("grid32", "ritualant_cavern"); current = self.state.motion.ground
-        self.state.motion.ground = grounds[(grounds.index(current) + 1) % len(grounds)]
+        grounds = animation_motion_preview.ground_ids()
+        if not grounds: return
+        current = self.state.motion.ground
+        index = grounds.index(current) if current in grounds else -1
+        self.state.motion.ground = grounds[(index + 1) % len(grounds)]
         self.run_worker(self._load_motion_preview(), group="motion-image", exclusive=True)
     def action_motion_curve(self):
         if self.state.mode != "motion": return
@@ -414,6 +451,18 @@ class OperatorWorkbenchApp(App):
         values = animation_motion_preview.DISTANCE_PRESETS
         current = min(range(len(values)), key=lambda index: abs(values[index] - self.state.motion.travel_px))
         self.state.motion.travel_px = values[(current + 1) % len(values)]; self._render_motion()
+    def action_motion_loop_cycles(self):
+        if self.state.mode != "motion": return
+        values = animation_motion_preview.LOOP_CYCLE_PRESETS
+        motion = self.state.motion
+        current = min(range(len(values)), key=lambda index: abs(values[index] - motion.loop_cycles))
+        motion.loop_cycles = values[(current + 1) % len(values)]
+        if self.preview_view:
+            duration = len(self.preview_view.frames) / self.state.review_fps
+            span = duration * motion.loop_cycles
+            if span > 0: motion.elapsed_sec %= span
+        self._activity(f"MOTION LOOP SPAN {motion.loop_cycles} cycles", "OK")
+        self._render_motion()
     def _adjust_motion_travel(self, delta: float):
         if self.state.mode != "motion": return
         self.state.motion.travel_px = min(512.0, max(0.0, self.state.motion.travel_px + delta)); self._render_motion()
@@ -428,14 +477,18 @@ class OperatorWorkbenchApp(App):
         self.run_worker(self._load_motion_preview(), group="motion-image", exclusive=True)
     def action_motion_runtime(self):
         if self.state.mode != "motion": return
-        selection = self._require_selection()
+        selection = self._motion_selection()
         if not selection: return
         motion = self.state.motion
         try:
-            self.service.launch_motion_runtime(selection, fps=self.state.review_fps, travel_px=motion.travel_px, curve=motion.curve, ground=motion.ground, mode=motion.mode)
+            self.service.launch_motion_runtime(
+                selection, fps=self.state.review_fps, travel_px=motion.travel_px,
+                curve=motion.curve, ground=motion.ground, mode=motion.mode,
+                loop=motion.loop, loop_cycles=motion.loop_cycles,
+            )
             motion.runtime_request_serial += 1
             self._activity("RUNTIME MOTION CHECK launched", "OK")
-            self._activity(f"{selection.identity} · {motion.travel_px:.0f}px · {self.state.review_fps:g}fps · {motion.curve.upper()}")
+            self._activity(f"{selection.identity} · {motion.travel_px:.0f}px/cycle · {motion.loop_cycles} cycles · {self.state.review_fps:g}fps · {motion.curve.upper()}")
         except Exception as error: self._error(error)
 
     def action_timeline_add(self):
@@ -475,18 +528,19 @@ class OperatorWorkbenchApp(App):
 
     def _preview_tick(self) -> None:
         if self.state.mode == "motion":
-            now = time.monotonic(); delta = now - self._motion_last_tick; self._motion_last_tick = now
+            now = time.monotonic()
+            delta = now - self._motion_last_tick
+            self._motion_last_tick = now
             if not self.state.motion.playing or not self.preview_view: return
+            motion = self.state.motion
             duration = len(self.preview_view.frames) / self.state.review_fps
-            self.state.motion.elapsed_sec += delta * self.state.motion.playback_rate
-            # elapsed_sec is cumulative review time and is NEVER wrapped here.
-            # sample_motion() derives animation phase (elapsed_sec % duration)
-            # from it independently of continuous world travel, so a looping
-            # treadmill keeps accumulating distance instead of resetting the
-            # ground every animation cycle. Only a non-looping pass clamps.
-            if not self.state.motion.loop and self.state.motion.elapsed_sec >= duration:
-                self.state.motion.elapsed_sec = duration
-                self.state.motion.playing = False
+            motion.elapsed_sec += delta * motion.playback_rate
+            if motion.loop:
+                span = duration * max(1, motion.loop_cycles)
+                if motion.elapsed_sec >= span: motion.elapsed_sec %= span
+            elif motion.elapsed_sec >= duration:
+                motion.elapsed_sec = duration
+                motion.playing = False
             self._render_motion(); return
         if self.state.mode not in ("preview", "timeline") or not self.state.preview_playing: return
         counter = getattr(self, "_preview_tick_counter", 0) + 1
