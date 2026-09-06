@@ -5,8 +5,25 @@ set -euo pipefail
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 cd "$REPO_ROOT"
 
+if command -v python3 >/dev/null 2>&1; then
+    PYTHON=python3
+elif command -v python >/dev/null 2>&1; then
+    PYTHON=python
+else
+    echo "Commit blocked: Python is required by the CUSTODIAN pre-commit checks." >&2
+    exit 1
+fi
+
+
 # ─────────────────────────────────────────────
-# 1. Block forbidden staged files
+# 1. Block Windows-incompatible staged paths
+# ─────────────────────────────────────────────
+echo "[pre-commit] validating cross-platform filenames..."
+"$PYTHON" tools/validate_filenames.py
+
+
+# ─────────────────────────────────────────────
+# 2. Block forbidden staged files
 # ─────────────────────────────────────────────
 #
 # ACMR deliberately excludes deletions, so removing an accidentally tracked
@@ -33,7 +50,7 @@ fi
 
 
 # ─────────────────────────────────────────────
-# 2. Warn about misplaced Aseprite source files
+# 3. Warn about misplaced Aseprite source files
 # ─────────────────────────────────────────────
 if [ -d "custodian/content" ]; then
     content_aseprite_files="$(
@@ -57,7 +74,7 @@ fi
 
 
 # ─────────────────────────────────────────────
-# 3. Warn about untracked local-state files
+# 4. Warn about untracked local-state files
 # ─────────────────────────────────────────────
 untracked="$(
     git ls-files \
@@ -77,13 +94,13 @@ fi
 
 
 # ─────────────────────────────────────────────
-# 4. Validate Design Codex when relevant
+# 5. Validate Design Codex when relevant
 # ─────────────────────────────────────────────
 if printf '%s\n' "$staged_paths" |
     grep -Eq '^(design/90_codex/|tools/validate_design_codex.py|\.githooks/pre-commit|tools/install_git_hooks.sh)'
 then
     echo "[pre-commit] validating design codex..."
-    python3 tools/validate_design_codex.py
+    "$PYTHON" tools/validate_design_codex.py
 fi
 
 exit 0
