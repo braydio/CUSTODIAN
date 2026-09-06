@@ -1,9 +1,9 @@
 # Dodge Flow
 
 **Project:** CUSTODIAN  
-**Status:** implemented-v1  
+**Status:** implemented-v1 + combat-pressure fatigue (2026-09-06)  
 **Created:** 2026-07-21  
-**Last Updated:** 2026-07-23
+**Last Updated:** 2026-09-06
 
 ## Purpose
 
@@ -78,7 +78,7 @@ At maximum retained Flow:
 
 The active duration stays fixed at `0.20s`. To achieve both peak-speed and travel targets without lengthening that clock, runtime adjusts the endpoint of the existing linear deceleration curve. The charged opener is never fed through this chain curve.
 
-Every link costs the ordinary `16` stamina. V1 has no hard link cap and no fatigue escalation; stamina, vulnerability seams, directional loss, obstacles, and timing are the constraints.
+Every link costs the ordinary `16` stamina **in traversal (out-of-combat)** -- and traversal dodges are effectively free, since stamina cost for the `dodge`/`dodge_chain` causes is forced to `0` outside combat pressure. V1 has no hard link cap. Under combat pressure, stamina and iframe duration escalate per link instead of staying flat -- see "Combat Pressure Fatigue" below.
 
 ## Animation Contract
 
@@ -101,11 +101,30 @@ or iframe timing.
 After final recovery, retained Flow creates a bounded carry state:
 
 ```gdscript
-exit_speed = SPEED * lerp(1.0, 1.45, flow)
-exit_duration = 0.18
+exit_speed = SPEED * lerp(1.0, 1.45, flow)   # traversal
+exit_duration = 0.18                          # traversal
 ```
 
+Under combat pressure this caps lower -- see "Combat Pressure Fatigue" below.
+
 The normal locomotion target blends with this authored vector. Matching run/sprint input inherits the direction without a neutral stop; no input produces a short braking step. Flow waits `0.22s` after carry, then decays at `1.8/s`. Matching sprint movement slows decay to preserve part of the sequence without creating raw physics momentum.
+
+## Combat Pressure Fatigue (2026-09-06)
+
+Traversal Flow (above) is unchanged: outside combat pressure, Dodge Flow chaining stays free and responsive exactly as authored. Combat pressure (`_is_combat_pressure_active()`, backed by `EngagementTracker.engagement_active`) applies a separate, additive fatigue schedule to **combat-pressure chains only** -- it does not touch traversal movement fantasy, the `0.20s` active clock, or the `+18%`/`+12%` Flow travel/speed bonuses.
+
+| | Link 0 (opener) | Link 1 | Link 2 | Link 3+ |
+|---|---:|---:|---:|---:|
+| Stamina cost | `16` (unchanged) | `20` | `26` | `34` |
+| Iframe duration | `0.16` (unchanged) | `0.135` | `0.115` | `0.10` |
+
+Recovery: under combat pressure, `_active_dodge_recovery_duration` lerps from the base `dodge_recovery_duration` (`0.16`, at low Flow -- "existing responsive behavior" for a short chain) toward `dodge_flow_combat_recovery_ceiling` (`0.20`, at high Flow) as Flow rises -- the opposite direction from traversal's `-35%` reduction. A long combat escape chain lands its terminal recovery in the `0.18-0.22s` band instead of being rewarded with a faster recovery.
+
+Exit carry: under combat pressure, the speed multiplier caps at `dodge_flow_combat_exit_carry_speed_mult` (`1.25x` instead of `1.45x`) and the duration caps at `dodge_flow_combat_exit_carry_duration` (`0.12s` instead of `0.18s`).
+
+Reset: chain index (the fatigue driver) resets only in `_finish_dodge_flow_sequence()`, i.e. when the Dodge Flow chain itself ends -- not between links. It is not reset mid-chain by anything else.
+
+Sprint stamina (unrelated system, verified while implementing this pass): when combat pressure is inactive, sprinting already costs `0` stamina *and* traversal stamina regeneration (`5x` rate) still runs -- there was no freeze bug in the current code.
 
 ## Presentation
 
@@ -140,13 +159,17 @@ Runtime records buffered inputs, successful links, stamina rejection, final coun
 - dedicated four-frame clean/90-degree link playback and full-atlas hard-pivot entry;
 - late-grace recovery cancellation;
 - final-link cooldown ownership;
-- exit carry, delayed decay, stamina cost, and insufficient-stamina termination.
+- exit carry, delayed decay, stamina cost, and insufficient-stamina termination;
+- traversal chains stay free (`0` stamina) regardless of chain length;
+- combat-pressure per-link stamina (`16/20/26/34+`) and iframe (`0.16/0.135/0.115/0.10+`) schedules;
+- combat-pressure long-chain terminal recovery lands in `0.18-0.22s`, not the traversal `-35%` floor;
+- combat-pressure exit carry caps at `1.25x`/`0.12s`.
 
 The charged-roll, charge-feedback, overlap-telemetry, and modular fast-attack smokes remain required regressions.
 
 ## Deferred
 
-- Chain fatigue after the third link, only if playtesting finds uncapped stamina-limited chains too safe.
+- Chain fatigue after the third link was implemented for **combat pressure only** (2026-09-06); traversal chains remain uncapped/fatigue-free as originally deferred.
 - Dedicated two- or three-frame hard-turn/pivot art and authored skid fragments.
 - Dedicated clean-link latch and momentum-break audio.
 - Flow conversion into attacks; V1 ends or cancels Flow at the existing attack boundary.

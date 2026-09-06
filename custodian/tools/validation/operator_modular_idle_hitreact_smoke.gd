@@ -153,6 +153,32 @@ func _run() -> void:
 	await process_frame
 	_assert(lower.visible and upper.visible, "cleanup should restore modular idle presentation")
 
+	# Combat tempo + impact feedback pass: the shared incoming-damage
+	# presentation package (hit stop + small directional recoil) must fire
+	# for BOTH the modular and fallback damage-reaction branches -- it must
+	# not be skipped just because begin_modular_damage_reaction() succeeded.
+	operator.set("visual_idle_direction", Vector2.DOWN)
+	operator.set("movement_direction", Vector2.ZERO)
+	operator.set("velocity", Vector2.ZERO)
+	operator.set("_enemy_impact_lock_timer", 0.0)
+	operator.set("_incoming_hit_stop_active", false)
+	operator.set("_last_damage_reaction_direction", Vector2.DOWN)
+	var base_time_scale := Engine.time_scale
+	operator.call("play_damage_reaction_fx", &"operator_idle_hitreact_modular_down", true)
+	_assert(Engine.time_scale < base_time_scale, "modular damage reaction must still trigger the shared hit stop")
+	_assert((operator.get("velocity") as Vector2).length() > 0.0, "modular damage reaction must still trigger the shared directional recoil")
+	Engine.time_scale = base_time_scale
+	operator.set("_incoming_hit_stop_active", false)
+	operator.call("finish_damage_reaction_presentation")
+
+	operator.set("velocity", Vector2.ZERO)
+	operator.set("_enemy_impact_lock_timer", 0.0)
+	operator.call("play_damage_reaction_fx", &"unarmed_light_hitreact_down", false)
+	_assert(Engine.time_scale < base_time_scale, "fallback (non-modular) damage reaction must trigger the shared hit stop")
+	_assert((operator.get("velocity") as Vector2).length() > 0.0, "fallback (non-modular) damage reaction must trigger the shared directional recoil")
+	Engine.time_scale = base_time_scale
+	operator.set("_incoming_hit_stop_active", false)
+
 	root.queue_free()
 	await process_frame
 	if _failed:

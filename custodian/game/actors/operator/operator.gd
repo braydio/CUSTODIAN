@@ -361,6 +361,23 @@ var last_fire_cooldown := 0.0
 @export var dodge_flow_distance_bonus: float = 0.18
 @export var dodge_flow_recovery_reduction: float = 0.35
 @export var dodge_exit_carry_duration: float = 0.18
+@export_group("Dodge Flow Combat Fatigue")
+## Under combat pressure, per-link stamina replaces the flat
+## dodge_stamina_cost for chain links (index 0/1/2, then 3+).
+@export var dodge_chain_combat_stamina_costs: PackedFloat32Array = PackedFloat32Array([16.0, 20.0, 26.0, 34.0])
+## Under combat pressure, per-link iframe duration replaces the flat
+## dodge_iframe_duration for chain links (index 0/1/2, then 3+). Traversal
+## (out-of-combat) iframe duration is unaffected.
+@export var dodge_chain_combat_iframe_durations: PackedFloat32Array = PackedFloat32Array([0.16, 0.135, 0.115, 0.10])
+## Under combat pressure, recovery lerps from dodge_recovery_duration (low
+## Flow / short chain, unchanged responsive feel) toward this ceiling (high
+## Flow / long chain) instead of down toward the traversal -35% reduction --
+## a long combat escape chain must not get a fast-recovery reward.
+@export var dodge_flow_combat_recovery_ceiling: float = 0.20
+## Under combat pressure, exit-carry is capped well below the traversal
+## maximum (1.45x / dodge_exit_carry_duration).
+@export var dodge_flow_combat_exit_carry_speed_mult: float = 1.25
+@export var dodge_flow_combat_exit_carry_duration: float = 0.12
 @export_group("", "")
 @export var heavy_attack_stamina_cost: float = 14.0
 @export var heavy_attack_blocked_while_sprinting: bool = true
@@ -502,6 +519,19 @@ var _dodge_fast_attack_presentation_active: bool = false
 var _buffered_attack_kind: String = ""
 var _buffered_attack_timer: float = 0.0
 var _terminal_fast_restart_buffered: bool = false
+@export var fast_chain_terminal_restart_grace_sec: float = 0.08
+var _fast_chain_terminal_restart_grace_remaining: float = 0.0
+var _fast_chain_neutral_pending: bool = false
+var _fast_chain_started_at_msec: int = 0
+var _vigil_fast_03_final_contact_logged: bool = false
+var _incoming_hit_stop_active: bool = false
+@export var operator_incoming_light_hit_stop_duration: float = 0.055
+@export var operator_incoming_light_hit_stop_scale: float = 0.5
+@export var operator_incoming_heavy_hit_stop_duration: float = 0.09
+@export var operator_incoming_heavy_hit_stop_scale: float = 0.35
+@export var operator_incoming_light_recoil_px: float = 6.5
+@export var operator_incoming_heavy_recoil_px: float = 14.0
+@export var operator_incoming_recoil_duration: float = 0.09
 var _buffered_dodge_direction: Vector2 = Vector2.ZERO
 var _melee_swing_sfx_played := false
 var _melee_swing_sfx_frames_played: Dictionary = {}
@@ -1283,6 +1313,12 @@ func _process(delta):
 	fire_cooldown_remaining = max(0.0, fire_cooldown_remaining - delta)
 	_weapon_failure_feedback_cooldown = maxf(0.0, _weapon_failure_feedback_cooldown - delta)
 	melee_cooldown_remaining = max(0.0, melee_cooldown_remaining - delta)
+	_fast_chain_terminal_restart_grace_remaining = maxf(0.0, _fast_chain_terminal_restart_grace_remaining - delta)
+	if _fast_chain_neutral_pending \
+	and melee_cooldown_remaining <= 0.0 \
+	and _fast_chain_terminal_restart_grace_remaining <= 0.0:
+		_fast_chain_neutral_pending = false
+		_obs_log(&"vigil_fast_chain_neutral", {"elapsed_since_chain_start": _fast_chain_elapsed_since_start()})
 	_dodge_cooldown_remaining = max(0.0, _dodge_cooldown_remaining - delta)
 	_dodge_iframe_timer = maxf(0.0, _dodge_iframe_timer - delta)
 	current_recoil = max(0.0, current_recoil - recoil_decay * delta)
@@ -5014,6 +5050,10 @@ func _advance_fast_chain_step() -> bool:
 	return true
 
 
+func _fast_chain_elapsed_since_start() -> float:
+	return float(Time.get_ticks_msec() - _fast_chain_started_at_msec) / 1000.0
+
+
 func _reset_fast_chain(clear_buffer: bool = true) -> void:
 	_melee_fast_combo_step = 0
 	_melee_fast_chain_direction_active = false
@@ -5147,6 +5187,9 @@ func _start_fast_attack() -> void:
 	_melee_fast_windup = false
 	_dodge_fast_attack_presentation_active = false
 	_melee_attack_kind = "fast"
+	if _melee_fast_combo_step == 0:
+		_fast_chain_started_at_msec = Time.get_ticks_msec()
+		_vigil_fast_03_final_contact_logged = false
 	var attack_profile: MeleeAttackProfile = _begin_melee_attack_profile("fast")
 	var is_unarmed_attack := _is_attack_profile_unarmed(_active_attack_profile)
 	_notify_camera_attack_windup(false)
@@ -5219,9 +5262,16 @@ func _start_fast_attack() -> void:
 		_melee_duration = _get_current_melee_animation_duration(
 			0.45,
 			0.24,
-			0.70
+			0.85
 		)
 		_lock_melee_cooldown(_melee_duration + 0.04)
+		match _melee_attack_key:
+			"vigil_dagger_fast_01":
+				_obs_log(&"vigil_fast_01_started", {"elapsed_since_chain_start": 0.0})
+			"vigil_dagger_fast_02":
+				_obs_log(&"vigil_fast_02_started", {"elapsed_since_chain_start": _fast_chain_elapsed_since_start()})
+			"vigil_dagger_fast_03":
+				_obs_log(&"vigil_fast_03_started", {"elapsed_since_chain_start": _fast_chain_elapsed_since_start()})
 		_obs_log(&"player_melee_fast_chain_step_started", {
 			"step": _melee_fast_combo_step,
 			"attack_key": _melee_attack_key,
@@ -5557,6 +5607,8 @@ func _update_melee_attack(delta: float) -> void:
 				_request_attack_state("fast")
 				return
 			terminal_restart_requested = true
+			_fast_chain_terminal_restart_grace_remaining = fast_chain_terminal_restart_grace_sec
+			_fast_chain_neutral_pending = true
 			_reset_fast_chain()
 		elif buffered_finisher_input == "dodge":
 			_start_buffered_fast_chain_dodge()
@@ -5602,7 +5654,9 @@ func _update_melee_attack(delta: float) -> void:
 
 
 func _try_start_terminal_fast_restart() -> void:
-	if not _terminal_fast_restart_buffered or not _can_start_attack_now():
+	if not _terminal_fast_restart_buffered \
+	or _fast_chain_terminal_restart_grace_remaining > 0.0 \
+	or not _can_start_attack_now():
 		return
 	_terminal_fast_restart_buffered = false
 	_request_attack_state("fast")
@@ -5655,6 +5709,11 @@ func _apply_melee_hitbox_tick(semantic_frame: int = -1) -> void:
 		window
 	)
 	var contact_id := StringName(active_contact.get("id", "default"))
+	if _melee_attack_key == "vigil_dagger_fast_03" \
+	and contact_id == &"cut_02" \
+	and not _vigil_fast_03_final_contact_logged:
+		_vigil_fast_03_final_contact_logged = true
+		_obs_log(&"vigil_fast_03_final_contact", {"elapsed_since_chain_start": _fast_chain_elapsed_since_start()})
 	var hit_count := 0
 	for body in overlapping_bodies:
 		if not (body is Node2D):
@@ -5902,7 +5961,9 @@ func guard_apply_parry_success(attacker: Node2D, hit_direction: Vector2, hit_dat
 	_spawn_parry_contact_spark(contact_position)
 	_spawn_parry_success_fx(contact_position)
 	_play_parry_success_sound(contact_position)
-	_notify_camera_attack_impact(hit_direction, false)
+	# Combat tempo pass: parry success no longer pushes/shakes the camera --
+	# the contact flash, stagger, and critical-open presentation already read
+	# clearly without it. Contact flash and success SFX are unchanged.
 	_obs_increment(&"player_parry_success")
 	_obs_log(&"player_parry_success", {
 		"position": global_position,
@@ -6010,6 +6071,9 @@ func _spawn_parry_success_fx(contact_position: Vector2) -> Node2D:
 		parent = get_parent()
 	parent.add_child(burst)
 	burst.global_position = contact_position
+	# Combat tempo pass: reduce the parry-success world VFX's apparent
+	# scale/intensity by ~40% -- mechanics, contact flash, and SFX unchanged.
+	burst.scale = Vector2(0.6, 0.6)
 
 	var direction := _get_attack_aim_direction()
 	if direction.length_squared() <= 0.001:
@@ -8436,6 +8500,42 @@ func _get_dodge_flow_end_speed_factor(flow: float) -> float:
 	return clampf(desired_average_factor * 2.0 - 1.0, base_end_speed_factor, 1.0)
 
 
+## Combat-pressure dodge fatigue: escalating per-link stamina cost. Chain
+## link 0 (the opener) is unaffected (still dodge_stamina_cost); traversal
+## (out-of-combat) dodges remain free via the existing _spend_stamina() gate
+## regardless of what this returns.
+func _get_dodge_chain_link_stamina_cost(chain_index: int, combat_pressure_active: bool) -> float:
+	if not combat_pressure_active or dodge_chain_combat_stamina_costs.is_empty():
+		return dodge_stamina_cost
+	var clamped_index := mini(maxi(chain_index, 0), dodge_chain_combat_stamina_costs.size() - 1)
+	return dodge_chain_combat_stamina_costs[clamped_index]
+
+
+## Combat-pressure dodge fatigue: shrinking per-link iframe duration.
+## Traversal iframe duration (dodge_iframe_duration) is unaffected.
+func _get_dodge_chain_link_iframe_duration(chain_index: int, combat_pressure_active: bool) -> float:
+	if not combat_pressure_active or dodge_chain_combat_iframe_durations.is_empty():
+		return dodge_iframe_duration
+	var clamped_index := mini(maxi(chain_index, 0), dodge_chain_combat_iframe_durations.size() - 1)
+	return dodge_chain_combat_iframe_durations[clamped_index]
+
+
+## Under combat pressure, recovery lerps toward dodge_flow_combat_recovery_ceiling
+## as Flow rises instead of down toward the traversal high-Flow reduction --
+## a long combat escape chain must not get a fast-recovery reward. Short
+## chains (low Flow) keep the existing responsive base value either way.
+func _resolve_dodge_recovery_duration(combat_pressure_active: bool) -> float:
+	if combat_pressure_active:
+		return maxf(
+			0.0,
+			lerpf(dodge_recovery_duration, dodge_flow_combat_recovery_ceiling, _dodge_flow)
+		)
+	return maxf(
+		0.0,
+		dodge_recovery_duration * lerpf(1.0, maxf(0.0, 1.0 - dodge_flow_recovery_reduction), _dodge_flow)
+	)
+
+
 func _launch_buffered_dodge_chain() -> bool:
 	if not _dodge_chain_buffered:
 		return false
@@ -8447,7 +8547,9 @@ func _launch_buffered_dodge_chain() -> bool:
 	if _is_dead or _enemy_impact_lock_timer > 0.0 or _portal_transition_locked or _portal_arrival_animation_active:
 		_dodge_chain_end_reason = &"runtime_lock"
 		return false
-	if stamina < maxf(0.0, dodge_stamina_cost):
+	var combat_pressure_active := _is_combat_pressure_active()
+	var upcoming_link_cost := _get_dodge_chain_link_stamina_cost(_dodge_chain_index + 1, combat_pressure_active)
+	if stamina < maxf(0.0, upcoming_link_cost):
 		_dodge_chain_end_reason = &"insufficient_stamina"
 		dodge_charge_cancelled.emit(&"insufficient_stamina")
 		_obs_increment(&"player_dodge_chain_rejected_stamina")
@@ -8466,21 +8568,34 @@ func _launch_buffered_dodge_chain() -> bool:
 	_active_dodge_profile = &"chain"
 	_active_dodge_speed = dodge_speed * lerpf(1.0, 1.0 + maxf(0.0, dodge_flow_speed_bonus), _dodge_flow)
 	_active_dodge_duration = maxf(0.05, dodge_duration)
-	_active_dodge_recovery_duration = maxf(
-		0.0,
-		dodge_recovery_duration * lerpf(1.0, maxf(0.0, 1.0 - dodge_flow_recovery_reduction), _dodge_flow)
-	)
+	_active_dodge_recovery_duration = _resolve_dodge_recovery_duration(combat_pressure_active)
 	_dodge_direction = next_direction
 	_dodge_backstep_active = _is_dodge_backstep_request(_dodge_direction)
 	_dodge_active = true
 	_dodge_recovery_active = false
 	_dodge_timer = _active_dodge_duration
-	_dodge_iframe_timer = minf(maxf(0.0, dodge_iframe_duration), _dodge_timer)
+	var link_iframe_duration := _get_dodge_chain_link_iframe_duration(_dodge_chain_index, combat_pressure_active)
+	_dodge_iframe_timer = minf(maxf(0.0, link_iframe_duration), _dodge_timer)
 	_dodge_recovery_timer = 0.0
 	_dodge_recovery_elapsed = 0.0
 	_dodge_cooldown_remaining = 0.0
 	_dodge_fast_attack_buffered = false
-	_spend_stamina(dodge_stamina_cost, &"dodge_chain")
+	_spend_stamina(upcoming_link_cost, &"dodge_chain")
+	_obs_log(&"combat_dodge_chain_link", {
+		"index": _dodge_chain_index,
+		"combat_pressure": combat_pressure_active,
+		"flow": _dodge_flow,
+	})
+	_obs_log(&"combat_dodge_chain_stamina_cost", {
+		"index": _dodge_chain_index,
+		"combat_pressure": combat_pressure_active,
+		"cost": upcoming_link_cost,
+	})
+	_obs_log(&"combat_dodge_chain_iframe_duration", {
+		"index": _dodge_chain_index,
+		"combat_pressure": combat_pressure_active,
+		"duration": _dodge_iframe_timer,
+	})
 	is_sprinting = false
 	is_sneaking = false
 	velocity = _dodge_direction * _active_dodge_speed
@@ -8593,9 +8708,14 @@ func _begin_dodge_exit_carry() -> void:
 		_dodge_exit_velocity = Vector2.ZERO
 		_dodge_exit_timer = 0.0
 		return
-	var exit_speed := SPEED * lerpf(1.0, 1.45, _dodge_flow)
+	# Under combat pressure, exit carry is capped well below the traversal
+	# maximum -- a long combat escape chain must not exit into a long,
+	# fast, hard-to-punish slide.
+	var carry_speed_mult := dodge_flow_combat_exit_carry_speed_mult if _is_combat_pressure_active() else 1.45
+	var carry_duration := dodge_flow_combat_exit_carry_duration if _is_combat_pressure_active() else dodge_exit_carry_duration
+	var exit_speed := SPEED * lerpf(1.0, carry_speed_mult, _dodge_flow)
 	_dodge_exit_velocity = _dodge_flow_direction * exit_speed
-	_dodge_exit_timer = maxf(0.0, dodge_exit_carry_duration)
+	_dodge_exit_timer = maxf(0.0, carry_duration)
 	velocity = _dodge_exit_velocity
 
 
@@ -8618,6 +8738,12 @@ func _finish_dodge_flow_sequence(reason: StringName, allow_exit_carry: bool = tr
 		"exit_duration": _dodge_exit_timer,
 	})
 	_obs_gauge(&"player_dodge_chain_index", 0)
+	_obs_log(&"combat_dodge_chain_ended", {
+		"count": chain_count,
+		"flow": final_flow,
+		"combat_pressure": _is_combat_pressure_active(),
+		"reason": String(reason),
+	})
 	_dodge_chain_buffered = false
 	_dodge_chain_direction = Vector2.ZERO
 	_dodge_chain_index = 0
@@ -12525,8 +12651,9 @@ func get_damage_reaction_duration(_reaction_name: String) -> float:
 	return operator_light_reaction_stun_duration
 
 
-func play_damage_reaction_fx(_animation_name: StringName) -> void:
-	_hide_modular_locomotion_layers()
+func play_damage_reaction_fx(_animation_name: StringName, modular_active: bool = false) -> void:
+	if not modular_active:
+		_hide_modular_locomotion_layers()
 	if _damage_reaction_strength == CombatConstants.HitStrength.HEAVY and animated_sprite:
 		# E/W are separately authored full-body sheets; do not inherit a stale
 		# locomotion mirror from the frame before impact.
@@ -12541,6 +12668,14 @@ func play_damage_reaction_fx(_animation_name: StringName) -> void:
 	if ranged_fx_overlay_sprite:
 		ranged_fx_overlay_sprite.visible = false
 		ranged_fx_overlay_sprite.stop()
+	_present_incoming_damage_package(modular_active)
+	if modular_active:
+		# The modular hit-react rig already carries its own visual contact
+		# feedback in its own sprite frames; the legacy full-body FX overlay
+		# sprite is intentionally left hidden here (begin_modular_damage_reaction
+		# already hid it) rather than re-shown, which would fight the modular
+		# presentation.
+		return
 	if melee_fx_overlay_sprite == null or melee_fx_overlay_sprite.sprite_frames == null:
 		return
 	var fx_animation := &"unarmed_light_hitreact_fx_down"
@@ -12553,6 +12688,51 @@ func play_damage_reaction_fx(_animation_name: StringName) -> void:
 	melee_fx_overlay_sprite.speed_scale = 1.0
 	melee_fx_overlay_sprite.set_frame_and_progress(0, 0.0)
 	melee_fx_overlay_sprite.play(fx_animation)
+
+
+## Shared incoming-damage presentation package -- fires exactly once per hit
+## from play_damage_reaction_fx(), for both the modular and fallback
+## damage-reaction branches. Camera impulse and damage SFX are already
+## unconditional upstream in take_damage(); this adds the two pieces that
+## were previously fallback-only (or missing entirely): hit stop and a
+## small directional recoil.
+func _present_incoming_damage_package(modular_active: bool) -> void:
+	var is_heavy := _damage_reaction_strength == CombatConstants.HitStrength.HEAVY
+	var hit_stop_duration := operator_incoming_heavy_hit_stop_duration if is_heavy else operator_incoming_light_hit_stop_duration
+	var hit_stop_scale := operator_incoming_heavy_hit_stop_scale if is_heavy else operator_incoming_light_hit_stop_scale
+	_apply_incoming_hit_stop(hit_stop_duration, hit_stop_scale)
+	var recoil_px := operator_incoming_heavy_recoil_px if is_heavy else operator_incoming_light_recoil_px
+	_apply_incoming_recoil_impulse(_last_damage_reaction_direction, recoil_px, operator_incoming_recoil_duration)
+	_obs_log(&"operator_damage_feedback_presented", {
+		"modular": modular_active,
+		"heavy": is_heavy,
+		"hit_stop_duration": hit_stop_duration,
+		"recoil_px": recoil_px,
+	})
+
+
+func _apply_incoming_hit_stop(duration: float, target_scale: float) -> void:
+	if _incoming_hit_stop_active:
+		return
+	_incoming_hit_stop_active = true
+	var previous_scale := Engine.time_scale
+	Engine.time_scale = minf(previous_scale, clampf(target_scale, 0.01, 1.0))
+	await get_tree().create_timer(maxf(0.01, duration), true, false, true).timeout
+	Engine.time_scale = previous_scale
+	_incoming_hit_stop_active = false
+
+
+func _apply_incoming_recoil_impulse(direction: Vector2, distance_px: float, duration: float) -> void:
+	if distance_px <= 0.0 or duration <= 0.0:
+		return
+	if _enemy_impact_lock_timer > 0.0:
+		# A stronger, more specific impact (dash/falcon punch) already owns
+		# the velocity impulse for this hit -- do not stomp its larger
+		# knockback with this smaller ordinary-hit recoil.
+		return
+	var impact_direction := direction.normalized() if direction.length_squared() > 0.0001 else Vector2.DOWN
+	_enemy_impact_lock_timer = maxf(_enemy_impact_lock_timer, duration)
+	velocity = impact_direction * (distance_px / duration)
 
 
 func finish_damage_reaction_presentation() -> void:

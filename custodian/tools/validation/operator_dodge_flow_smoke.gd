@@ -30,6 +30,8 @@ func _run() -> void:
 	_validate_late_grace(operator)
 	_validate_exit_carry_and_decay(operator)
 	_validate_stamina_constraint(operator)
+	_validate_traversal_dodge_is_free(operator)
+	_validate_combat_pressure_dodge_fatigue(operator)
 
 	operator.queue_free()
 	await process_frame
@@ -104,7 +106,7 @@ func _validate_charged_chain_and_redirect(operator: Node) -> void:
 	_assert(operator.get("_active_dodge_profile") == &"chain", "chain link must use the explicit chain profile")
 	_assert(int(operator.get("_dodge_chain_index")) == 1, "first continuation must be chain index one")
 	_assert(is_equal_approx(float(operator.get("_dodge_flow")), 1.0), "same-direction link must preserve maximum Flow")
-	_assert(is_equal_approx(float(operator.get("stamina")), stamina_after_opener - 16.0), "ordinary chain link must cost 16 stamina")
+	_assert(is_equal_approx(float(operator.get("stamina")), stamina_after_opener), "traversal (out-of-combat) chain link must remain free -- 0 stamina")
 	_assert(is_equal_approx(float(operator.get("_dodge_iframe_timer")), float(operator.get("dodge_iframe_duration"))), "Flow must not extend the iframe clock")
 	_assert(is_equal_approx(float(operator.get("_active_dodge_speed")), float(operator.get("dodge_speed")) * 1.12), "maximum Flow chain must gain 12 percent peak speed")
 	_assert(is_equal_approx(float(operator.get("_active_dodge_recovery_duration")), float(operator.get("dodge_recovery_duration")) * 0.65), "maximum Flow chain must reduce recovery by 35 percent")
@@ -170,15 +172,90 @@ func _validate_exit_carry_and_decay(operator: Node) -> void:
 
 
 func _validate_stamina_constraint(operator: Node) -> void:
+	# Stamina can only meaningfully gate a dodge under combat pressure --
+	# traversal dodges are free (see _validate_traversal_dodge_is_free).
+	_set_combat_pressure(operator, true)
 	_reset_operator(operator)
 	operator.set("stamina", 26.0)
 	operator.call("_try_start_dodge_with_profile", Vector2.RIGHT, &"committed", 1.0)
-	_assert(is_zero_approx(float(operator.get("stamina"))), "committed opener setup must consume remaining stamina")
+	_assert(is_zero_approx(float(operator.get("stamina"))), "committed opener setup must consume remaining stamina under combat pressure")
 	operator.call("_buffer_dodge_chain", Vector2.RIGHT, &"smoke")
 	operator.call("_update_dodge", 1.0)
 	_assert(not bool(operator.get("_dodge_active")), "chain without stamina must not launch")
 	_assert(bool(operator.get("_dodge_recovery_active")), "rejected chain must continue into ordinary recovery")
 	_assert(operator.get("_dodge_chain_end_reason") == &"insufficient_stamina", "stamina rejection must become the termination reason")
+	_set_combat_pressure(operator, false)
+
+
+## Combat tempo pass: traversal (out-of-combat) dodge chains remain free,
+## regardless of chain link index -- only combat pressure activates the
+## escalating fatigue schedule.
+func _validate_traversal_dodge_is_free(operator: Node) -> void:
+	_set_combat_pressure(operator, false)
+	_reset_operator(operator)
+	operator.set("stamina", 40.0)
+	operator.call("_try_start_dodge_with_profile", Vector2.RIGHT, &"tap")
+	_assert(is_equal_approx(float(operator.get("stamina")), 40.0), "traversal opener must be free")
+	for _link in range(3):
+		operator.call("_buffer_dodge_chain", Vector2.RIGHT, &"smoke")
+		operator.call("_update_dodge", 1.0)
+	_assert(is_equal_approx(float(operator.get("stamina")), 40.0), "traversal chain links must stay free regardless of chain length")
+	_assert(is_equal_approx(float(operator.get("_dodge_iframe_timer")), float(operator.get("dodge_iframe_duration"))), "traversal iframe duration must stay flat regardless of chain length")
+
+
+## Combat tempo pass: under combat pressure, stamina cost escalates per
+## link (16/20/26/34+), iframe duration shrinks per link (0.16/0.135/
+## 0.115/0.10+), and long-chain terminal recovery is pulled toward the
+## combat ceiling instead of the traversal -35% reduction reward.
+func _validate_combat_pressure_dodge_fatigue(operator: Node) -> void:
+	_set_combat_pressure(operator, true)
+	_reset_operator(operator)
+	operator.set("stamina", 200.0)
+	operator.call("_try_start_dodge_with_profile", Vector2.RIGHT, &"committed", 1.0)
+	var stamina_after_opener := float(operator.get("stamina"))
+
+	var expected_costs := [20.0, 26.0, 34.0, 34.0]
+	var expected_iframes := [0.135, 0.115, 0.10, 0.10]
+	var stamina_before := stamina_after_opener
+	for link_index in range(expected_costs.size()):
+		operator.call("_buffer_dodge_chain", Vector2.RIGHT, &"smoke")
+		operator.call("_update_dodge", 1.0)
+		var stamina_now := float(operator.get("stamina"))
+		_assert(
+			is_equal_approx(stamina_before - stamina_now, expected_costs[link_index]),
+			"combat-pressure chain link %d must cost %.1f stamina, cost was %.1f" % [link_index + 1, expected_costs[link_index], stamina_before - stamina_now]
+		)
+		_assert(
+			is_equal_approx(float(operator.get("_dodge_iframe_timer")), expected_iframes[link_index]),
+			"combat-pressure chain link %d iframe duration must be %.3f, was %.3f" % [link_index + 1, expected_iframes[link_index], float(operator.get("_dodge_iframe_timer"))]
+		)
+		stamina_before = stamina_now
+
+	# Long chain at (near-)maximum Flow: recovery must be pulled toward the
+	# combat ceiling, not reduced toward the traversal -35% floor.
+	var recovery := float(operator.get("_active_dodge_recovery_duration"))
+	_assert(
+		recovery >= 0.18 - 0.01 and recovery <= 0.22 + 0.01,
+		"long combat-pressure chain terminal recovery must be within 0.18-0.22s, was %.3f" % recovery
+	)
+
+	# Exit carry must be capped under combat pressure.
+	operator.call("_update_dodge", 1.0)
+	operator.call("_update_dodge_recovery", 1.0)
+	var flow_before_exit := float(operator.get("_dodge_flow"))
+	_assert(float(operator.get("_dodge_exit_timer")) <= 0.12 + 0.001, "combat-pressure exit carry duration must be capped at ~0.12s")
+	var expected_exit_speed := 150.0 * lerpf(1.0, 1.25, flow_before_exit)
+	_assert(
+		is_equal_approx((operator.get("_dodge_exit_velocity") as Vector2).length(), expected_exit_speed),
+		"combat-pressure exit carry speed must cap at ~1.25x instead of the traversal 1.45x"
+	)
+	_set_combat_pressure(operator, false)
+
+
+func _set_combat_pressure(operator: Node, active: bool) -> void:
+	var tracker = operator.get("_engagement_tracker")
+	if tracker != null:
+		tracker.set("engagement_active", active)
 
 
 func _reset_operator(operator: Node) -> void:

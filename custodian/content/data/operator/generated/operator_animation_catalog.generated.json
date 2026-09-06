@@ -7616,16 +7616,16 @@
           ]
         },
         "lower_body": {
-          "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__s__5f__96.png",
-          "frames": 5,
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__s__7f__96.png",
+          "frames": 7,
           "frame_size": [
             96,
             96
           ]
         },
         "upper_body": {
-          "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__s__5f__96.png",
-          "frames": 5,
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__s__7f__96.png",
+          "frames": 7,
           "frame_size": [
             96,
             96
@@ -7840,16 +7840,16 @@
           ]
         },
         "lower_body": {
-          "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__s__5f__96.png",
-          "frames": 5,
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__s__8f__96.png",
+          "frames": 8,
           "frame_size": [
             96,
             96
           ]
         },
         "upper_body": {
-          "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__upper_body__unarmed__locomotion__walk_01__s__5f__96.png",
-          "frames": 5,
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__upper_body__unarmed__locomotion__walk_01__s__8f__96.png",
+          "frames": 8,
           "frame_size": [
             96,
             96

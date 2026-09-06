@@ -56,8 +56,12 @@ func _run() -> void:
 func _test_notice_duration_contract() -> void:
 	var draw_duration := GRUNT_ANIMATION_SET.get_clip_duration(&"posture.draw", &"s")
 	var alert_duration := GRUNT_ANIMATION_SET.get_clip_duration(&"posture.alert", &"s")
-	_expect_near(_behavior.notice_duration_sec, draw_duration, 0.001, "grunt NOTICE must match posture.draw")
-	_expect_near(_behavior.notice_duration_sec, alert_duration, 0.001, "grunt NOTICE must match posture.alert")
+	# Combat tempo pass: gameplay NOTICE duration is intentionally decoupled
+	# from (and shorter than) the posture.draw/posture.alert presentation --
+	# ENGAGE_OPERATOR must not wait for that presentation to finish.
+	_expect_near(_behavior.notice_duration_sec, 0.20, 0.01, "baseline grunt NOTICE duration must be ~0.20s")
+	_expect(_behavior.notice_duration_sec < draw_duration, "NOTICE gameplay duration must not wait for posture.draw to finish")
+	_expect(_behavior.notice_duration_sec < alert_duration, "NOTICE gameplay duration must not wait for posture.alert to finish")
 
 
 func _test_fresh_patrol_detection() -> void:
@@ -67,14 +71,18 @@ func _test_fresh_patrol_detection() -> void:
 	_expect(_grunt._grunt_weapon_posture == Enemy.GruntWeaponPosture.DRAWING, "fresh NOTICE must enter DRAWING")
 	_expect(_grunt._grunt_expression_action == &"posture.draw", "fresh NOTICE must play posture.draw")
 	_expect(_grunt.velocity.is_zero_approx(), "NOTICE must stop locomotion")
-	_behavior.state_time = 0.49
+	_behavior.state_time = 0.19
 	_behavior.call("_update_notice", _grunt, 0.0)
-	_expect(_behavior.current_state == EnemyBehaviorStateMachine.NOTICE, "NOTICE must not finish before 0.50 seconds")
-	_grunt._update_grunt_expression(0.50)
-	_expect(_grunt._grunt_weapon_posture == Enemy.GruntWeaponPosture.READY, "completed draw must enter READY")
-	_behavior.state_time = 0.50
+	_expect(_behavior.current_state == EnemyBehaviorStateMachine.NOTICE, "NOTICE must not finish before its configured ~0.20s duration")
+	_behavior.state_time = 0.20
 	_behavior.call("_update_notice", _grunt, 0.0)
-	_expect(_behavior.current_state == EnemyBehaviorStateMachine.ENGAGE_OPERATOR, "completed NOTICE must engage")
+	_expect(_behavior.current_state == EnemyBehaviorStateMachine.ENGAGE_OPERATOR, "completed NOTICE must engage at its configured duration")
+	# Gameplay authority must not wait for the posture.draw presentation to
+	# finish -- it is very likely still mid-draw at this point.
+	_expect(_grunt._grunt_weapon_posture == Enemy.GruntWeaponPosture.DRAWING, "posture presentation may continue drawing after gameplay has already engaged")
+	var draw_duration := GRUNT_ANIMATION_SET.get_clip_duration(&"posture.draw", &"s")
+	_grunt._update_grunt_expression(draw_duration)
+	_expect(_grunt._grunt_weapon_posture == Enemy.GruntWeaponPosture.READY, "posture presentation must still reach READY once it finishes on its own")
 	_grunt.velocity = Vector2(75.0, 0.0)
 	_expect(_grunt._get_grunt_locomotion_action() == &"locomotion.run", "READY engage must use armed locomotion")
 

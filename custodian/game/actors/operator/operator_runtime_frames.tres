@@ -76,7 +76,7 @@
 [ext_resource type="Texture2D" uid="uid://d4cyauseefwfc" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__nw__5f__96.png" id="49_o5bff"]
 [ext_resource type="Texture2D" uid="uid://dd0qotawvfrwb" path="res://content/sprites/operator/runtime/animations/unarmed/attack/dodge_fast_attack_01/operator__full_body__unarmed__attack__dodge_fast_attack_01__w__11f__96.png" id="51_ujnwi"]
 [ext_resource type="Texture2D" uid="uid://cs5e2v1jlksa1" path="res://content/sprites/operator/runtime/animations/unarmed/attack/dodge_fast_attack_01/operator__full_body__unarmed__attack__dodge_fast_attack_01__e__11f__96.png" id="52_lvmiq"]
-[ext_resource type="Texture2D" uid="uid://bfu1g7nhw63cs" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__s__5f__96.png" id="52_qbbas"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__s__7f__96.png" id="52_qbbas"]
 [ext_resource type="Texture2D" uid="uid://dihbbkxbx51rc" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__sw__5f__96.png" id="53_ppf15"]
 [ext_resource type="Texture2D" uid="uid://dbhng644ilypu" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__se__5f__96.png" id="54_fvmts"]
 [ext_resource type="Texture2D" uid="uid://bci2qb2rofv0j" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__w__5f__96.png" id="55_iekjw"]
@@ -85,7 +85,7 @@
 [ext_resource type="Texture2D" uid="uid://dt40oscwj4la5" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__se__5f__96.png" id="64_ujnwi"]
 [ext_resource type="Texture2D" uid="uid://bjevyshevq3q6" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__w__5f__96.png" id="65_lvmiq"]
 [ext_resource type="Texture2D" uid="uid://7igytby6xjvj" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__e__5f__96.png" id="66_mjyvo"]
-[ext_resource type="Texture2D" uid="uid://c1mfv4pbrs5n2" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__s__5f__96.png" id="76_mbo84"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__s__8f__96.png" id="76_mbo84"]
 [ext_resource type="Texture2D" uid="uid://cx88o2ou15v5t" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__n__8f__96.png" id="81_djn1l"]
 [ext_resource type="Texture2D" uid="uid://c0kcj8wao5opc" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__n__8f__96.png" id="81_mbo84"]
 [ext_resource type="Texture2D" uid="uid://dihdkb18o5xh1" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__nw__6f__96.png" id="92_6djl6"]
@@ -3055,6 +3055,102 @@ region = Rect2(5184, 0, 96, 96)
 atlas = ExtResource("17_2pr6a")
 region = Rect2(5280, 0, 96, 96)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_39938d9acf4e"]
+atlas = ExtResource("2_aq5vh")
+region = Rect2(0, 0, 1152, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_a0236e98ab78"]
+atlas = ExtResource("4_gt11m")
+region = Rect2(0, 0, 384, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_9f1250616425"]
+atlas = ExtResource("5_dyaue")
+region = Rect2(0, 0, 192, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_356353814e0f"]
+atlas = ExtResource("6_2pr6a")
+region = Rect2(0, 0, 576, 288)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_ff76e0f882af"]
+atlas = ExtResource("6_k2xmv")
+region = Rect2(0, 0, 480, 288)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_e8b23c08857e"]
+atlas = ExtResource("7_2pr6a")
+region = Rect2(0, 0, 480, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_55db0e8b7afe"]
+atlas = ExtResource("7_aq5vh")
+region = Rect2(0, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_aa267af65f41"]
+atlas = ExtResource("8_aq5vh")
+region = Rect2(0, 0, 960, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_e0a6dd673382"]
+atlas = ExtResource("8_k2xmv")
+region = Rect2(0, 0, 5376, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_2acd47be5988"]
+atlas = ExtResource("9_3sr0d")
+region = Rect2(0, 0, 480, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_c7af4c986834"]
+atlas = ExtResource("10_2pr6a")
+region = Rect2(0, 0, 1152, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_f05995107a02"]
+atlas = ExtResource("10_67bvj")
+region = Rect2(0, 0, 384, 288)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_b2dad546232f"]
+atlas = ExtResource("12_5an6p")
+region = Rect2(0, 0, 672, 288)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_5fa4d03b2fcf"]
+atlas = ExtResource("12_e830f")
+region = Rect2(0, 0, 384, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_5d0ec4a927fa"]
+atlas = ExtResource("15_v6pkm")
+region = Rect2(0, 0, 384, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_1f489b63cd0e"]
+atlas = ExtResource("16_8leil")
+region = Rect2(0, 0, 384, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_390d01ab46ca"]
+atlas = ExtResource("16_k2xmv")
+region = Rect2(0, 0, 12288, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_b2b38d14c9ae"]
+atlas = ExtResource("17_2pr6a")
+region = Rect2(0, 0, 6144, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_5b931aea2037"]
+atlas = ExtResource("21_0wshn")
+region = Rect2(0, 0, 1248, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_027229fab25d"]
+atlas = ExtResource("52_qbbas")
+region = Rect2(480, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_10ae63e9910f"]
+atlas = ExtResource("52_qbbas")
+region = Rect2(576, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_824cdcac100d"]
+atlas = ExtResource("76_mbo84")
+region = Rect2(480, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_42ebf3037ddf"]
+atlas = ExtResource("76_mbo84")
+region = Rect2(576, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_23c35e657e09"]
+atlas = ExtResource("76_mbo84")
+region = Rect2(672, 0, 96, 96)
+
 [resource]
 animations = [{
 "frames": [{
@@ -5484,6 +5580,12 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_yqywf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_compat_027229fab25d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_compat_10ae63e9910f")
 }],
 "loop": 1,
 "name": &"unarmed_run_down",
@@ -5731,6 +5833,15 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_23p2v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_compat_824cdcac100d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_compat_42ebf3037ddf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_compat_23c35e657e09")
 }],
 "loop": 1,
 "name": &"unarmed_walk",
@@ -5751,6 +5862,15 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_23p2v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_compat_824cdcac100d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_compat_42ebf3037ddf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_compat_23c35e657e09")
 }],
 "loop": 1,
 "name": &"unarmed_walk_down",

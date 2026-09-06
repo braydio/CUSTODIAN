@@ -1,5 +1,75 @@
 # CURRENT STATE — CUSTODIAN
 
+## Combat Tempo + Impact Feedback Pass (2026-09-06)
+
+Enemy LIGHT hits that gameplay suppresses (attack-commit survival or flinch
+cooldown) now get a presentation-only cosmetic kick (3-6px, 0.07-0.11s, on
+the enemy's sprite, never touching `velocity`/timers/BSM state). Operator
+incoming-hit presentation is unified: the shared package (hit stop, ~5-8px
+directional recoil, contact VFX/SFX, camera impulse) now fires exactly once
+per hit for both the modular and fallback damage-reaction branches (it
+previously skipped entirely on the modular branch). Enemy melee knockback is
+now a short collision-resolved impulse (`move_and_collide` over several
+physics ticks via `_knockback_velocity`/`_knockback_remaining`), not an
+instant single-frame displacement — it stops cleanly at obstacles and never
+implies stagger on its own. Parry-success presentation is reduced (world VFX
+scale ~40% down, camera impulse removed) while parry mechanics, contact
+flash, and SFX are unchanged.
+
+**Vigil-Pattern Dagger fast chain** (authored `.tres` values, `fast_chain_*`
+frame indices unchanged — only playback fps and windup/active/recovery
+retimed):
+
+| Link | windup | active | recovery | total commitment | knockback |
+|---|---:|---:|---:|---:|---:|
+| Fast 01 | 0.278s | 0.056s | 0.222s | 0.556s (unchanged) | 4.5px / 0.09s |
+| Fast 02 | 0.358s | 0.072s | 0.143s | 0.573s | 6.0px / 0.10s |
+| Fast 03 | 0.385s | 0.077s | 0.269s | 0.731s | 16.0px / 0.12s (final cut); 1.9px graze (cut_01) |
+
+Fast 01 start → Fast 03 final contact: **1.38s**. Fast 01 start → fully
+neutral: **1.57s** (a new, separately-tracked `fast_chain_terminal_restart_grace_sec`
+= 0.08s bridges Fast 03's terminal-recovery-to-neutral gap — not folded into
+Fast 03's own 0.731s commitment number, and not silent dead time: it only
+gates starting a brand-new chain). Retuned by slowing Fast 02/03 animation
+playback (18fps → 14fps / 13fps) rather than padding cooldown past the
+visible animation.
+
+**Baseline raider_grunt cadence:** notice duration 0.35s → **0.20s** (gameplay
+no longer waits for posture.draw/alert presentation, which may still be
+mid-animation when ENGAGE_OPERATOR begins). Attack windup stays the authored
+**~0.42s**; attack recovery stays the authored **~0.40s**; a new
+`attack_redecision_delay_sec` = **0.28s** (band 0.20-0.35s) replaces the old
+generic 1.0s `damage_interval` re-fire gate for BSM-controlled baseline
+melee. Engage speed 75 → **90 px/sec** (patrol speed unchanged); new
+close-range braking in `ENGAGE_OPERATOR` tapers to ~70% between
+`attack_range+20` and `attack_range+48`, and brakes hard inside
+`attack_range+20`.
+
+**Combat-pressure Dodge Flow fatigue** (traversal/out-of-combat Flow is
+unchanged and stays free — see `design/02_features/operator/DODGE_FLOW.md`):
+
+| | Link 0 | Link 1 | Link 2 | Link 3+ |
+|---|---:|---:|---:|---:|
+| Stamina | 16 (unchanged) | 20 | 26 | 34 |
+| Iframe | 0.16 (unchanged) | 0.135 | 0.115 | 0.10 |
+
+Long combat-pressure chain terminal recovery lerps toward a **0.20s** ceiling
+(band 0.18-0.22s) instead of the traversal `-35%` reduction. Combat-pressure
+exit carry caps at **1.25x / 0.12s** (traversal remains 1.45x / 0.18s).
+Verified, not changed: out-of-combat sprint already costs 0 stamina and
+traversal regen (5x) already runs unsuppressed — no freeze bug existed.
+Verified, not changed: generic `take_damage()` does not cancel Savage
+chain/pounce state on ordinary LIGHT damage — only HEAVY/INTERRUPT/posture-
+break/parry/critical/death do.
+
+New telemetry (transition/hit-level only): `enemy_light_contact_visual_reaction`,
+`operator_damage_feedback_presented`, `enemy_knockback_impulse_started/completed/blocked`,
+`enemy_notice_started`, `enemy_engage_started`, `enemy_attack_windup_started`,
+`enemy_attack_recovery_completed`, `vigil_fast_01/02/03_started`,
+`vigil_fast_03_final_contact`, `vigil_fast_chain_neutral`,
+`combat_dodge_chain_link`, `combat_dodge_chain_stamina_cost`,
+`combat_dodge_chain_iframe_duration`, `combat_dodge_chain_ended`.
+
 ## Combat Exchange + Commitment Pass (2026-09-05)
 
 Vigil Fast 01/02 no longer cancel a grunt's committed pending attack. Enemy hit
@@ -8,9 +78,10 @@ neutral light flinch has a 0.70-second gate, committed lights preserve attack
 lifecycle, and heavy/interrupt/posture-break/critical/death authority remains.
 Enemies now accumulate independently authored posture (baseline grunt 100,
 1.25-second recovery delay, 26/s recovery); the Vigil chain contributes
-14/16/30. Fast 03 terminates rather than looping, owns a 0.42-second authored
-recovery floor, and retains its two-contact finisher payoff. Collision-resolved
-Vigil displacement is approximately 2.5/3/1.7+14 px by contact. Existing melee
+14/16/30. Fast 03 terminates rather than looping, and retains its two-contact
+finisher payoff (see Combat Tempo + Impact Feedback Pass below for current
+authored timing/displacement — this paragraph's original recovery-floor and
+displacement figures are superseded). Existing melee
 target acquisition remains generous but freezes direction and drive at action
 commit. EngagementTracker now also expresses combat pressure for stamina:
 intentional attacks enter pressure before spend, pressure retains its existing

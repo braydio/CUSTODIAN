@@ -604,3 +604,20 @@ Acceptance checks:
 - `cd custodian && godot --headless --script tools/validation/grunt_parry_crit_reaction_smoke.gd`
 - `cd custodian && godot --headless --quit`
 - In play, empty offhand hold guards, empty offhand hold plus primary parries, P-9 equipped hold readies sidearm, P-9 held plus primary fires sidearm, and selected ranged primary hold readies the primary ranged weapon.
+
+## Addendum: Combat Tempo + Impact Feedback Pass (2026-09-06)
+
+This pass retuned cadence and impact-feedback hierarchy without changing the architecture above. Full numeric detail lives in `custodian/docs/ai_context/CURRENT_STATE.md`; summary here for discoverability.
+
+**Impact-feedback hierarchy (weakest to strongest), incoming hits:**
+
+1. Cosmetic-only presentation kick (`enemy_light_contact_visual_reaction`) -- a suppressed LIGHT hit (attack-committed or flinch-cooldown) on an enemy. Visual sprite offset only, 3-6px / 0.07-0.11s. Never touches gameplay state.
+2. Ordinary incoming damage package (`operator_damage_feedback_presented`) -- body reaction + contact VFX/SFX (fallback path) + hit stop (0.045-0.065s) + ~5-8px directional recoil + existing camera impulse. Fires exactly once per hit for both the modular and fallback damage-reaction branches.
+3. Real enemy flinch/stagger (`_start_hit_recoil_reaction` / `_start_stagger_reaction`) and enemy knockback impulse -- always strictly stronger than (1), and collision-resolved (no tunneling) rather than instantaneous.
+4. Heavy/knockdown operator reactions and parry-success stagger/critical-open -- unchanged, remain the strongest tier.
+
+Parry-success presentation was reduced (not removed): world VFX scale ~40% down, camera impulse removed. Contact flash, success SFX, mechanics (window, counter window, stagger duration, stamina refund, critical-open) are unchanged.
+
+**Vigil-Pattern Dagger fast-chain cadence:** see `custodian/game/actors/operator/attacks/vigil_pattern_dagger_fast_0{1,2,3}.tres` for authoritative values; summarized in CURRENT_STATE.md. Retuned by slowing Fast 02/03 animation playback (18fps -> 14fps / 13fps), not by adding cooldown padding after the animation visibly finishes -- a new small `fast_chain_terminal_restart_grace_sec` (0.08s) bridges Fast 03's terminal-recovery-to-neutral gap explicitly, separate from any single link's own commitment number.
+
+**Baseline grunt cadence:** notice duration 0.35s -> 0.20s (gameplay no longer waits on posture.draw/alert presentation to finish). Normal-melee attack eligibility is now explicit (engaged, in range, not recovering/staggered/attacking) with a `attack_redecision_delay_sec` (0.20-0.35s, default 0.28s) after the existing ~0.40s recovery, replacing the old generic 1.0s `damage_interval` re-fire gate. Engage speed raised 75 -> 90 px/sec with new close-range braking in `ENGAGE_OPERATOR` (tapers to ~70% at `attack_range+20..+48`, brakes hard inside `attack_range+20`).

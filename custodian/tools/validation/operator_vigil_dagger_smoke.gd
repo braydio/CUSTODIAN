@@ -71,6 +71,7 @@ func _run() -> void:
 
 	_validate_definition()
 	var operator := await _create_operator()
+	_validate_chain_sequence_timing(operator)
 	_validate_default_scene(operator)
 	_validate_frame_resources(operator)
 	_validate_attack_playback(operator)
@@ -188,7 +189,73 @@ func _validate_definition() -> void:
 		_assert_close(profile.target_drive_bonus_max_px, expected_assist[index][1], "dagger assist drive tuning drifted")
 		_assert_close(profile.drive_distance_px, expected_assist[index][2], "dagger base drive was mutated by assist")
 		_assert_close(profile.posture_damage, expected_posture[index], "dagger posture progression drifted")
-	_assert_close((DAGGER_DEFINITION.fast_chain_attack_profiles[2] as MeleeAttackProfile).recovery_sec, 0.42, "Fast 03 terminal recovery drifted")
+	_assert_close((DAGGER_DEFINITION.fast_chain_attack_profiles[2] as MeleeAttackProfile).recovery_sec, 0.269, "Fast 03 terminal recovery drifted")
+	# Cadence Retune (combat tempo pass): total per-link commitment
+	# (windup + active + recovery, matching cooldown_sec) must land in its
+	# authored band -- these are the values the runtime-timing report is
+	# built from, so a drift here is a direct regression of the tuned feel.
+	var expected_commitment_bands := [
+		[0.48, 0.56],
+		[0.50, 0.60],
+		[0.68, 0.80],
+	]
+	for index in range(DAGGER_DEFINITION.fast_chain_attack_profiles.size()):
+		var profile := DAGGER_DEFINITION.fast_chain_attack_profiles[index] as MeleeAttackProfile
+		var total_commitment := profile.windup_sec + profile.active_sec + profile.recovery_sec
+		_assert_close(profile.cooldown_sec, total_commitment, "Fast %02d cooldown_sec must equal windup+active+recovery (no invisible dead time)" % (index + 1))
+		var band: Array = expected_commitment_bands[index]
+		_assert(
+			total_commitment >= band[0] - 0.005 and total_commitment <= band[1] + 0.005,
+			"Fast %02d total commitment %.3f is outside the target band [%.2f, %.2f]" % [index + 1, total_commitment, band[0], band[1]]
+		)
+
+
+## Combat tempo pass: frame/fps-derived wall-clock cadence for the full
+## Fast 01 -> Fast 02 -> Fast 03 chain. Computed from authored data (commit
+## frames, per-animation fps, contact-frame indices) rather than a real-time
+## simulation, since the chain-handoff frames are fixed regardless of input
+## timing (a buffered press is consumed the instant the commit frame is
+## reached) -- this is the deterministic wall-clock time of a maximally
+## forgiving (always-buffered) chain.
+func _validate_chain_sequence_timing(operator: Node) -> void:
+	var body := DAGGER_DEFINITION.body_frames_resource
+	if body == null:
+		_assert(false, "dagger body frames missing; cannot validate chain sequence timing")
+		return
+	var commit_frames := DAGGER_DEFINITION.fast_chain_commit_frames
+	var fps_01 := body.get_animation_speed(&"vigil_dagger_fast_01_right")
+	var fps_02 := body.get_animation_speed(&"vigil_dagger_fast_02_right")
+	var fps_03 := body.get_animation_speed(&"vigil_dagger_fast_03_right")
+	var segment_1 := float(commit_frames[0]) / fps_01
+	var segment_2 := float(commit_frames[1]) / fps_02
+
+	var finisher_window := DAGGER_DEFINITION.hit_windows.get("vigil_dagger_fast_03", {}) as Dictionary
+	var final_contact_authored_frame := 0
+	for contact_variant in finisher_window.get("contacts", []) as Array:
+		var frames_list: Array = (contact_variant as Dictionary).get("frames", [])
+		if not frames_list.is_empty():
+			final_contact_authored_frame = maxi(final_contact_authored_frame, int(frames_list[0]))
+	var final_contact_frame_index := final_contact_authored_frame - 1
+	var segment_3 := float(final_contact_frame_index) / fps_03
+
+	var fast_03_frame_count := body.get_frame_count(&"vigil_dagger_fast_03_right")
+	var fast_03_authored_units := 0.0
+	for frame_index in range(fast_03_frame_count):
+		fast_03_authored_units += body.get_frame_duration(&"vigil_dagger_fast_03_right", frame_index)
+	var fast_03_full_duration := fast_03_authored_units / fps_03
+	var terminal_grace := float(operator.get("fast_chain_terminal_restart_grace_sec"))
+
+	var contact_total := segment_1 + segment_2 + segment_3
+	var neutral_total := segment_1 + segment_2 + fast_03_full_duration + terminal_grace
+
+	_assert(
+		contact_total >= 1.15 - 0.01 and contact_total <= 1.40 + 0.01,
+		"Fast 01 start -> Fast 03 final contact is %.3fs, outside target [1.15, 1.40]" % contact_total
+	)
+	_assert(
+		neutral_total >= 1.55 - 0.01 and neutral_total <= 1.80 + 0.01,
+		"Fast 01 start -> fully neutral is %.3fs, outside target [1.55, 1.80]" % neutral_total
+	)
 
 
 func _validate_default_scene(operator: Node) -> void:
@@ -281,7 +348,14 @@ func _validate_animation_set(
 			# source; only the body/weapon Fast 03 clips still hold their prior
 			# 9-frame legacy layout.
 			expected_frames = 8
+		# Combat tempo pass: Fast 02/03 were deliberately slowed (18fps ->
+		# 14fps / 13fps) to widen the chain's runtime commitment windows;
+		# Fast 01 is unchanged.
 		var expected_fps := 18.0
+		if "fast_02" in String(animation):
+			expected_fps = 14.0
+		elif "fast_03" in String(animation):
+			expected_fps = 13.0
 		_assert(
 			frames.has_animation(animation),
 			"%s animation %s is missing" % [label, animation]

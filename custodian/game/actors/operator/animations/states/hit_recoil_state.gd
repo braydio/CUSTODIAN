@@ -18,29 +18,33 @@ func enter() -> void:
 	_modular_handled = false
 	if state_machine and state_machine.actor and state_machine.actor.has_method("get_damage_reaction_duration"):
 		recoil_duration = maxf(0.01, float(state_machine.actor.call("get_damage_reaction_duration", name)))
+	var animation_name := &""
+	if state_machine and state_machine.actor and state_machine.actor.has_method("get_damage_reaction_animation"):
+		animation_name = state_machine.actor.call("get_damage_reaction_animation", name)
 	if state_machine \
 	and state_machine.actor \
 	and state_machine.actor.has_method("begin_modular_damage_reaction"):
 		_modular_handled = bool(
 			state_machine.actor.call("begin_modular_damage_reaction", name)
 		)
-		if _modular_handled:
+	# The shared damage-presentation package (hit stop, directional recoil,
+	# contact VFX/SFX) must fire exactly once per hit regardless of which
+	# body-reaction branch handles the animation itself -- it must never be
+	# skipped just because the modular branch already succeeded, and never
+	# fire a second time for the same hit.
+	if not _modular_handled:
+		if state_machine == null or state_machine.sprite == null:
 			return
-	if state_machine == null or state_machine.sprite == null:
-		return
-	var animation_name := &""
-	if state_machine.actor and state_machine.actor.has_method("get_damage_reaction_animation"):
-		animation_name = state_machine.actor.call("get_damage_reaction_animation", name)
-	if animation_name == StringName():
-		return
-	if not state_machine.sprite.sprite_frames.has_animation(animation_name):
-		return
-	_played_animation = animation_name
-	state_machine.sprite.speed_scale = 1.0
-	state_machine.sprite.set_frame_and_progress(0, 0.0)
-	state_machine.sprite.play(animation_name)
-	if state_machine.actor and state_machine.actor.has_method("play_damage_reaction_fx"):
-		state_machine.actor.call("play_damage_reaction_fx", animation_name)
+		if animation_name == StringName():
+			return
+		if not state_machine.sprite.sprite_frames.has_animation(animation_name):
+			return
+		_played_animation = animation_name
+		state_machine.sprite.speed_scale = 1.0
+		state_machine.sprite.set_frame_and_progress(0, 0.0)
+		state_machine.sprite.play(animation_name)
+	if state_machine and state_machine.actor and state_machine.actor.has_method("play_damage_reaction_fx"):
+		state_machine.actor.call("play_damage_reaction_fx", animation_name, _modular_handled)
 
 
 func exit() -> void:

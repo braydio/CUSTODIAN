@@ -121,6 +121,10 @@ enum GruntWeaponPosture {
 @export var attack_objective: String = "breach_command"
 @export var attack_windup_duration: float = 0.10
 @export var attack_recovery_duration: float = 0.40
+## Short post-recovery pause before a BSM-controlled baseline grunt may
+## begin its next windup. Replaces the old generic 1.0s damage_interval gate
+## for that path; savage/falcon-punch/dash abilities are unaffected.
+@export var attack_redecision_delay_sec: float = 0.28
 @export var attack_tracking_lock_sec: float = 0.12
 @export var hit_recoil_duration: float = 0.12
 @export var melee_hit_range_grace_multiplier: float = 1.15
@@ -288,6 +292,13 @@ var _recoil_timer: float = 0.0
 var posture_current: float = 0.0
 var _posture_recovery_delay_timer: float = 0.0
 var _light_flinch_cooldown_timer: float = 0.0
+var _light_contact_visual_tween: Tween = null
+var _light_contact_visual_origin: Vector2 = Vector2.ZERO
+var _light_contact_visual_active: bool = false
+var _knockback_velocity := Vector2.ZERO
+var _knockback_remaining := 0.0
+var _attack_recovery_timer: float = 0.0
+var _attack_redecision_timer: float = 0.0
 var _crit_timer: float = 0.0
 var _crit_recovery_timer: float = 0.0
 var _parry_critical_window_timer: float = 0.0
@@ -598,6 +609,8 @@ func _physics_process(delta):
 			return
 		delta = _simulation_tier_accum
 		_simulation_tier_accum = 0.0
+	_update_knockback_impulse(delta)
+	_update_attack_recovery_and_redecision(delta)
 	var presentation_started: int = obs.perf_span_begin() if obs != null else 0
 	_update_threat_highlight_visual(delta)
 	_update_grunt_expression(delta)
@@ -757,17 +770,18 @@ func _attack_target(delta: float):
 		return
 	if _attack_windup_timer > 0.0:
 		return
-	damage_timer += delta
-	if damage_timer >= damage_interval:
-		damage_timer = 0
-		if target and target.has_method("take_damage"):
-			var dealt_damage := damage
-			var is_strong := false
-			if not used_strong_attack:
-				used_strong_attack = true
-				dealt_damage = damage * strong_attack_multiplier
-				is_strong = true
-			_start_attack_windup(dealt_damage, is_strong)
+	if _stagger_timer > 0.0 or _recoil_timer > 0.0:
+		return
+	if not _is_baseline_melee_attack_eligible():
+		return
+	if target and target.has_method("take_damage"):
+		var dealt_damage := damage
+		var is_strong := false
+		if not used_strong_attack:
+			used_strong_attack = true
+			dealt_damage = damage * strong_attack_multiplier
+			is_strong = true
+		_start_attack_windup(dealt_damage, is_strong)
 
 
 func _should_use_marine_dash_attack() -> bool:
@@ -2871,6 +2885,11 @@ func _start_attack_windup(queued_damage: float, is_strong: bool) -> void:
 	_windup_attack_is_strong = is_strong
 	_capture_pending_attack_context()
 	_obs_increment(&"enemy_attack_windups", 1)
+	_obs_log(&"enemy_attack_windup_started", {
+		"enemy_id": get_instance_id(),
+		"attack_id": _pending_attack_id,
+		"windup_duration": _attack_windup_timer,
+	})
 	_obs_log(&"enemy_attack_windup", {
 		"enemy": enemy_name,
 		"position": global_position,
@@ -3023,6 +3042,7 @@ func _execute_queued_attack() -> void:
 		}
 		whiff_data.merge(spatial, true)
 		_obs_log(&"enemy_attack_whiff", whiff_data)
+		_begin_attack_recovery_and_redecision()
 		_clear_pending_attack_context()
 		return
 
@@ -3058,6 +3078,7 @@ func _execute_queued_attack() -> void:
 		pass  # blocked, handled by receiver
 	elif float(hit_result.get("applied_damage", 0.0)) > 0.0:
 		print("Enemy hit ", target.name, " for ", hit_result.get("applied_damage", 0.0), " damage!")
+	_begin_attack_recovery_and_redecision()
 	_clear_pending_attack_context()
 
 
@@ -3273,15 +3294,54 @@ func _apply_reaction(amount: float, hit_strength: int = CombatConstants.HitStren
 		_play_armor_deflect_fx()
 		_obs_increment(&"enemy_reactions_armor_deflect", 1)
 	elif not _pending_attack_id.is_empty():
+		_play_light_contact_visual_reaction(amount)
 		_obs_increment(&"enemy_light_flinch_suppressed_commit")
 		_obs_increment(&"enemy_attack_survived_light_contact")
 	elif _light_flinch_cooldown_timer > 0.0:
+		_play_light_contact_visual_reaction(amount)
 		_obs_increment(&"enemy_light_flinch_suppressed_cooldown")
 	else:
 		_start_hit_recoil_reaction(amount)
 		_light_flinch_cooldown_timer = maxf(0.0, light_flinch_cooldown)
 		_obs_increment(&"enemy_light_flinch_applied")
 		_obs_increment(&"enemy_reactions_flinch", 1)
+
+
+## Presentation-only cosmetic reaction for a LIGHT hit that gameplay
+## suppressed (attack-commit survival or flinch-cooldown throttling). This
+## must never touch gameplay state -- velocity, _recoil_timer, _stagger_timer,
+## _attack_windup_timer, _pending_attack_id, _pending_attack_forward, and BSM
+## state are all left completely untouched by this function. Real flinch/
+## stagger presentation (_start_hit_recoil_reaction/_start_stagger_reaction)
+## remains a strictly stronger, separate reaction than this cosmetic kick.
+func _play_light_contact_visual_reaction(amount: float) -> void:
+	if animated_sprite == null:
+		return
+	if _light_contact_visual_tween != null and is_instance_valid(_light_contact_visual_tween):
+		_light_contact_visual_tween.kill()
+	var kick_px := clampf(remap(amount, 8.0, 20.0, 3.0, 6.0), 3.0, 6.0)
+	var duration := clampf(remap(amount, 8.0, 20.0, 0.07, 0.11), 0.07, 0.11)
+	var away := Vector2.UP
+	if target is Node2D and is_instance_valid(target):
+		var to_self := global_position - (target as Node2D).global_position
+		if to_self.length() > 0.001:
+			away = to_self.normalized()
+	var origin: Vector2 = animated_sprite.position
+	if _light_contact_visual_active:
+		origin = _light_contact_visual_origin
+	else:
+		_light_contact_visual_origin = origin
+		_light_contact_visual_active = true
+	var kicked: Vector2 = origin + away * kick_px
+	_light_contact_visual_tween = create_tween()
+	_light_contact_visual_tween.tween_property(animated_sprite, "position", kicked, duration * 0.35)
+	_light_contact_visual_tween.tween_property(animated_sprite, "position", origin, duration * 0.65)
+	_light_contact_visual_tween.finished.connect(func() -> void: _light_contact_visual_active = false)
+	_obs_log(&"enemy_light_contact_visual_reaction", {
+		"enemy_id": get_instance_id(),
+		"kick_px": kick_px,
+		"duration": duration,
+	})
 
 
 func _play_armor_deflect_fx() -> void:
@@ -3292,6 +3352,74 @@ func _play_armor_deflect_fx() -> void:
 		await get_tree().create_timer(0.06).timeout
 		if is_instance_valid(visual):
 			visual.modulate = original_modulate
+
+
+func _resolve_melee_impact_knockback_duration(base_attack_kind: String) -> float:
+	if "fast_01" in base_attack_kind:
+		return 0.09
+	if "fast_02" in base_attack_kind:
+		return 0.10
+	if "fast_03" in base_attack_kind:
+		return 0.12
+	return 0.10
+
+
+## Begins a short, collision-resolved knockback impulse. Uses normal
+## CharacterBody2D collision authority (move_and_collide, resolved over
+## several physics ticks in _physics_process) rather than an instantaneous
+## single-frame displacement or a position tween -- this stops cleanly at
+## obstacles (no tunneling) and never implies stagger on its own; it only
+## moves the body.
+func _begin_knockback_impulse(direction: Vector2, distance_px: float, duration_sec: float) -> void:
+	if distance_px <= 0.0 or duration_sec <= 0.0:
+		return
+	var normalized_direction := direction.normalized() if direction.length_squared() > 0.0001 else Vector2.DOWN
+	_knockback_velocity = normalized_direction * (distance_px / duration_sec)
+	_knockback_remaining = duration_sec
+	_obs_log(&"enemy_knockback_impulse_started", {
+		"enemy_id": get_instance_id(),
+		"distance_px": distance_px,
+		"duration": duration_sec,
+	})
+
+
+func _update_knockback_impulse(delta: float) -> void:
+	if _knockback_remaining <= 0.0:
+		return
+	var step := minf(delta, _knockback_remaining)
+	var collision := move_and_collide(_knockback_velocity * step)
+	_knockback_remaining = maxf(0.0, _knockback_remaining - step)
+	if collision != null:
+		_knockback_remaining = 0.0
+		_obs_increment(&"enemy_knockback_blocked")
+		_obs_log(&"enemy_knockback_blocked", {"enemy_id": get_instance_id()})
+		return
+	_obs_increment(&"enemy_knockback_applied")
+	if _knockback_remaining <= 0.0:
+		_obs_log(&"enemy_knockback_impulse_completed", {"enemy_id": get_instance_id()})
+
+
+## Starts the post-attack recovery + redecision gate for a BSM-controlled
+## baseline grunt melee attack that just naturally concluded (hit or whiff --
+## not an interruption, which is already gated by stagger/recoil instead).
+func _begin_attack_recovery_and_redecision() -> void:
+	_attack_recovery_timer = maxf(0.0, attack_recovery_duration)
+	_attack_redecision_timer = 0.0
+
+
+func _update_attack_recovery_and_redecision(delta: float) -> void:
+	if _attack_recovery_timer > 0.0:
+		_attack_recovery_timer = maxf(0.0, _attack_recovery_timer - delta)
+		if _attack_recovery_timer <= 0.0:
+			_attack_redecision_timer = maxf(0.0, attack_redecision_delay_sec)
+			_obs_log(&"enemy_attack_recovery_completed", {"enemy_id": get_instance_id()})
+		return
+	if _attack_redecision_timer > 0.0:
+		_attack_redecision_timer = maxf(0.0, _attack_redecision_timer - delta)
+
+
+func _is_baseline_melee_attack_eligible() -> bool:
+	return _attack_recovery_timer <= 0.0 and _attack_redecision_timer <= 0.0
 
 
 func apply_melee_impact(attack_kind: String, knockback_direction: Vector2, knockback_force: float) -> void:
@@ -3329,14 +3457,12 @@ func apply_melee_impact(attack_kind: String, knockback_direction: Vector2, knock
 	elif attack_kind == "heavy":
 		# Heavy gameplay interruption was already resolved at take_damage().
 		pass
-	var position_before := global_position
-	var displacement := knockback_direction.normalized() * maxf(0.0, knockback_force) * CombatConstants.MELEE_KNOCKBACK_FORCE_TO_DISTANCE_PX
-	var collision := move_and_collide(displacement)
-	var applied_distance := position_before.distance_to(global_position)
-	if collision != null:
-		_obs_increment(&"enemy_knockback_blocked")
-	if applied_distance > 0.001:
-		_obs_increment(&"enemy_knockback_applied")
+	var distance_px := maxf(0.0, knockback_force) * CombatConstants.MELEE_KNOCKBACK_FORCE_TO_DISTANCE_PX
+	_begin_knockback_impulse(
+		knockback_direction,
+		distance_px,
+		_resolve_melee_impact_knockback_duration(base_attack_kind)
+	)
 	if _uses_directional_animation_set():
 		var facing := _pending_attack_forward if preserve_attack_facing else _last_move_direction
 		_update_directional_animation(facing, false)

@@ -1,0 +1,217 @@
+{
+  "assertions": [
+    {
+      "role": "presentation",
+      "severity": "error",
+      "type": "role_exists"
+    },
+    {
+      "field": "persistent_tiles",
+      "op": "eq",
+      "probe": "threadway_state",
+      "severity": "error",
+      "tick": 0,
+      "type": "probe_compare",
+      "value": 0
+    },
+    {
+      "field": "reveal_count",
+      "op": "eq",
+      "probe": "threadway_state",
+      "severity": "error",
+      "tick": 20,
+      "type": "probe_compare",
+      "value": 1
+    },
+    {
+      "field": "blocker_active",
+      "op": "eq",
+      "probe": "threadway_state",
+      "severity": "error",
+      "tick": 20,
+      "type": "probe_compare",
+      "value": true
+    },
+    {
+      "field": "connector_committed",
+      "op": "eq",
+      "probe": "threadway_state",
+      "severity": "error",
+      "tick": 20,
+      "type": "probe_compare",
+      "value": false
+    },
+    {
+      "field": "connector_committed",
+      "op": "eq",
+      "probe": "threadway_state",
+      "severity": "error",
+      "tick": 46,
+      "type": "probe_compare",
+      "value": false
+    },
+    {
+      "field": "persistent_tiles",
+      "op": "eq",
+      "probe": "threadway_state",
+      "severity": "error",
+      "tick": 46,
+      "type": "probe_compare",
+      "value": 0
+    },
+    {
+      "field": "active_resolve_effects",
+      "op": "gt",
+      "probe": "threadway_state",
+      "severity": "error",
+      "tick": 68,
+      "type": "probe_compare",
+      "value": 0
+    },
+    {
+      "field": "persistent_tiles",
+      "op": "eq",
+      "probe": "threadway_state",
+      "severity": "error",
+      "tick": 110,
+      "type": "probe_compare",
+      "value": 20
+    },
+    {
+      "field": "connector_committed",
+      "op": "eq",
+      "probe": "threadway_state",
+      "severity": "error",
+      "tick": 110,
+      "type": "probe_compare",
+      "value": true
+    },
+    {
+      "field": "blocker_active",
+      "op": "eq",
+      "probe": "threadway_state",
+      "severity": "error",
+      "tick": 110,
+      "type": "probe_compare",
+      "value": false
+    },
+    {
+      "severity": "error",
+      "type": "no_unreleased_inputs"
+    },
+    {
+      "path": "telemetry.json",
+      "severity": "error",
+      "type": "output_exists"
+    }
+  ],
+  "capture": {
+    "audio": false,
+    "background": "opaque",
+    "contact_sheet_ticks": [
+      0,
+      24,
+      52,
+      76,
+      145,
+      190
+    ],
+    "end_tick": 199,
+    "fps": 60,
+    "height": 720,
+    "required_keyframes": true,
+    "start_tick": 0,
+    "width": 1280
+  },
+  "description": "An isolated Ash-Bell lift pocket remembers its White Thread causeway from mainland to lift.",
+  "duration_ticks": 200,
+  "id": "traversal/ash_bell_threadway_resolve",
+  "probes": [
+    {
+      "fields": [
+        "persistent_tiles",
+        "active_resolve_effects",
+        "reveal_count",
+        "blocker_active",
+        "connector_committed"
+      ],
+      "id": "threadway_state",
+      "required": true,
+      "role": "fixture",
+      "ticks": [
+        0,
+        20,
+        46,
+        68,
+        110,
+        190
+      ]
+    }
+  ],
+  "scene": "res://tools/validation/fixtures/ash_bell_threadway_moment.tscn",
+  "schema_version": 1,
+  "seed": 1138,
+  "setup": {
+    "fixture": {
+      "config": {
+        "review": "island_to_resolved"
+      },
+      "id": "ash_bell_threadway"
+    },
+    "processing": [],
+    "properties": [],
+    "remove_nodes": [],
+    "roles": {
+      "fixture": {
+        "node_path": "."
+      },
+      "presentation": {
+        "node_path": "AshBellLiftIngressPresentation"
+      }
+    },
+    "spawns": []
+  },
+  "simulation": {
+    "max_wall_seconds": 30,
+    "pause_during_setup": true,
+    "physics_hz": 60,
+    "warmup_ticks": 4
+  },
+  "stable_fingerprint": {
+    "counters": [],
+    "event_payload_fields": {},
+    "float_quantum": 0.0001,
+    "position_quantum_px": 0.25,
+    "probes": [
+      "threadway_state"
+    ]
+  },
+  "tags": [
+    "traversal",
+    "ash_bell",
+    "threadway",
+    "white_thread",
+    "world_ingress"
+  ],
+  "timeline": [
+    {
+      "action": "fixture_command",
+      "name": "acquire_white_thread_knot",
+      "tick": 18
+    },
+    {
+      "action": "fixture_command",
+      "name": "walk_operator_across",
+      "tick": 120
+    },
+    {
+      "action": "fixture_command",
+      "name": "stand_at_lift_entrance",
+      "tick": 185
+    },
+    {
+      "action": "finish",
+      "tick": 198
+    }
+  ]
+}

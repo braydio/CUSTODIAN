@@ -327,7 +327,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"vigil_dagger_fast_02_left",
-"speed": 18.0
+"speed": 14.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -356,7 +356,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"vigil_dagger_fast_02_right",
-"speed": 18.0
+"speed": 14.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -388,7 +388,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"vigil_dagger_fast_03_left",
-"speed": 18.0
+"speed": 13.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -420,5 +420,5 @@ animations = [{
 }],
 "loop": 0,
 "name": &"vigil_dagger_fast_03_right",
-"speed": 18.0
+"speed": 13.0
 }]

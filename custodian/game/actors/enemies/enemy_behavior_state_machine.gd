@@ -24,7 +24,7 @@ const DEAD := &"dead"
 
 @export var enabled: bool = true
 @export var profile_id: StringName = &"raider_grunt"
-@export var notice_duration_sec: float = 0.35
+@export var notice_duration_sec: float = 0.20
 @export var idle_rescore_interval_sec: float = 0.65
 @export var objective_switch_margin: float = 18.0
 @export var storage_interact_range_px: float = 42.0
@@ -136,6 +136,10 @@ func change_state(new_state: StringName) -> void:
 	var owner := get_parent()
 	if owner != null and owner.has_method("on_behavior_presentation_state_changed"):
 		owner.call("on_behavior_presentation_state_changed", previous_state, new_state)
+	if new_state == NOTICE:
+		_obs_log(&"enemy_notice_started", {"enemy_id": get_parent().get_instance_id() if get_parent() != null else 0})
+	elif new_state == ENGAGE_OPERATOR:
+		_obs_log(&"enemy_engage_started", {"enemy_id": get_parent().get_instance_id() if get_parent() != null else 0, "from_state": String(previous_state)})
 	if _owner_is_grunt() and previous_state == NOTICE and new_state == ENGAGE_OPERATOR:
 		_obs_increment(&"grunt_notice_to_engage")
 	elif _owner_is_grunt() and previous_state == ENGAGE_OPERATOR and new_state == SEARCH:
@@ -354,10 +358,30 @@ func _update_engage_operator(enemy: Node2D, _delta: float) -> void:
 	var attack_range := 40.0
 	if enemy.has_method("get_behavior_attack_range"):
 		attack_range = float(enemy.call("get_behavior_attack_range"))
-	if enemy.global_position.distance_to(operator.global_position) > attack_range:
-		enemy.call("behavior_move_toward", operator.global_position, _movement_speed(profile.engage_speed))
+	var distance_to_operator := enemy.global_position.distance_to(operator.global_position)
+	if distance_to_operator > attack_range:
+		enemy.call(
+			"behavior_move_toward",
+			operator.global_position,
+			_movement_speed(profile.engage_speed) * _engage_brake_factor(distance_to_operator, attack_range)
+		)
 	else:
 		enemy.call("behavior_attack_target")
+
+
+## Close-range braking so a grunt doesn't keep driving into the Operator
+## once it is already near attack range -- uses the existing navigation
+## movement path (behavior_move_toward), just with a tapered speed. Enemy-
+## enemy separation is applied inside behavior_move_toward itself and is
+## unaffected by this speed taper.
+func _engage_brake_factor(distance_to_operator: float, attack_range: float) -> float:
+	var brake_near := attack_range + 20.0
+	var brake_far := attack_range + 48.0
+	if distance_to_operator <= brake_near:
+		return 0.25
+	if distance_to_operator >= brake_far:
+		return 1.0
+	return lerpf(0.70, 1.0, (distance_to_operator - brake_near) / (brake_far - brake_near))
 
 
 func _update_seek_objective(enemy: Node2D, _delta: float) -> void:
@@ -667,7 +691,10 @@ func _obs_log(event_name: StringName, data: Dictionary) -> void:
 
 func _owner_is_grunt() -> bool:
 	var owner := get_parent()
-	return owner != null and String(owner.get("custom_enemy_animation_set")) == "enemy_grunt"
+	if owner == null:
+		return false
+	var animation_set: Variant = owner.get("custom_enemy_animation_set")
+	return animation_set is String and animation_set == "enemy_grunt"
 
 
 func _update_search(enemy: Node2D, delta: float) -> void:

@@ -212,4 +212,7 @@ static func create_profile(id: StringName) -> Resource:
 			profile.display_name = "Raider Grunt"
 			profile.ambient_activity_weight = 0.25
 			profile.noncombat_warning_seconds = 0.4
+			# Combat tempo pass: raise engage speed only -- patrol/investigate
+			# speed intentionally not scaled up alongside it.
+			profile.engage_speed = 90.0
 	return profile
