@@ -474,16 +474,18 @@ Two archway stubs on the west/southwest side of the room. They should imply a ga
 > `48x64` paths and frame counts in sections 6.1–6.4 below are historical art
 > prompts, not runtime authority. Existing production coverage is kneel/idle,
 > six-frame hostile idle, four-frame rise, ten-frame pin strike, nine-frame
-> thread pull, and a one-frame dissolve placeholder. The explicit remaining
-> authored gaps are:
+> thread pull, and four eight-frame encounter strips. The live bespoke
+> SpriteFrames consumer now includes:
 >
 > - `enemy_forlorn_ritualant__body__dissolve__s__8f__128.png`
 > - `enemy_forlorn_ritualant__body__ninth_answer__s__8f__128.png`
 > - `enemy_forlorn_ritualant__body__orra_late__s__8f__128.png`
 > - `enemy_forlorn_ritualant__body__death_violent__s__8f__128.png`
 >
-> Author in that priority order. Do not replace an explicit fallback with
-> invented production pixels. Hostile locomotion remains a later polish gap.
+> These four actions use unsuffixed runtime animation names, are non-looping,
+> and are rebuilt from canonical runtime PNGs by
+> `custodian/tools/pipelines/build_forlorn_ritualant_spriteframes.py`.
+> Hostile locomotion remains a later polish gap.
 
 Per your repo guidance, do **not** silently rely on invented production art. Wire placeholders first, then generate/replace these exact assets. The AGENTS file explicitly says new gameplay animation assets should be requested with exact save paths and intent.
 

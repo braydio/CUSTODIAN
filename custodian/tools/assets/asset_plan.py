@@ -42,9 +42,10 @@ class AssetPlan:
 def generate_plan(family:AssetFamilyContract,inbox_dir:Path,project_dir:Path,*,no_mirror:bool=False,kind_schemas:dict[str,AssetKindSchema]|None=None)->AssetPlan:
     schemas=kind_schemas or load_kind_schemas(); schema=schemas.get(family.kind)
     if schema is None: return AssetPlan(family.id,(),(f"unsupported asset kind schema: {family.kind}",))
-    if not inbox_dir.exists(): return AssetPlan(family.id,(),warnings=(f"inbox does not exist: {inbox_dir}",),post_process=schema.post_process)
+    post_process=tuple(dict.fromkeys((*schema.post_process,*family.post_process)))
+    if not inbox_dir.exists(): return AssetPlan(family.id,(),warnings=(f"inbox does not exist: {inbox_dir}",),post_process=post_process)
     files=sorted(inbox_dir.glob("*.png"))
-    if not files: return AssetPlan(family.id,(),warnings=(f"no PNG files found in {inbox_dir}",),post_process=schema.post_process)
+    if not files: return AssetPlan(family.id,(),warnings=(f"no PNG files found in {inbox_dir}",),post_process=post_process)
     inspected=[]; errors=[]
     for png in files:
         provisional_sid = None
@@ -93,8 +94,8 @@ def generate_plan(family:AssetFamilyContract,inbox_dir:Path,project_dir:Path,*,n
                 errors.append("blocked replacement for %s: stale consumer(s): %s" % ("/".join(key.semantic_identity), ", ".join(stale_consumers)))
             if target in seen_targets: errors.append(f"duplicate semantic output target: {target}")
             seen_targets[target]=output; outputs.append(output)
-        assets.append(PlannedAsset(png,family.id,state.id,resolution.confidence,resolution,inspection,backend,tuple(outputs),(),schema.post_process))
-    return AssetPlan(family.id,tuple(assets),tuple(errors),post_process=schema.post_process)
+        assets.append(PlannedAsset(png,family.id,state.id,resolution.confidence,resolution,inspection,backend,tuple(outputs),(),post_process))
+    return AssetPlan(family.id,tuple(assets),tuple(errors),post_process=post_process)
 def _hash(path:Path)->str: return hashlib.sha256(path.read_bytes()).hexdigest()
 
 def _semantic_runtime_siblings(project_dir:Path,family:AssetFamilyContract,key:AssetKey,target:Path)->tuple[Path,...]:

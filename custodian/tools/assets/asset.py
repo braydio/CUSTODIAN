@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import json
 import shutil
+import subprocess
 import sys
 from collections import Counter, defaultdict
 from pathlib import Path
@@ -25,6 +26,7 @@ from asset_router import load_kind_schemas
 from asset_status import get_family_status
 
 MARK = {"success": "✓", "pending": "→", "empty": "·", "warning": "⚠", "error": "✗", "partial": "◐"}
+RITUALANT_SPRITEFRAMES_HOOK = "forlorn_ritualant_spriteframes"
 
 
 def _title(value: str) -> str:
@@ -53,6 +55,33 @@ def _json_default(value):
 
 def _print_json(payload) -> None:
     print(json.dumps(payload, indent=2, default=_json_default))
+
+
+def _run_family_post_process(plan, record, staging: Path) -> None:
+    if RITUALANT_SPRITEFRAMES_HOOK not in plan.post_process:
+        return
+    output = PROJECT_DIR / "content/tiles/encounters/ritualant_set/runtime/forlorn_ritualant_animations.tres"
+    if output.is_file() and output not in record.backups:
+        backup = staging / "backups" / output.relative_to(PROJECT_DIR)
+        backup.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(output, backup)
+        record.backups[output] = backup
+        record.replaced_targets.append(output)
+    elif not output.exists() and output not in record.created_targets:
+        record.created_targets.append(output)
+    builder = PROJECT_DIR / "tools/pipelines/build_forlorn_ritualant_spriteframes.py"
+    completed = subprocess.run(
+        [sys.executable, str(builder)],
+        cwd=PROJECT_DIR,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if completed.stdout:
+        print(completed.stdout, end="")
+    if completed.returncode != 0:
+        detail = completed.stderr.strip() or "unknown builder failure"
+        raise RuntimeError(f"Forlorn Ritualant SpriteFrames post-process failed: {detail}")
 
 
 def _plan_payload(plan) -> dict:
@@ -181,6 +210,7 @@ def cmd_ingest(args, families):
                     raise RuntimeError(f"missing declared output: {output.target_relative_path}")
                 update_catalog_entry(catalog, family.id, output.state_id, CatalogEntry(list(output.key.semantic_identity), output.target_relative_path.as_posix(), output.key.frames, [output.key.frame_width, output.key.frame_height], file_hash(target), output.state_id, output.key.direction, output.provenance, output.source_asset), family.kind)
                 receipt_assets.append({"state_id": output.state_id, "direction": output.key.direction, "semantic_identity": list(output.key.semantic_identity), "path": output.target_relative_path.as_posix(), "provenance": output.provenance, "source_asset": output.source_asset, "sha256": file_hash(target), "operation": output.operation.value, "superseded_paths": [path.as_posix() for path in output.superseded_targets], "backend": asset.backend})
+        _run_family_post_process(plan, record, staging)
         import_result = None
         if args.godot_import:
             from adapters.godot_import import run_godot_import

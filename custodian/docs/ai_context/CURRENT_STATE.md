@@ -674,8 +674,11 @@ Documentation updates this session:
   Fountain, and never grants a second Knot from thread touch. Pin contact now
   revalidates range; Thread Pull is reachable at midrange; Ninth Answer and Orra
   Comes Late have telegraphed avoidable paths; three thread anchors or survival
-  resolve nonviolently. Final bespoke action/death art, procession silhouettes,
-  audio, and environmental dressing remain tracked production polish.
+  resolve nonviolently. Ninth Answer, Orra Comes Late, dissolve, and violent
+  death now use their canonical eight-frame 128x128 Asset V2 strips through the
+  bespoke encounter SpriteFrames consumer; both removal paths await non-looping
+  playback with a bounded timeout. Procession silhouettes, audio, locomotion,
+  reactions, and environmental dressing remain tracked production polish.
 - The authored First Vista moonlight sweep asset is production-ready at
   `content/backgrounds/sundered_keep/approach/light/first_vista_moonlight_sweep_01__6f__1024x512.png`
   with a six-frame, 15 FPS editable source at

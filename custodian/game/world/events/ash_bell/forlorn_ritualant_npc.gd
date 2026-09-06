@@ -30,6 +30,7 @@ enum Phase {
 @export var pin_damage := 8.0
 @export var ninth_answer_damage := 10.0
 @export var survive_to_dissolve_seconds: float = 90.0
+@export var resolution_animation_timeout_seconds: float = 2.0
 @export var target_path: NodePath
 @export var site_path: NodePath
 @export var animated_sprite_path: NodePath
@@ -145,7 +146,7 @@ func apply_damage(amount: int, damage_tags: Array[StringName] = []) -> void:
 
 
 func dissolve() -> void:
-	if phase == Phase.GONE:
+	if phase == Phase.GONE or phase == Phase.DISSOLVING:
 		return
 
 	phase = Phase.DISSOLVING
@@ -156,7 +157,7 @@ func dissolve() -> void:
 		if site.event_state.resolution != AshBellEventState.Resolution.SITE_STABILIZED:
 			site.event_state.set_resolution(AshBellEventState.Resolution.RITUALANT_DISSOLVED)
 	defeated_nonlethal.emit()
-	await get_tree().create_timer(1.25).timeout
+	await _wait_for_authored_animation(&"dissolve")
 	phase = Phase.GONE
 	queue_free()
 
@@ -181,12 +182,31 @@ func interrupt_for_stabilization() -> void:
 
 
 func die_violently() -> void:
-	phase = Phase.GONE
+	if phase == Phase.GONE or phase == Phase.DISSOLVING:
+		return
+	phase = Phase.DISSOLVING
 	velocity = Vector2.ZERO
+	_attack_in_progress = false
+	_play_anim(&"death_violent")
 	defeated_violent.emit()
 	if site != null:
 		site.defile_site()
+	await _wait_for_authored_animation(&"death_violent")
+	phase = Phase.GONE
 	queue_free()
+
+
+func _wait_for_authored_animation(anim_name: StringName) -> void:
+	if (
+		animated_sprite == null
+		or animated_sprite.sprite_frames == null
+		or not animated_sprite.sprite_frames.has_animation(anim_name)
+		or animated_sprite.animation != anim_name
+	):
+		return
+	var timeout := get_tree().create_timer(maxf(0.1, resolution_animation_timeout_seconds))
+	while animated_sprite.is_playing() and timeout.time_left > 0.0:
+		await get_tree().process_frame
 
 
 func _choose_attack(distance: float) -> void:
@@ -344,22 +364,19 @@ func _play_anim(anim_name: StringName) -> void:
 	if animated_sprite.sprite_frames != null and animated_sprite.sprite_frames.has_animation(anim_name):
 		animated_sprite.play(anim_name)
 		return
-	var fallback := {
-		&"ninth_answer": &"thread_pull",
-		&"orra_late": &"thread_pull",
-		&"dissolve": &"dissolve",
-		&"death_violent": &"hostile_idle",
-	}.get(anim_name, &"hostile_idle") as StringName
+	if anim_name in [&"ninth_answer", &"orra_late", &"dissolve", &"death_violent"]:
+		return
+	var fallback := &"hostile_idle"
 	if animated_sprite.sprite_frames != null and animated_sprite.sprite_frames.has_animation(fallback):
 		animated_sprite.play(fallback)
 
 
 func debug_get_animation_contract() -> Dictionary:
 	return {
-		"ninth_answer": "10f_128_missing_fallback_thread_pull",
-		"orra_late": "8f_128_missing_fallback_thread_pull",
-		"dissolve": "10f_128_missing_fallback_existing_dissolve",
-		"death_violent": "8f_128_missing_fallback_hostile_idle",
+		"ninth_answer": "8f_128_live",
+		"orra_late": "8f_128_live",
+		"dissolve": "8f_128_live",
+		"death_violent": "8f_128_live",
 	}
 
 

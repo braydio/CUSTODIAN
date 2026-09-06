@@ -50,3 +50,10 @@ python3 tools/validation/operator_animation_contract_report.py --strict
 ```
 
 Non-Operator assets continue through their domain-specific builders. Inputs are archived only after requested post-processing succeeds. `_pipeline/archive` is intake recovery material, not canonical art or version history.
+
+The `enemy_forlorn_ritualant` Asset V2 family adds the bounded
+`forlorn_ritualant_spriteframes` family hook. After its canonical PNGs publish,
+`build_forlorn_ritualant_spriteframes.py` validates both the existing base strips
+and nested `body/special` / `body/death` strips, then refreshes the bespoke
+encounter resource at
+`content/tiles/encounters/ritualant_set/runtime/forlorn_ritualant_animations.tres`.

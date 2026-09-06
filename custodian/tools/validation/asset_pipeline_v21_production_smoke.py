@@ -22,6 +22,9 @@ def png(path,size):
 def main():
     schemas=load_kind_schemas(); assert set(schemas)=={"world_prop","enemy","ambient_creature","tile","effect","vehicle","weapon","ui","backdrop"}
     families=load_all_families(); tile=families["void_cliff_face"]; enemy=families["enemy_grunt"]
+    ritualant=families["enemy_forlorn_ritualant"]
+    assert ritualant.post_process==("forlorn_ritualant_spriteframes",)
+    assert all(state.expected_frames==8 for state in ritualant.states.values())
     with tempfile.TemporaryDirectory() as tmp:
         root=Path(tmp); inbox=root/"asset_drop/inbox/void_cliff_face"
         for sid in tile.states: png(inbox/f"{sid}.png",(32,32))

@@ -501,6 +501,7 @@ godot --headless --path . --script res://tools/validation/ash_bell_threadway_cau
 godot --headless --path . --script res://tools/validation/ash_bell_threadway_generation_contract_smoke.gd
 godot --headless --path . --script res://tools/validation/ash_bell_lift_ingress_presentation_smoke.gd
 godot --headless --path . --script res://tools/validation/authored_threshold_blend_smoke.gd
+python tools/pipelines/build_forlorn_ritualant_spriteframes.py --check
 godot --headless --path . --script res://tools/validation/forlorn_ritualant_completion_smoke.gd
 godot --headless --path . --script res://tools/validation/level_scaffold_generator_smoke.gd
 godot --headless --path . --script res://tools/validation/authored_level_ingress_return_smoke.gd

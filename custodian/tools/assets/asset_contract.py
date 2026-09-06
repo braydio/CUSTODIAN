@@ -30,7 +30,8 @@ class AssetFamilyContract:
     id: str; kind: str; runtime_domain: str; runtime_owner: str; frame_width: int; frame_height: int
     direction_policy: str; states: dict[str,AssetStateContract]; auto_mirror: bool=False
     runtime_template: str|None=None; filename_policy: str|None=None; filename_template: str|None=None
-    aliases: dict[str,str]=field(default_factory=dict); consumers: tuple[dict[str,Any],...]=(); schema: str=SCHEMA_VERSION
+    aliases: dict[str,str]=field(default_factory=dict); consumers: tuple[dict[str,Any],...]=()
+    post_process: tuple[str,...]=(); schema: str=SCHEMA_VERSION
     @property
     def allowed_directions(self)->tuple[str,...]: return POLICY_DIRECTIONS[self.direction_policy]
     def resolve_state(self,name:str)->tuple[str|None,str]:
@@ -85,6 +86,8 @@ def parse_family(raw:dict[str,Any])->AssetFamilyContract:
     if not isinstance(aliases,dict) or any(target not in states for target in aliases.values()): raise ValueError("unresolved aliases")
     consumers=raw.get("consumers",[])
     if not isinstance(consumers,list) or any(not isinstance(c,dict) for c in consumers): raise ValueError("consumers must be objects")
+    post_process=raw.get("post_process",[])
+    if not isinstance(post_process,list) or any(not isinstance(step,str) or not step for step in post_process): raise ValueError("post_process must contain non-empty strings")
     filename_policy=runtime.get("filename_policy")
     if filename_policy is not None and filename_policy not in {"canonical","template"}: raise ValueError("invalid runtime filename_policy override")
     runtime_template=runtime.get("template")
@@ -95,4 +98,4 @@ def parse_family(raw:dict[str,Any])->AssetFamilyContract:
         names={name for _,name,_,_ in string.Formatter().parse(value) if name}
         if names-TEMPLATE_TOKENS: raise ValueError(f"{label} has unsupported tokens")
     if filename_policy=="template" and not filename_template: raise ValueError("template filename policy override requires filename_template")
-    return AssetFamilyContract(family_id,kind,domain,owner,width,height,policy,states,bool(raw.get("auto_mirror",False)),runtime_template,filename_policy,filename_template,dict(aliases),tuple(consumers),str(raw["schema"]))
+    return AssetFamilyContract(family_id,kind,domain,owner,width,height,policy,states,bool(raw.get("auto_mirror",False)),runtime_template,filename_policy,filename_template,dict(aliases),tuple(consumers),tuple(post_process),str(raw["schema"]))

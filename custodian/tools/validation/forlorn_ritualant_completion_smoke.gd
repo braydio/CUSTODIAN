@@ -235,6 +235,16 @@ func _validate_encounter_runtime() -> void:
 	_check(actor.speed_multiplier_calls == 1, "White Thread did not apply slow at authored threshold")
 
 	var npc := site.get_node("NPCs/ForlornRitualant") as ForlornRitualantNPC
+	var frames := npc.animated_sprite.sprite_frames
+	for animation_name in [&"ninth_answer", &"orra_late", &"dissolve", &"death_violent"]:
+		_check(frames.has_animation(animation_name), "Ritualant lacks %s animation" % animation_name)
+		if frames.has_animation(animation_name):
+			_check(frames.get_frame_count(animation_name) == 8, "%s does not contain eight frames" % animation_name)
+			_check(not frames.get_animation_loop(animation_name), "%s must be non-looping" % animation_name)
+	_check(is_equal_approx(frames.get_animation_speed(&"ninth_answer"), 8.0), "Ninth Answer speed drifted")
+	_check(is_equal_approx(frames.get_animation_speed(&"orra_late"), 8.0), "Orra Comes Late speed drifted")
+	_check(is_equal_approx(frames.get_animation_speed(&"dissolve"), 6.0), "dissolve speed drifted")
+	_check(is_equal_approx(frames.get_animation_speed(&"death_violent"), 8.0), "violent death speed drifted")
 	npc.target = actor
 	npc.site = site
 	site.event_state.ritualant_hostile = true
@@ -276,6 +286,7 @@ func _validate_encounter_runtime() -> void:
 
 	npc.ninth_answer_windup_seconds = 0.06
 	npc.debug_force_attack(&"ninth_answer")
+	_check(npc.animated_sprite.animation == &"ninth_answer", "Ninth Answer selected fallback animation")
 	await create_timer(0.02).timeout
 	_check(site.ghost_procession.visible, "Ninth Answer lane was not telegraphed")
 	actor.global_position.x += 90.0
@@ -286,12 +297,39 @@ func _validate_encounter_runtime() -> void:
 	npc.orra_late_delay_seconds = 0.05
 	var orra_start := actor.global_position
 	npc.debug_force_attack(&"orra_late")
+	_check(npc.animated_sprite.animation == &"orra_late", "Orra Comes Late selected fallback animation")
 	await create_timer(0.02).timeout
 	_check(site.unarrived_apparition.visible, "Orra Comes Late did not appear behind target")
 	actor.global_position = orra_start + Vector2(80.0, 0.0)
 	var pressure_before := site.event_state.silence_pressure
 	await create_timer(0.08).timeout
 	_check(site.event_state.silence_pressure == pressure_before, "Orra reaction was unavoidable after moving")
+
+	var dissolve_site := SITE_SCENE.instantiate() as ForlornRitualantSite
+	root.add_child(dissolve_site)
+	await process_frame
+	var dissolve_npc := dissolve_site.get_node("NPCs/ForlornRitualant") as ForlornRitualantNPC
+	dissolve_npc.dissolve()
+	_check(dissolve_npc.phase == ForlornRitualantNPC.Phase.DISSOLVING, "nonviolent defeat did not enter dissolving phase")
+	_check(dissolve_npc.animated_sprite.animation == &"dissolve", "nonviolent defeat did not visibly enter dissolve")
+	await create_timer(0.1).timeout
+	_check(is_instance_valid(dissolve_npc), "nonviolent defeat removed NPC before dissolve could play")
+	await create_timer(1.45).timeout
+	_check(not is_instance_valid(dissolve_npc), "nonviolent defeat did not remove NPC after bounded animation wait")
+	dissolve_site.queue_free()
+
+	var violent_site := SITE_SCENE.instantiate() as ForlornRitualantSite
+	root.add_child(violent_site)
+	await process_frame
+	var violent_npc := violent_site.get_node("NPCs/ForlornRitualant") as ForlornRitualantNPC
+	violent_npc.die_violently()
+	_check(violent_npc.phase == ForlornRitualantNPC.Phase.DISSOLVING, "violent defeat did not block combat during death")
+	_check(violent_npc.animated_sprite.animation == &"death_violent", "violent defeat did not visibly enter death_violent")
+	await create_timer(0.1).timeout
+	_check(is_instance_valid(violent_npc), "violent defeat removed NPC before death animation could play")
+	await create_timer(1.1).timeout
+	_check(not is_instance_valid(violent_npc), "violent defeat did not remove NPC after bounded animation wait")
+	violent_site.queue_free()
 
 	var snap_count := [0]
 	site.event_state.thread_snapped.connect(func() -> void: snap_count[0] += 1)
@@ -366,7 +404,9 @@ func _validate_encounter_runtime() -> void:
 	)
 	_check(site.get_departure_lines().is_empty(), "stabilized lift repeated Ritualant payoff")
 	var contracts := npc.debug_get_animation_contract()
-	_check(contracts.size() == 4, "missing action animation contracts are not explicit")
+	_check(contracts.size() == 4, "production action animation contracts are not explicit")
+	for animation_name in [&"ninth_answer", &"orra_late", &"dissolve", &"death_violent"]:
+		_check(contracts.get(animation_name, "") == "8f_128_live", "%s debug contract is not live" % animation_name)
 	site.queue_free()
 	actor.queue_free()
 	await process_frame

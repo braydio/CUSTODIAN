@@ -24,6 +24,7 @@
       "action_group": "special",
       "variant": "ninth_answer",
       "animation": true,
+      "frames": 8,
       "fps": 8,
       "layout": "horizontal_strip",
       "frame_width": 128,
@@ -36,6 +37,7 @@
       "action_group": "special",
       "variant": "orra_late",
       "animation": true,
+      "frames": 8,
       "fps": 8,
       "layout": "horizontal_strip",
       "frame_width": 128,
@@ -48,6 +50,7 @@
       "action_group": "death",
       "variant": "dissolve",
       "animation": true,
+      "frames": 8,
       "fps": 6,
       "layout": "horizontal_strip",
       "frame_width": 128,
@@ -60,6 +63,7 @@
       "action_group": "death",
       "variant": "death_violent",
       "animation": true,
+      "frames": 8,
       "fps": 8,
       "layout": "horizontal_strip",
       "frame_width": 128,
@@ -67,5 +71,12 @@
     }
   },
 
-  "aliases": {}
+  "aliases": {},
+  "consumers": [
+    {
+      "type": "sprite_frames",
+      "path": "res://content/tiles/encounters/ritualant_set/runtime/forlorn_ritualant_animations.tres"
+    }
+  ],
+  "post_process": ["forlorn_ritualant_spriteframes"]
 }
