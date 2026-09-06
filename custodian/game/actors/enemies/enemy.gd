@@ -127,8 +127,10 @@ enum GruntWeaponPosture {
 @export var melee_hit_range_grace_px: float = 10.0
 @export var melee_hit_arc_degrees: float = 95.0
 @export var stagger_duration: float = 0.35
+## Fallback HEAVY/LIGHT classifier for melee hits that arrive without an
+## explicit hit_kind (see _resolve_hit_strength_for_attack). Reaction
+## dispatch itself is posture- and hit_strength-driven, not threshold-driven.
 @export var stagger_damage_threshold: float = 24.0
-@export var crit_damage_threshold: float = 48.0
 @export var resists_light_flinch: bool = false
 @export_category("Poise and Posture")
 @export var posture_max: float = 100.0
@@ -2039,7 +2041,6 @@ func take_damage(
 	if applied_damage <= 0.0:
 		return _damage_result(0.0, true)
 	health = maxf(0.0, health_before - applied_damage)
-	_cancel_savage_attack()
 	if behavior_state_machine != null and behavior_state_machine.has_method("on_damaged"):
 		behavior_state_machine.call(
 			"on_damaged",
@@ -3297,12 +3298,19 @@ func apply_melee_impact(attack_kind: String, knockback_direction: Vector2, knock
 	if dead or _parry_critical_phase != ParryCriticalPhase.NONE:
 		return
 	_custom_ambient_knockout_flip_h = knockback_direction.x > 0.0
-	_last_move_direction = knockback_direction if knockback_direction.length_squared() > 0.0001 else _last_move_direction
 	var attack_parts := attack_kind.split(":", false, 1)
 	var base_attack_kind := attack_parts[0] if not attack_parts.is_empty() else attack_kind
 	var contact_id := attack_parts[1] if attack_parts.size() > 1 else ""
 	var is_dagger_finisher := base_attack_kind == "vigil_dagger_fast_03"
 	var is_dagger_finisher_catch := is_dagger_finisher and contact_id == "cut_01"
+	# A committed attack that survives contact keeps its authored facing —
+	# the knockback push moves the body without turning it away from its
+	# own swing (see _pending_attack_forward).
+	var preserve_attack_facing := is_dagger_finisher_catch \
+		and custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT) \
+		and not _pending_attack_id.is_empty()
+	if not preserve_attack_facing:
+		_last_move_direction = knockback_direction if knockback_direction.length_squared() > 0.0001 else _last_move_direction
 	if is_dagger_finisher_catch \
 	and custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT):
 		# First contact creates space but does not steal the enemy's turn.
@@ -3322,7 +3330,7 @@ func apply_melee_impact(attack_kind: String, knockback_direction: Vector2, knock
 		# Heavy gameplay interruption was already resolved at take_damage().
 		pass
 	var position_before := global_position
-	var displacement := knockback_direction.normalized() * maxf(0.0, knockback_force) / 60.0
+	var displacement := knockback_direction.normalized() * maxf(0.0, knockback_force) * CombatConstants.MELEE_KNOCKBACK_FORCE_TO_DISTANCE_PX
 	var collision := move_and_collide(displacement)
 	var applied_distance := position_before.distance_to(global_position)
 	if collision != null:
@@ -3330,7 +3338,8 @@ func apply_melee_impact(attack_kind: String, knockback_direction: Vector2, knock
 	if applied_distance > 0.001:
 		_obs_increment(&"enemy_knockback_applied")
 	if _uses_directional_animation_set():
-		_update_directional_animation(_last_move_direction, false)
+		var facing := _pending_attack_forward if preserve_attack_facing else _last_move_direction
+		_update_directional_animation(facing, false)
 
 
 func apply_parry_stagger(knockback_direction: Vector2, duration: float, knockback_force: float) -> void:
@@ -3794,6 +3803,7 @@ func _start_stagger_reaction() -> void:
 	_recoil_timer = 0.0
 	_attack_windup_timer = 0.0
 	_cancel_pending_attack_with_result(&"interrupted", &"stagger")
+	_cancel_savage_attack()
 	_release_engagement_token()
 	_finish_grunt_falcon_punch_attack()
 	_finish_marine_dash_attack()
@@ -3813,6 +3823,7 @@ func _start_crit_reaction() -> void:
 	_stagger_timer = 0.0
 	_attack_windup_timer = 0.0
 	_cancel_pending_attack_with_result(&"interrupted", &"critical_hit")
+	_cancel_savage_attack()
 	_finish_grunt_falcon_punch_attack()
 	_finish_marine_dash_attack()
 	velocity = Vector2.ZERO

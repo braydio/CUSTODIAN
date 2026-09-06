@@ -72,6 +72,32 @@ func _run() -> void:
 	if not ResourceLoader.exists(OVERLAY_SCENE_PATH):
 		failures.append("canonical observatory overlay scene missing")
 
+	var active_level := Node2D.new()
+	active_level.name = "RouteLevelFixture"
+	active_level.add_child(Sprite2D.new())
+	root.add_child(active_level)
+	var world_branch := Node2D.new()
+	world_branch.name = "WorldOriginFixture"
+	world_branch.add_to_group(&"world_origin_branch")
+	world_branch.add_child(Sprite2D.new())
+	root.add_child(world_branch)
+	observatory.record_route_render_diagnostics(&"route_node_entered", {
+		"route_id": "fixture_route", "node_id": "fixture_node", "level_id": "fixture_level",
+	}, active_level)
+	var route_event := observatory.get_recent_events(1)[0] as Dictionary
+	var route_data := route_event.get("data", {}) as Dictionary
+	if String(route_data.get("route_id", "")) != "fixture_route" or String(route_data.get("active_level_id", "")) != "fixture_level":
+		failures.append("route render diagnostics lost route/level identity")
+	if int(route_data.get("active_level_subtree_node_count", 0)) != 2 or int(route_data.get("active_level_canvas_item_count", 0)) != 2:
+		failures.append("route render diagnostics active-level subtree counts are incorrect")
+	var branch_rows := route_data.get("world_origin_branches", []) as Array
+	if branch_rows.size() != 1 or int((branch_rows[0] as Dictionary).get("canvas_item_count", 0)) != 2:
+		failures.append("route render diagnostics world-origin branch counts are incorrect")
+	if not route_data.has("rendered_objects") or not route_data.has("draw_calls") or not route_data.has("total_nodes"):
+		failures.append("route render diagnostics omitted Performance monitors")
+	active_level.queue_free()
+	world_branch.queue_free()
+
 	var paused_before_toggle: bool = paused
 	var scale_before_toggle := Engine.time_scale
 	var scans_before_toggles := int(observatory.get("_runtime_tree_scan_count"))

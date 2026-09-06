@@ -197,8 +197,8 @@ async def textual_smoke() -> None:
     from textual.app import App, ComposeResult
     from ui.app import OperatorWorkbenchApp
     from ui.dialogs import ContextMismatchDialog, FrameAddDialog, PublishDialog
-    from ui.widgets import ActivityLog, AnimationDetail, AnimationTree, MotionCanvas, PreviewCanvas
-    from textual.widgets import Static
+    from ui.widgets import ActivityLog, AnimationDetail, AnimationTree, ContextKeyBar, MotionCanvas, MotionControls, PreviewCanvas
+    from textual.widgets import Footer, Static
     from textual_image.widget import AutoImage
 
     class RasterPilot(App):
@@ -249,9 +249,13 @@ async def textual_smoke() -> None:
         assert list(layer_table.columns.values())[0].label.plain == "LAYER"
         assert len(layer_table.columns) == 3
         assert layer_table.max_scroll_x == 0
+        assert not app.main_screen.query(Footer)
+        key_bar = app.main_screen.query_one("#context-key-bar", ContextKeyBar)
+        assert "E Edit" in str(key_bar.render())
         app.action_mode_plan(); await pilot.pause()
         assert app.state.mode == "plan" and not app.main_screen.query_one("#plan-mode").has_class("hidden")
         assert app.main_screen.query_one("#workspace-row").has_class("hidden")
+        assert "ENTER Open" in str(key_bar.render())
         app.action_mode_workbench(); await pilot.pause()
         assert app.state.mode == "workbench" and not app.main_screen.query_one("#workspace-row").has_class("hidden")
         selected_identity = app.state.selection.identity
@@ -260,6 +264,18 @@ async def textual_smoke() -> None:
         assert app.state.mode == "motion" and not app.main_screen.query_one("#motion-mode").has_class("hidden"), (app.state.mode, app.main_screen.query_one("#motion-mode").classes)
         assert all(app.main_screen.query_one(selector).has_class("hidden") for selector in ("#plan-mode", "#workspace-row", "#preview-mode", "#timeline-mode"))
         assert app.state.selection.identity == selected_identity
+        assert "M Tread/World" in str(key_bar.render())
+        motion_controls_text = str(app.main_screen.query_one("#motion-controls", MotionControls).render())
+        assert "Enter runtime" not in motion_controls_text and "Shift" not in motion_controls_text
+        # Continuous treadmill: elapsed_sec must never wrap backward while
+        # looping, even across multiple animation-cycle boundaries.
+        app.state.motion.mode = "treadmill"; app.state.motion.loop = True; app.state.motion.playing = True
+        duration = len(app.preview_view.frames) / app.state.review_fps
+        app._motion_last_tick -= duration * 2.5
+        before_elapsed = app.state.motion.elapsed_sec
+        app._preview_tick()
+        assert app.state.motion.elapsed_sec > before_elapsed + duration * 2.0
+        app.state.motion.playing = False
         motion_canvas = app.main_screen.query_one("#motion-canvas", MotionCanvas)
         assert motion_canvas.source_frame is not None and motion_canvas.source_frame.mode == "RGBA"
         motion_canvas.low_fidelity_fallback = False; motion_canvas.renderer = "TGP"; app._render_motion(); await pilot.pause()

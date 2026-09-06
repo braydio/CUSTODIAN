@@ -376,7 +376,7 @@ func _transition_to_node(
 		_unlock_actor(actor, context.actor_process_mode)
 	_set_phase(TransitionPhase.COMPLETE)
 	route_node_entered.emit(_active_session.route_id, edge.to_node_id, target)
-	_observe(&"route_node_entered", {"route_id": String(_active_session.route_id), "profile_id": String(_active_session.profile_id), "node_id": String(edge.to_node_id), "edge_id": String(edge.edge_id)})
+	_observe(&"route_node_entered", {"route_id": String(_active_session.route_id), "profile_id": String(_active_session.profile_id), "node_id": String(edge.to_node_id), "level_id": String(target_node.level_id), "edge_id": String(edge.edge_id)}, target)
 	_set_phase(TransitionPhase.IDLE)
 	return true
 
@@ -1025,7 +1025,9 @@ func _find_or_create_level_loader() -> Node:
 	return loader
 
 
-func _observe(event_name: StringName, payload: Dictionary) -> void:
+func _observe(event_name: StringName, payload: Dictionary, active_level: Node = null) -> void:
 	var observatory := get_node_or_null("/root/DevObservatory")
-	if observatory != null and observatory.has_method("log_event"):
+	if observatory != null and observatory.has_method("record_route_render_diagnostics"):
+		observatory.call("record_route_render_diagnostics", event_name, payload, active_level)
+	elif observatory != null and observatory.has_method("log_event"):
 		observatory.call("log_event", event_name, payload)

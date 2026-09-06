@@ -51,6 +51,18 @@ class MotionConfig:
 
 @dataclass(frozen=True)
 class MotionSample:
+    """One instant of motion review.
+
+    A looping animation has two independent clocks: the ANIMATION PHASE
+    (which frame is showing, always in [0, duration_sec)) and CONTINUOUS
+    WORLD TRAVEL (how far the subject has actually gone since playback
+    started, which never resets while looping). The `phase_*` fields/aliases
+    describe a single cycle in isolation — this is what one-shot WORLD mode
+    reviews. The `continuous_*` fields describe cumulative travel across
+    however many cycles have completed — this is what TREADMILL mode's
+    scrolling ground uses, so the floor never snaps back to its start.
+    """
+
     elapsed_sec: float
     duration_sec: float
     normalized: float
@@ -61,6 +73,22 @@ class MotionSample:
     position_px: float
     average_speed: float
     current_speed: float
+    cycle_index: int = 0
+    phase_sec: float = 0.0
+    continuous_position_px: float = 0.0
+    continuous_root_displacement: tuple[float, float] = (0.0, 0.0)
+
+    @property
+    def phase_normalized(self) -> float:
+        return self.normalized
+
+    @property
+    def phase_position_px(self) -> float:
+        return self.position_px
+
+    @property
+    def phase_root_displacement(self) -> tuple[float, float]:
+        return self.root_displacement
 
 
 @dataclass(frozen=True)
@@ -120,20 +148,28 @@ def sample_motion(config: MotionConfig, elapsed_sec: float, *, loop: bool = Fals
     fps = max(0.001, float(config.review_fps))
     duration = count / fps
     elapsed = max(0.0, float(elapsed_sec))
-    if loop and elapsed >= duration:
-        elapsed %= duration
+    if loop:
+        cycle_index = int(math.floor(elapsed / duration))
+        phase_sec = elapsed - cycle_index * duration
     else:
-        elapsed = min(elapsed, duration)
-    normalized = elapsed / duration
+        cycle_index = 0
+        phase_sec = min(elapsed, duration)
+    normalized = phase_sec / duration
     progress = curve_progress(config.curve, normalized)
     dx, dy = direction_vector(config.direction)
-    distance = max(0.0, float(config.travel_px)) * progress
+    travel = max(0.0, float(config.travel_px))
+    distance = travel * progress
     root = (dx * distance, dy * distance)
     ground = (-root[0], -root[1])
+    continuous_distance = cycle_index * travel + distance
+    continuous_root = (dx * continuous_distance, dy * continuous_distance)
     frame = min(count - 1, int(math.floor(normalized * count)))
-    average = max(0.0, float(config.travel_px)) / duration
-    speed = max(0.0, float(config.travel_px)) * _curve_slope(config.curve, normalized) / duration
-    return MotionSample(elapsed, duration, normalized, frame, progress, root, ground, distance, average, speed)
+    average = travel / duration
+    speed = travel * _curve_slope(config.curve, normalized) / duration
+    return MotionSample(
+        elapsed, duration, normalized, frame, progress, root, ground, distance, average, speed,
+        cycle_index, phase_sec, continuous_distance, continuous_root,
+    )
 
 
 def scrub_motion(config: MotionConfig, ratio: float) -> MotionSample:
@@ -210,22 +246,37 @@ class MotionPreviewRenderer:
     def render(self, config: MotionConfig, elapsed_sec: float, *, loop: bool, show_grid: bool = True,
                show_start_ghost: bool = True, show_contact_markers: bool = True) -> MotionFrame:
         sample = sample_motion(config, elapsed_sec, loop=loop)
-        world_offset = sample.ground_displacement if config.mode == "treadmill" else (0.0, 0.0)
+        is_treadmill = config.mode == "treadmill"
+        # TREADMILL: the actor stays planted and the ground scrolls under it by
+        # the CONTINUOUS distance, so the floor never jumps back to origin when
+        # the sprite loops. WORLD: the ground stays fixed and the actor walks
+        # across it using the PHASE (single-cycle) displacement, resetting to
+        # the start each loop so it never leaves the review canvas.
+        world_offset = (-sample.continuous_root_displacement[0], -sample.continuous_root_displacement[1]) if is_treadmill else (0.0, 0.0)
         canvas = self._background(config.canvas_size, world_offset, show_grid)
         anchor = (config.canvas_size[0] / 2, OPERATOR_ANCHOR[1])
         if show_grid:
             self._draw_ruler(canvas, config.direction, anchor, world_offset)
         if show_start_ghost and self.frames:
-            ghost_offset = world_offset if config.mode == "treadmill" else (0.0, 0.0)
+            ghost_offset = world_offset if is_treadmill else (0.0, 0.0)
             self._paste_center(canvas, self.frames[0], (anchor[0] + ghost_offset[0], anchor[1] + ghost_offset[1]), 0.22)
-        actor_offset = (0.0, 0.0) if config.mode == "treadmill" else sample.root_displacement
+        actor_offset = (0.0, 0.0) if is_treadmill else sample.root_displacement
         self._paste_center(canvas, self.frames[sample.frame_index], (anchor[0] + actor_offset[0], anchor[1] + actor_offset[1]))
         if show_contact_markers:
             draw = ImageDraw.Draw(canvas, "RGBA")
+            dx, dy = direction_vector(config.direction)
             for marker in self.markers:
                 marker_elapsed = min(marker.frame, config.frame_count) / config.review_fps
                 marker_sample = sample_motion(config, marker_elapsed)
-                point = (anchor[0] + marker_sample.root_displacement[0] + world_offset[0], anchor[1] + marker_sample.root_displacement[1] + world_offset[1])
+                if is_treadmill:
+                    # Pin the marker to the CURRENT cycle so it scrolls with the
+                    # ground and re-enters each lap instead of drifting off
+                    # toward -infinity as cycles accumulate.
+                    contact_distance = sample.cycle_index * config.travel_px + marker_sample.phase_position_px
+                    marker_root = (dx * contact_distance, dy * contact_distance)
+                else:
+                    marker_root = marker_sample.root_displacement
+                point = (anchor[0] + marker_root[0] + world_offset[0], anchor[1] + marker_root[1] + world_offset[1])
                 draw.ellipse((point[0] - 5, point[1] - 5, point[0] + 5, point[1] + 5), outline=(255, 190, 72, 255), width=2)
                 draw.text((point[0] + 7, point[1] - 7), f"{marker.label} F{marker.frame + 1}", fill=(255, 220, 140, 255))
         return MotionFrame(canvas, sample, self.warnings)

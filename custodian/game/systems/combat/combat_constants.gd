@@ -31,6 +31,13 @@ enum DamageType {
 	ENERGY,
 }
 
+## Melee `knockback_force` values (authored on MeleeAttackProfile/enemy
+## exports, e.g. 56-840) are not pixels — Enemy.apply_melee_impact() divides
+## by this constant to get the actual per-hit displacement in pixels before
+## chain/contact multipliers. Use it when authoring or reading knockback_force
+## so the numbers stay legible (a "840" hit is ~14px, not a launch into orbit).
+const MELEE_KNOCKBACK_FORCE_TO_DISTANCE_PX := 1.0 / 60.0
+
 ## Convert a HitStrength enum value to a readable string for observability.
 static func hit_strength_name(strength: int) -> String:
 	match strength:

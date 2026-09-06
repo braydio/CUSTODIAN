@@ -20,7 +20,7 @@ from .features import AnimationFeature
 from .screens import MainScreen
 from .service import WorkbenchService
 from .state import AnimationSelection, ExistingContextView, WorkbenchUIState
-from .widgets import (ActivityLog, AnimationDetail, AnimationTree, LayerTable,
+from .widgets import (ActivityLog, AnimationDetail, AnimationTree, ContextKeyBar, LayerTable,
                       MotionCanvas, MotionControls, MotionMetrics, PlanTable,
                       PreviewCanvas, PreviewControls, TimelineTable, WorkbenchStatusBar)
 import animation_preview
@@ -43,6 +43,7 @@ class OperatorWorkbenchApp(App):
     #layer-detail { height: 4; padding: 0 1; background: #181e28; }
     #activity-pane { height: 10; border: solid #4c566a; }
     #activity-log { height: 1fr; padding: 0 1; }
+    #context-key-bar { height: 1; padding: 0 1; background: #202734; color: #d8dee9; }
     .mode-pane { height: 1fr; }
     #plan-table { height: 1fr; }
     #timeline-table { height: 12; }
@@ -52,7 +53,7 @@ class OperatorWorkbenchApp(App):
     #motion-workspace { height: 1fr; }
     #motion-canvas { width: 1fr; height: 1fr; content-align: center middle; }
     #motion-inspector { width: 28; min-width: 22; border: solid #4c566a; }
-    #motion-controls { height: 10; padding: 0 1; }
+    #motion-controls { height: 5; padding: 0 1; }
     #motion-metrics { height: 1fr; padding: 0 1; }
     #motion-preview-controls { height: 3; content-align: center middle; background: #202734; }
     .pane-title { height: 1; padding: 0 1; text-style: bold; background: #202734; }
@@ -64,29 +65,35 @@ class OperatorWorkbenchApp(App):
     .dialog-buttons { height: 3; align-horizontal: right; margin-top: 1; }
     .dialog-buttons Button { margin-left: 1; }
     """
+    # show=False everywhere: bindings stay live, but no Footer/future widget
+    # can dump the full application-wide binding set again. Per-mode hints
+    # live in ContextKeyBar instead (see widgets/context_key_bar.py).
     BINDINGS = [
-        ("q", "quit", "Quit"), Binding("slash", "search", "Search", priority=True), ("f5", "full_refresh", "Reload"),
-        ("question_mark", "help", "Help"), ("e", "edit", "Edit"), ("a", "add_frame", "Add Frame"),
-        ("x", "remove_frame", "Remove Frame"), ("p", "publish", "Publish"),
-        ("r", "refresh_workbench", "Refresh"), ("w", "weapon_context", "Weapon"),
-        ("v", "validate", "Validate"), ("j", "cursor_down", "Down"), ("k", "cursor_up", "Up"),
-        Binding("1", "mode_plan", "Plan", priority=True), Binding("2", "mode_workbench", "Workbench", priority=True),
-        Binding("3", "mode_preview", "Preview", priority=True), Binding("4", "mode_timeline", "Timeline", priority=True),
-        Binding("5", "mode_motion", "Motion", priority=True),
-        ("space", "preview_toggle", "Play/Pause"), ("left", "preview_previous", "Previous frame"),
-        ("right", "preview_next", "Next frame"), ("home", "preview_first", "First frame"),
-        ("end", "preview_last", "Last frame"), ("left_square_bracket", "preview_slower", "Slower review"),
-        ("right_square_bracket", "preview_faster", "Faster review"), ("l", "preview_loop", "Loop"),
-        ("s", "preview_source", "Source"), ("ctrl+a", "timeline_add", "Add clip"),
-        ("z", "preview_zoom", "Zoom"),
-        ("delete", "timeline_remove", "Remove clip"), ("ctrl+up", "timeline_up", "Move clip left"),
-        ("ctrl+down", "timeline_down", "Move clip right"), ("ctrl+s", "timeline_save", "Save sequence"),
-        ("ctrl+o", "timeline_load", "Load sequence"),
-        ("m", "motion_mode", "Motion mode"), ("g", "motion_ground", "Motion ground"),
-        ("c", "motion_curve", "Motion curve"), ("d", "motion_distance", "Motion distance"),
-        ("shift+left", "motion_travel_less", "Travel -16"), ("shift+right", "motion_travel_more", "Travel +16"),
-        ("ctrl+left", "motion_travel_less_large", "Travel -32"), ("ctrl+right", "motion_travel_more_large", "Travel +32"),
-        ("ctrl+r", "motion_reset", "Reset motion"), ("enter", "motion_runtime", "Runtime check"),
+        Binding("q", "quit", "Quit", show=False), Binding("slash", "search", "Search", priority=True, show=False),
+        Binding("f5", "full_refresh", "Reload", show=False),
+        Binding("question_mark", "help", "Help", show=False), Binding("e", "edit", "Edit", show=False),
+        Binding("a", "add_frame", "Add Frame", show=False),
+        Binding("x", "remove_frame", "Remove Frame", show=False), Binding("p", "publish", "Publish", show=False),
+        Binding("r", "refresh_workbench", "Refresh", show=False), Binding("w", "weapon_context", "Weapon", show=False),
+        Binding("v", "validate", "Validate", show=False), Binding("j", "cursor_down", "Down", show=False),
+        Binding("k", "cursor_up", "Up", show=False),
+        Binding("1", "mode_plan", "Plan", priority=True, show=False), Binding("2", "mode_workbench", "Workbench", priority=True, show=False),
+        Binding("3", "mode_preview", "Preview", priority=True, show=False), Binding("4", "mode_timeline", "Timeline", priority=True, show=False),
+        Binding("5", "mode_motion", "Motion", priority=True, show=False),
+        Binding("space", "preview_toggle", "Play/Pause", show=False), Binding("left", "preview_previous", "Previous frame", show=False),
+        Binding("right", "preview_next", "Next frame", show=False), Binding("home", "preview_first", "First frame", show=False),
+        Binding("end", "preview_last", "Last frame", show=False), Binding("left_square_bracket", "preview_slower", "Slower review", show=False),
+        Binding("right_square_bracket", "preview_faster", "Faster review", show=False), Binding("l", "preview_loop", "Loop", show=False),
+        Binding("s", "preview_source", "Source", show=False), Binding("ctrl+a", "timeline_add", "Add clip", show=False),
+        Binding("z", "preview_zoom", "Zoom", show=False),
+        Binding("delete", "timeline_remove", "Remove clip", show=False), Binding("ctrl+up", "timeline_up", "Move clip left", show=False),
+        Binding("ctrl+down", "timeline_down", "Move clip right", show=False), Binding("ctrl+s", "timeline_save", "Save sequence", show=False),
+        Binding("ctrl+o", "timeline_load", "Load sequence", show=False),
+        Binding("m", "motion_mode", "Motion mode", show=False), Binding("g", "motion_ground", "Motion ground", show=False),
+        Binding("c", "motion_curve", "Motion curve", show=False), Binding("d", "motion_distance", "Motion distance", show=False),
+        Binding("shift+left", "motion_travel_less", "Travel -16", show=False), Binding("shift+right", "motion_travel_more", "Travel +16", show=False),
+        Binding("ctrl+left", "motion_travel_less_large", "Travel -32", show=False), Binding("ctrl+right", "motion_travel_more_large", "Travel +32", show=False),
+        Binding("ctrl+r", "motion_reset", "Reset motion", show=False), Binding("enter", "motion_runtime", "Runtime check", show=False),
     ]
 
     def __init__(self, service: WorkbenchService | None = None, startup: AnimationSelection | None = None) -> None:
@@ -256,6 +263,7 @@ class OperatorWorkbenchApp(App):
         self.state.mode = mode
         ids = {"plan": "#plan-mode", "workbench": "#workspace-row", "preview": "#preview-mode", "timeline": "#timeline-mode", "motion": "#motion-mode"}
         for name, selector in ids.items(): self._main_widget(selector, Widget).set_class(name != mode, "hidden")
+        self._main_widget("#context-key-bar", ContextKeyBar).set_mode(mode)
         if mode == "preview": self.run_worker(self._load_preview(), group="preview-image", exclusive=True)
         if mode == "timeline":
             self._main_widget("#timeline-table", TimelineTable).set_sequence(self.sequence)
@@ -318,7 +326,7 @@ class OperatorWorkbenchApp(App):
             travel_px=motion.travel_px, fps=self.state.review_fps,
         )
         self._main_widget("#motion-metrics", MotionMetrics).show(
-            rendered.sample, len(self.preview_view.frames), rendered.warnings, bool(self.motion_markers),
+            rendered.sample, len(self.preview_view.frames), rendered.warnings, bool(self.motion_markers), mode=motion.mode,
         )
         self._main_widget("#motion-preview-controls", PreviewControls).show(
             frame=rendered.sample.frame_index, frames=len(self.preview_view.frames),
@@ -471,9 +479,14 @@ class OperatorWorkbenchApp(App):
             if not self.state.motion.playing or not self.preview_view: return
             duration = len(self.preview_view.frames) / self.state.review_fps
             self.state.motion.elapsed_sec += delta * self.state.motion.playback_rate
-            if self.state.motion.elapsed_sec >= duration:
-                if self.state.motion.loop: self.state.motion.elapsed_sec %= duration
-                else: self.state.motion.elapsed_sec = duration; self.state.motion.playing = False
+            # elapsed_sec is cumulative review time and is NEVER wrapped here.
+            # sample_motion() derives animation phase (elapsed_sec % duration)
+            # from it independently of continuous world travel, so a looping
+            # treadmill keeps accumulating distance instead of resetting the
+            # ground every animation cycle. Only a non-looping pass clamps.
+            if not self.state.motion.loop and self.state.motion.elapsed_sec >= duration:
+                self.state.motion.elapsed_sec = duration
+                self.state.motion.playing = False
             self._render_motion(); return
         if self.state.mode not in ("preview", "timeline") or not self.state.preview_playing: return
         counter = getattr(self, "_preview_tick_counter", 0) + 1

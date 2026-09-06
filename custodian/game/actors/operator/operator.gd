@@ -1521,9 +1521,11 @@ func _physics_process(delta):
 		if _is_combat_pressure_active():
 			_traversal_sprint_suppression_active = false
 			_spend_stamina(stamina_drain_per_second * delta, &"sprint")
-		elif not _traversal_sprint_suppression_active:
-			_traversal_sprint_suppression_active = true
-			_obs_increment(&"stamina_traversal_sprint_suppressed")
+		else:
+			if not _traversal_sprint_suppression_active:
+				_traversal_sprint_suppression_active = true
+				_obs_increment(&"stamina_traversal_sprint_suppressed")
+			_regenerate_stamina(stamina_regen_per_second * 5.0 * delta, &"traversal")
 		if stamina <= 0.0:
 			is_sprinting = false
 			if stamina_sprint_exhaustion_requires_full_recovery:
@@ -12594,7 +12596,9 @@ func _interrupt_active_combat_for_damage_reaction() -> void:
 	and _active_attack_profile != null \
 	and _active_attack_profile.weapon_id == &"vigil_pattern_dagger" \
 	and _melee_attack_key != "vigil_dagger_fast_03":
-		_obs_increment(&"vigil_fast_chain_abandoned")
+		# Only counts forced cancellation from taking damage mid-chain, not every
+		# way a chain can end (natural stop, dodge exit, heavy branch, etc).
+		_obs_increment(&"vigil_fast_chain_cancelled_by_hit")
 	_reset_fast_chain()
 	_melee_active = false
 	_melee_attack_kind = ""

@@ -137,6 +137,7 @@ parry.
 ## Completion Notes
 
 - 2026-07-17: Ingested and wired the Operator E/W `bodyslam_knockdown_01` full-body and combat-FX pairs for unblocked HEAVY hits. Incoming direction now reaches presentation through per-hit context; the one-second reaction hides modular/weapon layers and preserves LIGHT recoil behavior. Added `operator_knockdown_animation_smoke.gd`. Guard-break presentation and riposte remain open.
+- 2026-09-05: Enemy reaction dispatch diverged from the threshold-only sketch in this packet — it is now posture- and hit_strength-driven (see `design/02_features/combat_feel/HIT_TAXONOMY_AND_RIPOSTE.md` §2 for the current model). Removed the fully-unused `crit_damage_threshold` export from `enemy.gd` and `enemy_savage.tscn`; `stagger_damage_threshold` survives only as a fallback HEAVY/LIGHT classifier for un-tagged melee hits.
 
 ## Next Steps
 

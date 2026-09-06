@@ -113,7 +113,9 @@ carries dictionaries. We extend it with these standardized fields.
 
 ## 2. Differentiated Enemy Reactions
 
-### Current System (threshold-only)
+### Original Plan (threshold-only, superseded)
+
+The original sketch dispatched reactions purely off raw damage thresholds:
 
 ```
 amount >= crit_damage_threshold    → _start_crit_reaction()
@@ -121,43 +123,47 @@ amount >= stagger_damage_threshold → _start_stagger_reaction()
 else                               → _start_hit_recoil_reaction()
 ```
 
-### New System (threshold + strength)
+### Current System (posture + hit_strength authority)
+
+Implementation diverged from that sketch in a way we now treat as canonical.
+HP damage and posture damage are tracked independently, and posture — not a
+raw-damage threshold — owns stagger authority:
 
 ```
-if _parry_critical_phase != NONE:
-    return  # (unchanged)
+_apply_reaction(amount, hit_strength):
+    if _parry_critical_phase != NONE:
+        return
 
-if hit_strength == INTERRUPT:
-    _start_interrupt_reaction()
-elif amount >= crit_damage_threshold or hit_strength == HEAVY:
-    _start_stagger_reaction()  # HEAVY bypasses threshold for light enemies
-elif amount >= stagger_damage_threshold:
-    _start_stagger_reaction()
-else:
-    _start_hit_recoil_reaction()  # LIGHT flinch
+    posture_current += amount          # amount here is posture damage, not HP
+    if posture_current >= posture_max:
+        posture_current = 0.0
+        _start_stagger_reaction()      # posture break always staggers
+        return
+
+    if hit_strength == INTERRUPT:
+        _start_stagger_reaction()      # explicit interrupt-class hits
+        return
+
+    if hit_strength == HEAVY:
+        _start_stagger_reaction()      # commitment, not damage, guarantees stagger
+    elif resists_light_flinch:
+        _play_armor_deflect_fx()       # presentation only, no interruption
+    elif attack is committed or light-flinch cooldown active:
+        pass                           # LIGHT hits do not steal enemy agency
+    else:
+        _start_hit_recoil_reaction(amount)
 ```
+
+`crit_damage_threshold` has been removed — it was never read outside the
+original sketch above. `stagger_damage_threshold` survives only as a fallback
+HEAVY/LIGHT classifier in `_resolve_hit_strength_for_attack()` for melee hits
+that arrive without an explicit `hit_kind`; it plays no role in
+`_apply_reaction()` itself.
 
 ### Heavy-Enemy Resistance
 
-Some enemies (marine, future elites) may resist LIGHT flinch:
-
-```gdscript
-@export var resists_light_flinch: bool = false
-
-func _apply_reaction(amount: float, hit_strength: int = HitStrength.LIGHT) -> void:
-    if _parry_critical_phase != ParryCriticalPhase.NONE:
-        return
-    if hit_strength == HitStrength.INTERRUPT:
-        _start_interrupt_reaction()
-        return
-    if amount >= crit_damage_threshold or hit_strength == HitStrength.HEAVY:
-        _start_stagger_reaction()
-    elif amount >= stagger_damage_threshold:
-        _start_stagger_reaction()
-    elif not resists_light_flinch or hit_strength == HitStrength.HEAVY:
-        _start_hit_recoil_reaction()
-    # else: no reaction (armor deflect — presentation only)
-```
+Some enemies (marine, future elites) may resist LIGHT flinch via
+`@export var resists_light_flinch: bool = false`, handled in the branch above.
 
 ### Enemy Reaction Types
 

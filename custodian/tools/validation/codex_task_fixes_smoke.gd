@@ -42,7 +42,6 @@ func _run() -> void:
 
 	var grunt := GRUNT_SCENE.instantiate()
 	fixture.add_child(grunt)
-	grunt.set("crit_damage_threshold", 9999.0)
 	grunt.set("stagger_damage_threshold", 9999.0)
 	grunt.call(
 		"_apply_reaction",

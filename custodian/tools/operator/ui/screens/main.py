@@ -1,9 +1,9 @@
 from textual.app import ComposeResult
 from textual.containers import Container, Horizontal, Vertical
 from textual.screen import Screen
-from textual.widgets import Footer, Input, Label, Static
+from textual.widgets import Input, Label, Static
 
-from ..widgets import (ActivityLog, AnimationDetail, AnimationTree, LayerTable,
+from ..widgets import (ActivityLog, AnimationDetail, AnimationTree, ContextKeyBar, LayerTable,
                        MotionCanvas, MotionControls, MotionMetrics, PlanTable,
                        PreviewCanvas, PreviewControls, TimelineTable, WorkbenchStatusBar)
 
@@ -43,4 +43,4 @@ class MainScreen(Screen):
         with Vertical(id="activity-pane"):
             yield Label("ACTIVITY", classes="pane-title")
             yield ActivityLog(id="activity-log", max_lines=200, markup=True)
-        yield Footer()
+        yield ContextKeyBar(id="context-key-bar")

@@ -230,7 +230,14 @@ func _enter_approach(actor: Node) -> void:
 	var started := bool(route_manager.call("start_route", route_id, actor, context)) if has_route \
 		else bool(route_manager.call("start_single_level_route", level_id, actor, context))
 	if started:
-		_observe(&"route_ingress_entered", {"route_id": String(route_id), "level_id": String(level_id), "ingress_id": String(ingress_id)})
+		var active_level: Node = null
+		var active_session: RefCounted = route_manager.call("get_active_session") as RefCounted
+		var entered_payload := {"route_id": String(route_id), "node_id": "", "level_id": String(level_id), "ingress_id": String(ingress_id)}
+		if active_session != null:
+			active_level = active_session.get("current_instance") as Node
+			entered_payload["node_id"] = String(active_session.get("current_node_id"))
+			entered_payload["level_id"] = String(active_session.get("current_level_id"))
+		_observe_route_transition(&"route_ingress_entered", entered_payload, active_level)
 		return
 	_observe(&"route_ingress_entry_failed", {"route_id": String(route_id), "level_id": String(level_id), "ingress_id": String(ingress_id)})
 	_restore_failed_approach_entry(actor)
@@ -554,6 +561,14 @@ func set_ingress_marker_visible(is_visible: bool) -> void:
 		_sprite.visible = is_visible
 	if _marker_diamond != null:
 		_marker_diamond.visible = is_visible
+
+
+func _observe_route_transition(event_name: StringName, payload: Dictionary, active_level: Node) -> void:
+	var observatory := get_node_or_null("/root/DevObservatory")
+	if observatory != null and observatory.has_method("record_route_render_diagnostics"):
+		observatory.call("record_route_render_diagnostics", event_name, payload, active_level)
+	elif observatory != null and observatory.has_method("log_event"):
+		observatory.call("log_event", event_name, payload)
 
 
 func _observe(event_name: StringName, payload: Dictionary) -> void:

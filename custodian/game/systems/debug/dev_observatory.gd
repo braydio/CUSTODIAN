@@ -239,6 +239,64 @@ func log_event(kind: StringName, data: Dictionary = {}) -> void:
 	event_logged.emit(kind, data)
 
 
+func record_route_render_diagnostics(kind: StringName, data: Dictionary, active_level: Node = null) -> void:
+	var enriched := data.duplicate(true)
+	enriched["rendered_objects"] = int(Performance.get_monitor(Performance.RENDER_TOTAL_OBJECTS_IN_FRAME))
+	enriched["draw_calls"] = int(Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME))
+	enriched["total_nodes"] = int(Performance.get_monitor(Performance.OBJECT_NODE_COUNT))
+	if active_level != null and is_instance_valid(active_level):
+		enriched["active_level_scene_path"] = active_level.scene_file_path
+		enriched["active_level_id"] = String(data.get("level_id", _node_property(active_level, &"level_id", &"")))
+		var active_counts := _canvas_item_counts(active_level)
+		enriched["active_level_subtree_node_count"] = _count_nodes(active_level)
+		enriched["active_level_canvas_item_count"] = int(active_counts.total)
+		enriched["active_level_visible_canvas_item_count"] = int(active_counts.visible)
+	else:
+		enriched["active_level_scene_path"] = ""
+		enriched["active_level_id"] = String(data.get("level_id", ""))
+		enriched["active_level_subtree_node_count"] = 0
+		enriched["active_level_canvas_item_count"] = 0
+		enriched["active_level_visible_canvas_item_count"] = 0
+	var branches: Array[Dictionary] = []
+	if get_tree() != null:
+		for branch_variant in get_tree().get_nodes_in_group(&"world_origin_branch"):
+			var branch := branch_variant as Node
+			if branch == null or not is_instance_valid(branch):
+				continue
+			var counts := _canvas_item_counts(branch)
+			branches.append({
+				"path": String(branch.get_path()),
+				"visible": (branch as CanvasItem).visible if branch is CanvasItem else null,
+				"process_mode": branch.process_mode,
+				"canvas_item_count": int(counts.total),
+				"visible_canvas_item_count": int(counts.visible),
+			})
+	enriched["world_origin_branches"] = branches
+	log_event(kind, enriched)
+
+
+func _node_property(node: Node, property_name: StringName, fallback: Variant) -> Variant:
+	for property in node.get_property_list():
+		if StringName(property.get("name", &"")) == property_name:
+			return node.get(property_name)
+	return fallback
+
+
+func _canvas_item_counts(root_node: Node) -> Dictionary:
+	var total := 0
+	var visible := 0
+	var stack: Array[Node] = [root_node]
+	while not stack.is_empty():
+		var node: Node = stack.pop_back() as Node
+		if node is CanvasItem:
+			total += 1
+			if (node as CanvasItem).is_visible_in_tree():
+				visible += 1
+		for child in node.get_children():
+			stack.append(child)
+	return {"total": total, "visible": visible}
+
+
 func increment(name: StringName, amount: int = 1) -> void:
 	if not _telemetry_allowed:
 		return

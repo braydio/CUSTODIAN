@@ -24,7 +24,6 @@ attack_windup_duration = 0.26
 melee_hit_arc_degrees = 115.0
 stagger_duration = 0.45
 stagger_damage_threshold = 16.0
-crit_damage_threshold = 38.0
 material_drop_min = 0
 material_drop_max = 2
 custom_enemy_animation_set = "enemy_savage"
