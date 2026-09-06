@@ -295,6 +295,11 @@ overwrite the modular weapon overlay's direction/frame while draw, sheathe,
 ready/relaxed idle, or melee locomotion own it — this closes the
 previously-identified sword-facing corruption bug.
 
+Authored south-facing melee locomotion is selected literally: `run_01` uses
+the 12-frame lower/upper/Vigil weapon package and `walk_01` uses the 8-frame
+package. Each is consumed only as a complete three-layer stack; directions
+without a complete authored package retain the legacy fallback.
+
 ## Engagement Trigger
 
 Use `EngagementTracker.engagement_active` directly. The tracker is
@@ -500,7 +505,8 @@ This matches the modular ownership rules already documented for the Operator
 | `idle_relaxed_01` sheet | ✅ Ready | Generated E/W lower- and upper-body stack |
 | Vigil `idle_relaxed_01` weapon sheet | ✅ Ready | Generated E/W four-frame weapon layer under `melee_1h_dagger` and composed at runtime |
 | Vigil `idle_ready_01` weapon sheet | ✅ Ready | Generated E/W four-frame weapon layer selected through the equipped definition's `melee_1h_dagger` profile |
-| Melee `run_01` composition | ✅ Ready | Generated six-frame E/W `melee_1h` body clock plus profile-selected Vigil weapon layer; Vigil now uses interpolated Hybrid Weapon Socket grip records during run only, while missing metadata and other weapons retain authored-strip fallback |
+| Melee `run_01` composition | ✅ Ready | Generated six-frame E/W package plus authored 12-frame south lower/upper/Vigil weapon stack; E/W Vigil uses interpolated Hybrid Weapon Socket grip records, while south uses its authored body-slaved weapon strip |
+| Melee `walk_01` composition | 🟡 Partial | Authored eight-frame south lower/upper/Vigil weapon stack is live; other directions retain fallback until their complete packages are adopted |
 | `melee_ready_up` / `melee_relax` sheets | ❌ Missing | 2–3 frame transitions |
 | `melee_sheathe` | ✅ Ready | `melee_1h/posture/sheathe_01` body + `melee_1h_dagger/posture/sheathe_01` weapon, generated E/W |
 

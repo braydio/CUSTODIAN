@@ -60,6 +60,10 @@ const MELEE_POSTURE_CATALOG_ACTIONS: Array[StringName] = [
 	&"idle_ready_01",
 	&"idle_relaxed_01",
 ]
+const MELEE_LOCOMOTION_CATALOG_DIRECTIONS := {
+	&"run_01": [&"e", &"s", &"w"],
+	&"walk_01": [&"s"],
+}
 
 enum MeleeOverlayClockOwner { NONE, LEGACY_BODY, MODULAR_LOWER_BODY }
 const INITIATIVE_CLAIMED_VFX_SCENE := preload(
@@ -1999,8 +2003,14 @@ func _sync_modular_melee_locomotion(
 	direction: Vector2,
 	speed_scale: float
 ) -> bool:
-	if base_animation != "unarmed_run" \
-	or modular_lower_body_sprite == null \
+	var action := StringName()
+	match base_animation:
+		"unarmed_run": action = &"run_01"
+		"unarmed_walk": action = &"walk_01"
+		_:
+			_reset_melee_locomotion_socket_presentation()
+			return false
+	if modular_lower_body_sprite == null \
 	or modular_upper_body_sprite == null \
 	or melee_weapon_overlay_sprite == null:
 		_reset_melee_locomotion_socket_presentation()
@@ -2010,16 +2020,18 @@ func _sync_modular_melee_locomotion(
 	or weapon_definition.weapon_presentation_mode == "socketed_static":
 		_reset_melee_locomotion_socket_presentation()
 		return false
-	var suffix := "w" if direction.x < -0.05 else "e"
+	var suffix := "s" if direction.y > 0.05 and absf(direction.y) >= absf(direction.x) \
+		else ("w" if direction.x < -0.05 else "e")
 	var lower_animation := StringName(
-		"melee_1h/locomotion/run_01/%s/lower_body" % suffix
+		"melee_1h/locomotion/%s/%s/lower_body" % [action, suffix]
 	)
 	var upper_animation := StringName(
-		"melee_1h/locomotion/run_01/%s/upper_body" % suffix
+		"melee_1h/locomotion/%s/%s/upper_body" % [action, suffix]
 	)
 	var weapon_animation := StringName(
-		"%s/locomotion/run_01/%s/weapon" % [
+		"%s/locomotion/%s/%s/weapon" % [
 			String(weapon_definition.get_animation_profile()),
+			action,
 			suffix,
 		]
 	)
@@ -2272,17 +2284,18 @@ func _install_melee_posture_catalog_frames() -> void:
 				var animation := StringName("melee_1h/posture/%s/%s/%s" % [action, suffix, layer])
 				var target: SpriteFrames = modular_lower_body_sprite.sprite_frames if layer == "lower_body" else modular_upper_body_sprite.sprite_frames
 				_copy_catalog_animation(OPERATOR_ANIMATION_CATALOG_FRAMES, target, animation)
-	for suffix in ["e", "w"]:
-		for layer in ["lower_body", "upper_body"]:
-			var animation := StringName(
-				"melee_1h/locomotion/run_01/%s/%s" % [suffix, layer]
-			)
-			var target: SpriteFrames = (
-				modular_lower_body_sprite.sprite_frames
-				if layer == "lower_body"
-				else modular_upper_body_sprite.sprite_frames
-			)
-			_copy_catalog_animation(OPERATOR_ANIMATION_CATALOG_FRAMES, target, animation)
+	for action in MELEE_LOCOMOTION_CATALOG_DIRECTIONS:
+		for suffix in MELEE_LOCOMOTION_CATALOG_DIRECTIONS[action]:
+			for layer in ["lower_body", "upper_body"]:
+				var animation := StringName(
+					"melee_1h/locomotion/%s/%s/%s" % [action, suffix, layer]
+				)
+				var target: SpriteFrames = (
+					modular_lower_body_sprite.sprite_frames
+					if layer == "lower_body"
+					else modular_upper_body_sprite.sprite_frames
+				)
+				_copy_catalog_animation(OPERATOR_ANIMATION_CATALOG_FRAMES, target, animation)
 
 
 func _install_melee_posture_weapon_frames(
@@ -2301,12 +2314,13 @@ func _install_melee_posture_weapon_frames(
 			)
 			if OPERATOR_ANIMATION_CATALOG_FRAMES.has_animation(animation):
 				catalog_animations.append(animation)
-	for suffix in ["e", "w"]:
-		var animation := StringName(
-			"%s/locomotion/run_01/%s/weapon" % [weapon_profile, suffix]
-		)
-		if OPERATOR_ANIMATION_CATALOG_FRAMES.has_animation(animation):
-			catalog_animations.append(animation)
+	for action in MELEE_LOCOMOTION_CATALOG_DIRECTIONS:
+		for suffix in MELEE_LOCOMOTION_CATALOG_DIRECTIONS[action]:
+			var animation := StringName(
+				"%s/locomotion/%s/%s/weapon" % [weapon_profile, action, suffix]
+			)
+			if OPERATOR_ANIMATION_CATALOG_FRAMES.has_animation(animation):
+				catalog_animations.append(animation)
 	if catalog_animations.is_empty():
 		return
 	var frames: SpriteFrames = melee_weapon_overlay_sprite.sprite_frames

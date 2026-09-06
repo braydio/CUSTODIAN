@@ -39,6 +39,15 @@ func _init() -> void:
 		assert(CATALOG_FRAMES.has_animation("melee_1h/locomotion/run_01/%s/lower_body" % suffix))
 		assert(CATALOG_FRAMES.has_animation("melee_1h/locomotion/run_01/%s/upper_body" % suffix))
 		assert(CATALOG_FRAMES.has_animation("melee_1h_dagger/locomotion/run_01/%s/weapon" % suffix))
+	for action in ["run_01", "walk_01"]:
+		var expected_frames := 12 if action == "run_01" else 8
+		for layer in ["lower_body", "upper_body"]:
+			var body_animation := "melee_1h/locomotion/%s/s/%s" % [action, layer]
+			assert(CATALOG_FRAMES.has_animation(body_animation), "missing south %s %s" % [action, layer])
+			assert(CATALOG_FRAMES.get_frame_count(body_animation) == expected_frames)
+		var weapon_animation := "melee_1h_dagger/locomotion/%s/s/weapon" % action
+		assert(CATALOG_FRAMES.has_animation(weapon_animation), "missing south Vigil %s" % action)
+		assert(CATALOG_FRAMES.get_frame_count(weapon_animation) == expected_frames)
 	root.add_child(operator)
 	await process_frame
 	operator.call("_install_melee_posture_catalog_frames")
@@ -96,8 +105,18 @@ func _init() -> void:
 	var socket_snapshot := operator.call("get_melee_locomotion_socket_snapshot") as Dictionary
 	assert(bool(socket_snapshot.active), "Vigil run weapon should use locomotion socket mode")
 	assert(weapon.visible and not weapon.is_playing(), "socketed Vigil run weapon must use the body clock")
-	assert(not operator.call("_sync_modular_locomotion_layers", "unarmed_walk", Vector2.RIGHT, Vector2.RIGHT, 1.0), "missing Vigil walk art must retain fallback")
-	assert(not lower.visible and not upper.visible and not weapon.visible, "melee locomotion fallback must hide the incomplete modular stack")
+	assert(operator.call("_sync_modular_locomotion_layers", "unarmed_run", Vector2.DOWN, Vector2.DOWN, 1.0))
+	assert(lower.animation == &"melee_1h/locomotion/run_01/s/lower_body")
+	assert(upper.animation == &"melee_1h/locomotion/run_01/s/upper_body")
+	assert(weapon.animation == &"melee_1h_dagger/locomotion/run_01/s/weapon")
+	assert(weapon.visible and weapon.is_playing(), "south Vigil run must use its authored weapon strip")
+	assert(operator.call("_sync_modular_locomotion_layers", "unarmed_walk", Vector2.DOWN, Vector2.DOWN, 1.0))
+	assert(lower.animation == &"melee_1h/locomotion/walk_01/s/lower_body")
+	assert(upper.animation == &"melee_1h/locomotion/walk_01/s/upper_body")
+	assert(weapon.animation == &"melee_1h_dagger/locomotion/walk_01/s/weapon")
+	assert(weapon.visible and weapon.is_playing(), "south Vigil walk must use its authored weapon strip")
+	assert(not operator.call("_sync_modular_locomotion_layers", "unarmed_walk", Vector2.RIGHT, Vector2.RIGHT, 1.0), "missing east Vigil walk must retain fallback")
+	assert(not lower.visible and not upper.visible and not weapon.visible, "incomplete directional melee locomotion must hide the modular stack")
 	operator.set_process(false)
 	operator.set_physics_process(false)
 	operator.set("visual_idle_direction", Vector2.RIGHT)
