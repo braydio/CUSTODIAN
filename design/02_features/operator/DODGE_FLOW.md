@@ -128,7 +128,7 @@ Sprint stamina (unrelated system, verified while implementing this pass): when c
 
 ## Presentation
 
-The charge ring remains opener-only. `DodgeChargeFeedback` consumes `dodge_chain_started` for a thin cyan continuation streak scaled by retained Flow. Chain audio reuses the roll transient with a small pitch increase capped at `1.08`; pitch never climbs indefinitely. Bespoke pivot fragments and dedicated pivot-link art remain optional polish.
+The charge ring remains opener-only. `DodgeChargeFeedback` consumes `dodge_chain_started` for a thin cyan continuation streak scaled by retained Flow and the authored six-frame `dodge_chain_release_01` burst. The chain burst reuses the opener-release timing but stays smaller and dimmer so it reads as retained momentum rather than a second full charge. Chain audio reuses the roll transient with a small pitch increase capped at `1.08`; pitch never climbs indefinitely. Bespoke pivot fragments and dedicated pivot-link art remain optional polish.
 
 ## Signals and Read-only Status
 

@@ -14,6 +14,7 @@ const DANGER := Color("#c94d42")
 @onready var meter_sprite: Sprite2D = $MeterSprite
 @onready var ready_sprite: Sprite2D = $ReadySprite
 @onready var release_sprite: Sprite2D = $ReleaseSprite
+@onready var chain_release_sprite: Sprite2D = $ChainReleaseSprite
 @onready var trail_sprite: Sprite2D = $TrailSprite
 
 var _operator: Node2D = null
@@ -22,6 +23,7 @@ var _ratio := 0.0
 var _charge_ready := false
 var _ready_elapsed := 0.0
 var _release_elapsed := 0.0
+var _chain_release_elapsed := 0.0
 var _trail_elapsed := 0.0
 var _particle_phase := 0.0
 var _cancel_tween: Tween = null
@@ -47,6 +49,7 @@ func _process(delta: float) -> void:
 		queue_redraw()
 	_update_ready_animation(delta)
 	_update_release_animation(delta)
+	_update_chain_release_animation(delta)
 	_update_trail(delta)
 
 
@@ -103,8 +106,12 @@ func _on_dodge_charge_cancelled(reason: StringName) -> void:
 
 
 func _on_dodge_chain_started(_index: int, flow: float, direction: Vector2) -> void:
+	var launch_direction := direction.normalized()
+	if launch_direction == Vector2.ZERO:
+		launch_direction = Vector2.RIGHT
 	var chain_ratio := lerpf(0.25, 0.80, clampf(flow, 0.0, 1.0))
-	_play_trail(chain_ratio, direction.normalized())
+	_play_chain_release_burst(chain_ratio, launch_direction)
+	_play_trail(chain_ratio, launch_direction)
 	trail_sprite.scale.y *= 0.60
 	trail_sprite.modulate.a *= 0.78
 
@@ -166,6 +173,25 @@ func _update_release_animation(delta: float) -> void:
 	release_sprite.frame = mini(int(floor(_release_elapsed / release_frame_duration)), 5)
 	if release_sprite.frame >= 5 and _release_elapsed >= release_frame_duration * 6.0:
 		release_sprite.visible = false
+
+
+func _play_chain_release_burst(ratio: float, direction: Vector2) -> void:
+	_chain_release_elapsed = 0.0
+	chain_release_sprite.global_position = _operator.global_position
+	chain_release_sprite.global_rotation = direction.angle()
+	chain_release_sprite.scale = Vector2.ONE * lerpf(0.48, 0.68, clampf(ratio, 0.0, 1.0))
+	chain_release_sprite.modulate = Color(WHITE_CYAN, lerpf(0.46, 0.68, clampf(ratio, 0.0, 1.0)))
+	chain_release_sprite.frame = 0
+	chain_release_sprite.visible = true
+
+
+func _update_chain_release_animation(delta: float) -> void:
+	if not chain_release_sprite.visible:
+		return
+	_chain_release_elapsed += delta
+	chain_release_sprite.frame = mini(int(floor(_chain_release_elapsed / release_frame_duration)), 5)
+	if chain_release_sprite.frame >= 5 and _chain_release_elapsed >= release_frame_duration * 6.0:
+		chain_release_sprite.visible = false
 
 
 func _play_trail(ratio: float, direction: Vector2) -> void:
@@ -259,5 +285,6 @@ func _reset_visuals() -> void:
 	meter_sprite.visible = false
 	ready_sprite.visible = false
 	release_sprite.visible = false
+	chain_release_sprite.visible = false
 	trail_sprite.visible = false
 	_set_operator_compression(0.0)

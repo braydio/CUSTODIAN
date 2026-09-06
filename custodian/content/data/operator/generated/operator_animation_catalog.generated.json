@@ -849,6 +849,30 @@
         }
       }
     },
+    "melee_1h/locomotion/run_01/s": {
+      "profile": "melee_1h",
+      "group": "locomotion",
+      "action": "run_01",
+      "direction": "s",
+      "layers": {
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/locomotion/run_01/operator__lower_body__melee_1h__locomotion__run_01__s__12f__96.png",
+          "frames": 12,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/locomotion/run_01/operator__upper_body__melee_1h__locomotion__run_01__s__12f__96.png",
+          "frames": 12,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
     "melee_1h/locomotion/run_01/w": {
       "profile": "melee_1h",
       "group": "locomotion",
@@ -889,6 +913,30 @@
         },
         "upper_body": {
           "path": "res://content/sprites/operator/runtime/animations/melee_1h/locomotion/walk_01/operator__upper_body__melee_1h__locomotion__walk_01__e__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
+    "melee_1h/locomotion/walk_01/s": {
+      "profile": "melee_1h",
+      "group": "locomotion",
+      "action": "walk_01",
+      "direction": "s",
+      "layers": {
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/locomotion/walk_01/operator__lower_body__melee_1h__locomotion__walk_01__s__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/locomotion/walk_01/operator__upper_body__melee_1h__locomotion__walk_01__s__8f__96.png",
           "frames": 8,
           "frame_size": [
             96,
@@ -1241,6 +1289,22 @@
         }
       }
     },
+    "melee_1h_dagger/locomotion/run_01/s": {
+      "profile": "melee_1h_dagger",
+      "group": "locomotion",
+      "action": "run_01",
+      "direction": "s",
+      "layers": {
+        "weapon": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_dagger/locomotion/run_01/operator__weapon__melee_1h_dagger__locomotion__run_01__s__12f__96.png",
+          "frames": 12,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
     "melee_1h_dagger/locomotion/run_01/w": {
       "profile": "melee_1h_dagger",
       "group": "locomotion",
@@ -1265,6 +1329,22 @@
       "layers": {
         "weapon": {
           "path": "res://content/sprites/operator/runtime/animations/melee_1h_dagger/locomotion/walk_01/operator__weapon__melee_1h_dagger__locomotion__walk_01__e__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
+    "melee_1h_dagger/locomotion/walk_01/s": {
+      "profile": "melee_1h_dagger",
+      "group": "locomotion",
+      "action": "walk_01",
+      "direction": "s",
+      "layers": {
+        "weapon": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_dagger/locomotion/walk_01/operator__weapon__melee_1h_dagger__locomotion__walk_01__s__8f__96.png",
           "frames": 8,
           "frame_size": [
             96,
@@ -7616,16 +7696,16 @@
           ]
         },
         "lower_body": {
-          "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__s__10f__96.png",
-          "frames": 10,
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__s__12f__96.png",
+          "frames": 12,
           "frame_size": [
             96,
             96
           ]
         },
         "upper_body": {
-          "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__s__10f__96.png",
-          "frames": 10,
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__s__12f__96.png",
+          "frames": 12,
           "frame_size": [
             96,
             96
@@ -8162,6 +8242,22 @@
         "fx": {
           "path": "res://content/sprites/operator/runtime/animations/unarmed/reaction/light_hitreact_01/operator__fx__unarmed__reaction__light_hitreact_01__s__3f__96.png",
           "frames": 3,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
+    "unarmed/transition/dodge_chain_release_01/omni": {
+      "profile": "unarmed",
+      "group": "transition",
+      "action": "dodge_chain_release_01",
+      "direction": "omni",
+      "layers": {
+        "fx": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/transition/dodge_chain_release_01/operator__fx__unarmed__transition__dodge_chain_release_01__omni__6f__96.png",
+          "frames": 6,
           "frame_size": [
             96,
             96

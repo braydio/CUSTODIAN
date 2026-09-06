@@ -1,0 +1,23 @@
+{
+  "source": "operator__fx__unarmed__transition__dodge_chain_release_01__omni__6f__96.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "operator/source/animations/unarmed/transition/dodge_chain_release_01/operator__fx__unarmed__transition__dodge_chain_release_01__omni__6f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 6
+      }
+    }
+  ],
+  "post_process": [
+    "operator_runtime_build"
+  ],
+  "frame_size": [
+    96,
+    96
+  ],
+  "remove_superseded": true
+}

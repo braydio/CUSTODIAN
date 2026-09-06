@@ -24,6 +24,7 @@ func _run() -> void:
 	if feedback != null:
 		_validate_assets(feedback)
 		_validate_charge_presentation(operator, feedback)
+		_validate_chain_release_presentation(operator, feedback)
 		await _validate_cancellation(operator, feedback)
 		_validate_rejection(operator, feedback)
 	await _validate_hud_copy(world)
@@ -44,12 +45,24 @@ func _validate_assets(feedback: Node) -> void:
 	var meter := feedback.get_node("MeterSprite") as Sprite2D
 	var ready := feedback.get_node("ReadySprite") as Sprite2D
 	var release := feedback.get_node("ReleaseSprite") as Sprite2D
+	var chain_release := feedback.get_node("ChainReleaseSprite") as Sprite2D
 	var trail := feedback.get_node("TrailSprite") as Sprite2D
 	_assert(meter.texture != null and meter.texture.get_size() == Vector2(768, 96), "meter must use the 8x96 runtime strip")
 	_assert(meter.hframes == 8, "meter must expose eight ratio-selected frames")
 	_assert(ready.texture != null and ready.texture.get_size() == Vector2(480, 96) and ready.hframes == 5, "ready latch must use five 96px frames")
 	_assert(release.texture != null and release.texture.get_size() == Vector2(576, 96) and release.hframes == 6, "release burst must use six 96px frames")
+	_assert(chain_release.texture != null and chain_release.texture.get_size() == Vector2(576, 96) and chain_release.hframes == 6, "chain release must use the authored six-frame 96px strip")
 	_assert(trail.texture != null and trail.texture.get_size() == Vector2(32, 16), "trail must use the 32x16 motion texture")
+
+
+func _validate_chain_release_presentation(operator: Node, feedback: Node) -> void:
+	var chain_release := feedback.get_node("ChainReleaseSprite") as Sprite2D
+	operator.emit_signal("dodge_chain_started", 1, 0.75, Vector2.RIGHT)
+	_assert(chain_release.visible and chain_release.frame == 0, "a subsequent dodge chain must start the authored release burst")
+	_assert(chain_release.scale.x < 0.70 and chain_release.scale.y < 0.70, "chain release must remain smaller than the full charge release")
+	_assert(chain_release.modulate.a < 0.70, "chain release must remain dimmer than the full charge release")
+	feedback.call("_update_chain_release_animation", 0.26)
+	_assert(not chain_release.visible, "chain release must complete once without lingering")
 
 
 func _validate_charge_presentation(operator: Node, feedback: Node) -> void:
@@ -84,11 +97,16 @@ func _validate_charge_presentation(operator: Node, feedback: Node) -> void:
 
 func _validate_rejection(operator: Node, feedback: Node) -> void:
 	_reset_operator(operator)
+	var tracker = operator.get("_engagement_tracker")
+	if tracker != null:
+		tracker.set("engagement_active", true)
 	operator.set("stamina", 0.0)
 	_assert(not bool(operator.call("_begin_dodge_charge")), "insufficient stamina must reject charge")
 	var meter := feedback.get_node("MeterSprite") as Sprite2D
 	_assert(meter.visible, "stamina rejection must briefly expose broken ring feedback")
 	_assert(meter.modulate.is_equal_approx(Color("#c94d42")), "stamina rejection must use danger red rather than charge cyan")
+	if tracker != null:
+		tracker.set("engagement_active", false)
 
 
 func _validate_cancellation(operator: Node, feedback: Node) -> void:
