@@ -38,6 +38,8 @@ var _camera_search_elapsed := 0.0
 var _world_stack: Node2D
 var _debug_mode := "hidden"
 var _selected_variants := {"far": -1, "middle": -1, "near": -1}
+var _configured_visible := false
+var _connected_map_isolated := false
 
 
 func _ready() -> void:
@@ -47,7 +49,7 @@ func _ready() -> void:
 	_regions_root.name = "ChasmPresentationRoot"
 	add_child(_regions_root)
 	set_process(true)
-	visible = false
+	_set_configured_visible(false)
 	if underlay_profile != null:
 		_apply_profile(underlay_profile, variant_seed)
 
@@ -67,6 +69,24 @@ func get_underlay_profile_id() -> StringName:
 
 func get_selected_variant_indices() -> Dictionary:
 	return _selected_variants.duplicate()
+
+
+func set_connected_map_isolation(isolated: bool) -> void:
+	_connected_map_isolated = isolated
+	_refresh_visibility()
+
+
+func is_connected_map_isolated() -> bool:
+	return _connected_map_isolated
+
+
+func _set_configured_visible(enabled: bool) -> void:
+	_configured_visible = enabled
+	_refresh_visibility()
+
+
+func _refresh_visibility() -> void:
+	visible = _configured_visible and not _connected_map_isolated
 
 func _apply_profile(profile: ProcgenUnderlayProfile, seed_value: int) -> void:
 	if profile == null or not profile.is_valid():
@@ -121,14 +141,14 @@ func configure_from_cells(world_cells: Array) -> void:
 		decoded_cells.append(cell)
 
 	if decoded_cells.is_empty():
-		visible = false
+		_set_configured_visible(false)
 		push_warning(
 			"[ProcgenDepthBackdrop] No world cells received; backdrop hidden."
 		)
 		return
 
 	_create_world_bounds_stack(decoded_cells)
-	visible = true
+	_set_configured_visible(true)
 
 	print(
 		"[ProcgenDepthBackdrop] World fallback active: cells=%d"
@@ -146,7 +166,7 @@ func configure_from_chasm_cells(chasm_cells: Array) -> void:
 			continue
 		decoded_cells.append(cell)
 	if decoded_cells.is_empty():
-		visible = false
+		_set_configured_visible(false)
 		push_warning(
 			"[ProcgenDepthBackdrop] No chasm cells received; backdrop hidden."
 		)
@@ -155,7 +175,7 @@ func configure_from_chasm_cells(chasm_cells: Array) -> void:
 	if _world_stack != null:
 		_world_stack.set_meta("chasm_cell_bounds", _cell_bounds(decoded_cells))
 		_world_stack.set_meta("chasm_cell_count", decoded_cells.size())
-	visible = true
+	_set_configured_visible(true)
 	print(
 		"[ProcgenDepthBackdrop] Chasm camera backdrop active: cells=%d"
 		% decoded_cells.size()

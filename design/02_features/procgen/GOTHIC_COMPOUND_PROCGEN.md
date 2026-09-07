@@ -33,6 +33,8 @@ The Carrow travel interactable now uses the Asset Pipeline V2 District Transfer 
 
 The East Machine House uses a locked 14×10 symbol grid with separately authored collision. Its presentation fills all 140 cells with the V2 Carrow floor family, contains the room with an opaque backing beyond the floor footprint, and composes Carrow wall and prop art into a north machinery band, west maintenance nook, light east utility edge, open center, and three-cell south exit. The three service-storage interactions remain active but suppress their generic VaultStorage chest sprites so their aligned Carrow props own presentation. Wall footprint metadata informs authored placement only; painted alpha never owns collision or navigation.
 
+When the Operator enters Carrow Yard or the East Machine House, the main procgen `ProcgenDepthBackdrop` is explicitly isolated. Returning to the procgen world restores its prior configured visibility. This is a presentation-only transition; procgen terrain, cliff, collision, and navigation remain unchanged. The later biome-aware, world-positioned underlay replacement is a separate feature pass.
+
 ## Required Invariants
 
 - One compound rect exists.

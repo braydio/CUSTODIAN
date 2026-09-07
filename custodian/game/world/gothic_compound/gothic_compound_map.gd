@@ -83,6 +83,7 @@ func get_camera_bounds() -> Rect2:
 
 
 func enter_from_main(actor: Node) -> void:
+	_set_main_procgen_backdrop_isolated(true)
 	if actor is Node2D:
 		(actor as Node2D).global_position = get_entry_position()
 	_refresh_camera(self, actor)
@@ -90,6 +91,7 @@ func enter_from_main(actor: Node) -> void:
 
 func return_to_main(actor: Node) -> void:
 	_operator_inside_machine_house = false
+	_set_main_procgen_backdrop_isolated(false)
 	if actor is Node2D:
 		(actor as Node2D).global_position = main_return_position
 	_refresh_camera(main_map, actor)
@@ -352,6 +354,7 @@ func enter_machine_house(actor: Node) -> void:
 	if _machine_house_interior_rect.size == Vector2.ZERO:
 		return
 	_operator_inside_machine_house = true
+	_set_main_procgen_backdrop_isolated(true)
 	if actor is Node2D:
 		(actor as Node2D).global_position = to_global(
 			_machine_house_interior_rect.position
@@ -362,6 +365,7 @@ func enter_machine_house(actor: Node) -> void:
 
 func leave_machine_house(actor: Node) -> void:
 	_operator_inside_machine_house = false
+	_set_main_procgen_backdrop_isolated(true)
 	if actor is Node2D:
 		(actor as Node2D).global_position = to_global(_machine_house_exterior_return_position)
 	_refresh_camera(self, actor)
@@ -411,6 +415,28 @@ func _refresh_camera(map_instance: Node, actor: Node) -> void:
 		camera.call("set_runtime_map", map_instance)
 	elif camera != null and actor is Node2D:
 		camera.global_position = (actor as Node2D).global_position
+
+
+func _set_main_procgen_backdrop_isolated(isolated: bool) -> void:
+	var candidates: Array[Node] = []
+	if main_map != null and is_instance_valid(main_map):
+		candidates.append(main_map)
+	for candidate in get_tree().get_nodes_in_group("procgen_render_isolation"):
+		if candidate is Node and is_instance_valid(candidate):
+			candidates.append(candidate)
+	var seen: Dictionary = {}
+	for candidate in candidates:
+		var key := candidate.get_instance_id()
+		if seen.has(key):
+			continue
+		seen[key] = true
+		var backdrop := candidate as ProcgenDepthBackdrop
+		if backdrop == null:
+			backdrop = candidate.get_node_or_null("DepthBackdrop") as ProcgenDepthBackdrop
+		if backdrop == null:
+			backdrop = candidate.find_child("DepthBackdrop", true, false) as ProcgenDepthBackdrop
+		if backdrop != null:
+			backdrop.set_connected_map_isolation(isolated)
 
 
 func _update_depth_sort() -> void:
