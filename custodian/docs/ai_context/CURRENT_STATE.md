@@ -1336,6 +1336,8 @@ never changes the staged original, converter candidates, canonical source, or
 runtime output.
 # Awakening / The First Return, Sections 01-10 (2026-09-06)
 
+Awakening production art is registered through 31 Asset Pipeline V2 family contracts; the contracts define missing source/runtime targets and do not imply that production art exists or is bound.
+
 The one-image Home beginning is retired. The project now boots into
 `res://scenes/awakening_first_return.tscn`, a ten-section authored dungeon walked
 as one continuous space with no loading: Crèche of Answerless Names, Recovery

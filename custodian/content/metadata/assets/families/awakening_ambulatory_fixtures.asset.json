@@ -1,0 +1,119 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "awakening_ambulatory_fixtures",
+  "kind": "world_prop",
+  "priority": "P1",
+  "runtime": {
+    "domain": "sprites/environment/props/awakening",
+    "owner": "awakening_ambulatory_fixtures"
+  },
+  "canvas": {
+    "width": 128,
+    "height": 128
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "service_basin_a": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "service_basin_a",
+      "layout": "copy",
+      "frame_width": 128,
+      "frame_height": 128
+    },
+    "service_basin_b": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "service_basin_b",
+      "layout": "copy",
+      "frame_width": 128,
+      "frame_height": 128
+    },
+    "inspection_niche_medica": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "inspection_niche_medica",
+      "layout": "copy",
+      "frame_width": 160,
+      "frame_height": 192
+    },
+    "inspection_niche_vestment": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "inspection_niche_vestment",
+      "layout": "copy",
+      "frame_width": 160,
+      "frame_height": 192
+    },
+    "broken_mirror_panel": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "broken_mirror_panel",
+      "layout": "copy",
+      "frame_width": 128,
+      "frame_height": 192
+    },
+    "hidden_reliquary_panel": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "hidden_reliquary_panel",
+      "layout": "copy",
+      "frame_width": 128,
+      "frame_height": 128
+    },
+    "hanging_cloth_a": {
+      "required": false,
+      "recommended": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "hanging_cloth_a",
+      "layout": "copy",
+      "frame_width": 96,
+      "frame_height": 192
+    },
+    "hanging_cloth_b": {
+      "required": false,
+      "recommended": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "hanging_cloth_b",
+      "layout": "copy",
+      "frame_width": 96,
+      "frame_height": 192
+    },
+    "hanging_cloth_c": {
+      "required": false,
+      "recommended": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "hanging_cloth_c",
+      "layout": "copy",
+      "frame_width": 96,
+      "frame_height": 192
+    },
+    "ritual_washing_bowl": {
+      "required": false,
+      "recommended": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "ritual_washing_bowl",
+      "layout": "copy",
+      "frame_width": 96,
+      "frame_height": 96
+    }
+  },
+  "aliases": {},
+  "consumers": [
+    {
+      "type": "scene",
+      "path": "res://scenes/awakening_first_return.tscn"
+    }
+  ]
+}

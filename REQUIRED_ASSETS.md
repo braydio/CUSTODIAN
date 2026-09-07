@@ -108,25 +108,25 @@ Canonical tracker for production art, audio, animation, and content assets that 
 
 ## Awakening / The First Return (sections 01-10)
 
-The opening dungeon ships as a greybox blockout and is fully playable without any of these. Each section node reserves
-`ArtUnderlay`, `BlockoutPresentation`, `Occlusion`, and `SetPieces`, so a production pass can replace a single zone
-without disturbing authored collision, triggers, or gameplay coordinates. Envelopes are authoritative in
-`custodian/game/world/awakening/awakening_layout.gd`; the canvases below include ~64px of visual bleed beyond the
-gameplay envelope. All are 1 frame; foreground/occlusion companions use the same canvas with real alpha.
+The opening dungeon ships as a greybox blockout and is fully playable without any of these. Production art is
+registered by the Asset V2 families below; drop human-named state files into
+`custodian/asset_drop/inbox/<family>/`. Envelopes remain authoritative in
+`custodian/game/world/awakening/awakening_layout.gd`. Targets below are the V2-resolved runtime identities; `*`
+denotes the state names listed in the Notes column.
 
 | Status | Asset | Target Path | Purpose | Notes |
 |---|---|---|---|---|
-| needed | Crèche of Answerless Names underlay | `custodian/content/levels/awakening/01_creche/creche_underlay_v1.png` | Section 01 floor/architecture plate. | 960×704. Alcove bays, authority floor seal, headwall inscription. |
-| needed | Recovery Ambulatory underlay | `custodian/content/levels/awakening/02_ambulatory/ambulatory_underlay_v1.png` | Section 02 octagonal ring around the inaccessible Crèche headwall. | 1152×960. |
-| needed | Attestation Gallery underlay | `custodian/content/levels/awakening/03_attestation/attestation_underlay_v1.png` | Section 03 stele gallery and attestation dais. | 832×928. Twelve stelae, six per wall. |
-| needed | Locker Reliquary underlay | `custodian/content/levels/awakening/04_locker_reliquary/locker_reliquary_underlay_v1.png` | Section 04 octagonal reliquary; lockers read as wall relief around a central dry basin. | 704×704. |
-| needed | Dust Lung Cistern underlay | `custodian/content/levels/awakening/05_dust_lung/dust_lung_underlay_v1.png` | Section 05 scale shock: cistern ring, dry shaft, broken west bridge, daylight split. | 1216×1216. |
-| needed | Undergate Mechanism Hall underlay | `custodian/content/levels/awakening/06_undergate/undergate_underlay_v1.png` | Section 06 machinery hall and Register of Departures side room. | 896×1216. |
-| needed | Gate of Dust underlay | `custodian/content/levels/awakening/07_gate_of_dust/gate_of_dust_underlay_v1.png` | Section 07 plaza and the sealed gate the player emerges beneath. | 1536×768. Aperture 352px at `(0, -4768)`, pylons at `x = ±256`. |
-| needed | Custodian Approach underlay | `custodian/content/levels/awakening/08_approach/custodian_approach_underlay_v1.png` | Section 08 processional paving, chapel shells, burial terraces. | 1024×864. |
-| needed | Chapel of Late Service underlay | `custodian/content/levels/awakening/09_late_service/late_service_underlay_v1.png` | Section 09 optional side chapel: mosaic, relay-lamp altar, thread anchors. | 704×768. |
-| needed | Dust Lung transit lift cage | `custodian/content/sprites/environment/props/awakening/transit_lift/` | Replace the fade/dim placeholder with an animated cage travelling the shaft. | Interaction contract is fixed: `AwakeningTransitLift` locks input, relocates, restores. Art may replace the dim without changing it. |
-| needed | Crèche designation locker reskin | `custodian/content/sprites/environment/props/awakening/creche_locker/` | Visually reskin the existing Field Retention Locker into a crèche designation locker. | Mechanically already correct — do not add a second locker implementation. |
+| needed | P0/P1 zone plates — nine `awakening_*_environment` families | `custodian/content/levels/awakening/<zone>/<owner>_{underlay,foreground}_<WxH>.png` | Replace each section's blockout presentation without changing spatial authority. | Exact owners/canvases: `awakening_creche` 960×704; `awakening_ambulatory` 1152×960; `awakening_attestation` 832×928; `awakening_locker_reliquary` 704×704; `awakening_dust_lung` 1216×1216; `awakening_undergate` 896×1216; `awakening_gate_plaza` 1536×768; `awakening_custodian_approach` 1024×864; `awakening_late_service` 704×768. |
+| needed | P0 `awakening_creche_recovery_alcove` | `custodian/content/sprites/environment/props/awakening/awakening_creche_recovery_alcove/runtime/body/awakening_creche_recovery_alcove__body__{state__idle__omni__1f,interaction__wake__omni__8f}__192x256.png` | Recovery alcove body and wake presentation. | Required states: `idle`, `wake`. |
+| needed | P0 `awakening_creche_console` | `custodian/content/sprites/environment/props/awakening/awakening_creche_console/runtime/body/awakening_creche_console__body__interaction__idle__omni__1f__128.png` | Crèche console body. | Required state: `idle`; activation is the separate FX family below. |
+| needed | P0 `awakening_dust_lung_lift` | `custodian/content/sprites/environment/props/awakening/awakening_dust_lung_lift/runtime/body/awakening_dust_lung_lift__body__interaction__idle__omni__1f__192x256.png` | Replace the transit lift placeholder; movement remains runtime-authored. | Required state: `idle`. |
+| needed | P0 `gate_of_dust` | `custodian/content/sprites/environment/props/awakening/gate_of_dust/runtime/{body,fx}/gate_of_dust__*` | Supply the sealed gate body and component plates. | Required: `body_idle_sealed`, `west_pylon`, `east_pylon`, `sealed_aperture`, `rest_threshold`; continuity animation states are optional/deferred. |
+| needed | P1 `awakening_late_service_relay_lamp` | `custodian/content/sprites/environment/props/awakening/awakening_late_service_relay_lamp/runtime/body/awakening_late_service_relay_lamp__body__state__idle__omni__1f__192x224.png` | Relay-lamp altar hero prop. | Required state: `idle`. |
+| needed | P1 zone fixture families | `custodian/content/sprites/environment/props/awakening/<family>/runtime/body/<family>__body__fixture__*__omni__1f__<WxH>.png` | Room-specific required set pieces and recommended dressing. | Families: `awakening_creche_fixtures`, `awakening_ambulatory_fixtures`, `awakening_attestation_fixtures`, `awakening_reliquary_fixtures`, `awakening_dust_lung_structures`, `awakening_undergate_machinery`, `awakening_approach_fixtures`, `awakening_late_service_fixtures`; exact state canvases live in their contracts. |
+| needed | P1 `awakening_authority_inlay` | `custodian/content/tiles/awakening/authority_inlay/awakening_authority_inlay_*_32.png` | Authority-route equal-cell floor inlays. | Required: `straight`, `corner`, `t_junction`, `cross`, `ring_node`, `threshold`. |
+| needed | P1 `awakening_ruin_decal` | `custodian/content/tiles/awakening/ruin_decals/awakening_ruin_decal_*_64.png` | Ruin damage and rubble decal set. | Required: `floor_crack_a`, `floor_crack_b`, `floor_crack_c`, `rubble_small`, `rubble_medium`. |
+| needed | P0 `awakening_creche_console_activation_fx` | `custodian/content/sprites/effects/awakening/runtime/awakening_creche_console_activation_fx/awakening_creche_console_activation_fx__fx__effect__activate__omni__8f__128.png` | Independent console activation overlay. | Required state: `activate`, 8 frames at 8 FPS. |
+| needed | P1 ambient Awakening FX families | `custodian/content/sprites/effects/awakening/runtime/<family>/<family>__fx__effect__*__omni__8f__<size>.png` | Required environmental motion layers. | `awakening_dust_motes/loop` 64px at 6 FPS; `awakening_falling_ash/loop` 64px at 6 FPS; `awakening_gate_wind_dust/loop` 128px at 8 FPS. |
 
 ## Baby Opossum Ambient Creature
 

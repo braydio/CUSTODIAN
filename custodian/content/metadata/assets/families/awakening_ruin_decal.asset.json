@@ -1,0 +1,84 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "awakening_ruin_decal",
+  "kind": "tile",
+  "priority": "P1",
+  "runtime": {
+    "domain": "tiles/awakening/ruin_decals",
+    "owner": "awakening_ruin_decal"
+  },
+  "canvas": {
+    "width": 64,
+    "height": 64
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "floor_crack_a": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "floor_crack_a",
+      "layout": "copy"
+    },
+    "floor_crack_b": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "floor_crack_b",
+      "layout": "copy"
+    },
+    "floor_crack_c": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "floor_crack_c",
+      "layout": "copy"
+    },
+    "rubble_small": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "rubble_small",
+      "layout": "copy"
+    },
+    "rubble_medium": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "rubble_medium",
+      "layout": "copy"
+    },
+    "root_intrusion": {
+      "required": false,
+      "recommended": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "root_intrusion",
+      "layout": "copy"
+    },
+    "soot_bloom": {
+      "required": false,
+      "recommended": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "soot_bloom",
+      "layout": "copy"
+    },
+    "dust_scour": {
+      "required": false,
+      "recommended": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "dust_scour",
+      "layout": "copy"
+    }
+  },
+  "aliases": {},
+  "consumers": [
+    {
+      "type": "scene",
+      "path": "res://scenes/awakening_first_return.tscn"
+    }
+  ]
+}

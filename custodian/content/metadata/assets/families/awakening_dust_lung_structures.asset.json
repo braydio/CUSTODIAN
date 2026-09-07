@@ -1,0 +1,91 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "awakening_dust_lung_structures",
+  "kind": "world_prop",
+  "priority": "P1",
+  "runtime": {
+    "domain": "sprites/environment/props/awakening",
+    "owner": "awakening_dust_lung_structures"
+  },
+  "canvas": {
+    "width": 256,
+    "height": 160
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "broken_bridge_a": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "broken_bridge_a",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 160
+    },
+    "broken_bridge_b": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "broken_bridge_b",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 160
+    },
+    "giant_duct": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "giant_duct",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 256
+    },
+    "lift_lever": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "lift_lever",
+      "layout": "copy",
+      "frame_width": 128,
+      "frame_height": 128
+    },
+    "counterweight": {
+      "required": false,
+      "recommended": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "counterweight",
+      "layout": "copy",
+      "frame_width": 128,
+      "frame_height": 192
+    },
+    "scavenger_nest": {
+      "required": false,
+      "recommended": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "scavenger_nest",
+      "layout": "copy",
+      "frame_width": 192,
+      "frame_height": 128
+    },
+    "broken_railing": {
+      "required": false,
+      "recommended": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "broken_railing",
+      "layout": "copy",
+      "frame_width": 192,
+      "frame_height": 96
+    }
+  },
+  "aliases": {},
+  "consumers": [
+    {
+      "type": "scene",
+      "path": "res://scenes/awakening_first_return.tscn"
+    }
+  ]
+}

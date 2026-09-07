@@ -1,0 +1,120 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "awakening_approach_fixtures",
+  "kind": "world_prop",
+  "priority": "P1",
+  "runtime": {
+    "domain": "sprites/environment/props/awakening",
+    "owner": "awakening_approach_fixtures"
+  },
+  "canvas": {
+    "width": 256,
+    "height": 256
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "side_chapel_a": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "side_chapel_a",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 256
+    },
+    "dead_brazier": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "dead_brazier",
+      "layout": "copy",
+      "frame_width": 96,
+      "frame_height": 96
+    },
+    "burial_terrace": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "burial_terrace",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 192
+    },
+    "prayer_ring": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "prayer_ring",
+      "layout": "copy",
+      "frame_width": 96,
+      "frame_height": 128
+    },
+    "root_broken_court": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "root_broken_court",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 256
+    },
+    "side_chapel_b": {
+      "required": false,
+      "recommended": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "side_chapel_b",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 256
+    },
+    "side_chapel_c": {
+      "required": false,
+      "recommended": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "side_chapel_c",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 256
+    },
+    "processional_banner_a": {
+      "required": false,
+      "recommended": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "processional_banner_a",
+      "layout": "copy",
+      "frame_width": 128,
+      "frame_height": 256
+    },
+    "processional_banner_b": {
+      "required": false,
+      "recommended": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "processional_banner_b",
+      "layout": "copy",
+      "frame_width": 128,
+      "frame_height": 256
+    },
+    "roadside_monument": {
+      "required": false,
+      "recommended": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "roadside_monument",
+      "layout": "copy",
+      "frame_width": 128,
+      "frame_height": 192
+    }
+  },
+  "aliases": {},
+  "consumers": [
+    {
+      "type": "scene",
+      "path": "res://scenes/awakening_first_return.tscn"
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "awakening_creche_recovery_alcove",
+  "kind": "world_prop",
+  "priority": "P0",
+  "runtime": {
+    "domain": "sprites/environment/props/awakening",
+    "owner": "awakening_creche_recovery_alcove"
+  },
+  "canvas": {
+    "width": 192,
+    "height": 256
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "idle": {
+      "required": true,
+      "layer": "body",
+      "action_group": "state",
+      "variant": "idle",
+      "layout": "copy"
+    },
+    "wake": {
+      "required": true,
+      "layer": "body",
+      "action_group": "interaction",
+      "variant": "wake",
+      "animation": true,
+      "layout": "horizontal_strip",
+      "frames": 8,
+      "fps": 8
+    }
+  },
+  "aliases": {},
+  "consumers": [
+    {
+      "type": "scene",
+      "path": "res://scenes/awakening_first_return.tscn"
+    }
+  ]
+}

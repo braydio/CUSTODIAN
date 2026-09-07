@@ -1,0 +1,35 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "awakening_creche_console_activation_fx",
+  "kind": "effect",
+  "priority": "P0",
+  "runtime": {
+    "domain": "sprites/effects/awakening",
+    "owner": "awakening_creche_console_activation_fx"
+  },
+  "canvas": {
+    "width": 128,
+    "height": 128
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "activate": {
+      "required": true,
+      "layer": "fx",
+      "action_group": "effect",
+      "variant": "activate",
+      "animation": true,
+      "layout": "horizontal_strip",
+      "frames": 8,
+      "fps": 8
+    }
+  },
+  "aliases": {},
+  "consumers": [
+    {
+      "type": "scene",
+      "path": "res://scenes/awakening_first_return.tscn"
+    }
+  ]
+}

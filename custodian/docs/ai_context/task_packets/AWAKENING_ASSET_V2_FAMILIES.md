@@ -1,5 +1,7 @@
 # Task Packet — Awakening Asset Pipeline V2 Family Registration
 
+**Status:** complete (2026-09-06)
+
 ## Goal
 
 Register the production Asset Pipeline V2 families for **Awakening / The First Return sections 01–10** exactly as defined in:

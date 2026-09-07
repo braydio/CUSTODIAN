@@ -1,0 +1,128 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "awakening_creche_fixtures",
+  "kind": "world_prop",
+  "priority": "P1",
+  "runtime": {
+    "domain": "sprites/environment/props/awakening",
+    "owner": "awakening_creche_fixtures"
+  },
+  "canvas": {
+    "width": 128,
+    "height": 192
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "alcove_closed": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "alcove_closed",
+      "layout": "copy",
+      "frame_width": 128,
+      "frame_height": 192
+    },
+    "alcove_broken": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "alcove_broken",
+      "layout": "copy",
+      "frame_width": 128,
+      "frame_height": 192
+    },
+    "alcove_fused": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "alcove_fused",
+      "layout": "copy",
+      "frame_width": 128,
+      "frame_height": 192
+    },
+    "alcove_empty": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "alcove_empty",
+      "layout": "copy",
+      "frame_width": 128,
+      "frame_height": 192
+    },
+    "wall_of_seals": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "wall_of_seals",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 192
+    },
+    "relic_table": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "relic_table",
+      "layout": "copy",
+      "frame_width": 192,
+      "frame_height": 128
+    },
+    "authority_inscription": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "authority_inscription",
+      "layout": "copy",
+      "frame_width": 384,
+      "frame_height": 96
+    },
+    "collapsed_service_harness": {
+      "required": false,
+      "recommended": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "collapsed_service_harness",
+      "layout": "copy",
+      "frame_width": 128,
+      "frame_height": 128
+    },
+    "cracked_sidearm_holster": {
+      "required": false,
+      "recommended": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "cracked_sidearm_holster",
+      "layout": "copy",
+      "frame_width": 64,
+      "frame_height": 64
+    },
+    "petrified_bandage_spool": {
+      "required": false,
+      "recommended": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "petrified_bandage_spool",
+      "layout": "copy",
+      "frame_width": 64,
+      "frame_height": 64
+    },
+    "maintenance_slate": {
+      "required": false,
+      "recommended": true,
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "maintenance_slate",
+      "layout": "copy",
+      "frame_width": 96,
+      "frame_height": 64
+    }
+  },
+  "aliases": {},
+  "consumers": [
+    {
+      "type": "scene",
+      "path": "res://scenes/awakening_first_return.tscn"
+    }
+  ]
+}

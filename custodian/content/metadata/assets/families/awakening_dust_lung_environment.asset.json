@@ -1,0 +1,46 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "awakening_dust_lung_environment",
+  "kind": "backdrop",
+  "priority": "P0",
+  "runtime": {
+    "domain": "levels/awakening/05_dust_lung",
+    "owner": "awakening_dust_lung",
+    "template": "{domain}/{filename}",
+    "filename_policy": "template",
+    "filename_template": "{owner}_{variant}_{frame_size}.png"
+  },
+  "canvas": {
+    "width": 1216,
+    "height": 1216
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "underlay": {
+      "required": true,
+      "layer": "background",
+      "action_group": "display",
+      "variant": "underlay",
+      "layout": "copy",
+      "frame_width": 1216,
+      "frame_height": 1216
+    },
+    "foreground": {
+      "required": true,
+      "layer": "foreground",
+      "action_group": "display",
+      "variant": "foreground",
+      "layout": "copy",
+      "frame_width": 1216,
+      "frame_height": 1216
+    }
+  },
+  "aliases": {},
+  "consumers": [
+    {
+      "type": "scene",
+      "path": "res://scenes/awakening_first_return.tscn"
+    }
+  ]
+}
