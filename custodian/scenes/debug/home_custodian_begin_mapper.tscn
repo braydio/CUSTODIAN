@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://cee0ns0ay2sln"]
+[gd_scene format=3 uid="uid://b17r05u6hsly4"]
 
 [ext_resource type="Script" uid="uid://cq74pg3teo0ov" path="res://tools/level_authoring/mapper/authored_level_mapper.gd" id="1_mapper"]
 [ext_resource type="Script" uid="uid://cupgm0odfm377" path="res://scenes/debug/level_collision_poi_mapper_overlay.gd" id="2_overlay"]
