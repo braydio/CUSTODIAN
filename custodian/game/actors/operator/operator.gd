@@ -17,7 +17,7 @@ const OperatorAnimationCatalog = preload("res://game/actors/operator/animations/
 const DirectionalAnimationFallback = preload(
 	"res://game/systems/presentation/directional_animation_fallback.gd"
 )
-const WeaponSocketLibrary = preload("res://game/actors/operator/animations/operator_weapon_socket_library.gd")
+const WeaponSocketTracks = preload("res://game/actors/operator/animations/operator_weapon_socket_tracks.gd")
 const AnimationStateMachine = preload("res://game/actors/operator/animations/animation_state_machine.gd")
 const AttackFastState = preload("res://game/actors/operator/animations/states/attack_fast_state.gd")
 const AttackHeavyState = preload("res://game/actors/operator/animations/states/attack_heavy_state.gd")
@@ -48,8 +48,8 @@ const OperatorGuardConfig = preload(
 const EngagementTrackerScript = preload(
 	"res://game/systems/combat/engagement_tracker.gd"
 )
-const MeleePostureResolverScript = preload(
-	"res://game/actors/operator/presentation/melee_posture_resolver.gd"
+const MeleePostureStateScript = preload(
+	"res://game/actors/operator/presentation/melee_posture_state.gd"
 )
 const OPERATOR_ANIMATION_CATALOG_FRAMES := preload(
 	"res://game/actors/operator/operator_animation_catalog_frames.tres"
@@ -762,7 +762,7 @@ var _integrity_reclaim: RefCounted = OperatorIntegrityReclaim.new()
 var _integrity_reclaim_restore_serial := 0
 var _integrity_reclaim_last_restore := 0.0
 var _engagement_tracker: EngagementTracker = null
-var _melee_posture_resolver: MeleePostureResolver = null
+var _melee_posture_state: MeleePostureState = null
 var _melee_draw_presentation_active := false
 var _melee_sheathe_presentation_active := false
 var _melee_overlay_clock_owner := MeleeOverlayClockOwner.NONE
@@ -808,7 +808,7 @@ var _primary_ranged_action_timer: float = 0.0
 var _primary_ranged_action_total: float = 0.0
 var _primary_ranged_action_direction: Vector2 = Vector2.RIGHT
 var _primary_ranged_action_suffix: StringName = &"right"
-var _weapon_socket_library := WeaponSocketLibrary.new()
+var _weapon_socket_library := WeaponSocketTracks.new()
 var _active_weapon_socket: Dictionary = {}
 var _weapon_socket_error_key: String = ""
 var _melee_locomotion_socket_active: bool = false
@@ -1024,7 +1024,7 @@ func _ready():
 	)
 	_engagement_tracker.engagement_started.connect(_on_combat_pressure_entered)
 	_engagement_tracker.engagement_ended.connect(_on_combat_pressure_exited)
-	_melee_posture_resolver = MeleePostureResolverScript.new()
+	_melee_posture_state = MeleePostureStateScript.new()
 	_install_melee_posture_catalog_frames()
 	# Sync with ControllableActor base class
 	current_health = health
@@ -2186,7 +2186,7 @@ func get_melee_locomotion_socket_snapshot() -> Dictionary:
 
 
 func _update_melee_presentation_posture(delta: float) -> void:
-	if _melee_posture_resolver == null:
+	if _melee_posture_state == null:
 		return
 	var engagement_active := _engagement_tracker != null and _engagement_tracker.engagement_active
 	var presentation_locked := (
@@ -2201,16 +2201,16 @@ func _update_melee_presentation_posture(delta: float) -> void:
 		or _is_equip_weapon_state_active()
 		or _is_sheathe_weapon_state_active()
 	)
-	_melee_posture_resolver.resolve(delta, _is_melee_loadout_active() and not using_unarmed, engagement_active, presentation_locked)
+	_melee_posture_state.resolve(delta, _is_melee_loadout_active() and not using_unarmed, engagement_active, presentation_locked)
 
 
 func _sync_modular_melee_posture(direction: Vector2) -> bool:
 	_reset_melee_locomotion_socket_presentation()
-	if _melee_posture_resolver == null or modular_lower_body_sprite == null or modular_upper_body_sprite == null:
+	if _melee_posture_state == null or modular_lower_body_sprite == null or modular_upper_body_sprite == null:
 		return false
 	if modular_lower_body_sprite.sprite_frames == null or modular_upper_body_sprite.sprite_frames == null:
 		return false
-	var action := String(_melee_posture_resolver.get_animation_action())
+	var action := String(_melee_posture_state.get_animation_action())
 	var suffix := "w" if direction.x < -0.05 else "e"
 	var lower_animation := StringName("melee_1h/posture/%s/%s/lower_body" % [action, suffix])
 	var upper_animation := StringName("melee_1h/posture/%s/%s/upper_body" % [action, suffix])
@@ -2407,8 +2407,8 @@ func start_equip_weapon_presentation() -> void:
 			primary_weapon_sprite.visible = false
 	_melee_draw_presentation_active = true
 	_melee_overlay_clock_owner = MeleeOverlayClockOwner.MODULAR_LOWER_BODY
-	if _melee_posture_resolver != null:
-		_melee_posture_resolver.begin_draw_grace()
+	if _melee_posture_state != null:
+		_melee_posture_state.begin_draw_grace()
 
 
 func is_equip_weapon_presentation_complete() -> bool:
@@ -2904,7 +2904,7 @@ func _sync_primary_ranged_weapon_frame_to_upper() -> void:
 
 
 func resolve_aim_sector(direction: Vector2) -> StringName:
-	return WeaponSocketLibrary.resolve_aim_sector(direction)
+	return WeaponSocketTracks.resolve_aim_sector(direction)
 
 
 func _load_primary_weapon_socket_data() -> bool:
@@ -2912,7 +2912,7 @@ func _load_primary_weapon_socket_data() -> bool:
 	if weapon_definition == null:
 		return false
 	if weapon_definition.production_socket_data_required:
-		for sector in WeaponSocketLibrary.REQUIRED_SECTORS:
+		for sector in WeaponSocketTracks.REQUIRED_SECTORS:
 			if not (weapon_definition.directional_weapon_textures.get(String(sector)) is Texture2D):
 				push_error("Missing production directional weapon texture for %s sector %s" % [weapon_definition.weapon_id, sector])
 				return false
@@ -2940,7 +2940,7 @@ func _apply_frame_aware_primary_weapon_socket() -> bool:
 	if not _is_using_ranged_2h_primary() or modular_upper_body_sprite == null or not modular_upper_body_sprite.visible:
 		return false
 	var sector := resolve_aim_sector(_get_frame_aware_weapon_direction())
-	if not sector in WeaponSocketLibrary.REQUIRED_SECTORS:
+	if not sector in WeaponSocketTracks.REQUIRED_SECTORS:
 		return false
 	if not _weapon_socket_library.is_loaded() and not _load_primary_weapon_socket_data():
 		return false
@@ -2974,7 +2974,7 @@ func _apply_frame_aware_primary_weapon_socket() -> bool:
 	var ejection: Vector2 = socket.ejection + visual_offset
 	var desired_correction := 0.0
 	if weapon_definition != null and weapon_definition.fine_aim_limit_degrees > 0.0:
-		var sector_direction: Vector2 = WeaponSocketLibrary.sector_direction(sector)
+		var sector_direction: Vector2 = WeaponSocketTracks.sector_direction(sector)
 		var correction_weight := 1.0
 		if _is_primary_ranged_aim_presentation_active():
 			correction_weight = clampf(
@@ -3739,7 +3739,7 @@ func _clear_modular_fast_attack_layers() -> void:
 
 
 func _get_direction_suffix(dir: Vector2) -> String:
-	return WeaponSocketLibrary.resolve_animation_suffix(dir)
+	return WeaponSocketTracks.resolve_animation_suffix(dir)
 
 
 func _is_facing_left(dir: Vector2) -> bool:
@@ -9201,8 +9201,8 @@ func _should_sheathe_before_selection(selection: Dictionary) -> bool:
 	var current_weapon := _get_equipped_primary_weapon_definition() as OperatorWeaponDefinition
 	if current_weapon == null:
 		return false
-	if _melee_posture_resolver != null \
-	and _melee_posture_resolver.posture == MeleePostureResolver.Posture.SHEATHED:
+	if _melee_posture_state != null \
+	and _melee_posture_state.posture == MeleePostureState.Posture.SHEATHED:
 		return false
 	if _resolve_weapon_definition_for_selection(selection) == current_weapon:
 		return false
@@ -9242,8 +9242,8 @@ func commit_pending_weapon_selection_after_sheathe() -> bool:
 		pending_weapon_selection.clear()
 		_refresh_primary_weapon_state()
 	var target_is_melee := _is_melee_loadout_active() and not using_unarmed
-	if _melee_posture_resolver != null and not target_is_melee:
-		_melee_posture_resolver.mark_sheathed()
+	if _melee_posture_state != null and not target_is_melee:
+		_melee_posture_state.mark_sheathed()
 	return target_is_melee
 
 
@@ -9292,8 +9292,8 @@ func _apply_armed_selection(index: int) -> void:
 	primary_weapon_equipped = profile != null
 	equipped_primary_weapon_id = String(profile.weapon_id) if profile != null else PRIMARY_WEAPON_NONE
 	combat_loadout_mode = _get_loadout_mode_for_profile(profile)
-	if combat_loadout_mode == LOADOUT_MELEE and profile != null and profile.weapon_kind == "melee" and _melee_posture_resolver != null:
-		_melee_posture_resolver.begin_draw_grace()
+	if combat_loadout_mode == LOADOUT_MELEE and profile != null and profile.weapon_kind == "melee" and _melee_posture_state != null:
+		_melee_posture_state.begin_draw_grace()
 	_cancel_reload()
 	_reset_melee_overlay_visuals()
 	_apply_melee_weapon_animation_resources(profile)
@@ -9887,7 +9887,7 @@ func _get_ranged_muzzle_position(direction: Vector2) -> Vector2:
 	var weapon_definition := _get_primary_ranged_weapon_definition()
 	if _is_using_ranged_2h_primary() and weapon_definition != null and weapon_definition.production_socket_data_required:
 		var sector := resolve_aim_sector(direction)
-		if sector in WeaponSocketLibrary.REQUIRED_SECTORS:
+		if sector in WeaponSocketTracks.REQUIRED_SECTORS:
 			push_error("Production Carbine muzzle requested without a resolved frame socket (%s)" % _weapon_socket_error_key)
 			return global_position
 	var modular_position := _get_modular_ranged_muzzle_position(direction)

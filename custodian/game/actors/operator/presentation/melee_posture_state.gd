@@ -1,4 +1,4 @@
-class_name MeleePostureResolver
+class_name MeleePostureState
 extends RefCounted
 
 enum Posture { SHEATHED, READY, RELAXED }

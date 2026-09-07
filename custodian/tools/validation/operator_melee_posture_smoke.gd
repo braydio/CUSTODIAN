@@ -1,19 +1,19 @@
 extends SceneTree
 
-const RESOLVER_SCRIPT := preload("res://game/actors/operator/presentation/melee_posture_resolver.gd")
+const POSTURE_STATE_SCRIPT := preload("res://game/actors/operator/presentation/melee_posture_state.gd")
 const OPERATOR_SCENE := preload("res://game/actors/operator/operator.tscn")
 const CATALOG_FRAMES := preload("res://game/actors/operator/operator_animation_catalog_frames.tres")
 
 
 func _init() -> void:
-	var resolver := RESOLVER_SCRIPT.new() as MeleePostureResolver
-	assert(resolver.resolve(0.0, false, false, false) == MeleePostureResolver.Posture.SHEATHED)
-	resolver.begin_draw_grace(3.0)
-	assert(resolver.resolve(2.0, true, false, false) == MeleePostureResolver.Posture.READY)
-	assert(resolver.resolve(1.1, true, false, false) == MeleePostureResolver.Posture.RELAXED)
-	assert(resolver.resolve(0.0, true, true, false) == MeleePostureResolver.Posture.READY)
-	assert(resolver.resolve(0.0, true, false, true) == MeleePostureResolver.Posture.READY)
-	assert(resolver.attack_action_bypasses_ready_up())
+	var posture_state := POSTURE_STATE_SCRIPT.new() as MeleePostureState
+	assert(posture_state.resolve(0.0, false, false, false) == MeleePostureState.Posture.SHEATHED)
+	posture_state.begin_draw_grace(3.0)
+	assert(posture_state.resolve(2.0, true, false, false) == MeleePostureState.Posture.READY)
+	assert(posture_state.resolve(1.1, true, false, false) == MeleePostureState.Posture.RELAXED)
+	assert(posture_state.resolve(0.0, true, true, false) == MeleePostureState.Posture.READY)
+	assert(posture_state.resolve(0.0, true, false, true) == MeleePostureState.Posture.READY)
+	assert(posture_state.attack_action_bypasses_ready_up())
 	var operator := OPERATOR_SCENE.instantiate()
 	assert(CATALOG_FRAMES.has_animation("melee_1h/posture/idle_ready_01/e/lower_body"))
 	for suffix in ["e", "w"]:
@@ -86,14 +86,14 @@ func _init() -> void:
 	var vigil_index := armed_weapons.find(vigil_definition)
 	assert(vigil_index >= 0)
 	operator.call("_apply_armed_selection", vigil_index)
-	var runtime_resolver = operator.get("_melee_posture_resolver") as MeleePostureResolver
-	assert(runtime_resolver.resolve(4.0, true, false, false) == MeleePostureResolver.Posture.RELAXED)
+	var runtime_posture_state = operator.get("_melee_posture_state") as MeleePostureState
+	assert(runtime_posture_state.resolve(4.0, true, false, false) == MeleePostureState.Posture.RELAXED)
 	assert(operator.call("_sync_modular_melee_posture", Vector2.LEFT))
 	assert(weapon.visible, "Vigil posture weapon overlay should be visible")
 	assert(weapon.animation == &"melee_1h_dagger/posture/idle_relaxed_01/w/weapon")
 	assert(weapon.is_playing(), "Vigil posture weapon overlay should animate")
 	_assert_hidden_legacy_body_does_not_hijack(operator, lower, weapon)
-	assert(runtime_resolver.resolve(0.0, true, true, false) == MeleePostureResolver.Posture.READY)
+	assert(runtime_posture_state.resolve(0.0, true, true, false) == MeleePostureState.Posture.READY)
 	assert(operator.call("_sync_modular_melee_posture", Vector2.LEFT))
 	assert(weapon.animation == &"melee_1h_dagger/posture/idle_ready_01/w/weapon")
 	assert(weapon.visible and weapon.is_playing(), "Vigil ready weapon overlay should animate")

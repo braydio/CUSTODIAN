@@ -1,7 +1,7 @@
 extends SceneTree
 
 const OPERATOR_SCENE := preload("res://game/actors/operator/operator.tscn")
-const SOCKET_LIBRARY := preload("res://game/actors/operator/animations/operator_weapon_socket_library.gd")
+const SOCKET_LIBRARY := preload("res://game/actors/operator/animations/operator_weapon_socket_tracks.gd")
 const CAMERA_SCRIPT := preload("res://game/world/camera.gd")
 
 var _failures: Array[String] = []

@@ -204,6 +204,69 @@
       "consumer": "operator.weapon_selection.sheathe"
     },
     {
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "fast_01",
+      "status": "DORMANT",
+      "reason": "Materialized preservation art. The pixels still play through the compatibility SpriteFrames bridge; the canonical runtime identity has no consumer until the operator.gd selector cutover."
+    },
+    {
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "fast_02",
+      "status": "DORMANT",
+      "reason": "Materialized preservation art. The pixels still play through the compatibility SpriteFrames bridge; the canonical runtime identity has no consumer until the operator.gd selector cutover."
+    },
+    {
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "fast_03",
+      "status": "DORMANT",
+      "reason": "Materialized preservation art. The pixels still play through the compatibility SpriteFrames bridge; the canonical runtime identity has no consumer until the operator.gd selector cutover."
+    },
+    {
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "fast_recovery_01",
+      "status": "DORMANT",
+      "reason": "Materialized preservation art. The pixels still play through the compatibility SpriteFrames bridge; the canonical runtime identity has no consumer until the operator.gd selector cutover."
+    },
+    {
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "heavy_01",
+      "status": "DORMANT",
+      "reason": "Materialized preservation art. The pixels still play through the compatibility SpriteFrames bridge; the canonical runtime identity has no consumer until the operator.gd selector cutover."
+    },
+    {
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "heavy_windup_01",
+      "status": "DORMANT",
+      "reason": "Materialized preservation art. The pixels still play through the compatibility SpriteFrames bridge; the canonical runtime identity has no consumer until the operator.gd selector cutover."
+    },
+    {
+      "profile": "melee_1h_heavy",
+      "group": "defense",
+      "action": "block_enter_01",
+      "status": "DORMANT",
+      "reason": "Materialized guard preservation art. Awaits the guard controller cutover to semantic actions; legacy melee_2h_block_* still drives playback today."
+    },
+    {
+      "profile": "melee_1h_heavy",
+      "group": "defense",
+      "action": "block_exit_01",
+      "status": "DORMANT",
+      "reason": "Materialized guard preservation art. Awaits the guard controller cutover to semantic actions; legacy melee_2h_block_* still drives playback today."
+    },
+    {
+      "profile": "melee_1h_heavy",
+      "group": "defense",
+      "action": "block_hold_01",
+      "status": "DORMANT",
+      "reason": "Materialized guard preservation art. Awaits the guard controller cutover to semantic actions; legacy melee_2h_block_* still drives playback today."
+    },
+    {
       "profile": "ranged_2h",
       "group": "attack",
       "action": "fast_01",
@@ -237,6 +300,13 @@
       "action": "fire_01",
       "status": "DORMANT",
       "reason": "Ranged fire is currently driven by per-weapon legacy body-fire animation names, not this canonical sheet."
+    },
+    {
+      "profile": "ranged_2h",
+      "group": "cosmetic",
+      "action": "fire_walk_01",
+      "status": "DORMANT",
+      "reason": "Materialized from the actor's legacy_firing_slow_walk sheet. The actor still installs that sheet directly; canonical identity awaits the operator.gd cutover."
     },
     {
       "profile": "ranged_2h",
@@ -423,6 +493,13 @@
     {
       "profile": "unarmed",
       "group": "cosmetic",
+      "action": "critical_hitspark_01",
+      "status": "DORMANT",
+      "reason": "Materialized from the actor's legacy critical hitspark sheets. The actor still installs those sheets directly; canonical identity awaits the operator.gd cutover."
+    },
+    {
+      "profile": "unarmed",
+      "group": "cosmetic",
       "action": "criticial_execution_01",
       "status": "SUPERSEDED",
       "replacement": "unarmed/cosmetic/critical_execution_01"
@@ -552,6 +629,13 @@
       "action": "light_hitreact_01",
       "status": "LIVE",
       "consumer": "operator unarmed_light_hitreact"
+    },
+    {
+      "profile": "unarmed",
+      "group": "transition",
+      "action": "dodge_chain_release_01",
+      "status": "DORMANT",
+      "reason": "Authored dodge chain-release FX with no gameplay consumer."
     },
     {
       "profile": "unarmed",

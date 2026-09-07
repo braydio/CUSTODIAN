@@ -1,7 +1,7 @@
 extends RefCounted
 class_name AnimationResolver
 
-const WeaponSocketLibrary = preload("res://game/actors/operator/animations/operator_weapon_socket_library.gd")
+const WeaponSocketTracks = preload("res://game/actors/operator/animations/operator_weapon_socket_tracks.gd")
 
 
 static func resolve(base: String, direction: Vector2, sprite: AnimatedSprite2D) -> StringName:
@@ -31,4 +31,4 @@ static func _has_playable_animation(sprite_frames: SpriteFrames, animation_name:
 
 
 static func _get_direction_suffix(direction: Vector2) -> String:
-	return WeaponSocketLibrary.resolve_animation_suffix(direction)
+	return WeaponSocketTracks.resolve_animation_suffix(direction)

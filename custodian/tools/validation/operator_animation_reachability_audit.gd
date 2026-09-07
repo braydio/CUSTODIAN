@@ -1,6 +1,9 @@
 extends SceneTree
 
-const CATALOG_PATH := "res://content/data/operator/generated/operator_animation_catalog.generated.json"
+const MANIFEST_PATH := (
+	"res://content/sprites/operator/runtime/"
+	+ "operator_runtime_manifest.generated.json"
+)
 const REACHABILITY_PATH := "res://content/data/operator/operator_animation_reachability.json"
 const VALID_STATUSES := [
 	"LIVE",
@@ -18,10 +21,10 @@ func _init() -> void:
 
 
 func _run() -> void:
-	var catalog: Variant = _load_json(CATALOG_PATH)
+	var catalog: Variant = _load_json(MANIFEST_PATH)
 	_expect(
-		catalog is Dictionary and catalog.get("schema", "") == "custodian.operator_animation_catalog.v2",
-		"catalog schema mismatch or missing: %s" % CATALOG_PATH
+		catalog is Dictionary and catalog.get("schema", "") == "custodian.operator_runtime_manifest.v1",
+		"runtime manifest schema mismatch or missing: %s" % MANIFEST_PATH
 	)
 	var reachability: Variant = _load_json(REACHABILITY_PATH)
 	_expect(
@@ -82,7 +85,7 @@ func _run() -> void:
 
 	if _failures.is_empty():
 		print(
-			"operator_animation_reachability_audit: PASS (%d catalog actions checked, %d classifications)"
+			"operator_animation_reachability_audit: PASS (%d runtime actions checked, %d classifications)"
 			% [animations.size(), entries.size()]
 		)
 		quit(0)

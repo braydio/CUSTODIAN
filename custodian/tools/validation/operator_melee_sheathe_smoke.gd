@@ -111,10 +111,10 @@ func _run_sheathe_case(
 
 	_expect(bool(operator.get("using_unarmed")), "%s: target selection did not commit after the final sheathe frame" % suffix)
 	_expect(not weapon.visible, "%s: weapon overlay must disappear once unarmed commits" % suffix)
-	var resolver = operator.get("_melee_posture_resolver")
+	var posture_state = operator.get("_melee_posture_state")
 	_expect(
-		resolver.posture == MeleePostureResolver.Posture.SHEATHED,
-		"%s: melee posture resolver must report SHEATHED after sheathe commits" % suffix
+		posture_state.posture == MeleePostureState.Posture.SHEATHED,
+		"%s: melee posture state must report SHEATHED after sheathe commits" % suffix
 	)
 	_expect(
 		operator.get("_animation_state_machine").current_state == "idle",

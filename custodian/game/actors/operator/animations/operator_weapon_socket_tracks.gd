@@ -1,5 +1,5 @@
 extends RefCounted
-class_name OperatorWeaponSocketLibrary
+class_name OperatorWeaponSocketTracks
 
 const DEFAULT_DATA_PATH := "res://content/data/operator/generated/operator_weapon_sockets.generated.json"
 const REQUIRED_SECTORS: Array[StringName] = [&"e", &"w", &"se", &"sw"]
@@ -144,6 +144,9 @@ static func sector_direction(sector: StringName) -> Vector2:
 	return Vector2.DOWN
 
 
+## Migration bridge. Animation direction belongs to OperatorAnimationSelector,
+## which uses sector names directly and knows nothing about these old suffixes.
+## Both suffix helpers leave with the operator.gd cutover.
 static func animation_suffix_for_sector(sector: StringName) -> String:
 	match sector:
 		&"n": return "up"
