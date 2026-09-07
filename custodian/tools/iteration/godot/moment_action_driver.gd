@@ -208,6 +208,13 @@ func _fixture_command(action: Dictionary, result: Dictionary) -> void:
 			"answers_court",
 			"station_threshold",
 		],
+		"awakening_underlays_zones_01_05": [
+			"show_creche",
+			"show_ambulatory",
+			"show_attestation",
+			"show_locker_reliquary",
+			"show_dust_lung",
+		],
 		"field_fabricator": [
 			"power_on",
 			"begin_fabrication",

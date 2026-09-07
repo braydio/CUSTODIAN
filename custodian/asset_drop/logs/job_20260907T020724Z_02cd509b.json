@@ -1,0 +1,44 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260907T020724Z_02cd509b",
+  "timestamp": "2026-09-07T02:07:24.573945+00:00",
+  "family": "awakening_locker_reliquary_environment",
+  "kind": "backdrop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/awakening_locker_reliquary_environment/underlay.png",
+      "sha256": "d3e76199fd80616fd7da630493ddf05e3ef26804d375d1f1d4d7cd121bcdcf6f"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "underlay",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_locker_reliquary",
+        "backdrop",
+        "background",
+        "display",
+        "underlay",
+        "omni"
+      ],
+      "path": "content/levels/awakening/04_locker_reliquary/awakening_locker_reliquary_underlay_704x704.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "d3e76199fd80616fd7da630493ddf05e3ef26804d375d1f1d4d7cd121bcdcf6f",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

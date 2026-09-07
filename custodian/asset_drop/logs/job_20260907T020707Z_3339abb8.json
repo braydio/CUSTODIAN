@@ -1,0 +1,44 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260907T020707Z_3339abb8",
+  "timestamp": "2026-09-07T02:07:07.707790+00:00",
+  "family": "awakening_attestation_environment",
+  "kind": "backdrop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/awakening_attestation_environment/underlay.png",
+      "sha256": "a97c7f5f3a89e247d0f501959ef2d9636e29dd13a33ae12d32d0bedd20c93311"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "underlay",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_attestation",
+        "backdrop",
+        "background",
+        "display",
+        "underlay",
+        "omni"
+      ],
+      "path": "content/levels/awakening/03_attestation/awakening_attestation_underlay_832x928.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "a97c7f5f3a89e247d0f501959ef2d9636e29dd13a33ae12d32d0bedd20c93311",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

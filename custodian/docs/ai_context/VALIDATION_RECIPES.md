@@ -275,6 +275,11 @@ Full captures are not a default CI requirement. Advisory pixel and audio
 differences must not fail CI — only stable assertions and deterministic metrics
 are validation authority.
 
+For the first five Awakening environment underlays, run
+`python3 custodian/tools/iteration/run_moment.py traversal/awakening_underlays_zones_01_05 --capture-mode full`.
+Its contact sheet reviews the Crèche through Dust Lung registrations and its
+stable assertions require production blockouts to yield while zones 06–09 retain theirs.
+
 For Meridian civic semantic native props and the physical-scale review fixture:
 
 ```bash

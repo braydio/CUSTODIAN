@@ -4022,6 +4022,136 @@
           "source_asset": null
         }
       }
+    },
+    "awakening_creche_environment": {
+      "kind": "backdrop",
+      "assets": {
+        "underlay::omni": {
+          "state_id": "underlay",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_creche",
+            "backdrop",
+            "background",
+            "display",
+            "underlay",
+            "omni"
+          ],
+          "path": "content/levels/awakening/01_creche/awakening_creche_underlay_960x704.png",
+          "frames": 1,
+          "frame_size": [
+            960,
+            704
+          ],
+          "sha256": "54a1dfa0f88dfcc814ce47287c191b54eaeda0663a70461a4bcf34e7202f0661",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "awakening_ambulatory_environment": {
+      "kind": "backdrop",
+      "assets": {
+        "underlay::omni": {
+          "state_id": "underlay",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_ambulatory",
+            "backdrop",
+            "background",
+            "display",
+            "underlay",
+            "omni"
+          ],
+          "path": "content/levels/awakening/02_ambulatory/awakening_ambulatory_underlay_1152x960.png",
+          "frames": 1,
+          "frame_size": [
+            1152,
+            960
+          ],
+          "sha256": "b9816bcf3b6b6e11fcc655d3113f2621ce1b3c3d6bfce3f3932c8e91a30aa97c",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "awakening_attestation_environment": {
+      "kind": "backdrop",
+      "assets": {
+        "underlay::omni": {
+          "state_id": "underlay",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_attestation",
+            "backdrop",
+            "background",
+            "display",
+            "underlay",
+            "omni"
+          ],
+          "path": "content/levels/awakening/03_attestation/awakening_attestation_underlay_832x928.png",
+          "frames": 1,
+          "frame_size": [
+            832,
+            928
+          ],
+          "sha256": "a97c7f5f3a89e247d0f501959ef2d9636e29dd13a33ae12d32d0bedd20c93311",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "awakening_locker_reliquary_environment": {
+      "kind": "backdrop",
+      "assets": {
+        "underlay::omni": {
+          "state_id": "underlay",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_locker_reliquary",
+            "backdrop",
+            "background",
+            "display",
+            "underlay",
+            "omni"
+          ],
+          "path": "content/levels/awakening/04_locker_reliquary/awakening_locker_reliquary_underlay_704x704.png",
+          "frames": 1,
+          "frame_size": [
+            704,
+            704
+          ],
+          "sha256": "d3e76199fd80616fd7da630493ddf05e3ef26804d375d1f1d4d7cd121bcdcf6f",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "awakening_dust_lung_environment": {
+      "kind": "backdrop",
+      "assets": {
+        "underlay::omni": {
+          "state_id": "underlay",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_dust_lung",
+            "backdrop",
+            "background",
+            "display",
+            "underlay",
+            "omni"
+          ],
+          "path": "content/levels/awakening/05_dust_lung/awakening_dust_lung_underlay_1216x1216.png",
+          "frames": 1,
+          "frame_size": [
+            1216,
+            1216
+          ],
+          "sha256": "63d31f9cfef83cc42844d12f4e61b1787bd9906b520207f65d613e1fd50e3759",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
     }
   }
 }

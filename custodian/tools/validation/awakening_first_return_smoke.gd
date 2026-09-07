@@ -19,6 +19,13 @@ const HUD_SCENE := "res://game/ui/hud/custodian_hud.tscn"
 const MAPPER := "res://scenes/debug/awakening_first_return_mapper.tscn"
 const DEBUG_TOUR := "res://scenes/debug/awakening_first_return_debug.tscn"
 const ADAPTER := "res://tools/level_authoring/mapper/adapters/awakening_first_return_mapper_adapter.gd"
+const PRODUCTION_UNDERLAYS := {
+	"Zone01_Creche": {"position": Vector2(0, -32), "size": Vector2(960, 704)},
+	"Zone02_Ambulatory": {"position": Vector2(0, -864), "size": Vector2(1152, 960)},
+	"Zone03_Attestation": {"position": Vector2(0, -1744), "size": Vector2(832, 928)},
+	"Zone04_LockerReliquary": {"position": Vector2(704, -1984), "size": Vector2(704, 704)},
+	"Zone05_DustLung": {"position": Vector2(0, -3200), "size": Vector2(1216, 1216)},
+}
 
 ## Locked in the design; the whole opening dungeon hangs off these.
 const LOCKED_ENVELOPES := {
@@ -147,8 +154,33 @@ func _check_scene_skeleton(instance: Node) -> void:
 			_fail("scene missing node: %s" % node_path)
 	for zone in Layout.ZONES:
 		var path := "World/AwakeningZones/%s" % String(zone["node"])
-		if instance.get_node_or_null(NodePath(path)) == null:
+		var zone_node := instance.get_node_or_null(NodePath(path)) as Node2D
+		if zone_node == null:
 			_fail("scene missing zone node: %s" % path)
+		elif zone_node.position != Vector2.ZERO:
+			_fail("zone root must remain untransformed: %s" % path)
+	for zone_name in PRODUCTION_UNDERLAYS:
+		var spec: Dictionary = PRODUCTION_UNDERLAYS[zone_name]
+		var underlay_path := "World/AwakeningZones/%s/ArtUnderlay/Underlay" % zone_name
+		var underlay := instance.get_node_or_null(NodePath(underlay_path)) as Sprite2D
+		if underlay == null:
+			_fail("production underlay missing: %s" % underlay_path)
+			continue
+		if underlay.position != spec["position"]:
+			_fail("%s position drifted: %s" % [zone_name, str(underlay.position)])
+		if underlay.scale != Vector2.ONE:
+			_fail("%s underlay must remain at scale 1,1" % zone_name)
+		if not underlay.centered:
+			_fail("%s underlay must remain centered" % zone_name)
+		if underlay.texture == null:
+			_fail("%s underlay texture did not load" % zone_name)
+		elif underlay.texture.get_size() != spec["size"]:
+			_fail("%s texture size drifted: %s" % [zone_name, str(underlay.texture.get_size())])
+	var script_source := FileAccess.get_file_as_string(SCRIPT)
+	if not script_source.contains('presentation.visible = build_blockout_presentation and art_underlay.get_node_or_null("Underlay") == null'):
+		_fail("blockout presentation does not yield to an authored production underlay")
+	if not script_source.contains("presentation.add_child(visual)"):
+		_fail("grey placeholder set-piece visuals are not owned by BlockoutPresentation")
 	var operator := instance.get_node_or_null("World/Operator") as Node2D
 	if operator != null and operator.position != Layout.OPERATOR_WAKE_POSITION:
 		_fail("Operator does not start at the wake position: %s" % str(operator.position))

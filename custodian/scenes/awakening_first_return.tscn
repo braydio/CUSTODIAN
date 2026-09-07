@@ -8,6 +8,11 @@
 [ext_resource type="Script" uid="uid://c3sk1ii78dnsj" path="res://game/world/hub/road_of_witnesses_prototype.gd" id="6_road"]
 [ext_resource type="PackedScene" path="res://game/ui/hud/custodian_hud.tscn" id="8_hud"]
 [ext_resource type="PackedScene" path="res://game/actors/props/sidearm_locker.tscn" id="9_locker"]
+[ext_resource type="Texture2D" path="res://content/levels/awakening/01_creche/awakening_creche_underlay_960x704.png" id="10_creche_underlay"]
+[ext_resource type="Texture2D" path="res://content/levels/awakening/02_ambulatory/awakening_ambulatory_underlay_1152x960.png" id="11_ambulatory_underlay"]
+[ext_resource type="Texture2D" path="res://content/levels/awakening/03_attestation/awakening_attestation_underlay_832x928.png" id="12_attestation_underlay"]
+[ext_resource type="Texture2D" path="res://content/levels/awakening/04_locker_reliquary/awakening_locker_reliquary_underlay_704x704.png" id="13_reliquary_underlay"]
+[ext_resource type="Texture2D" path="res://content/levels/awakening/05_dust_lung/awakening_dust_lung_underlay_1216x1216.png" id="14_dust_lung_underlay"]
 
 [node name="GameRoot" type="Node2D"]
 script = ExtResource("1_awakening")
@@ -18,16 +23,51 @@ script = ExtResource("1_awakening")
 
 [node name="Zone01_Creche" type="Node2D" parent="World/AwakeningZones"]
 
+[node name="ArtUnderlay" type="Node2D" parent="World/AwakeningZones/Zone01_Creche"]
+
+[node name="Underlay" type="Sprite2D" parent="World/AwakeningZones/Zone01_Creche/ArtUnderlay"]
+position = Vector2(0, -32)
+texture = ExtResource("10_creche_underlay")
+centered = true
+
 [node name="Zone02_Ambulatory" type="Node2D" parent="World/AwakeningZones"]
+
+[node name="ArtUnderlay" type="Node2D" parent="World/AwakeningZones/Zone02_Ambulatory"]
+
+[node name="Underlay" type="Sprite2D" parent="World/AwakeningZones/Zone02_Ambulatory/ArtUnderlay"]
+position = Vector2(0, -864)
+texture = ExtResource("11_ambulatory_underlay")
+centered = true
 
 [node name="Zone03_Attestation" type="Node2D" parent="World/AwakeningZones"]
 
+[node name="ArtUnderlay" type="Node2D" parent="World/AwakeningZones/Zone03_Attestation"]
+
+[node name="Underlay" type="Sprite2D" parent="World/AwakeningZones/Zone03_Attestation/ArtUnderlay"]
+position = Vector2(0, -1744)
+texture = ExtResource("12_attestation_underlay")
+centered = true
+
 [node name="Zone04_LockerReliquary" type="Node2D" parent="World/AwakeningZones"]
+
+[node name="ArtUnderlay" type="Node2D" parent="World/AwakeningZones/Zone04_LockerReliquary"]
+
+[node name="Underlay" type="Sprite2D" parent="World/AwakeningZones/Zone04_LockerReliquary/ArtUnderlay"]
+position = Vector2(704, -1984)
+texture = ExtResource("13_reliquary_underlay")
+centered = true
 
 [node name="SidearmLocker" parent="World/AwakeningZones/Zone04_LockerReliquary" instance=ExtResource("9_locker")]
 position = Vector2(832, -1952)
 
 [node name="Zone05_DustLung" type="Node2D" parent="World/AwakeningZones"]
+
+[node name="ArtUnderlay" type="Node2D" parent="World/AwakeningZones/Zone05_DustLung"]
+
+[node name="Underlay" type="Sprite2D" parent="World/AwakeningZones/Zone05_DustLung/ArtUnderlay"]
+position = Vector2(0, -3200)
+texture = ExtResource("14_dust_lung_underlay")
+centered = true
 
 [node name="Zone06_Undergate" type="Node2D" parent="World/AwakeningZones"]
 

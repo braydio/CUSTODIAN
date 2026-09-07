@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://tools/validation/fixtures/awakening_underlays_moment.gd" id="1_fixture"]
+[ext_resource type="PackedScene" path="res://scenes/awakening_first_return.tscn" id="2_awakening"]
+
+[node name="AwakeningUnderlaysMoment" type="Node2D"]
+script = ExtResource("1_fixture")
+
+[node name="AwakeningFirstReturn" parent="." instance=ExtResource("2_awakening")]

@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "id": "traversal/awakening_underlays_zones_01_05",
+  "description": "Production-underlay registration review across Awakening zones 01-05 with later zones retaining their blockout presentation.",
+  "scene": "res://tools/validation/fixtures/awakening_underlays_moment.tscn",
+  "seed": 1701,
+  "duration_ticks": 300,
+  "simulation": {"physics_hz": 60, "warmup_ticks": 8, "max_wall_seconds": 45, "pause_during_setup": true},
+  "capture": {"width": 1280, "height": 720, "fps": 60, "audio": false, "start_tick": 0, "end_tick": 299, "contact_sheet_ticks": [30, 85, 140, 195, 250, 285], "required_keyframes": true, "background": "opaque"},
+  "setup": {
+    "remove_nodes": [],
+    "roles": {
+      "fixture": {"node_path": "."},
+      "operator": {"node_path": "AwakeningFirstReturn/World/Operator"}
+    },
+    "spawns": [],
+    "properties": [],
+    "processing": [],
+    "fixture": {"id": "awakening_underlays_zones_01_05", "config": {}}
+  },
+  "timeline": [
+    {"tick": 5, "action": "fixture_command", "name": "show_creche"},
+    {"tick": 60, "action": "fixture_command", "name": "show_ambulatory"},
+    {"tick": 115, "action": "fixture_command", "name": "show_attestation"},
+    {"tick": 170, "action": "fixture_command", "name": "show_locker_reliquary"},
+    {"tick": 225, "action": "fixture_command", "name": "show_dust_lung"},
+    {"tick": 295, "action": "finish"}
+  ],
+  "probes": [
+    {"id": "fixture_state", "role": "fixture", "fields": ["checkpoint", "production_underlays_ready", "remaining_blockouts_ready"], "ticks": [30, 85, 140, 195, 250], "required": true},
+    {"id": "operator_position", "role": "operator", "fields": ["global_position"], "ticks": [30, 85, 140, 195, 250], "required": true}
+  ],
+  "assertions": [
+    {"type": "role_exists", "role": "operator", "severity": "error"},
+    {"type": "probe_compare", "probe": "fixture_state", "tick": 30, "field": "production_underlays_ready", "op": "eq", "value": true, "severity": "error"},
+    {"type": "probe_compare", "probe": "fixture_state", "tick": 30, "field": "remaining_blockouts_ready", "op": "eq", "value": true, "severity": "error"},
+    {"type": "no_unreleased_inputs", "severity": "error"},
+    {"type": "output_exists", "path": "telemetry.json", "severity": "error"}
+  ],
+  "stable_fingerprint": {"event_payload_fields": {}, "counters": [], "probes": ["fixture_state", "operator_position"], "position_quantum_px": 0.25, "float_quantum": 0.0001},
+  "tags": ["traversal", "awakening", "visual_review", "production_art"]
+}

@@ -140,6 +140,20 @@
 		"scenario_ids": ["traversal/meridian_civic_native_scale"],
 		"priority": 120,
 		"reason": "Meridian civic native-prop semantics, runtime presentation, or physical scale changed."
+	},
+	{
+		"id": "awakening_underlays_zones_01_05",
+		"include": [
+			"custodian/content/levels/awakening/0[1-5]_*/**",
+			"custodian/scenes/awakening_first_return.tscn",
+			"custodian/game/world/awakening/awakening_first_return.gd",
+			"custodian/tools/validation/fixtures/awakening_underlays_moment.*",
+			"custodian/tools/iteration/scenarios/traversal/awakening_underlays_zones_01_05.json"
+		],
+		"exclude": ["**/*.import", "reports/**"],
+		"scenario_ids": ["traversal/awakening_underlays_zones_01_05"],
+		"priority": 125,
+		"reason": "Awakening zone underlay art, literal binding, blockout handoff, or visual-review fixture changed."
 	}
   ]
 }

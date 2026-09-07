@@ -1336,7 +1336,7 @@ never changes the staged original, converter candidates, canonical source, or
 runtime output.
 # Awakening / The First Return, Sections 01-10 (2026-09-06)
 
-Awakening production art is registered through 31 Asset Pipeline V2 family contracts; the contracts define missing source/runtime targets and do not imply that production art exists or is bound.
+Awakening production art is registered through 31 Asset Pipeline V2 family contracts. The first five environment underlays (Crèche through Dust Lung) are ingested and explicitly bound at their locked envelope centers; their per-zone blockout presentation now yields while collision, traversal, triggers, interactables, and layout authority remain unchanged. Foregrounds and zones 06–09 production plates remain missing.
 
 The one-image Home beginning is retired. The project now boots into
 `res://scenes/awakening_first_return.tscn`, a ten-section authored dungeon walked

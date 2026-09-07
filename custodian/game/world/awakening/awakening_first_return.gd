@@ -94,9 +94,10 @@ func _build_zone(zone_node: Node2D, zone_id: StringName, zone: Dictionary) -> vo
 	var art_underlay := _ensure_child(zone_node, "ArtUnderlay", Node2D.new())
 	art_underlay.z_index = Layout.Z_FLOOR - 1
 	var presentation := _ensure_child(zone_node, "BlockoutPresentation", Node2D.new())
+	presentation.visible = build_blockout_presentation and art_underlay.get_node_or_null("Underlay") == null
 	var collision := _ensure_child(zone_node, "Collision", StaticBody2D.new()) as StaticBody2D
 	_ensure_child(zone_node, "Occlusion", Node2D.new()).z_index = Layout.Z_FOREGROUND
-	var set_pieces := _ensure_child(zone_node, "SetPieces", Node2D.new())
+	_ensure_child(zone_node, "SetPieces", Node2D.new())
 	_ensure_child(zone_node, "Interactables", Node2D.new())
 	_ensure_child(zone_node, "Triggers", Node2D.new())
 	var markers := _ensure_child(zone_node, "Markers", Node2D.new())
@@ -105,7 +106,7 @@ func _build_zone(zone_node: Node2D, zone_id: StringName, zone: Dictionary) -> vo
 	# Section 10 reuses the Road prototype's own floor art and collision.
 	if zone_id != &"zone10_road_south_reach":
 		_build_floor(presentation, collision, zone_id, zone)
-		_build_set_pieces(presentation, collision, set_pieces, zone_id)
+		_build_set_pieces(presentation, collision, zone_id)
 	_build_markers(markers, zone_id)
 	_build_zone_region(zone_node, zone_id, zone)
 	_zone_bodies[zone_id] = collision
@@ -192,7 +193,7 @@ func _add_wall_facade(presentation: Node2D, polygon: PackedVector2Array, node_na
 	presentation.add_child(facade)
 
 
-func _build_set_pieces(presentation: Node2D, collision: StaticBody2D, set_pieces: Node2D, zone_id: StringName) -> void:
+func _build_set_pieces(presentation: Node2D, collision: StaticBody2D, zone_id: StringName) -> void:
 	for piece in Layout.set_pieces_for(zone_id):
 		# Prop-backed set pieces are instanced in the .tscn and bring their own
 		# art and collision; the layout lists them only so the geometry validator
@@ -205,7 +206,7 @@ func _build_set_pieces(presentation: Node2D, collision: StaticBody2D, set_pieces
 		visual.polygon = Layout.rect_to_polygon(rect)
 		visual.color = Layout.COLOR_ELEVATED_FACADE if bool(piece.get("blocking", false)) else Layout.COLOR_DUST
 		visual.z_index = Layout.Z_WORLD_PROPS
-		set_pieces.add_child(visual)
+		presentation.add_child(visual)
 		if not bool(piece.get("blocking", false)):
 			continue
 		# Locked traversal geometry always wins over a set piece.
