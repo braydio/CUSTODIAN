@@ -11,6 +11,12 @@ const MACHINE_HOUSE_DOOR_SCRIPT := preload("res://game/world/gothic_compound/car
 const LIGHTING_ZONE_SCRIPT := preload("res://game/world/lighting/lighting_zone_2d.gd")
 const LIGHT_RIG_SCENE := preload("res://game/world/lighting/light_rig_2d.tscn")
 const MACHINE_HOUSE_LIGHTING_PROFILE := preload("res://content/lighting/profiles/carrow_machine_house_interior.tres")
+const MACHINE_HOUSE_FLOOR_ROOT := "res://content/tiles/interiors/runtime/"
+const MACHINE_HOUSE_STRUCTURE_ROOT := "res://content/sprites/environment/structure/carrow_machine_house/runtime/"
+const MACHINE_HOUSE_FLOOR_STATES := [
+	"slab_plain_01", "slab_worn_01", "slab_cracked_01", "slab_oil_01",
+	"tread_01", "panel_bolted_01", "grate_grid_01", "conduit_horizontal_01",
+]
 const MACHINE_HOUSE_SIZE := Vector2i(12, 8)
 const MACHINE_HOUSE_LAYOUT := [
 	"XXXXXXXXXXXX",
@@ -168,6 +174,7 @@ func _add_east_machine_house_interior(result: Variant) -> void:
 	)
 	_machine_house_camera_bounds = _machine_house_interior_rect.grow(TILE_SIZE * 2.0)
 	_add_machine_house_floor(room_origin)
+	_add_machine_house_production_art(room_origin)
 	_add_machine_house_layout(room_origin)
 	_add_machine_house_storage("carrow_service_parts_locker", "Service Parts Locker", room_origin + Vector2i(3, 6), {&"ruin_scrap": 52, &"structural_alloy": 4})
 	_add_machine_house_storage("carrow_structural_spares_rack", "Structural Spares Rack", room_origin + Vector2i(6, 6), {&"structural_alloy": 14, &"ruin_scrap": 16})
@@ -191,6 +198,52 @@ func _add_machine_house_floor(room_origin: Vector2i) -> void:
 		top_left + Vector2(0.0, extent.y),
 	])
 	_machine_house_root.add_child(floor)
+	var floor_tiles := Node2D.new()
+	floor_tiles.name = "CarrowFloorTiles"
+	floor_tiles.z_index = -39
+	_machine_house_root.add_child(floor_tiles)
+	for y in range(MACHINE_HOUSE_SIZE.y):
+		for x in range(MACHINE_HOUSE_SIZE.x):
+			var state: String = MACHINE_HOUSE_FLOOR_STATES[(x * 3 + y * 5) % MACHINE_HOUSE_FLOOR_STATES.size()]
+			var sprite := Sprite2D.new()
+			sprite.name = "Floor_%02d_%02d" % [x, y]
+			sprite.texture = load(MACHINE_HOUSE_FLOOR_ROOT + "floor_carrow_%s_32.png" % state) as Texture2D
+			sprite.position = _tile_to_local(room_origin + Vector2i(x, y)) + Vector2.ONE * TILE_SIZE * 0.5
+			floor_tiles.add_child(sprite)
+
+
+func _add_machine_house_production_art(room_origin: Vector2i) -> void:
+	var art := Node2D.new()
+	art.name = "ProductionArt"
+	_machine_house_root.add_child(art)
+	_add_machine_house_art_sprite(art, "Entry", "props/carrow_machine_house_entry.png", room_origin + Vector2i(6, 8), 2)
+	_add_machine_house_art_sprite(art, "NorthWallPanelled", "walls/wall_carrow_wall_run_panelled_long_01.png", room_origin + Vector2i(3, 1), -18)
+	_add_machine_house_art_sprite(art, "NorthWallConduit", "walls/wall_carrow_wall_run_conduit_long_01.png", room_origin + Vector2i(9, 1), -18)
+	_add_machine_house_art_sprite(art, "WestControlBay", "walls/wall_carrow_control_bay_01.png", room_origin + Vector2i(1, 3), -17)
+	_add_machine_house_art_sprite(art, "EastMachineBay", "walls/wall_carrow_machine_bay_01.png", room_origin + Vector2i(11, 3), -17)
+	_add_machine_house_art_sprite(art, "WestPillar", "walls/wall_carrow_pillar_lit_01.png", room_origin + Vector2i(1, 6), -16)
+	_add_machine_house_art_sprite(art, "EastPillar", "walls/wall_carrow_pillar_plain_01.png", room_origin + Vector2i(11, 6), -16)
+	_add_machine_house_art_sprite(art, "RelayBank", "props/carrow_machine_house_relay_bank.png", room_origin + Vector2i(2, 3), -12)
+	_add_machine_house_art_sprite(art, "Switchgear", "props/carrow_machine_house_switchgear.png", room_origin + Vector2i(9, 3), -12)
+	_add_machine_house_art_sprite(art, "Workbench", "props/carrow_machine_house_workbench.png", room_origin + Vector2i(6, 5), -10)
+	_add_machine_house_art_sprite(art, "PartsLocker", "props/carrow_machine_house_parts_locker.png", room_origin + Vector2i(3, 7), -9)
+	_add_machine_house_art_sprite(art, "ServiceCabinet", "props/carrow_machine_house_service_cabinet.png", room_origin + Vector2i(8, 7), -9)
+	_add_machine_house_art_sprite(art, "ConduitJunction", "props/carrow_machine_house_conduit_junction.png", room_origin + Vector2i(6, 1), -11)
+
+
+func _add_machine_house_art_sprite(parent: Node2D, sprite_name: String, relative_path: String, anchor_cell: Vector2i, z: int) -> void:
+	var texture := load(MACHINE_HOUSE_STRUCTURE_ROOT + relative_path) as Texture2D
+	if texture == null:
+		push_warning("[CarrowYard] Missing Machine House art: %s" % relative_path)
+		return
+	var sprite := Sprite2D.new()
+	sprite.name = sprite_name
+	sprite.texture = texture
+	sprite.centered = true
+	sprite.position = _tile_to_local(anchor_cell) - Vector2(0.0, float(texture.get_height()) * 0.5)
+	sprite.z_as_relative = false
+	sprite.z_index = z
+	parent.add_child(sprite)
 
 
 func _add_machine_house_layout(room_origin: Vector2i) -> void:
@@ -201,34 +254,8 @@ func _add_machine_house_layout(room_origin: Vector2i) -> void:
 			if symbol == ".":
 				continue
 			var cell := room_origin + Vector2i(x, y)
-			_add_machine_house_cell_visual(cell, symbol)
 			if symbol in ["X", "R", "S", "L", "B"]:
 				_add_machine_house_cell_collision(cell, symbol)
-
-
-func _add_machine_house_cell_visual(cell: Vector2i, symbol: String) -> void:
-	var colors := {
-		"X": Color(0.16, 0.17, 0.18, 1.0),
-		"R": Color(0.20, 0.24, 0.25, 1.0),
-		"S": Color(0.24, 0.22, 0.18, 1.0),
-		"G": Color(0.11, 0.14, 0.15, 1.0),
-		"L": Color(0.19, 0.20, 0.19, 1.0),
-		"B": Color(0.24, 0.19, 0.14, 1.0),
-		"D": Color(0.42, 0.31, 0.16, 1.0),
-	}
-	var visual := Polygon2D.new()
-	visual.name = "Cell%s_%d_%d" % [symbol, cell.x, cell.y]
-	visual.color = colors.get(symbol, Color.WHITE)
-	visual.z_as_relative = false
-	visual.z_index = -35 if symbol == "G" or symbol == "D" else -20
-	var top_left := _tile_to_local(cell)
-	visual.polygon = PackedVector2Array([
-		top_left,
-		top_left + Vector2(TILE_SIZE, 0.0),
-		top_left + Vector2(TILE_SIZE, TILE_SIZE),
-		top_left + Vector2(0.0, TILE_SIZE),
-	])
-	_machine_house_root.add_child(visual)
 
 
 func _add_machine_house_cell_collision(cell: Vector2i, symbol: String) -> void:
@@ -348,6 +375,8 @@ func get_machine_house_debug_state() -> Dictionary:
 		"has_entry_door": get_node_or_null("EnterEastMachineHouse") != null,
 		"has_exit_door": _machine_house_root != null and _machine_house_root.get_node_or_null("LeaveEastMachineHouse") != null,
 		"structure_sites": _structure_sites.duplicate(true),
+		"floor_tile_count": _machine_house_root.get_node("CarrowFloorTiles").get_child_count() if _machine_house_root != null else 0,
+		"production_art_count": _machine_house_root.get_node("ProductionArt").get_child_count() if _machine_house_root != null else 0,
 	}
 
 

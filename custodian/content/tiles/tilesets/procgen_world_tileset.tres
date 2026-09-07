@@ -150,6 +150,71 @@
 [ext_resource type="Texture2D" uid="uid://4q7yop0x37gd" path="res://content/tiles/mountain_cliffs/void_fascia/void_cliff_face_bottom_01_32.png" id="153_void_cliff_face_bottom"]
 [ext_resource type="Texture2D" uid="uid://ytpvv76o03bm" path="res://content/tiles/mountain_cliffs/void_fascia/void_cliff_face_bottom_broken_01_32.png" id="154_void_cliff_face_bottom_broken"]
 
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_access_panel_01_32.png" id="155_interior_floor_carrow_access_panel_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_access_panel_02_32.png" id="156_interior_floor_carrow_access_panel_02_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_brace_x_01_32.png" id="157_interior_floor_carrow_brace_x_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_conduit_clamp_horizontal_01_32.png" id="158_interior_floor_carrow_conduit_clamp_horizontal_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_conduit_clamp_horizontal_02_32.png" id="159_interior_floor_carrow_conduit_clamp_horizontal_02_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_conduit_corner_01_32.png" id="160_interior_floor_carrow_conduit_corner_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_conduit_corner_02_32.png" id="161_interior_floor_carrow_conduit_corner_02_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_conduit_cross_01_32.png" id="162_interior_floor_carrow_conduit_cross_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_conduit_cross_02_32.png" id="163_interior_floor_carrow_conduit_cross_02_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_conduit_horizontal_01_32.png" id="164_interior_floor_carrow_conduit_horizontal_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_conduit_horizontal_clamp_01_32.png" id="165_interior_floor_carrow_conduit_horizontal_clamp_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_conduit_indicator_edge_01_32.png" id="166_interior_floor_carrow_conduit_indicator_edge_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_conduit_indicator_edge_02_32.png" id="167_interior_floor_carrow_conduit_indicator_edge_02_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_conduit_indicator_vertical_01_32.png" id="168_interior_floor_carrow_conduit_indicator_vertical_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_conduit_indicator_vertical_02_32.png" id="169_interior_floor_carrow_conduit_indicator_vertical_02_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_conduit_port_01_32.png" id="170_interior_floor_carrow_conduit_port_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_conduit_t_01_32.png" id="171_interior_floor_carrow_conduit_t_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_conduit_t_02_32.png" id="172_interior_floor_carrow_conduit_t_02_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_conduit_vertical_01_32.png" id="173_interior_floor_carrow_conduit_vertical_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_conduit_vertical_02_32.png" id="174_interior_floor_carrow_conduit_vertical_02_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_conduit_vertical_clamp_01_32.png" id="175_interior_floor_carrow_conduit_vertical_clamp_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_drain_round_01_32.png" id="176_interior_floor_carrow_drain_round_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_drain_square_01_32.png" id="177_interior_floor_carrow_drain_square_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_edge_bevel_01_32.png" id="178_interior_floor_carrow_edge_bevel_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_edge_plain_01_32.png" id="179_interior_floor_carrow_edge_plain_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_edge_vent_corner_01_32.png" id="180_interior_floor_carrow_edge_vent_corner_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_edge_vent_corner_02_32.png" id="181_interior_floor_carrow_edge_vent_corner_02_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_edge_vent_horizontal_01_32.png" id="182_interior_floor_carrow_edge_vent_horizontal_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_edge_vent_vertical_01_32.png" id="183_interior_floor_carrow_edge_vent_vertical_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_grate_grid_01_32.png" id="184_interior_floor_carrow_grate_grid_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_grate_honeycomb_01_32.png" id="185_interior_floor_carrow_grate_honeycomb_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_grate_horizontal_01_32.png" id="186_interior_floor_carrow_grate_horizontal_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_grate_horizontal_02_32.png" id="187_interior_floor_carrow_grate_horizontal_02_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_grate_slots_01_32.png" id="188_interior_floor_carrow_grate_slots_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_grate_slots_02_32.png" id="189_interior_floor_carrow_grate_slots_02_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_grate_vertical_01_32.png" id="190_interior_floor_carrow_grate_vertical_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_hatch_small_01_32.png" id="191_interior_floor_carrow_hatch_small_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_hazard_diagonal_01_32.png" id="192_interior_floor_carrow_hazard_diagonal_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_hazard_diagonal_02_32.png" id="193_interior_floor_carrow_hazard_diagonal_02_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_indicator_panel_01_32.png" id="194_interior_floor_carrow_indicator_panel_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_indicator_quad_01_32.png" id="195_interior_floor_carrow_indicator_quad_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_marking_bracket_01_32.png" id="196_interior_floor_carrow_marking_bracket_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_marking_corner_01_32.png" id="197_interior_floor_carrow_marking_corner_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_marking_cross_01_32.png" id="198_interior_floor_carrow_marking_cross_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_marking_line_01_32.png" id="199_interior_floor_carrow_marking_line_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_panel_bolted_01_32.png" id="200_interior_floor_carrow_panel_bolted_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_service_panel_01_32.png" id="201_interior_floor_carrow_service_panel_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_slab_cracked_01_32.png" id="202_interior_floor_carrow_slab_cracked_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_slab_cracked_02_32.png" id="203_interior_floor_carrow_slab_cracked_02_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_slab_oil_01_32.png" id="204_interior_floor_carrow_slab_oil_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_slab_oil_02_32.png" id="205_interior_floor_carrow_slab_oil_02_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_slab_plain_01_32.png" id="206_interior_floor_carrow_slab_plain_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_slab_pocked_01_32.png" id="207_interior_floor_carrow_slab_pocked_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_slab_scuffed_01_32.png" id="208_interior_floor_carrow_slab_scuffed_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_slab_worn_01_32.png" id="209_interior_floor_carrow_slab_worn_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_slot_small_01_32.png" id="210_interior_floor_carrow_slot_small_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_socket_small_01_32.png" id="211_interior_floor_carrow_socket_small_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_tread_01_32.png" id="212_interior_floor_carrow_tread_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_tread_hazard_left_01_32.png" id="213_interior_floor_carrow_tread_hazard_left_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_tread_hazard_right_01_32.png" id="214_interior_floor_carrow_tread_hazard_right_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_tread_scuffed_01_32.png" id="215_interior_floor_carrow_tread_scuffed_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_tread_worn_01_32.png" id="216_interior_floor_carrow_tread_worn_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_vent_square_01_32.png" id="217_interior_floor_carrow_vent_square_01_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_carrow_vent_triple_01_32.png" id="218_interior_floor_carrow_vent_triple_01_32"]
+
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_floor"]
 texture = ExtResource("1_floor")
 0:0/0 = 0
@@ -1377,6 +1442,326 @@ texture = ExtResource("99_ascent_terrain_landing_stone_32")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_access_panel_01_32"]
+texture = ExtResource("155_interior_floor_carrow_access_panel_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_access_panel_02_32"]
+texture = ExtResource("156_interior_floor_carrow_access_panel_02_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_brace_x_01_32"]
+texture = ExtResource("157_interior_floor_carrow_brace_x_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_conduit_clamp_horizontal_01_32"]
+texture = ExtResource("158_interior_floor_carrow_conduit_clamp_horizontal_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_conduit_clamp_horizontal_02_32"]
+texture = ExtResource("159_interior_floor_carrow_conduit_clamp_horizontal_02_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_conduit_corner_01_32"]
+texture = ExtResource("160_interior_floor_carrow_conduit_corner_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_conduit_corner_02_32"]
+texture = ExtResource("161_interior_floor_carrow_conduit_corner_02_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_conduit_cross_01_32"]
+texture = ExtResource("162_interior_floor_carrow_conduit_cross_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_conduit_cross_02_32"]
+texture = ExtResource("163_interior_floor_carrow_conduit_cross_02_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_conduit_horizontal_01_32"]
+texture = ExtResource("164_interior_floor_carrow_conduit_horizontal_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_conduit_horizontal_clamp_01_32"]
+texture = ExtResource("165_interior_floor_carrow_conduit_horizontal_clamp_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_conduit_indicator_edge_01_32"]
+texture = ExtResource("166_interior_floor_carrow_conduit_indicator_edge_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_conduit_indicator_edge_02_32"]
+texture = ExtResource("167_interior_floor_carrow_conduit_indicator_edge_02_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_conduit_indicator_vertical_01_32"]
+texture = ExtResource("168_interior_floor_carrow_conduit_indicator_vertical_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_conduit_indicator_vertical_02_32"]
+texture = ExtResource("169_interior_floor_carrow_conduit_indicator_vertical_02_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_conduit_port_01_32"]
+texture = ExtResource("170_interior_floor_carrow_conduit_port_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_conduit_t_01_32"]
+texture = ExtResource("171_interior_floor_carrow_conduit_t_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_conduit_t_02_32"]
+texture = ExtResource("172_interior_floor_carrow_conduit_t_02_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_conduit_vertical_01_32"]
+texture = ExtResource("173_interior_floor_carrow_conduit_vertical_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_conduit_vertical_02_32"]
+texture = ExtResource("174_interior_floor_carrow_conduit_vertical_02_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_conduit_vertical_clamp_01_32"]
+texture = ExtResource("175_interior_floor_carrow_conduit_vertical_clamp_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_drain_round_01_32"]
+texture = ExtResource("176_interior_floor_carrow_drain_round_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_drain_square_01_32"]
+texture = ExtResource("177_interior_floor_carrow_drain_square_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_edge_bevel_01_32"]
+texture = ExtResource("178_interior_floor_carrow_edge_bevel_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_edge_plain_01_32"]
+texture = ExtResource("179_interior_floor_carrow_edge_plain_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_edge_vent_corner_01_32"]
+texture = ExtResource("180_interior_floor_carrow_edge_vent_corner_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_edge_vent_corner_02_32"]
+texture = ExtResource("181_interior_floor_carrow_edge_vent_corner_02_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_edge_vent_horizontal_01_32"]
+texture = ExtResource("182_interior_floor_carrow_edge_vent_horizontal_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_edge_vent_vertical_01_32"]
+texture = ExtResource("183_interior_floor_carrow_edge_vent_vertical_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_grate_grid_01_32"]
+texture = ExtResource("184_interior_floor_carrow_grate_grid_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_grate_honeycomb_01_32"]
+texture = ExtResource("185_interior_floor_carrow_grate_honeycomb_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_grate_horizontal_01_32"]
+texture = ExtResource("186_interior_floor_carrow_grate_horizontal_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_grate_horizontal_02_32"]
+texture = ExtResource("187_interior_floor_carrow_grate_horizontal_02_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_grate_slots_01_32"]
+texture = ExtResource("188_interior_floor_carrow_grate_slots_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_grate_slots_02_32"]
+texture = ExtResource("189_interior_floor_carrow_grate_slots_02_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_grate_vertical_01_32"]
+texture = ExtResource("190_interior_floor_carrow_grate_vertical_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_hatch_small_01_32"]
+texture = ExtResource("191_interior_floor_carrow_hatch_small_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_hazard_diagonal_01_32"]
+texture = ExtResource("192_interior_floor_carrow_hazard_diagonal_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_hazard_diagonal_02_32"]
+texture = ExtResource("193_interior_floor_carrow_hazard_diagonal_02_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_indicator_panel_01_32"]
+texture = ExtResource("194_interior_floor_carrow_indicator_panel_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_indicator_quad_01_32"]
+texture = ExtResource("195_interior_floor_carrow_indicator_quad_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_marking_bracket_01_32"]
+texture = ExtResource("196_interior_floor_carrow_marking_bracket_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_marking_corner_01_32"]
+texture = ExtResource("197_interior_floor_carrow_marking_corner_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_marking_cross_01_32"]
+texture = ExtResource("198_interior_floor_carrow_marking_cross_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_marking_line_01_32"]
+texture = ExtResource("199_interior_floor_carrow_marking_line_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_panel_bolted_01_32"]
+texture = ExtResource("200_interior_floor_carrow_panel_bolted_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_service_panel_01_32"]
+texture = ExtResource("201_interior_floor_carrow_service_panel_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_slab_cracked_01_32"]
+texture = ExtResource("202_interior_floor_carrow_slab_cracked_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_slab_cracked_02_32"]
+texture = ExtResource("203_interior_floor_carrow_slab_cracked_02_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_slab_oil_01_32"]
+texture = ExtResource("204_interior_floor_carrow_slab_oil_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_slab_oil_02_32"]
+texture = ExtResource("205_interior_floor_carrow_slab_oil_02_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_slab_plain_01_32"]
+texture = ExtResource("206_interior_floor_carrow_slab_plain_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_slab_pocked_01_32"]
+texture = ExtResource("207_interior_floor_carrow_slab_pocked_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_slab_scuffed_01_32"]
+texture = ExtResource("208_interior_floor_carrow_slab_scuffed_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_slab_worn_01_32"]
+texture = ExtResource("209_interior_floor_carrow_slab_worn_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_slot_small_01_32"]
+texture = ExtResource("210_interior_floor_carrow_slot_small_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_socket_small_01_32"]
+texture = ExtResource("211_interior_floor_carrow_socket_small_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_tread_01_32"]
+texture = ExtResource("212_interior_floor_carrow_tread_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_tread_hazard_left_01_32"]
+texture = ExtResource("213_interior_floor_carrow_tread_hazard_left_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_tread_hazard_right_01_32"]
+texture = ExtResource("214_interior_floor_carrow_tread_hazard_right_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_tread_scuffed_01_32"]
+texture = ExtResource("215_interior_floor_carrow_tread_scuffed_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_tread_worn_01_32"]
+texture = ExtResource("216_interior_floor_carrow_tread_worn_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_vent_square_01_32"]
+texture = ExtResource("217_interior_floor_carrow_vent_square_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_carrow_vent_triple_01_32"]
+texture = ExtResource("218_interior_floor_carrow_vent_triple_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
 [resource]
 tile_size = Vector2i(32, 32)
 sources/0 = SubResource("TileSetAtlasSource_floor")
@@ -1528,3 +1913,67 @@ sources/151 = SubResource("TileSetAtlasSource_void_cliff_face_body_02")
 sources/152 = SubResource("TileSetAtlasSource_void_cliff_face_body_cracked")
 sources/153 = SubResource("TileSetAtlasSource_void_cliff_face_bottom")
 sources/154 = SubResource("TileSetAtlasSource_void_cliff_face_bottom_broken")
+sources/155 = SubResource("TileSetAtlasSource_interior_floor_carrow_access_panel_01_32")
+sources/156 = SubResource("TileSetAtlasSource_interior_floor_carrow_access_panel_02_32")
+sources/157 = SubResource("TileSetAtlasSource_interior_floor_carrow_brace_x_01_32")
+sources/158 = SubResource("TileSetAtlasSource_interior_floor_carrow_conduit_clamp_horizontal_01_32")
+sources/159 = SubResource("TileSetAtlasSource_interior_floor_carrow_conduit_clamp_horizontal_02_32")
+sources/160 = SubResource("TileSetAtlasSource_interior_floor_carrow_conduit_corner_01_32")
+sources/161 = SubResource("TileSetAtlasSource_interior_floor_carrow_conduit_corner_02_32")
+sources/162 = SubResource("TileSetAtlasSource_interior_floor_carrow_conduit_cross_01_32")
+sources/163 = SubResource("TileSetAtlasSource_interior_floor_carrow_conduit_cross_02_32")
+sources/164 = SubResource("TileSetAtlasSource_interior_floor_carrow_conduit_horizontal_01_32")
+sources/165 = SubResource("TileSetAtlasSource_interior_floor_carrow_conduit_horizontal_clamp_01_32")
+sources/166 = SubResource("TileSetAtlasSource_interior_floor_carrow_conduit_indicator_edge_01_32")
+sources/167 = SubResource("TileSetAtlasSource_interior_floor_carrow_conduit_indicator_edge_02_32")
+sources/168 = SubResource("TileSetAtlasSource_interior_floor_carrow_conduit_indicator_vertical_01_32")
+sources/169 = SubResource("TileSetAtlasSource_interior_floor_carrow_conduit_indicator_vertical_02_32")
+sources/170 = SubResource("TileSetAtlasSource_interior_floor_carrow_conduit_port_01_32")
+sources/171 = SubResource("TileSetAtlasSource_interior_floor_carrow_conduit_t_01_32")
+sources/172 = SubResource("TileSetAtlasSource_interior_floor_carrow_conduit_t_02_32")
+sources/173 = SubResource("TileSetAtlasSource_interior_floor_carrow_conduit_vertical_01_32")
+sources/174 = SubResource("TileSetAtlasSource_interior_floor_carrow_conduit_vertical_02_32")
+sources/175 = SubResource("TileSetAtlasSource_interior_floor_carrow_conduit_vertical_clamp_01_32")
+sources/176 = SubResource("TileSetAtlasSource_interior_floor_carrow_drain_round_01_32")
+sources/177 = SubResource("TileSetAtlasSource_interior_floor_carrow_drain_square_01_32")
+sources/178 = SubResource("TileSetAtlasSource_interior_floor_carrow_edge_bevel_01_32")
+sources/179 = SubResource("TileSetAtlasSource_interior_floor_carrow_edge_plain_01_32")
+sources/180 = SubResource("TileSetAtlasSource_interior_floor_carrow_edge_vent_corner_01_32")
+sources/181 = SubResource("TileSetAtlasSource_interior_floor_carrow_edge_vent_corner_02_32")
+sources/182 = SubResource("TileSetAtlasSource_interior_floor_carrow_edge_vent_horizontal_01_32")
+sources/183 = SubResource("TileSetAtlasSource_interior_floor_carrow_edge_vent_vertical_01_32")
+sources/184 = SubResource("TileSetAtlasSource_interior_floor_carrow_grate_grid_01_32")
+sources/185 = SubResource("TileSetAtlasSource_interior_floor_carrow_grate_honeycomb_01_32")
+sources/186 = SubResource("TileSetAtlasSource_interior_floor_carrow_grate_horizontal_01_32")
+sources/187 = SubResource("TileSetAtlasSource_interior_floor_carrow_grate_horizontal_02_32")
+sources/188 = SubResource("TileSetAtlasSource_interior_floor_carrow_grate_slots_01_32")
+sources/189 = SubResource("TileSetAtlasSource_interior_floor_carrow_grate_slots_02_32")
+sources/190 = SubResource("TileSetAtlasSource_interior_floor_carrow_grate_vertical_01_32")
+sources/191 = SubResource("TileSetAtlasSource_interior_floor_carrow_hatch_small_01_32")
+sources/192 = SubResource("TileSetAtlasSource_interior_floor_carrow_hazard_diagonal_01_32")
+sources/193 = SubResource("TileSetAtlasSource_interior_floor_carrow_hazard_diagonal_02_32")
+sources/194 = SubResource("TileSetAtlasSource_interior_floor_carrow_indicator_panel_01_32")
+sources/195 = SubResource("TileSetAtlasSource_interior_floor_carrow_indicator_quad_01_32")
+sources/196 = SubResource("TileSetAtlasSource_interior_floor_carrow_marking_bracket_01_32")
+sources/197 = SubResource("TileSetAtlasSource_interior_floor_carrow_marking_corner_01_32")
+sources/198 = SubResource("TileSetAtlasSource_interior_floor_carrow_marking_cross_01_32")
+sources/199 = SubResource("TileSetAtlasSource_interior_floor_carrow_marking_line_01_32")
+sources/200 = SubResource("TileSetAtlasSource_interior_floor_carrow_panel_bolted_01_32")
+sources/201 = SubResource("TileSetAtlasSource_interior_floor_carrow_service_panel_01_32")
+sources/202 = SubResource("TileSetAtlasSource_interior_floor_carrow_slab_cracked_01_32")
+sources/203 = SubResource("TileSetAtlasSource_interior_floor_carrow_slab_cracked_02_32")
+sources/204 = SubResource("TileSetAtlasSource_interior_floor_carrow_slab_oil_01_32")
+sources/205 = SubResource("TileSetAtlasSource_interior_floor_carrow_slab_oil_02_32")
+sources/206 = SubResource("TileSetAtlasSource_interior_floor_carrow_slab_plain_01_32")
+sources/207 = SubResource("TileSetAtlasSource_interior_floor_carrow_slab_pocked_01_32")
+sources/208 = SubResource("TileSetAtlasSource_interior_floor_carrow_slab_scuffed_01_32")
+sources/209 = SubResource("TileSetAtlasSource_interior_floor_carrow_slab_worn_01_32")
+sources/210 = SubResource("TileSetAtlasSource_interior_floor_carrow_slot_small_01_32")
+sources/211 = SubResource("TileSetAtlasSource_interior_floor_carrow_socket_small_01_32")
+sources/212 = SubResource("TileSetAtlasSource_interior_floor_carrow_tread_01_32")
+sources/213 = SubResource("TileSetAtlasSource_interior_floor_carrow_tread_hazard_left_01_32")
+sources/214 = SubResource("TileSetAtlasSource_interior_floor_carrow_tread_hazard_right_01_32")
+sources/215 = SubResource("TileSetAtlasSource_interior_floor_carrow_tread_scuffed_01_32")
+sources/216 = SubResource("TileSetAtlasSource_interior_floor_carrow_tread_worn_01_32")
+sources/217 = SubResource("TileSetAtlasSource_interior_floor_carrow_vent_square_01_32")
+sources/218 = SubResource("TileSetAtlasSource_interior_floor_carrow_vent_triple_01_32")

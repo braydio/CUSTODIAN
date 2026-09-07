@@ -658,5 +658,14 @@
     }
   },
   "aliases": {},
-  "consumers": []
+  "consumers": [
+    {
+      "type": "script",
+      "path": "res://game/world/gothic_compound/gothic_compound_map.gd"
+    },
+    {
+      "type": "resource",
+      "path": "res://content/tiles/tilesets/procgen_world_tileset.tres"
+    }
+  ]
 }

@@ -1,6 +1,6 @@
 # Gothic Compound Procgen
 
-Status: implemented-first-slice; canonical Carrow Yard interior slice in progress
+Status: implemented-first-slice; canonical Carrow Yard production-art slice implemented
 
 ## Canonical identity
 
@@ -28,6 +28,10 @@ The first implementation slice lives under `custodian/game/world/procgen/gothic_
 The generator currently uses a Sprite2D adapter for the authored connected-map prototype. The split is intentionally kept compatible with a later TileMapLayer adapter for the main tactical procgen map.
 
 The connected-map prototype now uses explicit render bands for the Sprite2D adapter: terrain, roads, and decals render below the operator; low/static cover renders as normal props; large buildings and tall exterior occluders carry metadata for player-relative depth sorting. The connected map calls the sprite context each frame so the operator renders in front of buildings until their feet cross the building's depth horizon.
+
+The Carrow travel interactable now uses the Asset Pipeline V2 District Transfer Frame family. Body, threshold, shadow, dressing, emissive, pedestal-screen, boot, aperture, and failure layers are explicit presentation state; emissive and screen variants are discrete machine states, not animation strips. Travel authority and timing remain unchanged.
+
+The East Machine House retains its locked 12×8 symbol grid and separately authored collision. Its presentation uses the V2 Carrow floor family across all 96 cells plus selected multi-cell wall modules and entry, relay, switchgear, workbench, storage, and conduit props. Wall footprint metadata informs authored placement only; painted alpha never owns collision or navigation.
 
 ## Required Invariants
 

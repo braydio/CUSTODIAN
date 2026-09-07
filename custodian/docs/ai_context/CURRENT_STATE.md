@@ -167,6 +167,8 @@ The former player-facing Gothic Compound is canonically **Carrow Yard** (`carrow
 
 The deterministic generator now publishes named structure sites for the Operations House, East Machine House, West Draft House, Alarm Gantry, and Yard Control Terminal. The East Machine House replaces the former authored-vault overlay with a 12×8 off-map interior, paired interaction doors, hardened-floor/machinery layout, collision boundaries, three renamed service-storage caches, an interior lighting zone, and one warm maintenance light.
 
+Carrow production art now enters through four Asset Pipeline V2 families: the District Transfer Frame, 64 Machine House floor states, 49 multi-cell wall modules, and 11 Machine House props. The travel gate is a layered Transfer Frame with discrete inactive/available/acquiring/active/failure presentation, while the East Machine House uses 96 registered floor sprites and authored wall/prop placements over the unchanged symbol-grid collision authority. Multi-cell walls remain sprites and are not forced into the 32 px TileSet registrar.
+
 Environment exposure is now resolved through the generic `environment_region_provider` group. Procgen and Carrow Yard both publish spatial ownership plus independent daylight and weather exposure. Entering the Machine House reduces environment exposure to `0.10`, suppresses weather to `0.0`, and leaves the deterministic clock/weather schedule advancing outside.
 
 ## Canon Migration (2026-09-03)

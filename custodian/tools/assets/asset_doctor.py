@@ -15,6 +15,7 @@ from asset_inspector import inspect_png
 from asset_classifier import classify_input
 from asset_catalog import file_hash, load_catalog
 from asset_plan import generate_plan
+from asset_naming import parse_canonical_filename
 from asset_router import load_kind_schemas
 
 
@@ -80,9 +81,39 @@ def _check_inbox(fam: AssetFamilyContract, project_dir: Path, issues: list[Docto
         return
 
     for png in inbox.glob("*.png"):
-        from asset_inspector import inspect_png
-        insp = inspect_png(png, fam.frame_width, fam.frame_height)
-        from asset_classifier import classify_input
+        provisional_sid = None
+        try:
+            canonical = parse_canonical_filename(png.name, fam.kind)
+            for sid, candidate in fam.states.items():
+                if (
+                    candidate.layer,
+                    candidate.action_group,
+                    candidate.variant,
+                ) == (
+                    canonical.layer,
+                    canonical.action_group,
+                    canonical.variant,
+                ):
+                    provisional_sid = sid
+                    break
+        except (TypeError, ValueError):
+            state_hint = png.stem.rsplit("__", 1)[0] if "__" in png.stem else png.stem
+            provisional_sid, _ = fam.resolve_state(state_hint)
+
+        state = fam.states.get(provisional_sid) if provisional_sid else None
+        frame_width, frame_height = (
+            fam.state_frame_size(state)
+            if state
+            else (fam.frame_width, fam.frame_height)
+        )
+        insp = inspect_png(
+            png,
+            frame_width,
+            frame_height,
+            state.layout if state else "auto",
+            state.columns if state else None,
+            state.rows if state else None,
+        )
         res = classify_input(fam, png.stem, insp)
         if res.confidence.value == "ambiguous":
             issues.append(DoctorIssue(

@@ -61,6 +61,14 @@ func _run() -> void:
 
 	var room := map.get_node_or_null("EastMachineHouseInterior")
 	_require(room != null, "East Machine House root missing")
+	_require(int(state.floor_tile_count) == 96, "Carrow floor did not fill the 12x8 room")
+	_require(int(state.production_art_count) == 13, "Machine House production-art placement count mismatch")
+	_require(room.get_node_or_null("CarrowFloorTiles/Floor_00_00") is Sprite2D, "Carrow floor sprites are missing")
+	_require(room.get_node_or_null("ProductionArt/Entry") is Sprite2D, "Machine House entry art is missing")
+	for art_name in ["NorthWallPanelled", "NorthWallConduit", "RelayBank", "Switchgear", "Workbench", "PartsLocker", "ServiceCabinet", "ConduitJunction"]:
+		var sprite := room.get_node_or_null("ProductionArt/" + art_name) as Sprite2D
+		_require(sprite != null and sprite.texture != null, "missing production art: %s" % art_name)
+	_require(room.find_children("Cell*", "Polygon2D", true, false).is_empty(), "legacy greybox cell visuals remain")
 	for expected_name in ["CarrowServicePartsLocker", "CarrowStructuralSparesRack", "CarrowPowerComponentsCabinet", "MachineHouseLightingZone", "SwitchBankMaintenanceLight"]:
 		_require(room.get_node_or_null(expected_name) != null, "missing interior node: %s" % expected_name)
 	var lighting_zone := room.get_node_or_null("MachineHouseLightingZone") as LightingZone2D
@@ -68,6 +76,20 @@ func _run() -> void:
 	if lighting_zone != null and lighting_zone.profile != null:
 		_require(is_equal_approx(lighting_zone.profile.environment_influence, 0.10), "lighting profile environment influence mismatch")
 		_require(is_equal_approx(lighting_zone.profile.weather_influence, 0.03), "lighting profile weather influence mismatch")
+
+	var gate := map.get_node_or_null("ReturnToMainMapGate") as GothicCompoundTravelGate
+	_require(gate != null, "Carrow return Transfer Frame is missing")
+	if gate != null:
+		var gate_state := gate.get_presentation_debug_state()
+		_require(int(gate_state.state) == GothicCompoundTravelGate.PresentationState.ROUTE_AVAILABLE, "Transfer Frame did not initialize route-available")
+		_require((gate_state.production_layers as Array).size() == 17, "Transfer Frame production layer count mismatch")
+		_require(gate_state.scale == Vector2.ONE, "Transfer Frame art was scaled")
+		gate.set_presentation_state(GothicCompoundTravelGate.PresentationState.ACTIVE)
+		gate_state = gate.get_presentation_debug_state()
+		_require(int(gate_state.interaction_frames) == 8, "aperture loop is not eight frames")
+		gate.set_presentation_state(GothicCompoundTravelGate.PresentationState.ACTIVATING)
+		gate_state = gate.get_presentation_debug_state()
+		_require(int(gate_state.interaction_frames) == 6, "boot strip is not six frames")
 
 	if _failed:
 		quit(1)

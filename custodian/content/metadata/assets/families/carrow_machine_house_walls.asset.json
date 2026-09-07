@@ -508,5 +508,10 @@
     }
   },
   "aliases": {},
-  "consumers": []
+  "consumers": [
+    {
+      "type": "script",
+      "path": "res://game/world/gothic_compound/gothic_compound_map.gd"
+    }
+  ]
 }

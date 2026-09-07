@@ -10,6 +10,7 @@ ROOT=Path(__file__).resolve().parents[2]; ASSETS=ROOT/"tools/assets"
 sys.path.insert(0,str(ASSETS))
 from asset_catalog import CatalogEntry,asset_catalog_key,load_catalog,save_catalog,update_catalog_entry
 from asset_contract import load_all_families,load_family
+from asset_doctor import DoctorIssue,_check_inbox
 from asset_inspector import FrameLayout,inspect_png
 from asset_plan import generate_plan
 from asset_router import load_kind_schemas
@@ -32,6 +33,14 @@ def main():
         expected={f"content/tiles/mountain_cliffs/void_fascia/void_cliff_face_{sid}_32.png" for sid in tile.states}
         assert {o.target_relative_path.as_posix() for o in plan.outputs}==expected
         assert all(a.backend=="runtime_ready" and a.inspection.layout==FrameLayout.COPY and a.inspection.frame_count==1 for a in plan.assets)
+
+        # Doctor must inspect mixed-canvas families with each resolved state's
+        # dimensions rather than the family's default canvas.
+        transfer=families["district_transfer_frame"]
+        png(root/"asset_drop/inbox/district_transfer_frame/threshold.png",(160,96))
+        doctor_issues:list[DoctorIssue]=[]
+        _check_inbox(transfer,root,doctor_issues)
+        assert not doctor_issues, doctor_issues
 
         asset_cli.FAMILIES_DIR=root/"families"; asset_cli.INBOX_ROOT=root/"inbox"
         for family_id,kind,size,direction in (("test_enemy","enemy","96x96","8dir"),("test_tile","tile","32x32","omni")):

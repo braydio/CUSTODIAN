@@ -1,0 +1,1493 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260907T033526Z_2c49ae5d",
+  "timestamp": "2026-09-07T03:35:26.231296+00:00",
+  "family": "carrow_machine_house_floor",
+  "kind": "tile",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/access_panel_01.png",
+      "sha256": "d20408dfa519ecc6f550a6e5030c54a28bf0eaeb2024f0a8d20484401e33c1e5"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/access_panel_02.png",
+      "sha256": "50874ee9d6b89ec09f6102a034c2bf15ee1cf233b26890f866aaf99b5a96c7b4"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/brace_x_01.png",
+      "sha256": "01d8210b7fdaa9fc5e5b52125c426b554a5bab352ea79732253c3068ed50ea94"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/conduit_clamp_horizontal_01.png",
+      "sha256": "73121993117a05ace5e82b25168c52925b49a5edeefe81bb94fcb0694ce79844"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/conduit_clamp_horizontal_02.png",
+      "sha256": "d936395bebff0537def8b0495c0c4dbff854e57ccaf0cf0214c1d8f560b078b0"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/conduit_corner_01.png",
+      "sha256": "09848ce8ec68c6d438e7a3cf7b3a857131f63bf79475c85722b18e9bd34cb998"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/conduit_corner_02.png",
+      "sha256": "7510047ab93903ec0f635fe951b8a46206982cd37813820017f2293926e57caf"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/conduit_cross_01.png",
+      "sha256": "f51a2244ee3b6f851025074811246895817a39ac3c5c49479f65fbd1e9b7b68e"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/conduit_cross_02.png",
+      "sha256": "4e14b7d03f567102baddc5a4bb262a0be38fe6f1b094f8c05c298214bb784e61"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/conduit_horizontal_01.png",
+      "sha256": "8c0a21add678b7c69781b3dda0b45012bec67640ba43e58486579d799c0b7a90"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/conduit_horizontal_clamp_01.png",
+      "sha256": "d97e524c9cbd7422005f37187b94a6f87d420eaf3edd7e919061dcbbe0a9b9f4"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/conduit_indicator_edge_01.png",
+      "sha256": "4070ec95007c543975749617f9e311475edf77bba2c8c152f6426a6b90ca5798"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/conduit_indicator_edge_02.png",
+      "sha256": "666fb2bfa6d61a91927374424bda1c9210e405d233dbfdb28306c03414a648e0"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/conduit_indicator_vertical_01.png",
+      "sha256": "5d492c11ca0b4569bf69844908758c77161ff4b5aced44a8f5acacb3175a2567"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/conduit_indicator_vertical_02.png",
+      "sha256": "1869bbbcfc93df7e775307bace8caec509cbe189a3af3e7ebf6e15af1dde0466"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/conduit_port_01.png",
+      "sha256": "f92ebe0df034370c32d3ba2404564985a0d49f2361a7c6ccfd1cde4fd7a0c247"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/conduit_t_01.png",
+      "sha256": "3d6d3e95d5b38f8f35bd756e89d40b2e22da188503eb1c38a082e500487027b7"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/conduit_t_02.png",
+      "sha256": "ebc432a5b92cc33f0b052c51601e71e58d25a90ec8e1ea81cb2ee639aa6b9cb0"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/conduit_vertical_01.png",
+      "sha256": "95605387834f05bc5a8ba4764b38dca5085ef3115e1e20868061bc8f2a163074"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/conduit_vertical_02.png",
+      "sha256": "8e6f8ffcc921368fdf5d6d54b3df33712d73d6251ea84f1afa4ed9c9b6030fc1"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/conduit_vertical_clamp_01.png",
+      "sha256": "166ee27960b3cc42d91212ace718e8c25841397eadd7ca68491562beb518e083"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/drain_round_01.png",
+      "sha256": "aeb43f42a2a9376f9bd205cf041aaf2e351992db1ab4ab188406725fa0fb8190"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/drain_square_01.png",
+      "sha256": "bdb2ea96732fb075323439fd4f7650d75077439bbed0e87014585f795884e551"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/edge_bevel_01.png",
+      "sha256": "c1efe96e47f6c282760dec3ae6a0ca5e0e82f5be8668c93c607965bfe4e3930a"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/edge_plain_01.png",
+      "sha256": "7865ad1034a76b4cdadc7679fc3163152d74e156234a6c0c5748fbfaa76e0574"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/edge_vent_corner_01.png",
+      "sha256": "ced5f16b14b53c9fb77f5c455c20b54840a2a22ae5d66fd47fa471af7ef51e90"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/edge_vent_corner_02.png",
+      "sha256": "8ed6d34f5c96ead6dee3056b28fbe0d57bc2f3754b0bf951d911206556503407"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/edge_vent_horizontal_01.png",
+      "sha256": "92d93e2b03a721ba52f87ebe1767c5d1f00b77164f139aabcc98b0173c431dd6"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/edge_vent_vertical_01.png",
+      "sha256": "2c9ee01a364ec5a0bf21e4c880538e4358dad9c49602ebca66d46a3293a95028"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/grate_grid_01.png",
+      "sha256": "a79e1bd8ad31774f4ab329a82c2022aa96bf9729d42ea6561a3cfa944de58cdb"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/grate_honeycomb_01.png",
+      "sha256": "14abfcb2dec28459e2dc296bede3eaad763ed8cb585846dca46167caab8dbe42"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/grate_horizontal_01.png",
+      "sha256": "fdaf811151aaa4ad44245282075605468ffc8197f8b21f575074fced827224ef"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/grate_horizontal_02.png",
+      "sha256": "42ee75a8c5f61875ce39c9295923a04a14cca0d469d7490cb2973b2c482385ef"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/grate_slots_01.png",
+      "sha256": "06a479c337506d247d28954fefbe26df275631a1394e22de7d520f32ec3dd740"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/grate_slots_02.png",
+      "sha256": "3ceb629daea5d704354f9ac432b620ffdc1ab947e8bcb4dde5f3a86e66b74520"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/grate_vertical_01.png",
+      "sha256": "42e4be20fe122cb13cc1896417189d16154d706df04b1c8d612bfa0a8b985620"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/hatch_small_01.png",
+      "sha256": "8a1aafab78c28af63f67e5660802e65c149674ba8865a81eca9f8b6c4f1d0db3"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/hazard_diagonal_01.png",
+      "sha256": "daa6a338e0d28c28e6ad7bd7a0df914591e783635cf42f656b5f7a733cd189ca"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/hazard_diagonal_02.png",
+      "sha256": "19107ac5c1def6ee429362b39b4e6f29c70e6f761265ce312b400f92ea07dbbd"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/indicator_panel_01.png",
+      "sha256": "940483e20eca1caf796f85d221a149b9e2432b436216c486c113a2ff88be9881"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/indicator_quad_01.png",
+      "sha256": "d5f1d678802ba88c5f45b7bab9e4b6c15682241fd6cbf20f14bf39189c247057"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/marking_bracket_01.png",
+      "sha256": "a9953056dabffe33bc3fb3489dd192814db68cd6365c311c5bbaf8d8246c13a5"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/marking_corner_01.png",
+      "sha256": "dc3126bbfdcc318ff4a072b645b8cf87cb29265e82cdc1928953e0f9284e842b"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/marking_cross_01.png",
+      "sha256": "c88b0a1bccd3ddc137d447a7c83c97e5e033602eafc41198087295c4e6a811c3"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/marking_line_01.png",
+      "sha256": "c7308e3132f803031bc9a72f8386777784f0d3f454d0976fff16b73de83a53d2"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/panel_bolted_01.png",
+      "sha256": "c1591ba8013d904cf96eb77d060afc1d861d5cb76a70a03a47da2b4cfbc56069"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/service_panel_01.png",
+      "sha256": "5258437fc217ce0c7034c3eb0674818d0a1c39d2930bbf9236567c018697eac8"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/slab_cracked_01.png",
+      "sha256": "9c250d09e6be06fe252634318b05d816a3fe9accf31cc3d601b3f5f66ae90a8c"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/slab_cracked_02.png",
+      "sha256": "f51f9310a0d1238a4f5f3eb57eed2b188351da719bf4e3ad3a21b42fbff755cd"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/slab_oil_01.png",
+      "sha256": "946218cff1b24594de4002e6ca54700efba3faee75000a825e37c6bf5fdb8e22"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/slab_oil_02.png",
+      "sha256": "bd606361ca5e07a352cee754dde7510ca55c35b9fc6cdd86c7c7ee98ac5e2f3e"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/slab_plain_01.png",
+      "sha256": "4e147094b82ac3dae2af1a93999dd0fa5067fd8cc8ebd04d4a76f526cc42215b"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/slab_pocked_01.png",
+      "sha256": "bdd982b63cb0ce64d5fac088eab605ed61bd2a65ca21f8d89abdeb5dab82f1c3"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/slab_scuffed_01.png",
+      "sha256": "38a0d5c76c9d9ba5411fa1b9230818e283c2964b9475db3cd662271d753d9684"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/slab_worn_01.png",
+      "sha256": "c300e97d7c34506feadda2b56852adcda954c56518fad8e89655bccca97a07ba"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/slot_small_01.png",
+      "sha256": "dec0dde16da7883ce2fb635222236998ffca20e2390614c2bf3e1f0713215eda"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/socket_small_01.png",
+      "sha256": "f41f453fe675be6e8f523af46595c5f119277224364d25e7e6361ba5975ab4c3"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/tread_01.png",
+      "sha256": "370ea852c2a046815c942c6bfe7f86531d64cba1a697d6671fd8f56249d8dd3c"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/tread_hazard_left_01.png",
+      "sha256": "b227904af68dee883d344562c16bbce3db8850d437e7e82fe0a5c2a014c34b98"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/tread_hazard_right_01.png",
+      "sha256": "33ad8ec7e589d3ac34b8a5c059ff2deaec9c1e7c43423e418d0f0d73583ecd2d"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/tread_scuffed_01.png",
+      "sha256": "4abb28d87c46ee2dcb7de476efb06570de0112c1f2cfb7c356df19ad66a76f9d"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/tread_worn_01.png",
+      "sha256": "5d777ba3558e2c27f8592491bf548aa260900c71ef700ae70b1352bd47624f45"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/vent_square_01.png",
+      "sha256": "d299eb7bba7e71ecaff37faf3b8e6fa795d58b0eb0b75125fbf7d9f10b414e50"
+    },
+    {
+      "path": "asset_drop/inbox/carrow_machine_house_floor/vent_triple_01.png",
+      "sha256": "a4f61948d39710ae447f1af09aab42948fa25329b6db81563da9b8906b9ef3bb"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "access_panel_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "access_panel_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_access_panel_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "d20408dfa519ecc6f550a6e5030c54a28bf0eaeb2024f0a8d20484401e33c1e5",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "access_panel_02",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "access_panel_02",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_access_panel_02_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "50874ee9d6b89ec09f6102a034c2bf15ee1cf233b26890f866aaf99b5a96c7b4",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "brace_x_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "brace_x_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_brace_x_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "01d8210b7fdaa9fc5e5b52125c426b554a5bab352ea79732253c3068ed50ea94",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "conduit_clamp_horizontal_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "conduit_clamp_horizontal_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_conduit_clamp_horizontal_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "73121993117a05ace5e82b25168c52925b49a5edeefe81bb94fcb0694ce79844",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "conduit_clamp_horizontal_02",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "conduit_clamp_horizontal_02",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_conduit_clamp_horizontal_02_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "d936395bebff0537def8b0495c0c4dbff854e57ccaf0cf0214c1d8f560b078b0",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "conduit_corner_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "conduit_corner_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_conduit_corner_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "09848ce8ec68c6d438e7a3cf7b3a857131f63bf79475c85722b18e9bd34cb998",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "conduit_corner_02",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "conduit_corner_02",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_conduit_corner_02_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "7510047ab93903ec0f635fe951b8a46206982cd37813820017f2293926e57caf",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "conduit_cross_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "conduit_cross_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_conduit_cross_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "f51a2244ee3b6f851025074811246895817a39ac3c5c49479f65fbd1e9b7b68e",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "conduit_cross_02",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "conduit_cross_02",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_conduit_cross_02_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "4e14b7d03f567102baddc5a4bb262a0be38fe6f1b094f8c05c298214bb784e61",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "conduit_horizontal_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "conduit_horizontal_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_conduit_horizontal_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "8c0a21add678b7c69781b3dda0b45012bec67640ba43e58486579d799c0b7a90",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "conduit_horizontal_clamp_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "conduit_horizontal_clamp_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_conduit_horizontal_clamp_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "d97e524c9cbd7422005f37187b94a6f87d420eaf3edd7e919061dcbbe0a9b9f4",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "conduit_indicator_edge_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "conduit_indicator_edge_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_conduit_indicator_edge_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "4070ec95007c543975749617f9e311475edf77bba2c8c152f6426a6b90ca5798",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "conduit_indicator_edge_02",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "conduit_indicator_edge_02",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_conduit_indicator_edge_02_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "666fb2bfa6d61a91927374424bda1c9210e405d233dbfdb28306c03414a648e0",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "conduit_indicator_vertical_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "conduit_indicator_vertical_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_conduit_indicator_vertical_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "5d492c11ca0b4569bf69844908758c77161ff4b5aced44a8f5acacb3175a2567",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "conduit_indicator_vertical_02",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "conduit_indicator_vertical_02",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_conduit_indicator_vertical_02_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "1869bbbcfc93df7e775307bace8caec509cbe189a3af3e7ebf6e15af1dde0466",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "conduit_port_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "conduit_port_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_conduit_port_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "f92ebe0df034370c32d3ba2404564985a0d49f2361a7c6ccfd1cde4fd7a0c247",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "conduit_t_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "conduit_t_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_conduit_t_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "3d6d3e95d5b38f8f35bd756e89d40b2e22da188503eb1c38a082e500487027b7",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "conduit_t_02",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "conduit_t_02",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_conduit_t_02_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "ebc432a5b92cc33f0b052c51601e71e58d25a90ec8e1ea81cb2ee639aa6b9cb0",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "conduit_vertical_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "conduit_vertical_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_conduit_vertical_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "95605387834f05bc5a8ba4764b38dca5085ef3115e1e20868061bc8f2a163074",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "conduit_vertical_02",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "conduit_vertical_02",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_conduit_vertical_02_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "8e6f8ffcc921368fdf5d6d54b3df33712d73d6251ea84f1afa4ed9c9b6030fc1",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "conduit_vertical_clamp_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "conduit_vertical_clamp_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_conduit_vertical_clamp_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "166ee27960b3cc42d91212ace718e8c25841397eadd7ca68491562beb518e083",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "drain_round_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "drain_round_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_drain_round_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "aeb43f42a2a9376f9bd205cf041aaf2e351992db1ab4ab188406725fa0fb8190",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "drain_square_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "drain_square_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_drain_square_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "bdb2ea96732fb075323439fd4f7650d75077439bbed0e87014585f795884e551",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "edge_bevel_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "edge_bevel_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_edge_bevel_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "c1efe96e47f6c282760dec3ae6a0ca5e0e82f5be8668c93c607965bfe4e3930a",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "edge_plain_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "edge_plain_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_edge_plain_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "7865ad1034a76b4cdadc7679fc3163152d74e156234a6c0c5748fbfaa76e0574",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "edge_vent_corner_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "edge_vent_corner_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_edge_vent_corner_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "ced5f16b14b53c9fb77f5c455c20b54840a2a22ae5d66fd47fa471af7ef51e90",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "edge_vent_corner_02",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "edge_vent_corner_02",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_edge_vent_corner_02_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "8ed6d34f5c96ead6dee3056b28fbe0d57bc2f3754b0bf951d911206556503407",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "edge_vent_horizontal_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "edge_vent_horizontal_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_edge_vent_horizontal_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "92d93e2b03a721ba52f87ebe1767c5d1f00b77164f139aabcc98b0173c431dd6",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "edge_vent_vertical_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "edge_vent_vertical_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_edge_vent_vertical_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "2c9ee01a364ec5a0bf21e4c880538e4358dad9c49602ebca66d46a3293a95028",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "grate_grid_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "grate_grid_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_grate_grid_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "a79e1bd8ad31774f4ab329a82c2022aa96bf9729d42ea6561a3cfa944de58cdb",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "grate_honeycomb_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "grate_honeycomb_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_grate_honeycomb_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "14abfcb2dec28459e2dc296bede3eaad763ed8cb585846dca46167caab8dbe42",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "grate_horizontal_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "grate_horizontal_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_grate_horizontal_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "fdaf811151aaa4ad44245282075605468ffc8197f8b21f575074fced827224ef",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "grate_horizontal_02",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "grate_horizontal_02",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_grate_horizontal_02_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "42ee75a8c5f61875ce39c9295923a04a14cca0d469d7490cb2973b2c482385ef",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "grate_slots_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "grate_slots_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_grate_slots_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "06a479c337506d247d28954fefbe26df275631a1394e22de7d520f32ec3dd740",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "grate_slots_02",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "grate_slots_02",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_grate_slots_02_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "3ceb629daea5d704354f9ac432b620ffdc1ab947e8bcb4dde5f3a86e66b74520",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "grate_vertical_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "grate_vertical_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_grate_vertical_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "42e4be20fe122cb13cc1896417189d16154d706df04b1c8d612bfa0a8b985620",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "hatch_small_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "hatch_small_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_hatch_small_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "8a1aafab78c28af63f67e5660802e65c149674ba8865a81eca9f8b6c4f1d0db3",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "hazard_diagonal_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "hazard_diagonal_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_hazard_diagonal_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "daa6a338e0d28c28e6ad7bd7a0df914591e783635cf42f656b5f7a733cd189ca",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "hazard_diagonal_02",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "hazard_diagonal_02",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_hazard_diagonal_02_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "19107ac5c1def6ee429362b39b4e6f29c70e6f761265ce312b400f92ea07dbbd",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "indicator_panel_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "indicator_panel_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_indicator_panel_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "940483e20eca1caf796f85d221a149b9e2432b436216c486c113a2ff88be9881",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "indicator_quad_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "indicator_quad_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_indicator_quad_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "d5f1d678802ba88c5f45b7bab9e4b6c15682241fd6cbf20f14bf39189c247057",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "marking_bracket_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "marking_bracket_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_marking_bracket_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "a9953056dabffe33bc3fb3489dd192814db68cd6365c311c5bbaf8d8246c13a5",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "marking_corner_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "marking_corner_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_marking_corner_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "dc3126bbfdcc318ff4a072b645b8cf87cb29265e82cdc1928953e0f9284e842b",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "marking_cross_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "marking_cross_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_marking_cross_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "c88b0a1bccd3ddc137d447a7c83c97e5e033602eafc41198087295c4e6a811c3",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "marking_line_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "marking_line_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_marking_line_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "c7308e3132f803031bc9a72f8386777784f0d3f454d0976fff16b73de83a53d2",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "panel_bolted_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "panel_bolted_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_panel_bolted_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "c1591ba8013d904cf96eb77d060afc1d861d5cb76a70a03a47da2b4cfbc56069",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "service_panel_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "service_panel_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_service_panel_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "5258437fc217ce0c7034c3eb0674818d0a1c39d2930bbf9236567c018697eac8",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "slab_cracked_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "slab_cracked_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_slab_cracked_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "9c250d09e6be06fe252634318b05d816a3fe9accf31cc3d601b3f5f66ae90a8c",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "slab_cracked_02",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "slab_cracked_02",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_slab_cracked_02_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "f51f9310a0d1238a4f5f3eb57eed2b188351da719bf4e3ad3a21b42fbff755cd",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "slab_oil_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "slab_oil_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_slab_oil_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "946218cff1b24594de4002e6ca54700efba3faee75000a825e37c6bf5fdb8e22",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "slab_oil_02",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "slab_oil_02",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_slab_oil_02_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "bd606361ca5e07a352cee754dde7510ca55c35b9fc6cdd86c7c7ee98ac5e2f3e",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "slab_plain_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "slab_plain_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_slab_plain_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "4e147094b82ac3dae2af1a93999dd0fa5067fd8cc8ebd04d4a76f526cc42215b",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "slab_pocked_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "slab_pocked_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_slab_pocked_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "bdd982b63cb0ce64d5fac088eab605ed61bd2a65ca21f8d89abdeb5dab82f1c3",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "slab_scuffed_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "slab_scuffed_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_slab_scuffed_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "38a0d5c76c9d9ba5411fa1b9230818e283c2964b9475db3cd662271d753d9684",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "slab_worn_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "slab_worn_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_slab_worn_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "c300e97d7c34506feadda2b56852adcda954c56518fad8e89655bccca97a07ba",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "slot_small_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "slot_small_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_slot_small_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "dec0dde16da7883ce2fb635222236998ffca20e2390614c2bf3e1f0713215eda",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "socket_small_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "socket_small_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_socket_small_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "f41f453fe675be6e8f523af46595c5f119277224364d25e7e6361ba5975ab4c3",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "tread_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "tread_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_tread_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "370ea852c2a046815c942c6bfe7f86531d64cba1a697d6671fd8f56249d8dd3c",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "tread_hazard_left_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "tread_hazard_left_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_tread_hazard_left_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "b227904af68dee883d344562c16bbce3db8850d437e7e82fe0a5c2a014c34b98",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "tread_hazard_right_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "tread_hazard_right_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_tread_hazard_right_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "33ad8ec7e589d3ac34b8a5c059ff2deaec9c1e7c43423e418d0f0d73583ecd2d",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "tread_scuffed_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "tread_scuffed_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_tread_scuffed_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "4abb28d87c46ee2dcb7de476efb06570de0112c1f2cfb7c356df19ad66a76f9d",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "tread_worn_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "tread_worn_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_tread_worn_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "5d777ba3558e2c27f8592491bf548aa260900c71ef700ae70b1352bd47624f45",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "vent_square_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "vent_square_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_vent_square_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "d299eb7bba7e71ecaff37faf3b8e6fa795d58b0eb0b75125fbf7d9f10b414e50",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "vent_triple_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "carrow_machine_house_floor",
+        "tile",
+        "body",
+        "tile",
+        "vent_triple_01",
+        "omni"
+      ],
+      "path": "content/tiles/interiors/runtime/floor_carrow_vent_triple_01_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "a4f61948d39710ae447f1af09aab42948fa25329b6db81563da9b8906b9ef3bb",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}
