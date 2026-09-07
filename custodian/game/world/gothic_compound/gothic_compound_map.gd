@@ -17,16 +17,18 @@ const MACHINE_HOUSE_FLOOR_STATES := [
 	"slab_plain_01", "slab_plain_01", "slab_plain_01", "slab_worn_01",
 	"slab_worn_01", "slab_oil_01", "slab_plain_01", "slab_plain_01",
 ]
-const MACHINE_HOUSE_SIZE := Vector2i(12, 8)
+const MACHINE_HOUSE_SIZE := Vector2i(14, 10)
 const MACHINE_HOUSE_LAYOUT := [
-	"XXXXXXXXXXXX",
-	"XRRRRRRRRSSX",
-	"X..........X",
-	"X..........X",
-	"X..........X",
-	"X..........X",
-	"XLL.......BX",
-	"XXXXXDDXXXXX",
+	"XXXXXXXXXXXXXX",
+	"X............X",
+	"XRRR......SSSX",
+	"XRRR......SSSX",
+	"XL..........CX",
+	"XW..........PX",
+	"X............X",
+	"X............X",
+	"X............X",
+	"XXXXXDDDXXXXX",
 ]
 
 @export var map_size_tiles: Vector2i = Vector2i(82, 60)
@@ -177,13 +179,29 @@ func _add_east_machine_house_interior(result: Variant) -> void:
 	_add_machine_house_production_art(room_origin)
 	_add_machine_house_layout(room_origin)
 	_add_machine_house_storage("carrow_service_parts_locker", "Service Parts Locker", room_origin + Vector2i(1, 5), {&"ruin_scrap": 52, &"structural_alloy": 4})
-	_add_machine_house_storage("carrow_structural_spares_rack", "Structural Spares Rack", room_origin + Vector2i(3, 6), {&"structural_alloy": 14, &"ruin_scrap": 16})
-	_add_machine_house_storage("carrow_power_components_cabinet", "Power Components Cabinet", room_origin + Vector2i(10, 6), {&"power_components": 4, &"capacitor_dust": 3, &"ruin_scrap": 10})
+	_add_machine_house_storage("carrow_structural_spares_rack", "Structural Spares Rack", room_origin + Vector2i(4, 5), {&"structural_alloy": 14, &"ruin_scrap": 16})
+	_add_machine_house_storage("carrow_power_components_cabinet", "Power Components Cabinet", room_origin + Vector2i(12, 6), {&"power_components": 4, &"capacitor_dust": 3, &"ruin_scrap": 10})
 	_add_machine_house_lighting(room_origin)
 	_add_machine_house_doors(machine_site, room_origin)
 
 
 func _add_machine_house_floor(room_origin: Vector2i) -> void:
+	var backing := Polygon2D.new()
+	backing.name = "MachineHouseInteriorBacking"
+	backing.color = Color(0.035, 0.038, 0.042, 1.0)
+	backing.z_as_relative = false
+	backing.z_index = -42
+	var backing_rect := Rect2(
+		_tile_to_local(room_origin) - Vector2.ONE * TILE_SIZE * 1.5,
+		Vector2(MACHINE_HOUSE_SIZE) * TILE_SIZE + Vector2.ONE * TILE_SIZE * 3.0
+	)
+	backing.polygon = PackedVector2Array([
+		backing_rect.position,
+		backing_rect.position + Vector2(backing_rect.size.x, 0.0),
+		backing_rect.end,
+		backing_rect.position + Vector2(0.0, backing_rect.size.y),
+	])
+	_machine_house_root.add_child(backing)
 	var floor := Polygon2D.new()
 	floor.name = "HardenedMachineFloor"
 	floor.color = Color(0.105, 0.11, 0.115, 1.0)
@@ -218,18 +236,19 @@ func _add_machine_house_production_art(room_origin: Vector2i) -> void:
 	_machine_house_root.add_child(art)
 	# Keep the shell legible: a single north service band, shallow side
 	# framing, and an obvious south doorway. Props are furnishings, not fill.
-	_add_machine_house_art_sprite(art, "NorthWallPanelled", "walls/wall_carrow_wall_run_panelled_long_01.png", room_origin + Vector2i(1, 2), -18)
-	_add_machine_house_art_sprite(art, "NorthWallConduit", "walls/wall_carrow_wall_run_conduit_long_01.png", room_origin + Vector2i(7, 2), -18)
-	_add_machine_house_art_sprite(art, "WestWall", "walls/wall_carrow_pillar_lit_01.png", room_origin + Vector2i(1, 6), -17)
-	_add_machine_house_art_sprite(art, "EastWall", "walls/wall_carrow_pillar_plain_02.png", room_origin + Vector2i(11, 6), -17)
-	_add_machine_house_art_sprite(art, "SouthDoorway", "walls/wall_carrow_doorframe_recessed_01.png", room_origin + Vector2i(5, 8), -16)
-	_add_machine_house_art_sprite(art, "RelayBank", "props/carrow_machine_house_relay_bank.png", room_origin + Vector2i(1, 3), -12)
-	_add_machine_house_art_sprite(art, "Switchgear", "props/carrow_machine_house_switchgear.png", room_origin + Vector2i(7, 3), -12)
-	_add_machine_house_art_sprite(art, "PartsLocker", "props/carrow_machine_house_parts_locker.png", room_origin + Vector2i(1, 6), -10)
-	_add_machine_house_art_sprite(art, "Workbench", "props/carrow_machine_house_workbench.png", room_origin + Vector2i(2, 7), -10)
-	_add_machine_house_art_sprite(art, "ServiceCabinet", "props/carrow_machine_house_service_cabinet.png", room_origin + Vector2i(4, 7), -10)
-	_add_machine_house_art_sprite(art, "ConduitJunction", "props/carrow_machine_house_conduit_junction.png", room_origin + Vector2i(10, 4), -10)
-	_add_machine_house_art_sprite(art, "PowerCabinet", "props/carrow_machine_house_power_cabinet.png", room_origin + Vector2i(10, 7), -10)
+	_add_machine_house_art_sprite(art, "NorthWallPanelled", "walls/wall_carrow_wall_run_panelled_long_01.png", room_origin + Vector2i(4, 2), -18)
+	_add_machine_house_art_sprite(art, "NorthWallConduit", "walls/wall_carrow_wall_run_conduit_long_01.png", room_origin + Vector2i(10, 2), -18)
+	_add_machine_house_art_sprite(art, "WestWall", "walls/wall_carrow_pillar_lit_01.png", room_origin + Vector2i(1, 5), -17)
+	_add_machine_house_art_sprite(art, "EastWall", "walls/wall_carrow_pillar_plain_02.png", room_origin + Vector2i(13, 5), -17)
+	_add_machine_house_art_sprite(art, "SouthDoorway", "walls/wall_carrow_doorframe_recessed_01.png", room_origin + Vector2i(6, 10), -16)
+	_add_machine_house_art_sprite(art, "RelayBank", "props/carrow_machine_house_relay_bank.png", room_origin + Vector2i(3, 3), -12)
+	_add_machine_house_art_sprite(art, "Switchgear", "props/carrow_machine_house_switchgear.png", room_origin + Vector2i(11, 3), -12)
+	_add_machine_house_art_sprite(art, "PartsLocker", "props/carrow_machine_house_parts_locker.png", room_origin + Vector2i(1, 5), -10)
+	_add_machine_house_art_sprite(art, "Workbench", "props/carrow_machine_house_workbench.png", room_origin + Vector2i(2, 6), -10)
+	_add_machine_house_art_sprite(art, "ServiceCabinet", "props/carrow_machine_house_service_cabinet.png", room_origin + Vector2i(4, 6), -10)
+	_add_machine_house_art_sprite(art, "ReplacementModules", "props/carrow_machine_house_replacement_modules.png", room_origin + Vector2i(4, 5), -10)
+	_add_machine_house_art_sprite(art, "ConduitJunction", "props/carrow_machine_house_conduit_junction.png", room_origin + Vector2i(12, 4), -10)
+	_add_machine_house_art_sprite(art, "PowerCabinet", "props/carrow_machine_house_power_cabinet.png", room_origin + Vector2i(12, 6), -10)
 
 
 func _add_machine_house_art_sprite(parent: Node2D, sprite_name: String, relative_path: String, anchor_cell: Vector2i, z: int) -> void:
@@ -255,7 +274,7 @@ func _add_machine_house_layout(room_origin: Vector2i) -> void:
 			if symbol == ".":
 				continue
 			var cell := room_origin + Vector2i(x, y)
-			if symbol in ["X", "R", "S", "L", "B"]:
+			if symbol in ["X", "R", "S", "L", "W", "C", "P"]:
 				_add_machine_house_cell_collision(cell, symbol)
 
 
@@ -279,6 +298,7 @@ func _add_machine_house_storage(storage_id: String, display_name: String, tile: 
 	storage.set("storage_id", StringName(storage_id))
 	storage.set("display_name", display_name)
 	storage.set("starting_resources", starting_resources)
+	storage.set("default_visual_enabled", false)
 	if storage is Node2D:
 		(storage as Node2D).position = _tile_to_local(tile)
 	_machine_house_root.add_child(storage)
@@ -300,7 +320,7 @@ func _add_machine_house_lighting(room_origin: Vector2i) -> void:
 	var rig := LIGHT_RIG_SCENE.instantiate() as LightRig2D
 	if rig != null:
 		rig.name = "SwitchBankMaintenanceLight"
-		rig.position = _tile_to_local(room_origin + Vector2i(8, 2)) + Vector2.ONE * TILE_SIZE * 0.5
+		rig.position = _tile_to_local(room_origin + Vector2i(10, 2)) + Vector2.ONE * TILE_SIZE * 0.5
 		rig.light_color = Color(1.0, 0.72, 0.42, 1.0)
 		rig.energy = 0.9
 		rig.glow_scale = 1.8
@@ -324,7 +344,7 @@ func _add_machine_house_doors(machine_site: Dictionary, room_origin: Vector2i) -
 	var interior_door := MACHINE_HOUSE_DOOR_SCRIPT.new() as CarrowMachineHouseDoor
 	interior_door.name = "LeaveEastMachineHouse"
 	interior_door.configure(self, CarrowMachineHouseDoor.TravelMode.LEAVE_MACHINE_HOUSE, "LEAVE EAST MACHINE HOUSE")
-	interior_door.position = _tile_to_local(room_origin + Vector2i(6, 7))
+	interior_door.position = _tile_to_local(room_origin + Vector2i(6, 9))
 	_machine_house_root.add_child(interior_door)
 
 
@@ -335,7 +355,7 @@ func enter_machine_house(actor: Node) -> void:
 	if actor is Node2D:
 		(actor as Node2D).global_position = to_global(
 			_machine_house_interior_rect.position
-			+ Vector2(5.5 * TILE_SIZE, 6.25 * TILE_SIZE)
+			+ Vector2(6.5 * TILE_SIZE, 8.25 * TILE_SIZE)
 		)
 	_refresh_camera(self, actor)
 

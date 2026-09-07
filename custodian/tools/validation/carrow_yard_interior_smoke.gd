@@ -19,9 +19,9 @@ func _run() -> void:
 	_require(map.is_in_group("environment_region_provider"), "map is not an environment-region provider")
 	var state := map.get_machine_house_debug_state()
 	_require(String(state.canonical_id) == "carrow_yard", "canonical ID mismatch")
-	_require(state.layout == ["XXXXXXXXXXXX","XRRRRRRRRSSX","X..........X","X..........X","X..........X","X..........X","XLL.......BX","XXXXXDDXXXXX"], "12x8 authored layout mismatch")
+	_require(state.layout == ["XXXXXXXXXXXXXX","X............X","XRRR......SSSX","XRRR......SSSX","XL..........CX","XW..........PX","X............X","X............X","X............X","XXXXXDDDXXXXX"], "14x10 authored layout mismatch")
 	var interior_rect: Rect2 = state.interior_rect
-	_require(interior_rect.size == Vector2(384, 256), "interior footprint is not 12x8 at 32 px")
+	_require(interior_rect.size == Vector2(448, 320), "interior footprint is not 14x10 at 32 px")
 	_require(bool(state.has_entry_door) and bool(state.has_exit_door), "interior doorway pair is incomplete")
 	var structure_sites := state.structure_sites as Dictionary
 	for site_id in ["operations_house", "west_draft_house", "machine_house", "terminal"]:
@@ -61,15 +61,30 @@ func _run() -> void:
 
 	var room := map.get_node_or_null("EastMachineHouseInterior")
 	_require(room != null, "East Machine House root missing")
-	_require(int(state.floor_tile_count) == 96, "Carrow floor did not fill the 12x8 room")
-	_require(int(state.production_art_count) == 12, "Machine House production-art placement count mismatch")
+	_require(int(state.floor_tile_count) == 140, "Carrow floor did not fill the 14x10 room")
+	_require(int(state.production_art_count) == 13, "Machine House production-art placement count mismatch")
+	_require(room.get_node_or_null("MachineHouseInteriorBacking") is Polygon2D, "interior backing is missing")
 	_require(room.get_node_or_null("CarrowFloorTiles/Floor_00_00") is Sprite2D, "Carrow floor sprites are missing")
-	for art_name in ["NorthWallPanelled", "NorthWallConduit", "WestWall", "EastWall", "SouthDoorway", "RelayBank", "Switchgear", "Workbench", "PartsLocker", "ServiceCabinet", "ConduitJunction", "PowerCabinet"]:
+	for art_name in ["NorthWallPanelled", "NorthWallConduit", "WestWall", "EastWall", "SouthDoorway", "RelayBank", "Switchgear", "Workbench", "PartsLocker", "ServiceCabinet", "ReplacementModules", "ConduitJunction", "PowerCabinet"]:
 		var sprite := room.get_node_or_null("ProductionArt/" + art_name) as Sprite2D
 		_require(sprite != null and sprite.texture != null, "missing production art: %s" % art_name)
 	_require(room.find_children("Cell*", "Polygon2D", true, false).is_empty(), "legacy greybox cell visuals remain")
 	for expected_name in ["CarrowServicePartsLocker", "CarrowStructuralSparesRack", "CarrowPowerComponentsCabinet", "MachineHouseLightingZone", "SwitchBankMaintenanceLight"]:
 		_require(room.get_node_or_null(expected_name) != null, "missing interior node: %s" % expected_name)
+	for storage_name in ["CarrowServicePartsLocker", "CarrowStructuralSparesRack", "CarrowPowerComponentsCabinet"]:
+		var storage := room.get_node(storage_name) as VaultStorage
+		_require(storage.has_resources(), "embedded storage lost its interaction resources: %s" % storage_name)
+		_require(not (storage.get_node("Sprite2D") as Sprite2D).visible, "embedded storage rendered the generic vault chest: %s" % storage_name)
+	var storage_art_bindings := {
+		"CarrowServicePartsLocker": "PartsLocker",
+		"CarrowStructuralSparesRack": "ReplacementModules",
+		"CarrowPowerComponentsCabinet": "PowerCabinet",
+	}
+	for storage_name in storage_art_bindings:
+		var storage := room.get_node(storage_name) as VaultStorage
+		var art_sprite := room.get_node("ProductionArt/" + storage_art_bindings[storage_name]) as Sprite2D
+		var art_floor_anchor := art_sprite.position + Vector2(0.0, float(art_sprite.texture.get_height()) * 0.5)
+		_require(storage.position == art_floor_anchor, "embedded storage is not aligned with Carrow art: %s" % storage_name)
 	var lighting_zone := room.get_node_or_null("MachineHouseLightingZone") as LightingZone2D
 	_require(lighting_zone != null and lighting_zone.profile != null, "interior lighting profile is not wired")
 	if lighting_zone != null and lighting_zone.profile != null:
@@ -93,7 +108,7 @@ func _run() -> void:
 	if _failed:
 		quit(1)
 		return
-	print("carrow_yard_interior_smoke: PASS interior=12x8 provider=connected_map")
+	print("carrow_yard_interior_smoke: PASS interior=14x10 provider=connected_map")
 	quit(0)
 
 

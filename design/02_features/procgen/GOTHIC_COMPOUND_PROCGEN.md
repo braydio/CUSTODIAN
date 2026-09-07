@@ -6,7 +6,7 @@ Status: implemented-first-slice; canonical Carrow Yard production-art slice impl
 
 The connected-map implementation is canonically **Carrow Yard** (`carrow_yard`), formally the Carrow District Utility Yard. Its technical `gothic_compound` namespace remains temporarily unchanged pending a separate mechanical migration. Player-facing language uses Carrow Yard, Operations House, East Machine House, West Draft House, Alarm Gantry, Yard Control Terminal, and Service Court.
 
-The East Machine House is the first accessible interior. It replaces the orphaned authored-vault prototype with a 12×8 off-map room, retains the three existing resource caches under diegetic names, and acts as the first connected-map proof of the generic environment-region provider contract.
+The East Machine House is the first accessible interior. It replaces the orphaned authored-vault prototype with a 14×10 off-map room, retains the three existing resource caches under diegetic names, and acts as the first connected-map proof of the generic environment-region provider contract.
 
 ## Goal
 
@@ -31,7 +31,7 @@ The connected-map prototype now uses explicit render bands for the Sprite2D adap
 
 The Carrow travel interactable now uses the Asset Pipeline V2 District Transfer Frame family. Body, threshold, shadow, dressing, emissive, pedestal-screen, boot, aperture, and failure layers are explicit presentation state; emissive and screen variants are discrete machine states, not animation strips. Travel authority and timing remain unchanged.
 
-The East Machine House retains its locked 12×8 symbol grid and separately authored collision. Its presentation uses the V2 Carrow floor family across all 96 cells plus selected multi-cell wall modules and entry, relay, switchgear, workbench, storage, and conduit props. Wall footprint metadata informs authored placement only; painted alpha never owns collision or navigation.
+The East Machine House uses a locked 14×10 symbol grid with separately authored collision. Its presentation fills all 140 cells with the V2 Carrow floor family, contains the room with an opaque backing beyond the floor footprint, and composes Carrow wall and prop art into a north machinery band, west maintenance nook, light east utility edge, open center, and three-cell south exit. The three service-storage interactions remain active but suppress their generic VaultStorage chest sprites so their aligned Carrow props own presentation. Wall footprint metadata informs authored placement only; painted alpha never owns collision or navigation.
 
 ## Required Invariants
 

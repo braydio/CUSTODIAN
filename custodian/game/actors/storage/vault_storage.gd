@@ -10,6 +10,7 @@ class_name VaultStorage
 @export var lock_difficulty: float = 0.0
 @export var max_integrity: int = 100
 @export var damaged_integrity_ratio: float = 0.5
+@export var default_visual_enabled: bool = true
 @export_file("*.png") var empty_texture_path: String = "res://content/sprites/environment/props/vault_storage/runtime/vault_storage__chest_small__empty__1f__160x128.png"
 @export_file("*.png") var stored_texture_path: String = "res://content/sprites/environment/props/vault_storage/runtime/vault_storage__chest_small__stored__1f__160x128.png"
 @export_file("*.png") var open_texture_path: String = "res://content/sprites/environment/props/vault_storage/runtime/vault_storage__chest_small__open__1f__160x128.png"
@@ -157,6 +158,9 @@ func get_debug_snapshot() -> Dictionary:
 func _update_visual_state() -> void:
 	var sprite := get_node_or_null("Sprite2D") as Sprite2D
 	if sprite == null:
+		return
+	sprite.visible = default_visual_enabled
+	if not default_visual_enabled:
 		return
 	var texture_path := _get_visual_texture_path()
 	if texture_path.is_empty():
