@@ -38,12 +38,12 @@ This document guides the migration from the current **type-first** animation str
 ```
 custodian/assets/sprites/
 ├── weapons/                              # Weapon-owned system
-│   ├── fallen_star_katana/
+│   ├── retired_melee_branch/
 │   │   ├── weapon_definition.json        # Animation mappings
 │   │   └── animations/
-│   │       ├── fallen_star_katana__idle.png
-│   │       ├── fallen_star_katana__melee_2h__fast.png
-│   │       └── fallen_star_katana__melee_2h__heavy.png
+│   │       ├── retired_melee_branch__idle.png
+│   │       ├── retired_melee_branch__melee_2h__fast.png
+│   │       └── retired_melee_branch__melee_2h__heavy.png
 │   │
 │   ├── carbine_rifle/
 │   │   ├── weapon_definition.json
@@ -74,7 +74,7 @@ custodian/assets/sprites/
 
 **Examples:**
 ```
-fallen_star_katana__melee_2h__fast.png
+retired_melee_branch__melee_2h__fast.png
 carbine_rifle__ranged__fire.png
 ```
 
@@ -115,11 +115,11 @@ ranged_fire
 
 | Current Location | Animation | New Location | Sprite |
 |-----------------|----------|-------------|--------|
-| `operator/runtime/body/melee_fast/` | melee_2h_fast_right | `weapons/fallen_star_katana/` | 96x96 |
-| `operator/runtime/body/melee_fast/` | melee_2h_fast_weapon | `weapons/fallen_star_katana/` | 96x96 |
-| `operator/runtime/body/melee_fast/` | melee_2h_fast_fx | `weapons/fallen_star_katana/` | 96x96 |
+| `operator/runtime/body/melee_fast/` | melee_2h_fast_right | `weapons/retired_melee_branch/` | 96x96 |
+| `operator/runtime/body/melee_fast/` | melee_2h_fast_weapon | `weapons/retired_melee_branch/` | 96x96 |
+| `operator/runtime/body/melee_fast/` | melee_2h_fast_fx | `weapons/retired_melee_branch/` | 96x96 |
 | `operator/runtime/body/melee_2h/` | melee_2h_stance | `operator/runtime/body/melee_2h/` | 96x96 |
-| `operator/runtime/idle/` | idle | `weapons/fallen_star_katana/` | 96x96 |
+| `operator/runtime/idle/` | idle | `weapons/retired_melee_branch/` | 96x96 |
 | `operator/runtime/body/ranged_2h/` | ranged_stance | `weapons/carbine_rifle/` | 96x96 |
 
 ### Enemy Animations
@@ -136,23 +136,23 @@ ranged_fire
 
 ## Weapon Definition JSON
 
-### Example: fallen_star_katana
+### Example: retired_melee_branch
 
 ```json
 {
-  "weapon_id": "fallen_star_katana",
+  "weapon_id": "retired_melee_branch",
   "weapon_type": "melee_2h",
   "sprite_size": 96,
   
   "animations": {
     "idle": {
-      "file": "animations/fallen_star_katana__idle.png",
+      "file": "animations/retired_melee_branch__idle.png",
       "frames": 3,
       "speed": 7.0,
       "loop": true
     },
     "melee_fast": {
-      "file": "animations/fallen_star_katana__melee_2h__fast.png",
+      "file": "animations/retired_melee_branch__melee_2h__fast.png",
       "frames": 12,
       "speed": 14.0,
       "loop": false,
@@ -160,7 +160,7 @@ ranged_fire
       "hit_frame_end": 6
     },
     "melee_heavy": {
-      "file": "animations/fallen_star_katana__melee_2h__heavy.png",
+      "file": "animations/retired_melee_branch__melee_2h__heavy.png",
       "frames": 8,
       "speed": 11.0,
       "loop": false,
@@ -297,7 +297,7 @@ animated_sprite.play(weapon_anims["melee_fast"].frames)
 | `operator_melee_overlay_frames.tres` | Migrate to weapon directories |
 | `enemy.tres` | Fix drone_missiles, resize to 96px |
 | `carbine_rifle_mk1_definition.tres` | Point to new structure |
-| `fallen_star_katana_definition.tres` | Point to new structure |
+| `retired_melee_branch_definition.tres` | Point to new structure |
 
 ---
 

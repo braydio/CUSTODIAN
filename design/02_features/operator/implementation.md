@@ -145,9 +145,9 @@ var interrupt_priority: int = 0
 - `custodian/assets/sprites/operator/runtime/body/melee_2h/operator_body_melee_2h_block_enter.png`
 - `custodian/assets/sprites/operator/runtime/body/melee_2h/operator_body_melee_2h_block_hold.png`
 - `custodian/assets/sprites/operator/runtime/body/melee_2h/operator_body_melee_2h_block_exit.png`
-- `custodian/assets/sprites/weapons/fallen_star_katana/animations/fallen_star_katana__melee_2h__block_enter_weapon.png`
-- `custodian/assets/sprites/weapons/fallen_star_katana/animations/fallen_star_katana__melee_2h__block_hold_weapon.png`
-- `custodian/assets/sprites/weapons/fallen_star_katana/animations/fallen_star_katana__melee_2h__block_exit_weapon.png`
+- `custodian/assets/sprites/weapons/retired_melee_branch/animations/retired_melee_branch__melee_2h__block_enter_weapon.png`
+- `custodian/assets/sprites/weapons/retired_melee_branch/animations/retired_melee_branch__melee_2h__block_hold_weapon.png`
+- `custodian/assets/sprites/weapons/retired_melee_branch/animations/retired_melee_branch__melee_2h__block_exit_weapon.png`
 
 ---
 

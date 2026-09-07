@@ -87,8 +87,8 @@ Current weapon split:
   and heavy action remain deferred.
 - Profile-owned attack drive advances the `CharacterBody2D` through collision
   at attack start; each weapon definition may provide a profile per chain link.
-- Fallen Star Katana retains its separate authored-frame three-link contract
-  in `OPERATOR_MELEE_FAST_CHAIN.md`: `Fast 01 -> Fast 02 -> Fast 03 -> Fast 01`.
+- The retired authored-frame three-link melee branch is no longer an active
+  runtime contract.
 - One distinct primary press advances or repeats the selected weapon's
   configured chain; holding does not repeat.
 - Legacy profiles without `fast_chain_keys` retain their time-based buffered
@@ -117,19 +117,19 @@ Current runtime hookup:
   and FX strips at 18 FPS; Fast 02 is eight frames and Fast 03 is the
   nine-frame two-contact finisher. The optional cleaver retains its separate
   provisional shared Chain 01 presentation.
-- The Katana source master is the verified `3432x96` 22-frame strip under
+- The retired melee branch source master was the verified `3432x96` 22-frame strip under
   `content/sprites/operator/new_operator/modular/chain_attack/`.
 - Runtime body slices are `7/7/8` frames under
   `content/sprites/operator/runtime/body/melee_1h/` and register dynamically as
   three non-looping 18 FPS animations.
-- The Katana body master includes the body and weapon but not the attack VFX. Each
+- The retired melee branch body master included the body and weapon but not the attack VFX. Each
   link loads its directional `modular_upper_fx` pipeline output as a separate
   synchronized overlay; no additional weapon overlay is played.
 - melee idle stance uses the authored body clip
   `res://content/sprites/operator/runtime/body/melee_2h/operator_body_melee_2h_stance.png`
 - socketed `vigil_pattern_dagger` is the default non-attack melee presentation;
-  the Katana uses its own held resource when separately equipped
-- Katana fast damage/commit indices are `5, 5, 6` (zero-based), with exactly
+  the retired melee branch held resource is no longer active
+- retired melee branch fast damage/commit indices were `5, 5, 6` (zero-based), with exactly
   one damage event per link.
 - Armed fast attacks emit one positional swing cue when each chain link starts.
   Chain links 1–3 use `melee_swing_fast_01-1.wav`, `swing_fast_02.wav`, and

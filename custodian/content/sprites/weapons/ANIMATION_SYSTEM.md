@@ -21,13 +21,13 @@ Custodian uses a **weapon-centric animation system** where each weapon owns its 
 ```
 weapons/
 ├── README.md                  # This file
-├── fallen_star_katana/
+├── retired_melee_branch/
 │   ├── weapon_definition.json # Animation mappings
 │   └── animations/
-│       ├── fallen_star_katana__idle.png
-│       ├── fallen_star_katana__melee_2h__fast.png
-│       ├── fallen_star_katana__melee_2h__heavy.png
-│       └── fallen_star_katana__melee_2h__combo.png
+│       ├── retired_melee_branch__idle.png
+│       ├── retired_melee_branch__melee_2h__fast.png
+│       ├── retired_melee_branch__melee_2h__heavy.png
+│       └── retired_melee_branch__melee_2h__combo.png
 │
 ├── carbine_rifle/
 │   ├── weapon_definition.json
@@ -58,7 +58,7 @@ weapons/
 
 **Examples:**
 ```
-fallen_star_katana__melee_2h__fast.png
+retired_melee_branch__melee_2h__fast.png
 carbine_rifle__ranged__fire.png
 sword_night_flame__ability__dash.png
 ```
@@ -71,18 +71,18 @@ Each weapon directory contains a `weapon_definition.json` that maps game actions
 
 ```json
 {
-  "weapon_id": "fallen_star_katana",
+  "weapon_id": "retired_melee_branch",
   "weapon_type": "melee_2h",
   "sprite_size": 96,
   "animations": {
     "idle": {
-      "file": "animations/fallen_star_katana__idle.png",
+      "file": "animations/retired_melee_branch__idle.png",
       "frames": 3,
       "speed": 7.0,
       "loop": true
     },
     "melee_fast": {
-      "file": "animations/fallen_star_katana__melee_2h__fast.png",
+      "file": "animations/retired_melee_branch__melee_2h__fast.png",
       "frames": 12,
       "speed": 14.0,
       "loop": false,
@@ -90,7 +90,7 @@ Each weapon directory contains a `weapon_definition.json` that maps game actions
       "hit_frame_end": 6
     },
     "melee_heavy": {
-      "file": "animations/fallen_star_katana__melee_2h__heavy.png",
+      "file": "animations/retired_melee_branch__melee_2h__heavy.png",
       "frames": 8,
       "speed": 11.0,
       "loop": false,
@@ -265,8 +265,8 @@ muzzle_socket.position = weapon_def.sockets.muzzle
 
 | Legacy Location | New Location |
 |----------------|-------------|
-| `operator/runtime/body/melee_fast/` | `weapons/fallen_star_katana/animations/` |
-| `operator/runtime/idle/` | `weapons/fallen_star_katana/animations/` |
+| `operator/runtime/body/melee_fast/` | `weapons/retired_melee_branch/animations/` |
+| `operator/runtime/idle/` | `weapons/retired_melee_branch/animations/` |
 | `weapons/ranged/carbine_rifle/` | `weapons/carbine_rifle/animations/` |
 | `operator_melee_overlay_frames.tres` | Weapon-owned per-animation |
 

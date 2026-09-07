@@ -8,7 +8,7 @@
 
 The Sword-Cleaver is an optional one-handed heavy melee weapon specializing in
 medium reach, broad pressure, and high stagger. It does not replace the default
-Vigil dagger or reuse the Fallen Star Katana definition.
+Vigil dagger is the active melee baseline; Sword-Cleaver owns its separate heavy profile.
 
 ## Current Runtime
 

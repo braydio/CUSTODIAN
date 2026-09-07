@@ -79,9 +79,11 @@ func _spawn_vent_vfx() -> void:
 
 
 func _flash_weapon(color: Color, duration: float) -> void:
-	var sprite := _operator.get_node_or_null("PrimaryWeaponSocket/PrimaryWeaponSprite") as CanvasItem if _operator != null else null
+	var sprite: CanvasItem = _operator.get_node_or_null("PrimaryWeaponSocket/WeaponSprite") as CanvasItem if _operator != null else null
+	if sprite == null and _operator != null:
+		sprite = _operator.get_node_or_null("PrimaryWeaponSocket/PrimaryWeaponSprite") as CanvasItem
 	if sprite == null:
-		_warn_missing_once(&"missing_weapon_sprite", "[WeaponFeedbackPresenter] LOUD MISSING PRESENTATION NODE: PrimaryWeaponSprite unavailable; heat tint skipped.")
+		_warn_missing_once(&"missing_weapon_sprite", "[WeaponFeedbackPresenter] LOUD MISSING PRESENTATION NODE: weapon presentation sprite unavailable; heat tint skipped.")
 		return
 	if _sprite_tween != null and _sprite_tween.is_valid():
 		_sprite_tween.kill()

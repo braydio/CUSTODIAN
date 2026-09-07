@@ -670,10 +670,10 @@ bounded movement, input filtering, wall truncation, no snapback, and interruptio
 cancellation. The engagement smoke proves single nearby committed permission,
 interruption transfer, and unconstrained distant attackers. The cleaver smoke validates its explicit override, independent
 per-link profiles, synchronized provisional Chain 01 reuse, bounded finisher
-drive, and the unchanged dagger default. The Katana smoke remains the separate
+drive, and the unchanged dagger default. The retired melee branch smoke remains the separate
 later-weapon regression.
 
-For Fallen Star Katana fast-chain changes:
+For retired melee branch fast-chain changes:
 
 ```bash
 cd custodian

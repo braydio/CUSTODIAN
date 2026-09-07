@@ -351,7 +351,7 @@ hover_buggy__body__move__e__6f__256.png
 Saved file examples by domain:
 
 ```text
-content/sprites/weapons/fallen_star_katana/animations/fallen_star_katana__melee_1h__fast_weapon__n__6f__96.png
+content/sprites/weapons/retired_melee_branch/animations/retired_melee_branch__melee_1h__fast_weapon__n__6f__96.png
 content/sprites/weapons/carbine_rifle/animations/carbine_rifle__ranged__stance__e__6f__96.png
 content/sprites/drone/runtime/body/locomotion/drone__body__locomotion__idle__s__4f__96.png
 content/sprites/allied_infantry_droid/runtime/body/locomotion/allied_infantry_droid__body__locomotion__idle__e__5f__96.png

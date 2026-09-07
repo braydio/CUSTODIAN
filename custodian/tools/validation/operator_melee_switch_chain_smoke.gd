@@ -3,7 +3,6 @@ extends SceneTree
 const OPERATOR_SCENE := preload("res://game/actors/operator/operator.tscn")
 const CARBINE_DEFINITION := preload("res://game/actors/operator/carbine_rifle_mk1_definition.tres")
 const SIDEARM_DEFINITION := preload("res://game/actors/operator/sidearm_pistol_definition.tres")
-const FALLEN_STAR_KATANA_DEFINITION := preload("res://game/actors/operator/fallen_star_katana_definition.tres")
 
 var _failures: Array[String] = []
 var _entered_states: Array[String] = []
@@ -29,7 +28,6 @@ func _run() -> void:
 	await _run_case(operator, "MELEE -> UNARMED", vigil_definition, null, {"type": "unarmed"}, false)
 	await _run_case(operator, "MELEE -> RANGED_2H", vigil_definition, CARBINE_DEFINITION, {"type": "armed"}, false)
 	await _run_case(operator, "MELEE -> SIDEARM (ranged-kind target)", vigil_definition, SIDEARM_DEFINITION, {"type": "armed"}, false)
-	await _run_case(operator, "MELEE -> DIFFERENT MELEE", vigil_definition, FALLEN_STAR_KATANA_DEFINITION, {"type": "armed"}, true)
 
 	state_machine.state_entered.disconnect(_on_state_entered)
 	operator.free()

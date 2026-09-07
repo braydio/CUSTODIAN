@@ -32,7 +32,7 @@ Each weapon needs `weapon_definition.json`:
 
 | Weapon | Status |
 |--------|--------|
-| fallen_star_katana | Legacy - migrate |
+| retired_melee_branch | Legacy - migrate |
 | carbine_rifle | Legacy - migrate |
 | carbine_rifle_mk1 | Needs setup |
 

@@ -417,38 +417,6 @@
         }
       }
     },
-    "melee_1h/attack/legacy_fallen_star_katana_melee_1h_fast_fx/omni": {
-      "profile": "melee_1h",
-      "group": "attack",
-      "action": "legacy_fallen_star_katana_melee_1h_fast_fx",
-      "direction": "omni",
-      "layers": {
-        "fx": {
-          "path": "res://content/sprites/operator/runtime/animations/melee_1h/attack/legacy_fallen_star_katana_melee_1h_fast_fx/operator__fx__melee_1h__attack__legacy_fallen_star_katana_melee_1h_fast_fx__omni__1f__1152x96.png",
-          "frames": 1,
-          "frame_size": [
-            1152,
-            96
-          ]
-        }
-      }
-    },
-    "melee_1h/attack/legacy_fallen_star_katana_melee_1h_fast_weapon/omni": {
-      "profile": "melee_1h",
-      "group": "attack",
-      "action": "legacy_fallen_star_katana_melee_1h_fast_weapon",
-      "direction": "omni",
-      "layers": {
-        "weapon": {
-          "path": "res://content/sprites/operator/runtime/animations/melee_1h/attack/legacy_fallen_star_katana_melee_1h_fast_weapon/operator__weapon__melee_1h__attack__legacy_fallen_star_katana_melee_1h_fast_weapon__omni__1f__1152x96.png",
-          "frames": 1,
-          "frame_size": [
-            1152,
-            96
-          ]
-        }
-      }
-    },
     "melee_1h/attack/legacy_fast_attack_right_base/omni": {
       "profile": "melee_1h",
       "group": "attack",
@@ -9237,21 +9205,6 @@
           "frame_size": [
             192,
             64
-          ]
-        }
-      }
-    },
-    "fallen_star_katana": {
-      "animation_profile": "unarmed",
-      "presentation_mode": "hybrid",
-      "held": {},
-      "overrides": {
-        "cosmetic/legacy_fallen_star_katana_stance/omni": {
-          "path": "res://content/sprites/weapons/fallen_star_katana/operator/unarmed/overrides/cosmetic/legacy_fallen_star_katana_stance/fallen_star_katana__weapon__unarmed__cosmetic__legacy_fallen_star_katana_stance__omni__1f__384x96.png",
-          "frames": 1,
-          "frame_size": [
-            384,
-            96
           ]
         }
       }

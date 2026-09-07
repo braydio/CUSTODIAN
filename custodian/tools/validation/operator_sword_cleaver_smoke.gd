@@ -9,9 +9,6 @@ const DAGGER_DEFINITION := preload(
 const CLEAVER_DEFINITION := preload(
 	"res://game/actors/operator/sword_cleaver_definition.tres"
 )
-const KATANA_DEFINITION := preload(
-	"res://game/actors/operator/fallen_star_katana_definition.tres"
-)
 
 const CHAIN_KEYS := [
 	"sword_cleaver_fast_01",
@@ -132,10 +129,6 @@ func _validate_canonical_default(operator: Node) -> void:
 	_assert(
 		operator.get("melee_weapon_definition") == DAGGER_DEFINITION,
 		"cleaver support changed the canonical dagger default"
-	)
-	_assert(
-		KATANA_DEFINITION.weapon_id == &"fallen_star_katana",
-		"Katana definition was mutated"
 	)
 
 

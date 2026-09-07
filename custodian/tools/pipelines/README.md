@@ -15,7 +15,7 @@ Examples:
 ```text
 operator__upper_body__melee_1h__posture__idle_ready_01__e__4f__96.png
 operator__fx__melee_1h__attack__fast_01__e__10f__156x96.png
-fallen_star_katana__weapon__melee_1h__presentation__held_01__e__1f__96.png
+retired_melee_branch__weapon__melee_1h__presentation__held_01__e__1f__96.png
 ```
 
 Put the PNG in `content/sprites/_pipeline/inbox/`, then run:

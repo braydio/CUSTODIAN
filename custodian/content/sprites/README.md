@@ -23,14 +23,14 @@ custodian/content/sprites/
 ├── weapons/                    # Weapon-owned animation system
 │   ├── README.md               # Weapons documentation
 │   ├── ANIMATION_SYSTEM.md    # Full animation system
-│   ├── fallen_star_katana/    # Melee weapon
+│   ├── retired_melee_branch/    # Melee weapon
 │   ├── carbine_rifle/          # Ranged weapon
 │   └── carbine_rifle_mk1/      # (Legacy - migrate)
 │
 ├── operator/                   # Player sprites (Legacy - migrate)
 │   └── runtime/
 │       ├── body/
-│       │   ├── melee_fast/     # → weapons/fallen_star_katana/
+│       │   ├── melee_fast/     # → weapons/retired_melee_branch/
 │       │   └── ranged_2h/      # → weapons/carbine_rifle/
 │       └── idle/               # → weapons/<weapon>/animations/
 │
@@ -80,7 +80,7 @@ existing runtime-owned sprite domains.
 
 | Weapon | Type | Status |
 |--------|------|--------|
-| fallen_star_katana | Melee 2H | Legacy - migrate to weapon-owned |
+| retired_melee_branch | Melee 2H | Legacy - migrate to weapon-owned |
 | carbine_rifle | Ranged 2H | Legacy - migrate to weapon-owned |
 | carbine_rifle_mk1 | Ranged 2H | Needs setup |
 

@@ -445,17 +445,6 @@
       "direction": "w",
       "layer": "weapon",
       "consumer": "res://game/actors/operator/vigil_pattern_dagger_definition.tres"
-    },
-    {
-      "resource": "res://game/actors/operator/fallen_star_katana_frames.tres",
-      "old_animation": "melee_stance",
-      "owner": "fallen_star_katana",
-      "profile": "unarmed",
-      "group": "posture",
-      "action": "stance_01",
-      "direction": "s",
-      "layer": "weapon",
-      "consumer": "res://game/actors/operator/fallen_star_katana_definition.tres"
     }
   ]
 }

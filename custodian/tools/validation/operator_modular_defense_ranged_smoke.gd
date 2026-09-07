@@ -136,10 +136,8 @@ func _validate_ranged_2h_stance_uses_modular_layers(operator: Node) -> void:
 	operator.set("visual_idle_direction", Vector2.RIGHT)
 
 	_assert_animation_exists(operator, "modular_upper_body_sprite", &"ranged_2h_stance_modular_right")
-	_assert_animation_exists(operator, "modular_sidearm_sprite", &"ranged_2h_stance_modular_right")
 	_assert_animation_exists(operator, "modular_lower_body_sprite", &"ranged_2h_aim_modular_right")
 	_assert_animation_exists(operator, "modular_upper_body_sprite", &"ranged_2h_aim_modular_right")
-	_assert_animation_exists(operator, "modular_sidearm_sprite", &"ranged_2h_aim_modular_right")
 	operator.call("_enter_ranged_ready")
 	_assert_true(bool(operator.call("_is_ranged_ready_active")), "carbine should enter ranged-ready")
 	_assert_true(bool(operator.call("_has_modular_ranged_ready_upper_stack")), "east ranged-ready stack should be accepted")
@@ -147,18 +145,18 @@ func _validate_ranged_2h_stance_uses_modular_layers(operator: Node) -> void:
 
 	var lower_sprite := operator.get("modular_lower_body_sprite") as AnimatedSprite2D
 	var upper_sprite := operator.get("modular_upper_body_sprite") as AnimatedSprite2D
-	var weapon_sprite := operator.get("modular_sidearm_sprite") as AnimatedSprite2D
+	var weapon_sprite := operator.get("weapon_sprite") as Sprite2D
 	var cape_sprite := operator.get("modular_cape_sprite") as AnimatedSprite2D
 	_assert_true(lower_sprite != null and lower_sprite.animation == &"ranged_2h_aim_modular_right", "ranged-ready should play lower east aim raise")
 	_assert_true(upper_sprite != null and upper_sprite.animation == &"ranged_2h_aim_modular_right", "ranged-ready should play upper east aim raise")
-	_assert_true(weapon_sprite != null and weapon_sprite.animation == &"ranged_2h_aim_modular_right", "ranged-ready should play weapon east aim raise")
+	_assert_true(weapon_sprite != null, "ranged-ready should have static carbine weapon sprite")
 	_assert_true(cape_sprite == null or not cape_sprite.visible, "ranged-ready should hide cape (no ranged-aim cape animation available)")
 	operator.call("_tick_primary_ranged_action_presentation", 1.0)
 	_assert_true(not bool(operator.call("_is_primary_ranged_aim_presentation_active")), "modular aim raise should finish before stance")
 	_assert_true(bool(operator.call("_sync_modular_ranged_2h_stance_presentation", Vector2.RIGHT)), "east ranged-ready should sync modular stance")
 
 	_assert_true(upper_sprite != null and upper_sprite.animation == &"ranged_2h_stance_modular_right", "ranged-ready should play upper east stance")
-	_assert_true(weapon_sprite != null and weapon_sprite.animation == &"ranged_2h_stance_modular_right", "ranged-ready should play weapon east stance")
+	_assert_true(weapon_sprite != null and weapon_sprite.visible and weapon_sprite.texture == CARBINE_DEFINITION.directional_weapon_textures["e"], "ranged-ready should keep static carbine east stance texture")
 
 
 func _assert_animation_exists(operator: Node, sprite_property: String, animation_name: StringName) -> void:

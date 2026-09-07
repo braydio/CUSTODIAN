@@ -26,10 +26,10 @@ def main() -> int:
     assert semantic_identity(rectangular) == semantic_identity(OperatorAssetKey(
         "operator", "fx", "melee_1h", "attack", "fast_01", "e", 4, 96, 96
     ))
-    weapon = parse_filename("fallen_star_katana__weapon__melee_1h__presentation__held_01__e__1f__96.png")
-    assert "weapons/fallen_star_katana" in canonical_source_path(weapon).as_posix()
+    weapon = parse_filename("carbine_mk1__weapon__ranged_2h__presentation__held_01__e__1f__96.png")
+    assert "weapons/carbine_mk1" in canonical_source_path(weapon).as_posix()
     assert parse_filename("operator__full_body__shared__transition__arrival_01__s__13f__156x156.png").layer == "full_body"
-    assert "weapons/fallen_star_katana/runtime/operator" in canonical_runtime_path(weapon).as_posix()
+    assert "weapons/carbine_mk1/runtime/operator" in canonical_runtime_path(weapon).as_posix()
     legacy = normalize_legacy_filename("operator__modular_lower_body__unarmed__chain_01__e__10f__156x96.png")
     assert legacy.action == "fast_01" and legacy.layer == "lower_body"
     try:

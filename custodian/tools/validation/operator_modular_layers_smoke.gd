@@ -25,6 +25,7 @@ func _init() -> void:
 	var weapon := operator.get_node_or_null("ModularSidearmSprite") as AnimatedSprite2D
 	var body := operator.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
 	var primary_weapon := operator.get_node_or_null("PrimaryWeaponSocket/PrimaryWeaponSprite") as AnimatedSprite2D
+	var weapon_sprite := operator.get_node_or_null("PrimaryWeaponSocket/WeaponSprite") as Sprite2D
 	var ranged_fx := operator.get_node_or_null("PrimaryWeaponSocket/RangedFxOverlaySprite") as AnimatedSprite2D
 	var failures: Array[String] = []
 
@@ -101,11 +102,14 @@ func _init() -> void:
 
 	_check_layer(lower, "ranged-ready idle lower", &"unarmed_idle_right", failures)
 	_check_layer(upper, "ranged-ready idle upper", &"ranged_2h_stance_modular_right", failures)
-	_check_layer(weapon, "ranged-ready idle weapon", &"ranged_2h_stance_modular_right", failures)
 	_check_hidden(head, "south-idle head should not remain frozen over ranged-ready stance", failures)
 	_check_hidden(body, "legacy body should be hidden during modular ranged-ready idle", failures)
 	_check_hidden(primary_weapon, "legacy primary weapon should hide during modular ranged-ready idle", failures)
 	_check_hidden(ranged_fx, "legacy ranged fx should hide during modular ranged-ready idle", failures)
+	if weapon_sprite == null:
+		failures.append("static ranged WeaponSprite is missing")
+	elif weapon_sprite.texture == null or not weapon_sprite.visible:
+		failures.append("static ranged WeaponSprite should render the selected Carbine texture")
 
 	operator.set("velocity", Vector2.UP * 32.0)
 	operator.set("is_sprinting", true)
@@ -115,7 +119,6 @@ func _init() -> void:
 
 	_check_layer(lower, "ranged-ready move lower", &"unarmed_run_up", failures)
 	_check_layer(upper, "ranged-ready move upper", &"ranged_2h_stance_modular_right", failures)
-	_check_layer(weapon, "ranged-ready move weapon", &"ranged_2h_stance_modular_right", failures)
 	_check_hidden(body, "legacy body should stay hidden during modular ranged-ready movement", failures)
 	if body != null and body.sprite_frames != null and body.sprite_frames.has_animation(&"ranged_run_east"):
 		failures.append("ranged-ready modular movement should not require baked ranged_run_east")

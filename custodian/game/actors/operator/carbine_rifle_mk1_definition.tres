@@ -1,7 +1,6 @@
 [gd_resource type="Resource" script_class="OperatorWeaponDefinition" format=3 uid="uid://buv7t506pckky"]
 
 [ext_resource type="Script" uid="uid://dr83ct4e8mal7" path="res://game/actors/operator/operator_weapon_definition.gd" id="1_weapon_definition"]
-[ext_resource type="SpriteFrames" uid="uid://c4ftqt42qddru" path="res://game/actors/operator/operator_weapon_frames.tres" id="2_weapon_frames"]
 [ext_resource type="Script" uid="uid://7lgg1qag2suc" path="res://game/systems/combat/melee_attack_profile.gd" id="9_s524m"]
 [ext_resource type="Texture2D" uid="uid://dfqgss5p5b1ir" path="res://content/sprites/weapons/carbine_mk1/runtime/carbine_mk1__weapon__aim__e.png" id="tex_e"]
 [ext_resource type="Texture2D" uid="uid://blx836o74ukjg" path="res://content/sprites/weapons/carbine_mk1/runtime/carbine_mk1__weapon__aim__n.png" id="tex_n"]
@@ -16,11 +15,13 @@
 script = ExtResource("1_weapon_definition")
 weapon_id = &"carbine_mk1"
 display_name = "Carbine Rifle"
+weapon_type = &"ranged_2h"
 weapon_kind = "ranged"
+animation_profile = &"ranged_2h"
+weapon_presentation_mode = "socketed_static"
 primary_intent = "ranged_unfocused_fire"
 secondary_intent = "ranged_ready"
 weapon_data_path = "res://content/weapons/data/carbine_mk1.json"
-frames_resource = ExtResource("2_weapon_frames")
 right_hand_socket_position = Vector2(10, -8)
 left_hand_socket_position = Vector2(2, -4)
 weapon_socket_position = Vector2(12, -8)

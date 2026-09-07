@@ -8,7 +8,7 @@
 
 The Vigil-Pattern Dagger is the default starting melee weapon and reference
 implementation for profile-owned attack drive. It is independent from the
-Sword-Cleaver and Fallen Star Katana.
+Sword-Cleaver is the supported alternate melee profile.
 
 Its silhouette may read at short-sword proportions, but that does not alter its
 canonical identity: `vigil_pattern_dagger`, displayed as **Vigil-Pattern Dagger**.

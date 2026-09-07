@@ -9,7 +9,7 @@ Last updated: 2026-08-15
 
 Define one durable contract for how CUSTODIAN melee attacks become readable physical actions rather than short visual twitches. This document covers authored animation phases, exact contact-frame ownership, deterministic phase timing, unarmed cadence, attack drive/assist, and validation. It applies to Fists first and serves as the shared rule for armed melee where a weapon does not already have a stronger authored contract.
 
-This document refines `COMBAT_FEEL_SYSTEM.md`; it does not replace the weapon-specific Vigil-Pattern Dagger or Fallen Star Katana contracts.
+This document refines `COMBAT_FEEL_SYSTEM.md`; it does not replace the weapon-specific Vigil-Pattern Dagger or Sword/Cleaver contracts.
 
 ## Design Summary
 
@@ -338,7 +338,7 @@ Use the same contact-frame/timeline contract, but preserve weapon identity:
 - Fists: fast pressure + brutal heavy
 - Dagger: rapid three-beat chain, mobility, precision
 - Sword/Cleaver: deliberate links and a proper committed heavy when authored
-- Katana: its own authored rhythm/commit contract
+- Sword/Cleaver: its own authored rhythm/commit contract
 
 ## Melee Posture Relationship
 
@@ -390,7 +390,7 @@ Implementation constraints:
 6. Do not let the fixed global `melee_fast_recovery_duration` truncate a profile-owned modular recovery.
 7. Synchronize modular lower body, upper body, optional FX, and fallback presentation to one phase timeline.
 8. Preserve dodge-fast-attack special presentation and charged-dodge commitment rules.
-9. Preserve parry, critical, ranged, dagger, cleaver, and Katana behavior unless an existing bug is directly exposed by the shared helper change.
+9. Preserve parry, critical, ranged, dagger, and cleaver behavior unless an existing bug is directly exposed by the shared helper change.
 10. Do not change damage/range/stagger balance in this slice.
 
 ## Validation Contract
@@ -490,7 +490,7 @@ Implement the complete Fists contact/timing/cadence repair while preserving exis
 6. Apply the Fists drive/assist/hit-stop/cadence values in this document.
 7. Validate and capture again.
 8. Audit Fists heavy against the same contact contract and apply its approved A/B values if the authored contact remains aligned.
-9. Keep dagger/Katana regressions green.
+9. Keep dagger/cleaver regressions green.
 10. Update current-state/index/design docs for any behavior or ownership changes.
 
 ### Completion report must include

@@ -35,8 +35,6 @@
 [ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_03_legacy_83910a80/operator__full_body__melee_1h__attack__fast_03_legacy_83910a80__e__8f__156x96.png" id="33_y7als"]
 [ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_03_legacy_99791341/operator__fx__melee_1h__attack__fast_03_legacy_99791341__w__8f__96.png" id="34_6vdfi"]
 [ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_attack_chain_01/operator__upper_body__melee_1h__attack__fast_attack_chain_01__e__8f__96.png" id="35_1ithg"]
-[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/melee_1h/attack/legacy_fallen_star_katana_melee_1h_fast_fx/operator__fx__melee_1h__attack__legacy_fallen_star_katana_melee_1h_fast_fx__omni__1f__1152x96.png" id="36_e653a"]
-[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/melee_1h/attack/legacy_fallen_star_katana_melee_1h_fast_weapon/operator__weapon__melee_1h__attack__legacy_fallen_star_katana_melee_1h_fast_weapon__omni__1f__1152x96.png" id="37_c1jsa"]
 [ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/melee_1h/attack/legacy_fast_attack_right_base/operator__full_body__melee_1h__attack__legacy_fast_attack_right_base__omni__1f__1152x128.png" id="38_hf54k"]
 [ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/melee_1h/attack/legacy_light_attack_base/operator__full_body__melee_1h__attack__legacy_light_attack_base__omni__1f__5376x96.png" id="39_7ubm2"]
 [ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/melee_1h/attack/legacy_operator_body_melee_fast_01_e_7f_156x96/operator__full_body__melee_1h__attack__legacy_operator_body_melee_fast_01_e_7f_156x96__omni__1f__1092x96.png" id="40_1wj43"]
@@ -1925,14 +1923,6 @@ region = Rect2(576, 0, 96, 96)
 [sub_resource type="AtlasTexture" id="AtlasTexture_xxida"]
 atlas = ExtResource("35_1ithg")
 region = Rect2(672, 0, 96, 96)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_oyn5f"]
-atlas = ExtResource("36_e653a")
-region = Rect2(0, 0, 1152, 96)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_t1ffc"]
-atlas = ExtResource("37_c1jsa")
-region = Rect2(0, 0, 1152, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5etne"]
 atlas = ExtResource("38_hf54k")
@@ -14449,22 +14439,6 @@ animations = [{
 }],
 "loop": 0,
 "name": &"melee_1h/attack/fast_attack_chain_01/e/upper_body",
-"speed": 12.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_oyn5f")
-}],
-"loop": 0,
-"name": &"melee_1h/attack/legacy_fallen_star_katana_melee_1h_fast_fx/omni/fx",
-"speed": 12.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_t1ffc")
-}],
-"loop": 0,
-"name": &"melee_1h/attack/legacy_fallen_star_katana_melee_1h_fast_weapon/omni/weapon",
 "speed": 12.0
 }, {
 "frames": [{

@@ -986,6 +986,7 @@ const KNIGHT_TEST_ANIMATION_SPECS := {
 @onready var left_hand_socket = $LeftHandSocket if has_node("LeftHandSocket") else null
 @onready var primary_weapon_socket = $PrimaryWeaponSocket if has_node("PrimaryWeaponSocket") else null
 @onready var primary_weapon_sprite = $PrimaryWeaponSocket/PrimaryWeaponSprite if has_node("PrimaryWeaponSocket/PrimaryWeaponSprite") else null
+@onready var weapon_sprite: Sprite2D = $PrimaryWeaponSocket/WeaponSprite if has_node("PrimaryWeaponSocket/WeaponSprite") else null
 @onready var ranged_fx_overlay_sprite = $PrimaryWeaponSocket/RangedFxOverlaySprite if has_node("PrimaryWeaponSocket/RangedFxOverlaySprite") else null
 @onready var melee_weapon_overlay_sprite = $MeleeWeaponOverlaySprite if has_node("MeleeWeaponOverlaySprite") else null
 @onready var melee_fx_overlay_sprite = $MeleeFxOverlaySprite if has_node("MeleeFxOverlaySprite") else null
@@ -1147,6 +1148,8 @@ func _apply_knight_test_skin_if_requested() -> void:
 
 func _hide_custom_operator_visual_layers() -> void:
 	_hide_modular_locomotion_layers()
+	if weapon_sprite:
+		weapon_sprite.visible = false
 	if primary_weapon_sprite:
 		primary_weapon_sprite.visible = false
 		primary_weapon_sprite.stop()
@@ -2744,7 +2747,7 @@ func _can_reuse_modular_lower_body_for_current_loadout() -> bool:
 func _has_modular_ranged_ready_upper_stack() -> bool:
 	if modular_upper_body_sprite == null or modular_upper_body_sprite.sprite_frames == null:
 		return false
-	if modular_sidearm_sprite == null or modular_sidearm_sprite.sprite_frames == null:
+	if weapon_sprite == null or _get_primary_ranged_weapon_definition() == null:
 		return false
 	var direction := aim_direction if aim_direction.length_squared() > 0.0001 else visual_idle_direction
 	if direction.length_squared() <= 0.0001:
@@ -2752,21 +2755,19 @@ func _has_modular_ranged_ready_upper_stack() -> bool:
 	var upper_animation := AnimationResolver.resolve("ranged_2h_stance_modular", direction, modular_upper_body_sprite)
 	if not _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, upper_animation):
 		return false
-	var weapon_animation := AnimationResolver.resolve("ranged_2h_stance_modular", direction, modular_sidearm_sprite)
-	return _has_playable_sprite_animation(modular_sidearm_sprite.sprite_frames, weapon_animation)
+	return true
 
 
 func _has_modular_ranged_relaxed_upper_stack() -> bool:
 	if modular_upper_body_sprite == null or modular_upper_body_sprite.sprite_frames == null:
 		return false
-	if modular_sidearm_sprite == null or modular_sidearm_sprite.sprite_frames == null:
+	if weapon_sprite == null or _get_primary_ranged_weapon_definition() == null:
 		return false
 	var direction := visual_idle_direction if visual_idle_direction.length_squared() > 0.0001 else Vector2.RIGHT
 	var upper_animation := AnimationResolver.resolve("ranged_2h_relaxed_modular", direction, modular_upper_body_sprite)
 	if not _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, upper_animation):
 		return false
-	var weapon_animation := AnimationResolver.resolve("ranged_2h_relaxed_modular", direction, modular_sidearm_sprite)
-	return _has_playable_sprite_animation(modular_sidearm_sprite.sprite_frames, weapon_animation)
+	return true
 
 
 func _sync_modular_sidearm_presentation(_is_firing: bool) -> bool:
@@ -2837,9 +2838,9 @@ func _sync_modular_ranged_ready_movement_presentation(
 		return false
 	if _reload_active or _is_ranged_fire_animation_active():
 		return false
-	if modular_lower_body_sprite == null or modular_upper_body_sprite == null or modular_sidearm_sprite == null:
+	if modular_lower_body_sprite == null or modular_upper_body_sprite == null:
 		return false
-	if modular_lower_body_sprite.sprite_frames == null or modular_upper_body_sprite.sprite_frames == null or modular_sidearm_sprite.sprite_frames == null:
+	if modular_lower_body_sprite.sprite_frames == null or modular_upper_body_sprite.sprite_frames == null:
 		return false
 
 	var resolved_upper_direction := upper_direction
@@ -2874,6 +2875,11 @@ func _sync_modular_ranged_ready_movement_presentation(
 
 
 func _sync_modular_ranged_weapon_layer(direction: Vector2, base_animation: String) -> bool:
+	if _is_using_ranged_2h_primary():
+		if modular_sidearm_sprite:
+			modular_sidearm_sprite.visible = false
+			modular_sidearm_sprite.stop()
+		return _apply_frame_aware_primary_weapon_socket()
 	if modular_sidearm_sprite == null or modular_sidearm_sprite.sprite_frames == null:
 		return false
 	var animation := AnimationResolver.resolve(base_animation, direction, modular_sidearm_sprite)
@@ -2892,12 +2898,13 @@ func _sync_primary_ranged_weapon_frame_to_upper() -> void:
 		return
 	if not _is_using_ranged_2h_primary():
 		return
-	if modular_upper_body_sprite == null or modular_sidearm_sprite == null:
+	if modular_upper_body_sprite == null:
 		return
-	if not modular_upper_body_sprite.visible or not modular_sidearm_sprite.visible:
+	if not modular_upper_body_sprite.visible:
 		return
 	_ensure_primary_ranged_weapon_direction_matches_upper()
-	_sync_ranged_slave_frame_to_upper(modular_sidearm_sprite)
+	if modular_sidearm_sprite != null and modular_sidearm_sprite.visible:
+		_sync_ranged_slave_frame_to_upper(modular_sidearm_sprite)
 	if modular_upper_fx_sprite != null and modular_upper_fx_sprite.visible:
 		_sync_ranged_slave_frame_to_upper(modular_upper_fx_sprite)
 	_apply_frame_aware_primary_weapon_socket()
@@ -2962,6 +2969,15 @@ func _apply_frame_aware_primary_weapon_socket() -> bool:
 	_active_weapon_socket = socket
 
 	var weapon_definition := _get_primary_ranged_weapon_definition()
+	if weapon_definition != null and weapon_sprite != null:
+		var texture_sector := resolve_aim_sector(_get_frame_aware_weapon_direction())
+		var static_texture := weapon_definition.directional_weapon_textures.get(String(texture_sector)) as Texture2D
+		if static_texture == null:
+			return false
+		weapon_sprite.texture = static_texture
+		weapon_sprite.visible = true
+		weapon_sprite.flip_h = false
+		weapon_sprite.scale = weapon_definition.weapon_sprite_scale
 	var frame_direction := _get_frame_aware_weapon_direction().normalized()
 	var recoil_ratio := clampf(current_recoil, 0.0, 1.0)
 	var procedural_recoil := Vector2.ZERO
@@ -3019,6 +3035,10 @@ func _apply_frame_aware_primary_weapon_socket() -> bool:
 	if primary_weapon_socket != null:
 		primary_weapon_socket.position = grip
 		primary_weapon_socket.rotation = authored_rotation + correction + recoil_rotation
+	if weapon_sprite != null:
+		weapon_sprite.position = Vector2.ZERO
+		weapon_sprite.rotation = 0.0
+		weapon_sprite.z_index = int(socket.weapon_z)
 	if barrel != null:
 		barrel.position = muzzle - grip
 	if ejection_socket != null:
@@ -3562,6 +3582,8 @@ func _hide_legacy_primary_ranged_presentation_for_modular_fire() -> void:
 		animated_sprite.visible = false
 	if primary_weapon_sprite != null:
 		primary_weapon_sprite.visible = false
+	if weapon_sprite != null:
+		weapon_sprite.visible = false
 	if ranged_fx_overlay_sprite != null:
 		ranged_fx_overlay_sprite.visible = false
 
@@ -3710,6 +3732,8 @@ func _hide_modular_locomotion_layers() -> void:
 		modular_upper_body_sprite.visible = false
 	if modular_sidearm_sprite:
 		modular_sidearm_sprite.visible = false
+	if weapon_sprite:
+		weapon_sprite.visible = false
 	if modular_upper_fx_sprite:
 		modular_upper_fx_sprite.visible = false
 	_hide_modular_head_layer()
@@ -10950,6 +10974,8 @@ func _apply_placeholder_runtime_layout() -> void:
 		primary_weapon_socket.rotation = 0.0
 	if primary_weapon_sprite:
 		primary_weapon_sprite.scale = weapon_definition.weapon_sprite_scale if weapon_definition else primary_weapon_sprite_scale
+	if weapon_sprite:
+		weapon_sprite.scale = weapon_definition.weapon_sprite_scale if weapon_definition else Vector2.ONE
 	if body_collision:
 		body_collision.position = placeholder_collision_offset
 		if body_collision.shape is CapsuleShape2D:
@@ -11044,6 +11070,9 @@ func _reset_primary_ranged_visual_transform() -> void:
 		primary_weapon_socket.scale = Vector2.ONE
 	if primary_weapon_sprite != null:
 		primary_weapon_sprite.rotation = 0.0
+	if weapon_sprite != null:
+		weapon_sprite.visible = false
+		weapon_sprite.rotation = 0.0
 		var weapon_definition: OperatorWeaponDefinition = _get_equipped_primary_weapon_definition()
 		primary_weapon_sprite.scale = weapon_definition.weapon_sprite_scale if weapon_definition != null else primary_weapon_sprite_scale
 		primary_weapon_sprite.modulate = Color.WHITE

@@ -270,10 +270,6 @@ func _validate_default_scene(operator: Node) -> void:
 		active_definition == DAGGER_DEFINITION,
 		"dagger could not become the equipped melee definition"
 	)
-	_assert(
-		DAGGER_DEFINITION.weapon_id != &"fallen_star_katana",
-		"dagger bootstrap mutated or aliased the Katana definition"
-	)
 
 
 func _validate_frame_resources(operator: Node) -> void:

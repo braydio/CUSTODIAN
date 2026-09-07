@@ -107,7 +107,7 @@ pass with that flag, and the temporary SOUTH branch can then leave the selector.
 
 Preservation is complete. 42 verified strips now cover heavy attack/windup/
 recovery/guard, Sword-Cleaver and Vigil-Dagger three-link E/W packages, the
-Fallen-Star stance, and the actor-installed critical hitspark and ranged
+retired melee stance, and the actor-installed critical hitspark and ranged
 fire-walk sheets. Every extraction is per-frame SHA256 verified, and the
 sheet-sourced ones are byte-identical to their sources.
 

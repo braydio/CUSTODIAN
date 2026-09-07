@@ -141,7 +141,7 @@ New sprite sheets should use this canonical filename pattern:
 
 Fields:
 
-- `owner`: entity or asset owner, such as `operator`, `enemy_grunt`, `drone`, `fallen_star_katana`, `hit_spark`
+- `owner`: entity or asset owner, such as `operator`, `enemy_grunt`, `drone`, `carbine_mk1`, `hit_spark`
 - `layer`: render layer, usually `body`, `weapon`, `fx`, `shadow`, or `mask`
 - `action_group`: broad semantic group, such as `locomotion`, `melee`, `defense`, `ranged`, `reaction`, `death`, `impact`
 - `variant`: specific animation, such as `walk`, `sprint`, `roll`, `fast_01`, `heavy_01`, `block_enter`, `hit_light`

@@ -88,10 +88,9 @@ Primary runtime files:
 - `custodian/game/actors/operator/carbine_rifle_mk1_definition.tres`
 - `custodian/game/actors/operator/vigil_pattern_dagger_definition.tres`
 - `custodian/game/actors/operator/sword_cleaver_definition.tres`
-- `custodian/game/actors/operator/fallen_star_katana_definition.tres`
 
-The Vigil-Pattern Dagger is the baseline/default melee implementation. The
-optional Sword-Cleaver and later Fallen Star Katana remain separate weapons.
+The Vigil-Pattern Dagger is the baseline/default melee implementation. Sword-Cleaver
+is the supported alternate melee profile.
 Definitions may own separate held, body-action, melee-weapon-overlay, and
 melee-FX `SpriteFrames` plus per-link fast profiles. The current dagger and
 cleaver Fast 02/03 entries provisionally reuse Chain 01 pixels behind distinct
@@ -561,8 +560,7 @@ Mitigation:
 
 1. Add `animation_resolver.gd`
 2. Expand `operator_weapon_definition.gd` with animation, hit-window, and fx maps
-3. Keep `vigil_pattern_dagger_definition.tres`,
-   `fallen_star_katana_definition.tres`, and
+3. Keep `vigil_pattern_dagger_definition.tres` and
    `carbine_rifle_mk1_definition.tres` independently populated
 4. Replace hardcoded playback in `operator.gd`
 5. Replace hardcoded hit windows in `operator.gd`

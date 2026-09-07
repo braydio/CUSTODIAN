@@ -482,7 +482,7 @@ def _canonical_runtime_path(info: SheetInfo) -> str:
             f"{info.owner}/runtime/{info.layer}/{info.action_group}/"
             f"{info.basename}"
         )
-    if info.owner in {"fallen_star_katana", "carbine_rifle", "carbine_rifle_mk1"}:
+    if info.owner in {"carbine_rifle", "carbine_rifle_mk1"}:
         return f"weapons/{info.owner}/animations/{info.basename}"
     if info.owner in {"command_terminal", "fabricator_terminal", "computer_terminal", "builder_terminal"}:
         return f"environment/props/terminal/runtime/body/{info.basename}"

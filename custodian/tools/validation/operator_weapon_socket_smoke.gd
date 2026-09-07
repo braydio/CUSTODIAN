@@ -38,6 +38,8 @@ func _init() -> void:
 
 	var upper := operator.get_node("ModularUpperBodySprite") as AnimatedSprite2D
 	var weapon := operator.get_node("ModularSidearmSprite") as AnimatedSprite2D
+	var static_weapon := operator.get_node_or_null("PrimaryWeaponSocket/WeaponSprite") as Sprite2D
+	_expect(static_weapon != null, "Carbine static WeaponSprite missing")
 	for suffix in ["right", "left", "down_right", "down_left"]:
 		for phase in ["stance", "aim", "fire"]:
 			var animation := StringName("ranged_2h_%s_modular_%s" % [phase, suffix])
@@ -72,6 +74,8 @@ func _init() -> void:
 	weapon.play(&"ranged_2h_stance_modular_right")
 	upper.set_frame_and_progress(0, 0.0)
 	operator.call("_sync_primary_ranged_weapon_frame_to_upper")
+	_expect(static_weapon.visible, "Carbine static WeaponSprite did not become visible")
+	_expect(static_weapon.texture == definition.directional_weapon_textures["e"], "Carbine static WeaponSprite selected the wrong sector")
 	var barrel := operator.get_node("PrimaryWeaponSocket/Barrel") as Node2D
 	var resolved_muzzle: Vector2 = operator.call("_get_ranged_muzzle_position", Vector2.RIGHT)
 	_expect(resolved_muzzle.distance_to(barrel.global_position) < 0.01, "projectile origin did not match frame-aware muzzle")

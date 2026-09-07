@@ -167,6 +167,9 @@ position = Vector2(12, -13)
 sprite_frames = ExtResource("26_weapon_frames")
 animation = &"ranged_2h_stance"
 
+[node name="WeaponSprite" type="Sprite2D" parent="PrimaryWeaponSocket"]
+visible = false
+
 [node name="RangedFxOverlaySprite" type="AnimatedSprite2D" parent="PrimaryWeaponSocket"]
 visible = false
 sprite_frames = ExtResource("28_ranged_fx_frames")

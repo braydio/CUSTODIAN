@@ -5,12 +5,6 @@
 
 ---
 
-## Katana Position Fix Applied
-
-**File:** `fallen_star_katana_definition.tres`  
-**Change:** `weapon_sprite_position` from `Vector2(-18, 10)` to `Vector2(-18, 0)`  
-**Effect:** Katana moved UP by 10 pixels in stance/idle
-
 ---
 
 ## Missing Animations — Requirements
@@ -212,7 +206,7 @@
 - Arm position matches weapon type
 
 **Files:**
-- `weapons/fallen_star_katana/animations/run.png`
+- `weapons/retired_melee_branch/animations/run.png`
 - `weapons/carbine_rifle/animations/run.png`
 
 ---
