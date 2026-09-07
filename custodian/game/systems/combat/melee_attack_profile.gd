@@ -53,9 +53,14 @@ class_name MeleeAttackProfile
 @export var hit_stop_duration: float = 0.028
 @export var camera_shake_power: float = 1.4
 
-@export_category("Animation")
-@export var animation_key: StringName = &"melee_2h_fast"
+@export_category("Presentation")
+## The semantic action this attack presents. The selector owns the concrete
+## runtime identity: direction, layer and clip name are not authored here.
+@export var presentation_action: StringName = &"fast_01"
+## Migration bridge: the last concrete clip name still read by the actor's
+## pre-selector melee playback. Remove with the operator.gd cutover.
 @export var fallback_animation: StringName = &"melee_2h_fast"
-@export var weapon_overlay_animation: StringName = &""
+
+@export_category("Animation")
 @export var hit_window_frames: PackedInt32Array = []
 @export var wound_up_before_hit: bool = false

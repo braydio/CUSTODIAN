@@ -23,6 +23,6 @@ turn_locked = true
 hit_stop_scale = 0.55
 hit_stop_duration = 0.05
 camera_shake_power = 4.2
-animation_key = &"unarmed_attack_heavy"
+presentation_action = &"heavy_01"
 fallback_animation = &"unarmed_attack_heavy"
 hit_window_frames = PackedInt32Array(4, 5)
