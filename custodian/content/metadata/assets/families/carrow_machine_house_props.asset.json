@@ -1,0 +1,132 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "carrow_machine_house_props",
+  "kind": "world_prop",
+  "runtime": {
+    "domain": "sprites/environment/structure/carrow_machine_house",
+    "owner": "carrow_machine_house_props",
+    "template": "{domain}/runtime/props/{filename}",
+    "filename_policy": "template",
+    "filename_template": "carrow_machine_house_{variant}.png"
+  },
+  "canvas": {
+    "width": 64,
+    "height": 96
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "entry": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "entry",
+      "layout": "copy",
+      "frame_width": 192,
+      "frame_height": 128,
+      "frames": 1
+    },
+    "relay_bank": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "relay_bank",
+      "layout": "copy",
+      "frame_width": 160,
+      "frame_height": 96,
+      "frames": 1
+    },
+    "switchgear": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "switchgear",
+      "layout": "copy",
+      "frame_width": 128,
+      "frame_height": 96,
+      "frames": 1
+    },
+    "parts_locker": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "parts_locker",
+      "layout": "copy",
+      "frame_width": 64,
+      "frame_height": 96,
+      "frames": 1
+    },
+    "service_cabinet": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "service_cabinet",
+      "layout": "copy",
+      "frame_width": 96,
+      "frame_height": 64,
+      "frames": 1
+    },
+    "workbench": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "workbench",
+      "layout": "copy",
+      "frame_width": 128,
+      "frame_height": 96,
+      "frames": 1
+    },
+    "tool_board": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "tool_board",
+      "layout": "copy",
+      "frame_width": 96,
+      "frame_height": 64,
+      "frames": 1
+    },
+    "maintenance_cart": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "maintenance_cart",
+      "layout": "copy",
+      "frame_width": 96,
+      "frame_height": 96,
+      "frames": 1
+    },
+    "power_cabinet": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "power_cabinet",
+      "layout": "copy",
+      "frame_width": 64,
+      "frame_height": 96,
+      "frames": 1
+    },
+    "conduit_junction": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "conduit_junction",
+      "layout": "copy",
+      "frame_width": 64,
+      "frame_height": 64,
+      "frames": 1
+    },
+    "replacement_modules": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "replacement_modules",
+      "layout": "copy",
+      "frame_width": 64,
+      "frame_height": 96,
+      "frames": 1
+    }
+  },
+  "aliases": {},
+  "consumers": []
+}

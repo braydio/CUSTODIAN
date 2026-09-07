@@ -1,0 +1,512 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "carrow_machine_house_walls",
+  "kind": "world_prop",
+  "runtime": {
+    "domain": "sprites/environment/structure/carrow_machine_house",
+    "owner": "carrow_machine_house_walls",
+    "template": "{domain}/runtime/walls/{filename}",
+    "filename_policy": "template",
+    "filename_template": "wall_carrow_{variant}.png"
+  },
+  "canvas": {
+    "width": 32,
+    "height": 32
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "wall_run_panelled_long_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "wall_run_panelled_long_01",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 96,
+      "frames": 1
+    },
+    "wall_run_conduit_long_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "wall_run_conduit_long_01",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 96,
+      "frames": 1
+    },
+    "wall_run_panelled_medium_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "wall_run_panelled_medium_01",
+      "layout": "copy",
+      "frame_width": 128,
+      "frame_height": 96,
+      "frames": 1
+    },
+    "wall_run_breached_long_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "wall_run_breached_long_01",
+      "layout": "copy",
+      "frame_width": 128,
+      "frame_height": 96,
+      "frames": 1
+    },
+    "corner_block_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "corner_block_01",
+      "layout": "copy",
+      "frame_width": 96,
+      "frame_height": 128,
+      "frames": 1
+    },
+    "corner_block_02": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "corner_block_02",
+      "layout": "copy",
+      "frame_width": 64,
+      "frame_height": 128,
+      "frames": 1
+    },
+    "pillar_lit_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "pillar_lit_01",
+      "layout": "copy",
+      "frame_width": 64,
+      "frame_height": 128,
+      "frames": 1
+    },
+    "pillar_plain_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "pillar_plain_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 96,
+      "frames": 1
+    },
+    "pillar_return_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "pillar_return_01",
+      "layout": "copy",
+      "frame_width": 64,
+      "frame_height": 128,
+      "frames": 1
+    },
+    "pillar_plain_02": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "pillar_plain_02",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 128,
+      "frames": 1
+    },
+    "pillar_plain_03": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "pillar_plain_03",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 128,
+      "frames": 1
+    },
+    "pillar_return_02": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "pillar_return_02",
+      "layout": "copy",
+      "frame_width": 64,
+      "frame_height": 128,
+      "frames": 1
+    },
+    "recess_vent_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "recess_vent_01",
+      "layout": "copy",
+      "frame_width": 160,
+      "frame_height": 128,
+      "frames": 1
+    },
+    "recess_vent_02": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "recess_vent_02",
+      "layout": "copy",
+      "frame_width": 128,
+      "frame_height": 96,
+      "frames": 1
+    },
+    "endcap_tall_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "endcap_tall_01",
+      "layout": "copy",
+      "frame_width": 64,
+      "frame_height": 128,
+      "frames": 1
+    },
+    "doorframe_wide_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "doorframe_wide_01",
+      "layout": "copy",
+      "frame_width": 160,
+      "frame_height": 96,
+      "frames": 1
+    },
+    "doorframe_recessed_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "doorframe_recessed_01",
+      "layout": "copy",
+      "frame_width": 128,
+      "frame_height": 96,
+      "frames": 1
+    },
+    "doorframe_narrow_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "doorframe_narrow_01",
+      "layout": "copy",
+      "frame_width": 96,
+      "frame_height": 96,
+      "frames": 1
+    },
+    "post_narrow_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "post_narrow_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 96,
+      "frames": 1
+    },
+    "wall_panel_medium_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "wall_panel_medium_01",
+      "layout": "copy",
+      "frame_width": 64,
+      "frame_height": 96,
+      "frames": 1
+    },
+    "wall_panel_long_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "wall_panel_long_01",
+      "layout": "copy",
+      "frame_width": 128,
+      "frame_height": 96,
+      "frames": 1
+    },
+    "doorframe_wide_02": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "doorframe_wide_02",
+      "layout": "copy",
+      "frame_width": 160,
+      "frame_height": 96,
+      "frames": 1
+    },
+    "control_bay_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "control_bay_01",
+      "layout": "copy",
+      "frame_width": 128,
+      "frame_height": 96,
+      "frames": 1
+    },
+    "machine_bay_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "machine_bay_01",
+      "layout": "copy",
+      "frame_width": 192,
+      "frame_height": 96,
+      "frames": 1
+    },
+    "conduit_bay_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "conduit_bay_01",
+      "layout": "copy",
+      "frame_width": 160,
+      "frame_height": 96,
+      "frames": 1
+    },
+    "vent_pipe_bay_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "vent_pipe_bay_01",
+      "layout": "copy",
+      "frame_width": 160,
+      "frame_height": 96,
+      "frames": 1
+    },
+    "fan_bay_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "fan_bay_01",
+      "layout": "copy",
+      "frame_width": 160,
+      "frame_height": 96,
+      "frames": 1
+    },
+    "vent_wall_wide_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "vent_wall_wide_01",
+      "layout": "copy",
+      "frame_width": 96,
+      "frame_height": 96,
+      "frames": 1
+    },
+    "vent_wall_medium_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "vent_wall_medium_01",
+      "layout": "copy",
+      "frame_width": 96,
+      "frame_height": 96,
+      "frames": 1
+    },
+    "utility_panel_small_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "utility_panel_small_01",
+      "layout": "copy",
+      "frame_width": 96,
+      "frame_height": 96,
+      "frames": 1
+    },
+    "damaged_wall_light_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "damaged_wall_light_01",
+      "layout": "copy",
+      "frame_width": 128,
+      "frame_height": 96,
+      "frames": 1
+    },
+    "breach_heavy_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "breach_heavy_01",
+      "layout": "copy",
+      "frame_width": 128,
+      "frame_height": 96,
+      "frames": 1
+    },
+    "cracked_pillar_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "cracked_pillar_01",
+      "layout": "copy",
+      "frame_width": 64,
+      "frame_height": 96,
+      "frames": 1
+    },
+    "rounded_pillar_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "rounded_pillar_01",
+      "layout": "copy",
+      "frame_width": 64,
+      "frame_height": 96,
+      "frames": 1
+    },
+    "rubble_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "rubble_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 64,
+      "frames": 1
+    },
+    "short_bridge_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "short_bridge_01",
+      "layout": "copy",
+      "frame_width": 64,
+      "frame_height": 64,
+      "frames": 1
+    },
+    "post_narrow_02": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "post_narrow_02",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 96,
+      "frames": 1
+    },
+    "post_narrow_03": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "post_narrow_03",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 96,
+      "frames": 1
+    },
+    "low_wall_long_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "low_wall_long_01",
+      "layout": "copy",
+      "frame_width": 160,
+      "frame_height": 64,
+      "frames": 1
+    },
+    "low_wall_medium_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "low_wall_medium_01",
+      "layout": "copy",
+      "frame_width": 96,
+      "frame_height": 64,
+      "frames": 1
+    },
+    "low_wall_long_02": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "low_wall_long_02",
+      "layout": "copy",
+      "frame_width": 128,
+      "frame_height": 64,
+      "frames": 1
+    },
+    "low_wall_short_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "low_wall_short_01",
+      "layout": "copy",
+      "frame_width": 64,
+      "frame_height": 64,
+      "frames": 1
+    },
+    "low_wall_short_02": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "low_wall_short_02",
+      "layout": "copy",
+      "frame_width": 64,
+      "frame_height": 64,
+      "frames": 1
+    },
+    "low_wall_endcap_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "low_wall_endcap_01",
+      "layout": "copy",
+      "frame_width": 64,
+      "frame_height": 64,
+      "frames": 1
+    },
+    "low_wall_vent_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "low_wall_vent_01",
+      "layout": "copy",
+      "frame_width": 64,
+      "frame_height": 64,
+      "frames": 1
+    },
+    "bollard_lit_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "bollard_lit_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 64,
+      "frames": 1
+    },
+    "low_post_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "low_post_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 64,
+      "frames": 1
+    },
+    "low_endcap_02": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "low_endcap_02",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 64,
+      "frames": 1
+    },
+    "cap_small_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "cap_small_01",
+      "layout": "copy",
+      "frame_width": 32,
+      "frame_height": 64,
+      "frames": 1
+    }
+  },
+  "aliases": {},
+  "consumers": []
+}

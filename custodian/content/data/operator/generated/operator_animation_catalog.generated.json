@@ -1497,6 +1497,238 @@
         }
       }
     },
+    "melee_1h_heavy/attack/fast_01/e": {
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "fast_01",
+      "direction": "e",
+      "layers": {
+        "full_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/fast_01/operator__full_body__melee_1h_heavy__attack__fast_01__e__10f__156x96.png",
+          "frames": 10,
+          "frame_size": [
+            156,
+            96
+          ]
+        },
+        "fx": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/fast_01/operator__fx__melee_1h_heavy__attack__fast_01__e__10f__156x96.png",
+          "frames": 10,
+          "frame_size": [
+            156,
+            96
+          ]
+        }
+      }
+    },
+    "melee_1h_heavy/attack/fast_01/w": {
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "fast_01",
+      "direction": "w",
+      "layers": {
+        "full_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/fast_01/operator__full_body__melee_1h_heavy__attack__fast_01__w__10f__156x96.png",
+          "frames": 10,
+          "frame_size": [
+            156,
+            96
+          ]
+        },
+        "fx": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/fast_01/operator__fx__melee_1h_heavy__attack__fast_01__w__10f__156x96.png",
+          "frames": 10,
+          "frame_size": [
+            156,
+            96
+          ]
+        }
+      }
+    },
+    "melee_1h_heavy/attack/fast_02/e": {
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "fast_02",
+      "direction": "e",
+      "layers": {
+        "full_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/fast_02/operator__full_body__melee_1h_heavy__attack__fast_02__e__10f__156x96.png",
+          "frames": 10,
+          "frame_size": [
+            156,
+            96
+          ]
+        },
+        "fx": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/fast_02/operator__fx__melee_1h_heavy__attack__fast_02__e__10f__156x96.png",
+          "frames": 10,
+          "frame_size": [
+            156,
+            96
+          ]
+        }
+      }
+    },
+    "melee_1h_heavy/attack/fast_02/w": {
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "fast_02",
+      "direction": "w",
+      "layers": {
+        "full_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/fast_02/operator__full_body__melee_1h_heavy__attack__fast_02__w__10f__156x96.png",
+          "frames": 10,
+          "frame_size": [
+            156,
+            96
+          ]
+        },
+        "fx": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/fast_02/operator__fx__melee_1h_heavy__attack__fast_02__w__10f__156x96.png",
+          "frames": 10,
+          "frame_size": [
+            156,
+            96
+          ]
+        }
+      }
+    },
+    "melee_1h_heavy/attack/fast_03/e": {
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "fast_03",
+      "direction": "e",
+      "layers": {
+        "full_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/fast_03/operator__full_body__melee_1h_heavy__attack__fast_03__e__10f__156x96.png",
+          "frames": 10,
+          "frame_size": [
+            156,
+            96
+          ]
+        },
+        "fx": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/fast_03/operator__fx__melee_1h_heavy__attack__fast_03__e__10f__156x96.png",
+          "frames": 10,
+          "frame_size": [
+            156,
+            96
+          ]
+        }
+      }
+    },
+    "melee_1h_heavy/attack/fast_03/w": {
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "fast_03",
+      "direction": "w",
+      "layers": {
+        "full_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/fast_03/operator__full_body__melee_1h_heavy__attack__fast_03__w__10f__156x96.png",
+          "frames": 10,
+          "frame_size": [
+            156,
+            96
+          ]
+        },
+        "fx": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/fast_03/operator__fx__melee_1h_heavy__attack__fast_03__w__10f__156x96.png",
+          "frames": 10,
+          "frame_size": [
+            156,
+            96
+          ]
+        }
+      }
+    },
+    "melee_1h_heavy/attack/fast_recovery_01/s": {
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "fast_recovery_01",
+      "direction": "s",
+      "layers": {
+        "full_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/fast_recovery_01/operator__full_body__melee_1h_heavy__attack__fast_recovery_01__s__2f__96.png",
+          "frames": 2,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "fx": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/fast_recovery_01/operator__fx__melee_1h_heavy__attack__fast_recovery_01__s__2f__96.png",
+          "frames": 2,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "weapon": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/fast_recovery_01/operator__weapon__melee_1h_heavy__attack__fast_recovery_01__s__2f__96.png",
+          "frames": 2,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
+    "melee_1h_heavy/attack/heavy_01/s": {
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "heavy_01",
+      "direction": "s",
+      "layers": {
+        "full_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/heavy_01/operator__full_body__melee_1h_heavy__attack__heavy_01__s__7f__96.png",
+          "frames": 7,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "fx": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/heavy_01/operator__fx__melee_1h_heavy__attack__heavy_01__s__7f__96.png",
+          "frames": 7,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "weapon": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/heavy_01/operator__weapon__melee_1h_heavy__attack__heavy_01__s__7f__96.png",
+          "frames": 7,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
+    "melee_1h_heavy/attack/heavy_windup_01/s": {
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "heavy_windup_01",
+      "direction": "s",
+      "layers": {
+        "full_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/heavy_windup_01/operator__full_body__melee_1h_heavy__attack__heavy_windup_01__s__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "weapon": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/heavy_windup_01/operator__weapon__melee_1h_heavy__attack__heavy_windup_01__s__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
     "melee_1h_heavy/attack/legacy_fast_attack_1_right_body/omni": {
       "profile": "melee_1h_heavy",
       "group": "attack",
@@ -1748,6 +1980,78 @@
           "frames": 1,
           "frame_size": [
             384,
+            96
+          ]
+        }
+      }
+    },
+    "melee_1h_heavy/defense/block_enter_01/s": {
+      "profile": "melee_1h_heavy",
+      "group": "defense",
+      "action": "block_enter_01",
+      "direction": "s",
+      "layers": {
+        "full_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/defense/block_enter_01/operator__full_body__melee_1h_heavy__defense__block_enter_01__s__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "weapon": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/defense/block_enter_01/operator__weapon__melee_1h_heavy__defense__block_enter_01__s__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
+    "melee_1h_heavy/defense/block_exit_01/s": {
+      "profile": "melee_1h_heavy",
+      "group": "defense",
+      "action": "block_exit_01",
+      "direction": "s",
+      "layers": {
+        "full_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/defense/block_exit_01/operator__full_body__melee_1h_heavy__defense__block_exit_01__s__2f__96.png",
+          "frames": 2,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "weapon": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/defense/block_exit_01/operator__weapon__melee_1h_heavy__defense__block_exit_01__s__2f__96.png",
+          "frames": 2,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
+    "melee_1h_heavy/defense/block_hold_01/s": {
+      "profile": "melee_1h_heavy",
+      "group": "defense",
+      "action": "block_hold_01",
+      "direction": "s",
+      "layers": {
+        "full_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/defense/block_hold_01/operator__full_body__melee_1h_heavy__defense__block_hold_01__s__1f__96.png",
+          "frames": 1,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "weapon": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/defense/block_hold_01/operator__weapon__melee_1h_heavy__defense__block_hold_01__s__1f__96.png",
+          "frames": 1,
+          "frame_size": [
+            96,
             96
           ]
         }
@@ -8350,6 +8654,54 @@
       "presentation_mode": "authored_overlay",
       "held": {},
       "overrides": {
+        "attack/fast_01/e": {
+          "path": "res://content/sprites/weapons/sword_cleaver/source/operator/melee_1h_heavy/overrides/attack/fast_01/sword_cleaver__weapon__melee_1h_heavy__attack__fast_01__e__10f__156x96.png",
+          "frames": 10,
+          "frame_size": [
+            156,
+            96
+          ]
+        },
+        "attack/fast_01/w": {
+          "path": "res://content/sprites/weapons/sword_cleaver/source/operator/melee_1h_heavy/overrides/attack/fast_01/sword_cleaver__weapon__melee_1h_heavy__attack__fast_01__w__10f__156x96.png",
+          "frames": 10,
+          "frame_size": [
+            156,
+            96
+          ]
+        },
+        "attack/fast_02/e": {
+          "path": "res://content/sprites/weapons/sword_cleaver/source/operator/melee_1h_heavy/overrides/attack/fast_02/sword_cleaver__weapon__melee_1h_heavy__attack__fast_02__e__10f__156x96.png",
+          "frames": 10,
+          "frame_size": [
+            156,
+            96
+          ]
+        },
+        "attack/fast_02/w": {
+          "path": "res://content/sprites/weapons/sword_cleaver/source/operator/melee_1h_heavy/overrides/attack/fast_02/sword_cleaver__weapon__melee_1h_heavy__attack__fast_02__w__10f__156x96.png",
+          "frames": 10,
+          "frame_size": [
+            156,
+            96
+          ]
+        },
+        "attack/fast_03/e": {
+          "path": "res://content/sprites/weapons/sword_cleaver/source/operator/melee_1h_heavy/overrides/attack/fast_03/sword_cleaver__weapon__melee_1h_heavy__attack__fast_03__e__10f__156x96.png",
+          "frames": 10,
+          "frame_size": [
+            156,
+            96
+          ]
+        },
+        "attack/fast_03/w": {
+          "path": "res://content/sprites/weapons/sword_cleaver/source/operator/melee_1h_heavy/overrides/attack/fast_03/sword_cleaver__weapon__melee_1h_heavy__attack__fast_03__w__10f__156x96.png",
+          "frames": 10,
+          "frame_size": [
+            156,
+            96
+          ]
+        },
         "cosmetic/legacy_operator_weapon_sword_cleaver_chain_01_e_10f_156x96/omni": {
           "path": "res://content/sprites/weapons/sword_cleaver/operator/melee_1h_heavy/overrides/cosmetic/legacy_operator_weapon_sword_cleaver_chain_01_e_10f_156x96/sword_cleaver__weapon__melee_1h_heavy__cosmetic__legacy_operator_weapon_sword_cleaver_chain_01_e_10f_156x96__omni__1f__1560x96.png",
           "frames": 1,
