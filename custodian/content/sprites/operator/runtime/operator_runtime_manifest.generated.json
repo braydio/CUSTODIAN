@@ -6081,6 +6081,31 @@
     }
   },
   "weapons": {
+    "fallen_star_katana": {
+      "animation_profile": "unarmed",
+      "presentation_mode": "hybrid",
+      "held": {},
+      "overrides": {
+        "posture/stance_01/s": {
+          "weapon": {
+            "path": "res://content/sprites/weapons/fallen_star_katana/runtime/operator/unarmed/overrides/posture/stance_01/fallen_star_katana__weapon__unarmed__posture__stance_01__s__4f__96.png",
+            "frames": 4,
+            "frame_size": [
+              96,
+              96
+            ],
+            "fps": 7.0,
+            "loop": true,
+            "durations": [
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        }
+      }
+    },
     "sword_cleaver": {
       "animation_profile": "melee_1h_heavy",
       "presentation_mode": "authored_overlay",
@@ -6227,6 +6252,151 @@
               1.0,
               1.0,
               1.0
+            ]
+          }
+        }
+      }
+    },
+    "vigil_pattern_dagger": {
+      "animation_profile": "melee_1h_dagger",
+      "presentation_mode": "authored_overlay",
+      "held": {},
+      "overrides": {
+        "attack/fast_01/e": {
+          "weapon": {
+            "path": "res://content/sprites/weapons/vigil_pattern_dagger/runtime/operator/melee_1h_dagger/overrides/attack/fast_01/vigil_pattern_dagger__weapon__melee_1h_dagger__attack__fast_01__e__10f__156x96.png",
+            "frames": 10,
+            "frame_size": [
+              156,
+              96
+            ],
+            "fps": 18.0,
+            "loop": false,
+            "durations": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        },
+        "attack/fast_01/w": {
+          "weapon": {
+            "path": "res://content/sprites/weapons/vigil_pattern_dagger/runtime/operator/melee_1h_dagger/overrides/attack/fast_01/vigil_pattern_dagger__weapon__melee_1h_dagger__attack__fast_01__w__10f__156x96.png",
+            "frames": 10,
+            "frame_size": [
+              156,
+              96
+            ],
+            "fps": 18.0,
+            "loop": false,
+            "durations": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        },
+        "attack/fast_02/e": {
+          "weapon": {
+            "path": "res://content/sprites/weapons/vigil_pattern_dagger/runtime/operator/melee_1h_dagger/overrides/attack/fast_02/vigil_pattern_dagger__weapon__melee_1h_dagger__attack__fast_02__e__8f__156x96.png",
+            "frames": 8,
+            "frame_size": [
+              156,
+              96
+            ],
+            "fps": 14.0,
+            "loop": false,
+            "durations": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        },
+        "attack/fast_02/w": {
+          "weapon": {
+            "path": "res://content/sprites/weapons/vigil_pattern_dagger/runtime/operator/melee_1h_dagger/overrides/attack/fast_02/vigil_pattern_dagger__weapon__melee_1h_dagger__attack__fast_02__w__8f__156x96.png",
+            "frames": 8,
+            "frame_size": [
+              156,
+              96
+            ],
+            "fps": 14.0,
+            "loop": false,
+            "durations": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        },
+        "attack/fast_03/e": {
+          "weapon": {
+            "path": "res://content/sprites/weapons/vigil_pattern_dagger/runtime/operator/melee_1h_dagger/overrides/attack/fast_03/vigil_pattern_dagger__weapon__melee_1h_dagger__attack__fast_03__e__9f__156x96.png",
+            "frames": 9,
+            "frame_size": [
+              156,
+              96
+            ],
+            "fps": 13.0,
+            "loop": false,
+            "durations": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.5
+            ]
+          }
+        },
+        "attack/fast_03/w": {
+          "weapon": {
+            "path": "res://content/sprites/weapons/vigil_pattern_dagger/runtime/operator/melee_1h_dagger/overrides/attack/fast_03/vigil_pattern_dagger__weapon__melee_1h_dagger__attack__fast_03__w__9f__156x96.png",
+            "frames": 9,
+            "frame_size": [
+              156,
+              96
+            ],
+            "fps": 13.0,
+            "loop": false,
+            "durations": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.5
             ]
           }
         }

@@ -214,13 +214,12 @@ not a permitted runtime API.
 
 ### Direction resolution rule
 
-Use dominant axis:
+Superseded. Runtime direction is one of the eight sectors
+`e se s sw w nw n ne`, or explicit `omni`, and `OperatorAnimationSelector` owns
+the vector-to-sector conversion. `w` is a real authored direction, not a flip of
+`e`, and there is no dominant-axis collapse to `right`/`up`/`down`.
 
-- horizontal dominant -> `right`
-- vertical dominant with `y < 0` -> `up`
-- vertical dominant with `y > 0` -> `down`
-
-Left-facing remains a sprite flip concern, not a unique animation suffix.
+See [Operator Runtime Animation Authority](OPERATOR_RUNTIME_ANIMATION_AUTHORITY.md).
 
 ## Phase 2: Expand Weapon Definition Contract
 

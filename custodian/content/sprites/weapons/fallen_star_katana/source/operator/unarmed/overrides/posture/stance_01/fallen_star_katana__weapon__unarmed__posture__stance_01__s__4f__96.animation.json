@@ -1,0 +1,23 @@
+{
+	"durations": [
+		1.0,
+		1.0,
+		1.0,
+		1.0
+	],
+	"fps": 7.0,
+	"frame_rgba_sha256": [
+		"a2588f4b07f3745ad29dfe2e23bd12904a570f1aea3ee0baa835f7c5ce97b5f9",
+		"9c20c6531531efca41bc7fd608bcae27ab622f16a342e9e34f69456480ddfc16",
+		"f2bbbf4bf03650c8ea1eee367c11e507a0feefaa7554271bab7bcd623c06ad32",
+		"9113d151309ef84ddc756864c86c299312f193b5882842ecad0e6f3a4d3ae735"
+	],
+	"frames": 4,
+	"loop": true,
+	"migration_source": {
+		"animation": "melee_stance",
+		"consumer": "res://game/actors/operator/fallen_star_katana_definition.tres",
+		"resource": "res://game/actors/operator/fallen_star_katana_frames.tres"
+	},
+	"schema": "custodian.operator_animation_timing.v1"
+}

@@ -177,13 +177,15 @@ Layers are `lower_body`, `upper_body`, `full_body`, `head`, `cape`, `fx`, and `w
 `shared`, `unarmed`, `melee_1h`, `melee_1h_dagger`, `melee_1h_heavy`, `sidearm`, and `ranged_2h`; action
 groups are `locomotion`, `posture`, `attack`, `defense`, `reaction`, `interaction`, `transition`, `cosmetic`,
 and `presentation`. The grammar, aliases, and semantic identity are owned by
-`custodian/tools/pipelines/operator_asset_schema.py`. Editable source sheets live under
-`content/sprites/operator/source/animations/<profile>/<group>/<action>/`, and `build_operator_runtime.py`
-emits runtime sheets under `content/sprites/operator/runtime/animations/<profile>/<group>/<action>/` plus the
-generated catalog at `content/data/operator/generated/operator_animation_catalog.generated.json`. The inbox
-routes supported modular layers through the `operator_modular_runtime` post-process hook, and legacy
-`operator__modular_*` names normalize into V2 through `operator_asset_schema.py`. Building the runtime does
-not automatically add new Operator gameplay states or playback mappings.
+`custodian/tools/pipelines/operator_asset_schema.py`, which is strict and rejects legacy actions.
+Editable source sheets live under `content/sprites/operator/source/animations/<profile>/<group>/<action>/`
+and `content/sprites/weapons/<weapon>/source/operator/`. `sync_operator_runtime_assets.py` emits runtime
+sheets under `content/sprites/operator/runtime/animations/<profile>/<group>/<action>/` and
+`content/sprites/weapons/<weapon>/runtime/operator/`, then scans runtime to generate
+`content/sprites/operator/runtime/operator_runtime_manifest.generated.json`. The inbox routes supported
+modular layers through the `operator_modular_runtime` post-process hook; legacy `operator__modular_*` names
+normalize into V2 only through `tools/pipelines/migrations/operator_legacy_asset_migration.py`. Building the
+runtime does not automatically add new Operator gameplay states or playback mappings.
 
 Composited Operator reaction pairs are a supported authored alias: `full_body_combat` routes to the live body domain and `combat_fx` routes to the synchronized overlay domain. Runtime playback remains an explicit gameplay/presentation wiring step.
 
@@ -191,7 +193,7 @@ Compatibility rule:
 
 - Operator compatibility paths are migration inputs only: materialize live frames and remove all consumers and bridges before declaring the runtime authority migration complete.
 - New source and pipeline intake work should use the canonical name.
-- A manifest may write a canonical output and a compatibility copy in the same run.
+- A manifest may write a canonical output and a compatibility copy in the same run, except for Operator animation art, where runtime is the single authority.
 - Do not create new naming families such as `fast_attack_north_base_*` unless they are temporary compatibility outputs for existing code.
 
 Non-Operator actor rule:

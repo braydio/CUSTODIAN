@@ -379,6 +379,83 @@
       "direction": "s",
       "layer": "full_body",
       "consumer": "res://game/actors/operator/operator.gd"
+    },
+    {
+      "resource": "res://game/actors/operator/vigil_pattern_dagger_melee_overlay_frames.tres",
+      "old_animation": "vigil_dagger_fast_01_weapon_right",
+      "owner": "vigil_pattern_dagger",
+      "profile": "melee_1h_dagger",
+      "group": "attack",
+      "action": "fast_01",
+      "direction": "e",
+      "layer": "weapon",
+      "consumer": "res://game/actors/operator/vigil_pattern_dagger_definition.tres"
+    },
+    {
+      "resource": "res://game/actors/operator/vigil_pattern_dagger_melee_overlay_frames.tres",
+      "old_animation": "vigil_dagger_fast_01_weapon_left",
+      "owner": "vigil_pattern_dagger",
+      "profile": "melee_1h_dagger",
+      "group": "attack",
+      "action": "fast_01",
+      "direction": "w",
+      "layer": "weapon",
+      "consumer": "res://game/actors/operator/vigil_pattern_dagger_definition.tres"
+    },
+    {
+      "resource": "res://game/actors/operator/vigil_pattern_dagger_melee_overlay_frames.tres",
+      "old_animation": "vigil_dagger_fast_02_weapon_right",
+      "owner": "vigil_pattern_dagger",
+      "profile": "melee_1h_dagger",
+      "group": "attack",
+      "action": "fast_02",
+      "direction": "e",
+      "layer": "weapon",
+      "consumer": "res://game/actors/operator/vigil_pattern_dagger_definition.tres"
+    },
+    {
+      "resource": "res://game/actors/operator/vigil_pattern_dagger_melee_overlay_frames.tres",
+      "old_animation": "vigil_dagger_fast_02_weapon_left",
+      "owner": "vigil_pattern_dagger",
+      "profile": "melee_1h_dagger",
+      "group": "attack",
+      "action": "fast_02",
+      "direction": "w",
+      "layer": "weapon",
+      "consumer": "res://game/actors/operator/vigil_pattern_dagger_definition.tres"
+    },
+    {
+      "resource": "res://game/actors/operator/vigil_pattern_dagger_melee_overlay_frames.tres",
+      "old_animation": "vigil_dagger_fast_03_weapon_right",
+      "owner": "vigil_pattern_dagger",
+      "profile": "melee_1h_dagger",
+      "group": "attack",
+      "action": "fast_03",
+      "direction": "e",
+      "layer": "weapon",
+      "consumer": "res://game/actors/operator/vigil_pattern_dagger_definition.tres"
+    },
+    {
+      "resource": "res://game/actors/operator/vigil_pattern_dagger_melee_overlay_frames.tres",
+      "old_animation": "vigil_dagger_fast_03_weapon_left",
+      "owner": "vigil_pattern_dagger",
+      "profile": "melee_1h_dagger",
+      "group": "attack",
+      "action": "fast_03",
+      "direction": "w",
+      "layer": "weapon",
+      "consumer": "res://game/actors/operator/vigil_pattern_dagger_definition.tres"
+    },
+    {
+      "resource": "res://game/actors/operator/fallen_star_katana_frames.tres",
+      "old_animation": "melee_stance",
+      "owner": "fallen_star_katana",
+      "profile": "unarmed",
+      "group": "posture",
+      "action": "stance_01",
+      "direction": "s",
+      "layer": "weapon",
+      "consumer": "res://game/actors/operator/fallen_star_katana_definition.tres"
     }
   ]
 }

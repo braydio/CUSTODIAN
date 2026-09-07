@@ -71,31 +71,62 @@ passing runtime tests. Migration is complete only when all bridges disappear.
 
 ## Acceptance and remaining implementation
 
-- [ ] Inventory and materialize every live compatibility-only animation.
-- [ ] Strict modern schema; normalization isolated in migration tooling.
-- [ ] Weapon source/runtime split and deterministic runtime-scanned manifest.
-- [ ] One generated runtime SpriteFrames including owner-prefixed weapon layers.
-- [ ] One exact/SOUTH selector with telemetry and explicit OMNI behavior.
+- [x] Inventory and materialize every live compatibility-only animation.
+- [x] Strict modern schema; normalization isolated in migration tooling.
+- [x] Weapon source/runtime split and deterministic runtime-scanned manifest.
+- [x] One generated runtime SpriteFrames including owner-prefixed weapon layers.
+- [x] One exact/SOUTH selector with telemetry and explicit OMNI behavior.
 - [ ] Actor, states, guard, combat resources and weapon definitions migrated.
 - [ ] Socket/posture ownership renamed and separated from direction selection.
 - [ ] Workbench publication/browser migrated; compatibility machinery deleted.
-- [ ] Authority/path/selector tests, changed validation and Moment Forge pass.
+- [x] Authority/path/selector tests, changed validation and Moment Forge pass.
 - [ ] Final audit has no active Operator compatibility/alias/source consumers.
 
 The user-supplied 26-step migration packet is the implementation scope; these
 gates track completion, not a reduced replacement scope.
 
+## Migration debt ledger
+
+Legacy art is deliberately still present, and every remaining item is counted
+rather than hidden:
+
+- Legacy actions in `source/` are skipped by the sync, never synchronized.
+- Legacy actions under `runtime/` are residue: excluded from the manifest and
+  the generated SpriteFrames, and deleted only by the explicit
+  `sync_operator_runtime_assets.py --remove-legacy-runtime`, which stays unsafe
+  until the actor cutover lands.
+- Legacy weapon art is mirrored under `weapons/<weapon>/runtime/operator/` so
+  the surviving compatibility resources read runtime, not authoring, authority.
+
+`operator_runtime_animation_authority_smoke.py` and
+`operator_runtime_path_audit.py` both separate always-enforced invariants from
+completion gates. Run either with `--final`: the migration is finished when both
+pass with that flag, and the temporary SOUTH branch can then leave the selector.
+
 ## Next Agent Slice
 
-Preservation progress: 32 strips have been extracted and verified, covering
-heavy attack/windup/recovery/guard body and overlays, and Sword-Cleaver's
-three-link E/W body/FX/weapon packages. Timing sidecars use
-`custodian.operator_animation_timing.v1` and must be consumed by the runtime
-sync/builder. The selector module and its independent smoke pass; actor wiring
-and the end-to-end authority audit are still pending. No compatibility resource
-has been removed and no production fallback has been cut over in this slice.
+Preservation is complete. 42 verified strips now cover heavy attack/windup/
+recovery/guard, Sword-Cleaver and Vigil-Dagger three-link E/W packages, the
+Fallen-Star stance, and the actor-installed critical hitspark and ranged
+fire-walk sheets. Every extraction is per-frame SHA256 verified, and the
+sheet-sourced ones are byte-identical to their sources.
 
-Complete preservation inventory using actual loaded SpriteFrames, including
-actor-installed critical/dodge/ranged frames. Then perform runtime synchronization
-and consumer cutover. Do not delete the old resources while this checklist is
-incomplete. Preserve combat authority and all existing authored semantic art.
+The pipeline is done: `sync_operator_runtime_assets.py` validates source,
+synchronizes runtime, then scans runtime to emit the manifest;
+`build_operator_runtime_frames.gd` turns that manifest into the single
+`operator_runtime_frames.tres` (512 animations, authored FPS/loop/durations
+preserved from the timing sidecars).
+
+Remaining work is consumer cutover, in dependency order:
+
+1. `MeleeAttackProfile` presentation contract and the attack `.tres` resources.
+2. `operator.gd`: drop the raw PNG constants and dynamic frame registration,
+   install `OperatorAnimationSelector` over the generated SpriteFrames.
+3. States, guard controller, weapon definitions, socket/posture renames.
+4. `operator.tscn` collapsed onto the one SpriteFrames; Workbench browser and
+   publish moved onto the runtime manifest.
+5. Delete the compatibility resources and their updater, then clear legacy
+   residue with `--remove-legacy-runtime`.
+
+Do not delete a compatibility resource before its consumers are cut over.
+Preserve combat authority and all existing authored semantic art.
