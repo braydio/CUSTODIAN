@@ -14,18 +14,18 @@ const MACHINE_HOUSE_LIGHTING_PROFILE := preload("res://content/lighting/profiles
 const MACHINE_HOUSE_FLOOR_ROOT := "res://content/tiles/interiors/runtime/"
 const MACHINE_HOUSE_STRUCTURE_ROOT := "res://content/sprites/environment/structure/carrow_machine_house/runtime/"
 const MACHINE_HOUSE_FLOOR_STATES := [
-	"slab_plain_01", "slab_worn_01", "slab_cracked_01", "slab_oil_01",
-	"tread_01", "panel_bolted_01", "grate_grid_01", "conduit_horizontal_01",
+	"slab_plain_01", "slab_plain_01", "slab_plain_01", "slab_worn_01",
+	"slab_worn_01", "slab_oil_01", "slab_plain_01", "slab_plain_01",
 ]
 const MACHINE_HOUSE_SIZE := Vector2i(12, 8)
 const MACHINE_HOUSE_LAYOUT := [
 	"XXXXXXXXXXXX",
-	"XRRR....SSSX",
-	"XRRR....SSSX",
+	"XRRRRRRRRSSX",
 	"X..........X",
-	"X..GGGGGG..X",
 	"X..........X",
-	"XLL......BBX",
+	"X..........X",
+	"X..........X",
+	"XLL.......BX",
 	"XXXXXDDXXXXX",
 ]
 
@@ -176,9 +176,9 @@ func _add_east_machine_house_interior(result: Variant) -> void:
 	_add_machine_house_floor(room_origin)
 	_add_machine_house_production_art(room_origin)
 	_add_machine_house_layout(room_origin)
-	_add_machine_house_storage("carrow_service_parts_locker", "Service Parts Locker", room_origin + Vector2i(3, 6), {&"ruin_scrap": 52, &"structural_alloy": 4})
-	_add_machine_house_storage("carrow_structural_spares_rack", "Structural Spares Rack", room_origin + Vector2i(6, 6), {&"structural_alloy": 14, &"ruin_scrap": 16})
-	_add_machine_house_storage("carrow_power_components_cabinet", "Power Components Cabinet", room_origin + Vector2i(8, 5), {&"power_components": 4, &"capacitor_dust": 3, &"ruin_scrap": 10})
+	_add_machine_house_storage("carrow_service_parts_locker", "Service Parts Locker", room_origin + Vector2i(1, 5), {&"ruin_scrap": 52, &"structural_alloy": 4})
+	_add_machine_house_storage("carrow_structural_spares_rack", "Structural Spares Rack", room_origin + Vector2i(3, 6), {&"structural_alloy": 14, &"ruin_scrap": 16})
+	_add_machine_house_storage("carrow_power_components_cabinet", "Power Components Cabinet", room_origin + Vector2i(10, 6), {&"power_components": 4, &"capacitor_dust": 3, &"ruin_scrap": 10})
 	_add_machine_house_lighting(room_origin)
 	_add_machine_house_doors(machine_site, room_origin)
 
@@ -216,19 +216,20 @@ func _add_machine_house_production_art(room_origin: Vector2i) -> void:
 	var art := Node2D.new()
 	art.name = "ProductionArt"
 	_machine_house_root.add_child(art)
-	_add_machine_house_art_sprite(art, "Entry", "props/carrow_machine_house_entry.png", room_origin + Vector2i(6, 8), 2)
-	_add_machine_house_art_sprite(art, "NorthWallPanelled", "walls/wall_carrow_wall_run_panelled_long_01.png", room_origin + Vector2i(3, 1), -18)
-	_add_machine_house_art_sprite(art, "NorthWallConduit", "walls/wall_carrow_wall_run_conduit_long_01.png", room_origin + Vector2i(9, 1), -18)
-	_add_machine_house_art_sprite(art, "WestControlBay", "walls/wall_carrow_control_bay_01.png", room_origin + Vector2i(1, 3), -17)
-	_add_machine_house_art_sprite(art, "EastMachineBay", "walls/wall_carrow_machine_bay_01.png", room_origin + Vector2i(11, 3), -17)
-	_add_machine_house_art_sprite(art, "WestPillar", "walls/wall_carrow_pillar_lit_01.png", room_origin + Vector2i(1, 6), -16)
-	_add_machine_house_art_sprite(art, "EastPillar", "walls/wall_carrow_pillar_plain_01.png", room_origin + Vector2i(11, 6), -16)
-	_add_machine_house_art_sprite(art, "RelayBank", "props/carrow_machine_house_relay_bank.png", room_origin + Vector2i(2, 3), -12)
-	_add_machine_house_art_sprite(art, "Switchgear", "props/carrow_machine_house_switchgear.png", room_origin + Vector2i(9, 3), -12)
-	_add_machine_house_art_sprite(art, "Workbench", "props/carrow_machine_house_workbench.png", room_origin + Vector2i(6, 5), -10)
-	_add_machine_house_art_sprite(art, "PartsLocker", "props/carrow_machine_house_parts_locker.png", room_origin + Vector2i(3, 7), -9)
-	_add_machine_house_art_sprite(art, "ServiceCabinet", "props/carrow_machine_house_service_cabinet.png", room_origin + Vector2i(8, 7), -9)
-	_add_machine_house_art_sprite(art, "ConduitJunction", "props/carrow_machine_house_conduit_junction.png", room_origin + Vector2i(6, 1), -11)
+	# Keep the shell legible: a single north service band, shallow side
+	# framing, and an obvious south doorway. Props are furnishings, not fill.
+	_add_machine_house_art_sprite(art, "NorthWallPanelled", "walls/wall_carrow_wall_run_panelled_long_01.png", room_origin + Vector2i(1, 2), -18)
+	_add_machine_house_art_sprite(art, "NorthWallConduit", "walls/wall_carrow_wall_run_conduit_long_01.png", room_origin + Vector2i(7, 2), -18)
+	_add_machine_house_art_sprite(art, "WestWall", "walls/wall_carrow_pillar_lit_01.png", room_origin + Vector2i(1, 6), -17)
+	_add_machine_house_art_sprite(art, "EastWall", "walls/wall_carrow_pillar_plain_02.png", room_origin + Vector2i(11, 6), -17)
+	_add_machine_house_art_sprite(art, "SouthDoorway", "walls/wall_carrow_doorframe_recessed_01.png", room_origin + Vector2i(5, 8), -16)
+	_add_machine_house_art_sprite(art, "RelayBank", "props/carrow_machine_house_relay_bank.png", room_origin + Vector2i(1, 3), -12)
+	_add_machine_house_art_sprite(art, "Switchgear", "props/carrow_machine_house_switchgear.png", room_origin + Vector2i(7, 3), -12)
+	_add_machine_house_art_sprite(art, "PartsLocker", "props/carrow_machine_house_parts_locker.png", room_origin + Vector2i(1, 6), -10)
+	_add_machine_house_art_sprite(art, "Workbench", "props/carrow_machine_house_workbench.png", room_origin + Vector2i(2, 7), -10)
+	_add_machine_house_art_sprite(art, "ServiceCabinet", "props/carrow_machine_house_service_cabinet.png", room_origin + Vector2i(4, 7), -10)
+	_add_machine_house_art_sprite(art, "ConduitJunction", "props/carrow_machine_house_conduit_junction.png", room_origin + Vector2i(10, 4), -10)
+	_add_machine_house_art_sprite(art, "PowerCabinet", "props/carrow_machine_house_power_cabinet.png", room_origin + Vector2i(10, 7), -10)
 
 
 func _add_machine_house_art_sprite(parent: Node2D, sprite_name: String, relative_path: String, anchor_cell: Vector2i, z: int) -> void:

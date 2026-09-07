@@ -19,7 +19,7 @@ func _run() -> void:
 	_require(map.is_in_group("environment_region_provider"), "map is not an environment-region provider")
 	var state := map.get_machine_house_debug_state()
 	_require(String(state.canonical_id) == "carrow_yard", "canonical ID mismatch")
-	_require(state.layout == ["XXXXXXXXXXXX","XRRR....SSSX","XRRR....SSSX","X..........X","X..GGGGGG..X","X..........X","XLL......BBX","XXXXXDDXXXXX"], "12x8 authored layout mismatch")
+	_require(state.layout == ["XXXXXXXXXXXX","XRRRRRRRRSSX","X..........X","X..........X","X..........X","X..........X","XLL.......BX","XXXXXDDXXXXX"], "12x8 authored layout mismatch")
 	var interior_rect: Rect2 = state.interior_rect
 	_require(interior_rect.size == Vector2(384, 256), "interior footprint is not 12x8 at 32 px")
 	_require(bool(state.has_entry_door) and bool(state.has_exit_door), "interior doorway pair is incomplete")
@@ -62,10 +62,9 @@ func _run() -> void:
 	var room := map.get_node_or_null("EastMachineHouseInterior")
 	_require(room != null, "East Machine House root missing")
 	_require(int(state.floor_tile_count) == 96, "Carrow floor did not fill the 12x8 room")
-	_require(int(state.production_art_count) == 13, "Machine House production-art placement count mismatch")
+	_require(int(state.production_art_count) == 12, "Machine House production-art placement count mismatch")
 	_require(room.get_node_or_null("CarrowFloorTiles/Floor_00_00") is Sprite2D, "Carrow floor sprites are missing")
-	_require(room.get_node_or_null("ProductionArt/Entry") is Sprite2D, "Machine House entry art is missing")
-	for art_name in ["NorthWallPanelled", "NorthWallConduit", "RelayBank", "Switchgear", "Workbench", "PartsLocker", "ServiceCabinet", "ConduitJunction"]:
+	for art_name in ["NorthWallPanelled", "NorthWallConduit", "WestWall", "EastWall", "SouthDoorway", "RelayBank", "Switchgear", "Workbench", "PartsLocker", "ServiceCabinet", "ConduitJunction", "PowerCabinet"]:
 		var sprite := room.get_node_or_null("ProductionArt/" + art_name) as Sprite2D
 		_require(sprite != null and sprite.texture != null, "missing production art: %s" % art_name)
 	_require(room.find_children("Cell*", "Polygon2D", true, false).is_empty(), "legacy greybox cell visuals remain")
