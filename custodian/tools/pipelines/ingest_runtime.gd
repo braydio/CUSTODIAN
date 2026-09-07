@@ -599,7 +599,7 @@ func _run_post_process(step: String, cleanup_superseded: bool) -> Dictionary:
 				return {"ok": true}
 			var build_output: Array = []
 			var build_args := [
-				ProjectSettings.globalize_path("res://tools/pipelines/build_operator_runtime.py")
+				ProjectSettings.globalize_path("res://tools/pipelines/sync_operator_runtime_assets.py")
 			]
 			var build_exit_code := OS.execute(
 				"python3",
@@ -647,7 +647,7 @@ func _run_post_process(step: String, cleanup_superseded: bool) -> Dictionary:
 				var cleanup_exit_code := OS.execute(
 					"python3",
 					[
-						ProjectSettings.globalize_path("res://tools/pipelines/build_operator_runtime.py"),
+						ProjectSettings.globalize_path("res://tools/pipelines/sync_operator_runtime_assets.py"),
 						"--remove-superseded"
 					],
 					cleanup_output,

@@ -1,0 +1,29 @@
+{
+	"durations": [
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0
+	],
+	"fps": 11.0,
+	"frame_rgba_sha256": [
+		"b81488573d26f558464063b920946ed7f9cca0652e2cf35bb55ef16ef6324b06",
+		"c7da569fa1b37b93c5a5d0c64e2225632e75c4f7533cd85ee571502955a88e02",
+		"858539d619c60f63aa19f5ee525456ef90e73c66648b6529d21fbb4bbb3dbef8",
+		"fe65512a2f285432b8c2cc79e8bbade7d2b4063258439db780d94256ff1c2d79",
+		"f9300f15cfb9b03842e471e692e98a3d13348e58d37e1558d07bb7675531b5ba",
+		"2aa0e98f407474e9857252dd0d855605fcd4ce74ce22e0017ab141ec532d5aed",
+		"bbe7adbd6dbdb27201a4b2c6b10d8dffd670a11c5b2c1ce9b74da788f3598bd9"
+	],
+	"frames": 7,
+	"loop": false,
+	"migration_source": {
+		"animation": "melee_2h_heavy_right",
+		"consumer": "res://game/actors/operator/operator.gd",
+		"resource": "res://game/actors/operator/operator_runtime_frames.tres"
+	},
+	"schema": "custodian.operator_animation_timing.v1"
+}

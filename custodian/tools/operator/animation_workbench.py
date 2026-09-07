@@ -191,7 +191,7 @@ def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_valid
                 old.with_suffix(old.suffix+".import").unlink(missing_ok=True)
             tmp=dst.with_suffix(".png.workbench.tmp"); shutil.copy2(c,tmp); dst.parent.mkdir(parents=True,exist_ok=True); os.replace(tmp,dst)
         _journal_stage(journal_path,journal,"SOURCE_SWAPPED","source_swap")
-        subprocess.run(["python3",str(m.PIPELINES/"build_operator_runtime.py"),"--strict","--remove-superseded"],check=True,cwd=m.REPO_ROOT)
+        subprocess.run(["python3",str(m.PIPELINES/"sync_operator_runtime_assets.py"),"--strict","--remove-superseded"],check=True,cwd=m.REPO_ROOT)
         _journal_stage(journal_path,journal,"RUNTIME_BUILT","runtime_build")
         _compatibility_update()
         for item in journal["resources"]: item["target_sha256"]=m.file_sha256(m.REPO_ROOT/item["path"])
@@ -214,7 +214,7 @@ def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_valid
                 side=source_backup/f"{b['binding_id']}.png.import"
                 if side.exists(): shutil.copy2(side,old.with_suffix(old.suffix+".import"))
             for resource in GENERATED_OPERATOR_RESOURCES: shutil.copy2(resource_backup/resource.name,resource)
-            subprocess.run(["python3",str(m.PIPELINES/"build_operator_runtime.py"),"--strict","--remove-superseded"],check=True,cwd=m.REPO_ROOT)
+            subprocess.run(["python3",str(m.PIPELINES/"sync_operator_runtime_assets.py"),"--strict","--remove-superseded"],check=True,cwd=m.REPO_ROOT)
             _compatibility_update(); _compatibility_check(); _godot_import(); _catalog_build(); _operator_scene_consistency()
             _journal_stage(journal_path,journal,"ROLLED_BACK","rollback_consistency")
         except Exception: journal["state"]="RECOVERY_REQUIRED"

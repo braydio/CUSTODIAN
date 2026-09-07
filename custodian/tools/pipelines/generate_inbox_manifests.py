@@ -10,7 +10,13 @@ from pathlib import Path
 
 from PIL import Image
 
-from operator_asset_schema import canonical_source_path, normalize_legacy_filename, parse_filename
+from operator_asset_schema import parse_filename
+
+# Inbox ingest still receives legacy-named art; the canonical schema rejects it.
+from migrations.operator_legacy_asset_migration import (
+    legacy_canonical_source_path as canonical_source_path,
+    normalize_legacy_filename,
+)
 
 
 PROJECT_DIR = Path(__file__).resolve().parents[2]

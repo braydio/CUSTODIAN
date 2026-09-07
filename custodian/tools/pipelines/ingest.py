@@ -8,7 +8,7 @@ from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_DIR = SCRIPT_DIR.parent.parent
-OPERATOR_RUNTIME_BUILDER = SCRIPT_DIR / "build_operator_runtime.py"
+OPERATOR_RUNTIME_BUILDER = SCRIPT_DIR / "sync_operator_runtime_assets.py"
 USAGE = """\
 Usage: python custodian/tools/pipelines/ingest.py [options]
 
@@ -25,7 +25,7 @@ Options:
 
 def main() -> int:
     forwarded_args: list[str] = []
-    build_operator_runtime = False
+    sync_operator_runtime_assets = False
     index = 0
     raw_args = sys.argv[1:]
     while index < len(raw_args):
@@ -34,7 +34,7 @@ def main() -> int:
             print(USAGE)
             return 0
         if arg == "--build-operator-runtime":
-            build_operator_runtime = True
+            sync_operator_runtime_assets = True
             index += 1
             continue
         forwarded_args.append(arg)
@@ -60,7 +60,7 @@ def main() -> int:
         print(result.stdout, end="")
     if result.stderr:
         print(result.stderr, file=sys.stderr, end="")
-    if result.returncode != 0 or not build_operator_runtime:
+    if result.returncode != 0 or not sync_operator_runtime_assets:
         return result.returncode
 
     builder_args = [sys.executable, str(OPERATOR_RUNTIME_BUILDER)]

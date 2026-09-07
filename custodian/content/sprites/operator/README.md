@@ -21,7 +21,7 @@ Filename grammar:
 ## Build
 
 ```bash
-python3 tools/pipelines/build_operator_runtime.py --strict --remove-superseded
+python3 tools/pipelines/sync_operator_runtime_assets.py --strict --remove-superseded
 godot --headless --path . --script res://tools/pipelines/build_operator_animation_resources.gd
 ```
 

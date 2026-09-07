@@ -1,0 +1,23 @@
+{
+	"durations": [
+		1.0,
+		1.0,
+		1.0,
+		1.0
+	],
+	"fps": 10.0,
+	"frame_rgba_sha256": [
+		"594d10e345e4cbbf99fceb9c9614010c7c5645e3b00081c53e9b0927831e28d4",
+		"d980305c5a0ef7248923a500c0836d21e663940d3fd6fb0878ef9a04e2673d86",
+		"74bf736bcb63c498d85ed5add50cffb607ec02a62322f1a088a1f8ba819a548d",
+		"d51860f0c672993fdfa9ad7969c3713bb1bd4c8c4804bf3ce10e54198344408c"
+	],
+	"frames": 4,
+	"loop": false,
+	"migration_source": {
+		"animation": "melee_2h_block_enter_weapon",
+		"consumer": "res://game/actors/operator/operator.gd",
+		"resource": "res://game/actors/operator/operator_melee_overlay_frames.tres"
+	},
+	"schema": "custodian.operator_animation_timing.v1"
+}

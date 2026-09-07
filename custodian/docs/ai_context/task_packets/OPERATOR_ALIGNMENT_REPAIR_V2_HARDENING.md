@@ -1,7 +1,7 @@
 # Operator Alignment Repair V2 Hardening
 
 - Status: `complete`
-- Authority: `design/04_architecture/SPRITE_PIPELINE_SYSTEM.md` (Operator V2 section), `custodian/tools/pipelines/operator_asset_schema.py`, `custodian/tools/pipelines/build_operator_runtime.py`
+- Authority: `design/04_architecture/SPRITE_PIPELINE_SYSTEM.md` (Operator V2 section), `custodian/tools/pipelines/operator_asset_schema.py`, `custodian/tools/pipelines/sync_operator_runtime_assets.py`
 - Goal: Harden the live Operator V2 alignment-repair conveyor (`custodian/tools/operator/modular_alignment_repair.py`) against five live bugs and lock the fixes in with regression smoke tests and doc remediation.
 - Files: `custodian/tools/operator/modular_alignment_repair.py`, `custodian/tools/operator/modular_combo_check.py`, `custodian/tools/validation/operator_modular_alignment_repair_smoke.py`, `custodian/tools/validation/validation_manifest.json`, `design/04_architecture/SPRITE_PIPELINE_SYSTEM.md`, `custodian/docs/ai_context/AGENT_TOOLING_BY_ASK.md`, `custodian/docs/ai_context/FILE_INDEX.md`, `custodian/docs/ai_context/CURRENT_STATE.md`.
 - Constraints: No PNG pixel edits; never touch `_pipeline/inbox`; no git add -A; no push; do not rewrite `modular_combo_check.py` pairing semantics globally; no new naming convention; no new runtime tree; legacy historical docs stay in place and are labeled historical.
@@ -15,7 +15,7 @@
 2. **Exact V2 pairing only.** Lower and upper sheets pair only when `(loadout, family, action, direction)` match exactly. Frame-count or canvas mismatches produce a missing record; duplicate or one-sided keys produce missing/error records. The conveyor never fans one action across partners or guesses.
 3. **Bounded connector region.** `connector_debug` finds the lower connector in the central 25–75% x-band scanning from the top, then searches the upper frame only near the expected seam within the lower connector's neighborhood, ignoring narrow appendages below the waist. Flagging requires `connector_confidence >= 0.35`.
 4. **Live queue, not an index walk.** `interactive_loop` repeatedly takes the next `pending` entry until none remain; after each save the runtime is rebuilt with `--strict` and the queue is refreshed (`refresh_live_queue`) so partner corrections collapse immediately and newly appeared suspects join as pending. The just-edited source reopens pending while still active. No "QUEUE COMPLETE" claim; a final drain count of fixed/unresolved/skipped is printed.
-5. **Strict rebuild.** `run_builder()` invokes `build_operator_runtime.py --strict --remove-superseded`, and the dry-run printed command reflects it.
+5. **Strict rebuild.** `run_builder()` invokes `sync_operator_runtime_assets.py --strict --remove-superseded`, and the dry-run printed command reflects it.
 
 ## Does Not Change Artwork
 
@@ -26,7 +26,7 @@ No runtime or source pixels change as part of this slice. If a sheet is later op
 ```bash
 python3 -m py_compile custodian/tools/operator/modular_alignment_repair.py custodian/tools/operator/modular_combo_check.py custodian/tools/operator/operator_asset_reconciliation.py custodian/tools/validation/operator_modular_alignment_repair_smoke.py
 python3 custodian/tools/validation/operator_modular_alignment_repair_smoke.py   # 20/20 pass
-cd custodian && python3 tools/pipelines/build_operator_runtime.py --strict --remove-superseded --dry-run && cd ..   # 603 sheets, 0 warnings
+cd custodian && python3 tools/pipelines/sync_operator_runtime_assets.py --strict --remove-superseded --dry-run && cd ..   # 603 sheets, 0 warnings
 python3 custodian/tools/operator/modular_alignment_repair.py --report-only --no-open   # 221 runtime sheets, 103 pairs, 524 frames, 91 flagged pairs
 python3 custodian/tools/validation/run_validation.py --changed --json   # operator_modular_alignment_repair, validation_runner, sundered_keep_shoreline_compositor all pass
 ```

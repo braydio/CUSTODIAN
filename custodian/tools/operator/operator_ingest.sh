@@ -83,9 +83,9 @@ fi
 
 echo "== Operator modular runtime build =="
 if [[ "$APPLY" -eq 1 ]]; then
-  python3 custodian/tools/pipelines/build_operator_runtime.py
+  python3 custodian/tools/pipelines/sync_operator_runtime_assets.py
 else
-  python3 custodian/tools/pipelines/build_operator_runtime.py --dry-run --remove-superseded
+  python3 custodian/tools/pipelines/sync_operator_runtime_assets.py --dry-run --remove-superseded
 fi
 echo ""
 
@@ -113,7 +113,7 @@ godot --headless --path custodian --script res://tools/pipelines/build_operator_
 echo ""
 
 echo "== Operator superseded runtime cleanup =="
-python3 custodian/tools/pipelines/build_operator_runtime.py --remove-superseded
+python3 custodian/tools/pipelines/sync_operator_runtime_assets.py --remove-superseded
 echo ""
 
 if [[ "$NO_VALIDATE" -eq 0 ]]; then

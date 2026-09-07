@@ -220,7 +220,7 @@ def priority_for(score: int) -> str:
 
 def report_commands(group_id: str) -> tuple[list[str], list[str]]:
     implementation = [
-        "python custodian/tools/pipelines/build_operator_runtime.py --remove-superseded",
+        "python custodian/tools/pipelines/sync_operator_runtime_assets.py --remove-superseded",
         "python custodian/tools/validation/operator_animation_contract_report.py",
         "python custodian/tools/validation/operator_modular_pipeline_smoke.py",
     ]

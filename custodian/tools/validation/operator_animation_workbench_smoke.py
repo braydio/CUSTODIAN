@@ -34,7 +34,7 @@ def main():
   sr=root/"dup";p=source(sr,key("operator","lower_body"));q=sr/"other"/p.name;q.parent.mkdir();shutil.copy2(p,q);os.utime(q,(1,1))
   try:m.source_index(sr,root/"none");raise AssertionError("duplicate accepted")
   except m.WorkbenchError:pass
-  sr=root/"owners/source";wr=root/"owners/weapons";source(sr,key("operator","lower_body"));source(sr,key("operator","upper_body"));source(wr,key("weapon_a","weapon","melee_1h_dagger"));source(wr,key("weapon_b","weapon","melee_1h_dagger"))
+  sr=root/"owners/source";wr_base=root/"owners/weapons";wr=wr_base/"content/sprites/weapons";source(sr,key("operator","lower_body"));source(sr,key("operator","upper_body"));source(wr_base,key("weapon_a","weapon","melee_1h_dagger"));source(wr_base,key("weapon_b","weapon","melee_1h_dagger"))
   cat=root/"catalog.json";cat.write_text(json.dumps({"weapons":{x:{"animation_profile":"melee_1h_dagger","presentation_mode":"authored_overlay"} for x in ("weapon_a","weapon_b")}}))
   a=m.build_plan("melee_1h","idle_relaxed_01","e",weapon_id="weapon_a",source_root=sr,weapon_root=wr,catalog_path=cat,repo_root=root);bb=m.build_plan("melee_1h","idle_relaxed_01","e",weapon_id="weapon_b",source_root=sr,weapon_root=wr,catalog_path=cat,repo_root=root)
   assert [x["owner"] for x in a["layers"] if x["layer"]=="weapon"]==["weapon_a"]

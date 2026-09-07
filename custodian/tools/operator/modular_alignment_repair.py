@@ -36,7 +36,7 @@ from operator_asset_reconciliation import (
 
 
 CHECKER_PATH = Path(__file__).with_name("modular_combo_check.py")
-BUILDER_PATH = REPO_ROOT / "custodian/tools/pipelines/build_operator_runtime.py"
+BUILDER_PATH = REPO_ROOT / "custodian/tools/pipelines/sync_operator_runtime_assets.py"
 
 
 def _load_checker():

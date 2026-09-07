@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass, replace
+from dataclasses import dataclass
 from pathlib import Path
 
 DIRECTIONS = ("s", "se", "e", "ne", "n", "nw", "w", "sw", "omni")
@@ -30,36 +30,6 @@ ACTION_GROUPS = (
     "presentation",
 )
 
-LAYER_ALIASES = {
-    "modular_body_lower": "lower_body",
-    "modular_lower_body": "lower_body",
-    "modular_body_upper": "upper_body",
-    "modular_upper_body": "upper_body",
-    "modular_combined_body": "full_body",
-    "combined_body": "full_body",
-    "body": "full_body",
-    "modular_head": "head",
-    "modular_wardrobe_cape": "cape",
-    "wardrobe_cape": "cape",
-    "cape": "cape",
-    "modular_upper_fx": "fx",
-    "upper_fx": "fx",
-    "combat_fx": "fx",
-    "fx": "fx",
-    "modular_sidearm": "weapon",
-    "modular_ranged_weapon": "weapon",
-    "weapon": "weapon",
-}
-PROFILE_ALIASES = {"full": "shared", "hooded": "shared", "melee_2h": "melee_1h_heavy"}
-ACTION_ALIASES = {
-    "chain_01": "fast_01",
-    "chain_02": "fast_02",
-    "chain_03": "fast_03",
-    "enter_block_01": "block_enter_01",
-    "block_loop_01": "block_hold_01",
-    "blocking_hitreact_01": "block_hit_01",
-}
-
 
 @dataclass(frozen=True)
 class OperatorAssetKey:
@@ -82,7 +52,9 @@ def _size(token: str) -> tuple[int, int]:
     return width, int(match.group(2) or width)
 
 
-def parse_filename(path_or_name: str | Path) -> OperatorAssetKey:
+def parse_filename(
+    path_or_name: str | Path, *, allow_legacy_action: bool = False
+) -> OperatorAssetKey:
     name = Path(path_or_name).name
     if not name.endswith(".png"):
         raise ValueError(f"Operator animation asset must be PNG: {name}")
@@ -106,11 +78,17 @@ def parse_filename(path_or_name: str | Path) -> OperatorAssetKey:
         width,
         height,
     )
-    validate_key(key)
+    validate_key(key, allow_legacy_action=allow_legacy_action)
     return key
 
 
-def validate_key(key: OperatorAssetKey) -> None:
+def is_legacy_action(action: str) -> bool:
+    return action.startswith("legacy_") or "_legacy_" in action
+
+
+def validate_key(key: OperatorAssetKey, *, allow_legacy_action: bool = False) -> None:
+    if not allow_legacy_action and is_legacy_action(key.action):
+        raise ValueError(f"legacy action is not valid canonical content: {key.action}")
     if key.layer not in LAYERS:
         raise ValueError(f"invalid Operator layer: {key.layer}")
     if key.animation_profile not in PROFILES:
@@ -123,8 +101,10 @@ def validate_key(key: OperatorAssetKey) -> None:
         raise ValueError("frames and canvas dimensions must be positive")
 
 
-def canonical_filename(key: OperatorAssetKey) -> str:
-    validate_key(key)
+def canonical_filename(
+    key: OperatorAssetKey, *, allow_legacy_action: bool = False
+) -> str:
+    validate_key(key, allow_legacy_action=allow_legacy_action)
     size = (
         str(key.frame_width)
         if key.frame_width == key.frame_height
@@ -159,39 +139,57 @@ def semantic_identity(key: OperatorAssetKey) -> tuple[str, str, str, str, str, s
     )
 
 
-def canonical_source_path(key: OperatorAssetKey) -> Path:
+def _weapon_relative_path(key: OperatorAssetKey, filename: str) -> Path:
+    """Weapon art stays weapon-owned; only the source/runtime prefix differs."""
+    return (
+        Path(key.animation_profile)
+        / (
+            Path("held")
+            if key.action_group == "presentation" and key.action == "held_01"
+            else Path("overrides") / key.action_group / key.action
+        )
+        / filename
+    )
+
+
+def canonical_source_path(
+    key: OperatorAssetKey, *, allow_legacy_action: bool = False
+) -> Path:
+    filename = canonical_filename(key, allow_legacy_action=allow_legacy_action)
     if key.owner == "operator":
         return (
             Path("content/sprites/operator/source/animations")
             / key.animation_profile
             / key.action_group
             / key.action
-            / canonical_filename(key)
+            / filename
         )
     return (
         Path("content/sprites/weapons")
         / key.owner
-        / "operator"
-        / key.animation_profile
-        / (
-            Path("held")
-            if key.action_group == "presentation" and key.action == "held_01"
-            else Path("overrides") / key.action_group / key.action
-        )
-        / canonical_filename(key)
+        / "source/operator"
+        / _weapon_relative_path(key, filename)
     )
 
 
-def canonical_runtime_path(key: OperatorAssetKey) -> Path:
+def canonical_runtime_path(
+    key: OperatorAssetKey, *, allow_legacy_action: bool = False
+) -> Path:
+    filename = canonical_filename(key, allow_legacy_action=allow_legacy_action)
     if key.owner == "operator":
         return (
             Path("content/sprites/operator/runtime/animations")
             / key.animation_profile
             / key.action_group
             / key.action
-            / canonical_filename(key)
+            / filename
         )
-    return canonical_source_path(key)
+    return (
+        Path("content/sprites/weapons")
+        / key.owner
+        / "runtime/operator"
+        / _weapon_relative_path(key, filename)
+    )
 
 
 def infer_action_group(action: str) -> str:
@@ -222,65 +220,3 @@ def infer_action_group(action: str) -> str:
         return "interaction"
 
     return "cosmetic"
-
-
-def normalize_legacy_filename(
-    path_or_name: str | Path, *, explicit_action_map: dict[str, str] | None = None
-) -> OperatorAssetKey:
-    """Normalize a parseable legacy strip; ambiguous names raise instead of guessing."""
-    name = Path(path_or_name).name
-    parts = Path(name).stem.split("__")
-    if len(parts) == 8:
-        return parse_filename(name)
-    if len(parts) < 6 or parts[0] != "operator":
-        raise ValueError(f"unrecognized legacy Operator filename: {name}")
-    direction, frame_token, size_token = parts[-3:]
-    if (
-        direction not in DIRECTIONS
-        or not frame_token.endswith("f")
-        or not frame_token[:-1].isdigit()
-    ):
-        raise ValueError(f"unparseable legacy animation tail: {name}")
-    width, height = _size(size_token)
-    raw_layer = parts[1]
-    layer = LAYER_ALIASES.get(raw_layer)
-    if layer is None:
-        if raw_layer.startswith("modular_weapon_"):
-            layer = "weapon"
-        elif raw_layer == "full_body_combat":
-            layer = "full_body"
-        else:
-            raise ValueError(f"unknown legacy Operator layer: {raw_layer}")
-    middle = parts[2:-3]
-    profile = middle[0] if middle else "unarmed"
-    action = "__".join(middle[1:]) if len(middle) > 1 else profile
-    if profile in {"locomotion", "ranged", "stance"}:
-        action, profile = (action if action != profile else profile), "unarmed"
-    profile = PROFILE_ALIASES.get(profile, profile)
-    if raw_layer == "modular_head":
-        profile = "shared"
-    if raw_layer in {"modular_sidearm"}:
-        profile = "sidearm"
-    if raw_layer in {"modular_ranged_weapon"}:
-        profile = "ranged_2h"
-    if raw_layer.startswith("modular_weapon_vigil"):
-        profile = "melee_1h_dagger"
-    elif raw_layer.startswith("modular_weapon_cleaver"):
-        profile = "melee_1h_heavy"
-    if profile not in PROFILES:
-        raise ValueError(f"ambiguous legacy animation profile {profile}: {name}")
-    mapping = {**ACTION_ALIASES, **(explicit_action_map or {})}
-    action = mapping.get(action, action)
-    key = OperatorAssetKey(
-        "operator",
-        layer,
-        profile,
-        infer_action_group(action),
-        action,
-        direction,
-        int(frame_token[:-1]),
-        width,
-        height,
-    )
-    validate_key(key)
-    return key

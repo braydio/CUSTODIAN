@@ -59,10 +59,16 @@ func _init() -> void:
 
 
 func _prepare(row: Dictionary) -> Dictionary:
-	for field in ["resource", "old_animation", "profile", "group", "action", "direction", "layer", "consumer"]:
+	var from_sheet := row.has("sheet")
+	var required := ["profile", "group", "action", "direction", "layer", "consumer"]
+	required.append_array(["sheet"] if from_sheet else ["resource", "old_animation"])
+	for field in required:
 		if String(row.get(field, "")).is_empty():
 			push_error("Migration row needs explicit %s: %s" % [field, row])
 			return {}
+	if from_sheet and row.has("resource"):
+		push_error("Migration row cannot mix sheet and resource sources: %s" % row)
+		return {}
 	var action := String(row.action)
 	var owner := String(row.get("owner", "operator"))
 	var token := RegEx.new()
@@ -80,38 +86,20 @@ func _prepare(row: Dictionary) -> Dictionary:
 	if not String(row.direction) in ["s", "se", "e", "ne", "n", "nw", "w", "sw", "omni"]:
 		push_error("Invalid migration direction")
 		return {}
-	var resource := load(String(row.resource)) as SpriteFrames
-	var old := StringName(row.old_animation)
-	if resource == null or not resource.has_animation(old) or resource.get_frame_count(old) < 1:
-		push_error("Missing migration animation %s in %s" % [old, row.resource])
+	var extracted := _extract_sheet(row) if from_sheet else _extract_resource(row)
+	if extracted.is_empty():
 		return {}
-	var images: Array[Image] = []
-	var durations: Array[float] = []
+	var images: Array[Image] = extracted.images
+	var durations: Array[float] = extracted.durations
 	var hashes: Array[String] = []
-	var size := Vector2i.ZERO
-	for index in resource.get_frame_count(old):
-		var texture := resource.get_frame_texture(old, index)
-		if texture == null:
-			push_error("Null migration frame %s:%d" % [old, index])
-			return {}
-		var frame := texture.get_image()
-		if frame == null or frame.is_empty():
-			push_error("Unreadable migration frame %s:%d" % [old, index])
-			return {}
-		frame.convert(Image.FORMAT_RGBA8)
-		if index == 0:
-			size = frame.get_size()
-		elif frame.get_size() != size:
-			push_error("Variable canvas needs explicit migration review: %s" % old)
-			return {}
-		images.append(frame)
-		durations.append(resource.get_frame_duration(old, index))
+	for frame in images:
 		hashes.append(_hash(frame))
+	var size: Vector2i = images[0].get_size()
 	var strip := Image.create(size.x * images.size(), size.y, false, Image.FORMAT_RGBA8)
 	for index in images.size():
 		strip.blit_rect(images[index], Rect2i(Vector2i.ZERO, size), Vector2i(index * size.x, 0))
 		if _hash(strip.get_region(Rect2i(index * size.x, 0, size.x, size.y))) != hashes[index]:
-			push_error("Migration pixel verification failed: %s:%d" % [old, index])
+			push_error("Migration pixel verification failed: %s:%d" % [extracted.label, index])
 			return {}
 	var cell := str(size.x) if size.x == size.y else "%dx%d" % [size.x, size.y]
 	var identity := "%s/%s/%s/%s/%s" % [row.profile, row.group, action, row.direction, row.layer]
@@ -135,10 +123,10 @@ func _prepare(row: Dictionary) -> Dictionary:
 				return {}
 	var metadata := {
 		"schema": "custodian.operator_animation_timing.v1",
-		"frames": images.size(), "fps": resource.get_animation_speed(old),
-		"loop": resource.get_animation_loop(old), "durations": durations,
+		"frames": images.size(), "fps": extracted.fps,
+		"loop": extracted.loop, "durations": durations,
 		"frame_rgba_sha256": hashes,
-		"migration_source": {"resource": row.resource, "animation": old, "consumer": row.consumer},
+		"migration_source": extracted.source,
 	}
 	var metadata_path := path.get_basename() + ".animation.json"
 	if FileAccess.file_exists(metadata_path):
@@ -149,6 +137,70 @@ func _prepare(row: Dictionary) -> Dictionary:
 	return {
 		"identity": identity, "path": path, "image": strip,
 		"metadata_path": metadata_path, "metadata": metadata,
+	}
+
+
+## Reads ordered frames out of an authored compatibility SpriteFrames resource.
+func _extract_resource(row: Dictionary) -> Dictionary:
+	var resource := load(String(row.resource)) as SpriteFrames
+	var old := StringName(row.old_animation)
+	if resource == null or not resource.has_animation(old) or resource.get_frame_count(old) < 1:
+		push_error("Missing migration animation %s in %s" % [old, row.resource])
+		return {}
+	var images: Array[Image] = []
+	var durations: Array[float] = []
+	var size := Vector2i.ZERO
+	for index in resource.get_frame_count(old):
+		var texture := resource.get_frame_texture(old, index)
+		if texture == null:
+			push_error("Null migration frame %s:%d" % [old, index])
+			return {}
+		var frame := texture.get_image()
+		if frame == null or frame.is_empty():
+			push_error("Unreadable migration frame %s:%d" % [old, index])
+			return {}
+		frame.convert(Image.FORMAT_RGBA8)
+		if index == 0:
+			size = frame.get_size()
+		elif frame.get_size() != size:
+			push_error("Variable canvas needs explicit migration review: %s" % old)
+			return {}
+		images.append(frame)
+		durations.append(resource.get_frame_duration(old, index))
+	return {
+		"images": images, "durations": durations, "label": String(old),
+		"fps": resource.get_animation_speed(old), "loop": resource.get_animation_loop(old),
+		"source": {"resource": row.resource, "animation": String(old), "consumer": row.consumer},
+	}
+
+
+## Slices an actor-installed baked horizontal sheet using the actor's own declared cell metrics.
+func _extract_sheet(row: Dictionary) -> Dictionary:
+	var sheet := String(row.sheet)
+	var count := int(row.get("frames", 0))
+	var cell := Vector2i(int(row.get("cell_width", 0)), int(row.get("cell_height", 0)))
+	var fps := float(row.get("fps", 0.0))
+	if count < 1 or cell.x < 1 or cell.y < 1 or fps <= 0.0:
+		push_error("Sheet migration needs explicit frames, cell_width, cell_height and fps: %s" % sheet)
+		return {}
+	var source_image := Image.load_from_file(ProjectSettings.globalize_path(sheet))
+	if source_image == null or source_image.is_empty():
+		push_error("Unreadable migration sheet: %s" % sheet)
+		return {}
+	source_image.convert(Image.FORMAT_RGBA8)
+	# A mismatch means the actor's constants no longer describe the art; never guess a slicing.
+	if source_image.get_size() != Vector2i(cell.x * count, cell.y):
+		push_error("Sheet %s is %v, not %d frames of %v" % [sheet, source_image.get_size(), count, cell])
+		return {}
+	var images: Array[Image] = []
+	var durations: Array[float] = []
+	for index in count:
+		images.append(source_image.get_region(Rect2i(index * cell.x, 0, cell.x, cell.y)))
+		durations.append(1.0)
+	return {
+		"images": images, "durations": durations, "label": sheet,
+		"fps": fps, "loop": bool(row.get("loop", false)),
+		"source": {"sheet": sheet, "consumer": row.consumer},
 	}
 
 

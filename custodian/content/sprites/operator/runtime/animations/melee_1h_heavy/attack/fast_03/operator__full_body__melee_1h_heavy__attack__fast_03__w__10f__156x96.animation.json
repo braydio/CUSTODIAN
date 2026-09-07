@@ -1,0 +1,35 @@
+{
+	"durations": [
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0
+	],
+	"fps": 18.0,
+	"frame_rgba_sha256": [
+		"e736145fb18409801664363aa6724c2534b7224719cb8f8a398a1389c2c0e1cd",
+		"01b814e579accd0518e40ee2a86e58a78e9999d8d12ea9bbaf49821196140241",
+		"8b565458363289b6e9ed3d9241032c1b0d2af97d938d6aec7ba81cfe0a38d93a",
+		"bd4bea5f1931eaa751865f7606f179ee223048511b535815cee5f72e368466c1",
+		"554dbc937f29306d63df2abac7d322b7a73ae54adf410423fdd1f41f95a39b59",
+		"508915a279051f59d12bbaca2117685d3b8dab8816555a555bb421366ee4f5c7",
+		"5da4feb7b50a3124bf2c61152f51bc776d477fec422b701b09e6b0a957d97ba9",
+		"795ebff2d64864e820854c57ae9c73a09319d1e98116dc77ce4da6dd346109c3",
+		"8aaa8cfec9c0fb5448d76b371a6e5f2b5aac6c7a4291e5046ca1a18240393258",
+		"e736145fb18409801664363aa6724c2534b7224719cb8f8a398a1389c2c0e1cd"
+	],
+	"frames": 10,
+	"loop": false,
+	"migration_source": {
+		"animation": "sword_cleaver_fast_03_left",
+		"consumer": "res://game/actors/operator/sword_cleaver_definition.tres",
+		"resource": "res://game/actors/operator/sword_cleaver_body_frames.tres"
+	},
+	"schema": "custodian.operator_animation_timing.v1"
+}

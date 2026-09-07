@@ -11,9 +11,10 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(PROJECT_ROOT / "tools/pipelines"))
 from operator_asset_schema import (
     DIRECTIONS, OperatorAssetKey, canonical_filename, canonical_runtime_path,
-    canonical_source_path, normalize_legacy_filename, parse_filename, semantic_identity,
+    canonical_source_path, is_legacy_action, parse_filename, semantic_identity,
 )
-import build_operator_runtime
+from migrations.operator_legacy_asset_migration import normalize_legacy_filename
+import sync_operator_runtime_assets
 
 
 def main() -> int:
@@ -28,6 +29,7 @@ def main() -> int:
     weapon = parse_filename("fallen_star_katana__weapon__melee_1h__presentation__held_01__e__1f__96.png")
     assert "weapons/fallen_star_katana" in canonical_source_path(weapon).as_posix()
     assert parse_filename("operator__full_body__shared__transition__arrival_01__s__13f__156x156.png").layer == "full_body"
+    assert "weapons/fallen_star_katana/runtime/operator" in canonical_runtime_path(weapon).as_posix()
     legacy = normalize_legacy_filename("operator__modular_lower_body__unarmed__chain_01__e__10f__156x96.png")
     assert legacy.action == "fast_01" and legacy.layer == "lower_body"
     try:
@@ -36,15 +38,29 @@ def main() -> int:
     except ValueError:
         pass
 
+    # Legacy identity is migration-only vocabulary; the canonical schema must reject it.
+    assert is_legacy_action("legacy_fast_attack") and is_legacy_action("fast_01_legacy_7f7c22c3")
+    assert not is_legacy_action("fast_01")
+    for name in (
+        "operator__full_body__melee_1h__attack__legacy_operator_body_melee_fast_01__omni__1f__1092x96.png",
+        "operator__fx__melee_1h__attack__fast_01_legacy_7f7c22c3__e__10f__96.png",
+    ):
+        try:
+            parse_filename(name)
+            raise AssertionError(f"legacy action accepted as canonical: {name}")
+        except ValueError:
+            pass
+        assert normalize_legacy_filename(name).action  # migration tooling still reads it
+
     with tempfile.TemporaryDirectory(prefix="operator-v2-builder-") as temp:
         root = Path(temp)
         source = root / "content/sprites/operator/source/animations"
         path = source / "unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__s__2f__96.png"
         path.parent.mkdir(parents=True)
         Image.new("RGBA", (192, 96)).save(path)
-        report = build_operator_runtime.build(
-            source_root=source, weapon_root=root / "weapons", project_root=root,
-            catalog_path=root / "catalog.json", strict=True,
+        report = sync_operator_runtime_assets.sync(
+            source_root=source, weapons_root=root / "weapons", project_root=root,
+            manifest_path=root / "manifest.json", strict=True,
         )
         output = root / canonical_runtime_path(parse_filename(path))
         assert output.exists() and Image.open(output).size == (192, 96)

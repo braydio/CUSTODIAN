@@ -13,9 +13,13 @@ from pathlib import Path
 
 from PIL import Image
 
-from operator_asset_schema import (
-    OperatorAssetKey, canonical_filename, canonical_runtime_path,
-    infer_action_group, normalize_legacy_filename, semantic_identity,
+from operator_asset_schema import OperatorAssetKey, infer_action_group, semantic_identity
+
+# This tool deliberately handles legacy identities; the canonical schema rejects them.
+from migrations.operator_legacy_asset_migration import (
+    legacy_canonical_filename as canonical_filename,
+    legacy_canonical_runtime_path as canonical_runtime_path,
+    normalize_legacy_filename,
 )
 
 

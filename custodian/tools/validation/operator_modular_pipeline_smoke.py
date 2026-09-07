@@ -14,7 +14,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 PIPELINES = PROJECT_ROOT / "tools" / "pipelines"
 sys.path.insert(0, str(PIPELINES))
 
-import build_operator_runtime as builder  # noqa: E402
+import sync_operator_runtime_assets as builder  # noqa: E402
 import generate_inbox_manifests as manifests  # noqa: E402
 from operator_asset_schema import parse_filename  # noqa: E402
 
@@ -29,7 +29,7 @@ def main() -> int:
         root = Path(temp)
         source = root / "source"
         runtime = root / "content/sprites/operator/runtime/animations"
-        catalog = root / "catalog.json"
+        manifest_path = root / "content/sprites/operator/runtime/operator_runtime_manifest.generated.json"
 
         lower = source / "melee_1h/posture/draw_01/operator__lower_body__melee_1h__posture__draw_01__e__4f__128x96.png"
         upper = source / "melee_1h/posture/draw_01/operator__upper_body__melee_1h__posture__draw_01__e__4f__128x96.png"
@@ -44,11 +44,11 @@ def main() -> int:
         assert manifest["frame_size"] == [128, 96]
         assert manifest["post_process"] == ["operator_runtime_build"]
 
-        report = builder.build(
+        report = builder.sync(
             source_root=source,
             project_root=root,
-            catalog_path=catalog,
-            weapon_root=root / "weapons",
+            manifest_path=manifest_path,
+            weapons_root=root / "weapons",
             strict=True,
             remove_superseded=True,
         )
@@ -59,18 +59,18 @@ def main() -> int:
         with Image.open(runtime / "melee_1h/attack/fast_01" / fx.name) as image:
             assert image.size == (1560, 96), "wide canvas must survive unchanged"
 
-        payload = json.loads(catalog.read_text(encoding="utf-8"))
+        payload = json.loads(manifest_path.read_text(encoding="utf-8"))
         entry = payload["animations"]["melee_1h/posture/draw_01/e"]
         assert entry["layers"]["lower_body"]["frame_size"] == [128, 96]
         assert entry["layers"]["upper_body"]["frames"] == 4
 
         stale = runtime / "melee_1h/posture/draw_01/operator__lower_body__melee_1h__posture__draw_01__e__3f__128x96.png"
         _write_strip(stale, 3, 128, 96)
-        builder.build(
+        builder.sync(
             source_root=source,
             project_root=root,
-            catalog_path=catalog,
-            weapon_root=root / "weapons",
+            manifest_path=manifest_path,
+            weapons_root=root / "weapons",
             strict=True,
             remove_superseded=True,
         )

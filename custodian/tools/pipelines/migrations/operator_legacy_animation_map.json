@@ -337,6 +337,48 @@
       "direction": "w",
       "layer": "weapon",
       "consumer": "res://game/actors/operator/sword_cleaver_definition.tres"
+    },
+    {
+      "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_operator_fx_critical_hitspark_01_e_8f_156x96/operator__fx__unarmed__cosmetic__legacy_operator_fx_critical_hitspark_01_e_8f_156x96__omni__1f__1248x96.png",
+      "frames": 8,
+      "cell_width": 156,
+      "cell_height": 96,
+      "fps": 15.0,
+      "loop": false,
+      "profile": "unarmed",
+      "group": "cosmetic",
+      "action": "critical_hitspark_01",
+      "direction": "e",
+      "layer": "fx",
+      "consumer": "res://game/actors/operator/operator.gd"
+    },
+    {
+      "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_operator_fx_critical_hitspark_01_w_8f_156x96/operator__fx__unarmed__cosmetic__legacy_operator_fx_critical_hitspark_01_w_8f_156x96__omni__1f__1248x96.png",
+      "frames": 8,
+      "cell_width": 156,
+      "cell_height": 96,
+      "fps": 15.0,
+      "loop": false,
+      "profile": "unarmed",
+      "group": "cosmetic",
+      "action": "critical_hitspark_01",
+      "direction": "w",
+      "layer": "fx",
+      "consumer": "res://game/actors/operator/operator.gd"
+    },
+    {
+      "sheet": "res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/legacy_firing_slow_walk/operator__full_body__ranged_2h__cosmetic__legacy_firing_slow_walk__omni__1f__672x96.png",
+      "frames": 7,
+      "cell_width": 96,
+      "cell_height": 96,
+      "fps": 10.0,
+      "loop": true,
+      "profile": "ranged_2h",
+      "group": "cosmetic",
+      "action": "fire_walk_01",
+      "direction": "s",
+      "layer": "full_body",
+      "consumer": "res://game/actors/operator/operator.gd"
     }
   ]
 }

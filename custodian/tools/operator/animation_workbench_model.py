@@ -21,7 +21,7 @@ def _load(name: str, path: Path):
     sys.modules[name] = module; spec.loader.exec_module(module); return module
 
 SCHEMA = _load("operator_asset_schema_workbench", PIPELINES / "operator_asset_schema.py")
-BUILDER = _load("operator_runtime_builder_workbench", PIPELINES / "build_operator_runtime.py")
+BUILDER = _load("operator_runtime_builder_workbench", PIPELINES / "sync_operator_runtime_assets.py")
 
 class WorkbenchError(RuntimeError): pass
 

@@ -23,7 +23,7 @@ SOURCE_ROOT = CUSTODIAN_ROOT / "content/sprites/operator/source/animations"
 MODULE_ROOT = CUSTODIAN_ROOT / "content/sprites/operator/runtime/animations"
 ARCHIVE_ROOT = CUSTODIAN_ROOT / "content/sprites/_pipeline/archive"
 DEFAULT_WORKSPACE = REPO_ROOT / ".ai/operator_modular_alignment_repair"
-BUILDER_PATH = CUSTODIAN_ROOT / "tools/pipelines/build_operator_runtime.py"
+BUILDER_PATH = CUSTODIAN_ROOT / "tools/pipelines/sync_operator_runtime_assets.py"
 
 
 def _load_builder():
