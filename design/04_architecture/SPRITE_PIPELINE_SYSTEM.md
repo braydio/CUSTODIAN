@@ -187,6 +187,13 @@ modular layers through the `operator_modular_runtime` post-process hook; legacy 
 normalize into V2 only through `tools/pipelines/migrations/operator_legacy_asset_migration.py`. Building the
 runtime does not automatically add new Operator gameplay states or playback mappings.
 
+Optional adjacent `<sheet>.animation.json` files use `custodian.operator_animation_timing.v1` and are the
+canonical, diffable animation-clock authority for FPS, loop behavior, and per-frame duration multipliers.
+The synchronized animation resolves timing from its lower-body clock (then full-body or upper-body when no
+lower body exists), copies the sidecar into runtime, and projects the resolved timing through both generated
+catalogs and managed `SpriteFrames`. Missing sidecars retain legacy uniform timing. Authored sibling timing
+must match the clock owner; binary Aseprite frame timing is import material, not runtime authority.
+
 Composited Operator reaction pairs are a supported authored alias: `full_body_combat` routes to the live body domain and `combat_fx` routes to the synchronized overlay domain. Runtime playback remains an explicit gameplay/presentation wiring step.
 
 Compatibility rule:

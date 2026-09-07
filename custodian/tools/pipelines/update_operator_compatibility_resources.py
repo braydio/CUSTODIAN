@@ -51,6 +51,13 @@ ATLAS_EXT_RE = re.compile(r'^atlas = ExtResource\("([^"]+)"\)$', re.MULTILINE)
 SUB_REF_RE = re.compile(r'SubResource\("([^"]+)"\)')
 NAME_RE = re.compile(r'^"name": &"([^"]+)"', re.MULTILINE)
 FRAMES_RE = re.compile(r'("frames": \[)(.*?)(\],\n"loop":)', re.DOTALL)
+LOOP_RE = re.compile(r'(^"loop": )(true|false|0|1)', re.MULTILINE)
+SPEED_RE = re.compile(r'(^"speed": )([-0-9.]+)', re.MULTILINE)
+
+
+def _number(value: float) -> str:
+    rendered = format(value, ".15g")
+    return rendered if "." in rendered else rendered + ".0"
 
 
 def _load_schema(repo_root: Path):
@@ -70,6 +77,9 @@ class CatalogSpec:
     frames: int
     frame_width: int
     frame_height: int
+    fps: float | None = None
+    loop: bool | None = None
+    durations: tuple[float, ...] | None = None
 
 
 @dataclass
@@ -77,11 +87,12 @@ class ResourceUpdate:
     path: Path
     changed_paths: list[tuple[str, str]]
     resized_animations: list[tuple[str, int, int]]
+    timing_updates: list[str]
     text: str
 
     @property
     def changed(self) -> bool:
-        return bool(self.changed_paths or self.resized_animations)
+        return bool(self.changed_paths or self.resized_animations or self.timing_updates)
 
 
 def catalog_index(catalog_path: Path, repo_root: Path = REPO_ROOT) -> dict[tuple, CatalogSpec]:
@@ -91,14 +102,28 @@ def catalog_index(catalog_path: Path, repo_root: Path = REPO_ROOT) -> dict[tuple
         raise ValueError(f"invalid Operator catalog: {catalog_path}")
     result: dict[tuple, CatalogSpec] = {}
     for animation in catalog.get("animations", {}).values():
+        timing = animation.get("timing")
+        if timing is not None:
+            fps = float(timing["fps"])
+            loop = bool(timing["loop"])
+            durations = tuple(float(value) for value in timing["durations"])
+        else:
+            fps = loop = durations = None
         for raw in animation.get("layers", {}).values():
             path = str(raw.get("path", ""))
             size = raw.get("frame_size", [])
-            key = schema.parse_filename(Path(path).name)
+            key = schema.parse_filename(Path(path).name, allow_legacy_action=True)
             if key is None or len(size) != 2:
                 raise ValueError(f"catalog contains invalid Operator layer: {path}")
             identity = schema.semantic_identity(key)
-            spec = CatalogSpec(path, int(raw["frames"]), int(size[0]), int(size[1]))
+            layer_frames = int(raw["frames"])
+            layer_timing = durations is not None and len(durations) == layer_frames
+            spec = CatalogSpec(
+                path, layer_frames, int(size[0]), int(size[1]),
+                fps if layer_timing else None,
+                loop if layer_timing else None,
+                durations if layer_timing else None,
+            )
             if identity in result and result[identity] != spec:
                 raise ValueError(f"ambiguous catalog semantic identity: {identity}")
             result[identity] = spec
@@ -207,7 +232,7 @@ def update_resource(path: Path, index: dict[tuple, CatalogSpec], repo_root: Path
         old_path, ext_id = match.groups()
         if not old_path.startswith("res://content/sprites/operator/runtime/animations/"):
             continue
-        old_key = schema.parse_filename(Path(old_path).name)
+        old_key = schema.parse_filename(Path(old_path).name, allow_legacy_action=True)
         if old_key is None:
             continue
         target = index.get(schema.semantic_identity(old_key))
@@ -220,12 +245,13 @@ def update_resource(path: Path, index: dict[tuple, CatalogSpec], repo_root: Path
             changed_paths.append((old_path, target.path))
 
     if not managed:
-        return ResourceUpdate(path, [], [], original)
+        return ResourceUpdate(path, [], [], [], original)
 
     atlases = _atlas_records(original)
     array_start, array_end, blocks = _animation_blocks(text)
     additions: list[str] = []
     resized: list[tuple[str, int, int]] = []
+    timing_updates: list[str] = []
     updated_blocks: list[str] = []
     target_ids: dict[str, list[str]] = {}
     for ext_id, (_old_key, target) in managed.items():
@@ -255,11 +281,17 @@ def update_resource(path: Path, index: dict[tuple, CatalogSpec], repo_root: Path
             frame_match = FRAMES_RE.search(block)
             if frame_match is None:
                 continue
+            durations = target.durations or tuple(1.0 for _ in target_ids[ext_id])
             frame_entries = ", ".join(
-                '{\n"duration": 1.0,\n"texture": SubResource("%s")\n}' % sub_id
-                for sub_id in target_ids[ext_id]
+                '{\n"duration": %s,\n"texture": SubResource("%s")\n}' % (_number(duration), sub_id)
+                for duration, sub_id in zip(durations, target_ids[ext_id], strict=True)
             )
             replacement = block[:frame_match.start(2)] + frame_entries + block[frame_match.end(2):]
+            if target.fps is not None:
+                replacement = SPEED_RE.sub(rf'\g<1>{_number(target.fps)}', replacement, count=1)
+                replacement = LOOP_RE.sub(rf'\g<1>{str(target.loop).lower()}', replacement, count=1)
+                if replacement != block:
+                    timing_updates.append(name)
             if old_key.frames != target.frames:
                 resized.append((name, old_key.frames, target.frames))
             break
@@ -276,7 +308,7 @@ def update_resource(path: Path, index: dict[tuple, CatalogSpec], repo_root: Path
         ext_count = len(EXT_RE.findall(text))
         sub_count = len(ATLAS_RE.findall(text))
         text = re.sub(r"load_steps=\d+", f"load_steps={ext_count + sub_count + 1}", text, count=1)
-    return ResourceUpdate(path, changed_paths, resized, text)
+    return ResourceUpdate(path, changed_paths, resized, timing_updates, text)
 
 
 def stale_runtime_references(resource_root: Path, repo_root: Path = REPO_ROOT) -> list[dict[str, str]]:
@@ -353,13 +385,18 @@ def main() -> int:
             "changed": result.changed,
             "path_updates": result.changed_paths,
             "resized_animations": result.resized_animations,
+            "timing_updates": result.timing_updates,
         })
     if args.json:
         print(json.dumps(report, indent=2))
     else:
         for item in report:
             if item["changed"]:
-                print(f"updated {item['resource']}: {len(item['path_updates'])} paths, {len(item['resized_animations'])} animations")
+                print(
+                    f"updated {item['resource']}: {len(item['path_updates'])} paths, "
+                    f"{len(item['resized_animations'])} resized animations, "
+                    f"{len(item['timing_updates'])} timing updates"
+                )
         if not any(item["changed"] for item in report):
             print("Operator compatibility SpriteFrames already current")
     return 0

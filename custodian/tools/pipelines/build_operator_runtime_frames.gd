@@ -38,9 +38,11 @@ func _build() -> bool:
 	var animations: Dictionary = manifest.get("animations", {})
 	for identity_variant in animations.keys():
 		var identity := String(identity_variant)
-		var layers: Dictionary = animations[identity_variant].get("layers", {})
+		var entry: Dictionary = animations[identity_variant]
+		var layers: Dictionary = entry.get("layers", {})
+		var timing: Dictionary = entry.get("timing", {})
 		for layer_variant in layers.keys():
-			if not _add_layer(frames, "%s/%s" % [identity, layer_variant], layers[layer_variant], identity):
+			if not _add_layer(frames, "%s/%s" % [identity, layer_variant], layers[layer_variant], identity, timing):
 				return false
 
 	var weapons: Dictionary = manifest.get("weapons", {})
@@ -76,7 +78,8 @@ func _build() -> bool:
 
 
 func _add_layer(
-	frames: SpriteFrames, animation_name: String, spec: Dictionary, identity: String
+	frames: SpriteFrames, animation_name: String, spec: Dictionary, identity: String,
+	timing: Dictionary = {}
 ) -> bool:
 	var path := String(spec.get("path", ""))
 	# The manifest is runtime authority; refuse anything that is not runtime art.
@@ -94,13 +97,16 @@ func _add_layer(
 		push_error("Duplicate runtime animation identity: %s" % animation_name)
 		return false
 	frames.add_animation(animation)
+	var resolved_timing := timing if timing.get("durations", []).size() == frame_count else {}
 	# Authored timing wins; the sidecar is the only place real FPS/loop survive.
-	frames.set_animation_speed(animation, float(spec.get("fps", DEFAULT_FPS)))
+	frames.set_animation_speed(animation, float(resolved_timing.get("fps", spec.get("fps", DEFAULT_FPS))))
 	frames.set_animation_loop(
 		animation,
-		bool(spec["loop"]) if spec.has("loop") else _should_loop_animation(identity)
+		bool(resolved_timing["loop"]) if resolved_timing.has("loop")
+		else bool(spec["loop"]) if spec.has("loop")
+		else _should_loop_animation(identity)
 	)
-	var durations: Array = spec.get("durations", [])
+	var durations: Array = resolved_timing.get("durations", spec.get("durations", []))
 	for frame_index in range(frame_count):
 		var atlas := AtlasTexture.new()
 		atlas.atlas = texture

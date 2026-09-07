@@ -69,7 +69,7 @@ def upgrade_v1_manifest_to_v2(data:dict) -> dict:
     weapon=data.get("weapon_context") or {}; identity=data["identity"]
     data["schema"]=SCHEMA_NAME
     data["context"]={"weapon_id":weapon.get("weapon_id",""),"linked_profile":weapon.get("animation_profile",""),"presentation_mode":weapon.get("presentation_mode",""),"fingerprint":context_fingerprint(identity,WeaponContext(weapon.get("weapon_id",""),weapon.get("animation_profile",""),weapon.get("presentation_mode","")) if weapon else None)}
-    clock=int(data["timeline"]["frames"]); data["timeline"].update({"source_clock_frames":clock,"workspace_clock_frames":clock,"document_frames":max([clock]+[int(b["frames"]) for b in data["layers"]])})
+    clock=int(data["timeline"]["frames"]); data["timeline"].update({"source_clock_frames":clock,"workspace_clock_frames":clock,"document_frames":max([clock]+[int(b["frames"]) for b in data["layers"]]),"timing_authority":False,"clock_owner":data["timeline"].get("clock_owner","lower_body")})
     for b in data["layers"]:
         semantic={"owner":b["owner"],"layer":b["layer"],"profile":b["profile"],"group":b["group"],"action":b["action"],"direction":b["direction"]}
         source={"path":b["source_path"],"frames":b["frames"],"frame_size":b["frame_size"],"file_sha256":b["source_file_sha256"],"pixel_sha256":b["source_pixel_sha256"]}
@@ -156,7 +156,15 @@ def build_plan(profile, action, direction, group="", weapon_id="", linked_profil
         path,k=full_body_reference; references.append({"binding_id":"full_body_reference","aseprite_layer_name":"__REFERENCE_FULL_BODY","role":"reference","editable":False,"source_path":rel(path,repo_root),"frames":k.frames,"frame_size":[k.frame_width,k.frame_height],"placement":[(width-k.frame_width)//2,(height-k.frame_height)//2],"timeline_slots":list(range(1,k.frames+1))})
     ident=asdict(identity); context={"weapon_id":weapon.weapon_id if weapon else "","linked_profile":weapon.animation_profile if weapon else "","presentation_mode":weapon.presentation_mode if weapon else ""}; context["fingerprint"]=context_fingerprint(ident,weapon)
     document=max([clock[1].frames]+[b["frames"] for b in bindings]+[r["frames"] for r in references])
-    return {"schema":SCHEMA_NAME,"identity":ident,"context":context,"weapon_context":asdict(weapon) if weapon else None,"timeline":{"frames":document,"source_clock_frames":clock[1].frames,"workspace_clock_frames":clock[1].frames,"document_frames":document,"preview_fps":12,"timing_authority":False,"clock_owner":clock[1].layer},"canvas":{"width":width,"height":height},"aseprite":{"path":"","last_synced_sha256":None},"layers":bindings,"references":references,"pending_migration":None,"last_publish":{"timestamp":None,"validation_status":None}}
+    timing=BUILDER.read_timing(clock[0],clock[1])
+    timeline={"frames":document,"source_clock_frames":clock[1].frames,"workspace_clock_frames":clock[1].frames,"document_frames":document,"preview_fps":timing["fps"] if timing else 12,"timing_authority":timing is not None,"clock_owner":clock[1].layer}
+    if timing:
+        timeline.update({"fps":timing["fps"],"loop":timing["loop"],"durations":timing["durations"],"frame_durations_ms":[duration/timing["fps"]*1000.0 for duration in timing["durations"]]})
+    return {"schema":SCHEMA_NAME,"identity":ident,"context":context,"weapon_context":asdict(weapon) if weapon else None,"timeline":timeline,"canvas":{"width":width,"height":height},"aseprite":{"path":"","last_synced_sha256":None},"layers":bindings,"references":references,"pending_migration":None,"last_publish":{"timestamp":None,"validation_status":None}}
+
+def timing_payload_from_timeline(timeline: dict) -> dict | None:
+    if not timeline.get("timing_authority",False): return None
+    return {"schema":BUILDER.TIMING_SCHEMA,"frames":int(timeline["workspace_clock_frames"]),"fps":float(timeline["fps"]),"loop":timeline["loop"],"durations":[float(value) for value in timeline["durations"]]}
 
 def extract_binding(raw: Path, binding: dict, canvas: dict, output: Path):
     with Image.open(raw) as im:

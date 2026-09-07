@@ -33,12 +33,14 @@ OPERATOR_SOURCE_ROOT = PROJECT_ROOT / "content/sprites/operator/source/animation
 OPERATOR_RUNTIME_ROOT = PROJECT_ROOT / "content/sprites/operator/runtime/animations"
 RUNTIME_PACKAGE_ROOT = PROJECT_ROOT / "content/sprites/operator/runtime"
 RUNTIME_MANIFEST_PATH = RUNTIME_PACKAGE_ROOT / "operator_runtime_manifest.generated.json"
+ANIMATION_CATALOG_PATH = PROJECT_ROOT / "content/data/operator/generated/operator_animation_catalog.generated.json"
 
 WEAPONS_ROOT = PROJECT_ROOT / "content/sprites/weapons"
 WEAPON_SOURCE_GLOB = "*/source/operator"
 WEAPON_RUNTIME_SEGMENT = "runtime/operator"
 
 MANIFEST_SCHEMA = "custodian.operator_runtime_manifest.v1"
+CATALOG_SCHEMA = "custodian.operator_animation_catalog.v2"
 TIMING_SCHEMA = "custodian.operator_animation_timing.v1"
 AUTHORED_OVERLAY_WEAPONS = {"vigil_pattern_dagger", "sword_cleaver"}
 
@@ -112,15 +114,46 @@ def timing_sidecar_path(png_path: Path) -> Path:
     return png_path.with_suffix("").with_suffix(".animation.json")
 
 
-def read_timing(png_path: Path) -> dict | None:
+def _animation_identity(key: OperatorAssetKey) -> str:
+    return "/".join((key.animation_profile, key.action_group, key.action, key.direction))
+
+
+def read_timing(png_path: Path, key: OperatorAssetKey | None = None) -> dict | None:
     """Timing sidecars preserve authored FPS/loop/frame durations through the pipeline."""
     sidecar = timing_sidecar_path(png_path)
     if not sidecar.exists():
         return None
-    payload = json.loads(sidecar.read_text(encoding="utf-8"))
+    key = key or parse_filename(png_path)
+    identity = _animation_identity(key)
+    prefix = f"{sidecar} [{identity}]"
+    try:
+        payload = json.loads(sidecar.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ValueError(f"{prefix}: invalid timing sidecar: {exc}") from exc
     if payload.get("schema") != TIMING_SCHEMA:
-        raise ValueError(f"{sidecar}: unexpected timing schema {payload.get('schema')!r}")
-    return payload
+        raise ValueError(f"{prefix}: unexpected timing schema {payload.get('schema')!r}")
+    frames = payload.get("frames")
+    fps = payload.get("fps")
+    loop = payload.get("loop")
+    durations = payload.get("durations")
+    if isinstance(frames, bool) or not isinstance(frames, int) or frames != key.frames:
+        raise ValueError(f"{prefix}: frames must equal PNG declaration {key.frames}, got {frames!r}")
+    if isinstance(fps, bool) or not isinstance(fps, (int, float)) or fps <= 0:
+        raise ValueError(f"{prefix}: fps must be a positive number, got {fps!r}")
+    if not isinstance(loop, bool):
+        raise ValueError(f"{prefix}: loop must be bool, got {loop!r}")
+    if not isinstance(durations, list) or len(durations) != frames:
+        actual = len(durations) if isinstance(durations, list) else type(durations).__name__
+        raise ValueError(f"{prefix}: durations must contain {frames} entries, got {actual}")
+    if any(isinstance(value, bool) or not isinstance(value, (int, float)) or value <= 0 for value in durations):
+        raise ValueError(f"{prefix}: all durations must be positive numbers, got {durations!r}")
+    return {
+        "schema": TIMING_SCHEMA,
+        "frames": frames,
+        "fps": float(fps),
+        "loop": loop,
+        "durations": [float(value) for value in durations],
+    }
 
 
 def weapon_source_roots(weapons_root: Path = WEAPONS_ROOT) -> list[Path]:
@@ -155,6 +188,7 @@ def scan_sources(
                     legacy_skipped.append(path)
                 continue
             validate_dimensions(path, key)
+            read_timing(path, key)
             found.append((path, key))
     return found
 
@@ -219,7 +253,7 @@ def _layer_entry(path: Path, key: OperatorAssetKey, project_root: Path) -> dict:
         "frames": key.frames,
         "frame_size": [key.frame_width, key.frame_height],
     }
-    timing = read_timing(path)
+    timing = read_timing(path, key)
     if timing is not None:
         entry["fps"] = timing["fps"]
         entry["loop"] = timing["loop"]
@@ -243,6 +277,20 @@ def build_runtime_manifest(
         })
         entry["layers"][key.layer] = _layer_entry(path, key, project_root)
 
+    for entry in animations.values():
+        layers = entry["layers"]
+        clock_layer = next((name for name in ("lower_body", "full_body", "upper_body") if name in layers), None)
+        if clock_layer is None:
+            continue
+        clock = layers[clock_layer]
+        if all(field in clock for field in ("fps", "loop", "durations")):
+            entry["timing"] = {
+                "clock_layer": clock_layer,
+                "fps": clock["fps"],
+                "loop": clock["loop"],
+                "durations": clock["durations"],
+            }
+
     weapons: dict[str, dict] = {}
     for path, key in sorted(weapon_runtime_assets, key=lambda item: item[0].as_posix()):
         default_mode = "authored_overlay" if key.owner in AUTHORED_OVERLAY_WEAPONS else "hybrid"
@@ -264,6 +312,35 @@ def build_runtime_manifest(
     }
 
 
+def build_animation_catalog(manifest: dict, catalog_path: Path) -> dict:
+    """Merge runtime clock data into the broader generated presentation catalog."""
+    if catalog_path.exists():
+        catalog = json.loads(catalog_path.read_text(encoding="utf-8"))
+        if catalog.get("schema") != CATALOG_SCHEMA:
+            raise ValueError(f"{catalog_path}: unexpected catalog schema {catalog.get('schema')!r}")
+    else:
+        catalog = {"schema": CATALOG_SCHEMA, "animations": {}, "weapons": {}, "errors": []}
+    catalog_animations = catalog.setdefault("animations", {})
+    for identity, runtime_entry in manifest["animations"].items():
+        entry = catalog_animations.setdefault(identity, runtime_entry)
+        if "timing" in runtime_entry:
+            entry["timing"] = runtime_entry["timing"]
+        else:
+            continue
+        for layer, runtime_layer in runtime_entry["layers"].items():
+            catalog_layer = entry.setdefault("layers", {}).get(layer)
+            if catalog_layer is None:
+                entry["layers"][layer] = runtime_layer
+                continue
+            for field in ("fps", "loop", "durations"):
+                if field in runtime_layer:
+                    catalog_layer[field] = runtime_layer[field]
+    if not catalog.get("weapons"):
+        catalog["weapons"] = manifest["weapons"]
+    catalog["errors"] = manifest["errors"]
+    return catalog
+
+
 def validate_sources(
     sources: list[tuple[Path, OperatorAssetKey]]
 ) -> tuple[list[tuple[Path, OperatorAssetKey]], list[str]]:
@@ -277,14 +354,30 @@ def validate_sources(
             errors.append(f"superseded semantic siblings: {identity}: {[str(item[0]) for item in candidates]}")
         selected.append(sorted(candidates, key=lambda item: item[0].as_posix())[-1])
 
-    synchronized: dict[tuple[str, str, str, str], dict[str, OperatorAssetKey]] = defaultdict(dict)
-    for _path, key in selected:
+    synchronized: dict[tuple[str, str, str, str], dict[str, tuple[Path, OperatorAssetKey]]] = defaultdict(dict)
+    for path, key in selected:
         if key.owner == "operator":
-            synchronized[(key.animation_profile, key.action_group, key.action, key.direction)][key.layer] = key
+            synchronized[(key.animation_profile, key.action_group, key.action, key.direction)][key.layer] = (path, key)
     for identity, layers in sorted(synchronized.items()):
         if "lower_body" in layers and "upper_body" in layers:
-            if layers["lower_body"].frames != layers["upper_body"].frames:
-                errors.append(f"synchronized frame mismatch {identity}: lower={layers['lower_body'].frames} upper={layers['upper_body'].frames}")
+            lower_key = layers["lower_body"][1]
+            upper_key = layers["upper_body"][1]
+            if lower_key.frames != upper_key.frames:
+                errors.append(f"synchronized frame mismatch {identity}: lower={lower_key.frames} upper={upper_key.frames}")
+        clock_layer = next((name for name in ("lower_body", "full_body", "upper_body") if name in layers), None)
+        if clock_layer is None:
+            continue
+        clock_path, clock_key = layers[clock_layer]
+        clock_timing = read_timing(clock_path, clock_key)
+        for layer, (path, key) in sorted(layers.items()):
+            if layer == clock_layer:
+                continue
+            sibling_timing = read_timing(path, key)
+            if sibling_timing is not None and sibling_timing != clock_timing:
+                errors.append(
+                    f"synchronized timing mismatch {identity}: clock {clock_layer} "
+                    f"({timing_sidecar_path(clock_path)}) != {layer} ({timing_sidecar_path(path)})"
+                )
     return selected, errors
 
 
@@ -347,6 +440,7 @@ def remove_superseded_runtime(
 def sync(
     *, source_root: Path = OPERATOR_SOURCE_ROOT, weapons_root: Path = WEAPONS_ROOT,
     project_root: Path = PROJECT_ROOT, manifest_path: Path = RUNTIME_MANIFEST_PATH,
+    catalog_path: Path | None = None,
     dry_run: bool = False, remove_superseded: bool = False, strict: bool = False,
     profile: str = "", remove_legacy_runtime: bool = False,
 ) -> dict:
@@ -388,6 +482,12 @@ def sync(
     if not dry_run:
         manifest_path.parent.mkdir(parents=True, exist_ok=True)
         manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+        resolved_catalog_path = catalog_path or (
+            project_root / "content/data/operator/generated/operator_animation_catalog.generated.json"
+        )
+        catalog = build_animation_catalog(manifest, resolved_catalog_path)
+        resolved_catalog_path.parent.mkdir(parents=True, exist_ok=True)
+        resolved_catalog_path.write_text(json.dumps(catalog, indent=2) + "\n", encoding="utf-8")
     return {
         "source_assets": len(sources), "emitted": len(emitted),
         "runtime_assets": len(runtime_assets) + len(weapon_runtime_assets),
@@ -403,6 +503,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--weapons-root", type=Path, default=WEAPONS_ROOT)
     parser.add_argument("--project-root", type=Path, default=PROJECT_ROOT)
     parser.add_argument("--manifest-path", type=Path, default=RUNTIME_MANIFEST_PATH)
+    parser.add_argument("--catalog-path", type=Path)
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--remove-superseded", action="store_true")
     parser.add_argument("--strict", action="store_true")
@@ -417,6 +518,7 @@ def main(argv: list[str] | None = None) -> int:
         report = sync(
             source_root=args.source_root, weapons_root=args.weapons_root,
             project_root=args.project_root, manifest_path=args.manifest_path,
+            catalog_path=args.catalog_path,
             dry_run=args.dry_run, remove_superseded=args.remove_superseded,
             strict=args.strict, profile=args.profile,
             remove_legacy_runtime=args.remove_legacy_runtime,

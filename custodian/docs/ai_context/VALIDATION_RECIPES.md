@@ -847,6 +847,7 @@ python -m py_compile custodian/tools/pipelines/generate_inbox_manifests.py custo
 python custodian/tools/validation/non_operator_actor_pipeline_smoke.py
 python custodian/tools/validation/operator_modular_pipeline_smoke.py
 python custodian/tools/validation/operator_compatibility_resources_smoke.py
+python custodian/tools/validation/operator_animation_timing_smoke.py
 godot --headless --path custodian \
   --script res://tools/validation/sprite_directional_mirror_pipeline_smoke.gd
 ```
@@ -855,6 +856,9 @@ The directional mirror smoke proves default `e↔w`, `ne↔nw`, and `se↔sw` pa
 enemy, allied/simple-character, and generic owner domains; authored counterpart precedence; the no-mirror
 opt-out; and per-frame horizontal pixel flipping. The other smokes cover modular-head inbox routing and the
 `head/actions/<profile>/<action>/` runtime module contract.
+The timing smoke proves source and runtime sidecars, resolved lower-body clock metadata in both generated
+catalogs, Workbench timing projection, and authored speed/loop/frame durations in managed compatibility
+resources for the south unarmed and melee-1h runs.
 After rebuilding curated resources, `operator_modular_layers_smoke.gd` verifies the hooded south-idle animation is
 registered, visible with modular unarmed idle, frame-synchronized to the upper body, and hidden when directional
 head coverage is unavailable.

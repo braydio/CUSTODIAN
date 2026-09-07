@@ -151,7 +151,7 @@ def _godot_import():
     subprocess.run(["godot","--headless","--path",str(m.CUSTODIAN_ROOT),"--import","--quit"],check=True)
 
 def _catalog_build():
-    subprocess.run(["godot","--headless","--path",str(m.CUSTODIAN_ROOT),"--script","res://tools/pipelines/build_operator_animation_resources.gd"],check=True)
+    subprocess.run(["godot","--headless","--path",str(m.CUSTODIAN_ROOT),"--script","res://tools/pipelines/build_operator_runtime_frames.gd"],check=True)
 
 def _operator_scene_consistency():
     _compatibility_check()
@@ -179,7 +179,9 @@ def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_valid
         sidecar=old.with_suffix(old.suffix+".import")
         saved_sidecar=source_backup/f"{b['binding_id']}.png.import"
         if sidecar.exists(): shutil.copy2(sidecar,saved_sidecar)
-        journal["sources"].append({"binding_id":b["binding_id"],"old_path":m.rel(old),"old_sha256":m.file_sha256(old),"target_path":m.rel(dst),"target_sha256":m.file_sha256(c),"backup_path":m.rel(saved),"import_backup_path":m.rel(saved_sidecar) if saved_sidecar.exists() else ""})
+        timing=m.BUILDER.timing_sidecar_path(old); saved_timing=source_backup/f"{b['binding_id']}.animation.json"
+        if timing.exists(): shutil.copy2(timing,saved_timing)
+        journal["sources"].append({"binding_id":b["binding_id"],"old_path":m.rel(old),"old_sha256":m.file_sha256(old),"target_path":m.rel(dst),"target_sha256":m.file_sha256(c),"backup_path":m.rel(saved),"import_backup_path":m.rel(saved_sidecar) if saved_sidecar.exists() else "","timing_backup_path":m.rel(saved_timing) if saved_timing.exists() else ""})
     for resource in GENERATED_OPERATOR_RESOURCES:
         saved=resource_backup/resource.name; shutil.copy2(resource,saved)
         journal["resources"].append({"path":m.rel(resource),"old_sha256":m.file_sha256(resource),"target_sha256":None,"backup_path":m.rel(saved)})
@@ -189,7 +191,14 @@ def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_valid
             if dst!=old:
                 old.unlink()
                 old.with_suffix(old.suffix+".import").unlink(missing_ok=True)
+                m.BUILDER.timing_sidecar_path(old).unlink(missing_ok=True)
             tmp=dst.with_suffix(".png.workbench.tmp"); shutil.copy2(c,tmp); dst.parent.mkdir(parents=True,exist_ok=True); os.replace(tmp,dst)
+        timing_payload=m.timing_payload_from_timeline(data["timeline"])
+        if timing_payload is not None:
+            clock=next(b for b,_,_,_ in candidates if b["layer"]==data["timeline"]["clock_owner"])
+            clock_target=next(dst for b,_,dst,_ in candidates if b is clock)
+            timing_path=m.BUILDER.timing_sidecar_path(clock_target)
+            timing_path.write_text(json.dumps(timing_payload,indent=2)+"\n",encoding="utf-8")
         _journal_stage(journal_path,journal,"SOURCE_SWAPPED","source_swap")
         subprocess.run(["python3",str(m.PIPELINES/"sync_operator_runtime_assets.py"),"--strict","--remove-superseded"],check=True,cwd=m.REPO_ROOT)
         _journal_stage(journal_path,journal,"RUNTIME_BUILT","runtime_build")
@@ -210,9 +219,13 @@ def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_valid
             for b,c,dst,old in candidates:
                 if dst.exists(): dst.unlink()
                 dst.with_suffix(dst.suffix+".import").unlink(missing_ok=True)
+                m.BUILDER.timing_sidecar_path(dst).unlink(missing_ok=True)
                 shutil.copy2(source_backup/f"{b['binding_id']}.png",old)
                 side=source_backup/f"{b['binding_id']}.png.import"
                 if side.exists(): shutil.copy2(side,old.with_suffix(old.suffix+".import"))
+                old_timing=m.BUILDER.timing_sidecar_path(old); old_timing.unlink(missing_ok=True)
+                timing=source_backup/f"{b['binding_id']}.animation.json"
+                if timing.exists(): shutil.copy2(timing,old_timing)
             for resource in GENERATED_OPERATOR_RESOURCES: shutil.copy2(resource_backup/resource.name,resource)
             subprocess.run(["python3",str(m.PIPELINES/"sync_operator_runtime_assets.py"),"--strict","--remove-superseded"],check=True,cwd=m.REPO_ROOT)
             _compatibility_update(); _compatibility_check(); _godot_import(); _catalog_build(); _operator_scene_consistency()

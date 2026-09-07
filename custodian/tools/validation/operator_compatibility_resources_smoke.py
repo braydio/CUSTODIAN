@@ -21,7 +21,7 @@ def load_module():
     return module
 
 
-def resource_text(path: str, ext_id: str, animation: str, frames: int, layer: str) -> str:
+def resource_text(path: str, ext_id: str, animation: str, frames: int, layer: str, *, speed: float = 12.0, loop: bool = True) -> str:
     lines = [
         f'[gd_resource type="SpriteFrames" load_steps={frames + 2} format=3]',
         "",
@@ -43,7 +43,7 @@ def resource_text(path: str, ext_id: str, animation: str, frames: int, layer: st
     )
     lines.extend([
         "[resource]",
-        f'animations = [{{\n"frames": [{entries}],\n"loop": true,\n"name": &"{animation}",\n"speed": 12.0\n}}]',
+        f'animations = [{{\n"frames": [{entries}],\n"loop": {str(loop).lower()},\n"name": &"{animation}",\n"speed": {speed}\n}}]',
         "",
     ])
     return "\n".join(lines)
@@ -85,6 +85,8 @@ def main() -> int:
                     "group": "locomotion",
                     "action": "run_01",
                     "direction": "e",
+                    "timing": {"clock_layer": "lower_body", "fps": 10.0, "loop": True,
+                               "durations": [0.6, 0.7, 1.0, 0.6, 0.7, 1.0]},
                     "layers": catalog_layers,
                 }
             },
@@ -107,7 +109,22 @@ def main() -> int:
             _start, _end, blocks = module._animation_blocks(text)
             run = next(block for block in blocks if '"name": &"unarmed_run_right"' in block)
             assert len(module.SUB_REF_RE.findall(run)) == 6
+            assert '"speed": 10' in run
+            assert '"loop": true' in run
+            assert [float(value) for value in __import__("re").findall(r'"duration": ([0-9.]+)', run)] == [0.6, 0.7, 1.0, 0.6, 0.7, 1.0]
             assert "region = Rect2(480, 0, 96, 96)" in text
+
+        legacy_path = resource_root / "legacy_uniform.tres"
+        legacy_key = schema.OperatorAssetKey("operator", "fx", "unarmed", "attack", "fast_01", "s", 2, 96, 96)
+        legacy_res = "res://" + schema.canonical_runtime_path(legacy_key).as_posix()
+        legacy_runtime = root / "custodian" / legacy_res.removeprefix("res://")
+        legacy_runtime.parent.mkdir(parents=True, exist_ok=True)
+        legacy_runtime.write_bytes(b"synthetic legacy runtime")
+        legacy_path.write_text(resource_text(legacy_res, "legacy_fx", "legacy_uniform", 2, "fx", speed=7.5, loop=False))
+        legacy_index = {schema.semantic_identity(legacy_key): module.CatalogSpec(legacy_res, 2, 96, 96)}
+        legacy = module.update_resource(legacy_path, legacy_index, REPO_ROOT)
+        assert not legacy.changed
+        assert '"speed": 7.5' in legacy.text and '"loop": false' in legacy.text
 
         assert module.stale_runtime_references(resource_root, root) == []
         for old_res in old_paths.values():

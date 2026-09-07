@@ -13,7 +13,7 @@ separate Operator Art Agent V1 above this backend. It may mutate only the
 disposable workbench and does not change Workbench publication authority. See
 `OPERATOR_ART_AGENT_SYSTEM.md`.
 
-V2 edits pixels and stages explicit frame-count contract migrations. It cannot change semantic identity, source-frame canvas, timing, speed, transitions, direction ownership, hit windows, weapon presentation ownership, or combat simulation. Frame commands mutate only the ignored workspace; publish alone replaces canonical frame-count filenames transactionally. Ambiguous semantic source identity is a hard error. Resolution uses Operator V2 grammar and exact identity; modification time, directory order, filename recency, arbitrary glob selection, and archives never choose authority.
+V2 edits pixels, stages explicit frame-count contract migrations, and exposes authored animation-clock timing. Canonical adjacent `.animation.json` sidecars own FPS, loop, and per-frame duration multipliers; publish updates that source sidecar transactionally and generated runtime resources remain projections. It cannot change semantic identity, source-frame canvas, transitions, direction ownership, hit windows, weapon presentation ownership, or combat simulation. Frame commands mutate only the ignored workspace; publish alone replaces canonical frame-count filenames and timing sidecars transactionally. Ambiguous semantic source identity is a hard error. Resolution uses Operator V2 grammar and exact identity; modification time, directory order, filename recency, arbitrary glob selection, and archives never choose authority.
 
 ## Workflow
 
