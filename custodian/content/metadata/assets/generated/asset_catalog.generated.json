@@ -7562,6 +7562,158 @@
           "source_asset": null
         }
       }
+    },
+    "procgen_depth_chunks": {
+      "kind": "backdrop",
+      "assets": {
+        "rocky_upland_cliff_bowl::omni": {
+          "state_id": "rocky_upland_cliff_bowl",
+          "direction": "omni",
+          "semantic_identity": [
+            "procgen_depth_chunks",
+            "backdrop",
+            "body",
+            "rocky_upland",
+            "rocky_upland_cliff_bowl",
+            "omni"
+          ],
+          "path": "content/backgrounds/procgen/depth_chunks/depth_rocky_upland_cliff_bowl_v1.png",
+          "frames": 1,
+          "frame_size": [
+            896,
+            576
+          ],
+          "sha256": "32f015326bad3cb89c1236b4e347fe2f76df0b16bb8595ed8f569ce547cb9357",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "rocky_upland_exposed_ledge::omni": {
+          "state_id": "rocky_upland_exposed_ledge",
+          "direction": "omni",
+          "semantic_identity": [
+            "procgen_depth_chunks",
+            "backdrop",
+            "body",
+            "rocky_upland",
+            "rocky_upland_exposed_ledge",
+            "omni"
+          ],
+          "path": "content/backgrounds/procgen/depth_chunks/depth_rocky_upland_exposed_ledge_v1.png",
+          "frames": 1,
+          "frame_size": [
+            640,
+            448
+          ],
+          "sha256": "3ac69a71bf092b9e4109fdb37f5884725feb6c0b7a0ca9571799ad78c700c40b",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "rocky_upland_talus_ravine::omni": {
+          "state_id": "rocky_upland_talus_ravine",
+          "direction": "omni",
+          "semantic_identity": [
+            "procgen_depth_chunks",
+            "backdrop",
+            "body",
+            "rocky_upland",
+            "rocky_upland_talus_ravine",
+            "omni"
+          ],
+          "path": "content/backgrounds/procgen/depth_chunks/depth_rocky_upland_talus_ravine_v1.png",
+          "frames": 1,
+          "frame_size": [
+            896,
+            576
+          ],
+          "sha256": "38f3cb3e3344e5495a3dc5f3f13f8cd0bfa7ed1bd32fd755fe501a43fa3acd27",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "wetland_drowned_service_platform::omni": {
+          "state_id": "wetland_drowned_service_platform",
+          "direction": "omni",
+          "semantic_identity": [
+            "procgen_depth_chunks",
+            "backdrop",
+            "body",
+            "wetland",
+            "wetland_drowned_service_platform",
+            "omni"
+          ],
+          "path": "content/backgrounds/procgen/depth_chunks/depth_wetland_drowned_service_platform_v1.png",
+          "frames": 1,
+          "frame_size": [
+            640,
+            448
+          ],
+          "sha256": "bcea221db1be4c11c836d0c4d9590eaaa7970f033c8ecdee18bf1da9b2dfe828",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "wetland_flooded_basin::omni": {
+          "state_id": "wetland_flooded_basin",
+          "direction": "omni",
+          "semantic_identity": [
+            "procgen_depth_chunks",
+            "backdrop",
+            "body",
+            "wetland",
+            "wetland_flooded_basin",
+            "omni"
+          ],
+          "path": "content/backgrounds/procgen/depth_chunks/depth_wetland_flooded_basin_v1.png",
+          "frames": 1,
+          "frame_size": [
+            896,
+            576
+          ],
+          "sha256": "cf7ea59232116cde4bb34745446cdd0c25a58912a26e8cdd8819ecb62d101644",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "wetland_reed_channels::omni": {
+          "state_id": "wetland_reed_channels",
+          "direction": "omni",
+          "semantic_identity": [
+            "procgen_depth_chunks",
+            "backdrop",
+            "body",
+            "wetland",
+            "wetland_reed_channels",
+            "omni"
+          ],
+          "path": "content/backgrounds/procgen/depth_chunks/depth_wetland_reed_channels_v1.png",
+          "frames": 1,
+          "frame_size": [
+            640,
+            448
+          ],
+          "sha256": "43d5a9c4891effb5de310f20a2e62876a66571781c57dde1c21d1def0517d025",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "woodland_overgrown_works::omni": {
+          "state_id": "woodland_overgrown_works",
+          "direction": "omni",
+          "semantic_identity": [
+            "procgen_depth_chunks",
+            "backdrop",
+            "body",
+            "woodland",
+            "woodland_overgrown_works",
+            "omni"
+          ],
+          "path": "content/backgrounds/procgen/depth_chunks/depth_woodland_overgrown_works_v1.png",
+          "frames": 1,
+          "frame_size": [
+            640,
+            448
+          ],
+          "sha256": "90e61ef23fff13d46679b5e27fea035e8edb3c0d30d148b257c7f036ab8d7f28",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
     }
   }
 }

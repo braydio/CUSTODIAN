@@ -1,0 +1,191 @@
+{
+  "schema": "custodian.procgen_depth_chunks.normalization.v2",
+  "source_root": "custodian/asset_drop/source_work/procgen_depth_chunks",
+  "inbox_root": "custodian/asset_drop/inbox/procgen_depth_chunks",
+  "resampling": "Pillow LANCZOS exactly once from master to final size",
+  "alpha_cutoff": 16,
+  "outputs": [
+    {
+      "source": "depth_woodland_overgrown_works_v1.png",
+      "source_sha256": "0ea10af070f069b27fda57e07cd821eacaa2e248923d5ceeea58f6ee131fecc3",
+      "source_size": [
+        1499,
+        1049
+      ],
+      "state": "woodland_overgrown_works",
+      "output": "woodland_overgrown_works.png",
+      "output_size": [
+        640,
+        448
+      ],
+      "source_alpha": {
+        "alpha_min": 0,
+        "alpha_max": 255,
+        "transparent_fraction": 0.42198008077835175,
+        "partial_alpha_fraction": 0.6312959831498723
+      },
+      "output_alpha": {
+        "alpha_min": 0,
+        "alpha_max": 255,
+        "transparent_fraction": 0.42159249441964286,
+        "partial_alpha_fraction": 0.6319475446428572
+      }
+    },
+    {
+      "source": "depth_wetland_flooded_basin_v1.png",
+      "source_sha256": "1d4f814601c33264c97762c466b3c71335234ee57e927096344b6ec55062a121",
+      "source_size": [
+        1564,
+        1006
+      ],
+      "state": "wetland_flooded_basin",
+      "output": "wetland_flooded_basin.png",
+      "output_size": [
+        896,
+        576
+      ],
+      "source_alpha": {
+        "alpha_min": 0,
+        "alpha_max": 255,
+        "transparent_fraction": 0.3286572127338272,
+        "partial_alpha_fraction": 0.7081666014145307
+      },
+      "output_alpha": {
+        "alpha_min": 0,
+        "alpha_max": 255,
+        "transparent_fraction": 0.3288012307787698,
+        "partial_alpha_fraction": 0.7071455698164683
+      }
+    },
+    {
+      "source": "depth_wetland_reed_channels_v1.png",
+      "source_sha256": "b47f2e7ebe655b3678a32d8c6b86f2dfcf61d525744442c49e40713f4e55d23a",
+      "source_size": [
+        1499,
+        1049
+      ],
+      "state": "wetland_reed_channels",
+      "output": "wetland_reed_channels.png",
+      "output_size": [
+        640,
+        448
+      ],
+      "source_alpha": {
+        "alpha_min": 0,
+        "alpha_max": 255,
+        "transparent_fraction": 0.387649599256193,
+        "partial_alpha_fraction": 0.7121207592478239
+      },
+      "output_alpha": {
+        "alpha_min": 0,
+        "alpha_max": 255,
+        "transparent_fraction": 0.38680245535714286,
+        "partial_alpha_fraction": 0.7130510602678571
+      }
+    },
+    {
+      "source": "depth_wetland_drowned_service_platform_v1.png",
+      "source_sha256": "65f7e096c55821c879864a1b436d6879da3dd3a74a452911e81fd9f9b04b30a1",
+      "source_size": [
+        1499,
+        1049
+      ],
+      "state": "wetland_drowned_service_platform",
+      "output": "wetland_drowned_service_platform.png",
+      "output_size": [
+        640,
+        448
+      ],
+      "source_alpha": {
+        "alpha_min": 0,
+        "alpha_max": 255,
+        "transparent_fraction": 0.4146927312838365,
+        "partial_alpha_fraction": 0.6408555815093762
+      },
+      "output_alpha": {
+        "alpha_min": 0,
+        "alpha_max": 255,
+        "transparent_fraction": 0.41246163504464284,
+        "partial_alpha_fraction": 0.6410121372767857
+      }
+    },
+    {
+      "source": "depth_rocky_upland_cliff_bowl_v1.png",
+      "source_sha256": "052f89bc0b0081d9f077ce973263c8e497aaf01434f44555386c13fbc6b33b0a",
+      "source_size": [
+        1564,
+        1006
+      ],
+      "state": "rocky_upland_cliff_bowl",
+      "output": "rocky_upland_cliff_bowl.png",
+      "output_size": [
+        896,
+        576
+      ],
+      "source_alpha": {
+        "alpha_min": 0,
+        "alpha_max": 255,
+        "transparent_fraction": 0.3034440416325576,
+        "partial_alpha_fraction": 0.7165599751872397
+      },
+      "output_alpha": {
+        "alpha_min": 0,
+        "alpha_max": 255,
+        "transparent_fraction": 0.30371481274801587,
+        "partial_alpha_fraction": 0.7150297619047619
+      }
+    },
+    {
+      "source": "depth_rocky_upland_talus_ravine_v1.png",
+      "source_sha256": "d5b51fd381db65216e292fb58a76835125571be4efd7f857a88cda22be3e1ecc",
+      "source_size": [
+        1564,
+        1006
+      ],
+      "state": "rocky_upland_talus_ravine",
+      "output": "rocky_upland_talus_ravine.png",
+      "output_size": [
+        896,
+        576
+      ],
+      "source_alpha": {
+        "alpha_min": 0,
+        "alpha_max": 255,
+        "transparent_fraction": 0.34640558185414366,
+        "partial_alpha_fraction": 0.6747094161374464
+      },
+      "output_alpha": {
+        "alpha_min": 0,
+        "alpha_max": 255,
+        "transparent_fraction": 0.34678238157242064,
+        "partial_alpha_fraction": 0.6731344556051587
+      }
+    },
+    {
+      "source": "depth_rocky_upland_exposed_ledge_v1.png",
+      "source_sha256": "aae5de4a9715a7f88830691973aaf450a69d942b9fb0bc4bdf8427e3611153f8",
+      "source_size": [
+        1499,
+        1049
+      ],
+      "state": "rocky_upland_exposed_ledge",
+      "output": "rocky_upland_exposed_ledge.png",
+      "output_size": [
+        640,
+        448
+      ],
+      "source_alpha": {
+        "alpha_min": 0,
+        "alpha_max": 255,
+        "transparent_fraction": 0.3639833610077516,
+        "partial_alpha_fraction": 0.6650394829473224
+      },
+      "output_alpha": {
+        "alpha_min": 0,
+        "alpha_max": 255,
+        "transparent_fraction": 0.36390206473214287,
+        "partial_alpha_fraction": 0.6638113839285714
+      }
+    }
+  ]
+}

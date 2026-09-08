@@ -1,0 +1,92 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "procgen_depth_chunks",
+  "kind": "backdrop",
+  "runtime": {
+    "domain": "backgrounds/procgen/depth_chunks",
+    "owner": "procgen_depth_chunks",
+    "template": "{domain}/{filename}",
+    "filename_policy": "template",
+    "filename_template": "depth_{variant}_v1.png"
+  },
+  "canvas": {
+    "width": 640,
+    "height": 448
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "woodland_overgrown_works": {
+      "required": false,
+      "layer": "body",
+      "action_group": "woodland",
+      "variant": "woodland_overgrown_works",
+      "layout": "copy",
+      "frame_width": 640,
+      "frame_height": 448,
+      "frames": 1
+    },
+    "wetland_flooded_basin": {
+      "required": false,
+      "layer": "body",
+      "action_group": "wetland",
+      "variant": "wetland_flooded_basin",
+      "layout": "copy",
+      "frame_width": 896,
+      "frame_height": 576,
+      "frames": 1
+    },
+    "wetland_reed_channels": {
+      "required": false,
+      "layer": "body",
+      "action_group": "wetland",
+      "variant": "wetland_reed_channels",
+      "layout": "copy",
+      "frame_width": 640,
+      "frame_height": 448,
+      "frames": 1
+    },
+    "wetland_drowned_service_platform": {
+      "required": false,
+      "layer": "body",
+      "action_group": "wetland",
+      "variant": "wetland_drowned_service_platform",
+      "layout": "copy",
+      "frame_width": 640,
+      "frame_height": 448,
+      "frames": 1
+    },
+    "rocky_upland_cliff_bowl": {
+      "required": false,
+      "layer": "body",
+      "action_group": "rocky_upland",
+      "variant": "rocky_upland_cliff_bowl",
+      "layout": "copy",
+      "frame_width": 896,
+      "frame_height": 576,
+      "frames": 1
+    },
+    "rocky_upland_talus_ravine": {
+      "required": false,
+      "layer": "body",
+      "action_group": "rocky_upland",
+      "variant": "rocky_upland_talus_ravine",
+      "layout": "copy",
+      "frame_width": 896,
+      "frame_height": 576,
+      "frames": 1
+    },
+    "rocky_upland_exposed_ledge": {
+      "required": false,
+      "layer": "body",
+      "action_group": "rocky_upland",
+      "variant": "rocky_upland_exposed_ledge",
+      "layout": "copy",
+      "frame_width": 640,
+      "frame_height": 448,
+      "frames": 1
+    }
+  },
+  "aliases": {},
+  "consumers": []
+}
