@@ -22,9 +22,9 @@ depth_backdrop = NodePath("DepthBackdrop")
 void_cliff_face = NodePath("VoidCliffFace")
 nonwalkable_surface_base_tilemap = NodePath("NavigationRegion2D/NonWalkableSurfaceBase")
 nonwalkable_surface_overlay_tilemap = NodePath("NavigationRegion2D/NonWalkableSurfaceOverlay")
-macro_presentation_back = NodePath("NavigationRegion2D/MacroPresentationBack")
-macro_presentation_ground = NodePath("NavigationRegion2D/MacroPresentationGround")
-macro_presentation_front = NodePath("NavigationRegion2D/MacroPresentationFront")
+macro_presentation_back = NodePath("NavigationRegion2D/TerrainPresentationBack")
+macro_presentation_ground = NodePath("NavigationRegion2D/TerrainPresentationGround")
+macro_presentation_front = NodePath("NavigationRegion2D/TerrainPresentationFront")
 macro_presentation_catalog = ExtResource("macro_stamp_catalog")
 floor_source_id = 10
 walls_source_id = 12
@@ -110,7 +110,7 @@ script = ExtResource("void_cliff_face_script")
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="." unique_id=2086078231]
 navigation_polygon = SubResource("NavigationPolygon_1")
 
-[node name="MacroPresentationBack" type="Node2D" parent="NavigationRegion2D"]
+[node name="TerrainPresentationBack" type="Node2D" parent="NavigationRegion2D"]
 z_index = -5
 z_as_relative = false
 
@@ -127,7 +127,7 @@ tile_set = ExtResource("2")
 [node name="Floor" type="TileMapLayer" parent="NavigationRegion2D" unique_id=1495522250]
 tile_set = ExtResource("2")
 
-[node name="MacroPresentationGround" type="Node2D" parent="NavigationRegion2D"]
+[node name="TerrainPresentationGround" type="Node2D" parent="NavigationRegion2D"]
 z_index = 0
 z_as_relative = false
 
@@ -144,7 +144,7 @@ script = ExtResource("4_shadow_system")
 z_index = 2
 tile_set = ExtResource("2")
 
-[node name="MacroPresentationFront" type="Node2D" parent="NavigationRegion2D"]
+[node name="TerrainPresentationFront" type="Node2D" parent="NavigationRegion2D"]
 z_index = 4
 z_as_relative = false
 

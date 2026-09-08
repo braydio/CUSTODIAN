@@ -2,7 +2,7 @@
 
 Status: implementation
 
-Last updated: 2026-09-04
+Last updated: 2026-09-08
 
 ## Purpose
 
@@ -102,6 +102,21 @@ scale, retain authored pivots, and use nearest filtering.
 `BiomeProfile` adds only `macro_stamp_families` and
 `macro_stamp_min_region_cells`. It does not absorb biome classification,
 surface gameplay authority, or weather.
+
+### Production BACK-band depth vocabulary
+
+The first production depth-chunk vocabulary is live in the existing terrain
+stamp catalog. `TerrainStampProfile` now distinguishes `SURFACE` and `CHASM`
+placement domains. CHASM profiles author a `chasm_core_rect`; they never infer
+semantic coverage from texture alpha, own gameplay occupancy, or mutate the
+32×32 world. They are restricted to the BACK band and to deterministic
+`depth_south_edge` runs whose first chasm row provides placement anchors.
+
+The approved families are `procgen_depth_universal`,
+`procgen_depth_scrubland`, and `procgen_depth_woodland`. Scrubland and woodland
+enable their specific family plus universal; wetland and rocky upland enable
+only universal until dedicated vocabularies are produced. At most eight depth
+stamps are realized for one active procgen map.
 
 The biome field is built after faction/story geometry, parking, final road
 repair, and the final generated-state capture. It continues to run in candidate

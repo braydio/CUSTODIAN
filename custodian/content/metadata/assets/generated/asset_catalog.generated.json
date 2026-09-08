@@ -7358,6 +7358,210 @@
           "source_asset": null
         }
       }
+    },
+    "procgen_depth_universal": {
+      "kind": "backdrop",
+      "assets": {
+        "civic_foundation_breach_v1::omni": {
+          "state_id": "civic_foundation_breach_v1",
+          "direction": "omni",
+          "semantic_identity": [
+            "procgen_depth_universal",
+            "backdrop",
+            "background",
+            "display",
+            "civic_foundation_breach_v1",
+            "omni"
+          ],
+          "path": "content/backgrounds/procgen/depth_chunks/universal/procgen_depth_universal_civic_foundation_breach_v1_896x576.png",
+          "frames": 1,
+          "frame_size": [
+            896,
+            576
+          ],
+          "sha256": "408c694897cba68eb4417643278f3a6c41914b6d0dfd8ff5a285f3dd7eae27f6",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "fractured_ravine_v1::omni": {
+          "state_id": "fractured_ravine_v1",
+          "direction": "omni",
+          "semantic_identity": [
+            "procgen_depth_universal",
+            "backdrop",
+            "background",
+            "display",
+            "fractured_ravine_v1",
+            "omni"
+          ],
+          "path": "content/backgrounds/procgen/depth_chunks/universal/procgen_depth_universal_fractured_ravine_v1_896x576.png",
+          "frames": 1,
+          "frame_size": [
+            896,
+            576
+          ],
+          "sha256": "85adb0ca2a7d3219d1118c5447d113a70578cb95dcd6a88da41fabbad32abfac",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "service_infrastructure_field_v1::omni": {
+          "state_id": "service_infrastructure_field_v1",
+          "direction": "omni",
+          "semantic_identity": [
+            "procgen_depth_universal",
+            "backdrop",
+            "background",
+            "display",
+            "service_infrastructure_field_v1",
+            "omni"
+          ],
+          "path": "content/backgrounds/procgen/depth_chunks/universal/procgen_depth_universal_service_infrastructure_field_v1_640x448.png",
+          "frames": 1,
+          "frame_size": [
+            640,
+            448
+          ],
+          "sha256": "2c2ba287979da527afb50a2aff85aef7e944fa833b9923f53ce0307846238f28",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "talus_and_rubble_shelf_v1::omni": {
+          "state_id": "talus_and_rubble_shelf_v1",
+          "direction": "omni",
+          "semantic_identity": [
+            "procgen_depth_universal",
+            "backdrop",
+            "background",
+            "display",
+            "talus_and_rubble_shelf_v1",
+            "omni"
+          ],
+          "path": "content/backgrounds/procgen/depth_chunks/universal/procgen_depth_universal_talus_and_rubble_shelf_v1_640x448.png",
+          "frames": 1,
+          "frame_size": [
+            640,
+            448
+          ],
+          "sha256": "24a681903fad3588c4fa98fc6ef1fdd697e39fc3e47bbdd3384d7c33a355783b",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "procgen_depth_scrubland": {
+      "kind": "backdrop",
+      "assets": {
+        "dry_basin_v1::omni": {
+          "state_id": "dry_basin_v1",
+          "direction": "omni",
+          "semantic_identity": [
+            "procgen_depth_scrubland",
+            "backdrop",
+            "background",
+            "display",
+            "dry_basin_v1",
+            "omni"
+          ],
+          "path": "content/backgrounds/procgen/depth_chunks/scrubland/procgen_depth_scrubland_dry_basin_v1_896x576.png",
+          "frames": 1,
+          "frame_size": [
+            896,
+            576
+          ],
+          "sha256": "a42f01a6cb6fdc7a1315a73964c67fa4953787c59a8f08d61941a2c9cbcb3e90",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "service_scar_v1::omni": {
+          "state_id": "service_scar_v1",
+          "direction": "omni",
+          "semantic_identity": [
+            "procgen_depth_scrubland",
+            "backdrop",
+            "background",
+            "display",
+            "service_scar_v1",
+            "omni"
+          ],
+          "path": "content/backgrounds/procgen/depth_chunks/scrubland/procgen_depth_scrubland_service_scar_v1_640x448.png",
+          "frames": 1,
+          "frame_size": [
+            640,
+            448
+          ],
+          "sha256": "02bab8352aab343c225421222bab8a0e0407b0bcb56142657af7851b15284c93",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "wash_channel_v1::omni": {
+          "state_id": "wash_channel_v1",
+          "direction": "omni",
+          "semantic_identity": [
+            "procgen_depth_scrubland",
+            "backdrop",
+            "background",
+            "display",
+            "wash_channel_v1",
+            "omni"
+          ],
+          "path": "content/backgrounds/procgen/depth_chunks/scrubland/procgen_depth_scrubland_wash_channel_v1_640x448.png",
+          "frames": 1,
+          "frame_size": [
+            640,
+            448
+          ],
+          "sha256": "d1b4aa2a3f5607f29f1a234da9e5c030da5a0d0c490c4d42b0ace2e74940f7ee",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "procgen_depth_woodland": {
+      "kind": "backdrop",
+      "assets": {
+        "canopy_basin_v1::omni": {
+          "state_id": "canopy_basin_v1",
+          "direction": "omni",
+          "semantic_identity": [
+            "procgen_depth_woodland",
+            "backdrop",
+            "background",
+            "display",
+            "canopy_basin_v1",
+            "omni"
+          ],
+          "path": "content/backgrounds/procgen/depth_chunks/woodland/procgen_depth_woodland_canopy_basin_v1_896x576.png",
+          "frames": 1,
+          "frame_size": [
+            896,
+            576
+          ],
+          "sha256": "197e5a22d9e18572fda02945d1b3d57757b16f42eaf7f336099e854d23149020",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "ravine_v1::omni": {
+          "state_id": "ravine_v1",
+          "direction": "omni",
+          "semantic_identity": [
+            "procgen_depth_woodland",
+            "backdrop",
+            "background",
+            "display",
+            "ravine_v1",
+            "omni"
+          ],
+          "path": "content/backgrounds/procgen/depth_chunks/woodland/procgen_depth_woodland_ravine_v1_896x576.png",
+          "frames": 1,
+          "frame_size": [
+            896,
+            576
+          ],
+          "sha256": "ea4deffc34fecfa90e3b98148dd2ef5a77043256ccfa37fd5eb3f3f686bee78f",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
     }
   }
 }

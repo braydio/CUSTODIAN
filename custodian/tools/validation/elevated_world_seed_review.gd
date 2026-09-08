@@ -9,7 +9,12 @@ func _init() -> void:
 
 
 func _run() -> void:
-	for seed in SEEDS:
+	var total_depth_stamps := 0
+	var review_seeds := SEEDS
+	for argument: String in OS.get_cmdline_user_args():
+		if argument.begins_with("--seed="):
+			review_seeds = [int(argument.trim_prefix("--seed="))]
+	for seed in review_seeds:
 		var map := MAP_SCENE.instantiate()
 		root.add_child(map)
 		var tilemap := map as ProcGenTilemap
@@ -39,6 +44,14 @@ func _run() -> void:
 		var bounds := _bounds(floors.keys())
 		var floor_layer := map.get_node("NavigationRegion2D/Floor") as TileMapLayer
 		var wall_layer := map.get_node("NavigationRegion2D/Walls") as TileMapLayer
+		var macro_plan := tilemap.debug_get_macro_presentation_plan()
+		var depth_stamps: Array = macro_plan.get("placements", [])
+		total_depth_stamps += depth_stamps.size()
+		assert(depth_stamps.size() <= 8, "Seed %d exceeded the depth stamp cap" % seed)
+		for placement: Dictionary in depth_stamps:
+			assert(int(placement.get("depth_band", -1)) == TerrainStampProfile.DepthBand.BACK)
+			for cell: Vector2i in placement.get("chasm_cells", []):
+				assert(tilemap.debug_get_chasm_cells().has(cell), "Depth stamp escaped chasm semantics")
 		var cliff_count := _count_layer_sources(floor_layer, 46, 59) + _count_layer_sources(wall_layer, 46, 59)
 		var void_count := _count_layer_sources(floor_layer, 100, 114) + _count_layer_sources(wall_layer, 100, 114)
 		assert(not floors.is_empty() and bounds.size != Vector2i.ZERO)
@@ -50,10 +63,11 @@ func _run() -> void:
 		assert(bool(audit.get("ok", false)), "Seed %d route invalid: %s" % [seed, audit])
 		var spawn := level_data.get("player_spawn", Vector2i(-1, -1)) as Vector2i
 		assert(spawn != Vector2i(-1, -1) and floors.has(spawn), "Seed %d spawn is not valid floor: %s" % [seed, spawn])
-		print("elevated_world_seed seed=%d floor=%d cliff=%d void=%d bounds=%s roads=%d route_ok=%s spawn=%s" % [seed, floors.size(), cliff_count, void_count, bounds, roads.size(), audit.get("ok", false), spawn])
+		print("elevated_world_seed seed=%d floor=%d cliff=%d void=%d macro_regions=%d depth_stamps=%d rejections=%s macro_fingerprint=%s bounds=%s roads=%d route_ok=%s spawn=%s" % [seed, floors.size(), cliff_count, void_count, (macro_plan.get("regions", []) as Array).size(), depth_stamps.size(), str(macro_plan.get("rejection_counts", {})), String(macro_plan.get("fingerprint", "")), bounds, roads.size(), audit.get("ok", false), spawn])
 		map.queue_free()
 		await process_frame
-	print("elevated_world_seed_review: PASS seeds=%s" % str(SEEDS))
+	assert(total_depth_stamps > 0, "Fixed-seed review realized no production depth chunks")
+	print("elevated_world_seed_review: PASS seeds=%s depth_stamps=%d" % [str(review_seeds), total_depth_stamps])
 	quit(0)
 
 

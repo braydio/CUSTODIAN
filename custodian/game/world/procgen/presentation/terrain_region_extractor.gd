@@ -50,10 +50,49 @@ func extract(context: Dictionary) -> Array[Dictionary]:
 					queue.append(neighbor)
 		regions.append(_make_region("rocky_upland_floor", &"rocky_upland", component))
 
+	regions.append_array(_extract_depth_south_edges(context))
+
 	regions.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
 		return String(a.get("region_id", "")) < String(b.get("region_id", ""))
 	)
 	return regions
+
+
+func _extract_depth_south_edges(context: Dictionary) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	var floor_cells: Dictionary = context.get("floor_cells", {})
+	var chasm_cells: Dictionary = context.get("chasm_cells", {})
+	var biome_by_cell: Dictionary = context.get("biome_id_by_cell", {})
+	var exposed: Array[Vector2i] = []
+	for key: Variant in floor_cells.keys():
+		if key is Vector2i:
+			var cell := key as Vector2i
+			if chasm_cells.has(cell + Vector2i.DOWN) and not _is_excluded(cell, context):
+				exposed.append(cell)
+	exposed = _sorted_cells(exposed)
+	var run: Array[Vector2i] = []
+	var run_biome: StringName = &""
+	for cell: Vector2i in exposed:
+		var biome := StringName(biome_by_cell.get(cell, &""))
+		var continues := not run.is_empty() and cell.y == run[-1].y and cell.x == run[-1].x + 1 and biome == run_biome
+		if not continues and not run.is_empty():
+			result.append(_make_depth_edge_region(run, run_biome))
+			run = []
+		if run.is_empty():
+			run_biome = biome
+		run.append(cell)
+	if not run.is_empty():
+		result.append(_make_depth_edge_region(run, run_biome))
+	return result
+
+
+func _make_depth_edge_region(cells: Array[Vector2i], biome_id: StringName) -> Dictionary:
+	var region := _make_region("depth_south_edge", biome_id, cells)
+	var anchors: Array[Vector2i] = []
+	for cell: Vector2i in cells:
+		anchors.append(cell + Vector2i.DOWN)
+	region["anchor_candidates"] = anchors
+	return region
 
 
 func _region_dictionary(value: Variant) -> Dictionary:

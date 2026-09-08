@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="TerrainStampProfile" load_steps=3 format=3]
+[ext_resource type="Script" path="res://game/world/procgen/presentation/terrain_stamp_profile.gd" id="1"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/procgen/depth_chunks/scrubland/procgen_depth_scrubland_dry_basin_v1_896x576.png" id="2"]
+[resource]
+script = ExtResource("1")
+stamp_id = &"dry_basin_v1"
+family_id = &"procgen_depth_scrubland"
+texture = ExtResource("2")
+canvas_px = Vector2i(896, 576)
+pivot_px = Vector2(0, 128)
+footprint_size_cells = Vector2i(28, 14)
+placement_domain = 1
+chasm_core_rect = Rect2i(6, 1, 16, 9)
+reveal_probe_cells = Array[Vector2i]([Vector2i(6, 0), Vector2i(10, 0), Vector2i(14, 0), Vector2i(18, 0), Vector2i(21, 0)])
+allowed_region_kinds = PackedStringArray("depth_south_edge")
+required_biome = &"scrubland"
+min_region_cells = 12
+depth_band = 0
+weight = 10
+claims_dressing_clearance = false
+allow_flip_h = true

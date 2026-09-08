@@ -1282,7 +1282,7 @@ Documentation updates this session:
 
 ## Documentation Status
 
-- Elevated procgen presentation is live: deterministic `ASCENT_FIELD` floor authority configures a global, non-colliding three-layer endless-forest depth composition before streaming reveal; plateau/cliff/chasm runtime art remains individual 32x32 sources with stable semantic IDs. Authority: `design/02_features/procgen/ELEVATED_WORLD_PRESENTATION.md`.
+- Elevated procgen depth presentation is live: deterministic `depth_south_edge` extraction fits at most eight world-positioned, BACK-band CHASM stamps from universal, scrubland, and woodland V2 families without changing 32×32 terrain authority. The default endless-forest camera stack is now subordinate FAR atmosphere; special Drowned Basilica values remain unchanged. Plateau/cliff/chasm gameplay sources retain stable semantic IDs. Authority: `design/02_features/procgen/ELEVATED_WORLD_PRESENTATION.md` and `design/02_features/procgen/PROCGEN_MACRO_PRESENTATION_SYSTEM.md`.
 
 - Active AI context directory: `custodian/docs/ai_context/`.
 - Mandatory local routing primer: `custodian/AGENTS.md`.

@@ -233,7 +233,7 @@ enum WorldShapeMode {
 @export_group("Macro Presentation", "macro_presentation_")
 @export var macro_presentation_enabled := true
 @export var macro_presentation_catalog: Resource
-@export_range(0, 64, 1) var macro_presentation_max_stamps := 12
+@export_range(0, 64, 1) var macro_presentation_max_stamps := 8
 @export var macro_presentation_debug_logging := false
 @export_group("", "")
 
@@ -1305,6 +1305,11 @@ func _fill_tilemaps() -> void:
 		_marks["roads2_state_capture"] = Time.get_ticks_msec() - roads2_phase_started
 	_marks["roads_pass2"] = Time.get_ticks_msec() - _last
 	_last = Time.get_ticks_msec()
+	# Chasm semantics must exist before biome-aware macro presentation planning.
+	# This classifier is read-only with respect to floor/wall gameplay authority.
+	_rebuild_nonwalkable_surface_regions(map_size)
+	_marks["nonwalkable_surface_semantics"] = Time.get_ticks_msec() - _last
+	_last = Time.get_ticks_msec()
 	# Classify the accepted final floor state, including late faction/story,
 	# parking, and second-pass road corrections.
 	_build_biome_field()
@@ -1358,7 +1363,6 @@ func _fill_tilemaps() -> void:
 	_last = Time.get_ticks_msec()
 	_enforce_route_playability_walkability(map_size)
 	_enforce_runtime_blocker_route_clearance()
-	_rebuild_nonwalkable_surface_regions(map_size)
 	_apply_sundered_keep_frontage_floor_visuals()
 	_rebuild_nonwalkable_surface_visuals()
 	_rebuild_runtime_walkable_boundary()
@@ -7429,13 +7433,19 @@ func _build_macro_presentation_plan(map_size: Vector2i) -> void:
 	for cell_variant: Variant in _generated_floor_cells.keys():
 		if cell_variant is Vector2i:
 			region_kind_by_cell[cell_variant] = get_region_type_at_tile(cell_variant)
-	var rocky_profile := BIOME_PROFILES.get("rocky_upland") as BiomeProfile
+	var families_by_biome: Dictionary = {}
+	var minimums_by_biome: Dictionary = {}
+	for biome_key: String in BIOME_PROFILES:
+		var profile := BIOME_PROFILES[biome_key] as BiomeProfile
+		families_by_biome[StringName(biome_key)] = profile.macro_stamp_families
+		minimums_by_biome[StringName(biome_key)] = profile.macro_stamp_min_region_cells
 	var context := {
 		"seed": _get_generation_seed(),
 		"max_stamps": macro_presentation_max_stamps,
 		"map_bounds": Rect2i(Vector2i.ZERO, map_size),
 		"floor_cells": _generated_floor_cells,
 		"wall_cells": _generated_wall_cells,
+		"chasm_cells": _chasm_cells,
 		"terrain_result": _last_terrain_result,
 		"biome_id_by_cell": _biome_id_by_cell,
 		"protected_cells": protected_cells,
@@ -7443,8 +7453,8 @@ func _build_macro_presentation_plan(map_size: Vector2i) -> void:
 		"reserved_cells": _macro_reserved_cells(),
 		"ingress_clearance_cells": ingress_cells,
 		"region_kind_by_cell": region_kind_by_cell,
-		"families": rocky_profile.macro_stamp_families if rocky_profile != null else PackedStringArray(),
-		"min_region_cells": rocky_profile.macro_stamp_min_region_cells if rocky_profile != null else 0,
+		"families_by_biome": families_by_biome,
+		"min_region_cells_by_biome": minimums_by_biome,
 	}
 	_macro_presentation_plan = _macro_presentation_composer.build_plan(
 		context,
@@ -7459,9 +7469,16 @@ func _build_macro_presentation_plan(map_size: Vector2i) -> void:
 		for cell: Vector2i in placement.get("overlay_cells", []):
 			_macro_presentation_dressing_clearance_cells[cell] = true
 	var family_counts: Dictionary = {}
+	var depth_stamp_count := 0
 	for placement: Dictionary in _macro_presentation_plan.get("placements", []):
 		var family := String(placement.get("family_id", ""))
 		family_counts[family] = int(family_counts.get(family, 0)) + 1
+		if family.begins_with("procgen_depth_"):
+			depth_stamp_count += 1
+	var depth_region_count := 0
+	for region: Dictionary in _macro_presentation_plan.get("regions", []):
+		if String(region.get("kind_name", "")) == "depth_south_edge":
+			depth_region_count += 1
 	_macro_presentation_summary = {
 		"schema": "custodian.procgen_macro_presentation.v1",
 		"seed": _get_generation_seed(),
@@ -7469,6 +7486,8 @@ func _build_macro_presentation_plan(map_size: Vector2i) -> void:
 		"region_count": (_macro_presentation_plan.get("regions", []) as Array).size(),
 		"fallback_region_count": (_macro_presentation_plan.get("fallback_region_ids", []) as Array).size(),
 		"family_counts": family_counts,
+		"depth_region_count": depth_region_count,
+		"depth_stamp_count": depth_stamp_count,
 		"fingerprint": String(_macro_presentation_plan.get("fingerprint", "")),
 	}
 	if macro_presentation_debug_logging:
@@ -7556,6 +7575,12 @@ func _publish_macro_presentation_gauges() -> void:
 	_obs_gauge(&"procgen_macro_stamp_count", int(_macro_presentation_summary.get("stamp_count", 0)))
 	_obs_gauge(&"procgen_macro_fallback_region_count", int(_macro_presentation_summary.get("fallback_region_count", 0)))
 	_obs_gauge(&"procgen_macro_clearance_cells", _macro_presentation_dressing_clearance_cells.size())
+	_obs_gauge(&"procgen_macro_depth_region_count", int(_macro_presentation_summary.get("depth_region_count", 0)))
+	_obs_gauge(&"procgen_macro_depth_stamp_count", int(_macro_presentation_summary.get("depth_stamp_count", 0)))
+	var family_counts: Dictionary = _macro_presentation_summary.get("family_counts", {})
+	_obs_gauge(&"procgen_depth_universal_count", int(family_counts.get("procgen_depth_universal", 0)))
+	_obs_gauge(&"procgen_depth_scrubland_count", int(family_counts.get("procgen_depth_scrubland", 0)))
+	_obs_gauge(&"procgen_depth_woodland_count", int(family_counts.get("procgen_depth_woodland", 0)))
 
 
 func set_environment_wind_multipliers(speed_multiplier: float, gust_multiplier: float) -> void:

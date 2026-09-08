@@ -9,12 +9,14 @@ func build_plan(
 	regions: Array[Dictionary],
 	catalog: TerrainStampCatalog,
 	context: Dictionary,
-	max_stamps: int = 12
+	max_stamps: int = 8
 ) -> Dictionary:
 	var placements: Array[Dictionary] = []
 	var fallback_ids: Array[String] = []
 	var rejection_counts: Dictionary = {}
+	var rejections: Array[Dictionary] = []
 	var occupied_solid: Dictionary = {}
+	var occupied_chasm: Dictionary = {}
 	var normalized_regions: Array[Dictionary] = []
 	for region: Dictionary in regions:
 		normalized_regions.append({
@@ -26,18 +28,25 @@ func build_plan(
 		})
 		var placed_for_region := false
 		if placements.size() < max_stamps and catalog != null:
-			var families: PackedStringArray = context.get("families", PackedStringArray())
+			var biome_id := StringName(region.get("biome_id", &""))
+			var families_by_biome: Dictionary = context.get("families_by_biome", {})
+			var families: PackedStringArray = families_by_biome.get(biome_id, context.get("families", PackedStringArray()))
+			var minimums_by_biome: Dictionary = context.get("min_region_cells_by_biome", {})
+			var context_minimum := int(minimums_by_biome.get(biome_id, context.get("min_region_cells", 0)))
 			var profiles := catalog.filter_profiles(families, StringName(region.get("kind_name", "")), StringName(region.get("biome_id", &"")))
 			var candidates: Array[Dictionary] = []
 			for profile: TerrainStampProfile in profiles:
-				if int(region.get("cell_count", 0)) < maxi(profile.min_region_cells, int(context.get("min_region_cells", 0))):
+				if int(region.get("cell_count", 0)) < maxi(profile.min_region_cells, context_minimum):
 					_count_rejection(rejection_counts, "region_too_small")
 					continue
 				for origin: Vector2i in region.get("anchor_candidates", []):
 					for flip_h: bool in ([false, true] if profile.allow_flip_h else [false]):
-						var candidate := _candidate(profile, region, origin, flip_h, context, occupied_solid)
+						var candidate := _candidate(profile, region, origin, flip_h, context, occupied_solid, occupied_chasm)
 						if not bool(candidate.get("valid", false)):
-							_count_rejection(rejection_counts, String(candidate.get("reason", "unknown")))
+							var reason := String(candidate.get("reason", "unknown"))
+							_count_rejection(rejection_counts, reason)
+							if rejections.size() < 64:
+								rejections.append({"stamp_id": profile.stamp_id, "region_id": String(region.get("region_id", "")), "biome_id": StringName(region.get("biome_id", &"")), "anchor_cell": origin, "flip_h": flip_h, "reason": reason})
 							continue
 						candidate["rank"] = _stable_hash(seed, String(region.get("region_id", "")), String(profile.stamp_id), origin, profile.weight)
 						candidates.append(candidate)
@@ -54,6 +63,8 @@ func build_plan(
 				placements.append(selected)
 				for cell: Vector2i in selected["solid_cells"]:
 					occupied_solid[cell] = true
+				for cell: Vector2i in selected["chasm_cells"]:
+					occupied_chasm[cell] = true
 				placed_for_region = true
 		if not placed_for_region:
 			fallback_ids.append(String(region.get("region_id", "")))
@@ -65,6 +76,7 @@ func build_plan(
 		"placements": placements,
 		"fallback_region_ids": fallback_ids,
 		"rejection_counts": _sorted_dictionary(rejection_counts),
+		"rejections": rejections,
 	}
 	plan["fingerprint"] = plan_fingerprint(plan)
 	return plan
@@ -82,16 +94,28 @@ func plan_fingerprint(plan: Dictionary) -> String:
 	return JSON.stringify(normalized).sha256_text()
 
 
-func _candidate(profile: TerrainStampProfile, region: Dictionary, origin: Vector2i, flip_h: bool, context: Dictionary, occupied: Dictionary) -> Dictionary:
+func _candidate(profile: TerrainStampProfile, region: Dictionary, anchor: Vector2i, flip_h: bool, context: Dictionary, occupied: Dictionary, occupied_chasm: Dictionary) -> Dictionary:
+	var core_position := profile.chasm_core_rect.position
+	if flip_h:
+		core_position.x = profile.footprint_size_cells.x - profile.chasm_core_rect.end.x
+	var origin := anchor - core_position if profile.placement_domain == TerrainStampProfile.PlacementDomain.CHASM else anchor
 	var solid := _mapped_cells(profile.solid_mask_cells, profile.footprint_size_cells, origin, flip_h)
 	var overlay := _mapped_cells(profile.walkable_overlay_cells, profile.footprint_size_cells, origin, flip_h)
 	var probes := _mapped_cells(profile.resolved_reveal_probe_cells(), profile.footprint_size_cells, origin, flip_h)
+	var chasm := _mapped_rect(profile.chasm_core_rect, profile.footprint_size_cells, origin, flip_h)
 	var bounds: Rect2i = context.get("map_bounds", Rect2i())
 	var wall_cells: Dictionary = context.get("wall_cells", {})
 	var floor_cells: Dictionary = context.get("floor_cells", {})
 	var terrain: Dictionary = context.get("terrain_result", {})
 	var traversal: Dictionary = terrain.get("traversal_by_cell", {})
 	var protected: Dictionary = context.get("protected_cells", {})
+	var chasm_cells: Dictionary = context.get("chasm_cells", {})
+	if profile.placement_domain == TerrainStampProfile.PlacementDomain.CHASM:
+		for cell: Vector2i in chasm:
+			if not bounds.has_point(cell): return {"valid": false, "reason": "chasm_outside_map"}
+			if _has_presentation_claim(cell, context): return {"valid": false, "reason": "protected_chasm"}
+			if not chasm_cells.has(cell): return {"valid": false, "reason": "chasm_semantic_mismatch"}
+			if occupied_chasm.has(cell): return {"valid": false, "reason": "chasm_presentation_overlap"}
 	for cell: Vector2i in solid:
 		if not bounds.has_point(cell): return {"valid": false, "reason": "outside_map"}
 		if protected.has(cell): return {"valid": false, "reason": "protected_solid"}
@@ -107,16 +131,33 @@ func _candidate(profile: TerrainStampProfile, region: Dictionary, origin: Vector
 		"stamp_id": profile.stamp_id,
 		"family_id": profile.family_id,
 		"region_id": String(region.get("region_id", "")),
+		"biome_id": StringName(region.get("biome_id", &"")),
 		"origin_cell": origin,
-		"anchor_cell": origin,
+		"anchor_cell": anchor,
 		"depth_band": profile.depth_band,
 		"solid_cells": solid,
 		"overlay_cells": overlay,
+		"chasm_cells": chasm,
 		"reveal_probe_cells": probes,
 		"visual_footprint": Rect2i(origin, profile.footprint_size_cells),
 		"flip_h": flip_h,
 		"claims_dressing_clearance": profile.claims_dressing_clearance,
-	}
+}
+
+
+func _has_presentation_claim(cell: Vector2i, context: Dictionary) -> bool:
+	for key: String in ["protected_cells", "required_cells", "reserved_cells", "ingress_clearance_cells"]:
+		if (context.get(key, {}) as Dictionary).has(cell):
+			return true
+	return false
+
+
+func _mapped_rect(rect: Rect2i, size: Vector2i, origin: Vector2i, flip_h: bool) -> Array[Vector2i]:
+	var cells: Array[Vector2i] = []
+	for y: int in range(rect.position.y, rect.end.y):
+		for x: int in range(rect.position.x, rect.end.x):
+			cells.append(Vector2i(x, y))
+	return _mapped_cells(cells, size, origin, flip_h)
 
 
 func _mapped_cells(cells: Array[Vector2i], size: Vector2i, origin: Vector2i, flip_h: bool) -> Array[Vector2i]:
@@ -150,7 +191,7 @@ func _normalize_placements(values: Variant) -> Array:
 	for value: Dictionary in values:
 		var entry := value.duplicate(true)
 		for key in ["origin_cell", "anchor_cell", "visual_footprint"]: entry[key] = str(entry.get(key))
-		for key in ["solid_cells", "overlay_cells", "reveal_probe_cells"]:
+		for key in ["solid_cells", "overlay_cells", "chasm_cells", "reveal_probe_cells"]:
 			var strings: Array[String] = []
 			for cell: Variant in entry.get(key, []): strings.append(str(cell))
 			strings.sort()
@@ -169,4 +210,3 @@ func _sorted_dictionary(value: Variant) -> Dictionary:
 	var result: Dictionary = {}
 	for key: Variant in keys: result[String(key)] = source[key]
 	return result
-

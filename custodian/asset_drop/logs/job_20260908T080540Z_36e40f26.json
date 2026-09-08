@@ -1,0 +1,90 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260908T080540Z_36e40f26",
+  "timestamp": "2026-09-08T08:05:40.666096+00:00",
+  "family": "procgen_depth_scrubland",
+  "kind": "backdrop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/procgen_depth_scrubland/dry_basin_v1.png",
+      "sha256": "a42f01a6cb6fdc7a1315a73964c67fa4953787c59a8f08d61941a2c9cbcb3e90"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_depth_scrubland/service_scar_v1.png",
+      "sha256": "02bab8352aab343c225421222bab8a0e0407b0bcb56142657af7851b15284c93"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_depth_scrubland/wash_channel_v1.png",
+      "sha256": "d1b4aa2a3f5607f29f1a234da9e5c030da5a0d0c490c4d42b0ace2e74940f7ee"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "dry_basin_v1",
+      "direction": "omni",
+      "semantic_identity": [
+        "procgen_depth_scrubland",
+        "backdrop",
+        "background",
+        "display",
+        "dry_basin_v1",
+        "omni"
+      ],
+      "path": "content/backgrounds/procgen/depth_chunks/scrubland/procgen_depth_scrubland_dry_basin_v1_896x576.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "a42f01a6cb6fdc7a1315a73964c67fa4953787c59a8f08d61941a2c9cbcb3e90",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "service_scar_v1",
+      "direction": "omni",
+      "semantic_identity": [
+        "procgen_depth_scrubland",
+        "backdrop",
+        "background",
+        "display",
+        "service_scar_v1",
+        "omni"
+      ],
+      "path": "content/backgrounds/procgen/depth_chunks/scrubland/procgen_depth_scrubland_service_scar_v1_640x448.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "02bab8352aab343c225421222bab8a0e0407b0bcb56142657af7851b15284c93",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "wash_channel_v1",
+      "direction": "omni",
+      "semantic_identity": [
+        "procgen_depth_scrubland",
+        "backdrop",
+        "background",
+        "display",
+        "wash_channel_v1",
+        "omni"
+      ],
+      "path": "content/backgrounds/procgen/depth_chunks/scrubland/procgen_depth_scrubland_wash_channel_v1_640x448.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "d1b4aa2a3f5607f29f1a234da9e5c030da5a0d0c490c4d42b0ace2e74940f7ee",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

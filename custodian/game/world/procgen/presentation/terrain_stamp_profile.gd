@@ -7,14 +7,21 @@ enum DepthBand {
 	FRONT,
 }
 
+enum PlacementDomain {
+	SURFACE,
+	CHASM,
+}
+
 @export var stamp_id: StringName
 @export var family_id: StringName
 @export var texture: Texture2D
 @export var canvas_px: Vector2i
 @export var pivot_px: Vector2
 @export var footprint_size_cells: Vector2i
+@export var placement_domain: PlacementDomain = PlacementDomain.SURFACE
 @export var solid_mask_cells: Array[Vector2i] = []
 @export var walkable_overlay_cells: Array[Vector2i] = []
+@export var chasm_core_rect: Rect2i = Rect2i()
 @export var reveal_probe_cells: Array[Vector2i] = []
 @export var allowed_region_kinds: PackedStringArray
 @export var required_biome: StringName = &""
@@ -49,8 +56,15 @@ func validate_contract(require_texture: bool = true) -> PackedStringArray:
 		failures.append("invalid_canvas")
 	if footprint_size_cells.x <= 0 or footprint_size_cells.y <= 0:
 		failures.append("invalid_footprint")
-	if solid_mask_cells.is_empty() and walkable_overlay_cells.is_empty():
+	if placement_domain == PlacementDomain.SURFACE and solid_mask_cells.is_empty() and walkable_overlay_cells.is_empty():
 		failures.append("empty_semantic_masks")
+	if placement_domain == PlacementDomain.CHASM:
+		if chasm_core_rect.size.x <= 0 or chasm_core_rect.size.y <= 0:
+			failures.append("invalid_chasm_core_rect")
+		elif not Rect2i(Vector2i.ZERO, footprint_size_cells).encloses(chasm_core_rect):
+			failures.append("chasm_core_out_of_footprint")
+		if depth_band != DepthBand.BACK:
+			failures.append("chasm_requires_back_band")
 	var margin := Vector2(canvas_px) * 0.5
 	if (
 		pivot_px.x < -margin.x or pivot_px.y < -margin.y
@@ -63,4 +77,3 @@ func validate_contract(require_texture: bool = true) -> PackedStringArray:
 			failures.append("mask_cell_out_of_footprint")
 			break
 	return failures
-

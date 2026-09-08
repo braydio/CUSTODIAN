@@ -9,7 +9,7 @@ func build_plan(context: Dictionary, catalog: Resource) -> Dictionary:
 	var regions: Array[Dictionary] = REGION_EXTRACTOR_SCRIPT.new().extract(context)
 	return STAMP_PLACER_SCRIPT.new().build_plan(
 		int(context.get("seed", 0)), regions, catalog as TerrainStampCatalog,
-		context, int(context.get("max_stamps", 12))
+		context, int(context.get("max_stamps", 8))
 	)
 
 
@@ -40,7 +40,7 @@ func apply_plan(
 		sprite.texture = profile.texture
 		sprite.centered = false
 		sprite.offset = -profile.pivot_px
-		sprite.position = Vector2(placement.get("anchor_cell", Vector2i.ZERO)) * tile_size
+		sprite.position = Vector2(placement.get("origin_cell", Vector2i.ZERO)) * tile_size
 		sprite.scale = Vector2.ONE / safe_scale
 		sprite.flip_h = bool(placement.get("flip_h", false))
 		sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
@@ -93,4 +93,3 @@ func _root_for_band(roots: Dictionary, band: int) -> Node2D:
 
 func _cell_is_painted(cell: Vector2i, floor_tilemap: TileMapLayer, walls_tilemap: TileMapLayer) -> bool:
 	return (floor_tilemap != null and floor_tilemap.get_cell_source_id(cell) >= 0) or (walls_tilemap != null and walls_tilemap.get_cell_source_id(cell) >= 0)
-

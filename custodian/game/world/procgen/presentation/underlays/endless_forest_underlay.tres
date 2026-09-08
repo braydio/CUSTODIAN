@@ -12,5 +12,5 @@ far_variants = Array[Texture2D]([ExtResource("2")])
 middle_variants = Array[Texture2D]([ExtResource("3")])
 near_variants = Array[Texture2D]([ExtResource("4")])
 far_alpha = 0.3
-middle_alpha = 0.9
-near_alpha = 0.48
+middle_alpha = 0.24
+near_alpha = 0.16

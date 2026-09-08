@@ -1,0 +1,67 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260908T080557Z_a254c25b",
+  "timestamp": "2026-09-08T08:05:57.628611+00:00",
+  "family": "procgen_depth_woodland",
+  "kind": "backdrop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/procgen_depth_woodland/canopy_basin_v1.png",
+      "sha256": "197e5a22d9e18572fda02945d1b3d57757b16f42eaf7f336099e854d23149020"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_depth_woodland/ravine_v1.png",
+      "sha256": "ea4deffc34fecfa90e3b98148dd2ef5a77043256ccfa37fd5eb3f3f686bee78f"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "canopy_basin_v1",
+      "direction": "omni",
+      "semantic_identity": [
+        "procgen_depth_woodland",
+        "backdrop",
+        "background",
+        "display",
+        "canopy_basin_v1",
+        "omni"
+      ],
+      "path": "content/backgrounds/procgen/depth_chunks/woodland/procgen_depth_woodland_canopy_basin_v1_896x576.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "197e5a22d9e18572fda02945d1b3d57757b16f42eaf7f336099e854d23149020",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "ravine_v1",
+      "direction": "omni",
+      "semantic_identity": [
+        "procgen_depth_woodland",
+        "backdrop",
+        "background",
+        "display",
+        "ravine_v1",
+        "omni"
+      ],
+      "path": "content/backgrounds/procgen/depth_chunks/woodland/procgen_depth_woodland_ravine_v1_896x576.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "ea4deffc34fecfa90e3b98148dd2ef5a77043256ccfa37fd5eb3f3f686bee78f",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

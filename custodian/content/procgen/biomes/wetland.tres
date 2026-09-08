@@ -6,3 +6,5 @@ biome_id = &"wetland"
 foliage_density_ceiling = 0.16
 tree_probability = 0.15
 foliage_tint = Color(0.84, 0.97, 0.91, 1)
+macro_stamp_families = PackedStringArray("procgen_depth_universal")
+macro_stamp_min_region_cells = 8

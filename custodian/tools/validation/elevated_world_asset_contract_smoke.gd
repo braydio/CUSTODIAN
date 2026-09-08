@@ -128,8 +128,8 @@ func _run() -> void:
 	var chasm_stack := regions[0] as Node2D
 	assert(chasm_stack.global_position == camera.global_position)
 	assert(is_equal_approx(backdrop.far_alpha, 0.30))
-	assert(is_equal_approx(backdrop.middle_alpha, 0.90))
-	assert(is_equal_approx(backdrop.near_alpha, 0.48))
+	assert(is_equal_approx(backdrop.middle_alpha, 0.24), "Default middle atmosphere must remain subordinate to authored BACK chunks")
+	assert(is_equal_approx(backdrop.near_alpha, 0.16), "Default near atmosphere must remain subordinate to authored BACK chunks")
 	assert(
 		_find_texture_path(map, CONTACT_SHADOW_SOURCE).is_empty(),
 		"Contact-shadow source must not be wired globally"

@@ -6,3 +6,5 @@ biome_id = &"scrubland"
 foliage_density_ceiling = 0.08
 tree_probability = 0.08
 foliage_tint = Color(1, 0.96, 0.88, 1)
+macro_stamp_families = PackedStringArray("procgen_depth_universal", "procgen_depth_scrubland")
+macro_stamp_min_region_cells = 8
