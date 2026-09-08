@@ -1,0 +1,49 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "procgen_depth_scrubland",
+  "kind": "backdrop",
+  "runtime": {
+    "domain": "backgrounds/procgen/depth_chunks/scrubland",
+    "owner": "procgen_depth_scrubland",
+    "template": "{domain}/{filename}",
+    "filename_policy": "template",
+    "filename_template": "{owner}_{variant}_{frame_size}.png"
+  },
+  "canvas": {
+    "width": 896,
+    "height": 576
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "dry_basin_v1": {
+      "required": true,
+      "layer": "background",
+      "action_group": "display",
+      "variant": "dry_basin_v1",
+      "layout": "copy",
+      "frame_width": 896,
+      "frame_height": 576
+    },
+    "wash_channel_v1": {
+      "required": true,
+      "layer": "background",
+      "action_group": "display",
+      "variant": "wash_channel_v1",
+      "layout": "copy",
+      "frame_width": 640,
+      "frame_height": 448
+    },
+    "service_scar_v1": {
+      "required": true,
+      "layer": "background",
+      "action_group": "display",
+      "variant": "service_scar_v1",
+      "layout": "copy",
+      "frame_width": 640,
+      "frame_height": 448
+    }
+  },
+  "aliases": {},
+  "consumers": []
+}

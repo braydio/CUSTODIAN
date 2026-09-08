@@ -1,0 +1,120 @@
+{
+  "static": [
+    {
+      "name": "Cr\u00e8che recovery alcove / idle",
+      "source": "creche_recovery_alcove.png",
+      "source_size": [
+        1086,
+        1448
+      ],
+      "output": "creche_recovery_alcove/idle.png",
+      "output_size": [
+        192,
+        256
+      ],
+      "anchor": "bottom"
+    },
+    {
+      "name": "Dust Lung lift / idle",
+      "source": "dust_lung_lift/idle.png",
+      "source_size": [
+        192,
+        256
+      ],
+      "output": "dust_lung_lift/idle.png",
+      "output_size": [
+        192,
+        256
+      ],
+      "anchor": "bottom"
+    },
+    {
+      "name": "Gate of Dust / body idle sealed",
+      "source": "gate_of_dust/body_idle_sealed.png",
+      "source_size": [
+        768,
+        512
+      ],
+      "output": "gate_of_dust/body_idle_sealed.png",
+      "output_size": [
+        768,
+        512
+      ],
+      "anchor": "center"
+    },
+    {
+      "name": "Gate of Dust / west pylon",
+      "source": "gate_of_dust/west_pylon.png",
+      "source_size": [
+        256,
+        512
+      ],
+      "output": "gate_of_dust/west_pylon.png",
+      "output_size": [
+        256,
+        512
+      ],
+      "anchor": "bottom"
+    },
+    {
+      "name": "Gate of Dust / east pylon",
+      "source": "gate_of_dust/east_pylon.png",
+      "source_size": [
+        256,
+        512
+      ],
+      "output": "gate_of_dust/east_pylon.png",
+      "output_size": [
+        256,
+        512
+      ],
+      "anchor": "bottom"
+    },
+    {
+      "name": "Gate of Dust / sealed aperture",
+      "source": "gate_of_dust/sealed_aperture.png",
+      "source_size": [
+        512,
+        512
+      ],
+      "output": "gate_of_dust/sealed_aperture.png",
+      "output_size": [
+        512,
+        512
+      ],
+      "anchor": "center"
+    },
+    {
+      "name": "Gate of Dust / rest threshold",
+      "source": "gate_of_dust/rest_threshold.png",
+      "source_size": [
+        128,
+        160
+      ],
+      "output": "gate_of_dust/rest_threshold.png",
+      "output_size": [
+        128,
+        160
+      ],
+      "anchor": "bottom"
+    }
+  ],
+  "wake": {
+    "source": "creche_recovery_alcove/wake.png",
+    "source_size": [
+      1536,
+      256
+    ],
+    "output": "creche_recovery_alcove/wake.png",
+    "output_size": [
+      1536,
+      256
+    ],
+    "frames": 8,
+    "frame_size": [
+      192,
+      256
+    ],
+    "frame_order": "left_to_right"
+  }
+}

@@ -1,58 +1,71 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://bh5jix7nstqb4"]
 
-[ext_resource type="Script" path="res://scenes/debug/awakening_first_return_debug.gd" id="1_debug"]
-[ext_resource type="Script" path="res://scenes/debug/awakening_first_return_overlay.gd" id="2_overlay"]
+[ext_resource type="Script" uid="uid://bxo2nqah4vvf6" path="res://scenes/debug/awakening_first_return_debug.gd" id="1_debug"]
+[ext_resource type="Script" uid="uid://cj1nh7jg7lgpn" path="res://scenes/debug/awakening_first_return_overlay.gd" id="2_overlay"]
 
-[node name="AwakeningFirstReturnDebug" type="Node2D"]
+[node name="AwakeningFirstReturnDebug" type="Node2D" unique_id=2055102849]
 script = ExtResource("1_debug")
+metadata/_edit_vertical_guides_ = [-592.0]
 
-[node name="Overlay" type="Node2D" parent="."]
+[node name="Overlay" type="Node2D" parent="." unique_id=673239929]
 script = ExtResource("2_overlay")
 
-[node name="UI" type="CanvasLayer" parent="."]
+[node name="UI" type="CanvasLayer" parent="." unique_id=265714126]
 
-[node name="Panel" type="PanelContainer" parent="UI"]
+[node name="Panel" type="PanelContainer" parent="UI" unique_id=1120987980]
 offset_left = 16.0
 offset_top = 16.0
 offset_right = 380.0
 offset_bottom = 300.0
 
-[node name="Margin" type="MarginContainer" parent="UI/Panel"]
+[node name="Margin" type="MarginContainer" parent="UI/Panel" unique_id=485433170]
+layout_mode = 2
 theme_override_constants/margin_left = 12
 theme_override_constants/margin_top = 12
 theme_override_constants/margin_right = 12
 theme_override_constants/margin_bottom = 12
 
-[node name="Content" type="VBoxContainer" parent="UI/Panel/Margin"]
+[node name="Content" type="VBoxContainer" parent="UI/Panel/Margin" unique_id=1422448262]
+layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="Title" type="Label" parent="UI/Panel/Margin/Content"]
+[node name="Title" type="Label" parent="UI/Panel/Margin/Content" unique_id=1084835016]
+layout_mode = 2
 text = "AWAKENING / FIRST RETURN"
 
-[node name="ZoneRow" type="HBoxContainer" parent="UI/Panel/Margin/Content"]
+[node name="ZoneRow" type="HBoxContainer" parent="UI/Panel/Margin/Content" unique_id=2099958826]
+layout_mode = 2
 
-[node name="ZoneLabel" type="Label" parent="UI/Panel/Margin/Content/ZoneRow"]
+[node name="ZoneLabel" type="Label" parent="UI/Panel/Margin/Content/ZoneRow" unique_id=387864574]
+layout_mode = 2
 text = "ZONE"
 
-[node name="ZoneSelector" type="OptionButton" parent="UI/Panel/Margin/Content/ZoneRow"]
+[node name="ZoneSelector" type="OptionButton" parent="UI/Panel/Margin/Content/ZoneRow" unique_id=262178455]
+layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="TeleportButton" type="Button" parent="UI/Panel/Margin/Content"]
+[node name="TeleportButton" type="Button" parent="UI/Panel/Margin/Content" unique_id=860605872]
+layout_mode = 2
 text = "TELEPORT TO ENTRY"
 
-[node name="ShowCollision" type="CheckButton" parent="UI/Panel/Margin/Content"]
+[node name="ShowCollision" type="CheckButton" parent="UI/Panel/Margin/Content" unique_id=740997886]
+layout_mode = 2
 text = "SHOW COLLISION"
 
-[node name="ShowZoneBounds" type="CheckButton" parent="UI/Panel/Margin/Content"]
+[node name="ShowZoneBounds" type="CheckButton" parent="UI/Panel/Margin/Content" unique_id=1882475862]
+layout_mode = 2
 button_pressed = true
 text = "SHOW ZONE BOUNDS"
 
-[node name="ShowLandmarks" type="CheckButton" parent="UI/Panel/Margin/Content"]
+[node name="ShowLandmarks" type="CheckButton" parent="UI/Panel/Margin/Content" unique_id=673859023]
+layout_mode = 2
 button_pressed = true
 text = "SHOW LANDMARKS"
 
-[node name="ResetButton" type="Button" parent="UI/Panel/Margin/Content"]
+[node name="ResetButton" type="Button" parent="UI/Panel/Margin/Content" unique_id=1925626417]
+layout_mode = 2
 text = "RESET PROGRESSION"
 
-[node name="StateLabel" type="Label" parent="UI/Panel/Margin/Content"]
+[node name="StateLabel" type="Label" parent="UI/Panel/Margin/Content" unique_id=1715972729]
+layout_mode = 2
 text = "—"

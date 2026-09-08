@@ -1,0 +1,253 @@
+{
+  "schema": "custodian.procgen_depth_chunk_normalization.v1",
+  "source_root": "custodian/asset_drop/source_work/procgen_depth_chunks_v1",
+  "prep_root": "custodian/asset_drop/production_prep/procgen_depth_chunks_v1",
+  "alpha_cutoff": 16,
+  "resampling": "Pillow LANCZOS, exactly once",
+  "composition_policy": "preserve full source canvas; no alpha trim",
+  "outputs": [
+    {
+      "source": "custodian/asset_drop/source_work/procgen_depth_chunks_v1/depth_civic_foundation_breach_v1.png",
+      "source_size": [
+        1564,
+        1006
+      ],
+      "target_size": [
+        896,
+        576
+      ],
+      "family": "procgen_depth_universal",
+      "state": "civic_foundation_breach_v1",
+      "prep_output": "custodian/asset_drop/production_prep/procgen_depth_chunks_v1/families/procgen_depth_universal/civic_foundation_breach_v1.png",
+      "sha256": "408c694897cba68eb4417643278f3a6c41914b6d0dfd8ff5a285f3dd7eae27f6",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.3827641567474946,
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "source_aspect": 1.554671968190855,
+      "target_aspect": 1.5555555555555556,
+      "aspect_error": 0.0005680204487361142
+    },
+    {
+      "source": "custodian/asset_drop/source_work/procgen_depth_chunks_v1/depth_fractured_ravine_v1.png",
+      "source_size": [
+        1564,
+        1006
+      ],
+      "target_size": [
+        896,
+        576
+      ],
+      "family": "procgen_depth_universal",
+      "state": "fractured_ravine_v1",
+      "prep_output": "custodian/asset_drop/production_prep/procgen_depth_chunks_v1/families/procgen_depth_universal/fractured_ravine_v1.png",
+      "sha256": "85adb0ca2a7d3219d1118c5447d113a70578cb95dcd6a88da41fabbad32abfac",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.41813441601033186,
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "source_aspect": 1.554671968190855,
+      "target_aspect": 1.5555555555555556,
+      "aspect_error": 0.0005680204487361142
+    },
+    {
+      "source": "custodian/asset_drop/source_work/procgen_depth_chunks_v1/depth_service_infrastructure_field_v1.png",
+      "source_size": [
+        1499,
+        1049
+      ],
+      "target_size": [
+        640,
+        448
+      ],
+      "family": "procgen_depth_universal",
+      "state": "service_infrastructure_field_v1",
+      "prep_output": "custodian/asset_drop/production_prep/procgen_depth_chunks_v1/families/procgen_depth_universal/service_infrastructure_field_v1.png",
+      "sha256": "2c2ba287979da527afb50a2aff85aef7e944fa833b9923f53ce0307846238f28",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.3877042909445191,
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "source_aspect": 1.428979980934223,
+      "target_aspect": 1.4285714285714286,
+      "aspect_error": 0.0002859866539560496
+    },
+    {
+      "source": "custodian/asset_drop/source_work/procgen_depth_chunks_v1/depth_talus_and_rubble_shelf_v1.png",
+      "source_size": [
+        1499,
+        1049
+      ],
+      "target_size": [
+        640,
+        448
+      ],
+      "family": "procgen_depth_universal",
+      "state": "talus_and_rubble_shelf_v1",
+      "prep_output": "custodian/asset_drop/production_prep/procgen_depth_chunks_v1/families/procgen_depth_universal/talus_and_rubble_shelf_v1.png",
+      "sha256": "24a681903fad3588c4fa98fc6ef1fdd697e39fc3e47bbdd3384d7c33a355783b",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.40046526092069007,
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "source_aspect": 1.428979980934223,
+      "target_aspect": 1.4285714285714286,
+      "aspect_error": 0.0002859866539560496
+    },
+    {
+      "source": "custodian/asset_drop/source_work/procgen_depth_chunks_v1/depth_scrubland_dry_basin_v1.png",
+      "source_size": [
+        1564,
+        1006
+      ],
+      "target_size": [
+        896,
+        576
+      ],
+      "family": "procgen_depth_scrubland",
+      "state": "dry_basin_v1",
+      "prep_output": "custodian/asset_drop/production_prep/procgen_depth_chunks_v1/families/procgen_depth_scrubland/dry_basin_v1.png",
+      "sha256": "a42f01a6cb6fdc7a1315a73964c67fa4953787c59a8f08d61941a2c9cbcb3e90",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.29786053499972037,
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "source_aspect": 1.554671968190855,
+      "target_aspect": 1.5555555555555556,
+      "aspect_error": 0.0005680204487361142
+    },
+    {
+      "source": "custodian/asset_drop/source_work/procgen_depth_chunks_v1/depth_scrubland_wash_channel_v1.png",
+      "source_size": [
+        1499,
+        1049
+      ],
+      "target_size": [
+        640,
+        448
+      ],
+      "family": "procgen_depth_scrubland",
+      "state": "wash_channel_v1",
+      "prep_output": "custodian/asset_drop/production_prep/procgen_depth_chunks_v1/families/procgen_depth_scrubland/wash_channel_v1.png",
+      "sha256": "d1b4aa2a3f5607f29f1a234da9e5c030da5a0d0c490c4d42b0ace2e74940f7ee",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.4375207876111879,
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "source_aspect": 1.428979980934223,
+      "target_aspect": 1.4285714285714286,
+      "aspect_error": 0.0002859866539560496
+    },
+    {
+      "source": "custodian/asset_drop/source_work/procgen_depth_chunks_v1/depth_scrubland_service_scar_v1.png",
+      "source_size": [
+        1499,
+        1049
+      ],
+      "target_size": [
+        640,
+        448
+      ],
+      "family": "procgen_depth_scrubland",
+      "state": "service_scar_v1",
+      "prep_output": "custodian/asset_drop/production_prep/procgen_depth_chunks_v1/families/procgen_depth_scrubland/service_scar_v1.png",
+      "sha256": "02bab8352aab343c225421222bab8a0e0407b0bcb56142657af7851b15284c93",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.35380943507937607,
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "source_aspect": 1.428979980934223,
+      "target_aspect": 1.4285714285714286,
+      "aspect_error": 0.0002859866539560496
+    },
+    {
+      "source": "custodian/asset_drop/source_work/procgen_depth_chunks_v1/depth_woodland_canopy_basin_v1.png",
+      "source_size": [
+        1564,
+        1006
+      ],
+      "target_size": [
+        896,
+        576
+      ],
+      "family": "procgen_depth_woodland",
+      "state": "canopy_basin_v1",
+      "prep_output": "custodian/asset_drop/production_prep/procgen_depth_chunks_v1/families/procgen_depth_woodland/canopy_basin_v1.png",
+      "sha256": "197e5a22d9e18572fda02945d1b3d57757b16f42eaf7f336099e854d23149020",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.3412561714114291,
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "source_aspect": 1.554671968190855,
+      "target_aspect": 1.5555555555555556,
+      "aspect_error": 0.0005680204487361142
+    },
+    {
+      "source": "custodian/asset_drop/source_work/procgen_depth_chunks_v1/depth_woodland_ravine_v1.png",
+      "source_size": [
+        1564,
+        1006
+      ],
+      "target_size": [
+        896,
+        576
+      ],
+      "family": "procgen_depth_woodland",
+      "state": "ravine_v1",
+      "prep_output": "custodian/asset_drop/production_prep/procgen_depth_chunks_v1/families/procgen_depth_woodland/ravine_v1.png",
+      "sha256": "ea4deffc34fecfa90e3b98148dd2ef5a77043256ccfa37fd5eb3f3f686bee78f",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.32814748338612826,
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "source_aspect": 1.554671968190855,
+      "target_aspect": 1.5555555555555556,
+      "aspect_error": 0.0005680204487361142
+    }
+  ]
+}
