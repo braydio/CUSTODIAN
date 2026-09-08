@@ -15,6 +15,13 @@ const Catalog := preload("res://game/ui/theme/black_reliquary_asset_catalog.gd")
 const Palette := preload("res://game/ui/theme/black_reliquary_palette.gd")
 const Plaque := preload("res://game/world/awakening/awakening_plaque_interactable.gd")
 const TransitLift := preload("res://game/world/awakening/awakening_transit_lift.gd")
+const RECOVERY_ALCOVE_IDLE := preload("res://content/sprites/environment/props/awakening/awakening_creche_recovery_alcove/runtime/body/awakening_creche_recovery_alcove__body__state__idle__omni__1f__192x256.png")
+const RECOVERY_ALCOVE_WAKE := preload("res://content/sprites/environment/props/awakening/awakening_creche_recovery_alcove/runtime/body/awakening_creche_recovery_alcove__body__interaction__wake__omni__8f__192x256.png")
+const GATE_BODY_IDLE_SEALED := preload("res://content/sprites/environment/props/awakening/gate_of_dust/runtime/body/gate_of_dust__body__state__idle_sealed__omni__1f__768x512.png")
+const GATE_WEST_PYLON := preload("res://content/sprites/environment/props/awakening/gate_of_dust/runtime/body/gate_of_dust__body__component__west_pylon__omni__1f__256x512.png")
+const GATE_EAST_PYLON := preload("res://content/sprites/environment/props/awakening/gate_of_dust/runtime/body/gate_of_dust__body__component__east_pylon__omni__1f__256x512.png")
+const GATE_SEALED_APERTURE := preload("res://content/sprites/environment/props/awakening/gate_of_dust/runtime/body/gate_of_dust__body__component__sealed_aperture__omni__1f__512.png")
+const GATE_REST_THRESHOLD := preload("res://content/sprites/environment/props/awakening/gate_of_dust/runtime/body/gate_of_dust__body__component__rest_threshold__omni__1f__128x160.png")
 
 const OBJECTIVE_RECOVERY := "Wake and read the crèche console"
 const OBJECTIVE_RETURN_TO_POST := "RETURN TO POST"
@@ -46,11 +53,13 @@ var _zone_bodies := {}
 var _fired_reveals := {}
 var _occupied_zones := {}
 var _transit_lift: Node = null
+var _recovery_alcove: AnimatedSprite2D = null
 var _reveal_release_pending := false
 
 
 func _ready() -> void:
 	_build_world_geometry()
+	_build_hero_presentation()
 	_build_interactables()
 	_build_triggers()
 	_place_operator()
@@ -301,6 +310,88 @@ func _build_south_reach_barrier() -> void:
 	collision.add_child(shape)
 
 
+func _build_hero_presentation() -> void:
+	_build_recovery_alcove_presentation()
+	_build_gate_of_dust_presentation()
+
+
+func _build_recovery_alcove_presentation() -> void:
+	var set_pieces := _zone_child(&"zone01_creche", "SetPieces")
+	if set_pieces == null or set_pieces.get_node_or_null("RecoveryAlcove") != null:
+		return
+	_recovery_alcove = AnimatedSprite2D.new()
+	_recovery_alcove.name = "RecoveryAlcove"
+	_recovery_alcove.position = _set_piece_position(&"zone01_creche", "active_alcove")
+	_recovery_alcove.z_index = Layout.Z_WORLD_PROPS
+	_recovery_alcove.sprite_frames = _build_recovery_alcove_frames()
+	_recovery_alcove.play(&"idle")
+	set_pieces.add_child(_recovery_alcove)
+	_hide_blockout_set_piece(&"zone01_creche", "active_alcove")
+
+
+func _build_recovery_alcove_frames() -> SpriteFrames:
+	var frames := SpriteFrames.new()
+	frames.remove_animation(&"default")
+	frames.add_animation(&"idle")
+	frames.set_animation_loop(&"idle", true)
+	frames.add_frame(&"idle", RECOVERY_ALCOVE_IDLE)
+	frames.add_animation(&"wake")
+	frames.set_animation_loop(&"wake", false)
+	frames.set_animation_speed(&"wake", 8.0)
+	for frame_index in 8:
+		var frame := AtlasTexture.new()
+		frame.atlas = RECOVERY_ALCOVE_WAKE
+		frame.region = Rect2(frame_index * 192, 0, 192, 256)
+		frames.add_frame(&"wake", frame)
+	return frames
+
+
+func _build_gate_of_dust_presentation() -> void:
+	var set_pieces := _zone_child(&"zone07_gate_of_dust", "SetPieces")
+	if set_pieces == null or set_pieces.get_node_or_null("GateOfDustProductionArt") != null:
+		return
+	var art := Node2D.new()
+	art.name = "GateOfDustProductionArt"
+	set_pieces.add_child(art)
+	_add_hero_sprite(art, "BodyIdleSealed", GATE_BODY_IDLE_SEALED, _marker_position(&"zone07_gate_of_dust", "gate_aperture"), Layout.Z_WORLD_PROPS)
+	_add_hero_sprite(art, "WestPylon", GATE_WEST_PYLON, _set_piece_position(&"zone07_gate_of_dust", "gate_pylon_west"), Layout.Z_WORLD_PROPS)
+	_add_hero_sprite(art, "EastPylon", GATE_EAST_PYLON, _set_piece_position(&"zone07_gate_of_dust", "gate_pylon_east"), Layout.Z_WORLD_PROPS)
+	_add_hero_sprite(art, "SealedAperture", GATE_SEALED_APERTURE, _marker_position(&"zone07_gate_of_dust", "gate_aperture"), Layout.Z_WORLD_PROPS)
+	_add_hero_sprite(art, "RestThreshold", GATE_REST_THRESHOLD, _set_piece_position(&"zone07_gate_of_dust", "rest_checkpoint"), Layout.Z_FLOOR)
+	for piece_id in ["gate_pylon_west", "gate_pylon_east", "rest_checkpoint"]:
+		_hide_blockout_set_piece(&"zone07_gate_of_dust", piece_id)
+
+
+func _add_hero_sprite(parent: Node2D, node_name: String, texture: Texture2D, position: Vector2, z: int) -> void:
+	var sprite := Sprite2D.new()
+	sprite.name = node_name
+	sprite.texture = texture
+	sprite.position = position
+	sprite.z_index = z
+	parent.add_child(sprite)
+
+
+func _set_piece_position(zone_id: StringName, piece_id: String) -> Vector2:
+	for piece in Layout.set_pieces_for(zone_id):
+		if String(piece.get("id", "")) == piece_id:
+			return piece.get("position", Vector2.ZERO)
+	return Vector2.ZERO
+
+
+func _marker_position(zone_id: StringName, marker_id: String) -> Vector2:
+	for marker in Layout.markers_for(zone_id):
+		if String(marker.get("id", "")) == marker_id:
+			return marker.get("position", Vector2.ZERO)
+	return Vector2.ZERO
+
+
+func _hide_blockout_set_piece(zone_id: StringName, piece_id: String) -> void:
+	var blockout := _zone_child(zone_id, "BlockoutPresentation")
+	var visual := blockout.get_node_or_null(piece_id) as CanvasItem if blockout != null else null
+	if visual != null:
+		visual.visible = false
+
+
 func _ensure_child(parent: Node, node_name: String, template: Node) -> Node:
 	var existing := parent.get_node_or_null(NodePath(node_name))
 	if existing != null:
@@ -452,6 +543,8 @@ func _resolve_occupied_zone() -> void:
 func _on_console_acknowledged(_actor: Node) -> void:
 	if opening_console_acknowledged: return
 	opening_console_acknowledged = true
+	if _recovery_alcove != null:
+		_recovery_alcove.play(&"wake")
 	_set_objective(OBJECTIVE_RETURN_TO_POST)
 	if hud != null:
 		hud.call("set_status_line", "key", Catalog.ICON_OBJECTIVE, "CONTINUITY: UNRESOLVED", Palette.GOLD_TEXT)
@@ -629,6 +722,8 @@ func reset_progression() -> void:
 	completed = false
 	opening_console_acknowledged = false
 	p9_recovered = false
+	if _recovery_alcove != null:
+		_recovery_alcove.play(&"idle")
 	_place_operator()
 	_configure_hud()
 	_enter_zone(&"zone01_creche")

@@ -97,6 +97,7 @@ Last updated: 2026-08-20
 - `custodian/tools/assets/asset.py` — preferred Asset Pipeline V2.1 CLI; schema-driven non-Operator family planning delegates static and animated execution to mature backends
 - `custodian/content/metadata/assets/schemas/*.json` — V2 kind registry for world props, enemies, tiles, effects, vehicles, weapons, UI, and backdrops
 - `../design/04_architecture/AWAKENING_ASSET_MANIFEST.md` and `custodian/content/metadata/assets/families/awakening_*.asset.json` plus `gate_of_dust.asset.json` — semantic state, canvas, priority, and routing authority plus the 31 registered Asset V2 family contracts for Awakening sections 01–10
+- `custodian/game/world/awakening/awakening_first_return.gd` and `awakening_transit_lift.gd` — live binding for the published Crèche recovery alcove idle/wake presentation, moving Dust Lung lift art, and required dormant Gate of Dust component composition without changing locked gameplay geometry
 - `custodian/content/metadata/assets/families/{enemy_grunt,pursuit_frame,void_cliff_face}.asset.json` — production directional enemy-sheet, non-blocking exact-frame Pursuit Frame intake, and exact-name 32px void-fascia contracts
 - `design/02_features/enemies/PURSUIT_FRAME.md` — Pursuit Frame animation intake and initial procgen ambient runtime authority
 - `custodian/game/actors/enemies/pursuit_frame.tscn` and `presentation/sets/pursuit_frame_animation_set.{gd,tres}` — live shared-behavior Pursuit actor and semantic V2-strip binding

@@ -1,0 +1,136 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260908T022845Z_9d2f26fb",
+  "timestamp": "2026-09-08T02:28:45.190016+00:00",
+  "family": "gate_of_dust",
+  "kind": "world_prop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/gate_of_dust/body_idle_sealed.png",
+      "sha256": "3afb7ddbf656e48788c9ab819743729bff92d735afb535e4315e7348d4e66f64"
+    },
+    {
+      "path": "asset_drop/inbox/gate_of_dust/east_pylon.png",
+      "sha256": "cca75f3626d0d8d1bbaf59a4bd07d63c9f1ed6b3f8de274f3bf6df8cddc035da"
+    },
+    {
+      "path": "asset_drop/inbox/gate_of_dust/rest_threshold.png",
+      "sha256": "084ca3852f2c28ef27757639a90e7bdedfe5dcbb8bf5644194761ecff6c51eb3"
+    },
+    {
+      "path": "asset_drop/inbox/gate_of_dust/sealed_aperture.png",
+      "sha256": "8a873a7b9c5e0fd24e9efa5a739ca8fc6cb2665d3521c598735840fd3fedc4b0"
+    },
+    {
+      "path": "asset_drop/inbox/gate_of_dust/west_pylon.png",
+      "sha256": "b0b54218e6736f1a8a45c64169cd2366356514f4e0174226de6a7ea2a3e8282f"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "body_idle_sealed",
+      "direction": "omni",
+      "semantic_identity": [
+        "gate_of_dust",
+        "world_prop",
+        "body",
+        "state",
+        "idle_sealed",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/awakening/gate_of_dust/runtime/body/gate_of_dust__body__state__idle_sealed__omni__1f__768x512.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "3afb7ddbf656e48788c9ab819743729bff92d735afb535e4315e7348d4e66f64",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "east_pylon",
+      "direction": "omni",
+      "semantic_identity": [
+        "gate_of_dust",
+        "world_prop",
+        "body",
+        "component",
+        "east_pylon",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/awakening/gate_of_dust/runtime/body/gate_of_dust__body__component__east_pylon__omni__1f__256x512.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "cca75f3626d0d8d1bbaf59a4bd07d63c9f1ed6b3f8de274f3bf6df8cddc035da",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "rest_threshold",
+      "direction": "omni",
+      "semantic_identity": [
+        "gate_of_dust",
+        "world_prop",
+        "body",
+        "component",
+        "rest_threshold",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/awakening/gate_of_dust/runtime/body/gate_of_dust__body__component__rest_threshold__omni__1f__128x160.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "084ca3852f2c28ef27757639a90e7bdedfe5dcbb8bf5644194761ecff6c51eb3",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "sealed_aperture",
+      "direction": "omni",
+      "semantic_identity": [
+        "gate_of_dust",
+        "world_prop",
+        "body",
+        "component",
+        "sealed_aperture",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/awakening/gate_of_dust/runtime/body/gate_of_dust__body__component__sealed_aperture__omni__1f__512.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "8a873a7b9c5e0fd24e9efa5a739ca8fc6cb2665d3521c598735840fd3fedc4b0",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "west_pylon",
+      "direction": "omni",
+      "semantic_identity": [
+        "gate_of_dust",
+        "world_prop",
+        "body",
+        "component",
+        "west_pylon",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/awakening/gate_of_dust/runtime/body/gate_of_dust__body__component__west_pylon__omni__1f__256x512.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "b0b54218e6736f1a8a45c64169cd2366356514f4e0174226de6a7ea2a3e8282f",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

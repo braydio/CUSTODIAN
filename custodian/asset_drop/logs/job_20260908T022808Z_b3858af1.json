@@ -1,0 +1,68 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260908T022808Z_b3858af1",
+  "timestamp": "2026-09-08T02:28:08.053508+00:00",
+  "family": "awakening_creche_recovery_alcove",
+  "kind": "world_prop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/awakening_creche_recovery_alcove/idle.png",
+      "sha256": "76e47bfb4dd460198037b2d2d3b40950367f4f4de2f16f0b12248710f9f98265"
+    },
+    {
+      "path": "asset_drop/inbox/awakening_creche_recovery_alcove/wake.png",
+      "sha256": "5bb0b456d25cd54634ac12abc2eed4474baee2184a70139076597c480f40abfe"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "idle",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_creche_recovery_alcove",
+        "world_prop",
+        "body",
+        "state",
+        "idle",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/awakening/awakening_creche_recovery_alcove/runtime/body/awakening_creche_recovery_alcove__body__state__idle__omni__1f__192x256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "76e47bfb4dd460198037b2d2d3b40950367f4f4de2f16f0b12248710f9f98265",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "wake",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_creche_recovery_alcove",
+        "world_prop",
+        "body",
+        "interaction",
+        "wake",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/awakening/awakening_creche_recovery_alcove/runtime/body/awakening_creche_recovery_alcove__body__interaction__wake__omni__8f__192x256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "e6aa962ccf971fe58e57f34f8b370eb54119d14b6d0bdd4d8bea56faa6677f71",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    }
+  ],
+  "backends": [
+    "runtime_ready",
+    "sprite_ingest"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

@@ -75,6 +75,9 @@ Canvas 192×256.
 
 Consumer: `res://scenes/awakening_first_return.tscn`.
 
+Published and bound 2026-09-08. The live recovery console acknowledgement plays
+the eight-frame `wake` strip; reset restores `idle`.
+
 ### `awakening_creche_console` — P0
 
 Canvas 128×128.
@@ -82,6 +85,9 @@ Canvas 128×128.
 - `idle`: required, body/interaction/idle, copy.
 
 Consumer: `res://scenes/awakening_first_return.tscn`.
+
+Published and bound 2026-09-08. The sprite follows the existing bidirectional
+lift runtime authority between its locked stations.
 
 The activation overlay is a separate `effect` family so body and FX lifecycles remain independent.
 
@@ -116,6 +122,9 @@ Optional/deferred future states, registered now so the family remains stable whe
 - `shutdown`: 768×512, fx/continuity/shutdown, 8 frames, 8 FPS.
 
 Consumer: `res://scenes/awakening_first_return.tscn` for current states. Do not wire future continuity states yet.
+
+All five required dormant components were published and bound 2026-09-08.
+Optional Continuity Port states remain unwired and incomplete by design.
 
 ### `awakening_late_service_relay_lamp` — P1
 

@@ -24,6 +24,7 @@ func _init() -> void:
 	await process_frame
 
 	_check_console(awakening)
+	_check_gate_presentation(awakening)
 	await _check_locker(awakening)
 	await _check_lift(awakening)
 	await _check_zone_volumes(awakening)
@@ -33,9 +34,38 @@ func _init() -> void:
 	_report()
 
 
+func _check_gate_presentation(awakening: Node) -> void:
+	var art := awakening.get_node_or_null(
+		"World/AwakeningZones/Zone07_GateOfDust/SetPieces/GateOfDustProductionArt"
+	)
+	if art == null:
+		_fail("Gate of Dust production composition is missing")
+		return
+	var expected_sizes := {
+		"BodyIdleSealed": Vector2(768, 512),
+		"WestPylon": Vector2(256, 512),
+		"EastPylon": Vector2(256, 512),
+		"SealedAperture": Vector2(512, 512),
+		"RestThreshold": Vector2(128, 160),
+	}
+	for child_name in expected_sizes:
+		var sprite := art.get_node_or_null(child_name) as Sprite2D
+		if sprite == null or sprite.texture == null:
+			_fail("Gate of Dust component missing: %s" % child_name)
+		elif sprite.texture.get_size() != expected_sizes[child_name]:
+			_fail("Gate of Dust %s size drifted: %s" % [child_name, str(sprite.texture.get_size())])
+
+
 # --- Crèche console ----------------------------------------------------------
 
 func _check_console(awakening: Node) -> void:
+	var alcove := awakening.get_node_or_null(
+		"World/AwakeningZones/Zone01_Creche/SetPieces/RecoveryAlcove"
+	) as AnimatedSprite2D
+	if alcove == null:
+		_fail("production recovery alcove is not present")
+	elif alcove.animation != &"idle":
+		_fail("recovery alcove does not start idle: %s" % String(alcove.animation))
 	var console := awakening.get_node_or_null(
 		"World/AwakeningZones/Zone01_Creche/Interactables/CrecheConsole"
 	)
@@ -51,6 +81,8 @@ func _check_console(awakening: Node) -> void:
 		_fail("console interaction did not advance progression")
 	if not String(console.readout).contains("RETURN TO SERVICE"):
 		_fail("console readout does not carry the locked opening state")
+	if alcove != null and alcove.animation != &"wake":
+		_fail("console acknowledgement did not start the recovery wake animation")
 
 
 # --- P-9 recovery ------------------------------------------------------------
@@ -93,6 +125,11 @@ func _check_lift(awakening: Node) -> void:
 	if Vector2(lift.get("upper_station")) != Vector2(384, -3424):
 		_fail("lift upper station drifted: %s" % str(lift.get("upper_station")))
 	var operator := awakening.get_node("World/Operator") as Node2D
+	var lift_sprite := lift.get_node_or_null("ProductionLift") as Sprite2D
+	if lift_sprite == null or lift_sprite.texture == null:
+		_fail("Dust Lung production lift sprite is missing")
+	elif lift_sprite.texture.get_size() != Vector2(192, 256):
+		_fail("Dust Lung lift texture has unexpected size: %s" % str(lift_sprite.texture.get_size()))
 
 	var lower := Vector2(lift.get("lower_station"))
 	var upper := Vector2(lift.get("upper_station"))
@@ -103,12 +140,16 @@ func _check_lift(awakening: Node) -> void:
 	await _wait_for_lift(lift)
 	if operator.global_position.distance_to(upper) > 1.0:
 		_fail("lift did not deliver to the upper station: %s" % str(operator.global_position))
+	if lift_sprite != null and lift_sprite.position.distance_to(upper) > 1.0:
+		_fail("production lift art did not travel to the upper station: %s" % str(lift_sprite.position))
 
 	if not bool(lift.call("ride", operator)):
 		_fail("lift refused the return ride from the upper station")
 	await _wait_for_lift(lift)
 	if operator.global_position.distance_to(lower) > 1.0:
 		_fail("lift did not return to the lower station: %s" % str(operator.global_position))
+	if lift_sprite != null and lift_sprite.position.distance_to(lower) > 1.0:
+		_fail("production lift art did not return to the lower station: %s" % str(lift_sprite.position))
 
 	# Off-station requests must be refused rather than teleporting the Operator.
 	operator.global_position = lower + Vector2(400, 0)

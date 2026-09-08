@@ -17,6 +17,7 @@ enum Station { LOWER, UPPER }
 const FADE_SEC := 0.15
 const SHAKE_SEC := 0.20
 const STATION_RADIUS := 48.0
+const LIFT_TEXTURE := preload("res://content/sprites/environment/props/awakening/awakening_dust_lung_lift/runtime/body/awakening_dust_lung_lift__body__interaction__idle__omni__1f__192x256.png")
 
 @export var lower_station := Vector2(384, -3008)
 @export var upper_station := Vector2(384, -3424)
@@ -25,6 +26,7 @@ const STATION_RADIUS := 48.0
 var current_station: int = Station.LOWER
 var _busy := false
 var _operator: Node2D = null
+var _lift_sprite: Sprite2D = null
 
 
 func _ready() -> void:
@@ -33,17 +35,12 @@ func _ready() -> void:
 
 
 func _build_station_visuals() -> void:
-	for station in [lower_station, upper_station]:
-		var pad := Polygon2D.new()
-		pad.polygon = PackedVector2Array([
-			station + Vector2(-STATION_RADIUS, -STATION_RADIUS),
-			station + Vector2(STATION_RADIUS, -STATION_RADIUS),
-			station + Vector2(STATION_RADIUS, STATION_RADIUS),
-			station + Vector2(-STATION_RADIUS, STATION_RADIUS),
-		])
-		pad.color = Color(0.278, 0.455, 0.482, 0.5)
-		pad.z_index = 1
-		add_child(pad)
+	_lift_sprite = Sprite2D.new()
+	_lift_sprite.name = "ProductionLift"
+	_lift_sprite.texture = LIFT_TEXTURE
+	_lift_sprite.position = station_position(current_station)
+	_lift_sprite.z_index = 1
+	add_child(_lift_sprite)
 
 
 func station_position(station: int) -> Vector2:
@@ -114,6 +111,9 @@ func _run_cycle(from_station: int, to_station: int) -> void:
 	transit_started.emit(from_station)
 	_set_operator_input_enabled(false)
 	await _wait(FADE_SEC)
+	if _lift_sprite != null:
+		var tween := create_tween()
+		tween.tween_property(_lift_sprite, "position", station_position(to_station), SHAKE_SEC).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	await _wait(SHAKE_SEC)
 	if _operator != null and is_instance_valid(_operator):
 		_operator.global_position = station_position(to_station)

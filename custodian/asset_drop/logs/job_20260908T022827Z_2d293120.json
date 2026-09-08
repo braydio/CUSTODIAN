@@ -1,0 +1,44 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260908T022827Z_2d293120",
+  "timestamp": "2026-09-08T02:28:27.875555+00:00",
+  "family": "awakening_dust_lung_lift",
+  "kind": "world_prop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/awakening_dust_lung_lift/idle.png",
+      "sha256": "b14959dbac84666a8efbc93efee4f921e80252b6db2ef6c1dcfc8bbb6df31d3f"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "idle",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_dust_lung_lift",
+        "world_prop",
+        "body",
+        "interaction",
+        "idle",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/awakening/awakening_dust_lung_lift/runtime/body/awakening_dust_lung_lift__body__interaction__idle__omni__1f__192x256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "b14959dbac84666a8efbc93efee4f921e80252b6db2ef6c1dcfc8bbb6df31d3f",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

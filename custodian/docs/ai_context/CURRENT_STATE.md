@@ -1339,7 +1339,7 @@ never changes the staged original, converter candidates, canonical source, or
 runtime output.
 # Awakening / The First Return, Sections 01-10 (2026-09-06)
 
-Awakening production art is registered through 31 Asset Pipeline V2 family contracts. The first five environment underlays (Crèche through Dust Lung) are ingested and explicitly bound at their locked envelope centers; their per-zone blockout presentation now yields while collision, traversal, triggers, interactables, and layout authority remain unchanged. Foregrounds and zones 06–09 production plates remain missing.
+Awakening production art is registered through 31 Asset Pipeline V2 family contracts. The first five environment underlays (Crèche through Dust Lung) are ingested and explicitly bound at their locked envelope centers; their per-zone blockout presentation now yields while collision, traversal, triggers, interactables, and layout authority remain unchanged. The Crèche recovery alcove, Dust Lung lift, and all five required dormant Gate of Dust components are also published and bound: console acknowledgement drives the alcove's eight-frame wake strip, lift art follows the existing transit authority, and Gate composition preserves locked landmarks while future Continuity Port states remain deferred. Foregrounds and zones 06–09 production plates remain missing.
 
 The one-image Home beginning is retired. The project now boots into
 `res://scenes/awakening_first_return.tscn`, a ten-section authored dungeon walked

@@ -7175,6 +7175,189 @@
           "source_asset": null
         }
       }
+    },
+    "awakening_creche_recovery_alcove": {
+      "kind": "world_prop",
+      "assets": {
+        "idle::omni": {
+          "state_id": "idle",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_creche_recovery_alcove",
+            "world_prop",
+            "body",
+            "state",
+            "idle",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_creche_recovery_alcove/runtime/body/awakening_creche_recovery_alcove__body__state__idle__omni__1f__192x256.png",
+          "frames": 1,
+          "frame_size": [
+            192,
+            256
+          ],
+          "sha256": "76e47bfb4dd460198037b2d2d3b40950367f4f4de2f16f0b12248710f9f98265",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "wake::omni": {
+          "state_id": "wake",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_creche_recovery_alcove",
+            "world_prop",
+            "body",
+            "interaction",
+            "wake",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_creche_recovery_alcove/runtime/body/awakening_creche_recovery_alcove__body__interaction__wake__omni__8f__192x256.png",
+          "frames": 8,
+          "frame_size": [
+            192,
+            256
+          ],
+          "sha256": "e6aa962ccf971fe58e57f34f8b370eb54119d14b6d0bdd4d8bea56faa6677f71",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "awakening_dust_lung_lift": {
+      "kind": "world_prop",
+      "assets": {
+        "idle::omni": {
+          "state_id": "idle",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_dust_lung_lift",
+            "world_prop",
+            "body",
+            "interaction",
+            "idle",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_dust_lung_lift/runtime/body/awakening_dust_lung_lift__body__interaction__idle__omni__1f__192x256.png",
+          "frames": 1,
+          "frame_size": [
+            192,
+            256
+          ],
+          "sha256": "b14959dbac84666a8efbc93efee4f921e80252b6db2ef6c1dcfc8bbb6df31d3f",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "gate_of_dust": {
+      "kind": "world_prop",
+      "assets": {
+        "body_idle_sealed::omni": {
+          "state_id": "body_idle_sealed",
+          "direction": "omni",
+          "semantic_identity": [
+            "gate_of_dust",
+            "world_prop",
+            "body",
+            "state",
+            "idle_sealed",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/gate_of_dust/runtime/body/gate_of_dust__body__state__idle_sealed__omni__1f__768x512.png",
+          "frames": 1,
+          "frame_size": [
+            768,
+            512
+          ],
+          "sha256": "3afb7ddbf656e48788c9ab819743729bff92d735afb535e4315e7348d4e66f64",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "east_pylon::omni": {
+          "state_id": "east_pylon",
+          "direction": "omni",
+          "semantic_identity": [
+            "gate_of_dust",
+            "world_prop",
+            "body",
+            "component",
+            "east_pylon",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/gate_of_dust/runtime/body/gate_of_dust__body__component__east_pylon__omni__1f__256x512.png",
+          "frames": 1,
+          "frame_size": [
+            256,
+            512
+          ],
+          "sha256": "cca75f3626d0d8d1bbaf59a4bd07d63c9f1ed6b3f8de274f3bf6df8cddc035da",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "rest_threshold::omni": {
+          "state_id": "rest_threshold",
+          "direction": "omni",
+          "semantic_identity": [
+            "gate_of_dust",
+            "world_prop",
+            "body",
+            "component",
+            "rest_threshold",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/gate_of_dust/runtime/body/gate_of_dust__body__component__rest_threshold__omni__1f__128x160.png",
+          "frames": 1,
+          "frame_size": [
+            128,
+            160
+          ],
+          "sha256": "084ca3852f2c28ef27757639a90e7bdedfe5dcbb8bf5644194761ecff6c51eb3",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "sealed_aperture::omni": {
+          "state_id": "sealed_aperture",
+          "direction": "omni",
+          "semantic_identity": [
+            "gate_of_dust",
+            "world_prop",
+            "body",
+            "component",
+            "sealed_aperture",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/gate_of_dust/runtime/body/gate_of_dust__body__component__sealed_aperture__omni__1f__512.png",
+          "frames": 1,
+          "frame_size": [
+            512,
+            512
+          ],
+          "sha256": "8a873a7b9c5e0fd24e9efa5a739ca8fc6cb2665d3521c598735840fd3fedc4b0",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "west_pylon::omni": {
+          "state_id": "west_pylon",
+          "direction": "omni",
+          "semantic_identity": [
+            "gate_of_dust",
+            "world_prop",
+            "body",
+            "component",
+            "west_pylon",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/gate_of_dust/runtime/body/gate_of_dust__body__component__west_pylon__omni__1f__256x512.png",
+          "frames": 1,
+          "frame_size": [
+            256,
+            512
+          ],
+          "sha256": "b0b54218e6736f1a8a45c64169cd2366356514f4e0174226de6a7ea2a3e8282f",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
     }
   }
 }
