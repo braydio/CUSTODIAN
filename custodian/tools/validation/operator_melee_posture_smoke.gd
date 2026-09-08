@@ -134,6 +134,19 @@ func _init() -> void:
 	assert(lower.animation == &"melee_1h/posture/draw_01/w/lower_body")
 	assert(upper.animation == &"melee_1h/posture/draw_01/w/upper_body")
 	assert(weapon.animation == &"melee_1h_dagger/posture/draw_01/w/weapon")
+	operator.set("aim_direction", Vector2.LEFT)
+	assert(operator.call("_try_start_vigil_ready_fast_startup"), "Vigil fast_01 should consume its startup transition")
+	var startup_lower := operator.get_node("VigilFastStartupLower") as AnimatedSprite2D
+	var startup_upper := operator.get_node("VigilFastStartupUpper") as AnimatedSprite2D
+	var startup_weapon := operator.get_node("VigilFastStartupWeapon") as AnimatedSprite2D
+	assert(startup_lower.animation == &"melee_1h/transition/idle_fast_transition_01/w/lower_body")
+	assert(startup_upper.animation == &"melee_1h/transition/idle_fast_transition_01/w/upper_body")
+	assert(startup_weapon.animation == &"melee_1h_dagger/transition/idle_fast_transition_01/w/weapon")
+	assert(bool(operator.get("_melee_fast_windup")), "startup transition must reserve the attack startup window")
+	await create_timer(0.30).timeout
+	assert(not bool(operator.get("_melee_fast_windup")), "startup transition must release into fast_01")
+	assert(bool(operator.get("_melee_active")), "existing fast_01 attack must begin after startup")
+	assert(not startup_lower.visible and not startup_upper.visible and not startup_weapon.visible)
 	var source := FileAccess.get_file_as_string("res://game/actors/operator/operator.gd")
 	assert(not source.contains("AnimationResolver.resolve(\"melee_1h_stance_01\""))
 	assert(not source.contains("/posture/draw_weapon_01/"), "runtime must not reference retired draw_weapon_01")

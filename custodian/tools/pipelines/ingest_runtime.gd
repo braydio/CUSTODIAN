@@ -625,6 +625,18 @@ func _run_post_process(step: String, cleanup_superseded: bool) -> Dictionary:
 					"ok": false,
 					"error": "operator compatibility SpriteFrames update failed:\n%s" % "\n".join(compatibility_output)
 				}
+			# sync_operator_runtime_assets.py may have created new PNGs after this
+			# ingest process started. Import them in a fresh editor process before
+			# the SpriteFrames builder attempts to load their resources.
+			var import_output: Array = []
+			var import_exit_code := OS.execute(
+				"godot",
+				["--headless", "--path", _project_root, "--import"],
+				import_output,
+				true
+			)
+			if import_exit_code != 0:
+				return {"ok": false, "error": "operator runtime Godot import failed:\n%s" % "\n".join(import_output)}
 			var curated_output: Array = []
 			var curated_exit_code := OS.execute(
 				"godot",
@@ -635,7 +647,7 @@ func _run_post_process(step: String, cleanup_superseded: bool) -> Dictionary:
 					"--log-file",
 					_project_root.path_join(".godot/sprite_pipeline_post_process.log"),
 					"--script",
-					"res://tools/pipelines/build_operator_animation_resources.gd"
+					"res://tools/pipelines/build_operator_runtime_frames.gd"
 				],
 				curated_output,
 				true

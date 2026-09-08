@@ -29,7 +29,7 @@ def main() -> int:
         "--path",
         str(PROJECT_DIR),
         "--script",
-        "res://tools/pipelines/build_operator_animation_resources.gd",
+        "res://tools/pipelines/build_operator_runtime_frames.gd",
     ]
     result = subprocess.run(command, capture_output=True, text=True, check=False)
     if result.stdout:

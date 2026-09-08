@@ -30,6 +30,15 @@ const WalkState = preload("res://game/actors/operator/animations/states/walk_sta
 const SprintState = preload("res://game/actors/operator/animations/states/sprint_state.gd")
 const DeathState = preload("res://game/actors/operator/animations/states/death_state.gd")
 const MeleeAttackProfile = preload("res://game/systems/combat/melee_attack_profile.gd")
+const VIGIL_READY_FAST_STARTUP_TEXTURES := {
+	&"melee_1h/transition/idle_fast_transition_01/e/lower_body": preload("res://content/sprites/operator/runtime/animations/melee_1h/transition/idle_fast_transition_01/operator__lower_body__melee_1h__transition__idle_fast_transition_01__e__3f__156x96.png"),
+	&"melee_1h/transition/idle_fast_transition_01/e/upper_body": preload("res://content/sprites/operator/runtime/animations/melee_1h/transition/idle_fast_transition_01/operator__upper_body__melee_1h__transition__idle_fast_transition_01__e__3f__156x96.png"),
+	&"melee_1h/transition/idle_fast_transition_01/w/lower_body": preload("res://content/sprites/operator/runtime/animations/melee_1h/transition/idle_fast_transition_01/operator__lower_body__melee_1h__transition__idle_fast_transition_01__w__3f__156x96.png"),
+	&"melee_1h/transition/idle_fast_transition_01/w/upper_body": preload("res://content/sprites/operator/runtime/animations/melee_1h/transition/idle_fast_transition_01/operator__upper_body__melee_1h__transition__idle_fast_transition_01__w__3f__156x96.png"),
+	&"melee_1h_dagger/transition/idle_fast_transition_01/e/weapon": preload("res://content/sprites/operator/runtime/animations/melee_1h_dagger/transition/idle_fast_transition_01/operator__weapon__melee_1h_dagger__transition__idle_fast_transition_01__e__3f__156x96.png"),
+	&"melee_1h_dagger/transition/idle_fast_transition_01/w/weapon": preload("res://content/sprites/operator/runtime/animations/melee_1h_dagger/transition/idle_fast_transition_01/operator__weapon__melee_1h_dagger__transition__idle_fast_transition_01__w__3f__156x96.png"),
+}
+const VIGIL_READY_FAST_STARTUP_DURATION := 3.0 / 12.0
 const MeleeTargetResolver = preload("res://game/systems/combat/melee_target_resolver.gd")
 const CombatConstants = preload("res://game/systems/combat/combat_constants.gd")
 const AttackRejection := preload("res://game/systems/combat/attack_rejection.gd")
@@ -54,7 +63,6 @@ const MeleePostureStateScript = preload(
 const OPERATOR_ANIMATION_CATALOG_FRAMES := preload(
 	"res://game/actors/operator/operator_animation_catalog_frames.tres"
 )
-
 const MELEE_POSTURE_CATALOG_ACTIONS: Array[StringName] = [
 	&"draw_01",
 	&"sheathe_01",
@@ -516,6 +524,11 @@ var _missing_animation_warnings: Dictionary = {}
 var _ranged_config_warning_once: Dictionary = {}
 var _melee_heavy_anticipating: bool = false
 var _melee_fast_windup: bool = false
+var _vigil_ready_fast_startup_token := 0
+var _vigil_startup_lower: AnimatedSprite2D = null
+var _vigil_startup_upper: AnimatedSprite2D = null
+var _vigil_startup_weapon: AnimatedSprite2D = null
+var _vigil_startup_frames: SpriteFrames = null
 var _melee_fast_combo_step: int = 0
 var _melee_fast_chain_direction_active: bool = false
 var _skip_next_fast_attack_windup: bool = false
@@ -4506,6 +4519,8 @@ func _try_melee_attack(intent: String = ""):
 		):
 			_reset_fast_chain()
 			return
+		if requested_kind == "fast" and _try_start_vigil_ready_fast_startup():
+			return
 		_request_attack_state(requested_kind)
 		return
 	if requested_kind == "fast" \
@@ -4520,6 +4535,99 @@ func _try_melee_attack(intent: String = ""):
 		})
 		return
 	_buffer_attack(requested_kind)
+
+
+func _try_start_vigil_ready_fast_startup() -> bool:
+	if _melee_fast_combo_step != 0 or _skip_next_fast_attack_windup:
+		return false
+	if _melee_posture_state == null \
+	or String(_melee_posture_state.get_animation_action()) != "idle_ready_01":
+		return false
+	var profile := get_current_combat_profile()
+	if profile == null or profile.weapon_id != &"vigil_pattern_dagger":
+		return false
+	var direction := _get_melee_forward_direction()
+	var suffix := "w" if direction.x < -0.05 else "e"
+	var lower_animation := StringName("melee_1h/transition/idle_fast_transition_01/%s/lower_body" % suffix)
+	var upper_animation := StringName("melee_1h/transition/idle_fast_transition_01/%s/upper_body" % suffix)
+	var weapon_animation := StringName("melee_1h_dagger/transition/idle_fast_transition_01/%s/weapon" % suffix)
+	var startup_frames := _get_vigil_ready_fast_startup_frames()
+	for animation in [lower_animation, upper_animation, weapon_animation]:
+		if not _has_playable_sprite_animation(startup_frames, animation):
+			return false
+	_ensure_vigil_ready_fast_startup_sprites()
+	_melee_fast_windup = true
+	_vigil_ready_fast_startup_token += 1
+	var token := _vigil_ready_fast_startup_token
+	_play_vigil_startup_layer(_vigil_startup_lower, lower_animation, 0)
+	_play_vigil_startup_layer(_vigil_startup_upper, upper_animation, 1)
+	_play_vigil_startup_layer(_vigil_startup_weapon, weapon_animation, 2)
+	if animated_sprite != null:
+		animated_sprite.visible = false
+	if modular_lower_body_sprite != null:
+		modular_lower_body_sprite.visible = false
+	if modular_upper_body_sprite != null:
+		modular_upper_body_sprite.visible = false
+	if melee_weapon_overlay_sprite != null:
+		melee_weapon_overlay_sprite.visible = false
+	_finish_vigil_ready_fast_startup(token)
+	return true
+
+
+func _ensure_vigil_ready_fast_startup_sprites() -> void:
+	if _vigil_startup_lower != null:
+		return
+	_vigil_startup_lower = AnimatedSprite2D.new()
+	_vigil_startup_lower.name = "VigilFastStartupLower"
+	_vigil_startup_upper = AnimatedSprite2D.new()
+	_vigil_startup_upper.name = "VigilFastStartupUpper"
+	_vigil_startup_weapon = AnimatedSprite2D.new()
+	_vigil_startup_weapon.name = "VigilFastStartupWeapon"
+	for sprite in [_vigil_startup_lower, _vigil_startup_upper, _vigil_startup_weapon]:
+		sprite.position = Vector2(0, -18)
+		sprite.sprite_frames = _get_vigil_ready_fast_startup_frames()
+		sprite.visible = false
+		add_child(sprite)
+
+
+func _get_vigil_ready_fast_startup_frames() -> SpriteFrames:
+	if _vigil_startup_frames != null:
+		return _vigil_startup_frames
+	_vigil_startup_frames = SpriteFrames.new()
+	_vigil_startup_frames.remove_animation(&"default")
+	for animation_variant in VIGIL_READY_FAST_STARTUP_TEXTURES:
+		var animation := animation_variant as StringName
+		_vigil_startup_frames.add_animation(animation)
+		_vigil_startup_frames.set_animation_loop(animation, false)
+		_vigil_startup_frames.set_animation_speed(animation, 12.0)
+		for frame_index in 3:
+			var frame := AtlasTexture.new()
+			frame.atlas = VIGIL_READY_FAST_STARTUP_TEXTURES[animation]
+			frame.region = Rect2(frame_index * 156, 0, 156, 96)
+			_vigil_startup_frames.add_frame(animation, frame)
+	return _vigil_startup_frames
+
+
+func _play_vigil_startup_layer(sprite: AnimatedSprite2D, animation: StringName, z: int) -> void:
+	sprite.z_index = z
+	sprite.visible = true
+	sprite.speed_scale = 1.0
+	sprite.play(animation)
+
+
+func _finish_vigil_ready_fast_startup(token: int) -> void:
+	await get_tree().create_timer(VIGIL_READY_FAST_STARTUP_DURATION).timeout
+	for sprite in [_vigil_startup_lower, _vigil_startup_upper, _vigil_startup_weapon]:
+		if sprite != null:
+			sprite.stop()
+			sprite.visible = false
+	if token != _vigil_ready_fast_startup_token or not _melee_fast_windup:
+		return
+	_melee_fast_windup = false
+	if _is_dead or not _is_melee_loadout_active():
+		_update_animation()
+		return
+	_request_attack_state("fast")
 
 
 func _try_start_contextual_attack() -> void:
@@ -4872,6 +4980,8 @@ func _can_start_attack_now() -> bool:
 	if _dodge_charge_active:
 		return false
 	if _melee_active:
+		return false
+	if _melee_fast_windup:
 		return false
 	return melee_cooldown_remaining <= 0.0
 

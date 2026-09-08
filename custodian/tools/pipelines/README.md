@@ -33,7 +33,7 @@ The Operator post-process runs:
 python3 tools/pipelines/sync_operator_runtime_assets.py --strict --remove-superseded
 python3 tools/pipelines/update_operator_compatibility_resources.py
 godot --headless --path . --import --quit
-godot --headless --path . --script res://tools/pipelines/build_operator_animation_resources.gd
+godot --headless --path . --script res://tools/pipelines/build_operator_runtime_frames.gd
 python3 tools/pipelines/update_operator_compatibility_resources.py --check
 ```
 

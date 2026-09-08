@@ -286,7 +286,7 @@ Current post-process support:
 resource generator and catalog resource builder; the retired
 `update_operator_curated_resources.gd` path no longer exists. The Python phase
 updates generated compatibility `.tres` paths and full-strip frame aliases
-before Godot import, while `build_operator_animation_resources.gd` rebuilds the
+before Godot import, while `build_operator_runtime_frames.gd` rebuilds the
 canonical catalog `SpriteFrames` after import. `operator_modular_runtime` normalizes supported modular Operator source sheets from
 `res://content/sprites/operator/source/animations/` into generated runtime sheets below
 `res://content/sprites/operator/runtime/animations/` through `build_operator_runtime.py`.
@@ -345,7 +345,7 @@ For already-authored Operator modular source sheets in `content/sprites/operator
 1. Run `python custodian/tools/pipelines/build_operator_runtime.py --dry-run --remove-superseded`
 2. Run `python custodian/tools/pipelines/build_operator_runtime.py --strict --remove-superseded`
 3. Run `python custodian/tools/pipelines/update_operator_compatibility_resources.py`
-4. Run Godot import, then `build_operator_animation_resources.gd`
+4. Run Godot import, then `build_operator_runtime_frames.gd`
 5. Run `python custodian/tools/pipelines/update_operator_compatibility_resources.py --check`
 6. Run `python custodian/tools/validation/operator_animation_contract_report.py`
 7. Generate QA previews with `operator_action_preview.py` when visual inspection is needed

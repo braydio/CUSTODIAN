@@ -311,7 +311,7 @@ or directly:
 ```bash
 python3 custodian/tools/pipelines/update_operator_compatibility_resources.py
 godot --headless --path custodian --import --quit
-godot --headless --path custodian --script res://tools/pipelines/build_operator_animation_resources.gd
+godot --headless --path custodian --script res://tools/pipelines/build_operator_runtime_frames.gd
 python3 custodian/tools/pipelines/update_operator_compatibility_resources.py --check
 ```
 
@@ -363,5 +363,5 @@ godot --headless --script tools/validation/operator_modular_layers_smoke.gd
 | Plan a new character's first animation batch | `scaffold_character_contract.py` |
 | Route new inbox PNGs | `generate_inbox_manifests.py`, then `ingest.py` |
 | Rebuild existing Operator modular source sheets | `build_operator_modular_runtime.py` |
-| Refresh Operator SpriteFrames | `reload_assets.py` or `update_operator_compatibility_resources.py` followed by `build_operator_animation_resources.gd` |
+| Refresh Operator SpriteFrames | `reload_assets.py` or `update_operator_compatibility_resources.py` followed by `build_operator_runtime_frames.gd` |
 | Validate pure Python tooling | the three new `*_smoke.py` scripts |

@@ -9191,6 +9191,86 @@
           ]
         }
       }
+    },
+    "melee_1h/transition/idle_fast_transition_01/e": {
+      "profile": "melee_1h",
+      "group": "transition",
+      "action": "idle_fast_transition_01",
+      "direction": "e",
+      "layers": {
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/transition/idle_fast_transition_01/operator__lower_body__melee_1h__transition__idle_fast_transition_01__e__3f__156x96.png",
+          "frames": 3,
+          "frame_size": [
+            156,
+            96
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/transition/idle_fast_transition_01/operator__upper_body__melee_1h__transition__idle_fast_transition_01__e__3f__156x96.png",
+          "frames": 3,
+          "frame_size": [
+            156,
+            96
+          ]
+        }
+      }
+    },
+    "melee_1h/transition/idle_fast_transition_01/w": {
+      "profile": "melee_1h",
+      "group": "transition",
+      "action": "idle_fast_transition_01",
+      "direction": "w",
+      "layers": {
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/transition/idle_fast_transition_01/operator__lower_body__melee_1h__transition__idle_fast_transition_01__w__3f__156x96.png",
+          "frames": 3,
+          "frame_size": [
+            156,
+            96
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/transition/idle_fast_transition_01/operator__upper_body__melee_1h__transition__idle_fast_transition_01__w__3f__156x96.png",
+          "frames": 3,
+          "frame_size": [
+            156,
+            96
+          ]
+        }
+      }
+    },
+    "melee_1h_dagger/transition/idle_fast_transition_01/e": {
+      "profile": "melee_1h_dagger",
+      "group": "transition",
+      "action": "idle_fast_transition_01",
+      "direction": "e",
+      "layers": {
+        "weapon": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_dagger/transition/idle_fast_transition_01/operator__weapon__melee_1h_dagger__transition__idle_fast_transition_01__e__3f__156x96.png",
+          "frames": 3,
+          "frame_size": [
+            156,
+            96
+          ]
+        }
+      }
+    },
+    "melee_1h_dagger/transition/idle_fast_transition_01/w": {
+      "profile": "melee_1h_dagger",
+      "group": "transition",
+      "action": "idle_fast_transition_01",
+      "direction": "w",
+      "layers": {
+        "weapon": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h_dagger/transition/idle_fast_transition_01/operator__weapon__melee_1h_dagger__transition__idle_fast_transition_01__w__3f__156x96.png",
+          "frames": 3,
+          "frame_size": [
+            156,
+            96
+          ]
+        }
+      }
     }
   },
   "weapons": {
