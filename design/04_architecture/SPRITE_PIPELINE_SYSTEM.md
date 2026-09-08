@@ -263,7 +263,7 @@ retain their own scope and acceptance contracts.
 
 Primary scripts:
 
-- `custodian/tools/art/source_to_pixel_art.py`
+- `custodian/tools/art/custodian_pixelart_converter.py`
 - `custodian/tools/pipelines/generate_inbox_manifests.py`
 - `custodian/tools/pipelines/ingest.py`
 - `custodian/tools/pipelines/ingest_runtime.gd`

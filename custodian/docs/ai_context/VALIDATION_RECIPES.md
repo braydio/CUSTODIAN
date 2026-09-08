@@ -807,8 +807,7 @@ Use for sprite intake, runtime animation slices, and curated operator resources.
 For the high-resolution source-art preparation command:
 
 ```bash
-python3 -m py_compile custodian/tools/art/source_to_pixel_art.py custodian/tools/validation/source_to_pixel_art_smoke.py
-python3 custodian/tools/validation/source_to_pixel_art_smoke.py
+python3 -m py_compile custodian/tools/art/custodian_pixelart_converter.py
 bash -n tools/custodian_aliases.sh
 ```
 
