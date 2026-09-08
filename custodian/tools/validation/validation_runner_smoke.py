@@ -16,8 +16,13 @@ def main() -> int:
     excludes = runner.load_coverage_excludes()
     assert tests and len({item["id"] for item in tests}) == len(tests)
     selected = runner.select_tests(tests, files=["custodian/game/systems/combat/melee_target_resolver.gd"])
-    assert [item["id"] for item in selected] == ["operator_melee_soft_targeting", "operator_vigil_dagger", "melee_soft_target_spacing"]
-    assert [item["tier"] for item in selected] == ["unit", "actor", "moment"]
+    assert [item["id"] for item in selected] == [
+        "operator_melee_soft_targeting",
+        "operator_runtime_path_audit",
+        "operator_vigil_dagger",
+        "melee_soft_target_spacing",
+    ]
+    assert [item["tier"] for item in selected] == ["unit", "unit", "actor", "moment"]
     assert runner.select_tests(tests, tag="ranged")
     assert [item["id"] for item in runner.select_tests(tests, test_id="operator_melee_soft_targeting")] == ["operator_melee_soft_targeting"]
     assert all(item["tier"] == "unit" for item in runner.select_tests(tests, tier="unit"))

@@ -141,6 +141,13 @@
       "replacement": "melee_1h/posture/idle_ready_01"
     },
     {
+      "profile": "melee_1h",
+      "group": "transition",
+      "action": "idle_fast_transition_01",
+      "status": "LIVE",
+      "consumer": "operator._try_start_vigil_ready_fast_startup (lower_body, upper_body)"
+    },
+    {
       "profile": "melee_1h_dagger",
       "group": "attack",
       "action": "fast_02",
@@ -202,6 +209,14 @@
       "layer": "weapon",
       "status": "LIVE",
       "consumer": "operator.weapon_selection.sheathe"
+    },
+    {
+      "profile": "melee_1h_dagger",
+      "group": "transition",
+      "action": "idle_fast_transition_01",
+      "layer": "weapon",
+      "status": "LIVE",
+      "consumer": "operator._try_start_vigil_ready_fast_startup (weapon)"
     },
     {
       "profile": "melee_1h_heavy",

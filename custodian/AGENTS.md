@@ -252,6 +252,32 @@ Use this whenever you are restructuring docs, moving asset guidance, consolidati
 - Debug surfaces must consume read-only snapshots from `DebugBus`. Mutation must go through debug overrides or queued commands that gameplay systems drain at safe boundaries, never direct per-frame UI writes into deterministic systems.
 - New debug instrumentation should route through `DevObservatory` (`/root/DevObservatory`), not raw `print()` or ad-hoc labels. Use `log_event` for state transitions, `increment`/`set_counter` for counts, `set_gauge` for live values, and `mark_warning` for anomalies. Keep it observability-only — never let observatory state influence simulation, generation, AI, collision, navigation, combat, or saves. See `design/02_features/debug_ui/DEVELOPER_OBSERVATORY_SYSTEM.md` for the full pattern and examples.
 
+## Operator Animation And Sprite Runtime Authority
+
+For active Operator gameplay and presentation code:
+
+- Gameplay may request animations by semantic identity only.
+- Do not preload or load individual Operator animation PNGs from
+  `content/sprites/operator/runtime/animations/`.
+- Do not load Operator animation art from `source/`.
+- Do not create actor-local `AtlasTexture`, `SpriteFrames`, texture dictionaries,
+  or animation databases for normal gameplay wiring.
+
+When adding or wiring a new animation, transition, attack, reaction, or state:
+
+1. Ensure the art exists in canonical source authority.
+2. Run the Operator source to runtime synchronization pipeline.
+3. Ensure the semantic identity exists in
+   `operator_runtime_manifest.generated.json`.
+4. Rebuild `operator_runtime_frames.tres`.
+5. Wire gameplay using `OperatorAnimationSelector` and the semantic identity.
+
+A new state needing a new animation is not an exception to this rule. The state
+must be wired to semantic animation authority rather than directly to its PNG.
+
+Direct PNG access is allowed only in explicit migration, validation, inspection,
+or asset-authoring tooling outside active gameplay runtime.
+
 ## Commit Policy
 
 - Commit completed, validated work at task boundaries without waiting for a per-task instruction.

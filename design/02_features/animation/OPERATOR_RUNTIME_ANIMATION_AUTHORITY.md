@@ -52,6 +52,17 @@ After Godot import, `build_operator_runtime_frames.gd` generates the sole
 nodes share this resource; the actor does not build an animation database.
 Workbench browses the runtime manifest and publishes through this same build.
 
+### New-animation wiring rule
+
+A new gameplay state or transition requiring newly authored animation is not a
+reason to bypass runtime authority.
+
+If a required semantic identity exists as art but is not yet consumable through
+the generated SpriteFrames, publication through the source to runtime to
+manifest to SpriteFrames pipeline is part of implementing that gameplay change.
+
+Direct gameplay PNG preloads are prohibited as a temporary wiring shortcut.
+
 ## Preservation and migration gates
 
 Before removing a compatibility resource, materialize still-live frames using
