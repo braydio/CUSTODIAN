@@ -149,10 +149,10 @@ def _resolve_targets(requested: list[str]) -> list[Path]:
 
 def _build_manifest(png_path: Path, *, remove_superseded: bool = False) -> dict:
     key = None
-    if png_path.name.startswith("operator__"):
-        try:
-            key = parse_filename(png_path)
-        except ValueError:
+    try:
+        key = parse_filename(png_path)
+    except ValueError:
+        if png_path.name.startswith("operator__"):
             key = normalize_legacy_filename(png_path)
             print(f"[LEGACY INPUT] {png_path.name} -> {canonical_source_path(key)}", file=sys.stderr)
     if key is not None and (key.owner == "operator" or key.layer == "weapon"):

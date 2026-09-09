@@ -109,7 +109,7 @@ else
 fi
 
 echo "== Operator catalog resource update =="
-godot --headless --path custodian --script res://tools/pipelines/build_operator_animation_resources.gd
+godot --headless --path custodian --script res://tools/pipelines/build_operator_runtime_frames.gd
 echo ""
 
 echo "== Operator superseded runtime cleanup =="

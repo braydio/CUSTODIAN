@@ -55,6 +55,18 @@ def main() -> int:
         manifest = manifests._build_manifest(lower)
         assert manifest["frame_size"] == [128, 96]
         assert manifest["post_process"] == ["operator_runtime_build"]
+        weapon_drop = (
+            source
+            / "vigil_pattern_dagger__weapon__melee_1h_dagger__defense__block_loop_01__e__5f__96.png"
+        )
+        _write_strip(weapon_drop, 5, 96, 96)
+        weapon_manifest = manifests._build_manifest(weapon_drop)
+        assert weapon_manifest["outputs"][0]["path"] == (
+            "weapons/vigil_pattern_dagger/source/operator/melee_1h_dagger/"
+            "overrides/defense/block_loop_01/"
+            "vigil_pattern_dagger__weapon__melee_1h_dagger__defense__block_loop_01__e__5f__96.png"
+        )
+        weapon_drop.unlink()
 
         report = builder.sync(
             source_root=source,

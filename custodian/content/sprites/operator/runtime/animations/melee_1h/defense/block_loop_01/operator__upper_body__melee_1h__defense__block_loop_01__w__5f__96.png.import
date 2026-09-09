@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bs10aarxs6rra"
-path="res://.godot/imported/operator__upper_body__melee_1h__block_enter_01__e__4f__96.png-ecaca9d5db4508d50b950cd8007c826c.ctex"
+uid="uid://bltg5ypkoh21y"
+path="res://.godot/imported/operator__upper_body__melee_1h__defense__block_loop_01__w__5f__96.png-4eb63f66168d58865194f924b36ed278.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/_pipeline/inbox/operator__upper_body__melee_1h__block_enter_01__e__4f__96.png"
-dest_files=["res://.godot/imported/operator__upper_body__melee_1h__block_enter_01__e__4f__96.png-ecaca9d5db4508d50b950cd8007c826c.ctex"]
+source_file="res://content/sprites/operator/runtime/animations/melee_1h/defense/block_loop_01/operator__upper_body__melee_1h__defense__block_loop_01__w__5f__96.png"
+dest_files=["res://.godot/imported/operator__upper_body__melee_1h__defense__block_loop_01__w__5f__96.png-4eb63f66168d58865194f924b36ed278.ctex"]
 
 [params]
 

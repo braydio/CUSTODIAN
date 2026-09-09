@@ -74,6 +74,7 @@ func _run() -> void:
 	_validate_chain_sequence_timing(operator)
 	_validate_default_scene(operator)
 	_validate_frame_resources(operator)
+	_validate_semantic_guard_playback(operator)
 	_validate_attack_playback(operator)
 	await _validate_two_contact_finisher(operator)
 	await _validate_open_space_drive(operator)
@@ -208,6 +209,32 @@ func _validate_definition() -> void:
 			total_commitment >= band[0] - 0.005 and total_commitment <= band[1] + 0.005,
 			"Fast %02d total commitment %.3f is outside the target band [%.2f, %.2f]" % [index + 1, total_commitment, band[0], band[1]]
 		)
+
+
+func _validate_semantic_guard_playback(operator: Node) -> void:
+	operator.call("guard_play_block_animation", &"melee_2h_block_enter")
+	var lower := operator.get_node_or_null("VigilGuardLower") as AnimatedSprite2D
+	var upper := operator.get_node_or_null("VigilGuardUpper") as AnimatedSprite2D
+	var weapon := operator.get_node_or_null("VigilGuardWeapon") as AnimatedSprite2D
+	_assert(lower != null and upper != null and weapon != null, "semantic Vigil guard layers were not created")
+	if lower == null or upper == null or weapon == null:
+		return
+	_assert(lower.animation == &"melee_1h/defense/block_enter_01/e/lower_body", "Vigil guard enter lower identity is wrong")
+	_assert(upper.animation == &"melee_1h/defense/block_enter_01/e/upper_body", "Vigil guard enter upper identity is wrong")
+	_assert(weapon.animation == &"weapon/vigil_pattern_dagger/melee_1h_dagger/defense/block_enter_01/e/weapon", "Vigil guard enter weapon identity is wrong")
+	operator.call("guard_play_block_animation", &"melee_2h_block_hold")
+	_assert(lower.animation == &"melee_1h/defense/block_loop_01/e/lower_body", "Vigil guard loop lower identity is wrong")
+	_assert(upper.animation == &"melee_1h/defense/block_loop_01/e/upper_body", "Vigil guard loop upper identity is wrong")
+	_assert(weapon.animation == &"weapon/vigil_pattern_dagger/melee_1h_dagger/defense/block_loop_01/e/weapon", "Vigil guard loop weapon identity is wrong")
+	for sprite in [lower, upper, weapon]:
+		_assert(sprite.sprite_frames.get_animation_loop(sprite.animation), "%s must loop" % sprite.name)
+	operator.set("aim_direction", Vector2.LEFT)
+	operator.call("guard_play_block_animation", &"melee_2h_block_enter")
+	_assert(lower.animation == &"melee_1h/defense/block_enter_01/w/lower_body", "Vigil guard west mirror lower identity is wrong")
+	_assert(upper.animation == &"melee_1h/defense/block_enter_01/w/upper_body", "Vigil guard west mirror upper identity is wrong")
+	_assert(weapon.animation == &"weapon/vigil_pattern_dagger/melee_1h_dagger/defense/block_enter_01/w/weapon", "Vigil guard west mirror weapon identity is wrong")
+	operator.call("guard_play_block_animation", &"melee_2h_block_exit")
+	_assert(not lower.visible and not upper.visible and not weapon.visible, "semantic Vigil guard layers remain visible on exit")
 
 
 ## Combat tempo pass: frame/fps-derived wall-clock cadence for the full

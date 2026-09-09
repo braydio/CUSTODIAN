@@ -93,6 +93,20 @@
     },
     {
       "profile": "melee_1h",
+      "group": "defense",
+      "action": "block_enter_01",
+      "status": "LIVE",
+      "consumer": "operator._try_play_vigil_semantic_block"
+    },
+    {
+      "profile": "melee_1h",
+      "group": "defense",
+      "action": "block_loop_01",
+      "status": "LIVE",
+      "consumer": "operator._try_play_vigil_semantic_block"
+    },
+    {
+      "profile": "melee_1h",
       "group": "locomotion",
       "action": "run_01",
       "status": "LIVE",

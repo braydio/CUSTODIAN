@@ -385,6 +385,162 @@
         }
       }
     },
+    "melee_1h/defense/block_enter_01/e": {
+      "profile": "melee_1h",
+      "group": "defense",
+      "action": "block_enter_01",
+      "direction": "e",
+      "layers": {
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/defense/block_enter_01/operator__lower_body__melee_1h__defense__block_enter_01__e__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/defense/block_enter_01/operator__upper_body__melee_1h__defense__block_enter_01__e__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
+    "melee_1h/defense/block_enter_01/w": {
+      "profile": "melee_1h",
+      "group": "defense",
+      "action": "block_enter_01",
+      "direction": "w",
+      "layers": {
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/defense/block_enter_01/operator__lower_body__melee_1h__defense__block_enter_01__w__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/defense/block_enter_01/operator__upper_body__melee_1h__defense__block_enter_01__w__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
+    "melee_1h/defense/block_loop_01/e": {
+      "profile": "melee_1h",
+      "group": "defense",
+      "action": "block_loop_01",
+      "direction": "e",
+      "layers": {
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/defense/block_loop_01/operator__lower_body__melee_1h__defense__block_loop_01__e__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "fps": 12.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/defense/block_loop_01/operator__upper_body__melee_1h__defense__block_loop_01__e__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "fps": 12.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 12.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "melee_1h/defense/block_loop_01/w": {
+      "profile": "melee_1h",
+      "group": "defense",
+      "action": "block_loop_01",
+      "direction": "w",
+      "layers": {
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/defense/block_loop_01/operator__lower_body__melee_1h__defense__block_loop_01__w__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "fps": 12.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/defense/block_loop_01/operator__upper_body__melee_1h__defense__block_loop_01__w__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "fps": 12.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 12.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
     "melee_1h/locomotion/run_01/e": {
       "profile": "melee_1h",
       "group": "locomotion",
@@ -6701,6 +6857,64 @@
               1.0,
               1.0,
               1.5
+            ]
+          }
+        },
+        "defense/block_enter_01/e": {
+          "weapon": {
+            "path": "res://content/sprites/weapons/vigil_pattern_dagger/runtime/operator/melee_1h_dagger/overrides/defense/block_enter_01/vigil_pattern_dagger__weapon__melee_1h_dagger__defense__block_enter_01__e__4f__96.png",
+            "frames": 4,
+            "frame_size": [
+              96,
+              96
+            ]
+          }
+        },
+        "defense/block_enter_01/w": {
+          "weapon": {
+            "path": "res://content/sprites/weapons/vigil_pattern_dagger/runtime/operator/melee_1h_dagger/overrides/defense/block_enter_01/vigil_pattern_dagger__weapon__melee_1h_dagger__defense__block_enter_01__w__4f__96.png",
+            "frames": 4,
+            "frame_size": [
+              96,
+              96
+            ]
+          }
+        },
+        "defense/block_loop_01/e": {
+          "weapon": {
+            "path": "res://content/sprites/weapons/vigil_pattern_dagger/runtime/operator/melee_1h_dagger/overrides/defense/block_loop_01/vigil_pattern_dagger__weapon__melee_1h_dagger__defense__block_loop_01__e__5f__96.png",
+            "frames": 5,
+            "frame_size": [
+              96,
+              96
+            ],
+            "fps": 12.0,
+            "loop": true,
+            "durations": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        },
+        "defense/block_loop_01/w": {
+          "weapon": {
+            "path": "res://content/sprites/weapons/vigil_pattern_dagger/runtime/operator/melee_1h_dagger/overrides/defense/block_loop_01/vigil_pattern_dagger__weapon__melee_1h_dagger__defense__block_loop_01__w__5f__96.png",
+            "frames": 5,
+            "frame_size": [
+              96,
+              96
+            ],
+            "fps": 12.0,
+            "loop": true,
+            "durations": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0
             ]
           }
         }

@@ -1,0 +1,12 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/vigil_pattern_dagger__weapon__melee_1h_dagger__defense__block_enter_01__e__4f__96.json",
+	"outputs": [
+		"res://content/sprites/weapons/vigil_pattern_dagger/source/operator/melee_1h_dagger/overrides/defense/block_enter_01/vigil_pattern_dagger__weapon__melee_1h_dagger__defense__block_enter_01__e__4f__96.png",
+		"res://content/sprites/weapons/vigil_pattern_dagger/source/operator/melee_1h_dagger/overrides/defense/block_enter_01/vigil_pattern_dagger__weapon__melee_1h_dagger__defense__block_enter_01__w__4f__96.png"
+	],
+	"post_process": [
+		"operator_runtime_build"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/vigil_pattern_dagger__weapon__melee_1h_dagger__defense__block_enter_01__e__4f__96.png",
+	"timestamp_utc": "2026-09-09 14:36:30"
+}

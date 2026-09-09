@@ -525,6 +525,10 @@ var _vigil_ready_fast_startup_token := 0
 var _vigil_startup_lower: AnimatedSprite2D = null
 var _vigil_startup_upper: AnimatedSprite2D = null
 var _vigil_startup_weapon: AnimatedSprite2D = null
+var _vigil_guard_lower: AnimatedSprite2D = null
+var _vigil_guard_upper: AnimatedSprite2D = null
+var _vigil_guard_weapon: AnimatedSprite2D = null
+var _vigil_guard_semantic_active := false
 var _operator_animation_selector = null
 var _melee_fast_combo_step: int = 0
 var _melee_fast_chain_direction_active: bool = false
@@ -7007,6 +7011,9 @@ func _play_modular_parry_fx(direction: Vector2, base_animation: String = "unarme
 
 
 func _play_block_animation(phase_key: StringName) -> void:
+	if _try_play_vigil_semantic_block(phase_key):
+		return
+	_hide_vigil_semantic_block()
 	var profile := get_current_combat_profile()
 	var resolved := _get_weapon_animation_name(profile, String(phase_key), phase_key)
 
@@ -7023,6 +7030,78 @@ func _play_block_animation(phase_key: StringName) -> void:
 		animated_sprite.play(resolved)
 	if not _is_current_profile_unarmed():
 		_play_block_weapon_overlay(phase_key)
+
+
+func _try_play_vigil_semantic_block(phase_key: StringName) -> bool:
+	var action := &""
+	match phase_key:
+		&"melee_2h_block_enter": action = &"block_enter_01"
+		&"melee_2h_block_hold": action = &"block_loop_01"
+		_: return false
+	var profile := get_current_combat_profile()
+	if profile == null or profile.weapon_id != &"vigil_pattern_dagger":
+		return false
+	var direction := Vector2.LEFT if _is_facing_left(aim_direction) else Vector2.RIGHT
+	var selector = _get_operator_animation_selector()
+	var lower_animation: StringName = selector.resolve(
+		&"melee_1h", &"defense", action, direction, &"lower_body"
+	)
+	var upper_animation: StringName = selector.resolve(
+		&"melee_1h", &"defense", action, direction, &"upper_body"
+	)
+	var weapon_animation: StringName = selector.resolve(
+		&"melee_1h_dagger", &"defense", action, direction, &"weapon",
+		&"vigil_pattern_dagger"
+	)
+	for animation in [lower_animation, upper_animation, weapon_animation]:
+		if animation.is_empty() \
+		or not _has_playable_sprite_animation(OPERATOR_RUNTIME_FRAMES, animation):
+			return false
+	_ensure_vigil_guard_sprites()
+	_play_vigil_guard_layer(_vigil_guard_lower, lower_animation, 0)
+	_play_vigil_guard_layer(_vigil_guard_upper, upper_animation, 1)
+	_play_vigil_guard_layer(_vigil_guard_weapon, weapon_animation, 2)
+	_vigil_guard_semantic_active = true
+	animated_sprite.visible = false
+	_hide_modular_locomotion_layers()
+	if melee_weapon_overlay_sprite != null:
+		melee_weapon_overlay_sprite.visible = false
+	if primary_weapon_sprite != null:
+		primary_weapon_sprite.visible = false
+	return true
+
+
+func _ensure_vigil_guard_sprites() -> void:
+	if _vigil_guard_lower != null:
+		return
+	_vigil_guard_lower = AnimatedSprite2D.new()
+	_vigil_guard_lower.name = "VigilGuardLower"
+	_vigil_guard_upper = AnimatedSprite2D.new()
+	_vigil_guard_upper.name = "VigilGuardUpper"
+	_vigil_guard_weapon = AnimatedSprite2D.new()
+	_vigil_guard_weapon.name = "VigilGuardWeapon"
+	for sprite in [_vigil_guard_lower, _vigil_guard_upper, _vigil_guard_weapon]:
+		sprite.position = Vector2(0, -18)
+		sprite.sprite_frames = OPERATOR_RUNTIME_FRAMES
+		sprite.visible = false
+		add_child(sprite)
+
+
+func _play_vigil_guard_layer(
+	sprite: AnimatedSprite2D, animation: StringName, layer_z_index: int
+) -> void:
+	sprite.z_index = layer_z_index
+	sprite.visible = true
+	sprite.speed_scale = 1.0
+	sprite.play(animation)
+
+
+func _hide_vigil_semantic_block() -> void:
+	_vigil_guard_semantic_active = false
+	for sprite in [_vigil_guard_lower, _vigil_guard_upper, _vigil_guard_weapon]:
+		if sprite != null:
+			sprite.stop()
+			sprite.visible = false
 
 
 func _play_modular_unarmed_block(base_animation: String) -> bool:
@@ -7126,6 +7205,8 @@ func _is_modular_block_active() -> bool:
 
 
 func _is_block_animation_finished() -> bool:
+	if _vigil_guard_semantic_active and _vigil_guard_upper != null:
+		return not _vigil_guard_upper.is_playing()
 	if _is_modular_block_active() and modular_upper_body_sprite != null:
 		return not modular_upper_body_sprite.is_playing()
 	return animated_sprite != null and not animated_sprite.is_playing()
