@@ -484,6 +484,8 @@ var build_target: Node = null  # WallBlueprint we're building
 var movement_direction := Vector2.DOWN  # Direction player is moving (for walk animations)
 var visual_idle_direction := Vector2.DOWN
 var arrow_aim_enabled: bool = false
+@export_range(0.0, 1.0, 0.01) var controller_aim_deadzone := 0.25
+var _last_controller_aim_direction := Vector2.ZERO
 var stamina: float = 100.0
 var is_sprinting: bool = false
 var is_sneaking: bool = false
@@ -529,6 +531,12 @@ var _vigil_guard_lower: AnimatedSprite2D = null
 var _vigil_guard_upper: AnimatedSprite2D = null
 var _vigil_guard_weapon: AnimatedSprite2D = null
 var _vigil_guard_semantic_active := false
+var _vigil_posture_bridge_lower: AnimatedSprite2D = null
+var _vigil_posture_bridge_upper: AnimatedSprite2D = null
+var _vigil_posture_bridge_weapon: AnimatedSprite2D = null
+var _vigil_posture_bridge_action := &""
+var _vigil_posture_bridge_token := 0
+var _vigil_posture_bridge_attack_queued := false
 var _operator_animation_selector = null
 var _melee_fast_combo_step: int = 0
 var _melee_fast_chain_direction_active: bool = false
@@ -1431,7 +1439,9 @@ func _process(delta):
 func _input(event: InputEvent) -> void:
 	if _is_ui_text_input_focused():
 		return
-	if event is InputEventMouseMotion and not arrow_aim_enabled:
+	if event is InputEventMouseMotion \
+	and not arrow_aim_enabled \
+	and not _is_gamepad_input_active():
 		var mouse_aim_vector := _get_world_mouse_position() - global_position
 		if mouse_aim_vector.length_squared() > 0.0001:
 			visual_idle_direction = mouse_aim_vector.normalized()
@@ -1694,10 +1704,20 @@ func debug_print_stuck_report() -> Dictionary:
 
 
 func _update_aim():
-	var controller_aim := _get_controller_aim_direction()
-	if controller_aim != Vector2.ZERO:
-		aim_direction = controller_aim
-		visual_idle_direction = controller_aim
+	if _is_gamepad_input_active():
+		var controller_aim := _get_controller_aim_direction()
+		if controller_aim != Vector2.ZERO:
+			_last_controller_aim_direction = controller_aim
+		if _last_controller_aim_direction == Vector2.ZERO:
+			_last_controller_aim_direction = (
+				movement_direction.normalized()
+				if movement_direction.length_squared() > 0.0001
+				else visual_idle_direction.normalized()
+			)
+		if _last_controller_aim_direction == Vector2.ZERO:
+			_last_controller_aim_direction = Vector2.RIGHT
+		aim_direction = _last_controller_aim_direction
+		visual_idle_direction = _last_controller_aim_direction
 	elif arrow_aim_enabled:
 		var keyboard_aim := _get_keyboard_aim_direction()
 		if keyboard_aim != Vector2.ZERO:
@@ -2205,6 +2225,7 @@ func get_melee_locomotion_socket_snapshot() -> Dictionary:
 func _update_melee_presentation_posture(delta: float) -> void:
 	if _melee_posture_state == null:
 		return
+	var previous_posture: MeleePostureState.Posture = _melee_posture_state.posture
 	var engagement_active := _engagement_tracker != null and _engagement_tracker.engagement_active
 	var presentation_locked := (
 		_is_dead
@@ -2217,12 +2238,22 @@ func _update_melee_presentation_posture(delta: float) -> void:
 		or _dodge_recovery_active
 		or _is_equip_weapon_state_active()
 		or _is_sheathe_weapon_state_active()
+		or not _vigil_posture_bridge_action.is_empty()
 	)
 	_melee_posture_state.resolve(delta, _is_melee_loadout_active() and not using_unarmed, engagement_active, presentation_locked)
+	if previous_posture != _melee_posture_state.posture:
+		if previous_posture == MeleePostureState.Posture.RELAXED \
+		and _melee_posture_state.posture == MeleePostureState.Posture.READY:
+			_start_vigil_posture_bridge(&"relaxed_to_ready_01")
+		elif previous_posture == MeleePostureState.Posture.READY \
+		and _melee_posture_state.posture == MeleePostureState.Posture.RELAXED:
+			_start_vigil_posture_bridge(&"ready_to_relaxed_01")
 
 
 func _sync_modular_melee_posture(direction: Vector2) -> bool:
 	_reset_melee_locomotion_socket_presentation()
+	if not _vigil_posture_bridge_action.is_empty():
+		return true
 	if _melee_posture_state == null or modular_lower_body_sprite == null or modular_upper_body_sprite == null:
 		return false
 	if modular_lower_body_sprite.sprite_frames == null or modular_upper_body_sprite.sprite_frames == null:
@@ -4541,11 +4572,22 @@ func _try_melee_attack(intent: String = ""):
 func _try_start_vigil_ready_fast_startup() -> bool:
 	if _melee_fast_combo_step != 0 or _skip_next_fast_attack_windup:
 		return false
-	if _melee_posture_state == null \
-	or String(_melee_posture_state.get_animation_action()) != "idle_ready_01":
-		return false
 	var profile := get_current_combat_profile()
 	if profile == null or profile.weapon_id != &"vigil_pattern_dagger":
+		return false
+	if _melee_posture_state == null:
+		return false
+	if _vigil_posture_bridge_action == &"relaxed_to_ready_01":
+		_vigil_posture_bridge_attack_queued = true
+		return true
+	if _vigil_posture_bridge_action == &"ready_to_relaxed_01":
+		_melee_posture_state.begin_draw_grace()
+		_start_vigil_posture_bridge(&"relaxed_to_ready_01", true)
+		return true
+	if String(_melee_posture_state.get_animation_action()) == "idle_relaxed_01":
+		_melee_posture_state.begin_draw_grace()
+		return _start_vigil_posture_bridge(&"relaxed_to_ready_01", true)
+	if String(_melee_posture_state.get_animation_action()) != "idle_ready_01":
 		return false
 	var direction := _get_melee_forward_direction()
 	var selector = _get_operator_animation_selector()
@@ -4625,6 +4667,91 @@ func _finish_vigil_ready_fast_startup(token: int, clock_animation: StringName) -
 		_update_animation()
 		return
 	_request_attack_state("fast")
+
+
+func _start_vigil_posture_bridge(action: StringName, queue_attack := false) -> bool:
+	var profile := get_current_combat_profile()
+	if profile == null or profile.weapon_id != &"vigil_pattern_dagger":
+		return false
+	var direction := Vector2.LEFT if _is_facing_left(visual_idle_direction) else Vector2.RIGHT
+	var selector = _get_operator_animation_selector()
+	var lower_animation: StringName = selector.resolve(
+		&"melee_1h", &"transition", action, direction, &"lower_body"
+	)
+	var upper_animation: StringName = selector.resolve(
+		&"melee_1h", &"transition", action, direction, &"upper_body"
+	)
+	var weapon_animation: StringName = selector.resolve(
+		&"melee_1h_dagger", &"transition", action, direction, &"weapon",
+		&"vigil_pattern_dagger"
+	)
+	for animation in [lower_animation, upper_animation, weapon_animation]:
+		if animation.is_empty() \
+		or not _has_playable_sprite_animation(OPERATOR_RUNTIME_FRAMES, animation):
+			return false
+	_ensure_vigil_posture_bridge_sprites()
+	_vigil_posture_bridge_token += 1
+	var token := _vigil_posture_bridge_token
+	_vigil_posture_bridge_action = action
+	_vigil_posture_bridge_attack_queued = queue_attack
+	_play_vigil_startup_layer(_vigil_posture_bridge_lower, lower_animation, 0)
+	_play_vigil_startup_layer(_vigil_posture_bridge_upper, upper_animation, 1)
+	_play_vigil_startup_layer(_vigil_posture_bridge_weapon, weapon_animation, 2)
+	animated_sprite.visible = false
+	_hide_modular_locomotion_layers()
+	if melee_weapon_overlay_sprite != null:
+		melee_weapon_overlay_sprite.visible = false
+	if primary_weapon_sprite != null:
+		primary_weapon_sprite.visible = false
+	_finish_vigil_posture_bridge(token, lower_animation)
+	return true
+
+
+func _ensure_vigil_posture_bridge_sprites() -> void:
+	if _vigil_posture_bridge_lower != null:
+		return
+	_vigil_posture_bridge_lower = AnimatedSprite2D.new()
+	_vigil_posture_bridge_lower.name = "VigilPostureBridgeLower"
+	_vigil_posture_bridge_upper = AnimatedSprite2D.new()
+	_vigil_posture_bridge_upper.name = "VigilPostureBridgeUpper"
+	_vigil_posture_bridge_weapon = AnimatedSprite2D.new()
+	_vigil_posture_bridge_weapon.name = "VigilPostureBridgeWeapon"
+	for sprite in [
+		_vigil_posture_bridge_lower,
+		_vigil_posture_bridge_upper,
+		_vigil_posture_bridge_weapon,
+	]:
+		sprite.position = Vector2(0, -18)
+		sprite.sprite_frames = OPERATOR_RUNTIME_FRAMES
+		sprite.visible = false
+		add_child(sprite)
+
+
+func _finish_vigil_posture_bridge(token: int, clock_animation: StringName) -> void:
+	var bridge_duration := 0.0
+	var fps := maxf(OPERATOR_RUNTIME_FRAMES.get_animation_speed(clock_animation), 0.001)
+	for frame_index in OPERATOR_RUNTIME_FRAMES.get_frame_count(clock_animation):
+		bridge_duration += OPERATOR_RUNTIME_FRAMES.get_frame_duration(
+			clock_animation, frame_index
+		) / fps
+	await get_tree().create_timer(bridge_duration).timeout
+	if token != _vigil_posture_bridge_token:
+		return
+	var queued_attack := _vigil_posture_bridge_attack_queued
+	_vigil_posture_bridge_action = &""
+	_vigil_posture_bridge_attack_queued = false
+	for sprite in [
+		_vigil_posture_bridge_lower,
+		_vigil_posture_bridge_upper,
+		_vigil_posture_bridge_weapon,
+	]:
+		if sprite != null:
+			sprite.stop()
+			sprite.visible = false
+	if queued_attack and not _is_dead and _is_melee_loadout_active():
+		_try_start_vigil_ready_fast_startup()
+	else:
+		_update_animation()
 
 
 func _try_start_contextual_attack() -> void:
@@ -7037,6 +7164,7 @@ func _try_play_vigil_semantic_block(phase_key: StringName) -> bool:
 	match phase_key:
 		&"melee_2h_block_enter": action = &"block_enter_01"
 		&"melee_2h_block_hold": action = &"block_loop_01"
+		&"melee_2h_block_hitreact": action = &"block_hit_01"
 		_: return false
 	var profile := get_current_combat_profile()
 	if profile == null or profile.weapon_id != &"vigil_pattern_dagger":
@@ -12272,9 +12400,16 @@ func _get_controller_aim_direction() -> Vector2:
 		Input.get_action_strength("aim_right") - Input.get_action_strength("aim_left"),
 		Input.get_action_strength("aim_down") - Input.get_action_strength("aim_up")
 	)
-	if aim_input.length_squared() <= 0.0001:
+	if aim_input.length() < controller_aim_deadzone:
 		return Vector2.ZERO
 	return aim_input.normalized()
+
+
+func _is_gamepad_input_active() -> bool:
+	var prompt_service := get_node_or_null("/root/InputPromptService")
+	return prompt_service != null \
+		and prompt_service.has_method("is_gamepad_active") \
+		and bool(prompt_service.call("is_gamepad_active"))
 
 
 func _is_aiming_for_facing() -> bool:
@@ -12294,6 +12429,12 @@ func _get_keyboard_aim_direction() -> Vector2:
 
 
 func _get_attack_aim_direction() -> Vector2:
+	if _is_gamepad_input_active():
+		if aim_direction.length_squared() > 0.0001:
+			return aim_direction.normalized()
+		if _last_controller_aim_direction.length_squared() > 0.0001:
+			return _last_controller_aim_direction.normalized()
+		return Vector2.RIGHT
 	if arrow_aim_enabled:
 		var keyboard_aim := _get_keyboard_aim_direction()
 		if keyboard_aim != Vector2.ZERO:

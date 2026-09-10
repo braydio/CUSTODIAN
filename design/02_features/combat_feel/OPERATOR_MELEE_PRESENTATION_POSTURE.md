@@ -41,9 +41,11 @@ not.
    `EquipWeaponState` is already a non-interruptible transitional state that
    plays its animation and returns to `idle`. No new gameplay state called
    `draw_sword` is invented.
-4. **`melee_ready_up` is presentation polish, never a gameplay gate.** An
-   attack input from RELAXED goes straight to `attack_fast`. Forcing
-   `relaxed → ready_up → ready → attack` adds input latency and is rejected.
+4. **Posture bridges are presentation sequencing, not standalone gameplay
+   states.** An attack from RELAXED latches its intent while the authored
+   `relaxed_to_ready_01` bridge reaches the READY anchor, then flows directly
+   through `idle_fast_transition_01` into Fast 01. The READY idle loop is not
+   inserted between those bridges.
 5. **The fast chain stays profile-owned under `attack_fast`.** Fast 01/02/03
    remain attack variants of the existing three-link chain, not individual
    gameplay states.
@@ -109,7 +111,7 @@ MELEE_READY
 MELEE_RELAXED
    │
    ├── hostile engagement ─► MELEE_READY
-   ├── attack ─────────────► ATTACK
+   ├── attack ─────────────► READY BRIDGE ─► ATTACK
    └── switch away ────────► SHEATHE
 ```
 
@@ -224,10 +226,9 @@ Walking an empty corridor reads naturally:
        sword lowers
 ```
 
-### ready_up — `melee_ready_up`
+### relaxed to ready — `relaxed_to_ready_01`
 
-A tiny transitional animation, the only asset currently missing from the
-generated pair:
+This reusable three-frame bridge establishes the READY anchor pose:
 
 ```text
 RELAXED                          READY
@@ -239,20 +240,26 @@ sword ↓        frame 1            sword ↗
                sword reaches guard
 ```
 
-- 2–3 frames, roughly **0.12–0.18 s** total.
-- Presentation polish only. If the player hits the primary from RELAXED, the
-  attack animation gets priority; `ready_up` is skipped, never queued ahead of
-  an attack.
+- 3 frames at the canonical Operator animation rate.
+- With no queued attack, completion enters `idle_ready_01`.
+- With a queued attack, completion flows directly into
+  `idle_fast_transition_01`; do not duplicate the READY anchor or play an idle
+  loop beat between the two clips.
+- An attack pressed while this bridge is already playing latches intent and
+  does not restart the bridge.
 
-### relax — `melee_relax`
+### ready to relaxed — `ready_to_relaxed_01`
 
-The inverse transition, also tiny (~3 frames), **0.25–0.40 s**.
+The authored eight-frame sword-transfer/casual wrist-twirl bridge settles READY
+into RELAXED. Attack intent has priority: an attack during this bridge redirects
+toward READY using `relaxed_to_ready_01`, then continues through the normal
+ready-to-fast bridge.
 
 The asymmetry is intentional:
 
 ```text
-ready_up:  0.12–0.18 sec
-relax:     0.25–0.40 sec
+relaxed_to_ready:  short / urgent
+ready_to_relaxed:  longer / deliberate
 ```
 
 Danger arrives quickly; calm returns gradually.

@@ -433,6 +433,54 @@
         }
       }
     },
+    "melee_1h/defense/block_hit_01/e": {
+      "profile": "melee_1h",
+      "group": "defense",
+      "action": "block_hit_01",
+      "direction": "e",
+      "layers": {
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/defense/block_hit_01/operator__lower_body__melee_1h__defense__block_hit_01__e__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/defense/block_hit_01/operator__upper_body__melee_1h__defense__block_hit_01__e__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
+    "melee_1h/defense/block_hit_01/w": {
+      "profile": "melee_1h",
+      "group": "defense",
+      "action": "block_hit_01",
+      "direction": "w",
+      "layers": {
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/defense/block_hit_01/operator__lower_body__melee_1h__defense__block_hit_01__w__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/defense/block_hit_01/operator__upper_body__melee_1h__defense__block_hit_01__w__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
     "melee_1h/defense/block_loop_01/e": {
       "profile": "melee_1h",
       "group": "defense",
@@ -1027,6 +1075,102 @@
           "frames": 3,
           "frame_size": [
             156,
+            96
+          ]
+        }
+      }
+    },
+    "melee_1h/transition/ready_to_relaxed_01/e": {
+      "profile": "melee_1h",
+      "group": "transition",
+      "action": "ready_to_relaxed_01",
+      "direction": "e",
+      "layers": {
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/transition/ready_to_relaxed_01/operator__lower_body__melee_1h__transition__ready_to_relaxed_01__e__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/transition/ready_to_relaxed_01/operator__upper_body__melee_1h__transition__ready_to_relaxed_01__e__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
+    "melee_1h/transition/ready_to_relaxed_01/w": {
+      "profile": "melee_1h",
+      "group": "transition",
+      "action": "ready_to_relaxed_01",
+      "direction": "w",
+      "layers": {
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/transition/ready_to_relaxed_01/operator__lower_body__melee_1h__transition__ready_to_relaxed_01__w__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/transition/ready_to_relaxed_01/operator__upper_body__melee_1h__transition__ready_to_relaxed_01__w__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
+    "melee_1h/transition/relaxed_to_ready_01/e": {
+      "profile": "melee_1h",
+      "group": "transition",
+      "action": "relaxed_to_ready_01",
+      "direction": "e",
+      "layers": {
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/transition/relaxed_to_ready_01/operator__lower_body__melee_1h__transition__relaxed_to_ready_01__e__3f__96.png",
+          "frames": 3,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/transition/relaxed_to_ready_01/operator__upper_body__melee_1h__transition__relaxed_to_ready_01__e__3f__96.png",
+          "frames": 3,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
+    "melee_1h/transition/relaxed_to_ready_01/w": {
+      "profile": "melee_1h",
+      "group": "transition",
+      "action": "relaxed_to_ready_01",
+      "direction": "w",
+      "layers": {
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/transition/relaxed_to_ready_01/operator__lower_body__melee_1h__transition__relaxed_to_ready_01__w__3f__96.png",
+          "frames": 3,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/melee_1h/transition/relaxed_to_ready_01/operator__upper_body__melee_1h__transition__relaxed_to_ready_01__w__3f__96.png",
+          "frames": 3,
+          "frame_size": [
+            96,
             96
           ]
         }
@@ -6880,6 +7024,26 @@
             ]
           }
         },
+        "defense/block_hit_01/e": {
+          "weapon": {
+            "path": "res://content/sprites/weapons/vigil_pattern_dagger/runtime/operator/melee_1h_dagger/overrides/defense/block_hit_01/vigil_pattern_dagger__weapon__melee_1h_dagger__defense__block_hit_01__e__5f__96.png",
+            "frames": 5,
+            "frame_size": [
+              96,
+              96
+            ]
+          }
+        },
+        "defense/block_hit_01/w": {
+          "weapon": {
+            "path": "res://content/sprites/weapons/vigil_pattern_dagger/runtime/operator/melee_1h_dagger/overrides/defense/block_hit_01/vigil_pattern_dagger__weapon__melee_1h_dagger__defense__block_hit_01__w__5f__96.png",
+            "frames": 5,
+            "frame_size": [
+              96,
+              96
+            ]
+          }
+        },
         "defense/block_loop_01/e": {
           "weapon": {
             "path": "res://content/sprites/weapons/vigil_pattern_dagger/runtime/operator/melee_1h_dagger/overrides/defense/block_loop_01/vigil_pattern_dagger__weapon__melee_1h_dagger__defense__block_loop_01__e__5f__96.png",
@@ -6915,6 +7079,46 @@
               1.0,
               1.0,
               1.0
+            ]
+          }
+        },
+        "transition/ready_to_relaxed_01/e": {
+          "weapon": {
+            "path": "res://content/sprites/weapons/vigil_pattern_dagger/runtime/operator/melee_1h_dagger/overrides/transition/ready_to_relaxed_01/vigil_pattern_dagger__weapon__melee_1h_dagger__transition__ready_to_relaxed_01__e__8f__96.png",
+            "frames": 8,
+            "frame_size": [
+              96,
+              96
+            ]
+          }
+        },
+        "transition/ready_to_relaxed_01/w": {
+          "weapon": {
+            "path": "res://content/sprites/weapons/vigil_pattern_dagger/runtime/operator/melee_1h_dagger/overrides/transition/ready_to_relaxed_01/vigil_pattern_dagger__weapon__melee_1h_dagger__transition__ready_to_relaxed_01__w__8f__96.png",
+            "frames": 8,
+            "frame_size": [
+              96,
+              96
+            ]
+          }
+        },
+        "transition/relaxed_to_ready_01/e": {
+          "weapon": {
+            "path": "res://content/sprites/weapons/vigil_pattern_dagger/runtime/operator/melee_1h_dagger/overrides/transition/relaxed_to_ready_01/vigil_pattern_dagger__weapon__melee_1h_dagger__transition__relaxed_to_ready_01__e__3f__96.png",
+            "frames": 3,
+            "frame_size": [
+              96,
+              96
+            ]
+          }
+        },
+        "transition/relaxed_to_ready_01/w": {
+          "weapon": {
+            "path": "res://content/sprites/weapons/vigil_pattern_dagger/runtime/operator/melee_1h_dagger/overrides/transition/relaxed_to_ready_01/vigil_pattern_dagger__weapon__melee_1h_dagger__transition__relaxed_to_ready_01__w__3f__96.png",
+            "frames": 3,
+            "frame_size": [
+              96,
+              96
             ]
           }
         }

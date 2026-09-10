@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://1gfxbncpb2ju"
-path="res://.godot/imported/operator_lower_body__melee_1h__blocking_hit_reaction_01__e__5f__95.png-c4e6ff8cbc0f349ed82b238d4b847363.ctex"
+uid="uid://cw3ndixmgh27f"
+path="res://.godot/imported/operator__upper_body__melee_1h__transition__ready_to_relaxed_01__w__8f__96.png-a01fd9b5de56e018d6dd6dec7bc3d1b2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/_pipeline/inbox/operator_lower_body__melee_1h__blocking_hit_reaction_01__e__5f__95.png"
-dest_files=["res://.godot/imported/operator_lower_body__melee_1h__blocking_hit_reaction_01__e__5f__95.png-c4e6ff8cbc0f349ed82b238d4b847363.ctex"]
+source_file="res://content/sprites/operator/runtime/animations/melee_1h/transition/ready_to_relaxed_01/operator__upper_body__melee_1h__transition__ready_to_relaxed_01__w__8f__96.png"
+dest_files=["res://.godot/imported/operator__upper_body__melee_1h__transition__ready_to_relaxed_01__w__8f__96.png-a01fd9b5de56e018d6dd6dec7bc3d1b2.ctex"]
 
 [params]
 

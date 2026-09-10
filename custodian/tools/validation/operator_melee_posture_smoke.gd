@@ -3,6 +3,7 @@ extends SceneTree
 const POSTURE_STATE_SCRIPT := preload("res://game/actors/operator/presentation/melee_posture_state.gd")
 const OPERATOR_SCENE := preload("res://game/actors/operator/operator.tscn")
 const CATALOG_FRAMES := preload("res://game/actors/operator/operator_animation_catalog_frames.tres")
+const RUNTIME_FRAMES := preload("res://content/sprites/operator/runtime/operator_runtime_frames.tres")
 
 
 func _init() -> void:
@@ -13,7 +14,16 @@ func _init() -> void:
 	assert(posture_state.resolve(1.1, true, false, false) == MeleePostureState.Posture.RELAXED)
 	assert(posture_state.resolve(0.0, true, true, false) == MeleePostureState.Posture.READY)
 	assert(posture_state.resolve(0.0, true, false, true) == MeleePostureState.Posture.READY)
-	assert(posture_state.attack_action_bypasses_ready_up())
+	assert(not posture_state.attack_action_bypasses_ready_up())
+	for action in ["relaxed_to_ready_01", "ready_to_relaxed_01"]:
+		for suffix in ["e", "w"]:
+			for layer in ["lower_body", "upper_body"]:
+				var body_bridge := StringName("melee_1h/transition/%s/%s/%s" % [action, suffix, layer])
+				assert(RUNTIME_FRAMES.has_animation(body_bridge))
+				assert(not RUNTIME_FRAMES.get_animation_loop(body_bridge))
+			var weapon_bridge := StringName("weapon/vigil_pattern_dagger/melee_1h_dagger/transition/%s/%s/weapon" % [action, suffix])
+			assert(RUNTIME_FRAMES.has_animation(weapon_bridge))
+			assert(not RUNTIME_FRAMES.get_animation_loop(weapon_bridge))
 	var operator := OPERATOR_SCENE.instantiate()
 	assert(CATALOG_FRAMES.has_animation("melee_1h/posture/idle_ready_01/e/lower_body"))
 	for suffix in ["e", "w"]:
@@ -86,6 +96,23 @@ func _init() -> void:
 	var vigil_index := armed_weapons.find(vigil_definition)
 	assert(vigil_index >= 0)
 	operator.call("_apply_armed_selection", vigil_index)
+	assert(operator.call("_start_vigil_posture_bridge", &"ready_to_relaxed_01"))
+	var bridge_lower := operator.get_node("VigilPostureBridgeLower") as AnimatedSprite2D
+	var bridge_upper := operator.get_node("VigilPostureBridgeUpper") as AnimatedSprite2D
+	var bridge_weapon := operator.get_node("VigilPostureBridgeWeapon") as AnimatedSprite2D
+	assert(bridge_lower.animation == &"melee_1h/transition/ready_to_relaxed_01/e/lower_body")
+	assert(bridge_upper.animation == &"melee_1h/transition/ready_to_relaxed_01/e/upper_body")
+	assert(bridge_weapon.animation == &"weapon/vigil_pattern_dagger/melee_1h_dagger/transition/ready_to_relaxed_01/e/weapon")
+	assert(operator.call("_try_start_vigil_ready_fast_startup"), "attack must redirect a passive settle bridge")
+	assert(operator.get("_vigil_posture_bridge_action") == &"relaxed_to_ready_01")
+	assert(bool(operator.get("_vigil_posture_bridge_attack_queued")))
+	assert(bridge_lower.animation == &"melee_1h/transition/relaxed_to_ready_01/e/lower_body")
+	operator.set("_vigil_posture_bridge_token", int(operator.get("_vigil_posture_bridge_token")) + 1)
+	operator.set("_vigil_posture_bridge_action", &"")
+	operator.set("_vigil_posture_bridge_attack_queued", false)
+	for sprite in [bridge_lower, bridge_upper, bridge_weapon]:
+		sprite.stop()
+		sprite.visible = false
 	var runtime_posture_state = operator.get("_melee_posture_state") as MeleePostureState
 	assert(runtime_posture_state.resolve(4.0, true, false, false) == MeleePostureState.Posture.RELAXED)
 	assert(operator.call("_sync_modular_melee_posture", Vector2.LEFT))
@@ -135,7 +162,11 @@ func _init() -> void:
 	assert(upper.animation == &"melee_1h/posture/draw_01/w/upper_body")
 	assert(weapon.animation == &"melee_1h_dagger/posture/draw_01/w/weapon")
 	operator.set("aim_direction", Vector2.LEFT)
-	assert(operator.call("_try_start_vigil_ready_fast_startup"), "Vigil fast_01 should consume its startup transition")
+	runtime_posture_state.posture = MeleePostureState.Posture.RELAXED
+	assert(operator.call("_try_start_vigil_ready_fast_startup"), "relaxed Vigil attack should latch through its posture bridge")
+	assert(operator.get("_vigil_posture_bridge_action") == &"relaxed_to_ready_01")
+	assert(bool(operator.get("_vigil_posture_bridge_attack_queued")))
+	await create_timer(0.30).timeout
 	var startup_lower := operator.get_node("VigilFastStartupLower") as AnimatedSprite2D
 	var startup_upper := operator.get_node("VigilFastStartupUpper") as AnimatedSprite2D
 	var startup_weapon := operator.get_node("VigilFastStartupWeapon") as AnimatedSprite2D
@@ -143,6 +174,7 @@ func _init() -> void:
 	assert(startup_upper.animation == &"melee_1h/transition/idle_fast_transition_01/w/upper_body")
 	assert(startup_weapon.animation == &"melee_1h_dagger/transition/idle_fast_transition_01/w/weapon")
 	assert(bool(operator.get("_melee_fast_windup")), "startup transition must reserve the attack startup window")
+	assert(not bridge_lower.visible and not bridge_upper.visible and not bridge_weapon.visible, "READY idle must not appear between chained transitions")
 	await create_timer(0.30).timeout
 	assert(not bool(operator.get("_melee_fast_windup")), "startup transition must release into fast_01")
 	assert(bool(operator.get("_melee_active")), "existing fast_01 attack must begin after startup")

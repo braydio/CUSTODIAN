@@ -101,6 +101,13 @@
     {
       "profile": "melee_1h",
       "group": "defense",
+      "action": "block_hit_01",
+      "status": "LIVE",
+      "consumer": "operator._try_play_vigil_semantic_block"
+    },
+    {
+      "profile": "melee_1h",
+      "group": "defense",
       "action": "block_loop_01",
       "status": "LIVE",
       "consumer": "operator._try_play_vigil_semantic_block"
@@ -160,6 +167,20 @@
       "action": "idle_fast_transition_01",
       "status": "LIVE",
       "consumer": "operator._try_start_vigil_ready_fast_startup (lower_body, upper_body)"
+    },
+    {
+      "profile": "melee_1h",
+      "group": "transition",
+      "action": "ready_to_relaxed_01",
+      "status": "LIVE",
+      "consumer": "operator._start_vigil_posture_bridge"
+    },
+    {
+      "profile": "melee_1h",
+      "group": "transition",
+      "action": "relaxed_to_ready_01",
+      "status": "LIVE",
+      "consumer": "operator._start_vigil_posture_bridge"
     },
     {
       "profile": "melee_1h_dagger",

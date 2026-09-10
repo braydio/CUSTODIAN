@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://boewqrs76mtfw"
-path="res://.godot/imported/operator_weapon_vigil_dagger__melee_1h__blocking_hit_reaction_01__e__5f__95.png-0b2bb3300a7dc4a7f4ce00c79475aaba.ctex"
+uid="uid://dfw0dq78lrjph"
+path="res://.godot/imported/operator__lower_body__melee_1h__defense__block_hit_01__e__5f__96.png-7be2892cd81fcc61a26101fa57749a6b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/_pipeline/inbox/operator_weapon_vigil_dagger__melee_1h__blocking_hit_reaction_01__e__5f__95.png"
-dest_files=["res://.godot/imported/operator_weapon_vigil_dagger__melee_1h__blocking_hit_reaction_01__e__5f__95.png-0b2bb3300a7dc4a7f4ce00c79475aaba.ctex"]
+source_file="res://content/sprites/_pipeline/normalized/operator__lower_body__melee_1h__defense__block_hit_01__e__5f__96.png"
+dest_files=["res://.godot/imported/operator__lower_body__melee_1h__defense__block_hit_01__e__5f__96.png-7be2892cd81fcc61a26101fa57749a6b.ctex"]
 
 [params]
 

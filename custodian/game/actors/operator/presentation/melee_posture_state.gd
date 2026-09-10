@@ -35,4 +35,4 @@ func get_animation_action() -> StringName:
 
 
 func attack_action_bypasses_ready_up() -> bool:
-	return true
+	return false

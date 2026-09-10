@@ -1,0 +1,23 @@
+{
+  "source": "vigil_pattern_dagger__weapon__melee_1h_dagger__transition__ready_to_relaxed_01__e__8f__96.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "weapons/vigil_pattern_dagger/source/operator/melee_1h_dagger/overrides/transition/ready_to_relaxed_01/vigil_pattern_dagger__weapon__melee_1h_dagger__transition__ready_to_relaxed_01__e__8f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 8
+      }
+    }
+  ],
+  "post_process": [
+    "operator_runtime_build"
+  ],
+  "frame_size": [
+    96,
+    96
+  ],
+  "remove_superseded": true
+}

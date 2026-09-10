@@ -1,0 +1,12 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/operator__lower_body__melee_1h__transition__ready_to_relaxed_01__e__8f__96.json",
+	"outputs": [
+		"res://content/sprites/operator/source/animations/melee_1h/transition/ready_to_relaxed_01/operator__lower_body__melee_1h__transition__ready_to_relaxed_01__e__8f__96.png",
+		"res://content/sprites/operator/source/animations/melee_1h/transition/ready_to_relaxed_01/operator__lower_body__melee_1h__transition__ready_to_relaxed_01__w__8f__96.png"
+	],
+	"post_process": [
+		"operator_runtime_build"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/operator__lower_body__melee_1h__transition__ready_to_relaxed_01__e__8f__96.png",
+	"timestamp_utc": "2026-09-10 08:53:05"
+}

@@ -228,6 +228,10 @@ func _validate_semantic_guard_playback(operator: Node) -> void:
 	_assert(weapon.animation == &"weapon/vigil_pattern_dagger/melee_1h_dagger/defense/block_loop_01/e/weapon", "Vigil guard loop weapon identity is wrong")
 	for sprite in [lower, upper, weapon]:
 		_assert(sprite.sprite_frames.get_animation_loop(sprite.animation), "%s must loop" % sprite.name)
+	operator.call("guard_play_block_animation", &"melee_2h_block_hitreact")
+	_assert(lower.animation == &"melee_1h/defense/block_hit_01/e/lower_body", "Vigil block-hit lower identity is wrong")
+	_assert(upper.animation == &"melee_1h/defense/block_hit_01/e/upper_body", "Vigil block-hit upper identity is wrong")
+	_assert(weapon.animation == &"weapon/vigil_pattern_dagger/melee_1h_dagger/defense/block_hit_01/e/weapon", "Vigil block-hit weapon identity is wrong")
 	operator.set("aim_direction", Vector2.LEFT)
 	operator.call("guard_play_block_animation", &"melee_2h_block_enter")
 	_assert(lower.animation == &"melee_1h/defense/block_enter_01/w/lower_body", "Vigil guard west mirror lower identity is wrong")
