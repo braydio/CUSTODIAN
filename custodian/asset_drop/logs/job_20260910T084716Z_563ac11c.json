@@ -1,0 +1,44 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260910T084716Z_563ac11c",
+  "timestamp": "2026-09-10T08:47:16.302952+00:00",
+  "family": "awakening_creche_console_activation_fx",
+  "kind": "effect",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/awakening_creche_console_activation_fx/activate.png",
+      "sha256": "a59cae75ef0ad0c241ac72340ae75c2e18152b80ceab8d1ff18a4c8bffe097c3"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "activate",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_creche_console_activation_fx",
+        "effect",
+        "fx",
+        "effect",
+        "activate",
+        "omni"
+      ],
+      "path": "content/sprites/effects/awakening/runtime/awakening_creche_console_activation_fx/awakening_creche_console_activation_fx__fx__effect__activate__omni__8f__128.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "5ce24cd54338cdf4f757c4be0b83514295239cbb578617cceb8234f44eb579b5",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    }
+  ],
+  "backends": [
+    "sprite_ingest"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": false,
+    "ok": null
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

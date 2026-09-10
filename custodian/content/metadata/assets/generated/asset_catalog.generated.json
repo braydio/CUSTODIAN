@@ -7269,7 +7269,7 @@
             768,
             512
           ],
-          "sha256": "3afb7ddbf656e48788c9ab819743729bff92d735afb535e4315e7348d4e66f64",
+          "sha256": "6748b6f63b18405bb9b7f4a600851ca8e08536b42368f187d1a8aabf90cb7e53",
           "provenance": "authored",
           "source_asset": null
         },
@@ -7290,7 +7290,7 @@
             256,
             512
           ],
-          "sha256": "cca75f3626d0d8d1bbaf59a4bd07d63c9f1ed6b3f8de274f3bf6df8cddc035da",
+          "sha256": "8bac545c2f5fa5c59a199fd535358c86b58e4823bf538b20d5aaf1d632dc1d72",
           "provenance": "authored",
           "source_asset": null
         },
@@ -7311,7 +7311,7 @@
             128,
             160
           ],
-          "sha256": "084ca3852f2c28ef27757639a90e7bdedfe5dcbb8bf5644194761ecff6c51eb3",
+          "sha256": "9cfdcf0311e469812c06fe92fe65b7391ed889d85f1adc176b438b61672ba478",
           "provenance": "authored",
           "source_asset": null
         },
@@ -7332,7 +7332,7 @@
             512,
             512
           ],
-          "sha256": "8a873a7b9c5e0fd24e9efa5a739ca8fc6cb2665d3521c598735840fd3fedc4b0",
+          "sha256": "4cd513640c0bdeaddd52b7973fd4a28084702f510cadfee5d69cf4eb21cc4944",
           "provenance": "authored",
           "source_asset": null
         },
@@ -7353,7 +7353,7 @@
             256,
             512
           ],
-          "sha256": "b0b54218e6736f1a8a45c64169cd2366356514f4e0174226de6a7ea2a3e8282f",
+          "sha256": "2dfb7ffabad82e7f1cede67abb8c96ebdd21c55de9e25d3df7c405a694e1aeef",
           "provenance": "authored",
           "source_asset": null
         }
@@ -7799,6 +7799,199 @@
             160
           ],
           "sha256": "400cc018e3b1661e354d69c8a0b32cf6d4cf4ea43181f973549a55c5a84eb3fb",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "awakening_gate_plaza_environment": {
+      "kind": "backdrop",
+      "assets": {
+        "foreground::omni": {
+          "state_id": "foreground",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_gate_plaza",
+            "backdrop",
+            "foreground",
+            "display",
+            "foreground",
+            "omni"
+          ],
+          "path": "content/levels/awakening/07_gate_of_dust/awakening_gate_plaza_foreground_1536x768.png",
+          "frames": 1,
+          "frame_size": [
+            1536,
+            768
+          ],
+          "sha256": "24444a6282742d5085b1770e149938bc600e504721ce2348bfd41121a347b6a3",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "underlay::omni": {
+          "state_id": "underlay",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_gate_plaza",
+            "backdrop",
+            "background",
+            "display",
+            "underlay",
+            "omni"
+          ],
+          "path": "content/levels/awakening/07_gate_of_dust/awakening_gate_plaza_underlay_1536x768.png",
+          "frames": 1,
+          "frame_size": [
+            1536,
+            768
+          ],
+          "sha256": "001bea56db0971acba79ae5b8a7850866aa21767eab2528713eba376afd6b8f2",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "awakening_custodian_approach_environment": {
+      "kind": "backdrop",
+      "assets": {
+        "foreground::omni": {
+          "state_id": "foreground",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_custodian_approach",
+            "backdrop",
+            "foreground",
+            "display",
+            "foreground",
+            "omni"
+          ],
+          "path": "content/levels/awakening/08_approach/awakening_custodian_approach_foreground_1024x864.png",
+          "frames": 1,
+          "frame_size": [
+            1024,
+            864
+          ],
+          "sha256": "093fbea7a76cb54ade9f72f04053ccc788691bfc9a212c309045bf6fae38bed8",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "underlay::omni": {
+          "state_id": "underlay",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_custodian_approach",
+            "backdrop",
+            "background",
+            "display",
+            "underlay",
+            "omni"
+          ],
+          "path": "content/levels/awakening/08_approach/awakening_custodian_approach_underlay_1024x864.png",
+          "frames": 1,
+          "frame_size": [
+            1024,
+            864
+          ],
+          "sha256": "9ee02f73b3490834af522c924767d7b2f0132446eae97f49bd673fc7ba07c30f",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "awakening_creche_console": {
+      "kind": "world_prop",
+      "assets": {
+        "idle::omni": {
+          "state_id": "idle",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_creche_console",
+            "world_prop",
+            "body",
+            "interaction",
+            "idle",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_creche_console/runtime/body/awakening_creche_console__body__interaction__idle__omni__1f__128.png",
+          "frames": 1,
+          "frame_size": [
+            128,
+            128
+          ],
+          "sha256": "01716bcdf4a3d7169e52149f495f91830106df93f94736e3c2aee8d910a30acb",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "awakening_creche_console_activation_fx": {
+      "kind": "effect",
+      "assets": {
+        "activate::omni": {
+          "state_id": "activate",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_creche_console_activation_fx",
+            "effect",
+            "fx",
+            "effect",
+            "activate",
+            "omni"
+          ],
+          "path": "content/sprites/effects/awakening/runtime/awakening_creche_console_activation_fx/awakening_creche_console_activation_fx__fx__effect__activate__omni__8f__128.png",
+          "frames": 8,
+          "frame_size": [
+            128,
+            128
+          ],
+          "sha256": "5ce24cd54338cdf4f757c4be0b83514295239cbb578617cceb8234f44eb579b5",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "awakening_creche_fixtures": {
+      "kind": "world_prop",
+      "assets": {
+        "alcove_broken::omni": {
+          "state_id": "alcove_broken",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_creche_fixtures",
+            "world_prop",
+            "body",
+            "fixture",
+            "alcove_broken",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_creche_fixtures/runtime/body/awakening_creche_fixtures__body__fixture__alcove_broken__omni__1f__128x192.png",
+          "frames": 1,
+          "frame_size": [
+            128,
+            192
+          ],
+          "sha256": "018f3995f120188d2dd6ec50d1bb0c889dd3cc8f0a5d6291455b5ef9bd3a5e44",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "alcove_closed::omni": {
+          "state_id": "alcove_closed",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_creche_fixtures",
+            "world_prop",
+            "body",
+            "fixture",
+            "alcove_closed",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_creche_fixtures/runtime/body/awakening_creche_fixtures__body__fixture__alcove_closed__omni__1f__128x192.png",
+          "frames": 1,
+          "frame_size": [
+            128,
+            192
+          ],
+          "sha256": "abb7639078849c24abe81348052f4c7ab92c8f6d48d3f22bcc72b90156e84a43",
           "provenance": "authored",
           "source_asset": null
         }

@@ -1,0 +1,67 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260910T084716Z_d88587dc",
+  "timestamp": "2026-09-10T08:47:16.006343+00:00",
+  "family": "awakening_custodian_approach_environment",
+  "kind": "backdrop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/awakening_custodian_approach_environment/foreground.png",
+      "sha256": "093fbea7a76cb54ade9f72f04053ccc788691bfc9a212c309045bf6fae38bed8"
+    },
+    {
+      "path": "asset_drop/inbox/awakening_custodian_approach_environment/underlay.png",
+      "sha256": "9ee02f73b3490834af522c924767d7b2f0132446eae97f49bd673fc7ba07c30f"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "foreground",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_custodian_approach",
+        "backdrop",
+        "foreground",
+        "display",
+        "foreground",
+        "omni"
+      ],
+      "path": "content/levels/awakening/08_approach/awakening_custodian_approach_foreground_1024x864.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "093fbea7a76cb54ade9f72f04053ccc788691bfc9a212c309045bf6fae38bed8",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "underlay",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_custodian_approach",
+        "backdrop",
+        "background",
+        "display",
+        "underlay",
+        "omni"
+      ],
+      "path": "content/levels/awakening/08_approach/awakening_custodian_approach_underlay_1024x864.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "9ee02f73b3490834af522c924767d7b2f0132446eae97f49bd673fc7ba07c30f",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": false,
+    "ok": null
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

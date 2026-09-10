@@ -1,0 +1,44 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260910T084716Z_5402691d",
+  "timestamp": "2026-09-10T08:47:16.162763+00:00",
+  "family": "awakening_creche_console",
+  "kind": "world_prop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/awakening_creche_console/idle.png",
+      "sha256": "01716bcdf4a3d7169e52149f495f91830106df93f94736e3c2aee8d910a30acb"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "idle",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_creche_console",
+        "world_prop",
+        "body",
+        "interaction",
+        "idle",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/awakening/awakening_creche_console/runtime/body/awakening_creche_console__body__interaction__idle__omni__1f__128.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "01716bcdf4a3d7169e52149f495f91830106df93f94736e3c2aee8d910a30acb",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": false,
+    "ok": null
+  },
+  "validation_evidence": [],
+  "result": "success"
+}
