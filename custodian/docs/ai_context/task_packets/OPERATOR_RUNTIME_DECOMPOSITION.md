@@ -1,6 +1,6 @@
 # Task Packet — Operator Runtime Decomposition
 
-**Status:** Slice A complete (2026-09-10); Slice B partially landed
+**Status:** Slices A and B complete (2026-09-10)
 **Contract:** `design/04_architecture/OPERATOR_RUNTIME_ARCHITECTURE.md`
 **Gate:** `custodian/tools/validation/operator_architecture_debt_audit.py`
 
@@ -73,19 +73,23 @@ and surrender it on release. `operator_visual_ownership_smoke.gd` asserts
 visible **body owners** one frame before and after every handoff, with negative
 controls proving it catches the pre-fix duplicate-body behaviour.
 
-**Remaining:** the authority still lives inside `operator.gd`, so
-`body_visibility_outside_presentation` sits at 25. Extract it:
+**Extracted (Slice B):** the authority now lives in
+`presentation/operator_body_presenter.gd` (`RefCounted`) with
+`presentation/operator_body_presentation_plan.gd` as the typed request shape.
+`operator.gd` holds a presenter instance, registers the static renderers in
+`_ready()` and the lazily built Vigil rigs as they are created, and keeps thin
+delegating wrappers with no visibility policy. `body_visibility_outside_presentation`
+is **0**; no other debt category moved.
 
-1. Create `presentation/operator_body_presenter.gd` owning the `BodyOwner`
-   enum, the layer registry, `set_owner()`, `claim_modular()`,
-   `release_modular()` and `release_rig()`.
-2. Add `presentation/operator_presentation_controller.gd`, binding the existing
-   `operator.tscn` nodes. **Do not rebuild `operator.tscn` in this slice.**
-3. Replace the 25 in-actor visibility writes with presenter calls.
-4. Introduce the `present(plan)` shape with `body_mode = MODULAR | FULL_BODY`.
-5. Rename the legacy full-body node to a canonical `FullBodySprite` only when
-   its consumers reach zero — full-body is not legacy.
-6. Drive `body_visibility_outside_presentation` to 0 and shrink the ledger.
+One deliberate deviation from the brief: `show_layer()` **adopts** the layer's
+owner rather than refusing to preempt an exclusive rig. Refusing broke
+`operator_melee_posture`, where a draw/equip presentation legitimately
+interrupts a posture bridge. Adoption still retires the previous owner in the
+same call, so no frame shows two bodies, and the exclusive guarantee stays
+where the regression tests point it: `_update_animation()` and the legacy
+fallback both check `_is_exclusive_body_owner_active()` first. Strict
+same-owner validation moved into `present(plan)`, which rejects a plan whose
+body layers span owners.
 
 Do not convert `operator_presentation_rig_2d.gd` into this controller.
 

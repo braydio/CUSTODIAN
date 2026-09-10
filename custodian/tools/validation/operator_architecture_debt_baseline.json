@@ -28,9 +28,6 @@
   "attack_fallback_animation": {
     "operator.gd": 16
   },
-  "body_visibility_outside_presentation": {
-    "operator.gd": 25
-  },
   "directional_animation_fallback": {
     "operator.gd": 6
   },

@@ -22,14 +22,14 @@ Measured at the start of this migration (`--emit-baseline`, 2026-09-10):
 | retired `AnimationResolver` | 45 | `OperatorAnimationSelector` |
 | absolute `/root/...` scene lookups | 38 | injected dependencies |
 | `AnimationState` → actor `has_method()`/`call()` glue | 34 | `OperatorActionController` |
-| body-layer visibility writes outside presentation | 25 | `OperatorBodyPresenter` |
+| body-layer visibility writes outside presentation | ~~25~~ **0** | `OperatorBodyPresenter` (Slice B) |
 | attack `fallback_animation` indirection | 16 | selector exact-identity contract |
 | simulation advanced from the render tick | 12 | the fixed physics tick |
 | retired `DirectionalAnimationFallback` | 6 | `OperatorAnimationSelector` |
 | actor-local `SpriteFrames` construction | 5 | one generated `operator_runtime_frames.tres` |
 | retired `OperatorAnimationCatalog` | 4 | `OperatorAnimationSelector` |
 | mutable state in `OperatorWeaponDefinition` | 3 | `OperatorWeaponRuntimeState` |
-| **total** | **347** | |
+| **total** | **347** → **322** | |
 
 `operator.gd` is 540,567 bytes / 13,745 lines and acts simultaneously as input
 handler, locomotion controller, aim resolver, combat coordinator, animation
@@ -126,6 +126,17 @@ authority for a different visible animation.
 ONLY operator_body_presenter.gd MAY CHANGE BODY-LAYER VISIBILITY.
 ```
 
+**Live as of Slice B.** `custodian/game/actors/operator/presentation/operator_body_presenter.gd`
+is a `RefCounted` that owns the `Owner` enum, the per-owner registry of
+body-capable renderers, owner-scoped overlay retirement, exclusive-owner
+classification, body visibility mutation and visible-owner observability. The
+Operator creates its renderers and registers them — the presenter performs no
+scene-tree discovery and never calls back into the actor. `operator.gd` keeps
+thin delegating wrappers (`_set_body_presentation_owner`,
+`_claim_modular_body_owner`, `_release_modular_body_layers`, `_show_body_layer`,
+`_hide_body_layer`, `get_body_presentation_owner`, `get_visible_body_owners`)
+that contain no visibility policy of their own.
+
 Combat does not. Dodge does not. Melee does not. `operator.gd` does not.
 Everything goes through:
 
@@ -215,7 +226,7 @@ the pattern the procgen foliage organisation pass already used.
 | Slice | Scope | State |
 |---|---|---|
 | A | Architecture contract, debt audit, characterization | **done** |
-| B | Presentation firewall, body ownership invariant | **invariant landed; presenter extraction pending** |
+| B | Presentation firewall, body ownership invariant | **done** — `body_visibility_outside_presentation` 25 → 0 |
 | C | Canonical animation-selector cutover | pending |
 | D | Input/aim router + fixed-step split | pending |
 | E | `OperatorActionController` replacing animation-state glue | pending |
