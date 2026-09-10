@@ -1,28 +1,56 @@
 # CUSTODIAN Procgen Depth Chunks
 
-## Full Production Art Specification, V1
+## Production Art and Runtime Integration Specification
 
-Status: new production contract
+**Status:** active production specification; baseline library is integrated, follow-on Wetland/Rocky batch is ingested and awaiting presentation binding
 
-Last updated: 2026-09-07
+**Last updated:** 2026-09-10
 
-Runtime: `custodian/`
+**Runtime:** `custodian/`
 
-This is the production contract for the nine authored depth chunks.
+**Primary presentation authority:** `design/02_features/procgen/PROCGEN_MACRO_PRESENTATION_SYSTEM.md`
 
-The key distinction: these are **not terrain tiles, not playable ground, and not
-a replacement for cliffs**. They are large world-positioned scenic plates
-underneath/outside generated terrain, designed to make the generated landmass
-feel embedded in a much larger physical environment.
+---
 
-## Runtime Stack
+## Current Truth
 
-The runtime stack should eventually read:
+Procgen depth chunks are large world-positioned scenic underlays beneath and outside playable generated terrain. They are **not terrain tiles, not playable ground, and not a replacement for near cliff/retaining-edge presentation**.
+
+The live repository now contains two generations of source work and four Asset Pipeline V2 families:
+
+```text
+BASELINE / INTEGRATED
+procgen_depth_universal   4 states
+procgen_depth_scrubland   3 states
+procgen_depth_woodland    2 states
+                         ----------
+                          9 runtime assets
+
+FOLLOW-ON / INGESTED, NOT YET PRESENTATION-BOUND
+procgen_depth_chunks      7 states
+                          1 woodland overgrown-works
+                          3 wetland
+                          3 rocky-upland
+                         ----------
+                          7 runtime assets
+
+TOTAL                     16 runtime depth-chunk assets
+```
+
+The old statement that Wetland and Rocky Upland should not be generated yet is obsolete. Those six biome assets plus the new Woodland overgrown-works asset have already been normalized and successfully ingested through Asset Pipeline V2.
+
+The remaining gap is **runtime presentation integration**, not art ingest.
+
+---
+
+# 1. Runtime Stack
+
+The presentation stack is:
 
 ```text
 FAR ATMOSPHERE
         ↓
-AUTHORED DEPTH CHUNKS         ← these nine assets
+AUTHORED DEPTH CHUNKS
         ↓
 NEAR CLIFF / RETAINING EDGE
         ↓
@@ -31,124 +59,206 @@ PLAYABLE PROCGEN TERRAIN
 PROPS / FOLIAGE / STRUCTURES
 ```
 
-## Authority Relationship
+Depth chunks belong to the world-positioned scenic underlay band. They do **not** replace macro terrain stamps, cliff faces, or playable TileMap semantics. The 32×32 semantic grid remains authoritative for walkability, collision, and navigation.
 
-This family is presentation-only and belongs to the procgen exterior
-presentation stack defined in
-`design/02_features/procgen/PROCGEN_MACRO_PRESENTATION_SYSTEM.md`. Depth chunks
-are the world-positioned scenic underlay band; they do **not** replace the macro
-terrain stamps, cliff faces, or playable TileMap semantics. The 32×32 semantic
-grid remains authoritative for walkability, collision, and navigation.
+Connected-map presentation must suppress procgen depth presentation where another map owns the scene.
 
 ---
 
-# 1. Family identity
+# 2. Asset Pipeline V2 Ownership
 
-**Family ID**
+All live depth families use:
 
 ```text
-procgen_depth_chunks_v1
+schema: custodian.asset_family.v2
+kind: backdrop
+direction_policy: omni
+auto_mirror: false
 ```
 
-**Source-work family**
+## Baseline families
+
+```text
+custodian/content/metadata/assets/families/
+├── procgen_depth_universal.asset.json
+├── procgen_depth_scrubland.asset.json
+└── procgen_depth_woodland.asset.json
+```
+
+Runtime roots:
+
+```text
+res://content/backgrounds/procgen/depth_chunks/universal/
+res://content/backgrounds/procgen/depth_chunks/scrubland/
+res://content/backgrounds/procgen/depth_chunks/woodland/
+```
+
+These nine assets also have `TerrainStampProfile` resources under:
+
+```text
+custodian/content/procgen/presentation/depth_chunks/
+```
+
+and are part of the procgen macro-presentation selection system.
+
+Current biome-family behavior is effectively:
+
+```text
+scrubland
+  procgen_depth_universal
+  procgen_depth_scrubland
+
+woodland
+  procgen_depth_universal
+  procgen_depth_woodland
+
+wetland
+  procgen_depth_universal
+
+rocky_upland
+  procgen_depth_universal
+```
+
+That last pair is why the follow-on batch still needs integration.
+
+## Follow-on family
+
+```text
+custodian/content/metadata/assets/families/
+└── procgen_depth_chunks.asset.json
+```
+
+Runtime root:
+
+```text
+res://content/backgrounds/procgen/depth_chunks/
+```
+
+States:
+
+```text
+woodland_overgrown_works
+
+wetland_flooded_basin
+wetland_reed_channels
+wetland_drowned_service_platform
+
+rocky_upland_cliff_bowl
+rocky_upland_talus_ravine
+rocky_upland_exposed_ledge
+```
+
+All seven are present in the generated V2 catalog and runtime directory. The family currently has no declared V2 consumers, but that field alone is not the integration test for this subsystem: the older depth families also have empty contract consumer arrays while being consumed through separate `TerrainStampProfile` resources.
+
+For the follow-on family, the actionable missing layer is the absence of corresponding presentation profiles/selection registration.
+
+---
+
+# 3. Source Work and Provenance
+
+Source masters remain under `asset_drop/source_work`; they are not runtime dependencies.
+
+## Baseline archive/master set
 
 ```text
 custodian/asset_drop/source_work/procgen_depth_chunks_v1/
 ```
 
-**V2 family recommendation**
+This is the broad older source set. It contains the original Universal, Scrubland, and Woodland baseline masters and also retained copies/revisions from later depth work.
+
+## Follow-on seven-asset source set
 
 ```text
-procgen_depth_chunks
+custodian/asset_drop/source_work/procgen_depth_chunks/
 ```
 
-**Runtime ownership**
+Current files:
 
 ```text
-res://content/sprites/environment/procgen_depth/
+depth_rocky_upland_cliff_bowl_v1.png
+depth_rocky_upland_exposed_ledge_v1.png
+depth_rocky_upland_talus_ravine_v1.png
+
+depth_wetland_drowned_service_platform_v1.png
+depth_wetland_flooded_basin_v1.png
+depth_wetland_reed_channels_v1.png
+
+depth_woodland_overgrown_works_v1.png
 ```
 
-These assets are:
+Six Wetland/Rocky files are byte-identical to same-named copies retained in `procgen_depth_chunks_v1/`.
 
-* presentation-only
-* non-colliding
-* non-navigable
-* world-positioned
-* biome-aware
-* seeded/deterministically selected
-* allowed to overlap generated terrain beneath the terrain edge
-* never allowed to imply reachable ground
+`depth_woodland_overgrown_works_v1.png` is **not** byte-identical between the two source roots. The source used to normalize the current `procgen_depth_chunks` runtime state is the copy under:
+
+```text
+custodian/asset_drop/source_work/procgen_depth_chunks/
+```
+
+Do not collapse these two source roots by deleting the differing Woodland master. A future provenance cleanup must update the preparation scripts and documentation in the same change.
 
 ---
 
-# 2. Production size classes
+# 4. Production Prep and Inbox State
 
-The generated artwork should remain untouched as **source masters**.
+The completed prep artifacts from the Carrow/depth work were moved during housekeeping to:
 
-Do not manually squash the generated masters directly into runtime.
+```text
+custodian/asset_drop/archive/
+manual_housekeeping_20260909-224003/
+production_prep/
+```
 
-Use Asset Pipeline V2 normalization to create derivatives.
+The active `custodian/asset_drop/production_prep/` lane is currently empty.
 
-| Class      | Runtime canvas | Logical footprint |
-| ---------- | -------------: | ----------------: |
-| **LARGE**  |      `896×576` |      ~28×18 cells |
-| **MEDIUM** |      `640×448` |      ~20×14 cells |
+The official V2 inbox has no pending depth-chunk art. Depth assets should only re-enter the inbox when a new or replacement source has passed review and normalization.
 
-The logical footprint is only a placement envelope.
-
-The alpha silhouette should remain irregular.
-
-The visible artwork does **not** need to fill the entire canvas.
+Do not treat `source_work` or archived `production_prep` as pending ingest queues.
 
 ---
 
-# 3. Core visual contract
+# 5. Production Size Classes
 
-All nine assets must obey the same production language.
+The generated artwork should remain untouched as source masters. Runtime derivatives are normalized through Asset Pipeline V2.
+
+| Class | Runtime canvas | Approximate logical footprint |
+|---|---:|---:|
+| **LARGE** | `896×576` | ~28×18 cells |
+| **MEDIUM** | `640×448` | ~20×14 cells |
+
+The logical footprint is a placement envelope, not a rectangular visible shape. Alpha silhouettes should remain irregular and the visible artwork does not need to fill the full canvas.
+
+---
+
+# 6. Core Visual Contract
 
 ## Perspective
 
-Top-down / 2.5D.
+Top-down / 2.5D. Match the world camera rather than side-scrolling perspective or full 45° isometric architecture.
 
-They should match the world camera, not side-scrolling perspective and not full
-isometric 45° architecture.
-
-Vertical relief is welcome, especially for:
-
-* ravines
-* retaining walls
-* cliff faces
-* foundation cavities
-
-but the player should still perceive the composition primarily from above.
+Vertical relief is welcome for ravines, retaining walls, cliff faces, and foundation cavities, but the composition should still read primarily from above.
 
 ## Detail hierarchy
 
-The chunks should be:
-
-**most detailed near the terrain-facing edge**
-
-then progressively quieter toward deeper background space.
+Depth chunks are most detailed near the terrain-contact edge and progressively quieter into deeper background space.
 
 Target:
 
 ```text
-upper / terrain-contact 25%
+terrain-contact ~25%
 HIGH detail
 
-middle 45%
+middle ~45%
 MEDIUM detail
 
-deep / outer 30%
+deep / outer ~30%
 LOWER detail + deeper shadow
 ```
 
-That lets playable terrain visually overlap the chunk without the underlay
-fighting the player.
+Playable terrain must remain visually dominant.
 
-## Color
+## Base palette
 
-Universal base palette:
+Universal language:
 
 ```text
 charcoal
@@ -158,7 +268,7 @@ dirty warm gray
 deep earth brown
 oxidized iron
 muted olive
-restrained moss/vegetation
+restrained moss / vegetation
 ```
 
 Scrubland adds:
@@ -181,16 +291,17 @@ wet graphite rock
 dark brown wood
 ```
 
-No high-saturation scenery.
+Wetland should extend the same grounded industrial/natural language with dark water, flooded infrastructure, reeds, mud, oxidized structures, and restrained green-brown vegetation.
 
-The playable surface must retain stronger gameplay contrast than the depth
-chunks.
+Rocky Upland should emphasize exposed stone, talus, broken ledges, dry structural scars, muted mineral tones, and vertical depth without becoming a bright fantasy mountain palette.
+
+No high-saturation scenery.
 
 ---
 
-# 4. Alpha contract
+# 7. Alpha Contract
 
-Every master must have:
+Every master must provide:
 
 ```text
 RGBA
@@ -199,177 +310,58 @@ irregular silhouette
 no rectangular matte
 ```
 
-Before V2 ingest:
+During normalization, near-zero accidental alpha may be cleaned to true zero. Preserve intentional partial alpha around foliage edges, fine roots, mist, water spray, and atmospheric edges.
 
-```text
-alpha <= ~16
-→ clean to 0
-```
-
-But preserve intentional partial alpha where it exists naturally around:
-
-* foliage edges
-* fine roots
-* mist
-* water spray
-* deep atmospheric edges
-
-Do **not** binary-alpha the whole family automatically.
-
-These assets contain much finer natural edges than Operator sprites.
+Do not binary-alpha the family globally.
 
 ---
 
-# 5. Lighting contract
+# 8. Lighting Contract
 
-All nine should assume:
+Assume soft overcast/diffuse top lighting. Avoid strongly baked directional sunlight so chunks remain usable under dawn, midday, dusk, night, overcast, rain, and mist presentation.
 
-```text
-soft overcast / diffuse top lighting
-```
-
-Avoid strongly baked directional sunlight.
-
-Why?
-
-Because these chunks need to survive:
-
-* dawn
-* midday
-* dusk
-* night
-* overcast
-* rain
-* mist
-
-under the environment compositor.
-
-Baked lighting can establish form, but not a strong fixed sun direction.
-
-## Relative brightness
-
-Depth chunks should generally render approximately:
-
-```text
-10–25% darker
-```
-
-than neighboring playable terrain before runtime atmospheric treatment.
-
-Especially avoid bright open dirt patches that look walkable.
+Depth chunks should generally read darker and quieter than adjacent playable terrain before environment treatment. Bright flat surfaces that imply reachable ground are undesirable.
 
 ---
 
-# 6. Terrain-contact edge
+# 9. Terrain-Contact Edge
 
-Each asset needs one intentional **terrain overlap zone**.
+Each asset needs an intentional terrain-overlap zone, normally the upper portion of the image.
 
-For most of these, that is the upper portion of the image.
-
-Target:
+Typical target:
 
 ```text
 20–25% of chunk height
 ```
 
-The playable terrain and cliff system may overlap this region.
+Suitable overlap material:
 
-Artwork there should include things that naturally disappear underneath another
-layer:
+- broken slabs
+- rock ledges
+- roots
+- retaining structures
+- soil/earth
+- rubble
+- vegetation
 
-* broken slabs
-* rock ledges
-* roots
-* retaining structures
-* earth
-* scattered debris
-* vegetation
-
-Do not place a hero focal object immediately on the overlap edge.
+Avoid placing the primary focal object directly on the overlap seam.
 
 ---
 
-# 7. Asset 01
+# 10. Baseline Universal Family
 
 ## `depth_civic_foundation_breach_v1.png`
 
-**Class:** LARGE
+**Class:** LARGE  
 **Runtime:** `896×576`
 
-## Role
+Universal structural hero chunk. A partially buried civic foundation should expose fractured retaining slabs, structural reinforcement, broken decks, conduits, pipe runs, drainage openings, collapsed retaining walls, rubble, and inaccessible service cavities.
 
-Universal structural hero chunk.
+The upper overlap zone should provide a convincing built foundation beneath playable terrain. The deeper edge should dissolve into rubble, earth, and dark infrastructure.
 
-This should be one of the most reusable depth assets in the entire system.
+Avoid intact inviting doors, brightly lit corridors, obvious usable stairs, giant signage, faction branding, overt religious architecture, or magical technology.
 
-## Environmental read
-
-> The playable land above was built, reinforced, or repeatedly repaired. Older
-> infrastructure exists underneath it.
-
-## Required composition
-
-A massive partially buried civic foundation with:
-
-* fractured composite retaining slabs
-* exposed structural reinforcement
-* broken concrete/composite decks
-* rebar/reinforcement ribs
-* dark support cavities
-* buried conduits
-* large pipe runs
-* service channels
-* drainage openings
-* collapsed retaining walls
-* rubble descending into the lower level
-* inaccessible maintenance openings
-
-## Upper overlap zone
-
-Strong civic structure:
-
-```text
-broken plateau slab
-retaining wall
-reinforcement
-conduit
-rock/earth
-```
-
-The playable level can visually sit directly on top of it.
-
-## Middle
-
-The structure opens up.
-
-Show:
-
-* collapsed cavities
-* fallen beams
-* service recesses
-* exposed pipe banks
-* ruined access tunnels
-
-## Deep edge
-
-Should dissolve visually into:
-
-* rubble
-* darkness
-* earth
-* shadowed infrastructure
-
-## Avoid
-
-* intact door inviting exploration
-* brightly illuminated corridors
-* obvious usable staircase
-* faction insignia
-* religious architecture
-* magical technology
-* giant readable signage
-
-## Placement tags
+Primary tags:
 
 ```text
 universal
@@ -380,85 +372,16 @@ large_void
 compound_adjacent
 ```
 
-## Preferred topology
-
-```text
-EDGE_LONG
-EDGE_LARGE_VOID
-EDGE_CONCAVE
-```
-
----
-
-# 8. Asset 02
-
 ## `depth_fractured_ravine_v1.png`
 
-**Class:** LARGE
+**Class:** LARGE  
 **Runtime:** `896×576`
 
-## Role
+Universal natural/structural depth separator. Use an uneven diagonal ravine with fractured ledges, dark depth channel, rubble, roots, modest vegetation, structural fragments, and optional subtle water trace.
 
-Universal natural/structural depth separator.
+The central channel must remain visibly unwalkable. Horizontal flip is acceptable when lighting remains coherent.
 
-## Read
-
-> This is genuinely below the playable level.
-
-It should produce one of the clearest vertical-depth reads.
-
-## Composition
-
-A strong diagonal ravine.
-
-Include:
-
-* uneven rock walls
-* fractured ledges
-* narrow dark depth channel
-* collapsed retaining structures
-* rubble caught on ledges
-* exposed roots
-* modest vegetation
-* old concrete fragments
-* possibly a subtle water trace
-
-The central channel should remain **visually unwalkable**.
-
-## Direction
-
-Primary authored orientation:
-
-```text
-NW → SE
-```
-
-Runtime may allow:
-
-```text
-horizontal flip
-```
-
-to achieve:
-
-```text
-NE → SW
-```
-
-provided the lighting still works.
-
-## Deepest zone
-
-Use:
-
-* near-black rock
-* deep water/shadow
-* vertical surfaces
-* debris
-
-No clean flat valley floor.
-
-## Placement tags
+Primary tags:
 
 ```text
 universal
@@ -468,70 +391,16 @@ structural_decay
 large_gap
 ```
 
-## Preferred topology
-
-```text
-EDGE_GAP
-EDGE_LONG
-EDGE_LARGE_VOID
-```
-
----
-
-# 9. Asset 03
-
 ## `depth_service_infrastructure_field_v1.png`
 
-**Class:** MEDIUM
+**Class:** MEDIUM  
 **Runtime:** `640×448`
 
-## Role
+Universal industrial background chunk representing buried utility infrastructure: dead cable trenches, armored pipe runs, conduit banks, broken vaults, service pads, collapsed grating, retaining structures, muddy depressions, and ruined utility hardware.
 
-Universal industrial background chunk.
+It should not read as a building or possess a clear architectural center.
 
-## Read
-
-> The player is seeing the utility layer that normal functioning districts
-> tried not to think about.
-
-This should feel ugly, functional, buried and redundant.
-
-## Composition
-
-Include:
-
-* dead cable trenches
-* armored pipe runs
-* buried conduit banks
-* half-submerged junction boxes
-* broken utility vaults
-* composite service pads
-* collapsed maintenance grating
-* low retaining structures
-* muddy depressions
-* one broken pole/gantry base
-
-Not a building.
-
-There should be **no obvious architectural center**.
-
-## Detail distribution
-
-Perimeter:
-
-* pipes
-* concrete
-* cable trench
-* supports
-
-Center:
-
-* darker disturbed ground
-* gravel
-* mud
-* scattered structural debris
-
-## Placement tags
+Primary tags:
 
 ```text
 universal
@@ -542,57 +411,16 @@ service
 carrow_compatible
 ```
 
-## Preferred topology
-
-```text
-EDGE_LONG
-EDGE_CONCAVE
-constructed_region
-compound_region
-```
-
----
-
-# 10. Asset 04
-
 ## `depth_talus_and_rubble_shelf_v1.png`
 
-**Class:** MEDIUM
+**Class:** MEDIUM  
 **Runtime:** `640×448`
 
-## Role
+Universal neutral glue/fallback chunk: angular rock, talus, gravel, fragmented concrete, fallen slabs, dust, sparse vegetation, and occasional reinforcement.
 
-Universal neutral glue chunk.
+No hero structure or dominant landmark.
 
-This one should appear frequently.
-
-## Composition
-
-A broad broken slope containing:
-
-* angular rock
-* talus
-* gravel
-* fragmented concrete
-* fallen slab pieces
-* dust
-* small soil pockets
-* extremely sparse vegetation
-* occasional exposed reinforcement
-
-No major landmark.
-
-No huge pipe.
-
-No hero structure.
-
-## Read
-
-> There is damaged lower terrain beneath this ledge.
-
-It should disappear into the scene rather than demand attention.
-
-## Placement tags
+Primary tags:
 
 ```text
 universal
@@ -602,455 +430,184 @@ talus
 fallback
 ```
 
-## Preferred topology
-
-Essentially everything:
-
-```text
-EDGE_LONG
-EDGE_CORNER
-EDGE_CONCAVE
-EDGE_SMALL_VOID
-EDGE_LARGE_VOID
-```
-
-This should be the **fallback chunk** if the placement system cannot find a
-stronger semantic match.
-
 ---
 
-# SCRUBLAND FAMILY
+# 11. Baseline Scrubland Family
 
-Scrubland should mean:
-
-```text
-wind-beaten
-dry
-eroded
-sparse
-abandoned
-```
-
-not:
-
-```text
-desert
-sand
-cowboy
-mesa
-dunes
-```
-
----
-
-# 11. Asset 05
+Scrubland should read as wind-beaten, dry, eroded, sparse, and abandoned, not as stylized desert, dunes, cowboy scenery, or dramatic mesa country.
 
 ## `depth_scrubland_dry_basin_v1.png`
 
-**Class:** LARGE
+**Class:** LARGE  
 **Runtime:** `896×576`
 
-## Role
+Broad lower-elevation basin with compacted earth, dark bedrock, erosion channels, gravel, sparse brush, dead grasses, small concrete fragments, utility remnants, and drainage traces.
 
-Primary scrubland large-void chunk.
-
-## Composition
-
-A broad lower-elevation basin with:
-
-* pale compacted ground
-* exposed dark bedrock
-* low erosion channels
-* gravel
-* sparse brush
-* dead grasses
-* small concrete fragments
-* abandoned utility stakes
-* occasional drainage remnants
-
-## Center
-
-The center must be intentionally subdued.
-
-Broad:
-
-```text
-dust / gravel / eroded earth
-```
-
-with minimal focal content.
-
-The perimeter can be busier.
-
-## Important readability rule
-
-Do not allow the broad center to look like a convenient alternate walking area.
-
-Use:
-
-* elevation cues
-* darker edge rock
-* irregular surface
-* surrounding cliffs
-* broken terrain
-
-to make the lower elevation clear.
-
-## Placement tags
-
-```text
-scrubland
-basin
-large_void
-dry
-```
-
-## Preferred topology
-
-```text
-EDGE_LARGE_VOID
-EDGE_CONCAVE
-```
-
----
-
-# 12. Asset 06
+The subdued center must still read as lower/inaccessible rather than convenient alternate walking ground.
 
 ## `depth_scrubland_wash_channel_v1.png`
 
-**Class:** MEDIUM
+**Class:** MEDIUM  
 **Runtime:** `640×448`
 
-## Role
+Diagonal old runoff corridor with gravel, sediment, erosion grooves, fractured culvert pieces, sparse brush, drainage remnants, and broken retaining structures.
 
-Scrubland linear depth feature.
-
-## Composition
-
-A diagonal old runoff corridor.
-
-Include:
-
-* dry channel
-* gravel bed
-* darker sediment
-* erosion grooves
-* fractured culvert
-* pipe remnants
-* sparse brush
-* gravel bars
-* broken retaining pieces
-
-## Direction
-
-Author one strong diagonal.
-
-Runtime flip allowed if visually acceptable.
-
-The feature should meander slightly rather than form a straight line.
-
-## Important rule
-
-The channel should **not read as a road**.
-
-Avoid:
-
-* symmetrical lanes
-* consistent width
-* clean shoulders
-* obvious drivable surface
-
-## Placement tags
-
-```text
-scrubland
-wash
-drainage
-erosion
-linear
-```
-
-## Preferred topology
-
-```text
-EDGE_LONG
-EDGE_GAP
-```
-
----
-
-# 13. Asset 07
+It must not read as a road. Avoid lane symmetry, constant width, clean shoulders, and an obvious driveable surface.
 
 ## `depth_scrubland_service_scar_v1.png`
 
-**Class:** MEDIUM
+**Class:** MEDIUM  
 **Runtime:** `640×448`
 
-## Role
+Former service route reclaimed by collapse and vegetation: disturbed-ground scars, fractured hardstand, abandoned cable trench, shrubs, smashed utility hardware, drainage, concrete debris, and buried conduit.
 
-Scrubland infrastructure/reclamation chunk.
-
-## Read
-
-> This used to be a service route. It is not one anymore.
-
-## Composition
-
-Include:
-
-* two parallel disturbed-ground scars
-* fractured hardstand
-* broken service paving
-* abandoned cable trench
-* shrubs through cracks
-* one smashed utility cabinet
-* drainage edge
-* concrete debris
-* buried conduit
-
-The scars should be incomplete and disrupted.
-
-## Critical readability
-
-Do not create an intact road.
-
-Break the visual continuity with:
-
-* vegetation
-* collapse
-* missing surface
-* rubble
-* displaced slab fragments
-
-## Placement tags
-
-```text
-scrubland
-infrastructure
-service_scar
-reclaimed
-constructed_decay
-```
-
-## Preferred topology
-
-```text
-EDGE_LONG
-constructed_region
-former_route
-```
+Visual continuity should be broken enough that it no longer reads as an intact road.
 
 ---
 
-# WOODLAND FAMILY
+# 12. Baseline Woodland Family
 
-Woodland should feel:
-
-```text
-dense
-low
-shadowed
-reclaimed
-structurally layered
-```
-
-but not lush fantasy wilderness.
-
-There should remain occasional evidence of old infrastructure.
-
----
-
-# 14. Asset 08
+Woodland should feel dense, low, shadowed, reclaimed, and structurally layered without becoming lush fantasy wilderness. Old infrastructure should remain faintly legible.
 
 ## `depth_woodland_canopy_basin_v1.png`
 
-**Class:** LARGE
+**Class:** LARGE  
 **Runtime:** `896×576`
 
-## Role
+Dense lower canopy with irregular tree crowns, dark understory, exposed rock, moss, fallen trunks, roots, openings, and one restrained buried-service cue.
 
-Primary woodland large-void chunk.
+The upper contact zone needs exposed cliff/soil/root/stone before dropping into foliage so the playable level reads physically above the canopy.
 
-## Composition
-
-Dense lower canopy viewed from above:
-
-* clustered tree crowns
-* irregular canopy density
-* dark understory
-* exposed rocks
-* moss
-* fallen trunks
-* root systems
-* canopy openings
-* one faint buried service line
-* small old utility fragment
-
-## Upper contact zone
-
-Needs exposed:
-
-* cliff
-* soil
-* roots
-* stone
-
-before dropping into foliage.
-
-This is important because the playable terrain needs to appear physically above
-the canopy.
-
-## Canopy variation
-
-Avoid a repeated "tree-ball texture."
-
-Use:
-
-```text
-large crowns
-small crowns
-dark gaps
-fallen tree
-rock interruption
-root interruption
-understory opening
-```
-
-The player should be able to recognize the authored composition.
-
-## Placement tags
-
-```text
-woodland
-canopy
-basin
-large_void
-vegetation
-```
-
-## Preferred topology
-
-```text
-EDGE_LARGE_VOID
-EDGE_CONCAVE
-```
-
----
-
-# 15. Asset 09
+Avoid a repeated tree-ball texture.
 
 ## `depth_woodland_ravine_v1.png`
 
-**Class:** LARGE
+**Class:** LARGE  
 **Runtime:** `896×576`
 
-## Role
+Woodland hero chunk with fractured stone walls, heavy roots, vegetation at several apparent elevations, fallen logs across inaccessible gaps, dark central water/shadow, retaining ruin, and one restrained piece of collapsed infrastructure.
 
-Woodland hero depth chunk.
-
-This should be one of the strongest scenic pieces in the family.
-
-## Composition
-
-Deep wooded ravine with:
-
-* fractured stone walls
-* heavy root systems
-* trees at multiple apparent elevations
-* fallen logs spanning inaccessible gaps
-* dark central water/shadow
-* moss
-* broken retaining slabs
-* collapsed culvert
-* pipe crossing
-* small waterfalls/runoff if present
-* vegetation hanging over structural ruin
-
-## Visual hierarchy
-
-The central ravine must remain clearly deeper than the woodland canopy around
-it.
-
-Use:
-
-```text
-dark water
-vertical rock
-root descent
-fallen logs
-deep shadow
-```
-
-## Infrastructure
-
-One collapsed piece only needs to carry the CUSTODIAN language:
-
-* culvert
-* retaining wall
-* pipe
-* broken service crossing
-
-Do not overload it with machinery.
-
-## Placement tags
-
-```text
-woodland
-ravine
-hero_depth
-water
-structural_decay
-```
-
-## Preferred topology
-
-```text
-EDGE_GAP
-EDGE_LONG
-EDGE_LARGE_VOID
-```
+The center must clearly read deeper than the surrounding canopy.
 
 ---
 
-# 16. Production filenames
+# 13. Follow-On Woodland Asset
 
-Use exactly:
+## `depth_woodland_overgrown_works_v1.png`
 
-```text
-depth_civic_foundation_breach_v1.png
-depth_fractured_ravine_v1.png
-depth_service_infrastructure_field_v1.png
-depth_talus_and_rubble_shelf_v1.png
+**Class:** MEDIUM  
+**Runtime:** `640×448`
 
-depth_scrubland_dry_basin_v1.png
-depth_scrubland_wash_channel_v1.png
-depth_scrubland_service_scar_v1.png
+This is the current follow-on Woodland state in `procgen_depth_chunks`.
 
-depth_woodland_canopy_basin_v1.png
-depth_woodland_ravine_v1.png
-```
+It should **augment**, not silently replace, the existing `procgen_depth_woodland` canopy-basin/ravine pair unless a later design decision explicitly supersedes one of those baseline states.
 
-Do not append the generated source dimensions to canonical asset identity.
-
-Source-master dimensions belong in provenance metadata, not filenames.
+Presentation intent: reclaimed civic/industrial works heavily overtaken by woodland growth, with enough structural geometry to distinguish it from pure canopy/ravine scenery.
 
 ---
 
-# 17. Runtime normalization
+# 14. Follow-On Wetland Assets
 
-The source masters just generated should remain at maximum generation
-resolution.
+## `depth_wetland_flooded_basin_v1.png`
+
+**Class:** LARGE  
+**Runtime:** `896×576`
+
+Primary Wetland large-void scenic plate. Flooded low ground, irregular dark water, mud/silt, emergent vegetation, drowned structural fragments, and strong elevation cues should prevent the basin from reading as traversable water terrain.
+
+## `depth_wetland_reed_channels_v1.png`
+
+**Class:** MEDIUM  
+**Runtime:** `640×448`
+
+Linear Wetland depth feature using reeds, dark channels, water/mud breaks, partially submerged structural remnants, and irregular banks. It should not read as a designed canal or playable path.
+
+## `depth_wetland_drowned_service_platform_v1.png`
+
+**Class:** MEDIUM  
+**Runtime:** `640×448`
+
+Constructed Wetland decay: a former service platform or utility structure partially submerged/reclaimed, with broken hard surfaces, water, vegetation, oxidized hardware, and inaccessible lower-space cues.
+
+---
+
+# 15. Follow-On Rocky Upland Assets
+
+## `depth_rocky_upland_cliff_bowl_v1.png`
+
+**Class:** LARGE  
+**Runtime:** `896×576`
+
+Primary Rocky Upland large-void plate. Use a strong bowl/cliff formation with exposed vertical stone, irregular ledges, rubble/talus, shadow depth, and restrained remnants of old constructed edge work.
+
+## `depth_rocky_upland_talus_ravine_v1.png`
+
+**Class:** LARGE  
+**Runtime:** `896×576`
+
+Hero Rocky Upland ravine with broken stone, talus descent, dark depth seams, fractured ledges, and selective structural debris. Avoid a clean valley floor or readable traversable channel.
+
+## `depth_rocky_upland_exposed_ledge_v1.png`
+
+**Class:** MEDIUM  
+**Runtime:** `640×448`
+
+Reusable rocky ledge/shelf plate with exposed bedrock, broken cliff lip, talus, cracks, sparse upland vegetation, and muted structural scars. It should function as a medium-size biome glue asset rather than a landmark every time it appears.
+
+---
+
+# 16. Canonical Runtime Files
+
+Baseline runtime files are generated by their family templates, for example:
+
+```text
+custodian/content/backgrounds/procgen/depth_chunks/universal/
+  procgen_depth_universal_civic_foundation_breach_v1_896x576.png
+  procgen_depth_universal_fractured_ravine_v1_896x576.png
+  procgen_depth_universal_service_infrastructure_field_v1_640x448.png
+  procgen_depth_universal_talus_and_rubble_shelf_v1_640x448.png
+
+custodian/content/backgrounds/procgen/depth_chunks/scrubland/
+  procgen_depth_scrubland_dry_basin_v1_896x576.png
+  procgen_depth_scrubland_wash_channel_v1_640x448.png
+  procgen_depth_scrubland_service_scar_v1_640x448.png
+
+custodian/content/backgrounds/procgen/depth_chunks/woodland/
+  procgen_depth_woodland_canopy_basin_v1_896x576.png
+  procgen_depth_woodland_ravine_v1_896x576.png
+```
+
+The follow-on family currently owns:
+
+```text
+custodian/content/backgrounds/procgen/depth_chunks/
+  depth_woodland_overgrown_works_v1.png
+
+  depth_wetland_flooded_basin_v1.png
+  depth_wetland_reed_channels_v1.png
+  depth_wetland_drowned_service_platform_v1.png
+
+  depth_rocky_upland_cliff_bowl_v1.png
+  depth_rocky_upland_talus_ravine_v1.png
+  depth_rocky_upland_exposed_ledge_v1.png
+```
+
+Gameplay/runtime code must reference canonical runtime resources, never source masters, prep files, archived handoffs, or inbox files.
+
+---
+
+# 17. Normalization Contract
 
 Pipeline:
 
 ```text
 generated source master
         ↓
-asset_drop/source_work/procgen_depth_chunks_v1
+asset_drop/source_work/...
         ↓
-V2 preparation
+review / preparation
         ↓
-trim only meaningless transparent border
+trim only meaningless transparent border when required
         ↓
 resize ONCE
         ↓
@@ -1059,332 +616,158 @@ MEDIUM → 640×448
         ↓
 preserve alpha
         ↓
-Asset Pipeline V2 ingest
+asset_drop/inbox/<family>/
+        ↓
+Asset Pipeline V2 plan / ingest
+        ↓
+canonical runtime + catalog + receipt/archive
 ```
 
-Use **Lanczos** for the major source reduction, since these source masters are
-high-resolution rendered artwork rather than already-native pixel art.
+Use a high-quality single reduction pass for high-resolution rendered source artwork. Do not downsample, upscale, and downsample again.
 
-After downsampling, do a restrained pixel-art compatibility pass if the rest of
-the world requires it.
-
-Do not:
-
-```text
-downsample
-→ upscale
-→ downsample again
-```
-
-One normalization pass only.
+The completed follow-on normalization used Pillow LANCZOS exactly once from source master to final target size and preserved partial alpha.
 
 ---
 
-# 18. Important pixel-art note
+# 18. Runtime Contrast Treatment
 
-These generated chunks are deliberately much more detailed than the runtime
-world assets.
+Raw files should preserve source detail. Runtime presentation owns hierarchy.
 
-Do **not** force them into crude pixelization immediately.
-
-At actual gameplay scale, downsampling from ~1500 px to 896 or 640 will already
-condense detail substantially.
-
-Evaluate them in runtime first.
-
-If they still look too photographic relative to the rest of CUSTODIAN, apply a
-**family-wide normalization pass**, not individual hand edits:
+Useful starting treatment remains approximately:
 
 ```text
-shared color quantization
-subtle edge cleanup
-minor local contrast reduction
+brightness/modulate ≈ 0.78–0.88
+saturation          ≈ 0.80–0.90
+contrast            slightly reduced
 ```
 
-Do not individually paint over all nine unless runtime proves it necessary.
+Environment, biome, day/night, and weather may modify this further.
+
+Do not permanently crush source masters merely to achieve one runtime lighting condition.
 
 ---
 
-# 19. Runtime contrast treatment
+# 19. Placement Density
 
-The raw files should preserve their detail.
+Do not carpet the void with scenic plates.
 
-Runtime presentation should control their hierarchy.
-
-Recommended starting presentation:
-
-```text
-modulate brightness ≈ 0.78–0.88
-saturation ≈ 0.80–0.90
-contrast slightly reduced
-```
-
-Then biome/environment/day/weather can modify them further.
-
-This is much better than permanently crushing the source art.
-
----
-
-# 20. Placement density
-
-Do not carpet the void with these.
-
-A normal camera view should probably show:
+A normal camera view should usually contain approximately:
 
 ```text
 0–2 major chunks
 ```
 
-rather than five overlapping scenic plates.
+Use universal assets as broad fallback/glue and biome-specific assets for identity.
 
-Suggested approximate selection:
-
-```text
-60% neutral/universal
-40% biome-specific
-```
-
-Within universal:
-
-```text
-talus/rubble shelf
-most common
-
-service infrastructure
-moderate
-
-fractured ravine
-less common
-
-civic foundation breach
-rare/hero
-```
-
-Within woodland:
-
-```text
-canopy basin
-common
-
-woodland ravine
-rare
-```
-
-Within scrubland:
-
-```text
-dry basin
-common
-
-wash channel
-moderate
-
-service scar
-less common
-```
+Avoid multiple competing hero assets in one view.
 
 ---
 
-# 21. Chunk overlap
+# 20. Overlap
 
-Allow chunks to overlap each other.
+Chunks may overlap each other where their silhouettes support it.
 
-Recommended:
+Typical overlap:
 
 ```text
 32–96 px
-1–3 world cells
+~1–3 world cells
 ```
 
-But overlap should occur primarily at:
+Prefer overlap through rock, earth, rubble, vegetation, water-edge noise, and similarly forgiving material transitions.
 
-* rock
-* earth
-* rubble
-* vegetation
-
-Avoid overlapping focal infrastructure over focal infrastructure.
-
-Bad:
-
-```text
-utility cabinet
-on top of
-broken culvert
-on top of
-foundation door
-```
-
-Good:
-
-```text
-talus edge
-over
-ravine rock edge
-```
+Avoid stacking focal infrastructure over focal infrastructure.
 
 ---
 
-# 22. Deterministic transformation
+# 21. Determinism and Transformations
 
-Runtime can safely use:
+Selection must remain seeded/deterministic.
 
-```text
-horizontal flip
-```
+Horizontal flips can be allowed selectively when the source lighting and terrain-contact edge remain valid.
 
-on most natural chunks.
+Do not freely rotate every chunk by 90°. Several assets have strong terrain-facing orientation and 2.5D relief.
 
-Potentially allow limited rotation only for near-top-down chunks:
-
-```text
-0°
-180°
-```
-
-Do **not** freely rotate every chunk by 90°.
-
-Some of these have strong perspective and terrain-facing orientation.
-
-For V1:
-
-```text
-rotation = 0
-flip_x = allowed selectively
-```
-
-is safer.
+For the current generation, `rotation = 0` plus carefully approved horizontal flip is safer than arbitrary rotation.
 
 ---
 
-# 23. Suggested semantic metadata
+# 22. Semantic Selection
 
-Each chunk should eventually carry something equivalent to:
+Selection should be owned by explicit presentation metadata/resources rather than filename inference at runtime.
 
-```json
-{
-  "id": "depth_woodland_ravine_v1",
-  "biomes": ["woodland"],
-  "size_class": "large",
-  "topologies": [
-    "edge_gap",
-    "edge_long",
-    "edge_large_void"
-  ],
-  "weight": 0.35,
-  "allow_flip_x": true,
-  "terrain_contact_edge": "north",
-  "collision": false,
-  "navigation": false,
-  "presentation_only": true
-}
+Depth profiles need enough data to express:
+
+```text
+family identity
+biome eligibility
+size class
+weight
+minimum region size
+placement domain
+allowed region/topology kinds
+terrain-contact edge
+overlap rows
+pivot
+footprint
+chasm/core exclusion geometry
+flip policy
+tags
 ```
 
-Universal assets:
+The existing `TerrainStampProfile` resource path is the live authority for baseline depth placement.
 
-```json
-"biomes": ["*"]
-```
-
-This metadata should control selection.
-
-Do not infer semantic purpose from filename parsing at runtime.
+The follow-on batch should join that authority instead of creating a parallel selector.
 
 ---
 
-# 24. Placement clearance
+# 23. Placement Clearance
 
-Depth chunks must never create a visual contradiction underneath:
+Depth chunks must never create visual contradictions underneath:
 
-* major building interiors
-* authored connected maps
-* transfer sequences
-* explicit black/void presentation regions
-* special hero connectors that own their own backdrop
+- major building interiors
+- authored connected maps
+- transfer sequences
+- explicit black/void presentation regions
+- hero connectors that own their own backdrop
+- ingress/route areas whose readability would be damaged by a scenic plate
 
-So chunk placement should respect presentation exclusion regions.
-
-Carrow itself is a perfect example.
-
-The Machine House interior should **not** inherit these chunks merely because
-the camera happens to move over their world coordinates.
+Placement must respect presentation exclusion and clearance regions.
 
 ---
 
-# 25. Connected-map isolation
+# 24. Connected-Map Isolation
 
 This family belongs to the **procgen exterior presentation stack**.
 
-When transitioning:
+When transitioning away from procgen into an authored connected map such as Carrow Yard or the East Machine House interior, the procgen depth presentation root must be suppressed. It should be restored on return to the procgen world.
 
-```text
-procgen world
-→ Carrow Yard connected map
-```
-
-the procgen depth-chunk root should be hidden.
-
-When transitioning back:
-
-```text
-Carrow Yard
-→ procgen
-```
-
-restore it.
-
-Same for:
-
-```text
-East Machine House interior
-```
-
-No woodland basin behind the electrical room ever again.
+No procgen woodland basin or other exterior depth plate should appear behind an interior merely because world coordinates overlap.
 
 ---
 
-# 26. Far backdrop after this change
+# 25. Far Backdrop Relationship
 
-The current camera-following forest should no longer be the dominant
-environment.
-
-Once these chunks ship, the surviving FAR layer should become extremely
-restrained.
-
-Something closer to:
+The far layer should remain restrained:
 
 ```text
 haze
 distant relief
-very dark canopy suggestion
-distant rock mass
+very dark canopy/rock suggestion
 atmospheric gradient
 ```
 
-at perhaps:
+The authored depth chunks provide tangible world mass. The FAR layer provides atmosphere.
 
-```text
-0.15–0.30 alpha
-```
-
-depending on profile.
-
-The authored chunks provide the tangible world.
-
-The FAR layer provides atmosphere.
+The old camera-following scenic wallpaper should not dominate the environment.
 
 ---
 
-# 27. Near-depth relationship
+# 26. Near-Depth Relationship
 
-These chunks do **not** replace cliff faces.
+Depth chunks do not replace cliff faces.
 
-Near edges should still be rendered with:
-
-* `ProcgenVoidCliffFace`
-* terrain-derived rock edges
-* retaining structures
-* edge transitions
+Near edges remain the responsibility of terrain-derived cliff/retaining-edge presentation such as `ProcgenVoidCliffFace` and related terrain/structure systems.
 
 Conceptually:
 
@@ -1400,15 +783,15 @@ PLAYABLE FLOOR
     far atmosphere
 ```
 
-The chunk starts visually underneath the cliff.
-
-That's what makes the landmass stop looking pasted onto a scenic background.
+The chunk begins visually beneath the near terrain edge.
 
 ---
 
-# 28. V2 asset family split
+# 27. Baseline Runtime Integration
 
-Use **three V2 families**, rather than one giant family:
+The original nine assets are no longer merely a future art proposal.
+
+They are represented as three live V2 families:
 
 ```text
 procgen_depth_universal
@@ -1416,177 +799,118 @@ procgen_depth_scrubland
 procgen_depth_woodland
 ```
 
-## Universal
+Their runtime textures are referenced by production `TerrainStampProfile` resources under:
 
 ```text
-civic_foundation_breach
-fractured_ravine
-service_infrastructure_field
-talus_and_rubble_shelf
+custodian/content/procgen/presentation/depth_chunks/
 ```
 
-## Scrubland
+The macro presentation validation exercises universal, scrubland, and woodland family eligibility.
 
-```text
-dry_basin
-wash_channel
-service_scar
-```
-
-## Woodland
-
-```text
-canopy_basin
-ravine
-```
-
-That makes later expansion clean:
-
-```text
-procgen_depth_wetland
-procgen_depth_rocky_upland
-```
-
-without rewriting an enormous family contract.
+This is the current integration path to extend.
 
 ---
 
-# 29. Source directory
+# 28. Follow-On Runtime Integration Required
 
-Save the nine generated masters exactly here:
+The follow-on `procgen_depth_chunks` family is successfully ingested but is **not yet part of the live biome presentation selection**.
 
-```text
-custodian/asset_drop/source_work/
-procgen_depth_chunks_v1/
-```
+The next implementation slice should:
 
-with the nine canonical filenames.
+1. Add presentation profiles for the three Wetland assets.
+2. Add presentation profiles for the three Rocky Upland assets.
+3. Add a Woodland presentation profile for `woodland_overgrown_works`.
+4. Extend biome family/eligibility selection so Wetland can choose universal + Wetland follow-on depth art.
+5. Extend biome family/eligibility selection so Rocky Upland can choose universal + Rocky follow-on depth art.
+6. Extend Woodland so `woodland_overgrown_works` augments the existing Woodland pair unless an explicit supersession decision is made.
+7. Preserve seeded deterministic selection, clearance rules, connected-map isolation, collision/navigation authority, and the existing baseline profiles.
+8. Add focused validation proving the new families/states are selectable only in the intended biomes and that deterministic selection remains stable.
 
-Do not put them straight into `content/`.
+Do **not** re-ingest the seven PNGs as part of this task. They are already runtime/catalog assets.
 
-Then do the same process established with Carrow:
-
-```text
-SOURCE MASTER
-        ↓
-V2 prep
-        ↓
-review contact sheet
-        ↓
-asset_drop/inbox/<family>
-        ↓
-asset plan
-        ↓
-asset ingest
-        ↓
-canonical runtime
-```
+Do **not** create a second depth-chunk selection system.
 
 ---
 
-# 30. Minimum runtime test scene
+# 29. Review Scene / Visual Validation
 
-Before wiring this into full procgen, build one test scene:
-
-```text
-DepthChunkReview.tscn
-```
-
-It should show:
+The existing depth-chunk review tooling should remain useful for checking:
 
 ```text
-generated-looking playable plateau
-cliff edge
-one depth chunk
-far background
-operator for scale
-```
-
-with hotkeys to cycle:
-
-```text
-1 universal
-2 scrubland
-3 woodland
-
-F flip
-N next
-B previous
-```
-
-and maybe:
-
-```text
+playable plateau / terrain edge
+one selected depth chunk
+far backdrop
+Operator or equivalent scale reference
+biome cycling
+horizontal-flip review where permitted
 day/night preview
 weather preview
 ```
 
-This will tell us very quickly whether the assets need further normalization.
+Visual review should answer:
+
+- Does the chunk clearly sit below playable terrain?
+- Does the alpha edge disappear naturally under the terrain contact zone?
+- Does it look consistent with the world camera and pixel/detail density?
+- Does it remain subordinate under day/night/weather presentation?
+- Does it ever imply reachable ground?
+- Does it overlap neighboring chunks without obvious rectangular seams?
 
 ---
 
-# 31. Definition of Done
+# 30. Definition of Done
 
-The nine-chunk family is production-ready when:
+The **baseline nine** are considered production-integrated when:
 
-* every master exists under `source_work`
-* true alpha is verified
-* no rectangular matte survives
-* LARGE outputs are exactly `896×576`
-* MEDIUM outputs are exactly `640×448`
-* no runtime code references source masters
-* V2 catalog owns all runtime outputs
-* chunks are placed in world space
-* chunks never follow the camera
-* chunks do not affect navigation
-* chunks do not affect collision
-* chunks are selected deterministically
-* biome eligibility is respected
-* geometry topology influences chunk choice
-* connected maps suppress procgen depth presentation
-* playable terrain visually overlaps the chunk contact zone
-* FAR backdrop is subordinate
-* nighttime/weather still preserve scene readability
-* normal gameplay does not mistake underlay terrain for reachable space
+- source masters remain preserved
+- V2 runtime/catalog outputs exist
+- `TerrainStampProfile` resources point to canonical runtime textures
+- deterministic selection uses those profiles
+- Scrubland and Woodland biome eligibility works
+- universal fallback works
+- collision/navigation remain unaffected
+- connected maps suppress procgen depth presentation
+
+The **follow-on seven** are considered production-integrated when:
+
+- current source masters remain preserved
+- all seven V2 runtime/catalog outputs remain intact
+- Wetland/Rocky/Overgrown presentation profiles exist
+- Wetland selects universal + appropriate Wetland depth profiles
+- Rocky Upland selects universal + appropriate Rocky profiles
+- Woodland can select the new overgrown-works profile alongside its existing baseline pair unless explicitly superseded
+- selection remains deterministic for a given seed/context
+- clearance/exclusion rules are preserved
+- no runtime consumer points into `asset_drop`
+- focused procgen macro-presentation validation passes
+- nighttime/weather preserve scene readability
+- normal gameplay does not mistake underlay scenery for reachable space
 
 ---
 
-# Current State
-
-The nine generated masters give a surprisingly good first library:
+# Current State Summary
 
 ```text
-UNIVERSAL
-├── civic foundation breach
-├── fractured ravine
-├── service infrastructure field
-└── talus/rubble shelf
+SOURCE MASTERS
+  retained
 
-SCRUBLAND
-├── dry basin
-├── wash channel
-└── reclaimed service scar
+ACTIVE PRODUCTION_PREP
+  empty after housekeeping
 
-WOODLAND
-├── canopy basin
-└── wooded ravine
+DEPTH INBOX
+  empty
+
+BASELINE 9
+  V2 ingested
+  runtime present
+  TerrainStampProfile presentation resources present
+  universal/scrubland/woodland selection integrated
+
+FOLLOW-ON 7
+  V2 ingested successfully
+  runtime present
+  generated catalog present
+  not yet registered into macro presentation selection
 ```
 
-That is already enough variety to completely replace the current "forest
-wallpaper under everything" look for the first implementation.
-
-Do **not** generate wetland and rocky upland yet. First get these nine
-normalized and placed. If a procedural world using just these already looks
-dramatically better, then the architecture works and the next art batch can
-cover the remaining biome families rather than guessing.
-
-**Track:** initial environment work = biomes + day/night + weather.
-**Problem discovered:** current camera-following procgen underlay is
-aesthetically weak and leaks into connected interiors.
-**Decided replacement:** terrain-derived near edges + world-positioned
-authored depth chunks + restrained far atmosphere.
-**Current:** nine production source chunks covering universal, scrubland, and
-woodland are generated and now have a complete production contract.
-**Next:** Asset Pipeline V2 normalization/ingest → depth-chunk review scene →
-topology-based procgen placement → then wetland/rocky-upland expansion if the
-runtime proof succeeds.
+**Current next step:** integrate the already-ingested `procgen_depth_chunks` Wetland, Rocky Upland, and Woodland-overgrown states into the existing `TerrainStampProfile` / macro-presentation authority. No new art generation or Asset V2 ingest is required for that slice.
