@@ -115,6 +115,14 @@ class MotionFrame:
     warnings: tuple[str, ...] = field(default_factory=tuple)
 
 
+@dataclass(frozen=True)
+class MotionPresentationOffsets:
+    """Presentation-only offsets with an explicit screen-space actor contract."""
+
+    world_offset: tuple[float, float]
+    actor_screen_offset: tuple[float, float]
+
+
 def direction_vector(direction: str) -> tuple[float, float]:
     vectors = {
         "e": (1.0, 0.0), "w": (-1.0, 0.0), "n": (0.0, -1.0),
@@ -278,18 +286,21 @@ def presentation_offsets(
     sample: MotionSample,
     *,
     loop: bool,
-) -> tuple[tuple[float, float], tuple[float, float]]:
-    """Return (world_offset, actor_offset) for treadmill or followed world presentation."""
+) -> MotionPresentationOffsets:
+    """Return independent world and final actor screen offsets."""
     travel_root = sample.continuous_root_displacement if loop else sample.root_displacement
     distance = sample.continuous_position_px if loop else sample.position_px
 
     if config.mode == "treadmill":
-        return (-travel_root[0], -travel_root[1]), (0.0, 0.0)
+        return MotionPresentationOffsets((-travel_root[0], -travel_root[1]), (0.0, 0.0))
 
     dx, dy = direction_vector(config.direction)
     camera_follow = max(0.0, distance - WORLD_FOLLOW_DISTANCE_PX)
     world_offset = (-dx * camera_follow, -dy * camera_follow)
-    return world_offset, travel_root
+    return MotionPresentationOffsets(
+        world_offset,
+        (travel_root[0] + world_offset[0], travel_root[1] + world_offset[1]),
+    )
 
 
 def visible_ruler_distances(
@@ -375,7 +386,8 @@ class MotionPreviewRenderer:
     def render(self, config: MotionConfig, elapsed_sec: float, *, loop: bool, show_grid: bool = True,
                show_start_ghost: bool = True, show_contact_markers: bool = True) -> MotionFrame:
         sample = sample_motion(config, elapsed_sec, loop=loop)
-        world_offset, actor_offset = presentation_offsets(config, sample, loop=loop)
+        offsets = presentation_offsets(config, sample, loop=loop)
+        world_offset = offsets.world_offset
         canvas = self._background(config.canvas_size, world_offset, show_grid)
         anchor = (config.canvas_size[0] / 2, OPERATOR_ANCHOR[1])
         if show_grid:
@@ -383,8 +395,8 @@ class MotionPreviewRenderer:
         if show_start_ghost and self.frames:
             self._paste_center(canvas, self.frames[0], (anchor[0] + world_offset[0], anchor[1] + world_offset[1]), 0.22)
         self._paste_center(canvas, self.frames[sample.frame_index], (
-            anchor[0] + actor_offset[0] + world_offset[0],
-            anchor[1] + actor_offset[1] + world_offset[1],
+            anchor[0] + offsets.actor_screen_offset[0],
+            anchor[1] + offsets.actor_screen_offset[1],
         ))
         if show_contact_markers:
             draw = ImageDraw.Draw(canvas, "RGBA")

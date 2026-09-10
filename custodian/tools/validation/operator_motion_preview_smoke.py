@@ -16,6 +16,7 @@ from animation_motion_preview import (
     presentation_offsets, sample_motion, scrub_motion, visible_ruler_distances,
 )
 from animation_preview import SemanticIdentity
+from animation_preview import consume_frame_time
 
 
 def digest_tree(root: Path) -> str:
@@ -43,6 +44,18 @@ values = [curve_progress("attack_lunge", step / 100) for step in range(101)]
 assert values[0] == 0.0 and values[-1] == 1.0
 assert all(left <= right for left, right in zip(values, values[1:]))
 assert ground_phase((-33.2, -65.0), (32, 32)) == (30, 31)
+
+# Requested Preview/Timeline FPS must be driven by elapsed time, not a 30 Hz divisor.
+for requested_fps in (8, 10, 12, 14, 18, 20, 24):
+    elapsed = 1.0
+    steps = 0
+    while True:
+        due, elapsed = consume_frame_time(elapsed, requested_fps)
+        if not due:
+            break
+        steps += 1
+    assert steps == requested_fps, (requested_fps, steps)
+    assert elapsed < 1e-9
 
 # --- Continuous treadmill loop semantics ------------------------------------
 # 10 frames @ 10 FPS -> a 1.0s animation cycle; 128px LINEAR travel per cycle.
@@ -94,10 +107,9 @@ for direction, expected in {
 # WORLD keeps a 96px actor lead and follows cumulative displacement after it.
 world = MotionConfig(identity, 10.0, 128.0, "linear", "e", mode="world", frame_count=10, loop_cycles=3)
 world_sample = sample_motion(world, 1.5, loop=True)
-world_offset, actor_offset = presentation_offsets(world, world_sample, loop=True)
-assert world_offset == (-96.0, -0.0)
-assert actor_offset == (192.0, 0.0)
-assert actor_offset[0] + world_offset[0] == 96.0
+world_offsets = presentation_offsets(world, world_sample, loop=True)
+assert world_offsets.world_offset == (-96.0, -0.0)
+assert world_offsets.actor_screen_offset == (96.0, 0.0)
 
 # Ruler labels are absolute and derived from the visible viewport.
 ticks = visible_ruler_distances((768, 384), "e", (384, 224), (-320.0, 0.0))
@@ -125,6 +137,18 @@ with tempfile.TemporaryDirectory(prefix="operator_motion_treadmill_") as raw:
     ground_before = -before_frame.sample.continuous_root_displacement[0]
     ground_after = -after_frame.sample.continuous_root_displacement[0]
     assert ground_after < ground_before, "ground scrolled backward across a cycle boundary"
+    for elapsed in (0.0, 0.5, 2.5):
+        rendered = renderer.render(tread, elapsed, loop=True, show_grid=False, show_start_ghost=False)
+        alpha_bounds = rendered.image.getchannel("A").getbbox()
+        # The opaque review background fills the image, so inspect the known red actor pixels.
+        red_bounds = Image.new("1", rendered.image.size)
+        source_pixels = rendered.image.load()
+        red_pixels = red_bounds.load()
+        for y in range(rendered.image.height):
+            for x in range(rendered.image.width):
+                red_pixels[x, y] = source_pixels[x, y][:3] == (255, 0, 0)
+        assert alpha_bounds is not None
+        assert red_bounds.getbbox() == (380, 220, 388, 228), (elapsed, red_bounds.getbbox())
 
 with tempfile.TemporaryDirectory(prefix="operator_motion_readonly_") as raw:
     root = Path(raw); sentinel = root / "runtime.png"

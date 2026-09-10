@@ -107,6 +107,8 @@ class OperatorWorkbenchApp(App):
         self.motion_renderer = None
         self.motion_markers = ()
         self._motion_last_tick = time.monotonic()
+        self._preview_last_tick = time.monotonic()
+        self._preview_elapsed_sec = 0.0
 
     def on_mount(self) -> None:
         self.main_screen = MainScreen()
@@ -245,7 +247,7 @@ class OperatorWorkbenchApp(App):
             self._render_motion()
             return
         frames = len(self.timeline_frames) if self.state.mode == "timeline" else len(self.preview_view.frames) if self.preview_view else 0
-        if frames: self.state.preview_frame = round(event.ratio * (frames - 1)); self._render_preview()
+        if frames: self.state.preview_frame = round(event.ratio * (frames - 1)); self._reset_preview_clock(); self._render_preview()
 
     async def on_animation_tree_selected(self, event: AnimationTree.Selected) -> None:
         selection = self.state.contextualize(event.selection)
@@ -267,6 +269,7 @@ class OperatorWorkbenchApp(App):
 
     def _set_mode(self, mode: str) -> None:
         self.state.mode = mode
+        self._reset_preview_clock()
         ids = {"plan": "#plan-mode", "workbench": "#workspace-row", "preview": "#preview-mode", "timeline": "#timeline-mode", "motion": "#motion-mode"}
         for name, selector in ids.items(): self._main_widget(selector, Widget).set_class(name != mode, "hidden")
         self._main_widget("#context-key-bar", ContextKeyBar).set_mode(mode)
@@ -290,6 +293,7 @@ class OperatorWorkbenchApp(App):
         try:
             self.preview_view = await self._thread(self.service.preview, selection, self.state.preview_source)
             self.state.preview_frame = min(self.state.preview_frame, len(self.preview_view.frames) - 1)
+            self._reset_preview_clock()
             self._render_preview()
         except Exception as error: self._error(error)
 
@@ -370,14 +374,14 @@ class OperatorWorkbenchApp(App):
             self.state.motion.playing = not self.state.motion.playing
             self._motion_last_tick = time.monotonic(); self._render_motion(); return
         if self.state.mode not in ("preview", "timeline"): return
-        self.state.preview_playing = not self.state.preview_playing; self._render_preview()
+        self.state.preview_playing = not self.state.preview_playing; self._reset_preview_clock(); self._render_preview()
     def action_preview_previous(self):
         if self.state.mode == "motion" and self.preview_view:
             self.state.motion.playing = False
             frame = max(0, self.state.preview_frame - 1)
             self.state.motion.elapsed_sec = frame / self.state.review_fps
             self._render_motion(); return
-        if self.preview_view or self.timeline_frames: self.state.preview_frame = max(0, self.state.preview_frame - 1); self._render_preview()
+        if self.preview_view or self.timeline_frames: self.state.preview_frame = max(0, self.state.preview_frame - 1); self._reset_preview_clock(); self._render_preview()
     def action_preview_next(self):
         if self.state.mode == "motion" and self.preview_view:
             self.state.motion.playing = False
@@ -390,15 +394,15 @@ class OperatorWorkbenchApp(App):
             self.state.preview_frame = 0 if self.state.preview_loop and self.state.preview_frame == last else min(last, self.state.preview_frame + 1); self._render_preview()
     def action_preview_first(self):
         if self.state.mode == "motion": self.state.motion.elapsed_sec = 0.0; self.state.motion.playing = False; self._render_motion(); return
-        self.state.preview_frame = 0; self._render_preview()
+        self.state.preview_frame = 0; self._reset_preview_clock(); self._render_preview()
     def action_preview_last(self):
         if self.state.mode == "motion" and self.preview_view:
             self.state.motion.elapsed_sec = len(self.preview_view.frames) / self.state.review_fps
             self.state.motion.playing = False; self._render_motion(); return
         frames = len(self.timeline_frames) if self.state.mode == "timeline" else len(self.preview_view.frames) if self.preview_view else 0
-        if frames: self.state.preview_frame = frames - 1; self._render_preview()
-    def action_preview_slower(self): self.state.review_fps = max(1.0, self.state.review_fps - 1.0); self._render_motion() if self.state.mode == "motion" else self._render_preview()
-    def action_preview_faster(self): self.state.review_fps = min(30.0, self.state.review_fps + 1.0); self._render_motion() if self.state.mode == "motion" else self._render_preview()
+        if frames: self.state.preview_frame = frames - 1; self._reset_preview_clock(); self._render_preview()
+    def action_preview_slower(self): self.state.review_fps = max(1.0, self.state.review_fps - 1.0); self._reset_preview_clock(); self._render_motion() if self.state.mode == "motion" else self._render_preview()
+    def action_preview_faster(self): self.state.review_fps = min(30.0, self.state.review_fps + 1.0); self._reset_preview_clock(); self._render_motion() if self.state.mode == "motion" else self._render_preview()
     def action_preview_loop(self):
         if self.state.mode == "motion": self.state.motion.loop = not self.state.motion.loop; self._render_motion(); return
         self.state.preview_loop = not self.state.preview_loop; self._render_preview()
@@ -406,6 +410,7 @@ class OperatorWorkbenchApp(App):
         if self.state.mode not in ("preview", "timeline", "motion"): return
         sources = ("workbench", "canonical", "runtime")
         self.state.preview_source = sources[(sources.index(self.state.preview_source) + 1) % len(sources)]
+        self._reset_preview_clock()
         task = self._load_timeline() if self.state.mode == "timeline" else self._load_motion_preview() if self.state.mode == "motion" else self._load_preview()
         self.run_worker(task, group="preview-image", exclusive=True)
 
@@ -526,6 +531,10 @@ class OperatorWorkbenchApp(App):
             self._activity(f"sequence loaded: {self.sequence.name}", "OK")
         except Exception as error: self._error(error)
 
+    def _reset_preview_clock(self) -> None:
+        self._preview_last_tick = time.monotonic()
+        self._preview_elapsed_sec = 0.0
+
     def _preview_tick(self) -> None:
         if self.state.mode == "motion":
             now = time.monotonic()
@@ -542,18 +551,28 @@ class OperatorWorkbenchApp(App):
                 motion.elapsed_sec = duration
                 motion.playing = False
             self._render_motion(); return
+        now = time.monotonic()
+        delta = max(0.0, now - self._preview_last_tick)
+        self._preview_last_tick = now
         if self.state.mode not in ("preview", "timeline") or not self.state.preview_playing: return
-        counter = getattr(self, "_preview_tick_counter", 0) + 1
-        self._preview_tick_counter = counter
-        fps = self.state.review_fps
-        if self.state.mode == "timeline" and self.timeline_frames:
-            fps = self.sequence.clips[self.timeline_frames[self.state.preview_frame][0]].review_fps
-        if counter % max(1, round(30.0 / fps)) == 0: self.action_preview_next()
+        self._preview_elapsed_sec += delta
+        while self.state.preview_playing:
+            fps = self.state.review_fps
+            if self.state.mode == "timeline" and self.timeline_frames:
+                clip_index = self.timeline_frames[self.state.preview_frame][0]
+                fps = self.sequence.clips[clip_index].review_fps
+            due, self._preview_elapsed_sec = animation_preview.consume_frame_time(
+                self._preview_elapsed_sec, fps,
+            )
+            if not due:
+                break
+            self.action_preview_next()
 
     async def _load_timeline(self) -> None:
         try:
             self.timeline_frames = await self._thread(self.service.flatten_sequence, self.sequence, self.state.preview_source)
             self.state.preview_frame = min(self.state.preview_frame, max(0, len(self.timeline_frames) - 1))
+            self._reset_preview_clock()
             self._render_preview()
         except Exception as error: self._error(error)
 

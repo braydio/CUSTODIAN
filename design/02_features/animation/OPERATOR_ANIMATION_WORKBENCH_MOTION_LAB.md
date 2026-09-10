@@ -20,13 +20,17 @@ to the 32 px review grid with an explicit warning.
 
 ## Motion contract
 
-- Requested review FPS drives the animation frame clock in both previews.
+- Requested review FPS drives an elapsed-time animation clock in Preview,
+  Timeline, and Motion; the UI refresh interval never quantizes the requested
+  rate.
 - Each animation cycle traverses the configured root distance and curve.
 - Looping defaults to three cycles; selectable spans are 2, 3, 4, 6, and 8.
 - Animation phase wraps every cycle while cumulative root/world displacement
   wraps only after the configured cycle span.
 - Non-looping playback performs one traversal and stops at its terminal pose.
-- TREADMILL fixes the actor to the anchor and scrolls the world immediately.
+- Presentation output separates `world_offset` from `actor_screen_offset`.
+  TREADMILL fixes the actor to the anchor (`actor_screen_offset == ZERO`) and
+  scrolls the world immediately; renderers never add world offset to the actor.
 - WORLD allows a 96 px actor lead, then follows with the camera while absolute
   cumulative travel continues.
 - Absolute ruler ticks are derived from the visible viewport at 32 px spacing;

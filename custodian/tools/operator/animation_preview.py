@@ -9,6 +9,14 @@ from typing import Literal
 
 from PIL import Image
 
+
+def consume_frame_time(elapsed_sec: float, fps: float) -> tuple[bool, float]:
+    """Consume one exact frame interval while retaining sub-frame elapsed time."""
+    frame_duration = 1.0 / max(0.001, float(fps))
+    if elapsed_sec + 1e-12 < frame_duration:
+        return False, max(0.0, elapsed_sec)
+    return True, max(0.0, elapsed_sec - frame_duration)
+
 PreviewSource = Literal["workbench", "canonical", "runtime"]
 ZoomMode = Literal["auto", "1x", "2x", "3x", "fit"]
 PLAN_SCHEMA = "custodian.operator_animation_implementation_plan.v1"

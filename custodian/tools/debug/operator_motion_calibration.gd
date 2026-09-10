@@ -157,9 +157,10 @@ func presentation_offsets(sample: Dictionary) -> Dictionary:
 	var root: Vector2 = sample.continuous_root if looping else sample.phase_root
 	var distance: float = sample.continuous_position if looping else sample.phase_position
 	if String(request.get("mode", "treadmill")) == "treadmill":
-		return {"world": -root, "actor": Vector2.ZERO}
+		return {"world_offset": -root, "actor_screen_offset": Vector2.ZERO}
 	var follow := maxf(0.0, distance - WORLD_FOLLOW_DISTANCE_PX)
-	return {"world": -direction_vector() * follow, "actor": root}
+	var world_offset := -direction_vector() * follow
+	return {"world_offset": world_offset, "actor_screen_offset": root + world_offset}
 
 
 func _build_runtime_view() -> void:
@@ -181,7 +182,7 @@ func _build_runtime_view() -> void:
 func _draw() -> void:
 	draw_rect(Rect2(Vector2.ZERO, CANVAS_SIZE), Color("12161d"))
 	var offsets := presentation_offsets(sample_motion(elapsed_sec))
-	var world_offset: Vector2 = offsets.world
+	var world_offset: Vector2 = offsets.world_offset
 	if ground_texture:
 		var phase := Vector2(fposmod(world_offset.x, ground_tile_size.x), fposmod(world_offset.y, ground_tile_size.y))
 		for y in range(int(phase.y) - ground_tile_size.y, int(CANVAS_SIZE.y), ground_tile_size.y):
@@ -214,7 +215,7 @@ func _update_presentation() -> void:
 	var sample := sample_motion(elapsed_sec)
 	var offsets := presentation_offsets(sample)
 	for sprite in animation_layers:
-		sprite.position = ANCHOR + offsets.actor + offsets.world
+		sprite.position = ANCHOR + offsets.actor_screen_offset
 		sprite.frame = mini(frame_count - 1, int(floor(sample.normalized * float(frame_count))))
 	if status_label:
 		status_label.text = ("%s\n%s · %.0f px/cycle\n%s · cycle %d/%d\n%.0f px total") % [

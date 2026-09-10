@@ -300,6 +300,11 @@ MOTION is a non-mutating physical calibration view over that same composed
 source. It selects real cardinal sibling variants, shares a seven-surface ground
 registry with Godot, and compares cycle-bounded cumulative travel in treadmill
 or WORLD camera-follow mode over viewport-derived absolute 32 px ruler ticks.
+The Python and Godot presenters share an explicit world-offset versus
+actor-screen-offset contract: treadmill actors remain pixel-stationary at the
+anchor, while WORLD retains its 96 px screen lead. Preview and Timeline consume
+monotonic elapsed time at their displayed per-clip FPS instead of quantizing
+playback through the 30 Hz UI refresh timer.
 Looping defaults to three animation cycles before root/world reset, with
 2/3/4/6/8-cycle spans and full-span scrubbing. Review FPS, travel, cycle span,
 and curve remain disposable review inputs rather than gameplay timing or combat

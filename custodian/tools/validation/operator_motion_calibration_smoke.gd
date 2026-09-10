@@ -28,21 +28,24 @@ func _init() -> void:
 	if not is_equal_approx(harness.sample_motion(harness.cycle_duration() * 0.6).progress, harness.curve_progress(0.6)):
 		_fail("modes do not share normalized curve"); return
 	var treadmill := harness.presentation_offsets(first_cycle)
-	if not is_equal_approx((treadmill.world as Vector2).x, -128.0) or treadmill.actor != Vector2.ZERO:
+	if not is_equal_approx((treadmill.world_offset as Vector2).x, -128.0) or treadmill.actor_screen_offset != Vector2.ZERO:
 		_fail("treadmill displacement mismatch"); return
 	harness.request["mode"] = "world"
 	var world_sample := harness.sample_motion(harness.cycle_duration() * 1.5)
 	var world := harness.presentation_offsets(world_sample)
-	if not is_equal_approx((world.world as Vector2).x, -96.0) or not is_equal_approx((world.actor as Vector2).x, 192.0):
+	if not is_equal_approx((world.world_offset as Vector2).x, -96.0) or not is_equal_approx((world.actor_screen_offset as Vector2).x, 96.0):
 		_fail("WORLD follow displacement mismatch"); return
 	if harness.ground_presets.size() != 7 or harness.ground_texture == null:
 		_fail("shared ground registry did not load"); return
+	harness.request["mode"] = "treadmill"
 	root.add_child(harness)
 	harness._build_runtime_view()
 	harness.elapsed_sec = harness.cycle_duration() * 0.5
 	harness._update_presentation()
 	if harness.animation_layers.is_empty() or harness.animation_layers[0].frame != 5:
 		_fail("requested review FPS did not drive runtime frame sampling"); return
+	if harness.animation_layers[0].position != harness.ANCHOR:
+		_fail("treadmill actor moved away from the screen anchor"); return
 	if harness.animation_layers[0].is_playing():
 		_fail("runtime SpriteFrames retained its independent playback clock"); return
 	harness.free()
