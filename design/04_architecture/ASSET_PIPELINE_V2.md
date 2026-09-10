@@ -309,6 +309,22 @@ human inputs are covered. Side effects of specialized post-process hooks are not
 fully transactional. Pre-existing duplicate outputs are never recorded as creates and
 therefore are never deleted during rollback.
 
+### Godot `.import` sidecars
+
+Repository-owned `.import` sidecars participate in rollback. For every planned runtime
+output and every superseded runtime target, `begin_transaction` journals the sidecar
+alongside the PNG:
+
+- an existing `<target>.png.import` is backed up and restored byte-for-byte on rollback;
+- an absent one is registered as a created target, so a sidecar Godot writes during a
+  failed import is removed on rollback instead of being orphaned.
+
+The sidecar path is `<target>.png.import` — built as `Path(str(target) + ".import")`,
+never `with_suffix(".import")`, which would wrongly yield `<target>.import`.
+
+Godot's `.godot/imported/` cache is disposable, already outside repository coverage,
+and deliberately not journaled.
+
 ---
 
 ## Provenance
@@ -375,7 +391,13 @@ The new `asset` command is now the **preferred** human interface.
 `asset_drop/.gdignore` keeps all human inbox, staging, archive, and receipt data
 outside Godot resource authority. Successful V2 inputs move to
 `asset_drop/archive/<job_id>/<family>/`; dry-run, ambiguity, conflict, and failure do
-not archive them. `asset ingest --godot-import` explicitly runs headless import.
+not archive them. `asset ingest --godot-import` explicitly runs headless import; it
+allows **300 seconds** by default, since a cold full-project import routinely runs past
+two minutes. Override per run with `asset ingest <family> --godot-import
+--godot-import-timeout <seconds>`. The default lives in one place —
+`DEFAULT_GODOT_IMPORT_TIMEOUT_SEC` in `adapters/godot_import.py` — and the CLI flag
+reads from it, so there is no second timeout authority. A timeout reports the value
+actually configured, e.g. `godot import timed out (300s)`.
 
 Status is layered: `SOURCE_PENDING`, `ART_PRESENT`, `IMPORTED`, `BOUND`, and
 `RUNTIME_VERIFIED`. Required completeness uses catalog-backed runtime art, never inbox

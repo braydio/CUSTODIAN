@@ -230,7 +230,11 @@ const SET_PIECES := {
 	# floor obstruction and circulation runs around it.
 	&"zone04_locker_reliquary": [
 		{"id": "dry_basin", "label": "CENTRAL DRY BASIN", "position": Vector2(704, -1984), "size": Vector2(128, 128), "blocking": true},
-		{"id": "p9_locker", "label": "P-9 DESIGNATION LOCKER", "position": Vector2(836, -1944), "size": Vector2(88, 96), "blocking": true, "prop": true},
+		# Wall-integrated relief: the 128x160 faceplate is visual only, so the
+		# footprint is the shallow base projection under the locker, centered on
+		# the .tscn collider at (832, -1952) + (0, 64). The interact/visual anchor
+		# stays at (832, -1952) in MARKERS.
+		{"id": "p9_locker", "label": "P-9 DESIGNATION LOCKER", "position": Vector2(832, -1888), "size": Vector2(112, 32), "blocking": true, "prop": true},
 		{"id": "inactive_locker_a", "label": "INACTIVE LOCKER", "position": Vector2(832, -2112), "size": Vector2(88, 96), "blocking": false},
 		{"id": "inactive_locker_b", "label": "INACTIVE LOCKER", "position": Vector2(576, -2112), "size": Vector2(88, 96), "blocking": false},
 		{"id": "inactive_locker_c", "label": "INACTIVE LOCKER", "position": Vector2(576, -1824), "size": Vector2(88, 96), "blocking": false},

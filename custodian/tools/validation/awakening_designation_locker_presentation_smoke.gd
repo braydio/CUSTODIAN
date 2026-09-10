@@ -9,6 +9,7 @@ extends SceneTree
 ## ends on `empty` with re-interaction unable to duplicate the sidearm.
 
 const SCENE := preload("res://scenes/awakening_first_return.tscn")
+const Layout := preload("res://game/world/awakening/awakening_layout.gd")
 
 const ART_ROOT := "res://content/sprites/environment/props/awakening/awakening_designation_locker/runtime/body"
 const EXPECTED_ART := {
@@ -20,6 +21,14 @@ const EXPECTED_ART := {
 
 const RETIRED_ART_DIR := "res://content/sprites/props/storage/field_retention_locker"
 const FRAME_SIZE := Vector2i(128, 160)
+
+## Geometry calibration contract. The 128x160 faceplate is a wall-integrated
+## relief, so the physical body is a shallow base projection, not the art canvas.
+const ANCHOR := Vector2(832, -1952)
+const COLLIDER_SIZE := Vector2(112, 32)
+const COLLIDER_OFFSET := Vector2(0, 64)
+const FOOTPRINT_CENTER := Vector2(832, -1888)
+const SPRITE_VISUAL_OFFSET := Vector2(72, 0)
 
 var _failures: Array[String] = []
 
@@ -40,8 +49,13 @@ func _init() -> void:
 		_report()
 		return
 
-	if locker.position != Vector2(832, -1952):
+	if locker.position != ANCHOR:
 		_fail("SidearmLocker drifted from the authored coordinate: %s" % str(locker.position))
+	if locker.global_position != ANCHOR:
+		_fail("SidearmLocker global anchor drifted: %s" % str(locker.global_position))
+
+	_check_collider(locker)
+	_check_layout_footprint()
 
 	var sprite := locker.get_node_or_null("LockerSprite") as AnimatedSprite2D
 	if sprite == null or sprite.sprite_frames == null:
@@ -53,6 +67,69 @@ func _init() -> void:
 	_check_closed_rest(locker, sprite)
 	await _check_authorization(locker, awakening, sprite)
 	_report()
+
+
+## The physical body is a shallow one-tile wall projection at the locker base,
+## deliberately narrower and much shallower than the 128x160 art canvas.
+func _check_collider(locker: Node) -> void:
+	var shape_node := locker.get_node_or_null("Body/CollisionShape2D") as CollisionShape2D
+	if shape_node == null:
+		_fail("SidearmLocker has no Body/CollisionShape2D")
+		return
+	if shape_node.position != COLLIDER_OFFSET:
+		_fail("collider local offset is %s, expected %s" % [
+			str(shape_node.position), str(COLLIDER_OFFSET),
+		])
+	var rectangle := shape_node.shape as RectangleShape2D
+	if rectangle == null:
+		_fail("collider is not a RectangleShape2D")
+		return
+	if rectangle.size != COLLIDER_SIZE:
+		_fail("collider size is %s, expected %s" % [str(rectangle.size), str(COLLIDER_SIZE)])
+	if rectangle.size == Vector2(FRAME_SIZE):
+		_fail("collider must not be the full art canvas")
+	if shape_node.global_position != FOOTPRINT_CENTER:
+		_fail("collider world center is %s, expected %s" % [
+			str(shape_node.global_position), str(FOOTPRINT_CENTER),
+		])
+
+
+## The layout entry exists so the geometry validator accounts for the prop; it
+## must agree with the .tscn collider it stands in for.
+func _check_layout_footprint() -> void:
+	var piece: Dictionary = {}
+	for candidate in Layout.set_pieces_for(&"zone04_locker_reliquary"):
+		if String(candidate.get("id", "")) == "p9_locker":
+			piece = candidate
+			break
+	if piece.is_empty():
+		_fail("no p9_locker set piece in zone04_locker_reliquary")
+		return
+	if Vector2(piece.get("position", Vector2.ZERO)) != FOOTPRINT_CENTER:
+		_fail("layout p9_locker footprint center is %s, expected %s" % [
+			str(piece.get("position")), str(FOOTPRINT_CENTER),
+		])
+	if Vector2(piece.get("size", Vector2.ZERO)) != COLLIDER_SIZE:
+		_fail("layout p9_locker footprint size is %s, expected %s" % [
+			str(piece.get("size")), str(COLLIDER_SIZE),
+		])
+	if not bool(piece.get("prop", false)):
+		_fail("layout p9_locker must stay prop = true")
+	if Layout.set_piece_rect(piece) != Rect2(FOOTPRINT_CENTER - COLLIDER_SIZE * 0.5, COLLIDER_SIZE):
+		_fail("layout p9_locker rect resolved unexpectedly: %s" % str(Layout.set_piece_rect(piece)))
+
+	var marker: Dictionary = {}
+	for candidate in Layout.markers_for(&"zone04_locker_reliquary"):
+		if String(candidate.get("id", "")) == "p9_locker":
+			marker = candidate
+			break
+	if marker.is_empty():
+		_fail("no p9_locker interactable marker in zone04_locker_reliquary")
+		return
+	if Vector2(marker.get("position", Vector2.ZERO)) != ANCHOR:
+		_fail("layout p9_locker interaction anchor is %s, expected %s" % [
+			str(marker.get("position")), str(ANCHOR),
+		])
 
 
 ## Every state resolves to a canonical Asset V2 runtime output.
@@ -138,6 +215,21 @@ func _check_closed_rest(locker: Node, sprite: AnimatedSprite2D) -> void:
 		_fail("closed locker should not be animating")
 	if int(locker.get("_state")) != 0:
 		_fail("locker did not start in the CLOSED state")
+
+	# Wall alignment is a pixel offset on the sprite; it must not leak into the
+	# node transform, the interaction anchor, or the interaction radius.
+	if sprite.offset != SPRITE_VISUAL_OFFSET:
+		_fail("sprite visual offset is %s, expected %s" % [
+			str(sprite.offset), str(SPRITE_VISUAL_OFFSET),
+		])
+	if sprite.position != Vector2.ZERO:
+		_fail("sprite alignment must use offset, not a child transform: %s" % str(sprite.position))
+	if Vector2(locker.call("get_interaction_position")) != ANCHOR:
+		_fail("interaction position is %s, expected %s" % [
+			str(locker.call("get_interaction_position")), str(ANCHOR),
+		])
+	if not is_equal_approx(float(locker.call("get_interaction_distance")), 84.0):
+		_fail("interaction distance changed: %s" % str(locker.call("get_interaction_distance")))
 
 
 func _check_authorization(locker: Node, awakening: Node, sprite: AnimatedSprite2D) -> void:

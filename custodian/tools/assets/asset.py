@@ -18,6 +18,7 @@ FAMILIES_DIR = PROJECT_DIR / "content/metadata/assets/families"
 if str(ASSETS_DIR) not in sys.path:
     sys.path.insert(0, str(ASSETS_DIR))
 
+from adapters.godot_import import DEFAULT_GODOT_IMPORT_TIMEOUT_SEC
 from asset_catalog import CatalogEntry, file_hash, load_catalog, save_catalog, update_catalog_entry
 from asset_contract import SCHEMA_VERSION, load_all_families, parse_family
 from asset_doctor import run_doctor
@@ -214,7 +215,7 @@ def cmd_ingest(args, families):
         import_result = None
         if args.godot_import:
             from adapters.godot_import import run_godot_import
-            import_result = run_godot_import(PROJECT_DIR)
+            import_result = run_godot_import(PROJECT_DIR, timeout_sec=args.godot_import_timeout)
             if not import_result.ok:
                 raise RuntimeError(import_result.detail)
         save_catalog(catalog)
@@ -450,7 +451,7 @@ def _output_flags(parser, *, verbose: bool = False) -> None:
     parser.add_argument("--json", action="store_true", help="Print stable machine-readable output.")
 
 
-def main():
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="asset")
     subs = parser.add_subparsers(dest="command", required=True)
     command = subs.add_parser("plan")
@@ -463,6 +464,9 @@ def main():
     command.add_argument("--dry-run", action="store_true")
     command.add_argument("--replace", action="store_true")
     command.add_argument("--godot-import", action="store_true")
+    command.add_argument("--godot-import-timeout", type=float, default=DEFAULT_GODOT_IMPORT_TIMEOUT_SEC,
+                         help="seconds to allow the Godot import when --godot-import is set "
+                              f"(default: {DEFAULT_GODOT_IMPORT_TIMEOUT_SEC})")
     command.add_argument("--no-mirror", action="store_true")
     command.add_argument("--verbose", action="store_true")
     command = subs.add_parser("status")
@@ -488,7 +492,11 @@ def main():
     _output_flags(command)
     command = subs.add_parser("doctor")
     _output_flags(command)
-    args = parser.parse_args()
+    return parser
+
+
+def main():
+    args = build_parser().parse_args()
     families = load_all_families()
     return globals()[f"cmd_{args.command}"](args, families)
 

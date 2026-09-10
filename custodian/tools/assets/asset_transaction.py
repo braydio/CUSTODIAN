@@ -29,6 +29,36 @@ class TransactionRecord:
     archived_inputs: dict[Path, Path] = field(default_factory=dict)
 
 
+def godot_sidecar(target: Path) -> Path:
+    """Godot's sidecar for `foo.png` is `foo.png.import`, not `foo.import`."""
+    return Path(str(target) + ".import")
+
+
+def _journal_sidecar(
+    record: TransactionRecord,
+    staging_dir: Path,
+    target: Path,
+    target_relative: Path,
+) -> None:
+    """Bring a runtime target's repository-owned `.import` sidecar into the journal.
+
+    An existing sidecar is backed up so rollback restores it byte-for-byte; an
+    absent one is registered as created so rollback removes whatever Godot wrote
+    during the transaction. Godot's `.godot/imported/` cache is disposable and
+    deliberately not journaled.
+    """
+    sidecar = godot_sidecar(target)
+    if sidecar.is_file():
+        if sidecar in record.backups:
+            return
+        backup = staging_dir / "backups" / godot_sidecar(target_relative)
+        backup.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(sidecar, backup)
+        record.backups[sidecar] = backup
+    elif sidecar not in record.created_targets:
+        record.created_targets.append(sidecar)
+
+
 def new_job_id() -> str:
     ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     short = uuid.uuid4().hex[:8]
@@ -60,6 +90,7 @@ def begin_transaction(
                 record.replaced_targets.append(target)
             elif not target.exists():
                 record.created_targets.append(target)
+            _journal_sidecar(record, staging_dir, target, output.target_relative_path)
             for relative in output.superseded_targets:
                 superseded = project_dir / relative
                 if superseded.exists() and superseded not in record.backups:
@@ -68,6 +99,7 @@ def begin_transaction(
                     shutil.copy2(superseded, backup)
                     record.backups[superseded] = backup
                     record.replaced_targets.append(superseded)
+                _journal_sidecar(record, staging_dir, superseded, relative)
 
     catalog = project_dir / "content/metadata/assets/generated/asset_catalog.generated.json"
     if catalog.exists():
