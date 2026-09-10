@@ -4,6 +4,9 @@ const OPERATOR_SCENE := preload("res://game/actors/operator/operator.tscn")
 const CombatConstants := preload(
 	"res://game/systems/combat/combat_constants.gd"
 )
+const WeaponSocketTracks := preload(
+	"res://game/actors/operator/animations/operator_weapon_socket_tracks.gd"
+)
 
 var _failed := false
 
@@ -145,13 +148,44 @@ func _run() -> void:
 	_assert(not bool(operator.call("begin_modular_damage_reaction", "hit_recoil")), "death should retain higher priority")
 	operator.set("_is_dead", false)
 
+	# Cleanup must surrender modular reaction ownership and leave the body in a
+	# single-owner state.
+	#
+	# It cannot assert a *modular* restore here, and that is a characterized
+	# runtime limitation rather than a test convenience. With a ranged primary
+	# equipped, the restored presentation runs through
+	# `_apply_frame_aware_primary_weapon_socket()`, which only supports
+	# `OperatorWeaponSocketTracks.REQUIRED_SECTORS` = [e, w, se, sw]. Aim is
+	# re-resolved from input on the next physics frame, and headless input has
+	# no mouse position, so the aim lands on sector `n` no matter what this test
+	# assigns to `aim_direction`. Sector `n` is unsupported, the weapon socket
+	# refuses, and the composition correctly falls back to the legacy full body.
+	#
+	# Asserting the modular restore needs deterministic aim ownership, which is
+	# Slice D of the Operator runtime decomposition
+	# (`design/04_architecture/OPERATOR_RUNTIME_ARCHITECTURE.md`). Until then the
+	# invariant worth guarding is the one-body rule through the handoff.
 	operator.set("visual_idle_direction", Vector2.DOWN)
 	operator.set("movement_direction", Vector2.ZERO)
 	_assert(bool(operator.call("begin_modular_damage_reaction", "hit_recoil")), "cleanup setup should begin")
 	operator.call("finish_damage_reaction_presentation")
 	_assert(not bool(operator.get("_modular_damage_reaction_active")), "cleanup should clear modular reaction ownership")
 	await process_frame
-	_assert(lower.visible and upper.visible, "cleanup should restore modular idle presentation")
+	var cleanup_sector = operator.call(
+		"resolve_aim_sector", operator.call("_get_frame_aware_weapon_direction")
+	)
+	var cleanup_owners: Array = operator.call("get_visible_body_owners")
+	_assert(
+		cleanup_owners.size() == 1,
+		"cleanup must leave exactly one visible body owner, saw %d" % cleanup_owners.size()
+	)
+	if WeaponSocketTracks.REQUIRED_SECTORS.has(cleanup_sector):
+		_assert(lower.visible and upper.visible, "supported aim sector should restore modular idle presentation")
+	else:
+		_assert(
+			legacy.visible and not upper.visible,
+			"unsupported aim sector %s must fall back to the legacy body" % cleanup_sector
+		)
 
 	# Combat tempo + impact feedback pass: the shared incoming-damage
 	# presentation package (hit stop + small directional recoil) must fire
