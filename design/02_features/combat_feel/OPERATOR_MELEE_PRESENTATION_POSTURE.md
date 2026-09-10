@@ -4,7 +4,10 @@
 - **Owner:** gameplay/combat + gameplay/animation
 - **Runtime target:** Godot 4 (`custodian/`)
 - **Active spec path:** `design/02_features/combat_feel/OPERATOR_MELEE_PRESENTATION_POSTURE.md`
-- **Related specs:** `OPERATOR_MELEE_FAST_CHAIN.md`, `OPERATOR_MELEE_ATTACK_DRIVE.md`, `WEAPON_OWNED_ANIMATION_SYSTEM.md`, `SWORD_CLEAVER.md`
+- **Related specs:** `OPERATOR_MELEE_CONTACT_TIMING_AND_CADENCE.md`, `OPERATOR_MELEE_ATTACK_DRIVE.md`, `SWORD_CLEAVER.md`, `../animation/OPERATOR_RUNTIME_ANIMATION_AUTHORITY.md`
+- **Locked relaxed-attack flow:** `relaxed` → `relaxed_to_ready` → READY anchor
+  → `ready_to_fast_1` → `fast_1`, with no `idle_ready` playback between the
+  bridges. Attacks from RELAXED do not bypass ready-up.
 
 ## Purpose
 
@@ -484,9 +487,10 @@ This matches the modular ownership rules already documented for the Operator
 
 - Focused smoke: pure posture-resolver test asserting READY/RELAXED resolution
   against injected `EngagementTracker.get_status()` fixtures, draw-grace
-  timing, and input-priority (attack from RELAXED bypasses `melee_ready_up`),
-  in the style of `operator_melee_soft_targeting_smoke.gd` /
-  `operator_melee_fast_chain_smoke.gd`.
+  timing, and input-priority (attack from RELAXED routes through the
+  `relaxed_to_ready` bridge; see the locked flow below), in the style of
+  `operator_melee_soft_targeting_smoke.gd` /
+  `operator_melee_posture_smoke.gd`.
 - Runtime wiring smoke: verify draw → ready → relaxed → ready transition
   sequence on the Operator, that no gameplay state is added to the state
   machine, and that the Vigil definition installs and plays its four-frame
@@ -536,7 +540,11 @@ Files:
 Constraints:
 
 - no new gameplay/action states; no changes to `EngagementTracker`;
-- attacks from RELAXED bypass `ready_up`;
+- attacks from RELAXED do **not** bypass ready-up: they route through the
+  `relaxed_to_ready` bridge to the READY anchor and then into
+  `ready_to_fast_1`, with no `idle_ready` playback in between. The live
+  `MeleePostureState.attack_action_bypasses_ready_up()` returns `false`;
+  earlier revisions of this document said otherwise and were stale;
 - posture never gates, blocks, or queues gameplay input;
 - gameplay direction, hitboxes, and drive remain unchanged;
 - `melee_ready_up` / `melee_relax` / `melee_sheathe` may be authored assets

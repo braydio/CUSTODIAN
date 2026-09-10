@@ -371,7 +371,7 @@ Related authorities/read-only references:
 
 ```text
 design/02_features/combat_feel/COMBAT_FEEL_SYSTEM.md
-design/02_features/combat_feel/OPERATOR_MELEE_FAST_CHAIN.md
+design/02_features/combat_feel/OPERATOR_MELEE_PRESENTATION_POSTURE.md
 design/02_features/combat_feel/OPERATOR_MELEE_PRESENTATION_POSTURE.md
 design/02_features/weapons/VIGIL_PATTERN_DAGGER.md
 custodian/docs/ai_context/CURRENT_STATE.md

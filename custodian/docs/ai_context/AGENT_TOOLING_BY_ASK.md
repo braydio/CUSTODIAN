@@ -66,7 +66,7 @@ python custodian/tools/validation/operator_animation_contract_report.py --strict
 
 What it does:
 
-- Reads `custodian/tools/validation/contracts/operator_modular_core.json`.
+- Reads `custodian/tools/validation/contracts/operator_animation_core.json`.
 - Scans modular source sheets, generated runtime modules, and action-runtime strips.
 - Reports OK required assets, missing required/optional assets, suspicious metadata, extra assets, source/runtime drift, and suggested next production batches.
 - Uses `--strict` only when missing/suspicious required coverage should fail validation.
@@ -194,7 +194,7 @@ What it does:
 - A positional direction (`n`, `ne`, `e`, `se`, `s`, `sw`, `w`, `nw`, or its full name) stages all runtime sheets for that direction and pairs exact action/loadout counterparts without locomotion fan-out.
 - Locomotion upper sheets pair with matching lower locomotion; action upper sheets fan out across lower locomotion domains.
 - With `--fit-debug`, it reports alpha bounding-box edge gaps and horizontal center deltas.
-- With `--next-actions`, it invokes `custodian/tools/operator/operator_next_actions_report.py`, joins fit evidence to `operator_modular_core.json` plus the production coverage reporter, and writes `reports/next_actions.json` and `reports/NEXT_ACTIONS.md` before embedding the top recommendations in `index.html`.
+- With `--next-actions`, it invokes `custodian/tools/operator/operator_next_actions_report.py`, joins fit evidence to `operator_animation_core.json` plus the production coverage reporter, and writes `reports/next_actions.json` and `reports/NEXT_ACTIONS.md` before embedding the top recommendations in `index.html`.
 - Pair and chain records retain resolved canonical source paths rather than temporary symlink/workspace paths.
 
 Historical sample from 2026-06-18 (not current repository state; rerun the command for live counts):
@@ -209,7 +209,7 @@ How to interpret it:
 - Use this when the ask is "show me upper/lower combinations," "does this modular action fit on locomotion?", or "generate review GIFs for art fit."
 - The script expects a source directory with literal `lower/` and `upper/` children. Do not point it directly at the canonical modular root unless you first build that shape with `refresh_combo_check_src.sh`.
 - Fit-debug is a visual triage signal, not gameplay authority. Confirm important results by opening the generated review page.
-- The next-actions report is generated evidence, not project authority. Contract group membership/required status comes from `operator_modular_core.json`; change that contract rather than hard-coding new priorities into the preview script.
+- The next-actions report is generated evidence, not project authority. Contract group membership/required status comes from `operator_animation_core.json`; change that contract rather than hard-coding new priorities into the preview script.
 
 ### Body And FX Pair Review
 
