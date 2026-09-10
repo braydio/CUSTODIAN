@@ -7714,6 +7714,95 @@
           "source_asset": null
         }
       }
+    },
+    "awakening_designation_locker": {
+      "kind": "world_prop",
+      "assets": {
+        "authorize_open::omni": {
+          "state_id": "authorize_open",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_designation_locker",
+            "world_prop",
+            "body",
+            "interaction",
+            "authorize_open",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_designation_locker/runtime/body/awakening_designation_locker__body__interaction__authorize_open__omni__8f__128x160.png",
+          "frames": 8,
+          "frame_size": [
+            128,
+            160
+          ],
+          "sha256": "d5d160a2ac6946d29b6404e8bc792e7f8f43dd2ac9a0e81446a5453c9cde6ad3",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "closed::omni": {
+          "state_id": "closed",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_designation_locker",
+            "world_prop",
+            "body",
+            "state",
+            "closed",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_designation_locker/runtime/body/awakening_designation_locker__body__state__closed__omni__1f__128x160.png",
+          "frames": 1,
+          "frame_size": [
+            128,
+            160
+          ],
+          "sha256": "9217b77aa8016be1e08c0dbd5ae3401a832bb9cbbb5968c9e1c294041244b07b",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "empty::omni": {
+          "state_id": "empty",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_designation_locker",
+            "world_prop",
+            "body",
+            "state",
+            "empty",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_designation_locker/runtime/body/awakening_designation_locker__body__state__empty__omni__1f__128x160.png",
+          "frames": 1,
+          "frame_size": [
+            128,
+            160
+          ],
+          "sha256": "d652e1b36c7798a7bdb0de43eeddbefdda83a1e1a07a0fe418d3e5bbf216af92",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "open_loaded::omni": {
+          "state_id": "open_loaded",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_designation_locker",
+            "world_prop",
+            "body",
+            "state",
+            "open_loaded",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_designation_locker/runtime/body/awakening_designation_locker__body__state__open_loaded__omni__1f__128x160.png",
+          "frames": 1,
+          "frame_size": [
+            128,
+            160
+          ],
+          "sha256": "400cc018e3b1661e354d69c8a0b32cf6d4cf4ea43181f973549a55c5a84eb3fb",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
     }
   }
 }

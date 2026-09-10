@@ -23,7 +23,8 @@
 - Multi-animation source masters may exist under source-work/Aseprite locations, but runtime gets only the concrete V2 state outputs actually used.
 - Audio is not an Asset V2 family in the current pipeline. Keep Awakening audio requirements in `REQUIRED_ASSETS.md` until an audio intake kind exists.
 - The existing Road of Witnesses image remains live and is not migrated in this family-registration pass.
-- Existing `field_retention_locker` art/runtime remains the P-9 locker authority for now. Do not create a replacement family until a deliberate designation-locker reskin pass.
+- The First Return now uses `awakening_designation_locker`; the old field-retention locker remains available only for generic storage if still referenced.
+  It is not canonical Crèche weapon-issuance art.
 
 ## Priority model
 
@@ -100,6 +101,42 @@ Canvas 192×256.
 The lift's world movement is runtime motion, not frame animation.
 
 Consumer: `res://scenes/awakening_first_return.tscn`.
+
+### `awakening_designation_locker` — P0
+
+Canvas 128×160.
+
+Replaces `field_retention_locker` as the P-9 presentation in The First Return. This is a wall-integrated institutional weapon
+reliquary keyed to designation authority, not a loot chest: a tall, narrow black-stone / ceramic-metal facade with a recessed brass
+authority line and a Custodian designation seal, severe vertical silhouette, closed state nearly flush with the wall. Same
+gothic-civic-industrial language as the Crèche alcove and the Gate of Dust. No glowing sci-fi vending-machine read.
+
+- `closed`: required, body/state/closed, copy. 1 frame.
+- `authorize_open`: required, body/interaction/authorize_open, horizontal strip, 8 frames, 10 FPS, one-shot.
+- `open_loaded`: required, body/state/open_loaded, copy. 1 frame.
+- `empty`: required, body/state/empty, copy. 1 frame.
+
+`authorize_open` is a transformation, not a lid lift:
+
+```text
+closed
+→ authority line illuminates
+→ side locks retract
+→ front plate separates
+→ inner cradle rotates / slides forward
+→ P-9 becomes visible
+→ mechanism settles
+→ open_loaded
+```
+
+`open_loaded` shows the P-9 held in a dedicated angled retention cradle. `empty` keeps the same open faceplate geometry with the
+clamps and retention hardware left visible and unloaded.
+
+Consumer: `res://scenes/awakening_first_return.tscn`.
+
+All four states were published and bound 2026-09-09. `SidearmLockerInteractable` now draws every state from this family and no
+longer references `field_retention_locker`. The first ingest shipped a `closed` plate that duplicated `empty`, so the locker read
+as already open at rest; the corrected sealed faceplate replaced it the same day.
 
 ### `gate_of_dust` — P0
 
@@ -208,7 +245,8 @@ Recommended:
 - `maintenance_sleeve` 64×96
 - `field_white_cord_bundle` 96×96
 
-Do not register a new active P-9 locker family in this pass. Runtime continues using `field_retention_locker`.
+The lockers in this family are set dressing only. The live P-9 release fixture is the separate `awakening_designation_locker` world-prop family;
+do not duplicate its states here.
 
 ### `awakening_dust_lung_structures` — P1
 
@@ -357,7 +395,6 @@ All listed states are required within their family except P2 families, where the
 - Pale city bird.
 - Audio.
 - Custodian Field Terminal / Ashen Forum / Continuity Port later-section assets.
-- Replacement designation/P-9 locker family.
 
 Those should receive families when their runtime/gameplay contracts are ready, not as speculative image buckets.
 
@@ -379,13 +416,14 @@ This pass is complete when:
 2. `awakening_creche_recovery_alcove`
 3. `awakening_creche_console` + `awakening_creche_console_activation_fx`
 4. `awakening_gate_plaza_environment`
-5. `gate_of_dust`
-6. `awakening_custodian_approach_environment`
-7. `awakening_dust_lung_environment`
-8. `awakening_dust_lung_lift`
-9. remaining P1 zone environments
-10. zone fixture families
-11. tile/decal families
-12. shared FX families
+5. `awakening_designation_locker`
+6. `gate_of_dust`
+7. `awakening_custodian_approach_environment`
+8. `awakening_dust_lung_environment`
+9. `awakening_dust_lung_lift`
+10. remaining P1 zone environments
+11. zone fixture families
+12. tile/decal families
+13. shared FX families
 
 The point of this order is to make every early batch visibly improve the live beginning while preserving stable semantic contracts for the full production pass.

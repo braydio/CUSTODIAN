@@ -1,6 +1,6 @@
 # Task Packet — Awakening Asset Pipeline V2 Family Registration
 
-**Status:** complete (2026-09-06)
+**Status:** complete (2026-09-06) · **Addendum A complete (2026-09-09)** — see [Addendum A](#addendum-a--p0-replace-the-p-9-locker) below.
 
 ## Goal
 
@@ -13,7 +13,7 @@ This is a **family-contract registration and tracker-alignment pass only**. Do n
 
 ## Runtime context
 
-Awakening is already live as `res://scenes/awakening_first_return.tscn`, with `game/world/awakening/awakening_layout.gd` as spatial authority. The Road of Witnesses South Reach remains the existing live map asset. The P-9 locker continues using the existing `field_retention_locker` art/runtime.
+Awakening is already live as `res://scenes/awakening_first_return.tscn`, with `game/world/awakening/awakening_layout.gd` as spatial authority. The Road of Witnesses South Reach remains the existing live map asset. The P-9 locker continued using the existing `field_retention_locker` art/runtime for the original pass; **Addendum A supersedes that.**
 
 ## Primary owner
 
@@ -159,7 +159,7 @@ Their gameplay/runtime contracts are not locked enough yet.
 
 Do not modify or replace:
 - `custodian/content/levels/hub/Road_of_Witnesses_Tilemap.png`
-- existing `field_retention_locker` family/art/runtime
+- existing `field_retention_locker` family/art/runtime *(superseded by Addendum A for The First Return only; the art itself still stays in the repo)*
 - Operator art
 - Field Terminal art/runtime
 
@@ -196,7 +196,7 @@ Do not rewrite unrelated sections.
 - No `asset watch` work.
 - No creature/enemy design.
 - No Road of Witnesses migration.
-- No P-9 locker replacement.
+- No P-9 locker replacement. *(Superseded by Addendum A.)*
 - No Continuity Port gameplay.
 
 ## Validation
@@ -254,7 +254,7 @@ python3 custodian/tools/validation/run_validation.py --changed --json
 - World props resolve under `content/sprites/environment/props/awakening/...`.
 - Tiles and effects use their existing V2 kinds and supported routing.
 - Gate future states exist but are optional/deferred.
-- Existing Road and P-9 locker assets remain untouched.
+- Existing Road and P-9 locker assets remain untouched. *(P-9 locker clause superseded by Addendum A.)*
 - `REQUIRED_ASSETS.md` is aligned with V2 family identities and resolved targets.
 - Focused Asset V2 validation passes.
 
@@ -266,3 +266,137 @@ Report only:
 - any contract/schema adjustment necessary versus the manifest;
 - validation commands and results;
 - any family that could not be represented cleanly by current V2 without changing the pipeline.
+
+
+---
+
+## Addendum A — P0: replace the P-9 locker
+
+**Status:** complete (2026-09-09). Supersedes the original packet's "no P-9 locker replacement" non-goal.
+
+### Problem
+
+The existing P-9 locker reads as generic storage and does not match the Crèche / Locker Reliquary tone. The first weapon pickup
+in the game is too important to happen out of a prop we already dislike.
+
+### New direction
+
+A purpose-built **Custodian Designation Locker**: a wall-integrated institutional weapon reliquary keyed to designation authority,
+not a loot chest.
+
+- tall, narrow black-stone / ceramic-metal facade
+- recessed brass authority line
+- Custodian designation seal
+- severe vertical silhouette
+- closed state nearly flush with the wall
+- authorization causes the faceplate to split/retract mechanically
+- interior reveals the P-9 held in a dedicated angled retention cradle
+- after pickup, empty clamps and retention hardware remain visible
+- same gothic-civic-industrial language as the Crèche alcove and the Gate of Dust
+- no glowing sci-fi vending-machine look
+
+### A1. Family contract — done
+
+`custodian/content/metadata/assets/families/awakening_designation_locker.asset.json`
+
+Kind `world_prop`, P0, canvas 128×160, domain `sprites/environment/props/awakening`, omni, no mirroring, consumer
+`res://scenes/awakening_first_return.tscn`. This brings the Awakening family count to **32**.
+
+| State | Source file | Canvas | Frames | FPS | Layout |
+|---|---|---:|---:|---:|---|
+| `closed` | `closed.png` | 128×160 | 1 | — | copy |
+| `authorize_open` | `authorize_open.png` | 1024×160 | 8 × 128×160 | 10 | horizontal strip, one-shot |
+| `open_loaded` | `open_loaded.png` | 128×160 | 1 | — | copy |
+| `empty` | `empty.png` | 128×160 | 1 | — | copy |
+
+`authorize_open` must be a proper transformation, not a lid lift:
+
+```text
+closed
+→ authority line illuminates
+→ side locks retract
+→ front plate separates
+→ inner cradle rotates / slides forward
+→ P-9 becomes visible
+→ mechanism settles
+→ open_loaded
+```
+
+Then:
+
+```text
+open_loaded
+→ player takes P-9
+→ empty
+```
+
+### A2. Production art — done
+
+Ingested 2026-09-09 from `custodian/asset_drop/source_work/awakening/awakening_designation_locker/` (with `open-loaded.png`
+renamed to `open_loaded.png` in the inbox). Asset Pipeline V2 resolved the frame geometry itself — 1024×160 inferred as 8 × 128×160
+horizontal strip, the three stills as 1-frame copies — and wrote every state pixel-identical to source with alpha intact, no
+resizing or repacking. Canonical runtime outputs:
+
+```text
+content/sprites/environment/props/awakening/awakening_designation_locker/runtime/body/
+  awakening_designation_locker__body__state__closed__omni__1f__128x160.png
+  awakening_designation_locker__body__interaction__authorize_open__omni__8f__128x160.png
+  awakening_designation_locker__body__state__open_loaded__omni__1f__128x160.png
+  awakening_designation_locker__body__state__empty__omni__1f__128x160.png
+```
+
+Archive job `job_20260909T183202Z_c76e4762`. `asset status` reports 4/4 required states ready.
+
+The first ingest shipped a `closed.png` that was byte-identical to `empty.png`, so the locker rendered as already open at rest.
+A corrected sealed faceplate (`closed_pixel_128x160.png`) was re-ingested the same day with `--replace` (job
+`job_20260909T184605Z_f4161fbd`); no contract or code change was needed. All four states are now visually distinct.
+
+### A3. Runtime migration — done
+
+`custodian/game/world/home/sidearm_locker_interactable.gd` now draws every state from the V2 family. The legacy
+`field_retention_locker` constants and the interim fallback branch are gone; each state is its own canonical output, so no still
+is sliced out of the animation strip.
+
+The **gameplay contract is unchanged**:
+
+```text
+interact
+→ authorize
+→ opening animation
+→ open_loaded
+→ grant p9_sidearm
+→ empty
+```
+
+`_sidearm_granted` guards the grant so re-interaction cannot duplicate the P-9, and the emptied locker leaves the `interactable`
+group. Interaction prompts, collision, the authored `(832, -1952)` coordinate, the `sidearm_taken` signal, and the
+`p9_recovered` progression flag in `awakening_first_return.gd` are all untouched — no scene or layout edit was needed to wire the
+new art.
+
+Covered by `custodian/tools/validation/awakening_designation_locker_presentation_smoke.gd` (registered as
+`awakening_designation_locker_presentation`), which asserts the canonical art resolves at the right sizes, the strip carries eight
+distinct 128×160 regions at 10 FPS one-shot, the stills are their own plates, nothing draws from the retired locker directory, the
+locker rests closed, settles on `open_loaded`, ends on `empty`, and grants the P-9 exactly once.
+
+Remaining art-gated follow-ups:
+
+- Retune the `SidearmLocker` collider in `custodian/game/actors/props/sidearm_locker.tscn` (currently 88×96) and the
+  `p9_locker` footprint in `custodian/game/world/awakening/awakening_layout.gd` against the 128×160 silhouette.
+- Re-check the flush-to-wall placement in `custodian/scenes/awakening_first_return.tscn` against the finished art.
+
+### A4. Manifest change — done
+
+`design/04_architecture/AWAKENING_ASSET_MANIFEST.md` production rules now read:
+
+> The First Return uses the dedicated `awakening_designation_locker` family for the P-9 release. Existing `field_retention_locker`
+> assets remain available for generic storage use but are not canonical Crèche weapon-issuance art.
+
+The family is documented under hero/interactable world-prop families, added to the art generation order, and removed from
+"explicitly not registered in this pass". The `awakening_reliquary_fixtures` lockers are now explicitly set dressing only.
+
+### A5. Not in scope
+
+- Deleting `custodian/content/sprites/props/storage/field_retention_locker/`. It stays in the repository for generic storage use;
+  no code references it any more.
+- Any change to the interact → authorize → grant → empty gameplay contract.
+- Any other Awakening family.

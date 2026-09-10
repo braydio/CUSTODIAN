@@ -1,0 +1,56 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "awakening_designation_locker",
+  "kind": "world_prop",
+  "priority": "P0",
+  "runtime": {
+    "domain": "sprites/environment/props/awakening",
+    "owner": "awakening_designation_locker"
+  },
+  "canvas": {
+    "width": 128,
+    "height": 160
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "closed": {
+      "required": true,
+      "layer": "body",
+      "action_group": "state",
+      "variant": "closed",
+      "layout": "copy"
+    },
+    "authorize_open": {
+      "required": true,
+      "layer": "body",
+      "action_group": "interaction",
+      "variant": "authorize_open",
+      "animation": true,
+      "layout": "horizontal_strip",
+      "frames": 8,
+      "fps": 10
+    },
+    "open_loaded": {
+      "required": true,
+      "layer": "body",
+      "action_group": "state",
+      "variant": "open_loaded",
+      "layout": "copy"
+    },
+    "empty": {
+      "required": true,
+      "layer": "body",
+      "action_group": "state",
+      "variant": "empty",
+      "layout": "copy"
+    }
+  },
+  "aliases": {},
+  "consumers": [
+    {
+      "type": "scene",
+      "path": "res://scenes/awakening_first_return.tscn"
+    }
+  ]
+}

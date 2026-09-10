@@ -3,39 +3,55 @@ class_name SidearmLockerInteractable
 
 signal sidearm_taken(actor: Node)
 
-## Sprite sheet: 1024×128, 8 frames of 128×128.
-## Frame 1 = closed/locked. Playing frames 1→8 animates opening.
-## After sidearm is taken, switches to _empty.png variant.
-const LOCKER_SHEET_PATH := "res://content/sprites/props/storage/field_retention_locker/field_retention_locker_sheet.png"
-const LOCKER_EMPTY_PATH := "res://content/sprites/props/storage/field_retention_locker/field_retention_locker_empty.png"
-const SIDEARM_DEFINITION_PATH := "res://game/actors/operator/sidearm_pistol_definition.tres"
+## The First Return P-9 release fixture: the Custodian Designation Locker.
+##
+## Visual authority is the `awakening_designation_locker` Asset V2 family. Each
+## state is its own canonical runtime output, so the node never slices a state
+## out of the animation strip:
+##
+##   closed          128×160, 1 frame — faceplate flush with the wall
+##   authorize_open  1024×160, 8 frames of 128×160 @ 10 FPS, one-shot
+##   open_loaded     128×160, 1 frame — P-9 in its retention cradle
+##   empty           128×160, 1 frame — clamps and hardware, unloaded
+##
+## Gameplay contract: interact → authorize → opening animation → open_loaded →
+## grant p9_sidearm → empty. The P-9 can only ever be granted once.
+const ART_ROOT := "res://content/sprites/environment/props/awakening/awakening_designation_locker/runtime/body"
+const CLOSED_PATH := ART_ROOT + "/awakening_designation_locker__body__state__closed__omni__1f__128x160.png"
+const AUTHORIZE_OPEN_PATH := ART_ROOT + "/awakening_designation_locker__body__interaction__authorize_open__omni__8f__128x160.png"
+const OPEN_LOADED_PATH := ART_ROOT + "/awakening_designation_locker__body__state__open_loaded__omni__1f__128x160.png"
+const EMPTY_PATH := ART_ROOT + "/awakening_designation_locker__body__state__empty__omni__1f__128x160.png"
 
-const FRAME_SIZE := Vector2i(128, 128)
+const FRAME_SIZE := Vector2i(128, 160)
 const FRAME_COUNT := 8
-const ANIMATION_FPS := 14.0
+const ANIMATION_FPS := 10.0
+
+const SIDEARM_DEFINITION_PATH := "res://game/actors/operator/sidearm_pistol_definition.tres"
 
 @export_range(24.0, 192.0, 1.0) var interaction_distance: float = 84.0
 
 enum LockerState { CLOSED, OPEN, EMPTY }
 var _state: LockerState = LockerState.CLOSED
 var _locker_sprite: AnimatedSprite2D = null
-var _empty_sprite: Sprite2D = null
-var _empty_texture: Texture2D = null
 var _sidearm_definition: Resource = null
 var _opening_playback_started := false
+var _sidearm_granted := false
 
 
 func _ready() -> void:
 	add_to_group("interactable")
-	_empty_texture = load(LOCKER_EMPTY_PATH) if ResourceLoader.exists(LOCKER_EMPTY_PATH) else null
 	if ResourceLoader.exists(SIDEARM_DEFINITION_PATH):
 		_sidearm_definition = load(SIDEARM_DEFINITION_PATH)
 	_build_locker_sprite()
 
 
 func _build_locker_sprite() -> void:
-	var sheet_texture := load(LOCKER_SHEET_PATH) as Texture2D
-	if sheet_texture == null:
+	var closed_texture := _load_texture(CLOSED_PATH)
+	var strip_texture := _load_texture(AUTHORIZE_OPEN_PATH)
+	var open_loaded_texture := _load_texture(OPEN_LOADED_PATH)
+	var empty_texture := _load_texture(EMPTY_PATH)
+	if closed_texture == null or strip_texture == null:
+		push_warning("[SidearmLocker] awakening_designation_locker runtime art missing")
 		return
 
 	_locker_sprite = AnimatedSprite2D.new()
@@ -45,37 +61,26 @@ func _build_locker_sprite() -> void:
 	move_child(_locker_sprite, 0)
 
 	var frames := SpriteFrames.new()
+	_add_still(frames, "closed", closed_texture)
+	_add_still(frames, "open_loaded", open_loaded_texture if open_loaded_texture != null else closed_texture)
+	_add_still(frames, "empty", empty_texture if empty_texture != null else closed_texture)
 
-	# closed — single frame (frame 1)
-	frames.add_animation("closed")
-	frames.set_animation_speed("closed", 0.0)
-	frames.set_animation_loop("closed", false)
+	# authorize_open — plays the transformation once, then stops on its last frame
+	frames.add_animation("authorize_open")
+	frames.set_animation_speed("authorize_open", ANIMATION_FPS)
+	frames.set_animation_loop("authorize_open", false)
 
-	# open — plays frames 1→8 then stops
-	frames.add_animation("open")
-	frames.set_animation_speed("open", ANIMATION_FPS)
-	frames.set_animation_loop("open", false)
-
-	# open_idle — holds on the last frame (frame 8)
-	frames.add_animation("open_idle")
-	frames.set_animation_speed("open_idle", 0.0)
-	frames.set_animation_loop("open_idle", false)
-
-	var columns := maxi(1, sheet_texture.get_width() / FRAME_SIZE.x)
+	var columns := maxi(1, strip_texture.get_width() / FRAME_SIZE.x)
 	for frame_index in FRAME_COUNT:
 		var atlas := AtlasTexture.new()
-		atlas.atlas = sheet_texture
+		atlas.atlas = strip_texture
 		atlas.region = Rect2(
 			(frame_index % columns) * FRAME_SIZE.x,
 			(frame_index / columns) * FRAME_SIZE.y,
 			FRAME_SIZE.x,
 			FRAME_SIZE.y,
 		)
-		if frame_index == 0:
-			frames.add_frame("closed", atlas)
-		frames.add_frame("open", atlas)
-		if frame_index == FRAME_COUNT - 1:
-			frames.add_frame("open_idle", atlas)
+		frames.add_frame("authorize_open", atlas)
 
 	_locker_sprite.sprite_frames = frames
 	_locker_sprite.animation = &"closed"
@@ -83,11 +88,24 @@ func _build_locker_sprite() -> void:
 	_locker_sprite.stop()
 
 
+func _add_still(frames: SpriteFrames, name: String, texture: Texture2D) -> void:
+	frames.add_animation(name)
+	frames.set_animation_speed(name, 0.0)
+	frames.set_animation_loop(name, false)
+	frames.add_frame(name, texture)
+
+
+func _load_texture(path: String) -> Texture2D:
+	if not ResourceLoader.exists(path):
+		return null
+	return load(path) as Texture2D
+
+
 func get_interaction_prompt() -> String:
 	var key := _get_interact_prompt_key()
 	match _state:
 		LockerState.CLOSED:
-			return "OPEN FIELD RETENTION LOCKER (%s)" % key
+			return "AUTHORIZE DESIGNATION LOCKER (%s)" % key
 		LockerState.OPEN:
 			return "TAKE P-9 FIELD SIDEARM (%s)" % key
 		LockerState.EMPTY:
@@ -112,21 +130,26 @@ func interact(actor: Node) -> void:
 		_take_sidearm(actor)
 
 
+## Authorization: the faceplate transformation plays once, then the locker rests
+## on `open_loaded` with the P-9 visible in its cradle.
 func _open_locker() -> void:
 	if _locker_sprite == null:
 		return
 	_opening_playback_started = true
-	_locker_sprite.animation = &"open"
+	_locker_sprite.animation = &"authorize_open"
 	_locker_sprite.frame = 0
 	_locker_sprite.play()
 	await _locker_sprite.animation_finished
 	_locker_sprite.stop()
-	_locker_sprite.animation = &"open_idle"
+	_locker_sprite.animation = &"open_loaded"
 	_locker_sprite.frame = 0
 	_state = LockerState.OPEN
 
 
 func _take_sidearm(actor: Node) -> void:
+	if _sidearm_granted:
+		return
+
 	var inventory_manager := get_node_or_null("/root/InventoryManager")
 	if inventory_manager == null or not inventory_manager.has_method("add_item"):
 		push_warning("[SidearmLocker] InventoryManager not available")
@@ -137,21 +160,15 @@ func _take_sidearm(actor: Node) -> void:
 		push_warning("[SidearmLocker] Failed to add P-9 to inventory")
 		return
 
+	_sidearm_granted = true
 	_state = LockerState.EMPTY
 	remove_from_group("interactable")
 
-	# Hide animated sprite
+	# Retention hardware remains; the cradle is now unloaded.
 	if _locker_sprite != null:
-		_locker_sprite.visible = false
-
-	# Show empty sprite variant
-	if _empty_texture != null:
-		_empty_sprite = Sprite2D.new()
-		_empty_sprite.name = "EmptyLockerSprite"
-		_empty_sprite.texture = _empty_texture
-		_empty_sprite.centered = true
-		add_child(_empty_sprite)
-		move_child(_empty_sprite, 0)
+		_locker_sprite.animation = &"empty"
+		_locker_sprite.frame = 0
+		_locker_sprite.stop()
 
 	sidearm_taken.emit(actor)
 

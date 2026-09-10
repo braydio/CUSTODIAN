@@ -23,6 +23,7 @@ bleeding across neighboring frames during resampling.
 
 Single-image behavior:
     - trims transparent dead space
+    - removes bright low-alpha edge fringe before runtime alpha clamping
     - preserves aspect ratio
     - uses an aspect-matched high-resolution preparation canvas
     - produces three candidates: crisp / balanced / clustered
@@ -160,6 +161,10 @@ class SheetConversionRequest:
     registrations: tuple[tuple[int, int], ...]
     alpha_cutoff: int = 16
     colors: int = 24
+    edge_cleanup: bool = True
+    edge_alpha_max: int = 56
+    edge_luma_min: float = 190.0
+    edge_max_solid_neighbors: int = 2
 
 
 # =============================================================================
@@ -217,6 +222,80 @@ def binary_alpha_mask(image: Image.Image, cutoff: int) -> Image.Image:
     return image.convert("RGBA").getchannel("A").point(
         lambda value: 255 if value >= cutoff else 0
     )
+
+
+def clean_bright_transparent_edge_pixels(
+    image: Image.Image,
+    *,
+    alpha_max: int = 56,
+    luma_min: float = 190.0,
+    max_solid_neighbors: int = 2,
+    solid_alpha: int = 128,
+) -> Image.Image:
+    """
+    Remove bright, low-alpha fringe pixels that touch transparent space.
+
+    This targets the scattered pale halo pixels commonly left around generated
+    transparent sprites. It is intentionally conservative:
+
+    - only partially transparent pixels with alpha <= ``alpha_max`` qualify
+    - the pixel must be bright enough (Rec.709 luminance >= ``luma_min``)
+    - it must touch at least one fully transparent neighbor
+    - it must have no more than ``max_solid_neighbors`` strongly opaque
+      neighbors, so supported anti-aliased silhouette pixels are less likely
+      to be shaved away
+
+    The cleanup runs before final binary-alpha clamping. That matters because
+    otherwise a fringe pixel with alpha 20-50 would be promoted to alpha 255 by
+    the normal runtime cutoff and become a permanent bright speck.
+    """
+    if not 0 <= alpha_max <= 254:
+        raise ValueError("edge alpha max must be between 0 and 254")
+    if not 0.0 <= luma_min <= 255.0:
+        raise ValueError("edge luminance minimum must be between 0 and 255")
+    if not 0 <= max_solid_neighbors <= 8:
+        raise ValueError("edge max solid neighbors must be between 0 and 8")
+    if not 1 <= solid_alpha <= 255:
+        raise ValueError("edge solid alpha must be between 1 and 255")
+
+    source = image.convert("RGBA")
+    pixels = source.load()
+    output = source.copy()
+    out_pixels = output.load()
+    width, height = source.size
+
+    for y in range(height):
+        for x in range(width):
+            r, g, b, a = pixels[x, y]
+            if a == 0 or a > alpha_max:
+                continue
+
+            luma = 0.2126 * r + 0.7152 * g + 0.0722 * b
+            if luma < luma_min:
+                continue
+
+            touches_transparent = False
+            solid_neighbors = 0
+
+            for neighbor_y in range(max(0, y - 1), min(height, y + 2)):
+                for neighbor_x in range(max(0, x - 1), min(width, x + 2)):
+                    if neighbor_x == x and neighbor_y == y:
+                        continue
+
+                    neighbor_alpha = pixels[neighbor_x, neighbor_y][3]
+                    if neighbor_alpha == 0:
+                        touches_transparent = True
+                    elif neighbor_alpha >= solid_alpha:
+                        solid_neighbors += 1
+
+            if not touches_transparent:
+                continue
+            if solid_neighbors > max_solid_neighbors:
+                continue
+
+            out_pixels[x, y] = (r, g, b, 0)
+
+    return output
 
 
 def clamp_alpha_binary(image: Image.Image, cutoff: int = 16) -> Image.Image:
@@ -943,11 +1022,23 @@ def make_single_candidates(
     colors: int,
     alpha_cutoff: int,
     crisp_colors: int | None = None,
+    edge_cleanup: bool = True,
+    edge_alpha_max: int = 56,
+    edge_luma_min: float = 190.0,
+    edge_max_solid_neighbors: int = 2,
 ) -> dict[str, Image.Image]:
     rgba = prepared_source.convert("RGBA")
 
+    crisp_source = rgba.resize(target_size, Image.Resampling.NEAREST)
+    if edge_cleanup:
+        crisp_source = clean_bright_transparent_edge_pixels(
+            crisp_source,
+            alpha_max=edge_alpha_max,
+            luma_min=edge_luma_min,
+            max_solid_neighbors=edge_max_solid_neighbors,
+        )
     crisp = clamp_alpha_binary(
-        rgba.resize(target_size, Image.Resampling.NEAREST),
+        crisp_source,
         cutoff=alpha_cutoff,
     )
     if crisp_colors is not None:
@@ -959,6 +1050,13 @@ def make_single_candidates(
         )
 
     balanced_reduced = rgba.resize(target_size, Image.Resampling.BOX)
+    if edge_cleanup:
+        balanced_reduced = clean_bright_transparent_edge_pixels(
+            balanced_reduced,
+            alpha_max=edge_alpha_max,
+            luma_min=edge_luma_min,
+            max_solid_neighbors=edge_max_solid_neighbors,
+        )
     balanced_palette = build_shared_palette(
         [balanced_reduced], colors, alpha_cutoff
     )
@@ -970,6 +1068,13 @@ def make_single_candidates(
     )
 
     clustered_reduced = rgba.resize(target_size, Image.Resampling.BOX)
+    if edge_cleanup:
+        clustered_reduced = clean_bright_transparent_edge_pixels(
+            clustered_reduced,
+            alpha_max=edge_alpha_max,
+            luma_min=edge_luma_min,
+            max_solid_neighbors=edge_max_solid_neighbors,
+        )
     clustered_reduced = ImageEnhance.Contrast(clustered_reduced).enhance(1.12)
     clustered_reduced = ImageEnhance.Color(clustered_reduced).enhance(1.08)
     clustered_colors = max(2, colors * 2 // 3)
@@ -995,19 +1100,29 @@ def make_sheet_candidates(
     colors: int,
     alpha_cutoff: int,
     crisp_colors: int | None = None,
+    edge_cleanup: bool = True,
+    edge_alpha_max: int = 56,
+    edge_luma_min: float = 190.0,
+    edge_max_solid_neighbors: int = 2,
 ) -> tuple[dict[str, Image.Image], dict[str, list[Image.Image]]]:
     """
     Process each frame independently so resampling never crosses frame borders,
     while balanced/clustered use a shared animation palette to prevent flicker.
     """
     # Crisp ---------------------------------------------------------------
-    crisp_frames = [
-        clamp_alpha_binary(
-            frame.resize(target_size, Image.Resampling.NEAREST),
-            cutoff=alpha_cutoff,
+    crisp_frames: list[Image.Image] = []
+    for frame in prepared_frames:
+        reduced = frame.resize(target_size, Image.Resampling.NEAREST)
+        if edge_cleanup:
+            reduced = clean_bright_transparent_edge_pixels(
+                reduced,
+                alpha_max=edge_alpha_max,
+                luma_min=edge_luma_min,
+                max_solid_neighbors=edge_max_solid_neighbors,
+            )
+        crisp_frames.append(
+            clamp_alpha_binary(reduced, cutoff=alpha_cutoff)
         )
-        for frame in prepared_frames
-    ]
     if crisp_colors is not None:
         crisp_palette = build_shared_palette(
             crisp_frames,
@@ -1025,10 +1140,17 @@ def make_sheet_candidates(
         ]
 
     # Balanced ------------------------------------------------------------
-    balanced_reduced = [
-        frame.resize(target_size, Image.Resampling.BOX)
-        for frame in prepared_frames
-    ]
+    balanced_reduced: list[Image.Image] = []
+    for frame in prepared_frames:
+        reduced = frame.resize(target_size, Image.Resampling.BOX)
+        if edge_cleanup:
+            reduced = clean_bright_transparent_edge_pixels(
+                reduced,
+                alpha_max=edge_alpha_max,
+                luma_min=edge_luma_min,
+                max_solid_neighbors=edge_max_solid_neighbors,
+            )
+        balanced_reduced.append(reduced)
     balanced_palette = build_shared_palette(
         balanced_reduced,
         colors,
@@ -1048,6 +1170,13 @@ def make_sheet_candidates(
     clustered_reduced: list[Image.Image] = []
     for frame in prepared_frames:
         reduced = frame.resize(target_size, Image.Resampling.BOX)
+        if edge_cleanup:
+            reduced = clean_bright_transparent_edge_pixels(
+                reduced,
+                alpha_max=edge_alpha_max,
+                luma_min=edge_luma_min,
+                max_solid_neighbors=edge_max_solid_neighbors,
+            )
         reduced = ImageEnhance.Contrast(reduced).enhance(1.12)
         reduced = ImageEnhance.Color(reduced).enhance(1.08)
         clustered_reduced.append(reduced)
@@ -1099,6 +1228,16 @@ def convert_sheet_request(request: SheetConversionRequest) -> Image.Image:
     )
     with Image.open(request.source) as source:
         frames = split_sheet_frames(source.convert("RGBA"), geometry)
+    if request.edge_cleanup:
+        frames = [
+            clean_bright_transparent_edge_pixels(
+                frame,
+                alpha_max=request.edge_alpha_max,
+                luma_min=request.edge_luma_min,
+                max_solid_neighbors=request.edge_max_solid_neighbors,
+            )
+            for frame in frames
+        ]
     prepared = prepare_sheet_frames(
         frames,
         request.transform,
@@ -1113,6 +1252,10 @@ def convert_sheet_request(request: SheetConversionRequest) -> Image.Image:
         request.colors,
         request.alpha_cutoff,
         crisp_colors=request.colors,
+        edge_cleanup=request.edge_cleanup,
+        edge_alpha_max=request.edge_alpha_max,
+        edge_luma_min=request.edge_luma_min,
+        edge_max_solid_neighbors=request.edge_max_solid_neighbors,
     )
     registered: list[Image.Image] = []
     for index, frame in enumerate(candidates[method_key]):
@@ -1524,6 +1667,50 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     parser.add_argument(
+        "--edge-cleanup",
+        dest="edge_cleanup",
+        action="store_true",
+        default=True,
+        help=(
+            "Remove bright low-alpha fringe pixels touching transparency before "
+            "runtime alpha is clamped. Enabled by default."
+        ),
+    )
+    parser.add_argument(
+        "--no-edge-cleanup",
+        dest="edge_cleanup",
+        action="store_false",
+        help="Disable bright semi-transparent edge cleanup.",
+    )
+    parser.add_argument(
+        "--edge-alpha-max",
+        type=int,
+        default=56,
+        metavar="0-254",
+        help=(
+            "Maximum alpha eligible for edge cleanup. Default: 56 (~22%% opacity)."
+        ),
+    )
+    parser.add_argument(
+        "--edge-luma-min",
+        type=float,
+        default=190.0,
+        metavar="0-255",
+        help=(
+            "Minimum Rec.709 luminance eligible for edge cleanup. Default: 190."
+        ),
+    )
+    parser.add_argument(
+        "--edge-max-solid-neighbors",
+        type=int,
+        default=2,
+        metavar="0-8",
+        help=(
+            "Maximum strongly opaque 8-neighbors for a fringe pixel to be removed. "
+            "Default: 2; lower is more conservative."
+        ),
+    )
+    parser.add_argument(
         "--prepare-filter",
         choices=["auto", "nearest", "box", "lanczos"],
         default="auto",
@@ -1647,6 +1834,13 @@ def main() -> int:
     if not 0 <= alpha_cutoff <= 255:
         raise SystemExit("--alpha-cutoff must be between 0 and 255")
 
+    if not 0 <= args.edge_alpha_max <= 254:
+        raise SystemExit("--edge-alpha-max must be between 0 and 254")
+    if not 0.0 <= args.edge_luma_min <= 255.0:
+        raise SystemExit("--edge-luma-min must be between 0 and 255")
+    if not 0 <= args.edge_max_solid_neighbors <= 8:
+        raise SystemExit("--edge-max-solid-neighbors must be between 0 and 8")
+
     if args.pixel_source:
         prepare_filter = "nearest"
     elif args.prepare_filter == "auto":
@@ -1698,6 +1892,16 @@ def main() -> int:
             args.source_cell,
         )
         source_frames = split_sheet_frames(source, geometry)
+        if args.edge_cleanup:
+            source_frames = [
+                clean_bright_transparent_edge_pixels(
+                    frame,
+                    alpha_max=args.edge_alpha_max,
+                    luma_min=args.edge_luma_min,
+                    max_solid_neighbors=args.edge_max_solid_neighbors,
+                )
+                for frame in source_frames
+            ]
         source_frame_bboxes = frame_bbox_report(source_frames, alpha_cutoff)
 
         transform = calculate_shared_frame_transform(
@@ -1733,6 +1937,10 @@ def main() -> int:
             colors,
             alpha_cutoff,
             crisp_colors=args.colors,
+            edge_cleanup=args.edge_cleanup,
+            edge_alpha_max=args.edge_alpha_max,
+            edge_luma_min=args.edge_luma_min,
+            edge_max_solid_neighbors=args.edge_max_solid_neighbors,
         )
 
         write_sheet_manifest(
@@ -1746,8 +1954,16 @@ def main() -> int:
         )
 
     else:
+        source_for_prepare = source
+        if args.edge_cleanup:
+            source_for_prepare = clean_bright_transparent_edge_pixels(
+                source_for_prepare,
+                alpha_max=args.edge_alpha_max,
+                luma_min=args.edge_luma_min,
+                max_solid_neighbors=args.edge_max_solid_neighbors,
+            )
         prepared_source = fit_on_canvas(
-            source,
+            source_for_prepare,
             canvas_size=source_canvas,
             margin=margin,
             alpha_cutoff=alpha_cutoff,
@@ -1763,6 +1979,10 @@ def main() -> int:
             colors=colors,
             alpha_cutoff=alpha_cutoff,
             crisp_colors=args.colors,
+            edge_cleanup=args.edge_cleanup,
+            edge_alpha_max=args.edge_alpha_max,
+            edge_luma_min=args.edge_luma_min,
+            edge_max_solid_neighbors=args.edge_max_solid_neighbors,
         )
 
     # Write all candidates before selection.
@@ -1787,6 +2007,15 @@ def main() -> int:
     print(f"tile preset:        {'yes' if args.tile else 'no'}")
     print(f"anchor:             {anchor}")
     print(f"alpha cutoff:       {alpha_cutoff}")
+    print(
+        "edge cleanup:       "
+        + (
+            f"on (alpha<={args.edge_alpha_max}, luma>={args.edge_luma_min:g}, "
+            f"solid-neighbors<={args.edge_max_solid_neighbors})"
+            if args.edge_cleanup
+            else "off"
+        )
+    )
     print(
         "prep alpha:         "
         + ("binary" if binary_alpha_during_prepare else "soft until final reduction")
@@ -1910,3 +2139,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

@@ -1,0 +1,44 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260909T184605Z_f4161fbd",
+  "timestamp": "2026-09-09T18:46:05.428186+00:00",
+  "family": "awakening_designation_locker",
+  "kind": "world_prop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/awakening_designation_locker/closed.png",
+      "sha256": "9217b77aa8016be1e08c0dbd5ae3401a832bb9cbbb5968c9e1c294041244b07b"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "closed",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_designation_locker",
+        "world_prop",
+        "body",
+        "state",
+        "closed",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/awakening/awakening_designation_locker/runtime/body/awakening_designation_locker__body__state__closed__omni__1f__128x160.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "9217b77aa8016be1e08c0dbd5ae3401a832bb9cbbb5968c9e1c294041244b07b",
+      "operation": "replace",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": false,
+    "ok": null
+  },
+  "validation_evidence": [],
+  "result": "success"
+}
