@@ -137,6 +137,13 @@ thin delegating wrappers (`_set_body_presentation_owner`,
 `_hide_body_layer`, `get_body_presentation_owner`, `get_visible_body_owners`)
 that contain no visibility policy of their own.
 
+Showing a renderer is a mechanism; changing presentation ownership is a
+decision. The presenter keeps those separate: `show_layer()` is strict and
+requires the layer to belong to the current owner, while
+`preempt_with_owner()` is the explicit transfer. One asymmetry is deliberate
+and named — `present_legacy_full_body()` displays its sprite on acquisition,
+because that owner is a single renderer and callers depend on it.
+
 Combat does not. Dodge does not. Melee does not. `operator.gd` does not.
 Everything goes through:
 

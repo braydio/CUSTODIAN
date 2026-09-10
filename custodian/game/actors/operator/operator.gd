@@ -3791,7 +3791,7 @@ func _is_exclusive_body_owner_active() -> bool:
 
 ## The current owner, for observability and regression coverage.
 func get_body_presentation_owner() -> int:
-	return _body_presenter.owner()
+	return _body_presenter.current_owner()
 
 
 ## Owners that currently have at least one visible body layer. The ownership
@@ -3818,7 +3818,16 @@ func _claim_modular_body_owner() -> void:
 
 
 ## Enable one already-configured body layer through the presenter.
+##
+## MIGRATION SEAM: the incremental modular sync paths still call this per layer
+## rather than declaring a presentation up front, so the ownership decision is
+## made explicit here instead of being hidden inside `show_layer()`. Slice F
+## should convert those call sites to `_present_body()` and delete this branch.
 func _show_body_layer(layer) -> bool:
+	var layer_owner := _body_presenter.layer_owner(layer)
+	if layer_owner != OperatorBodyPresenter.Owner.NONE \
+	and layer_owner != _body_presenter.current_owner():
+		_body_presenter.preempt_with_owner(layer_owner)
 	return _body_presenter.show_layer(layer)
 
 

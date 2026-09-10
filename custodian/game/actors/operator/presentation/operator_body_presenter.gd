@@ -68,8 +68,13 @@ func is_registered_body_layer(layer) -> bool:
 
 # --- observability -----------------------------------------------------------
 
-func owner() -> int:
+func current_owner() -> int:
 	return _owner
+
+
+## Which owner a registered renderer belongs to, or Owner.NONE if unregistered.
+func layer_owner(layer) -> int:
+	return _owner_of_layer.get(layer, Owner.NONE)
 
 
 func is_exclusive_owner_active() -> bool:
@@ -118,26 +123,40 @@ func present(plan: OperatorBodyPresentationPlan) -> void:
 		show_layer(overlay)
 
 
-## Convenience acquisition for callers that have no layer list to hand.
+## Take the body for the legacy full-body sprite and display it.
 ##
-## LEGACY_FULL_BODY is enabled outright because it is a single sprite. The
-## multi-layer owners compose from whatever art exists for the direction, so
-## their layers stay hidden here and are enabled by their own play functions
-## before the frame is drawn - which is what keeps the handoff atomic.
+## This owner is a single sprite, so acquiring it shows it outright; existing
+## callers depend on that. Multi-layer owners cannot behave this way because
+## their constituent animations need configuring before display, so their
+## layers stay hidden here and are enabled by their own play functions before
+## the frame is drawn — which is what keeps the handoff atomic.
+func present_legacy_full_body() -> void:
+	present(OperatorBodyPresentationPlan.create(
+		Owner.LEGACY_FULL_BODY, _layers_by_owner.get(Owner.LEGACY_FULL_BODY, [])
+	))
+
+
+## Acquisition by owner id, for callers that have no layer list to hand.
+## LEGACY_FULL_BODY routes through `present_legacy_full_body()` so the display
+## semantics live in one clearly named place.
 func set_owner(owner: int) -> void:
-	var layers: Array = []
 	if owner == Owner.LEGACY_FULL_BODY:
-		layers = _layers_by_owner.get(owner, [])
-	present(OperatorBodyPresentationPlan.create(owner, layers))
+		present_legacy_full_body()
+		return
+	present(OperatorBodyPresentationPlan.create(owner))
 
 
 ## Declared by a modular composition that has already configured its layers.
 ## Retires the legacy body and both authored rigs without disturbing the
 ## modular layers the caller just set up.
 func claim_modular() -> void:
-	# The legacy body is hidden but NOT stopped: while hidden it still serves as
-	# a frame clock that explicit weapon layers synchronise against, so stopping
-	# it here would change presentation timing.
+	# MIGRATION DEBT:
+	# LegacyFullBody remains hidden-but-playing because some weapon/presentation
+	# layers still slave frame timing to it. Slice C must eliminate this hidden
+	# animation-clock authority before LegacyFullBody can always be stopped on
+	# retire. A hidden renderer being authoritative for timing is exactly the
+	# split-brain the melee timing doctrine forbids; it survives here only
+	# because removing it inside an extraction slice would change timing.
 	_hide_layers(_layers_by_owner.get(Owner.LEGACY_FULL_BODY, []), false)
 	_hide_layers(_layers_by_owner.get(Owner.VIGIL_POSTURE_TRANSITION, []), true)
 	_hide_layers(_layers_by_owner.get(Owner.VIGIL_FAST_STARTUP, []), true)
@@ -162,30 +181,25 @@ func release_rig(owner: int) -> void:
 		_owner = Owner.NONE
 
 
-## Show one registered layer.
+## Show one registered layer. STRICT: a body layer must already belong to the
+## current owner.
 ##
-## Showing a body layer IS a claim on the body: if the layer belongs to another
-## owner, that owner is adopted here and whoever held the body is retired in the
-## same call, before anything is drawn. So the one-body invariant holds even
-## when a deliberate presentation preempts an authored rig - which the runtime
-## legitimately does, for example when a draw/equip presentation interrupts a
-## posture bridge.
-##
-## Preemption is deliberately NOT refused here. Preventing *incidental*
-## composition from drawing behind an authored rig is the job of the callers
-## that own that decision - `_update_animation()` and the legacy fallback both
-## check `is_exclusive_owner_active()` first - and that is where the
-## duplicate-body regression tests point.
+## Showing a renderer is a mechanism; changing presentation ownership is a
+## decision. This verb deliberately does not imply the other — an innocent
+## `show_layer()` must never be able to overthrow an exclusive presentation.
+## Callers that intend to take the body say so with `preempt_with_owner()`.
 func show_layer(layer) -> bool:
 	if layer == null:
 		return false
 	if _owner_of_layer.has(layer):
-		var layer_owner: int = _owner_of_layer[layer]
-		if layer_owner != _owner:
-			if layer_owner == Owner.MODULAR_BODY:
-				claim_modular()
-			else:
-				set_owner(layer_owner)
+		var owner_of_layer: int = _owner_of_layer[layer]
+		if owner_of_layer != _owner:
+			push_error(
+				"[OperatorBodyPresenter] show_layer() for owner %d while owner is %d;"
+				% [owner_of_layer, _owner]
+				+ " use preempt_with_owner() to take the body explicitly"
+			)
+			return false
 		layer.visible = true
 		return true
 	if _overlays.has(layer):
@@ -193,6 +207,24 @@ func show_layer(layer) -> bool:
 		return true
 	push_error("[OperatorBodyPresenter] show_layer() on an unregistered renderer")
 	return false
+
+
+## Explicitly transfer the body to `owner`, atomically retiring whoever held it.
+##
+## This is the honest name for the decision that `show_layer()` refuses to make
+## implicitly. `layers` may be empty: an authored rig takes the body first and
+## enables its own layers as it starts playing them.
+func preempt_with_owner(owner: int, layers: Array = []) -> void:
+	if owner == _owner:
+		for layer in layers:
+			show_layer(layer)
+		return
+	if owner == Owner.MODULAR_BODY:
+		claim_modular()
+	else:
+		set_owner(owner)
+	for layer in layers:
+		show_layer(layer)
 
 
 ## Hide one registered layer without changing ownership. Used by the incremental

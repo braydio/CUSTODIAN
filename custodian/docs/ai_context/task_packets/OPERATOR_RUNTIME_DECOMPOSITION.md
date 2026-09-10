@@ -81,15 +81,29 @@ controls proving it catches the pre-fix duplicate-body behaviour.
 delegating wrappers with no visibility policy. `body_visibility_outside_presentation`
 is **0**; no other debt category moved.
 
-One deliberate deviation from the brief: `show_layer()` **adopts** the layer's
-owner rather than refusing to preempt an exclusive rig. Refusing broke
-`operator_melee_posture`, where a draw/equip presentation legitimately
-interrupts a posture bridge. Adoption still retires the previous owner in the
-same call, so no frame shows two bodies, and the exclusive guarantee stays
-where the regression tests point it: `_update_animation()` and the legacy
-fallback both check `_is_exclusive_body_owner_active()` first. Strict
-same-owner validation moved into `present(plan)`, which rejects a plan whose
-body layers span owners.
+Presenter vocabulary is deliberately split, so that showing a renderer is a
+mechanism and changing ownership is a decision:
+
+- `show_layer(layer)` is **strict** — a body layer must already belong to the
+  current owner, otherwise it errors and refuses. An innocent-looking show can
+  never overthrow an exclusive presentation.
+- `preempt_with_owner(owner, layers)` is the explicit ownership transfer.
+- `present_legacy_full_body()` names the one asymmetric case: that owner is a
+  single sprite, so acquiring it displays it, which existing callers depend on.
+- `present(plan)` rejects a plan whose body layers span owners.
+
+Draw/equip legitimately preempting a posture bridge is real behaviour, so the
+transfer has to be possible — it just has to be *said*. The ~14 incremental
+modular sync call sites still speak per layer, so `operator.gd::_show_body_layer()`
+carries a documented MIGRATION SEAM that performs the explicit
+`preempt_with_owner()` on their behalf. Slice F should convert those call sites
+to `_present_body()` and delete the branch.
+
+`claim_modular()` still hides the legacy body without stopping it, now marked
+in-code as MIGRATION DEBT: some weapon/presentation layers slave frame timing
+to the hidden legacy sprite, and Slice C must remove that hidden
+animation-clock authority before LegacyFullBody can always be stopped on
+retire.
 
 Do not convert `operator_presentation_rig_2d.gd` into this controller.
 
