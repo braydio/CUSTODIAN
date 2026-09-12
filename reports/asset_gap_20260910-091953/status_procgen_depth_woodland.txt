@@ -1,0 +1,13 @@
+
+PROCGEN DEPTH WOODLAND
+──────────────────────
+Required art      2 / 2 ready
+Recommended       0 / 0 ready
+Optional          0 / 0 ready
+Inbox             0 files waiting
+
+READY
+  ✓ canopy_basin_v1    OMNI
+  ✓ ravine_v1          OMNI
+
+Next: asset request procgen_depth_woodland

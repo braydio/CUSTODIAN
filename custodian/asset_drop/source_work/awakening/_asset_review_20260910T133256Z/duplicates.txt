@@ -1,0 +1,4 @@
+sha256 prefix d1d0e03b8d7d
+  [10] awakening_designation_locker/closed.png
+  [15] awakening_designation_locker/source/closed_source.png
+

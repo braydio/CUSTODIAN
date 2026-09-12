@@ -283,7 +283,8 @@ or asset-authoring tooling outside active gameplay runtime.
 - Commit completed, validated work at task boundaries without waiting for a per-task instruction.
 - Stage only the files the current task changed; never `git add -A` blindly or sweep in another session's dirty files, secrets, logs, or generated artifacts.
 - Use short, lowercase, comma-joined summaries in the repo's existing style (for example `combat feel authoring, FPS chasing`).
-- Do not push, amend, or force-push unless explicitly asked.
+- Push completed work to the remote once committed.
+- Do not amend or force-push unless explicitly asked.
 
 ## Design Codex Governance
 

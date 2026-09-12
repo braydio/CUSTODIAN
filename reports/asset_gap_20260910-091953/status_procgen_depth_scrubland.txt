@@ -1,0 +1,14 @@
+
+PROCGEN DEPTH SCRUBLAND
+───────────────────────
+Required art      3 / 3 ready
+Recommended       0 / 0 ready
+Optional          0 / 0 ready
+Inbox             0 files waiting
+
+READY
+  ✓ dry_basin_v1       OMNI
+  ✓ wash_channel_v1    OMNI
+  ✓ service_scar_v1    OMNI
+
+Next: asset request procgen_depth_scrubland

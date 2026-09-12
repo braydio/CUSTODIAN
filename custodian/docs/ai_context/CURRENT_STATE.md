@@ -1,5 +1,15 @@
 # CURRENT STATE — CUSTODIAN
 
+## Operator Flashlight V1 (2026-09-12)
+
+The production Operator now instances one focused flashlight component as
+permanent equipment. Physical L or controller MISC1 / Xbox Share toggles a
+warm shadow-casting authored-cookie beam and subtle non-shadowed local glow;
+both start off, follow the existing world-space `aim_direction` in every
+loadout, and register with `render_point_light`. The flashlight has no battery,
+inventory, progression, enemy-awareness, or environmental-darkness authority.
+See `design/02_features/lighting/OPERATOR_FLASHLIGHT.md`.
+
 ## Operator Runtime Animation Authority Migration (2026-09-06, in progress)
 
 Target authority is

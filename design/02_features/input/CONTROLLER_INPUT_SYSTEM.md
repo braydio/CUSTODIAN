@@ -20,8 +20,13 @@ CUSTODIAN uses Godot's InputMap as the sole production gameplay input authority.
 | D-pad Up / Down | Field Patch or active utility / build, deploy, or pickup |
 | D-pad Left / Right | Previous / next weapon |
 | View / Menu | Map / pause |
+| Share / MISC1 | Flashlight toggle |
 
 Weapon cycling must retain access to unarmed where required; `toggle_unarmed` receives no dedicated controller button. Item-cycle compatibility actions are keyboard-only until a live item-selection design exists. Drone extras remain terminal-accessible or await a dedicated command-mode design. Debug, time-shift, replay, and developer actions remain keyboard-oriented.
+
+The permanent Operator flashlight uses physical keyboard L and joypad button
+15 (`JOY_BUTTON_MISC1`, exposed as Xbox Share where available). F remains
+reserved for `toggle_unarmed`.
 
 ## Analog Contract
 

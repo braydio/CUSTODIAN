@@ -6,6 +6,7 @@ const REQUIRED_ACTIONS := [
 	&"sprint", &"sneak", &"attack_primary", &"attack_secondary",
 	&"heavy_attack", &"dodge", &"interact", &"reload_weapon",
 	&"toggle_inventory", &"toggle_minimap", &"use_field_patch", &"build", &"repair",
+	&"flashlight_toggle",
 ]
 const EXPECTED_BUTTONS := {
 	&"interact": 0, &"dodge": 1, &"reload_weapon": 2,
@@ -13,6 +14,7 @@ const EXPECTED_BUTTONS := {
 	&"sprint": 7, &"sneak": 8, &"repair": 9, &"heavy_attack": 10,
 	&"use_field_patch": 11, &"build": 12,
 	&"cycle_prev_weapon": 13, &"cycle_next_weapon": 14,
+	&"flashlight_toggle": 15,
 }
 const EXPECTED_AXES := {
 	&"move_left": [0, -1.0], &"move_right": [0, 1.0],
@@ -44,6 +46,8 @@ func _initialize() -> void:
 	_expect(not _has_any_joypad_event(&"cycle_item_right"), "cycle_item_right still collides with weapon cycling")
 	_expect(_has_key(&"sprint"), "sprint lost keyboard compatibility")
 	_expect(_has_key(&"heavy_attack"), "heavy_attack lost keyboard compatibility")
+	_expect(_has_physical_key(&"flashlight_toggle", KEY_L), "flashlight_toggle missing physical L")
+	_expect(_has_physical_key(&"toggle_unarmed", KEY_F), "toggle_unarmed lost physical F")
 
 	var operator_source := FileAccess.get_file_as_string("res://game/actors/operator/operator.gd")
 	_expect(operator_source.contains('Input.is_action_pressed("sprint")'), "operator sprint is not action-driven")
@@ -90,6 +94,13 @@ func _has_axis(action: StringName, axis: int, value: float) -> bool:
 func _has_key(action: StringName) -> bool:
 	for event in InputMap.action_get_events(action):
 		if event is InputEventKey:
+			return true
+	return false
+
+
+func _has_physical_key(action: StringName, keycode: Key) -> bool:
+	for event in InputMap.action_get_events(action):
+		if event is InputEventKey and event.physical_keycode == keycode:
 			return true
 	return false
 

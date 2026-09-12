@@ -45,7 +45,8 @@ Agents commit completed work without waiting for a per-task instruction.
 - Commit at task boundaries once the change is implemented and validated (parse checks, smoke tests, or the recipe in `custodian/docs/ai_context/VALIDATION_RECIPES.md`).
 - Stage only the files the current task changed. Never `git add -A` blindly: do not sweep in another session's unrelated dirty files, secrets, logs, or generated artifacts.
 - Use short, lowercase, comma-joined summaries in the repo's existing style (for example `combat feel authoring, FPS chasing`).
-- Do not push, amend, or force-push unless explicitly asked.
+- Push completed work to the remote once committed.
+- Do not amend or force-push unless explicitly asked.
 - This working tree is shared with other sessions. If unrelated files are dirty alongside yours, commit only your own files so the tree stays reconcilable.
 
 <!-- code-review-graph MCP tools -->

@@ -1,0 +1,31 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/actors/operator/components/operator_flashlight.gd" id="1_flashlight"]
+[ext_resource type="Texture2D" path="res://content/sprites/world/lighting/light_cookie_beam_96x192.png" id="2_beam"]
+[ext_resource type="Texture2D" path="res://content/sprites/world/lighting/light_cookie_radial_soft_128.png" id="3_glow"]
+
+[node name="OperatorFlashlight" type="Node2D"]
+script = ExtResource("1_flashlight")
+
+[node name="BeamPivot" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="BeamLight" type="PointLight2D" parent="BeamPivot"]
+unique_name_in_owner = true
+position = Vector2(0, 264)
+enabled = false
+texture = ExtResource("2_beam")
+texture_scale = 2.75
+color = Color(0.909804, 0.843137, 0.698039, 1)
+energy = 1.15
+height = 24.0
+shadow_enabled = true
+
+[node name="LocalGlow" type="PointLight2D" parent="."]
+unique_name_in_owner = true
+enabled = false
+texture = ExtResource("3_glow")
+texture_scale = 1.75
+color = Color(0.909804, 0.843137, 0.698039, 1)
+energy = 0.3
+shadow_enabled = false
