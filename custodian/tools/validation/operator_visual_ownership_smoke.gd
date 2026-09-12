@@ -263,11 +263,15 @@ func _check_preempted_startup_lifecycle() -> void:
 	if int(_operator.get("_vigil_ready_fast_startup_token")) == stale_token:
 		_fail("startup preempt: startup token was not invalidated by the preempting caller")
 
-	# Drive the abandoned lifecycle past its own duration: it must change nothing.
-	var owner_before := int(_operator.call("get_body_presentation_owner"))
+	# Drive the abandoned lifecycle past its own duration. Awaiting real frames
+	# lets ordinary animation updates move the body between owners, which is
+	# legitimate, so the invariant is the narrower one: the expired rig must not
+	# RECLAIM presentation for itself, and must leave nothing of itself on screen.
 	await _operator.call("_finish_vigil_ready_fast_startup", stale_token, clock_animation)
-	if int(_operator.call("get_body_presentation_owner")) != owner_before:
-		_fail("startup preempt: expired startup lifecycle changed the body owner")
+	if int(_operator.call("get_body_presentation_owner")) == OWNER_VIGIL_FAST_STARTUP:
+		_fail("startup preempt: expired startup lifecycle reclaimed the body")
+	if startup_lower != null and startup_lower.visible:
+		_fail("startup preempt: expired startup lifecycle re-showed its body")
 	if startup_weapon != null and startup_weapon.visible:
 		_fail("startup preempt: expired startup lifecycle re-showed its weapon")
 	if bool(_operator.get("_melee_fast_windup")):
@@ -422,11 +426,13 @@ func _check_preempted_rig_lifecycle() -> void:
 		_fail("preemption: preempted bridge still has a pending action")
 
 	# Drive the abandoned lifecycle to completion: it must change nothing.
-	var owner_before := int(_operator.call("get_body_presentation_owner"))
-	# Yields until the expired bridge's own timer elapses.
+	# Yields until the expired bridge's own timer elapses. Same reasoning as the
+	# startup case: frames pass, so assert non-reclamation rather than stasis.
 	await _operator.call("_finish_vigil_posture_bridge", stale_token, clock_animation)
-	if int(_operator.call("get_body_presentation_owner")) != owner_before:
-		_fail("preemption: expired bridge lifecycle changed the body owner after waking")
+	if int(_operator.call("get_body_presentation_owner")) == OWNER_VIGIL_POSTURE_TRANSITION:
+		_fail("preemption: expired bridge lifecycle reclaimed the body")
+	if bridge_lower != null and bridge_lower.visible:
+		_fail("preemption: expired bridge lifecycle re-showed its body")
 	if bridge_weapon != null and bridge_weapon.visible:
 		_fail("preemption: expired bridge lifecycle re-showed its weapon")
 	_assert_single_owner("after expired bridge lifecycle woke")

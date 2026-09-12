@@ -165,11 +165,18 @@ clock. Both belong to C1.
 ## Slice C1 — presentation playback funnel — DONE
 
 `presentation/operator_animation_player.gd` owns HOW an already-resolved clip
-plays. All 94 direct `AnimatedSprite2D.play()` calls are routed through it —
-88 in `operator.gd`, and the 7 in the animation states via narrow
-`AnimationStateMachine.play_animation()` / `can_play_animation()` delegates that
-share the same authority instance. `animated_sprite_play_outside_presentation`
-is retired from the baseline. The rule also gained an optional subscript, because
+plays.
+
+The count, stated precisely. The recorded ledger was **94** (`operator.gd` 87 +
+7 across the animation states) and it moved 94 -> 0 as recorded. But the
+hardened detector found one more site the old pattern could not see —
+`sprites[index].play()`, direct playback wearing an index — so the *actual*
+number of direct playback sites was **95**: 88 in `operator.gd` plus 7 in the
+states. C1 eliminated all 95. The ledger and reality now agree.
+
+The states reach playback through narrow `AnimationStateMachine.play_animation()`
+/ `can_play_animation()` delegates that share the same authority instance.
+`animated_sprite_play_outside_presentation` is retired from the baseline. The rule also gained an optional subscript, because
 `sprites[index].play()` was the same direct playback wearing an index and the old
 pattern missed it, exactly the way the body-visibility rule missed aliases.
 
@@ -204,7 +211,98 @@ Deliberately untouched, for C2: `AnimationResolver` 45, `fallback_animation` 16,
 `DirectionalAnimationFallback` 6, actor-local `SpriteFrames` 5,
 `OperatorAnimationCatalog` 4.
 
-## Slice C2 — canonical animation authority
+## Slice C2a — canonical animation consumer cutover — BLOCKED, evidence landed
+
+Characterization landed; the code cutover did not, because characterization
+showed it cannot be done safely as specified yet. Three findings, in order of
+how much they block.
+
+### 1. Every renderer is on a compatibility SpriteFrames
+
+`operator.tscn` binds all eleven presentation renderers to the compatibility
+resources in `game/actors/operator/`, not to the generated
+`content/sprites/operator/runtime/operator_runtime_frames.tres`. Legacy clip
+names (`unarmed_walk_e`) and canonical identities
+(`unarmed/locomotion/walk_01/e/lower_body`) are disjoint namespaces, so a
+selector result is unplayable until its renderer is rebound — and per this
+packet's own rule, rebinding one renderer means migrating ALL of its consumers
+in the same atomic step. Touch points per renderer:
+
+```text
+animated_sprite              124      melee_weapon_overlay_sprite   22
+modular_upper_body_sprite     52      primary_weapon_sprite         19
+modular_lower_body_sprite     39      modular_upper_fx_sprite       17
+melee_fx_overlay_sprite       16      ranged_fx_overlay_sprite      12
+modular_head_sprite            6      modular_sidearm_sprite         5
+modular_cape_sprite            3
+```
+
+That is ~315 presentation touch points, and the largest single atomic unit is
+124. The three debt counters C2a targets (61 sites) are the visible part of a
+much larger change.
+
+### 2. The recorded evidence does not prove most mappings
+
+`operator_selection_cutover_inventory.py` (migration-only; gameplay must never
+consume it) joins every legacy selection site against the reachability contract
+and the runtime manifest. Of 59 sites:
+
+- 16 pass a clip literal; the contract records only **6** of those clips.
+- 24 pass a variable and need caller tracing to identify at all.
+- 9 resolve to recorded consumer evidence overall.
+
+`ranged_2h_aim_modular`, `ranged_2h_stance_modular`, `unarmed_parry`,
+`unarmed_attack_fast_windup`, `unarmed_attack_fast_recovery` and
+`unarmed_attack_fast_recovery_fx` appear at call sites and are **not** recorded
+in the reachability contract. This packet says not to infer identity from clip
+names when the repo records them; where the repo does *not* record them, the
+mapping has to be established deliberately, not guessed. Extending the
+reachability contract to cover these is the cheapest way to unblock.
+
+### 3. The dodge fallback is case C, and its replacement is a design decision
+
+`_resolve_dodge_presentation_animation()` searches for the nearest sector that
+has art. Dodge chain-link and charge-windup are authored in only three facings
+(`down`, `left`, `right`) covering eight input directions, so the search is
+doing real work. Its current outcomes are an artifact of tie-ordering rather
+than a coherent rule, and no deterministic mapping reproduces them:
+
+```text
+sector   current      |x|>=|y| rule
+n     -> right        down          <- differs
+ne    -> right        right
+e     -> right        right
+se    -> down         right         <- differs
+s     -> down         down
+sw    -> down         left          <- differs
+w     -> left         left
+nw    -> left         left
+```
+
+Under the strict contract a missing exact identity goes to SOUTH, so a
+north-east dodge would render the *down* strip where it renders *right* today.
+Choosing the replacement means answering what a north, south-east and
+south-west dodge should look like — an authoring decision. Options: author the
+missing directions, or declare an explicit three-facing intent rule and accept
+the change in those three sectors.
+
+### Recommended sequencing for the next attempt
+
+1. Extend `operator_animation_reachability.json` to record the ten unrecorded
+   clips, and trace the 24 variable-argument sites to their callers. The
+   inventory reports both sets.
+2. Answer the dodge authoring question in item 3.
+3. Then cut over renderer by renderer, smallest first
+   (`modular_cape_sprite`, `modular_sidearm_sprite`, `modular_head_sprite`)
+   to prove the rebinding pattern before touching `animated_sprite`.
+4. Expect SOUTH-fallback telemetry to spike where canonical directional
+   coverage is partial — `melee_1h/posture/*` is e/w only,
+   `unarmed/locomotion/walk_01` upper is 6 of 8. Collect the counts as §9 asks.
+
+Nothing in `game/` was changed by this slice: a partial cutover would silently
+change what the player sees, and the smokes cannot see art correctness.
+
+## Slice C2a — original scope
 
 Route every presentation request through `OperatorAnimationSelector` and the one
 generated `operator_runtime_frames.tres`. Retire `AnimationResolver` (45),
