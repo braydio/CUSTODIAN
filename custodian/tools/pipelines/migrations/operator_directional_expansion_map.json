@@ -1,0 +1,35 @@
+{
+  "schema": "custodian.operator_directional_expansion.v1",
+  "decision": "C2a authoring decision, 2026-09-12",
+  "rationale": "Dodge charge-windup and chain-link are authored in three facings. The retired DirectionalAnimationFallback chose among them by nearest-available-sector search, whose visible outcomes were an artifact of tie ordering. Those visible outcomes are preserved deliberately as an explicit authoring mapping and materialized into exact canonical identities, so the selector keeps its exact -> SOUTH -> error contract and no nearest-sector search survives. Presentation only: this must never affect dodge movement direction, Flow, timing or iframes.",
+  "expansions": [
+    {
+      "profile": "shared",
+      "group": "attack",
+      "action": "dodge_charge_windup_01",
+      "layer": "full_body",
+      "frames": 5,
+      "cell": "96",
+      "reason": "N/NE reuse E; SE/SW reuse S; NW reuses W.",
+      "directions": {
+        "e": "e", "n": "e", "ne": "e",
+        "s": "s", "se": "s", "sw": "s",
+        "w": "w", "nw": "w"
+      }
+    },
+    {
+      "profile": "shared",
+      "group": "transition",
+      "action": "dodge_chain_link_01",
+      "layer": "full_body",
+      "frames": 4,
+      "cell": "96",
+      "reason": "N/NE reuse E; SE/SW reuse S; NW reuses W.",
+      "directions": {
+        "e": "e", "n": "e", "ne": "e",
+        "s": "s", "se": "s", "sw": "s",
+        "w": "w", "nw": "w"
+      }
+    }
+  ]
+}

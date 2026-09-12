@@ -286,15 +286,47 @@ south-west dodge should look like — an authoring decision. Options: author the
 missing directions, or declare an explicit three-facing intent rule and accept
 the change in those three sectors.
 
+### Authoring decisions received (2026-09-12) and applied
+
+**Modular head and cape are retired from active composition, not deleted.**
+`Operator.ACTIVE_MODULAR_HEAD` / `ACTIVE_MODULAR_CAPE` gate the composition
+paths that drew them; source and runtime art stays published; the ten affected
+canonical layers are classified `DORMANT` per layer in the reachability
+contract. They are NOT rebinding targets for C2. The first small renderer proof
+is therefore `modular_sidearm_sprite` (5 touch points), not
+`modular_head_sprite`. `operator_modular_head_frames.tres` and
+`operator_modular_cape_frames.tres` become zero-consumer residue for C2b/G.
+
+**Dodge directional coverage is materialized, not fallen back to.** The visible
+mapping the characterization found is preserved deliberately —
+N/NE -> E art, SE/S/SW -> S art, W/NW -> W art — and expanded into exact
+canonical identities for all eight sectors of `dodge_charge_windup_01` and
+`dodge_chain_link_01`. Every expanded strip is a byte-identical copy of the
+authored strip it reuses, verified by SHA-256, and carries an `.expansion.json`
+sidecar recording that it is deliberate reuse rather than unique art, so no
+future agent mistakes it for authored coverage. The map and rationale live in
+`tools/pipelines/migrations/operator_directional_expansion_map.json`; the
+reachability entries point at it.
+
+The selector is deliberately NOT taught this mapping: it keeps seeing an exact
+identity, and its contract stays exact -> temporary same-identity SOUTH ->
+error. This is presentation only and must never affect dodge movement
+direction, Flow, timing or iframes.
+
+Note the dodge entries stay `DORMANT`: the coverage now exists, but the
+consumer still resolves legacy production body frames until `animated_sprite`
+is rebound. Retiring `DirectionalAnimationFallback` at that call site is
+therefore part of the `animated_sprite` cutover, not separable from it.
+
 ### Recommended sequencing for the next attempt
 
 1. Extend `operator_animation_reachability.json` to record the ten unrecorded
    clips, and trace the 24 variable-argument sites to their callers. The
    inventory reports both sets.
 2. Answer the dodge authoring question in item 3.
-3. Then cut over renderer by renderer, smallest first
-   (`modular_cape_sprite`, `modular_sidearm_sprite`, `modular_head_sprite`)
-   to prove the rebinding pattern before touching `animated_sprite`.
+3. Then cut over renderer by renderer, starting with `modular_sidearm_sprite`
+   (5 touch points) to prove the rebinding pattern before touching
+   `animated_sprite`. Head and cape are retired, not migrated.
 4. Expect SOUTH-fallback telemetry to spike where canonical directional
    coverage is partial — `melee_1h/posture/*` is e/w only,
    `unarmed/locomotion/walk_01` upper is 6 of 8. Collect the counts as §9 asks.

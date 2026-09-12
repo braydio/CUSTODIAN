@@ -155,6 +155,30 @@ and no action-specific methods. `operator.gd` and the compatibility
 `AnimationStateMachine` both drive playback through it rather than touching
 `AnimatedSprite2D` directly.
 
+### The active presentation chassis
+
+Modularity is not the goal; the minimum number of independently animated layers
+that supports real gameplay variation is. The active Operator chassis is:
+
+```text
+lower-body cadence
++ upper action layer where genuinely needed
++ weapon
++ FX
+```
+
+with authored full-body actions available where appropriate — not a stack of
+every layer that could technically be separated.
+
+**Retired from active composition (C2a authoring decision, 2026-09-12):** the
+modular head and the modular cape. `Operator.ACTIVE_MODULAR_HEAD` and
+`ACTIVE_MODULAR_CAPE` are `false`, and the composition paths that used to draw
+them return early. Their source and runtime art stays published and their
+canonical identities stay in the manifest, classified `DORMANT` per layer —
+this is a retirement, not a deletion, and they may return in a dedicated
+presentation/art pass. That is why these are gates rather than removed code.
+Their compatibility SpriteFrames become zero-consumer residue for C2b/G.
+
 ### The presentation clock
 
 Anything that follows animation frames — overlay synchronization, the melee

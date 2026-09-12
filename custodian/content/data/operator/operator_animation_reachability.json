@@ -391,7 +391,8 @@
       "group": "attack",
       "action": "dodge_charge_windup_01",
       "status": "DORMANT",
-      "reason": "Dodge-charge windup presentation resolves from legacy production body frames (operator_dodge_charge_windup); no consumer references this canonical sheet."
+      "reason": "Dodge-charge windup presentation resolves from legacy production body frames (operator_dodge_charge_windup); no consumer references this canonical sheet. C2a authoring decision 2026-09-12: full eight-sector canonical coverage now exists. N/NE reuse the authored E strip, SE/SW reuse S, NW reuses W \u2014 a deliberate reuse of authored pixels recorded per-file in .expansion.json sidecars, not unique art and not a runtime fallback. Still DORMANT: the consumer resolves legacy production body frames until animated_sprite is rebound to the generated runtime SpriteFrames.",
+      "directional_expansion": "tools/pipelines/migrations/operator_directional_expansion_map.json"
     },
     {
       "profile": "shared",
@@ -403,9 +404,25 @@
     {
       "profile": "shared",
       "group": "locomotion",
+      "action": "idle_01",
+      "layer": "head",
+      "status": "DORMANT",
+      "reason": "C2a authoring decision 2026-09-12: the modular head and cape are preserved but retired from the active Operator composition (Operator.ACTIVE_MODULAR_HEAD / ACTIVE_MODULAR_CAPE are false). Source and runtime art stays published; the Operator stops drawing this layer. May return in a dedicated presentation/art pass."
+    },
+    {
+      "profile": "shared",
+      "group": "locomotion",
       "action": "idle_hitreact_01",
       "status": "LIVE",
       "consumer": "operator operator_idle_hitreact_modular"
+    },
+    {
+      "profile": "shared",
+      "group": "locomotion",
+      "action": "idle_hitreact_01",
+      "layer": "head",
+      "status": "DORMANT",
+      "reason": "C2a authoring decision 2026-09-12: the modular head and cape are preserved but retired from the active Operator composition (Operator.ACTIVE_MODULAR_HEAD / ACTIVE_MODULAR_CAPE are false). Source and runtime art stays published; the Operator stops drawing this layer. May return in a dedicated presentation/art pass."
     },
     {
       "profile": "shared",
@@ -417,9 +434,25 @@
     {
       "profile": "shared",
       "group": "locomotion",
+      "action": "run_01",
+      "layer": "head",
+      "status": "DORMANT",
+      "reason": "C2a authoring decision 2026-09-12: the modular head and cape are preserved but retired from the active Operator composition (Operator.ACTIVE_MODULAR_HEAD / ACTIVE_MODULAR_CAPE are false). Source and runtime art stays published; the Operator stops drawing this layer. May return in a dedicated presentation/art pass."
+    },
+    {
+      "profile": "shared",
+      "group": "locomotion",
       "action": "walk_01",
       "status": "LIVE",
       "consumer": "operator legacy walk_<direction> fallback"
+    },
+    {
+      "profile": "shared",
+      "group": "locomotion",
+      "action": "walk_01",
+      "layer": "head",
+      "status": "DORMANT",
+      "reason": "C2a authoring decision 2026-09-12: the modular head and cape are preserved but retired from the active Operator composition (Operator.ACTIVE_MODULAR_HEAD / ACTIVE_MODULAR_CAPE are false). Source and runtime art stays published; the Operator stops drawing this layer. May return in a dedicated presentation/art pass."
     },
     {
       "profile": "shared",
@@ -427,6 +460,14 @@
       "action": "stance_01",
       "status": "SUPERSEDED",
       "replacement": "shared/locomotion/idle_01"
+    },
+    {
+      "profile": "shared",
+      "group": "posture",
+      "action": "stance_01",
+      "layer": "head",
+      "status": "DORMANT",
+      "reason": "C2a authoring decision 2026-09-12: the modular head and cape are preserved but retired from the active Operator composition (Operator.ACTIVE_MODULAR_HEAD / ACTIVE_MODULAR_CAPE are false). Source and runtime art stays published; the Operator stops drawing this layer. May return in a dedicated presentation/art pass."
     },
     {
       "profile": "shared",
@@ -440,7 +481,8 @@
       "group": "transition",
       "action": "dodge_chain_link_01",
       "status": "DORMANT",
-      "reason": "Dodge chain-link presentation resolves from legacy production body frames (operator_dodge_chain_link); no consumer references this canonical sheet."
+      "reason": "Dodge chain-link presentation resolves from legacy production body frames (operator_dodge_chain_link); no consumer references this canonical sheet. C2a authoring decision 2026-09-12: full eight-sector canonical coverage now exists. N/NE reuse the authored E strip, SE/SW reuse S, NW reuses W \u2014 a deliberate reuse of authored pixels recorded per-file in .expansion.json sidecars, not unique art and not a runtime fallback. Still DORMANT: the consumer resolves legacy production body frames until animated_sprite is rebound to the generated runtime SpriteFrames.",
+      "directional_expansion": "tools/pipelines/migrations/operator_directional_expansion_map.json"
     },
     {
       "profile": "sidearm",
@@ -473,6 +515,14 @@
     {
       "profile": "unarmed",
       "group": "attack",
+      "action": "dodge_fast_attack_01",
+      "layer": "cape",
+      "status": "DORMANT",
+      "reason": "C2a authoring decision 2026-09-12: the modular head and cape are preserved but retired from the active Operator composition (Operator.ACTIVE_MODULAR_HEAD / ACTIVE_MODULAR_CAPE are false). Source and runtime art stays published; the Operator stops drawing this layer. May return in a dedicated presentation/art pass."
+    },
+    {
+      "profile": "unarmed",
+      "group": "attack",
       "action": "fast_01",
       "status": "LIVE",
       "consumer": "operator unarmed fast-attack chain (modular + legacy full_body)"
@@ -501,6 +551,14 @@
     {
       "profile": "unarmed",
       "group": "attack",
+      "action": "fast_recovery_01",
+      "layer": "cape",
+      "status": "DORMANT",
+      "reason": "C2a authoring decision 2026-09-12: the modular head and cape are preserved but retired from the active Operator composition (Operator.ACTIVE_MODULAR_HEAD / ACTIVE_MODULAR_CAPE are false). Source and runtime art stays published; the Operator stops drawing this layer. May return in a dedicated presentation/art pass."
+    },
+    {
+      "profile": "unarmed",
+      "group": "attack",
       "action": "fast_strike_01",
       "status": "LIVE",
       "consumer": "operator unarmed_fast_strike_lower/upper/fx_modular"
@@ -508,9 +566,25 @@
     {
       "profile": "unarmed",
       "group": "attack",
+      "action": "fast_strike_01",
+      "layer": "cape",
+      "status": "DORMANT",
+      "reason": "C2a authoring decision 2026-09-12: the modular head and cape are preserved but retired from the active Operator composition (Operator.ACTIVE_MODULAR_HEAD / ACTIVE_MODULAR_CAPE are false). Source and runtime art stays published; the Operator stops drawing this layer. May return in a dedicated presentation/art pass."
+    },
+    {
+      "profile": "unarmed",
+      "group": "attack",
       "action": "fast_strike_02",
       "status": "DORMANT",
       "reason": "Only unarmed_fast_strike_01 is referenced by the attack presentation; the _02 variant has no consumer."
+    },
+    {
+      "profile": "unarmed",
+      "group": "attack",
+      "action": "fast_strike_02",
+      "layer": "cape",
+      "status": "DORMANT",
+      "reason": "C2a authoring decision 2026-09-12: the modular head and cape are preserved but retired from the active Operator composition (Operator.ACTIVE_MODULAR_HEAD / ACTIVE_MODULAR_CAPE are false). Source and runtime art stays published; the Operator stops drawing this layer. May return in a dedicated presentation/art pass."
     },
     {
       "profile": "unarmed",
@@ -637,6 +711,14 @@
       "action": "run_01",
       "status": "LIVE",
       "consumer": "operator._sync_modular_locomotion_layers (unarmed_run)"
+    },
+    {
+      "profile": "unarmed",
+      "group": "locomotion",
+      "action": "run_01",
+      "layer": "cape",
+      "status": "DORMANT",
+      "reason": "C2a authoring decision 2026-09-12: the modular head and cape are preserved but retired from the active Operator composition (Operator.ACTIVE_MODULAR_HEAD / ACTIVE_MODULAR_CAPE are false). Source and runtime art stays published; the Operator stops drawing this layer. May return in a dedicated presentation/art pass."
     },
     {
       "profile": "unarmed",

@@ -3599,6 +3599,9 @@ func _play_optional_modular_cape_animation(base_animation: String, direction: Ve
 	if dir_suffix != "up" and dir_suffix != "up_left" and dir_suffix != "up_right":
 		_hide_modular_cape_layer()
 		return {"played": false, "duration": 0.0}
+	if not ACTIVE_MODULAR_CAPE:
+		_hide_modular_cape_layer()
+		return {"played": false, "duration": 0.0}
 	var result := _play_modular_action_animation(modular_cape_sprite, base_animation, direction, target_fps)
 	if not bool(result.get("played", false)):
 		_hide_modular_cape_layer()
@@ -3607,6 +3610,9 @@ func _play_optional_modular_cape_animation(base_animation: String, direction: Ve
 
 func _play_optional_modular_cape_animation_backwards(base_animation: String, direction: Vector2, target_fps: float) -> Dictionary:
 	if not modular_primary_ranged_aim_cape_enabled:
+		_hide_modular_cape_layer()
+		return {"played": false, "duration": 0.0}
+	if not ACTIVE_MODULAR_CAPE:
 		_hide_modular_cape_layer()
 		return {"played": false, "duration": 0.0}
 	var result := _play_modular_action_animation_backwards(modular_cape_sprite, base_animation, direction, target_fps)
@@ -3773,6 +3779,9 @@ func _sync_modular_upper_body_layer(base_animation: String, direction: Vector2, 
 
 
 func _sync_modular_head_locomotion(base_animation: String, direction: Vector2, speed_scale: float) -> bool:
+	if not ACTIVE_MODULAR_HEAD:
+		_hide_modular_head_layer()
+		return false
 	if modular_head_sprite == null or modular_head_sprite.sprite_frames == null or modular_head_profile.is_empty():
 		_hide_modular_head_layer()
 		return false
@@ -3808,6 +3817,20 @@ func _sync_modular_head_locomotion(base_animation: String, direction: Vector2, s
 ## `design/04_architecture/OPERATOR_RUNTIME_ARCHITECTURE.md`. The Operator
 ## creates the renderers, registers them, and then only ever *requests*
 ## presentation. Nothing below may contain visibility policy of its own.
+## Presentation layers preserved but retired from the ACTIVE Operator
+## composition (C2a authoring decision, 2026-09-12).
+##
+## The modular head and cape were early presentation experiments. Their source
+## and runtime art stays published and their canonical identities stay in the
+## manifest — the Operator simply stops drawing them, so the active chassis is
+## lower-body cadence + upper action layer + weapon + FX, with authored
+## full-body actions where appropriate. Modularity is not the goal; the minimum
+## number of independently animated layers that supports real gameplay variation
+## is. Both may return in a dedicated presentation/art pass, which is why these
+## are gates rather than deletions.
+const ACTIVE_MODULAR_HEAD := false
+const ACTIVE_MODULAR_CAPE := false
+
 var _body_presenter := OperatorBodyPresenter.new()
 
 ## Sole authority for HOW an already-resolved clip plays. The Operator decides
@@ -5956,7 +5979,8 @@ func _play_dodge_fast_attack_presentation() -> bool:
 	if not _play_named_melee_fx_overlay(fx_animation) and melee_fx_overlay_sprite != null:
 		melee_fx_overlay_sprite.visible = false
 	var cape_animation := StringName("unarmed_dodge_fast_attack_cape_%s" % suffix)
-	if modular_cape_sprite != null \
+	if ACTIVE_MODULAR_CAPE \
+		and modular_cape_sprite != null \
 		and modular_cape_sprite.sprite_frames != null \
 		and _has_playable_sprite_animation(modular_cape_sprite.sprite_frames, cape_animation):
 		modular_cape_sprite.visible = true
@@ -13335,7 +13359,8 @@ func begin_modular_damage_reaction(state_name: String) -> bool:
 		animation_name,
 		target_fps
 	)
-	if modular_head_sprite != null \
+	if ACTIVE_MODULAR_HEAD \
+	and modular_head_sprite != null \
 	and modular_head_sprite.sprite_frames != null \
 	and _has_playable_sprite_animation(
 		modular_head_sprite.sprite_frames,

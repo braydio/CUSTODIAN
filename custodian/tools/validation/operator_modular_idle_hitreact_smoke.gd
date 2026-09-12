@@ -242,9 +242,15 @@ func _assert_reaction_direction(
 	_assert(lower.frame == 0 and upper.frame == 0, "required layers should start on frame zero")
 	_assert(lower.visible and upper.visible, "required modular layers should be visible")
 	_assert(not legacy.visible, "legacy and modular bodies must not render together")
-	if head.sprite_frames.has_animation(expected_animation):
-		_assert(head.visible and head.animation == expected_animation, "optional head should join matching reaction")
-		_assert(head.frame == lower.frame, "optional head should start synchronized")
+	# C2a authoring decision 2026-09-12: the modular head is preserved but retired
+	# from the active composition (Operator.ACTIVE_MODULAR_HEAD is false). Its art
+	# is still published and it may still have a matching clip, so assert the
+	# retirement rather than the old "optional head joins" behaviour — otherwise
+	# this test would pass again the moment the head quietly came back.
+	_assert(
+		not head.visible,
+		"retired modular head must not draw in a reaction (ACTIVE_MODULAR_HEAD is false)"
+	)
 
 
 func _assert(value: bool, message: String) -> void:

@@ -3065,6 +3065,54 @@
         }
       }
     },
+    "shared/attack/dodge_charge_windup_01/n": {
+      "profile": "shared",
+      "group": "attack",
+      "action": "dodge_charge_windup_01",
+      "direction": "n",
+      "layers": {
+        "full_body": {
+          "path": "res://content/sprites/operator/runtime/animations/shared/attack/dodge_charge_windup_01/operator__full_body__shared__attack__dodge_charge_windup_01__n__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
+    "shared/attack/dodge_charge_windup_01/ne": {
+      "profile": "shared",
+      "group": "attack",
+      "action": "dodge_charge_windup_01",
+      "direction": "ne",
+      "layers": {
+        "full_body": {
+          "path": "res://content/sprites/operator/runtime/animations/shared/attack/dodge_charge_windup_01/operator__full_body__shared__attack__dodge_charge_windup_01__ne__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
+    "shared/attack/dodge_charge_windup_01/nw": {
+      "profile": "shared",
+      "group": "attack",
+      "action": "dodge_charge_windup_01",
+      "direction": "nw",
+      "layers": {
+        "full_body": {
+          "path": "res://content/sprites/operator/runtime/animations/shared/attack/dodge_charge_windup_01/operator__full_body__shared__attack__dodge_charge_windup_01__nw__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
     "shared/attack/dodge_charge_windup_01/s": {
       "profile": "shared",
       "group": "attack",
@@ -3073,6 +3121,38 @@
       "layers": {
         "full_body": {
           "path": "res://content/sprites/operator/runtime/animations/shared/attack/dodge_charge_windup_01/operator__full_body__shared__attack__dodge_charge_windup_01__s__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
+    "shared/attack/dodge_charge_windup_01/se": {
+      "profile": "shared",
+      "group": "attack",
+      "action": "dodge_charge_windup_01",
+      "direction": "se",
+      "layers": {
+        "full_body": {
+          "path": "res://content/sprites/operator/runtime/animations/shared/attack/dodge_charge_windup_01/operator__full_body__shared__attack__dodge_charge_windup_01__se__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
+    "shared/attack/dodge_charge_windup_01/sw": {
+      "profile": "shared",
+      "group": "attack",
+      "action": "dodge_charge_windup_01",
+      "direction": "sw",
+      "layers": {
+        "full_body": {
+          "path": "res://content/sprites/operator/runtime/animations/shared/attack/dodge_charge_windup_01/operator__full_body__shared__attack__dodge_charge_windup_01__sw__5f__96.png",
           "frames": 5,
           "frame_size": [
             96,
@@ -3321,6 +3401,54 @@
         }
       }
     },
+    "shared/transition/dodge_chain_link_01/n": {
+      "profile": "shared",
+      "group": "transition",
+      "action": "dodge_chain_link_01",
+      "direction": "n",
+      "layers": {
+        "full_body": {
+          "path": "res://content/sprites/operator/runtime/animations/shared/transition/dodge_chain_link_01/operator__full_body__shared__transition__dodge_chain_link_01__n__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
+    "shared/transition/dodge_chain_link_01/ne": {
+      "profile": "shared",
+      "group": "transition",
+      "action": "dodge_chain_link_01",
+      "direction": "ne",
+      "layers": {
+        "full_body": {
+          "path": "res://content/sprites/operator/runtime/animations/shared/transition/dodge_chain_link_01/operator__full_body__shared__transition__dodge_chain_link_01__ne__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
+    "shared/transition/dodge_chain_link_01/nw": {
+      "profile": "shared",
+      "group": "transition",
+      "action": "dodge_chain_link_01",
+      "direction": "nw",
+      "layers": {
+        "full_body": {
+          "path": "res://content/sprites/operator/runtime/animations/shared/transition/dodge_chain_link_01/operator__full_body__shared__transition__dodge_chain_link_01__nw__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
     "shared/transition/dodge_chain_link_01/s": {
       "profile": "shared",
       "group": "transition",
@@ -3329,6 +3457,38 @@
       "layers": {
         "full_body": {
           "path": "res://content/sprites/operator/runtime/animations/shared/transition/dodge_chain_link_01/operator__full_body__shared__transition__dodge_chain_link_01__s__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
+    "shared/transition/dodge_chain_link_01/se": {
+      "profile": "shared",
+      "group": "transition",
+      "action": "dodge_chain_link_01",
+      "direction": "se",
+      "layers": {
+        "full_body": {
+          "path": "res://content/sprites/operator/runtime/animations/shared/transition/dodge_chain_link_01/operator__full_body__shared__transition__dodge_chain_link_01__se__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
+    "shared/transition/dodge_chain_link_01/sw": {
+      "profile": "shared",
+      "group": "transition",
+      "action": "dodge_chain_link_01",
+      "direction": "sw",
+      "layers": {
+        "full_body": {
+          "path": "res://content/sprites/operator/runtime/animations/shared/transition/dodge_chain_link_01/operator__full_body__shared__transition__dodge_chain_link_01__sw__4f__96.png",
           "frames": 4,
           "frame_size": [
             96,
