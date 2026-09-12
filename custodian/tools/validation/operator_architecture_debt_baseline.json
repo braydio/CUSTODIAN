@@ -7,7 +7,7 @@
   },
   "animation_resolver": {
     "animations/animation_resolver.gd": 1,
-    "operator.gd": 44
+    "operator.gd": 43
   },
   "animation_state_actor_glue": {
     "animations/states/attack_fast_state.gd": 4,

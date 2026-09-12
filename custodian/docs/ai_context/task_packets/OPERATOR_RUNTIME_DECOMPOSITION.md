@@ -390,15 +390,88 @@ substitution, and there is no unarmed `block_exit_01` art, though
 action is recorded on the reachability row as `open_authoring_question`. Not a
 cutover blocker.
 
+### C2a-R1 — modular_sidearm_sprite is canonical (DONE)
+
+The first live compatibility renderer is on the canonical spine.
+`operator.tscn` binds `ModularSidearmSprite` to
+`content/sprites/operator/runtime/operator_runtime_frames.tres`, the scene no
+longer loads `operator_modular_sidearm_frames.tres` at all, and the evidence
+report marks the renderer `CANONICAL` with `canonical_frames_bound: true` and
+zero legacy selection sites. The compatibility `.tres` stays on disk as C2b
+residue. No other renderer moved.
+
+Selection now runs semantic intent -> `OperatorAnimationSelector.resolve_sector()`
+-> `OperatorAnimationPlayer` -> renderer. `resolve_sector()` is a new entry point
+that takes an already-decided sector and performs the same exact -> temporary
+SOUTH -> error lookup, because projecting a requested direction onto an authored
+facing is presentation policy that belongs to the caller. The selector learns
+nothing about the projection.
+
+**The evidence artifact under-reported this renderer, and that matters for the
+renderers still to come.** It said 5 sites / 4 active / 0 blockers, scoped to the
+three debt patterns. Two further legacy selection mechanisms drive this renderer
+and are invisible to those patterns:
+
+* `_resolve_sidearm_directional_animation()` built `<base>_<up|down>_<left|right>`
+  names directly — the whole P-9 draw/fire path, and the reason the sidearm's own
+  presentation never appeared in the inventory at all. Now deleted.
+* `_play_first_available_modular_fire_animation()` walks a *candidate name list*,
+  so the ranged fire weapon layer selected legacy clips without ever touching
+  `AnimationResolver`. Its `&"weapon"` candidate list is now empty and the layer
+  resolves one canonical identity.
+
+Expect the same for later renderers: the debt counters are a floor on the
+consumer surface, not a description of it. Read the renderer, not only the report.
+
+**Direction policy.** The P-9 is authored for four diagonals. The 2026-09-12
+authoring decision is encoded as a literal table, and it is exactly what the
+deleted `_resolve_sidearm_directional_animation()` produced, so nothing the
+player sees changed:
+
+```text
+n, ne -> ne      e, se, s -> se      sw, w -> sw      nw -> nw
+```
+
+The sector is resolved ONCE per action and drives the whole authored stack. The
+three layers beside the pistol are still compatibility renderers, so they receive
+legacy names built from the SAME sector via
+`_sidearm_legacy_sector_suffix()` — they cannot drift from the pistol, which is
+what independent per-layer resolution allowed before.
+
+**ranged_2h on this renderer.** Despite the node's name it also carries the
+ranged_2h weapon layer. Those actions are published in partial sets, and their
+projection tables were characterized rather than invented: the compatibility
+resource already sourced canonical PNGs, its unsuffixed clips are the `e` art,
+and `AnimationResolver` fell through to `_left` when x < 0 and otherwise to
+`_right`. `RANGED_2H_AUTHORED_SECTORS` reproduces that per action. `fire_01`
+leaves ne/nw/s mapped to themselves because those sectors played nothing before;
+`has_sector_identity()` asks before resolving so ordinary aiming does not emit
+missing-animation errors for an optional layer.
+
+All of this is presentation only. Aim direction, projectile direction, the weapon
+socket, movement, target selection, gameplay state and combat timing are
+untouched.
+
+**Tests.** `operator_sidearm_canonical_smoke.gd` asserts the actual canonical
+animation selected for all eight sectors, that the stack shares one authored
+sector, that legacy clips are no longer playable on the renderer, and that
+ranged_2h requests never resolve P-9 art. Two negative controls verified: inverting
+one cardinal fails it, and desynchronising the legacy suffix table fails it.
+
+Two existing tests encoded the compatibility naming and were updated rather than
+worked around: `operator_weapon_socket_smoke` now asserts the renderer carries
+canonical identities and does **not** carry the legacy clips, and drives it with
+canonical names; its socket-track checks stay keyed to the still-legacy upper body.
+
 ### Recommended sequencing for the next attempt
 
 1. Extend `operator_animation_reachability.json` to record the ten unrecorded
    clips, and trace the 24 variable-argument sites to their callers. The
    inventory reports both sets.
 2. Answer the dodge authoring question in item 3.
-3. Then cut over renderer by renderer, starting with `modular_sidearm_sprite`
-   (5 touch points) to prove the rebinding pattern before touching
-   `animated_sprite`. Head and cape are retired, not migrated.
+3. `modular_sidearm_sprite` is done (C2a-R1). Next is `modular_upper_fx_sprite`,
+   then the body layers, then `animated_sprite` last. Head and cape are retired,
+   not migrated.
 4. Expect SOUTH-fallback telemetry to spike where canonical directional
    coverage is partial — `melee_1h/posture/*` is e/w only,
    `unarmed/locomotion/walk_01` upper is 6 of 8. Collect the counts as §9 asks.

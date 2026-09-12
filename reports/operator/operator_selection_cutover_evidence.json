@@ -2,8 +2,7 @@
   "schema": "custodian.operator_selection_cutover_evidence.v1",
   "counts": {
     "DATA_DRIVEN": 6,
-    "PROVEN": 50,
-    "RETIRED": 1,
+    "PROVEN": 47,
     "AUTHORING_DECISION": 2
   },
   "renderer_readiness": {
@@ -34,28 +33,18 @@
           "function": "_update_animation",
           "classification": "DATA_DRIVEN",
           "clips": [
-            "cancel_parry_critical_execution",
-            "damage_applied",
-            "damage_rejected",
-            "enemy_begin_rejected",
-            "enemy_invalid",
-            "input_lost",
             "melee_2h_heavy_anticipation",
             "operator_body_asset_missing",
             "operator_dead",
             "operator_exit_tree",
-            "operator_fx_asset_missing",
-            "player_critical_attack_started",
-            "player_dodge_charge_cancelled",
-            "reserve_parry_critical"
+            "operator_fx_asset_missing"
           ]
         },
         {
-          "line": 7733,
+          "line": 7916,
           "function": "_play_melee_anim_resolved",
           "classification": "DATA_DRIVEN",
           "clips": [
-            "attack_fast",
             "melee_2h_fast_1",
             "melee_2h_fast_2",
             "melee_2h_heavy",
@@ -68,44 +57,18 @@
       ]
     },
     "modular_lower_body_sprite": {
-      "sites": 16,
-      "active": 15,
-      "blocking": 2,
-      "ready": false,
-      "blocking_detail": [
-        {
-          "line": 13318,
-          "function": "begin_modular_damage_reaction",
-          "classification": "AUTHORING_DECISION",
-          "clips": []
-        },
-        {
-          "line": 13319,
-          "function": "begin_modular_damage_reaction",
-          "classification": "AUTHORING_DECISION",
-          "clips": []
-        }
-      ]
+      "sites": 13,
+      "active": 13,
+      "blocking": 0,
+      "ready": true,
+      "blocking_detail": []
     },
     "modular_upper_body_sprite": {
-      "sites": 17,
-      "active": 16,
-      "blocking": 2,
-      "ready": false,
-      "blocking_detail": [
-        {
-          "line": 13318,
-          "function": "begin_modular_damage_reaction",
-          "classification": "AUTHORING_DECISION",
-          "clips": []
-        },
-        {
-          "line": 13319,
-          "function": "begin_modular_damage_reaction",
-          "classification": "AUTHORING_DECISION",
-          "clips": []
-        }
-      ]
+      "sites": 14,
+      "active": 14,
+      "blocking": 0,
+      "ready": true,
+      "blocking_detail": []
     },
     "modular_upper_fx_sprite": {
       "sites": 5,
@@ -114,25 +77,10 @@
       "ready": true,
       "blocking_detail": []
     },
-    "modular_sidearm_sprite": {
-      "sites": 5,
-      "active": 4,
-      "blocking": 0,
-      "ready": true,
-      "blocking_detail": []
-    },
-    "modular_cape_sprite": {
-      "sites": 1,
-      "active": 0,
-      "blocking": 0,
-      "ready": false,
-      "retired": true,
-      "blocking_detail": []
-    },
     "<unattributed>": {
-      "sites": 7,
-      "active": 7,
-      "blocking": 0,
+      "sites": 9,
+      "active": 9,
+      "blocking": 2,
       "ready": false,
       "unattributed": true,
       "blocking_detail": []
@@ -144,23 +92,7 @@
       "ready": false,
       "blocking_detail": [
         {
-          "line": 8067,
-          "function": "_play_melee_overlay_from_key",
-          "classification": "DATA_DRIVEN",
-          "clips": [
-            "weapon_anim"
-          ]
-        }
-      ]
-    },
-    "melee_fx_overlay_sprite": {
-      "sites": 2,
-      "active": 2,
-      "blocking": 1,
-      "ready": false,
-      "blocking_detail": [
-        {
-          "line": 8069,
+          "line": 8250,
           "function": "_play_melee_overlay_from_key",
           "classification": "DATA_DRIVEN",
           "clips": [
@@ -175,12 +107,35 @@
         }
       ]
     },
-    "modular_head_sprite": {
+    "melee_fx_overlay_sprite": {
       "sites": 2,
+      "active": 2,
+      "blocking": 1,
+      "ready": false,
+      "blocking_detail": [
+        {
+          "line": 8252,
+          "function": "_play_melee_overlay_from_key",
+          "classification": "DATA_DRIVEN",
+          "clips": [
+            "melee_2h_fast_1",
+            "melee_2h_fast_2",
+            "melee_2h_heavy",
+            "melee_heavy",
+            "unarmed_attack_fast",
+            "unarmed_fast_1",
+            "unarmed_heavy"
+          ]
+        }
+      ]
+    },
+    "modular_sidearm_sprite": {
+      "sites": 0,
       "active": 0,
       "blocking": 0,
       "ready": false,
-      "retired": true,
+      "migrated": "C2a-R1",
+      "canonical_frames_bound": true,
       "blocking_detail": []
     }
   },
@@ -320,79 +275,23 @@
       "argument": "String(melee_body_stance_anim), animation_dir, animated_sprite)",
       "source": "var resolved_stance_anim := AnimationResolver.resolve(String(melee_body_stance_anim), animation_dir, animated_sprite)",
       "legacy_clips": [
-        "cancel_parry_critical_execution",
-        "damage_applied",
-        "damage_rejected",
-        "enemy_begin_rejected",
-        "enemy_invalid",
-        "input_lost",
         "melee_2h_heavy_anticipation",
         "operator_body_asset_missing",
         "operator_dead",
         "operator_exit_tree",
-        "operator_fx_asset_missing",
-        "player_critical_attack_started",
-        "player_dodge_charge_cancelled",
-        "reserve_parry_critical"
+        "operator_fx_asset_missing"
       ],
       "trace": [
-        "_finish_vigil_ready_fast_startup -> _update_animation (via caller)",
-        "_try_start_vigil_ready_fast_startup -> _finish_vigil_ready_fast_startup (via caller)",
-        "_try_melee_attack -> _try_start_vigil_ready_fast_startup (via caller)",
-        "_start_critical_attack -> _try_melee_attack: ['reserve_parry_critical']",
         "_cleanup_paired_execution -> _update_animation (via caller)",
         "_exit_tree -> _cleanup_paired_execution: ['operator_exit_tree']",
         "_physics_process -> _cleanup_paired_execution: ['operator_dead']",
-        "_begin_paired_execution -> _cleanup_paired_execution: ['enemy_begin_rejected', 'player_critical_attack_started']",
-        "_update_paired_execution -> _cleanup_paired_execution: ['enemy_invalid']",
         "_update_paired_execution -> _cleanup_paired_execution (via caller)",
         "_ensure_paired_execution_animation -> _update_paired_execution (via caller)",
-        "_begin_paired_execution -> _ensure_paired_execution_animation: ['cancel_parry_critical_execution', 'operator_body_asset_missing']",
-        "_begin_paired_execution -> _ensure_paired_execution_animation: ['cancel_parry_critical_execution', 'operator_fx_asset_missing']",
-        "_apply_paired_execution_impact -> _cleanup_paired_execution: ['damage_applied', 'damage_rejected']",
-        "_finish_dodge_charge_presentation -> _update_animation (via caller)",
-        "_release_dodge_charge -> _finish_dodge_charge_presentation (via caller)",
-        "_handle_dodge_input -> _release_dodge_charge: ['input_lost']",
-        "_cancel_dodge_charge -> _finish_dodge_charge_presentation: ['player_dodge_charge_cancelled']",
+        "_begin_paired_execution -> _ensure_paired_execution_animation: ['operator_body_asset_missing']",
+        "_begin_paired_execution -> _ensure_paired_execution_animation: ['operator_fx_asset_missing']",
         "_on_operator_animation_finished -> _update_animation: ['melee_2h_heavy_anticipation']"
       ],
       "mappings": [
-        {
-          "legacy_clip": "cancel_parry_critical_execution",
-          "classification": "UNRESOLVED",
-          "why": "no legacy_clips row in the reachability contract",
-          "canonical": null
-        },
-        {
-          "legacy_clip": "damage_applied",
-          "classification": "UNRESOLVED",
-          "why": "no legacy_clips row in the reachability contract",
-          "canonical": null
-        },
-        {
-          "legacy_clip": "damage_rejected",
-          "classification": "UNRESOLVED",
-          "why": "no legacy_clips row in the reachability contract",
-          "canonical": null
-        },
-        {
-          "legacy_clip": "enemy_begin_rejected",
-          "classification": "UNRESOLVED",
-          "why": "no legacy_clips row in the reachability contract",
-          "canonical": null
-        },
-        {
-          "legacy_clip": "enemy_invalid",
-          "classification": "UNRESOLVED",
-          "why": "no legacy_clips row in the reachability contract",
-          "canonical": null
-        },
-        {
-          "legacy_clip": "input_lost",
-          "classification": "UNRESOLVED",
-          "why": "no legacy_clips row in the reachability contract",
-          "canonical": null
-        },
         {
           "legacy_clip": "melee_2h_heavy_anticipation",
           "classification": "UNRESOLVED",
@@ -419,24 +318,6 @@
         },
         {
           "legacy_clip": "operator_fx_asset_missing",
-          "classification": "UNRESOLVED",
-          "why": "no legacy_clips row in the reachability contract",
-          "canonical": null
-        },
-        {
-          "legacy_clip": "player_critical_attack_started",
-          "classification": "UNRESOLVED",
-          "why": "no legacy_clips row in the reachability contract",
-          "canonical": null
-        },
-        {
-          "legacy_clip": "player_dodge_charge_cancelled",
-          "classification": "UNRESOLVED",
-          "why": "no legacy_clips row in the reachability contract",
-          "canonical": null
-        },
-        {
-          "legacy_clip": "reserve_parry_critical",
           "classification": "UNRESOLVED",
           "why": "no legacy_clips row in the reachability contract",
           "canonical": null
@@ -1682,149 +1563,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 2969,
-      "function": "_sync_modular_ranged_weapon_layer",
-      "renderer": "modular_sidearm_sprite",
-      "renderers": [
-        "modular_sidearm_sprite"
-      ],
-      "argument": "base_animation, direction, modular_sidearm_sprite)",
-      "source": "var animation := AnimationResolver.resolve(base_animation, direction, modular_sidearm_sprite)",
-      "legacy_clips": [
-        "ranged_2h_relaxed_modular",
-        "ranged_2h_stance_modular"
-      ],
-      "trace": [
-        "_sync_modular_ranged_ready_upper_layers -> _sync_modular_ranged_weapon_layer: ['ranged_2h_stance_modular']",
-        "_sync_modular_ranged_relaxed_upper_layers -> _sync_modular_ranged_weapon_layer: ['ranged_2h_relaxed_modular']",
-        "_sync_modular_ranged_ready_movement_presentation -> _sync_modular_ranged_weapon_layer: ['ranged_2h_stance_modular']"
-      ],
-      "mappings": [
-        {
-          "legacy_clip": "ranged_2h_relaxed_modular",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source A",
-          "canonical": {
-            "profile": "ranged_2h",
-            "group": "posture",
-            "action": "relaxed_01",
-            "layers": {
-              "lower_body": [
-                "e",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "w"
-              ],
-              "weapon": [
-                "e",
-                "w"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        },
-        {
-          "legacy_clip": "ranged_2h_stance_modular",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source C",
-          "canonical": {
-            "profile": "ranged_2h",
-            "group": "posture",
-            "action": "stance_01",
-            "layers": {
-              "lower_body": [
-                "e",
-                "n",
-                "se",
-                "sw",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "se",
-                "sw",
-                "w"
-              ],
-              "weapon": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "se",
-                "sw",
-                "w"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        }
-      ],
-      "classification": "PROVEN",
-      "site_reason": ""
-    },
-    {
-      "debt": "animation_resolver",
-      "file": "custodian/game/actors/operator/operator.gd",
-      "line": 3208,
-      "function": "_retarget_ranged_sprite_preserving_progress",
-      "renderer": "",
-      "renderers": [
-        "modular_sidearm_sprite"
-      ],
-      "argument": "base_animation, direction, sprite)",
-      "source": "var expected: StringName = AnimationResolver.resolve(base_animation, direction, sprite)",
-      "legacy_clips": [
-        "ranged_2h_aim_modular"
-      ],
-      "trace": [
-        "_ensure_primary_ranged_weapon_direction_matches_upper -> _retarget_ranged_sprite_preserving_progress: ['ranged_2h_aim_modular']",
-        "_retarget_primary_ranged_transition -> _retarget_ranged_sprite_preserving_progress: ['ranged_2h_aim_modular']"
-      ],
-      "mappings": [
-        {
-          "legacy_clip": "ranged_2h_aim_modular",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source A",
-          "canonical": {
-            "profile": "ranged_2h",
-            "group": "cosmetic",
-            "action": "aim_01",
-            "layers": {
-              "lower_body": [
-                "e",
-                "se",
-                "sw",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "se",
-                "sw",
-                "w"
-              ],
-              "weapon": [
-                "e",
-                "se",
-                "sw",
-                "w"
-              ]
-            },
-            "reachability_status": "DORMANT"
-          }
-        }
-      ],
-      "classification": "PROVEN",
-      "site_reason": ""
-    },
-    {
-      "debt": "animation_resolver",
-      "file": "custodian/game/actors/operator/operator.gd",
-      "line": 3385,
+      "line": 3448,
       "function": "_begin_modular_primary_ranged_aim_presentation",
       "renderer": "modular_lower_body_sprite",
       "renderers": [
@@ -1875,7 +1614,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 3386,
+      "line": 3449,
       "function": "_begin_modular_primary_ranged_aim_presentation",
       "renderer": "modular_upper_body_sprite",
       "renderers": [
@@ -1926,58 +1665,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 3387,
-      "function": "_begin_modular_primary_ranged_aim_presentation",
-      "renderer": "modular_sidearm_sprite",
-      "renderers": [
-        "modular_sidearm_sprite"
-      ],
-      "argument": "\"ranged_2h_aim_modular\", action_direction, modular_sidearm_sprite)",
-      "source": "var weapon_animation := AnimationResolver.resolve(\"ranged_2h_aim_modular\", action_direction, modular_sidearm_sprite)",
-      "legacy_clips": [
-        "ranged_2h_aim_modular"
-      ],
-      "trace": [],
-      "mappings": [
-        {
-          "legacy_clip": "ranged_2h_aim_modular",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source A",
-          "canonical": {
-            "profile": "ranged_2h",
-            "group": "cosmetic",
-            "action": "aim_01",
-            "layers": {
-              "lower_body": [
-                "e",
-                "se",
-                "sw",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "se",
-                "sw",
-                "w"
-              ],
-              "weapon": [
-                "e",
-                "se",
-                "sw",
-                "w"
-              ]
-            },
-            "reachability_status": "DORMANT"
-          }
-        }
-      ],
-      "classification": "PROVEN",
-      "site_reason": ""
-    },
-    {
-      "debt": "animation_resolver",
-      "file": "custodian/game/actors/operator/operator.gd",
-      "line": 3437,
+      "line": 3504,
       "function": "_begin_modular_primary_ranged_lower_presentation",
       "renderer": "modular_upper_body_sprite",
       "renderers": [
@@ -2028,91 +1716,11 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 3557,
-      "function": "_play_modular_action_animation",
-      "renderer": "",
-      "renderers": [
-        "modular_cape_sprite",
-        "modular_lower_body_sprite",
-        "modular_sidearm_sprite",
-        "modular_upper_body_sprite"
-      ],
-      "argument": "base_animation, direction, sprite)",
-      "source": "var animation_name := AnimationResolver.resolve(base_animation, direction, sprite)",
-      "legacy_clips": [
-        "ranged_2h_aim_cape",
-        "ranged_2h_aim_modular",
-        "unarmed_run_cape"
-      ],
-      "trace": [
-        "_begin_modular_primary_ranged_aim_presentation -> _play_modular_action_animation: ['ranged_2h_aim_modular']",
-        "_begin_modular_primary_ranged_aim_presentation -> _play_modular_action_animation: ['ranged_2h_aim_modular']",
-        "_begin_modular_primary_ranged_aim_presentation -> _play_modular_action_animation: ['ranged_2h_aim_cape', 'ranged_2h_aim_modular']",
-        "_play_modular_action_animation_backwards -> _play_modular_action_animation (via caller)",
-        "_begin_modular_primary_ranged_lower_presentation -> _play_modular_action_animation_backwards: ['ranged_2h_aim_modular']",
-        "_play_optional_modular_cape_animation_backwards -> _play_modular_action_animation_backwards (via caller)",
-        "_begin_modular_primary_ranged_lower_presentation -> _play_optional_modular_cape_animation_backwards: ['ranged_2h_aim_cape']",
-        "_play_optional_modular_cape_animation -> _play_modular_action_animation (via caller)",
-        "_sync_modular_locomotion_layers -> _play_optional_modular_cape_animation: ['unarmed_run_cape']",
-        "_begin_modular_primary_ranged_aim_presentation -> _play_optional_modular_cape_animation: ['ranged_2h_aim_cape']"
-      ],
-      "mappings": [
-        {
-          "legacy_clip": "ranged_2h_aim_cape",
-          "classification": "RETIRED",
-          "why": "targets the modular cape/head, retired from active composition by the 2026-09-12 authoring decision; art preserved, layer no longer drawn",
-          "canonical": null
-        },
-        {
-          "legacy_clip": "ranged_2h_aim_modular",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source A",
-          "canonical": {
-            "profile": "ranged_2h",
-            "group": "cosmetic",
-            "action": "aim_01",
-            "layers": {
-              "lower_body": [
-                "e",
-                "se",
-                "sw",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "se",
-                "sw",
-                "w"
-              ],
-              "weapon": [
-                "e",
-                "se",
-                "sw",
-                "w"
-              ]
-            },
-            "reachability_status": "DORMANT"
-          }
-        },
-        {
-          "legacy_clip": "unarmed_run_cape",
-          "classification": "RETIRED",
-          "why": "targets the modular cape/head, retired from active composition by the 2026-09-12 authoring decision; art preserved, layer no longer drawn",
-          "canonical": null
-        }
-      ],
-      "classification": "RETIRED",
-      "site_reason": ""
-    },
-    {
-      "debt": "animation_resolver",
-      "file": "custodian/game/actors/operator/operator.gd",
-      "line": 3649,
+      "line": 3724,
       "function": "_sync_field_patch_action_layer",
       "renderer": "",
       "renderers": [
         "modular_lower_body_sprite",
-        "modular_sidearm_sprite",
         "modular_upper_body_sprite",
         "modular_upper_fx_sprite"
       ],
@@ -2214,7 +1822,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 3750,
+      "line": 3821,
       "function": "_resolve_modular_lower_body_locomotion_animation",
       "renderer": "",
       "renderers": [
@@ -2231,7 +1839,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 3751,
+      "line": 3822,
       "function": "_resolve_modular_lower_body_locomotion_animation",
       "renderer": "",
       "renderers": [
@@ -2248,7 +1856,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 3752,
+      "line": 3823,
       "function": "_resolve_modular_lower_body_locomotion_animation",
       "renderer": "",
       "renderers": [
@@ -2265,7 +1873,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 3755,
+      "line": 3826,
       "function": "_resolve_modular_lower_body_locomotion_animation",
       "renderer": "modular_lower_body_sprite",
       "renderers": [
@@ -2324,7 +1932,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 3764,
+      "line": 3835,
       "function": "_sync_modular_upper_body_layer",
       "renderer": "modular_upper_body_sprite",
       "renderers": [
@@ -2603,7 +2211,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 5328,
+      "line": 5511,
       "function": "_get_parry_attempt_remaining_duration",
       "renderer": "modular_lower_body_sprite",
       "renderers": [
@@ -2651,7 +2259,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 5331,
+      "line": 5514,
       "function": "_get_parry_attempt_remaining_duration",
       "renderer": "modular_upper_body_sprite",
       "renderers": [
@@ -2699,7 +2307,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 5334,
+      "line": 5517,
       "function": "_get_parry_attempt_remaining_duration",
       "renderer": "animated_sprite",
       "renderers": [
@@ -2747,7 +2355,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 5903,
+      "line": 6086,
       "function": "_start_fast_attack",
       "renderer": "",
       "renderers": [],
@@ -2762,7 +2370,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 5907,
+      "line": 6090,
       "function": "_start_fast_attack",
       "renderer": "animated_sprite",
       "renderers": [
@@ -2779,7 +2387,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 5913,
+      "line": 6096,
       "function": "_start_fast_attack",
       "renderer": "animated_sprite",
       "renderers": [
@@ -2796,7 +2404,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 5917,
+      "line": 6100,
       "function": "_start_fast_attack",
       "renderer": "animated_sprite",
       "renderers": [
@@ -2813,7 +2421,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 5957,
+      "line": 6140,
       "function": "_start_fast_attack",
       "renderer": "",
       "renderers": [],
@@ -2828,7 +2436,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 6008,
+      "line": 6191,
       "function": "_try_start_fast_attack_windup",
       "renderer": "animated_sprite",
       "renderers": [
@@ -2891,7 +2499,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 6041,
+      "line": 6224,
       "function": "_begin_fast_attack_strike_phase",
       "renderer": "",
       "renderers": [],
@@ -2906,7 +2514,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 6113,
+      "line": 6296,
       "function": "_begin_heavy_attack_active_phase",
       "renderer": "",
       "renderers": [],
@@ -2921,7 +2529,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 6663,
+      "line": 6846,
       "function": "_play_parry_animation",
       "renderer": "animated_sprite",
       "renderers": [
@@ -3004,7 +2612,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 6682,
+      "line": 6865,
       "function": "_play_modular_unarmed_parry",
       "renderer": "modular_lower_body_sprite",
       "renderers": [
@@ -3043,7 +2651,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 6683,
+      "line": 6866,
       "function": "_play_modular_unarmed_parry",
       "renderer": "modular_upper_body_sprite",
       "renderers": [
@@ -3082,7 +2690,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 6710,
+      "line": 6893,
       "function": "_play_modular_unarmed_parry",
       "renderer": "modular_upper_fx_sprite",
       "renderers": [
@@ -3165,7 +2773,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7474,
+      "line": 7657,
       "function": "_play_modular_parry_fx",
       "renderer": "modular_upper_fx_sprite",
       "renderers": [
@@ -3204,7 +2812,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7609,
+      "line": 7792,
       "function": "_play_modular_unarmed_block",
       "renderer": "modular_upper_body_sprite",
       "renderers": [
@@ -3261,7 +2869,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7623,
+      "line": 7806,
       "function": "_play_modular_unarmed_block",
       "renderer": "modular_lower_body_sprite",
       "renderers": [
@@ -3318,7 +2926,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7624,
+      "line": 7807,
       "function": "_play_modular_unarmed_block",
       "renderer": "modular_upper_body_sprite",
       "renderers": [
@@ -3375,7 +2983,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7656,
+      "line": 7839,
       "function": "_sync_modular_block_hold_movement_presentation",
       "renderer": "modular_upper_body_sprite",
       "renderers": [
@@ -3416,7 +3024,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7667,
+      "line": 7850,
       "function": "_sync_modular_block_hold_movement_presentation",
       "renderer": "modular_lower_body_sprite",
       "renderers": [
@@ -3457,7 +3065,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7715,
+      "line": 7898,
       "function": "_play_melee_anim_from_key",
       "renderer": "melee_weapon_overlay_sprite",
       "renderers": [
@@ -3474,7 +3082,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7721,
+      "line": 7904,
       "function": "_play_melee_anim_from_key",
       "renderer": "animated_sprite",
       "renderers": [
@@ -3491,7 +3099,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7724,
+      "line": 7907,
       "function": "_play_melee_anim_from_key",
       "renderer": "animated_sprite",
       "renderers": [
@@ -3508,7 +3116,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7725,
+      "line": 7908,
       "function": "_play_melee_anim_from_key",
       "renderer": "",
       "renderers": [],
@@ -3523,7 +3131,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7726,
+      "line": 7909,
       "function": "_play_melee_anim_from_key",
       "renderer": "",
       "renderers": [],
@@ -3538,7 +3146,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7733,
+      "line": 7916,
       "function": "_play_melee_anim_resolved",
       "renderer": "animated_sprite",
       "renderers": [
@@ -3547,7 +3155,6 @@
       "argument": "String(base_animation), direction, animated_sprite)",
       "source": "var resolved_animation := AnimationResolver.resolve(String(base_animation), direction, animated_sprite)",
       "legacy_clips": [
-        "attack_fast",
         "melee_2h_fast_1",
         "melee_2h_fast_2",
         "melee_2h_heavy",
@@ -3559,8 +3166,6 @@
       "trace": [
         "_play_melee_anim_from_key -> _play_melee_anim_resolved (via caller)",
         "_start_fast_attack -> _play_melee_anim_from_key (via caller)",
-        "_start_attack_by_kind -> _start_fast_attack (via caller)",
-        "_request_attack_state -> _start_attack_by_kind: ['attack_fast']",
         "start_attack -> _start_fast_attack: ['melee_heavy', 'unarmed_heavy']",
         "_start_fast_attack -> _play_melee_anim_from_key: ['melee_2h_fast_1', 'melee_2h_fast_2', 'unarmed_attack_fast']",
         "_begin_fast_attack_strike_phase -> _play_melee_anim_from_key: ['unarmed_attack_fast']",
@@ -3569,12 +3174,6 @@
         "_play_critical_attack_animation -> _play_melee_anim_from_key: ['unarmed_attack_fast', 'unarmed_fast_1']"
       ],
       "mappings": [
-        {
-          "legacy_clip": "attack_fast",
-          "classification": "UNRESOLVED",
-          "why": "no legacy_clips row in the reachability contract",
-          "canonical": null
-        },
         {
           "legacy_clip": "melee_2h_fast_1",
           "classification": "UNRESOLVED",
@@ -3624,7 +3223,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 8067,
+      "line": 8250,
       "function": "_play_melee_overlay_from_key",
       "renderer": "melee_weapon_overlay_sprite",
       "renderers": [
@@ -3633,14 +3232,64 @@
       "argument": "String(weapon_anim), _melee_forward, melee_weapon_overlay_sprite)",
       "source": "weapon_anim = AnimationResolver.resolve(String(weapon_anim), _melee_forward, melee_weapon_overlay_sprite)",
       "legacy_clips": [
-        "weapon_anim"
+        "melee_2h_fast_1",
+        "melee_2h_fast_2",
+        "melee_2h_heavy",
+        "melee_heavy",
+        "unarmed_attack_fast",
+        "unarmed_fast_1",
+        "unarmed_heavy"
       ],
       "trace": [
-        "local assignment in _play_melee_overlay_from_key"
+        "_play_melee_anim_resolved -> _play_melee_overlay_from_key (via caller)",
+        "_play_melee_anim_from_key -> _play_melee_anim_resolved (via caller)",
+        "_start_fast_attack -> _play_melee_anim_from_key (via caller)",
+        "start_attack -> _start_fast_attack: ['melee_heavy', 'unarmed_heavy']",
+        "_start_fast_attack -> _play_melee_anim_from_key: ['melee_2h_fast_1', 'melee_2h_fast_2', 'unarmed_attack_fast']",
+        "_begin_fast_attack_strike_phase -> _play_melee_anim_from_key: ['unarmed_attack_fast']",
+        "_begin_heavy_attack_active_phase -> _play_melee_anim_from_key: ['melee_2h_heavy']",
+        "_begin_heavy_attack_active_phase -> _play_melee_anim_from_key: ['melee_2h_heavy']",
+        "_play_critical_attack_animation -> _play_melee_anim_from_key: ['unarmed_attack_fast', 'unarmed_fast_1']"
       ],
       "mappings": [
         {
-          "legacy_clip": "weapon_anim",
+          "legacy_clip": "melee_2h_fast_1",
+          "classification": "UNRESOLVED",
+          "why": "no legacy_clips row in the reachability contract",
+          "canonical": null
+        },
+        {
+          "legacy_clip": "melee_2h_fast_2",
+          "classification": "UNRESOLVED",
+          "why": "no legacy_clips row in the reachability contract",
+          "canonical": null
+        },
+        {
+          "legacy_clip": "melee_2h_heavy",
+          "classification": "UNRESOLVED",
+          "why": "no legacy_clips row in the reachability contract",
+          "canonical": null
+        },
+        {
+          "legacy_clip": "melee_heavy",
+          "classification": "UNRESOLVED",
+          "why": "no legacy_clips row in the reachability contract",
+          "canonical": null
+        },
+        {
+          "legacy_clip": "unarmed_attack_fast",
+          "classification": "UNRESOLVED",
+          "why": "no legacy_clips row in the reachability contract",
+          "canonical": null
+        },
+        {
+          "legacy_clip": "unarmed_fast_1",
+          "classification": "UNRESOLVED",
+          "why": "no legacy_clips row in the reachability contract",
+          "canonical": null
+        },
+        {
+          "legacy_clip": "unarmed_heavy",
           "classification": "UNRESOLVED",
           "why": "no legacy_clips row in the reachability contract",
           "canonical": null
@@ -3652,7 +3301,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 8069,
+      "line": 8252,
       "function": "_play_melee_overlay_from_key",
       "renderer": "melee_fx_overlay_sprite",
       "renderers": [
@@ -3730,7 +3379,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 8185,
+      "line": 8368,
       "function": "_play_fast_attack_recovery",
       "renderer": "animated_sprite",
       "renderers": [
@@ -3799,7 +3448,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 8197,
+      "line": 8380,
       "function": "_play_fast_attack_recovery",
       "renderer": "melee_fx_overlay_sprite",
       "renderers": [
@@ -3868,7 +3517,7 @@
     {
       "debt": "directional_animation_fallback",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 9068,
+      "line": 9251,
       "function": "_resolve_dodge_presentation_animation",
       "renderer": "",
       "renderers": [],
@@ -3883,7 +3532,7 @@
     {
       "debt": "directional_animation_fallback",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 9079,
+      "line": 9262,
       "function": "_resolve_dodge_presentation_animation",
       "renderer": "animated_sprite",
       "renderers": [
@@ -3900,14 +3549,10 @@
     {
       "debt": "directional_animation_fallback",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 13318,
+      "line": 13501,
       "function": "begin_modular_damage_reaction",
       "renderer": "",
-      "renderers": [
-        "modular_head_sprite",
-        "modular_lower_body_sprite",
-        "modular_upper_body_sprite"
-      ],
+      "renderers": [],
       "argument": "vector_to_sector",
       "source": "var requested_sector := DirectionalAnimationFallback.vector_to_sector(facing)",
       "legacy_clips": [],
@@ -3919,14 +3564,10 @@
     {
       "debt": "directional_animation_fallback",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 13319,
+      "line": 13502,
       "function": "begin_modular_damage_reaction",
       "renderer": "",
-      "renderers": [
-        "modular_head_sprite",
-        "modular_lower_body_sprite",
-        "modular_upper_body_sprite"
-      ],
+      "renderers": [],
       "argument": "nearest_available_sector",
       "source": "var resolved_sector := DirectionalAnimationFallback.nearest_available_sector(",
       "legacy_clips": [],
@@ -3938,7 +3579,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 13442,
+      "line": 13625,
       "function": "get_damage_reaction_animation",
       "renderer": "animated_sprite",
       "renderers": [

@@ -78,6 +78,17 @@ RENDERERS = (
 #: Renderers retired from active composition; their consumers are not C2 work.
 RETIRED_RENDERERS = {"modular_head_sprite", "modular_cape_sprite"}
 
+#: Renderers already cut over to the canonical spine, with the slice that did it.
+#: A migrated renderer must show zero legacy selection sites; if one reappears the
+#: report says MIGRATED-WITH-REGRESSION rather than quietly reverting to READY.
+MIGRATED_RENDERERS = {
+    "modular_sidearm_sprite": "C2a-R1",
+}
+
+#: The canonical SpriteFrames a migrated renderer must be bound to.
+CANONICAL_FRAMES = "res://content/sprites/operator/runtime/operator_runtime_frames.tres"
+SCENE = CUSTODIAN_ROOT / "game/actors/operator/operator.tscn"
+
 #: Selection sites whose replacement needs design input rather than evidence,
 #: keyed by enclosing function.
 AUTHORING_DECISIONS: dict[str, str] = {
@@ -167,6 +178,12 @@ def sources() -> list[tuple[Path, list[str], list[tuple[int, str]]]]:
 
 #: Literals that appear in these call sites but are not clip names — dictionary
 #: keys, phase names and result fields. Filtering by shape alone is not enough.
+#: Prefixes every legacy Operator clip name actually uses.
+CLIP_PREFIXES = (
+    "unarmed_", "melee_", "ranged_2h_", "ranged_", "sidearm_", "field_patch_",
+    "operator_", "dodge_", "vigil_", "sword_cleaver_", "primary_ranged_",
+)
+
 NON_CLIP_LITERALS = {
     "played", "duration", "animation", "aiming", "lowering", "windup", "strike",
     "recovery", "hidden", "up", "down", "left", "right", "default",
@@ -178,13 +195,19 @@ def literals_in(text: str, known: set[str] | None = None) -> list[str]:
     like "aiming" is a phase key and would otherwise be reported as an unproven
     clip forever."""
     found = []
+    # Legacy clip names appear both as plain Strings and as StringNames, so the
+    # quoting is not a usable signal; the prefix test below is what separates a
+    # clip from a canonical action token such as "stance_01".
     for literal in re.findall(r'"([a-z][a-z0-9_]*)"', text):
         if known and literal in known:
             found.append(literal)
             continue
         if literal in NON_CLIP_LITERALS:
             continue
-        if "_" in literal and len(literal) >= 8:
+        # Shape alone (has "_", long enough) also matches dictionary keys like
+        # "impact_position". Legacy Operator clip names always carry one of these
+        # profile/family prefixes, which is a far tighter test than length.
+        if literal.startswith(CLIP_PREFIXES):
             found.append(literal)
     return found
 
@@ -227,7 +250,7 @@ DRIVING_VERBS = (
     "_animation_player.play(",
     "_show_body_layer(",
     "_show_presentation_layer(",
-    ".animation =",
+
     "_sync_modular",
     "_play_modular",
     "_play_synchronized",
@@ -252,12 +275,35 @@ def function_renderers(lines: list[str], funcs, site_index: int) -> list[str]:
         if not any(verb in line for verb in DRIVING_VERBS):
             continue
         # Calls are often wrapped, so the verb and its renderer argument sit on
-        # different lines; match over a small window rather than one line.
-        window = " ".join(body[position:position + 4])
-        for renderer in RENDERERS:
-            if re.search(r"\b" + re.escape(renderer) + r"\b", window):
-                found.add(renderer)
+        # different lines. Match inside the call's ARGUMENT LIST only: a renderer
+        # merely mentioned nearby is not driven by this call, which is how
+        # _play_field_patch_use_presentation appeared to drive the sidearm it only
+        # hides a few lines later.
+        window = " ".join(body[position:position + 6])
+        for verb in DRIVING_VERBS:
+            start = window.find(verb)
+            if start < 0:
+                continue
+            args = _argument_text(window, start + len(verb) - 1)
+            for renderer in RENDERERS:
+                if re.search(r"\b" + re.escape(renderer) + r"\b", args):
+                    found.add(renderer)
     return sorted(found)
+
+
+def _argument_text(text: str, open_paren: int) -> str:
+    """The text between a call's parentheses, balanced."""
+    if open_paren < 0 or open_paren >= len(text) or text[open_paren] != "(":
+        return ""
+    depth = 0
+    for index in range(open_paren, len(text)):
+        if text[index] == "(":
+            depth += 1
+        elif text[index] == ")":
+            depth -= 1
+            if depth == 0:
+                return text[open_paren + 1:index]
+    return text[open_paren + 1:]
 
 
 def default_literals(names: list[str], lines: list[str], funcs, site_index: int) -> list[str]:
@@ -297,8 +343,12 @@ def trace_renderers(name: str, files, depth: int = 0, seen: set | None = None) -
             caller = enclosing(funcs, index)
             if caller == name:
                 continue
-            chunk = " ".join(lines[index:index + 4])
-            here = [r for r in RENDERERS if re.search(r"\b" + re.escape(r) + r"\b", chunk)]
+            chunk = " ".join(lines[index:index + 6])
+            # Only renderers passed INTO this call count; a renderer touched on a
+            # neighbouring line is not what this helper was handed.
+            call = chunk.find(name + "(")
+            args = _argument_text(chunk, call + len(name)) if call >= 0 else ""
+            here = [r for r in RENDERERS if re.search(r"\b" + re.escape(r) + r"\b", args)]
             if here:
                 found.extend(here)
             else:
@@ -388,6 +438,28 @@ def classify(clip: str, evidence: dict | None) -> tuple[str, str]:
     return "PROVEN", "reachability legacy_clips, proof source %s" % (evidence["proof_source"] or "?")
 
 
+def _renderer_uses_canonical_frames(renderer: str) -> bool:
+    """Whether the scene binds this renderer's node to the canonical SpriteFrames."""
+    if not SCENE.is_file():
+        return False
+    text = SCENE.read_text(encoding="utf-8", errors="ignore")
+    node = "".join(part.capitalize() for part in renderer.split("_"))
+    block = re.search(
+        r'\[node name="%s"[^\]]*\](.*?)(?=\n\[node |\Z)' % re.escape(node), text, re.S)
+    if block is None:
+        return False
+    ids = re.findall(r'sprite_frames = ExtResource\("([^"]+)"\)', block.group(1))
+    if not ids:
+        return False
+    for identifier in ids:
+        match = re.search(
+            r'\[ext_resource type="SpriteFrames" path="([^"]+)" id="%s"\]' % re.escape(identifier),
+            text)
+        if match is None or match.group(1) != CANONICAL_FRAMES:
+            return False
+    return True
+
+
 def _display(path: Path) -> str:
     resolved = path.resolve()
     try:
@@ -470,6 +542,11 @@ def main(argv: list[str] | None = None) -> int:
         for renderer in (site["renderers"] or ["<unattributed>"]):
             by_renderer[renderer].append(site)
 
+    # A migrated renderer whose legacy sites are all gone would otherwise vanish
+    # from the table; its absence IS the proof, so report it explicitly.
+    for renderer in MIGRATED_RENDERERS:
+        by_renderer.setdefault(renderer, [])
+
     readiness = {}
     for renderer, renderer_sites in by_renderer.items():
         if renderer == "<unattributed>":
@@ -477,6 +554,20 @@ def main(argv: list[str] | None = None) -> int:
                 "sites": len(renderer_sites), "active": len(renderer_sites),
                 "blocking": sum(1 for s in renderer_sites if s["classification"] != "PROVEN"),
                 "ready": False, "unattributed": True, "blocking_detail": [],
+            }
+            continue
+        if renderer in MIGRATED_RENDERERS:
+            legacy_sites = [s for s in renderer_sites if s["classification"] != "RETIRED"]
+            readiness[renderer] = {
+                "sites": len(renderer_sites), "active": len(legacy_sites),
+                "blocking": len(legacy_sites), "ready": False,
+                "migrated": MIGRATED_RENDERERS[renderer],
+                "canonical_frames_bound": _renderer_uses_canonical_frames(renderer),
+                "blocking_detail": [
+                    {"line": s["line"], "function": s["function"],
+                     "classification": s["classification"], "clips": s["legacy_clips"]}
+                    for s in legacy_sites
+                ],
             }
             continue
         if renderer in RETIRED_RENDERERS:
@@ -515,7 +606,10 @@ def main(argv: list[str] | None = None) -> int:
         print("  %-30s %5d %6d %8d  %s" % (
             renderer, info["sites"], info["active"], info["blocking"],
             "RETIRED" if info.get("retired") else (
-                "n/a" if info.get("unattributed") else ("READY" if info["ready"] else ""))))
+                "n/a" if info.get("unattributed") else (
+                    ("CANONICAL" if info.get("canonical_frames_bound") and not info["blocking"]
+                     else "MIGRATED-WITH-REGRESSION") if info.get("migrated")
+                    else ("READY" if info["ready"] else "")))))
 
     payload = {
         "schema": "custodian.operator_selection_cutover_evidence.v1",

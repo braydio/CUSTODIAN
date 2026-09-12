@@ -38,7 +38,23 @@ func resolve(
 	profile: StringName, group: StringName, action: StringName,
 	direction: Vector2, layer: StringName, weapon_id: StringName = &""
 ) -> StringName:
-	var sector := vector_to_sector(direction)
+	return resolve_sector(
+		profile, group, action, vector_to_sector(direction), layer, weapon_id
+	)
+
+
+## Resolve an identity whose direction the caller has already decided.
+##
+## Some actions are authored in fewer facings than the eight runtime sectors, and
+## projecting a requested direction onto an authored facing is an authoring
+## decision that belongs to the caller — it is presentation policy, not selection.
+## This entry point keeps the selector strict and ignorant of that projection: it
+## performs the same exact -> temporary SOUTH -> error lookup on the sector it is
+## handed.
+func resolve_sector(
+	profile: StringName, group: StringName, action: StringName,
+	sector: StringName, layer: StringName, weapon_id: StringName = &""
+) -> StringName:
 	var exact := animation_name(profile, group, action, sector, layer, weapon_id)
 	if _has_animation(exact):
 		return exact
@@ -68,6 +84,18 @@ func resolve_omni(
 		return exact
 	push_error("Missing required Operator runtime animation: %s" % exact)
 	return &""
+
+
+## Whether an exact identity exists, without reporting a missing-animation error.
+##
+## For OPTIONAL presentation layers only — a layer the composition may legitimately
+## omit. It is a pure query, not fallback policy: callers still ask `resolve_sector`
+## for the identity they intend to play.
+func has_sector_identity(
+	profile: StringName, group: StringName, action: StringName,
+	sector: StringName, layer: StringName, weapon_id: StringName = &""
+) -> bool:
+	return _has_animation(animation_name(profile, group, action, sector, layer, weapon_id))
 
 
 func _has_animation(identity: StringName) -> bool:

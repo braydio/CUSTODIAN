@@ -11,7 +11,7 @@
 [ext_resource type="Texture2D" path="res://content/sprites/world/shadows/contact_shadow_character_64x32.png" id="29_contact_shadow"]
 [ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_modular_lower_body_frames.tres" id="30_modular_lower_body_frames"]
 [ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_modular_upper_body_frames.tres" id="31_modular_upper_body_frames"]
-[ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_modular_sidearm_frames.tres" id="32_modular_sidearm_frames"]
+[ext_resource type="SpriteFrames" path="res://content/sprites/operator/runtime/operator_runtime_frames.tres" id="39_canonical_runtime_frames"]
 [ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_modular_upper_fx_frames.tres" id="33_modular_upper_fx_frames"]
 [ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_modular_cape_frames.tres" id="34_modular_cape_frames"]
 [ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_modular_head_frames.tres" id="37_modular_head_frames"]
@@ -134,7 +134,7 @@ animation = &"hooded_idle_down"
 [node name="ModularSidearmSprite" type="AnimatedSprite2D" parent="."]
 visible = false
 position = Vector2(0, -18)
-sprite_frames = ExtResource("32_modular_sidearm_frames")
+sprite_frames = ExtResource("39_canonical_runtime_frames")
 
 [node name="ModularUpperFxSprite" type="AnimatedSprite2D" parent="."]
 visible = false

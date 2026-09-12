@@ -40,13 +40,34 @@ func _init() -> void:
 	var weapon := operator.get_node("ModularSidearmSprite") as AnimatedSprite2D
 	var static_weapon := operator.get_node_or_null("PrimaryWeaponSocket/WeaponSprite") as Sprite2D
 	_expect(static_weapon != null, "Carbine static WeaponSprite missing")
+	# C2a-R1: ModularSidearmSprite is bound to the canonical runtime SpriteFrames, so
+	# it carries canonical identities and must NOT carry legacy clip names. The upper
+	# body is still a compatibility renderer in this slice.
+	const CANONICAL_SECTOR_BY_SUFFIX := {
+		"right": "e", "left": "w", "down_right": "se", "down_left": "sw",
+	}
+	const CANONICAL_ACTION_BY_PHASE := {
+		"stance": ["posture", "stance_01"], "aim": ["cosmetic", "aim_01"],
+		"fire": ["cosmetic", "fire_01"],
+	}
 	for suffix in ["right", "left", "down_right", "down_left"]:
 		for phase in ["stance", "aim", "fire"]:
-			var animation := StringName("ranged_2h_%s_modular_%s" % [phase, suffix])
-			_expect(upper.sprite_frames.has_animation(animation), "missing upper animation %s" % animation)
-			_expect(weapon.sprite_frames.has_animation(animation), "missing directional weapon art %s" % animation)
-			if upper.sprite_frames.has_animation(animation):
-				var errors: PackedStringArray = library.validate_track(animation, upper.sprite_frames.get_frame_count(animation))
+			var legacy := StringName("ranged_2h_%s_modular_%s" % [phase, suffix])
+			_expect(upper.sprite_frames.has_animation(legacy), "missing upper animation %s" % legacy)
+			_expect(
+				not weapon.sprite_frames.has_animation(legacy),
+				"canonical weapon renderer still carries the legacy clip %s" % legacy
+			)
+			var pair: Array = CANONICAL_ACTION_BY_PHASE[phase]
+			var canonical := StringName("ranged_2h/%s/%s/%s/weapon" % [
+				pair[0], pair[1], CANONICAL_SECTOR_BY_SUFFIX[suffix]])
+			_expect(
+				weapon.sprite_frames.has_animation(canonical),
+				"missing canonical weapon art %s" % canonical
+			)
+			# Socket tracks are still keyed by the compatibility upper-body clip name.
+			if upper.sprite_frames.has_animation(legacy):
+				var errors: PackedStringArray = library.validate_track(legacy, upper.sprite_frames.get_frame_count(legacy))
 				_expect(errors.is_empty(), "socket coverage errors: %s" % ", ".join(errors))
 
 	var definition = operator.get("primary_weapon_definition")
@@ -71,7 +92,8 @@ func _init() -> void:
 	upper.visible = true
 	weapon.visible = true
 	upper.play(&"ranged_2h_stance_modular_right")
-	weapon.play(&"ranged_2h_stance_modular_right")
+	# The weapon renderer is canonical as of C2a-R1; the upper body is not yet.
+	weapon.play(&"ranged_2h/posture/stance_01/e/weapon")
 	upper.set_frame_and_progress(0, 0.0)
 	operator.call("_sync_primary_ranged_weapon_frame_to_upper")
 	_expect(static_weapon.visible, "Carbine static WeaponSprite did not become visible")
@@ -110,7 +132,7 @@ func _init() -> void:
 	_expect(weapon.z_index == 3, "east draw order did not come from socket metadata")
 
 	upper.play(&"ranged_2h_stance_modular_down_right")
-	weapon.play(&"ranged_2h_stance_modular_down_right")
+	weapon.play(&"ranged_2h/posture/stance_01/se/weapon")
 	operator.set("aim_direction", Vector2(1, 1).normalized())
 	operator.call("_sync_primary_ranged_weapon_frame_to_upper")
 	_expect(weapon.z_index == 4, "southeast draw order did not change")

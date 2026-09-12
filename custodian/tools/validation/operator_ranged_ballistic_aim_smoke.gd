@@ -33,7 +33,9 @@ func _init() -> void:
 	upper.visible = true
 	weapon.visible = true
 	upper.play(&"ranged_2h_stance_modular_right")
-	weapon.play(&"ranged_2h_stance_modular_right")
+	# C2a-R1: ModularSidearmSprite is bound to the canonical runtime SpriteFrames;
+	# the upper body is still a compatibility renderer in this slice.
+	weapon.play(&"ranged_2h/posture/stance_01/e/weapon")
 	upper.set_frame_and_progress(0, 0.0)
 	operator.call("_begin_modular_primary_ranged_fire_presentation", Vector2.RIGHT)
 	operator.set("aim_direction", Vector2.LEFT)

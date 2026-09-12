@@ -2777,7 +2777,7 @@ func _sync_modular_ranged_ready_upper_layers(direction: Vector2) -> bool:
 	_declare_modular_body_composition()
 	if not _sync_modular_upper_body_layer("ranged_2h_stance_modular", resolved_direction, 1.0, false):
 		return false
-	if not _sync_modular_ranged_weapon_layer(resolved_direction, "ranged_2h_stance_modular"):
+	if not _sync_modular_ranged_weapon_layer(resolved_direction, &"posture", &"stance_01"):
 		return false
 	if primary_weapon_sprite != null:
 		primary_weapon_sprite.visible = false
@@ -2800,7 +2800,7 @@ func _sync_modular_ranged_relaxed_upper_layers(direction: Vector2) -> bool:
 	_declare_modular_body_composition()
 	if not _sync_modular_upper_body_layer("ranged_2h_relaxed_modular", resolved_direction, 1.0, false):
 		return false
-	if not _sync_modular_ranged_weapon_layer(resolved_direction, "ranged_2h_relaxed_modular"):
+	if not _sync_modular_ranged_weapon_layer(resolved_direction, &"posture", &"relaxed_01"):
 		return false
 	if primary_weapon_sprite != null:
 		primary_weapon_sprite.visible = false
@@ -2868,13 +2868,35 @@ func _sync_modular_sidearm_presentation(_is_firing: bool) -> bool:
 	var action_direction := aim_direction if holding else _sidearm_action_direction
 	var action := "fire" if firing else "draw"
 	var start_action := not holding and not _sidearm_action_phase_started
-	if not _sync_sidearm_action_sprite(modular_lower_body_sprite, "sidearm_%s_lower" % action, action_direction, holding, start_action):
+	# One authored sector for the whole stack.
+	var sector := _sidearm_authored_sector(action_direction)
+	var legacy_suffix := _sidearm_legacy_sector_suffix(sector)
+	# modular_sidearm_sprite is canonical as of C2a-R1; the other three layers are
+	# still compatibility renderers and keep legacy names built from the SAME
+	# sector, so they cannot drift from the pistol.
+	var canonical_group: StringName = &"cosmetic" if firing else &"posture"
+	var canonical_action: StringName = &"fire_sidearm_01" if firing else &"draw_sidearm_01"
+	var pistol_animation := _resolve_sidearm_weapon_animation(
+		canonical_group, canonical_action, sector
+	)
+	if not _sync_sidearm_action_sprite(
+		modular_lower_body_sprite,
+		StringName("sidearm_%s_lower_%s" % [action, legacy_suffix]), holding, start_action
+	):
 		return false
-	if not _sync_sidearm_action_sprite(modular_upper_body_sprite, "sidearm_%s_upper" % action, action_direction, holding, start_action):
+	if not _sync_sidearm_action_sprite(
+		modular_upper_body_sprite,
+		StringName("sidearm_%s_upper_%s" % [action, legacy_suffix]), holding, start_action
+	):
 		return false
-	if not _sync_sidearm_action_sprite(modular_sidearm_sprite, "sidearm_%s" % action, action_direction, holding, start_action):
+	if not _sync_sidearm_action_sprite(
+		modular_sidearm_sprite, pistol_animation, holding, start_action
+	):
 		return false
-	_sync_sidearm_action_sprite(modular_upper_fx_sprite, "sidearm_%s_fx" % action, action_direction, holding, start_action)
+	_sync_sidearm_action_sprite(
+		modular_upper_fx_sprite,
+		StringName("sidearm_%s_fx_%s" % [action, legacy_suffix]), holding, start_action
+	)
 	if start_action:
 		_sidearm_action_phase_started = true
 	_claim_modular_body_owner()
@@ -2943,7 +2965,7 @@ func _sync_modular_ranged_ready_movement_presentation(
 	if not _sync_modular_upper_body_layer("ranged_2h_stance_modular", resolved_upper_direction, 1.0, false):
 		_hide_modular_locomotion_layers()
 		return false
-	if not _sync_modular_ranged_weapon_layer(resolved_upper_direction, "ranged_2h_stance_modular"):
+	if not _sync_modular_ranged_weapon_layer(resolved_upper_direction, &"posture", &"stance_01"):
 		_hide_modular_locomotion_layers()
 		return false
 
@@ -2958,7 +2980,13 @@ func _sync_modular_ranged_ready_movement_presentation(
 	return true
 
 
-func _sync_modular_ranged_weapon_layer(direction: Vector2, base_animation: String) -> bool:
+## Drive the ranged_2h weapon layer on modular_sidearm_sprite.
+##
+## Callers pass semantic intent (group + action), not a clip name: this renderer is
+## canonical as of C2a-R1 and must never require a legacy animation name.
+func _sync_modular_ranged_weapon_layer(
+	direction: Vector2, group: StringName, action: StringName
+) -> bool:
 	if _is_using_ranged_2h_primary():
 		if modular_sidearm_sprite:
 			modular_sidearm_sprite.visible = false
@@ -2966,8 +2994,11 @@ func _sync_modular_ranged_weapon_layer(direction: Vector2, base_animation: Strin
 		return _apply_frame_aware_primary_weapon_socket()
 	if modular_sidearm_sprite == null or modular_sidearm_sprite.sprite_frames == null:
 		return false
-	var animation := AnimationResolver.resolve(base_animation, direction, modular_sidearm_sprite)
-	if not _has_playable_sprite_animation(modular_sidearm_sprite.sprite_frames, animation):
+	var animation := _resolve_ranged_2h_weapon_animation(
+		group, action, _ranged_2h_authored_sector(action, direction)
+	)
+	if animation.is_empty() \
+	or not _has_playable_sprite_animation(modular_sidearm_sprite.sprite_frames, animation):
 		return false
 	modular_sidearm_sprite.visible = true
 	modular_sidearm_sprite.flip_h = false
@@ -3173,14 +3204,21 @@ func _sync_ranged_slave_frame_to_upper(slave_sprite: AnimatedSprite2D) -> void:
 
 
 func _ensure_primary_ranged_weapon_direction_matches_upper() -> void:
-	var base: String = "ranged_2h_stance_modular"
+	var action: StringName = &"stance_01"
+	var group: StringName = &"posture"
 	var direction: Vector2 = aim_direction
 	if _is_primary_ranged_transition_presentation_active():
-		base = "ranged_2h_aim_modular"
+		action = &"aim_01"
+		group = &"cosmetic"
 		direction = _primary_ranged_action_direction
 	elif _is_primary_ranged_fire_presentation_active():
 		return
-	_retarget_ranged_sprite_preserving_progress(modular_sidearm_sprite, base, direction)
+	_retarget_ranged_sprite_preserving_progress(
+		modular_sidearm_sprite, "", direction,
+		_resolve_ranged_2h_weapon_animation(
+			group, action, _ranged_2h_authored_sector(action, direction)
+		)
+	)
 
 
 func _retarget_primary_ranged_transition(direction: Vector2) -> void:
@@ -3194,19 +3232,31 @@ func _retarget_primary_ranged_transition(direction: Vector2) -> void:
 	if previous_suffix == next_suffix:
 		return
 	_primary_ranged_action_direction = resolved
-	for sprite in [modular_lower_body_sprite, modular_upper_body_sprite, modular_sidearm_sprite]:
+	for sprite in [modular_lower_body_sprite, modular_upper_body_sprite]:
 		_retarget_ranged_sprite_preserving_progress(sprite, "ranged_2h_aim_modular", resolved)
+	_retarget_ranged_sprite_preserving_progress(
+		modular_sidearm_sprite, "", resolved,
+		_resolve_ranged_2h_weapon_animation(
+			&"cosmetic", &"aim_01", _ranged_2h_authored_sector(&"aim_01", resolved)
+		)
+	)
 
 
+## `resolved` lets a canonical renderer be driven through this helper without the
+## helper itself resolving anything: modular_sidearm_sprite is canonical as of
+## C2a-R1, while the layers beside it are still compatibility renderers.
 func _retarget_ranged_sprite_preserving_progress(
 	sprite: AnimatedSprite2D,
 	base_animation: String,
-	direction: Vector2
+	direction: Vector2,
+	resolved: StringName = &""
 ) -> void:
 	if sprite == null or sprite.sprite_frames == null:
 		return
-	var expected: StringName = AnimationResolver.resolve(base_animation, direction, sprite)
-	if not _has_playable_sprite_animation(sprite.sprite_frames, expected):
+	var expected: StringName = resolved if not resolved.is_empty() else AnimationResolver.resolve(
+		base_animation, direction, sprite
+	)
+	if expected.is_empty() or not _has_playable_sprite_animation(sprite.sprite_frames, expected):
 		return
 	if sprite.animation == expected:
 		return
@@ -3332,9 +3382,22 @@ func _begin_modular_primary_ranged_fire_presentation(
 	any_layer_played = any_layer_played or bool(upper_result.get("played", false))
 	longest_duration = max(longest_duration, float(upper_result.get("duration", 0.0)))
 
+	# modular_sidearm_sprite is canonical as of C2a-R1, so the weapon layer asks for
+	# one canonical identity instead of walking a legacy candidate list. fire_01 is
+	# published for e/n/se/sw/w; the unpublished sectors played nothing before and
+	# must keep playing nothing, so this asks before it resolves rather than
+	# emitting a missing-animation error during ordinary aiming.
+	var weapon_fire_sector := _ranged_2h_authored_sector(&"fire_01", _direction_from_suffix(suffix))
+	var weapon_candidates: Array[StringName] = []
+	if _get_operator_animation_selector().has_sector_identity(
+		&"ranged_2h", &"cosmetic", &"fire_01", weapon_fire_sector, &"weapon"
+	):
+		weapon_candidates.append(_resolve_ranged_2h_weapon_animation(
+			&"cosmetic", &"fire_01", weapon_fire_sector
+		))
 	var weapon_result := _play_first_available_modular_fire_animation(
 		modular_sidearm_sprite,
-		_primary_ranged_fire_candidates(&"weapon", suffix),
+		weapon_candidates,
 		modular_primary_ranged_fire_fps
 	)
 	any_layer_played = any_layer_played or bool(weapon_result.get("played", false))
@@ -3384,7 +3447,9 @@ func _begin_modular_primary_ranged_aim_presentation() -> bool:
 
 	var lower_animation := AnimationResolver.resolve("ranged_2h_aim_modular", action_direction, modular_lower_body_sprite)
 	var upper_animation := AnimationResolver.resolve("ranged_2h_aim_modular", action_direction, modular_upper_body_sprite)
-	var weapon_animation := AnimationResolver.resolve("ranged_2h_aim_modular", action_direction, modular_sidearm_sprite)
+	var weapon_animation := _resolve_ranged_2h_weapon_animation(
+		&"cosmetic", &"aim_01", _ranged_2h_authored_sector(&"aim_01", action_direction)
+	)
 	if not _has_playable_sprite_animation(modular_lower_body_sprite.sprite_frames, lower_animation):
 		return false
 	if not _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, upper_animation):
@@ -3403,7 +3468,9 @@ func _begin_modular_primary_ranged_aim_presentation() -> bool:
 	var upper_result := _play_modular_action_animation(modular_upper_body_sprite, "ranged_2h_aim_modular", action_direction, raise_fps)
 	longest_duration = max(longest_duration, float(upper_result.get("duration", 0.0)))
 
-	var weapon_result := _play_modular_action_animation(modular_sidearm_sprite, "ranged_2h_aim_modular", action_direction, raise_fps)
+	var weapon_result := _play_modular_action_animation(
+		modular_sidearm_sprite, "", action_direction, raise_fps, weapon_animation
+	)
 	longest_duration = max(longest_duration, float(weapon_result.get("duration", 0.0)))
 	var cape_result := _play_optional_modular_cape_animation("ranged_2h_aim_cape", action_direction, raise_fps)
 	longest_duration = max(longest_duration, float(cape_result.get("duration", 0.0)))
@@ -3438,6 +3505,11 @@ func _begin_modular_primary_ranged_lower_presentation() -> bool:
 	var lower_fps := modular_primary_ranged_aim_fps
 	if _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, resolved_upper):
 		lower_fps = float(modular_upper_body_sprite.sprite_frames.get_frame_count(resolved_upper)) / maxf(0.04, ranged_lower_duration)
+	# modular_sidearm_sprite is canonical as of C2a-R1; the two body layers beside
+	# it are still compatibility renderers, so each is handed what it understands.
+	var canonical_weapon_aim := _resolve_ranged_2h_weapon_animation(
+		&"cosmetic", &"aim_01", _ranged_2h_authored_sector(&"aim_01", action_direction)
+	)
 	for sprite in [modular_lower_body_sprite, modular_upper_body_sprite, modular_sidearm_sprite]:
 		var prior_ratio := 1.0
 		if lowering_from_partial_raise and sprite.sprite_frames != null:
@@ -3448,7 +3520,8 @@ func _begin_modular_primary_ranged_lower_presentation() -> bool:
 			sprite,
 			"ranged_2h_aim_modular",
 			action_direction,
-			lower_fps
+			lower_fps,
+			canonical_weapon_aim if sprite == modular_sidearm_sprite else &""
 		)
 		if not bool(result.get("played", false)):
 			return false
@@ -3499,13 +3572,9 @@ func _primary_ranged_fire_candidates(layer_key: StringName, suffix: StringName) 
 				StringName("ranged_2h_fire_modular_%s" % dir),
 			]
 		&"weapon":
-			return [
-				StringName("ranged_2h_fire_weapon_%s" % dir),
-				StringName("primary_ranged_fire_weapon_%s" % dir),
-				StringName("ranged_fire_weapon_%s" % dir),
-				StringName("ranged_2h_fire_modular_%s" % dir),
-				StringName("ranged_2h_fire_%s" % dir),
-			]
+			# The weapon layer is canonical as of C2a-R1 and no longer walks a
+			# legacy candidate list; see _begin_modular_primary_ranged_fire_presentation.
+			return []
 		&"fx":
 			return [
 				StringName("ranged_2h_fire_fx_%s" % dir),
@@ -3550,12 +3619,15 @@ func _play_modular_action_animation(
 	sprite: AnimatedSprite2D,
 	base_animation: String,
 	direction: Vector2,
-	target_fps: float
+	target_fps: float,
+	resolved: StringName = &""
 ) -> Dictionary:
 	if sprite == null or sprite.sprite_frames == null:
 		return {"played": false, "duration": 0.0}
-	var animation_name := AnimationResolver.resolve(base_animation, direction, sprite)
-	if not _has_playable_sprite_animation(sprite.sprite_frames, animation_name):
+	var animation_name: StringName = resolved if not resolved.is_empty() else AnimationResolver.resolve(
+		base_animation, direction, sprite
+	)
+	if animation_name.is_empty() or not _has_playable_sprite_animation(sprite.sprite_frames, animation_name):
 		return {"played": false, "duration": 0.0}
 
 	var frame_count := sprite.sprite_frames.get_frame_count(animation_name)
@@ -3578,9 +3650,12 @@ func _play_modular_action_animation_backwards(
 	sprite: AnimatedSprite2D,
 	base_animation: String,
 	direction: Vector2,
-	target_fps: float
+	target_fps: float,
+	resolved: StringName = &""
 ) -> Dictionary:
-	var result := _play_modular_action_animation(sprite, base_animation, direction, target_fps)
+	var result := _play_modular_action_animation(
+		sprite, base_animation, direction, target_fps, resolved
+	)
 	if not bool(result.get("played", false)):
 		return result
 	var animation_name: StringName = result.get("animation", &"")
@@ -3685,10 +3760,15 @@ func _hide_legacy_primary_ranged_presentation_for_modular_fire() -> void:
 		ranged_fx_overlay_sprite.visible = false
 
 
-func _sync_sidearm_action_sprite(sprite: AnimatedSprite2D, base: String, direction: Vector2, hold_last_frame: bool, start_action: bool = false) -> bool:
-	if sprite == null or sprite.sprite_frames == null:
+## Drive one Sidearm layer with an animation the caller has already resolved.
+##
+## It used to resolve the direction itself, which meant each of the four layers
+## resolved independently; the stack agreed only because every caller happened to
+## pass the same direction. The authored sector is now decided once per action and
+## handed down, so the stack cannot disagree with itself.
+func _sync_sidearm_action_sprite(sprite: AnimatedSprite2D, animation: StringName, hold_last_frame: bool, start_action: bool = false) -> bool:
+	if sprite == null or sprite.sprite_frames == null or animation.is_empty():
 		return false
-	var animation := _resolve_sidearm_directional_animation(base, direction, sprite)
 	if not _has_playable_sprite_animation(sprite.sprite_frames, animation):
 		_hide_presentation_layer(sprite, false)
 		return false
@@ -3712,15 +3792,6 @@ func _is_sidearm_action_finished() -> bool:
 		if sprite.is_playing():
 			return false
 	return true
-
-
-func _resolve_sidearm_directional_animation(base: String, direction: Vector2, sprite: AnimatedSprite2D) -> StringName:
-	var vertical := "up" if direction.y < 0.0 else "down"
-	var horizontal := "left" if direction.x < 0.0 else "right"
-	var candidate := StringName("%s_%s_%s" % [base, vertical, horizontal])
-	if sprite != null and sprite.sprite_frames != null and _has_playable_sprite_animation(sprite.sprite_frames, candidate):
-		return candidate
-	return StringName(base)
 
 
 func _sync_modular_lower_body_layer(base_animation: String, direction: Vector2, speed_scale: float) -> bool:
@@ -3828,6 +3899,65 @@ func _sync_modular_head_locomotion(base_animation: String, direction: Vector2, s
 ## number of independently animated layers that supports real gameplay variation
 ## is. Both may return in a dedicated presentation/art pass, which is why these
 ## are gates rather than deletions.
+## Authored-facing projection for actions published in fewer facings than the
+## eight runtime sectors (C2a-R1, modular_sidearm_sprite cutover).
+##
+## PRESENTATION ONLY. None of this touches raw aim direction, projectile
+## direction, the weapon socket, movement, target selection, gameplay state or
+## combat timing.
+##
+## These are literal authoring tables, not a fallback algorithm. The projection is
+## resolved ONCE per action and the same authored sector drives every layer of
+## that action's stack, so the stack can never disagree with itself.
+## `OperatorAnimationSelector` is never taught the projection: it receives an
+## already-decided sector and performs its normal exact lookup.
+##
+## The P-9 Sidearm is authored for four diagonals. This table is the 2026-09-12
+## authoring decision, and it is exactly what the retired
+## `_resolve_sidearm_directional_animation()` produced.
+const SIDEARM_AUTHORED_SECTORS := {
+	&"n": &"ne", &"ne": &"ne",
+	&"e": &"se", &"se": &"se", &"s": &"se",
+	&"sw": &"sw", &"w": &"sw",
+	&"nw": &"nw",
+}
+
+## The ranged_2h actions on this renderer are published in partial sets. These
+## tables were characterized from the compatibility resource rather than invented:
+## that resource already sources canonical PNGs, its unsuffixed clips are the `e`
+## art, and `AnimationResolver` fell through to `_left` when x < 0 and otherwise to
+## `_right`. Each row therefore reproduces what the player sees today.
+const RANGED_2H_AUTHORED_SECTORS := {
+	# authored: e se sw w
+	&"aim_01": {
+		&"n": &"e", &"ne": &"e", &"e": &"e", &"se": &"se",
+		&"s": &"e", &"sw": &"sw", &"w": &"w", &"nw": &"w",
+	},
+	# authored: e n ne nw se sw w  (only s is unpublished)
+	&"stance_01": {
+		&"n": &"n", &"ne": &"ne", &"e": &"e", &"se": &"se",
+		&"s": &"e", &"sw": &"sw", &"w": &"w", &"nw": &"nw",
+	},
+	# authored: e n se sw w  (ne/nw/s unpublished; they played nothing before and
+	# still do, so they map to themselves and the existence query declines them)
+	&"fire_01": {
+		&"n": &"n", &"ne": &"ne", &"e": &"e", &"se": &"se",
+		&"s": &"s", &"sw": &"sw", &"w": &"w", &"nw": &"nw",
+	},
+	# authored: e w
+	&"relaxed_01": {
+		&"n": &"e", &"ne": &"e", &"e": &"e", &"se": &"e",
+		&"s": &"e", &"sw": &"w", &"w": &"w", &"nw": &"w",
+	},
+}
+
+## The legacy `<up|down>_<left|right>` suffix for an authored sector. Needed only
+## while lower/upper/FX remain compatibility renderers: they must be driven by the
+## same sector the pistol uses, and their clip names still spell it this way.
+const SIDEARM_LEGACY_SECTOR_SUFFIXES := {
+	&"ne": "up_right", &"nw": "up_left", &"se": "down_right", &"sw": "down_left",
+}
+
 const ACTIVE_MODULAR_HEAD := false
 const ACTIVE_MODULAR_CAPE := false
 
@@ -3889,6 +4019,59 @@ func get_visible_body_overlays(owner: int) -> Array:
 func _set_body_presentation_owner(owner: int) -> bool:
 	_invalidate_preempted_rig_lifecycles(owner)
 	return _body_presenter.set_owner(owner)
+
+
+## Canonical Sidearm weapon identity for an already-decided authored sector.
+func _resolve_sidearm_weapon_animation(
+	group: StringName, action: StringName, sector: StringName
+) -> StringName:
+	return _get_operator_animation_selector().resolve_sector(
+		&"sidearm", group, action, sector, &"weapon"
+	)
+
+
+## Canonical ranged_2h weapon identity for an already-decided authored sector.
+func _resolve_ranged_2h_weapon_animation(
+	group: StringName, action: StringName, sector: StringName
+) -> StringName:
+	return _get_operator_animation_selector().resolve_sector(
+		&"ranged_2h", group, action, sector, &"weapon"
+	)
+
+
+## The legacy `<up|down>_<left|right>` suffix for an authored sector, so the
+## compatibility layers beside the pistol are driven by the same sector it uses.
+func _sidearm_legacy_sector_suffix(sector: StringName) -> String:
+	return SIDEARM_LEGACY_SECTOR_SUFFIXES.get(sector, "down_right")
+
+
+## The authored Sidearm facing for a requested direction. Resolved once per
+## action; every layer of the Sidearm stack must use the returned sector.
+func _sidearm_authored_sector(direction: Vector2) -> StringName:
+	var requested := OperatorAnimationSelector.vector_to_sector(direction)
+	return SIDEARM_AUTHORED_SECTORS.get(requested, &"se")
+
+
+## The direction a legacy `_<suffix>` name stands for. Needed only while the fire
+## path still receives its facing as a legacy suffix string.
+func _direction_from_suffix(suffix: StringName) -> Vector2:
+	match String(suffix):
+		"up": return Vector2.UP
+		"up_right": return Vector2(1, -1)
+		"right": return Vector2.RIGHT
+		"down_right": return Vector2(1, 1)
+		"down": return Vector2.DOWN
+		"down_left": return Vector2(-1, 1)
+		"left": return Vector2.LEFT
+		"up_left": return Vector2(-1, -1)
+	return Vector2.RIGHT
+
+
+## The authored ranged_2h facing for a requested direction and action.
+func _ranged_2h_authored_sector(action: StringName, direction: Vector2) -> StringName:
+	var requested := OperatorAnimationSelector.vector_to_sector(direction)
+	var table: Dictionary = RANGED_2H_AUTHORED_SECTORS.get(action, {})
+	return table.get(requested, requested)
 
 
 ## Whether a plan would be accepted. Changes nothing and reports nothing.
