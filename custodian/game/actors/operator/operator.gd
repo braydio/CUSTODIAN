@@ -2101,7 +2101,7 @@ func _sync_modular_melee_locomotion(
 		modular_lower_body_sprite,
 		modular_upper_body_sprite,
 	]:
-		sprite.visible = true
+		_show_presentation_layer(sprite)
 		sprite.flip_h = false
 		sprite.speed_scale = speed_scale
 	var animations: Array[StringName] = [
@@ -2619,7 +2619,7 @@ func _sync_modular_fast_attack_layer(
 	var resolved := AnimationResolver.resolve(base_animation, direction, layer_sprite)
 	if not _has_playable_sprite_animation(layer_sprite.sprite_frames, resolved):
 		return false
-	layer_sprite.visible = true
+	_show_presentation_layer(layer_sprite)
 	layer_sprite.flip_h = false
 	layer_sprite.speed_scale = speed_scale
 	if restart_once:
@@ -3487,7 +3487,7 @@ func _play_first_available_modular_fire_animation(
 			continue
 
 		var frame_count := sprite.sprite_frames.get_frame_count(animation_name)
-		sprite.visible = true
+		_show_presentation_layer(sprite)
 		sprite.flip_h = false
 		sprite.animation = animation_name
 		sprite.frame = 0
@@ -3518,7 +3518,7 @@ func _play_modular_action_animation(
 		return {"played": false, "duration": 0.0}
 
 	var frame_count := sprite.sprite_frames.get_frame_count(animation_name)
-	sprite.visible = true
+	_show_presentation_layer(sprite)
 	sprite.flip_h = false
 	sprite.animation = animation_name
 	sprite.frame = 0
@@ -3601,10 +3601,10 @@ func _sync_field_patch_action_layer(sprite: AnimatedSprite2D, base_animation: St
 		return false
 	var animation_name := AnimationResolver.resolve(base_animation, direction, sprite)
 	if not _has_playable_sprite_animation(sprite.sprite_frames, animation_name):
-		sprite.visible = false
+		_hide_presentation_layer(sprite, false)
 		return false
 
-	sprite.visible = true
+	_show_presentation_layer(sprite)
 	sprite.flip_h = false
 	var source_speed := sprite.sprite_frames.get_animation_speed(animation_name)
 	if source_speed <= 0.0:
@@ -3643,9 +3643,9 @@ func _sync_sidearm_action_sprite(sprite: AnimatedSprite2D, base: String, directi
 		return false
 	var animation := _resolve_sidearm_directional_animation(base, direction, sprite)
 	if not _has_playable_sprite_animation(sprite.sprite_frames, animation):
-		sprite.visible = false
+		_hide_presentation_layer(sprite, false)
 		return false
-	sprite.visible = true
+	_show_presentation_layer(sprite)
 	sprite.flip_h = false
 	sprite.speed_scale = 1.0
 	if hold_last_frame:
@@ -3780,9 +3780,16 @@ func _register_body_presentation_layers() -> void:
 		OperatorBodyPresenter.Owner.MODULAR_BODY,
 		[modular_lower_body_sprite, modular_upper_body_sprite, modular_head_sprite]
 	)
-	# The cape is worn by both the legacy dodge strips and the modular rig, so
-	# it is an owner-scoped overlay and must never count as a second body.
-	_body_presenter.register_overlay_layers([modular_cape_sprite])
+	# The cape is worn by both the legacy dodge strips and the modular rig, so it
+	# registers to both owners and must never count as a second body. Being worn
+	# by two owners is also why releasing modular leaves it alone: the next owner
+	# re-shows it rather than it blinking between presentations.
+	_body_presenter.register_overlay_layers(
+		OperatorBodyPresenter.Owner.LEGACY_FULL_BODY, [modular_cape_sprite]
+	)
+	_body_presenter.register_overlay_layers(
+		OperatorBodyPresenter.Owner.MODULAR_BODY, [modular_cape_sprite]
+	)
 
 
 func _is_exclusive_body_owner_active() -> bool:
@@ -3800,13 +3807,35 @@ func get_visible_body_owners() -> Array:
 	return _body_presenter.visible_owners()
 
 
-## Present the body for `owner`. Thin delegation: no policy here.
-func _set_body_presentation_owner(owner: int) -> void:
-	_body_presenter.set_owner(owner)
+## Overlays currently visible for `owner`.
+##
+## Observability for the invariant that preempting an owner leaves nothing of
+## that owner on screen — not its body and not its weapon — and that releasing
+## an unrelated owner never blanks this one's cosmetics.
+func get_visible_body_overlays(owner: int) -> Array:
+	return _body_presenter.visible_overlays(owner)
 
 
-func _present_body(plan: OperatorBodyPresentationPlan) -> void:
-	_body_presenter.present(plan)
+## Present the body for `owner`, cancelling the outgoing owner's lifecycle first.
+func _set_body_presentation_owner(owner: int) -> bool:
+	_invalidate_preempted_rig_lifecycles(owner)
+	return _body_presenter.set_owner(owner)
+
+
+## Whether a plan would be accepted. Changes nothing and reports nothing.
+func _can_present_body(plan: OperatorBodyPresentationPlan) -> bool:
+	return _body_presenter.can_present(plan)
+
+
+func _present_body(plan: OperatorBodyPresentationPlan, report_rejection := true) -> bool:
+	if plan == null:
+		return _body_presenter.present(plan, report_rejection)
+	# Cancelling the outgoing lifecycle must not happen for a plan that will be
+	# rejected, or a rejected presentation would still abandon the live one.
+	if not _body_presenter.can_present(plan):
+		return _body_presenter.present(plan, report_rejection)
+	_invalidate_preempted_rig_lifecycles(plan.owner)
+	return _body_presenter.present(plan, report_rejection)
 
 
 func _release_modular_body_layers() -> void:
@@ -3814,7 +3843,52 @@ func _release_modular_body_layers() -> void:
 
 
 func _claim_modular_body_owner() -> void:
+	_invalidate_preempted_rig_lifecycles(OperatorBodyPresenter.Owner.MODULAR_BODY)
 	_body_presenter.claim_modular()
+
+
+## Take the body for `owner` as a deliberate preemption.
+func _preempt_body_with_owner(owner: int, layers: Array = []) -> void:
+	_invalidate_preempted_rig_lifecycles(owner)
+	_body_presenter.preempt_with_owner(owner, layers)
+
+
+## Cancel the outstanding lifecycle of an authored rig that is losing the body.
+##
+## Transferring pixels away does not cancel a coroutine. A posture bridge or a
+## fast-attack startup has an outstanding token and timer; without this, it wakes
+## later with its original token still valid and runs completion behaviour —
+## queued attacks, animation updates, rig releases — for a presentation that no
+## longer exists.
+##
+## This lives in the actor, not in `OperatorBodyPresenter`. Retiring a renderer
+## is presentation; deciding that a posture transition is abandoned is
+## action/presentation coordination, and the presenter must stay ignorant of
+## melee and posture gameplay.
+func _invalidate_preempted_rig_lifecycles(next_owner: int) -> void:
+	var current := _body_presenter.current_owner()
+	if current == next_owner:
+		return
+	match current:
+		OperatorBodyPresenter.Owner.VIGIL_POSTURE_TRANSITION:
+			_vigil_posture_bridge_token += 1
+			_vigil_posture_bridge_action = &""
+			_vigil_posture_bridge_attack_queued = false
+		OperatorBodyPresenter.Owner.VIGIL_FAST_STARTUP:
+			_vigil_ready_fast_startup_token += 1
+		OperatorBodyPresenter.Owner.VIGIL_GUARD:
+			_vigil_guard_semantic_active = false
+
+
+## Retire a freshly built authored rig through the presenter.
+##
+## A new `AnimatedSprite2D` is visible by default, so a lazily constructed rig
+## has to be hidden the moment it is created. Routing that through the presenter
+## keeps construction from being a hole in the body-visibility firewall.
+func _retire_registered_rig_layers(layers: Array) -> void:
+	for layer in layers:
+		if layer != null:
+			_body_presenter.hide_layer(layer, true)
 
 
 ## Enable one already-configured body layer through the presenter.
@@ -3834,6 +3908,36 @@ func _show_body_layer(layer) -> bool:
 ## Retire one body layer without changing ownership.
 func _hide_body_layer(layer, stop_playback := true) -> void:
 	_body_presenter.hide_layer(layer, stop_playback)
+
+
+## Make one presentation renderer visible.
+##
+## Every renderer the presenter is authoritative for — all body layers and all
+## owner-scoped overlays — goes through it, so no generic helper can write body
+## visibility by aliasing a renderer into a loop variable or a parameter.
+##
+## Unregistered cosmetic layers (the melee/ranged weapon and FX overlays whose
+## lifetime belongs to loadout logic rather than to a body owner) are still set
+## directly: they are not bodies and cannot affect the one-body invariant.
+func _show_presentation_layer(layer) -> bool:
+	if layer == null:
+		return false
+	if _body_presenter.is_registered_layer(layer):
+		return _show_body_layer(layer)
+	layer.visible = true
+	return true
+
+
+## Hide one presentation renderer, mirroring `_show_presentation_layer()`.
+func _hide_presentation_layer(layer, stop_playback := true) -> void:
+	if layer == null:
+		return
+	if _body_presenter.is_registered_layer(layer):
+		_body_presenter.hide_layer(layer, stop_playback)
+		return
+	layer.visible = false
+	if stop_playback and layer.is_playing():
+		layer.stop()
 
 
 func _hide_modular_head_layer() -> void:
@@ -4712,15 +4816,21 @@ func _ensure_vigil_ready_fast_startup_sprites() -> void:
 	for sprite in [_vigil_startup_lower, _vigil_startup_upper, _vigil_startup_weapon]:
 		sprite.position = Vector2(0, -18)
 		sprite.sprite_frames = OPERATOR_RUNTIME_FRAMES
-		sprite.visible = false
 		add_child(sprite)
 	# The Operator creates the nodes; the presenter is told about them. The
-	# weapon layer is an overlay, not a body.
+	# weapon layer is an overlay, not a body. Registration happens before the
+	# rig is hidden so that even its initial retirement goes through the
+	# presenter rather than around it.
 	_body_presenter.register_body_layers(
 		OperatorBodyPresenter.Owner.VIGIL_FAST_STARTUP,
 		[_vigil_startup_lower, _vigil_startup_upper]
 	)
-	_body_presenter.register_overlay_layers([_vigil_startup_weapon])
+	_body_presenter.register_overlay_layers(
+		OperatorBodyPresenter.Owner.VIGIL_FAST_STARTUP, [_vigil_startup_weapon]
+	)
+	_retire_registered_rig_layers(
+		[_vigil_startup_lower, _vigil_startup_upper, _vigil_startup_weapon]
+	)
 
 
 func _get_operator_animation_selector():
@@ -4732,12 +4842,13 @@ func _get_operator_animation_selector():
 ## Stop and hide an authored transition rig and surrender the body, so the next
 ## owner starts from a clean slate rather than layering onto this one.
 func _release_vigil_rig(sprites: Array, owner: int) -> void:
+	# `release_rig()` retires the rig's body layers AND its owner-scoped
+	# overlays, so the rig weapon no longer needs hiding by hand here. Anything
+	# still unregistered is retired through the same funnel.
 	_body_presenter.release_rig(owner)
 	for sprite in sprites:
-		if sprite != null and not _body_presenter.is_registered_body_layer(sprite):
-			# The rig weapon layer is an overlay, not a body.
-			sprite.stop()
-			sprite.visible = false
+		if sprite != null and not _body_presenter.is_registered_layer(sprite):
+			_hide_presentation_layer(sprite, true)
 
 
 func _play_vigil_startup_layer(sprite: AnimatedSprite2D, animation: StringName, z: int) -> void:
@@ -4821,13 +4932,19 @@ func _ensure_vigil_posture_bridge_sprites() -> void:
 	]:
 		sprite.position = Vector2(0, -18)
 		sprite.sprite_frames = OPERATOR_RUNTIME_FRAMES
-		sprite.visible = false
 		add_child(sprite)
 	_body_presenter.register_body_layers(
 		OperatorBodyPresenter.Owner.VIGIL_POSTURE_TRANSITION,
 		[_vigil_posture_bridge_lower, _vigil_posture_bridge_upper]
 	)
-	_body_presenter.register_overlay_layers([_vigil_posture_bridge_weapon])
+	_body_presenter.register_overlay_layers(
+		OperatorBodyPresenter.Owner.VIGIL_POSTURE_TRANSITION, [_vigil_posture_bridge_weapon]
+	)
+	_retire_registered_rig_layers([
+		_vigil_posture_bridge_lower,
+		_vigil_posture_bridge_upper,
+		_vigil_posture_bridge_weapon,
+	])
 
 
 func _finish_vigil_posture_bridge(token: int, clock_animation: StringName) -> void:
@@ -7289,12 +7406,15 @@ func _try_play_vigil_semantic_block(phase_key: StringName) -> bool:
 		or not _has_playable_sprite_animation(OPERATOR_RUNTIME_FRAMES, animation):
 			return false
 	_ensure_vigil_guard_sprites()
+	# The guard rig is a complete authored body, so it takes the body explicitly.
+	# It used to claim MODULAR_BODY and then hide the modular composition behind
+	# itself, which left the real owner of those pixels unnamed.
+	_preempt_body_with_owner(OperatorBodyPresenter.Owner.VIGIL_GUARD)
+	_hide_modular_locomotion_layers()
 	_play_vigil_guard_layer(_vigil_guard_lower, lower_animation, 0)
 	_play_vigil_guard_layer(_vigil_guard_upper, upper_animation, 1)
 	_play_vigil_guard_layer(_vigil_guard_weapon, weapon_animation, 2)
 	_vigil_guard_semantic_active = true
-	_claim_modular_body_owner()
-	_hide_modular_locomotion_layers()
 	if melee_weapon_overlay_sprite != null:
 		melee_weapon_overlay_sprite.visible = false
 	if primary_weapon_sprite != null:
@@ -7314,25 +7434,37 @@ func _ensure_vigil_guard_sprites() -> void:
 	for sprite in [_vigil_guard_lower, _vigil_guard_upper, _vigil_guard_weapon]:
 		sprite.position = Vector2(0, -18)
 		sprite.sprite_frames = OPERATOR_RUNTIME_FRAMES
-		sprite.visible = false
 		add_child(sprite)
+	# The guard rig is a complete authored body, so it is a body OWNER like the
+	# other authored rigs. It was previously built and shown entirely outside the
+	# presenter, which made it invisible to the one-body invariant.
+	_body_presenter.register_body_layers(
+		OperatorBodyPresenter.Owner.VIGIL_GUARD,
+		[_vigil_guard_lower, _vigil_guard_upper]
+	)
+	_body_presenter.register_overlay_layers(
+		OperatorBodyPresenter.Owner.VIGIL_GUARD, [_vigil_guard_weapon]
+	)
+	_retire_registered_rig_layers(
+		[_vigil_guard_lower, _vigil_guard_upper, _vigil_guard_weapon]
+	)
 
 
 func _play_vigil_guard_layer(
 	sprite: AnimatedSprite2D, animation: StringName, layer_z_index: int
 ) -> void:
 	sprite.z_index = layer_z_index
-	sprite.visible = true
+	_show_presentation_layer(sprite)
 	sprite.speed_scale = 1.0
 	sprite.play(animation)
 
 
 func _hide_vigil_semantic_block() -> void:
 	_vigil_guard_semantic_active = false
-	for sprite in [_vigil_guard_lower, _vigil_guard_upper, _vigil_guard_weapon]:
-		if sprite != null:
-			sprite.stop()
-			sprite.visible = false
+	_release_vigil_rig(
+		[_vigil_guard_lower, _vigil_guard_upper, _vigil_guard_weapon],
+		OperatorBodyPresenter.Owner.VIGIL_GUARD
+	)
 
 
 func _play_modular_unarmed_block(base_animation: String) -> bool:
@@ -13092,8 +13224,7 @@ func begin_modular_damage_reaction(state_name: String) -> bool:
 		ranged_fx_overlay_sprite,
 	]:
 		if sprite != null:
-			sprite.visible = false
-			sprite.stop()
+			_hide_presentation_layer(sprite, true)
 	_obs_log(&"player_modular_idle_hitreact_started", {
 		"requested_sector": requested_sector,
 		"resolved_sector": resolved_sector,
@@ -13112,7 +13243,7 @@ func _play_synchronized_modular_reaction_layer(
 	var source_fps := sprite.sprite_frames.get_animation_speed(animation_name)
 	if source_fps <= 0.0:
 		source_fps = target_fps
-	sprite.visible = true
+	_show_presentation_layer(sprite)
 	sprite.flip_h = false
 	sprite.speed_scale = target_fps / maxf(0.01, source_fps)
 	sprite.play(animation_name)
@@ -13257,8 +13388,7 @@ func finish_damage_reaction_presentation() -> void:
 			modular_head_sprite,
 		]:
 			if sprite != null:
-				sprite.stop()
-				sprite.visible = false
+				_hide_presentation_layer(sprite, true)
 				sprite.frame = 0
 		if animated_sprite:
 			_set_body_presentation_owner(OperatorBodyPresenter.Owner.LEGACY_FULL_BODY)

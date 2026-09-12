@@ -41,22 +41,65 @@ BODY_LAYER_NODES = (
     "_vigil_startup_upper",
     "_vigil_posture_bridge_lower",
     "_vigil_posture_bridge_upper",
+    "_vigil_guard_lower",
+    "_vigil_guard_upper",
 )
+
+# A direct write names a body renderer, so a regex over those names finds it.
+# Binding one to a loop variable or a parameter and writing `sprite.visible`
+# instead hides the same write from the same regex, which is how the body
+# firewall reported a false zero. These are the alias names the Operator's
+# generic presentation helpers use; every one of them must route through
+# OperatorBodyPresenter rather than writing visibility itself.
+BODY_LAYER_ALIASES = ("sprite", "layer_sprite", "layer", "body", "rig")
+
+# The two functions that are allowed to write an unregistered renderer's
+# visibility, because they ARE the funnel: both refuse to touch anything the
+# presenter is authoritative for. Nothing else may write through an alias.
+VISIBILITY_FUNNEL_FUNCTIONS = ("_show_presentation_layer", "_hide_presentation_layer")
 
 
 class Rule:
     """One ownership rule: a pattern, the dirs allowed to violate it, and why."""
 
-    def __init__(self, key, title, pattern, owner, allowed_prefixes=(), files=("*.gd",)):
+    def __init__(self, key, title, pattern, owner, allowed_prefixes=(), files=("*.gd",),
+                 exempt_functions=()):
         self.key = key
         self.title = title
         self.pattern = re.compile(pattern, re.MULTILINE)
         self.owner = owner
         self.allowed_prefixes = allowed_prefixes
         self.files = files
+        # Named functions whose bodies are removed before matching. Used only
+        # where a single declared funnel is the correct place for a write; it is
+        # a narrow, auditable exemption rather than a laxer pattern.
+        self.exempt_functions = exempt_functions
 
     def allows(self, relative: str) -> bool:
         return any(relative.startswith(prefix) for prefix in self.allowed_prefixes)
+
+    def prepare(self, source: str) -> str:
+        for name in self.exempt_functions:
+            source = _strip_function(source, name)
+        return source
+
+
+def _strip_function(source: str, name: str) -> str:
+    """Remove one top-level function body so a rule can exempt it by name."""
+    lines = source.split("\n")
+    kept: list[str] = []
+    inside = False
+    for line in lines:
+        if line.startswith("func %s(" % name):
+            inside = True
+            continue
+        if inside:
+            if line.startswith("func ") or (line and not line[0].isspace()):
+                inside = False
+            else:
+                continue
+        kept.append(line)
+    return "\n".join(kept)
 
 
 RULES = [
@@ -73,6 +116,16 @@ RULES = [
         r"(?:%s)\s*\.\s*visible\s*=" % "|".join(re.escape(n) for n in BODY_LAYER_NODES),
         "OperatorBodyPresenter (operator/presentation/)",
         allowed_prefixes=("presentation/",),
+    ),
+    Rule(
+        "aliased_body_visibility_writes",
+        "body-layer visibility written through a loop variable or parameter",
+        r"(?:%s)\s*\.\s*visible\s*=" % "|".join(
+            r"\b" + re.escape(n) for n in BODY_LAYER_ALIASES
+        ),
+        "OperatorBodyPresenter (operator/presentation/)",
+        allowed_prefixes=("presentation/",),
+        exempt_functions=VISIBILITY_FUNNEL_FUNCTIONS,
     ),
     Rule(
         "animated_sprite_play_outside_presentation",
@@ -188,7 +241,7 @@ def measure() -> dict[str, dict[str, int]]:
             relative = path.relative_to(OPERATOR_DIR).as_posix()
             if rule.allows(relative):
                 continue
-            hits = len(rule.pattern.findall(source))
+            hits = len(rule.pattern.findall(rule.prepare(source)))
             if hits:
                 found.setdefault(rule.key, {})[relative] = hits
     return found

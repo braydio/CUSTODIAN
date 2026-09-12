@@ -14,12 +14,16 @@ extends SceneTree
 ## Owner ids mirror Operator.BodyOwner.
 const OPERATOR_SCENE := preload("res://game/actors/operator/operator.tscn")
 const CATALOG_FRAMES := preload("res://game/actors/operator/operator_animation_catalog_frames.tres")
+const BODY_PLAN := preload(
+	"res://game/actors/operator/presentation/operator_body_presentation_plan.gd"
+)
 
 const OWNER_NONE := 0
 const OWNER_LEGACY_FULL_BODY := 1
 const OWNER_MODULAR_BODY := 2
 const OWNER_VIGIL_POSTURE_TRANSITION := 3
 const OWNER_VIGIL_FAST_STARTUP := 4
+const OWNER_VIGIL_GUARD := 5
 
 const OWNER_NAMES := {
 	OWNER_NONE: "NONE",
@@ -27,6 +31,7 @@ const OWNER_NAMES := {
 	OWNER_MODULAR_BODY: "MODULAR_BODY",
 	OWNER_VIGIL_POSTURE_TRANSITION: "VIGIL_POSTURE_TRANSITION",
 	OWNER_VIGIL_FAST_STARTUP: "VIGIL_FAST_STARTUP",
+	OWNER_VIGIL_GUARD: "VIGIL_GUARD",
 }
 
 ## Overlays that may legitimately be visible alongside any body owner.
@@ -59,6 +64,9 @@ func _run() -> void:
 	await process_frame
 
 	_check_owner_api()
+	_check_present_is_transactional()
+	await _check_owner_scoped_overlays()
+	await _check_preempted_rig_lifecycle()
 	await _check_vigil_posture_and_fast_chain()
 	await _check_modular_locomotion()
 	await _check_legacy_fallback_presentations()
@@ -121,6 +129,171 @@ func _install_vigil_posture_art() -> void:
 		_fail("Vigil dagger is not in the armed weapon list")
 		return
 	_operator.call("_apply_armed_selection", vigil_index)
+
+
+# --- present() is transactional ----------------------------------------------
+
+## A rejected plan must change nothing.
+##
+## Validation used to happen mid-mutation: an unregistered layer defaulted to
+## looking valid, so the presenter retired the old owner and moved `_owner`
+## before `show_layer()` finally refused the bad renderer, leaving the body
+## owned by a presentation that never drew.
+func _check_present_is_transactional() -> void:
+	_operator.call("_set_body_presentation_owner", OWNER_LEGACY_FULL_BODY)
+	_assert_single_owner("transactional baseline", OWNER_LEGACY_FULL_BODY)
+	var legacy := _legacy_body()
+
+	# An unregistered renderer must be rejected, not adopted.
+	var stranger := AnimatedSprite2D.new()
+	stranger.name = "UnregisteredStranger"
+	_operator.add_child(stranger)
+	var plan = BODY_PLAN.create(OWNER_MODULAR_BODY, [stranger])
+	# Reporting is suppressed: this drives the real rejection path, and the strict
+	# harness reads deliberate engine errors as failures.
+	if _operator.call("_can_present_body", plan):
+		_fail("transactional: an unregistered body layer was considered valid")
+	var accepted: bool = bool(_operator.call("_present_body", plan, false))
+	if accepted:
+		_fail("transactional: a plan naming an unregistered body layer was accepted")
+	if int(_operator.call("get_body_presentation_owner")) != OWNER_LEGACY_FULL_BODY:
+		_fail("transactional: a rejected plan still changed the body owner")
+	if legacy != null and not legacy.visible:
+		_fail("transactional: a rejected plan retired the previous owner's body")
+	_assert_single_owner("after rejected plan", OWNER_LEGACY_FULL_BODY)
+
+	# A body layer belonging to another owner must also be rejected outright.
+	var modular_lower := _operator.get_node_or_null("ModularLowerBodySprite")
+	var cross_plan = BODY_PLAN.create(OWNER_VIGIL_FAST_STARTUP, [modular_lower])
+	if bool(_operator.call("_present_body", cross_plan, false)):
+		_fail("transactional: a plan reaching for another owner's body layer was accepted")
+	if int(_operator.call("get_body_presentation_owner")) != OWNER_LEGACY_FULL_BODY:
+		_fail("transactional: a cross-owner plan still changed the body owner")
+
+	stranger.queue_free()
+
+
+# --- owner-scoped overlays ---------------------------------------------------
+
+## Releasing one owner must never retire another owner's overlay.
+##
+## A single global overlay pool made `release_modular()` blank the *active*
+## authored rig's weapon, which is a floating-sword bug that counting bodies
+## cannot see: the bridge body stays correctly visible while its sword vanishes.
+func _check_owner_scoped_overlays() -> void:
+	_install_vigil_posture_art()
+	if not _failures.is_empty():
+		return
+
+	if not bool(_operator.call("_start_vigil_posture_bridge", &"relaxed_to_ready_01")):
+		_fail("owner-scoped overlays: relaxed_to_ready_01 bridge did not start")
+		return
+	_assert_single_owner("bridge started", OWNER_VIGIL_POSTURE_TRANSITION)
+
+	var bridge_weapon := _operator.get("_vigil_posture_bridge_weapon") as AnimatedSprite2D
+	if bridge_weapon == null:
+		_fail("owner-scoped overlays: bridge weapon overlay is missing")
+		return
+	if not bridge_weapon.visible:
+		_fail("owner-scoped overlays: bridge weapon is not visible while the bridge owns the body")
+	if (_operator.call("get_visible_body_overlays", OWNER_VIGIL_POSTURE_TRANSITION) as Array).is_empty():
+		_fail("owner-scoped overlays: bridge reports no visible owner-scoped overlay")
+
+	# An unrelated modular-release helper must leave this owner entirely alone.
+	_operator.call("_release_modular_body_layers")
+	_assert_single_owner("after unrelated modular release", OWNER_VIGIL_POSTURE_TRANSITION)
+	if not bridge_weapon.visible:
+		_fail("owner-scoped overlays: modular release retired the active bridge weapon")
+
+	# The same must hold for the helper that routes through it.
+	_operator.call("_hide_modular_locomotion_layers")
+	_assert_single_owner("after modular locomotion hide", OWNER_VIGIL_POSTURE_TRANSITION)
+	if not bridge_weapon.visible:
+		_fail("owner-scoped overlays: modular locomotion hide retired the active bridge weapon")
+
+	_abandon_posture_bridge()
+	_check_shared_overlay_survives_handoff()
+
+
+## An overlay worn by several owners must survive a handoff between them.
+##
+## Owner-scoping overlays introduces the opposite hazard to the global pool it
+## replaces: retiring "every overlay that is not the incoming owner's" blanks a
+## cosmetic the incoming owner also wears. The cape rides both the legacy strips
+## and the modular rig, so claiming modular must leave it alone.
+func _check_shared_overlay_survives_handoff() -> void:
+	var cape := _operator.get_node_or_null("ModularCapeSprite") as AnimatedSprite2D
+	if cape == null:
+		return
+	_operator.call("_set_body_presentation_owner", OWNER_LEGACY_FULL_BODY)
+	if not _operator.call("_show_presentation_layer", cape):
+		_fail("shared overlay: the legacy owner could not show the cape it wears")
+		return
+	if not cape.visible:
+		_fail("shared overlay: cape did not become visible for the legacy owner")
+		return
+	_operator.call("_claim_modular_body_owner")
+	if not cape.visible:
+		_fail("shared overlay: claiming modular retired a cape the modular rig also wears")
+	# `claim_modular()` deliberately leaves the modular body layers for the caller
+	# to fill, so assert the owner rather than a visible body here.
+	if int(_operator.call("get_body_presentation_owner")) != OWNER_MODULAR_BODY:
+		_fail("shared overlay: modular did not become the body owner")
+
+
+# --- preemption retires the whole owner, and cancels its lifecycle -----------
+
+## Preempting an owner must retire BOTH its body and its owner-scoped overlays,
+## and the abandoned rig's lifecycle must not wake up later and reclaim the
+## presentation it no longer owns.
+func _check_preempted_rig_lifecycle() -> void:
+	if not bool(_operator.call("_start_vigil_posture_bridge", &"relaxed_to_ready_01")):
+		_fail("preemption: relaxed_to_ready_01 bridge did not start")
+		return
+	var bridge_lower := _operator.get("_vigil_posture_bridge_lower") as AnimatedSprite2D
+	var bridge_weapon := _operator.get("_vigil_posture_bridge_weapon") as AnimatedSprite2D
+	var stale_token := int(_operator.get("_vigil_posture_bridge_token"))
+	var clock_animation: StringName = bridge_lower.animation
+
+	# Explicit preemption: the modular composition takes the body.
+	_operator.call("_claim_modular_body_owner")
+	if int(_operator.call("get_body_presentation_owner")) != OWNER_MODULAR_BODY:
+		_fail("preemption: modular did not become the body owner")
+	if bridge_lower != null and bridge_lower.visible:
+		_fail("preemption: preempted bridge body is still visible")
+	if bridge_weapon != null and bridge_weapon.visible:
+		_fail("preemption: preempted bridge weapon is still visible")
+	if not (_operator.call("get_visible_body_overlays", OWNER_VIGIL_POSTURE_TRANSITION) as Array).is_empty():
+		_fail("preemption: preempted bridge still reports a visible overlay")
+
+	# The caller that took the body must have invalidated the bridge lifecycle.
+	if int(_operator.get("_vigil_posture_bridge_token")) == stale_token:
+		_fail("preemption: bridge token was not invalidated by the preempting caller")
+	if String(_operator.get("_vigil_posture_bridge_action")) != "":
+		_fail("preemption: preempted bridge still has a pending action")
+
+	# Drive the abandoned lifecycle to completion: it must change nothing.
+	var owner_before := int(_operator.call("get_body_presentation_owner"))
+	# Yields until the expired bridge's own timer elapses.
+	await _operator.call("_finish_vigil_posture_bridge", stale_token, clock_animation)
+	if int(_operator.call("get_body_presentation_owner")) != owner_before:
+		_fail("preemption: expired bridge lifecycle changed the body owner after waking")
+	if bridge_weapon != null and bridge_weapon.visible:
+		_fail("preemption: expired bridge lifecycle re-showed its weapon")
+	_assert_single_owner("after expired bridge lifecycle woke")
+
+
+## Retire a bridge the test started, without relying on its timer.
+func _abandon_posture_bridge() -> void:
+	_operator.set("_vigil_posture_bridge_token",
+		int(_operator.get("_vigil_posture_bridge_token")) + 1)
+	_operator.call("_release_vigil_rig", [
+		_operator.get("_vigil_posture_bridge_lower"),
+		_operator.get("_vigil_posture_bridge_upper"),
+		_operator.get("_vigil_posture_bridge_weapon"),
+	], OWNER_VIGIL_POSTURE_TRANSITION)
+	_operator.set("_vigil_posture_bridge_action", &"")
+	_operator.set("_vigil_posture_bridge_attack_queued", false)
 
 
 # --- relaxed -> ready -> fast_01 ---------------------------------------------

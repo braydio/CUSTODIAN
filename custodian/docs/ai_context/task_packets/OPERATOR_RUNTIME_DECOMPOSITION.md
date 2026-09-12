@@ -78,8 +78,7 @@ controls proving it catches the pre-fix duplicate-body behaviour.
 `presentation/operator_body_presentation_plan.gd` as the typed request shape.
 `operator.gd` holds a presenter instance, registers the static renderers in
 `_ready()` and the lazily built Vigil rigs as they are created, and keeps thin
-delegating wrappers with no visibility policy. `body_visibility_outside_presentation`
-is **0**; no other debt category moved.
+delegating wrappers with no visibility policy.
 
 Presenter vocabulary is deliberately split, so that showing a renderer is a
 mechanism and changing ownership is a decision:
@@ -107,7 +106,75 @@ retire.
 
 Do not convert `operator_presentation_rig_2d.gd` into this controller.
 
-## Slice C — canonical animation authority
+## Slice B-final — close the presentation firewall — DONE
+
+Slice B's `body_visibility_outside_presentation = 0` was a **false zero**. The
+audit regex only recognised direct writes through the literal body-node names,
+so binding a body renderer to a loop variable or a parameter and writing
+`sprite.visible` hid the same write from the same rule. Seventeen such aliased
+writes were live in `operator.gd`.
+
+Closed in B-final:
+
+1. **Owner-scoped overlays.** The presenter's single global `_overlays` array
+   became `_overlays_by_owner` + `_owners_of_overlay`, alongside
+   `_layers_by_owner`. It had two opposite bugs at once: `release_modular()`
+   retired *every* owner's overlays, so an unrelated modular release hid the
+   active Vigil bridge's sword, while `claim_modular()` retired none, so modular
+   preemption took a rig's body and left its weapon floating. Counting bodies
+   could not see either. An overlay may be worn by several owners — the cape
+   rides both the legacy strips and the modular rig — so `release_modular()`
+   leaves shared overlays to whoever takes the body next.
+2. **Transactional `present()`.** Owner, every body layer and every overlay are
+   validated *before* anything retires and before `_owner` moves; the function
+   returns `bool`. An unregistered layer used to default to looking valid
+   (`_owner_of_layer.get(layer, plan.owner)`), so the presenter tore down the old
+   owner and changed `_owner` before `show_layer()` finally refused the bad
+   renderer. `register_body_layers()` now also refuses to reassign a body layer
+   that already belongs to a different owner.
+3. **Caller-side lifecycle cancellation.** Transferring pixels does not
+   invalidate a coroutine. `_invalidate_preempted_rig_lifecycles()` in
+   `operator.gd` bumps the abandoned rig's token and clears its pending action
+   when gameplay deliberately preempts it. The presenter stays ignorant of melee
+   and posture gameplay — cancelling a lifecycle is action/presentation
+   coordination, not renderer policy.
+4. **Real body-visibility zero.** Every aliased write now funnels through
+   `_show_presentation_layer()` / `_hide_presentation_layer()`, which route
+   anything the presenter owns to the presenter and only ever set unregistered
+   cosmetic layers directly. The audit gained
+   `aliased_body_visibility_writes`, which strips those two declared funnel
+   functions by name and flags aliasing everywhere else: **17 at the previous
+   commit, 0 now**.
+5. **The Vigil guard rig was never registered at all.** `_vigil_guard_lower` /
+   `_vigil_guard_upper` are a complete authored body that was built, shown and
+   hidden entirely outside the presenter, invisible to the one-body invariant. It
+   is now `Owner.VIGIL_GUARD`, an exclusive owner with its own weapon overlay,
+   and it takes the body explicitly instead of claiming `MODULAR_BODY` and hiding
+   the modular composition behind itself.
+
+`operator_visual_ownership_smoke.gd` gained three scenarios, each verified to
+fail when its bug is reintroduced: an unrelated modular release leaving an active
+bridge's weapon alone; explicit preemption retiring a rig's body *and* weapon and
+cancelling its lifecycle so the expired coroutine cannot reclaim the
+presentation; and a rejected plan changing nothing.
+
+Still deliberately open: `_show_body_layer()`'s MIGRATION SEAM, and
+`claim_modular()` keeping the legacy body hidden-but-playing as an animation
+clock. Both belong to C1.
+
+## Slice C1 — presentation playback funnel
+
+Retire the **94** `AnimatedSprite2D.play()` calls outside `operator/presentation/`
+(`animated_sprite_play_outside_presentation`: `operator.gd` 87, plus 7 across the
+animation states). Remove the hidden legacy-body-as-animation-clock authority
+that `claim_modular()` documents as MIGRATION DEBT, so `LegacyFullBody` can
+always be stopped on retire. Convert the incremental modular sync call sites from
+`_show_body_layer()` to `_present_body()` and delete that seam.
+
+Do this before C2: a single playback funnel is what makes the selector cutover a
+one-place change instead of a 94-place change.
+
+## Slice C2 — canonical animation authority
 
 Route every presentation request through `OperatorAnimationSelector` and the one
 generated `operator_runtime_frames.tres`. Retire `AnimationResolver` (45),
@@ -129,7 +196,14 @@ no-op `pass`, so replay/AI/vehicle drivers have a seam.
 
 ## Slice E — action arbitration
 
-Introduce `OperatorActionController`. Delete the empty `idle_state.gd`,
+Introduce `OperatorActionController` and `OperatorPresentationController`. The
+latter is what translates a semantic presentation request ("modular body playing
+`fast_01` on lower, upper and weapon") into the mechanical
+`OperatorBodyPresentationPlan`. Semantic action fields must **not** be added to
+that plan: the plan stays `owner` + `body_layers` + `overlays`, or the renderer
+reacquires the animation-selection authority C2 takes away from it.
+
+Delete the empty `idle_state.gd`,
 `walk_state.gd` and `sprint_state.gd` shells — locomotion is a separate axis and
 must not compete with attack state. Action arbitration owns interruption and
 priority only; melee, guard, dodge, ranged, equip/sheathe, damage and death own
@@ -145,6 +219,11 @@ so existing callers and tests keep working. Split
 `OperatorWeaponRuntimeState` (the 3 mutable `@export` fields are old-architecture
 residue with no meaningful current consumers).
 
+Retire the **38** absolute `/root/...` scene-tree lookups
+(`absolute_scene_lookups`) by injecting those dependencies, and remove the
+temporary presenter compatibility seams once the domains declare presentations up
+front.
+
 ## Slice G — collapse the shell
 
 Reorganise `operator.tscn` into `Controllers`, `Presentation`, `Sockets`,
@@ -153,6 +232,31 @@ Move Knight Test Skin and debug frame construction out of production Operator
 code. Update `FILE_INDEX.md`, `CURRENT_STATE.md` and
 `ARCHITECTURE_OWNERSHIP_MAP.md`. Turn the debt audit into a hard `--final` gate
 in the default validation set.
+
+## Tooling backlog
+
+**Generated Operator runtime spine needs a writer lock.** Multiple agent sessions
+can currently rebuild `operator_runtime_frames.tres`, its manifest and the
+imported resources derived from them while another session is validating against
+those same files. Engine errors under concurrent mutation are real failures and
+the harness is right to treat them strictly; the fix is to prevent concurrent
+mutation, not to soften validation. Does not block B-final, but install it before
+C1/C2, where those resources are hot.
+
+Observed during B-final: with a Godot **editor** open on `custodian/` (plus the
+`godot-ai` MCP server), a concurrent headless `run_validation.py` hit
+`infrastructure_failure: import` with the import step timing out at 120s. The
+editor holds the project and rescans on filesystem change, so it is a writer too
+— the lock has to cover the editor, not only headless agent sessions. Two
+overlapping headless validation runs reproduce it on their own.
+
+Deliberate engine errors are a related hazard. `classify_warnings()` treats any
+unregistered `ERROR:` line as fatal, and `known_headless_warnings.json` holds only
+engine-shutdown noise. Negative-control tests must therefore not emit errors:
+registering a real rejection message there would mask that same rejection
+everywhere else. `OperatorBodyPresenter.present()` takes `report_rejection` and
+`can_present()` probes validity silently precisely so the rejection paths can be
+tested without weakening the registry.
 
 ## Non-goals
 

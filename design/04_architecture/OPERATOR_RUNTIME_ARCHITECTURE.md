@@ -126,46 +126,82 @@ authority for a different visible animation.
 ONLY operator_body_presenter.gd MAY CHANGE BODY-LAYER VISIBILITY.
 ```
 
-**Live as of Slice B.** `custodian/game/actors/operator/presentation/operator_body_presenter.gd`
+**Live as of Slice B-final.** `custodian/game/actors/operator/presentation/operator_body_presenter.gd`
 is a `RefCounted` that owns the `Owner` enum, the per-owner registry of
-body-capable renderers, owner-scoped overlay retirement, exclusive-owner
-classification, body visibility mutation and visible-owner observability. The
-Operator creates its renderers and registers them — the presenter performs no
-scene-tree discovery and never calls back into the actor. `operator.gd` keeps
-thin delegating wrappers (`_set_body_presentation_owner`,
+body-capable renderers, per-owner overlay registration and retirement,
+exclusive-owner classification, body visibility mutation and visible-owner
+observability. The Operator creates its renderers and registers them — the
+presenter performs no scene-tree discovery and never calls back into the actor.
+`operator.gd` keeps thin delegating wrappers (`_set_body_presentation_owner`,
 `_claim_modular_body_owner`, `_release_modular_body_layers`, `_show_body_layer`,
-`_hide_body_layer`, `get_body_presentation_owner`, `get_visible_body_owners`)
-that contain no visibility policy of their own.
+`_hide_body_layer`, `_show_presentation_layer`, `_hide_presentation_layer`,
+`get_body_presentation_owner`, `get_visible_body_owners`,
+`get_visible_body_overlays`) that contain no visibility policy of their own.
+
+Overlays are owner-scoped, not a single global pool. Retiring one owner never
+blanks another owner's cosmetics, and preempting an owner takes down both its
+body and its overlays — a global pool produced two opposite bugs at once: an
+unrelated modular release hid the active rig's sword, while modular preemption
+retired a rig's body and left its weapon floating.
+
+An overlay may be worn by more than one owner. The cape rides both the legacy
+strips and the modular rig, so `release_modular()` deliberately leaves it for
+whoever takes the body next instead of blinking it between presentations.
 
 Showing a renderer is a mechanism; changing presentation ownership is a
 decision. The presenter keeps those separate: `show_layer()` is strict and
-requires the layer to belong to the current owner, while
+requires the renderer to belong to the current owner, while
 `preempt_with_owner()` is the explicit transfer. One asymmetry is deliberate
 and named — `present_legacy_full_body()` displays its sprite on acquisition,
 because that owner is a single renderer and callers depend on it.
+
+Transferring pixels is not the same as cancelling a lifecycle, and the presenter
+owns only the first. An authored rig has an outstanding token and timer; when
+gameplay deliberately preempts it, the **caller** invalidates that lifecycle
+(`_invalidate_preempted_rig_lifecycles()`), or the abandoned coroutine wakes with
+a still-valid token and runs completion behaviour — queued attacks, animation
+updates, rig releases — for a presentation that no longer exists. Deciding that a
+posture transition has been abandoned is action/presentation coordination;
+`OperatorBodyPresenter` must stay ignorant of melee and posture gameplay.
 
 Combat does not. Dodge does not. Melee does not. `operator.gd` does not.
 Everything goes through:
 
 ```gdscript
-body_presenter.present(plan)
+body_presenter.present(plan) -> bool
 ```
 
-where a plan is either
+`OperatorBodyPresentationPlan` is deliberately mechanical. It carries exactly
+three fields and no semantic animation vocabulary:
 
 ```text
-body_mode     = MODULAR
-lower_action  = fast_01
-upper_action  = fast_01
-weapon_action = fast_01
+owner        = OperatorBodyPresenter.Owner
+body_layers  = [renderers this owner wants visible]
+overlays     = [owner-scoped cosmetics riding along]
 ```
 
-or
+Semantic requests — "modular body playing `fast_01` on lower, upper and weapon"
+— are **not** the plan's job. Translating a semantic presentation request into
+this mechanical plan belongs to the future `OperatorPresentationController`
+(Slice E). Putting actions into the plan would hand the renderer the animation
+selection authority this architecture spent Slice C taking away from it.
 
-```text
-body_mode   = FULL_BODY
-body_action = critical_execution_01
-```
+An empty `body_layers` list is meaningful and common: an authored rig acquires
+the body first and shows its own layers as it starts playing them, which keeps
+art selection with the caller while ownership stays in the presenter.
+
+`present()` is transactional. The whole plan is validated — known owner, every
+body layer registered and owned by that owner, every overlay registered and worn
+by it — **before** anything is retired and before `_owner` moves. A rejected
+plan changes nothing and returns `false`, so a bad renderer can never leave the
+body owned by a presentation that never drew. `register_body_layers()` likewise
+refuses to reassign a body layer that already belongs to a different owner.
+
+`can_present(plan)` is the non-mutating, non-reporting probe, sharing one
+validator with `present()` so the two can never disagree. `present()` takes
+`report_rejection := true`; only negative-control tests pass `false`, because
+validation treats a deliberate engine error as a failure and a rejected
+presentation in production is a real bug that must be loud.
 
 The presenter retires the previous body ownership and enables the new one
 **atomically**, so no rendered frame contains two bodies. Weapon and FX
@@ -230,15 +266,38 @@ This is a staged strangler migration, **not** a rewrite. Large coordinators stay
 compatibility facades while stable responsibilities are extracted behind them —
 the pattern the procgen foliage organisation pass already used.
 
-| Slice | Scope | State |
-|---|---|---|
-| A | Architecture contract, debt audit, characterization | **done** |
-| B | Presentation firewall, body ownership invariant | **done** — `body_visibility_outside_presentation` 25 → 0 |
-| C | Canonical animation-selector cutover | pending |
-| D | Input/aim router + fixed-step split | pending |
-| E | `OperatorActionController` replacing animation-state glue | pending |
-| F | Extract melee, dodge, ranged, loadout, interaction, recovery | pending |
-| G | Collapse `operator.tscn` and `operator.gd`, delete compatibility infra | pending |
+Every measured debt family has exactly one slice that owns retiring it, so no
+counter is left without a home.
+
+| Slice | Scope | Debt family it retires | State |
+|---|---|---|---|
+| A | Architecture contract, debt audit, characterization | — (establishes the ledger) | **done** |
+| B | Presentation firewall, body ownership invariant | `body_visibility_outside_presentation` 25 → 0 | **done** |
+| B-final | Owner-scoped overlays, transactional `present()`, caller-side lifecycle cancellation, alias-proof audit | `aliased_body_visibility_writes` 17 → 0 | **done** |
+| C1 | Presentation playback funnel; remove hidden legacy-body-as-animation-clock authority | `animated_sprite_play_outside_presentation` 94 → 0 | pending |
+| C2 | Canonical semantic selection | `animation_resolver` 45, `attack_fallback_animation` 16, `directional_animation_fallback` 6, `actor_local_spriteframes` 5, `operator_animation_catalog` 4 → 0 | pending |
+| D | `InputFrame` + `InputRouter` + `AimController`; deterministic device ownership; fixed-step migration; `_process()` becomes presentation-only | `input_calls_outside_input_dir` 65 → 0, `gameplay_mutation_in_process` 12 → 0 | pending |
+| E | `OperatorActionController` replacing animation-state glue; `OperatorPresentationController` translating semantic requests into body plans | `animation_state_actor_glue` 34 → 0 | pending |
+| F | Extract melee, dodge, ranged, loadout, interaction, recovery behind injected dependencies; remove the temporary presenter compatibility seams | `absolute_scene_lookups` 38 → 0, `weapon_definition_runtime_state` 3 → 0 | pending |
+| G | Collapse `operator.tscn` and `operator.gd`, delete compatibility infra, final audits | `--final` on every audit | pending |
+
+Slice C was split because the repo gave better information than the original
+plan: the playback funnel and the selector cutover have different blast radii and
+different failure modes, and bundling them would have made one monster slice whose
+regression surface could not be reasoned about.
+
+### Migration floor
+
+The three-sweep validation baseline established by Slice B.5 is the floor:
+`run_validation.py --tier actor` selects **41** checks and all 41 pass, three
+sweeps in a row. No slice may land below it.
+
+**Current status: 40/41, deterministic across three sweeps.**
+`lootable_corpse_beacon` fails on "enemy corpse collection must show typed and
+recovered-resource toasts". It is unrelated to Operator body presentation and
+reproduces with the B-final Operator changes stashed, so it did not come from
+this slice — but the floor is not met until it is fixed, and it needs its own
+investigation rather than being carried silently.
 
 Slice detail lives in the task packet.
 
