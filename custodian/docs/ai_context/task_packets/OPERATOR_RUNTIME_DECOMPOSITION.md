@@ -243,12 +243,18 @@ the harness is right to treat them strictly; the fix is to prevent concurrent
 mutation, not to soften validation. Does not block B-final, but install it before
 C1/C2, where those resources are hot.
 
-Observed during B-final: with a Godot **editor** open on `custodian/` (plus the
-`godot-ai` MCP server), a concurrent headless `run_validation.py` hit
-`infrastructure_failure: import` with the import step timing out at 120s. The
-editor holds the project and rescans on filesystem change, so it is a writer too
-— the lock has to cover the editor, not only headless agent sessions. Two
-overlapping headless validation runs reproduce it on their own.
+Observed during B-final: **two overlapping headless `run_validation.py` runs**
+produced `infrastructure_failure: import`, with the import step timing out at
+120s. That is the reproducible cause — one agent session must not start a
+validation run while another is in flight.
+
+A Godot **editor** was also open on `custodian/` throughout (plus the `godot-ai`
+MCP server), and it did *not* break anything: all six clean sweeps that followed
+(changed-set 26/26 x3, actor tier x3) ran with the editor open. Do not blame the
+editor for that timeout. It is still a second writer in principle — it holds the
+project and reimports on filesystem change — so it is worth closing while the
+generated runtime spine is being rebuilt in C1/C2, but idle editor use is not
+what caused this.
 
 Deliberate engine errors are a related hazard. `classify_warnings()` treats any
 unregistered `ERROR:` line as fatal, and `known_headless_warnings.json` holds only
