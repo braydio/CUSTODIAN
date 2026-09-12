@@ -10,6 +10,7 @@ what gameplay will actually load, never a projection of source.
 from __future__ import annotations
 
 import argparse
+import contextlib
 import json
 import shutil
 import sys
@@ -20,10 +21,14 @@ from pathlib import Path
 from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from operator_asset_schema import (
     OperatorAssetKey, canonical_runtime_path, is_legacy_action, parse_filename,
     semantic_identity,
+)
+from godot_project_lock import (
+    GodotProjectBusy, GodotProjectLock, detect_external_editor,
 )
 
 
@@ -512,17 +517,43 @@ def main(argv: list[str] | None = None) -> int:
         "--remove-legacy-runtime", action="store_true",
         help="also delete legacy-named runtime art; only safe after the actor cutover",
     )
+    parser.add_argument(
+        "--no-godot-lock", action="store_true",
+        help="skip the machine-wide Godot project lock (debugging a stuck lock only)",
+    )
     parser.add_argument("--report-json", type=Path)
     args = parser.parse_args(argv)
+
+    # A dry run reads source and writes nothing, so it needs no lock.
+    needs_lock = not (args.dry_run or args.no_godot_lock)
+    if needs_lock:
+        editors = detect_external_editor(args.project_root)
+        if editors:
+            # The lock cannot capture the editor: it holds the project and
+            # reimports on filesystem change, so warn rather than pretend.
+            print(
+                "warning: a Godot editor is open on this project (pid %s);"
+                " close it while the generated runtime spine is rebuilt"
+                % ", ".join(str(pid) for pid in editors),
+                file=sys.stderr,
+            )
+    lock = (
+        GodotProjectLock(args.project_root, "sync_operator_runtime_assets")
+        if needs_lock else contextlib.nullcontext()
+    )
     try:
-        report = sync(
-            source_root=args.source_root, weapons_root=args.weapons_root,
-            project_root=args.project_root, manifest_path=args.manifest_path,
-            catalog_path=args.catalog_path,
-            dry_run=args.dry_run, remove_superseded=args.remove_superseded,
-            strict=args.strict, profile=args.profile,
-            remove_legacy_runtime=args.remove_legacy_runtime,
-        )
+        with lock:
+            report = sync(
+                source_root=args.source_root, weapons_root=args.weapons_root,
+                project_root=args.project_root, manifest_path=args.manifest_path,
+                catalog_path=args.catalog_path,
+                dry_run=args.dry_run, remove_superseded=args.remove_superseded,
+                strict=args.strict, profile=args.profile,
+                remove_legacy_runtime=args.remove_legacy_runtime,
+            )
+    except GodotProjectBusy as exc:
+        print("godot project busy: %s" % exc, file=sys.stderr)
+        return 3
     except (ValueError, RuntimeError) as exc:
         print(exc, file=sys.stderr)
         return 1

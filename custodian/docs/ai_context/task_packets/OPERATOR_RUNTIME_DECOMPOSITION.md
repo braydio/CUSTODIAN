@@ -235,26 +235,40 @@ in the default validation set.
 
 ## Tooling backlog
 
-**Generated Operator runtime spine needs a writer lock.** Multiple agent sessions
-can currently rebuild `operator_runtime_frames.tres`, its manifest and the
-imported resources derived from them while another session is validating against
-those same files. Engine errors under concurrent mutation are real failures and
-the harness is right to treat them strictly; the fix is to prevent concurrent
-mutation, not to soften validation. Does not block B-final, but install it before
-C1/C2, where those resources are hot.
+**Generated Operator runtime spine has a writer lock.** DONE.
+`custodian/tools/godot_project_lock.py` is a machine-wide exclusive `flock` over
+one Godot project, keyed by resolved project path. `run_validation.py` holds it
+across the import step and the tests that load its output; the Operator pipeline
+holds it while it rewrites the runtime spine. Both take `--no-godot-lock` for
+debugging a stuck lock.
 
-Observed during B-final: **two overlapping headless `run_validation.py` runs**
-produced `infrastructure_failure: import`, with the import step timing out at
-120s. That is the reproducible cause — one agent session must not start a
-validation run while another is in flight.
+`flock` was chosen because the kernel releases it when the holder dies: agent
+sessions get killed mid-run, and a PID-file lock would strand the project behind
+a lock nobody holds. The lock file lives in the system temp directory — never in
+the repository (it would show up in `git status`) and never in `.godot/`, because
+a full reimport deletes that directory and would silently unlink the inode every
+waiter is queued on. Acquisition is reentrant across process boundaries via
+`CUSTODIAN_GODOT_PROJECT_LOCK`, so a locked run can shell out to another locked
+tool without deadlocking.
 
-A Godot **editor** was also open on `custodian/` throughout (plus the `godot-ai`
-MCP server), and it did *not* break anything: all six clean sweeps that followed
-(changed-set 26/26 x3, actor tier x3) ran with the editor open. Do not blame the
-editor for that timeout. It is still a second writer in principle — it holds the
-project and reimports on filesystem change — so it is worth closing while the
-generated runtime spine is being rebuilt in C1/C2, but idle editor use is not
-what caused this.
+`godot_project_lock_smoke.py` asserts the behaviour rather than the presence of
+the code: a second acquirer blocks, times out with a message naming the holder,
+and succeeds once the holder releases — including when the holder is SIGKILLed.
+
+Evidence, stated precisely. The original incident was one observation: two
+overlapping full `run_validation.py` sweeps produced
+`infrastructure_failure: import` with the import step timing out at 120s.
+Afterwards that timeout **could not be reproduced on demand** with the lock
+disabled, on either single-test or 26-check overlapping runs — the project was
+already fully imported, so the contention window was small. So the lock is
+justified by proven serialization plus one real incident, not by a repeatable
+red. Treat a recurrence as new information rather than assuming this is closed.
+
+A Godot **editor** open on the project is a writer the lock cannot capture: it
+holds the project and reimports on filesystem change. It is harmless for ordinary
+validation — every B-final sweep passed with one open — so the pipeline only warns
+about it (`detect_external_editor()`) before rewriting the generated spine rather
+than refusing to run.
 
 Deliberate engine errors are a related hazard. `classify_warnings()` treats any
 unregistered `ERROR:` line as fatal, and `known_headless_warnings.json` holds only

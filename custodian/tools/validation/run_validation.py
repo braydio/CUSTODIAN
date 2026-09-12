@@ -10,6 +10,7 @@ import os
 import re
 import signal
 import subprocess
+from contextlib import nullcontext
 import sys
 import time
 from pathlib import Path
@@ -18,6 +19,9 @@ from typing import Any
 VALIDATION_DIR = Path(__file__).resolve().parent
 CUSTODIAN_DIR = VALIDATION_DIR.parents[1]
 REPO_ROOT = CUSTODIAN_DIR.parent
+
+sys.path.insert(0, str(CUSTODIAN_DIR / "tools"))
+from godot_project_lock import GodotProjectBusy, GodotProjectLock  # noqa: E402
 ITERATION_DIR = CUSTODIAN_DIR / "tools" / "iteration"
 sys.path.insert(0, str(ITERATION_DIR))
 from changed_file_router import changed_files  # noqa: E402
@@ -28,6 +32,7 @@ TIERS = ("unit", "actor", "integration", "moment", "boot")
 TYPES = {"godot_script", "python", "moment"}
 RESULT_PREFIX = "CUSTODIAN_TEST_RESULT_JSON:"
 EXIT_CONFIG, EXIT_PREFLIGHT, EXIT_FAILED, EXIT_TIMEOUT, EXIT_COVERAGE = 2, 3, 4, 5, 6
+EXIT_LOCK = 7
 TAIL_LINES = 40
 IMPORT_TIMEOUT_SEC = 120
 
@@ -276,6 +281,10 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--tier", choices=TIERS)
     parser.add_argument("--max-tier", choices=TIERS)
     parser.add_argument("--list", action="store_true")
+    parser.add_argument(
+        "--no-godot-lock", action="store_true",
+        help="skip the machine-wide Godot project lock (debugging a stuck lock only)",
+    )
     return parser
 
 
@@ -301,12 +310,26 @@ def main(argv: list[str] | None = None) -> int:
         payload = {"schema": "custodian.validation.result.v1", "passed": False, "configuration_error": f"unknown test id: {args.test}"}
         print(json.dumps(payload) if args.json else payload["configuration_error"])
         return EXIT_CONFIG
-    if any(bool(test.get("needs_import")) for test in selected):
-        ok, import_result = _run_import()
-        if not ok:
-            print(json.dumps({"schema":"custodian.validation.result.v1","passed":False,"infrastructure_failure":"import","import":import_result}))
-            return EXIT_PREFLIGHT
-    results = execute_tiered(selected, patterns)
+    # The import step and the tests that load its output are one critical
+    # section: a second process importing the same project mid-run does not fail
+    # cleanly, it stalls the import until it times out.
+    lock = nullcontext() if args.no_godot_lock else GodotProjectLock(
+        CUSTODIAN_DIR, "run_validation (%d checks)" % len(selected)
+    )
+    try:
+        with lock:
+            if any(bool(test.get("needs_import")) for test in selected):
+                ok, import_result = _run_import()
+                if not ok:
+                    print(json.dumps({"schema":"custodian.validation.result.v1","passed":False,"infrastructure_failure":"import","import":import_result}))
+                    return EXIT_PREFLIGHT
+            results = execute_tiered(selected, patterns)
+    except GodotProjectBusy as error:
+        print(json.dumps({
+            "schema": "custodian.validation.result.v1", "passed": False,
+            "infrastructure_failure": "godot_project_busy", "error": str(error),
+        }))
+        return EXIT_LOCK
     payload = {
         "schema": "custodian.validation.result.v1",
         "passed": bool(coverage["complete"]) and all(item["status"] == "passed" for item in results),
