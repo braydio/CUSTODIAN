@@ -13,7 +13,13 @@
       "group": "attack",
       "action": "fast_01",
       "status": "LIVE",
-      "consumer": "operator._legacy_melee_body_slaved_presentation (full_body, fx)"
+      "consumer": "operator._legacy_melee_body_slaved_presentation (full_body, fx)",
+      "legacy_clips": [
+        "vigil_dagger_fast_01"
+      ],
+      "legacy_clip_proof": {
+        "vigil_dagger_fast_01": "BD"
+      }
     },
     {
       "profile": "melee_1h",
@@ -36,7 +42,13 @@
       "group": "attack",
       "action": "fast_02",
       "status": "LIVE",
-      "consumer": "operator._legacy_melee_body_slaved_presentation (full_body, fx)"
+      "consumer": "operator._legacy_melee_body_slaved_presentation (full_body, fx)",
+      "legacy_clips": [
+        "vigil_dagger_fast_02"
+      ],
+      "legacy_clip_proof": {
+        "vigil_dagger_fast_02": "BD"
+      }
     },
     {
       "profile": "melee_1h",
@@ -59,7 +71,13 @@
       "group": "attack",
       "action": "fast_03",
       "status": "LIVE",
-      "consumer": "operator._legacy_melee_body_slaved_presentation (full_body, fx)"
+      "consumer": "operator._legacy_melee_body_slaved_presentation (full_body, fx)",
+      "legacy_clips": [
+        "vigil_dagger_fast_03"
+      ],
+      "legacy_clip_proof": {
+        "vigil_dagger_fast_03": "BD"
+      }
     },
     {
       "profile": "melee_1h",
@@ -138,7 +156,15 @@
       "group": "posture",
       "action": "idle_ready_01",
       "status": "LIVE",
-      "consumer": "operator._sync_modular_melee_posture"
+      "consumer": "operator._sync_modular_melee_posture",
+      "legacy_clips": [
+        "sword_cleaver_stance",
+        "vigil_dagger_stance"
+      ],
+      "legacy_clip_proof": {
+        "sword_cleaver_stance": "B",
+        "vigil_dagger_stance": "B"
+      }
     },
     {
       "profile": "melee_1h",
@@ -258,21 +284,39 @@
       "group": "attack",
       "action": "fast_01",
       "status": "DORMANT",
-      "reason": "Materialized preservation art. The pixels still play through the compatibility SpriteFrames bridge; the canonical runtime identity has no consumer until the operator.gd selector cutover."
+      "reason": "Materialized preservation art. The pixels still play through the compatibility SpriteFrames bridge; the canonical runtime identity has no consumer until the operator.gd selector cutover.",
+      "legacy_clips": [
+        "sword_cleaver_fast_01"
+      ],
+      "legacy_clip_proof": {
+        "sword_cleaver_fast_01": "BD"
+      }
     },
     {
       "profile": "melee_1h_heavy",
       "group": "attack",
       "action": "fast_02",
       "status": "DORMANT",
-      "reason": "Materialized preservation art. The pixels still play through the compatibility SpriteFrames bridge; the canonical runtime identity has no consumer until the operator.gd selector cutover."
+      "reason": "Materialized preservation art. The pixels still play through the compatibility SpriteFrames bridge; the canonical runtime identity has no consumer until the operator.gd selector cutover.",
+      "legacy_clips": [
+        "sword_cleaver_fast_02"
+      ],
+      "legacy_clip_proof": {
+        "sword_cleaver_fast_02": "BD"
+      }
     },
     {
       "profile": "melee_1h_heavy",
       "group": "attack",
       "action": "fast_03",
       "status": "DORMANT",
-      "reason": "Materialized preservation art. The pixels still play through the compatibility SpriteFrames bridge; the canonical runtime identity has no consumer until the operator.gd selector cutover."
+      "reason": "Materialized preservation art. The pixels still play through the compatibility SpriteFrames bridge; the canonical runtime identity has no consumer until the operator.gd selector cutover.",
+      "legacy_clips": [
+        "sword_cleaver_fast_03"
+      ],
+      "legacy_clip_proof": {
+        "sword_cleaver_fast_03": "BD"
+      }
     },
     {
       "profile": "melee_1h_heavy",
@@ -342,7 +386,13 @@
       "group": "cosmetic",
       "action": "aim_01",
       "status": "DORMANT",
-      "reason": "Ranged aim is currently driven by legacy_operator_body_ranged_2h_aim_raise / ranged_2h_aim_modular, not this canonical sheet."
+      "reason": "Ranged aim is currently driven by legacy_operator_body_ranged_2h_aim_raise / ranged_2h_aim_modular, not this canonical sheet.",
+      "legacy_clips": [
+        "ranged_2h_aim_modular"
+      ],
+      "legacy_clip_proof": {
+        "ranged_2h_aim_modular": "A"
+      }
     },
     {
       "profile": "ranged_2h",
@@ -370,7 +420,13 @@
       "group": "posture",
       "action": "relaxed_01",
       "status": "LIVE",
-      "consumer": "operator._sync_modular_ranged_relaxed_presentation (ranged_2h_relaxed_modular)"
+      "consumer": "operator._sync_modular_ranged_relaxed_presentation (ranged_2h_relaxed_modular)",
+      "legacy_clips": [
+        "ranged_2h_relaxed_modular"
+      ],
+      "legacy_clip_proof": {
+        "ranged_2h_relaxed_modular": "A"
+      }
     },
     {
       "profile": "ranged_2h",
@@ -384,7 +440,13 @@
       "group": "posture",
       "action": "stance_01",
       "status": "LIVE",
-      "consumer": "operator._sync_modular_ranged_2h_stance_presentation (ranged_2h_stance)"
+      "consumer": "operator._sync_modular_ranged_2h_stance_presentation (ranged_2h_stance)",
+      "legacy_clips": [
+        "ranged_2h_stance_modular"
+      ],
+      "legacy_clip_proof": {
+        "ranged_2h_stance_modular": "C"
+      }
     },
     {
       "profile": "shared",
@@ -392,7 +454,13 @@
       "action": "dodge_charge_windup_01",
       "status": "DORMANT",
       "reason": "Dodge-charge windup presentation resolves from legacy production body frames (operator_dodge_charge_windup); no consumer references this canonical sheet. C2a authoring decision 2026-09-12: full eight-sector canonical coverage now exists. N/NE reuse the authored E strip, SE/SW reuse S, NW reuses W \u2014 a deliberate reuse of authored pixels recorded per-file in .expansion.json sidecars, not unique art and not a runtime fallback. Still DORMANT: the consumer resolves legacy production body frames until animated_sprite is rebound to the generated runtime SpriteFrames.",
-      "directional_expansion": "tools/pipelines/migrations/operator_directional_expansion_map.json"
+      "directional_expansion": "tools/pipelines/migrations/operator_directional_expansion_map.json",
+      "legacy_clips": [
+        "operator_dodge_charge_windup"
+      ],
+      "legacy_clip_proof": {
+        "operator_dodge_charge_windup": "A"
+      }
     },
     {
       "profile": "shared",
@@ -414,7 +482,13 @@
       "group": "locomotion",
       "action": "idle_hitreact_01",
       "status": "LIVE",
-      "consumer": "operator operator_idle_hitreact_modular"
+      "consumer": "operator operator_idle_hitreact_modular",
+      "legacy_clips": [
+        "operator_idle_hitreact_modular"
+      ],
+      "legacy_clip_proof": {
+        "operator_idle_hitreact_modular": "A"
+      }
     },
     {
       "profile": "shared",
@@ -482,14 +556,26 @@
       "action": "dodge_chain_link_01",
       "status": "DORMANT",
       "reason": "Dodge chain-link presentation resolves from legacy production body frames (operator_dodge_chain_link); no consumer references this canonical sheet. C2a authoring decision 2026-09-12: full eight-sector canonical coverage now exists. N/NE reuse the authored E strip, SE/SW reuse S, NW reuses W \u2014 a deliberate reuse of authored pixels recorded per-file in .expansion.json sidecars, not unique art and not a runtime fallback. Still DORMANT: the consumer resolves legacy production body frames until animated_sprite is rebound to the generated runtime SpriteFrames.",
-      "directional_expansion": "tools/pipelines/migrations/operator_directional_expansion_map.json"
+      "directional_expansion": "tools/pipelines/migrations/operator_directional_expansion_map.json",
+      "legacy_clips": [
+        "operator_dodge_chain_link"
+      ],
+      "legacy_clip_proof": {
+        "operator_dodge_chain_link": "A"
+      }
     },
     {
       "profile": "sidearm",
       "group": "cosmetic",
       "action": "fire_sidearm_01",
       "status": "DORMANT",
-      "reason": "Sidearm fire presentation is driven by _resolve_sidearm_directional_animation's sidearm_fire_<up/down>_<left/right> names, not this canonical sheet."
+      "reason": "Sidearm fire presentation is driven by _resolve_sidearm_directional_animation's sidearm_fire_<up/down>_<left/right> names, not this canonical sheet.",
+      "legacy_clips": [
+        "sidearm_fire"
+      ],
+      "legacy_clip_proof": {
+        "sidearm_fire": "A"
+      }
     },
     {
       "profile": "sidearm",
@@ -503,7 +589,13 @@
       "group": "posture",
       "action": "draw_sidearm_01",
       "status": "LIVE",
-      "consumer": "operator._is_sidearm_action_finished / sidearm draw presentation"
+      "consumer": "operator._is_sidearm_action_finished / sidearm draw presentation",
+      "legacy_clips": [
+        "sidearm_draw"
+      ],
+      "legacy_clip_proof": {
+        "sidearm_draw": "C"
+      }
     },
     {
       "profile": "unarmed",
@@ -546,7 +638,21 @@
       "group": "attack",
       "action": "fast_recovery_01",
       "status": "LIVE",
-      "consumer": "operator unarmed_fast_recovery_lower/upper"
+      "consumer": "operator unarmed_fast_recovery_lower/upper",
+      "legacy_clips": [
+        "unarmed_attack_fast_recovery",
+        "unarmed_attack_fast_recovery_fx",
+        "unarmed_fast_recovery",
+        "unarmed_fast_recovery_lower",
+        "unarmed_fast_recovery_upper"
+      ],
+      "legacy_clip_proof": {
+        "unarmed_attack_fast_recovery": "C",
+        "unarmed_attack_fast_recovery_fx": "C",
+        "unarmed_fast_recovery": "A",
+        "unarmed_fast_recovery_lower": "C",
+        "unarmed_fast_recovery_upper": "C"
+      }
     },
     {
       "profile": "unarmed",
@@ -561,7 +667,21 @@
       "group": "attack",
       "action": "fast_strike_01",
       "status": "LIVE",
-      "consumer": "operator unarmed_fast_strike_lower/upper/fx_modular"
+      "consumer": "operator unarmed_fast_strike_lower/upper/fx_modular",
+      "legacy_clips": [
+        "unarmed_attack_fast_strike",
+        "unarmed_fast_strike",
+        "unarmed_fast_strike_fx_modular",
+        "unarmed_fast_strike_lower",
+        "unarmed_fast_strike_upper"
+      ],
+      "legacy_clip_proof": {
+        "unarmed_attack_fast_strike": "C",
+        "unarmed_fast_strike": "A",
+        "unarmed_fast_strike_fx_modular": "C",
+        "unarmed_fast_strike_lower": "C",
+        "unarmed_fast_strike_upper": "C"
+      }
     },
     {
       "profile": "unarmed",
@@ -591,7 +711,19 @@
       "group": "attack",
       "action": "fast_windup_01",
       "status": "LIVE",
-      "consumer": "operator unarmed_fast_windup_lower/upper"
+      "consumer": "operator unarmed_fast_windup_lower/upper",
+      "legacy_clips": [
+        "unarmed_attack_fast_windup",
+        "unarmed_fast_windup",
+        "unarmed_fast_windup_lower",
+        "unarmed_fast_windup_upper"
+      ],
+      "legacy_clip_proof": {
+        "unarmed_attack_fast_windup": "C",
+        "unarmed_fast_windup": "A",
+        "unarmed_fast_windup_lower": "C",
+        "unarmed_fast_windup_upper": "C"
+      }
     },
     {
       "profile": "unarmed",
@@ -605,7 +737,15 @@
       "group": "attack",
       "action": "parry_recovery_01",
       "status": "LIVE",
-      "consumer": "operator unarmed_parry_recovery"
+      "consumer": "operator unarmed_parry_recovery",
+      "legacy_clips": [
+        "unarmed_parry_recovery",
+        "unarmed_parry_recovery_fx"
+      ],
+      "legacy_clip_proof": {
+        "unarmed_parry_recovery": "A",
+        "unarmed_parry_recovery_fx": "C"
+      }
     },
     {
       "profile": "unarmed",
@@ -640,49 +780,104 @@
       "group": "defense",
       "action": "block_enter_01",
       "status": "LIVE",
-      "consumer": "operator._play_modular_unarmed_block (unarmed_block_enter)"
+      "consumer": "operator._play_modular_unarmed_block (unarmed_block_enter)",
+      "legacy_clips": [
+        "unarmed_block_enter",
+        "unarmed_block_exit"
+      ],
+      "legacy_clip_proof": {
+        "unarmed_block_enter": "A",
+        "unarmed_block_exit": "C"
+      },
+      "open_authoring_question": "unarmed_block_exit is played as block_enter_01 by an existing in-code substitution; there is no unarmed block_exit_01 art (melee_1h_heavy has one). Whether unarmed block exit deserves its own authored action is an open question, not a cutover blocker."
     },
     {
       "profile": "unarmed",
       "group": "defense",
       "action": "block_hit_01",
       "status": "LIVE",
-      "consumer": "operator block hitreact presentation (unarmed_block_hitreact)"
+      "consumer": "operator block hitreact presentation (unarmed_block_hitreact)",
+      "legacy_clips": [
+        "unarmed_block_hitreact"
+      ],
+      "legacy_clip_proof": {
+        "unarmed_block_hitreact": "A"
+      }
     },
     {
       "profile": "unarmed",
       "group": "defense",
       "action": "block_hold_01",
       "status": "LIVE",
-      "consumer": "operator._play_modular_unarmed_block (unarmed_block_hold)"
+      "consumer": "operator._play_modular_unarmed_block (unarmed_block_hold)",
+      "legacy_clips": [
+        "unarmed_block_hold"
+      ],
+      "legacy_clip_proof": {
+        "unarmed_block_hold": "A"
+      }
     },
     {
       "profile": "unarmed",
       "group": "defense",
       "action": "parry_01",
       "status": "DORMANT",
-      "reason": "No consumer references a bare parry_01 window animation; only parry_success_01 and parry_miss_01 are played."
+      "reason": "C2a evidence 2026-09-12: the earlier reason claimed no consumer references a bare parry_01 window animation. Three sites in _get_parry_attempt_remaining_duration resolve the legacy clip 'unarmed_parry' to measure the parry attempt window, so a consumer does exist (proof source C, runtime call context). Still DORMANT because that consumer reads compatibility frames until the renderers are rebound.",
+      "legacy_clips": [
+        "unarmed_parry"
+      ],
+      "legacy_clip_proof": {
+        "unarmed_parry": "C"
+      }
     },
     {
       "profile": "unarmed",
       "group": "defense",
       "action": "parry_miss_01",
       "status": "LIVE",
-      "consumer": "operator._play_parry_animation (unarmed_parry_miss_01)"
+      "consumer": "operator._play_parry_animation (unarmed_parry_miss_01)",
+      "legacy_clips": [
+        "unarmed_parry_miss"
+      ],
+      "legacy_clip_proof": {
+        "unarmed_parry_miss": "A"
+      }
     },
     {
       "profile": "unarmed",
       "group": "defense",
       "action": "parry_success_01",
       "status": "LIVE",
-      "consumer": "operator._play_parry_animation (unarmed_parry_success_01)"
+      "consumer": "operator._play_parry_animation (unarmed_parry_success_01)",
+      "legacy_clips": [
+        "unarmed_parry_fx",
+        "unarmed_parry_success",
+        "unarmed_parry_success_01",
+        "unarmed_parry_success_01_fx"
+      ],
+      "legacy_clip_proof": {
+        "unarmed_parry_fx": "C",
+        "unarmed_parry_success": "A",
+        "unarmed_parry_success_01": "A",
+        "unarmed_parry_success_01_fx": "C"
+      }
     },
     {
       "profile": "unarmed",
       "group": "interaction",
       "action": "field_patch_use_01",
       "status": "DORMANT",
-      "reason": "start_field_patch() drives gameplay state and timers but never plays this presentation animation."
+      "reason": "start_field_patch() drives gameplay state and timers but never plays this presentation animation.",
+      "legacy_clips": [
+        "field_patch_use_fx",
+        "field_patch_use_lower",
+        "field_patch_use_upper"
+      ],
+      "legacy_clip_proof": {
+        "field_patch_use_fx": "C",
+        "field_patch_use_lower": "C",
+        "field_patch_use_upper": "C"
+      }
     },
     {
       "profile": "unarmed",
@@ -696,7 +891,13 @@
       "group": "locomotion",
       "action": "idle_01",
       "status": "LIVE",
-      "consumer": "operator._sync_modular_locomotion_layers (unarmed_idle)"
+      "consumer": "operator._sync_modular_locomotion_layers (unarmed_idle)",
+      "legacy_clips": [
+        "unarmed_idle"
+      ],
+      "legacy_clip_proof": {
+        "unarmed_idle": "A"
+      }
     },
     {
       "profile": "unarmed",
@@ -710,7 +911,13 @@
       "group": "locomotion",
       "action": "run_01",
       "status": "LIVE",
-      "consumer": "operator._sync_modular_locomotion_layers (unarmed_run)"
+      "consumer": "operator._sync_modular_locomotion_layers (unarmed_run)",
+      "legacy_clips": [
+        "unarmed_run"
+      ],
+      "legacy_clip_proof": {
+        "unarmed_run": "A"
+      }
     },
     {
       "profile": "unarmed",
@@ -725,7 +932,13 @@
       "group": "locomotion",
       "action": "walk_01",
       "status": "LIVE",
-      "consumer": "operator._sync_modular_locomotion_layers (unarmed_walk)"
+      "consumer": "operator._sync_modular_locomotion_layers (unarmed_walk)",
+      "legacy_clips": [
+        "unarmed_walk"
+      ],
+      "legacy_clip_proof": {
+        "unarmed_walk": "A"
+      }
     },
     {
       "profile": "unarmed",
@@ -746,21 +959,39 @@
       "group": "reaction",
       "action": "bodyslam_knockdown_01",
       "status": "LIVE",
-      "consumer": "operator unarmed_bodyslam_knockdown_left/right"
+      "consumer": "operator unarmed_bodyslam_knockdown_left/right",
+      "legacy_clips": [
+        "unarmed_bodyslam_knockdown"
+      ],
+      "legacy_clip_proof": {
+        "unarmed_bodyslam_knockdown": "A"
+      }
     },
     {
       "profile": "unarmed",
       "group": "reaction",
       "action": "death_01",
       "status": "LIVE",
-      "consumer": "operator unarmed_death"
+      "consumer": "operator unarmed_death",
+      "legacy_clips": [
+        "unarmed_death"
+      ],
+      "legacy_clip_proof": {
+        "unarmed_death": "A"
+      }
     },
     {
       "profile": "unarmed",
       "group": "reaction",
       "action": "light_hitreact_01",
       "status": "LIVE",
-      "consumer": "operator unarmed_light_hitreact"
+      "consumer": "operator unarmed_light_hitreact",
+      "legacy_clips": [
+        "unarmed_light_hitreact"
+      ],
+      "legacy_clip_proof": {
+        "unarmed_light_hitreact": "A"
+      }
     },
     {
       "profile": "unarmed",

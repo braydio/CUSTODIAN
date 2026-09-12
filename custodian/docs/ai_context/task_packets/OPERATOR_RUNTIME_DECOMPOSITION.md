@@ -318,6 +318,78 @@ consumer still resolves legacy production body frames until `animated_sprite`
 is rebound. Retiring `DirectionalAnimationFallback` at that call site is
 therefore part of the `animated_sprite` cutover, not separable from it.
 
+### Evidence pass complete (2026-09-12)
+
+`operator_selection_cutover_inventory.py` now proves each site's canonical intent
+and emits `reports/operator/operator_selection_cutover_evidence.json` plus a
+Markdown companion. Every site is classified; **zero remain UNRESOLVED**:
+
+```text
+PROVEN              50
+DATA_DRIVEN          6
+AUTHORING_DECISION   2
+RETIRED              1
+```
+
+The authoritative join is `legacy_clips` on each reachability row, with
+`legacy_clip_proof` recording the proof source per clip. 43 clip mappings are
+recorded this way. Prose matching was tried first and rejected: "unarmed_parry"
+matches "unarmed_parry_recovery" by substring and silently yields the wrong
+action, so the contract records the mapping as data and the tool only reads it.
+
+**DATA_DRIVEN (6 sites)** are not provable from code at all: `base_animation`
+arrives from `OperatorWeaponDefinition.animation_map` / `fx_map`, or from the
+weapon `melee_stance` entry. The mapping is proven per resource entry — the
+`vigil_dagger_fast_*` and `sword_cleaver_fast_*` clips are recorded — but the
+*resource* is what has to change, per C2a §7. These block their renderers.
+
+**AUTHORING_DECISION (2 sites)** — `begin_modular_damage_reaction`.
+`shared/locomotion/idle_hitreact_01` is authored for `n` and `s` only and the
+retired nearest-sector search chose between them. Which variant a
+diagonal-facing hit reaction should use is the same shape of question as the
+dodge decision, and needs the same kind of answer. This blocks
+`modular_lower_body_sprite` and `modular_upper_body_sprite`.
+
+### Renderer readiness
+
+```text
+modular_sidearm_sprite      5 sites,  0 blocking   READY
+modular_upper_fx_sprite     5 sites,  0 blocking   READY
+melee_weapon_overlay_sprite 2 sites,  1 blocking
+melee_fx_overlay_sprite     2 sites,  1 blocking
+modular_lower_body_sprite  16 sites,  2 blocking
+modular_upper_body_sprite  17 sites,  2 blocking
+animated_sprite            15 sites,  4 blocking
+modular_head_sprite / modular_cape_sprite            RETIRED
+```
+
+Two corrections worth keeping. First, `modular_sidearm_sprite` is not the
+5-touch-point renderer the earlier estimate suggested — it serves both the
+`sidearm` and `ranged_2h` profiles, and its consumer set spans
+`_sync_sidearm_action_sprite`, `_sync_modular_ranged_weapon_layer`,
+`_retarget_ranged_sprite_preserving_progress` and `_play_modular_action_animation`.
+It is still the smallest READY renderer. Second, readiness had to attribute
+generic helper sites to the renderers their callers pass, and entry-point sites
+to the renderers they actually drive — attributing by mere mention made
+`begin_modular_damage_reaction` block the sidearm it only hides, and attributing
+by call line alone made `animated_sprite` look READY with four open blockers.
+
+### Coverage note for the sidearm cutover
+
+`sidearm/posture/draw_sidearm_01` and `sidearm/cosmetic/fire_sidearm_01` are
+published on the four diagonals only (`ne nw se sw`) — no cardinals. Under the
+strict contract a cardinal-facing sidearm draw has no exact identity and no
+SOUTH to fall back to, so expect either authored cardinals or a deliberate
+decision before the sidearm cutover is visually complete.
+
+### Open authoring question found while proving mappings
+
+`unarmed_block_exit` is played as `block_enter_01` by an existing in-code
+substitution, and there is no unarmed `block_exit_01` art, though
+`melee_1h_heavy` has one. Whether unarmed block exit deserves its own authored
+action is recorded on the reachability row as `open_authoring_question`. Not a
+cutover blocker.
+
 ### Recommended sequencing for the next attempt
 
 1. Extend `operator_animation_reachability.json` to record the ten unrecorded
