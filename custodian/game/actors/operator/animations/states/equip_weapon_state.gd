@@ -9,9 +9,8 @@ func enter() -> void:
 	if state_machine and state_machine.actor and state_machine.actor.has_method("start_equip_weapon_presentation"):
 		state_machine.actor.call("start_equip_weapon_presentation")
 		return
-	if state_machine and state_machine.sprite:
-		if state_machine.sprite.sprite_frames and state_machine.sprite.sprite_frames.has_animation("equip_weapon"):
-			state_machine.sprite.play("equip_weapon")
+	if state_machine and state_machine.can_play_animation(&"equip_weapon"):
+		state_machine.play_animation(&"equip_weapon")
 
 func update(delta: float) -> String:
 	if state_machine and state_machine.actor and state_machine.actor.has_method("is_equip_weapon_presentation_complete"):

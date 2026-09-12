@@ -79,6 +79,12 @@ The live Fists fast path currently mixes several timing authorities:
 
 1. `_try_start_fast_attack_windup()` starts a legacy/fallback `AnimatedSprite2D` windup and the visible modular windup together.
 2. The legacy body can be hidden while modular lower/upper layers are visible.
+   **Resolved in Slice C1**: it is now hidden *and stopped*. `claim_modular()`
+   retires it like any other body layer, and nothing reads its frame any more —
+   overlay synchronization, the melee hit-window scan, the frame tick and the
+   completion signal all follow `_presentation_clock_sprite()`, which only ever
+   returns a VISIBLE layer. A tick or a finish reported by a renderer that is not
+   the current clock is ignored outright.
 3. The hidden legacy animation uses the melee animation speed scale, while the modular fast phase currently plays at `speed_scale = 1.0`.
 4. `_on_animation_finished()` uses completion of `unarmed_attack_fast_windup*` to call `_begin_fast_attack_strike_phase()`.
 5. `_begin_fast_attack_strike_phase()` currently assigns `_melee_duration = attack_profile.recovery_sec`, even though it is entering the strike phase.
@@ -385,7 +391,7 @@ Implementation constraints:
 1. Preserve deterministic fixed-step gameplay authority.
 2. Do not add separate Fists combat states.
 3. Reuse `MeleeAttackProfile` drive/assist fields and existing target resolver rather than creating a Fists-only targeting system.
-4. Remove or bypass hidden legacy-animation timing authority for modular Fists fast phase transitions.
+4. Remove or bypass hidden legacy-animation timing authority for modular Fists fast phase transitions. **Done in Slice C1** for the clock, the frame tick and the completion signal; the remaining phase-duration items below are still open.
 5. Do not allow `recovery_sec` to stand in for strike duration.
 6. Do not let the fixed global `melee_fast_recovery_duration` truncate a profile-owned modular recovery.
 7. Synchronize modular lower body, upper body, optional FX, and fallback presentation to one phase timeline.

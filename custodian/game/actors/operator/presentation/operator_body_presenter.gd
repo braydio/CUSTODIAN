@@ -275,16 +275,14 @@ func set_owner(owner: int) -> bool:
 ## Retires the legacy body and every authored rig — including their overlays —
 ## without disturbing the modular layers the caller just set up.
 func claim_modular() -> void:
-	# MIGRATION DEBT:
-	# LegacyFullBody remains hidden-but-playing because some weapon/presentation
-	# layers still slave frame timing to it. Slice C1 must eliminate this hidden
-	# animation-clock authority before LegacyFullBody can always be stopped on
-	# retire. A hidden renderer being authoritative for timing is exactly the
-	# split-brain the melee timing doctrine forbids; it survives here only
-	# because removing it inside an extraction slice would change timing.
-	_hide_layers(_layers_by_owner.get(Owner.LEGACY_FULL_BODY, []), false)
+	# LegacyFullBody is stopped, not merely hidden. It used to be left playing
+	# because overlay synchronization and the melee hit-window scan both read its
+	# frame, which made a renderer nobody could see the timing authority for
+	# visible animation and for gameplay. Slice C1 moved both onto the visible
+	# presentation clock, so the hidden clock is gone and the legacy body retires
+	# like any other body layer.
 	for owner in _layers_by_owner:
-		if owner == Owner.MODULAR_BODY or owner == Owner.LEGACY_FULL_BODY:
+		if owner == Owner.MODULAR_BODY:
 			continue
 		_retire_layers(_layers_by_owner[owner])
 	# Preempting an owner must take its overlays down with its body, or a

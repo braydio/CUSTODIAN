@@ -41,8 +41,7 @@ func enter() -> void:
 			return
 		_played_animation = animation_name
 		state_machine.sprite.speed_scale = 1.0
-		state_machine.sprite.set_frame_and_progress(0, 0.0)
-		state_machine.sprite.play(animation_name)
+		state_machine.play_animation(animation_name, true)
 	if state_machine and state_machine.actor and state_machine.actor.has_method("play_damage_reaction_fx"):
 		state_machine.actor.call("play_damage_reaction_fx", animation_name, _modular_handled)
 

@@ -12,6 +12,11 @@ var current_state: String = ""
 var states: Dictionary = {}
 var animation_player: AnimationPlayer = null
 var sprite: AnimatedSprite2D = null
+## Shared playback authority, injected by the Operator. States drive playback
+## through the narrow delegates below rather than touching `sprite` directly, so
+## there is exactly one place that starts and stops an Operator clip. This is a
+## compatibility seam: Slice E replaces these states with OperatorActionController.
+var playback: OperatorAnimationPlayer = null
 var actor: Node = null
 var transition_sequence := 0
 
@@ -80,6 +85,21 @@ func reenter_current_state() -> void:
 
 func trigger_event(event_name: String, event_type: String = "default") -> void:
 	animation_event.emit(event_name, event_type)
+
+## Whether `sprite` can actually play `animation`. States used to reach through
+## `sprite.sprite_frames` to check this themselves.
+func can_play_animation(animation: StringName) -> bool:
+	if playback == null:
+		return false
+	return playback.can_play(sprite, animation)
+
+
+## Play `animation` on the state machine's sprite through the shared authority.
+func play_animation(animation: StringName, restart := false) -> bool:
+	if playback == null:
+		return false
+	return playback.play(sprite, animation, restart)
+
 
 func get_current_animation() -> String:
 	if sprite:

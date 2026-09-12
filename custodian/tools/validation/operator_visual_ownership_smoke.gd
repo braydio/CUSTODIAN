@@ -65,6 +65,8 @@ func _run() -> void:
 
 	_check_owner_api()
 	_check_present_is_transactional()
+	await _check_legacy_clock_is_gone()
+	await _check_preempted_startup_lifecycle()
 	await _check_owner_scoped_overlays()
 	await _check_preempted_rig_lifecycle()
 	await _check_vigil_posture_and_fast_chain()
@@ -129,6 +131,153 @@ func _install_vigil_posture_art() -> void:
 		_fail("Vigil dagger is not in the armed weapon list")
 		return
 	_operator.call("_apply_armed_selection", vigil_index)
+
+
+# --- the hidden legacy animation clock is gone -------------------------------
+
+## Under modular presentation the legacy body must be invisible AND stopped.
+##
+## It used to be left playing while hidden because overlay synchronization and
+## the melee hit-window scan both read its frame. A renderer nobody can see was
+## therefore the timing authority for visible animation and for gameplay, which
+## is exactly what OPERATOR_MELEE_CONTACT_TIMING_AND_CADENCE.md forbids.
+func _check_legacy_clock_is_gone() -> void:
+	# Establish the precondition the bug needs: the legacy body actually PLAYING
+	# while it owns the body. Without this the assertion below is vacuous — it
+	# was, until reintroducing the bug failed to trip it.
+	_operator.call("_set_body_presentation_owner", OWNER_LEGACY_FULL_BODY)
+	var legacy_body := _legacy_body()
+	if legacy_body == null or legacy_body.sprite_frames == null:
+		_fail("legacy clock: legacy body has no frames to play")
+		return
+	var clip := StringName("")
+	for candidate in legacy_body.sprite_frames.get_animation_names():
+		if legacy_body.sprite_frames.get_frame_count(candidate) > 1:
+			clip = StringName(candidate)
+			break
+	if clip.is_empty():
+		_fail("legacy clock: no multi-frame legacy clip available to play")
+		return
+	legacy_body.play(clip)
+	if not legacy_body.is_playing():
+		_fail("legacy clock: could not start legacy playback for the precondition")
+		return
+
+	# Exercise the exact handoff that used to leave the clock running. A full
+	# `present()` retires everything anyway, so only the modular claim isolates
+	# the invariant: hiding the legacy body must also STOP it.
+	_operator.call("_claim_modular_body_owner")
+	if legacy_body.visible:
+		_fail("legacy clock: modular claim left the legacy body visible")
+	if legacy_body.is_playing():
+		_fail("legacy clock: modular claim left the legacy body PLAYING while hidden")
+
+	_operator.set("using_unarmed", true)
+	_operator.set("combat_loadout_mode", "melee")
+	_operator.set("primary_weapon_equipped", false)
+	_operator.set("movement_direction", Vector2.RIGHT)
+	_operator.set("velocity", Vector2.RIGHT * 40.0)
+	_operator.call("_update_animation")
+	await process_frame
+
+	if int(_operator.call("get_body_presentation_owner")) != OWNER_MODULAR_BODY:
+		# Modular art is unavailable in this fixture; the invariant is untestable
+		# rather than satisfied, so say so instead of passing silently.
+		_fail("legacy clock: modular presentation did not take the body")
+		return
+
+	var legacy := _legacy_body()
+	if legacy == null:
+		_fail("legacy clock: legacy body node is missing")
+		return
+	if legacy.visible:
+		_fail("legacy clock: legacy body is visible under modular presentation")
+	if legacy.is_playing():
+		_fail("legacy clock: legacy body is still PLAYING under modular presentation")
+
+	# The visible modular body must advance on its own.
+	var lower := _operator.get_node_or_null("ModularLowerBodySprite") as AnimatedSprite2D
+	if lower == null or not lower.visible:
+		_fail("legacy clock: modular lower body is not the visible clock")
+		return
+	if not lower.is_playing():
+		_fail("legacy clock: the visible modular clock is not playing")
+
+	# A tick from the dormant legacy sprite must change nothing at all.
+	var weapon := _operator.get_node_or_null("MeleeWeaponOverlaySprite") as AnimatedSprite2D
+	var before_frame := weapon.frame if weapon != null else -1
+	var before_progress := weapon.frame_progress if weapon != null else -1.0
+	var before_flip := weapon.flip_h if weapon != null else false
+	legacy.frame_changed.emit()
+	if weapon != null:
+		if weapon.frame != before_frame or not is_equal_approx(weapon.frame_progress, before_progress):
+			_fail("legacy clock: a dormant legacy tick still moved the weapon overlay")
+		if weapon.flip_h != before_flip:
+			_fail("legacy clock: a dormant legacy tick still corrupted weapon facing")
+	_assert_single_owner("modular presentation with the legacy clock retired", OWNER_MODULAR_BODY)
+
+	_operator.set("velocity", Vector2.ZERO)
+
+
+# --- preempting the ready_to_fast startup ------------------------------------
+
+## The startup rig gets the same lifecycle guarantee as the posture bridge.
+##
+## Preempting it must retire its body AND its weapon, invalidate its token, and
+## leave no stranded windup: an expired startup coroutine waking later must not
+## change presentation, and `_melee_fast_windup` must not be left true, which
+## would block every subsequent attack.
+func _check_preempted_startup_lifecycle() -> void:
+	_install_vigil_posture_art()
+	if not _failures.is_empty():
+		return
+	var posture_state = _operator.get("_melee_posture_state")
+	if posture_state == null:
+		_fail("startup preempt: melee posture state is unavailable")
+		return
+	posture_state.begin_draw_grace(3.0)
+	posture_state.resolve(0.0, true, true, false)
+	_operator.set("_melee_fast_combo_step", 0)
+	_operator.set("_skip_next_fast_attack_windup", false)
+	for key in ["aim_direction", "movement_direction", "visual_idle_direction", "_melee_forward"]:
+		_operator.set(key, Vector2.RIGHT)
+
+	if not bool(_operator.call("_try_start_vigil_ready_fast_startup")):
+		_fail("startup preempt: ready_to_fast startup did not start")
+		return
+	_assert_single_owner("startup running", OWNER_VIGIL_FAST_STARTUP)
+
+	var startup_lower := _operator.get("_vigil_startup_lower") as AnimatedSprite2D
+	var startup_weapon := _operator.get("_vigil_startup_weapon") as AnimatedSprite2D
+	var stale_token := int(_operator.get("_vigil_ready_fast_startup_token"))
+	var clock_animation: StringName = startup_lower.animation
+
+	# A legitimate gameplay action takes the body.
+	_operator.call("_claim_modular_body_owner")
+	if startup_lower != null and startup_lower.visible:
+		_fail("startup preempt: preempted startup body is still visible")
+	if startup_weapon != null and startup_weapon.visible:
+		_fail("startup preempt: preempted startup weapon is still visible")
+	if not (_operator.call("get_visible_body_overlays", OWNER_VIGIL_FAST_STARTUP) as Array).is_empty():
+		_fail("startup preempt: preempted startup still reports a visible overlay")
+	if int(_operator.get("_vigil_ready_fast_startup_token")) == stale_token:
+		_fail("startup preempt: startup token was not invalidated by the preempting caller")
+
+	# Drive the abandoned lifecycle past its own duration: it must change nothing.
+	var owner_before := int(_operator.call("get_body_presentation_owner"))
+	await _operator.call("_finish_vigil_ready_fast_startup", stale_token, clock_animation)
+	if int(_operator.call("get_body_presentation_owner")) != owner_before:
+		_fail("startup preempt: expired startup lifecycle changed the body owner")
+	if startup_weapon != null and startup_weapon.visible:
+		_fail("startup preempt: expired startup lifecycle re-showed its weapon")
+	if bool(_operator.get("_melee_fast_windup")):
+		_fail("startup preempt: _melee_fast_windup was stranded true after preemption")
+
+	# The Operator must still be able to act.
+	_operator.set("_melee_active", false)
+	_operator.call("_update_animation")
+	await process_frame
+	_assert_single_owner("after a preempted startup settles")
 
 
 # --- present() is transactional ----------------------------------------------

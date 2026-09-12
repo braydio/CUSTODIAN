@@ -148,6 +148,29 @@ An overlay may be worn by more than one owner. The cape rides both the legacy
 strips and the modular rig, so `release_modular()` deliberately leaves it for
 whoever takes the body next instead of blinking it between presentations.
 
+`OperatorAnimationPlayer` (Slice C1) owns HOW an already-resolved clip plays:
+start, restart, stop, speed, frame and progress. It is mechanical and holds no
+semantic vocabulary — no attack kind, no weapon identity, no direction policy,
+and no action-specific methods. `operator.gd` and the compatibility
+`AnimationStateMachine` both drive playback through it rather than touching
+`AnimatedSprite2D` directly.
+
+### The presentation clock
+
+Anything that follows animation frames — overlay synchronization, the melee
+hit-window scan, the frame tick and the completion signal — reads them from
+`_presentation_clock_sprite()`, which returns only a **visible** body layer. A
+tick or a finish reported by a renderer that is not the current clock is ignored.
+
+This is what allowed the hidden legacy clock to go. The legacy body used to be
+left hidden-but-playing because it was three things at once: the frame value,
+the frame tick, and the completion signal for attacks that commit on animation
+finish. Under modular presentation it is now hidden **and stopped**, and the
+visible modular lower body is the clock.
+
+Gameplay timing is still not the renderer's: deterministic combat timelines own
+it, and visual layers merely follow the visible clock.
+
 Showing a renderer is a mechanism; changing presentation ownership is a
 decision. The presenter keeps those separate: `show_layer()` is strict and
 requires the renderer to belong to the current owner, while
@@ -196,6 +219,12 @@ by it — **before** anything is retired and before `_owner` moves. A rejected
 plan changes nothing and returns `false`, so a bad renderer can never leave the
 body owned by a presentation that never drew. `register_body_layers()` likewise
 refuses to reassign a body layer that already belongs to a different owner.
+
+Composition paths declare their whole presentation before configuring any layer:
+resolve and check the clips, build the plan or claim the owner, then play the
+layers they already own. `_show_body_layer()` is a strict delegate — it no longer
+carries the seam that quietly took ownership on a caller's behalf, so acquiring
+the body one layer at a time now reports an error instead of silently working.
 
 `can_present(plan)` is the non-mutating, non-reporting probe, sharing one
 validator with `present()` so the two can never disagree. `present()` takes
@@ -274,7 +303,7 @@ counter is left without a home.
 | A | Architecture contract, debt audit, characterization | — (establishes the ledger) | **done** |
 | B | Presentation firewall, body ownership invariant | `body_visibility_outside_presentation` 25 → 0 | **done** |
 | B-final | Owner-scoped overlays, transactional `present()`, caller-side lifecycle cancellation, alias-proof audit | `aliased_body_visibility_writes` 17 → 0 | **done** |
-| C1 | Presentation playback funnel; remove hidden legacy-body-as-animation-clock authority | `animated_sprite_play_outside_presentation` 94 → 0 | pending |
+| C1 | Presentation playback funnel; remove hidden legacy-body-as-animation-clock authority | `animated_sprite_play_outside_presentation` 94 → 0 | **done** |
 | C2 | Canonical semantic selection | `animation_resolver` 45, `attack_fallback_animation` 16, `directional_animation_fallback` 6, `actor_local_spriteframes` 5, `operator_animation_catalog` 4 → 0 | pending |
 | D | `InputFrame` + `InputRouter` + `AimController`; deterministic device ownership; fixed-step migration; `_process()` becomes presentation-only | `input_calls_outside_input_dir` 65 → 0, `gameplay_mutation_in_process` 12 → 0 | pending |
 | E | `OperatorActionController` replacing animation-state glue; `OperatorPresentationController` translating semantic requests into body plans | `animation_state_actor_glue` 34 → 0 | pending |
@@ -292,12 +321,13 @@ The three-sweep validation baseline established by Slice B.5 is the floor:
 `run_validation.py --tier actor` selects **41** checks and all 41 pass, three
 sweeps in a row. No slice may land below it.
 
-**Current status: 40/41, deterministic across three sweeps.**
-`lootable_corpse_beacon` fails on "enemy corpse collection must show typed and
-recovered-resource toasts". It is unrelated to Operator body presentation and
-reproduces with the B-final Operator changes stashed, so it did not come from
-this slice — but the floor is not met until it is fixed, and it needs its own
-investigation rather than being carried silently.
+**Current status: 40/41 or 41/41 — `lootable_corpse_beacon` is INTERMITTENT.**
+It fails on "enemy corpse collection must show typed and recovered-resource
+toasts", and across six recorded C1/B-final sweeps it failed four and passed two.
+It is unrelated to Operator body presentation and reproduces with the Operator
+changes stashed, so it comes from neither slice. Treat it as a flaky test to be
+diagnosed on its own terms — not as a deterministic red, and not as noise to be
+ignored, since a test that passes sometimes is hiding a real nondeterminism.
 
 Slice detail lives in the task packet.
 

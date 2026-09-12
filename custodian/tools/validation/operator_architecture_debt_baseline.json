@@ -5,14 +5,6 @@
   "actor_local_spriteframes": {
     "operator.gd": 5
   },
-  "animated_sprite_play_outside_presentation": {
-    "animations/states/attack_fast_state.gd": 2,
-    "animations/states/attack_heavy_state.gd": 2,
-    "animations/states/death_state.gd": 1,
-    "animations/states/equip_weapon_state.gd": 1,
-    "animations/states/hit_recoil_state.gd": 1,
-    "operator.gd": 87
-  },
   "animation_resolver": {
     "animations/animation_resolver.gd": 1,
     "operator.gd": 44

@@ -130,7 +130,10 @@ RULES = [
     Rule(
         "animated_sprite_play_outside_presentation",
         "AnimatedSprite2D.play() outside operator/presentation/",
-        r"(?:sprite|_lower|_upper|_head|_weapon|_body)\w*\s*\.\s*play\s*\(",
+        # The optional subscript matters: `sprites[index].play()` is the same
+        # direct playback wearing an index, and the un-subscripted pattern used
+        # to miss it exactly the way the body-visibility rule missed aliases.
+        r"(?:sprite|_lower|_upper|_head|_weapon|_body)\w*(?:\[[^\]]*\])?\s*\.\s*play\s*\(",
         "OperatorAnimationPlayer (operator/presentation/)",
         allowed_prefixes=("presentation/",),
     ),

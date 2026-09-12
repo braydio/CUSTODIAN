@@ -162,17 +162,47 @@ Still deliberately open: `_show_body_layer()`'s MIGRATION SEAM, and
 `claim_modular()` keeping the legacy body hidden-but-playing as an animation
 clock. Both belong to C1.
 
-## Slice C1 — presentation playback funnel
+## Slice C1 — presentation playback funnel — DONE
 
-Retire the **94** `AnimatedSprite2D.play()` calls outside `operator/presentation/`
-(`animated_sprite_play_outside_presentation`: `operator.gd` 87, plus 7 across the
-animation states). Remove the hidden legacy-body-as-animation-clock authority
-that `claim_modular()` documents as MIGRATION DEBT, so `LegacyFullBody` can
-always be stopped on retire. Convert the incremental modular sync call sites from
-`_show_body_layer()` to `_present_body()` and delete that seam.
+`presentation/operator_animation_player.gd` owns HOW an already-resolved clip
+plays. All 94 direct `AnimatedSprite2D.play()` calls are routed through it —
+88 in `operator.gd`, and the 7 in the animation states via narrow
+`AnimationStateMachine.play_animation()` / `can_play_animation()` delegates that
+share the same authority instance. `animated_sprite_play_outside_presentation`
+is retired from the baseline. The rule also gained an optional subscript, because
+`sprites[index].play()` was the same direct playback wearing an index and the old
+pattern missed it, exactly the way the body-visibility rule missed aliases.
 
-Do this before C2: a single playback funnel is what makes the selector cutover a
-one-place change instead of a 94-place change.
+**The hidden legacy clock is gone.** It turned out to be three things at once,
+which is why it had survived: the frame *value* read by overlay synchronization
+AND by the melee hit-window scan, the frame *tick* (`frame_changed` was only
+connected to the legacy body), and the *completion signal* for attacks that
+commit on animation finish. Removing only the first breaks the dagger, which is
+how the regression surfaced. All four now follow `_presentation_clock_sprite()`,
+which returns only a VISIBLE body layer; `frame_changed` and `animation_finished`
+are bound per-source and ignored when the source is not the current clock. Under
+modular presentation `LegacyFullBody` is hidden **and** stopped.
+
+Note `MeleeOverlayClockOwner.MODULAR_LOWER_BODY` was assigned in four places and
+consumed in none — under modular presentation the overlays were not being
+synchronized at all. They are now.
+
+**The body-show seam is gone.** `_show_body_layer()` is a strict delegate.
+Composition paths declare their presentation before configuring any layer, via
+`_declare_modular_body_composition()` at the point where they have resolved and
+checked their clips. Nine paths were acquiring the body one layer at a time and
+are converted: melee locomotion, melee posture, unarmed parry, unarmed block,
+lower/upper body locomotion, ranged ready/relaxed upper layers, ranged aim, and
+the damage reaction (which claimed the body *after* playing every layer).
+
+**A stranded windup was found and fixed.** Preempting the ready_to_fast startup
+left `_melee_fast_windup` true forever, because only the startup's own completion
+clears it — silently blocking every subsequent attack.
+`_invalidate_preempted_rig_lifecycles()` now clears it with the token.
+
+Deliberately untouched, for C2: `AnimationResolver` 45, `fallback_animation` 16,
+`DirectionalAnimationFallback` 6, actor-local `SpriteFrames` 5,
+`OperatorAnimationCatalog` 4.
 
 ## Slice C2 — canonical animation authority
 
