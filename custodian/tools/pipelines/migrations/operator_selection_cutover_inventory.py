@@ -48,10 +48,30 @@ MANIFEST = CUSTODIAN_ROOT / "content/sprites/operator/runtime/operator_runtime_m
 REACHABILITY = CUSTODIAN_ROOT / "content/data/operator/operator_animation_reachability.json"
 DEFAULT_REPORT = REPO_ROOT / "reports/operator/operator_selection_cutover_evidence.json"
 
+#: C2a-R1 and R2 both found live selection mechanisms outside the three debt
+#: patterns, so the inventory measures the MECHANISMS, not only the counters:
+#:
+#:   * R1: `_resolve_sidearm_directional_animation()` built `<base>_<up|down>_<l|r>`
+#:     names directly, and `_play_first_available_modular_fire_animation()` walked a
+#:     candidate name list. Neither touches AnimationResolver.
+#:   * R2: `_ensure_operator_critical_hitspark_animation()` and the paired-execution
+#:     path BUILD animations into a renderer's SpriteFrames at runtime, which is
+#:     incompatible with a shared canonical resource.
+#:
+#: A renderer is only safe to rebind when every one of these is accounted for.
 SELECTION_PATTERNS = {
     "animation_resolver": re.compile(r"AnimationResolver\.resolve\s*\(([^;]+)"),
     "directional_animation_fallback": re.compile(r"DirectionalAnimationFallback\.(\w+)\s*\("),
     "attack_fallback_animation": re.compile(r"\bfallback_animation\b"),
+    # Names assembled from a base plus a direction suffix, bypassing the selector.
+    "constructed_animation_name": re.compile(
+        r'StringName\(\s*"(?:%s)?[a-z][a-z0-9_]*_%%s'),
+    # A renderer's SpriteFrames mutated at runtime: it cannot share the canonical
+    # resource, because the mutation would leak into every other renderer.
+    "runtime_spriteframes_mutation": re.compile(
+        r"sprite_frames\s*\.\s*(?:add_animation|add_frame|set_animation_speed|set_animation_loop)\s*\("),
+    # Selection by walking a list of candidate clip names until one is playable.
+    "candidate_animation_list": re.compile(r"_primary_ranged_fire_candidates\s*\("),
 }
 
 #: The actual Operator presentation renderers. An explicit whitelist, because
@@ -92,6 +112,15 @@ SCENE = CUSTODIAN_ROOT / "game/actors/operator/operator.tscn"
 #: Selection sites whose replacement needs design input rather than evidence,
 #: keyed by enclosing function.
 AUTHORING_DECISIONS: dict[str, str] = {
+    "_play_modular_unarmed_parry": (
+        "C2a-R2 blocker. The legacy clip unarmed_parry_success_01_fx has no single "
+        "canonical identity: its _left sources parry_recovery_01 fx art and its _right "
+        "sources interaction/success_01 fx art, two semantically different actions under "
+        "one name. It is live via guard_enter_post_parry_neutral(). Separately, "
+        "unarmed_parry_recovery_fx is requested but absent from the compatibility "
+        "resource, so parry-recovery FX has never rendered while canonical art exists. "
+        "modular_upper_fx_sprite cannot be rebound until both are decided."
+    ),
     "begin_modular_damage_reaction": (
         "shared/locomotion/idle_hitreact_01 is authored for n and s only, and the "
         "retired nearest-sector search chose between them. Which variant a "
@@ -395,8 +424,8 @@ def trace_literals(name: str, files, known: set[str], depth: int = 0, seen: set 
 
 
 #: Worst-first, because a site is only as migratable as its least proven mapping.
-SEVERITY = ("UNRESOLVED", "AUTHORING_DECISION", "MISSING_PUBLICATION", "DATA_DRIVEN",
-            "RETIRED", "PROVEN")
+SEVERITY = ("UNRESOLVED", "BLOCKED", "AUTHORING_DECISION", "MISSING_PUBLICATION",
+            "DATA_DRIVEN", "RETIRED", "PROVEN")
 
 
 def worst(verdicts: set[str]) -> str:
@@ -414,6 +443,19 @@ def classify_site(site: dict) -> tuple[str, str] | None:
         return "PROVEN", RESOLVED_BY_DECISION[site["function"]]
     if site["function"] in DATA_DRIVEN_SITES:
         return "DATA_DRIVEN", DATA_DRIVEN_SITES[site["function"]]
+    if site["debt"] == "runtime_spriteframes_mutation":
+        return "BLOCKED", (
+            "builds animations into the renderer's SpriteFrames at runtime, which a "
+            "SHARED canonical resource cannot accept: the mutation would leak into "
+            "every other renderer bound to it. Canonical equivalents exist, so this is "
+            "migratable work rather than an authoring decision — but the renderer must "
+            "not be rebound while it remains."
+        )
+    if site["debt"] == "candidate_animation_list":
+        return "BLOCKED", (
+            "selects by walking a list of candidate legacy clip names; the caller must "
+            "request one canonical identity instead"
+        )
     if site["debt"] == "attack_fallback_animation":
         return "PROVEN", (
             "MeleeAttackProfile.presentation_action already carries the semantic "

@@ -739,13 +739,12 @@
       "status": "LIVE",
       "consumer": "operator unarmed_parry_recovery",
       "legacy_clips": [
-        "unarmed_parry_recovery",
-        "unarmed_parry_recovery_fx"
+        "unarmed_parry_recovery"
       ],
       "legacy_clip_proof": {
-        "unarmed_parry_recovery": "A",
-        "unarmed_parry_recovery_fx": "C"
-      }
+        "unarmed_parry_recovery": "A"
+      },
+      "open_authoring_question": "C2a-R2 note: _play_modular_unarmed_parry() requests the legacy clip unarmed_parry_recovery_fx, which is absent from operator_modular_upper_fx_frames.tres, so no parry-recovery FX has ever rendered. Canonical parry_recovery_01 fx exists for e/w. Preserving current behaviour means deliberately leaving that authored art unused; enabling it is a visible change and therefore an authoring decision."
     },
     {
       "profile": "unarmed",
@@ -824,10 +823,12 @@
       "status": "DORMANT",
       "reason": "C2a evidence 2026-09-12: the earlier reason claimed no consumer references a bare parry_01 window animation. Three sites in _get_parry_attempt_remaining_duration resolve the legacy clip 'unarmed_parry' to measure the parry attempt window, so a consumer does exist (proof source C, runtime call context). Still DORMANT because that consumer reads compatibility frames until the renderers are rebound.",
       "legacy_clips": [
-        "unarmed_parry"
+        "unarmed_parry",
+        "unarmed_parry_fx"
       ],
       "legacy_clip_proof": {
-        "unarmed_parry": "C"
+        "unarmed_parry": "C",
+        "unarmed_parry_fx": "A"
       }
     },
     {
@@ -850,17 +851,14 @@
       "status": "LIVE",
       "consumer": "operator._play_parry_animation (unarmed_parry_success_01)",
       "legacy_clips": [
-        "unarmed_parry_fx",
         "unarmed_parry_success",
-        "unarmed_parry_success_01",
-        "unarmed_parry_success_01_fx"
+        "unarmed_parry_success_01"
       ],
       "legacy_clip_proof": {
-        "unarmed_parry_fx": "C",
         "unarmed_parry_success": "A",
-        "unarmed_parry_success_01": "A",
-        "unarmed_parry_success_01_fx": "C"
-      }
+        "unarmed_parry_success_01": "A"
+      },
+      "open_authoring_question": "C2a-R2 blocker: the legacy clip unarmed_parry_success_01_fx has no single canonical identity. Texture provenance in operator_modular_upper_fx_frames.tres shows _left sources unarmed/attack/parry_recovery_01 fx art and _right sources unarmed/interaction/success_01 fx art, so one clip name spans two semantically different actions. It is live: guard_enter_post_parry_neutral() calls _play_parry_animation(&\"unarmed_parry_success_01\") and the modular body art for that base exists, so the FX branch is reached. Canonicalizing it requires an authoring decision between: (a) unarmed/defense/parry_success_01/fx, which exists for e/w and is the semantically obvious action but is NOT what plays today; (b) preserving today's pixels, which means encoding parry_recovery for west and interaction/success for east; or (c) no FX for this action. modular_upper_fx_sprite must not be rebound until this is decided."
     },
     {
       "profile": "unarmed",

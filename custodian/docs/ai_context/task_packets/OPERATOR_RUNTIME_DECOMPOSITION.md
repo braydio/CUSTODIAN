@@ -463,6 +463,79 @@ worked around: `operator_weapon_socket_smoke` now asserts the renderer carries
 canonical identities and does **not** carry the legacy clips, and drives it with
 canonical names; its socket-track checks stay keyed to the still-legacy upper body.
 
+### C2a-R2 — modular_upper_fx_sprite: STOPPED at the exhaustiveness pass
+
+The renderer was **not** rebound. The mandated Step 0 pass found live consumers
+that cannot be canonicalized without an authoring decision, and the packet's own
+rule is to stop rather than partially rebind.
+
+**The R1 lesson repeated, larger.** The inventory reported this renderer as
+5 sites / 4 active / 0 blockers / READY. Its real surface is **14 sites, 10
+blocking** — undercounted roughly threefold. Three mechanisms were invisible to
+the three debt patterns, and the inventory now detects all three:
+
+* `runtime_spriteframes_mutation` — `_ensure_operator_critical_hitspark_animation()`
+  and `_ensure_paired_execution_animation()` BUILD animations into the renderer's
+  `SpriteFrames` at runtime from raw PNG sheets. A shared canonical resource
+  cannot accept that: the mutation would leak into every other renderer bound to
+  it. Canonical equivalents exist (`critical_hitspark_01` e/w,
+  `critical_execution_01` e/s/w, `falcon_reversal_01` e/w), so this is migratable
+  work — but it must be done *before* the rebind, not after.
+* `candidate_animation_list` — the ranged fire FX layer walks
+  `_primary_ranged_fire_candidates(&"fx", …)`, the same mechanism R1 found on the
+  weapon layer.
+* `constructed_animation_name` — names assembled as `<base>_%s` suffixes.
+
+`_play_modular_parry_fx()` turned out to be dead code: no callers. Its
+`AnimationResolver` site is not an active consumer.
+
+**Two mappings I recorded in the evidence pass were wrong, and are corrected.**
+Texture provenance in `operator_modular_upper_fx_frames.tres` settles both, the
+same method that settled the sidearm question:
+
+* `unarmed_parry_fx` was recorded against `parry_success_01` on name similarity.
+  All four variants source `unarmed/defense/parry_01` art, and the directional
+  sets match exactly (legacy up/left/right == canonical n/w/e). Moved.
+* `unarmed_parry_success_01_fx` was recorded as one mapping. It is not one: its
+  `_left` sources `unarmed/attack/parry_recovery_01` fx art and its `_right`
+  sources `unarmed/interaction/success_01` fx art — **two semantically different
+  actions under one clip name**. The entry is withdrawn.
+
+The tool had faithfully reported both as PROVEN, because the evidence they rested
+on was mine and it was wrong. Evidence recorded by hand needs the same
+verification as code.
+
+**The blocker.** `unarmed_parry_success_01_fx` is live:
+`guard_enter_post_parry_neutral()` calls
+`_play_parry_animation(&"unarmed_parry_success_01")`, and the modular body art for
+that base exists in the lower/upper compatibility resources, so the FX branch is
+reached. Canonicalizing it requires choosing one of:
+
+```text
+(a) unarmed/defense/parry_success_01/fx   — exists for e/w, the semantically
+                                            obvious action, but NOT what plays today
+(b) preserve today's pixels               — parry_recovery_01 for west,
+                                            interaction/success_01 for east;
+                                            semantically incoherent
+(c) no FX for this action                 — a visible regression
+```
+
+**A second, smaller question.** `_play_modular_unarmed_parry()` requests
+`unarmed_parry_recovery_fx`, which is absent from the compatibility resource, so
+parry-recovery FX has **never rendered**. Canonical `parry_recovery_01` fx exists
+for e/w. Preserving current behaviour means deliberately leaving authored art
+unused; enabling it is a visible change. Both questions are recorded as
+`open_authoring_question` on their reachability rows.
+
+Everything else on this renderer is migratable once those are answered: fast-strike
+FX (canonical coverage is all eight sectors), field-patch FX, sidearm draw/fire FX
+(reusing R1's authored sector), ranged fire FX, and the two runtime-built cosmetic
+families.
+
+**R1 re-verified.** Under the new stricter detectors `modular_sidearm_sprite`
+still reports `CANONICAL` with zero sites, so R1's cutover holds against
+mechanisms it was not originally measured by.
+
 ### Recommended sequencing for the next attempt
 
 1. Extend `operator_animation_reachability.json` to record the ten unrecorded

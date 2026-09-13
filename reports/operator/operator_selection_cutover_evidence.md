@@ -29,9 +29,12 @@
 | modular_upper_fx_sprite | 2694 | _sync_modular_fast_attack_phase | unarmed_fast_strike_fx_modular | unarmed/attack/fast_strike_01 | PROVEN | reachability legacy_clips, proof source C |
 | modular_upper_body_sprite | 2839 | _has_modular_ranged_ready_upper_stack | ranged_2h_stance_modular | ranged_2h/posture/stance_01 | PROVEN | reachability legacy_clips, proof source C |
 | modular_upper_body_sprite | 2851 | _has_modular_ranged_relaxed_upper_stack | ranged_2h_relaxed_modular | ranged_2h/posture/relaxed_01 | PROVEN | reachability legacy_clips, proof source A |
+| modular_upper_body_sprite | 3379 | _begin_modular_primary_ranged_fire_presentation |  |  | BLOCKED |  |
+| modular_upper_fx_sprite | 3408 | _begin_modular_primary_ranged_fire_presentation |  |  | BLOCKED |  |
 | modular_lower_body_sprite | 3448 | _begin_modular_primary_ranged_aim_presentation | ranged_2h_aim_modular | ranged_2h/cosmetic/aim_01 | PROVEN | reachability legacy_clips, proof source A |
 | modular_upper_body_sprite | 3449 | _begin_modular_primary_ranged_aim_presentation | ranged_2h_aim_modular | ranged_2h/cosmetic/aim_01 | PROVEN | reachability legacy_clips, proof source A |
 | modular_upper_body_sprite | 3504 | _begin_modular_primary_ranged_lower_presentation | ranged_2h_aim_modular | ranged_2h/cosmetic/aim_01 | PROVEN | reachability legacy_clips, proof source A |
+|  | 3557 | _primary_ranged_fire_candidates |  |  | BLOCKED |  |
 |  | 3724 | _sync_field_patch_action_layer | field_patch_use_fx | unarmed/interaction/field_patch_use_01 | PROVEN | reachability legacy_clips, proof source C |
 |  | 3724 | _sync_field_patch_action_layer | field_patch_use_lower | unarmed/interaction/field_patch_use_01 | PROVEN | reachability legacy_clips, proof source C |
 |  | 3724 | _sync_field_patch_action_layer | field_patch_use_upper | unarmed/interaction/field_patch_use_01 | PROVEN | reachability legacy_clips, proof source C |
@@ -61,10 +64,22 @@
 | animated_sprite | 6846 | _play_parry_animation | unarmed_parry_success_01 | unarmed/defense/parry_success_01 | PROVEN | reachability legacy_clips, proof source A |
 | modular_lower_body_sprite | 6865 | _play_modular_unarmed_parry | unarmed_parry_success | unarmed/defense/parry_success_01 | PROVEN | reachability legacy_clips, proof source A |
 | modular_upper_body_sprite | 6866 | _play_modular_unarmed_parry | unarmed_parry_success | unarmed/defense/parry_success_01 | PROVEN | reachability legacy_clips, proof source A |
-| modular_upper_fx_sprite | 6893 | _play_modular_unarmed_parry | unarmed_parry_fx | unarmed/defense/parry_success_01 | PROVEN | reachability legacy_clips, proof source C |
-| modular_upper_fx_sprite | 6893 | _play_modular_unarmed_parry | unarmed_parry_recovery_fx | unarmed/attack/parry_recovery_01 | PROVEN | reachability legacy_clips, proof source C |
-| modular_upper_fx_sprite | 6893 | _play_modular_unarmed_parry | unarmed_parry_success_01_fx | unarmed/defense/parry_success_01 | PROVEN | reachability legacy_clips, proof source C |
-| modular_upper_fx_sprite | 7657 | _play_modular_parry_fx | unarmed_parry_fx | unarmed/defense/parry_success_01 | PROVEN | reachability legacy_clips, proof source C |
+| modular_upper_fx_sprite | 6893 | _play_modular_unarmed_parry | unarmed_parry_fx | unarmed/defense/parry_01 | PROVEN | reachability legacy_clips, proof source A |
+| modular_upper_fx_sprite | 6893 | _play_modular_unarmed_parry | unarmed_parry_recovery_fx |  | UNRESOLVED | no legacy_clips row in the reachability contract |
+| modular_upper_fx_sprite | 6893 | _play_modular_unarmed_parry | unarmed_parry_success_01_fx |  | UNRESOLVED | no legacy_clips row in the reachability contract |
+|  | 7360 | _ensure_paired_execution_animation |  |  | BLOCKED |  |
+|  | 7361 | _ensure_paired_execution_animation |  |  | BLOCKED |  |
+|  | 7364 | _ensure_paired_execution_animation |  |  | BLOCKED |  |
+|  | 7369 | _ensure_paired_execution_animation |  |  | BLOCKED |  |
+| animated_sprite | 7602 | _ensure_operator_critical_attack_animation |  |  | BLOCKED |  |
+| animated_sprite | 7603 | _ensure_operator_critical_attack_animation |  |  | BLOCKED |  |
+| animated_sprite | 7604 | _ensure_operator_critical_attack_animation |  |  | BLOCKED |  |
+| animated_sprite | 7609 | _ensure_operator_critical_attack_animation |  |  | BLOCKED |  |
+| modular_upper_fx_sprite | 7641 | _ensure_operator_critical_hitspark_animation |  |  | BLOCKED |  |
+| modular_upper_fx_sprite | 7642 | _ensure_operator_critical_hitspark_animation |  |  | BLOCKED |  |
+| modular_upper_fx_sprite | 7643 | _ensure_operator_critical_hitspark_animation |  |  | BLOCKED |  |
+| modular_upper_fx_sprite | 7648 | _ensure_operator_critical_hitspark_animation |  |  | BLOCKED |  |
+| modular_upper_fx_sprite | 7657 | _play_modular_parry_fx | unarmed_parry_fx | unarmed/defense/parry_01 | PROVEN | reachability legacy_clips, proof source A |
 | modular_upper_body_sprite | 7792 | _play_modular_unarmed_block | unarmed_block_enter | unarmed/defense/block_enter_01 | PROVEN | reachability legacy_clips, proof source A |
 | modular_upper_body_sprite | 7792 | _play_modular_unarmed_block | unarmed_block_exit | unarmed/defense/block_enter_01 | PROVEN | reachability legacy_clips, proof source C |
 | modular_lower_body_sprite | 7806 | _play_modular_unarmed_block | unarmed_block_enter | unarmed/defense/block_enter_01 | PROVEN | reachability legacy_clips, proof source A |

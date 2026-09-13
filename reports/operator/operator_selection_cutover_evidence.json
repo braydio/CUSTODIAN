@@ -2,14 +2,15 @@
   "schema": "custodian.operator_selection_cutover_evidence.v1",
   "counts": {
     "DATA_DRIVEN": 6,
-    "PROVEN": 47,
-    "AUTHORING_DECISION": 2
+    "PROVEN": 44,
+    "BLOCKED": 15,
+    "AUTHORING_DECISION": 5
   },
   "renderer_readiness": {
     "animated_sprite": {
-      "sites": 15,
-      "active": 15,
-      "blocking": 4,
+      "sites": 23,
+      "active": 23,
+      "blocking": 12,
       "ready": false,
       "blocking_detail": [
         {
@@ -41,6 +42,54 @@
           ]
         },
         {
+          "line": 7360,
+          "function": "_ensure_paired_execution_animation",
+          "classification": "BLOCKED",
+          "clips": []
+        },
+        {
+          "line": 7361,
+          "function": "_ensure_paired_execution_animation",
+          "classification": "BLOCKED",
+          "clips": []
+        },
+        {
+          "line": 7364,
+          "function": "_ensure_paired_execution_animation",
+          "classification": "BLOCKED",
+          "clips": []
+        },
+        {
+          "line": 7369,
+          "function": "_ensure_paired_execution_animation",
+          "classification": "BLOCKED",
+          "clips": []
+        },
+        {
+          "line": 7602,
+          "function": "_ensure_operator_critical_attack_animation",
+          "classification": "BLOCKED",
+          "clips": []
+        },
+        {
+          "line": 7603,
+          "function": "_ensure_operator_critical_attack_animation",
+          "classification": "BLOCKED",
+          "clips": []
+        },
+        {
+          "line": 7604,
+          "function": "_ensure_operator_critical_attack_animation",
+          "classification": "BLOCKED",
+          "clips": []
+        },
+        {
+          "line": 7609,
+          "function": "_ensure_operator_critical_attack_animation",
+          "classification": "BLOCKED",
+          "clips": []
+        },
+        {
           "line": 7916,
           "function": "_play_melee_anim_resolved",
           "classification": "DATA_DRIVEN",
@@ -59,28 +108,117 @@
     "modular_lower_body_sprite": {
       "sites": 13,
       "active": 13,
-      "blocking": 0,
-      "ready": true,
-      "blocking_detail": []
+      "blocking": 1,
+      "ready": false,
+      "blocking_detail": [
+        {
+          "line": 6865,
+          "function": "_play_modular_unarmed_parry",
+          "classification": "AUTHORING_DECISION",
+          "clips": [
+            "unarmed_parry_success"
+          ]
+        }
+      ]
     },
     "modular_upper_body_sprite": {
-      "sites": 14,
-      "active": 14,
-      "blocking": 0,
-      "ready": true,
-      "blocking_detail": []
+      "sites": 15,
+      "active": 15,
+      "blocking": 2,
+      "ready": false,
+      "blocking_detail": [
+        {
+          "line": 3379,
+          "function": "_begin_modular_primary_ranged_fire_presentation",
+          "classification": "BLOCKED",
+          "clips": []
+        },
+        {
+          "line": 6866,
+          "function": "_play_modular_unarmed_parry",
+          "classification": "AUTHORING_DECISION",
+          "clips": [
+            "unarmed_parry_success"
+          ]
+        }
+      ]
     },
     "modular_upper_fx_sprite": {
-      "sites": 5,
-      "active": 5,
-      "blocking": 0,
-      "ready": true,
-      "blocking_detail": []
+      "sites": 14,
+      "active": 14,
+      "blocking": 10,
+      "ready": false,
+      "blocking_detail": [
+        {
+          "line": 3408,
+          "function": "_begin_modular_primary_ranged_fire_presentation",
+          "classification": "BLOCKED",
+          "clips": []
+        },
+        {
+          "line": 6893,
+          "function": "_play_modular_unarmed_parry",
+          "classification": "AUTHORING_DECISION",
+          "clips": [
+            "unarmed_parry_fx",
+            "unarmed_parry_recovery_fx",
+            "unarmed_parry_success_01_fx"
+          ]
+        },
+        {
+          "line": 7360,
+          "function": "_ensure_paired_execution_animation",
+          "classification": "BLOCKED",
+          "clips": []
+        },
+        {
+          "line": 7361,
+          "function": "_ensure_paired_execution_animation",
+          "classification": "BLOCKED",
+          "clips": []
+        },
+        {
+          "line": 7364,
+          "function": "_ensure_paired_execution_animation",
+          "classification": "BLOCKED",
+          "clips": []
+        },
+        {
+          "line": 7369,
+          "function": "_ensure_paired_execution_animation",
+          "classification": "BLOCKED",
+          "clips": []
+        },
+        {
+          "line": 7641,
+          "function": "_ensure_operator_critical_hitspark_animation",
+          "classification": "BLOCKED",
+          "clips": []
+        },
+        {
+          "line": 7642,
+          "function": "_ensure_operator_critical_hitspark_animation",
+          "classification": "BLOCKED",
+          "clips": []
+        },
+        {
+          "line": 7643,
+          "function": "_ensure_operator_critical_hitspark_animation",
+          "classification": "BLOCKED",
+          "clips": []
+        },
+        {
+          "line": 7648,
+          "function": "_ensure_operator_critical_hitspark_animation",
+          "classification": "BLOCKED",
+          "clips": []
+        }
+      ]
     },
     "<unattributed>": {
-      "sites": 9,
-      "active": 9,
-      "blocking": 2,
+      "sites": 10,
+      "active": 10,
+      "blocking": 3,
       "ready": false,
       "unattributed": true,
       "blocking_detail": []
@@ -1561,6 +1699,40 @@
       "site_reason": ""
     },
     {
+      "debt": "candidate_animation_list",
+      "file": "custodian/game/actors/operator/operator.gd",
+      "line": 3379,
+      "function": "_begin_modular_primary_ranged_fire_presentation",
+      "renderer": "modular_upper_body_sprite",
+      "renderers": [
+        "modular_upper_body_sprite"
+      ],
+      "argument": "",
+      "source": "_primary_ranged_fire_candidates(&\"upper\", suffix),",
+      "legacy_clips": [],
+      "trace": [],
+      "mappings": [],
+      "classification": "BLOCKED",
+      "site_reason": "selects by walking a list of candidate legacy clip names; the caller must request one canonical identity instead"
+    },
+    {
+      "debt": "candidate_animation_list",
+      "file": "custodian/game/actors/operator/operator.gd",
+      "line": 3408,
+      "function": "_begin_modular_primary_ranged_fire_presentation",
+      "renderer": "modular_upper_fx_sprite",
+      "renderers": [
+        "modular_upper_fx_sprite"
+      ],
+      "argument": "",
+      "source": "_primary_ranged_fire_candidates(&\"fx\", suffix),",
+      "legacy_clips": [],
+      "trace": [],
+      "mappings": [],
+      "classification": "BLOCKED",
+      "site_reason": "selects by walking a list of candidate legacy clip names; the caller must request one canonical identity instead"
+    },
+    {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
       "line": 3448,
@@ -1712,6 +1884,21 @@
       ],
       "classification": "PROVEN",
       "site_reason": ""
+    },
+    {
+      "debt": "candidate_animation_list",
+      "file": "custodian/game/actors/operator/operator.gd",
+      "line": 3557,
+      "function": "_primary_ranged_fire_candidates",
+      "renderer": "",
+      "renderers": [],
+      "argument": "",
+      "source": "func _primary_ranged_fire_candidates(layer_key: StringName, suffix: StringName) -> Array[StringName]:",
+      "legacy_clips": [],
+      "trace": [],
+      "mappings": [],
+      "classification": "BLOCKED",
+      "site_reason": "selects by walking a list of candidate legacy clip names; the caller must request one canonical identity instead"
     },
     {
       "debt": "animation_resolver",
@@ -2645,8 +2832,8 @@
           }
         }
       ],
-      "classification": "PROVEN",
-      "site_reason": ""
+      "classification": "AUTHORING_DECISION",
+      "site_reason": "C2a-R2 blocker. The legacy clip unarmed_parry_success_01_fx has no single canonical identity: its _left sources parry_recovery_01 fx art and its _right sources interaction/success_01 fx art, two semantically different actions under one name. It is live via guard_enter_post_parry_neutral(). Separately, unarmed_parry_recovery_fx is requested but absent from the compatibility resource, so parry-recovery FX has never rendered while canonical art exists. modular_upper_fx_sprite cannot be rebound until both are decided."
     },
     {
       "debt": "animation_resolver",
@@ -2684,8 +2871,8 @@
           }
         }
       ],
-      "classification": "PROVEN",
-      "site_reason": ""
+      "classification": "AUTHORING_DECISION",
+      "site_reason": "C2a-R2 blocker. The legacy clip unarmed_parry_success_01_fx has no single canonical identity: its _left sources parry_recovery_01 fx art and its _right sources interaction/success_01 fx art, two semantically different actions under one name. It is live via guard_enter_post_parry_neutral(). Separately, unarmed_parry_recovery_fx is requested but absent from the compatibility resource, so parry-recovery FX has never rendered while canonical art exists. modular_upper_fx_sprite cannot be rebound until both are decided."
     },
     {
       "debt": "animation_resolver",
@@ -2710,65 +2897,254 @@
         {
           "legacy_clip": "unarmed_parry_fx",
           "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source C",
+          "why": "reachability legacy_clips, proof source A",
           "canonical": {
             "profile": "unarmed",
             "group": "defense",
-            "action": "parry_success_01",
+            "action": "parry_01",
             "layers": {
               "fx": [
                 "e",
-                "w"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        },
-        {
-          "legacy_clip": "unarmed_parry_recovery_fx",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source C",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "attack",
-            "action": "parry_recovery_01",
-            "layers": {
-              "fx": [
-                "e",
+                "n",
                 "w"
               ],
               "lower_body": [
                 "e",
+                "n",
                 "w"
               ],
               "upper_body": [
                 "e",
+                "n",
                 "w"
               ]
             },
-            "reachability_status": "LIVE"
+            "reachability_status": "DORMANT"
           }
         },
         {
+          "legacy_clip": "unarmed_parry_recovery_fx",
+          "classification": "UNRESOLVED",
+          "why": "no legacy_clips row in the reachability contract",
+          "canonical": null
+        },
+        {
           "legacy_clip": "unarmed_parry_success_01_fx",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source C",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "defense",
-            "action": "parry_success_01",
-            "layers": {
-              "fx": [
-                "e",
-                "w"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
+          "classification": "UNRESOLVED",
+          "why": "no legacy_clips row in the reachability contract",
+          "canonical": null
         }
       ],
-      "classification": "PROVEN",
-      "site_reason": ""
+      "classification": "AUTHORING_DECISION",
+      "site_reason": "C2a-R2 blocker. The legacy clip unarmed_parry_success_01_fx has no single canonical identity: its _left sources parry_recovery_01 fx art and its _right sources interaction/success_01 fx art, two semantically different actions under one name. It is live via guard_enter_post_parry_neutral(). Separately, unarmed_parry_recovery_fx is requested but absent from the compatibility resource, so parry-recovery FX has never rendered while canonical art exists. modular_upper_fx_sprite cannot be rebound until both are decided."
+    },
+    {
+      "debt": "runtime_spriteframes_mutation",
+      "file": "custodian/game/actors/operator/operator.gd",
+      "line": 7360,
+      "function": "_ensure_paired_execution_animation",
+      "renderer": "",
+      "renderers": [
+        "animated_sprite",
+        "modular_upper_fx_sprite"
+      ],
+      "argument": "",
+      "source": "sprite.sprite_frames.add_animation(animation_name)",
+      "legacy_clips": [],
+      "trace": [],
+      "mappings": [],
+      "classification": "BLOCKED",
+      "site_reason": "builds animations into the renderer's SpriteFrames at runtime, which a SHARED canonical resource cannot accept: the mutation would leak into every other renderer bound to it. Canonical equivalents exist, so this is migratable work rather than an authoring decision \u2014 but the renderer must not be rebound while it remains."
+    },
+    {
+      "debt": "runtime_spriteframes_mutation",
+      "file": "custodian/game/actors/operator/operator.gd",
+      "line": 7361,
+      "function": "_ensure_paired_execution_animation",
+      "renderer": "",
+      "renderers": [
+        "animated_sprite",
+        "modular_upper_fx_sprite"
+      ],
+      "argument": "",
+      "source": "sprite.sprite_frames.set_animation_loop(animation_name, false)",
+      "legacy_clips": [],
+      "trace": [],
+      "mappings": [],
+      "classification": "BLOCKED",
+      "site_reason": "builds animations into the renderer's SpriteFrames at runtime, which a SHARED canonical resource cannot accept: the mutation would leak into every other renderer bound to it. Canonical equivalents exist, so this is migratable work rather than an authoring decision \u2014 but the renderer must not be rebound while it remains."
+    },
+    {
+      "debt": "runtime_spriteframes_mutation",
+      "file": "custodian/game/actors/operator/operator.gd",
+      "line": 7364,
+      "function": "_ensure_paired_execution_animation",
+      "renderer": "",
+      "renderers": [
+        "animated_sprite",
+        "modular_upper_fx_sprite"
+      ],
+      "argument": "",
+      "source": "sprite.sprite_frames.set_animation_speed(animation_name, PAIRED_EXECUTION_SOURCE_FPS)",
+      "legacy_clips": [],
+      "trace": [],
+      "mappings": [],
+      "classification": "BLOCKED",
+      "site_reason": "builds animations into the renderer's SpriteFrames at runtime, which a SHARED canonical resource cannot accept: the mutation would leak into every other renderer bound to it. Canonical equivalents exist, so this is migratable work rather than an authoring decision \u2014 but the renderer must not be rebound while it remains."
+    },
+    {
+      "debt": "runtime_spriteframes_mutation",
+      "file": "custodian/game/actors/operator/operator.gd",
+      "line": 7369,
+      "function": "_ensure_paired_execution_animation",
+      "renderer": "",
+      "renderers": [
+        "animated_sprite",
+        "modular_upper_fx_sprite"
+      ],
+      "argument": "",
+      "source": "sprite.sprite_frames.add_frame(animation_name, atlas)",
+      "legacy_clips": [],
+      "trace": [],
+      "mappings": [],
+      "classification": "BLOCKED",
+      "site_reason": "builds animations into the renderer's SpriteFrames at runtime, which a SHARED canonical resource cannot accept: the mutation would leak into every other renderer bound to it. Canonical equivalents exist, so this is migratable work rather than an authoring decision \u2014 but the renderer must not be rebound while it remains."
+    },
+    {
+      "debt": "runtime_spriteframes_mutation",
+      "file": "custodian/game/actors/operator/operator.gd",
+      "line": 7602,
+      "function": "_ensure_operator_critical_attack_animation",
+      "renderer": "animated_sprite",
+      "renderers": [
+        "animated_sprite"
+      ],
+      "argument": "",
+      "source": "animated_sprite.sprite_frames.add_animation(animation_name)",
+      "legacy_clips": [],
+      "trace": [],
+      "mappings": [],
+      "classification": "BLOCKED",
+      "site_reason": "builds animations into the renderer's SpriteFrames at runtime, which a SHARED canonical resource cannot accept: the mutation would leak into every other renderer bound to it. Canonical equivalents exist, so this is migratable work rather than an authoring decision \u2014 but the renderer must not be rebound while it remains."
+    },
+    {
+      "debt": "runtime_spriteframes_mutation",
+      "file": "custodian/game/actors/operator/operator.gd",
+      "line": 7603,
+      "function": "_ensure_operator_critical_attack_animation",
+      "renderer": "animated_sprite",
+      "renderers": [
+        "animated_sprite"
+      ],
+      "argument": "",
+      "source": "animated_sprite.sprite_frames.set_animation_loop(animation_name, false)",
+      "legacy_clips": [],
+      "trace": [],
+      "mappings": [],
+      "classification": "BLOCKED",
+      "site_reason": "builds animations into the renderer's SpriteFrames at runtime, which a SHARED canonical resource cannot accept: the mutation would leak into every other renderer bound to it. Canonical equivalents exist, so this is migratable work rather than an authoring decision \u2014 but the renderer must not be rebound while it remains."
+    },
+    {
+      "debt": "runtime_spriteframes_mutation",
+      "file": "custodian/game/actors/operator/operator.gd",
+      "line": 7604,
+      "function": "_ensure_operator_critical_attack_animation",
+      "renderer": "animated_sprite",
+      "renderers": [
+        "animated_sprite"
+      ],
+      "argument": "",
+      "source": "animated_sprite.sprite_frames.set_animation_speed(animation_name, CRITICAL_ATTACK_FPS)",
+      "legacy_clips": [],
+      "trace": [],
+      "mappings": [],
+      "classification": "BLOCKED",
+      "site_reason": "builds animations into the renderer's SpriteFrames at runtime, which a SHARED canonical resource cannot accept: the mutation would leak into every other renderer bound to it. Canonical equivalents exist, so this is migratable work rather than an authoring decision \u2014 but the renderer must not be rebound while it remains."
+    },
+    {
+      "debt": "runtime_spriteframes_mutation",
+      "file": "custodian/game/actors/operator/operator.gd",
+      "line": 7609,
+      "function": "_ensure_operator_critical_attack_animation",
+      "renderer": "animated_sprite",
+      "renderers": [
+        "animated_sprite"
+      ],
+      "argument": "",
+      "source": "animated_sprite.sprite_frames.add_frame(animation_name, atlas)",
+      "legacy_clips": [],
+      "trace": [],
+      "mappings": [],
+      "classification": "BLOCKED",
+      "site_reason": "builds animations into the renderer's SpriteFrames at runtime, which a SHARED canonical resource cannot accept: the mutation would leak into every other renderer bound to it. Canonical equivalents exist, so this is migratable work rather than an authoring decision \u2014 but the renderer must not be rebound while it remains."
+    },
+    {
+      "debt": "runtime_spriteframes_mutation",
+      "file": "custodian/game/actors/operator/operator.gd",
+      "line": 7641,
+      "function": "_ensure_operator_critical_hitspark_animation",
+      "renderer": "modular_upper_fx_sprite",
+      "renderers": [
+        "modular_upper_fx_sprite"
+      ],
+      "argument": "",
+      "source": "modular_upper_fx_sprite.sprite_frames.add_animation(animation_name)",
+      "legacy_clips": [],
+      "trace": [],
+      "mappings": [],
+      "classification": "BLOCKED",
+      "site_reason": "builds animations into the renderer's SpriteFrames at runtime, which a SHARED canonical resource cannot accept: the mutation would leak into every other renderer bound to it. Canonical equivalents exist, so this is migratable work rather than an authoring decision \u2014 but the renderer must not be rebound while it remains."
+    },
+    {
+      "debt": "runtime_spriteframes_mutation",
+      "file": "custodian/game/actors/operator/operator.gd",
+      "line": 7642,
+      "function": "_ensure_operator_critical_hitspark_animation",
+      "renderer": "modular_upper_fx_sprite",
+      "renderers": [
+        "modular_upper_fx_sprite"
+      ],
+      "argument": "",
+      "source": "modular_upper_fx_sprite.sprite_frames.set_animation_loop(animation_name, false)",
+      "legacy_clips": [],
+      "trace": [],
+      "mappings": [],
+      "classification": "BLOCKED",
+      "site_reason": "builds animations into the renderer's SpriteFrames at runtime, which a SHARED canonical resource cannot accept: the mutation would leak into every other renderer bound to it. Canonical equivalents exist, so this is migratable work rather than an authoring decision \u2014 but the renderer must not be rebound while it remains."
+    },
+    {
+      "debt": "runtime_spriteframes_mutation",
+      "file": "custodian/game/actors/operator/operator.gd",
+      "line": 7643,
+      "function": "_ensure_operator_critical_hitspark_animation",
+      "renderer": "modular_upper_fx_sprite",
+      "renderers": [
+        "modular_upper_fx_sprite"
+      ],
+      "argument": "",
+      "source": "modular_upper_fx_sprite.sprite_frames.set_animation_speed(animation_name, CRITICAL_HITSPARK_FPS)",
+      "legacy_clips": [],
+      "trace": [],
+      "mappings": [],
+      "classification": "BLOCKED",
+      "site_reason": "builds animations into the renderer's SpriteFrames at runtime, which a SHARED canonical resource cannot accept: the mutation would leak into every other renderer bound to it. Canonical equivalents exist, so this is migratable work rather than an authoring decision \u2014 but the renderer must not be rebound while it remains."
+    },
+    {
+      "debt": "runtime_spriteframes_mutation",
+      "file": "custodian/game/actors/operator/operator.gd",
+      "line": 7648,
+      "function": "_ensure_operator_critical_hitspark_animation",
+      "renderer": "modular_upper_fx_sprite",
+      "renderers": [
+        "modular_upper_fx_sprite"
+      ],
+      "argument": "",
+      "source": "modular_upper_fx_sprite.sprite_frames.add_frame(animation_name, atlas)",
+      "legacy_clips": [],
+      "trace": [],
+      "mappings": [],
+      "classification": "BLOCKED",
+      "site_reason": "builds animations into the renderer's SpriteFrames at runtime, which a SHARED canonical resource cannot accept: the mutation would leak into every other renderer bound to it. Canonical equivalents exist, so this is migratable work rather than an authoring decision \u2014 but the renderer must not be rebound while it remains."
     },
     {
       "debt": "animation_resolver",
@@ -2791,18 +3167,29 @@
         {
           "legacy_clip": "unarmed_parry_fx",
           "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source C",
+          "why": "reachability legacy_clips, proof source A",
           "canonical": {
             "profile": "unarmed",
             "group": "defense",
-            "action": "parry_success_01",
+            "action": "parry_01",
             "layers": {
               "fx": [
                 "e",
+                "n",
+                "w"
+              ],
+              "lower_body": [
+                "e",
+                "n",
+                "w"
+              ],
+              "upper_body": [
+                "e",
+                "n",
                 "w"
               ]
             },
-            "reachability_status": "LIVE"
+            "reachability_status": "DORMANT"
           }
         }
       ],
