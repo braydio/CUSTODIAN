@@ -744,7 +744,7 @@
       "legacy_clip_proof": {
         "unarmed_parry_recovery": "A"
       },
-      "open_authoring_question": "C2a-R2 note: _play_modular_unarmed_parry() requests the legacy clip unarmed_parry_recovery_fx, which is absent from operator_modular_upper_fx_frames.tres, so no parry-recovery FX has ever rendered. Canonical parry_recovery_01 fx exists for e/w. Preserving current behaviour means deliberately leaving that authored art unused; enabling it is a visible change and therefore an authoring decision."
+      "open_authoring_question": "RESOLVED 2026-09-13 (C2a-R2): published canonical art with NO current live presentation contract. The active guard contract keeps the original parry_01 attempt through failed-parry recovery and defines no separate recovery FX beat, so nothing requests this. Preserved for a future explicit recovery presentation contract; do not add a gameplay call merely to make the asset reachable."
     },
     {
       "profile": "unarmed",
@@ -852,13 +852,15 @@
       "consumer": "operator._play_parry_animation (unarmed_parry_success_01)",
       "legacy_clips": [
         "unarmed_parry_success",
-        "unarmed_parry_success_01"
+        "unarmed_parry_success_01",
+        "unarmed_parry_success_01_fx"
       ],
       "legacy_clip_proof": {
         "unarmed_parry_success": "A",
-        "unarmed_parry_success_01": "A"
+        "unarmed_parry_success_01": "A",
+        "unarmed_parry_success_01_fx": "D"
       },
-      "open_authoring_question": "C2a-R2 blocker: the legacy clip unarmed_parry_success_01_fx has no single canonical identity. Texture provenance in operator_modular_upper_fx_frames.tres shows _left sources unarmed/attack/parry_recovery_01 fx art and _right sources unarmed/interaction/success_01 fx art, so one clip name spans two semantically different actions. It is live: guard_enter_post_parry_neutral() calls _play_parry_animation(&\"unarmed_parry_success_01\") and the modular body art for that base exists, so the FX branch is reached. Canonicalizing it requires an authoring decision between: (a) unarmed/defense/parry_success_01/fx, which exists for e/w and is the semantically obvious action but is NOT what plays today; (b) preserving today's pixels, which means encoding parry_recovery for west and interaction/success for east; or (c) no FX for this action. modular_upper_fx_sprite must not be rebound until this is decided."
+      "open_authoring_question": "RESOLVED 2026-09-13 (C2a-R2). The legacy clip unarmed_parry_success_01_fx was mis-published \u2014 its west sourced parry_recovery_01 art and its east sourced interaction/success_01 \u2014 and is NOT preservation authority. Successful parry presents this action. interaction/success_01 is DORMANT_PENDING_INTERACTION_SUCCESS_CONTRACT and must never stand in for parry-success presentation. Authored e/w; the caller preserves the historical left/right selection (x < 0 -> w, otherwise e) as presentation policy, not as selector behaviour."
     },
     {
       "profile": "unarmed",
@@ -882,7 +884,8 @@
       "group": "interaction",
       "action": "success_01",
       "status": "DORMANT_PENDING_INTERACTION_SUCCESS_CONTRACT",
-      "reason": "No generic interaction-success gameplay contract exists yet; interaction signals (repair_completed, interaction_pressed, etc.) are all per-interactable, not a unified Operator success beat."
+      "reason": "No generic interaction-success gameplay contract exists yet; interaction signals (repair_completed, interaction_pressed, etc.) are all per-interactable, not a unified Operator success beat.",
+      "open_authoring_question": "C2a-R2: explicitly NOT valid as parry-success presentation. The compatibility clip unarmed_parry_success_01_fx sourced this art for its east variant, which was a mis-publication. This action stays dormant pending a real interaction-success gameplay contract."
     },
     {
       "profile": "unarmed",

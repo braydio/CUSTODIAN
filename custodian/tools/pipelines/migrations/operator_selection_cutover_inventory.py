@@ -103,6 +103,7 @@ RETIRED_RENDERERS = {"modular_head_sprite", "modular_cape_sprite"}
 #: report says MIGRATED-WITH-REGRESSION rather than quietly reverting to READY.
 MIGRATED_RENDERERS = {
     "modular_sidearm_sprite": "C2a-R1",
+    "modular_upper_fx_sprite": "C2a-R2",
 }
 
 #: The canonical SpriteFrames a migrated renderer must be bound to.
@@ -219,6 +220,12 @@ NON_CLIP_LITERALS = {
 }
 
 
+#: Canonical action names, filled from the manifest. A cutover introduces these
+#: as arguments (`&"field_patch_use_01"`), and some share a prefix with the legacy
+#: clips they replace, so they must be excluded by identity rather than by shape.
+CANONICAL_ACTIONS: set[str] = set()
+
+
 def literals_in(text: str, known: set[str] | None = None) -> list[str]:
     """Clip-shaped literals. A clip name has a profile/action shape; a bare word
     like "aiming" is a phase key and would otherwise be reported as an unproven
@@ -231,7 +238,7 @@ def literals_in(text: str, known: set[str] | None = None) -> list[str]:
         if known and literal in known:
             found.append(literal)
             continue
-        if literal in NON_CLIP_LITERALS:
+        if literal in NON_CLIP_LITERALS or literal in CANONICAL_ACTIONS:
             continue
         # Shape alone (has "_", long enough) also matches dictionary keys like
         # "impact_position". Legacy Operator clip names always carry one of these
@@ -517,6 +524,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     coverage, join = load_contract()
+    CANONICAL_ACTIONS.update(action for _p, _g, action in coverage)
     files = sources()
 
     sites: list[dict] = []

@@ -5,8 +5,9 @@
 - `design/02_features/animation/OPERATOR_RUNTIME_ANIMATION_AUTHORITY.md` — target ownership, exact/SOUTH selection, preservation gates and remaining acceptance work.
 - `tools/pipelines/migrations/materialize_operator_legacy_animations.gd` — explicit, dry-run-default, pixel/timing-preserving extraction from compatibility SpriteFrames.
 - `tools/pipelines/migrations/operator_legacy_animation_map.json` — reviewed resource/animation/consumer mappings for the initial 32 heavy-melee/Cleaver strips.
-- `game/actors/operator/animations/operator_animation_selector.gd` — tested runtime selector module, not yet connected to gameplay.
+- `game/actors/operator/animations/operator_animation_selector.gd` — runtime selection authority; `resolve`, `resolve_sector` and the non-erroring `has_sector_identity`. Live for `modular_sidearm_sprite` (C2a-R1) and `modular_upper_fx_sprite` (C2a-R2); the remaining renderers are still on compatibility SpriteFrames.
 - `tools/validation/operator_animation_selector_smoke.gd` — exact/SOUTH/OMNI and namespace-isolation regression checks.
+- `tools/validation/operator_{sidearm,upper_fx}_canonical_smoke.gd` — per-renderer cutover gates: the renderer is bound to `operator_runtime_frames.tres`, resolves canonical identities, and never mutates the shared SpriteFrames.
 
 ## Canon migration
 

@@ -55,9 +55,11 @@ func _init() -> void:
 		&"ranged_2h_fire_upper_right",
 		&"ranged_2h_fire_upper_left",
 	])
+	# C2a-R2: the FX renderer is canonical, so its fixture carries canonical
+	# identities. The body layers beside it are still compatibility renderers.
 	_install_test_frames(fx, [
-		&"ranged_2h_fire_fx_right",
-		&"ranged_2h_fire_fx_left",
+		&"ranged_2h/cosmetic/fire_01/e/fx",
+		&"ranged_2h/cosmetic/fire_01/w/fx",
 	])
 
 	if not bool(operator.call("_sync_modular_ranged_relaxed_presentation", Vector2.RIGHT)):
@@ -139,7 +141,7 @@ func _init() -> void:
 	_check_layer(lower, &"unarmed_idle_right", "lower", failures)
 	_check_layer(upper, &"ranged_2h_fire_upper_right", "upper", failures)
 	_check_static_weapon(weapon, "weapon", failures)
-	_check_layer(fx, &"ranged_2h_fire_fx_right", "fx", failures)
+	_check_layer(fx, &"ranged_2h/cosmetic/fire_01/e/fx", "fx", failures)
 	if operator.call("get_ranged_posture") != &"firing":
 		failures.append("active primary shot should report firing posture")
 	operator.set("aim_direction", Vector2.LEFT)

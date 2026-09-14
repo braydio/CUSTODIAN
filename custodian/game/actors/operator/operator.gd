@@ -93,30 +93,15 @@ const CRITICAL_ATTACK_LEFT_SHEET := "res://content/sprites/operator/runtime/anim
 const CRITICAL_ATTACK_FRAME_COUNT := 8
 const CRITICAL_ATTACK_FRAME_SIZE := Vector2i(96, 96)
 const CRITICAL_ATTACK_FPS := 15.0
-const CRITICAL_HITSPARK_RIGHT_SHEET := "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_operator_fx_critical_hitspark_01_e_8f_156x96/operator__fx__unarmed__cosmetic__legacy_operator_fx_critical_hitspark_01_e_8f_156x96__omni__1f__1248x96.png"
-const CRITICAL_HITSPARK_LEFT_SHEET := "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_operator_fx_critical_hitspark_01_w_8f_156x96/operator__fx__unarmed__cosmetic__legacy_operator_fx_critical_hitspark_01_w_8f_156x96__omni__1f__1248x96.png"
-const CRITICAL_HITSPARK_FRAME_COUNT := 8
-const CRITICAL_HITSPARK_FRAME_SIZE := Vector2i(156, 96)
-const CRITICAL_HITSPARK_FPS := 15.0
 const PAIRED_EXECUTION_BODY_SHEETS := {
 	&"s": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/critical_execution_01/operator__full_body__unarmed__cosmetic__critical_execution_01__s__8f__96.png",
 	&"e": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/critical_execution_01/operator__full_body__unarmed__cosmetic__critical_execution_01__e__12f__96.png",
 	&"w": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/critical_execution_01/operator__full_body__unarmed__cosmetic__critical_execution_01__w__12f__96.png",
 }
-const PAIRED_EXECUTION_FX_SHEETS := {
-	&"s": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/critical_execution_01/operator__fx__unarmed__cosmetic__critical_execution_01__s__8f__96.png",
-	&"e": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/critical_execution_01/operator__fx__unarmed__cosmetic__critical_execution_01__e__12f__96.png",
-	&"w": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/critical_execution_01/operator__fx__unarmed__cosmetic__critical_execution_01__w__12f__96.png",
-}
 const PAIRED_EXECUTION_BODY_ANIMATIONS := {
 	&"s": &"operator_critical_execution_s",
 	&"e": &"operator_critical_execution_e",
 	&"w": &"operator_critical_execution_w",
-}
-const PAIRED_EXECUTION_FX_ANIMATIONS := {
-	&"s": &"operator_critical_execution_fx_s",
-	&"e": &"operator_critical_execution_fx_e",
-	&"w": &"operator_critical_execution_fx_w",
 }
 const PAIRED_EXECUTION_FRAME_SIZE := Vector2i(96, 96)
 const PAIRED_EXECUTION_SOURCE_FPS := 12.0
@@ -134,10 +119,6 @@ const FALCON_REVERSAL_HIT_STOP_DURATION := 0.13
 const FALCON_REVERSAL_BODY_SHEETS := {
 	&"e": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/falcon_reversal_01/operator__full_body__unarmed__cosmetic__falcon_reversal_01__e__8f__156.png",
 	&"w": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/falcon_reversal_01/operator__full_body__unarmed__cosmetic__falcon_reversal_01__w__8f__156.png",
-}
-const FALCON_REVERSAL_FX_SHEETS := {
-	&"e": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/falcon_reversal_01/operator__fx__unarmed__cosmetic__falcon_reversal_01__e__8f__156.png",
-	&"w": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/falcon_reversal_01/operator__fx__unarmed__cosmetic__falcon_reversal_01__w__8f__156.png",
 }
 const PAIRED_EXECUTION_IMPACT_SOUND := preload("res://addons/Sound FX Starter Pack Vol. 1/Motions and Impacts/Impact Vox Hammer.wav")
 const HIT_LIGHT_BODY_SOUND: AudioStream = preload("res://content/audio/sfx/combat/hit_light_body_01.wav")
@@ -2690,16 +2671,17 @@ func _sync_modular_fast_attack_phase(phase: StringName) -> bool:
 	_modular_upper_action_animation = AnimationResolver.resolve(upper_base, _melee_forward, modular_upper_body_sprite)
 	_modular_upper_fx_action_animation = &""
 	if not fx_base.is_empty():
-		if _sync_modular_fast_attack_layer(modular_upper_fx_sprite, fx_base, _melee_forward, speed, restart_once):
-			_modular_upper_fx_action_animation = AnimationResolver.resolve(fx_base, _melee_forward, modular_upper_fx_sprite)
-		else:
-			if modular_upper_fx_sprite:
-				modular_upper_fx_sprite.visible = false
-			if not _warned_missing_modular_fast_attack_fx:
-				_warned_missing_modular_fast_attack_fx = true
-				push_warning("Missing modular unarmed fast strike upper_fx for direction; body layers will play without FX.")
+		# The FX renderer is canonical as of C2a-R2. fast_strike_01 fx is authored
+		# for all eight sectors, so no reduced-direction policy applies here.
+		var fx_sector := OperatorAnimationSelector.vector_to_sector(_melee_forward)
+		if not _play_optional_fx(
+			&"unarmed", &"attack", &"fast_strike_01", fx_sector, speed
+		) and not _warned_missing_modular_fast_attack_fx:
+			_warned_missing_modular_fast_attack_fx = true
+			push_warning("Missing canonical unarmed fast strike fx for a sector; body layers play without FX.")
 	elif modular_upper_fx_sprite:
-		modular_upper_fx_sprite.visible = false
+		_hide_presentation_layer(modular_upper_fx_sprite, true)
+		_modular_upper_fx_action_animation = &""
 	_claim_modular_body_owner()
 	return true
 
@@ -2893,10 +2875,17 @@ func _sync_modular_sidearm_presentation(_is_firing: bool) -> bool:
 		modular_sidearm_sprite, pistol_animation, holding, start_action
 	):
 		return false
-	_sync_sidearm_action_sprite(
-		modular_upper_fx_sprite,
-		StringName("sidearm_%s_fx_%s" % [action, legacy_suffix]), holding, start_action
-	)
+	# The FX renderer is canonical as of C2a-R2 and reuses the SAME authored sector
+	# already chosen for the pistol, lower and upper — it does not resolve its own.
+	var fx_action: StringName = &"fire_sidearm_01" if firing else &"draw_sidearm_01"
+	var fx_group: StringName = &"cosmetic" if firing else &"posture"
+	if _has_fx_animation(&"sidearm", fx_group, fx_action, sector):
+		var fx_animation := _resolve_fx_animation(&"sidearm", fx_group, fx_action, sector)
+		_sync_sidearm_action_sprite(
+			modular_upper_fx_sprite, fx_animation, holding, start_action
+		)
+	elif modular_upper_fx_sprite != null:
+		_hide_presentation_layer(modular_upper_fx_sprite, true)
 	if start_action:
 		_sidearm_action_phase_started = true
 	_claim_modular_body_owner()
@@ -3403,9 +3392,18 @@ func _begin_modular_primary_ranged_fire_presentation(
 	any_layer_played = any_layer_played or bool(weapon_result.get("played", false))
 	longest_duration = max(longest_duration, float(weapon_result.get("duration", 0.0)))
 
+	# Canonical as of C2a-R2. fire_01 fx is authored e/se/sw/w and the compatibility
+	# renderer always showed something, so the projection preserves that rather than
+	# blanking the sectors the fx layer never authored directly.
+	var fx_fire_sector := _ranged_2h_fx_authored_sector(&"fire_01", _direction_from_suffix(suffix))
+	var fx_candidates: Array[StringName] = []
+	if _has_fx_animation(&"ranged_2h", &"cosmetic", &"fire_01", fx_fire_sector):
+		fx_candidates.append(
+			_resolve_fx_animation(&"ranged_2h", &"cosmetic", &"fire_01", fx_fire_sector)
+		)
 	var fx_result := _play_first_available_modular_fire_animation(
 		modular_upper_fx_sprite,
-		_primary_ranged_fire_candidates(&"fx", suffix),
+		fx_candidates,
 		modular_primary_ranged_fire_fps
 	)
 	any_layer_played = any_layer_played or bool(fx_result.get("played", false))
@@ -3576,11 +3574,8 @@ func _primary_ranged_fire_candidates(layer_key: StringName, suffix: StringName) 
 			# legacy candidate list; see _begin_modular_primary_ranged_fire_presentation.
 			return []
 		&"fx":
-			return [
-				StringName("ranged_2h_fire_fx_%s" % dir),
-				StringName("primary_ranged_fire_fx_%s" % dir),
-				StringName("ranged_fire_fx_%s" % dir),
-			]
+			# Canonical as of C2a-R2; see _begin_modular_primary_ranged_fire_presentation.
+			return []
 	return []
 
 
@@ -3703,7 +3698,11 @@ func _play_field_patch_use_presentation() -> bool:
 
 	var lower_played := _sync_field_patch_action_layer(modular_lower_body_sprite, "field_patch_use_lower", direction, 11.2)
 	var upper_played := _sync_field_patch_action_layer(modular_upper_body_sprite, "field_patch_use_upper", direction, 11.2)
-	_sync_field_patch_action_layer(modular_upper_fx_sprite, "field_patch_use_fx", direction, 11.2)
+	# field_patch_use_01 fx is authored e/w only.
+	_play_optional_fx(
+		&"unarmed", &"interaction", &"field_patch_use_01",
+		_reduced_horizontal_sector(direction)
+	)
 	if lower_played and upper_played:
 		_claim_modular_body_owner()
 		if modular_sidearm_sprite:
@@ -4021,6 +4020,100 @@ func _set_body_presentation_owner(owner: int) -> bool:
 	return _body_presenter.set_owner(owner)
 
 
+## Present the FX beat for one parry action, and report the identity it played.
+##
+## C2a-R2 authoring decisions:
+##
+## Successful parry presents unarmed/defense/parry_success_01. The legacy clip
+## unarmed_parry_success_01_fx was mis-published — its west sourced
+## parry_recovery art and its east sourced interaction/success_01, which is
+## DORMANT_PENDING_INTERACTION_SUCCESS_CONTRACT and must never stand in for
+## parry-success presentation — so it is not preservation authority.
+##
+## Failed parry gets NO separate recovery FX beat: the guard contract keeps the
+## original parry_01 attempt through recovery. parry_recovery_01 fx is published
+## but dormant, and playing it here would invent a beat the design does not define.
+##
+## Returns the canonical identity presented, or an empty name for "no FX".
+func _present_parry_fx(base_animation: String, direction: Vector2) -> StringName:
+	if modular_upper_fx_sprite == null:
+		return &""
+	if base_animation == "unarmed_parry_recovery":
+		_hide_presentation_layer(modular_upper_fx_sprite, true)
+		_modular_upper_fx_action_animation = &""
+		return &""
+	if base_animation == "unarmed_parry_success_01":
+		_play_optional_fx(
+			&"unarmed", &"defense", &"parry_success_01",
+			_reduced_horizontal_sector(direction)
+		)
+		return _modular_upper_fx_action_animation
+	_play_optional_fx(
+		&"unarmed", &"defense", &"parry_01",
+		OperatorAnimationSelector.vector_to_sector(direction)
+	)
+	return _modular_upper_fx_action_animation
+
+
+## The authored facing for art published east/west only.
+##
+## Caller-owned presentation policy, characterized from what the compatibility
+## renderer actually did: `AnimationResolver` took `_left` when x < 0 and
+## otherwise fell through to `_right`, so vertical and eastward requests both
+## resolved east. The selector is not taught this.
+func _reduced_horizontal_sector(direction: Vector2) -> StringName:
+	return &"w" if direction.x < 0.0 else &"e"
+
+
+## Canonical FX identity for an already-decided authored sector.
+##
+## modular_upper_fx_sprite is canonical as of C2a-R2, so every path that drives it
+## asks for one canonical identity instead of resolving a legacy clip name.
+func _resolve_fx_animation(
+	profile: StringName, group: StringName, action: StringName, sector: StringName
+) -> StringName:
+	return _get_operator_animation_selector().resolve_sector(
+		profile, group, action, sector, &"fx"
+	)
+
+
+## Whether an FX identity exists, without reporting a missing-animation error.
+##
+## FX is OPTIONAL presentation: a sector with no authored effect must render
+## nothing and let gameplay continue, not raise an error. Required body art is a
+## different matter and still errors loudly.
+func _has_fx_animation(
+	profile: StringName, group: StringName, action: StringName, sector: StringName
+) -> bool:
+	return _get_operator_animation_selector().has_sector_identity(
+		profile, group, action, sector, &"fx"
+	)
+
+
+## Play an optional canonical FX identity, or cleanly show nothing.
+func _play_optional_fx(
+	profile: StringName, group: StringName, action: StringName, sector: StringName,
+	speed_scale := 1.0
+) -> bool:
+	if modular_upper_fx_sprite == null:
+		return false
+	if not _has_fx_animation(profile, group, action, sector):
+		_hide_presentation_layer(modular_upper_fx_sprite, true)
+		_modular_upper_fx_action_animation = &""
+		return false
+	var animation := _resolve_fx_animation(profile, group, action, sector)
+	if animation.is_empty():
+		_hide_presentation_layer(modular_upper_fx_sprite, true)
+		_modular_upper_fx_action_animation = &""
+		return false
+	_show_presentation_layer(modular_upper_fx_sprite)
+	modular_upper_fx_sprite.flip_h = false
+	modular_upper_fx_sprite.speed_scale = speed_scale
+	_animation_player.play(modular_upper_fx_sprite, animation)
+	_modular_upper_fx_action_animation = animation
+	return true
+
+
 ## Canonical Sidearm weapon identity for an already-decided authored sector.
 func _resolve_sidearm_weapon_animation(
 	group: StringName, action: StringName, sector: StringName
@@ -4065,6 +4158,26 @@ func _direction_from_suffix(suffix: StringName) -> Vector2:
 		"left": return Vector2.LEFT
 		"up_left": return Vector2(-1, -1)
 	return Vector2.RIGHT
+
+
+## The authored ranged_2h FX facing. The FX layer's authored set is not the
+## weapon layer's — fire_01 publishes a weapon strip for `n` but no fx strip — so
+## the two cannot share a table. Characterized from the compatibility resource,
+## where the fx clips are e/se/sw/w plus an unsuffixed clip that is the `e` art,
+## and AnimationResolver fell through to `_left` when x < 0 and otherwise
+## `_right`. FX therefore always rendered something; it never rendered nothing.
+const RANGED_2H_FX_AUTHORED_SECTORS := {
+	&"fire_01": {
+		&"n": &"e", &"ne": &"e", &"e": &"e", &"se": &"se",
+		&"s": &"e", &"sw": &"sw", &"w": &"w", &"nw": &"w",
+	},
+}
+
+
+func _ranged_2h_fx_authored_sector(action: StringName, direction: Vector2) -> StringName:
+	var requested := OperatorAnimationSelector.vector_to_sector(direction)
+	var table: Dictionary = RANGED_2H_FX_AUTHORED_SECTORS.get(action, {})
+	return table.get(requested, requested)
 
 
 ## The authored ranged_2h facing for a requested direction and action.
@@ -6884,18 +6997,7 @@ func _play_modular_unarmed_parry(base_animation: String, direction: Vector2) -> 
 	_modular_upper_action_animation = upper_anim
 	_claim_modular_body_owner()
 
-	if modular_upper_fx_sprite != null and modular_upper_fx_sprite.sprite_frames != null:
-		var fx_base := "unarmed_parry_fx"
-		if base_animation == "unarmed_parry_success_01":
-			fx_base = "unarmed_parry_success_01_fx"
-		elif base_animation == "unarmed_parry_recovery":
-			fx_base = "unarmed_parry_recovery_fx"
-		var fx_anim := AnimationResolver.resolve(fx_base, direction, modular_upper_fx_sprite)
-		if _has_playable_sprite_animation(modular_upper_fx_sprite.sprite_frames, fx_anim):
-			modular_upper_fx_sprite.visible = true
-			modular_upper_fx_sprite.flip_h = false
-			modular_upper_fx_sprite.speed_scale = 1.0
-			_animation_player.play(modular_upper_fx_sprite, fx_anim)
+	_present_parry_fx(base_animation, direction)
 	return true
 
 
@@ -7196,8 +7298,7 @@ func _begin_paired_execution(
 	execution_direction = StringName(profile["direction"])
 	var body_animation: StringName = profile["body_animation"]
 	var body_sheet: String = profile["body_sheet"]
-	var fx_animation: StringName = profile["fx_animation"]
-	var fx_sheet: String = profile["fx_sheet"]
+	var fx_animation: StringName = &""
 	var frame_size: Vector2i = profile["frame_size"]
 	_paired_execution_frame_count = int(profile["frame_count"])
 	_paired_execution_frame_durations = Array(profile["frame_durations"]).duplicate()
@@ -7207,7 +7308,15 @@ func _begin_paired_execution(
 	if not _ensure_paired_execution_animation(animated_sprite, body_animation, body_sheet, _paired_execution_frame_count, frame_size):
 		target.call("cancel_parry_critical_execution", self, &"operator_body_asset_missing")
 		return false
-	if not _ensure_paired_execution_animation(modular_upper_fx_sprite, fx_animation, fx_sheet, _paired_execution_frame_count, frame_size):
+	# The FX layer is canonical as of C2a-R2: it must not build frames into the
+	# shared SpriteFrames. The body layer still uses the sheet builder because
+	# animated_sprite is not rebound in this slice.
+	fx_animation = _resolve_fx_animation(
+		&"unarmed", &"cosmetic", profile["fx_action"], execution_direction
+	)
+	if fx_animation.is_empty() \
+	or not _has_playable_sprite_animation(modular_upper_fx_sprite.sprite_frames, fx_animation) \
+	or modular_upper_fx_sprite.sprite_frames.get_frame_count(fx_animation) != _paired_execution_frame_count:
 		target.call("cancel_parry_critical_execution", self, &"operator_fx_asset_missing")
 		return false
 	_cancel_attack_drive(true)
@@ -7312,14 +7421,13 @@ func _get_paired_execution_profile(
 ) -> Dictionary:
 	if execution_kind == &"falcon_reversal":
 		if not FALCON_REVERSAL_BODY_SHEETS.has(direction) \
-				or not FALCON_REVERSAL_FX_SHEETS.has(direction):
+				or not _has_fx_animation(&"unarmed", &"cosmetic", &"falcon_reversal_01", direction):
 			return {}
 		return {
 			"direction": direction,
 			"body_animation": StringName("operator_falcon_reversal_%s" % String(direction)),
-			"fx_animation": StringName("operator_falcon_reversal_fx_%s" % String(direction)),
+			"fx_action": &"falcon_reversal_01",
 			"body_sheet": FALCON_REVERSAL_BODY_SHEETS[direction],
-			"fx_sheet": FALCON_REVERSAL_FX_SHEETS[direction],
 			"frame_size": FALCON_REVERSAL_FRAME_SIZE,
 			"frame_count": 8,
 			"frame_durations": FALCON_REVERSAL_FRAME_DURATIONS,
@@ -7331,9 +7439,8 @@ func _get_paired_execution_profile(
 	return {
 		"direction": direction,
 		"body_animation": PAIRED_EXECUTION_BODY_ANIMATIONS[direction],
-		"fx_animation": PAIRED_EXECUTION_FX_ANIMATIONS[direction],
+		"fx_action": &"critical_execution_01",
 		"body_sheet": PAIRED_EXECUTION_BODY_SHEETS[direction],
-		"fx_sheet": PAIRED_EXECUTION_FX_SHEETS[direction],
 		"frame_size": PAIRED_EXECUTION_FRAME_SIZE,
 		"frame_count": int(PAIRED_EXECUTION_FRAME_COUNTS.get(direction, 8)),
 		"frame_durations": Array(PAIRED_EXECUTION_FRAME_DURATIONS.get(direction, PAIRED_EXECUTION_FRAME_DURATIONS[&"s"])),
@@ -7611,56 +7718,13 @@ func _ensure_operator_critical_attack_animation(direction: Vector2) -> StringNam
 
 
 func _play_operator_critical_hitspark(direction: Vector2) -> bool:
-	if modular_upper_fx_sprite == null or modular_upper_fx_sprite.sprite_frames == null:
+	# Was built into the renderer's SpriteFrames at runtime from a raw PNG sheet.
+	# The renderer now shares the canonical resource, which such a mutation would
+	# leak into, and the same pixels are published as critical_hitspark_01.
+	var sector: StringName = &"w" if _is_facing_left(direction) else &"e"
+	if not _play_optional_fx(&"unarmed", &"cosmetic", &"critical_hitspark_01", sector):
+		_warn_missing_animation_once("critical_hitspark_01", "critical attack visual-only FX")
 		return false
-	var fx_animation := _ensure_operator_critical_hitspark_animation(direction)
-	if fx_animation.is_empty():
-		_warn_missing_animation_once("operator_critical_hitspark", "critical attack visual-only FX")
-		return false
-	modular_upper_fx_sprite.visible = true
-	modular_upper_fx_sprite.flip_h = false
-	modular_upper_fx_sprite.speed_scale = 1.0
-	_animation_player.play(modular_upper_fx_sprite, fx_animation)
-	_modular_upper_fx_action_animation = fx_animation
-	return true
-
-
-func _ensure_operator_critical_hitspark_animation(direction: Vector2) -> StringName:
-	if modular_upper_fx_sprite == null or modular_upper_fx_sprite.sprite_frames == null:
-		return &""
-	var facing_left := _is_facing_left(direction)
-	var animation_name := &"operator_critical_hitspark_left" if facing_left else &"operator_critical_hitspark_right"
-	if _has_playable_sprite_animation(modular_upper_fx_sprite.sprite_frames, animation_name):
-		return animation_name
-	var sheet_path := CRITICAL_HITSPARK_LEFT_SHEET if facing_left else CRITICAL_HITSPARK_RIGHT_SHEET
-	if not ResourceLoader.exists(sheet_path):
-		return &""
-	var texture := load(sheet_path) as Texture2D
-	if texture == null:
-		return &""
-	modular_upper_fx_sprite.sprite_frames.add_animation(animation_name)
-	modular_upper_fx_sprite.sprite_frames.set_animation_loop(animation_name, false)
-	modular_upper_fx_sprite.sprite_frames.set_animation_speed(animation_name, CRITICAL_HITSPARK_FPS)
-	for frame_index in range(CRITICAL_HITSPARK_FRAME_COUNT):
-		var atlas := AtlasTexture.new()
-		atlas.atlas = texture
-		atlas.region = Rect2(frame_index * CRITICAL_HITSPARK_FRAME_SIZE.x, 0, CRITICAL_HITSPARK_FRAME_SIZE.x, CRITICAL_HITSPARK_FRAME_SIZE.y)
-		modular_upper_fx_sprite.sprite_frames.add_frame(animation_name, atlas)
-	return animation_name
-
-
-func _play_modular_parry_fx(direction: Vector2, base_animation: String = "unarmed_parry_fx") -> bool:
-	if not modular_locomotion_layers_enabled:
-		return false
-	if modular_upper_fx_sprite == null or modular_upper_fx_sprite.sprite_frames == null:
-		return false
-	var fx_animation := AnimationResolver.resolve(base_animation, direction, modular_upper_fx_sprite)
-	if not _has_playable_sprite_animation(modular_upper_fx_sprite.sprite_frames, fx_animation):
-		return false
-	modular_upper_fx_sprite.visible = true
-	modular_upper_fx_sprite.flip_h = false
-	modular_upper_fx_sprite.speed_scale = 1.0
-	_animation_player.play(modular_upper_fx_sprite, fx_animation)
 	return true
 
 

@@ -463,7 +463,62 @@ worked around: `operator_weapon_socket_smoke` now asserts the renderer carries
 canonical identities and does **not** carry the legacy clips, and drives it with
 canonical names; its socket-track checks stay keyed to the still-legacy upper body.
 
-### C2a-R2 — modular_upper_fx_sprite: STOPPED at the exhaustiveness pass
+### C2a-R2 — modular_upper_fx_sprite is canonical (DONE)
+
+The authoring blockers were resolved on 2026-09-13 and the renderer is cut over.
+`ModularUpperFxSprite` binds to `operator_runtime_frames.tres`, the scene no
+longer loads `operator_modular_upper_fx_frames.tres`, and the evidence report
+marks it `CANONICAL` with zero legacy selection sites. `animation_resolver` fell
+43 -> 42 by this renderer's site. No other renderer moved.
+
+**The runtime SpriteFrames mutation is gone.** This was the structural blocker:
+`_ensure_operator_critical_hitspark_animation()` and the FX half of
+`_ensure_paired_execution_animation()` built animations into the renderer's
+SpriteFrames from raw PNG sheets, which a *shared* canonical resource cannot
+accept. Both now resolve published identities — `critical_hitspark_01`,
+`critical_execution_01`, `falcon_reversal_01` — whose frame counts and canvas
+sizes match the actor's constants exactly, so they are drop-in. The legacy sheet
+constants and the hitspark builder are deleted. `_play_modular_parry_fx()` was
+dead with no callers and is deleted rather than preserved as a seam.
+
+**Parry FX authoring decision.** Successful parry presents
+`unarmed/defense/parry_success_01/fx`. The legacy clip
+`unarmed_parry_success_01_fx` is NOT preservation authority: it was mis-published,
+its west sourcing `parry_recovery_01` art and its east sourcing
+`interaction/success_01`, which is `DORMANT_PENDING_INTERACTION_SUCCESS_CONTRACT`
+and must never stand in for parry-success. The action is authored e/w, and the
+caller preserves the historical left/right selection (`x < 0 -> w`, otherwise
+`e`) as presentation policy.
+
+Failed-parry recovery presents **no** FX beat. The guard contract keeps the
+original `parry_01` attempt through recovery, so nothing requests a recovery
+animation; `parry_recovery_01/fx` stays published but dormant for a future
+explicit contract. The FX decision is extracted as `_present_parry_fx()` and
+returns the identity it presented, because asserting it through the whole parry
+function proved vacuous — the modular path never reaches recovery today, as no
+modular body art exists for that base.
+
+**A correction found while migrating.** The initial plan assumed ranged fire FX
+should preserve "no FX" on unauthored sectors. That was wrong: the compatibility
+resource has an *unsuffixed* clip, so `AnimationResolver` always resolved
+something and FX never rendered nothing. Its unsuffixed clip is the `e` art. The
+FX layer therefore needs its own projection table, separate from the weapon
+layer's, because their authored sets differ — `fire_01` publishes a weapon strip
+for `n` but no fx strip. Blanking those sectors would have been a visible
+regression.
+
+Sidearm FX reuses the single authored sector R1 established rather than resolving
+its own, so the whole Sidearm stack still cannot disagree with itself.
+
+**Three negative controls verified**: mapping parry-success back to the
+mis-published interaction art, reintroducing the runtime SpriteFrames mutation,
+and unbinding the renderer each fail the new smoke.
+
+Two existing tests encoded compatibility naming on this renderer and were
+corrected: `operator_primary_ranged_modular_fire`'s FX fixture now installs
+canonical identities.
+
+#### Historical: the Step-0 stop that preceded this
 
 The renderer was **not** rebound. The mandated Step 0 pass found live consumers
 that cannot be canonicalized without an authoring decision, and the packet's own
@@ -542,9 +597,9 @@ mechanisms it was not originally measured by.
    clips, and trace the 24 variable-argument sites to their callers. The
    inventory reports both sets.
 2. Answer the dodge authoring question in item 3.
-3. `modular_sidearm_sprite` is done (C2a-R1). Next is `modular_upper_fx_sprite`,
-   then the body layers, then `animated_sprite` last. Head and cape are retired,
-   not migrated.
+3. `modular_sidearm_sprite` (C2a-R1) and `modular_upper_fx_sprite` (C2a-R2) are
+   done. Next is C2a-R3, the body layers, then `animated_sprite` last. Head and
+   cape are retired, not migrated.
 4. Expect SOUTH-fallback telemetry to spike where canonical directional
    coverage is partial — `melee_1h/posture/*` is e/w only,
    `unarmed/locomotion/walk_01` upper is 6 of 8. Collect the counts as §9 asks.
