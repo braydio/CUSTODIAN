@@ -2,8 +2,8 @@
   "schema": "custodian.operator_selection_cutover_evidence.v1",
   "counts": {
     "DATA_DRIVEN": 6,
+    "BLOCKED": 18,
     "PROVEN": 42,
-    "BLOCKED": 10,
     "AUTHORING_DECISION": 4
   },
   "renderer_readiness": {
@@ -14,7 +14,7 @@
       "ready": false,
       "blocking_detail": [
         {
-          "line": 1899,
+          "line": 1894,
           "function": "_update_animation",
           "classification": "DATA_DRIVEN",
           "clips": [
@@ -22,7 +22,7 @@
           ]
         },
         {
-          "line": 1919,
+          "line": 1914,
           "function": "_update_animation",
           "classification": "DATA_DRIVEN",
           "clips": [
@@ -30,7 +30,7 @@
           ]
         },
         {
-          "line": 1961,
+          "line": 1956,
           "function": "_update_animation",
           "classification": "DATA_DRIVEN",
           "clips": [
@@ -41,13 +41,19 @@
           ]
         },
         {
-          "line": 7472,
+          "line": 7467,
           "function": "_ensure_paired_execution_animation",
           "classification": "BLOCKED",
           "clips": []
         },
         {
-          "line": 7473,
+          "line": 7468,
+          "function": "_ensure_paired_execution_animation",
+          "classification": "BLOCKED",
+          "clips": []
+        },
+        {
+          "line": 7471,
           "function": "_ensure_paired_execution_animation",
           "classification": "BLOCKED",
           "clips": []
@@ -59,19 +65,19 @@
           "clips": []
         },
         {
-          "line": 7481,
-          "function": "_ensure_paired_execution_animation",
-          "classification": "BLOCKED",
-          "clips": []
-        },
-        {
-          "line": 7714,
+          "line": 7709,
           "function": "_ensure_operator_critical_attack_animation",
           "classification": "BLOCKED",
           "clips": []
         },
         {
-          "line": 7715,
+          "line": 7710,
+          "function": "_ensure_operator_critical_attack_animation",
+          "classification": "BLOCKED",
+          "clips": []
+        },
+        {
+          "line": 7711,
           "function": "_ensure_operator_critical_attack_animation",
           "classification": "BLOCKED",
           "clips": []
@@ -83,13 +89,7 @@
           "clips": []
         },
         {
-          "line": 7721,
-          "function": "_ensure_operator_critical_attack_animation",
-          "classification": "BLOCKED",
-          "clips": []
-        },
-        {
-          "line": 7985,
+          "line": 7980,
           "function": "_play_melee_anim_resolved",
           "classification": "DATA_DRIVEN",
           "clips": [
@@ -105,13 +105,31 @@
       ]
     },
     "modular_lower_body_sprite": {
-      "sites": 13,
-      "active": 13,
-      "blocking": 1,
+      "sites": 16,
+      "active": 16,
+      "blocking": 4,
       "ready": false,
       "blocking_detail": [
         {
-          "line": 6983,
+          "line": 2336,
+          "function": "_install_melee_posture_catalog_frames",
+          "classification": "BLOCKED",
+          "clips": []
+        },
+        {
+          "line": 2343,
+          "function": "_install_melee_posture_catalog_frames",
+          "classification": "BLOCKED",
+          "clips": []
+        },
+        {
+          "line": 2355,
+          "function": "_install_melee_posture_catalog_frames",
+          "classification": "BLOCKED",
+          "clips": []
+        },
+        {
+          "line": 6978,
           "function": "_play_modular_unarmed_parry",
           "classification": "AUTHORING_DECISION",
           "clips": [
@@ -121,19 +139,25 @@
       ]
     },
     "modular_upper_body_sprite": {
-      "sites": 15,
-      "active": 15,
-      "blocking": 2,
+      "sites": 16,
+      "active": 16,
+      "blocking": 3,
       "ready": false,
       "blocking_detail": [
         {
-          "line": 3373,
+          "line": 2337,
+          "function": "_install_melee_posture_catalog_frames",
+          "classification": "BLOCKED",
+          "clips": []
+        },
+        {
+          "line": 3368,
           "function": "_begin_modular_primary_ranged_fire_presentation",
           "classification": "BLOCKED",
           "clips": []
         },
         {
-          "line": 6984,
+          "line": 6979,
           "function": "_play_modular_unarmed_parry",
           "classification": "AUTHORING_DECISION",
           "clips": [
@@ -143,21 +167,33 @@
       ]
     },
     "<unattributed>": {
-      "sites": 10,
-      "active": 10,
-      "blocking": 3,
+      "sites": 12,
+      "active": 12,
+      "blocking": 5,
       "ready": false,
       "unattributed": true,
       "blocking_detail": []
     },
     "melee_weapon_overlay_sprite": {
-      "sites": 2,
-      "active": 2,
-      "blocking": 1,
+      "sites": 4,
+      "active": 4,
+      "blocking": 3,
       "ready": false,
       "blocking_detail": [
         {
-          "line": 8319,
+          "line": 2390,
+          "function": "_install_melee_posture_weapon_frames",
+          "classification": "BLOCKED",
+          "clips": []
+        },
+        {
+          "line": 2391,
+          "function": "_install_melee_posture_weapon_frames",
+          "classification": "BLOCKED",
+          "clips": []
+        },
+        {
+          "line": 8314,
           "function": "_play_melee_overlay_from_key",
           "classification": "DATA_DRIVEN",
           "clips": [
@@ -179,7 +215,7 @@
       "ready": false,
       "blocking_detail": [
         {
-          "line": 8321,
+          "line": 8316,
           "function": "_play_melee_overlay_from_key",
           "classification": "DATA_DRIVEN",
           "clips": [
@@ -217,7 +253,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 1899,
+      "line": 1894,
       "function": "_update_animation",
       "renderer": "animated_sprite",
       "renderers": [
@@ -283,7 +319,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 1919,
+      "line": 1914,
       "function": "_update_animation",
       "renderer": "animated_sprite",
       "renderers": [
@@ -340,7 +376,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 1961,
+      "line": 1956,
       "function": "_update_animation",
       "renderer": "animated_sprite",
       "renderers": [
@@ -393,9 +429,141 @@
       "site_reason": "melee_body_stance_anim arrives from _get_authored_melee_body_stance_animation(), which reads the weapon animation_map 'melee_stance' entry."
     },
     {
+      "debt": "runtime_spriteframes_fork",
+      "file": "custodian/game/actors/operator/operator.gd",
+      "line": 2336,
+      "function": "_install_melee_posture_catalog_frames",
+      "renderer": "modular_lower_body_sprite",
+      "renderers": [
+        "modular_lower_body_sprite"
+      ],
+      "argument": "",
+      "source": "modular_lower_body_sprite.sprite_frames = modular_lower_body_sprite.sprite_frames.duplicate(true)",
+      "legacy_clips": [],
+      "trace": [],
+      "mappings": [],
+      "classification": "BLOCKED",
+      "site_reason": "replaces the renderer's SpriteFrames with a private deep copy, which defeats sharing the one canonical resource and silently doubles its memory per Operator instance. It exists only to make a runtime mutation safe, so it retires with that mutation."
+    },
+    {
+      "debt": "runtime_spriteframes_fork",
+      "file": "custodian/game/actors/operator/operator.gd",
+      "line": 2337,
+      "function": "_install_melee_posture_catalog_frames",
+      "renderer": "modular_upper_body_sprite",
+      "renderers": [
+        "modular_upper_body_sprite"
+      ],
+      "argument": "",
+      "source": "modular_upper_body_sprite.sprite_frames = modular_upper_body_sprite.sprite_frames.duplicate(true)",
+      "legacy_clips": [],
+      "trace": [],
+      "mappings": [],
+      "classification": "BLOCKED",
+      "site_reason": "replaces the renderer's SpriteFrames with a private deep copy, which defeats sharing the one canonical resource and silently doubles its memory per Operator instance. It exists only to make a runtime mutation safe, so it retires with that mutation."
+    },
+    {
+      "debt": "secondary_animation_database",
+      "file": "custodian/game/actors/operator/operator.gd",
+      "line": 2343,
+      "function": "_install_melee_posture_catalog_frames",
+      "renderer": "modular_lower_body_sprite",
+      "renderers": [
+        "modular_lower_body_sprite"
+      ],
+      "argument": "",
+      "source": "_copy_catalog_animation(OPERATOR_ANIMATION_CATALOG_FRAMES, target, animation)",
+      "legacy_clips": [],
+      "trace": [],
+      "mappings": [],
+      "classification": "BLOCKED",
+      "site_reason": "reads animations from a second animation database and copies them into the renderer at runtime, instead of reading the one generated runtime SpriteFrames. Migratable when the same identities are already published canonically, which must be proven per identity before removal."
+    },
+    {
+      "debt": "secondary_animation_database",
+      "file": "custodian/game/actors/operator/operator.gd",
+      "line": 2355,
+      "function": "_install_melee_posture_catalog_frames",
+      "renderer": "modular_lower_body_sprite",
+      "renderers": [
+        "modular_lower_body_sprite"
+      ],
+      "argument": "",
+      "source": "_copy_catalog_animation(OPERATOR_ANIMATION_CATALOG_FRAMES, target, animation)",
+      "legacy_clips": [],
+      "trace": [],
+      "mappings": [],
+      "classification": "BLOCKED",
+      "site_reason": "reads animations from a second animation database and copies them into the renderer at runtime, instead of reading the one generated runtime SpriteFrames. Migratable when the same identities are already published canonically, which must be proven per identity before removal."
+    },
+    {
+      "debt": "secondary_animation_database",
+      "file": "custodian/game/actors/operator/operator.gd",
+      "line": 2372,
+      "function": "_install_melee_posture_weapon_frames",
+      "renderer": "",
+      "renderers": [],
+      "argument": "",
+      "source": "if OPERATOR_ANIMATION_CATALOG_FRAMES.has_animation(animation):",
+      "legacy_clips": [],
+      "trace": [],
+      "mappings": [],
+      "classification": "BLOCKED",
+      "site_reason": "reads animations from a second animation database and copies them into the renderer at runtime, instead of reading the one generated runtime SpriteFrames. Migratable when the same identities are already published canonically, which must be proven per identity before removal."
+    },
+    {
+      "debt": "secondary_animation_database",
+      "file": "custodian/game/actors/operator/operator.gd",
+      "line": 2379,
+      "function": "_install_melee_posture_weapon_frames",
+      "renderer": "",
+      "renderers": [],
+      "argument": "",
+      "source": "if OPERATOR_ANIMATION_CATALOG_FRAMES.has_animation(animation):",
+      "legacy_clips": [],
+      "trace": [],
+      "mappings": [],
+      "classification": "BLOCKED",
+      "site_reason": "reads animations from a second animation database and copies them into the renderer at runtime, instead of reading the one generated runtime SpriteFrames. Migratable when the same identities are already published canonically, which must be proven per identity before removal."
+    },
+    {
+      "debt": "secondary_animation_database",
+      "file": "custodian/game/actors/operator/operator.gd",
+      "line": 2390,
+      "function": "_install_melee_posture_weapon_frames",
+      "renderer": "melee_weapon_overlay_sprite",
+      "renderers": [
+        "melee_weapon_overlay_sprite"
+      ],
+      "argument": "",
+      "source": "_copy_catalog_animation(",
+      "legacy_clips": [],
+      "trace": [],
+      "mappings": [],
+      "classification": "BLOCKED",
+      "site_reason": "reads animations from a second animation database and copies them into the renderer at runtime, instead of reading the one generated runtime SpriteFrames. Migratable when the same identities are already published canonically, which must be proven per identity before removal."
+    },
+    {
+      "debt": "secondary_animation_database",
+      "file": "custodian/game/actors/operator/operator.gd",
+      "line": 2391,
+      "function": "_install_melee_posture_weapon_frames",
+      "renderer": "melee_weapon_overlay_sprite",
+      "renderers": [
+        "melee_weapon_overlay_sprite"
+      ],
+      "argument": "",
+      "source": "OPERATOR_ANIMATION_CATALOG_FRAMES,",
+      "legacy_clips": [],
+      "trace": [],
+      "mappings": [],
+      "classification": "BLOCKED",
+      "site_reason": "reads animations from a second animation database and copies them into the renderer at runtime, instead of reading the one generated runtime SpriteFrames. Migratable when the same identities are already published canonically, which must be proven per identity before removal."
+    },
+    {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 2614,
+      "line": 2609,
       "function": "_has_modular_fast_attack_layer",
       "renderer": "",
       "renderers": [
@@ -720,7 +888,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 2627,
+      "line": 2622,
       "function": "_sync_modular_fast_attack_layer",
       "renderer": "",
       "renderers": [
@@ -1045,7 +1213,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 2675,
+      "line": 2670,
       "function": "_sync_modular_fast_attack_phase",
       "renderer": "modular_lower_body_sprite",
       "renderers": [
@@ -1217,7 +1385,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 2676,
+      "line": 2671,
       "function": "_sync_modular_fast_attack_phase",
       "renderer": "modular_upper_body_sprite",
       "renderers": [
@@ -1389,7 +1557,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 2826,
+      "line": 2821,
       "function": "_has_modular_ranged_ready_upper_stack",
       "renderer": "modular_upper_body_sprite",
       "renderers": [
@@ -1447,7 +1615,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 2838,
+      "line": 2833,
       "function": "_has_modular_ranged_relaxed_upper_stack",
       "renderer": "modular_upper_body_sprite",
       "renderers": [
@@ -1492,7 +1660,7 @@
     {
       "debt": "candidate_animation_list",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 3373,
+      "line": 3368,
       "function": "_begin_modular_primary_ranged_fire_presentation",
       "renderer": "modular_upper_body_sprite",
       "renderers": [
@@ -1509,7 +1677,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 3451,
+      "line": 3446,
       "function": "_begin_modular_primary_ranged_aim_presentation",
       "renderer": "modular_lower_body_sprite",
       "renderers": [
@@ -1560,7 +1728,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 3452,
+      "line": 3447,
       "function": "_begin_modular_primary_ranged_aim_presentation",
       "renderer": "modular_upper_body_sprite",
       "renderers": [
@@ -1611,7 +1779,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 3507,
+      "line": 3502,
       "function": "_begin_modular_primary_ranged_lower_presentation",
       "renderer": "modular_upper_body_sprite",
       "renderers": [
@@ -1662,7 +1830,7 @@
     {
       "debt": "candidate_animation_list",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 3560,
+      "line": 3555,
       "function": "_primary_ranged_fire_candidates",
       "renderer": "",
       "renderers": [],
@@ -1677,7 +1845,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 3728,
+      "line": 3723,
       "function": "_sync_field_patch_action_layer",
       "renderer": "",
       "renderers": [
@@ -1754,7 +1922,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 3825,
+      "line": 3820,
       "function": "_resolve_modular_lower_body_locomotion_animation",
       "renderer": "",
       "renderers": [
@@ -1771,7 +1939,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 3826,
+      "line": 3821,
       "function": "_resolve_modular_lower_body_locomotion_animation",
       "renderer": "",
       "renderers": [
@@ -1788,7 +1956,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 3827,
+      "line": 3822,
       "function": "_resolve_modular_lower_body_locomotion_animation",
       "renderer": "",
       "renderers": [
@@ -1805,7 +1973,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 3830,
+      "line": 3825,
       "function": "_resolve_modular_lower_body_locomotion_animation",
       "renderer": "modular_lower_body_sprite",
       "renderers": [
@@ -1864,7 +2032,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 3839,
+      "line": 3834,
       "function": "_sync_modular_upper_body_layer",
       "renderer": "modular_upper_body_sprite",
       "renderers": [
@@ -2143,7 +2311,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 5629,
+      "line": 5624,
       "function": "_get_parry_attempt_remaining_duration",
       "renderer": "modular_lower_body_sprite",
       "renderers": [
@@ -2191,7 +2359,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 5632,
+      "line": 5627,
       "function": "_get_parry_attempt_remaining_duration",
       "renderer": "modular_upper_body_sprite",
       "renderers": [
@@ -2239,7 +2407,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 5635,
+      "line": 5630,
       "function": "_get_parry_attempt_remaining_duration",
       "renderer": "animated_sprite",
       "renderers": [
@@ -2287,7 +2455,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 6204,
+      "line": 6199,
       "function": "_start_fast_attack",
       "renderer": "",
       "renderers": [],
@@ -2302,7 +2470,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 6208,
+      "line": 6203,
       "function": "_start_fast_attack",
       "renderer": "animated_sprite",
       "renderers": [
@@ -2319,7 +2487,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 6214,
+      "line": 6209,
       "function": "_start_fast_attack",
       "renderer": "animated_sprite",
       "renderers": [
@@ -2336,7 +2504,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 6218,
+      "line": 6213,
       "function": "_start_fast_attack",
       "renderer": "animated_sprite",
       "renderers": [
@@ -2353,7 +2521,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 6258,
+      "line": 6253,
       "function": "_start_fast_attack",
       "renderer": "",
       "renderers": [],
@@ -2368,7 +2536,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 6309,
+      "line": 6304,
       "function": "_try_start_fast_attack_windup",
       "renderer": "animated_sprite",
       "renderers": [
@@ -2431,7 +2599,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 6342,
+      "line": 6337,
       "function": "_begin_fast_attack_strike_phase",
       "renderer": "",
       "renderers": [],
@@ -2446,7 +2614,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 6414,
+      "line": 6409,
       "function": "_begin_heavy_attack_active_phase",
       "renderer": "",
       "renderers": [],
@@ -2461,7 +2629,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 6964,
+      "line": 6959,
       "function": "_play_parry_animation",
       "renderer": "animated_sprite",
       "renderers": [
@@ -2544,7 +2712,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 6983,
+      "line": 6978,
       "function": "_play_modular_unarmed_parry",
       "renderer": "modular_lower_body_sprite",
       "renderers": [
@@ -2583,7 +2751,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 6984,
+      "line": 6979,
       "function": "_play_modular_unarmed_parry",
       "renderer": "modular_upper_body_sprite",
       "renderers": [
@@ -2622,7 +2790,7 @@
     {
       "debt": "runtime_spriteframes_mutation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7472,
+      "line": 7467,
       "function": "_ensure_paired_execution_animation",
       "renderer": "",
       "renderers": [
@@ -2639,7 +2807,7 @@
     {
       "debt": "runtime_spriteframes_mutation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7473,
+      "line": 7468,
       "function": "_ensure_paired_execution_animation",
       "renderer": "",
       "renderers": [
@@ -2656,7 +2824,7 @@
     {
       "debt": "runtime_spriteframes_mutation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7476,
+      "line": 7471,
       "function": "_ensure_paired_execution_animation",
       "renderer": "",
       "renderers": [
@@ -2673,7 +2841,7 @@
     {
       "debt": "runtime_spriteframes_mutation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7481,
+      "line": 7476,
       "function": "_ensure_paired_execution_animation",
       "renderer": "",
       "renderers": [
@@ -2690,7 +2858,7 @@
     {
       "debt": "runtime_spriteframes_mutation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7714,
+      "line": 7709,
       "function": "_ensure_operator_critical_attack_animation",
       "renderer": "animated_sprite",
       "renderers": [
@@ -2707,7 +2875,7 @@
     {
       "debt": "runtime_spriteframes_mutation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7715,
+      "line": 7710,
       "function": "_ensure_operator_critical_attack_animation",
       "renderer": "animated_sprite",
       "renderers": [
@@ -2724,7 +2892,7 @@
     {
       "debt": "runtime_spriteframes_mutation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7716,
+      "line": 7711,
       "function": "_ensure_operator_critical_attack_animation",
       "renderer": "animated_sprite",
       "renderers": [
@@ -2741,7 +2909,7 @@
     {
       "debt": "runtime_spriteframes_mutation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7721,
+      "line": 7716,
       "function": "_ensure_operator_critical_attack_animation",
       "renderer": "animated_sprite",
       "renderers": [
@@ -2758,7 +2926,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7861,
+      "line": 7856,
       "function": "_play_modular_unarmed_block",
       "renderer": "modular_upper_body_sprite",
       "renderers": [
@@ -2815,7 +2983,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7875,
+      "line": 7870,
       "function": "_play_modular_unarmed_block",
       "renderer": "modular_lower_body_sprite",
       "renderers": [
@@ -2872,7 +3040,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7876,
+      "line": 7871,
       "function": "_play_modular_unarmed_block",
       "renderer": "modular_upper_body_sprite",
       "renderers": [
@@ -2929,7 +3097,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7908,
+      "line": 7903,
       "function": "_sync_modular_block_hold_movement_presentation",
       "renderer": "modular_upper_body_sprite",
       "renderers": [
@@ -2970,7 +3138,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7919,
+      "line": 7914,
       "function": "_sync_modular_block_hold_movement_presentation",
       "renderer": "modular_lower_body_sprite",
       "renderers": [
@@ -3011,7 +3179,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7967,
+      "line": 7962,
       "function": "_play_melee_anim_from_key",
       "renderer": "melee_weapon_overlay_sprite",
       "renderers": [
@@ -3028,7 +3196,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7973,
+      "line": 7968,
       "function": "_play_melee_anim_from_key",
       "renderer": "animated_sprite",
       "renderers": [
@@ -3045,7 +3213,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7976,
+      "line": 7971,
       "function": "_play_melee_anim_from_key",
       "renderer": "animated_sprite",
       "renderers": [
@@ -3062,7 +3230,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7977,
+      "line": 7972,
       "function": "_play_melee_anim_from_key",
       "renderer": "",
       "renderers": [],
@@ -3077,7 +3245,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7978,
+      "line": 7973,
       "function": "_play_melee_anim_from_key",
       "renderer": "",
       "renderers": [],
@@ -3092,7 +3260,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7985,
+      "line": 7980,
       "function": "_play_melee_anim_resolved",
       "renderer": "animated_sprite",
       "renderers": [
@@ -3169,7 +3337,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 8319,
+      "line": 8314,
       "function": "_play_melee_overlay_from_key",
       "renderer": "melee_weapon_overlay_sprite",
       "renderers": [
@@ -3247,7 +3415,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 8321,
+      "line": 8316,
       "function": "_play_melee_overlay_from_key",
       "renderer": "melee_fx_overlay_sprite",
       "renderers": [
@@ -3325,7 +3493,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 8437,
+      "line": 8432,
       "function": "_play_fast_attack_recovery",
       "renderer": "animated_sprite",
       "renderers": [
@@ -3394,7 +3562,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 8449,
+      "line": 8444,
       "function": "_play_fast_attack_recovery",
       "renderer": "melee_fx_overlay_sprite",
       "renderers": [
@@ -3463,7 +3631,7 @@
     {
       "debt": "directional_animation_fallback",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 9320,
+      "line": 9315,
       "function": "_resolve_dodge_presentation_animation",
       "renderer": "",
       "renderers": [],
@@ -3478,7 +3646,7 @@
     {
       "debt": "directional_animation_fallback",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 9331,
+      "line": 9326,
       "function": "_resolve_dodge_presentation_animation",
       "renderer": "animated_sprite",
       "renderers": [
@@ -3495,7 +3663,7 @@
     {
       "debt": "directional_animation_fallback",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 13570,
+      "line": 13565,
       "function": "begin_modular_damage_reaction",
       "renderer": "",
       "renderers": [],
@@ -3510,7 +3678,7 @@
     {
       "debt": "directional_animation_fallback",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 13571,
+      "line": 13566,
       "function": "begin_modular_damage_reaction",
       "renderer": "",
       "renderers": [],
@@ -3525,7 +3693,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 13694,
+      "line": 13689,
       "function": "get_damage_reaction_animation",
       "renderer": "animated_sprite",
       "renderers": [

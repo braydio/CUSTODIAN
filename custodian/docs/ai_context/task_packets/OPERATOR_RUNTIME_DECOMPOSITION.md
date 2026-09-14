@@ -591,6 +591,110 @@ families.
 still reports `CANONICAL` with zero sites, so R1's cutover holds against
 mechanisms it was not originally measured by.
 
+### C2a-R3 — canonical body pair — STOPPED at the exhaustiveness pass
+
+`modular_lower_body_sprite` and `modular_upper_body_sprite` were **not** rebound.
+Section 0 required proving the complete consumer surface first, and it found two
+live mappings that cannot be canonicalized without an authoring decision, plus
+three places where the packet's stated premises are contradicted by the authored
+art. Nothing in `game/` changed.
+
+#### The reported site count was a floor again
+
+The evidence reported 13 active sites for the lower body and 15 for the upper.
+The real surface is **273 lines across 54 functions**. Two mechanism classes were
+invisible to the detector and are now detected:
+
+* `runtime_spriteframes_fork` — `_install_melee_posture_catalog_frames()` replaces
+  BOTH body `SpriteFrames` with `duplicate(true)` deep copies. This is how a
+  renderer opts out of sharing *before* mutating, so it hides a mutation that
+  `runtime_spriteframes_mutation` alone never flags. Against the shared canonical
+  resource it would fork 557 animations twice per Operator instance.
+* `secondary_animation_database` — that same function then copies clips in from
+  `operator_animation_catalog_frames.tres`, a second animation database, rather
+  than reading the one generated runtime SpriteFrames.
+
+With both detectors the body pair reads 16 sites / 4 blocking (lower) and
+16 / 3 (upper). `melee_weapon_overlay_sprite` also rose 2 -> 4; it uses the same
+catalog machinery and inherits this finding when its own slice runs.
+
+The catalog copy is **provably redundant**: all 24 identities it installs
+(`melee_1h/posture/{draw,sheathe,idle_ready,idle_relaxed}_01/{e,w}/{lower,upper}_body`
+and `melee_1h/locomotion/{run_01/{e,s,w},walk_01/s}/{lower,upper}_body`) are already
+published in `operator_runtime_frames.tres`, and were verified frame-by-frame as
+identical in atlas source, region, frame count, per-frame duration, FPS and loop.
+The fork, the copy and the second database all retire with the rebind.
+
+#### Proven by evidence, no decision needed
+
+| family | canonical identity | historical projection |
+|---|---|---|
+| parry windup / parry success (body) | `unarmed/defense/parry_01` | `n->n`, `ne,e,se,s->e`, `sw,w,nw->w` |
+| block hold | `unarmed/defense/block_hold_01` | `n,ne,e,se,s->e`, `sw,w,nw->w` |
+| block hitreact | `unarmed/defense/block_hit_01` | same e/w split |
+| ranged fire, upper | `ranged_2h/cosmetic/fire_01` | authored `n,e,se,sw,w`; `ne,s,nw` played **nothing** |
+| field patch | `unarmed/interaction/field_patch_use_01` | `n..s->e`, `sw,w,nw->w` |
+
+The ranged-fire candidate list collapses to a single identity family whose
+authored set is exactly R1's `fire_01` weapon table, so the upper body reuses
+`_ranged_2h_authored_sector()` rather than growing a third table.
+
+Locomotion projections are proven but **not** layer-symmetric, and two of them
+substitute a different *action*, not just a different direction:
+
+* lower `walk_01`: `ne -> idle_01/ne`, `nw -> run_01/nw`
+* lower `run_01`: `ne -> idle_01/ne`
+* upper `walk_01`: `ne,nw -> walk_01/n`
+* upper `idle_01`: `ne -> idle_01/n`
+
+#### Three packet premises the authored art contradicts
+
+1. **Section 2B — parry-success body art does not exist.** `parry_success_01` is
+   authored as `fx` only, in `source/` and `runtime/` alike. Every live
+   parry-success body clip sources `unarmed/defense/parry_01`. The section's
+   E/W-only policy would also drop the authored **north** parry pose, which
+   `unarmed_parry_success_up` renders today.
+2. **Section 2A — the profile is `unarmed`,** not `shared`: the identity is
+   `unarmed/locomotion/idle_hitreact_01`, authored `n,s` on both layers. The
+   prescribed policy matches today's behavior except for `e`/`w`, which are an
+   exact tie between `n` and `s` and currently stick to the previous sector.
+   Retiring the memory makes them always `s`; that is the one visible delta.
+3. **Sections 1 and 8 — "resolve the sector once" does not hold for every action.**
+   Lower and upper have different authored coverage for `idle_01` (upper has no
+   `ne`), `walk_01` (upper has no `ne`/`nw`), `ranged_2h/posture/stance_01` and
+   `field_patch_use_01`. A single shared sector would either request a missing
+   upper identity or discard an authored lower one. It holds for the sidearm and
+   parry beats and is applied there.
+
+#### The two blockers
+
+**B1 — upper-body block-enter art was never published canonically.**
+Of 217 playable clips across both compatibility resources, 215 map to a published
+canonical identity. The two that do not are the upper body's block-enter:
+
+    unarmed/defense/block_enter_01_legacy_cc318778/e/upper_body   (5 frames)
+    unarmed/defense/block_enter_01_legacy_68a274b0/w/upper_body   (5 frames)
+
+They exist only as legacy-named runtime residue. `source/` holds `block_enter_01`
+for the **lower** body only (4 frames e/w), so the sync never publishes an upper
+strip and `unarmed/defense/block_enter_01/*/upper_body` does not exist. This also
+governs guard **exit**, which is block-enter played backwards on the upper body.
+Rebinding without resolving it silently removes the upper half of guard enter and
+guard exit. Note the layers are already frame-asymmetric here: lower 4f, upper 5f.
+
+**B2 — post-parry-neutral lower west is mis-published.**
+`guard_enter_post_parry_neutral()` plays `unarmed_parry_success_01`, which resolves:
+
+| | east side (`n,ne,e,se,s`) | west side (`sw,w,nw`) |
+|---|---|---|
+| upper | `unarmed/attack/parry_recovery_01/e` | `unarmed/attack/parry_recovery_01/w` |
+| lower | `unarmed/attack/parry_recovery_01/e` | `unarmed/interaction/success_01/w` |
+
+One clip name, two different semantic actions, and the layers disagree — the same
+shape as the R2 FX defect. Both actions are fully published e/w for both body
+layers, so either reading is implementable.
+
+
 ### Recommended sequencing for the next attempt
 
 1. Extend `operator_animation_reachability.json` to record the ten unrecorded

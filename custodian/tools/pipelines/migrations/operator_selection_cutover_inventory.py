@@ -72,6 +72,18 @@ SELECTION_PATTERNS = {
         r"sprite_frames\s*\.\s*(?:add_animation|add_frame|set_animation_speed|set_animation_loop)\s*\("),
     # Selection by walking a list of candidate clip names until one is playable.
     "candidate_animation_list": re.compile(r"_primary_ranged_fire_candidates\s*\("),
+    # A renderer's SpriteFrames replaced by a private deep copy. Found in C2a-R3:
+    # this is how a renderer opts out of sharing before mutating, so it hides a
+    # mutation that `runtime_spriteframes_mutation` alone would not flag.
+    "runtime_spriteframes_fork": re.compile(
+        r"sprite_frames\s*=\s*[^\n]*\.duplicate\s*\("),
+    # Animations sourced from a SECOND animation database and copied in at runtime,
+    # rather than read from the one generated runtime SpriteFrames. Matches uses,
+    # not the declaration: a file-scope `const ... := preload(...)` names no
+    # renderer, so counting it attributes the site to every renderer at once.
+    "secondary_animation_database": re.compile(
+        r"(?<!func )_copy_catalog_animation\s*\("
+        r"|OPERATOR_ANIMATION_CATALOG_FRAMES\s*[.,)]"),
 }
 
 #: The actual Operator presentation renderers. An explicit whitelist, because
@@ -457,6 +469,20 @@ def classify_site(site: dict) -> tuple[str, str] | None:
             "every other renderer bound to it. Canonical equivalents exist, so this is "
             "migratable work rather than an authoring decision — but the renderer must "
             "not be rebound while it remains."
+        )
+    if site["debt"] == "runtime_spriteframes_fork":
+        return "BLOCKED", (
+            "replaces the renderer's SpriteFrames with a private deep copy, which "
+            "defeats sharing the one canonical resource and silently doubles its "
+            "memory per Operator instance. It exists only to make a runtime mutation "
+            "safe, so it retires with that mutation."
+        )
+    if site["debt"] == "secondary_animation_database":
+        return "BLOCKED", (
+            "reads animations from a second animation database and copies them into "
+            "the renderer at runtime, instead of reading the one generated runtime "
+            "SpriteFrames. Migratable when the same identities are already published "
+            "canonically, which must be proven per identity before removal."
         )
     if site["debt"] == "candidate_animation_list":
         return "BLOCKED", (
