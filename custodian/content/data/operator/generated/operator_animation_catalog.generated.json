@@ -1176,6 +1176,11 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 8.0,
+          "loop": false,
+          "durations": [
+            1.0
           ]
         },
         "upper_body": {
@@ -1186,6 +1191,14 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 8.0,
+        "loop": false,
+        "durations": [
+          1.0
+        ]
       }
     },
     "melee_1h/posture/stance_01/w": {
@@ -3664,6 +3677,15 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 8.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -3682,6 +3704,18 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 8.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "ranged_2h/posture/relaxed_01/w": {
@@ -3696,6 +3730,15 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 8.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -3714,6 +3757,18 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 8.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "ranged_2h/posture/relaxed_01_legacy_15a8b537/e": {
@@ -3792,6 +3847,15 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 8.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -3810,6 +3874,18 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 8.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "ranged_2h/posture/stance_01/n": {
@@ -3824,6 +3900,15 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 8.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -3842,6 +3927,18 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 8.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "ranged_2h/posture/stance_01/ne": {
@@ -3856,6 +3953,15 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 8.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "weapon": {
@@ -3866,6 +3972,18 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "upper_body",
+        "fps": 8.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "ranged_2h/posture/stance_01/nw": {
@@ -3904,6 +4022,15 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 8.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -3922,6 +4049,18 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 8.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "ranged_2h/posture/stance_01/sw": {
@@ -3936,6 +4075,15 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 8.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -3954,6 +4102,18 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 8.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "ranged_2h/posture/stance_01/w": {
@@ -3968,6 +4128,15 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 8.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -3986,6 +4155,18 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 8.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "shared/attack/dodge_charge_windup_01/e": {
@@ -5104,6 +5285,13 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 15.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -5114,6 +5302,16 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 15.0,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/attack/fast_recovery_01/n": {
@@ -5152,6 +5350,13 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 15.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -5162,6 +5367,16 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 15.0,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/attack/fast_recovery_01/ne": {
@@ -5184,6 +5399,13 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 15.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -5194,6 +5416,16 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 15.0,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/attack/fast_recovery_01/nw": {
@@ -5216,6 +5448,13 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 15.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -5226,6 +5465,16 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 15.0,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/attack/fast_recovery_01/s": {
@@ -5248,6 +5497,13 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 15.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -5258,6 +5514,16 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 15.0,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/attack/fast_recovery_01/se": {
@@ -5280,6 +5546,13 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 15.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -5290,6 +5563,16 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 15.0,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/attack/fast_recovery_01/sw": {
@@ -5312,6 +5595,13 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 15.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -5322,6 +5612,16 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 15.0,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/attack/fast_recovery_01/w": {
@@ -5344,6 +5644,13 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 15.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -5354,6 +5661,16 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 15.0,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/attack/fast_recovery_01_legacy_c248638b/e": {
@@ -7528,8 +7845,27 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 10.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 10.0,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/defense/block_enter_01/w": {
@@ -7544,8 +7880,27 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 10.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 10.0,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/defense/block_enter_01_legacy_68a274b0/w": {
@@ -7592,6 +7947,15 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 14.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -7602,6 +7966,18 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 14.0,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/defense/block_hit_01/w": {
@@ -7616,6 +7992,15 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 14.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -7626,6 +8011,18 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 14.0,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/defense/block_hold_01/e": {
@@ -7640,6 +8037,15 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 8.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -7650,6 +8056,18 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 8.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/defense/block_hold_01/w": {
@@ -7664,6 +8082,15 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 8.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -7674,6 +8101,18 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 8.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/defense/legacy_operator_block_2h_katana/omni": {
@@ -7888,6 +8327,24 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 11.2,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -7898,6 +8355,27 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 11.2,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/interaction/field_patch_use_01/n": {
@@ -7936,6 +8414,24 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 11.2,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -7946,6 +8442,27 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 11.2,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/interaction/success_01/e": {
@@ -8032,6 +8549,15 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 8.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -8042,6 +8568,18 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 8.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/locomotion/idle_01/n": {
@@ -8064,6 +8602,15 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 8.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -8074,6 +8621,18 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 8.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/locomotion/idle_01/ne": {
@@ -8088,8 +8647,31 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 8.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 8.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/locomotion/idle_01/nw": {
@@ -8104,6 +8686,15 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 8.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -8114,6 +8705,18 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 8.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/locomotion/idle_01/s": {
@@ -8136,6 +8739,15 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 8.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -8146,6 +8758,18 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 8.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/locomotion/idle_01/se": {
@@ -8160,6 +8784,15 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 8.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -8170,6 +8803,18 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 8.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/locomotion/idle_01/sw": {
@@ -8184,6 +8829,15 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 8.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -8194,6 +8848,18 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 8.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/locomotion/idle_01/w": {
@@ -8216,6 +8882,15 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 8.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -8226,6 +8901,18 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 8.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/locomotion/idle_01_legacy_8346cfa8/ne": {
@@ -8256,6 +8943,15 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 22.73,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -8266,6 +8962,18 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 22.73,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/locomotion/idle_hitreact_01/s": {
@@ -8280,6 +8988,15 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 22.73,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -8290,6 +9007,18 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 22.73,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/locomotion/run_01/e": {
@@ -8611,6 +9340,15 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 10.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -8621,6 +9359,18 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 10.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/locomotion/walk_01/n": {
@@ -8643,6 +9393,18 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 10.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -8653,6 +9415,21 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 10.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/locomotion/walk_01/ne": {
@@ -8667,8 +9444,31 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 10.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 10.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/locomotion/walk_01/nw": {
@@ -8683,8 +9483,31 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 10.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 10.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/locomotion/walk_01/s": {
@@ -8707,6 +9530,18 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 10.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -8717,6 +9552,21 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 10.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/locomotion/walk_01/se": {
@@ -8731,6 +9581,15 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 10.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -8741,6 +9600,18 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 10.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/locomotion/walk_01/sw": {
@@ -8755,6 +9626,15 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 10.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -8765,6 +9645,18 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 10.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/locomotion/walk_01/w": {
@@ -8787,6 +9679,15 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 10.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -8797,6 +9698,18 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 10.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/locomotion/walk_01_legacy_4739d019/ne": {

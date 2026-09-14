@@ -15303,17 +15303,17 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_egv0x")
 }],
-"loop": 1,
+"loop": 0,
 "name": &"melee_1h/posture/stance_01/e/lower_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_y1asm")
 }],
-"loop": 1,
+"loop": 0,
 "name": &"melee_1h/posture/stance_01/e/upper_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -17583,7 +17583,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"ranged_2h/posture/relaxed_01/e/lower_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -17603,7 +17603,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"ranged_2h/posture/relaxed_01/e/upper_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -17623,7 +17623,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"ranged_2h/posture/relaxed_01/e/weapon",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -17643,7 +17643,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"ranged_2h/posture/relaxed_01/w/lower_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -17663,7 +17663,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"ranged_2h/posture/relaxed_01/w/upper_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -17683,7 +17683,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"ranged_2h/posture/relaxed_01/w/weapon",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -17743,7 +17743,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"ranged_2h/posture/stance_01/e/lower_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -17763,7 +17763,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"ranged_2h/posture/stance_01/e/upper_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -17783,7 +17783,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"ranged_2h/posture/stance_01/e/weapon",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -17803,7 +17803,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"ranged_2h/posture/stance_01/n/lower_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -17823,7 +17823,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"ranged_2h/posture/stance_01/n/upper_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -17843,7 +17843,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"ranged_2h/posture/stance_01/n/weapon",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -17863,7 +17863,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"ranged_2h/posture/stance_01/ne/upper_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -17883,7 +17883,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"ranged_2h/posture/stance_01/ne/weapon",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -17943,7 +17943,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"ranged_2h/posture/stance_01/se/lower_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -17963,7 +17963,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"ranged_2h/posture/stance_01/se/upper_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -17983,7 +17983,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"ranged_2h/posture/stance_01/se/weapon",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -18003,7 +18003,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"ranged_2h/posture/stance_01/sw/lower_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -18023,7 +18023,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"ranged_2h/posture/stance_01/sw/upper_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -18043,7 +18043,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"ranged_2h/posture/stance_01/sw/weapon",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -18063,7 +18063,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"ranged_2h/posture/stance_01/w/lower_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -18083,7 +18083,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"ranged_2h/posture/stance_01/w/upper_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -18103,7 +18103,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"ranged_2h/posture/stance_01/w/weapon",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -20290,7 +20290,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/fast_recovery_01/e/full_body",
-"speed": 12.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -20304,7 +20304,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/fast_recovery_01/e/lower_body",
-"speed": 12.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -20318,7 +20318,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/fast_recovery_01/e/upper_body",
-"speed": 12.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -20332,7 +20332,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/fast_recovery_01/n/cape",
-"speed": 12.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -20346,7 +20346,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/fast_recovery_01/n/full_body",
-"speed": 12.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -20371,7 +20371,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/fast_recovery_01/n/lower_body",
-"speed": 12.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -20385,7 +20385,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/fast_recovery_01/n/upper_body",
-"speed": 12.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -20399,7 +20399,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/fast_recovery_01/ne/full_body",
-"speed": 12.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -20413,7 +20413,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/fast_recovery_01/ne/lower_body",
-"speed": 12.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -20427,7 +20427,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/fast_recovery_01/ne/upper_body",
-"speed": 12.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -20441,7 +20441,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/fast_recovery_01/nw/full_body",
-"speed": 12.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -20455,7 +20455,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/fast_recovery_01/nw/lower_body",
-"speed": 12.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -20469,7 +20469,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/fast_recovery_01/nw/upper_body",
-"speed": 12.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -20483,7 +20483,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/fast_recovery_01/s/full_body",
-"speed": 12.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -20497,7 +20497,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/fast_recovery_01/s/lower_body",
-"speed": 12.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -20511,7 +20511,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/fast_recovery_01/s/upper_body",
-"speed": 12.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -20525,7 +20525,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/fast_recovery_01/se/full_body",
-"speed": 12.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -20539,7 +20539,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/fast_recovery_01/se/lower_body",
-"speed": 12.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -20553,7 +20553,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/fast_recovery_01/se/upper_body",
-"speed": 12.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -20567,7 +20567,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/fast_recovery_01/sw/full_body",
-"speed": 12.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -20581,7 +20581,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/fast_recovery_01/sw/lower_body",
-"speed": 12.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -20595,7 +20595,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/fast_recovery_01/sw/upper_body",
-"speed": 12.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -20609,7 +20609,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/fast_recovery_01/w/full_body",
-"speed": 12.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -20623,7 +20623,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/fast_recovery_01/w/lower_body",
-"speed": 12.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -20637,7 +20637,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/fast_recovery_01/w/upper_body",
-"speed": 12.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -22289,7 +22289,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/defense/block_enter_01/e/lower_body",
-"speed": 12.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -22306,7 +22306,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/defense/block_enter_01/w/lower_body",
-"speed": 12.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -22326,7 +22326,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/defense/block_hit_01/e/lower_body",
-"speed": 12.0
+"speed": 14.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -22346,7 +22346,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/defense/block_hit_01/e/upper_body",
-"speed": 12.0
+"speed": 14.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -22366,7 +22366,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/defense/block_hit_01/w/lower_body",
-"speed": 12.0
+"speed": 14.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -22386,7 +22386,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/defense/block_hit_01/w/upper_body",
-"speed": 12.0
+"speed": 14.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -22406,7 +22406,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/defense/block_hold_01/e/lower_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -22426,7 +22426,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/defense/block_hold_01/e/upper_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -22446,7 +22446,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/defense/block_hold_01/w/lower_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -22466,7 +22466,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/defense/block_hold_01/w/upper_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -22800,7 +22800,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/interaction/field_patch_use_01/e/fx",
-"speed": 12.0
+"speed": 11.2
 }, {
 "frames": [{
 "duration": 1.0,
@@ -22847,7 +22847,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/interaction/field_patch_use_01/e/lower_body",
-"speed": 12.0
+"speed": 11.2
 }, {
 "frames": [{
 "duration": 1.0,
@@ -22894,7 +22894,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/interaction/field_patch_use_01/e/upper_body",
-"speed": 12.0
+"speed": 11.2
 }, {
 "frames": [{
 "duration": 1.0,
@@ -22988,7 +22988,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/interaction/field_patch_use_01/w/fx",
-"speed": 12.0
+"speed": 11.2
 }, {
 "frames": [{
 "duration": 1.0,
@@ -23035,7 +23035,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/interaction/field_patch_use_01/w/lower_body",
-"speed": 12.0
+"speed": 11.2
 }, {
 "frames": [{
 "duration": 1.0,
@@ -23082,7 +23082,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/interaction/field_patch_use_01/w/upper_body",
-"speed": 12.0
+"speed": 11.2
 }, {
 "frames": [{
 "duration": 1.0,
@@ -23245,7 +23245,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/locomotion/idle_01/e/lower_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -23265,7 +23265,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/locomotion/idle_01/e/upper_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -23320,7 +23320,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/locomotion/idle_01/n/lower_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -23340,7 +23340,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/locomotion/idle_01/n/upper_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -23363,7 +23363,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/locomotion/idle_01/ne/lower_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -23383,7 +23383,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/locomotion/idle_01/nw/lower_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -23403,7 +23403,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/locomotion/idle_01/nw/upper_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -23452,7 +23452,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/locomotion/idle_01/s/lower_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -23472,7 +23472,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/locomotion/idle_01/s/upper_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -23492,7 +23492,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/locomotion/idle_01/se/lower_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -23512,7 +23512,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/locomotion/idle_01/se/upper_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -23532,7 +23532,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/locomotion/idle_01/sw/lower_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -23552,7 +23552,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/locomotion/idle_01/sw/upper_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -23595,7 +23595,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/locomotion/idle_01/w/lower_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -23615,7 +23615,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/locomotion/idle_01/w/upper_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -23635,7 +23635,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/locomotion/idle_hitreact_01/n/lower_body",
-"speed": 12.0
+"speed": 22.73
 }, {
 "frames": [{
 "duration": 1.0,
@@ -23655,7 +23655,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/locomotion/idle_hitreact_01/n/upper_body",
-"speed": 12.0
+"speed": 22.73
 }, {
 "frames": [{
 "duration": 1.0,
@@ -23675,7 +23675,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/locomotion/idle_hitreact_01/s/lower_body",
-"speed": 12.0
+"speed": 22.73
 }, {
 "frames": [{
 "duration": 1.0,
@@ -23695,7 +23695,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/locomotion/idle_hitreact_01/s/upper_body",
-"speed": 12.0
+"speed": 22.73
 }, {
 "frames": [{
 "duration": 1.0,
@@ -24302,7 +24302,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/locomotion/walk_01/e/full_body",
-"speed": 12.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -24322,7 +24322,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/locomotion/walk_01/e/lower_body",
-"speed": 12.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -24342,7 +24342,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/locomotion/walk_01/e/upper_body",
-"speed": 12.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -24397,7 +24397,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/locomotion/walk_01/n/lower_body",
-"speed": 12.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -24426,7 +24426,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/locomotion/walk_01/n/upper_body",
-"speed": 12.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -24449,7 +24449,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/locomotion/walk_01/ne/lower_body",
-"speed": 12.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -24472,7 +24472,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/locomotion/walk_01/nw/lower_body",
-"speed": 12.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -24524,7 +24524,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/locomotion/walk_01/s/lower_body",
-"speed": 12.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -24553,7 +24553,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/locomotion/walk_01/s/upper_body",
-"speed": 12.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -24573,7 +24573,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/locomotion/walk_01/se/lower_body",
-"speed": 12.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -24593,7 +24593,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/locomotion/walk_01/se/upper_body",
-"speed": 12.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -24613,7 +24613,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/locomotion/walk_01/sw/lower_body",
-"speed": 12.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -24633,7 +24633,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/locomotion/walk_01/sw/upper_body",
-"speed": 12.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -24653,7 +24653,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/locomotion/walk_01/w/full_body",
-"speed": 12.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -24673,7 +24673,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/locomotion/walk_01/w/lower_body",
-"speed": 12.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -24693,7 +24693,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/locomotion/walk_01/w/upper_body",
-"speed": 12.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,

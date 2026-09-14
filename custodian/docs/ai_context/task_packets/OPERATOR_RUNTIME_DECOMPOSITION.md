@@ -1,6 +1,9 @@
 # Task Packet — Operator Runtime Decomposition
 
-**Status:** Slices A and B complete (2026-09-10)
+**Status:** Slices A, B, B-final and C1 complete. C2a in progress one renderer at a
+time: R1 `modular_sidearm_sprite` and R2 `modular_upper_fx_sprite` are canonical;
+R3 (the body pair) stopped at its exhaustiveness pass and is paused behind T1,
+the canonical timing-preservation repair (2026-09-14).
 **Contract:** `design/04_architecture/OPERATOR_RUNTIME_ARCHITECTURE.md`
 **Gate:** `custodian/tools/validation/operator_architecture_debt_audit.py`
 
@@ -693,6 +696,59 @@ guard exit. Note the layers are already frame-asymmetric here: lower 4f, upper 5
 One clip name, two different semantic actions, and the layers disagree — the same
 shape as the R2 FX defect. Both actions are fully published e/w for both body
 layers, so either reading is implementable.
+
+
+### C2a-T1 — canonical timing preservation (DONE)
+
+R3's exhaustiveness pass found that the canonical spine knew which pixels to play
+but not how fast. Operator source art carries `.animation.json` timing sidecars
+only sparsely, and `build_operator_runtime_frames.gd` falls back to 12 FPS plus a
+loop heuristic without one — while the compatibility resources carry hand-authored
+per-clip FPS. Rebinding a renderer therefore preserved pixels and frame counts
+while silently retiming the animation, which the preservation contract forbids.
+
+That had already happened twice, in work that was reviewed and accepted:
+
+* **C2a-R1** — `ranged_2h/posture/stance_01/*/weapon` went 8 -> 12 FPS. The
+  sidearm ranged-ready stance loop ran 50% fast.
+* **C2a-R2** — `unarmed/interaction/field_patch_use_01/*/fx` went 11.2 -> 12 FPS
+  and desynchronized from its own body layer, which is still driven at 11.2.
+
+Neither smoke could see it: the paths under test renormalize speed
+(`_play_first_available_modular_fire_animation()` sets
+`speed_scale = target_fps / source_speed`, and the ranged aim path derives FPS from
+frame count over a tuned duration), and these two paths do not. The selection
+architecture from R1 and R2 stands; only their timing preservation was defective.
+
+Of 191 canonical identities reachable from the four migrated or pending renderers,
+103 already matched, 31 are explicitly renormalized at runtime, and 88 would have
+retimed. Publishing **43** sidecars covers all 88, because the pipeline projects a
+clock layer's timing onto every sibling with the same frame count; the other 45 are
+covered by that projection rather than duplicated. Zero conflicts and zero
+inexpressible sibling clocks remain.
+
+Three cross-action mis-publications produced the only timing conflicts, and the R3
+decision to stop preserving them dissolved all three. Timing follows the *consumer*,
+not the mis-published pixels: `unarmed_walk_up_right` keeps the walk clock even
+though it drew idle art. A fourth was found the same way —
+`unarmed_fast_windup_lower_up` drew `fast_recovery_01/n`.
+
+`operator_timing_preservation_smoke.gd` is the gate that should have caught R1 and
+R2. It compares every compatibility clip against the canonical identity its consumer
+resolves to and fails on FPS, loop or per-frame duration drift, and it is verified
+against three negative controls: an authored clock regressed to 12 FPS, a flipped
+loop, and a changed duration multiplier.
+
+Two structural findings worth carrying forward:
+
+* `operator_animation_catalog.generated.json` accumulates. An identity the manifest
+  has no timing for keeps whatever the catalog already held, so deleting a sidecar
+  does not revert its clock.
+* The clock reaches only siblings with a matching frame count. Seven `full_body`
+  and `fx` layers are outside every clock published here and keep the generated
+  default; `animated_sprite` owns `full_body`, so its slice must publish them.
+
+No renderer binding changed in T1.
 
 
 ### Recommended sequencing for the next attempt

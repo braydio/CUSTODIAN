@@ -191,8 +191,21 @@ Optional adjacent `<sheet>.animation.json` files use `custodian.operator_animati
 canonical, diffable animation-clock authority for FPS, loop behavior, and per-frame duration multipliers.
 The synchronized animation resolves timing from its lower-body clock (then full-body or upper-body when no
 lower body exists), copies the sidecar into runtime, and projects the resolved timing through both generated
-catalogs and managed `SpriteFrames`. Missing sidecars retain legacy uniform timing. Authored sibling timing
-must match the clock owner; binary Aseprite frame timing is import material, not runtime authority.
+catalogs and managed `SpriteFrames`. Authored sibling timing must match the clock owner; binary Aseprite
+frame timing is import material, not runtime authority.
+
+A missing sidecar does **not** retain the art's historical timing. The build falls back to 12 FPS plus a
+loop heuristic, so an animation whose compatibility resource authored a different speed is silently retimed
+the moment its renderer is cut over to the canonical resource. Publishing the authored clock is therefore
+part of a renderer cutover, not optional polish, and
+`tools/validation/operator_timing_preservation_smoke.gd` fails the migration when authored FPS, loop or
+per-frame durations would change. The clock projects only onto siblings whose frame count matches the clock
+layer's; a sibling with a different frame count keeps its own sidecar or the default.
+
+`content/data/operator/generated/operator_animation_catalog.generated.json` accumulates rather than being
+rebuilt from scratch: an identity the current manifest carries no timing for keeps whatever timing the
+catalog already recorded. Deleting a sidecar therefore does not revert that clock, and the honest way to
+change published timing is to edit the sidecar rather than remove it.
 
 Composited Operator reaction pairs are a supported authored alias: `full_body_combat` routes to the live body domain and `combat_fx` routes to the synchronized overlay domain. Runtime playback remains an explicit gameplay/presentation wiring step.
 
