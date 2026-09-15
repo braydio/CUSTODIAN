@@ -1224,6 +1224,7 @@ From the repository root:
 ```bash
 python3 custodian/tools/validation/operator_art_agent_smoke.py
 python3 custodian/tools/validation/operator_animation_workbench_smoke.py
+python3 custodian/tools/validation/operator_workbench_mirror_publish_smoke.py
 python3 custodian/tools/validation/run_validation.py --changed --json
 ```
 
