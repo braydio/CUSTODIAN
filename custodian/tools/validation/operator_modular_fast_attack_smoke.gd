@@ -92,6 +92,10 @@ func _validate_runtime_phase_playback(operator: Node) -> void:
 	operator.set("combat_loadout_mode", "melee")
 	operator.set("primary_weapon_equipped", false)
 	operator.set("_melee_attack_key", "unarmed_fast_1")
+	# Slice C1 made OperatorBodyPresenter reject an undeclared ownership change:
+	# a composition must claim the body before it shows any layer. Driving the
+	# phase helpers directly skips the entry points that normally declare it.
+	operator.call("_declare_modular_body_composition")
 	for dir in _directions.keys():
 		operator.set("_melee_forward", _directions[dir]["vector"])
 		_assert_true(bool(operator.call("_sync_modular_fast_attack_phase", &"windup")), "windup should play modular body for %s" % dir)
@@ -101,7 +105,7 @@ func _validate_runtime_phase_playback(operator: Node) -> void:
 		_assert_layer_animation(operator, "modular_lower_body_sprite", "unarmed_fast_strike_lower", dir)
 		_assert_layer_animation(operator, "modular_upper_body_sprite", "unarmed_fast_strike_upper", dir)
 		if FileAccess.file_exists(_runtime_png_path("upper_fx", "fast_strike_01", dir)):
-			_assert_layer_animation(operator, "modular_upper_fx_sprite", "unarmed_fast_strike_fx_modular", dir)
+			_assert_canonical_fx(operator, "fast_strike_01", dir)
 		_assert_true(bool(operator.call("_sync_modular_fast_attack_phase", &"recovery")), "recovery should play modular body for %s" % dir)
 		_assert_layer_animation(operator, "modular_lower_body_sprite", "unarmed_fast_recovery_lower", dir)
 		_assert_layer_animation(operator, "modular_upper_body_sprite", "unarmed_fast_recovery_upper", dir)
@@ -149,6 +153,10 @@ func _validate_fast_attack_entry_points(operator: Node) -> void:
 	operator.set("_melee_forward", Vector2.RIGHT)
 	operator.set("_active_attack_profile", operator.call("get_current_combat_profile"))
 	operator.set("_active_melee_attack_profile", null)
+	# The fast-attack phase family does not declare the modular composition
+	# itself; in gameplay it is reached after `_update_animation` has already
+	# claimed the body. Driving it directly here has to stand in for that.
+	operator.call("_declare_modular_body_composition")
 	_assert_true(bool(operator.call("_try_start_fast_attack_windup")), "fast windup entry should start")
 	_assert_layer_animation(operator, "modular_lower_body_sprite", "unarmed_fast_windup_lower", "e")
 	_assert_layer_animation(operator, "modular_upper_body_sprite", "unarmed_fast_windup_upper", "e")
@@ -158,10 +166,13 @@ func _validate_fast_attack_entry_points(operator: Node) -> void:
 	operator.set("_melee_fast_windup", false)
 	operator.set("_melee_active", true)
 	operator.set("_melee_attack_kind", "fast")
+	# As above: the phase helper is driven directly here, outside the
+	# `_update_animation` path that normally declares the modular composition.
+	operator.call("_declare_modular_body_composition")
 	_assert_true(bool(operator.call("_sync_modular_action_domains")), "strike action domain sync should prefer true modular lower/upper strike")
 	_assert_layer_animation(operator, "modular_lower_body_sprite", "unarmed_fast_strike_lower", "e")
 	_assert_layer_animation(operator, "modular_upper_body_sprite", "unarmed_fast_strike_upper", "e")
-	_assert_layer_animation(operator, "modular_upper_fx_sprite", "unarmed_fast_strike_fx_modular", "e")
+	_assert_canonical_fx(operator, "fast_strike_01", "e")
 
 	operator.set("_melee_active", false)
 	operator.set("_melee_recovery_active", true)
@@ -251,6 +262,22 @@ func _source_png_path(layer: String, action: String, dir: String) -> String:
 
 func _runtime_png_path(layer: String, action: String, dir: String) -> String:
 	return "res://content/sprites/operator/runtime/animations/%s/actions/unarmed/fast_attack/%s/operator__modular_%s__unarmed__%s__%s__3f__96.png" % [layer, action, layer, action, dir]
+
+
+## modular_upper_fx_sprite is canonical as of C2a-R2: it resolves
+## profile/group/action/direction/layer through OperatorAnimationSelector rather
+## than a name built from a base plus a compatibility direction suffix.
+func _assert_canonical_fx(operator: Node, action: String, dir: String) -> void:
+	var sprite := operator.get("modular_upper_fx_sprite") as AnimatedSprite2D
+	_assert_true(sprite != null, "modular_upper_fx_sprite should exist")
+	if sprite == null:
+		return
+	var expected := StringName("unarmed/attack/%s/%s/fx" % [action, dir])
+	_assert_true(sprite.visible, "modular_upper_fx_sprite should be visible for %s" % dir)
+	_assert_true(
+		sprite.animation == expected,
+		"modular_upper_fx_sprite expected %s got %s" % [String(expected), String(sprite.animation)]
+	)
 
 
 func _assert_layer_animation(operator: Node, sprite_property: String, base: String, dir: String) -> void:

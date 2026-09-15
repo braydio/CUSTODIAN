@@ -50,7 +50,6 @@ func _validate_parry_attempt_uses_modular_layers(operator: Node) -> void:
 
 	_assert_animation_exists(operator, "modular_lower_body_sprite", &"unarmed_parry_success_01_right")
 	_assert_animation_exists(operator, "modular_upper_body_sprite", &"unarmed_parry_success_01_right")
-	_assert_animation_exists(operator, "modular_upper_fx_sprite", &"unarmed_parry_success_01_fx_right")
 	operator.call("_play_parry_animation", &"unarmed_parry_success_01")
 
 	var lower_sprite := operator.get("modular_lower_body_sprite") as AnimatedSprite2D
@@ -58,10 +57,22 @@ func _validate_parry_attempt_uses_modular_layers(operator: Node) -> void:
 	var fx_sprite := operator.get("modular_upper_fx_sprite") as AnimatedSprite2D
 	_assert_true(lower_sprite != null and lower_sprite.visible, "parry success should show modular lower body")
 	_assert_true(upper_sprite != null and upper_sprite.visible, "parry success should show modular upper body")
-	_assert_true(fx_sprite != null and fx_sprite.visible, "parry success should show modular upper FX")
 	_assert_true(lower_sprite != null and lower_sprite.animation == &"unarmed_parry_success_01_right", "parry success recovery should play lower right success_01")
 	_assert_true(upper_sprite != null and upper_sprite.animation == &"unarmed_parry_success_01_right", "parry success recovery should play upper right success_01")
-	_assert_true(fx_sprite != null and fx_sprite.animation == &"unarmed_parry_success_01_fx_right", "parry success recovery should play right success_01 FX")
+	# C2a-R2 canonicalized this renderer. The legacy `unarmed_parry_success_01_fx`
+	# was one clip sourcing two different actions -- parry_recovery_01 art on one
+	# side and interaction/success_01 on the other -- so it was replaced by the
+	# authored success identity. parry_recovery_01 FX stays dormant.
+	_assert_true(
+		fx_sprite != null and fx_sprite.visible
+		and fx_sprite.animation == &"unarmed/defense/parry_success_01/e/fx",
+		"post-parry neutral should present the canonical parry_success_01 FX"
+	)
+	_assert_true(
+		fx_sprite != null and String(fx_sprite.animation).find("parry_recovery_01") == -1
+		and String(fx_sprite.animation).find("interaction") == -1,
+		"post-parry neutral must never present recovery or interaction-success FX"
+	)
 
 	_assert_animation_exists(operator, "modular_lower_body_sprite", &"unarmed_parry_right")
 	_assert_animation_exists(operator, "modular_upper_body_sprite", &"unarmed_parry_right")

@@ -68,9 +68,10 @@ func _init() -> void:
 
 	_check_layer(lower, "unarmed idle lower", &"unarmed_idle_down", failures)
 	_check_layer(upper, "unarmed idle upper", &"unarmed_idle_down", failures)
-	_check_layer(head, "hooded idle head", &"hooded_idle_down", failures)
-	if head != null and upper != null and head.frame != upper.frame:
-		failures.append("hooded idle head frame should synchronize to modular upper body")
+	# C1 retired the modular head from active composition (ACTIVE_MODULAR_HEAD),
+	# preserving the art without drawing it. It must stay hidden in every state,
+	# so this asserts retirement rather than the old head/upper frame sync.
+	_check_hidden(head, "retired modular head should not draw during modular unarmed idle", failures)
 	_check_hidden(body, "legacy body should be hidden during modular unarmed idle", failures)
 
 	operator.set("velocity", Vector2.RIGHT * 32.0)
