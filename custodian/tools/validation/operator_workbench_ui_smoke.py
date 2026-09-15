@@ -73,9 +73,13 @@ class FakeWorkbench:
                 "affected_bindings": ["lower_body", "upper_body"],
                 "excluded_bindings": [{"binding_id": "fx", "reason": "independent clock"}],
                 "dependency_audit": {"level": "GREEN"}}
-    def publish(self, manifest, _aseprite, _force, dry_run, _full, requested):
+    @staticmethod
+    def horizontal_counterpart(direction): return {"e": "w", "w": "e", "ne": "nw", "nw": "ne", "se": "sw", "sw": "se"}.get(direction)
+    def publish(self, manifest, _aseprite, _force, dry_run, _full, requested, mirror_counterpart=False):
         if not dry_run: self.published += 1
-        return ["new/lower_body__7f__96.png", "new/upper_body__7f__96.png"]
+        direct = ["new/lower_body__7f__96.png", "new/upper_body__7f__96.png"]
+        if not mirror_counterpart: return direct
+        return [item for pair in zip(direct, ("new/lower_body__w__7f__96.png", "new/upper_body__w__7f__96.png")) for item in pair]
     def refresh(self, *args): return {}, Path(".")
     def _validation_commands(self, _data, full): return [[sys.executable, "-c", f"print('{'full' if full else 'standard'} validation')"]]
 
@@ -114,11 +118,18 @@ def pure_service_smoke() -> None:
         assert session.workbench_state == "ABSENT" and session.source_frames == 6
         assert session.workspace_display.startswith("workspace/")
         assert any(not layer.publishing and layer.layer == "full_body_reference" for layer in session.layers)
+        manifest_path = service.workspace(run.selection) / "workbench.json"
+        manifest_path.parent.mkdir(parents=True)
+        manifest_path.write_text(json.dumps(service._plan(run.selection)))
+        publish = service.publish_preview(run.selection)
+        assert publish.counterpart_direction == "w" and len(publish.mirror_paths) == 2
+        service.publish(run.selection)
+        assert backend.published == 1
         vigil = AnimationSelection("melee_1h", "posture", "idle_relaxed_01", "e", "vigil_pattern_dagger", "melee_1h_dagger")
         vigil_session = service.session(vigil)
         assert any(layer.layer == "weapon__vigil_pattern_dagger" for layer in vigil_session.layers)
         assert service.known_weapons()[0]["presentation_mode"] == "authored_overlay"
-        ws = service.workspace(run.selection); ws.mkdir(parents=True)
+        ws = service.workspace(run.selection); ws.mkdir(parents=True, exist_ok=True)
         plan = service._plan(run.selection)
         plan["pending_migration"] = backend.frame_migrate("", "", "", "add", 3, "duplicate-prev", "", "", "", "", "", "", True)
         plan["timeline"]["workspace_clock_frames"] = 7

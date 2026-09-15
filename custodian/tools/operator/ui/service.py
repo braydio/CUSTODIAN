@@ -316,23 +316,42 @@ class WorkbenchService:
     def publish_preview(self, selection: AnimationSelection, full_validate: bool = False) -> PublishView:
         plan = self._plan(selection)
         manifest_path = self.workspace(selection) / "workbench.json"
-        changed = self.workbench.publish(manifest_path, self.aseprite, False, True, full_validate, plan)
+        counterpart = self.workbench.horizontal_counterpart(selection.direction)
+        changed = self.workbench.publish(manifest_path, self.aseprite, False, True, full_validate, plan, bool(counterpart))
         data = self.workbench.load(manifest_path)
         migration = self.migration_view(data.get("pending_migration"))
         old_frames = int(data["timeline"]["source_clock_frames"])
         new_frames = int(data["timeline"]["workspace_clock_frames"])
         retired, new = [], []
-        changed_set = {str(Path(path)) for path in changed}
+        direct_changed = changed[::2] if counterpart else changed
+        mirror_changed = changed[1::2] if counterpart else []
         for binding in data.get("layers", ()):
             old = str(binding.get("source_contract", {}).get("path", ""))
             target = str(binding.get("publish_contract", {}).get("path", old))
-            if target in changed_set or old != target:
-                retired.append(old); new.append(target)
-        return PublishView(selection, old_frames, new_frames, tuple(retired), tuple(new), migration, migration.audit if migration else "GREEN")
+            retired.append(old); new.append(target)
+        def display(path: str) -> str:
+            value = Path(path)
+            try: return str(value.relative_to(self.repo_root))
+            except ValueError: return str(value)
+        mirror_paths = tuple(display(path) for path in mirror_changed)
+        counterpart_index = self.model.source_index(self.source_root, self.weapon_root) if counterpart else {}
+        normalized = manifest_path.parent / "exports" / data.get("export_stamp", "preview") / "normalized"
+        def operation(candidate: Path, existing: Path | None) -> str:
+            if existing is None or not existing.exists(): return "CREATE"
+            try: return "UNCHANGED" if self.model.pixel_sha256(candidate) == self.model.pixel_sha256(existing) else "REPLACE"
+            except (AttributeError, OSError): return "REPLACE"
+        bindings = tuple(data.get("layers", ()))
+        direct_operations = tuple(operation(normalized / f"{binding['binding_id']}.png", Path(path)) for binding,path in zip(bindings,direct_changed))
+        mirror_operations = []
+        for binding in bindings:
+            sid=(binding.get("owner"),binding.get("layer"),binding.get("profile"),binding.get("group"),binding.get("action"),counterpart)
+            existing=counterpart_index.get(sid)
+            mirror_operations.append(operation(normalized/f"mirror__{binding['binding_id']}.png",Path(existing[0]) if existing else None))
+        return PublishView(selection, old_frames, new_frames, tuple(retired), tuple(new), migration, migration.audit if migration else "GREEN", counterpart, mirror_paths, tuple(mirror_operations), direct_operations)
 
-    def publish(self, selection: AnimationSelection, full_validate: bool = False):
+    def publish(self, selection: AnimationSelection, full_validate: bool = False, mirror_counterpart: bool = False):
         plan = self._plan(selection)
-        return self.workbench.publish(self.workspace(selection) / "workbench.json", self.aseprite, False, False, full_validate, plan)
+        return self.workbench.publish(self.workspace(selection) / "workbench.json", self.aseprite, False, False, full_validate, plan, mirror_counterpart)
 
     def refresh(self, selection: AnimationSelection, discard: bool = False):
         return self.workbench.refresh(

@@ -21,6 +21,15 @@ def source(root,k):
 def main():
  with tempfile.TemporaryDirectory() as td:
   root=Path(td); src=root/"4.png"; add=root/"5.png"; back=root/"back.png";strip(src,4); old=pixels(src,4)
+  directional=root/"directional.png"; mirrored=root/"mirrored.png"
+  image=Image.new("RGBA",(15,2))
+  for frame in range(5):
+   image.putpixel((frame*3,0),(frame+1,0,0,255));image.putpixel((frame*3+2,1),(0,frame+1,0,255))
+  image.save(directional);w.mirror_strip_frames(directional,mirrored,5,[3,2])
+  with Image.open(mirrored) as result:
+   assert [result.getpixel((frame*3+2,0))[0] for frame in range(5)]==[1,2,3,4,5]
+   assert [result.getpixel((frame*3,1))[1] for frame in range(5)]==[1,2,3,4,5]
+  assert [(d,w.horizontal_counterpart(d)) for d in ("e","ne","se","w","nw","sw","n","s","omni")]==[("e","w"),("ne","nw"),("se","sw"),("w","e"),("nw","ne"),("sw","se"),("n",None),("s",None),("omni",None)]
   fc.transform_strip(src,add,4,[8,8],"add",2,"duplicate-prev");assert pixels(add,5)==[old[0],old[1],old[1],old[2],old[3]]
   fc.transform_strip(add,back,5,[8,8],"remove",3);assert pixels(back,4)==old
   raw=root/"raw.png";out=root/"out.png";canvas=Image.new("RGBA",(24,8))

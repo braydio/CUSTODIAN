@@ -660,8 +660,8 @@ class OperatorWorkbenchApp(App):
         except Exception as error:self._error(error)
     def action_publish(self)->None:
         if self._guard_preview(): self.run_worker(self._prepare_publish(),group="preview",exclusive=True)
-    def _accept_publish(self,full:bool|None)->None:
-        if full is not None and self.state.selection:self.run_worker(self._mutate("PUBLISH",self.service.publish,self.state.selection,full),group="mutation")
+    def _accept_publish(self,options:tuple[bool,bool]|None)->None:
+        if options is not None and self.state.selection:self.run_worker(self._mutate("PUBLISH",self.service.publish,self.state.selection,*options),group="mutation")
 
     def action_refresh_workbench(self)->None:
         if not self._guard_preview(): return

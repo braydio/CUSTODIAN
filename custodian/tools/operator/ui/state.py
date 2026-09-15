@@ -72,6 +72,10 @@ class PublishView:
     new_paths: tuple[str, ...]
     migration: MigrationView | None
     audit: str
+    counterpart_direction: str | None = None
+    mirror_paths: tuple[str, ...] = ()
+    mirror_operations: tuple[str, ...] = ()
+    direct_operations: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)

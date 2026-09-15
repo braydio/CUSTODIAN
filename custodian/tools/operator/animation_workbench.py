@@ -26,6 +26,28 @@ GENERATED_OPERATOR_RESOURCES=[
         "operator_animation_catalog_frames.tres",
     )
 ]
+HORIZONTAL_COUNTERPARTS={"e":"w","w":"e","ne":"nw","nw":"ne","se":"sw","sw":"se"}
+
+def horizontal_counterpart(direction):
+    return HORIZONTAL_COUNTERPARTS.get(direction)
+
+def mirror_strip_frames(source, target, frames, frame_size):
+    """Mirror every cell without reversing the strip's temporal ordering."""
+    fw,fh=map(int,frame_size)
+    with Image.open(source) as opened:
+        image=opened.convert("RGBA")
+        if image.size!=(fw*int(frames),fh):
+            raise m.WorkbenchError(f"mirror candidate dimensions {image.size} do not match {frames}x{fw}x{fh}: {source}")
+        mirrored=Image.new("RGBA",image.size)
+        for index in range(int(frames)):
+            cell=image.crop((index*fw,0,(index+1)*fw,fh))
+            mirrored.paste(cell.transpose(Image.Transpose.FLIP_LEFT_RIGHT),(index*fw,0))
+        target.parent.mkdir(parents=True,exist_ok=True)
+        mirrored.save(target)
+
+def _counterpart_target(binding, direction):
+    key=m.SCHEMA.OperatorAssetKey(binding["owner"],binding["layer"],binding["profile"],binding["group"],binding["action"],direction,binding["workspace_contract"]["frames"],*binding["frame_size"])
+    return m.CUSTODIAN_ROOT/m.SCHEMA.canonical_source_path(key)
 
 def resolve_aseprite(explicit=None, required=False):
     value=explicit or os.environ.get("ASEPRITE_BIN") or shutil.which("aseprite")
@@ -157,48 +179,68 @@ def _operator_scene_consistency():
     _compatibility_check()
     subprocess.run(["godot","--headless","--path",str(m.CUSTODIAN_ROOT),"--script","res://tools/validation/operator_modular_layers_smoke.gd"],check=True)
 
-def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_validate=False,requested=None):
+def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_validate=False,requested=None,mirror_counterpart=False):
     ws=manifest.parent; data=load(manifest); st=state(data,ws/"workbench.aseprite")
     if requested: m.assert_context(data,requested)
     if "STALE" in st and not force_stale: raise m.WorkbenchError(f"publish refused: {st}; use scary --force-stale-source only after review")
     stamp=datetime.now().strftime("%Y%m%dT%H%M%S"); data["export_stamp"]=stamp; save(manifest,data); aseprite_run(resolve_aseprite(aseprite,True),manifest,"export")
+    counterpart=horizontal_counterpart(data["identity"]["direction"])
+    if mirror_counterpart and counterpart is None:
+        raise m.WorkbenchError(f"no mirrored counterpart for direction: {data['identity']['direction']}")
+    counterpart_index=m.source_index() if mirror_counterpart else {}
     migration=data.get("pending_migration"); normalized=ws/"exports"/stamp/"normalized"; candidates=[]
     for b in data["layers"]:
-        out=normalized/f"{b['binding_id']}.png"; m.extract_binding(ws/"exports"/stamp/"raw"/f"{b['binding_id']}.png",b,data["canvas"],out); candidates.append((b,out,m.REPO_ROOT/b["publish_contract"]["path"],m.REPO_ROOT/b["source_contract"]["path"]))
-    if dry_run: return [str(x[2]) for x in candidates]
+        out=normalized/f"{b['binding_id']}.png"; m.extract_binding(ws/"exports"/stamp/"raw"/f"{b['binding_id']}.png",b,data["canvas"],out)
+        candidates.append({"binding":b,"candidate":out,"target":m.REPO_ROOT/b["publish_contract"]["path"],"old":m.REPO_ROOT/b["source_contract"]["path"],"mirror":False,"existed":True})
+        if mirror_counterpart:
+            mirrored=normalized/f"mirror__{b['binding_id']}.png"
+            mirror_strip_frames(out,mirrored,b["workspace_contract"]["frames"],b["frame_size"])
+            target=_counterpart_target(b,counterpart)
+            sid=(b["owner"],b["layer"],b["profile"],b["group"],b["action"],counterpart)
+            existing=counterpart_index.get(sid)
+            old=existing[0] if existing else target
+            candidates.append({"binding":b,"candidate":mirrored,"target":target,"old":old,"mirror":True,"existed":existing is not None})
+    if dry_run: return [str(x["target"]) for x in candidates]
     if migration:
         affected=[b for b in data["layers"] if b["binding_id"] in migration["affected_bindings"]]; current_audit=fc.audit_dependencies(m.REPO_ROOT,data,affected)
         if current_audit["level"]!="GREEN": raise m.WorkbenchError("FRAME MIGRATION BLOCKED BY GAMEPLAY FRAME AUTHORITY\n"+json.dumps(current_audit,indent=2))
-    for b,c,dst,old in candidates:
+    for item in candidates:
+        b,c,dst,old=item["binding"],item["candidate"],item["target"],item["old"]
+        if item["mirror"]: continue
         if dst!=old and dst.exists(): raise m.WorkbenchError(f"target frame contract already exists: {dst}")
     tx=ws/"transactions"/stamp; backup=tx/"backups"; source_backup=backup/"sources"; resource_backup=backup/"resources"; source_backup.mkdir(parents=True,exist_ok=True); resource_backup.mkdir(parents=True,exist_ok=True)
     journal_path=tx/"transaction.json"
-    journal={"transaction_id":stamp,"state":"PREPARED","sources":[],"resources":[],"pending_migration":migration,"validation_stages_completed":[]}
-    for b,c,dst,old in candidates:
-        saved=source_backup/f"{b['binding_id']}.png"; shutil.copy2(old,saved)
+    journal={"transaction_id":stamp,"state":"PREPARED","sources":[],"resources":[],"pending_migration":migration,"validation_stages_completed":[],"mirror_promotion":{"enabled":bool(mirror_counterpart),"source_direction":data["identity"]["direction"],"target_direction":counterpart if mirror_counterpart else None,"bindings":[b["binding_id"] for b in data["layers"]] if mirror_counterpart else []}}
+    for item in candidates:
+        b,c,dst,old=item["binding"],item["candidate"],item["target"],item["old"]
+        prefix="mirror__" if item["mirror"] else ""
+        saved=source_backup/f"{prefix}{b['binding_id']}.png"
+        if item["existed"]: shutil.copy2(old,saved)
         sidecar=old.with_suffix(old.suffix+".import")
-        saved_sidecar=source_backup/f"{b['binding_id']}.png.import"
+        saved_sidecar=source_backup/f"{prefix}{b['binding_id']}.png.import"
         if sidecar.exists(): shutil.copy2(sidecar,saved_sidecar)
-        timing=m.BUILDER.timing_sidecar_path(old); saved_timing=source_backup/f"{b['binding_id']}.animation.json"
+        timing=m.BUILDER.timing_sidecar_path(old); saved_timing=source_backup/f"{prefix}{b['binding_id']}.animation.json"
         if timing.exists(): shutil.copy2(timing,saved_timing)
-        journal["sources"].append({"binding_id":b["binding_id"],"old_path":m.rel(old),"old_sha256":m.file_sha256(old),"target_path":m.rel(dst),"target_sha256":m.file_sha256(c),"backup_path":m.rel(saved),"import_backup_path":m.rel(saved_sidecar) if saved_sidecar.exists() else "","timing_backup_path":m.rel(saved_timing) if saved_timing.exists() else ""})
+        journal["sources"].append({"binding_id":b["binding_id"],"mirror":item["mirror"],"operation":"REPLACE" if item["existed"] else "CREATE","old_path":m.rel(old),"old_sha256":m.file_sha256(old) if item["existed"] else None,"target_path":m.rel(dst),"target_sha256":m.file_sha256(c),"backup_path":m.rel(saved) if saved.exists() else "","import_backup_path":m.rel(saved_sidecar) if saved_sidecar.exists() else "","timing_backup_path":m.rel(saved_timing) if saved_timing.exists() else ""})
     for resource in GENERATED_OPERATOR_RESOURCES:
         saved=resource_backup/resource.name; shutil.copy2(resource,saved)
         journal["resources"].append({"path":m.rel(resource),"old_sha256":m.file_sha256(resource),"target_sha256":None,"backup_path":m.rel(saved)})
     save(journal_path,journal)
     try:
-        for b,c,dst,old in candidates:
+        for item in candidates:
+            b,c,dst,old=item["binding"],item["candidate"],item["target"],item["old"]
             if dst!=old:
                 old.unlink()
                 old.with_suffix(old.suffix+".import").unlink(missing_ok=True)
                 m.BUILDER.timing_sidecar_path(old).unlink(missing_ok=True)
-            tmp=dst.with_suffix(".png.workbench.tmp"); shutil.copy2(c,tmp); dst.parent.mkdir(parents=True,exist_ok=True); os.replace(tmp,dst)
+            dst.parent.mkdir(parents=True,exist_ok=True); tmp=dst.with_suffix(".png.workbench.tmp"); shutil.copy2(c,tmp); os.replace(tmp,dst)
         timing_payload=m.timing_payload_from_timeline(data["timeline"])
         if timing_payload is not None:
-            clock=next(b for b,_,_,_ in candidates if b["layer"]==data["timeline"]["clock_owner"])
-            clock_target=next(dst for b,_,dst,_ in candidates if b is clock)
-            timing_path=m.BUILDER.timing_sidecar_path(clock_target)
-            timing_path.write_text(json.dumps(timing_payload,indent=2)+"\n",encoding="utf-8")
+            clock=next(b for b in data["layers"] if b["layer"]==data["timeline"]["clock_owner"])
+            for item in candidates:
+                if item["binding"] is clock:
+                    timing_path=m.BUILDER.timing_sidecar_path(item["target"])
+                    timing_path.write_text(json.dumps(timing_payload,indent=2)+"\n",encoding="utf-8")
         _journal_stage(journal_path,journal,"SOURCE_SWAPPED","source_swap")
         subprocess.run(["python3",str(m.PIPELINES/"sync_operator_runtime_assets.py"),"--strict","--remove-superseded"],check=True,cwd=m.REPO_ROOT)
         _journal_stage(journal_path,journal,"RUNTIME_BUILT","runtime_build")
@@ -216,15 +258,18 @@ def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_valid
         _journal_stage(journal_path,journal,"VALIDATED","mandatory_validation")
     except Exception:
         try:
-            for b,c,dst,old in candidates:
+            for item in candidates:
+                b,dst,old=item["binding"],item["target"],item["old"]
                 if dst.exists(): dst.unlink()
                 dst.with_suffix(dst.suffix+".import").unlink(missing_ok=True)
                 m.BUILDER.timing_sidecar_path(dst).unlink(missing_ok=True)
-                shutil.copy2(source_backup/f"{b['binding_id']}.png",old)
-                side=source_backup/f"{b['binding_id']}.png.import"
+                prefix="mirror__" if item["mirror"] else ""
+                saved=source_backup/f"{prefix}{b['binding_id']}.png"
+                if saved.exists(): shutil.copy2(saved,old)
+                side=source_backup/f"{prefix}{b['binding_id']}.png.import"
                 if side.exists(): shutil.copy2(side,old.with_suffix(old.suffix+".import"))
                 old_timing=m.BUILDER.timing_sidecar_path(old); old_timing.unlink(missing_ok=True)
-                timing=source_backup/f"{b['binding_id']}.animation.json"
+                timing=source_backup/f"{prefix}{b['binding_id']}.animation.json"
                 if timing.exists(): shutil.copy2(timing,old_timing)
             for resource in GENERATED_OPERATOR_RESOURCES: shutil.copy2(resource_backup/resource.name,resource)
             subprocess.run(["python3",str(m.PIPELINES/"sync_operator_runtime_assets.py"),"--strict","--remove-superseded"],check=True,cwd=m.REPO_ROOT)
@@ -232,6 +277,8 @@ def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_valid
             _journal_stage(journal_path,journal,"ROLLED_BACK","rollback_consistency")
         except Exception: journal["state"]="RECOVERY_REQUIRED"
         save(journal_path,journal); raise
-    for b,_,dst,old in candidates:
+    for item in candidates:
+        if item["mirror"]: continue
+        b,dst=item["binding"],item["target"]
         b["source_path"]=m.rel(dst); b["source_file_sha256"]=m.file_sha256(dst); b["source_pixel_sha256"]=m.pixel_sha256(dst); b["source_contract"]={"path":m.rel(dst),"frames":b["workspace_contract"]["frames"],"frame_size":b["frame_size"],"file_sha256":b["source_file_sha256"],"pixel_sha256":b["source_pixel_sha256"]}; b["publish_contract"]={"path":m.rel(dst),"frames":b["frames"],"frame_size":b["frame_size"]}
-    data["timeline"]["source_clock_frames"]=data["timeline"]["workspace_clock_frames"]; data["pending_migration"]=None; _baseline(data,ws); data["aseprite"]["last_synced_sha256"]=m.file_sha256(ws/"workbench.aseprite"); data["last_publish"]={"timestamp":datetime.now(timezone.utc).isoformat(),"validation_status":"passed"}; _journal_stage(journal_path,journal,"COMMITTED","manifest_sync"); save(manifest,data); return [str(x[2]) for x in candidates]
+    data["timeline"]["source_clock_frames"]=data["timeline"]["workspace_clock_frames"]; data["pending_migration"]=None; _baseline(data,ws); data["aseprite"]["last_synced_sha256"]=m.file_sha256(ws/"workbench.aseprite"); data["last_publish"]={"timestamp":datetime.now(timezone.utc).isoformat(),"validation_status":"passed"}; _journal_stage(journal_path,journal,"COMMITTED","manifest_sync"); save(manifest,data); return [str(x["target"]) for x in candidates]

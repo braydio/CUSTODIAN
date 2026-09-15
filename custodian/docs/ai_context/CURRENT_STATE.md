@@ -1,5 +1,15 @@
 # CURRENT STATE — CUSTODIAN
 
+## Workbench Optional Mirror Promotion (2026-09-15)
+
+Operator Workbench publication can now opt into a same-transaction horizontal
+counterpart promotion for `e↔w`, `ne↔nw`, and `se↔sw`. The publish review keeps
+the option off by default, previews CREATE/REPLACE counterpart targets, mirrors
+each frame cell without reversing animation order, copies the authored timing
+contract, includes all publishing layers, and rolls both directions back on a
+downstream failure. `n`, `s`, and `omni` have no counterpart operation; the
+flow remains canonical Workbench publication and does not use asset-drop inbox.
+
 ## Operator Flashlight V1 (2026-09-12)
 
 The production Operator now instances one focused flashlight component as

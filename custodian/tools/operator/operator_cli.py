@@ -21,7 +21,7 @@ def main():
     frame=anim.add_parser("frame").add_subparsers(dest="frame_cmd",required=True)
     add=frame.add_parser("add"); common(add,dry_run=True); add.add_argument("--after",type=int,required=True); add.add_argument("--fill",choices=("duplicate-prev","duplicate-next","blank"),default="duplicate-prev"); add.add_argument("--layers",default="auto")
     remove=frame.add_parser("remove"); common(remove,dry_run=True); remove.add_argument("--frame",type=int,required=True); remove.add_argument("--layers",default="auto")
-    anim.choices["edit"].add_argument("--no-open",action="store_true"); anim.choices["refresh"].add_argument("--discard-edits",action="store_true"); anim.choices["publish"].add_argument("--force-stale-source",action="store_true"); anim.choices["publish"].add_argument("--full-validate",action="store_true")
+    anim.choices["edit"].add_argument("--no-open",action="store_true"); anim.choices["refresh"].add_argument("--discard-edits",action="store_true"); anim.choices["publish"].add_argument("--force-stale-source",action="store_true"); anim.choices["publish"].add_argument("--full-validate",action="store_true"); anim.choices["publish"].add_argument("--mirror-counterpart",action="store_true")
     x=ap.parse_args()
     if x.area=="art": return dispatch_art_command(x)
     if x.area=="ui":
@@ -51,7 +51,7 @@ def main():
                 out,ws=w.ensure(x.profile,x.action,x.direction,x.group,x.weapon,x.linked_profile,x.workspace_root,x.aseprite)
                 if not x.no_open: subprocess.run([str(w.resolve_aseprite(x.aseprite,True)),str(ws/"workbench.aseprite")],check=True)
             elif x.cmd=="refresh": out,ws=w.refresh(x.profile,x.action,x.direction,x.group,x.weapon,x.linked_profile,x.workspace_root,x.aseprite,x.discard_edits)
-            else: out={"changed_sources":w.publish(mf,x.aseprite,x.force_stale_source,x.dry_run,x.full_validate,plan)}
+            else: out={"changed_sources":w.publish(mf,x.aseprite,x.force_stale_source,x.dry_run,x.full_validate,plan,x.mirror_counterpart)}
         if getattr(x,"json",False): print(json.dumps(out,indent=2))
         else:
             if x.cmd=="status": print(f"OPERATOR ANIMATION\n{x.profile} / {out['identity']['group']} / {x.action} / {x.direction}\nsource contract: {out['timeline']['source_clock_frames']}f\nworkspace contract: {out['timeline']['workspace_clock_frames']}f\ndocument frames: {out['timeline']['document_frames']}\neditable layers:"); [print(f"  {b['aseprite_layer_name']}\n    source: {b['source_contract']['path']}\n    {b['source_contract']['frames']}f -> {b['publish_contract']['frames']}f {b['frame_size'][0]}x{b['frame_size'][1]}\n    canonical: YES") for b in out['layers']]; print(f"migration: {out['contract_state']}\nworkbench: {out['workbench_state']}\naseprite: {out['aseprite']}")
