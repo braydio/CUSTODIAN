@@ -1096,6 +1096,7 @@ godot --headless --path . --script res://tools/validation/world_contract_prewarm
 godot --headless --path . --script res://tools/validation/awakening_first_return_smoke.gd
 godot --headless --path . --script res://tools/validation/awakening_first_return_geometry_smoke.gd
 godot --headless --path . --script res://tools/validation/awakening_first_return_progression_smoke.gd
+godot --headless --path . --script res://tools/validation/awakening_undergate_lighting_smoke.gd
 ```
 
 The focused prewarm smoke injects a cheap deterministic generator and proves

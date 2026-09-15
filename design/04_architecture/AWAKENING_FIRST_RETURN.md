@@ -1,7 +1,7 @@
 # Awakening: The First Return
 
 **Status:** active blockout implementation, sections 01-10
-**Last Updated:** 2026-09-06
+**Last Updated:** 2026-09-15
 **Runtime Target:** Godot 4.x (`custodian/`)
 **Runtime Slice:** `res://scenes/awakening_first_return.tscn` (project `main_scene`)
 **Spatial authority:** `res://game/world/awakening/awakening_layout.gd`
@@ -80,6 +80,26 @@ locked value so drift is caught.
 Convention: `+X` east, `-X` west, `+Y` south, `-Y` north; origin at the centre of
 the Crèche; macro geometry on the 32px grid; world bounds
 `Rect2(-1088, -7328, 2176, 7680)`; wake at `(0, 160)`.
+
+The Undergate envelope is `Rect2(-704, -4864, 1408, 1088)` while its locked
+entry `(0, -3776)` and exit `(0, -4864)` remain unchanged. Its walkable shape
+contracts to a 256px south service throat, opens laterally into a 1024px-wide
+Mechanism Nave with the Register of Departures integrated as a west gallery,
+then contracts to a 320px north gate throat. The required route retains at
+least 128px clearance around the outward-set giant drums and route coils.
+
+### Dust Lung to Undergate light journey
+
+Awakening now uses the native `WorldLightingDirector` stack. Neutral baseline
+lighting preserves sections 01–04; authored overlapping `LightingZone2D`
+volumes then move from the Dust Lung's cold failing daylight through a weak
+institutional threshold into the flashlight-dominant Mechanism Hall core. A
+subtle cold lift identifies the northward Gate route without exposing it from
+the south entrance. Four sparse local light pools mark the maintenance
+threshold, damaged port console, Register gallery, and north seam. Six major
+occluders on drums, coils, and nave buttresses make moving flashlight shadows
+communicate the hall's scale. Darkness remains navigable and is never literal
+black.
 
 ### Runtime slice
 

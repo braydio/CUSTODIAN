@@ -11,7 +11,7 @@
     "filename_template": "{owner}_{variant}_{frame_size}.png"
   },
   "canvas": {
-    "width": 896,
+    "width": 1536,
     "height": 1216
   },
   "direction_policy": "omni",
@@ -23,7 +23,7 @@
       "action_group": "display",
       "variant": "underlay",
       "layout": "copy",
-      "frame_width": 896,
+      "frame_width": 1536,
       "frame_height": 1216
     },
     "foreground": {
@@ -32,7 +32,7 @@
       "action_group": "display",
       "variant": "foreground",
       "layout": "copy",
-      "frame_width": 896,
+      "frame_width": 1536,
       "frame_height": 1216
     }
   },

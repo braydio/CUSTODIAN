@@ -38,10 +38,17 @@ Environmental darkness remains the responsibility of authored
 `LightingZone2D` profiles. This component never changes ambient lighting or
 automatically activates by zone.
 
+The Undergate Mechanism Hall is the first authored flashlight-dominant
+environment. Its native Awakening lighting stack moves through failing Dust
+Lung daylight, a light-sink threshold, a low but non-black hall core, and a
+subtle northward lift. Sparse local pools and major machinery occluders make the
+beam an inspection tool without changing flashlight equipment or resource
+doctrine.
+
 ## Deferred
 
 - Enemy awareness or reaction to the flashlight.
-- Darkness authoring for Undergate or other intended flashlight spaces.
+- Darkness authoring for additional intended flashlight spaces.
 - Audio, flicker, upgrades, and alternate flashlight equipment.
 
 ## Validation

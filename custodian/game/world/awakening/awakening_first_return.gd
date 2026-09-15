@@ -211,9 +211,12 @@ func _build_set_pieces(presentation: Node2D, collision: StaticBody2D, zone_id: S
 			continue
 		var rect := Layout.set_piece_rect(piece)
 		var visual := Polygon2D.new()
-		visual.name = String(piece.get("id", "set_piece"))
+		var piece_id := String(piece.get("id", "set_piece"))
+		visual.name = piece_id
 		visual.polygon = Layout.rect_to_polygon(rect)
 		visual.color = Layout.COLOR_ELEVATED_FACADE if bool(piece.get("blocking", false)) else Layout.COLOR_DUST
+		if zone_id == &"zone06_undergate" and piece_id in ["drum_west", "drum_east", "coil_west", "coil_east"]:
+			visual.color = Layout.COLOR_DEEP_WALL.lerp(Layout.COLOR_ELEVATED_FACADE, 0.28)
 		visual.z_index = Layout.Z_WORLD_PROPS
 		presentation.add_child(visual)
 		if not bool(piece.get("blocking", false)):

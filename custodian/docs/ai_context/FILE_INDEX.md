@@ -420,6 +420,9 @@ Last updated: 2026-08-20
 - `custodian/game/world/awakening/awakening_first_return.gd` — Awakening orchestration only: zone state, HUD location/phase/objective, console and P-9 progression, one-shot camera reveals, first-pass completion.
 - `custodian/game/world/awakening/awakening_transit_lift.gd` — Dust Lung bidirectional service lift.
 - `custodian/game/world/awakening/awakening_plaque_interactable.gd` — read-only Crèche console and Undergate port readout.
+- `custodian/game/world/awakening/awakening_undergate_lighting.tscn` — authored Dust Lung-to-Undergate lighting zones, sparse local light pools, and major machinery occluders.
+- `custodian/content/lighting/profiles/awakening/` — neutral Awakening baseline plus Dust Lung, Undergate threshold/core, and north-threshold lighting profiles.
+- `custodian/tools/validation/awakening_undergate_lighting_smoke.gd` — validates the Awakening lighting stack, zone hierarchy, local-light/occluder budgets, flashlight presence, widened envelope, and environment-family canvas.
 - `custodian/scenes/debug/level_collision_poi_mapper.gd` — shared collision/POI authoring runtime used by Sundered Keep, Forlorn Ritualant Underground, and Home beginning mappers; saved edits update the live preview, script constants, and target-scene marker positions.
 - `custodian/game/world/home/field_terminal_interactable.gd` — reusable Field Terminal interactable that participates in the existing `interactable` group, plays existing terminal fallback activation art, and emits witness/access signals.
 - `custodian/game/world/compound/rooms/room_graph.gd` — deterministic compound room graph loader/validator with room count clamps, sorted type lookup, seeded template selection, and directional connection-rule checks

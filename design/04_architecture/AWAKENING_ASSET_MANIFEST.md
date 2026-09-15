@@ -44,10 +44,16 @@ All backdrop families use `direction_policy: omni`, `auto_mirror: false`, `layou
 | `awakening_attestation_environment` | `levels/awakening/03_attestation` / `awakening_attestation` | 832×928 | `underlay`, `foreground` | P1 |
 | `awakening_locker_reliquary_environment` | `levels/awakening/04_locker_reliquary` / `awakening_locker_reliquary` | 704×704 | `underlay`, `foreground` | P1 |
 | `awakening_dust_lung_environment` | `levels/awakening/05_dust_lung` / `awakening_dust_lung` | 1216×1216 | `underlay`, `foreground` | P0 |
-| `awakening_undergate_environment` | `levels/awakening/06_undergate` / `awakening_undergate` | 896×1216 | `underlay`, `foreground` | P1 |
+| `awakening_undergate_environment` | `levels/awakening/06_undergate` / `awakening_undergate` | 1536×1216 | `underlay`, `foreground` | P1 |
 | `awakening_gate_plaza_environment` | `levels/awakening/07_gate_of_dust` / `awakening_gate_plaza` | 1536×768 | `underlay`, `foreground` | P0 |
 | `awakening_custodian_approach_environment` | `levels/awakening/08_approach` / `awakening_custodian_approach` | 1024×864 | `underlay`, `foreground` | P0 |
 | `awakening_late_service_environment` | `levels/awakening/09_late_service` / `awakening_late_service` | 704×768 | `underlay`, `foreground` | P1 |
+
+The widened Undergate's future source-work belongs under
+`custodian/asset_drop/source_work/awakening/awakening_undergate_environment/`.
+Normalize `underlay.png` and `foreground.png`, each 1536×1216, through
+`custodian/asset_drop/inbox/awakening_undergate_environment/`; do not fabricate
+placeholder plates while the blockout remains active.
 
 Backdrop runtime template should be explicit so outputs land directly in the zone folder:
 
