@@ -36,27 +36,27 @@ func _init() -> void:
 	var failures: Array[String] = []
 
 	_install_test_frames(lower, [
-		&"unarmed_idle_right",
-		&"unarmed_idle_left",
-		&"ranged_2h_aim_modular_right",
-		&"ranged_2h_aim_modular_left",
-		&"ranged_2h_fire_lower_right",
-		&"ranged_2h_fire_lower_left",
+		&"unarmed/locomotion/idle_01/e/lower_body",
+		&"unarmed/locomotion/idle_01/w/lower_body",
+		&"ranged_2h/cosmetic/aim_01/e/lower_body",
+		&"ranged_2h/cosmetic/aim_01/w/lower_body",
+		&"ranged_2h/cosmetic/fire_01/e/lower_body",
+		&"ranged_2h/cosmetic/fire_01/w/lower_body",
 	])
 	_install_test_frames(upper, [
-		&"ranged_2h_relaxed_modular_right",
-		&"ranged_2h_relaxed_modular_left",
-		&"ranged_2h_aim_modular_right",
-		&"ranged_2h_aim_modular_left",
-		&"ranged_2h_stance_modular_right",
-		&"ranged_2h_stance_modular_up",
-		&"ranged_2h_stance_modular_left",
-		&"ranged_2h_stance_modular_down",
-		&"ranged_2h_fire_upper_right",
-		&"ranged_2h_fire_upper_left",
+		&"ranged_2h/posture/relaxed_01/e/upper_body",
+		&"ranged_2h/posture/relaxed_01/w/upper_body",
+		&"ranged_2h/cosmetic/aim_01/e/upper_body",
+		&"ranged_2h/cosmetic/aim_01/w/upper_body",
+		&"ranged_2h/posture/stance_01/e/upper_body",
+		&"ranged_2h/posture/stance_01/n/upper_body",
+		&"ranged_2h/posture/stance_01/w/upper_body",
+		&"ranged_2h/posture/stance_01/se/upper_body",
+		&"ranged_2h/cosmetic/fire_01/e/upper_body",
+		&"ranged_2h/cosmetic/fire_01/w/upper_body",
 	])
-	# C2a-R2: the FX renderer is canonical, so its fixture carries canonical
-	# identities. The body layers beside it are still compatibility renderers.
+	# C2a-R2 canonicalized the FX renderer and C2a-R3 the body pair, so every
+	# fixture here carries canonical identities.
 	_install_test_frames(fx, [
 		&"ranged_2h/cosmetic/fire_01/e/fx",
 		&"ranged_2h/cosmetic/fire_01/w/fx",
@@ -64,7 +64,7 @@ func _init() -> void:
 
 	if not bool(operator.call("_sync_modular_ranged_relaxed_presentation", Vector2.RIGHT)):
 		failures.append("equipped ranged relaxed presentation did not start")
-	_check_layer(upper, &"ranged_2h_relaxed_modular_right", "relaxed upper", failures)
+	_check_layer(upper, &"ranged_2h/posture/relaxed_01/e/upper_body", "relaxed upper", failures)
 	_check_static_weapon(weapon, "relaxed weapon", failures)
 	if operator.call("get_ranged_posture") != &"relaxed":
 		failures.append("equipped primary should report relaxed posture before ranged-ready")
@@ -76,7 +76,7 @@ func _init() -> void:
 	operator.call("_enter_ranged_ready")
 	if not is_equal_approx(float(operator.get("_primary_ranged_action_timer")), initial_aim_timer):
 		failures.append("held RMB restarted the aim raise instead of preserving progress")
-	_check_layer(upper, &"ranged_2h_aim_modular_right", "aim upper", failures)
+	_check_layer(upper, &"ranged_2h/cosmetic/aim_01/e/upper_body", "aim upper", failures)
 	_check_static_weapon(weapon, "aim weapon", failures)
 	if operator.call("get_ranged_posture") != &"raising":
 		failures.append("aim raise should report raising posture")
@@ -88,7 +88,7 @@ func _init() -> void:
 		operator.set("aim_direction", Vector2.LEFT)
 		operator.call("_retarget_primary_ranged_transition", Vector2.LEFT)
 		var progress_after_retarget := (float(upper.frame) + upper.frame_progress) / 3.0
-		_check_layer(upper, &"ranged_2h_aim_modular_left", "retargeted aim upper", failures)
+		_check_layer(upper, &"ranged_2h/cosmetic/aim_01/w/upper_body", "retargeted aim upper", failures)
 		_check_static_weapon(weapon, "retargeted aim weapon", failures)
 		if absf(progress_before_retarget - progress_after_retarget) >= 0.02:
 			failures.append("aim direction retarget restarted transition progress")
@@ -97,7 +97,7 @@ func _init() -> void:
 		failures.append("aim raise did not finish into stance")
 	if not bool(operator.call("_sync_modular_ranged_2h_stance_presentation", Vector2.LEFT)):
 		failures.append("held RMB ranged stance did not start")
-	_check_layer(upper, &"ranged_2h_stance_modular_left", "stance upper", failures)
+	_check_layer(upper, &"ranged_2h/posture/stance_01/w/upper_body", "stance upper", failures)
 	_check_static_weapon(weapon, "stance weapon", failures)
 	if operator.call("get_ranged_posture") != &"ready":
 		failures.append("completed aim raise should report ready posture")
@@ -121,7 +121,7 @@ func _init() -> void:
 		failures.append("stationary ranged lower body retained stale movement direction")
 
 	if upper != null and weapon != null:
-		upper.play(&"ranged_2h_stance_modular_left")
+		upper.play(&"ranged_2h/posture/stance_01/w/upper_body")
 		for tick in range(120):
 			var upper_position: float = fmod(float(tick) * 0.37, 3.0)
 			var upper_frame: int = int(floor(upper_position))
@@ -138,16 +138,16 @@ func _init() -> void:
 	if not (operator.get("_primary_ranged_action_direction") as Vector2).is_equal_approx(Vector2.RIGHT):
 		failures.append("accepted ranged intent was not stored as presentation commitment")
 
-	_check_layer(lower, &"unarmed_idle_right", "lower", failures)
-	_check_layer(upper, &"ranged_2h_fire_upper_right", "upper", failures)
+	_check_layer(lower, &"unarmed/locomotion/idle_01/e/lower_body", "lower", failures)
+	_check_layer(upper, &"ranged_2h/cosmetic/fire_01/e/upper_body", "upper", failures)
 	_check_static_weapon(weapon, "weapon", failures)
 	_check_layer(fx, &"ranged_2h/cosmetic/fire_01/e/fx", "fx", failures)
 	if operator.call("get_ranged_posture") != &"firing":
 		failures.append("active primary shot should report firing posture")
 	operator.set("aim_direction", Vector2.LEFT)
 	operator.call("_update_animation")
-	_check_layer(lower, &"unarmed_idle_right", "committed fire lower", failures)
-	_check_layer(upper, &"ranged_2h_fire_upper_right", "committed fire upper", failures)
+	_check_layer(lower, &"unarmed/locomotion/idle_01/e/lower_body", "committed fire lower", failures)
+	_check_layer(upper, &"ranged_2h/cosmetic/fire_01/e/upper_body", "committed fire upper", failures)
 	_check_static_weapon(weapon, "committed fire weapon", failures)
 	var committed_axis: Vector2 = operator.call("_get_current_ranged_weapon_axis", Vector2.RIGHT)
 	if committed_axis.x <= 0.0:
@@ -175,7 +175,7 @@ func _init() -> void:
 		failures.append("primary ranged modular fire presentation did not end after timer tick")
 	if operator.call("get_ranged_posture") != &"recovering":
 		failures.append("completed shot should enter recovering posture")
-	_check_layer(upper, &"ranged_2h_stance_modular_left", "recovery upper", failures)
+	_check_layer(upper, &"ranged_2h/posture/stance_01/w/upper_body", "recovery upper", failures)
 	_check_static_weapon(weapon, "recovery weapon", failures)
 	operator.call("_tick_primary_ranged_action_presentation", 10.0)
 	if operator.call("get_ranged_posture") != &"ready":
@@ -184,7 +184,7 @@ func _init() -> void:
 	operator.call("_exit_ranged_ready")
 	if not bool(operator.call("_is_primary_ranged_lower_presentation_active")):
 		failures.append("RMB release did not start reverse aim lower")
-	_check_layer(upper, &"ranged_2h_aim_modular_left", "lower upper", failures)
+	_check_layer(upper, &"ranged_2h/cosmetic/aim_01/w/upper_body", "lower upper", failures)
 	_check_static_weapon(weapon, "lower weapon", failures)
 	if operator.call("get_ranged_posture") != &"lowering":
 		failures.append("RMB release should report lowering posture")

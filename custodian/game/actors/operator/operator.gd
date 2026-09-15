@@ -788,6 +788,7 @@ var _melee_fx_overlay_base_position := Vector2.ZERO
 var _last_damage_reaction_direction := Vector2.DOWN
 var _modular_damage_reaction_active := false
 var _modular_damage_reaction_animation: StringName = &""
+var _modular_damage_reaction_upper_animation: StringName = &""
 var _modular_damage_reaction_head_animation: StringName = &""
 var _modular_damage_reaction_sector: StringName = &"s"
 var _production_body_frames: SpriteFrames = null
@@ -1029,7 +1030,6 @@ func _ready():
 	_engagement_tracker.engagement_started.connect(_on_combat_pressure_entered)
 	_engagement_tracker.engagement_ended.connect(_on_combat_pressure_exited)
 	_melee_posture_state = MeleePostureStateScript.new()
-	_install_melee_posture_catalog_frames()
 	# Sync with ControllableActor base class
 	current_health = health
 	_integrity_reclaim.call("configure", max_health)
@@ -2330,31 +2330,6 @@ func _sync_melee_posture_weapon_overlay(
 		)
 
 
-func _install_melee_posture_catalog_frames() -> void:
-	if modular_lower_body_sprite == null or modular_upper_body_sprite == null:
-		return
-	modular_lower_body_sprite.sprite_frames = modular_lower_body_sprite.sprite_frames.duplicate(true)
-	modular_upper_body_sprite.sprite_frames = modular_upper_body_sprite.sprite_frames.duplicate(true)
-	for action in MELEE_POSTURE_CATALOG_ACTIONS:
-		for suffix in ["e", "w"]:
-			for layer in ["lower_body", "upper_body"]:
-				var animation := StringName("melee_1h/posture/%s/%s/%s" % [action, suffix, layer])
-				var target: SpriteFrames = modular_lower_body_sprite.sprite_frames if layer == "lower_body" else modular_upper_body_sprite.sprite_frames
-				_copy_catalog_animation(OPERATOR_ANIMATION_CATALOG_FRAMES, target, animation)
-	for action in MELEE_LOCOMOTION_CATALOG_DIRECTIONS:
-		for suffix in MELEE_LOCOMOTION_CATALOG_DIRECTIONS[action]:
-			for layer in ["lower_body", "upper_body"]:
-				var animation := StringName(
-					"melee_1h/locomotion/%s/%s/%s" % [action, suffix, layer]
-				)
-				var target: SpriteFrames = (
-					modular_lower_body_sprite.sprite_frames
-					if layer == "lower_body"
-					else modular_upper_body_sprite.sprite_frames
-				)
-				_copy_catalog_animation(OPERATOR_ANIMATION_CATALOG_FRAMES, target, animation)
-
-
 func _install_melee_posture_weapon_frames(
 	weapon_definition: OperatorWeaponDefinition
 ) -> void:
@@ -2590,8 +2565,10 @@ func _sync_modular_action_domains() -> bool:
 		return false
 	if modular_lower_body_sprite.sprite_frames == null or modular_upper_body_sprite.sprite_frames == null:
 		return false
-	if _sync_modular_fast_attack_phase(&"strike"):
-		return true
+	if _can_present_modular_fast_attack_phase(&"strike"):
+		_declare_modular_body_composition()
+		if _sync_modular_fast_attack_phase(&"strike"):
+			return true
 	var lower_base := _get_modular_lower_body_motion_base()
 	var lower_direction := movement_direction if velocity.length() > 0.01 else visual_idle_direction
 	if not _sync_modular_lower_body_layer(lower_base, lower_direction, 1.0):
@@ -2606,7 +2583,10 @@ func _sync_modular_action_domains() -> bool:
 func _has_modular_fast_attack_layer(layer_sprite: AnimatedSprite2D, base_animation: String, direction: Vector2) -> bool:
 	if layer_sprite == null or layer_sprite.sprite_frames == null:
 		return false
-	var resolved := AnimationResolver.resolve(base_animation, direction, layer_sprite)
+	var layer: StringName = &"lower_body" if layer_sprite == modular_lower_body_sprite else &"upper_body"
+	var resolved := _resolve_modular_body_animation(base_animation, layer, direction)
+	if resolved.is_empty():
+		return false
 	return _has_playable_sprite_animation(layer_sprite.sprite_frames, resolved)
 
 
@@ -2619,8 +2599,9 @@ func _sync_modular_fast_attack_layer(
 ) -> bool:
 	if layer_sprite == null or layer_sprite.sprite_frames == null:
 		return false
-	var resolved := AnimationResolver.resolve(base_animation, direction, layer_sprite)
-	if not _has_playable_sprite_animation(layer_sprite.sprite_frames, resolved):
+	var layer: StringName = &"lower_body" if layer_sprite == modular_lower_body_sprite else &"upper_body"
+	var resolved := _resolve_modular_body_animation(base_animation, layer, direction)
+	if resolved.is_empty() or not _has_playable_sprite_animation(layer_sprite.sprite_frames, resolved):
 		return false
 	_show_presentation_layer(layer_sprite)
 	layer_sprite.flip_h = false
@@ -2634,6 +2615,54 @@ func _sync_modular_fast_attack_layer(
 	return true
 
 
+## The authored layer bases for a fast-attack phase, empty when it has none.
+func _modular_fast_attack_phase_bases(phase: StringName) -> Dictionary:
+	match phase:
+		&"windup":
+			return {
+				"lower": "unarmed_fast_windup_lower",
+				"upper": "unarmed_fast_windup_upper", "fx": "",
+			}
+		&"strike":
+			return {
+				"lower": "unarmed_fast_strike_lower",
+				"upper": "unarmed_fast_strike_upper",
+				"fx": "unarmed_fast_strike_fx_modular",
+			}
+		&"recovery":
+			return {
+				"lower": "unarmed_fast_recovery_lower",
+				"upper": "unarmed_fast_recovery_upper", "fx": "",
+			}
+	return {}
+
+
+## Non-mutating: can this phase present a complete modular body composition now?
+##
+## A transition entrypoint asks before it declares the composition, so a phase
+## that cannot present never takes the body away from the legacy rig. This
+## mirrors the sync helper's guards exactly; `_sync_modular_fast_attack_layer()`
+## re-checks the same playability, so nothing can fail after this returns true.
+func _can_present_modular_fast_attack_phase(phase: StringName) -> bool:
+	if not modular_locomotion_layers_enabled:
+		return false
+	if modular_lower_body_sprite == null or modular_upper_body_sprite == null:
+		return false
+	if modular_lower_body_sprite.sprite_frames == null \
+	or modular_upper_body_sprite.sprite_frames == null:
+		return false
+	var bases := _modular_fast_attack_phase_bases(phase)
+	if bases.is_empty():
+		return false
+	if not _has_modular_fast_attack_layer(
+		modular_lower_body_sprite, String(bases["lower"]), _melee_forward
+	):
+		return false
+	return _has_modular_fast_attack_layer(
+		modular_upper_body_sprite, String(bases["upper"]), _melee_forward
+	)
+
+
 func _sync_modular_fast_attack_phase(phase: StringName) -> bool:
 	if not modular_locomotion_layers_enabled:
 		return false
@@ -2641,22 +2670,12 @@ func _sync_modular_fast_attack_phase(phase: StringName) -> bool:
 		return false
 	if modular_lower_body_sprite.sprite_frames == null or modular_upper_body_sprite.sprite_frames == null:
 		return false
-	var lower_base := ""
-	var upper_base := ""
-	var fx_base := ""
-	match phase:
-		&"windup":
-			lower_base = "unarmed_fast_windup_lower"
-			upper_base = "unarmed_fast_windup_upper"
-		&"strike":
-			lower_base = "unarmed_fast_strike_lower"
-			upper_base = "unarmed_fast_strike_upper"
-			fx_base = "unarmed_fast_strike_fx_modular"
-		&"recovery":
-			lower_base = "unarmed_fast_recovery_lower"
-			upper_base = "unarmed_fast_recovery_upper"
-		_:
-			return false
+	var bases := _modular_fast_attack_phase_bases(phase)
+	if bases.is_empty():
+		return false
+	var lower_base := String(bases["lower"])
+	var upper_base := String(bases["upper"])
+	var fx_base := String(bases["fx"])
 	if not _has_modular_fast_attack_layer(modular_lower_body_sprite, lower_base, _melee_forward):
 		return false
 	if not _has_modular_fast_attack_layer(modular_upper_body_sprite, upper_base, _melee_forward):
@@ -2667,8 +2686,8 @@ func _sync_modular_fast_attack_phase(phase: StringName) -> bool:
 		return false
 	if not _sync_modular_fast_attack_layer(modular_upper_body_sprite, upper_base, _melee_forward, speed, restart_once):
 		return false
-	_modular_lower_action_animation = AnimationResolver.resolve(lower_base, _melee_forward, modular_lower_body_sprite)
-	_modular_upper_action_animation = AnimationResolver.resolve(upper_base, _melee_forward, modular_upper_body_sprite)
+	_modular_lower_action_animation = _resolve_modular_body_animation(String(lower_base), &"lower_body", _melee_forward)
+	_modular_upper_action_animation = _resolve_modular_body_animation(String(upper_base), &"upper_body", _melee_forward)
 	_modular_upper_fx_action_animation = &""
 	if not fx_base.is_empty():
 		# The FX renderer is canonical as of C2a-R2. fast_strike_01 fx is authored
@@ -2682,7 +2701,6 @@ func _sync_modular_fast_attack_phase(phase: StringName) -> bool:
 	elif modular_upper_fx_sprite:
 		_hide_presentation_layer(modular_upper_fx_sprite, true)
 		_modular_upper_fx_action_animation = &""
-	_claim_modular_body_owner()
 	return true
 
 
@@ -2818,7 +2836,7 @@ func _has_modular_ranged_ready_upper_stack() -> bool:
 	var direction := aim_direction if aim_direction.length_squared() > 0.0001 else visual_idle_direction
 	if direction.length_squared() <= 0.0001:
 		direction = Vector2.RIGHT
-	var upper_animation := AnimationResolver.resolve("ranged_2h_stance_modular", direction, modular_upper_body_sprite)
+	var upper_animation := _resolve_modular_body_animation("ranged_2h_stance_modular", &"upper_body", direction)
 	if not _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, upper_animation):
 		return false
 	return true
@@ -2830,7 +2848,7 @@ func _has_modular_ranged_relaxed_upper_stack() -> bool:
 	if weapon_sprite == null or _get_primary_ranged_weapon_definition() == null:
 		return false
 	var direction := visual_idle_direction if visual_idle_direction.length_squared() > 0.0001 else Vector2.RIGHT
-	var upper_animation := AnimationResolver.resolve("ranged_2h_relaxed_modular", direction, modular_upper_body_sprite)
+	var upper_animation := _resolve_modular_body_animation("ranged_2h_relaxed_modular", &"upper_body", direction)
 	if not _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, upper_animation):
 		return false
 	return true
@@ -3046,6 +3064,39 @@ func _get_frame_aware_weapon_direction() -> Vector2:
 	return visual_idle_direction
 
 
+## The socket track one posture consumes, which is its own identity except for
+## the single documented sharing case below.
+##
+## AUTHORING DEBT (C2a-R3). `ranged_2h/posture/relaxed_01` is a real live upper-body
+## action, but no relaxed weapon-socket calibration has ever been authored: the
+## production data carries stance, aim and fire only. Before R3 a compatibility
+## translator rebuilt a legacy clip name here and defaulted its phase to "stance",
+## so relaxed has always silently consumed the stance calibration. That translator
+## is gone, and this states the same outcome as a deliberate decision instead.
+##
+## This is socket-calibration sharing, NOT an animation alias and NOT a fallback.
+## The body keeps presenting relaxed_01; only the socket lookup is redirected, to
+## the SAME sector's stance track. A missing stance, aim or fire track still fails
+## loudly, and nothing here reacts to a lookup miss.
+##
+## EXIT CONDITION: calibrate real relaxed socket tracks, then delete this policy
+## and its table entry.
+const SHARED_WEAPON_SOCKET_POSTURES := {
+	&"ranged_2h/posture/relaxed_01": &"ranged_2h/posture/stance_01",
+}
+
+
+func _weapon_socket_track_for_posture(animation: StringName) -> StringName:
+	var parts := String(animation).rsplit("/", true, 2)
+	if parts.size() != 3:
+		return animation
+	var shared: StringName = SHARED_WEAPON_SOCKET_POSTURES.get(StringName(parts[0]), &"")
+	if shared.is_empty():
+		return animation
+	# Sector and layer are preserved exactly; only the action changes.
+	return StringName("%s/%s/%s" % [shared, parts[1], parts[2]])
+
+
 func _apply_frame_aware_primary_weapon_socket() -> bool:
 	_active_weapon_socket.clear()
 	if not _is_using_ranged_2h_primary() or modular_upper_body_sprite == null or not modular_upper_body_sprite.visible:
@@ -3055,17 +3106,16 @@ func _apply_frame_aware_primary_weapon_socket() -> bool:
 		return false
 	if not _weapon_socket_library.is_loaded() and not _load_primary_weapon_socket_data():
 		return false
+	# Socket tracks are keyed by the LIVE upper-body animation name, and after
+	# C2a-R3 that name is the canonical semantic identity the socket data is now
+	# keyed by. The legacy `ranged_2h_<phase>_modular_<suffix>` reconstruction that
+	# used to stand in here was a compatibility translator, and translating names
+	# at runtime is exactly the hidden authority this migration removes.
 	var animation: StringName = modular_upper_body_sprite.animation
 	var frame: int = modular_upper_body_sprite.frame
-	if not _weapon_socket_library.has_socket(animation, frame):
-		var suffix := String(_get_direction_suffix(_get_frame_aware_weapon_direction()))
-		var phase := "stance"
-		if _is_primary_ranged_fire_presentation_active() or _is_primary_ranged_fire_recover_presentation_active():
-			phase = "fire"
-		elif _is_primary_ranged_transition_presentation_active():
-			phase = "aim"
-		animation = StringName("ranged_2h_%s_modular_%s" % [phase, suffix])
-	var socket := _weapon_socket_library.get_socket(animation, frame, true)
+	var socket := _weapon_socket_library.get_socket(
+		_weapon_socket_track_for_posture(animation), frame, true
+	)
 	if socket.is_empty():
 		_weapon_socket_error_key = "%s:%d" % [animation, frame]
 		return false
@@ -3231,9 +3281,9 @@ func _retarget_primary_ranged_transition(direction: Vector2) -> void:
 	)
 
 
-## `resolved` lets a canonical renderer be driven through this helper without the
-## helper itself resolving anything: modular_sidearm_sprite is canonical as of
-## C2a-R1, while the layers beside it are still compatibility renderers.
+## `resolved` lets a caller hand this helper an already-decided identity. Every
+## renderer it drives is canonical now -- modular_sidearm_sprite since C2a-R1 and
+## the body pair since C2a-R3 -- so a body layer resolves a semantic identity.
 func _retarget_ranged_sprite_preserving_progress(
 	sprite: AnimatedSprite2D,
 	base_animation: String,
@@ -3242,9 +3292,14 @@ func _retarget_ranged_sprite_preserving_progress(
 ) -> void:
 	if sprite == null or sprite.sprite_frames == null:
 		return
-	var expected: StringName = resolved if not resolved.is_empty() else AnimationResolver.resolve(
-		base_animation, direction, sprite
-	)
+	var expected := resolved
+	if expected.is_empty():
+		if sprite == modular_lower_body_sprite:
+			expected = _resolve_modular_body_animation(base_animation, &"lower_body", direction)
+		elif sprite == modular_upper_body_sprite:
+			expected = _resolve_modular_body_animation(base_animation, &"upper_body", direction)
+		else:
+			expected = AnimationResolver.resolve(base_animation, direction, sprite)
 	if expected.is_empty() or not _has_playable_sprite_animation(sprite.sprite_frames, expected):
 		return
 	if sprite.animation == expected:
@@ -3363,9 +3418,20 @@ func _begin_modular_primary_ranged_fire_presentation(
 	if not _sync_modular_lower_body_locomotion(lower_base, lower_direction):
 		return false
 
+	# Canonical as of C2a-R3, so the upper body asks for one semantic identity
+	# instead of walking a legacy candidate list. fire_01 upper is authored for
+	# n/e/se/sw/w; ne, s and nw played no upper fire action before and still play
+	# none, so this asks before it resolves rather than erroring while aiming.
+	var upper_fire_direction := _direction_from_suffix(suffix)
+	var upper_fire_candidates: Array[StringName] = []
+	var upper_fire_identity := _resolve_modular_body_animation(
+		"ranged_2h_fire_modular", &"upper_body", upper_fire_direction
+	)
+	if not upper_fire_identity.is_empty():
+		upper_fire_candidates.append(upper_fire_identity)
 	var upper_result := _play_first_available_modular_fire_animation(
 		modular_upper_body_sprite,
-		_primary_ranged_fire_candidates(&"upper", suffix),
+		upper_fire_candidates,
 		modular_primary_ranged_fire_fps
 	)
 	any_layer_played = any_layer_played or bool(upper_result.get("played", false))
@@ -3443,8 +3509,8 @@ func _begin_modular_primary_ranged_aim_presentation() -> bool:
 		action_direction = Vector2.RIGHT
 	_primary_ranged_action_direction = action_direction.normalized()
 
-	var lower_animation := AnimationResolver.resolve("ranged_2h_aim_modular", action_direction, modular_lower_body_sprite)
-	var upper_animation := AnimationResolver.resolve("ranged_2h_aim_modular", action_direction, modular_upper_body_sprite)
+	var lower_animation := _resolve_modular_body_animation("ranged_2h_aim_modular", &"lower_body", action_direction)
+	var upper_animation := _resolve_modular_body_animation("ranged_2h_aim_modular", &"upper_body", action_direction)
 	var weapon_animation := _resolve_ranged_2h_weapon_animation(
 		&"cosmetic", &"aim_01", _ranged_2h_authored_sector(&"aim_01", action_direction)
 	)
@@ -3499,7 +3565,7 @@ func _begin_modular_primary_ranged_lower_presentation() -> bool:
 
 	var lowering_from_partial_raise := _is_primary_ranged_aim_presentation_active()
 	var longest_duration := 0.0
-	var resolved_upper := AnimationResolver.resolve("ranged_2h_aim_modular", action_direction, modular_upper_body_sprite)
+	var resolved_upper := _resolve_modular_body_animation("ranged_2h_aim_modular", &"upper_body", action_direction)
 	var lower_fps := modular_primary_ranged_aim_fps
 	if _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, resolved_upper):
 		lower_fps = float(modular_upper_body_sprite.sprite_frames.get_frame_count(resolved_upper)) / maxf(0.04, ranged_lower_duration)
@@ -3563,12 +3629,9 @@ func _primary_ranged_fire_candidates(layer_key: StringName, suffix: StringName) 
 				StringName("ranged_2h_fire_modular_%s" % dir),
 			]
 		&"upper":
-			return [
-				StringName("ranged_2h_fire_upper_%s" % dir),
-				StringName("primary_ranged_fire_upper_%s" % dir),
-				StringName("ranged_fire_upper_%s" % dir),
-				StringName("ranged_2h_fire_modular_%s" % dir),
-			]
+			# The upper body is canonical as of C2a-R3 and no longer walks a
+			# legacy candidate list; see _begin_modular_primary_ranged_fire_presentation.
+			return []
 		&"weapon":
 			# The weapon layer is canonical as of C2a-R1 and no longer walks a
 			# legacy candidate list; see _begin_modular_primary_ranged_fire_presentation.
@@ -3619,9 +3682,16 @@ func _play_modular_action_animation(
 ) -> Dictionary:
 	if sprite == null or sprite.sprite_frames == null:
 		return {"played": false, "duration": 0.0}
-	var animation_name: StringName = resolved if not resolved.is_empty() else AnimationResolver.resolve(
-		base_animation, direction, sprite
-	)
+	var animation_name := resolved
+	if animation_name.is_empty():
+		# The body pair is canonical as of C2a-R3, so a body layer resolves a
+		# semantic identity; other renderers still name their own clip.
+		if sprite == modular_lower_body_sprite:
+			animation_name = _resolve_modular_body_animation(base_animation, &"lower_body", direction)
+		elif sprite == modular_upper_body_sprite:
+			animation_name = _resolve_modular_body_animation(base_animation, &"upper_body", direction)
+		else:
+			animation_name = AnimationResolver.resolve(base_animation, direction, sprite)
 	if animation_name.is_empty() or not _has_playable_sprite_animation(sprite.sprite_frames, animation_name):
 		return {"played": false, "duration": 0.0}
 
@@ -3793,11 +3863,141 @@ func _is_sidearm_action_finished() -> bool:
 	return true
 
 
+## Legacy presentation base -> canonical semantic identity for the modular body
+## pair. C2a-R3 made both body renderers canonical, so every body consumer names
+## a semantic action and the projection tables below decide the authored sector.
+const MODULAR_BODY_IDENTITIES := {
+	"unarmed_idle": [&"unarmed", &"locomotion", &"idle_01"],
+	"unarmed_walk": [&"unarmed", &"locomotion", &"walk_01"],
+	"unarmed_run": [&"unarmed", &"locomotion", &"run_01"],
+	"unarmed_idle_hitreact": [&"unarmed", &"locomotion", &"idle_hitreact_01"],
+	"unarmed_parry": [&"unarmed", &"defense", &"parry_01"],
+	# Parry success draws the parry pose; there is no authored parry-success body.
+	"unarmed_parry_success": [&"unarmed", &"defense", &"parry_01"],
+	# The post-success neutral beat is the recovery action on both layers.
+	"unarmed_parry_success_01": [&"unarmed", &"attack", &"parry_recovery_01"],
+	"unarmed_block_enter": [&"unarmed", &"defense", &"block_enter_01"],
+	"unarmed_block_hold": [&"unarmed", &"defense", &"block_hold_01"],
+	"unarmed_block_hitreact": [&"unarmed", &"defense", &"block_hit_01"],
+	"unarmed_fast_windup_lower": [&"unarmed", &"attack", &"fast_windup_01"],
+	"unarmed_fast_windup_upper": [&"unarmed", &"attack", &"fast_windup_01"],
+	"unarmed_fast_strike_lower": [&"unarmed", &"attack", &"fast_strike_01"],
+	"unarmed_fast_strike_upper": [&"unarmed", &"attack", &"fast_strike_01"],
+	"unarmed_fast_recovery_lower": [&"unarmed", &"attack", &"fast_recovery_01"],
+	"unarmed_fast_recovery_upper": [&"unarmed", &"attack", &"fast_recovery_01"],
+	"field_patch_use_lower": [&"unarmed", &"interaction", &"field_patch_use_01"],
+	"field_patch_use_upper": [&"unarmed", &"interaction", &"field_patch_use_01"],
+	"ranged_2h_stance_modular": [&"ranged_2h", &"posture", &"stance_01"],
+	"ranged_2h_relaxed_modular": [&"ranged_2h", &"posture", &"relaxed_01"],
+	"ranged_2h_aim_modular": [&"ranged_2h", &"cosmetic", &"aim_01"],
+	"ranged_2h_fire_modular": [&"ranged_2h", &"cosmetic", &"fire_01"],
+}
+
+## Caller-owned presentation policy: which authored sector stands in for a
+## requested one, per action and layer. Every entry was characterized from what
+## the compatibility renderer visibly did, never inferred from coverage, and a
+## family authored for all eight sectors has no entry at all.
+##
+## Lower and upper deliberately differ where their authored coverage differs.
+## Forcing one shared sector would either request an unpublished identity or
+## discard an authored one.
+const MODULAR_BODY_AUTHORED_SECTORS := {
+	# authored n/e/w on both layers
+	"parry_01/lower_body": {
+		&"n": &"n", &"ne": &"e", &"e": &"e", &"se": &"e",
+		&"s": &"e", &"sw": &"w", &"w": &"w", &"nw": &"w",
+	},
+	# authored e/w on both layers. The whole defensive family and the
+	# post-success recovery share one proven split: the compatibility renderer
+	# took the west strip below the horizontal and the east strip everywhere else.
+	"block_enter_01/lower_body": {
+		&"n": &"e", &"ne": &"e", &"e": &"e", &"se": &"e",
+		&"s": &"e", &"sw": &"w", &"w": &"w", &"nw": &"w",
+	},
+	"block_hold_01/lower_body": {
+		&"n": &"e", &"ne": &"e", &"e": &"e", &"se": &"e",
+		&"s": &"e", &"sw": &"w", &"w": &"w", &"nw": &"w",
+	},
+	"block_hit_01/lower_body": {
+		&"n": &"e", &"ne": &"e", &"e": &"e", &"se": &"e",
+		&"s": &"e", &"sw": &"w", &"w": &"w", &"nw": &"w",
+	},
+	"parry_recovery_01/lower_body": {
+		&"n": &"e", &"ne": &"e", &"e": &"e", &"se": &"e",
+		&"s": &"e", &"sw": &"w", &"w": &"w", &"nw": &"w",
+	},
+	# authored n/s on both layers; the historical east/west tie inherited the
+	# previous vertical sector, and C2a-R3 retired that memory deliberately.
+	"idle_hitreact_01/lower_body": {
+		&"n": &"n", &"ne": &"n", &"e": &"s", &"se": &"s",
+		&"s": &"s", &"sw": &"s", &"w": &"s", &"nw": &"n",
+	},
+	# the upper body has no authored north-east idle
+	"idle_01/upper_body": {&"ne": &"n"},
+	# the upper body has no authored north-east or north-west walk
+	"walk_01/upper_body": {&"ne": &"n", &"nw": &"n"},
+	"stance_01/lower_body": {
+		&"n": &"n", &"ne": &"e", &"e": &"e", &"se": &"se",
+		&"s": &"e", &"sw": &"sw", &"w": &"w", &"nw": &"w",
+	},
+	"stance_01/upper_body": {
+		&"n": &"n", &"ne": &"ne", &"e": &"e", &"se": &"se",
+		&"s": &"e", &"sw": &"sw", &"w": &"w", &"nw": &"n",
+	},
+	"relaxed_01/lower_body": {
+		&"n": &"e", &"ne": &"e", &"e": &"e", &"se": &"e",
+		&"s": &"e", &"sw": &"w", &"w": &"w", &"nw": &"w",
+	},
+	"aim_01/lower_body": {
+		&"n": &"e", &"ne": &"e", &"e": &"e", &"se": &"se",
+		&"s": &"e", &"sw": &"sw", &"w": &"w", &"nw": &"w",
+	},
+	"field_patch_use_01/lower_body": {
+		&"n": &"e", &"ne": &"e", &"e": &"e", &"se": &"e",
+		&"s": &"e", &"sw": &"w", &"w": &"w", &"nw": &"w",
+	},
+}
+
+
+## The authored sector a requested direction presents for one action and layer.
+func _modular_body_authored_sector(
+	action: StringName, layer: StringName, direction: Vector2
+) -> StringName:
+	var requested := OperatorAnimationSelector.vector_to_sector(direction)
+	var table: Dictionary = MODULAR_BODY_AUTHORED_SECTORS.get(
+		"%s/%s" % [action, layer], {}
+	)
+	if table.is_empty() and layer == &"upper_body":
+		# Layers share a policy unless the upper authored set differs from it.
+		table = MODULAR_BODY_AUTHORED_SECTORS.get("%s/lower_body" % action, {})
+	return table.get(requested, requested)
+
+
+## Canonical body identity for a semantic base, or empty when nothing is
+## authored for the projected sector. Returning empty preserves the sectors the
+## compatibility renderer deliberately played nothing for.
+func _resolve_modular_body_animation(
+	base_animation: String, layer: StringName, direction: Vector2
+) -> StringName:
+	var identity: Array = MODULAR_BODY_IDENTITIES.get(base_animation, [])
+	if identity.is_empty():
+		return &""
+	var sector := _modular_body_authored_sector(identity[2], layer, direction)
+	if not _get_operator_animation_selector().has_sector_identity(
+		identity[0], identity[1], identity[2], sector, layer
+	):
+		return &""
+	return _get_operator_animation_selector().resolve_sector(
+		identity[0], identity[1], identity[2], sector, layer
+	)
+
+
 func _sync_modular_lower_body_layer(base_animation: String, direction: Vector2, speed_scale: float) -> bool:
 	if modular_lower_body_sprite == null or modular_lower_body_sprite.sprite_frames == null:
 		return false
-	var lower_animation := _resolve_modular_lower_body_locomotion_animation(base_animation, direction)
-	if not _has_playable_sprite_animation(modular_lower_body_sprite.sprite_frames, lower_animation):
+	var lower_animation := _resolve_modular_body_animation(base_animation, &"lower_body", direction)
+	if lower_animation.is_empty() \
+	or not _has_playable_sprite_animation(modular_lower_body_sprite.sprite_frames, lower_animation):
 		return false
 	_show_body_layer(modular_lower_body_sprite)
 	modular_lower_body_sprite.flip_h = false
@@ -3807,32 +4007,12 @@ func _sync_modular_lower_body_layer(base_animation: String, direction: Vector2, 
 	return true
 
 
-func _resolve_modular_lower_body_locomotion_animation(base_animation: String, direction: Vector2) -> StringName:
-	var frames: SpriteFrames = modular_lower_body_sprite.sprite_frames if modular_lower_body_sprite != null else null
-	if frames == null:
-		return StringName(base_animation)
-	var direction_suffix := _get_direction_suffix(direction)
-	var exact_animation := StringName("%s_%s" % [base_animation, direction_suffix])
-	if _has_playable_sprite_animation(frames, exact_animation):
-		return exact_animation
-	if base_animation == "unarmed_walk":
-		for fallback_base in ["unarmed_run", "unarmed_idle"]:
-			var fallback_animation := StringName("%s_%s" % [fallback_base, direction_suffix])
-			if _has_playable_sprite_animation(frames, fallback_animation):
-				return fallback_animation
-	if _has_playable_sprite_animation(frames, StringName(base_animation)):
-		return StringName(base_animation)
-	var direct_animation := AnimationResolver.resolve(base_animation, direction, modular_lower_body_sprite)
-	if _has_playable_sprite_animation(frames, direct_animation):
-		return direct_animation
-	return direct_animation
-
-
 func _sync_modular_upper_body_layer(base_animation: String, direction: Vector2, speed_scale: float, action_once: bool) -> bool:
 	if modular_upper_body_sprite == null or modular_upper_body_sprite.sprite_frames == null:
 		return false
-	var upper_animation := AnimationResolver.resolve(base_animation, direction, modular_upper_body_sprite)
-	if not _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, upper_animation):
+	var upper_animation := _resolve_modular_body_animation(base_animation, &"upper_body", direction)
+	if upper_animation.is_empty() \
+	or not _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, upper_animation):
 		return false
 	_show_body_layer(modular_upper_body_sprite)
 	modular_upper_body_sprite.flip_h = false
@@ -4018,6 +4198,12 @@ func get_visible_body_overlays(owner: int) -> Array:
 func _set_body_presentation_owner(owner: int) -> bool:
 	_invalidate_preempted_rig_lifecycles(owner)
 	return _body_presenter.set_owner(owner)
+
+
+## Which rig currently holds the body. Read-only; presentation authority stays
+## with OperatorBodyPresenter.
+func _body_presentation_owner() -> int:
+	return _body_presenter.current_owner()
 
 
 ## Present the FX beat for one parry action, and report the identity it played.
@@ -5621,10 +5807,10 @@ func _get_parry_attempt_remaining_duration() -> float:
 	var duration := 0.0
 	if _is_current_profile_unarmed() and modular_locomotion_layers_enabled:
 		if modular_lower_body_sprite != null and modular_lower_body_sprite.sprite_frames != null:
-			var lower_anim := AnimationResolver.resolve("unarmed_parry", direction, modular_lower_body_sprite)
+			var lower_anim := _resolve_modular_body_animation("unarmed_parry", &"lower_body", direction)
 			duration = maxf(duration, _get_sprite_frames_animation_duration(modular_lower_body_sprite.sprite_frames, lower_anim))
 		if modular_upper_body_sprite != null and modular_upper_body_sprite.sprite_frames != null:
-			var upper_anim := AnimationResolver.resolve("unarmed_parry", direction, modular_upper_body_sprite)
+			var upper_anim := _resolve_modular_body_animation("unarmed_parry", &"upper_body", direction)
 			duration = maxf(duration, _get_sprite_frames_animation_duration(modular_upper_body_sprite.sprite_frames, upper_anim))
 	if animated_sprite != null and animated_sprite.sprite_frames != null:
 		var body_anim := AnimationResolver.resolve("unarmed_parry", direction, animated_sprite)
@@ -6314,8 +6500,13 @@ func _try_start_fast_attack_windup() -> bool:
 	animated_sprite.flip_h = _is_facing_left(_melee_forward)
 	animated_sprite.speed_scale = _get_melee_animation_speed_scale(_melee_attack_key)
 	_animation_player.play(animated_sprite, windup_anim)
-	if _sync_modular_fast_attack_phase(&"windup"):
-		_claim_modular_body_owner()
+	# Acquire the body BEFORE any layer is shown. Asking first means a phase that
+	# cannot present never takes the body from the legacy rig, which is what the
+	# fallback below still depends on.
+	if _can_present_modular_fast_attack_phase(&"windup"):
+		_declare_modular_body_composition()
+		if not _sync_modular_fast_attack_phase(&"windup"):
+			_clear_modular_fast_attack_layers()
 	else:
 		_clear_modular_fast_attack_layers()
 	_lock_melee_cooldown(0.60)
@@ -6975,8 +7166,8 @@ func _play_modular_unarmed_parry(base_animation: String, direction: Vector2) -> 
 		return false
 
 	var resolved_base := "unarmed_parry_success" if base_animation == "unarmed_parry_success" else base_animation
-	var lower_anim := AnimationResolver.resolve(resolved_base, direction, modular_lower_body_sprite)
-	var upper_anim := AnimationResolver.resolve(resolved_base, direction, modular_upper_body_sprite)
+	var lower_anim := _resolve_modular_body_animation(String(resolved_base), &"lower_body", direction)
+	var upper_anim := _resolve_modular_body_animation(String(resolved_base), &"upper_body", direction)
 	if not _has_playable_sprite_animation(modular_lower_body_sprite.sprite_frames, lower_anim):
 		return false
 	if not _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, upper_anim):
@@ -7853,7 +8044,7 @@ func _play_modular_unarmed_block(base_animation: String) -> bool:
 		var lower_direction := movement_direction if velocity.length() > 0.01 else visual_idle_direction
 		if not _sync_modular_lower_body_layer(lower_base, lower_direction, 1.0):
 			return false
-		var upper_anim := AnimationResolver.resolve(resolved_base, direction, modular_upper_body_sprite)
+		var upper_anim := _resolve_modular_body_animation(String(resolved_base), &"upper_body", direction)
 		if not _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, upper_anim):
 			return false
 		_show_body_layer(modular_upper_body_sprite)
@@ -7867,8 +8058,8 @@ func _play_modular_unarmed_block(base_animation: String) -> bool:
 		return _sync_modular_block_hold_movement_presentation()
 
 	# Enter / hold / hitreact: both layers play the same animation
-	var lower_anim := AnimationResolver.resolve(resolved_base, direction, modular_lower_body_sprite)
-	var upper_anim := AnimationResolver.resolve(resolved_base, direction, modular_upper_body_sprite)
+	var lower_anim := _resolve_modular_body_animation(String(resolved_base), &"lower_body", direction)
+	var upper_anim := _resolve_modular_body_animation(String(resolved_base), &"upper_body", direction)
 	if not _has_playable_sprite_animation(modular_lower_body_sprite.sprite_frames, lower_anim):
 		return false
 	if not _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, upper_anim):
@@ -7900,7 +8091,7 @@ func _sync_modular_block_hold_movement_presentation() -> bool:
 	var upper_direction := aim_direction if aim_direction.length_squared() > 0.001 else visual_idle_direction
 	if upper_direction.length_squared() <= 0.001:
 		upper_direction = Vector2.DOWN
-	var upper_anim := AnimationResolver.resolve("unarmed_block_hold", upper_direction, modular_upper_body_sprite)
+	var upper_anim := _resolve_modular_body_animation("unarmed_block_hold", &"upper_body", upper_direction)
 	if not _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, upper_anim):
 		return false
 
@@ -7911,7 +8102,7 @@ func _sync_modular_block_hold_movement_presentation() -> bool:
 			lower_direction = upper_direction
 		lower_synced = _sync_modular_lower_body_layer("unarmed_walk", lower_direction, clampf(block_move_multiplier, 0.2, 1.0))
 	if not lower_synced:
-		var lower_anim := AnimationResolver.resolve("unarmed_block_hold", upper_direction, modular_lower_body_sprite)
+		var lower_anim := _resolve_modular_body_animation("unarmed_block_hold", &"lower_body", upper_direction)
 		if not _has_playable_sprite_animation(modular_lower_body_sprite.sprite_frames, lower_anim):
 			return false
 		_show_body_layer(modular_lower_body_sprite)
@@ -8435,8 +8626,10 @@ func _play_fast_attack_recovery() -> void:
 		if animated_sprite.sprite_frames.has_animation(recovery_animation):
 			animated_sprite.flip_h = _is_facing_left(_melee_forward) and recovery_animation != &"unarmed_attack_fast_recovery_left"
 			_animation_player.play(animated_sprite, recovery_animation)
-		if _sync_modular_fast_attack_phase(&"recovery"):
-			_claim_modular_body_owner()
+		if _can_present_modular_fast_attack_phase(&"recovery"):
+			_declare_modular_body_composition()
+			if not _sync_modular_fast_attack_phase(&"recovery"):
+				_clear_modular_fast_attack_layers()
 		else:
 			_clear_modular_fast_attack_layers()
 		if melee_weapon_overlay_sprite:
@@ -13562,25 +13755,30 @@ func begin_modular_damage_reaction(state_name: String) -> bool:
 		facing = movement_direction
 	if facing.length_squared() <= 0.0001:
 		facing = Vector2.DOWN
-	var requested_sector := DirectionalAnimationFallback.vector_to_sector(facing)
-	var resolved_sector := DirectionalAnimationFallback.nearest_available_sector(
-		requested_sector,
-		[&"n", &"s"],
-		_modular_damage_reaction_sector
+	# C2a-R3 retired the previous-sector memory deliberately. The authored set is
+	# north/south, and the projection is now a pure function of current facing:
+	# east and west were an exact tie that used to inherit whichever vertical
+	# sector happened to be remembered, and they always present south instead.
+	var lower_animation := _resolve_modular_body_animation(
+		"unarmed_idle_hitreact", &"lower_body", facing
 	)
-	var suffix := "up" if resolved_sector == &"n" else "down"
-	var animation_name := StringName(
-		"operator_idle_hitreact_modular_%s" % suffix
+	var upper_animation := _resolve_modular_body_animation(
+		"unarmed_idle_hitreact", &"upper_body", facing
+	)
+	var resolved_sector := _modular_body_authored_sector(
+		&"idle_hitreact_01", &"lower_body", facing
 	)
 
 	# Resolve every required layer before changing visibility. Missing body art
 	# must fall back atomically to the legacy full-body reaction.
+	if lower_animation.is_empty() or upper_animation.is_empty():
+		return false
 	if not _has_playable_sprite_animation(
 		modular_lower_body_sprite.sprite_frames,
-		animation_name
+		lower_animation
 	) or not _has_playable_sprite_animation(
 		modular_upper_body_sprite.sprite_frames,
-		animation_name
+		upper_animation
 	):
 		return false
 
@@ -13590,7 +13788,8 @@ func begin_modular_damage_reaction(state_name: String) -> bool:
 	)
 	var target_fps := 5.0 / duration
 	_modular_damage_reaction_active = true
-	_modular_damage_reaction_animation = animation_name
+	_modular_damage_reaction_animation = lower_animation
+	_modular_damage_reaction_upper_animation = upper_animation
 	_modular_damage_reaction_head_animation = &""
 	_modular_damage_reaction_sector = resolved_sector
 	# Declare before configuring. This used to claim the body AFTER playing every
@@ -13598,12 +13797,12 @@ func begin_modular_damage_reaction(state_name: String) -> bool:
 	_declare_modular_body_composition()
 	_play_synchronized_modular_reaction_layer(
 		modular_lower_body_sprite,
-		animation_name,
+		lower_animation,
 		target_fps
 	)
 	_play_synchronized_modular_reaction_layer(
 		modular_upper_body_sprite,
-		animation_name,
+		upper_animation,
 		target_fps
 	)
 	if ACTIVE_MODULAR_HEAD \
@@ -13611,12 +13810,12 @@ func begin_modular_damage_reaction(state_name: String) -> bool:
 	and modular_head_sprite.sprite_frames != null \
 	and _has_playable_sprite_animation(
 		modular_head_sprite.sprite_frames,
-		animation_name
+		lower_animation
 	):
-		_modular_damage_reaction_head_animation = animation_name
+		_modular_damage_reaction_head_animation = lower_animation
 		_play_synchronized_modular_reaction_layer(
 			modular_head_sprite,
-			animation_name,
+			lower_animation,
 			target_fps
 		)
 	else:
@@ -13636,10 +13835,11 @@ func begin_modular_damage_reaction(state_name: String) -> bool:
 		if sprite != null:
 			_hide_presentation_layer(sprite, true)
 	_obs_log(&"player_modular_idle_hitreact_started", {
-		"requested_sector": requested_sector,
+		"requested_sector": OperatorAnimationSelector.vector_to_sector(facing),
 		"resolved_sector": resolved_sector,
-		"animation": animation_name,
-		"fallback": requested_sector != resolved_sector,
+		"animation": lower_animation,
+		"upper_animation": upper_animation,
+		"projected": OperatorAnimationSelector.vector_to_sector(facing) != resolved_sector,
 		"head": not _modular_damage_reaction_head_animation.is_empty(),
 	})
 	return true
@@ -13668,7 +13868,7 @@ func is_modular_damage_reaction_playing() -> bool:
 	return modular_lower_body_sprite.visible \
 		and modular_upper_body_sprite.visible \
 		and modular_lower_body_sprite.animation == _modular_damage_reaction_animation \
-		and modular_upper_body_sprite.animation == _modular_damage_reaction_animation \
+		and modular_upper_body_sprite.animation == _modular_damage_reaction_upper_animation \
 		and modular_lower_body_sprite.is_playing() \
 		and modular_upper_body_sprite.is_playing()
 
@@ -13790,6 +13990,7 @@ func finish_damage_reaction_presentation() -> void:
 	var modular_was_active := _modular_damage_reaction_active
 	_modular_damage_reaction_active = false
 	_modular_damage_reaction_animation = &""
+	_modular_damage_reaction_upper_animation = &""
 	_modular_damage_reaction_head_animation = &""
 	if modular_was_active:
 		for sprite in [

@@ -7,7 +7,7 @@
   },
   "animation_resolver": {
     "animations/animation_resolver.gd": 1,
-    "operator.gd": 42
+    "operator.gd": 22
   },
   "animation_state_actor_glue": {
     "animations/states/attack_fast_state.gd": 4,
@@ -18,10 +18,10 @@
     "animations/states/sheathe_weapon_state.gd": 6
   },
   "attack_fallback_animation": {
-    "operator.gd": 16
+    "operator.gd": 13
   },
   "directional_animation_fallback": {
-    "operator.gd": 6
+    "operator.gd": 4
   },
   "gameplay_mutation_in_process": {
     "operator.gd": 12

@@ -32,16 +32,21 @@ func _init() -> void:
 	var weapon := operator.get_node("ModularSidearmSprite") as AnimatedSprite2D
 	upper.visible = true
 	weapon.visible = true
-	upper.play(&"ranged_2h_stance_modular_right")
-	# C2a-R1: ModularSidearmSprite is bound to the canonical runtime SpriteFrames;
-	# the upper body is still a compatibility renderer in this slice.
+	upper.play(&"ranged_2h/posture/stance_01/e/upper_body")
+	# ModularSidearmSprite is canonical as of C2a-R1 and the upper body as of
+	# C2a-R3, so both are driven by canonical identities here.
 	weapon.play(&"ranged_2h/posture/stance_01/e/weapon")
 	upper.set_frame_and_progress(0, 0.0)
 	operator.call("_begin_modular_primary_ranged_fire_presentation", Vector2.RIGHT)
 	operator.set("aim_direction", Vector2.LEFT)
 	operator.call("_sync_primary_ranged_weapon_frame_to_upper")
 	_expect((operator.get("_primary_ranged_action_direction") as Vector2).x > 0.0, "cursor reversal twisted the committed east fire presentation")
-	_expect(String(upper.animation).contains("right"), "cursor reversal switched the committed fire sprite octant")
+	# The committed octant is now read as a canonical east identity rather than a
+	# legacy "_right" suffix; the behaviour asserted is unchanged.
+	_expect(
+		String(upper.animation).ends_with("/e/upper_body"),
+		"cursor reversal switched the committed fire sprite octant (got %s)" % upper.animation
+	)
 
 	var accepted_aim_world_position := Vector2(180.0, 74.0)
 	var expected_muzzle: Vector2 = operator.call(

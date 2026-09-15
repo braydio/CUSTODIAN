@@ -92,9 +92,9 @@ func _validate_runtime_phase_playback(operator: Node) -> void:
 	operator.set("combat_loadout_mode", "melee")
 	operator.set("primary_weapon_equipped", false)
 	operator.set("_melee_attack_key", "unarmed_fast_1")
-	# Slice C1 made OperatorBodyPresenter reject an undeclared ownership change:
-	# a composition must claim the body before it shows any layer. Driving the
-	# phase helpers directly skips the entry points that normally declare it.
+	# This drives the low-level phase helper directly rather than an entrypoint,
+	# so it establishes the owner a transition would have declared. Real
+	# entrypoints acquire the body themselves and need no scaffolding.
 	operator.call("_declare_modular_body_composition")
 	for dir in _directions.keys():
 		operator.set("_melee_forward", _directions[dir]["vector"])
@@ -153,11 +153,20 @@ func _validate_fast_attack_entry_points(operator: Node) -> void:
 	operator.set("_melee_forward", Vector2.RIGHT)
 	operator.set("_active_attack_profile", operator.call("get_current_combat_profile"))
 	operator.set("_active_melee_attack_profile", null)
-	# The fast-attack phase family does not declare the modular composition
-	# itself; in gameplay it is reached after `_update_animation` has already
-	# claimed the body. Driving it directly here has to stand in for that.
-	operator.call("_declare_modular_body_composition")
+	# C2a-R3 ownership contract: a transition entrypoint acquires the body itself.
+	# It must not depend on an earlier frame having claimed MODULAR_BODY, so this
+	# hands the body back to the legacy rig immediately beforehand.
+	operator.call("_set_body_presentation_owner", OperatorBodyPresenter.Owner.LEGACY_FULL_BODY)
+	var presenter_before: int = operator.call("_body_presentation_owner")
+	_assert_true(
+		presenter_before == OperatorBodyPresenter.Owner.LEGACY_FULL_BODY,
+		"precondition: the legacy rig should hold the body before windup starts"
+	)
 	_assert_true(bool(operator.call("_try_start_fast_attack_windup")), "fast windup entry should start")
+	_assert_true(
+		int(operator.call("_body_presentation_owner")) == OperatorBodyPresenter.Owner.MODULAR_BODY,
+		"fast windup entrypoint should acquire MODULAR_BODY without prior ownership"
+	)
 	_assert_layer_animation(operator, "modular_lower_body_sprite", "unarmed_fast_windup_lower", "e")
 	_assert_layer_animation(operator, "modular_upper_body_sprite", "unarmed_fast_windup_upper", "e")
 	var legacy_sprite := operator.get("animated_sprite") as AnimatedSprite2D
@@ -166,9 +175,6 @@ func _validate_fast_attack_entry_points(operator: Node) -> void:
 	operator.set("_melee_fast_windup", false)
 	operator.set("_melee_active", true)
 	operator.set("_melee_attack_kind", "fast")
-	# As above: the phase helper is driven directly here, outside the
-	# `_update_animation` path that normally declares the modular composition.
-	operator.call("_declare_modular_body_composition")
 	_assert_true(bool(operator.call("_sync_modular_action_domains")), "strike action domain sync should prefer true modular lower/upper strike")
 	_assert_layer_animation(operator, "modular_lower_body_sprite", "unarmed_fast_strike_lower", "e")
 	_assert_layer_animation(operator, "modular_upper_body_sprite", "unarmed_fast_strike_upper", "e")
@@ -280,12 +286,33 @@ func _assert_canonical_fx(operator: Node, action: String, dir: String) -> void:
 	)
 
 
+## C2a-R3 made both body renderers canonical. The fast-attack families are
+## authored for all eight sectors, so the requested sector is the authored one
+## and no projection applies here.
+const CANONICAL_BODY_ACTIONS := {
+	"unarmed_fast_windup_lower": "fast_windup_01",
+	"unarmed_fast_windup_upper": "fast_windup_01",
+	"unarmed_fast_strike_lower": "fast_strike_01",
+	"unarmed_fast_strike_upper": "fast_strike_01",
+	"unarmed_fast_recovery_lower": "fast_recovery_01",
+	"unarmed_fast_recovery_upper": "fast_recovery_01",
+}
+
+
+func _canonical_body_identity(sprite_property: String, base: String, dir: String) -> StringName:
+	var action: String = CANONICAL_BODY_ACTIONS.get(base, "")
+	if action.is_empty():
+		return StringName("%s_%s" % [base, str(_directions[dir]["suffix"])])
+	var layer := "lower_body" if sprite_property.contains("lower") else "upper_body"
+	return StringName("unarmed/attack/%s/%s/%s" % [action, dir, layer])
+
+
 func _assert_layer_animation(operator: Node, sprite_property: String, base: String, dir: String) -> void:
 	var sprite := operator.get(sprite_property) as AnimatedSprite2D
 	_assert_true(sprite != null, "%s should exist" % sprite_property)
 	if sprite == null:
 		return
-	var expected := StringName("%s_%s" % [base, str(_directions[dir]["suffix"])])
+	var expected := _canonical_body_identity(sprite_property, base, dir)
 	_assert_true(sprite.visible, "%s should be visible for %s" % [sprite_property, dir])
 	_assert_true(sprite.animation == expected, "%s expected %s got %s" % [sprite_property, String(expected), String(sprite.animation)])
 

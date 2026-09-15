@@ -453,8 +453,8 @@ func _validate_offhand_parry_guard(operator: Node, root: Node) -> void:
 	_assert_true(bool(blocked_hit.get("blocked", false)), "receive_enemy_hit should preserve held guard for front-facing attacks")
 	_assert_true(operator.get("_block_phase") == &"hitreact", "blocked chip damage should keep block hitreact instead of normal hit recoil")
 	_assert_true(float(operator.get("health")) < 100.0, "blocked chip damage should still reduce health")
-	_assert_true(lower_sprite != null and lower_sprite.visible and lower_sprite.animation == &"unarmed_block_hitreact_right", "blocked hit should play lower block hitreact in the guard direction")
-	_assert_true(upper_sprite != null and upper_sprite.visible and upper_sprite.animation == &"unarmed_block_hitreact_right", "blocked hit should play upper block hitreact in the guard direction")
+	_assert_true(lower_sprite != null and lower_sprite.visible and lower_sprite.animation == &"unarmed/defense/block_hit_01/e/lower_body", "blocked hit should play lower block hitreact in the guard direction")
+	_assert_true(upper_sprite != null and upper_sprite.visible and upper_sprite.animation == &"unarmed/defense/block_hit_01/e/upper_body", "blocked hit should play upper block hitreact in the guard direction")
 
 	operator.set("_block_active", false)
 	operator.set("_block_phase", &"parry")
@@ -469,8 +469,8 @@ func _validate_offhand_parry_guard(operator: Node, root: Node) -> void:
 	_assert_true(operator.get("_parry_phase") == &"", "failed parry hit should cancel the committed parry attempt")
 	_assert_true(operator.get("_block_phase") == &"hitreact", "failed parry hit should play block hitreact instead of normal hit recoil")
 	_assert_true(float(operator.get("health")) < 100.0, "failed parry hit should still apply enemy damage")
-	_assert_true(lower_sprite != null and lower_sprite.visible and lower_sprite.animation == &"unarmed_block_hitreact_right", "failed parry hit should play lower block hitreact in the guard direction")
-	_assert_true(upper_sprite != null and upper_sprite.visible and upper_sprite.animation == &"unarmed_block_hitreact_right", "failed parry hit should play upper block hitreact in the guard direction")
+	_assert_true(lower_sprite != null and lower_sprite.visible and lower_sprite.animation == &"unarmed/defense/block_hit_01/e/lower_body", "failed parry hit should play lower block hitreact in the guard direction")
+	_assert_true(upper_sprite != null and upper_sprite.visible and upper_sprite.animation == &"unarmed/defense/block_hit_01/e/upper_body", "failed parry hit should play upper block hitreact in the guard direction")
 	operator.set("_block_active", false)
 	operator.set("_block_phase", &"")
 

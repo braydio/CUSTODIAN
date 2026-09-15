@@ -1,9 +1,19 @@
 # Task Packet — Operator Runtime Decomposition
 
-**Status:** Slices A, B, B-final and C1 complete. C2a in progress one renderer at a
-time: R1 `modular_sidearm_sprite` and R2 `modular_upper_fx_sprite` are canonical;
-R3 (the body pair) stopped at its exhaustiveness pass and is paused behind T1,
-the canonical timing-preservation repair (2026-09-14).
+**Status:** Slices A, B, B-final and C1 complete. C2a is cutting renderers over one
+at a time and the modular body is now canonical (2026-09-15):
+
+| step | renderer / scope | state |
+|---|---|---|
+| C2a-R1 | `modular_sidearm_sprite` | canonical |
+| C2a-R2 | `modular_upper_fx_sprite` | canonical |
+| C2a-T1 | authored timing preserved on the canonical spine | done |
+| C2a-R3 art | synchronized 4-frame `block_enter_01` body pair | published |
+| C2a-T1.1 | frozen authored-timing oracle | done |
+| C2a-R3 | `modular_lower_body_sprite` + `modular_upper_body_sprite` | canonical |
+
+`animated_sprite` and the melee/weapon overlays are still compatibility
+renderers, and the compatibility SpriteFrames stay on disk until C2b.
 **Contract:** `design/04_architecture/OPERATOR_RUNTIME_ARCHITECTURE.md`
 **Gate:** `custodian/tools/validation/operator_architecture_debt_audit.py`
 

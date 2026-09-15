@@ -60,14 +60,24 @@ func _init() -> void:
 		assert(CATALOG_FRAMES.get_frame_count(weapon_animation) == expected_frames)
 	root.add_child(operator)
 	await process_frame
-	operator.call("_install_melee_posture_catalog_frames")
+	# C2a-R3 retired the per-instance SpriteFrames fork and the secondary-catalog
+	# copy: the body pair now shares the canonical runtime SpriteFrames, which
+	# already publishes these melee posture/locomotion identities.
 	var lower := operator.get_node("ModularLowerBodySprite") as AnimatedSprite2D
 	var upper := operator.get_node("ModularUpperBodySprite") as AnimatedSprite2D
 	var weapon := operator.get_node("MeleeWeaponOverlaySprite") as AnimatedSprite2D
 	for action in ["idle_ready_01", "idle_relaxed_01"]:
 		for suffix in ["e", "w"]:
-			operator.call("_copy_catalog_animation", CATALOG_FRAMES, lower.sprite_frames, StringName("melee_1h/posture/%s/%s/lower_body" % [action, suffix]))
-			operator.call("_copy_catalog_animation", CATALOG_FRAMES, upper.sprite_frames, StringName("melee_1h/posture/%s/%s/upper_body" % [action, suffix]))
+			for layer_frames in [
+				[lower, "lower_body"], [upper, "upper_body"],
+			]:
+				var sprite: AnimatedSprite2D = layer_frames[0]
+				var identity := StringName("melee_1h/posture/%s/%s/%s" % [
+					action, suffix, layer_frames[1]])
+				assert(
+					sprite.sprite_frames.has_animation(identity),
+					"canonical body pair should publish %s natively" % identity
+				)
 			assert(lower.sprite_frames.has_animation("melee_1h/posture/%s/%s/lower_body" % [action, suffix]), "missing lower %s %s" % [action, suffix])
 			assert(upper.sprite_frames.has_animation("melee_1h/posture/%s/%s/upper_body" % [action, suffix]), "missing upper %s %s" % [action, suffix])
 	for suffix in ["e", "w"]:

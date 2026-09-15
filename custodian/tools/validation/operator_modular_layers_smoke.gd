@@ -31,30 +31,30 @@ func _init() -> void:
 
 	_check_frame_count(
 		lower,
-		&"unarmed_run_up_right",
+		&"unarmed/locomotion/run_01/ne/lower_body",
 		6,
-		"new NE lower-body run",
+		"canonical NE lower-body run",
 		failures
 	)
 	_check_frame_count(
 		lower,
-		&"unarmed_run_up_left",
+		&"unarmed/locomotion/run_01/nw/lower_body",
 		6,
-		"new NW lower-body run",
+		"canonical NW lower-body run",
 		failures
 	)
 	_check_frame_count(
 		lower,
-		&"unarmed_walk_up_right",
+		&"unarmed/locomotion/walk_01/ne/lower_body",
 		6,
-		"new NE lower-body walk",
+		"canonical NE lower-body walk",
 		failures
 	)
 	_check_frame_count(
 		lower,
-		&"unarmed_walk_up_left",
+		&"unarmed/locomotion/walk_01/nw/lower_body",
 		6,
-		"new NW lower-body walk",
+		"canonical NW lower-body walk",
 		failures
 	)
 
@@ -66,8 +66,8 @@ func _init() -> void:
 	operator.set("visual_idle_direction", Vector2.DOWN)
 	operator.call("_update_animation")
 
-	_check_layer(lower, "unarmed idle lower", &"unarmed_idle_down", failures)
-	_check_layer(upper, "unarmed idle upper", &"unarmed_idle_down", failures)
+	_check_layer(lower, "unarmed idle lower", &"unarmed/locomotion/idle_01/s/lower_body", failures)
+	_check_layer(upper, "unarmed idle upper", &"unarmed/locomotion/idle_01/s/upper_body", failures)
 	# C1 retired the modular head from active composition (ACTIVE_MODULAR_HEAD),
 	# preserving the art without drawing it. It must stay hidden in every state,
 	# so this asserts retirement rather than the old head/upper frame sync.
@@ -80,8 +80,8 @@ func _init() -> void:
 	operator.set("aim_direction", Vector2.RIGHT)
 	operator.call("_update_animation")
 
-	_check_layer(lower, "unarmed move lower", &"unarmed_walk_right", failures)
-	_check_layer(upper, "unarmed move upper", &"unarmed_walk_right", failures)
+	_check_layer(lower, "unarmed move lower", &"unarmed/locomotion/walk_01/e/lower_body", failures)
+	_check_layer(upper, "unarmed move upper", &"unarmed/locomotion/walk_01/e/upper_body", failures)
 	_check_hidden(head, "modular head should hide when the selected profile lacks walk-right art", failures)
 	_check_hidden(body, "legacy body should be hidden during modular unarmed locomotion", failures)
 
@@ -101,8 +101,8 @@ func _init() -> void:
 	operator.call("_tick_primary_ranged_action_presentation", 10.0)
 	operator.call("_update_animation")
 
-	_check_layer(lower, "ranged-ready idle lower", &"unarmed_idle_right", failures)
-	_check_layer(upper, "ranged-ready idle upper", &"ranged_2h_stance_modular_right", failures)
+	_check_layer(lower, "ranged-ready idle lower", &"unarmed/locomotion/idle_01/e/lower_body", failures)
+	_check_layer(upper, "ranged-ready idle upper", &"ranged_2h/posture/stance_01/e/upper_body", failures)
 	_check_hidden(head, "south-idle head should not remain frozen over ranged-ready stance", failures)
 	_check_hidden(body, "legacy body should be hidden during modular ranged-ready idle", failures)
 	_check_hidden(primary_weapon, "legacy primary weapon should hide during modular ranged-ready idle", failures)
@@ -118,8 +118,8 @@ func _init() -> void:
 	operator.set("aim_direction", Vector2.RIGHT)
 	operator.call("_update_animation")
 
-	_check_layer(lower, "ranged-ready move lower", &"unarmed_run_up", failures)
-	_check_layer(upper, "ranged-ready move upper", &"ranged_2h_stance_modular_right", failures)
+	_check_layer(lower, "ranged-ready move lower", &"unarmed/locomotion/run_01/n/lower_body", failures)
+	_check_layer(upper, "ranged-ready move upper", &"ranged_2h/posture/stance_01/e/upper_body", failures)
 	_check_hidden(body, "legacy body should stay hidden during modular ranged-ready movement", failures)
 	if body != null and body.sprite_frames != null and body.sprite_frames.has_animation(&"ranged_run_east"):
 		failures.append("ranged-ready modular movement should not require baked ranged_run_east")

@@ -77,6 +77,44 @@ local function encode(value)
 end
 
 local tracks = {}
+-- MIGRATION SEAM (C2a-R3). Socket tracks are keyed by the LIVE upper-body
+-- animation name, and after the body-pair cutover that name is the canonical
+-- semantic identity. The Carbine socket master still carries legacy tag names,
+-- so they are canonicalized here, at generation time.
+--
+-- This is NOT a runtime alias: nothing translates names while the game runs.
+-- EXIT CONDITION: retag `content/_aseprite/sprites/operator/source/
+-- aiming_2h_carbine_source.aseprite` with the canonical identities and delete
+-- this table. Tags already authored canonically pass through untouched.
+local LEGACY_TAG_MIGRATION = {
+  ranged_2h_stance_modular_right = "ranged_2h/posture/stance_01/e/upper_body",
+  ranged_2h_stance_modular_left = "ranged_2h/posture/stance_01/w/upper_body",
+  ranged_2h_stance_modular_down_right = "ranged_2h/posture/stance_01/se/upper_body",
+  ranged_2h_stance_modular_down_left = "ranged_2h/posture/stance_01/sw/upper_body",
+  ranged_2h_aim_modular_right = "ranged_2h/cosmetic/aim_01/e/upper_body",
+  ranged_2h_aim_modular_left = "ranged_2h/cosmetic/aim_01/w/upper_body",
+  ranged_2h_aim_modular_down_right = "ranged_2h/cosmetic/aim_01/se/upper_body",
+  ranged_2h_aim_modular_down_left = "ranged_2h/cosmetic/aim_01/sw/upper_body",
+  ranged_2h_fire_modular_right = "ranged_2h/cosmetic/fire_01/e/upper_body",
+  ranged_2h_fire_modular_left = "ranged_2h/cosmetic/fire_01/w/upper_body",
+  ranged_2h_fire_modular_down_right = "ranged_2h/cosmetic/fire_01/se/upper_body",
+  ranged_2h_fire_modular_down_left = "ranged_2h/cosmetic/fire_01/sw/upper_body",
+}
+
+-- A socket key must be a canonical animation identity. Anything else would be
+-- published as a track nothing can ever look up, because the live animation
+-- name never takes that shape again.
+local function canonical_track_key(tag_name)
+  local migrated = LEGACY_TAG_MIGRATION[tag_name]
+  if migrated then return migrated end
+  if not string.find(tag_name, "/", 1, true) then
+    error("Socket tag '" .. tag_name .. "' is not a canonical animation identity."
+      .. " Retag it as profile/group/action/direction/layer, or add it to"
+      .. " LEGACY_TAG_MIGRATION if it is known migration residue.")
+  end
+  return tag_name
+end
+
 for _, tag in ipairs(sprite.tags) do
   local frames = {}
   for frame_number = tag.fromFrame.frameNumber, tag.toFrame.frameNumber do
@@ -89,7 +127,7 @@ for _, tag in ipairs(sprite.tags) do
       weapon_z = 3,
     })
   end
-  tracks[tag.name] = frames
+  tracks[canonical_track_key(tag.name)] = frames
 end
 
 local output = app.params.output

@@ -113,13 +113,17 @@ func _assert_legacy_hidden(label: String) -> void:
 func _install_vigil_posture_art() -> void:
 	var lower := _operator.get_node("ModularLowerBodySprite") as AnimatedSprite2D
 	var upper := _operator.get_node("ModularUpperBodySprite") as AnimatedSprite2D
-	_operator.call("_install_melee_posture_catalog_frames")
+	# C2a-R3: the body pair shares the canonical runtime SpriteFrames, which already
+	# publishes these melee posture identities. Nothing is installed per instance
+	# any more -- the fork and the secondary-catalog copy were both retired.
 	for action in ["idle_ready_01", "idle_relaxed_01", "draw_01"]:
 		for suffix in ["e", "w"]:
-			_operator.call("_copy_catalog_animation", CATALOG_FRAMES, lower.sprite_frames,
-				StringName("melee_1h/posture/%s/%s/lower_body" % [action, suffix]))
-			_operator.call("_copy_catalog_animation", CATALOG_FRAMES, upper.sprite_frames,
-				StringName("melee_1h/posture/%s/%s/upper_body" % [action, suffix]))
+			for pair in [[lower, "lower_body"], [upper, "upper_body"]]:
+				var sprite: AnimatedSprite2D = pair[0]
+				var identity := StringName("melee_1h/posture/%s/%s/%s" % [
+					action, suffix, pair[1]])
+				if not sprite.sprite_frames.has_animation(identity):
+					_fail("canonical body pair should publish %s natively" % identity)
 	var vigil_definition = _operator.get("melee_weapon_definition")
 	if vigil_definition == null:
 		_fail("Vigil dagger definition is unavailable")

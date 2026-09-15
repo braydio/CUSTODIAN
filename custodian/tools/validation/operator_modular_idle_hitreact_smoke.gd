@@ -28,10 +28,13 @@ func _run() -> void:
 	var upper := operator.get_node("ModularUpperBodySprite") as AnimatedSprite2D
 	var head := operator.get_node("ModularHeadSprite") as AnimatedSprite2D
 	var legacy := operator.get_node("AnimatedSprite2D") as AnimatedSprite2D
+	# C2a-R3: both body renderers are canonical, so each layer owns its own
+	# identity instead of sharing one compatibility clip name.
 	for sprite in [lower, upper]:
+		var layer := "lower_body" if sprite == lower else "upper_body"
 		for animation_name in [
-			&"operator_idle_hitreact_modular_up",
-			&"operator_idle_hitreact_modular_down",
+			StringName("unarmed/locomotion/idle_hitreact_01/n/%s" % layer),
+			StringName("unarmed/locomotion/idle_hitreact_01/s/%s" % layer),
 		]:
 			_assert(
 				sprite.sprite_frames.has_animation(animation_name),
@@ -46,7 +49,7 @@ func _run() -> void:
 	_assert_reaction_direction(
 		operator,
 		Vector2.UP,
-		&"operator_idle_hitreact_modular_up",
+		&"n",
 		lower,
 		upper,
 		head,
@@ -56,7 +59,7 @@ func _run() -> void:
 	_assert_reaction_direction(
 		operator,
 		Vector2(1.0, -1.0),
-		&"operator_idle_hitreact_modular_up",
+		&"n",
 		lower,
 		upper,
 		head,
@@ -66,7 +69,7 @@ func _run() -> void:
 	_assert_reaction_direction(
 		operator,
 		Vector2(-1.0, -1.0),
-		&"operator_idle_hitreact_modular_up",
+		&"n",
 		lower,
 		upper,
 		head,
@@ -76,7 +79,7 @@ func _run() -> void:
 	_assert_reaction_direction(
 		operator,
 		Vector2.DOWN,
-		&"operator_idle_hitreact_modular_down",
+		&"s",
 		lower,
 		upper,
 		head,
@@ -86,7 +89,7 @@ func _run() -> void:
 	_assert_reaction_direction(
 		operator,
 		Vector2(1.0, 1.0),
-		&"operator_idle_hitreact_modular_down",
+		&"s",
 		lower,
 		upper,
 		head,
@@ -96,7 +99,7 @@ func _run() -> void:
 	_assert_reaction_direction(
 		operator,
 		Vector2(-1.0, 1.0),
-		&"operator_idle_hitreact_modular_down",
+		&"s",
 		lower,
 		upper,
 		head,
@@ -109,21 +112,23 @@ func _run() -> void:
 	operator.call("finish_damage_reaction_presentation")
 	operator.set("visual_idle_direction", Vector2.RIGHT)
 	_assert(bool(operator.call("begin_modular_damage_reaction", "hit_recoil")), "east tie should begin")
-	_assert(lower.animation == &"operator_idle_hitreact_modular_up", "east should preserve previous north sector")
+	# C2a-R3 retired the previous-sector memory: east and west are an exact tie
+	# between the authored north and south, and now always present south.
+	_assert(lower.animation == &"unarmed/locomotion/idle_hitreact_01/s/lower_body", "east tie should present south, not a remembered north")
 	operator.call("finish_damage_reaction_presentation")
 	operator.set("visual_idle_direction", Vector2.DOWN)
 	_assert(bool(operator.call("begin_modular_damage_reaction", "hit_recoil")), "south setup should begin")
 	operator.call("finish_damage_reaction_presentation")
 	operator.set("visual_idle_direction", Vector2.LEFT)
 	_assert(bool(operator.call("begin_modular_damage_reaction", "hit_recoil")), "west tie should begin")
-	_assert(lower.animation == &"operator_idle_hitreact_modular_down", "west should preserve previous south sector")
+	_assert(lower.animation == &"unarmed/locomotion/idle_hitreact_01/s/lower_body", "west tie should present south deterministically")
 	operator.call("_update_animation")
-	_assert(lower.animation == &"operator_idle_hitreact_modular_down", "locomotion must not overwrite active modular reaction")
+	_assert(lower.animation == &"unarmed/locomotion/idle_hitreact_01/s/lower_body", "locomotion must not overwrite active modular reaction")
 	operator.call("finish_damage_reaction_presentation")
 
 	var original_upper_frames := upper.sprite_frames
 	var incomplete_frames := original_upper_frames.duplicate() as SpriteFrames
-	incomplete_frames.remove_animation(&"operator_idle_hitreact_modular_down")
+	incomplete_frames.remove_animation(&"unarmed/locomotion/idle_hitreact_01/s/upper_body")
 	upper.sprite_frames = incomplete_frames
 	operator.set("visual_idle_direction", Vector2.DOWN)
 	var lower_visibility_before := lower.visible
@@ -226,7 +231,7 @@ func _run() -> void:
 func _assert_reaction_direction(
 	operator: Node,
 	direction: Vector2,
-	expected_animation: StringName,
+	expected_sector: StringName,
 	lower: AnimatedSprite2D,
 	upper: AnimatedSprite2D,
 	head: AnimatedSprite2D,
@@ -237,8 +242,10 @@ func _assert_reaction_direction(
 		bool(operator.call("begin_modular_damage_reaction", "hit_recoil")),
 		"reaction should begin for %s" % direction
 	)
-	_assert(lower.animation == expected_animation, "lower should resolve %s" % expected_animation)
-	_assert(upper.animation == expected_animation, "upper should resolve %s" % expected_animation)
+	var expected_lower := StringName("unarmed/locomotion/idle_hitreact_01/%s/lower_body" % expected_sector)
+	var expected_upper := StringName("unarmed/locomotion/idle_hitreact_01/%s/upper_body" % expected_sector)
+	_assert(lower.animation == expected_lower, "lower should resolve %s" % expected_lower)
+	_assert(upper.animation == expected_upper, "upper should resolve %s" % expected_upper)
 	_assert(lower.frame == 0 and upper.frame == 0, "required layers should start on frame zero")
 	_assert(lower.visible and upper.visible, "required modular layers should be visible")
 	_assert(not legacy.visible, "legacy and modular bodies must not render together")

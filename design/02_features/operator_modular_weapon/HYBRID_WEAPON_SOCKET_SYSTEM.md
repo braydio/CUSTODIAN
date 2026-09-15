@@ -75,7 +75,23 @@ sector selects the upper body, weapon presentation, socket record, draw order,
 and projectile baseline. The weapon and upper FX may copy that clock, but may
 not resolve direction independently.
 
-Socket metadata is keyed by the live upper-body animation name and frame. Each
+Socket metadata is keyed by the live upper-body animation name and frame. Since
+C2a-R3 that live name is the canonical semantic identity
+(`profile/group/action/direction/layer`), so production socket tracks are keyed
+by exactly the StringName the upper body plays — there is no translation step
+anywhere, and the legacy `ranged_2h_*_modular_*` keys were migration residue that
+R3 retired. `export_operator_weapon_sockets.lua` canonicalizes legacy source tags
+at generation time and refuses any new non-canonical tag.
+
+One documented exception: `ranged_2h/posture/relaxed_01` has never had weapon
+sockets calibrated, and before R3 a compatibility translator silently gave it the
+stance calibration. That outcome is preserved deliberately — the relaxed posture
+consumes the same sector's `stance_01` socket track — as a narrow, explicit
+sharing policy at the presentation caller. It is socket-calibration sharing, not
+an animation alias and not a fallback: the body still presents `relaxed_01`,
+`OperatorWeaponSocketTracks` stays exact, and a missing stance, aim or fire track
+still fails loudly. Exit condition: calibrate real relaxed socket tracks, then
+delete `SHARED_WEAPON_SOCKET_POSTURES`. Each
 record contains operator-local `grip`, `support_grip`, `muzzle`, and `ejection`
 points plus `weapon_angle_deg` and `weapon_z`. Runtime layout assignments are
 absolute. Recoil is an additive, short-lived presentation offset applied after
