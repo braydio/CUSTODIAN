@@ -1,5 +1,6 @@
 {
-  "canonical": {
+  "baseline_purpose": "Frozen authored timing captured from the Operator compatibility SpriteFrames before their renderers were cut over. This is the oracle for operator_timing_preservation_smoke.gd; the live compatibility resources are regenerated machinery and are NOT authoritative.",
+  "canonical_snapshot_informational_only": {
     "melee_1h/attack/critical_execution_01/e/weapon": {
       "durations": [
         1.0,
@@ -5209,7 +5210,29 @@
       "frames": 4,
       "loop": false
     },
+    "unarmed/defense/block_enter_01/e/upper_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 4,
+      "loop": false
+    },
     "unarmed/defense/block_enter_01/w/lower_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 4,
+      "loop": false
+    },
+    "unarmed/defense/block_enter_01/w/upper_body": {
       "durations": [
         1.0,
         1.0,
@@ -7094,6 +7117,8 @@
       "loop": false
     }
   },
+  "captured_from_commit": "6d84a391432844a019e076739a1e11b12569b592",
+  "frozen": true,
   "resources": {
     "modular_lower_body_sprite": {
       "clips": {

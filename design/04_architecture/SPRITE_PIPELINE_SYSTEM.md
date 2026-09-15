@@ -199,7 +199,17 @@ loop heuristic, so an animation whose compatibility resource authored a differen
 the moment its renderer is cut over to the canonical resource. Publishing the authored clock is therefore
 part of a renderer cutover, not optional polish, and
 `tools/validation/operator_timing_preservation_smoke.gd` fails the migration when authored FPS, loop or
-per-frame durations would change. The clock projects only onto siblings whose frame count matches the clock
+per-frame durations would change.
+
+That gate reads the authored side from `reports/operator/operator_compatibility_timing.json`, a frozen
+baseline captured once from the compatibility `SpriteFrames` and then held immutable. It must not read those
+`.tres` files directly. They are generated compatibility machinery that
+`update_operator_compatibility_resources.py` legitimately refreshes from canonical assets, so using them as
+the historical record is circular: an ingest can rewrite the "authored" values to agree with whatever
+canonical currently says, and the gate would then approve its own drift. An inbox ingest did exactly that to
+three cross-action clips, moving their recorded FPS onto the timing of the art they were mis-published
+against. `dump_operator_compatibility_timing.gd` refuses to overwrite the baseline without
+`--refresh-baseline`, and the whole arrangement retires when C2b deletes the compatibility surface. The clock projects only onto siblings whose frame count matches the clock
 layer's; a sibling with a different frame count keeps its own sidecar or the default.
 
 `content/data/operator/generated/operator_animation_catalog.generated.json` accumulates rather than being

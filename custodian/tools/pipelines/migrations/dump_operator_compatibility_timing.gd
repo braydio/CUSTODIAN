@@ -1,7 +1,16 @@
 extends SceneTree
-## Migration-only: dump authored timing + texture provenance from every Operator
-## compatibility SpriteFrames, so the timing-preservation tool can compare it
-## against what the canonical pipeline currently generates.
+## Migration-only: capture the FROZEN authored-timing baseline for the Operator
+## migration, by dumping timing and texture provenance from every compatibility
+## SpriteFrames.
+##
+## The output is evidence, not a build product. Compatibility `.tres` files are
+## generated machinery that `update_operator_compatibility_resources.py`
+## legitimately refreshes from canonical assets, so they cannot serve as the
+## historical record of what the art was authored to do -- a refresh silently
+## rewrites the very values a cutover is supposed to preserve. The baseline is
+## captured once and then frozen; `--refresh-baseline` is required to replace it.
+##
+## It retires when C2b deletes the compatibility migration surface.
 ##
 ## Authority: design/02_features/animation/OPERATOR_RUNTIME_ANIMATION_AUTHORITY.md
 
@@ -32,10 +41,40 @@ func _provenance(sprite_frames: SpriteFrames, animation: StringName) -> Dictiona
 	}
 
 
+func _git_head() -> String:
+	var output: Array = []
+	var exit_code := OS.execute("git", ["-C", ProjectSettings.globalize_path("res://"),
+		"rev-parse", "HEAD"], output, true)
+	if exit_code != 0 or output.is_empty():
+		return ""
+	return String(output[0]).strip_edges()
+
+
 func _init() -> void:
+	var refresh := false
+	for argument in OS.get_cmdline_user_args():
+		if argument == "--refresh-baseline":
+			refresh = true
+	if FileAccess.file_exists(OUT) and not refresh:
+		push_error(
+			"%s is frozen migration evidence: the authored timing it records is what " % OUT
+			+ "renderer cutovers are validated against, and compatibility resources are "
+			+ "regenerated machinery that can no longer reproduce it. Re-capture only "
+			+ "deliberately, with --refresh-baseline."
+		)
+		quit(1)
+		return
+
 	var canonical: SpriteFrames = load(CANONICAL)
 	var payload := {
 		"schema": "custodian.operator_compatibility_timing.v1",
+		"baseline_purpose":
+			"Frozen authored timing captured from the Operator compatibility SpriteFrames "
+			+ "before their renderers were cut over. This is the oracle for "
+			+ "operator_timing_preservation_smoke.gd; the live compatibility resources are "
+			+ "regenerated machinery and are NOT authoritative.",
+		"frozen": true,
+		"captured_from_commit": _git_head(),
 		"resources": {},
 	}
 	for renderer in RESOURCES:
@@ -79,7 +118,10 @@ func _init() -> void:
 			"loop": canonical.get_animation_loop(animation),
 			"durations": durations,
 		}
-	payload["canonical"] = generated
+	# Informational only. The gate must read current canonical timing from the
+	# live generated resource, never from this snapshot, or it would compare a
+	# stale canonical against itself and pass through real drift.
+	payload["canonical_snapshot_informational_only"] = generated
 
 	var file := FileAccess.open(OUT, FileAccess.WRITE)
 	if file == null:
@@ -88,7 +130,7 @@ func _init() -> void:
 		return
 	file.store_string(JSON.stringify(payload, "  ") + "\n")
 	file.close()
-	print("wrote %s (%d compatibility resources, %d canonical animations)" % [
+	print("wrote frozen baseline %s (%d compatibility resources, %d canonical animations)" % [
 		OUT, payload["resources"].size(), generated.size()
 	])
 	quit()
