@@ -15,7 +15,7 @@ import animation_motion_preview
 
 from .state import (
     AnimationRecord, AnimationSelection, ErrorView, ExistingContextView,
-    LayerView, MigrationView, PublishView, SessionView,
+    LayerView, MigrationView, PublishRow, PublishView, SessionView,
 )
 
 
@@ -328,7 +328,8 @@ class WorkbenchService:
         for binding in data.get("layers", ()):
             old = str(binding.get("source_contract", {}).get("path", ""))
             target = str(binding.get("publish_contract", {}).get("path", old))
-            retired.append(old); new.append(target)
+            if old != target: retired.append(old)
+            new.append(target)
         def display(path: str) -> str:
             value = Path(path)
             try: return str(value.relative_to(self.repo_root))
@@ -347,7 +348,26 @@ class WorkbenchService:
             sid=(binding.get("owner"),binding.get("layer"),binding.get("profile"),binding.get("group"),binding.get("action"),counterpart)
             existing=counterpart_index.get(sid)
             mirror_operations.append(operation(normalized/f"mirror__{binding['binding_id']}.png",Path(existing[0]) if existing else None))
-        return PublishView(selection, old_frames, new_frames, tuple(retired), tuple(new), migration, migration.audit if migration else "GREEN", counterpart, mirror_paths, tuple(mirror_operations), direct_operations)
+        direct_rows = tuple(PublishRow(
+            str(binding.get("binding_id", binding.get("layer", ""))), selection.direction,
+            operation_name, str(binding.get("source_contract", {}).get("path", "")),
+            str(binding.get("publish_contract", {}).get("path", "")),
+        ) for binding,operation_name in zip(bindings,direct_operations))
+        mirror_rows = []
+        for binding,path,operation_name in zip(bindings,mirror_paths,mirror_operations):
+            sid=(binding.get("owner"),binding.get("layer"),binding.get("profile"),binding.get("group"),binding.get("action"),counterpart)
+            existing=counterpart_index.get(sid)
+            mirror_rows.append(PublishRow(str(binding.get("binding_id",binding.get("layer",""))),f"{selection.direction} -> {counterpart}",operation_name,display(str(existing[0])) if existing else "",path))
+        timeline=data["timeline"]; durations=tuple(float(value) for value in timeline.get("durations", ()))
+        variable_durations=bool(durations) and any(abs(value-durations[0])>1e-9 for value in durations[1:])
+        return PublishView(
+            selection,old_frames,new_frames,tuple(retired),tuple(new),migration,
+            migration.audit if migration else "GREEN",counterpart,mirror_paths,
+            tuple(mirror_operations),direct_operations,
+            float(timeline.get("fps",timeline.get("preview_fps",12.0))),bool(timeline.get("loop",True)),
+            variable_durations,durations,tuple(row.layer for row in direct_rows),direct_rows,
+            tuple(mirror_rows),old_frames!=new_frames or bool(retired),True,
+        )
 
     def publish(self, selection: AnimationSelection, full_validate: bool = False, mirror_counterpart: bool = False):
         plan = self._plan(selection)

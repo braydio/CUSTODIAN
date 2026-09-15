@@ -64,6 +64,15 @@ class MigrationView:
 
 
 @dataclass(frozen=True)
+class PublishRow:
+    layer: str
+    direction: str
+    operation: str
+    old_path: str
+    target_path: str
+
+
+@dataclass(frozen=True)
 class PublishView:
     selection: AnimationSelection
     old_frames: int
@@ -76,6 +85,15 @@ class PublishView:
     mirror_paths: tuple[str, ...] = ()
     mirror_operations: tuple[str, ...] = ()
     direct_operations: tuple[str, ...] = ()
+    fps: float = 12.0
+    loop: bool = True
+    variable_durations: bool = False
+    durations: tuple[float, ...] = ()
+    publishing_layers: tuple[str, ...] = ()
+    direct_rows: tuple[PublishRow, ...] = ()
+    mirror_rows: tuple[PublishRow, ...] = ()
+    contract_changed: bool = False
+    compatibility_preflight: bool = True
 
 
 @dataclass(frozen=True)

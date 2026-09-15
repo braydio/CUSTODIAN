@@ -58,7 +58,16 @@ class OperatorWorkbenchApp(App):
     #motion-preview-controls { height: 3; content-align: center middle; background: #202734; }
     .pane-title { height: 1; padding: 0 1; text-style: bold; background: #202734; }
     .dialog { width: 72; max-height: 94%; margin: 1 4; padding: 1 2; border: thick #81a1c1; background: #202734; }
-    .publish-dialog { width: 96; }
+    .publish-dialog { width: 78; max-height: 100%; margin: 0 1; padding: 0 1; }
+    #publish-summary { height: 4; }
+    .publish-section-title { height: 1; margin-top: 1; }
+    .publish-table { height: auto; max-height: 5; overflow: hidden; }
+    .publish-dialog Checkbox { height: 1; }
+    #mirror-consequence { height: 2; padding-left: 4; color: #d8dee9; }
+    #publish-preflight { height: 1; margin-top: 1; }
+    #publish-details { height: 1fr; min-height: 15; overflow-y: auto; border: solid #4c566a; padding: 0 1; }
+    #publish-button-spacer { width: 1fr; }
+    .publish-buttons { align-horizontal: left; }
     .error-dialog { border: thick #bf616a; }
     .dialog-title { height: 2; text-align: center; text-style: bold; }
     .dialog-body { height: auto; max-height: 1fr; overflow-y: auto; }

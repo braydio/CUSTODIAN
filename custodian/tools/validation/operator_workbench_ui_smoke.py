@@ -13,7 +13,7 @@ OPERATOR_ROOT = Path(__file__).resolve().parents[1] / "operator"
 sys.path.insert(0, str(OPERATOR_ROOT))
 
 from ui.service import WorkbenchService
-from ui.state import AnimationRecord, AnimationSelection, ExistingContextView, LayerView, MigrationView, PublishView, SessionView
+from ui.state import AnimationRecord, AnimationSelection, ExistingContextView, LayerView, MigrationView, PublishRow, PublishView, SessionView
 import animation_motion_preview
 
 
@@ -38,17 +38,19 @@ class FakeModel:
             "binding_id": name, "aseprite_layer_name": name, "role": role,
             "editable": editable, "owner": weapon if name.startswith("weapon__") else "operator",
             "profile": linked if name.startswith("weapon__") else profile,
+            "group": group, "action": action, "direction": direction,
             "frames": 6, "frame_size": [96, 96],
             "source_contract": {"path": f"old/{name}__6f__96.png", "frames": 6},
             "workspace_contract": {"frames": 6},
-            "publish_contract": {"path": f"new/{name}__7f__96.png", "frames": 7},
+            "publish_contract": {"path": f"old/{name}__6f__96.png", "frames": 6},
         }
         layers = [binding("lower_body"), binding("upper_body")]
         if weapon: layers.append(binding(f"weapon__{weapon}", "linked_weapon"))
         return {
             "identity": {"profile": profile, "group": group, "action": action, "direction": direction},
             "context": {"weapon_id": weapon, "linked_profile": linked, "presentation_mode": "authored_overlay" if weapon else ""},
-            "timeline": {"source_clock_frames": 6, "workspace_clock_frames": 6, "document_frames": 6},
+            "timeline": {"source_clock_frames": 6, "workspace_clock_frames": 6, "document_frames": 6,
+                         "fps": 8.0, "loop": True, "durations": [1.0] * 6},
             "layers": layers, "references": [binding("full_body_reference", "reference", False)],
             "pending_migration": None,
         }
@@ -77,7 +79,7 @@ class FakeWorkbench:
     def horizontal_counterpart(direction): return {"e": "w", "w": "e", "ne": "nw", "nw": "ne", "se": "sw", "sw": "se"}.get(direction)
     def publish(self, manifest, _aseprite, _force, dry_run, _full, requested, mirror_counterpart=False):
         if not dry_run: self.published += 1
-        direct = ["new/lower_body__7f__96.png", "new/upper_body__7f__96.png"]
+        direct = ["old/lower_body__6f__96.png", "old/upper_body__6f__96.png"]
         if not mirror_counterpart: return direct
         return [item for pair in zip(direct, ("new/lower_body__w__7f__96.png", "new/upper_body__w__7f__96.png")) for item in pair]
     def refresh(self, *args): return {}, Path(".")
@@ -121,8 +123,13 @@ def pure_service_smoke() -> None:
         manifest_path = service.workspace(run.selection) / "workbench.json"
         manifest_path.parent.mkdir(parents=True)
         manifest_path.write_text(json.dumps(service._plan(run.selection)))
+        for name in ("lower.png", "upper.png", "lower_w.png", "upper_w.png"):
+            (root / name).write_bytes(b"existing")
         publish = service.publish_preview(run.selection)
         assert publish.counterpart_direction == "w" and len(publish.mirror_paths) == 2
+        assert publish.fps == 8.0 and publish.loop and not publish.variable_durations
+        assert publish.publishing_layers == ("lower_body", "upper_body")
+        assert not publish.contract_changed and not publish.retired_paths
         service.publish(run.selection)
         assert backend.published == 1
         vigil = AnimationSelection("melee_1h", "posture", "idle_relaxed_01", "e", "vigil_pattern_dagger", "melee_1h_dagger")
@@ -157,7 +164,7 @@ class PilotService:
     def __init__(self):
         self.repo_root = Path.cwd(); self.aseprite = None; self.workbench = SimpleNamespace(resolve_aseprite=lambda *_: Path("/bin/true")); self.mutations = 0
         self.selection = AnimationSelection("unarmed", "locomotion", "run_01", "e")
-        self.last_selection = None; self.preview_calls = 0; self.runtime_calls = 0
+        self.last_selection = None; self.preview_calls = 0; self.runtime_calls = 0; self.publish_calls = []
         self.runtime_selection = None
         self.migration = MigrationView("add", 3, "duplicate-prev", 6, 7, ("lower_body", "upper_body"), (("fx", "independent clock"),), "GREEN")
     def browser_records(self):
@@ -176,7 +183,16 @@ class PilotService:
     def frame_preview(self, _selection, operation, position, fill):
         if operation == "remove": return MigrationView("remove", position, fill, 6, 5, ("lower_body",), (), "GREEN")
         return self.migration
-    def publish_preview(self, selection, _full): return PublishView(selection, 6, 7, ("old__6f__96.png",), ("new__7f__96.png",), self.migration, "GREEN")
+    def publish_preview(self, selection, _full):
+        old = "custodian/content/sprites/operator/source/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__e__6f__96.png"
+        upper = old.replace("lower_body", "upper_body")
+        west = old.replace("__e__6f", "__w__6f")
+        west_upper = upper.replace("__e__6f", "__w__6f")
+        direct = (PublishRow("lower_body", "e", "REPLACE", old, old), PublishRow("upper_body", "e", "UNCHANGED", upper, upper))
+        mirror = (PublishRow("lower_body", "e -> w", "REPLACE", west, west), PublishRow("upper_body", "e -> w", "REPLACE", west_upper, west_upper))
+        return PublishView(selection, 6, 6, (), (old, upper), None, "GREEN", "w", (west, west_upper), ("REPLACE", "REPLACE"), ("REPLACE", "UNCHANGED"), 8.0, True, False, (1.0,) * 6, ("lower_body", "upper_body"), direct, mirror, False, True)
+    def publish(self, selection, full=False, mirror=False):
+        self.publish_calls.append((selection, full, mirror)); self.mutations += 1
     def project_error(self, error): return WorkbenchService.project_error(error)
     def transaction_state(self, _selection): return None
     def known_weapons(self): return []
@@ -345,14 +361,72 @@ async def textual_smoke() -> None:
         assert isinstance(app.screen, FrameAddDialog) and "6" in str(app.screen.query_one("#frame-add-preview").render())
         await pilot.click("#cancel"); await pilot.pause(); assert service.mutations == 0
         await pilot.press("p"); await pilot.pause(0.3)
-        assert isinstance(app.screen, PublishDialog) and "new__7f" in str(app.screen.query_one("#publish-preview").render())
+        assert isinstance(app.screen, PublishDialog)
+        summary = str(app.screen.query_one("#publish-summary", Static).render())
+        assert "unarmed / locomotion / walk_01" in summary and "EAST" in summary
+        assert "6 frames" in summary and "8 FPS" in summary and "LOOP" in summary
+        assert "Frame contract unchanged" in summary and "6 -> 6" not in summary
+        direct = str(app.screen.query_one("#publish-direct", Static).render())
+        mirror = str(app.screen.query_one("#publish-mirror", Static).render())
+        assert "Layer" in direct and "REPLACE" in direct and "UNCHANGED" in direct
+        assert "E -> W" in mirror and "REPLACE" in mirror
+        mirror_checkbox = app.screen.query_one("#mirror-counterpart")
+        assert not mirror_checkbox.value
+        assert "NOT ENABLED" in str(app.screen.query_one("#mirror-title", Static).render())
+        assert "Replaces 2 existing WEST sources" in str(app.screen.query_one("#mirror-consequence", Static).render())
+        assert "Retired contracts" not in summary and "RETIRED CONTRACTS" not in direct
+        await pilot.click("#details"); await pilot.pause()
+        details = app.screen.query_one("#publish-details", Static)
+        assert not details.has_class("hidden") and "custodian/content/sprites/operator/source" in str(details.render())
+        assert "RETIRED CONTRACTS" not in str(details.render())
+        await pilot.click("#details"); await pilot.pause()
+        app.screen.query_one("#mirror-counterpart").focus(); await pilot.press("space"); await pilot.pause()
+        assert "NOT ENABLED" not in str(app.screen.query_one("#mirror-title", Static).render())
+        assert app.screen.query_one("#mirror-counterpart").value
         activity_log = app.main_screen.query_one("#activity-log", ActivityLog)
         activity_lines = len(activity_log.lines)
         app._activity("fixture while publish modal")
         await pilot.pause()
         assert app.state.activity[-1].message == "fixture while publish modal"
         assert len(activity_log.lines) > activity_lines
-        await pilot.click("#cancel"); assert service.mutations == 0
+        await pilot.click("#confirm"); await pilot.pause(0.3)
+        assert service.publish_calls[-1][1:] == (False, True), service.publish_calls
+
+        await pilot.press("p"); await pilot.pause(0.3)
+        assert isinstance(app.screen, PublishDialog) and not app.screen.query_one("#mirror-counterpart").value
+        await pilot.click("#confirm"); await pilot.pause(0.3)
+        assert service.publish_calls[-1][1:] == (False, False)
+
+        migration_old = "custodian/content/sprites/operator/source/animations/unarmed/locomotion/run_01/old__5f__96.png"
+        migration_new = migration_old.replace("5f", "6f")
+        north_selection = AnimationSelection("unarmed", "locomotion", "run_01", "n")
+        migration_view = PublishView(
+            north_selection, 5, 6, (migration_old,), (migration_new,), service.migration, "GREEN",
+            None, (), (), ("REPLACE",), 12.0, False, True, (1.0, 0.5), ("full_body",),
+            (PublishRow("full_body", "n", "REPLACE", migration_old, migration_new),), (), True, True,
+        )
+        app.push_screen(PublishDialog(migration_view)); await pilot.pause()
+        migrated_summary = str(app.screen.query_one("#publish-summary", Static).render())
+        assert "Frames    5 -> 6" in migrated_summary and "NON-LOOP" in migrated_summary and "VARIABLE DURATIONS" in migrated_summary
+        assert not app.screen.query("#mirror-counterpart") and "unavailable for NORTH" in str(app.screen.query_one("#mirror-unavailable", Static).render())
+        await pilot.click("#details"); await pilot.pause()
+        assert migration_old in str(app.screen.query_one("#publish-details", Static).render())
+        await pilot.click("#details"); await pilot.pause()
+        await pilot.click("#cancel")
+
+        for direction, label in (("s", "SOUTH"), ("omni", "OMNI")):
+            selection = AnimationSelection("unarmed", "locomotion", "run_01", direction)
+            unavailable = PublishView(selection, 6, 6, (), (), None, "GREEN")
+            app.push_screen(PublishDialog(unavailable)); await pilot.pause()
+            assert not app.screen.query("#mirror-counterpart")
+            assert f"unavailable for {label}" in str(app.screen.query_one("#mirror-unavailable", Static).render())
+            await pilot.click("#cancel")
+
+        blocked = PublishView(service.selection, 6, 6, (), (), None, "RED", compatibility_preflight=False)
+        app.push_screen(PublishDialog(blocked)); await pilot.pause()
+        assert app.screen.query_one("#confirm").disabled
+        assert "Dependency audit" in str(app.screen.query_one("#publish-preflight", Static).render())
+        await pilot.click("#cancel")
 
     cancel_service = ContextPilotService()
     failing_app = OperatorWorkbenchApp(service=cancel_service, startup=cancel_service.selection)

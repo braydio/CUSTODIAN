@@ -31,7 +31,10 @@ Workbench V2 APIs
 The UI holds only selection, presentation, activity, process handles, and an
 operation lock. It resolves source/session state, migrations, publish dry-runs,
 weapon metadata, validation, and transaction progress through one structured
-service over this backend. Publish always requires a UI review modal. Aseprite
+service over this backend. Publish always requires a semantic-first, timing-aware
+UI review modal: compact direct/mirror operation tables and adjacent mirror
+consequences own the decision path, while full canonical paths, retired contracts,
+exact timing, and audit/preflight detail remain available on demand. Aseprite
 launch is nonblocking and publishing explicitly uses the last saved document.
 Textual is isolated to `tools/operator/ui/requirements.txt`; its absence must
 not affect any command below.
