@@ -88,6 +88,10 @@ centered = true
 
 [node name="Zone06_Undergate" type="Node2D" parent="World/AwakeningZones"]
 
+[node name="ArtUnderlay" type="Node2D" parent="World/AwakeningZones/Zone06_Undergate"]
+
+[node name="Occlusion" type="Node2D" parent="World/AwakeningZones/Zone06_Undergate"]
+
 [node name="Lighting" parent="World/AwakeningZones/Zone06_Undergate" instance=ExtResource("17_undergate_lighting")]
 
 [node name="Zone07_GateOfDust" type="Node2D" parent="World/AwakeningZones"]

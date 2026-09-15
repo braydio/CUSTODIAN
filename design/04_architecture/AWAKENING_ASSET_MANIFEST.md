@@ -51,9 +51,17 @@ All backdrop families use `direction_policy: omni`, `auto_mirror: false`, `layou
 
 The widened Undergate's future source-work belongs under
 `custodian/asset_drop/source_work/awakening/awakening_undergate_environment/`.
-Normalize `underlay.png` and `foreground.png`, each 1536×1216, through
+Save generation masters there as `underlay_source.png` and
+`foreground_source.png`. Normalize `underlay.png` and `foreground.png`, each 1536×1216, through
 `custodian/asset_drop/inbox/awakening_undergate_environment/`; do not fabricate
 placeholder plates while the blockout remains active.
+
+The underlay contains the floor, background walls, machinery bases, and other
+material behind the Operator. The foreground requires true alpha and contains
+only geometry that legitimately passes over the Operator; it must not duplicate
+the underlay, repaint the floor, add an opaque background, or bake canvas-wide
+darkness. Both plates share a pixel-identical centered registration. Runtime
+lighting remains authoritative.
 
 Backdrop runtime template should be explicit so outputs land directly in the zone folder:
 
