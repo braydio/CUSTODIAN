@@ -49,12 +49,12 @@ All backdrop families use `direction_policy: omni`, `auto_mirror: false`, `layou
 | `awakening_custodian_approach_environment` | `levels/awakening/08_approach` / `awakening_custodian_approach` | 1024×864 | `underlay`, `foreground` | P0 |
 | `awakening_late_service_environment` | `levels/awakening/09_late_service` / `awakening_late_service` | 704×768 | `underlay`, `foreground` | P1 |
 
-The widened Undergate's future source-work belongs under
+The widened Undergate's source-work belongs under
 `custodian/asset_drop/source_work/awakening/awakening_undergate_environment/`.
-Save generation masters there as `underlay_source.png` and
-`foreground_source.png`. Normalize `underlay.png` and `foreground.png`, each 1536×1216, through
-`custodian/asset_drop/inbox/awakening_undergate_environment/`; do not fabricate
-placeholder plates while the blockout remains active.
+The immutable generation masters are `underlay.png` and `foreground.png` in that
+dedicated family folder. Production-ready 1536×1216 copies were normalized through
+`custodian/asset_drop/inbox/awakening_undergate_environment/` and published on
+2026-09-16; both canonical runtime plates are bound at the shared zone-envelope center.
 
 The underlay contains the floor, background walls, machinery bases, and other
 material behind the Operator. The foreground requires true alpha and contains

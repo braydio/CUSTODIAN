@@ -7996,6 +7996,53 @@
           "source_asset": null
         }
       }
+    },
+    "awakening_undergate_environment": {
+      "kind": "backdrop",
+      "assets": {
+        "foreground::omni": {
+          "state_id": "foreground",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_undergate",
+            "backdrop",
+            "foreground",
+            "display",
+            "foreground",
+            "omni"
+          ],
+          "path": "content/levels/awakening/06_undergate/awakening_undergate_foreground_1536x1216.png",
+          "frames": 1,
+          "frame_size": [
+            1536,
+            1216
+          ],
+          "sha256": "960efc257bf5fabdc0db96116a91087e3bb0c5c23ac36161f196ab2102976bda",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "underlay::omni": {
+          "state_id": "underlay",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_undergate",
+            "backdrop",
+            "background",
+            "display",
+            "underlay",
+            "omni"
+          ],
+          "path": "content/levels/awakening/06_undergate/awakening_undergate_underlay_1536x1216.png",
+          "frames": 1,
+          "frame_size": [
+            1536,
+            1216
+          ],
+          "sha256": "156b23974db8c502f162bb771ba70571c8f42cbdfbe5a41be93f7819eac41f6c",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
     }
   }
 }

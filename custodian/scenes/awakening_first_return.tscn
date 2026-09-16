@@ -16,6 +16,8 @@
 [ext_resource type="Script" path="res://game/world/lighting/world_lighting_director.gd" id="15_lighting_director"]
 [ext_resource type="Resource" path="res://content/lighting/profiles/awakening/awakening_baseline.tres" id="16_awakening_baseline"]
 [ext_resource type="PackedScene" path="res://game/world/awakening/awakening_undergate_lighting.tscn" id="17_undergate_lighting"]
+[ext_resource type="Texture2D" path="res://content/levels/awakening/06_undergate/awakening_undergate_underlay_1536x1216.png" id="18_undergate_underlay"]
+[ext_resource type="Texture2D" path="res://content/levels/awakening/06_undergate/awakening_undergate_foreground_1536x1216.png" id="19_undergate_foreground"]
 
 [node name="GameRoot" type="Node2D"]
 script = ExtResource("1_awakening")
@@ -90,7 +92,18 @@ centered = true
 
 [node name="ArtUnderlay" type="Node2D" parent="World/AwakeningZones/Zone06_Undergate"]
 
+[node name="Underlay" type="Sprite2D" parent="World/AwakeningZones/Zone06_Undergate/ArtUnderlay"]
+position = Vector2(0, -4320)
+texture = ExtResource("18_undergate_underlay")
+centered = true
+
 [node name="Occlusion" type="Node2D" parent="World/AwakeningZones/Zone06_Undergate"]
+
+[node name="Foreground" type="Sprite2D" parent="World/AwakeningZones/Zone06_Undergate/Occlusion"]
+z_index = 10
+position = Vector2(0, -4320)
+texture = ExtResource("19_undergate_foreground")
+centered = true
 
 [node name="Lighting" parent="World/AwakeningZones/Zone06_Undergate" instance=ExtResource("17_undergate_lighting")]
 
