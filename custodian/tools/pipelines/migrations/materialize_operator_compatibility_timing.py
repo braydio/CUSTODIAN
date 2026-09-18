@@ -277,11 +277,144 @@ def write_sidecars(plan: list[dict], apply: bool) -> dict:
     return {"created": created, "updated": updated, "unchanged": unchanged, "refused": refused}
 
 
+FULL_BODY_BASELINE = PROJECT_ROOT / "reports/operator/operator_full_body_compatibility_timing.json"
+
+
+def _authored_clock_for(dump: dict, profile: str, group: str, action: str,
+                        direction: str, layer: str) -> float | None:
+    """The authored FPS C2a-T1 froze for one identity, or None if it froze none."""
+    for payload in dump["resources"].values():
+        for info in payload["clips"].values():
+            art = info.get("art") or {}
+            if (art.get("profile"), art.get("group"), art.get("action"),
+                    art.get("direction"), art.get("layer")) == (
+                    profile, group, action, direction, layer):
+                return round(float(info["fps"]), 4)
+    return None
+
+
+def materialize_full_body(apply: bool) -> int:
+    """C2a-R4: publish the authored full-body clock as canonical timing sidecars.
+
+    C2a-T1 deliberately left `full_body` to the animated_sprite slice, so those
+    identities are still sitting on the builder's 12 FPS default. Rebinding the
+    renderer before publishing them would retime dodge from 25 FPS to 12, which is
+    a gameplay-feel change wearing a refactor's clothes.
+    """
+    baseline = json.loads(FULL_BODY_BASELINE.read_text(encoding="utf-8"))
+    if baseline.get("schema") != "custodian.operator_full_body_timing.v1":
+        print(f"unexpected baseline schema {baseline.get('schema')!r}")
+        return 1
+    if not baseline.get("frozen"):
+        print("full-body baseline is not marked frozen")
+        return 1
+
+    dump = json.loads(DUMP.read_text(encoding="utf-8"))
+    canonical = dump["canonical_snapshot_informational_only"]
+
+    planned, unchanged, blocked = [], [], []
+    for identity, record in sorted(baseline["identities"].items()):
+        profile, group, action, direction, layer = identity.split("/")
+        current = canonical.get(identity)
+        if current is None:
+            blocked.append({"identity": identity, "why": "not published canonically"})
+            continue
+        authored = (round(float(record["fps"]), 4), bool(record["loop"]),
+                    [round(float(d), 4) for d in record["durations"]])
+        published = (round(float(current["fps"]), 4), bool(current["loop"]),
+                     [round(float(d), 4) for d in current["durations"]])
+        if current["frames"] != record["frames"]:
+            blocked.append({"identity": identity, "why":
+                            f"frame count {record['frames']} vs published {current['frames']}"})
+            continue
+        if authored == published:
+            unchanged.append(identity)
+            continue
+        # The pipeline projects a clock layer onto same-frame siblings, and
+        # `lower_body` outranks `full_body`. If such a sibling exists this sidecar
+        # cannot take effect, so say so rather than writing a file that does nothing.
+        target_layer = layer
+        sibling = canonical.get(f"{profile}/{group}/{action}/{direction}/lower_body")
+        if sibling is not None and sibling["frames"] != record["frames"]:
+            # The sync requires every sibling's timing to EQUAL the clock owner's,
+            # comparing whole records. Siblings of different lengths can never
+            # compare equal, so while `lower_body` owns the clock this identity's
+            # full-body clock is inexpressible -- writing the sidecar only makes
+            # `--strict` reject the publication.
+            blocked.append({"identity": identity, "why":
+                            f"lower_body clock owner is {sibling['frames']}f while full_body is "
+                            f"{record['frames']}f; the sibling-equality rule cannot express both"})
+            continue
+        if sibling is not None and sibling["frames"] == record["frames"]:
+            # The sidecar would be written and then ignored. Publishing on the
+            # clock owner instead is the only way to express this clock -- but
+            # only when that owner carries no authored clock of its own, or we
+            # would be overwriting one consumer's timing with another's.
+            owner_authored = _authored_clock_for(
+                dump, profile, group, action, direction, "lower_body"
+            )
+            if owner_authored is not None:
+                blocked.append({"identity": identity, "why":
+                                "lower_body outranks full_body and has its own authored clock "
+                                f"({owner_authored} fps)"})
+                continue
+            target_layer = "lower_body"
+        png = _find_source_png(profile, group, action, direction, target_layer)
+        if png is None:
+            blocked.append({"identity": identity, "why": "no canonical source PNG"})
+            continue
+        planned.append({
+            "identity": identity,
+            "sidecar": png.with_suffix("").with_suffix(".animation.json")
+                          .relative_to(PROJECT_ROOT).as_posix(),
+            "authored": {"frames": record["frames"], "fps": authored[0],
+                         "loop": authored[1], "durations": authored[2]},
+            "published": {"fps": published[0], "loop": published[1]},
+            "via_clip": record["via_clip"],
+            "published_on": target_layer,
+        })
+
+    for item in planned:
+        path = PROJECT_ROOT / item["sidecar"]
+        payload = {"schema": TIMING_SCHEMA, **item["authored"]}
+        if path.exists():
+            existing = json.loads(path.read_text(encoding="utf-8"))
+            if {k: existing.get(k) for k in payload} == payload:
+                continue
+            print(f"REFUSING to overwrite differing timing metadata: {item['sidecar']}")
+            return 1
+        if apply:
+            path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+
+    print("operator full-body timing preservation")
+    print(f"  {'identities in baseline':34} {len(baseline['identities'])}")
+    print(f"  {'already match':34} {len(unchanged)}")
+    print(f"  {'sidecars planned':34} {len(planned)}")
+    print(f"  {'blocked':34} {len(blocked)}")
+    for item in blocked:
+        print(f"    {item['identity']}: {item['why']}")
+    for item in planned:
+        print(f"    {item['identity']}: {item['published']['fps']} -> {item['authored']['fps']} fps"
+              f" loop {item['published']['loop']} -> {item['authored']['loop']}"
+              f" (via {item['via_clip']}"
+              + (f", published on {item['published_on']}" if item["published_on"] != "full_body" else "")
+              + ")")
+    if blocked:
+        return 1
+    print(f"{'wrote' if apply else 'dry run; would write'} {len(planned)} sidecars")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--apply", action="store_true", help="write sidecars (default: dry run)")
     parser.add_argument("--dump", type=Path, default=DUMP)
+    parser.add_argument("--full-body", action="store_true",
+                        help="C2a-R4: publish the authored animated_sprite full-body clock")
     args = parser.parse_args(argv)
+
+    if args.full_body:
+        return materialize_full_body(args.apply)
 
     dump = json.loads(args.dump.read_text(encoding="utf-8"))
     observations, skipped = collect(dump)
@@ -341,6 +474,10 @@ def main(argv: list[str] | None = None) -> int:
         return 1
     print(f"{'wrote' if report['applied'] else 'dry run; would write'} {len(result['created'])} sidecars")
     return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
 
 
 if __name__ == "__main__":

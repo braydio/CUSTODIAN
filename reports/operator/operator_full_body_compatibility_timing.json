@@ -1,0 +1,638 @@
+{
+  "baseline_purpose": "Frozen authored full-body timing captured from the animated_sprite compatibility SpriteFrames before its C2a-R4 cutover. C2a-T1 deliberately left full_body to this slice, so this is an ADDITIVE baseline with its own provenance, not part of that earlier capture.",
+  "baseline_scope": "animated_sprite/full_body",
+  "captured_from_commit": "c86dfdf26ef823a7e278d282b0cd8bd9db9f8185",
+  "frozen": true,
+  "identities": {
+    "ranged_2h/locomotion/run_01/e/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 14.0,
+      "frames": 5,
+      "loop": true,
+      "via_clip": "ranged_2h_run_right"
+    },
+    "ranged_2h/locomotion/run_01/w/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 14.0,
+      "frames": 5,
+      "loop": true,
+      "via_clip": "ranged_2h_run_left"
+    },
+    "shared/attack/dodge_charge_windup_01/e/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 5,
+      "loop": false,
+      "via_clip": "operator_dodge_charge_windup_right"
+    },
+    "shared/attack/dodge_charge_windup_01/w/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 5,
+      "loop": false,
+      "via_clip": "operator_dodge_charge_windup_left"
+    },
+    "shared/transition/dodge_01/n/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 25.0,
+      "frames": 9,
+      "loop": false,
+      "via_clip": "operator_dodge_full_north"
+    },
+    "shared/transition/dodge_01/s/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 25.0,
+      "frames": 9,
+      "loop": false,
+      "via_clip": "operator_dodge_full_south"
+    },
+    "shared/transition/dodge_chain_link_01/e/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 20.0,
+      "frames": 4,
+      "loop": false,
+      "via_clip": "operator_dodge_chain_link_right"
+    },
+    "shared/transition/dodge_chain_link_01/w/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 20.0,
+      "frames": 4,
+      "loop": false,
+      "via_clip": "operator_dodge_chain_link_left"
+    },
+    "unarmed/attack/dodge_fast_attack_01/e/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 20.0,
+      "frames": 11,
+      "loop": false,
+      "via_clip": "unarmed_dodge_fast_attack_right"
+    },
+    "unarmed/attack/dodge_fast_attack_01/w/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 20.0,
+      "frames": 11,
+      "loop": false,
+      "via_clip": "unarmed_dodge_fast_attack_left"
+    },
+    "unarmed/attack/fast_01/e/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 5,
+      "loop": false,
+      "via_clip": "unarmed_attack_fast_right"
+    },
+    "unarmed/attack/fast_01/n/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 6,
+      "loop": false,
+      "via_clip": "unarmed_attack_fast_up"
+    },
+    "unarmed/attack/fast_01/s/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 6,
+      "loop": false,
+      "via_clip": "unarmed_attack_fast_down"
+    },
+    "unarmed/attack/fast_01/w/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 5,
+      "loop": false,
+      "via_clip": "unarmed_attack_fast_left"
+    },
+    "unarmed/attack/fast_recovery_01/e/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 15.0,
+      "frames": 3,
+      "loop": false,
+      "via_clip": "unarmed_attack_fast_recovery_right"
+    },
+    "unarmed/attack/fast_recovery_01/n/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 15.0,
+      "frames": 3,
+      "loop": false,
+      "via_clip": "unarmed_attack_fast_recovery_up"
+    },
+    "unarmed/attack/fast_recovery_01/ne/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 15.0,
+      "frames": 3,
+      "loop": false,
+      "via_clip": "unarmed_attack_fast_recovery_up_right"
+    },
+    "unarmed/attack/fast_recovery_01/nw/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 15.0,
+      "frames": 3,
+      "loop": false,
+      "via_clip": "unarmed_attack_fast_recovery_up_left"
+    },
+    "unarmed/attack/fast_recovery_01/s/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 15.0,
+      "frames": 3,
+      "loop": false,
+      "via_clip": "unarmed_attack_fast_recovery_down"
+    },
+    "unarmed/attack/fast_recovery_01/se/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 15.0,
+      "frames": 3,
+      "loop": false,
+      "via_clip": "unarmed_attack_fast_recovery_down_right"
+    },
+    "unarmed/attack/fast_recovery_01/sw/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 15.0,
+      "frames": 3,
+      "loop": false,
+      "via_clip": "unarmed_attack_fast_recovery_down_left"
+    },
+    "unarmed/attack/fast_recovery_01/w/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 15.0,
+      "frames": 3,
+      "loop": false,
+      "via_clip": "unarmed_attack_fast_recovery_left"
+    },
+    "unarmed/attack/fast_strike_01/e/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 3,
+      "loop": false,
+      "via_clip": "unarmed_fast_strike_right"
+    },
+    "unarmed/attack/fast_strike_01/n/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 3,
+      "loop": false,
+      "via_clip": "unarmed_fast_strike_up"
+    },
+    "unarmed/attack/fast_strike_01/ne/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 3,
+      "loop": false,
+      "via_clip": "unarmed_fast_strike_up_right"
+    },
+    "unarmed/attack/fast_strike_01/nw/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 3,
+      "loop": false,
+      "via_clip": "unarmed_fast_strike_up_left"
+    },
+    "unarmed/attack/fast_strike_01/s/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 3,
+      "loop": false,
+      "via_clip": "unarmed_fast_strike_down"
+    },
+    "unarmed/attack/fast_strike_01/se/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 3,
+      "loop": false,
+      "via_clip": "unarmed_fast_strike_down_right"
+    },
+    "unarmed/attack/fast_strike_01/sw/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 3,
+      "loop": false,
+      "via_clip": "unarmed_fast_strike_down_left"
+    },
+    "unarmed/attack/fast_strike_01/w/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 3,
+      "loop": false,
+      "via_clip": "unarmed_fast_strike_left"
+    },
+    "unarmed/attack/fast_windup_01/e/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 3,
+      "loop": false,
+      "via_clip": "unarmed_attack_fast_windup_right"
+    },
+    "unarmed/attack/fast_windup_01/n/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 3,
+      "loop": false,
+      "via_clip": "unarmed_attack_fast_windup_up"
+    },
+    "unarmed/attack/fast_windup_01/ne/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 3,
+      "loop": false,
+      "via_clip": "unarmed_attack_fast_windup_up_right"
+    },
+    "unarmed/attack/fast_windup_01/nw/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 3,
+      "loop": false,
+      "via_clip": "unarmed_attack_fast_windup_up_left"
+    },
+    "unarmed/attack/fast_windup_01/s/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 3,
+      "loop": false,
+      "via_clip": "unarmed_attack_fast_windup_down"
+    },
+    "unarmed/attack/fast_windup_01/se/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 3,
+      "loop": false,
+      "via_clip": "unarmed_attack_fast_windup_down_right"
+    },
+    "unarmed/attack/fast_windup_01/sw/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 3,
+      "loop": false,
+      "via_clip": "unarmed_attack_fast_windup_down_left"
+    },
+    "unarmed/attack/fast_windup_01/w/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 3,
+      "loop": false,
+      "via_clip": "unarmed_attack_fast_windup_left"
+    },
+    "unarmed/attack/heavy_01/e/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 7,
+      "loop": false,
+      "via_clip": "unarmed_attack_heavy_right"
+    },
+    "unarmed/attack/heavy_01/n/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 11.5,
+      "frames": 8,
+      "loop": false,
+      "via_clip": "unarmed_attack_heavy_up"
+    },
+    "unarmed/attack/heavy_01/s/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 7,
+      "loop": false,
+      "via_clip": "unarmed_attack_heavy_down"
+    },
+    "unarmed/attack/heavy_01/w/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 7,
+      "loop": false,
+      "via_clip": "unarmed_attack_heavy_left"
+    },
+    "unarmed/posture/stance_01/e/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 8.0,
+      "frames": 12,
+      "loop": true,
+      "via_clip": "ranged_2h_stance",
+      "unpreservable": "lower_body owns this identity's clock at 1 frame while full_body is 12; the pipeline requires a sibling's timing record to EQUAL the clock owner's, and records of different lengths never compare equal, so the authored 8 FPS is inexpressible without a contract change. C2a-R4 records it rather than silently retiming to the 12 FPS default."
+    },
+    "unarmed/posture/stance_01/w/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 8.0,
+      "frames": 6,
+      "loop": true,
+      "via_clip": "unarmed_stance_left",
+      "unpreservable": "lower_body owns this identity's clock at 1 frame while full_body is 6; same sibling-equality limitation as the east strip."
+    },
+    "unarmed/reaction/bodyslam_knockdown_01/e/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 12,
+      "loop": false,
+      "via_clip": "unarmed_bodyslam_knockdown_right"
+    },
+    "unarmed/reaction/bodyslam_knockdown_01/w/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 12,
+      "loop": false,
+      "via_clip": "unarmed_bodyslam_knockdown_left"
+    },
+    "unarmed/reaction/death_01/omni/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 7.0,
+      "frames": 6,
+      "loop": false,
+      "via_clip": "unarmed_death"
+    },
+    "unarmed/reaction/light_hitreact_01/s/full_body": {
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 3,
+      "loop": false,
+      "via_clip": "unarmed_light_hitreact_down"
+    }
+  },
+  "schema": "custodian.operator_full_body_timing.v1",
+  "unpreservable_count": 2
+}

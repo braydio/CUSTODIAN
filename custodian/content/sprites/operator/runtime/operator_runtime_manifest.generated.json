@@ -2722,6 +2722,15 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 14.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "weapon": {
@@ -2732,6 +2741,18 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "full_body",
+        "fps": 14.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "ranged_2h/locomotion/run_01/w": {
@@ -2746,6 +2767,15 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 14.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "weapon": {
@@ -2756,6 +2786,18 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "full_body",
+        "fps": 14.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "ranged_2h/posture/relaxed_01/e": {
@@ -3242,8 +3284,29 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 10.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "full_body",
+        "fps": 10.0,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "shared/attack/dodge_charge_windup_01/n": {
@@ -3354,8 +3417,29 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 10.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "full_body",
+        "fps": 10.0,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "shared/locomotion/idle_01/s": {
@@ -3530,6 +3614,19 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 25.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "fx": {
@@ -3540,6 +3637,22 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "full_body",
+        "fps": 25.0,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "shared/transition/dodge_01/s": {
@@ -3554,6 +3667,19 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 25.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "fx": {
@@ -3564,6 +3690,22 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "full_body",
+        "fps": 25.0,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "shared/transition/dodge_chain_link_01/e": {
@@ -3578,8 +3720,27 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 20.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "full_body",
+        "fps": 20.0,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "shared/transition/dodge_chain_link_01/n": {
@@ -3690,8 +3851,27 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 20.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "full_body",
+        "fps": 20.0,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "sidearm/cosmetic/fire_sidearm_01/e": {
@@ -4090,6 +4270,21 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 20.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "fx": {
@@ -4100,6 +4295,24 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "full_body",
+        "fps": 20.0,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/attack/dodge_fast_attack_01/w": {
@@ -4122,6 +4335,21 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 20.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "fx": {
@@ -4132,6 +4360,24 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "full_body",
+        "fps": 20.0,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/attack/fast_01/e": {
@@ -5410,6 +5656,17 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 10.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "fx": {
@@ -5420,6 +5677,20 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "full_body",
+        "fps": 10.0,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/attack/heavy_01/n": {
@@ -5434,6 +5705,18 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 11.5,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "fx": {
@@ -5444,6 +5727,21 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "full_body",
+        "fps": 11.5,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/attack/heavy_01/s": {
@@ -5474,6 +5772,17 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 10.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -5484,6 +5793,20 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 10.0,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/attack/heavy_01/w": {
@@ -5498,6 +5821,17 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 10.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "fx": {
@@ -5508,6 +5842,20 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "full_body",
+        "fps": 10.0,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/attack/parry_recovery_01/e": {
@@ -7737,8 +8085,31 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 7.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "full_body",
+        "fps": 7.0,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/reaction/light_hitreact_01/s": {
@@ -7753,6 +8124,13 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 10.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "fx": {
@@ -7763,6 +8141,16 @@
             96
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "full_body",
+        "fps": 10.0,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "unarmed/transition/dodge_chain_release_01/omni": {

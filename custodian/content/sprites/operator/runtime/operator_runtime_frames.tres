@@ -17537,7 +17537,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"ranged_2h/locomotion/run_01/e/full_body",
-"speed": 12.0
+"speed": 14.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -17557,7 +17557,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"ranged_2h/locomotion/run_01/e/weapon",
-"speed": 12.0
+"speed": 14.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -17577,7 +17577,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"ranged_2h/locomotion/run_01/w/full_body",
-"speed": 12.0
+"speed": 14.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -17597,7 +17597,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"ranged_2h/locomotion/run_01/w/weapon",
-"speed": 12.0
+"speed": 14.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -18157,7 +18157,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"shared/attack/dodge_charge_windup_01/e/full_body",
-"speed": 12.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -18297,7 +18297,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"shared/attack/dodge_charge_windup_01/w/full_body",
-"speed": 12.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -18514,7 +18514,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"shared/transition/dodge_01/n/full_body",
-"speed": 12.0
+"speed": 25.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -18546,7 +18546,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"shared/transition/dodge_01/n/fx",
-"speed": 12.0
+"speed": 25.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -18578,7 +18578,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"shared/transition/dodge_01/s/full_body",
-"speed": 12.0
+"speed": 25.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -18610,7 +18610,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"shared/transition/dodge_01/s/fx",
-"speed": 12.0
+"speed": 25.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -18627,7 +18627,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"shared/transition/dodge_chain_link_01/e/full_body",
-"speed": 12.0
+"speed": 20.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -18746,7 +18746,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"shared/transition/dodge_chain_link_01/w/full_body",
-"speed": 12.0
+"speed": 20.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -19522,7 +19522,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/dodge_fast_attack_01/e/full_body",
-"speed": 12.0
+"speed": 20.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -19560,7 +19560,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/dodge_fast_attack_01/e/fx",
-"speed": 12.0
+"speed": 20.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -19598,7 +19598,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/dodge_fast_attack_01/w/cape",
-"speed": 12.0
+"speed": 20.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -19636,7 +19636,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/dodge_fast_attack_01/w/full_body",
-"speed": 12.0
+"speed": 20.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -19674,7 +19674,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/dodge_fast_attack_01/w/fx",
-"speed": 12.0
+"speed": 20.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -21509,7 +21509,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/heavy_01/e/full_body",
-"speed": 12.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -21535,7 +21535,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/heavy_01/e/fx",
-"speed": 12.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -21564,7 +21564,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/heavy_01/n/full_body",
-"speed": 12.0
+"speed": 11.5
 }, {
 "frames": [{
 "duration": 1.0,
@@ -21593,7 +21593,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/heavy_01/n/fx",
-"speed": 12.0
+"speed": 11.5
 }, {
 "frames": [{
 "duration": 1.0,
@@ -21619,7 +21619,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/heavy_01/s/full_body",
-"speed": 12.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -21645,7 +21645,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/heavy_01/s/fx",
-"speed": 12.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -21671,7 +21671,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/heavy_01/s/lower_body",
-"speed": 12.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -21697,7 +21697,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/heavy_01/s/upper_body",
-"speed": 12.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -21723,7 +21723,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/heavy_01/w/full_body",
-"speed": 12.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -21749,7 +21749,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/attack/heavy_01/w/fx",
-"speed": 12.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -25064,7 +25064,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/reaction/death_01/omni/full_body",
-"speed": 12.0
+"speed": 7.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -25078,7 +25078,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/reaction/light_hitreact_01/s/full_body",
-"speed": 12.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -25092,7 +25092,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"unarmed/reaction/light_hitreact_01/s/fx",
-"speed": 12.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,

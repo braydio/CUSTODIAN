@@ -15,6 +15,13 @@ extends SceneTree
 ## Authority: design/02_features/animation/OPERATOR_RUNTIME_ANIMATION_AUTHORITY.md
 
 const OUT := "res://../reports/operator/operator_compatibility_timing.json"
+## C2a-R4 captures a SEPARATE baseline. The file above is a frozen snapshot of the
+## modular compatibility renderers taken before C2a-R1/R2/R3; the full-body clock
+## is being discovered later, from a renderer that is still compatibility-bound.
+## Stamping that into the original file would misrepresent when it was captured,
+## so it gets its own provenance and the timing gate reads both.
+const FULL_BODY_OUT := "res://../reports/operator/operator_full_body_compatibility_timing.json"
+const FULL_BODY_RESOURCE := "res://game/actors/operator/operator_runtime_frames.tres"
 const CANONICAL := "res://content/sprites/operator/runtime/operator_runtime_frames.tres"
 const RESOURCES := {
 	"modular_lower_body_sprite": "res://game/actors/operator/operator_modular_lower_body_frames.tres",
@@ -50,11 +57,85 @@ func _git_head() -> String:
 	return String(output[0]).strip_edges()
 
 
+## The authored full-body clock, keyed by the canonical identity each legacy clip
+## draws. Only `full_body` art is captured: the same resource also carries
+## lower/upper clips whose identities C2a-T1 already froze, and re-capturing those
+## here would create a second, later authority for the same clock.
+func _capture_full_body(refresh: bool) -> void:
+	if FileAccess.file_exists(FULL_BODY_OUT) and not refresh:
+		push_error(
+			"%s is frozen migration evidence for C2a-R4. Re-capture only " % FULL_BODY_OUT
+			+ "deliberately, with --refresh-baseline."
+		)
+		quit(1)
+		return
+	var legacy: SpriteFrames = load(FULL_BODY_RESOURCE)
+	var identities := {}
+	for name in legacy.get_animation_names():
+		var clip := StringName(name)
+		var frame_count := legacy.get_frame_count(clip)
+		if frame_count == 0:
+			continue
+		var provenance := _provenance(legacy, clip)
+		if provenance.is_empty() or provenance["layer"] != "full_body":
+			continue
+		var identity := "%s/%s/%s/%s/full_body" % [
+			provenance["profile"], provenance["group"],
+			provenance["action"], provenance["direction"]]
+		if identity.find("legacy") != -1:
+			continue
+		var durations: Array = []
+		for index in frame_count:
+			durations.append(legacy.get_frame_duration(clip, index))
+		var record := {
+			"frames": frame_count, "fps": legacy.get_animation_speed(clip),
+			"loop": legacy.get_animation_loop(clip), "durations": durations,
+			"via_clip": String(name),
+		}
+		if identities.has(identity) and identities[identity] != record:
+			var existing: Dictionary = identities[identity]
+			if not is_equal_approx(float(existing["fps"]), float(record["fps"])) \
+			or bool(existing["loop"]) != bool(record["loop"]):
+				push_error("conflicting authored clock for %s: %s vs %s" % [
+					identity, existing["via_clip"], record["via_clip"]])
+				quit(1)
+				return
+		identities[identity] = record
+	var payload := {
+		"schema": "custodian.operator_full_body_timing.v1",
+		"baseline_scope": "animated_sprite/full_body",
+		"baseline_purpose":
+			"Frozen authored full-body timing captured from the animated_sprite "
+			+ "compatibility SpriteFrames before its C2a-R4 cutover. C2a-T1 "
+			+ "deliberately left full_body to this slice, so this is an ADDITIVE "
+			+ "baseline with its own provenance, not part of that earlier capture.",
+		"frozen": true,
+		"captured_from_commit": _git_head(),
+		"identities": identities,
+	}
+	var file := FileAccess.open(FULL_BODY_OUT, FileAccess.WRITE)
+	if file == null:
+		push_error("cannot write %s" % FULL_BODY_OUT)
+		quit(1)
+		return
+	file.store_string(JSON.stringify(payload, "  ") + "\n")
+	file.close()
+	print("wrote frozen full-body baseline %s (%d identities)" % [
+		FULL_BODY_OUT, identities.size()])
+	quit()
+
+
 func _init() -> void:
 	var refresh := false
+	var full_body := false
 	for argument in OS.get_cmdline_user_args():
 		if argument == "--refresh-baseline":
 			refresh = true
+		elif argument == "--scope-full-body":
+			full_body = true
+	if full_body:
+		_capture_full_body(refresh)
+		return
 	if FileAccess.file_exists(OUT) and not refresh:
 		push_error(
 			"%s is frozen migration evidence: the authored timing it records is what " % OUT

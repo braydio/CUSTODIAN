@@ -1,0 +1,15 @@
+{
+  "schema": "custodian.operator_animation_timing.v1",
+  "frames": 7,
+  "fps": 10.0,
+  "loop": false,
+  "durations": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+  ]
+}

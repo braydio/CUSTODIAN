@@ -24,6 +24,11 @@ extends SceneTree
 const CANONICAL := "res://content/sprites/operator/runtime/operator_runtime_frames.tres"
 const BASELINE := "res://../reports/operator/operator_compatibility_timing.json"
 const BASELINE_SCHEMA := "custodian.operator_compatibility_timing.v1"
+## C2a-T1 deliberately left `full_body` to the animated_sprite slice, so C2a-R4
+## captured it separately. Two baselines with independent provenance, rather than
+## one file pretending the original capture was always comprehensive.
+const FULL_BODY_BASELINE := "res://../reports/operator/operator_full_body_compatibility_timing.json"
+const FULL_BODY_SCHEMA := "custodian.operator_full_body_timing.v1"
 
 ## Clips whose pixels were published against the wrong action. C2a-R3 repoints
 ## the consumer at the correct canonical art, and the consumer's authored clock
@@ -47,6 +52,7 @@ const RUNTIME_NORMALIZED := [
 var _failures: int = 0
 var _checked: int = 0
 var _skipped_unpublished: int = 0
+var _unpreservable: int = 0
 
 
 func _fail(message: String) -> void:
@@ -135,10 +141,65 @@ func _init() -> void:
 					_fail("duration drift %s frame %d (via %s/%s): authored %.4f, canonical %.4f" % [
 						identity, index, renderer, clip, want_duration, got_duration])
 
+	_check_full_body(canonical)
+
 	if _failures > 0:
 		push_error("operator_timing_preservation_smoke failed")
 		quit(1)
 		return
-	print("operator timing preservation smoke passed (%d identities checked against frozen baseline %s, %d unpublished skipped)" % [
-		_checked, str(baseline.get("captured_from_commit", "")).substr(0, 9), _skipped_unpublished])
+	print("operator timing preservation smoke passed (%d identities checked, %d unpublished skipped, %d recorded unpreservable)" % [
+		_checked, _skipped_unpublished, _unpreservable])
 	quit()
+
+
+## The authored full-body clock, compared against the live canonical resource.
+func _check_full_body(canonical: SpriteFrames) -> void:
+	var raw := FileAccess.get_file_as_string(FULL_BODY_BASELINE)
+	if raw.is_empty():
+		_fail("frozen full-body timing baseline missing: %s" % FULL_BODY_BASELINE)
+		return
+	var parsed: Variant = JSON.parse_string(raw)
+	if not parsed is Dictionary:
+		_fail("full-body baseline is not a JSON object")
+		return
+	var baseline: Dictionary = parsed
+	if String(baseline.get("schema", "")) != FULL_BODY_SCHEMA:
+		_fail("unexpected full-body baseline schema %s" % baseline.get("schema"))
+		return
+	if not bool(baseline.get("frozen", false)):
+		_fail("full-body baseline is not marked frozen")
+		return
+	var identities: Dictionary = baseline.get("identities", {})
+	for identity in identities:
+		var record: Dictionary = identities[identity]
+		var name := StringName(identity)
+		if not canonical.has_animation(name):
+			_skipped_unpublished += 1
+			continue
+		if canonical.get_frame_count(name) != int(record["frames"]):
+			continue
+		# An identity the baseline marks unpreservable carries its reason with it.
+		# It is reported every run so it cannot quietly become normal, but it does
+		# not fail the gate: the clock genuinely cannot be expressed today.
+		if record.has("unpreservable"):
+			_unpreservable += 1
+			print("  UNPRESERVABLE %s: %s" % [identity, record["unpreservable"]])
+			continue
+		_checked += 1
+		var want_fps := float(record["fps"])
+		var got_fps := canonical.get_animation_speed(name)
+		if not is_equal_approx(want_fps, got_fps):
+			_fail("full-body timing drift %s (via %s): authored %.3f fps, canonical %.3f fps" % [
+				identity, record["via_clip"], want_fps, got_fps])
+		var want_loop := bool(record["loop"])
+		if want_loop != canonical.get_animation_loop(name):
+			_fail("full-body loop drift %s (via %s): authored %s, canonical %s" % [
+				identity, record["via_clip"], want_loop, canonical.get_animation_loop(name)])
+		var durations: Array = record.get("durations", [])
+		for index in int(record["frames"]):
+			if index >= durations.size():
+				break
+			if not is_equal_approx(float(durations[index]), canonical.get_frame_duration(name, index)):
+				_fail("full-body duration drift %s frame %d (via %s): authored %.4f, canonical %.4f" % [
+					identity, index, record["via_clip"], float(durations[index]),
+					canonical.get_frame_duration(name, index)])
