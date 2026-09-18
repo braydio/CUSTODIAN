@@ -2,9 +2,9 @@
   "schema": "custodian.operator_selection_cutover_evidence.v1",
   "counts": {
     "DATA_DRIVEN": 6,
-    "BLOCKED": 18,
-    "PROVEN": 42,
-    "AUTHORING_DECISION": 4
+    "BLOCKED": 13,
+    "PROVEN": 21,
+    "UNRESOLVED": 1
   },
   "renderer_readiness": {
     "animated_sprite": {
@@ -41,55 +41,55 @@
           ]
         },
         {
-          "line": 7467,
+          "line": 7666,
           "function": "_ensure_paired_execution_animation",
           "classification": "BLOCKED",
           "clips": []
         },
         {
-          "line": 7468,
+          "line": 7667,
           "function": "_ensure_paired_execution_animation",
           "classification": "BLOCKED",
           "clips": []
         },
         {
-          "line": 7471,
+          "line": 7670,
           "function": "_ensure_paired_execution_animation",
           "classification": "BLOCKED",
           "clips": []
         },
         {
-          "line": 7476,
+          "line": 7675,
           "function": "_ensure_paired_execution_animation",
           "classification": "BLOCKED",
           "clips": []
         },
         {
-          "line": 7709,
+          "line": 7908,
           "function": "_ensure_operator_critical_attack_animation",
           "classification": "BLOCKED",
           "clips": []
         },
         {
-          "line": 7710,
+          "line": 7909,
           "function": "_ensure_operator_critical_attack_animation",
           "classification": "BLOCKED",
           "clips": []
         },
         {
-          "line": 7711,
+          "line": 7910,
           "function": "_ensure_operator_critical_attack_animation",
           "classification": "BLOCKED",
           "clips": []
         },
         {
-          "line": 7716,
+          "line": 7915,
           "function": "_ensure_operator_critical_attack_animation",
           "classification": "BLOCKED",
           "clips": []
         },
         {
-          "line": 7980,
+          "line": 8179,
           "function": "_play_melee_anim_resolved",
           "classification": "DATA_DRIVEN",
           "clips": [
@@ -104,72 +104,10 @@
         }
       ]
     },
-    "modular_lower_body_sprite": {
-      "sites": 16,
-      "active": 16,
-      "blocking": 4,
-      "ready": false,
-      "blocking_detail": [
-        {
-          "line": 2336,
-          "function": "_install_melee_posture_catalog_frames",
-          "classification": "BLOCKED",
-          "clips": []
-        },
-        {
-          "line": 2343,
-          "function": "_install_melee_posture_catalog_frames",
-          "classification": "BLOCKED",
-          "clips": []
-        },
-        {
-          "line": 2355,
-          "function": "_install_melee_posture_catalog_frames",
-          "classification": "BLOCKED",
-          "clips": []
-        },
-        {
-          "line": 6978,
-          "function": "_play_modular_unarmed_parry",
-          "classification": "AUTHORING_DECISION",
-          "clips": [
-            "unarmed_parry_success"
-          ]
-        }
-      ]
-    },
-    "modular_upper_body_sprite": {
-      "sites": 16,
-      "active": 16,
-      "blocking": 3,
-      "ready": false,
-      "blocking_detail": [
-        {
-          "line": 2337,
-          "function": "_install_melee_posture_catalog_frames",
-          "classification": "BLOCKED",
-          "clips": []
-        },
-        {
-          "line": 3368,
-          "function": "_begin_modular_primary_ranged_fire_presentation",
-          "classification": "BLOCKED",
-          "clips": []
-        },
-        {
-          "line": 6979,
-          "function": "_play_modular_unarmed_parry",
-          "classification": "AUTHORING_DECISION",
-          "clips": [
-            "unarmed_parry_success"
-          ]
-        }
-      ]
-    },
     "<unattributed>": {
-      "sites": 12,
-      "active": 12,
-      "blocking": 5,
+      "sites": 10,
+      "active": 10,
+      "blocking": 3,
       "ready": false,
       "unattributed": true,
       "blocking_detail": []
@@ -181,19 +119,19 @@
       "ready": false,
       "blocking_detail": [
         {
-          "line": 2390,
+          "line": 2365,
           "function": "_install_melee_posture_weapon_frames",
           "classification": "BLOCKED",
           "clips": []
         },
         {
-          "line": 2391,
+          "line": 2366,
           "function": "_install_melee_posture_weapon_frames",
           "classification": "BLOCKED",
           "clips": []
         },
         {
-          "line": 8314,
+          "line": 8513,
           "function": "_play_melee_overlay_from_key",
           "classification": "DATA_DRIVEN",
           "clips": [
@@ -208,6 +146,41 @@
         }
       ]
     },
+    "modular_lower_body_sprite": {
+      "sites": 2,
+      "active": 2,
+      "blocking": 2,
+      "ready": false,
+      "migrated": "C2a-R3",
+      "canonical_frames_bound": true,
+      "blocking_detail": [
+        {
+          "line": 3302,
+          "function": "_retarget_ranged_sprite_preserving_progress",
+          "classification": "PROVEN",
+          "clips": [
+            "ranged_2h_aim_modular"
+          ]
+        },
+        {
+          "line": 3694,
+          "function": "_play_modular_action_animation",
+          "classification": "UNRESOLVED",
+          "clips": [
+            "melee_fast",
+            "melee_heavy",
+            "ranged_2h_aim_cape",
+            "ranged_2h_aim_modular",
+            "ranged_fire",
+            "ranged_focused_fire",
+            "ranged_unfocused_fire",
+            "unarmed_fast",
+            "unarmed_heavy",
+            "unarmed_run_cape"
+          ]
+        }
+      ]
+    },
     "melee_fx_overlay_sprite": {
       "sites": 2,
       "active": 2,
@@ -215,7 +188,7 @@
       "ready": false,
       "blocking_detail": [
         {
-          "line": 8316,
+          "line": 8515,
           "function": "_play_melee_overlay_from_key",
           "classification": "DATA_DRIVEN",
           "clips": [
@@ -245,6 +218,15 @@
       "blocking": 0,
       "ready": false,
       "migrated": "C2a-R2",
+      "canonical_frames_bound": true,
+      "blocking_detail": []
+    },
+    "modular_upper_body_sprite": {
+      "sites": 0,
+      "active": 0,
+      "blocking": 0,
+      "ready": false,
+      "migrated": "C2a-R3",
       "canonical_frames_bound": true,
       "blocking_detail": []
     }
@@ -429,77 +411,9 @@
       "site_reason": "melee_body_stance_anim arrives from _get_authored_melee_body_stance_animation(), which reads the weapon animation_map 'melee_stance' entry."
     },
     {
-      "debt": "runtime_spriteframes_fork",
-      "file": "custodian/game/actors/operator/operator.gd",
-      "line": 2336,
-      "function": "_install_melee_posture_catalog_frames",
-      "renderer": "modular_lower_body_sprite",
-      "renderers": [
-        "modular_lower_body_sprite"
-      ],
-      "argument": "",
-      "source": "modular_lower_body_sprite.sprite_frames = modular_lower_body_sprite.sprite_frames.duplicate(true)",
-      "legacy_clips": [],
-      "trace": [],
-      "mappings": [],
-      "classification": "BLOCKED",
-      "site_reason": "replaces the renderer's SpriteFrames with a private deep copy, which defeats sharing the one canonical resource and silently doubles its memory per Operator instance. It exists only to make a runtime mutation safe, so it retires with that mutation."
-    },
-    {
-      "debt": "runtime_spriteframes_fork",
-      "file": "custodian/game/actors/operator/operator.gd",
-      "line": 2337,
-      "function": "_install_melee_posture_catalog_frames",
-      "renderer": "modular_upper_body_sprite",
-      "renderers": [
-        "modular_upper_body_sprite"
-      ],
-      "argument": "",
-      "source": "modular_upper_body_sprite.sprite_frames = modular_upper_body_sprite.sprite_frames.duplicate(true)",
-      "legacy_clips": [],
-      "trace": [],
-      "mappings": [],
-      "classification": "BLOCKED",
-      "site_reason": "replaces the renderer's SpriteFrames with a private deep copy, which defeats sharing the one canonical resource and silently doubles its memory per Operator instance. It exists only to make a runtime mutation safe, so it retires with that mutation."
-    },
-    {
       "debt": "secondary_animation_database",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 2343,
-      "function": "_install_melee_posture_catalog_frames",
-      "renderer": "modular_lower_body_sprite",
-      "renderers": [
-        "modular_lower_body_sprite"
-      ],
-      "argument": "",
-      "source": "_copy_catalog_animation(OPERATOR_ANIMATION_CATALOG_FRAMES, target, animation)",
-      "legacy_clips": [],
-      "trace": [],
-      "mappings": [],
-      "classification": "BLOCKED",
-      "site_reason": "reads animations from a second animation database and copies them into the renderer at runtime, instead of reading the one generated runtime SpriteFrames. Migratable when the same identities are already published canonically, which must be proven per identity before removal."
-    },
-    {
-      "debt": "secondary_animation_database",
-      "file": "custodian/game/actors/operator/operator.gd",
-      "line": 2355,
-      "function": "_install_melee_posture_catalog_frames",
-      "renderer": "modular_lower_body_sprite",
-      "renderers": [
-        "modular_lower_body_sprite"
-      ],
-      "argument": "",
-      "source": "_copy_catalog_animation(OPERATOR_ANIMATION_CATALOG_FRAMES, target, animation)",
-      "legacy_clips": [],
-      "trace": [],
-      "mappings": [],
-      "classification": "BLOCKED",
-      "site_reason": "reads animations from a second animation database and copies them into the renderer at runtime, instead of reading the one generated runtime SpriteFrames. Migratable when the same identities are already published canonically, which must be proven per identity before removal."
-    },
-    {
-      "debt": "secondary_animation_database",
-      "file": "custodian/game/actors/operator/operator.gd",
-      "line": 2372,
+      "line": 2347,
       "function": "_install_melee_posture_weapon_frames",
       "renderer": "",
       "renderers": [],
@@ -514,7 +428,7 @@
     {
       "debt": "secondary_animation_database",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 2379,
+      "line": 2354,
       "function": "_install_melee_posture_weapon_frames",
       "renderer": "",
       "renderers": [],
@@ -529,7 +443,7 @@
     {
       "debt": "secondary_animation_database",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 2390,
+      "line": 2365,
       "function": "_install_melee_posture_weapon_frames",
       "renderer": "melee_weapon_overlay_sprite",
       "renderers": [
@@ -546,7 +460,7 @@
     {
       "debt": "secondary_animation_database",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 2391,
+      "line": 2366,
       "function": "_install_melee_posture_weapon_frames",
       "renderer": "melee_weapon_overlay_sprite",
       "renderers": [
@@ -563,1234 +477,20 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 2609,
-      "function": "_has_modular_fast_attack_layer",
-      "renderer": "",
-      "renderers": [
-        "modular_lower_body_sprite",
-        "modular_upper_body_sprite"
-      ],
-      "argument": "base_animation, direction, layer_sprite)",
-      "source": "var resolved := AnimationResolver.resolve(base_animation, direction, layer_sprite)",
-      "legacy_clips": [
-        "unarmed_fast_recovery_lower",
-        "unarmed_fast_recovery_upper",
-        "unarmed_fast_strike_lower",
-        "unarmed_fast_strike_upper",
-        "unarmed_fast_windup_lower",
-        "unarmed_fast_windup_upper"
-      ],
-      "trace": [
-        "_sync_modular_fast_attack_phase -> _has_modular_fast_attack_layer: ['unarmed_fast_recovery_lower', 'unarmed_fast_recovery_upper', 'unarmed_fast_strike_lower', 'unarmed_fast_strike_upper', 'unarmed_fast_windup_lower', 'unarmed_fast_windup_upper']",
-        "_sync_modular_fast_attack_phase -> _has_modular_fast_attack_layer: ['unarmed_fast_recovery_upper', 'unarmed_fast_strike_upper', 'unarmed_fast_windup_upper']"
-      ],
-      "mappings": [
-        {
-          "legacy_clip": "unarmed_fast_recovery_lower",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source C",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "attack",
-            "action": "fast_recovery_01",
-            "layers": {
-              "full_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "lower_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "cape": [
-                "n"
-              ],
-              "fx": [
-                "n"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        },
-        {
-          "legacy_clip": "unarmed_fast_recovery_upper",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source C",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "attack",
-            "action": "fast_recovery_01",
-            "layers": {
-              "full_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "lower_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "cape": [
-                "n"
-              ],
-              "fx": [
-                "n"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        },
-        {
-          "legacy_clip": "unarmed_fast_strike_lower",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source C",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "attack",
-            "action": "fast_strike_01",
-            "layers": {
-              "full_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "fx": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "lower_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "cape": [
-                "n"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        },
-        {
-          "legacy_clip": "unarmed_fast_strike_upper",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source C",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "attack",
-            "action": "fast_strike_01",
-            "layers": {
-              "full_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "fx": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "lower_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "cape": [
-                "n"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        },
-        {
-          "legacy_clip": "unarmed_fast_windup_lower",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source C",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "attack",
-            "action": "fast_windup_01",
-            "layers": {
-              "full_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "lower_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        },
-        {
-          "legacy_clip": "unarmed_fast_windup_upper",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source C",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "attack",
-            "action": "fast_windup_01",
-            "layers": {
-              "full_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "lower_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        }
-      ],
-      "classification": "PROVEN",
-      "site_reason": ""
-    },
-    {
-      "debt": "animation_resolver",
-      "file": "custodian/game/actors/operator/operator.gd",
-      "line": 2622,
-      "function": "_sync_modular_fast_attack_layer",
-      "renderer": "",
-      "renderers": [
-        "modular_lower_body_sprite",
-        "modular_upper_body_sprite"
-      ],
-      "argument": "base_animation, direction, layer_sprite)",
-      "source": "var resolved := AnimationResolver.resolve(base_animation, direction, layer_sprite)",
-      "legacy_clips": [
-        "unarmed_fast_recovery_lower",
-        "unarmed_fast_recovery_upper",
-        "unarmed_fast_strike_lower",
-        "unarmed_fast_strike_upper",
-        "unarmed_fast_windup_lower",
-        "unarmed_fast_windup_upper"
-      ],
-      "trace": [
-        "_sync_modular_fast_attack_phase -> _sync_modular_fast_attack_layer: ['unarmed_fast_recovery_lower', 'unarmed_fast_recovery_upper', 'unarmed_fast_strike_lower', 'unarmed_fast_strike_upper', 'unarmed_fast_windup_lower', 'unarmed_fast_windup_upper']",
-        "_sync_modular_fast_attack_phase -> _sync_modular_fast_attack_layer: ['unarmed_fast_recovery_lower', 'unarmed_fast_recovery_upper', 'unarmed_fast_strike_lower', 'unarmed_fast_strike_upper', 'unarmed_fast_windup_lower', 'unarmed_fast_windup_upper']"
-      ],
-      "mappings": [
-        {
-          "legacy_clip": "unarmed_fast_recovery_lower",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source C",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "attack",
-            "action": "fast_recovery_01",
-            "layers": {
-              "full_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "lower_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "cape": [
-                "n"
-              ],
-              "fx": [
-                "n"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        },
-        {
-          "legacy_clip": "unarmed_fast_recovery_upper",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source C",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "attack",
-            "action": "fast_recovery_01",
-            "layers": {
-              "full_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "lower_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "cape": [
-                "n"
-              ],
-              "fx": [
-                "n"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        },
-        {
-          "legacy_clip": "unarmed_fast_strike_lower",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source C",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "attack",
-            "action": "fast_strike_01",
-            "layers": {
-              "full_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "fx": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "lower_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "cape": [
-                "n"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        },
-        {
-          "legacy_clip": "unarmed_fast_strike_upper",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source C",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "attack",
-            "action": "fast_strike_01",
-            "layers": {
-              "full_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "fx": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "lower_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "cape": [
-                "n"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        },
-        {
-          "legacy_clip": "unarmed_fast_windup_lower",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source C",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "attack",
-            "action": "fast_windup_01",
-            "layers": {
-              "full_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "lower_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        },
-        {
-          "legacy_clip": "unarmed_fast_windup_upper",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source C",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "attack",
-            "action": "fast_windup_01",
-            "layers": {
-              "full_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "lower_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        }
-      ],
-      "classification": "PROVEN",
-      "site_reason": ""
-    },
-    {
-      "debt": "animation_resolver",
-      "file": "custodian/game/actors/operator/operator.gd",
-      "line": 2670,
-      "function": "_sync_modular_fast_attack_phase",
+      "line": 3302,
+      "function": "_retarget_ranged_sprite_preserving_progress",
       "renderer": "modular_lower_body_sprite",
       "renderers": [
         "modular_lower_body_sprite"
       ],
-      "argument": "lower_base, _melee_forward, modular_lower_body_sprite)",
-      "source": "_modular_lower_action_animation = AnimationResolver.resolve(lower_base, _melee_forward, modular_lower_body_sprite)",
+      "argument": "base_animation, direction, sprite)",
+      "source": "expected = AnimationResolver.resolve(base_animation, direction, sprite)",
       "legacy_clips": [
-        "unarmed_fast_recovery_lower",
-        "unarmed_fast_strike_lower",
-        "unarmed_fast_windup_lower"
+        "ranged_2h_aim_modular"
       ],
       "trace": [
-        "local assignment in _sync_modular_fast_attack_phase"
+        "_retarget_primary_ranged_transition -> _retarget_ranged_sprite_preserving_progress: ['ranged_2h_aim_modular']"
       ],
-      "mappings": [
-        {
-          "legacy_clip": "unarmed_fast_recovery_lower",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source C",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "attack",
-            "action": "fast_recovery_01",
-            "layers": {
-              "full_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "lower_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "cape": [
-                "n"
-              ],
-              "fx": [
-                "n"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        },
-        {
-          "legacy_clip": "unarmed_fast_strike_lower",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source C",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "attack",
-            "action": "fast_strike_01",
-            "layers": {
-              "full_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "fx": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "lower_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "cape": [
-                "n"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        },
-        {
-          "legacy_clip": "unarmed_fast_windup_lower",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source C",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "attack",
-            "action": "fast_windup_01",
-            "layers": {
-              "full_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "lower_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        }
-      ],
-      "classification": "PROVEN",
-      "site_reason": ""
-    },
-    {
-      "debt": "animation_resolver",
-      "file": "custodian/game/actors/operator/operator.gd",
-      "line": 2671,
-      "function": "_sync_modular_fast_attack_phase",
-      "renderer": "modular_upper_body_sprite",
-      "renderers": [
-        "modular_upper_body_sprite"
-      ],
-      "argument": "upper_base, _melee_forward, modular_upper_body_sprite)",
-      "source": "_modular_upper_action_animation = AnimationResolver.resolve(upper_base, _melee_forward, modular_upper_body_sprite)",
-      "legacy_clips": [
-        "unarmed_fast_recovery_upper",
-        "unarmed_fast_strike_upper",
-        "unarmed_fast_windup_upper"
-      ],
-      "trace": [
-        "local assignment in _sync_modular_fast_attack_phase"
-      ],
-      "mappings": [
-        {
-          "legacy_clip": "unarmed_fast_recovery_upper",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source C",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "attack",
-            "action": "fast_recovery_01",
-            "layers": {
-              "full_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "lower_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "cape": [
-                "n"
-              ],
-              "fx": [
-                "n"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        },
-        {
-          "legacy_clip": "unarmed_fast_strike_upper",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source C",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "attack",
-            "action": "fast_strike_01",
-            "layers": {
-              "full_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "fx": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "lower_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "cape": [
-                "n"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        },
-        {
-          "legacy_clip": "unarmed_fast_windup_upper",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source C",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "attack",
-            "action": "fast_windup_01",
-            "layers": {
-              "full_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "lower_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        }
-      ],
-      "classification": "PROVEN",
-      "site_reason": ""
-    },
-    {
-      "debt": "animation_resolver",
-      "file": "custodian/game/actors/operator/operator.gd",
-      "line": 2821,
-      "function": "_has_modular_ranged_ready_upper_stack",
-      "renderer": "modular_upper_body_sprite",
-      "renderers": [
-        "modular_upper_body_sprite"
-      ],
-      "argument": "\"ranged_2h_stance_modular\", direction, modular_upper_body_sprite)",
-      "source": "var upper_animation := AnimationResolver.resolve(\"ranged_2h_stance_modular\", direction, modular_upper_body_sprite)",
-      "legacy_clips": [
-        "ranged_2h_stance_modular"
-      ],
-      "trace": [],
-      "mappings": [
-        {
-          "legacy_clip": "ranged_2h_stance_modular",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source C",
-          "canonical": {
-            "profile": "ranged_2h",
-            "group": "posture",
-            "action": "stance_01",
-            "layers": {
-              "lower_body": [
-                "e",
-                "n",
-                "se",
-                "sw",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "se",
-                "sw",
-                "w"
-              ],
-              "weapon": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "se",
-                "sw",
-                "w"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        }
-      ],
-      "classification": "PROVEN",
-      "site_reason": ""
-    },
-    {
-      "debt": "animation_resolver",
-      "file": "custodian/game/actors/operator/operator.gd",
-      "line": 2833,
-      "function": "_has_modular_ranged_relaxed_upper_stack",
-      "renderer": "modular_upper_body_sprite",
-      "renderers": [
-        "modular_upper_body_sprite"
-      ],
-      "argument": "\"ranged_2h_relaxed_modular\", direction, modular_upper_body_sprite)",
-      "source": "var upper_animation := AnimationResolver.resolve(\"ranged_2h_relaxed_modular\", direction, modular_upper_body_sprite)",
-      "legacy_clips": [
-        "ranged_2h_relaxed_modular"
-      ],
-      "trace": [],
-      "mappings": [
-        {
-          "legacy_clip": "ranged_2h_relaxed_modular",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source A",
-          "canonical": {
-            "profile": "ranged_2h",
-            "group": "posture",
-            "action": "relaxed_01",
-            "layers": {
-              "lower_body": [
-                "e",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "w"
-              ],
-              "weapon": [
-                "e",
-                "w"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        }
-      ],
-      "classification": "PROVEN",
-      "site_reason": ""
-    },
-    {
-      "debt": "candidate_animation_list",
-      "file": "custodian/game/actors/operator/operator.gd",
-      "line": 3368,
-      "function": "_begin_modular_primary_ranged_fire_presentation",
-      "renderer": "modular_upper_body_sprite",
-      "renderers": [
-        "modular_upper_body_sprite"
-      ],
-      "argument": "",
-      "source": "_primary_ranged_fire_candidates(&\"upper\", suffix),",
-      "legacy_clips": [],
-      "trace": [],
-      "mappings": [],
-      "classification": "BLOCKED",
-      "site_reason": "selects by walking a list of candidate legacy clip names; the caller must request one canonical identity instead"
-    },
-    {
-      "debt": "animation_resolver",
-      "file": "custodian/game/actors/operator/operator.gd",
-      "line": 3446,
-      "function": "_begin_modular_primary_ranged_aim_presentation",
-      "renderer": "modular_lower_body_sprite",
-      "renderers": [
-        "modular_lower_body_sprite"
-      ],
-      "argument": "\"ranged_2h_aim_modular\", action_direction, modular_lower_body_sprite)",
-      "source": "var lower_animation := AnimationResolver.resolve(\"ranged_2h_aim_modular\", action_direction, modular_lower_body_sprite)",
-      "legacy_clips": [
-        "ranged_2h_aim_modular"
-      ],
-      "trace": [],
-      "mappings": [
-        {
-          "legacy_clip": "ranged_2h_aim_modular",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source A",
-          "canonical": {
-            "profile": "ranged_2h",
-            "group": "cosmetic",
-            "action": "aim_01",
-            "layers": {
-              "lower_body": [
-                "e",
-                "se",
-                "sw",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "se",
-                "sw",
-                "w"
-              ],
-              "weapon": [
-                "e",
-                "se",
-                "sw",
-                "w"
-              ]
-            },
-            "reachability_status": "DORMANT"
-          }
-        }
-      ],
-      "classification": "PROVEN",
-      "site_reason": ""
-    },
-    {
-      "debt": "animation_resolver",
-      "file": "custodian/game/actors/operator/operator.gd",
-      "line": 3447,
-      "function": "_begin_modular_primary_ranged_aim_presentation",
-      "renderer": "modular_upper_body_sprite",
-      "renderers": [
-        "modular_upper_body_sprite"
-      ],
-      "argument": "\"ranged_2h_aim_modular\", action_direction, modular_upper_body_sprite)",
-      "source": "var upper_animation := AnimationResolver.resolve(\"ranged_2h_aim_modular\", action_direction, modular_upper_body_sprite)",
-      "legacy_clips": [
-        "ranged_2h_aim_modular"
-      ],
-      "trace": [],
-      "mappings": [
-        {
-          "legacy_clip": "ranged_2h_aim_modular",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source A",
-          "canonical": {
-            "profile": "ranged_2h",
-            "group": "cosmetic",
-            "action": "aim_01",
-            "layers": {
-              "lower_body": [
-                "e",
-                "se",
-                "sw",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "se",
-                "sw",
-                "w"
-              ],
-              "weapon": [
-                "e",
-                "se",
-                "sw",
-                "w"
-              ]
-            },
-            "reachability_status": "DORMANT"
-          }
-        }
-      ],
-      "classification": "PROVEN",
-      "site_reason": ""
-    },
-    {
-      "debt": "animation_resolver",
-      "file": "custodian/game/actors/operator/operator.gd",
-      "line": 3502,
-      "function": "_begin_modular_primary_ranged_lower_presentation",
-      "renderer": "modular_upper_body_sprite",
-      "renderers": [
-        "modular_upper_body_sprite"
-      ],
-      "argument": "\"ranged_2h_aim_modular\", action_direction, modular_upper_body_sprite)",
-      "source": "var resolved_upper := AnimationResolver.resolve(\"ranged_2h_aim_modular\", action_direction, modular_upper_body_sprite)",
-      "legacy_clips": [
-        "ranged_2h_aim_modular"
-      ],
-      "trace": [],
       "mappings": [
         {
           "legacy_clip": "ranged_2h_aim_modular",
@@ -1830,7 +530,7 @@
     {
       "debt": "candidate_animation_list",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 3555,
+      "line": 3621,
       "function": "_primary_ranged_fire_candidates",
       "renderer": "",
       "renderers": [],
@@ -1845,569 +545,134 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 3723,
-      "function": "_sync_field_patch_action_layer",
-      "renderer": "",
+      "line": 3694,
+      "function": "_play_modular_action_animation",
+      "renderer": "modular_lower_body_sprite",
       "renderers": [
-        "modular_lower_body_sprite",
-        "modular_upper_body_sprite"
+        "modular_lower_body_sprite"
       ],
       "argument": "base_animation, direction, sprite)",
-      "source": "var animation_name := AnimationResolver.resolve(base_animation, direction, sprite)",
+      "source": "animation_name = AnimationResolver.resolve(base_animation, direction, sprite)",
       "legacy_clips": [
-        "field_patch_use_lower",
-        "field_patch_use_upper"
+        "melee_fast",
+        "melee_heavy",
+        "ranged_2h_aim_cape",
+        "ranged_2h_aim_modular",
+        "ranged_fire",
+        "ranged_focused_fire",
+        "ranged_unfocused_fire",
+        "unarmed_fast",
+        "unarmed_heavy",
+        "unarmed_run_cape"
       ],
       "trace": [
-        "_play_field_patch_use_presentation -> _sync_field_patch_action_layer: ['field_patch_use_lower', 'field_patch_use_upper']",
-        "_play_field_patch_use_presentation -> _sync_field_patch_action_layer: ['field_patch_use_upper']"
+        "_begin_modular_primary_ranged_aim_presentation -> _play_modular_action_animation: ['ranged_2h_aim_modular']",
+        "_begin_modular_primary_ranged_aim_presentation -> _play_modular_action_animation: ['ranged_2h_aim_modular']",
+        "_begin_modular_primary_ranged_aim_presentation -> _play_modular_action_animation (via caller)",
+        "_enter_ranged_ready -> _begin_modular_primary_ranged_aim_presentation (via caller)",
+        "_request_attack_intent -> _enter_ranged_ready: ['melee_fast', 'melee_heavy', 'ranged_fire', 'ranged_focused_fire', 'ranged_unfocused_fire', 'unarmed_fast', 'unarmed_heavy']",
+        "_play_modular_action_animation_backwards -> _play_modular_action_animation (via caller)",
+        "_begin_modular_primary_ranged_lower_presentation -> _play_modular_action_animation_backwards: ['ranged_2h_aim_modular']",
+        "_play_optional_modular_cape_animation_backwards -> _play_modular_action_animation_backwards (via caller)",
+        "_begin_modular_primary_ranged_lower_presentation -> _play_optional_modular_cape_animation_backwards: ['ranged_2h_aim_cape']",
+        "_play_optional_modular_cape_animation -> _play_modular_action_animation (via caller)",
+        "_sync_modular_locomotion_layers -> _play_optional_modular_cape_animation: ['unarmed_run_cape']",
+        "_begin_modular_primary_ranged_aim_presentation -> _play_optional_modular_cape_animation: ['ranged_2h_aim_cape']"
       ],
       "mappings": [
         {
-          "legacy_clip": "field_patch_use_lower",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source C",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "interaction",
-            "action": "field_patch_use_01",
-            "layers": {
-              "fx": [
-                "e",
-                "w"
-              ],
-              "lower_body": [
-                "e",
-                "n",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "w"
-              ]
-            },
-            "reachability_status": "DORMANT"
-          }
+          "legacy_clip": "melee_fast",
+          "classification": "UNRESOLVED",
+          "why": "no legacy_clips row in the reachability contract",
+          "canonical": null
         },
         {
-          "legacy_clip": "field_patch_use_upper",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source C",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "interaction",
-            "action": "field_patch_use_01",
-            "layers": {
-              "fx": [
-                "e",
-                "w"
-              ],
-              "lower_body": [
-                "e",
-                "n",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "w"
-              ]
-            },
-            "reachability_status": "DORMANT"
-          }
-        }
-      ],
-      "classification": "PROVEN",
-      "site_reason": ""
-    },
-    {
-      "debt": "attack_fallback_animation",
-      "file": "custodian/game/actors/operator/operator.gd",
-      "line": 3820,
-      "function": "_resolve_modular_lower_body_locomotion_animation",
-      "renderer": "",
-      "renderers": [
-        "modular_lower_body_sprite"
-      ],
-      "argument": "",
-      "source": "var fallback_animation := StringName(\"%s_%s\" % [fallback_base, direction_suffix])",
-      "legacy_clips": [],
-      "trace": [],
-      "mappings": [],
-      "classification": "PROVEN",
-      "site_reason": "MeleeAttackProfile.presentation_action already carries the semantic action on every attack resource (proof source B), so this field is removed rather than mapped."
-    },
-    {
-      "debt": "attack_fallback_animation",
-      "file": "custodian/game/actors/operator/operator.gd",
-      "line": 3821,
-      "function": "_resolve_modular_lower_body_locomotion_animation",
-      "renderer": "",
-      "renderers": [
-        "modular_lower_body_sprite"
-      ],
-      "argument": "",
-      "source": "if _has_playable_sprite_animation(frames, fallback_animation):",
-      "legacy_clips": [],
-      "trace": [],
-      "mappings": [],
-      "classification": "PROVEN",
-      "site_reason": "MeleeAttackProfile.presentation_action already carries the semantic action on every attack resource (proof source B), so this field is removed rather than mapped."
-    },
-    {
-      "debt": "attack_fallback_animation",
-      "file": "custodian/game/actors/operator/operator.gd",
-      "line": 3822,
-      "function": "_resolve_modular_lower_body_locomotion_animation",
-      "renderer": "",
-      "renderers": [
-        "modular_lower_body_sprite"
-      ],
-      "argument": "",
-      "source": "return fallback_animation",
-      "legacy_clips": [],
-      "trace": [],
-      "mappings": [],
-      "classification": "PROVEN",
-      "site_reason": "MeleeAttackProfile.presentation_action already carries the semantic action on every attack resource (proof source B), so this field is removed rather than mapped."
-    },
-    {
-      "debt": "animation_resolver",
-      "file": "custodian/game/actors/operator/operator.gd",
-      "line": 3825,
-      "function": "_resolve_modular_lower_body_locomotion_animation",
-      "renderer": "modular_lower_body_sprite",
-      "renderers": [
-        "modular_lower_body_sprite"
-      ],
-      "argument": "base_animation, direction, modular_lower_body_sprite)",
-      "source": "var direct_animation := AnimationResolver.resolve(base_animation, direction, modular_lower_body_sprite)",
-      "legacy_clips": [
-        "unarmed_walk"
-      ],
-      "trace": [
-        "local assignment in _resolve_modular_lower_body_locomotion_animation"
-      ],
-      "mappings": [
+          "legacy_clip": "melee_heavy",
+          "classification": "UNRESOLVED",
+          "why": "no legacy_clips row in the reachability contract",
+          "canonical": null
+        },
         {
-          "legacy_clip": "unarmed_walk",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source A",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "locomotion",
-            "action": "walk_01",
-            "layers": {
-              "full_body": [
-                "e",
-                "n",
-                "s",
-                "w"
-              ],
-              "lower_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "n",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        }
-      ],
-      "classification": "PROVEN",
-      "site_reason": ""
-    },
-    {
-      "debt": "animation_resolver",
-      "file": "custodian/game/actors/operator/operator.gd",
-      "line": 3834,
-      "function": "_sync_modular_upper_body_layer",
-      "renderer": "modular_upper_body_sprite",
-      "renderers": [
-        "modular_upper_body_sprite"
-      ],
-      "argument": "base_animation, direction, modular_upper_body_sprite)",
-      "source": "var upper_animation := AnimationResolver.resolve(base_animation, direction, modular_upper_body_sprite)",
-      "legacy_clips": [
-        "ranged_2h_relaxed_modular",
-        "ranged_2h_stance_modular",
-        "unarmed_fast_strike_upper",
-        "unarmed_idle",
-        "unarmed_run",
-        "unarmed_walk"
-      ],
-      "trace": [
-        "_sync_modular_action_domains -> _sync_modular_upper_body_layer: ['unarmed_fast_strike_upper']",
-        "_sync_modular_unarmed_upper_body_locomotion -> _sync_modular_upper_body_layer (via caller)",
-        "_sync_modular_locomotion_layers -> _sync_modular_unarmed_upper_body_locomotion (via caller)",
-        "_update_animation -> _sync_modular_locomotion_layers: ['unarmed_run']",
-        "_update_animation -> _sync_modular_locomotion_layers: ['unarmed_walk']",
-        "_update_animation -> _sync_modular_locomotion_layers: ['unarmed_idle']",
-        "_sync_modular_ranged_2h_stance_presentation -> _sync_modular_locomotion_layers (via caller)",
-        "_update_animation -> _sync_modular_ranged_2h_stance_presentation: ['ranged_2h_stance_modular']",
-        "_sync_modular_ranged_relaxed_presentation -> _sync_modular_locomotion_layers (via caller)",
-        "_update_animation -> _sync_modular_ranged_relaxed_presentation: ['ranged_2h_relaxed_modular', 'unarmed_idle']",
-        "_sync_modular_ranged_ready_upper_layers -> _sync_modular_upper_body_layer: ['ranged_2h_stance_modular']",
-        "_sync_modular_ranged_relaxed_upper_layers -> _sync_modular_upper_body_layer: ['ranged_2h_relaxed_modular']",
-        "_sync_modular_ranged_ready_movement_presentation -> _sync_modular_upper_body_layer: ['ranged_2h_stance_modular']"
-      ],
-      "mappings": [
+          "legacy_clip": "ranged_2h_aim_cape",
+          "classification": "RETIRED",
+          "why": "targets the modular cape/head, retired from active composition by the 2026-09-12 authoring decision; art preserved, layer no longer drawn",
+          "canonical": null
+        },
         {
-          "legacy_clip": "ranged_2h_relaxed_modular",
+          "legacy_clip": "ranged_2h_aim_modular",
           "classification": "PROVEN",
           "why": "reachability legacy_clips, proof source A",
           "canonical": {
             "profile": "ranged_2h",
-            "group": "posture",
-            "action": "relaxed_01",
+            "group": "cosmetic",
+            "action": "aim_01",
             "layers": {
               "lower_body": [
                 "e",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "w"
-              ],
-              "weapon": [
-                "e",
-                "w"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        },
-        {
-          "legacy_clip": "ranged_2h_stance_modular",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source C",
-          "canonical": {
-            "profile": "ranged_2h",
-            "group": "posture",
-            "action": "stance_01",
-            "layers": {
-              "lower_body": [
-                "e",
-                "n",
                 "se",
                 "sw",
                 "w"
               ],
               "upper_body": [
                 "e",
-                "n",
-                "ne",
-                "nw",
                 "se",
                 "sw",
                 "w"
               ],
               "weapon": [
                 "e",
-                "n",
-                "ne",
-                "nw",
                 "se",
                 "sw",
-                "w"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        },
-        {
-          "legacy_clip": "unarmed_fast_strike_upper",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source C",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "attack",
-            "action": "fast_strike_01",
-            "layers": {
-              "full_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "fx": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "lower_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "cape": [
-                "n"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        },
-        {
-          "legacy_clip": "unarmed_idle",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source A",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "locomotion",
-            "action": "idle_01",
-            "layers": {
-              "full_body": [
-                "e",
-                "n",
-                "s",
-                "w"
-              ],
-              "lower_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "n",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        },
-        {
-          "legacy_clip": "unarmed_run",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source A",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "locomotion",
-            "action": "run_01",
-            "layers": {
-              "full_body": [
-                "e",
-                "n",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "lower_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "cape": [
-                "n",
-                "ne",
-                "nw"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        },
-        {
-          "legacy_clip": "unarmed_walk",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source A",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "locomotion",
-            "action": "walk_01",
-            "layers": {
-              "full_body": [
-                "e",
-                "n",
-                "s",
-                "w"
-              ],
-              "lower_body": [
-                "e",
-                "n",
-                "ne",
-                "nw",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "n",
-                "s",
-                "se",
-                "sw",
-                "w"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        }
-      ],
-      "classification": "PROVEN",
-      "site_reason": ""
-    },
-    {
-      "debt": "animation_resolver",
-      "file": "custodian/game/actors/operator/operator.gd",
-      "line": 5624,
-      "function": "_get_parry_attempt_remaining_duration",
-      "renderer": "modular_lower_body_sprite",
-      "renderers": [
-        "modular_lower_body_sprite"
-      ],
-      "argument": "\"unarmed_parry\", direction, modular_lower_body_sprite)",
-      "source": "var lower_anim := AnimationResolver.resolve(\"unarmed_parry\", direction, modular_lower_body_sprite)",
-      "legacy_clips": [
-        "unarmed_parry"
-      ],
-      "trace": [],
-      "mappings": [
-        {
-          "legacy_clip": "unarmed_parry",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source C",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "defense",
-            "action": "parry_01",
-            "layers": {
-              "fx": [
-                "e",
-                "n",
-                "w"
-              ],
-              "lower_body": [
-                "e",
-                "n",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "n",
                 "w"
               ]
             },
             "reachability_status": "DORMANT"
           }
-        }
-      ],
-      "classification": "PROVEN",
-      "site_reason": ""
-    },
-    {
-      "debt": "animation_resolver",
-      "file": "custodian/game/actors/operator/operator.gd",
-      "line": 5627,
-      "function": "_get_parry_attempt_remaining_duration",
-      "renderer": "modular_upper_body_sprite",
-      "renderers": [
-        "modular_upper_body_sprite"
-      ],
-      "argument": "\"unarmed_parry\", direction, modular_upper_body_sprite)",
-      "source": "var upper_anim := AnimationResolver.resolve(\"unarmed_parry\", direction, modular_upper_body_sprite)",
-      "legacy_clips": [
-        "unarmed_parry"
-      ],
-      "trace": [],
-      "mappings": [
+        },
         {
-          "legacy_clip": "unarmed_parry",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source C",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "defense",
-            "action": "parry_01",
-            "layers": {
-              "fx": [
-                "e",
-                "n",
-                "w"
-              ],
-              "lower_body": [
-                "e",
-                "n",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "n",
-                "w"
-              ]
-            },
-            "reachability_status": "DORMANT"
-          }
+          "legacy_clip": "ranged_fire",
+          "classification": "UNRESOLVED",
+          "why": "no legacy_clips row in the reachability contract",
+          "canonical": null
+        },
+        {
+          "legacy_clip": "ranged_focused_fire",
+          "classification": "UNRESOLVED",
+          "why": "no legacy_clips row in the reachability contract",
+          "canonical": null
+        },
+        {
+          "legacy_clip": "ranged_unfocused_fire",
+          "classification": "UNRESOLVED",
+          "why": "no legacy_clips row in the reachability contract",
+          "canonical": null
+        },
+        {
+          "legacy_clip": "unarmed_fast",
+          "classification": "UNRESOLVED",
+          "why": "no legacy_clips row in the reachability contract",
+          "canonical": null
+        },
+        {
+          "legacy_clip": "unarmed_heavy",
+          "classification": "UNRESOLVED",
+          "why": "no legacy_clips row in the reachability contract",
+          "canonical": null
+        },
+        {
+          "legacy_clip": "unarmed_run_cape",
+          "classification": "RETIRED",
+          "why": "targets the modular cape/head, retired from active composition by the 2026-09-12 authoring decision; art preserved, layer no longer drawn",
+          "canonical": null
         }
       ],
-      "classification": "PROVEN",
+      "classification": "UNRESOLVED",
       "site_reason": ""
     },
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 5630,
+      "line": 5824,
       "function": "_get_parry_attempt_remaining_duration",
       "renderer": "animated_sprite",
       "renderers": [
@@ -2455,7 +720,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 6199,
+      "line": 6393,
       "function": "_start_fast_attack",
       "renderer": "",
       "renderers": [],
@@ -2470,7 +735,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 6203,
+      "line": 6397,
       "function": "_start_fast_attack",
       "renderer": "animated_sprite",
       "renderers": [
@@ -2487,7 +752,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 6209,
+      "line": 6403,
       "function": "_start_fast_attack",
       "renderer": "animated_sprite",
       "renderers": [
@@ -2504,7 +769,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 6213,
+      "line": 6407,
       "function": "_start_fast_attack",
       "renderer": "animated_sprite",
       "renderers": [
@@ -2521,7 +786,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 6253,
+      "line": 6447,
       "function": "_start_fast_attack",
       "renderer": "",
       "renderers": [],
@@ -2536,7 +801,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 6304,
+      "line": 6498,
       "function": "_try_start_fast_attack_windup",
       "renderer": "animated_sprite",
       "renderers": [
@@ -2599,7 +864,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 6337,
+      "line": 6536,
       "function": "_begin_fast_attack_strike_phase",
       "renderer": "",
       "renderers": [],
@@ -2614,7 +879,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 6409,
+      "line": 6608,
       "function": "_begin_heavy_attack_active_phase",
       "renderer": "",
       "renderers": [],
@@ -2629,7 +894,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 6959,
+      "line": 7158,
       "function": "_play_parry_animation",
       "renderer": "animated_sprite",
       "renderers": [
@@ -2710,87 +975,9 @@
       "site_reason": ""
     },
     {
-      "debt": "animation_resolver",
-      "file": "custodian/game/actors/operator/operator.gd",
-      "line": 6978,
-      "function": "_play_modular_unarmed_parry",
-      "renderer": "modular_lower_body_sprite",
-      "renderers": [
-        "modular_lower_body_sprite"
-      ],
-      "argument": "resolved_base, direction, modular_lower_body_sprite)",
-      "source": "var lower_anim := AnimationResolver.resolve(resolved_base, direction, modular_lower_body_sprite)",
-      "legacy_clips": [
-        "unarmed_parry_success"
-      ],
-      "trace": [
-        "local assignment in _play_modular_unarmed_parry"
-      ],
-      "mappings": [
-        {
-          "legacy_clip": "unarmed_parry_success",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source A",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "defense",
-            "action": "parry_success_01",
-            "layers": {
-              "fx": [
-                "e",
-                "w"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        }
-      ],
-      "classification": "AUTHORING_DECISION",
-      "site_reason": "C2a-R2 blocker. The legacy clip unarmed_parry_success_01_fx has no single canonical identity: its _left sources parry_recovery_01 fx art and its _right sources interaction/success_01 fx art, two semantically different actions under one name. It is live via guard_enter_post_parry_neutral(). Separately, unarmed_parry_recovery_fx is requested but absent from the compatibility resource, so parry-recovery FX has never rendered while canonical art exists. modular_upper_fx_sprite cannot be rebound until both are decided."
-    },
-    {
-      "debt": "animation_resolver",
-      "file": "custodian/game/actors/operator/operator.gd",
-      "line": 6979,
-      "function": "_play_modular_unarmed_parry",
-      "renderer": "modular_upper_body_sprite",
-      "renderers": [
-        "modular_upper_body_sprite"
-      ],
-      "argument": "resolved_base, direction, modular_upper_body_sprite)",
-      "source": "var upper_anim := AnimationResolver.resolve(resolved_base, direction, modular_upper_body_sprite)",
-      "legacy_clips": [
-        "unarmed_parry_success"
-      ],
-      "trace": [
-        "local assignment in _play_modular_unarmed_parry"
-      ],
-      "mappings": [
-        {
-          "legacy_clip": "unarmed_parry_success",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source A",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "defense",
-            "action": "parry_success_01",
-            "layers": {
-              "fx": [
-                "e",
-                "w"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        }
-      ],
-      "classification": "AUTHORING_DECISION",
-      "site_reason": "C2a-R2 blocker. The legacy clip unarmed_parry_success_01_fx has no single canonical identity: its _left sources parry_recovery_01 fx art and its _right sources interaction/success_01 fx art, two semantically different actions under one name. It is live via guard_enter_post_parry_neutral(). Separately, unarmed_parry_recovery_fx is requested but absent from the compatibility resource, so parry-recovery FX has never rendered while canonical art exists. modular_upper_fx_sprite cannot be rebound until both are decided."
-    },
-    {
       "debt": "runtime_spriteframes_mutation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7467,
+      "line": 7666,
       "function": "_ensure_paired_execution_animation",
       "renderer": "",
       "renderers": [
@@ -2807,7 +994,7 @@
     {
       "debt": "runtime_spriteframes_mutation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7468,
+      "line": 7667,
       "function": "_ensure_paired_execution_animation",
       "renderer": "",
       "renderers": [
@@ -2824,7 +1011,7 @@
     {
       "debt": "runtime_spriteframes_mutation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7471,
+      "line": 7670,
       "function": "_ensure_paired_execution_animation",
       "renderer": "",
       "renderers": [
@@ -2841,7 +1028,7 @@
     {
       "debt": "runtime_spriteframes_mutation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7476,
+      "line": 7675,
       "function": "_ensure_paired_execution_animation",
       "renderer": "",
       "renderers": [
@@ -2858,7 +1045,7 @@
     {
       "debt": "runtime_spriteframes_mutation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7709,
+      "line": 7908,
       "function": "_ensure_operator_critical_attack_animation",
       "renderer": "animated_sprite",
       "renderers": [
@@ -2875,7 +1062,7 @@
     {
       "debt": "runtime_spriteframes_mutation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7710,
+      "line": 7909,
       "function": "_ensure_operator_critical_attack_animation",
       "renderer": "animated_sprite",
       "renderers": [
@@ -2892,7 +1079,7 @@
     {
       "debt": "runtime_spriteframes_mutation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7711,
+      "line": 7910,
       "function": "_ensure_operator_critical_attack_animation",
       "renderer": "animated_sprite",
       "renderers": [
@@ -2909,7 +1096,7 @@
     {
       "debt": "runtime_spriteframes_mutation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7716,
+      "line": 7915,
       "function": "_ensure_operator_critical_attack_animation",
       "renderer": "animated_sprite",
       "renderers": [
@@ -2924,262 +1111,9 @@
       "site_reason": "builds animations into the renderer's SpriteFrames at runtime, which a SHARED canonical resource cannot accept: the mutation would leak into every other renderer bound to it. Canonical equivalents exist, so this is migratable work rather than an authoring decision \u2014 but the renderer must not be rebound while it remains."
     },
     {
-      "debt": "animation_resolver",
-      "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7856,
-      "function": "_play_modular_unarmed_block",
-      "renderer": "modular_upper_body_sprite",
-      "renderers": [
-        "modular_upper_body_sprite"
-      ],
-      "argument": "resolved_base, direction, modular_upper_body_sprite)",
-      "source": "var upper_anim := AnimationResolver.resolve(resolved_base, direction, modular_upper_body_sprite)",
-      "legacy_clips": [
-        "unarmed_block_enter",
-        "unarmed_block_exit"
-      ],
-      "trace": [
-        "local assignment in _play_modular_unarmed_block"
-      ],
-      "mappings": [
-        {
-          "legacy_clip": "unarmed_block_enter",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source A",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "defense",
-            "action": "block_enter_01",
-            "layers": {
-              "lower_body": [
-                "e",
-                "w"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        },
-        {
-          "legacy_clip": "unarmed_block_exit",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source C",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "defense",
-            "action": "block_enter_01",
-            "layers": {
-              "lower_body": [
-                "e",
-                "w"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        }
-      ],
-      "classification": "PROVEN",
-      "site_reason": ""
-    },
-    {
-      "debt": "animation_resolver",
-      "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7870,
-      "function": "_play_modular_unarmed_block",
-      "renderer": "modular_lower_body_sprite",
-      "renderers": [
-        "modular_lower_body_sprite"
-      ],
-      "argument": "resolved_base, direction, modular_lower_body_sprite)",
-      "source": "var lower_anim := AnimationResolver.resolve(resolved_base, direction, modular_lower_body_sprite)",
-      "legacy_clips": [
-        "unarmed_block_enter",
-        "unarmed_block_exit"
-      ],
-      "trace": [
-        "local assignment in _play_modular_unarmed_block"
-      ],
-      "mappings": [
-        {
-          "legacy_clip": "unarmed_block_enter",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source A",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "defense",
-            "action": "block_enter_01",
-            "layers": {
-              "lower_body": [
-                "e",
-                "w"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        },
-        {
-          "legacy_clip": "unarmed_block_exit",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source C",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "defense",
-            "action": "block_enter_01",
-            "layers": {
-              "lower_body": [
-                "e",
-                "w"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        }
-      ],
-      "classification": "PROVEN",
-      "site_reason": ""
-    },
-    {
-      "debt": "animation_resolver",
-      "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7871,
-      "function": "_play_modular_unarmed_block",
-      "renderer": "modular_upper_body_sprite",
-      "renderers": [
-        "modular_upper_body_sprite"
-      ],
-      "argument": "resolved_base, direction, modular_upper_body_sprite)",
-      "source": "var upper_anim := AnimationResolver.resolve(resolved_base, direction, modular_upper_body_sprite)",
-      "legacy_clips": [
-        "unarmed_block_enter",
-        "unarmed_block_exit"
-      ],
-      "trace": [
-        "local assignment in _play_modular_unarmed_block"
-      ],
-      "mappings": [
-        {
-          "legacy_clip": "unarmed_block_enter",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source A",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "defense",
-            "action": "block_enter_01",
-            "layers": {
-              "lower_body": [
-                "e",
-                "w"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        },
-        {
-          "legacy_clip": "unarmed_block_exit",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source C",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "defense",
-            "action": "block_enter_01",
-            "layers": {
-              "lower_body": [
-                "e",
-                "w"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        }
-      ],
-      "classification": "PROVEN",
-      "site_reason": ""
-    },
-    {
-      "debt": "animation_resolver",
-      "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7903,
-      "function": "_sync_modular_block_hold_movement_presentation",
-      "renderer": "modular_upper_body_sprite",
-      "renderers": [
-        "modular_upper_body_sprite"
-      ],
-      "argument": "\"unarmed_block_hold\", upper_direction, modular_upper_body_sprite)",
-      "source": "var upper_anim := AnimationResolver.resolve(\"unarmed_block_hold\", upper_direction, modular_upper_body_sprite)",
-      "legacy_clips": [
-        "unarmed_block_hold"
-      ],
-      "trace": [],
-      "mappings": [
-        {
-          "legacy_clip": "unarmed_block_hold",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source A",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "defense",
-            "action": "block_hold_01",
-            "layers": {
-              "lower_body": [
-                "e",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "w"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        }
-      ],
-      "classification": "PROVEN",
-      "site_reason": ""
-    },
-    {
-      "debt": "animation_resolver",
-      "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7914,
-      "function": "_sync_modular_block_hold_movement_presentation",
-      "renderer": "modular_lower_body_sprite",
-      "renderers": [
-        "modular_lower_body_sprite"
-      ],
-      "argument": "\"unarmed_block_hold\", upper_direction, modular_lower_body_sprite)",
-      "source": "var lower_anim := AnimationResolver.resolve(\"unarmed_block_hold\", upper_direction, modular_lower_body_sprite)",
-      "legacy_clips": [
-        "unarmed_block_hold"
-      ],
-      "trace": [],
-      "mappings": [
-        {
-          "legacy_clip": "unarmed_block_hold",
-          "classification": "PROVEN",
-          "why": "reachability legacy_clips, proof source A",
-          "canonical": {
-            "profile": "unarmed",
-            "group": "defense",
-            "action": "block_hold_01",
-            "layers": {
-              "lower_body": [
-                "e",
-                "w"
-              ],
-              "upper_body": [
-                "e",
-                "w"
-              ]
-            },
-            "reachability_status": "LIVE"
-          }
-        }
-      ],
-      "classification": "PROVEN",
-      "site_reason": ""
-    },
-    {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7962,
+      "line": 8161,
       "function": "_play_melee_anim_from_key",
       "renderer": "melee_weapon_overlay_sprite",
       "renderers": [
@@ -3196,7 +1130,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7968,
+      "line": 8167,
       "function": "_play_melee_anim_from_key",
       "renderer": "animated_sprite",
       "renderers": [
@@ -3213,7 +1147,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7971,
+      "line": 8170,
       "function": "_play_melee_anim_from_key",
       "renderer": "animated_sprite",
       "renderers": [
@@ -3230,7 +1164,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7972,
+      "line": 8171,
       "function": "_play_melee_anim_from_key",
       "renderer": "",
       "renderers": [],
@@ -3245,7 +1179,7 @@
     {
       "debt": "attack_fallback_animation",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7973,
+      "line": 8172,
       "function": "_play_melee_anim_from_key",
       "renderer": "",
       "renderers": [],
@@ -3260,7 +1194,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 7980,
+      "line": 8179,
       "function": "_play_melee_anim_resolved",
       "renderer": "animated_sprite",
       "renderers": [
@@ -3337,7 +1271,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 8314,
+      "line": 8513,
       "function": "_play_melee_overlay_from_key",
       "renderer": "melee_weapon_overlay_sprite",
       "renderers": [
@@ -3415,7 +1349,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 8316,
+      "line": 8515,
       "function": "_play_melee_overlay_from_key",
       "renderer": "melee_fx_overlay_sprite",
       "renderers": [
@@ -3493,7 +1427,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 8432,
+      "line": 8631,
       "function": "_play_fast_attack_recovery",
       "renderer": "animated_sprite",
       "renderers": [
@@ -3562,7 +1496,7 @@
     {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 8444,
+      "line": 8645,
       "function": "_play_fast_attack_recovery",
       "renderer": "melee_fx_overlay_sprite",
       "renderers": [
@@ -3631,7 +1565,7 @@
     {
       "debt": "directional_animation_fallback",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 9315,
+      "line": 9516,
       "function": "_resolve_dodge_presentation_animation",
       "renderer": "",
       "renderers": [],
@@ -3646,7 +1580,7 @@
     {
       "debt": "directional_animation_fallback",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 9326,
+      "line": 9527,
       "function": "_resolve_dodge_presentation_animation",
       "renderer": "animated_sprite",
       "renderers": [
@@ -3661,39 +1595,9 @@
       "site_reason": "Resolved by the 2026-09-12 dodge authoring decision: exact canonical coverage now exists for all eight sectors of dodge_charge_windup_01 and dodge_chain_link_01. Blocked only on the animated_sprite rebinding."
     },
     {
-      "debt": "directional_animation_fallback",
-      "file": "custodian/game/actors/operator/operator.gd",
-      "line": 13565,
-      "function": "begin_modular_damage_reaction",
-      "renderer": "",
-      "renderers": [],
-      "argument": "vector_to_sector",
-      "source": "var requested_sector := DirectionalAnimationFallback.vector_to_sector(facing)",
-      "legacy_clips": [],
-      "trace": [],
-      "mappings": [],
-      "classification": "AUTHORING_DECISION",
-      "site_reason": "shared/locomotion/idle_hitreact_01 is authored for n and s only, and the retired nearest-sector search chose between them. Which variant a diagonal-facing hit reaction should use is an authoring decision, the same shape as the dodge decision resolved on 2026-09-12."
-    },
-    {
-      "debt": "directional_animation_fallback",
-      "file": "custodian/game/actors/operator/operator.gd",
-      "line": 13566,
-      "function": "begin_modular_damage_reaction",
-      "renderer": "",
-      "renderers": [],
-      "argument": "nearest_available_sector",
-      "source": "var resolved_sector := DirectionalAnimationFallback.nearest_available_sector(",
-      "legacy_clips": [],
-      "trace": [],
-      "mappings": [],
-      "classification": "AUTHORING_DECISION",
-      "site_reason": "shared/locomotion/idle_hitreact_01 is authored for n and s only, and the retired nearest-sector search chose between them. Which variant a diagonal-facing hit reaction should use is an authoring decision, the same shape as the dodge decision resolved on 2026-09-12."
-    },
-    {
       "debt": "animation_resolver",
       "file": "custodian/game/actors/operator/operator.gd",
-      "line": 13689,
+      "line": 13897,
       "function": "get_damage_reaction_animation",
       "renderer": "animated_sprite",
       "renderers": [

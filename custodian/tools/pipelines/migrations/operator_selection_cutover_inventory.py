@@ -113,9 +113,22 @@ RETIRED_RENDERERS = {"modular_head_sprite", "modular_cape_sprite"}
 #: Renderers already cut over to the canonical spine, with the slice that did it.
 #: A migrated renderer must show zero legacy selection sites; if one reappears the
 #: report says MIGRATED-WITH-REGRESSION rather than quietly reverting to READY.
+#: Renderers already cut over to the canonical runtime SpriteFrames. A site
+#: attributed to one of these is reported as a REGRESSION rather than pending
+#: work, so this table must track the cutovers as they land.
+#:
+#: Attribution for a site whose call names no renderer falls back to a six-line
+#: proximity window, which cannot tell a driver from a dispatch guard such as
+#: `if sprite == modular_lower_body_sprite:`. Two such guards in
+#: `_play_modular_action_animation` and `_retarget_ranged_sprite_preserving_progress`
+#: are reported against the body pair even though their legacy branch only ever
+#: runs for renderers still on compatibility frames. Verify a body-pair
+#: regression against the source before acting on it.
 MIGRATED_RENDERERS = {
     "modular_sidearm_sprite": "C2a-R1",
     "modular_upper_fx_sprite": "C2a-R2",
+    "modular_lower_body_sprite": "C2a-R3",
+    "modular_upper_body_sprite": "C2a-R3",
 }
 
 #: The canonical SpriteFrames a migrated renderer must be bound to.
