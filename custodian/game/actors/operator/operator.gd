@@ -3790,7 +3790,15 @@ func _play_field_patch_use_presentation() -> bool:
 func _sync_field_patch_action_layer(sprite: AnimatedSprite2D, base_animation: String, direction: Vector2, target_fps: float) -> bool:
 	if sprite == null or sprite.sprite_frames == null:
 		return false
-	var animation_name := AnimationResolver.resolve(base_animation, direction, sprite)
+	# The body pair is canonical as of C2a-R3. This helper is only ever called with
+	# those two renderers, so it must resolve a semantic identity: a legacy clip
+	# name resolves to nothing against the canonical SpriteFrames, which silently
+	# hides the layer instead of presenting the action.
+	var layer: StringName = &"lower_body" if sprite == modular_lower_body_sprite else &"upper_body"
+	var animation_name := _resolve_modular_body_animation(base_animation, layer, direction)
+	if animation_name.is_empty():
+		_hide_presentation_layer(sprite, false)
+		return false
 	if not _has_playable_sprite_animation(sprite.sprite_frames, animation_name):
 		_hide_presentation_layer(sprite, false)
 		return false

@@ -119,6 +119,30 @@ func _init() -> void:
 			"%s %s %s resolved '%s', expected '%s'" % [case[0], case[1], case[2], got, case[3]])
 		_check(canonical.has_animation(got), "resolved identity %s should be playable" % got)
 
+	# G2. Layer-sync helpers must USE the canonical resolver, not merely have one
+	#     available. Field patch regressed exactly here after C2a-R3: the helper
+	#     still called AnimationResolver, resolved nothing against the canonical
+	#     SpriteFrames, and hid the layer instead of presenting the action. A
+	#     resolution-only assertion would not have caught it, so this drives the
+	#     helper and requires the layer to actually present.
+	# A low-level layer helper is driven directly here, so establish the owner a
+	# transition entrypoint would have declared.
+	operator.call("_declare_modular_body_composition")
+	for patch_case in [
+		[lower, "field_patch_use_lower", Vector2.RIGHT, "unarmed/interaction/field_patch_use_01/e/lower_body"],
+		[upper, "field_patch_use_upper", Vector2.LEFT, "unarmed/interaction/field_patch_use_01/w/upper_body"],
+	]:
+		var patch_sprite: AnimatedSprite2D = patch_case[0]
+		var synced: bool = operator.call(
+			"_sync_field_patch_action_layer", patch_sprite, patch_case[1], patch_case[2], 11.2
+		)
+		_check(synced, "field patch should present %s" % patch_case[1])
+		_check(
+			String(patch_sprite.animation) == String(patch_case[3]),
+			"field patch %s played '%s', expected '%s'" % [
+				patch_case[1], patch_sprite.animation, patch_case[3]]
+		)
+
 	# H. interaction/success_01 is never the post-parry-neutral body
 	for layer in [&"lower_body", &"upper_body"]:
 		for direction in [Vector2.RIGHT, Vector2.LEFT, Vector2.UP, Vector2.DOWN]:
