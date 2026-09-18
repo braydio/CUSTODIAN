@@ -121,10 +121,10 @@ add-frame dry-run review/cancel, publish review/cancel, modal-safe activity
 logging, and exact Workbench-error survival after failed session loading,
 without canonical source mutation.
 
-## V3 production cockpit
+## V5 production cockpit
 
-`operator ui` has four shared-selection modes: `1` PLAN, `2` WORKBENCH, `3`
-PREVIEW, and `4` TIMELINE. The implementation plan JSON beside this document is
+`operator ui` has five shared-selection modes: `1` PLAN, `2` WORKBENCH, `3`
+PREVIEW, `4` TIMELINE, and `5` MOTION. The implementation plan JSON beside this document is
 the only implementation-order authority. Rank, priority, and plan state are
 human-authored. Coverage and health are computed annotations; recommendations
 may explain a next action but never mutate or reorder authored rank.

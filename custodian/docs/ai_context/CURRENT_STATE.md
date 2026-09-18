@@ -1,5 +1,18 @@
 # CURRENT STATE — CUSTODIAN
 
+## Operator Aseprite Live Bridge Foundation (2026-09-18)
+
+Packet 1 of the Operator Workbench live-Aseprite roadmap is implemented as an
+optional, loopback-only Python WebSocket server and versioned semantic protocol
+under `tools/operator/live_bridge/`. It owns presentation-only connection,
+client capability, document/editor, revision, command, and causal-event state;
+open/export paths are confined to ignored `.ai/operator_animation_workbench/`
+roots. The fake-client smoke covers handshake rejection, lifecycle, state,
+causality, reconnect, path traversal, and production immutability. No Aseprite
+extension, UI startup, navigation sync, live preview, layer control, Art Agent
+integration, gameplay behavior, or publication authority changed. See
+`design/02_features/animation/OPERATOR_ASEPRITE_LIVE_BRIDGE.md`.
+
 ## Workbench Optional Mirror Promotion (2026-09-15)
 
 Operator Workbench publication can now opt into a same-transaction horizontal
