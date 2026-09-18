@@ -115,14 +115,18 @@ def _validate_payload(message: Message) -> None:
         if not isinstance(payload["api_version"], str) or not payload["api_version"]:
             raise ProtocolError("api_version must be a non-empty string")
         validate_capabilities(payload["capabilities"])
+        if "editor_state" in payload:
+            if not isinstance(payload["editor_state"], dict):
+                raise ProtocolError("editor_state must be an object")
+            _validate_editor_payload(payload["editor_state"])
     elif message.type is MessageType.SELECT_FRAME:
         _positive_int(payload, "frame")
     elif message.type is MessageType.EDITOR_STATE:
-        if "frame" in payload and payload["frame"] is not None:
-            _positive_int(payload, "frame")
-        if "revision" in payload and payload["revision"] is not None:
-            _nonnegative_int(payload, "revision")
+        _validate_editor_payload(payload)
+    elif message.type is MessageType.EDITOR_SITE_CHANGED:
+        _validate_editor_payload(payload)
     elif message.type is MessageType.DOCUMENT_CHANGED:
+        _validate_editor_payload(payload)
         if "revision" in payload and payload["revision"] is not None:
             _nonnegative_int(payload, "revision")
     elif message.type is MessageType.COMMAND_RESULT and message.cause is None:
@@ -143,6 +147,24 @@ def _nonnegative_int(payload: Mapping[str, Any], key: str) -> None:
     value = payload.get(key)
     if isinstance(value, bool) or not isinstance(value, int) or value < 0:
         raise ProtocolError(f"{key} must be a non-negative integer")
+
+
+def _validate_editor_payload(payload: Mapping[str, Any]) -> None:
+    if "has_document" in payload and not isinstance(payload["has_document"], bool):
+        raise ProtocolError("has_document must be a boolean")
+    if "frame" in payload and payload["frame"] is not None:
+        _positive_int(payload, "frame")
+    if "revision" in payload and payload["revision"] is not None:
+        _nonnegative_int(payload, "revision")
+    for key in ("document_path", "layer", "layer_id"):
+        if key in payload and payload[key] is not None and not isinstance(payload[key], str):
+            raise ProtocolError(f"{key} must be a string")
+    if "sprite_id" in payload and payload["sprite_id"] is not None:
+        value = payload["sprite_id"]
+        if isinstance(value, bool) or not isinstance(value, (int, str)):
+            raise ProtocolError("sprite_id must be a string or integer")
+    if "modified" in payload and payload["modified"] is not None and not isinstance(payload["modified"], bool):
+        raise ProtocolError("modified must be a boolean")
 
 
 def validate_capabilities(capabilities: Any) -> frozenset[str]:

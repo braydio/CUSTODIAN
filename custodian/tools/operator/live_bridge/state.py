@@ -26,6 +26,7 @@ class BridgeState:
     active_sprite_id: str | int | None = None
     active_frame: int | None = None
     active_layer: str | int | None = None
+    active_layer_id: str | None = None
     document_modified: bool | None = None
     document_revision: int = 0
     last_received_sequence: int | None = None
@@ -57,8 +58,15 @@ class BridgeState:
     def apply(self, message: Message) -> None:
         if self.last_received_sequence is not None and message.sequence <= self.last_received_sequence:
             raise ValueError("client sequence must increase within a session")
+        supplied_revision = message.payload.get("revision")
+        if (
+            message.type in (MessageType.EDITOR_STATE, MessageType.EDITOR_SITE_CHANGED)
+            and supplied_revision is not None
+            and supplied_revision < self.document_revision
+        ):
+            raise ValueError("document revision must not move backwards")
         self.last_received_sequence = message.sequence
-        if message.type is MessageType.EDITOR_STATE:
+        if message.type in (MessageType.EDITOR_STATE, MessageType.EDITOR_SITE_CHANGED):
             self._apply_editor_payload(message.payload)
         elif message.type is MessageType.DOCUMENT_CHANGED:
             supplied = message.payload.get("revision")
@@ -67,6 +75,7 @@ class BridgeState:
             self.document_revision = supplied if supplied is not None else self.document_revision + 1
             if "modified" in message.payload:
                 self.document_modified = bool(message.payload["modified"])
+            self._apply_document_payload(message.payload)
         if message.type in (MessageType.EDITOR_SITE_CHANGED, MessageType.DOCUMENT_CHANGED, MessageType.COMMAND_RESULT):
             linked = message.cause in self.known_commands if message.cause is not None else False
             self.last_event_user_originated = not linked
@@ -75,14 +84,31 @@ class BridgeState:
                 self.pending_commands.discard(message.cause)
 
     def _apply_editor_payload(self, payload: dict[str, Any]) -> None:
+        if payload.get("has_document") is False:
+            self.active_document_path = None
+            self.active_sprite_id = None
+            self.active_frame = None
+            self.active_layer = None
+            self.active_layer_id = None
+            self.document_modified = None
+            return
         mappings = {
             "document_path": "active_document_path",
             "sprite_id": "active_sprite_id",
             "frame": "active_frame",
             "layer": "active_layer",
+            "layer_id": "active_layer_id",
             "modified": "document_modified",
             "revision": "document_revision",
         }
         for source, target in mappings.items():
+            if source in payload:
+                setattr(self, target, payload[source])
+
+    def _apply_document_payload(self, payload: dict[str, Any]) -> None:
+        for source, target in {
+            "document_path": "active_document_path",
+            "sprite_id": "active_sprite_id",
+        }.items():
             if source in payload:
                 setattr(self, target, payload[source])

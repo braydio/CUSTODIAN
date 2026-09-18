@@ -5,7 +5,10 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import json
+import os
 from pathlib import Path
+import shutil
+import subprocess
 import sys
 import tempfile
 from uuid import uuid4
@@ -17,7 +20,7 @@ from live_bridge.protocol import (  # noqa: E402
     MESSAGE_SCHEMA, BridgePathPolicy, Message, MessageType, ProtocolError,
     REQUIRED_CAPABILITIES, parse_message,
 )
-from live_bridge.server import LiveBridgeServer  # noqa: E402
+from live_bridge.server import DEFAULT_HOST, DEFAULT_PORT, LiveBridgeServer  # noqa: E402
 from live_bridge.state import ConnectionState  # noqa: E402
 
 
@@ -110,12 +113,23 @@ async def exercise_server(repo_root: Path) -> None:
         await client.send(envelope(first_session, 6, "command.result", {"ok": True}, cause=request))
         await wait_for(lambda: server.state.last_received_sequence == 6, "causal result")
         assert server.state.last_event_user_originated is False
-        await client.send(envelope(first_session, 7, "editor.site_changed", {"frame": 6}))
+        await client.send(envelope(first_session, 7, "editor.site_changed", {
+            "has_document": True, "frame": 6, "layer": "weapon",
+            "layer_id": "12345678-1234-1234-1234-123456789abc",
+        }))
         await wait_for(lambda: server.state.last_received_sequence == 7, "user event")
         assert server.state.last_event_user_originated is True
+        assert server.state.active_frame == 6 and server.state.active_layer == "weapon"
+        assert server.state.active_layer_id == "12345678-1234-1234-1234-123456789abc"
+
+        await client.send(envelope(first_session, 8, "editor.site_changed", {
+            "has_document": False, "revision": 12,
+        }))
+        await wait_for(lambda: server.state.last_received_sequence == 8, "closed document")
+        assert server.state.active_document_path is None and server.state.active_frame is None
 
     await wait_for(lambda: server.state.connection is ConnectionState.DISCONNECTED, "disconnect")
-    assert server.state.active_frame == 4 and server.state.document_revision == 12
+    assert server.state.active_frame is None and server.state.document_revision == 12
 
     second_session = uuid4().hex
     async with connect(uri) as client:
@@ -152,12 +166,83 @@ def path_policy_smoke(repo_root: Path) -> None:
             raise AssertionError(f"unsafe path accepted: {path}")
 
 
+def stable_endpoint_smoke(repo_root: Path) -> None:
+    server = LiveBridgeServer(repo_root)
+    assert server.HOST == DEFAULT_HOST == "127.0.0.1"
+    assert server.port == DEFAULT_PORT == 32147
+    assert LiveBridgeServer(repo_root, port=0).port == 0
+
+
+def aseprite_extension_smoke() -> None:
+    extension = Path(__file__).resolve().parents[1] / "aseprite/operator_live_bridge"
+    manifest = json.loads((extension / "package.json").read_text())
+    assert manifest["name"] == "custodian-operator-live-bridge"
+    assert manifest["contributes"]["scripts"] == [{"path": "./main.lua"}]
+
+    protocol_source = (extension / "protocol.lua").read_text()
+    main_source = (extension / "main.lua").read_text()
+    for capability in REQUIRED_CAPABILITIES:
+        assert f'"{capability}"' in protocol_source
+    for command in ("open_workbench", "select_frame", "export_preview", "save"):
+        assert f'"command.{command}"' in protocol_source
+    assert 'error = "unsupported in Packet 2"' in protocol_source
+    assert 'Protocol.DEFAULT_URL = "ws://127.0.0.1:32147"' in protocol_source
+    assert 'app.events:on("sitechange"' in main_source
+    assert 'sprite.events:on("change"' in main_source
+    assert 'sprite.events:on("filenamechange"' in main_source
+    assert "minreconnectwait = 1.0" in main_source and "maxreconnectwait = 5.0" in main_source
+    assert "app.frame =" not in main_source and "app.layer =" not in main_source
+    for forbidden in ("os.execute", "io.popen", "app.open", "app.command.Save"):
+        assert forbidden not in main_source
+
+    aseprite = shutil.which("aseprite")
+    if aseprite:
+        with tempfile.TemporaryDirectory() as temporary:
+            script = Path(temporary) / "protocol_contract.lua"
+            protocol_path = json.dumps(str(extension / "protocol.lua"))
+            main_path = json.dumps(str(extension / "main.lua"))
+            script.write_text(f'''local protocol = dofile({protocol_path})
+assert(loadfile({main_path}))
+local client = protocol.new_client("client-session")
+local hello = protocol.encode_message(client, "client.hello", {{ ok=true }}, nil)
+assert(hello:find('"cause":null', 1, true))
+assert(client.sequence == 1)
+local serverHello, err = protocol.decode_server_message(client,
+  '{{"schema":"custodian.operator_live_bridge.message.v1","session_id":"bridge-session","sequence":1,"type":"server.hello","cause":1,"payload":{{"accepted":true}}}}')
+assert(serverHello ~= nil and err == nil)
+local command = protocol.decode_server_message(client,
+  '{{"schema":"custodian.operator_live_bridge.message.v1","session_id":"bridge-session","sequence":2,"type":"command.select_frame","cause":null,"payload":{{"frame":5}}}}')
+assert(command ~= nil)
+local refusal = protocol.packet2_response(client, command)
+assert(refusal:find('unsupported in Packet 2', 1, true))
+assert(client.sequence == 2)
+''')
+            result = subprocess.run([aseprite, "-b", "--script", str(script)],
+                                    capture_output=True, text=True, timeout=15)
+            assert result.returncode == 0, result.stdout + result.stderr
+
+
+def installer_smoke() -> None:
+    installer = Path(__file__).resolve().parents[1] / "aseprite/install_operator_live_bridge.sh"
+    with tempfile.TemporaryDirectory() as temporary:
+        env = os.environ.copy()
+        env["XDG_CONFIG_HOME"] = temporary
+        subprocess.run([str(installer)], check=True, capture_output=True, text=True, env=env)
+        target = Path(temporary) / "aseprite/extensions/custodian-operator-live-bridge"
+        assert target.is_symlink()
+        assert target.resolve() == installer.parent.joinpath("operator_live_bridge").resolve()
+        subprocess.run([str(installer)], check=True, capture_output=True, text=True, env=env)
+
+
 def main() -> None:
     with tempfile.TemporaryDirectory() as temporary:
         repo_root = Path(temporary)
         path_policy_smoke(repo_root)
+        stable_endpoint_smoke(repo_root)
         asyncio.run(exercise_server(repo_root))
-    print("PASS operator_live_bridge_smoke: loopback lifecycle, protocol, state, causality, reconnect, path confinement, production immutability")
+    aseprite_extension_smoke()
+    installer_smoke()
+    print("PASS operator_live_bridge_smoke: stable/ephemeral endpoint, loopback lifecycle, protocol/state/causality, Aseprite client contract, reconnect, install symlink, path confinement, production immutability")
 
 
 if __name__ == "__main__":

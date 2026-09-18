@@ -1,0 +1,21 @@
+{
+  "name": "custodian-operator-live-bridge",
+  "displayName": "CUSTODIAN Operator Live Bridge",
+  "description": "Reports Aseprite editor and document state to the local Operator Workbench bridge.",
+  "version": "0.2.0",
+  "author": {
+    "name": "CUSTODIAN"
+  },
+  "publisher": "custodian-local",
+  "license": "UNLICENSED",
+  "categories": [
+    "Scripts"
+  ],
+  "contributes": {
+    "scripts": [
+      {
+        "path": "./main.lua"
+      }
+    ]
+  }
+}

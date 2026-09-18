@@ -8,11 +8,14 @@ from typing import Any
 from .protocol import BridgePathPolicy, Message, MessageType, ProtocolError, parse_message
 from .state import BridgeState
 
+DEFAULT_HOST = "127.0.0.1"
+DEFAULT_PORT = 32147
+
 
 class LiveBridgeServer:
-    HOST = "127.0.0.1"
+    HOST = DEFAULT_HOST
 
-    def __init__(self, repo_root: Path, port: int = 0):
+    def __init__(self, repo_root: Path, port: int = DEFAULT_PORT):
         self.repo_root = Path(repo_root).resolve()
         self.port = port
         self.state = BridgeState()

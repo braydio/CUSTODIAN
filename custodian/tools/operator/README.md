@@ -29,6 +29,17 @@ Preview and Timeline use elapsed-time playback at the displayed FPS. Motion
 keeps the Operator screen-anchored in TREADMILL mode while its ground scrolls;
 WORLD mode retains the authored camera-follow lead.
 
+The optional reporting-only Aseprite Live Bridge extension can be linked into
+the user's extension directory once with:
+
+```sh
+custodian/tools/aseprite/install_operator_live_bridge.sh
+```
+
+Restart Aseprite afterward. It reconnects quietly to
+`ws://127.0.0.1:32147` and reports editor/document state only; Workbench-driven
+navigation and preview export are not implemented yet.
+
 ```sh
 operator anim list melee_1h --group posture
 operator anim status melee_1h idle_relaxed_01 e --weapon vigil_pattern_dagger
