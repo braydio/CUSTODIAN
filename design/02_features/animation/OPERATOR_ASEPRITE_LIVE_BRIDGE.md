@@ -2,13 +2,14 @@
 
 ## Status
 
-Foundation and persistent Aseprite reporting client implemented; live
-navigation deferred.
+Foundation, persistent Aseprite reporting client, and Workbench bridge
+lifecycle implemented; bidirectional frame navigation deferred.
 
 Packet 1 established the versioned protocol, loopback WebSocket server, tooling
 state model, capability gate, path confinement, and fake-client validation.
-Packet 2 adds the persistent reporting-only Aseprite extension. The Workbench UI
-still does not start the server and no command can mutate Aseprite yet.
+Packet 2 adds the persistent reporting-only Aseprite extension. Packet 3A makes
+the Workbench UI own server startup, status projection, and shutdown. No
+command can mutate Aseprite yet.
 
 ## Authority
 
@@ -81,7 +82,8 @@ confined ignored review location.
 
 1. **Live Bridge Core (implemented):** Python protocol/server/state and fake-client validation.
 2. **Aseprite Extension (implemented):** persistent Lua client and document/editor reporting.
-3. **Live Navigation (deferred):** document focus and causal frame sync.
+3A. **Workbench Bridge Lifecycle (implemented):** Textual-owned startup, status, transition logging, failure projection, and shutdown.
+3B. **Bidirectional Frame Navigation (deferred):** document focus and causal frame sync.
 4. **Live Unsaved Preview (deferred):** debounced in-memory render export.
 5. **Layer Synchronization (deferred):** focus and visibility proof/control.
 6. **Preview Examiner (deferred):** live/saved/canonical/runtime comparison.
@@ -146,10 +148,33 @@ server, install the symlink, restart Aseprite, and observe frame/pixel/save and
 reconnect state without publishing; headless one-shot scripting is not claimed
 as proof of plugin lifecycle behavior.
 
+## Workbench lifecycle and connection UX
+
+`custodian/tools/operator/ui/live_bridge_controller.py` is the focused Textual
+lifecycle adapter. `OperatorWorkbenchApp` owns exactly one controller, starts it
+as a non-blocking Textual worker after mounting the main screen, and projects an
+immutable snapshot every 0.5 seconds. Widgets never receive the WebSocket or a
+command surface, and live state is not copied into `WorkbenchUIState`.
+
+The UI lifecycle states are `STOPPED`, `STARTING`, `WAITING`, `CONNECTED`, and
+`UNAVAILABLE`. The compact status bar renders them as `LIVE ○ STOPPED`,
+`LIVE … STARTING`, `LIVE ○ WAITING`, `LIVE ● CONNECTED`, or
+`LIVE × UNAVAILABLE`. Only meaningful transitions enter ActivityLog: listening,
+client connected/disconnected, and one concise startup warning.
+
+Production UI startup uses the stable `127.0.0.1:32147` endpoint. Missing
+optional WebSocket support and address-in-use errors become `UNAVAILABLE`; the
+Workbench browser, editing, review, and publication surfaces continue normally.
+The controller never chooses another port or terminates the conflicting owner.
+
+Textual's awaited async unmount hook stops the server and bounds WebSocket close
+waiting to one second. It does not close Aseprite, save a sprite, or mutate any
+document. Aseprite remains open and its Packet 2 client quietly retries until a
+future Workbench owns the endpoint.
+
 ## Next Agent Slice
 
-Packet 3 may add causal document/frame navigation between the Workbench and the
-already-reporting client. It must not add preview rendering, layer control, Art
-Agent routing, or canonical publication behavior. The Workbench will need to
-own server startup at the stable endpoint in that slice or an explicitly
-separate lifecycle slice before motor control can be user-facing.
+Packet 3B may add causal document/frame navigation between the Workbench and the
+already-reporting client. It must preserve the Packet 3A lifecycle/status
+adapter and must not add preview rendering, layer control, Art Agent routing,
+or canonical publication behavior.

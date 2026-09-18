@@ -1,6 +1,6 @@
 # CURRENT STATE — CUSTODIAN
 
-## Operator Aseprite Live Bridge Packet 2 (2026-09-18)
+## Operator Aseprite Live Bridge Packet 3A (2026-09-18)
 
 The optional, loopback-only Python WebSocket server now defaults to stable
 `127.0.0.1:32147` while retaining explicit ephemeral test ports. The persistent
@@ -8,10 +8,14 @@ repo-owned Aseprite extension reports real version/API capability, active
 document/frame/layer UUID and name, dirty state, human save/filename changes,
 and client-session-monotonic content revisions through native events plus a
 one-second reconciliation timer. It quietly reconnects and refuses every
-Packet 3+ command without editor mutation. The focused smoke covers both the
-Python fake client and Aseprite Lua protocol runtime plus isolated symlink
-installation. No UI startup, navigation control, live preview, layer control,
-Art Agent integration, gameplay behavior, or publication authority changed. See
+Packet 3B+ command without editor mutation. The Textual Workbench now owns one
+focused bridge controller: non-blocking stable-endpoint startup, compact
+STARTING/WAITING/CONNECTED/UNAVAILABLE status, transition-only activity logging,
+non-fatal dependency/address failures, and awaited clean shutdown. The focused
+smoke covers the Python fake client, Aseprite Lua protocol runtime, isolated
+symlink installation, controller lifecycle, and Textual status projection. No
+navigation control, live preview, layer control, Art Agent integration,
+gameplay behavior, or publication authority changed. See
 `design/02_features/animation/OPERATOR_ASEPRITE_LIVE_BRIDGE.md`.
 
 ## Workbench Optional Mirror Promotion (2026-09-15)

@@ -40,7 +40,10 @@ class LiveBridgeServer:
                 "Live Bridge requires the optional Operator UI dependencies; "
                 "install custodian/tools/operator/ui/requirements.txt"
             ) from exc
-        self._server = await serve(self._handle_client, self.HOST, self.port)
+        self._server = await serve(
+            self._handle_client, self.HOST, self.port,
+            close_timeout=1.0,
+        )
 
     async def stop(self) -> None:
         client, self._client = self._client, None

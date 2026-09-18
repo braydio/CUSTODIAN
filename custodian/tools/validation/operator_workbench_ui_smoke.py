@@ -237,9 +237,13 @@ async def textual_smoke() -> None:
     from textual.app import App, ComposeResult
     from ui.app import OperatorWorkbenchApp
     from ui.dialogs import ContextMismatchDialog, FrameAddDialog, PublishDialog
-    from ui.widgets import ActivityLog, AnimationDetail, AnimationTree, ContextKeyBar, MotionCanvas, MotionControls, PreviewCanvas
+    from ui.live_bridge_controller import LiveBridgeController, LiveBridgeUIStatus
+    from ui.widgets import (ActivityLog, AnimationDetail, AnimationTree, ContextKeyBar,
+                            MotionCanvas, MotionControls, PreviewCanvas, WorkbenchStatusBar)
     from textual.widgets import Footer, Static
     from textual_image.widget import AutoImage
+    from websockets.asyncio.client import connect
+    from live_bridge.server import LiveBridgeServer
 
     class RasterPilot(App):
         def compose(self) -> ComposeResult:
@@ -269,9 +273,49 @@ async def textual_smoke() -> None:
         assert isinstance(square_input, Image.Image) and square_input.size == (96, 96)
         assert square_input.mode == "RGBA" and square_input.tobytes() == square.tobytes()
 
-    service = PilotService(); app = OperatorWorkbenchApp(service=service, startup=service.selection)
+    service = PilotService()
+    app = OperatorWorkbenchApp(
+        service=service, startup=service.selection,
+        live_bridge=LiveBridgeController(service.repo_root, port=0),
+    )
     async with app.run_test(size=(80, 35)) as pilot:
         await pilot.pause(0.5)
+        assert app.live_bridge.snapshot().status is LiveBridgeUIStatus.WAITING
+        status_bar = app.main_screen.query_one("#workbench-status", WorkbenchStatusBar)
+        assert "LIVE ○ WAITING" in str(status_bar.render())
+        for live, label in (
+            ("starting", "LIVE … STARTING"), ("stopped", "LIVE ○ STOPPED"),
+            ("unavailable", "LIVE × UNAVAILABLE"),
+        ):
+            status_bar.set_status("main", False, "/bin/true", live)
+            assert label in str(status_bar.render())
+        app._update_status_bar()
+        assert "LIVE ○ WAITING" in str(status_bar.render())
+        assert sum(event.message.startswith("Live Bridge listening on ") for event in app.state.activity) == 1
+        uri = f"ws://127.0.0.1:{app.live_bridge.server.listening_port}"
+        client_session = "ui-pilot-client"
+        async with connect(uri) as live_client:
+            await live_client.send(json.dumps({
+                "schema": "custodian.operator_live_bridge.message.v1",
+                "session_id": client_session, "sequence": 1,
+                "type": "client.hello", "cause": None,
+                "payload": {
+                    "aseprite_version": "ui-pilot", "api_version": "test-api",
+                    "capabilities": [
+                        "websocket", "app_events_sitechange", "sprite_change_events",
+                        "sprite_is_modified", "timer", "frame_selection", "image_render_export",
+                    ],
+                },
+            }))
+            await live_client.recv()
+            await pilot.pause(0.6)
+            assert app.live_bridge.snapshot().status is LiveBridgeUIStatus.CONNECTED
+            assert "LIVE ● CONNECTED" in str(status_bar.render())
+            assert sum(event.message == "Aseprite Live Bridge connected" for event in app.state.activity) == 1
+        await pilot.pause(0.6)
+        assert app.live_bridge.snapshot().status is LiveBridgeUIStatus.WAITING
+        assert "LIVE ○ WAITING" in str(status_bar.render())
+        assert sum(event.message == "Aseprite Live Bridge disconnected" for event in app.state.activity) == 1
         tree = app.screen.query_one("#animation-tree", AnimationTree)
         branches = [node.data for node in tree._walk_nodes() if isinstance(node.data, tuple)]
         assert branches.count(("unarmed",)) == 1
@@ -428,8 +472,13 @@ async def textual_smoke() -> None:
         assert "Dependency audit" in str(app.screen.query_one("#publish-preflight", Static).render())
         await pilot.click("#cancel")
 
+    assert app.live_bridge.snapshot().status is LiveBridgeUIStatus.STOPPED
+
     cancel_service = ContextPilotService()
-    failing_app = OperatorWorkbenchApp(service=cancel_service, startup=cancel_service.selection)
+    failing_app = OperatorWorkbenchApp(
+        service=cancel_service, startup=cancel_service.selection,
+        live_bridge=LiveBridgeController(cancel_service.repo_root, port=0),
+    )
     async with failing_app.run_test(size=(80, 35)) as pilot:
         await pilot.pause(0.5)
         assert isinstance(failing_app.screen, ContextMismatchDialog)
@@ -442,7 +491,10 @@ async def textual_smoke() -> None:
         await pilot.click("#cancel"); await pilot.pause()
         assert cancel_service.mutations == 0 and cancel_service.active_weapon == "vigil_pattern_dagger"
 
-    open_service = ContextPilotService(); open_app = OperatorWorkbenchApp(service=open_service, startup=open_service.selection)
+    open_service = ContextPilotService(); open_app = OperatorWorkbenchApp(
+        service=open_service, startup=open_service.selection,
+        live_bridge=LiveBridgeController(open_service.repo_root, port=0),
+    )
     async with open_app.run_test(size=(80, 35)) as pilot:
         await pilot.pause(0.5); assert isinstance(open_app.screen, ContextMismatchDialog)
         await pilot.click("#open-existing"); await pilot.pause(0.5)
@@ -450,7 +502,10 @@ async def textual_smoke() -> None:
         assert open_app.state.linked_profile == "melee_1h_dagger"
         assert open_service.mutations == 0 and open_app.screen is open_app.main_screen
 
-    refresh_service = ContextPilotService(); refresh_app = OperatorWorkbenchApp(service=refresh_service, startup=refresh_service.selection)
+    refresh_service = ContextPilotService(); refresh_app = OperatorWorkbenchApp(
+        service=refresh_service, startup=refresh_service.selection,
+        live_bridge=LiveBridgeController(refresh_service.repo_root, port=0),
+    )
     async with refresh_app.run_test(size=(80, 35)) as pilot:
         await pilot.pause(0.5); assert isinstance(refresh_app.screen, ContextMismatchDialog)
         await pilot.click("#recontextualize"); await pilot.pause(0.5)
@@ -458,6 +513,27 @@ async def textual_smoke() -> None:
         selection, discard = refresh_service.refresh_calls[0]
         assert selection.weapon_id == "" and selection.linked_profile == "" and discard is True
         assert refresh_app.screen is refresh_app.main_screen
+
+    class UnavailableServer(LiveBridgeServer):
+        async def start(self) -> None:
+            raise RuntimeError("fixture endpoint unavailable")
+
+    unavailable_service = PilotService()
+    unavailable_controller = LiveBridgeController(
+        unavailable_service.repo_root, server_factory=UnavailableServer,
+    )
+    unavailable_app = OperatorWorkbenchApp(
+        service=unavailable_service, startup=unavailable_service.selection,
+        live_bridge=unavailable_controller,
+    )
+    async with unavailable_app.run_test(size=(80, 35)) as pilot:
+        await pilot.pause(0.6)
+        assert unavailable_controller.snapshot().status is LiveBridgeUIStatus.UNAVAILABLE
+        unavailable_status = unavailable_app.main_screen.query_one("#workbench-status", WorkbenchStatusBar)
+        assert "LIVE × UNAVAILABLE" in str(unavailable_status.render())
+        warnings = [event for event in unavailable_app.state.activity if event.message.startswith("Live Bridge unavailable:")]
+        assert len(warnings) == 1
+        assert unavailable_app.main_screen.query_one("#animation-tree", AnimationTree).root.children
 
 
 def real_repo_read_only() -> None:

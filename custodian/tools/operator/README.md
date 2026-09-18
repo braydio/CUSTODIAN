@@ -37,8 +37,10 @@ custodian/tools/aseprite/install_operator_live_bridge.sh
 ```
 
 Restart Aseprite afterward. It reconnects quietly to
-`ws://127.0.0.1:32147` and reports editor/document state only; Workbench-driven
-navigation and preview export are not implemented yet.
+`ws://127.0.0.1:32147`. `operator ui` owns that server lifecycle and displays
+LIVE STARTING, WAITING, CONNECTED, or UNAVAILABLE without disabling ordinary
+Workbench features. The extension reports editor/document state only;
+Workbench-driven navigation and preview export are not implemented yet.
 
 ```sh
 operator anim list melee_1h --group posture

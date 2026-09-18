@@ -17,6 +17,7 @@ from .dialogs import (
     PublishDialog, RefreshDialog, ValidationDialog, WeaponContextDialog,
 )
 from .features import AnimationFeature
+from .live_bridge_controller import LiveBridgeController, LiveBridgeUIStatus
 from .screens import MainScreen
 from .service import WorkbenchService
 from .state import AnimationSelection, ExistingContextView, WorkbenchUIState
@@ -106,8 +107,17 @@ class OperatorWorkbenchApp(App):
         Binding("ctrl+r", "motion_reset", "Reset motion", show=False), Binding("enter", "motion_runtime", "Runtime check", show=False),
     ]
 
-    def __init__(self, service: WorkbenchService | None = None, startup: AnimationSelection | None = None) -> None:
+    def __init__(
+        self, service: WorkbenchService | None = None,
+        startup: AnimationSelection | None = None,
+        live_bridge: LiveBridgeController | None = None,
+    ) -> None:
         super().__init__(); self.service = service or WorkbenchService(); self.state = WorkbenchUIState(selection=startup)
+        self.live_bridge = live_bridge or LiveBridgeController(self.service.repo_root)
+        self._last_live_snapshot = self.live_bridge.snapshot()
+        self._status_branch = "unknown"
+        self._status_dirty = False
+        self._status_aseprite = "unavailable"
         self.features = {"animations": AnimationFeature(self.service)}; self.session_view = None
         self.main_screen: MainScreen | None = None
         self.preview_view = None
@@ -123,8 +133,43 @@ class OperatorWorkbenchApp(App):
         self.main_screen = MainScreen()
         self.push_screen(self.main_screen)
         self.call_after_refresh(self.action_full_refresh)
+        self.run_worker(
+            self._start_live_bridge(), group="live-bridge", exclusive=True,
+            exit_on_error=False,
+        )
+        self.set_interval(0.5, self._refresh_live_bridge_status)
         self.set_interval(1.0, self._watch_selected)
         self.set_interval(1.0 / 30.0, self._preview_tick)
+
+    async def on_unmount(self) -> None:
+        await self.live_bridge.stop()
+
+    async def _start_live_bridge(self) -> None:
+        await self.live_bridge.start()
+        self._refresh_live_bridge_status()
+
+    def _update_status_bar(self) -> None:
+        self._main_widget("#workbench-status", WorkbenchStatusBar).set_status(
+            self._status_branch, self._status_dirty, self._status_aseprite,
+            self.live_bridge.snapshot().status.value,
+        )
+
+    def _refresh_live_bridge_status(self) -> None:
+        snapshot = self.live_bridge.snapshot()
+        previous = self._last_live_snapshot
+        if snapshot == previous:
+            return
+        self._last_live_snapshot = snapshot
+        self._update_status_bar()
+        if snapshot.status is LiveBridgeUIStatus.WAITING:
+            if previous.status is LiveBridgeUIStatus.CONNECTED:
+                self._activity("Aseprite Live Bridge disconnected", "WARN")
+            elif previous.status in (LiveBridgeUIStatus.STARTING, LiveBridgeUIStatus.STOPPED):
+                self._activity(f"Live Bridge listening on {snapshot.host}:{snapshot.port}", "OK")
+        elif snapshot.status is LiveBridgeUIStatus.CONNECTED:
+            self._activity("Aseprite Live Bridge connected", "OK")
+        elif snapshot.status is LiveBridgeUIStatus.UNAVAILABLE:
+            self._activity(f"Live Bridge unavailable: {snapshot.error or 'unknown error'}", "WARN")
 
     def _main_widget(self, selector, kind):
         if self.main_screen is None:
@@ -172,9 +217,9 @@ class OperatorWorkbenchApp(App):
                 self.state.selection = self.state.contextualize(filtered[0].selection)
                 tree.select_identity(self.state.selection)
                 await self._load_session(self.state.selection)
-            branch, dirty = await self._thread(self._repo_status)
-            aseprite = str(self.service.workbench.resolve_aseprite(self.service.aseprite) or "unavailable")
-            self._main_widget("#workbench-status", WorkbenchStatusBar).set_status(branch, dirty, aseprite)
+            self._status_branch, self._status_dirty = await self._thread(self._repo_status)
+            self._status_aseprite = str(self.service.workbench.resolve_aseprite(self.service.aseprite) or "unavailable")
+            self._update_status_bar()
             if hasattr(self.service, "animation_plan"):
                 self._main_widget("#plan-table", PlanTable).set_items(await self._thread(self.service.animation_plan))
             action_count = len({(row.selection.profile, row.selection.group, row.selection.action) for row in filtered})

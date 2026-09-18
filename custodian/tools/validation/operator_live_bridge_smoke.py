@@ -8,6 +8,7 @@ import json
 import os
 from pathlib import Path
 import shutil
+import socket
 import subprocess
 import sys
 import tempfile
@@ -22,6 +23,9 @@ from live_bridge.protocol import (  # noqa: E402
 )
 from live_bridge.server import DEFAULT_HOST, DEFAULT_PORT, LiveBridgeServer  # noqa: E402
 from live_bridge.state import ConnectionState  # noqa: E402
+from ui.live_bridge_controller import (  # noqa: E402
+    LiveBridgeController, LiveBridgeUIStatus,
+)
 
 
 def envelope(session: str, sequence: int, kind: str, payload: dict, cause: int | None = None) -> str:
@@ -66,9 +70,15 @@ async def exercise_server(repo_root: Path) -> None:
     from websockets.asyncio.client import connect
 
     canonical = repo_root / "custodian/content/sprites/operator/source/animations/canonical.png"
+    runtime = repo_root / "custodian/content/sprites/operator/runtime/animations/runtime.png"
     canonical.parent.mkdir(parents=True)
+    runtime.parent.mkdir(parents=True)
     canonical.write_bytes(b"canonical-operator-sentinel")
-    before = hashlib.sha256(canonical.read_bytes()).hexdigest()
+    runtime.write_bytes(b"runtime-operator-sentinel")
+    before = {
+        path: hashlib.sha256(path.read_bytes()).hexdigest()
+        for path in (canonical, runtime)
+    }
 
     server = LiveBridgeServer(repo_root, port=0)
     await server.start()
@@ -139,7 +149,75 @@ async def exercise_server(repo_root: Path) -> None:
         assert server.state.client_session_id == second_session
     await server.stop()
     assert server.listening_port is None and server.state.connection is ConnectionState.DISCONNECTED
-    assert hashlib.sha256(canonical.read_bytes()).hexdigest() == before
+    assert all(hashlib.sha256(path.read_bytes()).hexdigest() == digest for path, digest in before.items())
+
+
+async def controller_lifecycle_smoke(repo_root: Path) -> None:
+    from websockets.asyncio.client import connect
+
+    controller = LiveBridgeController(repo_root, port=0)
+    assert controller.snapshot().status is LiveBridgeUIStatus.STOPPED
+    await controller.start()
+    waiting = controller.snapshot()
+    assert waiting.status is LiveBridgeUIStatus.WAITING
+    assert waiting.host == "127.0.0.1" and controller.server.listening_port
+    uri = f"ws://127.0.0.1:{controller.server.listening_port}"
+
+    async with connect(uri) as client:
+        await client.send(hello("controller-first"))
+        await client.recv()
+        await wait_for(
+            lambda: controller.snapshot().status is LiveBridgeUIStatus.CONNECTED,
+            "controller connected",
+        )
+        try:
+            await asyncio.wait_for(client.recv(), timeout=0.05)
+        except asyncio.TimeoutError:
+            pass
+        else:
+            raise AssertionError("Packet 3A sent an unsolicited semantic command")
+    await wait_for(
+        lambda: controller.snapshot().status is LiveBridgeUIStatus.WAITING,
+        "controller disconnected",
+    )
+
+    async with connect(uri) as client:
+        await client.send(hello("controller-second"))
+        await client.recv()
+        await wait_for(
+            lambda: controller.snapshot().status is LiveBridgeUIStatus.CONNECTED,
+            "controller reconnected",
+        )
+    await controller.stop()
+    assert controller.snapshot().status is LiveBridgeUIStatus.STOPPED
+    assert controller.server.listening_port is None
+
+
+async def controller_failure_smoke(repo_root: Path) -> None:
+    class MissingDependencyServer(LiveBridgeServer):
+        async def start(self) -> None:
+            raise RuntimeError("optional websockets dependency unavailable")
+
+    missing = LiveBridgeController(repo_root, server_factory=MissingDependencyServer)
+    await missing.start()
+    assert missing.snapshot().status is LiveBridgeUIStatus.UNAVAILABLE
+    assert "dependency unavailable" in (missing.snapshot().error or "")
+    await missing.stop()
+
+    occupied = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    occupied.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    occupied.bind(("127.0.0.1", 0))
+    occupied.listen(1)
+    port = occupied.getsockname()[1]
+    try:
+        conflict = LiveBridgeController(repo_root, port=port)
+        await conflict.start()
+        snapshot = conflict.snapshot()
+        assert snapshot.status is LiveBridgeUIStatus.UNAVAILABLE
+        assert snapshot.port == port and conflict.server.listening_port is None
+        await conflict.stop()
+    finally:
+        occupied.close()
 
 
 def path_policy_smoke(repo_root: Path) -> None:
@@ -240,9 +318,11 @@ def main() -> None:
         path_policy_smoke(repo_root)
         stable_endpoint_smoke(repo_root)
         asyncio.run(exercise_server(repo_root))
+        asyncio.run(controller_lifecycle_smoke(repo_root))
+        asyncio.run(controller_failure_smoke(repo_root))
     aseprite_extension_smoke()
     installer_smoke()
-    print("PASS operator_live_bridge_smoke: stable/ephemeral endpoint, loopback lifecycle, protocol/state/causality, Aseprite client contract, reconnect, install symlink, path confinement, production immutability")
+    print("PASS operator_live_bridge_smoke: stable/ephemeral endpoint, controller STOPPED/WAITING/CONNECTED/UNAVAILABLE lifecycle, conflict/dependency failure, no commands, protocol/state/causality, Aseprite client contract, reconnect, install symlink, path confinement, production immutability")
 
 
 if __name__ == "__main__":
