@@ -377,6 +377,17 @@ def validate_sources(
         for layer, (path, key) in sorted(layers.items()):
             if layer == clock_layer:
                 continue
+            # Timing equality is required only of siblings that can actually share
+            # one presentation clock, which means sharing a frame count. The
+            # builder already works this way: it applies the identity's clock only
+            # when that clock's duration array matches the layer's frame count, and
+            # otherwise reads the layer's own sidecar. Requiring equality across
+            # different-length siblings made a legitimate shape unpublishable --
+            # `unarmed/posture/stance_01` is a 1-frame modular pose beside a 12- and
+            # 6-frame full-body sequence, which are not one timeline and cannot be
+            # frame-synchronized no matter what the sidecars say.
+            if key.frames != clock_key.frames:
+                continue
             sibling_timing = read_timing(path, key)
             if sibling_timing is not None and sibling_timing != clock_timing:
                 errors.append(

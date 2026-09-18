@@ -24822,7 +24822,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/posture/stance_01/e/full_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -24861,7 +24861,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"unarmed/posture/stance_01/w/full_body",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,

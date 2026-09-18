@@ -335,16 +335,10 @@ def materialize_full_body(apply: bool) -> int:
         # cannot take effect, so say so rather than writing a file that does nothing.
         target_layer = layer
         sibling = canonical.get(f"{profile}/{group}/{action}/{direction}/lower_body")
-        if sibling is not None and sibling["frames"] != record["frames"]:
-            # The sync requires every sibling's timing to EQUAL the clock owner's,
-            # comparing whole records. Siblings of different lengths can never
-            # compare equal, so while `lower_body` owns the clock this identity's
-            # full-body clock is inexpressible -- writing the sidecar only makes
-            # `--strict` reject the publication.
-            blocked.append({"identity": identity, "why":
-                            f"lower_body clock owner is {sibling['frames']}f while full_body is "
-                            f"{record['frames']}f; the sibling-equality rule cannot express both"})
-            continue
+        # A different-length sibling is an independent clock, not a conflict: the
+        # builder reads this layer's own sidecar when the identity clock's duration
+        # array does not match its frame count, and the sync no longer demands
+        # equality across lengths that can never be frame-synchronized.
         if sibling is not None and sibling["frames"] == record["frames"]:
             # The sidecar would be written and then ignored. Publishing on the
             # clock owner instead is the only way to express this clock -- but

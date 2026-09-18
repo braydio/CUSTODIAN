@@ -191,8 +191,21 @@ Optional adjacent `<sheet>.animation.json` files use `custodian.operator_animati
 canonical, diffable animation-clock authority for FPS, loop behavior, and per-frame duration multipliers.
 The synchronized animation resolves timing from its lower-body clock (then full-body or upper-body when no
 lower body exists), copies the sidecar into runtime, and projects the resolved timing through both generated
-catalogs and managed `SpriteFrames`. Authored sibling timing must match the clock owner; binary Aseprite
-frame timing is import material, not runtime authority.
+catalogs and managed `SpriteFrames`. Binary Aseprite frame timing is import material, not runtime authority.
+
+Sibling timing equality is required only of layers that can actually share one presentation clock, which
+means sharing a frame count:
+
+- **same frame count** — one synchronized clock; FPS, loop and per-frame durations must match the clock
+  owner exactly.
+- **different frame count** — independent clocks; each layer may carry its own sidecar and no equality is
+  required. The builder already works this way, applying the identity clock only when its duration array
+  matches the layer's frame count and otherwise reading that layer's own timing.
+
+`unarmed/posture/stance_01` is why: a 1-frame modular pose sits beside a 12- and 6-frame full-body sequence.
+Those are the same semantic posture in two presentation modes, not one timeline, and treating the 1-frame
+pose as timing authority over the longer sequence would force a 50% speed change on art that has no
+synchronization relationship to it.
 
 A missing sidecar does **not** retain the art's historical timing. The build falls back to 12 FPS plus a
 loop heuristic, so an animation whose compatibility resource authored a different speed is silently retimed

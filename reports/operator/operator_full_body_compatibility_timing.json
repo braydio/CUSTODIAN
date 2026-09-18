@@ -549,8 +549,7 @@
       "fps": 8.0,
       "frames": 12,
       "loop": true,
-      "via_clip": "ranged_2h_stance",
-      "unpreservable": "lower_body owns this identity's clock at 1 frame while full_body is 12; the pipeline requires a sibling's timing record to EQUAL the clock owner's, and records of different lengths never compare equal, so the authored 8 FPS is inexpressible without a contract change. C2a-R4 records it rather than silently retiming to the 12 FPS default."
+      "via_clip": "ranged_2h_stance"
     },
     "unarmed/posture/stance_01/w/full_body": {
       "durations": [
@@ -564,8 +563,7 @@
       "fps": 8.0,
       "frames": 6,
       "loop": true,
-      "via_clip": "unarmed_stance_left",
-      "unpreservable": "lower_body owns this identity's clock at 1 frame while full_body is 6; same sibling-equality limitation as the east strip."
+      "via_clip": "unarmed_stance_left"
     },
     "unarmed/reaction/bodyslam_knockdown_01/e/full_body": {
       "durations": [
@@ -634,5 +632,5 @@
     }
   },
   "schema": "custodian.operator_full_body_timing.v1",
-  "unpreservable_count": 2
+  "unpreservable_count": 0
 }
