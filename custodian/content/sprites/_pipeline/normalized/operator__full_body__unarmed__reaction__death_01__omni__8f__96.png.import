@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://rvi571obqkvp"
-path="res://.godot/imported/operator__full_body__unarmed__reaction__death_01__omni__6f__96.png-74f57173df5598af852dc45346e83c8e.ctex"
+uid="uid://cmne762lnqi5x"
+path="res://.godot/imported/operator__full_body__unarmed__reaction__death_01__omni__8f__96.png-d2b8774998c63c68c3337879de94e416.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/operator/runtime/animations/unarmed/reaction/death_01/operator__full_body__unarmed__reaction__death_01__omni__6f__96.png"
-dest_files=["res://.godot/imported/operator__full_body__unarmed__reaction__death_01__omni__6f__96.png-74f57173df5598af852dc45346e83c8e.ctex"]
+source_file="res://content/sprites/_pipeline/normalized/operator__full_body__unarmed__reaction__death_01__omni__8f__96.png"
+dest_files=["res://.godot/imported/operator__full_body__unarmed__reaction__death_01__omni__8f__96.png-d2b8774998c63c68c3337879de94e416.ctex"]
 
 [params]
 

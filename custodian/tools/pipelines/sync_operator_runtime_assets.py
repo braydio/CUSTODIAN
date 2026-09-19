@@ -330,16 +330,24 @@ def build_animation_catalog(manifest: dict, catalog_path: Path) -> dict:
         entry = catalog_animations.setdefault(identity, runtime_entry)
         if "timing" in runtime_entry:
             entry["timing"] = runtime_entry["timing"]
-        else:
-            continue
         for layer, runtime_layer in runtime_entry["layers"].items():
             catalog_layer = entry.setdefault("layers", {}).get(layer)
             if catalog_layer is None:
                 entry["layers"][layer] = runtime_layer
                 continue
-            for field in ("fps", "loop", "durations"):
+            # The manifest is authoritative about WHICH sheet a layer is and how
+            # long it is. This used to merge only the clock fields, so re-authoring
+            # art to a different frame count left the catalog pointing at the
+            # superseded sheet -- and `update_operator_compatibility_resources.py`
+            # reads the catalog, so the compatibility resources kept an
+            # ext_resource reference to a file the sync had just deleted and failed
+            # to load entirely.
+            for field in ("path", "frames", "size", "fps", "loop", "durations"):
                 if field in runtime_layer:
                     catalog_layer[field] = runtime_layer[field]
+            for field in ("fps", "loop", "durations"):
+                if field not in runtime_layer:
+                    catalog_layer.pop(field, None)
     if not catalog.get("weapons"):
         catalog["weapons"] = manifest["weapons"]
     catalog["errors"] = manifest["errors"]

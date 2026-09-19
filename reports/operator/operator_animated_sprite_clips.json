@@ -1907,7 +1907,7 @@
         "group": "reaction",
         "layer": "full_body",
         "profile": "unarmed",
-        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/reaction/death_01/operator__full_body__unarmed__reaction__death_01__omni__6f__96.png"
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/reaction/death_01/operator__full_body__unarmed__reaction__death_01__omni__8f__96.png"
       },
       "canonical_identity": "unarmed/reaction/death_01/omni/full_body",
       "canonical_published": true,
@@ -1917,10 +1917,12 @@
         1.0,
         1.0,
         1.0,
+        1.0,
+        1.0,
         1.0
       ],
       "fps": 7.0,
-      "frames": 6,
+      "frames": 8,
       "loop": false
     },
     "unarmed_dodge_fast_attack_left": {
@@ -2583,7 +2585,7 @@
         1.0,
         1.0
       ],
-      "fps": 12.0,
+      "fps": 8.0,
       "frames": 6,
       "loop": true
     },
@@ -2861,7 +2863,7 @@
         1.0,
         1.0
       ],
-      "fps": 10.0,
+      "fps": 8.0,
       "frames": 6,
       "loop": true
     },

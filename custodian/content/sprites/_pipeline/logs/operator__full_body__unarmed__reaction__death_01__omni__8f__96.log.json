@@ -1,0 +1,11 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/operator__full_body__unarmed__reaction__death_01__omni__8f__96.json",
+	"outputs": [
+		"res://content/sprites/operator/source/animations/unarmed/reaction/death_01/operator__full_body__unarmed__reaction__death_01__omni__8f__96.png"
+	],
+	"post_process": [
+		"operator_runtime_build"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/operator__full_body__unarmed__reaction__death_01__omni__8f__96.png",
+	"timestamp_utc": "2026-09-19 04:00:07"
+}

@@ -606,7 +606,12 @@
       "via_clip": "unarmed_bodyslam_knockdown_left"
     },
     "unarmed/reaction/death_01/omni/full_body": {
+      "frames": 8,
+      "fps": 7.0,
+      "loop": false,
       "durations": [
+        1.0,
+        1.0,
         1.0,
         1.0,
         1.0,
@@ -614,10 +619,8 @@
         1.0,
         1.0
       ],
-      "fps": 7.0,
-      "frames": 6,
-      "loop": false,
-      "via_clip": "unarmed_death"
+      "via_clip": "unarmed_death",
+      "reauthored": "Art re-authored 2026-09-19 as an 8-frame full-body death, superseding the 6-frame strip this baseline originally captured. The authored clock is carried forward unchanged at 7 FPS, which both the superseded canonical strip and the legacy `death` clip ran at. Recorded here so the timing gate keeps covering the identity instead of skipping it on a frame-count mismatch."
     },
     "unarmed/reaction/light_hitreact_01/s/full_body": {
       "durations": [

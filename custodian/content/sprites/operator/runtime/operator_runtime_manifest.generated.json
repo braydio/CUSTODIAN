@@ -8106,8 +8106,8 @@
       "direction": "omni",
       "layers": {
         "full_body": {
-          "path": "res://content/sprites/operator/runtime/animations/unarmed/reaction/death_01/operator__full_body__unarmed__reaction__death_01__omni__6f__96.png",
-          "frames": 6,
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/reaction/death_01/operator__full_body__unarmed__reaction__death_01__omni__8f__96.png",
+          "frames": 8,
           "frame_size": [
             96,
             96
@@ -8115,6 +8115,8 @@
           "fps": 7.0,
           "loop": false,
           "durations": [
+            1.0,
+            1.0,
             1.0,
             1.0,
             1.0,
@@ -8129,6 +8131,8 @@
         "fps": 7.0,
         "loop": false,
         "durations": [
+          1.0,
+          1.0,
           1.0,
           1.0,
           1.0,

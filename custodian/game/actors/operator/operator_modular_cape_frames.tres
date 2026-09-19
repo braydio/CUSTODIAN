@@ -158,7 +158,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_aprhm")
 }],
-"loop": 0,
+"loop": false,
 "name": &"unarmed_dodge_fast_attack_cape_left",
 "speed": 20.0
 }, {

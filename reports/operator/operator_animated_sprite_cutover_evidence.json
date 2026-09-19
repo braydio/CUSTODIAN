@@ -2054,7 +2054,7 @@
       "clip": "unarmed_death",
       "consumers": [],
       "live": false,
-      "frames": 6,
+      "frames": 8,
       "authored_fps": 7.0,
       "authored_loop": false,
       "art": {
@@ -2063,7 +2063,7 @@
         "group": "reaction",
         "layer": "full_body",
         "profile": "unarmed",
-        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/reaction/death_01/operator__full_body__unarmed__reaction__death_01__omni__6f__96.png"
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/reaction/death_01/operator__full_body__unarmed__reaction__death_01__omni__8f__96.png"
       },
       "canonical_identity": "unarmed/reaction/death_01/omni/full_body",
       "canonical_published": true,
@@ -2731,7 +2731,7 @@
       ],
       "live": true,
       "frames": 6,
-      "authored_fps": 12.0,
+      "authored_fps": 8.0,
       "authored_loop": true,
       "art": {
         "action": "idle_01",
@@ -3013,7 +3013,7 @@
       ],
       "live": true,
       "frames": 6,
-      "authored_fps": 10.0,
+      "authored_fps": 8.0,
       "authored_loop": true,
       "art": {
         "action": "idle_01",
