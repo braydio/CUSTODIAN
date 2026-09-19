@@ -113,7 +113,10 @@ async def exercise_server(repo_root: Path) -> None:
         await client.send(envelope(first_session, 4, "document.changed", {"revision": 12, "modified": True}))
         await wait_for(lambda: server.state.document_revision == 12, "explicit revision")
 
-        request = await server.send_command(MessageType.SELECT_FRAME, {"frame": 5})
+        workbench = repo_root / ".ai/operator_animation_workbench/melee/walk/e/workbench.aseprite"
+        request = await server.send_command(MessageType.SELECT_FRAME, {
+            "frame": 5, "document_path": str(workbench),
+        })
         command = parse_message(await client.recv())
         assert command.sequence == request and command.type is MessageType.SELECT_FRAME
         assert request in server.state.pending_commands
@@ -166,16 +169,28 @@ async def controller_lifecycle_smoke(repo_root: Path) -> None:
     async with connect(uri) as client:
         await client.send(hello("controller-first"))
         await client.recv()
+        hello_event = await asyncio.wait_for(controller.next_event(), timeout=0.2)
+        assert hello_event.user_originated and hello_event.frame == 2
         await wait_for(
             lambda: controller.snapshot().status is LiveBridgeUIStatus.CONNECTED,
             "controller connected",
         )
-        try:
-            await asyncio.wait_for(client.recv(), timeout=0.05)
-        except asyncio.TimeoutError:
-            pass
-        else:
-            raise AssertionError("Packet 3A sent an unsolicited semantic command")
+        workbench = repo_root / ".ai/operator_animation_workbench/live/frame-test/workbench.aseprite"
+        request = await controller.select_frame(workbench, 6)
+        command = parse_message(await client.recv())
+        assert command.sequence == request and command.payload == {
+            "frame": 7, "document_path": str(workbench.resolve()),
+        }
+        await client.send(envelope("controller-first", 2, "editor.site_changed", {
+            "document_path": str(workbench.resolve()), "frame": 7,
+        }, cause=request))
+        causal = await asyncio.wait_for(controller.next_event(), timeout=0.2)
+        assert not causal.user_originated and causal.cause == request
+        await client.send(envelope("controller-first", 3, "editor.site_changed", {
+            "document_path": str(workbench.resolve()), "frame": 4,
+        }))
+        human = await asyncio.wait_for(controller.next_event(), timeout=0.2)
+        assert human.user_originated and human.frame == 4 and human.cause is None
     await wait_for(
         lambda: controller.snapshot().status is LiveBridgeUIStatus.WAITING,
         "controller disconnected",
@@ -229,6 +244,10 @@ def path_policy_smoke(repo_root: Path) -> None:
         ".ai/operator_animation_workbench/live/revision_83.png"
     )
     assert valid_workbench.suffix == ".aseprite" and valid_preview.suffix == ".png"
+    select = parse_message(Message("bridge", 1, MessageType.SELECT_FRAME, {
+        "frame": 1, "document_path": str(valid_workbench),
+    }).to_dict())
+    policy.validate_message_paths(select)
     invalid = [
         (policy.validate_workbench, "custodian/content/sprites/operator/source/canonical.aseprite"),
         (policy.validate_workbench, ".ai/operator_animation_workbench/../../escape.aseprite"),
@@ -242,6 +261,17 @@ def path_policy_smoke(repo_root: Path) -> None:
             pass
         else:
             raise AssertionError(f"unsafe path accepted: {path}")
+    for payload in (
+        {"frame": 1},
+        {"frame": 1, "document_path": "custodian/content/sprites/operator/source/canonical.aseprite"},
+    ):
+        try:
+            message = parse_message(Message("bridge", 1, MessageType.SELECT_FRAME, payload).to_dict())
+            policy.validate_message_paths(message)
+        except ProtocolError:
+            pass
+        else:
+            raise AssertionError(f"unsafe select-frame payload accepted: {payload}")
 
 
 def stable_endpoint_smoke(repo_root: Path) -> None:
@@ -263,13 +293,15 @@ def aseprite_extension_smoke() -> None:
         assert f'"{capability}"' in protocol_source
     for command in ("open_workbench", "select_frame", "export_preview", "save"):
         assert f'"command.{command}"' in protocol_source
-    assert 'error = "unsupported in Packet 2"' in protocol_source
+    assert protocol_source.count('["command.select_frame"] = true') == 1
+    assert 'error = "unsupported in Packet 3B"' in protocol_source
     assert 'Protocol.DEFAULT_URL = "ws://127.0.0.1:32147"' in protocol_source
     assert 'app.events:on("sitechange"' in main_source
     assert 'sprite.events:on("change"' in main_source
     assert 'sprite.events:on("filenamechange"' in main_source
     assert "minreconnectwait = 1.0" in main_source and "maxreconnectwait = 5.0" in main_source
-    assert "app.frame =" not in main_source and "app.layer =" not in main_source
+    assert "app.frame = frame" in main_source and "app.layer =" not in main_source
+    assert 'message.type == "command.select_frame"' in main_source
     for forbidden in ("os.execute", "io.popen", "app.open", "app.command.Save"):
         assert forbidden not in main_source
 
@@ -289,11 +321,20 @@ local serverHello, err = protocol.decode_server_message(client,
   '{{"schema":"custodian.operator_live_bridge.message.v1","session_id":"bridge-session","sequence":1,"type":"server.hello","cause":1,"payload":{{"accepted":true}}}}')
 assert(serverHello ~= nil and err == nil)
 local command = protocol.decode_server_message(client,
-  '{{"schema":"custodian.operator_live_bridge.message.v1","session_id":"bridge-session","sequence":2,"type":"command.select_frame","cause":null,"payload":{{"frame":5}}}}')
+  '{{"schema":"custodian.operator_live_bridge.message.v1","session_id":"bridge-session","sequence":2,"type":"command.open_workbench","cause":null,"payload":{{"path":"x"}}}}')
 assert(command ~= nil)
-local refusal = protocol.packet2_response(client, command)
-assert(refusal:find('unsupported in Packet 2', 1, true))
+local refusal = protocol.passive_response(client, command)
+assert(refusal:find('unsupported in Packet 3B', 1, true))
 assert(client.sequence == 2)
+for index, commandType in ipairs({{"command.export_preview", "command.save"}}) do
+  local deferred = protocol.decode_server_message(client,
+    '{{"schema":"custodian.operator_live_bridge.message.v1","session_id":"bridge-session","sequence":' .. tostring(index + 2) .. ',"type":"' .. commandType .. '","cause":null,"payload":{{}}}}')
+  assert(deferred ~= nil)
+  assert(protocol.passive_response(client, deferred):find('unsupported in Packet 3B', 1, true))
+end
+local selectFrame = protocol.decode_server_message(client,
+  '{{"schema":"custodian.operator_live_bridge.message.v1","session_id":"bridge-session","sequence":5,"type":"command.select_frame","cause":null,"payload":{{"frame":5,"document_path":"/tmp/workbench.aseprite"}}}}')
+assert(selectFrame ~= nil and protocol.passive_response(client, selectFrame) == nil)
 ''')
             result = subprocess.run([aseprite, "-b", "--script", str(script)],
                                     capture_output=True, text=True, timeout=15)
@@ -322,7 +363,7 @@ def main() -> None:
         asyncio.run(controller_failure_smoke(repo_root))
     aseprite_extension_smoke()
     installer_smoke()
-    print("PASS operator_live_bridge_smoke: stable/ephemeral endpoint, controller STOPPED/WAITING/CONNECTED/UNAVAILABLE lifecycle, conflict/dependency failure, no commands, protocol/state/causality, Aseprite client contract, reconnect, install symlink, path confinement, production immutability")
+    print("PASS operator_live_bridge_smoke: stable/ephemeral endpoint, lifecycle, select-frame conversion/path confinement, immediate causal/user event projection, Aseprite Packet 3B command contract, reconnect, install symlink, production immutability")
 
 
 if __name__ == "__main__":

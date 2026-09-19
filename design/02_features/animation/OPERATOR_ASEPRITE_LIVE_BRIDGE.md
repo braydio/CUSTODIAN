@@ -2,14 +2,14 @@
 
 ## Status
 
-Foundation, persistent Aseprite reporting client, and Workbench bridge
-lifecycle implemented; bidirectional frame navigation deferred.
+Foundation, persistent Aseprite reporting client, Workbench bridge lifecycle,
+and bidirectional frame navigation implemented; live unsaved preview deferred.
 
 Packet 1 established the versioned protocol, loopback WebSocket server, tooling
 state model, capability gate, path confinement, and fake-client validation.
-Packet 2 adds the persistent reporting-only Aseprite extension. Packet 3A makes
-the Workbench UI own server startup, status projection, and shutdown. No
-command can mutate Aseprite yet.
+Packet 2 adds the persistent Aseprite extension. Packet 3A makes the Workbench
+UI own server startup, status projection, and shutdown. Packet 3B adds guarded,
+causal frame navigation for the selected disposable authoring document only.
 
 ## Authority
 
@@ -33,7 +33,7 @@ Operator Workbench (semantic/control authority)
              |
        loopback WebSocket
              |
-Aseprite extension (future pixel editor client)
+Aseprite extension (pixel editor client)
              |
  disposable .aseprite document
 ```
@@ -83,7 +83,7 @@ confined ignored review location.
 1. **Live Bridge Core (implemented):** Python protocol/server/state and fake-client validation.
 2. **Aseprite Extension (implemented):** persistent Lua client and document/editor reporting.
 3A. **Workbench Bridge Lifecycle (implemented):** Textual-owned startup, status, transition logging, failure projection, and shutdown.
-3B. **Bidirectional Frame Navigation (deferred):** document focus and causal frame sync.
+3B. **Bidirectional Frame Navigation (implemented):** guarded causal frame sync between manual Preview navigation and the active authoring document.
 4. **Live Unsaved Preview (deferred):** debounced in-memory render export.
 5. **Layer Synchronization (deferred):** focus and visibility proof/control.
 6. **Preview Examiner (deferred):** live/saved/canonical/runtime comparison.
@@ -126,10 +126,34 @@ changes, including undo/redo, monotonically increment one client-session
 revision and emit `document.changed`. Filename changes and human saves are
 observed without saving or opening anything on the user's behalf.
 
-Packet 2 accepts only `server.hello` and heartbeat behavior. All four semantic
-commands return `command.result` with `ok=false` and `unsupported in Packet 2`;
-they never mutate the editor. Unknown schemas, sessions, sequences, and message
-types fail closed.
+Packet 3B accepts `command.select_frame`. `command.open_workbench`,
+`command.export_preview`, and `command.save` return `command.result` with
+`ok=false` and remain unable to mutate the editor. Unknown schemas, sessions,
+sequences, and message types fail closed.
+
+## Bidirectional frame navigation
+
+Workbench preview indexes are zero-based; Aseprite frame numbers are one-based.
+`LiveBridgeController.select_frame()` owns that conversion and sends the exact
+expected disposable `workbench.aseprite` path with every request. Python path
+confinement rejects documents outside `.ai/operator_animation_workbench/`, and
+the Lua client independently requires its active sprite filename to match
+before assigning `app.frame`.
+
+Validated hello/site messages are delivered immediately through a narrow
+server-listener and controller-event queue while `BridgeState` remains the sole
+transport state authority. A human Aseprite frame selection has no `cause` and
+immediately updates the selected Workbench animation frame. A frame selected by
+the Workbench carries the command sequence back on the resulting site event;
+the UI records but does not reapply that causal confirmation, preventing a
+feedback loop.
+
+Only manual Preview scrub/Left/Right/Home/End navigation sends frame commands.
+Automatic Preview playback, Timeline navigation/playback, and Motion
+navigation/playback remain independent review clocks and never drive Aseprite.
+Events for another document are ignored and never switch semantic animation
+identity. Opening/focusing documents and cross-document semantic following are
+still deferred.
 
 ## Validation
 
@@ -174,7 +198,7 @@ future Workbench owns the endpoint.
 
 ## Next Agent Slice
 
-Packet 3B may add causal document/frame navigation between the Workbench and the
-already-reporting client. It must preserve the Packet 3A lifecycle/status
-adapter and must not add preview rendering, layer control, Art Agent routing,
-or canonical publication behavior.
+Packet 4 may add debounced in-memory preview export for the active disposable
+document. It must preserve document confinement and causality, transport no
+pixels over WebSocket, and must not save the workbench, publish canonical art,
+add layer control, or route Art Agent mutations.

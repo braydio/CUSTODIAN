@@ -11,6 +11,7 @@ local sprite_change_listener = nil
 local filename_change_listener = nil
 local reconcile_timer = nil
 local last_snapshot_signature = nil
+local pending_site_change = nil
 
 local function runtime_capabilities_available()
   return WebSocket ~= nil and Timer ~= nil and Uuid ~= nil and Image ~= nil and
@@ -74,10 +75,10 @@ local function unbind_sprite()
   filename_change_listener = nil
 end
 
-local function send_site_state()
+local function send_site_state(cause)
   local state = editor_state()
   last_snapshot_signature = snapshot_signature(state)
-  send("editor.site_changed", state, nil)
+  send("editor.site_changed", state, cause)
 end
 
 local function bind_active_sprite()
@@ -99,7 +100,7 @@ local function bind_active_sprite()
     }, nil)
   end
   filename_change_listener = function()
-    send_site_state()
+    send_site_state(nil)
   end
   sprite.events:on("change", sprite_change_listener)
   sprite.events:on("filenamechange", filename_change_listener)
@@ -107,13 +108,60 @@ end
 
 local function handle_site_change()
   bind_active_sprite()
-  send_site_state()
+  local cause = nil
+  if pending_site_change ~= nil then
+    local frame = app.frame and app.frame.frameNumber or nil
+    if frame == pending_site_change.frame then
+      cause = pending_site_change.cause
+    end
+    pending_site_change = nil
+  end
+  send_site_state(cause)
+end
+
+local function send_command_result(message, ok, error_message)
+  send("command.result", { ok = ok, error = error_message }, message.sequence)
+end
+
+local function handle_select_frame(message)
+  local payload = message.payload or {}
+  local frame = payload.frame
+  local expected_path = payload.document_path
+  local sprite = app.sprite
+  if sprite == nil then
+    send_command_result(message, false, "no active Aseprite document")
+    return
+  end
+  if type(expected_path) ~= "string" or expected_path == "" then
+    send_command_result(message, false, "document_path is required")
+    return
+  end
+  if sprite.filename ~= expected_path then
+    send_command_result(message, false, "active document does not match requested workbench")
+    return
+  end
+  if type(frame) ~= "number" or frame % 1 ~= 0 or frame < 1 or frame > #sprite.frames then
+    send_command_result(message, false, "frame is outside active document")
+    return
+  end
+  if app.frame ~= nil and app.frame.frameNumber == frame then
+    send_site_state(message.sequence)
+    send_command_result(message, true, nil)
+    return
+  end
+  pending_site_change = { cause = message.sequence, frame = frame }
+  app.frame = frame
+  send_command_result(message, true, nil)
 end
 
 local function handle_server_text(text)
   local message = Protocol.decode_server_message(client, text)
   if message == nil then return end
-  local response = Protocol.packet2_response(client, message)
+  if message.type == "command.select_frame" then
+    handle_select_frame(message)
+    return
+  end
+  local response = Protocol.passive_response(client, message)
   if response ~= nil and connected and socket ~= nil then
     socket:sendText(response)
   end
@@ -162,7 +210,7 @@ function init(plugin)
       local signature = snapshot_signature(state)
       if signature ~= last_snapshot_signature then
         last_snapshot_signature = signature
-        send("editor.site_changed", state, nil)
+      send_site_state(nil)
       end
     end,
   }

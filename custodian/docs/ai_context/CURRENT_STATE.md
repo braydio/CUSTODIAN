@@ -1,21 +1,23 @@
 # CURRENT STATE — CUSTODIAN
 
-## Operator Aseprite Live Bridge Packet 3A (2026-09-18)
+## Operator Aseprite Live Bridge Packet 3B (2026-09-18)
 
 The optional, loopback-only Python WebSocket server now defaults to stable
 `127.0.0.1:32147` while retaining explicit ephemeral test ports. The persistent
 repo-owned Aseprite extension reports real version/API capability, active
 document/frame/layer UUID and name, dirty state, human save/filename changes,
 and client-session-monotonic content revisions through native events plus a
-one-second reconciliation timer. It quietly reconnects and refuses every
-Packet 3B+ command without editor mutation. The Textual Workbench now owns one
+one-second reconciliation timer. It quietly reconnects. The Textual Workbench owns one
 focused bridge controller: non-blocking stable-endpoint startup, compact
 STARTING/WAITING/CONNECTED/UNAVAILABLE status, transition-only activity logging,
-non-fatal dependency/address failures, and awaited clean shutdown. The focused
-smoke covers the Python fake client, Aseprite Lua protocol runtime, isolated
-symlink installation, controller lifecycle, and Textual status projection. No
-navigation control, live preview, layer control, Art Agent integration,
-gameplay behavior, or publication authority changed. See
+non-fatal dependency/address failures, and awaited clean shutdown. Manual Preview
+navigation and human Aseprite frame selection now synchronize immediately with
+explicit zero-/one-based conversion, exact disposable-document guards on both
+peers, and causal event suppression. Preview playback plus all Timeline/Motion
+clocks remain excluded. Open/save/export commands remain refused. Focused smoke
+covers protocol/path guards, event delivery, feedback-loop prevention, playback
+exclusions, Lua contract, reconnect, and Textual behavior. No live preview,
+layer control, Art Agent integration, gameplay behavior, or publication authority changed. See
 `design/02_features/animation/OPERATOR_ASEPRITE_LIVE_BRIDGE.md`.
 
 ## Workbench Optional Mirror Promotion (2026-09-15)

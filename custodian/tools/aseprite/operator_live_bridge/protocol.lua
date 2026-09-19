@@ -23,7 +23,6 @@ local server_types = {
 
 local unsupported_commands = {
   ["command.open_workbench"] = true,
-  ["command.select_frame"] = true,
   ["command.export_preview"] = true,
   ["command.save"] = true,
 }
@@ -102,12 +101,12 @@ function Protocol.decode_server_message(client, text)
   return message, nil
 end
 
-function Protocol.packet2_response(client, message)
+function Protocol.passive_response(client, message)
   if unsupported_commands[message.type] then
     return Protocol.encode_message(client, "command.result", {
       ok = false,
-      error = "unsupported in Packet 2",
-      packet = 2,
+      error = "unsupported in Packet 3B",
+      packet = "3B",
     }, message.sequence)
   end
   if message.type == "heartbeat" then

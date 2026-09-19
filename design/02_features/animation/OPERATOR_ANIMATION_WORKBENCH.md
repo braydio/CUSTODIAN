@@ -155,6 +155,7 @@ preview exports are keyed by the `.aseprite` SHA under the ignored workspace,
 so a changed saved workbench cannot reuse an earlier export.
 
 The persistent Aseprite channel is independently specified in
-`OPERATOR_ASEPRITE_LIVE_BRIDGE.md`. The UI now owns its stable loopback server
-lifecycle and truthfully reports waiting/connected/unavailable state, but no
-Workbench selection or command controls Aseprite until Packet 3B.
+`OPERATOR_ASEPRITE_LIVE_BRIDGE.md`. The UI owns its stable loopback server
+lifecycle and truthfully reports waiting/connected/unavailable state. Manual
+PREVIEW frame navigation synchronizes with the matching disposable Aseprite
+document; playback, TIMELINE, MOTION, and semantic document following do not.

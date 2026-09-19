@@ -18,6 +18,7 @@ from .dialogs import (
 )
 from .features import AnimationFeature
 from .live_bridge_controller import LiveBridgeController, LiveBridgeUIStatus
+from live_bridge.protocol import MessageType
 from .screens import MainScreen
 from .service import WorkbenchService
 from .state import AnimationSelection, ExistingContextView, WorkbenchUIState
@@ -137,6 +138,10 @@ class OperatorWorkbenchApp(App):
             self._start_live_bridge(), group="live-bridge", exclusive=True,
             exit_on_error=False,
         )
+        self.run_worker(
+            self._consume_live_bridge_events(), group="live-bridge-events",
+            exclusive=True, exit_on_error=False,
+        )
         self.set_interval(0.5, self._refresh_live_bridge_status)
         self.set_interval(1.0, self._watch_selected)
         self.set_interval(1.0 / 30.0, self._preview_tick)
@@ -147,6 +152,46 @@ class OperatorWorkbenchApp(App):
     async def _start_live_bridge(self) -> None:
         await self.live_bridge.start()
         self._refresh_live_bridge_status()
+
+    def _selected_live_workbench_path(self) -> Path | None:
+        if self.session_view is None:
+            return None
+        return (self.session_view.workspace_path / "workbench.aseprite").resolve()
+
+    def _live_document_matches_selection(self, document_path: str | None = None) -> bool:
+        expected = self._selected_live_workbench_path()
+        if expected is None:
+            return False
+        actual = document_path or self.live_bridge.server.state.active_document_path
+        if not actual:
+            return False
+        try:
+            return Path(actual).resolve() == expected
+        except OSError:
+            return False
+
+    async def _consume_live_bridge_events(self) -> None:
+        while True:
+            event = await self.live_bridge.next_event()
+            if event.message_type not in (
+                MessageType.CLIENT_HELLO, MessageType.EDITOR_SITE_CHANGED,
+            ):
+                continue
+            if not event.user_originated or self.state.mode not in ("workbench", "preview"):
+                continue
+            if not self._live_document_matches_selection(event.document_path):
+                continue
+            if event.frame is None or self.session_view is None:
+                continue
+            frame_index = event.frame - 1
+            if frame_index < 0 or frame_index >= self.session_view.document_frames:
+                continue
+            self.state.preview_frame = frame_index
+            if self.state.mode == "preview":
+                self.state.preview_playing = False
+                self._reset_preview_clock()
+                if self.preview_view is not None:
+                    self._render_preview()
 
     def _update_status_bar(self) -> None:
         self._main_widget("#workbench-status", WorkbenchStatusBar).set_status(
@@ -301,7 +346,11 @@ class OperatorWorkbenchApp(App):
             self._render_motion()
             return
         frames = len(self.timeline_frames) if self.state.mode == "timeline" else len(self.preview_view.frames) if self.preview_view else 0
-        if frames: self.state.preview_frame = round(event.ratio * (frames - 1)); self._reset_preview_clock(); self._render_preview()
+        if frames:
+            self.state.preview_playing = False
+            target = round(event.ratio * (frames - 1))
+            if self.state.mode == "preview": self._set_preview_frame(target, sync_live=True)
+            else: self.state.preview_frame = target; self._reset_preview_clock(); self._render_preview()
 
     async def on_animation_tree_selected(self, event: AnimationTree.Selected) -> None:
         selection = self.state.contextualize(event.selection)
@@ -423,6 +472,28 @@ class OperatorWorkbenchApp(App):
         self._main_widget("#preview-canvas", PreviewCanvas).show_frame(self.preview_view.frames[index], self.preview_view.identity.key, self.state.preview_zoom)
         self._main_widget("#preview-controls", PreviewControls).show(frame=index, frames=len(self.preview_view.frames), fps=self.state.review_fps, playing=self.state.preview_playing, loop=self.state.preview_loop, source=self.state.preview_source, zoom=self.state.preview_zoom)
 
+    def _set_preview_frame(self, frame_index: int, *, sync_live: bool) -> None:
+        if self.preview_view is None:
+            return
+        last = len(self.preview_view.frames) - 1
+        frame_index = max(0, min(last, frame_index))
+        self.state.preview_frame = frame_index
+        self._reset_preview_clock()
+        self._render_preview()
+        if sync_live and self.state.mode == "preview" and self._live_document_matches_selection():
+            workbench = self._selected_live_workbench_path()
+            if workbench is not None:
+                self.run_worker(
+                    self._send_live_frame(workbench, frame_index),
+                    group="live-frame-command", exclusive=True, exit_on_error=False,
+                )
+
+    async def _send_live_frame(self, workbench: Path, frame_index: int) -> None:
+        try:
+            await self.live_bridge.select_frame(workbench, frame_index)
+        except (ConnectionError, ValueError):
+            return
+
     def action_preview_toggle(self):
         if self.state.mode == "motion":
             self.state.motion.playing = not self.state.motion.playing
@@ -435,7 +506,10 @@ class OperatorWorkbenchApp(App):
             frame = max(0, self.state.preview_frame - 1)
             self.state.motion.elapsed_sec = frame / self.state.review_fps
             self._render_motion(); return
-        if self.preview_view or self.timeline_frames: self.state.preview_frame = max(0, self.state.preview_frame - 1); self._reset_preview_clock(); self._render_preview()
+        if self.state.mode == "preview" and self.preview_view:
+            self.state.preview_playing = False
+            self._set_preview_frame(self.state.preview_frame - 1, sync_live=True); return
+        if self.timeline_frames: self.state.preview_frame = max(0, self.state.preview_frame - 1); self._reset_preview_clock(); self._render_preview()
     def action_preview_next(self):
         if self.state.mode == "motion" and self.preview_view:
             self.state.motion.playing = False
@@ -445,16 +519,27 @@ class OperatorWorkbenchApp(App):
         frames = len(self.timeline_frames) if self.state.mode == "timeline" else len(self.preview_view.frames) if self.preview_view else 0
         if frames:
             last = frames - 1
-            self.state.preview_frame = 0 if self.state.preview_loop and self.state.preview_frame == last else min(last, self.state.preview_frame + 1); self._render_preview()
+            target = 0 if self.state.preview_loop and self.state.preview_frame == last else min(last, self.state.preview_frame + 1)
+            if self.state.mode == "preview":
+                self.state.preview_playing = False
+                self._set_preview_frame(target, sync_live=True)
+            else: self.state.preview_frame = target; self._render_preview()
     def action_preview_first(self):
         if self.state.mode == "motion": self.state.motion.elapsed_sec = 0.0; self.state.motion.playing = False; self._render_motion(); return
+        if self.state.mode == "preview":
+            self.state.preview_playing = False
+            self._set_preview_frame(0, sync_live=True); return
         self.state.preview_frame = 0; self._reset_preview_clock(); self._render_preview()
     def action_preview_last(self):
         if self.state.mode == "motion" and self.preview_view:
             self.state.motion.elapsed_sec = len(self.preview_view.frames) / self.state.review_fps
             self.state.motion.playing = False; self._render_motion(); return
         frames = len(self.timeline_frames) if self.state.mode == "timeline" else len(self.preview_view.frames) if self.preview_view else 0
-        if frames: self.state.preview_frame = frames - 1; self._reset_preview_clock(); self._render_preview()
+        if frames:
+            if self.state.mode == "preview":
+                self.state.preview_playing = False
+                self._set_preview_frame(frames - 1, sync_live=True)
+            else: self.state.preview_frame = frames - 1; self._reset_preview_clock(); self._render_preview()
     def action_preview_slower(self): self.state.review_fps = max(1.0, self.state.review_fps - 1.0); self._reset_preview_clock(); self._render_motion() if self.state.mode == "motion" else self._render_preview()
     def action_preview_faster(self): self.state.review_fps = min(30.0, self.state.review_fps + 1.0); self._reset_preview_clock(); self._render_motion() if self.state.mode == "motion" else self._render_preview()
     def action_preview_loop(self):
@@ -620,7 +705,15 @@ class OperatorWorkbenchApp(App):
             )
             if not due:
                 break
-            self.action_preview_next()
+            frames = len(self.timeline_frames) if self.state.mode == "timeline" else len(self.preview_view.frames) if self.preview_view else 0
+            if not frames:
+                break
+            last = frames - 1
+            target = 0 if self.state.preview_loop and self.state.preview_frame == last else min(last, self.state.preview_frame + 1)
+            if target == self.state.preview_frame and not self.state.preview_loop:
+                self.state.preview_playing = False
+            if self.state.mode == "preview": self._set_preview_frame(target, sync_live=False)
+            else: self.state.preview_frame = target; self._render_preview()
 
     async def _load_timeline(self) -> None:
         try:

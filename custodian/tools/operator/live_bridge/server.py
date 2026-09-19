@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import asyncio
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
@@ -23,6 +24,20 @@ class LiveBridgeServer:
         self._server: Any = None
         self._client: Any = None
         self._server_sequence = 0
+        self._message_listeners: set[Callable[[Message], None]] = set()
+
+    def add_message_listener(self, listener: Callable[[Message], None]) -> None:
+        self._message_listeners.add(listener)
+
+    def remove_message_listener(self, listener: Callable[[Message], None]) -> None:
+        self._message_listeners.discard(listener)
+
+    def _notify_message(self, message: Message) -> None:
+        for listener in tuple(self._message_listeners):
+            try:
+                listener(message)
+            except Exception:
+                continue
 
     @property
     def listening_port(self) -> int | None:
@@ -89,6 +104,7 @@ class LiveBridgeServer:
             if hello.type is not MessageType.CLIENT_HELLO:
                 raise ProtocolError("first message must be client.hello")
             self.state.connect(hello)
+            self._notify_message(hello)
             self._client = websocket
             accepted = True
             response = Message(
@@ -101,6 +117,7 @@ class LiveBridgeServer:
                 if message.session_id != self.state.client_session_id:
                     raise ProtocolError("message session_id does not match active client session")
                 self.state.apply(message)
+                self._notify_message(message)
         except (ProtocolError, ValueError, asyncio.TimeoutError) as exc:
             await websocket.close(code=1008, reason=str(exc)[:120])
         finally:

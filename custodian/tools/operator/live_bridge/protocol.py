@@ -121,6 +121,9 @@ def _validate_payload(message: Message) -> None:
             _validate_editor_payload(payload["editor_state"])
     elif message.type is MessageType.SELECT_FRAME:
         _positive_int(payload, "frame")
+        document_path = payload.get("document_path")
+        if not isinstance(document_path, str) or not document_path:
+            raise ProtocolError("command.select_frame requires document_path")
     elif message.type is MessageType.EDITOR_STATE:
         _validate_editor_payload(payload)
     elif message.type is MessageType.EDITOR_SITE_CHANGED:
@@ -202,6 +205,8 @@ class BridgePathPolicy:
     def validate_message_paths(self, message: Message) -> None:
         if message.type is MessageType.OPEN_WORKBENCH:
             self.validate_workbench(message.payload["path"])
+        elif message.type is MessageType.SELECT_FRAME:
+            self.validate_workbench(message.payload["document_path"])
         elif message.type is MessageType.EXPORT_PREVIEW:
             self.validate_preview(message.payload["output_path"])
 

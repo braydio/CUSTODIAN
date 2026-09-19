@@ -178,7 +178,8 @@ class PilotService:
     def available_directions(self, selection): return WorkbenchService.available_directions(self, selection)
     def session(self, selection):
         self.last_selection = selection
-        return SessionView(selection, 6, 6, 6, "CLEAN", "NONE", "GREEN", Path("/tmp/workbench"), "/bin/true", (LayerView("lower_body", "operator_layer", "operator", "unarmed", 6, 6, 6, "96×96"),))
+        workspace = self.repo_root / ".ai/operator_animation_workbench/ui-pilot"
+        return SessionView(selection, 6, 6, 6, "CLEAN", "NONE", "GREEN", workspace, "/bin/true", (LayerView("lower_body", "operator_layer", "operator", "unarmed", 6, 6, 6, "96×96"),))
     def watch_signature(self, _selection): return (None, None)
     def frame_preview(self, _selection, operation, position, fill):
         if operation == "remove": return MigrationView("remove", position, fill, 6, 5, ("lower_body",), (), "GREEN")
@@ -233,6 +234,7 @@ class ContextPilotService(PilotService):
 
 
 async def textual_smoke() -> None:
+    import animation_preview
     from PIL import Image
     from textual.app import App, ComposeResult
     from ui.app import OperatorWorkbenchApp
@@ -294,6 +296,7 @@ async def textual_smoke() -> None:
         assert sum(event.message.startswith("Live Bridge listening on ") for event in app.state.activity) == 1
         uri = f"ws://127.0.0.1:{app.live_bridge.server.listening_port}"
         client_session = "ui-pilot-client"
+        workbench_path = str((app.session_view.workspace_path / "workbench.aseprite").resolve())
         async with connect(uri) as live_client:
             await live_client.send(json.dumps({
                 "schema": "custodian.operator_live_bridge.message.v1",
@@ -305,6 +308,10 @@ async def textual_smoke() -> None:
                         "websocket", "app_events_sitechange", "sprite_change_events",
                         "sprite_is_modified", "timer", "frame_selection", "image_render_export",
                     ],
+                    "editor_state": {
+                        "has_document": True, "document_path": workbench_path,
+                        "frame": 1, "modified": False, "revision": 0,
+                    },
                 },
             }))
             await live_client.recv()
@@ -312,6 +319,76 @@ async def textual_smoke() -> None:
             assert app.live_bridge.snapshot().status is LiveBridgeUIStatus.CONNECTED
             assert "LIVE ● CONNECTED" in str(status_bar.render())
             assert sum(event.message == "Aseprite Live Bridge connected" for event in app.state.activity) == 1
+            app.action_mode_preview(); await pilot.pause(0.3)
+            await live_client.send(json.dumps({
+                "schema": "custodian.operator_live_bridge.message.v1",
+                "session_id": client_session, "sequence": 2,
+                "type": "editor.site_changed", "cause": None,
+                "payload": {"document_path": workbench_path, "frame": 4},
+            }))
+            await pilot.pause(0.05)
+            assert app.state.preview_frame == 3
+            assert app.main_screen.query_one("#preview-canvas", PreviewCanvas).source_frame is not None
+
+            app.action_preview_next(); await pilot.pause(0.05)
+            assert app._live_document_matches_selection(), (
+                app._selected_live_workbench_path(),
+                app.live_bridge.server.state.active_document_path,
+            )
+            assert app.state.mode == "preview" and app.state.preview_frame == 4
+            await pilot.pause(0.2)
+            assert app.live_bridge.server.state.pending_commands
+            command = json.loads(await asyncio.wait_for(live_client.recv(), timeout=0.2))
+            assert command["type"] == "command.select_frame"
+            assert command["payload"] == {"frame": 5, "document_path": workbench_path}
+            await live_client.send(json.dumps({
+                "schema": "custodian.operator_live_bridge.message.v1",
+                "session_id": client_session, "sequence": 3,
+                "type": "editor.site_changed", "cause": command["sequence"],
+                "payload": {"document_path": workbench_path, "frame": 5},
+            }))
+            await pilot.pause(0.05)
+            try:
+                await asyncio.wait_for(live_client.recv(), timeout=0.05)
+            except asyncio.TimeoutError:
+                pass
+            else:
+                raise AssertionError("causal site event created a frame-command feedback loop")
+
+            await live_client.send(json.dumps({
+                "schema": "custodian.operator_live_bridge.message.v1",
+                "session_id": client_session, "sequence": 4,
+                "type": "editor.site_changed", "cause": None,
+                "payload": {"document_path": str(service.repo_root / "other/workbench.aseprite"), "frame": 1},
+            }))
+            await pilot.pause(0.05)
+            assert app.state.preview_frame == 4
+
+            app.state.preview_playing = True
+            app._preview_last_tick -= 1.0 / app.state.review_fps
+            app._preview_tick()
+            try:
+                await asyncio.wait_for(live_client.recv(), timeout=0.05)
+            except asyncio.TimeoutError:
+                pass
+            else:
+                raise AssertionError("automatic Preview playback emitted a frame command")
+
+            app.state.preview_playing = False
+            app.state.mode = "timeline"
+            app.timeline_frames = [(0, 0, app.preview_view.frames[0]), (0, 1, app.preview_view.frames[1])]
+            app.sequence.clips = [animation_preview.TimelineClip("unarmed", "locomotion", "run_01", "e")]
+            app.state.preview_frame = 0
+            app.action_preview_next()
+            app.state.mode = "motion"
+            app.action_preview_next()
+            try:
+                await asyncio.wait_for(live_client.recv(), timeout=0.05)
+            except asyncio.TimeoutError:
+                pass
+            else:
+                raise AssertionError("Timeline or Motion navigation emitted a frame command")
+            app.action_mode_workbench(); await pilot.pause()
         await pilot.pause(0.6)
         assert app.live_bridge.snapshot().status is LiveBridgeUIStatus.WAITING
         assert "LIVE ○ WAITING" in str(status_bar.render())
