@@ -124,6 +124,14 @@ def _validate_payload(message: Message) -> None:
         document_path = payload.get("document_path")
         if not isinstance(document_path, str) or not document_path:
             raise ProtocolError("command.select_frame requires document_path")
+    elif message.type is MessageType.EXPORT_PREVIEW:
+        document_path = payload.get("document_path")
+        output_path = payload.get("output_path")
+        if not isinstance(document_path, str) or not document_path:
+            raise ProtocolError("command.export_preview requires document_path")
+        if not isinstance(output_path, str) or not output_path:
+            raise ProtocolError("command.export_preview requires output_path")
+        _nonnegative_int(payload, "revision")
     elif message.type is MessageType.EDITOR_STATE:
         _validate_editor_payload(payload)
     elif message.type is MessageType.EDITOR_SITE_CHANGED:
@@ -134,10 +142,9 @@ def _validate_payload(message: Message) -> None:
             _nonnegative_int(payload, "revision")
     elif message.type is MessageType.COMMAND_RESULT and message.cause is None:
         raise ProtocolError("command.result must identify its command in cause")
-    elif message.type in (MessageType.OPEN_WORKBENCH, MessageType.EXPORT_PREVIEW):
-        key = "path" if message.type is MessageType.OPEN_WORKBENCH else "output_path"
-        if not isinstance(payload.get(key), str) or not payload[key]:
-            raise ProtocolError(f"{message.type.value} requires {key}")
+    elif message.type is MessageType.OPEN_WORKBENCH:
+        if not isinstance(payload.get("path"), str) or not payload["path"]:
+            raise ProtocolError("command.open_workbench requires path")
 
 
 def _positive_int(payload: Mapping[str, Any], key: str) -> None:
@@ -208,6 +215,7 @@ class BridgePathPolicy:
         elif message.type is MessageType.SELECT_FRAME:
             self.validate_workbench(message.payload["document_path"])
         elif message.type is MessageType.EXPORT_PREVIEW:
+            self.validate_workbench(message.payload["document_path"])
             self.validate_preview(message.payload["output_path"])
 
     def _resolve(self, path: str | Path) -> Path:

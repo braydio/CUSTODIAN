@@ -23,7 +23,6 @@ local server_types = {
 
 local unsupported_commands = {
   ["command.open_workbench"] = true,
-  ["command.export_preview"] = true,
   ["command.save"] = true,
 }
 
@@ -105,8 +104,8 @@ function Protocol.passive_response(client, message)
   if unsupported_commands[message.type] then
     return Protocol.encode_message(client, "command.result", {
       ok = false,
-      error = "unsupported in Packet 3B",
-      packet = "3B",
+      error = "unsupported in Packet 4",
+      packet = "4",
     }, message.sequence)
   end
   if message.type == "heartbeat" then

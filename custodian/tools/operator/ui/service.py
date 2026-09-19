@@ -94,6 +94,17 @@ class WorkbenchService:
         )
         return self.preview_provider.load(identity, source)
 
+    def live_preview(
+        self, selection: AnimationSelection, strip_path: Path, *,
+        frames: int, frame_size: tuple[int, int],
+    ):
+        identity = animation_preview.SemanticIdentity(
+            selection.profile, selection.group, selection.action, selection.direction,
+        )
+        return self.preview_provider.load_live(
+            identity, Path(strip_path), frames=frames, frame_size=frame_size,
+        )
+
     def motion_event_markers(self, selection: AnimationSelection) -> tuple[animation_motion_preview.MotionEventMarker, ...]:
         """Read optional structured catalog events without scraping runtime source."""
         try:

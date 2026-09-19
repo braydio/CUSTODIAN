@@ -158,4 +158,6 @@ The persistent Aseprite channel is independently specified in
 `OPERATOR_ASEPRITE_LIVE_BRIDGE.md`. The UI owns its stable loopback server
 lifecycle and truthfully reports waiting/connected/unavailable state. Manual
 PREVIEW frame navigation synchronizes with the matching disposable Aseprite
-document; playback, TIMELINE, MOTION, and semantic document following do not.
+document. WORKBENCH-source PREVIEW prefers a revision-guarded render of its
+unsaved manifest-whitelisted pixels, with saved Workbench fallback. Playback,
+TIMELINE, MOTION, and semantic document following do not drive the bridge.

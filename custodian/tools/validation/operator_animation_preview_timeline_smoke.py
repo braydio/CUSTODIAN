@@ -75,4 +75,16 @@ with tempfile.TemporaryDirectory(prefix="operator_preview_") as raw:
     (workspace/"workbench.json").write_text(json.dumps({"aseprite":{"path":str(document)},"layers":bindings}))
     workbench=equivalent.load(SemanticIdentity("melee_1h","attack","fast_01","e"),"workbench")
     assert str(full) not in workbench.paths and workbench.frames[0].tobytes()==modular.frames[0].tobytes()
+    live_strip=root/"live.png"
+    live_image=Image.new("RGBA",(192,96),(0,0,0,0)); live_image.putpixel((100,5),(123,45,67,255)); live_image.save(live_strip)
+    live=equivalent.load_live(workbench.identity,live_strip,frames=2,frame_size=(96,96))
+    assert live.source=="live" and len(live.frames)==2
+    assert live.frames[1].getpixel((4,5))==(123,45,67,255)
+    try: equivalent.load(workbench.identity,"live")
+    except ValueError: pass
+    else: raise AssertionError("LIVE became a persisted global source")
+    for path,frames,size in ((root/"absent.png",2,(96,96)),(live_strip,0,(96,96)),(live_strip,2,(0,96))):
+        try: equivalent.load_live(workbench.identity,path,frames=frames,frame_size=size)
+        except ValueError: pass
+        else: raise AssertionError("invalid live preview contract accepted")
 print("operator_animation_preview_timeline_smoke ok")

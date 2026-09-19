@@ -191,6 +191,30 @@ async def controller_lifecycle_smoke(repo_root: Path) -> None:
         }))
         human = await asyncio.wait_for(controller.next_event(), timeout=0.2)
         assert human.user_originated and human.frame == 4 and human.cause is None
+        export_request = await controller.export_preview(workbench, 42)
+        export_command = parse_message(await client.recv())
+        expected_output = controller._live_preview_path(workbench)
+        assert export_command.sequence == export_request
+        assert export_command.type is MessageType.EXPORT_PREVIEW
+        assert export_command.payload == {
+            "document_path": str(workbench.resolve()),
+            "output_path": str(expected_output),
+            "revision": 42,
+        }
+        assert expected_output.parent == repo_root / ".ai/operator_animation_workbench/live"
+        assert expected_output.name == controller._live_preview_path(workbench).name
+        await client.send(envelope("controller-first", 4, "command.result", {
+            "ok": True, "operation": "export_preview",
+            "document_path": str(workbench.resolve()),
+            "output_path": str(expected_output), "revision": 42,
+            "frames": 8, "frame_width": 96, "frame_height": 96,
+            "modified": True,
+        }, cause=export_request))
+        exported = await asyncio.wait_for(controller.next_event(), timeout=0.2)
+        assert exported.operation == "export_preview" and exported.ok is True
+        assert exported.revision == 42 and exported.frame_count == 8
+        assert exported.frame_width == 96 and exported.frame_height == 96
+        assert exported.output_path == str(expected_output) and not exported.user_originated
     await wait_for(
         lambda: controller.snapshot().status is LiveBridgeUIStatus.WAITING,
         "controller disconnected",
@@ -248,6 +272,11 @@ def path_policy_smoke(repo_root: Path) -> None:
         "frame": 1, "document_path": str(valid_workbench),
     }).to_dict())
     policy.validate_message_paths(select)
+    export = parse_message(Message("bridge", 2, MessageType.EXPORT_PREVIEW, {
+        "document_path": str(valid_workbench),
+        "output_path": str(valid_preview), "revision": 42,
+    }).to_dict())
+    policy.validate_message_paths(export)
     invalid = [
         (policy.validate_workbench, "custodian/content/sprites/operator/source/canonical.aseprite"),
         (policy.validate_workbench, ".ai/operator_animation_workbench/../../escape.aseprite"),
@@ -272,6 +301,22 @@ def path_policy_smoke(repo_root: Path) -> None:
             pass
         else:
             raise AssertionError(f"unsafe select-frame payload accepted: {payload}")
+    invalid_exports = (
+        {"output_path": str(valid_preview), "revision": 1},
+        {"document_path": str(valid_workbench), "revision": 1},
+        {"document_path": str(valid_workbench), "output_path": str(valid_preview)},
+        {"document_path": str(valid_workbench), "output_path": str(valid_preview), "revision": -1},
+        {"document_path": str(repo_root / "canonical.aseprite"), "output_path": str(valid_preview), "revision": 1},
+        {"document_path": str(valid_workbench), "output_path": str(repo_root / "preview.png"), "revision": 1},
+    )
+    for payload in invalid_exports:
+        try:
+            message = parse_message(Message("bridge", 2, MessageType.EXPORT_PREVIEW, payload).to_dict())
+            policy.validate_message_paths(message)
+        except ProtocolError:
+            pass
+        else:
+            raise AssertionError(f"unsafe export-preview payload accepted: {payload}")
 
 
 def stable_endpoint_smoke(repo_root: Path) -> None:
@@ -289,12 +334,14 @@ def aseprite_extension_smoke() -> None:
 
     protocol_source = (extension / "protocol.lua").read_text()
     main_source = (extension / "main.lua").read_text()
+    preview_source = (extension / "live_preview.lua").read_text()
     for capability in REQUIRED_CAPABILITIES:
         assert f'"{capability}"' in protocol_source
     for command in ("open_workbench", "select_frame", "export_preview", "save"):
         assert f'"command.{command}"' in protocol_source
     assert protocol_source.count('["command.select_frame"] = true') == 1
-    assert 'error = "unsupported in Packet 3B"' in protocol_source
+    assert protocol_source.count('["command.export_preview"] = true') == 1
+    assert 'error = "unsupported in Packet 4"' in protocol_source
     assert 'Protocol.DEFAULT_URL = "ws://127.0.0.1:32147"' in protocol_source
     assert 'app.events:on("sitechange"' in main_source
     assert 'sprite.events:on("change"' in main_source
@@ -302,8 +349,13 @@ def aseprite_extension_smoke() -> None:
     assert "minreconnectwait = 1.0" in main_source and "maxreconnectwait = 5.0" in main_source
     assert "app.frame = frame" in main_source and "app.layer =" not in main_source
     assert 'message.type == "command.select_frame"' in main_source
-    for forbidden in ("os.execute", "io.popen", "app.open", "app.command.Save"):
-        assert forbidden not in main_source
+    assert 'message.type == "command.export_preview"' in main_source
+    assert "manifest.layers" in preview_source and "strip:saveAs(output_path)" in preview_source
+    for forbidden in (
+        "os.execute", "io.popen", "app.open", "app.command.Save",
+        "sprite:saveAs", "sprite:saveCopyAs",
+    ):
+        assert forbidden not in main_source and forbidden not in preview_source
 
     aseprite = shutil.which("aseprite")
     if aseprite:
@@ -324,21 +376,100 @@ local command = protocol.decode_server_message(client,
   '{{"schema":"custodian.operator_live_bridge.message.v1","session_id":"bridge-session","sequence":2,"type":"command.open_workbench","cause":null,"payload":{{"path":"x"}}}}')
 assert(command ~= nil)
 local refusal = protocol.passive_response(client, command)
-assert(refusal:find('unsupported in Packet 3B', 1, true))
+assert(refusal:find('unsupported in Packet 4', 1, true))
 assert(client.sequence == 2)
-for index, commandType in ipairs({{"command.export_preview", "command.save"}}) do
+for index, commandType in ipairs({{"command.save"}}) do
   local deferred = protocol.decode_server_message(client,
     '{{"schema":"custodian.operator_live_bridge.message.v1","session_id":"bridge-session","sequence":' .. tostring(index + 2) .. ',"type":"' .. commandType .. '","cause":null,"payload":{{}}}}')
   assert(deferred ~= nil)
-  assert(protocol.passive_response(client, deferred):find('unsupported in Packet 3B', 1, true))
+  assert(protocol.passive_response(client, deferred):find('unsupported in Packet 4', 1, true))
 end
 local selectFrame = protocol.decode_server_message(client,
-  '{{"schema":"custodian.operator_live_bridge.message.v1","session_id":"bridge-session","sequence":5,"type":"command.select_frame","cause":null,"payload":{{"frame":5,"document_path":"/tmp/workbench.aseprite"}}}}')
+  '{{"schema":"custodian.operator_live_bridge.message.v1","session_id":"bridge-session","sequence":4,"type":"command.select_frame","cause":null,"payload":{{"frame":5,"document_path":"/tmp/workbench.aseprite"}}}}')
 assert(selectFrame ~= nil and protocol.passive_response(client, selectFrame) == nil)
+local exportPreview = protocol.decode_server_message(client,
+  '{{"schema":"custodian.operator_live_bridge.message.v1","session_id":"bridge-session","sequence":5,"type":"command.export_preview","cause":null,"payload":{{"document_path":"/tmp/workbench.aseprite","output_path":"/tmp/live.png","revision":1}}}}')
+assert(exportPreview ~= nil and protocol.passive_response(client, exportPreview) == nil)
 ''')
             result = subprocess.run([aseprite, "-b", "--script", str(script)],
                                     capture_output=True, text=True, timeout=15)
             assert result.returncode == 0, result.stdout + result.stderr
+
+            fixture = Path(temporary) / "workbench"
+            fixture.mkdir()
+            workbench = fixture / "workbench.aseprite"
+            baseline = fixture / "baseline.aseprite"
+            output = fixture / "live.png"
+            canonical_sentinel = Path(temporary) / "canonical.png"
+            runtime_sentinel = Path(temporary) / "runtime.png"
+            canonical_sentinel.write_bytes(b"canonical-render-sentinel")
+            runtime_sentinel.write_bytes(b"runtime-render-sentinel")
+            production_before = (canonical_sentinel.read_bytes(), runtime_sentinel.read_bytes())
+            (fixture / "workbench.json").write_text(json.dumps({
+                "timeline": {"document_frames": 2},
+                "canvas": {"width": 4, "height": 3},
+                "layers": [
+                    {"aseprite_layer_name": "lower_body"},
+                    {"aseprite_layer_name": "upper_body"},
+                ],
+            }))
+            render_script = Path(temporary) / "live_render_contract.lua"
+            render_module = json.dumps(str(extension / "live_preview.lua"))
+            render_script.write_text(f'''local live = dofile({render_module})
+local sprite = Sprite(4, 3, ColorMode.RGB)
+local lower = sprite.layers[1]
+lower.name = "lower_body"
+local upper = sprite:newLayer()
+upper.name = "upper_body"
+local reference = sprite:newLayer()
+reference.name = "__REFERENCE_TEST"
+sprite:newEmptyFrame()
+local clear1 = Image(4, 3, ColorMode.RGB)
+local clear2 = Image(4, 3, ColorMode.RGB)
+local upper1 = Image(4, 3, ColorMode.RGB)
+local upper2 = Image(4, 3, ColorMode.RGB)
+local ref1 = Image(4, 3, ColorMode.RGB)
+local ref2 = Image(4, 3, ColorMode.RGB)
+upper1:drawPixel(0, 0, app.pixelColor.rgba(0, 255, 0, 255))
+upper2:drawPixel(0, 0, app.pixelColor.rgba(0, 255, 0, 255))
+ref1:drawPixel(3, 2, app.pixelColor.rgba(0, 0, 255, 255))
+ref2:drawPixel(3, 2, app.pixelColor.rgba(0, 0, 255, 255))
+sprite:newCel(lower, 1, clear1, Point(0, 0))
+sprite:newCel(lower, 2, clear2, Point(0, 0))
+sprite:newCel(upper, 1, upper1, Point(0, 0))
+sprite:newCel(upper, 2, upper2, Point(0, 0))
+sprite:newCel(reference, 1, ref1, Point(0, 0))
+sprite:newCel(reference, 2, ref2, Point(0, 0))
+sprite:saveAs({json.dumps(str(workbench))})
+local source = assert(io.open({json.dumps(str(workbench))}, "rb"))
+local bytes = source:read("*a")
+source:close()
+local copy = assert(io.open({json.dumps(str(baseline))}, "wb"))
+copy:write(bytes)
+copy:close()
+local changed = lower:cel(2).image:clone()
+changed:drawPixel(1, 1, app.pixelColor.rgba(255, 0, 0, 255))
+app.transaction(function() lower:cel(2).image = changed end)
+assert(sprite.isModified)
+local modified_before = sprite.isModified
+local manifest = live.read_json({json.dumps(str(fixture / 'workbench.json'))})
+local result = live.render(sprite, manifest, {json.dumps(str(output))})
+assert(result.frames == 2 and result.frame_width == 4 and result.frame_height == 3)
+assert(sprite.isModified == modified_before)
+''')
+            rendered = subprocess.run(
+                [aseprite, "-b", "--script", str(render_script)],
+                capture_output=True, text=True, timeout=15,
+            )
+            assert rendered.returncode == 0, rendered.stdout + rendered.stderr
+            assert output.exists() and workbench.read_bytes() == baseline.read_bytes()
+            assert production_before == (canonical_sentinel.read_bytes(), runtime_sentinel.read_bytes())
+            from PIL import Image
+            with Image.open(output) as image:
+                rgba = image.convert("RGBA")
+                assert rgba.size == (8, 3)
+                assert rgba.getpixel((5, 1)) == (255, 0, 0, 255)
+                assert rgba.getpixel((3, 2))[3] == 0
 
 
 def installer_smoke() -> None:
@@ -363,7 +494,7 @@ def main() -> None:
         asyncio.run(controller_failure_smoke(repo_root))
     aseprite_extension_smoke()
     installer_smoke()
-    print("PASS operator_live_bridge_smoke: stable/ephemeral endpoint, lifecycle, select-frame conversion/path confinement, immediate causal/user event projection, Aseprite Packet 3B command contract, reconnect, install symlink, production immutability")
+    print("PASS operator_live_bridge_smoke: Packet 4 export contract, deterministic path confinement, immediate result projection, detached manifest-filtered unsaved Aseprite render, dirty/workbench preservation, reconnect, production immutability")
 
 
 if __name__ == "__main__":

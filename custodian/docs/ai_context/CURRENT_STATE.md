@@ -1,6 +1,6 @@
 # CURRENT STATE — CUSTODIAN
 
-## Operator Aseprite Live Bridge Packet 3B (2026-09-18)
+## Operator Aseprite Live Bridge Packet 4 (2026-09-18)
 
 The optional, loopback-only Python WebSocket server now defaults to stable
 `127.0.0.1:32147` while retaining explicit ephemeral test ports. The persistent
@@ -14,10 +14,18 @@ non-fatal dependency/address failures, and awaited clean shutdown. Manual Previe
 navigation and human Aseprite frame selection now synchronize immediately with
 explicit zero-/one-based conversion, exact disposable-document guards on both
 peers, and causal event suppression. Preview playback plus all Timeline/Motion
-clocks remain excluded. Open/save/export commands remain refused. Focused smoke
-covers protocol/path guards, event delivery, feedback-loop prevention, playback
-exclusions, Lua contract, reconnect, and Textual behavior. No live preview,
-layer control, Art Agent integration, gameplay behavior, or publication authority changed. See
+clocks remain excluded. On WORKBENCH-source PREVIEW only, native sprite changes
+now trigger a 150 ms latest-revision debounce and a confined detached-image
+render to one SHA-keyed `.ai/operator_animation_workbench/live/` PNG. The Lua
+renderer uses only manifest-whitelisted presentation layers, includes unsaved
+in-memory pixels, excludes reference layers, preserves dirty state and saved
+document bytes, and returns dimensions/revision only after writing. PREVIEW
+labels the applied artifact LIVE; saved Workbench remains the disconnected
+fallback, while the global source cycle stays WORKBENCH/CANONICAL/RUNTIME.
+Open/save commands remain refused. Focused smoke covers protocol/path guards,
+real headless Aseprite rendering, dirty/workbench immutability, debounce/stale
+suppression, fallback, exclusions, reconnect, and Textual behavior. No layer
+control, Art Agent integration, gameplay behavior, or publication authority changed. See
 `design/02_features/animation/OPERATOR_ASEPRITE_LIVE_BRIDGE.md`.
 
 ## Workbench Optional Mirror Promotion (2026-09-15)

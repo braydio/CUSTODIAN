@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import asyncio
+import hashlib
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
@@ -32,10 +33,29 @@ class LiveBridgeSnapshot:
 @dataclass(frozen=True, slots=True)
 class LiveBridgeEvent:
     message_type: MessageType
-    document_path: str | None
-    frame: int | None
-    cause: int | None
-    user_originated: bool
+    document_path: str | None = None
+    frame: int | None = None
+    revision: int | None = None
+    modified: bool | None = None
+    cause: int | None = None
+    user_originated: bool = True
+    operation: str | None = None
+    ok: bool | None = None
+    output_path: str | None = None
+    frame_count: int | None = None
+    frame_width: int | None = None
+    frame_height: int | None = None
+    error: str | None = None
+
+
+def _project_string(value: object) -> str | None:
+    return value if isinstance(value, str) else None
+
+
+def _project_integer(value: object, *, minimum: int = 0) -> int | None:
+    if isinstance(value, bool) or not isinstance(value, int) or value < minimum:
+        return None
+    return value
 
 
 class LiveBridgeController:
@@ -59,18 +79,35 @@ class LiveBridgeController:
             payload = message.payload.get("editor_state", {})
         elif message.type is MessageType.EDITOR_SITE_CHANGED:
             payload = message.payload
+        elif message.type is MessageType.DOCUMENT_CHANGED:
+            payload = message.payload
+        elif message.type is MessageType.COMMAND_RESULT:
+            payload = message.payload
+            if payload.get("operation") != "export_preview":
+                return
         else:
             return
         if not isinstance(payload, dict):
             return
         document_path = payload.get("document_path")
         frame = payload.get("frame")
+        revision = payload.get("revision")
+        modified = payload.get("modified")
         self._events.put_nowait(LiveBridgeEvent(
             message_type=message.type,
-            document_path=document_path if isinstance(document_path, str) else None,
-            frame=frame if isinstance(frame, int) and not isinstance(frame, bool) else None,
+            document_path=_project_string(document_path),
+            frame=_project_integer(frame, minimum=1),
+            revision=_project_integer(revision),
+            modified=modified if isinstance(modified, bool) else None,
             cause=message.cause,
-            user_originated=message.cause is None,
+            user_originated=message.cause is None and message.type is not MessageType.COMMAND_RESULT,
+            operation="export_preview" if message.type is MessageType.COMMAND_RESULT else None,
+            ok=payload.get("ok") if isinstance(payload.get("ok"), bool) else None,
+            output_path=_project_string(payload.get("output_path")),
+            frame_count=_project_integer(payload.get("frames"), minimum=1),
+            frame_width=_project_integer(payload.get("frame_width"), minimum=1),
+            frame_height=_project_integer(payload.get("frame_height"), minimum=1),
+            error=_project_string(payload.get("error")),
         ))
 
     async def next_event(self) -> LiveBridgeEvent:
@@ -83,6 +120,24 @@ class LiveBridgeController:
         return await self.server.send_command(MessageType.SELECT_FRAME, {
             "frame": frame_index + 1,
             "document_path": str(document),
+        })
+
+    def _live_preview_path(self, workbench_path: Path) -> Path:
+        document = self.server.paths.validate_workbench(workbench_path)
+        key = hashlib.sha256(str(document).encode("utf-8")).hexdigest()[:16]
+        output = self.server.paths.preview_root / f"{key}.png"
+        output.parent.mkdir(parents=True, exist_ok=True)
+        return output
+
+    async def export_preview(self, workbench_path: Path, revision: int) -> int:
+        if revision < 0:
+            raise ValueError("revision must be non-negative")
+        document = self.server.paths.validate_workbench(workbench_path)
+        output = self._live_preview_path(document)
+        return await self.server.send_command(MessageType.EXPORT_PREVIEW, {
+            "document_path": str(document),
+            "output_path": str(output),
+            "revision": revision,
         })
 
     async def start(self) -> None:

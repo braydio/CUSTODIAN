@@ -1,4 +1,5 @@
 local Protocol = nil
+local LivePreview = nil
 
 local socket = nil
 local client = nil
@@ -154,11 +155,107 @@ local function handle_select_frame(message)
   send_command_result(message, true, nil)
 end
 
+local function export_result(message, payload)
+  payload.operation = "export_preview"
+  send("command.result", payload, message.sequence)
+end
+
+local function handle_export_preview(message)
+  local payload = message.payload or {}
+  local expected_path = payload.document_path
+  local output_path = payload.output_path
+  local expected_revision = payload.revision
+  local sprite = app.sprite
+  if sprite == nil then
+    export_result(message, { ok = false, error = "no active Aseprite document" })
+    return
+  end
+  if type(expected_path) ~= "string" or expected_path == "" then
+    export_result(message, { ok = false, error = "document_path is required" })
+    return
+  end
+  if sprite.filename ~= expected_path then
+    export_result(message, {
+      ok = false,
+      error = "active document does not match requested workbench",
+      document_path = sprite.filename,
+      revision = revision,
+    })
+    return
+  end
+  if type(output_path) ~= "string" or output_path == "" then
+    export_result(message, { ok = false, error = "output_path is required" })
+    return
+  end
+  if type(expected_revision) ~= "number" or expected_revision % 1 ~= 0 or expected_revision < 0 then
+    export_result(message, { ok = false, error = "invalid expected revision" })
+    return
+  end
+  if expected_revision ~= revision then
+    export_result(message, {
+      ok = false,
+      error = "stale live preview revision",
+      document_path = sprite.filename,
+      revision = revision,
+    })
+    return
+  end
+
+  local manifest_path = app.fs.joinPath(app.fs.filePath(sprite.filename), "workbench.json")
+  if not app.fs.isFile(manifest_path) then
+    export_result(message, {
+      ok = false,
+      error = "workbench manifest missing",
+      document_path = sprite.filename,
+      revision = revision,
+    })
+    return
+  end
+
+  local modified_before = sprite.isModified
+  local ok, result = pcall(function()
+    local manifest = LivePreview.read_json(manifest_path)
+    return LivePreview.render(sprite, manifest, output_path)
+  end)
+  if not ok then
+    export_result(message, {
+      ok = false,
+      error = tostring(result),
+      document_path = sprite.filename,
+      revision = revision,
+    })
+    return
+  end
+  if sprite.isModified ~= modified_before then
+    export_result(message, {
+      ok = false,
+      error = "live preview render changed document dirty state",
+      document_path = sprite.filename,
+      revision = revision,
+    })
+    return
+  end
+  export_result(message, {
+    ok = true,
+    document_path = sprite.filename,
+    output_path = output_path,
+    revision = revision,
+    modified = sprite.isModified,
+    frames = result.frames,
+    frame_width = result.frame_width,
+    frame_height = result.frame_height,
+  })
+end
+
 local function handle_server_text(text)
   local message = Protocol.decode_server_message(client, text)
   if message == nil then return end
   if message.type == "command.select_frame" then
     handle_select_frame(message)
+    return
+  end
+  if message.type == "command.export_preview" then
+    handle_export_preview(message)
     return
   end
   local response = Protocol.passive_response(client, message)
@@ -189,6 +286,7 @@ end
 
 function init(plugin)
   Protocol = dofile(app.fs.joinPath(plugin.path, "protocol.lua"))
+  LivePreview = dofile(app.fs.joinPath(plugin.path, "live_preview.lua"))
   exiting = false
   revision = 0
   if plugin.preferences.bridge_url == nil or plugin.preferences.bridge_url == "" then

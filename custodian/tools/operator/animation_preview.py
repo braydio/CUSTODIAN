@@ -17,7 +17,7 @@ def consume_frame_time(elapsed_sec: float, fps: float) -> tuple[bool, float]:
         return False, max(0.0, elapsed_sec)
     return True, max(0.0, elapsed_sec - frame_duration)
 
-PreviewSource = Literal["workbench", "canonical", "runtime"]
+PreviewSource = Literal["live", "workbench", "canonical", "runtime"]
 ZoomMode = Literal["auto", "1x", "2x", "3x", "fit"]
 PLAN_SCHEMA = "custodian.operator_animation_implementation_plan.v1"
 SEQUENCE_SCHEMA = "custodian.operator_animation_review_sequence.v1"
@@ -196,11 +196,28 @@ class AnimationPreviewProvider:
         return select_presentation_layers(rows)
 
     def load(self, identity: SemanticIdentity, source: PreviewSource = "runtime") -> Preview:
+        if source not in ("workbench", "canonical", "runtime"):
+            raise ValueError(f"live preview is not a persisted source: {source}")
         layers = self._workbench_layers(identity) if source == "workbench" else self._canonical_layers(identity) if source == "canonical" else self._catalog_layers(identity)
         paths = [item.path for item in layers]
         fingerprint = _digest(paths)
         frames, size = composite_layers(layers)
         return Preview(identity, source, frames, size, fingerprint, tuple(str(path) for path in paths))
+
+    def load_live(
+        self, identity: SemanticIdentity, strip_path: Path, *,
+        frames: int, frame_size: tuple[int, int],
+    ) -> Preview:
+        path = Path(strip_path)
+        if not path.exists():
+            raise ValueError(f"live preview artifact absent: {path}")
+        if frames < 1:
+            raise ValueError("live preview must contain at least one frame")
+        width, height = frame_size
+        if width < 1 or height < 1:
+            raise ValueError("invalid live preview frame contract")
+        images = tuple(split_strip(path, frames, frame_size))
+        return Preview(identity, "live", images, frame_size, _file_sha(path), (str(path),))
 
 
 def validate_plan(payload: dict, catalog: dict | None = None) -> list[dict]:

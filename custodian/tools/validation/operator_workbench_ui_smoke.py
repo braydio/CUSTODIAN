@@ -204,6 +204,15 @@ class PilotService:
         frames = tuple(Image.new("RGBA", (96, 96), (20 + index, 30, 40, 180)) for index in range(6))
         identity = animation_preview.SemanticIdentity(selection.profile, selection.group, selection.action, selection.direction)
         return animation_preview.Preview(identity, source, frames, (96, 96), "fixture", ())
+    def live_preview(self, selection, strip_path, *, frames, frame_size):
+        import animation_preview
+        identity = animation_preview.SemanticIdentity(
+            selection.profile, selection.group, selection.action, selection.direction,
+        )
+        images = tuple(animation_preview.split_strip(Path(strip_path), frames, frame_size))
+        return animation_preview.Preview(
+            identity, "live", images, frame_size, "live-fixture", (str(strip_path),),
+        )
     def motion_event_markers(self, _selection): return ()
     def launch_motion_runtime(self, selection, **_kwargs):
         self.runtime_calls += 1; self.runtime_selection = selection; return SimpleNamespace()
@@ -319,10 +328,37 @@ async def textual_smoke() -> None:
             assert app.live_bridge.snapshot().status is LiveBridgeUIStatus.CONNECTED
             assert "LIVE ● CONNECTED" in str(status_bar.render())
             assert sum(event.message == "Aseprite Live Bridge connected" for event in app.state.activity) == 1
+            assert app._live_document_matches_selection()
+            app.state.preview_source = "workbench"
             app.action_mode_preview(); await pilot.pause(0.3)
+            assert app.live_bridge.server.state.pending_commands, (
+                app.state.mode, app.preview_view.source if app.preview_view else None,
+                app.live_bridge.server.state.active_document_path,
+            )
+            initial_export = json.loads(await asyncio.wait_for(live_client.recv(), timeout=0.2))
+            assert initial_export["type"] == "command.export_preview"
+            assert initial_export["payload"]["revision"] == 0
+            initial_path = Path(initial_export["payload"]["output_path"])
+            initial_path.parent.mkdir(parents=True, exist_ok=True)
+            Image.new("RGBA", (96 * 6, 96), (10, 20, 30, 255)).save(initial_path)
             await live_client.send(json.dumps({
                 "schema": "custodian.operator_live_bridge.message.v1",
                 "session_id": client_session, "sequence": 2,
+                "type": "command.result", "cause": initial_export["sequence"],
+                "payload": {
+                    "ok": True, "operation": "export_preview",
+                    "document_path": workbench_path, "output_path": str(initial_path),
+                    "revision": 0, "frames": 6,
+                    "frame_width": 96, "frame_height": 96, "modified": False,
+                },
+            }))
+            await pilot.pause(0.1)
+            assert app.preview_view.source == "live"
+            assert "SOURCE: LIVE" in str(app.main_screen.query_one("#preview-controls").render())
+
+            await live_client.send(json.dumps({
+                "schema": "custodian.operator_live_bridge.message.v1",
+                "session_id": client_session, "sequence": 3,
                 "type": "editor.site_changed", "cause": None,
                 "payload": {"document_path": workbench_path, "frame": 4},
             }))
@@ -343,7 +379,7 @@ async def textual_smoke() -> None:
             assert command["payload"] == {"frame": 5, "document_path": workbench_path}
             await live_client.send(json.dumps({
                 "schema": "custodian.operator_live_bridge.message.v1",
-                "session_id": client_session, "sequence": 3,
+                "session_id": client_session, "sequence": 4,
                 "type": "editor.site_changed", "cause": command["sequence"],
                 "payload": {"document_path": workbench_path, "frame": 5},
             }))
@@ -357,7 +393,7 @@ async def textual_smoke() -> None:
 
             await live_client.send(json.dumps({
                 "schema": "custodian.operator_live_bridge.message.v1",
-                "session_id": client_session, "sequence": 4,
+                "session_id": client_session, "sequence": 5,
                 "type": "editor.site_changed", "cause": None,
                 "payload": {"document_path": str(service.repo_root / "other/workbench.aseprite"), "frame": 1},
             }))
@@ -388,11 +424,127 @@ async def textual_smoke() -> None:
                 pass
             else:
                 raise AssertionError("Timeline or Motion navigation emitted a frame command")
+
+            app.state.mode = "preview"
+            app.state.preview_source = "workbench"
+            for sequence, revision in ((6, 10), (7, 11), (8, 12)):
+                await live_client.send(json.dumps({
+                    "schema": "custodian.operator_live_bridge.message.v1",
+                    "session_id": client_session, "sequence": sequence,
+                    "type": "document.changed", "cause": None,
+                    "payload": {
+                        "document_path": workbench_path, "revision": revision,
+                        "modified": True,
+                    },
+                }))
+                await asyncio.sleep(0.03)
+            await pilot.pause(0.2)
+            debounced = json.loads(await asyncio.wait_for(live_client.recv(), timeout=0.2))
+            assert debounced["type"] == "command.export_preview"
+            assert debounced["payload"]["revision"] == 12
+            live_path = Path(debounced["payload"]["output_path"])
+            strip = Image.new("RGBA", (96 * 6, 96), (0, 0, 0, 0))
+            strip.putpixel((96 * 3 + 4, 5), (255, 44, 22, 255))
+            strip.save(live_path)
+            await live_client.send(json.dumps({
+                "schema": "custodian.operator_live_bridge.message.v1",
+                "session_id": client_session, "sequence": 9,
+                "type": "command.result", "cause": debounced["sequence"],
+                "payload": {
+                    "ok": True, "operation": "export_preview",
+                    "document_path": workbench_path, "output_path": str(live_path),
+                    "revision": 12, "frames": 6,
+                    "frame_width": 96, "frame_height": 96, "modified": True,
+                },
+            }))
+            await pilot.pause(0.1)
+            assert app.preview_view.source == "live" and len(app.preview_view.frames) == 6
+            assert app.preview_view.frames[3].getpixel((4, 5)) == (255, 44, 22, 255)
+            assert app.state.preview_frame < len(app.preview_view.frames)
+
+            await live_client.send(json.dumps({
+                "schema": "custodian.operator_live_bridge.message.v1",
+                "session_id": client_session, "sequence": 10,
+                "type": "document.changed", "cause": None,
+                "payload": {"document_path": workbench_path, "revision": 13, "modified": True},
+            }))
+            await pilot.pause(0.2)
+            stale_command = json.loads(await asyncio.wait_for(live_client.recv(), timeout=0.2))
+            assert stale_command["payload"]["revision"] == 13
+            live_before_stale = app.preview_view
+            await live_client.send(json.dumps({
+                "schema": "custodian.operator_live_bridge.message.v1",
+                "session_id": client_session, "sequence": 11,
+                "type": "document.changed", "cause": None,
+                "payload": {"document_path": workbench_path, "revision": 14, "modified": True},
+            }))
+            await live_client.send(json.dumps({
+                "schema": "custodian.operator_live_bridge.message.v1",
+                "session_id": client_session, "sequence": 12,
+                "type": "command.result", "cause": stale_command["sequence"],
+                "payload": {
+                    "ok": True, "operation": "export_preview",
+                    "document_path": workbench_path, "output_path": str(live_path),
+                    "revision": 13, "frames": 6,
+                    "frame_width": 96, "frame_height": 96, "modified": True,
+                },
+            }))
+            await pilot.pause(0.05)
+            assert app.preview_view is live_before_stale
+            await pilot.pause(0.15)
+            latest_command = json.loads(await asyncio.wait_for(live_client.recv(), timeout=0.2))
+            assert latest_command["payload"]["revision"] == 14
+
+            next_sequence = 13
+            for source, mode, path in (
+                ("canonical", "preview", workbench_path),
+                ("runtime", "preview", workbench_path),
+                ("workbench", "timeline", workbench_path),
+                ("workbench", "motion", workbench_path),
+                ("workbench", "preview", str(service.repo_root / "other/workbench.aseprite")),
+            ):
+                app.state.preview_source = source
+                app.state.mode = mode
+                await live_client.send(json.dumps({
+                    "schema": "custodian.operator_live_bridge.message.v1",
+                    "session_id": client_session, "sequence": next_sequence,
+                    "type": "document.changed", "cause": None,
+                    "payload": {"document_path": path, "revision": next_sequence + 2, "modified": True},
+                }))
+                next_sequence += 1
+                await pilot.pause(0.2)
+                try:
+                    await asyncio.wait_for(live_client.recv(), timeout=0.05)
+                except asyncio.TimeoutError:
+                    pass
+                else:
+                    raise AssertionError(f"{source}/{mode} emitted a live export")
+
+            app.state.mode = "workbench"
+            await live_client.send(json.dumps({
+                "schema": "custodian.operator_live_bridge.message.v1",
+                "session_id": client_session, "sequence": next_sequence,
+                "type": "editor.site_changed", "cause": None,
+                "payload": {"document_path": workbench_path, "frame": 1, "revision": 19},
+            }))
+            next_sequence += 1
+            await pilot.pause(0.05)
+            app.state.preview_source = "workbench"
+            app.action_mode_preview(); await pilot.pause(0.1)
+            immediate = json.loads(await asyncio.wait_for(live_client.recv(), timeout=0.2))
+            assert immediate["type"] == "command.export_preview"
+            assert immediate["payload"]["revision"] == app.live_bridge.server.state.document_revision
             app.action_mode_workbench(); await pilot.pause()
         await pilot.pause(0.6)
         assert app.live_bridge.snapshot().status is LiveBridgeUIStatus.WAITING
         assert "LIVE ○ WAITING" in str(status_bar.render())
         assert sum(event.message == "Aseprite Live Bridge disconnected" for event in app.state.activity) == 1
+        preview_calls = service.preview_calls
+        app.state.preview_source = "workbench"
+        app.action_mode_preview(); await pilot.pause(0.3)
+        assert service.preview_calls == preview_calls + 1
+        assert app.preview_view.source == "workbench"
+        app.action_mode_workbench(); await pilot.pause()
         tree = app.screen.query_one("#animation-tree", AnimationTree)
         branches = [node.data for node in tree._walk_nodes() if isinstance(node.data, tuple)]
         assert branches.count(("unarmed",)) == 1

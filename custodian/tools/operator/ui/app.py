@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import asyncio
+from functools import partial
 import shutil
 import subprocess
 import time
@@ -17,7 +18,7 @@ from .dialogs import (
     PublishDialog, RefreshDialog, ValidationDialog, WeaponContextDialog,
 )
 from .features import AnimationFeature
-from .live_bridge_controller import LiveBridgeController, LiveBridgeUIStatus
+from .live_bridge_controller import LiveBridgeController, LiveBridgeEvent, LiveBridgeUIStatus
 from live_bridge.protocol import MessageType
 from .screens import MainScreen
 from .service import WorkbenchService
@@ -27,6 +28,8 @@ from .widgets import (ActivityLog, AnimationDetail, AnimationTree, ContextKeyBar
                       PreviewCanvas, PreviewControls, TimelineTable, WorkbenchStatusBar)
 import animation_preview
 import animation_motion_preview
+
+LIVE_PREVIEW_DEBOUNCE_SEC = 0.15
 
 
 class OperatorWorkbenchApp(App):
@@ -173,6 +176,23 @@ class OperatorWorkbenchApp(App):
     async def _consume_live_bridge_events(self) -> None:
         while True:
             event = await self.live_bridge.next_event()
+            if event.message_type is MessageType.DOCUMENT_CHANGED:
+                if (
+                    self.state.mode == "preview"
+                    and self.state.preview_source == "workbench"
+                    and event.revision is not None
+                    and self._live_document_matches_selection(event.document_path)
+                ):
+                    self.run_worker(
+                        self._debounced_live_preview(event.revision),
+                        group="live-preview-export", exclusive=True,
+                        exit_on_error=False,
+                    )
+                continue
+            if event.message_type is MessageType.COMMAND_RESULT:
+                if event.operation == "export_preview":
+                    await self._apply_live_preview(event)
+                continue
             if event.message_type not in (
                 MessageType.CLIENT_HELLO, MessageType.EDITOR_SITE_CHANGED,
             ):
@@ -192,6 +212,65 @@ class OperatorWorkbenchApp(App):
                 self._reset_preview_clock()
                 if self.preview_view is not None:
                     self._render_preview()
+
+    async def _debounced_live_preview(self, revision: int) -> None:
+        await asyncio.sleep(LIVE_PREVIEW_DEBOUNCE_SEC)
+        if (
+            self.state.mode != "preview"
+            or self.state.preview_source != "workbench"
+            or not self._live_document_matches_selection()
+            or revision != self.live_bridge.server.state.document_revision
+        ):
+            return
+        workbench = self._selected_live_workbench_path()
+        if workbench is None:
+            return
+        try:
+            await self.live_bridge.export_preview(workbench, revision)
+        except (ConnectionError, ValueError):
+            return
+
+    async def _apply_live_preview(self, event: LiveBridgeEvent) -> None:
+        if not event.ok:
+            return
+        if (
+            self.state.mode != "preview"
+            or self.state.preview_source != "workbench"
+            or not self._live_document_matches_selection(event.document_path)
+            or event.revision is None
+            or event.revision != self.live_bridge.server.state.document_revision
+            or event.output_path is None
+            or event.frame_count is None
+            or event.frame_width is None
+            or event.frame_height is None
+        ):
+            return
+        workbench = self._selected_live_workbench_path()
+        if workbench is None:
+            return
+        expected_output = self.live_bridge._live_preview_path(workbench)
+        try:
+            if Path(event.output_path).resolve() != expected_output:
+                return
+        except OSError:
+            return
+        selection = self.state.selection
+        if selection is None:
+            return
+        try:
+            loader = partial(
+                self.service.live_preview, selection, expected_output,
+                frames=event.frame_count,
+                frame_size=(event.frame_width, event.frame_height),
+            )
+            live = await self._thread(loader)
+        except Exception:
+            return
+        if event.revision != self.live_bridge.server.state.document_revision:
+            return
+        self.preview_view = live
+        self.state.preview_frame = min(self.state.preview_frame, len(live.frames) - 1)
+        self._render_preview()
 
     def _update_status_bar(self) -> None:
         self._main_widget("#workbench-status", WorkbenchStatusBar).set_status(
@@ -394,6 +473,16 @@ class OperatorWorkbenchApp(App):
         selection = self._require_selection()
         if not selection: return
         try:
+            if self.state.preview_source == "workbench" and self._live_document_matches_selection():
+                workbench = self._selected_live_workbench_path()
+                if workbench is not None:
+                    try:
+                        await self.live_bridge.export_preview(
+                            workbench, self.live_bridge.server.state.document_revision,
+                        )
+                        return
+                    except (ConnectionError, ValueError):
+                        pass
             self.preview_view = await self._thread(self.service.preview, selection, self.state.preview_source)
             self.state.preview_frame = min(self.state.preview_frame, len(self.preview_view.frames) - 1)
             self._reset_preview_clock()
@@ -470,7 +559,7 @@ class OperatorWorkbenchApp(App):
         if not self.preview_view: return
         index = self.state.preview_frame
         self._main_widget("#preview-canvas", PreviewCanvas).show_frame(self.preview_view.frames[index], self.preview_view.identity.key, self.state.preview_zoom)
-        self._main_widget("#preview-controls", PreviewControls).show(frame=index, frames=len(self.preview_view.frames), fps=self.state.review_fps, playing=self.state.preview_playing, loop=self.state.preview_loop, source=self.state.preview_source, zoom=self.state.preview_zoom)
+        self._main_widget("#preview-controls", PreviewControls).show(frame=index, frames=len(self.preview_view.frames), fps=self.state.review_fps, playing=self.state.preview_playing, loop=self.state.preview_loop, source=self.preview_view.source, zoom=self.state.preview_zoom)
 
     def _set_preview_frame(self, frame_index: int, *, sync_live: bool) -> None:
         if self.preview_view is None:

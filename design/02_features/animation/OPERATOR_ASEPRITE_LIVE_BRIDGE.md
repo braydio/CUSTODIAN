@@ -3,13 +3,16 @@
 ## Status
 
 Foundation, persistent Aseprite reporting client, Workbench bridge lifecycle,
-and bidirectional frame navigation implemented; live unsaved preview deferred.
+bidirectional frame navigation, and live unsaved Preview implemented; layer
+synchronization deferred.
 
 Packet 1 established the versioned protocol, loopback WebSocket server, tooling
 state model, capability gate, path confinement, and fake-client validation.
 Packet 2 adds the persistent Aseprite extension. Packet 3A makes the Workbench
 UI own server startup, status projection, and shutdown. Packet 3B adds guarded,
 causal frame navigation for the selected disposable authoring document only.
+Packet 4 renders revision-guarded unsaved pixels into a disposable review strip
+without saving the Aseprite document.
 
 ## Authority
 
@@ -68,15 +71,15 @@ requires equivalents for WebSocket, app `sitechange`, sprite change events,
 `Sprite.isModified`, timers, frame selection, and image/render export. Tests do
 not infer or require a locally installed Aseprite version.
 
-Open commands are confined to `.aseprite` documents beneath
-`.ai/operator_animation_workbench/`. Future preview exports are confined to
+Open and preview commands are confined to `.aseprite` documents beneath
+`.ai/operator_animation_workbench/`. Live preview exports are confined to
 `.ai/operator_animation_workbench/live/` PNGs. These are ignored review
 artifacts. Paths are resolved before containment checks, preventing traversal.
 The protocol has no generic Lua, shell, or arbitrary-file command.
 
-Pixels never cross the WebSocket. A later preview flow will carry revision and
-export coordination only; Aseprite will render the in-memory sprite to the
-confined ignored review location.
+Pixels never cross the WebSocket. The bridge carries revision and export
+coordination only; Aseprite renders the in-memory sprite to the confined ignored
+review location.
 
 ## Packet roadmap
 
@@ -84,7 +87,7 @@ confined ignored review location.
 2. **Aseprite Extension (implemented):** persistent Lua client and document/editor reporting.
 3A. **Workbench Bridge Lifecycle (implemented):** Textual-owned startup, status, transition logging, failure projection, and shutdown.
 3B. **Bidirectional Frame Navigation (implemented):** guarded causal frame sync between manual Preview navigation and the active authoring document.
-4. **Live Unsaved Preview (deferred):** debounced in-memory render export.
+4. **Live Unsaved Preview (implemented):** debounced, revision-guarded in-memory render export.
 5. **Layer Synchronization (deferred):** focus and visibility proof/control.
 6. **Preview Examiner (deferred):** live/saved/canonical/runtime comparison.
 7. **Transition Examiner (deferred):** seam metrics and ghost review.
@@ -126,10 +129,9 @@ changes, including undo/redo, monotonically increment one client-session
 revision and emit `document.changed`. Filename changes and human saves are
 observed without saving or opening anything on the user's behalf.
 
-Packet 3B accepts `command.select_frame`. `command.open_workbench`,
-`command.export_preview`, and `command.save` return `command.result` with
-`ok=false` and remain unable to mutate the editor. Unknown schemas, sessions,
-sequences, and message types fail closed.
+Packet 4 accepts `command.select_frame` and `command.export_preview`.
+`command.open_workbench` and `command.save` return `command.result` with
+`ok=false`. Unknown schemas, sessions, sequences, and message types fail closed.
 
 ## Bidirectional frame navigation
 
@@ -155,6 +157,42 @@ Events for another document are ignored and never switch semantic animation
 identity. Opening/focusing documents and cross-document semantic following are
 still deferred.
 
+## Live unsaved Preview
+
+When PREVIEW is on its existing `workbench` source and the connected Aseprite
+document exactly matches the selected workspace, `document.changed` starts a
+150 ms exclusive debounce. Only the newest client-session revision is exported.
+Entering PREVIEW also requests the current revision immediately. Failed, stale,
+wrong-document, disconnected, and superseded requests are silent review-state
+conditions rather than modal errors.
+
+The controller chooses one stable SHA-keyed artifact per document beneath
+`.ai/operator_animation_workbench/live/`. The Lua client validates the active
+document and revision, reads adjacent `workbench.json`, and composites only the
+manifest `layers` whitelist from bottom to top into one horizontal detached
+`Image`. Reference, guide, landmark, and review-note layers are therefore not
+eligible. Missing, non-image, or ambiguously duplicated manifest layer names
+fail closed. The detached image is saved as PNG without changing visibility,
+calling any sprite save API, clearing dirty state, or writing the `.aseprite`.
+
+The successful causal result reports the artifact path, revision, frame count,
+and dynamic frame dimensions. The Workbench verifies the result is still the
+current revision and deterministic expected path, loads it as source `live`,
+and redraws Preview without changing `WorkbenchUIState.preview_source` from
+`workbench`. The source selector therefore remains exactly WORKBENCH / CANONICAL
+/ RUNTIME. Timeline and Motion always retain persisted-source behavior. When
+Aseprite is disconnected, existing saved Workbench preview export remains the
+fallback.
+
+Authority remains explicit:
+
+```text
+live PNG          = disposable review artifact
+workbench.aseprite = disposable authoring document
+canonical PNG     = production source authority
+runtime assets    = generated execution authority
+```
+
 ## Validation
 
 `custodian/tools/validation/operator_live_bridge_smoke.py` uses an in-process
@@ -162,8 +200,10 @@ fake WebSocket client. It proves stable and ephemeral endpoint contracts,
 loopback lifecycle, typed handshake, rejection
 of bad schemas and missing capabilities, state/revision updates, command
 tracking and causality, non-destructive disconnect/reconnect, confined paths,
-and canonical-file immutability. It also runs the protocol under the installed
-Aseprite Lua runtime, checks the extension structure/reporting/refusal seams,
+and canonical-file immutability. It also runs the protocol and a real detached
+manifest-filtered two-frame render under the installed Aseprite Lua runtime,
+proving unsaved pixels are present, reference pixels are absent, dirty state is
+preserved, and the `.aseprite` remains byte-identical. It checks refusal seams
 and proves the safe idempotent symlink installer in an isolated config root.
 
 Persistent-plugin GUI automation is not deterministic in the current headless
@@ -198,7 +238,7 @@ future Workbench owns the endpoint.
 
 ## Next Agent Slice
 
-Packet 4 may add debounced in-memory preview export for the active disposable
-document. It must preserve document confinement and causality, transport no
-pixels over WebSocket, and must not save the workbench, publish canonical art,
-add layer control, or route Art Agent mutations.
+Packet 5 may add layer focus/visibility synchronization. It must preserve the
+manifest-whitelisted render boundary, keep reference/review layers outside
+production-style composition, and must not add save/publication or Art Agent
+mutation authority.

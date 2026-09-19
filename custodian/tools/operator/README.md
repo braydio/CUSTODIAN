@@ -40,8 +40,10 @@ Restart Aseprite afterward. It reconnects quietly to
 `ws://127.0.0.1:32147`. `operator ui` owns that server lifecycle and displays
 LIVE STARTING, WAITING, CONNECTED, or UNAVAILABLE without disabling ordinary
 Workbench features. Human Aseprite frame changes and manual PREVIEW navigation
-synchronize for the selected disposable document. Preview playback,
-TIMELINE/MOTION clocks, document opening, and preview export do not.
+synchronize for the selected disposable document. With source WORKBENCH,
+PREVIEW also prefers a debounced manifest-filtered render of unsaved in-memory
+pixels and falls back to the saved Workbench when disconnected. Preview
+playback, TIMELINE/MOTION clocks, and document opening do not drive the bridge.
 
 ```sh
 operator anim list melee_1h --group posture
