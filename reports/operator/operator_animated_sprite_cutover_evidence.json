@@ -1,0 +1,3288 @@
+{
+  "schema": "custodian.operator_animated_sprite_cutover_evidence.v1",
+  "scope": "animated_sprite only; melee and weapon overlays are separate slices",
+  "counts": {
+    "AUTHORING_DECISION": 14,
+    "PROVEN_CANONICAL": 36,
+    "RETIRED": 85
+  },
+  "live_counts": {
+    "AUTHORING_DECISION": 14,
+    "PROVEN_CANONICAL": 36
+  },
+  "data_driven_bases": {
+    "_get_weapon_animation_name(...unarmed_light_hitreact...)": "OperatorWeaponDefinition animation_map; the damage-reaction base is a weapon-definition field, not a literal in the actor",
+    "_get_authored_melee_body_stance_animation()": "melee posture resolver / weapon definition; the stance base is authored per weapon rather than named in the actor"
+  },
+  "external_consumers": {
+    "instant_replay_recorder.gd": {
+      "kind": "observability",
+      "detail": "captures `sprite.animation` and restores it on playback. In-memory only with no checked-in fixtures, so it round-trips whatever names are live; a replay captured before a cutover cannot be restored after one."
+    },
+    "animation_state_machine.gd": {
+      "kind": "presentation",
+      "detail": "`current_animation()` returns `sprite.animation` and `is_animation_playing(name)` compares it. The comparison helper has zero callers, so no gameplay state keys off the clip name today."
+    },
+    "hit_recoil_state.gd": {
+      "kind": "gameplay-semantic",
+      "detail": "detects reaction completion by comparing `sprite.animation` against the name it played. Survives renaming only because both sides move together; it must keep comparing the same string the state played."
+    },
+    "operator_presentation_rig_2d.gd": {
+      "kind": "presentation",
+      "detail": "mirrors `animated.animation = source_animated.animation` onto a preview rig, so the rig needs the same SpriteFrames the source renderer uses."
+    },
+    "operator.gd::_apply_knight_test_skin_if_requested": {
+      "kind": "observability",
+      "detail": "swaps `animated_sprite.sprite_frames` for a debug Knight skin built under legacy clip names, caching the production resource to restore. After canonicalization the skin's own names no longer match what consumers request, so the debug skin needs its own disposition."
+    }
+  },
+  "rows": [
+    {
+      "clip": "attack_down",
+      "consumers": [],
+      "live": false,
+      "frames": 6,
+      "authored_fps": 13.0,
+      "authored_loop": false,
+      "art": {
+        "action": "legacy_front_idle_loop",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_front_idle_loop/operator__full_body__unarmed__cosmetic__legacy_front_idle_loop__omni__1f__480x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_front_idle_loop/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "attack_right_combo",
+      "consumers": [],
+      "live": false,
+      "frames": 0,
+      "authored_fps": 15.0,
+      "authored_loop": false,
+      "art": {},
+      "canonical_identity": "",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "attack_up",
+      "consumers": [],
+      "live": false,
+      "frames": 6,
+      "authored_fps": 13.0,
+      "authored_loop": false,
+      "art": {
+        "action": "legacy_front_idle_loop",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_front_idle_loop/operator__full_body__unarmed__cosmetic__legacy_front_idle_loop__omni__1f__480x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_front_idle_loop/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "death",
+      "consumers": [
+        "played by death_state.gd through the animation state machine"
+      ],
+      "live": true,
+      "frames": 9,
+      "authored_fps": 7.0,
+      "authored_loop": false,
+      "art": {
+        "action": "legacy_death_disintigrate_base",
+        "direction": "omni",
+        "group": "reaction",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/reaction/legacy_death_disintigrate_base/operator__full_body__unarmed__reaction__legacy_death_disintigrate_base__omni__1f__1152x128.png"
+      },
+      "canonical_identity": "unarmed/reaction/legacy_death_disintigrate_base/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "AUTHORING_DECISION",
+      "why": "draws art published only under a legacy action id; it has no canonical identity to migrate to without an authoring decision",
+      "canonical_candidates": [
+        "attack/dodge_fast_attack_01",
+        "attack/fast_01",
+        "attack/fast_recovery_01",
+        "attack/fast_strike_01",
+        "attack/fast_windup_01",
+        "attack/heavy_01",
+        "cosmetic/critical_execution_01",
+        "cosmetic/criticial_execution_01",
+        "cosmetic/falcon_reversal_01",
+        "defense/parry_miss_01",
+        "locomotion/idle_01",
+        "locomotion/run_01",
+        "locomotion/walk_01",
+        "posture/stance_01",
+        "reaction/bodyslam_knockdown_01",
+        "reaction/death_01",
+        "reaction/light_hitreact_01"
+      ]
+    },
+    {
+      "clip": "default",
+      "consumers": [],
+      "live": false,
+      "frames": 0,
+      "authored_fps": 5.0,
+      "authored_loop": true,
+      "art": {},
+      "canonical_identity": "",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "hurt",
+      "consumers": [],
+      "live": false,
+      "frames": 4,
+      "authored_fps": 10.0,
+      "authored_loop": false,
+      "art": {
+        "action": "legacy_front_idle_loop",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_front_idle_loop/operator__full_body__unarmed__cosmetic__legacy_front_idle_loop__omni__1f__480x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_front_idle_loop/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "idle_alternative",
+      "consumers": [],
+      "live": false,
+      "frames": 3,
+      "authored_fps": 7.0,
+      "authored_loop": true,
+      "art": {
+        "action": "legacy_front_idle_loop",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_front_idle_loop/operator__full_body__unarmed__cosmetic__legacy_front_idle_loop__omni__1f__480x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_front_idle_loop/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "idle_down",
+      "consumers": [],
+      "live": false,
+      "frames": 3,
+      "authored_fps": 7.0,
+      "authored_loop": true,
+      "art": {
+        "action": "legacy_front_idle_loop",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_front_idle_loop/operator__full_body__unarmed__cosmetic__legacy_front_idle_loop__omni__1f__480x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_front_idle_loop/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "idle_long",
+      "consumers": [
+        "guarded by a has_animation probe"
+      ],
+      "live": true,
+      "frames": 10,
+      "authored_fps": 3.0,
+      "authored_loop": true,
+      "art": {
+        "action": "legacy_front_idle_long_loop",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_front_idle_long_loop/operator__full_body__unarmed__cosmetic__legacy_front_idle_long_loop__omni__1f__960x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_front_idle_long_loop/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "AUTHORING_DECISION",
+      "why": "draws art published only under a legacy action id; it has no canonical identity to migrate to without an authoring decision",
+      "canonical_candidates": [
+        "attack/dodge_fast_attack_01",
+        "attack/fast_01",
+        "attack/fast_recovery_01",
+        "attack/fast_strike_01",
+        "attack/fast_windup_01",
+        "attack/heavy_01",
+        "cosmetic/critical_execution_01",
+        "cosmetic/criticial_execution_01",
+        "cosmetic/falcon_reversal_01",
+        "defense/parry_miss_01",
+        "locomotion/idle_01",
+        "locomotion/run_01",
+        "locomotion/walk_01",
+        "posture/stance_01",
+        "reaction/bodyslam_knockdown_01",
+        "reaction/death_01",
+        "reaction/light_hitreact_01"
+      ]
+    },
+    {
+      "clip": "idle_right",
+      "consumers": [
+        "played directly by name"
+      ],
+      "live": true,
+      "frames": 3,
+      "authored_fps": 7.0,
+      "authored_loop": true,
+      "art": {
+        "action": "legacy_front_idle_loop",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_front_idle_loop/operator__full_body__unarmed__cosmetic__legacy_front_idle_loop__omni__1f__480x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_front_idle_loop/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "AUTHORING_DECISION",
+      "why": "draws art published only under a legacy action id; it has no canonical identity to migrate to without an authoring decision",
+      "canonical_candidates": [
+        "attack/dodge_fast_attack_01",
+        "attack/fast_01",
+        "attack/fast_recovery_01",
+        "attack/fast_strike_01",
+        "attack/fast_windup_01",
+        "attack/heavy_01",
+        "cosmetic/critical_execution_01",
+        "cosmetic/criticial_execution_01",
+        "cosmetic/falcon_reversal_01",
+        "defense/parry_miss_01",
+        "locomotion/idle_01",
+        "locomotion/run_01",
+        "locomotion/walk_01",
+        "posture/stance_01",
+        "reaction/bodyslam_knockdown_01",
+        "reaction/death_01",
+        "reaction/light_hitreact_01"
+      ]
+    },
+    {
+      "clip": "idle_up",
+      "consumers": [],
+      "live": false,
+      "frames": 3,
+      "authored_fps": 7.0,
+      "authored_loop": true,
+      "art": {
+        "action": "legacy_front_idle_loop",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_front_idle_loop/operator__full_body__unarmed__cosmetic__legacy_front_idle_loop__omni__1f__480x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_front_idle_loop/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "melee_2h_block_enter",
+      "consumers": [],
+      "live": false,
+      "frames": 4,
+      "authored_fps": 10.0,
+      "authored_loop": false,
+      "art": {
+        "action": "legacy_operator_body_melee_2h_block_enter",
+        "direction": "omni",
+        "group": "defense",
+        "layer": "full_body",
+        "profile": "melee_1h_heavy",
+        "sheet": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/defense/legacy_operator_body_melee_2h_block_enter/operator__full_body__melee_1h_heavy__defense__legacy_operator_body_melee_2h_block_enter__omni__1f__384x96.png"
+      },
+      "canonical_identity": "melee_1h_heavy/defense/legacy_operator_body_melee_2h_block_enter/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "melee_2h_block_exit",
+      "consumers": [],
+      "live": false,
+      "frames": 2,
+      "authored_fps": 10.0,
+      "authored_loop": false,
+      "art": {
+        "action": "legacy_operator_body_melee_2h_block_exit",
+        "direction": "omni",
+        "group": "defense",
+        "layer": "full_body",
+        "profile": "melee_1h_heavy",
+        "sheet": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/defense/legacy_operator_body_melee_2h_block_exit/operator__full_body__melee_1h_heavy__defense__legacy_operator_body_melee_2h_block_exit__omni__1f__192x96.png"
+      },
+      "canonical_identity": "melee_1h_heavy/defense/legacy_operator_body_melee_2h_block_exit/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "melee_2h_block_hold",
+      "consumers": [],
+      "live": false,
+      "frames": 1,
+      "authored_fps": 1.0,
+      "authored_loop": true,
+      "art": {
+        "action": "legacy_operator_body_melee_2h_block_hold",
+        "direction": "omni",
+        "group": "defense",
+        "layer": "full_body",
+        "profile": "melee_1h_heavy",
+        "sheet": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/defense/legacy_operator_body_melee_2h_block_hold/operator__full_body__melee_1h_heavy__defense__legacy_operator_body_melee_2h_block_hold__omni__1f__96.png"
+      },
+      "canonical_identity": "melee_1h_heavy/defense/legacy_operator_body_melee_2h_block_hold/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "melee_2h_fast_1_right",
+      "consumers": [
+        "guarded by a has_animation probe"
+      ],
+      "live": true,
+      "frames": 6,
+      "authored_fps": 12.0,
+      "authored_loop": false,
+      "art": {
+        "action": "legacy_fast_attack_1_right_body",
+        "direction": "omni",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "melee_1h_heavy",
+        "sheet": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/legacy_fast_attack_1_right_body/operator__full_body__melee_1h_heavy__attack__legacy_fast_attack_1_right_body__omni__1f__576x288.png"
+      },
+      "canonical_identity": "melee_1h_heavy/attack/legacy_fast_attack_1_right_body/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "AUTHORING_DECISION",
+      "why": "draws art published only under a legacy action id; it has no canonical identity to migrate to without an authoring decision",
+      "canonical_candidates": [
+        "attack/fast_01",
+        "attack/fast_02",
+        "attack/fast_03",
+        "attack/fast_recovery_01",
+        "attack/heavy_01",
+        "attack/heavy_windup_01",
+        "defense/block_enter_01",
+        "defense/block_exit_01",
+        "defense/block_hold_01"
+      ]
+    },
+    {
+      "clip": "melee_2h_fast_2_right",
+      "consumers": [
+        "guarded by a has_animation probe"
+      ],
+      "live": true,
+      "frames": 5,
+      "authored_fps": 12.0,
+      "authored_loop": false,
+      "art": {
+        "action": "legacy_fast_attack_2_right_body",
+        "direction": "omni",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "melee_1h_heavy",
+        "sheet": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/legacy_fast_attack_2_right_body/operator__full_body__melee_1h_heavy__attack__legacy_fast_attack_2_right_body__omni__1f__480x288.png"
+      },
+      "canonical_identity": "melee_1h_heavy/attack/legacy_fast_attack_2_right_body/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "AUTHORING_DECISION",
+      "why": "draws art published only under a legacy action id; it has no canonical identity to migrate to without an authoring decision",
+      "canonical_candidates": [
+        "attack/fast_01",
+        "attack/fast_02",
+        "attack/fast_03",
+        "attack/fast_recovery_01",
+        "attack/heavy_01",
+        "attack/heavy_windup_01",
+        "defense/block_enter_01",
+        "defense/block_exit_01",
+        "defense/block_hold_01"
+      ]
+    },
+    {
+      "clip": "melee_2h_fast_down",
+      "consumers": [],
+      "live": false,
+      "frames": 7,
+      "authored_fps": 12.0,
+      "authored_loop": true,
+      "art": {
+        "action": "legacy_light_attack_base",
+        "direction": "omni",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "melee_1h",
+        "sheet": "res://content/sprites/operator/runtime/animations/melee_1h/attack/legacy_light_attack_base/operator__full_body__melee_1h__attack__legacy_light_attack_base__omni__1f__5376x96.png"
+      },
+      "canonical_identity": "melee_1h/attack/legacy_light_attack_base/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "melee_2h_fast_down_left",
+      "consumers": [],
+      "live": false,
+      "frames": 7,
+      "authored_fps": 12.0,
+      "authored_loop": true,
+      "art": {
+        "action": "legacy_light_attack_base",
+        "direction": "omni",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "melee_1h",
+        "sheet": "res://content/sprites/operator/runtime/animations/melee_1h/attack/legacy_light_attack_base/operator__full_body__melee_1h__attack__legacy_light_attack_base__omni__1f__5376x96.png"
+      },
+      "canonical_identity": "melee_1h/attack/legacy_light_attack_base/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "melee_2h_fast_down_right",
+      "consumers": [],
+      "live": false,
+      "frames": 7,
+      "authored_fps": 12.0,
+      "authored_loop": true,
+      "art": {
+        "action": "legacy_light_attack_base",
+        "direction": "omni",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "melee_1h",
+        "sheet": "res://content/sprites/operator/runtime/animations/melee_1h/attack/legacy_light_attack_base/operator__full_body__melee_1h__attack__legacy_light_attack_base__omni__1f__5376x96.png"
+      },
+      "canonical_identity": "melee_1h/attack/legacy_light_attack_base/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "melee_2h_fast_left",
+      "consumers": [],
+      "live": false,
+      "frames": 7,
+      "authored_fps": 12.0,
+      "authored_loop": true,
+      "art": {
+        "action": "legacy_light_attack_base",
+        "direction": "omni",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "melee_1h",
+        "sheet": "res://content/sprites/operator/runtime/animations/melee_1h/attack/legacy_light_attack_base/operator__full_body__melee_1h__attack__legacy_light_attack_base__omni__1f__5376x96.png"
+      },
+      "canonical_identity": "melee_1h/attack/legacy_light_attack_base/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "melee_2h_fast_recovery",
+      "consumers": [
+        "played directly by name",
+        "guarded by a has_animation probe"
+      ],
+      "live": true,
+      "frames": 2,
+      "authored_fps": 10.0,
+      "authored_loop": false,
+      "art": {
+        "action": "legacy_fast_recovery_body",
+        "direction": "omni",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "melee_1h_heavy",
+        "sheet": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/legacy_fast_recovery_body/operator__full_body__melee_1h_heavy__attack__legacy_fast_recovery_body__omni__1f__192.png"
+      },
+      "canonical_identity": "melee_1h_heavy/attack/legacy_fast_recovery_body/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "AUTHORING_DECISION",
+      "why": "draws art published only under a legacy action id; it has no canonical identity to migrate to without an authoring decision",
+      "canonical_candidates": [
+        "attack/fast_01",
+        "attack/fast_02",
+        "attack/fast_03",
+        "attack/fast_recovery_01",
+        "attack/heavy_01",
+        "attack/heavy_windup_01",
+        "defense/block_enter_01",
+        "defense/block_exit_01",
+        "defense/block_hold_01"
+      ]
+    },
+    {
+      "clip": "melee_2h_fast_right",
+      "consumers": [
+        "played by attack_fast_state.gd through the animation state machine"
+      ],
+      "live": true,
+      "frames": 12,
+      "authored_fps": 12.0,
+      "authored_loop": false,
+      "art": {
+        "action": "legacy_fast_attack_right_base",
+        "direction": "omni",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "melee_1h",
+        "sheet": "res://content/sprites/operator/runtime/animations/melee_1h/attack/legacy_fast_attack_right_base/operator__full_body__melee_1h__attack__legacy_fast_attack_right_base__omni__1f__1152x128.png"
+      },
+      "canonical_identity": "melee_1h/attack/legacy_fast_attack_right_base/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "AUTHORING_DECISION",
+      "why": "draws art published only under a legacy action id; it has no canonical identity to migrate to without an authoring decision",
+      "canonical_candidates": [
+        "attack/fast_01",
+        "attack/fast_02",
+        "attack/fast_03",
+        "cosmetic/melee_1h"
+      ]
+    },
+    {
+      "clip": "melee_2h_fast_up",
+      "consumers": [],
+      "live": false,
+      "frames": 7,
+      "authored_fps": 12.0,
+      "authored_loop": true,
+      "art": {
+        "action": "legacy_light_attack_base",
+        "direction": "omni",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "melee_1h",
+        "sheet": "res://content/sprites/operator/runtime/animations/melee_1h/attack/legacy_light_attack_base/operator__full_body__melee_1h__attack__legacy_light_attack_base__omni__1f__5376x96.png"
+      },
+      "canonical_identity": "melee_1h/attack/legacy_light_attack_base/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "melee_2h_fast_up_left",
+      "consumers": [],
+      "live": false,
+      "frames": 7,
+      "authored_fps": 12.0,
+      "authored_loop": true,
+      "art": {
+        "action": "legacy_light_attack_base",
+        "direction": "omni",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "melee_1h",
+        "sheet": "res://content/sprites/operator/runtime/animations/melee_1h/attack/legacy_light_attack_base/operator__full_body__melee_1h__attack__legacy_light_attack_base__omni__1f__5376x96.png"
+      },
+      "canonical_identity": "melee_1h/attack/legacy_light_attack_base/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "melee_2h_fast_up_right",
+      "consumers": [],
+      "live": false,
+      "frames": 7,
+      "authored_fps": 12.0,
+      "authored_loop": true,
+      "art": {
+        "action": "legacy_light_attack_base",
+        "direction": "omni",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "melee_1h",
+        "sheet": "res://content/sprites/operator/runtime/animations/melee_1h/attack/legacy_light_attack_base/operator__full_body__melee_1h__attack__legacy_light_attack_base__omni__1f__5376x96.png"
+      },
+      "canonical_identity": "melee_1h/attack/legacy_light_attack_base/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "melee_2h_heavy",
+      "consumers": [
+        "played by attack_heavy_state.gd through the animation state machine"
+      ],
+      "live": true,
+      "frames": 7,
+      "authored_fps": 11.0,
+      "authored_loop": false,
+      "art": {
+        "action": "legacy_operator_2h_heavy_3layer",
+        "direction": "omni",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/legacy_operator_2h_heavy_3layer/operator__full_body__unarmed__attack__legacy_operator_2h_heavy_3layer__omni__1f__672x288.png"
+      },
+      "canonical_identity": "unarmed/attack/legacy_operator_2h_heavy_3layer/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "AUTHORING_DECISION",
+      "why": "draws art published only under a legacy action id; it has no canonical identity to migrate to without an authoring decision",
+      "canonical_candidates": [
+        "attack/dodge_fast_attack_01",
+        "attack/fast_01",
+        "attack/fast_recovery_01",
+        "attack/fast_strike_01",
+        "attack/fast_windup_01",
+        "attack/heavy_01",
+        "cosmetic/critical_execution_01",
+        "cosmetic/criticial_execution_01",
+        "cosmetic/falcon_reversal_01",
+        "defense/parry_miss_01",
+        "locomotion/idle_01",
+        "locomotion/run_01",
+        "locomotion/walk_01",
+        "posture/stance_01",
+        "reaction/bodyslam_knockdown_01",
+        "reaction/death_01",
+        "reaction/light_hitreact_01"
+      ]
+    },
+    {
+      "clip": "melee_2h_heavy_anticipation",
+      "consumers": [
+        "played directly by name",
+        "guarded by a has_animation probe"
+      ],
+      "live": true,
+      "frames": 5,
+      "authored_fps": 11.0,
+      "authored_loop": false,
+      "art": {
+        "action": "legacy_heavy_anticipation_body",
+        "direction": "omni",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "melee_1h_heavy",
+        "sheet": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/legacy_heavy_anticipation_body/operator__full_body__melee_1h_heavy__attack__legacy_heavy_anticipation_body__omni__1f__480x192.png"
+      },
+      "canonical_identity": "melee_1h_heavy/attack/legacy_heavy_anticipation_body/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "AUTHORING_DECISION",
+      "why": "draws art published only under a legacy action id; it has no canonical identity to migrate to without an authoring decision",
+      "canonical_candidates": [
+        "attack/fast_01",
+        "attack/fast_02",
+        "attack/fast_03",
+        "attack/fast_recovery_01",
+        "attack/heavy_01",
+        "attack/heavy_windup_01",
+        "defense/block_enter_01",
+        "defense/block_exit_01",
+        "defense/block_hold_01"
+      ]
+    },
+    {
+      "clip": "melee_2h_heavy_right",
+      "consumers": [
+        "played by attack_heavy_state.gd through the animation state machine"
+      ],
+      "live": true,
+      "frames": 7,
+      "authored_fps": 11.0,
+      "authored_loop": false,
+      "art": {
+        "action": "legacy_operator_2h_heavy_3layer",
+        "direction": "omni",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/legacy_operator_2h_heavy_3layer/operator__full_body__unarmed__attack__legacy_operator_2h_heavy_3layer__omni__1f__672x288.png"
+      },
+      "canonical_identity": "unarmed/attack/legacy_operator_2h_heavy_3layer/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "AUTHORING_DECISION",
+      "why": "draws art published only under a legacy action id; it has no canonical identity to migrate to without an authoring decision",
+      "canonical_candidates": [
+        "attack/dodge_fast_attack_01",
+        "attack/fast_01",
+        "attack/fast_recovery_01",
+        "attack/fast_strike_01",
+        "attack/fast_windup_01",
+        "attack/heavy_01",
+        "cosmetic/critical_execution_01",
+        "cosmetic/criticial_execution_01",
+        "cosmetic/falcon_reversal_01",
+        "defense/parry_miss_01",
+        "locomotion/idle_01",
+        "locomotion/run_01",
+        "locomotion/walk_01",
+        "posture/stance_01",
+        "reaction/bodyslam_knockdown_01",
+        "reaction/death_01",
+        "reaction/light_hitreact_01"
+      ]
+    },
+    {
+      "clip": "melee_2h_stance",
+      "consumers": [],
+      "live": false,
+      "frames": 4,
+      "authored_fps": 7.0,
+      "authored_loop": true,
+      "art": {
+        "action": "legacy_operator_body_melee_2h_stance",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "melee_1h_heavy",
+        "sheet": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/cosmetic/legacy_operator_body_melee_2h_stance/operator__full_body__melee_1h_heavy__cosmetic__legacy_operator_body_melee_2h_stance__omni__1f__384x96.png"
+      },
+      "canonical_identity": "melee_1h_heavy/cosmetic/legacy_operator_body_melee_2h_stance/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "operator_dodge_chain_link_down",
+      "consumers": [],
+      "live": false,
+      "frames": 4,
+      "authored_fps": 20.0,
+      "authored_loop": false,
+      "art": {
+        "action": "dodge_chain_link_01",
+        "direction": "e",
+        "group": "transition",
+        "layer": "full_body",
+        "profile": "shared",
+        "sheet": "res://content/sprites/operator/runtime/animations/shared/transition/dodge_chain_link_01/operator__full_body__shared__transition__dodge_chain_link_01__e__4f__96.png"
+      },
+      "canonical_identity": "shared/transition/dodge_chain_link_01/e/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "operator_dodge_chain_link_left",
+      "consumers": [],
+      "live": false,
+      "frames": 4,
+      "authored_fps": 20.0,
+      "authored_loop": false,
+      "art": {
+        "action": "dodge_chain_link_01",
+        "direction": "w",
+        "group": "transition",
+        "layer": "full_body",
+        "profile": "shared",
+        "sheet": "res://content/sprites/operator/runtime/animations/shared/transition/dodge_chain_link_01/operator__full_body__shared__transition__dodge_chain_link_01__w__4f__96.png"
+      },
+      "canonical_identity": "shared/transition/dodge_chain_link_01/w/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "operator_dodge_chain_link_right",
+      "consumers": [],
+      "live": false,
+      "frames": 4,
+      "authored_fps": 20.0,
+      "authored_loop": false,
+      "art": {
+        "action": "dodge_chain_link_01",
+        "direction": "e",
+        "group": "transition",
+        "layer": "full_body",
+        "profile": "shared",
+        "sheet": "res://content/sprites/operator/runtime/animations/shared/transition/dodge_chain_link_01/operator__full_body__shared__transition__dodge_chain_link_01__e__4f__96.png"
+      },
+      "canonical_identity": "shared/transition/dodge_chain_link_01/e/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "operator_dodge_charge_windup_down",
+      "consumers": [],
+      "live": false,
+      "frames": 5,
+      "authored_fps": 10.0,
+      "authored_loop": false,
+      "art": {
+        "action": "dodge_charge_windup_01",
+        "direction": "e",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "shared",
+        "sheet": "res://content/sprites/operator/runtime/animations/shared/attack/dodge_charge_windup_01/operator__full_body__shared__attack__dodge_charge_windup_01__e__5f__96.png"
+      },
+      "canonical_identity": "shared/attack/dodge_charge_windup_01/e/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "operator_dodge_charge_windup_left",
+      "consumers": [],
+      "live": false,
+      "frames": 5,
+      "authored_fps": 10.0,
+      "authored_loop": false,
+      "art": {
+        "action": "dodge_charge_windup_01",
+        "direction": "w",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "shared",
+        "sheet": "res://content/sprites/operator/runtime/animations/shared/attack/dodge_charge_windup_01/operator__full_body__shared__attack__dodge_charge_windup_01__w__5f__96.png"
+      },
+      "canonical_identity": "shared/attack/dodge_charge_windup_01/w/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "operator_dodge_charge_windup_right",
+      "consumers": [],
+      "live": false,
+      "frames": 5,
+      "authored_fps": 10.0,
+      "authored_loop": false,
+      "art": {
+        "action": "dodge_charge_windup_01",
+        "direction": "e",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "shared",
+        "sheet": "res://content/sprites/operator/runtime/animations/shared/attack/dodge_charge_windup_01/operator__full_body__shared__attack__dodge_charge_windup_01__e__5f__96.png"
+      },
+      "canonical_identity": "shared/attack/dodge_charge_windup_01/e/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "operator_dodge_full_north",
+      "consumers": [],
+      "live": false,
+      "frames": 9,
+      "authored_fps": 25.0,
+      "authored_loop": false,
+      "art": {
+        "action": "dodge_01",
+        "direction": "n",
+        "group": "transition",
+        "layer": "full_body",
+        "profile": "shared",
+        "sheet": "res://content/sprites/operator/runtime/animations/shared/transition/dodge_01/operator__full_body__shared__transition__dodge_01__n__9f__96.png"
+      },
+      "canonical_identity": "shared/transition/dodge_01/n/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "operator_dodge_full_south",
+      "consumers": [],
+      "live": false,
+      "frames": 9,
+      "authored_fps": 25.0,
+      "authored_loop": false,
+      "art": {
+        "action": "dodge_01",
+        "direction": "s",
+        "group": "transition",
+        "layer": "full_body",
+        "profile": "shared",
+        "sheet": "res://content/sprites/operator/runtime/animations/shared/transition/dodge_01/operator__full_body__shared__transition__dodge_01__s__9f__96.png"
+      },
+      "canonical_identity": "shared/transition/dodge_01/s/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "ranged_2h_fire",
+      "consumers": [],
+      "live": false,
+      "frames": 4,
+      "authored_fps": 12.0,
+      "authored_loop": true,
+      "art": {
+        "action": "legacy_fire_body",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "ranged_2h",
+        "sheet": "res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/legacy_fire_body/operator__full_body__ranged_2h__cosmetic__legacy_fire_body__omni__1f__384x288.png"
+      },
+      "canonical_identity": "ranged_2h/cosmetic/legacy_fire_body/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "ranged_2h_reload",
+      "consumers": [
+        "played directly by name",
+        "guarded by a has_animation probe"
+      ],
+      "live": true,
+      "frames": 4,
+      "authored_fps": 10.0,
+      "authored_loop": false,
+      "art": {
+        "action": "legacy_operator_body_ranged_2h_reloading",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "ranged_2h",
+        "sheet": "res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/legacy_operator_body_ranged_2h_reloading/operator__full_body__ranged_2h__cosmetic__legacy_operator_body_ranged_2h_reloading__omni__1f__384x192.png"
+      },
+      "canonical_identity": "ranged_2h/cosmetic/legacy_operator_body_ranged_2h_reloading/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "AUTHORING_DECISION",
+      "why": "draws art published only under a legacy action id; it has no canonical identity to migrate to without an authoring decision",
+      "canonical_candidates": [
+        "cosmetic/fire_walk_01",
+        "locomotion/run_01"
+      ]
+    },
+    {
+      "clip": "ranged_2h_run_left",
+      "consumers": [
+        "guarded by a has_animation probe"
+      ],
+      "live": true,
+      "frames": 5,
+      "authored_fps": 14.0,
+      "authored_loop": true,
+      "art": {
+        "action": "run_01",
+        "direction": "w",
+        "group": "locomotion",
+        "layer": "full_body",
+        "profile": "ranged_2h",
+        "sheet": "res://content/sprites/operator/runtime/animations/ranged_2h/locomotion/run_01/operator__full_body__ranged_2h__locomotion__run_01__w__5f__96.png"
+      },
+      "canonical_identity": "ranged_2h/locomotion/run_01/w/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "ranged_2h_run_right",
+      "consumers": [],
+      "live": false,
+      "frames": 5,
+      "authored_fps": 14.0,
+      "authored_loop": true,
+      "art": {
+        "action": "run_01",
+        "direction": "e",
+        "group": "locomotion",
+        "layer": "full_body",
+        "profile": "ranged_2h",
+        "sheet": "res://content/sprites/operator/runtime/animations/ranged_2h/locomotion/run_01/operator__full_body__ranged_2h__locomotion__run_01__e__5f__96.png"
+      },
+      "canonical_identity": "ranged_2h/locomotion/run_01/e/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "ranged_2h_stance",
+      "consumers": [],
+      "live": false,
+      "frames": 12,
+      "authored_fps": 8.0,
+      "authored_loop": true,
+      "art": {
+        "action": "stance_01",
+        "direction": "e",
+        "group": "posture",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/posture/stance_01/operator__full_body__unarmed__posture__stance_01__e__12f__96.png"
+      },
+      "canonical_identity": "unarmed/posture/stance_01/e/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "run_down",
+      "consumers": [],
+      "live": false,
+      "frames": 16,
+      "authored_fps": 14.0,
+      "authored_loop": true,
+      "art": {
+        "action": "legacy_running_base",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_running_base/operator__full_body__unarmed__cosmetic__legacy_running_base__omni__1f__12288x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_running_base/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "run_down_left",
+      "consumers": [],
+      "live": false,
+      "frames": 16,
+      "authored_fps": 14.0,
+      "authored_loop": true,
+      "art": {
+        "action": "legacy_running_base",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_running_base/operator__full_body__unarmed__cosmetic__legacy_running_base__omni__1f__12288x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_running_base/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "run_down_right",
+      "consumers": [],
+      "live": false,
+      "frames": 16,
+      "authored_fps": 14.0,
+      "authored_loop": true,
+      "art": {
+        "action": "legacy_running_base",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_running_base/operator__full_body__unarmed__cosmetic__legacy_running_base__omni__1f__12288x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_running_base/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "run_left",
+      "consumers": [],
+      "live": false,
+      "frames": 16,
+      "authored_fps": 14.0,
+      "authored_loop": true,
+      "art": {
+        "action": "legacy_running_base",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_running_base/operator__full_body__unarmed__cosmetic__legacy_running_base__omni__1f__12288x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_running_base/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "run_right",
+      "consumers": [
+        "played directly by name",
+        "guarded by a has_animation probe"
+      ],
+      "live": true,
+      "frames": 16,
+      "authored_fps": 14.0,
+      "authored_loop": true,
+      "art": {
+        "action": "legacy_running_base",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_running_base/operator__full_body__unarmed__cosmetic__legacy_running_base__omni__1f__12288x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_running_base/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "AUTHORING_DECISION",
+      "why": "draws art published only under a legacy action id; it has no canonical identity to migrate to without an authoring decision",
+      "canonical_candidates": [
+        "attack/dodge_fast_attack_01",
+        "attack/fast_01",
+        "attack/fast_recovery_01",
+        "attack/fast_strike_01",
+        "attack/fast_windup_01",
+        "attack/heavy_01",
+        "cosmetic/critical_execution_01",
+        "cosmetic/criticial_execution_01",
+        "cosmetic/falcon_reversal_01",
+        "defense/parry_miss_01",
+        "locomotion/idle_01",
+        "locomotion/run_01",
+        "locomotion/walk_01",
+        "posture/stance_01",
+        "reaction/bodyslam_knockdown_01",
+        "reaction/death_01",
+        "reaction/light_hitreact_01"
+      ]
+    },
+    {
+      "clip": "run_up",
+      "consumers": [],
+      "live": false,
+      "frames": 16,
+      "authored_fps": 14.0,
+      "authored_loop": true,
+      "art": {
+        "action": "legacy_running_base",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_running_base/operator__full_body__unarmed__cosmetic__legacy_running_base__omni__1f__12288x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_running_base/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "run_up_left",
+      "consumers": [],
+      "live": false,
+      "frames": 16,
+      "authored_fps": 14.0,
+      "authored_loop": true,
+      "art": {
+        "action": "legacy_running_base",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_running_base/operator__full_body__unarmed__cosmetic__legacy_running_base__omni__1f__12288x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_running_base/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "run_up_right",
+      "consumers": [],
+      "live": false,
+      "frames": 16,
+      "authored_fps": 14.0,
+      "authored_loop": true,
+      "art": {
+        "action": "legacy_running_base",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_running_base/operator__full_body__unarmed__cosmetic__legacy_running_base__omni__1f__12288x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_running_base/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_arrival",
+      "consumers": [],
+      "live": false,
+      "frames": 13,
+      "authored_fps": 12.0,
+      "authored_loop": false,
+      "art": {
+        "action": "legacy_operator_full_body_unarmed_arrival_01_s_13f_96",
+        "direction": "omni",
+        "group": "transition",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/transition/legacy_operator_full_body_unarmed_arrival_01_s_13f_96/operator__full_body__unarmed__transition__legacy_operator_full_body_unarmed_arrival_01_s_13f_96__omni__1f__1248x96.png"
+      },
+      "canonical_identity": "unarmed/transition/legacy_operator_full_body_unarmed_arrival_01_s_13f_96/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_arrival_down",
+      "consumers": [],
+      "live": false,
+      "frames": 13,
+      "authored_fps": 12.0,
+      "authored_loop": false,
+      "art": {
+        "action": "legacy_operator_full_body_unarmed_arrival_01_s_13f_96",
+        "direction": "omni",
+        "group": "transition",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/transition/legacy_operator_full_body_unarmed_arrival_01_s_13f_96/operator__full_body__unarmed__transition__legacy_operator_full_body_unarmed_arrival_01_s_13f_96__omni__1f__1248x96.png"
+      },
+      "canonical_identity": "unarmed/transition/legacy_operator_full_body_unarmed_arrival_01_s_13f_96/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_attack_fast",
+      "consumers": [],
+      "live": false,
+      "frames": 6,
+      "authored_fps": 12.0,
+      "authored_loop": false,
+      "art": {
+        "action": "fast_01",
+        "direction": "s",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_01/operator__full_body__unarmed__attack__fast_01__s__6f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_01/s/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_attack_fast_down",
+      "consumers": [],
+      "live": false,
+      "frames": 6,
+      "authored_fps": 12.0,
+      "authored_loop": false,
+      "art": {
+        "action": "fast_01",
+        "direction": "s",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_01/operator__full_body__unarmed__attack__fast_01__s__6f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_01/s/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_attack_fast_left",
+      "consumers": [],
+      "live": false,
+      "frames": 5,
+      "authored_fps": 12.0,
+      "authored_loop": false,
+      "art": {
+        "action": "fast_01",
+        "direction": "w",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_01/operator__full_body__unarmed__attack__fast_01__w__5f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_01/w/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_attack_fast_recovery",
+      "consumers": [
+        "resolver base `unarmed_attack_fast_recovery` (literal base in operator.gd)"
+      ],
+      "live": true,
+      "frames": 3,
+      "authored_fps": 15.0,
+      "authored_loop": false,
+      "art": {
+        "action": "fast_recovery_01",
+        "direction": "e",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__full_body__unarmed__attack__fast_recovery_01__e__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_recovery_01/e/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_attack_fast_recovery_down",
+      "consumers": [
+        "resolver base `unarmed_attack_fast_recovery` (literal base in operator.gd)"
+      ],
+      "live": true,
+      "frames": 3,
+      "authored_fps": 15.0,
+      "authored_loop": false,
+      "art": {
+        "action": "fast_recovery_01",
+        "direction": "s",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__full_body__unarmed__attack__fast_recovery_01__s__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_recovery_01/s/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_attack_fast_recovery_down_left",
+      "consumers": [
+        "resolver base `unarmed_attack_fast_recovery` (literal base in operator.gd)"
+      ],
+      "live": true,
+      "frames": 3,
+      "authored_fps": 15.0,
+      "authored_loop": false,
+      "art": {
+        "action": "fast_recovery_01",
+        "direction": "sw",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__full_body__unarmed__attack__fast_recovery_01__sw__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_recovery_01/sw/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_attack_fast_recovery_down_right",
+      "consumers": [
+        "resolver base `unarmed_attack_fast_recovery` (literal base in operator.gd)"
+      ],
+      "live": true,
+      "frames": 3,
+      "authored_fps": 15.0,
+      "authored_loop": false,
+      "art": {
+        "action": "fast_recovery_01",
+        "direction": "se",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__full_body__unarmed__attack__fast_recovery_01__se__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_recovery_01/se/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_attack_fast_recovery_left",
+      "consumers": [
+        "resolver base `unarmed_attack_fast_recovery` (literal base in operator.gd)",
+        "guarded by a has_animation probe"
+      ],
+      "live": true,
+      "frames": 3,
+      "authored_fps": 15.0,
+      "authored_loop": false,
+      "art": {
+        "action": "fast_recovery_01",
+        "direction": "w",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__full_body__unarmed__attack__fast_recovery_01__w__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_recovery_01/w/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_attack_fast_recovery_right",
+      "consumers": [
+        "resolver base `unarmed_attack_fast_recovery` (literal base in operator.gd)"
+      ],
+      "live": true,
+      "frames": 3,
+      "authored_fps": 15.0,
+      "authored_loop": false,
+      "art": {
+        "action": "fast_recovery_01",
+        "direction": "e",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__full_body__unarmed__attack__fast_recovery_01__e__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_recovery_01/e/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_attack_fast_recovery_up",
+      "consumers": [
+        "resolver base `unarmed_attack_fast_recovery` (literal base in operator.gd)"
+      ],
+      "live": true,
+      "frames": 3,
+      "authored_fps": 15.0,
+      "authored_loop": false,
+      "art": {
+        "action": "fast_recovery_01",
+        "direction": "n",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__full_body__unarmed__attack__fast_recovery_01__n__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_recovery_01/n/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_attack_fast_recovery_up_left",
+      "consumers": [
+        "resolver base `unarmed_attack_fast_recovery` (literal base in operator.gd)"
+      ],
+      "live": true,
+      "frames": 3,
+      "authored_fps": 15.0,
+      "authored_loop": false,
+      "art": {
+        "action": "fast_recovery_01",
+        "direction": "nw",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__full_body__unarmed__attack__fast_recovery_01__nw__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_recovery_01/nw/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_attack_fast_recovery_up_right",
+      "consumers": [
+        "resolver base `unarmed_attack_fast_recovery` (literal base in operator.gd)"
+      ],
+      "live": true,
+      "frames": 3,
+      "authored_fps": 15.0,
+      "authored_loop": false,
+      "art": {
+        "action": "fast_recovery_01",
+        "direction": "ne",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__full_body__unarmed__attack__fast_recovery_01__ne__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_recovery_01/ne/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_attack_fast_right",
+      "consumers": [],
+      "live": false,
+      "frames": 5,
+      "authored_fps": 12.0,
+      "authored_loop": false,
+      "art": {
+        "action": "fast_01",
+        "direction": "e",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_01/operator__full_body__unarmed__attack__fast_01__e__5f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_01/e/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_attack_fast_up",
+      "consumers": [],
+      "live": false,
+      "frames": 6,
+      "authored_fps": 12.0,
+      "authored_loop": false,
+      "art": {
+        "action": "fast_01",
+        "direction": "n",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_01/operator__full_body__unarmed__attack__fast_01__n__6f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_01/n/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_attack_fast_windup",
+      "consumers": [
+        "resolver base `unarmed_attack_fast_windup` (literal base in operator.gd)"
+      ],
+      "live": true,
+      "frames": 3,
+      "authored_fps": 12.0,
+      "authored_loop": false,
+      "art": {
+        "action": "fast_windup_01",
+        "direction": "s",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_windup_01/operator__full_body__unarmed__attack__fast_windup_01__s__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_windup_01/s/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_attack_fast_windup_down",
+      "consumers": [
+        "resolver base `unarmed_attack_fast_windup` (literal base in operator.gd)"
+      ],
+      "live": true,
+      "frames": 3,
+      "authored_fps": 12.0,
+      "authored_loop": false,
+      "art": {
+        "action": "fast_windup_01",
+        "direction": "s",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_windup_01/operator__full_body__unarmed__attack__fast_windup_01__s__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_windup_01/s/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_attack_fast_windup_down_left",
+      "consumers": [
+        "resolver base `unarmed_attack_fast_windup` (literal base in operator.gd)"
+      ],
+      "live": true,
+      "frames": 3,
+      "authored_fps": 12.0,
+      "authored_loop": false,
+      "art": {
+        "action": "fast_windup_01",
+        "direction": "sw",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_windup_01/operator__full_body__unarmed__attack__fast_windup_01__sw__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_windup_01/sw/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_attack_fast_windup_down_right",
+      "consumers": [
+        "resolver base `unarmed_attack_fast_windup` (literal base in operator.gd)"
+      ],
+      "live": true,
+      "frames": 3,
+      "authored_fps": 12.0,
+      "authored_loop": false,
+      "art": {
+        "action": "fast_windup_01",
+        "direction": "se",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_windup_01/operator__full_body__unarmed__attack__fast_windup_01__se__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_windup_01/se/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_attack_fast_windup_left",
+      "consumers": [
+        "resolver base `unarmed_attack_fast_windup` (literal base in operator.gd)"
+      ],
+      "live": true,
+      "frames": 3,
+      "authored_fps": 12.0,
+      "authored_loop": false,
+      "art": {
+        "action": "fast_windup_01",
+        "direction": "w",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_windup_01/operator__full_body__unarmed__attack__fast_windup_01__w__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_windup_01/w/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_attack_fast_windup_right",
+      "consumers": [
+        "resolver base `unarmed_attack_fast_windup` (literal base in operator.gd)"
+      ],
+      "live": true,
+      "frames": 3,
+      "authored_fps": 12.0,
+      "authored_loop": false,
+      "art": {
+        "action": "fast_windup_01",
+        "direction": "e",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_windup_01/operator__full_body__unarmed__attack__fast_windup_01__e__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_windup_01/e/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_attack_fast_windup_up",
+      "consumers": [
+        "resolver base `unarmed_attack_fast_windup` (literal base in operator.gd)"
+      ],
+      "live": true,
+      "frames": 3,
+      "authored_fps": 12.0,
+      "authored_loop": false,
+      "art": {
+        "action": "fast_windup_01",
+        "direction": "n",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_windup_01/operator__full_body__unarmed__attack__fast_windup_01__n__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_windup_01/n/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_attack_fast_windup_up_left",
+      "consumers": [
+        "resolver base `unarmed_attack_fast_windup` (literal base in operator.gd)"
+      ],
+      "live": true,
+      "frames": 3,
+      "authored_fps": 12.0,
+      "authored_loop": false,
+      "art": {
+        "action": "fast_windup_01",
+        "direction": "nw",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_windup_01/operator__full_body__unarmed__attack__fast_windup_01__nw__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_windup_01/nw/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_attack_fast_windup_up_right",
+      "consumers": [
+        "resolver base `unarmed_attack_fast_windup` (literal base in operator.gd)"
+      ],
+      "live": true,
+      "frames": 3,
+      "authored_fps": 12.0,
+      "authored_loop": false,
+      "art": {
+        "action": "fast_windup_01",
+        "direction": "ne",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_windup_01/operator__full_body__unarmed__attack__fast_windup_01__ne__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_windup_01/ne/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_attack_heavy",
+      "consumers": [],
+      "live": false,
+      "frames": 7,
+      "authored_fps": 10.0,
+      "authored_loop": false,
+      "art": {
+        "action": "heavy_01",
+        "direction": "e",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/heavy_01/operator__full_body__unarmed__attack__heavy_01__e__7f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/heavy_01/e/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_attack_heavy_down",
+      "consumers": [],
+      "live": false,
+      "frames": 7,
+      "authored_fps": 10.0,
+      "authored_loop": false,
+      "art": {
+        "action": "heavy_01",
+        "direction": "s",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/heavy_01/operator__full_body__unarmed__attack__heavy_01__s__7f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/heavy_01/s/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_attack_heavy_left",
+      "consumers": [],
+      "live": false,
+      "frames": 7,
+      "authored_fps": 10.0,
+      "authored_loop": false,
+      "art": {
+        "action": "heavy_01",
+        "direction": "w",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/heavy_01/operator__full_body__unarmed__attack__heavy_01__w__7f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/heavy_01/w/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_attack_heavy_right",
+      "consumers": [],
+      "live": false,
+      "frames": 7,
+      "authored_fps": 10.0,
+      "authored_loop": false,
+      "art": {
+        "action": "heavy_01",
+        "direction": "e",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/heavy_01/operator__full_body__unarmed__attack__heavy_01__e__7f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/heavy_01/e/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_attack_heavy_up",
+      "consumers": [],
+      "live": false,
+      "frames": 8,
+      "authored_fps": 11.5,
+      "authored_loop": false,
+      "art": {
+        "action": "heavy_01",
+        "direction": "n",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/heavy_01/operator__full_body__unarmed__attack__heavy_01__n__8f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/heavy_01/n/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_bodyslam_knockdown_left",
+      "consumers": [],
+      "live": false,
+      "frames": 12,
+      "authored_fps": 12.0,
+      "authored_loop": false,
+      "art": {
+        "action": "bodyslam_knockdown_01",
+        "direction": "w",
+        "group": "reaction",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/reaction/bodyslam_knockdown_01/operator__full_body__unarmed__reaction__bodyslam_knockdown_01__w__12f__96.png"
+      },
+      "canonical_identity": "unarmed/reaction/bodyslam_knockdown_01/w/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_bodyslam_knockdown_right",
+      "consumers": [],
+      "live": false,
+      "frames": 12,
+      "authored_fps": 12.0,
+      "authored_loop": false,
+      "art": {
+        "action": "bodyslam_knockdown_01",
+        "direction": "e",
+        "group": "reaction",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/reaction/bodyslam_knockdown_01/operator__full_body__unarmed__reaction__bodyslam_knockdown_01__e__12f__96.png"
+      },
+      "canonical_identity": "unarmed/reaction/bodyslam_knockdown_01/e/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_death",
+      "consumers": [],
+      "live": false,
+      "frames": 6,
+      "authored_fps": 7.0,
+      "authored_loop": false,
+      "art": {
+        "action": "death_01",
+        "direction": "omni",
+        "group": "reaction",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/reaction/death_01/operator__full_body__unarmed__reaction__death_01__omni__6f__96.png"
+      },
+      "canonical_identity": "unarmed/reaction/death_01/omni/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_dodge_fast_attack_left",
+      "consumers": [],
+      "live": false,
+      "frames": 11,
+      "authored_fps": 20.0,
+      "authored_loop": false,
+      "art": {
+        "action": "dodge_fast_attack_01",
+        "direction": "w",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/dodge_fast_attack_01/operator__full_body__unarmed__attack__dodge_fast_attack_01__w__11f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/dodge_fast_attack_01/w/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_dodge_fast_attack_right",
+      "consumers": [],
+      "live": false,
+      "frames": 11,
+      "authored_fps": 20.0,
+      "authored_loop": false,
+      "art": {
+        "action": "dodge_fast_attack_01",
+        "direction": "e",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/dodge_fast_attack_01/operator__full_body__unarmed__attack__dodge_fast_attack_01__e__11f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/dodge_fast_attack_01/e/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_fast_strike",
+      "consumers": [],
+      "live": false,
+      "frames": 3,
+      "authored_fps": 12.0,
+      "authored_loop": false,
+      "art": {
+        "action": "fast_strike_01",
+        "direction": "s",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__full_body__unarmed__attack__fast_strike_01__s__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_strike_01/s/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_fast_strike_down",
+      "consumers": [],
+      "live": false,
+      "frames": 3,
+      "authored_fps": 12.0,
+      "authored_loop": false,
+      "art": {
+        "action": "fast_strike_01",
+        "direction": "s",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__full_body__unarmed__attack__fast_strike_01__s__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_strike_01/s/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_fast_strike_down_left",
+      "consumers": [],
+      "live": false,
+      "frames": 3,
+      "authored_fps": 12.0,
+      "authored_loop": false,
+      "art": {
+        "action": "fast_strike_01",
+        "direction": "sw",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__full_body__unarmed__attack__fast_strike_01__sw__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_strike_01/sw/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_fast_strike_down_right",
+      "consumers": [],
+      "live": false,
+      "frames": 3,
+      "authored_fps": 12.0,
+      "authored_loop": false,
+      "art": {
+        "action": "fast_strike_01",
+        "direction": "se",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__full_body__unarmed__attack__fast_strike_01__se__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_strike_01/se/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_fast_strike_left",
+      "consumers": [],
+      "live": false,
+      "frames": 3,
+      "authored_fps": 12.0,
+      "authored_loop": false,
+      "art": {
+        "action": "fast_strike_01",
+        "direction": "w",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__full_body__unarmed__attack__fast_strike_01__w__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_strike_01/w/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_fast_strike_right",
+      "consumers": [],
+      "live": false,
+      "frames": 3,
+      "authored_fps": 12.0,
+      "authored_loop": false,
+      "art": {
+        "action": "fast_strike_01",
+        "direction": "e",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__full_body__unarmed__attack__fast_strike_01__e__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_strike_01/e/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_fast_strike_up",
+      "consumers": [],
+      "live": false,
+      "frames": 3,
+      "authored_fps": 12.0,
+      "authored_loop": false,
+      "art": {
+        "action": "fast_strike_01",
+        "direction": "n",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__full_body__unarmed__attack__fast_strike_01__n__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_strike_01/n/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_fast_strike_up_left",
+      "consumers": [],
+      "live": false,
+      "frames": 3,
+      "authored_fps": 12.0,
+      "authored_loop": false,
+      "art": {
+        "action": "fast_strike_01",
+        "direction": "nw",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__full_body__unarmed__attack__fast_strike_01__nw__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_strike_01/nw/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_fast_strike_up_right",
+      "consumers": [],
+      "live": false,
+      "frames": 3,
+      "authored_fps": 12.0,
+      "authored_loop": false,
+      "art": {
+        "action": "fast_strike_01",
+        "direction": "ne",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__full_body__unarmed__attack__fast_strike_01__ne__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_strike_01/ne/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_idle",
+      "consumers": [],
+      "live": false,
+      "frames": 5,
+      "authored_fps": 8.0,
+      "authored_loop": true,
+      "art": {
+        "action": "idle_01",
+        "direction": "s",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__s__5f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/idle_01/s/lower_body",
+      "canonical_published": true,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_idle_down",
+      "consumers": [],
+      "live": false,
+      "frames": 5,
+      "authored_fps": 8.0,
+      "authored_loop": true,
+      "art": {
+        "action": "idle_01",
+        "direction": "s",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__s__5f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/idle_01/s/lower_body",
+      "canonical_published": true,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_idle_down_left",
+      "consumers": [],
+      "live": false,
+      "frames": 5,
+      "authored_fps": 8.0,
+      "authored_loop": true,
+      "art": {
+        "action": "idle_01",
+        "direction": "sw",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__sw__5f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/idle_01/sw/lower_body",
+      "canonical_published": true,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_idle_down_right",
+      "consumers": [],
+      "live": false,
+      "frames": 5,
+      "authored_fps": 8.0,
+      "authored_loop": true,
+      "art": {
+        "action": "idle_01",
+        "direction": "se",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__se__5f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/idle_01/se/lower_body",
+      "canonical_published": true,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_idle_left",
+      "consumers": [],
+      "live": false,
+      "frames": 5,
+      "authored_fps": 8.0,
+      "authored_loop": true,
+      "art": {
+        "action": "idle_01",
+        "direction": "w",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__w__5f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/idle_01/w/lower_body",
+      "canonical_published": true,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_idle_right",
+      "consumers": [],
+      "live": false,
+      "frames": 5,
+      "authored_fps": 8.0,
+      "authored_loop": true,
+      "art": {
+        "action": "idle_01",
+        "direction": "e",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__e__5f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/idle_01/e/lower_body",
+      "canonical_published": true,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_idle_up",
+      "consumers": [],
+      "live": false,
+      "frames": 5,
+      "authored_fps": 8.0,
+      "authored_loop": true,
+      "art": {
+        "action": "idle_01",
+        "direction": "n",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__n__5f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/idle_01/n/lower_body",
+      "canonical_published": true,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_idle_up_left",
+      "consumers": [],
+      "live": false,
+      "frames": 5,
+      "authored_fps": 8.0,
+      "authored_loop": true,
+      "art": {
+        "action": "idle_01",
+        "direction": "nw",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__nw__5f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/idle_01/nw/lower_body",
+      "canonical_published": true,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_idle_up_right",
+      "consumers": [],
+      "live": false,
+      "frames": 6,
+      "authored_fps": 8.0,
+      "authored_loop": true,
+      "art": {
+        "action": "idle_01",
+        "direction": "ne",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__ne__6f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/idle_01/ne/lower_body",
+      "canonical_published": true,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_light_hitreact",
+      "consumers": [],
+      "live": false,
+      "frames": 3,
+      "authored_fps": 10.0,
+      "authored_loop": false,
+      "art": {
+        "action": "light_hitreact_01",
+        "direction": "s",
+        "group": "reaction",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/reaction/light_hitreact_01/operator__full_body__unarmed__reaction__light_hitreact_01__s__3f__96.png"
+      },
+      "canonical_identity": "unarmed/reaction/light_hitreact_01/s/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_light_hitreact_down",
+      "consumers": [],
+      "live": false,
+      "frames": 3,
+      "authored_fps": 10.0,
+      "authored_loop": false,
+      "art": {
+        "action": "light_hitreact_01",
+        "direction": "s",
+        "group": "reaction",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/reaction/light_hitreact_01/operator__full_body__unarmed__reaction__light_hitreact_01__s__3f__96.png"
+      },
+      "canonical_identity": "unarmed/reaction/light_hitreact_01/s/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_run_down",
+      "consumers": [
+        "resolver base `unarmed_run` (literal base in operator.gd)"
+      ],
+      "live": true,
+      "frames": 12,
+      "authored_fps": 10.0,
+      "authored_loop": true,
+      "art": {
+        "action": "run_01",
+        "direction": "s",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__s__12f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/run_01/s/lower_body",
+      "canonical_published": true,
+      "timing_preserved": false,
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_run_down_left",
+      "consumers": [
+        "resolver base `unarmed_run` (literal base in operator.gd)"
+      ],
+      "live": true,
+      "frames": 5,
+      "authored_fps": 12.0,
+      "authored_loop": true,
+      "art": {
+        "action": "run_01",
+        "direction": "sw",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__sw__5f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/run_01/sw/lower_body",
+      "canonical_published": true,
+      "timing_preserved": false,
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_run_down_right",
+      "consumers": [
+        "resolver base `unarmed_run` (literal base in operator.gd)"
+      ],
+      "live": true,
+      "frames": 5,
+      "authored_fps": 12.0,
+      "authored_loop": true,
+      "art": {
+        "action": "run_01",
+        "direction": "se",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__se__5f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/run_01/se/lower_body",
+      "canonical_published": true,
+      "timing_preserved": false,
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_run_left",
+      "consumers": [
+        "resolver base `unarmed_run` (literal base in operator.gd)"
+      ],
+      "live": true,
+      "frames": 5,
+      "authored_fps": 12.0,
+      "authored_loop": true,
+      "art": {
+        "action": "run_01",
+        "direction": "w",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__w__5f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/run_01/w/lower_body",
+      "canonical_published": true,
+      "timing_preserved": false,
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_run_right",
+      "consumers": [
+        "resolver base `unarmed_run` (literal base in operator.gd)"
+      ],
+      "live": true,
+      "frames": 6,
+      "authored_fps": 12.0,
+      "authored_loop": true,
+      "art": {
+        "action": "run_01",
+        "direction": "e",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__e__6f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/run_01/e/lower_body",
+      "canonical_published": true,
+      "timing_preserved": false,
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_run_up",
+      "consumers": [
+        "resolver base `unarmed_run` (literal base in operator.gd)"
+      ],
+      "live": true,
+      "frames": 8,
+      "authored_fps": 12.0,
+      "authored_loop": true,
+      "art": {
+        "action": "run_01",
+        "direction": "n",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__n__8f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/run_01/n/lower_body",
+      "canonical_published": true,
+      "timing_preserved": false,
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_run_up_left",
+      "consumers": [
+        "resolver base `unarmed_run` (literal base in operator.gd)"
+      ],
+      "live": true,
+      "frames": 6,
+      "authored_fps": 12.0,
+      "authored_loop": true,
+      "art": {
+        "action": "run_01",
+        "direction": "nw",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__nw__6f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/run_01/nw/lower_body",
+      "canonical_published": true,
+      "timing_preserved": false,
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_run_up_right",
+      "consumers": [
+        "resolver base `unarmed_run` (literal base in operator.gd)"
+      ],
+      "live": true,
+      "frames": 6,
+      "authored_fps": 12.0,
+      "authored_loop": true,
+      "art": {
+        "action": "idle_01",
+        "direction": "ne",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__ne__6f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/idle_01/ne/lower_body",
+      "canonical_published": true,
+      "timing_preserved": false,
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_stance",
+      "consumers": [],
+      "live": false,
+      "frames": 6,
+      "authored_fps": 8.0,
+      "authored_loop": true,
+      "art": {
+        "action": "stance_01_legacy_93b8afca",
+        "direction": "e",
+        "group": "posture",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/posture/stance_01_legacy_93b8afca/operator__full_body__unarmed__posture__stance_01_legacy_93b8afca__e__6f__96.png"
+      },
+      "canonical_identity": "unarmed/posture/stance_01_legacy_93b8afca/e/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_stance_left",
+      "consumers": [],
+      "live": false,
+      "frames": 6,
+      "authored_fps": 8.0,
+      "authored_loop": true,
+      "art": {
+        "action": "stance_01",
+        "direction": "w",
+        "group": "posture",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/posture/stance_01/operator__full_body__unarmed__posture__stance_01__w__6f__96.png"
+      },
+      "canonical_identity": "unarmed/posture/stance_01/w/full_body",
+      "canonical_published": true,
+      "timing_preserved": true,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_stance_right",
+      "consumers": [],
+      "live": false,
+      "frames": 6,
+      "authored_fps": 8.0,
+      "authored_loop": true,
+      "art": {
+        "action": "stance_01_legacy_93b8afca",
+        "direction": "e",
+        "group": "posture",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/posture/stance_01_legacy_93b8afca/operator__full_body__unarmed__posture__stance_01_legacy_93b8afca__e__6f__96.png"
+      },
+      "canonical_identity": "unarmed/posture/stance_01_legacy_93b8afca/e/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_walk",
+      "consumers": [
+        "resolver base `unarmed_walk` (literal base in operator.gd)"
+      ],
+      "live": true,
+      "frames": 8,
+      "authored_fps": 10.0,
+      "authored_loop": true,
+      "art": {
+        "action": "walk_01",
+        "direction": "s",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__s__8f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/walk_01/s/lower_body",
+      "canonical_published": true,
+      "timing_preserved": false,
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_walk_down",
+      "consumers": [
+        "resolver base `unarmed_walk` (literal base in operator.gd)"
+      ],
+      "live": true,
+      "frames": 8,
+      "authored_fps": 10.0,
+      "authored_loop": true,
+      "art": {
+        "action": "walk_01",
+        "direction": "s",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__s__8f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/walk_01/s/lower_body",
+      "canonical_published": true,
+      "timing_preserved": false,
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_walk_down_left",
+      "consumers": [
+        "resolver base `unarmed_walk` (literal base in operator.gd)"
+      ],
+      "live": true,
+      "frames": 5,
+      "authored_fps": 10.0,
+      "authored_loop": true,
+      "art": {
+        "action": "walk_01",
+        "direction": "sw",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__sw__5f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/walk_01/sw/lower_body",
+      "canonical_published": true,
+      "timing_preserved": false,
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_walk_down_right",
+      "consumers": [
+        "resolver base `unarmed_walk` (literal base in operator.gd)"
+      ],
+      "live": true,
+      "frames": 5,
+      "authored_fps": 10.0,
+      "authored_loop": true,
+      "art": {
+        "action": "walk_01",
+        "direction": "se",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__se__5f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/walk_01/se/lower_body",
+      "canonical_published": true,
+      "timing_preserved": false,
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_walk_left",
+      "consumers": [
+        "resolver base `unarmed_walk` (literal base in operator.gd)"
+      ],
+      "live": true,
+      "frames": 5,
+      "authored_fps": 10.0,
+      "authored_loop": true,
+      "art": {
+        "action": "walk_01",
+        "direction": "w",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__w__5f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/walk_01/w/lower_body",
+      "canonical_published": true,
+      "timing_preserved": false,
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_walk_right",
+      "consumers": [
+        "resolver base `unarmed_walk` (literal base in operator.gd)"
+      ],
+      "live": true,
+      "frames": 5,
+      "authored_fps": 10.0,
+      "authored_loop": true,
+      "art": {
+        "action": "walk_01",
+        "direction": "e",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__e__5f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/walk_01/e/lower_body",
+      "canonical_published": true,
+      "timing_preserved": false,
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_walk_up",
+      "consumers": [
+        "resolver base `unarmed_walk` (literal base in operator.gd)"
+      ],
+      "live": true,
+      "frames": 8,
+      "authored_fps": 10.0,
+      "authored_loop": true,
+      "art": {
+        "action": "walk_01",
+        "direction": "n",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__n__8f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/walk_01/n/lower_body",
+      "canonical_published": true,
+      "timing_preserved": false,
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_walk_up_left",
+      "consumers": [
+        "resolver base `unarmed_walk` (literal base in operator.gd)"
+      ],
+      "live": true,
+      "frames": 6,
+      "authored_fps": 10.0,
+      "authored_loop": true,
+      "art": {
+        "action": "run_01",
+        "direction": "nw",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__nw__6f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/run_01/nw/lower_body",
+      "canonical_published": true,
+      "timing_preserved": false,
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "unarmed_walk_up_right",
+      "consumers": [
+        "resolver base `unarmed_walk` (literal base in operator.gd)"
+      ],
+      "live": true,
+      "frames": 6,
+      "authored_fps": 10.0,
+      "authored_loop": true,
+      "art": {
+        "action": "idle_01",
+        "direction": "ne",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__ne__6f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/idle_01/ne/lower_body",
+      "canonical_published": true,
+      "timing_preserved": false,
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "walk_down",
+      "consumers": [],
+      "live": false,
+      "frames": 0,
+      "authored_fps": 6.0,
+      "authored_loop": true,
+      "art": {},
+      "canonical_identity": "",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "walk_down_default",
+      "consumers": [
+        "played directly by name",
+        "guarded by a has_animation probe"
+      ],
+      "live": true,
+      "frames": 8,
+      "authored_fps": 10.0,
+      "authored_loop": true,
+      "art": {
+        "action": "legacy_walking_base",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_walking_base/operator__full_body__unarmed__cosmetic__legacy_walking_base__omni__1f__6144x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_walking_base/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "AUTHORING_DECISION",
+      "why": "draws art published only under a legacy action id; it has no canonical identity to migrate to without an authoring decision",
+      "canonical_candidates": [
+        "attack/dodge_fast_attack_01",
+        "attack/fast_01",
+        "attack/fast_recovery_01",
+        "attack/fast_strike_01",
+        "attack/fast_windup_01",
+        "attack/heavy_01",
+        "cosmetic/critical_execution_01",
+        "cosmetic/criticial_execution_01",
+        "cosmetic/falcon_reversal_01",
+        "defense/parry_miss_01",
+        "locomotion/idle_01",
+        "locomotion/run_01",
+        "locomotion/walk_01",
+        "posture/stance_01",
+        "reaction/bodyslam_knockdown_01",
+        "reaction/death_01",
+        "reaction/light_hitreact_01"
+      ]
+    },
+    {
+      "clip": "walk_down_left",
+      "consumers": [],
+      "live": false,
+      "frames": 8,
+      "authored_fps": 10.0,
+      "authored_loop": true,
+      "art": {
+        "action": "legacy_walking_base",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_walking_base/operator__full_body__unarmed__cosmetic__legacy_walking_base__omni__1f__6144x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_walking_base/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "walk_down_right",
+      "consumers": [],
+      "live": false,
+      "frames": 8,
+      "authored_fps": 10.0,
+      "authored_loop": true,
+      "art": {
+        "action": "legacy_walking_base",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_walking_base/operator__full_body__unarmed__cosmetic__legacy_walking_base__omni__1f__6144x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_walking_base/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "walk_east",
+      "consumers": [],
+      "live": false,
+      "frames": 2,
+      "authored_fps": 8.0,
+      "authored_loop": true,
+      "art": {
+        "action": "legacy_walk_right_body",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_walk_right_body/operator__full_body__unarmed__cosmetic__legacy_walk_right_body__omni__1f__384x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_walk_right_body/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "walk_left",
+      "consumers": [],
+      "live": false,
+      "frames": 8,
+      "authored_fps": 10.0,
+      "authored_loop": true,
+      "art": {
+        "action": "legacy_walking_base",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_walking_base/operator__full_body__unarmed__cosmetic__legacy_walking_base__omni__1f__6144x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_walking_base/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "walk_right",
+      "consumers": [
+        "played directly by name"
+      ],
+      "live": true,
+      "frames": 8,
+      "authored_fps": 10.0,
+      "authored_loop": true,
+      "art": {
+        "action": "legacy_walking_base",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_walking_base/operator__full_body__unarmed__cosmetic__legacy_walking_base__omni__1f__6144x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_walking_base/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "AUTHORING_DECISION",
+      "why": "draws art published only under a legacy action id; it has no canonical identity to migrate to without an authoring decision",
+      "canonical_candidates": [
+        "attack/dodge_fast_attack_01",
+        "attack/fast_01",
+        "attack/fast_recovery_01",
+        "attack/fast_strike_01",
+        "attack/fast_windup_01",
+        "attack/heavy_01",
+        "cosmetic/critical_execution_01",
+        "cosmetic/criticial_execution_01",
+        "cosmetic/falcon_reversal_01",
+        "defense/parry_miss_01",
+        "locomotion/idle_01",
+        "locomotion/run_01",
+        "locomotion/walk_01",
+        "posture/stance_01",
+        "reaction/bodyslam_knockdown_01",
+        "reaction/death_01",
+        "reaction/light_hitreact_01"
+      ]
+    },
+    {
+      "clip": "walk_up",
+      "consumers": [],
+      "live": false,
+      "frames": 8,
+      "authored_fps": 10.0,
+      "authored_loop": true,
+      "art": {
+        "action": "legacy_walking_base",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_walking_base/operator__full_body__unarmed__cosmetic__legacy_walking_base__omni__1f__6144x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_walking_base/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "walk_up_left",
+      "consumers": [],
+      "live": false,
+      "frames": 8,
+      "authored_fps": 10.0,
+      "authored_loop": true,
+      "art": {
+        "action": "legacy_walking_base",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_walking_base/operator__full_body__unarmed__cosmetic__legacy_walking_base__omni__1f__6144x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_walking_base/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    },
+    {
+      "clip": "walk_up_right",
+      "consumers": [],
+      "live": false,
+      "frames": 8,
+      "authored_fps": 10.0,
+      "authored_loop": true,
+      "art": {
+        "action": "legacy_walking_base",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_walking_base/operator__full_body__unarmed__cosmetic__legacy_walking_base__omni__1f__6144x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_walking_base/omni/full_body",
+      "canonical_published": false,
+      "timing_preserved": false,
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
+      "canonical_candidates": []
+    }
+  ]
+}

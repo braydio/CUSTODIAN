@@ -1,0 +1,3099 @@
+{
+  "clips": {
+    "attack_down": {
+      "art": {
+        "action": "legacy_front_idle_loop",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_front_idle_loop/operator__full_body__unarmed__cosmetic__legacy_front_idle_loop__omni__1f__480x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_front_idle_loop/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 13.0,
+      "frames": 6,
+      "loop": false
+    },
+    "attack_right_combo": {
+      "art": {},
+      "canonical_identity": "",
+      "canonical_published": false,
+      "durations": [],
+      "fps": 15.0,
+      "frames": 0,
+      "loop": false
+    },
+    "attack_up": {
+      "art": {
+        "action": "legacy_front_idle_loop",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_front_idle_loop/operator__full_body__unarmed__cosmetic__legacy_front_idle_loop__omni__1f__480x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_front_idle_loop/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 13.0,
+      "frames": 6,
+      "loop": false
+    },
+    "death": {
+      "art": {
+        "action": "legacy_death_disintigrate_base",
+        "direction": "omni",
+        "group": "reaction",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/reaction/legacy_death_disintigrate_base/operator__full_body__unarmed__reaction__legacy_death_disintigrate_base__omni__1f__1152x128.png"
+      },
+      "canonical_identity": "unarmed/reaction/legacy_death_disintigrate_base/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 7.0,
+      "frames": 9,
+      "loop": false
+    },
+    "default": {
+      "art": {},
+      "canonical_identity": "",
+      "canonical_published": false,
+      "durations": [],
+      "fps": 5.0,
+      "frames": 0,
+      "loop": true
+    },
+    "hurt": {
+      "art": {
+        "action": "legacy_front_idle_loop",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_front_idle_loop/operator__full_body__unarmed__cosmetic__legacy_front_idle_loop__omni__1f__480x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_front_idle_loop/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 4,
+      "loop": false
+    },
+    "idle_alternative": {
+      "art": {
+        "action": "legacy_front_idle_loop",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_front_idle_loop/operator__full_body__unarmed__cosmetic__legacy_front_idle_loop__omni__1f__480x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_front_idle_loop/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 7.0,
+      "frames": 3,
+      "loop": true
+    },
+    "idle_down": {
+      "art": {
+        "action": "legacy_front_idle_loop",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_front_idle_loop/operator__full_body__unarmed__cosmetic__legacy_front_idle_loop__omni__1f__480x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_front_idle_loop/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 7.0,
+      "frames": 3,
+      "loop": true
+    },
+    "idle_long": {
+      "art": {
+        "action": "legacy_front_idle_long_loop",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_front_idle_long_loop/operator__full_body__unarmed__cosmetic__legacy_front_idle_long_loop__omni__1f__960x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_front_idle_long_loop/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 3.0,
+      "frames": 10,
+      "loop": true
+    },
+    "idle_right": {
+      "art": {
+        "action": "legacy_front_idle_loop",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_front_idle_loop/operator__full_body__unarmed__cosmetic__legacy_front_idle_loop__omni__1f__480x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_front_idle_loop/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 7.0,
+      "frames": 3,
+      "loop": true
+    },
+    "idle_up": {
+      "art": {
+        "action": "legacy_front_idle_loop",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_front_idle_loop/operator__full_body__unarmed__cosmetic__legacy_front_idle_loop__omni__1f__480x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_front_idle_loop/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 7.0,
+      "frames": 3,
+      "loop": true
+    },
+    "melee_2h_block_enter": {
+      "art": {
+        "action": "legacy_operator_body_melee_2h_block_enter",
+        "direction": "omni",
+        "group": "defense",
+        "layer": "full_body",
+        "profile": "melee_1h_heavy",
+        "sheet": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/defense/legacy_operator_body_melee_2h_block_enter/operator__full_body__melee_1h_heavy__defense__legacy_operator_body_melee_2h_block_enter__omni__1f__384x96.png"
+      },
+      "canonical_identity": "melee_1h_heavy/defense/legacy_operator_body_melee_2h_block_enter/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 4,
+      "loop": false
+    },
+    "melee_2h_block_exit": {
+      "art": {
+        "action": "legacy_operator_body_melee_2h_block_exit",
+        "direction": "omni",
+        "group": "defense",
+        "layer": "full_body",
+        "profile": "melee_1h_heavy",
+        "sheet": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/defense/legacy_operator_body_melee_2h_block_exit/operator__full_body__melee_1h_heavy__defense__legacy_operator_body_melee_2h_block_exit__omni__1f__192x96.png"
+      },
+      "canonical_identity": "melee_1h_heavy/defense/legacy_operator_body_melee_2h_block_exit/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 2,
+      "loop": false
+    },
+    "melee_2h_block_hold": {
+      "art": {
+        "action": "legacy_operator_body_melee_2h_block_hold",
+        "direction": "omni",
+        "group": "defense",
+        "layer": "full_body",
+        "profile": "melee_1h_heavy",
+        "sheet": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/defense/legacy_operator_body_melee_2h_block_hold/operator__full_body__melee_1h_heavy__defense__legacy_operator_body_melee_2h_block_hold__omni__1f__96.png"
+      },
+      "canonical_identity": "melee_1h_heavy/defense/legacy_operator_body_melee_2h_block_hold/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0
+      ],
+      "fps": 1.0,
+      "frames": 1,
+      "loop": true
+    },
+    "melee_2h_fast_1_right": {
+      "art": {
+        "action": "legacy_fast_attack_1_right_body",
+        "direction": "omni",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "melee_1h_heavy",
+        "sheet": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/legacy_fast_attack_1_right_body/operator__full_body__melee_1h_heavy__attack__legacy_fast_attack_1_right_body__omni__1f__576x288.png"
+      },
+      "canonical_identity": "melee_1h_heavy/attack/legacy_fast_attack_1_right_body/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 6,
+      "loop": false
+    },
+    "melee_2h_fast_2_right": {
+      "art": {
+        "action": "legacy_fast_attack_2_right_body",
+        "direction": "omni",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "melee_1h_heavy",
+        "sheet": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/legacy_fast_attack_2_right_body/operator__full_body__melee_1h_heavy__attack__legacy_fast_attack_2_right_body__omni__1f__480x288.png"
+      },
+      "canonical_identity": "melee_1h_heavy/attack/legacy_fast_attack_2_right_body/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 5,
+      "loop": false
+    },
+    "melee_2h_fast_down": {
+      "art": {
+        "action": "legacy_light_attack_base",
+        "direction": "omni",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "melee_1h",
+        "sheet": "res://content/sprites/operator/runtime/animations/melee_1h/attack/legacy_light_attack_base/operator__full_body__melee_1h__attack__legacy_light_attack_base__omni__1f__5376x96.png"
+      },
+      "canonical_identity": "melee_1h/attack/legacy_light_attack_base/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 7,
+      "loop": true
+    },
+    "melee_2h_fast_down_left": {
+      "art": {
+        "action": "legacy_light_attack_base",
+        "direction": "omni",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "melee_1h",
+        "sheet": "res://content/sprites/operator/runtime/animations/melee_1h/attack/legacy_light_attack_base/operator__full_body__melee_1h__attack__legacy_light_attack_base__omni__1f__5376x96.png"
+      },
+      "canonical_identity": "melee_1h/attack/legacy_light_attack_base/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 7,
+      "loop": true
+    },
+    "melee_2h_fast_down_right": {
+      "art": {
+        "action": "legacy_light_attack_base",
+        "direction": "omni",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "melee_1h",
+        "sheet": "res://content/sprites/operator/runtime/animations/melee_1h/attack/legacy_light_attack_base/operator__full_body__melee_1h__attack__legacy_light_attack_base__omni__1f__5376x96.png"
+      },
+      "canonical_identity": "melee_1h/attack/legacy_light_attack_base/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 7,
+      "loop": true
+    },
+    "melee_2h_fast_left": {
+      "art": {
+        "action": "legacy_light_attack_base",
+        "direction": "omni",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "melee_1h",
+        "sheet": "res://content/sprites/operator/runtime/animations/melee_1h/attack/legacy_light_attack_base/operator__full_body__melee_1h__attack__legacy_light_attack_base__omni__1f__5376x96.png"
+      },
+      "canonical_identity": "melee_1h/attack/legacy_light_attack_base/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 7,
+      "loop": true
+    },
+    "melee_2h_fast_recovery": {
+      "art": {
+        "action": "legacy_fast_recovery_body",
+        "direction": "omni",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "melee_1h_heavy",
+        "sheet": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/legacy_fast_recovery_body/operator__full_body__melee_1h_heavy__attack__legacy_fast_recovery_body__omni__1f__192.png"
+      },
+      "canonical_identity": "melee_1h_heavy/attack/legacy_fast_recovery_body/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 2,
+      "loop": false
+    },
+    "melee_2h_fast_right": {
+      "art": {
+        "action": "legacy_fast_attack_right_base",
+        "direction": "omni",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "melee_1h",
+        "sheet": "res://content/sprites/operator/runtime/animations/melee_1h/attack/legacy_fast_attack_right_base/operator__full_body__melee_1h__attack__legacy_fast_attack_right_base__omni__1f__1152x128.png"
+      },
+      "canonical_identity": "melee_1h/attack/legacy_fast_attack_right_base/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 12,
+      "loop": false
+    },
+    "melee_2h_fast_up": {
+      "art": {
+        "action": "legacy_light_attack_base",
+        "direction": "omni",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "melee_1h",
+        "sheet": "res://content/sprites/operator/runtime/animations/melee_1h/attack/legacy_light_attack_base/operator__full_body__melee_1h__attack__legacy_light_attack_base__omni__1f__5376x96.png"
+      },
+      "canonical_identity": "melee_1h/attack/legacy_light_attack_base/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 7,
+      "loop": true
+    },
+    "melee_2h_fast_up_left": {
+      "art": {
+        "action": "legacy_light_attack_base",
+        "direction": "omni",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "melee_1h",
+        "sheet": "res://content/sprites/operator/runtime/animations/melee_1h/attack/legacy_light_attack_base/operator__full_body__melee_1h__attack__legacy_light_attack_base__omni__1f__5376x96.png"
+      },
+      "canonical_identity": "melee_1h/attack/legacy_light_attack_base/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 7,
+      "loop": true
+    },
+    "melee_2h_fast_up_right": {
+      "art": {
+        "action": "legacy_light_attack_base",
+        "direction": "omni",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "melee_1h",
+        "sheet": "res://content/sprites/operator/runtime/animations/melee_1h/attack/legacy_light_attack_base/operator__full_body__melee_1h__attack__legacy_light_attack_base__omni__1f__5376x96.png"
+      },
+      "canonical_identity": "melee_1h/attack/legacy_light_attack_base/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 7,
+      "loop": true
+    },
+    "melee_2h_heavy": {
+      "art": {
+        "action": "legacy_operator_2h_heavy_3layer",
+        "direction": "omni",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/legacy_operator_2h_heavy_3layer/operator__full_body__unarmed__attack__legacy_operator_2h_heavy_3layer__omni__1f__672x288.png"
+      },
+      "canonical_identity": "unarmed/attack/legacy_operator_2h_heavy_3layer/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 11.0,
+      "frames": 7,
+      "loop": false
+    },
+    "melee_2h_heavy_anticipation": {
+      "art": {
+        "action": "legacy_heavy_anticipation_body",
+        "direction": "omni",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "melee_1h_heavy",
+        "sheet": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/legacy_heavy_anticipation_body/operator__full_body__melee_1h_heavy__attack__legacy_heavy_anticipation_body__omni__1f__480x192.png"
+      },
+      "canonical_identity": "melee_1h_heavy/attack/legacy_heavy_anticipation_body/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 11.0,
+      "frames": 5,
+      "loop": false
+    },
+    "melee_2h_heavy_right": {
+      "art": {
+        "action": "legacy_operator_2h_heavy_3layer",
+        "direction": "omni",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/legacy_operator_2h_heavy_3layer/operator__full_body__unarmed__attack__legacy_operator_2h_heavy_3layer__omni__1f__672x288.png"
+      },
+      "canonical_identity": "unarmed/attack/legacy_operator_2h_heavy_3layer/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 11.0,
+      "frames": 7,
+      "loop": false
+    },
+    "melee_2h_stance": {
+      "art": {
+        "action": "legacy_operator_body_melee_2h_stance",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "melee_1h_heavy",
+        "sheet": "res://content/sprites/operator/runtime/animations/melee_1h_heavy/cosmetic/legacy_operator_body_melee_2h_stance/operator__full_body__melee_1h_heavy__cosmetic__legacy_operator_body_melee_2h_stance__omni__1f__384x96.png"
+      },
+      "canonical_identity": "melee_1h_heavy/cosmetic/legacy_operator_body_melee_2h_stance/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 7.0,
+      "frames": 4,
+      "loop": true
+    },
+    "operator_dodge_chain_link_down": {
+      "art": {
+        "action": "dodge_chain_link_01",
+        "direction": "e",
+        "group": "transition",
+        "layer": "full_body",
+        "profile": "shared",
+        "sheet": "res://content/sprites/operator/runtime/animations/shared/transition/dodge_chain_link_01/operator__full_body__shared__transition__dodge_chain_link_01__e__4f__96.png"
+      },
+      "canonical_identity": "shared/transition/dodge_chain_link_01/e/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 20.0,
+      "frames": 4,
+      "loop": false
+    },
+    "operator_dodge_chain_link_left": {
+      "art": {
+        "action": "dodge_chain_link_01",
+        "direction": "w",
+        "group": "transition",
+        "layer": "full_body",
+        "profile": "shared",
+        "sheet": "res://content/sprites/operator/runtime/animations/shared/transition/dodge_chain_link_01/operator__full_body__shared__transition__dodge_chain_link_01__w__4f__96.png"
+      },
+      "canonical_identity": "shared/transition/dodge_chain_link_01/w/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 20.0,
+      "frames": 4,
+      "loop": false
+    },
+    "operator_dodge_chain_link_right": {
+      "art": {
+        "action": "dodge_chain_link_01",
+        "direction": "e",
+        "group": "transition",
+        "layer": "full_body",
+        "profile": "shared",
+        "sheet": "res://content/sprites/operator/runtime/animations/shared/transition/dodge_chain_link_01/operator__full_body__shared__transition__dodge_chain_link_01__e__4f__96.png"
+      },
+      "canonical_identity": "shared/transition/dodge_chain_link_01/e/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 20.0,
+      "frames": 4,
+      "loop": false
+    },
+    "operator_dodge_charge_windup_down": {
+      "art": {
+        "action": "dodge_charge_windup_01",
+        "direction": "e",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "shared",
+        "sheet": "res://content/sprites/operator/runtime/animations/shared/attack/dodge_charge_windup_01/operator__full_body__shared__attack__dodge_charge_windup_01__e__5f__96.png"
+      },
+      "canonical_identity": "shared/attack/dodge_charge_windup_01/e/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 5,
+      "loop": false
+    },
+    "operator_dodge_charge_windup_left": {
+      "art": {
+        "action": "dodge_charge_windup_01",
+        "direction": "w",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "shared",
+        "sheet": "res://content/sprites/operator/runtime/animations/shared/attack/dodge_charge_windup_01/operator__full_body__shared__attack__dodge_charge_windup_01__w__5f__96.png"
+      },
+      "canonical_identity": "shared/attack/dodge_charge_windup_01/w/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 5,
+      "loop": false
+    },
+    "operator_dodge_charge_windup_right": {
+      "art": {
+        "action": "dodge_charge_windup_01",
+        "direction": "e",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "shared",
+        "sheet": "res://content/sprites/operator/runtime/animations/shared/attack/dodge_charge_windup_01/operator__full_body__shared__attack__dodge_charge_windup_01__e__5f__96.png"
+      },
+      "canonical_identity": "shared/attack/dodge_charge_windup_01/e/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 5,
+      "loop": false
+    },
+    "operator_dodge_full_north": {
+      "art": {
+        "action": "dodge_01",
+        "direction": "n",
+        "group": "transition",
+        "layer": "full_body",
+        "profile": "shared",
+        "sheet": "res://content/sprites/operator/runtime/animations/shared/transition/dodge_01/operator__full_body__shared__transition__dodge_01__n__9f__96.png"
+      },
+      "canonical_identity": "shared/transition/dodge_01/n/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 25.0,
+      "frames": 9,
+      "loop": false
+    },
+    "operator_dodge_full_south": {
+      "art": {
+        "action": "dodge_01",
+        "direction": "s",
+        "group": "transition",
+        "layer": "full_body",
+        "profile": "shared",
+        "sheet": "res://content/sprites/operator/runtime/animations/shared/transition/dodge_01/operator__full_body__shared__transition__dodge_01__s__9f__96.png"
+      },
+      "canonical_identity": "shared/transition/dodge_01/s/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 25.0,
+      "frames": 9,
+      "loop": false
+    },
+    "ranged_2h_fire": {
+      "art": {
+        "action": "legacy_fire_body",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "ranged_2h",
+        "sheet": "res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/legacy_fire_body/operator__full_body__ranged_2h__cosmetic__legacy_fire_body__omni__1f__384x288.png"
+      },
+      "canonical_identity": "ranged_2h/cosmetic/legacy_fire_body/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 4,
+      "loop": true
+    },
+    "ranged_2h_reload": {
+      "art": {
+        "action": "legacy_operator_body_ranged_2h_reloading",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "ranged_2h",
+        "sheet": "res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/legacy_operator_body_ranged_2h_reloading/operator__full_body__ranged_2h__cosmetic__legacy_operator_body_ranged_2h_reloading__omni__1f__384x192.png"
+      },
+      "canonical_identity": "ranged_2h/cosmetic/legacy_operator_body_ranged_2h_reloading/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 4,
+      "loop": false
+    },
+    "ranged_2h_run_left": {
+      "art": {
+        "action": "run_01",
+        "direction": "w",
+        "group": "locomotion",
+        "layer": "full_body",
+        "profile": "ranged_2h",
+        "sheet": "res://content/sprites/operator/runtime/animations/ranged_2h/locomotion/run_01/operator__full_body__ranged_2h__locomotion__run_01__w__5f__96.png"
+      },
+      "canonical_identity": "ranged_2h/locomotion/run_01/w/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 14.0,
+      "frames": 5,
+      "loop": true
+    },
+    "ranged_2h_run_right": {
+      "art": {
+        "action": "run_01",
+        "direction": "e",
+        "group": "locomotion",
+        "layer": "full_body",
+        "profile": "ranged_2h",
+        "sheet": "res://content/sprites/operator/runtime/animations/ranged_2h/locomotion/run_01/operator__full_body__ranged_2h__locomotion__run_01__e__5f__96.png"
+      },
+      "canonical_identity": "ranged_2h/locomotion/run_01/e/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 14.0,
+      "frames": 5,
+      "loop": true
+    },
+    "ranged_2h_stance": {
+      "art": {
+        "action": "stance_01",
+        "direction": "e",
+        "group": "posture",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/posture/stance_01/operator__full_body__unarmed__posture__stance_01__e__12f__96.png"
+      },
+      "canonical_identity": "unarmed/posture/stance_01/e/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 8.0,
+      "frames": 12,
+      "loop": true
+    },
+    "run_down": {
+      "art": {
+        "action": "legacy_running_base",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_running_base/operator__full_body__unarmed__cosmetic__legacy_running_base__omni__1f__12288x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_running_base/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 14.0,
+      "frames": 16,
+      "loop": true
+    },
+    "run_down_left": {
+      "art": {
+        "action": "legacy_running_base",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_running_base/operator__full_body__unarmed__cosmetic__legacy_running_base__omni__1f__12288x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_running_base/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 14.0,
+      "frames": 16,
+      "loop": true
+    },
+    "run_down_right": {
+      "art": {
+        "action": "legacy_running_base",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_running_base/operator__full_body__unarmed__cosmetic__legacy_running_base__omni__1f__12288x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_running_base/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 14.0,
+      "frames": 16,
+      "loop": true
+    },
+    "run_left": {
+      "art": {
+        "action": "legacy_running_base",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_running_base/operator__full_body__unarmed__cosmetic__legacy_running_base__omni__1f__12288x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_running_base/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 14.0,
+      "frames": 16,
+      "loop": true
+    },
+    "run_right": {
+      "art": {
+        "action": "legacy_running_base",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_running_base/operator__full_body__unarmed__cosmetic__legacy_running_base__omni__1f__12288x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_running_base/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 14.0,
+      "frames": 16,
+      "loop": true
+    },
+    "run_up": {
+      "art": {
+        "action": "legacy_running_base",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_running_base/operator__full_body__unarmed__cosmetic__legacy_running_base__omni__1f__12288x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_running_base/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 14.0,
+      "frames": 16,
+      "loop": true
+    },
+    "run_up_left": {
+      "art": {
+        "action": "legacy_running_base",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_running_base/operator__full_body__unarmed__cosmetic__legacy_running_base__omni__1f__12288x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_running_base/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 14.0,
+      "frames": 16,
+      "loop": true
+    },
+    "run_up_right": {
+      "art": {
+        "action": "legacy_running_base",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_running_base/operator__full_body__unarmed__cosmetic__legacy_running_base__omni__1f__12288x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_running_base/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 14.0,
+      "frames": 16,
+      "loop": true
+    },
+    "unarmed_arrival": {
+      "art": {
+        "action": "legacy_operator_full_body_unarmed_arrival_01_s_13f_96",
+        "direction": "omni",
+        "group": "transition",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/transition/legacy_operator_full_body_unarmed_arrival_01_s_13f_96/operator__full_body__unarmed__transition__legacy_operator_full_body_unarmed_arrival_01_s_13f_96__omni__1f__1248x96.png"
+      },
+      "canonical_identity": "unarmed/transition/legacy_operator_full_body_unarmed_arrival_01_s_13f_96/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 13,
+      "loop": false
+    },
+    "unarmed_arrival_down": {
+      "art": {
+        "action": "legacy_operator_full_body_unarmed_arrival_01_s_13f_96",
+        "direction": "omni",
+        "group": "transition",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/transition/legacy_operator_full_body_unarmed_arrival_01_s_13f_96/operator__full_body__unarmed__transition__legacy_operator_full_body_unarmed_arrival_01_s_13f_96__omni__1f__1248x96.png"
+      },
+      "canonical_identity": "unarmed/transition/legacy_operator_full_body_unarmed_arrival_01_s_13f_96/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 13,
+      "loop": false
+    },
+    "unarmed_attack_fast": {
+      "art": {
+        "action": "fast_01",
+        "direction": "s",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_01/operator__full_body__unarmed__attack__fast_01__s__6f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_01/s/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 6,
+      "loop": false
+    },
+    "unarmed_attack_fast_down": {
+      "art": {
+        "action": "fast_01",
+        "direction": "s",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_01/operator__full_body__unarmed__attack__fast_01__s__6f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_01/s/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 6,
+      "loop": false
+    },
+    "unarmed_attack_fast_left": {
+      "art": {
+        "action": "fast_01",
+        "direction": "w",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_01/operator__full_body__unarmed__attack__fast_01__w__5f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_01/w/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 5,
+      "loop": false
+    },
+    "unarmed_attack_fast_recovery": {
+      "art": {
+        "action": "fast_recovery_01",
+        "direction": "e",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__full_body__unarmed__attack__fast_recovery_01__e__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_recovery_01/e/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 15.0,
+      "frames": 3,
+      "loop": false
+    },
+    "unarmed_attack_fast_recovery_down": {
+      "art": {
+        "action": "fast_recovery_01",
+        "direction": "s",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__full_body__unarmed__attack__fast_recovery_01__s__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_recovery_01/s/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 15.0,
+      "frames": 3,
+      "loop": false
+    },
+    "unarmed_attack_fast_recovery_down_left": {
+      "art": {
+        "action": "fast_recovery_01",
+        "direction": "sw",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__full_body__unarmed__attack__fast_recovery_01__sw__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_recovery_01/sw/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 15.0,
+      "frames": 3,
+      "loop": false
+    },
+    "unarmed_attack_fast_recovery_down_right": {
+      "art": {
+        "action": "fast_recovery_01",
+        "direction": "se",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__full_body__unarmed__attack__fast_recovery_01__se__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_recovery_01/se/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 15.0,
+      "frames": 3,
+      "loop": false
+    },
+    "unarmed_attack_fast_recovery_left": {
+      "art": {
+        "action": "fast_recovery_01",
+        "direction": "w",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__full_body__unarmed__attack__fast_recovery_01__w__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_recovery_01/w/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 15.0,
+      "frames": 3,
+      "loop": false
+    },
+    "unarmed_attack_fast_recovery_right": {
+      "art": {
+        "action": "fast_recovery_01",
+        "direction": "e",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__full_body__unarmed__attack__fast_recovery_01__e__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_recovery_01/e/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 15.0,
+      "frames": 3,
+      "loop": false
+    },
+    "unarmed_attack_fast_recovery_up": {
+      "art": {
+        "action": "fast_recovery_01",
+        "direction": "n",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__full_body__unarmed__attack__fast_recovery_01__n__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_recovery_01/n/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 15.0,
+      "frames": 3,
+      "loop": false
+    },
+    "unarmed_attack_fast_recovery_up_left": {
+      "art": {
+        "action": "fast_recovery_01",
+        "direction": "nw",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__full_body__unarmed__attack__fast_recovery_01__nw__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_recovery_01/nw/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 15.0,
+      "frames": 3,
+      "loop": false
+    },
+    "unarmed_attack_fast_recovery_up_right": {
+      "art": {
+        "action": "fast_recovery_01",
+        "direction": "ne",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__full_body__unarmed__attack__fast_recovery_01__ne__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_recovery_01/ne/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 15.0,
+      "frames": 3,
+      "loop": false
+    },
+    "unarmed_attack_fast_right": {
+      "art": {
+        "action": "fast_01",
+        "direction": "e",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_01/operator__full_body__unarmed__attack__fast_01__e__5f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_01/e/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 5,
+      "loop": false
+    },
+    "unarmed_attack_fast_up": {
+      "art": {
+        "action": "fast_01",
+        "direction": "n",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_01/operator__full_body__unarmed__attack__fast_01__n__6f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_01/n/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 6,
+      "loop": false
+    },
+    "unarmed_attack_fast_windup": {
+      "art": {
+        "action": "fast_windup_01",
+        "direction": "s",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_windup_01/operator__full_body__unarmed__attack__fast_windup_01__s__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_windup_01/s/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 3,
+      "loop": false
+    },
+    "unarmed_attack_fast_windup_down": {
+      "art": {
+        "action": "fast_windup_01",
+        "direction": "s",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_windup_01/operator__full_body__unarmed__attack__fast_windup_01__s__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_windup_01/s/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 3,
+      "loop": false
+    },
+    "unarmed_attack_fast_windup_down_left": {
+      "art": {
+        "action": "fast_windup_01",
+        "direction": "sw",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_windup_01/operator__full_body__unarmed__attack__fast_windup_01__sw__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_windup_01/sw/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 3,
+      "loop": false
+    },
+    "unarmed_attack_fast_windup_down_right": {
+      "art": {
+        "action": "fast_windup_01",
+        "direction": "se",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_windup_01/operator__full_body__unarmed__attack__fast_windup_01__se__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_windup_01/se/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 3,
+      "loop": false
+    },
+    "unarmed_attack_fast_windup_left": {
+      "art": {
+        "action": "fast_windup_01",
+        "direction": "w",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_windup_01/operator__full_body__unarmed__attack__fast_windup_01__w__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_windup_01/w/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 3,
+      "loop": false
+    },
+    "unarmed_attack_fast_windup_right": {
+      "art": {
+        "action": "fast_windup_01",
+        "direction": "e",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_windup_01/operator__full_body__unarmed__attack__fast_windup_01__e__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_windup_01/e/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 3,
+      "loop": false
+    },
+    "unarmed_attack_fast_windup_up": {
+      "art": {
+        "action": "fast_windup_01",
+        "direction": "n",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_windup_01/operator__full_body__unarmed__attack__fast_windup_01__n__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_windup_01/n/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 3,
+      "loop": false
+    },
+    "unarmed_attack_fast_windup_up_left": {
+      "art": {
+        "action": "fast_windup_01",
+        "direction": "nw",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_windup_01/operator__full_body__unarmed__attack__fast_windup_01__nw__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_windup_01/nw/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 3,
+      "loop": false
+    },
+    "unarmed_attack_fast_windup_up_right": {
+      "art": {
+        "action": "fast_windup_01",
+        "direction": "ne",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_windup_01/operator__full_body__unarmed__attack__fast_windup_01__ne__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_windup_01/ne/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 3,
+      "loop": false
+    },
+    "unarmed_attack_heavy": {
+      "art": {
+        "action": "heavy_01",
+        "direction": "e",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/heavy_01/operator__full_body__unarmed__attack__heavy_01__e__7f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/heavy_01/e/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 7,
+      "loop": false
+    },
+    "unarmed_attack_heavy_down": {
+      "art": {
+        "action": "heavy_01",
+        "direction": "s",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/heavy_01/operator__full_body__unarmed__attack__heavy_01__s__7f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/heavy_01/s/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 7,
+      "loop": false
+    },
+    "unarmed_attack_heavy_left": {
+      "art": {
+        "action": "heavy_01",
+        "direction": "w",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/heavy_01/operator__full_body__unarmed__attack__heavy_01__w__7f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/heavy_01/w/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 7,
+      "loop": false
+    },
+    "unarmed_attack_heavy_right": {
+      "art": {
+        "action": "heavy_01",
+        "direction": "e",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/heavy_01/operator__full_body__unarmed__attack__heavy_01__e__7f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/heavy_01/e/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 7,
+      "loop": false
+    },
+    "unarmed_attack_heavy_up": {
+      "art": {
+        "action": "heavy_01",
+        "direction": "n",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/heavy_01/operator__full_body__unarmed__attack__heavy_01__n__8f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/heavy_01/n/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 11.5,
+      "frames": 8,
+      "loop": false
+    },
+    "unarmed_bodyslam_knockdown_left": {
+      "art": {
+        "action": "bodyslam_knockdown_01",
+        "direction": "w",
+        "group": "reaction",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/reaction/bodyslam_knockdown_01/operator__full_body__unarmed__reaction__bodyslam_knockdown_01__w__12f__96.png"
+      },
+      "canonical_identity": "unarmed/reaction/bodyslam_knockdown_01/w/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 12,
+      "loop": false
+    },
+    "unarmed_bodyslam_knockdown_right": {
+      "art": {
+        "action": "bodyslam_knockdown_01",
+        "direction": "e",
+        "group": "reaction",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/reaction/bodyslam_knockdown_01/operator__full_body__unarmed__reaction__bodyslam_knockdown_01__e__12f__96.png"
+      },
+      "canonical_identity": "unarmed/reaction/bodyslam_knockdown_01/e/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 12,
+      "loop": false
+    },
+    "unarmed_death": {
+      "art": {
+        "action": "death_01",
+        "direction": "omni",
+        "group": "reaction",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/reaction/death_01/operator__full_body__unarmed__reaction__death_01__omni__6f__96.png"
+      },
+      "canonical_identity": "unarmed/reaction/death_01/omni/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 7.0,
+      "frames": 6,
+      "loop": false
+    },
+    "unarmed_dodge_fast_attack_left": {
+      "art": {
+        "action": "dodge_fast_attack_01",
+        "direction": "w",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/dodge_fast_attack_01/operator__full_body__unarmed__attack__dodge_fast_attack_01__w__11f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/dodge_fast_attack_01/w/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 20.0,
+      "frames": 11,
+      "loop": false
+    },
+    "unarmed_dodge_fast_attack_right": {
+      "art": {
+        "action": "dodge_fast_attack_01",
+        "direction": "e",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/dodge_fast_attack_01/operator__full_body__unarmed__attack__dodge_fast_attack_01__e__11f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/dodge_fast_attack_01/e/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 20.0,
+      "frames": 11,
+      "loop": false
+    },
+    "unarmed_fast_strike": {
+      "art": {
+        "action": "fast_strike_01",
+        "direction": "s",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__full_body__unarmed__attack__fast_strike_01__s__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_strike_01/s/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 3,
+      "loop": false
+    },
+    "unarmed_fast_strike_down": {
+      "art": {
+        "action": "fast_strike_01",
+        "direction": "s",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__full_body__unarmed__attack__fast_strike_01__s__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_strike_01/s/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 3,
+      "loop": false
+    },
+    "unarmed_fast_strike_down_left": {
+      "art": {
+        "action": "fast_strike_01",
+        "direction": "sw",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__full_body__unarmed__attack__fast_strike_01__sw__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_strike_01/sw/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 3,
+      "loop": false
+    },
+    "unarmed_fast_strike_down_right": {
+      "art": {
+        "action": "fast_strike_01",
+        "direction": "se",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__full_body__unarmed__attack__fast_strike_01__se__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_strike_01/se/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 3,
+      "loop": false
+    },
+    "unarmed_fast_strike_left": {
+      "art": {
+        "action": "fast_strike_01",
+        "direction": "w",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__full_body__unarmed__attack__fast_strike_01__w__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_strike_01/w/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 3,
+      "loop": false
+    },
+    "unarmed_fast_strike_right": {
+      "art": {
+        "action": "fast_strike_01",
+        "direction": "e",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__full_body__unarmed__attack__fast_strike_01__e__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_strike_01/e/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 3,
+      "loop": false
+    },
+    "unarmed_fast_strike_up": {
+      "art": {
+        "action": "fast_strike_01",
+        "direction": "n",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__full_body__unarmed__attack__fast_strike_01__n__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_strike_01/n/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 3,
+      "loop": false
+    },
+    "unarmed_fast_strike_up_left": {
+      "art": {
+        "action": "fast_strike_01",
+        "direction": "nw",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__full_body__unarmed__attack__fast_strike_01__nw__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_strike_01/nw/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 3,
+      "loop": false
+    },
+    "unarmed_fast_strike_up_right": {
+      "art": {
+        "action": "fast_strike_01",
+        "direction": "ne",
+        "group": "attack",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__full_body__unarmed__attack__fast_strike_01__ne__3f__96.png"
+      },
+      "canonical_identity": "unarmed/attack/fast_strike_01/ne/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 3,
+      "loop": false
+    },
+    "unarmed_idle": {
+      "art": {
+        "action": "idle_01",
+        "direction": "s",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__s__5f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/idle_01/s/lower_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 8.0,
+      "frames": 5,
+      "loop": true
+    },
+    "unarmed_idle_down": {
+      "art": {
+        "action": "idle_01",
+        "direction": "s",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__s__5f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/idle_01/s/lower_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 8.0,
+      "frames": 5,
+      "loop": true
+    },
+    "unarmed_idle_down_left": {
+      "art": {
+        "action": "idle_01",
+        "direction": "sw",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__sw__5f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/idle_01/sw/lower_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 8.0,
+      "frames": 5,
+      "loop": true
+    },
+    "unarmed_idle_down_right": {
+      "art": {
+        "action": "idle_01",
+        "direction": "se",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__se__5f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/idle_01/se/lower_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 8.0,
+      "frames": 5,
+      "loop": true
+    },
+    "unarmed_idle_left": {
+      "art": {
+        "action": "idle_01",
+        "direction": "w",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__w__5f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/idle_01/w/lower_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 8.0,
+      "frames": 5,
+      "loop": true
+    },
+    "unarmed_idle_right": {
+      "art": {
+        "action": "idle_01",
+        "direction": "e",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__e__5f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/idle_01/e/lower_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 8.0,
+      "frames": 5,
+      "loop": true
+    },
+    "unarmed_idle_up": {
+      "art": {
+        "action": "idle_01",
+        "direction": "n",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__n__5f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/idle_01/n/lower_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 8.0,
+      "frames": 5,
+      "loop": true
+    },
+    "unarmed_idle_up_left": {
+      "art": {
+        "action": "idle_01",
+        "direction": "nw",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__nw__5f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/idle_01/nw/lower_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 8.0,
+      "frames": 5,
+      "loop": true
+    },
+    "unarmed_idle_up_right": {
+      "art": {
+        "action": "idle_01",
+        "direction": "ne",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__ne__6f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/idle_01/ne/lower_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 8.0,
+      "frames": 6,
+      "loop": true
+    },
+    "unarmed_light_hitreact": {
+      "art": {
+        "action": "light_hitreact_01",
+        "direction": "s",
+        "group": "reaction",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/reaction/light_hitreact_01/operator__full_body__unarmed__reaction__light_hitreact_01__s__3f__96.png"
+      },
+      "canonical_identity": "unarmed/reaction/light_hitreact_01/s/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 3,
+      "loop": false
+    },
+    "unarmed_light_hitreact_down": {
+      "art": {
+        "action": "light_hitreact_01",
+        "direction": "s",
+        "group": "reaction",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/reaction/light_hitreact_01/operator__full_body__unarmed__reaction__light_hitreact_01__s__3f__96.png"
+      },
+      "canonical_identity": "unarmed/reaction/light_hitreact_01/s/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 3,
+      "loop": false
+    },
+    "unarmed_run_down": {
+      "art": {
+        "action": "run_01",
+        "direction": "s",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__s__12f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/run_01/s/lower_body",
+      "canonical_published": true,
+      "durations": [
+        0.600000023841858,
+        0.699999988079071,
+        1.0,
+        0.600000023841858,
+        0.699999988079071,
+        1.0,
+        0.600000023841858,
+        0.699999988079071,
+        1.0,
+        0.600000023841858,
+        0.699999988079071,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 12,
+      "loop": true
+    },
+    "unarmed_run_down_left": {
+      "art": {
+        "action": "run_01",
+        "direction": "sw",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__sw__5f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/run_01/sw/lower_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 5,
+      "loop": true
+    },
+    "unarmed_run_down_right": {
+      "art": {
+        "action": "run_01",
+        "direction": "se",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__se__5f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/run_01/se/lower_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 5,
+      "loop": true
+    },
+    "unarmed_run_left": {
+      "art": {
+        "action": "run_01",
+        "direction": "w",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__w__5f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/run_01/w/lower_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 5,
+      "loop": true
+    },
+    "unarmed_run_right": {
+      "art": {
+        "action": "run_01",
+        "direction": "e",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__e__6f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/run_01/e/lower_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 6,
+      "loop": true
+    },
+    "unarmed_run_up": {
+      "art": {
+        "action": "run_01",
+        "direction": "n",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__n__8f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/run_01/n/lower_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 8,
+      "loop": true
+    },
+    "unarmed_run_up_left": {
+      "art": {
+        "action": "run_01",
+        "direction": "nw",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__nw__6f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/run_01/nw/lower_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 6,
+      "loop": true
+    },
+    "unarmed_run_up_right": {
+      "art": {
+        "action": "idle_01",
+        "direction": "ne",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__ne__6f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/idle_01/ne/lower_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 12.0,
+      "frames": 6,
+      "loop": true
+    },
+    "unarmed_stance": {
+      "art": {
+        "action": "stance_01_legacy_93b8afca",
+        "direction": "e",
+        "group": "posture",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/posture/stance_01_legacy_93b8afca/operator__full_body__unarmed__posture__stance_01_legacy_93b8afca__e__6f__96.png"
+      },
+      "canonical_identity": "unarmed/posture/stance_01_legacy_93b8afca/e/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 8.0,
+      "frames": 6,
+      "loop": true
+    },
+    "unarmed_stance_left": {
+      "art": {
+        "action": "stance_01",
+        "direction": "w",
+        "group": "posture",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/posture/stance_01/operator__full_body__unarmed__posture__stance_01__w__6f__96.png"
+      },
+      "canonical_identity": "unarmed/posture/stance_01/w/full_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 8.0,
+      "frames": 6,
+      "loop": true
+    },
+    "unarmed_stance_right": {
+      "art": {
+        "action": "stance_01_legacy_93b8afca",
+        "direction": "e",
+        "group": "posture",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/posture/stance_01_legacy_93b8afca/operator__full_body__unarmed__posture__stance_01_legacy_93b8afca__e__6f__96.png"
+      },
+      "canonical_identity": "unarmed/posture/stance_01_legacy_93b8afca/e/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 8.0,
+      "frames": 6,
+      "loop": true
+    },
+    "unarmed_walk": {
+      "art": {
+        "action": "walk_01",
+        "direction": "s",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__s__8f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/walk_01/s/lower_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 8,
+      "loop": true
+    },
+    "unarmed_walk_down": {
+      "art": {
+        "action": "walk_01",
+        "direction": "s",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__s__8f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/walk_01/s/lower_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 8,
+      "loop": true
+    },
+    "unarmed_walk_down_left": {
+      "art": {
+        "action": "walk_01",
+        "direction": "sw",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__sw__5f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/walk_01/sw/lower_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 5,
+      "loop": true
+    },
+    "unarmed_walk_down_right": {
+      "art": {
+        "action": "walk_01",
+        "direction": "se",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__se__5f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/walk_01/se/lower_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 5,
+      "loop": true
+    },
+    "unarmed_walk_left": {
+      "art": {
+        "action": "walk_01",
+        "direction": "w",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__w__5f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/walk_01/w/lower_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 5,
+      "loop": true
+    },
+    "unarmed_walk_right": {
+      "art": {
+        "action": "walk_01",
+        "direction": "e",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__e__5f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/walk_01/e/lower_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 5,
+      "loop": true
+    },
+    "unarmed_walk_up": {
+      "art": {
+        "action": "walk_01",
+        "direction": "n",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__n__8f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/walk_01/n/lower_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 8,
+      "loop": true
+    },
+    "unarmed_walk_up_left": {
+      "art": {
+        "action": "run_01",
+        "direction": "nw",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__nw__6f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/run_01/nw/lower_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 6,
+      "loop": true
+    },
+    "unarmed_walk_up_right": {
+      "art": {
+        "action": "idle_01",
+        "direction": "ne",
+        "group": "locomotion",
+        "layer": "lower_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__ne__6f__96.png"
+      },
+      "canonical_identity": "unarmed/locomotion/idle_01/ne/lower_body",
+      "canonical_published": true,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 6,
+      "loop": true
+    },
+    "walk_down": {
+      "art": {},
+      "canonical_identity": "",
+      "canonical_published": false,
+      "durations": [],
+      "fps": 6.0,
+      "frames": 0,
+      "loop": true
+    },
+    "walk_down_default": {
+      "art": {
+        "action": "legacy_walking_base",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_walking_base/operator__full_body__unarmed__cosmetic__legacy_walking_base__omni__1f__6144x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_walking_base/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 8,
+      "loop": true
+    },
+    "walk_down_left": {
+      "art": {
+        "action": "legacy_walking_base",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_walking_base/operator__full_body__unarmed__cosmetic__legacy_walking_base__omni__1f__6144x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_walking_base/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 8,
+      "loop": true
+    },
+    "walk_down_right": {
+      "art": {
+        "action": "legacy_walking_base",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_walking_base/operator__full_body__unarmed__cosmetic__legacy_walking_base__omni__1f__6144x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_walking_base/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 8,
+      "loop": true
+    },
+    "walk_east": {
+      "art": {
+        "action": "legacy_walk_right_body",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_walk_right_body/operator__full_body__unarmed__cosmetic__legacy_walk_right_body__omni__1f__384x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_walk_right_body/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0
+      ],
+      "fps": 8.0,
+      "frames": 2,
+      "loop": true
+    },
+    "walk_left": {
+      "art": {
+        "action": "legacy_walking_base",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_walking_base/operator__full_body__unarmed__cosmetic__legacy_walking_base__omni__1f__6144x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_walking_base/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 8,
+      "loop": true
+    },
+    "walk_right": {
+      "art": {
+        "action": "legacy_walking_base",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_walking_base/operator__full_body__unarmed__cosmetic__legacy_walking_base__omni__1f__6144x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_walking_base/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 8,
+      "loop": true
+    },
+    "walk_up": {
+      "art": {
+        "action": "legacy_walking_base",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_walking_base/operator__full_body__unarmed__cosmetic__legacy_walking_base__omni__1f__6144x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_walking_base/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 8,
+      "loop": true
+    },
+    "walk_up_left": {
+      "art": {
+        "action": "legacy_walking_base",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_walking_base/operator__full_body__unarmed__cosmetic__legacy_walking_base__omni__1f__6144x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_walking_base/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 8,
+      "loop": true
+    },
+    "walk_up_right": {
+      "art": {
+        "action": "legacy_walking_base",
+        "direction": "omni",
+        "group": "cosmetic",
+        "layer": "full_body",
+        "profile": "unarmed",
+        "sheet": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_walking_base/operator__full_body__unarmed__cosmetic__legacy_walking_base__omni__1f__6144x96.png"
+      },
+      "canonical_identity": "unarmed/cosmetic/legacy_walking_base/omni/full_body",
+      "canonical_published": false,
+      "durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "fps": 10.0,
+      "frames": 8,
+      "loop": true
+    }
+  },
+  "resource": "res://game/actors/operator/operator_runtime_frames.tres",
+  "schema": "custodian.operator_animated_sprite_clips.v1"
+}

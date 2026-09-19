@@ -767,9 +767,10 @@ No renderer binding changed in T1.
    clips, and trace the 24 variable-argument sites to their callers. The
    inventory reports both sets.
 2. Answer the dodge authoring question in item 3.
-3. `modular_sidearm_sprite` (C2a-R1) and `modular_upper_fx_sprite` (C2a-R2) are
-   done. Next is C2a-R3, the body layers, then `animated_sprite` last. Head and
-   cape are retired, not migrated.
+3. R1 `modular_sidearm_sprite`, R2 `modular_upper_fx_sprite` and R3 the body pair
+   are done. Next is C2a-R4, `animated_sprite`, the last of the large renderers —
+   the melee and weapon overlays are still compatibility-bound and belong to
+   their own later slices. Head and cape are retired, not migrated.
 4. Expect SOUTH-fallback telemetry to spike where canonical directional
    coverage is partial — `melee_1h/posture/*` is e/w only,
    `unarmed/locomotion/walk_01` upper is 6 of 8. Collect the counts as §9 asks.
