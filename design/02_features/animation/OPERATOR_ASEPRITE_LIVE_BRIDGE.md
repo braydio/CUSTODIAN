@@ -93,10 +93,17 @@ review location.
 4. **Live Unsaved Preview (implemented):** debounced, revision-guarded in-memory render export.
 5. **Layer Synchronization (implemented):** guarded focus and visibility control.
 6. **Preview Examiner (implemented):** SINGLE/SPLIT/DIFF live/saved/canonical/runtime comparison with cached persisted sources and filmstrip review.
-7. **Transition Examiner (deferred):** seam metrics and ghost review.
+7A. **Transition Analysis Core (implemented):** shared pure seam normalization, boundary metrics, exact diff, and ghost review used by Art Agent and future Workbench UI.
+7B. **Transition Examiner UI (deferred):** Workbench seam picker and interactive ghost/diff review.
 8. **Timeline Completion (deferred):** trims, loops, FPS, and source-frame navigation.
 9. **Art Agent Coexistence (deferred):** guarded live-document mutation without weakening current locks or transactions.
 10. **Workspace Polish (deferred):** lifecycle, recovery, and optional window layout.
+
+The shared transition analysis core owns cross-canvas normalization, boundary
+geometry, baseline and centroid deltas, silhouette overlap, exact boundary diff,
+and ghost overlays. Art Agent transition review delegates to that core while
+retaining its existing API and artifact contract. Packet 7B will consume the
+same metrics without introducing another analysis stack.
 
 Later packets must preserve the canonical publication boundary and may add only
 semantic commands, never general remote execution.
@@ -258,7 +265,6 @@ future Workbench owns the endpoint.
 
 ## Next Agent Slice
 
-Packet 6 may add the Preview Examiner: explicit live/saved/canonical/runtime
-comparison, split/diff views, and filmstrip review. It must preserve the layer
-presentation boundary and must not add save/publication or Art Agent mutation
-authority.
+Packet 7B may add the Workbench Transition Examiner UI. It must consume the
+shared analysis core, preserve the layer presentation boundary, and must not add
+save/publication or Art Agent mutation authority.
