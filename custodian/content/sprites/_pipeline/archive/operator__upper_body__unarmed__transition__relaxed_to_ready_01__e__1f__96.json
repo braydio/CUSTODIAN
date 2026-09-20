@@ -1,0 +1,14 @@
+{
+  "source": "operator__upper_body__unarmed__transition__relaxed_to_ready_01__e__1f__96.png",
+  "mode": "copy",
+  "outputs": [
+    {
+      "path": "operator/source/animations/unarmed/transition/relaxed_to_ready_01/operator__upper_body__unarmed__transition__relaxed_to_ready_01__e__1f__96.png",
+      "layout": "copy"
+    }
+  ],
+  "post_process": [
+    "operator_runtime_build"
+  ],
+  "remove_superseded": true
+}

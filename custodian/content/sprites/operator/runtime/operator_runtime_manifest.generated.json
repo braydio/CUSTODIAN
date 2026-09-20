@@ -7961,6 +7961,222 @@
         }
       }
     },
+    "unarmed/posture/idle_ready_01/e": {
+      "profile": "unarmed",
+      "group": "posture",
+      "action": "idle_ready_01",
+      "direction": "e",
+      "layers": {
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/posture/idle_ready_01/operator__lower_body__unarmed__posture__idle_ready_01__e__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "fps": 8.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/posture/idle_ready_01/operator__upper_body__unarmed__posture__idle_ready_01__e__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "fps": 8.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 8.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "unarmed/posture/idle_ready_01/w": {
+      "profile": "unarmed",
+      "group": "posture",
+      "action": "idle_ready_01",
+      "direction": "w",
+      "layers": {
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/posture/idle_ready_01/operator__lower_body__unarmed__posture__idle_ready_01__w__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "fps": 8.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/posture/idle_ready_01/operator__upper_body__unarmed__posture__idle_ready_01__w__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "fps": 8.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 8.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "unarmed/posture/idle_relaxed_01/e": {
+      "profile": "unarmed",
+      "group": "posture",
+      "action": "idle_relaxed_01",
+      "direction": "e",
+      "layers": {
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "fps": 8.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "fps": 8.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 8.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "unarmed/posture/idle_relaxed_01/w": {
+      "profile": "unarmed",
+      "group": "posture",
+      "action": "idle_relaxed_01",
+      "direction": "w",
+      "layers": {
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__w__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "fps": 8.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__w__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "fps": 8.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 8.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
     "unarmed/posture/stance_01/e": {
       "profile": "unarmed",
       "group": "posture",
@@ -8229,6 +8445,174 @@
             96
           ]
         }
+      }
+    },
+    "unarmed/transition/ready_to_relaxed_01/e": {
+      "profile": "unarmed",
+      "group": "transition",
+      "action": "ready_to_relaxed_01",
+      "direction": "e",
+      "layers": {
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/transition/ready_to_relaxed_01/operator__lower_body__unarmed__transition__ready_to_relaxed_01__e__1f__96.png",
+          "frames": 1,
+          "frame_size": [
+            96,
+            96
+          ],
+          "fps": 8.0,
+          "loop": false,
+          "durations": [
+            1.0
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/transition/ready_to_relaxed_01/operator__upper_body__unarmed__transition__ready_to_relaxed_01__e__1f__96.png",
+          "frames": 1,
+          "frame_size": [
+            96,
+            96
+          ],
+          "fps": 8.0,
+          "loop": false,
+          "durations": [
+            1.0
+          ]
+        }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 8.0,
+        "loop": false,
+        "durations": [
+          1.0
+        ]
+      }
+    },
+    "unarmed/transition/ready_to_relaxed_01/w": {
+      "profile": "unarmed",
+      "group": "transition",
+      "action": "ready_to_relaxed_01",
+      "direction": "w",
+      "layers": {
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/transition/ready_to_relaxed_01/operator__lower_body__unarmed__transition__ready_to_relaxed_01__w__1f__96.png",
+          "frames": 1,
+          "frame_size": [
+            96,
+            96
+          ],
+          "fps": 8.0,
+          "loop": false,
+          "durations": [
+            1.0
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/transition/ready_to_relaxed_01/operator__upper_body__unarmed__transition__ready_to_relaxed_01__w__1f__96.png",
+          "frames": 1,
+          "frame_size": [
+            96,
+            96
+          ],
+          "fps": 8.0,
+          "loop": false,
+          "durations": [
+            1.0
+          ]
+        }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 8.0,
+        "loop": false,
+        "durations": [
+          1.0
+        ]
+      }
+    },
+    "unarmed/transition/relaxed_to_ready_01/e": {
+      "profile": "unarmed",
+      "group": "transition",
+      "action": "relaxed_to_ready_01",
+      "direction": "e",
+      "layers": {
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/transition/relaxed_to_ready_01/operator__lower_body__unarmed__transition__relaxed_to_ready_01__e__1f__96.png",
+          "frames": 1,
+          "frame_size": [
+            96,
+            96
+          ],
+          "fps": 8.0,
+          "loop": false,
+          "durations": [
+            1.0
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/transition/relaxed_to_ready_01/operator__upper_body__unarmed__transition__relaxed_to_ready_01__e__1f__96.png",
+          "frames": 1,
+          "frame_size": [
+            96,
+            96
+          ],
+          "fps": 8.0,
+          "loop": false,
+          "durations": [
+            1.0
+          ]
+        }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 8.0,
+        "loop": false,
+        "durations": [
+          1.0
+        ]
+      }
+    },
+    "unarmed/transition/relaxed_to_ready_01/w": {
+      "profile": "unarmed",
+      "group": "transition",
+      "action": "relaxed_to_ready_01",
+      "direction": "w",
+      "layers": {
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/transition/relaxed_to_ready_01/operator__lower_body__unarmed__transition__relaxed_to_ready_01__w__1f__96.png",
+          "frames": 1,
+          "frame_size": [
+            96,
+            96
+          ],
+          "fps": 8.0,
+          "loop": false,
+          "durations": [
+            1.0
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/transition/relaxed_to_ready_01/operator__upper_body__unarmed__transition__relaxed_to_ready_01__w__1f__96.png",
+          "frames": 1,
+          "frame_size": [
+            96,
+            96
+          ],
+          "fps": 8.0,
+          "loop": false,
+          "durations": [
+            1.0
+          ]
+        }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 8.0,
+        "loop": false,
+        "durations": [
+          1.0
+        ]
       }
     }
   },
