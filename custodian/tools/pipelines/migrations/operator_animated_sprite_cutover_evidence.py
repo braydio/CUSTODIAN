@@ -76,6 +76,93 @@ LEGACY_PROMOTIONS = {
     },
 }
 
+#: Authoring decisions that have been made. A promotion proves equivalence; these
+#: do not, and must not be dressed up as proof. The pixels are deliberately
+#: different, or the mechanism is deliberately going away. Recording them as
+#: resolved decisions rather than reclassifying them keeps that distinction
+#: legible after the cutover, when the legacy clip no longer exists to inspect.
+#:
+#:   REPLACE -- the clip's intent survives under a chosen canonical identity
+#:   RETIRE  -- the clip, or the mechanism that reaches it, should disappear
+#:
+#: Retirements stay AUTHORING_DECISION rather than moving to RETIRED, because
+#: RETIRED in this report is a mechanical finding ("no live consumer reaches
+#: this clip"). These have live consumers; dropping them is a judgement call,
+#: and collapsing the two would lose exactly the archaeology worth keeping.
+RESOLVED_DECISIONS = {
+    "idle_long": {
+        "kind": "RETIRE",
+        "why": "The legacy long-idle artwork is not wanted. No canonical replacement "
+               "is authored and none should be; the idle path is unarmed/locomotion/idle_01.",
+    },
+    "idle_right": {
+        "kind": "REPLACE",
+        "resolution": "unarmed/locomotion/idle_01/e/full_body",
+        "why": "Deliberate visual modernization. The canonical idle supersedes the legacy "
+               "body idle; pixels differ on purpose.",
+    },
+    "run_right": {
+        "kind": "REPLACE",
+        "resolution": "unarmed/locomotion/run_01/e/full_body",
+        "why": "Deliberate visual modernization of the legacy locomotion base.",
+    },
+    "walk_right": {
+        "kind": "REPLACE",
+        "resolution": "unarmed/locomotion/walk_01/e/full_body",
+        "why": "Deliberate visual modernization of the legacy locomotion base.",
+    },
+    "walk_down_default": {
+        "kind": "REPLACE",
+        "resolution": "unarmed/locomotion/walk_01/s/full_body",
+        "why": "Deliberate visual modernization of the legacy locomotion base; the "
+               "'default' suffix was the old pipeline's name for the south strip.",
+    },
+    "death": {
+        "kind": "REPLACE",
+        "resolution": "unarmed/reaction/death_01/omni/full_body",
+        "why": "Deliberate new-art replacement, not a pixel-preserving migration. The "
+               "re-authored 8f @7 death supersedes the legacy 9f disintegrate, which retires.",
+    },
+    "melee_2h_fast_1_right": {
+        "kind": "RETIRE",
+        "why": "A legacy capability probe and runtime-mutation name, not a presentation "
+               "identity. Fast-chain capability comes from weapon fast-chain data, not from "
+               "has_animation() against the compatibility resource.",
+    },
+    "melee_2h_fast_2_right": {
+        "kind": "RETIRE",
+        "why": "Second link of the same legacy capability probe; retires with it.",
+    },
+    "melee_2h_fast_recovery": {
+        "kind": "REPLACE",
+        "resolution": "melee_1h_heavy/attack/fast_recovery_01/s/full_body",
+        "why": "The canonical fast-recovery body action carries this presentation.",
+    },
+    "melee_2h_fast_right": {
+        "kind": "RETIRE",
+        "why": "An unreachable AttackFastState direct-play fallback. The Operator delegates "
+               "through start_attack(), so this path never runs in the production actor.",
+    },
+    "melee_2h_heavy_anticipation": {
+        "kind": "REPLACE",
+        "resolution": "melee_1h_heavy/attack/heavy_windup_01/s/full_body",
+        "why": "The canonical heavy-windup body action carries this presentation.",
+    },
+    "melee_2h_heavy": {
+        "kind": "RETIRE",
+        "why": "A generic legacy identity standing in for whatever heavy attack was active. "
+               "Heavy presentation comes from semantic attack/profile authority instead: "
+               "unarmed resolves unarmed/attack/heavy_01, armed resolves the active weapon "
+               "profile's canonical heavy family. Creating a second canonical heavy identity "
+               "to receive this name would reintroduce the ambiguity it encodes.",
+    },
+    "melee_2h_heavy_right": {
+        "kind": "RETIRE",
+        "why": "The directional spelling of the same generic legacy identity; retires with it "
+               "rather than becoming a second canonical heavy action.",
+    },
+}
+
 #: Consumers outside the actor that read this renderer's animation name or frame.
 EXTERNAL_CONSUMERS = {
     "instant_replay_recorder.gd": {
@@ -149,9 +236,20 @@ def canonical_full_body() -> dict[str, set[str]]:
     return by_profile
 
 
+def published_full_body_identities() -> set[str]:
+    """Every full-body identity the canonical runtime spine actually publishes."""
+
+    text = CANONICAL_TRES.read_text(encoding="utf-8")
+    return {
+        name for name in re.findall(r'"name": &"([^"]+)"', text)
+        if name.endswith("/full_body")
+    }
+
+
 def main() -> int:
     source = ACTOR.read_text(encoding="utf-8")
     candidates = canonical_full_body()
+    published_identities = published_full_body_identities()
     clips = json.loads(CLIPS.read_text(encoding="utf-8"))["clips"]
     baseline = json.loads(FULL_BODY_BASELINE.read_text(encoding="utf-8"))["identities"]
 
@@ -208,6 +306,20 @@ def main() -> int:
             disposition, why = "UNRESOLVED", f"art maps to {identity}, which is not published canonically"
         else:
             disposition, why = "PROVEN_CANONICAL", "art provenance maps to a published canonical identity"
+        decision = RESOLVED_DECISIONS.get(clip)
+        decision_status = resolution = resolution_kind = None
+        if disposition == "AUTHORING_DECISION":
+            if decision is None:
+                decision_status = "OPEN"
+            else:
+                decision_status = "RESOLVED"
+                resolution_kind = decision["kind"]
+                resolution = decision.get("resolution")
+                why = decision["why"]
+                if resolution is not None and resolution not in published_identities:
+                    raise ValueError(
+                        f"{clip} resolves to {resolution}, which is not published canonically"
+                    )
         rows.append({
             "clip": clip,
             "consumers": consumers,
@@ -222,8 +334,11 @@ def main() -> int:
             "disposition": disposition,
             "why": why,
             "canonical_candidates": sorted(candidates.get(info["art"].get("profile", ""), []))
-                                     if disposition == "AUTHORING_DECISION" else [],
+                                     if decision_status == "OPEN" else [],
             "promoted": info["art"].get("action") in LEGACY_PROMOTIONS,
+            "decision_status": decision_status,
+            "resolution_kind": resolution_kind,
+            "resolution": resolution,
         })
 
     counts: dict[str, int] = defaultdict(int)
@@ -233,11 +348,16 @@ def main() -> int:
         if row["live"]:
             live_counts[row["disposition"]] += 1
 
+    open_decisions = [r["clip"] for r in rows if r["decision_status"] == "OPEN"]
+    unresolved = [r["clip"] for r in rows if r["disposition"] == "UNRESOLVED"]
     report = {
         "schema": "custodian.operator_animated_sprite_cutover_evidence.v1",
         "scope": "animated_sprite only; melee and weapon overlays are separate slices",
         "counts": dict(sorted(counts.items())),
         "live_counts": dict(sorted(live_counts.items())),
+        "open_decisions": open_decisions,
+        "unresolved": unresolved,
+        "cutover_ready": not open_decisions and not unresolved,
         "data_driven_bases": DATA_DRIVEN_BASES,
         "external_consumers": EXTERNAL_CONSUMERS,
         "rows": rows,
@@ -262,18 +382,33 @@ def main() -> int:
                      f"{'preserved' if row['timing_preserved'] else '-'} | {row['disposition']} |")
     lines += ["", "## Authoring decisions", "",
               "Each of these is a live clip drawing art published only under a legacy action",
-              "id. The reachability contract covers canonical entries only, so none of them",
-              "carry a recorded status; candidates are published full-body actions in the",
-              "same profile, listed across groups because the legacy strips were filed by",
-              "the old pipeline's grouping rather than their semantics.", "",
-              "| clip | legacy art | authored | candidates in profile |", "|---|---|---|---|"]
-    for row in rows:
-        if row["disposition"] != "AUTHORING_DECISION" or not row["live"]:
-            continue
+              "id, so none has a canonical counterpart that evidence alone can establish.",
+              "They are decisions, and they are recorded as decisions: a resolved decision is",
+              "not the same claim as a proof of equivalence, and is deliberately not filed as",
+              "`PROVEN_CANONICAL`. `REPLACE` chooses the canonical identity the intent moves",
+              "to, with pixels that differ on purpose. `RETIRE` drops the clip or the",
+              "mechanism that reaches it.", ""]
+    resolved_rows = [r for r in rows if r["decision_status"] == "RESOLVED"]
+    lines += [f"{len(resolved_rows)} resolved, {len(open_decisions)} open.", "",
+              "| clip | legacy art | authored | decision | resolution |", "|---|---|---|---|---|"]
+    for row in resolved_rows:
         art = row["art"]
         lines.append(f"| `{row['clip']}` | `{art.get('action','?')}` | "
-                     f"{row['frames']}f @{row['authored_fps']} | "
-                     f"{', '.join('`%s`' % c for c in row['canonical_candidates']) or '-'} |")
+                     f"{row['frames']}f @{row['authored_fps']} | {row['resolution_kind']} | "
+                     f"{'`%s`' % row['resolution'] if row['resolution'] else 'no replacement'} |")
+    lines += ["", "Rationale:", ""]
+    for row in resolved_rows:
+        lines.append(f"- `{row['clip']}` — {row['why']}")
+    if open_decisions:
+        lines += ["", "### Still open", "",
+                  "| clip | legacy art | authored | candidates in profile |", "|---|---|---|---|"]
+        for row in rows:
+            if row["decision_status"] != "OPEN":
+                continue
+            art = row["art"]
+            lines.append(f"| `{row['clip']}` | `{art.get('action','?')}` | "
+                         f"{row['frames']}f @{row['authored_fps']} | "
+                         f"{', '.join('`%s`' % c for c in row['canonical_candidates']) or '-'} |")
     lines += ["", "## Data-driven bases", ""]
     for name, why in DATA_DRIVEN_BASES.items():
         lines.append(f"- `{name}` — {why}")
@@ -286,6 +421,8 @@ def main() -> int:
     print(f"  clips: {len(rows)}   live: {sum(1 for r in rows if r['live'])}")
     for key in sorted(counts):
         print(f"  {key:22} {counts[key]:4}  (live {live_counts.get(key, 0)})")
+    print(f"  open decisions: {len(open_decisions)}   unresolved: {len(unresolved)}")
+    print(f"  cutover ready: {report['cutover_ready']}")
     return 0
 
 

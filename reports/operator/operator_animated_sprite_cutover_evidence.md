@@ -69,26 +69,46 @@ compatibility renderers and belong to their own later slices.
 ## Authoring decisions
 
 Each of these is a live clip drawing art published only under a legacy action
-id. The reachability contract covers canonical entries only, so none of them
-carry a recorded status; candidates are published full-body actions in the
-same profile, listed across groups because the legacy strips were filed by
-the old pipeline's grouping rather than their semantics.
+id, so none has a canonical counterpart that evidence alone can establish.
+They are decisions, and they are recorded as decisions: a resolved decision is
+not the same claim as a proof of equivalence, and is deliberately not filed as
+`PROVEN_CANONICAL`. `REPLACE` chooses the canonical identity the intent moves
+to, with pixels that differ on purpose. `RETIRE` drops the clip or the
+mechanism that reaches it.
 
-| clip | legacy art | authored | candidates in profile |
-|---|---|---|---|
-| `death` | `legacy_death_disintigrate_base` | 9f @7.0 | `attack/dodge_fast_attack_01`, `attack/fast_01`, `attack/fast_recovery_01`, `attack/fast_strike_01`, `attack/fast_windup_01`, `attack/heavy_01`, `cosmetic/critical_execution_01`, `cosmetic/criticial_execution_01`, `cosmetic/falcon_reversal_01`, `defense/parry_miss_01`, `locomotion/idle_01`, `locomotion/run_01`, `locomotion/walk_01`, `posture/stance_01`, `reaction/bodyslam_knockdown_01`, `reaction/death_01`, `reaction/light_hitreact_01` |
-| `idle_long` | `legacy_front_idle_long_loop` | 10f @3.0 | `attack/dodge_fast_attack_01`, `attack/fast_01`, `attack/fast_recovery_01`, `attack/fast_strike_01`, `attack/fast_windup_01`, `attack/heavy_01`, `cosmetic/critical_execution_01`, `cosmetic/criticial_execution_01`, `cosmetic/falcon_reversal_01`, `defense/parry_miss_01`, `locomotion/idle_01`, `locomotion/run_01`, `locomotion/walk_01`, `posture/stance_01`, `reaction/bodyslam_knockdown_01`, `reaction/death_01`, `reaction/light_hitreact_01` |
-| `idle_right` | `legacy_front_idle_loop` | 3f @7.0 | `attack/dodge_fast_attack_01`, `attack/fast_01`, `attack/fast_recovery_01`, `attack/fast_strike_01`, `attack/fast_windup_01`, `attack/heavy_01`, `cosmetic/critical_execution_01`, `cosmetic/criticial_execution_01`, `cosmetic/falcon_reversal_01`, `defense/parry_miss_01`, `locomotion/idle_01`, `locomotion/run_01`, `locomotion/walk_01`, `posture/stance_01`, `reaction/bodyslam_knockdown_01`, `reaction/death_01`, `reaction/light_hitreact_01` |
-| `melee_2h_fast_1_right` | `legacy_fast_attack_1_right_body` | 6f @12.0 | `attack/fast_01`, `attack/fast_02`, `attack/fast_03`, `attack/fast_recovery_01`, `attack/heavy_01`, `attack/heavy_windup_01`, `defense/block_enter_01`, `defense/block_exit_01`, `defense/block_hold_01` |
-| `melee_2h_fast_2_right` | `legacy_fast_attack_2_right_body` | 5f @12.0 | `attack/fast_01`, `attack/fast_02`, `attack/fast_03`, `attack/fast_recovery_01`, `attack/heavy_01`, `attack/heavy_windup_01`, `defense/block_enter_01`, `defense/block_exit_01`, `defense/block_hold_01` |
-| `melee_2h_fast_recovery` | `legacy_fast_recovery_body` | 2f @10.0 | `attack/fast_01`, `attack/fast_02`, `attack/fast_03`, `attack/fast_recovery_01`, `attack/heavy_01`, `attack/heavy_windup_01`, `defense/block_enter_01`, `defense/block_exit_01`, `defense/block_hold_01` |
-| `melee_2h_fast_right` | `legacy_fast_attack_right_base` | 12f @12.0 | `attack/fast_01`, `attack/fast_02`, `attack/fast_03`, `cosmetic/melee_1h` |
-| `melee_2h_heavy` | `legacy_operator_2h_heavy_3layer` | 7f @11.0 | `attack/dodge_fast_attack_01`, `attack/fast_01`, `attack/fast_recovery_01`, `attack/fast_strike_01`, `attack/fast_windup_01`, `attack/heavy_01`, `cosmetic/critical_execution_01`, `cosmetic/criticial_execution_01`, `cosmetic/falcon_reversal_01`, `defense/parry_miss_01`, `locomotion/idle_01`, `locomotion/run_01`, `locomotion/walk_01`, `posture/stance_01`, `reaction/bodyslam_knockdown_01`, `reaction/death_01`, `reaction/light_hitreact_01` |
-| `melee_2h_heavy_anticipation` | `legacy_heavy_anticipation_body` | 5f @11.0 | `attack/fast_01`, `attack/fast_02`, `attack/fast_03`, `attack/fast_recovery_01`, `attack/heavy_01`, `attack/heavy_windup_01`, `defense/block_enter_01`, `defense/block_exit_01`, `defense/block_hold_01` |
-| `melee_2h_heavy_right` | `legacy_operator_2h_heavy_3layer` | 7f @11.0 | `attack/dodge_fast_attack_01`, `attack/fast_01`, `attack/fast_recovery_01`, `attack/fast_strike_01`, `attack/fast_windup_01`, `attack/heavy_01`, `cosmetic/critical_execution_01`, `cosmetic/criticial_execution_01`, `cosmetic/falcon_reversal_01`, `defense/parry_miss_01`, `locomotion/idle_01`, `locomotion/run_01`, `locomotion/walk_01`, `posture/stance_01`, `reaction/bodyslam_knockdown_01`, `reaction/death_01`, `reaction/light_hitreact_01` |
-| `run_right` | `legacy_running_base` | 16f @14.0 | `attack/dodge_fast_attack_01`, `attack/fast_01`, `attack/fast_recovery_01`, `attack/fast_strike_01`, `attack/fast_windup_01`, `attack/heavy_01`, `cosmetic/critical_execution_01`, `cosmetic/criticial_execution_01`, `cosmetic/falcon_reversal_01`, `defense/parry_miss_01`, `locomotion/idle_01`, `locomotion/run_01`, `locomotion/walk_01`, `posture/stance_01`, `reaction/bodyslam_knockdown_01`, `reaction/death_01`, `reaction/light_hitreact_01` |
-| `walk_down_default` | `legacy_walking_base` | 8f @10.0 | `attack/dodge_fast_attack_01`, `attack/fast_01`, `attack/fast_recovery_01`, `attack/fast_strike_01`, `attack/fast_windup_01`, `attack/heavy_01`, `cosmetic/critical_execution_01`, `cosmetic/criticial_execution_01`, `cosmetic/falcon_reversal_01`, `defense/parry_miss_01`, `locomotion/idle_01`, `locomotion/run_01`, `locomotion/walk_01`, `posture/stance_01`, `reaction/bodyslam_knockdown_01`, `reaction/death_01`, `reaction/light_hitreact_01` |
-| `walk_right` | `legacy_walking_base` | 8f @10.0 | `attack/dodge_fast_attack_01`, `attack/fast_01`, `attack/fast_recovery_01`, `attack/fast_strike_01`, `attack/fast_windup_01`, `attack/heavy_01`, `cosmetic/critical_execution_01`, `cosmetic/criticial_execution_01`, `cosmetic/falcon_reversal_01`, `defense/parry_miss_01`, `locomotion/idle_01`, `locomotion/run_01`, `locomotion/walk_01`, `posture/stance_01`, `reaction/bodyslam_knockdown_01`, `reaction/death_01`, `reaction/light_hitreact_01` |
+13 resolved, 0 open.
+
+| clip | legacy art | authored | decision | resolution |
+|---|---|---|---|---|
+| `death` | `legacy_death_disintigrate_base` | 9f @7.0 | REPLACE | `unarmed/reaction/death_01/omni/full_body` |
+| `idle_long` | `legacy_front_idle_long_loop` | 10f @3.0 | RETIRE | no replacement |
+| `idle_right` | `legacy_front_idle_loop` | 3f @7.0 | REPLACE | `unarmed/locomotion/idle_01/e/full_body` |
+| `melee_2h_fast_1_right` | `legacy_fast_attack_1_right_body` | 6f @12.0 | RETIRE | no replacement |
+| `melee_2h_fast_2_right` | `legacy_fast_attack_2_right_body` | 5f @12.0 | RETIRE | no replacement |
+| `melee_2h_fast_recovery` | `legacy_fast_recovery_body` | 2f @10.0 | REPLACE | `melee_1h_heavy/attack/fast_recovery_01/s/full_body` |
+| `melee_2h_fast_right` | `legacy_fast_attack_right_base` | 12f @12.0 | RETIRE | no replacement |
+| `melee_2h_heavy` | `legacy_operator_2h_heavy_3layer` | 7f @11.0 | RETIRE | no replacement |
+| `melee_2h_heavy_anticipation` | `legacy_heavy_anticipation_body` | 5f @11.0 | REPLACE | `melee_1h_heavy/attack/heavy_windup_01/s/full_body` |
+| `melee_2h_heavy_right` | `legacy_operator_2h_heavy_3layer` | 7f @11.0 | RETIRE | no replacement |
+| `run_right` | `legacy_running_base` | 16f @14.0 | REPLACE | `unarmed/locomotion/run_01/e/full_body` |
+| `walk_down_default` | `legacy_walking_base` | 8f @10.0 | REPLACE | `unarmed/locomotion/walk_01/s/full_body` |
+| `walk_right` | `legacy_walking_base` | 8f @10.0 | REPLACE | `unarmed/locomotion/walk_01/e/full_body` |
+
+Rationale:
+
+- `death` — Deliberate new-art replacement, not a pixel-preserving migration. The re-authored 8f @7 death supersedes the legacy 9f disintegrate, which retires.
+- `idle_long` — The legacy long-idle artwork is not wanted. No canonical replacement is authored and none should be; the idle path is unarmed/locomotion/idle_01.
+- `idle_right` — Deliberate visual modernization. The canonical idle supersedes the legacy body idle; pixels differ on purpose.
+- `melee_2h_fast_1_right` — A legacy capability probe and runtime-mutation name, not a presentation identity. Fast-chain capability comes from weapon fast-chain data, not from has_animation() against the compatibility resource.
+- `melee_2h_fast_2_right` — Second link of the same legacy capability probe; retires with it.
+- `melee_2h_fast_recovery` — The canonical fast-recovery body action carries this presentation.
+- `melee_2h_fast_right` — An unreachable AttackFastState direct-play fallback. The Operator delegates through start_attack(), so this path never runs in the production actor.
+- `melee_2h_heavy` — A generic legacy identity standing in for whatever heavy attack was active. Heavy presentation comes from semantic attack/profile authority instead: unarmed resolves unarmed/attack/heavy_01, armed resolves the active weapon profile's canonical heavy family. Creating a second canonical heavy identity to receive this name would reintroduce the ambiguity it encodes.
+- `melee_2h_heavy_anticipation` — The canonical heavy-windup body action carries this presentation.
+- `melee_2h_heavy_right` — The directional spelling of the same generic legacy identity; retires with it rather than becoming a second canonical heavy action.
+- `run_right` — Deliberate visual modernization of the legacy locomotion base.
+- `walk_down_default` — Deliberate visual modernization of the legacy locomotion base; the 'default' suffix was the old pipeline's name for the south strip.
+- `walk_right` — Deliberate visual modernization of the legacy locomotion base.
 
 ## Data-driven bases
 

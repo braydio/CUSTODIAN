@@ -10,6 +10,9 @@
     "AUTHORING_DECISION": 13,
     "PROVEN_CANONICAL": 37
   },
+  "open_decisions": [],
+  "unresolved": [],
+  "cutover_ready": true,
   "data_driven_bases": {
     "_get_weapon_animation_name(...unarmed_light_hitreact...)": "OperatorWeaponDefinition animation_map; the damage-reaction base is a weapon-definition field, not a literal in the actor",
     "_get_authored_melee_body_stance_animation()": "melee posture resolver / weapon definition; the stance base is authored per weapon rather than named in the actor"
@@ -58,7 +61,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "attack_right_combo",
@@ -74,7 +80,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "attack_up",
@@ -97,7 +106,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "death",
@@ -120,27 +132,12 @@
       "canonical_published": false,
       "timing_preserved": false,
       "disposition": "AUTHORING_DECISION",
-      "why": "draws art published only under a legacy action id; it has no canonical identity to migrate to without an authoring decision",
-      "canonical_candidates": [
-        "attack/dodge_fast_attack_01",
-        "attack/fast_01",
-        "attack/fast_recovery_01",
-        "attack/fast_strike_01",
-        "attack/fast_windup_01",
-        "attack/heavy_01",
-        "cosmetic/critical_execution_01",
-        "cosmetic/criticial_execution_01",
-        "cosmetic/falcon_reversal_01",
-        "defense/parry_miss_01",
-        "locomotion/idle_01",
-        "locomotion/run_01",
-        "locomotion/walk_01",
-        "posture/stance_01",
-        "reaction/bodyslam_knockdown_01",
-        "reaction/death_01",
-        "reaction/light_hitreact_01"
-      ],
-      "promoted": false
+      "why": "Deliberate new-art replacement, not a pixel-preserving migration. The re-authored 8f @7 death supersedes the legacy 9f disintegrate, which retires.",
+      "canonical_candidates": [],
+      "promoted": false,
+      "decision_status": "RESOLVED",
+      "resolution_kind": "REPLACE",
+      "resolution": "unarmed/reaction/death_01/omni/full_body"
     },
     {
       "clip": "default",
@@ -156,7 +153,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "hurt",
@@ -179,7 +179,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "idle_alternative",
@@ -202,7 +205,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "idle_down",
@@ -225,7 +231,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "idle_long",
@@ -248,27 +257,12 @@
       "canonical_published": false,
       "timing_preserved": false,
       "disposition": "AUTHORING_DECISION",
-      "why": "draws art published only under a legacy action id; it has no canonical identity to migrate to without an authoring decision",
-      "canonical_candidates": [
-        "attack/dodge_fast_attack_01",
-        "attack/fast_01",
-        "attack/fast_recovery_01",
-        "attack/fast_strike_01",
-        "attack/fast_windup_01",
-        "attack/heavy_01",
-        "cosmetic/critical_execution_01",
-        "cosmetic/criticial_execution_01",
-        "cosmetic/falcon_reversal_01",
-        "defense/parry_miss_01",
-        "locomotion/idle_01",
-        "locomotion/run_01",
-        "locomotion/walk_01",
-        "posture/stance_01",
-        "reaction/bodyslam_knockdown_01",
-        "reaction/death_01",
-        "reaction/light_hitreact_01"
-      ],
-      "promoted": false
+      "why": "The legacy long-idle artwork is not wanted. No canonical replacement is authored and none should be; the idle path is unarmed/locomotion/idle_01.",
+      "canonical_candidates": [],
+      "promoted": false,
+      "decision_status": "RESOLVED",
+      "resolution_kind": "RETIRE",
+      "resolution": null
     },
     {
       "clip": "idle_right",
@@ -291,27 +285,12 @@
       "canonical_published": false,
       "timing_preserved": false,
       "disposition": "AUTHORING_DECISION",
-      "why": "draws art published only under a legacy action id; it has no canonical identity to migrate to without an authoring decision",
-      "canonical_candidates": [
-        "attack/dodge_fast_attack_01",
-        "attack/fast_01",
-        "attack/fast_recovery_01",
-        "attack/fast_strike_01",
-        "attack/fast_windup_01",
-        "attack/heavy_01",
-        "cosmetic/critical_execution_01",
-        "cosmetic/criticial_execution_01",
-        "cosmetic/falcon_reversal_01",
-        "defense/parry_miss_01",
-        "locomotion/idle_01",
-        "locomotion/run_01",
-        "locomotion/walk_01",
-        "posture/stance_01",
-        "reaction/bodyslam_knockdown_01",
-        "reaction/death_01",
-        "reaction/light_hitreact_01"
-      ],
-      "promoted": false
+      "why": "Deliberate visual modernization. The canonical idle supersedes the legacy body idle; pixels differ on purpose.",
+      "canonical_candidates": [],
+      "promoted": false,
+      "decision_status": "RESOLVED",
+      "resolution_kind": "REPLACE",
+      "resolution": "unarmed/locomotion/idle_01/e/full_body"
     },
     {
       "clip": "idle_up",
@@ -334,7 +313,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "melee_2h_block_enter",
@@ -357,7 +339,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "melee_2h_block_exit",
@@ -380,7 +365,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "melee_2h_block_hold",
@@ -403,7 +391,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "melee_2h_fast_1_right",
@@ -426,19 +417,12 @@
       "canonical_published": false,
       "timing_preserved": false,
       "disposition": "AUTHORING_DECISION",
-      "why": "draws art published only under a legacy action id; it has no canonical identity to migrate to without an authoring decision",
-      "canonical_candidates": [
-        "attack/fast_01",
-        "attack/fast_02",
-        "attack/fast_03",
-        "attack/fast_recovery_01",
-        "attack/heavy_01",
-        "attack/heavy_windup_01",
-        "defense/block_enter_01",
-        "defense/block_exit_01",
-        "defense/block_hold_01"
-      ],
-      "promoted": false
+      "why": "A legacy capability probe and runtime-mutation name, not a presentation identity. Fast-chain capability comes from weapon fast-chain data, not from has_animation() against the compatibility resource.",
+      "canonical_candidates": [],
+      "promoted": false,
+      "decision_status": "RESOLVED",
+      "resolution_kind": "RETIRE",
+      "resolution": null
     },
     {
       "clip": "melee_2h_fast_2_right",
@@ -461,19 +445,12 @@
       "canonical_published": false,
       "timing_preserved": false,
       "disposition": "AUTHORING_DECISION",
-      "why": "draws art published only under a legacy action id; it has no canonical identity to migrate to without an authoring decision",
-      "canonical_candidates": [
-        "attack/fast_01",
-        "attack/fast_02",
-        "attack/fast_03",
-        "attack/fast_recovery_01",
-        "attack/heavy_01",
-        "attack/heavy_windup_01",
-        "defense/block_enter_01",
-        "defense/block_exit_01",
-        "defense/block_hold_01"
-      ],
-      "promoted": false
+      "why": "Second link of the same legacy capability probe; retires with it.",
+      "canonical_candidates": [],
+      "promoted": false,
+      "decision_status": "RESOLVED",
+      "resolution_kind": "RETIRE",
+      "resolution": null
     },
     {
       "clip": "melee_2h_fast_down",
@@ -496,7 +473,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "melee_2h_fast_down_left",
@@ -519,7 +499,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "melee_2h_fast_down_right",
@@ -542,7 +525,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "melee_2h_fast_left",
@@ -565,7 +551,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "melee_2h_fast_recovery",
@@ -589,19 +578,12 @@
       "canonical_published": false,
       "timing_preserved": false,
       "disposition": "AUTHORING_DECISION",
-      "why": "draws art published only under a legacy action id; it has no canonical identity to migrate to without an authoring decision",
-      "canonical_candidates": [
-        "attack/fast_01",
-        "attack/fast_02",
-        "attack/fast_03",
-        "attack/fast_recovery_01",
-        "attack/heavy_01",
-        "attack/heavy_windup_01",
-        "defense/block_enter_01",
-        "defense/block_exit_01",
-        "defense/block_hold_01"
-      ],
-      "promoted": false
+      "why": "The canonical fast-recovery body action carries this presentation.",
+      "canonical_candidates": [],
+      "promoted": false,
+      "decision_status": "RESOLVED",
+      "resolution_kind": "REPLACE",
+      "resolution": "melee_1h_heavy/attack/fast_recovery_01/s/full_body"
     },
     {
       "clip": "melee_2h_fast_right",
@@ -624,14 +606,12 @@
       "canonical_published": false,
       "timing_preserved": false,
       "disposition": "AUTHORING_DECISION",
-      "why": "draws art published only under a legacy action id; it has no canonical identity to migrate to without an authoring decision",
-      "canonical_candidates": [
-        "attack/fast_01",
-        "attack/fast_02",
-        "attack/fast_03",
-        "cosmetic/melee_1h"
-      ],
-      "promoted": false
+      "why": "An unreachable AttackFastState direct-play fallback. The Operator delegates through start_attack(), so this path never runs in the production actor.",
+      "canonical_candidates": [],
+      "promoted": false,
+      "decision_status": "RESOLVED",
+      "resolution_kind": "RETIRE",
+      "resolution": null
     },
     {
       "clip": "melee_2h_fast_up",
@@ -654,7 +634,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "melee_2h_fast_up_left",
@@ -677,7 +660,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "melee_2h_fast_up_right",
@@ -700,7 +686,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "melee_2h_heavy",
@@ -723,27 +712,12 @@
       "canonical_published": false,
       "timing_preserved": false,
       "disposition": "AUTHORING_DECISION",
-      "why": "draws art published only under a legacy action id; it has no canonical identity to migrate to without an authoring decision",
-      "canonical_candidates": [
-        "attack/dodge_fast_attack_01",
-        "attack/fast_01",
-        "attack/fast_recovery_01",
-        "attack/fast_strike_01",
-        "attack/fast_windup_01",
-        "attack/heavy_01",
-        "cosmetic/critical_execution_01",
-        "cosmetic/criticial_execution_01",
-        "cosmetic/falcon_reversal_01",
-        "defense/parry_miss_01",
-        "locomotion/idle_01",
-        "locomotion/run_01",
-        "locomotion/walk_01",
-        "posture/stance_01",
-        "reaction/bodyslam_knockdown_01",
-        "reaction/death_01",
-        "reaction/light_hitreact_01"
-      ],
-      "promoted": false
+      "why": "A generic legacy identity standing in for whatever heavy attack was active. Heavy presentation comes from semantic attack/profile authority instead: unarmed resolves unarmed/attack/heavy_01, armed resolves the active weapon profile's canonical heavy family. Creating a second canonical heavy identity to receive this name would reintroduce the ambiguity it encodes.",
+      "canonical_candidates": [],
+      "promoted": false,
+      "decision_status": "RESOLVED",
+      "resolution_kind": "RETIRE",
+      "resolution": null
     },
     {
       "clip": "melee_2h_heavy_anticipation",
@@ -767,19 +741,12 @@
       "canonical_published": false,
       "timing_preserved": false,
       "disposition": "AUTHORING_DECISION",
-      "why": "draws art published only under a legacy action id; it has no canonical identity to migrate to without an authoring decision",
-      "canonical_candidates": [
-        "attack/fast_01",
-        "attack/fast_02",
-        "attack/fast_03",
-        "attack/fast_recovery_01",
-        "attack/heavy_01",
-        "attack/heavy_windup_01",
-        "defense/block_enter_01",
-        "defense/block_exit_01",
-        "defense/block_hold_01"
-      ],
-      "promoted": false
+      "why": "The canonical heavy-windup body action carries this presentation.",
+      "canonical_candidates": [],
+      "promoted": false,
+      "decision_status": "RESOLVED",
+      "resolution_kind": "REPLACE",
+      "resolution": "melee_1h_heavy/attack/heavy_windup_01/s/full_body"
     },
     {
       "clip": "melee_2h_heavy_right",
@@ -802,27 +769,12 @@
       "canonical_published": false,
       "timing_preserved": false,
       "disposition": "AUTHORING_DECISION",
-      "why": "draws art published only under a legacy action id; it has no canonical identity to migrate to without an authoring decision",
-      "canonical_candidates": [
-        "attack/dodge_fast_attack_01",
-        "attack/fast_01",
-        "attack/fast_recovery_01",
-        "attack/fast_strike_01",
-        "attack/fast_windup_01",
-        "attack/heavy_01",
-        "cosmetic/critical_execution_01",
-        "cosmetic/criticial_execution_01",
-        "cosmetic/falcon_reversal_01",
-        "defense/parry_miss_01",
-        "locomotion/idle_01",
-        "locomotion/run_01",
-        "locomotion/walk_01",
-        "posture/stance_01",
-        "reaction/bodyslam_knockdown_01",
-        "reaction/death_01",
-        "reaction/light_hitreact_01"
-      ],
-      "promoted": false
+      "why": "The directional spelling of the same generic legacy identity; retires with it rather than becoming a second canonical heavy action.",
+      "canonical_candidates": [],
+      "promoted": false,
+      "decision_status": "RESOLVED",
+      "resolution_kind": "RETIRE",
+      "resolution": null
     },
     {
       "clip": "melee_2h_stance",
@@ -845,7 +797,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "operator_dodge_chain_link_down",
@@ -868,7 +823,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "operator_dodge_chain_link_left",
@@ -891,7 +849,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "operator_dodge_chain_link_right",
@@ -914,7 +875,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "operator_dodge_charge_windup_down",
@@ -937,7 +901,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "operator_dodge_charge_windup_left",
@@ -960,7 +927,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "operator_dodge_charge_windup_right",
@@ -983,7 +953,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "operator_dodge_full_north",
@@ -1006,7 +979,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "operator_dodge_full_south",
@@ -1029,7 +1005,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "ranged_2h_fire",
@@ -1052,7 +1031,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "ranged_2h_reload",
@@ -1078,7 +1060,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "promoted byte-for-byte into ranged_2h/cosmetic/reload_01/omni/full_body -- row 1 of the 384x192 sheet, which is exactly the region the live clip slices (y=0, four 96x96 cells); verified pixel-identical to the live clip frame for frame at 4f/10 FPS/non-loop. Row 2 is the legacy rifle overlay and is deliberately not published: the target is a static socketed carbine, not animated weapon SpriteFrames. The 8-frame operator_ranged_body_core_v1 candidate is a post-R4 art upgrade under this same identity, not part of preservation.",
       "canonical_candidates": [],
-      "promoted": true
+      "promoted": true,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "ranged_2h_run_left",
@@ -1103,7 +1088,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "ranged_2h_run_right",
@@ -1126,7 +1114,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "ranged_2h_stance",
@@ -1149,7 +1140,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "run_down",
@@ -1172,7 +1166,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "run_down_left",
@@ -1195,7 +1192,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "run_down_right",
@@ -1218,7 +1218,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "run_left",
@@ -1241,7 +1244,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "run_right",
@@ -1265,27 +1271,12 @@
       "canonical_published": false,
       "timing_preserved": false,
       "disposition": "AUTHORING_DECISION",
-      "why": "draws art published only under a legacy action id; it has no canonical identity to migrate to without an authoring decision",
-      "canonical_candidates": [
-        "attack/dodge_fast_attack_01",
-        "attack/fast_01",
-        "attack/fast_recovery_01",
-        "attack/fast_strike_01",
-        "attack/fast_windup_01",
-        "attack/heavy_01",
-        "cosmetic/critical_execution_01",
-        "cosmetic/criticial_execution_01",
-        "cosmetic/falcon_reversal_01",
-        "defense/parry_miss_01",
-        "locomotion/idle_01",
-        "locomotion/run_01",
-        "locomotion/walk_01",
-        "posture/stance_01",
-        "reaction/bodyslam_knockdown_01",
-        "reaction/death_01",
-        "reaction/light_hitreact_01"
-      ],
-      "promoted": false
+      "why": "Deliberate visual modernization of the legacy locomotion base.",
+      "canonical_candidates": [],
+      "promoted": false,
+      "decision_status": "RESOLVED",
+      "resolution_kind": "REPLACE",
+      "resolution": "unarmed/locomotion/run_01/e/full_body"
     },
     {
       "clip": "run_up",
@@ -1308,7 +1299,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "run_up_left",
@@ -1331,7 +1325,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "run_up_right",
@@ -1354,7 +1351,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_arrival",
@@ -1377,7 +1377,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_arrival_down",
@@ -1400,7 +1403,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_attack_fast",
@@ -1423,7 +1429,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_attack_fast_down",
@@ -1446,7 +1455,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_attack_fast_left",
@@ -1469,7 +1481,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_attack_fast_recovery",
@@ -1494,7 +1509,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_attack_fast_recovery_down",
@@ -1519,7 +1537,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_attack_fast_recovery_down_left",
@@ -1544,7 +1565,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_attack_fast_recovery_down_right",
@@ -1569,7 +1593,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_attack_fast_recovery_left",
@@ -1595,7 +1622,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_attack_fast_recovery_right",
@@ -1620,7 +1650,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_attack_fast_recovery_up",
@@ -1645,7 +1678,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_attack_fast_recovery_up_left",
@@ -1670,7 +1706,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_attack_fast_recovery_up_right",
@@ -1695,7 +1734,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_attack_fast_right",
@@ -1718,7 +1760,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_attack_fast_up",
@@ -1741,7 +1786,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_attack_fast_windup",
@@ -1766,7 +1814,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_attack_fast_windup_down",
@@ -1791,7 +1842,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_attack_fast_windup_down_left",
@@ -1816,7 +1870,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_attack_fast_windup_down_right",
@@ -1841,7 +1898,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_attack_fast_windup_left",
@@ -1866,7 +1926,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_attack_fast_windup_right",
@@ -1891,7 +1954,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_attack_fast_windup_up",
@@ -1916,7 +1982,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_attack_fast_windup_up_left",
@@ -1941,7 +2010,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_attack_fast_windup_up_right",
@@ -1966,7 +2038,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_attack_heavy",
@@ -1989,7 +2064,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_attack_heavy_down",
@@ -2012,7 +2090,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_attack_heavy_left",
@@ -2035,7 +2116,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_attack_heavy_right",
@@ -2058,7 +2142,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_attack_heavy_up",
@@ -2081,7 +2168,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_bodyslam_knockdown_left",
@@ -2104,7 +2194,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_bodyslam_knockdown_right",
@@ -2127,7 +2220,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_death",
@@ -2150,7 +2246,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_dodge_fast_attack_left",
@@ -2173,7 +2272,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_dodge_fast_attack_right",
@@ -2196,7 +2298,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_fast_strike",
@@ -2219,7 +2324,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_fast_strike_down",
@@ -2242,7 +2350,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_fast_strike_down_left",
@@ -2265,7 +2376,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_fast_strike_down_right",
@@ -2288,7 +2402,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_fast_strike_left",
@@ -2311,7 +2428,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_fast_strike_right",
@@ -2334,7 +2454,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_fast_strike_up",
@@ -2357,7 +2480,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_fast_strike_up_left",
@@ -2380,7 +2506,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_fast_strike_up_right",
@@ -2403,7 +2532,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_idle",
@@ -2426,7 +2558,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_idle_down",
@@ -2449,7 +2584,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_idle_down_left",
@@ -2472,7 +2610,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_idle_down_right",
@@ -2495,7 +2636,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_idle_left",
@@ -2518,7 +2662,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_idle_right",
@@ -2541,7 +2688,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_idle_up",
@@ -2564,7 +2714,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_idle_up_left",
@@ -2587,7 +2740,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_idle_up_right",
@@ -2610,7 +2766,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_light_hitreact",
@@ -2633,7 +2792,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_light_hitreact_down",
@@ -2656,7 +2818,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_run_down",
@@ -2681,7 +2846,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_run_down_left",
@@ -2706,7 +2874,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_run_down_right",
@@ -2731,7 +2902,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_run_left",
@@ -2756,7 +2930,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_run_right",
@@ -2781,7 +2958,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_run_up",
@@ -2806,7 +2986,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_run_up_left",
@@ -2831,7 +3014,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_run_up_right",
@@ -2856,7 +3042,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_stance",
@@ -2879,7 +3068,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_stance_left",
@@ -2902,7 +3094,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_stance_right",
@@ -2925,7 +3120,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_walk",
@@ -2950,7 +3148,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_walk_down",
@@ -2975,7 +3176,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_walk_down_left",
@@ -3000,7 +3204,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_walk_down_right",
@@ -3025,7 +3232,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_walk_left",
@@ -3050,7 +3260,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_walk_right",
@@ -3075,7 +3288,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_walk_up",
@@ -3100,7 +3316,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_walk_up_left",
@@ -3125,7 +3344,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "unarmed_walk_up_right",
@@ -3150,7 +3372,10 @@
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "walk_down",
@@ -3166,7 +3391,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "walk_down_default",
@@ -3190,27 +3418,12 @@
       "canonical_published": false,
       "timing_preserved": false,
       "disposition": "AUTHORING_DECISION",
-      "why": "draws art published only under a legacy action id; it has no canonical identity to migrate to without an authoring decision",
-      "canonical_candidates": [
-        "attack/dodge_fast_attack_01",
-        "attack/fast_01",
-        "attack/fast_recovery_01",
-        "attack/fast_strike_01",
-        "attack/fast_windup_01",
-        "attack/heavy_01",
-        "cosmetic/critical_execution_01",
-        "cosmetic/criticial_execution_01",
-        "cosmetic/falcon_reversal_01",
-        "defense/parry_miss_01",
-        "locomotion/idle_01",
-        "locomotion/run_01",
-        "locomotion/walk_01",
-        "posture/stance_01",
-        "reaction/bodyslam_knockdown_01",
-        "reaction/death_01",
-        "reaction/light_hitreact_01"
-      ],
-      "promoted": false
+      "why": "Deliberate visual modernization of the legacy locomotion base; the 'default' suffix was the old pipeline's name for the south strip.",
+      "canonical_candidates": [],
+      "promoted": false,
+      "decision_status": "RESOLVED",
+      "resolution_kind": "REPLACE",
+      "resolution": "unarmed/locomotion/walk_01/s/full_body"
     },
     {
       "clip": "walk_down_left",
@@ -3233,7 +3446,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "walk_down_right",
@@ -3256,7 +3472,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "walk_east",
@@ -3279,7 +3498,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "walk_left",
@@ -3302,7 +3524,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "walk_right",
@@ -3325,27 +3550,12 @@
       "canonical_published": false,
       "timing_preserved": false,
       "disposition": "AUTHORING_DECISION",
-      "why": "draws art published only under a legacy action id; it has no canonical identity to migrate to without an authoring decision",
-      "canonical_candidates": [
-        "attack/dodge_fast_attack_01",
-        "attack/fast_01",
-        "attack/fast_recovery_01",
-        "attack/fast_strike_01",
-        "attack/fast_windup_01",
-        "attack/heavy_01",
-        "cosmetic/critical_execution_01",
-        "cosmetic/criticial_execution_01",
-        "cosmetic/falcon_reversal_01",
-        "defense/parry_miss_01",
-        "locomotion/idle_01",
-        "locomotion/run_01",
-        "locomotion/walk_01",
-        "posture/stance_01",
-        "reaction/bodyslam_knockdown_01",
-        "reaction/death_01",
-        "reaction/light_hitreact_01"
-      ],
-      "promoted": false
+      "why": "Deliberate visual modernization of the legacy locomotion base.",
+      "canonical_candidates": [],
+      "promoted": false,
+      "decision_status": "RESOLVED",
+      "resolution_kind": "REPLACE",
+      "resolution": "unarmed/locomotion/walk_01/e/full_body"
     },
     {
       "clip": "walk_up",
@@ -3368,7 +3578,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "walk_up_left",
@@ -3391,7 +3604,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     },
     {
       "clip": "walk_up_right",
@@ -3414,7 +3630,10 @@
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
-      "promoted": false
+      "promoted": false,
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null
     }
   ]
 }
