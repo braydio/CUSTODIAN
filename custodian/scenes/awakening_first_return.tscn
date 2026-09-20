@@ -25,6 +25,10 @@
 [ext_resource type="Texture2D" path="res://content/levels/awakening/03_attestation/awakening_attestation_foreground_832x928.png" id="24_attestation_foreground"]
 [ext_resource type="Texture2D" path="res://content/levels/awakening/04_locker_reliquary/awakening_locker_reliquary_foreground_704x704.png" id="25_reliquary_foreground"]
 [ext_resource type="Texture2D" path="res://content/levels/awakening/05_dust_lung/awakening_dust_lung_foreground_1216x1216.png" id="26_dust_lung_foreground"]
+[ext_resource type="Texture2D" path="res://content/levels/awakening/07_gate_of_dust/awakening_gate_plaza_underlay_1536x768.png" id="27_gate_plaza_underlay"]
+[ext_resource type="Texture2D" path="res://content/levels/awakening/07_gate_of_dust/awakening_gate_plaza_foreground_1536x768.png" id="28_gate_plaza_foreground"]
+[ext_resource type="Texture2D" path="res://content/levels/awakening/08_approach/awakening_custodian_approach_underlay_1024x864.png" id="29_approach_underlay"]
+[ext_resource type="Texture2D" path="res://content/levels/awakening/08_approach/awakening_custodian_approach_foreground_1024x864.png" id="30_approach_foreground"]
 
 [node name="GameRoot" type="Node2D"]
 script = ExtResource("1_awakening")
@@ -156,7 +160,37 @@ centered = true
 
 [node name="Zone07_GateOfDust" type="Node2D" parent="World/AwakeningZones"]
 
+[node name="ArtUnderlay" type="Node2D" parent="World/AwakeningZones/Zone07_GateOfDust"]
+
+[node name="Underlay" type="Sprite2D" parent="World/AwakeningZones/Zone07_GateOfDust/ArtUnderlay"]
+position = Vector2(0, -5184)
+texture = ExtResource("27_gate_plaza_underlay")
+centered = true
+
+[node name="Occlusion" type="Node2D" parent="World/AwakeningZones/Zone07_GateOfDust"]
+
+[node name="Foreground" type="Sprite2D" parent="World/AwakeningZones/Zone07_GateOfDust/Occlusion"]
+z_index = 10
+position = Vector2(0, -5184)
+texture = ExtResource("28_gate_plaza_foreground")
+centered = true
+
 [node name="Zone08_CustodianApproach" type="Node2D" parent="World/AwakeningZones"]
+
+[node name="ArtUnderlay" type="Node2D" parent="World/AwakeningZones/Zone08_CustodianApproach"]
+
+[node name="Underlay" type="Sprite2D" parent="World/AwakeningZones/Zone08_CustodianApproach/ArtUnderlay"]
+position = Vector2(0, -5872)
+texture = ExtResource("29_approach_underlay")
+centered = true
+
+[node name="Occlusion" type="Node2D" parent="World/AwakeningZones/Zone08_CustodianApproach"]
+
+[node name="Foreground" type="Sprite2D" parent="World/AwakeningZones/Zone08_CustodianApproach/Occlusion"]
+z_index = 10
+position = Vector2(0, -5872)
+texture = ExtResource("30_approach_foreground")
+centered = true
 
 [node name="Zone09_ChapelLateService" type="Node2D" parent="World/AwakeningZones"]
 

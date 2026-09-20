@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "id": "traversal/awakening_production_environments_zones_01_09",
+  "description": "Full production environment plate review across Awakening zones 01-09.",
+  "scene": "res://tools/validation/fixtures/awakening_production_environments_moment.tscn",
+  "seed": 1701,
+  "duration_ticks": 600,
+  "simulation": {"physics_hz": 60, "warmup_ticks": 8, "max_wall_seconds": 60, "pause_during_setup": true},
+  "capture": {"width": 1280, "height": 720, "fps": 60, "audio": false, "start_tick": 0, "end_tick": 599, "contact_sheet_ticks": [30, 160, 290, 355, 420, 550], "required_keyframes": true, "background": "opaque"},
+  "setup": {"remove_nodes": [], "roles": {"fixture": {"node_path": "."}, "operator": {"node_path": "AwakeningFirstReturn/World/Operator"}}, "spawns": [], "properties": [], "processing": [], "fixture": {"id": "awakening_production_environments_zones_01_09", "config": {}}},
+  "timeline": [
+    {"tick": 5, "action": "fixture_command", "name": "show_creche"},
+    {"tick": 70, "action": "fixture_command", "name": "show_ambulatory"},
+    {"tick": 135, "action": "fixture_command", "name": "show_attestation"},
+    {"tick": 200, "action": "fixture_command", "name": "show_locker_reliquary"},
+    {"tick": 265, "action": "fixture_command", "name": "show_dust_lung"},
+    {"tick": 330, "action": "fixture_command", "name": "show_undergate"},
+    {"tick": 395, "action": "fixture_command", "name": "show_gate_plaza"},
+    {"tick": 460, "action": "fixture_command", "name": "show_custodian_approach"},
+    {"tick": 525, "action": "fixture_command", "name": "show_late_service"},
+    {"tick": 595, "action": "finish"}
+  ],
+  "probes": [{"id": "fixture_state", "role": "fixture", "fields": ["checkpoint", "production_underlays_ready", "production_foregrounds_ready"], "ticks": [30, 95, 160, 225, 290, 355, 420, 485, 550], "required": true}],
+  "assertions": [
+    {"type": "role_exists", "role": "operator", "severity": "error"},
+    {"type": "probe_compare", "probe": "fixture_state", "tick": 30, "field": "production_underlays_ready", "op": "eq", "value": true, "severity": "error"},
+    {"type": "probe_compare", "probe": "fixture_state", "tick": 30, "field": "production_foregrounds_ready", "op": "eq", "value": true, "severity": "error"},
+    {"type": "no_unreleased_inputs", "severity": "error"},
+    {"type": "output_exists", "path": "telemetry.json", "severity": "error"}
+  ],
+  "stable_fingerprint": {"event_payload_fields": {}, "counters": [], "probes": ["fixture_state"], "position_quantum_px": 0.25, "float_quantum": 0.0001},
+  "tags": ["traversal", "awakening", "visual_review", "production_art"]
+}

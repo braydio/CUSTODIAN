@@ -59,7 +59,7 @@ func _check_production_underlays() -> bool:
 func _check_remaining_blockouts() -> bool:
 	for zone_name in ["Zone06_Undergate", "Zone07_GateOfDust", "Zone08_CustodianApproach", "Zone09_ChapelLateService"]:
 		var blockout := awakening.get_node_or_null("World/AwakeningZones/%s/BlockoutPresentation" % zone_name) as Node2D
-		if blockout == null or not blockout.visible:
+		if blockout != null and blockout.visible:
 			return false
 	return true
 

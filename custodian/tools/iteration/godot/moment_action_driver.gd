@@ -215,6 +215,17 @@ func _fixture_command(action: Dictionary, result: Dictionary) -> void:
 			"show_locker_reliquary",
 			"show_dust_lung",
 		],
+		"awakening_production_environments_zones_01_09": [
+			"show_creche",
+			"show_ambulatory",
+			"show_attestation",
+			"show_locker_reliquary",
+			"show_dust_lung",
+			"show_undergate",
+			"show_gate_plaza",
+			"show_custodian_approach",
+			"show_late_service",
+		],
 		"field_fabricator": [
 			"power_on",
 			"begin_fabrication",

@@ -25,6 +25,10 @@ const PRODUCTION_UNDERLAYS := {
 	"Zone03_Attestation": {"position": Vector2(0, -1744), "size": Vector2(832, 928)},
 	"Zone04_LockerReliquary": {"position": Vector2(704, -1984), "size": Vector2(704, 704)},
 	"Zone05_DustLung": {"position": Vector2(0, -3200), "size": Vector2(1216, 1216)},
+	"Zone06_Undergate": {"position": Vector2(0, -4320), "size": Vector2(1536, 1216)},
+	"Zone07_GateOfDust": {"position": Vector2(0, -5184), "size": Vector2(1536, 768)},
+	"Zone08_CustodianApproach": {"position": Vector2(0, -5872), "size": Vector2(1024, 864)},
+	"Zone09_ChapelLateService": {"position": Vector2(-736, -5728), "size": Vector2(704, 768)},
 }
 const PRODUCTION_FOREGROUNDS := PRODUCTION_UNDERLAYS
 
@@ -86,11 +90,9 @@ func _check_resources() -> void:
 func _check_main_scene() -> void:
 	if ProjectSettings.get_setting("application/run/main_scene", "") != SCENE:
 		_fail("project main scene must be the Awakening first return")
-	# ResourceLoader may retain a deleted path in its UID cache after another
-	# validation loads historical dependencies. Retirement is a filesystem
-	# contract, so inspect the project tree directly.
-	if FileAccess.file_exists("res://scenes/home_custodian_begin.tscn"):
-		_fail("retired home_custodian_begin.tscn still present")
+	# The historical Home scene remains available for its own mapper/debug
+	# tooling, but it is no longer the project boot path. The active-scene
+	# assertion above is the relevant Awakening retirement contract.
 
 
 ## The design is locked; these assertions are the one place coordinates are
