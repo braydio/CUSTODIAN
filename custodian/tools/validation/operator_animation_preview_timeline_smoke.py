@@ -5,8 +5,8 @@ from PIL import Image
 
 ROOT=Path(__file__).resolve().parents[3]
 sys.path.insert(0,str(ROOT/"custodian/tools/operator"))
-from animation_preview import (AnimationPreviewProvider, ReviewSequence, SemanticIdentity,
-    TimelineClip, flatten_sequence, load_sequence, save_sequence, scale_preview_frame)
+from animation_preview import (AnimationPreviewProvider, Preview, ReviewSequence, SemanticIdentity,
+    TimelineClip, compare_frames, compare_previews, flatten_sequence, load_sequence, save_sequence, scale_preview_frame)
 
 def sha(path): return hashlib.sha256(path.read_bytes()).hexdigest()
 
@@ -34,6 +34,22 @@ with tempfile.TemporaryDirectory(prefix="operator_preview_") as raw:
     assert len(loaded.clips)==3 and len(flatten_sequence(loaded,provider))==5
     loaded.clips[0],loaded.clips[1]=loaded.clips[1],loaded.clips[0]; loaded.clips.pop(); assert len(loaded.clips)==2
     assert before==(sha(runtime),sha(source),sha(catalog))
+
+    identical = Image.new("RGBA", (96, 96), (0, 0, 0, 0))
+    diff, metrics = compare_frames(identical, identical.copy())
+    assert metrics.changed_pixels == 0 and metrics.bbox is None and metrics.equal
+    altered = identical.copy(); altered.putpixel((4, 5), (255, 0, 0, 255))
+    _, metrics = compare_frames(identical, altered)
+    assert metrics.changed_pixels == 1 and metrics.bbox == (4, 5, 5, 6)
+    alpha = identical.copy(); alpha.putpixel((4, 5), (0, 0, 0, 1))
+    _, metrics = compare_frames(identical, alpha)
+    assert metrics.changed_pixels == 1
+    _, metrics = compare_frames(identical, Image.new("RGBA", (156, 96)))
+    assert metrics.left_size == (96, 96) and metrics.right_size == (156, 96)
+    left = preview
+    right = Preview(preview.identity, "runtime", tuple(preview.frames[:-1]), preview.frame_size, "x", ())
+    assert len(compare_previews(left, right)) == len(left.frames)
+    assert compare_previews(left, right)[-1].metrics.right_present is False
 
     # Equivalent presentation policy: modular body replaces full_body, while
     # authored FX remains on top. Full-body fallback still works by itself.

@@ -25,7 +25,7 @@ from .service import WorkbenchService
 from .state import AnimationSelection, ExistingContextView, WorkbenchUIState
 from .widgets import (ActivityLog, AnimationDetail, AnimationTree, ContextKeyBar, LayerTable,
                       MotionCanvas, MotionControls, MotionMetrics, PlanTable,
-                      PreviewCanvas, PreviewControls, TimelineTable, WorkbenchStatusBar)
+                      PreviewCanvas, PreviewControls, PreviewFilmstrip, TimelineTable, WorkbenchStatusBar)
 import animation_preview
 import animation_motion_preview
 
@@ -54,6 +54,10 @@ class OperatorWorkbenchApp(App):
     #timeline-table { height: 12; }
     #timeline-canvas { height: 1fr; content-align: center middle; }
     #preview-canvas { height: 1fr; content-align: center middle; }
+    #preview-examiner-row { height: 1fr; }
+    #preview-compare-canvas { width: 1fr; height: 1fr; }
+    #preview-diff-metrics { height: 2; padding: 0 1; text-align: center; background: #181e28; }
+    #preview-filmstrip { height: 7; }
     #preview-controls { height: 3; content-align: center middle; background: #202734; }
     #motion-workspace { height: 1fr; }
     #motion-canvas { width: 1fr; height: 1fr; content-align: center middle; }
@@ -99,6 +103,8 @@ class OperatorWorkbenchApp(App):
         Binding("end", "preview_last", "Last frame", show=False), Binding("left_square_bracket", "preview_slower", "Slower review", show=False),
         Binding("right_square_bracket", "preview_faster", "Faster review", show=False), Binding("l", "preview_loop", "Loop", show=False),
         Binding("s", "preview_source", "Source", show=False), Binding("ctrl+a", "timeline_add", "Add clip", show=False),
+        Binding("shift+d", "preview_examiner_mode", "Preview examiner", show=False),
+        Binding("shift+s", "preview_compare_source", "Compare source", show=False),
         Binding("z", "preview_zoom", "Zoom", show=False),
         Binding("delete", "timeline_remove", "Remove clip", show=False), Binding("ctrl+up", "timeline_up", "Move clip left", show=False),
         Binding("ctrl+down", "timeline_down", "Move clip right", show=False), Binding("ctrl+s", "timeline_save", "Save sequence", show=False),
@@ -125,6 +131,8 @@ class OperatorWorkbenchApp(App):
         self.features = {"animations": AnimationFeature(self.service)}; self.session_view = None
         self.main_screen: MainScreen | None = None
         self.preview_view = None
+        self.preview_compare_view = None
+        self.preview_comparisons = ()
         self.timeline_frames = []
         self.sequence = animation_preview.ReviewSequence("review")
         self.motion_renderer = None
@@ -285,6 +293,9 @@ class OperatorWorkbenchApp(App):
             return
         self.preview_view = live
         self.state.preview_frame = min(self.state.preview_frame, len(live.frames) - 1)
+        if self.state.preview_examiner_mode != "single":
+            await self._load_preview_comparison()
+            self._rebuild_preview_comparison()
         self._render_preview()
 
     def _update_status_bar(self) -> None:
@@ -371,6 +382,8 @@ class OperatorWorkbenchApp(App):
             session = await self._thread(self.service.session, selection); self.session_view = session
             self.state.selection = selection; self.state.watch_signature = self.service.watch_signature(selection)
             if changed:
+                self.preview_compare_view = None
+                self.preview_comparisons = ()
                 self.state.motion.elapsed_sec = 0.0
                 self.state.motion.playing = False
                 self.state.motion.heading = selection.direction
@@ -518,8 +531,46 @@ class OperatorWorkbenchApp(App):
             self.preview_view = await self._thread(self.service.preview, selection, self.state.preview_source)
             self.state.preview_frame = min(self.state.preview_frame, len(self.preview_view.frames) - 1)
             self._reset_preview_clock()
+            await self._load_preview_comparison()
             self._render_preview()
         except Exception as error: self._error(error)
+
+    def _normalized_compare_source(self) -> str:
+        sources = ("workbench", "canonical", "runtime")
+        requested = self.state.preview_compare_source
+        primary = self.preview_view.source if self.preview_view is not None else self.state.preview_source
+        if primary == "live" and requested in sources:
+            return requested
+        start = sources.index(requested) if requested in sources else -1
+        for offset in range(1, len(sources) + 1):
+            candidate = sources[(start + offset) % len(sources)]
+            if candidate != primary:
+                return candidate
+        return "workbench"
+
+    async def _load_preview_comparison(self, *, force: bool = False) -> None:
+        if self.state.mode != "preview" or self.state.preview_examiner_mode == "single" or self.preview_view is None:
+            self.preview_compare_view = None; self.preview_comparisons = (); return
+        selection = self.state.selection
+        if selection is None: return
+        source = self._normalized_compare_source()
+        if not force and self.preview_compare_view is not None and self.preview_compare_view.source == source and self.preview_compare_view.identity == self.preview_view.identity:
+            self._rebuild_preview_comparison(); return
+        try:
+            self.preview_compare_view = await self._thread(self.service.preview, selection, source)
+            self.state.preview_compare_source = source
+            self._rebuild_preview_comparison()
+        except Exception as error:
+            self._activity(f"Preview comparison unavailable: {error}", "WARN")
+
+    def _rebuild_preview_comparison(self) -> None:
+        if self.preview_view is None or self.preview_compare_view is None:
+            self.preview_comparisons = (); return
+        self.preview_comparisons = animation_preview.compare_previews(self.preview_view, self.preview_compare_view)
+
+    def _preview_frame_or_blank(self, preview, index: int, fallback_size: tuple[int, int]):
+        if preview is not None and 0 <= index < len(preview.frames): return preview.frames[index]
+        return animation_preview.Image.new("RGBA", fallback_size, (0, 0, 0, 0))
 
     def _motion_selection(self) -> AnimationSelection | None:
         base = self.state.selection
@@ -589,9 +640,66 @@ class OperatorWorkbenchApp(App):
             self._main_widget("#timeline-controls", PreviewControls).show(frame=index, frames=len(self.timeline_frames), fps=fps, playing=self.state.preview_playing, loop=self.state.preview_loop, source=self.state.preview_source, zoom=self.state.preview_zoom)
             return
         if not self.preview_view: return
-        index = self.state.preview_frame
-        self._main_widget("#preview-canvas", PreviewCanvas).show_frame(self.preview_view.frames[index], self.preview_view.identity.key, self.state.preview_zoom)
-        self._main_widget("#preview-controls", PreviewControls).show(frame=index, frames=len(self.preview_view.frames), fps=self.state.review_fps, playing=self.state.preview_playing, loop=self.state.preview_loop, source=self.preview_view.source, zoom=self.state.preview_zoom)
+        primary = self.preview_view
+        index = min(self.state.preview_frame, len(primary.frames) - 1)
+        self.state.preview_frame = index
+        canvas = self._main_widget("#preview-canvas", PreviewCanvas)
+        compare_canvas = self._main_widget("#preview-compare-canvas", PreviewCanvas)
+        metrics_widget = self._main_widget("#preview-diff-metrics", Static)
+        filmstrip = self._main_widget("#preview-filmstrip", PreviewFilmstrip)
+        mode = self.state.preview_examiner_mode
+        primary_label = animation_preview.preview_source_label(primary.source)
+        changed = ()
+        if mode == "single" or self.preview_compare_view is None:
+            compare_canvas.add_class("hidden")
+            canvas.show_frame(primary.frames[index], f"{primary.identity.key} · {primary_label}", self.state.preview_zoom)
+            metrics_widget.update(f"{primary_label} · {len(primary.frames)} frames · {primary.frame_size[0]}×{primary.frame_size[1]}")
+        else:
+            secondary = self.preview_compare_view
+            secondary_label = animation_preview.preview_source_label(secondary.source)
+            if not self.preview_comparisons: self._rebuild_preview_comparison()
+            comparison = self.preview_comparisons[index] if index < len(self.preview_comparisons) else None
+            if comparison is None: return
+            if mode == "split":
+                compare_canvas.remove_class("hidden")
+                canvas.show_frame(primary.frames[index], primary_label, self.state.preview_zoom)
+                compare_canvas.show_frame(self._preview_frame_or_blank(secondary, index, secondary.frame_size), secondary_label, self.state.preview_zoom)
+            else:
+                compare_canvas.add_class("hidden")
+                canvas.show_frame(comparison.diff, f"DIFF {primary_label} ↔ {secondary_label}", self.state.preview_zoom)
+            m = comparison.metrics
+            pixels = "MATCH" if m.changed_pixels == 0 else f"{m.changed_pixels} PX CHANGED"
+            bbox = "none" if m.bbox is None else f"{m.bbox[0]},{m.bbox[1]}–{m.bbox[2]},{m.bbox[3]}"
+            metrics_widget.update(f"{primary_label} ↔ {secondary_label} · {pixels} · BBOX {bbox} · FRAMES {len(primary.frames)}/{len(secondary.frames)} · CANVAS {primary.frame_size[0]}×{primary.frame_size[1]}/{secondary.frame_size[0]}×{secondary.frame_size[1]}")
+            changed = tuple(not row.metrics.equal for row in self.preview_comparisons)
+        filmstrip.show_frames(tuple(primary.frames), current=index, changed=changed)
+        compare_source = animation_preview.preview_source_label(self.preview_compare_view.source) if self.preview_compare_view else None
+        self._main_widget("#preview-controls", PreviewControls).show(frame=index, frames=len(primary.frames), fps=self.state.review_fps, playing=self.state.preview_playing, loop=self.state.preview_loop, source=primary_label, zoom=self.state.preview_zoom, view=mode, compare_source=compare_source)
+
+    def action_preview_examiner_mode(self) -> None:
+        if self.state.mode != "preview": return
+        modes = ("single", "split", "diff")
+        self.state.preview_examiner_mode = modes[(modes.index(self.state.preview_examiner_mode) + 1) % len(modes)]
+        if self.state.preview_examiner_mode == "single":
+            self.preview_compare_view = None; self.preview_comparisons = (); self._render_preview(); return
+        self.run_worker(self._load_preview_comparison(), group="preview-comparison", exclusive=True, exit_on_error=False)
+
+    def action_preview_compare_source(self) -> None:
+        if self.state.mode != "preview" or self.state.preview_examiner_mode == "single": return
+        sources = ("workbench", "canonical", "runtime")
+        current = sources.index(self.state.preview_compare_source) if self.state.preview_compare_source in sources else -1
+        primary = self.preview_view.source if self.preview_view else ""
+        for offset in range(1, len(sources) + 1):
+            candidate = sources[(current + offset) % len(sources)]
+            if primary == "live" or candidate != primary:
+                self.state.preview_compare_source = candidate; break
+        self.preview_compare_view = None; self.preview_comparisons = ()
+        self.run_worker(self._load_preview_comparison(force=True), group="preview-comparison", exclusive=True, exit_on_error=False)
+
+    def on_preview_filmstrip_selected(self, event: PreviewFilmstrip.Selected) -> None:
+        if self.state.mode == "preview" and self.preview_view is not None:
+            self.state.preview_playing = False
+            self._set_preview_frame(event.index, sync_live=True)
 
     async def _send_live_layer_focus(self, workbench: Path, layer: str) -> None:
         try:
@@ -701,6 +809,8 @@ class OperatorWorkbenchApp(App):
         if self.state.mode not in ("preview", "timeline", "motion"): return
         sources = ("workbench", "canonical", "runtime")
         self.state.preview_source = sources[(sources.index(self.state.preview_source) + 1) % len(sources)]
+        self.preview_compare_view = None
+        self.preview_comparisons = ()
         self._reset_preview_clock()
         task = self._load_timeline() if self.state.mode == "timeline" else self._load_motion_preview() if self.state.mode == "motion" else self._load_preview()
         self.run_worker(task, group="preview-image", exclusive=True)
@@ -880,7 +990,14 @@ class OperatorWorkbenchApp(App):
         if not selection: return
         signature = self.service.watch_signature(selection)
         if signature != self.state.watch_signature:
-            self.state.watch_signature = signature; self._activity("workbench changed", "OK"); await self._load_session(selection)
+            self.state.watch_signature = signature
+            if self.preview_compare_view is not None and self.preview_compare_view.source == "workbench":
+                self.preview_compare_view = None
+                self.preview_comparisons = ()
+            self._activity("workbench changed", "OK"); await self._load_session(selection)
+            if self.state.mode == "preview" and self.state.preview_examiner_mode != "single":
+                await self._load_preview_comparison(force=True)
+                self._render_preview()
         process = self.state.aseprite_process
         if process is not None and process.poll() is not None:
             self.state.aseprite_process = None; self._activity("Aseprite closed")

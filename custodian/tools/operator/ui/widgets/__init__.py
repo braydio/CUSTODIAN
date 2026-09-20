@@ -7,9 +7,10 @@ from .status_bar import WorkbenchStatusBar
 from .plan_table import PlanTable
 from .preview_canvas import PreviewCanvas
 from .preview_controls import PreviewControls
+from .preview_filmstrip import PreviewFilmstrip
 from .timeline import TimelineTable
 from .motion_canvas import MotionCanvas
 from .motion_controls import MotionControls
 from .motion_metrics import MotionMetrics
 
-__all__ = ["ActivityLog", "AnimationDetail", "AnimationTree", "ContextKeyBar", "LayerTable", "WorkbenchStatusBar", "PlanTable", "PreviewCanvas", "PreviewControls", "TimelineTable", "MotionCanvas", "MotionControls", "MotionMetrics"]
+__all__ = ["ActivityLog", "AnimationDetail", "AnimationTree", "ContextKeyBar", "LayerTable", "WorkbenchStatusBar", "PlanTable", "PreviewCanvas", "PreviewControls", "PreviewFilmstrip", "TimelineTable", "MotionCanvas", "MotionControls", "MotionMetrics"]

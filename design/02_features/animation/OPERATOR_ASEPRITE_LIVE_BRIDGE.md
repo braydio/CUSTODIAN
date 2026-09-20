@@ -4,7 +4,7 @@
 
 Foundation, persistent Aseprite reporting client, Workbench bridge lifecycle,
 bidirectional frame navigation, live unsaved Preview, and bidirectional layer
-focus/visibility synchronization implemented.
+focus/visibility synchronization, and the Preview Examiner implemented.
 
 Packet 1 established the versioned protocol, loopback WebSocket server, tooling
 state model, capability gate, path confinement, and fake-client validation.
@@ -92,7 +92,7 @@ review location.
 3B. **Bidirectional Frame Navigation (implemented):** guarded causal frame sync between manual Preview navigation and the active authoring document.
 4. **Live Unsaved Preview (implemented):** debounced, revision-guarded in-memory render export.
 5. **Layer Synchronization (implemented):** guarded focus and visibility control.
-6. **Preview Examiner (deferred):** live/saved/canonical/runtime comparison.
+6. **Preview Examiner (implemented):** SINGLE/SPLIT/DIFF live/saved/canonical/runtime comparison with cached persisted sources and filmstrip review.
 7. **Transition Examiner (deferred):** seam metrics and ghost review.
 8. **Timeline Completion (deferred):** trims, loops, FPS, and source-frame navigation.
 9. **Art Agent Coexistence (deferred):** guarded live-document mutation without weakening current locks or transactions.

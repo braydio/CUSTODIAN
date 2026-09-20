@@ -1,6 +1,6 @@
 # CURRENT STATE — CUSTODIAN
 
-## Operator Aseprite Live Bridge Packet 5 (2026-09-19)
+## Operator Aseprite Live Bridge Packet 6 (2026-09-20)
 
 The optional, loopback-only Python WebSocket server now defaults to stable
 `127.0.0.1:32147` while retaining explicit ephemeral test ports. The persistent
@@ -22,6 +22,11 @@ in-memory pixels, excludes reference layers, preserves dirty state and saved
 document bytes, and returns dimensions/revision only after writing. PREVIEW
 labels the applied artifact LIVE; saved Workbench remains the disconnected
 fallback, while the global source cycle stays WORKBENCH/CANONICAL/RUNTIME.
+The PREVIEW-only Examiner now supports SINGLE/SPLIT/DIFF views across LIVE,
+SAVED, CANONICAL, and RUNTIME, with pure pixel counts, diff bounds, frame/canvas
+mismatch reporting, cached persisted comparisons, and a clickable filmstrip.
+Live revisions recompute against the cached comparison; saved Workbench changes
+invalidate only the saved comparison cache.
 Open/save commands remain refused. Layer focus and visibility now synchronize
 bidirectionally for manifest-authorized layers, with UUID hardening and API-34
 visibility-event capability gating. Visibility remains editor presentation state;

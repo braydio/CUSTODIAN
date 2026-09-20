@@ -180,6 +180,8 @@ class WorkbenchUIState:
     preview_loop: bool = True
     review_fps: float = 12.0
     preview_zoom: str = "auto"
+    preview_examiner_mode: str = "single"
+    preview_compare_source: str = "workbench"
     sequence_name: str = "review"
     motion: MotionLabState = field(default_factory=MotionLabState)
 

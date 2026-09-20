@@ -5,7 +5,7 @@ from textual.widgets import Input, Label, Static
 
 from ..widgets import (ActivityLog, AnimationDetail, AnimationTree, ContextKeyBar, LayerTable,
                        MotionCanvas, MotionControls, MotionMetrics, PlanTable,
-                       PreviewCanvas, PreviewControls, TimelineTable, WorkbenchStatusBar)
+                       PreviewCanvas, PreviewControls, PreviewFilmstrip, TimelineTable, WorkbenchStatusBar)
 
 
 class MainScreen(Screen):
@@ -25,7 +25,11 @@ class MainScreen(Screen):
                 yield LayerTable(id="layer-table")
                 yield Static("Select a layer for ownership details", id="layer-detail")
         with Container(id="preview-mode", classes="mode-pane hidden"):
-            yield PreviewCanvas("Select an animation", id="preview-canvas")
+            with Horizontal(id="preview-examiner-row"):
+                yield PreviewCanvas("Select an animation", id="preview-canvas")
+                yield PreviewCanvas("", id="preview-compare-canvas", classes="hidden")
+            yield Static("", id="preview-diff-metrics")
+            yield PreviewFilmstrip(id="preview-filmstrip")
             yield PreviewControls("REVIEW FPS", id="preview-controls")
         with Container(id="timeline-mode", classes="mode-pane hidden"):
             yield Label("REVIEW SEQUENCE · disposable .ai artifact", classes="pane-title")
