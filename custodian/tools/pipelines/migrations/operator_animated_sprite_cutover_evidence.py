@@ -168,7 +168,14 @@ RESOLVED_DECISIONS = {
                "architecture being migrated to, so ranged_2h/cosmetic/fire_01/*/full_body is "
                "deliberately not published. The historical strip stays as provenance art and "
                "simply stops being reachable; a modular stack that cannot present reports the "
-               "missing canonical presentation instead of falling back.",
+               "missing canonical presentation instead of falling back. After the cutover "
+               "this clip still counts as live because the name survives as a hardcoded "
+               "weapon-map default, but its remaining consumers draw from the weapon "
+               "renderer's own SpriteFrames rather than animated_sprite -- "
+               "operator_weapon_frames.tres has its own clip of the same name. The count is "
+               "left conservative on purpose: under-reporting is the failure mode that hid "
+               "consumers in four consecutive slices, so a name collision is reported and "
+               "explained rather than filtered away.",
     },
     "ranged_2h_stance": {
         "kind": "RETIRE",
@@ -178,7 +185,10 @@ RESOLVED_DECISIONS = {
                "substitution a valid canonical ranged stance, exactly as in R3. Ranged stance "
                "remains the canonical modular upper-body and socketed-weapon composition over "
                "a movement-owned lower body, so ranged_2h/posture/stance_01/*/full_body is "
-               "deliberately not created.",
+               "deliberately not created. As with ranged_2h_fire, the surviving references "
+               "resolve against primary_weapon_sprite and the weapon icon's frames_resource, "
+               "which the weapon-overlay slice owns, so this stays reported as live while no "
+               "longer reaching animated_sprite.",
     },
     "melee_2h_heavy_right": {
         "kind": "RETIRE",

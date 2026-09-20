@@ -147,22 +147,6 @@ const DODGE_FAST_ATTACK_FRAME_COUNT := 11
 const DODGE_FAST_ATTACK_FPS := 20.0
 const DODGE_FAST_ATTACK_HIT_FRAME := 4
 const MELEE_FAST_CHAIN_FPS := 17.0
-const MELEE_STANCE_PLACEHOLDER_ANIMATION := &"melee_stance"
-const MELEE_FAST_CHAIN_FRAME_SIZE := Vector2i(156, 96)
-const MELEE_FAST_CHAIN_BODY_SHEETS := {
-	&"melee_2h_fast_1_right": {
-		"path": "res://content/sprites/operator/runtime/animations/melee_1h/attack/legacy_operator_body_melee_fast_01_e_7f_156x96/operator__full_body__melee_1h__attack__legacy_operator_body_melee_fast_01_e_7f_156x96__omni__1f__1092x96.png",
-		"frames": 7,
-	},
-	&"melee_2h_fast_2_right": {
-		"path": "res://content/sprites/operator/runtime/animations/melee_1h/attack/legacy_operator_body_melee_fast_02_e_7f_156x96/operator__full_body__melee_1h__attack__legacy_operator_body_melee_fast_02_e_7f_156x96__omni__1f__1092x96.png",
-		"frames": 7,
-	},
-	&"melee_2h_fast_3_right": {
-		"path": "res://content/sprites/operator/runtime/animations/melee_1h/attack/legacy_operator_body_melee_fast_03_e_8f_156x96/operator__full_body__melee_1h__attack__legacy_operator_body_melee_fast_03_e_8f_156x96__omni__1f__1248x96.png",
-		"frames": 8,
-	},
-}
 const MELEE_FAST_CHAIN_FX_SHEETS := {
 	&"melee_2h_fast_1_fx_right": {
 		"path": "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01_legacy_7f7c22c3/operator__fx__melee_1h__attack__fast_01_legacy_7f7c22c3__e__10f__96.png",
@@ -416,7 +400,6 @@ var last_fire_cooldown := 0.0
 @export_file("*.png") var idle_main_sheet_path := "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_front_idle_loop/operator__full_body__unarmed__cosmetic__legacy_front_idle_loop__omni__1f__480x96.png"
 @export_file("*.png") var ranged_2h_stance_sheet_path := "res://content/sprites/operator/runtime/animations/unarmed/posture/stance_01/operator__full_body__unarmed__posture__stance_01__e__12f__96.png"
 @export_file("*.png") var ranged_2h_aim_sheet_path := "res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/legacy_operator_body_ranged_2h_aim_raise/operator__full_body__ranged_2h__cosmetic__legacy_operator_body_ranged_2h_aim_raise__omni__1f__288x96.png"
-@export_file("*.png") var ranged_2h_fire_walk_sheet_path := "res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/legacy_firing_slow_walk/operator__full_body__ranged_2h__cosmetic__legacy_firing_slow_walk__omni__1f__672x96.png"
 @export_group("Knight Test Skin", "knight_test")
 @export var knight_test_skin_enabled: bool = false
 @export_dir var knight_test_sprite_dir := "res://dev/test_sprites/Knight"
@@ -892,24 +875,23 @@ const PRIMARY_WEAPON_CARBINE := "carbine_rifle"
 const LOADOUT_HOLSTERED := &"holstered"
 const LOADOUT_MELEE := &"melee"
 const LOADOUT_RANGED := &"ranged"
-const RANGED_FIRE_WALK_ANIMATION := &"ranged_2h_fire_walk"
-const RANGED_FIRE_WALK_FRAME_WIDTH := 96
-const RANGED_FIRE_WALK_BASE_FPS := 10.0
+## C2a-R4: the canonical identity, published by the runtime spine. This used to
+## be a compatibility name that the actor injected into a forked SpriteFrames
+## from a legacy sheet path; the canonical clip carries the same
+## 7 frames at 10 FPS looping.
+const RANGED_FIRE_WALK_ANIMATION := &"ranged_2h/cosmetic/fire_walk_01/s/full_body"
 const RANGED_VISUAL_STATIONARY_SPEED_SQ := 16.0
 const RANGED_VISUAL_MAX_TWIST_DEGREES := 100.0
 const DODGE_STEP_ANIMATION := &"operator_dodge_step"
 const DODGE_RECOVERY_ANIMATION := &"operator_dodge_recovery"
 const DODGE_BACKSTEP_ANIMATION := &"operator_dodge_backstep"
 const DODGE_BACKSTEP_RECOVERY_ANIMATION := &"operator_dodge_backstep_recovery"
-const DODGE_STEP_RUNTIME_SHEET_PATH := ""
-const DODGE_RECOVERY_RUNTIME_SHEET_PATH := ""
-const DODGE_BACKSTEP_RUNTIME_SHEET_PATH := ""
-const DODGE_BACKSTEP_RECOVERY_RUNTIME_SHEET_PATH := ""
-const DODGE_STEP_SHEET_PATH := ""
 const DODGE_STEP_FX_ANIMATION := &"operator_dodge_step_fx"
 const DODGE_STEP_FX_SHEET_PATH := ""
-const DODGE_FULL_NORTH_ANIMATION := &"operator_dodge_full_north"
-const DODGE_FULL_SOUTH_ANIMATION := &"operator_dodge_full_south"
+## C2a-R4: canonical identities, published by the runtime spine at the same 9
+## frames and 25 FPS the actor used to inject from the sheet paths below.
+const DODGE_FULL_NORTH_ANIMATION := &"shared/transition/dodge_01/n/full_body"
+const DODGE_FULL_SOUTH_ANIMATION := &"shared/transition/dodge_01/s/full_body"
 const DODGE_FULL_NORTH_SHEET_PATH := "res://content/sprites/operator/runtime/animations/shared/transition/dodge_01/operator__full_body__shared__transition__dodge_01__n__9f__96.png"
 const DODGE_FULL_SOUTH_SHEET_PATH := "res://content/sprites/operator/runtime/animations/shared/transition/dodge_01/operator__full_body__shared__transition__dodge_01__s__9f__96.png"
 const DODGE_FULL_NORTH_FX_ANIMATION := &"operator_dodge_full_fx_north"
@@ -1066,7 +1048,7 @@ func _ready():
 			_on_operator_animation_finished.bind(modular_lower_body_sprite)
 		)
 	if animated_sprite:
-		_ensure_runtime_body_animations()
+		_ensure_compatibility_overlay_animations()
 		_apply_knight_test_skin_if_requested()
 	if melee_weapon_overlay_sprite != null:
 		_default_melee_overlay_frames = (
@@ -1791,7 +1773,12 @@ func _update_animation():
 	# Check if currently firing or attacking (lock to cursor)
 	var is_firing = _is_ranged_fire_animation_active() and not _is_primary_ranged_fire_recover_presentation_active()
 	var current_animation := String(animated_sprite.animation)
-	var is_melee_attack_anim := current_animation.begins_with("melee_2h_fast") or current_animation.begins_with("melee_2h_heavy")
+	# Canonical identities carry their group, so `/attack/` recognises every attack
+	# action across profiles. The legacy prefixes stay for the compatibility
+	# renderers this slice does not own.
+	var is_melee_attack_anim := current_animation.contains("/attack/") \
+		or current_animation.begins_with("melee_2h_fast") \
+		or current_animation.begins_with("melee_2h_heavy")
 	var is_attacking = _melee_active or _melee_fast_windup or (
 		animated_sprite.is_playing()
 		and (is_melee_attack_anim or current_animation.begins_with("attack") or current_animation.begins_with("unarmed_attack_fast_windup"))
@@ -1822,7 +1809,13 @@ func _update_animation():
 	# Don't override attack animation while playing
 	if is_attacking or is_block_anim or _melee_recovery_active or _is_equip_weapon_state_active() or _is_sheathe_weapon_state_active():
 		var active_animation_name := String(animated_sprite.animation)
-		animated_sprite.flip_h = facing_left and not active_animation_name.ends_with("_left")
+		# A canonical identity already encodes its sector, so mirroring it would
+		# reverse the facing it was authored with. Only compatibility names carry
+		# their direction in a `_left`/`_right` suffix.
+		animated_sprite.flip_h = (
+			false if active_animation_name.contains("/")
+			else facing_left and not active_animation_name.ends_with("_left")
+		)
 		if is_attacking and _sync_modular_action_domains():
 			return
 		if is_block_anim and _sync_modular_block_hold_movement_presentation():
@@ -1838,6 +1831,10 @@ func _update_animation():
 
 	if is_reloading:
 		_hide_modular_locomotion_layers()
+		# OMNI is the one case where mirroring stays correct: a single strip serves
+		# every direction, authored facing east, so flipping it is how west is
+		# expressed. Sectored identities must not be flipped -- see
+		# `_play_canonical_full_body`.
 		animated_sprite.flip_h = facing_left
 		animated_sprite.speed_scale = 1.0
 		var reload_animation := _resolve_omni_full_body_animation("ranged_2h_reload")
@@ -1882,28 +1879,17 @@ func _update_animation():
 				return
 		if is_sprinting:
 			if not _is_ranged_ready_active() and _is_using_ranged_2h_primary() and (direction_suffix == "right" or direction_suffix == "left"):
-				var ranged_run_anim := "ranged_2h_run_left" if direction_suffix == "left" and animated_sprite.sprite_frames.has_animation("ranged_2h_run_left") else "ranged_2h_run_right"
-				if animated_sprite.sprite_frames.has_animation(ranged_run_anim):
-					_hide_modular_locomotion_layers()
-					animated_sprite.flip_h = facing_left and not ranged_run_anim.ends_with("_left")
-					if animated_sprite.animation != ranged_run_anim:
-						_animation_player.play(animated_sprite, ranged_run_anim)
+				if not _play_canonical_full_body("ranged_2h_run", animation_dir).is_empty():
 					_update_idle_loop_tracking(false, "")
 					return
 			if _sync_modular_locomotion_layers("unarmed_run", movement_direction, _get_modular_upper_locomotion_direction(animation_dir)):
 				_update_idle_loop_tracking(false, "")
 				return
-			var run_anim := String(AnimationResolver.resolve("unarmed_run", animation_dir, animated_sprite)) if _is_current_profile_unarmed() else "run_" + direction_suffix
-			if animated_sprite.sprite_frames.has_animation(run_anim):
-				animated_sprite.flip_h = facing_left and not run_anim.ends_with("_left")
-				if animated_sprite.animation != run_anim:
-					_animation_player.play(animated_sprite, run_anim)
-				_update_idle_loop_tracking(false, "")
-				return
-			if animated_sprite.sprite_frames.has_animation("run_right"):
-				_hide_modular_locomotion_layers()
-				if animated_sprite.animation != "run_right":
-					_animation_player.play(animated_sprite, "run_right")
+			# One canonical run for every profile and every sector. This replaces the
+			# legacy resolver chain, the `run_<suffix>` names and the `run_right`
+			# single-sector fallback; the projection table decides what an unauthored
+			# diagonal presents.
+			if not _play_canonical_full_body("unarmed_run", animation_dir).is_empty():
 				_update_idle_loop_tracking(false, "")
 				return
 			_hide_modular_locomotion_layers()
@@ -1912,32 +1898,14 @@ func _update_animation():
 		if _sync_modular_locomotion_layers("unarmed_walk", movement_direction, _get_modular_upper_locomotion_direction(animation_dir)):
 			_update_idle_loop_tracking(false, "")
 			return
-		if _is_current_profile_unarmed():
-			var unarmed_walk_anim := String(AnimationResolver.resolve("unarmed_walk", animation_dir, animated_sprite))
-			if animated_sprite.sprite_frames.has_animation(unarmed_walk_anim):
-				animated_sprite.flip_h = facing_left and not unarmed_walk_anim.ends_with("_left")
-				if animated_sprite.animation != unarmed_walk_anim:
-					_animation_player.play(animated_sprite, unarmed_walk_anim)
-				_update_idle_loop_tracking(false, "")
-				return
-		if not _is_using_ranged_2h_primary() and direction_suffix == "down" and animated_sprite.sprite_frames.has_animation("walk_down_default"):
-			_hide_modular_locomotion_layers()
-			if animated_sprite.animation != "walk_down_default":
-				_animation_player.play(animated_sprite, "walk_down_default")
+		# One canonical walk, replacing the legacy resolver chain,
+		# `walk_down_default`, the `walk_<suffix>` names and the `walk_right`
+		# mirrored fallback.
+		if not _play_canonical_full_body("unarmed_walk", animation_dir).is_empty():
 			_update_idle_loop_tracking(false, "")
 			return
-		var walk_anim = "walk_" + direction_suffix
-		if animated_sprite.sprite_frames.has_animation(walk_anim):
-			_hide_modular_locomotion_layers()
-			if animated_sprite.animation != walk_anim:
-				_animation_player.play(animated_sprite, walk_anim)
-			_update_idle_loop_tracking(false, "")
-		else:
-			# Fallback to right with flip
-			_hide_modular_locomotion_layers()
-			if animated_sprite.animation != "walk_right":
-				_animation_player.play(animated_sprite, "walk_right")
-			_update_idle_loop_tracking(false, "")
+		_hide_modular_locomotion_layers()
+		_update_idle_loop_tracking(false, "")
 	else:
 		var ranged_stance_direction := _get_modular_upper_locomotion_direction(animation_dir)
 		if _sync_modular_ranged_2h_stance_presentation(ranged_stance_direction):
@@ -1954,14 +1922,16 @@ func _update_animation():
 			if _sync_modular_melee_posture(animation_dir):
 				_update_idle_loop_tracking(true, "melee_posture")
 				return
+		# The weapon-authored stance base still arrives from resource data, which
+		# C2a section 7 leaves to its own slice. What changes here is only how it is
+		# resolved: through the canonical identity table rather than
+		# `AnimationResolver` against the compatibility names. A base with no
+		# canonical identity -- the per-weapon stances -- resolves empty and falls
+		# through to canonical idle, which is what the absent legacy clips already
+		# did.
 		var melee_body_stance_anim := _get_authored_melee_body_stance_animation()
 		if _is_melee_loadout_active() and not melee_body_stance_anim.is_empty():
-			var resolved_stance_anim := AnimationResolver.resolve(String(melee_body_stance_anim), animation_dir, animated_sprite)
-			if animated_sprite.sprite_frames.has_animation(resolved_stance_anim):
-				_hide_modular_locomotion_layers()
-				animated_sprite.flip_h = facing_left and not String(resolved_stance_anim).ends_with("_left")
-				if animated_sprite.animation != resolved_stance_anim:
-					_animation_player.play(animated_sprite, resolved_stance_anim)
+			if not _play_canonical_full_body(String(melee_body_stance_anim), animation_dir).is_empty():
 				_update_idle_loop_tracking(false, "")
 				return
 		# C2a-R4: no full-body ranged stance fallback either. The historical clip
@@ -1970,20 +1940,18 @@ func _update_animation():
 		# canonical ranged presentation.
 		if not facing_up and _is_using_ranged_weapon_visual():
 			_report_missing_modular_ranged_presentation(&"stance")
-		var idle_anim = "idle_" + direction_suffix
-		if _should_play_idle_long() and animated_sprite.sprite_frames.has_animation("idle_long"):
-			idle_anim = "idle_long"
-		if animated_sprite.sprite_frames.has_animation(idle_anim):
-			_hide_modular_locomotion_layers()
-			if animated_sprite.animation != idle_anim:
-				_animation_player.play(animated_sprite, idle_anim)
-			_update_idle_loop_tracking(true, idle_anim)
-		else:
-			# Fallback to right with flip
-			_hide_modular_locomotion_layers()
-			if animated_sprite.animation != "idle_right":
-				_animation_player.play(animated_sprite, "idle_right")
-			_update_idle_loop_tracking(true, "idle_right")
+		# One canonical idle, replacing the `idle_<suffix>` names and the
+		# `idle_right` mirrored fallback. `idle_long` is retired outright rather
+		# than folded into ordinary idle: it was a legacy clip selected by a
+		# `has_animation()` probe, and a long idle should return, if it returns, as
+		# an authored semantic action. `_idle_loop_counter` and
+		# `idle_long_loop_threshold` remain as the seam that would drive it.
+		var idle_animation := _play_canonical_full_body("unarmed_idle", animation_dir)
+		if not idle_animation.is_empty():
+			_update_idle_loop_tracking(true, String(idle_animation))
+			return
+		_hide_modular_locomotion_layers()
+		_update_idle_loop_tracking(true, "")
 
 
 func _sync_modular_locomotion_layers(base_animation: String, lower_direction: Vector2, upper_direction: Vector2 = Vector2.ZERO, speed_scale: float = 1.0) -> bool:
@@ -3998,6 +3966,11 @@ const FULL_BODY_IDENTITIES := {
 	"unarmed_run": ["unarmed", "locomotion", "run_01"],
 	"unarmed_attack_fast_windup": ["unarmed", "attack", "fast_windup_01"],
 	"unarmed_attack_fast_recovery": ["unarmed", "attack", "fast_recovery_01"],
+	"unarmed_dodge_fast_attack": ["unarmed", "attack", "dodge_fast_attack_01"],
+	"unarmed_fast_strike": ["unarmed", "attack", "fast_strike_01"],
+	"unarmed_attack_heavy": ["unarmed", "attack", "heavy_01"],
+	"operator_dodge_chain_link": ["shared", "transition", "dodge_chain_link_01"],
+	"operator_dodge_charge_windup": ["shared", "attack", "dodge_charge_windup_01"],
 	"ranged_2h_run": ["ranged_2h", "locomotion", "run_01"],
 	"ranged_2h_reload": ["ranged_2h", "cosmetic", "reload_01"],
 	"ranged_2h_fire_walk": ["ranged_2h", "cosmetic", "fire_walk_01"],
@@ -4047,6 +4020,16 @@ const FULL_BODY_AUTHORED_SECTORS := {
 		&"w": &"w",
 		&"nw": &"w",
 	},
+	"unarmed/attack/heavy_01/full_body": {
+		&"n": &"n",
+		&"ne": &"e",
+		&"e": &"e",
+		&"se": &"e",
+		&"s": &"s",
+		&"sw": &"w",
+		&"w": &"w",
+		&"nw": &"w",
+	},
 	"unarmed/locomotion/run_01/full_body": {
 		&"n": &"n",
 		&"ne": &"e",
@@ -4068,6 +4051,28 @@ func _full_body_authored_sector(
 		"%s/%s/%s/full_body" % [profile, group, action], {}
 	)
 	return table.get(requested, requested)
+
+
+## Play a canonical full-body identity, or report that nothing is authored.
+##
+## Canonical directional animation identities own facing. `flip_h` is
+## compatibility behaviour and must not be applied to authored e/w identities:
+## `walk_01/e` and `walk_01/w` are separately authored strips, so mirroring the
+## west strip would turn the Operator back toward east while every animation name
+## still looked correct. `facing_left` lives nearby for the compatibility paths --
+## do not "simplify" it back into this one.
+func _play_canonical_full_body(base_animation: String, direction: Vector2) -> StringName:
+	if animated_sprite == null or animated_sprite.sprite_frames == null:
+		return &""
+	var animation := _resolve_full_body_animation(base_animation, direction)
+	if animation.is_empty() \
+	or not _has_playable_sprite_animation(animated_sprite.sprite_frames, animation):
+		return &""
+	_hide_modular_locomotion_layers()
+	animated_sprite.flip_h = false
+	if animated_sprite.animation != animation:
+		_animation_player.play(animated_sprite, animation)
+	return animation
 
 
 func _resolve_full_body_animation(base_animation: String, direction: Vector2) -> StringName:
@@ -6541,15 +6546,20 @@ func _start_fast_attack() -> void:
 	var next_fast_key := "melee_fast_1"
 	var fallback_animation: StringName = &"melee_2h_fast"
 	var next_duration := 0.42
-	if _melee_fast_combo_step >= 1 and animated_sprite and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation("melee_2h_fast_2_right"):
+	# C2a-R4: fast-chain capability is weapon data, not a `has_animation()` probe.
+	# It used to ask whether `melee_2h_fast_2_right` existed -- a legacy clip the
+	# actor injected into its own forked SpriteFrames, so the probe was really
+	# asking whether that injection had run. The injection is gone, and the
+	# question it stood in for is properly "does this weapon define a second fast
+	# link".
+	if _melee_fast_combo_step >= 1 and _weapon_defines_fast_chain_link("melee_fast_2"):
 		next_fast_key = "melee_fast_2"
-		fallback_animation = &"melee_2h_fast_2"
+		fallback_animation = &""
 		next_duration = 0.42
 		_melee_fast_combo_step = 2
 	else:
 		_melee_fast_combo_step = 1
-		if animated_sprite and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation("melee_2h_fast_1_right"):
-			fallback_animation = &"melee_2h_fast_1"
+		fallback_animation = &""
 		next_duration = 0.42
 	if is_unarmed_attack:
 		next_fast_key = "unarmed_fast_2" if _melee_fast_combo_step >= 2 else "unarmed_fast_1"
@@ -6605,9 +6615,17 @@ func _start_fast_attack() -> void:
 func _play_dodge_fast_attack_presentation() -> bool:
 	if animated_sprite == null or animated_sprite.sprite_frames == null:
 		return false
+	# `_get_dodge_fast_attack_visual_suffix` keeps the authored inversion: the
+	# roll-exit strips face opposite the direction of travel, so facing east plays
+	# the west-authored strip. That inversion is presentation policy and stays
+	# here; only the name it produces is now canonical.
 	var suffix := _get_dodge_fast_attack_visual_suffix(_melee_forward)
-	var body_animation := StringName("unarmed_dodge_fast_attack_%s" % suffix)
-	if not _has_playable_sprite_animation(animated_sprite.sprite_frames, body_animation):
+	var body_animation := _resolve_full_body_animation(
+		"unarmed_dodge_fast_attack",
+		Vector2.LEFT if suffix == "left" else Vector2.RIGHT
+	)
+	if body_animation.is_empty() \
+	or not _has_playable_sprite_animation(animated_sprite.sprite_frames, body_animation):
 		return false
 	_hide_modular_locomotion_layers()
 	_set_body_presentation_owner(OperatorBodyPresenter.Owner.LEGACY_FULL_BODY)
@@ -6644,8 +6662,9 @@ func _try_start_fast_attack_windup() -> bool:
 	# Returns true if windup was started, false if fallback to direct strike.
 	if animated_sprite == null or animated_sprite.sprite_frames == null:
 		return false
-	var windup_anim := AnimationResolver.resolve("unarmed_attack_fast_windup", _melee_forward, animated_sprite)
-	if not animated_sprite.sprite_frames.has_animation(windup_anim):
+	var windup_anim := _resolve_full_body_animation("unarmed_attack_fast_windup", _melee_forward)
+	if windup_anim.is_empty() \
+	or not _has_playable_sprite_animation(animated_sprite.sprite_frames, windup_anim):
 		return false
 	_melee_active = false
 	_melee_fast_windup = true
@@ -6654,7 +6673,8 @@ func _try_start_fast_attack_windup() -> bool:
 	disable_hitbox()
 	_melee_hit_targets.clear()
 	_melee_miss_sfx_played = false
-	animated_sprite.flip_h = _is_facing_left(_melee_forward)
+	# The canonical identity carries its own sector, so it is never mirrored.
+	animated_sprite.flip_h = false
 	animated_sprite.speed_scale = _get_melee_animation_speed_scale(_melee_attack_key)
 	_animation_player.play(animated_sprite, windup_anim)
 	# Acquire the body BEFORE any layer is shown. Asking first means a phase that
@@ -6720,7 +6740,12 @@ func _start_heavy_attack() -> void:
 		_melee_forward,
 		float(targeting_solution.get("resolved_drive_distance", -1.0))
 	)
-	if not is_unarmed_attack and animated_sprite and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation("melee_2h_heavy_anticipation"):
+	var heavy_windup_animation := _resolve_full_body_animation(
+		"melee_2h_heavy_anticipation", _melee_forward
+	)
+	if not is_unarmed_attack and animated_sprite and animated_sprite.sprite_frames \
+	and not heavy_windup_animation.is_empty() \
+	and _has_playable_sprite_animation(animated_sprite.sprite_frames, heavy_windup_animation):
 		_melee_active = false
 		_melee_heavy_anticipating = true
 		_melee_elapsed = 0.0
@@ -6728,8 +6753,8 @@ func _start_heavy_attack() -> void:
 		disable_hitbox()
 		_melee_hit_targets.clear()
 		_melee_miss_sfx_played = false
-		animated_sprite.flip_h = _is_facing_left(_melee_forward)
-		_animation_player.play(animated_sprite, "melee_2h_heavy_anticipation")
+		animated_sprite.flip_h = false
+		_animation_player.play(animated_sprite, heavy_windup_animation)
 		_play_named_melee_weapon_overlay(&"melee_2h_heavy_anticipation_weapon")
 		_lock_melee_cooldown(1.10)
 		return
@@ -6757,7 +6782,10 @@ func _begin_heavy_attack_active_phase() -> void:
 		_play_melee_anim_from_key(_melee_attack_key, attack_profile.fallback_animation)
 	else:
 		_configure_melee_hitbox(melee_heavy_hit_damage, melee_heavy_range, melee_heavy_arc_degrees)
-		_play_melee_anim_from_key(_melee_attack_key, &"melee_2h_heavy")
+		# No legacy fallback name. `melee_2h_heavy` was a generic identity standing
+		# in for whichever heavy attack was active; heavy presentation resolves
+		# through the weapon profile's own mapping instead.
+		_play_melee_anim_from_key(_melee_attack_key)
 	if melee_cooldown_remaining <= 0.0:
 		_lock_melee_cooldown(_melee_duration + 0.18)
 
@@ -8324,6 +8352,19 @@ func _play_melee_anim_from_key(attack_key: String, fallback_animation: StringNam
 func _play_melee_anim_resolved(base_animation: StringName, direction: Vector2, attack_key: String) -> bool:
 	if animated_sprite == null:
 		return false
+	# Canonical first. A base with a canonical identity resolves through the
+	# selector and is never mirrored; the legacy chain below still serves the
+	# per-weapon bases that arrive from weapon resources, which C2a section 7
+	# migrates in its own slice.
+	var canonical_animation := _resolve_full_body_animation(String(base_animation), direction)
+	if not canonical_animation.is_empty() and animated_sprite.sprite_frames \
+	and _has_playable_sprite_animation(animated_sprite.sprite_frames, canonical_animation):
+		animated_sprite.flip_h = false
+		animated_sprite.speed_scale = _get_melee_animation_speed_scale(attack_key)
+		_animation_player.play(animated_sprite, canonical_animation)
+		_play_melee_overlay_from_key(attack_key)
+		_sync_melee_hitbox_window_from_animation()
+		return true
 	animated_sprite.flip_h = _is_facing_left(direction)
 	var resolved_animation := AnimationResolver.resolve(String(base_animation), direction, animated_sprite)
 	if animated_sprite.sprite_frames and _has_playable_sprite_animation(animated_sprite.sprite_frames, resolved_animation):
@@ -8777,11 +8818,15 @@ func _play_fast_attack_recovery() -> void:
 	if animated_sprite == null or not animated_sprite.sprite_frames:
 		return
 	if _is_attack_profile_unarmed(_active_attack_profile):
-		var recovery_animation := AnimationResolver.resolve("unarmed_attack_fast_recovery", _melee_forward, animated_sprite)
-		if _melee_forward.x < -0.05 and animated_sprite.sprite_frames.has_animation("unarmed_attack_fast_recovery_left"):
-			recovery_animation = &"unarmed_attack_fast_recovery_left"
-		if animated_sprite.sprite_frames.has_animation(recovery_animation):
-			animated_sprite.flip_h = _is_facing_left(_melee_forward) and recovery_animation != &"unarmed_attack_fast_recovery_left"
+		# `unarmed/attack/fast_recovery_01` authors all eight sectors, so the
+		# west-facing special case the compatibility names needed is gone: the
+		# identity already is the direction.
+		var recovery_animation := _resolve_full_body_animation(
+			"unarmed_attack_fast_recovery", _melee_forward
+		)
+		if not recovery_animation.is_empty() \
+		and _has_playable_sprite_animation(animated_sprite.sprite_frames, recovery_animation):
+			animated_sprite.flip_h = false
 			_animation_player.play(animated_sprite, recovery_animation)
 		if _can_present_modular_fast_attack_phase(&"recovery"):
 			_declare_modular_body_composition()
@@ -8795,8 +8840,11 @@ func _play_fast_attack_recovery() -> void:
 		if not _play_named_melee_fx_overlay(recovery_fx):
 			_reset_melee_overlay_visuals()
 		return
-	if animated_sprite.sprite_frames.has_animation("melee_2h_fast_recovery"):
-		_animation_player.play(animated_sprite, "melee_2h_fast_recovery")
+	var armed_recovery := _resolve_full_body_animation("melee_2h_fast_recovery", _melee_forward)
+	if not armed_recovery.is_empty() \
+	and _has_playable_sprite_animation(animated_sprite.sprite_frames, armed_recovery):
+		animated_sprite.flip_h = false
+		_animation_player.play(animated_sprite, armed_recovery)
 		_play_named_melee_weapon_overlay(&"melee_2h_fast_recovery_weapon")
 		_play_named_melee_fx_overlay(&"melee_2h_fast_recovery_fx")
 
@@ -9663,6 +9711,21 @@ func _resolve_dodge_presentation_animation(
 	direction: Vector2
 ) -> Dictionary:
 	var requested_sector := DirectionalAnimationFallback.vector_to_sector(direction)
+	# A canonical identity resolves exactly, so no nearest-sector search runs for
+	# it. The search below remains only for bases still published under legacy
+	# names with partial coverage.
+	var canonical_animation := _resolve_full_body_animation(String(base_animation), direction)
+	if not canonical_animation.is_empty() and animated_sprite != null \
+	and animated_sprite.sprite_frames != null \
+	and _has_playable_sprite_animation(animated_sprite.sprite_frames, canonical_animation):
+		_dodge_requested_presentation_sector = requested_sector
+		_dodge_resolved_presentation_sector = requested_sector
+		return {
+			"animation": canonical_animation,
+			"requested_sector": requested_sector,
+			"resolved_sector": requested_sector,
+			"fallback": false,
+		}
 	var available_sectors: Array[StringName] = []
 	if animated_sprite != null and animated_sprite.sprite_frames != null:
 		for sector: StringName in DirectionalAnimationFallback.SECTOR_ORDER:
@@ -11817,139 +11880,24 @@ func _update_pending_ranged_shot(delta: float) -> void:
 		_emit_pending_ranged_shot()
 
 
-func _ensure_runtime_body_animations() -> void:
-	if animated_sprite == null or animated_sprite.sprite_frames == null:
-		return
-	var runtime_frames := (
-		animated_sprite.sprite_frames.duplicate(true)
-		as SpriteFrames
-	)
-	if runtime_frames == null:
-		return
-	var changed := false
-	changed = _register_melee_fast_chain_body_animations(
-		runtime_frames
-	) or changed
-	if not runtime_frames.has_animation(RANGED_FIRE_WALK_ANIMATION):
-		var fire_walk_texture: Texture2D = _load_optional_texture(ranged_2h_fire_walk_sheet_path, null)
-		if fire_walk_texture != null:
-			var fire_walk_frame_count: int = max(1, fire_walk_texture.get_width() / RANGED_FIRE_WALK_FRAME_WIDTH)
-			_add_sheet_animation(runtime_frames, String(RANGED_FIRE_WALK_ANIMATION), fire_walk_texture, fire_walk_frame_count, true, RANGED_FIRE_WALK_BASE_FPS)
-			changed = true
-	changed = _ensure_optional_sheet_animation(
-		runtime_frames,
-		DODGE_STEP_ANIMATION,
-		[DODGE_STEP_RUNTIME_SHEET_PATH, DODGE_STEP_SHEET_PATH],
-		false,
-		18.0
-	) or changed
-	changed = _ensure_optional_sheet_animation(
-		runtime_frames,
-		DODGE_RECOVERY_ANIMATION,
-		[DODGE_RECOVERY_RUNTIME_SHEET_PATH],
-		false,
-		18.0
-	) or changed
-	changed = _ensure_optional_sheet_animation(
-		runtime_frames,
-		DODGE_BACKSTEP_ANIMATION,
-		[DODGE_BACKSTEP_RUNTIME_SHEET_PATH],
-		false,
-		18.0
-	) or changed
-	changed = _ensure_optional_sheet_animation(
-		runtime_frames,
-		DODGE_BACKSTEP_RECOVERY_ANIMATION,
-		[DODGE_BACKSTEP_RECOVERY_RUNTIME_SHEET_PATH],
-		false,
-		18.0
-	) or changed
-	changed = _ensure_optional_sheet_animation(
-		runtime_frames,
-		DODGE_FULL_NORTH_ANIMATION,
-		[DODGE_FULL_NORTH_SHEET_PATH],
-		false,
-		DODGE_FULL_SEQUENCE_FPS
-	) or changed
-	changed = _ensure_optional_sheet_animation(
-		runtime_frames,
-		DODGE_FULL_SOUTH_ANIMATION,
-		[DODGE_FULL_SOUTH_SHEET_PATH],
-		false,
-		DODGE_FULL_SEQUENCE_FPS
-	) or changed
-	if changed:
-		animated_sprite.sprite_frames = runtime_frames
+## Initialize the compatibility FX and overlay renderers.
+##
+## This used to be `_ensure_runtime_body_animations()`, which forked
+## `animated_sprite.sprite_frames` with `duplicate(true)` and injected legacy
+## full-body clips into the copy. `animated_sprite` now binds the shared canonical
+## runtime SpriteFrames directly, and nothing may mutate that resource -- an
+## injection there would rewrite the spine for every renderer at once. The
+## full-body clips it used to add are published canonically instead: the fast
+## chain retired with its capability probe, the melee stance placeholder retired
+## with it, and ranged fire-walk and the full dodge strips resolve through
+## `RANGED_FIRE_WALK_ANIMATION` and `DODGE_FULL_*_ANIMATION`.
+##
+## What survives is only the melee FX and dodge FX overlays, which are still
+## compatibility renderers with their own resources and belong to a later slice.
+## The name says so, so that nothing reintroduces body mutation here.
+func _ensure_compatibility_overlay_animations() -> void:
 	_ensure_melee_fast_chain_fx_animations()
 	_ensure_dodge_fx_animation()
-
-
-func _register_melee_fast_chain_body_animations(
-	runtime_frames: SpriteFrames
-) -> bool:
-	var changed := false
-	for animation_variant: Variant in MELEE_FAST_CHAIN_BODY_SHEETS:
-		var animation_name := StringName(animation_variant)
-		var spec := (
-			MELEE_FAST_CHAIN_BODY_SHEETS[animation_name]
-			as Dictionary
-		)
-		var texture := _load_optional_texture(
-			String(spec.get("path", "")),
-			null
-		)
-		if texture == null:
-			continue
-		var frame_count := int(spec.get("frames", 0))
-		var expected_size := Vector2i(
-			MELEE_FAST_CHAIN_FRAME_SIZE.x * frame_count,
-			MELEE_FAST_CHAIN_FRAME_SIZE.y
-		)
-		var actual_size := Vector2i(
-			texture.get_width(),
-			texture.get_height()
-		)
-		if actual_size != expected_size:
-			_obs_warning(
-				"Operator fast-chain strip has invalid dimensions",
-				{
-					"animation": String(animation_name),
-					"path": String(spec.get("path", "")),
-					"expected": expected_size,
-					"actual": actual_size,
-				}
-			)
-			continue
-		if runtime_frames.has_animation(animation_name):
-			runtime_frames.remove_animation(animation_name)
-		_add_sheet_animation(
-			runtime_frames,
-			String(animation_name),
-			texture,
-			frame_count,
-			false,
-			MELEE_FAST_CHAIN_FPS
-		)
-		changed = true
-	changed = _register_melee_stance_placeholder(runtime_frames) or changed
-	return changed
-
-
-func _register_melee_stance_placeholder(runtime_frames: SpriteFrames) -> bool:
-	var spec := MELEE_FAST_CHAIN_BODY_SHEETS[&"melee_2h_fast_1_right"] as Dictionary
-	var texture := _load_optional_texture(String(spec.get("path", "")), null)
-	if texture == null or Vector2i(texture.get_width(), texture.get_height()) != Vector2i(1092, 96):
-		return false
-	if runtime_frames.has_animation(MELEE_STANCE_PLACEHOLDER_ANIMATION):
-		runtime_frames.remove_animation(MELEE_STANCE_PLACEHOLDER_ANIMATION)
-	runtime_frames.add_animation(MELEE_STANCE_PLACEHOLDER_ANIMATION)
-	runtime_frames.set_animation_loop(MELEE_STANCE_PLACEHOLDER_ANIMATION, true)
-	runtime_frames.set_animation_speed(MELEE_STANCE_PLACEHOLDER_ANIMATION, 1.0)
-	var atlas := AtlasTexture.new()
-	atlas.atlas = texture
-	atlas.region = Rect2(0.0, 0.0, 156.0, 96.0)
-	runtime_frames.add_frame(MELEE_STANCE_PLACEHOLDER_ANIMATION, atlas)
-	return true
 
 
 func _ensure_melee_fast_chain_fx_animations() -> void:
@@ -12175,10 +12123,6 @@ func _load_optional_texture(path: String, fallback: Texture2D) -> Texture2D:
 	return fallback
 
 
-func _should_play_idle_long() -> bool:
-	return not _has_active_idle_input() and _idle_loop_counter >= idle_long_loop_threshold
-
-
 func _has_active_idle_input() -> bool:
 	return Input.is_action_pressed("move_left") \
 		or Input.is_action_pressed("move_right") \
@@ -12215,7 +12159,7 @@ func _update_idle_loop_tracking(is_idle_anim: bool, animation_name: String) -> v
 	if _last_idle_animation != animation_name:
 		_last_idle_frame = -1
 		_last_idle_animation = animation_name
-	if animation_name != "idle_long" and _last_idle_frame >= 0 and animated_sprite.frame < _last_idle_frame:
+	if _last_idle_frame >= 0 and animated_sprite.frame < _last_idle_frame:
 		_idle_loop_counter += 1
 	_last_idle_frame = animated_sprite.frame
 
@@ -12737,6 +12681,21 @@ func set_arrn_stabilization_locked(locked: bool) -> void:
 		_reset_fast_chain()
 
 
+## Whether the equipped weapon defines this fast-chain link.
+##
+## The authority for chain length is the weapon's `animation_map`: a weapon that
+## maps `melee_fast_2` has a second link, one that does not has a single strike.
+## Asking the SpriteFrames instead conflated "this weapon chains" with "a legacy
+## clip happens to be registered", which is how a presentation resource ended up
+## deciding a combat capability.
+func _weapon_defines_fast_chain_link(chain_key: String) -> bool:
+	var weapon_definition = _get_equipped_primary_weapon_definition()
+	if weapon_definition == null or not (weapon_definition.animation_map is Dictionary):
+		return false
+	var mapped = weapon_definition.animation_map.get(chain_key, null)
+	return mapped != null and not String(mapped).is_empty()
+
+
 func _get_weapon_animation_name(weapon_definition, key: String, fallback: StringName = &"") -> StringName:
 	if weapon_definition != null and weapon_definition.animation_map is Dictionary:
 		var mapped_value = weapon_definition.animation_map.get(key, null)
@@ -12769,7 +12728,10 @@ func _on_operator_animation_finished(finished_sprite: AnimatedSprite2D = null) -
 		_update_primary_weapon_visual(false)
 		_update_animation()
 		return
-	if _melee_heavy_anticipating and finished_animation.begins_with("melee_2h_heavy_anticipation"):
+	if _melee_heavy_anticipating and (
+		finished_animation.begins_with("melee_1h_heavy/attack/heavy_windup_01/")
+		or finished_animation.begins_with("melee_2h_heavy_anticipation")
+	):
 		_begin_heavy_attack_active_phase()
 	if _melee_fast_windup and finished_animation.begins_with("unarmed_attack_fast_windup"):
 		_begin_fast_attack_strike_phase()

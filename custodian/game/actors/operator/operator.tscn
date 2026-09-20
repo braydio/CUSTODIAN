@@ -3,7 +3,6 @@
 [ext_resource type="Script" path="res://game/actors/operator/operator.gd" id="1_operator"]
 [ext_resource type="Resource" path="res://game/actors/operator/carbine_rifle_mk1_definition.tres" id="2_carbine_weapon"]
 [ext_resource type="Resource" path="res://game/actors/operator/vigil_pattern_dagger_definition.tres" id="3_melee_weapon"]
-[ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_runtime_frames.tres" id="25_runtime_frames"]
 [ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_weapon_frames.tres" id="26_weapon_frames"]
 [ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_melee_overlay_frames.tres" id="27_melee_overlay_frames"]
 [ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_ranged_fx_frames.tres" id="28_ranged_fx_frames"]
@@ -101,7 +100,7 @@ offset = Vector2(0, 0)
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1317416612]
 position = Vector2(0, -18)
-sprite_frames = ExtResource("25_runtime_frames")
+sprite_frames = ExtResource("39_canonical_runtime_frames")
 offset = Vector2(0, 0)
 
 [node name="ModularCapeSprite" type="AnimatedSprite2D" parent="."]

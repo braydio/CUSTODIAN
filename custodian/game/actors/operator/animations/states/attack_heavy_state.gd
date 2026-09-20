@@ -14,11 +14,10 @@ func enter() -> void:
 	damage_frame_triggered = false
 	if state_machine and state_machine.actor and state_machine.actor.has_method("start_attack"):
 		state_machine.actor.call("start_attack", "melee_heavy")
-	elif state_machine:
-		if state_machine.can_play_animation(&"melee_2h_heavy_right"):
-			state_machine.play_animation(&"melee_2h_heavy_right")
-		elif state_machine.can_play_animation(&"melee_2h_heavy"):
-			state_machine.play_animation(&"melee_2h_heavy")
+	# C2a-R4: the legacy direct-play fallback is retired. It named generic
+	# compatibility clips that stood in for whichever attack was active, and it was
+	# unreachable in the production Operator, which always delegates through
+	# `start_attack()`. Presentation comes from semantic attack/profile authority.
 
 func on_animation_event(event_name: String, event_type: String) -> void:
 	match event_name:

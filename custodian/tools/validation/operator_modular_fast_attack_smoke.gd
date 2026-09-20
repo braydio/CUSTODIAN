@@ -141,10 +141,10 @@ func _validate_fast_attack_entry_points(operator: Node) -> void:
 	var directional_body := operator.get("animated_sprite") as AnimatedSprite2D
 	operator.set("_melee_forward", Vector2.RIGHT)
 	_assert_true(bool(operator.call("_play_dodge_fast_attack_presentation")), "right-facing roll-exit presentation should play")
-	_assert_true(directional_body.animation == &"unarmed_dodge_fast_attack_left", "right-facing roll-exit played the left-facing art")
+	_assert_true(directional_body.animation == &"unarmed/attack/dodge_fast_attack_01/w/full_body", "right-facing roll-exit played the left-facing art")
 	operator.set("_melee_forward", Vector2.LEFT)
 	_assert_true(bool(operator.call("_play_dodge_fast_attack_presentation")), "left-facing roll-exit presentation should play")
-	_assert_true(directional_body.animation == &"unarmed_dodge_fast_attack_right", "left-facing roll-exit played the right-facing art")
+	_assert_true(directional_body.animation == &"unarmed/attack/dodge_fast_attack_01/e/full_body", "left-facing roll-exit played the right-facing art")
 	operator.call("_reset_melee_overlay_visuals")
 	operator.set("using_unarmed", true)
 	operator.set("combat_loadout_mode", "melee")
@@ -202,11 +202,14 @@ func _validate_fast_attack_entry_points(operator: Node) -> void:
 	_assert_true(float(operator.get("_dodge_cooldown_remaining")) > 0.0, "roll-exit attack cancel must preserve dodge cooldown")
 	_assert_true(bool(operator.call("_sync_modular_action_domains")), "roll-exit strike should claim the modular action presentation on the next visual sync")
 	if bool(operator.get("_dodge_fast_attack_presentation_active")):
-		_assert_true(legacy_sprite.visible and String(legacy_sprite.animation).begins_with("unarmed_dodge_fast_attack_"), "ingested roll-exit body should own the full-body presentation")
+		_assert_true(legacy_sprite.visible and String(legacy_sprite.animation).begins_with("unarmed/attack/dodge_fast_attack_01/"), "ingested roll-exit body should own the full-body presentation")
 	else:
-		var roll_exit_suffix := str(operator.call("_get_direction_suffix", operator.get("_melee_forward")))
-		_assert_layer_animation_suffix(operator, "modular_lower_body_sprite", "unarmed_fast_strike_lower", roll_exit_suffix)
-		_assert_layer_animation_suffix(operator, "modular_upper_body_sprite", "unarmed_fast_strike_upper", roll_exit_suffix)
+		# C2a-R4: the modular strike layers are canonical here too. This branch
+		# asserted compatibility suffix names, which went unnoticed because the
+		# roll-exit body above always won before the cutover.
+		var roll_exit_sector := str(operator.call("_modular_body_authored_sector", &"fast_strike_01", &"lower_body", operator.get("_melee_forward")))
+		_assert_layer_animation(operator, "modular_lower_body_sprite", "unarmed_fast_strike_lower", roll_exit_sector)
+		_assert_layer_animation(operator, "modular_upper_body_sprite", "unarmed_fast_strike_upper", roll_exit_sector)
 
 	operator.set("_melee_active", false)
 	operator.set("_melee_recovery_active", false)

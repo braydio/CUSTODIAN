@@ -2,13 +2,11 @@
   "schema": "custodian.operator_animated_sprite_cutover_evidence.v1",
   "scope": "animated_sprite only; melee and weapon overlays are separate slices",
   "counts": {
-    "AUTHORING_DECISION": 15,
-    "PROVEN_CANONICAL": 37,
-    "RETIRED": 83
+    "AUTHORING_DECISION": 2,
+    "RETIRED": 133
   },
   "live_counts": {
-    "AUTHORING_DECISION": 15,
-    "PROVEN_CANONICAL": 37
+    "AUTHORING_DECISION": 2
   },
   "open_decisions": [],
   "unresolved": [],
@@ -123,10 +121,8 @@
     },
     {
       "clip": "death",
-      "consumers": [
-        "played by death_state.gd through the animation state machine"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 9,
       "authored_fps": 7.0,
       "authored_loop": false,
@@ -141,13 +137,13 @@
       "canonical_identity": "unarmed/reaction/legacy_death_disintigrate_base/omni/full_body",
       "canonical_published": false,
       "timing_preserved": false,
-      "disposition": "AUTHORING_DECISION",
-      "why": "Deliberate new-art replacement, not a pixel-preserving migration. The re-authored 8f @7 death supersedes the legacy 9f disintegrate, which retires.",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
-      "decision_status": "RESOLVED",
-      "resolution_kind": "REPLACE",
-      "resolution": "unarmed/reaction/death_01/omni/full_body",
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null,
       "historical_mapping": "unarmed/reaction/legacy_death_disintigrate_base/omni/full_body",
       "historical_mapping_proven": true
     },
@@ -258,10 +254,8 @@
     },
     {
       "clip": "idle_long",
-      "consumers": [
-        "guarded by a has_animation probe"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 10,
       "authored_fps": 3.0,
       "authored_loop": true,
@@ -276,22 +270,20 @@
       "canonical_identity": "unarmed/cosmetic/legacy_front_idle_long_loop/omni/full_body",
       "canonical_published": false,
       "timing_preserved": false,
-      "disposition": "AUTHORING_DECISION",
-      "why": "The legacy long-idle artwork is not wanted. No canonical replacement is authored and none should be; the idle path is unarmed/locomotion/idle_01.",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
-      "decision_status": "RESOLVED",
-      "resolution_kind": "RETIRE",
+      "decision_status": null,
+      "resolution_kind": null,
       "resolution": null,
       "historical_mapping": "unarmed/cosmetic/legacy_front_idle_long_loop/omni/full_body",
       "historical_mapping_proven": true
     },
     {
       "clip": "idle_right",
-      "consumers": [
-        "played directly by name"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 3,
       "authored_fps": 7.0,
       "authored_loop": true,
@@ -306,13 +298,13 @@
       "canonical_identity": "unarmed/cosmetic/legacy_front_idle_loop/omni/full_body",
       "canonical_published": false,
       "timing_preserved": false,
-      "disposition": "AUTHORING_DECISION",
-      "why": "Deliberate visual modernization. The canonical idle supersedes the legacy body idle; pixels differ on purpose.",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
-      "decision_status": "RESOLVED",
-      "resolution_kind": "REPLACE",
-      "resolution": "unarmed/locomotion/idle_01/e/full_body",
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null,
       "historical_mapping": "unarmed/cosmetic/legacy_front_idle_loop/omni/full_body",
       "historical_mapping_proven": true
     },
@@ -430,10 +422,8 @@
     },
     {
       "clip": "melee_2h_fast_1_right",
-      "consumers": [
-        "guarded by a has_animation probe"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 6,
       "authored_fps": 12.0,
       "authored_loop": false,
@@ -448,22 +438,20 @@
       "canonical_identity": "melee_1h_heavy/attack/legacy_fast_attack_1_right_body/omni/full_body",
       "canonical_published": false,
       "timing_preserved": false,
-      "disposition": "AUTHORING_DECISION",
-      "why": "A legacy capability probe and runtime-mutation name, not a presentation identity. Fast-chain capability comes from weapon fast-chain data, not from has_animation() against the compatibility resource.",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
-      "decision_status": "RESOLVED",
-      "resolution_kind": "RETIRE",
+      "decision_status": null,
+      "resolution_kind": null,
       "resolution": null,
       "historical_mapping": "melee_1h_heavy/attack/legacy_fast_attack_1_right_body/omni/full_body",
       "historical_mapping_proven": true
     },
     {
       "clip": "melee_2h_fast_2_right",
-      "consumers": [
-        "guarded by a has_animation probe"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 5,
       "authored_fps": 12.0,
       "authored_loop": false,
@@ -478,12 +466,12 @@
       "canonical_identity": "melee_1h_heavy/attack/legacy_fast_attack_2_right_body/omni/full_body",
       "canonical_published": false,
       "timing_preserved": false,
-      "disposition": "AUTHORING_DECISION",
-      "why": "Second link of the same legacy capability probe; retires with it.",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
-      "decision_status": "RESOLVED",
-      "resolution_kind": "RETIRE",
+      "decision_status": null,
+      "resolution_kind": null,
       "resolution": null,
       "historical_mapping": "melee_1h_heavy/attack/legacy_fast_attack_2_right_body/omni/full_body",
       "historical_mapping_proven": true
@@ -602,11 +590,8 @@
     },
     {
       "clip": "melee_2h_fast_recovery",
-      "consumers": [
-        "played directly by name",
-        "guarded by a has_animation probe"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 2,
       "authored_fps": 10.0,
       "authored_loop": false,
@@ -621,22 +606,20 @@
       "canonical_identity": "melee_1h_heavy/attack/legacy_fast_recovery_body/omni/full_body",
       "canonical_published": false,
       "timing_preserved": false,
-      "disposition": "AUTHORING_DECISION",
-      "why": "The canonical fast-recovery body action carries this presentation.",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
-      "decision_status": "RESOLVED",
-      "resolution_kind": "REPLACE",
-      "resolution": "melee_1h_heavy/attack/fast_recovery_01/s/full_body",
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null,
       "historical_mapping": "melee_1h_heavy/attack/legacy_fast_recovery_body/omni/full_body",
       "historical_mapping_proven": true
     },
     {
       "clip": "melee_2h_fast_right",
-      "consumers": [
-        "played by attack_fast_state.gd through the animation state machine"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 12,
       "authored_fps": 12.0,
       "authored_loop": false,
@@ -651,12 +634,12 @@
       "canonical_identity": "melee_1h/attack/legacy_fast_attack_right_base/omni/full_body",
       "canonical_published": false,
       "timing_preserved": false,
-      "disposition": "AUTHORING_DECISION",
-      "why": "An unreachable AttackFastState direct-play fallback. The Operator delegates through start_attack(), so this path never runs in the production actor.",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
-      "decision_status": "RESOLVED",
-      "resolution_kind": "RETIRE",
+      "decision_status": null,
+      "resolution_kind": null,
       "resolution": null,
       "historical_mapping": "melee_1h/attack/legacy_fast_attack_right_base/omni/full_body",
       "historical_mapping_proven": true
@@ -747,10 +730,8 @@
     },
     {
       "clip": "melee_2h_heavy",
-      "consumers": [
-        "played by attack_heavy_state.gd through the animation state machine"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 7,
       "authored_fps": 11.0,
       "authored_loop": false,
@@ -765,23 +746,20 @@
       "canonical_identity": "unarmed/attack/legacy_operator_2h_heavy_3layer/omni/full_body",
       "canonical_published": false,
       "timing_preserved": false,
-      "disposition": "AUTHORING_DECISION",
-      "why": "A generic legacy identity standing in for whatever heavy attack was active. Heavy presentation comes from semantic attack/profile authority instead: unarmed resolves unarmed/attack/heavy_01, armed resolves the active weapon profile's canonical heavy family. Creating a second canonical heavy identity to receive this name would reintroduce the ambiguity it encodes.",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
-      "decision_status": "RESOLVED",
-      "resolution_kind": "RETIRE",
+      "decision_status": null,
+      "resolution_kind": null,
       "resolution": null,
       "historical_mapping": "unarmed/attack/legacy_operator_2h_heavy_3layer/omni/full_body",
       "historical_mapping_proven": true
     },
     {
       "clip": "melee_2h_heavy_anticipation",
-      "consumers": [
-        "played directly by name",
-        "guarded by a has_animation probe"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 5,
       "authored_fps": 11.0,
       "authored_loop": false,
@@ -796,22 +774,20 @@
       "canonical_identity": "melee_1h_heavy/attack/legacy_heavy_anticipation_body/omni/full_body",
       "canonical_published": false,
       "timing_preserved": false,
-      "disposition": "AUTHORING_DECISION",
-      "why": "The canonical heavy-windup body action carries this presentation.",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
-      "decision_status": "RESOLVED",
-      "resolution_kind": "REPLACE",
-      "resolution": "melee_1h_heavy/attack/heavy_windup_01/s/full_body",
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null,
       "historical_mapping": "melee_1h_heavy/attack/legacy_heavy_anticipation_body/omni/full_body",
       "historical_mapping_proven": true
     },
     {
       "clip": "melee_2h_heavy_right",
-      "consumers": [
-        "played by attack_heavy_state.gd through the animation state machine"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 7,
       "authored_fps": 11.0,
       "authored_loop": false,
@@ -826,12 +802,12 @@
       "canonical_identity": "unarmed/attack/legacy_operator_2h_heavy_3layer/omni/full_body",
       "canonical_published": false,
       "timing_preserved": false,
-      "disposition": "AUTHORING_DECISION",
-      "why": "The directional spelling of the same generic legacy identity; retires with it rather than becoming a second canonical heavy action.",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
-      "decision_status": "RESOLVED",
-      "resolution_kind": "RETIRE",
+      "decision_status": null,
+      "resolution_kind": null,
       "resolution": null,
       "historical_mapping": "unarmed/attack/legacy_operator_2h_heavy_3layer/omni/full_body",
       "historical_mapping_proven": true
@@ -1110,7 +1086,7 @@
       "canonical_published": false,
       "timing_preserved": false,
       "disposition": "AUTHORING_DECISION",
-      "why": "The full-body ranged fire fallback is retired rather than migrated. Canonical ranged fire is the modular composition -- movement-owned lower body, ranged_2h/cosmetic/fire_01 upper_body, the socketed static carbine, and fire_01 FX -- and WEAPON_OWNED_ANIMATION_SYSTEM.md forbids substituting a compatibility full-body clip for a missing ranged layer. Promoting the old legacy_fire_body strip would produce a schema-clean asset that violates the architecture being migrated to, so ranged_2h/cosmetic/fire_01/*/full_body is deliberately not published. The historical strip stays as provenance art and simply stops being reachable; a modular stack that cannot present reports the missing canonical presentation instead of falling back.",
+      "why": "The full-body ranged fire fallback is retired rather than migrated. Canonical ranged fire is the modular composition -- movement-owned lower body, ranged_2h/cosmetic/fire_01 upper_body, the socketed static carbine, and fire_01 FX -- and WEAPON_OWNED_ANIMATION_SYSTEM.md forbids substituting a compatibility full-body clip for a missing ranged layer. Promoting the old legacy_fire_body strip would produce a schema-clean asset that violates the architecture being migrated to, so ranged_2h/cosmetic/fire_01/*/full_body is deliberately not published. The historical strip stays as provenance art and simply stops being reachable; a modular stack that cannot present reports the missing canonical presentation instead of falling back. After the cutover this clip still counts as live because the name survives as a hardcoded weapon-map default, but its remaining consumers draw from the weapon renderer's own SpriteFrames rather than animated_sprite -- operator_weapon_frames.tres has its own clip of the same name. The count is left conservative on purpose: under-reporting is the failure mode that hid consumers in four consecutive slices, so a name collision is reported and explained rather than filtered away.",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": "RESOLVED",
@@ -1121,11 +1097,8 @@
     },
     {
       "clip": "ranged_2h_reload",
-      "consumers": [
-        "played directly by name",
-        "guarded by a has_animation probe"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 4,
       "authored_fps": 10.0,
       "authored_loop": false,
@@ -1137,11 +1110,11 @@
         "profile": "ranged_2h",
         "sheet": "res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/legacy_operator_body_ranged_2h_reloading/operator__full_body__ranged_2h__cosmetic__legacy_operator_body_ranged_2h_reloading__omni__1f__384x192.png"
       },
-      "canonical_identity": "ranged_2h/cosmetic/reload_01/omni/full_body",
+      "canonical_identity": "ranged_2h/cosmetic/legacy_operator_body_ranged_2h_reloading/omni/full_body",
       "canonical_published": false,
       "timing_preserved": false,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "promoted byte-for-byte into ranged_2h/cosmetic/reload_01/omni/full_body -- row 1 of the 384x192 sheet, which is exactly the region the live clip slices (y=0, four 96x96 cells); verified pixel-identical to the live clip frame for frame at 4f/10 FPS/non-loop. Row 2 is the legacy rifle overlay and is deliberately not published: the target is a static socketed carbine, not animated weapon SpriteFrames. The 8-frame operator_ranged_body_core_v1 candidate is a post-R4 art upgrade under this same identity, not part of preservation.",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": true,
       "decision_status": null,
@@ -1152,10 +1125,8 @@
     },
     {
       "clip": "ranged_2h_run_left",
-      "consumers": [
-        "guarded by a has_animation probe"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 5,
       "authored_fps": 14.0,
       "authored_loop": true,
@@ -1170,8 +1141,8 @@
       "canonical_identity": "ranged_2h/locomotion/run_01/w/full_body",
       "canonical_published": true,
       "timing_preserved": true,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,
@@ -1230,7 +1201,7 @@
       "canonical_published": true,
       "timing_preserved": true,
       "disposition": "AUTHORING_DECISION",
-      "why": "The historical mapping is mechanically proven and semantically rejected: this clip drew unarmed/posture/stance_01/e/full_body, the unarmed stance standing in for a ranged one. That the pixels were really shown does not make the substitution a valid canonical ranged stance, exactly as in R3. Ranged stance remains the canonical modular upper-body and socketed-weapon composition over a movement-owned lower body, so ranged_2h/posture/stance_01/*/full_body is deliberately not created.",
+      "why": "The historical mapping is mechanically proven and semantically rejected: this clip drew unarmed/posture/stance_01/e/full_body, the unarmed stance standing in for a ranged one. That the pixels were really shown does not make the substitution a valid canonical ranged stance, exactly as in R3. Ranged stance remains the canonical modular upper-body and socketed-weapon composition over a movement-owned lower body, so ranged_2h/posture/stance_01/*/full_body is deliberately not created. As with ranged_2h_fire, the surviving references resolve against primary_weapon_sprite and the weapon icon's frames_resource, which the weapon-overlay slice owns, so this stays reported as live while no longer reaching animated_sprite.",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": "RESOLVED",
@@ -1353,11 +1324,8 @@
     },
     {
       "clip": "run_right",
-      "consumers": [
-        "played directly by name",
-        "guarded by a has_animation probe"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 16,
       "authored_fps": 14.0,
       "authored_loop": true,
@@ -1372,13 +1340,13 @@
       "canonical_identity": "unarmed/cosmetic/legacy_running_base/omni/full_body",
       "canonical_published": false,
       "timing_preserved": false,
-      "disposition": "AUTHORING_DECISION",
-      "why": "Deliberate visual modernization of the legacy locomotion base.",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
-      "decision_status": "RESOLVED",
-      "resolution_kind": "REPLACE",
-      "resolution": "unarmed/locomotion/run_01/e/full_body",
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null,
       "historical_mapping": "unarmed/cosmetic/legacy_running_base/omni/full_body",
       "historical_mapping_proven": true
     },
@@ -1608,10 +1576,8 @@
     },
     {
       "clip": "unarmed_attack_fast_recovery",
-      "consumers": [
-        "resolver base `unarmed_attack_fast_recovery` (literal base in operator.gd)"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 3,
       "authored_fps": 15.0,
       "authored_loop": false,
@@ -1626,8 +1592,8 @@
       "canonical_identity": "unarmed/attack/fast_recovery_01/e/full_body",
       "canonical_published": true,
       "timing_preserved": true,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,
@@ -1638,10 +1604,8 @@
     },
     {
       "clip": "unarmed_attack_fast_recovery_down",
-      "consumers": [
-        "resolver base `unarmed_attack_fast_recovery` (literal base in operator.gd)"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 3,
       "authored_fps": 15.0,
       "authored_loop": false,
@@ -1656,8 +1620,8 @@
       "canonical_identity": "unarmed/attack/fast_recovery_01/s/full_body",
       "canonical_published": true,
       "timing_preserved": true,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,
@@ -1668,10 +1632,8 @@
     },
     {
       "clip": "unarmed_attack_fast_recovery_down_left",
-      "consumers": [
-        "resolver base `unarmed_attack_fast_recovery` (literal base in operator.gd)"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 3,
       "authored_fps": 15.0,
       "authored_loop": false,
@@ -1686,8 +1648,8 @@
       "canonical_identity": "unarmed/attack/fast_recovery_01/sw/full_body",
       "canonical_published": true,
       "timing_preserved": true,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,
@@ -1698,10 +1660,8 @@
     },
     {
       "clip": "unarmed_attack_fast_recovery_down_right",
-      "consumers": [
-        "resolver base `unarmed_attack_fast_recovery` (literal base in operator.gd)"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 3,
       "authored_fps": 15.0,
       "authored_loop": false,
@@ -1716,8 +1676,8 @@
       "canonical_identity": "unarmed/attack/fast_recovery_01/se/full_body",
       "canonical_published": true,
       "timing_preserved": true,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,
@@ -1728,11 +1688,8 @@
     },
     {
       "clip": "unarmed_attack_fast_recovery_left",
-      "consumers": [
-        "resolver base `unarmed_attack_fast_recovery` (literal base in operator.gd)",
-        "guarded by a has_animation probe"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 3,
       "authored_fps": 15.0,
       "authored_loop": false,
@@ -1747,8 +1704,8 @@
       "canonical_identity": "unarmed/attack/fast_recovery_01/w/full_body",
       "canonical_published": true,
       "timing_preserved": true,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,
@@ -1759,10 +1716,8 @@
     },
     {
       "clip": "unarmed_attack_fast_recovery_right",
-      "consumers": [
-        "resolver base `unarmed_attack_fast_recovery` (literal base in operator.gd)"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 3,
       "authored_fps": 15.0,
       "authored_loop": false,
@@ -1777,8 +1732,8 @@
       "canonical_identity": "unarmed/attack/fast_recovery_01/e/full_body",
       "canonical_published": true,
       "timing_preserved": true,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,
@@ -1789,10 +1744,8 @@
     },
     {
       "clip": "unarmed_attack_fast_recovery_up",
-      "consumers": [
-        "resolver base `unarmed_attack_fast_recovery` (literal base in operator.gd)"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 3,
       "authored_fps": 15.0,
       "authored_loop": false,
@@ -1807,8 +1760,8 @@
       "canonical_identity": "unarmed/attack/fast_recovery_01/n/full_body",
       "canonical_published": true,
       "timing_preserved": true,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,
@@ -1819,10 +1772,8 @@
     },
     {
       "clip": "unarmed_attack_fast_recovery_up_left",
-      "consumers": [
-        "resolver base `unarmed_attack_fast_recovery` (literal base in operator.gd)"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 3,
       "authored_fps": 15.0,
       "authored_loop": false,
@@ -1837,8 +1788,8 @@
       "canonical_identity": "unarmed/attack/fast_recovery_01/nw/full_body",
       "canonical_published": true,
       "timing_preserved": true,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,
@@ -1849,10 +1800,8 @@
     },
     {
       "clip": "unarmed_attack_fast_recovery_up_right",
-      "consumers": [
-        "resolver base `unarmed_attack_fast_recovery` (literal base in operator.gd)"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 3,
       "authored_fps": 15.0,
       "authored_loop": false,
@@ -1867,8 +1816,8 @@
       "canonical_identity": "unarmed/attack/fast_recovery_01/ne/full_body",
       "canonical_published": true,
       "timing_preserved": true,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,
@@ -1935,10 +1884,8 @@
     },
     {
       "clip": "unarmed_attack_fast_windup",
-      "consumers": [
-        "resolver base `unarmed_attack_fast_windup` (literal base in operator.gd)"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 3,
       "authored_fps": 12.0,
       "authored_loop": false,
@@ -1953,8 +1900,8 @@
       "canonical_identity": "unarmed/attack/fast_windup_01/s/full_body",
       "canonical_published": true,
       "timing_preserved": true,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,
@@ -1965,10 +1912,8 @@
     },
     {
       "clip": "unarmed_attack_fast_windup_down",
-      "consumers": [
-        "resolver base `unarmed_attack_fast_windup` (literal base in operator.gd)"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 3,
       "authored_fps": 12.0,
       "authored_loop": false,
@@ -1983,8 +1928,8 @@
       "canonical_identity": "unarmed/attack/fast_windup_01/s/full_body",
       "canonical_published": true,
       "timing_preserved": true,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,
@@ -1995,10 +1940,8 @@
     },
     {
       "clip": "unarmed_attack_fast_windup_down_left",
-      "consumers": [
-        "resolver base `unarmed_attack_fast_windup` (literal base in operator.gd)"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 3,
       "authored_fps": 12.0,
       "authored_loop": false,
@@ -2013,8 +1956,8 @@
       "canonical_identity": "unarmed/attack/fast_windup_01/sw/full_body",
       "canonical_published": true,
       "timing_preserved": true,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,
@@ -2025,10 +1968,8 @@
     },
     {
       "clip": "unarmed_attack_fast_windup_down_right",
-      "consumers": [
-        "resolver base `unarmed_attack_fast_windup` (literal base in operator.gd)"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 3,
       "authored_fps": 12.0,
       "authored_loop": false,
@@ -2043,8 +1984,8 @@
       "canonical_identity": "unarmed/attack/fast_windup_01/se/full_body",
       "canonical_published": true,
       "timing_preserved": true,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,
@@ -2055,10 +1996,8 @@
     },
     {
       "clip": "unarmed_attack_fast_windup_left",
-      "consumers": [
-        "resolver base `unarmed_attack_fast_windup` (literal base in operator.gd)"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 3,
       "authored_fps": 12.0,
       "authored_loop": false,
@@ -2073,8 +2012,8 @@
       "canonical_identity": "unarmed/attack/fast_windup_01/w/full_body",
       "canonical_published": true,
       "timing_preserved": true,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,
@@ -2085,10 +2024,8 @@
     },
     {
       "clip": "unarmed_attack_fast_windup_right",
-      "consumers": [
-        "resolver base `unarmed_attack_fast_windup` (literal base in operator.gd)"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 3,
       "authored_fps": 12.0,
       "authored_loop": false,
@@ -2103,8 +2040,8 @@
       "canonical_identity": "unarmed/attack/fast_windup_01/e/full_body",
       "canonical_published": true,
       "timing_preserved": true,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,
@@ -2115,10 +2052,8 @@
     },
     {
       "clip": "unarmed_attack_fast_windup_up",
-      "consumers": [
-        "resolver base `unarmed_attack_fast_windup` (literal base in operator.gd)"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 3,
       "authored_fps": 12.0,
       "authored_loop": false,
@@ -2133,8 +2068,8 @@
       "canonical_identity": "unarmed/attack/fast_windup_01/n/full_body",
       "canonical_published": true,
       "timing_preserved": true,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,
@@ -2145,10 +2080,8 @@
     },
     {
       "clip": "unarmed_attack_fast_windup_up_left",
-      "consumers": [
-        "resolver base `unarmed_attack_fast_windup` (literal base in operator.gd)"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 3,
       "authored_fps": 12.0,
       "authored_loop": false,
@@ -2163,8 +2096,8 @@
       "canonical_identity": "unarmed/attack/fast_windup_01/nw/full_body",
       "canonical_published": true,
       "timing_preserved": true,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,
@@ -2175,10 +2108,8 @@
     },
     {
       "clip": "unarmed_attack_fast_windup_up_right",
-      "consumers": [
-        "resolver base `unarmed_attack_fast_windup` (literal base in operator.gd)"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 3,
       "authored_fps": 12.0,
       "authored_loop": false,
@@ -2193,8 +2124,8 @@
       "canonical_identity": "unarmed/attack/fast_windup_01/ne/full_body",
       "canonical_published": true,
       "timing_preserved": true,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,
@@ -3045,10 +2976,8 @@
     },
     {
       "clip": "unarmed_run_down",
-      "consumers": [
-        "resolver base `unarmed_run` (literal base in operator.gd)"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 12,
       "authored_fps": 10.0,
       "authored_loop": true,
@@ -3063,8 +2992,8 @@
       "canonical_identity": "unarmed/locomotion/run_01/s/lower_body",
       "canonical_published": true,
       "timing_preserved": false,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,
@@ -3075,10 +3004,8 @@
     },
     {
       "clip": "unarmed_run_down_left",
-      "consumers": [
-        "resolver base `unarmed_run` (literal base in operator.gd)"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 5,
       "authored_fps": 12.0,
       "authored_loop": true,
@@ -3093,8 +3020,8 @@
       "canonical_identity": "unarmed/locomotion/run_01/sw/lower_body",
       "canonical_published": true,
       "timing_preserved": false,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,
@@ -3105,10 +3032,8 @@
     },
     {
       "clip": "unarmed_run_down_right",
-      "consumers": [
-        "resolver base `unarmed_run` (literal base in operator.gd)"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 5,
       "authored_fps": 12.0,
       "authored_loop": true,
@@ -3123,8 +3048,8 @@
       "canonical_identity": "unarmed/locomotion/run_01/se/lower_body",
       "canonical_published": true,
       "timing_preserved": false,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,
@@ -3135,10 +3060,8 @@
     },
     {
       "clip": "unarmed_run_left",
-      "consumers": [
-        "resolver base `unarmed_run` (literal base in operator.gd)"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 5,
       "authored_fps": 12.0,
       "authored_loop": true,
@@ -3153,8 +3076,8 @@
       "canonical_identity": "unarmed/locomotion/run_01/w/lower_body",
       "canonical_published": true,
       "timing_preserved": false,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,
@@ -3165,10 +3088,8 @@
     },
     {
       "clip": "unarmed_run_right",
-      "consumers": [
-        "resolver base `unarmed_run` (literal base in operator.gd)"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 6,
       "authored_fps": 12.0,
       "authored_loop": true,
@@ -3183,8 +3104,8 @@
       "canonical_identity": "unarmed/locomotion/run_01/e/lower_body",
       "canonical_published": true,
       "timing_preserved": false,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,
@@ -3195,10 +3116,8 @@
     },
     {
       "clip": "unarmed_run_up",
-      "consumers": [
-        "resolver base `unarmed_run` (literal base in operator.gd)"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 8,
       "authored_fps": 12.0,
       "authored_loop": true,
@@ -3213,8 +3132,8 @@
       "canonical_identity": "unarmed/locomotion/run_01/n/lower_body",
       "canonical_published": true,
       "timing_preserved": false,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,
@@ -3225,10 +3144,8 @@
     },
     {
       "clip": "unarmed_run_up_left",
-      "consumers": [
-        "resolver base `unarmed_run` (literal base in operator.gd)"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 6,
       "authored_fps": 12.0,
       "authored_loop": true,
@@ -3243,8 +3160,8 @@
       "canonical_identity": "unarmed/locomotion/run_01/nw/lower_body",
       "canonical_published": true,
       "timing_preserved": false,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,
@@ -3255,10 +3172,8 @@
     },
     {
       "clip": "unarmed_run_up_right",
-      "consumers": [
-        "resolver base `unarmed_run` (literal base in operator.gd)"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 6,
       "authored_fps": 8.0,
       "authored_loop": true,
@@ -3273,8 +3188,8 @@
       "canonical_identity": "unarmed/locomotion/idle_01/ne/lower_body",
       "canonical_published": true,
       "timing_preserved": false,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,
@@ -3369,10 +3284,8 @@
     },
     {
       "clip": "unarmed_walk",
-      "consumers": [
-        "resolver base `unarmed_walk` (literal base in operator.gd)"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 8,
       "authored_fps": 10.0,
       "authored_loop": true,
@@ -3387,8 +3300,8 @@
       "canonical_identity": "unarmed/locomotion/walk_01/s/lower_body",
       "canonical_published": true,
       "timing_preserved": false,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,
@@ -3399,10 +3312,8 @@
     },
     {
       "clip": "unarmed_walk_down",
-      "consumers": [
-        "resolver base `unarmed_walk` (literal base in operator.gd)"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 8,
       "authored_fps": 10.0,
       "authored_loop": true,
@@ -3417,8 +3328,8 @@
       "canonical_identity": "unarmed/locomotion/walk_01/s/lower_body",
       "canonical_published": true,
       "timing_preserved": false,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,
@@ -3429,10 +3340,8 @@
     },
     {
       "clip": "unarmed_walk_down_left",
-      "consumers": [
-        "resolver base `unarmed_walk` (literal base in operator.gd)"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 5,
       "authored_fps": 10.0,
       "authored_loop": true,
@@ -3447,8 +3356,8 @@
       "canonical_identity": "unarmed/locomotion/walk_01/sw/lower_body",
       "canonical_published": true,
       "timing_preserved": false,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,
@@ -3459,10 +3368,8 @@
     },
     {
       "clip": "unarmed_walk_down_right",
-      "consumers": [
-        "resolver base `unarmed_walk` (literal base in operator.gd)"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 5,
       "authored_fps": 10.0,
       "authored_loop": true,
@@ -3477,8 +3384,8 @@
       "canonical_identity": "unarmed/locomotion/walk_01/se/lower_body",
       "canonical_published": true,
       "timing_preserved": false,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,
@@ -3489,10 +3396,8 @@
     },
     {
       "clip": "unarmed_walk_left",
-      "consumers": [
-        "resolver base `unarmed_walk` (literal base in operator.gd)"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 5,
       "authored_fps": 10.0,
       "authored_loop": true,
@@ -3507,8 +3412,8 @@
       "canonical_identity": "unarmed/locomotion/walk_01/w/lower_body",
       "canonical_published": true,
       "timing_preserved": false,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,
@@ -3519,10 +3424,8 @@
     },
     {
       "clip": "unarmed_walk_right",
-      "consumers": [
-        "resolver base `unarmed_walk` (literal base in operator.gd)"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 5,
       "authored_fps": 10.0,
       "authored_loop": true,
@@ -3537,8 +3440,8 @@
       "canonical_identity": "unarmed/locomotion/walk_01/e/lower_body",
       "canonical_published": true,
       "timing_preserved": false,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,
@@ -3549,10 +3452,8 @@
     },
     {
       "clip": "unarmed_walk_up",
-      "consumers": [
-        "resolver base `unarmed_walk` (literal base in operator.gd)"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 8,
       "authored_fps": 10.0,
       "authored_loop": true,
@@ -3567,8 +3468,8 @@
       "canonical_identity": "unarmed/locomotion/walk_01/n/lower_body",
       "canonical_published": true,
       "timing_preserved": false,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,
@@ -3579,10 +3480,8 @@
     },
     {
       "clip": "unarmed_walk_up_left",
-      "consumers": [
-        "resolver base `unarmed_walk` (literal base in operator.gd)"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 6,
       "authored_fps": 10.0,
       "authored_loop": true,
@@ -3597,8 +3496,8 @@
       "canonical_identity": "unarmed/locomotion/run_01/nw/lower_body",
       "canonical_published": true,
       "timing_preserved": false,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,
@@ -3609,10 +3508,8 @@
     },
     {
       "clip": "unarmed_walk_up_right",
-      "consumers": [
-        "resolver base `unarmed_walk` (literal base in operator.gd)"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 6,
       "authored_fps": 8.0,
       "authored_loop": true,
@@ -3627,8 +3524,8 @@
       "canonical_identity": "unarmed/locomotion/idle_01/ne/lower_body",
       "canonical_published": true,
       "timing_preserved": false,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,
@@ -3660,11 +3557,8 @@
     },
     {
       "clip": "walk_down_default",
-      "consumers": [
-        "played directly by name",
-        "guarded by a has_animation probe"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 8,
       "authored_fps": 10.0,
       "authored_loop": true,
@@ -3679,13 +3573,13 @@
       "canonical_identity": "unarmed/cosmetic/legacy_walking_base/omni/full_body",
       "canonical_published": false,
       "timing_preserved": false,
-      "disposition": "AUTHORING_DECISION",
-      "why": "Deliberate visual modernization of the legacy locomotion base; the 'default' suffix was the old pipeline's name for the south strip.",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
-      "decision_status": "RESOLVED",
-      "resolution_kind": "REPLACE",
-      "resolution": "unarmed/locomotion/walk_01/s/full_body",
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null,
       "historical_mapping": "unarmed/cosmetic/legacy_walking_base/omni/full_body",
       "historical_mapping_proven": true
     },
@@ -3803,10 +3697,8 @@
     },
     {
       "clip": "walk_right",
-      "consumers": [
-        "played directly by name"
-      ],
-      "live": true,
+      "consumers": [],
+      "live": false,
       "frames": 8,
       "authored_fps": 10.0,
       "authored_loop": true,
@@ -3821,13 +3713,13 @@
       "canonical_identity": "unarmed/cosmetic/legacy_walking_base/omni/full_body",
       "canonical_published": false,
       "timing_preserved": false,
-      "disposition": "AUTHORING_DECISION",
-      "why": "Deliberate visual modernization of the legacy locomotion base.",
+      "disposition": "RETIRED",
+      "why": "no live consumer reaches this clip",
       "canonical_candidates": [],
       "promoted": false,
-      "decision_status": "RESOLVED",
-      "resolution_kind": "REPLACE",
-      "resolution": "unarmed/locomotion/walk_01/e/full_body",
+      "decision_status": null,
+      "resolution_kind": null,
+      "resolution": null,
       "historical_mapping": "unarmed/cosmetic/legacy_walking_base/omni/full_body",
       "historical_mapping_proven": true
     },

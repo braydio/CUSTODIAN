@@ -114,7 +114,7 @@ func _validate_charged_chain_and_redirect(operator: Node) -> void:
 	var integrated_distance_ratio := 1.12 * ((1.0 + end_factor) * 0.5) / ((1.0 + 0.45) * 0.5)
 	_assert(is_equal_approx(integrated_distance_ratio, 1.18), "maximum Flow velocity curve must produce 18 percent travel gain")
 	var body := operator.get_node("AnimatedSprite2D") as AnimatedSprite2D
-	_assert(body.animation == &"operator_dodge_chain_link_right", "clean chain must use the dedicated directional link")
+	_assert(body.animation == &"shared/transition/dodge_chain_link_01/e/full_body", "clean chain must use the dedicated directional link")
 	_assert(body.frame == 0, "clean chain must restart dedicated link art at frame zero")
 	_assert(is_equal_approx(body.sprite_frames.get_animation_speed(body.animation) * body.speed_scale, 20.0), "four-frame link must complete over the fixed 0.20-second active clock")
 
@@ -124,7 +124,7 @@ func _validate_charged_chain_and_redirect(operator: Node) -> void:
 	_assert(is_equal_approx(float(operator.get("_dodge_flow")), 0.75), "90-degree redirect must spend one quarter of Flow")
 	_assert(is_equal_approx(float(operator.get("_dodge_chain_last_turn_angle")), 90.0), "redirect telemetry must retain the turn angle")
 	_assert(is_equal_approx(float(operator.get("_dodge_chain_last_retention")), 0.75), "redirect telemetry must retain the multiplier")
-	_assert(String(body.animation).begins_with("operator_dodge_chain_link"), "90-degree redirect must use dedicated link art")
+	_assert(String(body.animation).begins_with("shared/transition/dodge_chain_link_01/"), "90-degree redirect must use dedicated link art")
 	_assert(body.frame == 0, "back-to-back links must restart at frame zero without exposing neutral")
 	_assert(_chain_started_events.size() == 2, "each successful continuation must emit one chain-start signal")
 
@@ -135,7 +135,7 @@ func _validate_reverse_break(operator: Node) -> void:
 	_assert(int(operator.get("_dodge_chain_index")) == 3, "reverse pivot remains a legal uncapped chain link")
 	_assert(is_zero_approx(float(operator.get("_dodge_flow"))), "reverse pivot must clear Flow")
 	var body := operator.get_node("AnimatedSprite2D") as AnimatedSprite2D
-	_assert(String(body.animation).begins_with("operator_dodge_full"), "reverse pivot must retain the full-dodge atlas")
+	_assert(String(body.animation).begins_with("shared/transition/dodge_01/"), "reverse pivot must retain the full-dodge atlas")
 	_assert(body.frame == 0, "reverse pivot must replay the full plant frame")
 
 

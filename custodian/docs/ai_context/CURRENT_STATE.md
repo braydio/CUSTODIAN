@@ -99,15 +99,23 @@ registered acceptance gate. Its own smoke still covers exact E/N, SOUTH
 substitution, empty clips, missing identities, exact-only OMNI,
 owner/profile/group/layer isolation, and fallback counters/events.
 
-`animated_sprite` is the remaining large renderer and is still bound to the
-compatibility SpriteFrames. Its cutover evidence pass is complete
+`animated_sprite` was cut over in C2a-R4 and now binds the same generated
+runtime SpriteFrames as the other canonical renderers. Direction lives in the
+canonical identity, so canonical directional playback is never mirrored; the
+sparser full-body locomotion coverage is resolved by an explicit caller-owned
+projection table (`FULL_BODY_AUTHORED_SECTORS`) rather than by any selector
+fallback. The actor-local `duplicate(true)` fork and every legacy full-body
+injection are gone, which matters more now that the resource is shared: a
+mutation there would rewrite the spine for every renderer at once. The
+compatibility evidence pass is complete
 (`reports/operator/operator_animated_sprite_cutover_evidence.md`: 135 clips,
-85 retired, 37 proven canonical, 13 open authoring decisions), and its
-acceptance gate is seeded at
-`tools/validation/operator_animated_sprite_canonical_smoke.gd`. Remaining work
-is those authoring decisions, the rebind itself, the smaller trailing
-renderers, Workbench publication, and bridge deletion. The authority document
-tracks the remaining acceptance gates.
+133 now unreachable, 0 open decisions, 0 unresolved), gated by
+`tools/validation/operator_animated_sprite_canonical_smoke.gd`. The two rows
+still counted live are a reported name collision, not a live body clip: the
+names survive as hardcoded weapon-map defaults whose remaining consumers draw
+from the weapon renderer's own SpriteFrames. Remaining work is the melee and
+weapon overlay renderers, Workbench publication, and compatibility-store
+demolition. The authority document tracks the remaining acceptance gates.
 
 ## Combat Tempo + Impact Feedback Pass (2026-09-06)
 

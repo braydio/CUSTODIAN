@@ -28,6 +28,7 @@ const AUTHORED_FULL_BODY_SECTORS := {
 	"unarmed/locomotion/idle_01": [&"e", &"n", &"s", &"w"],
 	"unarmed/locomotion/walk_01": [&"e", &"n", &"s", &"w"],
 	"unarmed/locomotion/run_01": [&"e", &"n", &"s", &"se", &"sw", &"w"],
+	"unarmed/attack/heavy_01": [&"e", &"n", &"s", &"w"],
 }
 
 ## legacy compatibility clip -> canonical identity it was promoted into.
@@ -130,8 +131,96 @@ func _init() -> void:
 	scene_root.add_child(operator)
 	await process_frame
 	_check_full_body_projection(operator, canonical)
+	_check_rebind(operator, canonical)
 
 	_report()
+
+
+func _check_rebind(operator: Node, canonical: SpriteFrames) -> void:
+	## The cutover itself: `animated_sprite` draws from the shared canonical spine,
+	## nothing forks or mutates it, and the legacy full-body names are gone.
+	var sprite := operator.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
+	_check(sprite != null, "the Operator should still have its AnimatedSprite2D")
+	if sprite == null:
+		return
+
+	# A. bound directly to the shared resource, not to a copy of it.
+	_check(
+		sprite.sprite_frames == canonical,
+		"animated_sprite should bind the canonical runtime SpriteFrames"
+	)
+
+	# B. no per-instance fork. A duplicate compares unequal, which is exactly how
+	#    the retired `duplicate(true)` injection used to hide.
+	var second := OPERATOR_SCENE.instantiate()
+	operator.get_parent().add_child(second)
+	var second_sprite := second.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
+	_check(
+		second_sprite != null and second_sprite.sprite_frames == sprite.sprite_frames,
+		"two Operators must share one SpriteFrames instance, not fork per instance"
+	)
+	second.queue_free()
+
+	# C. the legacy full-body names the actor used to inject or select are absent
+	#    from the canonical spine, so nothing can quietly resolve them again.
+	for retired in [
+		&"melee_2h_fast_1_right", &"melee_2h_fast_2_right", &"melee_2h_fast_3_right",
+		&"melee_stance", &"idle_long", &"idle_right", &"run_right", &"walk_right",
+		&"walk_down_default", &"ranged_2h_fire", &"ranged_2h_stance",
+		&"ranged_2h_fire_walk", &"operator_dodge_full_north", &"operator_dodge_full_south",
+		&"death",
+	]:
+		_check(
+			not canonical.has_animation(retired),
+			"retired legacy name %s must not exist in the canonical spine" % retired
+		)
+
+	# D. the canonical identities the cutover depends on are published.
+	for identity in [
+		"unarmed/reaction/death_01/omni/full_body",
+		"ranged_2h/cosmetic/reload_01/omni/full_body",
+		"ranged_2h/cosmetic/fire_walk_01/s/full_body",
+		"shared/transition/dodge_01/n/full_body",
+		"shared/transition/dodge_01/s/full_body",
+		"unarmed/locomotion/idle_01/e/full_body",
+		"unarmed/locomotion/walk_01/e/full_body",
+		"unarmed/locomotion/walk_01/w/full_body",
+		"unarmed/locomotion/run_01/e/full_body",
+	]:
+		_check(canonical.has_animation(identity), "%s should be published" % identity)
+
+	# E. the ranged full-body composition is deliberately NOT published. Publishing
+	#    it later would be schema-clean and architecturally wrong.
+	for absent in [
+		"ranged_2h/cosmetic/fire_01/e/full_body",
+		"ranged_2h/posture/stance_01/e/full_body",
+	]:
+		_check(
+			not canonical.has_animation(absent),
+			"%s must stay unpublished; ranged presentation is the modular stack" % absent
+		)
+
+	# F. direction lives in the identity. `walk_01/e` and `walk_01/w` are separate
+	#    authored strips, so playing west must use the west texture and must not
+	#    mirror it back toward east.
+	var east := "unarmed/locomotion/walk_01/e/full_body"
+	var west := "unarmed/locomotion/walk_01/w/full_body"
+	_check(east != west, "east and west walk should be different canonical identities")
+	if canonical.has_animation(east) and canonical.has_animation(west):
+		var east_texture := canonical.get_frame_texture(east, 0)
+		var west_texture := canonical.get_frame_texture(west, 0)
+		_check(
+			east_texture != null and west_texture != null and east_texture != west_texture,
+			"east and west walk should draw different textures, not one mirrored strip"
+		)
+	var played: StringName = operator._play_canonical_full_body(
+		"unarmed_walk", _sector_vector(&"w")
+	)
+	_check(played == StringName(west), "west walk should resolve %s, got %s" % [west, played])
+	_check(
+		not sprite.flip_h,
+		"canonical directional playback must not mirror; flip_h should be false"
+	)
 
 
 func _sector_vector(sector: StringName) -> Vector2:
@@ -224,7 +313,7 @@ func _check_full_body_projection(operator: Node, canonical: SpriteFrames) -> voi
 
 func _report() -> void:
 	if _failures.is_empty():
-		print("operator animated_sprite canonical smoke: OK (%d promotion(s), full-body projection policy)" % PROMOTIONS.size())
+		print("operator animated_sprite canonical smoke: OK (%d promotion(s), projection policy, rebind)" % PROMOTIONS.size())
 		quit(0)
 		return
 	for failure in _failures:
