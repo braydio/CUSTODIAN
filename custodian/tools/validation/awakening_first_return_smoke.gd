@@ -26,6 +26,7 @@ const PRODUCTION_UNDERLAYS := {
 	"Zone04_LockerReliquary": {"position": Vector2(704, -1984), "size": Vector2(704, 704)},
 	"Zone05_DustLung": {"position": Vector2(0, -3200), "size": Vector2(1216, 1216)},
 }
+const PRODUCTION_FOREGROUNDS := PRODUCTION_UNDERLAYS
 
 ## Locked in the design; the whole opening dungeon hangs off these.
 const LOCKED_ENVELOPES := {
@@ -176,6 +177,23 @@ func _check_scene_skeleton(instance: Node) -> void:
 			_fail("%s underlay texture did not load" % zone_name)
 		elif underlay.texture.get_size() != spec["size"]:
 			_fail("%s texture size drifted: %s" % [zone_name, str(underlay.texture.get_size())])
+		var foreground_path := "World/AwakeningZones/%s/Occlusion/Foreground" % zone_name
+		var foreground := instance.get_node_or_null(NodePath(foreground_path)) as Sprite2D
+		if foreground == null:
+			_fail("production foreground missing: %s" % foreground_path)
+			continue
+		if foreground.position != spec["position"]:
+			_fail("%s foreground position drifted: %s" % [zone_name, str(foreground.position)])
+		if foreground.scale != Vector2.ONE:
+			_fail("%s foreground must remain at scale 1,1" % zone_name)
+		if not foreground.centered:
+			_fail("%s foreground must remain centered" % zone_name)
+		if foreground.z_index != 10:
+			_fail("%s foreground z_index drifted: %d" % [zone_name, foreground.z_index])
+		if foreground.texture == null:
+			_fail("%s foreground texture did not load" % zone_name)
+		elif foreground.texture.get_size() != spec["size"]:
+			_fail("%s foreground texture size drifted: %s" % [zone_name, str(foreground.texture.get_size())])
 	var script_source := FileAccess.get_file_as_string(SCRIPT)
 	if not script_source.contains('presentation.visible = build_blockout_presentation and art_underlay.get_node_or_null("Underlay") == null'):
 		_fail("blockout presentation does not yield to an authored production underlay")

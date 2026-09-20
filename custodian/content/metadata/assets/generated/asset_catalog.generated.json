@@ -4067,6 +4067,27 @@
           "sha256": "54a1dfa0f88dfcc814ce47287c191b54eaeda0663a70461a4bcf34e7202f0661",
           "provenance": "authored",
           "source_asset": null
+        },
+        "foreground::omni": {
+          "state_id": "foreground",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_creche",
+            "backdrop",
+            "foreground",
+            "display",
+            "foreground",
+            "omni"
+          ],
+          "path": "content/levels/awakening/01_creche/awakening_creche_foreground_960x704.png",
+          "frames": 1,
+          "frame_size": [
+            960,
+            704
+          ],
+          "sha256": "72c0daa2b9b64cf71e17264a16277c4fd4a5a31683b3dd431fb8fbd502d74cac",
+          "provenance": "authored",
+          "source_asset": null
         }
       }
     },
@@ -4091,6 +4112,27 @@
             960
           ],
           "sha256": "b9816bcf3b6b6e11fcc655d3113f2621ce1b3c3d6bfce3f3932c8e91a30aa97c",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "foreground::omni": {
+          "state_id": "foreground",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_ambulatory",
+            "backdrop",
+            "foreground",
+            "display",
+            "foreground",
+            "omni"
+          ],
+          "path": "content/levels/awakening/02_ambulatory/awakening_ambulatory_foreground_1152x960.png",
+          "frames": 1,
+          "frame_size": [
+            1152,
+            960
+          ],
+          "sha256": "3abd2b03761adcc39ee57c69542064823e857e792678c407ec1f1efdb819d58d",
           "provenance": "authored",
           "source_asset": null
         }
@@ -4119,6 +4161,27 @@
           "sha256": "a97c7f5f3a89e247d0f501959ef2d9636e29dd13a33ae12d32d0bedd20c93311",
           "provenance": "authored",
           "source_asset": null
+        },
+        "foreground::omni": {
+          "state_id": "foreground",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_attestation",
+            "backdrop",
+            "foreground",
+            "display",
+            "foreground",
+            "omni"
+          ],
+          "path": "content/levels/awakening/03_attestation/awakening_attestation_foreground_832x928.png",
+          "frames": 1,
+          "frame_size": [
+            832,
+            928
+          ],
+          "sha256": "7ae43e487a49b1113d8f00420817d143bfbd826d00d5040127e0f73abcdd3c94",
+          "provenance": "authored",
+          "source_asset": null
         }
       }
     },
@@ -4145,6 +4208,27 @@
           "sha256": "d3e76199fd80616fd7da630493ddf05e3ef26804d375d1f1d4d7cd121bcdcf6f",
           "provenance": "authored",
           "source_asset": null
+        },
+        "foreground::omni": {
+          "state_id": "foreground",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_locker_reliquary",
+            "backdrop",
+            "foreground",
+            "display",
+            "foreground",
+            "omni"
+          ],
+          "path": "content/levels/awakening/04_locker_reliquary/awakening_locker_reliquary_foreground_704x704.png",
+          "frames": 1,
+          "frame_size": [
+            704,
+            704
+          ],
+          "sha256": "7f0f2a57bcbf3d3fc4dc861cd5d7af47927515c17137bee22cbd31b9adc7dab8",
+          "provenance": "authored",
+          "source_asset": null
         }
       }
     },
@@ -4169,6 +4253,27 @@
             1216
           ],
           "sha256": "df0825600d5f74aea0a41b6ca514951e66dc51d1e5b9dd26817d18a0989eedfa",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "foreground::omni": {
+          "state_id": "foreground",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_dust_lung",
+            "backdrop",
+            "foreground",
+            "display",
+            "foreground",
+            "omni"
+          ],
+          "path": "content/levels/awakening/05_dust_lung/awakening_dust_lung_foreground_1216x1216.png",
+          "frames": 1,
+          "frame_size": [
+            1216,
+            1216
+          ],
+          "sha256": "3d99660f18d5355cc3ce2d28902591adbbf86ded2ccdf981f7a7025b0b780bd7",
           "provenance": "authored",
           "source_asset": null
         }

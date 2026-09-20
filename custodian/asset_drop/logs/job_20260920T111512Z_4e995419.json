@@ -1,0 +1,44 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260920T111512Z_4e995419",
+  "timestamp": "2026-09-20T11:15:12.449741+00:00",
+  "family": "awakening_creche_environment",
+  "kind": "backdrop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/awakening_creche_environment/foreground.png",
+      "sha256": "72c0daa2b9b64cf71e17264a16277c4fd4a5a31683b3dd431fb8fbd502d74cac"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "foreground",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_creche",
+        "backdrop",
+        "foreground",
+        "display",
+        "foreground",
+        "omni"
+      ],
+      "path": "content/levels/awakening/01_creche/awakening_creche_foreground_960x704.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "72c0daa2b9b64cf71e17264a16277c4fd4a5a31683b3dd431fb8fbd502d74cac",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}
