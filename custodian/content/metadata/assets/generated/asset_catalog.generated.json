@@ -8064,6 +8064,53 @@
           "source_asset": null
         }
       }
+    },
+    "awakening_late_service_environment": {
+      "kind": "backdrop",
+      "assets": {
+        "foreground::omni": {
+          "state_id": "foreground",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_late_service",
+            "backdrop",
+            "foreground",
+            "display",
+            "foreground",
+            "omni"
+          ],
+          "path": "content/levels/awakening/09_late_service/awakening_late_service_foreground_704x768.png",
+          "frames": 1,
+          "frame_size": [
+            704,
+            768
+          ],
+          "sha256": "4a1d32d635de267aca16e257d740563c3c866371abecd3b8745765f7f8d0b147",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "underlay::omni": {
+          "state_id": "underlay",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_late_service",
+            "backdrop",
+            "background",
+            "display",
+            "underlay",
+            "omni"
+          ],
+          "path": "content/levels/awakening/09_late_service/awakening_late_service_underlay_704x768.png",
+          "frames": 1,
+          "frame_size": [
+            704,
+            768
+          ],
+          "sha256": "561843ce53a3c7dbffb45bb5f5e4625dc1ed3967cb270e70784a4a50c0ebb8aa",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
     }
   }
 }

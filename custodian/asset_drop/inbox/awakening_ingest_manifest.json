@@ -1,0 +1,17 @@
+{
+  "schema": "custodian.awakening_ingest.v1",
+  "generated_from": "live Asset V2 catalog and family contracts",
+  "families": {
+    "awakening_creche_console": {"states": {"idle": {"size": [128, 128], "frames": 1, "status": "runtime_verified"}}},
+    "awakening_creche_console_activation_fx": {"states": {"activate": {"size": [1024, 128], "frames": 8, "status": "runtime_verified"}}},
+    "awakening_creche_fixtures": {"states": {"alcove_closed": {"size": [128, 192], "frames": 1, "status": "runtime_verified"}, "alcove_broken": {"size": [128, 192], "frames": 1, "status": "runtime_verified"}}, "missing": ["alcove_fused", "alcove_empty", "wall_of_seals", "relic_table", "authority_inscription"]},
+    "awakening_creche_recovery_alcove": {"states": {"idle": {"size": [192, 256], "frames": 1, "status": "runtime_verified"}, "wake": {"size": [1536, 256], "frames": 8, "status": "runtime_verified"}}},
+    "awakening_custodian_approach_environment": {"states": {"underlay": {"size": [1024, 864], "frames": 1, "status": "runtime_verified"}, "foreground": {"size": [1024, 864], "frames": 1, "status": "runtime_verified"}}},
+    "awakening_designation_locker": {"states": {"closed": {"size": [128, 160], "frames": 1, "status": "runtime_verified"}, "authorize_open": {"size": [1024, 160], "frames": 8, "status": "runtime_verified"}, "open_loaded": {"size": [128, 160], "frames": 1, "status": "runtime_verified"}, "empty": {"size": [128, 160], "frames": 1, "status": "runtime_verified"}}},
+    "awakening_dust_lung_lift": {"states": {"idle": {"size": [192, 256], "frames": 1, "status": "runtime_verified"}}},
+    "gate_of_dust": {"states": {"body_idle_sealed": {"size": [768, 512], "frames": 1, "status": "runtime_verified"}, "west_pylon": {"size": [256, 512], "frames": 1, "status": "runtime_verified"}, "east_pylon": {"size": [256, 512], "frames": 1, "status": "runtime_verified"}, "sealed_aperture": {"size": [512, 512], "frames": 1, "status": "runtime_verified"}, "rest_threshold": {"size": [128, 160], "frames": 1, "status": "runtime_verified"}}},
+    "awakening_gate_plaza_environment": {"states": {"underlay": {"size": [1536, 768], "frames": 1, "status": "runtime_verified"}, "foreground": {"size": [1536, 768], "frames": 1, "status": "runtime_verified"}}},
+    "awakening_late_service_environment": {"states": {"underlay": {"size": [704, 768], "frames": 1, "status": "runtime_verified"}, "foreground": {"size": [704, 768], "frames": 1, "status": "runtime_verified"}}},
+    "awakening_undergate_environment": {"states": {"underlay": {"size": [896, 1216], "frames": 1, "status": "runtime_verified"}, "foreground": {"size": [896, 1216], "frames": 1, "status": "runtime_verified"}}}
+  }
+}

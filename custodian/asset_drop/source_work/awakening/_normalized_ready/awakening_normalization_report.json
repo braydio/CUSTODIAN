@@ -1,0 +1,38 @@
+{
+  "family": "awakening_late_service_environment",
+  "items": [
+    {
+      "family": "awakening_late_service_environment",
+      "state": "underlay",
+      "source": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/asset_drop/source_work/awakening/late_service/late_service_underlay.png",
+      "normalized": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/asset_drop/source_work/awakening/_normalized_ready/awakening_late_service_environment/underlay.png",
+      "target": [
+        704,
+        768
+      ],
+      "final": [
+        704,
+        768
+      ],
+      "mode": "pair",
+      "status": "ok"
+    },
+    {
+      "family": "awakening_late_service_environment",
+      "state": "foreground",
+      "source": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/asset_drop/source_work/awakening/late_service/late_service_foreground.png",
+      "normalized": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/asset_drop/source_work/awakening/_normalized_ready/awakening_late_service_environment/foreground.png",
+      "target": [
+        704,
+        768
+      ],
+      "final": [
+        704,
+        768
+      ],
+      "mode": "pair",
+      "status": "ok"
+    }
+  ],
+  "warnings": []
+}

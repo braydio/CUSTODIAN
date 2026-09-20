@@ -1,0 +1,67 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260920T075617Z_c21e6fe6",
+  "timestamp": "2026-09-20T07:56:17.738920+00:00",
+  "family": "awakening_late_service_environment",
+  "kind": "backdrop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/awakening_late_service_environment/foreground.png",
+      "sha256": "4a1d32d635de267aca16e257d740563c3c866371abecd3b8745765f7f8d0b147"
+    },
+    {
+      "path": "asset_drop/inbox/awakening_late_service_environment/underlay.png",
+      "sha256": "561843ce53a3c7dbffb45bb5f5e4625dc1ed3967cb270e70784a4a50c0ebb8aa"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "foreground",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_late_service",
+        "backdrop",
+        "foreground",
+        "display",
+        "foreground",
+        "omni"
+      ],
+      "path": "content/levels/awakening/09_late_service/awakening_late_service_foreground_704x768.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "4a1d32d635de267aca16e257d740563c3c866371abecd3b8745765f7f8d0b147",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "underlay",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_late_service",
+        "backdrop",
+        "background",
+        "display",
+        "underlay",
+        "omni"
+      ],
+      "path": "content/levels/awakening/09_late_service/awakening_late_service_underlay_704x768.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "561843ce53a3c7dbffb45bb5f5e4625dc1ed3967cb270e70784a4a50c0ebb8aa",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}
