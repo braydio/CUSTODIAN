@@ -72,6 +72,47 @@ All siblings in a tier run; a bad tier skips every higher tier. Individual comma
 debugging. Moment entries run with capture mode `none`; richer evidence remains
 an explicit `run_moment.py` decision.
 
+## Resource Budget Before Broad Sweeps
+
+Every `godot_script` entry in the manifest launches its own headless Godot
+process. A single `--test <id>` is one process; `--tier actor` is roughly fifty
+in sequence, and `--changed` is however many tests own the changed files. A full
+`sync_operator_runtime_assets.py` run plus a Godot `--import` is heavier still,
+because it rewrites and reimports the whole Operator sheet set.
+
+Broad sweeps are expected and fine to run. Check free memory first, so a sweep
+does not land on a machine that is already loaded:
+
+```bash
+free -h | head -2
+```
+
+Run the sweep when the `available` column has comfortable headroom. If it does
+not, find out what is holding memory before starting another Godot fleet:
+
+```bash
+pgrep -af 'godot|run_validation|run_moment'
+```
+
+Practices that keep a long session cheap without giving up coverage:
+
+- Iterate with `--test <id>` on the gate you are actually changing. Spend the
+  broad `--changed` and `--tier` sweeps on verifying finished work.
+- Run one sweep at a time. Do not start a tier run in the background while other
+  Godot work is in flight; sequential runs of the same suite are cheaper than
+  overlapping ones and far easier to attribute.
+- Sample a suspected flake with the single-test form in a loop, never by
+  re-running the whole tier to observe one test.
+- After a sweep, confirm nothing survived it. A killed or timed-out run can
+  leave a headless Godot process holding memory:
+
+```bash
+pgrep -af godot || echo "clear"
+```
+
+- Prefer `--json` for machine-readable results instead of re-running a suite to
+  read its output again.
+
 ## Route Traversal V1
 
 From `custodian/`, run the complete directed-route suite:
@@ -95,6 +136,7 @@ Prefer RTK subcommands for compact output when they support the command shape. R
 - Generic runtime-ready asset intake: run the persistent drop router in dry-run mode before apply.
 - Asset Pipeline V2.1: run `python3 custodian/tools/validation/asset_pipeline_v2_smoke.py` and `python3 custodian/tools/validation/asset_pipeline_v21_production_smoke.py`; focused schema, plan, ingest, replacement, transaction, status, and backend-delegation entrypoints sit beside them. For Pursuit Frame intake changes, also run `python3 custodian/tools/validation/pursuit_frame_asset_family_smoke.py`.
 - Tile pipeline change: run Python syntax checks plus the relevant tile generator command.
+- Broad sweep (`--tier`, `--changed` over a wide change, full asset sync): check `free -h` first and run one at a time. See Resource Budget Before Broad Sweeps.
 - Commit/staging task: inspect status with RTK, but do not stage or commit without explicit user approval.
 
 ## Common Commands

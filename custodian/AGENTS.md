@@ -87,6 +87,14 @@ readability, camera composition, or game feel.
    explicitly; do not invoke every suggestion or use `--execute-suggested`
    without reviewing the matched paths and reasons.
 
+   This is a resource rule as much as a signal-to-noise one. Each selected
+   scenario and each `godot_script` validation entry launches its own headless
+   Godot process, so a wide selection is a fleet of them. Check `free -h` before
+   a broad sweep, run one sweep at a time rather than overlapping them, and
+   confirm with `pgrep -af godot` that an interrupted run left nothing behind.
+   See Resource Budget Before Broad Sweeps in
+   `custodian/docs/ai_context/VALIDATION_RECIPES.md`.
+
 3. Use:
 
    * `--capture-mode none` for deterministic assertions and fingerprints;

@@ -29,6 +29,9 @@ Repository-root path equivalents used by the local primer are:
 - current state/context/index: `custodian/docs/ai_context/`
 - active runtime: `custodian/game/`, `custodian/content/`, and `custodian/project.godot`
 - validation: `custodian/docs/ai_context/VALIDATION_RECIPES.md` and `custodian/tools/validation/`
+- validation resource cost: broad sweeps launch one headless Godot process per test
+  (`--tier actor` is roughly fifty). Check `free -h` before one and run a single sweep at
+  a time; see Resource Budget Before Broad Sweeps in `VALIDATION_RECIPES.md`.
 - active project doctrine: `design/00_meta/MASTER_DESIGN_DOCTRINE.md`
 - deterministic micro-playtest review: route through `custodian/AGENTS.md`,
   `design/02_features/debug_ui/MOMENT_FORGE_SYSTEM.md`, and the Moment Forge
