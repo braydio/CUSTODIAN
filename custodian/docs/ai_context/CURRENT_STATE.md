@@ -90,13 +90,24 @@ the Operator `melee_1h_heavy` source profile. They are source assets pending the
 runtime migration, not proof of a completed consumer cutover. The existing
 builder does not yet consume the new timing sidecars.
 
-`OperatorAnimationSelector` is implemented and independently smoke-tested but
-not yet wired into gameplay. Its tests cover exact E/N, SOUTH substitution,
-empty clips, missing identities, exact-only OMNI, owner/profile/group/layer
-isolation, and fallback counters/events. Remaining work includes the full
-dynamic-art inventory, strict schema split, runtime sync/manifest/resource,
-all actor/combat/state/weapon consumers, Workbench publication, and bridge
-deletion. The authority document tracks the remaining acceptance gates.
+`OperatorAnimationSelector` is the live selection authority for the renderers
+that have been cut over. C2a-R1 (`modular_sidearm_sprite`), C2a-R2
+(`modular_upper_fx_sprite`) and C2a-R3 (the `ModularLowerBodySprite` /
+`ModularUpperBodySprite` pair) all bind the one generated runtime SpriteFrames
+and resolve semantic identities through the selector at runtime; each has a
+registered acceptance gate. Its own smoke still covers exact E/N, SOUTH
+substitution, empty clips, missing identities, exact-only OMNI,
+owner/profile/group/layer isolation, and fallback counters/events.
+
+`animated_sprite` is the remaining large renderer and is still bound to the
+compatibility SpriteFrames. Its cutover evidence pass is complete
+(`reports/operator/operator_animated_sprite_cutover_evidence.md`: 135 clips,
+85 retired, 37 proven canonical, 13 open authoring decisions), and its
+acceptance gate is seeded at
+`tools/validation/operator_animated_sprite_canonical_smoke.gd`. Remaining work
+is those authoring decisions, the rebind itself, the smaller trailing
+renderers, Workbench publication, and bridge deletion. The authority document
+tracks the remaining acceptance gates.
 
 ## Combat Tempo + Impact Feedback Pass (2026-09-06)
 

@@ -2,13 +2,13 @@
   "schema": "custodian.operator_animated_sprite_cutover_evidence.v1",
   "scope": "animated_sprite only; melee and weapon overlays are separate slices",
   "counts": {
-    "AUTHORING_DECISION": 14,
-    "PROVEN_CANONICAL": 36,
+    "AUTHORING_DECISION": 13,
+    "PROVEN_CANONICAL": 37,
     "RETIRED": 85
   },
   "live_counts": {
-    "AUTHORING_DECISION": 14,
-    "PROVEN_CANONICAL": 36
+    "AUTHORING_DECISION": 13,
+    "PROVEN_CANONICAL": 37
   },
   "data_driven_bases": {
     "_get_weapon_animation_name(...unarmed_light_hitreact...)": "OperatorWeaponDefinition animation_map; the damage-reaction base is a weapon-definition field, not a literal in the actor",
@@ -57,7 +57,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "attack_right_combo",
@@ -72,7 +73,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "attack_up",
@@ -94,7 +96,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "death",
@@ -136,7 +139,8 @@
         "reaction/bodyslam_knockdown_01",
         "reaction/death_01",
         "reaction/light_hitreact_01"
-      ]
+      ],
+      "promoted": false
     },
     {
       "clip": "default",
@@ -151,7 +155,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "hurt",
@@ -173,7 +178,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "idle_alternative",
@@ -195,7 +201,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "idle_down",
@@ -217,7 +224,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "idle_long",
@@ -259,7 +267,8 @@
         "reaction/bodyslam_knockdown_01",
         "reaction/death_01",
         "reaction/light_hitreact_01"
-      ]
+      ],
+      "promoted": false
     },
     {
       "clip": "idle_right",
@@ -301,7 +310,8 @@
         "reaction/bodyslam_knockdown_01",
         "reaction/death_01",
         "reaction/light_hitreact_01"
-      ]
+      ],
+      "promoted": false
     },
     {
       "clip": "idle_up",
@@ -323,7 +333,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "melee_2h_block_enter",
@@ -345,7 +356,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "melee_2h_block_exit",
@@ -367,7 +379,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "melee_2h_block_hold",
@@ -389,7 +402,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "melee_2h_fast_1_right",
@@ -423,7 +437,8 @@
         "defense/block_enter_01",
         "defense/block_exit_01",
         "defense/block_hold_01"
-      ]
+      ],
+      "promoted": false
     },
     {
       "clip": "melee_2h_fast_2_right",
@@ -457,7 +472,8 @@
         "defense/block_enter_01",
         "defense/block_exit_01",
         "defense/block_hold_01"
-      ]
+      ],
+      "promoted": false
     },
     {
       "clip": "melee_2h_fast_down",
@@ -479,7 +495,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "melee_2h_fast_down_left",
@@ -501,7 +518,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "melee_2h_fast_down_right",
@@ -523,7 +541,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "melee_2h_fast_left",
@@ -545,7 +564,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "melee_2h_fast_recovery",
@@ -580,7 +600,8 @@
         "defense/block_enter_01",
         "defense/block_exit_01",
         "defense/block_hold_01"
-      ]
+      ],
+      "promoted": false
     },
     {
       "clip": "melee_2h_fast_right",
@@ -609,7 +630,8 @@
         "attack/fast_02",
         "attack/fast_03",
         "cosmetic/melee_1h"
-      ]
+      ],
+      "promoted": false
     },
     {
       "clip": "melee_2h_fast_up",
@@ -631,7 +653,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "melee_2h_fast_up_left",
@@ -653,7 +676,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "melee_2h_fast_up_right",
@@ -675,7 +699,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "melee_2h_heavy",
@@ -717,7 +742,8 @@
         "reaction/bodyslam_knockdown_01",
         "reaction/death_01",
         "reaction/light_hitreact_01"
-      ]
+      ],
+      "promoted": false
     },
     {
       "clip": "melee_2h_heavy_anticipation",
@@ -752,7 +778,8 @@
         "defense/block_enter_01",
         "defense/block_exit_01",
         "defense/block_hold_01"
-      ]
+      ],
+      "promoted": false
     },
     {
       "clip": "melee_2h_heavy_right",
@@ -794,7 +821,8 @@
         "reaction/bodyslam_knockdown_01",
         "reaction/death_01",
         "reaction/light_hitreact_01"
-      ]
+      ],
+      "promoted": false
     },
     {
       "clip": "melee_2h_stance",
@@ -816,7 +844,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "operator_dodge_chain_link_down",
@@ -838,7 +867,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "operator_dodge_chain_link_left",
@@ -860,7 +890,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "operator_dodge_chain_link_right",
@@ -882,7 +913,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "operator_dodge_charge_windup_down",
@@ -904,7 +936,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "operator_dodge_charge_windup_left",
@@ -926,7 +959,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "operator_dodge_charge_windup_right",
@@ -948,7 +982,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "operator_dodge_full_north",
@@ -970,7 +1005,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "operator_dodge_full_south",
@@ -992,7 +1028,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "ranged_2h_fire",
@@ -1014,7 +1051,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "ranged_2h_reload",
@@ -1034,15 +1072,13 @@
         "profile": "ranged_2h",
         "sheet": "res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/legacy_operator_body_ranged_2h_reloading/operator__full_body__ranged_2h__cosmetic__legacy_operator_body_ranged_2h_reloading__omni__1f__384x192.png"
       },
-      "canonical_identity": "ranged_2h/cosmetic/legacy_operator_body_ranged_2h_reloading/omni/full_body",
+      "canonical_identity": "ranged_2h/cosmetic/reload_01/omni/full_body",
       "canonical_published": false,
       "timing_preserved": false,
-      "disposition": "AUTHORING_DECISION",
-      "why": "draws art published only under a legacy action id; it has no canonical identity to migrate to without an authoring decision",
-      "canonical_candidates": [
-        "cosmetic/fire_walk_01",
-        "locomotion/run_01"
-      ]
+      "disposition": "PROVEN_CANONICAL",
+      "why": "promoted byte-for-byte into ranged_2h/cosmetic/reload_01/omni/full_body -- row 1 of the 384x192 sheet, which is exactly the region the live clip slices (y=0, four 96x96 cells); verified pixel-identical to the live clip frame for frame at 4f/10 FPS/non-loop. Row 2 is the legacy rifle overlay and is deliberately not published: the target is a static socketed carbine, not animated weapon SpriteFrames. The 8-frame operator_ranged_body_core_v1 candidate is a post-R4 art upgrade under this same identity, not part of preservation.",
+      "canonical_candidates": [],
+      "promoted": true
     },
     {
       "clip": "ranged_2h_run_left",
@@ -1066,7 +1102,8 @@
       "timing_preserved": true,
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "ranged_2h_run_right",
@@ -1088,7 +1125,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "ranged_2h_stance",
@@ -1110,7 +1148,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "run_down",
@@ -1132,7 +1171,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "run_down_left",
@@ -1154,7 +1194,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "run_down_right",
@@ -1176,7 +1217,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "run_left",
@@ -1198,7 +1240,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "run_right",
@@ -1241,7 +1284,8 @@
         "reaction/bodyslam_knockdown_01",
         "reaction/death_01",
         "reaction/light_hitreact_01"
-      ]
+      ],
+      "promoted": false
     },
     {
       "clip": "run_up",
@@ -1263,7 +1307,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "run_up_left",
@@ -1285,7 +1330,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "run_up_right",
@@ -1307,7 +1353,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_arrival",
@@ -1329,7 +1376,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_arrival_down",
@@ -1351,7 +1399,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_attack_fast",
@@ -1373,7 +1422,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_attack_fast_down",
@@ -1395,7 +1445,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_attack_fast_left",
@@ -1417,7 +1468,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_attack_fast_recovery",
@@ -1441,7 +1493,8 @@
       "timing_preserved": true,
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_attack_fast_recovery_down",
@@ -1465,7 +1518,8 @@
       "timing_preserved": true,
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_attack_fast_recovery_down_left",
@@ -1489,7 +1543,8 @@
       "timing_preserved": true,
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_attack_fast_recovery_down_right",
@@ -1513,7 +1568,8 @@
       "timing_preserved": true,
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_attack_fast_recovery_left",
@@ -1538,7 +1594,8 @@
       "timing_preserved": true,
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_attack_fast_recovery_right",
@@ -1562,7 +1619,8 @@
       "timing_preserved": true,
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_attack_fast_recovery_up",
@@ -1586,7 +1644,8 @@
       "timing_preserved": true,
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_attack_fast_recovery_up_left",
@@ -1610,7 +1669,8 @@
       "timing_preserved": true,
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_attack_fast_recovery_up_right",
@@ -1634,7 +1694,8 @@
       "timing_preserved": true,
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_attack_fast_right",
@@ -1656,7 +1717,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_attack_fast_up",
@@ -1678,7 +1740,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_attack_fast_windup",
@@ -1702,7 +1765,8 @@
       "timing_preserved": true,
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_attack_fast_windup_down",
@@ -1726,7 +1790,8 @@
       "timing_preserved": true,
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_attack_fast_windup_down_left",
@@ -1750,7 +1815,8 @@
       "timing_preserved": true,
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_attack_fast_windup_down_right",
@@ -1774,7 +1840,8 @@
       "timing_preserved": true,
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_attack_fast_windup_left",
@@ -1798,7 +1865,8 @@
       "timing_preserved": true,
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_attack_fast_windup_right",
@@ -1822,7 +1890,8 @@
       "timing_preserved": true,
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_attack_fast_windup_up",
@@ -1846,7 +1915,8 @@
       "timing_preserved": true,
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_attack_fast_windup_up_left",
@@ -1870,7 +1940,8 @@
       "timing_preserved": true,
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_attack_fast_windup_up_right",
@@ -1894,7 +1965,8 @@
       "timing_preserved": true,
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_attack_heavy",
@@ -1916,7 +1988,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_attack_heavy_down",
@@ -1938,7 +2011,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_attack_heavy_left",
@@ -1960,7 +2034,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_attack_heavy_right",
@@ -1982,7 +2057,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_attack_heavy_up",
@@ -2004,7 +2080,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_bodyslam_knockdown_left",
@@ -2026,7 +2103,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_bodyslam_knockdown_right",
@@ -2048,7 +2126,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_death",
@@ -2070,7 +2149,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_dodge_fast_attack_left",
@@ -2092,7 +2172,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_dodge_fast_attack_right",
@@ -2114,7 +2195,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_fast_strike",
@@ -2136,7 +2218,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_fast_strike_down",
@@ -2158,7 +2241,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_fast_strike_down_left",
@@ -2180,7 +2264,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_fast_strike_down_right",
@@ -2202,7 +2287,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_fast_strike_left",
@@ -2224,7 +2310,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_fast_strike_right",
@@ -2246,7 +2333,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_fast_strike_up",
@@ -2268,7 +2356,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_fast_strike_up_left",
@@ -2290,7 +2379,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_fast_strike_up_right",
@@ -2312,7 +2402,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_idle",
@@ -2334,7 +2425,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_idle_down",
@@ -2356,7 +2448,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_idle_down_left",
@@ -2378,7 +2471,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_idle_down_right",
@@ -2400,7 +2494,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_idle_left",
@@ -2422,7 +2517,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_idle_right",
@@ -2444,7 +2540,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_idle_up",
@@ -2466,7 +2563,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_idle_up_left",
@@ -2488,7 +2586,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_idle_up_right",
@@ -2510,7 +2609,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_light_hitreact",
@@ -2532,7 +2632,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_light_hitreact_down",
@@ -2554,7 +2655,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_run_down",
@@ -2578,7 +2680,8 @@
       "timing_preserved": false,
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_run_down_left",
@@ -2602,7 +2705,8 @@
       "timing_preserved": false,
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_run_down_right",
@@ -2626,7 +2730,8 @@
       "timing_preserved": false,
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_run_left",
@@ -2650,7 +2755,8 @@
       "timing_preserved": false,
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_run_right",
@@ -2674,7 +2780,8 @@
       "timing_preserved": false,
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_run_up",
@@ -2698,7 +2805,8 @@
       "timing_preserved": false,
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_run_up_left",
@@ -2722,7 +2830,8 @@
       "timing_preserved": false,
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_run_up_right",
@@ -2746,7 +2855,8 @@
       "timing_preserved": false,
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_stance",
@@ -2768,7 +2878,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_stance_left",
@@ -2790,7 +2901,8 @@
       "timing_preserved": true,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_stance_right",
@@ -2812,7 +2924,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_walk",
@@ -2836,7 +2949,8 @@
       "timing_preserved": false,
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_walk_down",
@@ -2860,7 +2974,8 @@
       "timing_preserved": false,
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_walk_down_left",
@@ -2884,7 +2999,8 @@
       "timing_preserved": false,
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_walk_down_right",
@@ -2908,7 +3024,8 @@
       "timing_preserved": false,
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_walk_left",
@@ -2932,7 +3049,8 @@
       "timing_preserved": false,
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_walk_right",
@@ -2956,7 +3074,8 @@
       "timing_preserved": false,
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_walk_up",
@@ -2980,7 +3099,8 @@
       "timing_preserved": false,
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_walk_up_left",
@@ -3004,7 +3124,8 @@
       "timing_preserved": false,
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "unarmed_walk_up_right",
@@ -3028,7 +3149,8 @@
       "timing_preserved": false,
       "disposition": "PROVEN_CANONICAL",
       "why": "art provenance maps to a published canonical identity",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "walk_down",
@@ -3043,7 +3165,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "walk_down_default",
@@ -3086,7 +3209,8 @@
         "reaction/bodyslam_knockdown_01",
         "reaction/death_01",
         "reaction/light_hitreact_01"
-      ]
+      ],
+      "promoted": false
     },
     {
       "clip": "walk_down_left",
@@ -3108,7 +3232,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "walk_down_right",
@@ -3130,7 +3255,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "walk_east",
@@ -3152,7 +3278,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "walk_left",
@@ -3174,7 +3301,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "walk_right",
@@ -3216,7 +3344,8 @@
         "reaction/bodyslam_knockdown_01",
         "reaction/death_01",
         "reaction/light_hitreact_01"
-      ]
+      ],
+      "promoted": false
     },
     {
       "clip": "walk_up",
@@ -3238,7 +3367,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "walk_up_left",
@@ -3260,7 +3390,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     },
     {
       "clip": "walk_up_right",
@@ -3282,7 +3413,8 @@
       "timing_preserved": false,
       "disposition": "RETIRED",
       "why": "no live consumer reaches this clip",
-      "canonical_candidates": []
+      "canonical_candidates": [],
+      "promoted": false
     }
   ]
 }

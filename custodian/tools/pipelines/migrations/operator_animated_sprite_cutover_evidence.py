@@ -59,6 +59,23 @@ DATA_DRIVEN_BASES = {
         "per weapon rather than named in the actor",
 }
 
+#: Legacy action ids whose live body art has been promoted, byte-for-byte, into a
+#: canonical semantic identity. A promotion preserves behaviour: same pixels, same
+#: frame count, same clock. It is not an art change, which is why the newer
+#: replacement candidates for these actions stay out of the cutover.
+LEGACY_PROMOTIONS = {
+    "legacy_operator_body_ranged_2h_reloading": {
+        "canonical": "ranged_2h/cosmetic/reload_01/omni/full_body",
+        "proof": "row 1 of the 384x192 sheet, which is exactly the region the live "
+                 "clip slices (y=0, four 96x96 cells); verified pixel-identical to "
+                 "the live clip frame for frame at 4f/10 FPS/non-loop. Row 2 is the "
+                 "legacy rifle overlay and is deliberately not published: the target "
+                 "is a static socketed carbine, not animated weapon SpriteFrames. "
+                 "The 8-frame operator_ranged_body_core_v1 candidate is a post-R4 "
+                 "art upgrade under this same identity, not part of preservation.",
+    },
+}
+
 #: Consumers outside the actor that read this renderer's animation name or frame.
 EXTERNAL_CONSUMERS = {
     "instant_replay_recorder.gd": {
@@ -176,6 +193,11 @@ def main() -> int:
         timing = baseline.get(identity)
         if not consumers:
             disposition, why = "RETIRED", "no live consumer reaches this clip"
+        elif legacy_art and info["art"].get("action") in LEGACY_PROMOTIONS:
+            promotion = LEGACY_PROMOTIONS[info["art"]["action"]]
+            identity = promotion["canonical"]
+            disposition, why = "PROVEN_CANONICAL", (
+                "promoted byte-for-byte into %s -- %s" % (identity, promotion["proof"]))
         elif legacy_art:
             disposition, why = "AUTHORING_DECISION", (
                 "draws art published only under a legacy action id; it has no canonical "
@@ -201,6 +223,7 @@ def main() -> int:
             "why": why,
             "canonical_candidates": sorted(candidates.get(info["art"].get("profile", ""), []))
                                      if disposition == "AUTHORING_DECISION" else [],
+            "promoted": info["art"].get("action") in LEGACY_PROMOTIONS,
         })
 
     counts: dict[str, int] = defaultdict(int)

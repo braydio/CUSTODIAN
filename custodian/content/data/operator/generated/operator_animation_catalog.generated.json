@@ -11478,6 +11478,41 @@
           1.0
         ]
       }
+    },
+    "ranged_2h/cosmetic/reload_01/omni": {
+      "profile": "ranged_2h",
+      "group": "cosmetic",
+      "action": "reload_01",
+      "direction": "omni",
+      "layers": {
+        "full_body": {
+          "path": "res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/reload_01/operator__full_body__ranged_2h__cosmetic__reload_01__omni__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ],
+          "fps": 10.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "timing": {
+        "clock_layer": "full_body",
+        "fps": 10.0,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
     }
   },
   "weapons": {

@@ -410,6 +410,19 @@
     },
     {
       "profile": "ranged_2h",
+      "group": "cosmetic",
+      "action": "reload_01",
+      "status": "DORMANT",
+      "reason": "Promoted byte-for-byte from row 1 of the legacy ranged_2h reloading sheet, which is exactly the region the live clip slices. The canonical identity is published and gated by operator_animated_sprite_canonical_smoke, but the consumer still plays legacy ranged_2h_reload until animated_sprite is rebound.",
+      "legacy_clips": [
+        "ranged_2h_reload"
+      ],
+      "legacy_clip_proof": {
+        "ranged_2h_reload": "PROMOTION"
+      }
+    },
+    {
+      "profile": "ranged_2h",
       "group": "locomotion",
       "action": "run_01",
       "status": "LIVE",
@@ -453,7 +466,7 @@
       "group": "attack",
       "action": "dodge_charge_windup_01",
       "status": "DORMANT",
-      "reason": "Dodge-charge windup presentation resolves from legacy production body frames (operator_dodge_charge_windup); no consumer references this canonical sheet. C2a authoring decision 2026-09-12: full eight-sector canonical coverage now exists. N/NE reuse the authored E strip, SE/SW reuse S, NW reuses W \u2014 a deliberate reuse of authored pixels recorded per-file in .expansion.json sidecars, not unique art and not a runtime fallback. Still DORMANT: the consumer resolves legacy production body frames until animated_sprite is rebound to the generated runtime SpriteFrames.",
+      "reason": "Dodge-charge windup presentation resolves from legacy production body frames (operator_dodge_charge_windup); no consumer references this canonical sheet. C2a authoring decision 2026-09-12: full eight-sector canonical coverage now exists. N/NE reuse the authored E strip, SE/SW reuse S, NW reuses W — a deliberate reuse of authored pixels recorded per-file in .expansion.json sidecars, not unique art and not a runtime fallback. Still DORMANT: the consumer resolves legacy production body frames until animated_sprite is rebound to the generated runtime SpriteFrames.",
       "directional_expansion": "tools/pipelines/migrations/operator_directional_expansion_map.json",
       "legacy_clips": [
         "operator_dodge_charge_windup"
@@ -555,7 +568,7 @@
       "group": "transition",
       "action": "dodge_chain_link_01",
       "status": "DORMANT",
-      "reason": "Dodge chain-link presentation resolves from legacy production body frames (operator_dodge_chain_link); no consumer references this canonical sheet. C2a authoring decision 2026-09-12: full eight-sector canonical coverage now exists. N/NE reuse the authored E strip, SE/SW reuse S, NW reuses W \u2014 a deliberate reuse of authored pixels recorded per-file in .expansion.json sidecars, not unique art and not a runtime fallback. Still DORMANT: the consumer resolves legacy production body frames until animated_sprite is rebound to the generated runtime SpriteFrames.",
+      "reason": "Dodge chain-link presentation resolves from legacy production body frames (operator_dodge_chain_link); no consumer references this canonical sheet. C2a authoring decision 2026-09-12: full eight-sector canonical coverage now exists. N/NE reuse the authored E strip, SE/SW reuse S, NW reuses W — a deliberate reuse of authored pixels recorded per-file in .expansion.json sidecars, not unique art and not a runtime fallback. Still DORMANT: the consumer resolves legacy production body frames until animated_sprite is rebound to the generated runtime SpriteFrames.",
       "directional_expansion": "tools/pipelines/migrations/operator_directional_expansion_map.json",
       "legacy_clips": [
         "operator_dodge_chain_link"
@@ -860,7 +873,7 @@
         "unarmed_parry_success_01": "A",
         "unarmed_parry_success_01_fx": "D"
       },
-      "open_authoring_question": "RESOLVED 2026-09-13 (C2a-R2). The legacy clip unarmed_parry_success_01_fx was mis-published \u2014 its west sourced parry_recovery_01 art and its east sourced interaction/success_01 \u2014 and is NOT preservation authority. Successful parry presents this action. interaction/success_01 is DORMANT_PENDING_INTERACTION_SUCCESS_CONTRACT and must never stand in for parry-success presentation. Authored e/w; the caller preserves the historical left/right selection (x < 0 -> w, otherwise e) as presentation policy, not as selector behaviour."
+      "open_authoring_question": "RESOLVED 2026-09-13 (C2a-R2). The legacy clip unarmed_parry_success_01_fx was mis-published — its west sourced parry_recovery_01 art and its east sourced interaction/success_01 — and is NOT preservation authority. Successful parry presents this action. interaction/success_01 is DORMANT_PENDING_INTERACTION_SUCCESS_CONTRACT and must never stand in for parry-success presentation. Authored e/w; the caller preserves the historical left/right selection (x < 0 -> w, otherwise e) as presentation policy, not as selector behaviour."
     },
     {
       "profile": "unarmed",
@@ -951,6 +964,20 @@
     {
       "profile": "unarmed",
       "group": "posture",
+      "action": "idle_ready_01",
+      "status": "DORMANT",
+      "reason": "C2a authoring decision 2026-09-20: art published by the unarmed posture skeleton ingest, runtime flow deliberately parked until after the animated_sprite cutover (C2a-R4). No consumer plays this identity yet."
+    },
+    {
+      "profile": "unarmed",
+      "group": "posture",
+      "action": "idle_relaxed_01",
+      "status": "DORMANT",
+      "reason": "C2a authoring decision 2026-09-20: art published by the unarmed posture skeleton ingest, runtime flow deliberately parked until after the animated_sprite cutover (C2a-R4). No consumer plays this identity yet."
+    },
+    {
+      "profile": "unarmed",
+      "group": "posture",
       "action": "stance_01",
       "status": "SUPERSEDED",
       "replacement": "unarmed/locomotion/idle_01"
@@ -1014,6 +1041,20 @@
       "action": "dodge_charge_release_01",
       "status": "DORMANT",
       "reason": "Dodge-charge gameplay signals exist but no code plays this presentation animation yet."
+    },
+    {
+      "profile": "unarmed",
+      "group": "transition",
+      "action": "ready_to_relaxed_01",
+      "status": "DORMANT",
+      "reason": "C2a authoring decision 2026-09-20: art published by the unarmed posture skeleton ingest, runtime flow deliberately parked until after the animated_sprite cutover (C2a-R4). No consumer plays this identity yet."
+    },
+    {
+      "profile": "unarmed",
+      "group": "transition",
+      "action": "relaxed_to_ready_01",
+      "status": "DORMANT",
+      "reason": "C2a authoring decision 2026-09-20: art published by the unarmed posture skeleton ingest, runtime flow deliberately parked until after the animated_sprite cutover (C2a-R4). No consumer plays this identity yet."
     }
   ]
 }

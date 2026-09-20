@@ -7,8 +7,8 @@ compatibility renderers and belong to their own later slices.
 
 | disposition | all clips | live only |
 |---|---|---|
-| AUTHORING_DECISION | 14 | 14 |
-| PROVEN_CANONICAL | 36 | 36 |
+| AUTHORING_DECISION | 13 | 13 |
+| PROVEN_CANONICAL | 37 | 37 |
 | RETIRED | 85 | 0 |
 
 ## Live clips
@@ -25,7 +25,7 @@ compatibility renderers and belong to their own later slices.
 | `melee_2h_heavy` | `unarmed/attack/legacy_operator_2h_heavy_3layer/omni/full_body` | NO | - | AUTHORING_DECISION |
 | `melee_2h_heavy_anticipation` | `melee_1h_heavy/attack/legacy_heavy_anticipation_body/omni/full_body` | NO | - | AUTHORING_DECISION |
 | `melee_2h_heavy_right` | `unarmed/attack/legacy_operator_2h_heavy_3layer/omni/full_body` | NO | - | AUTHORING_DECISION |
-| `ranged_2h_reload` | `ranged_2h/cosmetic/legacy_operator_body_ranged_2h_reloading/omni/full_body` | NO | - | AUTHORING_DECISION |
+| `ranged_2h_reload` | `ranged_2h/cosmetic/reload_01/omni/full_body` | NO | - | PROVEN_CANONICAL |
 | `ranged_2h_run_left` | `ranged_2h/locomotion/run_01/w/full_body` | yes | preserved | PROVEN_CANONICAL |
 | `run_right` | `unarmed/cosmetic/legacy_running_base/omni/full_body` | NO | - | AUTHORING_DECISION |
 | `unarmed_attack_fast_recovery` | `unarmed/attack/fast_recovery_01/e/full_body` | yes | preserved | PROVEN_CANONICAL |
@@ -86,7 +86,6 @@ the old pipeline's grouping rather than their semantics.
 | `melee_2h_heavy` | `legacy_operator_2h_heavy_3layer` | 7f @11.0 | `attack/dodge_fast_attack_01`, `attack/fast_01`, `attack/fast_recovery_01`, `attack/fast_strike_01`, `attack/fast_windup_01`, `attack/heavy_01`, `cosmetic/critical_execution_01`, `cosmetic/criticial_execution_01`, `cosmetic/falcon_reversal_01`, `defense/parry_miss_01`, `locomotion/idle_01`, `locomotion/run_01`, `locomotion/walk_01`, `posture/stance_01`, `reaction/bodyslam_knockdown_01`, `reaction/death_01`, `reaction/light_hitreact_01` |
 | `melee_2h_heavy_anticipation` | `legacy_heavy_anticipation_body` | 5f @11.0 | `attack/fast_01`, `attack/fast_02`, `attack/fast_03`, `attack/fast_recovery_01`, `attack/heavy_01`, `attack/heavy_windup_01`, `defense/block_enter_01`, `defense/block_exit_01`, `defense/block_hold_01` |
 | `melee_2h_heavy_right` | `legacy_operator_2h_heavy_3layer` | 7f @11.0 | `attack/dodge_fast_attack_01`, `attack/fast_01`, `attack/fast_recovery_01`, `attack/fast_strike_01`, `attack/fast_windup_01`, `attack/heavy_01`, `cosmetic/critical_execution_01`, `cosmetic/criticial_execution_01`, `cosmetic/falcon_reversal_01`, `defense/parry_miss_01`, `locomotion/idle_01`, `locomotion/run_01`, `locomotion/walk_01`, `posture/stance_01`, `reaction/bodyslam_knockdown_01`, `reaction/death_01`, `reaction/light_hitreact_01` |
-| `ranged_2h_reload` | `legacy_operator_body_ranged_2h_reloading` | 4f @10.0 | `cosmetic/fire_walk_01`, `locomotion/run_01` |
 | `run_right` | `legacy_running_base` | 16f @14.0 | `attack/dodge_fast_attack_01`, `attack/fast_01`, `attack/fast_recovery_01`, `attack/fast_strike_01`, `attack/fast_windup_01`, `attack/heavy_01`, `cosmetic/critical_execution_01`, `cosmetic/criticial_execution_01`, `cosmetic/falcon_reversal_01`, `defense/parry_miss_01`, `locomotion/idle_01`, `locomotion/run_01`, `locomotion/walk_01`, `posture/stance_01`, `reaction/bodyslam_knockdown_01`, `reaction/death_01`, `reaction/light_hitreact_01` |
 | `walk_down_default` | `legacy_walking_base` | 8f @10.0 | `attack/dodge_fast_attack_01`, `attack/fast_01`, `attack/fast_recovery_01`, `attack/fast_strike_01`, `attack/fast_windup_01`, `attack/heavy_01`, `cosmetic/critical_execution_01`, `cosmetic/criticial_execution_01`, `cosmetic/falcon_reversal_01`, `defense/parry_miss_01`, `locomotion/idle_01`, `locomotion/run_01`, `locomotion/walk_01`, `posture/stance_01`, `reaction/bodyslam_knockdown_01`, `reaction/death_01`, `reaction/light_hitreact_01` |
 | `walk_right` | `legacy_walking_base` | 8f @10.0 | `attack/dodge_fast_attack_01`, `attack/fast_01`, `attack/fast_recovery_01`, `attack/fast_strike_01`, `attack/fast_windup_01`, `attack/heavy_01`, `cosmetic/critical_execution_01`, `cosmetic/criticial_execution_01`, `cosmetic/falcon_reversal_01`, `defense/parry_miss_01`, `locomotion/idle_01`, `locomotion/run_01`, `locomotion/walk_01`, `posture/stance_01`, `reaction/bodyslam_knockdown_01`, `reaction/death_01`, `reaction/light_hitreact_01` |
