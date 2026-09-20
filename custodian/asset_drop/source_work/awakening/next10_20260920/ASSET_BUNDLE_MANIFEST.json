@@ -1,0 +1,238 @@
+{
+  "bundle": "CUSTODIAN Awakening next-10 required fixture batch",
+  "date": "2026-09-20",
+  "authority": {
+    "missing_asset_tracker": "REQUIRED_ASSETS.md",
+    "asset_manifest": "design/04_architecture/AWAKENING_ASSET_MANIFEST.md",
+    "pipeline": "Asset Pipeline V2"
+  },
+  "selection_note": "Zone foreground plates 01-05 remain major P0/P1 gaps, but require exact registration against existing underlays. This bundle therefore takes the next ten highest-value REQUIRED standalone fixture states that can be delivered safely without guessing scene registration.",
+  "current_art_status_snapshot": {
+    "zone_plates": "Underlays 01-05 published; zones 06-08 underlay+foreground published; remaining zone-plate gaps are foregrounds 01-05 and both Late Service plates.",
+    "creche_fixtures": "alcove_closed and alcove_broken already published; this bundle supplies the five remaining REQUIRED Cr\u00e8che fixture states.",
+    "ambulatory_fixtures": "This bundle supplies five of six REQUIRED Ambulatory fixture states; service_basin_b remains outstanding.",
+    "other_major_outstanding": "Attestation, Reliquary, Dust Lung, Undergate, Approach, Late Service fixture families; authority inlays; ruin decals; ambient Awakening FX; Late Service relay lamp."
+  },
+  "assets": [
+    {
+      "family": "awakening_creche_fixtures",
+      "family_schema": "custodian/content/metadata/assets/families/awakening_creche_fixtures.asset.json",
+      "kind": "world_prop",
+      "priority": "P1",
+      "state": "alcove_fused",
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "alcove_fused",
+      "direction": "omni",
+      "frames": 1,
+      "frame_size": [
+        128,
+        192
+      ],
+      "layout": "copy",
+      "format": "PNG RGBA",
+      "alpha": "true transparency",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_creche_fixtures/alcove_fused.png",
+      "expected_runtime_path": "custodian/content/sprites/environment/props/awakening/awakening_creche_fixtures/runtime/body/awakening_creche_fixtures__body__fixture__alcove_fused__omni__1f__128x192.png",
+      "sha256": "b7f4ba49c917e200a5c7a636275d482181f520d3197521f983a5cd7f026b3761"
+    },
+    {
+      "family": "awakening_creche_fixtures",
+      "family_schema": "custodian/content/metadata/assets/families/awakening_creche_fixtures.asset.json",
+      "kind": "world_prop",
+      "priority": "P1",
+      "state": "alcove_empty",
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "alcove_empty",
+      "direction": "omni",
+      "frames": 1,
+      "frame_size": [
+        128,
+        192
+      ],
+      "layout": "copy",
+      "format": "PNG RGBA",
+      "alpha": "true transparency",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_creche_fixtures/alcove_empty.png",
+      "expected_runtime_path": "custodian/content/sprites/environment/props/awakening/awakening_creche_fixtures/runtime/body/awakening_creche_fixtures__body__fixture__alcove_empty__omni__1f__128x192.png",
+      "sha256": "f60439af6cd604d9ee140f714664d29a22901ed0562d5105ce3680e2618ba5a7"
+    },
+    {
+      "family": "awakening_creche_fixtures",
+      "family_schema": "custodian/content/metadata/assets/families/awakening_creche_fixtures.asset.json",
+      "kind": "world_prop",
+      "priority": "P1",
+      "state": "wall_of_seals",
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "wall_of_seals",
+      "direction": "omni",
+      "frames": 1,
+      "frame_size": [
+        256,
+        192
+      ],
+      "layout": "copy",
+      "format": "PNG RGBA",
+      "alpha": "true transparency",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_creche_fixtures/wall_of_seals.png",
+      "expected_runtime_path": "custodian/content/sprites/environment/props/awakening/awakening_creche_fixtures/runtime/body/awakening_creche_fixtures__body__fixture__wall_of_seals__omni__1f__256x192.png",
+      "sha256": "907dd08416462ba72a358978e974c72ecfe34d16ce986825eb30da4f6bd2e698"
+    },
+    {
+      "family": "awakening_creche_fixtures",
+      "family_schema": "custodian/content/metadata/assets/families/awakening_creche_fixtures.asset.json",
+      "kind": "world_prop",
+      "priority": "P1",
+      "state": "relic_table",
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "relic_table",
+      "direction": "omni",
+      "frames": 1,
+      "frame_size": [
+        192,
+        128
+      ],
+      "layout": "copy",
+      "format": "PNG RGBA",
+      "alpha": "true transparency",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_creche_fixtures/relic_table.png",
+      "expected_runtime_path": "custodian/content/sprites/environment/props/awakening/awakening_creche_fixtures/runtime/body/awakening_creche_fixtures__body__fixture__relic_table__omni__1f__192x128.png",
+      "sha256": "0bd8791d9af094b41dbbc5297f4885041ad4760ca204dd053cdede9a5fdefc72"
+    },
+    {
+      "family": "awakening_creche_fixtures",
+      "family_schema": "custodian/content/metadata/assets/families/awakening_creche_fixtures.asset.json",
+      "kind": "world_prop",
+      "priority": "P1",
+      "state": "authority_inscription",
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "authority_inscription",
+      "direction": "omni",
+      "frames": 1,
+      "frame_size": [
+        384,
+        96
+      ],
+      "layout": "copy",
+      "format": "PNG RGBA",
+      "alpha": "true transparency",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_creche_fixtures/authority_inscription.png",
+      "expected_runtime_path": "custodian/content/sprites/environment/props/awakening/awakening_creche_fixtures/runtime/body/awakening_creche_fixtures__body__fixture__authority_inscription__omni__1f__384x96.png",
+      "sha256": "9701e0a74ae41104b047ce0e2a52e5046cdaaf944486d5a533f3a1260bd61885"
+    },
+    {
+      "family": "awakening_ambulatory_fixtures",
+      "family_schema": "custodian/content/metadata/assets/families/awakening_ambulatory_fixtures.asset.json",
+      "kind": "world_prop",
+      "priority": "P1",
+      "state": "service_basin_a",
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "service_basin_a",
+      "direction": "omni",
+      "frames": 1,
+      "frame_size": [
+        128,
+        128
+      ],
+      "layout": "copy",
+      "format": "PNG RGBA",
+      "alpha": "true transparency",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_ambulatory_fixtures/service_basin_a.png",
+      "expected_runtime_path": "custodian/content/sprites/environment/props/awakening/awakening_ambulatory_fixtures/runtime/body/awakening_ambulatory_fixtures__body__fixture__service_basin_a__omni__1f__128.png",
+      "sha256": "7258a942cb7b0203eb3588297135057f467410c1158fe6d7928ad173c94819f7"
+    },
+    {
+      "family": "awakening_ambulatory_fixtures",
+      "family_schema": "custodian/content/metadata/assets/families/awakening_ambulatory_fixtures.asset.json",
+      "kind": "world_prop",
+      "priority": "P1",
+      "state": "inspection_niche_medica",
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "inspection_niche_medica",
+      "direction": "omni",
+      "frames": 1,
+      "frame_size": [
+        160,
+        192
+      ],
+      "layout": "copy",
+      "format": "PNG RGBA",
+      "alpha": "true transparency",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_ambulatory_fixtures/inspection_niche_medica.png",
+      "expected_runtime_path": "custodian/content/sprites/environment/props/awakening/awakening_ambulatory_fixtures/runtime/body/awakening_ambulatory_fixtures__body__fixture__inspection_niche_medica__omni__1f__160x192.png",
+      "sha256": "9ebfb200dc50af022bcd72de98acad1519d51c59e923fb5f77c17aab62a55702"
+    },
+    {
+      "family": "awakening_ambulatory_fixtures",
+      "family_schema": "custodian/content/metadata/assets/families/awakening_ambulatory_fixtures.asset.json",
+      "kind": "world_prop",
+      "priority": "P1",
+      "state": "inspection_niche_vestment",
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "inspection_niche_vestment",
+      "direction": "omni",
+      "frames": 1,
+      "frame_size": [
+        160,
+        192
+      ],
+      "layout": "copy",
+      "format": "PNG RGBA",
+      "alpha": "true transparency",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_ambulatory_fixtures/inspection_niche_vestment.png",
+      "expected_runtime_path": "custodian/content/sprites/environment/props/awakening/awakening_ambulatory_fixtures/runtime/body/awakening_ambulatory_fixtures__body__fixture__inspection_niche_vestment__omni__1f__160x192.png",
+      "sha256": "56f070457186a446fe5e1c792e6cace5271bc939c92f1fa103922855d9ec0f40"
+    },
+    {
+      "family": "awakening_ambulatory_fixtures",
+      "family_schema": "custodian/content/metadata/assets/families/awakening_ambulatory_fixtures.asset.json",
+      "kind": "world_prop",
+      "priority": "P1",
+      "state": "broken_mirror_panel",
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "broken_mirror_panel",
+      "direction": "omni",
+      "frames": 1,
+      "frame_size": [
+        128,
+        192
+      ],
+      "layout": "copy",
+      "format": "PNG RGBA",
+      "alpha": "true transparency",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_ambulatory_fixtures/broken_mirror_panel.png",
+      "expected_runtime_path": "custodian/content/sprites/environment/props/awakening/awakening_ambulatory_fixtures/runtime/body/awakening_ambulatory_fixtures__body__fixture__broken_mirror_panel__omni__1f__128x192.png",
+      "sha256": "99cd1950e2bf0b6edd16af1492c102a6a897793326fb1343d904f38422323efc"
+    },
+    {
+      "family": "awakening_ambulatory_fixtures",
+      "family_schema": "custodian/content/metadata/assets/families/awakening_ambulatory_fixtures.asset.json",
+      "kind": "world_prop",
+      "priority": "P1",
+      "state": "hidden_reliquary_panel",
+      "layer": "body",
+      "action_group": "fixture",
+      "variant": "hidden_reliquary_panel",
+      "direction": "omni",
+      "frames": 1,
+      "frame_size": [
+        128,
+        128
+      ],
+      "layout": "copy",
+      "format": "PNG RGBA",
+      "alpha": "true transparency",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_ambulatory_fixtures/hidden_reliquary_panel.png",
+      "expected_runtime_path": "custodian/content/sprites/environment/props/awakening/awakening_ambulatory_fixtures/runtime/body/awakening_ambulatory_fixtures__body__fixture__hidden_reliquary_panel__omni__1f__128.png",
+      "sha256": "e61afa689c262b42fabb3d7c4254edd1e98fd3f7d5591ff7ef2b53d67407c601"
+    }
+  ]
+}

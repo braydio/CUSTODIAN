@@ -1,0 +1,136 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260920T102407Z_9c6d41b0",
+  "timestamp": "2026-09-20T10:24:07.600912+00:00",
+  "family": "awakening_creche_fixtures",
+  "kind": "world_prop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/awakening_creche_fixtures/alcove_empty.png",
+      "sha256": "f60439af6cd604d9ee140f714664d29a22901ed0562d5105ce3680e2618ba5a7"
+    },
+    {
+      "path": "asset_drop/inbox/awakening_creche_fixtures/alcove_fused.png",
+      "sha256": "b7f4ba49c917e200a5c7a636275d482181f520d3197521f983a5cd7f026b3761"
+    },
+    {
+      "path": "asset_drop/inbox/awakening_creche_fixtures/authority_inscription.png",
+      "sha256": "9701e0a74ae41104b047ce0e2a52e5046cdaaf944486d5a533f3a1260bd61885"
+    },
+    {
+      "path": "asset_drop/inbox/awakening_creche_fixtures/relic_table.png",
+      "sha256": "0bd8791d9af094b41dbbc5297f4885041ad4760ca204dd053cdede9a5fdefc72"
+    },
+    {
+      "path": "asset_drop/inbox/awakening_creche_fixtures/wall_of_seals.png",
+      "sha256": "907dd08416462ba72a358978e974c72ecfe34d16ce986825eb30da4f6bd2e698"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "alcove_empty",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_creche_fixtures",
+        "world_prop",
+        "body",
+        "fixture",
+        "alcove_empty",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/awakening/awakening_creche_fixtures/runtime/body/awakening_creche_fixtures__body__fixture__alcove_empty__omni__1f__128x192.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "f60439af6cd604d9ee140f714664d29a22901ed0562d5105ce3680e2618ba5a7",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "alcove_fused",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_creche_fixtures",
+        "world_prop",
+        "body",
+        "fixture",
+        "alcove_fused",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/awakening/awakening_creche_fixtures/runtime/body/awakening_creche_fixtures__body__fixture__alcove_fused__omni__1f__128x192.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "b7f4ba49c917e200a5c7a636275d482181f520d3197521f983a5cd7f026b3761",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "authority_inscription",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_creche_fixtures",
+        "world_prop",
+        "body",
+        "fixture",
+        "authority_inscription",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/awakening/awakening_creche_fixtures/runtime/body/awakening_creche_fixtures__body__fixture__authority_inscription__omni__1f__384x96.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "9701e0a74ae41104b047ce0e2a52e5046cdaaf944486d5a533f3a1260bd61885",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "relic_table",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_creche_fixtures",
+        "world_prop",
+        "body",
+        "fixture",
+        "relic_table",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/awakening/awakening_creche_fixtures/runtime/body/awakening_creche_fixtures__body__fixture__relic_table__omni__1f__192x128.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "0bd8791d9af094b41dbbc5297f4885041ad4760ca204dd053cdede9a5fdefc72",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "wall_of_seals",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_creche_fixtures",
+        "world_prop",
+        "body",
+        "fixture",
+        "wall_of_seals",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/awakening/awakening_creche_fixtures/runtime/body/awakening_creche_fixtures__body__fixture__wall_of_seals__omni__1f__256x192.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "907dd08416462ba72a358978e974c72ecfe34d16ce986825eb30da4f6bd2e698",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

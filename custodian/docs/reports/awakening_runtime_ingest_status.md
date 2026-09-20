@@ -12,12 +12,19 @@ V2 catalog and load through the Awakening runtime route. Late Service uses the
 canonical 704×768 pair under `content/levels/awakening/09_late_service/` with
 one shared resize transform and production foreground occlusion.
 
+The Crèche fixture family now has all seven required states published. The
+Recovery Ambulatory fixture family has five of six required states published;
+`service_basin_b` remains the only required gap.
+
 ## Partial / missing
 
-`awakening_creche_fixtures` remains partial: `alcove_closed` and
-`alcove_broken` are present, while `alcove_fused`, `alcove_empty`,
-`wall_of_seals`, `relic_table`, and `authority_inscription` remain missing
-(plus any additional states reported by its live family contract).
+`awakening_creche_fixtures` required coverage is complete: `alcove_closed`,
+`alcove_broken`, `alcove_fused`, `alcove_empty`, `wall_of_seals`, `relic_table`,
+and `authority_inscription` are present. Recommended dressing remains open.
+
+`awakening_ambulatory_fixtures` is partial: `service_basin_a`,
+`inspection_niche_medica`, `inspection_niche_vestment`, `broken_mirror_panel`,
+and `hidden_reliquary_panel` are present; `service_basin_b` remains required.
 
 ## Tooling and housekeeping
 

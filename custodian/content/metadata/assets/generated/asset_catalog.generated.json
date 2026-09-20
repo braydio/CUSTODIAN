@@ -8015,6 +8015,111 @@
           "sha256": "abb7639078849c24abe81348052f4c7ab92c8f6d48d3f22bcc72b90156e84a43",
           "provenance": "authored",
           "source_asset": null
+        },
+        "alcove_empty::omni": {
+          "state_id": "alcove_empty",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_creche_fixtures",
+            "world_prop",
+            "body",
+            "fixture",
+            "alcove_empty",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_creche_fixtures/runtime/body/awakening_creche_fixtures__body__fixture__alcove_empty__omni__1f__128x192.png",
+          "frames": 1,
+          "frame_size": [
+            128,
+            192
+          ],
+          "sha256": "f60439af6cd604d9ee140f714664d29a22901ed0562d5105ce3680e2618ba5a7",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "alcove_fused::omni": {
+          "state_id": "alcove_fused",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_creche_fixtures",
+            "world_prop",
+            "body",
+            "fixture",
+            "alcove_fused",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_creche_fixtures/runtime/body/awakening_creche_fixtures__body__fixture__alcove_fused__omni__1f__128x192.png",
+          "frames": 1,
+          "frame_size": [
+            128,
+            192
+          ],
+          "sha256": "b7f4ba49c917e200a5c7a636275d482181f520d3197521f983a5cd7f026b3761",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "authority_inscription::omni": {
+          "state_id": "authority_inscription",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_creche_fixtures",
+            "world_prop",
+            "body",
+            "fixture",
+            "authority_inscription",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_creche_fixtures/runtime/body/awakening_creche_fixtures__body__fixture__authority_inscription__omni__1f__384x96.png",
+          "frames": 1,
+          "frame_size": [
+            384,
+            96
+          ],
+          "sha256": "9701e0a74ae41104b047ce0e2a52e5046cdaaf944486d5a533f3a1260bd61885",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "relic_table::omni": {
+          "state_id": "relic_table",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_creche_fixtures",
+            "world_prop",
+            "body",
+            "fixture",
+            "relic_table",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_creche_fixtures/runtime/body/awakening_creche_fixtures__body__fixture__relic_table__omni__1f__192x128.png",
+          "frames": 1,
+          "frame_size": [
+            192,
+            128
+          ],
+          "sha256": "0bd8791d9af094b41dbbc5297f4885041ad4760ca204dd053cdede9a5fdefc72",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "wall_of_seals::omni": {
+          "state_id": "wall_of_seals",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_creche_fixtures",
+            "world_prop",
+            "body",
+            "fixture",
+            "wall_of_seals",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_creche_fixtures/runtime/body/awakening_creche_fixtures__body__fixture__wall_of_seals__omni__1f__256x192.png",
+          "frames": 1,
+          "frame_size": [
+            256,
+            192
+          ],
+          "sha256": "907dd08416462ba72a358978e974c72ecfe34d16ce986825eb30da4f6bd2e698",
+          "provenance": "authored",
+          "source_asset": null
         }
       }
     },
@@ -8107,6 +8212,116 @@
             768
           ],
           "sha256": "561843ce53a3c7dbffb45bb5f5e4625dc1ed3967cb270e70784a4a50c0ebb8aa",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "awakening_ambulatory_fixtures": {
+      "kind": "world_prop",
+      "assets": {
+        "broken_mirror_panel::omni": {
+          "state_id": "broken_mirror_panel",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_ambulatory_fixtures",
+            "world_prop",
+            "body",
+            "fixture",
+            "broken_mirror_panel",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_ambulatory_fixtures/runtime/body/awakening_ambulatory_fixtures__body__fixture__broken_mirror_panel__omni__1f__128x192.png",
+          "frames": 1,
+          "frame_size": [
+            128,
+            192
+          ],
+          "sha256": "99cd1950e2bf0b6edd16af1492c102a6a897793326fb1343d904f38422323efc",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "hidden_reliquary_panel::omni": {
+          "state_id": "hidden_reliquary_panel",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_ambulatory_fixtures",
+            "world_prop",
+            "body",
+            "fixture",
+            "hidden_reliquary_panel",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_ambulatory_fixtures/runtime/body/awakening_ambulatory_fixtures__body__fixture__hidden_reliquary_panel__omni__1f__128.png",
+          "frames": 1,
+          "frame_size": [
+            128,
+            128
+          ],
+          "sha256": "e61afa689c262b42fabb3d7c4254edd1e98fd3f7d5591ff7ef2b53d67407c601",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "inspection_niche_medica::omni": {
+          "state_id": "inspection_niche_medica",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_ambulatory_fixtures",
+            "world_prop",
+            "body",
+            "fixture",
+            "inspection_niche_medica",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_ambulatory_fixtures/runtime/body/awakening_ambulatory_fixtures__body__fixture__inspection_niche_medica__omni__1f__160x192.png",
+          "frames": 1,
+          "frame_size": [
+            160,
+            192
+          ],
+          "sha256": "9ebfb200dc50af022bcd72de98acad1519d51c59e923fb5f77c17aab62a55702",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "inspection_niche_vestment::omni": {
+          "state_id": "inspection_niche_vestment",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_ambulatory_fixtures",
+            "world_prop",
+            "body",
+            "fixture",
+            "inspection_niche_vestment",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_ambulatory_fixtures/runtime/body/awakening_ambulatory_fixtures__body__fixture__inspection_niche_vestment__omni__1f__160x192.png",
+          "frames": 1,
+          "frame_size": [
+            160,
+            192
+          ],
+          "sha256": "56f070457186a446fe5e1c792e6cace5271bc939c92f1fa103922855d9ec0f40",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "service_basin_a::omni": {
+          "state_id": "service_basin_a",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_ambulatory_fixtures",
+            "world_prop",
+            "body",
+            "fixture",
+            "service_basin_a",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_ambulatory_fixtures/runtime/body/awakening_ambulatory_fixtures__body__fixture__service_basin_a__omni__1f__128.png",
+          "frames": 1,
+          "frame_size": [
+            128,
+            128
+          ],
+          "sha256": "7258a942cb7b0203eb3588297135057f467410c1158fe6d7928ad173c94819f7",
           "provenance": "authored",
           "source_asset": null
         }
