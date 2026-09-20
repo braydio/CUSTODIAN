@@ -128,12 +128,20 @@ class WorkbenchService:
     def transition_preview(self, selection: AnimationSelection, primary_source: str):
         sources = ("workbench", "canonical", "runtime") if primary_source in ("live", "workbench") else (("canonical", "runtime") if primary_source == "canonical" else ("runtime", "canonical"))
         errors = []
+        workbench_error = getattr(self.model, "WorkbenchError", model.WorkbenchError)
+        availability_errors = (workbench_error, ValueError, OSError, subprocess.CalledProcessError)
         for source in sources:
             try:
                 return self.preview(selection, source)
-            except Exception as error:
+            except availability_errors as error:
                 errors.append(f"{source}: {error}")
         raise ValueError("transition target unavailable: " + "; ".join(errors))
+
+    def timeline_clip_frame_count(self, clip: animation_preview.TimelineClip) -> int:
+        for record in self.browser_records():
+            if record.selection.identity == clip.identity:
+                return record.frames
+        raise ValueError(f"timeline clip identity is no longer present: {clip.identity.key}")
 
     def motion_event_markers(self, selection: AnimationSelection) -> tuple[animation_motion_preview.MotionEventMarker, ...]:
         """Read optional structured catalog events without scraping runtime source."""

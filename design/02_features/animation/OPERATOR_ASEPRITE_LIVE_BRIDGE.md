@@ -95,7 +95,7 @@ review location.
 6. **Preview Examiner (implemented):** SINGLE/SPLIT/DIFF live/saved/canonical/runtime comparison with cached persisted sources and filmstrip review.
 7A. **Transition Analysis Core (implemented):** shared pure seam normalization, boundary metrics, exact diff, and ghost review used by Art Agent and Workbench UI.
 7B. **Transition Examiner UI (implemented):** PREVIEW transition mode with compatible visual targets, split/ghost/diff seam views, and a context-only boundary filmstrip.
-8. **Timeline Completion (deferred):** trims, loops, FPS, and source-frame navigation.
+8. **Timeline Completion (implemented):** trims, clip loops, per-clip review FPS, save/load persistence, and source-frame navigation.
 9. **Art Agent Coexistence (deferred):** guarded live-document mutation without weakening current locks or transactions.
 10. **Workspace Polish (deferred):** lifecycle, recovery, and optional window layout.
 

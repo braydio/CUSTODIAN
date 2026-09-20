@@ -1,6 +1,6 @@
 # CURRENT STATE — CUSTODIAN
 
-## Operator Aseprite Live Bridge Packet 6 (2026-09-20)
+## Operator Animation Workbench Live Bridge + Review Cockpit Packet 8 (2026-09-20)
 
 The optional, loopback-only Python WebSocket server now defaults to stable
 `127.0.0.1:32147` while retaining explicit ephemeral test ports. The persistent
@@ -27,6 +27,13 @@ SAVED, CANONICAL, and RUNTIME, with pure pixel counts, diff bounds, frame/canvas
 mismatch reporting, cached persisted comparisons, and a clickable filmstrip.
 Live revisions recompute against the cached comparison; saved Workbench changes
 invalidate only the saved comparison cache.
+The shared transition core and TRANSITION Examiner add same-profile,
+same-direction visual seam review with cached TO previews and context-only
+boundary filmstrips. TIMELINE is now a completed disposable review cockpit:
+clips support inclusive trim, repeat counts, per-clip REVIEW FPS, save/load, and
+bidirectional row/playhead/source-frame navigation. PREVIEW, TIMELINE, and
+MOTION remain read-only review surfaces and never publish, mutate canonical
+assets, or drive Aseprite.
 Open/save commands remain refused. Layer focus and visibility now synchronize
 bidirectionally for manifest-authorized layers, with UUID hardening and API-34
 visibility-event capability gating. Visibility remains editor presentation state;

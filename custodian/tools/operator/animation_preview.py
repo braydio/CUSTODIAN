@@ -139,6 +139,37 @@ class ReviewSequence:
         return cls(str(value["name"]), [TimelineClip(**item) for item in value.get("clips", ())])
 
 
+def clip_frame_bounds(clip: TimelineClip, frame_count: int) -> tuple[int, int]:
+    if frame_count < 1:
+        raise ValueError("timeline clip has no source frames")
+    start = 0 if clip.start_frame is None else int(clip.start_frame)
+    end = frame_count - 1 if clip.end_frame is None else int(clip.end_frame)
+    if not 0 <= start <= end < frame_count:
+        raise ValueError("timeline clip trim outside source contract")
+    return start, end
+
+
+def set_clip_frame_bounds(clip: TimelineClip, frame_count: int, start: int, end: int) -> tuple[int, int]:
+    if frame_count < 1 or not 0 <= start <= end < frame_count:
+        raise ValueError("timeline clip trim outside source contract")
+    clip.start_frame = None if start == 0 else start
+    clip.end_frame = None if end == frame_count - 1 else end
+    return start, end
+
+
+def adjust_clip_trim(clip: TimelineClip, frame_count: int, *, edge: str, delta: int) -> tuple[int, int]:
+    if delta not in (-1, 1):
+        raise ValueError("timeline trim delta must be -1 or 1")
+    start, end = clip_frame_bounds(clip, frame_count)
+    if edge == "start":
+        start = max(0, min(end, start + delta))
+    elif edge == "end":
+        end = min(frame_count - 1, max(start, end + delta))
+    else:
+        raise ValueError(f"unknown timeline trim edge: {edge}")
+    return set_clip_frame_bounds(clip, frame_count, start, end)
+
+
 def _digest(paths: list[Path]) -> str:
     digest = hashlib.sha256()
     for path in paths:
@@ -318,9 +349,9 @@ def flatten_sequence(sequence: ReviewSequence, provider: AnimationPreviewProvide
     flattened = []
     for clip_index, clip in enumerate(sequence.clips):
         preview = provider.load(clip.identity, source)
-        start = 0 if clip.start_frame is None else clip.start_frame
-        end = len(preview.frames) - 1 if clip.end_frame is None else clip.end_frame
-        if not 0 <= start <= end < len(preview.frames): raise ValueError(f"invalid frame trim for clip {clip_index + 1}")
+        start, end = clip_frame_bounds(clip, len(preview.frames))
+        if clip.loops < 1: raise ValueError(f"invalid loop count for clip {clip_index + 1}")
+        if clip.review_fps <= 0: raise ValueError(f"invalid review FPS for clip {clip_index + 1}")
         for _loop in range(clip.loops):
             flattened.extend((clip_index, index, preview.frames[index]) for index in range(start, end + 1))
     return flattened

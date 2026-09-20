@@ -6,7 +6,7 @@ from PIL import Image
 ROOT=Path(__file__).resolve().parents[3]
 sys.path.insert(0,str(ROOT/"custodian/tools/operator"))
 from animation_preview import (AnimationPreviewProvider, Preview, ReviewSequence, SemanticIdentity,
-    TimelineClip, compare_frames, compare_previews, flatten_sequence, load_sequence, save_sequence, scale_preview_frame)
+    TimelineClip, adjust_clip_trim, clip_frame_bounds, compare_frames, compare_previews, flatten_sequence, load_sequence, save_sequence, scale_preview_frame)
 
 def sha(path): return hashlib.sha256(path.read_bytes()).hexdigest()
 
@@ -30,6 +30,25 @@ with tempfile.TemporaryDirectory(prefix="operator_preview_") as raw:
     assert square_2x.size==(192,192) and square_2x.getpixel((4,6))==(10,20,30,127)
     canonical=provider.load(preview.identity,"canonical"); assert canonical.frame_size==(96,96)
     sequence=ReviewSequence("boundary",[TimelineClip("melee_1h","attack","fast_01","e",8,2,0,0),TimelineClip("melee_1h","attack","fast_01","e",12,1,1,1),TimelineClip("melee_1h","attack","fast_01","e")])
+    bounds_clip = TimelineClip("u", "locomotion", "run", "e")
+    assert clip_frame_bounds(bounds_clip, 6) == (0, 5)
+    adjust_clip_trim(bounds_clip, 6, edge="start", delta=1)
+    adjust_clip_trim(bounds_clip, 6, edge="start", delta=1)
+    assert clip_frame_bounds(bounds_clip, 6) == (2, 5)
+    adjust_clip_trim(bounds_clip, 6, edge="end", delta=-1)
+    assert clip_frame_bounds(bounds_clip, 6) == (2, 4)
+    adjust_clip_trim(bounds_clip, 6, edge="start", delta=-1)
+    adjust_clip_trim(bounds_clip, 6, edge="start", delta=-1)
+    adjust_clip_trim(bounds_clip, 6, edge="end", delta=1)
+    assert bounds_clip.start_frame is None and bounds_clip.end_frame is None
+    one = TimelineClip("u", "locomotion", "run", "e", start_frame=2, end_frame=2)
+    adjust_clip_trim(one, 6, edge="start", delta=1)
+    adjust_clip_trim(one, 6, edge="end", delta=-1)
+    assert clip_frame_bounds(one, 6) == (2, 2)
+    invalid = TimelineClip("u", "locomotion", "run", "e", review_fps=0, loops=0)
+    try: flatten_sequence(ReviewSequence("invalid", [invalid]), provider)
+    except ValueError: pass
+    else: raise AssertionError("invalid timeline clip accepted")
     path=save_sequence(sequence,root/"sequences"); loaded=load_sequence(path)
     assert len(loaded.clips)==3 and len(flatten_sequence(loaded,provider))==5
     loaded.clips[0],loaded.clips[1]=loaded.clips[1],loaded.clips[0]; loaded.clips.pop(); assert len(loaded.clips)==2

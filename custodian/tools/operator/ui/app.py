@@ -31,6 +31,7 @@ import animation_motion_preview
 import animation_transition
 
 LIVE_PREVIEW_DEBOUNCE_SEC = 0.15
+TIMELINE_LOOP_PRESETS = (1, 2, 3, 4, 6, 8)
 
 
 class OperatorWorkbenchApp(App):
@@ -109,6 +110,9 @@ class OperatorWorkbenchApp(App):
         Binding("t", "transition_target", "Transition target", show=False),
         Binding("shift+t", "transition_view", "Transition view", show=False),
         Binding("z", "preview_zoom", "Zoom", show=False),
+        Binding("i", "timeline_trim_in_forward", "Trim in +", show=False), Binding("shift+i", "timeline_trim_in_backward", "Trim in -", show=False),
+        Binding("o", "timeline_trim_out_backward", "Trim out -", show=False), Binding("shift+o", "timeline_trim_out_forward", "Trim out +", show=False),
+        Binding("shift+l", "timeline_clip_loops", "Clip loops", show=False),
         Binding("delete", "timeline_remove", "Remove clip", show=False), Binding("ctrl+up", "timeline_up", "Move clip left", show=False),
         Binding("ctrl+down", "timeline_down", "Move clip right", show=False), Binding("ctrl+s", "timeline_save", "Save sequence", show=False),
         Binding("ctrl+o", "timeline_load", "Load sequence", show=False),
@@ -140,6 +144,7 @@ class OperatorWorkbenchApp(App):
         self.transition_target_view = None
         self.transition_analysis = None
         self.timeline_frames = []
+        self._timeline_pending_focus = None
         self.sequence = animation_preview.ReviewSequence("review")
         self.motion_renderer = None
         self.motion_markers = ()
@@ -453,6 +458,9 @@ class OperatorWorkbenchApp(App):
         self._main_widget("#layer-detail", Static).update(table.selected_detail(event.cursor_row))
 
     def on_data_table_row_selected(self, event: DataTable.RowSelected) -> None:
+        if event.data_table.id == "timeline-table":
+            self._jump_timeline_clip(event.cursor_row)
+            return
         if event.data_table.id == "layer-table":
             if self.state.mode != "workbench" or not self._live_document_matches_selection():
                 return
@@ -688,7 +696,10 @@ class OperatorWorkbenchApp(App):
         if self.state.mode == "timeline":
             if not self.timeline_frames: return
             index = self.state.preview_frame; clip, source_frame, frame = self.timeline_frames[index]
-            self._main_widget("#timeline-canvas", PreviewCanvas).show_frame(frame, f"CLIP {clip + 1} · SOURCE FRAME {source_frame + 1}", self.state.preview_zoom)
+            self._main_widget("#timeline-table", TimelineTable).select_clip(clip)
+            timeline_clip = self.sequence.clips[clip]
+            label = f"CLIP {clip + 1} · {timeline_clip.identity.key} · SOURCE FRAME {source_frame + 1}"
+            self._main_widget("#timeline-canvas", PreviewCanvas).show_frame(frame, label, self.state.preview_zoom)
             fps = self.sequence.clips[clip].review_fps
             self._main_widget("#timeline-controls", PreviewControls).show(frame=index, frames=len(self.timeline_frames), fps=fps, playing=self.state.preview_playing, loop=self.state.preview_loop, source=self.state.preview_source, zoom=self.state.preview_zoom)
             return
@@ -897,13 +908,28 @@ class OperatorWorkbenchApp(App):
                 self.state.preview_playing = False
                 self._set_preview_frame(frames - 1, sync_live=True)
             else: self.state.preview_frame = frames - 1; self._reset_preview_clock(); self._render_preview()
-    def action_preview_slower(self): self.state.review_fps = max(1.0, self.state.review_fps - 1.0); self._reset_preview_clock(); self._render_motion() if self.state.mode == "motion" else self._render_preview()
-    def action_preview_faster(self): self.state.review_fps = min(30.0, self.state.review_fps + 1.0); self._reset_preview_clock(); self._render_motion() if self.state.mode == "motion" else self._render_preview()
+    def _adjust_timeline_clip_fps(self, delta: float) -> None:
+        index = self._timeline_index()
+        if not 0 <= index < len(self.sequence.clips): return
+        self.sequence.clips[index].review_fps = min(30.0, max(1.0, self.sequence.clips[index].review_fps + delta))
+        table = self._main_widget("#timeline-table", TimelineTable); table.set_sequence(self.sequence); table.select_clip(index)
+        self._reset_preview_clock(); self._render_preview()
+
+    def action_preview_slower(self):
+        if self.state.mode == "timeline": self._adjust_timeline_clip_fps(-1.0); return
+        self.state.review_fps = max(1.0, self.state.review_fps - 1.0); self._reset_preview_clock(); self._render_motion() if self.state.mode == "motion" else self._render_preview()
+
+    def action_preview_faster(self):
+        if self.state.mode == "timeline": self._adjust_timeline_clip_fps(1.0); return
+        self.state.review_fps = min(30.0, self.state.review_fps + 1.0); self._reset_preview_clock(); self._render_motion() if self.state.mode == "motion" else self._render_preview()
     def action_preview_loop(self):
         if self.state.mode == "motion": self.state.motion.loop = not self.state.motion.loop; self._render_motion(); return
         self.state.preview_loop = not self.state.preview_loop; self._render_preview()
     def action_preview_source(self):
         if self.state.mode not in ("preview", "timeline", "motion"): return
+        if self.state.mode == "timeline" and self.timeline_frames:
+            clip, source_frame, _frame = self.timeline_frames[self.state.preview_frame]
+            self._timeline_pending_focus = (clip, source_frame)
         sources = ("workbench", "canonical", "runtime")
         self.state.preview_source = sources[(sources.index(self.state.preview_source) + 1) % len(sources)]
         self.preview_compare_view = None
@@ -1017,21 +1043,46 @@ class OperatorWorkbenchApp(App):
         selection = self._require_selection()
         if not selection: return
         self.sequence.clips.append(animation_preview.TimelineClip(selection.profile, selection.group, selection.action, selection.direction, self.state.review_fps))
-        self._main_widget("#timeline-table", TimelineTable).set_sequence(self.sequence)
+        index = len(self.sequence.clips) - 1
+        self._timeline_pending_focus = (index, 0)
+        table = self._main_widget("#timeline-table", TimelineTable); table.set_sequence(self.sequence); table.select_clip(index)
         self.run_worker(self._load_timeline(), group="timeline-image", exclusive=True)
 
     def _timeline_index(self) -> int:
-        return self._main_widget("#timeline-table", TimelineTable).cursor_row
+        return self._main_widget("#timeline-table", TimelineTable).selected_clip_index()
+
+    def _timeline_current_source_frame(self, clip_index: int) -> int | None:
+        if not self.timeline_frames or not 0 <= self.state.preview_frame < len(self.timeline_frames): return None
+        current_clip, source_frame, _frame = self.timeline_frames[self.state.preview_frame]
+        return source_frame if current_clip == clip_index else None
+
+    def _jump_timeline_clip(self, clip_index: int, source_frame: int | None = None) -> None:
+        if self.state.mode != "timeline" or not self.timeline_frames: return
+        matches = [i for i, (candidate, source, _frame) in enumerate(self.timeline_frames) if candidate == clip_index and (source_frame is None or source == source_frame)]
+        if not matches and source_frame is not None:
+            matches = [i for i, (candidate, _source, _frame) in enumerate(self.timeline_frames) if candidate == clip_index]
+        if matches:
+            self.state.preview_playing = False; self.state.preview_frame = matches[0]; self._reset_preview_clock(); self._render_preview()
 
     def action_timeline_remove(self):
         index = self._timeline_index()
-        if 0 <= index < len(self.sequence.clips): self.sequence.clips.pop(index); self._main_widget("#timeline-table", TimelineTable).set_sequence(self.sequence); self.run_worker(self._load_timeline(), group="timeline-image", exclusive=True)
+        if 0 <= index < len(self.sequence.clips):
+            self.sequence.clips.pop(index)
+            if self.sequence.clips:
+                self._timeline_pending_focus = (min(index, len(self.sequence.clips) - 1), None)
+            else:
+                self.state.preview_frame = 0; self.state.preview_playing = False
+            table = self._main_widget("#timeline-table", TimelineTable); table.set_sequence(self.sequence)
+            if self.sequence.clips: table.select_clip(min(index, len(self.sequence.clips) - 1))
+            self.run_worker(self._load_timeline(), group="timeline-image", exclusive=True)
 
     def _move_clip(self, delta: int):
         index = self._timeline_index(); target = index + delta
         if 0 <= index < len(self.sequence.clips) and 0 <= target < len(self.sequence.clips):
+            source_frame = self._timeline_current_source_frame(index)
             self.sequence.clips[index], self.sequence.clips[target] = self.sequence.clips[target], self.sequence.clips[index]
-            table = self._main_widget("#timeline-table", TimelineTable); table.set_sequence(self.sequence); table.move_cursor(row=target)
+            self._timeline_pending_focus = (target, source_frame)
+            table = self._main_widget("#timeline-table", TimelineTable); table.set_sequence(self.sequence); table.select_clip(target)
             self.run_worker(self._load_timeline(), group="timeline-image", exclusive=True)
 
     def action_timeline_up(self): self._move_clip(-1)
@@ -1044,9 +1095,42 @@ class OperatorWorkbenchApp(App):
         try:
             self.sequence = self.service.load_sequence(self.state.sequence_name)
             self._main_widget("#timeline-table", TimelineTable).set_sequence(self.sequence)
+            self._timeline_pending_focus = (0, None) if self.sequence.clips else None
+            if not self.sequence.clips: self.state.preview_frame = 0; self.state.preview_playing = False
             self.run_worker(self._load_timeline(), group="timeline-image", exclusive=True)
             self._activity(f"sequence loaded: {self.sequence.name}", "OK")
         except Exception as error: self._error(error)
+
+    def action_timeline_clip_loops(self) -> None:
+        if self.state.mode != "timeline": return
+        index = self._timeline_index()
+        if not 0 <= index < len(self.sequence.clips): return
+        clip = self.sequence.clips[index]
+        current = TIMELINE_LOOP_PRESETS.index(clip.loops) if clip.loops in TIMELINE_LOOP_PRESETS else -1
+        clip.loops = TIMELINE_LOOP_PRESETS[(current + 1) % len(TIMELINE_LOOP_PRESETS)]
+        self._timeline_pending_focus = (index, self._timeline_current_source_frame(index))
+        table = self._main_widget("#timeline-table", TimelineTable); table.set_sequence(self.sequence); table.select_clip(index)
+        self.run_worker(self._load_timeline(), group="timeline-image", exclusive=True)
+
+    def _adjust_timeline_trim(self, *, edge: str, delta: int) -> None:
+        if self.state.mode != "timeline": return
+        index = self._timeline_index()
+        if not 0 <= index < len(self.sequence.clips): return
+        clip = self.sequence.clips[index]
+        try:
+            frame_count = self.service.timeline_clip_frame_count(clip)
+            source_frame = self._timeline_current_source_frame(index)
+            animation_preview.adjust_clip_trim(clip, frame_count, edge=edge, delta=delta)
+        except (ValueError, getattr(self.service.model, "WorkbenchError", RuntimeError)) as error:
+            self._activity(f"Timeline trim unavailable: {error}", "WARN"); return
+        self._timeline_pending_focus = (index, source_frame)
+        table = self._main_widget("#timeline-table", TimelineTable); table.set_sequence(self.sequence); table.select_clip(index)
+        self.run_worker(self._load_timeline(), group="timeline-image", exclusive=True)
+
+    def action_timeline_trim_in_forward(self): self._adjust_timeline_trim(edge="start", delta=1)
+    def action_timeline_trim_in_backward(self): self._adjust_timeline_trim(edge="start", delta=-1)
+    def action_timeline_trim_out_backward(self): self._adjust_timeline_trim(edge="end", delta=-1)
+    def action_timeline_trim_out_forward(self): self._adjust_timeline_trim(edge="end", delta=1)
 
     def _reset_preview_clock(self) -> None:
         self._preview_last_tick = time.monotonic()
@@ -1096,6 +1180,13 @@ class OperatorWorkbenchApp(App):
     async def _load_timeline(self) -> None:
         try:
             self.timeline_frames = await self._thread(self.service.flatten_sequence, self.sequence, self.state.preview_source)
+            pending = self._timeline_pending_focus; self._timeline_pending_focus = None
+            if pending is not None:
+                clip_index, source_frame = pending
+                matches = [i for i, (candidate, source, _frame) in enumerate(self.timeline_frames) if candidate == clip_index and (source_frame is None or source == source_frame)]
+                if not matches and source_frame is not None:
+                    matches = [i for i, (candidate, _source, _frame) in enumerate(self.timeline_frames) if candidate == clip_index]
+                if matches: self.state.preview_frame = matches[0]
             self.state.preview_frame = min(self.state.preview_frame, max(0, len(self.timeline_frames) - 1))
             self._reset_preview_clock()
             self._render_preview()

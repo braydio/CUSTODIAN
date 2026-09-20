@@ -153,6 +153,13 @@ Timeline clips contain only semantic identity, direction, REVIEW FPS, loop
 count, and optional inclusive frame trims. Duplicates are legal. Saved sequences
 live under `.ai/operator_animation_workbench/sequences/`; clip boundaries are
 exact, and sequence JSON is never published to canonical source or runtime.
+Enter jumps to the selected clip; I / Shift+I and O / Shift+O edit inclusive
+trim edges; brackets edit selected-clip REVIEW FPS; Shift+L cycles clip repeat
+count while L loops the whole sequence; arrows navigate flattened source frames;
+Ctrl+A appends the current semantic animation; Delete removes; Ctrl+Up/Down
+reorders; and Ctrl+S/Ctrl+O save/load the `.ai` review sequence. These are
+disposable review controls and never mutate source art, gameplay timing, or the
+Aseprite document.
 WorkbenchService remains the exclusive UI/backend boundary. Saved-workbench
 preview exports are keyed by the `.aseprite` SHA under the ignored workspace,
 so a changed saved workbench cannot reuse an earlier export.
