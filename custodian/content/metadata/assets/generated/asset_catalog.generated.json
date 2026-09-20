@@ -3464,6 +3464,27 @@
           "sha256": "417241f6758ae7ba6ddc9d5e4e519cacfeb4da651e83803eaef4c12fcadcf0a1",
           "provenance": "authored",
           "source_asset": null
+        },
+        "patrol_walk_01::n": {
+          "state_id": "patrol_walk_01",
+          "direction": "n",
+          "semantic_identity": [
+            "pursuit_frame",
+            "enemy",
+            "body",
+            "locomotion",
+            "patrol_walk_01",
+            "n"
+          ],
+          "path": "content/sprites/enemies/pursuit_frame/runtime/body/locomotion/pursuit_frame__body__locomotion__patrol_walk_01__n__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ],
+          "sha256": "8ab903d3bff3f7fa20419f7fe21971e962d4d94ed75bc2f5804ff0fa8b1420d7",
+          "provenance": "authored",
+          "source_asset": null
         }
       }
     },

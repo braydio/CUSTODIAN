@@ -265,7 +265,8 @@ family list, and each two-actor camp alternates the live Enemy Grunt and the new
 Pursuit Frame actor. Pursuit Frame uses the shared human-enemy behavior/combat
 authority plus a dedicated semantic animation set backed by its canonical
 Asset Pipeline V2 posture, locomotion, melee, flinch, stagger, and death strips.
-Bespoke intercept gameplay remains deferred.
+Authored patrol-walk presentation now covers both north and south directions at
+eight frames and 8 FPS. Bespoke intercept gameplay remains deferred.
 
 ## Required Ritualant World Ingress (2026-09-01)
 

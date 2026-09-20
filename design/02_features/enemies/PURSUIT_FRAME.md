@@ -25,7 +25,7 @@ Use `<state>__<direction>.png` names:
 | State | Group | Direction | Frames | Source dimensions |
 | --- | --- | --- | ---: | ---: |
 | `idle_ready_01` | posture | S | 4 | 384×96 |
-| `patrol_walk_01` | locomotion | S | 8 | 768×96 |
+| `patrol_walk_01` | locomotion | N, S | 8 | 768×96 |
 | `patrol_scan_01` | activity | S | 6 | 576×96 |
 | `checkpoint_halt_01` | activity | S | 4 | 384×96 |
 | `notice_01` | combat | S | 4 | 384×96 |
@@ -59,7 +59,7 @@ python3 custodian/tools/assets/asset.py plan pursuit_frame
 python3 custodian/tools/assets/asset.py ingest pursuit_frame --dry-run
 ```
 
-Apply only after reviewing the plan. Runtime actor wiring is a separate feature slice after enough presentation coverage exists.
+Apply only after reviewing the plan. Runtime actor wiring and ambient procgen presentation are implemented; bespoke intercept gameplay remains deferred.
 
 ## Runtime wiring
 
