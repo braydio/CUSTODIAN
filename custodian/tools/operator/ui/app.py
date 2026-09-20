@@ -1102,7 +1102,9 @@ class OperatorWorkbenchApp(App):
         except Exception as error: self._error(error)
 
     def action_timeline_clip_loops(self) -> None:
-        if self.state.mode != "timeline": return
+        if self.state.mode != "timeline":
+            self.action_motion_loop_cycles()
+            return
         index = self._timeline_index()
         if not 0 <= index < len(self.sequence.clips): return
         clip = self.sequence.clips[index]

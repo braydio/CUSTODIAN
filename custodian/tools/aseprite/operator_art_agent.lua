@@ -1,5 +1,7 @@
 -- Deterministic pixel-authoring bridge for disposable Operator workbenches.
 local protocol=dofile(assert(app.params["lib"],"Art Agent library parameter required"))
+local Ops=nil
+if app.params["ops"] then Ops=dofile(app.params["ops"]) end
 local function read_json(path)
   local file=assert(io.open(path,"rb")); local text=file:read("*a"); file:close()
   if not json or not json.decode then error("Aseprite native JSON support required") end
@@ -30,6 +32,12 @@ local function execute()
   if not manifest.context or manifest.context.fingerprint~=capability.context_fingerprint then error("WORKBENCH CONTEXT MISMATCH") end
   local operation=assert(req.operation,"operation required")
   local sprite=assert(app.open(req.workbench),"failed to open Operator workbench")
+
+  if Ops and (operation.type=="inspect" or operation.type=="render" or operation.type=="render_clean" or operation.type=="render_editor" or operation.type=="render_layer" or operation.type=="render_silhouette") then
+    local result=Ops.execute(sprite,req,capability,manifest)
+    sprite:close()
+    return result
+  end
 
   local function close_and_error(message)
     sprite:close(); error(message)

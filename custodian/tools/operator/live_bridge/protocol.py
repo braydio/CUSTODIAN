@@ -27,6 +27,7 @@ class MessageType(str, Enum):
     SET_LAYER_VISIBILITY = "command.set_layer_visibility"
     EXPORT_PREVIEW = "command.export_preview"
     SAVE = "command.save"
+    ART_AGENT_EXECUTE = "command.art_agent_execute"
     COMMAND_RESULT = "command.result"
     HEARTBEAT = "heartbeat"
 
@@ -38,6 +39,7 @@ COMMAND_TYPES = frozenset({
     MessageType.SET_LAYER_VISIBILITY,
     MessageType.EXPORT_PREVIEW,
     MessageType.SAVE,
+    MessageType.ART_AGENT_EXECUTE,
 })
 
 REQUIRED_CAPABILITIES = frozenset({
@@ -51,6 +53,7 @@ REQUIRED_CAPABILITIES = frozenset({
     "layer_selection",
     "layer_visibility_control",
     "layer_visibility_events",
+    "art_agent_live_read",
 })
 
 
@@ -181,6 +184,16 @@ def _validate_payload(message: Message) -> None:
     elif message.type is MessageType.OPEN_WORKBENCH:
         if not isinstance(payload.get("path"), str) or not payload["path"]:
             raise ProtocolError("command.open_workbench requires path")
+    elif message.type is MessageType.ART_AGENT_EXECUTE:
+        document_path = payload.get("document_path")
+        if not isinstance(document_path, str) or not document_path:
+            raise ProtocolError("command.art_agent_execute requires document_path")
+        _nonnegative_int(payload, "revision")
+        for key in ("request", "capability", "manifest"):
+            if not isinstance(payload.get(key), dict):
+                raise ProtocolError(f"{key} must be an object")
+        if payload.get("allow_mutation") is not False:
+            raise ProtocolError("Packet 9A live Art Agent execution is read-only")
 
 
 def _positive_int(payload: Mapping[str, Any], key: str) -> None:
@@ -261,6 +274,8 @@ class BridgePathPolicy:
             self.validate_workbench(message.payload["document_path"])
             self.validate_preview(message.payload["output_path"])
         elif message.type in (MessageType.SELECT_LAYER, MessageType.SET_LAYER_VISIBILITY):
+            self.validate_workbench(message.payload["document_path"])
+        elif message.type is MessageType.ART_AGENT_EXECUTE:
             self.validate_workbench(message.payload["document_path"])
 
     def _resolve(self, path: str | Path) -> Path:

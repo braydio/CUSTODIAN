@@ -96,7 +96,8 @@ review location.
 7A. **Transition Analysis Core (implemented):** shared pure seam normalization, boundary metrics, exact diff, and ghost review used by Art Agent and Workbench UI.
 7B. **Transition Examiner UI (implemented):** PREVIEW transition mode with compatible visual targets, split/ghost/diff seam views, and a context-only boundary filmstrip.
 8. **Timeline Completion (implemented):** trims, clip loops, per-clip review FPS, save/load persistence, and source-frame navigation.
-9. **Art Agent Coexistence (deferred):** guarded live-document mutation without weakening current locks or transactions.
+9A. **Art Agent Live Read Coexistence (implemented):** matching live reads use the in-memory Aseprite document through a shared Lua executor; matching mutations fail closed and unmatched documents retain the headless fallback.
+9B. **Art Agent Live Mutation (deferred):** revision-locked live transactions and undo/rollback.
 10. **Workspace Polish (deferred):** lifecycle, recovery, and optional window layout.
 
 The shared transition analysis core owns cross-canvas normalization, boundary
@@ -273,5 +274,8 @@ future Workbench owns the endpoint.
 Packet 7B is implemented as a PREVIEW Examiner mode. It consumes the shared
 analysis core, preserves the layer presentation boundary, and adds no
 save/publication or Art Agent mutation authority. Packet 8 completes disposable
-Timeline review editing and navigation. The next deferred slice is Packet 9 —
-Art Agent live-document coexistence.
+Timeline review editing and navigation. Packet 9A now routes matching live Art
+Agent reads through the already-open Aseprite document, restores presentation
+state, and refuses matching live mutations; unmatched documents use the legacy
+headless backend. The next deferred slice is Packet 9B — Art Agent live
+mutation.

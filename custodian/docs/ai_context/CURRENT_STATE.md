@@ -33,15 +33,21 @@ boundary filmstrips. TIMELINE is now a completed disposable review cockpit:
 clips support inclusive trim, repeat counts, per-clip REVIEW FPS, save/load, and
 bidirectional row/playhead/source-frame navigation. PREVIEW, TIMELINE, and
 MOTION remain read-only review surfaces and never publish, mutate canonical
-assets, or drive Aseprite.
+assets, or drive Aseprite. Packet 9A adds Art Agent live-read coexistence: a
+matching open Workbench routes inspect/render reads through the in-memory
+Aseprite sprite via one shared Lua executor, restores editor presentation state,
+and refuses matching live mutations. A non-matching document keeps the legacy
+headless Art Agent path. Packet 9B remains deferred for revision-locked live
+mutation and undo/rollback.
 Open/save commands remain refused. Layer focus and visibility now synchronize
 bidirectionally for manifest-authorized layers, with UUID hardening and API-34
 visibility-event capability gating. Visibility remains editor presentation state;
 Packet 4 live composition stays manifest-complete even when a layer is hidden.
 Focused smoke covers protocol/path guards, real headless Aseprite rendering and
 layer primitives, dirty/workbench immutability, debounce/stale suppression,
-fallback, exclusions, reconnect, and Textual behavior. No Art Agent integration,
-gameplay behavior, or publication authority changed. See
+fallback, exclusions, reconnect, Textual behavior, and the confined Packet 9A
+live Art Agent relay/read path. No live mutation, gameplay behavior, or
+publication authority changed. See
 `design/02_features/animation/OPERATOR_ASEPRITE_LIVE_BRIDGE.md`.
 
 ## Workbench Optional Mirror Promotion (2026-09-15)

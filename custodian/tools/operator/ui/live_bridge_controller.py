@@ -11,6 +11,7 @@ from typing import Callable
 from live_bridge.protocol import Message, MessageType
 from live_bridge.server import DEFAULT_HOST, DEFAULT_PORT, LiveBridgeServer
 from live_bridge.state import ConnectionState
+from live_bridge.art_agent_relay import LiveArtAgentRelay, DEFAULT_RELAY_PORT
 
 
 class LiveBridgeUIStatus(str, Enum):
@@ -28,6 +29,7 @@ class LiveBridgeSnapshot:
     port: int = DEFAULT_PORT
     aseprite_version: str | None = None
     error: str | None = None
+    art_agent_relay_available: bool = False
 
 
 @dataclass(frozen=True, slots=True)
@@ -70,8 +72,11 @@ class LiveBridgeController:
         *,
         port: int = DEFAULT_PORT,
         server_factory: Callable[..., LiveBridgeServer] = LiveBridgeServer,
+        relay_factory: Callable[..., LiveArtAgentRelay] = LiveArtAgentRelay,
+        relay_port: int = DEFAULT_RELAY_PORT,
     ) -> None:
         self.server = server_factory(repo_root, port=port)
+        self.art_agent_relay = relay_factory(repo_root, self.server, port=relay_port)
         self._status = LiveBridgeUIStatus.STOPPED
         self._error: str | None = None
         self._events: asyncio.Queue[LiveBridgeEvent] = asyncio.Queue()
@@ -186,10 +191,16 @@ class LiveBridgeController:
             self._status = LiveBridgeUIStatus.UNAVAILABLE
             self._error = str(error).strip() or error.__class__.__name__
             return
+        try:
+            await self.art_agent_relay.start()
+        except OSError:
+            # Relay is optional; normal Workbench operation remains available.
+            pass
         self._status = LiveBridgeUIStatus.WAITING
 
     async def stop(self) -> None:
         try:
+            await self.art_agent_relay.stop()
             await self.server.stop()
         finally:
             self._status = LiveBridgeUIStatus.STOPPED
@@ -211,4 +222,5 @@ class LiveBridgeController:
             port=self.server.port,
             aseprite_version=self.server.state.aseprite_version,
             error=self._error,
+            art_agent_relay_available=self.art_agent_relay.available,
         )

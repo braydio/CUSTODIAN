@@ -400,6 +400,14 @@ Bridge responsibilities are intentionally narrow:
 It cannot resolve canonical sources, choose art intent, run arbitrary Lua,
 publish, invoke Git, or write outside its manifest-authorized workspace.
 
+Packet 9A adds a confined loopback relay for read-only coexistence with the
+persistent Aseprite bridge. Matching open Workbenches execute inspect/render
+operations against in-memory pixels through the shared Lua operation seam and
+restore editor presentation state. Matching live mutations are refused rather
+than redirected to a second headless process; requests without a matching live
+document retain the existing headless adapter. Revision-locked live mutation,
+undo, and rollback remain Packet 9B work.
+
 ## Machine-readable Operator art profile
 
 Create human and tooling authorities together:

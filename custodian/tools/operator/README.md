@@ -64,6 +64,13 @@ Use `--dry-run` on frame or publish commands to inspect without mutation. Frame
 commands stage a dependency-audited migration in `.ai`; only publish changes
 canonical PNG contracts.
 
+Packet 9A adds a loopback Art Agent relay on `127.0.0.1:32148`. When the exact
+Workbench is already open in the persistent Aseprite bridge, inspect/render
+reads use that in-memory document through the shared Lua executor and restore
+editor presentation state. Matching live mutations fail closed; an unmatched
+document retains the legacy headless Art Agent backend. Live mutation remains
+deferred to Packet 9B.
+
 ## Operator Art Agent V2
 
 `operator art` is the agent-safe semantic repair layer above Workbench V2. V1

@@ -1,5 +1,6 @@
 local Protocol = nil
 local LivePreview = nil
+local ArtAgentOps = nil
 
 local socket = nil
 local client = nil
@@ -18,6 +19,7 @@ local last_layer_visibility = {}
 local pending_layer_visibility = nil
 local send_layer_snapshot = nil
 local emit_visibility_changes = nil
+local art_agent_internal_read = false
 
 local function runtime_capabilities_available()
   local api_version = tonumber(app.apiVersion)
@@ -126,6 +128,7 @@ local function bind_active_sprite()
   if sprite == nil then return end
 
   sprite_change_listener = function()
+    if art_agent_internal_read then return end
     revision = revision + 1
     local state = editor_state()
     last_snapshot_signature = snapshot_signature(state)
@@ -141,7 +144,9 @@ local function bind_active_sprite()
   end
   sprite.events:on("change", sprite_change_listener)
   sprite.events:on("filenamechange", filename_change_listener)
-  layer_visibility_listener = function() emit_visibility_changes() end
+  layer_visibility_listener = function()
+    if not art_agent_internal_read then emit_visibility_changes() end
+  end
   sprite.events:on("layervisibility", layer_visibility_listener)
 end
 
@@ -252,6 +257,62 @@ end
 
 local function send_command_result(message, ok, error_message)
   send("command.result", { ok = ok, error = error_message }, message.sequence)
+end
+
+local function art_agent_result(message, payload)
+  payload.operation = "art_agent_execute"
+  send("command.result", payload, message.sequence)
+end
+
+local function presentation_snapshot(sprite)
+  local layer_name, layer_id = layer_identity(app.layer)
+  return {
+    frame = app.frame and app.frame.frameNumber or nil,
+    layer_id = layer_id,
+    layer_name = layer_name,
+    visibility = snapshot_layer_visibility(sprite),
+    modified = sprite.isModified,
+    filename = sprite.filename,
+    revision = revision,
+  }
+end
+
+local function restore_presentation(sprite, snapshot)
+  for _, layer in ipairs(collect_layers(sprite)) do
+    local key = layer_key(layer)
+    if snapshot.visibility[key] ~= nil then pcall(function() layer.isVisible = snapshot.visibility[key] end) end
+  end
+  if snapshot.frame ~= nil then pcall(function() app.frame = snapshot.frame end) end
+  if snapshot.layer_id ~= nil or snapshot.layer_name ~= nil then
+    for _, layer in ipairs(collect_layers(sprite)) do
+      local layer_name, layer_id = layer_identity(layer)
+      if (snapshot.layer_id ~= nil and layer_id == snapshot.layer_id)
+          or (snapshot.layer_id == nil and layer_name == snapshot.layer_name) then
+        pcall(function() app.range.layers = { layer } end); break
+      end
+    end
+  end
+end
+
+local function handle_art_agent_execute(message)
+  local payload, sprite = message.payload or {}, app.sprite
+  if sprite == nil then art_agent_result(message, { ok=false, error="no active Aseprite document" }); return end
+  if type(payload.document_path) ~= "string" or sprite.filename ~= payload.document_path then art_agent_result(message, { ok=false, error="active document does not match requested workbench" }); return end
+  if type(payload.revision) ~= "number" or payload.revision % 1 ~= 0 or payload.revision < 0 or payload.revision ~= revision then art_agent_result(message, { ok=false, error="stale live Art Agent revision", revision=revision, document_path=sprite.filename }); return end
+  if payload.allow_mutation ~= false then art_agent_result(message, { ok=false, error="Packet 9A live Art Agent execution is read-only" }); return end
+  if type(payload.request) ~= "table" or type(payload.capability) ~= "table" or type(payload.manifest) ~= "table" then art_agent_result(message, { ok=false, error="request, capability, and manifest are required" }); return end
+  local before = presentation_snapshot(sprite)
+  art_agent_internal_read = true
+  local ok, response = xpcall(function()
+    return ArtAgentOps.execute(sprite, payload.request, payload.capability, payload.manifest)
+  end, debug.traceback)
+  restore_presentation(sprite, before)
+  art_agent_internal_read = false
+  if sprite.filename ~= before.filename or sprite.isModified ~= before.modified or revision ~= before.revision then
+    art_agent_result(message, { ok=false, error="live Art Agent read changed document state", revision=revision, document_path=sprite.filename }); return
+  end
+  if not ok then art_agent_result(message, { ok=false, error=tostring(response), revision=revision, document_path=sprite.filename }); return end
+  art_agent_result(message, { ok=true, document_path=sprite.filename, revision=revision, modified=sprite.isModified, art_agent_response=response })
 end
 
 local function handle_select_frame(message)
@@ -434,6 +495,10 @@ local function handle_server_text(text)
     handle_export_preview(message)
     return
   end
+  if message.type == "command.art_agent_execute" then
+    handle_art_agent_execute(message)
+    return
+  end
   local response = Protocol.passive_response(client, message)
   if response ~= nil and connected and socket ~= nil then
     socket:sendText(response)
@@ -464,6 +529,7 @@ end
 function init(plugin)
   Protocol = dofile(app.fs.joinPath(plugin.path, "protocol.lua"))
   LivePreview = dofile(app.fs.joinPath(plugin.path, "live_preview.lua"))
+  ArtAgentOps = dofile(app.fs.joinPath(plugin.path, "art_agent_ops.lua"))
   exiting = false
   revision = 0
   if plugin.preferences.bridge_url == nil or plugin.preferences.bridge_url == "" then

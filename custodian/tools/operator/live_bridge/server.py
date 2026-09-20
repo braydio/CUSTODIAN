@@ -25,6 +25,7 @@ class LiveBridgeServer:
         self._client: Any = None
         self._server_sequence = 0
         self._message_listeners: set[Callable[[Message], None]] = set()
+        self._command_waiters: dict[int, asyncio.Future[Message]] = {}
 
     def add_message_listener(self, listener: Callable[[Message], None]) -> None:
         self._message_listeners.add(listener)
@@ -61,6 +62,7 @@ class LiveBridgeServer:
         )
 
     async def stop(self) -> None:
+        self._fail_command_waiters(ConnectionError("Aseprite client disconnected"))
         client, self._client = self._client, None
         if client is not None:
             await client.close(code=1001, reason="bridge shutdown")
@@ -77,7 +79,7 @@ class LiveBridgeServer:
     async def __aexit__(self, *_args: object) -> None:
         await self.stop()
 
-    async def send_command(self, message_type: MessageType, payload: dict[str, Any]) -> int:
+    def _command_message(self, message_type: MessageType, payload: dict[str, Any]) -> Message:
         if message_type not in COMMAND_TYPES:
             raise ProtocolError(f"not a command type: {message_type.value}")
         if self._client is None:
@@ -86,9 +88,30 @@ class LiveBridgeServer:
         message = Message(self.state.bridge_session_id, sequence, message_type, payload)
         message = parse_message(message.to_dict())
         self.paths.validate_message_paths(message)
-        self.state.track_command(sequence)
+        return message
+
+    async def send_command(self, message_type: MessageType, payload: dict[str, Any]) -> int:
+        message = self._command_message(message_type, payload)
+        self.state.track_command(message.sequence)
         await self._client.send(message.to_json())
-        return sequence
+        return message.sequence
+
+    async def request_command(self, message_type: MessageType, payload: dict[str, Any], *, timeout: float = 10.0) -> Message:
+        message = self._command_message(message_type, payload)
+        loop = asyncio.get_running_loop()
+        waiter = loop.create_future()
+        self._command_waiters[message.sequence] = waiter
+        self.state.track_command(message.sequence)
+        try:
+            await self._client.send(message.to_json())
+            return await asyncio.wait_for(waiter, timeout=timeout)
+        finally:
+            self._command_waiters.pop(message.sequence, None)
+
+    def _fail_command_waiters(self, error: Exception) -> None:
+        for waiter in tuple(self._command_waiters.values()):
+            if not waiter.done(): waiter.set_exception(error)
+        self._command_waiters.clear()
 
     async def _handle_client(self, websocket: Any) -> None:
         if self._client is not None:
@@ -114,6 +137,9 @@ class LiveBridgeServer:
                 if message.session_id != self.state.client_session_id:
                     raise ProtocolError("message session_id does not match active client session")
                 self.state.apply(message)
+                if message.type is MessageType.COMMAND_RESULT and message.cause is not None:
+                    waiter = self._command_waiters.get(message.cause)
+                    if waiter is not None and not waiter.done(): waiter.set_result(message)
                 self._notify_message(message)
         except (ProtocolError, ValueError, asyncio.TimeoutError) as exc:
             await websocket.close(code=1008, reason=str(exc)[:120])
@@ -121,6 +147,7 @@ class LiveBridgeServer:
             if accepted and self._client is websocket:
                 self._client = None
                 self.state.disconnect()
+                self._fail_command_waiters(ConnectionError("Aseprite client disconnected"))
 
     def _next_sequence(self) -> int:
         self._server_sequence += 1

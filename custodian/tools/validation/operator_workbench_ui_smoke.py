@@ -189,6 +189,7 @@ def pure_service_smoke() -> None:
 class PilotService:
     def __init__(self):
         self.repo_root = Path.cwd(); self.aseprite = None; self.workbench = SimpleNamespace(resolve_aseprite=lambda *_: Path("/bin/true")); self.mutations = 0
+        self.model = SimpleNamespace(WorkbenchError=RuntimeError)
         self.selection = AnimationSelection("unarmed", "locomotion", "run_01", "e")
         self.last_selection = None; self.preview_calls = 0; self.runtime_calls = 0; self.publish_calls = []
         self.runtime_selection = None
@@ -227,7 +228,14 @@ class PilotService:
         from PIL import Image
         import animation_preview
         self.preview_calls += 1
-        frames = tuple(Image.new("RGBA", (96, 96), (20 + index, 30, 40, 180)) for index in range(6))
+        frames = []
+        for index in range(6):
+            image = Image.new("RGBA", (96, 96), (0, 0, 0, 0))
+            for y in range(30, 70):
+                for x in range(40, 56):
+                    image.putpixel((x, y), (20 + index, 30, 40, 255))
+            frames.append(image)
+        frames = tuple(frames)
         identity = animation_preview.SemanticIdentity(selection.profile, selection.group, selection.action, selection.direction)
         return animation_preview.Preview(identity, source, frames, (96, 96), "fixture", ())
     def flatten_sequence(self, sequence, source="runtime"):
@@ -239,6 +247,11 @@ class PilotService:
             for _loop in range(clip.loops):
                 output.extend((clip_index, index, preview.frames[index]) for index in range(start, end + 1))
         return output
+    def timeline_clip_frame_count(self, clip):
+        for record in self.browser_records():
+            if record.selection.identity == clip.identity.key:
+                return record.frames
+        raise ValueError(f"timeline clip identity is no longer present: {clip.identity.key}")
     def transition_candidates(self, selection):
         return WorkbenchService.transition_candidates(self, selection)
     def transition_preview(self, selection, primary_source):
@@ -368,6 +381,7 @@ async def textual_smoke() -> None:
                         "websocket", "app_events_sitechange", "sprite_change_events",
                         "sprite_is_modified", "timer", "frame_selection", "image_render_export",
                         "layer_selection", "layer_visibility_control", "layer_visibility_events",
+                        "art_agent_live_read",
                     ],
                     "editor_state": {
                         "has_document": True, "document_path": workbench_path,
@@ -423,12 +437,12 @@ async def textual_smoke() -> None:
             app._jump_timeline_clip(1)
             assert app.timeline_frames[app.state.preview_frame][0] == 1
             assert app.timeline_frames[app.state.preview_frame][1] == 0
-            assert "walk_01" in str(app.main_screen.query_one("#timeline-canvas").render())
+            assert "walk_01" in str(app.main_screen.query_one("#timeline-canvas .preview-label", Static).render())
             clip = app.sequence.clips[1]
             clip_count_before = len(app.timeline_frames)
             app._adjust_timeline_trim(edge="start", delta=1)
-            await pilot.pause(0.2)
-            assert clip.start_frame == 1 and len(app.timeline_frames) == clip_count_before - 1
+            await pilot.pause(0.5)
+            assert clip.start_frame == 1 and len(app.timeline_frames) == clip_count_before - clip.loops
             app.action_preview_faster(); assert clip.review_fps == 9.0
             app.action_timeline_clip_loops(); await pilot.pause(0.2)
             assert clip.loops == 3
@@ -437,6 +451,7 @@ async def textual_smoke() -> None:
             except asyncio.TimeoutError: pass
             else: raise AssertionError("Timeline review emitted a live bridge command")
 
+            app.action_mode_preview(); await pilot.pause(0.2)
             app.state.preview_examiner_mode = "transition"
             await app._load_transition_examiner()
             assert app.transition_target_view is not None
@@ -449,15 +464,15 @@ async def textual_smoke() -> None:
             app.state.transition_view = "ghost"
             app._render_preview(); await pilot.pause()
             assert transition_compare.has_class("hidden")
-            assert transition_canvas.source_frame is app.transition_analysis.ghost
+            assert transition_canvas.source_frame.tobytes() == app.transition_analysis.ghost.tobytes()
             app.action_transition_view(); assert app.state.transition_view == "diff"
             app._render_preview(); await pilot.pause()
-            assert transition_canvas.source_frame is app.transition_analysis.diff
+            assert transition_canvas.source_frame.tobytes() == app.transition_analysis.diff.tobytes()
             app.action_transition_view(); assert app.state.transition_view == "split"
             app._render_preview(); await pilot.pause()
             assert not transition_compare.has_class("hidden")
-            assert transition_canvas.source_frame is app.transition_analysis.target_boundary
-            assert transition_compare.source_frame is app.transition_analysis.reference_boundary
+            assert transition_canvas.source_frame.tobytes() == app.transition_analysis.target_boundary.tobytes()
+            assert transition_compare.source_frame.tobytes() == app.transition_analysis.reference_boundary.tobytes()
             transition_target = app.transition_target_view
             app.action_transition_target(); await pilot.pause(0.1)
             assert app.transition_target_view is not None
