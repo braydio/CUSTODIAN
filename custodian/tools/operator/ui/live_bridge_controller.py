@@ -46,6 +46,9 @@ class LiveBridgeEvent:
     frame_width: int | None = None
     frame_height: int | None = None
     error: str | None = None
+    layer: str | None = None
+    layer_id: str | None = None
+    visible: bool | None = None
 
 
 def _project_string(value: object) -> str | None:
@@ -81,6 +84,8 @@ class LiveBridgeController:
             payload = message.payload
         elif message.type is MessageType.DOCUMENT_CHANGED:
             payload = message.payload
+        elif message.type is MessageType.LAYER_STATE_CHANGED:
+            payload = message.payload
         elif message.type is MessageType.COMMAND_RESULT:
             payload = message.payload
             if payload.get("operation") != "export_preview":
@@ -108,6 +113,9 @@ class LiveBridgeController:
             frame_width=_project_integer(payload.get("frame_width"), minimum=1),
             frame_height=_project_integer(payload.get("frame_height"), minimum=1),
             error=_project_string(payload.get("error")),
+            layer=_project_string(payload.get("layer")),
+            layer_id=_project_string(payload.get("layer_id")),
+            visible=payload.get("visible") if isinstance(payload.get("visible"), bool) else None,
         ))
 
     async def next_event(self) -> LiveBridgeEvent:
@@ -121,6 +129,33 @@ class LiveBridgeController:
             "frame": frame_index + 1,
             "document_path": str(document),
         })
+
+    async def select_layer(self, workbench_path: Path, layer: str) -> int:
+        if not layer:
+            raise ValueError("layer is required")
+        document = self.server.paths.validate_workbench(workbench_path)
+        payload: dict[str, object] = {
+            "document_path": str(document),
+            "layer": layer,
+        }
+        layer_id = self.server.state.layer_ids.get(layer)
+        if layer_id:
+            payload["layer_id"] = layer_id
+        return await self.server.send_command(MessageType.SELECT_LAYER, payload)
+
+    async def set_layer_visibility(self, workbench_path: Path, layer: str, visible: bool) -> int:
+        if not layer:
+            raise ValueError("layer is required")
+        document = self.server.paths.validate_workbench(workbench_path)
+        payload: dict[str, object] = {
+            "document_path": str(document),
+            "layer": layer,
+            "visible": visible,
+        }
+        layer_id = self.server.state.layer_ids.get(layer)
+        if layer_id:
+            payload["layer_id"] = layer_id
+        return await self.server.send_command(MessageType.SET_LAYER_VISIBILITY, payload)
 
     def _live_preview_path(self, workbench_path: Path) -> Path:
         document = self.server.paths.validate_workbench(workbench_path)

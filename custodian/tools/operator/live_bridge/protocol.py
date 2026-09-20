@@ -20,8 +20,11 @@ class MessageType(str, Enum):
     EDITOR_STATE = "editor.state"
     EDITOR_SITE_CHANGED = "editor.site_changed"
     DOCUMENT_CHANGED = "document.changed"
+    LAYER_STATE_CHANGED = "layer.state_changed"
     OPEN_WORKBENCH = "command.open_workbench"
     SELECT_FRAME = "command.select_frame"
+    SELECT_LAYER = "command.select_layer"
+    SET_LAYER_VISIBILITY = "command.set_layer_visibility"
     EXPORT_PREVIEW = "command.export_preview"
     SAVE = "command.save"
     COMMAND_RESULT = "command.result"
@@ -31,6 +34,8 @@ class MessageType(str, Enum):
 COMMAND_TYPES = frozenset({
     MessageType.OPEN_WORKBENCH,
     MessageType.SELECT_FRAME,
+    MessageType.SELECT_LAYER,
+    MessageType.SET_LAYER_VISIBILITY,
     MessageType.EXPORT_PREVIEW,
     MessageType.SAVE,
 })
@@ -43,6 +48,9 @@ REQUIRED_CAPABILITIES = frozenset({
     "timer",
     "frame_selection",
     "image_render_export",
+    "layer_selection",
+    "layer_visibility_control",
+    "layer_visibility_events",
 })
 
 
@@ -132,6 +140,24 @@ def _validate_payload(message: Message) -> None:
         if not isinstance(output_path, str) or not output_path:
             raise ProtocolError("command.export_preview requires output_path")
         _nonnegative_int(payload, "revision")
+    elif message.type is MessageType.SELECT_LAYER:
+        document_path = payload.get("document_path")
+        layer = payload.get("layer")
+        if not isinstance(document_path, str) or not document_path:
+            raise ProtocolError("command.select_layer requires document_path")
+        if not isinstance(layer, str) or not layer:
+            raise ProtocolError("command.select_layer requires layer")
+        _optional_layer_id(payload)
+    elif message.type is MessageType.SET_LAYER_VISIBILITY:
+        document_path = payload.get("document_path")
+        layer = payload.get("layer")
+        if not isinstance(document_path, str) or not document_path:
+            raise ProtocolError("command.set_layer_visibility requires document_path")
+        if not isinstance(layer, str) or not layer:
+            raise ProtocolError("command.set_layer_visibility requires layer")
+        if not isinstance(payload.get("visible"), bool):
+            raise ProtocolError("visible must be a boolean")
+        _optional_layer_id(payload)
     elif message.type is MessageType.EDITOR_STATE:
         _validate_editor_payload(payload)
     elif message.type is MessageType.EDITOR_SITE_CHANGED:
@@ -140,6 +166,16 @@ def _validate_payload(message: Message) -> None:
         _validate_editor_payload(payload)
         if "revision" in payload and payload["revision"] is not None:
             _nonnegative_int(payload, "revision")
+    elif message.type is MessageType.LAYER_STATE_CHANGED:
+        document_path = payload.get("document_path")
+        layer = payload.get("layer")
+        if not isinstance(document_path, str) or not document_path:
+            raise ProtocolError("layer.state_changed requires document_path")
+        if not isinstance(layer, str) or not layer:
+            raise ProtocolError("layer.state_changed requires layer")
+        if not isinstance(payload.get("visible"), bool):
+            raise ProtocolError("layer.state_changed requires visible")
+        _optional_layer_id(payload)
     elif message.type is MessageType.COMMAND_RESULT and message.cause is None:
         raise ProtocolError("command.result must identify its command in cause")
     elif message.type is MessageType.OPEN_WORKBENCH:
@@ -159,6 +195,12 @@ def _nonnegative_int(payload: Mapping[str, Any], key: str) -> None:
         raise ProtocolError(f"{key} must be a non-negative integer")
 
 
+def _optional_layer_id(payload: Mapping[str, Any]) -> None:
+    value = payload.get("layer_id")
+    if value is not None and (not isinstance(value, str) or not value):
+        raise ProtocolError("layer_id must be a non-empty string when supplied")
+
+
 def _validate_editor_payload(payload: Mapping[str, Any]) -> None:
     if "has_document" in payload and not isinstance(payload["has_document"], bool):
         raise ProtocolError("has_document must be a boolean")
@@ -166,13 +208,14 @@ def _validate_editor_payload(payload: Mapping[str, Any]) -> None:
         _positive_int(payload, "frame")
     if "revision" in payload and payload["revision"] is not None:
         _nonnegative_int(payload, "revision")
-    for key in ("document_path", "layer", "layer_id"):
+    for key in ("document_path", "layer"):
         if key in payload and payload[key] is not None and not isinstance(payload[key], str):
             raise ProtocolError(f"{key} must be a string")
     if "sprite_id" in payload and payload["sprite_id"] is not None:
         value = payload["sprite_id"]
         if isinstance(value, bool) or not isinstance(value, (int, str)):
             raise ProtocolError("sprite_id must be a string or integer")
+    _optional_layer_id(payload)
     if "modified" in payload and payload["modified"] is not None and not isinstance(payload["modified"], bool):
         raise ProtocolError("modified must be a boolean")
 
@@ -217,6 +260,8 @@ class BridgePathPolicy:
         elif message.type is MessageType.EXPORT_PREVIEW:
             self.validate_workbench(message.payload["document_path"])
             self.validate_preview(message.payload["output_path"])
+        elif message.type in (MessageType.SELECT_LAYER, MessageType.SET_LAYER_VISIBILITY):
+            self.validate_workbench(message.payload["document_path"])
 
     def _resolve(self, path: str | Path) -> Path:
         candidate = Path(path)

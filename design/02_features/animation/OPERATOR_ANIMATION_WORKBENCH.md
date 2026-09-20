@@ -46,7 +46,10 @@ completeness: synchronized lower+upper and valid full-body sources are COMPLETE,
 while weapon-only, FX-only, and isolated fragments are PARTIAL and remain
 available for audit. The primary layer view is deliberately compact—layer,
 source/workspace/publish contract, and canvas—with role/owner/profile/reference
-status in the selected-layer detail.
+status in the selected-layer detail. When a matching Aseprite Live Bridge
+document is connected, the table also shows editor visibility/focus state;
+these controls are limited to manifest-authorized layers and do not alter the
+manifest-complete LIVE preview composition.
 
 Persistent shell widgets belong to the retained main screen, not whichever
 modal is currently topmost. Activity events always append to UI state and the

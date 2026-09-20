@@ -135,11 +135,19 @@ async def exercise_server(repo_root: Path) -> None:
         assert server.state.active_frame == 6 and server.state.active_layer == "weapon"
         assert server.state.active_layer_id == "12345678-1234-1234-1234-123456789abc"
 
-        await client.send(envelope(first_session, 8, "editor.site_changed", {
+        await client.send(envelope(first_session, 8, "layer.state_changed", {
+            "document_path": str(workbench), "layer": "weapon",
+            "layer_id": "weapon-id", "visible": False,
+        }))
+        await wait_for(lambda: server.state.layer_visibility.get("weapon") is False, "layer state")
+        assert server.state.layer_ids["weapon"] == "weapon-id"
+
+        await client.send(envelope(first_session, 9, "editor.site_changed", {
             "has_document": False, "revision": 12,
         }))
-        await wait_for(lambda: server.state.last_received_sequence == 8, "closed document")
+        await wait_for(lambda: server.state.last_received_sequence == 9, "closed document")
         assert server.state.active_document_path is None and server.state.active_frame is None
+        assert not server.state.layer_visibility and not server.state.layer_ids
 
     await wait_for(lambda: server.state.connection is ConnectionState.DISCONNECTED, "disconnect")
     assert server.state.active_frame is None and server.state.document_revision == 12
@@ -215,6 +223,27 @@ async def controller_lifecycle_smoke(repo_root: Path) -> None:
         assert exported.revision == 42 and exported.frame_count == 8
         assert exported.frame_width == 96 and exported.frame_height == 96
         assert exported.output_path == str(expected_output) and not exported.user_originated
+        await client.send(envelope("controller-first", 5, "layer.state_changed", {
+            "document_path": str(workbench.resolve()), "layer": "upper_body",
+            "layer_id": "upper-id", "visible": True,
+        }))
+        layer_event = await asyncio.wait_for(controller.next_event(), timeout=0.2)
+        assert layer_event.layer == "upper_body" and layer_event.layer_id == "upper-id"
+        layer_select = await controller.select_layer(workbench, "upper_body")
+        layer_command = parse_message(await client.recv())
+        assert layer_command.type is MessageType.SELECT_LAYER
+        assert layer_command.sequence == layer_select
+        assert layer_command.payload == {
+            "document_path": str(workbench.resolve()), "layer": "upper_body", "layer_id": "upper-id",
+        }
+        visibility = await controller.set_layer_visibility(workbench, "upper_body", False)
+        visibility_command = parse_message(await client.recv())
+        assert visibility_command.type is MessageType.SET_LAYER_VISIBILITY
+        assert visibility_command.sequence == visibility
+        assert visibility_command.payload == {
+            "document_path": str(workbench.resolve()), "layer": "upper_body",
+            "visible": False, "layer_id": "upper-id",
+        }
     await wait_for(
         lambda: controller.snapshot().status is LiveBridgeUIStatus.WAITING,
         "controller disconnected",
@@ -277,6 +306,12 @@ def path_policy_smoke(repo_root: Path) -> None:
         "output_path": str(valid_preview), "revision": 42,
     }).to_dict())
     policy.validate_message_paths(export)
+    for message_type, payload in (
+        (MessageType.SELECT_LAYER, {"document_path": str(valid_workbench), "layer": "upper_body"}),
+        (MessageType.SET_LAYER_VISIBILITY, {"document_path": str(valid_workbench), "layer": "upper_body", "visible": False}),
+    ):
+        message = parse_message(Message("bridge", 3, message_type, payload).to_dict())
+        policy.validate_message_paths(message)
     invalid = [
         (policy.validate_workbench, "custodian/content/sprites/operator/source/canonical.aseprite"),
         (policy.validate_workbench, ".ai/operator_animation_workbench/../../escape.aseprite"),
@@ -317,6 +352,18 @@ def path_policy_smoke(repo_root: Path) -> None:
             pass
         else:
             raise AssertionError(f"unsafe export-preview payload accepted: {payload}")
+    for message_type, payload in (
+        (MessageType.SELECT_LAYER, {"layer": "upper_body"}),
+        (MessageType.SELECT_LAYER, {"document_path": str(valid_workbench)}),
+        (MessageType.SET_LAYER_VISIBILITY, {"document_path": str(valid_workbench), "layer": "upper_body", "visible": "no"}),
+        (MessageType.SELECT_LAYER, {"document_path": str(valid_workbench), "layer": "upper_body", "layer_id": ""}),
+    ):
+        try:
+            parse_message(Message("bridge", 4, message_type, payload).to_dict())
+        except ProtocolError:
+            pass
+        else:
+            raise AssertionError(f"invalid layer payload accepted: {payload}")
 
 
 def stable_endpoint_smoke(repo_root: Path) -> None:
@@ -337,19 +384,22 @@ def aseprite_extension_smoke() -> None:
     preview_source = (extension / "live_preview.lua").read_text()
     for capability in REQUIRED_CAPABILITIES:
         assert f'"{capability}"' in protocol_source
-    for command in ("open_workbench", "select_frame", "export_preview", "save"):
+    for command in ("open_workbench", "select_frame", "export_preview", "select_layer", "set_layer_visibility", "save"):
         assert f'"command.{command}"' in protocol_source
     assert protocol_source.count('["command.select_frame"] = true') == 1
     assert protocol_source.count('["command.export_preview"] = true') == 1
-    assert 'error = "unsupported in Packet 4"' in protocol_source
+    assert 'error = "unsupported in Packet 5"' in protocol_source
     assert 'Protocol.DEFAULT_URL = "ws://127.0.0.1:32147"' in protocol_source
     assert 'app.events:on("sitechange"' in main_source
     assert 'sprite.events:on("change"' in main_source
     assert 'sprite.events:on("filenamechange"' in main_source
     assert "minreconnectwait = 1.0" in main_source and "maxreconnectwait = 5.0" in main_source
-    assert "app.frame = frame" in main_source and "app.layer =" not in main_source
+    assert "app.frame = frame" in main_source and "app.layer = layer" not in main_source
     assert 'message.type == "command.select_frame"' in main_source
     assert 'message.type == "command.export_preview"' in main_source
+    assert 'message.type == "command.select_layer"' in main_source
+    assert 'message.type == "command.set_layer_visibility"' in main_source
+    assert 'sprite.events:on("layervisibility"' in main_source
     assert "manifest.layers" in preview_source and "strip:saveAs(output_path)" in preview_source
     for forbidden in (
         "os.execute", "io.popen", "app.open", "app.command.Save",
@@ -376,13 +426,13 @@ local command = protocol.decode_server_message(client,
   '{{"schema":"custodian.operator_live_bridge.message.v1","session_id":"bridge-session","sequence":2,"type":"command.open_workbench","cause":null,"payload":{{"path":"x"}}}}')
 assert(command ~= nil)
 local refusal = protocol.passive_response(client, command)
-assert(refusal:find('unsupported in Packet 4', 1, true))
+assert(refusal:find('unsupported in Packet 5', 1, true))
 assert(client.sequence == 2)
 for index, commandType in ipairs({{"command.save"}}) do
   local deferred = protocol.decode_server_message(client,
     '{{"schema":"custodian.operator_live_bridge.message.v1","session_id":"bridge-session","sequence":' .. tostring(index + 2) .. ',"type":"' .. commandType .. '","cause":null,"payload":{{}}}}')
   assert(deferred ~= nil)
-  assert(protocol.passive_response(client, deferred):find('unsupported in Packet 4', 1, true))
+  assert(protocol.passive_response(client, deferred):find('unsupported in Packet 5', 1, true))
 end
 local selectFrame = protocol.decode_server_message(client,
   '{{"schema":"custodian.operator_live_bridge.message.v1","session_id":"bridge-session","sequence":4,"type":"command.select_frame","cause":null,"payload":{{"frame":5,"document_path":"/tmp/workbench.aseprite"}}}}')
@@ -451,6 +501,7 @@ local changed = lower:cel(2).image:clone()
 changed:drawPixel(1, 1, app.pixelColor.rgba(255, 0, 0, 255))
 app.transaction(function() lower:cel(2).image = changed end)
 assert(sprite.isModified)
+lower.isVisible = false
 local modified_before = sprite.isModified
 local manifest = live.read_json({json.dumps(str(fixture / 'workbench.json'))})
 local result = live.render(sprite, manifest, {json.dumps(str(output))})
@@ -470,6 +521,26 @@ assert(sprite.isModified == modified_before)
                 assert rgba.size == (8, 3)
                 assert rgba.getpixel((5, 1)) == (255, 0, 0, 255)
                 assert rgba.getpixel((3, 2))[3] == 0
+
+            layer_script = Path(temporary) / "layer_api_contract.lua"
+            layer_script.write_text("""local sprite = Sprite(2, 2, ColorMode.RGB)
+local target = sprite.layers[1]
+target.name = 'upper_body'
+assert(tonumber(app.apiVersion) >= 34)
+app.range.layers = { target }
+assert(app.layer ~= nil and tostring(app.layer.name) == 'upper_body')
+local reference = sprite:newLayer()
+reference.name = '__REFERENCE_TEST'
+local before = target.isVisible
+target.isVisible = not before
+assert(target.isVisible == (not before))
+target.isVisible = before
+""")
+            layer_result = subprocess.run(
+                [aseprite, "-b", "--script", str(layer_script)],
+                capture_output=True, text=True, timeout=15,
+            )
+            assert layer_result.returncode == 0, layer_result.stdout + layer_result.stderr
 
 
 def installer_smoke() -> None:

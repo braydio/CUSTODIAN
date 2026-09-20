@@ -6,7 +6,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
-from .protocol import BridgePathPolicy, Message, MessageType, ProtocolError, parse_message
+from .protocol import COMMAND_TYPES, BridgePathPolicy, Message, MessageType, ProtocolError, parse_message
 from .state import BridgeState
 
 DEFAULT_HOST = "127.0.0.1"
@@ -78,10 +78,7 @@ class LiveBridgeServer:
         await self.stop()
 
     async def send_command(self, message_type: MessageType, payload: dict[str, Any]) -> int:
-        if message_type not in {
-            MessageType.OPEN_WORKBENCH, MessageType.SELECT_FRAME,
-            MessageType.EXPORT_PREVIEW, MessageType.SAVE,
-        }:
+        if message_type not in COMMAND_TYPES:
             raise ProtocolError(f"not a command type: {message_type.value}")
         if self._client is None:
             raise ConnectionError("Aseprite client is not connected")

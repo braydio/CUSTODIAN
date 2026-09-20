@@ -250,8 +250,8 @@ async def textual_smoke() -> None:
     from ui.dialogs import ContextMismatchDialog, FrameAddDialog, PublishDialog
     from ui.live_bridge_controller import LiveBridgeController, LiveBridgeUIStatus
     from ui.widgets import (ActivityLog, AnimationDetail, AnimationTree, ContextKeyBar,
-                            MotionCanvas, MotionControls, PreviewCanvas, WorkbenchStatusBar)
-    from textual.widgets import Footer, Static
+                            LayerTable, MotionCanvas, MotionControls, PreviewCanvas, WorkbenchStatusBar)
+    from textual.widgets import DataTable, Footer, Static
     from textual_image.widget import AutoImage
     from websockets.asyncio.client import connect
     from live_bridge.server import LiveBridgeServer
@@ -316,6 +316,7 @@ async def textual_smoke() -> None:
                     "capabilities": [
                         "websocket", "app_events_sitechange", "sprite_change_events",
                         "sprite_is_modified", "timer", "frame_selection", "image_render_export",
+                        "layer_selection", "layer_visibility_control", "layer_visibility_events",
                     ],
                     "editor_state": {
                         "has_document": True, "document_path": workbench_path,
@@ -535,6 +536,65 @@ async def textual_smoke() -> None:
             assert immediate["type"] == "command.export_preview"
             assert immediate["payload"]["revision"] == app.live_bridge.server.state.document_revision
             app.action_mode_workbench(); await pilot.pause()
+            layer_table = app.main_screen.query_one("#layer-table", LayerTable)
+            for layer_name, visible in (("lower_body", True),):
+                await live_client.send(json.dumps({
+                    "schema": "custodian.operator_live_bridge.message.v1",
+                    "session_id": client_session, "sequence": next_sequence,
+                    "type": "layer.state_changed", "cause": None,
+                    "payload": {"document_path": workbench_path, "layer": layer_name, "visible": visible},
+                }))
+                next_sequence += 1
+            await pilot.pause(0.1)
+            assert layer_table._live_visibility.get("lower_body") is True
+            assert layer_table._live_marker("lower_body") == "●"
+            await live_client.send(json.dumps({
+                "schema": "custodian.operator_live_bridge.message.v1",
+                "session_id": client_session, "sequence": next_sequence,
+                "type": "editor.site_changed", "cause": None,
+                "payload": {"document_path": workbench_path, "layer": "lower_body"},
+            }))
+            next_sequence += 1
+            await pilot.pause(0.05)
+            assert layer_table.selected_layer_name() == "lower_body"
+            layer_table.select_live_layer("lower_body")
+            layer_table.post_message(DataTable.RowSelected(
+                layer_table, layer_table.cursor_row, layer_table._row_keys[layer_table.cursor_row]
+            ))
+            await pilot.pause(0.1)
+            layer_command = json.loads(await asyncio.wait_for(live_client.recv(), timeout=0.2))
+            assert layer_command["type"] == "command.select_layer"
+            assert layer_command["payload"] == {"document_path": workbench_path, "layer": "lower_body"}
+            await live_client.send(json.dumps({
+                "schema": "custodian.operator_live_bridge.message.v1",
+                "session_id": client_session, "sequence": next_sequence,
+                "type": "editor.site_changed", "cause": layer_command["sequence"],
+                "payload": {"document_path": workbench_path, "layer": "lower_body"},
+            }))
+            next_sequence += 1
+            await pilot.pause(0.05)
+            try:
+                await asyncio.wait_for(live_client.recv(), timeout=0.05)
+            except asyncio.TimeoutError:
+                pass
+            else:
+                raise AssertionError("causal layer event created a command feedback loop")
+            app.action_preview_toggle()
+            await pilot.pause(0.1)
+            visibility_command = json.loads(await asyncio.wait_for(live_client.recv(), timeout=0.2))
+            assert visibility_command["type"] == "command.set_layer_visibility"
+            assert visibility_command["payload"] == {
+                "document_path": workbench_path, "layer": "lower_body", "visible": False,
+            }
+            await live_client.send(json.dumps({
+                "schema": "custodian.operator_live_bridge.message.v1",
+                "session_id": client_session, "sequence": next_sequence,
+                "type": "layer.state_changed", "cause": visibility_command["sequence"],
+                "payload": {"document_path": workbench_path, "layer": "lower_body", "visible": False},
+            }))
+            next_sequence += 1
+            await pilot.pause(0.05)
+            assert layer_table._live_marker("lower_body") == "○"
         await pilot.pause(0.6)
         assert app.live_bridge.snapshot().status is LiveBridgeUIStatus.WAITING
         assert "LIVE ○ WAITING" in str(status_bar.render())
@@ -560,7 +620,7 @@ async def textual_smoke() -> None:
         assert not next(node for node in tree._walk_nodes() if node.data == ("unarmed", "defense")).is_expanded
         layer_table = app.screen.query_one("#layer-table")
         assert list(layer_table.columns.values())[0].label.plain == "LAYER"
-        assert len(layer_table.columns) == 3
+        assert len(layer_table.columns) == 4
         assert layer_table.max_scroll_x == 0
         assert not app.main_screen.query(Footer)
         key_bar = app.main_screen.query_one("#context-key-bar", ContextKeyBar)

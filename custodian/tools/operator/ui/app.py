@@ -176,6 +176,21 @@ class OperatorWorkbenchApp(App):
     async def _consume_live_bridge_events(self) -> None:
         while True:
             event = await self.live_bridge.next_event()
+            if event.message_type in (MessageType.CLIENT_HELLO, MessageType.EDITOR_SITE_CHANGED):
+                if self._live_document_matches_selection(event.document_path):
+                    table = self._main_widget("#layer-table", LayerTable)
+                    if event.layer is not None:
+                        table.select_live_layer(event.layer)
+            if event.message_type is MessageType.LAYER_STATE_CHANGED:
+                if (
+                    self._live_document_matches_selection(event.document_path)
+                    and event.layer is not None
+                    and event.visible is not None
+                ):
+                    self._main_widget("#layer-table", LayerTable).set_live_visibility(
+                        event.layer, event.visible
+                    )
+                continue
             if event.message_type is MessageType.DOCUMENT_CHANGED:
                 if (
                     self.state.mode == "preview"
@@ -362,6 +377,12 @@ class OperatorWorkbenchApp(App):
             self._main_widget("#animation-detail", AnimationDetail).show_session(session)
             self._main_widget("#layer-table", LayerTable).show_session(session)
             layer_table = self._main_widget("#layer-table", LayerTable)
+            layer_table.clear_live_state()
+            if self._live_document_matches_selection():
+                for layer, visible in self.live_bridge.server.state.layer_visibility.items():
+                    layer_table.set_live_visibility(layer, visible)
+                if self.live_bridge.server.state.active_layer:
+                    layer_table.select_live_layer(str(self.live_bridge.server.state.active_layer))
             self._main_widget("#layer-detail", Static).update(layer_table.selected_detail(0))
             if changed and self.state.mode == "motion":
                 await self._load_motion_preview()
@@ -404,6 +425,17 @@ class OperatorWorkbenchApp(App):
         self._main_widget("#layer-detail", Static).update(table.selected_detail(event.cursor_row))
 
     def on_data_table_row_selected(self, event: DataTable.RowSelected) -> None:
+        if event.data_table.id == "layer-table":
+            if self.state.mode != "workbench" or not self._live_document_matches_selection():
+                return
+            layer = event.data_table.layer_name_at(event.cursor_row)
+            workbench = self._selected_live_workbench_path()
+            if layer and workbench:
+                self.run_worker(
+                    self._send_live_layer_focus(workbench, layer),
+                    group="live-layer-focus", exclusive=True, exit_on_error=False,
+                )
+            return
         if event.data_table.id != "plan-table": return
         item_id = str(event.row_key.value)
         item = next((row for row in self.service.animation_plan() if row["id"] == item_id), None)
@@ -561,6 +593,34 @@ class OperatorWorkbenchApp(App):
         self._main_widget("#preview-canvas", PreviewCanvas).show_frame(self.preview_view.frames[index], self.preview_view.identity.key, self.state.preview_zoom)
         self._main_widget("#preview-controls", PreviewControls).show(frame=index, frames=len(self.preview_view.frames), fps=self.state.review_fps, playing=self.state.preview_playing, loop=self.state.preview_loop, source=self.preview_view.source, zoom=self.state.preview_zoom)
 
+    async def _send_live_layer_focus(self, workbench: Path, layer: str) -> None:
+        try:
+            await self.live_bridge.select_layer(workbench, layer)
+        except (ConnectionError, ValueError):
+            return
+
+    async def _set_live_layer_visibility(self, workbench: Path, layer: str, visible: bool) -> None:
+        try:
+            await self.live_bridge.set_layer_visibility(workbench, layer, visible)
+        except (ConnectionError, ValueError):
+            return
+
+    def action_layer_visibility(self) -> None:
+        if self.state.mode != "workbench" or not self._live_document_matches_selection():
+            return
+        table = self._main_widget("#layer-table", LayerTable)
+        layer = table.selected_layer_name()
+        if not layer:
+            return
+        current = self.live_bridge.server.state.layer_visibility.get(layer)
+        workbench = self._selected_live_workbench_path()
+        if current is None or workbench is None:
+            return
+        self.run_worker(
+            self._set_live_layer_visibility(workbench, layer, not current),
+            group="live-layer-visibility", exclusive=True, exit_on_error=False,
+        )
+
     def _set_preview_frame(self, frame_index: int, *, sync_live: bool) -> None:
         if self.preview_view is None:
             return
@@ -584,6 +644,9 @@ class OperatorWorkbenchApp(App):
             return
 
     def action_preview_toggle(self):
+        if self.state.mode == "workbench":
+            self.action_layer_visibility()
+            return
         if self.state.mode == "motion":
             self.state.motion.playing = not self.state.motion.playing
             self._motion_last_tick = time.monotonic(); self._render_motion(); return

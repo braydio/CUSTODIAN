@@ -3,8 +3,8 @@
 ## Status
 
 Foundation, persistent Aseprite reporting client, Workbench bridge lifecycle,
-bidirectional frame navigation, and live unsaved Preview implemented; layer
-synchronization deferred.
+bidirectional frame navigation, live unsaved Preview, and bidirectional layer
+focus/visibility synchronization implemented.
 
 Packet 1 established the versioned protocol, loopback WebSocket server, tooling
 state model, capability gate, path confinement, and fake-client validation.
@@ -54,8 +54,9 @@ Every message uses the exact fields `schema`, `session_id`, `sequence`, `type`,
 `custodian.operator_live_bridge.message.v1`.
 
 Packet 1 defines `client.hello`, `server.hello`, `editor.state`,
-`editor.site_changed`, `document.changed`, `command.open_workbench`,
-`command.select_frame`, `command.export_preview`, `command.save`,
+`editor.site_changed`, `document.changed`, `layer.state_changed`,
+`command.open_workbench`, `command.select_frame`, `command.select_layer`,
+`command.set_layer_visibility`, `command.export_preview`, `command.save`,
 `command.result`, and `heartbeat`.
 
 Sequences identify commands and order each peer's messages. A consequence or
@@ -68,7 +69,9 @@ session without deleting last-known document/editor presentation state.
 
 `client.hello` supplies the Aseprite and API versions. The pure capability gate
 requires equivalents for WebSocket, app `sitechange`, sprite change events,
-`Sprite.isModified`, timers, frame selection, and image/render export. Tests do
+`Sprite.isModified`, timers, frame selection, image/render export, layer
+selection, writable layer visibility, and the API-34 `layervisibility` event.
+Tests do
 not infer or require a locally installed Aseprite version.
 
 Open and preview commands are confined to `.aseprite` documents beneath
@@ -88,7 +91,7 @@ review location.
 3A. **Workbench Bridge Lifecycle (implemented):** Textual-owned startup, status, transition logging, failure projection, and shutdown.
 3B. **Bidirectional Frame Navigation (implemented):** guarded causal frame sync between manual Preview navigation and the active authoring document.
 4. **Live Unsaved Preview (implemented):** debounced, revision-guarded in-memory render export.
-5. **Layer Synchronization (deferred):** focus and visibility proof/control.
+5. **Layer Synchronization (implemented):** guarded focus and visibility control.
 6. **Preview Examiner (deferred):** live/saved/canonical/runtime comparison.
 7. **Transition Examiner (deferred):** seam metrics and ghost review.
 8. **Timeline Completion (deferred):** trims, loops, FPS, and source-frame navigation.
@@ -184,6 +187,23 @@ and redraws Preview without changing `WorkbenchUIState.preview_source` from
 Aseprite is disconnected, existing saved Workbench preview export remains the
 fallback.
 
+## Layer focus and visibility
+
+Packet 5 adds bidirectional focus and editor visibility synchronization. The
+Workbench layer table projects a compact LIVE column (`●`, `○`, or `?`), follows
+human and causal Aseprite layer focus, and sends focus requests for selected
+Workbench rows. In WORKBENCH mode, Space toggles the selected authorized
+layer's Aseprite visibility.
+
+Layer commands include the expected disposable document path and optional UUID.
+The Aseprite client authorizes only names declared by adjacent `workbench.json`
+`layers` or `references`; unmanifested guide, draft, baseline, and review layers
+fail closed. Visibility is editor presentation state only: Packet 4 continues
+to render every eligible manifest presentation binding regardless of editor
+visibility, and references remain excluded from that production-style preview.
+Layer visibility events require the API-34 `layervisibility` capability rather
+than polling.
+
 Authority remains explicit:
 
 ```text
@@ -238,7 +258,7 @@ future Workbench owns the endpoint.
 
 ## Next Agent Slice
 
-Packet 5 may add layer focus/visibility synchronization. It must preserve the
-manifest-whitelisted render boundary, keep reference/review layers outside
-production-style composition, and must not add save/publication or Art Agent
-mutation authority.
+Packet 6 may add the Preview Examiner: explicit live/saved/canonical/runtime
+comparison, split/diff views, and filmstrip review. It must preserve the layer
+presentation boundary and must not add save/publication or Art Agent mutation
+authority.

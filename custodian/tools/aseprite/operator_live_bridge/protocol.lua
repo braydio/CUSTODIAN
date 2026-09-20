@@ -10,6 +10,9 @@ Protocol.REQUIRED_CAPABILITIES = {
   "timer",
   "frame_selection",
   "image_render_export",
+  "layer_selection",
+  "layer_visibility_control",
+  "layer_visibility_events",
 }
 
 local server_types = {
@@ -18,6 +21,8 @@ local server_types = {
   ["command.open_workbench"] = true,
   ["command.select_frame"] = true,
   ["command.export_preview"] = true,
+  ["command.select_layer"] = true,
+  ["command.set_layer_visibility"] = true,
   ["command.save"] = true,
 }
 
@@ -104,8 +109,8 @@ function Protocol.passive_response(client, message)
   if unsupported_commands[message.type] then
     return Protocol.encode_message(client, "command.result", {
       ok = false,
-      error = "unsupported in Packet 4",
-      packet = "4",
+      error = "unsupported in Packet 5",
+      packet = "5",
     }, message.sequence)
   end
   if message.type == "heartbeat" then

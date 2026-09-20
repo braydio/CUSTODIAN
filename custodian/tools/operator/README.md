@@ -44,6 +44,10 @@ synchronize for the selected disposable document. With source WORKBENCH,
 PREVIEW also prefers a debounced manifest-filtered render of unsaved in-memory
 pixels and falls back to the saved Workbench when disconnected. Preview
 playback, TIMELINE/MOTION clocks, and document opening do not drive the bridge.
+In WORKBENCH mode, the layer table reflects live Aseprite visibility and focus;
+selecting a row and pressing Space controls only layers authorized by the
+adjacent Workbench manifest. This editor visibility state never changes the
+manifest-complete LIVE preview composite.
 
 ```sh
 operator anim list melee_1h --group posture

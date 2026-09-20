@@ -3,7 +3,7 @@ from textual.widgets import Static
 
 HINTS = {
     "plan": "ENTER Open   / Search   1-5 Modes   ? Help",
-    "workbench": "E Edit   A/X Frame   P Publish   V Validate   W Weapon   ? Help",
+    "workbench": "ENTER Layer   SPACE Show/Hide   E Edit   A/X Frame   P Publish   V Validate   W Weapon   ? Help",
     "preview": "SPACE Play   ←/→ Frame   [/] FPS   L Loop   S Source   Z Zoom   ? Help",
     "timeline": "SPACE Play   Ctrl+A Add   Del Remove   Ctrl+↑/↓ Move   Ctrl+S/O Save/Load   ? Help",
     "motion": (

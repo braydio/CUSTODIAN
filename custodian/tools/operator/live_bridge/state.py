@@ -34,6 +34,8 @@ class BridgeState:
     pending_commands: set[int] = field(default_factory=set)
     known_commands: set[int] = field(default_factory=set)
     last_event_user_originated: bool | None = None
+    layer_visibility: dict[str, bool] = field(default_factory=dict)
+    layer_ids: dict[str, str] = field(default_factory=dict)
 
     def connect(self, hello: Message) -> None:
         payload = hello.payload
@@ -68,6 +70,8 @@ class BridgeState:
         self.last_received_sequence = message.sequence
         if message.type in (MessageType.EDITOR_STATE, MessageType.EDITOR_SITE_CHANGED):
             self._apply_editor_payload(message.payload)
+        elif message.type is MessageType.LAYER_STATE_CHANGED:
+            self._apply_layer_payload(message.payload)
         elif message.type is MessageType.DOCUMENT_CHANGED:
             supplied = message.payload.get("revision")
             if supplied is not None and supplied < self.document_revision:
@@ -76,7 +80,7 @@ class BridgeState:
             if "modified" in message.payload:
                 self.document_modified = bool(message.payload["modified"])
             self._apply_document_payload(message.payload)
-        if message.type in (MessageType.EDITOR_SITE_CHANGED, MessageType.DOCUMENT_CHANGED, MessageType.COMMAND_RESULT):
+        if message.type in (MessageType.EDITOR_SITE_CHANGED, MessageType.DOCUMENT_CHANGED, MessageType.LAYER_STATE_CHANGED, MessageType.COMMAND_RESULT):
             linked = message.cause in self.known_commands if message.cause is not None else False
             self.last_event_user_originated = not linked
             if linked:
@@ -84,6 +88,7 @@ class BridgeState:
                 self.pending_commands.discard(message.cause)
 
     def _apply_editor_payload(self, payload: dict[str, Any]) -> None:
+        previous_document = self.active_document_path
         if payload.get("has_document") is False:
             self.active_document_path = None
             self.active_sprite_id = None
@@ -91,7 +96,12 @@ class BridgeState:
             self.active_layer = None
             self.active_layer_id = None
             self.document_modified = None
+            self.layer_visibility.clear()
+            self.layer_ids.clear()
             return
+        if "document_path" in payload and payload["document_path"] != previous_document:
+            self.layer_visibility.clear()
+            self.layer_ids.clear()
         mappings = {
             "document_path": "active_document_path",
             "sprite_id": "active_sprite_id",
@@ -104,6 +114,17 @@ class BridgeState:
         for source, target in mappings.items():
             if source in payload:
                 setattr(self, target, payload[source])
+
+    def _apply_layer_payload(self, payload: dict[str, Any]) -> None:
+        layer = payload.get("layer")
+        if not isinstance(layer, str):
+            return
+        visible = payload.get("visible")
+        if isinstance(visible, bool):
+            self.layer_visibility[layer] = visible
+        layer_id = payload.get("layer_id")
+        if isinstance(layer_id, str):
+            self.layer_ids[layer] = layer_id
 
     def _apply_document_payload(self, payload: dict[str, Any]) -> None:
         for source, target in {

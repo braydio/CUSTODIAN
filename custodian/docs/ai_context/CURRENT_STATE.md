@@ -1,6 +1,6 @@
 # CURRENT STATE — CUSTODIAN
 
-## Operator Aseprite Live Bridge Packet 4 (2026-09-18)
+## Operator Aseprite Live Bridge Packet 5 (2026-09-19)
 
 The optional, loopback-only Python WebSocket server now defaults to stable
 `127.0.0.1:32147` while retaining explicit ephemeral test ports. The persistent
@@ -22,10 +22,14 @@ in-memory pixels, excludes reference layers, preserves dirty state and saved
 document bytes, and returns dimensions/revision only after writing. PREVIEW
 labels the applied artifact LIVE; saved Workbench remains the disconnected
 fallback, while the global source cycle stays WORKBENCH/CANONICAL/RUNTIME.
-Open/save commands remain refused. Focused smoke covers protocol/path guards,
-real headless Aseprite rendering, dirty/workbench immutability, debounce/stale
-suppression, fallback, exclusions, reconnect, and Textual behavior. No layer
-control, Art Agent integration, gameplay behavior, or publication authority changed. See
+Open/save commands remain refused. Layer focus and visibility now synchronize
+bidirectionally for manifest-authorized layers, with UUID hardening and API-34
+visibility-event capability gating. Visibility remains editor presentation state;
+Packet 4 live composition stays manifest-complete even when a layer is hidden.
+Focused smoke covers protocol/path guards, real headless Aseprite rendering and
+layer primitives, dirty/workbench immutability, debounce/stale suppression,
+fallback, exclusions, reconnect, and Textual behavior. No Art Agent integration,
+gameplay behavior, or publication authority changed. See
 `design/02_features/animation/OPERATOR_ASEPRITE_LIVE_BRIDGE.md`.
 
 ## Workbench Optional Mirror Promotion (2026-09-15)
