@@ -2,23 +2,25 @@
   "schema": "custodian.operator_animated_sprite_cutover_evidence.v1",
   "scope": "animated_sprite only; melee and weapon overlays are separate slices",
   "counts": {
-    "AUTHORING_DECISION": 14,
-    "PROVEN_CANONICAL": 38,
+    "AUTHORING_DECISION": 15,
+    "PROVEN_CANONICAL": 37,
     "RETIRED": 83
   },
   "live_counts": {
-    "AUTHORING_DECISION": 14,
-    "PROVEN_CANONICAL": 38
+    "AUTHORING_DECISION": 15,
+    "PROVEN_CANONICAL": 37
   },
-  "open_decisions": [
-    "ranged_2h_fire"
-  ],
+  "open_decisions": [],
   "unresolved": [],
-  "cutover_ready": false,
+  "cutover_ready": true,
   "data_driven_bases": {
     "_get_weapon_animation_name(...unarmed_light_hitreact...)": "OperatorWeaponDefinition animation_map; the damage-reaction base is a weapon-definition field, not a literal in the actor",
     "_get_authored_melee_body_stance_animation()": "melee posture resolver / weapon definition; the stance base is authored per weapon rather than named in the actor"
   },
+  "weapon_animation_map_sites": [
+    "`ranged_fire` -> default `ranged_2h_fire` \u2014 overridden by sidearm_pistol_definition.tres to ranged_2h_fire",
+    "`ranged_stance` -> default `ranged_2h_stance` \u2014 overridden by sidearm_pistol_definition.tres to ranged_2h_stance"
+  ],
   "external_consumers": {
     "instant_replay_recorder.gd": {
       "kind": "observability",
@@ -66,7 +68,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/cosmetic/legacy_front_idle_loop/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "attack_right_combo",
@@ -85,7 +89,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": null,
+      "historical_mapping_proven": false
     },
     {
       "clip": "attack_up",
@@ -111,7 +117,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/cosmetic/legacy_front_idle_loop/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "death",
@@ -139,7 +147,9 @@
       "promoted": false,
       "decision_status": "RESOLVED",
       "resolution_kind": "REPLACE",
-      "resolution": "unarmed/reaction/death_01/omni/full_body"
+      "resolution": "unarmed/reaction/death_01/omni/full_body",
+      "historical_mapping": "unarmed/reaction/legacy_death_disintigrate_base/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "default",
@@ -158,7 +168,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": null,
+      "historical_mapping_proven": false
     },
     {
       "clip": "hurt",
@@ -184,7 +196,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/cosmetic/legacy_front_idle_loop/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "idle_alternative",
@@ -210,7 +224,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/cosmetic/legacy_front_idle_loop/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "idle_down",
@@ -236,7 +252,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/cosmetic/legacy_front_idle_loop/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "idle_long",
@@ -264,7 +282,9 @@
       "promoted": false,
       "decision_status": "RESOLVED",
       "resolution_kind": "RETIRE",
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/cosmetic/legacy_front_idle_long_loop/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "idle_right",
@@ -292,7 +312,9 @@
       "promoted": false,
       "decision_status": "RESOLVED",
       "resolution_kind": "REPLACE",
-      "resolution": "unarmed/locomotion/idle_01/e/full_body"
+      "resolution": "unarmed/locomotion/idle_01/e/full_body",
+      "historical_mapping": "unarmed/cosmetic/legacy_front_idle_loop/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "idle_up",
@@ -318,7 +340,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/cosmetic/legacy_front_idle_loop/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "melee_2h_block_enter",
@@ -344,7 +368,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "melee_1h_heavy/defense/legacy_operator_body_melee_2h_block_enter/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "melee_2h_block_exit",
@@ -370,7 +396,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "melee_1h_heavy/defense/legacy_operator_body_melee_2h_block_exit/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "melee_2h_block_hold",
@@ -396,7 +424,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "melee_1h_heavy/defense/legacy_operator_body_melee_2h_block_hold/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "melee_2h_fast_1_right",
@@ -424,7 +454,9 @@
       "promoted": false,
       "decision_status": "RESOLVED",
       "resolution_kind": "RETIRE",
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "melee_1h_heavy/attack/legacy_fast_attack_1_right_body/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "melee_2h_fast_2_right",
@@ -452,7 +484,9 @@
       "promoted": false,
       "decision_status": "RESOLVED",
       "resolution_kind": "RETIRE",
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "melee_1h_heavy/attack/legacy_fast_attack_2_right_body/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "melee_2h_fast_down",
@@ -478,7 +512,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "melee_1h/attack/legacy_light_attack_base/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "melee_2h_fast_down_left",
@@ -504,7 +540,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "melee_1h/attack/legacy_light_attack_base/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "melee_2h_fast_down_right",
@@ -530,7 +568,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "melee_1h/attack/legacy_light_attack_base/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "melee_2h_fast_left",
@@ -556,7 +596,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "melee_1h/attack/legacy_light_attack_base/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "melee_2h_fast_recovery",
@@ -585,7 +627,9 @@
       "promoted": false,
       "decision_status": "RESOLVED",
       "resolution_kind": "REPLACE",
-      "resolution": "melee_1h_heavy/attack/fast_recovery_01/s/full_body"
+      "resolution": "melee_1h_heavy/attack/fast_recovery_01/s/full_body",
+      "historical_mapping": "melee_1h_heavy/attack/legacy_fast_recovery_body/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "melee_2h_fast_right",
@@ -613,7 +657,9 @@
       "promoted": false,
       "decision_status": "RESOLVED",
       "resolution_kind": "RETIRE",
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "melee_1h/attack/legacy_fast_attack_right_base/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "melee_2h_fast_up",
@@ -639,7 +685,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "melee_1h/attack/legacy_light_attack_base/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "melee_2h_fast_up_left",
@@ -665,7 +713,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "melee_1h/attack/legacy_light_attack_base/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "melee_2h_fast_up_right",
@@ -691,7 +741,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "melee_1h/attack/legacy_light_attack_base/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "melee_2h_heavy",
@@ -719,7 +771,9 @@
       "promoted": false,
       "decision_status": "RESOLVED",
       "resolution_kind": "RETIRE",
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/legacy_operator_2h_heavy_3layer/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "melee_2h_heavy_anticipation",
@@ -748,7 +802,9 @@
       "promoted": false,
       "decision_status": "RESOLVED",
       "resolution_kind": "REPLACE",
-      "resolution": "melee_1h_heavy/attack/heavy_windup_01/s/full_body"
+      "resolution": "melee_1h_heavy/attack/heavy_windup_01/s/full_body",
+      "historical_mapping": "melee_1h_heavy/attack/legacy_heavy_anticipation_body/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "melee_2h_heavy_right",
@@ -776,7 +832,9 @@
       "promoted": false,
       "decision_status": "RESOLVED",
       "resolution_kind": "RETIRE",
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/legacy_operator_2h_heavy_3layer/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "melee_2h_stance",
@@ -802,7 +860,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "melee_1h_heavy/cosmetic/legacy_operator_body_melee_2h_stance/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "operator_dodge_chain_link_down",
@@ -828,7 +888,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "shared/transition/dodge_chain_link_01/e/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "operator_dodge_chain_link_left",
@@ -854,7 +916,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "shared/transition/dodge_chain_link_01/w/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "operator_dodge_chain_link_right",
@@ -880,7 +944,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "shared/transition/dodge_chain_link_01/e/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "operator_dodge_charge_windup_down",
@@ -906,7 +972,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "shared/attack/dodge_charge_windup_01/e/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "operator_dodge_charge_windup_left",
@@ -932,7 +1000,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "shared/attack/dodge_charge_windup_01/w/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "operator_dodge_charge_windup_right",
@@ -958,7 +1028,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "shared/attack/dodge_charge_windup_01/e/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "operator_dodge_full_north",
@@ -984,7 +1056,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "shared/transition/dodge_01/n/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "operator_dodge_full_south",
@@ -1010,12 +1084,15 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "shared/transition/dodge_01/s/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "ranged_2h_fire",
       "consumers": [
-        "hardcoded _get_weapon_animation_name fallback; ships whenever the weapon definition has no animation_map entry"
+        "hardcoded _get_weapon_animation_name fallback; ships whenever the weapon definition has no animation_map entry",
+        "mapped to animation_map key `ranged_fire` by sidearm_pistol_definition.tres"
       ],
       "live": true,
       "frames": 4,
@@ -1033,16 +1110,14 @@
       "canonical_published": false,
       "timing_preserved": false,
       "disposition": "AUTHORING_DECISION",
-      "why": "draws art published only under a legacy action id; it has no canonical identity to migrate to without an authoring decision",
-      "canonical_candidates": [
-        "cosmetic/fire_walk_01",
-        "cosmetic/reload_01",
-        "locomotion/run_01"
-      ],
+      "why": "The full-body ranged fire fallback is retired rather than migrated. Canonical ranged fire is the modular composition -- movement-owned lower body, ranged_2h/cosmetic/fire_01 upper_body, the socketed static carbine, and fire_01 FX -- and WEAPON_OWNED_ANIMATION_SYSTEM.md forbids substituting a compatibility full-body clip for a missing ranged layer. Promoting the old legacy_fire_body strip would produce a schema-clean asset that violates the architecture being migrated to, so ranged_2h/cosmetic/fire_01/*/full_body is deliberately not published. The historical strip stays as provenance art and simply stops being reachable; a modular stack that cannot present reports the missing canonical presentation instead of falling back.",
+      "canonical_candidates": [],
       "promoted": false,
-      "decision_status": "OPEN",
-      "resolution_kind": null,
-      "resolution": null
+      "decision_status": "RESOLVED",
+      "resolution_kind": "RETIRE",
+      "resolution": null,
+      "historical_mapping": "ranged_2h/cosmetic/legacy_fire_body/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "ranged_2h_reload",
@@ -1071,7 +1146,9 @@
       "promoted": true,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "ranged_2h/cosmetic/legacy_operator_body_ranged_2h_reloading/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "ranged_2h_run_left",
@@ -1099,7 +1176,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "ranged_2h/locomotion/run_01/w/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "ranged_2h_run_right",
@@ -1125,12 +1204,15 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "ranged_2h/locomotion/run_01/e/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "ranged_2h_stance",
       "consumers": [
-        "hardcoded _get_weapon_animation_name fallback; ships whenever the weapon definition has no animation_map entry"
+        "hardcoded _get_weapon_animation_name fallback; ships whenever the weapon definition has no animation_map entry",
+        "mapped to animation_map key `ranged_stance` by sidearm_pistol_definition.tres"
       ],
       "live": true,
       "frames": 12,
@@ -1147,13 +1229,15 @@
       "canonical_identity": "unarmed/posture/stance_01/e/full_body",
       "canonical_published": true,
       "timing_preserved": true,
-      "disposition": "PROVEN_CANONICAL",
-      "why": "art provenance maps to a published canonical identity",
+      "disposition": "AUTHORING_DECISION",
+      "why": "The historical mapping is mechanically proven and semantically rejected: this clip drew unarmed/posture/stance_01/e/full_body, the unarmed stance standing in for a ranged one. That the pixels were really shown does not make the substitution a valid canonical ranged stance, exactly as in R3. Ranged stance remains the canonical modular upper-body and socketed-weapon composition over a movement-owned lower body, so ranged_2h/posture/stance_01/*/full_body is deliberately not created.",
       "canonical_candidates": [],
       "promoted": false,
-      "decision_status": null,
-      "resolution_kind": null,
-      "resolution": null
+      "decision_status": "RESOLVED",
+      "resolution_kind": "RETIRE",
+      "resolution": null,
+      "historical_mapping": "unarmed/posture/stance_01/e/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "run_down",
@@ -1179,7 +1263,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/cosmetic/legacy_running_base/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "run_down_left",
@@ -1205,7 +1291,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/cosmetic/legacy_running_base/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "run_down_right",
@@ -1231,7 +1319,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/cosmetic/legacy_running_base/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "run_left",
@@ -1257,7 +1347,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/cosmetic/legacy_running_base/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "run_right",
@@ -1286,7 +1378,9 @@
       "promoted": false,
       "decision_status": "RESOLVED",
       "resolution_kind": "REPLACE",
-      "resolution": "unarmed/locomotion/run_01/e/full_body"
+      "resolution": "unarmed/locomotion/run_01/e/full_body",
+      "historical_mapping": "unarmed/cosmetic/legacy_running_base/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "run_up",
@@ -1312,7 +1406,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/cosmetic/legacy_running_base/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "run_up_left",
@@ -1338,7 +1434,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/cosmetic/legacy_running_base/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "run_up_right",
@@ -1364,7 +1462,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/cosmetic/legacy_running_base/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_arrival",
@@ -1390,7 +1490,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/transition/legacy_operator_full_body_unarmed_arrival_01_s_13f_96/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_arrival_down",
@@ -1416,7 +1518,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/transition/legacy_operator_full_body_unarmed_arrival_01_s_13f_96/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_attack_fast",
@@ -1442,7 +1546,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/fast_01/s/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_attack_fast_down",
@@ -1468,7 +1574,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/fast_01/s/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_attack_fast_left",
@@ -1494,7 +1602,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/fast_01/w/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_attack_fast_recovery",
@@ -1522,7 +1632,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/fast_recovery_01/e/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_attack_fast_recovery_down",
@@ -1550,7 +1662,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/fast_recovery_01/s/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_attack_fast_recovery_down_left",
@@ -1578,7 +1692,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/fast_recovery_01/sw/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_attack_fast_recovery_down_right",
@@ -1606,7 +1722,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/fast_recovery_01/se/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_attack_fast_recovery_left",
@@ -1635,7 +1753,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/fast_recovery_01/w/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_attack_fast_recovery_right",
@@ -1663,7 +1783,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/fast_recovery_01/e/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_attack_fast_recovery_up",
@@ -1691,7 +1813,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/fast_recovery_01/n/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_attack_fast_recovery_up_left",
@@ -1719,7 +1843,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/fast_recovery_01/nw/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_attack_fast_recovery_up_right",
@@ -1747,7 +1873,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/fast_recovery_01/ne/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_attack_fast_right",
@@ -1773,7 +1901,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/fast_01/e/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_attack_fast_up",
@@ -1799,7 +1929,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/fast_01/n/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_attack_fast_windup",
@@ -1827,7 +1959,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/fast_windup_01/s/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_attack_fast_windup_down",
@@ -1855,7 +1989,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/fast_windup_01/s/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_attack_fast_windup_down_left",
@@ -1883,7 +2019,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/fast_windup_01/sw/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_attack_fast_windup_down_right",
@@ -1911,7 +2049,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/fast_windup_01/se/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_attack_fast_windup_left",
@@ -1939,7 +2079,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/fast_windup_01/w/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_attack_fast_windup_right",
@@ -1967,7 +2109,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/fast_windup_01/e/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_attack_fast_windup_up",
@@ -1995,7 +2139,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/fast_windup_01/n/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_attack_fast_windup_up_left",
@@ -2023,7 +2169,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/fast_windup_01/nw/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_attack_fast_windup_up_right",
@@ -2051,7 +2199,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/fast_windup_01/ne/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_attack_heavy",
@@ -2077,7 +2227,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/heavy_01/e/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_attack_heavy_down",
@@ -2103,7 +2255,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/heavy_01/s/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_attack_heavy_left",
@@ -2129,7 +2283,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/heavy_01/w/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_attack_heavy_right",
@@ -2155,7 +2311,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/heavy_01/e/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_attack_heavy_up",
@@ -2181,7 +2339,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/heavy_01/n/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_bodyslam_knockdown_left",
@@ -2207,7 +2367,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/reaction/bodyslam_knockdown_01/w/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_bodyslam_knockdown_right",
@@ -2233,7 +2395,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/reaction/bodyslam_knockdown_01/e/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_death",
@@ -2259,7 +2423,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/reaction/death_01/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_dodge_fast_attack_left",
@@ -2285,7 +2451,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/dodge_fast_attack_01/w/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_dodge_fast_attack_right",
@@ -2311,7 +2479,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/dodge_fast_attack_01/e/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_fast_strike",
@@ -2337,7 +2507,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/fast_strike_01/s/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_fast_strike_down",
@@ -2363,7 +2535,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/fast_strike_01/s/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_fast_strike_down_left",
@@ -2389,7 +2563,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/fast_strike_01/sw/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_fast_strike_down_right",
@@ -2415,7 +2591,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/fast_strike_01/se/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_fast_strike_left",
@@ -2441,7 +2619,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/fast_strike_01/w/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_fast_strike_right",
@@ -2467,7 +2647,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/fast_strike_01/e/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_fast_strike_up",
@@ -2493,7 +2675,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/fast_strike_01/n/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_fast_strike_up_left",
@@ -2519,7 +2703,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/fast_strike_01/nw/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_fast_strike_up_right",
@@ -2545,7 +2731,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/attack/fast_strike_01/ne/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_idle",
@@ -2571,7 +2759,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/locomotion/idle_01/s/lower_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_idle_down",
@@ -2597,7 +2787,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/locomotion/idle_01/s/lower_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_idle_down_left",
@@ -2623,7 +2815,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/locomotion/idle_01/sw/lower_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_idle_down_right",
@@ -2649,7 +2843,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/locomotion/idle_01/se/lower_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_idle_left",
@@ -2675,7 +2871,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/locomotion/idle_01/w/lower_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_idle_right",
@@ -2701,7 +2899,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/locomotion/idle_01/e/lower_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_idle_up",
@@ -2727,7 +2927,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/locomotion/idle_01/n/lower_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_idle_up_left",
@@ -2753,7 +2955,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/locomotion/idle_01/nw/lower_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_idle_up_right",
@@ -2779,7 +2983,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/locomotion/idle_01/ne/lower_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_light_hitreact",
@@ -2805,7 +3011,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/reaction/light_hitreact_01/s/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_light_hitreact_down",
@@ -2831,7 +3039,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/reaction/light_hitreact_01/s/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_run_down",
@@ -2859,7 +3069,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/locomotion/run_01/s/lower_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_run_down_left",
@@ -2887,7 +3099,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/locomotion/run_01/sw/lower_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_run_down_right",
@@ -2915,7 +3129,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/locomotion/run_01/se/lower_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_run_left",
@@ -2943,7 +3159,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/locomotion/run_01/w/lower_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_run_right",
@@ -2971,7 +3189,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/locomotion/run_01/e/lower_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_run_up",
@@ -2999,7 +3219,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/locomotion/run_01/n/lower_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_run_up_left",
@@ -3027,7 +3249,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/locomotion/run_01/nw/lower_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_run_up_right",
@@ -3055,7 +3279,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/locomotion/idle_01/ne/lower_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_stance",
@@ -3081,7 +3307,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/posture/stance_01_legacy_93b8afca/e/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_stance_left",
@@ -3107,7 +3335,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/posture/stance_01/w/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_stance_right",
@@ -3133,7 +3363,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/posture/stance_01_legacy_93b8afca/e/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_walk",
@@ -3161,7 +3393,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/locomotion/walk_01/s/lower_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_walk_down",
@@ -3189,7 +3423,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/locomotion/walk_01/s/lower_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_walk_down_left",
@@ -3217,7 +3453,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/locomotion/walk_01/sw/lower_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_walk_down_right",
@@ -3245,7 +3483,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/locomotion/walk_01/se/lower_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_walk_left",
@@ -3273,7 +3513,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/locomotion/walk_01/w/lower_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_walk_right",
@@ -3301,7 +3543,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/locomotion/walk_01/e/lower_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_walk_up",
@@ -3329,7 +3573,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/locomotion/walk_01/n/lower_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_walk_up_left",
@@ -3357,7 +3603,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/locomotion/run_01/nw/lower_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "unarmed_walk_up_right",
@@ -3385,7 +3633,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/locomotion/idle_01/ne/lower_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "walk_down",
@@ -3404,7 +3654,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": null,
+      "historical_mapping_proven": false
     },
     {
       "clip": "walk_down_default",
@@ -3433,7 +3685,9 @@
       "promoted": false,
       "decision_status": "RESOLVED",
       "resolution_kind": "REPLACE",
-      "resolution": "unarmed/locomotion/walk_01/s/full_body"
+      "resolution": "unarmed/locomotion/walk_01/s/full_body",
+      "historical_mapping": "unarmed/cosmetic/legacy_walking_base/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "walk_down_left",
@@ -3459,7 +3713,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/cosmetic/legacy_walking_base/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "walk_down_right",
@@ -3485,7 +3741,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/cosmetic/legacy_walking_base/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "walk_east",
@@ -3511,7 +3769,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/cosmetic/legacy_walk_right_body/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "walk_left",
@@ -3537,7 +3797,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/cosmetic/legacy_walking_base/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "walk_right",
@@ -3565,7 +3827,9 @@
       "promoted": false,
       "decision_status": "RESOLVED",
       "resolution_kind": "REPLACE",
-      "resolution": "unarmed/locomotion/walk_01/e/full_body"
+      "resolution": "unarmed/locomotion/walk_01/e/full_body",
+      "historical_mapping": "unarmed/cosmetic/legacy_walking_base/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "walk_up",
@@ -3591,7 +3855,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/cosmetic/legacy_walking_base/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "walk_up_left",
@@ -3617,7 +3883,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/cosmetic/legacy_walking_base/omni/full_body",
+      "historical_mapping_proven": true
     },
     {
       "clip": "walk_up_right",
@@ -3643,7 +3911,9 @@
       "promoted": false,
       "decision_status": null,
       "resolution_kind": null,
-      "resolution": null
+      "resolution": null,
+      "historical_mapping": "unarmed/cosmetic/legacy_walking_base/omni/full_body",
+      "historical_mapping_proven": true
     }
   ]
 }

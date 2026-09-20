@@ -27,6 +27,7 @@ ACTOR = CUSTODIAN / "game/actors/operator/operator.gd"
 #: actor file alone does not see them, and a clip reached only from here would be
 #: wrongly reported as dead residue.
 STATES = CUSTODIAN / "game/actors/operator/animations/states"
+WEAPON_DEFINITIONS = CUSTODIAN / "game/actors/operator"
 CLIPS = PROJECT_ROOT / "reports/operator/operator_animated_sprite_clips.json"
 FULL_BODY_BASELINE = PROJECT_ROOT / "reports/operator/operator_full_body_compatibility_timing.json"
 OUT_JSON = PROJECT_ROOT / "reports/operator/operator_animated_sprite_cutover_evidence.json"
@@ -156,6 +157,29 @@ RESOLVED_DECISIONS = {
                "profile's canonical heavy family. Creating a second canonical heavy identity "
                "to receive this name would reintroduce the ambiguity it encodes.",
     },
+    "ranged_2h_fire": {
+        "kind": "RETIRE",
+        "why": "The full-body ranged fire fallback is retired rather than migrated. Canonical "
+               "ranged fire is the modular composition -- movement-owned lower body, "
+               "ranged_2h/cosmetic/fire_01 upper_body, the socketed static carbine, and "
+               "fire_01 FX -- and WEAPON_OWNED_ANIMATION_SYSTEM.md forbids substituting a "
+               "compatibility full-body clip for a missing ranged layer. Promoting the old "
+               "legacy_fire_body strip would produce a schema-clean asset that violates the "
+               "architecture being migrated to, so ranged_2h/cosmetic/fire_01/*/full_body is "
+               "deliberately not published. The historical strip stays as provenance art and "
+               "simply stops being reachable; a modular stack that cannot present reports the "
+               "missing canonical presentation instead of falling back.",
+    },
+    "ranged_2h_stance": {
+        "kind": "RETIRE",
+        "why": "The historical mapping is mechanically proven and semantically rejected: this "
+               "clip drew unarmed/posture/stance_01/e/full_body, the unarmed stance standing "
+               "in for a ranged one. That the pixels were really shown does not make the "
+               "substitution a valid canonical ranged stance, exactly as in R3. Ranged stance "
+               "remains the canonical modular upper-body and socketed-weapon composition over "
+               "a movement-owned lower body, so ranged_2h/posture/stance_01/*/full_body is "
+               "deliberately not created.",
+    },
     "melee_2h_heavy_right": {
         "kind": "RETIRE",
         "why": "The directional spelling of the same generic legacy identity; retires with it "
@@ -211,6 +235,80 @@ def literal_requests(source: str) -> tuple[set[str], set[str], set[str], set[str
     weapon_defaults = set(re.findall(
         r'_get_weapon_animation_name\([^()]*,\s*&"([^"]+)"\s*\)', source))
     return bases, plays, probes, weapon_defaults
+
+
+def weapon_map_sites(source: str) -> dict[str, str]:
+    """`animation_map` key -> the literal default the actor hardcodes for it."""
+
+    return {
+        key: default
+        for key, default in re.findall(
+            r'_get_weapon_animation_name\([^()]*,\s*"([^"]+)"\s*,\s*&"([^"]+)"\s*\)', source)
+    }
+
+
+def weapon_animation_maps() -> dict[str, dict[str, str]]:
+    """Each weapon definition's `animation_map`, as authored on disk."""
+
+    maps: dict[str, dict[str, str]] = {}
+    for path in sorted(WEAPON_DEFINITIONS.glob("*_definition.tres")):
+        text = path.read_text(encoding="utf-8")
+        match = re.search(r"^animation_map = \{(.*?)^\}", text, re.MULTILINE | re.DOTALL)
+        entries: dict[str, str] = {}
+        if match:
+            entries = dict(re.findall(r'"([^"]+)":\s*"([^"]*)"', match.group(1)))
+        maps[path.name] = entries
+    return maps
+
+
+def register_weapon_map_requests(source: str, clips: dict, live: dict) -> list[str]:
+    """Record, and then assert, every animation name reachable through a weapon map.
+
+    This closes the blind spot that hid `ranged_2h_fire` and `ranged_2h_stance`.
+    `_get_weapon_animation_name()` looks data-driven, so its literal defaults read
+    as weapon-resource values and were skipped. They are not: the carbine
+    definition has no `animation_map` at all, which makes the hardcoded default
+    the name that actually ships. A name is genuinely data-driven only where some
+    definition really overrides that key.
+
+    Four slices in a row have found consumers that name-oriented static analysis
+    missed, so the invariant is asserted rather than described: if a default, or a
+    name a definition maps a key to, matches a compatibility clip, that clip must
+    have a recorded live consumer.
+    """
+
+    notes: list[str] = []
+    maps = weapon_animation_maps()
+    sites = weapon_map_sites(source)
+    for key, default in sorted(sites.items()):
+        overriding = sorted(name for name, entries in maps.items() if key in entries)
+        mapped = sorted({entries[key] for entries in maps.values() if key in entries})
+        for name in mapped:
+            if name in clips:
+                live[name].append(
+                    "mapped to animation_map key `%s` by %s" % (key, ", ".join(overriding)))
+        notes.append("`%s` -> default `%s`%s%s" % (
+            key,
+            default,
+            "" if overriding else
+            " — no weapon definition overrides this key, so the default is what ships",
+            (" — overridden by %s to %s" % (", ".join(overriding), ", ".join(mapped)))
+            if overriding else "",
+        ))
+
+    for key, default in sorted(sites.items()):
+        if default in clips and not live.get(default):
+            raise ValueError(
+                f"{default} is the hardcoded default for animation_map key '{key}' and names a "
+                f"compatibility clip, but no live consumer was recorded for it"
+            )
+        for name in {entries[key] for entries in maps.values() if key in entries}:
+            if name in clips and not live.get(name):
+                raise ValueError(
+                    f"{name} is mapped to animation_map key '{key}' by a weapon definition and "
+                    f"names a compatibility clip, but no live consumer was recorded for it"
+                )
+    return notes
 
 
 def reachable(base: str, clips: dict) -> list[str]:
@@ -293,6 +391,7 @@ def main() -> int:
     for clip, origin in sorted(state_plays.items()):
         if clip in clips:
             live[clip].append(f"played by {origin} through the animation state machine")
+    weapon_map_notes = register_weapon_map_requests(source, clips, live)
 
     rows = []
     for clip in sorted(clips):
@@ -319,20 +418,29 @@ def main() -> int:
             disposition, why = "UNRESOLVED", f"art maps to {identity}, which is not published canonically"
         else:
             disposition, why = "PROVEN_CANONICAL", "art provenance maps to a published canonical identity"
+        # Proof and disposition are orthogonal. "These pixels really were shown"
+        # is a fact about history; "this is the canonical identity we migrate to"
+        # is a decision. A row may carry a proven historical mapping and still be
+        # deliberately retired -- ranged_2h_stance provably drew the unarmed
+        # stance, which is precisely why it is not canonised.
+        # The identity the atlas provenance establishes, whether or not it is
+        # published canonically and whether or not the migration accepts it.
+        historical_mapping = info["canonical_identity"] or None
+        historical_mapping_proven = historical_mapping is not None
         decision = RESOLVED_DECISIONS.get(clip)
         decision_status = resolution = resolution_kind = None
-        if disposition == "AUTHORING_DECISION":
-            if decision is None:
-                decision_status = "OPEN"
-            else:
-                decision_status = "RESOLVED"
-                resolution_kind = decision["kind"]
-                resolution = decision.get("resolution")
-                why = decision["why"]
-                if resolution is not None and resolution not in published_identities:
-                    raise ValueError(
-                        f"{clip} resolves to {resolution}, which is not published canonically"
-                    )
+        if decision is not None and consumers:
+            disposition = "AUTHORING_DECISION"
+            decision_status = "RESOLVED"
+            resolution_kind = decision["kind"]
+            resolution = decision.get("resolution")
+            why = decision["why"]
+            if resolution is not None and resolution not in published_identities:
+                raise ValueError(
+                    f"{clip} resolves to {resolution}, which is not published canonically"
+                )
+        elif disposition == "AUTHORING_DECISION":
+            decision_status = "OPEN"
         rows.append({
             "clip": clip,
             "consumers": consumers,
@@ -352,6 +460,8 @@ def main() -> int:
             "decision_status": decision_status,
             "resolution_kind": resolution_kind,
             "resolution": resolution,
+            "historical_mapping": historical_mapping,
+            "historical_mapping_proven": historical_mapping_proven,
         })
 
     counts: dict[str, int] = defaultdict(int)
@@ -372,6 +482,7 @@ def main() -> int:
         "unresolved": unresolved,
         "cutover_ready": not open_decisions and not unresolved,
         "data_driven_bases": DATA_DRIVEN_BASES,
+        "weapon_animation_map_sites": weapon_map_notes,
         "external_consumers": EXTERNAL_CONSUMERS,
         "rows": rows,
     }
@@ -422,6 +533,14 @@ def main() -> int:
             lines.append(f"| `{row['clip']}` | `{art.get('action','?')}` | "
                          f"{row['frames']}f @{row['authored_fps']} | "
                          f"{', '.join('`%s`' % c for c in row['canonical_candidates']) or '-'} |")
+    lines += ["", "## Weapon `animation_map` sites", "",
+              "A name reached through `_get_weapon_animation_name()` is only data-driven where a",
+              "weapon definition actually overrides that key. Where none does, the actor's",
+              "literal default is what ships, and it is an ordinary live request. Reading these",
+              "as resource values is what hid `ranged_2h_fire` and `ranged_2h_stance`, so the",
+              "generator now fails if one of them names a clip with no recorded consumer.", ""]
+    for note in weapon_map_notes:
+        lines.append(f"- {note}")
     lines += ["", "## Data-driven bases", ""]
     for name, why in DATA_DRIVEN_BASES.items():
         lines.append(f"- `{name}` — {why}")

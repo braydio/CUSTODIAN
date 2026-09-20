@@ -1840,9 +1840,10 @@ func _update_animation():
 		_hide_modular_locomotion_layers()
 		animated_sprite.flip_h = facing_left
 		animated_sprite.speed_scale = 1.0
-		if animated_sprite.sprite_frames.has_animation("ranged_2h_reload"):
-			if animated_sprite.animation != "ranged_2h_reload" or not animated_sprite.is_playing():
-				_animation_player.play(animated_sprite, "ranged_2h_reload")
+		var reload_animation := _resolve_omni_full_body_animation("ranged_2h_reload")
+		if not reload_animation.is_empty():
+			if animated_sprite.animation != reload_animation or not animated_sprite.is_playing():
+				_animation_player.play(animated_sprite, reload_animation)
 		_update_primary_weapon_visual(false)
 		_update_idle_loop_tracking(false, "")
 		return
@@ -1851,14 +1852,15 @@ func _update_animation():
 	animated_sprite.flip_h = facing_left
 	_update_primary_weapon_visual(is_firing)
 
-	var ranged_fire_anim := _get_current_ranged_body_fire_animation(is_moving and not is_sprinting)
-	if is_firing and not facing_up and _is_using_ranged_weapon_visual() and animated_sprite.sprite_frames.has_animation(ranged_fire_anim):
-		_hide_modular_locomotion_layers()
-		animated_sprite.speed_scale = _get_body_animation_speed_scale(ranged_fire_anim)
-		if animated_sprite.animation != ranged_fire_anim or not animated_sprite.is_playing():
-			_animation_player.play(animated_sprite, ranged_fire_anim)
-		_update_idle_loop_tracking(false, "")
-		return
+	# C2a-R4: there is deliberately no full-body ranged fire fallback. Canonical
+	# ranged fire is the modular composition -- movement-owned lower body,
+	# `ranged_2h/cosmetic/fire_01` upper body, the socketed static carbine and its
+	# FX -- and a missing ranged layer may not substitute a compatibility
+	# full-body clip. If that stack cannot present, presentation degrades through
+	# the ordinary movement path and the gap is reported; gameplay firing does not
+	# depend on it.
+	if is_firing and not facing_up and _is_using_ranged_weapon_visual():
+		_report_missing_modular_ranged_presentation(&"fire")
 	animated_sprite.speed_scale = 1.0
 	
 	# Play walk or idle based on movement and direction
@@ -1939,6 +1941,7 @@ func _update_animation():
 	else:
 		var ranged_stance_direction := _get_modular_upper_locomotion_direction(animation_dir)
 		if _sync_modular_ranged_2h_stance_presentation(ranged_stance_direction):
+			_clear_missing_modular_ranged_report(&"stance")
 			_update_idle_loop_tracking(true, "ranged_2h_stance_modular")
 			return
 		if _is_using_ranged_2h_primary() and _sync_modular_ranged_relaxed_presentation(animation_dir):
@@ -1961,13 +1964,12 @@ func _update_animation():
 					_animation_player.play(animated_sprite, resolved_stance_anim)
 				_update_idle_loop_tracking(false, "")
 				return
-		var ranged_stance_anim := _get_weapon_animation_name(_get_active_ranged_weapon_definition(), "ranged_stance", &"ranged_2h_stance")
-		if not facing_up and animated_sprite.sprite_frames.has_animation(ranged_stance_anim) and _is_using_ranged_weapon_visual():
-			_hide_modular_locomotion_layers()
-			if animated_sprite.animation != ranged_stance_anim:
-				_animation_player.play(animated_sprite, ranged_stance_anim)
-			_update_idle_loop_tracking(false, "")
-			return
+		# C2a-R4: no full-body ranged stance fallback either. The historical clip
+		# drew `unarmed/posture/stance_01/e/full_body` -- the unarmed stance wearing
+		# a ranged name -- and that substitution is deliberately not carried into
+		# canonical ranged presentation.
+		if not facing_up and _is_using_ranged_weapon_visual():
+			_report_missing_modular_ranged_presentation(&"stance")
 		var idle_anim = "idle_" + direction_suffix
 		if _should_play_idle_long() and animated_sprite.sprite_frames.has_animation("idle_long"):
 			idle_anim = "idle_long"
@@ -3391,6 +3393,7 @@ func _begin_modular_primary_ranged_fire_presentation(
 		return false
 	if modular_lower_body_sprite == null and modular_upper_body_sprite == null and modular_sidearm_sprite == null and modular_upper_fx_sprite == null:
 		return false
+	_clear_missing_modular_ranged_report(&"fire")
 	# Declare the composition before configuring any of its layers. Acquiring the
 	# body one layer at a time is what the strict presenter exists to prevent.
 	_declare_modular_body_composition()
@@ -4928,6 +4931,34 @@ func _obs_gauge(gauge_name: StringName, value: Variant) -> void:
 		observatory.call("set_gauge", String(gauge_name), value)
 
 
+## Ranged presentation gaps are reported, never papered over.
+##
+## C2a-R4 retired the compatibility full-body ranged fire and stance clips
+## instead of migrating them, because `WEAPON_OWNED_ANIMATION_SYSTEM.md` forbids
+## substituting a full-body clip for a missing ranged layer. So a modular stack
+## that cannot present is a real authoring gap and is surfaced as one. Reported
+## on transition rather than every frame: this runs inside `_update_animation`.
+var _reported_missing_modular_ranged: Dictionary = {}
+
+
+func _report_missing_modular_ranged_presentation(kind: StringName) -> void:
+	if bool(_reported_missing_modular_ranged.get(kind, false)):
+		return
+	_reported_missing_modular_ranged[kind] = true
+	_obs_warning(
+		"Operator modular ranged presentation unavailable; no compatibility fallback exists",
+		{
+			"kind": String(kind),
+			"canonical_stack": "movement lower_body + ranged_2h/cosmetic/fire_01 upper_body"
+				+ " + socketed weapon + fire_01 fx",
+		}
+	)
+
+
+func _clear_missing_modular_ranged_report(kind: StringName) -> void:
+	_reported_missing_modular_ranged.erase(kind)
+
+
 func _obs_warning(message: String, data: Dictionary = {}) -> void:
 	var observatory := _get_dev_observatory()
 	if observatory != null and observatory.has_method("mark_warning"):
@@ -5190,7 +5221,9 @@ func _request_ranged_shot() -> void:
 		"accepted_aim_world_position": accepted_aim_world_position,
 	}
 	_obs_gauge(&"player_ranged_requests_pending", 1)
-	_play_ranged_fire_animation(fire_animation)
+	# C2a-R4: no legacy full-body fire strip is played here. `fire_animation` now
+	# only supplies the gameplay release timing below; the visible presentation is
+	# the modular composition started next.
 	if not _is_using_sidearm_ranged():
 		_begin_modular_primary_ranged_fire_presentation(accepted_aim_direction)
 	_emit_weapon_feedback(&"fire")
@@ -11772,17 +11805,6 @@ func _get_ranged_fire_release_delay(animation_name: StringName) -> float:
 	if fps <= 0.001:
 		return 0.0
 	return float(fire_frame) / fps
-
-
-func _play_ranged_fire_animation(animation_name: StringName) -> void:
-	if animated_sprite == null or animated_sprite.sprite_frames == null:
-		return
-	if not animated_sprite.sprite_frames.has_animation(animation_name):
-		return
-	animated_sprite.flip_h = _is_facing_left(aim_direction)
-	animated_sprite.speed_scale = _get_body_animation_speed_scale(animation_name)
-	_animation_player.play(animated_sprite, animation_name)
-	_update_primary_weapon_visual(true)
 
 
 func _update_pending_ranged_shot(delta: float) -> void:

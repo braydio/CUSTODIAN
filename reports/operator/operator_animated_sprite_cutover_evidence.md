@@ -7,8 +7,8 @@ compatibility renderers and belong to their own later slices.
 
 | disposition | all clips | live only |
 |---|---|---|
-| AUTHORING_DECISION | 14 | 14 |
-| PROVEN_CANONICAL | 38 | 38 |
+| AUTHORING_DECISION | 15 | 15 |
+| PROVEN_CANONICAL | 37 | 37 |
 | RETIRED | 83 | 0 |
 
 ## Live clips
@@ -28,7 +28,7 @@ compatibility renderers and belong to their own later slices.
 | `ranged_2h_fire` | `ranged_2h/cosmetic/legacy_fire_body/omni/full_body` | NO | - | AUTHORING_DECISION |
 | `ranged_2h_reload` | `ranged_2h/cosmetic/reload_01/omni/full_body` | NO | - | PROVEN_CANONICAL |
 | `ranged_2h_run_left` | `ranged_2h/locomotion/run_01/w/full_body` | yes | preserved | PROVEN_CANONICAL |
-| `ranged_2h_stance` | `unarmed/posture/stance_01/e/full_body` | yes | preserved | PROVEN_CANONICAL |
+| `ranged_2h_stance` | `unarmed/posture/stance_01/e/full_body` | yes | preserved | AUTHORING_DECISION |
 | `run_right` | `unarmed/cosmetic/legacy_running_base/omni/full_body` | NO | - | AUTHORING_DECISION |
 | `unarmed_attack_fast_recovery` | `unarmed/attack/fast_recovery_01/e/full_body` | yes | preserved | PROVEN_CANONICAL |
 | `unarmed_attack_fast_recovery_down` | `unarmed/attack/fast_recovery_01/s/full_body` | yes | preserved | PROVEN_CANONICAL |
@@ -78,7 +78,7 @@ not the same claim as a proof of equivalence, and is deliberately not filed as
 to, with pixels that differ on purpose. `RETIRE` drops the clip or the
 mechanism that reaches it.
 
-13 resolved, 1 open.
+15 resolved, 0 open.
 
 | clip | legacy art | authored | decision | resolution |
 |---|---|---|---|---|
@@ -92,6 +92,8 @@ mechanism that reaches it.
 | `melee_2h_heavy` | `legacy_operator_2h_heavy_3layer` | 7f @11.0 | RETIRE | no replacement |
 | `melee_2h_heavy_anticipation` | `legacy_heavy_anticipation_body` | 5f @11.0 | REPLACE | `melee_1h_heavy/attack/heavy_windup_01/s/full_body` |
 | `melee_2h_heavy_right` | `legacy_operator_2h_heavy_3layer` | 7f @11.0 | RETIRE | no replacement |
+| `ranged_2h_fire` | `legacy_fire_body` | 4f @12.0 | RETIRE | no replacement |
+| `ranged_2h_stance` | `stance_01` | 12f @8.0 | RETIRE | no replacement |
 | `run_right` | `legacy_running_base` | 16f @14.0 | REPLACE | `unarmed/locomotion/run_01/e/full_body` |
 | `walk_down_default` | `legacy_walking_base` | 8f @10.0 | REPLACE | `unarmed/locomotion/walk_01/s/full_body` |
 | `walk_right` | `legacy_walking_base` | 8f @10.0 | REPLACE | `unarmed/locomotion/walk_01/e/full_body` |
@@ -108,15 +110,22 @@ Rationale:
 - `melee_2h_heavy` — A generic legacy identity standing in for whatever heavy attack was active. Heavy presentation comes from semantic attack/profile authority instead: unarmed resolves unarmed/attack/heavy_01, armed resolves the active weapon profile's canonical heavy family. Creating a second canonical heavy identity to receive this name would reintroduce the ambiguity it encodes.
 - `melee_2h_heavy_anticipation` — The canonical heavy-windup body action carries this presentation.
 - `melee_2h_heavy_right` — The directional spelling of the same generic legacy identity; retires with it rather than becoming a second canonical heavy action.
+- `ranged_2h_fire` — The full-body ranged fire fallback is retired rather than migrated. Canonical ranged fire is the modular composition -- movement-owned lower body, ranged_2h/cosmetic/fire_01 upper_body, the socketed static carbine, and fire_01 FX -- and WEAPON_OWNED_ANIMATION_SYSTEM.md forbids substituting a compatibility full-body clip for a missing ranged layer. Promoting the old legacy_fire_body strip would produce a schema-clean asset that violates the architecture being migrated to, so ranged_2h/cosmetic/fire_01/*/full_body is deliberately not published. The historical strip stays as provenance art and simply stops being reachable; a modular stack that cannot present reports the missing canonical presentation instead of falling back.
+- `ranged_2h_stance` — The historical mapping is mechanically proven and semantically rejected: this clip drew unarmed/posture/stance_01/e/full_body, the unarmed stance standing in for a ranged one. That the pixels were really shown does not make the substitution a valid canonical ranged stance, exactly as in R3. Ranged stance remains the canonical modular upper-body and socketed-weapon composition over a movement-owned lower body, so ranged_2h/posture/stance_01/*/full_body is deliberately not created.
 - `run_right` — Deliberate visual modernization of the legacy locomotion base.
 - `walk_down_default` — Deliberate visual modernization of the legacy locomotion base; the 'default' suffix was the old pipeline's name for the south strip.
 - `walk_right` — Deliberate visual modernization of the legacy locomotion base.
 
-### Still open
+## Weapon `animation_map` sites
 
-| clip | legacy art | authored | candidates in profile |
-|---|---|---|---|
-| `ranged_2h_fire` | `legacy_fire_body` | 4f @12.0 | `cosmetic/fire_walk_01`, `cosmetic/reload_01`, `locomotion/run_01` |
+A name reached through `_get_weapon_animation_name()` is only data-driven where a
+weapon definition actually overrides that key. Where none does, the actor's
+literal default is what ships, and it is an ordinary live request. Reading these
+as resource values is what hid `ranged_2h_fire` and `ranged_2h_stance`, so the
+generator now fails if one of them names a clip with no recorded consumer.
+
+- `ranged_fire` -> default `ranged_2h_fire` — overridden by sidearm_pistol_definition.tres to ranged_2h_fire
+- `ranged_stance` -> default `ranged_2h_stance` — overridden by sidearm_pistol_definition.tres to ranged_2h_stance
 
 ## Data-driven bases
 
