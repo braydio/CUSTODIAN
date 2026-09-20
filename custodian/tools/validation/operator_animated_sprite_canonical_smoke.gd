@@ -17,6 +17,18 @@ extends SceneTree
 
 const CANONICAL := "res://content/sprites/operator/runtime/operator_runtime_frames.tres"
 const COMPATIBILITY := "res://game/actors/operator/operator_runtime_frames.tres"
+const OPERATOR_SCENE := preload("res://game/actors/operator/operator.tscn")
+
+const SECTORS: Array[StringName] = [&"n", &"ne", &"e", &"se", &"s", &"sw", &"w", &"nw"]
+
+## Sectors each full-body locomotion action actually authors. The projection
+## table may map a missing sector onto one of these, and may not send an
+## authored sector anywhere else.
+const AUTHORED_FULL_BODY_SECTORS := {
+	"unarmed/locomotion/idle_01": [&"e", &"n", &"s", &"w"],
+	"unarmed/locomotion/walk_01": [&"e", &"n", &"s", &"w"],
+	"unarmed/locomotion/run_01": [&"e", &"n", &"s", &"se", &"sw", &"w"],
+}
 
 ## legacy compatibility clip -> canonical identity it was promoted into.
 ## Mirrors LEGACY_PROMOTIONS in
@@ -110,12 +122,109 @@ func _init() -> void:
 				"%s frame %d should keep its authored duration" % [identity, index]
 			)
 
+	var scene_root := Node2D.new()
+	scene_root.name = "OperatorAnimatedSpriteCanonicalRoot"
+	root.add_child(scene_root)
+	current_scene = scene_root
+	var operator := OPERATOR_SCENE.instantiate()
+	scene_root.add_child(operator)
+	await process_frame
+	_check_full_body_projection(operator, canonical)
+
 	_report()
+
+
+func _sector_vector(sector: StringName) -> Vector2:
+	match sector:
+		&"n": return Vector2(0.0, -1.0)
+		&"ne": return Vector2(1.0, -1.0).normalized()
+		&"e": return Vector2(1.0, 0.0)
+		&"se": return Vector2(1.0, 1.0).normalized()
+		&"s": return Vector2(0.0, 1.0)
+		&"sw": return Vector2(-1.0, 1.0).normalized()
+		&"w": return Vector2(-1.0, 0.0)
+		&"nw": return Vector2(-1.0, -1.0).normalized()
+	return Vector2.ZERO
+
+
+func _check_full_body_projection(operator: Node, canonical: SpriteFrames) -> void:
+	## Sparse full-body locomotion coverage is resolved by an explicit authoring
+	## table, not by the selector. The selector stays exact-only, so a missing
+	## identity is an error; deciding what a missing diagonal shows is
+	## presentation policy and belongs to the caller.
+	var table: Dictionary = operator.get("FULL_BODY_AUTHORED_SECTORS")
+	_check(table != null and not table.is_empty(), "the full-body projection table should exist")
+	if table == null or table.is_empty():
+		return
+
+	for identity in AUTHORED_FULL_BODY_SECTORS:
+		var parts: PackedStringArray = String(identity).split("/")
+		var authored: Array = AUTHORED_FULL_BODY_SECTORS[identity]
+		_check(
+			table.has("%s/full_body" % identity),
+			"%s should declare a projection" % identity
+		)
+		for sector in SECTORS:
+			var resolved: StringName = operator._full_body_authored_sector(
+				parts[0], parts[1], parts[2], _sector_vector(sector)
+			)
+
+			# A. every projected destination is real canonical full-body art.
+			var destination := "%s/%s/full_body" % [identity, resolved]
+			_check(
+				canonical.has_animation(destination),
+				"%s projects %s -> %s, which is not published" % [identity, sector, destination]
+			)
+
+			if authored.has(sector):
+				# B. an authored sector always presents itself. Projection covers
+				#    missing art; it never overrides art that exists.
+				_check(
+					resolved == sector,
+					"%s authors %s and must present it, not %s" % [identity, sector, resolved]
+				)
+				continue
+
+			# C. a missing sector projects horizontally, and never onto another
+			#    action. The historical fallback drew idle art for walk diagonals;
+			#    that substitution is exactly what this table exists to stop.
+			_check(
+				resolved == &"e" or resolved == &"w",
+				"%s should project missing %s horizontally, got %s" % [identity, sector, resolved]
+			)
+			_check(
+				authored.has(resolved),
+				"%s projects %s onto unauthored %s" % [identity, sector, resolved]
+			)
+
+	# D. run authors its lower diagonals and keeps them. Sparse coverage may be
+	#    projected; authored art may not be discarded to make a table uniform.
+	for sector in [&"se", &"sw"]:
+		var run_sector: StringName = operator._full_body_authored_sector(
+			"unarmed", "locomotion", "run_01", _sector_vector(sector)
+		)
+		_check(
+			run_sector == sector,
+			"run_01 authors %s and must not discard it (got %s)" % [sector, run_sector]
+		)
+
+	# E. the selector itself stays exact-only: it reports the unauthored
+	#    diagonals as absent rather than quietly finding something near them.
+	var selector = operator._get_operator_animation_selector()
+	for sector in [&"ne", &"nw", &"se", &"sw"]:
+		_check(
+			not selector.has_sector_identity("unarmed", "locomotion", "walk_01", sector, &"full_body"),
+			"selector should report walk_01 %s full_body absent, not substitute for it" % sector
+		)
+	_check(
+		selector.has_sector_identity("unarmed", "locomotion", "walk_01", &"e", &"full_body"),
+		"selector should resolve the authored walk_01 e full_body"
+	)
 
 
 func _report() -> void:
 	if _failures.is_empty():
-		print("operator animated_sprite canonical smoke: OK (%d promotion(s) verified)" % PROMOTIONS.size())
+		print("operator animated_sprite canonical smoke: OK (%d promotion(s), full-body projection policy)" % PROMOTIONS.size())
 		quit(0)
 		return
 	for failure in _failures:

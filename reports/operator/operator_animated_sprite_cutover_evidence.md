@@ -3,13 +3,13 @@
 Scope is `animated_sprite` alone. The melee and weapon overlays remain
 compatibility renderers and belong to their own later slices.
 
-135 clips in the compatibility resource; 50 are reachable by a live consumer.
+135 clips in the compatibility resource; 52 are reachable by a live consumer.
 
 | disposition | all clips | live only |
 |---|---|---|
-| AUTHORING_DECISION | 13 | 13 |
-| PROVEN_CANONICAL | 37 | 37 |
-| RETIRED | 85 | 0 |
+| AUTHORING_DECISION | 14 | 14 |
+| PROVEN_CANONICAL | 38 | 38 |
+| RETIRED | 83 | 0 |
 
 ## Live clips
 
@@ -25,8 +25,10 @@ compatibility renderers and belong to their own later slices.
 | `melee_2h_heavy` | `unarmed/attack/legacy_operator_2h_heavy_3layer/omni/full_body` | NO | - | AUTHORING_DECISION |
 | `melee_2h_heavy_anticipation` | `melee_1h_heavy/attack/legacy_heavy_anticipation_body/omni/full_body` | NO | - | AUTHORING_DECISION |
 | `melee_2h_heavy_right` | `unarmed/attack/legacy_operator_2h_heavy_3layer/omni/full_body` | NO | - | AUTHORING_DECISION |
+| `ranged_2h_fire` | `ranged_2h/cosmetic/legacy_fire_body/omni/full_body` | NO | - | AUTHORING_DECISION |
 | `ranged_2h_reload` | `ranged_2h/cosmetic/reload_01/omni/full_body` | NO | - | PROVEN_CANONICAL |
 | `ranged_2h_run_left` | `ranged_2h/locomotion/run_01/w/full_body` | yes | preserved | PROVEN_CANONICAL |
+| `ranged_2h_stance` | `unarmed/posture/stance_01/e/full_body` | yes | preserved | PROVEN_CANONICAL |
 | `run_right` | `unarmed/cosmetic/legacy_running_base/omni/full_body` | NO | - | AUTHORING_DECISION |
 | `unarmed_attack_fast_recovery` | `unarmed/attack/fast_recovery_01/e/full_body` | yes | preserved | PROVEN_CANONICAL |
 | `unarmed_attack_fast_recovery_down` | `unarmed/attack/fast_recovery_01/s/full_body` | yes | preserved | PROVEN_CANONICAL |
@@ -76,7 +78,7 @@ not the same claim as a proof of equivalence, and is deliberately not filed as
 to, with pixels that differ on purpose. `RETIRE` drops the clip or the
 mechanism that reaches it.
 
-13 resolved, 0 open.
+13 resolved, 1 open.
 
 | clip | legacy art | authored | decision | resolution |
 |---|---|---|---|---|
@@ -109,6 +111,12 @@ Rationale:
 - `run_right` — Deliberate visual modernization of the legacy locomotion base.
 - `walk_down_default` — Deliberate visual modernization of the legacy locomotion base; the 'default' suffix was the old pipeline's name for the south strip.
 - `walk_right` — Deliberate visual modernization of the legacy locomotion base.
+
+### Still open
+
+| clip | legacy art | authored | candidates in profile |
+|---|---|---|---|
+| `ranged_2h_fire` | `legacy_fire_body` | 4f @12.0 | `cosmetic/fire_walk_01`, `cosmetic/reload_01`, `locomotion/run_01` |
 
 ## Data-driven bases
 

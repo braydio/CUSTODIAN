@@ -2,17 +2,19 @@
   "schema": "custodian.operator_animated_sprite_cutover_evidence.v1",
   "scope": "animated_sprite only; melee and weapon overlays are separate slices",
   "counts": {
-    "AUTHORING_DECISION": 13,
-    "PROVEN_CANONICAL": 37,
-    "RETIRED": 85
+    "AUTHORING_DECISION": 14,
+    "PROVEN_CANONICAL": 38,
+    "RETIRED": 83
   },
   "live_counts": {
-    "AUTHORING_DECISION": 13,
-    "PROVEN_CANONICAL": 37
+    "AUTHORING_DECISION": 14,
+    "PROVEN_CANONICAL": 38
   },
-  "open_decisions": [],
+  "open_decisions": [
+    "ranged_2h_fire"
+  ],
   "unresolved": [],
-  "cutover_ready": true,
+  "cutover_ready": false,
   "data_driven_bases": {
     "_get_weapon_animation_name(...unarmed_light_hitreact...)": "OperatorWeaponDefinition animation_map; the damage-reaction base is a weapon-definition field, not a literal in the actor",
     "_get_authored_melee_body_stance_animation()": "melee posture resolver / weapon definition; the stance base is authored per weapon rather than named in the actor"
@@ -1012,8 +1014,10 @@
     },
     {
       "clip": "ranged_2h_fire",
-      "consumers": [],
-      "live": false,
+      "consumers": [
+        "hardcoded _get_weapon_animation_name fallback; ships whenever the weapon definition has no animation_map entry"
+      ],
+      "live": true,
       "frames": 4,
       "authored_fps": 12.0,
       "authored_loop": true,
@@ -1028,11 +1032,15 @@
       "canonical_identity": "ranged_2h/cosmetic/legacy_fire_body/omni/full_body",
       "canonical_published": false,
       "timing_preserved": false,
-      "disposition": "RETIRED",
-      "why": "no live consumer reaches this clip",
-      "canonical_candidates": [],
+      "disposition": "AUTHORING_DECISION",
+      "why": "draws art published only under a legacy action id; it has no canonical identity to migrate to without an authoring decision",
+      "canonical_candidates": [
+        "cosmetic/fire_walk_01",
+        "cosmetic/reload_01",
+        "locomotion/run_01"
+      ],
       "promoted": false,
-      "decision_status": null,
+      "decision_status": "OPEN",
       "resolution_kind": null,
       "resolution": null
     },
@@ -1121,8 +1129,10 @@
     },
     {
       "clip": "ranged_2h_stance",
-      "consumers": [],
-      "live": false,
+      "consumers": [
+        "hardcoded _get_weapon_animation_name fallback; ships whenever the weapon definition has no animation_map entry"
+      ],
+      "live": true,
       "frames": 12,
       "authored_fps": 8.0,
       "authored_loop": true,
@@ -1137,8 +1147,8 @@
       "canonical_identity": "unarmed/posture/stance_01/e/full_body",
       "canonical_published": true,
       "timing_preserved": true,
-      "disposition": "RETIRED",
-      "why": "no live consumer reaches this clip",
+      "disposition": "PROVEN_CANONICAL",
+      "why": "art provenance maps to a published canonical identity",
       "canonical_candidates": [],
       "promoted": false,
       "decision_status": null,

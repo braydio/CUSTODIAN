@@ -198,11 +198,19 @@ EXTERNAL_CONSUMERS = {
 }
 
 
-def literal_requests(source: str) -> tuple[set[str], set[str], set[str]]:
+def literal_requests(source: str) -> tuple[set[str], set[str], set[str], set[str]]:
     bases = set(re.findall(r'AnimationResolver\.resolve\(\s*"([^"]+)"\s*,[^,]+,\s*animated_sprite', source))
     plays = set(re.findall(r'_animation_player\.play\(\s*animated_sprite\s*,\s*&?"([^"]+)"', source))
     probes = set(re.findall(r'animated_sprite\.sprite_frames\.has_animation\(\s*&?"([^"]+)"', source))
-    return bases, plays, probes
+    # Names the actor hardcodes as the weapon-map fallback. These reach
+    # animated_sprite through a variable, so the direct-literal patterns above
+    # miss them entirely -- and the fallback is what actually ships whenever a
+    # weapon definition supplies no animation_map entry, which is the case for
+    # the carbine. Counting only the direct literals understated the live
+    # surface, the same way it did in R1, R2 and R3.
+    weapon_defaults = set(re.findall(
+        r'_get_weapon_animation_name\([^()]*,\s*&"([^"]+)"\s*\)', source))
+    return bases, plays, probes, weapon_defaults
 
 
 def reachable(base: str, clips: dict) -> list[str]:
@@ -253,7 +261,7 @@ def main() -> int:
     clips = json.loads(CLIPS.read_text(encoding="utf-8"))["clips"]
     baseline = json.loads(FULL_BODY_BASELINE.read_text(encoding="utf-8"))["identities"]
 
-    bases, plays, probes = literal_requests(source)
+    bases, plays, probes, weapon_defaults = literal_requests(source)
     state_plays: dict[str, str] = {}
     for path in sorted(STATES.glob("*.gd")):
         text = path.read_text(encoding="utf-8")
@@ -274,6 +282,11 @@ def main() -> int:
     for clip in sorted(plays):
         if clip in clips:
             live[clip].append("played directly by name")
+    for clip in sorted(weapon_defaults):
+        if clip in clips:
+            live[clip].append(
+                "hardcoded _get_weapon_animation_name fallback; ships whenever the "
+                "weapon definition has no animation_map entry")
     for clip in sorted(probes):
         if clip in clips:
             live[clip].append("guarded by a has_animation probe")

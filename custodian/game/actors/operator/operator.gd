@@ -3984,6 +3984,122 @@ func _modular_body_authored_sector(
 ## Canonical body identity for a semantic base, or empty when nothing is
 ## authored for the projected sector. Returning empty preserves the sectors the
 ## compatibility renderer deliberately played nothing for.
+#: Legacy `animated_sprite` base names -> the canonical identity they present.
+#: Every entry is settled in
+#: `reports/operator/operator_animated_sprite_cutover_evidence.md`, either as a
+#: proven mapping or as a resolved authoring decision. Names that decision
+#: retired are absent on purpose and must not be reintroduced here.
+const FULL_BODY_IDENTITIES := {
+	"unarmed_idle": ["unarmed", "locomotion", "idle_01"],
+	"unarmed_walk": ["unarmed", "locomotion", "walk_01"],
+	"unarmed_run": ["unarmed", "locomotion", "run_01"],
+	"unarmed_attack_fast_windup": ["unarmed", "attack", "fast_windup_01"],
+	"unarmed_attack_fast_recovery": ["unarmed", "attack", "fast_recovery_01"],
+	"ranged_2h_run": ["ranged_2h", "locomotion", "run_01"],
+	"ranged_2h_reload": ["ranged_2h", "cosmetic", "reload_01"],
+	"ranged_2h_fire_walk": ["ranged_2h", "cosmetic", "fire_walk_01"],
+	"melee_2h_fast_recovery": ["melee_1h_heavy", "attack", "fast_recovery_01"],
+	"melee_2h_heavy_anticipation": ["melee_1h_heavy", "attack", "heavy_windup_01"],
+	"death": ["unarmed", "reaction", "death_01"],
+	"operator_dodge_full": ["shared", "transition", "dodge_01"],
+}
+
+#: Which authored sector a requested direction presents, per canonical identity.
+#:
+#: Full-body locomotion is authored more sparsely than the modular layers, which
+#: carry all eight sectors. Choosing what a missing diagonal shows is a
+#: presentation decision and it lives here, with the caller, not in
+#: `OperatorAnimationSelector` -- the selector stays exact-only so that a missing
+#: identity is an error rather than a silent nearest-neighbour guess.
+#:
+#: The rule is: an authored sector always presents itself, and a missing diagonal
+#: projects horizontally. That keeps the horizontal read the historical fallback
+#: had without inheriting its cross-action substitutions (`walk_up_right` used to
+#: draw `idle_01/ne` art). North and south stay genuinely north and south instead
+#: of being flattened into east/west. `run_01` authors `se` and `sw`, so those
+#: keep their own art -- sparse coverage may be projected, authored art may not be
+#: discarded to make the table uniform.
+#:
+#: Keys are the complete semantic identity so a future profile publishing the same
+#: action name cannot collide with these entries. When real full-body diagonals
+#: are authored, the entry becomes exact and then disappears.
+const FULL_BODY_AUTHORED_SECTORS := {
+	"unarmed/locomotion/idle_01/full_body": {
+		&"n": &"n",
+		&"ne": &"e",
+		&"e": &"e",
+		&"se": &"e",
+		&"s": &"s",
+		&"sw": &"w",
+		&"w": &"w",
+		&"nw": &"w",
+	},
+	"unarmed/locomotion/walk_01/full_body": {
+		&"n": &"n",
+		&"ne": &"e",
+		&"e": &"e",
+		&"se": &"e",
+		&"s": &"s",
+		&"sw": &"w",
+		&"w": &"w",
+		&"nw": &"w",
+	},
+	"unarmed/locomotion/run_01/full_body": {
+		&"n": &"n",
+		&"ne": &"e",
+		&"e": &"e",
+		&"se": &"se",
+		&"s": &"s",
+		&"sw": &"sw",
+		&"w": &"w",
+		&"nw": &"w",
+	},
+}
+
+
+func _full_body_authored_sector(
+	profile: String, group: String, action: String, direction: Vector2
+) -> StringName:
+	var requested := OperatorAnimationSelector.vector_to_sector(direction)
+	var table: Dictionary = FULL_BODY_AUTHORED_SECTORS.get(
+		"%s/%s/%s/full_body" % [profile, group, action], {}
+	)
+	return table.get(requested, requested)
+
+
+func _resolve_full_body_animation(base_animation: String, direction: Vector2) -> StringName:
+	## The canonical full-body identity for a legacy base name, or empty.
+	##
+	## Empty means "this renderer has nothing authored for that direction", which
+	## the caller handles as presentation policy. It never means "substitute
+	## something close".
+	var identity: Array = FULL_BODY_IDENTITIES.get(base_animation, [])
+	if identity.is_empty():
+		return &""
+	var sector := _full_body_authored_sector(identity[0], identity[1], identity[2], direction)
+	if not _get_operator_animation_selector().has_sector_identity(
+		identity[0], identity[1], identity[2], sector, &"full_body"
+	):
+		return &""
+	return _get_operator_animation_selector().resolve_sector(
+		identity[0], identity[1], identity[2], sector, &"full_body"
+	)
+
+
+func _resolve_omni_full_body_animation(base_animation: String) -> StringName:
+	## OMNI identities are exact-only: one authored strip serves every direction.
+	var identity: Array = FULL_BODY_IDENTITIES.get(base_animation, [])
+	if identity.is_empty():
+		return &""
+	if not _get_operator_animation_selector().has_sector_identity(
+		identity[0], identity[1], identity[2], &"omni", &"full_body"
+	):
+		return &""
+	return _get_operator_animation_selector().resolve_sector(
+		identity[0], identity[1], identity[2], &"omni", &"full_body"
+	)
+
+
 func _resolve_modular_body_animation(
 	base_animation: String, layer: StringName, direction: Vector2
 ) -> StringName:
