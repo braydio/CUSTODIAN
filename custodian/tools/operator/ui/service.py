@@ -105,6 +105,36 @@ class WorkbenchService:
             identity, Path(strip_path), frames=frames, frame_size=frame_size,
         )
 
+    def transition_candidates(
+        self, selection: AnimationSelection,
+    ) -> tuple[AnimationSelection, ...]:
+        candidates = []
+        for record in self.browser_records():
+            candidate = record.selection
+            if candidate.profile != selection.profile or candidate.direction != selection.direction:
+                continue
+            if candidate.group == selection.group and candidate.action == selection.action:
+                continue
+            layers = set(record.layers)
+            if "full_body" not in layers and not {"lower_body", "upper_body"} <= layers:
+                continue
+            candidates.append(AnimationSelection(
+                candidate.profile, candidate.group, candidate.action, candidate.direction,
+                selection.weapon_id, selection.linked_profile,
+            ))
+        candidates.sort(key=lambda item: (item.group != selection.group, item.group, item.action))
+        return tuple(candidates)
+
+    def transition_preview(self, selection: AnimationSelection, primary_source: str):
+        sources = ("workbench", "canonical", "runtime") if primary_source in ("live", "workbench") else (("canonical", "runtime") if primary_source == "canonical" else ("runtime", "canonical"))
+        errors = []
+        for source in sources:
+            try:
+                return self.preview(selection, source)
+            except Exception as error:
+                errors.append(f"{source}: {error}")
+        raise ValueError("transition target unavailable: " + "; ".join(errors))
+
     def motion_event_markers(self, selection: AnimationSelection) -> tuple[animation_motion_preview.MotionEventMarker, ...]:
         """Read optional structured catalog events without scraping runtime source."""
         try:

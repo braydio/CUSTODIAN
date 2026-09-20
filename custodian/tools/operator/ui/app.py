@@ -28,6 +28,7 @@ from .widgets import (ActivityLog, AnimationDetail, AnimationTree, ContextKeyBar
                       PreviewCanvas, PreviewControls, PreviewFilmstrip, TimelineTable, WorkbenchStatusBar)
 import animation_preview
 import animation_motion_preview
+import animation_transition
 
 LIVE_PREVIEW_DEBOUNCE_SEC = 0.15
 
@@ -105,6 +106,8 @@ class OperatorWorkbenchApp(App):
         Binding("s", "preview_source", "Source", show=False), Binding("ctrl+a", "timeline_add", "Add clip", show=False),
         Binding("shift+d", "preview_examiner_mode", "Preview examiner", show=False),
         Binding("shift+s", "preview_compare_source", "Compare source", show=False),
+        Binding("t", "transition_target", "Transition target", show=False),
+        Binding("shift+t", "transition_view", "Transition view", show=False),
         Binding("z", "preview_zoom", "Zoom", show=False),
         Binding("delete", "timeline_remove", "Remove clip", show=False), Binding("ctrl+up", "timeline_up", "Move clip left", show=False),
         Binding("ctrl+down", "timeline_down", "Move clip right", show=False), Binding("ctrl+s", "timeline_save", "Save sequence", show=False),
@@ -133,6 +136,9 @@ class OperatorWorkbenchApp(App):
         self.preview_view = None
         self.preview_compare_view = None
         self.preview_comparisons = ()
+        self.transition_candidates = ()
+        self.transition_target_view = None
+        self.transition_analysis = None
         self.timeline_frames = []
         self.sequence = animation_preview.ReviewSequence("review")
         self.motion_renderer = None
@@ -294,8 +300,13 @@ class OperatorWorkbenchApp(App):
         self.preview_view = live
         self.state.preview_frame = min(self.state.preview_frame, len(live.frames) - 1)
         if self.state.preview_examiner_mode != "single":
-            await self._load_preview_comparison()
-            self._rebuild_preview_comparison()
+            if self.state.preview_examiner_mode == "transition" and self.transition_target_view is not None:
+                self.transition_analysis = animation_transition.analyze_transition(
+                    self.preview_view.frames, self.transition_target_view.frames, tail=2, head=2,
+                )
+            else:
+                await self._load_preview_comparison()
+                self._rebuild_preview_comparison()
         self._render_preview()
 
     def _update_status_bar(self) -> None:
@@ -384,6 +395,10 @@ class OperatorWorkbenchApp(App):
             if changed:
                 self.preview_compare_view = None
                 self.preview_comparisons = ()
+                self.transition_candidates = ()
+                self.transition_target_view = None
+                self.transition_analysis = None
+                self.state.transition_target_identity = ""
                 self.state.motion.elapsed_sec = 0.0
                 self.state.motion.playing = False
                 self.state.motion.heading = selection.direction
@@ -459,6 +474,8 @@ class OperatorWorkbenchApp(App):
             self.run_worker(self._load_session(self.state.selection), group="session", exclusive=True)
 
     def on_preview_controls_scrubbed(self, event: PreviewControls.Scrubbed) -> None:
+        if self.state.mode == "preview" and self.state.preview_examiner_mode == "transition":
+            return
         if self.state.mode == "motion" and self.preview_view:
             duration = len(self.preview_view.frames) / self.state.review_fps
             span = duration * self.state.motion.loop_cycles if self.state.motion.loop else duration
@@ -531,7 +548,10 @@ class OperatorWorkbenchApp(App):
             self.preview_view = await self._thread(self.service.preview, selection, self.state.preview_source)
             self.state.preview_frame = min(self.state.preview_frame, len(self.preview_view.frames) - 1)
             self._reset_preview_clock()
-            await self._load_preview_comparison()
+            if self.state.preview_examiner_mode == "transition":
+                await self._load_transition_examiner()
+            else:
+                await self._load_preview_comparison()
             self._render_preview()
         except Exception as error: self._error(error)
 
@@ -562,6 +582,39 @@ class OperatorWorkbenchApp(App):
             self._rebuild_preview_comparison()
         except Exception as error:
             self._activity(f"Preview comparison unavailable: {error}", "WARN")
+
+    def _transition_target(self) -> AnimationSelection | None:
+        if not self.transition_candidates:
+            return None
+        requested = self.state.transition_target_identity
+        for candidate in self.transition_candidates:
+            if candidate.identity == requested:
+                return candidate
+        target = self.transition_candidates[0]
+        self.state.transition_target_identity = target.identity
+        return target
+
+    async def _load_transition_examiner(self) -> None:
+        if self.state.mode != "preview" or self.state.preview_examiner_mode != "transition" or self.preview_view is None or self.state.selection is None:
+            return
+        try:
+            self.transition_candidates = await self._thread(self.service.transition_candidates, self.state.selection)
+            target = self._transition_target()
+            if target is None:
+                self.transition_target_view = None; self.transition_analysis = None
+                self._activity("No compatible transition target", "WARN")
+                self._render_preview(); return
+            self.transition_target_view = await self._thread(self.service.transition_preview, target, self.preview_view.source)
+            self.transition_analysis = await self._thread(partial(
+                animation_transition.analyze_transition,
+                self.preview_view.frames, self.transition_target_view.frames, tail=2, head=2,
+            ))
+            self.state.preview_playing = False
+            self._render_preview()
+        except Exception as error:
+            self.transition_target_view = None; self.transition_analysis = None
+            self._activity(f"Transition Examiner unavailable: {error}", "WARN")
+            self._render_preview()
 
     def _rebuild_preview_comparison(self) -> None:
         if self.preview_view is None or self.preview_compare_view is None:
@@ -648,6 +701,9 @@ class OperatorWorkbenchApp(App):
         metrics_widget = self._main_widget("#preview-diff-metrics", Static)
         filmstrip = self._main_widget("#preview-filmstrip", PreviewFilmstrip)
         mode = self.state.preview_examiner_mode
+        if mode == "transition":
+            self._render_transition_examiner(canvas, compare_canvas, metrics_widget, filmstrip)
+            return
         primary_label = animation_preview.preview_source_label(primary.source)
         changed = ()
         if mode == "single" or self.preview_compare_view is None:
@@ -676,16 +732,49 @@ class OperatorWorkbenchApp(App):
         compare_source = animation_preview.preview_source_label(self.preview_compare_view.source) if self.preview_compare_view else None
         self._main_widget("#preview-controls", PreviewControls).show(frame=index, frames=len(primary.frames), fps=self.state.review_fps, playing=self.state.preview_playing, loop=self.state.preview_loop, source=primary_label, zoom=self.state.preview_zoom, view=mode, compare_source=compare_source)
 
+    def _render_transition_examiner(self, canvas, compare_canvas, metrics_widget, filmstrip) -> None:
+        primary = self.preview_view; target = self.transition_target_view; analysis = self.transition_analysis
+        if primary is None or target is None or analysis is None:
+            compare_canvas.add_class("hidden")
+            metrics_widget.update("TRANSITION · no compatible target loaded")
+            if primary is not None:
+                filmstrip.show_frames(tuple(primary.frames), current=0)
+            return
+        from_label = animation_preview.preview_source_label(primary.source)
+        to_label = animation_preview.preview_source_label(target.source)
+        view = self.state.transition_view
+        if view == "split":
+            compare_canvas.remove_class("hidden")
+            canvas.show_frame(analysis.target_boundary, f"FROM · {primary.identity.key} · {from_label}", self.state.preview_zoom)
+            compare_canvas.show_frame(analysis.reference_boundary, f"TO · {target.identity.key} · {to_label}", self.state.preview_zoom)
+        else:
+            compare_canvas.add_class("hidden")
+            image = analysis.ghost if view == "ghost" else analysis.diff
+            label = "GHOST" if view == "ghost" else "DIFF"
+            canvas.show_frame(image, f"{label} · {primary.identity.key} → {target.identity.key}", self.state.preview_zoom)
+        metrics = analysis.metrics
+        centroid = "n/a" if metrics.visual_centroid_delta is None else f"{metrics.visual_centroid_delta[0]:+.1f},{metrics.visual_centroid_delta[1]:+.1f}"
+        distance = "n/a" if metrics.centroid_distance is None else f"{metrics.centroid_distance:.2f}px"
+        baseline = "n/a" if metrics.baseline_delta is None else f"{metrics.baseline_delta:+d}px"
+        iou = "n/a" if metrics.silhouette_iou is None else f"{metrics.silhouette_iou:.3f}"
+        metrics_widget.update(f"FROM {primary.identity.key} → TO {target.identity.key} · CENTROID Δ {centroid} ({distance}) · BASELINE Δ {baseline} · IOU {iou} · {metrics.changed_pixels} PX CHANGED")
+        filmstrip.show_frames(analysis.frames, current=analysis.boundary_index, divider_after=analysis.boundary_index)
+        self._main_widget("#preview-controls", PreviewControls).show(frame=analysis.boundary_index, frames=len(analysis.frames), fps=self.state.review_fps, playing=False, loop=False, source=from_label, zoom=self.state.preview_zoom, view="transition", compare_source=to_label)
+
     def action_preview_examiner_mode(self) -> None:
         if self.state.mode != "preview": return
-        modes = ("single", "split", "diff")
+        modes = ("single", "split", "diff", "transition")
         self.state.preview_examiner_mode = modes[(modes.index(self.state.preview_examiner_mode) + 1) % len(modes)]
         if self.state.preview_examiner_mode == "single":
-            self.preview_compare_view = None; self.preview_comparisons = (); self._render_preview(); return
+            self.preview_compare_view = None; self.preview_comparisons = (); self.transition_target_view = None; self.transition_analysis = None; self._render_preview(); return
+        if self.state.preview_examiner_mode == "transition":
+            self.preview_compare_view = None; self.preview_comparisons = ()
+            self.run_worker(self._load_transition_examiner(), group="transition-examiner", exclusive=True, exit_on_error=False); return
+        self.transition_target_view = None; self.transition_analysis = None
         self.run_worker(self._load_preview_comparison(), group="preview-comparison", exclusive=True, exit_on_error=False)
 
     def action_preview_compare_source(self) -> None:
-        if self.state.mode != "preview" or self.state.preview_examiner_mode == "single": return
+        if self.state.mode != "preview" or self.state.preview_examiner_mode in ("single", "transition"): return
         sources = ("workbench", "canonical", "runtime")
         current = sources.index(self.state.preview_compare_source) if self.state.preview_compare_source in sources else -1
         primary = self.preview_view.source if self.preview_view else ""
@@ -697,6 +786,8 @@ class OperatorWorkbenchApp(App):
         self.run_worker(self._load_preview_comparison(force=True), group="preview-comparison", exclusive=True, exit_on_error=False)
 
     def on_preview_filmstrip_selected(self, event: PreviewFilmstrip.Selected) -> None:
+        if self.state.preview_examiner_mode == "transition":
+            return
         if self.state.mode == "preview" and self.preview_view is not None:
             self.state.preview_playing = False
             self._set_preview_frame(event.index, sync_live=True)
@@ -758,9 +849,12 @@ class OperatorWorkbenchApp(App):
         if self.state.mode == "motion":
             self.state.motion.playing = not self.state.motion.playing
             self._motion_last_tick = time.monotonic(); self._render_motion(); return
+        if self.state.mode == "preview" and self.state.preview_examiner_mode == "transition":
+            return
         if self.state.mode not in ("preview", "timeline"): return
         self.state.preview_playing = not self.state.preview_playing; self._reset_preview_clock(); self._render_preview()
     def action_preview_previous(self):
+        if self.state.mode == "preview" and self.state.preview_examiner_mode == "transition": return
         if self.state.mode == "motion" and self.preview_view:
             self.state.motion.playing = False
             frame = max(0, self.state.preview_frame - 1)
@@ -771,6 +865,7 @@ class OperatorWorkbenchApp(App):
             self._set_preview_frame(self.state.preview_frame - 1, sync_live=True); return
         if self.timeline_frames: self.state.preview_frame = max(0, self.state.preview_frame - 1); self._reset_preview_clock(); self._render_preview()
     def action_preview_next(self):
+        if self.state.mode == "preview" and self.state.preview_examiner_mode == "transition": return
         if self.state.mode == "motion" and self.preview_view:
             self.state.motion.playing = False
             frame = min(len(self.preview_view.frames) - 1, self.state.preview_frame + 1)
@@ -785,12 +880,14 @@ class OperatorWorkbenchApp(App):
                 self._set_preview_frame(target, sync_live=True)
             else: self.state.preview_frame = target; self._render_preview()
     def action_preview_first(self):
+        if self.state.mode == "preview" and self.state.preview_examiner_mode == "transition": return
         if self.state.mode == "motion": self.state.motion.elapsed_sec = 0.0; self.state.motion.playing = False; self._render_motion(); return
         if self.state.mode == "preview":
             self.state.preview_playing = False
             self._set_preview_frame(0, sync_live=True); return
         self.state.preview_frame = 0; self._reset_preview_clock(); self._render_preview()
     def action_preview_last(self):
+        if self.state.mode == "preview" and self.state.preview_examiner_mode == "transition": return
         if self.state.mode == "motion" and self.preview_view:
             self.state.motion.elapsed_sec = len(self.preview_view.frames) / self.state.review_fps
             self.state.motion.playing = False; self._render_motion(); return
@@ -811,9 +908,28 @@ class OperatorWorkbenchApp(App):
         self.state.preview_source = sources[(sources.index(self.state.preview_source) + 1) % len(sources)]
         self.preview_compare_view = None
         self.preview_comparisons = ()
+        self.transition_target_view = None
+        self.transition_analysis = None
         self._reset_preview_clock()
         task = self._load_timeline() if self.state.mode == "timeline" else self._load_motion_preview() if self.state.mode == "motion" else self._load_preview()
         self.run_worker(task, group="preview-image", exclusive=True)
+
+    def action_transition_target(self) -> None:
+        if self.state.mode != "preview" or self.state.preview_examiner_mode != "transition" or not self.transition_candidates:
+            return
+        current = self.state.transition_target_identity
+        index = next((i for i, candidate in enumerate(self.transition_candidates) if candidate.identity == current), -1)
+        target = self.transition_candidates[(index + 1) % len(self.transition_candidates)]
+        self.state.transition_target_identity = target.identity
+        self.transition_target_view = None; self.transition_analysis = None
+        self.run_worker(self._load_transition_examiner(), group="transition-examiner", exclusive=True, exit_on_error=False)
+
+    def action_transition_view(self) -> None:
+        if self.state.mode != "preview" or self.state.preview_examiner_mode != "transition":
+            return
+        views = ("split", "ghost", "diff")
+        self.state.transition_view = views[(views.index(self.state.transition_view) + 1) % len(views)]
+        self._render_preview()
 
     def action_preview_zoom(self):
         if self.state.mode not in ("preview", "timeline", "motion"): return
@@ -995,8 +1111,11 @@ class OperatorWorkbenchApp(App):
                 self.preview_compare_view = None
                 self.preview_comparisons = ()
             self._activity("workbench changed", "OK"); await self._load_session(selection)
-            if self.state.mode == "preview" and self.state.preview_examiner_mode != "single":
-                await self._load_preview_comparison(force=True)
+            if self.state.mode == "preview":
+                if self.state.preview_examiner_mode == "transition":
+                    await self._load_transition_examiner()
+                elif self.state.preview_examiner_mode != "single":
+                    await self._load_preview_comparison(force=True)
                 self._render_preview()
         process = self.state.aseprite_process
         if process is not None and process.poll() is not None:

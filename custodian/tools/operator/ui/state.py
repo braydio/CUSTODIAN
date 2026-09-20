@@ -182,6 +182,8 @@ class WorkbenchUIState:
     preview_zoom: str = "auto"
     preview_examiner_mode: str = "single"
     preview_compare_source: str = "workbench"
+    transition_target_identity: str = ""
+    transition_view: str = "ghost"
     sequence_name: str = "review"
     motion: MotionLabState = field(default_factory=MotionLabState)
 

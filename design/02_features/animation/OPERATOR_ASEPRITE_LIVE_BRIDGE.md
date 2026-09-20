@@ -93,8 +93,8 @@ review location.
 4. **Live Unsaved Preview (implemented):** debounced, revision-guarded in-memory render export.
 5. **Layer Synchronization (implemented):** guarded focus and visibility control.
 6. **Preview Examiner (implemented):** SINGLE/SPLIT/DIFF live/saved/canonical/runtime comparison with cached persisted sources and filmstrip review.
-7A. **Transition Analysis Core (implemented):** shared pure seam normalization, boundary metrics, exact diff, and ghost review used by Art Agent and future Workbench UI.
-7B. **Transition Examiner UI (deferred):** Workbench seam picker and interactive ghost/diff review.
+7A. **Transition Analysis Core (implemented):** shared pure seam normalization, boundary metrics, exact diff, and ghost review used by Art Agent and Workbench UI.
+7B. **Transition Examiner UI (implemented):** PREVIEW transition mode with compatible visual targets, split/ghost/diff seam views, and a context-only boundary filmstrip.
 8. **Timeline Completion (deferred):** trims, loops, FPS, and source-frame navigation.
 9. **Art Agent Coexistence (deferred):** guarded live-document mutation without weakening current locks or transactions.
 10. **Workspace Polish (deferred):** lifecycle, recovery, and optional window layout.
@@ -102,8 +102,13 @@ review location.
 The shared transition analysis core owns cross-canvas normalization, boundary
 geometry, baseline and centroid deltas, silhouette overlap, exact boundary diff,
 and ghost overlays. Art Agent transition review delegates to that core while
-retaining its existing API and artifact contract. Packet 7B will consume the
-same metrics without introducing another analysis stack.
+retaining its existing API and artifact contract. Workbench PREVIEW consumes the
+same metrics directly: FROM is the current semantic animation, TO candidates
+share profile and direction and are visual review candidates rather than
+gameplay reachability. `T` cycles targets, `Shift+T` cycles split/ghost/diff,
+and the default window is the final two FROM frames plus the first two TO
+frames. LIVE FROM revisions recompute against a cached TO preview; the
+transition filmstrip is context-only and never drives Aseprite frame commands.
 
 Later packets must preserve the canonical publication boundary and may add only
 semantic commands, never general remote execution.
@@ -265,6 +270,7 @@ future Workbench owns the endpoint.
 
 ## Next Agent Slice
 
-Packet 7B may add the Workbench Transition Examiner UI. It must consume the
-shared analysis core, preserve the layer presentation boundary, and must not add
-save/publication or Art Agent mutation authority.
+Packet 7B is implemented as a PREVIEW Examiner mode. It consumes the shared
+analysis core, preserves the layer presentation boundary, and adds no
+save/publication or Art Agent mutation authority. Packet 8 is the next deferred
+slice: Timeline completion.

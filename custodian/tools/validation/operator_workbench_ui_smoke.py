@@ -106,6 +106,9 @@ def pure_service_smoke() -> None:
         assert len(service.filter_records(records, "locomotion")) == 3
         assert len(service.filter_records(records, "RUN_01")) == 2
         assert service.available_directions(run.selection) == ("e", "w")
+        candidates = service.transition_candidates(run.selection)
+        assert tuple(candidate.action for candidate in candidates) == ("walk_01", "guard_01")
+        assert all(candidate.direction == "e" for candidate in candidates)
         service._popen = lambda command: command
         service.launch_motion_runtime(
             run.selection, fps=10.0, travel_px=128.0, curve="linear",
@@ -204,6 +207,22 @@ class PilotService:
         frames = tuple(Image.new("RGBA", (96, 96), (20 + index, 30, 40, 180)) for index in range(6))
         identity = animation_preview.SemanticIdentity(selection.profile, selection.group, selection.action, selection.direction)
         return animation_preview.Preview(identity, source, frames, (96, 96), "fixture", ())
+    def transition_candidates(self, selection):
+        return WorkbenchService.transition_candidates(self, selection)
+    def transition_preview(self, selection, primary_source):
+        from PIL import Image
+        import animation_preview
+        self.preview_calls += 1
+        frames = []
+        for index in range(6):
+            image = Image.new("RGBA", (96, 96), (0, 0, 0, 0))
+            x = 40 + (1 if index == 0 else 0)
+            for y in range(30, 70):
+                for px in range(x, x + 16):
+                    image.putpixel((px, y), (255, 255, 255, 255))
+            frames.append(image)
+        identity = animation_preview.SemanticIdentity(selection.profile, selection.group, selection.action, selection.direction)
+        return animation_preview.Preview(identity, "workbench", tuple(frames), (96, 96), "transition-fixture", ())
     def live_preview(self, selection, strip_path, *, frames, frame_size):
         import animation_preview
         identity = animation_preview.SemanticIdentity(
@@ -356,6 +375,36 @@ async def textual_smoke() -> None:
             await pilot.pause(0.1)
             assert app.preview_view.source == "live"
             assert "SOURCE: LIVE" in str(app.main_screen.query_one("#preview-controls").render())
+
+            app.state.preview_examiner_mode = "transition"
+            await app._load_transition_examiner()
+            assert app.transition_target_view is not None
+            assert app.transition_target_view.identity.action == "walk_01"
+            assert app.transition_analysis is not None
+            assert app.transition_analysis.metrics.visual_centroid_delta == (1.0, 0.0)
+            assert app.transition_analysis.metrics.changed_pixels > 0
+            transition_canvas = app.main_screen.query_one("#preview-canvas", PreviewCanvas)
+            transition_compare = app.main_screen.query_one("#preview-compare-canvas", PreviewCanvas)
+            app.state.transition_view = "ghost"
+            app._render_preview(); await pilot.pause()
+            assert transition_compare.has_class("hidden")
+            assert transition_canvas.source_frame is app.transition_analysis.ghost
+            app.action_transition_view(); assert app.state.transition_view == "diff"
+            app._render_preview(); await pilot.pause()
+            assert transition_canvas.source_frame is app.transition_analysis.diff
+            app.action_transition_view(); assert app.state.transition_view == "split"
+            app._render_preview(); await pilot.pause()
+            assert not transition_compare.has_class("hidden")
+            assert transition_canvas.source_frame is app.transition_analysis.target_boundary
+            assert transition_compare.source_frame is app.transition_analysis.reference_boundary
+            transition_target = app.transition_target_view
+            app.action_transition_target(); await pilot.pause(0.1)
+            assert app.transition_target_view is not None
+            assert app.transition_target_view is not transition_target
+            app.state.preview_examiner_mode = "single"
+            app.transition_target_view = None
+            app.transition_analysis = None
+            app._render_preview()
 
             await live_client.send(json.dumps({
                 "schema": "custodian.operator_live_bridge.message.v1",

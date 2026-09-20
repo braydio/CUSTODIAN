@@ -22,7 +22,7 @@ class PreviewFilmstrip(Container):
     def compose(self) -> ComposeResult:
         yield AutoImage(classes="filmstrip-raster")
 
-    def show_frames(self, frames: tuple[Image.Image, ...], *, current: int, changed: tuple[bool, ...] = ()) -> None:
+    def show_frames(self, frames: tuple[Image.Image, ...], *, current: int, changed: tuple[bool, ...] = (), divider_after: int | None = None) -> None:
         self._count = len(frames)
         if not frames:
             self.contact_sheet = None; return
@@ -34,6 +34,9 @@ class PreviewFilmstrip(Container):
             left = index * THUMB_SLOT
             if index < len(changed) and changed[index]: draw.rectangle((left + 1, 1, left + THUMB_SLOT - 2, THUMB_SLOT - 2), outline=(191, 97, 106, 255))
             if index == self._current: draw.rectangle((left, 0, left + THUMB_SLOT - 1, THUMB_SLOT - 1), outline=(129, 161, 193, 255), width=2)
+        if divider_after is not None and 0 <= divider_after < len(frames) - 1:
+            x = (divider_after + 1) * THUMB_SLOT
+            draw.line((x, 0, x, THUMB_SLOT - 1), fill=(235, 203, 139, 255), width=2)
         self.contact_sheet = sheet; self.query_one(".filmstrip-raster", AutoImage).image = sheet
 
     def on_click(self, event) -> None:
