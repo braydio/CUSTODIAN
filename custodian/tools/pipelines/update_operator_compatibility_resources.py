@@ -13,8 +13,9 @@ import hashlib
 import importlib.util
 import json
 import re
+import struct
 import sys
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 
@@ -22,6 +23,18 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 CUSTODIAN_ROOT = REPO_ROOT / "custodian"
 CATALOG_PATH = CUSTODIAN_ROOT / "content/data/operator/generated/operator_animation_catalog.generated.json"
 OPERATOR_RESOURCE_ROOT = CUSTODIAN_ROOT / "game/actors/operator"
+
+#: Frozen records of what the compatibility clips actually played before any
+#: renderer was cut over. See `_frozen_timing_index` for why these, and not the
+#: catalog, are timing authority for clips they know about.
+FROZEN_TIMING_PATHS = (
+    REPO_ROOT / "reports/operator/operator_compatibility_timing.json",
+    REPO_ROOT / "reports/operator/operator_full_body_compatibility_timing.json",
+)
+#: The compatibility resource the full-body baseline was captured from. That
+#: baseline is keyed by canonical identity and names its clips via `via_clip`,
+#: so the resource has to be supplied here.
+FULL_BODY_TIMING_RESOURCE = "res://game/actors/operator/operator_runtime_frames.tres"
 
 COMPATIBILITY_RESOURCE_NAMES = (
     "operator_runtime_frames.tres",
@@ -52,12 +65,44 @@ SUB_REF_RE = re.compile(r'SubResource\("([^"]+)"\)')
 NAME_RE = re.compile(r'^"name": &"([^"]+)"', re.MULTILINE)
 FRAMES_RE = re.compile(r'("frames": \[)(.*?)(\],\n"loop":)', re.DOTALL)
 LOOP_RE = re.compile(r'(^"loop": )(true|false|0|1)', re.MULTILINE)
-SPEED_RE = re.compile(r'(^"speed": )([-0-9.]+)', re.MULTILINE)
+SPEED_RE = re.compile(r'(^"speed": )([-0-9.e+]+)', re.MULTILINE)
+DURATION_RE = re.compile(r'"duration": ([-0-9.e+]+)')
 
 
 def _number(value: float) -> str:
     rendered = format(value, ".15g")
     return rendered if "." in rendered else rendered + ".0"
+
+
+def _same_float(text: str, value: float) -> bool:
+    """Whether an existing literal already denotes `value` at Godot precision.
+
+    Godot stores these as 32-bit floats, so a duration authored as 0.6 reads back
+    as 0.600000023841858. Both spellings load to the same float. Comparing at
+    float32 keeps a refresh from rewriting a file to say the same thing.
+    """
+
+    try:
+        current = float(text)
+    except ValueError:
+        return False
+    return struct.pack("<f", current) == struct.pack("<f", value)
+
+
+def _preserve_number(existing: str | None, value: float) -> str:
+    """Render `value`, keeping the existing spelling when it means the same."""
+
+    if existing is not None and _same_float(existing, value):
+        return existing
+    return _number(value)
+
+
+def _preserve_bool(existing: str | None, value: bool) -> str:
+    """Render `value`, keeping `0`/`1` vs `false`/`true` when unchanged."""
+
+    if existing is not None and (existing in ("true", "1")) == value:
+        return existing
+    return str(value).lower()
 
 
 def _load_schema(repo_root: Path):
@@ -69,6 +114,59 @@ def _load_schema(repo_root: Path):
     sys.modules[spec.name] = module
     spec.loader.exec_module(module)
     return module
+
+
+@dataclass(frozen=True)
+class FrozenTiming:
+    """What a compatibility clip played at the moment it was frozen."""
+
+    fps: float
+    loop: bool
+    frames: int
+    durations: tuple[float, ...]
+
+
+def _frozen_timing_index(paths=FROZEN_TIMING_PATHS) -> dict[tuple[str, str], FrozenTiming]:
+    """Historical compatibility timing, keyed by (resource path, animation name).
+
+    A compatibility clip's timing is a property of the clip, not of the pixels it
+    happens to point at. Several historical clips are cross-action: the strip
+    behind `unarmed_walk_up_right` is authored as `unarmed/locomotion/idle_01/ne`,
+    so deriving its clock from the catalog entry for those pixels silently
+    retimes the clip to the idle clock. That is not a hypothetical -- it rewrote
+    the same three clips on four consecutive ingests.
+
+    The catalog stays authority for which texture a frame points at and for
+    frame geometry. This index is authority for how fast it plays.
+    """
+
+    index: dict[tuple[str, str], FrozenTiming] = {}
+    for path in paths:
+        if not path.exists():
+            continue
+        payload = json.loads(path.read_text())
+        if not payload.get("frozen", False):
+            raise ValueError(f"compatibility timing baseline is not frozen: {path}")
+        for record in payload.get("resources", {}).values():
+            resource = str(record.get("path", ""))
+            for name, clip in record.get("clips", {}).items():
+                index[(resource, name)] = FrozenTiming(
+                    float(clip["fps"]),
+                    bool(clip["loop"]),
+                    int(clip["frames"]),
+                    tuple(float(value) for value in clip["durations"]),
+                )
+        for identity in payload.get("identities", {}).values():
+            name = str(identity.get("via_clip", ""))
+            if not name:
+                continue
+            index[(FULL_BODY_TIMING_RESOURCE, name)] = FrozenTiming(
+                float(identity["fps"]),
+                bool(identity["loop"]),
+                int(identity["frames"]),
+                tuple(float(value) for value in identity["durations"]),
+            )
+    return index
 
 
 @dataclass(frozen=True)
@@ -89,6 +187,7 @@ class ResourceUpdate:
     resized_animations: list[tuple[str, int, int]]
     timing_updates: list[str]
     text: str
+    preserved_timing: list[str] = field(default_factory=list)
 
     @property
     def changed(self) -> bool:
@@ -221,8 +320,24 @@ def _atlas_id(resource_path: Path, ext_id: str, frame_index: int) -> str:
     return f"AtlasTexture_compat_{digest}"
 
 
-def update_resource(path: Path, index: dict[tuple, CatalogSpec], repo_root: Path = REPO_ROOT) -> ResourceUpdate:
+def update_resource(
+    path: Path,
+    index: dict[tuple, CatalogSpec],
+    repo_root: Path = REPO_ROOT,
+    frozen: dict[tuple[str, str], FrozenTiming] | None = None,
+) -> ResourceUpdate:
     schema = _load_schema(repo_root)
+    if frozen is None:
+        frozen = _frozen_timing_index()
+    project_root = (repo_root / "custodian").resolve()
+    resolved = path.resolve()
+    # A resource outside the project (a synthetic fixture, say) has no res://
+    # identity, so no frozen record can name it and the catalog stays authority.
+    resource_uri = (
+        "res://" + resolved.relative_to(project_root).as_posix()
+        if resolved.is_relative_to(project_root)
+        else ""
+    )
     original = path.read_text()
     text = original
     changed_paths: list[tuple[str, str]] = []
@@ -245,13 +360,14 @@ def update_resource(path: Path, index: dict[tuple, CatalogSpec], repo_root: Path
             changed_paths.append((old_path, target.path))
 
     if not managed:
-        return ResourceUpdate(path, [], [], [], original)
+        return ResourceUpdate(path, [], [], [], original, [])
 
     atlases = _atlas_records(original)
     array_start, array_end, blocks = _animation_blocks(text)
     additions: list[str] = []
     resized: list[tuple[str, int, int]] = []
     timing_updates: list[str] = []
+    preserved_timing: list[str] = []
     updated_blocks: list[str] = []
     target_ids: dict[str, list[str]] = {}
     for ext_id, (_old_key, target) in managed.items():
@@ -281,15 +397,47 @@ def update_resource(path: Path, index: dict[tuple, CatalogSpec], repo_root: Path
             frame_match = FRAMES_RE.search(block)
             if frame_match is None:
                 continue
-            durations = target.durations or tuple(1.0 for _ in target_ids[ext_id])
+            # Timing authority: the frozen compatibility record when it knows this
+            # clip, the catalog otherwise. The catalog still decides the texture
+            # and the frame geometry either way.
+            authored = frozen.get((resource_uri, name))
+            fps = target.fps
+            loop = target.loop
+            durations = target.durations
+            if authored is not None:
+                fps = authored.fps
+                loop = authored.loop
+                # Durations only transfer when the strip still has the same number
+                # of frames. A genuine re-author changes the count, and historical
+                # per-frame durations cannot describe frames that did not exist.
+                durations = authored.durations if authored.frames == target.frames else durations
+                preserved_timing.append(name)
+            durations = durations or tuple(1.0 for _ in target_ids[ext_id])
+            existing_durations = DURATION_RE.findall(frame_match.group(2))
             frame_entries = ", ".join(
-                '{\n"duration": %s,\n"texture": SubResource("%s")\n}' % (_number(duration), sub_id)
-                for duration, sub_id in zip(durations, target_ids[ext_id], strict=True)
+                '{\n"duration": %s,\n"texture": SubResource("%s")\n}' % (
+                    _preserve_number(
+                        existing_durations[frame_index] if frame_index < len(existing_durations) else None,
+                        duration,
+                    ),
+                    sub_id,
+                )
+                for frame_index, (duration, sub_id) in enumerate(
+                    zip(durations, target_ids[ext_id], strict=True)
+                )
             )
             replacement = block[:frame_match.start(2)] + frame_entries + block[frame_match.end(2):]
-            if target.fps is not None:
-                replacement = SPEED_RE.sub(rf'\g<1>{_number(target.fps)}', replacement, count=1)
-                replacement = LOOP_RE.sub(rf'\g<1>{str(target.loop).lower()}', replacement, count=1)
+            if fps is not None:
+                speed_match = SPEED_RE.search(replacement)
+                loop_match = LOOP_RE.search(replacement)
+                rendered_speed = _preserve_number(
+                    speed_match.group(2) if speed_match else None, fps
+                )
+                rendered_loop = _preserve_bool(
+                    loop_match.group(2) if loop_match else None, bool(loop)
+                )
+                replacement = SPEED_RE.sub(rf'\g<1>{rendered_speed}', replacement, count=1)
+                replacement = LOOP_RE.sub(rf'\g<1>{rendered_loop}', replacement, count=1)
                 if replacement != block:
                     timing_updates.append(name)
             if old_key.frames != target.frames:
@@ -308,7 +456,7 @@ def update_resource(path: Path, index: dict[tuple, CatalogSpec], repo_root: Path
         ext_count = len(EXT_RE.findall(text))
         sub_count = len(ATLAS_RE.findall(text))
         text = re.sub(r"load_steps=\d+", f"load_steps={ext_count + sub_count + 1}", text, count=1)
-    return ResourceUpdate(path, changed_paths, resized, timing_updates, text)
+    return ResourceUpdate(path, changed_paths, resized, timing_updates, text, preserved_timing)
 
 
 def stale_runtime_references(resource_root: Path, repo_root: Path = REPO_ROOT) -> list[dict[str, str]]:
@@ -371,11 +519,12 @@ def main() -> int:
         return 0
     catalog_path = (args.catalog or repo_root / CATALOG_PATH.relative_to(REPO_ROOT)).resolve()
     index = catalog_index(catalog_path, repo_root)
+    frozen = _frozen_timing_index()
     resources = args.resource or [resource_root / name for name in GENERATED_RESOURCE_NAMES]
     report = []
     for resource in resources:
         path = resource if resource.is_absolute() else repo_root / resource
-        result = update_resource(path, index, repo_root)
+        result = update_resource(path, index, repo_root, frozen)
         if result.changed and not args.dry_run:
             temp = path.with_suffix(path.suffix + ".compat.tmp")
             temp.write_text(result.text)
@@ -386,6 +535,7 @@ def main() -> int:
             "path_updates": result.changed_paths,
             "resized_animations": result.resized_animations,
             "timing_updates": result.timing_updates,
+            "preserved_timing": result.preserved_timing,
         })
     if args.json:
         print(json.dumps(report, indent=2))

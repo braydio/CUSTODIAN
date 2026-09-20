@@ -49,6 +49,156 @@ def resource_text(path: str, ext_id: str, animation: str, frames: int, layer: st
     return "\n".join(lines)
 
 
+def multi_resource_text(entries: list[dict]) -> str:
+    """A SpriteFrames resource holding several full-strip animations."""
+
+    lines = [f'[gd_resource type="SpriteFrames" load_steps=99 format=3]', ""]
+    seen_ext: dict[str, str] = {}
+    for entry in entries:
+        if entry["ext_id"] in seen_ext:
+            continue
+        seen_ext[entry["ext_id"]] = entry["path"]
+        lines.append(
+            f'[ext_resource type="Texture2D" uid="uid://{entry["ext_id"]}" '
+            f'path="{entry["path"]}" id="{entry["ext_id"]}"]'
+        )
+    lines.append("")
+    emitted: set[str] = set()
+    for entry in entries:
+        for index in range(entry["frames"]):
+            sub_id = f'AtlasTexture_{entry["ext_id"]}_{index}'
+            if sub_id in emitted:
+                continue
+            emitted.add(sub_id)
+            lines.extend([
+                f'[sub_resource type="AtlasTexture" id="{sub_id}"]',
+                f'atlas = ExtResource("{entry["ext_id"]}")',
+                f"region = Rect2({index * 96}, 0, 96, 96)",
+                "",
+            ])
+    blocks = []
+    for entry in entries:
+        frame_entries = ", ".join(
+            '{\n"duration": 1.0,\n"texture": SubResource("AtlasTexture_%s_%d")\n}'
+            % (entry["ext_id"], index)
+            for index in range(entry["frames"])
+        )
+        blocks.append(
+            '{\n"frames": [%s],\n"loop": %s,\n"name": &"%s",\n"speed": %s\n}'
+            % (frame_entries, str(entry["loop"]).lower(), entry["name"], entry["speed"])
+        )
+    lines.extend(["[resource]", "animations = [" + ", ".join(blocks) + "]", ""])
+    return "\n".join(lines)
+
+
+def check_frozen_timing_authority(module, schema) -> None:
+    """The frozen compatibility record outranks the catalog for clips it knows.
+
+    Three historical clips are cross-action: the strip behind
+    `unarmed_walk_up_right` is authored as `unarmed/locomotion/idle_01/ne`, so
+    refreshing from the catalog entry for those pixels retimes the clip to the
+    idle clock. That happened on four consecutive Operator ingests, each time
+    needing manual repair, which is exactly the kind of silent drift a migration
+    must not carry. A clip the frozen record does not name still refreshes from
+    the catalog, so ordinary art updates keep working.
+    """
+
+    with tempfile.TemporaryDirectory() as temp_dir:
+        root = Path(temp_dir)
+        # The res:// identity of the resource is what the frozen record is keyed
+        # by, so the fixture has to sit at the real project-relative location.
+        (root / "custodian").mkdir()
+        (root / "custodian/tools").symlink_to(REPO_ROOT / "custodian/tools")
+        resource_root = root / "custodian/game/actors/operator"
+        resource_root.mkdir(parents=True)
+
+        def runtime_path(group: str, action: str, direction: str, frames: int) -> tuple[object, str]:
+            key = schema.OperatorAssetKey(
+                "operator", "lower_body", "unarmed", group, action, direction, frames, 96, 96
+            )
+            return key, "res://" + schema.canonical_runtime_path(key).as_posix()
+
+        idle_key, idle_res = runtime_path("locomotion", "idle_01", "ne", 6)
+        recovery_key, recovery_res = runtime_path("attack", "fast_recovery_01", "n", 3)
+        walk_key, walk_res = runtime_path("locomotion", "walk_01", "e", 4)
+        posture_key, posture_res = runtime_path("posture", "idle_ready_01", "e", 5)
+
+        entries = [
+            # Frozen: 6f @10 looping. Catalog for these pixels says 8 FPS.
+            {"name": "unarmed_walk_up_right", "path": idle_res, "ext_id": "idle_ne",
+             "frames": 6, "speed": 10.0, "loop": True},
+            # Frozen: 6f @12 looping. Same pixels, different clip, different clock.
+            {"name": "unarmed_run_up_right", "path": idle_res, "ext_id": "idle_ne",
+             "frames": 6, "speed": 12.0, "loop": True},
+            # Frozen: 3f @12 non-looping.
+            {"name": "unarmed_fast_windup_lower_up", "path": recovery_res, "ext_id": "recovery_n",
+             "frames": 3, "speed": 12.0, "loop": False},
+            # Frozen at 5f, but the art has since been re-authored to 4f. The
+            # historical per-frame durations cannot describe frames that no
+            # longer exist, so they come from the catalog -- but the clock the
+            # consumer plays this clip at is still the frozen one.
+            {"name": "unarmed_walk_right", "path": walk_res, "ext_id": "walk_e",
+             "frames": 4, "speed": 99.0, "loop": False},
+            # Named by no frozen record, as a clip added after the baseline was
+            # captured would be. Ordinary catalog-driven refresh still applies.
+            {"name": "unarmed_posture_idle_ready_lower", "path": posture_res, "ext_id": "posture_e",
+             "frames": 5, "speed": 99.0, "loop": False},
+        ]
+        resource = resource_root / "operator_modular_lower_body_frames.tres"
+        resource.write_text(multi_resource_text(entries))
+
+        index = {
+            schema.semantic_identity(idle_key): module.CatalogSpec(
+                idle_res, 6, 96, 96, 8.0, True, tuple(1.0 for _ in range(6))),
+            schema.semantic_identity(recovery_key): module.CatalogSpec(
+                recovery_res, 3, 96, 96, 8.0, True, tuple(1.0 for _ in range(3))),
+            schema.semantic_identity(walk_key): module.CatalogSpec(
+                walk_res, 4, 96, 96, 8.0, True, tuple(1.0 for _ in range(4))),
+            schema.semantic_identity(posture_key): module.CatalogSpec(
+                posture_res, 5, 96, 96, 8.0, True, tuple(1.0 for _ in range(5))),
+        }
+
+        result = module.update_resource(resource, index, root)
+        _start, _end, blocks = module._animation_blocks(result.text)
+        by_name = {}
+        for block in blocks:
+            match = module.NAME_RE.search(block)
+            if match:
+                by_name[match.group(1)] = block
+
+        preserved = {
+            "unarmed_walk_up_right": (10.0, "true"),
+            "unarmed_run_up_right": (12.0, "true"),
+            "unarmed_fast_windup_lower_up": (12.0, "false"),
+        }
+        for name, (fps, loop) in preserved.items():
+            block = by_name[name]
+            speed = float(module.SPEED_RE.search(block).group(2))
+            assert speed == fps, f"{name} should keep {fps} FPS, refresh wrote {speed}"
+            assert module.LOOP_RE.search(block).group(2) == loop, f"{name} loop drifted"
+            assert name in result.preserved_timing, f"{name} should report frozen timing authority"
+
+        # Re-authored frame count: clock preserved, geometry and durations follow
+        # the new art.
+        rewritten = by_name["unarmed_walk_right"]
+        rewritten_speed = float(module.SPEED_RE.search(rewritten).group(2))
+        assert rewritten_speed == 10.0, f"re-authored clip should keep 10 FPS, got {rewritten_speed}"
+        assert len(module.SUB_REF_RE.findall(rewritten)) == 4, "re-authored clip should take the new frame count"
+        assert "unarmed_walk_right" in result.preserved_timing
+
+        control = by_name["unarmed_posture_idle_ready_lower"]
+        control_speed = float(module.SPEED_RE.search(control).group(2))
+        assert control_speed == 8.0, f"unknown clip should refresh from the catalog, got {control_speed}"
+        assert module.LOOP_RE.search(control).group(2) == "true", "unknown clip should take catalog loop"
+        assert "unarmed_posture_idle_ready_lower" not in result.preserved_timing
+
+        # A second refresh of the result must be a no-op: an ingest followed by a
+        # compatibility refresh has to leave the repository clean.
+        resource.write_text(result.text)
+        again = module.update_resource(resource, index, root)
+        assert again.text == result.text, "compatibility refresh is not idempotent"
+
+
 def main() -> int:
     module = load_module()
     schema = module._load_schema(REPO_ROOT)
@@ -132,7 +282,12 @@ def main() -> int:
         for new_res in new_paths.values():
             assert (root / "custodian" / new_res.removeprefix("res://")).exists()
 
-    print("operator_compatibility_resources_smoke: PASS 5f->6f paths, aliases, AtlasTexture frames, stale-path gate")
+    check_frozen_timing_authority(module, schema)
+
+    print(
+        "operator_compatibility_resources_smoke: PASS 5f->6f paths, aliases, "
+        "AtlasTexture frames, stale-path gate, frozen timing authority"
+    )
     return 0
 
 
