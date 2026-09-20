@@ -1,0 +1,67 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260920T203029Z_5e56cd32",
+  "timestamp": "2026-09-20T20:30:29.909894+00:00",
+  "family": "road_of_witnesses_overgrown_reliquary_east_environment",
+  "kind": "backdrop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/road_of_witnesses_overgrown_reliquary_east_environment/foreground.png",
+      "sha256": "790927393576751efa4e47c970618f165db9eb73236c96f05236fddb045f0607"
+    },
+    {
+      "path": "asset_drop/inbox/road_of_witnesses_overgrown_reliquary_east_environment/underlay.png",
+      "sha256": "a8c3b3ad27545991e33d3baec42e0ad5a1a6f063a510c0116eb5d7555f8b9780"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "foreground",
+      "direction": "omni",
+      "semantic_identity": [
+        "road_of_witnesses_overgrown_reliquary_east",
+        "backdrop",
+        "foreground",
+        "display",
+        "foreground",
+        "omni"
+      ],
+      "path": "content/levels/hub/road_of_witnesses/overgrown_reliquary_east/road_of_witnesses_overgrown_reliquary_east_foreground_896x896.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "790927393576751efa4e47c970618f165db9eb73236c96f05236fddb045f0607",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "underlay",
+      "direction": "omni",
+      "semantic_identity": [
+        "road_of_witnesses_overgrown_reliquary_east",
+        "backdrop",
+        "underlay",
+        "display",
+        "underlay",
+        "omni"
+      ],
+      "path": "content/levels/hub/road_of_witnesses/overgrown_reliquary_east/road_of_witnesses_overgrown_reliquary_east_underlay_896x896.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "a8c3b3ad27545991e33d3baec42e0ad5a1a6f063a510c0116eb5d7555f8b9780",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

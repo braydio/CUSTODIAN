@@ -1,0 +1,36 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "road_of_witnesses_south_reach_civic_axis_environment",
+  "kind": "backdrop",
+  "priority": "P1",
+  "runtime": {
+    "domain": "levels/hub/road_of_witnesses/south_reach_civic_axis",
+    "owner": "road_of_witnesses_south_reach_civic_axis",
+    "template": "{domain}/{filename}",
+    "filename_policy": "template",
+    "filename_template": "{owner}_{variant}_{frame_size}.png"
+  },
+  "canvas": {
+    "width": 768,
+    "height": 896
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "underlay": {
+      "required": true,
+      "layer": "underlay",
+      "action_group": "display",
+      "variant": "underlay",
+      "layout": "copy"
+    },
+    "foreground": {
+      "required": true,
+      "layer": "foreground",
+      "action_group": "display",
+      "variant": "foreground",
+      "layout": "copy"
+    }
+  },
+  "aliases": {}
+}

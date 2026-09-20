@@ -14,7 +14,6 @@ const Layout := preload("res://game/world/awakening/awakening_layout.gd")
 const SCENE := "res://scenes/awakening_first_return.tscn"
 const SCRIPT := "res://game/world/awakening/awakening_first_return.gd"
 const LAYOUT := "res://game/world/awakening/awakening_layout.gd"
-const ROAD_MAP := "res://content/levels/hub/Road_of_Witnesses_Tilemap.png"
 const HUD_SCENE := "res://game/ui/hud/custodian_hud.tscn"
 const MAPPER := "res://scenes/debug/awakening_first_return_mapper.tscn"
 const DEBUG_TOUR := "res://scenes/debug/awakening_first_return_debug.tscn"
@@ -82,7 +81,7 @@ func _init() -> void:
 
 
 func _check_resources() -> void:
-	for path in [SCENE, SCRIPT, LAYOUT, ROAD_MAP, HUD_SCENE, MAPPER, DEBUG_TOUR, ADAPTER]:
+	for path in [SCENE, SCRIPT, LAYOUT, HUD_SCENE, MAPPER, DEBUG_TOUR, ADAPTER]:
 		if not ResourceLoader.exists(path):
 			_fail("missing resource: %s" % path)
 
@@ -243,8 +242,12 @@ func _check_road_instance(instance: Node) -> void:
 	var road_source := FileAccess.get_file_as_string(
 		"res://game/world/hub/road_of_witnesses_prototype.gd"
 	)
-	if not road_source.contains("to_local(player_pos)"):
-		_fail("Road occlusion still compares global Y against local thresholds")
+	if road_source.contains("OCCLUSION_REGIONS") or road_source.contains("Road_of_Witnesses_Tilemap.png"):
+		_fail("Road production presentation still depends on monolithic/cropped occlusion art")
+	if instance.get_node_or_null(
+		"World/AwakeningZones/Zone10_RoadSouthReach/RoadOfWitnessesPrototype/EnvironmentModules"
+	) == null:
+		_fail("Road modular EnvironmentModules root is missing")
 
 
 ## The prologue must not smuggle in later-section systems.

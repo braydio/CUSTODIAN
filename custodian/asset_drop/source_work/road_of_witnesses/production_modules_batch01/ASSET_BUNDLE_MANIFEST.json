@@ -1,0 +1,264 @@
+{
+  "bundle": "CUSTODIAN Road of Witnesses production modules batch 01",
+  "date": "2026-09-20",
+  "scope": "First 10 assets = underlay + foreground for first five modules; collision remains authored separately.",
+  "style_authority": "User-provided ruined civic composite, interpreted through generated Road of Witnesses module board.",
+  "not_in_this_batch": [
+    "north_processional_approach/underlay",
+    "north_processional_approach/foreground",
+    "all collision",
+    "scene placement/binding"
+  ],
+  "assets": [
+    {
+      "family": "road_of_witnesses_south_reach_civic_axis_environment",
+      "family_schema": "custodian/content/metadata/assets/families/road_of_witnesses_south_reach_civic_axis_environment.asset.json",
+      "module": "south_reach_civic_axis",
+      "module_title": "South Reach Civic Axis",
+      "role": "underlay",
+      "layer": "underlay",
+      "action_group": "display",
+      "variant": "underlay",
+      "direction": "omni",
+      "frames": 1,
+      "layout": "copy",
+      "canvas": [
+        768,
+        896
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "inbox_path": "custodian/asset_drop/inbox/road_of_witnesses_south_reach_civic_axis_environment/underlay.png",
+      "expected_runtime_path": "custodian/content/levels/hub/road_of_witnesses/south_reach_civic_axis/road_of_witnesses_south_reach_civic_axis_underlay_768x896.png",
+      "sha256": "f13c5eb7fca73cd98306061f69df3e38756c7dd01c6c99abfc58bda8d05439b3"
+    },
+    {
+      "family": "road_of_witnesses_south_reach_civic_axis_environment",
+      "family_schema": "custodian/content/metadata/assets/families/road_of_witnesses_south_reach_civic_axis_environment.asset.json",
+      "module": "south_reach_civic_axis",
+      "module_title": "South Reach Civic Axis",
+      "role": "foreground",
+      "layer": "foreground",
+      "action_group": "display",
+      "variant": "foreground",
+      "direction": "omni",
+      "frames": 1,
+      "layout": "copy",
+      "canvas": [
+        768,
+        896
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "inbox_path": "custodian/asset_drop/inbox/road_of_witnesses_south_reach_civic_axis_environment/foreground.png",
+      "expected_runtime_path": "custodian/content/levels/hub/road_of_witnesses/south_reach_civic_axis/road_of_witnesses_south_reach_civic_axis_foreground_768x896.png",
+      "sha256": "0ce4df61c2781a55f842a62b8160e2ffc97e2cf409f5eef866d441b416e3c907"
+    },
+    {
+      "family": "road_of_witnesses_witness_plaza_environment",
+      "family_schema": "custodian/content/metadata/assets/families/road_of_witnesses_witness_plaza_environment.asset.json",
+      "module": "witness_plaza",
+      "module_title": "Witness Plaza",
+      "role": "underlay",
+      "layer": "underlay",
+      "action_group": "display",
+      "variant": "underlay",
+      "direction": "omni",
+      "frames": 1,
+      "layout": "copy",
+      "canvas": [
+        896,
+        896
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "inbox_path": "custodian/asset_drop/inbox/road_of_witnesses_witness_plaza_environment/underlay.png",
+      "expected_runtime_path": "custodian/content/levels/hub/road_of_witnesses/witness_plaza/road_of_witnesses_witness_plaza_underlay_896.png",
+      "sha256": "d548e9ba65f7ce69c567caf7afc8b460f0cbe2ea46f1d7ea5d004ab9e455f3c9"
+    },
+    {
+      "family": "road_of_witnesses_witness_plaza_environment",
+      "family_schema": "custodian/content/metadata/assets/families/road_of_witnesses_witness_plaza_environment.asset.json",
+      "module": "witness_plaza",
+      "module_title": "Witness Plaza",
+      "role": "foreground",
+      "layer": "foreground",
+      "action_group": "display",
+      "variant": "foreground",
+      "direction": "omni",
+      "frames": 1,
+      "layout": "copy",
+      "canvas": [
+        896,
+        896
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "inbox_path": "custodian/asset_drop/inbox/road_of_witnesses_witness_plaza_environment/foreground.png",
+      "expected_runtime_path": "custodian/content/levels/hub/road_of_witnesses/witness_plaza/road_of_witnesses_witness_plaza_foreground_896.png",
+      "sha256": "474d653202aa422f504546fb0032f6065dc8873bdef59f1fad2feb1bca8924d1"
+    },
+    {
+      "family": "road_of_witnesses_collapsed_chapel_court_environment",
+      "family_schema": "custodian/content/metadata/assets/families/road_of_witnesses_collapsed_chapel_court_environment.asset.json",
+      "module": "collapsed_chapel_court",
+      "module_title": "Collapsed Chapel Court",
+      "role": "underlay",
+      "layer": "underlay",
+      "action_group": "display",
+      "variant": "underlay",
+      "direction": "omni",
+      "frames": 1,
+      "layout": "copy",
+      "canvas": [
+        768,
+        896
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "inbox_path": "custodian/asset_drop/inbox/road_of_witnesses_collapsed_chapel_court_environment/underlay.png",
+      "expected_runtime_path": "custodian/content/levels/hub/road_of_witnesses/collapsed_chapel_court/road_of_witnesses_collapsed_chapel_court_underlay_768x896.png",
+      "sha256": "2d44c71912eed82390ccf3747ea79744d0bade7ea57a7507cc727fb2669cec98"
+    },
+    {
+      "family": "road_of_witnesses_collapsed_chapel_court_environment",
+      "family_schema": "custodian/content/metadata/assets/families/road_of_witnesses_collapsed_chapel_court_environment.asset.json",
+      "module": "collapsed_chapel_court",
+      "module_title": "Collapsed Chapel Court",
+      "role": "foreground",
+      "layer": "foreground",
+      "action_group": "display",
+      "variant": "foreground",
+      "direction": "omni",
+      "frames": 1,
+      "layout": "copy",
+      "canvas": [
+        768,
+        896
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "inbox_path": "custodian/asset_drop/inbox/road_of_witnesses_collapsed_chapel_court_environment/foreground.png",
+      "expected_runtime_path": "custodian/content/levels/hub/road_of_witnesses/collapsed_chapel_court/road_of_witnesses_collapsed_chapel_court_foreground_768x896.png",
+      "sha256": "f3f06af40362a0d6e3e2de5da72758657552d5bcd029d92a7d5c92fc9c7452e4"
+    },
+    {
+      "family": "road_of_witnesses_archive_ruin_west_environment",
+      "family_schema": "custodian/content/metadata/assets/families/road_of_witnesses_archive_ruin_west_environment.asset.json",
+      "module": "archive_ruin_west",
+      "module_title": "Archive Ruin West",
+      "role": "underlay",
+      "layer": "underlay",
+      "action_group": "display",
+      "variant": "underlay",
+      "direction": "omni",
+      "frames": 1,
+      "layout": "copy",
+      "canvas": [
+        896,
+        896
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "inbox_path": "custodian/asset_drop/inbox/road_of_witnesses_archive_ruin_west_environment/underlay.png",
+      "expected_runtime_path": "custodian/content/levels/hub/road_of_witnesses/archive_ruin_west/road_of_witnesses_archive_ruin_west_underlay_896.png",
+      "sha256": "f718aadfde457077a67c844f14836896c14a74a67d1aaae9b42f7b27706e719f"
+    },
+    {
+      "family": "road_of_witnesses_archive_ruin_west_environment",
+      "family_schema": "custodian/content/metadata/assets/families/road_of_witnesses_archive_ruin_west_environment.asset.json",
+      "module": "archive_ruin_west",
+      "module_title": "Archive Ruin West",
+      "role": "foreground",
+      "layer": "foreground",
+      "action_group": "display",
+      "variant": "foreground",
+      "direction": "omni",
+      "frames": 1,
+      "layout": "copy",
+      "canvas": [
+        896,
+        896
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "inbox_path": "custodian/asset_drop/inbox/road_of_witnesses_archive_ruin_west_environment/foreground.png",
+      "expected_runtime_path": "custodian/content/levels/hub/road_of_witnesses/archive_ruin_west/road_of_witnesses_archive_ruin_west_foreground_896.png",
+      "sha256": "97dbb49d7fc00c7eb269b513c810558aff0763643a737e17f723fca2796f148b"
+    },
+    {
+      "family": "road_of_witnesses_overgrown_reliquary_east_environment",
+      "family_schema": "custodian/content/metadata/assets/families/road_of_witnesses_overgrown_reliquary_east_environment.asset.json",
+      "module": "overgrown_reliquary_east",
+      "module_title": "Overgrown Reliquary East",
+      "role": "underlay",
+      "layer": "underlay",
+      "action_group": "display",
+      "variant": "underlay",
+      "direction": "omni",
+      "frames": 1,
+      "layout": "copy",
+      "canvas": [
+        896,
+        896
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "inbox_path": "custodian/asset_drop/inbox/road_of_witnesses_overgrown_reliquary_east_environment/underlay.png",
+      "expected_runtime_path": "custodian/content/levels/hub/road_of_witnesses/overgrown_reliquary_east/road_of_witnesses_overgrown_reliquary_east_underlay_896.png",
+      "sha256": "a8c3b3ad27545991e33d3baec42e0ad5a1a6f063a510c0116eb5d7555f8b9780"
+    },
+    {
+      "family": "road_of_witnesses_overgrown_reliquary_east_environment",
+      "family_schema": "custodian/content/metadata/assets/families/road_of_witnesses_overgrown_reliquary_east_environment.asset.json",
+      "module": "overgrown_reliquary_east",
+      "module_title": "Overgrown Reliquary East",
+      "role": "foreground",
+      "layer": "foreground",
+      "action_group": "display",
+      "variant": "foreground",
+      "direction": "omni",
+      "frames": 1,
+      "layout": "copy",
+      "canvas": [
+        896,
+        896
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "inbox_path": "custodian/asset_drop/inbox/road_of_witnesses_overgrown_reliquary_east_environment/foreground.png",
+      "expected_runtime_path": "custodian/content/levels/hub/road_of_witnesses/overgrown_reliquary_east/road_of_witnesses_overgrown_reliquary_east_foreground_896.png",
+      "sha256": "790927393576751efa4e47c970618f165db9eb73236c96f05236fddb045f0607"
+    }
+  ]
+}

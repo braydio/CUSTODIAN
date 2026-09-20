@@ -784,7 +784,7 @@ Last updated: 2026-08-20
 - `custodian/tools/validation/content_asset_audit.py` — read-only content-root audit for loose files, unregistered quarantine files, and exact duplicate groups
 - `custodian/tools/art/build_reference_samplesheet.py` — Pillow-based utility that samples active runtime-facing tiles, walls, floors, ruin props, and environment prop sheets into a labeled design-reference PNG
 - `custodian/content/README.md` — stable content-root domain map and duplicate policy for runtime/source/legacy/quarantine asset placement
-- `custodian/content/levels/hub/Road_of_Witnesses_Tilemap.png` — level-owned source map image for the Road of Witnesses prototype scene
+- `custodian/content/levels/hub/Road_of_Witnesses_Tilemap.png` — retained legacy/source map image; active Road presentation uses modular plates under `custodian/content/levels/hub/road_of_witnesses/`
 - `custodian/content/levels/hub/twin_solaria/development/twin_solaria_rebuilt_upscaled.png` — project-local development copy of the largest current Twin Solaria composite used by the dedicated backdrop test scene
 - `custodian/content/props/gothic/vault_dressing/source/unregistered/` — vault-owned source quarantine for unregistered vault prop art pending manifest/runtime promotion
 - `custodian/content/tiles/source/ashen_forum/`, `custodian/content/tiles/source/compound_ashen/`, `custodian/content/tiles/source/gothic_compound/`, and `custodian/content/tiles/source/roads_paths/` — source/master tile-sheet homes for previously loose top-level tile art

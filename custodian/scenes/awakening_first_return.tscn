@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://fxo77x8sii2s"]
 
 [ext_resource type="Script" uid="uid://i5sl1dpc4fyt" path="res://game/world/awakening/awakening_first_return.gd" id="1_awakening"]
-[ext_resource type="Texture2D" uid="uid://cnxg8pupb5w7j" path="res://content/levels/hub/Road_of_Witnesses_Tilemap.png" id="2_map"]
 [ext_resource type="PackedScene" uid="uid://d3xbaxlif3364" path="res://game/actors/operator/operator.tscn" id="3_operator"]
 [ext_resource type="Script" uid="uid://cyoadqv7g5hc6" path="res://game/world/camera.gd" id="4_camera"]
 [ext_resource type="Script" uid="uid://bqt6lkdd6nniw" path="res://game/systems/core/player_controller.gd" id="5_player_controller"]
@@ -218,12 +217,9 @@ apply_camera_bounds = false
 south_gate_gap_width = 192.0
 south_gate_gap_center_x = -6.0
 
-[node name="Background" type="Sprite2D" parent="World/AwakeningZones/Zone10_RoadSouthReach/RoadOfWitnessesPrototype"]
-texture = ExtResource("2_map")
-
 [node name="CollisionRoot" type="StaticBody2D" parent="World/AwakeningZones/Zone10_RoadSouthReach/RoadOfWitnessesPrototype"]
 
-[node name="ForegroundOcclusion" type="Node2D" parent="World/AwakeningZones/Zone10_RoadSouthReach/RoadOfWitnessesPrototype"]
+[node name="EnvironmentModules" type="Node2D" parent="World/AwakeningZones/Zone10_RoadSouthReach/RoadOfWitnessesPrototype"]
 
 [node name="Projectiles" type="Node2D" parent="World"]
 

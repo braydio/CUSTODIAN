@@ -126,12 +126,14 @@ objective, and first-pass completion. It owns no geometry.
 - The **Operator**, **PlayerController**, **Camera2D**, and **Black Reliquary HUD**
   are the existing ones.
 - Section 10 is the existing `RoadOfWitnessesPrototype` instanced at world offset
-  `(6, -6626)`, derived from `ROAD_WORLD_SOUTH_ENTRY - ROAD_LOCAL_SOUTH_ENTRY`. Two
+  `(6, -6626)`, derived from `ROAD_WORLD_SOUTH_ENTRY - ROAD_LOCAL_SOUTH_ENTRY`.
+  The prototype now presents five modular production plate pairs (South Reach,
+  Witness Plaza, Collapsed Chapel Court, Archive Ruin West, and Overgrown
+  Reliquary East) with authored collision kept separate from Sprite2D art. Two
   changes make it translation-safe: `apply_camera_bounds` is off inside the
-  Awakening (the Awakening owns the combined world envelope), and its occlusion
-  thresholds now compare `to_local(player_position).y` instead of global Y. A
+  Awakening (the Awakening owns the combined world envelope), and a
   `south_gate_gap_width` opens its southern boundary wall so the Approach joins it
-  as continuous walkable space.
+  as continuous walkable space. The north processional approach remains deferred.
 - The **existing `SidearmLocker`** is the P-9 recovery at `(832, -1952)`. No second
   locker implementation was written.
 - Camera reveals use the camera's existing `set_presentation_framing_transition` /

@@ -1,0 +1,67 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260920T202935Z_7a79187b",
+  "timestamp": "2026-09-20T20:29:35.605067+00:00",
+  "family": "road_of_witnesses_witness_plaza_environment",
+  "kind": "backdrop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/road_of_witnesses_witness_plaza_environment/foreground.png",
+      "sha256": "474d653202aa422f504546fb0032f6065dc8873bdef59f1fad2feb1bca8924d1"
+    },
+    {
+      "path": "asset_drop/inbox/road_of_witnesses_witness_plaza_environment/underlay.png",
+      "sha256": "d548e9ba65f7ce69c567caf7afc8b460f0cbe2ea46f1d7ea5d004ab9e455f3c9"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "foreground",
+      "direction": "omni",
+      "semantic_identity": [
+        "road_of_witnesses_witness_plaza",
+        "backdrop",
+        "foreground",
+        "display",
+        "foreground",
+        "omni"
+      ],
+      "path": "content/levels/hub/road_of_witnesses/witness_plaza/road_of_witnesses_witness_plaza_foreground_896x896.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "474d653202aa422f504546fb0032f6065dc8873bdef59f1fad2feb1bca8924d1",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "underlay",
+      "direction": "omni",
+      "semantic_identity": [
+        "road_of_witnesses_witness_plaza",
+        "backdrop",
+        "underlay",
+        "display",
+        "underlay",
+        "omni"
+      ],
+      "path": "content/levels/hub/road_of_witnesses/witness_plaza/road_of_witnesses_witness_plaza_underlay_896x896.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "d548e9ba65f7ce69c567caf7afc8b460f0cbe2ea46f1d7ea5d004ab9e455f3c9",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}
