@@ -15,6 +15,7 @@ sys.path.insert(0, str(OPERATOR_ROOT))
 from ui.service import WorkbenchService
 from ui.state import AnimationRecord, AnimationSelection, ExistingContextView, LayerView, MigrationView, PublishRow, PublishView, SessionView
 import animation_motion_preview
+import animation_preview
 
 
 class FakeModel:
@@ -109,6 +110,28 @@ def pure_service_smoke() -> None:
         candidates = service.transition_candidates(run.selection)
         assert tuple(candidate.action for candidate in candidates) == ("walk_01", "guard_01")
         assert all(candidate.direction == "e" for candidate in candidates)
+        original_preview = service.preview
+        calls = []
+        def availability_preview(selection, source="runtime"):
+            calls.append(source)
+            if source == "workbench": raise ValueError("absent")
+            return "canonical-preview"
+        service.preview = availability_preview
+        assert service.transition_preview(run.selection, "workbench") == "canonical-preview"
+        assert calls == ["workbench", "canonical"]
+        def broken_preview(selection, source="runtime"):
+            calls.append(source)
+            raise RuntimeError("bug")
+        service.preview = broken_preview
+        try: service.transition_preview(run.selection, "workbench")
+        except RuntimeError as error: assert str(error) == "bug"
+        else: raise AssertionError("programming error was swallowed by transition fallback")
+        assert calls[-1] == "workbench"
+        service.preview = original_preview
+        assert service.timeline_clip_frame_count(animation_preview.TimelineClip("unarmed", "locomotion", "run_01", "e")) == 6
+        try: service.timeline_clip_frame_count(animation_preview.TimelineClip("missing", "group", "action", "e"))
+        except ValueError: pass
+        else: raise AssertionError("unknown timeline identity accepted")
         service._popen = lambda command: command
         service.launch_motion_runtime(
             run.selection, fps=10.0, travel_px=128.0, curve="linear",
@@ -207,6 +230,15 @@ class PilotService:
         frames = tuple(Image.new("RGBA", (96, 96), (20 + index, 30, 40, 180)) for index in range(6))
         identity = animation_preview.SemanticIdentity(selection.profile, selection.group, selection.action, selection.direction)
         return animation_preview.Preview(identity, source, frames, (96, 96), "fixture", ())
+    def flatten_sequence(self, sequence, source="runtime"):
+        output = []
+        for clip_index, clip in enumerate(sequence.clips):
+            preview = self.preview(clip.identity, source)
+            start, end = animation_preview.clip_frame_bounds(clip, len(preview.frames))
+            if clip.loops < 1 or clip.review_fps <= 0: raise ValueError("invalid timeline clip")
+            for _loop in range(clip.loops):
+                output.extend((clip_index, index, preview.frames[index]) for index in range(start, end + 1))
+        return output
     def transition_candidates(self, selection):
         return WorkbenchService.transition_candidates(self, selection)
     def transition_preview(self, selection, primary_source):
@@ -269,7 +301,7 @@ async def textual_smoke() -> None:
     from ui.dialogs import ContextMismatchDialog, FrameAddDialog, PublishDialog
     from ui.live_bridge_controller import LiveBridgeController, LiveBridgeUIStatus
     from ui.widgets import (ActivityLog, AnimationDetail, AnimationTree, ContextKeyBar,
-                            LayerTable, MotionCanvas, MotionControls, PreviewCanvas, WorkbenchStatusBar)
+                            LayerTable, MotionCanvas, MotionControls, PreviewCanvas, TimelineTable, WorkbenchStatusBar)
     from textual.widgets import DataTable, Footer, Static
     from textual_image.widget import AutoImage
     from websockets.asyncio.client import connect
@@ -375,6 +407,35 @@ async def textual_smoke() -> None:
             await pilot.pause(0.1)
             assert app.preview_view.source == "live"
             assert "SOURCE: LIVE" in str(app.main_screen.query_one("#preview-controls").render())
+
+            # Timeline is a persisted-source review surface: row selection,
+            # trim/loop/FPS edits, and playback never send bridge commands.
+            app.sequence = animation_preview.ReviewSequence("ui-timeline", [
+                animation_preview.TimelineClip("unarmed", "locomotion", "run_01", "e"),
+                animation_preview.TimelineClip("unarmed", "locomotion", "walk_01", "e", loops=2),
+                animation_preview.TimelineClip("unarmed", "defense", "guard_01", "e"),
+            ])
+            app.state.preview_source = "runtime"
+            app.action_mode_timeline(); await pilot.pause(0.2)
+            timeline_table = app.main_screen.query_one("#timeline-table", TimelineTable)
+            assert timeline_table.row_count == 3
+            timeline_table.select_clip(1)
+            app._jump_timeline_clip(1)
+            assert app.timeline_frames[app.state.preview_frame][0] == 1
+            assert app.timeline_frames[app.state.preview_frame][1] == 0
+            assert "walk_01" in str(app.main_screen.query_one("#timeline-canvas").render())
+            clip = app.sequence.clips[1]
+            clip_count_before = len(app.timeline_frames)
+            app._adjust_timeline_trim(edge="start", delta=1)
+            await pilot.pause(0.2)
+            assert clip.start_frame == 1 and len(app.timeline_frames) == clip_count_before - 1
+            app.action_preview_faster(); assert clip.review_fps == 9.0
+            app.action_timeline_clip_loops(); await pilot.pause(0.2)
+            assert clip.loops == 3
+            assert app.state.preview_source == "runtime"
+            try: await asyncio.wait_for(live_client.recv(), timeout=0.05)
+            except asyncio.TimeoutError: pass
+            else: raise AssertionError("Timeline review emitted a live bridge command")
 
             app.state.preview_examiner_mode = "transition"
             await app._load_transition_examiner()

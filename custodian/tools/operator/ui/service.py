@@ -139,7 +139,13 @@ class WorkbenchService:
 
     def timeline_clip_frame_count(self, clip: animation_preview.TimelineClip) -> int:
         for record in self.browser_records():
-            if record.selection.identity == clip.identity:
+            selection = record.selection
+            if (
+                selection.profile == clip.profile
+                and selection.group == clip.group
+                and selection.action == clip.action
+                and selection.direction == clip.direction
+            ):
                 return record.frames
         raise ValueError(f"timeline clip identity is no longer present: {clip.identity.key}")
 

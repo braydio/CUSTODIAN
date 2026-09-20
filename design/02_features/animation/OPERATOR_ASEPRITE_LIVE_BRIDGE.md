@@ -272,5 +272,6 @@ future Workbench owns the endpoint.
 
 Packet 7B is implemented as a PREVIEW Examiner mode. It consumes the shared
 analysis core, preserves the layer presentation boundary, and adds no
-save/publication or Art Agent mutation authority. Packet 8 is the next deferred
-slice: Timeline completion.
+save/publication or Art Agent mutation authority. Packet 8 completes disposable
+Timeline review editing and navigation. The next deferred slice is Packet 9 —
+Art Agent live-document coexistence.
