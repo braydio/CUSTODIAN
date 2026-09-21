@@ -19,10 +19,11 @@ def main() -> int:
     assert [item["id"] for item in selected] == [
         "operator_melee_soft_targeting",
         "operator_runtime_path_audit",
+        "operator_sword_cleaver",
         "operator_vigil_dagger",
         "melee_soft_target_spacing",
     ]
-    assert [item["tier"] for item in selected] == ["unit", "unit", "actor", "moment"]
+    assert [item["tier"] for item in selected] == ["unit", "unit", "actor", "actor", "moment"]
     assert runner.select_tests(tests, tag="ranged")
     assert [item["id"] for item in runner.select_tests(tests, test_id="operator_melee_soft_targeting")] == ["operator_melee_soft_targeting"]
     assert all(item["tier"] == "unit" for item in runner.select_tests(tests, tier="unit"))

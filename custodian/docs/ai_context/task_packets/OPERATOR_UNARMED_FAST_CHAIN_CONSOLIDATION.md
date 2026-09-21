@@ -244,7 +244,7 @@ the Vigil dagger did.
     target_acquire_extra_px        8
     target_assist_cone_degrees     24
     target_aim_correction_degrees  6
-    target_drive_bonus_max_px      0   (left at default; drive is C3)
+    target_drive_bonus_max_px      0   (raised in C3, once drive existed)
 
 Applied to all four links. The drive bonus is deliberately left at zero so this
 step changes aim only -- the assist path can also extend attack drive, and mixing
@@ -264,3 +264,96 @@ targeting.
 
 Gates: operator_melee_soft_targeting, operator_unarmed_fast_chain and
 operator_vigil_dagger green. Dagger values untouched.
+
+### C3 — attack-drive continuity (done)
+
+Fists had **no attack drive at all**. Every unarmed link left `drive_distance_px`
+at its 0.0 default while both shipped melee weapons escalate across their chains
+(Vigil dagger 7/9/11, Sword-Cleaver 9/11/14). The runtime system is complete and
+already per-link -- `_begin_attack_drive()` is called from the chain-advance path
+with the assist-resolved distance -- so the whole feature was simply inert for
+Fists.
+
+That also left a hole in C1 that only drive can close. `MeleeTargetResolver`
+builds its reach model from the drive:
+
+    reliable_drive = drive_distance_px * target_reliable_drive_fraction
+    reliable_reach = range_px + reliable_drive
+    assist_reach   = reliable_reach + target_acquire_extra_px
+    assist_drive   = min(distance - reliable_reach, target_drive_bonus_max_px)
+
+With drive at zero, `reliable_drive` was zero and `assist_drive` was always zero.
+So C1's 8px acquire ring acquired and aimed at targets between 64 and 72px and
+then punched at them from out of range. C1 was aim-only by design; this is the
+step that pays for it, which is why the drive bonus lands here rather than there.
+
+| link | drive px | delay s | duration s | input influence | falloff | assist bonus px |
+|---|---|---|---|---|---|---|
+| fast_01 | 5 | 0.08 | 0.16 | 0.30 | 1.8 | 4 |
+| fast_02 | 7 | 0.04 | 0.16 | 0.26 | 1.8 | 5 |
+| fast_03 | 9 | 0.05 | 0.18 | 0.20 | 1.7 | 6 |
+| fast_04 | 13 | 0.06 | 0.20 | 0.12 | 1.5 | 8 |
+
+Derivation, so these are data rather than taste:
+
+- **Distance** follows the commitment curve the move multipliers already
+  establish (1.00/0.95/1.00 down to 0.88/0.68/0.90). Link 1 is the poke thrown
+  while repositioning and barely steps; link 4 is the finisher and takes the
+  large jump, mirroring the 0.82 -> 0.68 break in active movement.
+- **Delay and duration** start from the Cleaver's shipped relation, delay ~
+  `windup_sec + 0.02` and duration ~ `active_sec + 0.04`. Link 1 keeps that.
+  Links 2-4 cut the delay below it deliberately: a continuation link starts while
+  the previous link's drive is still carrying, and honouring the full windup
+  there is exactly what makes a chain stutter.
+- **Input influence** descends as commitment rises, as on both armed chains, but
+  sits higher overall (0.30 vs the Cleaver's 0.20) because Fists is the mobile,
+  uncommitted option.
+- **Falloff power** is front-loaded for the jabs (1.8) and lower on the finisher
+  (1.5) so it carries rather than snaps. Distance is exact at any power -- the
+  sampler normalises by `(power + 1) / duration` -- so this changes the shape of
+  the step, not its length.
+
+**Residual, recorded rather than hidden.** `_begin_attack_drive()` calls
+`_cancel_attack_drive(true)`, which subtracts the outgoing drive's velocity
+contribution. Between a chain advance and the next link's delay expiring there is
+therefore a window with no drive contribution: about 0.04s at the 1->2 seam,
+shorter later. The player's own locomotion still moves them through it
+(`movement_profile = "mobile"`), so it is not a dead stop. Closing it properly
+means carrying residual drive velocity across links in `_begin_attack_drive()`,
+which is a runtime change and not a no-new-assets data pass. Left for a feel
+review to decide whether it is perceptible.
+
+The full acquire ring is also not guaranteed to connect. Under the conservative
+`target_reliable_drive_fraction = 0.75` model, closing the last pixel of the ring
+would need a bonus of `target_acquire_extra_px / 0.75` = 10.7px, which on a 5px
+base link would read as a magnet snap. The bonuses above close most of the ring
+and scale with the link, so the finisher reaches furthest and link 1 can still
+honestly whiff at the outer edge.
+
+Coverage: `operator_unarmed_fast_chain` gained a drive section that asserts the
+declared contract, drives each link through the real `_physics_process` and
+measures the travelled distance, checks the drive settles without snap-back,
+checks opposing input cannot reverse a committed step, and asserts a target at
+the edge of each link's own acquire ring now resolves extra drive. Negative
+control: zeroing link 1's distance and bonus fails it in six places.
+
+**`operator_sword_cleaver_smoke.gd` had never run.** It exists, it passes, and it
+is the gate that owns the Cleaver drive numbers this step calibrated against --
+but it was absent from `validation_manifest.json`, the same defect found earlier
+with `operator_unarmed_fast_chain_smoke.gd`. Registered at actor tier.
+`validation_runner_smoke.py` pins an exact selection list for
+`melee_target_resolver.gd` and correctly caught the new entry; the expected list
+was updated rather than the owners glob narrowed, because the Cleaver gate should
+run when the resolver changes.
+
+Validation: actor tier 55/55, changed set 7/7, and the focused melee set
+(operator_melee_soft_targeting, operator_sword_cleaver, operator_vigil_dagger,
+operator_unarmed_fast_chain, operator_attack_phase_cadence,
+operator_armed_melee_body_visibility, operator_melee_switch_chain,
+operator_melee_point_blank, operator_melee_posture) all green.
+
+### Remaining Part C steps
+
+C4 early input forgiveness, C2 per-link impact progression (already partly
+applied during the four-link tuning pass), C5 chain movement continuity, C6 Fast
+04 posture settle, C7 contact-owned feedback, C8 parry alignment.

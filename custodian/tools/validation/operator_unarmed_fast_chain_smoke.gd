@@ -74,6 +74,8 @@ func _run() -> void:
 	var playback_clock := operator.get("modular_lower_body_sprite") as AnimatedSprite2D
 	_assert_true(playback_clock.frame > 0, "visible modular presentation clock must advance")
 
+	await _validate_attack_drive(operator, root)
+
 	operator.queue_free()
 	if _failed:
 		push_error("operator_unarmed_fast_chain_smoke failed")
@@ -88,3 +90,91 @@ func _assert_true(value: bool, message: String) -> void:
 		return
 	_failed = true
 	push_error(message)
+
+
+## Attack drive: the Fists chain must actually step forward, and the soft-target
+## assist must be able to close the ring it acquires in.
+##
+## Before this, every unarmed link left `drive_distance_px` at its 0.0 default, so
+## the whole Attack Drive system was inert for Fists and `MeleeTargetResolver`
+## computed `reliable_drive = 0`. That made the C1 assist window half a promise: a
+## target between `range_px` and `range_px + target_acquire_extra_px` was acquired
+## and aimed at, and then punched at from too far away. Drive is what pays that off,
+## so the two are asserted together.
+func _validate_attack_drive(operator: Node, root: Node) -> void:
+	var expected_drive := [5.0, 7.0, 9.0, 13.0]
+	var previous := 0.0
+	for index in range(4):
+		var profile = UNARMED.fast_chain_attack_profiles[index]
+		_assert_true(
+			is_equal_approx(profile.drive_distance_px, expected_drive[index]),
+			"link %d drive is %.2f, expected %.2f" % [index + 1, profile.drive_distance_px, expected_drive[index]]
+		)
+		# Distance alone does nothing: `_begin_attack_drive` bails on a zero duration.
+		_assert_true(profile.drive_duration_sec > 0.0, "link %d declares distance with no duration" % (index + 1))
+		_assert_true(profile.drive_distance_px > previous, "chain drive must escalate at link %d" % (index + 1))
+		previous = profile.drive_distance_px
+		_assert_true(
+			profile.target_drive_bonus_max_px > 0.0,
+			"link %d assist cannot close the ring it acquires without a drive bonus" % (index + 1)
+		)
+
+	# Executed, not merely declared. Each link is driven through the real physics
+	# step and the travelled distance is measured.
+	operator.set("unstuck_enabled", false)
+	operator.set_physics_process(false)
+	for flag in ["_melee_active", "_melee_recovery_active", "_melee_heavy_anticipating"]:
+		operator.set(flag, false)
+	for index in range(4):
+		var profile = UNARMED.fast_chain_attack_profiles[index]
+		operator.global_position = Vector2.ZERO
+		operator.set("velocity", Vector2.ZERO)
+		await physics_frame
+		operator.call("_begin_attack_drive", profile, Vector2.RIGHT)
+		# Holding backwards must not reverse a committed step.
+		var opposing := operator.call("_filter_locomotion_for_attack_drive", Vector2.LEFT * 100.0) as Vector2
+		_assert_true(
+			opposing.dot(Vector2.RIGHT) >= -0.001,
+			"opposing input reversed the link %d drive" % (index + 1)
+		)
+		for _step in range(40):
+			operator.call("_physics_process", 1.0 / 60.0)
+		var travelled: float = operator.global_position.x
+		var declared: float = profile.drive_distance_px
+		_assert_true(
+			travelled > declared * 0.8 and travelled <= declared * 1.05 + 0.1,
+			"link %d travelled %.3f px, expected about %.1f" % [index + 1, travelled, declared]
+		)
+		var settled: Vector2 = operator.global_position
+		for _step in range(8):
+			operator.call("_physics_process", 1.0 / 60.0)
+		_assert_true(
+			operator.global_position.distance_to(settled) <= 0.05,
+			"link %d drive snapped back or drifted after completion" % (index + 1)
+		)
+	operator.global_position = Vector2.ZERO
+	operator.set("velocity", Vector2.ZERO)
+
+	# The assist ring now resolves extra drive instead of aim correction alone.
+	var dummy := Node2D.new()
+	root.add_child(dummy)
+	for index in range(4):
+		var profile = UNARMED.fast_chain_attack_profiles[index]
+		var reach := MeleeTargetResolver.get_reach_model(profile)
+		var edge := float(reach.assist_reach)
+		dummy.global_position = Vector2(edge, 0.0)
+		var solution := MeleeTargetResolver.resolve_attack(
+			Vector2.ZERO, Vector2.RIGHT, dummy, dummy.global_position, profile
+		)
+		var assist := float(solution.get("assist_drive_distance", 0.0))
+		var resolved := float(solution.get("resolved_drive_distance", 0.0))
+		var gap := edge - float(reach.reliable_reach)
+		_assert_true(
+			is_equal_approx(assist, minf(gap, profile.target_drive_bonus_max_px)),
+			"link %d assist drive is %.3f, expected %.3f" % [index + 1, assist, minf(gap, profile.target_drive_bonus_max_px)]
+		)
+		_assert_true(
+			resolved > profile.drive_distance_px,
+			"link %d gains no drive from a target at the edge of its own acquire ring" % (index + 1)
+		)
+	dummy.queue_free()
