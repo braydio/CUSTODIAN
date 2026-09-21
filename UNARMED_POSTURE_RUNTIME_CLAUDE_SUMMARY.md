@@ -7,11 +7,62 @@ This file is overwritten each time the slice advances; it is not a changelog.
 
 ## Status
 
-**Reconnaissance complete, implementation not started.** No runtime changes yet.
+**Part A complete and committed. Part B designed, not yet implemented.**
 
-Goal: make the already-published unarmed posture skeleton live without adding a
-second gameplay-state axis. READY/RELAXED stay presentation-only, driven by the
-existing `EngagementTracker`.
+```
+A. harden the R4.1 acceptance proof + fix summary drift   DONE
+B. implement Unarmed Posture Runtime                      NEXT
+```
+
+## Part A — R4.1 proof hardening (done)
+
+The R4.1 runtime fixes were correct. The test meant to prove them was not, and
+would have passed with or without them.
+
+`_equip_armed_melee()` set `using_unarmed = false` and
+`combat_loadout_mode = "melee"` by hand, which is not a loadout.
+`_rebuild_armed_weapon_list()` appends the primary ranged weapon before the melee
+one, so `armed_weapon_index` stayed on the carbine and the current profile was
+ranged. The guard passed only because the profile was not *unarmed*.
+
+Selection now goes through the actor's own path — search `armed_weapons` for
+`weapon_kind == "melee"`, then `_apply_armed_selection(index)` — and asserts
+`using_unarmed` false, `_is_melee_loadout_active()` true, and a genuinely melee
+profile. The index is searched, never hardcoded.
+
+Assertions moved from resolver return values to the lifecycle. Heavy anticipation
+drives `_start_heavy_attack()` per cardinal, asserts anticipating with
+`_melee_active` still false, checks the clock plays a heavy-windup identity, then
+drives the real completion signal with that clock and asserts the active phase
+begins. Recovery drives `_play_fast_attack_recovery()` and asserts a canonical
+unmirrored body plus surviving weapon/FX overlays.
+
+**Outcome: the strengthened test passes.** The R4.1 projections and semantic
+completion predicates hold under a real armed melee loadout. Negative-controlled:
+removing the heavy windup projection fails it.
+
+R4 summary drift corrected: R4 integrated at `96e225bec`, R4.1 at `0edcfe827`,
+main since advanced, and the R4 branch is a historical marker not tracking main.
+
+## BLOCKER FOUND: an unimportable tracked audio asset
+
+`custodian/content/audio/sfx/combat/hit_medium_body_01.wav` is
+**WAVE_FORMAT_EXTENSIBLE** (`audio_format=65534`), which Godot's WAV importer
+rejects outright:
+
+```
+ERROR: Format not supported for WAVE file (not PCM).
+ERROR: Can't save empty resource to .../hit_medium_body_01.wav-...sample
+```
+
+`operator.gd` preloads that wav, so on any **fresh checkout** the script fails to
+parse and every Operator test fails. Existing worktrees only work because they
+carry a cached `.sample` from before, which a clean clone cannot reproduce.
+
+This is pre-existing and unrelated to posture. I unblocked locally by copying the
+cached artifact into this worktree's gitignored `.godot/imported/` — no repo
+change. The real fix is re-encoding the asset as PCM through the audio pipeline,
+which is an asset decision outside this slice.
 
 ## Key finding: the machinery already exists
 
