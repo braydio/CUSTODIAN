@@ -96,6 +96,7 @@ var _distant_proxy_tween: Tween
 
 
 func _ready() -> void:
+	add_to_group("environment_region_provider")
 	_build_playable_ground()
 	if ritualant_site != null and not ritualant_site.encounter_completed.is_connected(
 		_on_ritualant_encounter_completed
@@ -109,6 +110,17 @@ func _ready() -> void:
 		call_deferred("_refresh_initial_camera_profile")
 	call_deferred("_bind_active_operator")
 
+
+func get_environment_region_at_global(world_position: Vector2) -> Dictionary:
+	var local_position := to_local(world_position)
+	if not LEVEL_BOUNDS.has_point(local_position):
+		return {}
+	return {
+		"contains": true,
+		"indoor": true,
+		"environment_exposure": 0.03,
+		"weather_exposure": 0.0,
+	}
 
 func _on_ritualant_encounter_completed(_resolution: int) -> void:
 	if lower_quarter_seal == null or lower_quarter_seal.modulate.a <= 0.0:
