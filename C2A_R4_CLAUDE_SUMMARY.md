@@ -1,12 +1,14 @@
 # C2a-R4 — `animated_sprite` cutover
 
-Branch `c2a-r4-animated-sprite`. Latest: `05cb7532a`. Actor tier **50/50**.
+Branch `c2a-r4-animated-sprite`, rebased onto `main` at `3064e882f`. Actor tier
+**50/50**, changed-set **38/38** against main, focused R4 smoke green.
 
 This file is overwritten each time the slice advances; it is not a changelog.
 
 ## Status
 
-**R4 is landed.** `animated_sprite` binds
+**R4 is complete and integrated.** The branch is a strict descendant of current
+`main` and fast-forwards cleanly. `animated_sprite` binds
 `content/sprites/operator/runtime/operator_runtime_frames.tres`, the same
 generated resource the other canonical renderers share. The compatibility
 `ext_resource` is gone from `operator.tscn`.
@@ -22,17 +24,34 @@ open decisions 0   unresolved 0   cutover_ready true
 pair) and R4 (`animated_sprite`). The melee and weapon overlays are the remaining
 compatibility renderers.
 
-## Commits in this slice
+## Integration notes
+
+The rebase took two passes because `main` advanced mid-run. Only three files ever
+overlapped — `CURRENT_STATE.md`, `FILE_INDEX.md` and `validation_manifest.json` —
+all resolved with both sides intact; no runtime code conflicted. Every R4
+contract was re-verified after each rebase rather than assumed.
+
+Landing on current `main` surfaced one real gate failure, and it was the right
+kind: `operator_runtime_path_audit` ratchets a ledger of known legacy raw asset
+paths and requires the ledger to shrink when the debt does. R4 removed four —
+the three fast-chain body sheets and the legacy fire-walk sheet — so those
+allowances are deleted rather than left as stale permission.
+
+## Commits
+
+Base: `3064e882f`
 
 | Commit | What |
 |---|---|
-| `ecd05fb63` | Promote legacy ranged reload row 1 into `ranged_2h/cosmetic/reload_01`, byte-for-byte |
-| `befd28a95` | Frozen compatibility timing outranks the catalog on refresh |
-| `828369ff8` | Close the 13 remaining authoring decisions |
-| `96e720cab` | Full-body projection policy; two live clips the evidence missed |
-| `0178c89b1` | Validation resource cost made explicit for agents |
-| `7117ad30e` | Retire the full-body ranged fallbacks; proof/disposition split |
-| `05cb7532a` | The rebind itself |
+| `e5cad2917` | promote legacy ranged reload into a canonical identity |
+| `53dad967a` | make frozen compatibility timing outrank the catalog on refresh |
+| `638666aa7` | close the remaining 13 animated_sprite authoring decisions |
+| `45a7a88bb` | full-body projection policy, and two live clips the evidence missed |
+| `395dd5011` | make validation resource cost explicit for agents |
+| `4a53f18aa` | retire the full-body ranged fallbacks and close the evidence model |
+| `81f97921a` | rebind animated_sprite to the canonical runtime spine (C2a-R4) |
+| `ba3179be8` | add the C2a-R4 slice summary as a tracked file |
+| `644d8c7e8` | shrink the raw-path ledger and supersede the ranged fallback packet |
 
 ## Decisions that shaped it
 
@@ -146,10 +165,14 @@ each fail.
 
 ## Open items
 
-- `custodian/docs/ai_context/task_packets/OPERATOR_RANGED_READY_INPUT.md` still
-  says to fall back to ranged stance/fire body frames, which is exactly what R4
-  removed. Needs a superseded banner pointing at the current ranged
-  composition/socket authority, or archiving.
+- ~~`OPERATOR_RANGED_READY_INPUT.md` ranged fallback guidance~~ — **fixed**. It
+  now carries a superseded banner naming the current composition/socket
+  authority, with the two offending lines marked at their point of use. The
+  input/posture behaviour it documents is still accurate.
+- Older reachability prose around `ranged_2h/cosmetic/aim_01` and `fire_01` still
+  describes compatibility-era consumers. Left alone deliberately: its validation
+  is not wrong, and C2b is the better broom for the remaining compatibility
+  descriptions.
 - `lootable_corpse_beacon` is nondeterministic independently of this work
   (sampled 1/3 in this worktree, 2/3 on an unmodified checkout at `aa025bf26`).
   Unrelated to Operator animation, and distinct from the controller-input flake.
@@ -159,8 +182,19 @@ each fail.
 
 ## Next, in order
 
-1. Wire the parked unarmed relaxed/ready posture flow (art already published,
-   classified DORMANT).
-2. Wire the new ranged equip/relaxed/reload semantics using the temporary
-   full-body assets.
-3. C2b compatibility-store demolition.
+R4 is closed. New work starts on a fresh branch and worktree, not on this one.
+
+1. **Unarmed Posture Runtime.** Make the published posture skeleton live without
+   adding a gameplay-state axis: READY/RELAXED stay presentation-only, driven by
+   the existing `EngagementTracker`. Attack input must never wait for the ready-up
+   animation. E/W are authored identities, so `flip_h = false`. The 1-frame
+   transitions are deliberate placeholders — wire the semantics now so
+   multi-frame replacement art drops in without runtime changes.
+2. **Ranged posture/equip/reload.** Needs asset bookkeeping first: the
+   `operator_ranged_body_core_v1` temporary full-body family is untracked on this
+   branch and must come through Asset Pipeline V2, carrying a loud warning that
+   those are temporary fused `full_body` layers awaiting proper lower/upper
+   replacement.
+3. **C2b compatibility demolition.** Delete the compatibility SpriteFrames,
+   remaining legacy aliases and fallback machinery, duplicate animation stores,
+   and dead overlay plumbing.
