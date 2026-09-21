@@ -179,7 +179,15 @@ def _operator_scene_consistency():
     _compatibility_check()
     subprocess.run(["godot","--headless","--path",str(m.CUSTODIAN_ROOT),"--script","res://tools/validation/operator_modular_layers_smoke.gd"],check=True)
 
-def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_validate=False,requested=None,mirror_counterpart=False):
+## Mirroring the horizontal counterpart is the default.
+##
+## Authoring both directions by hand doubles the work for a difference that is
+## usually the mirror anyway, so publishing east now also publishes west unless
+## the caller opts out with `--no-mirror-counterpart`. Opt out when the
+## counterpart carries real asymmetry -- gear worn on one side, lighting keyed
+## from one direction, a pose that is not symmetric -- because a mirror would
+## silently discard that.
+def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_validate=False,requested=None,mirror_counterpart=True):
     ws=manifest.parent; data=load(manifest); st=state(data,ws/"workbench.aseprite")
     if requested: m.assert_context(data,requested)
     if "STALE" in st and not force_stale: raise m.WorkbenchError(f"publish refused: {st}; use scary --force-stale-source only after review")

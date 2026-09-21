@@ -21,7 +21,7 @@ def main():
     frame=anim.add_parser("frame").add_subparsers(dest="frame_cmd",required=True)
     add=frame.add_parser("add"); common(add,dry_run=True); add.add_argument("--after",type=int,required=True); add.add_argument("--fill",choices=("duplicate-prev","duplicate-next","blank"),default="duplicate-prev"); add.add_argument("--layers",default="auto")
     remove=frame.add_parser("remove"); common(remove,dry_run=True); remove.add_argument("--frame",type=int,required=True); remove.add_argument("--layers",default="auto")
-    anim.choices["edit"].add_argument("--no-open",action="store_true"); anim.choices["refresh"].add_argument("--discard-edits",action="store_true"); anim.choices["publish"].add_argument("--force-stale-source",action="store_true"); anim.choices["publish"].add_argument("--full-validate",action="store_true"); anim.choices["publish"].add_argument("--mirror-counterpart",action="store_true")
+    anim.choices["edit"].add_argument("--no-open",action="store_true"); anim.choices["refresh"].add_argument("--discard-edits",action="store_true"); anim.choices["publish"].add_argument("--force-stale-source",action="store_true"); anim.choices["publish"].add_argument("--full-validate",action="store_true"); anim.choices["publish"].add_argument("--mirror-counterpart",action="store_true",default=True,help="publish the horizontal counterpart as a mirror of this direction (default)"); anim.choices["publish"].add_argument("--no-mirror-counterpart",dest="mirror_counterpart",action="store_false",help="author the counterpart separately instead of mirroring")
     x=ap.parse_args()
     if x.area=="art": return dispatch_art_command(x)
     if x.area=="ui":

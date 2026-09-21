@@ -90,7 +90,14 @@ def main():
    subprocess.run([sys.executable,str(cli),"anim","edit",*common,"--no-open"],check=True,stdout=subprocess.DEVNULL)
    subprocess.run([sys.executable,str(cli),"anim","frame","add",*common,"--after","2"],check=True,stdout=subprocess.DEVNULL)
    manifest=json.loads((Path(td)/"melee_1h/posture/idle_relaxed_01/e/workbench.json").read_text());assert manifest["timeline"]["workspace_clock_frames"]==old_clock+1 and manifest["pending_migration"]["affected_bindings"]==["lower_body","upper_body","weapon__vigil_pattern_dagger"]
-   published=subprocess.run([sys.executable,str(cli),"anim","publish",*common,"--dry-run","--json"],check=True,capture_output=True,text=True);targets=json.loads(published.stdout)["changed_sources"];assert len(targets)==3 and all(f"__{old_clock+1}f__96.png" in p for p in targets)
+   # Opting out isolates the frame migration: three bindings, one direction.
+   solo=subprocess.run([sys.executable,str(cli),"anim","publish",*common,"--no-mirror-counterpart","--dry-run","--json"],check=True,capture_output=True,text=True);targets=json.loads(solo.stdout)["changed_sources"];assert len(targets)==3 and all(f"__{old_clock+1}f__96.png" in p for p in targets),targets
+   # The default now also publishes the mirrored counterpart, so the same edit
+   # covers both directions. This is the halved-authoring policy; if it silently
+   # reverted, this assertion is what notices.
+   mirrored=subprocess.run([sys.executable,str(cli),"anim","publish",*common,"--dry-run","--json"],check=True,capture_output=True,text=True);both=json.loads(mirrored.stdout)["changed_sources"]
+   assert len(both)==6 and all(f"__{old_clock+1}f__96.png" in p for p in both),both
+   assert sum(1 for p in both if "__w__" in p)==3 and sum(1 for p in both if "__e__" in p)==3,both
  else: print("SKIP ASEPRITE INTEGRATION: aseprite executable unavailable")
  print("PASS operator_animation_workbench_smoke: V2 add/remove, bounds, duplicates, owner/context, upgrade, mixed clocks, real Vigil GREEN")
 if __name__=="__main__":main()
