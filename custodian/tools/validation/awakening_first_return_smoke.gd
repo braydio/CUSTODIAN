@@ -75,6 +75,7 @@ func _init() -> void:
 		root.add_child(instance)
 		await physics_frame
 		_check_scene_skeleton(instance)
+		_check_zone_art_fade(instance)
 		_check_road_instance(instance)
 		_check_retired_home_logic()
 		instance.free()
@@ -165,6 +166,12 @@ func _check_scene_skeleton(instance: Node) -> void:
 			_fail("zone root must remain untransformed: %s" % path)
 	for zone_name in PRODUCTION_UNDERLAYS:
 		var spec: Dictionary = PRODUCTION_UNDERLAYS[zone_name]
+		var underlay_layer := instance.get_node_or_null(NodePath("World/AwakeningZones/%s/ArtUnderlay" % zone_name))
+		var foreground_layer := instance.get_node_or_null(NodePath("World/AwakeningZones/%s/Occlusion" % zone_name))
+		if underlay_layer == null or underlay_layer.get_child_count() != 1:
+			_fail("%s must have exactly one production underlay" % zone_name)
+		if foreground_layer == null or foreground_layer.get_child_count() != 1:
+			_fail("%s must have exactly one production foreground" % zone_name)
 		var underlay_path := "World/AwakeningZones/%s/ArtUnderlay/Underlay" % zone_name
 		var underlay := instance.get_node_or_null(NodePath(underlay_path)) as Sprite2D
 		if underlay == null:
@@ -211,6 +218,12 @@ func _check_scene_skeleton(instance: Node) -> void:
 		_fail("Layout traversal authority is missing")
 	elif traversal != null and traversal.get_child_count() != Layout.traversal_rects().size() * 2:
 		_fail("traversal debug presentation no longer follows Layout traversal authority")
+	var backdrop := instance.get_node_or_null("World/AwakeningVoidBackdrop") as Polygon2D
+	if backdrop == null or backdrop.polygon.size() != 4:
+		_fail("Awakening presentation void backdrop is missing")
+	var camera := instance.get_node_or_null("World/Camera2D") as Camera2D
+	if camera == null or camera.zoom.x <= 1.0:
+		_fail("Awakening local camera framing is not active")
 	_check_marker_placements(instance)
 	var operator := instance.get_node_or_null("World/Operator") as Node2D
 	if operator != null and operator.position != Layout.OPERATOR_WAKE_POSITION:
@@ -234,6 +247,27 @@ func _check_scene_skeleton(instance: Node) -> void:
 		for method_name in ["set_location", "set_phase", "set_objective", "show_interaction"]:
 			if not hud.has_method(method_name):
 				_fail("HUD missing presentation method: %s" % method_name)
+
+
+func _check_zone_art_fade(instance: Node) -> void:
+	var operator := instance.get_node_or_null("World/Operator") as Node2D
+	var creche := instance.get_node_or_null("World/AwakeningZones/Zone01_Creche/ArtUnderlay") as CanvasItem
+	var attestation := instance.get_node_or_null("World/AwakeningZones/Zone03_Attestation/ArtUnderlay") as CanvasItem
+	var reliquary := instance.get_node_or_null("World/AwakeningZones/Zone04_LockerReliquary/ArtUnderlay") as CanvasItem
+	if operator == null or creche == null or attestation == null or reliquary == null:
+		return
+	operator.global_position = Vector2(384, -1984)
+	instance.call("_update_zone_art_visibility")
+	if attestation.modulate.a <= 0.0 or reliquary.modulate.a <= 0.0:
+		_fail("both room plates must blend across the 03→04 doorway")
+	operator.global_position = Vector2(704, -1984)
+	instance.call("_update_zone_art_visibility")
+	if reliquary.modulate.a != 1.0 or attestation.modulate.a != 0.0:
+		_fail("neighboring room art must yield inside the Reliquary")
+	operator.global_position = Layout.OPERATOR_WAKE_POSITION
+	instance.call("_update_zone_art_visibility")
+	if creche.modulate.a != 1.0 or reliquary.modulate.a != 0.0:
+		_fail("backtracking must restore Crèche art and hide the Reliquary")
 
 
 func _check_marker_placements(instance: Node) -> void:

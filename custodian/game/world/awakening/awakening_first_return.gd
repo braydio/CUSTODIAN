@@ -29,6 +29,9 @@ const OBJECTIVE_RETURN_TO_POST := "RETURN TO POST"
 const CRECHE_READOUT := "FIELD RECALL DETECTED\nCUSTODIAN AUTHORITY: VALID\nPERSONAL CONTINUITY: UNRESOLVED\n\nRETURN TO SERVICE"
 const CRECHE_READOUT_AGAIN := "CUSTODIAN AUTHORITY: VALID\nPERSONAL CONTINUITY: UNRESOLVED\n\nRETURN TO SERVICE"
 const PORT_READOUT := "PORT AUTHORITY: SUSPENDED\nROUTE INDEX: UNAVAILABLE\nPOST STATUS: UNMANNED"
+const CAMERA_ZOOM_SCALE := 2.25
+const BACKDROP_MARGIN := 1024.0
+const ZONE_ART_FADE_DISTANCE := 128.0
 
 signal zone_entered(zone_id: StringName, index: int)
 signal console_acknowledged()
@@ -59,14 +62,21 @@ var _reveal_generation := 0
 
 
 func _ready() -> void:
+	_build_void_backdrop()
 	_build_world_geometry()
 	_build_hero_presentation()
 	_build_interactables()
 	_build_triggers()
 	_place_operator()
 	_apply_camera_bounds()
+	_apply_camera_policy()
 	_configure_hud()
 	_enter_zone(&"zone01_creche")
+	_update_zone_art_visibility()
+
+
+func _process(_delta: float) -> void:
+	_update_zone_art_visibility()
 
 
 func _place_operator() -> void:
@@ -79,6 +89,57 @@ func _apply_camera_bounds() -> void:
 	# configured with apply_camera_bounds = false so it cannot clamp us to itself.
 	if camera_ref != null and camera_ref.has_method("set_authored_map_bounds"):
 		camera_ref.call("set_authored_map_bounds", Layout.WORLD_BOUNDS)
+
+
+func _build_void_backdrop() -> void:
+	if world == null or world.get_node_or_null("AwakeningVoidBackdrop") != null:
+		return
+	var backdrop := Polygon2D.new()
+	backdrop.name = "AwakeningVoidBackdrop"
+	backdrop.polygon = Layout.rect_to_polygon(Layout.WORLD_BOUNDS.grow(BACKDROP_MARGIN))
+	backdrop.color = Layout.COLOR_DEEP_WALL
+	backdrop.z_index = Layout.Z_FLOOR - 10
+	world.add_child(backdrop)
+	world.move_child(backdrop, 0)
+
+
+## Scope the shared camera's existing zoom profiles to this authored scene.
+## Lookahead, combat framing, and special reveal values remain camera-owned.
+func _apply_camera_policy() -> void:
+	if camera_ref == null:
+		return
+	camera_ref.max_zoom = Vector2(2.5, 2.5)
+	for property_name in [
+		"base_zoom", "move_zoom", "interaction_zoom", "melee_zoom",
+		"melee_move_zoom", "ranged_zoom", "ranged_move_zoom",
+		"hitstun_zoom", "sector_entry_zoom", "heavy_zoom",
+	]:
+		camera_ref.set(property_name, camera_ref.get(property_name) * CAMERA_ZOOM_SCALE)
+	camera_ref.zoom = camera_ref.base_zoom
+	camera_ref.target_zoom = camera_ref.base_zoom
+	camera_ref.set("_locked_zoom", camera_ref.base_zoom)
+
+
+func _update_zone_art_visibility() -> void:
+	if operator_ref == null or zones_root == null:
+		return
+	var point := operator_ref.global_position
+	for zone in Layout.ZONES:
+		var zone_node := zones_root.get_node_or_null(NodePath(String(zone["node"])))
+		if zone_node == null:
+			continue
+		var rect: Rect2 = zone["envelope"]
+		var nearest := Vector2(
+			clampf(point.x, rect.position.x, rect.end.x),
+			clampf(point.y, rect.position.y, rect.end.y)
+		)
+		var alpha := 1.0 - clampf(point.distance_to(nearest) / ZONE_ART_FADE_DISTANCE, 0.0, 1.0)
+		for child_name in ["ArtUnderlay", "Occlusion", "SetPieces", "RoadOfWitnessesPrototype", "SidearmLocker"]:
+			var visual := zone_node.get_node_or_null(child_name) as CanvasItem
+			if visual != null:
+				var tint := visual.modulate
+				tint.a = alpha
+				visual.modulate = tint
 
 
 # --- Geometry construction ---------------------------------------------------
