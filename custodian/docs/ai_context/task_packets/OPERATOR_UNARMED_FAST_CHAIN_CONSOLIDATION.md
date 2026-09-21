@@ -135,24 +135,57 @@ commitment. These are proposed from the authored frame counts and the approved
 0.46 s Fast 01 target, and want a visual pass in Moment Forge before they are
 called final.
 
+## Landed so far
+
+| commit | what |
+|---|---|
+| `398fe7a41` | Part A: armed melee body ownership |
+| `09cbe98de` | data contract: chain keys, Fast 02/03 profiles, measured contact frames |
+| `7f7fb04e0` | preview tool reads the canonical runtime layout |
+| (this) | chain timing on the visible clock; blade-SFX guard |
+
+### Clock cleanup (done)
+
+`_fast_chain_presentation_frame()` replaces four direct `animated_sprite.frame`
+reads in chain timing: the queue window, the swing-cue frame, the commit
+comparison, and the hit-window resolved frame. `animated_sprite` is the correct
+clock only while the legacy full body is visible; for a modular chain it is
+hidden, so reading it would time a visible attack off an invisible one.
+Simulation authority did not move — profiles remain gameplay truth and this only
+supplies the authored-frame observation.
+
+### Blade SFX guard (done)
+
+The swing cue fires from the generic authored-chain branch, which keys off
+`fast_chain_keys`. Fists now declares a chain, so without a guard punching would
+play sword audio. `_weapon_emits_blade_swing_sfx()` tests the weapon's semantic
+kind rather than a clip name. This was urgent rather than optional: the chain
+keys had already landed in `09cbe98de`, so the trap was armed.
+
 ## Remaining work
 
-- Populate the definition and author Fast 02/03 profiles.
-- Capture frame metadata from the preview tool.
-- `_sync_unarmed_fast_chain_action()` helper resolving through
-  `OperatorAnimationSelector`, caller-owned E/W projection, `flip_h = false`.
-- Clock cleanup: replace `animated_sprite.frame` reads in fast-chain timing with
-  `_presentation_clock_sprite()`.
-- Guard blade swing SFX by weapon kind so Fists never emits it.
-- Remove unarmed-specific phase choreography (keeping shared flags and the
-  generic non-integrated recovery capability).
-- Reachability: Fast 01/02/03 genuinely LIVE; windup/strike/recovery SUPERSEDED.
+Runtime presentation is the big one and is **not** started:
+
+- `_sync_unarmed_fast_chain_action()` resolving through
+  `OperatorAnimationSelector`, caller-owned E/W projection, `flip_h = false`,
+  claiming `MODULAR_BODY`, starting lower/upper together.
+- Route Fists link starts onto it, once per link, with playback scale derived
+  from authored over target duration (1.63 / 1.39 / 1.28).
+- Remove unarmed-specific phase choreography once the chain presents; keep
+  `_melee_fast_windup` (Vigil still uses it) and the generic non-integrated
+  recovery capability.
+- Fast 01 FX: resolve or defer the 3f east / 9f west asymmetry. Do not wire it
+  until then, and never stretch, repeat or mirror to fake parity.
+- Reachability: Fast 01/02/03 genuinely LIVE, windup/strike/recovery SUPERSEDED.
 - Tooling drift: `operator_next_actions_report.py` phase expansion,
   `refresh_combo_check_src.sh`, active preview docs.
 - Design docs: `OPERATOR_MELEE_CONTACT_TIMING_AND_CADENCE.md`,
-  `COMBAT_FEEL_SYSTEM.md`, `CURRENT_STATE.md`, `FILE_INDEX.md`.
-- `operator_unarmed_fast_chain_smoke.gd` with the 23 acceptance points, plus
-  retiring/rewriting `operator_modular_fast_attack_smoke.gd` and updating
-  `operator_attack_phase_cadence_smoke.gd`.
-- Negative controls listed in the packet.
-- Moment Forge full-capture review of Fast 01→02→03.
+  `COMBAT_FEEL_SYSTEM.md`, `COMBAT_FEEL_UPGRADE.md`, `CURRENT_STATE.md`,
+  `FILE_INDEX.md`.
+- `operator_unarmed_fast_chain_smoke.gd`, the 23 acceptance points, and the
+  negative controls.
+- Part C feel work, which is explicitly gated on B being mechanically green.
+
+Nothing in Part C has been started, by design: the packet gates it on the
+migration being green, and tuning feel against a chain that does not yet present
+would be tuning noise.

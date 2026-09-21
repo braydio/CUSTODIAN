@@ -6422,11 +6422,31 @@ func _get_fast_chain_frame_value(values: PackedInt32Array, fallback: int) -> int
 	return int(values[_melee_fast_combo_step])
 
 
+## The frame the player can actually see, for fast-chain timing.
+##
+## Queue windows, commit frames and swing cues are authored against the frames of
+## the strip being drawn. `animated_sprite` is the right answer only while the
+## legacy full body is the visible renderer; for a modular chain it is hidden and
+## its frame is meaningless, so reading it would time a visible attack off an
+## invisible one. `_presentation_clock_sprite()` returns whichever layer owns
+## visible cadence.
+##
+## Simulation authority does not move here. Profiles and timelines remain
+## gameplay truth; this only supplies the authored-frame observation.
+func _fast_chain_presentation_frame() -> int:
+	var clock := _presentation_clock_sprite()
+	if clock == null:
+		return -1
+	return clock.frame
+
+
 func _is_fast_chain_queue_window_open() -> bool:
 	var weapon := _get_fast_chain_weapon()
-	if weapon == null or animated_sprite == null:
+	if weapon == null:
 		return false
-	var frame: int = animated_sprite.frame
+	var frame: int = _fast_chain_presentation_frame()
+	if frame < 0:
+		return false
 	var open_frame := _get_fast_chain_frame_value(
 		weapon.fast_chain_queue_open_frames,
 		0
@@ -6994,7 +7014,7 @@ func _update_melee_attack(delta: float) -> void:
 			)]
 		for swing_frame_variant: Variant in swing_frames:
 			var swing_frame := int(swing_frame_variant)
-			if animated_sprite.frame < swing_frame \
+			if _fast_chain_presentation_frame() < swing_frame \
 			or _melee_swing_sfx_frames_played.has(swing_frame):
 				continue
 			var audio_started: int = get_node_or_null("/root/DevObservatory").perf_span_begin() if get_node_or_null("/root/DevObservatory") != null else 0
@@ -7017,11 +7037,7 @@ func _update_melee_attack(delta: float) -> void:
 	and _has_authored_fast_chain() \
 	and not _buffered_attack_kind.is_empty():
 		var commit_frame := _get_fast_chain_commit_frame()
-		var presentation_frame: int = (
-			animated_sprite.frame
-			if animated_sprite != null
-			else -1
-		)
+		var presentation_frame: int = _fast_chain_presentation_frame()
 		if _fast_chain_commits_on_animation_finished():
 			pass
 		elif _buffered_attack_kind == "dodge":
@@ -7165,7 +7181,7 @@ func _apply_melee_hitbox_tick(semantic_frame: int = -1) -> void:
 		if not weapon_window.is_empty():
 			window = weapon_window
 	var resolved_frame: int = semantic_frame \
-		if semantic_frame >= 0 else (animated_sprite.frame if animated_sprite else 0)
+		if semantic_frame >= 0 else maxi(_fast_chain_presentation_frame(), 0)
 	var active_directions := _get_melee_active_hit_directions(resolved_frame, window)
 	var active_contact := _get_melee_contact_for_frame(
 		resolved_frame,
@@ -7632,9 +7648,25 @@ func _select_melee_fast_swing_sound(chain_step: int = -1) -> AudioStream:
 	]
 
 
+## Blade swing cues belong to bladed weapons, not to whoever owns a fast chain.
+##
+## The swing cue fires from the generic authored-chain branch, which keys off
+## `fast_chain_keys`. Fists now declares a chain, so without this guard punching
+## would play sword audio. The test is the weapon's semantic kind, not a clip
+## name: an unarmed profile has no blade to swing.
+func _weapon_emits_blade_swing_sfx() -> bool:
+	var profile := _active_attack_profile if _active_attack_profile != null \
+		else get_current_combat_profile()
+	if profile == null:
+		return false
+	return String(profile.weapon_kind) == "melee"
+
+
 func _play_melee_fast_swing_sfx(
 	chain_step: int = -1
 ) -> AudioStreamPlayer2D:
+	if not _weapon_emits_blade_swing_sfx():
+		return null
 	var stream := _select_melee_fast_swing_sound(chain_step)
 	if stream == null:
 		return null
