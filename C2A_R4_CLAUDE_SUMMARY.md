@@ -1,14 +1,22 @@
 # C2a-R4 — `animated_sprite` cutover
 
-Branch `c2a-r4-animated-sprite`, rebased onto `main` at `3064e882f`. Actor tier
-**50/50**, changed-set **38/38** against main, focused R4 smoke green.
-
-This file is overwritten each time the slice advances; it is not a changelog.
+This file is overwritten as the slice's truth changes; it is not a changelog.
 
 ## Status
 
-**R4 is integrated, plus an R4.1 correctness patch.** `main` and
-`c2a-r4-animated-sprite` point at the same integrated commit; R4.1 lands on top.
+**R4 and its R4.1 correction are integrated into `main`.**
+
+```
+R4 integrated on main    96e225bec
+R4.1 landed on main      0edcfe827
+main has since advanced through unrelated work
+```
+
+The `c2a-r4-animated-sprite` branch is a historical marker at the R4 integration
+point and is deliberately not advanced to track `main`; R4.1 and everything after
+it live on `main`. Validation at integration: actor tier 51/51, changed-set
+34/34, focused R4 and cadence gates green.
+
 `animated_sprite` binds
 `content/sprites/operator/runtime/operator_runtime_frames.tres`, the same
 generated resource the other canonical renderers share. The compatibility
