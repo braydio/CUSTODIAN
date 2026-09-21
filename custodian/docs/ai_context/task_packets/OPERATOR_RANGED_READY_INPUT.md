@@ -1,5 +1,28 @@
 # Operator Ranged-Ready Input
 
+> **SUPERSEDED (C2a-R4, 2026-09-20) — the fallback guidance below is no longer
+> valid.** This packet tells a future agent to "use existing ranged stance/fire
+> body and weapon frames as fallback". C2a-R4 deliberately **retired** those
+> compatibility full-body ranged clips rather than migrating them, and
+> `design/02_features/animation/WEAPON_OWNED_ANIMATION_SYSTEM.md` forbids
+> substituting a compatibility full-body clip for a missing ranged layer.
+>
+> Canonical ranged presentation is the modular composition: movement-owned lower
+> body, `ranged_2h/cosmetic/fire_01` upper body, the static socketed carbine, and
+> `fire_01` FX. `ranged_2h/cosmetic/fire_01/*/full_body` and
+> `ranged_2h/posture/stance_01/*/full_body` are intentionally **not** published,
+> and a modular stack that cannot present reports the missing canonical
+> presentation instead of falling back. Reintroducing a full-body ranged fallback
+> would reopen exactly what R4 closed.
+>
+> Current authority:
+> - `design/02_features/animation/WEAPON_OWNED_ANIMATION_SYSTEM.md` (composition + socket authority)
+> - `design/02_features/animation/OPERATOR_RUNTIME_ANIMATION_AUTHORITY.md` (selection authority)
+> - `reports/operator/operator_animated_sprite_cutover_evidence.md` (per-clip dispositions)
+>
+> The input/posture behaviour this packet describes is still accurate. Only the
+> asset-fallback guidance is superseded.
+
 ## Packet Status
 
 - Status: complete
@@ -34,7 +57,7 @@ Secondary input holds the operator in ranged-ready, keeps movement available, ma
 
 - Determinism concerns: input handling remains local runtime state; projectile emission continues through the existing delayed shot path.
 - Simulation/UI boundary concerns: no HUD prompt rewrite in this slice.
-- Asset requirements: use existing ranged stance/fire body and weapon frames as fallback; track true modular ranged-ready/fire assets as future work if absent.
+- Asset requirements: ~~use existing ranged stance/fire body and weapon frames as fallback~~ **SUPERSEDED by C2a-R4** — no compatibility full-body ranged fallback exists or may be reintroduced. Ranged presentation composes modular layers over a movement-owned lower body with a static socketed weapon; a missing layer is reported, not substituted.
 - Compatibility or migration concerns: right mouse moves from block to ranged-ready; block remains on `R`.
 - Clarifying questions or assumptions: primary-alone remains close-combat/no ranged shot; primary plus held secondary is the only default ranged fire request.
 
@@ -71,7 +94,7 @@ Secondary input holds the operator in ranged-ready, keeps movement available, ma
 
 ## Next Steps
 
-- Next action: author or ingest the true modular ranged-ready/fire art suite, then replace the fallback ranged stance/fire presentation with layered upper/cape/weapon/FX runtime playback.
+- Next action: author or ingest the true modular ranged-ready/fire art suite. The fallback ranged stance/fire presentation it was meant to replace is already gone as of C2a-R4, so this is now purely an authoring task, not a replacement of live runtime behaviour.
 - Best starting files: `custodian/game/actors/operator/operator.gd`, `custodian/project.godot`.
 - Required context: modular operator layered runtime and current weapon-owned animation docs.
 - Validation to run: `godot --headless --path custodian --script res://tools/validation/operator_ranged_ready_input_smoke.gd`; `godot --headless --path custodian --quit`.
