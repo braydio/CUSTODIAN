@@ -14,6 +14,7 @@ Protocol.REQUIRED_CAPABILITIES = {
   "layer_visibility_control",
   "layer_visibility_events",
   "art_agent_live_read",
+  "art_agent_live_mutation",
 }
 
 local server_types = {
@@ -25,6 +26,7 @@ local server_types = {
   ["command.select_layer"] = true,
   ["command.set_layer_visibility"] = true,
   ["command.art_agent_execute"] = true,
+  ["command.art_agent_undo"] = true,
   ["command.save"] = true,
 }
 

@@ -171,3 +171,10 @@ PREVIEW frame navigation synchronizes with the matching disposable Aseprite
 document. WORKBENCH-source PREVIEW prefers a revision-guarded render of its
 unsaved manifest-whitelisted pixels, with saved Workbench fallback. Playback,
 TIMELINE, MOTION, and semantic document following do not drive the bridge.
+Art Agent coexistence is revision-locked when the exact Workbench is open in
+Aseprite: reads rebase to current in-memory pixels, mutations remain unsaved
+and advance one live revision per operation, and `undo_last` uses Aseprite
+undo rather than restoring a disk backup. Human edits invalidate Art Agent
+mutation/undo authority; unknown live outcomes close the session fail-closed.
+When no matching live document is open, the legacy headless Art Agent path
+remains available.

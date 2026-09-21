@@ -16,7 +16,7 @@ from PIL import Image
 import animation_workbench as workbench
 import animation_workbench_model as model
 
-from .aseprite_bridge import ArtAgentBridge
+from .aseprite_bridge import ArtAgentBridge, LiveArtAgentError, LiveArtAgentKnownFailure, LiveArtAgentStale, LiveArtAgentUnknownOutcome
 from .models import ArtIdentity, ArtSession, CAPABILITY_SCHEMA, REQUEST_SCHEMA
 from .render import extract_note_components, make_animation_gif, make_before_after, make_contact_sheet, make_diff, make_mask_overlay, make_onion_skin, make_silhouette_sheet, split_strip
 from .security import require_under
@@ -891,6 +891,27 @@ class ArtAgentService:
                     expected_request_id=request_id,
                     expected_operation_key=operation_key,
                 )
+            except LiveArtAgentStale as error:
+                session.operation_count = operation_id
+                self.save_session(session_path, session)
+                append_jsonl(root / "operations.jsonl", {"operation_id": operation_id, "timestamp_utc": utc_now(), "type": operation["type"], "operation_key": operation_key, "arguments": operation, "status": "FAILED_LIVE_NO_CHANGE", "transport": "live", "workbench_sha256_before": actual_sha, "workbench_sha256_after": actual_sha, "error": str(error)})
+                raise
+            except LiveArtAgentUnknownOutcome as error:
+                session.state = "ERROR"
+                session.operation_count = operation_id
+                self.save_session(session_path, session)
+                append_jsonl(root / "operations.jsonl", {"operation_id": operation_id, "timestamp_utc": utc_now(), "type": operation["type"], "operation_key": operation_key, "arguments": operation, "status": "UNKNOWN_LIVE_OUTCOME", "transport": "live", "workbench_sha256_before": actual_sha, "workbench_sha256_after": actual_sha, "error": str(error), "live_client_session_id": session.live_client_session_id, "expected_live_revision": session.expected_live_revision})
+                raise
+            except LiveArtAgentKnownFailure as error:
+                session.operation_count = operation_id
+                self.save_session(session_path, session)
+                append_jsonl(root / "operations.jsonl", {"operation_id": operation_id, "timestamp_utc": utc_now(), "type": operation["type"], "operation_key": operation_key, "arguments": operation, "status": "FAILED_LIVE_NO_CHANGE", "transport": "live", "workbench_sha256_before": actual_sha, "workbench_sha256_after": actual_sha, "error": str(error)})
+                raise
+            except LiveArtAgentError as error:
+                session.operation_count = operation_id
+                self.save_session(session_path, session)
+                append_jsonl(root / "operations.jsonl", {"operation_id": operation_id, "timestamp_utc": utc_now(), "type": operation["type"], "operation_key": operation_key, "arguments": operation, "status": "FAILED_LIVE_NO_CHANGE", "transport": "live", "workbench_sha256_before": actual_sha, "workbench_sha256_after": actual_sha, "error": str(error)})
+                raise
             except Exception as error:
                 shutil.copy2(backup, workbench_path)
                 session.operation_count = operation_id
@@ -912,7 +933,10 @@ class ArtAgentService:
                     },
                 )
                 raise
-            after_sha = model.file_sha256(workbench_path)
+            transport = response.get("_transport", "headless")
+            if transport == "live":
+                self._apply_live_binding(root, session, response)
+            after_sha = actual_sha if transport == "live" else model.file_sha256(workbench_path)
             changed = bool(response.get("changed", response.get("changed_pixels", 0) > 0))
             if not changed and after_sha != actual_sha:
                 shutil.copy2(backup, workbench_path)
@@ -929,10 +953,11 @@ class ArtAgentService:
                 "workbench_sha256_after": after_sha,
                 "backup": str(backup.resolve()),
                 "response": response,
+                "transport": transport,
             }
             append_jsonl(root / "operations.jsonl", record)
             session.operation_count = operation_id
-            session.expected_workbench_sha256 = after_sha
+            session.expected_workbench_sha256 = actual_sha if transport == "live" else after_sha
             self.save_session(session_path, session)
             return record
 
@@ -944,6 +969,8 @@ class ArtAgentService:
             record = self._last_active_mutation(root / "operations.jsonl")
             if record is None:
                 raise model.WorkbenchError("nothing to undo")
+            if record.get("transport", "headless") == "live":
+                return self._undo_live(session_path, session, root, record)
             actual_sha = model.file_sha256(workbench_path)
             if actual_sha != record["workbench_sha256_after"]:
                 raise model.WorkbenchError(
@@ -966,6 +993,22 @@ class ArtAgentService:
                 "undone_operation": record["operation_id"],
                 "workbench_sha256": restored_sha,
             }
+
+    def _undo_live(self, session_path: Path, session: ArtSession, root: Path, record: dict[str, Any]) -> dict[str, Any]:
+        if not session.live_client_session_id or session.expected_live_revision is None:
+            raise model.WorkbenchError("live Art Agent session has no revision binding")
+        request_id = f"{int(record['operation_id']):06d}"
+        request_path = root / "requests" / f"{request_id}.json"
+        response_path = root / "responses" / f"undo_{request_id}.json"
+        with mutation_lock(Path(session.workbench_path)):
+            result = self.bridge_factory(aseprite=self.aseprite).undo_live(request_path=request_path, response_path=response_path, operation_key=record["operation_key"], client_session_id=session.live_client_session_id, revision=session.expected_live_revision)
+            revision_after = result.get("revision_after")
+            if not isinstance(revision_after, int): raise model.WorkbenchError("live undo response missing revision")
+            session.expected_live_revision = revision_after
+            self.save_session(session_path, session)
+            undo_record = {"type":"undo","timestamp_utc":utc_now(),"target_operation_id":record["operation_id"],"transport":"live","workbench_sha256_before":record.get("workbench_sha256_after"),"workbench_sha256_after":record.get("workbench_sha256_after"),"live_revision_before":result.get("revision_before"),"live_revision_after":revision_after}
+            append_jsonl(root / "operations.jsonl", undo_record)
+            return {"undone_operation":record["operation_id"],"transport":"live","live_revision":revision_after}
 
     def close(self, session_path: Path) -> dict[str, Any]:
         session = self.load_session(session_path)
@@ -1029,12 +1072,25 @@ class ArtAgentService:
             request_path,
             self._build_request(session, request_id, operation, operation_key),
         )
-        return self.bridge_factory(aseprite=self.aseprite).execute(
+        response = self.bridge_factory(aseprite=self.aseprite).execute(
             request_path=request_path,
             response_path=response_path,
             expected_request_id=request_id,
             expected_operation_key=operation_key,
         )
+        self._apply_live_binding(root, session, response)
+        return response
+
+    def _apply_live_binding(self, root: Path, session: ArtSession, response: dict[str, Any]) -> None:
+        if response.get("_transport") != "live":
+            return
+        client_session = response.get("_live_client_session_id")
+        revision = response.get("_live_revision_after")
+        if not isinstance(client_session, str) or not client_session or isinstance(revision, bool) or not isinstance(revision, int):
+            raise model.WorkbenchError("live Art Agent response missing revision binding")
+        session.live_client_session_id = client_session
+        session.expected_live_revision = revision
+        self.save_session(root / "session.json", session)
 
     def _build_request(
         self,
@@ -1052,6 +1108,10 @@ class ArtAgentService:
             "nonce": json.loads(Path(session.capability_path).read_text())["nonce"],
             "manifest": session.workbench_manifest,
             "workbench": session.workbench_path,
+            "live_guard": {
+                "client_session_id": session.live_client_session_id or None,
+                "expected_revision": session.expected_live_revision,
+            },
             "operation": operation,
         }
 

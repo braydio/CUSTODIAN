@@ -28,6 +28,7 @@ class MessageType(str, Enum):
     EXPORT_PREVIEW = "command.export_preview"
     SAVE = "command.save"
     ART_AGENT_EXECUTE = "command.art_agent_execute"
+    ART_AGENT_UNDO = "command.art_agent_undo"
     COMMAND_RESULT = "command.result"
     HEARTBEAT = "heartbeat"
 
@@ -40,6 +41,7 @@ COMMAND_TYPES = frozenset({
     MessageType.EXPORT_PREVIEW,
     MessageType.SAVE,
     MessageType.ART_AGENT_EXECUTE,
+    MessageType.ART_AGENT_UNDO,
 })
 
 REQUIRED_CAPABILITIES = frozenset({
@@ -54,6 +56,7 @@ REQUIRED_CAPABILITIES = frozenset({
     "layer_visibility_control",
     "layer_visibility_events",
     "art_agent_live_read",
+    "art_agent_live_mutation",
 })
 
 
@@ -192,8 +195,20 @@ def _validate_payload(message: Message) -> None:
         for key in ("request", "capability", "manifest"):
             if not isinstance(payload.get(key), dict):
                 raise ProtocolError(f"{key} must be an object")
-        if payload.get("allow_mutation") is not False:
-            raise ProtocolError("Packet 9A live Art Agent execution is read-only")
+        if not isinstance(payload.get("allow_mutation"), bool):
+            raise ProtocolError("allow_mutation must be boolean")
+        if payload.get("allow_mutation") is True:
+            client_session_id = payload.get("client_session_id")
+            if not isinstance(client_session_id, str) or not client_session_id:
+                raise ProtocolError("live mutation requires client_session_id")
+    elif message.type is MessageType.ART_AGENT_UNDO:
+        document_path = payload.get("document_path")
+        if not isinstance(document_path, str) or not document_path:
+            raise ProtocolError("command.art_agent_undo requires document_path")
+        _nonnegative_int(payload, "revision")
+        for key in ("client_session_id", "operation_key"):
+            if not isinstance(payload.get(key), str) or not payload[key]:
+                raise ProtocolError(f"command.art_agent_undo requires {key}")
 
 
 def _positive_int(payload: Mapping[str, Any], key: str) -> None:
@@ -276,6 +291,8 @@ class BridgePathPolicy:
         elif message.type in (MessageType.SELECT_LAYER, MessageType.SET_LAYER_VISIBILITY):
             self.validate_workbench(message.payload["document_path"])
         elif message.type is MessageType.ART_AGENT_EXECUTE:
+            self.validate_workbench(message.payload["document_path"])
+        elif message.type is MessageType.ART_AGENT_UNDO:
             self.validate_workbench(message.payload["document_path"])
 
     def _resolve(self, path: str | Path) -> Path:

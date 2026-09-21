@@ -406,7 +406,8 @@ operations against in-memory pixels through the shared Lua operation seam and
 restore editor presentation state. Matching live mutations are refused rather
 than redirected to a second headless process; requests without a matching live
 document retain the existing headless adapter. Revision-locked live mutation,
-undo, and rollback remain Packet 9B work.
+Packet 9B now adds revision-locked live mutation and Aseprite undo ownership;
+unknown outcomes fail closed without disk-backup restoration.
 
 ## Machine-readable Operator art profile
 

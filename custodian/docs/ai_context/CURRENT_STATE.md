@@ -37,8 +37,9 @@ assets, or drive Aseprite. Packet 9A adds Art Agent live-read coexistence: a
 matching open Workbench routes inspect/render reads through the in-memory
 Aseprite sprite via one shared Lua executor, restores editor presentation state,
 and refuses matching live mutations. A non-matching document keeps the legacy
-headless Art Agent path. Packet 9B remains deferred for revision-locked live
-mutation and undo/rollback.
+headless Art Agent path. Packet 9B now adds revision-locked live mutation,
+operation replay protection, no-save Aseprite transactions, and live undo with
+human-change invalidation; Packet 10 remains deferred.
 Open/save commands remain refused. Layer focus and visibility now synchronize
 bidirectionally for manifest-authorized layers, with UUID hardening and API-34
 visibility-event capability gating. Visibility remains editor presentation state;

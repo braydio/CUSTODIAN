@@ -52,6 +52,8 @@ class ArtSession:
     capability_path: str = ""
     operation_count: int = 0
     state: Literal["ACTIVE", "CLOSED", "ERROR"] = "ACTIVE"
+    live_client_session_id: str = ""
+    expected_live_revision: int | None = None
 
     @classmethod
     def create(

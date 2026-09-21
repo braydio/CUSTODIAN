@@ -19,7 +19,10 @@ local last_layer_visibility = {}
 local pending_layer_visibility = nil
 local send_layer_snapshot = nil
 local emit_visibility_changes = nil
-local art_agent_internal_read = false
+local art_agent_internal_action = false
+local live_mutation_stack = {}
+local live_mutation_poisoned = false
+local art_agent_replay = {}
 
 local function runtime_capabilities_available()
   local api_version = tonumber(app.apiVersion)
@@ -128,7 +131,8 @@ local function bind_active_sprite()
   if sprite == nil then return end
 
   sprite_change_listener = function()
-    if art_agent_internal_read then return end
+    if art_agent_internal_action then return end
+    live_mutation_stack = {}
     revision = revision + 1
     local state = editor_state()
     last_snapshot_signature = snapshot_signature(state)
@@ -145,7 +149,7 @@ local function bind_active_sprite()
   sprite.events:on("change", sprite_change_listener)
   sprite.events:on("filenamechange", filename_change_listener)
   layer_visibility_listener = function()
-    if not art_agent_internal_read then emit_visibility_changes() end
+    if not art_agent_internal_action then emit_visibility_changes() end
   end
   sprite.events:on("layervisibility", layer_visibility_listener)
 end
@@ -299,20 +303,67 @@ local function handle_art_agent_execute(message)
   if sprite == nil then art_agent_result(message, { ok=false, error="no active Aseprite document" }); return end
   if type(payload.document_path) ~= "string" or sprite.filename ~= payload.document_path then art_agent_result(message, { ok=false, error="active document does not match requested workbench" }); return end
   if type(payload.revision) ~= "number" or payload.revision % 1 ~= 0 or payload.revision < 0 or payload.revision ~= revision then art_agent_result(message, { ok=false, error="stale live Art Agent revision", revision=revision, document_path=sprite.filename }); return end
-  if payload.allow_mutation ~= false then art_agent_result(message, { ok=false, error="Packet 9A live Art Agent execution is read-only" }); return end
+  if type(payload.allow_mutation) ~= "boolean" then art_agent_result(message, { ok=false, error="allow_mutation must be boolean" }); return end
+  local is_mutation = payload.allow_mutation == true
+  if is_mutation and payload.client_session_id ~= client.session_id then art_agent_result(message, { ok=false, error="live Art Agent client session mismatch" }); return end
+  if is_mutation and live_mutation_poisoned then art_agent_result(message, { ok=false, error="live Art Agent mutation state is poisoned; reopen the document" }); return end
   if type(payload.request) ~= "table" or type(payload.capability) ~= "table" or type(payload.manifest) ~= "table" then art_agent_result(message, { ok=false, error="request, capability, and manifest are required" }); return end
+  local operation = payload.request.operation or {}
+  if is_mutation and not ArtAgentOps.MUTATION_TYPES[operation.type] then art_agent_result(message, { ok=false, error="unsupported live Art Agent mutation" }); return end
+  local replay_key = tostring(payload.request.session_id) .. ":" .. tostring(payload.request.operation_key)
+  local replay_fingerprint = json.encode(operation)
+  if is_mutation and art_agent_replay[replay_key] ~= nil then
+    local cached = art_agent_replay[replay_key]
+    if cached.fingerprint ~= replay_fingerprint or cached.request_id ~= payload.request.request_id then art_agent_result(message, { ok=false, error="operation_key replay mismatch" }); return end
+    art_agent_result(message, cached.payload); return
+  end
   local before = presentation_snapshot(sprite)
-  art_agent_internal_read = true
+  local committed = false
+  art_agent_internal_action = true
   local ok, response = xpcall(function()
-    return ArtAgentOps.execute(sprite, payload.request, payload.capability, payload.manifest)
+    return ArtAgentOps.execute(sprite, payload.request, payload.capability, payload.manifest, { on_commit=function() committed=true end })
   end, debug.traceback)
   restore_presentation(sprite, before)
-  art_agent_internal_read = false
-  if sprite.filename ~= before.filename or sprite.isModified ~= before.modified or revision ~= before.revision then
+  art_agent_internal_action = false
+  if not is_mutation and (sprite.filename ~= before.filename or sprite.isModified ~= before.modified or revision ~= before.revision) then
     art_agent_result(message, { ok=false, error="live Art Agent read changed document state", revision=revision, document_path=sprite.filename }); return
   end
-  if not ok then art_agent_result(message, { ok=false, error=tostring(response), revision=revision, document_path=sprite.filename }); return end
-  art_agent_result(message, { ok=true, document_path=sprite.filename, revision=revision, modified=sprite.isModified, art_agent_response=response })
+  if not ok then
+    if is_mutation and committed then pcall(function() app.undo() end) end
+    art_agent_result(message, { ok=false, error=tostring(response), outcome_known=not committed, mutation_applied=false, revision=revision, document_path=sprite.filename }); return
+  end
+  local revision_before = before.revision
+  local changed = response.changed == true
+  if is_mutation and changed then
+    revision = revision_before + 1
+    table.insert(live_mutation_stack, { session_id=payload.request.session_id, operation_key=payload.request.operation_key })
+  end
+  local result_payload = { ok=true, document_path=sprite.filename, client_session_id=client.session_id, revision_before=revision_before, revision_after=revision, modified=sprite.isModified, mutation_applied=changed, outcome_known=true, art_agent_response=response }
+  if is_mutation then
+    art_agent_replay[replay_key] = { fingerprint=replay_fingerprint, request_id=payload.request.request_id, payload=result_payload }
+    send("document.changed", { revision=revision, modified=sprite.isModified, document_path=sprite.filename, sprite_id=sprite.id }, message.sequence)
+  end
+  art_agent_result(message, result_payload)
+end
+
+local function handle_art_agent_undo(message)
+  local payload, sprite = message.payload or {}, app.sprite
+  if sprite == nil or sprite.filename ~= payload.document_path then send("command.result", { ok=false, operation="art_agent_undo", error="active document does not match requested workbench" }, message.sequence); return end
+  if payload.client_session_id ~= client.session_id or payload.revision ~= revision then send("command.result", { ok=false, operation="art_agent_undo", error="stale live Art Agent revision" }, message.sequence); return end
+  if live_mutation_poisoned or #live_mutation_stack == 0 then send("command.result", { ok=false, operation="art_agent_undo", error="no authoritative live Art Agent operation to undo" }, message.sequence); return end
+  local top = live_mutation_stack[#live_mutation_stack]
+  if top.session_id ~= client.session_id or top.operation_key ~= payload.operation_key then send("command.result", { ok=false, operation="art_agent_undo", error="live Art Agent undo authority mismatch" }, message.sequence); return end
+  local before = presentation_snapshot(sprite)
+  art_agent_internal_action = true
+  local ok, error_message = pcall(function() app.undo() end)
+  restore_presentation(sprite, before)
+  art_agent_internal_action = false
+  if not ok or sprite.filename ~= before.filename then live_mutation_poisoned=true; send("command.result", { ok=false, operation="art_agent_undo", outcome_known=false, error=tostring(error_message) }, message.sequence); return end
+  local revision_before = revision
+  revision = revision + 1
+  table.remove(live_mutation_stack)
+  send("document.changed", { revision=revision, modified=sprite.isModified, document_path=sprite.filename, sprite_id=sprite.id }, message.sequence)
+  send("command.result", { ok=true, operation="art_agent_undo", revision_before=revision_before, revision_after=revision, modified=sprite.isModified }, message.sequence)
 end
 
 local function handle_select_frame(message)
@@ -497,6 +548,10 @@ local function handle_server_text(text)
   end
   if message.type == "command.art_agent_execute" then
     handle_art_agent_execute(message)
+    return
+  end
+  if message.type == "command.art_agent_undo" then
+    handle_art_agent_undo(message)
     return
   end
   local response = Protocol.passive_response(client, message)

@@ -16,6 +16,7 @@ from live_bridge.protocol import Message, MessageType
 
 class State:
     active_document_path: str | None = None
+    client_session_id = "client-a"
     document_revision = 4
 
 
@@ -26,6 +27,13 @@ class Server:
 
     async def request_command(self, message_type, payload, **_kwargs):
         self.calls.append((message_type, payload))
+        if message_type is MessageType.ART_AGENT_UNDO:
+            return Message("bridge", 8, MessageType.COMMAND_RESULT, {
+                "operation": "art_agent_undo",
+                "ok": True,
+                "revision_before": self.state.document_revision,
+                "revision_after": self.state.document_revision + 1,
+            }, cause=1)
         return Message("bridge", 8, MessageType.COMMAND_RESULT, {
             "operation": "art_agent_execute",
             "art_agent_response": {
@@ -71,16 +79,29 @@ def main():
 
         request["operation"] = {"type": "paint_pixels"}
         request_path.write_text(json.dumps(request))
-        refused = asyncio.run(relay.execute(request_path, response_path))
-        assert refused["status"] == "mutation_refused"
-        assert len(bridge.server.calls) == 1
+        mutation = asyncio.run(relay.execute(request_path, response_path))
+        assert mutation["status"] == "executed"
+        assert bridge.server.calls[-1][1]["allow_mutation"] is True
+
+        request["live_guard"] = {"client_session_id": "client-a", "expected_revision": 3}
+        request_path.write_text(json.dumps(request))
+        stale = asyncio.run(relay.execute(request_path, response_path))
+        assert stale["status"] == "stale_live"
+        assert bridge.server.calls[-1][1]["allow_mutation"] is True
+
+        request["live_guard"] = {"client_session_id": "client-a", "expected_revision": 4}
+        request["operation"] = {"type": "paint_pixels"}
+        request_path.write_text(json.dumps(request))
+        undone = asyncio.run(relay.undo(request_path, response_path, operation_key="key", client_session_id="client-a", revision=4))
+        assert undone["status"] == "executed"
+        assert bridge.server.calls[-1][0] is MessageType.ART_AGENT_UNDO
 
         bridge.server.state.active_document_path = str((workspace / "other.aseprite").resolve())
         request["operation"] = {"type": "inspect"}
         request_path.write_text(json.dumps(request))
         unavailable = asyncio.run(relay.execute(request_path, response_path))
         assert unavailable["status"] == "unavailable"
-        assert len(bridge.server.calls) == 1
+        assert len(bridge.server.calls) == 3
     print("operator_art_agent_live_relay_smoke ok")
 
 

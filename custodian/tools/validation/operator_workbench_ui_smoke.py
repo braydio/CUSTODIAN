@@ -382,6 +382,7 @@ async def textual_smoke() -> None:
                         "sprite_is_modified", "timer", "frame_selection", "image_render_export",
                         "layer_selection", "layer_visibility_control", "layer_visibility_events",
                         "art_agent_live_read",
+                        "art_agent_live_mutation",
                     ],
                     "editor_state": {
                         "has_document": True, "document_path": workbench_path,
