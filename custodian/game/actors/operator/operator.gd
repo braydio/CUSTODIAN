@@ -1802,7 +1802,12 @@ func _update_animation():
 	var is_melee_attack_anim := current_animation.contains("/attack/") \
 		or current_animation.begins_with("melee_2h_fast") \
 		or current_animation.begins_with("melee_2h_heavy")
-	var is_attacking = _melee_active or _melee_fast_windup or (
+	# `_melee_heavy_anticipating` belongs here with the other attack phases. Left
+	# out, an armed heavy in its anticipation phase is not "attacking", so the idle
+	# branch takes the body back and stops the anticipation clip -- and because the
+	# remaining term depends on `animated_sprite.is_playing()`, once stopped it can
+	# never become true again.
+	var is_attacking = _melee_active or _melee_fast_windup or _melee_heavy_anticipating or (
 		animated_sprite.is_playing()
 		and (is_melee_attack_anim or current_animation.begins_with("attack") or current_animation.begins_with("unarmed_attack_fast_windup"))
 	)
@@ -4861,7 +4866,12 @@ func _hide_modular_locomotion_layers() -> void:
 	if _is_exclusive_body_owner_active():
 		_release_modular_body_layers()
 		return
-	_set_body_presentation_owner(OperatorBodyPresenter.Owner.LEGACY_FULL_BODY)
+	# Only transfer when the body is not already legacy-owned. Re-presenting an
+	# owner you already hold still runs the presenter's retire-then-show cycle,
+	# and retiring stops playback -- so an idempotent re-claim one frame after an
+	# attack starts is enough to stop the swing that just began.
+	if _body_presentation_owner() != OperatorBodyPresenter.Owner.LEGACY_FULL_BODY:
+		_set_body_presentation_owner(OperatorBodyPresenter.Owner.LEGACY_FULL_BODY)
 
 
 func _clear_modular_upper_action_layer() -> void:
@@ -6914,6 +6924,9 @@ func _start_heavy_attack() -> void:
 		disable_hitbox()
 		_melee_hit_targets.clear()
 		_melee_miss_sfx_played = false
+		# Same ownership rule as the swing itself: take the body first, or the next
+		# ownership transfer stops the anticipation clip mid-playback.
+		_prepare_armed_melee_full_body()
 		animated_sprite.flip_h = false
 		_animation_player.play(animated_sprite, heavy_windup_animation)
 		_play_named_melee_weapon_overlay(&"melee_2h_heavy_anticipation_weapon")
@@ -8510,6 +8523,29 @@ func _play_melee_anim_from_key(attack_key: String, fallback_animation: StringNam
 		_play_melee_anim_resolved(fallback_animation, _melee_forward, attack_key)
 
 
+## Take the body before starting a full-body melee clip.
+##
+## `OperatorBodyPresenter.present()` deliberately retires every outgoing renderer,
+## and retiring stops playback. So a clip started while the modular rig still owns
+## the body is killed by the very next ownership transfer: `_update_animation()`
+## reaches `_hide_modular_locomotion_layers()`, the presenter stops
+## `animated_sprite` mid-swing, then re-shows it without restarting anything. The
+## attack keeps running as gameplay while the body stands still -- and because the
+## presentation clock went with it, the rest of the chain loses its cadence too.
+##
+## The FX overlay is a separate layer, which is why the symptom looked like
+## effects without a swing rather than nothing at all.
+##
+## Ownership is therefore claimed here, before the clip starts, not inferred
+## afterwards. `_sync_modular_action_domains()` only ever handled the unarmed fast
+## attack, so armed melee never had an earlier claim to rely on. The presenter is
+## not the thing to relax: retiring outgoing renderers is the body firewall, and
+## this caller was simply ordered wrong.
+func _prepare_armed_melee_full_body() -> void:
+	if _body_presentation_owner() != OperatorBodyPresenter.Owner.LEGACY_FULL_BODY:
+		_hide_modular_locomotion_layers()
+
+
 func _play_melee_anim_resolved(base_animation: StringName, direction: Vector2, attack_key: String) -> bool:
 	if animated_sprite == null:
 		return false
@@ -8520,6 +8556,7 @@ func _play_melee_anim_resolved(base_animation: StringName, direction: Vector2, a
 	var canonical_animation := _resolve_full_body_animation(String(base_animation), direction)
 	if not canonical_animation.is_empty() and animated_sprite.sprite_frames \
 	and _has_playable_sprite_animation(animated_sprite.sprite_frames, canonical_animation):
+		_prepare_armed_melee_full_body()
 		animated_sprite.flip_h = false
 		animated_sprite.speed_scale = _get_melee_animation_speed_scale(attack_key)
 		_animation_player.play(animated_sprite, canonical_animation)
@@ -8529,6 +8566,7 @@ func _play_melee_anim_resolved(base_animation: StringName, direction: Vector2, a
 	animated_sprite.flip_h = _is_facing_left(direction)
 	var resolved_animation := AnimationResolver.resolve(String(base_animation), direction, animated_sprite)
 	if animated_sprite.sprite_frames and _has_playable_sprite_animation(animated_sprite.sprite_frames, resolved_animation):
+		_prepare_armed_melee_full_body()
 		animated_sprite.flip_h = _is_facing_left(direction) and not String(resolved_animation).ends_with("_left")
 		animated_sprite.speed_scale = _get_melee_animation_speed_scale(attack_key)
 		_animation_player.play(animated_sprite, resolved_animation)
@@ -8537,14 +8575,17 @@ func _play_melee_anim_resolved(base_animation: StringName, direction: Vector2, a
 		return true
 	var right_fallback := StringName("%s_right" % String(base_animation))
 	if animated_sprite.sprite_frames and _has_playable_sprite_animation(animated_sprite.sprite_frames, right_fallback):
+		_prepare_armed_melee_full_body()
 		animated_sprite.speed_scale = _get_melee_animation_speed_scale(attack_key)
 		_animation_player.play(animated_sprite, right_fallback)
 		return true
 	if animated_sprite.sprite_frames and _has_playable_sprite_animation(animated_sprite.sprite_frames, base_animation):
+		_prepare_armed_melee_full_body()
 		animated_sprite.speed_scale = _get_melee_animation_speed_scale(attack_key)
 		_animation_player.play(animated_sprite, base_animation)
 		return true
 	if animated_sprite.sprite_frames and _has_playable_sprite_animation(animated_sprite.sprite_frames, &"attack_right_old"):
+		_prepare_armed_melee_full_body()
 		animated_sprite.speed_scale = _get_melee_animation_speed_scale(attack_key)
 		_animation_player.play(animated_sprite, "attack_right_old")
 		return true
@@ -9004,6 +9045,7 @@ func _play_fast_attack_recovery() -> void:
 	var armed_recovery := _resolve_full_body_animation("melee_2h_fast_recovery", _melee_forward)
 	if not armed_recovery.is_empty() \
 	and _has_playable_sprite_animation(animated_sprite.sprite_frames, armed_recovery):
+		_prepare_armed_melee_full_body()
 		animated_sprite.flip_h = false
 		_animation_player.play(animated_sprite, armed_recovery)
 		_play_named_melee_weapon_overlay(&"melee_2h_fast_recovery_weapon")

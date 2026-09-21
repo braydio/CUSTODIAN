@@ -81,6 +81,51 @@ follows directly from the e/w-only authoring decision, and
 `operator_modular_layers_smoke` was updated to the new truth rather than left
 asserting the old one.
 
+## Armed melee body-ownership fix
+
+An armed swing started while the modular rig still owned the body was killed by
+its own ownership transfer. `OperatorBodyPresenter.present()` retires every
+outgoing renderer and retiring stops playback, so the next `_update_animation()`
+stopped `animated_sprite` mid-swing and re-showed it without restarting. Gameplay
+ran, the FX overlay still flashed because it is a separate layer, and the sword
+swung invisibly. The presentation clock went with it, which is why later chain
+links misbehaved too.
+
+Ownership is now claimed *before* the clip starts, in every armed full-body
+branch plus heavy anticipation and armed recovery. The presenter is untouched:
+retiring outgoing renderers is the body firewall, and the caller was ordered
+wrong.
+
+Two further defects surfaced while proving it:
+
+- **An idempotent re-claim still retired.** Even with the body pre-claimed,
+  `_hide_modular_locomotion_layers()` re-presented `LEGACY_FULL_BODY` a frame
+  later, and re-presenting an owner you already hold still runs retire-then-show.
+  That alone stopped the swing. It now transfers only when the owner actually
+  changes.
+- **`is_attacking` omitted `_melee_heavy_anticipating`.** During anticipation the
+  idle branch could take the body back. This one is defensive rather than
+  independently proven: with the two fixes above the clip keeps playing, so the
+  predicate's `is_playing()` term already covers it. It is kept because that term
+  is self-defeating -- once a clip stops, it can never become true again.
+
+New gate `operator_armed_melee_body_visibility_smoke.gd` asserts what every
+existing melee gate missed: that the body is owned, visible, playing, holding the
+presentation clock, and the only visible owner -- per chain link and for the
+heavy attack, both at start and after the ownership-transfer frame.
+
+Two things the gate taught us about the loadout, worth recording:
+
+- The shipped Operator scene equips the **Vigil dagger**, not the Sword-Cleaver,
+  so the Cleaver is installed through the actor's own loadout rebuild.
+- The Vigil dagger deliberately routes a fast attack from RELAXED through its
+  authored relaxed-to-ready bridge and queues the swing behind it, so
+  `_melee_active` is false on the requesting frame. That is correct vigil
+  behaviour, so the gate uses the Cleaver, which swings directly.
+
+Negative-controlled: dropping the pre-play claim fails it in six places, and
+restoring the unguarded re-claim fails it in ten.
+
 ## Reachability changed
 
 ```
@@ -107,8 +152,8 @@ focused   operator_unarmed_posture, operator_attack_phase_cadence,
           operator_melee_posture, operator_modular_fast_attack,
           operator_animated_sprite_canonical, reachability audit,
           operator_visual_ownership          all green
-changed   34/34
-actor     51/52
+changed   35/35
+actor     52/53
 ```
 
 The one actor-tier failure is `lootable_corpse_beacon`, nondeterministic
