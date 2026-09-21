@@ -19,7 +19,7 @@ func _init() -> void:
 	var composer := COMPOSER.new() as ProcgenMacroPresentationComposer
 	var production_report: Dictionary = PRODUCTION_CATALOG.validation_report(true)
 	_require((production_report.rejected as Array).is_empty(), "production macro catalog has rejected profiles")
-	_require((production_report.valid as Array).size() == 9, "production macro catalog does not contain nine depth profiles")
+	_require((production_report.valid as Array).size() == 16, "production macro catalog does not contain sixteen depth profiles")
 	for production_profile: TerrainStampProfile in production_report.valid:
 		_require(production_profile.placement_domain == TerrainStampProfile.PlacementDomain.CHASM, "production depth profile is not CHASM")
 		_require(production_profile.depth_band == TerrainStampProfile.DepthBand.BACK, "production depth profile is not BACK")
@@ -32,6 +32,7 @@ func _init() -> void:
 	_validate_masks(first.placements[0], context)
 	_validate_chasm_contract_and_placement(composer)
 	_validate_biome_family_selection(composer)
+	_validate_production_catalog_selection(composer)
 
 	var empty_catalog := CATALOG.new() as TerrainStampCatalog
 	var fallback := composer.build_plan(context, empty_catalog)
@@ -189,6 +190,92 @@ func _validate_biome_family_selection(composer: ProcgenMacroPresentationComposer
 				continue
 			var family := String(placements[0].family_id)
 			_require(allowed[biome].has(family), "biome %s selected disallowed family %s" % [biome, family])
+
+
+func _validate_production_catalog_selection(composer: ProcgenMacroPresentationComposer) -> void:
+	var follow_on := {
+		&"woodland_overgrown_works_v1": &"woodland",
+		&"wetland_flooded_basin_v1": &"wetland",
+		&"wetland_reed_channels_v1": &"wetland",
+		&"wetland_drowned_service_platform_v1": &"wetland",
+		&"rocky_upland_cliff_bowl_v1": &"rocky_upland",
+		&"rocky_upland_talus_ravine_v1": &"rocky_upland",
+		&"rocky_upland_exposed_ledge_v1": &"rocky_upland",
+	}
+	for stamp_id: StringName in follow_on:
+		var profile := PRODUCTION_CATALOG.get_profile(stamp_id)
+		_require(profile != null, "missing follow-on production profile %s" % stamp_id)
+		if profile == null:
+			continue
+		_require(profile.family_id == &"procgen_depth_chunks", "follow-on profile has wrong family %s" % stamp_id)
+		_require(profile.required_biome == follow_on[stamp_id], "follow-on profile has wrong biome %s" % stamp_id)
+		_require(profile.placement_domain == TerrainStampProfile.PlacementDomain.CHASM, "follow-on profile is not CHASM %s" % stamp_id)
+		_require(profile.depth_band == TerrainStampProfile.DepthBand.BACK, "follow-on profile is not BACK %s" % stamp_id)
+		_require(not profile.claims_dressing_clearance, "follow-on profile claims dressing clearance %s" % stamp_id)
+	var expected := {
+		&"woodland": {"families": PackedStringArray(["procgen_depth_universal", "procgen_depth_woodland", "procgen_depth_chunks"]), "allow": [&"woodland_overgrown_works_v1"], "deny": [&"wetland_flooded_basin_v1", &"wetland_reed_channels_v1", &"wetland_drowned_service_platform_v1", &"rocky_upland_cliff_bowl_v1", &"rocky_upland_talus_ravine_v1", &"rocky_upland_exposed_ledge_v1"]},
+		&"wetland": {"families": PackedStringArray(["procgen_depth_universal", "procgen_depth_chunks"]), "allow": [&"wetland_flooded_basin_v1", &"wetland_reed_channels_v1", &"wetland_drowned_service_platform_v1"], "deny": [&"woodland_overgrown_works_v1", &"rocky_upland_cliff_bowl_v1", &"rocky_upland_talus_ravine_v1", &"rocky_upland_exposed_ledge_v1", &"dry_basin_v1", &"wash_channel_v1", &"service_scar_v1"]},
+		&"rocky_upland": {"families": PackedStringArray(["procgen_depth_universal", "procgen_depth_chunks"]), "allow": [&"rocky_upland_cliff_bowl_v1", &"rocky_upland_talus_ravine_v1", &"rocky_upland_exposed_ledge_v1"], "deny": [&"woodland_overgrown_works_v1", &"wetland_flooded_basin_v1", &"wetland_reed_channels_v1", &"wetland_drowned_service_platform_v1", &"dry_basin_v1", &"wash_channel_v1", &"service_scar_v1"]},
+		&"scrubland": {"families": PackedStringArray(["procgen_depth_universal", "procgen_depth_scrubland"]), "allow": [], "deny": [&"woodland_overgrown_works_v1", &"wetland_flooded_basin_v1", &"wetland_reed_channels_v1", &"wetland_drowned_service_platform_v1", &"rocky_upland_cliff_bowl_v1", &"rocky_upland_talus_ravine_v1", &"rocky_upland_exposed_ledge_v1"]},
+	}
+	for biome: StringName in expected:
+		var filtered := PRODUCTION_CATALOG.filter_profiles(expected[biome]["families"], &"depth_south_edge", biome)
+		var ids := {}
+		for profile: TerrainStampProfile in filtered:
+			ids[profile.stamp_id] = true
+		for stamp_id: StringName in expected[biome].allow:
+			_require(ids.has(stamp_id), "%s cannot see expected production stamp %s" % [biome, stamp_id])
+		for stamp_id: StringName in expected[biome].deny:
+			_require(not ids.has(stamp_id), "%s leaked production stamp %s" % [biome, stamp_id])
+		if biome == &"scrubland":
+			for stamp_id: StringName in ids:
+				var scrub_profile := PRODUCTION_CATALOG.get_profile(stamp_id)
+				_require(scrub_profile.family_id != &"procgen_depth_chunks", "scrubland gained follow-on family")
+		var context := _production_chasm_context(biome) if biome != &"scrubland" else _chasm_context(biome)
+		var before := context.duplicate(true)
+		context.families = expected[biome]["families"]
+		context.families_by_biome = {biome: expected[biome]["families"]}
+		before.families = expected[biome]["families"]
+		before.families_by_biome = {biome: expected[biome]["families"]}
+		var first := composer.build_plan(context, PRODUCTION_CATALOG)
+		var second := composer.build_plan(context, PRODUCTION_CATALOG)
+		_require(first.fingerprint == second.fingerprint, "%s production selection is not deterministic" % biome)
+		_require(context == before, "%s production planning changed semantic context" % biome)
+		if biome != &"scrubland":
+			var selected_ids := {}
+			for seed: int in range(1, 33):
+				context.seed = seed
+				var plan := composer.build_plan(context, PRODUCTION_CATALOG)
+				_require(not (plan.placements as Array).is_empty(), "%s production context did not resolve a depth placement" % biome)
+				if not (plan.placements as Array).is_empty():
+					var placement: Dictionary = plan.placements[0]
+					_require(placement.biome_id == biome, "%s production placement selected another biome" % biome)
+					selected_ids[placement.stamp_id] = true
+			_require(selected_ids.size() > 1, "%s production eligible selection never varied" % biome)
+
+
+func _production_chasm_context(biome: StringName) -> Dictionary:
+	var floors: Dictionary = {}
+	var chasm: Dictionary = {}
+	var biomes: Dictionary = {}
+	for x: int in range(6, 34):
+		var floor_cell := Vector2i(x, 2)
+		floors[floor_cell] = true
+		biomes[floor_cell] = biome
+		for y: int in range(3, 14):
+			chasm[Vector2i(x, y)] = true
+	return {
+		"seed": 1, "max_stamps": 8,
+		"map_bounds": Rect2i(Vector2i.ZERO, Vector2i(40, 16)),
+		"floor_cells": floors, "wall_cells": {}, "chasm_cells": chasm,
+		"terrain_result": {"traversal_by_cell": {}},
+		"biome_id_by_cell": biomes,
+		"protected_cells": {}, "required_cells": {}, "reserved_cells": {},
+		"ingress_clearance_cells": {}, "region_kind_by_cell": {},
+		"families": PackedStringArray(["procgen_depth_universal", "procgen_depth_chunks"]),
+		"families_by_biome": {biome: PackedStringArray(["procgen_depth_universal", "procgen_depth_chunks"])},
+		"min_region_cells_by_biome": {biome: 0},
+	}
 
 
 func _chasm_profile(id: StringName, family: StringName, biome: StringName = &"") -> TerrainStampProfile:

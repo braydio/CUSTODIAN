@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="TerrainStampCatalog" load_steps=11 format=3]
+[gd_resource type="Resource" script_class="TerrainStampCatalog" load_steps=18 format=3]
 
 [ext_resource type="Script" path="res://game/world/procgen/presentation/terrain_stamp_catalog.gd" id="1_catalog"]
 [ext_resource type="Resource" path="res://content/procgen/presentation/depth_chunks/depth_civic_foundation_breach_v1.tres" id="2"]
@@ -10,7 +10,14 @@
 [ext_resource type="Resource" path="res://content/procgen/presentation/depth_chunks/depth_scrubland_service_scar_v1.tres" id="8"]
 [ext_resource type="Resource" path="res://content/procgen/presentation/depth_chunks/depth_woodland_canopy_basin_v1.tres" id="9"]
 [ext_resource type="Resource" path="res://content/procgen/presentation/depth_chunks/depth_woodland_ravine_v1.tres" id="10"]
+[ext_resource type="Resource" path="res://content/procgen/presentation/depth_chunks/depth_woodland_overgrown_works_v1.tres" id="11"]
+[ext_resource type="Resource" path="res://content/procgen/presentation/depth_chunks/depth_wetland_flooded_basin_v1.tres" id="12"]
+[ext_resource type="Resource" path="res://content/procgen/presentation/depth_chunks/depth_wetland_reed_channels_v1.tres" id="13"]
+[ext_resource type="Resource" path="res://content/procgen/presentation/depth_chunks/depth_wetland_drowned_service_platform_v1.tres" id="14"]
+[ext_resource type="Resource" path="res://content/procgen/presentation/depth_chunks/depth_rocky_upland_cliff_bowl_v1.tres" id="15"]
+[ext_resource type="Resource" path="res://content/procgen/presentation/depth_chunks/depth_rocky_upland_talus_ravine_v1.tres" id="16"]
+[ext_resource type="Resource" path="res://content/procgen/presentation/depth_chunks/depth_rocky_upland_exposed_ledge_v1.tres" id="17"]
 
 [resource]
 script = ExtResource("1_catalog")
-stamps = Array[TerrainStampProfile]([ExtResource("2"), ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("6"), ExtResource("7"), ExtResource("8"), ExtResource("9"), ExtResource("10")])
+stamps = Array[TerrainStampProfile]([ExtResource("2"), ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("6"), ExtResource("7"), ExtResource("8"), ExtResource("9"), ExtResource("10"), ExtResource("11"), ExtResource("12"), ExtResource("13"), ExtResource("14"), ExtResource("15"), ExtResource("16"), ExtResource("17")])

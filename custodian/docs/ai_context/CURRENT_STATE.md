@@ -1588,8 +1588,7 @@ implementation authority.
 
 Accepted procgen maps now own deterministic scrubland, woodland, wetland, and rocky-upland fields that constrain foliage density, composition, and tint beneath route policy. One world-local `WorldEnvironmentDirector` owns a 24-minute fixed-physics day, contract-seeded weather, and indoor exposure; existing lighting, atmosphere, and shared foliage materials remain presentation authorities.
 
-Procgen Macro Presentation V1 is in implementation with an empty-safe
-rocky-upland catalog. Biomes now classify the final captured floor authority
+Procgen Macro Presentation V1 has all 16 procgen depth chunks presentation-bound: Wetland and Rocky Upland consume their authored depth families, Woodland gains overgrown works as an additional option, and depth chunks remain CHASM/BACK visual-only underlays. Playable SURFACE macro composition remains the next world-presentation slice. Biomes now classify the final captured floor authority
 after faction/story, parking, and second-pass road corrections. Pure region and
 stamp planning is deterministic and separate from Sprite2D realization;
 presentation roots compensate for the scaled map parent, and streaming gates

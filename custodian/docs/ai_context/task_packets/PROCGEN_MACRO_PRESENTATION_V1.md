@@ -17,8 +17,10 @@
 - Completed: hardened authority reconciliation, final-state biome sequencing,
   pure region/planner/catalog foundations, presentation roots and realization,
   streaming visibility gating, separate dressing clearance, level summary,
-  observability, empty production catalog, and focused smoke foundation.
-- Deferred: production art/profile population and fixed-seed visual acceptance.
+  observability, production depth catalog with 16 CHASM/BACK profiles,
+  baseline/follow-on depth binding, and focused smoke coverage.
+- Deferred: true playable SURFACE macro art and fixed-seed visual acceptance for
+  the SURFACE rocky-upland target.
 
 ## Ownership And Timing
 
@@ -64,7 +66,7 @@ Allowed ledger states are `waiting_spec`, `pending`, `in_progress`, `blocked`,
 | Claims | Stamps or later clusters invade authored/route/combat clearances | Reuse a named existing claim/clearance API after live audit |
 | Performance | Large textures and many Sprite2D nodes exceed budgets | Set texture, node, culling, and per-screen budgets in hardened spec |
 | Art | Visual footprint and semantic footprint disagree | Require explicit masks/anchors and debug footprint overlays |
-| Inventory | Production family contains 19 specified runtime assets | Keep catalog empty until approved art and masks exist |
+| Inventory | Production depth family is presentation-bound | Keep SURFACE art/profile population deferred until separately approved |
 | Fallback | Missing assets make terrain invisible or invalid | Keep current TileMap sources authoritative and visible |
 | Scope | Biome/profile work expands into classification rewrite | Add presentation fields only; retain classifier ownership |
 
@@ -107,8 +109,8 @@ Allowed ledger states are `waiting_spec`, `pending`, `in_progress`, `blocked`,
 
 ## Handoff
 
-- Next action: complete the required regression suite, then await approved
-  rocky-upland art/profile masks for visual acceptance.
+- Next action: complete the required regression suite, then proceed to the
+  separate playable SURFACE rocky-upland macro slice.
 - Best starting files: the authority document, this packet,
   `ELEVATED_WORLD_PRESENTATION.md`, the environment/biome spec, and the live
   procgen/terrain integration points discovered during the audit.
@@ -116,6 +118,5 @@ Allowed ledger states are `waiting_spec`, `pending`, `in_progress`, `blocked`,
 - Validation after implementation: focused macro-presentation smoke plus the
   existing terrain, elevation, route, foliage, streaming, and full procgen
   recipes named by the hardened spec.
-- Blockers or open questions: no approved rocky-upland production PNGs or stamp
-  masks are currently registered, so the required visual acceptance cannot yet
-  be completed without fabricating forbidden placeholder art.
+- Blockers or open questions: fixed-seed visual acceptance for the playable
+  SURFACE rocky-upland target remains pending; depth underlay binding is complete.

@@ -2,7 +2,7 @@
 
 ## Production Art and Runtime Integration Specification
 
-**Status:** active production specification; baseline library is integrated, follow-on Wetland/Rocky batch is ingested and awaiting presentation binding
+**Status:** active production specification; baseline and follow-on depth libraries are integrated, with 16 production runtime depth profiles presentation-bound
 
 **Last updated:** 2026-09-10
 
@@ -26,7 +26,7 @@ procgen_depth_woodland    2 states
                          ----------
                           9 runtime assets
 
-FOLLOW-ON / INGESTED, NOT YET PRESENTATION-BOUND
+FOLLOW-ON / INTEGRATED
 procgen_depth_chunks      7 states
                           1 woodland overgrown-works
                           3 wetland
@@ -39,7 +39,7 @@ TOTAL                     16 runtime depth-chunk assets
 
 The old statement that Wetland and Rocky Upland should not be generated yet is obsolete. Those six biome assets plus the new Woodland overgrown-works asset have already been normalized and successfully ingested through Asset Pipeline V2.
 
-The remaining gap is **runtime presentation integration**, not art ingest.
+The baseline and follow-on libraries are presentation-bound as CHASM/BACK visual-only underlays. Playable SURFACE macro composition remains a separate future slice.
 
 ---
 
@@ -93,7 +93,7 @@ res://content/backgrounds/procgen/depth_chunks/scrubland/
 res://content/backgrounds/procgen/depth_chunks/woodland/
 ```
 
-These nine assets also have `TerrainStampProfile` resources under:
+All 16 assets have `TerrainStampProfile` resources under:
 
 ```text
 custodian/content/procgen/presentation/depth_chunks/
@@ -119,7 +119,7 @@ rocky_upland
   procgen_depth_universal
 ```
 
-That last pair is why the follow-on batch still needs integration.
+The follow-on family is filtered by each profile's required biome and now participates in live presentation selection.
 
 ## Follow-on family
 
@@ -811,9 +811,9 @@ This is the current integration path to extend.
 
 ---
 
-# 28. Follow-On Runtime Integration Required
+# 28. Follow-On Runtime Integration
 
-The follow-on `procgen_depth_chunks` family is successfully ingested but is **not yet part of the live biome presentation selection**.
+The follow-on `procgen_depth_chunks` family is successfully ingested and is part of the live biome presentation selection.
 
 The next implementation slice should:
 
@@ -910,7 +910,8 @@ FOLLOW-ON 7
   V2 ingested successfully
   runtime present
   generated catalog present
-  not yet registered into macro presentation selection
+  TerrainStampProfile presentation resources present
+  Wetland/Rocky/overgrown selection integrated
 ```
 
-**Current next step:** integrate the already-ingested `procgen_depth_chunks` Wetland, Rocky Upland, and Woodland-overgrown states into the existing `TerrainStampProfile` / macro-presentation authority. No new art generation or Asset V2 ingest is required for that slice.
+**Current next step:** playable SURFACE macro composition remains the next world-presentation slice. No new art generation or Asset V2 ingest is required for the completed depth binding.

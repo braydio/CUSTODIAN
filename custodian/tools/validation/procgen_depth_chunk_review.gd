@@ -16,6 +16,17 @@ const GROUPS := {
 	"woodland_seed": [
 		["canopy basin", preload("res://content/backgrounds/procgen/depth_chunks/woodland/procgen_depth_woodland_canopy_basin_v1_896x576.png")],
 		["ravine", preload("res://content/backgrounds/procgen/depth_chunks/woodland/procgen_depth_woodland_ravine_v1_896x576.png")],
+		["overgrown works", preload("res://content/backgrounds/procgen/depth_chunks/depth_woodland_overgrown_works_v1.png")],
+	],
+	"wetland_seed": [
+		["flooded basin", preload("res://content/backgrounds/procgen/depth_chunks/depth_wetland_flooded_basin_v1.png")],
+		["reed channels", preload("res://content/backgrounds/procgen/depth_chunks/depth_wetland_reed_channels_v1.png")],
+		["drowned service platform", preload("res://content/backgrounds/procgen/depth_chunks/depth_wetland_drowned_service_platform_v1.png")],
+	],
+	"rocky_upland_seed": [
+		["cliff bowl", preload("res://content/backgrounds/procgen/depth_chunks/depth_rocky_upland_cliff_bowl_v1.png")],
+		["talus ravine", preload("res://content/backgrounds/procgen/depth_chunks/depth_rocky_upland_talus_ravine_v1.png")],
+		["exposed ledge", preload("res://content/backgrounds/procgen/depth_chunks/depth_rocky_upland_exposed_ledge_v1.png")],
 	],
 }
 
