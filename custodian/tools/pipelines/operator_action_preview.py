@@ -193,7 +193,44 @@ def compose_action(
     return join_frames(base_frames, frame_size), preview
 
 
+def find_canonical_strip(runtime_root: Path, layer: str, loadout: str, action: str, direction: str, frame_size: int) -> Strip | None:
+    """Locate a strip in the canonical runtime layout.
+
+    R3/R4 moved Operator art to `animations/<profile>/<group>/<action>/` with
+    `operator__<layer>__<profile>__<group>__<action>__<dir>__<n>f__<size>.png`.
+    The module lookup below still globs the pre-canonical
+    `modules/new_operator/...` tree, which survives but holds none of this art --
+    so the tool reported `frames: 0` for canonical actions that exist and are
+    registered in `operator_runtime_frames.tres`. Canonical is searched first and
+    the legacy tree remains a fallback for anything not yet migrated.
+
+    The group is not known to the caller, so every group directory is searched.
+    """
+
+    animations_root = runtime_root / "animations" / loadout
+    if not animations_root.is_dir():
+        return None
+    # The canonical FX layer is `fx`; the preview's own vocabulary calls it
+    # `upper_fx`, which is the pre-canonical module name.
+    layer_names = [layer] if layer != "upper_fx" else ["fx", "upper_fx"]
+    for group_dir in sorted(animations_root.iterdir()):
+        if not group_dir.is_dir():
+            continue
+        for layer_name in layer_names:
+            pattern = (
+                f"{action}/operator__{layer_name}__{loadout}__{group_dir.name}__{action}"
+                f"__{direction}__*f__{frame_size}.png"
+            )
+            strip = first_matching_strip(group_dir, pattern, frame_size)
+            if strip:
+                return strip
+    return None
+
+
 def find_module_strip(runtime_root: Path, layer: str, loadout: str, action: str, direction: str, frame_size: int) -> Strip | None:
+    canonical = find_canonical_strip(runtime_root, layer, loadout, action, direction, frame_size)
+    if canonical:
+        return canonical
     module_root = runtime_root / "modules/new_operator" / layer
     patterns = [
         f"actions/{loadout}/{action}/operator__modular_{layer}__{loadout}__{action}__{direction}__*f__{frame_size}.png",
