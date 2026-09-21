@@ -2673,6 +2673,14 @@ func _sync_modular_action_domains() -> bool:
 		return false
 	if modular_lower_body_sprite.sprite_frames == null or modular_upper_body_sprite.sprite_frames == null:
 		return false
+	# The authored chain link owns the whole attack, so it is maintained here
+	# rather than re-composed from separate windup/strike phases. This runs before
+	# the phase path so the consolidated strip is not overwritten a frame after it
+	# starts; the phase path below remains for profiles that still lack a chain.
+	var chain_profile := _get_current_melee_attack_profile("fast")
+	if chain_profile != null and _has_authored_fast_chain() \
+	and _sync_unarmed_fast_chain_action(chain_profile.presentation_action, _melee_forward):
+		return true
 	if _can_present_modular_fast_attack_phase(&"strike"):
 		_declare_modular_body_composition()
 		if _sync_modular_fast_attack_phase(&"strike"):
@@ -8541,6 +8549,123 @@ func _play_block_weapon_overlay(animation_name: StringName) -> void:
 	melee_weapon_overlay_sprite.frame = 0
 
 
+## Present one link of the unarmed fast chain on the canonical modular body.
+##
+## The authored strip is the whole link: windup, contact, follow-through and
+## recovery live inside `fast_01`/`fast_02`/`fast_03`, so there is no separate
+## windup or recovery clip to sequence. Timing stays gameplay metadata on the
+## attack profile.
+##
+## `gameplay_direction` is the real attack direction and is never modified here.
+## Only the *presentation sector* is projected to the authored east/west art, so a
+## north-facing punch still hits north while drawing the east strip. Letting the
+## art dictate the hit direction is the trap this separation exists to avoid.
+##
+## Returns false without touching ownership if the pair cannot be resolved, so a
+## caller never ends up owning the body with nothing to draw.
+func _sync_unarmed_fast_chain_action(action: StringName, gameplay_direction: Vector2) -> bool:
+	if modular_lower_body_sprite == null or modular_upper_body_sprite == null:
+		return false
+	if modular_lower_body_sprite.sprite_frames == null \
+	or modular_upper_body_sprite.sprite_frames == null:
+		return false
+	var sector := _unarmed_fast_chain_sector(gameplay_direction)
+	var selector = _get_operator_animation_selector()
+	if not selector.has_sector_identity(&"unarmed", &"attack", action, sector, &"lower_body"):
+		return false
+	if not selector.has_sector_identity(&"unarmed", &"attack", action, sector, &"upper_body"):
+		return false
+	var lower_animation: StringName = selector.resolve_sector(
+		&"unarmed", &"attack", action, sector, &"lower_body"
+	)
+	var upper_animation: StringName = selector.resolve_sector(
+		&"unarmed", &"attack", action, sector, &"upper_body"
+	)
+	if not _has_playable_sprite_animation(modular_lower_body_sprite.sprite_frames, lower_animation):
+		return false
+	if not _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, upper_animation):
+		return false
+
+	var speed_scale := _unarmed_fast_chain_speed_scale(lower_animation)
+	# The whole composition resolved, so declare it before configuring any layer.
+	_declare_modular_body_composition()
+	_show_body_layer(modular_lower_body_sprite)
+	_show_body_layer(modular_upper_body_sprite)
+	# East and west are separately authored strips; mirroring west would face the
+	# Operator east while the identity said west.
+	modular_lower_body_sprite.flip_h = false
+	modular_upper_body_sprite.flip_h = false
+	modular_lower_body_sprite.speed_scale = speed_scale
+	modular_upper_body_sprite.speed_scale = speed_scale
+	_animation_player.play(modular_lower_body_sprite, lower_animation)
+	_animation_player.play(modular_upper_body_sprite, upper_animation)
+	_sync_unarmed_fast_chain_fx(action, sector, speed_scale)
+	_hide_modular_head_layer()
+	_hide_modular_cape_layer()
+	_claim_modular_body_owner()
+	return true
+
+
+## Presentation-only sector projection. Gameplay direction is untouched.
+func _unarmed_fast_chain_sector(gameplay_direction: Vector2) -> StringName:
+	return &"w" if gameplay_direction.x < -0.05 else &"e"
+
+
+## Fast 01 overlay FX is deliberately omitted in both directions.
+##
+## Its authored source is asymmetric -- east is a 3-frame 128px sheet, west a
+## 9-frame 96px one -- and the archived east asset is 3 frames too, so this is a
+## source-family discrepancy rather than a truncated publish. Giving west a rich
+## nine-frame effect and east three frames would read worse than giving neither.
+## Recorded as an Asset Pipeline V2 repair candidate; nothing is stretched,
+## repeated or mirrored to fake parity. The existing unarmed contact VFX still
+## plays, so impact is not silent.
+const UNARMED_FAST_CHAIN_FX_DEFERRED: Array[StringName] = [&"fast_01"]
+
+
+func _sync_unarmed_fast_chain_fx(action: StringName, sector: StringName, speed_scale: float) -> void:
+	if modular_upper_fx_sprite == null or modular_upper_fx_sprite.sprite_frames == null:
+		return
+	if UNARMED_FAST_CHAIN_FX_DEFERRED.has(action):
+		modular_upper_fx_sprite.visible = false
+		return
+	var selector = _get_operator_animation_selector()
+	if not selector.has_sector_identity(&"unarmed", &"attack", action, sector, &"fx"):
+		modular_upper_fx_sprite.visible = false
+		return
+	var fx_animation: StringName = selector.resolve_sector(
+		&"unarmed", &"attack", action, sector, &"fx"
+	)
+	if not _has_playable_sprite_animation(modular_upper_fx_sprite.sprite_frames, fx_animation):
+		modular_upper_fx_sprite.visible = false
+		return
+	_show_body_layer(modular_upper_fx_sprite)
+	modular_upper_fx_sprite.flip_h = false
+	modular_upper_fx_sprite.speed_scale = speed_scale
+	_animation_player.play(modular_upper_fx_sprite, fx_animation)
+
+
+## Playback scale from authored duration over the link's intended duration.
+##
+## Derived rather than hardcoded, so retiming a link is a data edit on the
+## profile. The consolidated strips are longer than the clips they replace -- Fast
+## 01 is 9 frames at 12 FPS, 0.75s authored, against an approved 0.46s cadence --
+## so playing them at authored speed would quietly make Fists sluggish.
+func _unarmed_fast_chain_speed_scale(clock_animation: StringName) -> float:
+	var profile := _get_current_melee_attack_profile("fast")
+	if profile == null:
+		return 1.0
+	var target := profile.cooldown_sec
+	if target <= 0.001:
+		return 1.0
+	var frames := OPERATOR_RUNTIME_FRAMES.get_frame_count(clock_animation)
+	var fps := OPERATOR_RUNTIME_FRAMES.get_animation_speed(clock_animation)
+	if frames <= 0 or fps <= 0.001:
+		return 1.0
+	var authored := float(frames) / fps
+	return clampf(authored / target, 0.25, 4.0)
+
+
 func _play_melee_anim_from_key(attack_key: String, fallback_animation: StringName = &"") -> void:
 	if not _is_melee_loadout_active():
 		return
@@ -8581,6 +8706,18 @@ func _prepare_armed_melee_full_body() -> void:
 func _play_melee_anim_resolved(base_animation: StringName, direction: Vector2, attack_key: String) -> bool:
 	if animated_sprite == null:
 		return false
+	# The unarmed chain presents modularly from its own authored action, so it
+	# never reaches the full-body resolution below. The profile's
+	# `presentation_action` is the authority for which link is drawn -- that field
+	# has existed on MeleeAttackProfile all along with no reader, which is why
+	# Fists kept presenting through the retired windup/strike/recovery clips.
+	if _melee_attack_kind == "fast" and _is_current_profile_unarmed():
+		var chain_profile := _get_current_melee_attack_profile("fast")
+		if chain_profile != null \
+		and _sync_unarmed_fast_chain_action(chain_profile.presentation_action, direction):
+			_sync_melee_hitbox_window_from_animation()
+			return true
+
 	# Canonical first. A base with a canonical identity resolves through the
 	# selector and is never mirrored; the legacy chain below still serves the
 	# per-weapon bases that arrive from weapon resources, which C2a section 7

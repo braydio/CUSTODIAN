@@ -162,30 +162,58 @@ play sword audio. `_weapon_emits_blade_swing_sfx()` tests the weapon's semantic
 kind rather than a clip name. This was urgent rather than optional: the chain
 keys had already landed in `09cbe98de`, so the trap was armed.
 
+## Fast 01 canonical presentation is live
+
+`_sync_unarmed_fast_chain_action()` resolves the link through
+`OperatorAnimationSelector`, projects the presentation sector east/west in the
+caller, verifies the whole pair before claiming `MODULAR_BODY`, and plays lower
+and upper together with `flip_h = false`.
+
+Gameplay direction is never touched. Only the presentation sector is projected,
+so a north-facing punch still hits north while drawing the east strip.
+
+Two seams made this possible and are worth recording:
+
+- `MeleeAttackProfile.presentation_action` has existed all along **with no
+  reader anywhere in the actor**. That unread field is exactly why Fists kept
+  presenting through the retired clips; it is now the authority for which link
+  is drawn.
+- The chain presentation runs *before* the phase path in
+  `_sync_modular_action_domains()`. Without that ordering the consolidated strip
+  started correctly and was overwritten by the old phase art one frame later --
+  measured, not assumed.
+
+Live probe:
+
+```
+chain keys: ["unarmed_fast_01", "unarmed_fast_02", "unarmed_fast_03"]
+link 1: active=true windup=false
+        lower=unarmed/attack/fast_01/e/lower_body
+        upper=unarmed/attack/fast_01/e/upper_body   scale=1.63
+```
+
+Scale 1.63 is derived, not hardcoded: authored 9 frames / 12 FPS = 0.75 s over
+the profile's 0.46 s target. Retiming a link is now a data edit.
+
+Fast 01 overlay FX is deliberately omitted in **both** directions, per decision.
+The east source is a 3-frame 128px sheet and the archived east asset is 3 frames
+too, so this is a source-family discrepancy rather than a truncated publish.
+Recorded as an Asset Pipeline V2 repair candidate. The existing unarmed contact
+VFX still plays, so impact is not silent. Fast 02/03 FX will be enabled.
+
 ## Remaining work
 
-Runtime presentation is the big one and is **not** started:
-
-- `_sync_unarmed_fast_chain_action()` resolving through
-  `OperatorAnimationSelector`, caller-owned E/W projection, `flip_h = false`,
-  claiming `MODULAR_BODY`, starting lower/upper together.
-- Route Fists link starts onto it, once per link, with playback scale derived
-  from authored over target duration (1.63 / 1.39 / 1.28).
-- Remove unarmed-specific phase choreography once the chain presents; keep
-  `_melee_fast_windup` (Vigil still uses it) and the generic non-integrated
-  recovery capability.
-- Fast 01 FX: resolve or defer the 3f east / 9f west asymmetry. Do not wire it
-  until then, and never stretch, repeat or mirror to fake parity.
-- Reachability: Fast 01/02/03 genuinely LIVE, windup/strike/recovery SUPERSEDED.
-- Tooling drift: `operator_next_actions_report.py` phase expansion,
-  `refresh_combo_check_src.sh`, active preview docs.
-- Design docs: `OPERATOR_MELEE_CONTACT_TIMING_AND_CADENCE.md`,
-  `COMBAT_FEEL_SYSTEM.md`, `COMBAT_FEEL_UPGRADE.md`, `CURRENT_STATE.md`,
-  `FILE_INDEX.md`.
-- `operator_unarmed_fast_chain_smoke.gd`, the 23 acceptance points, and the
-  negative controls.
-- Part C feel work, which is explicitly gated on B being mechanically green.
-
-Nothing in Part C has been started, by design: the packet gates it on the
-migration being green, and tuning feel against a chain that does not yet present
-would be tuning noise.
+- **Chain advance.** Links 2 and 3 do not yet advance in a live probe: a fresh
+  `_try_melee_attack` after completion is refused by cooldown rather than
+  queued. The buffered-primary path through the queue window needs verifying
+  against the measured 5/5/6 commit frames. Fast 01 presentation is correct.
+- `operator_modular_fast_attack_smoke.gd` now fails, correctly: it asserts
+  `fast_strike_01` where runtime presents `fast_01`. It validates the superseded
+  family and must be retired or rewritten, not patched to accept both.
+- Remove the unarmed phase choreography once 02/03 advance; keep
+  `_melee_fast_windup` (Vigil uses it) and the generic non-integrated recovery.
+- Reachability, tooling drift, design docs.
+- `operator_unarmed_fast_chain_smoke.gd` with the 23 points and the negative
+  controls.
+- Moment Forge cadence pass, then finalize the provisional 1.63 / 1.39 / 1.28.
+- Part C, gated on the above being green.
