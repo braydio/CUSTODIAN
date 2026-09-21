@@ -31,6 +31,20 @@ const AUTHORED_FULL_BODY_SECTORS := {
 	"unarmed/attack/heavy_01": [&"e", &"n", &"s", &"w"],
 }
 
+## Identities whose callers restrict the direction they ever request, so sparse
+## coverage is safe without a projection entry. Each needs a reason, because
+## "the caller happens to be careful" is only true until someone edits the caller.
+const CALLER_CONSTRAINED_IDENTITIES := {
+	"shared/transition/dodge_01":
+		"played from DODGE_FULL_NORTH/SOUTH_ANIMATION directly; never direction-resolved",
+	"ranged_2h/cosmetic/fire_walk_01":
+		"a weapon-map fallback name and a speed-scale comparison; never direction-resolved",
+	"ranged_2h/locomotion/run_01":
+		"requested only inside a direction_suffix right/left guard, so only e/w",
+	"unarmed/attack/dodge_fast_attack_01":
+		"requested with Vector2.LEFT/RIGHT from the authored roll-exit inversion",
+}
+
 ## legacy compatibility clip -> canonical identity it was promoted into.
 ## Mirrors LEGACY_PROMOTIONS in
 ## tools/pipelines/migrations/operator_animated_sprite_cutover_evidence.py.
@@ -131,6 +145,7 @@ func _init() -> void:
 	scene_root.add_child(operator)
 	await process_frame
 	_check_full_body_projection(operator, canonical)
+	_check_identity_coverage(operator, canonical)
 	_check_rebind(operator, canonical)
 
 	_report()
@@ -221,6 +236,55 @@ func _check_rebind(operator: Node, canonical: SpriteFrames) -> void:
 		not sprite.flip_h,
 		"canonical directional playback must not mirror; flip_h should be false"
 	)
+
+
+func _check_identity_coverage(operator: Node, canonical: SpriteFrames) -> void:
+	## Every identity reachable through `_resolve_full_body_animation` must be
+	## resolvable for every sector a caller can ask for.
+	##
+	## This audits the whole table rather than a list of families someone
+	## remembered to enumerate, because that is the hole that let two regressions
+	## through C2a-R4: `melee_1h_heavy/attack/heavy_windup_01` and
+	## `fast_recovery_01` are authored `s`-only, were previously generic
+	## direction-less compatibility clips, and silently stopped resolving for every
+	## non-south attack. The heavy one skipped a gameplay phase, not just art.
+	##
+	## Four outcomes are acceptable, and nothing else is: the action is OMNI, it
+	## publishes all eight sectors, it has an explicit projection policy, or its
+	## caller provably constrains the request.
+	var identities: Dictionary = operator.get("FULL_BODY_IDENTITIES")
+	var projections: Dictionary = operator.get("FULL_BODY_AUTHORED_SECTORS")
+	_check(identities != null and not identities.is_empty(), "the identity table should exist")
+	if identities == null:
+		return
+
+	for base in identities:
+		var identity: Array = identities[base]
+		var action := "%s/%s/%s" % [identity[0], identity[1], identity[2]]
+		if CALLER_CONSTRAINED_IDENTITIES.has(action):
+			continue
+		if canonical.has_animation("%s/omni/full_body" % action):
+			continue
+		if projections.has("%s/full_body" % action):
+			# A policy exists; _check_full_body_projection validates its contents
+			# for the families it enumerates. Here we only require every sector to
+			# land somewhere real.
+			for sector in SECTORS:
+				var resolved: StringName = operator._full_body_authored_sector(
+					identity[0], identity[1], identity[2], _sector_vector(sector)
+				)
+				_check(
+					canonical.has_animation("%s/%s/full_body" % [action, resolved]),
+					"%s projects %s -> %s, which is not published" % [action, sector, resolved]
+				)
+			continue
+		for sector in SECTORS:
+			_check(
+				canonical.has_animation("%s/%s/full_body" % [action, sector]),
+				("%s is requested by `%s` but publishes no %s full_body art, and has neither a "
+				+ "FULL_BODY_AUTHORED_SECTORS policy nor a recorded caller constraint")
+					% [action, base, sector]
+			)
 
 
 func _sector_vector(sector: StringName) -> Vector2:

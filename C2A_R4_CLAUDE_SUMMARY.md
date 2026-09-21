@@ -7,8 +7,9 @@ This file is overwritten each time the slice advances; it is not a changelog.
 
 ## Status
 
-**R4 is complete and integrated.** The branch is a strict descendant of current
-`main` and fast-forwards cleanly. `animated_sprite` binds
+**R4 is integrated, plus an R4.1 correctness patch.** `main` and
+`c2a-r4-animated-sprite` point at the same integrated commit; R4.1 lands on top.
+`animated_sprite` binds
 `content/sprites/operator/runtime/operator_runtime_frames.tres`, the same
 generated resource the other canonical renderers share. The compatibility
 `ext_resource` is gone from `operator.tscn`.
@@ -23,6 +24,54 @@ open decisions 0   unresolved 0   cutover_ready true
 (`modular_sidearm_sprite`), R2 (`modular_upper_fx_sprite`), R3 (the modular body
 pair) and R4 (`animated_sprite`). The melee and weapon overlays are the remaining
 compatibility renderers.
+
+## R4.1 correctness patch
+
+Review of the integrated cutover found two runtime regressions R4 introduced and
+the suite could not see, because every existing attack test proved a phase
+*starts* and none proved it *ends*.
+
+**Unarmed fast windup stranded.** The visible clock finishes on a canonical
+identity (`unarmed/attack/fast_windup_01/<sector>/lower_body` under modular
+presentation), but the completion callback still matched the old compatibility
+prefix, so the strike phase never began. `_melee_fast_windup` stayed true,
+`_melee_active` false, `_melee_duration` zero, and `is_attack_state_complete()`
+refuses completion while the windup flag is set — no timer rescued it. Fixed
+with `_is_unarmed_fast_windup_identity()` / `_is_heavy_windup_identity()`, which
+match the *action* rather than a layer, sector or spelling, so completion is
+robust to which renderer owns the clock.
+
+**Armed heavy anticipation became direction-dependent.** `heavy_windup_01` is
+authored `s`-only, and before R4 it was a generic compatibility clip with no
+direction at all. Resolving it per-sector made every non-south heavy resolve
+empty and fall straight through to the active phase — a lost gameplay phase, not
+just missing art. `fast_recovery_01` has the same shape, costing body/weapon/FX
+presentation. Both now carry explicit `FULL_BODY_AUTHORED_SECTORS` policies
+projecting every sector onto the authored `s`. The selector is untouched.
+
+If those two families are conceptually directionless rather than south-facing,
+republishing them as OMNI is the better long-term fix — a pipeline/schema
+correction, not a runtime fallback.
+
+**The structural hole is closed, not just the two instances.** The projection
+gate only checked families someone had remembered to enumerate. It now audits
+every `FULL_BODY_IDENTITIES` entry against the generated catalog, requiring each
+to be OMNI, publish all eight sectors, carry a projection policy, or be recorded
+in `CALLER_CONSTRAINED_IDENTITIES` with a reason. That audit found four more
+sparse families — `shared/transition/dodge_01`, `ranged_2h/cosmetic/fire_walk_01`,
+`ranged_2h/locomotion/run_01`, `unarmed/attack/dodge_fast_attack_01` — all
+verified caller-constrained rather than broken, and now recorded as such.
+
+New gate `operator_attack_phase_cadence_smoke.gd` asserts the transitions
+themselves, per direction, driving the real completion signal with the real clock
+sprite. Negative-controlled: restoring the old predicate fails it, and removing
+the heavy projection fails it.
+
+The Knight test skin is knowingly left stale and documented at the code site. It
+publishes compatibility names while production asks for canonical identities, so
+its body does not present while enabled. Teaching production to fall back for a
+dev skin would reintroduce what R4 removed; deletion or canonicalisation is
+deferred to C2b. `knight_test_skin_enabled` defaults false.
 
 ## Integration notes
 

@@ -1172,6 +1172,23 @@ func _hide_custom_operator_visual_layers() -> void:
 		melee_fx_overlay_sprite.stop()
 
 
+## KNOWN STALE after C2a-R4; scheduled for C2b. Do not "fix" from production.
+##
+## This builds its own `SpriteFrames` under compatibility names (`idle_right`,
+## `unarmed_walk_right`, `melee_2h_heavy_anticipation`, `death`, ...) and swaps it
+## onto `animated_sprite`. Production playback now asks for canonical identities
+## such as `unarmed/locomotion/idle_01/e/full_body`, so while the skin is enabled
+## those requests find nothing and the body does not present. Gameplay is
+## unaffected; this is a dev-only visualisation.
+##
+## It is left stale deliberately. The alternative -- teaching production playback
+## to fall back to compatibility names when the bound resource lacks a canonical
+## identity -- would reintroduce exactly the fallback machinery C2a-R4 removed,
+## for the sake of a test skin. If the skin is still wanted, the fix belongs on
+## this side of the wall: publish the canonical identities it needs into its own
+## resource. Nothing here may mutate `OPERATOR_RUNTIME_FRAMES`.
+##
+## `knight_test_skin_enabled` defaults false, so nothing is broken by default.
 func _build_knight_test_frames() -> SpriteFrames:
 	var frames := SpriteFrames.new()
 	if frames.has_animation(&"default"):
@@ -4000,6 +4017,34 @@ const FULL_BODY_IDENTITIES := {
 #: action name cannot collide with these entries. When real full-body diagonals
 #: are authored, the entry becomes exact and then disappears.
 const FULL_BODY_AUTHORED_SECTORS := {
+	# Both armed families below are authored as a single `s` presentation. Before
+	# C2a-R4 they were generic compatibility clips with no direction at all, so
+	# resolving them per-sector made a gameplay phase direction-dependent: a
+	# non-south heavy skipped its anticipation entirely and went straight to the
+	# active phase. Projecting every sector onto the authored one restores the
+	# cadence without letting the selector guess. If these are conceptually
+	# directionless rather than south-facing, the real fix is republishing them as
+	# OMNI in the pipeline -- a schema correction, not a runtime fallback.
+	"melee_1h_heavy/attack/heavy_windup_01/full_body": {
+		&"n": &"s",
+		&"ne": &"s",
+		&"e": &"s",
+		&"se": &"s",
+		&"s": &"s",
+		&"sw": &"s",
+		&"w": &"s",
+		&"nw": &"s",
+	},
+	"melee_1h_heavy/attack/fast_recovery_01/full_body": {
+		&"n": &"s",
+		&"ne": &"s",
+		&"e": &"s",
+		&"se": &"s",
+		&"s": &"s",
+		&"sw": &"s",
+		&"w": &"s",
+		&"nw": &"s",
+	},
 	"unarmed/locomotion/idle_01/full_body": {
 		&"n": &"n",
 		&"ne": &"e",
@@ -12728,13 +12773,34 @@ func _on_operator_animation_finished(finished_sprite: AnimatedSprite2D = null) -
 		_update_primary_weapon_visual(false)
 		_update_animation()
 		return
-	if _melee_heavy_anticipating and (
-		finished_animation.begins_with("melee_1h_heavy/attack/heavy_windup_01/")
-		or finished_animation.begins_with("melee_2h_heavy_anticipation")
-	):
+	if _melee_heavy_anticipating and _is_heavy_windup_identity(finished_animation):
 		_begin_heavy_attack_active_phase()
-	if _melee_fast_windup and finished_animation.begins_with("unarmed_attack_fast_windup"):
+	if _melee_fast_windup and _is_unarmed_fast_windup_identity(finished_animation):
 		_begin_fast_attack_strike_phase()
+
+
+## Phase completion is matched on identity, not on one spelling of a name.
+##
+## The visible windup clock is whichever layer owns cadence. Under modular
+## presentation that is `modular_lower_body_sprite`, finishing
+## `unarmed/attack/fast_windup_01/<sector>/lower_body`; on the full-body path it
+## is `.../full_body`. A prefix test against the old compatibility name matched
+## neither after C2a-R4, which stranded the attack in windup: `_melee_fast_windup`
+## stays true, `_melee_active` stays false, `_melee_duration` is zero, and
+## `is_attack_state_complete()` refuses completion while the windup flag is set,
+## so there is no timer that rescues it.
+##
+## Matching the action rather than the layer or the sector is what makes this
+## robust to which renderer owns the clock. The compatibility arm goes away with
+## C2b.
+func _is_unarmed_fast_windup_identity(animation_name: String) -> bool:
+	return animation_name.contains("unarmed/attack/fast_windup_01/") \
+		or animation_name.begins_with("unarmed_attack_fast_windup")
+
+
+func _is_heavy_windup_identity(animation_name: String) -> bool:
+	return animation_name.contains("/attack/heavy_windup_01/") \
+		or animation_name.begins_with("melee_2h_heavy_anticipation")
 
 
 func _get_authored_melee_body_stance_animation() -> StringName:
