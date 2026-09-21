@@ -226,3 +226,41 @@ keys had already landed in `09cbe98de`, so the trap was armed.
 Nothing in Part C has been started, by design: the packet gates it on the
 migration being green, and tuning feel against a chain that does not yet present
 would be tuning noise.
+
+## Part C — feel pass (sequential)
+
+Tuned one parameter group at a time, with evidence between steps, so a bad
+setting cannot be hidden by compensating with another.
+
+### C1 — subtle Fists target assistance (done)
+
+The machinery already existed and was already correct: `melee_target_resolver.gd`
+gates on `target_assist_enabled`, rejects anything beyond `assist_reach` or
+outside `target_assist_cone_degrees`, and clamps the nudge to
+`target_aim_correction_degrees`. The Fists profiles simply never opted in, while
+the Vigil dagger did.
+
+    target_assist_enabled          true
+    target_acquire_extra_px        8
+    target_assist_cone_degrees     24
+    target_aim_correction_degrees  6
+    target_drive_bonus_max_px      0   (left at default; drive is C3)
+
+Applied to all four links. The drive bonus is deliberately left at zero so this
+step changes aim only -- the assist path can also extend attack drive, and mixing
+that in here would make C3 impossible to read.
+
+Measured in `combat/melee_soft_target_spacing`:
+
+| case | input error | correction applied |
+|---|---|---|
+| target off-axis at 63px | ~4.7 deg | **4.15 deg** (under the 6 deg clamp) |
+| target already aligned at 61px | 0 | **0.00 deg** |
+
+So it corrects a real aiming error and does nothing when none exists. Baseline
+control: with `target_assist_enabled = false` both corrections read `0.0`, which
+confirms the effect comes from this change rather than from pre-existing
+targeting.
+
+Gates: operator_melee_soft_targeting, operator_unarmed_fast_chain and
+operator_vigil_dagger green. Dagger values untouched.
