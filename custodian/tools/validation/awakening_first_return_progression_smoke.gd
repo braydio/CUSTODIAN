@@ -227,6 +227,9 @@ func _check_reveal_lifecycle_and_reset(awakening: Node) -> void:
 	await create_timer(2.1).timeout
 	if not bool(camera.call("has_presentation_framing")):
 		_fail("earlier reveal timeout cleared the newer reveal")
+	var expected_zoom: Vector2 = Layout.CAMERA_REVEALS[&"zone08_custodian_approach"]["zoom"] * awakening.CAMERA_ZOOM_SCALE
+	if not (camera.get("_presentation_zoom") as Vector2).is_equal_approx(expected_zoom):
+		_fail("Awakening reveal lost its authored pullback relative to local camera framing")
 	await create_timer(1.2).timeout
 	if bool(camera.call("has_presentation_framing")):
 		_fail("newer reveal did not release its framing")

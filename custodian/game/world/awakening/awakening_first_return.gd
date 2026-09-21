@@ -651,7 +651,7 @@ func play_camera_reveal(zone_id: StringName) -> bool:
 	if not camera_ref.has_method("set_presentation_framing_transition"): return false
 	_reveal_generation += 1
 	camera_ref.call("set_presentation_framing_transition",
-		reveal["offset"], reveal["zoom"], float(reveal["transition_sec"]))
+		reveal["offset"], (reveal["zoom"] as Vector2) * CAMERA_ZOOM_SCALE, float(reveal["transition_sec"]))
 	_release_reveal_after(float(reveal["transition_sec"]) + float(reveal["hold_sec"]))
 	return true
 

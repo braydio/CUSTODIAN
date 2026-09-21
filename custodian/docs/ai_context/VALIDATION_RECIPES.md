@@ -319,8 +319,9 @@ are validation authority.
 
 For the first five Awakening environment underlays, run
 `python3 custodian/tools/iteration/run_moment.py traversal/awakening_underlays_zones_01_05 --capture-mode full`.
-Its contact sheet reviews the Crèche through Dust Lung registrations and its
-stable assertions require production blockouts to yield while zones 06–09 retain theirs.
+Its contact sheet reviews the Crèche through Dust Lung registrations. Zones
+01–09 now have production underlay/foreground pairs, and production traversal
+blockout presentation is hidden while Layout traversal remains authoritative.
 
 For Meridian civic semantic native props and the physical-scale review fixture:
 
