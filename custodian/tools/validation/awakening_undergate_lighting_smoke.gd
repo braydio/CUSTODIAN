@@ -36,8 +36,11 @@ func _check_profiles() -> void:
 		_expect(profile != null, "an authored Awakening lighting profile failed to load")
 	_expect(_luminance(DUST.ambient_color) > _luminance(THRESHOLD.ambient_color), "Dust Lung must be brighter than the Undergate threshold")
 	_expect(_luminance(THRESHOLD.ambient_color) > _luminance(CORE.ambient_color), "Undergate threshold must be brighter than its core")
+	_expect(_luminance(THRESHOLD.ambient_color) < 0.26, "Undergate threshold ambient must remain near-black")
 	_expect(_luminance(CORE.ambient_color) > 0.05, "Undergate core ambient must remain non-black")
+	_expect(_luminance(CORE.ambient_color) < 0.16, "Undergate core ambient must remain flashlight-dominant")
 	_expect(_luminance(NORTH.ambient_color) > _luminance(CORE.ambient_color), "north threshold must lift above the core")
+	_expect(_luminance(NORTH.ambient_color) < 0.23, "north threshold ambient must remain inside the dark zone")
 	for profile in [BASELINE, DUST, THRESHOLD, CORE, NORTH]:
 		_expect(is_zero_approx(profile.environment_influence), "Awakening profiles must resist environment influence")
 		_expect(is_zero_approx(profile.weather_influence), "Awakening profiles must resist weather influence")
