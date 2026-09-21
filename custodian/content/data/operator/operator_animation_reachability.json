@@ -322,9 +322,8 @@
       "profile": "melee_1h_heavy",
       "group": "attack",
       "action": "fast_recovery_01",
-      "status": "LIVE",
-      "consumer": "operator._play_fast_attack_recovery (armed recovery)",
-      "migration_note": "Live since the C2a-R4 cutover, which replaced the legacy melee_2h_fast_recovery clip with this canonical identity."
+      "status": "DORMANT",
+      "reason": "C2a-R4 marked this LIVE through the generic armed branch of operator._play_fast_attack_recovery, which was too strong. That branch is only reached from _update_melee_attack when the fast-chain weapon is null or sets fast_chain_has_integrated_recovery = false, and both shipped melee weapons (sword_cleaver, vigil_pattern_dagger) set it true and author their own chain recovery. So no shipped loadout reaches this identity. The canonical art and the code path both remain; an armed melee weapon without integrated recovery would make it live again. Proven by operator_attack_phase_cadence, which asserts the integrated-recovery weapons complete a real fast attack without entering the generic recovery path."
     },
     {
       "profile": "melee_1h_heavy",

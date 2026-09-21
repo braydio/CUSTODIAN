@@ -56,7 +56,7 @@ func _run() -> void:
 
 	await _check_unarmed_fast_windup_completes(operator)
 	await _check_armed_heavy_anticipation_is_directional(operator)
-	await _check_armed_fast_recovery_is_directional(operator)
+	await _check_fast_recovery_paths(operator)
 
 	operator.queue_free()
 	if _failures.is_empty():
@@ -241,15 +241,34 @@ func _check_armed_heavy_anticipation_is_directional(operator: Node) -> void:
 		await process_frame
 
 
-func _check_armed_fast_recovery_is_directional(operator: Node) -> void:
-	## Recovery presentation must survive every facing. The body is canonical; the
-	## weapon and FX overlays are still compatibility-owned in R4 and must keep
-	## presenting rather than silently disappearing.
-	if not _check_armed_melee_selection(operator):
-		return
+func _check_fast_recovery_paths(operator: Node) -> void:
+	## Recovery, tested along the path each loadout actually takes.
+	##
+	## `_start_fast_attack_recovery()` runs only when the fast-chain weapon is null
+	## or lacks `fast_chain_has_integrated_recovery`. Both shipped melee weapons set
+	## it true, so an armed fast chain never reaches the generic recovery helper.
+	## Calling `_play_fast_attack_recovery()` directly after selecting Sword-Cleaver
+	## proved the helper can render something; it did not prove anything the game
+	## does. Worse, it asserted weapon and FX overlays that a Sword-Cleaver does not
+	## even publish -- its resources carry the fast-chain animations instead.
+	##
+	## So: the unarmed path, which genuinely uses the helper, is exercised
+	## end-to-end. Armed weapons are checked against the contract that skips it. If
+	## an armed weapon ever ships without integrated recovery, the else-branch below
+	## starts requiring the generic presentation for it, rather than this test
+	## silently continuing to pass.
+	_check_unarmed_fast_recovery_presents(operator)
+	_check_integrated_recovery_weapons_skip_generic(operator)
+
+
+func _check_unarmed_fast_recovery_presents(operator: Node) -> void:
+	operator.call("_apply_unarmed_selection")
+	await process_frame
+	_check(
+		bool(operator.get("using_unarmed")),
+		"unarmed selection should engage for the recovery check"
+	)
 	var body := operator.get("animated_sprite") as AnimatedSprite2D
-	var weapon_overlay := operator.get("melee_weapon_overlay_sprite") as AnimatedSprite2D
-	var fx_overlay := operator.get("melee_fx_overlay_sprite") as AnimatedSprite2D
 	for sector in CARDINALS:
 		var forward: Vector2 = CARDINALS[sector]
 		_reset_attack_state(operator)
@@ -262,23 +281,77 @@ func _check_armed_fast_recovery_is_directional(operator: Node) -> void:
 		operator.call("_play_fast_attack_recovery")
 		await process_frame
 
-		var presented := body != null and String(body.animation).contains("fast_recovery_01")
+		var clock := operator.call("_presentation_clock_sprite") as AnimatedSprite2D
+		var presented := clock != null and String(clock.animation).contains("fast_recovery_01")
 		_check(
 			presented,
-			("%s: armed fast recovery should present a canonical recovery body, got %s")
-				% [sector, "null body" if body == null else String(body.animation)]
+			"%s: unarmed fast recovery should present a canonical recovery, clock shows %s"
+				% [sector, "null" if clock == null else String(clock.animation)]
 		)
 		if presented:
-			_check(not body.flip_h, "%s: canonical recovery must not be mirrored" % sector)
-		_check(
-			weapon_overlay == null or weapon_overlay.visible
-				or String(weapon_overlay.animation).is_empty() == false,
-			"%s: the weapon overlay should still present during recovery" % sector
-		)
-		_check(
-			fx_overlay == null or fx_overlay.visible
-				or String(fx_overlay.animation).is_empty() == false,
-			"%s: the FX overlay should still present during recovery" % sector
-		)
+			_check(not clock.flip_h, "%s: canonical recovery must not be mirrored" % sector)
 		_reset_attack_state(operator)
 		await process_frame
+
+
+func _check_integrated_recovery_weapons_skip_generic(operator: Node) -> void:
+	var armed: Array = operator.get("armed_weapons")
+	if armed == null:
+		_failures.append("armed_weapons should exist")
+		return
+	var melee_seen := 0
+	for index in armed.size():
+		var profile = armed[index]
+		if profile == null or String(profile.weapon_kind) != "melee":
+			continue
+		melee_seen += 1
+		operator.call("_apply_armed_selection", index)
+		await process_frame
+		_reset_attack_state(operator)
+		operator.set("_melee_attack_kind", "fast")
+		operator.set("_buffered_attack_kind", "")
+
+		if bool(profile.fast_chain_has_integrated_recovery):
+			# Its own chain art carries the recovery, so the generic helper must not
+			# run. Drive a real fast attack to completion and watch the flag that
+			# `_start_fast_attack_recovery()` would have set.
+			operator.set("_melee_forward", Vector2.RIGHT)
+			operator.call("_try_melee_attack", "melee_fast")
+			await process_frame
+			# Without this the loop below can never run and the assertions pass
+			# vacuously, which is the same shape of hole this rewrite exists to fix.
+			_check(
+				bool(operator.get("_melee_active")),
+				"%s fast attack should actually start before recovery is judged"
+					% profile.weapon_id
+			)
+			var guard := 0
+			while bool(operator.get("_melee_active")) and guard < 240:
+				operator.call("_update_melee_attack", 0.05)
+				guard += 1
+			_check(
+				guard < 240,
+				"%s fast attack should complete within the guard window" % profile.weapon_id
+			)
+			_check(
+				not bool(operator.get("_melee_recovery_active")),
+				("%s integrates its own fast-chain recovery, so the generic recovery path "
+				+ "must not run for it") % profile.weapon_id
+			)
+		else:
+			# A weapon that does not integrate recovery must actually get one.
+			operator.set("_melee_forward", Vector2.RIGHT)
+			operator.set("_active_attack_profile", profile)
+			var body := operator.get("animated_sprite") as AnimatedSprite2D
+			if body != null:
+				body.animation = &""
+			operator.call("_play_fast_attack_recovery")
+			await process_frame
+			_check(
+				body != null and String(body.animation).contains("fast_recovery_01"),
+				"%s has no integrated recovery, so the generic recovery must present"
+					% profile.weapon_id
+			)
+		_reset_attack_state(operator)
+		await process_frame
+	_check(melee_seen > 0, "at least one melee weapon should be available to check")

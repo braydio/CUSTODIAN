@@ -1,7 +1,7 @@
 # Unarmed Posture Runtime
 
 Branch `unarmed-posture-runtime`, worktree `/home/braydenchaffee/Projects/CUSTODIAN-posture`,
-based on `main` at `96e225bec` (the integrated R4 tip).
+merge base `1febeae0a` on `main` (rebased as main advances).
 
 This file is overwritten each time the slice advances; it is not a changelog.
 
