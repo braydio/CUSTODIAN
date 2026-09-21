@@ -504,8 +504,10 @@ def main() -> int:
     expected = []
     for item in expanded:
         legacy_group = "core_locomotion" if item["action_group"] == "locomotion" else "fast_attack" if item["action"] == "fast_01" else item["group_id"]
-        actions = ("fast_windup_01", "fast_strike_01", "fast_recovery_01") if item["action"] == "fast_01" else (item["action"],)
-        for action in actions:
+        # Canonical `fast_01` stays `fast_01`. This used to expand it back into the
+        # retired windup/strike/recovery family, which told every future agent to
+        # recreate the three-clip design the Fists chain replaced.
+        for action in (item["action"],):
             expected.append(SimpleNamespace(
                 group=legacy_group, direction=item["direction"], layer=item["layer"],
                 loadout=item["animation_profile"], action=action, frames=1,

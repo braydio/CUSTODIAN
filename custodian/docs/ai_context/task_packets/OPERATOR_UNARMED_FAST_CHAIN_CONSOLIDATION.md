@@ -61,26 +61,21 @@ Two loadout facts that the gate forced into the open:
 
 ## Part B — verified asset facts
 
-The replacement art is already published. No Asset Pipeline V2 work is expected.
-Confirmed against `operator_runtime_manifest.generated.json`:
+The 2026-09-21 generated-art migration replaced the modular E/W body chain and
+added a terminal fourth link. Confirmed against
+`operator_runtime_manifest.generated.json`:
 
 ```
-unarmed/attack/fast_01/{e,w}/lower_body   9f
-unarmed/attack/fast_01/{e,w}/upper_body   9f
-unarmed/attack/fast_01/e/fx               3f      <-- asymmetric, see below
-unarmed/attack/fast_01/w/fx               9f
-unarmed/attack/fast_02/{e,w}/lower_body   7f
-unarmed/attack/fast_02/{e,w}/upper_body   7f
-unarmed/attack/fast_02/{e,w}/fx           7f
-unarmed/attack/fast_03/{e,w}/lower_body   8f
-unarmed/attack/fast_03/{e,w}/upper_body   8f
-unarmed/attack/fast_03/{e,w}/fx           8f
+unarmed/attack/fast_01/{e,w}/{lower_body,upper_body}   6f
+unarmed/attack/fast_02/{e,w}/{lower_body,upper_body}   6f
+unarmed/attack/fast_03/{e,w}/{lower_body,upper_body}   7f
+unarmed/attack/fast_04/{e,w}/{lower_body,upper_body}   8f
+unarmed/attack/fast_04/{e,w}/fx                       8f
 ```
 
-**Discrepancy found, not yet resolved:** `fast_01/e/fx` has 3 frames while
-`fast_01/w/fx` has 9. Every other layer pair in the family is symmetric. This is
-recorded rather than papered over; it needs a decision before FX is wired for
-Fast 01 (the east FX may be a truncated publication).
+Preserved Fast 01–03 FX and full-body variants remain compatibility/preservation
+art and are not selected by the four-link modular presentation. Only Fast 04's
+synchronized extracted flare is live in this chain.
 
 Fast 01 also carries preserved full-body variants (`e,w` 5f and `n,s` 6f) and
 four `fast_01_legacy_*` families. Those are preservation art. The modular E/W
@@ -105,11 +100,12 @@ satisfies the packet's actual intent: do not guess contact from filenames. Per
 frame, the opaque pixel count and the forward reach of the silhouette both peak
 on the contact frame, and they agree.
 
-| link | frames | contact | peak reach | queue open | queue close | commit |
-|---|---|---|---|---|---|---|
-| fast_01 | 9 | **5** | 80 px | 5 | 8 | 5 |
-| fast_02 | 7 | **5** | 75 px | 5 | 6 | 5 |
-| fast_03 | 8 | **6** | 82 px | 6 | 7 (terminal) | 6 |
+| link | frames | contact | queue open | queue close | commit |
+|---|---|---|---|---|---|
+| fast_01 | 6 | **4** | 3 | 4 | 3 |
+| fast_02 | 6 | **4** | 3 | 4 | 3 |
+| fast_03 | 7 | **4** | 3 | 5 | 3 |
+| fast_04 | 8 | **5** | 4 | 7 (terminal) | 4 |
 
 East and west measure identically to within one pixel, confirming separately
 authored but symmetric strips — consistent with `flip_h = false` and never
@@ -162,28 +158,27 @@ play sword audio. `_weapon_emits_blade_swing_sfx()` tests the weapon's semantic
 kind rather than a clip name. This was urgent rather than optional: the chain
 keys had already landed in `09cbe98de`, so the trap was armed.
 
-## Remaining work
+## Current runtime integration
 
-Runtime presentation is the big one and is **not** started:
-
-- `_sync_unarmed_fast_chain_action()` resolving through
+- `_sync_unarmed_fast_chain_action()` resolves through
   `OperatorAnimationSelector`, caller-owned E/W projection, `flip_h = false`,
   claiming `MODULAR_BODY`, starting lower/upper together.
-- Route Fists link starts onto it, once per link, with playback scale derived
-  from authored over target duration (1.63 / 1.39 / 1.28).
+- Fists links use data-authored presentation targets of 0.42 / 0.42 / 0.42 /
+  0.50 seconds; Fast 04 reaches its visible terminal recovery.
 - Remove unarmed-specific phase choreography once the chain presents; keep
   `_melee_fast_windup` (Vigil still uses it) and the generic non-integrated
   recovery capability.
-- Fast 01 FX: resolve or defer the 3f east / 9f west asymmetry. Do not wire it
-  until then, and never stretch, repeat or mirror to fake parity.
+- Fast 01–03 preservation FX are deliberately not wired. Fast 04 owns the only
+  synchronized FX strip in the replacement family.
 - Reachability: Fast 01/02/03 genuinely LIVE, windup/strike/recovery SUPERSEDED.
 - Tooling drift: `operator_next_actions_report.py` phase expansion,
   `refresh_combo_check_src.sh`, active preview docs.
 - Design docs: `OPERATOR_MELEE_CONTACT_TIMING_AND_CADENCE.md`,
   `COMBAT_FEEL_SYSTEM.md`, `COMBAT_FEEL_UPGRADE.md`, `CURRENT_STATE.md`,
   `FILE_INDEX.md`.
-- `operator_unarmed_fast_chain_smoke.gd`, the 23 acceptance points, and the
-  negative controls.
+- `operator_unarmed_fast_chain_smoke.gd` proves four-link ordering, terminal
+  behavior, E/W authored identities, no runtime flip, synchronized clocks, and
+  the 6/6/7/8 frame contract.
 - Part C feel work, which is explicitly gated on B being mechanically green.
 
 Nothing in Part C has been started, by design: the packet gates it on the

@@ -165,7 +165,12 @@ class SourceArtService:
         return result
 
     def plan_normalization(
-        self, session_path: Path | str, *, anchor: str = "feet", method: str = "balanced"
+        self,
+        session_path: Path | str,
+        *,
+        anchor: str = "feet",
+        method: str = "balanced",
+        global_scale: float | None = None,
     ) -> dict[str, Any]:
         session, root, path = self.load(session_path)
         analysis_path = root / "analysis.json"
@@ -174,7 +179,13 @@ class SourceArtService:
         analysis = json.loads(analysis_path.read_text(encoding="utf-8"))
         if analysis.get("source_sha256") != session.source_sha256:
             raise model.WorkbenchError("analysis belongs to a different source")
-        plan = build_plan(session=session, analysis=analysis, method=method, anchor=anchor)
+        plan = build_plan(
+            session=session,
+            analysis=analysis,
+            method=method,
+            anchor=anchor,
+            global_scale=global_scale,
+        )
         write_json(root / "normalization_plan.json", plan.to_json())
         session.state = "PLANNED"
         self.save(path, session)
@@ -230,6 +241,24 @@ class SourceArtService:
                 )
                 output = root / "candidates" / f"{method}.png"
                 convert_sheet_request(request).save(output)
+                if session.geometry.rows > 1:
+                    with Image.open(output) as gridded:
+                        horizontal = Image.new(
+                            "RGBA",
+                            (session.geometry.frame_count * session.target_width, session.target_height),
+                            (0, 0, 0, 0),
+                        )
+                        for index in range(session.geometry.frame_count):
+                            column = index % session.geometry.columns
+                            row = index // session.geometry.columns
+                            frame = gridded.crop((
+                                column * session.target_width,
+                                row * session.target_height,
+                                (column + 1) * session.target_width,
+                                (row + 1) * session.target_height,
+                            ))
+                            horizontal.alpha_composite(frame, (index * session.target_width, 0))
+                    horizontal.save(output)
                 outputs[method] = str(output.resolve())
         except ValueError as error:
             raise model.WorkbenchError(str(error)) from error

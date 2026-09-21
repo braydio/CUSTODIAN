@@ -28,7 +28,9 @@ for anim in idle_01 run_01 walk_01; do
 done
 
 # ── Lower body from source modular (fast actions) ──
-for anim in fast_strike_01 fast_windup_01 fast_recovery_01; do
+# Fists now presents the authored fast_01..fast_04 chain; the windup/strike/
+# recovery family it replaced is preservation art with no runtime consumer.
+for anim in fast_01 fast_02 fast_03 fast_04; do
     for f in "$NEW_OP/modular/fast_attack"/*modular_lower_body*.png; do
         [ -f "$f" ] || continue
         base=$(basename "$f")
@@ -45,8 +47,8 @@ for anim in idle_01 run_01 walk_01; do
     done
 done
 
-# ── Upper body fast-attack phases from generated runtime actions ──
-for anim in fast_windup_01 fast_strike_01 fast_recovery_01; do
+# ── Upper body fast-attack links from generated runtime actions ──
+for anim in fast_01 fast_02 fast_03 fast_04; do
     for f in "$RUNTIME_MOD/upper_body/actions/unarmed/fast_attack/$anim"/*.png; do
         [ -f "$f" ] || continue
         link_upper "$f" "$(basename "$f")"

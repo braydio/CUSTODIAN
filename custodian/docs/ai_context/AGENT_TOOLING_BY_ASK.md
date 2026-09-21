@@ -83,7 +83,7 @@ Use when the ask is "show this Operator action/sequence from the generated runti
 
 ```bash
 python custodian/tools/pipelines/operator_action_preview.py --loadout unarmed --action block_loop_01 --directions e,w --include-fx
-python custodian/tools/pipelines/operator_action_preview.py --loadout unarmed --sequence fast_windup_01,fast_strike_01,fast_recovery_01 --include-fx
+python custodian/tools/pipelines/operator_action_preview.py --loadout unarmed --sequence fast_01,fast_02,fast_03,fast_04 --include-fx
 ```
 
 What it does:
@@ -171,7 +171,7 @@ python3 custodian/tools/operator/modular_combo_check.py \
   --fit-debug \
   --fit-gap-threshold 3 \
   --fit-center-threshold 5 \
-  --chain fast_windup_01,fast_strike_01,fast_recovery_01 \
+  --chain fast_01,fast_02,fast_03,fast_04 \
   --next-actions \
   --next-actions-max 20
 ```

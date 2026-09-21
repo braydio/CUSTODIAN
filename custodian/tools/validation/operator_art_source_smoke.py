@@ -31,6 +31,19 @@ def make_source(path: Path) -> None:
     sheet.save(path)
 
 
+def make_grid_source(path: Path) -> None:
+    sheet = Image.new("RGBA", (512, 512), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(sheet)
+    colors = ((255, 0, 0, 255), (0, 255, 0, 255), (0, 0, 255, 255))
+    for index, color in enumerate(colors):
+        column = index % 2
+        row = index // 2
+        left = column * 256 + 64
+        top = row * 256 + 64
+        draw.rectangle((left, top, left + 127, top + 127), fill=color)
+    sheet.save(path)
+
+
 def main() -> int:
     with tempfile.TemporaryDirectory(prefix="operator-art-source-smoke-") as temp:
         root = Path(temp)
@@ -55,6 +68,34 @@ def main() -> int:
         for registration in plan.registrations:
             payload = asdict(registration)
             assert "scale" not in payload and "width" not in payload and "height" not in payload
+
+        reviewed_scale = plan.global_scale * 0.9
+        reviewed_payload = service.plan_normalization(
+            session,
+            anchor="feet",
+            method="balanced",
+            global_scale=reviewed_scale,
+        )
+        reviewed_plan = NormalizationPlan.from_json(reviewed_payload)
+        assert reviewed_plan.global_scale == reviewed_scale
+        assert reviewed_plan.destination_x > plan.destination_x
+        assert reviewed_plan.destination_y > plan.destination_y
+        try:
+            service.plan_normalization(
+                session,
+                anchor="feet",
+                method="balanced",
+                global_scale=plan.global_scale * 1.01,
+            )
+            raise AssertionError("clipping-unsafe reviewed scale was accepted")
+        except model.WorkbenchError as error:
+            assert "clipping-safe contain scale" in str(error)
+        service.plan_normalization(
+            session,
+            anchor="feet",
+            method="balanced",
+            global_scale=reviewed_scale,
+        )
         converted = service.convert(session)
         assert set(converted["candidates"]) == {"crisp", "balanced", "clustered"}
         for candidate in converted["candidates"].values():
@@ -70,6 +111,23 @@ def main() -> int:
         handoff = service.handoff(session, destination_name="operator__test__walk_01__e__2f__96.png")
         assert handoff["status"] == "READY_FOR_INGEST" and Path(handoff["candidate"]).exists()
         assert source.read_bytes() == original
+
+        grid_source = allowed / "highres_grid_3f.png"
+        make_grid_source(grid_source)
+        grid_session = service.start(
+            source_path=grid_source,
+            frames=3,
+            columns=2,
+            rows=2,
+            target_size=96,
+        )
+        service.analyze(grid_session)
+        service.plan_normalization(grid_session)
+        grid_result = service.convert(grid_session)
+        with Image.open(grid_result["registered"]).convert("RGBA") as grid_candidate:
+            assert grid_candidate.size == (288, 96)
+            sampled = [grid_candidate.getpixel((index * 96 + 48, 48))[:3] for index in range(3)]
+            assert sampled == [(255, 0, 0), (0, 255, 0), (0, 0, 255)], sampled
 
         outside = root / "outside.png"
         make_source(outside)

@@ -653,9 +653,16 @@
     {
       "profile": "unarmed",
       "group": "attack",
-      "action": "fast_recovery_01",
+      "action": "fast_04",
       "status": "LIVE",
-      "consumer": "operator unarmed_fast_recovery_lower/upper",
+      "consumer": "operator._sync_unarmed_fast_chain_action (terminal link of the Fists fast chain)",
+      "migration_note": "Fourth and terminal link of the canonical unarmed fast chain. Authored e/w only at 8 frames; the caller projects the presentation sector east/west while gameplay direction is untouched, and playback scale derives from the chain's authored presentation duration. Proven live by operator_unarmed_fast_chain and by the combat/unarmed_four_link_confirmed Moment Forge capture, which records four melee contacts."
+    },
+    {
+      "profile": "unarmed",
+      "group": "attack",
+      "action": "fast_recovery_01",
+      "status": "SUPERSEDED",
       "legacy_clips": [
         "unarmed_attack_fast_recovery",
         "unarmed_attack_fast_recovery_fx",
@@ -669,7 +676,9 @@
         "unarmed_fast_recovery": "A",
         "unarmed_fast_recovery_lower": "C",
         "unarmed_fast_recovery_upper": "C"
-      }
+      },
+      "replacement": "unarmed/attack/fast_01",
+      "migration_note": "Superseded by the authored Fists fast chain. `fast_01`..`fast_04` each contain their own windup, contact, follow-through and recovery, so ordinary unarmed attacks no longer sequence separate phase clips: `_try_start_fast_attack_windup()` is skipped for any weapon with an authored chain. The separate-phase path survives as a generic capability for profiles that declare no chain, and the art is preserved rather than purged."
     },
     {
       "profile": "unarmed",
@@ -683,8 +692,7 @@
       "profile": "unarmed",
       "group": "attack",
       "action": "fast_strike_01",
-      "status": "LIVE",
-      "consumer": "operator unarmed_fast_strike_lower/upper/fx_modular",
+      "status": "SUPERSEDED",
       "legacy_clips": [
         "unarmed_attack_fast_strike",
         "unarmed_fast_strike",
@@ -698,7 +706,9 @@
         "unarmed_fast_strike_fx_modular": "C",
         "unarmed_fast_strike_lower": "C",
         "unarmed_fast_strike_upper": "C"
-      }
+      },
+      "replacement": "unarmed/attack/fast_01",
+      "migration_note": "Superseded by the authored Fists fast chain. `fast_01`..`fast_04` each contain their own windup, contact, follow-through and recovery, so ordinary unarmed attacks no longer sequence separate phase clips: `_try_start_fast_attack_windup()` is skipped for any weapon with an authored chain. The separate-phase path survives as a generic capability for profiles that declare no chain, and the art is preserved rather than purged."
     },
     {
       "profile": "unarmed",
@@ -727,8 +737,7 @@
       "profile": "unarmed",
       "group": "attack",
       "action": "fast_windup_01",
-      "status": "LIVE",
-      "consumer": "operator unarmed_fast_windup_lower/upper",
+      "status": "SUPERSEDED",
       "legacy_clips": [
         "unarmed_attack_fast_windup",
         "unarmed_fast_windup",
@@ -740,7 +749,9 @@
         "unarmed_fast_windup": "A",
         "unarmed_fast_windup_lower": "C",
         "unarmed_fast_windup_upper": "C"
-      }
+      },
+      "replacement": "unarmed/attack/fast_01",
+      "migration_note": "Superseded by the authored Fists fast chain. `fast_01`..`fast_04` each contain their own windup, contact, follow-through and recovery, so ordinary unarmed attacks no longer sequence separate phase clips: `_try_start_fast_attack_windup()` is skipped for any weapon with an authored chain. The separate-phase path survives as a generic capability for profiles that declare no chain, and the art is preserved rather than purged."
     },
     {
       "profile": "unarmed",

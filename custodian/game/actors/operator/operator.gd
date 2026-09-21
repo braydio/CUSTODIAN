@@ -2673,6 +2673,8 @@ func _sync_modular_action_domains() -> bool:
 		return false
 	if modular_lower_body_sprite.sprite_frames == null or modular_upper_body_sprite.sprite_frames == null:
 		return false
+	if _sync_unarmed_fast_chain_action():
+		return true
 	if _can_present_modular_fast_attack_phase(&"strike"):
 		_declare_modular_body_composition()
 		if _sync_modular_fast_attack_phase(&"strike"):
@@ -2684,6 +2686,57 @@ func _sync_modular_action_domains() -> bool:
 	if not _sync_modular_upper_body_layer("unarmed_fast_strike_upper", _melee_forward, _get_melee_animation_speed_scale(_melee_attack_key), true):
 		return false
 
+	_claim_modular_body_owner()
+	return true
+
+
+## Presents the authored unarmed combo link as one synchronized modular clock.
+## The caller owns directional projection: this family is authored E/W only.
+func _sync_unarmed_fast_chain_action() -> bool:
+	var profile := _active_melee_attack_profile
+	if profile == null or profile.presentation_action.is_empty():
+		return false
+	var action := profile.presentation_action
+	if not String(action).begins_with("fast_0"):
+		return false
+	var sector: StringName = &"w" if _melee_forward.x < 0.0 else &"e"
+	var selector = _get_operator_animation_selector()
+	for layer: StringName in [&"lower_body", &"upper_body"]:
+		if not selector.has_sector_identity(&"unarmed", &"attack", action, sector, layer):
+			return false
+	var lower_animation: StringName = selector.resolve_sector(
+		&"unarmed", &"attack", action, sector, &"lower_body"
+	)
+	var upper_animation: StringName = selector.resolve_sector(
+		&"unarmed", &"attack", action, sector, &"upper_body"
+	)
+	if not _has_playable_sprite_animation(modular_lower_body_sprite.sprite_frames, lower_animation):
+		return false
+	if not _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, upper_animation):
+		return false
+	var speed := _get_melee_animation_speed_scale(_melee_attack_key)
+	_declare_modular_body_composition()
+	_show_body_layer(modular_lower_body_sprite)
+	_show_body_layer(modular_upper_body_sprite)
+	for sprite: AnimatedSprite2D in [modular_lower_body_sprite, modular_upper_body_sprite]:
+		sprite.flip_h = false
+		sprite.speed_scale = speed
+	var restart: bool = modular_lower_body_sprite.animation != lower_animation
+	if restart:
+		_animation_player.play(modular_lower_body_sprite, lower_animation)
+		_animation_player.play(modular_upper_body_sprite, upper_animation)
+	elif modular_upper_body_sprite.animation != upper_animation:
+		_animation_player.play(modular_upper_body_sprite, upper_animation)
+	_modular_lower_action_animation = lower_animation
+	_modular_upper_action_animation = upper_animation
+	_modular_upper_fx_action_animation = &""
+	if action == &"fast_04" \
+	and selector.has_sector_identity(&"unarmed", &"attack", action, sector, &"fx"):
+		_play_optional_fx(&"unarmed", &"attack", action, sector, speed)
+	elif modular_upper_fx_sprite != null:
+		_hide_presentation_layer(modular_upper_fx_sprite, true)
+	_hide_modular_head_layer()
+	_hide_modular_cape_layer()
 	_claim_modular_body_owner()
 	return true
 
@@ -6467,6 +6520,15 @@ func _get_fast_chain_stamina_cost_for_step(step: int) -> float:
 	return float(weapon.fast_chain_stamina_costs[step])
 
 
+func _get_fast_chain_presentation_duration(fallback: float) -> float:
+	var weapon := _get_fast_chain_weapon()
+	if weapon == null \
+	or _melee_fast_combo_step < 0 \
+	or _melee_fast_combo_step >= weapon.fast_chain_presentation_durations.size():
+		return fallback
+	return maxf(0.01, float(weapon.fast_chain_presentation_durations[_melee_fast_combo_step]))
+
+
 func _get_fast_chain_stamina_cost() -> float:
 	return _get_fast_chain_stamina_cost_for_step(
 		_melee_fast_combo_step
@@ -6772,8 +6834,16 @@ func _start_fast_attack() -> void:
 	else:
 		_configure_melee_hitbox(melee_fast_hit_damage, melee_range, melee_arc_degrees)
 
-	# Try windup phase for unarmed fast attacks (skip for melee weapons)
-	if is_unarmed_attack and not skip_windup_from_dodge and _try_start_fast_attack_windup():
+	# Windup is a phase of the authored strip, not a clip that precedes it.
+	#
+	# `fast_01`..`fast_04` each contain their own windup, contact, follow-through
+	# and recovery, so a weapon with an authored chain must not first play the
+	# retired `fast_windup_01` clip -- doing so prepends a second anticipation and
+	# delays contact past the tuned presentation duration. The separate-clip path
+	# below stays for profiles that still have no authored chain.
+	if is_unarmed_attack and not skip_windup_from_dodge \
+	and not _has_authored_fast_chain() \
+	and _try_start_fast_attack_windup():
 		return
 	if is_unarmed_attack and skip_windup_from_dodge:
 		_obs_increment(&"player_fast_attacks_from_dodge_recovery")
@@ -6894,7 +6964,10 @@ func _begin_fast_attack_strike_phase() -> void:
 	if attack_profile != null:
 		_configure_melee_hitbox(attack_profile.damage, attack_profile.range_px, attack_profile.arc_degrees)
 		_play_melee_anim_from_key(_melee_attack_key, attack_profile.fallback_animation)
-		_melee_duration = _get_current_melee_animation_duration(attack_profile.active_sec + attack_profile.recovery_sec, 0.24, 0.42)
+		var authored_target := _get_fast_chain_presentation_duration(0.42)
+		_melee_duration = _get_current_melee_animation_duration(
+			authored_target, 0.24, authored_target
+		)
 	else:
 		_configure_melee_hitbox(melee_fast_hit_damage, melee_range, melee_arc_degrees)
 		_play_melee_anim_from_key(_melee_attack_key, &"unarmed_attack_fast")
@@ -8640,6 +8713,22 @@ func _has_playable_sprite_animation(sprite_frames: SpriteFrames, animation_name:
 func _get_melee_animation_speed_scale(attack_key: String) -> float:
 	if _has_authored_fast_chain() \
 	and _get_fast_chain_keys().has(attack_key):
+		var weapon := _get_fast_chain_weapon()
+		var step := _get_fast_chain_keys().find(attack_key)
+		if weapon != null \
+		and step >= 0 \
+		and step < weapon.fast_chain_presentation_durations.size():
+			var target := float(weapon.fast_chain_presentation_durations[step])
+			var profile := _active_melee_attack_profile
+			if target > 0.0 and profile != null:
+				var sector: StringName = &"w" if _melee_forward.x < 0.0 else &"e"
+				var animation: StringName = _get_operator_animation_selector().resolve_sector(
+					&"unarmed", &"attack", profile.presentation_action, sector, &"lower_body"
+				)
+				if _has_playable_sprite_animation(modular_lower_body_sprite.sprite_frames, animation):
+					var frames: int = modular_lower_body_sprite.sprite_frames.get_frame_count(animation)
+					var fps: float = modular_lower_body_sprite.sprite_frames.get_animation_speed(animation)
+					return maxf(0.1, float(frames) / (fps * target))
 		return 1.0
 	if attack_key.begins_with("melee_fast") or attack_key.begins_with("unarmed_fast"):
 		return max(0.1, melee_fast_animation_speed_scale)

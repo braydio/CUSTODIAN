@@ -127,6 +127,7 @@ _TOOL_SPECS: dict[str, dict[str, tuple[dict[str, Any], bool]]] = {
         "session": (_STRING, True),
         "anchor": ({"type": "string", "enum": ["feet", "center", "top-center", "bottom-center"], "default": "feet"}, False),
         "method": ({"type": "string", "enum": ["crisp", "balanced", "clustered"], "default": "balanced"}, False),
+        "global_scale": ({"type": "number", "exclusiveMinimum": 0}, False),
     },
     "operator_art_source_set_registration": {
         "session": (_STRING, True),

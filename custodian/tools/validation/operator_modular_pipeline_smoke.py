@@ -98,6 +98,16 @@ def main() -> int:
         assert catalog["animations"]["melee_1h/posture/draw_01/e"]["timing"]["durations"] == durations
         assert "timing" not in payload["animations"]["melee_1h/attack/fast_01/e"], "missing sidecar must preserve legacy timing"
 
+        catalog["animations"]["melee_1h/posture/draw_01/e"]["layers"]["fx"] = {
+            "path": "res://deleted_fx.png", "frames": 4, "frame_size": [128, 96]
+        }
+        catalog_path.write_text(json.dumps(catalog))
+        builder.sync(source_root=source, project_root=root, manifest_path=manifest_path,
+                     weapons_root=root / "weapons", strict=True)
+        catalog = json.loads(catalog_path.read_text())
+        assert "fx" not in catalog["animations"]["melee_1h/posture/draw_01/e"]["layers"], \
+            "catalog must prune layers retired from a live semantic identity"
+
         _write_timing(upper, 4, [1.0, 1.0, 1.0, 1.0])
         try:
             builder.sync(source_root=source, project_root=root, manifest_path=manifest_path,

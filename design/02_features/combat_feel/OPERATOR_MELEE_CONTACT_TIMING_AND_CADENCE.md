@@ -431,6 +431,13 @@ python3 custodian/tools/validation/run_validation.py --changed --json
 
 ### Moment Forge
 
+**Fists four-link fast chain (2026-09-21):** the live modular E/W presentation
+uses 6/6/7/8 frames for Fast 01–04. Reviewed authored contacts are frames
+4/4/4/5 (runtime indices 3/3/3/4). Queue windows are 3–4, 3–4, 3–5, and 4–7;
+Fast 04 is terminal, never loops, and owns a 0.50-second presentation target so
+its final guarded recovery remains visible. Fast 01–03 retain their existing
+non-timing balance values; Fast 04 begins from Fast 03's non-timing baseline.
+
 Because acceptance depends on timing, displacement, animation, VFX/SFX, and impact feel:
 
 ```bash

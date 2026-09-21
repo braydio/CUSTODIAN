@@ -125,6 +125,7 @@ def configure_art_parser(parser: argparse.ArgumentParser) -> None:
     source_plan.add_argument("session", type=Path)
     source_plan.add_argument("--anchor", choices=("feet", "center", "top-center", "bottom-center"), default="feet")
     source_plan.add_argument("--method", choices=("crisp", "balanced", "clustered"), default="balanced")
+    source_plan.add_argument("--global-scale", type=float)
     source_plan.add_argument("--json", action="store_true")
     source_register = commands.add_parser("source-register")
     source_register.add_argument("session", type=Path)
@@ -221,7 +222,12 @@ def dispatch_art_command(args: argparse.Namespace) -> int:
                 result = {"session": str(source.start(source_path=args.source, frames=args.frames, columns=args.columns, rows=args.rows, target_size=args.target_size))}
             elif command == "source-status": result = source.status(args.session)
             elif command == "source-analyze": result = source.analyze(args.session)
-            elif command == "source-plan": result = source.plan_normalization(args.session, anchor=args.anchor, method=args.method)
+            elif command == "source-plan": result = source.plan_normalization(
+                args.session,
+                anchor=args.anchor,
+                method=args.method,
+                global_scale=args.global_scale,
+            )
             elif command == "source-register": result = source.set_frame_registration(args.session, frame=args.frame, dx=args.dx, dy=args.dy)
             elif command == "source-convert": result = source.convert(args.session)
             elif command == "source-review": result = source.review(args.session)

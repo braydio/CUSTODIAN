@@ -1,0 +1,23 @@
+{
+  "source": "operator__fx__unarmed__attack__fast_04__e__8f__96.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "operator/source/animations/unarmed/attack/fast_04/operator__fx__unarmed__attack__fast_04__e__8f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 8
+      }
+    }
+  ],
+  "post_process": [
+    "operator_runtime_build"
+  ],
+  "frame_size": [
+    96,
+    96
+  ],
+  "remove_superseded": true
+}

@@ -6,6 +6,7 @@
 [ext_resource type="Resource" path="res://game/actors/operator/attacks/unarmed_fast_02.tres" id="4_unarmed_fast_02"]
 [ext_resource type="Resource" path="res://game/actors/operator/attacks/unarmed_fast_03.tres" id="5_unarmed_fast_03"]
 [ext_resource type="Script" uid="uid://7lgg1qag2suc" path="res://game/systems/combat/melee_attack_profile.gd" id="6_profile_script"]
+[ext_resource type="Resource" path="res://game/actors/operator/attacks/unarmed_fast_04.tres" id="7_unarmed_fast_04"]
 
 [resource]
 script = ExtResource("1_weapon_definition")
@@ -90,11 +91,12 @@ damage_multiplier = 0.65
 stagger_multiplier = 0.55
 fast_attack_profile = ExtResource("2_unarmed_fast")
 heavy_attack_profile = ExtResource("3_unarmed_heavy")
-fast_chain_keys = PackedStringArray("unarmed_fast_01", "unarmed_fast_02", "unarmed_fast_03")
-fast_chain_attack_profiles = Array[ExtResource("6_profile_script")]([ExtResource("2_unarmed_fast"), ExtResource("4_unarmed_fast_02"), ExtResource("5_unarmed_fast_03")])
-fast_chain_queue_open_frames = PackedInt32Array(5, 5, 6)
-fast_chain_queue_close_frames = PackedInt32Array(8, 6, 7)
-fast_chain_commit_frames = PackedInt32Array(5, 5, 6)
-fast_chain_stamina_costs = PackedFloat32Array(0, 0, 0)
+fast_chain_keys = PackedStringArray("unarmed_fast_01", "unarmed_fast_02", "unarmed_fast_03", "unarmed_fast_04")
+fast_chain_attack_profiles = Array[ExtResource("6_profile_script")]([ExtResource("2_unarmed_fast"), ExtResource("4_unarmed_fast_02"), ExtResource("5_unarmed_fast_03"), ExtResource("7_unarmed_fast_04")])
+fast_chain_queue_open_frames = PackedInt32Array(2, 2, 2, 4)
+fast_chain_queue_close_frames = PackedInt32Array(4, 4, 5, 7)
+fast_chain_commit_frames = PackedInt32Array(3, 3, 3, 4)
+fast_chain_presentation_durations = PackedFloat32Array(0.3, 0.32, 0.37, 0.52)
+fast_chain_stamina_costs = PackedFloat32Array(0, 0, 0, 0)
 fast_chain_loops = false
 fast_chain_has_integrated_recovery = true

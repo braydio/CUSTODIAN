@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="MeleeAttackProfile" format=3]
+
+[ext_resource type="Script" path="res://game/systems/combat/melee_attack_profile.gd" id="1_profile"]
+
+[resource]
+script = ExtResource("1_profile")
+attack_id = &"unarmed_fast_04"
+attack_kind = "fast"
+damage = 10.0
+range_px = 64.0
+arc_degrees = 72.0
+knockback_force = 56.0
+windup_sec = 0.08
+active_sec = 0.12
+recovery_sec = 0.16
+cooldown_sec = 0.52
+cancel_start_sec = 0.30
+movement_profile = "mobile"
+startup_move_mult = 0.88
+active_move_mult = 0.68
+recovery_move_mult = 0.9
+turn_locked = false
+hit_stop_scale = 0.86
+hit_stop_duration = 0.05
+camera_shake_power = 2.2
+presentation_action = &"fast_04"
+hit_window_frames = PackedInt32Array(4)

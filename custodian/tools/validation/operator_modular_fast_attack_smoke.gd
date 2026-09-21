@@ -1,4 +1,16 @@
 extends SceneTree
+## Modular fast-attack coverage that survives the Fists chain migration.
+##
+## `_validate_runtime_phase_playback()` was removed here: it asserted the
+## `fast_windup_01` / `fast_strike_01` / `fast_recovery_01` family that ordinary
+## unarmed attacks no longer present. Fists now plays the authored
+## `fast_01`..`fast_04` links, each containing its own windup and recovery, and
+## `operator_unarmed_fast_chain_smoke.gd` owns that contract.
+##
+## What remains is still real and is not covered there: SpriteFrames agreeing
+## with the published PNGs, roll-exit ingest registration, the fast-attack
+## entrypoints, and unarmed contact VFX. Two suites asserting incompatible
+## runtime contracts would be worse than one narrower suite.
 
 const OPERATOR_SCENE := preload("res://game/actors/operator/operator.tscn")
 
@@ -48,7 +60,6 @@ func _run() -> void:
 
 	_validate_spriteframes_match_existing_runtime_pngs()
 	_validate_roll_exit_ingest_registration()
-	_validate_runtime_phase_playback(operator)
 	_validate_fast_attack_entry_points(operator)
 	_validate_unarmed_contact_vfx(operator, root)
 
@@ -84,32 +95,6 @@ func _validate_spriteframes_match_existing_runtime_pngs() -> void:
 			_assert_playable(frames, animation, "%s %s %s should be registered" % [layer, action, dir])
 			if bool(_directions[dir].get("alias_base", false)):
 				_assert_playable(frames, StringName(base), "%s %s base alias should be registered" % [layer, action])
-
-
-func _validate_runtime_phase_playback(operator: Node) -> void:
-	operator.set("modular_locomotion_layers_enabled", true)
-	operator.set("using_unarmed", true)
-	operator.set("combat_loadout_mode", "melee")
-	operator.set("primary_weapon_equipped", false)
-	operator.set("_melee_attack_key", "unarmed_fast_1")
-	# This drives the low-level phase helper directly rather than an entrypoint,
-	# so it establishes the owner a transition would have declared. Real
-	# entrypoints acquire the body themselves and need no scaffolding.
-	operator.call("_declare_modular_body_composition")
-	for dir in _directions.keys():
-		operator.set("_melee_forward", _directions[dir]["vector"])
-		_assert_true(bool(operator.call("_sync_modular_fast_attack_phase", &"windup")), "windup should play modular body for %s" % dir)
-		_assert_layer_animation(operator, "modular_lower_body_sprite", "unarmed_fast_windup_lower", dir)
-		_assert_layer_animation(operator, "modular_upper_body_sprite", "unarmed_fast_windup_upper", dir)
-		_assert_true(bool(operator.call("_sync_modular_fast_attack_phase", &"strike")), "strike should play modular body for %s" % dir)
-		_assert_layer_animation(operator, "modular_lower_body_sprite", "unarmed_fast_strike_lower", dir)
-		_assert_layer_animation(operator, "modular_upper_body_sprite", "unarmed_fast_strike_upper", dir)
-		if FileAccess.file_exists(_runtime_png_path("upper_fx", "fast_strike_01", dir)):
-			_assert_canonical_fx(operator, "fast_strike_01", dir)
-		_assert_true(bool(operator.call("_sync_modular_fast_attack_phase", &"recovery")), "recovery should play modular body for %s" % dir)
-		_assert_layer_animation(operator, "modular_lower_body_sprite", "unarmed_fast_recovery_lower", dir)
-		_assert_layer_animation(operator, "modular_upper_body_sprite", "unarmed_fast_recovery_upper", dir)
-		operator.call("_clear_modular_fast_attack_layers")
 
 
 func _validate_roll_exit_ingest_registration() -> void:
@@ -175,10 +160,25 @@ func _validate_fast_attack_entry_points(operator: Node) -> void:
 	operator.set("_melee_fast_windup", false)
 	operator.set("_melee_active", true)
 	operator.set("_melee_attack_kind", "fast")
-	_assert_true(bool(operator.call("_sync_modular_action_domains")), "strike action domain sync should prefer true modular lower/upper strike")
-	_assert_layer_animation(operator, "modular_lower_body_sprite", "unarmed_fast_strike_lower", "e")
-	_assert_layer_animation(operator, "modular_upper_body_sprite", "unarmed_fast_strike_upper", "e")
-	_assert_canonical_fx(operator, "fast_strike_01", "e")
+	# The chain resolves its link from the active profile, which the real attack
+	# entry establishes. This scenario sets the phase flags by hand, so it has to
+	# supply the profile too or it silently measures the retired phase path.
+	operator.set("_active_melee_attack_profile", operator.call("_get_current_melee_attack_profile", "fast"))
+	# Fists presents the authored chain link, not a separate strike clip. The
+	# active profile decides which link, so this asserts the canonical identity
+	# rather than the retired `fast_strike_01` phase art.
+	_assert_true(bool(operator.call("_sync_modular_action_domains")), "strike action domain sync should present the authored chain link")
+	var lower_sprite := operator.get("modular_lower_body_sprite") as AnimatedSprite2D
+	var upper_sprite := operator.get("modular_upper_body_sprite") as AnimatedSprite2D
+	_assert_true(
+		lower_sprite != null and String(lower_sprite.animation).begins_with("unarmed/attack/fast_0"),
+		"strike should present a canonical chain link, got %s" % ("null" if lower_sprite == null else String(lower_sprite.animation))
+	)
+	_assert_true(
+		upper_sprite != null and String(upper_sprite.animation).begins_with("unarmed/attack/fast_0"),
+		"upper body should present the same canonical chain link"
+	)
+	_assert_true(lower_sprite == null or not lower_sprite.flip_h, "canonical chain art must not be mirrored")
 
 	operator.set("_melee_active", false)
 	operator.set("_melee_recovery_active", true)
@@ -204,12 +204,18 @@ func _validate_fast_attack_entry_points(operator: Node) -> void:
 	if bool(operator.get("_dodge_fast_attack_presentation_active")):
 		_assert_true(legacy_sprite.visible and String(legacy_sprite.animation).begins_with("unarmed/attack/dodge_fast_attack_01/"), "ingested roll-exit body should own the full-body presentation")
 	else:
-		# C2a-R4: the modular strike layers are canonical here too. This branch
-		# asserted compatibility suffix names, which went unnoticed because the
-		# roll-exit body above always won before the cutover.
-		var roll_exit_sector := str(operator.call("_modular_body_authored_sector", &"fast_strike_01", &"lower_body", operator.get("_melee_forward")))
-		_assert_layer_animation(operator, "modular_lower_body_sprite", "unarmed_fast_strike_lower", roll_exit_sector)
-		_assert_layer_animation(operator, "modular_upper_body_sprite", "unarmed_fast_strike_upper", roll_exit_sector)
+		# Without the ingested roll-exit body, the modular chain link owns the
+		# presentation. It is the authored strip, not the retired strike phase.
+		var roll_lower := operator.get("modular_lower_body_sprite") as AnimatedSprite2D
+		var roll_upper := operator.get("modular_upper_body_sprite") as AnimatedSprite2D
+		_assert_true(
+			roll_lower != null and String(roll_lower.animation).begins_with("unarmed/attack/fast_0"),
+			"roll-exit fallback should present a canonical chain link, got %s" % ("null" if roll_lower == null else String(roll_lower.animation))
+		)
+		_assert_true(
+			roll_upper != null and String(roll_upper.animation).begins_with("unarmed/attack/fast_0"),
+			"roll-exit fallback upper body should present the same canonical chain link"
+		)
 
 	operator.set("_melee_active", false)
 	operator.set("_melee_recovery_active", false)

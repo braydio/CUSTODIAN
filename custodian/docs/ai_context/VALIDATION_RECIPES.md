@@ -983,7 +983,7 @@ For modular Operator action QA previews:
 
 ```bash
 python custodian/tools/pipelines/operator_action_preview.py --loadout unarmed --action block_loop_01 --directions e,w --include-fx
-python custodian/tools/pipelines/operator_action_preview.py --loadout unarmed --sequence fast_windup_01,fast_strike_01,fast_recovery_01 --include-fx
+python custodian/tools/pipelines/operator_action_preview.py --loadout unarmed --sequence fast_01,fast_02,fast_03,fast_04 --include-fx
 python custodian/tools/validation/operator_action_preview_smoke.py
 ```
 

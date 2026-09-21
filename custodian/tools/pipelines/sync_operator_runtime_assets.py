@@ -328,6 +328,12 @@ def build_animation_catalog(manifest: dict, catalog_path: Path) -> dict:
     catalog_animations = catalog.setdefault("animations", {})
     for identity, runtime_entry in manifest["animations"].items():
         entry = catalog_animations.setdefault(identity, runtime_entry)
+        # A current semantic identity is wholly runtime-described. Retaining a
+        # layer that disappeared from the runtime manifest leaves generated
+        # SpriteFrames pointing at a deleted file (for example, an old independent
+        # FX clock after a body-only frame migration).
+        for stale_layer in set(entry.get("layers", {})) - set(runtime_entry["layers"]):
+            entry["layers"].pop(stale_layer, None)
         if "timing" in runtime_entry:
             entry["timing"] = runtime_entry["timing"]
         for layer, runtime_layer in runtime_entry["layers"].items():

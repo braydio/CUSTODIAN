@@ -126,6 +126,7 @@ const MeleeAttackProfile = preload("res://game/systems/combat/melee_attack_profi
 @export var fast_chain_queue_open_frames: PackedInt32Array = PackedInt32Array()
 @export var fast_chain_queue_close_frames: PackedInt32Array = PackedInt32Array()
 @export var fast_chain_commit_frames: PackedInt32Array = PackedInt32Array()
+@export var fast_chain_presentation_durations: PackedFloat32Array = PackedFloat32Array()
 @export var fast_chain_stamina_costs: PackedFloat32Array = PackedFloat32Array()
 @export var fast_chain_loops: bool = true
 @export var fast_chain_has_integrated_recovery: bool = false

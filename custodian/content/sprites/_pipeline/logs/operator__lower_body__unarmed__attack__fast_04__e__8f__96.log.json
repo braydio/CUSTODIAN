@@ -1,0 +1,12 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/operator__lower_body__unarmed__attack__fast_04__e__8f__96.json",
+	"outputs": [
+		"res://content/sprites/operator/source/animations/unarmed/attack/fast_04/operator__lower_body__unarmed__attack__fast_04__e__8f__96.png",
+		"res://content/sprites/operator/source/animations/unarmed/attack/fast_04/operator__lower_body__unarmed__attack__fast_04__w__8f__96.png"
+	],
+	"post_process": [
+		"operator_runtime_build"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/operator__lower_body__unarmed__attack__fast_04__e__8f__96.png",
+	"timestamp_utc": "2026-09-21 15:09:09"
+}

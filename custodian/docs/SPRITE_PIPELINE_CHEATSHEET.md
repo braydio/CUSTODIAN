@@ -146,7 +146,7 @@ For fast attack sequence review:
 ```bash
 python custodian/tools/pipelines/operator_action_preview.py \
   --loadout unarmed \
-  --sequence fast_windup_01,fast_strike_01,fast_recovery_01 \
+  --sequence fast_01,fast_02,fast_03,fast_04 \
   --include-fx
 ```
 
