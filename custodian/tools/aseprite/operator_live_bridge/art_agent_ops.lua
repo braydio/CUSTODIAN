@@ -181,14 +181,36 @@ function Ops.execute(sprite, req, capability, manifest, options)
         local pixels={}; for _,point in ipairs(spans_pixels(operation.spans)) do table.insert(pixels,{x=point[1],y=point[2],rgba={0,0,0,0}}) end
         local result=mutate_pixels(sprite,manifest,{type="erase_pixels",layer=operation.layer,frame=operation.frame,pixels=pixels},"clear_masked_region",options.on_commit); response.frame=operation.frame; response.layer=operation.layer; response.changed=result.changed; response.changed_pixels=result.changed_pixels; response.changed_bbox=result.changed_bbox
       elseif operation.type == "recolor_plan" then
-        local total=0; local all_changed={}
+        local total=0; local all_changed={}; local prepared={}
         for _, target in ipairs(operation.targets or {}) do
           local binding=binding_for_layer(manifest,sprite,target.layer); local cel,rect=resolve_cel(sprite,binding,target.frame); local image=cel.image:clone(); local mapping={}
           for _, item in ipairs(target.mappings or {}) do if #item.source_rgb ~= 3 or #item.destination_rgb ~= 3 then fail("recolor mappings contain RGB only") end; mapping[string.format("%d:%d:%d",item.source_rgb[1],item.source_rgb[2],item.source_rgb[3])]=item.destination_rgb end
-          for y=0,rect.h-1 do for x=0,rect.w-1 do local value=image:getPixel(x,y); local alpha=app.pixelColor.rgbaA(value); local key=string.format("%d:%d:%d",app.pixelColor.rgbaR(value),app.pixelColor.rgbaG(value),app.pixelColor.rgbaB(value)); local replacement=mapping[key]; if alpha>0 and replacement then local next_value=app.pixelColor.rgba(replacement[1],replacement[2],replacement[3],alpha); if next_value~=value then image:drawPixel(x,y,next_value); total=total+1;table.insert(all_changed,{rect.x+x,rect.y+y}) end end end end
-          if total>0 then app.transaction("Operator Art Agent: recolor plan",function() cel.image=image end) end
+          local target_points=nil
+          if target.spans ~= nil then
+            target_points={}
+            for _, span in ipairs(target.spans) do
+              local y,x0,x1=integer(span.y,"target span y"),integer(span.x0,"target span x0"),integer(span.x1,"target span x1")
+              if x1 < x0 then fail("target span is reversed") end
+              for x=x0,x1 do table.insert(target_points,{x,y}) end
+            end
+            if #target_points == 0 then fail("semantic target mask is empty") end
+            for _, point in ipairs(target_points) do
+              if not contains(rect,point[1],point[2]) then fail("target span outside legal binding rectangle") end
+            end
+          end
+          for y=0,rect.h-1 do for x=0,rect.w-1 do
+            if target_points ~= nil then
+              local found=false
+              for _, tp in ipairs(target_points) do if tp[1]==x and tp[2]==y then found=true; break end end
+              if not found then goto skip_pixel end
+            end
+            local value=image:getPixel(x,y); local alpha=app.pixelColor.rgbaA(value); local key=string.format("%d:%d:%d",app.pixelColor.rgbaR(value),app.pixelColor.rgbaG(value),app.pixelColor.rgbaB(value)); local replacement=mapping[key]
+            if alpha>0 and replacement then local next_value=app.pixelColor.rgba(replacement[1],replacement[2],replacement[3],alpha); if next_value~=value then image:drawPixel(x,y,next_value); total=total+1; table.insert(all_changed,{rect.x+x,rect.y+y}) end end
+            ::skip_pixel::
+          end end
+          table.insert(prepared,{cel=cel,image=image})
         end
-        if total>0 and options.on_commit then options.on_commit() end; response.changed=total>0; response.changed_pixels=total; response.changed_bbox=changed_bounds(all_changed); response.plan_id=operation.plan_id
+        if total>0 then app.transaction("Operator Art Agent: recolor plan",function() for _, p in ipairs(prepared) do p.cel.image=p.image end end); if options.on_commit then options.on_commit() end; response.changed=total>0; response.changed_pixels=total; response.changed_bbox=changed_bounds(all_changed); response.plan_id=operation.plan_id end
       elseif operation.type == "draft_shift_part" or operation.type == "draft_copy_part" or operation.type == "draft_replace_part" or operation.type == "draft_mirror_part" then
         local binding=binding_for_layer(manifest,sprite,operation.layer); local source_cel,rect=resolve_cel(sprite,binding,operation.source_frame or operation.frame); local pixels=spans_pixels(operation.spans); local draft_id=operation.draft_id; if find_layer(sprite,draft_id) then fail("invalid or duplicate draft id") end
         local image=Image(sprite.width,sprite.height,ColorMode.RGB); local changed={}; local dx,dy=operation.dx or 0,operation.dy or 0
@@ -199,7 +221,10 @@ function Ops.execute(sprite, req, capability, manifest, options)
         local draft=find_draft(sprite,operation.draft_id); app.transaction("Operator Art Agent: discard draft",function() sprite:deleteLayer(draft) end);if options.on_commit then options.on_commit() end;response.changed=true;response.draft_id=operation.draft_id
       elseif operation.type == "bake_draft" then
         local draft=find_draft(sprite,operation.draft_id); local binding=binding_for_layer(manifest,sprite,operation.layer); local target,rect=resolve_cel(sprite,binding,operation.frame); local draft_cel=draft:cel(operation.frame); if not draft_cel then fail("draft has no cel for target frame") end; local image=target.image:clone(); local changed={}
-        for y=rect.y,rect.y+rect.h-1 do for x=rect.x,rect.x+rect.w-1 do local value=draft_cel.image:getPixel(x-draft_cel.position.x,y-draft_cel.position.y); if app.pixelColor.rgbaA(value)>0 then image:drawPixel(x-rect.x,y-rect.y,value);table.insert(changed,{x,y}) end end end
+        if operation.clear_spans ~= nil then
+          local clear_points=spans_pixels(operation.clear_spans); for _, point in ipairs(clear_points) do local x,y=point[1],point[2]; if not contains(rect,x,y) then fail("clear span outside legal binding rectangle") end; local lx,ly=x-rect.x,y-rect.y; if image:getPixel(lx,ly)~=transparent() then image:drawPixel(lx,ly,transparent());table.insert(changed,{x,y}) end end
+        end
+        for y=rect.y,rect.y+rect.h-1 do for x=rect.x,rect.x+rect.w-1 do local value=draft_cel.image:getPixel(x-draft_cel.position.x,y-draft_cel.position.y); if app.pixelColor.rgbaA(value)>0 then if image:getPixel(x-rect.x,y-rect.y)~=value then image:drawPixel(x-rect.x,y-rect.y,value);table.insert(changed,{x,y}) end end end end
         app.transaction("Operator Art Agent: bake draft",function() target.image=image;sprite:deleteLayer(draft) end);if options.on_commit then options.on_commit() end;response.changed=true;response.changed_pixels=#changed;response.changed_bbox=changed_bounds(changed);response.draft_id=operation.draft_id;response.needs_gap_repair=operation.clear_spans ~= nil
       else
         fail("live Art Agent mutation is not yet implemented for " .. operation.type)

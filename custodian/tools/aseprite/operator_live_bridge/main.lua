@@ -23,6 +23,7 @@ local art_agent_internal_action = false
 local live_mutation_stack = {}
 local live_mutation_poisoned = false
 local art_agent_replay = {}
+local ART_AGENT_REPLAY_LIMIT = 64
 
 local function runtime_capabilities_available()
   local api_version = tonumber(app.apiVersion)
@@ -318,6 +319,7 @@ local function handle_art_agent_execute(message)
     art_agent_result(message, cached.payload); return
   end
   local before = presentation_snapshot(sprite)
+  local state_before = { sprite_filename = sprite.filename, sprite_modified = sprite.isModified, revision = revision, stack_size = #live_mutation_stack }
   local committed = false
   art_agent_internal_action = true
   local ok, response = xpcall(function()
@@ -330,17 +332,26 @@ local function handle_art_agent_execute(message)
   end
   if not ok then
     if is_mutation and committed then pcall(function() app.undo() end) end
+    local rolled_back = (sprite.filename == state_before.sprite_filename and sprite.isModified == state_before.sprite_modified and revision == state_before.revision and #live_mutation_stack == state_before.stack_size)
+    if is_mutation and not rolled_back then live_mutation_poisoned=true; art_agent_result(message, { ok=false, error=tostring(response), outcome_known=false, mutation_applied=false, revision=revision, document_path=sprite.filename }); return end
+    if is_mutation and rolled_back then art_agent_result(message, { ok=false, error=tostring(response), outcome_known=true, mutation_applied=false, revision=revision, document_path=sprite.filename }); return end
     art_agent_result(message, { ok=false, error=tostring(response), outcome_known=not committed, mutation_applied=false, revision=revision, document_path=sprite.filename }); return
   end
   local revision_before = before.revision
   local changed = response.changed == true
   if is_mutation and changed then
     revision = revision_before + 1
-    table.insert(live_mutation_stack, { session_id=payload.request.session_id, operation_key=payload.request.operation_key })
+    table.insert(live_mutation_stack, { session_id=payload.request.session_id, operation_key=payload.request.operation_key, art_agent_session_id=payload.request.session_id })
   end
   local result_payload = { ok=true, document_path=sprite.filename, client_session_id=client.session_id, revision_before=revision_before, revision_after=revision, modified=sprite.isModified, mutation_applied=changed, outcome_known=true, art_agent_response=response }
   if is_mutation then
     art_agent_replay[replay_key] = { fingerprint=replay_fingerprint, request_id=payload.request.request_id, payload=result_payload }
+    local order = {}
+    for k in pairs(art_agent_replay) do table.insert(order, k) end
+    table.sort(order)
+    if #order > ART_AGENT_REPLAY_LIMIT then art_agent_replay[order[1]] = nil end
+  end
+  if is_mutation then
     send("document.changed", { revision=revision, modified=sprite.isModified, document_path=sprite.filename, sprite_id=sprite.id }, message.sequence)
   end
   art_agent_result(message, result_payload)
@@ -352,13 +363,16 @@ local function handle_art_agent_undo(message)
   if payload.client_session_id ~= client.session_id or payload.revision ~= revision then send("command.result", { ok=false, operation="art_agent_undo", error="stale live Art Agent revision" }, message.sequence); return end
   if live_mutation_poisoned or #live_mutation_stack == 0 then send("command.result", { ok=false, operation="art_agent_undo", error="no authoritative live Art Agent operation to undo" }, message.sequence); return end
   local top = live_mutation_stack[#live_mutation_stack]
-  if top.session_id ~= client.session_id or top.operation_key ~= payload.operation_key then send("command.result", { ok=false, operation="art_agent_undo", error="live Art Agent undo authority mismatch" }, message.sequence); return end
+  if payload.art_agent_session_id ~= top.art_agent_session_id or top.operation_key ~= payload.operation_key then send("command.result", { ok=false, operation="art_agent_undo", error="live Art Agent undo authority mismatch" }, message.sequence); return end
   local before = presentation_snapshot(sprite)
   art_agent_internal_action = true
   local ok, error_message = pcall(function() app.undo() end)
   restore_presentation(sprite, before)
   art_agent_internal_action = false
-  if not ok or sprite.filename ~= before.filename then live_mutation_poisoned=true; send("command.result", { ok=false, operation="art_agent_undo", outcome_known=false, error=tostring(error_message) }, message.sequence); return end
+  local undo_state_before = { sprite_filename = sprite.filename, sprite_modified = sprite.isModified, revision = revision, stack_size = #live_mutation_stack }
+  if not ok then live_mutation_poisoned=true; send("command.result", { ok=false, operation="art_agent_undo", outcome_known=false, error=tostring(error_message) }, message.sequence); return end
+  local rolled_back = (sprite.filename == undo_state_before.sprite_filename and sprite.isModified == undo_state_before.sprite_modified and revision == undo_state_before.revision and #live_mutation_stack == undo_state_before.stack_size)
+  if not rolled_back then live_mutation_poisoned=true; send("command.result", { ok=false, operation="art_agent_undo", outcome_known=false, error="rollback verification failed" }, message.sequence); return end
   local revision_before = revision
   revision = revision + 1
   table.remove(live_mutation_stack)

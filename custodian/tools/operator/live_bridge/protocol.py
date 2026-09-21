@@ -206,6 +206,9 @@ def _validate_payload(message: Message) -> None:
         if not isinstance(document_path, str) or not document_path:
             raise ProtocolError("command.art_agent_undo requires document_path")
         _nonnegative_int(payload, "revision")
+        art_agent_session_id = payload.get("art_agent_session_id")
+        if not isinstance(art_agent_session_id, str) or not art_agent_session_id:
+            raise ProtocolError("command.art_agent_undo requires art_agent_session_id")
         for key in ("client_session_id", "operation_key"):
             if not isinstance(payload.get(key), str) or not payload[key]:
                 raise ProtocolError(f"command.art_agent_undo requires {key}")

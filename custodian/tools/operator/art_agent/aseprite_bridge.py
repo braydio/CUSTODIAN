@@ -47,8 +47,10 @@ class ArtAgentLiveRelayClient:
         if not received: raise ConnectionError("live Art Agent relay returned no response")
         return json.loads(received.decode())
 
-    def undo(self, *, request_path: Path, response_path: Path, operation_key: str, client_session_id: str, revision: int) -> dict:
-        payload = {"schema": "custodian.operator_art_agent.live_relay.v1", "action": "undo", "request_path": str(Path(request_path).resolve()), "response_path": str(Path(response_path).resolve()), "operation_key": operation_key, "client_session_id": client_session_id, "revision": revision}
+    def undo(self, *, request_path: Path, response_path: Path, operation_key: str, client_session_id: str, art_agent_session_id: str, revision: int) -> dict:
+        if not isinstance(client_session_id, str) or not client_session_id: raise ValueError("client_session_id must be a non-empty string")
+        if not isinstance(art_agent_session_id, str) or not art_agent_session_id: raise ValueError("art_agent_session_id must be a non-empty string")
+        payload = {"schema": "custodian.operator_art_agent.live_relay.v1", "action": "undo", "request_path": str(Path(request_path).resolve()), "response_path": str(Path(response_path).resolve()), "operation_key": operation_key, "client_session_id": client_session_id, "art_agent_session_id": art_agent_session_id, "revision": revision}
         with socket.create_connection((self.host, self.port), timeout=self.timeout) as stream:
             stream.settimeout(self.timeout); stream.sendall((json.dumps(payload, separators=(",", ":")) + "\n").encode()); received=b""
             while not received.endswith(b"\n"):
@@ -134,10 +136,10 @@ class ArtAgentBridge:
         payload.setdefault("_transport", "headless")
         return self._validate_response(payload, expected_request_id, expected_operation_key, completed=completed)
 
-    def undo_live(self, *, request_path: Path, response_path: Path, operation_key: str, client_session_id: str, revision: int) -> dict:
+    def undo_live(self, *, request_path: Path, response_path: Path, operation_key: str, client_session_id: str, art_agent_session_id: str, revision: int) -> dict:
         relay_factory = getattr(self, "relay_factory", ArtAgentLiveRelayClient)
         try:
-            result = relay_factory().undo(request_path=request_path, response_path=response_path, operation_key=operation_key, client_session_id=client_session_id, revision=revision)
+            result = relay_factory().undo(request_path=request_path, response_path=response_path, operation_key=operation_key, client_session_id=client_session_id, art_agent_session_id=art_agent_session_id, revision=revision)
         except (OSError, TimeoutError, ConnectionError) as error:
             raise LiveArtAgentError("live Art Agent undo relay unavailable") from error
         status = result.get("status")

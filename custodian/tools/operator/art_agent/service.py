@@ -1000,15 +1000,14 @@ class ArtAgentService:
         request_id = f"{int(record['operation_id']):06d}"
         request_path = root / "requests" / f"{request_id}.json"
         response_path = root / "responses" / f"undo_{request_id}.json"
-        with mutation_lock(Path(session.workbench_path)):
-            result = self.bridge_factory(aseprite=self.aseprite).undo_live(request_path=request_path, response_path=response_path, operation_key=record["operation_key"], client_session_id=session.live_client_session_id, revision=session.expected_live_revision)
-            revision_after = result.get("revision_after")
-            if not isinstance(revision_after, int): raise model.WorkbenchError("live undo response missing revision")
-            session.expected_live_revision = revision_after
-            self.save_session(session_path, session)
-            undo_record = {"type":"undo","timestamp_utc":utc_now(),"target_operation_id":record["operation_id"],"transport":"live","workbench_sha256_before":record.get("workbench_sha256_after"),"workbench_sha256_after":record.get("workbench_sha256_after"),"live_revision_before":result.get("revision_before"),"live_revision_after":revision_after}
-            append_jsonl(root / "operations.jsonl", undo_record)
-            return {"undone_operation":record["operation_id"],"transport":"live","live_revision":revision_after}
+        result = self.bridge_factory(aseprite=self.aseprite).undo_live(request_path=request_path, response_path=response_path, operation_key=record["operation_key"], client_session_id=session.live_client_session_id, revision=session.expected_live_revision, art_agent_session_id=record.get("art_agent_session_id"))
+        revision_after = result.get("revision_after")
+        if not isinstance(revision_after, int): raise model.WorkbenchError("live undo response missing revision")
+        session.expected_live_revision = revision_after
+        self.save_session(session_path, session)
+        undo_record = {"type":"undo","timestamp_utc":utc_now(),"target_operation_id":record["operation_id"],"transport":"live","workbench_sha256_before":record.get("workbench_sha256_after"),"workbench_sha256_after":record.get("workbench_sha256_after"),"live_revision_before":result.get("revision_before"),"live_revision_after":revision_after}
+        append_jsonl(root / "operations.jsonl", undo_record)
+        return {"undone_operation":record["operation_id"],"transport":"live","live_revision":revision_after}
 
     def close(self, session_path: Path) -> dict[str, Any]:
         session = self.load_session(session_path)

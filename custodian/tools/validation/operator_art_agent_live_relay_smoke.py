@@ -16,7 +16,7 @@ from live_bridge.protocol import Message, MessageType
 
 class State:
     active_document_path: str | None = None
-    client_session_id = "client-a"
+    client_session_id = "aseprite-client-a"
     document_revision = 4
 
 
@@ -67,7 +67,7 @@ def main():
         manifest_path.write_text(json.dumps(manifest))
         capability = {"schema": "custodian.operator_art_agent.capability.v1", "session_id": "s", "nonce": "n", "context_fingerprint": "fp", "workbench_manifest": str(manifest_path), "workbench": str(workbench), "capability_path": str(capability_path), "preview_root": str(workspace / "previews")}
         capability_path.write_text(json.dumps(capability))
-        request = {"schema": "custodian.operator_art_agent.request.v2", "request_id": "read_001", "operation_key": "key", "session_id": "s", "nonce": "n", "capability": str(capability_path), "manifest": str(manifest_path), "workbench": str(workbench), "operation": {"type": "inspect"}}
+        request = {"schema": "custodian.operator_art_agent.request.v2", "request_id": "read_001", "operation_key": "key", "session_id": "agent-session-a", "nonce": "n", "capability": str(capability_path), "manifest": str(manifest_path), "workbench": str(workbench), "operation": {"type": "inspect"}}
         request_path.write_text(json.dumps(request))
         bridge = Bridge()
         bridge.server.state.active_document_path = str(workbench.resolve())
@@ -83,25 +83,40 @@ def main():
         assert mutation["status"] == "executed"
         assert bridge.server.calls[-1][1]["allow_mutation"] is True
 
-        request["live_guard"] = {"client_session_id": "client-a", "expected_revision": 3}
+        request["live_guard"] = {"client_session_id": "aseprite-client-a", "expected_revision": 3}
         request_path.write_text(json.dumps(request))
         stale = asyncio.run(relay.execute(request_path, response_path))
         assert stale["status"] == "stale_live"
         assert bridge.server.calls[-1][1]["allow_mutation"] is True
 
-        request["live_guard"] = {"client_session_id": "client-a", "expected_revision": 4}
+        request["live_guard"] = {"client_session_id": "aseprite-client-a", "expected_revision": 4}
         request["operation"] = {"type": "paint_pixels"}
         request_path.write_text(json.dumps(request))
-        undone = asyncio.run(relay.undo(request_path, response_path, operation_key="key", client_session_id="client-a", revision=4))
+
+        # Cross-namespace regression: Art Agent session != Aseprite client identity
+        # Correct undo: both namespaces match the original request
+        undone = asyncio.run(relay.undo(request_path, response_path, operation_key="key", client_session_id="aseprite-client-a", art_agent_session_id="agent-session-a", revision=4))
         assert undone["status"] == "executed"
         assert bridge.server.calls[-1][0] is MessageType.ART_AGENT_UNDO
+        undo_payload = bridge.server.calls[-1][1]
+        assert undo_payload["art_agent_session_id"] == "agent-session-a"
+        assert undo_payload["client_session_id"] == "aseprite-client-a"
+
+        # Wrong Art Agent session: must be refused (relay-level check)
+        wrong_agent = asyncio.run(relay.undo(request_path, response_path, operation_key="key", client_session_id="aseprite-client-a", art_agent_session_id="agent-session-b", revision=4))
+        assert wrong_agent["status"] == "live_error"
+        assert "session" in wrong_agent.get("error", "").lower() or "mismatch" in wrong_agent.get("error", "").lower()
+
+        # Wrong Aseprite client: must be refused (relay-level stale check)
+        wrong_client = asyncio.run(relay.undo(request_path, response_path, operation_key="key", client_session_id="aseprite-client-b", art_agent_session_id="agent-session-a", revision=4))
+        assert wrong_client["status"] == "stale_live"
 
         bridge.server.state.active_document_path = str((workspace / "other.aseprite").resolve())
         request["operation"] = {"type": "inspect"}
         request_path.write_text(json.dumps(request))
         unavailable = asyncio.run(relay.execute(request_path, response_path))
         assert unavailable["status"] == "unavailable"
-        assert len(bridge.server.calls) == 3
+        assert len(bridge.server.calls) == 5
     print("operator_art_agent_live_relay_smoke ok")
 
 

@@ -118,16 +118,18 @@ class LiveArtAgentRelay:
             payload["error"] = result.payload.get("error")
         return payload
 
-    async def undo(self, request_path: Path, response_path: Path, *, operation_key: str, client_session_id: str, revision: int) -> dict[str, Any]:
+    async def undo(self, request_path: Path, response_path: Path, *, operation_key: str, client_session_id: str, art_agent_session_id: str, revision: int) -> dict[str, Any]:
         request, capability, manifest = self._validate_request(request_path, response_path)
         if request.get("operation_key") != operation_key:
             return {"schema": RELAY_SCHEMA, "status": "live_error", "error": "undo operation key does not match original request"}
+        if art_agent_session_id != request["session_id"]:
+            return {"schema": RELAY_SCHEMA, "status": "live_error", "error": "Art Agent undo session mismatch"}
         state = self.bridge.server.state
         if state.active_document_path != request["_workbench_path"]:
             return {"schema": RELAY_SCHEMA, "status": "unavailable"}
         if state.client_session_id != client_session_id or state.document_revision != revision:
             return {"schema": RELAY_SCHEMA, "status": "stale_live", "error": "live Art Agent revision changed; inspect/render before retrying"}
-        result = await self.bridge.server.request_command(MessageType.ART_AGENT_UNDO, {"document_path": request["_workbench_path"], "revision": revision, "client_session_id": client_session_id, "operation_key": operation_key})
+        result = await self.bridge.server.request_command(MessageType.ART_AGENT_UNDO, {"document_path": request["_workbench_path"], "revision": revision, "client_session_id": client_session_id, "art_agent_session_id": art_agent_session_id, "operation_key": operation_key})
         if result.payload.get("ok") is False:
             return {"schema": RELAY_SCHEMA, "status": "live_error", "error": result.payload.get("error"), "client_session_id": client_session_id, "revision_before": revision, "revision_after": result.payload.get("revision_after", revision)}
         return {"schema": RELAY_SCHEMA, "status": "executed", "transport": "live", "client_session_id": client_session_id, "revision_before": result.payload.get("revision_before", revision), "revision_after": result.payload.get("revision_after", revision), "response": result.payload}
@@ -141,7 +143,7 @@ class LiveArtAgentRelay:
             if envelope.get("schema") != RELAY_SCHEMA:
                 raise ValueError("unsupported relay schema")
             if envelope.get("action", "execute") == "undo":
-                result = await self.undo(Path(envelope["request_path"]), Path(envelope["response_path"]), operation_key=str(envelope.get("operation_key", "")), client_session_id=str(envelope.get("client_session_id", "")), revision=int(envelope.get("revision", -1)))
+                result = await self.undo(Path(envelope["request_path"]), Path(envelope["response_path"]), operation_key=str(envelope.get("operation_key", "")), client_session_id=str(envelope.get("client_session_id", "")), art_agent_session_id=str(envelope.get("art_agent_session_id", "")), revision=int(envelope.get("revision", -1)))
             else:
                 result = await self.execute(Path(envelope["request_path"]), Path(envelope["response_path"]))
         except Exception as error:
