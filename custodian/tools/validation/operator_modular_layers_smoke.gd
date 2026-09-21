@@ -66,8 +66,14 @@ func _init() -> void:
 	operator.set("visual_idle_direction", Vector2.DOWN)
 	operator.call("_update_animation")
 
-	_check_layer(lower, "unarmed idle lower", &"unarmed/locomotion/idle_01/s/lower_body", failures)
-	_check_layer(upper, "unarmed idle upper", &"unarmed/locomotion/idle_01/s/upper_body", failures)
+	# A stationary, unengaged, unarmed Operator now presents the RELAXED stance
+	# rather than the locomotion idle -- that is what the unarmed posture slice
+	# installed. The sector is `e` because the posture family is authored east and
+	# west only, and the caller-owned projection sends a south-facing request east
+	# rather than fabricating south posture art. Locomotion idle still owns the
+	# body whenever posture cannot present; see operator_unarmed_posture_smoke.
+	_check_layer(lower, "unarmed idle lower", &"unarmed/posture/idle_relaxed_01/e/lower_body", failures)
+	_check_layer(upper, "unarmed idle upper", &"unarmed/posture/idle_relaxed_01/e/upper_body", failures)
 	# C1 retired the modular head from active composition (ACTIVE_MODULAR_HEAD),
 	# preserving the art without drawing it. It must stay hidden in every state,
 	# so this asserts retirement rather than the old head/upper frame sync.

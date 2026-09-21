@@ -969,15 +969,17 @@
       "profile": "unarmed",
       "group": "posture",
       "action": "idle_ready_01",
-      "status": "DORMANT",
-      "reason": "C2a authoring decision 2026-09-20: art published by the unarmed posture skeleton ingest, runtime flow deliberately parked until after the animated_sprite cutover (C2a-R4). No consumer plays this identity yet."
+      "status": "LIVE",
+      "consumer": "operator._sync_unarmed_posture (READY stance)",
+      "migration_note": "Live since the unarmed posture runtime slice. Presentation-only: driven by EngagementTracker, resolved through OperatorAnimationSelector on the canonical modular body pair, and never gating gameplay. Authored e/w only; north and south take the caller-owned projection in UnarmedPosturePresentation.authored_sector()."
     },
     {
       "profile": "unarmed",
       "group": "posture",
       "action": "idle_relaxed_01",
-      "status": "DORMANT",
-      "reason": "C2a authoring decision 2026-09-20: art published by the unarmed posture skeleton ingest, runtime flow deliberately parked until after the animated_sprite cutover (C2a-R4). No consumer plays this identity yet."
+      "status": "LIVE",
+      "consumer": "operator._sync_unarmed_posture (RELAXED stance)",
+      "migration_note": "Live since the unarmed posture runtime slice. Presentation-only: driven by EngagementTracker, resolved through OperatorAnimationSelector on the canonical modular body pair, and never gating gameplay. Authored e/w only; north and south take the caller-owned projection in UnarmedPosturePresentation.authored_sector()."
     },
     {
       "profile": "unarmed",
@@ -1050,15 +1052,17 @@
       "profile": "unarmed",
       "group": "transition",
       "action": "ready_to_relaxed_01",
-      "status": "DORMANT",
-      "reason": "C2a authoring decision 2026-09-20: art published by the unarmed posture skeleton ingest, runtime flow deliberately parked until after the animated_sprite cutover (C2a-R4). No consumer plays this identity yet."
+      "status": "LIVE",
+      "consumer": "operator._update_unarmed_presentation_posture -> _sync_unarmed_posture",
+      "migration_note": "Live since the unarmed posture runtime slice. Presentation-only: driven by EngagementTracker, resolved through OperatorAnimationSelector on the canonical modular body pair, and never gating gameplay. Authored e/w only; north and south take the caller-owned projection in UnarmedPosturePresentation.authored_sector()."
     },
     {
       "profile": "unarmed",
       "group": "transition",
       "action": "relaxed_to_ready_01",
-      "status": "DORMANT",
-      "reason": "C2a authoring decision 2026-09-20: art published by the unarmed posture skeleton ingest, runtime flow deliberately parked until after the animated_sprite cutover (C2a-R4). No consumer plays this identity yet."
+      "status": "LIVE",
+      "consumer": "operator._update_unarmed_presentation_posture -> _sync_unarmed_posture",
+      "migration_note": "Live since the unarmed posture runtime slice. Presentation-only: driven by EngagementTracker, resolved through OperatorAnimationSelector on the canonical modular body pair, and never gating gameplay. Authored e/w only; north and south take the caller-owned projection in UnarmedPosturePresentation.authored_sector()."
     }
   ]
 }

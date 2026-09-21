@@ -7,42 +7,112 @@ This file is overwritten each time the slice advances; it is not a changelog.
 
 ## Status
 
-**Part A complete and committed. Part B designed, not yet implemented.**
+**Both parts complete.** Actor tier 52/52, changed-set 34/34, focused gates green.
 
 ```
 A. harden the R4.1 acceptance proof + fix summary drift   DONE
-B. implement Unarmed Posture Runtime                      NEXT
+B. implement Unarmed Posture Runtime                      DONE
 ```
 
-## Part A — R4.1 proof hardening (done)
+## Part A — R4.1 proof hardening
 
-The R4.1 runtime fixes were correct. The test meant to prove them was not, and
-would have passed with or without them.
-
+The R4.1 runtime fixes were correct; the test meant to prove them was not.
 `_equip_armed_melee()` set `using_unarmed = false` and
-`combat_loadout_mode = "melee"` by hand, which is not a loadout.
-`_rebuild_armed_weapon_list()` appends the primary ranged weapon before the melee
-one, so `armed_weapon_index` stayed on the carbine and the current profile was
-ranged. The guard passed only because the profile was not *unarmed*.
+`combat_loadout_mode = "melee"` by hand, which is not a loadout:
+`_rebuild_armed_weapon_list()` appends the primary ranged weapon first, so the
+current profile stayed the carbine and the guard passed only because it was not
+*unarmed*.
 
-Selection now goes through the actor's own path — search `armed_weapons` for
-`weapon_kind == "melee"`, then `_apply_armed_selection(index)` — and asserts
-`using_unarmed` false, `_is_melee_loadout_active()` true, and a genuinely melee
-profile. The index is searched, never hardcoded.
+Selection now searches `armed_weapons` for `weapon_kind == "melee"` and goes
+through `_apply_armed_selection()`. Heavy anticipation drives the real
+`_start_heavy_attack()` per cardinal, asserts anticipating with `_melee_active`
+still false, and completes through the real clock signal. **All four cardinals
+pass**, so the projections and semantic completion predicates hold under a
+genuine armed melee loadout.
 
-Assertions moved from resolver return values to the lifecycle. Heavy anticipation
-drives `_start_heavy_attack()` per cardinal, asserts anticipating with
-`_melee_active` still false, checks the clock plays a heavy-windup identity, then
-drives the real completion signal with that clock and asserts the active phase
-begins. Recovery drives `_play_fast_attack_recovery()` and asserts a canonical
-unmirrored body plus surviving weapon/FX overlays.
+Recovery was also synthetic and is now tested per path. Both shipped melee
+weapons set `fast_chain_has_integrated_recovery`, so an armed fast chain never
+reaches the generic helper; calling it by hand proved nothing the game does, and
+asserted Sword-Cleaver overlays that do not exist. The unarmed loadout genuinely
+uses the helper and is driven end-to-end; armed weapons are checked against the
+contract that skips it, with an anti-vacuous assertion that the attack actually
+started. If an armed weapon ever ships without integrated recovery, the
+else-branch starts requiring generic recovery for it.
 
-**Outcome: the strengthened test passes.** The R4.1 projections and semantic
-completion predicates hold under a real armed melee loadout. Negative-controlled:
-removing the heavy windup projection fails it.
+That evidence also corrected a claim R4 made:
+`melee_1h_heavy/attack/fast_recovery_01` was marked LIVE through a branch no
+shipped loadout reaches, and is back to DORMANT with the condition that would
+revive it.
 
-R4 summary drift corrected: R4 integrated at `96e225bec`, R4.1 at `0edcfe827`,
-main since advanced, and the R4 branch is a historical marker not tracking main.
+## Part B — Unarmed Posture Runtime
+
+`presentation/unarmed_posture_presentation.gd` owns the posture model, the
+east/west projection, and the transition lifecycle. It **reuses
+`MeleePostureState`** rather than adding a second READY/RELAXED machine; SHEATHED
+and draw grace are melee concepts it never enters. Melee posture behaviour is
+untouched.
+
+```
+quiet   -> idle_relaxed_01
+engaged -> relaxed_to_ready_01 -> idle_ready_01
+quiet   -> ready_to_relaxed_01 -> idle_relaxed_01
+```
+
+- **Engagement** comes from `EngagementTracker` alone. No proximity scan, no
+  second timer, no new gameplay state, no retuning.
+- **Attacks are never gated.** An attack from RELAXED begins on the frame it is
+  requested; the smoke asserts gameplay engaged and that no ready-up preceded it.
+- **Movement** retires the stance immediately. `_update_animation` reaches
+  locomotion before the idle branch, and `_can_present_unarmed_posture()` refuses
+  independently so a direct caller cannot draw a stance over a walk.
+- **Preemption** is token-based. Anything taking the body cancels the transition,
+  and completion rides the clip's own completion signal rather than a wall-clock
+  timer — so a preempted transition simply never completes, and the one-frame
+  placeholders can be replaced with real art without touching runtime logic.
+- **Direction**: authored `e`/`w` only. `x < 0 -> w`, everything else including
+  north and south `-> e`, played with `flip_h = false`. The selector stays
+  exact-only and the smoke asserts it still reports the unauthored sectors absent.
+
+One deliberate visual consequence: a stationary unarmed Operator facing south now
+shows the east-facing relaxed stance instead of the south locomotion idle. That
+follows directly from the e/w-only authoring decision, and
+`operator_modular_layers_smoke` was updated to the new truth rather than left
+asserting the old one.
+
+## Reachability changed
+
+```
+unarmed/posture/idle_relaxed_01          DORMANT -> LIVE
+unarmed/posture/idle_ready_01            DORMANT -> LIVE
+unarmed/transition/relaxed_to_ready_01   DORMANT -> LIVE
+unarmed/transition/ready_to_relaxed_01   DORMANT -> LIVE
+melee_1h_heavy/attack/fast_recovery_01   LIVE -> DORMANT   (corrects an R4 claim)
+```
+
+## Architecture debt
+
+The audit caught a violation I introduced: `_update_unarmed_presentation_posture`
+took a delta on the render tick. Unarmed posture has no time-based state —
+engagement is advanced on the fixed tick by its own tracker, and transitions end
+on clip completion — so it no longer takes one. The ledger was then refreshed for
+a genuine shrink (`animation_resolver` in operator.gd, 22 -> 17), after verifying
+no metric increased.
+
+## Validation
+
+```
+focused   operator_unarmed_posture, operator_attack_phase_cadence,
+          operator_melee_posture, operator_modular_fast_attack,
+          operator_animated_sprite_canonical, reachability audit,
+          operator_visual_ownership          all green
+changed   34/34
+actor     52/52
+```
+
+Negative-controlled rather than assumed: suppressing the transition, mirroring
+west onto east, and removing the movement guard each fail the posture smoke;
+restoring the old completion predicate and removing the heavy projection each
+fail the cadence smoke.
 
 ## BLOCKER FOUND: an unimportable tracked audio asset
 
@@ -64,111 +134,13 @@ cached artifact into this worktree's gitignored `.godot/imported/` — no repo
 change. The real fix is re-encoding the asset as PCM through the audio pipeline,
 which is an asset decision outside this slice.
 
-## Key finding: the machinery already exists
+## Deferred deliberately
 
-`custodian/game/actors/operator/presentation/melee_posture_state.gd` is already
-almost exactly the state machine this slice needs, and it is already driven by
-engagement rather than by proximity scanning:
+- Older ranged `aim_01` / `fire_01` compatibility-era reachability prose. Its
+  validation is not wrong, and C2b is the better broom.
+- The Knight test skin remains knowingly stale and disabled by default.
+- Re-encoding `hit_medium_body_01.wav` belongs to an audio/asset-pipeline task.
 
-```gdscript
-enum Posture { SHEATHED, READY, RELAXED }
+## Open decisions
 
-func resolve(delta, melee_equipped, engagement_active, presentation_locked) -> Posture
-func get_animation_action() -> StringName   # idle_ready_01 / idle_relaxed_01
-func attack_action_bypasses_ready_up() -> bool
-```
-
-Three things make it a good seam rather than a coincidence:
-
-- `get_animation_action()` returns bare action names, with no profile in them.
-  The profile is the caller's business, so unarmed needs no new vocabulary.
-- `resolve()` already takes `engagement_active`, wired in `operator.gd` from
-  `_engagement_tracker.engagement_started` / `engagement_ended`. No new
-  gameplay state, no proximity scan.
-- `attack_action_bypasses_ready_up()` already exists as the hook for "attacks
-  must not wait for the ready-up animation".
-
-The only reason unarmed is excluded today is the caller's gate:
-
-```gdscript
-_melee_posture_state.resolve(
-    delta, _is_melee_loadout_active() and not using_unarmed, engagement_active, presentation_locked
-)
-```
-
-So this is a generalization, not a new system. Plan is to widen that predicate
-and let the caller supply the profile, rather than to build a parallel unarmed
-posture path.
-
-## Canonical art (published, currently DORMANT)
-
-```
-unarmed/posture/idle_relaxed_01/{e,w}/{lower_body,upper_body}        5f @8 loop
-unarmed/posture/idle_ready_01/{e,w}/{lower_body,upper_body}          5f @8 loop
-unarmed/transition/relaxed_to_ready_01/{e,w}/{lower_body,upper_body} 1f @8
-unarmed/transition/ready_to_relaxed_01/{e,w}/{lower_body,upper_body} 1f @8
-```
-
-The 1-frame transitions are deliberate placeholders. Wire the semantic
-transition now so multi-frame replacement art drops in with no runtime change.
-
-## Runtime policy
-
-```
-neutral + unarmed + no engagement -> RELAXED
-neutral + unarmed + engagement    -> READY
-
-RELAXED -> READY    play relaxed_to_ready_01, then idle_ready_01
-READY -> RELAXED    play ready_to_relaxed_01, then idle_relaxed_01
-```
-
-Constraints:
-
-- Posture idles own the body only while stationary and neutral. Ordinary unarmed
-  walk/run keeps using canonical locomotion; movement is movement-owned.
-- Attacks from RELAXED begin gameplay immediately. Ready-up is presentation-only
-  and is preempted by attack, dodge, hit reaction, death, interaction, or any
-  higher-priority body owner.
-- Direction is E/W authored: `x < 0 -> w`, otherwise `e`, played with
-  `flip_h = false`. West is never mirrored east — the R4 lesson.
-- Selection goes through `OperatorAnimationSelector` and the canonical body pair.
-  No compatibility names constructed, nothing added to SpriteFrames at runtime.
-
-## Open question to resolve during implementation
-
-`_start_vigil_posture_bridge()` is the existing transition player and is
-vigil-specific. Either generalize it to take a profile, or give the unarmed path
-a sibling that shares its ownership discipline. Generalizing is preferred, but
-only if it can be done without a broad rename that makes ownership less
-truthful — the surrounding names need to keep saying what they actually own.
-
-## Acceptance smoke (to be written)
-
-```
-quiet unarmed neutral            -> idle_relaxed_01
-engagement                       -> relaxed_to_ready_01 -> idle_ready_01
-quiet after engagement           -> ready_to_relaxed_01 -> idle_relaxed_01
-E/W select distinct canonical identities
-west never uses flip_h
-movement preempts posture with normal locomotion
-attack from relaxed is not gameplay-delayed
-dodge / hit / death preempt a posture transition cleanly
-body ownership never exposes two competing body presentations
-selector remains exact-only
-```
-
-Reachability for the four actions moves DORMANT -> LIVE only once the consumer
-exists.
-
-## Out of scope
-
-- The temporary `operator_ranged_body_core_v1` full-body family. Untouched here.
-- Older reachability prose around `ranged_2h/cosmetic/aim_01` and `fire_01` that
-  still describes compatibility-era consumers. Its validation is not wrong, and
-  C2b is the better broom.
-
-## Validation order
-
-Focused posture smoke, then changed-set, single-test repeats for any suspected
-flake, and one actor-tier sweep at the end. Check `free -h` before a broad sweep
-and run one at a time.
+None. No unresolved issues.

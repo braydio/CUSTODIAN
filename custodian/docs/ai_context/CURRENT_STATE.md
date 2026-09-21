@@ -118,6 +118,19 @@ from the weapon renderer's own SpriteFrames. Remaining work is the melee and
 weapon overlay renderers, Workbench publication, and compatibility-store
 demolition. The authority document tracks the remaining acceptance gates.
 
+Unarmed READY/RELAXED posture is live as presentation only. A stationary,
+unarmed, unengaged Operator presents `unarmed/posture/idle_relaxed_01`; engagement
+drives `relaxed_to_ready_01` then `idle_ready_01`, and going quiet reverses it.
+`EngagementTracker` remains the only engagement authority -- no proximity scan and
+no new gameplay state. Attacks from RELAXED begin immediately: ready-up never
+gates gameplay. Movement retires the stance at once and ordinary canonical
+locomotion resumes. The family is authored east and west only, so a north or
+south request takes a caller-owned projection in
+`UnarmedPosturePresentation.authored_sector()` and plays with `flip_h = false`;
+the selector stays exact-only. Transitions end on their clip's completion rather
+than a timer, so the current one-frame placeholders can be replaced with real art
+without touching runtime logic.
+
 ## Combat Tempo + Impact Feedback Pass (2026-09-06)
 
 Enemy LIGHT hits that gameplay suppresses (attack-commit survival or flinch

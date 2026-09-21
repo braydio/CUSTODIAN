@@ -54,6 +54,9 @@ const OperatorGuardConfig = preload(
 const EngagementTrackerScript = preload(
 	"res://game/systems/combat/engagement_tracker.gd"
 )
+const UnarmedPosturePresentationScript = preload(
+	"res://game/actors/operator/presentation/unarmed_posture_presentation.gd"
+)
 const MeleePostureStateScript = preload(
 	"res://game/actors/operator/presentation/melee_posture_state.gd"
 )
@@ -749,6 +752,7 @@ var _integrity_reclaim_restore_serial := 0
 var _integrity_reclaim_last_restore := 0.0
 var _engagement_tracker: EngagementTracker = null
 var _melee_posture_state: MeleePostureState = null
+var _unarmed_posture: UnarmedPosturePresentation = null
 var _melee_draw_presentation_active := false
 var _melee_sheathe_presentation_active := false
 var _melee_overlay_clock_owner := MeleeOverlayClockOwner.NONE
@@ -1012,6 +1016,7 @@ func _ready():
 	_engagement_tracker.engagement_started.connect(_on_combat_pressure_entered)
 	_engagement_tracker.engagement_ended.connect(_on_combat_pressure_exited)
 	_melee_posture_state = MeleePostureStateScript.new()
+	_unarmed_posture = UnarmedPosturePresentationScript.new()
 	# Sync with ControllableActor base class
 	current_health = health
 	_integrity_reclaim.call("configure", max_health)
@@ -1364,6 +1369,7 @@ func _process(delta):
 	_update_field_patch(delta)
 	_update_field_patch_observability(delta)
 	_update_melee_presentation_posture(delta)
+	_update_unarmed_presentation_posture()
 	_tick_primary_ranged_action_presentation(delta)
 	_sync_ranged_aim_camera_state()
 	_sync_primary_ranged_weapon_frame_to_upper()
@@ -1932,6 +1938,12 @@ func _update_animation():
 		if _is_using_ranged_2h_primary() and _sync_modular_ranged_relaxed_presentation(animation_dir):
 			_update_idle_loop_tracking(true, "ranged_2h_relaxed_modular")
 			return
+		# Unarmed stance comes before the locomotion idle, and only while standing
+		# still: `_can_present_unarmed_posture()` refuses the moment anything else
+		# wants the body. Movement never reaches here.
+		if _sync_unarmed_posture(_unarmed_posture_direction()):
+			_update_idle_loop_tracking(true, "unarmed_posture")
+			return
 		if _is_current_profile_unarmed() and _sync_modular_locomotion_layers("unarmed_idle", visual_idle_direction, _get_modular_upper_locomotion_direction(animation_dir)):
 			_update_idle_loop_tracking(true, "unarmed_idle")
 			return
@@ -2241,6 +2253,110 @@ func _update_melee_presentation_posture(delta: float) -> void:
 		elif previous_posture == MeleePostureState.Posture.READY \
 		and _melee_posture_state.posture == MeleePostureState.Posture.RELAXED:
 			_start_vigil_posture_bridge(&"ready_to_relaxed_01")
+
+
+## Whether unarmed posture may present right now.
+##
+## Posture is the lowest-priority body presentation there is. It owns the body
+## only when nothing else wants it and the Operator is standing still: movement is
+## movement-owned, and every gameplay presentation outranks a stance.
+func _can_present_unarmed_posture() -> bool:
+	if _unarmed_posture == null or _is_dead:
+		return false
+	if not _is_current_profile_unarmed():
+		return false
+	if not modular_locomotion_layers_enabled:
+		return false
+	if modular_lower_body_sprite == null or modular_upper_body_sprite == null:
+		return false
+	if velocity.length() > 0.0:
+		return false
+	if _is_exclusive_body_owner_active():
+		return false
+	return not (
+		_melee_active
+		or _melee_heavy_anticipating
+		or _melee_fast_windup
+		or _melee_recovery_active
+		or _modular_damage_reaction_active
+		or _dodge_active
+		or _dodge_recovery_active
+		or _field_patch_active
+		or _parry_neutral_lock_active
+		or _is_block_state_active()
+		or _is_equip_weapon_state_active()
+		or _is_sheathe_weapon_state_active()
+	)
+
+
+## Takes no delta on purpose.
+##
+## Unarmed posture has no time-based state: it reads engagement, which
+## `EngagementTracker` already advances on the fixed tick with its own hysteresis,
+## and the transition ends on its clip's completion rather than a duration. The
+## draw grace that `MeleePostureState` decays is a melee concept that unarmed
+## never enters. Consuming a delta here would be simulation advancing on the
+## render tick, which the architecture audit rightly counts as debt.
+func _update_unarmed_presentation_posture() -> void:
+	if _unarmed_posture == null:
+		return
+	var available := _can_present_unarmed_posture()
+	var engagement_active := _engagement_tracker != null and _engagement_tracker.engagement_active
+	var transition := _unarmed_posture.advance(0.0, available, engagement_active, false)
+	if transition.is_empty():
+		return
+	_unarmed_posture.begin_transition(transition)
+
+
+func _unarmed_posture_direction() -> Vector2:
+	return visual_idle_direction if visual_idle_direction.length_squared() > 0.0001 else aim_direction
+
+
+## Present the current posture on the canonical modular body pair.
+##
+## Resolution goes through `OperatorAnimationSelector` for both layers, and the
+## sector is the caller-owned east/west projection. `flip_h` stays false: `e` and
+## `w` are separately authored strips, so mirroring west would face the Operator
+## east while the identity said west.
+func _sync_unarmed_posture(direction: Vector2) -> bool:
+	if not _can_present_unarmed_posture():
+		return false
+	var sector := _unarmed_posture.authored_sector(direction)
+	var group := _unarmed_posture.current_group()
+	var action := _unarmed_posture.current_action()
+	var selector = _get_operator_animation_selector()
+	if not selector.has_sector_identity(&"unarmed", group, action, sector, &"lower_body"):
+		return false
+	if not selector.has_sector_identity(&"unarmed", group, action, sector, &"upper_body"):
+		return false
+	var lower_animation: StringName = selector.resolve_sector(
+		&"unarmed", group, action, sector, &"lower_body"
+	)
+	var upper_animation: StringName = selector.resolve_sector(
+		&"unarmed", group, action, sector, &"upper_body"
+	)
+	if not _has_playable_sprite_animation(modular_lower_body_sprite.sprite_frames, lower_animation):
+		return false
+	if not _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, upper_animation):
+		return false
+	# Both layers resolved, so the composition is real: declare it, then configure.
+	_declare_modular_body_composition()
+	_show_body_layer(modular_lower_body_sprite)
+	_show_body_layer(modular_upper_body_sprite)
+	modular_lower_body_sprite.flip_h = false
+	modular_upper_body_sprite.flip_h = false
+	modular_lower_body_sprite.speed_scale = 1.0
+	modular_upper_body_sprite.speed_scale = 1.0
+	if modular_lower_body_sprite.animation != lower_animation \
+	or not modular_lower_body_sprite.is_playing():
+		_animation_player.play(modular_lower_body_sprite, lower_animation)
+	if modular_upper_body_sprite.animation != upper_animation \
+	or not modular_upper_body_sprite.is_playing():
+		_animation_player.play(modular_upper_body_sprite, upper_animation)
+	_hide_modular_head_layer()
+	_hide_modular_cape_layer()
+	_claim_modular_body_owner()
+	return true
 
 
 func _sync_modular_melee_posture(direction: Vector2) -> bool:
@@ -12777,6 +12893,10 @@ func _on_operator_animation_finished(finished_sprite: AnimatedSprite2D = null) -
 		_begin_heavy_attack_active_phase()
 	if _melee_fast_windup and _is_unarmed_fast_windup_identity(finished_animation):
 		_begin_fast_attack_strike_phase()
+	# The posture transition ends when its own clip ends. Nothing schedules a
+	# timer, so a transition that lost the body simply never completes.
+	if _unarmed_posture != null and _unarmed_posture.complete_transition_for(finished_animation):
+		_update_animation()
 
 
 ## Phase completion is matched on identity, not on one spelling of a name.
