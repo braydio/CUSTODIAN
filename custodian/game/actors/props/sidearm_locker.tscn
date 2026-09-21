@@ -12,5 +12,5 @@ script = ExtResource("1_locker")
 z_index = -1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Body"]
-position = Vector2(0, 64)
+position = Vector2(88, 64)
 shape = SubResource("RectangleShape2D_body")

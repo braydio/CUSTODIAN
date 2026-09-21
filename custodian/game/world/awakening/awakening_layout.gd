@@ -173,12 +173,12 @@ const FLOOR_POLYGONS := {
 ## its dry shaft.
 const VOID_POLYGONS := {
 	&"zone02_ambulatory": [[
-		Vector2(-160, -1120), Vector2(160, -1120), Vector2(288, -992), Vector2(288, -736),
-		Vector2(160, -608), Vector2(-160, -608), Vector2(-288, -736), Vector2(-288, -992),
+		Vector2(-128, -1056), Vector2(128, -1056), Vector2(224, -960), Vector2(224, -768),
+		Vector2(128, -672), Vector2(-128, -672), Vector2(-224, -768), Vector2(-224, -960),
 	]],
 	&"zone05_dust_lung": [[
-		Vector2(-128, -3408), Vector2(128, -3408), Vector2(208, -3328), Vector2(208, -3072),
-		Vector2(128, -2992), Vector2(-128, -2992), Vector2(-208, -3072), Vector2(-208, -3328),
+		Vector2(-96, -3488), Vector2(96, -3488), Vector2(272, -3312), Vector2(272, -3200),
+		Vector2(96, -3040), Vector2(-96, -3040), Vector2(-272, -3200), Vector2(-272, -3312),
 	]],
 }
 
@@ -236,7 +236,7 @@ const SET_PIECES := {
 		# footprint is the shallow base projection under the locker, centered on
 		# the .tscn collider at (832, -1952) + (0, 64). The interact/visual anchor
 		# stays at (832, -1952) in MARKERS.
-		{"id": "p9_locker", "label": "P-9 DESIGNATION LOCKER", "position": Vector2(832, -1888), "size": Vector2(112, 32), "blocking": true, "prop": true},
+		{"id": "p9_locker", "label": "P-9 DESIGNATION LOCKER", "position": Vector2(920, -1888), "size": Vector2(112, 32), "blocking": true, "prop": true},
 		{"id": "inactive_locker_a", "label": "INACTIVE LOCKER", "position": Vector2(832, -2112), "size": Vector2(88, 96), "blocking": false},
 		{"id": "inactive_locker_b", "label": "INACTIVE LOCKER", "position": Vector2(576, -2112), "size": Vector2(88, 96), "blocking": false},
 		{"id": "inactive_locker_c", "label": "INACTIVE LOCKER", "position": Vector2(576, -1824), "size": Vector2(88, 96), "blocking": false},

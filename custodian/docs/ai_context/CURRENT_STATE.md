@@ -1439,6 +1439,14 @@ runtime output.
 
 Awakening production art is registered through 32 Asset Pipeline V2 family contracts. Zones 01–09 (Crèche, Ambulatory, Attestation, Locker Reliquary, Dust Lung, Undergate, Gate Plaza, Custodian Approach, and Late Service) now have normalized, ingested, and explicitly bound underlay/foreground plates at their locked envelope centers, with production foregrounds yielding blockout presentation while collision, traversal, triggers, interactables, lighting, and layout authority remain unchanged. The Crèche recovery alcove, Dust Lung lift, and all five required dormant Gate of Dust components are also published and bound: console acknowledgement drives the alcove's eight-frame wake strip, lift art follows the existing transit authority, and Gate composition preserves locked landmarks while future Continuity Port states remain deferred. The P-9 release fixture is now the `awakening_designation_locker` family: all four states (`closed`, the eight-frame `authorize_open` strip at 10 FPS, `open_loaded`, `empty`) are ingested and bound, and `SidearmLockerInteractable` no longer references `field_retention_locker`, which remains in the repository only as generic storage art. The required Crèche fixture family is now complete (7/7); Recovery Ambulatory fixtures are 5/6 required, with only `service_basin_b` missing.
 
+Plate binding is distinct from finished visual QA. The live Awakening now hides
+production traversal blockout visuals, uses a dark void plane and local camera
+framing, fades neighboring room canvases at transitions, seats the P-9 locker
+into its east wall, and raises only the Undergate's existing ambient profiles.
+The 04→05 dogleg still lacks authored connector art; the first five Road modular
+presentation families require new native-size art. The sealed central Gate
+body's passage composition remains an authored-state decision.
+
 The traversal connector/inlay blockout layer now yields to the production
 plates while Layout retains collision authority. Console and lift stations use
 Layout markers; camera reveal releases are generation-safe; debug reset cancels

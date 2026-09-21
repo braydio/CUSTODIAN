@@ -26,9 +26,9 @@ const FRAME_SIZE := Vector2i(128, 160)
 ## relief, so the physical body is a shallow base projection, not the art canvas.
 const ANCHOR := Vector2(832, -1952)
 const COLLIDER_SIZE := Vector2(112, 32)
-const COLLIDER_OFFSET := Vector2(0, 64)
-const FOOTPRINT_CENTER := Vector2(832, -1888)
-const SPRITE_VISUAL_OFFSET := Vector2(72, 0)
+const COLLIDER_OFFSET := Vector2(88, 64)
+const FOOTPRINT_CENTER := Vector2(920, -1888)
+const SPRITE_VISUAL_OFFSET := Vector2(88, -24)
 
 var _failures: Array[String] = []
 

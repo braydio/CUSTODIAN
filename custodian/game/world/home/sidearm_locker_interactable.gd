@@ -30,10 +30,10 @@ const ANIMATION_FPS := 10.0
 ## Reliquary's east wall instead of a free-standing cabinet on open floor.
 ## Calibrated in the live scene against the zone underlay: the wall's inner face
 ## sits near world x 928, and the opaque faceplate is 64 px of the 128 px canvas,
-## so +72 seats its right edge on the wall grille without covering the sconces.
-## This moves pixels only — the node anchor, interaction position, collider, and
-## layout footprint all stay on (832, -1952).
-const SPRITE_VISUAL_OFFSET := Vector2(72, 0)
+## so +88 seats its right edge on the wall grille without covering the sconces.
+## The faceplate is also raised into the wall recess. The interaction anchor
+## stays on (832, -1952); Layout owns the shallow physical base.
+const SPRITE_VISUAL_OFFSET := Vector2(88, -24)
 
 const SIDEARM_DEFINITION_PATH := "res://game/actors/operator/sidearm_pistol_definition.tres"
 

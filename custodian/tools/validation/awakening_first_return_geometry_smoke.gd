@@ -37,6 +37,7 @@ func _init() -> void:
 	else:
 		_check_route_visits_mandatory_zones(route)
 	_check_zone_anchors()
+	_check_production_footprints()
 	_report(build_ms, route.size())
 
 
@@ -239,6 +240,21 @@ func _check_zone_anchors() -> void:
 		var interior := Vector2(-736, -5696)
 		if _find_route(START, interior).is_empty():
 			_fail("optional Chapel interior %s is unreachable" % str(interior))
+
+
+func _check_production_footprints() -> void:
+	for point in [Vector2(0, -864), Vector2(0, -3200), Vector2(192, -3200)]:
+		var cell := _cell_of(point)
+		if _open[cell.y * _cols + cell.x] != 0:
+			_fail("visible shaft is walkable at %s" % str(point))
+	for point in [Layout.OPERATOR_WAKE_POSITION, Vector2(256, -864), Vector2(352, -3200), Vector2(0, -5184)]:
+		var cell := _cell_of(point)
+		if _safe[cell.y * _cols + cell.x] == 0:
+			_fail("production route is blocked at %s" % str(point))
+	for point in [Vector2(-320, -192), Vector2(320, 64), Vector2(112, 144)]:
+		var cell := _cell_of(point)
+		if _open[cell.y * _cols + cell.x] != 0:
+			_fail("solid Crèche fixture base is walkable at %s" % str(point))
 
 
 func _fail(message: String) -> void:

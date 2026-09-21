@@ -121,6 +121,14 @@ traversal blockout polygons/inlays live under `Traversal/BlockoutPresentation`
 and are hidden when those plates are present; Layout still owns traversal and
 collision carving.
 
+The live scene places a dark, collision-free void plane beneath the plates and
+uses an Awakening-local camera scale. Zone art fades by distance to the
+Operator's current Layout envelope so neighboring complete canvases do not
+intrude at room edges; the 128px blend supports crossing and backtracking.
+Production art remains at native scale and registration. The 04→05 dogleg
+still has uncovered route cells and needs authored connector art. The first
+five Road modular plate pairs also remain pending native-size replacement.
+
 `AwakeningFirstReturn` is orchestration only: current zone, visited zones, console
 acknowledgement, P-9 recovery, one-shot camera reveals, HUD location/phase/
 objective, and first-pass completion. It owns no geometry.
@@ -139,7 +147,8 @@ objective, and first-pass completion. It owns no geometry.
   `south_gate_gap_width` opens its southern boundary wall so the Approach joins it
   as continuous walkable space. The north processional approach remains deferred.
 - The **existing `SidearmLocker`** is the P-9 recovery at `(832, -1952)`. No second
-  locker implementation was written.
+  locker implementation was written. Its visual is inset into the east wall and
+  its 112×32 floor-contact blocker is centered at `(920, -1888)`.
 - Camera reveals use the camera's existing `set_presentation_framing_transition` /
   `clear_presentation_framing` seam. Player input is never taken away — the vista
   is discovered while still walking.
