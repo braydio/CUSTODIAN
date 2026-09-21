@@ -45,7 +45,8 @@ func _run() -> void:
 	await _check_direction_policy(operator)
 	await _check_movement_preempts(operator)
 	await _check_attack_is_not_gated(operator)
-	await _check_preemption_cannot_be_reclaimed(operator)
+	await _check_real_owners_preempt_a_transition(operator)
+	await _check_guard_flags_cancel_a_transition(operator)
 	await _check_selector_stays_exact_only(operator)
 
 	operator.queue_free()
@@ -271,38 +272,131 @@ func _check_attack_is_not_gated(operator: Node) -> void:
 	operator.set("_melee_fast_windup", false)
 
 
-func _check_preemption_cannot_be_reclaimed(operator: Node) -> void:
-	## A transition interrupted by a higher-priority owner must not come back.
-	## Each case starts a real transition, preempts it, then settles long enough
-	## that a surviving timer would have fired.
+## Put posture into a genuine, mid-flight transition and return its clip name.
+func _enter_transition(operator: Node) -> String:
+	_stand_still_unarmed(operator)
+	_set_engagement(operator, false)
+	await _settle(operator)
+	_set_engagement(operator, true)
+	operator.call("_update_unarmed_presentation_posture")
+	operator.call("_update_animation")
+	await process_frame
+	var lower := _lower(operator)
+	return "" if lower == null else String(lower.animation)
+
+
+func _check_single_body_owner(operator: Node, context: String) -> void:
+	var presenter = operator.get("_body_presenter")
+	if presenter == null:
+		return
+	var owners: Array = presenter.call("visible_owners")
+	_check(
+		owners.size() <= 1,
+		"%s should leave at most one visible body owner, saw %s" % [context, owners]
+	)
+
+
+func _check_real_owners_preempt_a_transition(operator: Node) -> void:
+	## The claim worth proving is a handoff, not a flag. These drive the real
+	## attack, dodge and movement paths while a posture transition is genuinely in
+	## flight, and check that the body ends up owned by exactly one presenter.
+	var during := await _enter_transition(operator)
+	_check(
+		during.begins_with(TO_READY),
+		"the attack-preemption case should start from a live transition, got %s" % during
+	)
+	operator.set("_melee_forward", Vector2.RIGHT)
+	operator.call("_try_melee_attack", "unarmed_fast")
+	await process_frame
+	# Without this the preemption is never actually exercised and everything below
+	# passes vacuously.
+	_check(
+		bool(operator.get("_melee_active")) or bool(operator.get("_melee_fast_windup")),
+		"the attack-preemption case requires the attack to actually start"
+	)
+	await _settle(operator, 3)
+	var posture = operator.get("_unarmed_posture")
+	_check(
+		posture != null and not bool(posture.call("is_transitioning")),
+		"a real attack should drop the in-flight posture transition"
+	)
+	var after := String(_lower(operator).animation)
+	_check(
+		not after.begins_with(TO_READY),
+		"an attack-preempted transition must not still be drawing, showing %s" % after
+	)
+	_check_single_body_owner(operator, "attack preempting a posture transition")
+	operator.set("_melee_active", false)
+	operator.set("_melee_fast_windup", false)
+	await process_frame
+
+	during = await _enter_transition(operator)
+	_check(
+		during.begins_with(TO_READY),
+		"the dodge-preemption case should start from a live transition, got %s" % during
+	)
+	var dodge_started := bool(operator.call("_try_start_dodge"))
+	_check(dodge_started, "the dodge-preemption case requires the dodge to actually start")
+	await process_frame
+	await _settle(operator, 3)
+	posture = operator.get("_unarmed_posture")
+	_check(
+		posture != null and not bool(posture.call("is_transitioning")),
+		"a real dodge should drop the in-flight posture transition"
+	)
+	_check_single_body_owner(operator, "dodge preempting a posture transition")
+	operator.set("_dodge_active", false)
+	operator.set("_dodge_recovery_active", false)
+	await process_frame
+
+	during = await _enter_transition(operator)
+	_check(
+		during.begins_with(TO_READY),
+		"the movement-preemption case should start from a live transition, got %s" % during
+	)
+	operator.set("velocity", Vector2.RIGHT * 80.0)
+	operator.set("movement_direction", Vector2.RIGHT)
+	await _settle(operator, 3)
+	posture = operator.get("_unarmed_posture")
+	_check(
+		posture != null and not bool(posture.call("is_transitioning")),
+		"walking away mid-transition should drop it, not finish it later"
+	)
+	var moving := String(_lower(operator).animation)
+	_check(
+		moving.contains("/locomotion/"),
+		"movement during a transition should hand the body to locomotion, got %s" % moving
+	)
+	_check_single_body_owner(operator, "movement preempting a posture transition")
+	operator.set("velocity", Vector2.ZERO)
+	await process_frame
+
+
+func _check_guard_flags_cancel_a_transition(operator: Node) -> void:
+	## Hit reaction and death are checked as guard/cancellation only. These set the
+	## flag directly rather than driving the real damage or death presentation, so
+	## they prove posture stands down and refuses to present again -- not a full
+	## owner transfer. The attack, dodge and movement cases above cover that.
 	var cases := {
-		"attack": "_melee_active",
-		"dodge": "_dodge_active",
 		"hit reaction": "_modular_damage_reaction_active",
 		"death": "_is_dead",
 	}
 	for label in cases:
-		_stand_still_unarmed(operator)
-		_set_engagement(operator, false)
-		await _settle(operator)
-		_set_engagement(operator, true)
-		operator.call("_update_unarmed_presentation_posture")
-		await process_frame
-
+		var during := await _enter_transition(operator)
+		_check(
+			during.begins_with(TO_READY),
+			"the %s case should start from a live transition, got %s" % [label, during]
+		)
 		operator.set(cases[label], true)
 		operator.call("_update_unarmed_presentation_posture")
 		await process_frame
-		# Long enough that any transition timer left running would have fired.
-		await _settle(operator, 10, 0.2)
+		await _settle(operator, 4)
 
 		var posture = operator.get("_unarmed_posture")
 		_check(
 			posture != null and not bool(posture.call("is_transitioning")),
 			"%s should cancel the posture transition, not leave it in flight" % label
 		)
-		# Assert the posture authority released, not the sprite's pixels: these
-		# cases set the preempting flag directly, so the real owner never repaints
-		# the layer and a stale texture would prove nothing either way.
 		_check(
 			not bool(operator.call("_can_present_unarmed_posture")),
 			"%s should stop posture from presenting at all" % label
@@ -312,8 +406,6 @@ func _check_preemption_cannot_be_reclaimed(operator: Node) -> void:
 			"%s-preempted posture must refuse to present when asked again" % label
 		)
 		operator.set(cases[label], false)
-		if label == "death":
-			operator.set("_is_dead", false)
 		await process_frame
 
 

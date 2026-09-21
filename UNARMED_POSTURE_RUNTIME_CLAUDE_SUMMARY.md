@@ -65,10 +65,12 @@ quiet   -> ready_to_relaxed_01 -> idle_relaxed_01
 - **Movement** retires the stance immediately. `_update_animation` reaches
   locomotion before the idle branch, and `_can_present_unarmed_posture()` refuses
   independently so a direct caller cannot draw a stance over a walk.
-- **Preemption** is token-based. Anything taking the body cancels the transition,
-  and completion rides the clip's own completion signal rather than a wall-clock
-  timer — so a preempted transition simply never completes, and the one-frame
-  placeholders can be replaced with real art without touching runtime logic.
+- **Preemption** needs no token and no timer. A transition is state, not a
+  scheduled callback: it ends when its own clip reports completion, and
+  `advance()` drops it the moment posture stops being available. There is nothing
+  to race against — the new owner retires the layer, and the forgotten transition
+  has no continuation to fire. That also means the one-frame placeholders can be
+  replaced with real art without touching runtime logic.
 - **Direction**: authored `e`/`w` only. `x < 0 -> w`, everything else including
   north and south `-> e`, played with `flip_h = false`. The selector stays
   exact-only and the smoke asserts it still reports the unauthored sectors absent.
@@ -106,13 +108,28 @@ focused   operator_unarmed_posture, operator_attack_phase_cadence,
           operator_animated_sprite_canonical, reachability audit,
           operator_visual_ownership          all green
 changed   34/34
-actor     52/52
+actor     51/52
 ```
+
+The one actor-tier failure is `lootable_corpse_beacon`, nondeterministic
+independently of this work and unrelated to Operator animation: sampled
+FAILED/PASSED/FAILED in three consecutive runs here, and previously 2/3 on an
+unmodified checkout.
+
+Preemption is proven against real owners, not flags. A genuine in-flight
+transition is interrupted by a real attack, a real dodge and real movement; each
+asserts the attack or dodge actually started, that the transition was dropped,
+that the body moved to the new presenter, and that
+`OperatorBodyPresenter.visible_owners()` holds at most one. Hit reaction and
+death remain flag-driven and are described as what they are — guard and
+cancellation tests, proving posture stands down and refuses to present again,
+not full owner transfers.
 
 Negative-controlled rather than assumed: suppressing the transition, mirroring
 west onto east, and removing the movement guard each fail the posture smoke;
-restoring the old completion predicate and removing the heavy projection each
-fail the cadence smoke.
+removing the cancellation on unavailability fails it in five places; restoring
+the old completion predicate and removing the heavy projection each fail the
+cadence smoke.
 
 ## BLOCKER FOUND: an unimportable tracked audio asset
 

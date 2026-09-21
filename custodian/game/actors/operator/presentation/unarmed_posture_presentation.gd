@@ -3,10 +3,16 @@ extends RefCounted
 ## Unarmed READY/RELAXED posture, as presentation only.
 ##
 ## This owns three things and deliberately nothing else: which posture the
-## Operator is presenting, which authored sector that posture draws, and the
-## lifecycle of the transition between the two. It does not decide whether the
-## Operator may attack, does not scan for enemies, and does not own the body --
-## `operator.gd` keeps ownership through `OperatorBodyPresenter`.
+## Operator is presenting, which authored sector that posture draws, and which
+## transition is currently running. It does not decide whether the Operator may
+## attack, does not scan for enemies, and does not own the body -- `operator.gd`
+## keeps ownership through `OperatorBodyPresenter`.
+##
+## Transition safety needs no token or timer. A transition is a piece of state,
+## not a scheduled callback: it ends when its own clip reports completion, and
+## `advance()` drops it the instant posture stops being available. Preemption
+## therefore has nothing to race against -- the new owner retires the layer, and
+## the forgotten transition has no continuation to fire.
 ##
 ## The READY/RELAXED model itself is `MeleePostureState`, reused rather than
 ## reimplemented, so there is exactly one such state machine in the codebase. Its
@@ -36,7 +42,6 @@ const AUTHORED_SECTORS: Array[StringName] = [&"e", &"w"]
 
 var _state := MeleePostureState.new()
 var _transition_action: StringName = &""
-var _transition_token := 0
 
 
 func posture() -> MeleePostureState.Posture:
@@ -98,24 +103,8 @@ func is_transitioning() -> bool:
 	return not _transition_action.is_empty()
 
 
-## Begin a transition and return its token. The token is what makes preemption
-## safe: a completion that arrives after anything else claimed the body carries a
-## stale token and is discarded, so no retired clip can reclaim presentation.
-func begin_transition(action: StringName) -> int:
-	_transition_token += 1
+func begin_transition(action: StringName) -> void:
 	_transition_action = action
-	return _transition_token
-
-
-func is_transition_current(token: int) -> bool:
-	return token == _transition_token and not _transition_action.is_empty()
-
-
-func complete_transition(token: int) -> bool:
-	if token != _transition_token:
-		return false
-	_transition_action = &""
-	return true
 
 
 ## Complete whatever transition is running, if the finished clip is that
@@ -132,10 +121,14 @@ func complete_transition_for(finished_animation: String) -> bool:
 	return true
 
 
-## Invalidate any in-flight transition. Called whenever posture loses the body,
-## so a timer already scheduled cannot act when it fires.
+## Drop any in-flight transition.
+##
+## Called from `advance()` the moment posture stops being available, which is how
+## preemption works: nothing is scheduled and nothing is awaited, so once the
+## transition is forgotten there is no continuation left to fire. The old clip
+## stops because the new owner retires the layer, not because a timer was
+## cancelled.
 func cancel_transition() -> void:
-	_transition_token += 1
 	_transition_action = &""
 
 
