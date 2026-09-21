@@ -507,7 +507,12 @@ var _vigil_posture_bridge_attack_queued := false
 var _operator_animation_selector = null
 var _melee_fast_combo_step: int = 0
 var _melee_fast_chain_direction_active: bool = false
-var _skip_next_fast_attack_windup: bool = false
+## The next fast attack enters from a dodge, so it uses the dedicated roll-exit
+## presentation. Formerly `_dodge_fast_attack_entry_pending`, which described a
+## separate windup clip that ordinary Fists attacks no longer have: the authored
+## chain links contain their own anticipation. What survives is the entry
+## choice, not the skipping of a phase.
+var _dodge_fast_attack_entry_pending: bool = false
 var _dodge_fast_attack_buffered: bool = false
 var _dodge_fast_attack_presentation_active: bool = false
 var _buffered_attack_kind: String = ""
@@ -5712,7 +5717,7 @@ func _try_melee_attack(intent: String = ""):
 	if requested_kind == "fast" and _dodge_recovery_active \
 	and _active_dodge_profile == &"tap" and _can_start_attack_now():
 		_cancel_dodge_recovery_for_fast_attack()
-		_skip_next_fast_attack_windup = true
+		_dodge_fast_attack_entry_pending = true
 	if (_dodge_active or _dodge_recovery_active) and _active_dodge_profile != &"tap":
 		_buffer_attack(requested_kind)
 		_buffered_attack_timer = maxf(
@@ -5746,7 +5751,7 @@ func _try_melee_attack(intent: String = ""):
 
 
 func _try_start_vigil_ready_fast_startup() -> bool:
-	if _melee_fast_combo_step != 0 or _skip_next_fast_attack_windup:
+	if _melee_fast_combo_step != 0 or _dodge_fast_attack_entry_pending:
 		return false
 	var profile := get_current_combat_profile()
 	if profile == null or profile.weapon_id != &"vigil_pattern_dagger":
@@ -6684,8 +6689,8 @@ func _get_fast_chain_hit_stop_duration(
 
 
 func _start_fast_attack() -> void:
-	var skip_windup_from_dodge := _skip_next_fast_attack_windup
-	_skip_next_fast_attack_windup = false
+	var uses_dodge_fast_attack_entry := _dodge_fast_attack_entry_pending
+	_dodge_fast_attack_entry_pending = false
 	_critical_attack_target = null
 	_critical_attack_damage = 0.0
 	_active_attack_profile = get_current_combat_profile()
@@ -6845,11 +6850,11 @@ func _start_fast_attack() -> void:
 	# retired `fast_windup_01` clip -- doing so prepends a second anticipation and
 	# delays contact past the tuned presentation duration. The separate-clip path
 	# below stays for profiles that still have no authored chain.
-	if is_unarmed_attack and not skip_windup_from_dodge \
+	if is_unarmed_attack and not uses_dodge_fast_attack_entry \
 	and not _has_authored_fast_chain() \
 	and _try_start_fast_attack_windup():
 		return
-	if is_unarmed_attack and skip_windup_from_dodge:
+	if is_unarmed_attack and uses_dodge_fast_attack_entry:
 		_obs_increment(&"player_fast_attacks_from_dodge_recovery")
 		_obs_log(&"player_fast_attack_dodge_cancel", {
 			"attack_key": _melee_attack_key,
@@ -6865,7 +6870,7 @@ func _start_fast_attack() -> void:
 	# A roll-exit fast attack owns a dedicated full-body presentation when the
 	# ingested strip is available. Gameplay remains on the ordinary fast-attack
 	# profile; only its authored hit frame and visual duration differ.
-	if is_unarmed_attack and skip_windup_from_dodge:
+	if is_unarmed_attack and uses_dodge_fast_attack_entry:
 		_dodge_fast_attack_presentation_active = _play_dodge_fast_attack_presentation()
 	if not _dodge_fast_attack_presentation_active:
 		_play_melee_anim_from_key(_melee_attack_key, fallback_animation)
@@ -10603,7 +10608,7 @@ func _start_dodge_recovery() -> void:
 		_dodge_fast_attack_buffered = false
 		_dodge_recovery_active = true
 		_cancel_dodge_recovery_for_fast_attack()
-		_skip_next_fast_attack_windup = true
+		_dodge_fast_attack_entry_pending = true
 		_request_attack_state("fast")
 		return
 	if _dodge_recovery_timer <= 0.0 or not _has_dodge_recovery_animation():

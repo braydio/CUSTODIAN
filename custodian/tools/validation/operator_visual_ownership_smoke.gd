@@ -242,7 +242,7 @@ func _check_preempted_startup_lifecycle() -> void:
 	posture_state.begin_draw_grace(3.0)
 	posture_state.resolve(0.0, true, true, false)
 	_operator.set("_melee_fast_combo_step", 0)
-	_operator.set("_skip_next_fast_attack_windup", false)
+	_operator.set("_dodge_fast_attack_entry_pending", false)
 	for key in ["aim_direction", "movement_direction", "visual_idle_direction", "_melee_forward"]:
 		_operator.set(key, Vector2.RIGHT)
 
@@ -526,7 +526,7 @@ func _check_vigil_posture_and_fast_chain() -> void:
 	posture_state.begin_draw_grace(3.0)
 	posture_state.resolve(0.0, true, true, false)
 	_operator.set("_melee_fast_combo_step", 0)
-	_operator.set("_skip_next_fast_attack_windup", false)
+	_operator.set("_dodge_fast_attack_entry_pending", false)
 	# The startup resolves its strip from the attack aim direction, and only
 	# east/west transition art is authored, so commit an explicit facing.
 	_operator.set("aim_direction", Vector2.RIGHT)

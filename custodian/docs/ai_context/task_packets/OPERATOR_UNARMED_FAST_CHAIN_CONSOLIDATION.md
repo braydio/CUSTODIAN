@@ -131,6 +131,48 @@ commitment. These are proposed from the authored frame counts and the approved
 0.46 s Fast 01 target, and want a visual pass in Moment Forge before they are
 called final.
 
+## Measured cadence: the reported latency was a unit error
+
+An earlier report described ~0.372s from input to Fast 01 contact and ~0.2s of
+dead air between links, and proposed hunting a runtime handoff gremlin. **Those
+numbers were wall clock from a headless capture, reported as if they were game
+time.** They are not.
+
+Moment Forge renders at ~24 fps while stepping 60 Hz physics, so its
+`uptime_sec` runs about 2.5x longer than simulated time. Measured from the run's
+own data: 188 ticks is 3.13s of game time against a 7.89s wall span, a **2.52x
+dilation**.
+
+Corrected, and confirmed independently by an in-engine probe:
+
+| stage | measured |
+|---|---|
+| input -> `_try_melee_attack` returns | 0.3 ms |
+| -> canonical playback starts | 7.1 ms |
+| -> clock reaches contact frame 3 | 158.7 ms |
+
+| interval | wall | game |
+|---|---|---|
+| input -> contact | 0.372s | **0.148s** |
+| contact 1 -> 2 | 0.549s | 0.218s |
+| contact 2 -> 3 | 0.676s | 0.269s |
+| contact 3 -> 4 | 0.910s | 0.361s |
+
+Fast 01 is 6 frames at 12 fps scaled 1.67x, so contact at frame 3 is expected at
+**0.150s**. Measured 0.148s. The chain is hitting its target, and is already
+faster than the 0.17-0.22s design window.
+
+Runtime handoff is 7.1 ms, under half a frame at 60 Hz. There is no quarter
+second unaccounted for, so there is nothing to hunt: no latency investigation, no
+timing-sidecar reshaping, and certainly no new art.
+
+The escalation ratio was scale-invariant and still holds: **1.00 / 1.23 / 1.66**,
+snap -> snap -> drive -> BOOM.
+
+Lesson for future captures: Moment Forge `uptime_sec` is wall clock. Divide by
+the tick-derived dilation, or read ticks, before treating any interval as a
+gameplay timing.
+
 ## Landed so far
 
 | commit | what |
