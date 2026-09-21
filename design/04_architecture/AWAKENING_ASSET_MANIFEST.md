@@ -189,6 +189,17 @@ Consumer: `res://scenes/awakening_first_return.tscn`.
 
 These are coherent room-specific set-piece families. Per-state frame size overrides are intentional. They are not runtime atlas sheets.
 
+Current consumption audit (2026-09-20): the published Crèche states
+(`alcove_closed`, `alcove_broken`, `alcove_fused`, `alcove_empty`,
+`wall_of_seals`, `relic_table`, `authority_inscription`) and Ambulatory states
+(`service_basin_a`, `inspection_niche_medica`, `inspection_niche_vestment`,
+`broken_mirror_panel`, `hidden_reliquary_panel`) are **BAKED_ONLY** in the live
+production plates. No separate sprite binding is appropriate. Ambulatory
+`service_basin_b` and all states in the Attestation, Reliquary, Dust Lung
+structures, Undergate machinery, and Late Service relay-lamp families are
+**NOT_READY** as standalone runtime assets. Their production scenes may depict
+equivalent architecture; this classification concerns separate asset binding.
+
 ### `awakening_creche_fixtures` — P1
 
 Base canvas 128×192.

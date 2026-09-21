@@ -418,7 +418,7 @@ Last updated: 2026-08-20
 - `custodian/game/world/sundered_keep/sundered_keep_tilemap_loader.gd` — small JSON loader for `custodian.sundered_keep.level_tilemap.v1` level data used by the Sundered Keep Sprite2D tilemap build path
 - `custodian/game/world/sundered_keep/sundered_keep_interactable.gd` — small InputMap-aware interactable bridge used by the Sundered Keep Return Mooring, gate key pickup, Main Gate, and Great Hall door interaction nodes
 - `custodian/game/world/awakening/awakening_layout.gd` — single spatial authority for the opening dungeon: world bounds, section envelopes, floors, voids, connectors, thresholds, set pieces, markers, camera reveals, and the Road offset.
-- `custodian/game/world/awakening/awakening_first_return.gd` — Awakening orchestration only: zone state, HUD location/phase/objective, console and P-9 progression, one-shot camera reveals, first-pass completion.
+- `custodian/game/world/awakening/awakening_first_return.gd` — Awakening orchestration: zone/HUD progression, Layout-bound interactables, production-aware traversal blockout, generation-safe reveals, controller-scoped debug reset, and first-pass completion.
 - `custodian/game/world/awakening/awakening_transit_lift.gd` — Dust Lung bidirectional service lift.
 - `custodian/game/world/awakening/awakening_plaque_interactable.gd` — read-only Crèche console and Undergate port readout.
 - `custodian/game/world/awakening/awakening_undergate_lighting.tscn` — authored Dust Lung-to-Undergate lighting zones, sparse local light pools, and major machinery occluders.
@@ -851,7 +851,8 @@ Last updated: 2026-08-20
 - `custodian/tools/validation/sundered_keep_large_layout_smoke.gd` — validates the large JSON functional layout, production underlay, absence of retired static visual placements, retained Return Mooring/module presentation, elevation transitions, underpass/roof regions, stateful gate and Great Hall presentation/blockers, marine ambush, minimap conversion, siege activation/objectives/repair/turret, and missing asset count
 - `custodian/tools/validation/awakening_first_return_smoke.gd` — locked section coordinates, connectors, scene skeleton, Road offset and translation-safety, mapper/debug-tour wiring, and the deliberate absence of Terminal/prewarm/handoff logic.
 - `custodian/tools/validation/awakening_first_return_geometry_smoke.gd` — 16px occupancy grid proving a continuous Operator-width route from `(0, 160)` to `(0, -6464)` across every mandatory section.
-- `custodian/tools/validation/awakening_first_return_progression_smoke.gd` — console progression, P-9 recovery through the existing locker, bidirectional lift, zone volumes, one-shot camera reveals, completion trigger, and disabled encounter slots.
+- `custodian/tools/validation/awakening_first_return_progression_smoke.gd` — console/P-9 progression, bidirectional lift, reveal ownership and reset lifecycle, completion trigger, and disabled encounter slots.
+- `custodian/tools/validation/awakening_gate_collision_capture.gd` — production Gate capture with the live pylon collision shapes outlined; evidence is under `reports/awakening_gate_collision/`.
 - `custodian/tools/validation/operator_authored_melee_fx_smoke.gd` — validates
   authored Operator melee FX suppress the legacy procedural gold swing while
   attacks without authored FX retain it as a fallback.

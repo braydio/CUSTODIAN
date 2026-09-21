@@ -1419,6 +1419,19 @@ runtime output.
 
 Awakening production art is registered through 32 Asset Pipeline V2 family contracts. Zones 01–09 (Crèche, Ambulatory, Attestation, Locker Reliquary, Dust Lung, Undergate, Gate Plaza, Custodian Approach, and Late Service) now have normalized, ingested, and explicitly bound underlay/foreground plates at their locked envelope centers, with production foregrounds yielding blockout presentation while collision, traversal, triggers, interactables, lighting, and layout authority remain unchanged. The Crèche recovery alcove, Dust Lung lift, and all five required dormant Gate of Dust components are also published and bound: console acknowledgement drives the alcove's eight-frame wake strip, lift art follows the existing transit authority, and Gate composition preserves locked landmarks while future Continuity Port states remain deferred. The P-9 release fixture is now the `awakening_designation_locker` family: all four states (`closed`, the eight-frame `authorize_open` strip at 10 FPS, `open_loaded`, `empty`) are ingested and bound, and `SidearmLockerInteractable` no longer references `field_retention_locker`, which remains in the repository only as generic storage art. The required Crèche fixture family is now complete (7/7); Recovery Ambulatory fixtures are 5/6 required, with only `service_basin_b` missing.
 
+The traversal connector/inlay blockout layer now yields to the production
+plates while Layout retains collision authority. Console and lift stations use
+Layout markers; camera reveal releases are generation-safe; debug reset cancels
+pending reveal/lift activity and leaves global inventory and the P-9 grant
+persistent. Published Crèche and Ambulatory fixture states are baked into the
+plates and remain unbound as separate sprites. Other audited fixture families
+have no standalone runtime files yet.
+Gate technical capture confirmed the pylon components were materially wider
+and taller than their blockers; those two blockers now use 240×496 footprints
+at the original centers, with the central route still open. The central sealed
+body remains visually opaque across part of the mandatory route and needs an
+authored composition decision before its collision can match the image.
+
 The one-image Home beginning is retired. The project now boots into
 `res://scenes/awakening_first_return.tscn`, a ten-section authored dungeon walked
 as one continuous space with no loading: Crèche of Answerless Names, Recovery

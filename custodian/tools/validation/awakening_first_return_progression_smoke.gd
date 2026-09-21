@@ -31,6 +31,7 @@ func _init() -> void:
 	_check_camera_reveals(awakening)
 	await _check_south_reach(awakening)
 	_check_encounters_disabled(awakening)
+	await _check_reveal_lifecycle_and_reset(awakening)
 	_report()
 
 
@@ -54,6 +55,15 @@ func _check_gate_presentation(awakening: Node) -> void:
 			_fail("Gate of Dust component missing: %s" % child_name)
 		elif sprite.texture.get_size() != expected_sizes[child_name]:
 			_fail("Gate of Dust %s size drifted: %s" % [child_name, str(sprite.texture.get_size())])
+	var collision := awakening.get_node("World/AwakeningZones/Zone07_GateOfDust/Collision")
+	for piece in Layout.set_pieces_for(&"zone07_gate_of_dust"):
+		if not String(piece["id"]).begins_with("gate_pylon_"):
+			continue
+		var shape := collision.get_node_or_null(String(piece["id"]) + "_body") as CollisionShape2D
+		if shape == null or not shape.shape is RectangleShape2D:
+			_fail("Gate pylon collision missing: %s" % piece["id"])
+		elif shape.position != piece["position"] or (shape.shape as RectangleShape2D).size != piece["size"]:
+			_fail("Gate pylon collision differs from Layout: %s" % piece["id"])
 
 
 # --- Crèche console ----------------------------------------------------------
@@ -207,6 +217,39 @@ func _check_camera_reveals(awakening: Node) -> void:
 	var fired_after: Array = awakening.get_awakening_state().get("fired_reveals", [])
 	if fired_after.size() != fired.size() + 1:
 		_fail("camera reveal is not one-shot (%d -> %d)" % [fired.size(), fired_after.size()])
+
+
+func _check_reveal_lifecycle_and_reset(awakening: Node) -> void:
+	var camera := awakening.get_node("World/Camera2D")
+	awakening.call("play_camera_reveal", &"zone05_dust_lung")
+	await create_timer(0.1).timeout
+	awakening.call("play_camera_reveal", &"zone08_custodian_approach")
+	await create_timer(2.1).timeout
+	if not bool(camera.call("has_presentation_framing")):
+		_fail("earlier reveal timeout cleared the newer reveal")
+	await create_timer(1.2).timeout
+	if bool(camera.call("has_presentation_framing")):
+		_fail("newer reveal did not release its framing")
+	awakening.call("play_camera_reveal", &"zone05_dust_lung")
+	var lift: Node = awakening.call("get_transit_lift")
+	var operator := awakening.get_node("World/Operator") as Node2D
+	operator.global_position = lift.lower_station
+	if not bool(lift.call("ride", operator)):
+		_fail("lift did not begin a ride for reset regression")
+	awakening.call("reset_progression")
+	if not bool(awakening.get("p9_recovered")):
+		_fail("debug reset falsely rewound the persistent P-9 grant")
+	if bool(camera.call("has_presentation_framing")) or bool(awakening.get("_reveal_release_pending")):
+		_fail("debug reset left camera reveal state active")
+	if lift != null and (bool(lift.call("is_busy")) or lift.current_station != 0):
+		_fail("debug reset left transit lift state active")
+	if operator.global_position != Layout.OPERATOR_WAKE_POSITION:
+		_fail("debug reset did not return Operator to wake")
+	await create_timer(2.2).timeout
+	if bool(camera.call("has_presentation_framing")):
+		_fail("cancelled reveal timer restored framing after reset")
+	if operator.global_position != Layout.OPERATOR_WAKE_POSITION or bool(lift.call("is_busy")):
+		_fail("cancelled lift cycle changed state after reset")
 
 
 # --- Completion --------------------------------------------------------------

@@ -264,8 +264,8 @@ const SET_PIECES := {
 		{"id": "route_map_wall", "label": "ROUTE MAP WALL", "position": Vector2(-560, -4496), "size": Vector2(224, 32), "blocking": false},
 	],
 	&"zone07_gate_of_dust": [
-		{"id": "gate_pylon_west", "label": "GATE PYLON", "position": Vector2(-256, -4768), "size": Vector2(160, 320), "blocking": true},
-		{"id": "gate_pylon_east", "label": "GATE PYLON", "position": Vector2(256, -4768), "size": Vector2(160, 320), "blocking": true},
+		{"id": "gate_pylon_west", "label": "GATE PYLON", "position": Vector2(-256, -4768), "size": Vector2(240, 496), "blocking": true},
+		{"id": "gate_pylon_east", "label": "GATE PYLON", "position": Vector2(256, -4768), "size": Vector2(240, 496), "blocking": true},
 		{"id": "rest_checkpoint", "label": "REST / CHECKPOINT", "position": Vector2(0, -5056), "size": Vector2(96, 64), "blocking": false},
 	],
 	&"zone08_custodian_approach": [

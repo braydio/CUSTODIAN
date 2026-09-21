@@ -27,6 +27,8 @@ var current_station: int = Station.LOWER
 var _busy := false
 var _operator: Node2D = null
 var _lift_sprite: Sprite2D = null
+var _cycle_generation := 0
+var _ride_tween: Tween = null
 
 
 func _ready() -> void:
@@ -107,20 +109,25 @@ func ride(actor: Node2D) -> bool:
 
 
 func _run_cycle(from_station: int, to_station: int) -> void:
+	_cycle_generation += 1
+	var generation := _cycle_generation
 	_busy = true
 	transit_started.emit(from_station)
 	_set_operator_input_enabled(false)
 	await _wait(FADE_SEC)
+	if generation != _cycle_generation: return
 	if _lift_sprite != null:
-		var tween := create_tween()
-		tween.tween_property(_lift_sprite, "position", station_position(to_station), SHAKE_SEC).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		_ride_tween = create_tween()
+		_ride_tween.tween_property(_lift_sprite, "position", station_position(to_station), SHAKE_SEC).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	await _wait(SHAKE_SEC)
+	if generation != _cycle_generation: return
 	if _operator != null and is_instance_valid(_operator):
 		_operator.global_position = station_position(to_station)
 		if _operator is CharacterBody2D:
 			(_operator as CharacterBody2D).velocity = Vector2.ZERO
 	current_station = to_station
 	await _wait(FADE_SEC)
+	if generation != _cycle_generation: return
 	_set_operator_input_enabled(true)
 	_busy = false
 	transit_finished.emit(to_station)
@@ -142,3 +149,17 @@ func _set_operator_input_enabled(enabled: bool) -> void:
 
 func is_busy() -> bool:
 	return _busy
+
+
+## Abort an in-flight ride when the Awakening debug tour returns to the wake.
+func reset_transient_state() -> void:
+	_cycle_generation += 1
+	if _ride_tween != null and _ride_tween.is_running():
+		_ride_tween.kill()
+	_ride_tween = null
+	_set_operator_input_enabled(true)
+	_busy = false
+	_operator = null
+	current_station = Station.LOWER
+	if _lift_sprite != null:
+		_lift_sprite.position = lower_station

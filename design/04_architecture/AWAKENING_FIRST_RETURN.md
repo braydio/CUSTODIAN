@@ -1,7 +1,7 @@
 # Awakening: The First Return
 
-**Status:** active blockout implementation, sections 01-10
-**Last Updated:** 2026-09-15
+**Status:** active opening, production plates in sections 01-09 and authored Road in section 10
+**Last Updated:** 2026-09-20
 **Runtime Target:** Godot 4.x (`custodian/`)
 **Runtime Slice:** `res://scenes/awakening_first_return.tscn` (project `main_scene`)
 **Spatial authority:** `res://game/world/awakening/awakening_layout.gd`
@@ -116,6 +116,10 @@ Each section is a node with a fixed skeleton — `ArtUnderlay`,
 `Triggers`, `Markers`, `Audio` — so a production art pass can replace
 `BlockoutPresentation` and fill `ArtUnderlay`, `Occlusion`, and `SetPieces`
 **without touching authored collision, triggers, or gameplay coordinates**.
+Sections 01-09 now have production underlay and foreground plates. The shared
+traversal blockout polygons/inlays live under `Traversal/BlockoutPresentation`
+and are hidden when those plates are present; Layout still owns traversal and
+collision carving.
 
 `AwakeningFirstReturn` is orchestration only: current zone, visited zones, console
 acknowledgement, P-9 recovery, one-shot camera reveals, HUD location/phase/
@@ -161,6 +165,16 @@ objective, and first-pass completion. It owns no geometry.
 | 10 Road reveal | `(0, -6080)` | `(0, -120)` | 0.66 | 1.20s | 2.00s |
 
 Each fires once, then releases to normal follow.
+Overlapping reveals release only their own framing generation. The debug tour's
+`reset_progression()` cancels pending reveal and lift presentation and restores
+the wake pose, but does not rewind global inventory or the P-9 locker grant.
+
+Gate collision QA (2026-09-20) found that the original 160×320 pylon blockers
+covered only part of the opaque 256×512 component art. Both pylon blockers now
+use 240×496 footprints at their original centers. The authored route remains
+traversable. The sealed central body is still opaque across part of that route;
+resolving that visual passage requires an authored Gate state/composition
+decision, so its collision was not extended across the mandatory route.
 
 ### Deliberately not in this pass
 

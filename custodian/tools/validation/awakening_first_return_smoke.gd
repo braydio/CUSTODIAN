@@ -72,6 +72,8 @@ func _init() -> void:
 	_check_main_scene()
 	var instance := _instantiate_scene()
 	if instance != null:
+		root.add_child(instance)
+		await physics_frame
 		_check_scene_skeleton(instance)
 		_check_road_instance(instance)
 		_check_retired_home_logic()
@@ -200,6 +202,16 @@ func _check_scene_skeleton(instance: Node) -> void:
 		_fail("blockout presentation does not yield to an authored production underlay")
 	if not script_source.contains("presentation.add_child(visual)"):
 		_fail("grey placeholder set-piece visuals are not owned by BlockoutPresentation")
+	var traversal := instance.get_node_or_null("World/AwakeningZones/Traversal/BlockoutPresentation") as CanvasItem
+	if traversal == null:
+		_fail("traversal blockout presentation is missing")
+	elif traversal.visible:
+		_fail("production traversal blockout overlay is visible above authored plates")
+	if Layout.traversal_rects().is_empty():
+		_fail("Layout traversal authority is missing")
+	elif traversal != null and traversal.get_child_count() != Layout.traversal_rects().size() * 2:
+		_fail("traversal debug presentation no longer follows Layout traversal authority")
+	_check_marker_placements(instance)
 	var operator := instance.get_node_or_null("World/Operator") as Node2D
 	if operator != null and operator.position != Layout.OPERATOR_WAKE_POSITION:
 		_fail("Operator does not start at the wake position: %s" % str(operator.position))
@@ -222,6 +234,31 @@ func _check_scene_skeleton(instance: Node) -> void:
 		for method_name in ["set_location", "set_phase", "set_objective", "show_interaction"]:
 			if not hud.has_method(method_name):
 				_fail("HUD missing presentation method: %s" % method_name)
+
+
+func _check_marker_placements(instance: Node) -> void:
+	var placements := [
+		["Zone01_Creche/Interactables/CrecheConsole", &"zone01_creche", "creche_console"],
+		["Zone06_Undergate/Interactables/PortStatusPlaque", &"zone06_undergate", "port_status_plaque"],
+	]
+	for placement in placements:
+		var node := instance.get_node_or_null(NodePath("World/AwakeningZones/" + placement[0])) as Node2D
+		if node == null:
+			_fail("marker-bound interactable missing: %s" % placement[0])
+			continue
+		for marker in Layout.markers_for(placement[1]):
+			if String(marker.get("id", "")) == placement[2] and node.position != marker["position"]:
+				_fail("%s differs from Layout marker" % placement[0])
+	var lift := instance.get_node_or_null("World/AwakeningZones/Zone05_DustLung/Interactables/TransitLift")
+	if lift == null:
+		_fail("transit lift missing")
+		return
+	for marker in Layout.markers_for(&"zone05_dust_lung"):
+		match String(marker.get("id", "")):
+			"lift_lower":
+				if lift.lower_station != marker["position"]: _fail("lower lift station differs from Layout marker")
+			"lift_upper":
+				if lift.upper_station != marker["position"]: _fail("upper lift station differs from Layout marker")
 
 
 func _check_road_instance(instance: Node) -> void:

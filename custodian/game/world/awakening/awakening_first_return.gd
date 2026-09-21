@@ -55,6 +55,7 @@ var _occupied_zones := {}
 var _transit_lift: Node = null
 var _recovery_alcove: AnimatedSprite2D = null
 var _reveal_release_pending := false
+var _reveal_generation := 0
 
 
 func _ready() -> void:
@@ -267,16 +268,18 @@ func _build_zone_region(zone_node: Node2D, zone_id: StringName, zone: Dictionary
 	region.set_meta("zone_id", zone_id)
 
 
-## Connectors and thresholds are drawn as floor so the locked route reads as one
-## continuous space, and are carved out of collision by _overlaps_traversal.
+## Connector and threshold geometry remains Layout-owned for collision carving.
+## This visual layer is only useful where production underlays are absent.
 func _build_traversal_presentation() -> void:
 	var root := _ensure_child(zones_root, "Traversal", Node2D.new())
+	var presentation := _ensure_child(root, "BlockoutPresentation", Node2D.new())
+	presentation.visible = build_blockout_presentation and not _has_production_traversal_art()
 	for rect in Layout.traversal_rects():
 		var poly := Polygon2D.new()
 		poly.polygon = Layout.rect_to_polygon(rect)
 		poly.color = Layout.COLOR_FLOOR
 		poly.z_index = Layout.Z_FLOOR
-		root.add_child(poly)
+		presentation.add_child(poly)
 		var inlay := Line2D.new()
 		inlay.width = 3.0
 		inlay.default_color = Layout.COLOR_OLD_BRASS
@@ -286,7 +289,17 @@ func _build_traversal_presentation() -> void:
 			Vector2(rect.get_center().x, rect.position.y),
 			Vector2(rect.get_center().x, rect.end.y),
 		])
-		root.add_child(inlay)
+		presentation.add_child(inlay)
+
+
+func _has_production_traversal_art() -> bool:
+	for zone in Layout.ZONES:
+		if StringName(zone["id"]) == &"zone10_road_south_reach":
+			continue
+		var zone_node := zones_root.get_node_or_null(NodePath(String(zone["node"])))
+		if zone_node == null or zone_node.get_node_or_null("ArtUnderlay/Underlay") == null:
+			return false
+	return true
 
 
 ## Temporary visible ruin closing the Road north of the South Reach. Deliberately
@@ -412,7 +425,7 @@ func _build_interactables() -> void:
 	if creche != null and creche.get_node_or_null("CrecheConsole") == null:
 		var console := Plaque.new()
 		console.name = "CrecheConsole"
-		console.position = Vector2(112, 144)
+		console.position = _marker_position(&"zone01_creche", "creche_console")
 		console.title = "CRÈCHE CONSOLE"
 		console.readout = CRECHE_READOUT
 		console.acknowledged_readout = CRECHE_READOUT_AGAIN
@@ -423,7 +436,7 @@ func _build_interactables() -> void:
 	if undergate != null and undergate.get_node_or_null("PortStatusPlaque") == null:
 		var plaque := Plaque.new()
 		plaque.name = "PortStatusPlaque"
-		plaque.position = Vector2(128, -4016)
+		plaque.position = _marker_position(&"zone06_undergate", "port_status_plaque")
 		plaque.title = "DAMAGED PORT CONSOLE"
 		plaque.readout = PORT_READOUT
 		undergate.add_child(plaque)
@@ -432,8 +445,8 @@ func _build_interactables() -> void:
 	if cistern != null and cistern.get_node_or_null("TransitLift") == null:
 		var lift := TransitLift.new()
 		lift.name = "TransitLift"
-		lift.lower_station = Vector2(384, -3008)
-		lift.upper_station = Vector2(384, -3424)
+		lift.lower_station = _marker_position(&"zone05_dust_lung", "lift_lower")
+		lift.upper_station = _marker_position(&"zone05_dust_lung", "lift_upper")
 		cistern.add_child(lift)
 		_transit_lift = lift
 
@@ -575,6 +588,7 @@ func play_camera_reveal(zone_id: StringName) -> bool:
 	var reveal: Dictionary = Layout.CAMERA_REVEALS.get(zone_id, {})
 	if reveal.is_empty() or camera_ref == null: return false
 	if not camera_ref.has_method("set_presentation_framing_transition"): return false
+	_reveal_generation += 1
 	camera_ref.call("set_presentation_framing_transition",
 		reveal["offset"], reveal["zoom"], float(reveal["transition_sec"]))
 	_release_reveal_after(float(reveal["transition_sec"]) + float(reveal["hold_sec"]))
@@ -582,8 +596,11 @@ func play_camera_reveal(zone_id: StringName) -> bool:
 
 
 func _release_reveal_after(seconds: float) -> void:
+	var generation := _reveal_generation
 	_reveal_release_pending = true
 	await get_tree().create_timer(seconds).timeout
+	if generation != _reveal_generation:
+		return
 	if camera_ref != null and camera_ref.has_method("clear_presentation_framing"):
 		camera_ref.call("clear_presentation_framing", true)
 	_reveal_release_pending = false
@@ -619,7 +636,10 @@ func _configure_hud() -> void:
 	hud.set_debug_overlay_visible(false)
 	hud.call("set_status_line", "key", Catalog.ICON_OBJECTIVE, "CONTINUITY: UNRESOLVED", Palette.MUTED_TEXT)
 	hud.call("set_status_line", "gate", Catalog.ICON_HAZARD, "AUTHORITY: UNVERIFIED", Palette.DANGER)
-	hud.call("set_status_line", "return", Catalog.COMPASS_ROSE_SMALL, "POST: UNMANNED", Palette.BLUE_TECH)
+	if p9_recovered:
+		hud.call("set_status_line", "return", Catalog.COMPASS_ROSE_SMALL, "P-9: RECOVERED", Palette.GREEN_SIGNAL)
+	else:
+		hud.call("set_status_line", "return", Catalog.COMPASS_ROSE_SMALL, "POST: UNMANNED", Palette.BLUE_TECH)
 	_set_objective(OBJECTIVE_RECOVERY)
 
 
@@ -715,16 +735,23 @@ func get_awakening_state() -> Dictionary:
 	}
 
 
-## Debug tour support: drops progression back to the wake state without
-## reloading the scene.
+## Debug tour support: resets controller-owned state without reloading the scene.
+## Global inventory and the persistent P-9 locker grant are not rewound.
 func reset_progression() -> void:
+	_reveal_generation += 1
+	_reveal_release_pending = false
+	if camera_ref != null and camera_ref.has_method("clear_presentation_framing"):
+		camera_ref.call("clear_presentation_framing", true)
+	var lift := get_transit_lift()
+	if lift != null and lift.has_method("reset_transient_state"):
+		lift.call("reset_transient_state")
 	current_zone_index = 1
 	visited_zones.clear()
 	_fired_reveals.clear()
 	_occupied_zones.clear()
 	completed = false
 	opening_console_acknowledged = false
-	p9_recovered = false
+	# Keep the one-time grant state aligned with the persistent locker/inventory.
 	if _recovery_alcove != null:
 		_recovery_alcove.play(&"idle")
 	_place_operator()
