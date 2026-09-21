@@ -555,7 +555,48 @@ def installer_smoke() -> None:
         subprocess.run([str(installer)], check=True, capture_output=True, text=True, env=env)
 
 
+def _reexec_with_websockets() -> None:
+    """Re-run under an interpreter that has `websockets`, or fail saying so.
+
+    Every WebSocket assertion in this smoke imports `websockets` lazily, so
+    without it the gate dies on a `ModuleNotFoundError` traceback that reads like
+    a code defect rather than a missing dependency. The repository already
+    provisions the package in the Operator UI virtualenv (`opui-install`), so the
+    interpreter exists -- the manifest just runs this file with the system
+    python.
+
+    Re-exec there rather than skipping: a validation gate that quietly opts out
+    of its own assertions is worse than one that fails, because it reports green
+    while proving nothing.
+    """
+
+    try:
+        import websockets  # noqa: F401
+        return
+    except ModuleNotFoundError:
+        pass
+
+    repo_root = Path(__file__).resolve().parents[3]
+    candidate = repo_root / ".ai/operator-ui-venv/bin/python"
+    if candidate.is_file() and os.access(candidate, os.X_OK):
+        probe = subprocess.run(
+            [str(candidate), "-c", "import websockets"],
+            capture_output=True,
+        )
+        if probe.returncode == 0:
+            raise SystemExit(
+                subprocess.run([str(candidate), str(Path(__file__).resolve())]).returncode
+            )
+
+    raise SystemExit(
+        "operator_live_bridge_smoke requires the `websockets` package. It ships in the "
+        "Operator UI virtualenv: run `opui-install`, or install websockets for this "
+        "interpreter."
+    )
+
+
 def main() -> None:
+    _reexec_with_websockets()
     with tempfile.TemporaryDirectory() as temporary:
         repo_root = Path(temporary)
         path_policy_smoke(repo_root)
