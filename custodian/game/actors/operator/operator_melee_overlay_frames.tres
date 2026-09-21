@@ -9,7 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://bg5o5rpjlfqea" path="res://content/sprites/operator/runtime/animations/unarmed/attack/legacy_operator_2h_heavy_3layer/operator__full_body__unarmed__attack__legacy_operator_2h_heavy_3layer__omni__1f__672x288.png" id="8_0rblj"]
 [ext_resource type="Texture2D" uid="uid://cwoddshodls73" path="res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/legacy_heavy_anticipation_body/operator__full_body__melee_1h_heavy__attack__legacy_heavy_anticipation_body__omni__1f__480x192.png" id="8_6r37m"]
 [ext_resource type="Texture2D" uid="uid://bpw58xvexdas5" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_01/operator__fx__unarmed__attack__fast_01__s__6f__96.png" id="10_w2rep"]
-[ext_resource type="Texture2D" uid="uid://dshd07slfesky" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_01/operator__fx__unarmed__attack__fast_01__e__3f__128.png" id="11_esjq4"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_01/operator__fx__unarmed__attack__fast_01__e__6f__96.png" id="11_esjq4"]
 [ext_resource type="Texture2D" uid="uid://c5m2nciqlkhrb" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_01/operator__fx__unarmed__attack__fast_01__n__6f__96.png" id="11_somh8"]
 [ext_resource type="Texture2D" uid="uid://cw6etjt05i4rw" path="res://content/sprites/operator/runtime/animations/unarmed/attack/heavy_01/operator__fx__unarmed__attack__heavy_01__e__7f__96.png" id="12_esjq4"]
 [ext_resource type="Texture2D" uid="uid://bxorgcwu3td54" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__fx__unarmed__attack__fast_recovery_01__n__2f__96.png" id="13_5wtfu"]
@@ -765,6 +765,18 @@ region = Rect2(128, 0, 128, 128)
 [sub_resource type="AtlasTexture" id="AtlasTexture_compat_ad07a46943b9"]
 atlas = ExtResource("11_esjq4")
 region = Rect2(256, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_5e13c97cdc05"]
+atlas = ExtResource("11_esjq4")
+region = Rect2(384, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_088adbe0a71f"]
+atlas = ExtResource("11_esjq4")
+region = Rect2(512, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_0bb1547c1354"]
+atlas = ExtResource("11_esjq4")
+region = Rect2(640, 0, 128, 128)
 
 [resource]
 animations = [{

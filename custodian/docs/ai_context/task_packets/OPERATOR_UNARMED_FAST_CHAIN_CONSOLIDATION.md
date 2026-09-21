@@ -73,9 +73,9 @@ unarmed/attack/fast_04/{e,w}/{lower_body,upper_body}   8f
 unarmed/attack/fast_04/{e,w}/fx                       8f
 ```
 
-Preserved Fast 01–03 FX and full-body variants remain compatibility/preservation
-art and are not selected by the four-link modular presentation. Only Fast 04's
-synchronized extracted flare is live in this chain.
+Fast 01–04 now use synchronized authored E/W FX strips in the four-link modular
+presentation. Older full-body variants remain compatibility/preservation art
+and are not selected by this chain.
 
 Fast 01 also carries preserved full-body variants (`e,w` 5f and `n,s` 6f) and
 four `fast_01_legacy_*` families. Those are preservation art. The modular E/W
@@ -210,8 +210,8 @@ keys had already landed in `09cbe98de`, so the trap was armed.
 - Remove unarmed-specific phase choreography once the chain presents; keep
   `_melee_fast_windup` (Vigil still uses it) and the generic non-integrated
   recovery capability.
-- Fast 01–03 preservation FX are deliberately not wired. Fast 04 owns the only
-  synchronized FX strip in the replacement family.
+- Fast 01–04 each use a synchronized authored E/W FX strip in the replacement
+  family, sharing the exact visible frame clock with their body layers.
 - Reachability: Fast 01/02/03 genuinely LIVE, windup/strike/recovery SUPERSEDED.
 - Tooling drift: `operator_next_actions_report.py` phase expansion,
   `refresh_combo_check_src.sh`, active preview docs.

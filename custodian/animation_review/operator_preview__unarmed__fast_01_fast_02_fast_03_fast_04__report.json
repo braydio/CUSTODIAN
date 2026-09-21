@@ -1,0 +1,352 @@
+{
+  "loadout": "unarmed",
+  "actions": [
+    "fast_01",
+    "fast_02",
+    "fast_03",
+    "fast_04"
+  ],
+  "directions": [
+    "s",
+    "se",
+    "e",
+    "ne",
+    "n",
+    "nw",
+    "w",
+    "sw"
+  ],
+  "include_fx": true,
+  "output_dir": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/animation_review",
+  "grid": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/animation_review/operator_preview__unarmed__fast_01_fast_02_fast_03_fast_04__grid.png",
+  "previews": [
+    {
+      "action": "fast_01",
+      "direction": "s",
+      "body_source": null,
+      "fx_source": null,
+      "missing_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "frames": 0
+    },
+    {
+      "action": "fast_02",
+      "direction": "s",
+      "body_source": null,
+      "fx_source": null,
+      "missing_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "frames": 0
+    },
+    {
+      "action": "fast_03",
+      "direction": "s",
+      "body_source": null,
+      "fx_source": null,
+      "missing_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "frames": 0
+    },
+    {
+      "action": "fast_04",
+      "direction": "s",
+      "body_source": null,
+      "fx_source": null,
+      "missing_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "frames": 0
+    },
+    {
+      "action": "fast_01",
+      "direction": "se",
+      "body_source": null,
+      "fx_source": null,
+      "missing_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "frames": 0
+    },
+    {
+      "action": "fast_02",
+      "direction": "se",
+      "body_source": null,
+      "fx_source": null,
+      "missing_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "frames": 0
+    },
+    {
+      "action": "fast_03",
+      "direction": "se",
+      "body_source": null,
+      "fx_source": null,
+      "missing_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "frames": 0
+    },
+    {
+      "action": "fast_04",
+      "direction": "se",
+      "body_source": null,
+      "fx_source": null,
+      "missing_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "frames": 0
+    },
+    {
+      "action": "fast_01",
+      "direction": "e",
+      "body_source": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/runtime/animations/unarmed/attack/fast_01/operator__lower_body__unarmed__attack__fast_01__e__6f__96.png + /home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/runtime/animations/unarmed/attack/fast_01/operator__upper_body__unarmed__attack__fast_01__e__6f__96.png",
+      "fx_source": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/runtime/animations/unarmed/attack/fast_01/operator__fx__unarmed__attack__fast_01__e__6f__96.png",
+      "missing_layers": [],
+      "frames": 6
+    },
+    {
+      "action": "fast_02",
+      "direction": "e",
+      "body_source": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/runtime/animations/unarmed/attack/fast_02/operator__lower_body__unarmed__attack__fast_02__e__6f__96.png + /home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/runtime/animations/unarmed/attack/fast_02/operator__upper_body__unarmed__attack__fast_02__e__6f__96.png",
+      "fx_source": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/runtime/animations/unarmed/attack/fast_02/operator__fx__unarmed__attack__fast_02__e__6f__96.png",
+      "missing_layers": [],
+      "frames": 6
+    },
+    {
+      "action": "fast_03",
+      "direction": "e",
+      "body_source": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/runtime/animations/unarmed/attack/fast_03/operator__lower_body__unarmed__attack__fast_03__e__7f__96.png + /home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/runtime/animations/unarmed/attack/fast_03/operator__upper_body__unarmed__attack__fast_03__e__7f__96.png",
+      "fx_source": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/runtime/animations/unarmed/attack/fast_03/operator__fx__unarmed__attack__fast_03__e__7f__96.png",
+      "missing_layers": [],
+      "frames": 7
+    },
+    {
+      "action": "fast_04",
+      "direction": "e",
+      "body_source": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/runtime/animations/unarmed/attack/fast_04/operator__lower_body__unarmed__attack__fast_04__e__8f__96.png + /home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/runtime/animations/unarmed/attack/fast_04/operator__upper_body__unarmed__attack__fast_04__e__8f__96.png",
+      "fx_source": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/runtime/animations/unarmed/attack/fast_04/operator__fx__unarmed__attack__fast_04__e__8f__96.png",
+      "missing_layers": [],
+      "frames": 8
+    },
+    {
+      "action": "fast_01",
+      "direction": "ne",
+      "body_source": null,
+      "fx_source": null,
+      "missing_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "frames": 0
+    },
+    {
+      "action": "fast_02",
+      "direction": "ne",
+      "body_source": null,
+      "fx_source": null,
+      "missing_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "frames": 0
+    },
+    {
+      "action": "fast_03",
+      "direction": "ne",
+      "body_source": null,
+      "fx_source": null,
+      "missing_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "frames": 0
+    },
+    {
+      "action": "fast_04",
+      "direction": "ne",
+      "body_source": null,
+      "fx_source": null,
+      "missing_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "frames": 0
+    },
+    {
+      "action": "fast_01",
+      "direction": "n",
+      "body_source": null,
+      "fx_source": null,
+      "missing_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "frames": 0
+    },
+    {
+      "action": "fast_02",
+      "direction": "n",
+      "body_source": null,
+      "fx_source": null,
+      "missing_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "frames": 0
+    },
+    {
+      "action": "fast_03",
+      "direction": "n",
+      "body_source": null,
+      "fx_source": null,
+      "missing_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "frames": 0
+    },
+    {
+      "action": "fast_04",
+      "direction": "n",
+      "body_source": null,
+      "fx_source": null,
+      "missing_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "frames": 0
+    },
+    {
+      "action": "fast_01",
+      "direction": "nw",
+      "body_source": null,
+      "fx_source": null,
+      "missing_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "frames": 0
+    },
+    {
+      "action": "fast_02",
+      "direction": "nw",
+      "body_source": null,
+      "fx_source": null,
+      "missing_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "frames": 0
+    },
+    {
+      "action": "fast_03",
+      "direction": "nw",
+      "body_source": null,
+      "fx_source": null,
+      "missing_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "frames": 0
+    },
+    {
+      "action": "fast_04",
+      "direction": "nw",
+      "body_source": null,
+      "fx_source": null,
+      "missing_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "frames": 0
+    },
+    {
+      "action": "fast_01",
+      "direction": "w",
+      "body_source": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/runtime/animations/unarmed/attack/fast_01/operator__lower_body__unarmed__attack__fast_01__w__6f__96.png + /home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/runtime/animations/unarmed/attack/fast_01/operator__upper_body__unarmed__attack__fast_01__w__6f__96.png",
+      "fx_source": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/runtime/animations/unarmed/attack/fast_01/operator__fx__unarmed__attack__fast_01__w__6f__96.png",
+      "missing_layers": [],
+      "frames": 6
+    },
+    {
+      "action": "fast_02",
+      "direction": "w",
+      "body_source": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/runtime/animations/unarmed/attack/fast_02/operator__lower_body__unarmed__attack__fast_02__w__6f__96.png + /home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/runtime/animations/unarmed/attack/fast_02/operator__upper_body__unarmed__attack__fast_02__w__6f__96.png",
+      "fx_source": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/runtime/animations/unarmed/attack/fast_02/operator__fx__unarmed__attack__fast_02__w__6f__96.png",
+      "missing_layers": [],
+      "frames": 6
+    },
+    {
+      "action": "fast_03",
+      "direction": "w",
+      "body_source": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/runtime/animations/unarmed/attack/fast_03/operator__lower_body__unarmed__attack__fast_03__w__7f__96.png + /home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/runtime/animations/unarmed/attack/fast_03/operator__upper_body__unarmed__attack__fast_03__w__7f__96.png",
+      "fx_source": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/runtime/animations/unarmed/attack/fast_03/operator__fx__unarmed__attack__fast_03__w__7f__96.png",
+      "missing_layers": [],
+      "frames": 7
+    },
+    {
+      "action": "fast_04",
+      "direction": "w",
+      "body_source": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/runtime/animations/unarmed/attack/fast_04/operator__lower_body__unarmed__attack__fast_04__w__8f__96.png + /home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/runtime/animations/unarmed/attack/fast_04/operator__upper_body__unarmed__attack__fast_04__w__8f__96.png",
+      "fx_source": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/runtime/animations/unarmed/attack/fast_04/operator__fx__unarmed__attack__fast_04__w__8f__96.png",
+      "missing_layers": [],
+      "frames": 8
+    },
+    {
+      "action": "fast_01",
+      "direction": "sw",
+      "body_source": null,
+      "fx_source": null,
+      "missing_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "frames": 0
+    },
+    {
+      "action": "fast_02",
+      "direction": "sw",
+      "body_source": null,
+      "fx_source": null,
+      "missing_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "frames": 0
+    },
+    {
+      "action": "fast_03",
+      "direction": "sw",
+      "body_source": null,
+      "fx_source": null,
+      "missing_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "frames": 0
+    },
+    {
+      "action": "fast_04",
+      "direction": "sw",
+      "body_source": null,
+      "fx_source": null,
+      "missing_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "frames": 0
+    }
+  ]
+}
