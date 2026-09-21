@@ -338,7 +338,7 @@
 [ext_resource type="Texture2D" uid="uid://jsty4yfwoqs7" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_01/operator__full_body__unarmed__attack__fast_01__s__6f__96.png" id="338_uwpnk"]
 [ext_resource type="Texture2D" uid="uid://bpw58xvexdas5" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_01/operator__fx__unarmed__attack__fast_01__s__6f__96.png" id="339_p3b75"]
 [ext_resource type="Texture2D" uid="uid://j51jjutgbfdf" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_01/operator__full_body__unarmed__attack__fast_01__w__5f__96.png" id="340_r0srh"]
-[ext_resource type="Texture2D" uid="uid://dcbv4o1wml6y" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_01/operator__fx__unarmed__attack__fast_01__w__9f__96.png" id="341_x36xx"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_01/operator__fx__unarmed__attack__fast_01__w__3f__128.png" id="341_x36xx"]
 [ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_01/operator__lower_body__unarmed__attack__fast_01__w__6f__96.png" id="342_xlvwq"]
 [ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_01/operator__upper_body__unarmed__attack__fast_01__w__6f__96.png" id="343_75eyt"]
 [ext_resource type="Texture2D" uid="uid://dl378k7xlhw3c" path="res://content/sprites/operator/runtime/animations/unarmed/attack/fast_01_legacy_5e34d149/operator__fx__unarmed__attack__fast_01_legacy_5e34d149__w__5f__96.png" id="344_mcy33"]
@@ -20086,24 +20086,6 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_wqdnm")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_kqmyn")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_vhx3t")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_xaxls")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_wcbuy")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_uxc4u")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_5wb20")
 }],
 "loop": 0,
 "name": &"unarmed/attack/fast_01/w/fx",

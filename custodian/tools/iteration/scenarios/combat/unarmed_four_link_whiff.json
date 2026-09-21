@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "id": "combat/unarmed_four_link_whiff",
+  "description": "Complete four-link Fists whiff chain and terminal recovery.",
+  "scene": "res://scenes/debug/combat_playground.tscn",
+  "seed": 104729,
+  "duration_ticks": 190,
+  "simulation": {"physics_hz": 60, "warmup_ticks": 2, "max_wall_seconds": 25, "pause_during_setup": true},
+  "capture": {"width": 1280, "height": 720, "fps": 60, "audio": true, "start_tick": 45, "end_tick": 170, "contact_sheet_ticks": [55, 68, 84, 100, 142, 168], "required_keyframes": true, "background": "opaque"},
+  "setup": {
+    "remove_nodes": ["World/Enemies/EnemyGrunt2", "World/Enemies/EnemyGrunt3", "World/DroneManager"],
+    "roles": {"operator": {"node_path": "World/Operator"}, "target": {"node_path": "World/Enemies/EnemyGrunt1"}, "camera": {"node_path": "World/Camera2D"}},
+    "spawns": [],
+    "properties": [{"role": "operator", "property": "global_position", "value": [420, 360]}, {"role": "target", "property": "global_position", "value": [700, 360]}],
+    "processing": [{"role": "target", "physics": false, "process": false}],
+    "fixture": {"id": "combat_playground", "config": {"stationary_target": true}}
+  },
+  "timeline": [
+    {"tick": 2, "action": "input_tap", "name": "toggle_unarmed", "hold_ticks": 1},
+    {"tick": 48, "action": "aim_at_role", "role": "operator", "target_role": "target"},
+    {"tick": 52, "action": "input_press", "name": "aim_right"},
+    {"tick": 55, "action": "input_tap", "name": "attack_primary", "hold_ticks": 1},
+    {"tick": 68, "action": "input_tap", "name": "attack_primary", "hold_ticks": 1},
+    {"tick": 84, "action": "input_tap", "name": "attack_primary", "hold_ticks": 1},
+    {"tick": 100, "action": "input_tap", "name": "attack_primary", "hold_ticks": 1},
+    {"tick": 160, "action": "input_release", "name": "aim_right"},
+    {"tick": 188, "action": "finish"}
+  ],
+  "probes": [{"id": "operator_state", "role": "operator", "fields": ["global_position", "visible_visual_anchor_delta_px"], "ticks": [54, 68, 84, 100, 118, 142, 168], "required": true}],
+  "assertions": [{"type": "role_exists", "role": "target", "severity": "error"}, {"type": "no_unreleased_inputs", "severity": "error"}, {"type": "output_exists", "path": "telemetry.json", "severity": "error"}],
+  "stable_fingerprint": {"event_payload_fields": {}, "counters": [], "probes": ["operator_state"], "position_quantum_px": 0.25, "float_quantum": 0.0001},
+  "tags": ["combat", "melee", "fists", "four_link", "whiff", "operator_animation"]
+}

@@ -2730,8 +2730,12 @@ func _sync_unarmed_fast_chain_action() -> bool:
 	_modular_lower_action_animation = lower_animation
 	_modular_upper_action_animation = upper_animation
 	_modular_upper_fx_action_animation = &""
-	if action == &"fast_04" \
-	and selector.has_sector_identity(&"unarmed", &"attack", action, sector, &"fx"):
+	# FX plays for any link that authors it in this sector. Fast 01 was excluded
+	# while its east strip was 3 frames against a 9-frame west; both are now 3f at
+	# 128px, so the asymmetry that justified the exclusion is gone. The overlay is
+	# a separate renderer with its own clock, so a flash shorter than the body is
+	# expected rather than a mismatch.
+	if selector.has_sector_identity(&"unarmed", &"attack", action, sector, &"fx"):
 		_play_optional_fx(&"unarmed", &"attack", action, sector, speed)
 	elif modular_upper_fx_sprite != null:
 		_hide_presentation_layer(modular_upper_fx_sprite, true)

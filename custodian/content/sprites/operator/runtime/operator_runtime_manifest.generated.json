@@ -4518,11 +4518,11 @@
           ]
         },
         "fx": {
-          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_01/operator__fx__unarmed__attack__fast_01__w__9f__96.png",
-          "frames": 9,
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_01/operator__fx__unarmed__attack__fast_01__w__3f__128.png",
+          "frames": 3,
           "frame_size": [
-            96,
-            96
+            128,
+            128
           ]
         },
         "lower_body": {
