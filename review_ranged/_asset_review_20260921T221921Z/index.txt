@@ -1,0 +1,23 @@
+[001] operator__full_body__ranged_2h__cosmetic__aim_01__e__master.png
+      size=2172x724 mode=RGBA alpha=0..255; T=71.99% P=27.96% O=0.05%
+      sha256=6344d3657a94 layout=horizontal strip: 3 × 724×724
+
+[002] operator__full_body__ranged_2h__cosmetic__reload_01__e__master.png
+      size=2172x724 mode=RGBA alpha=0..255; T=73.58% P=26.40% O=0.02%
+      sha256=820664cb5f2e layout=horizontal strip: 3 × 724×724
+
+[003] operator__full_body__ranged_2h__posture__relaxed_01__e__master.png
+      size=2172x724 mode=RGBA alpha=0..255; T=70.93% P=29.02% O=0.05%
+      sha256=f049e600dc59 layout=horizontal strip: 3 × 724×724
+
+[004] operator__full_body__ranged_2h__transition__take_aim_01__e__master.png
+      size=2172x724 mode=RGBA alpha=0..255; T=73.25% P=26.69% O=0.06%
+      sha256=52b3d0feef5b layout=horizontal strip: 3 × 724×724
+
+[005] operator__fx__ranged_2h__cosmetic__reload_01__e__master.png
+      size=2172x724 mode=RGBA alpha=0..255; T=93.40% P=6.57% O=0.03%
+      sha256=9ca5fe7b4b9f layout=horizontal strip: 3 × 724×724
+
+[006] operator__weapon__ranged_2h__cosmetic__reload_01__e__master.png
+      size=2172x724 mode=RGBA alpha=0..255; T=91.14% P=8.83% O=0.03%
+      sha256=2ff10f11823f layout=horizontal strip: 3 × 724×724

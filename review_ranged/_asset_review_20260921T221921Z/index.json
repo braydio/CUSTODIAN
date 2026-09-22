@@ -1,0 +1,170 @@
+{
+  "schema": "custodian.asset_review.v1",
+  "generated_at_utc": "2026-09-21T22:19:22+00:00",
+  "root": "/home/braydenchaffee/Projects/CUSTODIAN/review_ranged",
+  "file_count": 6,
+  "files": [
+    {
+      "index": 1,
+      "relative_path": "operator__full_body__ranged_2h__cosmetic__aim_01__e__master.png",
+      "filename": "operator__full_body__ranged_2h__cosmetic__aim_01__e__master.png",
+      "parent": ".",
+      "width": 2172,
+      "height": 724,
+      "mode": "RGBA",
+      "file_size_bytes": 704412,
+      "sha256_12": "6344d3657a94",
+      "has_alpha_channel": true,
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "alpha_bbox": [
+        0,
+        22,
+        2150,
+        676
+      ],
+      "transparent_pct": 71.99,
+      "partial_alpha_pct": 27.96,
+      "opaque_pct": 0.05,
+      "inferred_layout": "horizontal strip: 3 \u00d7 724\u00d7724",
+      "notes": [
+        "horizontal strip: 3 \u00d7 724\u00d7724"
+      ]
+    },
+    {
+      "index": 2,
+      "relative_path": "operator__full_body__ranged_2h__cosmetic__reload_01__e__master.png",
+      "filename": "operator__full_body__ranged_2h__cosmetic__reload_01__e__master.png",
+      "parent": ".",
+      "width": 2172,
+      "height": 724,
+      "mode": "RGBA",
+      "file_size_bytes": 681349,
+      "sha256_12": "820664cb5f2e",
+      "has_alpha_channel": true,
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "alpha_bbox": [
+        23,
+        51,
+        2156,
+        668
+      ],
+      "transparent_pct": 73.58,
+      "partial_alpha_pct": 26.4,
+      "opaque_pct": 0.02,
+      "inferred_layout": "horizontal strip: 3 \u00d7 724\u00d7724",
+      "notes": [
+        "horizontal strip: 3 \u00d7 724\u00d7724"
+      ]
+    },
+    {
+      "index": 3,
+      "relative_path": "operator__full_body__ranged_2h__posture__relaxed_01__e__master.png",
+      "filename": "operator__full_body__ranged_2h__posture__relaxed_01__e__master.png",
+      "parent": ".",
+      "width": 2172,
+      "height": 724,
+      "mode": "RGBA",
+      "file_size_bytes": 777292,
+      "sha256_12": "f049e600dc59",
+      "has_alpha_channel": true,
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "alpha_bbox": [
+        0,
+        17,
+        2152,
+        676
+      ],
+      "transparent_pct": 70.93,
+      "partial_alpha_pct": 29.02,
+      "opaque_pct": 0.05,
+      "inferred_layout": "horizontal strip: 3 \u00d7 724\u00d7724",
+      "notes": [
+        "horizontal strip: 3 \u00d7 724\u00d7724"
+      ]
+    },
+    {
+      "index": 4,
+      "relative_path": "operator__full_body__ranged_2h__transition__take_aim_01__e__master.png",
+      "filename": "operator__full_body__ranged_2h__transition__take_aim_01__e__master.png",
+      "parent": ".",
+      "width": 2172,
+      "height": 724,
+      "mode": "RGBA",
+      "file_size_bytes": 696739,
+      "sha256_12": "52b3d0feef5b",
+      "has_alpha_channel": true,
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "alpha_bbox": [
+        0,
+        32,
+        2125,
+        684
+      ],
+      "transparent_pct": 73.25,
+      "partial_alpha_pct": 26.69,
+      "opaque_pct": 0.06,
+      "inferred_layout": "horizontal strip: 3 \u00d7 724\u00d7724",
+      "notes": [
+        "horizontal strip: 3 \u00d7 724\u00d7724"
+      ]
+    },
+    {
+      "index": 5,
+      "relative_path": "operator__fx__ranged_2h__cosmetic__reload_01__e__master.png",
+      "filename": "operator__fx__ranged_2h__cosmetic__reload_01__e__master.png",
+      "parent": ".",
+      "width": 2172,
+      "height": 724,
+      "mode": "RGBA",
+      "file_size_bytes": 212689,
+      "sha256_12": "9ca5fe7b4b9f",
+      "has_alpha_channel": true,
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "alpha_bbox": [
+        0,
+        65,
+        2172,
+        700
+      ],
+      "transparent_pct": 93.4,
+      "partial_alpha_pct": 6.57,
+      "opaque_pct": 0.03,
+      "inferred_layout": "horizontal strip: 3 \u00d7 724\u00d7724",
+      "notes": [
+        "horizontal strip: 3 \u00d7 724\u00d7724"
+      ]
+    },
+    {
+      "index": 6,
+      "relative_path": "operator__weapon__ranged_2h__cosmetic__reload_01__e__master.png",
+      "filename": "operator__weapon__ranged_2h__cosmetic__reload_01__e__master.png",
+      "parent": ".",
+      "width": 2172,
+      "height": 724,
+      "mode": "RGBA",
+      "file_size_bytes": 262768,
+      "sha256_12": "2ff10f11823f",
+      "has_alpha_channel": true,
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "alpha_bbox": [
+        58,
+        200,
+        2140,
+        586
+      ],
+      "transparent_pct": 91.14,
+      "partial_alpha_pct": 8.83,
+      "opaque_pct": 0.03,
+      "inferred_layout": "horizontal strip: 3 \u00d7 724\u00d7724",
+      "notes": [
+        "horizontal strip: 3 \u00d7 724\u00d7724"
+      ]
+    }
+  ]
+}

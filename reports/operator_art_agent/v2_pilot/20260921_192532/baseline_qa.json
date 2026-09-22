@@ -1,0 +1,12 @@
+{
+  "schema": "custodian.operator_art_qa.v2",
+  "status": "YELLOW",
+  "publish_authorized": false,
+  "findings": [
+    {
+      "severity": "advisory",
+      "class": "pixel_art",
+      "issue": "semi-transparent pixels present"
+    }
+  ]
+}

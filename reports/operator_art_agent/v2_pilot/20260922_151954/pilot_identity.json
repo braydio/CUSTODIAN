@@ -1,0 +1,52 @@
+{
+  "identity": {
+    "profile": "melee_1h",
+    "group": "locomotion",
+    "action": "walk_01",
+    "direction": "e",
+    "weapon": "vigil_pattern_dagger",
+    "linked_profile": "melee_1h_dagger"
+  },
+  "canvas": {
+    "height": 96,
+    "width": 96
+  },
+  "frames": 8,
+  "layers": [
+    {
+      "editable": true,
+      "frames": 8,
+      "legal_rect": [
+        0,
+        0,
+        96,
+        96
+      ],
+      "name": "lower_body"
+    },
+    {
+      "editable": true,
+      "frames": 8,
+      "legal_rect": [
+        0,
+        0,
+        96,
+        96
+      ],
+      "name": "upper_body"
+    },
+    {
+      "editable": true,
+      "frames": 8,
+      "legal_rect": [
+        0,
+        0,
+        96,
+        96
+      ],
+      "name": "weapon__vigil_pattern_dagger"
+    }
+  ],
+  "context_fingerprint": "79a8e5c532226c6e8f356b54628ea9d6a1ac99fe8da59b28b572cc260c7ddb8d",
+  "workbench": "/home/braydenchaffee/Projects/CUSTODIAN/.ai/operator_animation_workbench/melee_1h/locomotion/walk_01/e/workbench.aseprite"
+}

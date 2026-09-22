@@ -1,0 +1,8 @@
+{
+  "selected_frame": 4,
+  "part": "far_leg",
+  "mask_id": "far_leg_f4_0eab5d2d5f",
+  "dx": 2,
+  "dy": -1,
+  "reason": "tightest mid-cycle lower-body silhouette selected as deterministic crossover proxy; bounded integer shift makes the far-leg lead visibly without transform filtering"
+}
