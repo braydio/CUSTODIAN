@@ -12,6 +12,7 @@ const SensorsTerminalViewModelScript := preload("res://game/ui/terminal/sensors_
 const TerminalMapPreviewScript := preload("res://game/ui/terminal/terminal_map_preview.gd")
 const TerminalPlanetPreviewScript := preload("res://game/ui/terminal/terminal_planet_preview.gd")
 const DebugScreenScene := preload("res://game/ui/hud/debug_screen.tscn")
+const VaultwingSpawnerScript := preload("res://game/systems/spawning/vaultwing_spawner.gd")
 
 const TERMINAL_PANEL_FRAME_TEXTURE := preload("res://content/ui/terminal/panels/panel_frame_medium_9slice.png")
 const TERMINAL_HEADER_ACTIVE_TEXTURE := preload("res://content/ui/terminal/overlays/Header_Bar_Active.png")
@@ -311,6 +312,7 @@ var _terminal_completion_seed := ""
 var _terminal_contract_snapshot: Dictionary = {}
 var _terminal_contract_node: Node = null
 var _terminal_latest_contract: Dictionary = {}
+var _debug_vaultwing_spawner: VaultwingSpawner = null
 var _planet_preview_viewport: SubViewport = null
 var _planet_preview_root: Node3D = null
 var _planet_preview_globe: MeshInstance3D = null
@@ -535,6 +537,7 @@ func _register_devconsole_commands() -> void:
 		_register_devconsole_command(console, "show_cognitive", _devconsole_show_cognitive)
 		_register_devconsole_command(console, "test_spawn", _devconsole_test_spawn)
 		_register_devconsole_command(console, "spawn_grunt", _devconsole_spawn_grunt)
+		_register_devconsole_command(console, "spawn_vaultwing", _devconsole_spawn_vaultwing)
 		_register_devconsole_command(console, "spawn_pursuit_frame", _devconsole_spawn_pursuit_frame)
 		_register_devconsole_command(console, "spawn_savage", _devconsole_spawn_savage)
 		_register_devconsole_command(console, "knight_skin", _devconsole_knight_skin)
@@ -632,6 +635,32 @@ func _devconsole_spawn_grunt(args: Array) -> String:
 		var spawned := bool(enemy_mgr.call("spawn_debug_enemy_type", "grunt", pos, &"", mode))
 		return "Spawned grunt mode=%s at %s" % [String(mode), str(pos)] if spawned else "Failed to spawn grunt mode=%s" % String(mode)
 	return "EnemyDirector not found or spawn_debug_enemy_type not available"
+
+
+func _devconsole_spawn_vaultwing(args: Array) -> String:
+	var operator := _get_operator_node()
+	if operator == null:
+		return "Operator not found"
+	var offset := Vector2(192.0, 0.0)
+	if args.size() >= 2 and str(args[0]).is_valid_float() and str(args[1]).is_valid_float():
+		offset = Vector2(float(args[0]), float(args[1]))
+	var creature_seed := 1
+	if args.size() >= 3 and str(args[2]).is_valid_int():
+		creature_seed = int(args[2])
+	var game_root := get_node_or_null("/root/GameRoot")
+	if game_root == null:
+		return "GameRoot not found"
+	if _debug_vaultwing_spawner == null or not is_instance_valid(_debug_vaultwing_spawner):
+		_debug_vaultwing_spawner = VaultwingSpawnerScript.new()
+		_debug_vaultwing_spawner.name = "DebugVaultwingSpawner"
+		_debug_vaultwing_spawner.max_active_vaultwings = 8
+		_debug_vaultwing_spawner.vaultwing_container_path = NodePath("/root/GameRoot/World/Ambient")
+		game_root.add_child(_debug_vaultwing_spawner)
+	var spawn_position := (operator as Node2D).global_position + offset
+	var creature = _debug_vaultwing_spawner.spawn_at(spawn_position, creature_seed)
+	if creature == null:
+		return "Failed to spawn Vaultwing (container missing or debug population limit reached)"
+	return "Spawned Vaultwing seed=%d at %s" % [creature_seed, str(spawn_position)]
 
 
 func _normalize_debug_grunt_spawn_mode(value: String) -> StringName:
