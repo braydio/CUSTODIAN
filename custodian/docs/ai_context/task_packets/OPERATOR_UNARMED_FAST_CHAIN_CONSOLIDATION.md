@@ -496,9 +496,69 @@ prompted this.
 Validation: actor tier, changed set, and the Vigil dagger and Sword-Cleaver gates
 green.
 
+### C5 — chain movement continuity (done)
+
+C3 recorded a residual: `_begin_attack_drive()` opens with
+`_cancel_attack_drive(true)`, so the outgoing link lost its contribution the
+instant a successor started, and the successor then sat through its own
+`drive_delay_sec` before moving. The chain read as drive, gap, drive.
+
+Measured at each seam, taking the seam at the link's real commit frame on its own
+presentation clock, and measuring drive contribution rather than position so that
+ordinary locomotion is not counted:
+
+| seam | seam at | dead frames before | after | drive total before | after | authored budget |
+|---|---|---|---|---|---|---|
+| 1 -> 2 | 0.150 s | 2 of 3 | **0** | 11.46 px | **12.00 px** | 12.0 px |
+| 2 -> 3 | 0.160 s | 3 of 3 | **0** | 16.00 px | **16.00 px** | 16.0 px |
+| 3 -> 4 | 0.159 s | 3 of 4 | **0** | 22.00 px | **22.00 px** | 22.0 px |
+
+The seam is bridged across the incoming delay at a speed decaying linearly from
+the outgoing link's own authored curve speed to zero. It is funded **first** from
+whatever the outgoing link had authored but not yet spent, and **then** from the
+incoming link's `_attack_drive_distance_remaining`, which the incoming drive
+consequently does not get to spend later. The bound is exact, not approximate:
+each seam now drives its two authored distances and not a pixel more. Seam 1 -> 2
+rose by 0.54 px because that much of Fast 01's *own* authored distance used to be
+forfeited at the handoff; the other two seams are unchanged in total, because
+their outgoing link was already fully spent and the bridge borrowed from the
+incoming budget instead.
+
+A continuation is recognised structurally rather than by animation name: the live
+drive records which chain step it belongs to, and only step N+1 of the same chain
+may inherit from step N. A fresh attack, a chain restart at step 0, and all
+non-chain melee inherit nothing.
+
+**Two things had to change for the middle seams to work at all**, and both were
+found by measurement rather than reasoning:
+
+- A front-loaded falloff spends the authored distance well before the curve ends.
+  At the real commit frame, Fast 02 and Fast 03 have **zero** unspent distance, so
+  a bridge funded only by outgoing residue would have been empty exactly where it
+  was most needed. Hence the fall-through to the incoming budget.
+- A drive that exhausts itself used to call `_cancel_attack_drive()`, which wiped
+  the chain step and the direction. By the time the chain advanced there was no
+  record that a chain had been running. Natural exhaustion now *completes*
+  instead, preserving the chain step, handoff speed and handoff direction;
+  interruption still cancels, and cancelling still clears the carry.
+
+Coverage in `operator_unarmed_fast_chain`: dead frames at all three seams,
+displacement bounded above *and* below at each seam, a chain restart inheriting
+nothing, dodge / damage reaction / block each clearing carried momentum through
+their real entry points, blocking geometry truncating it, and opposing input
+unable to reverse it mid-handoff.
+
+Controlled: restoring the hard cancel fails it in eight places, naming the exact
+2 / 3 / 3 dead-frame counts above. The collision case is a two-run comparison,
+clear versus obstructed, because asserting only that the drive ended would pass
+vacuously -- it ends on its own after its authored duration either way. Removing
+the wall from the obstructed run fails it.
+
+No drive profile values were retuned. Fists remains 5 / 7 / 9 / 13 px.
+
+Validation: actor tier 54/55, changed set 36/36, focused melee and dodge/guard
+gates green.
+
 ### Remaining Part C steps
 
-C5 chain movement continuity — the first genuinely unfinished feel mechanic, and
-the one that wants a real runtime change: `_begin_attack_drive()` removes the
-outgoing drive's residual velocity before the next link's delayed drive starts.
-Then C6 Fast 04 posture settle, C7 contact-owned feedback, C8 parry alignment.
+C6 Fast 04 posture settle, C7 contact-owned feedback, C8 parry alignment.

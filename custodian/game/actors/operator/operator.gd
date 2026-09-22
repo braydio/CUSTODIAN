@@ -486,6 +486,23 @@ var _attack_drive_input_influence := 0.0
 var _attack_drive_falloff_power := 1.0
 var _attack_drive_stops_on_collision := true
 var _last_attack_drive_velocity := Vector2.ZERO
+## Which authored fast-chain link the live drive belongs to, or -1. This is how a
+## genuine continuation is recognised without matching animation names: only
+## step N+1 may inherit momentum from step N.
+var _attack_drive_chain_step := -1
+## Residual momentum handed over from the outgoing link, spent strictly out of
+## that link's own unspent distance. See `_capture_attack_drive_carry()`.
+var _attack_drive_carry_direction := Vector2.ZERO
+var _attack_drive_carry_speed := 0.0
+var _attack_drive_carry_duration := 0.0
+var _attack_drive_carry_time_remaining := 0.0
+var _attack_drive_carry_distance_remaining := 0.0
+## The authored curve speed the live drive was travelling at most recently,
+## regardless of whether its distance budget had already run out. A front-loaded
+## falloff spends the budget well before the curve ends, so this -- not the last
+## applied velocity -- is what a handoff should continue from.
+var _attack_drive_handoff_speed := 0.0
+var _attack_drive_handoff_direction := Vector2.ZERO
 var _missing_animation_warnings: Dictionary = {}
 var _ranged_config_warning_once: Dictionary = {}
 var _melee_heavy_anticipating: bool = false
@@ -12001,6 +12018,9 @@ func _begin_attack_drive(
 	direction: Vector2,
 	distance_override: float = -1.0
 ) -> void:
+	# Captured before the cancel below wipes it. A fresh attack captures nothing,
+	# so only a real chain continuation can inherit momentum.
+	var carry := _capture_attack_drive_carry()
 	_cancel_attack_drive(true)
 	var drive_distance := (
 		profile.drive_distance_px
@@ -12035,10 +12055,17 @@ func _begin_attack_drive(
 	_attack_drive_stops_on_collision = (
 		profile.drive_stops_on_collision
 	)
+	_attack_drive_chain_step = (
+		_melee_fast_combo_step
+		if _melee_attack_kind == "fast" and _has_authored_fast_chain()
+		else -1
+	)
+	_apply_attack_drive_carry(carry)
 
 
 func _sample_attack_drive_velocity(delta: float) -> Vector2:
 	var drive_delta := maxf(0.0, delta)
+	var carry_offset := Vector2.ZERO
 	if _attack_drive_delay_remaining > 0.0:
 		var consumed := minf(
 			drive_delta,
@@ -12046,12 +12073,21 @@ func _sample_attack_drive_velocity(delta: float) -> Vector2:
 		)
 		_attack_drive_delay_remaining -= consumed
 		drive_delta -= consumed
+		carry_offset = _consume_attack_drive_carry(consumed)
 	if drive_delta <= 0.0:
-		return Vector2.ZERO
+		if carry_offset == Vector2.ZERO:
+			return Vector2.ZERO
+		return carry_offset / maxf(0.0001, delta)
+	# The incoming link owns the motion from here. Any unspent carry is dropped
+	# rather than stacked on top of it, so a handoff can never add distance the
+	# outgoing contract had not already promised.
+	_clear_attack_drive_carry()
 	if _attack_drive_time_remaining <= 0.0 \
 	or _attack_drive_distance_remaining <= 0.0:
-		_cancel_attack_drive(false)
-		return Vector2.ZERO
+		_complete_attack_drive()
+		if carry_offset == Vector2.ZERO:
+			return Vector2.ZERO
+		return carry_offset / maxf(0.0001, delta)
 
 	var elapsed := (
 		_attack_drive_total_duration
@@ -12074,6 +12110,8 @@ func _sample_attack_drive_velocity(delta: float) -> Vector2:
 		1.0 - ratio,
 		_attack_drive_falloff_power
 	)
+	_attack_drive_handoff_speed = current_speed
+	_attack_drive_handoff_direction = _attack_drive_direction
 	var frame_distance := minf(
 		_attack_drive_distance_remaining,
 		current_speed * drive_delta
@@ -12083,13 +12121,10 @@ func _sample_attack_drive_velocity(delta: float) -> Vector2:
 		0.0,
 		_attack_drive_time_remaining - drive_delta
 	)
-	if frame_distance <= 0.0:
+	var frame_offset := carry_offset + _attack_drive_direction * frame_distance
+	if frame_offset == Vector2.ZERO:
 		return Vector2.ZERO
-	return (
-		_attack_drive_direction
-		* frame_distance
-		/ maxf(0.0001, delta)
-	)
+	return frame_offset / maxf(0.0001, delta)
 
 
 func _filter_locomotion_for_attack_drive(
@@ -12130,6 +12165,121 @@ func _check_attack_drive_collision() -> void:
 			return
 
 
+## Momentum the outgoing link had promised but not yet spent, or empty.
+##
+## Attack drive normally hard-cancels on every `_begin_attack_drive()`, which is
+## correct for a fresh attack and wrong for a chained one: the outgoing link
+## loses its contribution the instant the successor starts, and the successor
+## then sits through its own `drive_delay_sec` before moving. That gap is the
+## motion valley between punches.
+##
+## Only a genuine authored continuation qualifies -- step N handing to step N+1
+## of the same chain -- which the drive's own recorded chain step decides, so no
+## animation name is matched and non-chain melee can never inherit anything.
+##
+## The budget is the outgoing drive's **unspent** distance. It is momentum
+## already owned by a contract the game had committed to, not a new lunge, so a
+## handoff cannot create free distance: the outgoing link still moves at most its
+## authored distance, and the incoming link still moves at most its own.
+func _capture_attack_drive_carry() -> Dictionary:
+	if _melee_attack_kind != "fast" or not _has_authored_fast_chain():
+		return {}
+	if _attack_drive_chain_step < 0 \
+	or _melee_fast_combo_step != _attack_drive_chain_step + 1:
+		return {}
+	var direction := _attack_drive_handoff_direction
+	var speed := _attack_drive_handoff_speed
+	if direction == Vector2.ZERO or speed <= 0.0:
+		return {}
+	return {
+		"direction": direction,
+		"speed": speed,
+		"distance": maxf(0.0, _attack_drive_distance_remaining),
+	}
+
+
+## Install a captured carry so it plays out across the incoming link's delay.
+func _apply_attack_drive_carry(carry: Dictionary) -> void:
+	if carry.is_empty() or _attack_drive_delay_remaining <= 0.0:
+		return
+	_attack_drive_carry_direction = carry["direction"]
+	_attack_drive_carry_speed = float(carry["speed"])
+	_attack_drive_carry_duration = _attack_drive_delay_remaining
+	_attack_drive_carry_time_remaining = _attack_drive_delay_remaining
+	_attack_drive_carry_distance_remaining = float(carry["distance"])
+
+
+## Spend the carry for one sub-step, returning the displacement it earned.
+##
+## Speed decays linearly to zero across the incoming delay, so the outgoing
+## link's last velocity continues rather than snapping to nothing, and the
+## incoming drive picks up from there. Every frame is also clamped by the
+## remaining budget, which is what keeps the bound exact rather than approximate.
+func _consume_attack_drive_carry(step_delta: float) -> Vector2:
+	if _attack_drive_carry_time_remaining <= 0.0 \
+	or _attack_drive_carry_direction == Vector2.ZERO \
+	or step_delta <= 0.0:
+		return Vector2.ZERO
+	var ratio := clampf(
+		_attack_drive_carry_time_remaining
+		/ maxf(0.0001, _attack_drive_carry_duration),
+		0.0,
+		1.0
+	)
+	var wanted := _attack_drive_carry_speed * ratio * step_delta
+	var distance := minf(_attack_drive_carry_distance_remaining, wanted)
+	_attack_drive_carry_distance_remaining -= distance
+	var shortfall := wanted - distance
+	if shortfall > 0.0:
+		# The outgoing link is spent. Rather than drop back to a dead frame, the
+		# bridge borrows from the incoming link's own distance -- which the
+		# incoming drive then does not get to spend later, because the same
+		# `_attack_drive_distance_remaining` clamps it. Still no free distance,
+		# and the bridge survives a chain continued later than the nominal commit
+		# frame, when the outgoing drive has nothing left to give.
+		var borrowed := minf(_attack_drive_distance_remaining, shortfall)
+		_attack_drive_distance_remaining -= borrowed
+		distance += borrowed
+	_attack_drive_carry_time_remaining = maxf(
+		0.0,
+		_attack_drive_carry_time_remaining - step_delta
+	)
+	return _attack_drive_carry_direction * distance
+
+
+## A drive that ran out of distance or duration on its own, as opposed to one
+## interrupted by a dodge, a hit reaction or a new attack.
+##
+## Motion stops either way, but a natural completion is still part of the chain,
+## so the continuation marker and the handoff speed survive it. Wiping them here
+## is what left the Fast 02 -> Fast 03 seam dead: that link spends its whole
+## budget before the commit frame, so by the time the chain advanced there was no
+## record that a chain had been running at all.
+func _complete_attack_drive() -> void:
+	var chain_step := _attack_drive_chain_step
+	var handoff_speed := _attack_drive_handoff_speed
+	var handoff_direction := _attack_drive_handoff_direction
+	_cancel_attack_drive(false)
+	_attack_drive_chain_step = chain_step
+	_attack_drive_handoff_speed = handoff_speed
+	_attack_drive_handoff_direction = handoff_direction
+
+
+## Whether chain momentum is currently being carried across a handoff. Exposed
+## so the continuity contract can be observed without reading five variables.
+func _has_attack_drive_carry() -> bool:
+	return _attack_drive_carry_time_remaining > 0.0 \
+	and _attack_drive_carry_direction != Vector2.ZERO
+
+
+func _clear_attack_drive_carry() -> void:
+	_attack_drive_carry_direction = Vector2.ZERO
+	_attack_drive_carry_speed = 0.0
+	_attack_drive_carry_duration = 0.0
+	_attack_drive_carry_time_remaining = 0.0
+	_attack_drive_carry_distance_remaining = 0.0
+
+
 func _cancel_attack_drive(
 	remove_last_velocity: bool = true
 ) -> void:
@@ -12145,6 +12295,10 @@ func _cancel_attack_drive(
 	_attack_drive_falloff_power = 1.0
 	_attack_drive_stops_on_collision = true
 	_last_attack_drive_velocity = Vector2.ZERO
+	_attack_drive_chain_step = -1
+	_attack_drive_handoff_speed = 0.0
+	_attack_drive_handoff_direction = Vector2.ZERO
+	_clear_attack_drive_carry()
 
 
 func get_attack_drive_status() -> Dictionary:

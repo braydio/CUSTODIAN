@@ -89,6 +89,7 @@ func _run() -> void:
 	await _validate_attack_drive(operator, root)
 	await _validate_early_input_forgiveness(operator)
 	await _validate_impact_progression(operator)
+	await _validate_chain_drive_continuity(operator, root)
 
 	operator.queue_free()
 	if _failed:
@@ -440,4 +441,269 @@ func _validate_impact_progression(operator: Node) -> void:
 		)
 	Engine.time_scale = 1.0
 	game_root.queue_free()
+
+
+## C5: a chained link must not leave a hole in the attack drive, and closing that
+## hole must not hand out free distance.
+##
+## `_begin_attack_drive()` opens with `_cancel_attack_drive(true)`, which strips
+## the outgoing drive's contribution immediately. The successor then sits through
+## its own `drive_delay_sec` before it moves at all, so the chain read as
+## drive -> nothing -> drive. The seam is bridged now, funded first from whatever
+## the outgoing link had authored but not yet spent and then from the incoming
+## link's own budget, so the total can never exceed the two authored contracts.
+func _validate_chain_drive_continuity(operator: Node, root: Node) -> void:
+	operator.set("unstuck_enabled", false)
+	operator.set_physics_process(false)
+	operator.set("using_unarmed", true)
+	operator.set("combat_loadout_mode", "melee")
+	operator.set("primary_weapon_equipped", false)
+	operator.set("_melee_attack_kind", "fast")
+	for flag in ["_melee_recovery_active", "_melee_heavy_anticipating"]:
+		operator.set(flag, false)
+	_assert_true(
+		bool(operator.call("_has_authored_fast_chain")),
+		"the continuity case needs the authored chain"
+	)
+
+	for seam in range(3):
+		var outgoing = UNARMED.fast_chain_attack_profiles[seam]
+		var incoming = UNARMED.fast_chain_attack_profiles[seam + 1]
+		var seam_time := _chain_seam_time(seam)
+		var measured := _drive_through_seam(operator, seam, seam_time, -1)
+		var budget: float = outgoing.drive_distance_px + incoming.drive_distance_px
+
+		_assert_true(
+			int(measured["dead_frames"]) == 0,
+			"seam %d->%d left %d dead attack-drive frame(s) during the incoming "
+				% [seam + 1, seam + 2, int(measured["dead_frames"])]
+				+ "delay; the chain still reads as drive, gap, drive"
+		)
+		# The invariant that matters more than the continuity: no free distance.
+		_assert_true(
+			float(measured["driven"]) <= budget + 0.05,
+			"seam %d->%d drove %.3f px against an authored budget of %.1f px"
+				% [seam + 1, seam + 2, float(measured["driven"]), budget]
+		)
+		_assert_true(
+			float(measured["driven"]) > budget - 1.0,
+			"seam %d->%d drove only %.3f px of its %.1f px budget"
+				% [seam + 1, seam + 2, float(measured["driven"]), budget]
+		)
+
+	# A fresh attack must not inherit anything. Same machinery, but the successor
+	# restarts the chain at step 0 instead of continuing it.
+	var restart := _drive_through_seam(operator, 0, _chain_seam_time(0), 0)
+	_assert_true(
+		int(restart["dead_frames"]) > 0,
+		"a chain restart at step 0 must not inherit the outgoing link's momentum"
+	)
+	_assert_true(
+		not bool(operator.call("_has_attack_drive_carry")),
+		"a chain restart must leave no carry installed"
+	)
+
+	# Holding backwards must not reverse a committed step mid-handoff either.
+	_install_live_carry(operator)
+	_assert_true(
+		bool(operator.call("_has_attack_drive_carry")),
+		"the opposing-input case needs a live carry"
+	)
+	var opposing := operator.call(
+		"_filter_locomotion_for_attack_drive", Vector2.LEFT * 100.0
+	) as Vector2
+	_assert_true(
+		opposing.dot(Vector2.RIGHT) >= -0.001,
+		"opposing input reversed drive during a chain handoff"
+	)
+	var carried := Vector2.ZERO
+	for _i in 4:
+		operator.call("_physics_process", 1.0 / 60.0)
+		carried += operator.get("_last_attack_drive_velocity") as Vector2
+	_assert_true(
+		carried.dot(Vector2.RIGHT) > 0.0,
+		"carried momentum must stay committed forward, measured %.2f" % carried.x
+	)
+	operator.call("_cancel_attack_drive", true)
+
+	await _validate_carry_interruptions(operator)
+	await _validate_carry_collision(operator, root)
+
+
+func _chain_seam_time(seam: int) -> float:
+	return (
+		float(UNARMED.fast_chain_commit_frames[seam])
+		/ float(EXPECTED_FRAMES[seam])
+		* float(UNARMED.fast_chain_presentation_durations[seam])
+	)
+
+
+## Run the outgoing link to the seam, advance the chain, and measure the incoming
+## delay. `successor_step` of -1 means the genuine next link.
+func _drive_through_seam(
+	operator: Node,
+	seam: int,
+	seam_time: float,
+	successor_step: int
+) -> Dictionary:
+	var outgoing = UNARMED.fast_chain_attack_profiles[seam]
+	var incoming = UNARMED.fast_chain_attack_profiles[seam + 1]
+	operator.set("velocity", Vector2.ZERO)
+	operator.call("_cancel_attack_drive", true)
+	operator.set("_melee_fast_combo_step", seam)
+	operator.call("_begin_attack_drive", outgoing, Vector2.RIGHT)
+	var driven := 0.0
+	for _i in int(round(seam_time * 60.0)):
+		operator.call("_physics_process", 1.0 / 60.0)
+		driven += (operator.get("_last_attack_drive_velocity") as Vector2).length() / 60.0
+
+	operator.set(
+		"_melee_fast_combo_step",
+		seam + 1 if successor_step < 0 else successor_step
+	)
+	operator.call("_begin_attack_drive", incoming, Vector2.RIGHT)
+	var dead_frames := 0
+	for _i in int(ceil(incoming.drive_delay_sec * 60.0)):
+		operator.call("_physics_process", 1.0 / 60.0)
+		var speed: float = (operator.get("_last_attack_drive_velocity") as Vector2).length()
+		driven += speed / 60.0
+		if speed <= 0.001:
+			dead_frames += 1
+	for _i in 60:
+		operator.call("_physics_process", 1.0 / 60.0)
+		driven += (operator.get("_last_attack_drive_velocity") as Vector2).length() / 60.0
+	return {"driven": driven, "dead_frames": dead_frames}
+
+
+## Every existing interruption must still take the carry with it.
+func _validate_carry_interruptions(operator: Node) -> void:
+	for case in ["dodge", "damage", "block"]:
+		_install_live_carry(operator)
+		_assert_true(
+			bool(operator.call("_has_attack_drive_carry")),
+			"the %s interruption case needs a live carry to interrupt" % case
+		)
+		match case:
+			"dodge":
+				# A dodge refuses to start from an active attack, so the actor is
+				# put in the state a dodge is genuinely allowed from. What is
+				# under test is that the dodge takes the carry with it.
+				for lock in [
+					"_melee_active", "_melee_fast_windup", "_melee_recovery_active",
+					"_melee_heavy_anticipating", "_dodge_charge_active",
+					"_dodge_active", "_dodge_recovery_active", "_field_patch_active",
+				]:
+					operator.set(lock, false)
+				operator.set("_dodge_cooldown_remaining", 0.0)
+				operator.set("_enemy_impact_lock_timer", 0.0)
+				operator.set("stamina", 100.0)
+				var reason := String(operator.call("_get_dodge_start_rejection_reason", -1.0))
+				var started: bool = bool(operator.call(
+					"_try_start_dodge_with_profile", Vector2.RIGHT, &"tap", -1.0
+				))
+				_assert_true(
+					started,
+					"the dodge interruption case needs the dodge to start, refused with %s"
+						% ("no reason" if reason.is_empty() else reason)
+				)
+			"damage":
+				operator.call("_interrupt_active_combat_for_damage_reaction")
+			"block":
+				operator.call("_request_block_state")
+		_assert_true(
+			not bool(operator.call("_has_attack_drive_carry")),
+			"a %s must clear carried chain momentum" % case
+		)
+		operator.set("_dodge_active", false)
+		operator.set("_dodge_recovery_active", false)
+		operator.call("_cancel_attack_drive", true)
+	await process_frame
+
+
+## Blocking geometry must still truncate the contribution, carry included.
+##
+## Run twice from the same staged handoff, once unobstructed and once into a
+## wall, and compare. Asserting only that the drive ended would pass vacuously --
+## it ends on its own after its authored duration either way -- so what is
+## measured is that the wall ends it sooner and shorter.
+func _validate_carry_collision(operator: Node, root: Node) -> void:
+	var wall := StaticBody2D.new()
+	var shape := CollisionShape2D.new()
+	var rect := RectangleShape2D.new()
+	rect.size = Vector2(32.0, 256.0)
+	shape.shape = rect
+	wall.add_child(shape)
+	root.add_child(wall)
+
+	var clear_run := await _run_handoff_against_wall(operator, wall, false)
+	var blocked_run := await _run_handoff_against_wall(operator, wall, true)
+
+	_assert_true(
+		int(blocked_run["end_frame"]) >= 0 and int(clear_run["end_frame"]) >= 0,
+		"both collision runs must terminate their drive within the sample window"
+	)
+	_assert_true(
+		int(blocked_run["end_frame"]) < int(clear_run["end_frame"]),
+		"blocking geometry must end the drive sooner than its authored duration, "
+			+ "blocked ended on frame %d and clear on frame %d"
+				% [int(blocked_run["end_frame"]), int(clear_run["end_frame"])]
+	)
+	_assert_true(
+		float(blocked_run["travelled"]) < float(clear_run["travelled"]) - 1.0,
+		"blocking geometry must truncate the distance, blocked %.2f px vs clear %.2f px"
+			% [float(blocked_run["travelled"]), float(clear_run["travelled"])]
+	)
+	wall.queue_free()
+	operator.global_position = Vector2.ZERO
+	operator.set("velocity", Vector2.ZERO)
+	operator.call("_cancel_attack_drive", true)
+	await process_frame
+
+
+func _run_handoff_against_wall(
+	operator: Node,
+	wall: StaticBody2D,
+	obstruct: bool
+) -> Dictionary:
+	# Parked far away while the handoff is staged, because staging drives forward
+	# and would otherwise hit the wall before the carry exists.
+	wall.global_position = Vector2(100000.0, 0.0)
+	await physics_frame
+	_install_live_carry(operator)
+	_assert_true(
+		bool(operator.call("_has_attack_drive_carry")),
+		"the collision case needs a live carry to truncate"
+	)
+	var start_x: float = operator.global_position.x
+	if obstruct:
+		wall.global_position = Vector2(start_x + 26.0, 0.0)
+	await physics_frame
+	var end_frame := -1
+	for frame in range(30):
+		operator.call("_physics_process", 1.0 / 60.0)
+		if end_frame < 0 \
+		and (operator.get("_attack_drive_direction") as Vector2) == Vector2.ZERO:
+			end_frame = frame
+	return {
+		"end_frame": end_frame,
+		"travelled": operator.global_position.x - start_x,
+	}
+
+
+## Put the actor mid-handoff, with carry installed and still unspent.
+func _install_live_carry(operator: Node) -> void:
+	operator.global_position = Vector2.ZERO
+	operator.set("velocity", Vector2.ZERO)
+	operator.set("_melee_attack_kind", "fast")
+	operator.call("_cancel_attack_drive", true)
+	operator.set("_melee_fast_combo_step", 0)
+	operator.call(
+		"_begin_attack_drive", UNARMED.fast_chain_attack_profiles[0], Vector2.RIGHT
+	)
+	for _i in int(round(_chain_seam_time(0) * 60.0)):
+		operator.call("_physics_process", 1.0 / 60.0)
+	operator.set("_melee_fast_combo_step", 1)
+	operator.call(
+		"_begin_attack_drive", UNARMED.fast_chain_attack_profiles[1], Vector2.RIGHT
+	)
 

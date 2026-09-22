@@ -10,12 +10,52 @@ Full derivation lives in
 C1  subtle Fists target assistance      DONE
 C3  attack-drive continuity             DONE
 C4  early input forgiveness             DONE
-C2  per-link impact progression         DONE   <- this pass
-C5  chain movement continuity           next (wants a real runtime change)
-C6  Fast 04 posture settle              pending
+C2  per-link impact progression         DONE
+C5  chain movement continuity           DONE   <- this pass
+C6  Fast 04 posture settle              next
 C7  contact-owned feedback              pending
 C8  parry alignment                     pending
 ```
+
+## C5 — chain movement continuity
+
+C3 left a residual: `_begin_attack_drive()` opens with
+`_cancel_attack_drive(true)`, so the outgoing link lost its contribution the
+instant a successor started, and the successor then sat through its own
+`drive_delay_sec`. The chain read as drive, gap, drive.
+
+Measured at each link's real commit frame, counting drive contribution rather
+than position so ordinary locomotion is not counted:
+
+| seam | dead frames before | after | drive total before | after | authored budget |
+|---|---|---|---|---|---|
+| 1 -> 2 | 2 of 3 | **0** | 11.46 px | **12.00 px** | 12.0 px |
+| 2 -> 3 | 3 of 3 | **0** | 16.00 px | **16.00 px** | 16.0 px |
+| 3 -> 4 | 3 of 4 | **0** | 22.00 px | **22.00 px** | 22.0 px |
+
+The seam is bridged across the incoming delay, decaying from the outgoing link's
+authored curve speed to zero, funded first from the outgoing link's unspent
+distance and then from the incoming link's own budget — which the incoming drive
+then does not get to spend later. **The bound is exact:** each seam drives its
+two authored distances and not a pixel more. Seam 1 -> 2 gained 0.54 px because
+that much of Fast 01's own distance used to be forfeited at the handoff.
+
+Continuations are recognised structurally — the drive records its chain step, and
+only step N+1 may inherit from step N — so a fresh attack, a restart at step 0,
+and all non-chain melee inherit nothing.
+
+Two things measurement caught that reasoning had not: a front-loaded falloff
+leaves Fast 02 and Fast 03 with **zero** unspent distance at their commit frame,
+so an outgoing-only bridge would have been empty exactly where it mattered; and a
+drive that exhausted itself used to cancel, wiping the chain step before the
+chain advanced. Natural exhaustion now completes instead, preserving the handoff;
+interruption still cancels and still clears the carry.
+
+Controlled: restoring the hard cancel fails the gate in eight places with the
+exact 2/3/3 dead-frame counts. The collision case is a clear-versus-obstructed
+comparison, because asserting only that the drive ended would pass vacuously.
+
+No drive values retuned — Fists remains 5 / 7 / 9 / 13 px.
 
 ## C2 — per-link impact progression
 
@@ -152,11 +192,3 @@ travelled distance measured, settling is checked for snap-back, opposing input i
 checked not to reverse a committed step, and a target at the edge of each link's
 own acquire ring is asserted to resolve extra drive. Negative control: zeroing
 link 1's distance and bonus fails it in six places.
-
-## Still staged, not applied
-
-`custodian/content/sprites/_pipeline/inbox/` holds the two
-`unarmed/locomotion/run_01` west 6f mirrors (per-frame mirrored from east,
-verified exact). `operator_ingest.sh --apply` is blocked while a Godot editor is
-open, and the stale `...__w__5f__96.png` files have different names so they will
-not be overwritten — they need explicit removal in the same pass.
