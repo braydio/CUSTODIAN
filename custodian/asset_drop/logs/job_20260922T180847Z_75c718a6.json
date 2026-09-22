@@ -1,0 +1,67 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260922T180847Z_75c718a6",
+  "timestamp": "2026-09-22T18:08:47.149244+00:00",
+  "family": "awakening_creche_environment",
+  "kind": "backdrop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/awakening_creche_environment/foreground.png",
+      "sha256": "775d2b111f4573409e50df33b857952bbb05ee4f13baf4602976a80c59e89a5a"
+    },
+    {
+      "path": "asset_drop/inbox/awakening_creche_environment/underlay.png",
+      "sha256": "3c19f69efd8f35ae9d4c0b78f69829f8905a75994a1f57238ce2f4cdfc98c22c"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "foreground",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_creche",
+        "backdrop",
+        "foreground",
+        "display",
+        "foreground",
+        "omni"
+      ],
+      "path": "content/levels/awakening/01_creche/awakening_creche_foreground_960x704.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "775d2b111f4573409e50df33b857952bbb05ee4f13baf4602976a80c59e89a5a",
+      "operation": "replace",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "underlay",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_creche",
+        "backdrop",
+        "background",
+        "display",
+        "underlay",
+        "omni"
+      ],
+      "path": "content/levels/awakening/01_creche/awakening_creche_underlay_960x704.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "3c19f69efd8f35ae9d4c0b78f69829f8905a75994a1f57238ce2f4cdfc98c22c",
+      "operation": "replace",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}
