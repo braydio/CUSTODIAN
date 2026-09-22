@@ -75,6 +75,83 @@ authority.
 | `GROUND` | feeding, stalking, fighting, taming, landing/takeoff, injury/death | ordinary world collision and walkable-space constraints |
 | `PERCHED` | roosting, observing, ambience, taming | attached to a semantic perch marker; no normal locomotion |
 
+### Ground projection and visual altitude
+
+The Vaultwing has one real 2D gameplay position: the ground projection directly
+beneath the creature. The gameplay actor, collision, navigation, targeting, and
+shadow remain anchored to that position. Flight height is presentation-only.
+
+```text
+Vaultwing gameplay position
+          ↓
+        SHADOW
+          |
+          | visual altitude
+          |
+       VAULTWING
+```
+
+Conceptually:
+
+```gdscript
+ground_position = global_position
+body.position.y = -visual_altitude_px
+shadow.position = Vector2.ZERO
+```
+
+Never move the actor's world Y northward to represent ascent. The body receives
+an independent screen-facing vertical offset while the shadow stays at the
+ground projection. Vertical lift does most of the altitude work:
+
+```text
+GROUND       0 px
+ATTACK       roughly 40–100 px above shadow
+HIGH         roughly 140–240+ px above shadow
+```
+
+The presentation may continue climbing until the body leaves the camera view.
+The shadow remains in-world, so a later moving shadow can reveal a hidden
+Vaultwing overhead. `HIGH` has two presentation targets, not two simulation
+states: `HIGH_VISIBLE` and `HIGH_ABOVE_CAMERA`.
+
+Use a continuous presentation altitude value, for example:
+
+```text
+0.00 grounded
+0.20 takeoff
+0.35 low flight
+0.55 attack altitude
+0.75 high visible flight
+1.00 above-camera flight
+```
+
+Scale reinforces distance but does not carry altitude alone:
+
+```text
+GROUND       1.00x
+low ATTACK   0.95x
+high ATTACK  0.88x
+HIGH         0.78–0.85x
+```
+
+The shadow is an altitude instrument. Grounded shadows are dark, sharp, and
+close beneath the body. As altitude increases, the shadow becomes lighter,
+softer, lower-contrast, and more separated. At maximum HIGH altitude the body
+may be completely off-camera while the projected shadow remains visible and
+travels with the hidden creature's ground projection. It must not remain glued
+to the Operator.
+
+During a dive, body and shadow visibly converge. Shadow convergence is a primary
+attack telegraph and must remain synchronized with the committed dive timeline:
+
+```text
+ominous shadow → darker/sharper convergence → body re-enters from above
+→ body/shadow convergence accelerates → DIVE_STRIKE
+```
+
+This presentation contract does not add behavior states or a second movement
+authority.
+
 ## 5. Behavior ownership and states
 
 Vaultwing behavior has its own focused controller. Do not put predator behavior
@@ -312,6 +389,8 @@ states anchor the projected body center. Wing motion occurs around the origin;
 runtime movement owns travel. A dive frame shows compression, wing change, neck
 extension, and strike posture, not whole-animal translation across the cell.
 Shadows are runtime presentation so altitude and terrain separation remain valid.
+They must implement the ground-projection/visual-altitude contract above rather
+than being baked into body art.
 
 ## 12. Baseline animation family
 
@@ -404,8 +483,11 @@ feeding, recognition, and bonded response.
 
 Implement actor, deterministic spawn, patrol, perch behavior, discrete bands,
 circle/interest, dive, landing/takeoff, ground attack, damage/death/retreat,
-semantic presentation hooks, and focused validation. Bonding is interface-only
-at this stage.
+semantic presentation hooks, and focused validation. Slice A must implement the
+ground-projection/visual-altitude contract: persistent shadow, independent body
+lift, modest scale shift, intentional above-camera HIGH presentation, and
+synchronized body/shadow convergence during committed dives. Bonding is
+interface-only at this stage.
 
 ### Slice B — Bonding
 
@@ -484,6 +566,13 @@ The following decisions are locked unless explicitly revisited:
 - bonded creatures remain semi-feral in presentation;
 - mounted flight is deferred;
 - flight uses discrete aerial bands, not true 3D navigation;
+- aerial altitude is an independent body presentation offset from a persistent
+  2D ground projection;
+- body scale changes modestly with altitude and never substitutes for lift;
+- shadow sharpness, opacity, contrast, and separation communicate altitude;
+- HIGH presentation may intentionally leave the body above the camera while its
+  shadow remains in-world;
+- body/shadow convergence is synchronized to the committed dive timeline;
 - hostile behavior has its own focused authority;
 - `AmbientCritterManager` does not own Vaultwing combat;
 - the generic enemy state machine does not become Vaultwing-specific;
