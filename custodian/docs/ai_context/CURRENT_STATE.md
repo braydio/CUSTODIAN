@@ -1592,6 +1592,11 @@ Accepted procgen maps now own deterministic scrubland, woodland, wetland, and ro
 Procgen Macro Presentation V1 has all 16 procgen depth chunks presentation-bound: Wetland and Rocky Upland consume their authored depth families, Woodland gains overgrown works as an additional option, and depth chunks remain CHASM/BACK visual-only underlays. Playable SURFACE macro composition remains the next world-presentation slice. Biomes now classify the final captured floor authority
 after faction/story, parking, and second-pass road corrections. Pure region and
 stamp planning is deterministic and separate from Sprite2D realization;
-presentation roots compensate for the scaled map parent, and streaming gates
+presentation roots run under the native-32px, `Vector2.ONE` map root, and streaming gates
 each macro stamp against all live Floor/Walls reveal probes. Macro masks and
 dressing clearances never create collision, navigation, or terrain authority.
+The planner now reserves independent budgets of eight CHASM and six SURFACE
+stamps within a fourteen-stamp overall cap, and SURFACE occupancy is the union
+of authored solid and walkable-overlay cells. The ten-state Rocky Upland
+SURFACE Asset V2 family is registered, but production PNGs are SOURCE_PENDING;
+profiles, catalog registration, and biome binding remain deliberately deferred.

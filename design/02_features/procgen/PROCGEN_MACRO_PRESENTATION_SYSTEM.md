@@ -81,10 +81,10 @@ TerrainPresentationGround
 TerrainPresentationFront
 ```
 
-The roots are live children of `NavigationRegion2D` on the scaled `ProcGenMap`
+The roots are live children of `NavigationRegion2D` on the native-scale `ProcGenMap`
 root. BACK/GROUND/FRONT use absolute z indices `-5/0/4`. V1 places BACK and
-GROUND only. Spawned sprites compensate for the map's `Vector2(2, 2)` parent
-scale, retain authored pivots, and use nearest filtering.
+GROUND only. Procgen runs at native 32px with root scale `Vector2.ONE`;
+spawned sprites retain authored pivots and use nearest filtering.
 
 ## Planned Data Contracts
 
@@ -113,10 +113,11 @@ semantic coverage from texture alpha, own gameplay occupancy, or mutate the
 `depth_south_edge` runs whose first chasm row provides placement anchors.
 
 The approved families are `procgen_depth_universal`,
-`procgen_depth_scrubland`, and `procgen_depth_woodland`. Scrubland and woodland
-enable their specific family plus universal; wetland and rocky upland enable
-only universal until dedicated vocabularies are produced. At most eight depth
-stamps are realized for one active procgen map.
+`procgen_depth_scrubland`, `procgen_depth_woodland`, and
+`procgen_depth_chunks`. Scrubland enables universal plus its specific family;
+Woodland enables universal, its specific family, and depth chunks; Wetland and
+Rocky Upland enable universal plus depth chunks. At most eight depth stamps are
+realized for one active procgen map.
 
 The biome field is built after faction/story geometry, parking, final road
 repair, and the final generated-state capture. It continues to run in candidate

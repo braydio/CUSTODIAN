@@ -1,0 +1,32 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "procgen_surface_rocky_upland",
+  "kind": "backdrop",
+  "runtime": {
+    "domain": "tiles/procgen_macro/runtime/rocky_upland",
+    "owner": "procgen_surface_rocky_upland",
+    "template": "{domain}/{filename}",
+    "filename_policy": "template",
+    "filename_template": "{variant}.png"
+  },
+  "canvas": {
+    "width": 1024,
+    "height": 1024
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "granite_cliff_mass_south_01": {"required": true, "layer": "body", "action_group": "rocky_upland", "variant": "granite_cliff_mass_south_01", "layout": "copy", "frame_width": 1024, "frame_height": 768, "frames": 1},
+    "granite_cliff_mass_south_02": {"required": true, "layer": "body", "action_group": "rocky_upland", "variant": "granite_cliff_mass_south_02", "layout": "copy", "frame_width": 1024, "frame_height": 768, "frames": 1},
+    "granite_cliff_mass_east_01": {"required": true, "layer": "body", "action_group": "rocky_upland", "variant": "granite_cliff_mass_east_01", "layout": "copy", "frame_width": 768, "frame_height": 1024, "frames": 1},
+    "granite_cliff_mass_west_01": {"required": true, "layer": "body", "action_group": "rocky_upland", "variant": "granite_cliff_mass_west_01", "layout": "copy", "frame_width": 768, "frame_height": 1024, "frames": 1},
+    "granite_cliff_corner_se_01": {"required": true, "layer": "body", "action_group": "rocky_upland", "variant": "granite_cliff_corner_se_01", "layout": "copy", "frame_width": 1024, "frame_height": 1024, "frames": 1},
+    "granite_cliff_corner_sw_01": {"required": true, "layer": "body", "action_group": "rocky_upland", "variant": "granite_cliff_corner_sw_01", "layout": "copy", "frame_width": 1024, "frame_height": 1024, "frames": 1},
+    "granite_shelf_large_01": {"required": true, "layer": "body", "action_group": "rocky_upland", "variant": "granite_shelf_large_01", "layout": "copy", "frame_width": 1024, "frame_height": 768, "frames": 1},
+    "granite_shelf_large_02": {"required": true, "layer": "body", "action_group": "rocky_upland", "variant": "granite_shelf_large_02", "layout": "copy", "frame_width": 1024, "frame_height": 768, "frames": 1},
+    "granite_shelf_small_01": {"required": true, "layer": "body", "action_group": "rocky_upland", "variant": "granite_shelf_small_01", "layout": "copy", "frame_width": 512, "frame_height": 384, "frames": 1},
+    "scree_overlay_01": {"required": true, "layer": "body", "action_group": "rocky_upland", "variant": "scree_overlay_01", "layout": "copy", "frame_width": 512, "frame_height": 256, "frames": 1}
+  },
+  "aliases": {},
+  "consumers": []
+}

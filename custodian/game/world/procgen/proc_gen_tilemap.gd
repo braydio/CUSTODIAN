@@ -233,7 +233,9 @@ enum WorldShapeMode {
 @export_group("Macro Presentation", "macro_presentation_")
 @export var macro_presentation_enabled := true
 @export var macro_presentation_catalog: Resource
-@export_range(0, 64, 1) var macro_presentation_max_stamps := 8
+@export_range(0, 64, 1) var macro_presentation_max_stamps := 14
+@export_range(0, 64, 1) var macro_presentation_max_chasm_stamps := 8
+@export_range(0, 64, 1) var macro_presentation_max_surface_stamps := 6
 @export var macro_presentation_debug_logging := false
 @export_group("", "")
 
@@ -7442,6 +7444,10 @@ func _build_macro_presentation_plan(map_size: Vector2i) -> void:
 	var context := {
 		"seed": _get_generation_seed(),
 		"max_stamps": macro_presentation_max_stamps,
+		"max_stamps_by_domain": {
+			TerrainStampProfile.PlacementDomain.CHASM: macro_presentation_max_chasm_stamps,
+			TerrainStampProfile.PlacementDomain.SURFACE: macro_presentation_max_surface_stamps,
+		},
 		"map_bounds": Rect2i(Vector2i.ZERO, map_size),
 		"floor_cells": _generated_floor_cells,
 		"wall_cells": _generated_wall_cells,
@@ -7470,15 +7476,21 @@ func _build_macro_presentation_plan(map_size: Vector2i) -> void:
 			_macro_presentation_dressing_clearance_cells[cell] = true
 	var family_counts: Dictionary = {}
 	var depth_stamp_count := 0
+	var surface_stamp_count := 0
 	for placement: Dictionary in _macro_presentation_plan.get("placements", []):
 		var family := String(placement.get("family_id", ""))
 		family_counts[family] = int(family_counts.get(family, 0)) + 1
 		if family.begins_with("procgen_depth_"):
 			depth_stamp_count += 1
+		if int(placement.get("placement_domain", TerrainStampProfile.PlacementDomain.SURFACE)) == TerrainStampProfile.PlacementDomain.SURFACE:
+			surface_stamp_count += 1
 	var depth_region_count := 0
+	var surface_region_count := 0
 	for region: Dictionary in _macro_presentation_plan.get("regions", []):
 		if String(region.get("kind_name", "")) == "depth_south_edge":
 			depth_region_count += 1
+		else:
+			surface_region_count += 1
 	_macro_presentation_summary = {
 		"schema": "custodian.procgen_macro_presentation.v1",
 		"seed": _get_generation_seed(),
@@ -7488,6 +7500,8 @@ func _build_macro_presentation_plan(map_size: Vector2i) -> void:
 		"family_counts": family_counts,
 		"depth_region_count": depth_region_count,
 		"depth_stamp_count": depth_stamp_count,
+		"surface_region_count": surface_region_count,
+		"surface_stamp_count": surface_stamp_count,
 		"fingerprint": String(_macro_presentation_plan.get("fingerprint", "")),
 	}
 	if macro_presentation_debug_logging:
@@ -7577,10 +7591,13 @@ func _publish_macro_presentation_gauges() -> void:
 	_obs_gauge(&"procgen_macro_clearance_cells", _macro_presentation_dressing_clearance_cells.size())
 	_obs_gauge(&"procgen_macro_depth_region_count", int(_macro_presentation_summary.get("depth_region_count", 0)))
 	_obs_gauge(&"procgen_macro_depth_stamp_count", int(_macro_presentation_summary.get("depth_stamp_count", 0)))
+	_obs_gauge(&"procgen_macro_surface_region_count", int(_macro_presentation_summary.get("surface_region_count", 0)))
+	_obs_gauge(&"procgen_macro_surface_stamp_count", int(_macro_presentation_summary.get("surface_stamp_count", 0)))
 	var family_counts: Dictionary = _macro_presentation_summary.get("family_counts", {})
 	_obs_gauge(&"procgen_depth_universal_count", int(family_counts.get("procgen_depth_universal", 0)))
 	_obs_gauge(&"procgen_depth_scrubland_count", int(family_counts.get("procgen_depth_scrubland", 0)))
 	_obs_gauge(&"procgen_depth_woodland_count", int(family_counts.get("procgen_depth_woodland", 0)))
+	_obs_gauge(&"procgen_surface_rocky_upland_count", int(family_counts.get("procgen_surface_rocky_upland", 0)))
 
 
 func set_environment_wind_multipliers(speed_multiplier: float, gust_multiplier: float) -> void:

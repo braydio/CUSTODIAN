@@ -111,12 +111,15 @@ scrubland
 woodland
   procgen_depth_universal
   procgen_depth_woodland
+  procgen_depth_chunks
 
 wetland
   procgen_depth_universal
+  procgen_depth_chunks
 
 rocky_upland
   procgen_depth_universal
+  procgen_depth_chunks
 ```
 
 The follow-on family is filtered by each profile's required biome and now participates in live presentation selection.

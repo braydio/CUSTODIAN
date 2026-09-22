@@ -3,6 +3,7 @@ extends SceneTree
 const COMPOSER := preload("res://game/world/procgen/presentation/procgen_macro_presentation_composer.gd")
 const CATALOG := preload("res://game/world/procgen/presentation/terrain_stamp_catalog.gd")
 const PROFILE := preload("res://game/world/procgen/presentation/terrain_stamp_profile.gd")
+const PLACER := preload("res://game/world/procgen/presentation/terrain_stamp_placer.gd")
 const MAP_SCENE := preload("res://game/world/procgen/proc_gen_map.tscn")
 const MAP_SCRIPT := preload("res://game/world/procgen/proc_gen_tilemap.gd")
 const PRODUCTION_CATALOG := preload("res://content/procgen/presentation/terrain_stamp_catalog_v1.tres")
@@ -33,6 +34,8 @@ func _init() -> void:
 	_validate_chasm_contract_and_placement(composer)
 	_validate_biome_family_selection(composer)
 	_validate_production_catalog_selection(composer)
+	_validate_domain_budgets_and_surface_overlap()
+	_validate_surface_biome_isolation()
 
 	var empty_catalog := CATALOG.new() as TerrainStampCatalog
 	var fallback := composer.build_plan(context, empty_catalog)
@@ -190,6 +193,90 @@ func _validate_biome_family_selection(composer: ProcgenMacroPresentationComposer
 				continue
 			var family := String(placements[0].family_id)
 			_require(allowed[biome].has(family), "biome %s selected disallowed family %s" % [biome, family])
+
+
+func _validate_domain_budgets_and_surface_overlap() -> void:
+	var chasm_profile := _chasm_profile(&"budget_chasm", &"procgen_depth_universal")
+	chasm_profile.footprint_size_cells = Vector2i.ONE
+	chasm_profile.chasm_core_rect = Rect2i(Vector2i.ZERO, Vector2i.ONE)
+	chasm_profile.reveal_probe_cells = [Vector2i.ZERO]
+	var surface_profile := _fixture_profile()
+	surface_profile.stamp_id = &"budget_surface"
+	surface_profile.family_id = &"procgen_surface_rocky_upland"
+	surface_profile.footprint_size_cells = Vector2i.ONE
+	surface_profile.solid_mask_cells = []
+	surface_profile.walkable_overlay_cells = [Vector2i.ZERO]
+	surface_profile.reveal_probe_cells = [Vector2i.ZERO]
+	var catalog := CATALOG.new() as TerrainStampCatalog
+	catalog.stamps = [chasm_profile, surface_profile]
+	var regions: Array[Dictionary] = []
+	var floor_cells: Dictionary = {}
+	var chasm_cells: Dictionary = {}
+	var biome_cells: Dictionary = {}
+	for index: int in range(9):
+		var cell := Vector2i(index + 1, 1)
+		floor_cells[cell] = true
+		chasm_cells[cell] = true
+		biome_cells[cell] = &"rocky_upland"
+		regions.append({"region_id": "chasm_%02d" % index, "kind_name": "depth_south_edge", "biome_id": &"rocky_upland", "bounds": Rect2i(cell, Vector2i.ONE), "cell_count": 1, "anchor_candidates": [cell]})
+	var surface_cell := Vector2i(12, 1)
+	floor_cells[surface_cell] = true
+	biome_cells[surface_cell] = &"rocky_upland"
+	regions.append({"region_id": "surface", "kind_name": "mountain_wall", "biome_id": &"rocky_upland", "bounds": Rect2i(surface_cell, Vector2i.ONE), "cell_count": 1, "anchor_candidates": [surface_cell]})
+	var context := {
+		"map_bounds": Rect2i(Vector2i.ZERO, Vector2i(16, 4)),
+		"floor_cells": floor_cells, "wall_cells": {}, "chasm_cells": chasm_cells,
+		"terrain_result": {"traversal_by_cell": {}}, "biome_id_by_cell": biome_cells,
+		"protected_cells": {}, "required_cells": {}, "reserved_cells": {}, "ingress_clearance_cells": {},
+		"families": PackedStringArray(["procgen_depth_universal", "procgen_surface_rocky_upland"]),
+		"max_stamps_by_domain": {TerrainStampProfile.PlacementDomain.CHASM: 8, TerrainStampProfile.PlacementDomain.SURFACE: 6},
+	}
+	var before := context.duplicate(true)
+	var placer := PLACER.new() as TerrainStampPlacer
+	var plan: Dictionary = placer.build_plan(17, regions, catalog, context, 14)
+	var chasm_count := 0
+	var surface_count := 0
+	for placement: Dictionary in plan.placements:
+		if int(placement.placement_domain) == TerrainStampProfile.PlacementDomain.CHASM:
+			chasm_count += 1
+		else:
+			surface_count += 1
+	_require(chasm_count == 8, "CHASM domain budget was not enforced at eight")
+	_require(surface_count == 1, "CHASM budget exhaustion starved a valid SURFACE placement")
+	_require((plan.placements as Array).size() <= 14, "overall macro stamp budget was exceeded")
+	_require(int(plan.rejection_counts.get("domain_budget_exhausted", 0)) > 0, "domain budget exhaustion was not observable")
+	_require(context == before, "domain-budget planning mutated semantic context")
+	for placement: Dictionary in plan.placements:
+		_require(placement.has("placement_domain"), "normalized placement omitted placement_domain")
+	var altered_domain_plan := plan.duplicate(true)
+	for placement: Dictionary in altered_domain_plan.placements:
+		if int(placement.placement_domain) == TerrainStampProfile.PlacementDomain.CHASM:
+			placement.erase("placement_domain")
+			break
+	_require(placer.plan_fingerprint(altered_domain_plan) != plan.fingerprint, "placement_domain did not affect the plan fingerprint")
+
+	var overlap_regions: Array[Dictionary] = [
+		{"region_id": "surface_a", "kind_name": "mountain_wall", "biome_id": &"rocky_upland", "bounds": Rect2i(surface_cell, Vector2i.ONE), "cell_count": 1, "anchor_candidates": [surface_cell]},
+		{"region_id": "surface_b", "kind_name": "mountain_wall", "biome_id": &"rocky_upland", "bounds": Rect2i(surface_cell, Vector2i.ONE), "cell_count": 1, "anchor_candidates": [surface_cell]},
+	]
+	var overlap_plan: Dictionary = placer.build_plan(17, overlap_regions, catalog, context, 14)
+	_require((overlap_plan.placements as Array).size() == 1, "overlapping SURFACE stamps both placed")
+	_require(int(overlap_plan.rejection_counts.get("surface_presentation_overlap", 0)) > 0, "SURFACE overlap rejection was not observable")
+
+	var legacy_context := context.duplicate(true)
+	legacy_context.erase("max_stamps_by_domain")
+	var legacy_plan: Dictionary = placer.build_plan(17, regions, catalog, legacy_context, 14)
+	_require((legacy_plan.placements as Array).size() == 10, "missing domain budgets did not preserve legacy overall-limit behavior")
+
+
+func _validate_surface_biome_isolation() -> void:
+	var surface := _fixture_profile()
+	surface.family_id = &"procgen_surface_rocky_upland"
+	var catalog := CATALOG.new() as TerrainStampCatalog
+	catalog.stamps = [surface]
+	_require(catalog.filter_profiles(PackedStringArray(["procgen_surface_rocky_upland"]), &"mountain_wall", &"rocky_upland").size() == 1, "rocky surface family is unavailable to rocky_upland")
+	for biome: StringName in [&"scrubland", &"woodland", &"wetland"]:
+		_require(catalog.filter_profiles(PackedStringArray(["procgen_surface_rocky_upland"]), &"mountain_wall", biome).is_empty(), "rocky surface family leaked into %s" % biome)
 
 
 func _validate_production_catalog_selection(composer: ProcgenMacroPresentationComposer) -> void:
