@@ -59,6 +59,8 @@ animation = &"vibrate"
 [node name="RiderAnchor" type="Marker2D" parent="."]
 position = Vector2(0, -26)
 
+[node name="SafeBoardingMarker" type="Marker2D" parent="."]
+
 [node name="PlatformFront" type="Node2D" parent="."]
 z_as_relative = false
 z_index = 3

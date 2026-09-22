@@ -23,7 +23,7 @@ const CHAPEL_ORIGIN := Vector2(0.0, -1120.0)
 const RITUALANT_CHAMBER_BOUNDS := Rect2(-640.0, -1600.0, 1280.0, 960.0)
 const LOWER_LIFT_DOCK := Vector2(0.0, 1696.0)
 const LOWER_LIFT_ARRIVAL_START := Vector2(0.0, 1440.0)
-const SPAWN_DESCENT_LANDING := Vector2(0.0, 1670.0)
+const SPAWN_DESCENT_LANDING := LOWER_LIFT_DOCK
 const LANDING_CONNECTOR := Rect2(-128.0, 1312.0, 256.0, 128.0)
 const CHAPEL_CONNECTOR := Rect2(-96.0, -768.0, 192.0, 128.0)
 const CAVERN_DEEPER_DIRECTION := Vector2.UP
@@ -259,6 +259,10 @@ func _suspend_arrival_actor(actor: Node) -> void:
 
 func _finish_arrival_sequence() -> void:
 	if _arrival_actor != null and is_instance_valid(_arrival_actor):
+		# RiderAnchor is presentation-only. Restore the live body at the
+		# collision-safe lift marker before physics resumes.
+		if lower_lift != null and _arrival_actor is Node2D:
+			(_arrival_actor as Node2D).global_position = lower_lift.get_boarding_position()
 		_restore_departure_actor_processing(_arrival_actor)
 	if _arrival_rig != null and is_instance_valid(_arrival_rig):
 		_arrival_rig.restore_source_visuals()

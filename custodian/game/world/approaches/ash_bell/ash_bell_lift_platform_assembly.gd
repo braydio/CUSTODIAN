@@ -8,10 +8,13 @@ class_name AshBellLiftPlatformAssembly
 @onready var front_lip_idle: Sprite2D = $PlatformFront/FrontLipIdle
 @onready var front_lip_vibrate: AnimatedSprite2D = $PlatformFront/FrontLipVibrate
 @onready var rider_anchor: Marker2D = $RiderAnchor
+@onready var safe_boarding_marker: Marker2D = $SafeBoardingMarker
 
 @export var boarding_half_width := 72.0
 @export var boarding_min_y := -60.0
 @export var boarding_max_y := 24.0
+
+var inward_direction := Vector2.DOWN
 
 
 func set_vibrating(active: bool) -> void:
@@ -36,16 +39,26 @@ func set_depths(back_z: int, front_z: int) -> void:
 	platform_front.z_index = front_z
 
 
+func set_inward_direction(direction: Vector2) -> void:
+	if direction.length_squared() < 0.5:
+		inward_direction = Vector2.DOWN
+	else:
+		inward_direction = direction.normalized()
+
+
 func is_actor_boarded(actor: Node2D) -> bool:
 	if actor == null:
 		return false
-	var local_actor := to_local(actor.global_position)
+	var delta := actor.global_position - global_position
+	var lateral_direction := Vector2(inward_direction.y, -inward_direction.x)
+	var inward_distance := delta.dot(inward_direction)
+	var lateral_distance := delta.dot(lateral_direction)
 	return (
-		absf(local_actor.x) <= boarding_half_width
-		and local_actor.y >= boarding_min_y
-		and local_actor.y <= boarding_max_y
+		absf(lateral_distance) <= boarding_half_width
+		and inward_distance >= boarding_min_y
+		and inward_distance <= boarding_max_y
 	)
 
 
 func get_boarding_position() -> Vector2:
-	return rider_anchor.global_position
+	return safe_boarding_marker.global_position

@@ -420,8 +420,17 @@ func _validate_lower_lift() -> void:
 	var exit := level.get_node("Exits/Exit_ReturnWorld") as InteractableLevelExit2D
 	var lift := level.get_node("PropsRoot/LowerLiftAssembly") as AshBellLiftPlatformAssembly
 	var surface_lift := surface.get_node("LiftRoot") as AshBellLiftPlatformAssembly
+	var descent_marker := level.get_node("Markers/Spawn_DescentLanding") as Marker2D
 	_check(lift.scene_file_path == LIFT_ASSEMBLY_PATH, "lower lift does not instance shared assembly")
 	_check(surface_lift.scene_file_path == LIFT_ASSEMBLY_PATH, "surface lift does not instance shared assembly")
+	_check(
+		descent_marker.global_position == lift.get_boarding_position(),
+		"underground descent marker is not derived from the safe lift position"
+	)
+	_check(
+		_is_operator_shape_clear(descent_marker.global_position),
+		"underground descent marker overlaps authored collision"
+	)
 	_check(not surface.has_node("ThresholdSurface"), "surface lift retained flat ThresholdSurface polygon")
 	_check(is_equal_approx(exit.interaction_distance, 64.0), "lower lift interaction distance was not reduced")
 	_check(is_equal_approx(exit.arrival_guard_radius, 56.0), "lower lift arrival guard was not reduced")
@@ -440,6 +449,10 @@ func _validate_lower_lift() -> void:
 	actor.add_to_group("player")
 	root.add_child(actor)
 	actor.global_position = lift.get_boarding_position()
+	_check(
+		_is_operator_shape_clear(actor.global_position),
+		"lower lift safe boarding marker overlaps authored collision"
+	)
 	await process_frame
 	actor.global_position = exit.global_position + Vector2(140.0, 0.0)
 	_check(
@@ -451,7 +464,7 @@ func _validate_lower_lift() -> void:
 		AshBellEventState.Resolution.SITE_DEFILED
 	)
 	for offset_x in [-68.0, 0.0, 68.0]:
-		actor.global_position = lift.global_position + Vector2(offset_x, -26.0)
+		actor.global_position = lift.global_position + Vector2(offset_x, 0.0)
 		_check(
 			lift.is_actor_boarded(actor),
 			"visible lower-lift deck rejected boarded actor at x=%s" % offset_x
@@ -459,6 +472,10 @@ func _validate_lower_lift() -> void:
 		_check(
 			exit.get_interaction_prompt() == "ASCEND TO SURFACE",
 			"visible lower-lift deck lacked ASCEND prompt at x=%s" % offset_x
+		)
+		_check(
+			_is_operator_shape_clear(actor.global_position),
+			"lower lift boarding position overlaps authored collision at x=%s" % offset_x
 		)
 	actor.global_position = lift.get_boarding_position()
 	var transitions := [0]
@@ -554,3 +571,13 @@ func _json(path: String) -> Dictionary:
 func _check(condition: bool, message: String) -> void:
 	if not condition:
 		errors.append(message)
+
+
+func _is_operator_shape_clear(position: Vector2) -> bool:
+	var query := PhysicsShapeQueryParameters2D.new()
+	var shape := CircleShape2D.new()
+	shape.radius = 11.0
+	query.shape = shape
+	query.transform = Transform2D(0.0, position)
+	query.collision_mask = 1
+	return root.get_world_2d().direct_space_state.intersect_shape(query, 16).is_empty()

@@ -35,6 +35,7 @@ enum FacadeFacing {
 
 @onready var visual_root: Node2D = $VisualRoot
 @onready var spatial_facing_root: Node2D = $SpatialFacingRoot
+@onready var boarding_semantic_root: Node2D = $BoardingSemanticRoot
 @onready var lift_root: AshBellLiftPlatformAssembly = $LiftRoot
 @onready var rider_anchor: Marker2D = $LiftRoot/RiderAnchor
 @onready var boarding_marker: Marker2D = $BoardingMarker
@@ -91,6 +92,8 @@ func configure_outward_direction(direction: Vector2i) -> void:
 	spatial_facing_root.rotation = 0.0
 	spatial_facing_root.scale = Vector2.ONE
 	var inward := -direction
+	boarding_semantic_root.rotation = Vector2.DOWN.angle_to(Vector2(inward))
+	lift_root.set_inward_direction(Vector2(inward))
 	interaction_approach_marker.position = Vector2(inward) * 72.0
 	left_cliff_collision.polygon = _orient_semantic_polygon(LEFT_CLIFF_COLLISION_LOCAL, inward)
 	right_cliff_collision.polygon = _orient_semantic_polygon(RIGHT_CLIFF_COLLISION_LOCAL, inward)
@@ -285,7 +288,7 @@ func get_presentation_puppet() -> OperatorPresentationRig2D:
 
 
 func get_boarding_position() -> Vector2:
-	return boarding_marker.global_position
+	return lift_root.get_boarding_position()
 
 
 func get_procgen_dressing_clearance_world_rect() -> Rect2:

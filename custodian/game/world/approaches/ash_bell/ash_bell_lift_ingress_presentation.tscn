@@ -268,17 +268,19 @@ position = Vector2(76, -108)
 sprite_frames = SubResource("SpriteFrames_lamp")
 animation = &"flicker"
 
-[node name="BoardingBounds" type="StaticBody2D" parent="." unique_id=1562508588]
+[node name="BoardingSemanticRoot" type="Node2D" parent="." unique_id=1562508587]
 
-[node name="BackStop" type="CollisionShape2D" parent="BoardingBounds" unique_id=1221824079]
+[node name="BoardingBounds" type="StaticBody2D" parent="BoardingSemanticRoot" unique_id=1562508588]
+
+[node name="BackStop" type="CollisionShape2D" parent="BoardingSemanticRoot/BoardingBounds" unique_id=1221824079]
 position = Vector2(0.5, -36)
 shape = SubResource("Rectangle_boarding_back")
 
-[node name="LeftFrontWing" type="CollisionShape2D" parent="BoardingBounds" unique_id=1853738078]
+[node name="LeftFrontWing" type="CollisionShape2D" parent="BoardingSemanticRoot/BoardingBounds" unique_id=1853738078]
 position = Vector2(-56, 38)
 shape = SubResource("Rectangle_boarding_front_wing")
 
-[node name="RightFrontWing" type="CollisionShape2D" parent="BoardingBounds" unique_id=513191003]
+[node name="RightFrontWing" type="CollisionShape2D" parent="BoardingSemanticRoot/BoardingBounds" unique_id=513191003]
 position = Vector2(56, 38)
 shape = SubResource("Rectangle_boarding_front_wing")
 

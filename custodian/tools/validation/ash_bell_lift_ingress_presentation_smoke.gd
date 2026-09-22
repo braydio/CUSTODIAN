@@ -172,7 +172,12 @@ func _validate_scene(
 	_check((presentation.get_node("VisualRoot/RearMassRoot/MountainCliff") as Sprite2D).visible, "mountain is hidden while idle", errors)
 	_check(presentation.lift_root.position == threshold.position, "parked platform is not aligned to its threshold", errors)
 	_check(rider_anchor.position == Vector2(0, -26), "rider anchor height drifted", errors)
-	_check(boarding_marker.position == Vector2(0, -26), "boarding marker drifted", errors)
+	_check(boarding_marker.position == Vector2(0, -26), "visual boarding marker drifted", errors)
+	_check(
+		presentation.get_boarding_position() == presentation.lift_root.get_node("SafeBoardingMarker").global_position,
+		"physical boarding position is not the lift safe marker",
+		errors
+	)
 	_check(approach.position.y > threshold.position.y, "interaction approach is not outside the platform threshold", errors)
 	var platform_width := float(platform.texture.get_width()) * platform.scale.x
 	_check(platform_width >= 150.0 and platform_width <= 190.0, "parked platform width is outside the Operator-scale target", errors)
@@ -400,7 +405,7 @@ func _validate_boarding_bounds(
 	presentation: AshBellLiftIngressPresentation,
 	errors: Array[String]
 ) -> void:
-	var bounds := presentation.get_node_or_null("BoardingBounds")
+	var bounds := presentation.get_node_or_null("BoardingSemanticRoot/BoardingBounds")
 	_check(bounds is StaticBody2D, "boarding bounds StaticBody2D is missing", errors)
 	if bounds == null:
 		return
@@ -478,6 +483,19 @@ func _validate_cardinal_facing(presentation: AshBellLiftIngressPresentation, err
 		_check(is_zero_approx(entrance_shell.global_rotation), "entrance shell rotated for %s" % outward, errors)
 		_check(is_zero_approx(mountain_cliff.global_rotation), "mountain rotated for %s" % outward, errors)
 		_check(is_zero_approx(presentation.lift_root.global_rotation), "lift rotated for %s" % outward, errors)
+		var inward := Vector2(-outward)
+		var expected_boarding_rotation := Vector2.DOWN.angle_to(inward)
+		_check(
+			is_equal_approx(presentation.boarding_semantic_root.rotation, expected_boarding_rotation),
+			"boarding semantic root did not rotate for %s" % outward,
+			errors
+		)
+		var safe_actor := Node2D.new()
+		presentation.add_child(safe_actor)
+		safe_actor.global_position = presentation.get_boarding_position()
+		_check(presentation.is_actor_boarded(safe_actor), "safe marker is not boardable for %s" % outward, errors)
+		_check(_is_operator_shape_clear(safe_actor.global_position), "safe marker overlaps collision for %s" % outward, errors)
+		safe_actor.queue_free()
 		_check(is_equal_approx(presentation.shaft_scroll.global_rotation, 0.0), "shaft scroll rotated for %s" % outward, errors)
 		_check(presentation.lift_root.global_position == lift_start, "lift moved while facing %s" % outward, errors)
 		_check(presentation.rider_anchor.global_position - presentation.lift_root.global_position == rider_offset, "rider detached while facing %s" % outward, errors)
@@ -485,6 +503,16 @@ func _validate_cardinal_facing(presentation: AshBellLiftIngressPresentation, err
 		for local_corner in [Vector2(-416, -432), Vector2(416, -432), Vector2(416, 176), Vector2(-416, 176)]:
 			_check(clearance.grow(0.1).has_point(presentation.visual_root.to_global(local_corner)), "clearance missed approach art for %s" % outward, errors)
 	presentation.configure_outward_direction(Vector2i.UP)
+
+
+func _is_operator_shape_clear(position: Vector2) -> bool:
+	var query := PhysicsShapeQueryParameters2D.new()
+	var shape := CircleShape2D.new()
+	shape.radius = 11.0
+	query.shape = shape
+	query.transform = Transform2D(0.0, position)
+	query.collision_mask = 1
+	return root.get_world_2d().direct_space_state.intersect_shape(query, 16).is_empty()
 
 
 func _validate_snapshot_hook_order(errors: Array[String]) -> void:

@@ -468,7 +468,7 @@ collision_layer=1
 collision_mask=1
 [node name="Markers" type="Node2D" parent="."]
 [node name="Spawn_DescentLanding" type="Marker2D" parent="Markers"]
-position=Vector2(0,1670)
+position=Vector2(0,1696)
 [node name="POIRoot" type="Node2D" parent="."]
 [node name="EventMarkers" type="Node2D" parent="."]
 [node name="EventRuntime" type="Node2D" parent="."]
