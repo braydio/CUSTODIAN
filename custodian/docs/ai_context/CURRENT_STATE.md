@@ -1593,16 +1593,19 @@ The Common Vaultwing Slice A foundation is now present under
 HIGH/ATTACK/GROUND/PERCHED behavior, patrol, interest, committed dive windup and
 strike, climb-out, landing/takeoff, aerial stagger, damage, retreat, and death.
 The actor owns health/combat API and reuses the shared ambient semantic
-presentation controller. No bonding, companion commands, mounting, or production
-Vaultwing sprites are implemented.
+presentation controller. No bonding, companion commands, or mounting are
+implemented.
 
 The `ambient_vaultwing_common` Asset V2 family contract is registered with a
-256×256 RGBA canvas and honest missing-art status. Runtime behavior fails soft
-while art is absent. Visual altitude remains presentation-only: the body lifts
+256×256 RGBA canvas. The first production batch now publishes east-authored and
+west-mirrored `glide`, `flap`, `dive_windup`, `dive_strike`, `climb_out`, `land`,
+`takeoff`, `ground_idle`, and `bite_attack` strips through the canonical runtime
+domain. `perch_idle`, `ground_walk`, `air_stagger`, `hurt`, `death`, and south/
+north coverage remain honestly missing. Runtime behavior remains fail-soft for
+those pending states. Visual altitude remains presentation-only: the body lifts
 above a persistent ground-projection shadow, scale changes modestly, HIGH flight
 may leave the body above the camera, and body/shadow convergence is part of the
-dive telegraph. Focused validation is registered as `vaultwing_runtime`; asset
-generation remains the next parallel production task.
+dive telegraph. Focused validation is registered as `vaultwing_runtime`.
 ## World Environment V1 (2026-09-03)
 
 Accepted procgen maps now own deterministic scrubland, woodland, wetland, and rocky-upland fields that constrain foliage density, composition, and tint beneath route policy. One world-local `WorldEnvironmentDirector` owns a 24-minute fixed-physics day, contract-seeded weather, and indoor exposure; existing lighting, atmosphere, and shared foliage materials remain presentation authorities.

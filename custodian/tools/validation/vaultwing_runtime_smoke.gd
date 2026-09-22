@@ -1,8 +1,8 @@
 extends SceneTree
 
-## Slice A gate for the wild Common Vaultwing. Production art is optional;
-## behavior, deterministic bands, committed dive timing, and visual altitude
-## must remain valid without any runtime PNGs installed.
+## Slice A gate for the wild Common Vaultwing. Published art is discovered
+## semantically when present; behavior remains valid while optional states are
+## still pending.
 
 const SCENE := preload("res://game/actors/ambient/vaultwing/vaultwing.tscn")
 const SPAWNER_SCRIPT := preload("res://game/systems/spawning/vaultwing_spawner.gd")
@@ -13,7 +13,7 @@ var _failures: PackedStringArray = PackedStringArray()
 func _init() -> void:
 	await _run()
 	if _failures.is_empty():
-		print("PASS vaultwing_runtime_smoke: deterministic wild flight, dive commitment, altitude presentation, damage, stagger, retreat, and missing-art fallback")
+		print("PASS vaultwing_runtime_smoke: deterministic wild flight, published semantic art, dive commitment, altitude presentation, damage, stagger, retreat, and optional-art fallback")
 		quit(0)
 	else:
 		for failure in _failures: push_error(failure)
@@ -28,7 +28,10 @@ func _run() -> void:
 	await physics_frame
 	if not actor.is_in_group("vaultwing"): _fail("actor missing vaultwing group")
 	if actor.get_altitude_band_name() != &"high": _fail("initial band is not HIGH")
-	if actor.has_action(&"glide"): _fail("missing production art unexpectedly resolved as installed")
+	for action in [&"glide", &"flap", &"dive_windup", &"dive_strike", &"climb_out", &"land", &"takeoff", &"ground_idle", &"bite_attack"]:
+		if not actor.has_action(action): _fail("published Vaultwing action was not discovered: %s" % String(action))
+	for action in [&"perch_idle", &"ground_walk", &"air_stagger", &"hurt", &"death"]:
+		if actor.has_action(action): _fail("pending Vaultwing action unexpectedly resolved: %s" % String(action))
 	_check_api(actor)
 	await _check_determinism()
 	await _check_spawn_authority()

@@ -17,6 +17,13 @@ func _init() -> void:
 	set_id = &"ambient_vaultwing_common"
 	default_frame_size = Vector2i(256, 256)
 	aliases = {"idle":"ground_idle", "move":"ground_walk", "attack":"bite_attack"}
+	rescan_runtime()
+
+## Asset V2 runtime files may be imported after this Resource is preloaded.
+## Re-scan at actor initialization so published clips become visible without
+## requiring a second process/editor restart.
+func rescan_runtime() -> void:
+	clips.clear()
 	_scan_directory(ROOT)
 	refresh()
 
@@ -34,8 +41,10 @@ func _parse_clip(path: String, filename: String) -> Dictionary:
 	if parts.size() != 7 or parts[0] != OWNER or not VALID_DIRECTIONS.has(parts[4]): return {}
 	var frame_count := int(String(parts[5]).trim_suffix("f"))
 	var dimensions := String(parts[6]).split("x")
-	if frame_count <= 0 or dimensions.size() != 2: return {}
-	var size := Vector2i(int(dimensions[0]), int(dimensions[1]))
+	if frame_count <= 0 or dimensions.is_empty() or dimensions.size() > 2: return {}
+	var width := int(dimensions[0])
+	var height := width if dimensions.size() == 1 else int(dimensions[1])
+	var size := Vector2i(width, height)
 	if size != default_frame_size: return {}
 	var action := StringName(parts[3])
 	return {

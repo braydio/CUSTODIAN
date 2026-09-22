@@ -25,6 +25,8 @@ func _ready() -> void:
 	add_to_group("ambient_creature")
 	add_to_group("hostile_fauna")
 	add_to_group("vaultwing")
+	if ANIMATION_SET.has_method("rescan_runtime"):
+		ANIMATION_SET.rescan_runtime()
 	presentation.setup(ANIMATION_SET, body_sprite)
 	behavior = CONTROLLER_SCRIPT.new()
 	add_child(behavior)
