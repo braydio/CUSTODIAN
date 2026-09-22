@@ -6685,34 +6685,6 @@ func _get_fast_chain_knockback_multiplier() -> float:
 			return 1.0
 
 
-func _get_fast_chain_camera_shake_multiplier() -> float:
-	if not _has_authored_fast_chain():
-		return 1.0
-	match _melee_fast_combo_step:
-		1:
-			return 1.08
-		2:
-			return 1.25
-		_:
-			return 1.0
-
-
-func _get_fast_chain_hit_stop_duration(
-	fallback: float
-) -> float:
-	if not _has_authored_fast_chain():
-		return fallback
-	match _melee_fast_combo_step:
-		0:
-			return 0.026
-		1:
-			return 0.030
-		2:
-			return 0.036
-		_:
-			return fallback
-
-
 func _start_fast_attack() -> void:
 	var uses_dodge_fast_attack_entry := _dodge_fast_attack_entry_pending
 	_dodge_fast_attack_entry_pending = false
@@ -9347,8 +9319,6 @@ func _trigger_camera_shake() -> void:
 		if _active_melee_attack_profile == null:
 			if _melee_attack_kind == "fast":
 				power = melee_fast_camera_shake_power
-		if _melee_attack_kind == "fast":
-			power *= _get_fast_chain_camera_shake_multiplier()
 		camera.call("shake", power if power > 0.0 else melee_camera_shake_power)
 
 
@@ -9374,30 +9344,53 @@ func _get_world_camera() -> Node:
 	return get_node_or_null("/root/GameRoot/World/Camera2D")
 
 
-func _apply_hit_stop() -> void:
-	if _hit_stop_active:
-		return
-	_hit_stop_active = true
-	var previous_scale := Engine.time_scale
+## The hit stop this contact should apply, resolved but not yet applied.
+##
+## `MeleeAttackProfile` is the authority: for a fast chain the active profile is
+## the current link's, so the authored per-link staircase arrives here intact.
+## The actor-level exports are the fallback for a contact with no profile, and an
+## `_active_melee_contact` entry -- a paired execution, for instance -- still wins
+## over both.
+##
+## Split out of `_apply_hit_stop()` so the resolved values can be read without
+## also stopping time. They were previously unreadable, because resolving and
+## applying were one function, and a hardcoded per-step duration table sat
+## between the profile and the timer for exactly as long as nothing could see it.
+func _resolve_melee_hit_stop() -> Dictionary:
 	var configured_scale: float = _active_melee_attack_profile.hit_stop_scale if _active_melee_attack_profile != null else melee_heavy_hit_stop_scale
 	var configured_duration: float = _active_melee_attack_profile.hit_stop_duration if _active_melee_attack_profile != null else melee_heavy_hit_stop_duration
 	if _active_melee_attack_profile == null:
 		if _melee_attack_kind == "fast":
 			configured_scale = melee_fast_hit_stop_scale
 			configured_duration = melee_fast_hit_stop_duration
-	if _melee_attack_kind == "fast":
-		configured_duration = _get_fast_chain_hit_stop_duration(
-			configured_duration
-		)
 	configured_scale = float(
 		_active_melee_contact.get("hit_stop_scale", configured_scale)
 	)
 	configured_duration = float(
 		_active_melee_contact.get("hit_stop_duration", configured_duration)
 	)
-	var target_scale: float = clamp(configured_scale if configured_scale > 0.0 else melee_hit_stop_scale, 0.01, 1.0)
-	Engine.time_scale = min(previous_scale, target_scale)
-	await get_tree().create_timer(configured_duration if configured_duration > 0.0 else melee_hit_stop_duration, true, false, true).timeout
+	return {
+		"scale": clamp(
+			configured_scale if configured_scale > 0.0 else melee_hit_stop_scale,
+			0.01,
+			1.0
+		),
+		"duration": (
+			configured_duration
+			if configured_duration > 0.0
+			else melee_hit_stop_duration
+		),
+	}
+
+
+func _apply_hit_stop() -> void:
+	if _hit_stop_active:
+		return
+	_hit_stop_active = true
+	var previous_scale := Engine.time_scale
+	var resolved := _resolve_melee_hit_stop()
+	Engine.time_scale = min(previous_scale, float(resolved["scale"]))
+	await get_tree().create_timer(float(resolved["duration"]), true, false, true).timeout
 	Engine.time_scale = previous_scale
 	_hit_stop_active = false
 

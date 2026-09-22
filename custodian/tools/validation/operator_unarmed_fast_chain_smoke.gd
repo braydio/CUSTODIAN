@@ -4,6 +4,18 @@ const OPERATOR_SCENE := preload("res://game/actors/operator/operator.tscn")
 const UNARMED := preload("res://game/actors/operator/unarmed_definition.tres")
 const EXPECTED_FRAMES := [6, 6, 7, 8]
 const EXPECTED_CONTACTS := [3, 3, 3, 4]
+const EXPECTED_HITSTOP := [0.018, 0.024, 0.032, 0.050]
+const EXPECTED_SHAKE := [0.70, 1.00, 1.45, 2.20]
+
+
+## Stands in for the world camera so the real `_trigger_camera_shake()` can be
+## driven and the power it asks for recorded. `_get_world_camera()` resolves an
+## absolute path and only requires a `shake` method.
+class ShakeProbe extends Node2D:
+	var powers: Array[float] = []
+
+	func shake(power: float) -> void:
+		powers.append(power)
 
 var _failed := false
 
@@ -76,6 +88,7 @@ func _run() -> void:
 
 	await _validate_attack_drive(operator, root)
 	await _validate_early_input_forgiveness(operator)
+	await _validate_impact_progression(operator)
 
 	operator.queue_free()
 	if _failed:
@@ -300,4 +313,131 @@ func _validate_early_input_forgiveness(operator: Node) -> void:
 		"an early press must advance the chain at the commit frame, step is %d"
 			% int(operator.get("_melee_fast_combo_step"))
 	)
+
+
+## C2: the per-link impact staircase must be the authored one, and it must be the
+## profile that reaches the real feedback path.
+##
+## This is presentation hierarchy only. Damage stays 10.0 and knockback stays 56.0
+## across all four links on purpose -- the links differ in how a hit *reads*, not
+## in what it is worth -- so those are asserted flat here to keep a later feel
+## pass from quietly becoming a balance pass.
+func _validate_impact_progression(operator: Node) -> void:
+	for index in range(4):
+		var profile = UNARMED.fast_chain_attack_profiles[index]
+		_assert_true(
+			is_equal_approx(profile.hit_stop_duration, EXPECTED_HITSTOP[index]),
+			"link %d hitstop is %.4f, expected %.4f"
+				% [index + 1, profile.hit_stop_duration, EXPECTED_HITSTOP[index]]
+		)
+		_assert_true(
+			is_equal_approx(profile.camera_shake_power, EXPECTED_SHAKE[index]),
+			"link %d shake is %.3f, expected %.3f"
+				% [index + 1, profile.camera_shake_power, EXPECTED_SHAKE[index]]
+		)
+		if index > 0:
+			var previous = UNARMED.fast_chain_attack_profiles[index - 1]
+			_assert_true(
+				profile.hit_stop_duration > previous.hit_stop_duration,
+				"hitstop must rise at link %d" % (index + 1)
+			)
+			_assert_true(
+				profile.camera_shake_power > previous.camera_shake_power,
+				"shake must rise at link %d" % (index + 1)
+			)
+		# Presentation hierarchy, not balance escalation.
+		_assert_true(
+			is_equal_approx(profile.damage, 10.0),
+			"link %d damage changed; C2 is presentation only" % (index + 1)
+		)
+		_assert_true(
+			is_equal_approx(profile.knockback_force, 56.0),
+			"link %d knockback changed; C2 is presentation only" % (index + 1)
+		)
+
+	# Executed, not declarative. The real `_trigger_camera_shake()` and
+	# `_apply_hit_stop()` are driven per link and the values they actually ask for
+	# are measured, which is the only way to catch a parallel table overriding the
+	# profile on the way to the feedback path.
+	var probe := ShakeProbe.new()
+	var game_root := Node.new()
+	game_root.name = "GameRoot"
+	var world := Node.new()
+	world.name = "World"
+	probe.name = "Camera2D"
+	world.add_child(probe)
+	game_root.add_child(world)
+	get_root().add_child(game_root)
+	await process_frame
+	_assert_true(
+		operator.call("_get_world_camera") == probe,
+		"the shake probe must be the camera the actor resolves"
+	)
+
+	operator.set("using_unarmed", true)
+	operator.set("combat_loadout_mode", "melee")
+	operator.set("primary_weapon_equipped", false)
+	operator.set("_melee_attack_kind", "fast")
+	operator.set("_active_melee_contact", {})
+	for index in range(4):
+		var profile = UNARMED.fast_chain_attack_profiles[index]
+		operator.set("_melee_fast_combo_step", index)
+		# Resolved the way the runtime resolves it, from the chain step, rather
+		# than assigned by hand.
+		var resolved = operator.call("_get_current_melee_attack_profile", "fast")
+		_assert_true(
+			resolved == profile,
+			"link %d must resolve to its own attack profile" % (index + 1)
+		)
+		operator.set("_active_melee_attack_profile", resolved)
+
+		probe.powers.clear()
+		operator.call("_trigger_camera_shake")
+		_assert_true(
+			probe.powers.size() == 1,
+			"link %d should request exactly one shake, saw %d" % [index + 1, probe.powers.size()]
+		)
+		if probe.powers.size() == 1:
+			_assert_true(
+				is_equal_approx(probe.powers[0], EXPECTED_SHAKE[index]),
+				"link %d shook at %.4f, but authored %.4f -- the profile is not "
+					% [index + 1, probe.powers[0], EXPECTED_SHAKE[index]]
+					+ "reaching the feedback path unmodified"
+			)
+
+		# The duration cannot be timed: a headless process frame is ~6 ms and the
+		# links differ by 4-8 ms, so a wall-clock measurement would not tell the
+		# authored staircase from a flattened one. It is read from the resolution
+		# seam the apply path itself uses instead.
+		var hit_stop: Dictionary = operator.call("_resolve_melee_hit_stop")
+		_assert_true(
+			is_equal_approx(float(hit_stop["duration"]), EXPECTED_HITSTOP[index]),
+			"link %d resolves a %.4f s hit stop, but authored %.4f -- the profile "
+				% [index + 1, float(hit_stop["duration"]), EXPECTED_HITSTOP[index]]
+				+ "is not reaching the feedback path unmodified"
+		)
+		_assert_true(
+			is_equal_approx(float(hit_stop["scale"]), profile.hit_stop_scale),
+			"link %d resolves scale %.4f, expected the authored %.4f"
+				% [index + 1, float(hit_stop["scale"]), profile.hit_stop_scale]
+		)
+
+		# And the apply path must really consume what the seam resolves.
+		operator.set("_hit_stop_active", false)
+		Engine.time_scale = 1.0
+		operator.call("_apply_hit_stop")
+		_assert_true(
+			is_equal_approx(Engine.time_scale, profile.hit_stop_scale),
+			"link %d hit stop set time scale to %.4f, expected the authored %.4f"
+				% [index + 1, Engine.time_scale, profile.hit_stop_scale]
+		)
+		# Let the real timer expire so the suite does not continue time-scaled.
+		await create_timer(maxf(0.08, profile.hit_stop_duration * 2.0)).timeout
+		_assert_true(
+			is_equal_approx(Engine.time_scale, 1.0),
+			"link %d hit stop did not restore time scale, left %.4f"
+				% [index + 1, Engine.time_scale]
+		)
+	Engine.time_scale = 1.0
+	game_root.queue_free()
 

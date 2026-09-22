@@ -405,8 +405,100 @@ Validation: actor tier 54/55 (`lootable_corpse_beacon` only, nondeterministic
 and unrelated), changed set 36/36, focused chain gates green including the Vigil
 dagger and Sword-Cleaver, which share this code path.
 
+### C2 — per-link impact progression (done)
+
+Scoped as presentation hierarchy, not balance: damage stays 10.0 and knockback
+56.0 across all four links, and the gate now asserts that flatness so a later
+feel pass cannot quietly become a balance pass.
+
+The authored staircase was already in the profiles from the four-link
+integration:
+
+| link | hit stop | shake | scale |
+|---|---|---|---|
+| fast_01 | 0.018 | 0.70 | 0.88 |
+| fast_02 | 0.024 | 1.00 | 0.88 |
+| fast_03 | 0.032 | 1.45 | 0.86 |
+| fast_04 | 0.050 | 2.20 | 0.86 |
+
+**But none of it reached the game.** Two hardcoded per-step tables sat between
+`MeleeAttackProfile` and the feedback path and silently overrode it:
+
+```gdscript
+func _get_fast_chain_hit_stop_duration(fallback: float) -> float:
+    match _melee_fast_combo_step:
+        0: return 0.026
+        1: return 0.030
+        2: return 0.036
+        _: return fallback
+
+func _get_fast_chain_camera_shake_multiplier() -> float:
+    match _melee_fast_combo_step:
+        1: return 1.08
+        2: return 1.25
+        _: return 1.0
+```
+
+Both keyed on steps 0/1/2 with a fallback, which dates them to the retired
+three-link model. Nothing else referenced them and no validation asserted their
+numbers. What the player actually got:
+
+| link | authored stop | ran as | authored shake | ran as |
+|---|---|---|---|---|
+| fast_01 | 0.018 | **0.026** | 0.70 | 0.70 |
+| fast_02 | 0.024 | **0.030** | 1.00 | **1.08** |
+| fast_03 | 0.032 | **0.036** | 1.45 | **1.81** |
+| fast_04 | 0.050 | 0.050 | 2.20 | 2.20 |
+
+The authored curve spans 2.8x from first jab to finisher; the one that ran spanned
+1.9x, with the early links louder than authored and the steps between them
+compressed. Only link 4 was correct, and only because step 3 fell off the end of
+a table written for three links.
+
+**This was not confined to Fists.** `_has_authored_fast_chain()` is true for both
+armed melee weapons, so the same table overrode them, and there it inverted the
+intent outright:
+
+| weapon | authored stop | ran as |
+|---|---|---|
+| Vigil dagger | 0.022 / 0.027 / 0.043 | 0.026 / 0.030 / **0.036** |
+| Sword-Cleaver | 0.032 / 0.034 / 0.048 | **0.026** / **0.030** / **0.036** |
+
+The dagger's finisher was cut from 0.043 to 0.036 and the Cleaver's opener was
+cut from 0.032 to 0.026 — the heaviest beats were the ones most flattened.
+
+Both helpers and their call sites are deleted. That removes a parallel impact
+system rather than adding one; `MeleeAttackProfile` is now the only authority, as
+`CURRENT_STATE.md` already claimed it was.
+
+**One structural change was needed to make this testable.** `_apply_hit_stop()`
+resolved the values and applied them in the same function, so the resolved
+duration could not be read without also stopping time — and a headless process
+frame is ~6 ms while the links differ by 4-8 ms, so a wall-clock measurement
+cannot tell the authored staircase from a flattened one. Resolution is now
+`_resolve_melee_hit_stop()`, which `_apply_hit_stop()` consumes. Semantics are
+unchanged, including the `_active_melee_contact` override for paired executions.
+Fusing resolve and apply is precisely what let a parallel table hide in the
+middle for as long as nothing could see it.
+
+Coverage in `operator_unarmed_fast_chain`: the authored values and their
+monotonicity, damage and knockback asserted flat, the real
+`_trigger_camera_shake()` driven against a stub camera and the power it asks for
+measured, the resolved hit stop read from the seam the apply path uses, and
+`_apply_hit_stop()` confirmed to move `Engine.time_scale` to the authored scale
+and restore it.
+
+Controlled from both directions, as the packet asked: flattening the four links
+to one generic impact value fails it in fourteen places, and restoring the two
+hardcoded tables fails it in five — so the gate would have caught the defect that
+prompted this.
+
+Validation: actor tier, changed set, and the Vigil dagger and Sword-Cleaver gates
+green.
+
 ### Remaining Part C steps
 
-C2 per-link impact progression (already partly applied during the four-link
-tuning pass), C5 chain movement continuity, C6 Fast 04 posture settle, C7
-contact-owned feedback, C8 parry alignment.
+C5 chain movement continuity — the first genuinely unfinished feel mechanic, and
+the one that wants a real runtime change: `_begin_attack_drive()` removes the
+outgoing drive's residual velocity before the next link's delayed drive starts.
+Then C6 Fast 04 posture settle, C7 contact-owned feedback, C8 parry alignment.

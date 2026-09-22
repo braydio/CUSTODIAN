@@ -8,14 +8,56 @@ Full derivation lives in
 
 ```
 C1  subtle Fists target assistance      DONE
-C3  attack-drive continuity             DONE   <- this pass
-C4  early input forgiveness             DONE   <- this pass
-C2  per-link impact progression         partly applied during four-link tuning
-C5  chain movement continuity           pending
+C3  attack-drive continuity             DONE
+C4  early input forgiveness             DONE
+C2  per-link impact progression         DONE   <- this pass
+C5  chain movement continuity           next (wants a real runtime change)
 C6  Fast 04 posture settle              pending
 C7  contact-owned feedback              pending
 C8  parry alignment                     pending
 ```
+
+## C2 — per-link impact progression
+
+Presentation hierarchy, not balance. Damage stays 10.0 and knockback 56.0 across
+all four links, and the gate now asserts that flatness so a later feel pass
+cannot quietly become a balance pass.
+
+The authored staircase was already in the profiles — **but none of it reached the
+game.** Two hardcoded per-step tables sat between `MeleeAttackProfile` and the
+feedback path and overrode it:
+
+| link | authored stop | ran as | authored shake | ran as |
+|---|---|---|---|---|
+| fast_01 | 0.018 | **0.026** | 0.70 | 0.70 |
+| fast_02 | 0.024 | **0.030** | 1.00 | **1.08** |
+| fast_03 | 0.032 | **0.036** | 1.45 | **1.81** |
+| fast_04 | 0.050 | 0.050 | 2.20 | 2.20 |
+
+Both tables keyed on steps 0/1/2 with a fallback, dating them to the retired
+three-link model — which is why only link 4 was correct, and only by falling off
+the end of the table. The authored curve spans 2.8x from jab to finisher; what
+ran spanned 1.9x, with the early links louder than authored and the steps between
+them compressed.
+
+**It was not confined to Fists.** `_has_authored_fast_chain()` is true for both
+armed weapons, and there it inverted the intent: the Vigil dagger's finisher was
+cut from 0.043 to 0.036, and every Sword-Cleaver link was wrong, its opener cut
+from 0.032 to 0.026. The heaviest beats were the ones most flattened.
+
+Both helpers and their call sites are deleted — removing a parallel impact system
+rather than adding one. `MeleeAttackProfile` is now the only authority, as
+`CURRENT_STATE.md` already claimed.
+
+One structural change was needed to make this testable: `_apply_hit_stop()`
+resolved and applied in the same function, so the duration could not be read
+without stopping time, and a headless frame (~6 ms) is coarser than the gaps
+between links (4-8 ms). Resolution is now `_resolve_melee_hit_stop()`, consumed
+by `_apply_hit_stop()`, semantics unchanged including the `_active_melee_contact`
+override. Fusing resolve and apply is exactly what let the parallel table hide.
+
+Controlled from both directions: flattening the links to one generic value fails
+the gate in fourteen places; restoring the two hardcoded tables fails it in five.
 
 ## C4 — early input forgiveness
 
@@ -45,7 +87,7 @@ to fix.
 Controlled from both sides: reverting to reject-unless-open fails the gate in
 four places, and forgiving late presses too fails it in one.
 
-## C3 — what changed
+## C3 — attack-drive continuity
 
 Fists had **no attack drive at all**: every unarmed link sat at the 0.0 default
 while the Vigil dagger (7/9/11) and Sword-Cleaver (9/11/14) both escalate. The
