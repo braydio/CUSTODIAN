@@ -342,6 +342,7 @@ class SourceArtService:
         write_json(root / "review/normalization_review.json", result)
         if result["status"] == "PASS":
             session.state = "REVIEWED"
+            session.reviewed_candidate_sha256 = sha256(candidate)
             self.save(path, session)
         return result
 
@@ -359,6 +360,9 @@ class SourceArtService:
         if Path(destination_name).name != destination_name or not destination_name.lower().endswith(".png"):
             raise model.WorkbenchError("handoff destination must be a plain PNG filename")
         candidate = Path(session.selected_candidate).resolve(strict=True)
+        candidate_sha256 = sha256(candidate)
+        if not session.reviewed_candidate_sha256 or candidate_sha256 != session.reviewed_candidate_sha256:
+            raise model.WorkbenchError("selected candidate changed after review; requires re-review")
         try:
             destination_key = model.SCHEMA.parse_filename(destination_name)
         except ValueError as error:
@@ -397,6 +401,8 @@ class SourceArtService:
         if canonical_directory.exists():
             for candidate in sorted(canonical_directory.glob("*.png")):
                 inspect_existing(candidate)
+        for candidate in sorted(self.handoff_root.glob("*.png")):
+            inspect_existing(candidate)
         unique_existing: dict[str, dict[str, Any]] = {item["path"]: item for item in existing_assets}
         existing_assets = list(unique_existing.values())
         existing = existing_assets or None

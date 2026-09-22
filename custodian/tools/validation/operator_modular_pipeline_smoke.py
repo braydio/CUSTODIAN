@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import sys
 import tempfile
+import types
 from pathlib import Path
 
 from PIL import Image
@@ -37,6 +38,41 @@ def _write_timing(path: Path, frames: int, durations: list[float]) -> None:
 def main() -> int:
     with tempfile.TemporaryDirectory(prefix="operator-v2-pipeline-") as temp:
         root = Path(temp)
+
+        # Targeted manifest generation must carry the same selection into the
+        # downstream Godot ingest; otherwise a second unrelated inbox manifest
+        # is silently processed as well.
+        targeted_inbox = root / "content/sprites/_pipeline/inbox"
+        targeted_inbox.mkdir(parents=True)
+        first = targeted_inbox / "operator__upper_body__unarmed__locomotion__walk_01__e__2f__96.png"
+        second = targeted_inbox / "operator__upper_body__unarmed__locomotion__run_01__e__2f__96.png"
+        _write_strip(first, 2, 96, 96)
+        _write_strip(second, 2, 96, 96)
+        captured: list[list[str]] = []
+        original_inbox, original_project, original_ingest, original_argv, original_run = (
+            manifests.INBOX_DIR, manifests.PROJECT_DIR, manifests.INGEST_SCRIPT, sys.argv[:], manifests.subprocess.run
+        )
+        try:
+            manifests.INBOX_DIR = targeted_inbox
+            manifests.PROJECT_DIR = root
+            manifests.INGEST_SCRIPT = root / "ingest.py"
+            manifests.subprocess.run = lambda command, **_kwargs: (
+                captured.append(command) or types.SimpleNamespace(returncode=0)
+            )
+            sys.argv = ["generate_inbox_manifests.py", "--manifest", first.name]
+            assert manifests.main() == 0
+        finally:
+            manifests.INBOX_DIR, manifests.PROJECT_DIR, manifests.INGEST_SCRIPT = (
+                original_inbox, original_project, original_ingest
+            )
+            manifests.subprocess.run = original_run
+            sys.argv = original_argv
+        assert captured and captured[0].count("--manifest") == 1
+        assert first.with_suffix(".json").as_posix() in captured[0]
+        assert second.with_suffix(".json").as_posix() not in captured[0]
+        assert first.with_suffix(".json").exists()
+        assert not second.with_suffix(".json").exists()
+
         source = root / "source"
         runtime = root / "content/sprites/operator/runtime/animations"
         manifest_path = root / "content/sprites/operator/runtime/operator_runtime_manifest.generated.json"

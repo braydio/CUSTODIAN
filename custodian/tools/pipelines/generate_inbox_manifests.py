@@ -91,8 +91,11 @@ def main() -> int:
 
     generated = 0
     skipped = 0
+    selected_manifest_paths: list[Path] = []
     for png_path in targets:
         manifest_path = png_path.with_suffix(".json")
+        if args.manifest:
+            selected_manifest_paths.append(manifest_path)
         if manifest_path.exists() and not args.regen:
             skipped += 1
             if args.dry_run and args.remove_superseded:
@@ -126,6 +129,9 @@ def main() -> int:
         ingest_args.append("--no-mirror")
     if args.remove_superseded:
         ingest_args.append("--remove-superseded")
+    if args.manifest:
+        for manifest_path in selected_manifest_paths:
+            ingest_args.extend(["--manifest", str(manifest_path)])
 
     result = subprocess.run(ingest_args, cwd=PROJECT_DIR, check=False)
     return result.returncode

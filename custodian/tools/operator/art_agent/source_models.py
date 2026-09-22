@@ -49,6 +49,7 @@ class SourceSession:
         "REVIEWED", "READY", "CLOSED",
     ] = "STAGED"
     selected_candidate: str = ""
+    reviewed_candidate_sha256: str = ""
 
     @classmethod
     def create(cls, **kwargs: Any) -> "SourceSession":

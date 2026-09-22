@@ -36,8 +36,8 @@ def make_grid_source(path: Path, *, frames: int = 3, columns: int = 2, rows: int
     draw = ImageDraw.Draw(sheet)
     colors = tuple((255 if index % 3 == 0 else 0, 255 if index % 3 == 1 else 0, 255 if index % 3 == 2 else 0, 255) for index in range(frames))
     for index, color in enumerate(colors):
-        column = index % 2
-        row = index // 2
+        column = index % columns
+        row = index // columns
         left = column * 256 + 64
         top = row * 256 + 64
         draw.rectangle((left, top, left + 127, top + 127), fill=color)
@@ -146,6 +146,16 @@ def main() -> int:
         assert contract_dry["old"][0]["frames"] == 5
         assert contract_dry["new"]["frames"] == 6
 
+        stale_session = service.start(source_path=source, frames=2, target_size=96)
+        service.analyze(stale_session); service.plan_normalization(stale_session); service.convert(stale_session); service.review(stale_session)
+        stale_candidate = Path(service.status(stale_session)["selected_candidate"])
+        stale_candidate.write_bytes(stale_candidate.read_bytes() + b"stale")
+        try:
+            service.handoff(stale_session, destination_name=destination_name, replace=True)
+            raise AssertionError("modified reviewed candidate was accepted")
+        except model.WorkbenchError as error:
+            assert "requires re-review" in str(error)
+
         unreviewed = service.start(source_path=source, frames=2, target_size=96)
         try:
             service.handoff(unreviewed, destination_name="operator__upper_body__unarmed__locomotion__run_01__e__2f__96.png", replace=True)
@@ -178,6 +188,15 @@ def main() -> int:
             service.plan_normalization(session_grid)
             converted_grid = service.convert(session_grid)
             assert Image.open(converted_grid["registered"]).size == (frames * 96, 96)
+            with Image.open(converted_grid["registered"]).convert("RGBA") as flattened:
+                expected = [
+                    (255 if index % 3 == 0 else 0,
+                     255 if index % 3 == 1 else 0,
+                     255 if index % 3 == 2 else 0)
+                    for index in range(frames)
+                ]
+                sampled = [flattened.getpixel((index * 96 + 48, 48))[:3] for index in range(frames)]
+                assert sampled == expected, (frames, sampled, expected)
             reviewed_grid = service.review(session_grid)
             assert reviewed_grid["status"] == "PASS", reviewed_grid
 
