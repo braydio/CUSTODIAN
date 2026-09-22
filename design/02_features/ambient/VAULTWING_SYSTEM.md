@@ -1,6 +1,6 @@
 # CUSTODIAN — VAULTWING CREATURE, PREDATION, AND BOND SYSTEM
 
-**Status:** design locked / Slice A implemented; EAST art baseline published
+**Status:** design locked / Slice A implemented; EAST/WEST baseline published; SOUTH/NORTH temporary baseline art published with alpha cleanup pending
 **Feature family:** ambient ecology / hostile fauna / companion progression  
 **Initial creature:** Common Vaultwing  
 **Runtime identity:** `vaultwing_common`  
@@ -546,7 +546,7 @@ Do not create a second missing-asset tracker. Register the Asset V2 family and
 use the current `asset.py` plan/status/doctor commands rather than inventing
 pipeline commands.
 
-The next implementation slice is **Slice A: Wild Vaultwing foundation**. Inspect
+The next implementation slice is **bonding and companion progression**. Inspect
 the live dependency graph before choosing exact file ownership. Preserve
 unrelated working-tree changes; keep simulation deterministic; do not expand
 `AmbientCritterManager`; reuse semantic ambient presentation; keep flight as

@@ -1604,8 +1604,13 @@ The `ambient_vaultwing_common` Asset V2 family contract is registered with a
 and west-mirrored strips through the canonical runtime domain: `glide`, `flap`,
 `dive_windup`, `dive_strike`, `climb_out`, `land`, `takeoff`, `perch_idle`,
 `ground_idle`, `ground_walk`, `bite_attack`, `air_stagger`, `hurt`, and `death`.
-North and south coverage remain honestly missing; the family is not yet
-directionally complete. Visual altitude remains presentation-only: the body
+SOUTH now publishes all 14 states and NORTH publishes six ground/perch/reaction
+states. These 20 strips are temporary visual baseline art with a known generated
+gray matte while corrected alpha-clean artwork is prepared. Replacement keeps
+the same semantic filenames and frame contracts through the family inbox and
+targeted Asset V2 ingest; the quarantine remains rollback evidence. The
+remaining NORTH aerial/transition states are still missing. Visual altitude
+remains presentation-only: the body
 lifts above a persistent ground-projection shadow, scale changes modestly, HIGH
 flight may leave the body above the camera, and body/shadow convergence is part
 of the dive telegraph. Focused validation is registered as `vaultwing_runtime`.
