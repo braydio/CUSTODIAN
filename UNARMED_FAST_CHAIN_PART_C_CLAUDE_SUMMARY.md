@@ -9,13 +9,41 @@ Full derivation lives in
 ```
 C1  subtle Fists target assistance      DONE
 C3  attack-drive continuity             DONE   <- this pass
-C4  early input forgiveness             next
+C4  early input forgiveness             DONE   <- this pass
 C2  per-link impact progression         partly applied during four-link tuning
 C5  chain movement continuity           pending
 C6  Fast 04 posture settle              pending
 C7  contact-owned feedback              pending
 C8  parry alignment                     pending
 ```
+
+## C4 — early input forgiveness
+
+`_try_melee_attack()` **discarded** any fast press made outside the rhythm
+window — it never reached `_buffer_attack()`. On Fast 01 the window opens at
+frame 2 of 6, so roughly the first third of the link silently ate the player's
+input and they had to press again. Fast 04 opens at frame 4 of 8, a 0.26s dead
+region on the finisher.
+
+Early and late are now different answers. `_fast_chain_queue_window_state()`
+reports `open` / `early` / `late` / `unavailable`, and
+`_is_fast_chain_queue_window_open()` delegates to it so the window has one
+definition. Early presses are buffered and spent at the commit frame; late
+presses are still refused, because a rhythm gate that forgives both directions
+is not a gate. No new timer was needed — `_update_attack_buffer()` already
+freezes the buffer for the duration of an authored chain, so a latched early
+press survives to commit instead of decaying.
+
+Forgiveness is bounded by the link's own geometry rather than a second tunable:
+the pre-window region is at most four frames and is exactly the interval the
+author already marked as not-yet-queueable.
+
+Fixed in passing: the rejection log read `animated_sprite.frame`, the wrong clock
+for a modular chain — the same defect `_fast_chain_presentation_frame()` exists
+to fix.
+
+Controlled from both sides: reverting to reject-unless-open fails the gate in
+four places, and forgiving late presses too fails it in one.
 
 ## C3 — what changed
 
@@ -67,8 +95,8 @@ was updated rather than the owners glob narrowed.
 ## Validation
 
 ```
-actor tier    55/55
-changed set   7/7
+actor tier    54/55  (lootable_corpse_beacon only; resampled F/P/F, unrelated)
+changed set   36/36
 focused       operator_melee_soft_targeting, operator_sword_cleaver,
               operator_vigil_dagger, operator_unarmed_fast_chain,
               operator_attack_phase_cadence, operator_armed_melee_body_visibility,

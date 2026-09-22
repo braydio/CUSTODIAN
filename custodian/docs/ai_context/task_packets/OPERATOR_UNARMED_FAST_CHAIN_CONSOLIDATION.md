@@ -352,8 +352,61 @@ operator_unarmed_fast_chain, operator_attack_phase_cadence,
 operator_armed_melee_body_visibility, operator_melee_switch_chain,
 operator_melee_point_blank, operator_melee_posture) all green.
 
+### C4 — early input forgiveness (done)
+
+`_try_melee_attack()` discarded any fast press made outside the rhythm window. It
+did not buffer it, did not shorten it, did not queue it: the press reached
+`_obs_log(..., "outside_rhythm_window")` and returned, never touching
+`_buffer_attack()`.
+
+On Fast 01 the window opens at frame 2 of 6, so roughly the first third of the
+link silently ate the player's input and they had to press again. The pre-window
+region per link:
+
+| link | frames | window opens | pre-window region | at the link's own cadence |
+|---|---|---|---|---|
+| fast_01 | 6 | 2 | frames 0-1 | 0.10 s |
+| fast_02 | 6 | 2 | frames 0-1 | 0.11 s |
+| fast_03 | 7 | 2 | frames 0-1 | 0.11 s |
+| fast_04 | 8 | 4 | frames 0-3 | 0.26 s |
+
+An early press and a late press are different mistakes and now get different
+answers. `_fast_chain_queue_window_state()` replaces the bare boolean and reports
+`open`, `early`, `late` or `unavailable`; `_is_fast_chain_queue_window_open()`
+delegates to it so there is one definition of the window, not two.
+
+- **early** is forgiven. The press is buffered and spent at the commit frame.
+  This costs no new timer: `_update_attack_buffer()` already freezes the buffer
+  for the duration of an authored chain, so a latched early press survives to
+  commit instead of decaying.
+- **late** is still refused. The rhythm gate only means something if a missed
+  beat can cost you the link, and forgiving both directions would delete it.
+- **unavailable** (no chain weapon, no readable clock) is refused, which is what
+  the predicate already did.
+
+The forgiveness is bounded by the link's own geometry rather than by a second
+tunable. The pre-window region is at most four frames, and it is exactly the
+region the author already marked as "not yet queueable", so a separate
+forgiveness window would be a knob describing the same interval twice.
+
+Fixed in passing: the rejection log reported `animated_sprite.frame`, which is
+the wrong clock for a modular chain — the same defect `_fast_chain_presentation_frame()`
+was introduced to fix. It now reports the visible frame.
+
+Coverage in `operator_unarmed_fast_chain`, driven through a real
+`_try_melee_attack` on a real running link, with the clock asserted to be the
+link actually being drawn: early buffers, inside-window still buffers, late is
+still refused, an early press does not decay while the link runs, and an early
+press advances the chain at the commit frame. Controlled from **both** sides —
+reverting to the old reject-unless-open fails it in four places, and forgiving
+late presses too fails it in one.
+
+Validation: actor tier 54/55 (`lootable_corpse_beacon` only, nondeterministic
+and unrelated), changed set 36/36, focused chain gates green including the Vigil
+dagger and Sword-Cleaver, which share this code path.
+
 ### Remaining Part C steps
 
-C4 early input forgiveness, C2 per-link impact progression (already partly
-applied during the four-link tuning pass), C5 chain movement continuity, C6 Fast
-04 posture settle, C7 contact-owned feedback, C8 parry alignment.
+C2 per-link impact progression (already partly applied during the four-link
+tuning pass), C5 chain movement continuity, C6 Fast 04 posture settle, C7
+contact-owned feedback, C8 parry alignment.

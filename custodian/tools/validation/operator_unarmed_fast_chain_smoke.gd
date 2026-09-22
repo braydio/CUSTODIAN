@@ -75,6 +75,7 @@ func _run() -> void:
 	_assert_true(playback_clock.frame > 0, "visible modular presentation clock must advance")
 
 	await _validate_attack_drive(operator, root)
+	await _validate_early_input_forgiveness(operator)
 
 	operator.queue_free()
 	if _failed:
@@ -178,3 +179,125 @@ func _validate_attack_drive(operator: Node, root: Node) -> void:
 			"link %d gains no drive from a target at the edge of its own acquire ring" % (index + 1)
 		)
 	dummy.queue_free()
+
+
+## Early input forgiveness: pressing slightly before the rhythm window opens must
+## be heard, while pressing after it closes must still cost the link.
+##
+## Before this, `_try_melee_attack` discarded any fast press made outside the
+## queue window outright -- it never reached `_buffer_attack()`. On Fast 01 the
+## window opens at frame 2 of 6, so roughly the first third of the link silently
+## ate the player's input and they had to press again. Late presses are a
+## different mistake and are still refused, otherwise the rhythm gate means
+## nothing.
+func _validate_early_input_forgiveness(operator: Node) -> void:
+	operator.set("using_unarmed", true)
+	operator.set("combat_loadout_mode", "melee")
+	operator.set("primary_weapon_equipped", false)
+	operator.set("velocity", Vector2.ZERO)
+	operator.set("aim_direction", Vector2.RIGHT)
+	operator.set("visual_idle_direction", Vector2.RIGHT)
+	operator.set("_melee_forward", Vector2.RIGHT)
+	operator.set("melee_cooldown_remaining", 0.0)
+	operator.set("_melee_fast_combo_step", 0)
+	operator.call("_clear_attack_buffer")
+	operator.call("_try_melee_attack", "unarmed_fast")
+	await process_frame
+	# Let the attack take the body, so the clock below is the link being drawn
+	# rather than whatever the previous case left on screen.
+	operator.call("_update_animation")
+	await process_frame
+
+	# Anti-vacuous: every assertion below is meaningless unless a real authored
+	# link is actually running and visibly drawn with a readable clock.
+	_assert_true(bool(operator.get("_melee_active")), "forgiveness case needs a real attack to start")
+	_assert_true(bool(operator.call("_has_authored_fast_chain")), "forgiveness case needs the authored chain")
+	var clock := operator.call("_presentation_clock_sprite") as AnimatedSprite2D
+	_assert_true(clock != null, "forgiveness case needs a readable presentation clock")
+	if clock == null or not bool(operator.get("_melee_active")):
+		return
+	_assert_true(
+		String(clock.animation).contains("attack/fast_01"),
+		"the rhythm clock must be the link being drawn, got %s" % String(clock.animation)
+	)
+
+	var weapon = operator.call("_get_fast_chain_weapon")
+	var step: int = int(operator.get("_melee_fast_combo_step"))
+	var open_frame: int = int(weapon.fast_chain_queue_open_frames[step])
+	var close_frame: int = int(weapon.fast_chain_queue_close_frames[step])
+	var commit_frame: int = int(weapon.fast_chain_commit_frames[step])
+	_assert_true(open_frame > 0, "the early region must exist for this test to mean anything")
+
+	# Early: refused before, buffered now.
+	clock.frame = 0
+	_assert_true(
+		String(operator.call("_fast_chain_queue_window_state")) == "early",
+		"frame 0 should classify as early, got %s" % operator.call("_fast_chain_queue_window_state")
+	)
+	operator.call("_clear_attack_buffer")
+	operator.call("_try_melee_attack", "unarmed_fast")
+	_assert_true(
+		String(operator.get("_buffered_attack_kind")) == "fast",
+		"a press before the window opens must be buffered, not discarded"
+	)
+
+	# Inside the window: unchanged behaviour.
+	clock.frame = open_frame
+	_assert_true(
+		String(operator.call("_fast_chain_queue_window_state")) == "open",
+		"the open frame should classify as open"
+	)
+	operator.call("_clear_attack_buffer")
+	operator.call("_try_melee_attack", "unarmed_fast")
+	_assert_true(
+		String(operator.get("_buffered_attack_kind")) == "fast",
+		"a press inside the window must still be buffered"
+	)
+
+	# Late: still refused, so the rhythm gate keeps its teeth.
+	var frame_count: int = clock.sprite_frames.get_frame_count(clock.animation)
+	_assert_true(
+		frame_count == EXPECTED_FRAMES[step],
+		"the rhythm clock should carry link %d's authored frame count, got %d"
+			% [step + 1, frame_count]
+	)
+	if close_frame + 1 < frame_count:
+		clock.frame = close_frame + 1
+		_assert_true(
+			String(operator.call("_fast_chain_queue_window_state")) == "late",
+			"a frame past the close frame should classify as late"
+		)
+		operator.call("_clear_attack_buffer")
+		operator.call("_try_melee_attack", "unarmed_fast")
+		_assert_true(
+			String(operator.get("_buffered_attack_kind")).is_empty(),
+			"a press after the window closes must still be refused"
+		)
+	else:
+		_assert_true(false, "link %d has no frame past its close frame to test lateness" % (step + 1))
+
+	# The forgiven press must actually buy the next link, not merely sit in a
+	# variable. Latch early, then run the link to its commit frame.
+	clock.frame = 0
+	operator.call("_clear_attack_buffer")
+	operator.call("_try_melee_attack", "unarmed_fast")
+	_assert_true(
+		String(operator.get("_buffered_attack_kind")) == "fast",
+		"the advance case needs the early press latched"
+	)
+	# Frozen for the duration of an authored chain, so it must survive the wait.
+	for _i in range(12):
+		operator.call("_update_attack_buffer", 1.0 / 60.0)
+	_assert_true(
+		String(operator.get("_buffered_attack_kind")) == "fast",
+		"an early press must not decay while the authored link is still running"
+	)
+	clock.frame = commit_frame
+	operator.call("_update_melee_attack", 1.0 / 60.0)
+	await process_frame
+	_assert_true(
+		int(operator.get("_melee_fast_combo_step")) == step + 1,
+		"an early press must advance the chain at the commit frame, step is %d"
+			% int(operator.get("_melee_fast_combo_step"))
+	)
+

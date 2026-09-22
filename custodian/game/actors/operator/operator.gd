@@ -5739,14 +5739,19 @@ func _try_melee_attack(intent: String = ""):
 	if requested_kind == "fast" \
 	and _melee_active \
 	and _melee_attack_kind == "fast" \
-	and _has_authored_fast_chain() \
-	and not _is_fast_chain_queue_window_open():
-		_obs_log(&"player_melee_fast_chain_input_rejected", {
-			"step": _melee_fast_combo_step,
-			"frame": animated_sprite.frame if animated_sprite != null else -1,
-			"reason": "outside_rhythm_window",
-		})
-		return
+	and _has_authored_fast_chain():
+		# Early presses are forgiven; late ones are not. `_update_attack_buffer()`
+		# freezes the buffer for the duration of an authored chain, so a press
+		# latched before the window opens survives to the commit frame rather than
+		# decaying, and the player does not have to press twice to be heard.
+		var window_state := _fast_chain_queue_window_state()
+		if window_state != &"open" and window_state != &"early":
+			_obs_log(&"player_melee_fast_chain_input_rejected", {
+				"step": _melee_fast_combo_step,
+				"frame": _fast_chain_presentation_frame(),
+				"reason": "after_rhythm_window" if window_state == &"late" else "no_rhythm_clock",
+			})
+			return
 	_buffer_attack(requested_kind)
 
 
@@ -6503,12 +6508,28 @@ func _fast_chain_presentation_frame() -> int:
 
 
 func _is_fast_chain_queue_window_open() -> bool:
+	return _fast_chain_queue_window_state() == &"open"
+
+
+## Why the rhythm window is not open, not merely that it is not.
+##
+## An early press and a late press are different mistakes and deserve different
+## answers. Pressing before the window opens is the ordinary human error when
+## chaining quickly: the intent is unambiguous and the link is still running, so
+## it is buffered and spent at the commit frame. Pressing after the window has
+## closed is a missed beat, and is still refused -- the rhythm gate only means
+## something if being late can cost you the link.
+##
+## Returns `open`, `early`, `late`, or `unavailable` when there is no chain
+## weapon or no readable presentation clock. `unavailable` is refused, which is
+## the behaviour this predicate already had.
+func _fast_chain_queue_window_state() -> StringName:
 	var weapon := _get_fast_chain_weapon()
 	if weapon == null:
-		return false
+		return &"unavailable"
 	var frame: int = _fast_chain_presentation_frame()
 	if frame < 0:
-		return false
+		return &"unavailable"
 	var open_frame := _get_fast_chain_frame_value(
 		weapon.fast_chain_queue_open_frames,
 		0
@@ -6517,7 +6538,11 @@ func _is_fast_chain_queue_window_open() -> bool:
 		weapon.fast_chain_queue_close_frames,
 		_get_fast_chain_commit_frame()
 	)
-	return frame >= open_frame and frame <= close_frame
+	if frame < open_frame:
+		return &"early"
+	if frame > close_frame:
+		return &"late"
+	return &"open"
 
 
 func _get_fast_chain_stamina_cost_for_step(step: int) -> float:
