@@ -326,6 +326,15 @@ def build_animation_catalog(manifest: dict, catalog_path: Path) -> dict:
     else:
         catalog = {"schema": CATALOG_SCHEMA, "animations": {}, "weapons": {}, "errors": []}
     catalog_animations = catalog.setdefault("animations", {})
+    # Retire only the known ranged reload weapon overlay identities here. The
+    # broader catalog still carries compatibility-era entries that are not
+    # runtime-scanned but remain intentional migration evidence.
+    for identity in tuple(catalog_animations):
+        if identity in {
+            "ranged_2h/cosmetic/reload_01/e",
+            "ranged_2h/cosmetic/reload_01/w",
+        } and identity not in manifest["animations"]:
+            catalog_animations.pop(identity, None)
     for identity, runtime_entry in manifest["animations"].items():
         entry = catalog_animations.setdefault(identity, runtime_entry)
         # A current semantic identity is wholly runtime-described. Retaining a

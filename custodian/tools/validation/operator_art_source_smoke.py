@@ -56,6 +56,7 @@ def main() -> int:
             root=root / ".ai/source_sessions",
             allowed_source_roots=(allowed,),
             handoff_root=allowed / "operator",
+            canonical_root=root / "custodian",
         )
         session = service.start(source_path=source, frames=2, target_size=96)
         assert service.status(session)["state"] == "STAGED"
@@ -121,9 +122,29 @@ def main() -> int:
         except model.WorkbenchError as error:
             assert "explicit replacement" in str(error)
         dry = service.handoff(replacement, destination_name=destination_name, replace=True, dry_run=True)
-        assert dry["status"] == "DRY_RUN" and dry["operation"] == "REPLACE" and dry["old"]["sha256"]
+        assert dry["status"] == "DRY_RUN" and dry["operation"] == "REPLACE" and dry["old"][0]["sha256"]
         replaced = service.handoff(replacement, destination_name=destination_name, replace=True)
         assert replaced["operation"] == "REPLACE"
+
+        # Contract replacement changes the filename (5f -> 6f), so discovery
+        # must use semantic identity rather than destination-path existence.
+        old_semantic = root / "custodian/content/sprites/operator/source/animations/unarmed/locomotion/walk_01"
+        old_semantic.mkdir(parents=True)
+        old_strip = old_semantic / "operator__upper_body__unarmed__locomotion__walk_01__e__5f__96.png"
+        Image.new("RGBA", (480, 96), (0, 0, 0, 0)).save(old_strip)
+        contract_source = allowed / "highres_contract_6f.png"
+        make_grid_source(contract_source, frames=6, columns=3, rows=2)
+        contract_session = service.start(source_path=contract_source, frames=6, columns=3, rows=2, target_size=96)
+        service.analyze(contract_session); service.plan_normalization(contract_session); service.convert(contract_session); service.review(contract_session)
+        contract_dry = service.handoff(
+            contract_session,
+            destination_name="operator__upper_body__unarmed__locomotion__walk_01__e__6f__96.png",
+            replace=True,
+            dry_run=True,
+        )
+        assert contract_dry["operation"] == "REPLACE_CONTRACT"
+        assert contract_dry["old"][0]["frames"] == 5
+        assert contract_dry["new"]["frames"] == 6
 
         unreviewed = service.start(source_path=source, frames=2, target_size=96)
         try:

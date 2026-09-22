@@ -1263,6 +1263,7 @@ Documentation updates this session:
 - Unarmed lower-body walk and idle now also have 8-way module playback. Current true walk source coverage is east/west only, and true idle source coverage is south only; the generated module strips make defaults stable while the missing source art is requested.
 - Unarmed west stance is wired as `unarmed_stance_left` from canonical `operator__body__unarmed__stance_01__w__6f__96.png`.
 - Operator ranged east stance is refreshed as `ranged_2h_stance` from canonical `operator__body__ranged__stance_01__e__12f__96.png`.
+- Ranged reload weapon masters remain preserved socket/timing reference evidence only. Active `ranged_2h/cosmetic/reload_01/*/weapon` source/runtime identities are not published; the Carbine stays static and socket-driven while reload body ownership remains with the live Operator reload action.
 - Operator idle facing now preserves the last movement direction after stopping; mouse motion or keyboard aim updates the visual idle facing explicitly, while attacks still resolve from combat aim.
 - Unarmed heavy attacks are wired for all four cardinal directions: east/right body+FX, west/left body+FX, north/up body+FX, and south/down body+FX. North uses canonical 8-frame sheets at `11.5 FPS`; east, west, and south use canonical 7-frame sheets at `10 FPS`.
 - Unarmed death is wired as `unarmed_death` from canonical `operator__body__unarmed__death_01__omni__6f__96.png`; the operator death handler uses it only while Fists are active and falls back to generic `death` otherwise.

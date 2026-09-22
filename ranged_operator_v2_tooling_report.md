@@ -90,3 +90,19 @@ No W direction was fabricated.
 This pass intentionally stopped before canonical ingest. No gameplay, timing,
 runtime catalog, or ranged presentation authority was changed. The preserved
 raw and prepared evidence is ready for a focused decomposition pass.
+
+## Correction — 2026-09-22
+
+A subsequent whole-tree ingest briefly published the reload weapon reference
+master as active `ranged_2h/cosmetic/reload_01/e/weapon` and fabricated a west
+counterpart. That was an ingest-boundary error, not a change to the Hybrid
+Weapon Socket contract. The active source/runtime weapon identities have now
+been removed through the normal superseded-runtime cleanup and the generated
+runtime manifest/catalog/SpriteFrames were rebuilt. The six-frame weapon master
+remains preserved source/reference evidence only; no ranged reload weapon layer
+is production authority and no W direction is published from this batch.
+
+The reload FX master remains deferred: it contains five authored frames against
+the six-frame reload body. No runtime FX clock was invented or silently
+resampled. The bounded body/weapon decomposition and reload-clock decision
+remain follow-up work for the Art Agent/Workbench path.

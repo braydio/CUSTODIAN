@@ -63,9 +63,14 @@ class SourceArtService:
         root: Path = SOURCE_ROOT,
         allowed_source_roots: tuple[Path, ...] = ALLOWED_SOURCE_ROOTS,
         handoff_root: Path | None = None,
+        canonical_root: Path | None = None,
     ):
         self.root = Path(root)
         self.allowed_source_roots = tuple(Path(path) for path in allowed_source_roots)
+        # ``canonical_source_path`` is relative to the custodian project root,
+        # not the repository root.  Keeping this injectable makes isolated
+        # source-session tests able to exercise contract replacement safely.
+        self.canonical_root = Path(canonical_root or model.CUSTODIAN_ROOT)
         # Source Session handoff is the reviewed staging boundary for the
         # specialized Operator sprite pipeline.  Keep the old asset-drop root
         # available for source intake, but do not make callers bridge it by
@@ -365,26 +370,49 @@ class SourceArtService:
             raise model.WorkbenchError("handoff filename frame contract does not match the reviewed candidate")
         destination = self.handoff_root / destination_name
         destination.parent.mkdir(parents=True, exist_ok=True)
-        existing = None
-        operation = "CREATE"
-        if destination.exists():
+        incoming_identity = model.SCHEMA.semantic_identity(destination_key)
+        existing_assets: list[dict[str, Any]] = []
+
+        def inspect_existing(path_value: Path) -> None:
+            if not path_value.exists() or not path_value.is_file() or path_value.suffix.lower() != ".png":
+                return
             try:
-                existing_key = model.SCHEMA.parse_filename(destination.name)
-            except ValueError as error:
-                raise model.WorkbenchError(f"existing handoff is not a valid Operator V2 filename: {error}") from error
-            if model.SCHEMA.semantic_identity(existing_key) != model.SCHEMA.semantic_identity(destination_key):
-                raise model.WorkbenchError("replacement refused: existing and new assets have different semantic identities")
+                existing_key = model.SCHEMA.parse_filename(path_value.name)
+            except ValueError:
+                return
+            if model.SCHEMA.semantic_identity(existing_key) != incoming_identity:
+                return
+            existing_assets.append({
+                "path": str(path_value.resolve()),
+                "sha256": sha256(path_value),
+                "frames": existing_key.frames,
+                "frame_size": [existing_key.frame_width, existing_key.frame_height],
+            })
+
+        inspect_existing(destination)
+        # A contract replacement changes the filename, so inspect the current
+        # canonical semantic directory as well as the intake boundary.
+        canonical_relative = model.SCHEMA.canonical_source_path(destination_key)
+        canonical_directory = self.canonical_root / canonical_relative.parent
+        if canonical_directory.exists():
+            for candidate in sorted(canonical_directory.glob("*.png")):
+                inspect_existing(candidate)
+        unique_existing: dict[str, dict[str, Any]] = {item["path"]: item for item in existing_assets}
+        existing_assets = list(unique_existing.values())
+        existing = existing_assets or None
+        operation = "CREATE"
+        if existing_assets:
             if not replace:
-                raise model.WorkbenchError("handoff destination already exists; pass explicit replacement")
-            operation = "REPLACE"
-            existing = {"path": str(destination.resolve()), "sha256": sha256(destination), "frames": existing_key.frames, "frame_size": [existing_key.frame_width, existing_key.frame_height]}
+                raise model.WorkbenchError("semantic asset already exists; pass explicit replacement")
+            operation = "REPLACE_CONTRACT" if any(item["frames"] != destination_key.frames or item["frame_size"] != [destination_key.frame_width, destination_key.frame_height] for item in existing_assets) else "REPLACE"
         report = {
             "operation": operation,
-            "semantic_identity": list(model.SCHEMA.semantic_identity(destination_key)),
+            "semantic_identity": list(incoming_identity),
             "old": existing,
+            "superseded": existing or [],
             "new": {"path": str(destination.resolve()), "sha256": sha256(candidate), "frames": destination_key.frames, "frame_size": [destination_key.frame_width, destination_key.frame_height]},
             "staging_boundary": str(self.handoff_root.resolve()),
-            "next_action": "run generate_inbox_manifests.py / specialized Operator ingest",
+            "next_action": "run generate_inbox_manifests.py with --remove-superseded, then specialized Operator ingest",
         }
         write_json(_root / "handoff/replacement_report.json", report)
         if dry_run:
@@ -405,8 +433,9 @@ class SourceArtService:
             "frame_size": [session.target_width, session.target_height],
             "source_session": str(path.resolve()),
             "operation": operation,
-            "semantic_identity": list(model.SCHEMA.semantic_identity(destination_key)),
-            "next_action": "run generate_inbox_manifests.py / specialized Operator ingest; compatibility resources refresh during operator_runtime_build",
+            "semantic_identity": list(incoming_identity),
+            "superseded": existing or [],
+            "next_action": "run generate_inbox_manifests.py with --remove-superseded, then specialized Operator ingest; compatibility resources refresh during operator_runtime_build",
         }
 
     def palette_inspect(self,session_path:Path|str)->dict[str,Any]:

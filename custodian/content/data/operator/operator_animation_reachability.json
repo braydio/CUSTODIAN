@@ -421,7 +421,7 @@
         "ranged_2h_reload": "PROMOTION"
       },
       "consumer": "operator._update_animation reload branch, resolved as an OMNI canonical identity.",
-      "migration_note": "Promoted byte-for-byte from row 1 of the legacy ranged_2h reloading sheet and live since the C2a-R4 animated_sprite cutover."
+      "migration_note": "Promoted byte-for-byte from row 1 of the legacy ranged_2h reloading sheet and live since the C2a-R4 animated_sprite cutover. Reload weapon presentation remains socket-driven/static; no ranged_2h reload weapon-layer identity is production authority."
     },
     {
       "profile": "ranged_2h",
