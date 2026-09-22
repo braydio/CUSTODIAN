@@ -1,0 +1,26 @@
+{
+  "schema":"custodian.asset_family.v2",
+  "id":"ambient_vaultwing_common",
+  "kind":"ambient_creature",
+  "runtime":{"domain":"sprites/ambient_creatures","owner":"vaultwing_common"},
+  "canvas":{"width":256,"height":256},
+  "direction_policy":"4dir",
+  "auto_mirror":true,
+  "states":{
+    "glide":{"required":true,"layer":"body","action_group":"flight","variant":"glide","animation":true,"fps":8,"frames":6,"required_directions":["n","s","e"]},
+    "flap":{"recommended":true,"layer":"body","action_group":"flight","variant":"flap","animation":true,"fps":10,"frames":8},
+    "dive_windup":{"required":true,"layer":"body","action_group":"attack","variant":"dive_windup","animation":true,"fps":10,"frames":4,"required_directions":["e"]},
+    "dive_strike":{"required":true,"layer":"body","action_group":"attack","variant":"dive_strike","animation":true,"fps":14,"frames":6,"required_directions":["e"]},
+    "climb_out":{"required":true,"layer":"body","action_group":"flight","variant":"climb_out","animation":true,"fps":12,"frames":6},
+    "land":{"required":true,"layer":"body","action_group":"transition","variant":"land","animation":true,"fps":10,"frames":8},
+    "takeoff":{"required":true,"layer":"body","action_group":"transition","variant":"takeoff","animation":true,"fps":12,"frames":8},
+    "perch_idle":{"recommended":true,"layer":"body","action_group":"perch","variant":"perch_idle","animation":true,"fps":6,"frames":6},
+    "ground_idle":{"required":true,"layer":"body","action_group":"locomotion","variant":"ground_idle","animation":true,"fps":6,"frames":6},
+    "ground_walk":{"recommended":true,"layer":"body","action_group":"locomotion","variant":"ground_walk","animation":true,"fps":8,"frames":8},
+    "bite_attack":{"required":true,"layer":"body","action_group":"attack","variant":"bite_attack","animation":true,"fps":12,"frames":6},
+    "air_stagger":{"required":true,"layer":"body","action_group":"reaction","variant":"air_stagger","animation":true,"fps":12,"frames":5},
+    "hurt":{"required":true,"layer":"body","action_group":"reaction","variant":"hurt","animation":true,"fps":12,"frames":4},
+    "death":{"required":true,"layer":"body","action_group":"reaction","variant":"death","animation":true,"fps":10,"frames":8}
+  },
+  "consumers":[{"type":"script","path":"res://game/actors/ambient/vaultwing/vaultwing_animation_set.gd"}]
+}

@@ -1105,11 +1105,18 @@ Last updated: 2026-08-20
 - `design/02_features/ambient/VAULTWING_SYSTEM.md` — locked design authority
   for the Common Vaultwing wild predator, discrete flight bands, bonding,
   companion commands, Asset V2 family, and Slice A acceptance.
-- `custodian/game/actors/ambient/vaultwing/` — reserved implementation surface
-  for the focused Vaultwing actor, behavior, bond state, and semantic animation
-  integration once Slice A begins.
+- `custodian/game/actors/ambient/vaultwing/` — Slice A Common Vaultwing actor,
+  deterministic behavior controller, semantic animation set, and scene; bonding
+  and companion state remain deferred.
+- `custodian/game/systems/spawning/vaultwing_spawner.gd` — focused deterministic
+  wild Vaultwing population/spawn authority, separate from passive critters and
+  generic enemy camps.
 - `custodian/content/metadata/assets/families/ambient_vaultwing_common.asset.json`
-  — reserved Asset V2 family contract path; not yet implemented.
+  — Asset V2 family contract for the 256px Common Vaultwing states; production
+  art is intentionally pending and tracked honestly as missing.
+- `custodian/tools/validation/vaultwing_runtime_smoke.gd` — deterministic Slice A
+  runtime smoke covering flight bands, dive commitment, stagger, retreat/death,
+  presentation fallback, and missing-art initialization.
 ## World Environment V1
 
 - `design/02_features/environment/WORLD_ENVIRONMENT_BIOME_DAYNIGHT_WEATHER.md` — implementation authority.
