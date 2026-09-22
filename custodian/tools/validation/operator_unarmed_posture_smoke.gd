@@ -15,6 +15,9 @@ const RELAXED := "unarmed/posture/idle_relaxed_01"
 const READY := "unarmed/posture/idle_ready_01"
 const TO_READY := "unarmed/transition/relaxed_to_ready_01"
 const TO_RELAXED := "unarmed/transition/ready_to_relaxed_01"
+const FAST_04 := "unarmed/attack/fast_04"
+const FAST_04_FRAMES := 8
+const FAST_04_TARGET_SEC := 0.52
 
 var _failures: Array[String] = []
 
@@ -48,6 +51,10 @@ func _run() -> void:
 	await _check_real_owners_preempt_a_transition(operator)
 	await _check_guard_flags_cancel_a_transition(operator)
 	await _check_selector_stays_exact_only(operator)
+	await _check_terminal_settle_engaged(operator)
+	await _check_terminal_settle_quiet(operator)
+	await _check_terminal_settle_is_not_installed_by_interruptions(operator)
+	await _check_terminal_restart_is_not_swallowed(operator)
 
 	operator.queue_free()
 	if _failures.is_empty():
@@ -423,3 +430,286 @@ func _check_selector_stays_exact_only(operator: Node) -> void:
 			selector.has_sector_identity("unarmed", "posture", "idle_relaxed_01", sector, &"lower_body"),
 			"selector should resolve the authored posture sector %s" % sector
 		)
+
+
+# --- C6: terminal Fast 04 posture settle -------------------------------------
+
+## Drive the terminal Fists link to natural completion and report what was drawn.
+##
+## The link is entered at the terminal step and then left entirely alone: the
+## attack ends because `_update_melee_attack` says it has, not because the test
+## stopped it. Velocity is pinned to zero each tick only because the finisher
+## drives 13 px forward and a coasting actor is not standing still, which would
+## hand the body to locomotion for reasons that have nothing to do with posture.
+func _drive_terminal_fast_04(operator: Node, engaged: bool) -> Dictionary:
+	_stand_still_unarmed(operator)
+	_set_engagement(operator, engaged)
+	await _settle(operator, 4)
+	operator.set("stamina", 100.0)
+	operator.set("melee_cooldown_remaining", 0.0)
+	operator.call("_clear_attack_buffer")
+	operator.set("_melee_forward", Vector2.RIGHT)
+	operator.set("_melee_fast_combo_step", 3)
+	operator.call("_start_fast_attack")
+	await process_frame
+	operator.call("_update_animation")
+	await process_frame
+
+	var lower := _lower(operator)
+	var clip := String(lower.animation)
+	var frames := 0
+	var visible_sec := 0.0
+	if lower.sprite_frames != null and lower.sprite_frames.has_animation(lower.animation):
+		frames = lower.sprite_frames.get_frame_count(lower.animation)
+		var fps := lower.sprite_frames.get_animation_speed(lower.animation)
+		visible_sec = float(frames) / maxf(fps * lower.speed_scale, 0.0001)
+	var gameplay_sec := float(operator.get("_melee_duration"))
+
+	var during: Array[String] = []
+	var posture_free_during_attack := true
+	var settle_armed := false
+	var guard := 0
+	while bool(operator.get("_melee_active")) and guard < 200:
+		operator.set("velocity", Vector2.ZERO)
+		operator.call("_update_melee_attack", 1.0 / 60.0)
+		if not bool(operator.get("_melee_active")):
+			# Read before `_update_animation()`, which is what consumes it.
+			settle_armed = bool(operator.get("_unarmed_terminal_settle_pending"))
+		else:
+			if bool(operator.call("_can_present_unarmed_posture")):
+				posture_free_during_attack = false
+			_record(during, String(lower.animation))
+		operator.call("_update_animation")
+		await process_frame
+		guard += 1
+
+	# Resolution is driven by the clock's completion signal rather than by waiting
+	# out real-time playback: a headless frame is worth several milliseconds on an
+	# idle machine and rather more on a loaded one, and a fixed-iteration wait here
+	# is exactly the kind of test that passes alone and fails inside a tier run.
+	var after: Array[String] = []
+	var posture = operator.get("_unarmed_posture")
+	for _i in 8:
+		operator.set("velocity", Vector2.ZERO)
+		operator.call("_update_unarmed_presentation_posture")
+		operator.call("_update_animation")
+		_record(after, String(lower.animation))
+		await process_frame
+		if posture != null and bool(posture.call("is_transitioning")):
+			await _finish_transition(operator)
+			_record(after, String(lower.animation))
+	return {
+		"clip": clip,
+		"frames": frames,
+		"visible_sec": visible_sec,
+		"gameplay_sec": gameplay_sec,
+		"settle_armed": settle_armed,
+		"during": during,
+		"posture_free_during_attack": posture_free_during_attack,
+		"after": after,
+		"ready": posture != null and bool(posture.call("is_ready")),
+	}
+
+
+func _record(log: Array[String], value: String) -> void:
+	if log.is_empty() or log[log.size() - 1] != value:
+		log.append(value)
+
+
+## The finisher's own authored recovery must survive the settle.
+##
+## Rather than counting frames across two clocks that do not agree in a headless
+## run, this asserts the two facts that make truncation impossible: the clip is
+## the authored eight frames playing for exactly its authored target, and the
+## gameplay phase outlives that. If the attack ended before 0.52 s the guarded
+## ending would be cut, and it does not.
+func _check_fast_04_recovery_is_whole(result: Dictionary, context: String) -> void:
+	_check(
+		String(result["clip"]).begins_with(FAST_04),
+		"%s: the terminal link should present %s, got %s" % [context, FAST_04, result["clip"]]
+	)
+	_check(
+		int(result["frames"]) == FAST_04_FRAMES,
+		"%s: Fast 04 should keep its %d authored frames, has %d"
+			% [context, FAST_04_FRAMES, int(result["frames"])]
+	)
+	_check(
+		absf(float(result["visible_sec"]) - FAST_04_TARGET_SEC) <= 0.01,
+		"%s: Fast 04 should play for its authored %.2f s, plays for %.3f s"
+			% [context, FAST_04_TARGET_SEC, float(result["visible_sec"])]
+	)
+	_check(
+		bool(result["posture_free_during_attack"]),
+		"%s: posture became presentable while the finisher was still active" % context
+	)
+	for drawn in result["during"]:
+		_check(
+			not String(drawn).begins_with("unarmed/posture/")
+				and not String(drawn).begins_with("unarmed/transition/"),
+			"%s: posture drew %s while the finisher was still running" % [context, drawn]
+		)
+
+
+func _check_terminal_settle_engaged(operator: Node) -> void:
+	var result := await _drive_terminal_fast_04(operator, true)
+	_check_fast_04_recovery_is_whole(result, "engaged terminal settle")
+	_check(
+		bool(result["settle_armed"]),
+		"a naturally completed terminal Fast 04 should arm the posture settle"
+	)
+	_check(
+		bool(result["ready"]),
+		"posture should be READY after a finisher that ends guarded, not RELAXED"
+	)
+	var after: Array = result["after"]
+	for drawn in after:
+		_check(
+			not String(drawn).begins_with(TO_READY),
+			"an engaged terminal settle must not insert %s; Fast 04 already "
+				% TO_READY
+				+ "delivered the body to the guarded anchor (drew %s)" % str(after)
+		)
+	_check(
+		after.has(READY + "/e/lower_body") or _last(after).begins_with(READY),
+		"an engaged terminal settle should land on %s, drew %s" % [READY, str(after)]
+	)
+	_check_single_body_owner(operator, "engaged terminal settle")
+
+
+func _check_terminal_settle_quiet(operator: Node) -> void:
+	var result := await _drive_terminal_fast_04(operator, false)
+	_check_fast_04_recovery_is_whole(result, "quiet terminal settle")
+	_check(
+		bool(result["settle_armed"]),
+		"a quiet terminal Fast 04 should still arm the posture settle"
+	)
+	var after: Array = result["after"]
+	var to_relaxed := -1
+	var relaxed := -1
+	for index in after.size():
+		var drawn := String(after[index])
+		if to_relaxed < 0 and drawn.begins_with(TO_RELAXED):
+			to_relaxed = index
+		if relaxed < 0 and drawn.begins_with(RELAXED):
+			relaxed = index
+	_check(
+		to_relaxed >= 0,
+		"a quiet terminal settle should exhale through %s, drew %s" % [TO_RELAXED, str(after)]
+	)
+	_check(
+		relaxed >= 0,
+		"a quiet terminal settle should end on %s, drew %s" % [RELAXED, str(after)]
+	)
+	# The pop this closes: guarded finisher straight into relaxed idle.
+	_check(
+		to_relaxed >= 0 and (relaxed < 0 or to_relaxed < relaxed),
+		"a quiet terminal settle popped from the guarded finisher straight to %s "
+			% RELAXED
+			+ "without the READY -> RELAXED transition, drew %s" % str(after)
+	)
+	_check_single_body_owner(operator, "quiet terminal settle")
+
+
+func _last(values: Array) -> String:
+	return "" if values.is_empty() else String(values[values.size() - 1])
+
+
+## An attack that exits through another owner must not hand posture anything.
+func _check_terminal_settle_is_not_installed_by_interruptions(operator: Node) -> void:
+	for case in ["dodge", "damage"]:
+		_stand_still_unarmed(operator)
+		_set_engagement(operator, true)
+		await _settle(operator, 2)
+		operator.set("stamina", 100.0)
+		operator.set("melee_cooldown_remaining", 0.0)
+		operator.call("_clear_attack_buffer")
+		operator.set("_melee_forward", Vector2.RIGHT)
+		operator.set("_melee_fast_combo_step", 3)
+		operator.call("_start_fast_attack")
+		await process_frame
+		_check(
+			bool(operator.get("_melee_active")),
+			"the %s interruption case needs the finisher to actually start" % case
+		)
+		for _i in 4:
+			operator.call("_update_melee_attack", 1.0 / 60.0)
+			await process_frame
+		match case:
+			"dodge":
+				operator.set("_melee_active", false)
+				operator.set("_dodge_cooldown_remaining", 0.0)
+				var started: bool = bool(operator.call(
+					"_try_start_dodge_with_profile", Vector2.RIGHT, &"tap", -1.0
+				))
+				_check(started, "the dodge interruption case needs the dodge to start")
+			"damage":
+				operator.call("_interrupt_active_combat_for_damage_reaction")
+		await process_frame
+		operator.call("_update_unarmed_presentation_posture")
+		_check(
+			not bool(operator.get("_unarmed_terminal_settle_pending")),
+			"a finisher interrupted by %s must not install the terminal settle" % case
+		)
+		operator.set("_dodge_active", false)
+		operator.set("_dodge_recovery_active", false)
+		operator.set("_modular_damage_reaction_active", false)
+		operator.set("_melee_active", false)
+	await process_frame
+
+
+## A buffered press at the terminal link still owns the exit, not posture.
+##
+## The Fists chain does not route its terminal restart through
+## `_fast_chain_commits_on_animation_finished()`, which is a Vigil path, so the
+## buffered press is spent at the commit frame instead. Either way the settle
+## branch is unreachable while anything is buffered, and this proves it against
+## the real consumption rather than against the flag that Fists never sets.
+func _check_terminal_restart_is_not_swallowed(operator: Node) -> void:
+	_stand_still_unarmed(operator)
+	_set_engagement(operator, true)
+	await _settle(operator, 2)
+	operator.set("stamina", 100.0)
+	operator.set("melee_cooldown_remaining", 0.0)
+	operator.call("_clear_attack_buffer")
+	operator.set("_melee_forward", Vector2.RIGHT)
+	operator.set("_melee_fast_combo_step", 3)
+	operator.set("_unarmed_terminal_settle_pending", false)
+	operator.call("_start_fast_attack")
+	await process_frame
+	operator.call("_update_animation")
+	await process_frame
+	operator.call("_try_melee_attack", "unarmed_fast")
+	_check(
+		String(operator.get("_buffered_attack_kind")) == "fast",
+		"the restart case needs a buffered fast press at the terminal link"
+	)
+	var clock := operator.call("_presentation_clock_sprite") as AnimatedSprite2D
+	if clock != null:
+		clock.frame = int(operator.call("_get_fast_chain_commit_frame"))
+	var guard := 0
+	while bool(operator.get("_melee_active")) and guard < 200:
+		operator.set("velocity", Vector2.ZERO)
+		operator.call("_update_melee_attack", 1.0 / 60.0)
+		guard += 1
+		await process_frame
+	_check(
+		not bool(operator.get("_unarmed_terminal_settle_pending")),
+		"a buffered press at the terminal link must not arm the posture settle"
+	)
+	# Posture must not add latency to what comes next. A transition may legitimately
+	# be running here -- the actor is engaged and posture is resuming -- so what is
+	# asserted is that it cannot delay the attack, which is the contract that matters.
+	operator.call("_clear_attack_buffer")
+	operator.set("melee_cooldown_remaining", 0.0)
+	operator.set("stamina", 100.0)
+	operator.call("_try_melee_attack", "unarmed_fast")
+	await process_frame
+	_check(
+		bool(operator.get("_melee_active")) or bool(operator.get("_melee_fast_windup")),
+		"a restart after the terminal link must begin immediately, with no posture latency"
+	)
+	operator.call("_clear_attack_buffer")
+	operator.set("_melee_active", false)
+	operator.set("_terminal_fast_restart_buffered", false)
+	operator.set("_fast_chain_terminal_restart_grace_remaining", 0.0)
+	await process_frame

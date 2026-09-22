@@ -68,6 +68,13 @@ func advance(
 		# Retire without emitting a transition. Posture that is not presenting has
 		# nothing to transition between, and emitting one here is how a stale clip
 		# would later wake up over whoever took the body.
+		#
+		# RELAXED is the resting assumption for a body posture did not see land,
+		# not a claim about where it actually is. A caller that *does* know -- a
+		# finisher whose own authored recovery ends guarded, say -- says so
+		# through `settle_from_terminal_attack()` once posture is presentable
+		# again, and this branch cannot undo it because it only runs while
+		# posture is unavailable.
 		cancel_transition()
 		_state.posture = MeleePostureState.Posture.RELAXED
 		return &""
@@ -89,6 +96,23 @@ func advance(
 ## should be fabricated.
 func authored_sector(direction: Vector2) -> StringName:
 	return &"w" if direction.x < -0.05 else &"e"
+
+
+## Accept a terminal attack's final pose as the READY anchor.
+##
+## An attack that carries its own recovery has already put the body where it
+## belongs; the Fists finisher ends on a guarded frame. Without this, posture
+## resumes from the RELAXED resting assumption above and either inserts a
+## `relaxed_to_ready_01` bridge the body does not need, or reads the guarded
+## ending as already-relaxed and pops.
+##
+## It is an anchor, not a presentation decision: no clip is chosen here and no
+## gameplay state is owned. `advance()` still decides everything that follows,
+## so an engaged settle holds READY and a quiet one exhales through
+## `ready_to_relaxed_01` exactly as any other READY would.
+func settle_from_terminal_attack() -> void:
+	cancel_transition()
+	_state.posture = MeleePostureState.Posture.READY
 
 
 func idle_action() -> StringName:

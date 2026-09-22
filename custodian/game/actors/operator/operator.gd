@@ -503,6 +503,9 @@ var _attack_drive_carry_distance_remaining := 0.0
 ## applied velocity -- is what a handoff should continue from.
 var _attack_drive_handoff_speed := 0.0
 var _attack_drive_handoff_direction := Vector2.ZERO
+## A terminal authored unarmed chain link finished under its own recovery and has
+## not yet handed its final pose to posture. See `_is_unarmed_terminal_chain_completion()`.
+var _unarmed_terminal_settle_pending := false
 var _missing_animation_warnings: Dictionary = {}
 var _ranged_config_warning_once: Dictionary = {}
 var _melee_heavy_anticipating: bool = false
@@ -2298,9 +2301,21 @@ func _can_present_unarmed_posture() -> bool:
 		return false
 	if velocity.length() > 0.0:
 		return false
+	return not _is_unarmed_posture_preempted()
+
+
+## Whether something other than posture owns, or is about to own, the body.
+##
+## Split out of `_can_present_unarmed_posture()` because the terminal settle needs
+## the same question without the "is the actor standing still" half: a finisher
+## that drove forward is still coasting for a few frames afterwards, and that is
+## not a reason to throw away where the finisher left the body.
+func _is_unarmed_posture_preempted() -> bool:
+	if _is_dead or not _is_current_profile_unarmed():
+		return true
 	if _is_exclusive_body_owner_active():
-		return false
-	return not (
+		return true
+	return (
 		_melee_active
 		or _melee_heavy_anticipating
 		or _melee_fast_windup
@@ -2328,6 +2343,16 @@ func _update_unarmed_presentation_posture() -> void:
 	if _unarmed_posture == null:
 		return
 	var available := _can_present_unarmed_posture()
+	if _unarmed_terminal_settle_pending:
+		if _is_unarmed_posture_preempted():
+			# Something took the body after the finisher landed. That owner's
+			# exit decides the posture, not a stale settle.
+			_unarmed_terminal_settle_pending = false
+		elif available:
+			# Consumed the first frame posture can actually present, so the
+			# coast-down after the finisher's drive cannot discard the anchor.
+			_unarmed_terminal_settle_pending = false
+			_unarmed_posture.settle_from_terminal_attack()
 	var engagement_active := _engagement_tracker != null and _engagement_tracker.engagement_active
 	var transition := _unarmed_posture.advance(0.0, available, engagement_active, false)
 	if transition.is_empty():
@@ -6611,6 +6636,28 @@ func _advance_fast_chain_step() -> bool:
 	return true
 
 
+## A terminal link of an authored unarmed chain that just finished on its own.
+##
+## Structural rather than by name: the last key of a non-looping authored chain,
+## owning its own recovery, on an unarmed profile. For today's Fists that is
+## Fast 04, and it stays true if the chain is ever lengthened. Armed chains are
+## excluded deliberately -- their terminal posture behaviour is not part of this
+## slice.
+func _is_unarmed_terminal_chain_completion(
+	weapon: OperatorWeaponDefinition
+) -> bool:
+	if weapon == null or not _is_current_profile_unarmed():
+		return false
+	if not _has_authored_fast_chain():
+		return false
+	if weapon.fast_chain_loops or not weapon.fast_chain_has_integrated_recovery:
+		return false
+	var keys := _get_fast_chain_keys()
+	if keys.is_empty():
+		return false
+	return _melee_fast_combo_step == keys.size() - 1
+
+
 func _fast_chain_elapsed_since_start() -> float:
 	return float(Time.get_ticks_msec() - _fast_chain_started_at_msec) / 1000.0
 
@@ -7198,6 +7245,11 @@ func _update_melee_attack(delta: float) -> void:
 		if weapon == null \
 		or not weapon.fast_chain_has_integrated_recovery:
 			_start_fast_attack_recovery()
+		# Armed before the reset, which is what puts the chain step back to 0.
+		# This branch is already unreachable when anything is buffered, so a
+		# queued dodge, heavy or restart never arms it.
+		if _is_unarmed_terminal_chain_completion(weapon):
+			_unarmed_terminal_settle_pending = true
 		_reset_fast_chain(false)
 
 	if _melee_attack_kind == "fast" \

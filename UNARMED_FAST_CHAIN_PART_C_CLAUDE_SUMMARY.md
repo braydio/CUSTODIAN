@@ -11,11 +11,45 @@ C1  subtle Fists target assistance      DONE
 C3  attack-drive continuity             DONE
 C4  early input forgiveness             DONE
 C2  per-link impact progression         DONE
-C5  chain movement continuity           DONE   <- this pass
-C6  Fast 04 posture settle              next
-C7  contact-owned feedback              pending
+C5  chain movement continuity           DONE
+C6  Fast 04 posture settle              DONE   <- this pass
+C7  contact-owned feedback              next
 C8  parry alignment                     pending
 ```
+
+## C6 — terminal Fast 04 posture settle
+
+No new art. Fast 04 already ends on a guarded frame; the seam was that posture
+threw that away. `UnarmedPosturePresentation.advance()` resets its model to
+RELAXED whenever posture is unavailable, and posture is unavailable for the whole
+of an attack. RELAXED is the right resting assumption for a body posture did not
+see land — it is not a claim about where the body actually is.
+
+| engagement | before | after |
+|---|---|---|
+| active | `fast_04` -> **`relaxed_to_ready_01`** -> `idle_ready_01` | `fast_04` -> `idle_ready_01` |
+| quiet | `fast_04` -> **`idle_relaxed_01`** (pop) | `fast_04` -> `ready_to_relaxed_01` -> `idle_relaxed_01` |
+
+`settle_from_terminal_attack()` sets the anchor to READY and cancels any stale
+transition. It plays nothing and owns no gameplay state; the ordinary resolver
+does the rest, which is why the engaged case simply holds READY and the quiet one
+exhales through a transition that already existed. No new timer.
+
+The latch is consumed on the first frame posture can actually present, not when
+the attack ends — Fast 04 drives 13 px, so the actor is still coasting and
+availability is false for reasons unrelated to posture. Terminality is structural:
+the last key of a non-looping authored chain owning its own recovery, on an
+unarmed profile.
+
+Control: returning posture from the attack semantically RELAXED fails the gate in
+three places, naming both the bridge and the pop.
+
+**Recorded, not fixed:** `_melee_duration` for the unarmed chain is measured off
+`animated_sprite`, which during a modular chain shows an unrelated leftover clip
+(observed: `melee_1h/attack/critical_execution_01/e/weapon`). It read 0.667 s in
+one state and 0.360 s in another against a 0.520 s finisher. Same wrong-clock
+class as the C2 tables, but it is cadence and this slice was told not to touch
+cadence.
 
 ## C5 — chain movement continuity
 

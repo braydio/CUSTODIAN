@@ -559,6 +559,67 @@ No drive profile values were retuned. Fists remains 5 / 7 / 9 / 13 px.
 Validation: actor tier 54/55, changed set 36/36, focused melee and dodge/guard
 gates green.
 
+### C6 — terminal Fast 04 posture settle (done)
+
+No new art. Fast 04 already ends on a guarded frame; the seam was that posture
+threw that away.
+
+`UnarmedPosturePresentation.advance()` resets its model to RELAXED whenever
+posture is unavailable, and posture is unavailable for the whole of an attack.
+RELAXED is the right *resting assumption* for a body posture did not see land,
+but it is not a claim about where the body actually is, and the finisher had put
+it somewhere specific. Confirmed by negative control, which reproduces both
+pre-fix symptoms exactly:
+
+| engagement | before | after |
+|---|---|---|
+| active | `fast_04` -> **`relaxed_to_ready_01`** -> `idle_ready_01` | `fast_04` -> `idle_ready_01` |
+| quiet | `fast_04` -> **`idle_relaxed_01`** (pop) | `fast_04` -> `ready_to_relaxed_01` -> `idle_relaxed_01` |
+
+`settle_from_terminal_attack()` sets the posture anchor to READY and cancels any
+stale transition. It plays nothing and owns no gameplay state; the ordinary
+resolver decides everything after it, which is why an engaged settle simply holds
+READY and a quiet one exhales through the transition that already existed.
+
+**The latch is consumed on the first frame posture can actually present**, not
+when the attack ends. Fast 04 drives 13 px, so the actor is still coasting for a
+few frames afterwards and `_can_present_unarmed_posture()` is false for a reason
+that has nothing to do with posture; arming the anchor into that window would
+have let `advance()` wipe it immediately. `_is_unarmed_posture_preempted()` was
+split out of the availability predicate for exactly this: the same question
+without the "is the actor standing still" half.
+
+Terminality is structural, not a name match: the last key of a non-looping
+authored chain that owns its own recovery, on an unarmed profile. The completion
+branch it hangs off is already unreachable while anything is buffered, so a
+queued dodge, heavy or restart never arms it, and a real interruption clears it
+through the preempt check.
+
+Coverage in `operator_unarmed_posture`, driven through a real `_start_fast_attack`
+and a real completion: Fast 04 keeps its 8 authored frames playing for its
+authored 0.52 s, posture is never presentable while the finisher is active, the
+engaged settle inserts no `relaxed_to_ready_01`, the quiet settle reaches
+`idle_relaxed_01` only after `ready_to_relaxed_01`, dodge and damage reaction each
+leave the settle uninstalled, and a buffered press at the terminal link neither
+arms the settle nor adds latency to the restart. Control: returning posture from
+the attack semantically RELAXED fails it in three places, naming the bridge and
+the pop.
+
+**Two corrections to the packet's assumptions, both found by measurement.**
+
+- `_melee_duration` for the unarmed chain is derived from `animated_sprite`, which
+  during a modular chain is showing an unrelated leftover clip -- in one observed
+  state `melee_1h/attack/critical_execution_01/e/weapon`. It measured 0.667 s in
+  one setup and 0.360 s in another against a 0.520 s finisher. This is the same
+  wrong-clock defect class as `_fast_chain_presentation_frame()` and the C2 tables,
+  it is a **cadence** concern this slice was told not to touch, and an assertion
+  written against it would have been asserting an accident. Recorded, not fixed.
+- Fists never sets `_terminal_fast_restart_buffered`. That flag is set only on the
+  `_fast_chain_commits_on_animation_finished()` path, which is a Vigil behaviour;
+  a buffered press at the Fists terminal link is spent at the commit frame
+  instead. The restart case asserts the real consumption rather than a flag this
+  chain does not use.
+
 ### Remaining Part C steps
 
-C6 Fast 04 posture settle, C7 contact-owned feedback, C8 parry alignment.
+C7 contact-owned feedback, then C8 parry alignment.

@@ -123,7 +123,10 @@ unarmed, unengaged Operator presents `unarmed/posture/idle_relaxed_01`; engageme
 drives `relaxed_to_ready_01` then `idle_ready_01`, and going quiet reverses it.
 `EngagementTracker` remains the only engagement authority -- no proximity scan and
 no new gameplay state. Attacks from RELAXED begin immediately: ready-up never
-gates gameplay. Movement retires the stance at once and ordinary canonical
+gates gameplay. A terminal Fists finisher is the one entry that does not arrive
+through RELAXED: Fast 04 ends on a guarded frame and hands that pose to posture
+as READY, so an engaged finisher settles straight into `idle_ready_01` with no
+ready-up bridge, and a quiet one exhales through `ready_to_relaxed_01`. Movement retires the stance at once and ordinary canonical
 locomotion resumes. The family is authored east and west only, so a north or
 south request takes a caller-owned projection in
 `UnarmedPosturePresentation.authored_sector()` and plays with `flip_h = false`;
