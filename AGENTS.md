@@ -39,6 +39,24 @@ Repository-root path equivalents used by the local primer are:
 
 If root guidance conflicts with `custodian/AGENTS.md` for Godot runtime work, follow `custodian/AGENTS.md`.
 
+## Operator Main-Character Pixel-Art Resizing
+
+For any pixel-art conversion or resizing of the Operator main character's
+artwork, use the repository alias defined in `tools/custodian_aliases.sh`:
+
+```bash
+source tools/custodian_aliases.sh
+pixelart <source> --choose 1 ...
+```
+
+The `pixelart` alias is the required entrypoint; do not bypass it by invoking
+the converter script directly. `--choose 1` is the required resizing method
+(crisp nearest-neighbor reduction) for Operator main-character art. Do not use
+options 2 or 3 for this artwork unless an active Operator design specification
+explicitly overrides this rule. This requirement applies to authoring and
+review-preparation conversions; it does not replace the canonical Operator
+source-to-runtime ingest pipeline.
+
 For long-horizon wanted-feature tracking, use `design/90_codex/` and its tracker at `design/90_codex/TRACKER.md`; codex cards are idea inventory until graduated into active design authority.
 
 ## Commit Policy

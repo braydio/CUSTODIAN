@@ -262,6 +262,23 @@ Use this whenever you are restructuring docs, moving asset guidance, consolidati
 
 ## Operator Animation And Sprite Runtime Authority
 
+### Required Pixel-Art Conversion Rule
+
+When converting or resizing pixel art for the Operator main character, source
+the repository aliases from `tools/custodian_aliases.sh` and invoke the
+`pixelart` alias. Always select resizing option 1 explicitly:
+
+```bash
+source tools/custodian_aliases.sh
+pixelart <source> --choose 1 ...
+```
+
+Option 1 means crisp nearest-neighbor reduction. Do not invoke the underlying
+converter directly, and do not select options 2 or 3 for Operator main-character
+art unless an active Operator design specification explicitly says otherwise.
+This rule governs pixel-art authoring and review preparation; canonical runtime
+publication still goes through the Operator source-to-runtime pipeline below.
+
 For active Operator gameplay and presentation code:
 
 - Gameplay may request animations by semantic identity only.
