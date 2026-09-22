@@ -2710,6 +2710,22 @@
         ]
       }
     },
+    "ranged_2h/cosmetic/reload_01/e": {
+      "profile": "ranged_2h",
+      "group": "cosmetic",
+      "action": "reload_01",
+      "direction": "e",
+      "layers": {
+        "weapon": {
+          "path": "res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/reload_01/operator__weapon__ranged_2h__cosmetic__reload_01__e__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
     "ranged_2h/cosmetic/reload_01/omni": {
       "profile": "ranged_2h",
       "group": "cosmetic",
@@ -2743,6 +2759,22 @@
           1.0,
           1.0
         ]
+      }
+    },
+    "ranged_2h/cosmetic/reload_01/w": {
+      "profile": "ranged_2h",
+      "group": "cosmetic",
+      "action": "reload_01",
+      "direction": "w",
+      "layers": {
+        "weapon": {
+          "path": "res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/reload_01/operator__weapon__ranged_2h__cosmetic__reload_01__w__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
       }
     },
     "ranged_2h/locomotion/run_01/e": {
@@ -7635,16 +7667,16 @@
           ]
         },
         "lower_body": {
-          "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__w__5f__96.png",
-          "frames": 5,
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__w__6f__96.png",
+          "frames": 6,
           "frame_size": [
             96,
             96
           ]
         },
         "upper_body": {
-          "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__w__5f__96.png",
-          "frames": 5,
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__w__6f__96.png",
+          "frames": 6,
           "frame_size": [
             96,
             96

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cmv7sfh0yvlb2"
-path="res://.godot/imported/operator__lower_body__unarmed__locomotion__run_01__w__5f__96.png-2920cbe743700faf4b4ecb6808bab505.ctex"
+uid="uid://cubg5a4rwraps"
+path="res://.godot/imported/operator__weapon__ranged_2h__cosmetic__reload_01__w__6f__96.png-966e612e1e7458c4e09850ad76037325.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/operator/source/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__w__5f__96.png"
-dest_files=["res://.godot/imported/operator__lower_body__unarmed__locomotion__run_01__w__5f__96.png-2920cbe743700faf4b4ecb6808bab505.ctex"]
+source_file="res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/reload_01/operator__weapon__ranged_2h__cosmetic__reload_01__w__6f__96.png"
+dest_files=["res://.godot/imported/operator__weapon__ranged_2h__cosmetic__reload_01__w__6f__96.png-966e612e1e7458c4e09850ad76037325.ctex"]
 
 [params]
 

@@ -79,7 +79,7 @@
 [ext_resource type="Texture2D" uid="uid://c8aj11m1w1fur" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__s__12f__96.png" id="52_qbbas"]
 [ext_resource type="Texture2D" uid="uid://dihbbkxbx51rc" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__sw__5f__96.png" id="53_ppf15"]
 [ext_resource type="Texture2D" uid="uid://dbhng644ilypu" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__se__5f__96.png" id="54_fvmts"]
-[ext_resource type="Texture2D" uid="uid://bci2qb2rofv0j" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__w__5f__96.png" id="55_iekjw"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__w__6f__96.png" id="55_iekjw"]
 [ext_resource type="Texture2D" uid="uid://ybu5gqs8vn5l" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__e__6f__96.png" id="56_lcq2y"]
 [ext_resource type="Texture2D" uid="uid://cayyilu83xje6" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__sw__5f__96.png" id="63_kmblg"]
 [ext_resource type="Texture2D" uid="uid://dt40oscwj4la5" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__se__5f__96.png" id="64_ujnwi"]
@@ -3179,6 +3179,10 @@ region = Rect2(576, 0, 96, 96)
 atlas = ExtResource("31_gilue")
 region = Rect2(672, 0, 96, 96)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_ced6be9051d4"]
+atlas = ExtResource("55_iekjw")
+region = Rect2(480, 0, 96, 96)
+
 [resource]
 animations = [{
 "frames": [{
@@ -5695,6 +5699,9 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_p36st")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_compat_ced6be9051d4")
 }],
 "loop": 1,
 "name": &"unarmed_run_left",

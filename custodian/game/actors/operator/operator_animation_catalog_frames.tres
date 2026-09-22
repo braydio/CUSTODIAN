@@ -633,8 +633,8 @@
 [ext_resource type="Texture2D" uid="uid://dihbbkxbx51rc" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__sw__5f__96.png" id="633_jgy5n"]
 [ext_resource type="Texture2D" uid="uid://bq6tnfi34h71n" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__sw__5f__96.png" id="634_srw8f"]
 [ext_resource type="Texture2D" uid="uid://3bsk2002ygiu" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__full_body__unarmed__locomotion__run_01__w__5f__96.png" id="635_oyqrw"]
-[ext_resource type="Texture2D" uid="uid://bci2qb2rofv0j" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__w__5f__96.png" id="636_r6ufv"]
-[ext_resource type="Texture2D" uid="uid://ci0mhp10xl4i4" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__w__5f__96.png" id="637_eaurn"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__w__6f__96.png" id="636_r6ufv"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__w__6f__96.png" id="637_eaurn"]
 [ext_resource type="Texture2D" uid="uid://s7hrg1ky6fdc" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__full_body__unarmed__locomotion__walk_01__e__5f__96.png" id="638_l0ovy"]
 [ext_resource type="Texture2D" uid="uid://7igytby6xjvj" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__e__5f__96.png" id="639_etoo8"]
 [ext_resource type="Texture2D" uid="uid://dep88gkddl17g" path="res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__upper_body__unarmed__locomotion__walk_01__e__5f__96.png" id="640_gjswv"]
@@ -13348,6 +13348,14 @@ region = Rect2(512, 0, 128, 128)
 atlas = ExtResource("333_tj48o")
 region = Rect2(640, 0, 128, 128)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_e945b10fe44d"]
+atlas = ExtResource("636_r6ufv")
+region = Rect2(480, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_5e04d3e41b38"]
+atlas = ExtResource("637_eaurn")
+region = Rect2(480, 0, 96, 96)
+
 [resource]
 animations = [{
 "frames": [{
@@ -25194,6 +25202,9 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_s1qew")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_compat_e945b10fe44d")
 }],
 "loop": 1,
 "name": &"unarmed/locomotion/run_01/w/lower_body",
@@ -25214,6 +25225,9 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_pgwax")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_compat_5e04d3e41b38")
 }],
 "loop": 1,
 "name": &"unarmed/locomotion/run_01/w/upper_body",

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bci2qb2rofv0j"
-path="res://.godot/imported/operator__lower_body__unarmed__locomotion__run_01__w__5f__96.png-0c8f2774fc1103cee77fcd57fc09437b.ctex"
+uid="uid://b58liukmey6qx"
+path="res://.godot/imported/operator__lower_body__unarmed__locomotion__run_01__w__6f__96.png-193dd5272854377c4b42031577b17022.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__w__5f__96.png"
-dest_files=["res://.godot/imported/operator__lower_body__unarmed__locomotion__run_01__w__5f__96.png-0c8f2774fc1103cee77fcd57fc09437b.ctex"]
+source_file="res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__w__6f__96.png"
+dest_files=["res://.godot/imported/operator__lower_body__unarmed__locomotion__run_01__w__6f__96.png-193dd5272854377c4b42031577b17022.ctex"]
 
 [params]
 
