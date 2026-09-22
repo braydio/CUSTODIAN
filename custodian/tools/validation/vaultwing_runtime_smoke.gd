@@ -28,10 +28,8 @@ func _run() -> void:
 	await physics_frame
 	if not actor.is_in_group("vaultwing"): _fail("actor missing vaultwing group")
 	if actor.get_altitude_band_name() != &"high": _fail("initial band is not HIGH")
-	for action in [&"glide", &"flap", &"dive_windup", &"dive_strike", &"climb_out", &"land", &"takeoff", &"ground_idle", &"bite_attack"]:
+	for action in [&"glide", &"flap", &"dive_windup", &"dive_strike", &"climb_out", &"land", &"takeoff", &"perch_idle", &"ground_idle", &"ground_walk", &"bite_attack", &"air_stagger", &"hurt", &"death"]:
 		if not actor.has_action(action): _fail("published Vaultwing action was not discovered: %s" % String(action))
-	for action in [&"perch_idle", &"ground_walk", &"air_stagger", &"hurt", &"death"]:
-		if actor.has_action(action): _fail("pending Vaultwing action unexpectedly resolved: %s" % String(action))
 	_check_api(actor)
 	await _check_determinism()
 	await _check_spawn_authority()

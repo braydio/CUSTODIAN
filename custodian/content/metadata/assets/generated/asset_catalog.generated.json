@@ -9262,6 +9262,216 @@
           "sha256": "d65031ccb73b6501880d60f8dba4c77b1ae2abe7c2163cfb45ae6d4749938a09",
           "provenance": "mirrored",
           "source_asset": "takeoff::e"
+        },
+        "air_stagger::e": {
+          "state_id": "air_stagger",
+          "direction": "e",
+          "semantic_identity": [
+            "vaultwing_common",
+            "ambient_creature",
+            "body",
+            "reaction",
+            "air_stagger",
+            "e"
+          ],
+          "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/reaction/vaultwing_common__body__reaction__air_stagger__e__5f__256.png",
+          "frames": 5,
+          "frame_size": [
+            256,
+            256
+          ],
+          "sha256": "5d1e319590e3880c910c6140d995c42d4cfe5d8d1b6bad95b74f2ca925109090",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "air_stagger::w": {
+          "state_id": "air_stagger",
+          "direction": "w",
+          "semantic_identity": [
+            "vaultwing_common",
+            "ambient_creature",
+            "body",
+            "reaction",
+            "air_stagger",
+            "w"
+          ],
+          "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/reaction/vaultwing_common__body__reaction__air_stagger__w__5f__256.png",
+          "frames": 5,
+          "frame_size": [
+            256,
+            256
+          ],
+          "sha256": "343f61dbb2732421a7701bb86a58e6ba214c4931c6b74792db9db5630217c6ba",
+          "provenance": "mirrored",
+          "source_asset": "air_stagger::e"
+        },
+        "death::e": {
+          "state_id": "death",
+          "direction": "e",
+          "semantic_identity": [
+            "vaultwing_common",
+            "ambient_creature",
+            "body",
+            "reaction",
+            "death",
+            "e"
+          ],
+          "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/reaction/vaultwing_common__body__reaction__death__e__8f__256.png",
+          "frames": 8,
+          "frame_size": [
+            256,
+            256
+          ],
+          "sha256": "528bbe3eadff67aadbde9a346c2d495e950b41d293b901d446c911f016499aac",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "death::w": {
+          "state_id": "death",
+          "direction": "w",
+          "semantic_identity": [
+            "vaultwing_common",
+            "ambient_creature",
+            "body",
+            "reaction",
+            "death",
+            "w"
+          ],
+          "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/reaction/vaultwing_common__body__reaction__death__w__8f__256.png",
+          "frames": 8,
+          "frame_size": [
+            256,
+            256
+          ],
+          "sha256": "b9c555098854fbbae0389509c40e93e2736ab15bac95fef1706286674c004c14",
+          "provenance": "mirrored",
+          "source_asset": "death::e"
+        },
+        "ground_walk::e": {
+          "state_id": "ground_walk",
+          "direction": "e",
+          "semantic_identity": [
+            "vaultwing_common",
+            "ambient_creature",
+            "body",
+            "locomotion",
+            "ground_walk",
+            "e"
+          ],
+          "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/locomotion/vaultwing_common__body__locomotion__ground_walk__e__8f__256.png",
+          "frames": 8,
+          "frame_size": [
+            256,
+            256
+          ],
+          "sha256": "88ca74b1d93b34cc4fa25b57066378d5af0ace988639430ea3cae34e65157abc",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "ground_walk::w": {
+          "state_id": "ground_walk",
+          "direction": "w",
+          "semantic_identity": [
+            "vaultwing_common",
+            "ambient_creature",
+            "body",
+            "locomotion",
+            "ground_walk",
+            "w"
+          ],
+          "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/locomotion/vaultwing_common__body__locomotion__ground_walk__w__8f__256.png",
+          "frames": 8,
+          "frame_size": [
+            256,
+            256
+          ],
+          "sha256": "fc0e1b257408ca9bf3ae29a71c12c0c0428bfd26aedbd78ffeceda2b461d9123",
+          "provenance": "mirrored",
+          "source_asset": "ground_walk::e"
+        },
+        "hurt::e": {
+          "state_id": "hurt",
+          "direction": "e",
+          "semantic_identity": [
+            "vaultwing_common",
+            "ambient_creature",
+            "body",
+            "reaction",
+            "hurt",
+            "e"
+          ],
+          "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/reaction/vaultwing_common__body__reaction__hurt__e__4f__256.png",
+          "frames": 4,
+          "frame_size": [
+            256,
+            256
+          ],
+          "sha256": "48daa831e5b40489e43678e78190075830b2decf3c03c157443b996744e54bfd",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "hurt::w": {
+          "state_id": "hurt",
+          "direction": "w",
+          "semantic_identity": [
+            "vaultwing_common",
+            "ambient_creature",
+            "body",
+            "reaction",
+            "hurt",
+            "w"
+          ],
+          "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/reaction/vaultwing_common__body__reaction__hurt__w__4f__256.png",
+          "frames": 4,
+          "frame_size": [
+            256,
+            256
+          ],
+          "sha256": "a5ca1730ee48991f13260654dc93364fc40c6b331edaf2df193e0f86c534112b",
+          "provenance": "mirrored",
+          "source_asset": "hurt::e"
+        },
+        "perch_idle::e": {
+          "state_id": "perch_idle",
+          "direction": "e",
+          "semantic_identity": [
+            "vaultwing_common",
+            "ambient_creature",
+            "body",
+            "perch",
+            "perch_idle",
+            "e"
+          ],
+          "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/perch/vaultwing_common__body__perch__perch_idle__e__6f__256.png",
+          "frames": 6,
+          "frame_size": [
+            256,
+            256
+          ],
+          "sha256": "ff77f7093199e4794eb1732e1946f7d46e95d912513d43a0c611df403cd24dce",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "perch_idle::w": {
+          "state_id": "perch_idle",
+          "direction": "w",
+          "semantic_identity": [
+            "vaultwing_common",
+            "ambient_creature",
+            "body",
+            "perch",
+            "perch_idle",
+            "w"
+          ],
+          "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/perch/vaultwing_common__body__perch__perch_idle__w__6f__256.png",
+          "frames": 6,
+          "frame_size": [
+            256,
+            256
+          ],
+          "sha256": "55cf8859d18bfb2208bb95c5464e758432a3b4a8d4b7b1835cb5efdc56ef956d",
+          "provenance": "mirrored",
+          "source_asset": "perch_idle::e"
         }
       }
     }

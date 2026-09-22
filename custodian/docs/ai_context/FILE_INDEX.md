@@ -1112,9 +1112,9 @@ Last updated: 2026-08-20
   wild Vaultwing population/spawn authority, separate from passive critters and
   generic enemy camps.
 - `custodian/content/metadata/assets/families/ambient_vaultwing_common.asset.json`
-  — Asset V2 family contract for the 256px Common Vaultwing states; the first
-  east-authored batch is published with west mirroring, while pending reactions,
-  perch/ground-walk states, and south/north coverage remain tracked as missing.
+  — Asset V2 family contract for the 256px Common Vaultwing states; all 14 EAST
+  states are now published with west mirroring, while south/north coverage
+  remains tracked as missing.
 - `custodian/tools/validation/vaultwing_runtime_smoke.gd` — deterministic Slice A
   runtime smoke covering flight bands, dive commitment, stagger, retreat/death,
   presentation fallback, and missing-art initialization.
