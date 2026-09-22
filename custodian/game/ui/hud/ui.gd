@@ -642,11 +642,16 @@ func _devconsole_spawn_vaultwing(args: Array) -> String:
 	if operator == null:
 		return "Operator not found"
 	var offset := Vector2(192.0, 0.0)
-	if args.size() >= 2 and str(args[0]).is_valid_float() and str(args[1]).is_valid_float():
-		offset = Vector2(float(args[0]), float(args[1]))
+	var arg_offset := 0
+	var land_immediately := false
+	if not args.is_empty() and str(args[0]).strip_edges().to_lower() in ["ground", "land"]:
+		land_immediately = true
+		arg_offset = 1
+	if args.size() >= arg_offset + 2 and str(args[arg_offset]).is_valid_float() and str(args[arg_offset + 1]).is_valid_float():
+		offset = Vector2(float(args[arg_offset]), float(args[arg_offset + 1]))
 	var creature_seed := 1
-	if args.size() >= 3 and str(args[2]).is_valid_int():
-		creature_seed = int(args[2])
+	if args.size() > arg_offset + 2 and str(args[arg_offset + 2]).is_valid_int():
+		creature_seed = int(args[arg_offset + 2])
 	var game_root := get_node_or_null("/root/GameRoot")
 	if game_root == null:
 		return "GameRoot not found"
@@ -660,7 +665,9 @@ func _devconsole_spawn_vaultwing(args: Array) -> String:
 	var creature = _debug_vaultwing_spawner.spawn_at(spawn_position, creature_seed)
 	if creature == null:
 		return "Failed to spawn Vaultwing (container missing or debug population limit reached)"
-	return "Spawned Vaultwing seed=%d at %s" % [creature_seed, str(spawn_position)]
+	if land_immediately:
+		creature.request_land()
+	return "Spawned Vaultwing seed=%d at %s%s" % [creature_seed, str(spawn_position), " (landing)" if land_immediately else ""]
 
 
 func _normalize_debug_grunt_spawn_mode(value: String) -> StringName:

@@ -188,12 +188,45 @@ func _enter(next_state: State) -> void:
 	if state == State.AIR_STAGGER: _log_event(&"vaultwing_air_staggered", {})
 
 func _publish_presentation() -> void:
+	if actor.has_method("play_action"):
+		var action := _presentation_action_for_state()
+		if action != &"": actor.call("play_action", action)
 	if actor.has_method("apply_visual_altitude"):
 		var target_altitude := 0.75 if band == Band.HIGH else (0.52 if band == Band.ATTACK else 0.0)
 		if state == State.DIVE_STRIKE: target_altitude = 0.10
 		if state == State.CLIMB_OUT: target_altitude = 0.70
 		visual_altitude = move_toward(visual_altitude, target_altitude, 2.4 / 60.0)
 		actor.call("apply_visual_altitude", visual_altitude)
+
+func _presentation_action_for_state() -> StringName:
+	match state:
+		State.HIGH_PATROL, State.CIRCLE_INTEREST:
+			return &"glide"
+		State.DIVE_WINDUP:
+			return &"dive_windup"
+		State.DIVE_STRIKE:
+			return &"dive_strike"
+		State.CLIMB_OUT, State.RETREAT:
+			return &"climb_out"
+		State.PERCH_IDLE, State.PERCH_ALERT:
+			return &"perch_idle"
+		State.LAND:
+			return &"land"
+		State.GROUND_IDLE:
+			return &"ground_idle"
+		State.GROUND_STALK:
+			return &"ground_walk"
+		State.GROUND_ATTACK:
+			return &"bite_attack"
+		State.TAKEOFF:
+			return &"takeoff"
+		State.AIR_STAGGER:
+			return &"air_stagger"
+		State.GROUND_STAGGER:
+			return &"hurt"
+		State.DEAD:
+			return &"death"
+	return &""
 
 func _direction_from_rng() -> Vector2:
 	var angle := _rng.randf_range(-PI, PI)
