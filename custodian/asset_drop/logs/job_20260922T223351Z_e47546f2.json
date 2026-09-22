@@ -1,0 +1,481 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260922T223351Z_e47546f2",
+  "timestamp": "2026-09-22T22:33:51.406364+00:00",
+  "family": "ambient_vaultwing_common",
+  "kind": "ambient_creature",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/ambient_vaultwing_common/air_stagger__s.png",
+      "sha256": "06c889abc0ff47c1507e785f833e5641599d4c60bbe5a9d42286e53ae0684dd3"
+    },
+    {
+      "path": "asset_drop/inbox/ambient_vaultwing_common/bite_attack__n.png",
+      "sha256": "98ab0f7ac02e1f76c4f696bd047001cbee28c140c626088cad47586dfee6927c"
+    },
+    {
+      "path": "asset_drop/inbox/ambient_vaultwing_common/bite_attack__s.png",
+      "sha256": "cec2ae06cfeb94b68897333131051efbd5d81777bcd1167ba5ee7259419c8552"
+    },
+    {
+      "path": "asset_drop/inbox/ambient_vaultwing_common/climb_out__s.png",
+      "sha256": "f2b0f12d525d2154d8115af45d3e6efd2b154ce53e0071f81a336288f9c19fdc"
+    },
+    {
+      "path": "asset_drop/inbox/ambient_vaultwing_common/death__n.png",
+      "sha256": "78952eba54086cfa870ac55361675b3680faa747b0683712671b1d29905c4d4c"
+    },
+    {
+      "path": "asset_drop/inbox/ambient_vaultwing_common/death__s.png",
+      "sha256": "b607568e0c867cb203696a8881232d397ee84b6274875e6935e99da7359747e0"
+    },
+    {
+      "path": "asset_drop/inbox/ambient_vaultwing_common/dive_strike__s.png",
+      "sha256": "c556e551d8c34b30faf15aac1db69603de1e44bed4532f10c7de47972747587c"
+    },
+    {
+      "path": "asset_drop/inbox/ambient_vaultwing_common/dive_windup__s.png",
+      "sha256": "8e7413b9200664b6d56ddc89289770b4f5e92d9095080076068730ffbcdbe7ba"
+    },
+    {
+      "path": "asset_drop/inbox/ambient_vaultwing_common/flap__s.png",
+      "sha256": "658203e008643a17fd763082350a5f3ba9f42f0f24c9fd1a333b040697983e26"
+    },
+    {
+      "path": "asset_drop/inbox/ambient_vaultwing_common/glide__s.png",
+      "sha256": "11b24f4c228ed5e92b055d69397735f8432d98c80f4126a85c8a721d6ebe1110"
+    },
+    {
+      "path": "asset_drop/inbox/ambient_vaultwing_common/ground_idle__n.png",
+      "sha256": "f9232bddf7a0cb2fbd754e368a6b5c138fcc41f087816921c0d49d668bcadeb8"
+    },
+    {
+      "path": "asset_drop/inbox/ambient_vaultwing_common/ground_idle__s.png",
+      "sha256": "18e85e47780647a84465e55b2f2747e0387a4daf19a2c9e3a66a7e59d676c90d"
+    },
+    {
+      "path": "asset_drop/inbox/ambient_vaultwing_common/ground_walk__n.png",
+      "sha256": "7adb5ba68f01966d7a2b83c76575a468c20cad018b1612810513ac520a424822"
+    },
+    {
+      "path": "asset_drop/inbox/ambient_vaultwing_common/ground_walk__s.png",
+      "sha256": "a04f459bf208bccaea3ee68e05288ef7880615ef69888638ad60dec8df94ad2d"
+    },
+    {
+      "path": "asset_drop/inbox/ambient_vaultwing_common/hurt__n.png",
+      "sha256": "438ab1471da480169235262860e90ffd031b7c89d304191168df71bf37c81c85"
+    },
+    {
+      "path": "asset_drop/inbox/ambient_vaultwing_common/hurt__s.png",
+      "sha256": "193dcb3394e0f34f3ffb44f3f22241cfeb2f5b4837305bfa90126d00ef04fdfc"
+    },
+    {
+      "path": "asset_drop/inbox/ambient_vaultwing_common/land__s.png",
+      "sha256": "738839908b3014a695356b1d154e8b79cb86d3b44c7f19eba82abd19578f1378"
+    },
+    {
+      "path": "asset_drop/inbox/ambient_vaultwing_common/perch_idle__n.png",
+      "sha256": "bf9edc7bf778aac07e38a4af8804e74bcd27df195abc6e41fcf6f01cce3d8a08"
+    },
+    {
+      "path": "asset_drop/inbox/ambient_vaultwing_common/perch_idle__s.png",
+      "sha256": "e35aa52ba581353a68fafe77dcfbc2194ec923e73c4ccbc8151a90f5eb9b3c43"
+    },
+    {
+      "path": "asset_drop/inbox/ambient_vaultwing_common/takeoff__s.png",
+      "sha256": "ad9901cfcb78a274c611a92f8cd91dbf9628e42c1dc04f4bc479dc71ad4b3999"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "air_stagger",
+      "direction": "s",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "reaction",
+        "air_stagger",
+        "s"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/reaction/vaultwing_common__body__reaction__air_stagger__s__5f__256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "22d8e1443e68943e15013b1234468131fa231f4901e5ed6b2875c347bfe1b6b3",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "bite_attack",
+      "direction": "n",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "attack",
+        "bite_attack",
+        "n"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/attack/vaultwing_common__body__attack__bite_attack__n__6f__256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "98e90ef588e729483a7564e3892dc3ffacd29e4a2f08bbd82ee6f9ab85a6d7d3",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "bite_attack",
+      "direction": "s",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "attack",
+        "bite_attack",
+        "s"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/attack/vaultwing_common__body__attack__bite_attack__s__6f__256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "9372f675ba52f166f06b94eab135dec92f16c121e8ed7fdad5fbd54987348c11",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "climb_out",
+      "direction": "s",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "flight",
+        "climb_out",
+        "s"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/flight/vaultwing_common__body__flight__climb_out__s__6f__256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "ae1d72cd84d9df2e4ee74ec4369a120737b3b1ec3b263ff8112de9fc8a828f39",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "death",
+      "direction": "n",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "reaction",
+        "death",
+        "n"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/reaction/vaultwing_common__body__reaction__death__n__8f__256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "7e2a7553592ca77385a30b63ecd877c3beca6e32534701c8ff80a08f982aed3e",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "death",
+      "direction": "s",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "reaction",
+        "death",
+        "s"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/reaction/vaultwing_common__body__reaction__death__s__8f__256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "9bd78f9d0abebc7d8c23578275e73987d1cb9c4ee6bfa5164f1b2fff7d8d95ab",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "dive_strike",
+      "direction": "s",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "attack",
+        "dive_strike",
+        "s"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/attack/vaultwing_common__body__attack__dive_strike__s__6f__256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "fb928f1288bab7d2c40b347132519596414a97015fa97ad76da6042e206ea13c",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "dive_windup",
+      "direction": "s",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "attack",
+        "dive_windup",
+        "s"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/attack/vaultwing_common__body__attack__dive_windup__s__4f__256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "1aa0189e13937fd299bfa6714e207f0d6d92d93e753eeac99eb5bc319be7d326",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "flap",
+      "direction": "s",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "flight",
+        "flap",
+        "s"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/flight/vaultwing_common__body__flight__flap__s__8f__256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "eb6733affc2692d8fdc73a2283d490682d471b74f2fb2e6c22cc0b4cdb19b51a",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "glide",
+      "direction": "s",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "flight",
+        "glide",
+        "s"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/flight/vaultwing_common__body__flight__glide__s__6f__256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "4164cbfdae6efcf0d06ec9b6baf4d7ff193aa9306b98dee7f3735ea056da46cb",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "ground_idle",
+      "direction": "n",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "locomotion",
+        "ground_idle",
+        "n"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/locomotion/vaultwing_common__body__locomotion__ground_idle__n__6f__256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "29e7669e196f6855d31f51bb1d5c05068f7d16fa3ab845478e36750a3c24a66d",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "ground_idle",
+      "direction": "s",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "locomotion",
+        "ground_idle",
+        "s"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/locomotion/vaultwing_common__body__locomotion__ground_idle__s__6f__256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "a39cafba31eb53ff3af486ee6fb87fbb439846d7ebf6319e16e9f1cc6dd0a0ad",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "ground_walk",
+      "direction": "n",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "locomotion",
+        "ground_walk",
+        "n"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/locomotion/vaultwing_common__body__locomotion__ground_walk__n__8f__256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "f82eb720c8f165c01ae5652cc67766dd2142691c0bbdb1bbb6eaf38d4d7558b0",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "ground_walk",
+      "direction": "s",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "locomotion",
+        "ground_walk",
+        "s"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/locomotion/vaultwing_common__body__locomotion__ground_walk__s__8f__256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "3770a8417c97a40d3ea8bd899a3b03cb60687e4b20a0adb01be94fbb5844894d",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "hurt",
+      "direction": "n",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "reaction",
+        "hurt",
+        "n"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/reaction/vaultwing_common__body__reaction__hurt__n__4f__256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "e744591881a53a356664397e4244b4e6ed4e1ebf84238e3a4d4c68e84c2b8ecc",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "hurt",
+      "direction": "s",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "reaction",
+        "hurt",
+        "s"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/reaction/vaultwing_common__body__reaction__hurt__s__4f__256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "ab8c28ecfc331e173af9e88f29adf29080ff37fee33cf9b59a0ef88ee6591c10",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "land",
+      "direction": "s",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "transition",
+        "land",
+        "s"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/transition/vaultwing_common__body__transition__land__s__8f__256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "c92ad0eadb61ae15c3962caef0dfc2bef01e6b46e4ad77f66fe84ed508a32fc9",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "perch_idle",
+      "direction": "n",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "perch",
+        "perch_idle",
+        "n"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/perch/vaultwing_common__body__perch__perch_idle__n__6f__256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "3d11a51ecf6e4cf5d4fc9cae65b5b98a63e128a64db805c96735214ac5733ba5",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "perch_idle",
+      "direction": "s",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "perch",
+        "perch_idle",
+        "s"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/perch/vaultwing_common__body__perch__perch_idle__s__6f__256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "1bf4a8875878848802072371b723e406829dfba738ed5c1516c66e3c70052e04",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "takeoff",
+      "direction": "s",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "transition",
+        "takeoff",
+        "s"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/transition/vaultwing_common__body__transition__takeoff__s__8f__256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "f5553b6666a4d11dab96424206e123ca26f39ad1446d2ee40e88f3c2fbf17ec8",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    }
+  ],
+  "backends": [
+    "sprite_ingest"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": false,
+    "ok": null
+  },
+  "validation_evidence": [],
+  "result": "success"
+}
