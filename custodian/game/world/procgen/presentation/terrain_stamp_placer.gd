@@ -110,9 +110,16 @@ func plan_fingerprint(plan: Dictionary) -> String:
 
 func _candidate(profile: TerrainStampProfile, region: Dictionary, anchor: Vector2i, flip_h: bool, context: Dictionary, occupied: Dictionary, occupied_surface: Dictionary, occupied_chasm: Dictionary) -> Dictionary:
 	var core_position := profile.chasm_core_rect.position
+	if profile.placement_domain == TerrainStampProfile.PlacementDomain.SURFACE:
+		var semantic_cells: Array[Vector2i] = profile.solid_mask_cells if not profile.solid_mask_cells.is_empty() else profile.walkable_overlay_cells
+		if not semantic_cells.is_empty():
+			core_position = semantic_cells[0]
 	if flip_h:
-		core_position.x = profile.footprint_size_cells.x - profile.chasm_core_rect.end.x
-	var origin := anchor - core_position if profile.placement_domain == TerrainStampProfile.PlacementDomain.CHASM else anchor
+		if profile.placement_domain == TerrainStampProfile.PlacementDomain.CHASM:
+			core_position.x = profile.footprint_size_cells.x - profile.chasm_core_rect.end.x
+		else:
+			core_position.x = profile.footprint_size_cells.x - 1 - core_position.x
+	var origin := anchor - core_position
 	var solid := _mapped_cells(profile.solid_mask_cells, profile.footprint_size_cells, origin, flip_h)
 	var overlay := _mapped_cells(profile.walkable_overlay_cells, profile.footprint_size_cells, origin, flip_h)
 	var probes := _mapped_cells(profile.resolved_reveal_probe_cells(), profile.footprint_size_cells, origin, flip_h)

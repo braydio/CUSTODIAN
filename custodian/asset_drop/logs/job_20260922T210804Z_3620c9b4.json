@@ -1,0 +1,251 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260922T210804Z_3620c9b4",
+  "timestamp": "2026-09-22T21:08:04.560869+00:00",
+  "family": "procgen_surface_rocky_upland",
+  "kind": "backdrop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/procgen_surface_rocky_upland/granite_cliff_corner_se_01.png",
+      "sha256": "7e0a752c48e2524490d635933486289752ce71559b6ea0bc33f4a34155d92aa2"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_surface_rocky_upland/granite_cliff_corner_sw_01.png",
+      "sha256": "b863f238b0627f6cd8faf98279c1b72761fa41254776530af60683981300e557"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_surface_rocky_upland/granite_cliff_mass_east_01.png",
+      "sha256": "fe0174279f45d6a0d49a79d1cdedecdc5d8f5913eb0b8dd9812735549b31c5f9"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_surface_rocky_upland/granite_cliff_mass_south_01.png",
+      "sha256": "85e22406325293163097cdf4ca57f6b05bfa3e76401ece994ff45c5159c58481"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_surface_rocky_upland/granite_cliff_mass_south_02.png",
+      "sha256": "24e01c225819ef6e76b5075066e0bdd8964f34d7b7a703e8fc38a202d68ceb6a"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_surface_rocky_upland/granite_cliff_mass_west_01.png",
+      "sha256": "eee0362ed736a4bad5e1a19dc7d4d92d85758744ef93376aa57dff2072f331fc"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_surface_rocky_upland/granite_shelf_large_01.png",
+      "sha256": "d1613c7bc5930e99dd13df5ba27880c11548acbcaa8558fa374a94304f7623aa"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_surface_rocky_upland/granite_shelf_large_02.png",
+      "sha256": "c82a99ef748919d693d7f41ab02e1efd21352681f7568315e23303061160b098"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_surface_rocky_upland/granite_shelf_small_01.png",
+      "sha256": "a697f73871b664fe73e03745a68258f8b8757c3b0ec0d67b858a9e1d4dc9606e"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_surface_rocky_upland/scree_overlay_01.png",
+      "sha256": "7ade35553345fb64e74eb95d662ce388305f32973b9a50356d0a39bcf3625d07"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "granite_cliff_corner_se_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "procgen_surface_rocky_upland",
+        "backdrop",
+        "body",
+        "rocky_upland",
+        "granite_cliff_corner_se_01",
+        "omni"
+      ],
+      "path": "content/tiles/procgen_macro/runtime/rocky_upland/granite_cliff_corner_se_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "7e0a752c48e2524490d635933486289752ce71559b6ea0bc33f4a34155d92aa2",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "granite_cliff_corner_sw_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "procgen_surface_rocky_upland",
+        "backdrop",
+        "body",
+        "rocky_upland",
+        "granite_cliff_corner_sw_01",
+        "omni"
+      ],
+      "path": "content/tiles/procgen_macro/runtime/rocky_upland/granite_cliff_corner_sw_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "b863f238b0627f6cd8faf98279c1b72761fa41254776530af60683981300e557",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "granite_cliff_mass_east_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "procgen_surface_rocky_upland",
+        "backdrop",
+        "body",
+        "rocky_upland",
+        "granite_cliff_mass_east_01",
+        "omni"
+      ],
+      "path": "content/tiles/procgen_macro/runtime/rocky_upland/granite_cliff_mass_east_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "fe0174279f45d6a0d49a79d1cdedecdc5d8f5913eb0b8dd9812735549b31c5f9",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "granite_cliff_mass_south_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "procgen_surface_rocky_upland",
+        "backdrop",
+        "body",
+        "rocky_upland",
+        "granite_cliff_mass_south_01",
+        "omni"
+      ],
+      "path": "content/tiles/procgen_macro/runtime/rocky_upland/granite_cliff_mass_south_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "85e22406325293163097cdf4ca57f6b05bfa3e76401ece994ff45c5159c58481",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "granite_cliff_mass_south_02",
+      "direction": "omni",
+      "semantic_identity": [
+        "procgen_surface_rocky_upland",
+        "backdrop",
+        "body",
+        "rocky_upland",
+        "granite_cliff_mass_south_02",
+        "omni"
+      ],
+      "path": "content/tiles/procgen_macro/runtime/rocky_upland/granite_cliff_mass_south_02.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "24e01c225819ef6e76b5075066e0bdd8964f34d7b7a703e8fc38a202d68ceb6a",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "granite_cliff_mass_west_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "procgen_surface_rocky_upland",
+        "backdrop",
+        "body",
+        "rocky_upland",
+        "granite_cliff_mass_west_01",
+        "omni"
+      ],
+      "path": "content/tiles/procgen_macro/runtime/rocky_upland/granite_cliff_mass_west_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "eee0362ed736a4bad5e1a19dc7d4d92d85758744ef93376aa57dff2072f331fc",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "granite_shelf_large_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "procgen_surface_rocky_upland",
+        "backdrop",
+        "body",
+        "rocky_upland",
+        "granite_shelf_large_01",
+        "omni"
+      ],
+      "path": "content/tiles/procgen_macro/runtime/rocky_upland/granite_shelf_large_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "d1613c7bc5930e99dd13df5ba27880c11548acbcaa8558fa374a94304f7623aa",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "granite_shelf_large_02",
+      "direction": "omni",
+      "semantic_identity": [
+        "procgen_surface_rocky_upland",
+        "backdrop",
+        "body",
+        "rocky_upland",
+        "granite_shelf_large_02",
+        "omni"
+      ],
+      "path": "content/tiles/procgen_macro/runtime/rocky_upland/granite_shelf_large_02.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "c82a99ef748919d693d7f41ab02e1efd21352681f7568315e23303061160b098",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "granite_shelf_small_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "procgen_surface_rocky_upland",
+        "backdrop",
+        "body",
+        "rocky_upland",
+        "granite_shelf_small_01",
+        "omni"
+      ],
+      "path": "content/tiles/procgen_macro/runtime/rocky_upland/granite_shelf_small_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "a697f73871b664fe73e03745a68258f8b8757c3b0ec0d67b858a9e1d4dc9606e",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "scree_overlay_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "procgen_surface_rocky_upland",
+        "backdrop",
+        "body",
+        "rocky_upland",
+        "scree_overlay_01",
+        "omni"
+      ],
+      "path": "content/tiles/procgen_macro/runtime/rocky_upland/scree_overlay_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "7ade35553345fb64e74eb95d662ce388305f32973b9a50356d0a39bcf3625d07",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

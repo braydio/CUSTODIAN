@@ -20,10 +20,17 @@ func _init() -> void:
 	var composer := COMPOSER.new() as ProcgenMacroPresentationComposer
 	var production_report: Dictionary = PRODUCTION_CATALOG.validation_report(true)
 	_require((production_report.rejected as Array).is_empty(), "production macro catalog has rejected profiles")
-	_require((production_report.valid as Array).size() == 16, "production macro catalog does not contain sixteen depth profiles")
+	_require((production_report.valid as Array).size() == 26, "production macro catalog does not contain twenty-six profiles")
+	var production_chasm_count := 0
+	var production_surface_count := 0
 	for production_profile: TerrainStampProfile in production_report.valid:
-		_require(production_profile.placement_domain == TerrainStampProfile.PlacementDomain.CHASM, "production depth profile is not CHASM")
-		_require(production_profile.depth_band == TerrainStampProfile.DepthBand.BACK, "production depth profile is not BACK")
+		if production_profile.placement_domain == TerrainStampProfile.PlacementDomain.CHASM:
+			production_chasm_count += 1
+			_require(production_profile.depth_band == TerrainStampProfile.DepthBand.BACK, "production depth profile is not BACK")
+		else:
+			production_surface_count += 1
+	_require(production_chasm_count == 16, "production catalog does not retain sixteen CHASM profiles")
+	_require(production_surface_count == 10, "production catalog does not contain ten SURFACE profiles")
 	var first := composer.build_plan(context, catalog)
 	var second := composer.build_plan(context, catalog)
 	_require(first == second, "same input and seed changed the normalized plan")
@@ -34,6 +41,7 @@ func _init() -> void:
 	_validate_chasm_contract_and_placement(composer)
 	_validate_biome_family_selection(composer)
 	_validate_production_catalog_selection(composer)
+	_validate_production_surface_profiles()
 	_validate_domain_budgets_and_surface_overlap()
 	_validate_surface_biome_isolation()
 
@@ -263,6 +271,19 @@ func _validate_domain_budgets_and_surface_overlap() -> void:
 	_require((overlap_plan.placements as Array).size() == 1, "overlapping SURFACE stamps both placed")
 	_require(int(overlap_plan.rejection_counts.get("surface_presentation_overlap", 0)) > 0, "SURFACE overlap rejection was not observable")
 
+	var offset_surface := _fixture_profile()
+	offset_surface.stamp_id = &"offset_surface"
+	offset_surface.family_id = &"procgen_surface_rocky_upland"
+	offset_surface.footprint_size_cells = Vector2i(8, 8)
+	offset_surface.solid_mask_cells = []
+	offset_surface.walkable_overlay_cells = [Vector2i(3, 4)]
+	offset_surface.reveal_probe_cells = [Vector2i(3, 4)]
+	var offset_catalog := CATALOG.new() as TerrainStampCatalog
+	offset_catalog.stamps = [offset_surface]
+	var offset_plan: Dictionary = placer.build_plan(17, [overlap_regions[0]], offset_catalog, context, 1)
+	_require((offset_plan.placements as Array).size() == 1, "offset SURFACE semantic anchor did not place")
+	_require((offset_plan.placements[0] as Dictionary).origin_cell == surface_cell - Vector2i(3, 4), "SURFACE origin did not align its semantic mask to the region anchor")
+
 	var legacy_context := context.duplicate(true)
 	legacy_context.erase("max_stamps_by_domain")
 	var legacy_plan: Dictionary = placer.build_plan(17, regions, catalog, legacy_context, 14)
@@ -277,6 +298,45 @@ func _validate_surface_biome_isolation() -> void:
 	_require(catalog.filter_profiles(PackedStringArray(["procgen_surface_rocky_upland"]), &"mountain_wall", &"rocky_upland").size() == 1, "rocky surface family is unavailable to rocky_upland")
 	for biome: StringName in [&"scrubland", &"woodland", &"wetland"]:
 		_require(catalog.filter_profiles(PackedStringArray(["procgen_surface_rocky_upland"]), &"mountain_wall", biome).is_empty(), "rocky surface family leaked into %s" % biome)
+
+
+func _validate_production_surface_profiles() -> void:
+	var cliff_ids := PackedStringArray([
+		"granite_cliff_mass_south_01", "granite_cliff_mass_south_02",
+		"granite_cliff_mass_east_01", "granite_cliff_mass_west_01",
+		"granite_cliff_corner_se_01", "granite_cliff_corner_sw_01",
+	])
+	var shelf_ids := PackedStringArray([
+		"granite_shelf_large_01", "granite_shelf_large_02", "granite_shelf_small_01",
+	])
+	var surface_ids := cliff_ids.duplicate()
+	surface_ids.append_array(shelf_ids)
+	surface_ids.append("scree_overlay_01")
+	for stamp_id: String in surface_ids:
+		var profile := PRODUCTION_CATALOG.get_profile(StringName(stamp_id))
+		_require(profile != null, "missing Rocky Upland SURFACE profile %s" % stamp_id)
+		if profile == null:
+			continue
+		_require(profile.family_id == &"procgen_surface_rocky_upland", "surface profile has wrong family %s" % stamp_id)
+		_require(profile.placement_domain == TerrainStampProfile.PlacementDomain.SURFACE, "surface profile has wrong domain %s" % stamp_id)
+		_require(profile.required_biome == &"rocky_upland", "surface profile has wrong biome %s" % stamp_id)
+		_require(not profile.allow_flip_h, "surface profile permits horizontal flip %s" % stamp_id)
+		_require(profile.reveal_probe_cells.size() >= 5 and profile.reveal_probe_cells.size() <= 9, "surface profile reveal probe count is outside 5-9 %s" % stamp_id)
+		_require(not profile.resolved_reveal_probe_cells().is_empty(), "surface profile has no reveal probes %s" % stamp_id)
+		if cliff_ids.has(stamp_id):
+			_require(profile.allowed_region_kinds == PackedStringArray(["mountain_wall"]), "cliff profile has wrong region kind %s" % stamp_id)
+			_require(profile.depth_band == TerrainStampProfile.DepthBand.BACK, "cliff profile has wrong depth band %s" % stamp_id)
+			_require(not profile.solid_mask_cells.is_empty() and profile.walkable_overlay_cells.is_empty(), "cliff profile semantic masks are invalid %s" % stamp_id)
+			_require(profile.claims_dressing_clearance, "cliff profile does not claim dressing clearance %s" % stamp_id)
+		else:
+			_require(profile.allowed_region_kinds == PackedStringArray(["rocky_upland_floor"]), "ground profile has wrong region kind %s" % stamp_id)
+			_require(profile.depth_band == TerrainStampProfile.DepthBand.GROUND, "ground profile has wrong depth band %s" % stamp_id)
+			_require(profile.solid_mask_cells.is_empty() and not profile.walkable_overlay_cells.is_empty(), "ground profile semantic masks are invalid %s" % stamp_id)
+			_require(profile.claims_dressing_clearance == (stamp_id != "scree_overlay_01"), "ground profile has wrong dressing clearance %s" % stamp_id)
+
+	for biome: StringName in [&"scrubland", &"woodland", &"wetland"]:
+		var leaked := PRODUCTION_CATALOG.filter_profiles(PackedStringArray(["procgen_surface_rocky_upland"]), &"mountain_wall", biome)
+		_require(leaked.is_empty(), "production Rocky Upland SURFACE profiles leaked into %s" % biome)
 
 
 func _validate_production_catalog_selection(composer: ProcgenMacroPresentationComposer) -> void:

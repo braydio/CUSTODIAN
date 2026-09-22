@@ -6,5 +6,5 @@ biome_id = &"rocky_upland"
 foliage_density_ceiling = 0.03
 tree_probability = 0.0
 foliage_tint = Color(0.92, 0.89, 0.82, 1)
-macro_stamp_families = PackedStringArray("procgen_depth_universal", "procgen_depth_chunks")
+macro_stamp_families = PackedStringArray("procgen_depth_universal", "procgen_depth_chunks", "procgen_surface_rocky_upland")
 macro_stamp_min_region_cells = 8

@@ -119,6 +119,12 @@ Woodland enables universal, its specific family, and depth chunks; Wetland and
 Rocky Upland enable universal plus depth chunks. At most eight depth stamps are
 realized for one active procgen map.
 
+The first Rocky Upland SURFACE production family is also live: ten authored
+RGBA assets and ten explicit-mask profiles cover cliff/corner, shelf, and scree
+compositions. The terrain stamp catalog now contains 26 profiles total: 16
+CHASM/BACK depth profiles plus 10 Rocky Upland SURFACE profiles. No other biome
+enables this SURFACE family.
+
 The biome field is built after faction/story geometry, parking, final road
 repair, and the final generated-state capture. It continues to run in candidate
 evaluation, while macro Sprite2D realization runs only for direct final output
@@ -148,17 +154,18 @@ prove one normal gameplay view containing:
 - a weathered hardened road or apron;
 - Ash Bell embedded in a memorable mountain composition.
 
-The initial planned art vocabulary currently enumerates 19 reusable assets:
+The broader planned art vocabulary still enumerates 19 reusable assets:
 
 - six cardinal/corner granite cliff masses;
 - three large/small rock shelves;
 - six boulder, pine-rock, and scrub-rock clusters;
 - four rock-ground and scree overlays.
 
-The hardened contract resolves this as 19 runtime assets. Runtime art belongs
+The first production subset resolves ten of those assets: six cliff/corner
+masses, three shelves, and one scree overlay. Runtime art belongs
 under `content/tiles/procgen_macro/runtime/rocky_upland/`; oversized masters
-belong under the sibling `source/rocky_upland/` domain. The catalog remains
-empty-safe until approved art and explicit authored semantic masks exist.
+are retained through Asset Pipeline V2 source-work/archive provenance. The
+remaining cluster and material-overlay vocabulary is still deferred.
 
 Masks are authored resource data and are never inferred from PNG alpha.
 `solid_mask_cells` must already map to wall/blocked/ledge/drop authority;

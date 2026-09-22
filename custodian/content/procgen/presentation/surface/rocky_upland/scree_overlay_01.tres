@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="TerrainStampProfile" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/world/procgen/presentation/terrain_stamp_profile.gd" id="1"]
+[ext_resource type="Texture2D" path="res://content/tiles/procgen_macro/runtime/rocky_upland/scree_overlay_01.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+stamp_id = &"scree_overlay_01"
+family_id = &"procgen_surface_rocky_upland"
+texture = ExtResource("2")
+canvas_px = Vector2i(512, 256)
+pivot_px = Vector2(0, 0)
+footprint_size_cells = Vector2i(16, 8)
+placement_domain = 0
+walkable_overlay_cells = Array[Vector2i]([Vector2i(5, 3), Vector2i(6, 3), Vector2i(7, 3), Vector2i(8, 3), Vector2i(9, 3), Vector2i(10, 3), Vector2i(5, 4), Vector2i(6, 4), Vector2i(7, 4), Vector2i(8, 4), Vector2i(9, 4), Vector2i(10, 4)])
+reveal_probe_cells = Array[Vector2i]([Vector2i(5, 3), Vector2i(7, 3), Vector2i(10, 3), Vector2i(6, 4), Vector2i(8, 4), Vector2i(10, 4)])
+allowed_region_kinds = PackedStringArray("rocky_upland_floor")
+required_biome = &"rocky_upland"
+min_region_cells = 12
+depth_band = 1
+weight = 14
+claims_dressing_clearance = false
+allow_flip_h = false

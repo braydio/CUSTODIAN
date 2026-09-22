@@ -1607,7 +1607,7 @@ generation remains the next parallel production task.
 
 Accepted procgen maps now own deterministic scrubland, woodland, wetland, and rocky-upland fields that constrain foliage density, composition, and tint beneath route policy. One world-local `WorldEnvironmentDirector` owns a 24-minute fixed-physics day, contract-seeded weather, and indoor exposure; existing lighting, atmosphere, and shared foliage materials remain presentation authorities.
 
-Procgen Macro Presentation V1 has all 16 procgen depth chunks presentation-bound: Wetland and Rocky Upland consume their authored depth families, Woodland gains overgrown works as an additional option, and depth chunks remain CHASM/BACK visual-only underlays. Playable SURFACE macro composition remains the next world-presentation slice. Biomes now classify the final captured floor authority
+Procgen Macro Presentation V1 has all 16 procgen depth chunks presentation-bound: Wetland and Rocky Upland consume their authored depth families, Woodland gains overgrown works as an additional option, and depth chunks remain CHASM/BACK visual-only underlays. The first playable SURFACE production family is live for Rocky Upland with ten cliff/corner, shelf, and scree assets and profiles. Biomes now classify the final captured floor authority
 after faction/story, parking, and second-pass road corrections. Pure region and
 stamp planning is deterministic and separate from Sprite2D realization;
 presentation roots run under the native-32px, `Vector2.ONE` map root, and streaming gates
@@ -1615,6 +1615,7 @@ each macro stamp against all live Floor/Walls reveal probes. Macro masks and
 dressing clearances never create collision, navigation, or terrain authority.
 The planner now reserves independent budgets of eight CHASM and six SURFACE
 stamps within a fourteen-stamp overall cap, and SURFACE occupancy is the union
-of authored solid and walkable-overlay cells. The ten-state Rocky Upland
-SURFACE Asset V2 family is registered, but production PNGs are SOURCE_PENDING;
-profiles, catalog registration, and biome binding remain deliberately deferred.
+of authored solid and walkable-overlay cells. The catalog contains 26 profiles:
+16 CHASM/BACK depth profiles and 10 Rocky Upland SURFACE profiles. Only the
+Rocky Upland biome enables `procgen_surface_rocky_upland`; broader biome SURFACE
+families and the remaining Rocky Upland material/cluster vocabulary are deferred.

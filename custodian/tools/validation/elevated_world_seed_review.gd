@@ -45,7 +45,10 @@ func _run() -> void:
 		var floor_layer := map.get_node("NavigationRegion2D/Floor") as TileMapLayer
 		var wall_layer := map.get_node("NavigationRegion2D/Walls") as TileMapLayer
 		var macro_plan := tilemap.debug_get_macro_presentation_plan()
-		var depth_stamps: Array = macro_plan.get("placements", [])
+		var depth_stamps: Array = []
+		for placement: Dictionary in macro_plan.get("placements", []):
+			if int(placement.get("placement_domain", TerrainStampProfile.PlacementDomain.SURFACE)) == TerrainStampProfile.PlacementDomain.CHASM:
+				depth_stamps.append(placement)
 		total_depth_stamps += depth_stamps.size()
 		assert(depth_stamps.size() <= 8, "Seed %d exceeded the depth stamp cap" % seed)
 		for placement: Dictionary in depth_stamps:
