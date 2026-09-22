@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import shutil
 import sys
 import uuid
@@ -65,7 +66,11 @@ class SourceArtService:
     ):
         self.root = Path(root)
         self.allowed_source_roots = tuple(Path(path) for path in allowed_source_roots)
-        self.handoff_root = Path(handoff_root or (model.CUSTODIAN_ROOT / "asset_drop/inbox/operator"))
+        # Source Session handoff is the reviewed staging boundary for the
+        # specialized Operator sprite pipeline.  Keep the old asset-drop root
+        # available for source intake, but do not make callers bridge it by
+        # hand before ingest.
+        self.handoff_root = Path(handoff_root or (model.CUSTODIAN_ROOT / "content/sprites/_pipeline/inbox"))
 
     def authorize_source_path(self, path: Path) -> Path:
         resolved = Path(path).resolve(strict=True)
@@ -297,10 +302,16 @@ class SourceArtService:
             raise model.WorkbenchError("select or convert a candidate before review")
         candidate = require_under(root / "registered", Path(session.selected_candidate), label="source candidate").resolve(strict=True)
         with Image.open(candidate) as sheet:
+            expected_size = (session.geometry.frame_count * session.target_width, session.target_height)
+            if sheet.size != expected_size:
+                raise model.WorkbenchError(
+                    "normalized candidate must be a horizontal strip sized "
+                    f"{expected_size[0]}x{expected_size[1]}, got {sheet.width}x{sheet.height}"
+                )
             frames = extract_frames(
                 sheet,
-                columns=session.geometry.columns,
-                rows=session.geometry.rows,
+                columns=session.geometry.frame_count,
+                rows=1,
                 frame_count=session.geometry.frame_count,
             )
         frame_paths: list[Path] = []
@@ -329,18 +340,62 @@ class SourceArtService:
             self.save(path, session)
         return result
 
-    def handoff(self, session_path: Path | str, *, destination_name: str) -> dict[str, Any]:
+    def handoff(
+        self,
+        session_path: Path | str,
+        *,
+        destination_name: str,
+        replace: bool = False,
+        dry_run: bool = False,
+    ) -> dict[str, Any]:
         session, _root, path = self.load(session_path)
         if session.state != "REVIEWED":
             raise model.WorkbenchError("source must pass review before ingest handoff")
         if Path(destination_name).name != destination_name or not destination_name.lower().endswith(".png"):
             raise model.WorkbenchError("handoff destination must be a plain PNG filename")
         candidate = Path(session.selected_candidate).resolve(strict=True)
+        try:
+            destination_key = model.SCHEMA.parse_filename(destination_name)
+        except ValueError as error:
+            raise model.WorkbenchError(f"handoff destination is not a valid Operator V2 filename: {error}") from error
+        if destination_key.frames != session.geometry.frame_count or (
+            destination_key.frame_width,
+            destination_key.frame_height,
+        ) != (session.target_width, session.target_height):
+            raise model.WorkbenchError("handoff filename frame contract does not match the reviewed candidate")
         destination = self.handoff_root / destination_name
         destination.parent.mkdir(parents=True, exist_ok=True)
+        existing = None
+        operation = "CREATE"
         if destination.exists():
-            raise model.WorkbenchError("handoff destination already exists")
-        shutil.copy2(candidate, destination)
+            try:
+                existing_key = model.SCHEMA.parse_filename(destination.name)
+            except ValueError as error:
+                raise model.WorkbenchError(f"existing handoff is not a valid Operator V2 filename: {error}") from error
+            if model.SCHEMA.semantic_identity(existing_key) != model.SCHEMA.semantic_identity(destination_key):
+                raise model.WorkbenchError("replacement refused: existing and new assets have different semantic identities")
+            if not replace:
+                raise model.WorkbenchError("handoff destination already exists; pass explicit replacement")
+            operation = "REPLACE"
+            existing = {"path": str(destination.resolve()), "sha256": sha256(destination), "frames": existing_key.frames, "frame_size": [existing_key.frame_width, existing_key.frame_height]}
+        report = {
+            "operation": operation,
+            "semantic_identity": list(model.SCHEMA.semantic_identity(destination_key)),
+            "old": existing,
+            "new": {"path": str(destination.resolve()), "sha256": sha256(candidate), "frames": destination_key.frames, "frame_size": [destination_key.frame_width, destination_key.frame_height]},
+            "staging_boundary": str(self.handoff_root.resolve()),
+            "next_action": "run generate_inbox_manifests.py / specialized Operator ingest",
+        }
+        write_json(_root / "handoff/replacement_report.json", report)
+        if dry_run:
+            return {"status": "DRY_RUN", **report, "source_session": str(path.resolve())}
+        temporary = destination.with_name(f".{destination.name}.{uuid.uuid4().hex}.tmp")
+        try:
+            shutil.copy2(candidate, temporary)
+            os.replace(temporary, destination)
+        except Exception:
+            temporary.unlink(missing_ok=True)
+            raise
         session.state = "READY"
         self.save(path, session)
         return {
@@ -349,6 +404,9 @@ class SourceArtService:
             "frame_count": session.geometry.frame_count,
             "frame_size": [session.target_width, session.target_height],
             "source_session": str(path.resolve()),
+            "operation": operation,
+            "semantic_identity": list(model.SCHEMA.semantic_identity(destination_key)),
+            "next_action": "run generate_inbox_manifests.py / specialized Operator ingest; compatibility resources refresh during operator_runtime_build",
         }
 
     def palette_inspect(self,session_path:Path|str)->dict[str,Any]:

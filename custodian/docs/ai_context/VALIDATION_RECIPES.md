@@ -1309,10 +1309,14 @@ python3 custodian/tools/validation/operator_art_agent_mcp_smoke.py
 
 The source smoke proves allowlisted staging, immutable source hashing, fixed
 sheet geometry, one shared global scale, translation-only registration, three
-96 px candidates, true alpha, clipping refusal, review artifacts, and staged
-handoff without canonical publication. The pilot runs an eight-frame source by
-default or accepts `--source PATH --frames N --target-size N`, and hashes the
-production Operator tree before and after.
+96 px candidates, true alpha, clipping refusal, flattened multi-row review,
+semantic replacement dry-run/guarding, review artifacts, and staged handoff
+without canonical publication. Handoff stages directly in the specialized
+`content/sprites/_pipeline/inbox/` boundary. The pilot runs an eight-frame
+source by default or accepts `--source PATH --frames N --target-size N`, and
+hashes the production Operator tree before and after. Specialized ingest runs
+the existing `operator_runtime_build` post-process, including compatibility
+resource refresh.
 # Operator Runtime Authority Migration Checks (in progress)
 
 These checks validate the preservation/selector foundations only; they do not

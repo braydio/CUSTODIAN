@@ -31,10 +31,10 @@ def make_source(path: Path) -> None:
     sheet.save(path)
 
 
-def make_grid_source(path: Path) -> None:
-    sheet = Image.new("RGBA", (512, 512), (0, 0, 0, 0))
+def make_grid_source(path: Path, *, frames: int = 3, columns: int = 2, rows: int = 2) -> None:
+    sheet = Image.new("RGBA", (columns * 256, rows * 256), (0, 0, 0, 0))
     draw = ImageDraw.Draw(sheet)
-    colors = ((255, 0, 0, 255), (0, 255, 0, 255), (0, 0, 255, 255))
+    colors = tuple((255 if index % 3 == 0 else 0, 255 if index % 3 == 1 else 0, 255 if index % 3 == 2 else 0, 255) for index in range(frames))
     for index, color in enumerate(colors):
         column = index % 2
         row = index // 2
@@ -108,12 +108,32 @@ def main() -> int:
         assert Path(review["contact_sheet"]).exists()
         assert Path(review["silhouette"]).exists()
         assert Path(review["animation"]).exists()
-        handoff = service.handoff(session, destination_name="operator__test__walk_01__e__2f__96.png")
+        destination_name = "operator__upper_body__unarmed__locomotion__walk_01__e__2f__96.png"
+        handoff = service.handoff(session, destination_name=destination_name)
         assert handoff["status"] == "READY_FOR_INGEST" and Path(handoff["candidate"]).exists()
         assert source.read_bytes() == original
 
+        replacement = service.start(source_path=source, frames=2, target_size=96)
+        service.analyze(replacement); service.plan_normalization(replacement); service.convert(replacement); service.review(replacement)
+        try:
+            service.handoff(replacement, destination_name=destination_name)
+            raise AssertionError("implicit replacement was accepted")
+        except model.WorkbenchError as error:
+            assert "explicit replacement" in str(error)
+        dry = service.handoff(replacement, destination_name=destination_name, replace=True, dry_run=True)
+        assert dry["status"] == "DRY_RUN" and dry["operation"] == "REPLACE" and dry["old"]["sha256"]
+        replaced = service.handoff(replacement, destination_name=destination_name, replace=True)
+        assert replaced["operation"] == "REPLACE"
+
+        unreviewed = service.start(source_path=source, frames=2, target_size=96)
+        try:
+            service.handoff(unreviewed, destination_name="operator__upper_body__unarmed__locomotion__run_01__e__2f__96.png", replace=True)
+            raise AssertionError("unreviewed handoff was accepted")
+        except model.WorkbenchError as error:
+            assert "pass review" in str(error)
+
         grid_source = allowed / "highres_grid_3f.png"
-        make_grid_source(grid_source)
+        make_grid_source(grid_source, frames=3, columns=2, rows=2)
         grid_session = service.start(
             source_path=grid_source,
             frames=3,
@@ -128,6 +148,17 @@ def main() -> int:
             assert grid_candidate.size == (288, 96)
             sampled = [grid_candidate.getpixel((index * 96 + 48, 48))[:3] for index in range(3)]
             assert sampled == [(255, 0, 0), (0, 255, 0), (0, 0, 255)], sampled
+
+        for frames, columns, rows in ((6, 3, 2), (7, 4, 2), (8, 4, 2)):
+            source_grid = allowed / f"highres_grid_{frames}f.png"
+            make_grid_source(source_grid, frames=frames, columns=columns, rows=rows)
+            session_grid = service.start(source_path=source_grid, frames=frames, columns=columns, rows=rows, target_size=96)
+            service.analyze(session_grid)
+            service.plan_normalization(session_grid)
+            converted_grid = service.convert(session_grid)
+            assert Image.open(converted_grid["registered"]).size == (frames * 96, 96)
+            reviewed_grid = service.review(session_grid)
+            assert reviewed_grid["status"] == "PASS", reviewed_grid
 
         outside = root / "outside.png"
         make_source(outside)

@@ -141,14 +141,24 @@ operator art source-register SESSION --frame 4 --dx -1 --dy 2
 operator art source-convert SESSION
 operator art source-select SESSION balanced
 operator art source-review SESSION
-operator art source-handoff SESSION operator__melee_1h__walk_01__e__8f__96.png
+operator art source-handoff SESSION operator__upper_body__melee_1h__locomotion__walk_01__e__8f__96.png
+# Existing semantic replacement (preview first, then apply):
+operator art source-handoff SESSION operator__upper_body__melee_1h__locomotion__walk_01__e__8f__96.png --replace --dry-run
+operator art source-handoff SESSION operator__upper_body__melee_1h__locomotion__walk_01__e__8f__96.png --replace
+python3 custodian/tools/pipelines/generate_inbox_manifests.py --manifest operator__upper_body__melee_1h__locomotion__walk_01__e__8f__96.png
 ```
 
 Source reads are confined to the inbox and source-work asset-drop roots. One
 crop and scale is shared by the complete sheet; registrations are bounded
-integer translations and conversion refuses clipping. Handoff only stages a
-reviewed candidate in the inbox for the existing ingest workflow. It does not
-publish canonical source or runtime assets.
+integer translations and conversion refuses clipping. Normalized candidates
+are reviewed as horizontal `frame_count * target_width` strips, even when the
+source was multi-row. Handoff stages directly in the specialized
+`content/sprites/_pipeline/inbox/` boundary, so callers do not copy between
+inboxes. Existing destinations require explicit `--replace`; replacement is
+allowed only for the same parsed semantic identity and emits a dry-run report
+with old/new hashes and frame contracts. It does not publish canonical source
+or runtime assets; specialized ingest runs the existing runtime and
+compatibility-resource refresh.
 
 Sessions live under
 `.ai/operator_art_agent/<profile>/<group>/<action>/<direction>/<session-id>/`.

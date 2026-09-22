@@ -362,6 +362,8 @@ godot --headless --script tools/validation/operator_modular_layers_smoke.gd
 | Preview a built Operator action or sequence | `operator_action_preview.py` |
 | Plan a new character's first animation batch | `scaffold_character_contract.py` |
 | Route new inbox PNGs | `generate_inbox_manifests.py`, then `ingest.py` |
+| Normalize/review Operator generated art | `operator art source-*`; handoff stages directly in `_pipeline/inbox/` |
+| Replace an existing Operator semantic strip | `source-handoff ... --replace --dry-run`, then `--replace`; ingest refreshes compatibility resources |
 | Rebuild existing Operator modular source sheets | `build_operator_modular_runtime.py` |
 | Refresh Operator SpriteFrames | `reload_assets.py` or `update_operator_compatibility_resources.py` followed by `build_operator_runtime_frames.gd` |
 | Validate pure Python tooling | the three new `*_smoke.py` scripts |
